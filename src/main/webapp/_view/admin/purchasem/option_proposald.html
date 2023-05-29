@@ -1,0 +1,98 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+    <div class="jbolt_table_toolbar">
+        <div class="btn-group" role="group" aria-label="btn-group">
+            <button onclick="submitThisForm();" class="btn btn-success"><i class="fa fa-check mr-1"></i>
+                #if(noiniproposalds == null)
+                确定并新建
+                #else
+                细项新增确定
+                #end
+            </button>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <input type="hidden" id="proposalmid" value="#(iproposalmid??)">
+        <input type="hidden" id="noiniproposalds" value="#(noiniproposalds??)">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="proposaldRowtpl_#(pageId)">
+            {@each datas as data,index}
+                <tr data-id="${data.iautoid}" >
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.cbudgetno}</td>
+                <td>${data.citemname}</td>
+                <td>${data.iquantity}</td>
+                <td>${data.iunitprice}</td>
+                <td>${data.inatmoney}</td>
+                <td>${data.inatsum}</td>
+                <td>${data.cvenname}</td>
+                <td>${data.ddemanddate|date_ymd}</td>
+                <td>${data.cbudgetdepname}</td>
+                <td>${data.istatus == 1 ? '已申购':'未申购'}</td>
+                </tr>
+            {@/each}
+        </textarea>
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               id="jbolt_table_#(pageId)"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-width="auto"
+               data-url="admin/proposald/findByiProposalMid?iproposalmid=#(iproposalmid??)&noiniproposalds=#(noiniproposalds)"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="proposaldForm_#(pageId)"
+               data-rowtpl="proposaldRowtpl_#(pageId)"
+               data-toolbar="proposald_toolbar_#(pageId)"
+               data-fixed-columns-left="1,2,3"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-min-width="150" data-column="cbudgetno">预算NO</th>
+                <th data-width="150" data-column="cItemName">项目细项名称</th>
+                <th data-width="150" data-column="iQuantity">数量</th>
+                <th data-width="150" data-column="iUnitPrice">单价</th>
+                <th data-width="150" data-column="iNatMoney">申请金额(不含税)</th>
+                <th data-width="150" data-column="iNatSum">申请金额(含税)</th>
+                <th data-width="150" data-column="cVenCode">预定供货商</th>
+                <th data-width="150" data-column="dDemandDate">需求日</th>
+                <th data-width="150" data-column="cBudgetDepCode">预算对应部门</th>
+                <th data-width="150" data-column="iStatus">申购状态</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+    function submitThisForm() {
+        // 禀议主表ID
+        var iproposalmid = $("#proposalmid").val();
+        var noiniproposalds = $("#noiniproposalds").val();
+        var iproposaldids = jboltTableGetCheckedIds('jbolt_table_#(pageId)');
+
+        if (!iproposaldids) {
+            LayerMsgBox.alert('您未勾选明细数据!', 2);
+            return;
+        }
+
+        if (noiniproposalds) {
+            noiniproposalds = noiniproposalds.split(",");
+            iproposaldids.push(noiniproposalds);
+        }
+
+        // 跳转新增页面
+        location.href = '/admin/purchasem/instrumentAdd?iproposalmid=' + iproposalmid + '&iproposaldids=' + iproposaldids.join(',') + '&_jb_rqtype_=dialog';
+
+    }
+</script>
+#end

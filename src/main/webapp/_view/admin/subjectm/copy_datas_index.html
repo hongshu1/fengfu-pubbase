@@ -1,0 +1,43 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+    <div class="jbolt_page_title">
+        <form onsubmit="return  false;"  id="investmentPlanForm_#(pageId)"  action="#(action)" method="post">
+            <button  id="investmentPrint" type="submit" hidden class="btn btn-primary"><i class="fa fa-check mr-1">提交表单</i></button>
+            <div class="form-group row">
+                <label class="col-2 ">版本</label>
+                <div class="col">
+                    <input id="cversion" data-rule="required" type="text"  autocomplete="off" class="form-control" placeholder="=版本=" name="cversion" value=""/>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+    function submitThisForm(){
+        let cversion = $('#cversion').val();
+        console.log(cversion);
+        $("#investmentPrint").click();
+        $.post('admin/subjectm/copyDatas',
+            {    // data数据，要参考并符合api格式给定
+                cversion: cversion
+            },
+            function (res) {    // 回调函数
+                if (res.state === 'ok') {
+                    LayerMsgBox.success("提交成功", 600, function () {
+                        parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        window.parent.refreshJBoltTable();
+                    });
+                } else {
+                    LayerMsgBox.alert(res.msg, 2);
+                }
+            }
+        )
+
+    }
+</script>
+#end

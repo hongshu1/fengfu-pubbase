@@ -1,0 +1,276 @@
+#@jboltLayout()
+#define main()
+#set(pageId = RandomUtil.random(6))
+<div class="jbolt_page vh-100" data-key="#(pmkey)" id="jbolttable_mspage_#(pageId)">
+<div class="jbolt_page_title">
+    <form onsubmit="return false;" id="expenseBudgetDetailForm" action="#(action)" method="post">
+        <div class="form-group row">
+            <label class="col-1 col-form-label">部门</label>
+            <div class="col-3">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required" placeholder="请输入" maxlength="19" name="expenseBudget.cdepname" value="#(expenseBudget.cdepname??)" disabled>
+            </div>
+            <label class="col-1 col-form-label">预算年度</label>
+            <div class="col-3">
+                <input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" data-rule="required" placeholder="请设置年份" data-tips="请设置年份" maxlength="10" name="expenseBudget.ibudgetyear"
+                       value="#(expenseBudget.ibudgetyear??)" disabled>
+            </div>
+            <label class="col-1 col-form-label">预算类型</label>
+            <div class="col-3">
+               <select class="form-control"
+                    		data-select-type="select2"
+                            name="expenseBudget.ibudgettype"
+                            data-autoload
+                            data-tips="预算类型"
+                            data-url="admin/dictionary/options?key=expense_budget_type"
+                            data-text="=预算类型="
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-value=""
+                            data-select="#( expenseBudget.ibudgettype ??)"
+                            data-width="200"
+                            disabled>
+                </select>
+            </div>
+        </div>
+		<div class="form-group row">
+			<label class="col-1 col-form-label">开始年月</label>
+			<div class="col-3">
+				<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置开始年月" data-tips="请设置开始年月" maxlength="23" name="expenseBudget.cbegindate" value="#date(expenseBudget.cbegindate??,'yyyy-MM')" disabled/>
+			</div>
+			<label class="col-1 col-form-label">结束年月</label>
+			<div class="col-3">
+				<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置结束年月" data-tips="请设置结束年月" maxlength="23" name="expenseBudget.cenddate" value="#date(expenseBudget.cenddate??,'yyyy-MM')" disabled/>
+			</div>
+			<label class="col-1 col-form-label">审核状态</label>
+            <div class="col-3 input-group jb_col_input_group">
+                <select class="form-control ml-1"
+                    data-autoload
+                    name="expenseBudget.auditstatus"
+                    data-select-type="select2"
+                    data-tips="=请选择审核状态="
+                    data-url="admin/dictionary/options?key=audit_status"
+                    data-value=""
+                    data-text-attr="name"
+                    data-value-attr="sn"
+                    data-select="#( expenseBudget.iauditstatus ??)"
+                    disabled>
+                </select>
+            </div>
+		</div>
+    </form>
+</div>
+
+<div class="jbolt_page_content">
+    <!-- JBoltTable -->
+    <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_expenseBudgetDetailForm_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+			#if(expenseBudget.iEffectiveStatus??1 == 2)
+			<td><img data-switchbtn data-confirm="确定切换是否冻结？" data-value="${data.isfreeze}"  data-handler="refreshJBoltTable"  data-url="admin/projectcard/toggleIsfreeze/${data.iprojectcardid}"/></td>
+			#end
+            <td>${data.cbudgetno}</td>
+            <td>${data.chighestsubjectname}</td>
+            <td>${data.clowestsubjectname}</td>
+            <td>${data.citemname}</td>
+            <td>${data.careertypename}</td>
+            <td>$${data.islargeamountexpense|isLargeAmountExpense}</td>
+			<td>${data.cuse}</td>
+            <td>${data.cmemo}</td>
+            <td>${data.iprice}</td>
+            <td>${data.cunit}</td>
+			<td>$${data.isscheduled|isscheduled}</td>
+			<td hidden>${data.ihighestsubjectid}</td>
+			<td hidden>${data.ilowestsubjectid}</td>
+			#if(quantityandamountcolumnlist)
+                    #for(quantityandamountcolumn : quantityandamountcolumnlist)
+						<td>${data.#(quantityandamountcolumn.quantitydatacolumn)}</td>
+						<td>${data.#(quantityandamountcolumn.amountdatacolumn)}</td>
+						#if(quantityandamountcolumn.totaldatacolumn)
+							<td>${data.#(quantityandamountcolumn.totaldatacolumn)}</td>
+						#end
+                    #end
+            #end
+            </tr>
+            {@/each}
+        </script>    
+			<div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)_1">
+			<span><i class="fa fa-file-text-o mr-1"></i>费用预算项目(单价单位：元， 金额单位：千元)</span>
+			</div>
+		    <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
+		    	   data-jbolttable
+		           data-height="fill"
+		           data-column-resize="true"
+		           data-toolbar="jbolt_table_toolbar_#(pageId)_1"
+		           data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+		           data-rowtpl="jboltTable_expenseBudgetDetailForm_#(pageId)"
+		           data-tfoot-fixed="true"
+		           data-editable="true"
+               	   data-editable-option="getEditableTableOptions_#(pageId)"
+               	   data-fixed-columns-left="1,2,3,4"
+		           data-ajax="true"
+		           data-url="/admin/expensebudget/findExpenseBudgetItemDatas?iexpenseid=#(expenseBudget.iautoid)">
+		        <thead class="fw_normal">
+ 			<tr>
+ 				#if(expenseBudget.iEffectiveStatus??1 == 2)
+ 				<th data-width="150" data-column="isfreeze" rowspan="3">是否冻结</th>
+ 				#end
+	            <th data-width="120" data-column="cbudgetno" rowspan="3">预算编号</th>
+	            <th data-width="100" data-column="chighestsubjectname" rowspan="3">科目大类</th>
+	            <th data-width="100" data-column="clowestsubjectname" rowspan="3">明细科目</th>
+	            <th data-width="130" data-column="citemname" rowspan="3">名称</th>
+	            <th data-width="130" data-column="careertype" rowspan="3">事业类型</th>
+	            <th data-width="130" data-column="islargeamountexpense" rowspan="3">是否大额费用</th>
+	            <th data-width="130" data-column="cuse" rowspan="3">用途</th>
+	            <th data-width="100" data-column="cmemo" rowspan="3">备注</th>
+	            <th data-width="100" data-column="iprice" rowspan="3">单价</th>
+	            <th data-width="50" data-column="cunit" rowspan="3">单位</th>
+	            <th data-width="50" data-column="isscheduled" rowspan="3">计划类型</th>
+	            <th hidden data-width="50" data-column="ihighestsubjectid" rowspan="3">科目大类ID</th>
+	            <th hidden data-width="50" data-column="ilowestsubjectid" rowspan="3">科目明细ID</th>
+	            #if(yearcolumntxtlist)
+                    #for(yearcolumntxt : yearcolumntxtlist)
+                    	<th data-width="90" colspan="#(yearcolumntxt.colspan)">#(yearcolumntxt.colname)</th>
+                    	<th data-width="80" data-column="#(yearcolumntxt.totaldatacolumn)" rowspan="3">合计</th>
+                    #end
+                #end
+            </tr>
+            <tr>
+            	#if(monthcolumntxtlist)
+                    #for(monthcolumntxt : monthcolumntxtlist)
+                    	<th colspan="2">#(monthcolumntxt)</th>
+                    #end
+                #end
+            </tr>
+            <tr>
+            	#if(quantityandamountcolumnlist)
+                    #for(quantityandamountcolumn : quantityandamountcolumnlist)
+                    	<th data-width="80" data-column="#(quantityandamountcolumn.quantitydatacolumn)">数量</th>
+                    	<th data-width="80" data-column="#(quantityandamountcolumn.amountdatacolumn)">金额</th>
+                    #end
+                #end
+            </tr>
+            </thead>
+            <tfoot>
+            	#if(expenseBudget.iEffectiveStatus??1 == 2)
+            		<th></th>
+            	#end
+            		<th></th>
+            		<th>合计</th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th hidden></th>
+            		<th hidden></th>
+            		#if(yearcolumntxtlist)
+	                    #for(yearcolumntxt : yearcolumntxtlist)
+	                   		<th></th>
+	                    #end
+	                #end
+            		#if(quantityandamountcolumnlist)
+            		#for(quantityandamountcolumn : quantityandamountcolumnlist)
+            		<th></th>
+            		<th></th>
+            		#end
+            		#end
+            		<th></th>
+            </tfoot>
+		        <tbody></tbody>
+		    </table>
+		    
+</div>
+</div>
+#end
+#define js()
+#include("/_view/_admin/common/_formjs.html",formId="expenseBudgetDetailForm")
+<script>
+hideParentLayerDialogBtn(0);
+//获得配置参数
+function getEditableTableOptions_#(pageId)(){
+    var editableTableOptions={
+        trigger:"click",
+        // 初始行数
+        initRowCount:0,
+        // 限制最大数 默认30
+        //maxRowCount:1,
+        submit:{
+            withForm:["expenseBudgetEditForm"],
+            type:"all",//cell|all
+            //params:{"orderId":3},//携带其他额外参数
+            url:"admin/expensebudget/saveTableByUpdate",
+            success:function(res){
+                LayerMsgBox.success("提交成功",600,function(){
+                	/* parent.layer.close(parent.layer.getFrameIndex(window.name));
+                    window.parent.refreshJBoltTable(); */
+                	location.href = '/admin/expensebudget/edit/' + res.data.iautoid + '-_jb_rqtype_dialog';
+                });
+            } 
+        },
+        cols: {
+            iautoid: {
+                submitAttr: "iautoid"
+            }
+            /* iprice: {
+                summary:[{
+					dir:"v",
+					tofixed:2,
+					roundtag:"round",
+					removezero:true,
+					formula:"sum"
+				}]
+            }, */
+            #if(quantityandamountcolumnlist)
+                #for(quantityandamountcolumn : quantityandamountcolumnlist)
+                    ,
+                	#(quantityandamountcolumn.quantitydatacolumn):{
+    					type:"amount",
+    					submitAttr:"#(quantityandamountcolumn.quantitydatacolumn)",
+    					summary:[{
+    						dir:"v",
+    						tofixed:2,
+    						roundtag:"round",
+    						removezero:true,
+    						formula:"sum"
+    					}]
+    				},
+    				#(quantityandamountcolumn.amountdatacolumn):{
+        				type:"amount",
+        				placeholder:"金额",
+        				submitAttr:"#(quantityandamountcolumn.amountdatacolumn)",
+        				summary:[{
+    						dir:"v",
+    						tofixed:2,
+    						roundtag:"round",
+    						removezero:true,
+    						formula:"sum"
+    					}]
+                    }
+                #end
+            #end
+            #if(yearcolumntxtlist)
+                #for(yearcolumntxt : yearcolumntxtlist)
+                	,
+                	#(yearcolumntxt.totaldatacolumn):{
+                		summary:[{
+    						dir:"v",
+    						tofixed:2,
+    						roundtag:"round",
+    						removezero:true,
+    						formula:"sum"
+    					}]
+                	}
+                #end
+            #end
+        }
+    };
+    return editableTableOptions;
+}
+</script>
+#end
+

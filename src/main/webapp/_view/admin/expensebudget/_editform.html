@@ -1,0 +1,408 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" data-dontchangeleftnav="true">
+
+    <div class="jbolt_page_title">
+        <form onsubmit="return false;" id="expenseBudgetEditForm" action="#(action)" method="post">
+            <div class="form-group row text-left">
+            	<input type="hidden" name="expenseBudget.iautoid" value="#(expenseBudget.iautoid)"/>
+            	<input type="hidden" name="expenseBudget.iperiodid" value="#(expenseBudget.iperiod)"/>
+            	<input type="hidden" name="expenseBudget.cbegindate" value="#(expenseBudget.cbegindate)"/>
+            	<input type="hidden" name="expenseBudget.cenddate" value="#(expenseBudget.cenddate)"/>
+                <label class="col-1 col-form-label">部门</label>
+                <div class="col-2">
+                    <select class="form-control"
+                            data-rule="required"
+                            id="cdepcodeSelect_#(pageId)"
+                            data-select-type="select2"
+                            data-autoload
+                            data-tips="请选择u8部门"
+                            data-url="admin/department/getTreeTableDatas"
+                            data-text="=请选择u8部门="
+                            data-text-attr="cdepname"
+                            data-value-attr="cdepcode"
+                            data-setvalueto="cdepcode"
+                            data-value=""
+                            data-select="#(expenseBudget.cdepcode)"
+                            data-width="200"
+                            disabled
+                            >
+                    </select>
+                    <input type="hidden" name="expenseBudget.cdepcode" value="#(expenseBudget.cdepcode)"/>
+                </div>
+                <label class="col-1 col-form-label">预算年度</label>
+                <div class="col-2">
+                    <input id="ibudgetyear_#(pageId)" type="text" data-date data-type="year" style="width:200px" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" data-rule="required" placeholder="请设置年份" data-tips="请设置年份" maxlength="10"
+                           value="#(expenseBudget.ibudgetyear)" disabled>
+                    <input type="hidden" name="expenseBudget.iBudgetYear" value="#(expenseBudget.ibudgetyear)"/>
+                </div>
+                <label class="col-1 col-form-label">预算类型</label>
+                <div class="col-2">
+                    <select class="form-control"
+                    		data-select-type="select2"
+                            data-autoload
+                            id="ibudgettype_#(pageId)"
+                            data-tips="预算类型"
+                            data-url="admin/dictionary/options?key=expense_budget_type"
+                            data-text="=预算类型="
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-select="#(expenseBudget.ibudgettype)"
+                            data-value=""
+                            data-width="200"
+                            disabled
+                            ></select>
+                    <input type="hidden" name="expenseBudget.ibudgetType" value="#(expenseBudget.ibudgettype)"/>
+                </div>
+                <label class="col-1 col-form-label">备注</label>
+                <div class="col-2">
+                    <input type="text" style="width:200px" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="expenseBudget.cmemo" value="" disabled>
+                </div>
+                <input id="tabledatas_#(pageId)" name="tabledatas" type="hidden" value="" />
+            </div>
+        </form>
+    </div>
+	<!-- <div class="jbolt_page_title">
+    	<div class="row">
+			<div class="col-md-auto">
+				<h1><i class="fa fa-file-text-o"></i>费用预算项目</h1>
+			</div>
+		</div>
+	</div> -->
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_expenseBudgetEditForm_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+            <td>${data.cbudgetno}</td>
+            <td>${data.chighestsubjectname}</td>
+            <td>${data.clowestsubjectname}</td>
+            <td>${data.citemname}</td>
+            <td>${data.careertypename}</td>
+            <td>$${data.islargeamountexpense|isLargeAmountExpense}</td>
+			<td>${data.cuse}</td>
+            <td>${data.cmemo}</td>
+            <td>${data.iprice}</td>
+            <td>${data.cunit}</td>
+			<td hidden>${data.ihighestsubjectid}</td>
+			<td hidden>${data.ilowestsubjectid}</td>
+			#if(quantityandamountcolumnlist)
+                    #for(quantityandamountcolumn : quantityandamountcolumnlist)
+						<td>${data.#(quantityandamountcolumn.quantitydatacolumn)}</td>
+						<td>${data.#(quantityandamountcolumn.amountdatacolumn)}</td>
+						#if(quantityandamountcolumn.totaldatacolumn)
+							<td>${data.#(quantityandamountcolumn.totaldatacolumn)}</td>
+						#end
+                    #end
+            #end
+            </tr>
+            {@/each}
+        </script>
+
+        <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 增行</button>
+                <button onclick="jboltTableRemoveCheckedRow(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-trash"></i> 删行</button>
+                <button data-openpage="dialog" data-check-handler="addExportUnfinishCheckHandler" data-area="100%,100%"  data-title="导入未完成项目"  data-url="admin/expensebudget/importUnfinishExpenseBudgetItem/" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 导入未完成项目</button>
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	            导出 & 导入
+	        	</button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+	                <a class="dropdown-item btn btn-outline-primary btn-sm" onclick="expenseBudgetAddDatasExport()"><i class="fa fa-file-excel-o mr-2"></i> 导出</a>
+	                <div class="j_upload_file_box "
+		                 data-name="file"
+		                 data-btn-class="dropdown-item btn btn-outline-primary btn-sm"
+		                 data-placeholder="导入"
+		                 data-confirm="确认导入数据？"
+		                 data-accept="excel"
+		                 data-maxsize="20480"
+		                 data-handler="uploadFile"
+		                 data-upload-success-handler="uploadHandler"
+		                 data-url="/admin/expensebudget/importTableExpenseBudgetTpl?iexpenseid=#(expenseBudget.iautoid)">
+		            </div>
+	            </div>
+	            <a hidden id="expenseBudgetAddExportBtn" data-downloadbtn href="admin/expensebudget/exportTableExpenseBudgetDatas" data-form="expenseBudgetEditForm" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> 导出</a>
+	            <button id="saveBtn_#(pageId)" onclick="submitThisForm()" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 保存</button>
+	            <button data-ajaxbtn data-handler="closeHandler()" data-url="admin/expensebudget/submitAudit/#(expenseBudget.iautoid)" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 提交审核</button>
+	            <button onclick="closeHandler()" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 关闭</button>
+                <!-- <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button> -->
+                 (单价单位：元， 金额单位：千元)
+            </div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
+               data-jbolttable
+               data-ajax="true"
+               data-column-prepend="1:checkbox"
+               data-url="/admin/expensebudget/findExpenseBudgetItemDatas?iexpenseid=#(expenseBudget.iautoid)"
+               data-column-resize="true"
+               data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+               data-rowtpl="jboltTable_expenseBudgetEditForm_#(pageId)"
+               data-toolbar="jbolt_table_toolbar_#(pageId)"
+               data-editable="true"
+               data-editable-option="getEditableTableOptions_#(pageId)"
+               id="jbolt_Table_#(pageId)"
+               ###data-fixed-columns-left="1,2,3,4"
+               data-height="fill"
+               data-tfoot-fixed="true"
+        >
+            <thead class="fw_normal">
+            <tr>
+	            <th data-width="120" data-column="cbudgetno" rowspan="3">预算编号</th>
+	            <th data-width="100" data-column="chighestsubjectname" rowspan="3">科目大类</th>
+	            <th data-width="100" data-column="clowestsubjectname" rowspan="3">明细科目</th>
+	            <th data-width="130" data-column="citemname" rowspan="3">名称</th>
+	            <th data-width="130" data-column="careertype" rowspan="3">事业类型</th>
+	            <th data-width="130" data-column="islargeamountexpense" rowspan="3">是否大额费用</th>
+	            <th data-width="130" data-column="cuse" rowspan="3">用途</th>
+	            <th data-width="100" data-column="cmemo" rowspan="3">备注</th>
+	            <th data-width="100" data-column="iprice" rowspan="3">单价</th>
+	            <th data-width="50" data-column="cunit" rowspan="3">单位</th>
+	            <th hidden data-width="50" data-column="ihighestsubjectid" rowspan="3">科目大类ID</th>
+	            <th hidden data-width="50" data-column="ilowestsubjectid" rowspan="3">科目明细ID</th>
+	            #if(yearcolumntxtlist)
+                    #for(yearcolumntxt : yearcolumntxtlist)
+                    	<th data-width="90" colspan="#(yearcolumntxt.colspan)">#(yearcolumntxt.colname)</th>
+                    	<th data-width="80" data-column="#(yearcolumntxt.totaldatacolumn)" rowspan="3">合计</th>
+                    #end
+                #end
+            </tr>
+            <tr>
+            	#if(monthcolumntxtlist)
+                    #for(monthcolumntxt : monthcolumntxtlist)
+                    	<th colspan="2">#(monthcolumntxt)</th>
+                    #end
+                #end
+            </tr>
+            <tr>
+            	#if(quantityandamountcolumnlist)
+                    #for(quantityandamountcolumn : quantityandamountcolumnlist)
+                    	<th data-width="80" data-column="#(quantityandamountcolumn.quantitydatacolumn)">数量</th>
+                    	<th data-width="80" data-column="#(quantityandamountcolumn.amountdatacolumn)">金额</th>
+                    #end
+                #end
+            </tr>
+            </thead>
+            <tfoot>
+            		<th></th>
+            		<th>合计</th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th></th>
+            		<th hidden></th>
+            		<th hidden></th>
+            		#if(yearcolumntxtlist)
+	                    #for(yearcolumntxt : yearcolumntxtlist)
+	                   		<th></th>
+	                    #end
+	                #end
+            		#if(quantityandamountcolumnlist)
+            		#for(quantityandamountcolumn : quantityandamountcolumnlist)
+            		<th></th>
+            		<th></th>
+            		#end
+            		#end
+            		<th></th>
+            </tfoot>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+#end
+#define js()
+<script>
+	hideParentLayerDialogBtn(0);
+	hideParentLayerDialogBtn(1);
+	function submitThisForm(){
+		var index = LayerMsgBox.loading('执行中...');
+		jboltTableSubmit("#jbolt_Table_#(pageId)");
+	}
+    //获得配置参数
+    function getEditableTableOptions_#(pageId)(){
+        var editableTableOptions={
+            trigger:"click",
+            // 初始行数
+            initRowCount:0,
+            // 限制最大数 默认30
+            //maxRowCount:1,
+            submit:{
+                withForm:["expenseBudgetEditForm"],
+                type:"all",//cell|all
+                //params:{"orderId":3},//携带其他额外参数
+                url:"admin/expensebudget/saveTableByUpdate",
+                success:function(res){
+                    LayerMsgBox.success("提交成功",600,function(){
+                    	/* parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        window.parent.refreshJBoltTable(); */
+                    	location.href = '/admin/expensebudget/edit/' + res.data.iautoid + '-_jb_rqtype_dialog';
+                    });
+                } 
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid"
+                },
+                cprojectcode: {
+                    type: "autocomplete",
+                    url: "/admin/project/autocomplete",
+                    columnAttr: "cprojectcode,cprojectname",
+                    valueAttr: "cprojectcode",
+                    textAttr: "cprojectcode",
+                    width: 450,
+                    maxLength: 200,
+                    placeholder: "=请选择=",
+                    required: true,
+                    changeColumns: [{column: 'cprojectname', use: 'cprojectname'},{column: 'iprojectid',use: 'iautoid'}]
+                },
+                chighestsubjectname: {
+                    type: "autocomplete",
+                    url: "/admin/subjectm/highestsubjectAutocomplete",
+                    columnAttr: "csubjectcode,csubjectname",
+                    valueAttr: "csubjectname",
+                    textAttr: "csubjectname",
+                    width: 450,
+                    maxLength: 200,
+                    required: true,
+                    placeholder: "=请选择=",
+                    changeColumns: [{column: 'ihighestsubjectid', use: 'iautoid'}]
+                },
+                clowestsubjectname: {
+                    type: "autocomplete",
+                    url: "/admin/subjectm/lowestsubjectAutocomplete",
+                    columnAttr: "csubjectcode,csubjectname",
+                    valueAttr: "csubjectname",
+                    textAttr: "csubjectname",
+                    linkColumn: 'ihighestsubjectid',
+                    width: 450,
+                    required: true,
+                    maxLength: 200,
+                    placeholder: "=请选择=",
+                    changeColumns: [{column: 'ihighestsubjectid', use: 'ihighestsubjectid'},
+                                    {column: 'chighestsubjectname', use: 'chighestsubjectname'},
+                                    {column: 'ilowestsubjectid', use: 'iautoid'}]
+                },
+                citemname: {
+                    type:"input",
+                    submitAttr:"citemname",
+                    maxLength:50
+                },
+                careertype: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=career_type",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=事业类型=',
+                    required:true
+                },
+                islargeamountexpense: {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=is_import",
+                    valueAttr: 'sn',
+                    textAttr: 'name',
+                    placeholder:'=是否大额费用=',
+                    required:true
+                },
+                cuse: {
+                    type:"input",
+                    submitAttr:"cuse",
+                    maxLength:50
+                },
+                cmemo: {
+                    type:"input",
+                    submitAttr:"cmemo",
+                    maxLength:50
+                },
+                iprice: {
+                    type:"amount",
+                    placeholder:'=单价=',
+                    submitAttr:"iprice"
+                },
+                cunit: {
+                    type:"input",
+                    submitAttr:"cunit",
+                    maxLength:50
+                }
+                #if(quantityandamountcolumnlist)
+                    #for(quantityandamountcolumn : quantityandamountcolumnlist)
+                        ,
+                    	#(quantityandamountcolumn.quantitydatacolumn):{
+        					type:"amount",
+        					placeholder:"数量",
+        					submitAttr:"#(quantityandamountcolumn.quantitydatacolumn)",
+        					summary:[{
+        						dir:"v",
+        						tofixed:2,
+        						roundtag:"round",
+        						removezero:true,
+        						formula:"sum"
+        					}]
+        				},
+        				#(quantityandamountcolumn.amountdatacolumn):{
+            				type:"amount",
+            				placeholder:"金额",
+            				submitAttr:"#(quantityandamountcolumn.amountdatacolumn)",
+            				summary:[{
+        						dir:"v",
+        						tofixed:2,
+        						roundtag:"round",
+        						removezero:true,
+        						formula:"sum"
+        					}]
+                        }
+                    #end
+                #end
+                #if(yearcolumntxtlist)
+                    #for(yearcolumntxt : yearcolumntxtlist)
+                    	,
+                    	#(yearcolumntxt.totaldatacolumn):{
+                    		summary:[{
+        						dir:"v",
+        						tofixed:2,
+        						roundtag:"round",
+        						removezero:true,
+        						formula:"sum"
+        					}]
+                    	}
+                    #end
+                #end
+            }
+        };
+        return editableTableOptions;
+    }
+    function addExportUnfinishCheckHandler(ele){
+		var cdepcodeSelect_#(pageId) = $("#cdepcodeSelect_#(pageId)").val();
+		var ibudgetyear_#(pageId) = $("#ibudgetyear_#(pageId)").val();
+		var ibudgettype_#(pageId) = $("#ibudgettype_#(pageId)").val();
+		ele.data("paras",{cdepcode:cdepcodeSelect_#(pageId),ibudgetyear:ibudgetyear_#(pageId),ibudgettype:ibudgettype_#(pageId)})
+		return;
+	}
+    function expenseBudgetAddDatasExport(){
+    	var tableDatas_#(pageId) = jboltTableGetAllDatas('#jbolt_Table_#(pageId)');
+		$("#tabledatas_#(pageId)").val(JSON.stringify(tableDatas_#(pageId)));
+		$("#expenseBudgetAddExportBtn").click();
+    }
+
+    function insertUnfinishExpenseBudgetItem(datas){
+    	jboltTableInsertRow('#jbolt_Table_#(pageId)', datas);
+    }
+
+    function uploadHandler(uploader,type,fileInput,res){
+    	//jboltTableClear("#jbolt_Table_#(pageId)");
+    	//jboltTableInsertRow('#jbolt_Table_#(pageId)', res.list);
+    	jboltTableRefresh("#jbolt_Table_#(pageId)");
+    }
+    function closeHandler(){
+    	parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+</script>
+#end
+

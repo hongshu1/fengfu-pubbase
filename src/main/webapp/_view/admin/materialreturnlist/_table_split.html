@@ -14,7 +14,7 @@
     <td>${data.cinvstd}</td>
     <td>品牌</td>
     <td>${data.ipurchaseuomid}</td>
-    <td>${data.qty}</td>
+    <td>${data.qtys}</td>
     <td>${data.memo}</td>
     <td hidden>${data.iqty}</td>
   </tr>
@@ -47,7 +47,7 @@
                  data-height="200"
                  data-ajax="true"
                  data-column-resize="true"
-                 data-url="admin/materialreturnlist/getmaterialReturnListLines?autoid=#(puinstore.autoid??)"
+                 data-url="admin/materialreturnlist/getmaterialReturnLists?autoid=#(puinstore.autoid??)"
                  data-column-prepend="1:checkbox:true"
                  data-conditions-form="inventoryForm_#(pageId)"
                  data-rowtpl="inventorySplit_tpl_#(pageId)"

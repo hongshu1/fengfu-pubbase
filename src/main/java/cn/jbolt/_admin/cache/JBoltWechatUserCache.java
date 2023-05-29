@@ -9,9 +9,7 @@ import cn.jbolt.core.cache.JBoltCacheKit;
 import cn.jbolt.core.util.JBoltArrayUtil;
 import com.jfinal.aop.Aop;
 import com.jfinal.kit.StrKit;
-import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.ehcache.IDataLoader;
-
 import java.util.ArrayList;
 import java.util.List;
 

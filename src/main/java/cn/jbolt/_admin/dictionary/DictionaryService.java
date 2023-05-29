@@ -40,5 +40,8 @@ public class DictionaryService extends JBoltDictionaryService{
 		if(dictionaryType==null){return Collections.emptyList();}
 		return getListByTypeId(dictionaryType.getId(),null);
 	}
+    public List<Record> getOptionsByTypeKey(String typeKey) {
+        return findRecords("SELECT * FROM jb_dictionary WHERE type_key = ? ", typeKey);
+    }
 	
 }

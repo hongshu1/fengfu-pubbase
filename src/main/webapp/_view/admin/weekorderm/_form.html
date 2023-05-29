@@ -226,7 +226,6 @@
                                 </div>
                             </div>
                         </div>
-                </div>
                 </form>
             </div>
         </div>
@@ -327,16 +326,14 @@
     hideParentLayerDialogBtn();
 
     //获得配置参数
-    function getEditableTableOptions_
-
-    #(pageId)()
+    function getEditableTableOptions_#(pageId)()
     {
         var editableTableOptions = {
             submit: {
                 withForm: ["WeekOrderM_Form"],
                 name: 'WeekOrderMForm',
                 type: "all",
-                url: "/admin/weekorderm/save",
+                url: "/admin/weekorderm/saveTableSubmit",
                 success: function (res) {
                     LayerMsgBox.success("提交成功", 600, function () {
                         parent.refreshPjaxContainer();
