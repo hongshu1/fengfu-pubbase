@@ -879,6 +879,13 @@ CREATE TABLE `jb_code_gen`  (
 `is_cache_get_name_by_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getNameBySn(sn)',
 `is_cache_get_by_sn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成getBySn(sn)',
 `model_title` varchar(40) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '模型名称',
+`is_gen_options_action` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成options接口',
+`is_return_option_type` char(1) COLLATE utf8mb4_general_ci DEFAULT '1' COMMENT '是否返回Option类型',
+`options_text_column` varchar(40) COLLATE utf8mb4_general_ci DEFAULT 'name' COMMENT 'options接口text用哪一列',
+`options_value_column` varchar(40) COLLATE utf8mb4_general_ci DEFAULT 'id' COMMENT 'options接口value用哪一列',
+`is_gen_autocomplete_action` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否生成Autocomplete接口',
+`autocomplete_limit` int(10) NOT NULL DEFAULT '20' COMMENT 'autocomplete接口limit',
+`autocomplete_match_columns` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'autocomplete接口匹配字段',
 PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成配置' ROW_FORMAT = Dynamic;
 
@@ -961,6 +968,7 @@ CREATE TABLE `jb_code_gen_model_attr`  (
 `form_maxsize` int(11) DEFAULT '200' COMMENT '上传尺寸限制',
 `qiniu_bucket_sn` varchar(60) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '七牛bucket sn',
 `qiniu_file_key` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '[dateTime]/[randomId]/[filename]' COMMENT '七牛file key',
+`is_need_check_exists` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '是否检测数据重复字段',
 PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'CodeGen模型详细设计' ROW_FORMAT = Dynamic;
 
