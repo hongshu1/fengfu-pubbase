@@ -5,3 +5,8 @@ select a.cVBTID from Bd_VouchTypeDic a where CVBTID=#para(cvbtid)
 #sql("selectByIautoId")
 select a.cVBTID from Bd_VouchTypeDic a where iAutoId=#para(iAutoId)
 #end
+
+#sql("selectListCvbtid")
+select Cvbtid from  Bd_VouchTypeDic
+#end
+

@@ -7,12 +7,16 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.VouchRdContrapose;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
+import java.util.List;
+
 /**
  * 单据类型与收发类别对照表 Service
  * @ClassName: VouchRdContraposeService
@@ -50,15 +54,21 @@ public class VouchRdContraposeService extends BaseService<VouchRdContrapose> {
 		if(vouchRdContrapose==null || isOk(vouchRdContrapose.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
+	   VouchRdContrapose flag = selectCvrrcodeAndCvrsCode(vouchRdContrapose.getCVRRCode(), vouchRdContrapose.getCVRSCode());
+
+		if (isOk(flag)){
+			ValidationUtils.error("添加失败，类别已存在");
+		}
+
 		User user = JBoltUserKit.getUser();
 		Date now = new Date();
 		vouchRdContrapose.setIOrgId(getOrgId());
 		vouchRdContrapose.setCOrgCode(getOrgCode());
 		vouchRdContrapose.setCOrgName(getOrgName());
 		vouchRdContrapose.setCVRRCode(vouchRdContrapose.getCVRRCode());
-		vouchRdContrapose.setCVBTID("1");
-//		String cvrrName = getCvrrName(vouchRdContrapose.getCVRRCode());
+		vouchRdContrapose.setCVBTID(vouchRdContrapose.getCVBTID());
 		vouchRdContrapose.setCVRSCode(vouchRdContrapose.getCVRSCode());
+
 		vouchRdContrapose.setISource(SourceEnum.MES.getValue());
 		vouchRdContrapose.setIsDeleted(false);
 		vouchRdContrapose.setICreateBy(user.getId());
@@ -73,6 +83,12 @@ public class VouchRdContraposeService extends BaseService<VouchRdContrapose> {
 			//addSaveSystemLog(vouchRdContrapose.getIautoid(), JBoltUserKit.getUserId(), vouchRdContrapose.getName());
 		}
 		return ret(success);
+	}
+
+	private VouchRdContrapose selectCvrrcodeAndCvrsCode(String cvrrCode, String cvrsCode) {
+		Okv data=Okv.by("cvrrCode",cvrrCode)
+				.set("cvrsCode",cvrsCode);
+		return daoTemplate("vouchrdcontrapose.selectCvrrcodeAndCvrsCode",data).findFirst();
 	}
 
 	private String getCvrrName(String cvrrCode) {
@@ -90,6 +106,15 @@ public class VouchRdContraposeService extends BaseService<VouchRdContrapose> {
 		if(vouchRdContrapose==null || notOk(vouchRdContrapose.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
+		String cvrrCode = vouchRdContrapose.getCVRRCode();
+		String cvrsCode = vouchRdContrapose.getCVRSCode();
+		List<Record> list = selectCvrrcodeOnCvrsCodeList();
+		for (Record row : list) {
+			if (row.get("cvrrCode").equals(cvrrCode)&&row.get("cvrsCode").equals(cvrsCode)){
+				ValidationUtils.error("修改失败，类别已存在");
+			}
+		}
+
 		//更新时需要判断数据存在
 		VouchRdContrapose dbVouchRdContrapose=findById(vouchRdContrapose.getIAutoId());
 		if(dbVouchRdContrapose==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
@@ -104,6 +129,10 @@ public class VouchRdContraposeService extends BaseService<VouchRdContrapose> {
 			//addUpdateSystemLog(vouchRdContrapose.getIautoid(), JBoltUserKit.getUserId(), vouchRdContrapose.getName());
 		}
 		return ret(success);
+	}
+
+	private List<Record> selectCvrrcodeOnCvrsCodeList() {
+		return dbTemplate("vouchrdcontrapose.selectCvrrcodeOnCvrsCodeList").find();
 	}
 
 	/**
