@@ -26,6 +26,17 @@ public class BillNoUtils {
     }
 
     /**
+     * 生成禀议系统相关单号
+     */
+    public static String genProposalSystemNo(long orgId, String u9Docno, boolean useAllQty, int billNoLength) {
+        synchronized (LOCK) {
+            String prefix = u9Docno;
+            return useAllQty ? prefix + "01" : MOM_DATA_FUNC_SERVICE.getNextRouteNo(orgId, prefix, billNoLength);
+        }
+    }
+    
+    
+    /**
      * 生成工序卡号
      */
     public static String genRouterecordNo(long orgId, String u9Docno, boolean useAllQty, int billNoLength) {
