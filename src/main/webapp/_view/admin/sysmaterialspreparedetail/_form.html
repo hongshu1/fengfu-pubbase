@@ -79,7 +79,7 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">客户部番：</label>
                                 <div class="col-10">
-                                    <input type="number" data-rule="required" data-notnull="false"
+                                    <input type="text" data-rule="required" data-notnull="false"
                                            data-tips=""
                                            data-with-clearbtn="false" autocomplete="off"
                                            class="form-control"
@@ -141,7 +141,7 @@
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.InvCode}</td>
+<td>${data.invcode}</td>
 <td>${data.cinvcode1}</td>
 <td>${data.cinvname1}</td>
 <td>${data.cinvstd}</td>
@@ -160,7 +160,7 @@
        data-width="fill"
        data-height="65%"
        data-ajax="true"
-       data-url="admin/sysmaterialspreparedetail/getMaterialsOutLines?cmodocno=#(cmodocno??)"
+       data-url="admin/sysmaterialspreparedetail/getMaterialsOutLines1?cmodocno=#(cmodocno??)"
        data-rowtpl="MoPickItemM_tpl_#(pageId)"
        data-copy-to-excel="false"
        data-page="MoPickItemM_page"

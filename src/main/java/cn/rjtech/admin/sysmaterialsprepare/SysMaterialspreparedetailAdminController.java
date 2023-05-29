@@ -208,7 +208,7 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
         Department first1 = department.findFirst("select *   from Bd_Department where iAutoId=?", modoc.getIDepartmentId());
         SysMaterialspreparedetail mpd = serviceD.findFirst("select *   from T_Sys_MaterialsPrepareDetail where MasID=?", sysMaterialsprepare.getAutoID());
         Inventory inventory = invent.findFirst("select *   from Bd_Inventory where iAutoId=?", modoc.getIInventoryId());
-        EquipmentModel equipmentModel = equipmentModelService.findFirst("select *   from Bd_EquipmentModel where iAutoId=?", inventory.getIEquipmentModelId());
+        EquipmentModel equipmentModel = equipmentModelService.findFirst("select *   from Bd_EquipmentModel where iAutoId=?", inventory.getIEquipmentModelId()== null ? "" : inventory.getIEquipmentModelId());
         Workshiftm workshiftm = workshiftmService.findFirst("select *   from Bd_WorkShiftM where iAutoId=?", modoc.getIWorkShiftMid());
         if (null != modoc && null != modoc.getCMoDocNo()) {
             set("cmodocno", modoc.getCMoDocNo());
@@ -344,6 +344,13 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
         String sourcebillid = get("sourcebillid");
         MoDoc modoc = moDocS.findFirst("select *   from Mo_MoDoc where iAutoId=? and iStatus=2", sourcebillid);
         renderJson(service.submitByJBoltTable(sourcebillid, modoc));
+    }
+
+    public void getMaterialsOutLines1() {
+        String cmodocno = get("cmodocno");
+        Kv kv = new Kv();
+        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
+        renderJsonData(service.getMaterialsOutLines1(getPageNumber(), getPageSize(), kv));
     }
 
 }

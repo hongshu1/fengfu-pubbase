@@ -155,6 +155,10 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         return dbTemplate("materialsprepare.getMaterialsOutLines", kv).paginate(pageNumber, pageSize);
     }
 
+    public Page<Record> getMaterialsOutLines1(int pageNumber, int pageSize, Kv kv) {
+        return dbTemplate("materialsprepare.getMaterialsOutLines1", kv).paginate(pageNumber, pageSize);
+    }
+
     public Page<Record> getAdminDatasForauto(int pageNumber, int pageSize, Kv kv) {
         Page<Record> paginate = dbTemplate("materialsprepare.Auto", kv).paginate(pageNumber, pageSize);
         return paginate;
