@@ -4,7 +4,6 @@
 		<label class="col-sm-2 col-form-label">收类别编码</label>
 		<div class="col">
 			<select class="form-control"
-					data-rule="required"
 					data-autoload
 					name="vouchRdContrapose.cvrrcode"
 					data-url="admin/rdstyle/options"
@@ -19,7 +18,6 @@
 		<label class="col-sm-2 col-form-label">发类别编码</label>
 		<div class="col">
 			<select class="form-control"
-					data-rule="required"
 					data-autoload
 					name="vouchRdContrapose.cvrscode"
 					data-url="admin/rdstyle/options1"
@@ -30,6 +28,26 @@
 			</select>
 		</div>
 	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">业务类型</label>
+		<div class="col">
+			<select class="form-control"
+					data-rule="required"
+					data-autoload
+					name="vouchRdContrapose.cvbtid"
+					data-url="admin/vouchtypedic/options"
+					data-value-attr="cvbtid"
+					data-text-attr="cvbtid"
+					data-text="=选择业务类型="
+					data-select="#(vouchRdContrapose.cvbtid??)">
+			</select>
+		</div>
+	</div>
+
+
+
+
 </form>
 #define js()
 <script>
