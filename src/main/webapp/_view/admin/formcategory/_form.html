@@ -21,20 +21,14 @@
                 <div class="col-10">
                     <input type="hidden" name="formCategory.iPid" value="#(formCategory.iPid??0)" id="ipid">
                     
-                    <select class="form-control" 
+                    <select class="form-control"
                             data-autoload
-                            data-url="admin/formcategory/tree"
+                            data-url="admin/formcategory/tree?withEmpty=true"
                             data-select-type="select"
                             data-text-attr="cname"
                             data-value-attr="iautoid"
                             data-setvalueto="ipid"
-                            
-                            #if(formCategory.iPid??0)
                             data-select="#(formCategory.iPid??0)"
-                            #else
-                            data-text="=上级类别="
-                            #end
-                            
                             data-value="#(formCategory.iPid??0)"
                     ></select>
                 </div>
