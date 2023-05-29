@@ -1,4 +1,32 @@
-var jbolt_table_js_version="3.5.0";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: jbolt-table.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: jbolt-table.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var jbolt_table_js_version="3.4.4";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 
@@ -524,12 +552,12 @@ function jboltTableShowColumnConfigDialog(tableEle){
 		return false;
 	}
 
-	var tpl = '<div class="jbolttable_vscolumns" style="padding:20px 20px 20px 30px;">'+
-		'<div class="btn-group btn-group-sm text-center mb-3" role="group" aria-label="btn-group">'+
-		'<button type="button" class="btn btn-outline-primary" onclick="CheckboxUtil.checkAll(\'visibleColumn\')">全选</button>'+
-		'<button type="button" class="btn btn-outline-info" onclick="CheckboxUtil.uncheckAll(\'visibleColumn\')">全不选</button>'+
-		'<button type="button" class="btn btn-outline-danger" onclick="CheckboxUtil.convertCheckAll(\'visibleColumn\')">反选</button>'+
-		'</div><div class="form-group" data-checkbox data-rule="checkbox" data-name="visibleColumn" data-value="${checkedDatas}">{@each columns as column,index}<div class="checkbox checkbox-primary"><input  id="vs_${column.name}" type="checkbox" name="visibleColumn"   value="${column.index}"/><label for="vs_${column.name}">${column.text}</label></div>{@/each}</div></div>';
+	var tpl = '&lt;div class="jbolttable_vscolumns" style="padding:20px 20px 20px 30px;">'+
+		'&lt;div class="btn-group btn-group-sm text-center mb-3" role="group" aria-label="btn-group">'+
+		'&lt;button type="button" class="btn btn-outline-primary" onclick="CheckboxUtil.checkAll(\'visibleColumn\')">全选&lt;/button>'+
+		'&lt;button type="button" class="btn btn-outline-info" onclick="CheckboxUtil.uncheckAll(\'visibleColumn\')">全不选&lt;/button>'+
+		'&lt;button type="button" class="btn btn-outline-danger" onclick="CheckboxUtil.convertCheckAll(\'visibleColumn\')">反选&lt;/button>'+
+		'&lt;/div>&lt;div class="form-group" data-checkbox data-rule="checkbox" data-name="visibleColumn" data-value="${checkedDatas}">{@each columns as column,index}&lt;div class="checkbox checkbox-primary">&lt;input  id="vs_${column.name}" type="checkbox" name="visibleColumn"   value="${column.index}"/>&lt;label for="vs_${column.name}">${column.text}&lt;/label>&lt;/div>{@/each}&lt;/div>&lt;/div>';
 	var checkedDatas = [];
 	for(var i in visibleColumnsConfig){
 		if(!visibleColumnsConfig[i].hidden){
@@ -617,10 +645,10 @@ function jboltTableMenuClearFilter(tableEle){
 function jboltTableGetCellSelectText(td){
 	var selectText = getSelectText();
 	var text=$.trim(td[0].innerText);
-	if(!text && !selectText){
+	if(!text &amp;&amp; !selectText){
 		return null;
 	}
-	if(selectText && text.indexOf(selectText)!=-1){
+	if(selectText &amp;&amp; text.indexOf(selectText)!=-1){
 		text = selectText;
 	}
 
@@ -670,7 +698,7 @@ function jboltTableMenuFilter(tableEle){
 			var tempPageSize  =  table.data("pagesize");
 			if(typeof(tempPageSize)=="undefined"){
 				pageSize = 15;
-			}else if(tempPageSize <=0){
+			}else if(tempPageSize &lt;=0){
 				pageSize = 15;
 			}else{
 				pageSize = tempPageSize;
@@ -703,7 +731,7 @@ function jboltTableMenuFilter(tableEle){
 						}
 					}
 				}
-				if(column&&comparison&&hasValue){
+				if(column&amp;&amp;comparison&amp;&amp;hasValue){
 					itemsJson.push({column:column,type:type,comparison:comparison,value:value});
 				}
 			}
@@ -745,7 +773,7 @@ function jboltTableMenuFilterByKeywords(tableEle,keywords,include,pageSize){
 			var tempPageSize  =  table.data("pagesize");
 			if(typeof(tempPageSize)=="undefined"){
 				pageSize = 15;
-			}else if(tempPageSize <= 0){
+			}else if(tempPageSize &lt;= 0){
 				pageSize = 15;
 			}else{
 				pageSize = tempPageSize;
@@ -778,7 +806,7 @@ function jboltTableMenuAddFilterItem(tableEle,column,comparison,value){
 		jboltTable.menuFilterItemTpl = jboltTable.menus.find(".jbolttable_filter_item_tpl");
 	}
 	var tplHtml=jboltTable.menuFilterItemTpl.html();
-	var item=$("<div class='jbolttable_filter_item d-flex mb-1'></div>");
+	var item=$("&lt;div class='jbolttable_filter_item d-flex mb-1'>&lt;/div>");
 	item.html(tplHtml);
 	jboltTable.menus.find(".jbolttable_filter_items").append(item);
 
@@ -795,7 +823,7 @@ function jboltTableMenuAddFilterItem(tableEle,column,comparison,value){
 		}
 	}
 	var hasColumn = false;
-	if(column&&column!="index"&&column!="optcol"){
+	if(column&amp;&amp;column!="index"&amp;&amp;column!="optcol"){
 		columnSelect.val(column);
 		hasColumn=true;
 	}
@@ -843,7 +871,7 @@ function jboltTableMenuAddFilterItem(tableEle,column,comparison,value){
 	comparisonSelect.val(comparison);
 
 	item.find("[name='value']").removeClass("is_current");
-	if(!value && jboltTable.menuInTbody && jboltTable.currentMenuTd){
+	if(!value &amp;&amp; jboltTable.menuInTbody &amp;&amp; jboltTable.currentMenuTd){
 		var imgbtn = jboltTable.currentMenuTd.find("img[data-switchbtn]");
 		if(isOk(imgbtn)){
 			value = imgbtn.data("value");
@@ -852,7 +880,7 @@ function jboltTableMenuAddFilterItem(tableEle,column,comparison,value){
 		}
 	}
 	var valueInput;
-	if(hasColumn && isOk(selectedColumnOption)){
+	if(hasColumn &amp;&amp; isOk(selectedColumnOption)){
 		switch(type){
 			case 1://字符串
 				valueInput = item.find("input[name='value']");
@@ -946,7 +974,7 @@ function getCurrentEditableAndKeyEventJBoltTables(){
 	var jboltTableTmp,tableArray=new Array();
 	tables.each(function(){
 		jboltTableTmp=$(this).jboltTable("inst");
-		if(jboltTableTmp&&jboltTableTmp.editable){
+		if(jboltTableTmp&amp;&amp;jboltTableTmp.editable){
 			tableArray.push(jboltTableTmp);
 		}
 	});
@@ -971,7 +999,7 @@ function getCurrentEditableAndKeyEventJBoltTable(){
 		}
 		if(isOk(table)){
 			var jboltTable=table.jboltTable("inst");
-			if(jboltTable&&jboltTable.editable){
+			if(jboltTable&amp;&amp;jboltTable.editable){
 				JBoltCurrentEditableAndKeyEventTable=jboltTable;
 			}
 		}
@@ -1202,13 +1230,13 @@ function jboltEditableFocusTurnTableByDir(currentTable,up){
 		var jump=false;
 		$.each(tables,function(i,table){
 			if(table.attr("id")==tableId){
-				if(up&&i>0){
+				if(up&amp;&amp;i>0){
 					changeJBoltCurrentEditableAndKeyEventTable(tables[i-1]);
 					jump=true;
 					return false;
 				}
 
-				if(!up&&i<size-1){
+				if(!up&amp;&amp;i&lt;size-1){
 					changeJBoltCurrentEditableAndKeyEventTable(tables[i+1]);
 					jump=true;
 					return false;
@@ -1440,7 +1468,7 @@ function jboltTableColumnBatchAssignUseTd(tableEle,useTd,dontExeValueChangeHandl
  */
 function jboltEditableEnterKeyProcess(jboltTable,e){
 	//按了alt键 alt Enter或者ctrl alt enter
-	if(e.altKey&&!e.shiftKey){
+	if(e.altKey&amp;&amp;!e.shiftKey){
 		e.preventDefault();
 		e.stopPropagation();
 		if(e.ctrlKey){
@@ -1462,10 +1490,10 @@ function jboltEditableEnterKeyProcess(jboltTable,e){
 			}
 			td.trigger(jboltTable.editableOptions.trigger);
 		}
-	}else if(!e.altKey&&!e.shiftKey&&!e.ctrlKey){
+	}else if(!e.altKey&amp;&amp;!e.shiftKey&amp;&amp;!e.ctrlKey){
 		var ele=$(e.target);
 		//如果是内置textarea 就不做任何操作 使用默认行为
-		if(ele.hasClass("jbt_editor") && ele.is("TEXTAREA")){
+		if(ele.hasClass("jbt_editor") &amp;&amp; ele.is("TEXTAREA")){
 			e.stopPropagation();
 			return false;
 		}
@@ -1491,7 +1519,7 @@ function processEditableKeyEventDefaultEditorOk(table,e){
 		e.stopPropagation();
 		var td=ele.closest("td");
 		var enterHandler = td.data("enter-handler");
-		if(enterHandler && typeof(enterHandler) == "function"){
+		if(enterHandler &amp;&amp; typeof(enterHandler) == "function"){
 			var tr=td.parent();
 			var jsonData = table.isEmpty?null:table.tableListDatas[tr.data("index")];
 			ele.data("in-editable-td",true);
@@ -1553,7 +1581,7 @@ function processEditableKeyEventDefaultEditorOk(table,e){
  */
 function jboltEditableTabKeyProcess(jboltTable,e){
 	//ctrl alt shift都没按 只按tab
-	if(!e.ctrlKey&&!e.altKey&&!e.shiftKey){
+	if(!e.ctrlKey&amp;&amp;!e.altKey&amp;&amp;!e.shiftKey){
 		//那就判断当前元素
 		processEditableKeyEventDefaultEditorOk(jboltTable,e);
 	}
@@ -1730,7 +1758,7 @@ function jboltTableCopyCheckedRowAppend(tableEle){
  * @returns
  */
 function jboltTableFilterByKeywords(tableEle,keywords,colIndexArr){
-	if(!((event && event.which==13) ||  !keywords)){
+	if(!((event &amp;&amp; event.which==13) ||  !keywords)){
 		return false;
 	}
 	var table=getJBoltTable(tableEle);
@@ -1805,7 +1833,7 @@ function jboltTableProcessTdByDialogChooser(text,value,data){
 		return false;
 	}
 	var vchandler=editingTd.data("dialog-choose-choose-handler");
-	if(vchandler&&typeof(vchandler)=="function"){
+	if(vchandler&amp;&amp;typeof(vchandler)=="function"){
 		var jsonData=jboltTable.tableListDatas[editingTd.closest("tr").data("index")];
 		var ischangecolumns = editingTd.data("jbolttable-handler-ischangecolumns");
 		if(!ischangecolumns){
@@ -1856,7 +1884,7 @@ function jboltTableInsertRowsByDialogChooser(action,datas,insertType,keepId,dont
 		LayerMsgBox.alert("请选择至少一行数据",2);
 		return false;
 	}
-	if(isArray(datas)&&datas.length==0){
+	if(isArray(datas)&amp;&amp;datas.length==0){
 		LayerMsgBox.alert("请选择至少一行数据",2);
 		return false;
 	}
@@ -1920,11 +1948,11 @@ function jboltTableMaximize(ele){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
 			var result=jboltTable.me.maximize(jboltTable);
-			if(result&&ele.tagName!="TABLE"){
+			if(result&amp;&amp;ele.tagName!="TABLE"){
 				if(jboltTable.table_view.hasClass("maximize")){
-					ele.innerHTML='<i class="fa fa-window-maximize"></i> 恢复';
+					ele.innerHTML='&lt;i class="fa fa-window-maximize">&lt;/i> 恢复';
 				}else{
-					ele.innerHTML='<i class="fa fa-window-maximize"></i> 最大化';
+					ele.innerHTML='&lt;i class="fa fa-window-maximize">&lt;/i> 最大化';
 				}
 			}
 
@@ -2098,9 +2126,9 @@ function jboltTableGetCheckedId(ele,dontShowError){
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
-			if(ele&&typeof(ele)!="string"){
+			if(ele&amp;&amp;typeof(ele)!="string"){
 				var msg,eleObj=getRealJqueryObject(ele),eleit=eleObj[0];
-				if(isOk(eleObj)&&eleit.tagName!='TABLE'){
+				if(isOk(eleObj)&amp;&amp;eleit.tagName!='TABLE'){
 					if(eleit.hasAttribute("data-nomsg")){
 						dontShowError=true;
 					}else{
@@ -2750,7 +2778,7 @@ function jboltTableRemoveRow(ele){
 					return false;
 				}
 			}
-			if(isOk(action)&&(isOk(action.closest("table[data-jbolttable]"))||isOk(action.closest(".jbolt_table_fixed")))){
+			if(isOk(action)&amp;&amp;(isOk(action.closest("table[data-jbolttable]"))||isOk(action.closest(".jbolt_table_fixed")))){
 				var tr=action.closest("tr");
 //				var tempid=tr.data("tempid");
 				var id=tr.data("id");
@@ -2936,7 +2964,7 @@ function getRealJboltTableByEle(ele){
 	var action=getRealJqueryObject(ele);
 	var table;
 	if(isOk(action)){
-		if(action[0].tagName=="TABLE" && action.hasClass("jbolt_table")){
+		if(action[0].tagName=="TABLE" &amp;&amp; action.hasClass("jbolt_table")){
 			table=action;
 		}else{
 			var tableId=action.data("jbolt-table-id");
@@ -3063,11 +3091,11 @@ function resetJBolttableSlaveBox(masterTable){
 	var elm,elsrcurl;
 	slave.find("[data-masterid],input[type='hidden'][data-masterid-hidden='true'],[data-url][data-origin-url],[data-url][data-orign-url],[href][data-origin-url],[href][data-orign-url],[href][data-orignurl],[data-url][data-srcurl],[data-url][data-src-url],[href][data-srcurl],[href][data-src-url]").each(function(){
 		elm=$(this);
-		if(elm.is("input") && elm.attr("type")=="hidden" && elm.data("masterid-hidden")){
+		if(elm.is("input") &amp;&amp; elm.attr("type")=="hidden" &amp;&amp; elm.data("masterid-hidden")){
 			elm.val(id).change();
 		}else{
 			elsrcurl=elm.data("origin-url")||elm.data("orign-url")||elm.data("orignurl")||elm.data("srcurl")||elm.data("src-url");
-			if(elsrcurl && elsrcurl.indexOf("[masterId]")!=-1){
+			if(elsrcurl &amp;&amp; elsrcurl.indexOf("[masterId]")!=-1){
 				elsrcurl=elsrcurl.replaceAll("[masterId]",id);
 				if(elm.data("url")){
 					elm.data("url",elsrcurl).attr("data-url",elsrcurl);
@@ -3077,7 +3105,7 @@ function resetJBolttableSlaveBox(masterTable){
 				}
 			}else{
 				elsrcurl = elm.data("masterid");
-				if(elsrcurl && elsrcurl == "[masterId]"){
+				if(elsrcurl &amp;&amp; elsrcurl == "[masterId]"){
 					elm.data("masterid",id).attr("data-masterid",id);
 				}
 			}
@@ -3128,7 +3156,7 @@ function masterTableTrTriggerShowSlave(ele,id,masterOtherParams,tableCallback,aj
 	masterTable.find("tbody>tr.active").removeClass("active");
 	masterTable.find("tbody>tr[data-index='"+trDataIndex+"']").addClass("active");
 	var masterJboltTable=masterTable.jboltTable("inst");
-	if(masterJboltTable&&isOk(masterJboltTable.fixedColumnTables)){
+	if(masterJboltTable&amp;&amp;isOk(masterJboltTable.fixedColumnTables)){
 		var fixtable,tempTr;
 		masterJboltTable.fixedColumnTables.each(function(){
 			fixtable=$(this);
@@ -3145,7 +3173,7 @@ function masterTableTrTriggerShowSlave(ele,id,masterOtherParams,tableCallback,aj
 	var elm,elsrcurl;
 	slave.find("[data-masterid],input[type='hidden'][data-masterid-hidden='true'],[data-url][data-origin-url],[data-url][data-orign-url],[href][data-origin-url],[href][data-orign-url],[href][data-orignurl],[data-url][data-srcurl],[data-url][data-src-url],[href][data-srcurl],[href][data-src-url]").each(function(){
 		elm=$(this);
-		if(elm.is("input") && elm.attr("type")=="hidden" && elm.data("masterid-hidden")){
+		if(elm.is("input") &amp;&amp; elm.attr("type")=="hidden" &amp;&amp; elm.data("masterid-hidden")){
 			elm.val(id).change();
 		}else{
 			elsrcurl=elm.data("origin-url")||elm.data("orign-url")||elm.data("orignurl")||elm.data("srcurl")||elm.data("src-url");
@@ -3159,7 +3187,7 @@ function masterTableTrTriggerShowSlave(ele,id,masterOtherParams,tableCallback,aj
 				}
 			}else{
 				elsrcurl = elm.data("masterid");
-				if(elsrcurl && elsrcurl == "[masterId]"){
+				if(elsrcurl &amp;&amp; elsrcurl == "[masterId]"){
 					elm.data("masterid",id).attr("data-masterid",id);
 				}
 			}
@@ -3183,7 +3211,7 @@ function masterTableTrTriggerShowSlave(ele,id,masterOtherParams,tableCallback,aj
 						tableCallback(ctable,masterJboltTable,masterData,masterOtherParams);
 					}else if(typeof(tableCallback)=="string"){
 						var execall_handler=eval(tableCallback);
-						if(execall_handler&&typeof(execall_handler)=="function"){
+						if(execall_handler&amp;&amp;typeof(execall_handler)=="function"){
 							execall_handler(ctable,masterJboltTable,masterData,masterOtherParams);
 						}
 					}
@@ -3209,7 +3237,7 @@ function masterTableTrTriggerShowSlave(ele,id,masterOtherParams,tableCallback,aj
 						ajaxPortalCallback(portal,masterJboltTable,masterData,masterOtherParams);
 					}else if(typeof(ajaxPortalCallback)=="string"){
 						var aexecall_handler=eval(ajaxPortalCallback);
-						if(aexecall_handler&&typeof(aexecall_handler)=="function"){
+						if(aexecall_handler&amp;&amp;typeof(aexecall_handler)=="function"){
 							aexecall_handler(portal,masterJboltTable,masterData,masterOtherParams);
 						}
 					}
@@ -3292,7 +3320,7 @@ function processTreeTableTrAllNodes(upArray,tbody,tr){
 		var sons=tbody.find("tr[data-pid='"+tr.data("id")+"']");
 		if(isOk(sons)){
 			var size=sons.length;
-			for(var i=0;i<size;i++){
+			for(var i=0;i&lt;size;i++){
 				processTreeTableTrAllNodes(upArray,tbody,sons.eq(i));
 			}
 		}
@@ -3312,7 +3340,7 @@ function deleteTreeTableRow(table,tr){
 		var sons=tbody.find("tr[data-pid='"+tr.data("id")+"']");
 		if(isOk(sons)){
 			var size=sons.length;
-			for(var i=0;i<size;i++){
+			for(var i=0;i&lt;size;i++){
 				deleteTreeTableRow(table,sons.eq(i))
 			}
 		}
@@ -3375,7 +3403,7 @@ function jboltTableUpdateOtherColumns(table,tr,data,columns){
 	}
 	var size=columns.length;
 	var tempTheadTh,onlyHandler=false,column,changeColumn,willChangeValue=false,hasColumnValue=false,columnName,columnType,handler,editable=null,editableType,editableBy,useArr,camelColumn,colConfig,text,value,handlerResult,colIndex=-1,tempTd,changeTextAttr,changeValueAttr;
-	for(var i=0;i<size;i++){
+	for(var i=0;i&lt;size;i++){
 		column=columns[i];
 		columnType=typeof(column);
 		onlyHandler=false;
@@ -3419,12 +3447,12 @@ function jboltTableUpdateOtherColumns(table,tr,data,columns){
 				changeTextAttr=column.asText;
 				changeValueAttr=column.asValue;
 				willChangeValue=true;
-			}else if(typeof(column.value)!=undefined&&typeof(column.value)!="undefined"){
+			}else if(typeof(column.value)!=undefined&amp;&amp;typeof(column.value)!="undefined"){
 				hasColumnValue=true;
 				changeValueAttr=null;
 				changeTextAttr=null;
 				willChangeValue=true;
-			}else if(typeof(handler)!=undefined&&typeof(handler)=="function"){
+			}else if(typeof(handler)!=undefined&amp;&amp;typeof(handler)=="function"){
 				hasColumnValue=false;
 				changeValueAttr=camelColumn;
 				changeTextAttr=camelColumn;
@@ -3468,10 +3496,10 @@ function jboltTableUpdateOtherColumns(table,tr,data,columns){
 					tempTd.attr("data-value",value).data("value",value);
 					tempTd.html(text);
 					colConfig=table.editableOptions.cols[columnName];
-					if(colConfig&&colConfig.editable){
+					if(colConfig&amp;&amp;colConfig.editable){
 						table.me.processEditableTdChooseData(table,tempTd,text,value);
 					}else{
-						if(data&&data.hasOwnProperty(columnName)){
+						if(data&amp;&amp;data.hasOwnProperty(columnName)){
 							JBoltArrayUtil.changeOneItemAttrValue(table.tableListDatas,tr.data("index"),columnName,value);
 						}else {
 							JBoltArrayUtil.changeOneItemAttrValue(table.tableListDatas,tr.data("index"),camelColumn,value);
@@ -3519,9 +3547,9 @@ function jboltTableUpdateOtherColumns(table,tr,data,columns){
 				if(isOk(column.triggerSummaryColumns)){
 					table.me.processTriggerOtherColumnSummary2(table,tr,column.column,column.triggerSummaryColumns);
 				}else{
-					if(table.summaryTriggerColumns && table.summaryTriggerColumns[column.column]){
+					if(table.summaryTriggerColumns &amp;&amp; table.summaryTriggerColumns[column.column]){
 						colConfig=table.editableOptions.cols[column.column];
-						if(colConfig && isOk(colConfig.triggerSummaryColumns)){
+						if(colConfig &amp;&amp; isOk(colConfig.triggerSummaryColumns)){
 							table.me.processTriggerOtherColumnSummary2(table,tr,column.column,colConfig.triggerSummaryColumns);
 						}else{
 							table.me.processTbodySummarysInTr(table,tr);
@@ -3787,38 +3815,38 @@ function getScrollBarHeight(ele){
 	return Math.abs(ele.offsetHeight - ele.clientHeight);
 }
 ;(function($){
-	var jboltTablePageTpl='<div class="jbolt_table_pages noselect">'+
-		'<div class="pages">'+
-		'<div class="mainPagination mb-1 mb-sm-0  d-block d-sm-inline-block text-center" id="${pageId}"></div>'+
-		'<div class="searchPage d-none d-sm-inline-block">'+
-		'<span class="page-go pl-3">到<input style="width:50px;" id="gonu" data-rule="pint" data-tips="请输入正整数" type="text" oninput="return FormChecker.checkIt(this)" min="1" maxlength="6"  pattern="[0-9]*" class="current_page" value="1">页</span>'+
-		'<a tabindex="-1" href="javascript:;" class="page-btn">GO</a>'+
-		'<span class="page-sum">共&nbsp;<strong id="totalRow" class="allPage">1</strong>&nbsp;条&nbsp;<strong id="totalPage" class="allPage">1</strong>&nbsp;页</span>'+
-		'<select id="pageSize" class="mx-2" style="width:80px;height: 32px;margin-top:-1px;border-color:#e6e6e6;">'+
-		'{@each options as option}{@if option}<option {@if option==pageSize} selected="selected" {@/if} value="${option}">${option}条/页</option>{@/if}{@/each}'+
-		'</select>'+
-		'</div>'+
-		'</div>'+
-		'<div class="clearfix"></div>'+
-		'</div>';
-	var jboltTablePageTpl_mini='<div class="jbolt_table_pages noselect">'+
-		'<div class="pages">'+
-		'<div class="mainPagination mb-1 mb-sm-0 d-block text-center" id="${pageId}"></div>'+
-		'<div class="searchPage d-none">'+
-		'<input type="hidden" id="pageSize" value="${pageSize?pageSize:10}" />'+
-		'</div>'+
-		'</div>'+
-		'<div class="clearfix"></div>'+
-		'</div>';
+	var jboltTablePageTpl='&lt;div class="jbolt_table_pages noselect">'+
+		'&lt;div class="pages">'+
+		'&lt;div class="mainPagination mb-1 mb-sm-0  d-block d-sm-inline-block text-center" id="${pageId}">&lt;/div>'+
+		'&lt;div class="searchPage d-none d-sm-inline-block">'+
+		'&lt;span class="page-go pl-3">到&lt;input style="width:50px;" id="gonu" data-rule="pint" data-tips="请输入正整数" type="text" oninput="return FormChecker.checkIt(this)" min="1" maxlength="6"  pattern="[0-9]*" class="current_page" value="1">页&lt;/span>'+
+		'&lt;a tabindex="-1" href="javascript:;" class="page-btn">GO&lt;/a>'+
+		'&lt;span class="page-sum">共&amp;nbsp;&lt;strong id="totalRow" class="allPage">1&lt;/strong>&amp;nbsp;条&amp;nbsp;&lt;strong id="totalPage" class="allPage">1&lt;/strong>&amp;nbsp;页&lt;/span>'+
+		'&lt;select id="pageSize" class="mx-2" style="width:80px;height: 32px;margin-top:-1px;border-color:#e6e6e6;">'+
+		'{@each options as option}{@if option}&lt;option {@if option==pageSize} selected="selected" {@/if} value="${option}">${option}条/页&lt;/option>{@/if}{@/each}'+
+		'&lt;/select>'+
+		'&lt;/div>'+
+		'&lt;/div>'+
+		'&lt;div class="clearfix">&lt;/div>'+
+		'&lt;/div>';
+	var jboltTablePageTpl_mini='&lt;div class="jbolt_table_pages noselect">'+
+		'&lt;div class="pages">'+
+		'&lt;div class="mainPagination mb-1 mb-sm-0 d-block text-center" id="${pageId}">&lt;/div>'+
+		'&lt;div class="searchPage d-none">'+
+		'&lt;input type="hidden" id="pageSize" value="${pageSize?pageSize:10}" />'+
+		'&lt;/div>'+
+		'&lt;/div>'+
+		'&lt;div class="clearfix">&lt;/div>'+
+		'&lt;/div>';
 
-	var JboltColSortTpl='<span class="jbolt_table_col_sort"><i class="sort sort_asc" title="升序"></i><i class="sort sort_desc" title="降序"></i><span>';
-	var JboltColSort_asc_Tpl='<span class="jbolt_table_col_sort"><i class="sort sort_asc active" title="升序"></i><i class="sort sort_desc" title="降序"></i><span>';
-	var JboltColSort_desc_Tpl='<span class="jbolt_table_col_sort"><i class="sort sort_asc" title="升序"></i><i class="sort sort_desc active" title="降序"></i><span>';
+	var JboltColSortTpl='&lt;span class="jbolt_table_col_sort">&lt;i class="sort sort_asc" title="升序">&lt;/i>&lt;i class="sort sort_desc" title="降序">&lt;/i>&lt;span>';
+	var JboltColSort_asc_Tpl='&lt;span class="jbolt_table_col_sort">&lt;i class="sort sort_asc active" title="升序">&lt;/i>&lt;i class="sort sort_desc" title="降序">&lt;/i>&lt;span>';
+	var JboltColSort_desc_Tpl='&lt;span class="jbolt_table_col_sort">&lt;i class="sort sort_asc" title="升序">&lt;/i>&lt;i class="sort sort_desc active" title="降序">&lt;/i>&lt;span>';
 	var prependTplMap={
-		"th_checkbox":'<th rowspan="[rowspan]" data-width="50" style="min-width:50px;max-width:50px;width:50px;text-align:center;" data-column="checkbox"><div class="jbolt_table_checkbox"><input type="checkbox" name="jboltTableCheckbox" data-ptype="thead" /><span><i class="fa fa-check"></i></span></div></th>',
-		"td_checkbox":'<td style="min-width:50px;max-width:50px;width:50px;text-align:center;"><div class="jbolt_table_checkbox"><input type="checkbox" name="jboltTableCheckbox" data-ptype="tbody" /><span><i class="fa fa-check"></i></span></div></td>',
-		"th_radio":'<th rowspan="[rowspan]" data-width="50"  style="min-width:50px;max-width:50px;width:50px;text-align:center;" data-column="radio"><div class="jbolt_table_radio"><input type="radio" name="jboltTableRadio" data-ptype="thead" /></div></th>',
-		"td_radio":'<td data-width="50"  style="min-width:50px;max-width:50px;width:50px;text-align:center;"><div class="jbolt_table_radio"><input type="radio" name="jboltTableRadio" data-ptype="tbody" /></div></td>'
+		"th_checkbox":'&lt;th rowspan="[rowspan]" data-width="50" style="min-width:50px;max-width:50px;width:50px;text-align:center;" data-column="checkbox">&lt;div class="jbolt_table_checkbox">&lt;input type="checkbox" name="jboltTableCheckbox" data-ptype="thead" />&lt;span>&lt;i class="fa fa-check">&lt;/i>&lt;/span>&lt;/div>&lt;/th>',
+		"td_checkbox":'&lt;td style="min-width:50px;max-width:50px;width:50px;text-align:center;">&lt;div class="jbolt_table_checkbox">&lt;input type="checkbox" name="jboltTableCheckbox" data-ptype="tbody" />&lt;span>&lt;i class="fa fa-check">&lt;/i>&lt;/span>&lt;/div>&lt;/td>',
+		"th_radio":'&lt;th rowspan="[rowspan]" data-width="50"  style="min-width:50px;max-width:50px;width:50px;text-align:center;" data-column="radio">&lt;div class="jbolt_table_radio">&lt;input type="radio" name="jboltTableRadio" data-ptype="thead" />&lt;/div>&lt;/th>',
+		"td_radio":'&lt;td data-width="50"  style="min-width:50px;max-width:50px;width:50px;text-align:center;">&lt;div class="jbolt_table_radio">&lt;input type="radio" name="jboltTableRadio" data-ptype="tbody" />&lt;/div>&lt;/td>'
 	};
 	var jb_methods = {
 		resize:function(table){
@@ -3857,7 +3885,7 @@ function getScrollBarHeight(ele){
 				return true;
 			}
 			var value=td.data("value");
-			if(typeof(value)!=undefined && typeof(value)!='undefined' && isOk(value.toString())){
+			if(typeof(value)!=undefined &amp;&amp; typeof(value)!='undefined' &amp;&amp; isOk(value.toString())){
 				return true;
 			}
 			td.addClass("is-invalid");
@@ -3879,7 +3907,7 @@ function getScrollBarHeight(ele){
 				LayerMsgBox.alert("表格可编辑参数[data-editable-option]中的[submit]中配置异常,[type:all]时才可以整体提交，不能执行Submit操作",2);
 				return false;
 			}
-			if(submitOption.type!="multi"&&!submitOption.url){
+			if(submitOption.type!="multi"&amp;&amp;!submitOption.url){
 				LayerMsgBox.alert("表格可编辑参数[data-editable-option]中的[submit]配置里未设置[url]参数，不能执行Submit操作",2);
 				return false;
 			}
@@ -3923,7 +3951,7 @@ function getScrollBarHeight(ele){
 				}
 			}
 
-			if(table.editableOptions&&table.editableOptions.required){
+			if(table.editableOptions&amp;&amp;table.editableOptions.required){
 				if(table.isEmpty){
 					LayerMsgBox.alert("表格数据不能为空",2);
 					return false;
@@ -3969,7 +3997,7 @@ function getScrollBarHeight(ele){
 				var tds,tempTr,tempTd,tempText,hasInvalid=false,count=0,size=trs.length;
 				$.each(trs,function(i,item){
 					tempTr = $(item);
-					if(!assignTr && !tempTr.data("changed")){
+					if(!assignTr &amp;&amp; !tempTr.data("changed")){
 						return true;
 					}
 					tds=tempTr.find("td[data-required='true'][data-value='']");
@@ -4025,7 +4053,7 @@ function getScrollBarHeight(ele){
 			var trIndex=-1,trLen=trs.length,saveTrData;
 			trs.each(function(){
 				trIndex=$(this).data("index");
-				if(trIndex>=0||trIndex<=trLen-1){
+				if(trIndex>=0||trIndex&lt;=trLen-1){
 					saveTrData = table.tableListDatas[trIndex];
 					if(saveTrData){
 						datas.push(saveTrData);
@@ -4167,12 +4195,12 @@ function getScrollBarHeight(ele){
 				}
 				//如果存在共享save attr的话 就挨个处理save
 				var save=commonAttr['save'];
-				if(isOk(save)&&isOk(saveData)){
+				if(isOk(save)&amp;&amp;isOk(saveData)){
 					this.processCommonAttrIntoData(saveData,save);
 				}
 				//如果存在共享update attr的话 就挨个处理update
 				var update=commonAttr['update'];
-				if(isOk(update)&&isOk(updateData)){
+				if(isOk(update)&amp;&amp;isOk(updateData)){
 					this.processCommonAttrIntoData(updateData,update);
 				}
 			}
@@ -4244,7 +4272,7 @@ function getScrollBarHeight(ele){
 			var beforeHandler=submitOption.before;
 			if(beforeHandler){
 				var result = beforeHandler(table,table.tableListDatas);
-				if(typeof(result)=="boolean" && !result){
+				if(typeof(result)=="boolean" &amp;&amp; !result){
 					return false;
 				}
 			}
@@ -4297,7 +4325,7 @@ function getScrollBarHeight(ele){
 			}
 			var postData={};
 			var idConfig=table.editableOptions.cols["id"];
-			postData[(idConfig&&idConfig.submitAttr)?idConfig.submitAttr:"id"]=id;
+			postData[(idConfig&amp;&amp;idConfig.submitAttr)?idConfig.submitAttr:"id"]=id;
 			postData[submitattr]=value;
 			return postData;
 		},
@@ -4334,7 +4362,7 @@ function getScrollBarHeight(ele){
 //					var tempTr=$(tempTrHtml);
 //					//处理Tbody添加列操作 比如在第一列添加checkbox等
 //					var columnPrepend=table.data("column-prepend");
-//					if(columnPrepend&&table.prependColumnType){
+//					if(columnPrepend&amp;&amp;table.prependColumnType){
 //						var aftertd=tempTr.find("td:nth-child("+(table.prependColumnIndex+1)+")");
 //						if(isOk(aftertd)){
 //							aftertd.before(this.getColumnPrependElement(table.prependColumnType,"td"));
@@ -4385,11 +4413,11 @@ function getScrollBarHeight(ele){
 				LayerMsgBox.alert("表格内无数据",2);
 				return;
 			}
-			if(typeof(table.activeTrIndex)=="undefined" || table.activeTrIndex<0){
+			if(typeof(table.activeTrIndex)=="undefined" || table.activeTrIndex&lt;0){
 				LayerMsgBox.alert("表格尚未选中任何数据",2);
 				return;
 			}
-			if(typeof(table.activeTrIndex)=="number" && table.activeTrIndex>=table.tableListDatas.length-1){
+			if(typeof(table.activeTrIndex)=="number" &amp;&amp; table.activeTrIndex>=table.tableListDatas.length-1){
 				LayerMsgBox.alert("已经选中表格最后一行数据",2);
 				return;
 			}
@@ -4403,11 +4431,11 @@ function getScrollBarHeight(ele){
 				LayerMsgBox.alert("表格内无数据",2);
 				return;
 			}
-			if(typeof(table.activeTrIndex)=="undefined" || table.activeTrIndex<0){
+			if(typeof(table.activeTrIndex)=="undefined" || table.activeTrIndex&lt;0){
 				LayerMsgBox.alert("表格尚未选中任何数据",2);
 				return;
 			}
-			if(typeof(table.activeTrIndex)=="number" && table.activeTrIndex<=0){
+			if(typeof(table.activeTrIndex)=="number" &amp;&amp; table.activeTrIndex&lt;=0){
 				LayerMsgBox.alert("已经选中表格第一行数据",2);
 				return;
 			}
@@ -4434,7 +4462,7 @@ function getScrollBarHeight(ele){
 							tr = cks.eq(i).closest("tr");
 							index = tr.data("index");
 							id = tr.data("id");
-							that.removeRow(table,index,(i<(cksLen-1)));
+							that.removeRow(table,index,(i&lt;(cksLen-1)));
 							if(id){
 								ids.push(id);
 							}
@@ -4701,7 +4729,7 @@ function getScrollBarHeight(ele){
 			}
 
 			var jsons=new Array(),tempJsonData,dataSize=datas.length;
-			if(needAttrs&&needAttrs.length>0){
+			if(needAttrs&amp;&amp;needAttrs.length>0){
 				var newJsonData,newArr;
 				chrds.each(function(i){
 					if(i>=dataSize){
@@ -4753,7 +4781,7 @@ function getScrollBarHeight(ele){
 				return null;
 			}
 			var jsonData=datas[rowIndex];
-			if(needAttrs&&needAttrs.length>0){
+			if(needAttrs&amp;&amp;needAttrs.length>0){
 				var newJsonData={},newArr;
 				$.each(needAttrs,function(i,item){
 					if(item.indexOf(":")==-1){
@@ -4868,7 +4896,7 @@ function getScrollBarHeight(ele){
 				copyData=deepClone(copyData);
 				if(isDeleteDataId){
 					var idConfig=table.editableOptions.cols["id"];
-					delete copyData[(idConfig&&idConfig.submitAttr)?idConfig.submitAttr:"id"];
+					delete copyData[(idConfig&amp;&amp;idConfig.submitAttr)?idConfig.submitAttr:"id"];
 				}
 				return copyData;
 			}
@@ -4892,7 +4920,7 @@ function getScrollBarHeight(ele){
 			var firstTr=prepend?table.tbody.find("tr:first"):checkedTrs[0];
 			var size=checkedTrs.length;
 			var newTr,radio,checkbox,tempTd,colIndex=-1,switchBtn,copyData;
-			for(var i=0;i<size;i++){
+			for(var i=0;i&lt;size;i++){
 				newTr=checkedTrs[i].clone();
 				copyData=this.copyEditableTrData(table,newTr,true);
 				newTr.data("id",'').removeAttr("data-id");
@@ -4930,9 +4958,9 @@ function getScrollBarHeight(ele){
 				tempKey=columns[i];
 				if(tempKey){
 					colIndex=table.columnIndexMap[tempKey];
-					if(colIndex!=undefined&&colIndex>=0){
+					if(colIndex!=undefined&amp;&amp;colIndex>=0){
 						colConfig=table.editableOptions.cols[tempKey];
-						if(colConfig&&colConfig.editable){
+						if(colConfig&amp;&amp;colConfig.editable){
 							tempTd=tr.find("td[data-col-index='"+colIndex+"']");
 							if(isOk(tempTd)){
 								tdText=tempTd[0].innerText;
@@ -5101,10 +5129,10 @@ function getScrollBarHeight(ele){
 		},
 		//新增 插入空行
 		insertEmptyRows:function(table,count,tr,insertToBefore){
-			if(count<=0){return false;}
+			if(count&lt;=0){return false;}
 			var tmpTr,data,datas=new Array();
 			var insertDefaultValues=table.editableOptions.insertDefaultValues;
-			for(var i=0;i<count;i++){
+			for(var i=0;i&lt;count;i++){
 				if(insertDefaultValues){
 					data=deepClone(insertDefaultValues);
 				}else{
@@ -5142,19 +5170,19 @@ function getScrollBarHeight(ele){
 		checkCanInsertNewTr:function(table,insertCount){
 			var maxRowCount = 100;
 			var tableEditableOptions=table.editableOptions;
-			if(tableEditableOptions&&(typeof(tableEditableOptions.maxRowCount)=="number")){
+			if(tableEditableOptions&amp;&amp;(typeof(tableEditableOptions.maxRowCount)=="number")){
 				maxRowCount=tableEditableOptions.maxRowCount;
 			}
 			if(!insertCount){insertCount=1;}
 			//如果插入数量大于最大值肯定false
-			if(maxRowCount>0 && insertCount>maxRowCount){
+			if(maxRowCount>0 &amp;&amp; insertCount>maxRowCount){
 				LayerMsgBox.alert("不能超过表格配置最大行数:"+maxRowCount+"行",2);
 				return false;
 			}
 			if(table.isEmpty){return true;}
 			var trLen = table.table_body.find("table.jbolt_main_table>tbody>tr").length;
 			//如果已经存在tr 存在量+插入量如果大于maxRowCount 也不行
-			if(maxRowCount>0 && trLen+insertCount>maxRowCount){
+			if(maxRowCount>0 &amp;&amp; trLen+insertCount>maxRowCount){
 				LayerMsgBox.alert("不能超过表格配置最大行数:"+maxRowCount+"行",2);
 				return false;
 			}
@@ -5191,7 +5219,7 @@ function getScrollBarHeight(ele){
 				tempKey=columns[i];
 				if(tempKey){
 					colIndex=table.columnIndexMap[tempKey];
-					if(colIndex!=undefined&&colIndex>=0){
+					if(colIndex!=undefined&amp;&amp;colIndex>=0){
 						tempTd=tr.find("td[data-col-index='"+colIndex+"']");
 						if(isOk(tempTd)){
 							tdText=tempTd[0].innerText;
@@ -5240,7 +5268,7 @@ function getScrollBarHeight(ele){
 				if(isArray(datas)){
 					var size=datas.length;
 					var insertEmptyData;
-					for(var i=0;i<size;i++){
+					for(var i=0;i&lt;size;i++){
 						insertEmptyData={};
 						newDatas.push(Object.assign(insertEmptyData,deepClone(insertDefaultValues),datas[i]));
 					}
@@ -5273,7 +5301,7 @@ function getScrollBarHeight(ele){
 			return tmpTr;
 		},
 		processEditableTableAfterInsertRowHandler:function(table,tr){
-			if(table.editable && table.editableOptions && table.editableOptions.afterInsertRowHandler){
+			if(table.editable &amp;&amp; table.editableOptions &amp;&amp; table.editableOptions.afterInsertRowHandler){
 				table.editableOptions.afterInsertRowHandler(table,tr);
 			}
 		},
@@ -5290,7 +5318,7 @@ function getScrollBarHeight(ele){
 		setCell:function(table,tr,column,text,value,dontExeValueChangeHandler){
 			//设置单元格数据
 			var dataIndex = table.columnIndexMap[column];
-			if(typeof(dataIndex)!="undefined" && dataIndex>=0){
+			if(typeof(dataIndex)!="undefined" &amp;&amp; dataIndex>=0){
 				var td = tr.find("td[data-col-index='"+dataIndex+"']");
 				return this.processEditableTdChooseData(table,td,text,value,dontExeValueChangeHandler);
 			}
@@ -5302,7 +5330,7 @@ function getScrollBarHeight(ele){
 			}
 			var dataIndex = tr.data("index");
 			//设置属性数据
-			if(typeof(dataIndex)!="undefined" && dataIndex>=0){
+			if(typeof(dataIndex)!="undefined" &amp;&amp; dataIndex>=0){
 				JBoltArrayUtil.changeOneItemAttrValue(table.tableListDatas,dataIndex,attrName,value);
 				return true;
 			}
@@ -5311,7 +5339,7 @@ function getScrollBarHeight(ele){
 		setCellEditable:function(table,tr,column,editable,falseClear,clearValue,dontExeValueChangeHandler){
 			//设置单元格数据
 			var dataIndex = table.columnIndexMap[column];
-			if(typeof(dataIndex)!="undefined" && dataIndex>=0){
+			if(typeof(dataIndex)!="undefined" &amp;&amp; dataIndex>=0){
 				var td = tr.find("td[data-col-index='"+dataIndex+"']");
 				if(isOk(td)){
 					td.data("editable",(editable||false)).attr("data-editable",editable||false);
@@ -5329,7 +5357,7 @@ function getScrollBarHeight(ele){
 		setColEditable:function(table,column,editable){
 			//设置单元格数据
 			var dataIndex = table.columnIndexMap[column];
-			if(typeof(dataIndex)!="undefined" && dataIndex>=0){
+			if(typeof(dataIndex)!="undefined" &amp;&amp; dataIndex>=0){
 				var tds = table.tbody.find("td[data-col-index='"+dataIndex+"']");
 				if(isOk(tds)){
 					tds.data("editable",(editable||false)).attr("data-editable",editable||false);
@@ -5367,7 +5395,7 @@ function getScrollBarHeight(ele){
 		},
 		processTableListDataRemove:function(table){
 			var deleteIndexs=table.deleteRowIndexs;
-			if(isOk(deleteIndexs)&&isOk(table.tableListDatas)){
+			if(isOk(deleteIndexs)&amp;&amp;isOk(table.tableListDatas)){
 				var size=deleteIndexs.length;
 				if(size==1){
 					JBoltArrayUtil.removeByIndex(table.tableListDatas,deleteIndexs[0]);
@@ -5616,7 +5644,7 @@ function getScrollBarHeight(ele){
 		},
 		//得到实例
 		inst:function(tableId){
-			if(!tableId&&this.hasClass("jbolt_table")){
+			if(!tableId&amp;&amp;this.hasClass("jbolt_table")){
 				tableId=this.attr("id");
 			}
 			return JBoltTableInts[tableId];
@@ -5728,10 +5756,10 @@ function getScrollBarHeight(ele){
 			if(tableOptions.footbox){
 				table.data("footbox",tableOptions.footbox).attr("data-footbox",tableOptions.footbox);
 			}
-			if(typeof(tableOptions.page)=="boolean" && tableOptions.page){
+			if(typeof(tableOptions.page)=="boolean" &amp;&amp; tableOptions.page){
 				var pageId="table_page_"+randomId();
 				table.data("page",pageId).attr("data-page",pageId);
-			}else if(typeof(tableOptions.page)=="string" && tableOptions.page){
+			}else if(typeof(tableOptions.page)=="string" &amp;&amp; tableOptions.page){
 				table.data("page",tableOptions.page).attr("data-page",tableOptions.page);
 			}
 
@@ -5763,11 +5791,11 @@ function getScrollBarHeight(ele){
 			if(isOk(thead)){
 				thead.empty();
 			}else{
-				thead = $("<thead></thead>");
+				thead = $("&lt;thead>&lt;/thead>");
 				table.prepend(thead);
 			}
 
-			var str="<tr>"
+			var str="&lt;tr>"
 			var sortColumnsArr=[],dataSort,columnPrependArr=[],columnPrependStr,leftFixedColArr=[],rightFixedColArr=[];
 			$.each(cols,function(i,col){
 				if(col.fixed){
@@ -5790,7 +5818,7 @@ function getScrollBarHeight(ele){
 				}
 
 
-				str=str+"<th "+(typeof(col.minWidth)=="number"?" data-min-width='"+col.minWidth+"'":'')+" "+(typeof(col.width)=="number"?" data-width='"+col.width+"'":'')+" data-column='"+col.column+"'>"+col.title+"</th>";
+				str=str+"&lt;th "+(typeof(col.minWidth)=="number"?" data-min-width='"+col.minWidth+"'":'')+" "+(typeof(col.width)=="number"?" data-width='"+col.width+"'":'')+" data-column='"+col.column+"'>"+col.title+"&lt;/th>";
 				if(col.sort){
 					sortColumnsArr.push(col.column);
 					if(typeof(col.sort)=="object"){
@@ -5802,7 +5830,7 @@ function getScrollBarHeight(ele){
 					}
 				}
 			});
-			str+="</tr>";
+			str+="&lt;/tr>";
 			thead.append(str);
 			if(isOk(sortColumnsArr)){
 				var sortColumns=sortColumnsArr.join(",");
@@ -5832,26 +5860,26 @@ function getScrollBarHeight(ele){
 			}
 			var cols = tableOptions.cols;
 			var str ='{@each datas as data,index}';
-			str = str+ '<tr data-id="${data.'+(tableOptions.primaryKey?tableOptions.primaryKey:"id")+'}">';
+			str = str+ '&lt;tr data-id="${data.'+(tableOptions.primaryKey?tableOptions.primaryKey:"id")+'}">';
 			$.each(cols,function(i,col){
 				if(col.column=="checkbox" || col.column == "radio"){
 					return true;
 				}
 				if(col.column == "index"){
 					if(col.valueTpl){
-						str = str + "<td>" + col.valueTpl + "</td>";
+						str = str + "&lt;td>" + col.valueTpl + "&lt;/td>";
 					}else{
-						str = str + "<td>${pageNumber,pageSize,index|rownum}</td>";
+						str = str + "&lt;td>${pageNumber,pageSize,index|rownum}&lt;/td>";
 					}
 					return true;
 				}
 				if(col.valueTpl){
-					str = str + "<td>" + col.valueTpl + "</td>";
+					str = str + "&lt;td>" + col.valueTpl + "&lt;/td>";
 				}else{
-					str = str + "<td>${data." + ( col.valueAttr?col.valueAttr:StrUtil.camel(col.column) ) + "}</td>";
+					str = str + "&lt;td>${data." + ( col.valueAttr?col.valueAttr:StrUtil.camel(col.column) ) + "}&lt;/td>";
 				}
 			});
-			str+="</tr>"
+			str+="&lt;/tr>"
 			str+="{@/each}";
 			table.rowtplContent = str;
 		},
@@ -6005,7 +6033,7 @@ function getScrollBarHeight(ele){
 				if(isOk(table.tbody)){
 					table.hasBody=true;
 				}else{
-					table.append("<tbody></tbody>");
+					table.append("&lt;tbody>&lt;/tbody>");
 					table.tbody=table.find("tbody");
 					table.hasBody=true;
 				}
@@ -6051,7 +6079,7 @@ function getScrollBarHeight(ele){
 						table_parent.data("theme",table.theme).attr("data-theme",table.theme);
 						table_body = table_parent;
 					}else{
-						table.wrap("<div data-theme='"+table.theme+"' class='jbolt_table_body'></div>");
+						table.wrap("&lt;div data-theme='"+table.theme+"' class='jbolt_table_body'>&lt;/div>");
 						table_body=table.closest(".jbolt_table_body");
 					}
 				}else{
@@ -6064,7 +6092,7 @@ function getScrollBarHeight(ele){
 					table_box = table_body.closest(".jbolt_table_box");
 				}
 				if(!isOk(table_box)){
-					table_body.wrap("<div data-theme='"+table.theme+"' class='jbolt_table_box'></div>");
+					table_body.wrap("&lt;div data-theme='"+table.theme+"' class='jbolt_table_box'>&lt;/div>");
 					table_box=table_body.closest(".jbolt_table_box");
 				}else{
 					table_box.attr("data-theme",table.theme).data("theme",table.theme);
@@ -6077,7 +6105,7 @@ function getScrollBarHeight(ele){
 					table_view = table_box.closest(".jbolt_table_view");
 				}
 				if(!isOk(table_view)){
-					table_box.wrap("<div data-theme='"+table.theme+"' class='jbolt_table_view'></div>");
+					table_box.wrap("&lt;div data-theme='"+table.theme+"' class='jbolt_table_view'>&lt;/div>");
 					table_view=table_box.closest(".jbolt_table_view");
 				}else{
 					table_view.attr("data-theme",table.theme).data("theme",table.theme);
@@ -6094,10 +6122,10 @@ function getScrollBarHeight(ele){
 								pbox=JBoltTabUtil.getCurrentTabContent();
 							}else{
 								pbox=mainPjaxContainer
-								var inDialog=!(pbox&&pbox.length==1);
+								var inDialog=!(pbox&amp;&amp;pbox.length==1);
 								if(inDialog){
 									pbox=$("body .jbolt_page");
-									var notNormalPage=!(pbox&&pbox.length==1);
+									var notNormalPage=!(pbox&amp;&amp;pbox.length==1);
 									if(notNormalPage){
 										pbox=jboltBody;
 									}
@@ -6124,10 +6152,10 @@ function getScrollBarHeight(ele){
 						pbox=JBoltTabUtil.getCurrentTabContent();
 					}else{
 						pbox=mainPjaxContainer
-						var inDialog=!(pbox&&pbox.length==1);
+						var inDialog=!(pbox&amp;&amp;pbox.length==1);
 						if(inDialog){
 							pbox=$("body .jbolt_page");
-							var notNormalPage=!(pbox&&pbox.length==1);
+							var notNormalPage=!(pbox&amp;&amp;pbox.length==1);
 							if(notNormalPage){
 								pbox=jboltBody;
 							}
@@ -6302,7 +6330,7 @@ function getScrollBarHeight(ele){
 
 				var autoload=table.data("autoload");
 				var autoloadType=typeof(autoload);
-				if((autoloadType=="undefined")||(autoloadType=="string"&&!autoload)){
+				if((autoloadType=="undefined")||(autoloadType=="string"&amp;&amp;!autoload)){
 					autoload=true;
 				}
 				table.autoload=autoload;
@@ -6349,7 +6377,7 @@ function getScrollBarHeight(ele){
 			if(isOk(pages)){
 				jbolt_table_pages=pages.closest(".jbolt_table_pages");
 				if(!isOk(jbolt_table_pages)){
-					pages.attr("class","pages").wrap('<div data-theme="'+table.theme+'" class="jbolt_table_pages noselect"></div>');
+					pages.attr("class","pages").wrap('&lt;div data-theme="'+table.theme+'" class="jbolt_table_pages noselect">&lt;/div>');
 				}
 			}else{
 				//如果没有 就说明压根没在view里 就得找找外面了
@@ -6362,7 +6390,7 @@ function getScrollBarHeight(ele){
 				if(isOk(pages)){
 					jbolt_table_pages=pages.closest(".jbolt_table_pages");
 					if(!isOk(jbolt_table_pages)){
-						pages.attr("class","pages").wrap('<div data-theme="'+table.theme+'" class="jbolt_table_pages noselect"></div>');
+						pages.attr("class","pages").wrap('&lt;div data-theme="'+table.theme+'" class="jbolt_table_pages noselect">&lt;/div>');
 						jbolt_table_pages=pages.closest(".jbolt_table_pages");
 					}
 					table.table_box.append(jbolt_table_pages)
@@ -6399,10 +6427,10 @@ function getScrollBarHeight(ele){
 			var result="";
 			switch (columnType) {
 				case "checkbox":
-					retult="<td><input type='checkbox' data-type='tbody_checkbox'/></td>";
+					retult="&lt;td>&lt;input type='checkbox' data-type='tbody_checkbox'/>&lt;/td>";
 					break;
 				case "radio":
-					retult="<td><input type='radio' data-type='tbody_radio'/></td>";
+					retult="&lt;td>&lt;input type='radio' data-type='tbody_radio'/>&lt;/td>";
 					break;
 			}
 			return result;
@@ -6504,7 +6532,7 @@ function getScrollBarHeight(ele){
 		processTrsColumnPrependDisabled:function(table,trs){
 			if(!table.prependColumnType || notOk(trs)){return false;}
 			var size = trs.length;
-			for(var i=0;i<size;i++){
+			for(var i=0;i&lt;size;i++){
 				this.processTrColumnPrependDisabled(table,trs.eq(i));
 			}
 		},
@@ -6640,7 +6668,7 @@ function getScrollBarHeight(ele){
 			if(!tableDatas){return;}
 			if(window[tableDatas]){
 				var exe_handler=eval(tableDatas);
-				if(exe_handler&&typeof(exe_handler)=="function"){
+				if(exe_handler&amp;&amp;typeof(exe_handler)=="function"){
 					table.tableListDatas = exe_handler();
 				}
 			}else{
@@ -6688,7 +6716,7 @@ function getScrollBarHeight(ele){
 				sortColumn=dsarr[0];
 				sortType=dsarr[1];
 			}
-			for(var i=0;i<len;i++){
+			for(var i=0;i&lt;len;i++){
 				th=thead.find("tr>th[data-column='"+columnsArr[i]+"']");
 				if(isOk(th)){
 					th.addClass("sort_col");
@@ -6714,7 +6742,7 @@ function getScrollBarHeight(ele){
 		},
 		processNotRowSpanFirstTr:function(tbody,startIndex,endIndex){
 			var tempTr;
-			for(var i=startIndex;i<=endIndex;i++){
+			for(var i=startIndex;i&lt;=endIndex;i++){
 				tempTr=tbody.find("tr:nth-child("+i+")");
 				if(isOk(tempTr)){
 					tempTr.addClass("notRowSpanFirstTr");
@@ -6736,12 +6764,12 @@ function getScrollBarHeight(ele){
 				newThs=currentTr.find("th");
 				if(isOk(newThs)){
 					thLen=newThs.length;
-					for(var i=0;i<thLen;i++){
+					for(var i=0;i&lt;thLen;i++){
 						if(processHead){
 							tempColumnTh=newThs.eq(i);
 							tempColumnTh_column=tempColumnTh.data("column");
 							tempColumnTh.data("col-index",i).attr("data-col-index",i);
-							if(tempColumnTh_column&&tempColumnTh_column!='index'&&tempColumnTh_column!='checkbox'&&tempColumnTh_column!='radio'){
+							if(tempColumnTh_column&amp;&amp;tempColumnTh_column!='index'&amp;&amp;tempColumnTh_column!='checkbox'&amp;&amp;tempColumnTh_column!='radio'){
 								columnMap["columnToIndex"][tempColumnTh_column]=i;
 								columnMap["indexToColumn"]["col_"+i]=tempColumnTh_column;
 							}
@@ -6770,7 +6798,7 @@ function getScrollBarHeight(ele){
 						}
 					}
 
-					if(processHead&&columnMap){
+					if(processHead&amp;&amp;columnMap){
 						table.columnIndexMap=columnMap["columnToIndex"];
 						table.indexColumnMap=columnMap["indexToColumn"];
 						table.indexColumnTextMap=columnMap["indexToColumnText"];
@@ -6790,7 +6818,7 @@ function getScrollBarHeight(ele){
 				var fixedIndex=1;//处理fixed
 				var nextTrIndex=0,ncolspan,nrowspan=1;
 
-				for(var i=0;i<thLen;i++){
+				for(var i=0;i&lt;thLen;i++){
 					currentTh = newThs.eq(i);
 					if(processHead){
 						currentTh.data("fixed-col-index",fixedIndex).attr("data-fixed-col-index",fixedIndex);
@@ -6805,7 +6833,7 @@ function getScrollBarHeight(ele){
 						nextTrIndex = currentTr.index()+nrowspan;
 						that.processColSpanNextTrThColIndex(table,thead,tbody,tfoot,nextTrIndex,thIndex,endIndex,fixedIndex,columnMap,processHead);
 						if(processBody){
-							for(var j=thIndex;j<=endIndex;j++){
+							for(var j=thIndex;j&lt;=endIndex;j++){
 								tbody.find("tr>td:nth-child("+(j+1)+")").data("col-index",j).attr("data-col-index",j);
 								tbody.find("tr>td:nth-child("+(j+1)+")").data("fixed-col-index",fixedIndex).attr("data-fixed-col-index",fixedIndex);
 							}
@@ -6815,7 +6843,7 @@ function getScrollBarHeight(ele){
 						if(processHead){
 							currentTh.data("col-index",thIndex).attr("data-col-index",thIndex);
 							tempColumnTh_column=currentTh.data("column");
-							if(tempColumnTh_column&&tempColumnTh_column!='index'&&tempColumnTh_column!='checkbox'&&tempColumnTh_column!='radio'){
+							if(tempColumnTh_column&amp;&amp;tempColumnTh_column!='index'&amp;&amp;tempColumnTh_column!='checkbox'&amp;&amp;tempColumnTh_column!='radio'){
 								columnMap["columnToIndex"][tempColumnTh_column]=thIndex;
 								columnMap["indexToColumn"]["col_"+thIndex]=tempColumnTh_column;
 							}
@@ -6836,7 +6864,7 @@ function getScrollBarHeight(ele){
 					fixedIndex++;
 				}
 
-				if(processHead&&columnMap){
+				if(processHead&amp;&amp;columnMap){
 					table.columnIndexMap=columnMap["columnToIndex"];
 					table.indexColumnMap=columnMap["indexToColumn"];
 					table.indexColumnTextMap=columnMap["indexToColumnText"];
@@ -6864,7 +6892,7 @@ function getScrollBarHeight(ele){
 				}else{
 					hasCount = hasCount +1;
 				}
-				if(hasCount<=count){
+				if(hasCount&lt;=count){
 					thsArray.push($(th));
 				}
 			});
@@ -6879,7 +6907,7 @@ function getScrollBarHeight(ele){
 			var ths=this.getTrOkThs(tr,startColIndex,endColIndex);
 			if(!isOk(ths)){return false;}
 			var thIndex=0,tempTh,tempColumnTh_column,size=ths.length,i=startColIndex;
-			for(var thIndex=0;thIndex<size;thIndex++){
+			for(var thIndex=0;thIndex&lt;size;thIndex++){
 				tempTh=ths[thIndex];
 				if(processHead) {
 					tempTh.data("fixed-col-index", fixedIndex).attr("data-fixed-col-index", fixedIndex);
@@ -6893,7 +6921,7 @@ function getScrollBarHeight(ele){
 				if(processHead){
 					tempTh.data("col-index",i).attr("data-col-index",i);
 					tempColumnTh_column=tempTh.data("column");
-					if(tempColumnTh_column&&tempColumnTh_column!='index'&&tempColumnTh_column!='checkbox'&&tempColumnTh_column!='radio'){
+					if(tempColumnTh_column&amp;&amp;tempColumnTh_column!='index'&amp;&amp;tempColumnTh_column!='checkbox'&amp;&amp;tempColumnTh_column!='radio'){
 						columnMap["columnToIndex"][tempColumnTh_column]=i;
 						columnMap["indexToColumn"]["col_"+i]=tempColumnTh_column;
 					}
@@ -6967,7 +6995,7 @@ function getScrollBarHeight(ele){
 		processConditionsForm:function(table){
 			var that=this;
 			var conditionsForm=table.data("conditions-form");
-			if(conditionsForm!=undefined&&conditionsForm!=""&&conditionsForm!="undefined"){
+			if(conditionsForm!=undefined&amp;&amp;conditionsForm!=""&amp;&amp;conditionsForm!="undefined"){
 				if(table.isAjax){
 					$("#"+conditionsForm).on("submit",function(e){
 						e.preventDefault();
@@ -7049,7 +7077,7 @@ function getScrollBarHeight(ele){
 			if(table.hasHeader){
 				table.fixed_header.table.css("margin-left",(0-leftScroll)+"px");
 			}
-			if(table.hasFooter&&table.tfootFixed){
+			if(table.hasFooter&amp;&amp;table.tfootFixed){
 				table.fixed_footer.table.css("margin-left",(0-leftScroll)+"px");
 			}
 			if(table.table_body.sortRankAfter){
@@ -7133,7 +7161,7 @@ function getScrollBarHeight(ele){
 			that.processExtraData(table);
 			//处理ajax加载数据后重新刷新绑定必要组件自动化
 			that.afterAjaxSetTableDataInitAutoEle(table);
-			// if((!table.isEmpty&&table.isTreeTable&&table.tableListDatas.length<20) || (!table.isEmpty&&!table.isTreeTable&&table.tableListDatas.length<100)){
+			// if((!table.isEmpty&amp;&amp;table.isTreeTable&amp;&amp;table.tableListDatas.length&lt;20) || (!table.isEmpty&amp;&amp;!table.isTreeTable&amp;&amp;table.tableListDatas.length&lt;100)){
 			// 	that.processTableStyleAfterAjax(table,callback);
 			// }else{
 			// 	setTimeout(function(){
@@ -7163,10 +7191,10 @@ function getScrollBarHeight(ele){
 				return;
 			}
 			//如果是有逗号的字符串
-			if(type=="string" && mergeCellCols.indexOf(",")!=-1){
+			if(type=="string" &amp;&amp; mergeCellCols.indexOf(",")!=-1){
 				var arr = mergeCellCols.split(",");
 				mergeCellCols = [];
-				for(var i=0;i<arr.length;i++){
+				for(var i=0;i&lt;arr.length;i++){
 					mergeCellCols.push(parseInt(arr[i]));
 				}
 			}
@@ -7286,7 +7314,7 @@ function getScrollBarHeight(ele){
 			table.treeTableOptColIndex = optColIndex;
 			this.processTrLevels(table);
 			//默认就是显示第一层 其他的都关闭
-			if(typeof(openLevel)=="number"&&openLevel>1){
+			if(typeof(openLevel)=="number"&amp;&amp;openLevel>1){
 				this.processTrOpenByLevel(table,openLevel);
 			}else if(openLevel=="all"){
 				this.expandAll(table);
@@ -7299,10 +7327,10 @@ function getScrollBarHeight(ele){
 		processParentTrOptBtn:function(table,optColIndex){
 			optColIndex=optColIndex||1;
 			table.tbody.find("tr>td:nth-child("+optColIndex+")").addClass("text-left");
-			table.tbody.find("tr.parent.hasItems>td:nth-child("+optColIndex+")").prepend('<div class="parent_flag_box"><i class="fa fa-caret-right"></i></div>');
-			table.tbody.find("tr:not(.hasItems).son>td:nth-child("+optColIndex+")").prepend('<div class="parent_flag_box"><i class="fa son">•</i></div>');
-			table.tbody.find("tr:not(.hasItems).parent>td:nth-child("+optColIndex+")").prepend('<div class="parent_flag_box"><i class="fa"></i></div>');
-//				table.tbody.find("tr[data-hasitems!='true'][data-level='1']>td:nth-child("+optColIndex+")").prepend('<div class="parent_flag_box"><i class="fa"></i></div>');
+			table.tbody.find("tr.parent.hasItems>td:nth-child("+optColIndex+")").prepend('&lt;div class="parent_flag_box">&lt;i class="fa fa-caret-right">&lt;/i>&lt;/div>');
+			table.tbody.find("tr:not(.hasItems).son>td:nth-child("+optColIndex+")").prepend('&lt;div class="parent_flag_box">&lt;i class="fa son">•&lt;/i>&lt;/div>');
+			table.tbody.find("tr:not(.hasItems).parent>td:nth-child("+optColIndex+")").prepend('&lt;div class="parent_flag_box">&lt;i class="fa">&lt;/i>&lt;/div>');
+//				table.tbody.find("tr[data-hasitems!='true'][data-level='1']>td:nth-child("+optColIndex+")").prepend('&lt;div class="parent_flag_box">&lt;i class="fa">&lt;/i>&lt;/div>');
 			var level,box;
 			table.tbody.find("tr[data-level]>td>.parent_flag_box").each(function(){
 				box=$(this);
@@ -7321,13 +7349,13 @@ function getScrollBarHeight(ele){
 				level = tr.data("level")||1;
 				if(tr.data("hasitems")){
 					tr.addClass("parent hasItems son");
-					tr.find("td:nth-child("+optColIndex+")").prepend('<div style="width:'+(16+(level-1)*24)+'px" class="parent_flag_box"><i class="fa fa-caret-right"></i></div>');
+					tr.find("td:nth-child("+optColIndex+")").prepend('&lt;div style="width:'+(16+(level-1)*24)+'px" class="parent_flag_box">&lt;i class="fa fa-caret-right">&lt;/i>&lt;/div>');
 				}else if(level>1){
 					tr.addClass("son");
-					tr.find("td:nth-child("+optColIndex+")").prepend('<div style="width:'+(16+(level-1)*24)+'px" class="parent_flag_box"><i class="fa son">•</i></div>');
+					tr.find("td:nth-child("+optColIndex+")").prepend('&lt;div style="width:'+(16+(level-1)*24)+'px" class="parent_flag_box">&lt;i class="fa son">•&lt;/i>&lt;/div>');
 				}else  if(level==1){
 					tr.addClass("parent son");
-					tr.find("td:nth-child("+optColIndex+")").prepend('<div style="width:'+(16+(level-1)*24)+'px" class="parent_flag_box"><i class="fa">•</i></div>');
+					tr.find("td:nth-child("+optColIndex+")").prepend('&lt;div style="width:'+(16+(level-1)*24)+'px" class="parent_flag_box">&lt;i class="fa">•&lt;/i>&lt;/div>');
 				}
 
 
@@ -7337,14 +7365,14 @@ function getScrollBarHeight(ele){
 //				trs.each(function(){
 //					tr=$(this);
 //					tr.find("td:nth-child("+optColIndex+")").addClass("text-left");
-//					if(tr.hasClass("parent") && tr.hasClass("hasItems")){
-//						tr.find("td:nth-child("+optColIndex+")").prepend('<div class="parent_flag_box"><i class="fa fa-caret-right"></i></div>');
+//					if(tr.hasClass("parent") &amp;&amp; tr.hasClass("hasItems")){
+//						tr.find("td:nth-child("+optColIndex+")").prepend('&lt;div class="parent_flag_box">&lt;i class="fa fa-caret-right">&lt;/i>&lt;/div>');
 //					}
-//					if(tr.hasClass("son") && !tr.hasClass("hasItems")){
-//						tr.find("td:nth-child("+optColIndex+")").prepend('<div class="parent_flag_box"><i class="fa son">•</i></div>');
+//					if(tr.hasClass("son") &amp;&amp; !tr.hasClass("hasItems")){
+//						tr.find("td:nth-child("+optColIndex+")").prepend('&lt;div class="parent_flag_box">&lt;i class="fa son">•&lt;/i>&lt;/div>');
 //					}
-//					if(tr.hasClass("parent") && !tr.hasClass("hasItems")){
-//						tr.find("td:nth-child("+optColIndex+")").prepend('<div class="parent_flag_box"><i class="fa"></i></div>');
+//					if(tr.hasClass("parent") &amp;&amp; !tr.hasClass("hasItems")){
+//						tr.find("td:nth-child("+optColIndex+")").prepend('&lt;div class="parent_flag_box">&lt;i class="fa">&lt;/i>&lt;/div>');
 //					}
 //
 //					box=tr.find("td>.parent_flag_box");
@@ -7403,7 +7431,7 @@ function getScrollBarHeight(ele){
 						hasKeywords=false;
 						$.each(colIndexArr,function(i,colIndex){
 							temptr.find("td[data-col-index='"+(colIndex-1)+"']").each(function(){
-								if(this.innerText&&this.innerText.indexOf(keywords)!=-1){
+								if(this.innerText&amp;&amp;this.innerText.indexOf(keywords)!=-1){
 									//如果指定td里包含 再去执行高亮
 									filterAndHighlight(this,keywords);
 									if(hasKeywords==false){
@@ -7420,7 +7448,7 @@ function getScrollBarHeight(ele){
 							temptr.removeClass("show jb_filteritem").addClass("d-none");
 						}
 					}else{
-						if(this.innerText&&this.innerText.indexOf(keywords)!=-1){
+						if(this.innerText&amp;&amp;this.innerText.indexOf(keywords)!=-1){
 //								this.style.display="table-row";
 							temptr.addClass("show jb_filteritem").removeClass("d-none");
 							filterAndHighlight(this,keywords);
@@ -7499,7 +7527,7 @@ function getScrollBarHeight(ele){
 					return;
 				}
 				var isCheckedAll = false;
-				if(table.prependColumnType && table.prependColumnType == "checkbox"){
+				if(table.prependColumnType &amp;&amp; table.prependColumnType == "checkbox"){
 					isCheckedAll = this.isCheckboxCheckedAll(table);
 				}
 				this.processTableTrsColumnPrepend(table,sontrs);
@@ -7523,7 +7551,7 @@ function getScrollBarHeight(ele){
 			}
 		},
 		processTreeTableColumnFixed:function(table,tr,sontrs,dir){
-			if((dir=="left" && !table.left_fixed) || (dir=="right" && !table.right_fixed)){
+			if((dir=="left" &amp;&amp; !table.left_fixed) || (dir=="right" &amp;&amp; !table.right_fixed)){
 				return;
 			}
 			var trIndex = tr.data("index");
@@ -7584,16 +7612,16 @@ function getScrollBarHeight(ele){
 			});
 		},
 		processTrOpenByLevel:function(table,maxOpenLevel){
-			if(maxOpenLevel<2){return;}
+			if(maxOpenLevel&lt;2){return;}
 			var xlevel='',xlevel2='';
-			for(var level=2;level<=maxOpenLevel;level++){
+			for(var level=2;level&lt;=maxOpenLevel;level++){
 				if(xlevel){
 					xlevel=xlevel+",tr.son[data-level='"+level+"']";
 				}else{
 					xlevel="tr.son[data-level='"+level+"']";
 				}
 			}
-			for(var level=1;level<maxOpenLevel;level++){
+			for(var level=1;level&lt;maxOpenLevel;level++){
 				if(xlevel2){
 					xlevel2=xlevel2+",tr.parent[data-level='"+level+"']";
 				}else{
@@ -7614,7 +7642,7 @@ function getScrollBarHeight(ele){
 		},
 		//处理tableExtraData
 		processExtraData:function(table){
-			var hasExtraData=(table.jsonData&&isOk(table.jsonData.extraData));
+			var hasExtraData=(table.jsonData&amp;&amp;isOk(table.jsonData.extraData));
 			if(!hasExtraData){
 				return false;
 			}
@@ -7691,7 +7719,7 @@ function getScrollBarHeight(ele){
 
 		},
 		initEditableTbodyHSummarys:function(table){
-			if(table.editable&&table.isAjax&&isOk(table.hsummarys)&&!table.isEmpty){
+			if(table.editable&amp;&amp;table.isAjax&amp;&amp;isOk(table.hsummarys)&amp;&amp;!table.isEmpty){
 				this.initEditableHSummarys(table);
 			}
 		},
@@ -7719,7 +7747,7 @@ function getScrollBarHeight(ele){
 			});
 		},
 		processTfootSummary:function(table,summaryThColIndex){
-			if(!table.hasFooter||typeof(summaryThColIndex)=="undefined"||summaryThColIndex<0){return false;}
+			if(!table.hasFooter||typeof(summaryThColIndex)=="undefined"||summaryThColIndex&lt;0){return false;}
 			var summaryTh=table.tfoot.find("tr>th[data-summary='true'][data-col-index='"+summaryThColIndex+"']");
 			if(isOk(summaryTh)){
 				this.processTfootSummaryTh(table,summaryTh);
@@ -7738,10 +7766,10 @@ function getScrollBarHeight(ele){
 				if(isOk(table.tableListDatas)){
 					var len = table.tableListDatas.length;
 					var data;
-					for(var i = 0 ; i < len ;i++ ){
+					for(var i = 0 ; i &lt; len ;i++ ){
 						data=table.tableListDatas[i];
 						tempValue = data[summaryColumnName]||data[StrUtil.camel(summaryColumnName)];
-						if(typeof(tempValue)!="undefined" && typeof(tempValue)!="number"){
+						if(typeof(tempValue)!="undefined" &amp;&amp; typeof(tempValue)!="number"){
 							try{
 								tempValue = Number(tempValue);
 							}catch(e){
@@ -7755,7 +7783,7 @@ function getScrollBarHeight(ele){
 						if(tempValue>max){
 							max=tempValue;
 						}
-						if(tempValue<min){
+						if(tempValue&lt;min){
 							min=tempValue;
 						}
 					}
@@ -7781,7 +7809,7 @@ function getScrollBarHeight(ele){
 						if(tempValue>max){
 							max=tempValue;
 						}
-						if(tempValue<min){
+						if(tempValue&lt;min){
 							min=tempValue;
 						}
 					}
@@ -7815,7 +7843,7 @@ function getScrollBarHeight(ele){
 			summaryTh.attr("data-value",toFixedValue).data("value",toFixedValue);
 			if(value){
 				value=numberFormat(value,toFixed,'.',',',roundtag);
-				if(toFixed&&removeZero){
+				if(toFixed&amp;&amp;removeZero){
 					value=removeFixedNumberAllZero(value,toFixed);
 					if(removeEndZero){
 						value=removeNumberEndZero(value);
@@ -7840,7 +7868,7 @@ function getScrollBarHeight(ele){
 			if(handler){
 				summaryTh.trigger("exeSummaryHandler");
 //					var exe_handler=eval(handler);
-//					if(exe_handler&&typeof(exe_handler)=="function"){
+//					if(exe_handler&amp;&amp;typeof(exe_handler)=="function"){
 //						exe_handler(toFixedValue);
 //					}
 			}
@@ -7853,7 +7881,7 @@ function getScrollBarHeight(ele){
 			fstr=fstr.replaceAll("*",",");
 			fstr=fstr.replaceAll("/",",");
 			fstr=fstr.replaceAll(">",",");
-			fstr=fstr.replaceAll("<",",");
+			fstr=fstr.replaceAll("&lt;",",");
 			fstr=fstr.replaceAll("==",",");
 			fstr=fstr.replaceAll("!=",",");
 			fstr=fstr.replaceAll("(","");
@@ -7871,7 +7899,7 @@ function getScrollBarHeight(ele){
 			var tempEle,tempEleValue,haserror=false,tempKeyPre,switchBtn,switchBtnValue,checkbox,checkboxValue;
 			if(farr.length>1){
 				farr.sort(function(x,y){
-					if(x&&y){
+					if(x&amp;&amp;y){
 						return y.length - x.length;
 					}
 					return 0;
@@ -7907,7 +7935,7 @@ function getScrollBarHeight(ele){
 									haserror=true;
 									return false;
 								}
-								if(formula.indexOf("/"+tempKey)!=-1&&tempEleValue==0){
+								if(formula.indexOf("/"+tempKey)!=-1&amp;&amp;tempEleValue==0){
 									console.error("计算表达式"+oldformula+"中关联ID的元素:"+tempKey+"值为0，除数不能为0");
 									haserror=true;
 									return false;
@@ -7923,9 +7951,9 @@ function getScrollBarHeight(ele){
 							var trIndex=tr.data("index");
 							var trData = table.tableListDatas[trIndex];
 							var colIndex;
-							if(tempKey.indexOf("?")!=-1&&tempKey.indexOf(":")!=-1){
+							if(tempKey.indexOf("?")!=-1&amp;&amp;tempKey.indexOf(":")!=-1){
 								tempKeyPre=tempKey.split("?")[0];
-								if(trData&&trData.hasOwnProperty(tempKeyPre)){
+								if(trData&amp;&amp;trData.hasOwnProperty(tempKeyPre)){
 									tdValue=trData[tempKeyPre];
 									tdValue = tempKey.replaceAll(tempKeyPre,tdValue);
 								}else{
@@ -7935,7 +7963,7 @@ function getScrollBarHeight(ele){
 										return false;
 									}else{
 										colIndex=table.columnIndexMap[tempKeyPre];
-										if(colIndex!=undefined&&colIndex>=0){
+										if(colIndex!=undefined&amp;&amp;colIndex>=0){
 											tempTd=tr.find("td[data-col-index='"+colIndex+"']");
 											if(isOk(tempTd)){
 												switchBtn=tempTd.find("img[data-switchbtn]");
@@ -7968,7 +7996,7 @@ function getScrollBarHeight(ele){
 												tdValue=0;
 											}
 										}else{
-											if(tempKey.indexOf("?")!=-1&&tempKey.indexOf(":")!=-1){
+											if(tempKey.indexOf("?")!=-1&amp;&amp;tempKey.indexOf(":")!=-1){
 											}else{
 												haserror=true;
 												console.error("计算表达式"+oldformula+"中计算列找不到:"+tempKey);
@@ -7980,7 +8008,7 @@ function getScrollBarHeight(ele){
 									}
 								}
 							}else{
-								if(trData&&trData.hasOwnProperty(tempKey)){
+								if(trData&amp;&amp;trData.hasOwnProperty(tempKey)){
 									tdValue=trData[tempKey];
 								}else{
 									if(typeof(table.columnIndexMap[tempKey])=="undefined"){
@@ -7989,7 +8017,7 @@ function getScrollBarHeight(ele){
 										return false;
 									}else{
 										colIndex=table.columnIndexMap[tempKey];
-										if(colIndex!=undefined&&colIndex>=0){
+										if(colIndex!=undefined&amp;&amp;colIndex>=0){
 											tempTd=tr.find("td[data-col-index='"+colIndex+"']");
 											if(isOk(tempTd)){
 												tdText=$.trim(tempTd[0].innerText);
@@ -8006,7 +8034,7 @@ function getScrollBarHeight(ele){
 												tdValue=0;
 											}
 										}else{
-											if(tempKey.indexOf("?")!=-1&&tempKey.indexOf(":")!=-1){
+											if(tempKey.indexOf("?")!=-1&amp;&amp;tempKey.indexOf(":")!=-1){
 											}else{
 												haserror=true;
 												console.error("计算表达式"+oldformula+"中计算列找不到:"+tempKey);
@@ -8028,7 +8056,7 @@ function getScrollBarHeight(ele){
 								}
 							}
 							formula=formula.replaceAll(tempKey,tdValue);
-//							if(colIndex!=undefined&&colIndex>=0){
+//							if(colIndex!=undefined&amp;&amp;colIndex>=0){
 //								tempTd=tr.find("td[data-col-index='"+colIndex+"']");
 //								if(isOk(tempTd)){
 //									switchBtn=tempTd.find("img[data-switchbtn]");
@@ -8062,7 +8090,7 @@ function getScrollBarHeight(ele){
 //								}
 //								formula=formula.replaceAll(tempKey,tdValue);
 //							}else{
-//								if(tempKey.indexOf("?")!=-1&&tempKey.indexOf(":")!=-1){
+//								if(tempKey.indexOf("?")!=-1&amp;&amp;tempKey.indexOf(":")!=-1){
 //								}else{
 //									haserror=true;
 //									console.error("计算表达式"+oldformula+"中计算列找不到:"+tempKey);
@@ -8113,7 +8141,7 @@ function getScrollBarHeight(ele){
 			}else if(typeof(autoSummary)=="string"){
 				autoSummary = (autoSummary === "true");
 			}
-			if(!autoSummary && !summaryTd.triggerSummaryByOther){
+			if(!autoSummary &amp;&amp; !summaryTd.triggerSummaryByOther){
 				//如果设置不自动 并且这次没有被主动触发 就什么都不干
 				return;
 			}
@@ -8135,7 +8163,7 @@ function getScrollBarHeight(ele){
 			this.processChangeTableListDatasColumnValue(table,summaryTd,Number(toFixedValue));
 			if(value){
 				value=numberFormat(value,toFixed,'.',',',roundtag);
-				if(toFixed&&removeZero){
+				if(toFixed&amp;&amp;removeZero){
 					value=removeFixedNumberAllZero(value,toFixed);
 					if(removeEndZero){
 						value=removeNumberEndZero(value);
@@ -8170,7 +8198,7 @@ function getScrollBarHeight(ele){
 			if(handler){
 				summaryTd.trigger("exeSummaryHandler");
 //					var exe_handler=eval(handler);
-//					if(exe_handler&&typeof(exe_handler)=="function"){
+//					if(exe_handler&amp;&amp;typeof(exe_handler)=="function"){
 //						exe_handler(table,summaryTd,toFixedValue);
 //					}
 			}
@@ -8197,7 +8225,7 @@ function getScrollBarHeight(ele){
 			}
 		},
 		colConfigAutoInitHandler:function(table,td,colConfig){
-			if(colConfig.type=="auto" && colConfig.initHandler){
+			if(colConfig.type=="auto" &amp;&amp; colConfig.initHandler){
 				var dataIndex=td.parent().data("index");
 				var trJsonData = table.tableListDatas[dataIndex];
 				colConfig.initHandler(table,td,trJsonData,deepClone(colConfig));
@@ -8205,39 +8233,39 @@ function getScrollBarHeight(ele){
 		},
 		//通过colConfig配置 将td转为tdEditor
 		getTdEditorHtml:function(table,currentTd,col_config,tdValue,tdText){
-			var tpl='<div {@if tooltip} tooltip data-title="${tooltip}" {@/if} class="jbt_edit_ele ${parentCssClass}">'+
+			var tpl='&lt;div {@if tooltip} tooltip data-title="${tooltip}" {@/if} class="jbt_edit_ele ${parentCssClass}">'+
 				'{@if type==="input"}'+
-				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if jbe_id}id="${jbe_id}"{@/if} data-with-clearbtn="true" {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if} autocomplete="off" type="text"  data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength}" placeholder ="${placeholder }" name="${jbe_col_key}" value="${tdText}"/>'+
+				'&lt;input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if jbe_id}id="${jbe_id}"{@/if} data-with-clearbtn="true" {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if} autocomplete="off" type="text"  data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len&lt;=${maxLength?maxLength:20}{@if min!=undefined&amp;&amp;min!="undefined"};>=${min}{@/if}{@if max!=undefined&amp;&amp;max!="undefined"};&lt;=${max}{@/if}" data-notnull="false" maxLength="${maxLength}" placeholder ="${placeholder }" name="${jbe_col_key}" value="${tdText}"/>'+
 				'{@else if type==="textarea" }'+
-				'<textarea {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} data-with-clearbtn="true" {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" style="height:${height}px;${cssStyle}" autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:40}" data-notnull="false" maxLength="${maxLength?maxLength:40}" placeholder ="${placeholder}" name="${jbe_col_key}">${tdText}</textarea>'+
+				'&lt;textarea {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} data-with-clearbtn="true" {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" style="height:${height}px;${cssStyle}" autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len&lt;=${maxLength?maxLength:40}" data-notnull="false" maxLength="${maxLength?maxLength:40}" placeholder ="${placeholder}" name="${jbe_col_key}">${tdText}&lt;/textarea>'+
 				'{@else if type==="input_color" }'+
-				'<input class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="color" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
+				'&lt;input class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="color" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len&lt;=${maxLength?maxLength:20}{@if min!=undefined&amp;&amp;min!="undefined"};>=${min}{@/if}{@if max!=undefined&amp;&amp;max!="undefined"};&lt;=${max}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
 				'{@else if type==="input_number" }'+
-				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} data-with-clearbtn="true" {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
+				'&lt;input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} data-with-clearbtn="true" {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len&lt;=${maxLength?maxLength:20}{@if min!=undefined&amp;&amp;min!="undefined"};>=${min}{@/if}{@if max!=undefined&amp;&amp;max!="undefined"};&lt;=${max}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
 				'{@else if type==="input_ranger" }'+
-				'<span class="rangerText">${tdText}</span><input oninput="$(this).prev().text(this.value)" {@if readOnly}readonly="readonly"{@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="range" {@if min} min="${min}" {@/if} {@if min} min="${min}" {@/if}  {@if max} max="${max}" {@/if}  data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}{@if min!=undefined&&min!="undefined"};>=${min}{@/if}{@if max!=undefined&&max!="undefined"};<=${max}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
+				'&lt;span class="rangerText">${tdText}&lt;/span>&lt;input oninput="$(this).prev().text(this.value)" {@if readOnly}readonly="readonly"{@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="range" {@if min} min="${min}" {@/if} {@if min} min="${min}" {@/if}  {@if max} max="${max}" {@/if}  data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len&lt;=${maxLength?maxLength:20}{@if min!=undefined&amp;&amp;min!="undefined"};>=${min}{@/if}{@if max!=undefined&amp;&amp;max!="undefined"};&lt;=${max}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder}" name="${jbe_col_key}" value="${tdText}"/>'+
 				'{@else if type==="datetime" || type==="date"  || type==="time" || type==="year" || type==="month"}'+
-				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }" data-date data-type="${type}" {@if range}data-range="${range}"{@/if} data-trigger="focus" name="${jbe_col_key}" data-fmt="${pattern}" value="${tdText}"/>'+
+				'&lt;input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len&lt;=${maxLength?maxLength:20}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }" data-date data-type="${type}" {@if range}data-range="${range}"{@/if} data-trigger="focus" name="${jbe_col_key}" data-fmt="${pattern}" value="${tdText}"/>'+
 				'{@else if type==="week" }'+
-				'<input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="week" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:20}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }" name="${jbe_col_key}" value="${tdText}"/>'+
+				'&lt;input {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  autocomplete="off" type="week" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len&lt;=${maxLength?maxLength:20}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }" name="${jbe_col_key}" value="${tdText}"/>'+
 				'{@else if type==="autocomplete" }'+
-				'<input data-mustmatch="${mustMatch}" {@if matchCase}data-match-case="${matchCase}"{@/if} {@if limit}data-limit="${limit}"{@/if} {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} data-trigger="click" data-delimiter="${delimiter}" {@if textAsValue}data-textasvalue="${textAsValue}"{@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  data-autocomplete data-hidden-input="${jbe_acpl_hiddenId}" autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len<=${maxLength?maxLength:40}" data-notnull="false" maxLength="${maxLength?maxLength:40}" placeholder ="${placeholder }"  value="${tdText}" data-url="${url}"  {@if textAttr}data-text-attr="${textAttr}"{@/if}  {@if header}data-header="${header}"{@/if} {@if textAlign}data-text-align="${textAlign}"{@/if}   {@if width}data-width="${width}"{@/if} {@if height}data-height="${height}"{@/if}  {@if columnAttr}data-column-attr="${columnAttr}"{@/if} {@if valueAttr}data-value-attr="${valueAttr}"{@/if}/>'+
-				'<input class="jbt_editor_hidden" type="hidden" id="${jbe_acpl_hiddenId}" name="${jbe_col_key}" value="${tdValue}" />'+
+				'&lt;input data-mustmatch="${mustMatch}" {@if matchCase}data-match-case="${matchCase}"{@/if} {@if limit}data-limit="${limit}"{@/if} {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} data-trigger="click" data-delimiter="${delimiter}" {@if textAsValue}data-textasvalue="${textAsValue}"{@/if} {@if ajaxCheckUrl}data-ajax-check-url="${ajaxCheckUrl}"{@/if}  {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}  data-autocomplete data-hidden-input="${jbe_acpl_hiddenId}" autocomplete="off" type="text" data-tips="${ruleTips}" data-rule="{@if rule}${rule};{@/if}len&lt;=${maxLength?maxLength:40}" data-notnull="false" maxLength="${maxLength?maxLength:40}" placeholder ="${placeholder }"  value="${tdText}" data-url="${url}"  {@if textAttr}data-text-attr="${textAttr}"{@/if}  {@if header}data-header="${header}"{@/if} {@if textAlign}data-text-align="${textAlign}"{@/if}   {@if width}data-width="${width}"{@/if} {@if height}data-height="${height}"{@/if}  {@if columnAttr}data-column-attr="${columnAttr}"{@/if} {@if valueAttr}data-value-attr="${valueAttr}"{@/if}/>'+
+				'&lt;input class="jbt_editor_hidden" type="hidden" id="${jbe_acpl_hiddenId}" name="${jbe_col_key}" value="${tdValue}" />'+
 				'{@else if type==="jboltinput" }'+
-				'<input {@if onlyAttrFilter}data-onlyattrfilter="${onlyAttrFilter}"{@/if} {@if onlyleaf}data-onlyleaf="${onlyleaf?true:false}"{@/if} {@if onlytype}data-onlytype="${onlytype?true:false}"{@/if} {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if}  {@if textAsValue}data-textasvalue="${textAsValue}"{@/if}  {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}   data-jboltinput data-zero-clear="true" data-load-type="${loadType}" {@if openType} data-open-type="${openType}" {@/if} data-hidden-input="${jbe_jbi_hiddenId}" autocomplete="off" type="text" {@if contentId}data-content-id="${contentId}"{@/if} data-tips="${ruleTips}" data-rule="{@if rule}${rule};len<=${maxLength?maxLength:20}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }"  value="${tdText}" {@if new_url}data-url="${new_url}"{@/if}   {@if width}data-width="${width}"{@/if} {@if height}data-height="${height}"{@/if} {@if filterHandler}data-filter-handler="${filterHandler}"{@/if} />'+
-				'<input class="jbt_editor_hidden" type="hidden" id="${jbe_jbi_hiddenId}" name="${jbe_col_key}" value="${tdValue}" />'+
+				'&lt;input {@if onlyAttrFilter}data-onlyattrfilter="${onlyAttrFilter}"{@/if} {@if onlyleaf}data-onlyleaf="${onlyleaf?true:false}"{@/if} {@if onlytype}data-onlytype="${onlytype?true:false}"{@/if} {@if readOnly}readonly="readonly"{@/if} {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if}  {@if textAsValue}data-textasvalue="${textAsValue}"{@/if}  {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if}   data-jboltinput data-zero-clear="true" data-load-type="${loadType}" {@if openType} data-open-type="${openType}" {@/if} data-hidden-input="${jbe_jbi_hiddenId}" autocomplete="off" type="text" {@if contentId}data-content-id="${contentId}"{@/if} data-tips="${ruleTips}" data-rule="{@if rule}${rule};len&lt;=${maxLength?maxLength:20}{@/if}" data-notnull="false" maxLength="${maxLength?maxLength:20}" placeholder ="${placeholder }"  value="${tdText}" {@if new_url}data-url="${new_url}"{@/if}   {@if width}data-width="${width}"{@/if} {@if height}data-height="${height}"{@/if} {@if filterHandler}data-filter-handler="${filterHandler}"{@/if} />'+
+				'&lt;input class="jbt_editor_hidden" type="hidden" id="${jbe_jbi_hiddenId}" name="${jbe_col_key}" value="${tdValue}" />'+
 				'{@else if type==="select" }'+
-				'<select {@if multiple} multiple="multiple" {@/if} {@if selectedTextDelimiter} data-selected-text-delimiter="${selectedTextDelimiter}" {@/if} data-select-type="${theme}" {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if} data-tips="${ruleTips}" data-rule="select{@if rule};${rule}{@/if}" data-notnull="false" name="${jbe_col_key}" data-autoload {@if refresh} data-refresh="${refresh}" {@/if} {@if onlyleaf} data-onlyleaf="${onlyleaf}" {@/if} {@if delimiter} data-delimiter="${delimiter}" {@/if} data-url="${url}" {@if textAttr} data-text-attr="${textAttr}" {@/if} {@if valueAttr} data-value-attr="${valueAttr}" {@/if}  data-text="=请选择="  data-value="" data-default="${defaultValue}" data-select="${tdValue}"></select>'+
-				'{@else if type==="dialogbtn" && withDialog }'+
-				'<button  class="jbt_editor {@if cssClass}${cssClass}{@else}btn btn-light{@/if}" {@if cssStyle} style="${cssStyle}" {@/if} data-in-editable-td="true" onclick="DialogUtil.openBy(this)" data-btn="${dialog.btn}" {@if linkColumn} data-link-column="${linkColumn}" {@/if}  data-link-para-ele="{@if jbe_link_ele_id}#${jbe_link_ele_id}{@/if}{@if linkPara}{@if jbe_link_ele_id},{@/if}${linkPara}{@/if}" data-area="${dialog.area}"  data-title="${dialog.title}"   data-url="${dialog.url}">{@if icon}<i class="${icon} mr-1"></i>{@else}<i class="fa fa-search mr-1"></i>{@/if}${text?text:"按钮"}</button>'+
-				'<input class="jbt_editor_hidden" type="hidden" id="${jbe_hidden_id}" name="${jbe_col_key}" value="${tdValue}" />'+
+				'&lt;select {@if multiple} multiple="multiple" {@/if} {@if selectedTextDelimiter} data-selected-text-delimiter="${selectedTextDelimiter}" {@/if} data-select-type="${theme}" {@if focusChangeToExtraForm} data-focus-changeto-extra-form="true" {@/if} {@if linkPara} data-link-para-ele="${linkPara}" {@/if} {@if linkColumn} data-link-column="${linkColumn}" {@/if} class="jbt_editor ${cssClass}" {@if cssStyle} style="${cssStyle}" {@/if} data-tips="${ruleTips}" data-rule="select{@if rule};${rule}{@/if}" data-notnull="false" name="${jbe_col_key}" data-autoload {@if refresh} data-refresh="${refresh}" {@/if} {@if onlyleaf} data-onlyleaf="${onlyleaf}" {@/if} {@if delimiter} data-delimiter="${delimiter}" {@/if} data-url="${url}" {@if textAttr} data-text-attr="${textAttr}" {@/if} {@if valueAttr} data-value-attr="${valueAttr}" {@/if}  data-text="=请选择="  data-value="" data-default="${defaultValue}" data-select="${tdValue}">&lt;/select>'+
+				'{@else if type==="dialogbtn" &amp;&amp; withDialog }'+
+				'&lt;button  class="jbt_editor {@if cssClass}${cssClass}{@else}btn btn-light{@/if}" {@if cssStyle} style="${cssStyle}" {@/if} data-in-editable-td="true" onclick="DialogUtil.openBy(this)" data-btn="${dialog.btn}" {@if linkColumn} data-link-column="${linkColumn}" {@/if}  data-link-para-ele="{@if jbe_link_ele_id}#${jbe_link_ele_id}{@/if}{@if linkPara}{@if jbe_link_ele_id},{@/if}${linkPara}{@/if}" data-area="${dialog.area}"  data-title="${dialog.title}"   data-url="${dialog.url}">{@if icon}&lt;i class="${icon} mr-1">&lt;/i>{@else}&lt;i class="fa fa-search mr-1">&lt;/i>{@/if}${text?text:"按钮"}&lt;/button>'+
+				'&lt;input class="jbt_editor_hidden" type="hidden" id="${jbe_hidden_id}" name="${jbe_col_key}" value="${tdValue}" />'+
 				'{@/if}'+
-				'{@if withDialog && type != "dialogbtn"}'+
-				'<div class="ac_append">'+
-				'<button class="btn btn-light" data-in-editable-td="true" onclick="DialogUtil.openBy(this)" data-btn="${dialog.btn}" {@if linkColumn} data-link-column="${linkColumn}" {@/if}  data-link-para-ele="{@if jbe_link_ele_id}#${jbe_link_ele_id}{@/if}{@if linkPara}{@if jbe_link_ele_id},{@/if}${linkPara}{@/if}" data-area="${dialog.area}"  data-title="${dialog.title}"   data-url="${dialog.url}"><i class="fa fa-search mr-1"></i></button>'+
-				'</div>'+
+				'{@if withDialog &amp;&amp; type != "dialogbtn"}'+
+				'&lt;div class="ac_append">'+
+				'&lt;button class="btn btn-light" data-in-editable-td="true" onclick="DialogUtil.openBy(this)" data-btn="${dialog.btn}" {@if linkColumn} data-link-column="${linkColumn}" {@/if}  data-link-para-ele="{@if jbe_link_ele_id}#${jbe_link_ele_id}{@/if}{@if linkPara}{@if jbe_link_ele_id},{@/if}${linkPara}{@/if}" data-area="${dialog.area}"  data-title="${dialog.title}"   data-url="${dialog.url}">&lt;i class="fa fa-search mr-1">&lt;/i>&lt;/button>'+
+				'&lt;/div>'+
 				'{@/if}'+
-				'</div>';
+				'&lt;/div>';
 			var colConfig;
 			if(col_config.type == "auto"){
 				var tdoptions = currentTd.data("col-options");
@@ -8269,7 +8297,7 @@ function getScrollBarHeight(ele){
 				colConfig.dialog.title=colConfig.dialog.title||"请选择";
 				colConfig.dialog.btn=colConfig.dialog.btn||"选择,取消";
 			}
-			if(colConfig.changeColumns && (!colConfig.hasOwnProperty("handler")&&!colConfig.ischangecolumns)){
+			if(colConfig.changeColumns &amp;&amp; (!colConfig.hasOwnProperty("handler")&amp;&amp;!colConfig.ischangecolumns)){
 				colConfig.ischangecolumns=true;
 				colConfig.handler=function(table,td,text,value,jsonData,chooseData){
 					jboltTableUpdateOtherColumns(table,td.parent(),chooseData?chooseData:jsonData,colConfig.changeColumns);
@@ -8280,7 +8308,7 @@ function getScrollBarHeight(ele){
 			}
 			var html=juicer(tpl,colConfig);
 			var editorEle=$(html);
-			if(colConfig&&colConfig.hasOwnProperty("handler")){
+			if(colConfig&amp;&amp;colConfig.hasOwnProperty("handler")){
 				if(colConfig.type=="select" || colConfig.type=="autocomplete" || colConfig.type=="jboltinput"|| colConfig.type=="dialogbtn"){
 					currentTd.data("dialog-choose-choose-handler",colConfig.handler).data("jbolttable-handler-ischangecolumns",colConfig.ischangecolumns);
 					editorEle.find("input[data-autocomplete],input[data-jboltinput],select").data("jbolttable-handler",colConfig.handler).data("jbolttable-handler-ischangecolumns",colConfig.ischangecolumns);
@@ -8288,7 +8316,7 @@ function getScrollBarHeight(ele){
 					currentTd.data("editable-value-change-handler",colConfig.handler).data("jbolttable-handler-ischangecolumns",colConfig.ischangecolumns);
 				}
 			}
-			if(colConfig.type=="select"&&colConfig.options){
+			if(colConfig.type=="select"&amp;&amp;colConfig.options){
 				editorEle.find("select").data("options",colConfig.options);
 			}
 			if(colConfig.enterHandler){
@@ -8411,7 +8439,7 @@ function getScrollBarHeight(ele){
 			//单元格编辑完成后执行数据变更
 			var currentTdIndex=td.data("col-index");
 			var thColumn,attrName;
-			if(typeof(currentTdIndex)!="undefined" && currentTdIndex>=0 ){
+			if(typeof(currentTdIndex)!="undefined" &amp;&amp; currentTdIndex>=0 ){
 				thColumn=table.indexColumnMap["col_"+currentTdIndex];
 			}
 			if(!thColumn){
@@ -8439,7 +8467,7 @@ function getScrollBarHeight(ele){
 			}
 			var tr=td.parent();
 			var dataIndex=tr.data("index");
-			if(typeof(value)=="string"&&colConfig&&colConfig.rule){
+			if(typeof(value)=="string"&amp;&amp;colConfig&amp;&amp;colConfig.rule){
 				if(colConfig.type=="input_number"||colConfig.type=="input_ranger"|| colConfig.rule.indexOf("int")!=-1 || colConfig.rule.indexOf("number")!=-1){
 					value=Number(value);
 				}
@@ -8464,19 +8492,19 @@ function getScrollBarHeight(ele){
 			}
 
 			var textHtmlFormatValue=editingTd.processValue;
-			if(typeof(textHtmlFormatValue)=="number"&&text&&!isNaN(text)){
-				if(text.length<19){
+			if(typeof(textHtmlFormatValue)=="number"&amp;&amp;text&amp;&amp;!isNaN(text)){
+				if(text.length&lt;19){
 					text = Number(text);
 				}
 			}
 
 			//修复data-value=0的问题
-			if(typeof(editingTd.processValue)=="number"&&editingTd.processValue==0){
+			if(typeof(editingTd.processValue)=="number"&amp;&amp;editingTd.processValue==0){
 				if(typeof(text) == undefined || typeof(text)=="undefined" || text==""){
 					editingTd.processValue="";
 				}
 			}
-			if(typeof(text)!="number" && !text && typeof(textHtmlFormatValue)=="number" && textHtmlFormatValue==0){
+			if(typeof(text)!="number" &amp;&amp; !text &amp;&amp; typeof(textHtmlFormatValue)=="number" &amp;&amp; textHtmlFormatValue==0){
 				textHtmlFormatValue = "";
 			}
 			//单元格赋值
@@ -8486,11 +8514,11 @@ function getScrollBarHeight(ele){
 			var html=that.processEditableTdHtmlFormat(table,editingTd,text,textHtmlFormatValue);
 			editingTd.html(html);
 			editingTd.removeAttr("data-editing");
-			if(value&&editingTd.hasClass("is-invalid")){
+			if(value&amp;&amp;editingTd.hasClass("is-invalid")){
 				editingTd.removeClass("is-invalid").removeClass("imgbg");
 				editingTd.tooltip("dispose");
 			}
-			if(typeof(text)!="undefined" && typeof(orignText)!="undefined"  && text.toString()==orignText.toString()){
+			if(typeof(text)!="undefined" &amp;&amp; typeof(orignText)!="undefined"  &amp;&amp; text.toString()==orignText.toString()){
 				editingTd.data("changed",false).removeAttr("data-changed");
 			}else{
 				editingTd.data("changed",true).attr("data-changed",true);
@@ -8498,7 +8526,7 @@ function getScrollBarHeight(ele){
 			}
 //				if(isNaN(orignText)){
 //				}else{
-//				/*	if(Number(orignText)==0&&(Number(text)==0||text==""||text=="0"||text==undefined)){
+//				/*	if(Number(orignText)==0&amp;&amp;(Number(text)==0||text==""||text=="0"||text==undefined)){
 //						editingTd.data("changed",false).removeAttr("data-changed");
 //						editingTd.text(orignText);
 //					}else */
@@ -8523,7 +8551,7 @@ function getScrollBarHeight(ele){
 				}
 			}
 			//如果summaryTriggerColumns 里有这一列 就可以触发
-			if(columnName && table.summaryTriggerColumns[columnName]){
+			if(columnName &amp;&amp; table.summaryTriggerColumns[columnName]){
 				//处理这一行的tbody summary
 				var editTr = editingTd.parent();
 				that.processTbodySummarysInTr(table,editTr);
@@ -8536,7 +8564,7 @@ function getScrollBarHeight(ele){
 			that.checkAndProcessOneColumnUpdate(table,editingTd);
 			if(!dontExeValueChangeHandler){
 				var vchandler=editingTd.data("editable-value-change-handler");
-				if(vchandler&&typeof(vchandler)=="function"){
+				if(vchandler&amp;&amp;typeof(vchandler)=="function"){
 					var jsonData=table.tableListDatas[editingTd.closest("tr").data("index")];
 					var ischangecolumns = editingTd.data("jbolttable-handler-ischangecolumns");
 					if(!ischangecolumns){
@@ -8559,7 +8587,7 @@ function getScrollBarHeight(ele){
 			}
 			if(columnName){
 				var colConfig=table.editableOptions.cols[columnName];
-				if(colConfig&&colConfig.changeColumns){
+				if(colConfig&amp;&amp;colConfig.changeColumns){
 					jboltTableUpdateOtherColumns(table,editingTd.parent(),data,colConfig.changeColumns);
 //						console.log(table.tableListDatas)
 				}
@@ -8573,7 +8601,7 @@ function getScrollBarHeight(ele){
 					var thColumn=table.indexColumnMap["col_"+currentTdIndex];
 					if(thColumn){
 						var colConfig=table.editableOptions.cols[thColumn];
-						if(colConfig&&colConfig.focusChangeToExtraForm){
+						if(colConfig&amp;&amp;colConfig.focusChangeToExtraForm){
 							if(editingTd.data("editing")){
 								this.processEditingTd(table,editingTd);
 							}
@@ -8643,7 +8671,7 @@ function getScrollBarHeight(ele){
 						text="";
 					}
 
-				}else if(editingInputBox[0].tagName=="INPUT"&&(editingInputBox.hasClass("ac_input")||editingInputBox[0].hasAttribute("data-jboltinput"))){
+				}else if(editingInputBox[0].tagName=="INPUT"&amp;&amp;(editingInputBox.hasClass("ac_input")||editingInputBox[0].hasAttribute("data-jboltinput"))){
 					if(editingInputBox.hasClass("ac_input")){
 						var exeResult=editingInputBox.data("exe-result");
 						if(exeResult){
@@ -8674,7 +8702,7 @@ function getScrollBarHeight(ele){
 					}
 					if(value==''||value.length==0){
 						if(editingInputBox.data("textasvalue")){
-							value=(text!=""&&text.length>0)?text:"";
+							value=(text!=""&amp;&amp;text.length>0)?text:"";
 						}else{
 							var mm = editingInputBox.data("mustmatch");
 							if(typeof(mm)=="undefined"){
@@ -8684,7 +8712,7 @@ function getScrollBarHeight(ele){
 								text="";
 								value="";
 							}else{
-								value=(text!=""&&text.length>0)?text:"";
+								value=(text!=""&amp;&amp;text.length>0)?text:"";
 							}
 
 						}
@@ -8693,7 +8721,7 @@ function getScrollBarHeight(ele){
 					var buttonHidden = editingInputBox.next();
 					text=buttonHidden.val();
 					if(editingInputBox.data("textasvalue")){
-						value=(text!=""&&text.length>0)?text:"";
+						value=(text!=""&amp;&amp;text.length>0)?text:"";
 					}else{
 						value=text;
 					}
@@ -8730,7 +8758,7 @@ function getScrollBarHeight(ele){
 				that.processTriggerOtherColumnSummary(table,editingTd);
 
 				var vchandler=editingTd.data("editable-value-change-handler");
-				if(vchandler&&typeof(vchandler)=="function"){
+				if(vchandler&amp;&amp;typeof(vchandler)=="function"){
 					var jsonData=table.tableListDatas[editingTd.closest("tr").data("index")];
 					var ischangecolumns = editingTd.data("jbolttable-handler-ischangecolumns");
 					if(!ischangecolumns){
@@ -8746,7 +8774,7 @@ function getScrollBarHeight(ele){
 			td.data("beTextFormat",false);
 			if(column){
 				var colConfig=table.editableOptions.cols[column];
-				if(colConfig&&colConfig.textFormat){
+				if(colConfig&amp;&amp;colConfig.textFormat){
 					var dataIndex=td.parent().data("index");
 					var trJsonData = table.tableListDatas[dataIndex];
 					result=colConfig.textFormat(table,td,text,value,trJsonData);
@@ -8759,7 +8787,7 @@ function getScrollBarHeight(ele){
 			var html=text;
 			if(column){
 				var colConfig=table.editableOptions.cols[column];
-				if(colConfig&&colConfig.htmlFormat){
+				if(colConfig&amp;&amp;colConfig.htmlFormat){
 					var dataIndex=td.parent().data("index");
 					var trJsonData = table.tableListDatas[dataIndex];
 					html=colConfig.htmlFormat(table,td,text,value,trJsonData);
@@ -8772,7 +8800,7 @@ function getScrollBarHeight(ele){
 			var result=value;
 			if(column){
 				var colConfig=table.editableOptions.cols[column];
-				if(colConfig&&colConfig.editorFormat){
+				if(colConfig&amp;&amp;colConfig.editorFormat){
 					var dataIndex=td.parent().data("index");
 					var trJsonData = table.tableListDatas[dataIndex];
 					result=colConfig.editorFormat(table,td,text,value,trJsonData);
@@ -8792,7 +8820,7 @@ function getScrollBarHeight(ele){
 				editingTds.each(function(){
 					editingTd=$(this);
 					result=that.processEditingTd(table,editingTd);
-					if(!result&&!fail){
+					if(!result&amp;&amp;!fail){
 						fail=true;
 					}
 				});
@@ -8802,11 +8830,11 @@ function getScrollBarHeight(ele){
 		},
 		checkAndProcessOneColumnUpdate:function(table,td){
 			//每个可编辑单元格恢复不可编辑状态的时候 需要判断是否需要提交更新这个字段
-			if(table.editable&&td.data("changed")){
+			if(table.editable&amp;&amp;td.data("changed")){
 				//首先你得是changed数据才有机会更新 然后看submit配置里是不是cell
-				if(table.editableOptions&&table.editableOptions.submit){
+				if(table.editableOptions&amp;&amp;table.editableOptions.submit){
 					var type=table.editableOptions.submit.type;
-					if(type&&type=="cell"){
+					if(type&amp;&amp;type=="cell"){
 						var tr=td.parent();
 						if(tr.data("id")){
 							this.updateOneColumn(table,td);
@@ -8885,7 +8913,7 @@ function getScrollBarHeight(ele){
 				newCount=minCount;
 			}else{
 				realCount=table.tbody.find("tr").length;
-				if(realCount<minCount){
+				if(realCount&lt;minCount){
 					newCount=minCount-realCount;
 				}
 			}
@@ -8896,7 +8924,7 @@ function getScrollBarHeight(ele){
 		},
 		reProcessEditableTfootSummarys:function(table){
 			if(!table.editable||!table.editableOptions||!table.editableOptions.cols){return false;}
-			if(table.hasFooter&&isOk(table.vsummarys)){
+			if(table.hasFooter&amp;&amp;isOk(table.vsummarys)){
 				//处理tfoot summary
 				this.processTfootSummarys(table);
 			}
@@ -8912,7 +8940,7 @@ function getScrollBarHeight(ele){
 			if(!table.editable||!table.editableOptions||!table.editableOptions.cols){return false;}
 			if(!isOk(trs)){return false;}
 			var that=this;
-			if(table.hasFooter&&isOk(table.hsummarys)){
+			if(table.hasFooter&amp;&amp;isOk(table.hsummarys)){
 				//处理tbody summary
 				var tr;
 				trs.each(function(){
@@ -8920,7 +8948,7 @@ function getScrollBarHeight(ele){
 					that.processTbodySummarysInTr(table,tr);
 				});
 			}
-			if(table.hasFooter&&isOk(table.vsummarys)){
+			if(table.hasFooter&amp;&amp;isOk(table.vsummarys)){
 				//处理tfoot summary
 				this.processTfootSummarys(table);
 			}
@@ -8936,11 +8964,11 @@ function getScrollBarHeight(ele){
 			for(var i in keys){
 				key=keys[i];
 				temp=colConfigs[key];
-				if(temp&&temp.summary){
+				if(temp&amp;&amp;temp.summary){
 					if(isArray(temp.summary)){
 						for(var i in temp.summary){
 							arrayItem=temp.summary[i];
-							if(arrayItem.dir&&arrayItem.formula){
+							if(arrayItem.dir&amp;&amp;arrayItem.formula){
 								tempSummary={
 									formula:arrayItem.formula,
 									column:key,
@@ -8956,7 +8984,7 @@ function getScrollBarHeight(ele){
 
 								if(table.columnIndexMap){
 									colIndex=table.columnIndexMap[key];
-									if(colIndex!=undefined&&colIndex>=0){
+									if(colIndex!=undefined&amp;&amp;colIndex>=0){
 										tempSummary.colIndex=colIndex;
 									}
 								}
@@ -8966,7 +8994,7 @@ function getScrollBarHeight(ele){
 								}else if(arrayItem.dir=="v"){
 									vs.push(tempSummary);
 								}
-								if(arrayItem.formula!="sum" && arrayItem.formula!="max" && arrayItem.formula!="min" && arrayItem.formula!="avg"){
+								if(arrayItem.formula!="sum" &amp;&amp; arrayItem.formula!="max" &amp;&amp; arrayItem.formula!="min" &amp;&amp; arrayItem.formula!="avg"){
 									//如果不是触发器 判断一下6871
 									for(var j in keys){
 										if(typeof(summaryTriggerColumns[keys[j]])=="undefined"){
@@ -8981,7 +9009,7 @@ function getScrollBarHeight(ele){
 							}
 						}
 
-					}else if(temp.summary.dir&&temp.summary.formula){
+					}else if(temp.summary.dir&amp;&amp;temp.summary.formula){
 						tempSummary={
 							formula:temp.summary.formula,
 							column:key,
@@ -8996,7 +9024,7 @@ function getScrollBarHeight(ele){
 						};
 						if(table.columnIndexMap){
 							colIndex=table.columnIndexMap[key];
-							if(colIndex!=undefined&&colIndex>=0){
+							if(colIndex!=undefined&amp;&amp;colIndex>=0){
 								tempSummary.colIndex=colIndex;
 							}
 						}
@@ -9012,7 +9040,7 @@ function getScrollBarHeight(ele){
 								summaryTriggerColumns[key]=true;
 							}
 						}
-						if(temp.summary.formula!="sum" && temp.summary.formula!="max" && temp.summary.formula!="min" && temp.summary.formula!="avg"){
+						if(temp.summary.formula!="sum" &amp;&amp; temp.summary.formula!="max" &amp;&amp; temp.summary.formula!="min" &amp;&amp; temp.summary.formula!="avg"){
 							//如果不是触发器 判断一下6871
 							for(var j in keys){
 								if(typeof(summaryTriggerColumns[keys[j]])=="undefined"){
@@ -9024,7 +9052,7 @@ function getScrollBarHeight(ele){
 							}
 						}
 					}
-				}else if(temp&&temp.changeColumns){
+				}else if(temp&amp;&amp;temp.changeColumns){
 					var changeColumn,changeColumnName;
 					for(var i in temp.changeColumns){
 						changeColumn = temp.changeColumns[i];
@@ -9078,7 +9106,7 @@ function getScrollBarHeight(ele){
 								var edtr = edTh.closest("tr");
 								var thValue = edTh.data("value");
 								var handler=edTh.data("handler");
-								if(handler && typeof(handler)=="function"){
+								if(handler &amp;&amp; typeof(handler)=="function"){
 									handler(table,edtr,edTh,thValue);
 								}
 							});
@@ -9147,7 +9175,7 @@ function getScrollBarHeight(ele){
 				column=th.data("column");
 				if(column){
 					editable=th.data("editable");
-					if(typeof(editable)=="boolean"&&editable==false){
+					if(typeof(editable)=="boolean"&amp;&amp;editable==false){
 						return true;
 					}
 					dataType=th.data("type");
@@ -9164,7 +9192,7 @@ function getScrollBarHeight(ele){
 							type:type,
 							submitAttr:StrUtil.camel(column)
 						}
-					}else if(column!="index"&&column!="optcol"&&column!="checkbox"&&column!="radio"){
+					}else if(column!="index"&amp;&amp;column!="optcol"&amp;&amp;column!="checkbox"&amp;&amp;column!="radio"){
 						type="input";
 						cols[column]={
 							type:type,
@@ -9195,7 +9223,7 @@ function getScrollBarHeight(ele){
 				column=this.name;
 				if(column){
 					temp=colConfigs[column];
-					if(temp&&temp.type=="checkbox"){
+					if(temp&amp;&amp;temp.type=="checkbox"){
 						if(temp.submitAttr){
 							submitattr = temp.submitAttr;
 						}else{
@@ -9227,7 +9255,7 @@ function getScrollBarHeight(ele){
 				column=this.name;
 				if(column){
 					temp=colConfigs[column];
-					if(temp&&temp.type=="switchbtn"){
+					if(temp&amp;&amp;temp.type=="switchbtn"){
 						if(temp.submitAttr){
 							submitattr = temp.submitAttr;
 						}else{
@@ -9258,7 +9286,7 @@ function getScrollBarHeight(ele){
 				empKey=keys[i];
 				colConfig=cols[empKey];
 				colIndex=-1;
-				if(colConfig&&colConfig.editable){
+				if(colConfig&amp;&amp;colConfig.editable){
 					colIndex=table.columnIndexMap[empKey];
 					if(colIndex>=0){
 						//必填列就得上面列头加红星了
@@ -9266,7 +9294,7 @@ function getScrollBarHeight(ele){
 						if(isOk(th)){
 							if(colConfig.required){
 								th.addClass("is_required");
-								if(!table.isEmpty&&!table.isAjax){
+								if(!table.isEmpty&amp;&amp;!table.isAjax){
 									//可编辑列 就得加底色了
 									var tds = table.table_box.find("table>tbody>tr>td[data-col-index='"+colIndex+"']");
 									if(isOk(tds)){
@@ -9279,7 +9307,7 @@ function getScrollBarHeight(ele){
 									}
 								}
 							}else{
-								if(!table.isEmpty&&!table.isAjax){
+								if(!table.isEmpty&amp;&amp;!table.isAjax){
 									//可编辑列 就得加底色了
 									var tds = table.table_box.find("table>tbody>tr>td[data-col-index='"+colIndex+"']");
 									if(isOk(tds)){
@@ -9296,7 +9324,7 @@ function getScrollBarHeight(ele){
 				}
 			}
 
-			if(!table.isEmpty&&!table.isAjax){
+			if(!table.isEmpty&amp;&amp;!table.isAjax){
 				uneditableCellCalss=table.editableOptions.uneditableCellCalss;
 				if(uneditableCellCalss){
 					var cssSelector= "table>tbody>tr>td:not([data-editable='true'])";
@@ -9332,7 +9360,7 @@ function getScrollBarHeight(ele){
 					options = optionsStr;
 				}else{
 					var optionFunc=eval(optionsStr);
-					if(optionFunc&&typeof(optionFunc)=="function"){
+					if(optionFunc&amp;&amp;typeof(optionFunc)=="function"){
 						options=optionFunc(table);
 					}else{
 						LayerMsgBox.alert("表格data-editable-option设置异常，值应为一个function",2);
@@ -9351,7 +9379,7 @@ function getScrollBarHeight(ele){
 				var submitStr=table.data("editable-submit");
 				if(submitStr){
 					var submitFunc=eval(submitStr);
-					if(submitFunc&&typeof(submitFunc)=="function"){
+					if(submitFunc&amp;&amp;typeof(submitFunc)=="function"){
 						options.submit=submitFunc(table);
 					}else{
 						LayerMsgBox.alert("表格data-editable-submit设置异常，值应为一个function",2);
@@ -9363,7 +9391,7 @@ function getScrollBarHeight(ele){
 				var colsStr=table.data("editable-cols");
 				if(colsStr){
 					var colsFunc=eval(colsStr);
-					if(colsFunc&&typeof(colsFunc)=="function"){
+					if(colsFunc&amp;&amp;typeof(colsFunc)=="function"){
 						options.cols=colsFunc();
 					}else{
 						LayerMsgBox.alert("表格data-editable-cols，值应为一个function",2);
@@ -9385,7 +9413,7 @@ function getScrollBarHeight(ele){
 				options.cols=this.initTableEditableOptionCols(table);
 			}
 			if(!options.cols){LayerMsgBox.alert("表格data-editable-option中未设置cols",2);return false;}
-			if(!options.trigger||(options.trigger!="click"&&options.trigger!="dblclick")){
+			if(!options.trigger||(options.trigger!="click"&amp;&amp;options.trigger!="dblclick")){
 				options.trigger="dblclick";
 			}
 
@@ -9431,7 +9459,7 @@ function getScrollBarHeight(ele){
 					options = optionsStr;
 				}else{
 					var optionFunc=eval(optionsStr);
-					if(optionFunc&&typeof(optionFunc)=="function"){
+					if(optionFunc&amp;&amp;typeof(optionFunc)=="function"){
 						options=optionFunc(table);
 					}else{
 						LayerMsgBox.alert("表格data-editable-option设置异常，值应为一个function",2);
@@ -9450,7 +9478,7 @@ function getScrollBarHeight(ele){
 				var submitStr=table.data("editable-submit");
 				if(submitStr){
 					var submitFunc=eval(submitStr);
-					if(submitFunc&&typeof(submitFunc)=="function"){
+					if(submitFunc&amp;&amp;typeof(submitFunc)=="function"){
 						options.submit=submitFunc(table);
 					}else{
 						LayerMsgBox.alert("表格data-editable-submit设置异常，值应为一个function",2);
@@ -9462,7 +9490,7 @@ function getScrollBarHeight(ele){
 				var colsStr=table.data("editable-cols");
 				if(colsStr){
 					var colsFunc=eval(colsStr);
-					if(colsFunc&&typeof(colsFunc)=="function"){
+					if(colsFunc&amp;&amp;typeof(colsFunc)=="function"){
 						options.cols=colsFunc();
 					}else{
 						LayerMsgBox.alert("表格data-editable-cols，值应为一个function",2);
@@ -9484,7 +9512,7 @@ function getScrollBarHeight(ele){
 				options.cols=this.initTableEditableOptionCols(table);
 			}
 			if(!options.cols){LayerMsgBox.alert("表格data-editable-option中未设置cols",2);return false;}
-			if(!options.trigger||(options.trigger!="click"&&options.trigger!="dblclick")){
+			if(!options.trigger||(options.trigger!="click"&amp;&amp;options.trigger!="dblclick")){
 				options.trigger="dblclick";
 			}
 
@@ -9503,7 +9531,7 @@ function getScrollBarHeight(ele){
 				if(typeof(optcolConfig.editable)=="undefined"){
 					optcolConfig.editable=isOk(optcolConfig.type);
 				}
-				if(!hasautocomplete&&optcolConfig.type=="autocomplete"){
+				if(!hasautocomplete&amp;&amp;optcolConfig.type=="autocomplete"){
 					hasautocomplete=true;
 				}
 			}
@@ -9526,7 +9554,7 @@ function getScrollBarHeight(ele){
 //						jboltTableSaveFormToTableCurrentActiveTr(table.extraColumnForm);
 //					});
 				/*table.extraColumnForm.on("keydown",function(e){
-						if(e.ctrlKey&&e.altKey){
+						if(e.ctrlKey&amp;&amp;e.altKey){
 							if(e.which==13){
 								e.preventDefault();
 								e.stopPropagation();
@@ -9575,18 +9603,18 @@ function getScrollBarHeight(ele){
 				//双击未编辑的表格事件
 				var targetName=e.target.tagName;
 				//input和select组件 直接返回不执行
-				if((targetName =="INPUT" && e.target.type!="checkbox" && e.target.type!="radio") || targetName=="SELECT" || (targetName=="IMG"&& e.target.hasAttribute("data-switchbtn"))){return;}
+				if((targetName =="INPUT" &amp;&amp; e.target.type!="checkbox" &amp;&amp; e.target.type!="radio") || targetName=="SELECT" || (targetName=="IMG"&amp;&amp; e.target.hasAttribute("data-switchbtn"))){return;}
 				//处理editing的td恢复原状
 				var result=that.processEditingTds(table);
 				if(!result){
 					return;
 				}
-				if(table.willCopy && trigger=="click"){
+				if(table.willCopy &amp;&amp; trigger=="click"){
 					return;
 				}
 				currentTd=$(this);
 				currentTr=currentTd.parent();
-				if((rowClickActive||rowClickHandler)&&!currentTr.hasClass("active")){
+				if((rowClickActive||rowClickHandler)&amp;&amp;!currentTr.hasClass("active")){
 					currentTr.trigger("click");
 				}
 				var hasEditableAttr=currentTd[0].hasAttribute("data-editable");
@@ -9613,7 +9641,7 @@ function getScrollBarHeight(ele){
 					return;
 				}
 				if(!colConfig.editable){
-					if(!hasEditableAttr||(hasEditableAttr&&tdSelfEditable!=null&&tdSelfEditable==false)){
+					if(!hasEditableAttr||(hasEditableAttr&amp;&amp;tdSelfEditable!=null&amp;&amp;tdSelfEditable==false)){
 						e.preventDefault();
 						e.stopPropagation();
 						return;
@@ -9637,7 +9665,7 @@ function getScrollBarHeight(ele){
 				colConfig.jbe_col_key=colConfig.submitAttr;
 				orignText=currentTd.data("origin-text");
 				var originTextType=typeof(orignText);
-				if(originTextType=="undefined"&&!orignText&&!currentTd[0].hasAttribute("data-origin-text")){
+				if(originTextType=="undefined"&amp;&amp;!orignText&amp;&amp;!currentTd[0].hasAttribute("data-origin-text")){
 					currentTd.attr("data-origin-text",currentTd[0].innerText).data("origin-text",currentTd[0].innerText);
 				}
 				//处理点击的td转editor
@@ -9686,7 +9714,7 @@ function getScrollBarHeight(ele){
 
 		},
 		processColConfigInitByType:function(colConfig){
-			if(typeof(colConfig.range)=="boolean" && colConfig.range){
+			if(typeof(colConfig.range)=="boolean" &amp;&amp; colConfig.range){
 				colConfig.range = "~";
 			}
 			switch (colConfig.type) {
@@ -9855,16 +9883,16 @@ function getScrollBarHeight(ele){
 					if(colConfig.dialog){
 						colConfig.jbe_link_ele_id=colConfig.jbe_jbi_hiddenId;
 					}
-					if(colConfig.tdValue&&colConfig.url&&colConfig.loadType=="jstree"){
+					if(colConfig.tdValue&amp;&amp;colConfig.url&amp;&amp;colConfig.loadType=="jstree"){
 						var newUrl=colConfig.url;
 						var lastChar=newUrl.charAt(newUrl.length-1);
 						if(newUrl.indexOf("?")!=-1){
-							if(lastChar==='?'||lastChar==='&'){//问号结尾的URL
+							if(lastChar==='?'||lastChar==='&amp;'){//问号结尾的URL
 								newUrl=newUrl+"selectId="+colConfig.tdValue;
 							}else if(lastChar==='/'){//有问号 但是/结尾的URL
-								newUrl=newUrl.substring(0,newUrl.length-1)+"&selectId="+colConfig.tdValue;
+								newUrl=newUrl.substring(0,newUrl.length-1)+"&amp;selectId="+colConfig.tdValue;
 							}else{
-								newUrl=newUrl+"&selectId="+colConfig.tdValue;
+								newUrl=newUrl+"&amp;selectId="+colConfig.tdValue;
 							}
 						}else if(newUrl.indexOf("-")!=-1){
 							if(lastChar==='-'){
@@ -9940,7 +9968,7 @@ function getScrollBarHeight(ele){
 				}
 			});
 			jboltBody.on("keydown",function(e){
-				if(e.ctrlKey&&e.altKey&&e.which==13){
+				if(e.ctrlKey&amp;&amp;e.altKey&amp;&amp;e.which==13){
 					//如果按键是ctrl+alert+回车键 执行跳转当前选中
 					var td=table.tbody.focusTd;
 					if(isOk(td)){
@@ -9953,7 +9981,7 @@ function getScrollBarHeight(ele){
 					}
 				}
 				//如果不按alt键 一般是tab键 回车键 上下左右方向键和ctrl+回车键
-				if(table.isEditableLock&&!e.altKey){
+				if(table.isEditableLock&amp;&amp;!e.altKey){
 					var ele=$(e.target);
 					var tagName=e.target.tagName;
 					if(e.which==37){
@@ -10193,12 +10221,12 @@ function getScrollBarHeight(ele){
 						}
 
 					}
-				}else if(e.ctrlKey&&e.shiftKey&e.which==13){
+				}else if(e.ctrlKey&amp;&amp;e.shiftKey&amp;e.which==13){
 					table.isEditableLock=false;
 					that.clearTdFocus(table);
 				}else{
 					//按下alt
-					if(!e.ctrlKey&&!e.shiftKey&&e.altKey&&e.which==13){
+					if(!e.ctrlKey&amp;&amp;!e.shiftKey&amp;&amp;e.altKey&amp;&amp;e.which==13){
 						table.isEditableLock=true;
 						that.processEditingTds(table);
 						if(table.isEditableLock){
@@ -10283,11 +10311,11 @@ function getScrollBarHeight(ele){
 				nextIndex=-1;
 				incolIndexArr=false;
 				//td.needCreateNextTr=false;
-				for(var i=0;i<size;i++){
+				for(var i=0;i&lt;size;i++){
 					if(table.tabEventSortColIndexs[i]==currentTdIndex){
 						incolIndexArr=true;
 						//如果不是一行最后一个可编辑 就找本行下一个
-						if(i<size-1){
+						if(i&lt;size-1){
 							nextIndex=table.tabEventSortColIndexs[i+1];
 							next=tr.find("td[data-col-index='"+nextIndex+"']");
 						}else if(i==size-1){
@@ -10351,8 +10379,8 @@ function getScrollBarHeight(ele){
 					}else{
 						var nextSortColIndex=-1;
 						var findSuccess=false;
-						for(nextIndex=currentTdIndex;nextIndex<=trLastTdColIndex;nextIndex++){
-							for(var i=0;i<size;i++){
+						for(nextIndex=currentTdIndex;nextIndex&lt;=trLastTdColIndex;nextIndex++){
+							for(var i=0;i&lt;size;i++){
 								if(table.tabEventSortColIndexs[i]==nextIndex){
 									nextSortColIndex=i;
 									findSuccess=true;
@@ -10462,7 +10490,7 @@ function getScrollBarHeight(ele){
 			}
 			var that=this;
 			var orignText=editingTd.data("origin-text");
-			if(typeof(orignText)=='undefined'&&!orignText&&!editingTd[0].hasAttribute("data-origin-text")){
+			if(typeof(orignText)=='undefined'&amp;&amp;!orignText&amp;&amp;!editingTd[0].hasAttribute("data-origin-text")){
 				orignText=!result;
 				editingTd.attr("data-origin-text",orignText).data("origin-text",orignText);
 			}
@@ -10519,7 +10547,7 @@ function getScrollBarHeight(ele){
 			this.checkAndProcessOneColumnUpdate(table,editingTd);
 
 
-			if(colConfig&&(colConfig.type=="checkbox"||colConfig.type=="switchbtn")&&typeof(colConfig.handler)=="function"){
+			if(colConfig&amp;&amp;(colConfig.type=="checkbox"||colConfig.type=="switchbtn")&amp;&amp;typeof(colConfig.handler)=="function"){
 				var jsonData=table.tableListDatas[editingTd.closest("tr").data("index")];
 				this.processColConfigChangeColumns(table,editingTd,jsonData);
 				colConfig.handler(table,editingTd,jsonData,btn,result);
@@ -10555,7 +10583,7 @@ function getScrollBarHeight(ele){
 				return;
 			}
 			var colConfig=table.editableOptions.cols[column];
-			if(colConfig&&isOk(colConfig.triggerSummaryColumns)){
+			if(colConfig&amp;&amp;isOk(colConfig.triggerSummaryColumns)){
 				var tr=editingTd.parent();
 				this.processTriggerOtherColumnSummary2(table,tr,column,colConfig.triggerSummaryColumns);
 			}
@@ -10619,7 +10647,7 @@ function getScrollBarHeight(ele){
 
 			if(!options){LayerMsgBox.alert("可编辑表格setEditableOptions设置异常",2);return false;}
 			if(!options.cols){LayerMsgBox.alert("可编辑表格中未设置cols",2);return false;}
-			if(!options.trigger||(options.trigger!="click"&&options.trigger!="dblclick")){
+			if(!options.trigger||(options.trigger!="click"&amp;&amp;options.trigger!="dblclick")){
 				options.trigger="dblclick";
 			}
 
@@ -10690,7 +10718,7 @@ function getScrollBarHeight(ele){
 					if(originWidth == "auto"){
 						table.table_box.find("table").data("width","auto").attr("data-width","auto").data("origin-width",originWidth).attr("data-origin-width",originWidth);
 					}else if(originWidth == "fill"){
-						if(showSize < allSize){
+						if(showSize &lt; allSize){
 							table.table_box.find("table").data("width","auto").attr("data-width","auto").data("origin-width",originWidth).attr("data-origin-width",originWidth);
 						}else{
 							table.table_box.find("table").data("width","fill").attr("data-width","fill").data("origin-width",originWidth).attr("data-origin-width",originWidth);
@@ -10702,7 +10730,7 @@ function getScrollBarHeight(ele){
 					if(originWidth == "auto") {
 						table.table_box.find("table").data("width", "auto").attr("data-width", "auto").data("origin-width", "auto").attr("data-origin-width", originWidth);
 					}else if(originWidth == "fill"){
-						if(showSize < allSize){
+						if(showSize &lt; allSize){
 							table.table_box.find("table").data("width","auto").attr("data-width","auto").data("origin-width",originWidth).attr("data-origin-width",originWidth);
 						}else{
 							table.table_box.find("table").data("width","fill").attr("data-width","fill").data("origin-width",originWidth).attr("data-origin-width",originWidth);
@@ -10770,7 +10798,7 @@ function getScrollBarHeight(ele){
 			if(!formId){
 				formId="jb_form_"+randomId();
 				table.data("conditions-form",formId).attr("data-conditions-form",formId);
-				form=$("<form class='form-inline d-none' id='"+formId+"' method='post'  data-pjaxsubmit></form>");
+				form=$("&lt;form class='form-inline d-none' id='"+formId+"' method='post'  data-pjaxsubmit>&lt;/form>");
 				jboltBody.append(form);
 			}
 			if(!isOk(form)){
@@ -10784,10 +10812,10 @@ function getScrollBarHeight(ele){
 						pbox=table.closest(".jbolt_tabcontent");
 					}else{
 						pbox=$(mainPjaxContainer);
-						var inDialog=!(pbox&&pbox.length==1);
+						var inDialog=!(pbox&amp;&amp;pbox.length==1);
 						if(inDialog){
 							pbox=$("body .jbolt_page");
-							var notNormalPage=!(pbox&&pbox.length==1);
+							var notNormalPage=!(pbox&amp;&amp;pbox.length==1);
 							if(notNormalPage){
 								pbox=jboltBody;
 							}
@@ -10813,15 +10841,15 @@ function getScrollBarHeight(ele){
 					}
 
 					var pageSize=pages.find("#pageSize").val();
-					form.append('<input type="hidden" name="page" value="'+pageNumber+'"/>');
-					form.append('<input type="hidden" name="pageSize" value="'+pageSize+'"/>');
+					form.append('&lt;input type="hidden" name="page" value="'+pageNumber+'"/>');
+					form.append('&lt;input type="hidden" name="pageSize" value="'+pageSize+'"/>');
 				}
 
 				var sortColumn=table.data("sort-column");
 				var sortType=table.data("sort-type");
-				if(sortColumn&&sortType){
-					form.append('<input type="hidden" name="sortColumn" value="'+sortColumn+'"/>');
-					form.append('<input type="hidden" name="sortType" value="'+sortType+'"/>');
+				if(sortColumn&amp;&amp;sortType){
+					form.append('&lt;input type="hidden" name="sortColumn" value="'+sortColumn+'"/>');
+					form.append('&lt;input type="hidden" name="sortType" value="'+sortType+'"/>');
 				}
 				form.submit();
 			}
@@ -10875,11 +10903,11 @@ function getScrollBarHeight(ele){
 				var jboltTable=this.jboltTable("inst");
 				var totalpage = jboltTable.data("totalpage")||1;
 				var pageNumber = jboltTable.data("pagenumber")||1;
-				if(!toFirstPageIfLast && pageNumber>=totalpage){
+				if(!toFirstPageIfLast &amp;&amp; pageNumber>=totalpage){
 					LayerMsgBox.alert("当前已经是最后一页",2);
 					return;
 				}
-				if(toFirstPageIfLast && pageNumber>=totalpage){
+				if(toFirstPageIfLast &amp;&amp; pageNumber>=totalpage){
 					pageNumber = 1;
 				}else{
 					pageNumber = pageNumber+1;
@@ -10895,11 +10923,11 @@ function getScrollBarHeight(ele){
 			}else{
 				var totalpage = table.data("totalpage")||1;
 				var pageNumber = table.data("pagenumber")||1;
-				if(!toFirstPageIfLast && pageNumber>=totalpage){
+				if(!toFirstPageIfLast &amp;&amp; pageNumber>=totalpage){
 					LayerMsgBox.alert("当前已经是最后一页",2);
 					return;
 				}
-				if(toFirstPageIfLast && pageNumber>=totalpage){
+				if(toFirstPageIfLast &amp;&amp; pageNumber>=totalpage){
 					pageNumber = 1;
 				}else{
 					pageNumber = pageNumber+1;
@@ -10919,11 +10947,11 @@ function getScrollBarHeight(ele){
 				var jboltTable=this.jboltTable("inst");
 				var totalpage = jboltTable.data("totalpage")||1;
 				var pageNumber = jboltTable.data("pagenumber")||1;
-				if(!toLastPageIfFirst && pageNumber==1){
+				if(!toLastPageIfFirst &amp;&amp; pageNumber==1){
 					LayerMsgBox.alert("当前已经是第一页",2);
 					return;
 				}
-				if(toLastPageIfFirst && pageNumber==1&&totalpage>1){
+				if(toLastPageIfFirst &amp;&amp; pageNumber==1&amp;&amp;totalpage>1){
 					pageNumber = totalpage;
 				}else{
 					pageNumber = pageNumber-1;
@@ -10938,11 +10966,11 @@ function getScrollBarHeight(ele){
 			}else{
 				var totalpage = table.data("totalpage")||1;
 				var pageNumber = table.data("pagenumber")||1;
-				if(!toLastPageIfFirst && pageNumber==1){
+				if(!toLastPageIfFirst &amp;&amp; pageNumber==1){
 					LayerMsgBox.alert("当前已经是第一页",2);
 					return;
 				}
-				if(toLastPageIfFirst && pageNumber==1&&totalpage>1){
+				if(toLastPageIfFirst &amp;&amp; pageNumber==1&amp;&amp;totalpage>1){
 					pageNumber = totalpage;
 				}else{
 					pageNumber = pageNumber-1;
@@ -10991,7 +11019,7 @@ function getScrollBarHeight(ele){
 					table.beforeAjaxHandler(table);
 				}else{
 					var tableBeforeAjaxExeFunc = eval(table.beforeAjaxHandler);
-					if(tableBeforeAjaxExeFunc && typeof(tableBeforeAjaxExeFunc)=="function"){
+					if(tableBeforeAjaxExeFunc &amp;&amp; typeof(tableBeforeAjaxExeFunc)=="function"){
 						tableBeforeAjaxExeFunc(table);
 					}
 				}
@@ -11033,7 +11061,7 @@ function getScrollBarHeight(ele){
 			}
 			var oldPageSize = Math.abs(parseInt(jbolt_table_pages.find("#pageSize").val()));
 			var pageSize=oldPageSize;
-			if(table.readByJsonConditions && table.jsonConditions){
+			if(table.readByJsonConditions &amp;&amp; table.jsonConditions){
 				pageSize = table.jsonConditions.pageSize;
 				if(pageSize){
 					delete table.jsonConditions["pageSize"];
@@ -11064,13 +11092,13 @@ function getScrollBarHeight(ele){
 				table.scrollToTop=false;
 				table.table_body.sortRankAfter=false;
 				if(table.table_body.scroll_left||table.table_body.scroll_top){
-//						  if(oldPageNumber&&oldPageNumber==pageNumber){
+//						  if(oldPageNumber&amp;&amp;oldPageNumber==pageNumber){
 //							  table.table_body.needKeepScrollLeft=true;
 //						  }
 					if(table.table_body.scroll_left){
 						table.table_body.needKeepScrollLeft=true;
 					}
-					if(table.table_body.scroll_top&&oldPageNumber&&oldPageNumber==pageNumber&&!table.scrollToTop){
+					if(table.table_body.scroll_top&amp;&amp;oldPageNumber&amp;&amp;oldPageNumber==pageNumber&amp;&amp;!table.scrollToTop){
 						table.table_body.needKeepScrollTop=true;
 					}
 					if(sortColumn){
@@ -11094,7 +11122,7 @@ function getScrollBarHeight(ele){
 						callback(table);
 					}else if(typeof(callback)=="string"){
 						var execall_handler=eval(callback);
-						if(execall_handler&&typeof(execall_handler)=="function"){
+						if(execall_handler&amp;&amp;typeof(execall_handler)=="function"){
 							execall_handler(table);
 						}
 					}
@@ -11147,7 +11175,7 @@ function getScrollBarHeight(ele){
 				jbolt_table_pages=addJboltPageBox(table);
 			}
 			var pager=jbolt_table_pages.find("#"+pageId);
-			jbolt_table_pages.find("#gonu").val(pageInfo.pageNumber).attr("max",pageInfo.totalPage).data("rule","pint;<="+pageInfo.totalPage).data("tips","请输入正整数 并且小于等于"+pageInfo.totalPage);
+			jbolt_table_pages.find("#gonu").val(pageInfo.pageNumber).attr("max",pageInfo.totalPage).data("rule","pint;&lt;="+pageInfo.totalPage).data("tips","请输入正整数 并且小于等于"+pageInfo.totalPage);
 			jbolt_table_pages.find("#totalPage").text(pageInfo.totalPage);
 			jbolt_table_pages.find("#totalRow").text(pageInfo.totalRow);
 			jbolt_table_pages.find("#pageSize").val(pageInfo.pageSize);
@@ -11214,14 +11242,14 @@ function getScrollBarHeight(ele){
 				var size=datas.length;
 				var insertEmptyData,data,tempData,col;
 				var columns = Object.keys(insertDefaultValues);
-				for(var i=0;i<size;i++){
+				for(var i=0;i&lt;size;i++){
 					insertEmptyData={};
 					data = datas[i];
 					tempData = Object.assign(insertEmptyData,deepClone(insertDefaultValues),data);
 					newDatas.push(tempData);
 					for(var j in columns){
 						col = columns[j];
-						if(tempData[col]===insertDefaultValues[col] && tempData[col]!==data[col]){
+						if(tempData[col]===insertDefaultValues[col] &amp;&amp; tempData[col]!==data[col]){
 							if(table.changeTrs.indexOf(i)==-1){
 								table.changeTrs.push(i);
 							}
@@ -11250,7 +11278,7 @@ function getScrollBarHeight(ele){
 				return;
 			}
 			var exeHandler = eval(ajaxDataHandler);
-			if(exeHandler&&typeof(exeHandler)=="function"){
+			if(exeHandler&amp;&amp;typeof(exeHandler)=="function"){
 				exeHandler(table,table.tableListDatas);
 			}
 		},
@@ -11269,7 +11297,7 @@ function getScrollBarHeight(ele){
 			if(data){
 				var appendHtml="";
 				//如果带着extraData 说明不是标准的list或者page对象
-				if(data.tableData&&data.extraData){
+				if(data.tableData&amp;&amp;data.extraData){
 					var datas=data.tableData;
 					var extraData=data.extraData;
 					//如果直接传数据数据 就直接渲染
@@ -11278,7 +11306,7 @@ function getScrollBarHeight(ele){
 						this.processTableListBeforeRender(table);
 						appendHtml = juicer(tplContent,{datas:table.tableListDatas,formData:formData,extraData:extraData})
 						//appendEle.append();
-					}else if(datas.pageSize&&datas.totalRow){
+					}else if(datas.pageSize&amp;&amp;datas.totalRow){
 						table.tableListDatas=this.processInsertDefaultColumnValues(table,datas.list);
 						this.processTableListBeforeRender(table);
 						//说明是分页数据
@@ -11292,7 +11320,7 @@ function getScrollBarHeight(ele){
 						this.processTableListBeforeRender(table);
 						appendHtml = juicer(tplContent,{datas:table.tableListDatas,formData:formData});
 						//appendEle.append();
-					}else if(data.pageSize&&data.totalRow){
+					}else if(data.pageSize&amp;&amp;data.totalRow){
 						table.tableListDatas=this.processInsertDefaultColumnValues(table,data.list);
 						this.processTableListBeforeRender(table);
 						//说明是分页数据
@@ -11303,7 +11331,7 @@ function getScrollBarHeight(ele){
 				if(appendHtml){
 					//如果是树表
 					if(table.isTreeTable){
-						var appendHtmlObj = $("<tbody>"+appendHtml+"</tbody>");
+						var appendHtmlObj = $("&lt;tbody>"+appendHtml+"&lt;/tbody>");
 						var trs = appendHtmlObj.find("tr");
 						var len=trs.length;
 						if(len>100){
@@ -11312,9 +11340,9 @@ function getScrollBarHeight(ele){
 							var trsSelector="";
 							if(typeof(tableOpt) == "number"){
 								if(tableOpt>1){
-									for(var i=1;i<=tableOpt;i++){
+									for(var i=1;i&lt;=tableOpt;i++){
 										trsSelector+="tr[data-level='"+i+"']";
-										if(i<tableOpt){
+										if(i&lt;tableOpt){
 											trsSelector += ",";
 										}
 									}
@@ -11329,9 +11357,9 @@ function getScrollBarHeight(ele){
 
 							}else if(tableOpt.indexOf("all")!=-1){
 								var newtableOpt=2;
-								for(var i=1;i<=newtableOpt;i++){
+								for(var i=1;i&lt;=newtableOpt;i++){
 									trsSelector+="tr[data-level='"+i+"']";
-									if(i<newtableOpt){
+									if(i&lt;newtableOpt){
 										trsSelector += ",";
 									}
 								}
@@ -11355,7 +11383,7 @@ function getScrollBarHeight(ele){
 			}
 			this.processEmptyTableBody(table);
 			var that=this;
-			if(!table.isEmpty && table.editable && isOk(table.changeTrs)){
+			if(!table.isEmpty &amp;&amp; table.editable &amp;&amp; isOk(table.changeTrs)){
 				setTimeout(function(){
 					var tr;
 					var columns1=Object.keys(table.columnIndexMap);
@@ -11400,7 +11428,7 @@ function getScrollBarHeight(ele){
 		},
 		removeInsertDataId:function(table,datas){
 			var primaryKey = "id";
-			if(table.editableOptions.cols.id && table.editableOptions.cols.id.submitAttr){
+			if(table.editableOptions.cols.id &amp;&amp; table.editableOptions.cols.id.submitAttr){
 				primaryKey = table.editableOptions.cols.id.submitAttr;
 			}
 			if(datas){
@@ -11408,7 +11436,7 @@ function getScrollBarHeight(ele){
 					var tmpData;
 					for(var i in datas){
 						tmpData = datas[i];
-						if(tmpData&&tmpData[primaryKey]){
+						if(tmpData&amp;&amp;tmpData[primaryKey]){
 							delete tmpData[primaryKey];
 						}
 					}
@@ -11435,7 +11463,7 @@ function getScrollBarHeight(ele){
 			var tplContent = table.rowtplContent;
 			var html;
 			if(isArray(data)){
-				if(table.editable && table.editableOptions && table.editableOptions.beforeInsertRowHandler){
+				if(table.editable &amp;&amp; table.editableOptions &amp;&amp; table.editableOptions.beforeInsertRowHandler){
 					table.editableOptions.beforeInsertRowHandler(table,tr,insertToBefore,data);
 				}
 				if(!keepId){
@@ -11443,10 +11471,10 @@ function getScrollBarHeight(ele){
 				}
 				html=juicer(tplContent,{datas:data,formData:table.formData});
 			}else{
-				if(data.tableData&&data.extraData){
+				if(data.tableData&amp;&amp;data.extraData){
 					var datas=data.tableData;
 					var extraData=data.extraData;
-					if(table.editable && table.editableOptions && table.editableOptions.beforeInsertRowHandler){
+					if(table.editable &amp;&amp; table.editableOptions &amp;&amp; table.editableOptions.beforeInsertRowHandler){
 						table.editableOptions.beforeInsertRowHandler(table,tr,insertToBefore,datas,extraData);
 					}
 					//如果直接传数据数据 就直接渲染
@@ -11459,7 +11487,7 @@ function getScrollBarHeight(ele){
 						html=juicer(tplContent,{datas:[datas],formData:table.formData,extraData:extraData});
 					}
 				}else{
-					if(table.editable && table.editableOptions && table.editableOptions.beforeInsertRowHandler){
+					if(table.editable &amp;&amp; table.editableOptions &amp;&amp; table.editableOptions.beforeInsertRowHandler){
 						table.editableOptions.beforeInsertRowHandler(table,tr,insertToBefore,data);
 					}
 					if(!keepId){
@@ -11478,7 +11506,7 @@ function getScrollBarHeight(ele){
 				}
 				//处理Tbody添加列操作 比如在第一列添加checkbox等
 				var columnPrepend=table.data("column-prepend");
-				if(columnPrepend&&table.prependColumnType){
+				if(columnPrepend&amp;&amp;table.prependColumnType){
 					var td=newTr.find("td:nth-child("+(table.prependColumnIndex+1)+")");
 					if(isOk(td)){
 						td.before(this.getColumnPrependElement(table.prependColumnType,"td"));
@@ -11522,7 +11550,7 @@ function getScrollBarHeight(ele){
 			//重新排序号
 			var colIndex=-1;
 			//如果设置了indexColumn就在设置列里找
-			if(table.editable && table.editableOptions.indexColumn){
+			if(table.editable &amp;&amp; table.editableOptions.indexColumn){
 				colIndex=table.editableOptions.indexColumn-1;
 			}else{
 				//如果没设置indexColumn 就去thead里找data-column='index'的列
@@ -11532,7 +11560,7 @@ function getScrollBarHeight(ele){
 				}
 			}
 
-			if(colIndex<0){return false;}
+			if(colIndex&lt;0){return false;}
 			var tds=table.table_box.find("table.jbolt_main_table>tbody>tr>td[data-col-index='"+colIndex+"']");
 			if(!isOk(tds)){return false;}
 			var tempTd,temIndexSpan;
@@ -11568,7 +11596,7 @@ function getScrollBarHeight(ele){
 				empKey=keys[i];
 				colConfig=cols[empKey];
 				colIndex=-1;
-				if(colConfig&&colConfig.editable){
+				if(colConfig&amp;&amp;colConfig.editable){
 					colIndex=table.columnIndexMap[empKey];
 					if(colIndex>=0){
 						//必填列就得上面列头加红星了
@@ -11697,7 +11725,7 @@ function getScrollBarHeight(ele){
 				//处理Tbody添加列操作 比如在第一列添加checkbox等
 				var columnPrepend=table.data("column-prepend");
 				var hasCheckedele=false;
-				if(columnPrepend&&table.prependColumnType){
+				if(columnPrepend&amp;&amp;table.prependColumnType){
 					var td=newTr.find("td:nth-child("+(table.prependColumnIndex+1)+")");
 					if(isOk(td)){
 						hasCheckedele=true;
@@ -11759,7 +11787,7 @@ function getScrollBarHeight(ele){
 			that.addRowDatas(table,data,formData);
 			//处理table tbody 列补充类型 额外添加的
 			that.processTableTbodyColumnPrepend(table);
-			if(data.tableData&&data.extraData&&data.tableData.pageSize){
+			if(data.tableData&amp;&amp;data.extraData&amp;&amp;data.tableData.pageSize){
 				//处理分页组件变化
 				var pageInfo={pageNumber:data.tableData.pageNumber,pageSize:data.tableData.pageSize,totalPage:data.tableData.totalPage,totalRow:data.tableData.totalRow,firstPage:data.tableData.firstPage,lastPage:data.tableData.lastPage};
 				that.initJboltTablePage(table,pageInfo);
@@ -11776,7 +11804,7 @@ function getScrollBarHeight(ele){
 		showLoading:function(table){
 			var loading=table.table_box.find(".jbolt_table_loading");
 			if(!isOk(loading)){
-				loading=$('<div class="jbolt_table_loading noselect"><span class="loading_msg"><i class="fa fa-spinner fa-pulse mr-2"></i>数据加载中...</span></div>');
+				loading=$('&lt;div class="jbolt_table_loading noselect">&lt;span class="loading_msg">&lt;i class="fa fa-spinner fa-pulse mr-2">&lt;/i>数据加载中...&lt;/span>&lt;/div>');
 				table.table_box.append(loading);
 			}
 			loading.show();
@@ -11791,7 +11819,7 @@ function getScrollBarHeight(ele){
 					th=$(this);
 					width=th.outerWidth();
 					/*dataW=th.data("min-width")||th.data("width");
-						if(width<dataW){
+						if(width&lt;dataW){
 							width=dataW;
 						}*/
 					th.data("old-width",width).attr("data-old-width",width);
@@ -11804,7 +11832,7 @@ function getScrollBarHeight(ele){
 			if(table.hasHeader){
 				table.fixed_header.table.css("margin-left",(0-leftScroll)+"px");
 			}
-			if(table.hasFooter&&table.tfootFixed){
+			if(table.hasFooter&amp;&amp;table.tfootFixed){
 				table.fixed_footer.table.css("margin-left",(0-leftScroll)+"px");
 			}
 			var topScroll=table.table_body.scrollTop();
@@ -11856,35 +11884,35 @@ function getScrollBarHeight(ele){
 				if(!pageNumber){
 					pageNumber=1;
 				}
-				if(table.readByJsonConditions&&table.jsonConditions){
+				if(table.readByJsonConditions&amp;&amp;table.jsonConditions){
 					table.jsonConditions.page=pageNumber;
 					table.jsonConditions.pageSize=pageSize;
 				}else{
 					if(url.indexOf("?")!=-1){
-						url=url+"&page="+pageNumber+"&pageSize="+pageSize;
+						url=url+"&amp;page="+pageNumber+"&amp;pageSize="+pageSize;
 					}else{
-						url=url+"?page="+pageNumber+"&pageSize="+pageSize;
+						url=url+"?page="+pageNumber+"&amp;pageSize="+pageSize;
 					}
 				}
 			}
 			//处理 sort 参数
 			var sortColumn=table.data("sort-column");
 			var sortType=table.data("sort-type");
-			if(sortColumn&&sortColumn){
-				if(table.readByJsonConditions&&table.jsonConditions){
+			if(sortColumn&amp;&amp;sortColumn){
+				if(table.readByJsonConditions&amp;&amp;table.jsonConditions){
 					table.jsonConditions.sortColumn=sortColumn;
 					table.jsonConditions.sortType=sortType;
 				}else{
 					if(url.indexOf("?")!=-1){
-						url=url+"&sortColumn="+sortColumn+"&sortType="+sortType;
+						url=url+"&amp;sortColumn="+sortColumn+"&amp;sortType="+sortType;
 					}else{
-						url=url+"?sortColumn="+sortColumn+"&sortType="+sortType;
+						url=url+"?sortColumn="+sortColumn+"&amp;sortType="+sortType;
 					}
 				}
 			}
 
 
-			if(table.readByJsonConditions&&table.jsonConditions){
+			if(table.readByJsonConditions&amp;&amp;table.jsonConditions){
 				var postData=table.jsonConditions.isMenuFilter?JSON.stringify(table.jsonConditions):table.jsonConditions;
 				Ajax.post(url,postData,function(res){
 					that.ajaxLoadDataWithoutFormCallback(table,res,callback);
@@ -11894,7 +11922,7 @@ function getScrollBarHeight(ele){
 			}else{
 				//执行ajax加载 要考虑绑定了查询条件的需要带着 用post
 				var conditionsForm=table.data("conditions-form");
-				if(conditionsForm!=undefined&&conditionsForm!=""&&conditionsForm!="undefined"){
+				if(conditionsForm!=undefined&amp;&amp;conditionsForm!=""&amp;&amp;conditionsForm!="undefined"){
 					var ajaxCallback=function(res){
 						//如果分页了 并且 要求是调用跳转到最后一页 并且TM最后一页满了之后 新增加新页面后totalPage变更了
 						//就要根据请求反馈信息拿到最后一页 重新调用一次查询最后一页
@@ -11952,22 +11980,22 @@ function getScrollBarHeight(ele){
 								value=tmpSelect.val();
 								dataSelect=tmpSelect.data("select");
 								//如果选中的值不是默认值
-								if(initFormData[dataName]!=dataSelect&&dataSelect!=value){
+								if(initFormData[dataName]!=dataSelect&amp;&amp;dataSelect!=value){
 									initFormData[dataName]=dataSelect;
 								}
 							});
 						}
 //						var formDataStr = Object.keys(initFormData).map(function (key) {
 //								var value=initFormData[key];
-//								if(value&&value!="undefined"){
+//								if(value&amp;&amp;value!="undefined"){
 //									value=encodeURIComponent(value);
 //								}else{
 //									value='';
 //								}
 //							return encodeURIComponent(key) + "=" + value;
-//							}).join("&");
+//							}).join("&amp;");
 //						if(url.indexOf("?")!=-1){
-//							url=url+"&"+formDataStr;
+//							url=url+"&amp;"+formDataStr;
 //						}else{
 //							url=url+"?"+formDataStr;
 //						}
@@ -12020,7 +12048,7 @@ function getScrollBarHeight(ele){
 				table.isEmpty = true;
 				//设置表格数据和分页数据
 				var formData = {};
-				if (table.readByJsonConditions && table.jsonConditions) {
+				if (table.readByJsonConditions &amp;&amp; table.jsonConditions) {
 					formData = table.jsonConditions;
 				}
 				that.setTableDataAfterAjax(table, res.data, formData);
@@ -12033,7 +12061,7 @@ function getScrollBarHeight(ele){
 				table.isEmpty=true;
 				//设置表格数据和分页数据
 				var formData = {};
-				if (table.readByJsonConditions && table.jsonConditions) {
+				if (table.readByJsonConditions &amp;&amp; table.jsonConditions) {
 					formData = table.jsonConditions;
 				}
 				that.setTableDataAfterAjax(table, res.data, formData);
@@ -12047,7 +12075,7 @@ function getScrollBarHeight(ele){
 		processEmptyTableBody:function(table){
 			var trs=table.tbody.find("tr");
 			if(!isOk(trs)){
-//					table.tbody.append('<tr><td colspan="100%" class="text-center"><div class="alert alert-warning d-inline-block px-5 py-1 my-2" style="font-size:16px;"><i class="fa fa-warning mr-1"></i>暂无数据</div></td></tr>');
+//					table.tbody.append('&lt;tr>&lt;td colspan="100%" class="text-center">&lt;div class="alert alert-warning d-inline-block px-5 py-1 my-2" style="font-size:16px;">&lt;i class="fa fa-warning mr-1">&lt;/i>暂无数据&lt;/div>&lt;/td>&lt;/tr>');
 				if(isOk(table.left_fixed)||isOk(table.right_fixed)){
 					table.table_box.find(".jbolt_table_fixed").hide();
 				}
@@ -12076,7 +12104,7 @@ function getScrollBarHeight(ele){
 		//初始化默认值
 		initTableDataSet:function(table){
 			var width=table.data("width");
-			if(!width||(typeof(width)=="string"&&width=="100%")){
+			if(!width||(typeof(width)=="string"&amp;&amp;width=="100%")){
 				width="fill";
 				table.data("width","fill").attr("data-width","fill");
 			}
@@ -12095,10 +12123,10 @@ function getScrollBarHeight(ele){
 						thWidth=parseInt(styleWidth);
 					}
 					th.data("width",thWidth).attr("data-width",thWidth);
-					if(thWidth=="auto"&&this.hasAttribute("data-col-index")&&!this.hasAttribute("data-min-width")){
+					if(thWidth=="auto"&amp;&amp;this.hasAttribute("data-col-index")&amp;&amp;!this.hasAttribute("data-min-width")){
 						th.data("min-width","100").attr("data-min-width","100");
 					}
-				}else if(typeof(thWidth)=="number"&&this.hasAttribute("data-col-index")){
+				}else if(typeof(thWidth)=="number"&amp;&amp;this.hasAttribute("data-col-index")){
 					if(hasAutoTh){
 						th.attr("data-nochange","true").data("nochange",true);
 					}
@@ -12121,11 +12149,11 @@ function getScrollBarHeight(ele){
 				if(wtype=="number"){
 					width=width+"px";
 					table.table_view.css("width",width);
-				}else if(wtype=="string"&&width=="auto"){
+				}else if(wtype=="string"&amp;&amp;width=="auto"){
 					table.table_view.css({"width":"100%","max-width":"100%"});
-				}else if(wtype=="string"&&width=="fill"){
+				}else if(wtype=="string"&amp;&amp;width=="fill"){
 					table.table_view.css({"width":"100%","max-width":"100%"});
-				}else if(wtype=="string"&&width.indexOf("%")!=-1&&width!="100%"){
+				}else if(wtype=="string"&amp;&amp;width.indexOf("%")!=-1&amp;&amp;width!="100%"){
 					table.table_view.css({"width":width,"max-width":width});
 				}else{
 					table.table_view.css({"width":width,"max-width":width});
@@ -12171,21 +12199,21 @@ function getScrollBarHeight(ele){
 				height=table.data("height");
 			maxheight=table.data("max-height")
 			leftrightbox_height=0;
-			if(!height&&maxheight){
+			if(!height&amp;&amp;maxheight){
 				height=maxheight;
 			}
 			if(height){
 				var htype=typeof(height);
-				if(htype=="string"&&(height=="100%"||height=="fill")){
+				if(htype=="string"&amp;&amp;(height=="100%"||height=="fill")){
 					var fillHeight=that.getFillHeight(table);
 					if(!maxheight){
 						table.table_body.css("height",fillHeight+"px");
 					}
 					table.table_body.css("max-height",fillHeight+"px");
 					leftrightbox_height=fillHeight;
-				}else if(htype=="string"&&height=="fill_box"){
+				}else if(htype=="string"&amp;&amp;height=="fill_box"){
 					leftrightbox_height=that.processTableFillBox(table);
-				}else if(htype=="string"&&height.indexOf("%")!=-1){
+				}else if(htype=="string"&amp;&amp;height.indexOf("%")!=-1){
 					var fillHeight=that.getFillHeight(table);
 					var numberHeightPre=Number(height.replace("%",""))/100;
 					var tableHeight=parseInt(fillHeight*numberHeightPre);
@@ -12195,7 +12223,7 @@ function getScrollBarHeight(ele){
 					table.table_body.css("max-height",tableHeight+"px");
 					leftrightbox_height=tableHeight;
 				}else{
-					if(!(typeof(height)=="string" && height== 'auto')){
+					if(!(typeof(height)=="string" &amp;&amp; height== 'auto')){
 						var thead=table.find("thead"),
 							thh=thead.outerHeight();
 						height=height-thh-4;
@@ -12215,7 +12243,7 @@ function getScrollBarHeight(ele){
 					if(table.hasHeader){
 						leftrightbox_height=leftrightbox_height+(table.thead.outerHeight()||0);
 					}
-					if(table.hasFooter&&table.tfootFixed){
+					if(table.hasFooter&amp;&amp;table.tfootFixed){
 						leftrightbox_height=leftrightbox_height+(table.tfoot.outerHeight()||0);
 					}
 					leftrightbox_height=leftrightbox_height+1;
@@ -12338,7 +12366,7 @@ function getScrollBarHeight(ele){
 			var page_box=table.table_box.find(".jbolt_table_pages");
 			if(isOk(page_box)){
 				var pagerHeight=Math.ceil(page_box.outerHeight(true));
-				if(pagerHeight<44){
+				if(pagerHeight&lt;44){
 					pagerHeight=44;
 				}
 				height=height-pagerHeight-2;
@@ -12349,11 +12377,11 @@ function getScrollBarHeight(ele){
 				var toolbarHeight=Math.ceil(table.toolbar.outerHeight());
 				height=height-toolbarHeight;
 			}
-			if(isOk(table.headbox) && table.headbox.is(":visible")){
+			if(isOk(table.headbox) &amp;&amp; table.headbox.is(":visible")){
 				var tableHeadboxHeight=Math.ceil(table.headbox.outerHeight());
 				height=height-tableHeadboxHeight;
 			}
-			if(isOk(table.footbox) && table.footbox.is(":visible")){
+			if(isOk(table.footbox) &amp;&amp; table.footbox.is(":visible")){
 				var tableFootboxHeight=Math.ceil(table.footbox.outerHeight());
 				height=height-tableFootboxHeight;
 			}
@@ -12367,7 +12395,7 @@ function getScrollBarHeight(ele){
 			if(table.hasHeader){
 				height=height-table.thead.outerHeight();
 			}
-			if(table.hasFooter&&table.tfootFixed&&isOk(table.tfoot)){
+			if(table.hasFooter&amp;&amp;table.tfootFixed&amp;&amp;isOk(table.tfoot)){
 				height=height-table.tfoot.outerHeight();
 			}
 			if(isFillBox){
@@ -12477,7 +12505,7 @@ function getScrollBarHeight(ele){
 				if(table.hasHeader){
 					table.fixed_header.table.css("margin-left",(0-leftScroll)+"px");
 				}
-				if(table.hasFooter&&table.tfootFixed){
+				if(table.hasFooter&amp;&amp;table.tfootFixed){
 					table.fixed_footer.table.css("margin-left",(0-leftScroll)+"px");
 				}
 				var topScroll=table.table_body.scrollTop();
@@ -12588,7 +12616,7 @@ function getScrollBarHeight(ele){
 				copyAllDatas.push(copyTrDatas.join("\t"));
 			});
 			var dataStr = copyAllDatas.join("\r\n");
-			var textareaHtml = "<textarea id='jbolt_copy_temp_textarea'>"+dataStr+"</textarea>";
+			var textareaHtml = "&lt;textarea id='jbolt_copy_temp_textarea'>"+dataStr+"&lt;/textarea>";
 			jboltBody.prepend(textareaHtml);
 			var textarea = jboltBody.find("#jbolt_copy_temp_textarea");
 			textarea.select();
@@ -12600,12 +12628,12 @@ function getScrollBarHeight(ele){
 		createTableCopyDataOptBox:function(table){
 			var tableId = table.attr("id");
 			var that = this;
-			var box = '<div data-table-id="'+tableId+'"  class="jbolt_table_copy_opt jbolt_drag_box">'+
-				'<div class="jbolt_drag_trigger" tooltip data-title="点我拖动改变位置"><i class="d-inline-block text-dark jbicon2 jbi-drag" style="font-size:30px;"></i></div>'+
-				'<ul><li data-func="copyData" tooltip data-title="只复制数据"><i class="jbicon2 jbi-file-copy"></i></li>'+
-				'<li data-func="copyDataWithHeader" tooltip data-title="复制数据_带表头"><i class="jbicon2 jbi-file-copy-fill"></i></li>'+
-				'<li data-func="clear" tooltip data-title="清空选择"><i class="jbicon2 jbi-clear"></i></li>'+
-				'</ul></div>';
+			var box = '&lt;div data-table-id="'+tableId+'"  class="jbolt_table_copy_opt jbolt_drag_box">'+
+				'&lt;div class="jbolt_drag_trigger" tooltip data-title="点我拖动改变位置">&lt;i class="d-inline-block text-dark jbicon2 jbi-drag" style="font-size:30px;">&lt;/i>&lt;/div>'+
+				'&lt;ul>&lt;li data-func="copyData" tooltip data-title="只复制数据">&lt;i class="jbicon2 jbi-file-copy">&lt;/i>&lt;/li>'+
+				'&lt;li data-func="copyDataWithHeader" tooltip data-title="复制数据_带表头">&lt;i class="jbicon2 jbi-file-copy-fill">&lt;/i>&lt;/li>'+
+				'&lt;li data-func="clear" tooltip data-title="清空选择">&lt;i class="jbicon2 jbi-clear">&lt;/i>&lt;/li>'+
+				'&lt;/ul>&lt;/div>';
 			var boxObj = $(box);
 			table.table_view.prepend(boxObj);
 			initToolTip(boxObj);
@@ -12674,7 +12702,7 @@ function getScrollBarHeight(ele){
 			table.willCopy = false;
 			//按下ctrl 锁定表格
 			jboltBody.on("keydown",function(e){
-				table.willCopy = !e.shiftKey && !e.ctrlKey && e.altKey;
+				table.willCopy = !e.shiftKey &amp;&amp; !e.ctrlKey &amp;&amp; e.altKey;
 				if(table.willCopy){
 					table.table_box.addClass("noselect");
 				}else{
@@ -12751,7 +12779,7 @@ function getScrollBarHeight(ele){
 					table.copySelectArea = {left:e.clientX,top:e.clientY,width:0,height:0};
 				}
 			}).on("mouseenter","table.jbolt_table>tbody>tr>td",function (e) {
-				if (table.willCopy&&table.isMouseDown) {
+				if (table.willCopy&amp;&amp;table.isMouseDown) {
 					var currentTD = $(this);
 					var currentTR = currentTD.parent();
 					table.curindexrow = currentTR.data("index");
@@ -12761,8 +12789,8 @@ function getScrollBarHeight(ele){
 					var maxrow = table.curindexrow>table.firstindexrow?table.curindexrow:table.firstindexrow;
 					var maxcol = table.curindexcol>table.firstindexcol?table.curindexcol:table.firstindexcol;
 					if(e.buttons==2){
-						for(var i=minrow;i<=maxrow;i++){
-							for(var j=mincol;j<=maxcol;j++){
+						for(var i=minrow;i&lt;=maxrow;i++){
+							for(var j=mincol;j&lt;=maxcol;j++){
 								$("tr[data-index='"+i+"']>td[data-col-index='"+j+"']").removeClass("jbt_copy_td");
 								that.processTableCopyThByColIndex(table,j);
 							}
@@ -12771,8 +12799,8 @@ function getScrollBarHeight(ele){
 						e.stopPropagation();
 						return false;
 					}else{
-						for(var i=minrow;i<=maxrow;i++){
-							for(var j=mincol;j<=maxcol;j++){
+						for(var i=minrow;i&lt;=maxrow;i++){
+							for(var j=mincol;j&lt;=maxcol;j++){
 								$("tr[data-index='"+i+"']>td[data-col-index='"+j+"']").addClass("jbt_copy_td");
 								that.showTableCopyThByColIndex(table,j);
 							}
@@ -12789,15 +12817,15 @@ function getScrollBarHeight(ele){
 					return false;
 				}
 			}).on("mousemove","table.jbolt_table>tbody>tr>td",function (e) {
-				if(table.willCopy&&table.isMouseDown) {
+				if(table.willCopy&amp;&amp;table.isMouseDown) {
 					var x=e.clientX,y=e.clientY;
 					table.copySelectArea.width=Math.abs(x-table.copySelectAreaStartPoint.x);
 					table.copySelectArea.height=Math.abs(y-table.copySelectAreaStartPoint.y);
 
-					if(x<table.copySelectAreaStartPoint.x){
+					if(x&lt;table.copySelectAreaStartPoint.x){
 						table.copySelectArea.left = x;
 					}
-					if(y<table.copySelectAreaStartPoint.y){
+					if(y&lt;table.copySelectAreaStartPoint.y){
 						table.copySelectArea.top = y;
 					}
 					that.drawTableCopySelectArea(table);
@@ -12807,7 +12835,7 @@ function getScrollBarHeight(ele){
 			});
 
 			jboltBody.on("mouseup",function (e) {
-				if(table.willCopy&&table.isMouseDown) {
+				if(table.willCopy&amp;&amp;table.isMouseDown) {
 					e.preventDefault();
 					e.stopPropagation();
 					that.processTableCopyState(table);
@@ -12820,15 +12848,15 @@ function getScrollBarHeight(ele){
 					return false;
 				}
 			}).on("mousemove",".jbt_copy_select_area_layer",function(e){
-				if(table.willCopy&&table.isMouseDown) {
+				if(table.willCopy&amp;&amp;table.isMouseDown) {
 					var x=e.clientX,y=e.clientY;
 					table.copySelectArea.width=Math.abs(x-table.copySelectAreaStartPoint.x);
 					table.copySelectArea.height=Math.abs(y-table.copySelectAreaStartPoint.y);
 
-					if(x<table.copySelectAreaStartPoint.x){
+					if(x&lt;table.copySelectAreaStartPoint.x){
 						table.copySelectArea.left = x;
 					}
-					if(y<table.copySelectAreaStartPoint.y){
+					if(y&lt;table.copySelectAreaStartPoint.y){
 						table.copySelectArea.top = y;
 					}
 					that.drawTableCopySelectArea(table);
@@ -12838,7 +12866,7 @@ function getScrollBarHeight(ele){
 			});
 		},
 		drawTableCopySelectArea:function(table){
-			if(table.willCopy&&table.isMouseDown && table.copySelectArea) {
+			if(table.willCopy&amp;&amp;table.isMouseDown &amp;&amp; table.copySelectArea) {
 				if(!table.copySelectAreaLayer){
 					table.copySelectAreaLayer = this.createCopySelectAreaLayer(table);
 				}
@@ -12846,7 +12874,7 @@ function getScrollBarHeight(ele){
 			}
 		},
 		createCopySelectAreaLayer:function(table){
-			var box = $("<div class='jbt_copy_select_area_layer'></div>");
+			var box = $("&lt;div class='jbt_copy_select_area_layer'>&lt;/div>");
 			jboltBody.append(box);
 			return box;
 		},
@@ -12943,7 +12971,7 @@ function getScrollBarHeight(ele){
 					var needCount = (trLen-1+trIndex) - endIndex;
 					if(needCount){
 						var emptyDatas=[];
-						for(var i=0;i<needCount;i++){
+						for(var i=0;i&lt;needCount;i++){
 							//执行插入新行
 							var result = that.insertEmptyRow(table);
 							if(!isOk(result)){
@@ -12957,14 +12985,14 @@ function getScrollBarHeight(ele){
 
 					var tdIndex = table.tbody.focusTd.data("col-index");
 					var excelTr,excelTd,excelValue,tdLen,targetTr,targetTd;
-					for(var i = 0;i<trLen;i++){
+					for(var i = 0;i&lt;trLen;i++){
 						excelTr = trs[i];
 						targetTr = table.tbody.find("tr[data-index='"+(trIndex+i)+"']");
 						if(isOk(targetTr)){
 							tds=excelTr.children;
 							tdLen=tds.length;
 							if(tdLen){
-								for(var k=0;k<tdLen;k++){
+								for(var k=0;k&lt;tdLen;k++){
 									excelTd = tds[k];
 									excelValue = excelTd.innerText;
 									targetTd = targetTr.find("td[data-col-index='"+(tdIndex+k)+"']")
@@ -12992,9 +13020,9 @@ function getScrollBarHeight(ele){
 		},
 		getMenuTplByTheme:function(theme){
 			if(theme=="button"){
-				return '<div class="jbolt_table_menus theme_button left noselect" style="{@if width}width:${width}px;{@/if}"><a href="javascript:void(0)" class="closebtn" onclick="closeJBoltTableMenu(this)" title="关闭菜单"><i class="jbicon jb-close"></i></a>{@each menus as menu,index}{@if menu.br}<br/>{@else}<a tabindex="-1" data-menu-index="${+index}" class="jbolt_table_menu btn-sm ${menu.cssClass?menu.cssClass:"btn btn-light"}" style="${menu.cssStyle}">{@if menu.icon}<i class="${menu.icon} mr-1"></i>{@/if}<span class="jbolt_table_menu_text">${menu.text}</span></a>{@/if}{@/each}</div>';
+				return '&lt;div class="jbolt_table_menus theme_button left noselect" style="{@if width}width:${width}px;{@/if}">&lt;a href="javascript:void(0)" class="closebtn" onclick="closeJBoltTableMenu(this)" title="关闭菜单">&lt;i class="jbicon jb-close">&lt;/i>&lt;/a>{@each menus as menu,index}{@if menu.br}&lt;br/>{@else}&lt;a tabindex="-1" data-menu-index="${+index}" class="jbolt_table_menu btn-sm ${menu.cssClass?menu.cssClass:"btn btn-light"}" style="${menu.cssStyle}">{@if menu.icon}&lt;i class="${menu.icon} mr-1">&lt;/i>{@/if}&lt;span class="jbolt_table_menu_text">${menu.text}&lt;/span>&lt;/a>{@/if}{@/each}&lt;/div>';
 			}
-			return '<div class="jbolt_table_menus theme_list noselect" style="{@if width}width:${width}px;{@/if}"><a href="javascript:void(0)" class="closebtn" onclick="closeJBoltTableMenu(this)" title="关闭菜单"><i class="jbicon jb-close"></i></a><div class="dropdown-menu" style="{@if width}width:${width}px;{@/if}">{@each menus as menu,index}{@if menu.divider||menu.br}<div class="dropdown-divider"></div>{@else if menu.custom}<div class="jbolttable_custombox ${menu.cssClass?menu.cssClass:""}" style="${menu.cssStyle}">$${menu.html}</div>{@else}<a tabindex="-1" data-menu-index="${+index}" class="jbolt_table_menu dropdown-item ${menu.cssClass?menu.cssClass:"btn btn-light"}" style="${menu.cssStyle}">{@if menu.icon}<i class="${menu.icon} mr-1"></i>{@/if}<span class="jbolt_table_menu_text">${menu.text}</span></a>{@/if}{@/each}</div>';
+			return '&lt;div class="jbolt_table_menus theme_list noselect" style="{@if width}width:${width}px;{@/if}">&lt;a href="javascript:void(0)" class="closebtn" onclick="closeJBoltTableMenu(this)" title="关闭菜单">&lt;i class="jbicon jb-close">&lt;/i>&lt;/a>&lt;div class="dropdown-menu" style="{@if width}width:${width}px;{@/if}">{@each menus as menu,index}{@if menu.divider||menu.br}&lt;div class="dropdown-divider">&lt;/div>{@else if menu.custom}&lt;div class="jbolttable_custombox ${menu.cssClass?menu.cssClass:""}" style="${menu.cssStyle}">$${menu.html}&lt;/div>{@else}&lt;a tabindex="-1" data-menu-index="${+index}" class="jbolt_table_menu dropdown-item ${menu.cssClass?menu.cssClass:"btn btn-light"}" style="${menu.cssStyle}">{@if menu.icon}&lt;i class="${menu.icon} mr-1">&lt;/i>{@/if}&lt;span class="jbolt_table_menu_text">${menu.text}&lt;/span>&lt;/a>{@/if}{@/each}&lt;/div>';
 		},
 		processTableMenuOptions:function(table){
 			if(isOk(table.menuOptions)){
@@ -13024,7 +13052,7 @@ function getScrollBarHeight(ele){
 			var tempMenu,tpl,cus_html,pageSize;
 			for(var i in meuns){
 				tempMenu = meuns[i];
-				if(tempMenu.custom && tempMenu.tpl){
+				if(tempMenu.custom &amp;&amp; tempMenu.tpl){
 					tpl=g(tempMenu.tpl).innerHTML;
 					if(tpl){
 						if(tempMenu.data){
@@ -13086,7 +13114,7 @@ function getScrollBarHeight(ele){
 					ctd=$(e.target);
 					inThead = isOk(ctd.closest("thead"));
 				}
-				var cm_pos=(cm_position=="td" && inTd)?ctd.offset():{top:e.clientY,left:e.clientX};
+				var cm_pos=(cm_position=="td" &amp;&amp; inTd)?ctd.offset():{top:e.clientY,left:e.clientX};
 				var tableWidth = parseInt(table.menus.css("width"));
 				if(cm_pos.left+tableWidth>jboltWindowWidth){
 					if(table.menuOptions.theme =="list"){
@@ -13127,7 +13155,7 @@ function getScrollBarHeight(ele){
 					var dataIndex=ctr.data("index");
 					var trJsonData=isOk(table.tableListDatas)?table.tableListDatas[dataIndex]:null;
 					$.each(table.menuOptions.menus,function(i,item){
-						if(item.visible && typeof(item.visible)=="function"){
+						if(item.visible &amp;&amp; typeof(item.visible)=="function"){
 							var menu=menuObj.find("a[data-menu-index='"+i+"']");
 							if(isOk(menu)){
 								menu.icon=menu.find("i");
@@ -13143,7 +13171,7 @@ function getScrollBarHeight(ele){
 					});
 				}else{
 					$.each(table.menuOptions.menus,function(i,item){
-						if(item.visible && typeof(item.visible)=="function"){
+						if(item.visible &amp;&amp; typeof(item.visible)=="function"){
 							var menu=menuObj.find("a[data-menu-index='"+i+"']");
 							if(isOk(menu)){
 								menu.icon=menu.find("i");
@@ -13179,7 +13207,7 @@ function getScrollBarHeight(ele){
 				e.stopPropagation();
 				var ajt_index=$(this).data("menu-index");
 				var ajt_menu=table.menuOptions.menus[ajt_index];
-				if(isOk(ajt_menu)&&ajt_menu.func&&typeof(ajt_menu.func)=="function"){
+				if(isOk(ajt_menu)&amp;&amp;ajt_menu.func&amp;&amp;typeof(ajt_menu.func)=="function"){
 					var ajt_td=table.currentMenuTd;
 					var returnResult;
 					if(ajt_td){
@@ -13194,7 +13222,7 @@ function getScrollBarHeight(ele){
 					}else{
 						returnResult=ajt_menu.func(table,null,null,null,table.menuInThead,table.menuInTbody);
 					}
-					if(typeof(returnResult)=="undefined" || (typeof(returnResult)=="boolean") && returnResult == true){
+					if(typeof(returnResult)=="undefined" || (typeof(returnResult)=="boolean") &amp;&amp; returnResult == true){
 						that.closeMenu(table);
 					}
 				}
@@ -13355,7 +13383,7 @@ function getScrollBarHeight(ele){
 						e.preventDefault();
 					}else{
 						tempTr=$(this);
-						if(rowClickHandler&&isOk(table.currentChooseActiveTr)&&isOk(table.extraColumnForm)){
+						if(rowClickHandler&amp;&amp;isOk(table.currentChooseActiveTr)&amp;&amp;isOk(table.extraColumnForm)){
 							//存在右侧辅助录入区域
 							that.saveFormToTableCurrentActiveTr(table,table.extraColumnForm);
 						}
@@ -13390,7 +13418,7 @@ function getScrollBarHeight(ele){
 						}
 						if(rowClickHandler){
 							var exe_handler=eval(rowClickHandler);
-							if(exe_handler&&typeof(exe_handler)=="function"){
+							if(exe_handler&amp;&amp;typeof(exe_handler)=="function"){
 								trId=tempTr.data("id");
 								jsonData=that.getRowJsonData(table,tempTr);
 								exe_handler(table,tempTr,trId,deepClone(jsonData));
@@ -13410,7 +13438,7 @@ function getScrollBarHeight(ele){
 					}else{
 
 						tempTr1=$(this);
-						if(rowDblClickActive&&isOk(table.currentChooseActiveTr)&&isOk(table.extraColumnForm)){
+						if(rowDblClickActive&amp;&amp;isOk(table.currentChooseActiveTr)&amp;&amp;isOk(table.extraColumnForm)){
 							//存在右侧辅助录入区域
 							that.saveFormToTableCurrentActiveTr(table,table.extraColumnForm);
 						}
@@ -13421,7 +13449,7 @@ function getScrollBarHeight(ele){
 							table.table_box.find("table>tbody>tr:nth-child("+(trIndex1+1)+")").addClass("active");
 						}
 						if(rowDblClickHandler){
-							if(typeof(rowDblClickHandler) == "string" && rowDblClickHandler=="edit"){
+							if(typeof(rowDblClickHandler) == "string" &amp;&amp; rowDblClickHandler=="edit"){
 								var editBtn = tempTr1.find("td [data-role='edit']:eq(0)");
 								if(!isOk(editBtn)){
 									editBtn = tempTr1.find("td .jbolt_table_editbtn:eq(0)");
@@ -13450,7 +13478,7 @@ function getScrollBarHeight(ele){
 								}
 							}else{
 								var exe_handler=eval(rowDblClickHandler);
-								if(exe_handler&&typeof(exe_handler)=="function"){
+								if(exe_handler&amp;&amp;typeof(exe_handler)=="function"){
 									trId1=tempTr1.data("id");
 									jsonData1=that.getRowJsonData(table,tempTr1);
 									exe_handler(table,tempTr1,trId1,deepClone(jsonData1));
@@ -13467,7 +13495,7 @@ function getScrollBarHeight(ele){
 			//处理columnprepend row点击选中
 			table.table_box.on("click","table>tbody>tr",function(e){
 				var tagName=e.target.tagName;
-				if(tagName=="TD" || (tagName=="DIV" && (e.target.className=="jbolt_table_radio"||e.target.className=="jbolt_table_checkbox"))){
+				if(tagName=="TD" || (tagName=="DIV" &amp;&amp; (e.target.className=="jbolt_table_radio"||e.target.className=="jbolt_table_checkbox"))){
 					e.preventDefault();
 					e.stopPropagation();
 					var tr=$(this);
@@ -13494,7 +13522,7 @@ function getScrollBarHeight(ele){
 				var handler=table.data("ajax-success-handler");
 				if(handler){
 					var exe_handler=eval(handler);
-					if(exe_handler&&typeof(exe_handler)=="function"){
+					if(exe_handler&amp;&amp;typeof(exe_handler)=="function"){
 						exe_handler(table,res);
 					}
 				}
@@ -13509,7 +13537,7 @@ function getScrollBarHeight(ele){
 				var handler=table.data("ajax-fail-handler");
 				if(handler){
 					var exe_handler=eval(handler);
-					if(exe_handler&&typeof(exe_handler)=="function"){
+					if(exe_handler&amp;&amp;typeof(exe_handler)=="function"){
 						exe_handler(table,res);
 					}
 				}
@@ -13520,7 +13548,7 @@ function getScrollBarHeight(ele){
 			var handler=table.data("init-handler");
 			if(handler){
 				var exe_handler=eval(handler);
-				if(exe_handler&&typeof(exe_handler)=="function"){
+				if(exe_handler&amp;&amp;typeof(exe_handler)=="function"){
 					exe_handler(table);
 				}
 			}
@@ -13544,8 +13572,8 @@ function getScrollBarHeight(ele){
 			var that=this;
 			var level=tr.data("level");
 			var pid=tr.data("pid");
-			if(level>1&&pid>0){
-				if(isMainTable&&!isFixedTable){
+			if(level>1&amp;&amp;pid>0){
+				if(isMainTable&amp;&amp;!isFixedTable){
 					//说明还有上级需要处理
 					var parentCheckbox=table.tbody.find("tr[data-id='"+pid+"'][data-level='"+(level-1)+"']>td[data-col-index='"+colIndex+"']>.jbolt_table_checkbox>input[type='checkbox']");
 					if(isOk(parentCheckbox)){
@@ -13565,7 +13593,7 @@ function getScrollBarHeight(ele){
 						});
 					}
 
-				}else if(!isMainTable&&isFixedTable){
+				}else if(!isMainTable&amp;&amp;isFixedTable){
 					//说明还有上级需要处理
 					var parentCheckbox=clicktable.find("tbody>tr[data-id='"+pid+"'][data-level='"+(level-1)+"']>td[data-col-index='"+colIndex+"']>.jbolt_table_checkbox>input[type='checkbox']");
 					if(isOk(parentCheckbox)){
@@ -13588,7 +13616,7 @@ function getScrollBarHeight(ele){
 			var that=this;
 			var level=tr.data("level");
 			var pid=tr.data("id");
-			if(isMainTable&&!isFixedTable){
+			if(isMainTable&amp;&amp;!isFixedTable){
 				//说明还有上级需要处理
 				var parentCheckbox=table.tbody.find("tr[data-pid='"+pid+"'][data-level='"+(level+1)+"']>td[data-col-index='"+colIndex+"']>.jbolt_table_checkbox>input[type='checkbox']");
 				if(isOk(parentCheckbox)){
@@ -13608,7 +13636,7 @@ function getScrollBarHeight(ele){
 					});
 				}
 
-			}else if(!isMainTable&&isFixedTable){
+			}else if(!isMainTable&amp;&amp;isFixedTable){
 				//说明还有上级需要处理
 				var parentCheckbox=clicktable.find("tbody>tr[data-pid='"+pid+"'][data-level='"+(level+1)+"']>td[data-col-index='"+colIndex+"']>.jbolt_table_checkbox>input[type='checkbox']");
 				if(isOk(parentCheckbox)){
@@ -13630,7 +13658,7 @@ function getScrollBarHeight(ele){
 			var level=tr.data("level");
 			var pid=tr.data("id");
 			var that=this;
-			if(isMainTable&&!isFixedTable){
+			if(isMainTable&amp;&amp;!isFixedTable){
 				//下需要处理
 				var sonCheckbox=table.tbody.find("tr[data-pid='"+ pid +"'][data-level='"+(level+1)+"']>td[data-col-index='"+colIndex+"']>.jbolt_table_checkbox>input[type='checkbox']");
 				if(isOk(sonCheckbox)){
@@ -13650,7 +13678,7 @@ function getScrollBarHeight(ele){
 						that.uncheckTreeTableSons(table,clicktable,theadCheckboxs,isMainTable,isFixedTable,$(this).closest("tr"),colIndex);
 					});
 				}
-			}else if(!isMainTable&&isFixedTable){
+			}else if(!isMainTable&amp;&amp;isFixedTable){
 				//下需要处理
 				var sonCheckbox=clicktable.find("tbody>tr[data-pid='"+ pid +"'][data-level='"+(level+1)+"']>td[data-col-index='"+colIndex+"']>.jbolt_table_checkbox>input[type='checkbox']");
 				if(isOk(sonCheckbox)){
@@ -13676,7 +13704,7 @@ function getScrollBarHeight(ele){
 //				var ajax=table.data("ajax");
 			var hasColumnPrepend=table.data("column-prepend");
 			//ajax加载table 但是没设置这个 就直接略过
-//				if(ajax&&!hasColumnPrepend){
+//				if(ajax&amp;&amp;!hasColumnPrepend){
 			if(!hasColumnPrepend){
 				return false;
 			}
@@ -13684,7 +13712,7 @@ function getScrollBarHeight(ele){
 			var exe_checked_handler=null;
 			if(tableCheckedChangeHandler){
 				var exe_handler=eval(tableCheckedChangeHandler);
-				if(exe_handler&&typeof(exe_handler)=="function"){
+				if(exe_handler&amp;&amp;typeof(exe_handler)=="function"){
 					exe_checked_handler = exe_handler;
 				}
 			}
@@ -13836,7 +13864,7 @@ function getScrollBarHeight(ele){
 					me.checkAll=false;
 				}
 				//如果是mainTable不是悬浮table
-				if(isMainTable&&!isFixedTable){
+				if(isMainTable&amp;&amp;!isFixedTable){
 					//存在fixedTable
 					if(isOk(table.fixedColumnTables)){
 						var fixedCheckbox=table.fixedColumnTables.find("tbody>tr[data-index='"+rowIndex+"']>td[data-col-index='"+colIndex+"']>.jbolt_table_checkbox>input[type='checkbox']");
@@ -13850,7 +13878,7 @@ function getScrollBarHeight(ele){
 					}
 				}else
 					//如果是悬浮table
-				if(isFixedTable&&!isMainTable){
+				if(isFixedTable&amp;&amp;!isMainTable){
 					var mainTableCheckbox=table.tbody.find("tr[data-index='"+rowIndex+"']>td[data-col-index='"+colIndex+"']>.jbolt_table_checkbox>input[type='checkbox']");
 					if(isOk(mainTableCheckbox)){
 						if(this.checked){
@@ -13919,7 +13947,7 @@ function getScrollBarHeight(ele){
 					fixedHeaderRadio.removeAttr("checked");
 				}
 				//如果是mainTable不是悬浮table
-				if(isMainTable&&!isFixedTable){
+				if(isMainTable&amp;&amp;!isFixedTable){
 					//存在fixedTable
 					if(isOk(table.fixedColumnTables)){
 						var fixedRadio=table.fixedColumnTables.find("tbody>tr[data-index='"+rowIndex+"']>td[data-col-index='"+colIndex+"']>.jbolt_table_radio>input[type='radio']");
@@ -13929,7 +13957,7 @@ function getScrollBarHeight(ele){
 						}
 					}
 
-				}else if(isFixedTable&&!isMainTable){
+				}else if(isFixedTable&amp;&amp;!isMainTable){
 					var mainTableRadio=table.tbody.find("tr[data-index='"+rowIndex+"']>td[data-col-index='"+colIndex+"']>.jbolt_table_radio>input[type='radio']");
 					if(isOk(mainTableRadio)){
 						mainTableRadio[0].checked=true;
@@ -14072,7 +14100,7 @@ function getScrollBarHeight(ele){
 				var tr=th.parent(),resizing=th.data("resizing");
 				var width=th.outerWidth()-10,left=th.offset().left;
 				var newWidth=e.clientX-left;
-				if(th.hasClass("resize_col") && th[0].hasAttribute("data-col-index")){
+				if(th.hasClass("resize_col") &amp;&amp; th[0].hasAttribute("data-col-index")){
 					if(!resizing){
 						if(newWidth>=width){
 							th.data("can-resize",true).attr("data-can-resize",true);
@@ -14111,7 +14139,7 @@ function getScrollBarHeight(ele){
 					var right = left+width;
 					var newLeft = right-10;
 					var currentMouseLeft = e.clientX;
-					if(currentMouseLeft>=newLeft && currentMouseLeft<=right){
+					if(currentMouseLeft>=newLeft &amp;&amp; currentMouseLeft&lt;=right){
 						jboltBody.addClass("noselect");
 						jboltBody.css("cursor","col-resize");
 						table.leftbox.canResize = true;
@@ -14128,7 +14156,7 @@ function getScrollBarHeight(ele){
 				var right = left+width;
 				var newLeft = right-4;
 				var currentMouseLeft = e.clientX;
-				if(currentMouseLeft>=newLeft && currentMouseLeft<=right){
+				if(currentMouseLeft>=newLeft &amp;&amp; currentMouseLeft&lt;=right){
 					jboltBody.css("cursor","col-resize");
 					if(table.leftbox.canResize){
 						jboltBody.addClass("noselect");
@@ -14211,7 +14239,7 @@ function getScrollBarHeight(ele){
 							sameCols.addClass("resizing");
 						}
 					}
-					if(!(e.target.tagName == "A" && e.target.className.indexOf(" jbolt_drag_trigger")!=-1)){
+					if(!(e.target.tagName == "A" &amp;&amp; e.target.className.indexOf(" jbolt_drag_trigger")!=-1)){
 						return false;
 					}
 				}).on("mouseup",function(e){
@@ -14267,7 +14295,7 @@ function getScrollBarHeight(ele){
 						var th=$(e.target),tr=th.parent();
 						var width=th.outerWidth()-10,left=th.offset().left;
 						var newWidth=e.clientX-left;
-						if(newWidth<width){
+						if(newWidth&lt;width){
 							tr.css("cursor","pointer");
 							th.data("can-sort",true).attr("data-can-sort",true);
 						}
@@ -14322,7 +14350,7 @@ function getScrollBarHeight(ele){
 			var colIndex=col.data("col-index");
 			table.data("sort-column",sort_column_name).attr("data-sort-column",sort_column_name);
 			var defaultSortColumn=table.data("default-sort-column");
-			if(defaultSortColumn&&sort_column_name==defaultSortColumn&&!theSortType){
+			if(defaultSortColumn&amp;&amp;sort_column_name==defaultSortColumn&amp;&amp;!theSortType){
 				//如果table的默认排序字段就是当前要排序的字段 并且当前排序的字段已经是倒序排列了 就需要切换为正序
 				var activeType=col.find("i.sort.active");
 				if(isOk(activeType)){
@@ -14412,7 +14440,7 @@ function getScrollBarHeight(ele){
 			}
 			that.processHeaderRight(mainTable);
 			var tableDataHeight=mainTable.data("height");
-			var isFillHeight=(typeof(tableDataHeight)=="string"&&tableDataHeight=="fill");
+			var isFillHeight=(typeof(tableDataHeight)=="string"&amp;&amp;tableDataHeight=="fill");
 			var tableH=parseInt(mainTable.height());
 			var bodyH=parseInt(mainTable.table_body.height());
 			if(isFillHeight){
@@ -14423,7 +14451,7 @@ function getScrollBarHeight(ele){
 				}
 			}else{
 
-				if(tableH< bodyH){
+				if(tableH&lt; bodyH){
 					mainTable.table_box.find(".jbolt_table_body>table").removeClass("noBottomBorder");
 				}else{
 					mainTable.table_box.find(".jbolt_table_body>table").addClass("noBottomBorder");
@@ -14442,7 +14470,7 @@ function getScrollBarHeight(ele){
 			var mainTbodyHeight=parseInt(mainTable.table_body.height());
 			var tableH=parseInt(mainTable.height());
 			var tableDataHeight=mainTable.data("height");
-			var isFillHeight=(typeof(tableDataHeight)=="string"&&tableDataHeight=="fill");
+			var isFillHeight=(typeof(tableDataHeight)=="string"&amp;&amp;tableDataHeight=="fill");
 			//如果是height fill的情况
 			if(isFillHeight){
 				if(hasHScroll){
@@ -14489,7 +14517,7 @@ function getScrollBarHeight(ele){
 					});
 					var jbolt_table_fixed_right_mend=mainTable.right_fixed.header.find(".jbolt_table_fixed_right_mend");
 					if(!isOk(jbolt_table_fixed_right_mend)){
-						mainTable.right_fixed.header.append("<div class='jbolt_table_fixed_right_mend' style='width:"+scrollWidth+"px;right:"+(0-scrollWidth)+"px'></div>");
+						mainTable.right_fixed.header.append("&lt;div class='jbolt_table_fixed_right_mend' style='width:"+scrollWidth+"px;right:"+(0-scrollWidth)+"px'>&lt;/div>");
 					}
 				}else{
 					mainTable.right_fixed.css({
@@ -14517,12 +14545,12 @@ function getScrollBarHeight(ele){
 					indexArr=fixed_columns.split(",");
 				}
 				//右侧用负数的处理
-				if(isOk(indexArr)&&fixed_columns_dir=="right"){
+				if(isOk(indexArr)&amp;&amp;fixed_columns_dir=="right"){
 					var lastTd=table.tbody.find("tr>td[data-col-index]:last");
 					var lastColIndex=lastTd.data("col-index")+2;
 					var tempAttr=new Array();
 					$.each(indexArr,function(i,item){
-						if(item<0){
+						if(item&lt;0){
 							tempAttr.push(parseInt(item) + lastColIndex);
 						}else{
 							tempAttr.push(item);
@@ -14538,7 +14566,7 @@ function getScrollBarHeight(ele){
 			var size=indexArr.length;
 			var tbody_td_selector="td:not(";
 			//就一行的话 好说
-			for(var i=0;i<size;i++){
+			for(var i=0;i&lt;size;i++){
 				tbody_td_selector=tbody_td_selector+(i>0?",":"")+":nth-child("+indexArr[i]+")";
 			}
 			tbody_td_selector=tbody_td_selector+")";
@@ -14549,7 +14577,7 @@ function getScrollBarHeight(ele){
 			var that=this;
 			var className="jbolt_table_fixed_"+dir;
 			//从原数据处克隆后处理
-			var fixedColumnBox=$('<div class="jbolt_table_fixed"></div>');
+			var fixedColumnBox=$('&lt;div class="jbolt_table_fixed">&lt;/div>');
 			fixedColumnBox.addClass(className);
 			var jbolt_table_header=table_box.find(".jbolt_table_header:first").clone();
 			var jbolt_table_body=table_box.find(".jbolt_table_body:first").clone();
@@ -14560,7 +14588,7 @@ function getScrollBarHeight(ele){
 				var thead_th_selector="table>thead>tr>th:not(",
 					tbody_td_selector="table>tbody>tr>td:not(";
 				//就一行的话 好说
-				for(var i=0;i<size;i++){
+				for(var i=0;i&lt;size;i++){
 					thead_th_selector=thead_th_selector+(i>0?",":"")+":nth-child("+indexArr[i]+")";
 					tbody_td_selector=tbody_td_selector+(i>0?",":"")+":nth-child("+indexArr[i]+")";
 				}
@@ -14574,7 +14602,7 @@ function getScrollBarHeight(ele){
 				var thead_th_selector1="table>thead>tr>th:not(",
 					tbody_td_selector1="table>tbody>tr>td:not(";
 				//就一行的话 好说
-				for(var i=0;i<size;i++){
+				for(var i=0;i&lt;size;i++){
 					thead_th_selector1=thead_th_selector1+(i>0?",":"")+"[data-fixed-col-index='"+indexArr[i]+"']";
 					tbody_td_selector1=tbody_td_selector1+(i>0?",":"")+"[data-fixed-col-index='"+indexArr[i]+"']";
 				}
@@ -14594,12 +14622,12 @@ function getScrollBarHeight(ele){
 			fixedColumnBox.append(jbolt_table_body);
 			jbolt_table_header.table=jbolt_table_header.find("table");
 			var header_width=jbolt_table_header.table.css("width");
-			if(header_width&&typeof(header_width)=="string"&&header_width.indexOf("px")!=-1){
+			if(header_width&amp;&amp;typeof(header_width)=="string"&amp;&amp;header_width.indexOf("px")!=-1){
 				jbolt_table_header.table.css({"width":"auto"});
 			}
 			jbolt_table_body.table=jbolt_table_body.find("table");
 			var body_width=jbolt_table_body.table.css("width");
-			if(body_width&&typeof(body_width)=="string"&&body_width.indexOf("px")!=-1){
+			if(body_width&amp;&amp;typeof(body_width)=="string"&amp;&amp;body_width.indexOf("px")!=-1){
 				jbolt_table_body.table.css({"width":"auto"});
 			}
 			that.clearTableData(jbolt_table_header.table);
@@ -14682,12 +14710,12 @@ function getScrollBarHeight(ele){
 		cloneHFTable:function(table){
 			var clazzs=table.attr("class");
 			var tableWidth=table.data("width");
-			var newTable=$("<table data-width='"+tableWidth+"' data-theme='"+table.theme+"' class='"+clazzs+"'></table>");
+			var newTable=$("&lt;table data-width='"+tableWidth+"' data-theme='"+table.theme+"' class='"+clazzs+"'>&lt;/table>");
 			newTable.removeClass("jbolt_main_table");
 			return newTable;
 		},
 		processHeaderAndFooterFixed:function(table){
-			if(!table.hasHeader&&!table.hasFooter){
+			if(!table.hasHeader&amp;&amp;!table.hasFooter){
 				return false;
 			}
 			//要去复制一份儿
@@ -14700,7 +14728,7 @@ function getScrollBarHeight(ele){
 				if(columnResize){
 					thead.find("tr>th").addClass("resize_col");
 				}
-				var jboltTableHeader=$("<div data-theme='"+table.theme+"' class='jbolt_table_header'></div>");
+				var jboltTableHeader=$("&lt;div data-theme='"+table.theme+"' class='jbolt_table_header'>&lt;/div>");
 				jboltTableHeader.append(headerTable);
 				//在原区域上方插入
 				table.table_body.before(jboltTableHeader);
@@ -14721,14 +14749,14 @@ function getScrollBarHeight(ele){
 				table.fixed_header.table=headerTable;
 				table.fixed_header.table.find("input[type='radio']").attr("name","jboltTableRadio_fixedheader")
 			}
-			if(table.hasFooter&&table.tfootFixed){
+			if(table.hasFooter&amp;&amp;table.tfootFixed){
 				var footerTable=this.cloneHFTable(table),
 					tfoot=table.tfoot.clone();
 				footerTable.append(tfoot);
 				if(columnResize){
 					tfoot.find("tr>th").addClass("resize_col");
 				}
-				var jboltTableFooter=$("<div data-theme='"+table.theme+"' class='jbolt_table_footer'></div>");
+				var jboltTableFooter=$("&lt;div data-theme='"+table.theme+"' class='jbolt_table_footer'>&lt;/div>");
 				jboltTableFooter.append(footerTable);
 				//在原区域下方插入
 				table.table_body.after(jboltTableFooter);
@@ -14761,7 +14789,7 @@ function getScrollBarHeight(ele){
 			avgths=table.thead.find("tr>th[data-col-index][data-width='auto'],tr>th[data-col-index]:not([data-width]),tr>th[data-col-index]:not([data-nochange]):not([data-column='index']):not([data-column='checkbox']):not([data-column='optcol'])");
 			if(isOk(avgths)){
 				avgthsSize=avgths.length;
-				if(table.tableBodyLeaveWidth<200&&avgthsSize>=2){
+				if(table.tableBodyLeaveWidth&lt;200&amp;&amp;avgthsSize>=2){
 					avgWidth=100;
 				}else{
 					avgWidth=Math.floor(table.tableBodyLeaveWidth/avgthsSize);
@@ -14783,14 +14811,14 @@ function getScrollBarHeight(ele){
 				avgths.each(function(i){
 					th=$(this);
 					real_avgWidth=avgWidth;
-					if(i==avgthsSize-1 && laveaWidth>0){
+					if(i==avgthsSize-1 &amp;&amp; laveaWidth>0){
 						real_avgWidth=real_avgWidth+laveaWidth;
 					}
 					dataWidth=th.data("min-width")||th.data("width");
-					if(dataWidth<100){
+					if(dataWidth&lt;100){
 						dataWidth=100;
 					}
-					if(real_avgWidth<dataWidth){
+					if(real_avgWidth&lt;dataWidth){
 						real_avgWidth=dataWidth;
 					}
 					that.resizeTheadTh(table,th.data("col-index"),real_avgWidth);
@@ -14808,12 +14836,12 @@ function getScrollBarHeight(ele){
 			var mins=1;
 			//表格还剩多少没分配宽度
 			table.tableBodyLeaveWidth=table.table_body.width()-mins;
-			for(var i=0;i<thsize;i++){
+			for(var i=0;i&lt;thsize;i++){
 				//处理非auto列的宽度 一次性设置好 不能变更的 剩下的下面自动化处理
 				that.setOneColumnWidth(table,i,ths.eq(i));
 			}
 			var width=table.data("width");
-			if(width&&width!="auto"){
+			if(width&amp;&amp;width!="auto"){
 				//处理补全
 				that.processTheadWidthCompletion(table);
 			}
@@ -14837,7 +14865,7 @@ function getScrollBarHeight(ele){
 				var thead=table.find("thead"),tbody=table.find("tbody"),ths=thead.find("tr>th[data-col-index]:not(.jbolt_table_last_th)");
 				if(!isOk(ths)){return false;}
 				var thSize=ths.length,thColIndex,th,real_width,width,totalWidth=0,autoThColIndex=new Array();
-				for(var i=0;i<thSize;i++){
+				for(var i=0;i&lt;thSize;i++){
 					th=ths.eq(i);
 					thColIndex=th.data("col-index");
 					real_width=th[0].offsetWidth;
@@ -14848,7 +14876,7 @@ function getScrollBarHeight(ele){
 					if(!width||width=="auto"){
 						autoThColIndex.push(thColIndex);
 					}else{
-						if(real_width<width){
+						if(real_width&lt;width){
 							real_width=width;
 						}
 						totalWidth=totalWidth+real_width;
@@ -14865,7 +14893,7 @@ function getScrollBarHeight(ele){
 				if(!isOk(ths)){return false;}
 				tbody.hide();
 				var thSize=ths.length,thColIndex,th,real_width;
-				for(var i=0;i<thSize;i++){
+				for(var i=0;i&lt;thSize;i++){
 					th=ths.eq(i);
 					thColIndex=th.data("col-index");
 					real_width=th.outerWidth();
@@ -14882,7 +14910,7 @@ function getScrollBarHeight(ele){
 			var oldhasHScroll=checkTableBodyHasScrollBar(table,'h');
 			var that=this;
 			var th,thwidth,realWidth,allWitdh=0,thlen=table.theadWithColIndexThs.length;
-			for(var i=0;i<thlen;i++){
+			for(var i=0;i&lt;thlen;i++){
 				th=table.theadWithColIndexThs.eq(i);
 				thwidth=th.data("old-width");
 				allWitdh+=thwidth;
@@ -14916,7 +14944,7 @@ function getScrollBarHeight(ele){
 						}
 					}
 					var minwidth=avgth.data("min-width")||avgth.data("width")||100;
-					if(realWidth&&realWidth>=minwidth){
+					if(realWidth&amp;&amp;realWidth>=minwidth){
 						that.resizeTheadTh(table,avgth.data("col-index"),realWidth);
 					}
 				}
@@ -14925,7 +14953,7 @@ function getScrollBarHeight(ele){
 			allWitdh=allWitdh+2;
 			var tableWidth=table.table_body.width();
 //				console.log(allWitdh+":"+tableWidth)
-			if(allWitdh<tableWidth){
+			if(allWitdh&lt;tableWidth){
 				table.table_box.find("table").addClass("col_last_need_border_right");
 			}else{
 				table.table_box.find("table").removeClass("col_last_need_border_right");
@@ -14934,7 +14962,7 @@ function getScrollBarHeight(ele){
 				var hasVScroll=checkTableBodyHasScrollBar(table,'v');
 				if(!hasVScroll){
 					alert(oldhasHScroll+":"+hasHScroll)
-					if(hasHScroll ||(oldhasHScroll&&!hasHScroll)){
+					if(hasHScroll ||(oldhasHScroll&amp;&amp;!hasHScroll)){
 						table.table_box.find("table").removeClass("col_last_need_border_right");
 						return;
 					}
@@ -14943,7 +14971,7 @@ function getScrollBarHeight(ele){
 				}
 
 				var hasHScroll=checkTableBodyHasScrollBar(table,'h');
-				if(hasHScroll || (oldhasHScroll&&!hasHScroll)){
+				if(hasHScroll || (oldhasHScroll&amp;&amp;!hasHScroll)){
 					table.table_box.find("table").removeClass("col_last_need_border_right");
 				}*/
 		},
@@ -14955,12 +14983,12 @@ function getScrollBarHeight(ele){
 			var hasVScroll=checkTableBodyHasScrollBar(table, "v");
 			var hasHScroll=checkTableBodyHasScrollBar(table, "h");
 			var thead=table.find("thead");
-			if(!hasVScroll&&!hasHScroll){
+			if(!hasVScroll&amp;&amp;!hasHScroll){
 				var isAuto=table[0].style.width="auto";
 				if(isAuto){
 					var pr=parseInt(table.fixed_header.css("padding-right"));
 					var cha=table.table_body.width()-table.width();
-					if(cha>=10||cha<=-10){
+					if(cha>=10||cha&lt;=-10){
 						var lastTh=thead.find("tr>th[data-col-index][data-width='auto']:first");
 						if(!isOk(lastTh)){
 							lastTh=thead.find("tr>th[data-col-index]:not([data-width]):first");
@@ -14972,12 +15000,12 @@ function getScrollBarHeight(ele){
 						return;
 					}
 				}
-			}else if(hasVScroll&&!hasHScroll){
+			}else if(hasVScroll&amp;&amp;!hasHScroll){
 				var isAuto=table[0].style.width="auto";
 				if(isAuto){
 					var pr=parseInt(table.fixed_header.css("padding-right"));
 					var cha=table.table_body.width()-table.width();
-					if(pr==0&&(cha<=5||cha>=-5)){
+					if(pr==0&amp;&amp;(cha&lt;=5||cha>=-5)){
 						var lastTh=thead.find("tr>th[data-col-index][data-width='auto']:first");
 						if(!isOk(lastTh)){
 							lastTh=thead.find("tr>th[data-col-index]:not([data-width]):first");
@@ -14994,7 +15022,7 @@ function getScrollBarHeight(ele){
 		processCellHeight:function(table){
 			if(!table.isEmpty){
 				var tr,height,trs=table.tbody.find("tr"),len=trs.length;
-				for(var i=0;i<len;i++){
+				for(var i=0;i&lt;len;i++){
 					tr = trs.eq(i);
 					tr.data("index",i).attr("data-index",i);
 					height=tr.find("td:not([rowspan]):first").outerHeight()+"px";
@@ -15032,7 +15060,7 @@ function getScrollBarHeight(ele){
 			});
 		},
 		setOneAutoWidthColumnWidth:function(table,index,th,minWidth){
-			var width=th.data("width"),isAutoTh=(typeof(width)=="string"&&width=="auto"),nthTdIndex=index+1,maxWidth;
+			var width=th.data("width"),isAutoTh=(typeof(width)=="string"&amp;&amp;width=="auto"),nthTdIndex=index+1,maxWidth;
 			if(!isAutoTh){
 				return false;
 			}
@@ -15073,11 +15101,11 @@ function getScrollBarHeight(ele){
 			if(minwidth){
 				width=minwidth;
 			}
-			if(!width||(typeof(width)=="string"&&width=="auto")){
+			if(!width||(typeof(width)=="string"&amp;&amp;width=="auto")){
 				return false;
 			}
 			var column=th.data("column");
-			if((column&&(column=="index"||column=="checkbox"||column=="radio"||column=='optcol'))||th[0].hasAttribute("data-nochange")){
+			if((column&amp;&amp;(column=="index"||column=="checkbox"||column=="radio"||column=='optcol'))||th[0].hasAttribute("data-nochange")){
 				table.tableBodyLeaveWidth=table.tableBodyLeaveWidth-width;
 			}
 			this.resizeTheadTh(table,th.data("col-index"),width);
@@ -15128,7 +15156,7 @@ function getScrollBarHeight(ele){
 				if(typeof(tdIndex)=="undefined"||tdIndex=="undefined"){
 					tdIndex=0;
 				}
-				tbody.find("tr[data-parent]>td:nth-child("+tdIndex+")").data("parent-td",true).attr("data-parent-td","true").append('<div class="parent_flag_box"><i class="fa fa-caret-right"></i></div>');
+				tbody.find("tr[data-parent]>td:nth-child("+tdIndex+")").data("parent-td",true).attr("data-parent-td","true").append('&lt;div class="parent_flag_box">&lt;i class="fa fa-caret-right">&lt;/i>&lt;/div>');
 
 				var expandall_trigger=table.data("expandall-trigger");
 				if(expandall_trigger){
@@ -15220,7 +15248,7 @@ function getScrollBarHeight(ele){
 				if(tr[0].hasAttribute("data-parent")){
 					//如果是个parent就找到所有子节点
 					var trs=tr.nextAll("tr[data-pid='"+dataId+"']");
-					if(trs&&trs.length>0){
+					if(trs&amp;&amp;trs.length>0){
 						var theTr;
 						//如果有下级就逐级关闭
 						trs.each(function(){
@@ -15250,4 +15278,26 @@ function getScrollBarHeight(ele){
 			$.error('Method' + method + 'does not exist on jQuery.jboltTreeTable');
 		}
 	};
-})(jQuery);
+})(jQuery);</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#changeJBoltCurrentEditableAndKeyEventTable">changeJBoltCurrentEditableAndKeyEventTable</a></li><li><a href="global.html#changeJBoltTableEditableOptions">changeJBoltTableEditableOptions</a></li><li><a href="global.html#checkEditableCellRequired">checkEditableCellRequired</a></li><li><a href="global.html#checkEditableCheckedTrCellRequired">checkEditableCheckedTrCellRequired</a></li><li><a href="global.html#checkMasterTableId">checkMasterTableId</a></li><li><a href="global.html#checkTableBodyHasScrollBar">checkTableBodyHasScrollBar</a></li><li><a href="global.html#clearJBoltCurrentEditableAndKeyEventTable">clearJBoltCurrentEditableAndKeyEventTable</a></li><li><a href="global.html#clearJboltTable">clearJboltTable</a></li><li><a href="global.html#closeJBoltTableMenu">closeJBoltTableMenu</a></li><li><a href="global.html#deleteTreeTableRow">deleteTreeTableRow</a></li><li><a href="global.html#finishEditingCells">finishEditingCells</a></li><li><a href="global.html#getCurrentEditableAndKeyEventJBoltTable">getCurrentEditableAndKeyEventJBoltTable</a></li><li><a href="global.html#getCurrentEditableAndKeyEventJBoltTables">getCurrentEditableAndKeyEventJBoltTables</a></li><li><a href="global.html#getJBoltTable">getJBoltTable</a></li><li><a href="global.html#getJBoltTableInst">getJBoltTableInst</a></li><li><a href="global.html#getJboltTableAllDatas">getJboltTableAllDatas</a></li><li><a href="global.html#getJboltTableCheckedCols">getJboltTableCheckedCols</a></li><li><a href="global.html#getJboltTableCheckedData">getJboltTableCheckedData</a></li><li><a href="global.html#getJboltTableCheckedDatas">getJboltTableCheckedDatas</a></li><li><a href="global.html#getJboltTableCheckedId">getJboltTableCheckedId</a></li><li><a href="global.html#getJboltTableCheckedIds">getJboltTableCheckedIds</a></li><li><a href="global.html#getJboltTableCheckedTexts">getJboltTableCheckedTexts</a></li><li><a href="global.html#getJboltTableOneColumnDatas">getJboltTableOneColumnDatas</a></li><li><a href="global.html#getRealJboltTableByEle">getRealJboltTableByEle</a></li><li><a href="global.html#getScrollBarHeight">getScrollBarHeight</a></li><li><a href="global.html#getScrollBarWidth">getScrollBarWidth</a></li><li><a href="global.html#initJBoltEditableKeyEvent">initJBoltEditableKeyEvent</a></li><li><a href="global.html#jboltEditableEnterKeyProcess">jboltEditableEnterKeyProcess</a></li><li><a href="global.html#jboltEditableFocusTurnDownByDir">jboltEditableFocusTurnDownByDir</a></li><li><a href="global.html#jboltEditableFocusTurnLeftByDir">jboltEditableFocusTurnLeftByDir</a></li><li><a href="global.html#jboltEditableFocusTurnRightByDir">jboltEditableFocusTurnRightByDir</a></li><li><a href="global.html#jboltEditableFocusTurnTableByDir">jboltEditableFocusTurnTableByDir</a></li><li><a href="global.html#jboltEditableFocusTurnUpByDir">jboltEditableFocusTurnUpByDir</a></li><li><a href="global.html#jboltEditableTabKeyProcess">jboltEditableTabKeyProcess</a></li><li><a href="global.html#jboltMainTableRefresh">jboltMainTableRefresh</a></li><li><a href="global.html#jboltTableActiveNextTr">jboltTableActiveNextTr</a></li><li><a href="global.html#jboltTableActivePrevTr">jboltTableActivePrevTr</a></li><li><a href="global.html#jboltTableAppendEmptyRow">jboltTableAppendEmptyRow</a></li><li><a href="global.html#jboltTableAppendRow">jboltTableAppendRow</a></li><li><a href="global.html#jboltTableBatchSetColumn">jboltTableBatchSetColumn</a></li><li><a href="global.html#jboltTableBatchSetColumns">jboltTableBatchSetColumns</a></li><li><a href="global.html#jboltTableCheckAll">jboltTableCheckAll</a></li><li><a href="global.html#jboltTableChooseAndInsert">jboltTableChooseAndInsert</a></li><li><a href="global.html#jboltTableClear">jboltTableClear</a></li><li><a href="global.html#jboltTableCollapseAll">jboltTableCollapseAll</a></li><li><a href="global.html#jboltTableColumnBatchAssignUseTd">jboltTableColumnBatchAssignUseTd</a></li><li><a href="global.html#jboltTableConvertCheckAll">jboltTableConvertCheckAll</a></li><li><a href="global.html#jboltTableCopyCheckedRowAppend">jboltTableCopyCheckedRowAppend</a></li><li><a href="global.html#jboltTableCopyCheckedRowInsertAfter">jboltTableCopyCheckedRowInsertAfter</a></li><li><a href="global.html#jboltTableCopyCheckedRowInsertBefore">jboltTableCopyCheckedRowInsertBefore</a></li><li><a href="global.html#jboltTableCopyCheckedRowPrepend">jboltTableCopyCheckedRowPrepend</a></li><li><a href="global.html#jboltTableExpandAll">jboltTableExpandAll</a></li><li><a href="global.html#jboltTableFilterByKeywords">jboltTableFilterByKeywords</a></li><li><a href="global.html#jboltTableGetAllDatas">jboltTableGetAllDatas</a></li><li><a href="global.html#jboltTableGetCellSelectText">jboltTableGetCellSelectText</a></li><li><a href="global.html#jboltTableGetCheckedCols">jboltTableGetCheckedCols</a></li><li><a href="global.html#jboltTableGetCheckedCount">jboltTableGetCheckedCount</a></li><li><a href="global.html#jboltTableGetCheckedData">jboltTableGetCheckedData</a></li><li><a href="global.html#jboltTableGetCheckedDatas">jboltTableGetCheckedDatas</a></li><li><a href="global.html#jboltTableGetCheckedId">jboltTableGetCheckedId</a></li><li><a href="global.html#jboltTableGetCheckedIds">jboltTableGetCheckedIds</a></li><li><a href="global.html#jboltTableGetCheckedTexts">jboltTableGetCheckedTexts</a></li><li><a href="global.html#jboltTableGetKeepSelectedDatas">jboltTableGetKeepSelectedDatas</a></li><li><a href="global.html#jboltTableGetKeepSelectedIds">jboltTableGetKeepSelectedIds</a></li><li><a href="global.html#jboltTableGetKeepSelectedTexts">jboltTableGetKeepSelectedTexts</a></li><li><a href="global.html#jboltTableGetOneColumnDatas">jboltTableGetOneColumnDatas</a></li><li><a href="global.html#jboltTableGetRowJsonData">jboltTableGetRowJsonData</a></li><li><a href="global.html#jboltTableGetSubmitData">jboltTableGetSubmitData</a></li><li><a href="global.html#jboltTableGetSubmitDataMulti">jboltTableGetSubmitDataMulti</a></li><li><a href="global.html#jboltTableHideBox">jboltTableHideBox</a></li><li><a href="global.html#jboltTableHideFootbox">jboltTableHideFootbox</a></li><li><a href="global.html#jboltTableHideHeadbox">jboltTableHideHeadbox</a></li><li><a href="global.html#jboltTableHideLeftbox">jboltTableHideLeftbox</a></li><li><a href="global.html#jboltTableHideRightbox">jboltTableHideRightbox</a></li><li><a href="global.html#jboltTableInsertAfterRow">jboltTableInsertAfterRow</a></li><li><a href="global.html#jboltTableInsertBeforeRow">jboltTableInsertBeforeRow</a></li><li><a href="global.html#jboltTableInsertEmptyRow">jboltTableInsertEmptyRow</a></li><li><a href="global.html#jboltTableInsertEmptyRowAfterChecked">jboltTableInsertEmptyRowAfterChecked</a></li><li><a href="global.html#jboltTableInsertEmptyRowBeforeChecked">jboltTableInsertEmptyRowBeforeChecked</a></li><li><a href="global.html#jboltTableInsertRow">jboltTableInsertRow</a></li><li><a href="global.html#jboltTableInsertRowAfterChecked">jboltTableInsertRowAfterChecked</a></li><li><a href="global.html#jboltTableInsertRowBeforeChecked">jboltTableInsertRowBeforeChecked</a></li><li><a href="global.html#jboltTableInsertRowsByDialogChooser">jboltTableInsertRowsByDialogChooser</a></li><li><a href="global.html#jboltTableIsCheckedAll">jboltTableIsCheckedAll</a></li><li><a href="global.html#jboltTableIsCheckedNone">jboltTableIsCheckedNone</a></li><li><a href="global.html#jboltTableMaximize">jboltTableMaximize</a></li><li><a href="global.html#jboltTableMenuAddFilterItem">jboltTableMenuAddFilterItem</a></li><li><a href="global.html#jboltTableMenuClearFilter">jboltTableMenuClearFilter</a></li><li><a href="global.html#jboltTableMenuFilter">jboltTableMenuFilter</a></li><li><a href="global.html#jboltTableMenuFilterByKeywords">jboltTableMenuFilterByKeywords</a></li><li><a href="global.html#jboltTableMenuOffsetTopChange">jboltTableMenuOffsetTopChange</a></li><li><a href="global.html#jboltTablePageTo">jboltTablePageTo</a></li><li><a href="global.html#jboltTablePageToFirst">jboltTablePageToFirst</a></li><li><a href="global.html#jboltTablePageToLast">jboltTablePageToLast</a></li><li><a href="global.html#jboltTablePageToNext">jboltTablePageToNext</a></li><li><a href="global.html#jboltTablePageToPrev">jboltTablePageToPrev</a></li><li><a href="global.html#jboltTablePrependEmptyRow">jboltTablePrependEmptyRow</a></li><li><a href="global.html#jboltTablePrependRow">jboltTablePrependRow</a></li><li><a href="global.html#jboltTableProcessTdByDialogChooser">jboltTableProcessTdByDialogChooser</a></li><li><a href="global.html#jboltTableReadByConditions">jboltTableReadByConditions</a></li><li><a href="global.html#jboltTableRefresh">jboltTableRefresh</a></li><li><a href="global.html#jboltTableRefreshs">jboltTableRefreshs</a></li><li><a href="global.html#jboltTableRemove">jboltTableRemove</a></li><li><a href="global.html#jboltTableRemoveCheckedRow">jboltTableRemoveCheckedRow</a></li><li><a href="global.html#jboltTableRemoveKeepSelectedItem">jboltTableRemoveKeepSelectedItem</a></li><li><a href="global.html#jboltTableRemoveRow">jboltTableRemoveRow</a></li><li><a href="global.html#jboltTableReplaceCheckedRow">jboltTableReplaceCheckedRow</a></li><li><a href="global.html#jboltTableSaveFormToTableCurrentActiveTr">jboltTableSaveFormToTableCurrentActiveTr</a></li><li><a href="global.html#jboltTableSetAttrValue">jboltTableSetAttrValue</a></li><li><a href="global.html#jboltTableSetAttrsValue">jboltTableSetAttrsValue</a></li><li><a href="global.html#jboltTableSetCell">jboltTableSetCell</a></li><li><a href="global.html#jboltTableSetCellEditable">jboltTableSetCellEditable</a></li><li><a href="global.html#jboltTableSetCells">jboltTableSetCells</a></li><li><a href="global.html#jboltTableSetCellsEditable">jboltTableSetCellsEditable</a></li><li><a href="global.html#jboltTableSetCheckedId">jboltTableSetCheckedId</a></li><li><a href="global.html#jboltTableSetCheckedIds">jboltTableSetCheckedIds</a></li><li><a href="global.html#jboltTableSetEditableOptions">jboltTableSetEditableOptions</a></li><li><a href="global.html#jboltTableShowBox">jboltTableShowBox</a></li><li><a href="global.html#jboltTableShowColumnConfigDialog">jboltTableShowColumnConfigDialog</a></li><li><a href="global.html#jboltTableShowFootbox">jboltTableShowFootbox</a></li><li><a href="global.html#jboltTableShowHeadbox">jboltTableShowHeadbox</a></li><li><a href="global.html#jboltTableShowLeftbox">jboltTableShowLeftbox</a></li><li><a href="global.html#jboltTableShowRightbox">jboltTableShowRightbox</a></li><li><a href="global.html#jboltTableSubmit">jboltTableSubmit</a></li><li><a href="global.html#jboltTableSubmitConditionsForm">jboltTableSubmitConditionsForm</a></li><li><a href="global.html#jboltTableSubmitMulti">jboltTableSubmitMulti</a></li><li><a href="global.html#jboltTableToggleBox">jboltTableToggleBox</a></li><li><a href="global.html#jboltTableToggleFootbox">jboltTableToggleFootbox</a></li><li><a href="global.html#jboltTableToggleHeadbox">jboltTableToggleHeadbox</a></li><li><a href="global.html#jboltTableToggleLeftbox">jboltTableToggleLeftbox</a></li><li><a href="global.html#jboltTableToggleRightbox">jboltTableToggleRightbox</a></li><li><a href="global.html#jboltTableTrMoveDown">jboltTableTrMoveDown</a></li><li><a href="global.html#jboltTableTrMoveUp">jboltTableTrMoveUp</a></li><li><a href="global.html#jboltTableUncheckAll">jboltTableUncheckAll</a></li><li><a href="global.html#jboltTableUpdateOtherColumns">jboltTableUpdateOtherColumns</a></li><li><a href="global.html#masterTableTrTriggerShowSlave">masterTableTrTriggerShowSlave</a></li><li><a href="global.html#moveDownTreeTableRow">moveDownTreeTableRow</a></li><li><a href="global.html#moveUpTreeTableRow">moveUpTreeTableRow</a></li><li><a href="global.html#processEditableKeyEventDefaultEditorOk">processEditableKeyEventDefaultEditorOk</a></li><li><a href="global.html#processJboltTableVisibleColumnsByThead">processJboltTableVisibleColumnsByThead</a></li><li><a href="global.html#processTreeTableTrAllNodes">processTreeTableTrAllNodes</a></li><li><a href="global.html#refreshJBoltMainTable">refreshJBoltMainTable</a></li><li><a href="global.html#refreshJBoltTable">refreshJBoltTable</a></li><li><a href="global.html#refreshJBoltTableById">refreshJBoltTableById</a></li><li><a href="global.html#refreshJBoltTables">refreshJBoltTables</a></li><li><a href="global.html#removeJBoltTable">removeJBoltTable</a></li><li><a href="global.html#removeJBoltTableCheckedTr">removeJBoltTableCheckedTr</a></li><li><a href="global.html#removeJBoltTables">removeJBoltTables</a></li><li><a href="global.html#resetJBolttableSlaveBox">resetJBolttableSlaveBox</a></li><li><a href="global.html#setJboltTableCheckedId">setJboltTableCheckedId</a></li><li><a href="global.html#setJboltTableCheckedIds">setJboltTableCheckedIds</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed May 24 2023 11:05:28 GMT+0800 (中国标准时间)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
