@@ -100,6 +100,8 @@
 	{@else}
 	<a class="jbolt_table_editbtn" href="#(codeGen.controllerPathWithoutFirstSlash)/edit/#(dataIdStr??)" data-handler="refreshJBoltTable" data-area="#(codeGen.formDialogArea?? '800,600')" data-title="编辑#(codeGen.modelTitle?? (codeGen.pageTitle?? codeGen.mainTableRemark??))"><i class="fa fa-edit"></i></a>
 	{@/if}
+	#else
+	<a class="jbolt_table_editbtn" href="#(codeGen.controllerPathWithoutFirstSlash)/edit/#(dataIdStr??)" data-handler="refreshJBoltTable" data-area="#(codeGen.formDialogArea?? '800,600')" data-title="编辑#(codeGen.modelTitle?? (codeGen.pageTitle?? codeGen.mainTableRemark??))"><i class="fa fa-edit"></i></a>
 	#end
 #end
 #if(codeGen.isCrud && codeGen.isShowOptcolDel)
