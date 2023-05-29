@@ -1,0 +1,71 @@
+
+<div class="jbolt_page_title">
+    <div class="row">
+
+        <div class="col-12 form-inline">
+
+            <div class="col-4">
+                <h3>基础信息</h3>
+            </div>
+
+            <div class="col-8 text-right">
+                ###permission(PermissionKey.permissionKeyName)
+                 ###定义权限控制的按钮
+                ###end
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+
+<form onsubmit="return false;" id="expenseMonthAdjustmentdForm" action="#(action)" method="post">
+#if(expenseMonthAdjustmentd.iautoid??)
+	<input type="hidden" name="expenseMonthAdjustmentd.iautoid" value="#(expenseMonthAdjustmentd.iautoid??)" />
+#end
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">费用月度实绩调整主表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入费用月度实绩调整主表ID" maxlength="19" name="expenseMonthAdjustmentd.iadjustmentmid" value="#(expenseMonthAdjustmentd.iadjustmentmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">部门编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入部门编码" maxlength="20" name="expenseMonthAdjustmentd.cdepcode" value="#(expenseMonthAdjustmentd.cdepcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">科目大类</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入科目大类" maxlength="30" name="expenseMonthAdjustmentd.chighestsubjectcode" value="#(expenseMonthAdjustmentd.chighestsubjectcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">明细科目</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入明细科目" maxlength="30" name="expenseMonthAdjustmentd.clowestsubjectcode" value="#(expenseMonthAdjustmentd.clowestsubjectcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">调整金额</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=3;"  data-notnull="false" placeholder="请输入调整金额"  maxlength="10" name="expenseMonthAdjustmentd.iamount" value="#(expenseMonthAdjustmentd.iamount??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">调整说明</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入调整说明" maxlength="100" name="expenseMonthAdjustmentd.cexplanation" value="#(expenseMonthAdjustmentd.cexplanation??)"/>
+		</div>
+	</div>
+</form>
+</div>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="expenseMonthAdjustmentdForm")
+#end
+

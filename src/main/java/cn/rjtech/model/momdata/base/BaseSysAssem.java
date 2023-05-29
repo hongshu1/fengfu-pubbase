@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 
 /**
  * 组装拆卸及形态转换单
@@ -38,16 +38,6 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
     public static final String AUDITDATE = "AuditDate";
     /**状态 1已保存 2待审批 3已审批 4审批不通过 */
     public static final String STATE = "state";
-    /**删除状态：0. 未删除 1. 已删除*/
-    public static final String ISDELETED = "IsDeleted";
-    /**转换方式*/
-    public static final String TRANSFORMATION = "transformation";
-    /**生产部门名称*/
-    public static final String DEPTNAME = "deptName";
-	/**修改人*/
-	public static final String MODIFYPERSON = "ModifyPerson";
-	/**修改时间*/
-	public static final String MODIFYDATE = "ModifyDate";
 	/**
 	 * 主键ID
 	 */
@@ -284,92 +274,6 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
 	@JSONField(name = "state")
 	public java.lang.String getState() {
 		return getStr("state");
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	public M setIsDeleted(java.lang.Boolean IsDeleted) {
-		set("IsDeleted", IsDeleted);
-		return (M)this;
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=false, maxLength=1, fixed=0, order=15)
-	@JSONField(name = "isdeleted")
-	public java.lang.Boolean getIsDeleted() {
-		return getBoolean("IsDeleted");
-	}
-
-	/**
-	 * 转换方式
-	 */
-	public M setTransformation(java.lang.String transformation) {
-		set("transformation", transformation);
-		return (M)this;
-	}
-
-	/**
-	 * 转换方式
-	 */
-	@JBoltField(name="transformation" ,columnName="transformation",type="String", remark="转换方式", required=false, maxLength=30, fixed=0, order=16)
-	@JSONField(name = "transformation")
-	public java.lang.String getTransformation() {
-		return getStr("transformation");
-	}
-
-	/**
-	 * 生产部门名称
-	 */
-	public M setDeptName(java.lang.String deptName) {
-		set("deptName", deptName);
-		return (M)this;
-	}
-
-	/**
-	 * 生产部门名称
-	 */
-	@JBoltField(name="deptname" ,columnName="deptName",type="String", remark="生产部门名称", required=false, maxLength=30, fixed=0, order=17)
-	@JSONField(name = "deptname")
-	public java.lang.String getDeptName() {
-		return getStr("deptName");
-	}
-
-
-	/**
-	 * 修改人
-	 */
-	public M setModifyPerson(java.lang.String ModifyPerson) {
-		set("ModifyPerson", ModifyPerson);
-		return (M)this;
-	}
-
-	/**
-	 * 修改人
-	 */
-	@JBoltField(name="modifyperson" ,columnName="ModifyPerson",type="String", remark="修改人", required=false, maxLength=30, fixed=0, order=17)
-	@JSONField(name = "modifyperson")
-	public java.lang.String getModifyPerson() {
-		return getStr("ModifyPerson");
-	}
-
-	/**
-	 * 修改时间
-	 */
-	public M setModifyDate(java.util.Date ModifyDate) {
-		set("ModifyDate", ModifyDate);
-		return (M)this;
-	}
-
-	/**
-	 * 修改时间
-	 */
-	@JBoltField(name="modifydate" ,columnName="ModifyDate",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=18)
-	@JSONField(name = "modifydate")
-	public java.util.Date getModifyDate() {
-		return getDate("ModifyDate");
 	}
 
 }

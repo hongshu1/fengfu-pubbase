@@ -1,0 +1,176 @@
+
+<div class="jbolt_page_title">
+	<div class="row">
+
+		<div class="col-12 form-inline">
+
+			<div class="col-4">
+			</div>
+
+			<div class="col-8 text-right">
+				###permission(PermissionKey.permissionKeyName)
+				###定义权限控制的按钮
+				###end
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+<div class="jbolt_page_content">
+
+	<form onsubmit="return false;" id="subjectmForm" action="#(action)" method="post">
+		#if(subjectm.iautoid??)
+		<input type="hidden" name="subjectm.iautoid" value="#(subjectm.iautoid??)" />
+		#end
+		#if(pid??)
+		<input type="hidden" name="subjectm.iParentId" value="#(pid??)" />
+		#end
+		<div class="form-group row">
+			<label class="col-form-label col-sm-2">上级科目</label>
+			<div class="col-md-6 col-lg-4 col-sm-10">
+				<select  data-refresh="true"
+						 data-live-search="true"
+						 readonly="readonly"
+						 class="form-control"
+						 name="csubjectname"
+						 data-text="=上级科目="
+						 data-value=" "
+						 data-select="#(csubjectname?? )"
+						 data-autoload
+						 data-text-attr="csubjectname"
+						 data-value-attr="csubjectname"
+						 data-url="admin/subjectm/options"></select>
+
+			</div>
+
+			<div class="col-auto">
+				<a hidden class="btn btn-danger btn-sm mt-1" data-openpage="dialog" data-target="parent" data-area="1080,750" href="admin/subjectm/add" tooltip data-title="添加新上级资源"><i class="fa fa-plus"></i></a>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">科目等级</label>
+			<div class="col">
+				#if(clevel??)
+				<input type="text" data-with-clearbtn="true" style="width:40%"  autocomplete="off"  class="form-control"    readonly="readonly"  maxlength="30" name="subjectm.clevel" value="#(clevel??)"/>
+				#else
+				<input type="text" data-with-clearbtn="true" style="width:40%"  autocomplete="off"  class="form-control"    readonly="readonly"  maxlength="30" name="subjectm.clevel" value="#(subjectm.clevel??)"/>
+				#end
+			</div>
+
+		</div>
+		#if(cversion??)
+		<div class="form-group row">
+
+			<label class="col-sm-2 col-form-label">版本号</label>
+			<div class="col">
+				<input type="text" data-with-clearbtn="true" style="width:40%"  autocomplete="off"  class="form-control" readonly="readonly" maxlength="30" name="cversion" value="#(cversions ??)"/>
+			</div>
+		</div>
+		#end
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">科目编码</label>
+			<div class="col">
+				<input type="text" data-with-clearbtn="true" style="width:40%"  autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入科目编码" maxlength="30" name="subjectm.csubjectcode" value="#(subjectm.csubjectcode??)"/>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">科目名称</label>
+			<div class="col">
+				<input type="text" data-with-clearbtn="true" style="width:40%"  autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入科目名称" maxlength="30" name="subjectm.csubjectname" value="#(subjectm.csubjectname??)"/>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">U8末级科目</label>
+			<div class="col input-group">
+				<!-- <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" id="codename"   placeholder="选择对应U8末级科目" maxlength="200" name="ccodename" value="#(ccodename??)"/> -->
+				<input type="text" autocomplete="off" class="form-control" 
+					data-autocomplete 
+					id="codename"
+					data-rule="required"
+					data-url="/admin/subjectm/u8SubjectAutocomplete"  
+					data-hiddeninput="ccode,ccode_name" 
+					data-text-attr="ccode_name"
+					data-header="末级科目编码,末级科目名称"
+					data-column-attr="ccode,ccode_name" 
+					placeholder="选择对应U8末级科目"  data-tips="选择对应U8末级科目"  maxlength="40" 
+					value="#(ccodename??)">				
+				<div class="input-group-append">
+					<button id="u8code" class="form-control" data-dialogbtn data-area="80%,100%" data-scroll="yes" data-title="选择对应U8末级科目"
+							data-url="admin/subjectm/minSubjectsList/"><i class="fa fa-search mr-1"></i></button>
+				</div>
+				<input type="hidden" id="ccode" data-value-attr="ccode" name="ccode" autocomplete="off" value="#(ccode??)"/>
+				<input type="hidden" id="ccode_name" data-value-attr="ccode_name" name="ccodename" autocomplete="off" value="#(ccodename??)"/>				
+				<!-- <input  data-with-clearbtn="true" type="hidden" autocomplete="off"  class="form-control" id="ccode"    maxlength="200" name="ccode" value="#(ccode??)"/>
+				<input  data-with-clearbtn=" " type="hidden" autocomplete="off"  class="form-control"    /> -->
+			</div>
+		</div>
+		<div class="form-group row"
+			 data-radio
+			 data-rule="radio"
+			 data-value="#(subjectm.isend??)"
+			 data-name="subjectm.isend"
+			 data-default="options_first"
+			 data-width="col-sm-2,col"
+		>
+			<div class="col"  style="padding-top: 1px;">
+				<label class="col-sm-2 col-form-label" >是否末级</label>
+				<div class="radio radio-primary  radio-inline">
+					<div class="radio radio-primary  radio-inline">
+						<input onclick="judge()"   id="r_isend_false"   type="radio" name="subjectm.isend" value="false" />
+						<label for="r_isend_false">否</label>
+					</div>
+					<input   id="r_isend_true" onclick="judge()" type="radio" name="subjectm.isend" value="true"/>
+					<label for="r_isend_true">是</label>
+				</div>
+				<input  hidden id="isend"  type="text"  value="#(subjectm.isend ??'')"/>
+			</div>
+		</div>
+	</form>
+</div>
+#define js()
+<script>
+
+	function selectSubject(code,codename) {
+		$("#codename").val(codename);
+		$("#ccode_name").val(codename);
+		$("#ccode").val(code);
+		layer.close(layer.index);
+	}
+	function judge(){
+		//判断是否选择是否末级
+		let val1 = $('input:radio:checked').val();
+		let elementById = document.getElementById("isend").value;
+		if (elementById === '') {
+			document.getElementById("codename").disabled=true;
+			document.getElementById("u8code").disabled=true;
+		}
+		//编辑
+		if (elementById==='true'){
+			document.getElementById("codename").disabled=false;
+			document.getElementById("u8code").disabled=false;
+			console.log(val1);
+		} if (elementById==='false') {
+			document.getElementById("codename").disabled=true;
+			document.getElementById("u8code").disabled=true;
+			console.log(val1);
+		}
+		//新增
+		if (val1==='true'){
+			document.getElementById("codename").disabled=false;
+			document.getElementById("u8code").disabled=false;
+			console.log(val1);
+		} if (val1==='false') {
+			document.getElementById("codename").disabled=true;
+			document.getElementById("u8code").disabled=true;
+			console.log(val1);
+		}
+
+
+
+	}
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="subjectmForm")
+#end
+

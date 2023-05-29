@@ -1,0 +1,178 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" id="jbolttable_mspage_#(pageId)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto text-left">
+                <form class="form-inline" id="expenseBudgetDifferencesForm_#(pageId)"   onsubmit="return false;" method="post">
+                	<input  type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" class="form-control"
+                           data-rule="required" placeholder="=年份=" data-tips="=年份=" maxlength="10" name="ibudgetyear">
+                    <select class="form-control"
+                            data-select-type="select2"
+                            data-autoload
+                            data-tips="U8部门"
+                            data-url="admin/department/getTreeTableDatas"
+                            data-text="=U8部门="
+                            data-text-attr="cdepname"
+                            data-value-attr="cdepcode"
+                            data-setvalueto="cdepcode"
+                            data-value=""
+                            name="cdepcode"
+                            data-width="250">
+                    </select>
+                  	<!--   <input type="text" autocomplete="off"  class="form-control"  placeholder="=科目大类=" name="keywords" value="" />
+                    <input type="text" autocomplete="off"  class="form-control"  placeholder="=明细科目=" name="suject" value="" /> -->
+                    <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                    <!-- <input hidden type="text" id="ibudgettype"  value="#(ibudgettype)" autocomplete="off" />
+                    <div class="form-group row"
+                         data-checkbox
+                         data-rule="checkbox"
+                         data-value="#(ibudgettype??)"
+                         data-hidden-input="ibudgettype"
+                         data-name="ibudgettype"
+                         data-default="1,2,3,4,5" >
+                        <dd>预算类型：</dd>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c1" type="checkbox" name="ibudgettype"   value="1"/>
+                            <label for="c1">全年预算a</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c2" type="checkbox" name="ibudgettype"   value="2"/>
+                            <label for="c2">下半年修订b</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c3" type="checkbox" name="ibudgettype" value="3"/>
+                            <label for="c3">月度实行计划c</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c4" type="checkbox" name="ibudgettype"   value="4"/>
+                            <label for="c4">实绩预测d</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c5" type="checkbox" name="ibudgettype"   value="5"/>
+                            <label for="c5">实绩e</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c6" type="checkbox" name="ibudgettype"   value="6"/>
+                            <label for="c6">差异A（b-a）</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c7" type="checkbox" name="ibudgettype"   value="7"/>
+                            <label for="c7">差异B（c-a）</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c8" type="checkbox" name="ibudgettype"   value="8"/>
+                            <label for="c8">差异C（c-b）</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c9" type="checkbox" name="ibudgettype"   value="9"/>
+                            <label for="c9">差异D（c-d）</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c10" type="checkbox" name="ibudgettype"   value="10"/>
+                            <label for="c10">差异E（d-a）</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c11" type="checkbox" name="ibudgettype"   value="11"/>
+                            <label for="c11">差异F（d-b）</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c12" type="checkbox" name="ibudgettype"   value="12"/>
+                            <label for="c12">差异H（e-b）</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c13" type="checkbox" name="ibudgettype"   value="13"/>
+                            <label for="c13">差异I（e-c）</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c14" type="checkbox" name="ibudgettype"   value="14"/>
+                            <label for="c14">差异J（e-d）</label>
+                        </div>
+                        <button onclick="typeSelection(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-confirm"></i>确定</button>
+                    </div> -->
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<script type="text/template" id="expenseBudgetDifferencesRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${data.chighestsubjectname}</td>
+<td>${data.clowestsubjectname}</td>
+<td>$${data.ibudgettype|iBudgetType2}</td>
+<td>${data.imonthamount1|kFormat}</td>
+<td>${data.imonthamount2|kFormat}</td>
+<td>${data.imonthamount3|kFormat}</td>
+<td>${data.imonthamount4|kFormat}</td>
+<td>${data.imonthamount5|kFormat}</td>
+<td>${data.imonthamount6|kFormat}</td>
+<td>${data.imonthamount7|kFormat}</td>
+<td>${data.imonthamount8|kFormat}</td>
+<td>${data.imonthamount9|kFormat}</td>
+<td>${data.imonthamount10|kFormat}</td>
+<td>${data.imonthamount11|kFormat}</td>
+<td>${data.imonthamount12|kFormat}</td>
+<td>${data.ifirsthalfofyear|kFormat}</td>
+<td>${data.isecondhalfofyear|kFormat}</td>
+<td>${data.iallofyear|kFormat}</td>
+</tr>
+{@/each}
+</script>
+        <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
+               data-jbolttable
+               data-autoload="false"
+               id="jbolt_Table_#(pageId)"
+               data-height="fill"
+               data-ajax="true"
+               data-width="auto"
+               data-url="admin/expensebudgetitem/differencesManagementDatas"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="expenseBudgetDifferencesForm_#(pageId)"
+               data-rowtpl="expenseBudgetDifferencesRowtpl_#(pageId)"
+               data-ajax-success-handler="ajaxSuccessHandler_#(pageId)"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="150" data-column="chighestsubjectname">科目大类</th>
+                <th data-width="150" data-column="clowestsubjectname">明细科目</th>
+                <th data-width="150" data-column="ibudgettype">预算类型</th>
+                <th data-width="100" data-column="imonthamount1">1月</th>
+                <th data-width="100" data-column="imonthamount2">2月</th>
+                <th data-width="100" data-column="imonthamount3">3月</th>
+                <th data-width="100" data-column="imonthamount4">4月</th>
+                <th data-width="100" data-column="imonthamount5">5月</th>
+                <th data-width="100" data-column="imonthamount6">6月</th>
+                <th data-width="100" data-column="imonthamount7">7月</th>
+                <th data-width="100" data-column="imonthamount8">8月</th>
+                <th data-width="100" data-column="imonthamount9">9月</th>
+                <th data-width="100" data-column="imonthamount10">10月</th>
+                <th data-width="100" data-column="imonthamount11">11月</th>
+                <th data-width="100" data-column="imonthamount12">12月</th>
+                <th data-width="100" data-column="ifirsthalfofyear">上半年</th>
+                <th data-width="100" data-column="isecondhalfofyear">下半年</th>
+                <th data-width="100" data-column="iallofyear">全年合计</th>
+            </tr>
+            </thead>
+            <tbody id="datatr1">
+            </tbody>
+        </table>
+
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+function ajaxSuccessHandler_#(pageId)(table) {
+	   $('.jbolt_table').tablesMergeCell({
+	      cols: [1,2]
+	   })
+}
+</script>
+#end
+

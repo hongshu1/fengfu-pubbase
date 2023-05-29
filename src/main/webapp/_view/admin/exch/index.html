@@ -1,124 +1,137 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page" data-key="#(pmkey)" >
+
 <div class="jbolt_page_title">
-<div class="row">
-	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>汇率档案</h1></div>
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>币种汇率档案</h1>
+	</div>
 	<div class="col">
-	<form class="form-inline" id="Exch_form_#(pageId)">
+		<form class="form-inline" id="exchForm_#(pageId)"   onsubmit="return false;" method="post">
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
-
-<select class="form-control" name="itype"
-	data-autoload
-	data-url="admin/dictionary/options?key=null"
-	data-select-type="select"
-	data-text="=汇率类型="
-	data-value=""
-	data-value-attr="sn"
-	></select>
-
-<select class="form-control" name="isDeleted"
-	data-autoload
-	data-url="admin/dictionary/options?key=options_enable"
-	data-select-type="select"
-	data-text="=删除状态;0. 未删除 1. 已删除="
-	data-value=""
-	data-value-attr="sn"
-	></select>
-		<div class="btn-group text-center mx-1">
-			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
-			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
-		</div>
-	</form>
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
 	</div>
-	<div class="col-sm-auto text-right">
-	
-	
-	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
-	
-	
+	<div class="col-md-auto">
 	</div>
-</div>
+	</div>
 </div>
 <div class="jbolt_page_content">
-<!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="Exch_tpl_#(pageId)">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="exchRowtpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iAutoId}">
+<tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.iAutoId}</td>
-<td>${data.iOrgId}</td>
-<td>${data.cOrgCode}</td>
-<td>${data.cOrgName}</td>
-<td>${data.cexch_name}</td>
+<td>${data.iorgid}</td>
+<td>${data.corgcode}</td>
+<td>${data.corgname}</td>
+<td>${data.cexchname}</td>
 <td>${data.iperiod}</td>
 <td>${data.itype}</td>
 <td>${data.cdate}</td>
 <td>${data.nflat}</td>
-<td>${data.iYear}</td>
-<td>${data.iSource}</td>
-<td>${data.iSourceId}</td>
-<td>${data.iCreateBy}</td>
-<td>${data.cCreateName}</td>
-<td>${data.dCreateTime}</td>
-<td>${data.iUpdateBy}</td>
-<td>${data.cUpdateName}</td>
-<td>${data.dUpdateTime}</td>
-<td><img data-switchbtn data-confirm="确定切换删除状态;0. 未删除 1. 已删除？" data-value="${data.isDeleted}"  data-handler="refreshJBoltTable"  data-url="admin/exch/toggleIsDeleted/${data.iAutoId}"/></td>
+<td>${data.iyear}</td>
+<td>${data.isource}</td>
+<td>${data.isourceid}</td>
+<td>${data.icreateby}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+<td>${data.iupdateby}</td>
+<td>${data.cupdatename}</td>
+<td>${data.dupdatetime}</td>
+<td><img data-switchbtn data-confirm="确定切换删除状态;0. 未删除 1. 已删除？" data-value="${data.isdeleted}"  data-handler="refreshJBoltTable"  data-url="admin/exch/toggleIsdeleted/${data.id}"/></td>
+<td>
+	<a href="admin/exch/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改币种汇率档案" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+    <a href="admin/exch/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+</td>
 </tr>
 {@/each}
 </textarea>
-<div class="jbolt_table_toolbar" id="Exch_toolbar_#(pageId)">
-<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="exch_toolbar_#(pageId)">
+	<div class="" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增币种汇率档案"  data-url="admin/exch/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改币种汇率档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/exch/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/exch/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
 </div>
 
-</div>
-<table class="jbolt_table jbolt_main_table  table-center "
-	   data-jbolttable
-	   data-width="fill"
-	   data-height="fill"
-	   data-ajax="true"
-	   data-conditions-form="Exch_form_#(pageId)"
-	   data-url="admin/exch/datas"
-	   data-rowtpl="Exch_tpl_#(pageId)"
-	   data-copy-to-excel="false"
-	   data-page="Exch_page"
-	   data-toolbar="Exch_toolbar_#(pageId)"
+
+
+<table class="jbolt_table jbolt_main_table table-center hover_info"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/exch/datas"
+data-column-resize="true"
+data-row-click-active="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="exchForm_#(pageId)"
+data-rowtpl="exchRowtpl_#(pageId)"
+data-page="exchPage_#(pageId)"
+data-toolbar="exch_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+data-fixed-columns-right="-1"
+data-row-dblclick-active="true"
+data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 >
-<thead class="fw-normal" >
+<thead>
 <tr>
-<th data-width="60" data-column="index">序号</th>
-	<th  data-width="100" data-column="iAutoId">主键ID[1]</th>
-	<th  data-width="100" data-column="iOrgId">组织ID[2]</th>
-	<th  data-width="150" data-column="cOrgCode">组织编码[3]</th>
-	<th  data-width="150" data-column="cOrgName">组织名称[4]</th>
-	<th  data-width="150" data-column="cexch_name">币种名称[5]</th>
-	<th  data-width="100" data-column="iperiod">会计期间[6]</th>
-	<th  data-width="100" data-column="itype">汇率类型[7]</th>
-	<th  data-width="150" data-column="cdate">日期[8]</th>
-	<th  data-width="100" data-column="nflat">汇率[9]</th>
-	<th  data-width="100" data-column="iYear">年[10]</th>
-	<th  data-width="100" data-column="iSource">来源;1. MES 2. U8[11]</th>
-	<th  data-width="150" data-column="iSourceId">来源ID[12]</th>
-	<th  data-width="100" data-column="iCreateBy">创建人ID[13]</th>
-	<th  data-width="150" data-column="cCreateName">创建人名称[14]</th>
-	<th  data-min-width="160" data-column="dCreateTime">创建时间[15]</th>
-	<th  data-width="100" data-column="iUpdateBy">更新人ID[16]</th>
-	<th  data-width="150" data-column="cUpdateName">更新人名称[17]</th>
-	<th  data-min-width="160" data-column="dUpdateTime">更新时间[18]</th>
-	<th  data-width="100" data-column="isDeleted">删除状态;0. 未删除 1. 已删除[19]</th>
-
+	<th data-width="60">序号</th>
+	<th data-min-width="150" data-column="iOrgId">组织ID</th>
+	<th data-width="150" data-column="cOrgCode">组织编码</th>
+	<th data-width="150" data-column="cOrgName">组织名称</th>
+	<th data-width="150" data-column="cexch_name">币种名称</th>
+	<th data-width="150" data-column="iperiod">会计期间</th>
+	<th data-width="150" data-column="itype">汇率类型</th>
+	<th data-width="150" data-column="cdate">日期</th>
+	<th data-width="150" data-column="nflat">汇率</th>
+	<th data-width="150" data-column="iYear">年</th>
+	<th data-width="150" data-column="iSource">来源;1. MES 2. U8</th>
+	<th data-width="150" data-column="iSourceId">来源ID</th>
+	<th data-width="150" data-column="iCreateBy">创建人ID</th>
+	<th data-width="150" data-column="cCreateName">创建人名称</th>
+	<th data-width="150" data-column="dCreateTime">创建时间</th>
+	<th data-width="150" data-column="iUpdateBy">更新人ID</th>
+	<th data-width="150" data-column="cUpdateName">更新人名称</th>
+	<th data-width="150" data-column="dUpdateTime">更新时间</th>
+	<th data-width="150" data-column="isDeleted">删除状态;0. 未删除 1. 已删除</th>
+	<th data-width="100">操作</th>
 </tr>
 </thead>
-<tbody></tbody>
+<tbody>
+</tbody>
 </table>
+
+
+
 </div>
 </div>
 #end
 
 #define js()
 <script type="text/javascript">
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/admin/exch/edit/' + rowData.iautoid)
+			.data('area', '1200,800')
+			.data('title', '币种汇率档案')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
 </script>
 #end

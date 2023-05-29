@@ -232,7 +232,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         tx(() -> {
             
             // 新增
-            if (ObjUtil.isNull(weekOrderM)) {
+            if (ObjUtil.isNull(weekOrderM.getIAutoId())) {
                 doSave(weekOrderM, jBoltTable, now);
             } else {
                 doUpdate(weekOrderM, jBoltTable, now);

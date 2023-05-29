@@ -12,6 +12,8 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.SysAssem;
+import cn.rjtech.model.momdata.SysAssemdetail;
+import cn.rjtech.model.momdata.SysOtherindetail;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -19,6 +21,8 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -48,7 +52,7 @@ public class SysAssemService extends BaseService<SysAssem> {
 	 * @param pageSize   每页几条数据
 	 * @param keywords   关键词
      * @param BillType 单据类型;采购PO  委外OM
-     * @param state 状态 1已保存 2待审批 3已审批 4审批不通过 
+     * @param state 状态 1已保存 2待审批 3已审批 4审批不通过
      * @param IsDeleted 删除状态：0. 未删除 1. 已删除
 	 * @return
 	 */
@@ -198,14 +202,10 @@ public class SysAssemService extends BaseService<SysAssem> {
 				sysotherin.setOrganizeCode(getOrgCode());
 				sysotherin.setCreatePerson(user.getName());
 				sysotherin.setCreateDate(now);
-				sysotherin.setModifyPerson(user.getName());
 				sysotherin.setState("1");
-				sysotherin.setModifyDate(now);
 				//主表新增
 				ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
 			}else{
-				sysotherin.setModifyPerson(user.getName());
-				sysotherin.setModifyDate(now);
 				//主表修改
 				ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
 			}
@@ -225,64 +225,75 @@ public class SysAssemService extends BaseService<SysAssem> {
 	private void saveTableSubmitDatas(JBoltTable jBoltTable,SysAssem sysotherin){
 		List<Record> list = jBoltTable.getSaveRecordList();
 		if(CollUtil.isEmpty(list)) return;
+		User user = JBoltUserKit.getUser();
 		Date now = new Date();
+		ArrayList<SysAssemdetail> sysAssemdetails = new ArrayList<>();
 		for (int i=0;i<list.size();i++) {
 			Record row = list.get(i);
-			row.set("IsDeleted", "0");
-			row.set("MasID", sysotherin.getAutoID());
-			row.set("AutoID", JBoltSnowflakeKit.me.nextId());
-			row.set("CreateDate", now);
-			row.set("ModifyDate", now);
-//			row.set("inventorycode",row.get("cinvcode"));
-//			row.set("inventorycodeh",row.get("cinvcodeh"));
-			row.remove("caddress");
-			row.remove("cversion");
-			row.remove("cinvcode2");
-			row.remove("cinvcode1");
-			row.remove("cinvname1");
-			row.remove("cinvname2");
-			row.remove("caddressh");
-			row.remove("cversionh");
-			row.remove("cinvcode2h");
-			row.remove("cinvcode1h");
-			row.remove("cinvname1h");
-			row.remove("cinvname2h");
+			SysAssemdetail sysAssemdetail = new SysAssemdetail();
+			sysAssemdetail.setMasID(sysotherin.getAutoID());
+			sysAssemdetail.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
+			sysAssemdetail.setCreateDate(now);
+			sysAssemdetail.setModifyDate(now);
+			sysAssemdetail.setCreatePerson(user.getName());
+			sysAssemdetail.setModifyPerson(user.getName());
+			sysAssemdetail.setBarcode(row.get("barcode"));
+			sysAssemdetail.setSourceBillNoRow(row.get("sourcebillnorow"));
+			sysAssemdetail.setQty(new BigDecimal(row.get("qty").toString()));
+			sysAssemdetail.setSourceType(row.getStr("sourcebilltype"));
+			sysAssemdetail.setSourceBillNo(row.getStr("sourcebillno"));
+			sysAssemdetail.setSourceBillDid(row.getStr("sourcebilldid"));
+			sysAssemdetail.setSourceBillID(row.getStr("sourcebilldid"));
+			sysAssemdetail.setAssemType(row.getStr("assemtype"));
+			sysAssemdetail.setWhCode(row.getStr("whcode"));
+			sysAssemdetail.setPosCode(row.getStr("poscode"));
+			sysAssemdetail.setCombinationNo(Integer.valueOf(row.getStr("combinationno")==null ? "0" : row.getStr("combinationno")));
+			sysAssemdetail.setRowNo(Integer.valueOf(row.getStr("rowno")==null ? "0" : row.getStr("rowno")));
+			sysAssemdetail.setTrackType(row.getStr("tracktype"));
+			sysAssemdetail.setMemo(row.getStr("memo"));
 
+			sysAssemdetails.add(sysAssemdetail);
 		}
-		sysassemdetailservice.batchSaveRecords(list);
+		sysassemdetailservice.batchSave(sysAssemdetails);
 	}
 	//可编辑表格提交-修改数据
 	private void updateTableSubmitDatas(JBoltTable jBoltTable,SysAssem sysotherin){
 		List<Record> list = jBoltTable.getUpdateRecordList();
 		if(CollUtil.isEmpty(list)) return;
+		User user = JBoltUserKit.getUser();
 		Date now = new Date();
+		ArrayList<SysAssemdetail> sysAssemdetails = new ArrayList<>();
 		for(int i = 0;i < list.size(); i++){
 			Record row = list.get(i);
-			row.set("ModifyDate", now);
+			SysAssemdetail sysAssemdetail = new SysAssemdetail();
+			sysAssemdetail.setMasID(sysotherin.getAutoID());
+			sysAssemdetail.setModifyDate(now);
+			sysAssemdetail.setModifyPerson(user.getName());
+			sysAssemdetail.setBarcode(row.get("barcode"));
+			sysAssemdetail.setSourceBillNoRow(row.get("sourcebillnorow"));
+			sysAssemdetail.setQty(new BigDecimal(row.get("qty").toString()));
+			sysAssemdetail.setSourceType(row.getStr("sourcebilltype"));
+			sysAssemdetail.setSourceBillNo(row.getStr("sourcebillno"));
+			sysAssemdetail.setSourceBillDid(row.getStr("sourcebilldid"));
+			sysAssemdetail.setSourceBillID(row.getStr("sourcebilldid"));
+			sysAssemdetail.setAssemType(row.getStr("assemtype"));
+			sysAssemdetail.setWhCode(row.getStr("whcode"));
+			sysAssemdetail.setPosCode(row.getStr("poscode"));
+			sysAssemdetail.setCombinationNo(Integer.valueOf(row.getStr("combinationno")));
+			sysAssemdetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
+			sysAssemdetail.setTrackType(row.getStr("tracktype"));
+			sysAssemdetail.setMemo(row.getStr("memo"));
 
-			row.remove("caddress");
-			row.remove("cversion");
-			row.remove("cinvcode2");
-			row.remove("cinvcode1");
-			row.remove("cinvname1");
-			row.remove("cinvname2");
-			row.remove("caddressh");
-			row.remove("cversionh");
-			row.remove("cinvcode2h");
-			row.remove("cinvcode1h");
-			row.remove("cinvname1h");
-			row.remove("cinvname2h");
+			sysAssemdetails.add(sysAssemdetail);
 
 		}
-		sysassemdetailservice.batchUpdateRecords(list);
+		sysassemdetailservice.batchUpdate(sysAssemdetails);
 	}
 	//可编辑表格提交-删除数据
 	private void deleteTableSubmitDatas(JBoltTable jBoltTable){
 		Object[] ids = jBoltTable.getDelete();
 		if(ArrayUtil.isEmpty(ids)) return;
-		for (Object id : ids) {
-			update("update T_Sys_AssemDetail  set  IsDeleted = 1 where  AutoID = ?",id);
-		}
+		sysassemdetailservice.deleteByIds(ids);
 	}
 
 	public List<Record> getdictionary(Kv kv) {
@@ -296,5 +307,7 @@ public class SysAssemService extends BaseService<SysAssem> {
 	public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode) {
 		return dbTemplate("sysassem.getBarcodeDatas",Kv.by("q", q).set("limit",limit).set("orgCode",orgCode)).find();
 	}
+
+
 
 }

@@ -198,5 +198,12 @@ public class PersonAdminController extends BaseAdminController {
         }
         renderJson(service.importExcelDatas(files, getKv()));
     }
-    
+    @UnCheck
+    public void autocomplete() {
+        renderJsonData(service.getAutocompleteList(get("q"), getInt("limit", 10), true, "cPsn_Num,cPsn_Name"));
+    }
+    @UnCheck
+    public void autocompleteWithDept() {
+        renderJsonData(service.getAutocompleteListWithDept(get("cdepcode"),get("q"), getInt("limit", 10)));
+    }
 }

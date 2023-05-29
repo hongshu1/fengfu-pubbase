@@ -1,0 +1,89 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto text-left">
+	<h1>项目卡片</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="projectCardForm_#(pageId)"   onsubmit="return false;" method="post">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="projectCardRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iorgid}</td>
+<td>${data.corgcode}</td>
+<td>${data.iservicetype}</td>
+<td>${data.ccode}</td>
+<td>${data.istatus}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="projectCard_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="700,800"  data-handler="jboltTablePageToFirst" data-title="新增项目卡片"  data-url="admin/projectcard/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-area="700,800"  data-handler="refreshJBoltTable" data-title="修改项目卡片" data-check-handler="jboltTableGetCheckedId" data-url="admin/projectcard/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/projectcard/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-width="auto"
+data-url="admin/projectcard/datas"
+data-column-resize="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="projectCardForm_#(pageId)"
+data-rowtpl="projectCardRowtpl_#(pageId)"
+data-page="projectCardPage_#(pageId)"
+data-pagesize="50"
+data-toolbar="projectCard_toolbar_#(pageId)"
+
+
+
+
+data-fixed-columns-left="1,2,3"
+>
+<thead class="fw-normal">
+<tr>
+	<th data-width="60">序号</th>
+	<th data-min-width="150" data-column="iOrgId">组织ID</th>
+	<th data-width="150" data-column="cOrgCode">组织编码</th>
+	<th data-width="150" data-column="iServiceType">业务类型</th>
+	<th data-width="150" data-column="cCode">资料编码</th>
+	<th data-width="150" data-column="iStatus">状态(1.未完成,2.已完成)</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+

@@ -233,5 +233,7 @@ public class PurchaseTypeService extends BaseService<PurchaseType> {
 		//这里用来覆盖 检测PurchaseType是否被其它表引用
 		return null;
 	}
+	
+
 
 }
