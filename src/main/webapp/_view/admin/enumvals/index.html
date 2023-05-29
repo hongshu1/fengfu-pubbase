@@ -1,0 +1,179 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>系统管理-枚举值</h1></div>
+	<form class="form-inline" id="EnumVals_form_#(pageId)">
+		<h5>选择分类：
+		<!--<select class="form-control" name="iEnumTypeId"-->
+				<!--data-autoload-->
+				<!--data-url="admin/dictionary/options?key=null"-->
+				<!--data-select-type="select"-->
+				<!--data-text="=枚举类型ID="-->
+				<!--data-value=""-->
+				<!--data-value-attr="sn"-->
+		<!--&gt;</select>-->
+			<select class="form-control"
+			name="iEnumTypeId"
+			data-autoload
+			data-text="=请选择分类="
+			data-url="admin/enumType/options"
+			data-select-type="select"
+			data-value-attr="cenumtypecode"
+			data-text-attr="cenumtypename">
+			</select>
+		<div class="btn-group text-center mx-1">
+			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 搜索</button>
+			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
+		</div></h5>
+	</form>
+
+	<!--<div class="col">-->
+	<!--</div>-->
+	<div class="col-sm-auto text-right">
+
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="EnumVals_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+	<td>
+	{@if data.iautoid}
+	<!--<a class="jbolt_table_btn" onclick="submitThisForm()" data-handler="refreshJBoltTable" data-title="保存行"><i class=""></i>保存01</a>-->
+	<a class="jbolt_table_editbtn" href="admin/enumVals/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑系统管理-枚举值"><i class=""></i>编辑</a>
+	<a class="jbolt_table_delbtn" href="admin/enumVals/delete/${data.iautoid}" data-handler="refreshJBoltTable" ><i class=""></i>删除</a>
+	{@else}
+	<a class="jbolt_table_btn" onclick="submitThisForm()" data-handler="refreshJBoltTable" data-title="保存行"><i class=""></i>保存</a>
+	<a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">取消</a>
+	{@/if}
+	</td>
+<td>${data.ienumtypeid}</td>
+<td>${data.cenumtypename}</td>
+<td>${data.cenumcode}</td>
+<td>${data.cenumname}</td>
+</tr>
+{@/each}
+</textarea>
+
+
+
+
+<div class="jbolt_table_toolbar" id="EnumVals_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增系统管理-枚举值" data-url="admin/enumVals/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="" data-url="admin/enumType/index" class="btn btn-outline-primary" ><i class="fa fa-edit"></i> 分类管理</button>
+	<button onclick="jboltTableInsertEmptyRow(this)" data-handler="refreshJBoltTable" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
+	<!--<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>-->
+</div>
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   id="jbolt_table_#(pageId)"
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="EnumVals_form_#(pageId)"
+	   data-url="admin/enumVals/datas"
+	   data-rowtpl="EnumVals_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="EnumVals_page"
+	   data-pagesize-options="10,20,50,100"
+	   data-column-resize="true"
+	   data-editable="true"
+	   data-toolbar="EnumVals_toolbar_#(pageId)"
+	   data-editable-option="getEditableTableOptions_#(pageId)"
+	>
+
+	<thead class="fw-normal" >
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="80">操作</th>
+	<th data-width="100" data-column="iEnumTypeId">分类编码</th>
+	<th data-width="100" data-column="cenumtypename">分类名称</th>
+	<th data-width="150" data-column="cEnumCode">枚举编码</th>
+	<th data-width="150" data-column="cEnumName">枚举值</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+    function submitThisForm() {
+        jboltTableSubmit("#jbolt_table_#(pageId)");
+    }
+
+    //获得配置参数
+    function getEditableTableOptions_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "dblclick",
+            submit: {
+//                withForm: ["EnumVals_form_"],
+                type: "all",
+                url: "/admin/enumVals/submitAll",
+                success: function (res, table, td) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success(res.msg, 1000, function () {
+                            parent.LayerMsgBox.closeAll();
+                            parent.refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid",
+                },
+//                iEnumTypeId: {
+//                    type: "",
+//                    url: "admin/enumType/options",
+//                    placeholder: "请选择",
+//                    textAttr: "cenumtypecode,cenumtypename",
+//                    valueAttr: "cenumtypecode",
+//                    submitAttr: "ienumtypeid",
+//					value:"cenumtypecode",
+//                    required: false
+//                },
+                cenumtypename: {
+                    type: "select",
+                    url: "admin/enumType/options",
+                    placeholder: "请选择",
+                    textAttr: "cenumtypecode,cenumtypename",
+                    valueAttr: "cenumtypecode",
+                    submitAttr: "ienumtypeid",
+                    value:"cenumtypecode",
+                    required: false
+                },
+                cEnumCode: {
+                    type: "input",
+                    maxLength: 100,
+                    placeholder: "请输入",
+                    submitAttr: "cenumcode",
+                    required: true
+                },
+                cEnumName: {
+                    type:"input",
+                    placeholder:"备注",
+                    required: true,
+                    submitAttr: "cenumname"
+                }
+
+            }
+
+        };
+        return editableTableOptions;
+    }
+</script>
+#end
