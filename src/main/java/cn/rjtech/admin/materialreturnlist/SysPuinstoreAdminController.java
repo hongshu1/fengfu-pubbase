@@ -81,7 +81,11 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		String autoid = puinstore.getAutoID();
+		String OrgCode = getOrgCode();
+		Record puinstoreName = service.getstockoutQcFormMList(autoid,OrgCode);
 		set("type", get("type"));
+		set("puinstoreName",puinstoreName);
 		set("puinstore",puinstore);
 		render("edit.html");
 	}

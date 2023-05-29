@@ -92,9 +92,17 @@ SELECT
     i.cInvCode,
     i.cInvName,
     i.cInvCode1,
-    i.cInvName1
+    i.cInvName1,
+
+    t1.RdCode,
+    t5.cRdName,
+    t1.BillType,
+    t8.cPTName,
+    t1.DeptCode,
+    t7.cDepName,
+    t1.VenCode,
+    t6.cVenName
 FROM
-    T_Sys_PUInStore t1,
     T_Sys_PUInStoreDetail t2
         LEFT JOIN (
         SELECT
@@ -120,9 +128,15 @@ FROM
     ) t4 ON t2.spotTicket = t4.cbarcode
         LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
-        LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
+        LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid,
+    T_Sys_PUInStore t1
+	left join Bd_Rd_Style t5 on t1.RdCode = t5.cRdCode
+    left join Bd_Department t7 on t1.DeptCode = t7.cDepCode
+    left join Bd_PurchaseType t8 on t1.BillType = t8.iAutoId
+    left join Bd_Vendor t6 on t1.VenCode = t6.cVenCode
 WHERE
         t1.AutoID = t2.MasID
+        AND t2.Qty < 0
         AND  t1.AutoID = '#(autoid)'
     #if(OrgCode)
         AND t1.OrganizeCode = #para(OrgCode)
@@ -137,7 +151,6 @@ SELECT
     t2.Memo,
     t2.MasID,
     t2.spotTicket,
-    t2.Whcode,
     t2.SourceBillDid,
     t2.SourceBillNoRow,
     t2.SourceBillType,
@@ -195,12 +208,17 @@ select t1.AutoID,
        t1.BillDate,
        t5.cRdName,
        t3.cDepName,
-       t4.cPTName
+       t4.cPTName,
+       t1.BillType,
+       t1.DeptCode,
+       t1.VenCode,
+       t6.cVenName
 from T_Sys_PUInStore t1
     LEFT JOIN T_Sys_PUInStoreDetail t2 ON t1.AutoID = t2.MasID
     LEFT JOIN Bd_Rd_Style t5 ON t1.RdCode = t5.cRdCode
     LEFT JOIN Bd_Department t3 ON t1.DeptCode = t3.cDepCode
     LEFT JOIN Bd_PurchaseType t4 ON t1.BillType = t4.iAutoId
+    LEFT JOIN Bd_Vendor t6 ON t1.VenCode = t6.cVenCode
 
 where 1 =1
     AND t2.Qty > 0
@@ -212,6 +230,9 @@ where 1 =1
     #end
 
 GROUP BY
+    t1.BillType,
+    t1.DeptCode,
+    t1.VenCode,
     t1.RdCode,
     t1.AutoID,
     t1.BillNo,
@@ -219,7 +240,8 @@ GROUP BY
     t1.SourceBillNo,
     t5.cRdName,
     t3.cDepName,
-    t4.cPTName
+    t4.cPTName,
+    t6.cVenName
     #end
 
 
@@ -227,9 +249,7 @@ GROUP BY
 #sql("getmaterialLines")
 SELECT (SELECT SUM(Qty) FROM T_Sys_PUInStoreDetail WHERE t1.AutoID = MasID AND spotTicket = t2.spotTicket) AS qtys,
        t2.Memo,
-       t2.MasID,
        t2.spotTicket,
-       t2.Whcode,
        t2.SourceBillDid,
        t2.SourceBillNoRow,
        t2.SourceBillType,
@@ -278,7 +298,6 @@ GROUP BY
     t2.Memo,
     t2.MasID,
     t2.spotTicket,
-    t2.Whcode,
     t2.SourceBillDid,
     t2.SourceBillNoRow,
     t2.SourceBillType,

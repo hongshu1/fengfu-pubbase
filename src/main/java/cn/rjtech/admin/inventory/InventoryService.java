@@ -1060,8 +1060,9 @@ public class InventoryService extends BaseService<Inventory> {
 	 * @param kv
 	 * @return
 	 */
-	public List<Record> inventorySpotCheckList(Kv kv) {
-        return dbTemplate("inventoryclass.inventorySpotCheckList", kv).find();
+	public Page<Record> inventorySpotCheckList(Kv kv) {
+		return dbTemplate("inventoryclass.inventorySpotCheckList", kv).paginate(kv.getInt("page"), kv.getInt(
+			"pageSize"));
 	}
 	
 	/**

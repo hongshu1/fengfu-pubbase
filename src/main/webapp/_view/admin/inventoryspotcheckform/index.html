@@ -30,25 +30,25 @@
   <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
     <a tooltip title="编辑" href="admin/inventoryspotcheckform/edit/${data.iautoid}" data-scroll="yes"
-       data-handler="refreshJBoltTable" data-title="编辑质量建模-点检适用标准" data-area="1200,1000" class="jbolt_table_editbtn">编辑</a>
+       data-handler="refreshJBoltTable" data-title="编辑质量建模-点检适用标准" data-area="98%,98%" class="jbolt_table_editbtn">编辑</a>
     <a tooltip title="删除" href="admin/inventoryspotcheckform/delete/${data.iautoid}" data-handler="refreshJBoltTable"
        class="jbolt_table_delbtn">删除</a>
   </td>
-  <td>${data.itypename}</td>
-  <td>${data.cspotcheckformname}</td>
-  <td>${data.cinvaddcode}</td>
-  <td>${data.cinvcode1}</td>
-  <td>${data.cinvname1}</td>
-  <td>${data.coperationname}</td>
-  <td>${data.ccreatename}</td>
-  <td>${data.dcreatetime}</td>
+  <td title="${data.itypename}">${data.itypename}</td>
+  <td title="${data.cspotcheckformname}">${data.cspotcheckformname}</td>
+  <td title="${data.cinvaddcode}">${data.cinvaddcode}</td>
+  <td title="${data.cinvcode1}">${data.cinvcode1}</td>
+  <td title="${data.cinvname1}">${data.cinvname1}</td>
+  <td title="${data.coperationname}">${data.coperationname}</td>
+  <td title="${data.ccreatename}">${data.ccreatename}</td>
+  <td title="${data.dcreatetime}">${data.dcreatetime}</td>
 </tr>
 {@/each}
 </textarea>
     <div class="jbolt_table_toolbar" id="inventorySpotCheckForm_toolbar_#(pageId)">
       <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         <!--id="toolbar_addBtn_#(pageId)"-->
-        <button data-dialogbtn data-area="90%,1000" data-handler="jboltTablePageToFirst" data-openpage="dialog"
+        <button data-dialogbtn data-area="98%,98%" data-handler="jboltTablePageToFirst" data-openpage="dialog"
                 data-title="新增质量建模-点检适用标准" data-url="admin/inventoryspotcheckform/add" class="btn btn-outline-primary"><i
             class="fa fa-plus"></i> 新增
         </button>
@@ -109,14 +109,14 @@
       <tr>
         <th data-width="60" data-column="index">序号</th>
         <th data-width="120">操作</th>
-        <th data-width="130" data-column="itypename">点检业务</th>
-        <th data-width="130" data-column="cspotcheckformname">点检表格名称</th>
-        <th data-width="120" data-column="cinvaddcode">存货编码</th>
-        <th data-width="120" data-column="cinvcode1">客户部番</th>
-        <th data-width="120" data-column="cinvname1">部品名称</th>
-        <th data-width="100" data-column="coperationname">工序名称</th>
+        <th data-width="150" data-column="itypename">点检业务</th>
+        <th data-width="150" data-column="cspotcheckformname">点检表格名称</th>
+        <th data-width="180" data-column="cinvaddcode">存货编码</th>
+        <th data-width="180" data-column="cinvcode1">客户部番</th>
+        <th data-width="180" data-column="cinvname1">部品名称</th>
+        <th data-width="200" data-column="coperationname">工序名称</th>
         <th data-width="100" data-column="ccreatename">创建人名称</th>
-        <th data-min-width="60" data-column="dcreatetime">创建时间</th>
+        <th data-min-width="150" data-column="dcreatetime">创建时间</th>
       </tr>
       </thead>
       <tbody></tbody>

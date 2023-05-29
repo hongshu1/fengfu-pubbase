@@ -1,17 +1,27 @@
 package cn.rjtech.admin.form;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.datasource.JBoltTableMetaUtil;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formfield.FormFieldService;
+import cn.rjtech.enums.FormFieldEnum;
 import cn.rjtech.model.momdata.Form;
+import cn.rjtech.model.momdata.FormField;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.generator.ColumnMeta;
+import com.jfinal.plugin.activerecord.generator.TableMeta;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +35,9 @@ import java.util.List;
 public class FormService extends BaseService<Form> {
 
     private final Form dao = new Form().dao();
+
+    @Inject
+    private FormFieldService formFieldService;
 
     @Override
     protected Form dao() {
@@ -208,7 +221,94 @@ public class FormService extends BaseService<Form> {
 
     public String getNameByFormId(String formId) {
         Form form = findById(formId);
-        return form==null?null:form.getCFormName();
+        return form == null ? null : form.getCFormName();
     }
-    
+
+    public Ret autoGen(Long iautoid) {
+        Form form = findById(iautoid);
+        ValidationUtils.notNull(form, JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.isTrue(!form.getIsDeleted(), JBoltMsg.DATA_NOT_EXIST);
+
+        TableMeta tableMeta = JBoltTableMetaUtil.getTableMeta(dataSourceConfigName(), dbType(), table(), false);
+        ValidationUtils.notNull(tableMeta, "获取数据表元数据失败");
+
+        List<ColumnMeta> columnMetas = tableMeta.columnMetas;
+        ValidationUtils.notEmpty(columnMetas, "数据表字段不能为空");
+
+        List<FormField> formFields = new ArrayList<>();
+        
+        for (ColumnMeta meta : columnMetas) {
+
+            String colLow = meta.name.toLowerCase();
+            
+            // id字段跳过、状态
+            if (colLow.endsWith("id") || colLow.endsWith("status") || colLow.endsWith("state")) {
+                continue;
+            }
+
+            // 跳过已知字段
+            switch (colLow) {
+                case "corgcode":
+                case "corgname":
+                case "icreateby":
+                case "iupdateby":
+                case "ccreatename":
+                case "cupdatename":
+                case "dcreatetime":
+                case "dupdatetime":
+                case "isdeleted":
+                    continue;
+                default:
+                    break;
+            }
+
+            String javaType = meta.javaType.toLowerCase();
+            
+            // 跳过指定类型
+            switch (javaType) {
+                case "java.lang.boolean":
+                case "java.lang.long":
+                    continue;
+                default:
+                     break;
+            }
+
+            FormField formField = new FormField()
+                    .setIFormId(form.getIAutoId())
+                    .setIAutoId(JBoltSnowflakeKit.me.nextId())
+                    .setCFieldCode(meta.name)
+                    .setCFieldName(meta.remarks)
+                    .setIsImportField(false)
+                    .setIsDeleted(false);
+
+            switch (javaType) {
+                case "java.lang.string":
+                    formField.setCFieldTypeSn(FormFieldEnum.STRING.getValue());
+                    break;
+                case "java.lang.integer":
+                case "java.lang.float":
+                case "java.lang.double":
+                case "java.math.bigdecimal":
+                    formField.setCFieldTypeSn(FormFieldEnum.NUMBER.getValue());
+                    break;
+                case "java.util.date":
+                    formField.setCFieldTypeSn(FormFieldEnum.DATE.getValue());
+                    break;
+                default:
+                    break;
+            }
+
+            formFields.add(formField);
+        }
+
+        tx(() -> {
+
+            formFieldService.batchSave(formFields);
+
+            return true;
+        });
+        
+        return SUCCESS;
+    }
+
 }

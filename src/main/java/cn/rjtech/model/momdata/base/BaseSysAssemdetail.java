@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 
 /**
  * 组装拆卸及形态转换单明细
@@ -14,6 +14,8 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
     public static final String AUTOID = "AutoID";
     /**主表ID;T_Sys_Assem.AutoID*/
     public static final String MASID = "MasID";
+    /***/
+    public static final String BARCODE = "Barcode";
     /**来源类型*/
     public static final String SOURCETYPE = "SourceType";
     /**来源单号*/
@@ -30,6 +32,8 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
     public static final String WHCODE = "WhCode";
     /**货位编码*/
     public static final String POSCODE = "PosCode";
+    /**组号*/
+    public static final String COMBINATIONNO = "CombinationNo";
     /**行号*/
     public static final String ROWNO = "RowNo";
     /**入库数量*/
@@ -46,24 +50,6 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
     public static final String MODIFYPERSON = "ModifyPerson";
     /**修改时间*/
     public static final String MODIFYDATE = "ModifyDate";
-    /**删除状态：0. 未删除 1. 已删除*/
-    public static final String ISDELETED = "IsDeleted";
-    /**现品票转换前*/
-    public static final String SPOTTICKET = "spotTicket";
-    /**现品票转换后*/
-    public static final String SPOTTICKETH = "spotTicketH";
-    /**仓库编码转换后*/
-    public static final String WHCODEH = "WhCodeH";
-    /**仓库转换前名字*/
-    public static final String WHCODENAME = "WhCodeName";
-    /**仓库转换后名字*/
-    public static final String WHCODEHNAME = "WhCodeHName";
-    /**存货转换前编码*/
-    public static final String INVENTORYCODE = "inventoryCode";
-    /**存货转换后编码*/
-    public static final String INVENTORYHCODE = "inventoryHCode";
-    /**转换后数量*/
-    public static final String QTYH = "QtyH";
 	/**
 	 * AutoID
 	 */
@@ -98,6 +84,17 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 		return getStr("MasID");
 	}
 
+	public M setBarcode(java.lang.String Barcode) {
+		set("Barcode", Barcode);
+		return (M)this;
+	}
+
+	@JBoltField(name="barcode" ,columnName="Barcode",type="String", remark="BARCODE", required=false, maxLength=30, fixed=0, order=3)
+	@JSONField(name = "barcode")
+	public java.lang.String getBarcode() {
+		return getStr("Barcode");
+	}
+
 	/**
 	 * 来源类型
 	 */
@@ -109,7 +106,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 来源类型
 	 */
-	@JBoltField(name="sourcetype" ,columnName="SourceType",type="String", remark="来源类型", required=false, maxLength=30, fixed=0, order=3)
+	@JBoltField(name="sourcetype" ,columnName="SourceType",type="String", remark="来源类型", required=false, maxLength=30, fixed=0, order=4)
 	@JSONField(name = "sourcetype")
 	public java.lang.String getSourceType() {
 		return getStr("SourceType");
@@ -126,7 +123,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 来源单号
 	 */
-	@JBoltField(name="sourcebillno" ,columnName="SourceBillNo",type="String", remark="来源单号", required=false, maxLength=32, fixed=0, order=4)
+	@JBoltField(name="sourcebillno" ,columnName="SourceBillNo",type="String", remark="来源单号", required=false, maxLength=32, fixed=0, order=5)
 	@JSONField(name = "sourcebillno")
 	public java.lang.String getSourceBillNo() {
 		return getStr("SourceBillNo");
@@ -143,7 +140,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 来源单号+行号
 	 */
-	@JBoltField(name="sourcebillnorow" ,columnName="SourceBillNoRow",type="String", remark="来源单号+行号", required=false, maxLength=32, fixed=0, order=5)
+	@JBoltField(name="sourcebillnorow" ,columnName="SourceBillNoRow",type="String", remark="来源单号+行号", required=false, maxLength=32, fixed=0, order=6)
 	@JSONField(name = "sourcebillnorow")
 	public java.lang.String getSourceBillNoRow() {
 		return getStr("SourceBillNoRow");
@@ -160,7 +157,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 来源单据ID
 	 */
-	@JBoltField(name="sourcebillid" ,columnName="SourceBillID",type="String", remark="来源单据ID", required=false, maxLength=32, fixed=0, order=6)
+	@JBoltField(name="sourcebillid" ,columnName="SourceBillID",type="String", remark="来源单据ID", required=false, maxLength=32, fixed=0, order=7)
 	@JSONField(name = "sourcebillid")
 	public java.lang.String getSourceBillID() {
 		return getStr("SourceBillID");
@@ -177,7 +174,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 来源单据DID
 	 */
-	@JBoltField(name="sourcebilldid" ,columnName="SourceBillDid",type="String", remark="来源单据DID", required=false, maxLength=30, fixed=0, order=7)
+	@JBoltField(name="sourcebilldid" ,columnName="SourceBillDid",type="String", remark="来源单据DID", required=false, maxLength=30, fixed=0, order=8)
 	@JSONField(name = "sourcebilldid")
 	public java.lang.String getSourceBillDid() {
 		return getStr("SourceBillDid");
@@ -194,7 +191,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 转换状态;转换前 及转换后
 	 */
-	@JBoltField(name="assemtype" ,columnName="AssemType",type="String", remark="转换状态;转换前 及转换后", required=false, maxLength=30, fixed=0, order=8)
+	@JBoltField(name="assemtype" ,columnName="AssemType",type="String", remark="转换状态;转换前 及转换后", required=false, maxLength=30, fixed=0, order=9)
 	@JSONField(name = "assemtype")
 	public java.lang.String getAssemType() {
 		return getStr("AssemType");
@@ -211,7 +208,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 仓库编码
 	 */
-	@JBoltField(name="whcode" ,columnName="WhCode",type="String", remark="仓库编码", required=false, maxLength=30, fixed=0, order=9)
+	@JBoltField(name="whcode" ,columnName="WhCode",type="String", remark="仓库编码", required=false, maxLength=30, fixed=0, order=10)
 	@JSONField(name = "whcode")
 	public java.lang.String getWhCode() {
 		return getStr("WhCode");
@@ -228,10 +225,27 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 货位编码
 	 */
-	@JBoltField(name="poscode" ,columnName="PosCode",type="String", remark="货位编码", required=false, maxLength=30, fixed=0, order=10)
+	@JBoltField(name="poscode" ,columnName="PosCode",type="String", remark="货位编码", required=false, maxLength=30, fixed=0, order=11)
 	@JSONField(name = "poscode")
 	public java.lang.String getPosCode() {
 		return getStr("PosCode");
+	}
+
+	/**
+	 * 组号
+	 */
+	public M setCombinationNo(java.lang.Integer CombinationNo) {
+		set("CombinationNo", CombinationNo);
+		return (M)this;
+	}
+
+	/**
+	 * 组号
+	 */
+	@JBoltField(name="combinationno" ,columnName="CombinationNo",type="Integer", remark="组号", required=false, maxLength=10, fixed=0, order=12)
+	@JSONField(name = "combinationno")
+	public java.lang.Integer getCombinationNo() {
+		return getInt("CombinationNo");
 	}
 
 	/**
@@ -245,7 +259,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 行号
 	 */
-	@JBoltField(name="rowno" ,columnName="RowNo",type="Integer", remark="行号", required=false, maxLength=10, fixed=0, order=11)
+	@JBoltField(name="rowno" ,columnName="RowNo",type="Integer", remark="行号", required=false, maxLength=10, fixed=0, order=13)
 	@JSONField(name = "rowno")
 	public java.lang.Integer getRowNo() {
 		return getInt("RowNo");
@@ -262,7 +276,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 入库数量
 	 */
-	@JBoltField(name="qty" ,columnName="Qty",type="BigDecimal", remark="入库数量", required=false, maxLength=18, fixed=6, order=12)
+	@JBoltField(name="qty" ,columnName="Qty",type="BigDecimal", remark="入库数量", required=false, maxLength=18, fixed=6, order=14)
 	@JSONField(name = "qty")
 	public java.math.BigDecimal getQty() {
 		return getBigDecimal("Qty");
@@ -279,7 +293,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 跟单类型
 	 */
-	@JBoltField(name="tracktype" ,columnName="TrackType",type="String", remark="跟单类型", required=false, maxLength=30, fixed=0, order=13)
+	@JBoltField(name="tracktype" ,columnName="TrackType",type="String", remark="跟单类型", required=false, maxLength=30, fixed=0, order=15)
 	@JSONField(name = "tracktype")
 	public java.lang.String getTrackType() {
 		return getStr("TrackType");
@@ -296,7 +310,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 备注
 	 */
-	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=32, fixed=0, order=14)
+	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=32, fixed=0, order=16)
 	@JSONField(name = "memo")
 	public java.lang.String getMemo() {
 		return getStr("Memo");
@@ -313,7 +327,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 创建人
 	 */
-	@JBoltField(name="createperson" ,columnName="CreatePerson",type="String", remark="创建人", required=false, maxLength=30, fixed=0, order=15)
+	@JBoltField(name="createperson" ,columnName="CreatePerson",type="String", remark="创建人", required=false, maxLength=30, fixed=0, order=17)
 	@JSONField(name = "createperson")
 	public java.lang.String getCreatePerson() {
 		return getStr("CreatePerson");
@@ -330,7 +344,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="createdate" ,columnName="CreateDate",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=16)
+	@JBoltField(name="createdate" ,columnName="CreateDate",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=18)
 	@JSONField(name = "createdate")
 	public java.util.Date getCreateDate() {
 		return getDate("CreateDate");
@@ -347,7 +361,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 修改人
 	 */
-	@JBoltField(name="modifyperson" ,columnName="ModifyPerson",type="String", remark="修改人", required=false, maxLength=30, fixed=0, order=17)
+	@JBoltField(name="modifyperson" ,columnName="ModifyPerson",type="String", remark="修改人", required=false, maxLength=30, fixed=0, order=19)
 	@JSONField(name = "modifyperson")
 	public java.lang.String getModifyPerson() {
 		return getStr("ModifyPerson");
@@ -364,163 +378,10 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 修改时间
 	 */
-	@JBoltField(name="modifydate" ,columnName="ModifyDate",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=18)
+	@JBoltField(name="modifydate" ,columnName="ModifyDate",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=20)
 	@JSONField(name = "modifydate")
 	public java.util.Date getModifyDate() {
 		return getDate("ModifyDate");
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	public M setIsDeleted(java.lang.Boolean IsDeleted) {
-		set("IsDeleted", IsDeleted);
-		return (M)this;
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=false, maxLength=1, fixed=0, order=19)
-	@JSONField(name = "isdeleted")
-	public java.lang.Boolean getIsDeleted() {
-		return getBoolean("IsDeleted");
-	}
-
-	/**
-	 * 现品票转换前
-	 */
-	public M setSpotTicket(java.lang.String spotTicket) {
-		set("spotTicket", spotTicket);
-		return (M)this;
-	}
-
-	/**
-	 * 现品票转换前
-	 */
-	@JBoltField(name="spotticket" ,columnName="spotTicket",type="String", remark="现品票转换前", required=false, maxLength=50, fixed=0, order=20)
-	@JSONField(name = "spotticket")
-	public java.lang.String getSpotTicket() {
-		return getStr("spotTicket");
-	}
-
-	/**
-	 * 现品票转换后
-	 */
-	public M setSpotTicketH(java.lang.String spotTicketH) {
-		set("spotTicketH", spotTicketH);
-		return (M)this;
-	}
-
-	/**
-	 * 现品票转换后
-	 */
-	@JBoltField(name="spotticketh" ,columnName="spotTicketH",type="String", remark="现品票转换后", required=false, maxLength=50, fixed=0, order=21)
-	@JSONField(name = "spotticketh")
-	public java.lang.String getSpotTicketH() {
-		return getStr("spotTicketH");
-	}
-
-	/**
-	 * 仓库编码转换后
-	 */
-	public M setWhCodeH(java.lang.String WhCodeH) {
-		set("WhCodeH", WhCodeH);
-		return (M)this;
-	}
-
-	/**
-	 * 仓库编码转换后
-	 */
-	@JBoltField(name="whcodeh" ,columnName="WhCodeH",type="String", remark="仓库编码转换后", required=false, maxLength=30, fixed=0, order=22)
-	@JSONField(name = "whcodeh")
-	public java.lang.String getWhCodeH() {
-		return getStr("WhCodeH");
-	}
-
-	/**
-	 * 仓库转换前名字
-	 */
-	public M setWhCodeName(java.lang.String WhCodeName) {
-		set("WhCodeName", WhCodeName);
-		return (M)this;
-	}
-
-	/**
-	 * 仓库转换前名字
-	 */
-	@JBoltField(name="whcodename" ,columnName="WhCodeName",type="String", remark="仓库转换前名字", required=false, maxLength=30, fixed=0, order=23)
-	@JSONField(name = "whcodename")
-	public java.lang.String getWhCodeName() {
-		return getStr("WhCodeName");
-	}
-
-	/**
-	 * 仓库转换后名字
-	 */
-	public M setWhCodeHName(java.lang.String WhCodeHName) {
-		set("WhCodeHName", WhCodeHName);
-		return (M)this;
-	}
-
-	/**
-	 * 仓库转换后名字
-	 */
-	@JBoltField(name="whcodehname" ,columnName="WhCodeHName",type="String", remark="仓库转换后名字", required=false, maxLength=30, fixed=0, order=24)
-	@JSONField(name = "whcodehname")
-	public java.lang.String getWhCodeHName() {
-		return getStr("WhCodeHName");
-	}
-
-	/**
-	 * 存货转换前编码
-	 */
-	public M setInventoryCode(java.lang.String inventoryCode) {
-		set("inventoryCode", inventoryCode);
-		return (M)this;
-	}
-
-	/**
-	 * 存货转换前编码
-	 */
-	@JBoltField(name="inventorycode" ,columnName="inventoryCode",type="String", remark="存货转换前编码", required=false, maxLength=30, fixed=0, order=25)
-	@JSONField(name = "inventorycode")
-	public java.lang.String getInventoryCode() {
-		return getStr("inventoryCode");
-	}
-
-	/**
-	 * 存货转换后编码
-	 */
-	public M setInventoryHCode(java.lang.String inventoryHCode) {
-		set("inventoryHCode", inventoryHCode);
-		return (M)this;
-	}
-
-	/**
-	 * 存货转换后编码
-	 */
-	@JBoltField(name="inventoryhcode" ,columnName="inventoryHCode",type="String", remark="存货转换后编码", required=false, maxLength=30, fixed=0, order=26)
-	@JSONField(name = "inventoryhcode")
-	public java.lang.String getInventoryHCode() {
-		return getStr("inventoryHCode");
-	}
-
-	/**
-	 * 转换后数量
-	 */
-	public M setQtyH(java.math.BigDecimal QtyH) {
-		set("QtyH", QtyH);
-		return (M)this;
-	}
-
-	/**
-	 * 转换后数量
-	 */
-	@JBoltField(name="qtyh" ,columnName="QtyH",type="BigDecimal", remark="转换后数量", required=false, maxLength=18, fixed=6, order=27)
-	@JSONField(name = "qtyh")
-	public java.math.BigDecimal getQtyH() {
-		return getBigDecimal("QtyH");
 	}
 
 }

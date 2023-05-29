@@ -25,12 +25,12 @@
 {@each datas as data,index}
 	<tr data-id="${data.iautoid}">
 		<td>${pageNumber,pageSize,index | rownum}</td>
-		<td>${data.cinvaddcode}</td>
-		<td>${data.cinvcode1}</td>
-		<td>${data.cinvname1}</td><!--部品名称-->
-    <td>${data.cinvstd}</td><!--规格-->
-    <td>${data.cequipmentmodelname}</td><!--机型-->
-    <td>${data.cuomname}</td><!--库存单位-->
+		<td title="${data.cinvaddcode}">${data.cinvaddcode}</td>
+		<td title="${data.cinvcode1}">${data.cinvcode1}</td>
+		<td title="${data.cinvname1}">${data.cinvname1}</td><!--部品名称-->
+    <td title="${data.cinvstd}">${data.cinvstd}</td><!--规格-->
+    <td title="${data.cequipmentmodelname}">${data.cequipmentmodelname}</td><!--机型-->
+    <td title="${data.cuomname}">${data.cuomname}</td><!--库存单位-->
 	</tr>
 	{@/each}
 </textarea>
@@ -46,8 +46,10 @@
     <table class="jbolt_table jbolt_main_table table-center"
            id="bomitemPage_#(pageId)"
            data-jbolttable
-           data-height="200"
+           data-height="350"
            data-ajax="true"
+           data-pagesize="50"
+           data-column-resize="true"
            data-url="admin/inventory/inventorySpotCheckList"
            data-column-resize="true"
            data-column-prepend="1:checkbox:true"
@@ -59,11 +61,11 @@
         <tr>
           <th data-width="30">序号</th>
           <th data-width="150" data-column="cInvAddCode">存货编码</th>
-          <th data-width="150" data-cInvCode1="cinvcode1">客户部番</th>
-          <th data-width="150" data-column="cinvname1">部品名称</th>
-          <th data-width="150" data-column="cinvstd">规格</th>
+          <th data-width="180" data-cInvCode1="cinvcode1">客户部番</th>
+          <th data-width="180" data-column="cinvname1">部品名称</th>
+          <th data-width="180" data-column="cinvstd">规格</th>
           <th data-width="150" data-column="cequipmentmodelname">机型</th>
-          <th data-width="150" data-column="cuomname">库存单位</th><!-- iinventoryuomid1-->
+          <th data-width="120" data-column="cuomname">库存单位</th><!-- iinventoryuomid1-->
         </tr>
       </thead>
       <tbody>

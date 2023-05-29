@@ -122,14 +122,9 @@ public class SplitBarCodeService extends BaseService<Inventory> {
         JSONObject res = JSON.parseObject(post);
         ValidationUtils.notNull(res, "解析JSON为空");
 
-        String code = res.getString("code");
-        String message = res.getString("message");
-        if (message == null) {
-            message = res.getString("msg");
-        }
-
-        ValidationUtils.notNull(code, "json:" + json + ";" + message);
-        ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);
+        String state = res.getString("state");
+        ValidationUtils.notNull(state, "json:" + json + ";" + "拆分条码失败");
+        ValidationUtils.equals(state, "ok", state + ";" + "json:" + json + ";" + "拆分条码失败");
         return post;
     }
 
