@@ -46,12 +46,14 @@ public class ProcessDefectAdminController extends BaseAdminController {
         Kv kv = new Kv();
         kv.setIfNotNull("cdocno", get("cdocno"));
         kv.setIfNotNull("imodocid", get("imodocid"));
+        kv.setIfNotNull("cmodocno", get("cmodocno")); //工单号
         kv.setIfNotNull("cinvcode1", get("cinvcode1"));
         kv.setIfNotNull("cinvname", get("cinvname"));
         kv.setIfNotNull("cinvcode", get("cinvcode"));
         kv.setIfNotNull("istatus", get("istatus"));
         kv.setIfNotNull("startdate", get("startdate"));
         kv.setIfNotNull("enddate", get("enddate"));
+        kv.setIfNotNull("idepartmentid", get("idepartmentid"));
         renderJsonData(service.paginateAdminDatas(getPageSize(), getPageNumber(), kv));
     }
 
@@ -79,8 +81,10 @@ public class ProcessDefectAdminController extends BaseAdminController {
                 set("iresptype", (processDefect.getIRespType() == 1) ? "本工序" : "其他");
                 render("add3.html");
             } else if (processDefect.getIStatus() == 2) {
-                int getCApproach = Integer.parseInt(processDefect.getCApproach());
-                set("capproach", (getCApproach == 1) ? "返修" : "报废");
+                if(processDefect.getCApproach()!=null) {
+                    int getCApproach = Integer.parseInt(processDefect.getCApproach());
+                    set("capproach", (getCApproach == 1) ? "返修" : "报废");
+                }
                 set("isfirsttime", (processDefect.getIsFirstTime() == true) ? "首发" : "再发");
                 set("iresptype", (processDefect.getIRespType() == 1) ? "本工序" : "其他");
                 render("add4.html");
@@ -141,6 +145,35 @@ public class ProcessDefectAdminController extends BaseAdminController {
     public void ProcessDefectupdateEditTable() {
         renderJson(service.updateEditTable(getKv()));
     }
+
+    /**
+     * 保存单据
+     */
+    public void saveprocessDefect(){
+
+
+    renderJson(service.saveprocessDefect(getModel(ProcessDefect.class, "processDefect")));
+    }
+
+    /**
+     * 更新单据
+     */
+    public void updateprocessDefect(){
+
+
+        renderJson(service.updateprocessDefect(getModel(ProcessDefect.class, "processDefect")));
+    }
+
+    /**
+     * 提交单据审批
+     */
+    public void subprocessDefect(){
+
+
+        renderJson(service.subprocessDefect(getModel(ProcessDefect.class, "processDefect")));
+    }
+
+
 
     /**
      * 生成二维码

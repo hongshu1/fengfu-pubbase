@@ -126,4 +126,9 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         return null;
     }
 
+    public List<Record> whoptions(){
+        Kv kv = new Kv();
+        return dbTemplate("warehousebeginofperiod.whoptions", kv).find();
+    }
+
 }

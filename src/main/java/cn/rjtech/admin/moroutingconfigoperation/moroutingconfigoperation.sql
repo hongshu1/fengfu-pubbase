@@ -1,6 +1,6 @@
 #sql ("findOperationList")
 SELECT
-    a.*,p.iAutoId,p.cOperationCode,p.cOperationName
+    a.iOperationId,p.cOperationCode,p.cOperationName
 FROM
     Mo_MoRoutingConfig_Operation a
         LEFT JOIN Bd_Operation p ON a.iOperationId= p.iAutoId

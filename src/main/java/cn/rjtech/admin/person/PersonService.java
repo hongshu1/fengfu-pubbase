@@ -13,10 +13,6 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.User;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.util.JBoltDateUtil;
@@ -27,7 +23,10 @@ import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.admin.personequipment.PersonEquipmentService;
 import cn.rjtech.admin.workclass.WorkClassService;
 import cn.rjtech.enums.SourceEnum;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.Equipment;
+import cn.rjtech.model.momdata.Person;
+import cn.rjtech.model.momdata.PersonEquipment;
+import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
@@ -91,7 +90,7 @@ public class PersonService extends BaseService<Person> {
             row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("iuserid")));
             row.set("sysworkage", calcSysworkage(row.getDate("dhiredate")));
         }
-        
+
         return pageList;
     }
 
@@ -339,8 +338,8 @@ public class PersonService extends BaseService<Person> {
         for (UploadFile uploadFile : fileList) {
             StringBuilder errorMsg = new StringBuilder();
             //使用字段配置维护
-            Object modelss =  cusFieldsMappingdService.getImportDatas(uploadFile.getFile(), "人员档案").get("data");
-            String docInfoRelaStrings= JSON.toJSONString(modelss);
+            Object modelss = cusFieldsMappingdService.getImportDatas(uploadFile.getFile(), "人员档案").get("data");
+            String docInfoRelaStrings = JSON.toJSONString(modelss);
             List<Person> rows = JSON.parseArray(docInfoRelaStrings, Person.class);
 
             if (notOk(rows)) {
@@ -501,6 +500,12 @@ public class PersonService extends BaseService<Person> {
         return dbTemplate("person.getpersonByCpsnnum", Kv.by("cpsnnum", cpsnnum)).findFirst();
     }
 
+    /**
+     * 通过系统用户ID查询人员
+     *
+     * @param userId 系统用户ID
+     * @return 绑定的人员
+     */
     public Person findFirstByUserId(Long userId) {
         return findFirst("select * from Bd_Person where iUserId = ? AND isDeleted = ?  ", userId, ZERO_STR);
     }
