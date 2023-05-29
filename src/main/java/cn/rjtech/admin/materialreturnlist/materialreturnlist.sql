@@ -151,7 +151,6 @@ SELECT
     t2.Memo,
     t2.MasID,
     t2.spotTicket,
-    t2.Whcode,
     t2.SourceBillDid,
     t2.SourceBillNoRow,
     t2.SourceBillType,

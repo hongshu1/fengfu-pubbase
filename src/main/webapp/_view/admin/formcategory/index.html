@@ -78,6 +78,60 @@
         >
             <thead>
             <tr>
+                <td>${ccreatename}</td>
+                <td>${dcreatetime}</td>
+                <td>${cupdatename}</td>
+                <td>${dupdatetime}</td>
+                <td>
+                    <a class="jbolt_table_editbtn" href="admin/formcategory/edit/${iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑系统设置-表单类别"><i class="fa fa-edit"></i></a>
+                    <a class="jbolt_table_delbtn" href="admin/formcategory/${isDeleted?'realDelete':'delete'}/${iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+                </td>
+            </tr>
+            
+            {@if items&&items.length>0}
+            {@each items as son}
+            {@include "#FormCategory_tpl_#(pageId)",son}
+            {@/each}
+            {@/if}
+        </textarea>
+
+        <textarea class="jb_tpl_box" id="deptRowtpl_#(pageId)">
+            {@each datas as data,index}
+            {# 先循环第一级}
+            {@include "#FormCategory_tpl_#(pageId)",data}
+            {@/each}
+        </textarea>
+        
+        <div class="jbolt_table_toolbar" id="FormCategory_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增系统设置-表单类别" data-url="admin/formcategory/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑系统设置-表单类别" data-check-handler="jboltTableGetCheckedId" data-url="admin/formcategory/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/formcategory/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+        </div>
+        
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="auto"
+               data-height="auto"
+               data-ajax="true"
+               data-conditions-form="FormCategory_form_#(pageId)"
+               data-url="admin/formcategory/tree"
+               data-rowtpl="deptRowtpl_#(pageId)"
+               data-copy-to-excel="false"
+               ###data-page="FormCategory_page"
+               data-column-resize="true"
+               data-toolbar="FormCategory_toolbar_#(pageId)"
+               ###data-column-prepend="1:checkbox:true:false:false"
+               data-row-click-active="true"
+               ###设置是treetable 默认显示到第一级 操作列在第一列
+               data-treetable="all:1"
+               ###data-fixed-columns-left="1"
+               ###data-fixed-columns-right="6,7"
+        >
+            <thead>
+            <tr>
                 <th data-width="250" data-column="cname">类别名称</th>
                 <th data-width="250" data-column="ccode">类别编码</th>
                 <th data-width="150" data-column="ccreatename">创建人名称</th>

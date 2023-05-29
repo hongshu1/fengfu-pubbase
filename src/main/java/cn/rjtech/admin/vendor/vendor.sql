@@ -63,3 +63,37 @@ WHERE  1 = 1
         AND v.cvccode = #para(cvccode)
     #end
 #end
+
+#sql("getAutocompleteList")
+SELECT TOP #(limit) *
+FROM Bd_Vendor
+WHERE 1=1 and isdeleted = 0 and isenabled = 0
+    #if(q)
+        AND (
+            cvencode LIKE CONCAT('%', #para(q), '%') OR
+            cvenname LIKE CONCAT('%', #para(q), '%')
+        )
+    #end
+#end
+
+#sql ("getVendorList")
+SELECT 
+#if(limit)
+ top #(limit)
+#end
+v.*
+FROM bd_Vendor v
+WHERE  1 = 1
+    #if(q)
+        AND  (
+            v.cVenCode like CONCAT ('%', #para(q), '%') OR
+            v.cVenName like CONCAT ('%', #para(q), '%')
+        )
+    #end
+    #if(cvencode)
+        AND v.cVenCode = #para(cvencode)
+    #end
+    #if(cvccode)
+        AND v.cvccode = #para(cvccode)
+    #end
+#end

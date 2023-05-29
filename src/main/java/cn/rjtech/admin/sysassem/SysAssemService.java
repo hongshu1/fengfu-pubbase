@@ -286,6 +286,7 @@ public class SysAssemService extends BaseService<SysAssem> {
 
 			sysAssemdetails.add(sysAssemdetail);
 
+			sysAssemdetails.add(sysAssemdetail);
 		}
 		sysassemdetailservice.batchUpdate(sysAssemdetails);
 	}
