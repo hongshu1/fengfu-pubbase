@@ -65,6 +65,9 @@
                         <input required type="text" id="sourcebillno" name="puinstore.sourcebillno" class="form-control border-none"
                                readonly="readonly" placeholder=""
                                value="#(puinstore.sourcebillno??)"/>
+                        <input required type="hidden" id="billtype" name="puinstore.billtype" class="form-control border-none"
+                               readonly="readonly" placeholder=""
+                               value="#(puinstore.billtype??)"/>
                     </div>
                 </div>
 
@@ -74,21 +77,24 @@
                     <input required type="text" id="cdepname" name="puinstore.deptcode" class="form-control border-none"
                            readonly="readonly" placeholder=""
                            value="#(puinstore.deptcode??)"/>
+                    <input required type="hidden" id="deptcode" name="puinstore.deptcode" class="form-control border-none"
+                           readonly="readonly" placeholder=""
+                           value="#(puinstore.deptcode??)"/>
                 </div>
 
                 <label class="col-sm-2 col-form-label">采购类型：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input required type="text" id="cptname" name="puinstore.billtype" class="form-control border-none"
+                    <input required type="text" id="cptname"  class="form-control border-none"
                            readonly="readonly" placeholder=""
-                           value="#(puinstore.billtype??)"/>
+                           value="#(puinstore.cptname??)"/>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">供货单位：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input id="venname" name="cvenname" type="text" readonly="readonly"
-                           autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.cvenname??)"/>
+                    <input id="cvenname" name="cvenname" type="text" readonly="readonly"
+                           autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.cdepname??)"/>
                     <input id="vencode" name="puinstore.vencode" type="hidden" readonly="readonly"
                            autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.vencode??)"/>
                 </div>
@@ -103,7 +109,7 @@
                 <div class="col-sm-2 col-form-label">
                     <input required type="text" id="crdname" class="form-control border-none"
                            readonly="readonly" placeholder=""
-                           value="#(puinstore.rdcode??)"/>
+                           value="#(puinstore.crdname??)"/>
                     <input required type="hidden" id="rdcode" name="puinstore.rdcode" class="form-control border-none"
                            readonly="readonly" placeholder=""
                            value="#(puinstore.rdcode??)"/>
@@ -241,6 +247,11 @@
         $("#crdname").val(data.crdname);
         $("#rdcode").val(data.rdcode);
         $("#autoid").val(data.autoid);
+        $("#billtype").val(data.billtype);
+        $("#deptcode").val(data.deptcode);
+        $("#vencode").val(data.vencode);
+        $("#cvenname").val(data.cvenname);
+        $("#cptname").val(data.cptname);
         if ($("#autoid").val()!=null) {
             var tables = ["Puinstoreform_TableId_#(pageId)"];
             refreshJBoltTables(tables,false,true);
