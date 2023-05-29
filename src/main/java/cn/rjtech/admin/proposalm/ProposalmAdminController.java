@@ -1,18 +1,5 @@
 package cn.rjtech.admin.proposalm;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Record;
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -41,12 +28,21 @@ import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.ProposaldTypeEnum;
 import cn.rjtech.enums.ServiceTypeEnum;
-import cn.rjtech.model.momdata.ExpenseBudget;
-import cn.rjtech.model.momdata.InvestmentPlan;
-import cn.rjtech.model.momdata.Period;
-import cn.rjtech.model.momdata.ProposalAttachment;
-import cn.rjtech.model.momdata.Proposalm;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 禀议管理 Controller
@@ -88,7 +84,7 @@ public class ProposalmAdminController extends BaseAdminController {
     @Inject
     private InvestmentPlanItemdService investmentPlanItemdService;
     @Inject
-    private PeriodService periodService; 
+    private PeriodService periodService;
 
     /**
      * 首页
@@ -139,16 +135,17 @@ public class ProposalmAdminController extends BaseAdminController {
 
     /**
      * 新增禀议书-参照预算/投资
+     *
      * @param cdepcode
      * @param itemidandtypes
      */
-    public void addBudgetOrInvestmentPlan(@Para(value = "expensebudgetitemid") String expensebudgetitemid,@Para(value = "investmentplanitemid") String investmentplanitemid){
-    	String itemidandtypes = "";
-    	if(JBoltStringUtil.isNotBlank(expensebudgetitemid)) itemidandtypes += expensebudgetitemid+",";
-    	if(JBoltStringUtil.isNotBlank(investmentplanitemid)) itemidandtypes += investmentplanitemid+",";
-    	ValidationUtils.notBlank(itemidandtypes, "请选择费用/计划!");
-    	itemidandtypes = itemidandtypes.substring(0, itemidandtypes.lastIndexOf(","));
-    	String cdepcode = service.isSameCdepCode(itemidandtypes);
+    public void addBudgetOrInvestmentPlan(@Para(value = "expensebudgetitemid") String expensebudgetitemid, @Para(value = "investmentplanitemid") String investmentplanitemid) {
+        String itemidandtypes = "";
+        if (JBoltStringUtil.isNotBlank(expensebudgetitemid)) itemidandtypes += expensebudgetitemid + ",";
+        if (JBoltStringUtil.isNotBlank(investmentplanitemid)) itemidandtypes += investmentplanitemid + ",";
+        ValidationUtils.notBlank(itemidandtypes, "请选择费用/计划!");
+        itemidandtypes = itemidandtypes.substring(0, itemidandtypes.lastIndexOf(","));
+        String cdepcode = service.isSameCdepCode(itemidandtypes);
         ValidationUtils.notBlank(cdepcode, JBoltMsg.PARAM_ERROR);
         User user = JBoltUserKit.getUser();
         Proposalm proposalm = new Proposalm();
@@ -160,7 +157,7 @@ public class ProposalmAdminController extends BaseAdminController {
             proposalm.setCapplypersoncode(contro.getStr("cpsn_num"));
             proposalm.setCapplypersonname(user.getName());
         }
-        set("proposalds", getProposaldDatas(expensebudgetitemid,investmentplanitemid, proposalm,false));
+        set("proposalds", getProposaldDatas(expensebudgetitemid, investmentplanitemid, proposalm, false));
         set("proposalm", proposalm);
         set("cdepname", departmentService.getCdepName(proposalm.getCdepcode()));
         render("add.html");
@@ -237,19 +234,21 @@ public class ProposalmAdminController extends BaseAdminController {
 
         return proposalds;
     }
+
     /**
      * 新增禀议书-参照预算/投资: 设置禀议书新增界面的内容，包括项目和表单的数据
-     * 	费用预算每个项目的总金额是不含税的，税率默认取全局参数，项目的预算总金额(含税)需要计算
-     * 	投资计划每个项目的总金额是含税的，税率默认取编制时录入的税率，项目的预算总金额(不含税)需要计算
-     * @param isSupplemental 
+     * 费用预算每个项目的总金额是不含税的，税率默认取全局参数，项目的预算总金额(含税)需要计算
+     * 投资计划每个项目的总金额是含税的，税率默认取编制时录入的税率，项目的预算总金额(不含税)需要计算
+     *
+     * @param isSupplemental
      */
-    private List<Record> getProposaldDatas(String expensebudgetitemid,String investmentplanitemid,Proposalm proposalm, Boolean isSupplemental) {
+    private List<Record> getProposaldDatas(String expensebudgetitemid, String investmentplanitemid, Proposalm proposalm, Boolean isSupplemental) {
         List<Record> proposalds = new ArrayList<>();
         BigDecimal ibudgetmoneyTotal = BigDecimal.ZERO;//整份禀议书的预算总金额(不含税)
         BigDecimal ibudgetsumTotal = BigDecimal.ZERO;//整份禀议书的预算总金额(含税)
         //全局参数的税率：费用预算编制未维护税率，默认使用全局参数中的税率，投资计划编制时维护了税率直接取编制维护的说率
         BigDecimal iTaxRate = globalConfigService.getTaxRate();
-        BigDecimal iTaxRateMul = iTaxRate.multiply(BigDecimal.valueOf(100L).setScale(2,RoundingMode.HALF_UP));
+        BigDecimal iTaxRateMul = iTaxRate.multiply(BigDecimal.valueOf(100L).setScale(2, RoundingMode.HALF_UP));
         //参照费用预算
         if (notNull(expensebudgetitemid)) {
             List<Record> expenseBudgets = expenseBudgetItemService.findByIautoids(expensebudgetitemid);
@@ -259,7 +258,7 @@ public class ProposalmAdminController extends BaseAdminController {
                 //费用项目的预算总金额(不含税)
                 BigDecimal ibudgetmoney = expenseBudgetItemdService.getAmountSum(item.getLong("iautoid"));
                 //费用项目的预算总金额(含税)
-                BigDecimal ibudgetsum = ibudgetmoney.multiply(BigDecimal.ONE.add(iTaxRate)).setScale(2,RoundingMode.HALF_UP);
+                BigDecimal ibudgetsum = ibudgetmoney.multiply(BigDecimal.ONE.add(iTaxRate)).setScale(2, RoundingMode.HALF_UP);
                 //禀议书的预算总金额(不含税)累加
                 ibudgetmoneyTotal = ibudgetmoneyTotal.add(ibudgetmoney);
                 //禀议书的预算总金额(含税)累加
@@ -288,14 +287,14 @@ public class ProposalmAdminController extends BaseAdminController {
         if (notNull(investmentplanitemid)) {
             List<Record> investmentPlans = investmentPlanItemService.findByIautoids(investmentplanitemid);
             for (Record item : investmentPlans) {
-            	BigDecimal planItemITaxRate = item.getBigDecimal("itaxrate") == null ? iTaxRateMul : item.getBigDecimal("itaxrate");
-            	BigDecimal planItemITaxRateCal = planItemITaxRate.divide(BigDecimal.valueOf(100L),2,RoundingMode.HALF_UP);
+                BigDecimal planItemITaxRate = item.getBigDecimal("itaxrate") == null ? iTaxRateMul : item.getBigDecimal("itaxrate");
+                BigDecimal planItemITaxRateCal = planItemITaxRate.divide(BigDecimal.valueOf(100L), 2, RoundingMode.HALF_UP);
                 // 主表记录
                 //InvestmentPlan plan = investmentPlanService.findById(item.getLong("iplanid"));
                 //投资计划项目预算总金额(含税)
                 BigDecimal ibudgetsum = investmentPlanItemdService.getAmountSum(item.getLong("iautoid"));
                 //投资计划项目预算总金额(不含税) ： 税率取投资计划项目编制时录入的税率，追加的项目默认去全局参数的
-                BigDecimal ibudgetmoney = ibudgetsum.divide(BigDecimal.ONE.add(planItemITaxRateCal),2,RoundingMode.HALF_UP);
+                BigDecimal ibudgetmoney = ibudgetsum.divide(BigDecimal.ONE.add(planItemITaxRateCal), 2, RoundingMode.HALF_UP);
                 //禀议书的预算总金额(不含税)累加
                 ibudgetmoneyTotal = ibudgetmoneyTotal.add(ibudgetmoney);
                 //禀议书的预算总金额(含税)累加
@@ -361,7 +360,7 @@ public class ProposalmAdminController extends BaseAdminController {
 
             proposalds.add(new Record()
                     .set("isourceid", item.getLong("iautoid"))
-                    
+
                     .set("itype", ProposaldTypeEnum.SOURCE.getValue())
                     .set("cbudgetno", item.getStr("cplanno"))
                     .set("ibudgetmoney", investmentPlanItemdService.getAmountSum(item.getLong("iautoid")))
@@ -442,10 +441,10 @@ public class ProposalmAdminController extends BaseAdminController {
         renderJson(investmentPlanItemService.checkPlanItem(iinvestmentplanitemids));
     }
 
-    public void checkBudgetItemAndPlanItem(@Para(value = "expensebudgetitemid") String expensebudgetitemid,@Para(value = "investmentplanitemid") String investmentplanitemid,@Para(value = "isSupplemental") Boolean isSupplemental) {
+    public void checkBudgetItemAndPlanItem(@Para(value = "expensebudgetitemid") String expensebudgetitemid, @Para(value = "investmentplanitemid") String investmentplanitemid, @Para(value = "isSupplemental") Boolean isSupplemental) {
         String allItemIds = "";
-        if(JBoltStringUtil.isNotBlank(expensebudgetitemid)) allItemIds += expensebudgetitemid + ","; 
-        if(JBoltStringUtil.isNotBlank(investmentplanitemid)) allItemIds += investmentplanitemid + ",";
+        if (JBoltStringUtil.isNotBlank(expensebudgetitemid)) allItemIds += expensebudgetitemid + ",";
+        if (JBoltStringUtil.isNotBlank(investmentplanitemid)) allItemIds += investmentplanitemid + ",";
         ValidationUtils.notBlank(allItemIds, "请选择费用/计划");
         allItemIds = allItemIds.substring(0, allItemIds.lastIndexOf(","));
         String cdepcode = service.isSameCdepCode(allItemIds);
@@ -453,11 +452,11 @@ public class ProposalmAdminController extends BaseAdminController {
         //DataPermissionKit.validateAccess(JBoltUserKit.getUser(), cdepcode);
         List<Record> proposalds = null;
         //追加禀议-对追加选定的项目进行处理后回填到表格
-        if(isSupplemental != null) proposalds = getProposaldDatas(expensebudgetitemid,investmentplanitemid, new Proposalm(),isSupplemental);
+        if (isSupplemental != null) proposalds = getProposaldDatas(expensebudgetitemid, investmentplanitemid, new Proposalm(), isSupplemental);
         renderJson(Ret.ok().set("proposalds", proposalds));
     }
 
-	/**
+    /**
      * 获取禀议项目的初始数据
      */
     public void budgetData(@Para(value = "iexpensebudgetitemids") String iexpensebudgetitemids) {
@@ -484,10 +483,10 @@ public class ProposalmAdminController extends BaseAdminController {
         Proposalm proposalm = service.findById(iautoid);
         ValidationUtils.notNull(proposalm, JBoltMsg.DATA_NOT_EXIST);
         Long isourceproposalmid = proposalm.getIsourceproposalid();
-        if(isourceproposalmid !=null ){
-        	Proposalm sourceProposalm = service.findById(isourceproposalmid);
-	        set("sourceinatmoney",sourceProposalm.getInatmoney());
-	        set("sourceinatsum",sourceProposalm.getInatsum());
+        if (isourceproposalmid != null) {
+            Proposalm sourceProposalm = service.findById(isourceproposalmid);
+            set("sourceinatmoney", sourceProposalm.getInatmoney());
+            set("sourceinatsum", sourceProposalm.getInatsum());
         }
         //keepPara();
         set("proposalm", proposalm);
@@ -505,9 +504,7 @@ public class ProposalmAdminController extends BaseAdminController {
         render("edit.html");
     }
 
-    @CheckPermission(PermissionKey.PROPOSALM_PRINTDATA)
-    public void printData(@Para(value = "iautoid") Long iautoid)
-    {
+    public void printData(@Para(value = "iautoid") Long iautoid) {
         renderJson(service.printData(iautoid));
     }
 
@@ -523,109 +520,106 @@ public class ProposalmAdminController extends BaseAdminController {
      * 选择费用预算列表
      */
     @CheckPermission(PermissionKey.PROPOSALM_SAVE)
-    public void chooseExpenseBudget(@Para(value = "iperiodid") Long iperiodid,@Para(value = "cdepcode") String cdepcode,@Para(value = "isourceproposalid") Long isourceproposalid) {
-    	Period period = periodService.findById(iperiodid);
-    	keepPara();
-    	if(period!=null){
-    	List<Record> yearColumnTxtList = new ArrayList<Record>();
-        List<String> monthColumnTxtList = new ArrayList<String>();
-        List<Record> quantityAndAmountColumnList = new ArrayList<Record>();
-    	periodService.calcDynamicExpenseBudgetTableColumn(period.getDstarttime(),period.getDendtime(),yearColumnTxtList,monthColumnTxtList,quantityAndAmountColumnList);
-        set("period", period);
-        set("yearcolumntxtlist",yearColumnTxtList);
-        set("monthcolumntxtlist",monthColumnTxtList);
-        set("quantityandamountcolumnlist",quantityAndAmountColumnList);
-    	}
+    public void chooseExpenseBudget(@Para(value = "iperiodid") Long iperiodid, @Para(value = "cdepcode") String cdepcode, @Para(value = "isourceproposalid") Long isourceproposalid) {
+        Period period = periodService.findById(iperiodid);
+        keepPara();
+        if (period != null) {
+            List<Record> yearColumnTxtList = new ArrayList<>();
+            List<String> monthColumnTxtList = new ArrayList<>();
+            List<Record> quantityAndAmountColumnList = new ArrayList<>();
+            periodService.calcDynamicExpenseBudgetTableColumn(period.getDstarttime(), period.getDendtime(), yearColumnTxtList, monthColumnTxtList, quantityAndAmountColumnList);
+            set("period", period);
+            set("yearcolumntxtlist", yearColumnTxtList);
+            set("monthcolumntxtlist", monthColumnTxtList);
+            set("quantityandamountcolumnlist", quantityAndAmountColumnList);
+        }
         render("choose_expensebudget.html");
     }
- 
+
     /**
      * 选择投资计划
      */
     @CheckPermission(PermissionKey.PROPOSALM_SAVE)
-    public void chooseInvestmentPlan(@Para(value = "iperiodid") Long iperiodid,@Para(value = "cdepcode") String cdepcode) {
-    	Period period = periodService.findById(iperiodid);
-    	keepPara();
-    	set("period", period);
+    public void chooseInvestmentPlan(@Para(value = "iperiodid") Long iperiodid, @Para(value = "cdepcode") String cdepcode) {
+        Period period = periodService.findById(iperiodid);
+        keepPara();
+        set("period", period);
         render("choose_investmentplan.html");
     }
 
     /**
      * 参考费用预算或者投资计划按钮点击选择期间页面
-     * */
-    public void choosePeriod(){
-    	render("choose_period.html");
+     */
+    public void choosePeriod() {
+        render("choose_period.html");
     }
-    
+
     /**
      * 参照费用预算/投资计划
-     * @param iproposalmid
      */
     @UnCheck
-    public void chooseExpenseBudgetOrInvestmentPlan(@Para(value = "iperiodIds") String iperiodIds){
-    	ValidationUtils.notBlank(iperiodIds, JBoltMsg.PARAM_ERROR);
-    	List<Period> periodList = periodService.findListModelByIds(iperiodIds);
-    	Period expenseBudgetPeriod = null;
-    	Period investmentPlanPeriod = null;
-    	for (Period period : periodList) {
-    		if(period.getIservicetype() == ServiceTypeEnum.EXPENSE_BUDGET.getValue()) expenseBudgetPeriod = period;
-    		if(period.getIservicetype() == ServiceTypeEnum.INVESTMENT_PLAN.getValue()) investmentPlanPeriod = period;
-		}
-    	set("expenseBudgetPeriod",expenseBudgetPeriod);
-    	set("investmentPlanPeriod",investmentPlanPeriod);
+    public void chooseExpenseBudgetOrInvestmentPlan(@Para(value = "iperiodIds") String iperiodIds) {
+        ValidationUtils.notBlank(iperiodIds, JBoltMsg.PARAM_ERROR);
+        List<Period> periodList = periodService.findListModelByIds(iperiodIds);
+        Period expenseBudgetPeriod = null;
+        Period investmentPlanPeriod = null;
+        for (Period period : periodList) {
+            if (period.getIservicetype() == ServiceTypeEnum.EXPENSE_BUDGET.getValue()) expenseBudgetPeriod = period;
+            if (period.getIservicetype() == ServiceTypeEnum.INVESTMENT_PLAN.getValue()) investmentPlanPeriod = period;
+        }
+        set("expenseBudgetPeriod", expenseBudgetPeriod);
+        set("investmentPlanPeriod", investmentPlanPeriod);
         render("choose_expensebudget_or_investmentplan_v2.html");
     }
 
     /**
      * 追加禀议-追加选定（参照费用/投资）功能需要查询原禀议书部门的生效状态的费用或者投资
-     * @param iproposalmid
      */
     @UnCheck
-    public void chooseEffectivedExpenseBudgetOrInvestmentPlan(@Para(value = "isourceproposalid") Long isourceproposalid){
-    	ValidationUtils.notNull(isourceproposalid, "原禀议书ID为空!");
-    	Proposalm proposalm = service.findById(isourceproposalid);
-    	ValidationUtils.notNull(proposalm, "原禀议书为空!");
-    	String cdepcode = proposalm.getCdepcode();
-    	Kv para = Kv.by("cdepcode", cdepcode);
-    	ExpenseBudget expenseBudget = expenseBudgetService.findEffectivedExpenseBudgetByDeptCode(para);
-    	InvestmentPlan investmentPlan = investmentPlanService.findEffectivedInvestmentByDeptCode(para);
-    	Period expenseBudgetPeriod = null;
-    	Period investmentPlanPeriod = null;
-    	if(expenseBudget!=null) expenseBudgetPeriod = periodService.findById(expenseBudget.getIperiodid());
-    	if(investmentPlan!=null) investmentPlanPeriod = periodService.findById(investmentPlan.getIperiodid());
-    	keepPara();
-    	set("expenseBudgetPeriod",expenseBudgetPeriod);
-    	set("investmentPlanPeriod",investmentPlanPeriod);
-    	set("cdepcode",cdepcode);
+    public void chooseEffectivedExpenseBudgetOrInvestmentPlan(@Para(value = "isourceproposalid") Long isourceproposalid) {
+        ValidationUtils.notNull(isourceproposalid, "原禀议书ID为空!");
+        Proposalm proposalm = service.findById(isourceproposalid);
+        ValidationUtils.notNull(proposalm, "原禀议书为空!");
+        String cdepcode = proposalm.getCdepcode();
+        Kv para = Kv.by("cdepcode", cdepcode);
+        ExpenseBudget expenseBudget = expenseBudgetService.findEffectivedExpenseBudgetByDeptCode(para);
+        InvestmentPlan investmentPlan = investmentPlanService.findEffectivedInvestmentByDeptCode(para);
+        Period expenseBudgetPeriod = null;
+        Period investmentPlanPeriod = null;
+        if (expenseBudget != null) expenseBudgetPeriod = periodService.findById(expenseBudget.getIperiodid());
+        if (investmentPlan != null) investmentPlanPeriod = periodService.findById(investmentPlan.getIperiodid());
+        keepPara();
+        set("expenseBudgetPeriod", expenseBudgetPeriod);
+        set("investmentPlanPeriod", investmentPlanPeriod);
+        set("cdepcode", cdepcode);
         render("choose_supplemental_expensebudget_or_investmentplan_v2.html");
     }
+
     /**
      * 编制禀议书界面-选择费用/投资项目
-     * @param iproposalmid
      */
     @UnCheck
-    public void editProposalmChooseExpenseBudgetOrInvestmentPlan(@Para(value = "cdepcode") String cdepcode,@Para(value = "iprojectcardids") String iprojectcardids){
-    	ValidationUtils.notNull(cdepcode, "禀议书部门为空!");
-    	Kv para = Kv.by("cdepcode", cdepcode);
-    	ExpenseBudget expenseBudget = expenseBudgetService.findEffectivedExpenseBudgetByDeptCode(para);
-    	InvestmentPlan investmentPlan = investmentPlanService.findEffectivedInvestmentByDeptCode(para);
-    	Period expenseBudgetPeriod = null;
-    	Period investmentPlanPeriod = null;
-    	if(expenseBudget!=null) expenseBudgetPeriod = periodService.findById(expenseBudget.getIperiodid());
-    	if(investmentPlan!=null) investmentPlanPeriod = periodService.findById(investmentPlan.getIperiodid());
-    	keepPara();
-    	set("expenseBudgetPeriod",expenseBudgetPeriod);
-    	set("investmentPlanPeriod",investmentPlanPeriod);
-    	set("cdepcode",cdepcode);
+    public void editProposalmChooseExpenseBudgetOrInvestmentPlan(@Para(value = "cdepcode") String cdepcode, @Para(value = "iprojectcardids") String iprojectcardids) {
+        ValidationUtils.notNull(cdepcode, "禀议书部门为空!");
+        Kv para = Kv.by("cdepcode", cdepcode);
+        ExpenseBudget expenseBudget = expenseBudgetService.findEffectivedExpenseBudgetByDeptCode(para);
+        InvestmentPlan investmentPlan = investmentPlanService.findEffectivedInvestmentByDeptCode(para);
+        Period expenseBudgetPeriod = null;
+        Period investmentPlanPeriod = null;
+        if (expenseBudget != null) expenseBudgetPeriod = periodService.findById(expenseBudget.getIperiodid());
+        if (investmentPlan != null) investmentPlanPeriod = periodService.findById(investmentPlan.getIperiodid());
+        keepPara();
+        set("expenseBudgetPeriod", expenseBudgetPeriod);
+        set("investmentPlanPeriod", investmentPlanPeriod);
+        set("cdepcode", cdepcode);
         render("editproposalm_choose_expensebudget_or_investmentplan_v2.html");
-    }    
-    
+    }
+
     /**
      * 参照费用预算/投资计划数据源
      */
     @UnCheck
-    public void mdatas()
-    {
+    public void mdatas() {
         renderJsonData(service.paginateMdatas(getPageNumber(), getPageSize(), getKv()));
     }
 
@@ -644,8 +638,8 @@ public class ProposalmAdminController extends BaseAdminController {
         // 原禀议项目
         List<Record> proposalds = proposaldService.findByiProposalMid(iproposalmid);
         for (Record proposald : proposalds) {
-	        // 预算项目
-	        proposald.remove("iautoid", "iproposalmid");
+            // 预算项目
+            proposald.remove("iautoid", "iproposalmid");
         }
 
         List<ProposalAttachment> attachments = proposalAttachmentService.findByIproposalmid(proposalm.getIautoid());
@@ -655,9 +649,9 @@ public class ProposalmAdminController extends BaseAdminController {
             }
         }
         proposalm.setIsourceproposalid(proposalm.getIautoid())
-        .setCsourceproposalno(proposalm.getCproposalno())
-        .setDapplydate(new Date()).setIssupplemental(true)
-        .remove("iautoid", "cproposalno", "iauditstatus", "ieffectivestatus");
+                .setCsourceproposalno(proposalm.getCproposalno())
+                .setDapplydate(new Date()).setIssupplemental(true)
+                .remove("iautoid", "cproposalno", "iauditstatus", "ieffectivestatus");
         set("cdepname", departmentService.getCdepName(proposalm.getCdepcode()));
         set("proposalm", proposalm);
         set("proposalds", proposalds);
@@ -739,14 +733,17 @@ public class ProposalmAdminController extends BaseAdminController {
     public void detaiDatasExport() {
         renderBytesToExcelXlsFile(service.getExcelReport(get("ids")).setFileName("禀议明细Excel"));
     }
+
     /**
      * 移除行
-     * */
-    public void deleteByAjax(){
-    	renderJson(service.deleteByAjax());
+     */
+    public void deleteByAjax() {
+        renderJson(service.deleteByAjax());
     }
+
     @UnCheck
-    public void validateProposalMoneyIsExceed(){
-    	renderJsonData(service.validateProposalMoneyIsExceed(getKv()));
+    public void validateProposalMoneyIsExceed() {
+        renderJsonData(service.validateProposalMoneyIsExceed(getKv()));
     }
+
 }

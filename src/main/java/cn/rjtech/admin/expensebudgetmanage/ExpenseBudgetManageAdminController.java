@@ -26,9 +26,9 @@ import com.jfinal.plugin.activerecord.Record;
 public class ExpenseBudgetManageAdminController extends BaseAdminController {
 
     @Inject
-    private ExpenseBudgetManageService service;
-    @Inject
     private PeriodService periodService;
+    @Inject
+    private ExpenseBudgetManageService service;
 
     /**
      * 首页
@@ -53,9 +53,9 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
         set("expenseBudget", expenseBudget);
         Date dstarttime = expenseBudget.getDate("cbegindate");
         Date dendtime = expenseBudget.getDate("cenddate");
-        List<Record> yearColumnTxtList = new ArrayList<Record>();
-        List<String> monthColumnTxtList = new ArrayList<String>();
-        List<Record> quantityAndAmountColumnList = new ArrayList<Record>();
+        List<Record> yearColumnTxtList = new ArrayList<>();
+        List<String> monthColumnTxtList = new ArrayList<>();
+        List<Record> quantityAndAmountColumnList = new ArrayList<>();
         periodService.calcDynamicExpenseBudgetTableColumn(dstarttime,dendtime,yearColumnTxtList,monthColumnTxtList,quantityAndAmountColumnList);
         set("expenseBudget", expenseBudget);
         set("yearcolumntxtlist",yearColumnTxtList);
@@ -78,11 +78,13 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
     public void effect(){
     	renderJson(service.effect(getLong(0)));
     }
+
     /**
-     *	费用预算作废
-     * */
+     * 费用预算作废
+     */
     @CheckPermission(PermissionKey.EXPENSE_BUDGET_MANAGE_CANCLE)
     public void cancle(){
     	renderJson(service.cancle(getLong(0)));
     }
+    
 }

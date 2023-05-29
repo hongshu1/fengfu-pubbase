@@ -73,4 +73,5 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
     public void cancle(){
     	renderJson(service.cancle(getLong(0)));
     }
+    
 }

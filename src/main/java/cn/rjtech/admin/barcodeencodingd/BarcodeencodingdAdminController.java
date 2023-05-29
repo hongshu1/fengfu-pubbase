@@ -1,15 +1,11 @@
 package cn.rjtech.admin.barcodeencodingd;
 
-import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Barcodeencodingd;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -22,8 +18,7 @@ import com.jfinal.core.paragetter.Para;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-04-15 15:52
  */
-@UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.BARCODEENCODINGD)
+@UnCheck
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/barcodeencodingd", viewPath = "/_view/admin/barcodeencodingd")
 public class BarcodeencodingdAdminController extends BaseAdminController {
