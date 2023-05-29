@@ -1,0 +1,160 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+		<div class="col-md-auto text-left">
+			<form class="form-inline" id="expenseBudgetForm_#(pageId)"   onsubmit="return false;" method="post">
+				<input type="text" class="form-control"
+                           data-date
+                           data-type="year"
+                           placeholder="=预算年度="
+                           name="ibudgetyear">
+                <select class="form-control"
+                		data-select-type="select2"
+                        name="cdepcode"
+                        data-autoload
+                        data-tips="u8部门"
+                        data-url="admin/department/getTreeTableDatas"
+                        data-text="=u8部门="
+                        data-text-attr="cdepname"
+                        data-value-attr="cdepcode"
+                        data-setvalueto="cdepcode"
+                        data-value=""
+                        data-width="200">
+                </select>
+                <select class="form-control"
+                    		data-select-type="select2"
+                            name="ibudgettype"
+                            data-autoload
+                            data-tips="预算类型"
+                            data-url="admin/dictionary/options?key=expense_budget_type"
+                            data-text="=预算类型="
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-value=""
+                            data-width="200">
+                </select>
+                <select class="form-control"
+                    		data-select-type="select2"
+                            name="ieffectivestatus"
+                            data-autoload
+                            data-tips="生效状态"
+                            data-url="admin/dictionary/options?key=effective_status"
+                            data-text="=生效状态="
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-value=""
+                            data-width="200">
+                </select>                   
+                <input type="hidden" name="iauditstatus" value="1,2"/>
+				<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+				<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="expenseBudgetRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cdepname}</td>
+<td>${data.ibudgetyear}</td>
+<td>$${data.ibudgettype|BudgetType}</td>
+<td>${data.cbegindate|date_ym}</td>
+<td>${data.cenddate|date_ym}</td>
+<td>$${data.iauditstatus|AuditStatus}</td>
+<td>${data.daudittime|date_ymd}</td>
+<td>$${data.ieffectivestatus|EffectiveStatus}</td>
+<td>${data.dcreatetime|date_ymd}</td>
+<td>${data.cusername}</td>
+<td>${data.cmemo}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="expenseBudget_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<button data-dialogbtn data-handler="refreshPjaxContainer" data-offset="0.2,0" data-area="100%,100%" data-title="费用预算详情" data-check-handler="jboltTableGetCheckedId" data-url="admin/expensebudgetmanage/detail/" class="btn btn-outline-primary btn-sm"  data-btn="close"><i class="fa fa-edit"></i>详情</button>
+		<button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
+                        data-check-handler="getIdIfValid_#(pageId)" data-url="admin/verifyprogress/findprocess?cobjecttype=01&iobjectid="
+                        class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i class="fa fa-chain"></i>查看审批</button>
+		<button data-ajaxbtn data-area="700,400" data-title="生效" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/expensebudgetmanage/effect/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 生效</button>
+		<button data-ajaxbtn data-area="700,400" data-title="作废" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/expensebudgetmanage/cancle/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 作废</button>
+		<button data-ajaxbtn data-handler="jboltTableRefresh(this)" data-check-handler="jboltTableGetCheckedId" data-url="admin/expensebudget/submitAudit/" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 重启审批流</button>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-width="auto"
+data-url="admin/expensebudgetmanage/datas"
+data-column-resize="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="expenseBudgetForm_#(pageId)"
+data-rowtpl="expenseBudgetRowtpl_#(pageId)"
+data-page="expenseBudgetPage_#(pageId)"
+data-pagesize="50"
+data-toolbar="expenseBudget_toolbar_#(pageId)"
+data-row-dblclick-active = "true"
+data-row-dblclick-handler = "jbolt_table_dblclickhandler_#(pageId)"
+data-fixed-columns-left="1,2,3"
+>
+<thead class="fw-normal">
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="150" data-column="cDepCode">部门名称</th>
+	<th data-width="150" data-column="ibugetyear">预算年度</th>
+	<th data-width="150" data-column="cBudgetType">预算类型</th>
+	<th data-width="150" data-column="cBeginDate">开始年月</th>
+	<th data-width="150" data-column="cEndDate">结束年月</th>
+	<th data-width="150" data-column="iAuditStatus">审核状态</th>
+	<th data-width="150" data-column="AuditTime">审核时间</th>
+	<th data-width="150" data-column="ieffectivestatus">生效状态</th>
+	<th data-width="150" data-column="dCreateTime">创建时间</th>
+	<th data-width="150" data-column="iCreateBy">创建人</th>
+	<th data-width="150" data-column="cMemo">备注</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+	<script type="text/javascript">
+function getIdIfValid_#(pageId)(ele) {
+    var row = jboltTableGetCheckedData(ele);
+    if (row.iauditstatus > 0 && row.iauditstatus < 3 ) {
+        return row.iautoid;
+    }
+    LayerMsgBox.alert('您选择的记录非审核中的单据！', 2);
+    return false;
+}
+function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+	$(tempTr1).data('url', 'admin/expensebudgetmanage/detail/' + rowData.iautoid)
+			.data('offset', '0.2,0')
+			.data('area', '100%,100%')
+			.data('title', '费用预算详情');
+
+	DialogUtil.openBy(tempTr1);
+}
+	</script>
+#end

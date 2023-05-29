@@ -35,3 +35,11 @@ WHERE t1.isDeleted = '0'
   AND t1.cvccode = #para(cvccode)
   #end
 #end
+
+#sql("getSubList")
+SELECT *
+FROM Bd_VendorClass
+WHERE ipid = #para(pid)
+ORDER BY
+    cvccode
+#end

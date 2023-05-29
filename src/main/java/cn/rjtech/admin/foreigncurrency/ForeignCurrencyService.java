@@ -194,4 +194,8 @@ public class ForeignCurrencyService extends BaseService<ForeignCurrency> {
     public List<Record> findAll(Kv kv){
         return dbTemplate("foreigncurrency.paginateAdminDatas", kv.set("iorgid", getOrgId())).find();
     }
+    
+    public List<Record> getAllCexchName(){
+        return dbTemplate("foreigncurrency.getAllCexchName").find();
+    }
 }

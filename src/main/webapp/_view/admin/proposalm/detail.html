@@ -1,0 +1,155 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col text-left">
+                <form class="form-inline" id="proposalDetailForm_#(pageId)" onsubmit="return false;" method="post">
+                    <select class="form-control"
+                            name="cdepcode"
+                            data-select-type="select2"
+                            data-autoload
+                            data-url="admin/department/getTreeTableDatas"
+                            data-text="=部门="
+                            data-text-attr="cdepname"
+                            data-value-attr="cdepcode"
+                            data-width="250"></select>
+                    <select class="form-control"
+                            data-url="admin/dictionary/options?key=audit_status"
+                            name="iauditstatus"
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-autoload
+                            data-text="=审核状态="></select>
+                    <select class="form-control"
+                            data-url="admin/dictionary/options?key=isscheduled"
+                            name="isscheduled"
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-text="=事业计划="
+                            data-autoload></select>
+                    <select class="form-control"
+                            data-url="admin/dictionary/options?key=purpose"
+                            name="cpurposename"
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-text="=目的区分="
+                            data-autoload
+                    >
+                    </select>
+                    <input type="text" autocomplete="off" class="form-control" data-date data-type="date" data-fmt="yyyy-MM-dd" placeholder="申请日期" name="dapplydate" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="禀议书编号" name="cproposalno" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="项目名称" name="cprojectname" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="类别区分" name="ccategoryname" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="预算编号" name="cbudgetno" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="细项名称" name="citemname" value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="proposalDetailRowtpl_#(pageId)">
+        {@each datas as data,index}
+            <tr data-id="${data.iautoid}" >
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.cproposalno}</td>
+                <td>${data.cdepname}${data.cdepcode|bracket}</td>
+                <td>${data.capplypersonname}</td>
+                <td>${data.dapplydate,'yyyy-MM-dd'|date}</td>
+                <td>$${data.iauditstatus|AuditStatus}</td>
+                <td>${data.cprojectcode}</td>
+                <td>${data.cprojectname}</td>
+                <td>${data.cpurposename}</td>
+                <td>${data.ccategoryname}</td>
+                <td>${data.cbudgetno}</td>
+                <td>${data.clowestsubjectcode}</td>
+                <td>${data.budgetamount}</td>
+                <td>${data.budgetamountnottaxinclu}</td>
+                <td>${data.sumamounttaxinclu}</td>
+                <td>${data.sumamountnottaxinclu}</td>
+                <td>${data.citemname}</td>
+                <td>${data.iquantity}</td>
+                <td>${data.inatunitprice}</td>
+                <td>${data.iamounttaxinclu}</td>
+                <td>${data.iamountnottaxinclu}</td>
+                <td>${data.cvencode}</td>
+                <td>${data.ddemanddate,'yyyy-MM-dd'|date}</td>
+                <td>${data.cbudgetdepname}${data.cbudgetdepcode|bracket}</td>
+            </tr>
+        {@/each}
+        </textarea>
+
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="proposalDetail_toolbar_#(pageId)">
+            <div class="btn-group" role="group" aria-label="btn-group">
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+
+            <div class="btn-group pull-right" role="group" aria-label="btn-group">
+                <a class="btn btn-outline-info"
+                        data-downloadbtn
+                        data-usecheckedids="true"
+                        data-url="admin/proposalm/detaiDatasExport">
+                    <i class="fa fa-download"></i> 导出Excel
+                </a>
+            </div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-width="auto"
+               data-url="admin/proposalm/detaiDatas"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="proposalDetailForm_#(pageId)"
+               data-rowtpl="proposalDetailRowtpl_#(pageId)"
+               data-page="proposalDetailPage_#(pageId)"
+               data-pagesize="50"
+               data-toolbar="proposalDetail_toolbar_#(pageId)"
+               data-fixed-columns-left="1,2,3"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150" data-column="cproposalno">禀议书编号</th>
+                <th data-width="150" data-column="cdepcode">部门</th>
+                <th data-width="150" data-column="capplypersonname">申请人</th>
+                <th data-width="150" data-column="dapplydate">申请日期</th>
+                <th data-width="150" data-column="iauditstatus">审批状态</th>
+                <th data-width="150" data-column="cprojectcode">项目编码</th>
+                <th data-width="150" data-column="cprojectname">项目名称</th>
+                <th data-width="150" data-column="cpurposename">目的区分</th>
+                <th data-width="150" data-column="ccategoryname">类别区分</th>
+                <th data-width="150" data-column="cbudgetno">预算编号</th>
+                <th data-width="150" data-column="clowestsubjectcode">明细科目</th>
+                <th data-width="150" data-column="budgetamount">预算金额（含税）</th>
+                <th data-width="150" data-column="budgetamountnottaxinclu">预算金额（不含税）</th>
+                <th data-width="150" data-column="sumamounttaxinclu">已禀议金额（含税）</th>
+                <th data-width="150" data-column="sumamountnottaxinclu">已禀议金额（不含税）</th>
+                <th data-width="150" data-column="citemname">细项名称</th>
+                <th data-width="150" data-column="iquantity">数量</th>
+                <th data-width="150" data-column="inatunitprice">单位</th>
+                <th data-width="150" data-column="iamounttaxinclu">申请金额（含税）</th>
+                <th data-width="150" data-column="iamountnottaxinclu">申请金额（不含税）</th>
+                <th data-width="150" data-column="cvencode">预定供应商</th>
+                <th data-width="150" data-column="ddemanddate">需求日</th>
+                <th data-width="150" data-column="cbudgetdepcode">预算对应部门</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+#end

@@ -168,6 +168,413 @@ function iOrderStatus(val) {
     }
 }
 
+function isLargeAmountExpense(val) {
+    switch (val) {
+        case '0':
+            return juicer_bool_html('否', val);
+        case '1':
+            return juicer_bool_html('是', val);
+        default:
+            return "";
+    }
+}
+
+function proposalmSourceType(val) {
+    switch (val) {
+        case 1:
+            return juicer_html('费用预算', val);
+        case 2:
+            return juicer_html('投资计划', val);
+        default:
+            return '未知';
+    }
+}
+
+function iseffective(val) {
+    switch (val) {
+        case '0':
+            return juicer_bool_html('未生效', val);
+        case '1':
+            return juicer_bool_html('已生效', val);
+        default:
+            return "";
+    }
+}
+
+function isscheduled(val) {
+    switch (val) {
+        case 0:
+            return juicer_bool_html('计划外', val);
+        case 1:
+            return juicer_bool_html('计划内', val);
+        case 2:
+            return juicer_bool_html('提前实施', val);
+        default:
+            return "";
+    }
+}
+
+function auditstate(val) {
+    switch (val) {
+        case 0:
+            return juicer_html('未审核', ++val);
+        case 1:
+            return juicer_html('已审核', ++val);
+        default:
+            return '未知';
+    }
+}
+function careertype(val){
+    switch (val){
+        case '1':
+            return juicer_html('COLD',++val);
+        case '2':
+            return juicer_html('HOT', ++val);
+        case '3':
+            return juicer_html('变矩器',++val);
+        case '4':
+            return juicer_html('锻造', ++val);
+        case '5':
+            return juicer_html('马达', ++val);
+        case '6':
+            return juicer_html('其它', ++val);
+        default:
+            return '未知';
+    }
+}
+function investmentdistinction(val){
+    switch (val){
+        case '1':
+            return juicer_html('能力扩大',++val);
+        case '2':
+            return juicer_html('品质向上', ++val);
+        case '3':
+            return juicer_html('改善合理化',++val);
+        case '4':
+            return juicer_html('更新', ++val);
+        case '5':
+            return juicer_html('环境改善', ++val);
+        case '6':
+            return juicer_html('厂房建筑', ++val);
+        case '7':
+            return juicer_html('其他', ++val);
+        default:
+            return '未知';
+    }
+}
+function assettype(val){
+    switch (val) {
+        case '1':
+            return juicer_html('土地',++val);
+        case '2':
+            return juicer_html('房屋及建筑物', ++val);
+        case '3':
+            return juicer_html('公共设施',++val);
+        case '4':
+            return juicer_html('生产设备', ++val);
+        case '5':
+            return juicer_html('检验设备', ++val);
+        case '6':
+            return juicer_html('模检治具', ++val);
+        case '7':
+            return juicer_html('运输设备', ++val);
+        case '8':
+            return juicer_html('办公设备', ++val);
+        case '9':
+            return juicer_html('事务用品', ++val);
+        case '10':
+            return juicer_html('软件', ++val);
+        case '11':
+            return juicer_html('长期待摊', ++val);
+        default:
+            return '未知';
+    }
+}
+function spriorreport(val){
+    switch (val){
+        case '0':
+            return juicer_html('否', ++val);
+        case '1':
+            return juicer_html('是',++val);
+        default:
+            return '未知';
+    }
+}
+
+function paymentprogress(val){
+    switch (val){
+        case '1':
+            return juicer_html('计划',++val);
+        case '2':
+            return juicer_html('禀议', ++val);
+        case '3':
+            return juicer_html('发注', ++val);
+        default:
+            return '未知';
+    }
+}
+function edittype(val){
+    switch (val){
+        case '1':
+            return juicer_html('新增',++val);
+        case '2':
+            return juicer_html('超支', ++val);
+        case '3':
+            return juicer_html('节约',++val);
+        case '4':
+            return juicer_html('取消', ++val);
+        case '5':
+            return juicer_html('提前', ++val);
+        case '6':
+            return juicer_html('上年延后至本年', ++val);
+        case '7':
+            return juicer_html('本年延后至明年', ++val);
+        default:
+            return '未知';
+    }
+}
+
+function periodprogress(val){
+    switch (val){
+        case '1':
+            return juicer_html('发注',++val);
+        case '2':
+            return juicer_html('纳入', ++val);
+        case '3':
+            return juicer_html('验收',++val);
+        case '4':
+            return juicer_html('质保', ++val);
+        default:
+            return ' ';
+    }
+}
+
+function simport(val) {
+    switch (val) {
+        case '0':
+            return juicer_bool_html('否', ++val);
+        case '1':
+            return juicer_bool_html('是', ++val);
+        default:
+            return "";
+    }
+}
+
+function proposaldType(val) {
+    switch (val) {
+        case 1:
+            return juicer_html('原禀议', val);
+        case 2:
+            return juicer_html('新增', val);
+        default:
+            return '未知';
+    }
+}
+
+function purchaseState(val) {
+    switch (val) {
+        case 1:
+            return juicer_html('未推送', val);
+        case 2:
+            return juicer_html('已推送', val);
+        default:
+            return '未知';
+    }
+}
+
+function serviceType(val) {
+    switch (val) {
+        case 1:
+            return juicer_html('费用预算', val);
+        case 2:
+            return juicer_html('投资计划', val);
+        default:
+            return '未知';
+    }
+}
+
+function proposalChooseType(val){
+    switch (val) {
+        case 1:
+            return juicer_html('费用预算', val);
+        case 2:
+            return juicer_html('投资计划', val);
+        case 3:
+            return juicer_html('追加禀议', val);
+        default:
+            return '未知';
+    }
+}
+
+function BudgetType(val) {
+    switch (val) {
+        case 1:
+            return juicer_html('全年预算', val);
+        case 2:
+            return juicer_html('下期修改', val);
+        case 3:
+            return juicer_html('实绩预测', val);
+        case 4:
+            return juicer_html('实绩', val);
+        case 5:
+            return juicer_html('差异(②-①)', val);
+        case 6:
+            return juicer_html('差异(③-①)', val);
+        case 7:
+            return juicer_html('差异(③-②)', val);
+        default:
+            return "";
+    }
+}
+
+function AuditStatus(val) {
+    switch (val) {
+        case 0:
+            return juicer_html('未审核', ++val);
+        case 1:
+            return juicer_html('待审核', ++val);
+        case 2:
+            return juicer_html('已审核', ++val);
+        case 3:
+            return juicer_html('不通过', ++val);
+        default:
+            return "";
+    }
+}
+
+function EffectiveStatus(val) {
+    switch (val) {
+        case 1:
+            return juicer_html('未生效', ++val);
+        case 2:
+            return juicer_html('已生效', ++val);
+        case 3:
+            return juicer_html('已失效', ++val);
+        case 4:
+            return juicer_html('已作废', ++val);
+        default:
+            return "";
+    }
+}
+
+function iBudgetType1(val) {
+    switch (val) {
+        case 1:
+            return juicer_html('日程', ++val);
+        case 2:
+            return juicer_html('付款', ++val);
+        default:
+            return "";
+    }
+}
+function iBudgetType2(val) {
+    switch (val) {
+        case 1:
+            return juicer_html('全年预算a', ++val);
+        case 2:
+            return juicer_html('下半年修订b', ++val);
+        case 3:
+            return juicer_html('实绩预测d', ++val);
+        case 4:
+            return juicer_html('实绩e', ++val);
+        case 5:
+            return juicer_html('差异A（b-a）', ++val);
+        case 6:
+            return juicer_html('差异E（d-a）', ++val);
+        case 7:
+            return juicer_html('差异F（d-b）', ++val);
+        case 8:
+            return juicer_html('差异G（e-a）', ++val);
+        case 9:
+            return juicer_html('差异H（e-b）', ++val);
+        case 10:
+            return juicer_html('差异J（e-d）', ++val);
+        default:
+            return "";
+    }
+}
+
+function iBudgetTypeInvestmentGroupSummary(val) {
+    switch (val) {
+        case 1:
+            return juicer_html('全年预算', ++val);
+        case 2:
+            return juicer_html('下半年修订', ++val);
+        case 3:
+            return juicer_html('实绩', ++val);
+        default:
+            return "";
+    }
+}
+
+var kFormat = function (val) {
+	if (val === 0) {
+		return 0;
+	}
+	return val ? numberFormat((val / 1000), 2) : '';
+};
+
+function cItemTypeSituation(val) {
+    switch (val) {
+        case '1':
+            return juicer_html('立项', ++val);
+        case '2':
+            return juicer_html('修订', ++val);
+        case '3':
+            return juicer_html('实绩', ++val);
+        default:
+            return "";
+    }
+}
+
+var finishStatus = function (val) {
+    switch (val) {
+	    case 1:
+	        return juicer_html('未完成', ++val);
+	    case 2:
+	        return juicer_html('已完成', ++val);
+	    default:
+	        return "";
+    }
+};
+
+var isubitem = function(val){
+    switch (val) {
+	    case 0:
+	        return "否";
+	    case 1:
+	        return "是";
+	    default:
+	        return "";
+    }	
+}
+
+function iPurchaseRefType(val) {
+    switch (val) {
+        case 1:
+            return juicer_bool_html('禀议书', val);
+        case 2:
+            return juicer_bool_html('预算', val);
+        default:
+            return "";
+    }
+}
+
+/*
+ * 数字格式化 清除掉小数点后的无用的0 如果最后是0 转为自定义字符显示
+ * 参数说明：
+ * number：要格式化的数字
+ * decimals：保留几位小数
+ * dec_point：小数点符号
+ * thousands_sep：千分位符号
+ * roundtag:舍入参数，默认 "ceil" 向上取,"floor"向下取,"round" 四舍五入
+ * defaultChar: 为0时显示的字符
+ * */
+function numberFormatZeroDefaultChar(number, decimals, dec_point, thousands_sep,roundtag,defaultChar) {
+	var value= numberFormat2(number, decimals, dec_point, thousands_sep,roundtag);
+	return value.toString()==="0"?defaultChar:value;
+}
+
 function initMineJuicer(){
 	//格式 juicer.register("模板函数名定义（自己取名）",具体模板函数实现);
 	//举例 juicer.register("date_ymdhm",date_ymdhm);
@@ -191,6 +598,35 @@ function initMineJuicer(){
     juicer.register('iSex', iSex);
     juicer.register('cOrderStatusDescByAuditStatus', cOrderStatusDescByAuditStatus);
     juicer.register('iOrderStatus', iOrderStatus);
+    juicer.register('isLargeAmountExpense', isLargeAmountExpense);
+    juicer.register('proposalmSourceType', proposalmSourceType);
+    juicer.register('iseffective', iseffective);
+    juicer.register('isscheduled', isscheduled);
+    juicer.register('auditstate', auditstate);
+    juicer.register('careertype', careertype);
+    juicer.register('investmentdistinction', investmentdistinction);
+    juicer.register('assettype', assettype);
+    juicer.register('spriorreport', spriorreport);
+    juicer.register('paymentprogress', paymentprogress);
+    juicer.register('edittype', edittype);
+    juicer.register('periodprogress', periodprogress);
+    juicer.register('simport', simport);
+    juicer.register('proposaldType', proposaldType);
+    juicer.register('purchaseState', purchaseState);
+    juicer.register('serviceType', serviceType);
+    juicer.register('proposalChooseType', proposalChooseType);
+    juicer.register('BudgetType', BudgetType);
+    juicer.register('AuditStatus', AuditStatus);
+    juicer.register('EffectiveStatus', EffectiveStatus);
+    juicer.register('iBudgetType1', iBudgetType1);
+    juicer.register('iBudgetType2', iBudgetType2);
+    juicer.register('iBudgetTypeInvestmentGroupSummary', iBudgetTypeInvestmentGroupSummary);
+    juicer.register('kFormat', kFormat);
+    juicer.register('cItemTypeSituation', cItemTypeSituation);
+    juicer.register('finishStatus', finishStatus);
+    juicer.register('isubitem', isubitem);
+    juicer.register('iPurchaseRefType', iPurchaseRefType);
+    juicer.register('numberFormatZeroDefaultChar', numberFormatZeroDefaultChar);
 }
 
 function jboltTableGetSpecCols(ele, colName) {

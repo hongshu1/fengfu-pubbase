@@ -89,3 +89,8 @@ FROM T_Sys_TransVouch t1,
 WHERE
         t1.AutoID = t2.MasID AND  t1.AutoID = '#(autoid)'
     #end
+
+#sql("pushU8List")
+
+
+#end

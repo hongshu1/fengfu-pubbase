@@ -93,5 +93,19 @@ public class MoMaterialscanusedlogmAdminController extends BaseAdminController {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
 
+	/**
+	 * 获取材料出库明细
+	 */
+	public void  getMaterialscanList(){
+		renderJson(service.getMaterialscanList(getKv()));
+	}
+
+	/**
+	 * 获取备料现品票明细
+	 */
+	public void getMaterialsPrepareList(){
+		renderJson(service.getMaterialsPrepareList(getKv()));
+	}
+
 
 }

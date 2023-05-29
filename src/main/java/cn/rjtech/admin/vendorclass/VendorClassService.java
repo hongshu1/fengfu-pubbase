@@ -1,5 +1,6 @@
 package cn.rjtech.admin.vendorclass;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
@@ -367,4 +368,26 @@ public class VendorClassService extends BaseService<VendorClass> {
                     .setMerges(JBoltExcelMerge.create("A", "C", 1, 1, "供应商分类"))
             );
     }
+
+    public List<JsTreeBean> getTreeList() {
+        List<JsTreeBean> treeBeans = new ArrayList<>();
+        // 根节点
+        treeBeans.add(new JsTreeBean(0, "#", "供应商分类档案", true, "root_opened", true));
+        appendSubTree(treeBeans,0L);
+        return treeBeans;
+    }
+    private void appendSubTree(List<JsTreeBean> treeBeans, Long pid) {
+    	List<Record> subList = getSubList(pid);
+    	if(CollUtil.isEmpty(subList)) return;
+        for (Record row : subList) {
+            // 当前节点
+            treeBeans.add(new JsTreeBean(row.getStr("cvccode"), pid, row.getStr("cvcname") + "(" + row.getStr("cvccode") + ")","default", null, true));
+            // 追加子节点
+            appendSubTree(treeBeans,row.getLong("iautoid"));
+        }
+    }
+    private List<Record> getSubList(Long pid) {
+        Okv para = Okv.by("pid", pid);
+        return dbTemplate("vendorclass.getSubList", para).find();
+    }     
 }

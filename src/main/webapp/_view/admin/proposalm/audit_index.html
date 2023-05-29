@@ -1,0 +1,223 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col">
+                <form class="form-inline" id="proposalmForm_#(pageId)" onsubmit="return false;" method="post">
+
+                    <input type="hidden" name="audit" value="1">
+
+                    <select class="form-control"
+                            data-select-type="select2"
+                            data-autoload
+                            data-tips="部门"
+                            data-url="admin/department/getTreeTableDatas"
+                            data-text="=部门="
+                            data-text-attr="cdepname"
+                            data-value-attr="cdepcode"
+                            data-setvalueto="cdepcode"
+                            data-value=""
+                            data-width="250">
+                    </select>
+
+                    <input type="text" name="cdepcode" id="cdepcode" hidden>
+
+                    <input type="text" autocomplete="off" class="form-control col-md-1" placeholder="=编号=" name="cproposalno" value=""/>
+                    <input type="text" autocomplete="off" class="form-control col-md-1" placeholder="=原编号=" name="csourceproposalno" value=""/>
+
+                    <input type="text" autocomplete="off" class="form-control"
+                           data-autocomplete
+                           data-url="admin/person/autocomplete"
+                           data-link-para-ele="#capplypersoncode"
+                           data-sync-ele="capplypersoncode"
+                           data-text-attr="cpsn_name"
+                           data-value-attr="cpsn_num"
+                           placeholder="=申请人="
+                           data-column-attr="cpsn_num,cpsn_name">
+
+                    <input type="text" name="capplypersoncode" id="capplypersoncode" data-sync-attr="cpsn_num" hidden>
+
+                    <input type="text" autocomplete="off" class="form-control col-md-1" placeholder="=项目编码=" name="cprojectcode" value=""/>
+                    <input type="text" autocomplete="off" class="form-control col-md-1" placeholder="=项目名称=" name="cprojectname" value=""/>
+
+                    <select class="form-control"
+                            data-url="admin/dictionary/options?key=audit_status"
+                            name="iauditstatus"
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-autoload
+                            data-text="=审核状态="
+                    ></select>
+
+                    <select class="form-control"
+                            data-url="admin/dictionary/options?key=iseffective"
+                            name="iseffective"
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-text="=生效状态="
+                            data-autoload
+                    ></select>
+
+                    <select class="form-control"
+                            data-url="admin/dictionary/options?key=isscheduled"
+                            name="isscheduled"
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-text="=事业计划="
+                            data-autoload
+                    ></select>
+
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="proposalmRowtpl_#(pageId)">
+        {@each datas as data,index}
+            <tr data-id="${data.iautoid}" >
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.cproposalno}</td>
+                <td>${data.csourceproposalno}</td>
+                <td>${data.cdepname}${data.cdepcode|bracket}</td>
+                <td>${data.capplypersonname}${data.capplypersoncode|bracket}</td>
+                <td>${data.dapplydate|date_ymd}</td>
+                <td>${data.cprojectname}${data.cprojectcode|bracket}</td>
+                <td>$${data.iauditstatus|AuditStatus}</td>
+                <td>$${data.ieffectivestatus|EffectiveStatus}</td>
+                <td>$${data.isscheduled|isscheduled}</td>
+                <td>${data.cpurposename}</td>
+                <td>${data.ccategoryname}</td>
+                <td>${data.cdesc}</td>
+                <td>${data.dcreatetime}</td>
+                <td>${data.cname}</td>
+                <td>${data.dupdatetime}</td>
+                <td>${data.uname}</td>
+            </tr>
+        {@/each}
+        </textarea>
+
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="proposalm_toolbar_#(pageId)">
+
+            <div class="btn-group" role="group" aria-label="btn-group">
+
+                #permission(PermissionKey.PROPOSALM_EDIT)
+                <button data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="修改禀议管理数据" data-check-handler="jboltTableGetCheckedId" data-url="admin/proposalm/edit?readonly=readonly&iautoid=" class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i>查看</button>
+                #end
+
+                #permission(PermissionKey.PROPOSALM_WITHDRAW)
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/proposalm/withdraw?iautoid=" data-confirm="确定撤销选中数据？" class="btn btn-outline-primary btn-sm"><i class="jbicon jb-jujue"></i> 撤销提交</button>
+                #end
+
+                <button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
+                        data-check-handler="getIdIfValid" data-url="admin/verifyprogress/findprocess?cobjecttype=03&iobjectid="
+                        class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i class="fa fa-chain"></i>查看审批</button>
+
+                #permission(PermissionKey.PROPOSALM_EFFECT)
+                <button data-ajaxbtn data-area="700,400" data-title="生效" data-handler="refreshJBoltTable" data-check-handler="effectiveValidate" data-url="/admin/proposalm/effect?iautoid=" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 生效</button>
+                #end
+
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-width="auto"
+               data-url="admin/proposalm/datas"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="proposalmForm_#(pageId)"
+               data-rowtpl="proposalmRowtpl_#(pageId)"
+               data-page="proposalmPage_#(pageId)"
+               data-pagesize="50"
+               data-toolbar="proposalm_toolbar_#(pageId)"
+               data-fixed-columns-left="1,2,3"
+               data-row-dblclick-active="true"
+               data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="120" data-column="cproposalno">编号</th>
+                <th data-width="100" data-column="csourceproposalno">原编号</th>
+                <th data-width="150" data-column="cdepcode">申请部门</th>
+                <th data-width="120" data-column="capplypersoncode">申请人</th>
+                <th data-width="100" data-column="dapplydate">申请日期</th>
+                <th data-width="200" data-column="cprojectcode">项目</th>
+                <th data-width="100" data-column="iauditstatus">审批状态</th>
+                <th data-width="90" data-column="iseffective">生效状态</th>
+                <th data-width="100" data-column="isscheduled">事业计划</th>
+                <th data-width="100" data-column="cpurpose">目的区分</th>
+                <th data-width="100" data-column="categorycode">类别区分</th>
+                <th data-width="100" data-column="cdesc">说明</th>
+                <th data-width="150" data-column="dcreatetime">创建时间</th>
+                <th data-width="100" data-column="icreateby">创建人</th>
+                <th data-width="150" data-column="dupdatetime">更新时间</th>
+                <th data-width="100" data-column="iupdateby">更新人</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+#end
+#define js()
+<script>
+    function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+        console.log(JSON.stringify(rowData));
+
+        $(tempTr1).data('url', '/admin/proposalm/edit?readonly=readonly&iautoid=' + rowData.iautoid)
+        	.data('offset', '0.2,0')
+            .data('area', '100%,100%')
+            .data('title', '禀议书')
+            .data('btn', '保存,关闭');
+
+        DialogUtil.openBy(tempTr1);
+    }
+
+    function getIdIfValid(ele) {
+        var row = jboltTableGetCheckedData(ele);
+        if (row.iauditstatus > 0) {
+            return row.iautoid;
+        }
+        LayerMsgBox.alert('您选择的记录非审核中的单据！', 2);
+        return false;
+    }
+
+    /**
+     * 生效校验
+     */
+    function effectiveValidate(ele) {
+        var row = jboltTableGetCheckedData(ele);
+        if (!row) {
+            LayerMsgBox.alert('请选择一行数据', 2);
+            return false;
+        }
+        if (row.iseffective === '1') {
+            LayerMsgBox.alert('已生效记录无法操作', 2);
+            return false;
+        }
+        if (row.iauditstatus !== 2) {
+            LayerMsgBox.alert('请先走完审批流程', 2);
+            return false;
+        }
+        return row.iautoid;
+    }
+</script>
+#end

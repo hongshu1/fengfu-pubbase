@@ -1,0 +1,72 @@
+<form onsubmit="return false;" id="projectForm" action="#(action)" method="post">
+	<input type="hidden" name="project.iautoid" value="#(project.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目编码</label>
+		<div class="col">
+			<input type="text" 
+				#if(project.iautoid??) disabled #end
+			data-with-clearbtn="true" autocomplete="off" class="form-control"  data-rule="required" placeholder="请输入项目编码" maxlength="20" name="project.cprojectcode" value="#(project.cprojectcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目名称</label>
+		<div class="col">
+			<input type="text"
+				#if(project.iautoid??) disabled #end
+			 data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required" placeholder="请输入项目名称" maxlength="200" name="project.cprojectname" value="#(project.cprojectname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">u8部门名称</label>
+		<div class="col">
+			<select class="form-control"
+					data-select-type="select2"
+					data-autoload
+					data-tips="u8部门"
+					data-url="admin/department/getTreeTableDatas"
+					data-text="=u8部门="
+					data-text-attr="cdepname"
+					data-value-attr="cdepcode"
+					name="project.cdepcode"
+					data-select="#(project.cdepcode??)"
+					data-setvalueto="project.cdepcode"
+					data-value=""
+					data-rule="required"
+					>
+			</select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货编码</label>
+		<input type="hidden" name="project.cInvCode" value="#(project.cInvCode??)" id="cinvcode" data-value-attr="cinvcode"/>
+		<div class="col">
+			<input type="text" class="form-control"
+				   data-autocomplete
+				   data-url="admin/inventory/autocomplete"
+				   data-rule="required"
+				   data-hidden-input="cinvcode"
+				   data-text-attr="cinvname"
+				   data-column-attr="cinvcode,cinvname"
+				   placeholder="请选择"
+				   data-tips="请选择"
+				   data-header="存货编码,存货名称"
+				   maxlength="40"
+				   value="#(project.cInvCode??)"
+				   >   			
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">备注</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"   class="form-control"  placeholder="请输入备注" maxlength="200" name="project.cmemo" value="#(project.cmemo??)"/>
+		</div>
+	</div>	
+</form>
+
+#define js()
+<script>
+
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="projectForm")
+#end
+

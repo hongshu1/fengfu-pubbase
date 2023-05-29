@@ -38,6 +38,7 @@ import cn.rjtech.admin.invpart.InvPartService;
 import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.enums.InvPartTypeEnum;
 import cn.rjtech.enums.InventoryTableTypeEnum;
+import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.OperationTypeEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
@@ -1210,5 +1211,28 @@ public class InventoryService extends BaseService<Inventory> {
 		}
 		return splitCOperationName[0];
 	}
+
+	public Record findByCinvcode(String cinvcode) {
+		return findFirstRecord(selectSql().eq("cinvcode", cinvcode).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("isenabled", IsEnableEnum.NO.getValue()));
+	}
+
+    /**
+     * 获取存货信息Autocomplete
+     */
+    public List<Record> getInventoryAutocomplete(Kv kv) {
+        Page<Record> page = dbTemplate("inventory.getInventoryList", kv).paginate(1, 100);
+        ValidationUtils.notNull(page, JBoltMsg.DATA_NOT_EXIST);
+        return page.getList();
+    }
+
+    /**
+     * 获取存货信息分页
+     */
+    public Page<Record> getInventoryPaginate(Integer pageNumber, Integer pageSize, Kv kv) {
+        Page<Record> page = dbTemplate("inventory.getInventoryList", kv).paginate(pageNumber, pageSize);
+        ValidationUtils.notNull(page, JBoltMsg.DATA_NOT_EXIST);
+        return page;
+    }   
+    
 }
 
