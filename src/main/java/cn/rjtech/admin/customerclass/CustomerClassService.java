@@ -251,6 +251,14 @@ public class CustomerClassService extends BaseService<CustomerClass> {
 			for(CustomerClass p:models){
 				CustomerClass customerclass = findFirst(Okv.by("cCCCode", p.getCUpdateName()),
 						"iautoid", "desc");
+				if(notOk(p.getCCCCode())){
+					return fail("编码不能为空");
+				}
+				if(notOk(p.getCCCName())){
+					return fail("名称不能为空");
+				}
+				ValidationUtils.isTrue(findFirst(Okv.by("cCCCode", p.getCCCCode()), "iautoid", "asc")==null, p.getCCCCode()+
+						"编码重复");
 				if(customerclass!=null){
 					p.setIPid(customerclass.getIAutoId());
 				}else{
@@ -265,14 +273,7 @@ public class CustomerClassService extends BaseService<CustomerClass> {
 				p.setCUpdateName(JBoltUserKit.getUserName());
 				p.setDUpdateTime(now);
 				p.setDCreateTime(now);
-				if(notOk(p.getCCCCode())){
-					return fail("编码不能为空");
-				}
-				if(notOk(p.getCCCName())){
-					return fail("名称不能为空");
-				}
-				ValidationUtils.isTrue(findFirst(Okv.by("cCCCode", p.getCCCCode()), "iautoid", "asc")==null, p.getCCCCode()+
-                        "编码重复");
+
 
 			}
 		}
@@ -287,21 +288,6 @@ public class CustomerClassService extends BaseService<CustomerClass> {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL);
 		}
 		return SUCCESS;
-	}
-
-	/**
-	 * 创建工段档案信息预处理
-	 */
-	public void saveWorkRegionMHandle(CustomerClass workregionm, Long userId, Date date, String username, Long orgId, String orgCode, String orgName) {
-		workregionm.setICreateBy(userId);
-		workregionm.setDCreateTime(date);
-		workregionm.setCCreateName(username);
-		workregionm.setIOrgId(orgId);
-		workregionm.setCOrgCode(orgCode);
-		workregionm.setCOrgName(orgName);
-		workregionm.setIUpdateBy(userId);
-		workregionm.setDUpdateTime(date);
-		workregionm.setCUpdateName(username);
 	}
 
 }
