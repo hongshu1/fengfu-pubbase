@@ -13,7 +13,7 @@
 <div class="form-group row" >
 <label class="col-sm-2 col-form-label">分类编码</label>
 <div class="col-10">
-    <output type="text"  id="demoUserId1"  data-rule="required" data-notnull="true" data-tips="请输入枚举类型ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入枚举类型ID" maxlength="40" name="enumVals.iEnumTypeId" value="#(enumVals.iEnumTypeId??)"/>
+    <input type="text"  id="demoUserId1"  data-rule="required" data-notnull="true" data-tips="请输入枚举类型ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入枚举类型ID" maxlength="40" name="enumVals.iEnumTypeId" value="#(enumVals.iEnumTypeId??)"/>
 </div>
 </div>
 
@@ -22,7 +22,6 @@
         <div class="col-10">
             <input type="text"   autocomplete="off" name="demoUserName1" value=""  class="form-control"  placeholder="=选择分类名称="
                    data-jboltinput
-                   data-rule="required"
                    data-load-type="ajaxportal"
                    data-url="admin/enumType/ajaxPortalTable"
                    data-hidden-input="demoUserId1"

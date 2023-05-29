@@ -104,6 +104,16 @@ public class EnumValsService extends BaseService<EnumVals> {
 		EnumVals dbEnumVals=findById(enumVals.getIAutoId());
 		if(dbEnumVals==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		//if(existsName(enumVals.getName(), enumVals.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+
+		//校验编码是否存在
+		List<EnumVals> cenumtyoeid = service.find("SELECT * FROM Bd_EnumType WHERE cEnumTypeCode = ?",enumVals.getIEnumTypeId());
+		if(cenumtyoeid.size()==0){
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+
+
+
+
 		boolean success=enumVals.update();
 		if(success) {
 			//添加日志

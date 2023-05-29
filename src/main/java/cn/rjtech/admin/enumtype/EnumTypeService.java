@@ -30,6 +30,8 @@ public class EnumTypeService extends BaseService<EnumType> {
 	private final EnumType dao=new EnumType().dao();
 	@Inject
 	private EnumValsService enumValsService;
+	@Inject
+	private EnumTypeService service;
 
 	@Override
 	protected EnumType dao() {
@@ -84,6 +86,11 @@ public class EnumTypeService extends BaseService<EnumType> {
 		enumType.setCOrgName(getOrgName());
 		enumType.setIOrgId(getOrgId());
 
+		//校验编码是否重复
+		List<EnumType> ifenumtypeid = service.find("SELECT * FROM Bd_EnumType WHERE cEnumTypeCode = ?",enumType.getCEnumTypeCode());
+		if(ifenumtypeid.size()>0){
+			return fail(JBoltMsg.DATA_SAME_NAME_EXIST);
+		}
 		boolean success = enumType.save();
 		if(success) {
 			//添加日志
@@ -106,19 +113,8 @@ public class EnumTypeService extends BaseService<EnumType> {
 		if(dbEnumType==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		//if(existsName(enumType.getName(), enumType.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 
-		//关联编辑，修改EnumVals表数据
-//		String updatecenumtypecode = enumType.getCEnumTypeCode();
-//		List<EnumVals> ifcEnumTypeCide = enumValsService.find("SELECT iAutoId FROM Bd_EnumVals WHERE iEnumTypeId = ?",updatecenumtypecode);
-//
-//		for (int i=0;i < ifcEnumTypeCide.size();i++){
-//			EnumVals enumVals = enumValsService.findById(ifcEnumTypeCide.get(i));
-//			System.out.println(i+"aaaaaaaaaaaaaaa"+enumVals);
-//			System.out.println(i+"aaaaaaaaaaaaaaa"+enumVals);
-//			System.out.println(i+"aaaaaaaaaaaaaaa"+enumVals);
-//			System.out.println(i+"aaaaaaaaaaaaaaa"+enumVals);
-//			System.out.println(i+"aaaaaaaaaaaaaaa"+enumVals);
-//			enumVals.setIEnumTypeId(Long.valueOf(updatecenumtypecode));
-//		}
+
+
 
 
 		boolean success=enumType.update();
