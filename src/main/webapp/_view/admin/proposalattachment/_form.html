@@ -1,0 +1,61 @@
+
+<div class="jbolt_page_title">
+    <div class="row">
+
+
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+    <small class="form-text text-muted text-ceter">温馨提示：附件只支持PPT、WORD、EXCEL、JPG、PDF等格式预览，文件大小不超过20M</small>
+    <br/>
+    <div class="col-12 col-sm-6 col-lg-3">
+        <fieldset class="form-page-fieldset">
+            <div class="form-group text-center">
+                <div class="j_upload_file_box"
+                     data-handler="uploadFile"
+                     data-maxsize="204800"
+                     data-upload-success-handler="uploadFiles"
+                     data-url="/admin/proposaldattachment/uploadFile"
+                     data-value="#(proposaldattachment.attachmenturi??)"></div>
+                <!-- <small class="form-text text-muted text-ceter">文件大小不超过20M</small> -->
+            </div>
+        </fieldset>
+    </div>
+
+    <form onsubmit="return false;" id="proposalAttachmentForm" action="#(action)" method="post">
+        #if(proposalAttachment.iautoid??)
+        <input type="hidden" name="proposalAttachment.iautoid" value="#(proposalAttachment.iautoid)" />
+        #else
+        <input type="hidden" name="proposalAttachment.iproposaldid" value="#(iproposaldid)" />
+        #end
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">附件名称</label>
+            <div class="col">
+                <input type="text" id="attaName" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入附件名称" maxlength="200" name="proposalAttachment.attachmentname" value="#(proposalAttachment.attachmentname??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">附件路径</label>
+            <div class="col">
+                <input type="text" id="attaUrlInput" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入附件路径" maxlength="200" name="proposalAttachment.attachmenturi" value="#(proposalAttachment.attachmenturi??)"/>
+            </div>
+        </div>
+    </form>
+</div>
+#define js()
+<script>
+    function uploadFiles(fileInput, type, btn, res) {
+        console.log(fileInput);
+        console.log(type);
+        console.log(btn);
+        console.log(res);
+
+        $("#attaName").val(res.name);
+        $("#attaUrlInput").val(res.data);
+    }
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="proposalAttachmentForm")
+#end
+

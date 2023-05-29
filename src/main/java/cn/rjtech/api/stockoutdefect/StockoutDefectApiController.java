@@ -74,8 +74,8 @@ public class StockoutDefectApiController extends BaseApiController {
     /**
      *
      *
-     * @param iautoid              来料异常品ID
-     * @param stockoutqcformmid     在库表ID
+     * @param iautoid              在库异常品ID
+     * @param stockoutqcformmid     在库检ID
      * @param capproach            处置区分
      * @param idqqty               不良数量
      * @param iresptype            责任区：1. 工程内 2. 其他
@@ -102,7 +102,7 @@ public class StockoutDefectApiController extends BaseApiController {
         kv.set("isfirsttime", isfirsttime);
         kv.set("cbadnesssns", cbadnesssns);
         kv.set("cdesc", cdesc);
-        kv.set("ircvdocqcformmid", stockoutqcformmid);
+        kv.set("stockoutqcformmid", stockoutqcformmid);
         renderJBoltApiRet(stockoutDefectApiService.update(kv));
     }
 

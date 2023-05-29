@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
+import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.person.PersonService;
@@ -14,9 +15,7 @@ import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.enums.SourceTypeEnum;
-import cn.rjtech.model.momdata.Person;
-import cn.rjtech.model.momdata.SubcontractOrderM;
-import cn.rjtech.model.momdata.Vendor;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -55,6 +54,9 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 	private SubcontractOrderDBatchService subcontractOrderDBatchService;
 	@Inject
 	private InventoryChangeService inventoryChangeService;
+	@Inject
+	private ExchService exchService;
+	
 	
 	/**
 	 * 首页
@@ -81,12 +83,30 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 		Vendor vendor = vendorService.findById(iVendorId);
 		Record record = new Record();
 		record.set(SubcontractOrderM.IVENDORID, vendor.getIAutoId());
-		record.set(Vendor.CVENNAME, vendor.getCVenName());
 		record.set(SubcontractOrderM.DBEGINDATE, beginDate);
 		record.set(SubcontractOrderM.DENDDATE, endDate);
-		setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType, iSourceType));
+		
+		if (ObjectUtil.isNotNull(vendor.getITaxRate())){
+			record.set(SubcontractOrderM.ITAXRATE, vendor.getITaxRate().stripTrailingZeros().stripTrailingZeros());
+		}
+		
+		record.set(SubcontractOrderM.CCURRENCY, vendor.getCCurrency());
+		Exch exch = exchService.getNameByLatestExch(getOrgId(), vendor.getCCurrency());
+		// 汇率
+		if (ObjectUtil.isNotNull(exch)){
+			record.set(PurchaseOrderM.IEXCHANGERATE, exch.getNflat());
+		}
+		record.set(SubcontractOrderM.IDEPARTMENTID, vendor.getCVenDepart());
+		record.set(SubcontractOrderM.IDUTYUSERID, vendor.getIDutyPersonId());
+		
+		Person person = personService.findById(vendor.getIDutyPersonId());
+		if (ObjectUtil.isNotNull(person)){
+			set("personname",person.getCpsnName());
+		}
 		set("subcontractOrderM", record);
 		record.set(SubcontractOrderM.ITYPE, iSourceType);
+		setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType, iSourceType));
+		
 		if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == iSourceType){
 			render("blank_add.html");
 			return;
@@ -129,6 +149,12 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 		set(Vendor.CVENNAME, vendor.getCVenName());
 		if (StrUtil.isNotBlank(isView)){
 			set("isView", 1);
+		}
+		if (ObjectUtil.isNotNull(subcontractOrderM.getITaxRate())){
+			subcontractOrderM.setITaxRate( subcontractOrderM.getITaxRate().stripTrailingZeros());
+		}
+		if (ObjectUtil.isNotNull(subcontractOrderM.getIExchangeRate())){
+			subcontractOrderM.setIExchangeRate( subcontractOrderM.getIExchangeRate().stripTrailingZeros());
 		}
 		set("subcontractOrderM",subcontractOrderM);
 		setAttrs(service.getDateMap(subcontractOrderM));

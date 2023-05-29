@@ -14,12 +14,12 @@
             <label class="col-1 col-form-label">存货编码</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                         maxlength="100"  readonly value="#(invcode??)"/>
+                         maxlength="100"  readonly value="#(bill.invcode??)"/>
             </div>
             <label class="col-1 col-form-label">存货名称</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly value="#(invname??)"/>
+                       maxlength="100"  readonly value="#(bill.invname??)"/>
             </div>
         </div>
         <dic class="form-group row">
@@ -27,12 +27,12 @@
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
                        maxlength="100"  readonly
-                       value="#(invstd??)"/>
+                       value="#(bill.invstd??)"/>
             </div>
             <label class="col-1 col-form-label">库存单位</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly value="#(unitname??)"/>
+                       maxlength="100"  readonly value="#(bill.unitname??)"/>
             </div>
         </dic>
 
@@ -40,12 +40,12 @@
             <label class="col-1 col-form-label">创建人</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly value="#(createperson??)"/>
+                       maxlength="100"  readonly value="#(bill.createperson??)"/>
             </div>
             <label class="col-1 col-form-label">创建时间</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="50" readonly value="#date(createdate??)"/>
+                       maxlength="50" readonly value="#date(bill.createdate??)"/>
             </div>
         </div>
         <h5>新现品票</h5>
@@ -54,19 +54,19 @@
             <label class="col-1 col-form-label">现品票</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly value="#(barcode??)"/>
+                       maxlength="100"  readonly value="#(bill.barcode??)"/>
             </div>
         </div>
         <div class="form-group row">
             <label class="col-1 col-form-label">批次号</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly value="#(batch??)"/>
+                       maxlength="100"  readonly value="#(bill.batch??)"/>
             </div>
             <label class="col-1 col-form-label">合并数量</label>
             <div class="col-2">
                 <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
-                       maxlength="100"  readonly value="#number(qtys??)"/>
+                       maxlength="100"  readonly value="#number(bill.qty??)"/>
             </div>
         </div>
     </form>
@@ -78,9 +78,9 @@
 		{@each datas as data,index}
     <tr data-id="${data.logno}">
       <td>${pageNumber,pageSize,index | rownum}</td>
-			<td>${data.barcode}</td>
+			<td>${data.cbarcode}</td>
 			<td>${data.batch}</td>
-			<td>${data.qty, 2|number_format}</td>
+			<td>${data.iqty, 2|number_format}</td>
 		</tr>
 		{@/each}
 	</textarea>
@@ -102,9 +102,9 @@
         <thead>
         <tr>
             <th data-width="70" data-column="index">序号</th>
-            <th data-width="200" data-column="barcode">现品票</th>
+            <th data-width="200" data-column="cbarcode">现品票</th>
             <th data-width="200" data-column="batch">批次号</th>
-            <th data-width="100" data-column="qty">数量</th>
+            <th data-width="100" data-column="iqty">数量</th>
         </tr>
         </thead>
         <tbody>

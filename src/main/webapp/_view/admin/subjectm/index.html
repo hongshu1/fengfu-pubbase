@@ -1,0 +1,157 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col-md-auto">
+				<h1><i class="jbicon2 jbi-safetycertificate"></i> 科目对照表</h1>
+				<a href="javascript:void(0)" onclick="jboltTableExpandAll(this)" class="text-primary">展开</a>|<a href="javascript:void(0)" onclick="jboltTableCollapseAll(this)"  class="text-secondary">闭合</a>
+			</div>
+			<div class="col">
+				<form onkeydown="if(event.which==13){return false;}" onsubmit="return false;" class="form-inline" id="subjectmForm_#(pageId)" action="admin/subjectm" method="post">
+				<input type="hidden" name="isdelete" value="0"/>
+					<input type="text" id="keywords"  autocomplete="off" class="form-control" placeholder="=科目编码/名称=" name="keywords" value=""/>
+					<input type="text" class="form-control"
+						   id="cversion"
+						   data-date
+						   data-type="year"
+						   placeholder="=版本="
+						   name="cversion"
+							value="#(cversion ??)">
+<!--					<select class="form-control"-->
+<!--							id="senabled"-->
+<!--							data-select-type="select2"-->
+<!--							name="senabled"-->
+<!--							data-autoload-->
+<!--							data-tips="是否启用"-->
+<!--							data-url="admin/dictionary/options?key=whether_enable"-->
+<!--							data-text="=是否启用="-->
+<!--							data-text-attr="name"-->
+<!--							data-value-attr="sn"-->
+<!--							data-value=""-->
+<!--							data-width="120">-->
+<!--					</select>-->
+					<button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+					<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+				</form>
+			</div>
+			<div class="col-md-auto">
+				<div class="btn-group" role="group" aria-label="btn-group">
+					<!-- <a id="addid" onclick="addDatas()"   data-area="80%,80%"   data-title="新增一级科目"   data-handler="refreshJBoltTable"   class="jbolt_table_editbtn btn btn-outline-info btn-sm"><i class="fa fa-plus">新增一级科目</i></a> -->
+					<button data-openpage="dialog" data-area="80%,80%" data-handler="refreshJBoltTable" data-check-handler="addBeforeHandler" data-title="新增一级科目" data-url="admin/subjectm/add/" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增一级科目</button>
+					<button onclick="enable(1)"  data-title="版本启用"  class="btn btn-outline-primary btn-sm" ><i class="fa  "></i> 启用</button>
+					<button onclick="enable(0)"  data-title="版本停用"  class="btn btn-outline-info btn-sm" ><i class="fa "></i> 停用</button>
+					<button onclick="copyDatas()"  data-title="复制数据"  class="btn btn-outline-info btn-sm" ><i class="fa "></i> 复制</button>
+					<button onclick="jboltTableRefresh(this)" class="btn btn-outline-secondary btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="jbolt_page_content">
+		<!-- JBoltTable的数据模板定义-->
+		<script type="text/template" id="subjectm_rowtpl_tr_#(pageId)">
+			<tr data-id="${iautoid}" data-pid="${iparentid}"  data-hasitems="${items&&items.length>0}">
+				<td><i></i>${csubjectcode}</td>
+				<td>${csubjectname}</td>
+				<td>${parentname}</td>
+				<td>${clevel}</td>
+				<td>${isend == 0 ? '否':'是' }</td>
+				<td>${ccodename}</td>
+				<td>${ucode}</td>
+				<td data-value="${isenabled}" id="isenabled">${isenabled == 1 ?'启用':isenabled == 0 ? '停用':''}</td>
+				<td>${cversion}</td>
+				<td>${icreateby}</td>
+				<td>${createtime|date_ymd}</td>
+
+				<td class="text-right">
+					{@if(isenabled == 1)}
+					<a  href="admin/subjectm/add/${iautoid}"  data-area="80%,80%"  tooltip data-title="添加下级科目"   data-handler="refreshJBoltTable"  dialog-title="添加下级科目" class="jbolt_table_editbtn"><i class="fa fa-plus"></i></a>
+					<a href="admin/subjectm/edit/${iautoid}" data-area="80%,80%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" dialog-title="编辑科目" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+					<a href="admin/subjectm/deleteByIds/${iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除这条数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+					{@/if}
+				</td>
+			</tr>
+			{@if items&&items.length>0}
+			{@each items as son}
+			{@include "#subjectm_rowtpl_tr_#(pageId)",son}
+			{@/each}
+			{@/if}
+		</script>
+		<script type="text/template" id="subjectm_rowtpl_#(pageId)">
+			{@each datas as data,index}
+			{# 先循环第一级}
+			{@include "#subjectm_rowtpl_tr_#(pageId)",data}
+			{@/each}
+		</script>
+
+		<table class="table table-bordered table-hover table-center text-nowrap thead_font_normal"
+			   id="subjectm_table_#(pageId)"
+			   data-jbolttable
+			   ###设置是treetable 默认显示到第一级 操作列在第一列
+			   data-treetable="all:1"
+			   data-fixed-columns-left="1"
+			   data-fixed-columns-right="12"
+			   data-column-resize="true"
+			   data-ajax="true"
+			   data-url="admin/subjectm/datas?isenabled=1"
+			   data-rowtpl="subjectm_rowtpl_#(pageId)"
+			   data-conditions-form="subjectmForm_#(pageId)"
+		>
+			<thead>
+			<tr>
+				<th data-width="100">科目编码</th>
+				<th data-width="150">科目名称</th>
+				<th data-width="150">上级科目</th>
+				<th data-width="100">科目等级</th>
+				<th data-width="100">是否末级</th>
+				<th data-width="100">U8末级科目名称</th>
+				<th data-width="100">U8末级科目编码</th>
+				<th data-width="100">是否启用</th>
+				<th data-width="80">版本</th>
+				<th data-width="100">创建人</th>
+				<th data-width="100">创建时间</th>
+				<th data-width="100">操作</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>
+#end
+#define js()
+<script>
+
+
+$(function(){});
+	function addDatas(){
+		var value = document.getElementById("cversion").value;
+		let value1 = document.getElementById("addid");
+		let s = 'admin/subjectm/add/0-1?cversion='+value;
+		value1.setAttribute('href', s);
+	}
+	function addBeforeHandler(ele){
+		var cversion = document.getElementById("cversion").value;
+		ele.data("paras",{cversion:cversion});
+		return "0-1";
+	}
+	function enable(data){
+		var keywords = $("input[name='keywords']").val();
+		var cversion = $("input[name='cversion']").val();
+		// var senabled = $("select[name='senabled']").val();
+		Ajax.post("admin/subjectm/versionEnable",{"keywords":keywords,"cversion":cversion,"senabled":data},function(res){
+			LayerMsgBox.success("操作成功",500,function(){
+				parent.refreshPjaxContainer();
+			});
+		});
+	}
+     function copyDatas() {
+		 Ajax.post("admin/subjectm/copyDatas",{},function(res){
+			 LayerMsgBox.success("操作成功",500,function(){
+				 parent.refreshPjaxContainer();
+			 });
+		 });
+     }
+</script>
+#end

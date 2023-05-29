@@ -10,6 +10,7 @@
 	</div>
 	<div class="col">
 		<form class="form-inline" id="processDefectForm_#(pageId)"   onsubmit="return false;" method="post">
+			<input type="hidden"  id=""  name="imodocid" value="#(imodocid??)" >
 		<!--	<input type="text" autocomplete="off"  class="form-control"  placeholder="=异常品单号=" name="cdocno" value="" />
 			<input type="text" autocomplete="off"  class="form-control"  placeholder="=工单号=" name="imodocid" value="" />
 			<input type="text" autocomplete="off"  class="form-control"  placeholder="=客户部番=" name="cinvcode" value="" />
@@ -44,7 +45,8 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
 	{@if data.istatus==1}
-		<a href="admin/processdefect/add2?iautoid=${data.iautoid}&iissueid=${data.iissueid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判定" class="jbolt_table_editbtn">异常品判定</a>
+		<a href="admin/moprocessdefect/edit/${data.iautoid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn">编辑</a>
+	    <a href="admin/processdefect/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="关闭" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
 	{@else if data.istatus==2}
 	    <a href="common/qrcode?code=${data.cdocno}" data-photobtn tooltip data-title="点击查看二维码"><i style="font-size:20px;" class="fa fa-qrcode"></i></a>
 		<a href="admin/processdefect/add2?iautoid=${data.iautoid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
@@ -54,10 +56,12 @@
 </td>
 <td>${data.istatus=='1'?'待判定':data.istatus=='2'?'已完成':'待记录'}</td>
 <td>${data.cdocno}</td>
-<td>${data.imodocid}</td>
-<td>存货编码</td>
-<td>部品名称</td>
-<td>客户部番</td>
+<td>${data.cmodocno}</td>
+<td>${data.ddemanddate|date_ymd}</td>
+<td>${data.cdepname}</td>
+<td>${data.cinvcode}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cinvcode1}</td>
 <td>${data.processname}</td>
 <td>${data.idqqty}</td>
 <td>${data.capproach=='1'?'返修':'报废'}</td>
@@ -73,7 +77,7 @@
 		<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
 			<!--<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">打印二维码</button>-->
 			<button data-openpage="dialog"  data-handler="jboltTablePageToFirst"
-					data-title="新增记录" data-url="admin/moprocessdefect/add" data-fs="true"  class="btn btn-outline-primary btn-sm"><i
+					data-title="新增记录" data-url="admin/moprocessdefect/add?imodocid=#(imodocid??)" data-fs="true"  class="btn btn-outline-primary btn-sm"><i
 					class="fa fa-plus"></i> 新增
 			</button>
 			<div class="dropdown-menu" aria-labelledby="exportMenuButton">
@@ -115,10 +119,12 @@ data-row-dblclick-active="true"
 	<th data-width="200">操作</th>
 	<th data-width="100" data-column="iStatus">状态</th>
 	<th data-width="150" data-column="cDocNo">异常品单号</th>
-	<th data-width="150" data-column="iMoDocId">工单号</th>
-	<th data-width="150" data-column="iInventoryId">存货编码</th>
+	<th data-width="150" data-column="cMoDocNo">工单号</th>
+	<th data-width="150" data-column="dDemandDate">需求日期</th>
+	<th data-width="150" data-column="cDepName">生产部门</th>
+	<th data-width="150" data-column="cInvCode">存货编码</th>
 	<th data-width="150" data-column="cInvName">部品名称</th>
-	<th data-width="150" data-column="cInvCode">客户部番</th>
+	<th data-width="150" data-column="cInvCode1">客户部番</th>
 	<th data-width="150" data-column="ProcessName">工序名称</th>
 	<th data-width="150" data-column="iDqQty">不良数量</th>
 	<th data-width="150" data-column="cApproach">处置区分</th>
@@ -139,7 +145,7 @@ data-row-dblclick-active="true"
 #define js()
 <script type="text/javascript">
 
-
+	hideParentLayerDialogBtn(0);
 	// 打印
 	function containerPrint_#(pageId)(mark) {
 		let rows;

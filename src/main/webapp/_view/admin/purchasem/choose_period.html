@@ -1,0 +1,110 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto text-left">
+                <form class="form-inline" id="periodForm_#(pageId)" onsubmit="return false;" method="post">
+                <input type="hidden" name="iservicetype" value="1,2"/>
+            	<input type="hidden" name="isenabled" value="1"/>
+                    <select class="form-control"
+                            data-select-type="select2"
+                            name="ibudgettype"
+                            data-autoload
+                            data-tips="预算类型"
+                            data-url="admin/dictionary/options?key=investment_budget_type"
+                            data-text="=预算类型="
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-value=""
+                            data-width="120">
+                    </select>
+
+                    <input type="text" class="form-control"
+                           data-date
+                           name="ibudgetyear"
+                           data-type="year"
+                           placeholder="=预算年度="
+                           name="keywords">
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="periodRowtpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}" >
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.iservicetype == 1 ? '费用预算':'投资计划'}</td>
+            <td>${data.ibudgettype == 1 ? '全年预算':data.ibudgettype == 2 ? '下期修改':data.ibudgettype == 3 ? '实绩预测' : '实绩'}</td>
+            <td>${data.ibudgetyear}</td>
+            <td>${data.dstarttime}</td>
+            <td>${data.dendtime}</td>
+        </tr>
+        {@/each}
+        </textarea>
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-width="auto"
+               id="jbolt_Table_#(pageId)"
+               data-url="admin/period/datas"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="periodForm_#(pageId)"
+               data-rowtpl="periodRowtpl_#(pageId)"
+               data-page="periodPage_#(pageId)"
+               data-pagesize="50"
+               data-fixed-columns-left="1,2,3"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150" data-column="iservicetype">业务类型</th>
+                <th data-width="150" data-column="ibudgettype">预算类型</th>
+                <th data-width="150" data-column="ibudgetyear">预算年度</th>
+                <th data-width="150" data-column="dstarttime">开始年月</th>
+                <th data-width="150" data-column="dendtime">截止年月</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+#end
+#define js()
+<script type="text/javascript">
+	function submitThisForm(){
+		var index = LayerMsgBox.loading('执行中...');
+		var checkedTableDatas_#(pageId) = getJboltTableCheckedDatas("#jbolt_Table_#(pageId)");
+		if(!checkedTableDatas_#(pageId)) return;
+		//勾选的费用预算期间最多一条，//勾选的投资计划期间最多一条
+		var iservicetype1 = 0;
+		var iservicetype2 = 0;
+		var iperiodIds= '';
+		for(var i=0;i<checkedTableDatas_#(pageId).length;i++){
+			if(checkedTableDatas_#(pageId)[i].iservicetype == 1) iservicetype1++;
+			if(checkedTableDatas_#(pageId)[i].iservicetype == 2) iservicetype2++;
+			iperiodIds+=checkedTableDatas_#(pageId)[i].iautoid + ',';
+		}
+		iperiodIds = iperiodIds.substring(0,iperiodIds.lastIndexOf(','));
+		if(iservicetype1>1 || iservicetype2 > 1){
+			LayerMsgBox.error("投资计划或者费用预算期间分别最多勾选一条!");
+			return;
+		}
+		location.href = '/admin/purchasem/chooseExpenseBudgetOrInvestmentPlan?iperiodIds=' + iperiodIds + '&_jb_rqtype_=dialog'; 
+	}
+</script>
+#end

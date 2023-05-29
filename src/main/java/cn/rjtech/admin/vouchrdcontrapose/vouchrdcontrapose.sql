@@ -18,3 +18,15 @@
 		and vc.iorgid = #para(iorgid)
 	#end		
 #end
+
+#sql("getCvrrName")
+ select cRdName from Bd_Rd_Style where cRdCode=#para(cvrrcode)
+ #end
+
+ #sql("selectCvrrcodeAndCvrsCode")
+ select * from Bd_VouchRdContrapose where cVRRCode=#para(cvrrCode) AND cVRSCode=#para(cvrsCode)
+ #end
+
+ #sql("selectCvrrcodeOnCvrsCodeList")
+ select cvrrCode,cvrsCode from Bd_VouchRdContrapose
+ #end

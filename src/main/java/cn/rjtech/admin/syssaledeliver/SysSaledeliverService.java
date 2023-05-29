@@ -1,21 +1,32 @@
 package cn.rjtech.admin.syssaledeliver;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.User;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.model.momdata.SysSaledeliver;
+import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.model.momdata.*;
+import cn.rjtech.wms.utils.HttpApiUtils;
+import cn.smallbun.screw.core.util.CollectionUtils;
+import com.alibaba.fastjson.JSON;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.json.JSONArray;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 销售出库
@@ -30,6 +41,9 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
     protected SysSaledeliver dao() {
         return dao;
     }
+
+    @Inject
+    private PersonService personservice;
 
     @Override
     protected int systemLogTargetType() {
@@ -57,6 +71,13 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         JBoltCamelCaseUtil.keyToCamelCase(lists);
         return lists;
     }
+
+    public List<SysSaledeliver> getpushu(Kv kv) {
+        List<SysSaledeliver> lists = daoTemplate("sysSaleDeliver.pushu", kv).find();
+        return lists;
+    }
+
+
 
     /**
      * 获取行数据
@@ -178,5 +199,97 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         // 这里用来覆盖 检测是否被其它表引用
         return null;
     }
+
+
+    //推送u8数据接口
+    public Ret pushU8(SysSaledeliver syssaledeliver, List<SysSaledeliverdetail> syssaledeliverdetail) {
+        if(!CollectionUtils.isNotEmpty(syssaledeliverdetail)){
+            return Ret.fail("数据不能为空");
+        }
+
+        User user = JBoltUserKit.getUser();
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("userCode",user.getUsername());
+        data.put("organizeCode",this.getdeptid());
+        data.put("token","");
+
+        JSONObject preallocate = new JSONObject();
+
+
+        preallocate.set("userCode",user.getUsername());
+        preallocate.set("organizeCode",this.getdeptid());
+        preallocate.set("CreatePerson",user.getId());
+        preallocate.set("CreatePersonName",user.getName());
+        preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
+        preallocate.set("tag","ProductionIn");
+        preallocate.set("type","ProductionIn");
+
+        data.put("PreAllocate",preallocate);
+
+        JSONArray maindata = new JSONArray();
+        syssaledeliverdetail.stream().forEach(s -> {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.set("owhcode",s.getWhCode());
+            jsonObject.set("odeptcode",this.getdeptid());
+            jsonObject.set("oposcode","");
+            jsonObject.set("invcode",s.getInvCode());
+            jsonObject.set("userCode",user.getUsername());
+            jsonObject.set("organizeCode",this.getdeptid());
+            jsonObject.set("Qty",s.getQty());
+            jsonObject.set("cuscode","");
+            jsonObject.set("barcode",s.getBarcode());
+            jsonObject.set("invstd","");
+            jsonObject.set("invname","");
+            jsonObject.set("index","1");
+            jsonObject.set("billDate",syssaledeliver.getBillDate());
+            jsonObject.set("billid","");
+            jsonObject.set("billdid","");
+            jsonObject.set("billno",syssaledeliver.getBillNo());
+            jsonObject.set("billrowno","");
+            jsonObject.set("billnorow","");
+            jsonObject.set("sourcebilldid",s.getSourceBillDid());
+            jsonObject.set("sourcebillnorow",s.getSourceBIllNoRow());
+            jsonObject.set("sourcebillno",s.getSourceBillNo());
+            jsonObject.set("sourcebillrowno","");
+            jsonObject.set("Tag","SaleDispatch");
+            jsonObject.set("cusname","");
+            jsonObject.set("ORdType",s.getTrackType());
+
+            maindata.put(jsonObject);
+        });
+        data.put("MainData",maindata);
+
+        //            请求头
+        Map<String, String> header = new HashMap<>(5);
+        header.put("Content-Type", "application/json");
+        String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
+
+        try {
+            String post = HttpApiUtils.httpHutoolPost(url, data, header);
+            com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
+            if (isOk(post)) {
+                if ("201".equals(jsonObject.getString("code"))) {
+                    return Ret.ok("提交成功");
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return Ret.fail("上传u8失败");
+    }
+
+
+    //通过当前登录人名称获取部门id
+    public String getdeptid(){
+        String dept = "001";
+        User user = JBoltUserKit.getUser();
+        Person person = personservice.findFirstByUserId(user.getId());
+        if(null != person && "".equals(person)){
+            dept = person.getCOrgCode();
+        }
+        return dept;
+    }
+
 
 }

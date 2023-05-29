@@ -27,9 +27,9 @@
         {@each datas as data,index}
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
-            <td>${data.cbtid}</td>
-            <td>${data.cbtchname}</td>
+            <td>${data.cvbtid}</td>
             <td>${data.cvtchname}</td>
+            <td>${data.cbtchname}</td>
             <td>${data.cbtdemo}</td>
             <td>${data.cserial}</td>
             <td>${data.ccreatename}</td>
@@ -70,8 +70,8 @@
             <tr>
                 <th data-width="60" data-column="index">序号</th>
                 <th data-width="150" data-column="cvbtid">单据业务类型</th>
-                <th data-width="150" data-column="cbtchname">业务类型中文名</th>
                 <th data-width="150" data-column="cvtchname">单据类型中文名</th>
+                <th data-width="150" data-column="cbtchname">业务类型中文名</th>
                 <th data-width="150" data-column="cbtdemo">（业务类型）备注</th>
                 <th data-width="150" data-column="cserial">序号</th>
                 <th data-width="150" data-column="ccreatename">创建人名称</th>

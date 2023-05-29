@@ -1,0 +1,175 @@
+### 从表数据，带工具条，可编辑表单
+<div class="jbolt_page_content" onfocus="">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="purchased_Rowtpl_#(pageId)">
+			{@each datas as data,index}
+				<tr data-id="${data.iautoid}" class="table-info">
+					<td>${pageNumber,pageSize,index |rownum}</td>
+                    <td #if(details)data-editable="false"#end>$${data.isourcetype|proposalChooseType}</td>
+                    <td #if(details)data-editable="false"#end>${data.ibudgetmoney,2|number_format3}</td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.cbudgetno}">${data.cbudgetno}</a></td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.cinvcode}">${data.cinvcode}</a></td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.cinvname}">${data.cinvname}</a></td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.cinvstd}">${data.cinvstd}</a></td>
+					<td #if(details)data-editable="false"#end>${data.cunit}</td>
+					<td #if(details)data-editable="false"#end>${data.caddress}</td>
+					<td #if(details)data-editable="false"#end>${data.iquantity}</td>
+					<td #if(details)data-editable="false"#end>${data.iprice,2|number_format3}</td>
+                    <td #if(details)data-editable="false"#end>${data.nflat,6|number_format3}</td>
+                    <td #if(details)data-editable="false"#end>${data.itaxrate,2|number_format3}</td>
+					<td #if(details)data-editable="false"#end>${data.ddemandate,'yyyy-MM-dd'|date}</td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.cvenname}">${data.cvenname}</a></td>
+					<td #if(details)data-editable="false"#end>${data.ccurrency}</td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.creferencepurpose}">${data.creferencepurpose}</a></td>                    
+                    <td>${data.itax}</td>
+                    <td>${data.itaxexclusivetotalamount}</td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.itotalamount}">${data.itotalamount}</td>
+			        <td>${data.inatunitprice}</td>
+			        <td>${data.inattax}</td>
+			        <td>${data.inatmoney}</td>
+			        <td>${data.inatsum}</td>					
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.cmemo}">${data.cmemo}</a></td>
+				</tr>
+			{@/each}
+	</textarea>
+
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="purchased_toolbar_#(pageId)">
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            #if(add??||edit??)
+            <button class="btn btn-outline-primary btn-sm add_item" data-dialogbtn data-area="100%,100%" 
+                    data-url="admin/purchasem/optionProposald?ifirstsourceproposalid=#(purchasem.ifirstsourceproposalid??)"
+                    data-width="1200"><i class="fa fa-plus"></i>新增</button>
+            <button onclick="copySelected(this);" data-btn class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 复制</button>
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	            导出 & 导入
+	        	</button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+	                <a class="dropdown-item btn btn-outline-primary btn-sm" onclick="refProposalPurchasedDatasExport()"><i class="fa fa-file-excel-o mr-2"></i> 导出</a>
+	                <div class="j_upload_file_box "
+		                 data-name="file"
+		                 data-btn-class="dropdown-item btn btn-outline-primary btn-sm"
+		                 data-placeholder="导入"
+		                 data-confirm="确认导入数据？"
+		                 data-accept="excel"
+		                 data-maxsize="20480"
+		                 data-handler="uploadFile"
+		                 data-upload-success-handler="uploadHandlerSuccess"
+		                 data-upload-fail-handler="uploadHandlerFail"
+		                 data-url="/admin/purchasem/importRefProposalPurchasedTplNotSave?ifirstsourceproposalid=#(purchasem.ifirstsourceproposalid??)">
+		            </div>
+	            </div>
+	            <a hidden id="refProposalPurchasedExportBtn" data-downloadbtn href="admin/purchasem/exportTablePurchasedDatas" data-form="purchasemForm" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> 导出</a>                    
+            <button onclick="jboltTableRemoveCheckedRow(this)" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+            <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-outline-success"><i class="fa fa-refresh"></i> 刷新</button>
+            #end
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <table
+            class="jbolt_table jbolt_main_table table-center"
+            id="jbolt_table_#(pageId)"
+            data-jbolttable
+            data-height="fill"
+            data-ajax="true"
+            data-url="admin/purchased/datas?ipurchaseid=#(purchasem.iautoid??)"
+            data-column-resize="true"
+            data-column-prepend="1:checkbox:true"
+            data-conditions-form="purchasemForm"
+            data-tabledatas="processTableListDatas_#(pageId)"
+            data-rowtpl="purchased_Rowtpl_#(pageId)"
+            data-page="purchasedPage_#(pageId)"
+            data-pagesize="5"
+            data-toolbar="purchased_toolbar_#(pageId)"
+            data-editable="true"
+            data-editable-option="getEdiTableOptions"
+            data-editable-submit="getEdiTableSubmit"
+            #if(add)
+            data-ajax-success-handler="tableAjaxSuccessHandler_#(pageId)"
+            #end
+    >
+
+        <thead class="fw-normal" data-height="60">
+        <tr>
+            <th data-width="60" data-column="index">序号<br/>(番号)</th>
+            <th data-width="120" data-column="iSourceType">预算类型(予算類別)</th>
+            <th data-width="120" data-column="ibudgetmoney">预算金额</th>
+            <th data-width="150" data-column="cbudgetno">预算编码<br/>(予算コード)</th>
+            <th data-width="120" data-column="cinvcode">存货编码<br/>(在庫品コード)</th>
+            <th data-width="100" data-column="cinvname">存货名称<br/>(在庫品名称)</th>
+            <th data-width="100" data-column="cinvstd">规格型号<br/>(規格型番)</th>
+            <th data-width="20" data-column="cunit">单位</th>
+            <th data-width="20" data-column="caddress">品牌</th>
+            <th data-width="100" data-column="iquantity">数量</th>
+            <th data-width="120" data-column="iprice">原币无税单价<br/>(税抜き単価)</th>
+            <th data-width="100" data-column="nflat">汇率<br/>(かわせ)</th>
+            <th data-width="100" data-column="itaxrate">税率</th>
+            <th data-width="100" data-column="ddemandate">需求日期<br/>(需要日)</th>
+            <th data-width="100" data-column="cvencode">供应商<br/>(メーカー)</th>
+            <th data-width="100" data-column="ccurrency">币种<br/>(通貨)</th>
+            <th data-width="100" data-column="creferencepurpose">参考用途</th>            
+            <th data-width="120" data-column="itax">原币税额</th>
+	        <th data-width="120" data-column="itaxexclusivetotalamount">原币无税金额</th>
+	        <th data-width="120" data-column="itotalamount">原币价税合计</th>            
+	        <th data-width="120" data-column="inatunitprice">本币无税单价</th>
+	        <th data-width="120" data-column="inattax">本币税额</th>
+	        <th data-width="120" data-column="inatmoney">本币无税金额</th>
+	        <th data-width="120" data-column="inatsum">本币价税合计</th>         
+            <th data-width="100" data-column="cmemo">备注<br/>(備考)</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+        ### 汇总数据
+        <tr>
+            <th></th>
+            <th>合计:</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </tfoot>
+    </table>
+</div>
+
+<script type="text/javascript">
+	
+	function insertOtherItem(rowData){
+		jboltTableInsertRow('#jbolt_table_#(pageId)', rowData);
+	}
+
+    function refProposalPurchasedDatasExport(){
+    	var tableDatas_#(pageId) = jboltTableGetAllDatas('#jbolt_table_#(pageId)');
+		$("#tabledatas_#(pageId)").val(JSON.stringify(tableDatas_#(pageId)));
+		$("#refProposalPurchasedExportBtn").click();
+    }
+
+    function uploadHandlerSuccess(uploader,type,fileInput,res){
+    	clearJboltTable("#jbolt_table_#(pageId)");
+    	jboltTableInsertRow('#jbolt_table_#(pageId)', res.rows);
+    }
+    function uploadHandlerFail(uploader,type,fileInput,res){
+    	LayerMsgBox.alert(res.msg,2);
+    }
+</script>

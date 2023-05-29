@@ -1466,6 +1466,10 @@ public class PermissionKey {
 	 */
 	public static final String VOUCHTYPEDIC = "vouchtypedic";
 	/**
+	 * 记录上传
+	 */
+	public static final String FORM_UPLOADM = "form_uploadm";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
@@ -1989,4 +1993,12 @@ public class PermissionKey {
 	 * 导出
 	 */
 	public static final String EXECUTION_PROGRESS_TRACKING_EXPORT = "execution_progress_tracking_export";
+	/**
+	 * 作废
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE_CANCLE = "expense_budget_manage_cancle";
+	/**
+	 * 作废
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE_CANCLE = "investment_plan_manage_cancle";
 }

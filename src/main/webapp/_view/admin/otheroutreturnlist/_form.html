@@ -94,16 +94,19 @@
 		var autoid = $("#otherOutautoid").val();
 		var value = action.data("value");
 		var tables = ["jbolt_table_inventory_split_#(pageId)"];
-		jboltTableSubmitMulti(tables, "admin/otheroutreturnlist/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
-			if (res.state == "ok") {
-				LayerMsgBox.success(res.msg, 600, function () {
-					parent.refreshPjaxContainer();
-					parent.layer.close(parent.layer.getFrameIndex(window.name));
-				})
-			} else {
-				LayerMsgBox.error(res.msg);
-			}
+		debugger
+		if (otheroutreturncheckTds()) {
+			jboltTableSubmitMulti(tables, "admin/otheroutreturnlist/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
+				if (res.state == "ok") {
+					LayerMsgBox.success(res.msg, 600, function () {
+						parent.refreshPjaxContainer();
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					})
+				} else {
+					LayerMsgBox.error(res.msg);
+				}
 		});
+		}
 	}
 
 

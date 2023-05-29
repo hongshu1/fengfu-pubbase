@@ -1,25 +1,30 @@
 package cn.rjtech.admin.otherdeliverylist;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
+import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
-import cn.rjtech.model.momdata.OtherOut;
-import cn.rjtech.model.momdata.OtherOutDetail;
+import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.HttpApiUtils;
+import cn.smallbun.screw.core.util.CollectionUtils;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.json.JSONArray;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -32,6 +37,10 @@ import static cn.hutool.core.text.StrPool.COMMA;
 public class OtherOutService extends BaseService<OtherOut> {
 
 	private final OtherOut dao = new OtherOut().dao();
+
+	@Inject
+	private PersonService personservice;
+
 
 	@Override
 	protected OtherOut dao() {
@@ -281,6 +290,14 @@ public class OtherOutService extends BaseService<OtherOut> {
 					materialsOutDetail.setModifyPerson(userName);
 				});
 				otherOutDetailService.batchUpdate(lines);
+
+				//测试u8接口
+				OtherOut otherOut = jBoltTable.getFormModel(OtherOut.class, "otherOut");
+				System.out.println("开始u8，开始u8，开始u8，开始u8，开始u8"+new Date());
+				Ret ret = this.pushU8(otherOut, lines);
+				System.out.println(ret);
+            	System.out.println("结束u8，结束u8，结束u8，结束u8，结束u8"+new Date());
+
 			}
 			// 获取待删除数据 执行删除
 			if (jBoltTable.deleteIsNotBlank()) {
@@ -361,5 +378,91 @@ public class OtherOutService extends BaseService<OtherOut> {
 	}
 
 
+
+	//推送u8数据接口
+	public Ret pushU8(OtherOut otherout, List<OtherOutDetail> otheroutdetail) {
+		if(!CollectionUtils.isNotEmpty(otheroutdetail)){
+			return Ret.fail("数据不能为空");
+		}
+
+		User user = JBoltUserKit.getUser();
+		Map<String, Object> data = new HashMap<>();
+
+		data.put("userCode",user.getUsername());
+		data.put("organizeCode",this.getdeptid());
+		data.put("token","");
+
+		JSONObject preallocate = new JSONObject();
+
+
+		preallocate.set("userCode",user.getUsername());
+		preallocate.set("organizeCode",this.getdeptid());
+		preallocate.set("CreatePerson",user.getId());
+		preallocate.set("CreatePersonName",user.getName());
+		preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
+		preallocate.set("tag","OtherOut");
+		preallocate.set("type","OtherOut");
+
+		data.put("PreAllocate",preallocate);
+
+		JSONArray maindata = new JSONArray();
+		otheroutdetail.stream().forEach(s -> {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.set("invstd","");
+			jsonObject.set("owhcode",otherout.getWhcode());
+			jsonObject.set("invname","");
+			jsonObject.set("index","1");
+			jsonObject.set("vt_id","");
+			jsonObject.set("billDate",otherout.getBillDate());
+			jsonObject.set("lineColor","");
+			jsonObject.set("invcode",s.getInvCode());
+			jsonObject.set("userCode",user.getUsername());
+			jsonObject.set("iswhpos","true");
+			jsonObject.set("ispack","0");
+			jsonObject.set("organizeCode",otherout.getOrganizeCode());
+			jsonObject.set("qty",s.getQty());
+			jsonObject.set("Tag","OtherOut");
+			jsonObject.set("oposcode","");
+			jsonObject.set("barcode",s.getBarcode());
+			jsonObject.set("ORdName","其他出库");
+			jsonObject.set("ORdCode",otherout.getRdCode());
+			jsonObject.set("ODeptCode",otherout.getDeptCode());
+			jsonObject.set("ODeptName","");
+			jsonObject.set("ORdType",otherout.getType());
+
+			maindata.put(jsonObject);
+		});
+		data.put("MainData",maindata);
+
+		//            请求头
+		Map<String, String> header = new HashMap<>(5);
+		header.put("Content-Type", "application/json");
+		String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
+
+		try {
+			String post = HttpApiUtils.httpHutoolPost(url, data, header);
+			com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
+			if (isOk(post)) {
+				if ("201".equals(jsonObject.getString("code"))) {
+					System.out.println(jsonObject);
+					return Ret.ok("提交成功");
+				}
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return Ret.fail("上传u8失败");
+	}
+
+	//通过当前登录人名称获取部门id
+	public String getdeptid(){
+		String dept = "001";
+		User user = JBoltUserKit.getUser();
+		Person person = personservice.findFirstByUserId(user.getId());
+		if(null != person && "".equals(person)){
+			dept = person.getCOrgCode();
+		}
+		return dept;
+	}
 
 }
