@@ -127,11 +127,3 @@ WHERE ipid = #para(pid)
 ORDER BY
     cInvCCode
 #end
-
-#sql("getSubList")
-SELECT *
-FROM bd_InventoryClass
-WHERE ipid = #para(pid)
-ORDER BY
-    cInvCCode
-#end

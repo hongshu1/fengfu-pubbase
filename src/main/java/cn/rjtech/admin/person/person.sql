@@ -78,17 +78,3 @@ WHERE 1=1
     #end
 ORDER BY hp.cpsn_num
 #end
-
-#sql("getAutocompleteListWithDept")
-SELECT TOP #(limit) hp.cpsn_num, hp.cpsn_name, d.cdepcode, d.cdepname
-FROM Bd_Person hp
-    INNER JOIN bd_Department d ON hp.cdept_num = d.cdepcode
-WHERE 1=1
-    #if(q)
-        AND ( hp.cpsn_num LIKE CONCAT('%', #para(q), '%') OR hp.cpsn_name LIKE CONCAT('%', #para(q), '%') )
-    #end
-    #if(cdepcode)
-    	and d.cdepcode = #para(cdepcode)
-    #end
-ORDER BY hp.cpsn_num
-#end

@@ -43,11 +43,3 @@ WHERE ipid = #para(pid)
 ORDER BY
     cvccode
 #end
-
-#sql("getSubList")
-SELECT *
-FROM Bd_VendorClass
-WHERE ipid = #para(pid)
-ORDER BY
-    cvccode
-#end

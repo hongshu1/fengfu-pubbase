@@ -75,25 +75,3 @@ WHERE 1=1 and isdeleted = 0 and isenabled = 0
         )
     #end
 #end
-
-#sql ("getVendorList")
-SELECT 
-#if(limit)
- top #(limit)
-#end
-v.*
-FROM bd_Vendor v
-WHERE  1 = 1
-    #if(q)
-        AND  (
-            v.cVenCode like CONCAT ('%', #para(q), '%') OR
-            v.cVenName like CONCAT ('%', #para(q), '%')
-        )
-    #end
-    #if(cvencode)
-        AND v.cVenCode = #para(cvencode)
-    #end
-    #if(cvccode)
-        AND v.cvccode = #para(cvccode)
-    #end
-#end
