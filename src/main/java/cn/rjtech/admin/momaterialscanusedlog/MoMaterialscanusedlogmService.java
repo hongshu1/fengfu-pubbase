@@ -9,6 +9,10 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoMaterialscanusedlogm;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
 /**
  * 制造工单-材料耗用主表 Service
  * @ClassName: MoMaterialscanusedlogmService
@@ -166,4 +170,11 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 		return null;
 	}
 
+    public List<Record> getMaterialscanList(Kv kv) {
+		return  dbTemplate("momaterialscanusedlog.getMaterialscanList",kv).find();
+    }
+
+	public List<Record> getMaterialsPrepareList(Kv kv){
+		return dbTemplate("momaterialscanusedlog.getMaterialsPrepareList",kv).find();
+	}
 }
