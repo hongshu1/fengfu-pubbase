@@ -83,37 +83,37 @@ WHERE ir.iinventoryid = #para(iinventoryid) AND ir.isDeleted = '0'
 
 #sql("inventorySpotCheckList")
 SELECT
-    i.*,i.iautoid as inventoryiautoid,ic.cInvCName cinvcname,eq.*,
+    i.iInventoryClassId,i.iautoid as inventoryiautoid,i.cInvCode,
+    i.cInvName,i.cInvCode1,i.cInvAddCode,i.cInvAddCode1,i.cInvName1,i.cInvStd,
+    ic.cInvCName cinvcname,
+    eq.cEquipmentModelCode,eq.cEquipmentModelName,
     eq.iautoid equipiautoid,
     uom.iautoid uomiautoid,
     uom.iUomClassId,
     uom.cUomCode,
     uom.cUomName
 FROM Bd_Inventory i
-    inner join Bd_InventoryClass ic on i.iInventoryClassId = ic.iautoid
+    left join Bd_InventoryClass ic on i.iInventoryClassId = ic.iautoid
     left join Bd_EquipmentModel eq on i.iEquipmentModelId = eq.iautoid
     left join Bd_Uom uom on i.iInventoryUomId1 = uom.iautoid
-WHERE 1=1
+WHERE 1=1 AND i.isenabled = '1'
 #if(iInventoryClassId)
     AND i.iInventoryClassId = #para(iInventoryClassId)
 #end
-#if(isEnabled)
-    AND i.isenabled = '1'
+#if(cinvcode1)
+    AND i.cInvCode1 like CONCAT('%', #para(cinvcode1), '%')
 #end
-#if(cInvCode1)
-    AND i.cInvCode1 = #para(cInvCode1)
-#end
-#if(cInvName)
-    AND i.cInvName like CONCAT('%', #para(cInvName), '%')
+#if(cinvname)
+    AND i.cInvName like CONCAT('%', #para(cinvname), '%')
 #end
 #if(cInvName1)
     AND i.cInvName1 like CONCAT('%', #para(cInvName1), '%')
 #end
-#if(cInvCode)
-    AND i.cInvCode = #para(cInvCode)
+#if(cinvcode)
+    AND i.cInvCode like CONCAT('%', #para(cinvcode), '%')
 #end
-#if(cInvAddCode)
-    AND i.cInvAddCode = #para(cInvAddCode)
+#if(cinvaddcode)
+    AND i.cInvAddCode like CONCAT('%', #para(cinvaddcode), '%')
 #end
 #if(sqlids)
     AND i.iAutoId in (#(sqlids))

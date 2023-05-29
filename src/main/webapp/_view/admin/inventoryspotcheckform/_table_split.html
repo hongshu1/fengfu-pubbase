@@ -7,13 +7,13 @@
               <a tooltip title="删除" href="admin/inventoryspotcheckform/delete/${data.iautoid}" data-handler="refreshJBoltTable"
                  class="jbolt_table_delbtn">删除</a>
             </td>
-            <td>${data.cequipmentmodelname}</td> <!--机型,cEquipmentModelName-->
-            <td>${data.cinvaddcode}</td> <!--存货编码-->
-            <td>${data.cinvcode1}</td> <!--客户部番-->
-            <td>${data.cinvname1}</td> <!--部品名称-->
-            <td>${data.cinvstd}</td> <!--规格-->
-            <td>${data.cuomname}</td> <!--主计量单位iinventoryuomid1-->
-            <td>${data.coperationname}</td> <!--工序名称-->
+            <td title="${data.cequipmentmodelname}">${data.cequipmentmodelname}</td> <!--机型,cEquipmentModelName-->
+            <td title="${data.cinvaddcode}">${data.cinvaddcode}</td> <!--存货编码-->
+            <td title="${data.cinvcode1}">${data.cinvcode1}</td> <!--客户部番-->
+            <td title="${data.cinvname1}">${data.cinvname1}</td> <!--部品名称-->
+            <td title="${data.cinvstd}">${data.cinvstd}</td> <!--规格-->
+            <td title="${data.cuomname}">${data.cuomname}</td> <!--主计量单位iinventoryuomid1-->
+            <td title="${data.coperationname}">${data.coperationname}</td> <!--工序名称-->
         </tr>
     {@/each}
 </textarea>
@@ -24,6 +24,10 @@
       <div class="card-body">
         <div class="btn-group">
           <form class="form-inline" id="inventoryForm_#(pageId)" onsubmit="return false;" method="post" style="width: 1200px">
+            <!--inventoryspotcheckform-->
+            #if(inventoryspotcheckform.iAutoId??)
+            <input type="hidden" name="inventoryspotcheckform.iAutoId" value="#(inventoryspotcheckform.iAutoId??)"/>
+            #end
             <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=存货编码="
                    maxlength="50" name="cinvaddcode" value="#(cinvaddcode??)"/>
             <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=客户部番="
@@ -56,7 +60,6 @@
           <div class="clearfix"></div>
         </div>
 
-        <!---->
         <table class="jbolt_table jbolt_main_table table-center"
                id="jbolt_table_inventory_split_#(pageId)"
                data-jbolttable
@@ -77,11 +80,11 @@
             <th data-width="80">操作</th>
             <th data-width="150" data-column="cEquipmentModelName">机型</th>
             <th data-width="150" data-column="cInvAddCode">存货编码</th>
-            <th data-width="150" data-cInvCode1="cPhone">客户部番</th>
-            <th data-width="150" data-column="cInvName1">部品名称</th>
-            <th data-width="150" data-column="cInvStd">规格</th>
-            <th data-width="150" data-column="cuomname">主计量单位</th><!--iInventoryUomId1-->
-            <th data-width="150" data-column="ioperationid">工序名称</th>
+            <th data-width="180" data-cInvCode1="cPhone">客户部番</th>
+            <th data-width="180" data-column="cInvName1">部品名称</th>
+            <th data-width="180" data-column="cInvStd">规格</th>
+            <th data-width="120" data-column="cuomname">主计量单位</th><!--iInventoryUomId1-->
+            <th data-width="200" data-column="ioperationid">工序名称</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -125,6 +128,7 @@
         ioperationid: { //工序
           required: true,
           placeholder: "=工序=",
+          multiple:true,
           type:"select2",
           url:"admin/operation/optionsToInventoryCheckForm",
           valueAttr:"iautoid",//textAttr:"cOperationName"

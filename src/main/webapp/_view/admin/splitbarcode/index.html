@@ -124,12 +124,12 @@
       cinvname
     }, function (ret) {
       var json = JSON.parse(ret.data);
-      if (json.code == '200') {
-        LayerMsgBox.alert("提交成功！", 1);
+      if (json.code == '200' || json.code == '0' || json.state == 'ok') {
+        LayerMsgBox.alert("拆分成功！", 1);
         //刷新
         parent.refreshJBoltTable();
       } else {
-        LayerMsgBox.alert(ret.msg, 2);
+        LayerMsgBox.alert(ret.message, 2);
       }
     });
   }

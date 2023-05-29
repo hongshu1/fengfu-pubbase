@@ -125,7 +125,7 @@ public class InventoryspotcheckformOperationService extends BaseService<Inventor
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
-	public List<InventoryspotcheckformOperation> listByIinventorySpotCheckFormId(String iInventorySpotCheckFormId){
+	public List<InventoryspotcheckformOperation> listByIinventorySpotCheckFormId(Long iInventorySpotCheckFormId){
 		return find("select * from Bd_InventorySpotCheckForm_Operation where iInventorySpotCheckFormId =? ",iInventorySpotCheckFormId);
 	}
 }

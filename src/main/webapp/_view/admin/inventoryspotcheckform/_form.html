@@ -15,18 +15,15 @@
        data-name="itype">
   </div>
 
-  <!--
-  data-select=""#(cspotcheckformname.ispotcheckformId??)
-  name="ispotcheckformId"
-  -->
   <div class="form-group row">
     <label class="col-sm-2 col-form-label" style="right: 80px;">点检表格名称</label>
     <div class="col-2" style="right: 85px;">
       <select class="form-control"
               data-autoload
               name="ispotcheckformid"
+              data-rule="required"
               data-select-type="select2"
-              data-tips="点检表格名称"
+              data-tips="点检表格名称不能为空"
               data-url="admin/spotcheckform/options"
               data-text="=点检表格名称="
               data-value=""
