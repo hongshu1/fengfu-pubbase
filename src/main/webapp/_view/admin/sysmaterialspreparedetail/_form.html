@@ -141,7 +141,7 @@
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.invcode}</td>
+<td>${data.cinvcode}</td>
 <td>${data.cinvcode1}</td>
 <td>${data.cinvname1}</td>
 <td>${data.cinvstd}</td>
@@ -150,7 +150,7 @@
      <input type="text" class="form-control " placeholder="" maxlength="20" name="iplanqty" value=""/>
 </td>
 <td>
-	<a class="jbolt_table_delbtn" href="admin/sysmaterialspreparedetail/${data.isDeleted?'realDelete':'delete'}/${data.autoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger">移除</i></a>
+	<a class="jbolt_table_delbtn" href="admin/sysmaterialspreparedetail/${data.isDeleted?'realDelete':'delete'}/${data.autoid}" data-handler="refreshJBoltTable" ><i class="fa c-danger">移除</i></a>
 </td>
 </tr>
 {@/each}

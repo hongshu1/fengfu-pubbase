@@ -87,13 +87,17 @@ SELECT md.iAutoId,
        it.cInvCode,
        it.cInvCode1,
        it.cInvName1,
+       md.iQty * iri.iUsageUOM AS totalQty,
        uom.cUomName
 FROM Mo_MoDoc md
-         LEFT JOIN Bd_Department dpm ON dpm.iAutoId = md.iDepartmentId
-         LEFT JOIN Bd_WorkShiftM wsm ON wsm.iAutoId = md.iWorkShiftMid
-         LEFT JOIN Bd_Inventory it ON it.iAutoId = md.iInventoryId
-         LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iManufactureUomId
-         LEFT JOIN Bd_WorkRegionM wrm ON wrm.iAutoId = md.iWorkRegionMid
+         LEFT JOIN Bd_Department dpm ON md.iDepartmentId=dpm.iAutoId
+         LEFT JOIN Bd_WorkShiftM wsm ON md.iWorkShiftMid=wsm.iAutoId
+         LEFT JOIN Bd_Inventory it ON md.iInventoryId=it.iAutoId
+         LEFT JOIN Bd_Uom uom ON it.iManufactureUomId=uom.iAutoId
+         LEFT JOIN Bd_WorkRegionM wrm ON md.iWorkRegionMid=wrm.iAutoId
+         LEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting=ir.iAutoId
+         LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId=irc.iInventoryRoutingId
+         LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId=iri.iInventoryRoutingConfigId
 WHERE 1 = 1
   AND md.iStatus = 2
     #if(dplandate)
@@ -154,15 +158,20 @@ WHERE 1 = 1
 
 
 #sql("getMaterialsOutLines1")
-SELECT mpd.InvCode,
+SELECT it.cInvCode,
        it.cInvCode1,
        it.cInvName1,
-       it.cInvStd
+       it.cInvStd,
+       uom.cUomName,
+       md.iQty,
+       iri.iUsageUOM,
+       md.iQty * iri.iUsageUOM AS totalQty
 FROM Mo_MoDoc md
-LEFT JOIN Bd_InventoryRouting ir ON ir.iAutoId= md.iInventoryRouting
-LEFT JOIN Bd_Inventory it ON it.iAutoId= ir.iInventoryId
-LEFT JOIN T_Sys_MaterialsPrepare mp ON mp.SourceBillID= md.iAutoId
-LEFT JOIN T_Sys_MaterialsPrepareDetail mpd ON mpd.MasID= mp.AutoID
+LEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting=ir.iAutoId
+LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId=irc.iInventoryRoutingId
+LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId=iri.iInventoryRoutingConfigId
+LEFT JOIN Bd_Inventory it ON iri.iInventoryId=it.iAutoId
+LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1=uom.iAutoId
 WHERE 1 = 1
   AND md.cMoDocNo = '#(cmodocno)' #end
 
