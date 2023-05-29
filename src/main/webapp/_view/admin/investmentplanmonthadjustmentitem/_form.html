@@ -1,0 +1,47 @@
+
+<div class="jbolt_page_title">
+    <div class="row">
+
+        <div class="col-12 form-inline">
+
+            <div class="col-4">
+                <h3>基础信息</h3>
+            </div>
+
+            <div class="col-8 text-right">
+                ###permission(PermissionKey.permissionKeyName)
+                 ###定义权限控制的按钮
+                ###end
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+
+<form onsubmit="return false;" id="investmentplanMonthAdjustmentItemForm" action="#(action)" method="post">
+#if(investmentplanMonthAdjustmentItem.iautoid??)
+	<input type="hidden" name="investmentplanMonthAdjustmentItem.iautoid" value="#(investmentplanMonthAdjustmentItem.iautoid??)" />
+#end
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">调整主表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入调整主表ID" maxlength="19" name="investmentplanMonthAdjustmentItem.iadjustmentmid" value="#(investmentplanMonthAdjustmentItem.iadjustmentmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">投资计划项目ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入投资计划项目ID" maxlength="19" name="investmentplanMonthAdjustmentItem.iplanid" value="#(investmentplanMonthAdjustmentItem.iplanid??)"/>
+		</div>
+	</div>
+</form>
+</div>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="investmentplanMonthAdjustmentItemForm")
+#end
+

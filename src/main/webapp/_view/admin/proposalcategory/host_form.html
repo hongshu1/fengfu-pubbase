@@ -1,0 +1,18 @@
+<form onsubmit="return false;" id="proposalcategoryForm" action="#(action)" method="post">
+	#if(proposalcategory.iAutoId??)
+		<input type="hidden" name="proposalcategory.iAutoId" value="#(proposalcategory.iAutoId)" />
+	#end
+	<div class="form-group">
+		<label>请输入名称</label>
+		<input type="text" autocomplete="off" autofocus="autofocus"  class="form-control" data-rule="required" data-tips="请输入名称" maxlength="20" name="proposalcategory.ccategoryname" value="#(proposalcategory.ccategoryname??)">
+<!--		<textarea style="height: 100px;" autocomplete="off" autofocus="autofocus" data-rule="len<=1000"  class="form-control"  placeholder="请输入名称 如有多个 用单个空格隔开 单个长度需<=100 " data-tips="请输入名称 " maxlength="1000" name="proposalcategory.ccategoryname" >#(proposalcategory.ccategoryname??)</textarea>-->
+	</div>
+	<div class="form-group">
+		<label>请输入编号</label>
+<!--		<textarea  style="height: 100px;"  class="form-control" data-rule="len<=1000" data-notnull="false" data-tips="请输入编号 " placeholder="请输入编号 如有多个 用单个空格隔开 单个长度需<=100 " maxlength="1000" name="proposalcategory.ccategorycode">#(proposalcategory.ccategorycode??)</textarea>-->
+		<input type="text" autocomplete="off"  class="form-control" data-rule="required" data-tips="请输入编号" maxlength="40" name="proposalcategory.ccategorycode" value="#(proposalcategory.ccategorycode??)">
+	</div>
+</form>
+#define js()
+#include("/_view/_admin/common/_formjs.html",formId="proposalcategoryForm")
+#end

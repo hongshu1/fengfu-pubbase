@@ -8,28 +8,28 @@ FROM Bd_Inventory t1
     SELECT iinventoryId,cBarcode,iQty from PS_SubcontractOrderDBatch
 ) t2 on t2.iinventoryId = t1.iAutoId
 where t1.isDeleted = '0'
-#if(cinvname)
-  and  t1.cinvcode = #para(cinvname)
+#if(invcode)
+  and  t1.cinvcode = #para(invcode)
 #end
-#if(cinvname)
-  and t1.cinvname = #para(cinvname)
+#if(invname)
+  and t1.cinvname = #para(invname)
 #end
-#if(cbarcode)
-  and t2.cbarcode = #para(cbarcode)
+#if(barcode)
+  and t2.cbarcode = #para(barcode)
 #end
 order by t1.dUpdateTime desc
 #end
 
 #sql("findByListCsourceid")
-SELECT t2.*,t3.Batch,t3.PAT
+SELECT DISTINCT t2.puriautoid,t2.*,t3.Batch,t3.PAT
 from  T_Sys_ScanLog log
 INNER JOIN (
-    SELECT iPurchaseOrderDid,iinventoryId,cBarcode,iQty,cSourceld,cSourceBarcode,cSeq from PS_PurchaseOrderDBatch
+    SELECT iautoid as puriautoid,iPurchaseOrderDid,iinventoryId,cBarcode,iQty,cSourceld,cSourceBarcode,cSeq from PS_PurchaseOrderDBatch
     UNION ALL
-    SELECT iSubcontractOrderDid,iinventoryId,cBarcode,iQty,cSourceld,cSourceBarcode,cSeq from PS_SubcontractOrderDBatch
-) t2 on log.barcode = t2.cSourceBarcode
+    SELECT iautoid as subiautoid,iSubcontractOrderDid,iinventoryId,cBarcode,iQty,cSourceld,cSourceBarcode,cSeq from PS_SubcontractOrderDBatch
+    ) t2 on log.barcode = t2.cSourceBarcode
 left join T_Sys_BarcodeDetail t3 on log.InvCode = t3.Invcode and log.Barcode = t3.Barcode
-where 1=1
+where 1=1 and log.ProcessType = 'BarcodeSplit' and log.TagBillType='begin'
 #if(csourceid)
 and t2.cSourceld = #para(csourceid)
 #end

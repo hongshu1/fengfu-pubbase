@@ -1,0 +1,438 @@
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page_title">
+    <div class="row">
+        <div class="col-12 form-inline">
+            <div class="col-4">
+                <h3>基础信息</h3>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jbolt_page_content">
+<form onsubmit="return false;" id="appendInvestmentItemForm" action="#(action)" method="post">
+#if(appendItem.iautoid??)
+	<input type="hidden" name="appendItem.iautoid" value="#(appendItem.iautoid??)" />
+#end
+	<input type="hidden" name="appendItem.iservicetype" value="#(appendItem.iservicetype??2)"/>
+	<input type="hidden" name="appendItem.ieffectivestatus" value="#(appendItem.ieffectivestatus??1)"/>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">U8部门</label>
+		<div class="col">
+			<select class="form-control"
+           			id="cdepcodeSelect_#(pageId)"
+                    data-rule="required"
+                    name="appendItem.cdepcode"
+                    data-select-type="select2"
+                    data-autoload
+                    data-tips="请选择u8部门"
+                    data-url="admin/department/getTreeTableDatas"
+                    data-text="=请选择u8部门="
+                    data-text-attr="cdepname"
+                    data-value-attr="cdepcode"
+                    data-setvalueto="cdepcode"
+                    data-value=""
+                    data-handler="findDeptNewestInvestmentDatas"
+                    data-width="200"
+                    #if(appendItem.iautoid??)
+                    data-select="#(appendItem.cdepcode??)"
+                    disabled
+                    #end
+                    >
+            </select>
+            #if(appendItem.iautoid??)
+            	<input type="hidden" name="appendItem.cdepcode" value="#(appendItem.cdepcode??)"/>
+           	#end
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">预算类型</label>
+		<div class="col">
+	        <select class="form-control"
+	                data-autoload
+	                id="ibudgettypeshow_#(pageId)"
+	                data-rule="required"
+	                data-tips="预算类型"
+	                data-url="admin/dictionary/options?key=investment_budget_type"
+	                data-text="=预算类型="
+	                data-text-attr="name"
+	                data-value-attr="sn"
+	                data-value=""
+	                data-select="#(appendItem.ibudgettype??)"
+	                data-width="200"
+	                disabled
+	                >
+	        </select>
+	        <input type="hidden" id="ibudgettypepara_#(pageId)" name="appendItem.ibudgettype" value="#(appendItem.ibudgettype??)"/>		
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">预算年份</label>
+		<div class="col">
+			<input id="ibudgetyearshow_#(pageId)" type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy"  autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置预算年份" data-tips="请设置预算年份" maxlength="10" value="#(appendItem.ibudgetyear??)" disabled/>
+		</div>
+		<input id="ibudgetyearpara_#(pageId)" type="hidden" name="appendItem.ibudgetyear" value="#(appendItem.ibudgetyear??)"/>
+	</div>
+	#if(appendItem.iautoid??)
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">预算编号</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入预算编号" maxlength="30" name="appendItem.ccode" value="#(appendItem.ccode??)" disabled/>
+		</div>
+	</div>
+	#end
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目细项名称</label>
+		<div class="col">
+			<input type="text" 
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end			
+			data-with-clearbtn="true" autocomplete="off"  class="form-control"  data-rule="required" placeholder="请输入项目细项名称" maxlength="100" name="appendItem.citemname" value="#(appendItem.citemname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">事业区分</label>
+		<div class="col">
+			<select class="form-control"
+	          		data-select-type="select2"
+	                data-autoload
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end		                
+	                data-tips="事业类型"
+	                data-url="admin/dictionary/options?key=career_type"
+	                data-text="=事业类型="
+	                data-text-attr="name"
+	                data-value-attr="sn"
+	                data-value=""
+	                data-rule="required"
+	                data-select="#(appendItem.icareertype??)"
+	                name="appendItem.icareertype"
+	                data-width="200"
+	                >
+	        </select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">投资类型</label>
+		<div class="col">
+			<select class="form-control"
+	          		data-select-type="select2"
+	                data-autoload
+	                data-tips="投资类型"
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end	                
+	                data-url="admin/dictionary/options?key=investment_type"
+	                data-text="=投资类型="
+	                data-text-attr="name"
+	                data-value-attr="sn"
+	                data-value=""
+	                data-rule="required"
+	                data-select="#(appendItem.iinvestmenttype??)"
+	                name="appendItem.iinvestmenttype"
+	                data-width="200"
+	                >
+	        </select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生产线</label>
+		<div class="col">
+			<input type="text" 
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end			
+			data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入生产线" maxlength="100" name="appendItem.cproductline" value="#(appendItem.cproductline??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">机种</label>
+		<div class="col">
+			<input type="text" 
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end			
+			data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入机种" maxlength="60" name="appendItem.cmodelinvccode" value="#(appendItem.cmodelinvccode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">部品</label>
+		<div class="col">
+			<input type="text" 
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end			
+			data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入部品" maxlength="50" name="appendItem.cparts" value="#(appendItem.cparts??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">投资区分</label>
+		<div class="col">
+			<select class="form-control"
+	          		data-select-type="select2"
+	                data-autoload
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end	                
+	                data-tips="投资区分"
+	                data-url="admin/dictionary/options?key=investment_distinction"
+	                data-text="=投资区分="
+	                data-text-attr="name"
+	                data-value-attr="sn"
+	                data-rule="required"
+	                data-value=""
+	                data-select="#(appendItem.iinvestmentdistinction??)"
+	                name="appendItem.iinvestmentdistinction"
+	                data-width="200"
+	                >
+	        </select>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(appendItem.isimport??)"
+    	data-name="appendItem.isimport"
+				#if(appendItem.ieffectivestatus??==2)
+	            data-disabled
+	            #end    	
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否进口</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isimport_true" type="radio" name="appendItem.isimport" value="1"/>
+					<label for="r_isimport_true">是</label>
+				</div>
+
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isimport_false" type="radio" name="appendItem.isimport" value="0"/>
+					<label for="r_isimport_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" 
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end			
+			autocomplete="off"  class="form-control" data-rule="pnumber" data-rule="required" data-notnull="false" placeholder="请输入数量"  maxlength="10" name="appendItem.iquantity" value="#(appendItem.iquantity??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">单位</label>
+		<div class="col">
+			<input type="text" 
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end			
+			data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入单位" maxlength="20" name="appendItem.cunit" value="#(appendItem.cunit??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">资产类别</label>
+		<div class="col">
+			<select class="form-control"
+	          		data-select-type="select2"
+	                data-autoload
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end	                
+	                data-tips="资产类别"
+	                data-url="admin/dictionary/options?key=asset_type"
+	                data-text="=资产类别="
+	                data-text-attr="name"
+	                data-value-attr="sn"
+	                data-value=""
+	                data-select="#(appendItem.cassettype??)"
+	                name="appendItem.cassettype"
+	                data-rule="required"
+	                data-width="200"
+	                >
+	        </select>		
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">目的</label>
+		<div class="col">
+			<input type="text" 
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end			
+			data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入目的" maxlength="100" name="appendItem.cpurpose" value="#(appendItem.cpurpose??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">效果金额</label>
+		<div class="col">
+			<input type="text" 
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end			
+			data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入效果金额" maxlength="100" name="appendItem.ceffectamount" value="#(appendItem.ceffectamount??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">回收年限</label>
+		<div class="col">
+			<input type="text" 
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end			
+			data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置回收年限" data-tips="请设置回收年限" maxlength="100" name="appendItem.creclaimyear" value="#(appendItem.creclaimyear??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">等级区分</label>
+		<div class="col">
+			<select class="form-control"
+	          		data-select-type="select2"
+	                data-autoload
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end	                
+	                data-tips="等级区分"
+	                data-url="admin/dictionary/options?key=level"
+	                data-text="#(appendItem.clevel??)"
+	                data-text-attr="name"
+	                data-value-attr="name"
+	                data-value="#(appendItem.clevel??)"
+	                data-rule="required"
+	                name="appendItem.clevel"
+	                data-width="200"
+	                >
+	        </select>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(appendItem.ispriorreport??)"
+    	data-name="appendItem.ispriorreport"
+    	data-default="options_first"
+				#if(appendItem.ieffectivestatus??==2)
+	            data-disabled
+	            #end    	
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否做事前报告</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_ispriorreport_true" type="radio" name="appendItem.ispriorreport" value="1"/>
+					<label for="r_ispriorreport_true">是</label>
+				</div>
+
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_ispriorreport_false" type="radio" name="appendItem.ispriorreport" value="0"/>
+					<label for="r_ispriorreport_false">否</label>
+				</div>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">实施阶段</label>
+		<div class="col">
+			<select class="form-control"
+	          		data-select-type="select2"
+	                data-autoload
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end	                
+	                data-tips="实施阶段"
+	                data-url="admin/dictionary/options?key=payment_progress"
+	                data-text="=实施阶段="
+	                data-text-attr="name"
+	                data-value-attr="sn"
+	                data-rule="required"
+	                data-value=""
+	                data-select="#(appendItem.cpaymentprogress??)"
+	                name="appendItem.cpaymentprogress"
+	                data-width="200"
+	                >
+	        </select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计划类型</label>
+		<div class="col">
+			<select class="form-control"
+	          		data-select-type="select2"
+	                data-autoload
+	                data-rule="required"
+	                data-tips="计划类型"
+	                data-url="admin/dictionary/options?key=append_item_isscheduled"
+	                data-text="=计划类型="
+	                data-text-attr="name"
+	                data-handler="isscheduledChange"
+	                data-value-attr="sn"
+	                data-value=""
+	                data-rule="required"
+	                data-select="#(appendItem.isscheduled??)"
+	                name="appendItem.isscheduled"
+	                data-width="200"
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end	                
+	                >
+	        </select>
+		</div>
+	</div>		
+	<div class="form-group row" id="iBudgetMoneyDiv">
+		<label class="col-sm-2 col-form-label">预算总金额(不含税:千元)</label>
+		<div class="col">
+			<input id="iBudgetMoney"
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end			
+			 type="text" data-with-clearbtn="true" autocomplete="off" data-rule="pznumber;;fix<=2;" class="form-control"  placeholder="请输入预算总金额" maxlength="100" name="appendItem.iBudgetMoney" value="#(appendItem.iBudgetMoney??)"/>
+		</div>
+	</div>	
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">备注</label>
+		<div class="col">
+			<input type="text"
+				#if(appendItem.ieffectivestatus??==2)
+	            disabled
+	            #end			
+			 data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="appendItem.cmemo" value="#(appendItem.cmemo??)"/>
+		</div>
+	</div>
+</form>
+</div>
+#define js()
+<script>
+#if(appendItem.ieffectivestatus??==2)
+	hideParentLayerDialogBtn(0);
+#end    
+	function findDeptNewestInvestmentDatas(select){
+		if(select.val()){
+			Ajax.post("admin/investmentplan/findNewestInvestmentByDeptCode",{cdepcode:select.val()},function(res){
+				if(!res.data) {
+					LayerMsgBox.error("所选部门没有最新生效的投资计划,不能追加项目,请检查!");
+					$("#ibudgettypeshow_#(pageId)").val('');
+					$("#ibudgettypepara_#(pageId)").val('');
+					$("#ibudgetyearshow_#(pageId)").val('');
+					$("#ibudgetyearpara_#(pageId)").val('');
+				}else{
+					$("#ibudgettypeshow_#(pageId)").val(res.data.ibudgettype);
+					$("#ibudgettypepara_#(pageId)").val(res.data.ibudgettype);
+					$("#ibudgetyearshow_#(pageId)").val(res.data.ibudgetyear);
+					$("#ibudgetyearpara_#(pageId)").val(res.data.ibudgetyear);
+				}
+			});
+		}
+	}
+	function isscheduledChange(ele){
+		if(ele.val() == '2'){
+			$('#iBudgetMoneyDiv').css('display','flex');
+		}else{
+			$("#iBudgetMoney").val(0);
+			$('#iBudgetMoneyDiv').css('display','none');
+		}
+	}	
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="appendInvestmentItemForm")
+#end

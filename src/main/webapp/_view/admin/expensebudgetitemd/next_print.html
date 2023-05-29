@@ -1,0 +1,299 @@
+#@adminDialogLayout()
+#define css()
+#@hiprintcss()
+#end
+
+#define main()
+#setLocal(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="col-auto">
+        <div id="hiprintContentViewer1" style="min-width: 100%" class="jb_hiprint_portal shadow"></div>
+    </div>
+</div>
+#end
+#define js()
+#@hiprintjs()
+
+<script>
+    var jsonDate = JSON.parse('#(list)');
+    console.log(jsonDate);
+    var eleArray = [];
+    var newarr = [{value: 1}]
+    var topele = 0;
+    var printTemplate;
+    var recordInfo;
+    getRecordInfo();
+    $("#orgdept").change(function () {
+        getRecordInfo();
+    })
+
+    function getRecordInfo(){
+        if(false) {
+
+        }else {
+          var  eleArray = []
+          var  top = 0;
+            topele = 0
+            eleArray.push(
+                {"options":{"left":50.5,"top":36.5+topele,"height":9.75,"width":150,"title":"费用预算明细","fontSize":20.25,"fontWeight":"bold"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":50.5,"top":90.5+topele,"height":9.75,"width":120,"title":"预算期间: ","fontWeight":"bold"},"printElementType":{"type":"text"}},
+                {"options":{"left":100.5,"top":90.5+topele,"height":9.75,"width":120,"title":"起: #(calendarStartDate)"},"printElementType":{"type":"text"}},
+                {"options":{"left":100.5,"top":105.5+topele,"height":9.75,"width":120,"title":"止: #(calendarCutoffTimetDate)"},"printElementType":{"type":"text"}},
+                {"options":{"left":185.5,"top":105.5+topele,"height":9.75,"width":120,"title":"预算类型: #(iBudgetType)"},"printElementType":{"type":"text"}},
+                {"options":{"left":185.5,"top":90.5+topele,"height":9.75,"width":120,"title":"部门: #(cdepname)"},"printElementType":{"type":"text"}},
+                {"options":{"left":300.5,"top":90.5+topele,"height":9.75,"width":120,"title":"预算年度: #(budgetYear)年"},"printElementType":{"type":"text"}},
+                //长竖线
+                {"options":{"left":80,"top":124.5+topele,"height":604,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":700,"top":124.5+topele,"height":604,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":765,"top":124.5+topele,"height":604,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":815,"top":124.5+topele,"height":604,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":865,"top":124.5+topele,"height":604,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":900,"top":124.5+topele,"height":604,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":2060,"top":124.5+topele,"height":604,"width":9},"printElementType":{"type":"vline"}},
+
+                //中竖线
+                {"options":{"left":150,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":230,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":310,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":390,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":490,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":570,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":630,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":960,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1020,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1100,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1180,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1260,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1340,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1420,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1500,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1580,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1660,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1740,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1820,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1900,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1980,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":2060,"top":160.5+topele,"height":568,"width":9},"printElementType":{"type":"vline"}},
+                //短竖线
+                {"options":{"left":1060,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1140,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1220,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1300,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1380,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1460,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1540,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1620,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1700,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1780,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1860,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":1940,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+                {"options":{"left":2020,"top":190.5+topele,"height":538,"width":9},"printElementType":{"type":"vline"}},
+
+                //外边框
+                {"options":{"left":43.5,"top":124.5+topele,"height":604,"width":2017},"printElementType":{"type":"rect"}},
+                //标题
+                {"options":{"left":55.5,"top":175+topele,"height":9.75,"width":57,"title":"NO.","fontWeight":"900"},"printElementType":{"type":"text"}},
+                {"options":{"left":330.5,"top":155+topele,"height":9.75,"width":60,"title":"费用项目","fontSize":14,"fontWeight":"bold"},"printElementType":{"type":"text"}},
+                {"options":{"left":95.5,"top":200+topele,"height":9.75,"width":60,"title":"项目编码","fontWeight":"bold"},"printElementType":{"type":"text"}},
+                {"options":{"left":170.5,"top":200+topele,"height":9.75,"width":60,"title":"项目名称","fontWeight":"bold"},"printElementType":{"type":"text"}},
+                {"options":{"left":250.5,"top":200+topele,"height":9.75,"width":60,"title":"预算编号","fontWeight":"bold"},"printElementType":{"type":"text"}},
+                {"options":{"left":330.5,"top":200+topele,"height":9.75,"width":60,"title":"科目大类","fontWeight":"bold"},"printElementType":{"type":"text"}},
+                {"options":{"left":420.5,"top":200+topele,"height":9.75,"width":60,"title":"明细科目","fontWeight":"bold"},"printElementType":{"type":"text"}},
+                {"options":{"left":510.5,"top":200+topele,"height":9.75,"width":60,"title":"细项名称","fontWeight":"bold"},"printElementType":{"type":"text"}},
+                {"options":{"left":580.5,"top":200+topele,"height":9.75,"width":60,"title":"事业类型","fontWeight":"bold"},"printElementType":{"type":"text"}},
+                {"options":{"left":635.5,"top":200+topele,"height":9.75,"width":600,"title":"是否大额费用","fontWeight":"bold"},"printElementType":{"type":"text"}},
+                {"options":{"left":725.5,"top":170.5+topele,"height":9.75,"width":600,"title":"用途"},"printElementType":{"type":"text"}},
+                {"options":{"left":780.5,"top":170.5+topele,"height":9.75,"width":600,"title":"备注"},"printElementType":{"type":"text"}},
+                {"options":{"left":830.5,"top":170.5+topele,"height":9.75,"width":600,"title":"单价"},"printElementType":{"type":"text"}},
+                {"options":{"left":873.5,"top":170.5+topele,"height":9.75,"width":600,"title":"单位"},"printElementType":{"type":"text"}},
+                {"options":{"left":1530,"top":140+topele+top,"height":9.75,"width":65,"title":"#(budgetYear)","fontSize":14,"fontWeight":"bold"},"printElementType":{"type":"text"}},
+                {"options":{"left":910,"top":200+topele,"height":9.75,"width":600,"title":"上期剩余"},"printElementType":{"type":"text"}},
+                {"options":{"left":975,"top":200+topele,"height":9.75,"width":600,"title":"已结转"},"printElementType":{"type":"text"}},
+                //日期
+                {"options":{"left":1055,"top":170.5+topele,"height":9.75,"width":600,"title":"1月"},"printElementType":{"type":"text"}},
+                {"options":{"left":1135,"top":170.5+topele,"height":9.75,"width":600,"title":"2月"},"printElementType":{"type":"text"}},
+                {"options":{"left":1215,"top":170.5+topele,"height":9.75,"width":600,"title":"3月"},"printElementType":{"type":"text"}},
+                {"options":{"left":1295,"top":170.5+topele,"height":9.75,"width":600,"title":"4月"},"printElementType":{"type":"text"}},
+                {"options":{"left":1375,"top":170.5+topele,"height":9.75,"width":600,"title":"5月"},"printElementType":{"type":"text"}},
+                {"options":{"left":1455,"top":170.5+topele,"height":9.75,"width":600,"title":"6月"},"printElementType":{"type":"text"}},
+                {"options":{"left":1535,"top":170.5+topele,"height":9.75,"width":600,"title":"7月"},"printElementType":{"type":"text"}},
+                {"options":{"left":1615,"top":170.5+topele,"height":9.75,"width":600,"title":"8月"},"printElementType":{"type":"text"}},
+                {"options":{"left":1695,"top":170.5+topele,"height":9.75,"width":600,"title":"9月"},"printElementType":{"type":"text"}},
+                {"options":{"left":1775,"top":170.5+topele,"height":9.75,"width":600,"title":"10月"},"printElementType":{"type":"text"}},
+                {"options":{"left":1855,"top":170.5+topele,"height":9.75,"width":600,"title":"11月"},"printElementType":{"type":"text"}},
+                {"options":{"left":1935,"top":170.5+topele,"height":9.75,"width":600,"title":"12月"},"printElementType":{"type":"text"}},
+                {"options":{"left":2008,"top":170.5+topele,"height":9.75,"width":600,"title":"1-12月"},"printElementType":{"type":"text"}},
+
+
+
+
+                //数量 金额
+                {"options":{"left":1030,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":1070,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":1110,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":1150,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":1190,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":1230,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":1270,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":1310,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":1350,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":1390,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":1430,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":1470,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":1510,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":1550,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":1590,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":1630,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":1670,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":1710,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":1750,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":1790,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":1830,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":1870,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":1910,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":1950,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+                {"options":{"left":1990,"top":200+topele,"height":9.75,"width":600,"title":"数量"},"printElementType":{"type":"text"}},
+                {"options":{"left":2030,"top":200+topele,"height":9.75,"width":600,"title":"金额"},"printElementType":{"type":"text"}},
+
+
+
+
+                //横线
+                //类型的横线
+                {"options":{"left":80.5,"top":190.5+topele,"height":9,"width":620},"printElementType":{"type":"hline"}},
+                {"options":{"left":900,"top":190.5+topele,"height":9,"width":1160},"printElementType":{"type":"hline"}},
+                {"options":{"left":900,"top":160.5+topele,"height":9,"width":1160},"printElementType":{"type":"hline"}},
+
+                //其他
+                {"options":{"left":43.5,"top":220+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":253+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":278+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":308+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":338+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":368+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":398+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":428+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":458+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":488+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":518+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":548+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":578+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":608+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":638+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":668+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":698+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+                {"options":{"left":43.5,"top":728+topele,"height":9,"width":2017},"printElementType":{"type":"hline"}},
+
+
+            )
+
+            objArray = []
+            for(var i=0;i<jsonDate.length;i++){
+                //数据
+                eleArray.push(
+                    {"options":{"left":59,"top":232+topele+top,"height":9.75,"width":57,"title":""+(i+1)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":84,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].cprojectcode==null?'':jsonDate[i].cprojectcode)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":154,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].cprojectname==null?'':jsonDate[i].cprojectname)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":234,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].cbudgetno==null?'':jsonDate[i].cbudgetno)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":314,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].chighestsubjectname==null?'':jsonDate[i].chighestsubjectname)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":394,"top":228+topele+top,"height":9.75,"width":90,"title":""+(jsonDate[i].clowestsubjectname==null?'':jsonDate[i].clowestsubjectname)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":494,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].citemname==null?'':jsonDate[i].citemname)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":590,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].careertype==null?'':jsonDate[i].careertype)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":660,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].islargeamountexpense==null?'':jsonDate[i].islargeamountexpense)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":704,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].cuse==null ? '':jsonDate[i].cuse)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":769,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].cmemo==null ? '':jsonDate[i].cmemo)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":819,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].iprice==null?'':jsonDate[i].iprice)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":875,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].cunit==null?'':jsonDate[i].cunit)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":904,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].previousremain==null ? '':jsonDate[i].previousremain)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1024,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthquantity1==null ? '':jsonDate[i].nowyearmounthquantity1)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":1064,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthamount1==null ? '':jsonDate[i].nowyearmounthamount1)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1104,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthquantity2==null ? '':jsonDate[i].nowyearmounthquantity2)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":1144,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthamount2==null ? '':jsonDate[i].nowyearmounthamount2)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1184,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthquantity3==null ? '':jsonDate[i].nowyearmounthquantity3)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":1224,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthamount3==null ? '':jsonDate[i].nowyearmounthamount3)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1264,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthquantity4==null ? '':jsonDate[i].nowyearmounthquantity4)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":1304,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthamount4==null ? '':jsonDate[i].nowyearmounthamount4)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1344,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthquantity5==null ? '':jsonDate[i].nowyearmounthquantity5)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":1384,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthamount5==null ? '':jsonDate[i].nowyearmounthamount5)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1424,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthquantity6==null ? '':jsonDate[i].nowyearmounthquantity6)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":1464,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthamount6==null ? '':jsonDate[i].nowyearmounthamount6)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1504,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthquantity7==null ? '':jsonDate[i].nowyearmounthquantity7)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":1544,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthamount7==null ? '':jsonDate[i].nowyearmounthamount7)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1584,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthquantity8==null ? '':jsonDate[i].nowyearmounthquantity8)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":1624,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthamount8==null ? '':jsonDate[i].nowyearmounthamount8)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1664,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthquantity9==null ? '':jsonDate[i].nowyearmounthquantity9)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":1704,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthamount9==null ? '':jsonDate[i].nowyearmounthamount9)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1744,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthquantity10==null ? '':jsonDate[i].nowyearmounthquantity10)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":1784,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthamount10==null ? '':jsonDate[i].nowyearmounthamount10)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1824,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthquantity11==null ? '':jsonDate[i].nowyearmounthquantity11)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":1864,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthamount11==null ? '':jsonDate[i].nowyearmounthamount11)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1904,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthquantity12==null ? '':jsonDate[i].nowyearmounthquantity12)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":1944,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].nowyearmounthamount12==null ? '':jsonDate[i].nowyearmounthamount12)+""},"printElementType":{"type":"text"}},
+
+                    {"options":{"left":1984,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].totalquantity1==null ? '':jsonDate[i].totalquantity1)+""},"printElementType":{"type":"text"}},
+                    {"options":{"left":2024,"top":228+topele+top,"height":9.75,"width":65,"title":""+(jsonDate[i].totalamount1==null ? '':jsonDate[i].totalamount1)+""},"printElementType":{"type":"text"}},
+
+                )
+                top +=29;
+                //topele+=400.5;
+                if ((i+1)===jsonDate.length){
+                    objArray.push({"height":500,"width":750,"paperHeader":115,"paperFooter":750,"printElements":eleArray,"paperNumberLeft":0,"paperNumberTop":0});
+                }
+            }
+
+            //var panelsheight = 140*jsonDate.length
+            var snContent = {"panels":objArray};
+            console.log(snContent)
+            // var snContent = {"panels":[{"index": 0,"paperType":"A4","height":panelsheight,"width":231,"paperHeader":-1.5,"paperFooter":900,"printElements":eleArray,"paperNumberLeft":565,"paperNumberTop":819,"paperNumberDisabled":true}]};
+            var renderBox = getRealJqueryObject("hiprintContentViewer1");
+            printTemplate = new hiprint.PrintTemplate({ template: snContent});
+            var htmlContent = printTemplate.getHtml(newarr)
+            if(htmlContent){
+                renderBox.html(htmlContent);
+                renderBox.data("printtemplate", printTemplate);
+                renderBox.data("printdata", jsonDate);
+            }
+        }
+    }
+    function webPrint(){
+        printTemplate.print(newarr);
+    }
+
+    $(function(){
+        hideParentLayerDialogBtn(0);
+        addParentLayerDialogBtn("Web打印","lay_success",function(data){
+
+            LayerMsgBox.confirm("确定进行打印",function(){
+                webPrint();
+            })
+        });
+    });
+</script>
+#end
+

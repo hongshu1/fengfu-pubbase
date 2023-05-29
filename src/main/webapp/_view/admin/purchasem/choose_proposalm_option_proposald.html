@@ -1,0 +1,150 @@
+#@jboltLayout()
+#define main()
+#set(pageId = RandomUtil.random(6))
+<div class="jbolt_page vh-100" data-key="#(pmkey)" id="jbolttable_mspage_#(pageId)">
+<div class="jbolt_page_title">
+</div>
+<div class="jbolt_page_content">
+    <!-- JBoltTable -->
+    <!-- JBoltTable的数据模板定义-->
+    <script type="text/template" id="jboltTable_investmentplanmForm_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}" onclick="masterTableTrTriggerShowSlave(this,'${data.iautoid}')">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.cproposalno}</td>
+                <td>${data.cdepname}</td>
+                <td>${data.capplypersonname}</td>
+                <td>${data.dapplydate|date_ymd}</td>
+                <td>${data.cprojectname}${data.cprojectcode|bracket}</td>
+                <td>$${data.isscheduled|isscheduled}</td>
+                <td>${data.cpurposename}</td>
+                <td>${data.ccategoryname}</td>
+                <td>${data.cdesc}</td>
+        </tr>
+        {@/each}
+    </script>
+    <script type="text/template" id="jbolt_table_rowtpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+        <td>${pageNumber,pageSize,index | rownum}</td>
+        <td>$${data.isourcetype|proposalChooseType}</td>
+        <td>${data.cbudgetno}</td>
+        <td>${data.clowestsubjectname}</td>
+        <td>${data.ibudgetmoney}</td>
+        <td>${data.ibudgetsum}</td>
+        <td>${data.citemname}</td>
+        <td>${data.iquantity}</td>
+        <td>${data.cunit}</td>
+        <td>${data.ccurrency}</td>
+        <td>${data.iunitprice}</td>
+        <td>${data.nflat|money_4}</td>
+        <td>${data.itaxrate}</td>
+        <td>${data.itax}</td>
+        <td>${data.imoney}</td>
+        <td>${data.isum}</td>
+        <td>${data.inatunitprice}</td>
+        <td>${data.inattax}</td>
+        <td>${data.inatmoney}</td>
+        <td>${data.inatsum}</td>
+        <td>${data.cvenname}</td>
+        <td>${data.ddemanddate|date_ymd}</td>
+            </tr>
+            {@/each}
+    </script>
+        <!-- 内容区域 使用下方的一个上下结构组件 -->
+		<div class="jbolttable_master_slave_box" data-sizes="5:5">
+			<div class="split master">
+				<div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)_1">
+				<span><i class="fa fa-file-text-o mr-1"></i>禀议书</span>
+				</div>
+			    <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
+			           data-height="fill_box"
+			           data-column-resize="true"
+			           data-toolbar="jbolt_table_toolbar_#(pageId)_1"
+			           data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+			           data-rowtpl="jboltTable_investmentplanmForm_#(pageId)"
+			           data-ajax="true"
+			           data-url="admin/purchasem/chooseProposalmDatas?ieffectivestatus=2&ifirstsourceproposalid=#(ifirstsourceproposalid??)">
+			        <thead class="fw_normal">
+			        <tr>
+		               <th data-width="60">序号</th>
+		               <th data-width="120" data-column="cproposalno">编号</th>
+		               <th data-width="100" data-column="cdepcode">申请部门</th>
+		               <th data-width="120" data-column="capplypersoncode">申请人</th>
+		               <th data-width="100" data-column="dapplydate">申请日期</th>
+		               <th data-width="200" data-column="cprojectcode">项目</th>
+		               <th data-width="100" data-column="isscheduled">事业计划</th>
+		               <th data-width="100" data-column="cpurpose">目的区分</th>
+		               <th data-width="100" data-column="categorycode">类别区分</th>
+		               <th data-width="100" data-column="cdesc">说明</th>
+			        </tr>
+			        </thead>
+			        <tbody></tbody>
+			    </table>
+    		</div>
+
+
+		    <div class="split slave">
+		    <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)_2">
+			  <span><i class="fa fa-file-text-o mr-1"></i>禀议书项目</span>
+			  </div>
+		    	<table class="jbolt_table table_striped thead_font_normal table-center"
+					  data-height="fill_box"
+					  id="slave_jbolt_table_#(pageId)"
+					  data-ajax="true"
+					  data-toolbar="jbolt_table_toolbar_#(pageId)_2"
+					  data-origin-url="/admin/purchasem/chooseProposalmDatasDetail?iproposalmid=[masterId]"
+					  data-url="/admin/purchasem/chooseProposalmDatasDetail?iproposalmid=0"
+					  data-rowtpl="jbolt_table_rowtpl_#(pageId)"
+					  data-column-prepend="1:checkbox:true"
+					  data-page="slave_page_#(pageId)_1"
+					  data-pagesize="10">
+				<thead class="fw_normal">
+					<tr>
+						<th data-width="60" data-column="index">序号</th>
+						<th data-width="120" data-column="isourcetype">业务类别</th>
+				        <th data-width="150" data-column="cbudgetno">预算NO.</th>
+				        <th data-width="120" data-column="clowestsubjectname">明细科目</th>
+				        <th data-width="130" data-column="ibudgetmoney">预算金额(不含税)</th>
+				        <th data-width="120" data-column="ibudgetsum">预算金额(含税)</th>
+				        <th data-width="120" data-column="citemname">项目细项名称</th>
+				        <th data-width="70" data-column="iquantity">数量</th>
+				        <th data-width="70" data-column="cunit">单位</th>
+				        <th data-width="100" data-column="ccurrency">币种</th>
+				        <th data-width="120" data-column="iunitprice">原币无税单价</th>
+				        <th data-width="100" data-column="nflat">汇率</th>
+				        <th data-width="100" data-column="itaxrate">税率</th>
+				        <th data-width="120" data-column="itax">原币税额</th>
+				        <th data-width="120" data-column="imoney">原币无税金额</th>
+				        <th data-width="120" data-column="isum">原币价税合计</th>
+				        <th data-width="120" data-column="inatunitprice">本币无税单价</th>
+				        <th data-width="120" data-column="inattax">本币税额</th>
+				        <th data-width="120" data-column="inatmoney">本币无税金额</th>
+				        <th data-width="120" data-column="inatsum">本币价税合计</th>
+				        <th data-width="120" data-column="cvencode">预定供货商</th>
+				        <th data-width="100" data-column="ddemanddate">需求日</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+				</table>
+		    </div>
+		</div>
+</div>
+</div>
+#end
+#define js()
+<script>
+	$(function(){
+		//使用JS去初始化这个主从布局 给定所在的jbolt_page的ID
+		MasterSlaveUtil.initJBoltTable("jbolttable_mspage_#(pageId)");
+	});
+	function submitThisForm() {
+		var needAttr = ["iproposaldid","itaxrate","cvencode","cvenname","ccurrency","inatsum","nflat","cbudgetno","ibudgetmoney","isourcetype","isourceid","iprojectcardid","isubitem"];
+		var rowDatas = jboltTableGetCheckedDatas("slave_jbolt_table_#(pageId)",needAttr);
+		parent.insertOtherItem(rowDatas);
+		//关闭当前页面
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+	}	
+</script>
+#end
+

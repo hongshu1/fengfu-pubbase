@@ -95,8 +95,9 @@ public class FormCategoryAdminController extends BaseAdminController {
      * 得到树形结构数据
      */
     @UnCheck
-    public void tree(@Para(value = "keywords") String keywords) {
-        renderJsonData(service.getTreeDatas(keywords));
+    public void tree(@Para(value = "keywords") String keywords,
+                     @Para(value = "withEmpty", defaultValue = "false") Boolean withEmpty) {
+        renderJsonData(service.getTreeDatas(keywords, withEmpty));
     }
 
     /**

@@ -1,0 +1,112 @@
+<div class="jbolt_page_title">
+    <div class="row">
+
+        <div class="col-12 form-inline">
+
+            <div class="col-4">
+                <h3>基础信息</h3>
+            </div>
+
+            <div class="col-8 text-right">
+                ###permission(PermissionKey.permissionKeyName)
+                ###定义权限控制的按钮
+                ###end
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+
+    <form onsubmit="return false;" id="proposaldForm" action="#(action)" method="post">
+        #if(proposald.iautoid??)
+        <input type="hidden" name="proposald.iautoid" value="#(proposald.iautoid??)"/>
+        #end
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">禀议书ID</label>
+            <div class="col">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required" placeholder="请输入禀议书ID" maxlength="19" name="proposald.iproposalmid" value="#(proposald.iproposalmid??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">来源ID</label>
+            <div class="col">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入来源ID" maxlength="19" name="proposald.isourceid" value="#(proposald.isourceid??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">类型(1.原禀议 2.新增)</label>
+            <div class="col">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="pnumber" placeholder="请输入类型(1.原禀议 2.新增)" maxlength="10" name="proposald.itype" value="#(proposald.itype??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">项目细项名称</label>
+            <div class="col">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入项目细项名称" maxlength="200" name="proposald.citemname" value="#(proposald.citemname??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">数量</label>
+            <div class="col">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="pnumber" data-notnull="false" placeholder="请输入数量" maxlength="10" name="proposald.iquantity" value="#(proposald.iquantity??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">单价</label>
+            <div class="col">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="pnumber;fix<=2;" data-notnull="false" placeholder="请输入单价" maxlength="20" name="proposald.iprice" value="#(proposald.iprice??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">申请金额(不含税)</label>
+            <div class="col">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="pnumber;fix<=2;" data-notnull="false" placeholder="请输入申请金额(不含税)" maxlength="20" name="proposald.iapplyamount" value="#(proposald.iapplyamount??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">申请金额(含税)</label>
+            <div class="col">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="pnumber;fix<=2;" data-notnull="false" placeholder="请输入申请金额(含税)" maxlength="20" name="proposald.inatsum" value="#(proposald.inatsum??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">预定供货商</label>
+            <div class="col">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入预定供货商" maxlength="20" name="proposald.cvencode" value="#(proposald.cvencode??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">需求日</label>
+            <div class="col">
+                <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置需求日" data-tips="请设置需求日" maxlength="23" name="proposald.ddemanddate" value="#(proposald.ddemanddate??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">预算对应部门</label>
+            <div class="col">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入预算对应部门" maxlength="20" name="proposald.cbudgetdepcode" value="#(proposald.cbudgetdepcode??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">备注</label>
+            <div class="col">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入备注" maxlength="100" name="proposald.cmemo" value="#(proposald.cmemo??)"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">申购状态: 0. 未申购 1. 已申购</label>
+            <div class="col input-group">
+                <select class="form-control" data-autoload data-url="替换为自己的数据源地址" name="proposald.istatus" data-refresh="true" data-rule="select" data-tips="请选择申购状态: 0. 未申购 1. 已申购" data-text="=请选择=" data-value="" data-select="#( proposald.istatus ??)"></select>
+            </div>
+        </div>
+    </form>
+</div>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="proposaldForm")
+#end
+

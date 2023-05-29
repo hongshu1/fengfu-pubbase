@@ -1,0 +1,70 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+	    <div class="jbolt_page_title">
+	    </div>
+	    <div class="jbolt_page_content">
+	    	<div class="jbolt_tab_view">
+				  <div class="jbolt_tab_links">
+				  	#if(expenseBudgetPeriod??)
+					  <a class="jbolt_tab_link active"  href="#jbolt_tabcontent1_#(pageId)">费用预算</a>
+					#end
+					#if(investmentPlanPeriod??)
+					  <a class="jbolt_tab_link"  href="#jbolt_tabcontent2_#(pageId)">投资计划</a>
+					#end
+				  </div>
+				  <div class="jbolt_tab_contents">
+				  	#if(expenseBudgetPeriod??)
+					  <div class="jbolt_tab_content active" id="jbolt_tabcontent1_#(pageId)">
+						<div data-ajaxportal data-url="/admin/proposalm/chooseExpenseBudget?iperiodid=#(expenseBudgetPeriod.iautoid??)&cdepcode=#(cdepcode??)&isourceproposalid=#(isourceproposalid??)"></div>
+					  </div>
+					#end
+					#if(investmentPlanPeriod??)
+					  <div class="jbolt_tab_content" id="jbolt_tabcontent2_#(pageId)">
+						<div data-ajaxportal data-url="/admin/proposalm/chooseInvestmentPlan?iperiodid=#(investmentPlanPeriod.iautoid??)&cdepcode=#(cdepcode??)&isourceproposalid=#(isourceproposalid??)"></div>
+					  </div>
+					#end
+				  </div>
+			</div>
+	    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+function submitThisForm() {
+	var expensebudgetitemid_#(pageId);
+	var investmentplanitemid_#(pageId);
+	#if(expenseBudgetPeriod??)
+		expensebudgetitemid_#(pageId) = jboltTableGetCheckedIds('#jbolt_Table_proposal_add_choose_expensebudget',true);
+	#end
+	#if(investmentPlanPeriod??)
+		investmentplanitemid_#(pageId) = jboltTableGetCheckedIds('#jbolt_Table_proposal_add_choose_investmentplan',true);
+	#end
+	if(!(expensebudgetitemid_#(pageId) || investmentplanitemid_#(pageId))){
+		LayerMsgBox.error('请至少选择一行数据');
+		return;
+	}
+	var iautoids_expensebudget_#(pageId) = '';
+	var iautoids_investmentplan_#(pageId) = '';
+	if(expensebudgetitemid_#(pageId)) {
+		iautoids_expensebudget_#(pageId) = expensebudgetitemid_#(pageId).join(',');
+	}
+	if(investmentplanitemid_#(pageId)){
+		iautoids_investmentplan_#(pageId) = investmentplanitemid_#(pageId).join(',');
+	}
+    // 校验勾选的项目是否存在编辑状态的禀议书
+    Ajax.post('/admin/proposalm/checkBudgetItemAndPlanItem', {expensebudgetitemid: iautoids_expensebudget_#(pageId),investmentplanitemid : iautoids_investmentplan_#(pageId),isSupplemental:true}, function (ret) {
+        if (ret.state === 'ok') {
+            //插入数据
+            parent.insertSupplementalItem(ret.proposalds);
+         	//关闭当前页面
+            parent.layer.close(parent.layer.getFrameIndex(window.name));
+        } else {
+            LayerMsgBox.alert(ret.msg, 2);
+        }
+    });
+}
+</script>
+#end
