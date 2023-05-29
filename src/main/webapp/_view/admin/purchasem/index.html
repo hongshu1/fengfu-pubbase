@@ -1,0 +1,222 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col">
+                <form class="form-inline text-left" id="purchasemForm_#(pageId)" onsubmit="return false;" method="post">
+                	<input type="text" autocomplete="off" class="form-control col-md-1" placeholder="=单据号=" name="cpurchaseno" value=""/>
+                	<input type="text" data-date data-fmt="yyyy-MM-dd"  placeholder="=日期=" class="form-control" name="cpurchasedate" value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置
+                    </button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="purchasemRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cpurchaseno}</td>
+<td>${data.cpurchasedate,'yyyy-MM-dd'|date}</td>
+<td>$${data.ireftype|iPurchaseRefType}</td>
+<td>${data.cdepname}</td>
+<td>${data.cpersonname}</td>
+<td>${data.cservicetypename}</td>
+<td>${data.ipurchasetypename}</td>
+<td>$${data.ispurchased|isLargeAmountExpense}</td>
+<td>${data.inatmoney}</td>
+<td>${data.createname}</td>
+<td>${data.dcreatetime}</td>
+<td>$${data.iauditstatus|AuditStatus}</td>
+<td>$${data.istatus|purchaseState}</td>
+<td>{@if data.caccessorypath}<a tooltip title="附件" target="_blank" class="btn btn-outline-info btn-sm" href="${data.caccessorypath}"><i class="fa fa-download"></i>下载附件</a>{@/if}</td>
+</tr>
+{@/each}
+</textarea>
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="purchasem_toolbar_#(pageId)">
+            <div class="btn-group" role="group" aria-label="btn-group">
+                <!-- 申购单编制按钮 -->
+                #if(purchaseInstrument)
+                #permission(PermissionKey.PURCHASE_INSTRUMENT_CHOOSE_PROPOSALM)
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    新增
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%"
+                       href="/admin/purchasem/chooseProposalm" data-close-handler="refreshJBoltTable">参照禀议书</a>
+                    <a class="dropdown-item" data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%" href="/admin/purchasem/choosePeriod"
+                       data-close-handler="refreshJBoltTable">参照预算</a>
+                </div>
+                #end
+
+                #permission(PermissionKey.PURCHASE_INSTRUMENT_EDIT)
+                <button data-openpage="dialog" data-offset="0.2,0" data-fs="true" data-handler="refreshJBoltTable"
+                        data-title="修改申购单" data-check-handler="updateCheck"
+                        data-url="admin/purchasem/instrumentEdit/" class="btn btn-outline-primary btn-sm"><i
+                        class="fa fa-edit"></i>
+                    修改
+                </button>
+                #end
+
+                #permission(PermissionKey.PURCHASE_INSTRUMENT_SUBMIT)
+                <button data-ajaxbtn data-handler="refreshJBoltTable"
+                        data-check-handler="jboltTableGetCheckedId"
+                        data-url="/admin/purchasem/submit?iautoid="
+                        class="btn btn-outline-primary btn-sm"><i class="fa fa-adjust"></i> 提交审批
+                </button>
+                #end
+
+                #permission(PermissionKey.PURCHASE_INSTRUMENT_UPLOAD_FILE)
+                <button class="btn btn-outline-primary btn-sm" data-openpage="dialog" data-btn="close"
+                        data-area="600,400"
+                        data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId"
+                        data-title="上传附件" data-url="admin/purchasem/instrumentFile/">
+                    <i class="fa fa-upload mr-2"></i>上传附件
+                </button>
+                #end
+
+                #permission(PermissionKey.PURCHASE_INSTRUMENT_DELETE)
+                <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr"
+                        data-check-handler="jboltTableGetCheckedIds"
+                        data-url="admin/purchasem/instrumentDeleteByIds?ids="
+                        data-confirm="确定删除选中数据？" class="btn btn-outline-primary btn-sm"><i class="fa fa-trash"></i> 删除
+                </button>
+                #end
+                #end
+
+                <!-- 申购单管理按钮 -->
+                #if(purchaseManagement)
+                <button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
+                        data-check-handler="getIdIfValid"
+                        data-url="admin/verifyprogress/findprocess?cobjecttype=04&iobjectid="
+                        class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i
+                        class="fa fa-chain"></i>查看审批
+                </button>
+
+                #permission(PermissionKey.PURCHASE_WITHDRAW)
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId"
+                        data-url="/admin/purchasem/withdraw?iautoid=" data-confirm="确定撤销选中数据？"
+                        class="btn btn-outline-primary btn-sm"><i class="jbicon jb-jujue"></i> 撤销审批
+                </button>
+                #end
+
+                #permission(PermissionKey.PURCHASE_MANAGEMENT_SUMBITPURCHASE)
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId"
+                        data-url="admin/purchasem/sumbitPurchase/" class="btn btn-outline-primary btn-sm"><i
+                        class="fa fa-edit"></i>
+                    提交采购
+                </button>
+                #end
+
+                #permission(PermissionKey.PURCHASE_MANAGEMENT_REVOCATIONSUBMIT)
+                <button data-ajaxbtn data-handler="refreshJBoltTable"
+                        data-check-handler="jboltTableGetCheckedIds" data-url="admin/purchasem/revocationSubmit?ids="
+                        data-confirm="确定撤销选中数据？" class="btn btn-outline-primary btn-sm"><i class="fa fa-trash"></i> 撤销采购
+                </button>
+                #end
+           
+                #end
+
+                <!-- 公共按钮 -->
+                <button data-openpage="dialog" data-btn="close" data-offset="0.2,0" data-fs="true" data-handler="refreshJBoltTable"
+                        data-title="详情" data-check-handler="jboltTableGetCheckedId"
+                        data-url="admin/purchasem/details/" class="btn btn-outline-primary btn-sm">
+                    <i class="fa fa-search"></i> 详情
+                </button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm"><i
+                        class="fa fa-refresh"></i> 刷新
+                </button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-width="auto"
+               data-url="admin/purchasem/datas"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="purchasemForm_#(pageId)"
+               data-rowtpl="purchasemRowtpl_#(pageId)"
+               data-page="purchasemPage_#(pageId)"
+               data-pagesize="50"
+               data-toolbar="purchasem_toolbar_#(pageId)"
+               data-fixed-columns-left="1"
+               data-fixed-columns-right="-1,-2,-3,-4"
+               data-row-dblclick-active="true"
+               data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+        >
+
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150" data-column="cPurchaseNo">单据号</th>
+                <th data-width="150" data-column="cPurchaseDate">日期</th>
+                <th data-width="150" data-column="iRefType">参照类型</th>
+                <th data-width="150" data-column="cDepCode">请购部门</th>
+                <th data-width="150" data-column="cPersonCode">请购人</th>
+                <th data-width="150" data-column="cServiceTypeName">业务类型</th>
+                <th data-width="150" data-column="iPurchaseType">采购类型</th>
+                <th data-width="100" data-column="IsPurchased">是否经采购</th>
+<!--                 <th data-width="150" data-column="cProposalNo">禀议书编号</th>
+                <th data-width="150" data-column="iProposalMoney">禀议书金额</th>
+                <th data-width="150" data-column="iProposalTotalPurchaseMoney">禀议项目累计申购金额</th>
+                <th data-width="150" data-column="iRemainProposalMoney">剩余禀议金额</th>
+                <th data-width="150" data-column="iBudgetMoney">预算金额</th>
+                <th data-width="150" data-column="iBudgetTotalPurchaseMoney">预算累计申购金额</th>
+                <th data-width="150" data-column="iRemainBudgetMoney">剩余预算金额</th> -->
+                <th data-width="150" data-column="inatmoney">申购金额</th>
+                <th data-width="150" data-column="iCreateBy">创建人</th>
+                <th data-width="150" data-column="dCreateTime">创建时间</th>
+                <th data-width="100" data-column="iAuditStatus">审核状态</th>
+                <th data-width="100" data-column="iStatus">单据状态</th>
+                <th data-width="150" data-column="cAccessoryPath">附件</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+#end
+#define js()
+<script>
+    function getIdIfValid(ele) {
+        var row = jboltTableGetCheckedData(ele);
+        if (row.iauditstatus > 0) {
+            return row.iautoid;
+        }
+        LayerMsgBox.alert('您选择的记录非审核中的单据！', 2);
+        return false;
+    }
+    function updateCheck(ele) {
+        var row = jboltTableGetCheckedData(ele);
+        if (row.iauditstatus > 0) {
+            LayerMsgBox.alert('只允许修改未审核数据！', 2);
+            return false;
+        }
+        return row.iautoid;
+    }
+
+    function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData)
+    {
+        $(tempTr1).data('url', 'admin/purchasem/details/' + rowData.iautoid)
+        	.data('offset', '0.2,0')
+            .data('area', '100%,100%')
+            .data('btn','close')
+            .data('title', '申购单');
+        DialogUtil.openBy(tempTr1);
+    }
+</script>
+#end

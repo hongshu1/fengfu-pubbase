@@ -1797,6 +1797,335 @@ public class PermissionKey {
 	 * 审批流列表
 	 */
 	public static final String APPROVALM = "approvalm";
+	
+	/**
+	 * 费用预算编制
+	 */
+	public static final String EXPENSE_BUDGET = "expense_budget";
+	
+	/**
+	 * 费用预算编制
+	 */
+	public static final String EXPENSE_BUDGET_FORMULATE = "expense_budget_formulate";
+	
+	/**
+	 * 费用预算编制-新增
+	 */
+	public static final String EXPENSE_BUDGET_FORMULATE_ADD = "expense_budget_formulate_add";
+	
+	/**
+	 * 费用预算编制-修改
+	 */
+	public static final String EXPENSE_BUDGET_FORMULATE_EDIT = "expense_budget_formulate_edit";
+	
+	/**
+	 * 费用预算编制-删除
+	 */
+	public static final String EXPENSE_BUDGET_FORMULATE_DELETE = "expense_budget_formulate_delete";
+	
+	/**
+	 * 费用预算编制列表-导出
+	 */
+	public static final String EXPENSE_BUDGET_FORMULATE_EXPORT = "expense_budget_formulate_export";
+	
+	/**
+	 * 费用预算编制-提交审核
+	 */
+	public static final String EXPENSE_BUDGET_FORMULATE_SUBMITAUDIT = "expense_budget_formulate_submitaudit";
+	
+	/**
+	 * 费用预算管理
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE = "expense_budget_manage";
+	/**
+	 * 费用预算管理-生效
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE_EFFECT = "expense_budget_manage_effect";
+	/**
+	 * 费用预算管理-失效
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE_CANCLE = "expense_budget_manage_cancle";
+
+	/**
+	 * 费用预算管理-详情
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE_DETAIL = "expense_budget_manage_detail";
+	
+	/**
+	 * 费用月度实绩调整
+	 */
+	public static final String EXPENSE_MONTH_ADJUSTMENTM = "expense_month_adjustmentm";
+	/**
+	 * 费用月度实绩调整-新增
+	 */
+	public static final String EXPENSE_MONTH_ADJUSTMENTM_ADD = "expense_month_adjustmentm_add";
+	/**
+	 * 费用月度实绩调整-修改
+	 */
+	public static final String EXPENSE_MONTH_ADJUSTMENTM_EDIT = "expense_month_adjustmentm_edit";
+	/**
+	 * 费用月度实绩调整-删除
+	 */
+	public static final String EXPENSE_MONTH_ADJUSTMENTM_DELETE = "expense_month_adjustmentm_delete";
+	/**
+	 * 费用月度实绩调整-生效
+	 */
+	public static final String EXPENSE_MONTH_ADJUSTMENTM_EFFECT = "expense_month_adjustmentm_effect";
+	/**
+	 * 费用月度实绩调整-撤销
+	 */
+	public static final String EXPENSE_MONTH_ADJUSTMENTM_UNEFFECT = "expense_month_adjustmentm_uneffect";
+	/**
+	 * 投资计划编制
+	 */
+	public static final String INVESTMENT_PLAN_FORMULATE = "investment_plan_formulate";
+	
+	/**
+	 * 投资计划编制-新增
+	 */
+	public static final String INVESTMENT_PLAN_FORMULATE_ADD = "investment_plan_formulate_add";
+	
+	/**
+	 * 投资计划编制-修改
+	 */
+	public static final String INVESTMENT_PLAN_FORMULATE_EDIT = "investment_plan_formulate_edit";
+	
+	/**
+	 * 投资计划编制-删除
+	 */
+	public static final String INVESTMENT_PLAN_FORMULATE_DELETE = "investment_plan_formulate_delete";
+	
+	/**
+	 * 投资计划编制-列表导出
+	 */
+	public static final String INVESTMENT_PLAN_FORMULATE_EXPORT = "investment_plan_formulate_export";
+	
+	/**
+	 * 投资计划编制-提交审核
+	 */
+	public static final String INVESTMENT_PLAN_FORMULATE_SUBMITAUDIT = "investment_plan_formulate_submitaudit";
+	
+	/**
+	 * 投资计划管理
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE = "investment_plan_manage";
+	
+	/**
+	 * 投资计划管理-生效
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE_EFFECT = "investment_plan_manage_effect";
+	/**
+	 * 投资计划管理-失效
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE_CANCLE = "investment_plan_manage_cancle";
+	
+	/**
+	 * 投资计划管理-详情
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE_DETAIL = "investment_plan_manage_detail";
+	/**
+	 * 投资月度实绩调整
+	 */
+	public static final String INVESTMENT_MONTH_ADJUSTMENTM = "investment_month_adjustmentm";
+	/**
+	 * 投资月度实绩调整-新增
+	 */
+	public static final String INVESTMENT_MONTH_ADJUSTMENTM_ADD = "investment_month_adjustmentm_add";
+	/**
+	 * 投资月度实绩调整-修改
+	 */
+	public static final String INVESTMENT_MONTH_ADJUSTMENTM_EDIT = "investment_month_adjustmentm_edit";
+	/**
+	 * 投资月度实绩调整-删除
+	 */
+	public static final String INVESTMENT_MONTH_ADJUSTMENTM_DELETE = "investment_month_adjustmentm_delete";
+	/**
+	 * 投资月度实绩调整-生效
+	 */
+	public static final String INVESTMENT_MONTH_ADJUSTMENTM_EFFECT = "investment_month_adjustmentm_effect";
+	/**
+	 * 投资月度实绩调整-撤销
+	 */
+	public static final String INVESTMENT_MONTH_ADJUSTMENTM_UNEFFECT = "investment_month_adjustmentm_uneffect";
+	/**
+	 * 投资预实差异管理表
+	 */
+	public static final String INVESTMENT_BUDGET_ACTUAL_DIFFERENCE = "investment_budget_actual_difference";
+	/**
+	 * 投资汇总管表
+	 */
+	public static final String INVESTMENT_PLAN_SUMMARY = "investment_plan_summary";
+	/**
+	 * 投资情况查询表
+	 */
+	public static final String INVESTMENT_PLAN_SITUATION_INDEX = "investment_plan_situation_index";
+	/**
+	 * 禀议管理
+	 */
+	public static final String ADVICE_MANAGEMENT = "advice_management";
+	/**
+	 * 禀议书-提审
+	 */
+	public static final String PROPOSALM_SUBMIT = "proposalm_submit";
+	/**
+	 * 禀议书-新增
+	 */
+	public static final String PROPOSALM_SAVE = "proposalm_save";
+	/**
+	 * 禀议书-修改
+	 */
+	public static final String PROPOSALM_EDIT = "proposalm_edit";
+	/**
+	 * 禀议书-撤销提审
+	 */
+	public static final String PROPOSALM_WITHDRAW = "proposalm_withdraw";
+	/**
+	 * 禀议书-删除
+	 */
+	public static final String PROPOSALM_DELETE = "proposalm_delete";
+	/**
+	 * 禀议书管理
+	 */
+	public static final String PROPOSALM_AUDIT_INDEX = "proposalm_audit_index";
+	/**
+	 * 禀议书-查看
+	 */
+	public static final String PROPOSALM_VIEW = "proposalm_view";
+	/**
+	 * 禀议书管理-生效
+	 */
+	public static final String PROPOSALM_EFFECT = "proposalm_effect";
+	
+	/**
+	 * 新增-参考禀议书
+	 */
+	public static final String PURCHASE_INSTRUMENT_CHOOSE_PROPOSALM = "purchase_instrument_choose_proposalm";
+
+	/**
+	 * 删除
+	 */
+	public static final String PURCHASE_INSTRUMENT_DELETE = "purchase_instrument_delete";
+	/**
+	 * 上传附件
+	 */
+	public static final String PURCHASE_INSTRUMENT_UPLOAD_FILE = "purchase_instrument_upload_file";
+	/**
+	 * 提交审核
+	 */
+	public static final String PURCHASE_INSTRUMENT_SUBMIT = "purchase_instrument_submit";
+	/**
+	 * 撤销审核
+	 */
+	public static final String PURCHASE_WITHDRAW = "purchase_withdraw";
+	/**
+	 * 编辑
+	 */
+	public static final String PURCHASE_INSTRUMENT_EDIT = "purchase_instrument_edit";
+	/**
+	 * 提交采购
+	 */
+	public static final String PURCHASE_MANAGEMENT_SUMBITPURCHASE = "purchase_management_sumbitpurchase";
+	/**
+	 * 撤销提交
+	 */
+	public static final String PURCHASE_MANAGEMENT_REVOCATIONSUBMIT = "purchase_management_revocationsubmit";
+	/**
+	 * 执行进度跟踪
+	 */
+	public static final String EXECUTION_PROGRESS_TRACKING = "execution_progress_tracking";
+	/**
+	 * 科目对照主表
+	 */
+	public static final String SUBJECTM = "subjectm";
+	/**
+	 * 科目对照细表
+	 */
+	public static final String SUBJECTD = "subjectd";
+
+	public static final String PROPOSALM_PRINTDATA = "PROPOSALM_PRINTDATA";
+	
+	/**
+	 * 禀议系统-基础设置
+	 */
+	public static final String BASISARCHIVES = "basisarchives";
+	/**
+	 * 追加项目首页
+	 */
+	public static final String APPEND_ITEM = "append_item";
+	/**
+	 * 追加项目新增界面
+	 */
+	public static final String APPEND_ITEM_ADD = "append_item_add";
+	/**
+	 * 追加项目修改界面
+	 */
+	public static final String APPEND_ITEM_EDIT = "append_item_edit";
+	/**
+	 * 追加项目-删除
+	 */
+	public static final String APPEND_ITEM_DELETE = "append_item_delete";
+	/**
+	 * 追加项目-生效
+	 */
+	public static final String APPEND_ITEM_EFFECT = "append_item_effect";
+	/**
+	 * 追加项目-撤销
+	 */
+	public static final String APPEND_ITEM_UNEFFECT = "append_item_uneffect";
+	/**
+	 * 编码规则
+	 */
+	public static final String BARCODEENCODINGM = "barcodeencodingm";
+	/**
+	 * 编码规则细表
+	 */
+	public static final String BARCODEENCODINGD = "barcodeencodingd";
+	/**
+	 * 期间管理
+	 */
+	public static final String PERIOD = "period";
+	/**
+	 * 禀议类别区分
+	 */
+	public static final String PROPOSALCATEGORY = "proposalcategory";
+	/**
+	 * 项目档案
+	 */
+	public static final String PROJECT = "project";
+	/**
+	 * 禀议书编制
+	 */
+	public static final String PROPOSALM = "proposalm";
+	/**
+	 * 申购单管理
+	 */
+	public static final String PURCHASE_MANAGEMENT = "purchase_management";
+	/**
+	 * 申购单编制
+	 */
+	public static final String PURCHASE_INSTRUMENT = "purchase_instrument";
+	/**
+	 * 统计分析
+	 */
+	public static final String STATISTIC_ANALYSIS = "statistic_analysis";
+	/**
+	 * 统计分析-禀议明细表
+	 */
+	public static final String STATISTIC_ANALYSIS_PROPOSAL_DETAIL = "statistic_analysis_proposal_detail";
+	/**
+	 * 统计分析-禀议明细表导出
+	 */
+	public static final String PROPOSAL_DETAIL_EXPORT = "proposal_detail_export";
+	
+	/**
+	 * 统计分析-费用预算明细
+	 */
+	public static final String STATISTIC_ANALYSIS_EXPENSEBUDGETITEMD = "statistic_analysis_expensebudgetitemd";
+	
+	/**
+	 * 统计分析-投资计划明细
+	 */
+	public static final String STATISTIC_ANALYSIS_INVESTMENTPLANITEMD = "statistic_analysis_investmentplanitemd";
 	/**
 	 * 新增
 	 */

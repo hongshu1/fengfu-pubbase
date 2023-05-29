@@ -22,6 +22,7 @@ import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.admin.personequipment.PersonEquipmentService;
 import cn.rjtech.admin.workclass.WorkClassService;
+import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Equipment;
 import cn.rjtech.model.momdata.Person;
@@ -31,6 +32,7 @@ import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -510,4 +512,12 @@ public class PersonService extends BaseService<Person> {
         return findFirst("select * from Bd_Person where iUserId = ? AND isDeleted = ?  ", userId, ZERO_STR);
     }
 
+	public Record findFirstByCuserid(Long iuserid) {
+		return findFirstRecord(selectSql().eq("iuserid", iuserid).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("isenabled", IsEnableEnum.NO.getValue()));
+	}
+	
+	public List<Record> getAutocompleteListWithDept(String cdepcode,String q, Integer limit) {
+	    return dbTemplate("person.getAutocompleteListWithDept", Okv.by("q", q).set("limit", limit).set("cdepcode", cdepcode)).find();
+	}
+    
 }

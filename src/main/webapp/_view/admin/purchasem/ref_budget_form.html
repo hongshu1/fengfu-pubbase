@@ -1,0 +1,751 @@
+#@jboltLayout()
+#define main()
+#define css()
+#set(pageId=RandomUtil.random(6))
+#@formtablecss?()
+#@hiprintcss()
+<style>
+    .chengtop {
+        top: calc(100% - 306px) !important;
+    }
+</style>
+#end
+
+<div class="jbolt_page_content">
+    <form onsubmit="return false;" id="refBudgetPurchasemForm" action="#(action)" method="post">
+        #if(purchasem.iautoid??)
+        <input type="hidden" name="purchasem.iautoid" value="#(purchasem.iautoid??)"/>
+        #end
+        <input id="tabledatas_#(pageId)" name="tabledatas" type="hidden" value="" />
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label">业务类型(業務類別)</label>
+            <div class="col-2">
+                <select class="form-control" data-rule="required" name="purchasem.cservicetypename" data-autoload
+                        data-url="admin/dictionary/options?key=purchase_service_type" data-text="=业务类型="
+                        data-value-attr="name" #if(details??) disabled #end
+                        data-text-attr="name" data-select="#(purchasem.cservicetypename??)"></select>
+            </div>
+            <label class="col-sm-1 col-form-label">单据号(帳票番号)</label>
+            <div class="col-2">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" readonly="readonly" class="form-control"
+                       placeholder="请输入单据号" maxlength="50" name="purchasem.cpurchaseno"
+                       value="#(purchasem.cpurchaseno??)"/>
+            </div>
+
+            <label class="col-sm-1 col-form-label">日期(日付)</label>
+            <div class="col-2">
+                <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd"
+                       autocomplete="off" class="form-control" data-rule="required" placeholder="请设置日期"
+                       data-tips="请设置日期" maxlength="23" name="purchasem.cpurchasedate" #if(details??) disabled #end
+                       value="#date(purchasem.cpurchasedate??DateUtil.getNow(),'yyyy-MM-dd')"/>
+            </div>
+            <label class="col-sm-1 col-form-label">是否经采购</label>
+            <div class="col-2">
+                <select class="form-control" data-rule="required" name="purchasem.ispurchased" data-autoload #if(details??) disabled #end
+                        data-text="=类型=" data-value-attr="sn"
+                        data-select="#(purchasem.ispurchased??)">
+                        <option value="">请选择</option>
+						<option value="1">是</option>
+                        <option value="0">否</option>                        
+                </select>
+            </div>            
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label">请购部门(申請購買部門)</label>
+            <div class="col-2">
+                <input type="text" autocomplete="off" class="form-control" value="#(purchasem.cdepname??)" disabled>
+                <input type="hidden" id="cdepcodelink" name="purchasem.cdepcode" autocomplete="off" class="form-control" value="#(purchasem.cdepcode??)" >
+            </div>
+            <label class="col-sm-1 col-form-label">请购人(申請購買人)</label>
+            <div class="col-2">
+                <input type="text" autocomplete="off" class="form-control"
+                       data-autocomplete
+                       data-
+                       data-link-para-ele="#cdepcodelink"
+                       data-url="admin/person/autocompleteWithDept"
+                       data-width="800"
+                       data-sync-ele="cpersoncode"
+                       data-text-attr="cpsn_name"
+                       data-header="编码,姓名,部门编码,部门名称"
+                       data-column-attr="cpsn_num,cpsn_name,cdepcode,cdepname"
+                       maxlength="50"
+                       #if(details??) disabled #end
+                       value="#(purchasem.cpersonname??)"
+                >
+                <input type="hidden" autocomplete="off" class="form-control" maxlength="100"
+                       name="purchasem.cpersoncode" value="#(purchasem.cpersoncode??)" readonly id="cpersoncode"
+                       data-sync-attr="cpsn_num">
+            </div>
+            <label class="col-sm-1 col-form-label">采购类型(購買類別)</label>
+            <div class="col-2">
+                <select class="form-control" data-rule="required" name="purchasem.ipurchasetype" data-autoload
+                        data-url="admin/purchasem/getPurchaseType" data-text="=采购类型=" data-value-attr="cptcode"
+                        data-text-attr="cptname" #if(details??) disabled #end
+                        data-select="#(purchasem.ipurchasetype??)"></select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label">申购金额(本币无税)</label>
+            <div class="col-2 ">
+				<input type="hidden" class="form-control" id="inatmoney" name="purchasem.inatmoney" value="#(purchasem.inatmoney??0.00)"/>
+				<input type="text" class="form-control" id="inatmoneyshow" value="" readonly/>            
+            </div>   
+            <label class="col-sm-1 col-form-label">预算金额(予算金額)</label>
+            <div class="col-2 ">
+                <input type="hidden" class="form-control" value="#(purchasem.ibudgetmoney??0)" id="ibudgetmoney"/>
+                <input type="text" class="form-control" value="" id="ibudgetmoneyshow" disabled/>
+            </div>
+            <label class="col-sm-1 col-form-label">预算累计申购金额(予算累計申請購買金額)</label>
+            <div class="col-2">
+            	<input type="hidden" id="ibudgetalreadypurchasemoney" class="form-control" value="#(purchasem.ibudgetalreadypurchasemoney??0)"/> <!-- 预算已申购金额(原币无税) -->
+                <input type="text" class="form-control" value="" id="ibudgettotalpurchasemoneyshow" disabled/>
+            </div>
+            <label class="col-sm-1 col-form-label">剩余预算金额(剰余予算金額)</label>
+            <div class="col-2">
+                <input type="hidden" class="form-control" value="" id="iremainbudgetmoney"/>
+                <input type="text" class="form-control" disabled value="" id="iremainbudgetmoneyshow"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="jbolt_page_content" onfocus="">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="purchased_Rowtpl_#(pageId)">
+			{@each datas as data,index}
+				<tr data-id="${data.iautoid}" class="table-info">
+					<td>${pageNumber,pageSize,index |rownum}</td>
+                    <td #if(details)data-editable="false"#end>$${data.isourcetype|proposalChooseType}</td>
+                    <td #if(details)data-editable="false"#end>${data.ibudgetmoney}</td>
+                    <td hidden>${data.ibudgetmoneyhidden}</td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.cbudgetno}">${data.cbudgetno}</a></td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.cinvcode}">${data.cinvcode}</a></td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.cinvname}">${data.cinvname}</a></td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.cinvstd}">${data.cinvstd}</a></td>
+					<td #if(details)data-editable="false"#end>${data.cunit}</td>
+					<td #if(details)data-editable="false"#end>${data.caddress}</td>
+					<td #if(details)data-editable="false"#end>${data.iquantity}</td>
+					<td #if(details)data-editable="false"#end>${data.iprice}</td>
+                    <td #if(details)data-editable="false"#end>${data.nflat}</td>
+                    <td #if(details)data-editable="false"#end>${data.itaxrate??taxrate}</td>
+					<td #if(details)data-editable="false"#end>${data.ddemandate,'yyyy-MM-dd'|date}</td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.cvenname}">${data.cvenname}</a></td>
+					<td #if(details)data-editable="false"#end>${data.ccurrency}</td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.creferencepurpose}">${data.creferencepurpose}</a></td>                    
+                    <td>${data.itax}</td>
+                    <td>${data.itaxexclusivetotalamount}</td>
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.itotalamount}">${data.itotalamount}</td>
+			        <td>${data.inatunitprice}</td>
+			        <td>${data.inattax}</td>
+			        <td hidden>${data.ibudgetalreadypurchasemoney}</td>
+			        <td>${data.inatmoney}</td>
+			        <td>${data.inatsum}</td>					
+					<td #if(details)data-editable="false"#end><a tooltip data-title="${data.cmemo}">${data.cmemo}</a></td>
+				</tr>
+			{@/each}
+	</textarea>
+
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="purchased_toolbar_#(pageId)">
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            #if(add??||edit??)
+            <button class="btn btn-outline-primary btn-sm add_item" data-dialogbtn data-area="100%,100%" 
+                    data-url="admin/purchasem/chooseExpenseBudgetOrInvestmentAppend?cdepcode=#(purchasem.cdepcode??)"
+                    data-width="1200"><i class="fa fa-plus"></i>新增</button>
+            <button onclick="copySelected(this);" data-btn class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 复制</button>
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	            导出 & 导入
+	        	</button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+	                <a class="dropdown-item btn btn-outline-primary btn-sm" onclick="refBudgetPurchasedDatasExport()"><i class="fa fa-file-excel-o mr-2"></i> 导出</a>
+	                <div class="j_upload_file_box "
+		                 data-name="file"
+		                 data-btn-class="dropdown-item btn btn-outline-primary btn-sm"
+		                 data-placeholder="导入"
+		                 data-confirm="确认导入数据？"
+		                 data-accept="excel"
+		                 data-maxsize="20480"
+		                 data-handler="uploadFile"
+		                 data-upload-success-handler="uploadHandlerSuccess"
+		                 data-upload-fail-handler="uploadHandlerFail"
+		                 data-url="/admin/purchasem/importRefBudgetPurchasedTplNotSave?cdepcode=#(purchasem.cdepcode??)">
+		            </div>
+	            </div>
+	            <a hidden id="refBudgetPurchasedExportBtn" data-downloadbtn href="admin/purchasem/exportTablePurchasedDatas" data-form="refBudgetPurchasemForm" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> 导出</a>
+            <button onclick="deleteRow(this)" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+            <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-outline-success"><i class="fa fa-refresh"></i> 刷新</button>
+            #end
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <table
+            class="jbolt_table jbolt_main_table table-center"
+            id="jbolt_table_#(pageId)"
+            data-jbolttable
+            data-height="fill"
+            data-ajax="true"
+            data-url="admin/purchased/refBudgetDatas?ipurchaseid=#(purchasem.iautoid??)"
+            data-column-resize="true"
+            data-column-prepend="1:checkbox:true"
+            data-conditions-form="refBudgetPurchasemForm"
+            data-tabledatas="processTableListDatas_#(pageId)"
+            data-rowtpl="purchased_Rowtpl_#(pageId)"
+            data-page="purchasedPage_#(pageId)"
+            data-pagesize="5"
+            data-toolbar="purchased_toolbar_#(pageId)"
+            data-editable="true"
+            data-editable-option="getEdiTableOptions_#(pageId)"
+            data-editable-submit="getEdiTableSubmit"
+            #if(add)
+            data-ajax-success-handler="tableAjaxSuccessHandler_#(pageId)"
+            #end
+    >
+
+        <thead class="fw-normal" data-height="60">
+        <tr>
+            <th data-width="60" data-column="index">序号<br/>(番号)</th>
+            <th data-width="120" data-column="iSourceType">预算类型(予算類別)</th>
+            <th data-width="120" data-column="ibudgetmoney">预算金额</th>
+            <th hidden data-width="120" data-column="ibudgetmoneyhidden">预算金额(需要将复制行的预算金额设置为0并且回写到表头)</th>
+            <th data-width="150" data-column="cbudgetno">预算编码<br/>(予算コード)</th>
+            <th data-width="120" data-column="cinvcode">存货编码<br/>(在庫品コード)</th>
+            <th data-width="100" data-column="cinvname">存货名称<br/>(在庫品名称)</th>
+            <th data-width="100" data-column="cinvstd">规格型号<br/>(規格型番)</th>
+            <th data-width="20" data-column="cunit">单位</th>
+            <th data-width="20" data-column="caddress">品牌</th>
+            <th data-width="100" data-column="iquantity">数量</th>
+            <th data-width="120" data-column="iprice">原币无税单价<br/>(税抜き単価)</th>
+            <th data-width="100" data-column="nflat">汇率<br/>(かわせ)</th>
+            <th data-width="100" data-column="itaxrate">税率</th>
+            <th data-width="100" data-column="ddemandate">需求日期<br/>(需要日)</th>
+            <th data-width="100" data-column="cvencode">供应商<br/>(メーカー)</th>
+            <th data-width="100" data-column="ccurrency">币种<br/>(通貨)</th>
+            <th data-width="100" data-column="creferencepurpose">参考用途</th>            
+            <th data-width="120" data-column="itax">原币税额</th>
+	        <th data-width="120" data-column="itaxexclusivetotalamount">原币无税金额</th>
+	        <th data-width="120" data-column="itotalamount">原币价税合计</th>            
+	        <th data-width="120" data-column="inatunitprice">本币无税单价</th>
+	        <th data-width="120" data-column="inattax">本币税额</th>
+	        <th hidden data-width="120" data-column="ibudgetalreadypurchasemoney">已申购金额</th>
+	        <th data-width="120" data-column="inatmoney">本币无税金额</th>
+	        <th data-width="120" data-column="inatsum">本币价税合计</th>         
+            <th data-width="100" data-column="cmemo">备注<br/>(備考)</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+        ### 汇总数据
+        <tr>
+            <th></th>
+            <th>合计:</th>
+            <th></th>
+            <th hidden></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th hidden></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </tfoot>
+    </table>
+</div>
+#end
+#define js()
+#@hiprintjs()
+<script type="text/javascript">
+    function submitThisForm() {
+    	var index = LayerMsgBox.loading('执行中...');
+    	finishEditingCells("#jbolt_table_#(pageId)");
+        jboltTableSubmit('#jbolt_table_#(pageId)');
+    }
+
+    function getEdiTableOptions_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "click",
+            initRowCount: 0,
+            maxRowCount: 20,
+            submit: {
+                withForm: ["refBudgetPurchasemForm"],
+                type: "all",
+                url: "admin/purchasem/refBudgetSaveTableSubmit",
+                success: function (res) {
+                    LayerMsgBox.success("提交成功", 600, function () {
+                        parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        window.parent.refreshJBoltTable();
+                    });
+                }
+            },
+         	// 插入数据时默认属性值
+            insertDefaultValues: {ccurrency:'人民币',nflat:1},
+            hsummaryFirstByAutoCalc: true,
+            cols: {
+            	iautoid: {
+                    submitAttr: "iautoid"
+                },
+                // 存货编码
+                cinvcode: {
+                    type: "autocomplete",
+                    required: true,
+                    url: "admin/purchasem/getInventoryAutocomplete",
+                    // 同步设置存货名称, 规格信号, 单位等一些关联数据
+                    header: "存货编码,存货名称,规格型号,品牌",
+                    columnAttr: "cinvcode,cinvname,cinvstd,caddress",
+                    valueAttr: "cinvcode",
+                    textAttr: "cinvcode",
+                    width: 600,
+                    placeholder: "=请选择=",
+                    changeColumns: [{column: 'cinvname', use: 'cinvname'},
+                        {column: 'cinvstd', use: 'cinvstd'},
+                        {column: 'caddress', use: 'caddress'}],
+                    dialog: {
+                        url: "admin/purchasem/chooseInventory",
+                        area: "80%,80%",
+                        btn: "确定,关闭",
+                        title:"选择存货"
+                    }/* ,
+                    handler: function (table, td, text, value, trJsonData) {
+                        if (value && trJsonData.cvencode) {
+                            var cvencode = trJsonData.cvencode;
+                            Ajax.get("admin/purchasem/getVenPrice?cinvcode=" + value + "&cvencode=" + cvencode, function (ret) {
+                                if (ret.state === 'ok') {
+                                    jboltTableUpdateOtherColumns(table, td.parent(), ret.data, [{
+                                        column: "iprice",
+                                        use: "iunitprice"
+                                    }]);
+                                } else {
+                                    LayerMsgBox.alert(ret.msg, 2)
+                                }
+                            });
+                        }
+                    } */
+                },
+              	//单位
+                cunit: {
+                    type: "input",
+                    placeholder: "单位",
+                    required: true,
+                    maxLength:10
+                },
+             	//品牌
+                caddress: {
+                    type: "input",
+                    placeholder: "品牌",
+                    maxLength: 25
+                },
+                //数量
+                iquantity: {
+                    type: "input_number",
+                    placeholder: "数量",
+                    required: true,
+                    rule: "pint",
+                    summary: {
+                        dir: "v",
+                        removezero: true,
+                        formula: "sum"
+                    }
+                },
+                //原币不含税单价
+                iprice: {
+                    type: "input_number",
+                    placeholder: "不含税单价",
+                    required: true,
+                    maxLength: 20,
+                },
+             	//税率
+                itaxrate: {
+                    type: "input_number",
+                    rule: "pznumber",
+                    min:0,
+                    max:100,
+                    placeholder: "税率",
+                    required: true,
+                },
+                //原币不含税总额
+                itaxexclusivetotalamount: {
+                    summary: [{
+                        dir: "h",
+                        tofixed: 3,
+                        removezero: true,
+                        formula: "iquantity*iprice"
+                    }, {
+                        dir: "v",
+                        tofixed: 3,
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                //原币税额
+                itax: {
+                    summary:[{
+                        dir:"h",
+                        tofixed:2,
+                        removezero:true,
+                        formula:"iprice*iquantity*itaxrate/100"
+                    },{
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },                
+                //原币含税总额
+                itotalamount: {
+                    summary: [{
+                        dir: "h",
+                        tofixed: 3,
+                        removezero: true,
+                        formula: "itaxexclusivetotalamount * (1 + itaxrate/100)"
+                    }, {
+                        dir: "v",
+                        tofixed: 3,
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                //本币无税单价
+                inatunitprice:{
+                    summary:[{
+                        dir:"h",
+                        tofixed:2,
+                        removezero:true,
+                        formula:"iprice*nflat",
+                    }]
+                },
+              	//本币税额
+                inattax:{
+                    summary:[{
+                        dir:"h",
+                        tofixed:2,
+                        removezero:true,
+                        formula:"inatunitprice*iquantity*itaxrate/100",
+                    },{
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                //本币无税金额
+                inatmoney:{
+                    summary: [{
+                        dir: "h",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "inatunitprice*iquantity",
+                    }, {
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum",
+                        syncval: "#inatmoney"
+                    }]
+                },
+                //本币价税合计	
+                inatsum: {
+                    summary:[{
+                        dir:"h",
+                        tofixed:2,
+                        removezero:true,
+                        formula:"inatunitprice*iquantity*(1+itaxrate/100)",
+                    }, {
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },                
+                // 需求日期
+                ddemandate: {
+                    submitAttr: "ddemandate",
+                    type: "date",
+                    required: true
+                },
+                // 供应商
+                cvencode: {
+                    type: "autocomplete",
+                    required: true,
+                    url: "admin/purchasem/getVendor",
+                    valueAttr: "cvencode",
+                    textAttr: "cvenname",
+                    width: 600,
+                    placeholder: "=请选择=",
+                    dialog: {
+                        url: "admin/purchasem/chooseVendor",
+                        area: "80%,80%",
+                        btn: "确定,关闭",
+                        title:"选择供应商"
+                    },
+                    handler: function (table, td, text, value, trJsonData) {
+                        if (trJsonData.cinvcode && trJsonData.cvencode) {
+                            var cinvcode = trJsonData.cinvcode;
+                            var cvencode = trJsonData.cvencode;
+                            Ajax.get("admin/purchasem/getVenPrice?cinvcode=" + cinvcode + "&cvencode=" + cvencode, function (ret) {
+                                if (ret.state === 'ok') {
+                                    jboltTableUpdateOtherColumns(table, td.parent(), ret.data, [{
+                                        column: "iprice",
+                                        use: "iunitprice"
+                                    }]);
+                                } else {
+                                    LayerMsgBox.alert(ret.msg, 2)
+                                }
+                            });
+                        }
+                    }
+                },
+                // 币种
+                ccurrency: {
+                    type: "select",
+                    url: "admin/purchasem/getAllCexchName",
+                    valueAttr: "cexch_name",
+                    textAttr: "cexch_name",
+                    handler: function (table, td, text, value, trJsonData) {
+                        // 设置汇率
+                        Ajax.get("admin/purchasem/getNflat?cexchname=" + value, function (ret) {
+                            if (ret.state === 'ok') {
+                                jboltTableUpdateOtherColumns(table, td.parent(), ret.data, [{
+                                    column: "nflat",
+                                    use: "nflat"
+                                }]);
+                            } else {
+                                LayerMsgBox.alert(ret.msg, 2)
+                            }
+                        });
+                    }
+                },
+                // 汇率
+                nflat: {
+                    type: "amount",
+                    placeholder: "汇率",
+                    required: true,
+                    maxLength: 8
+                },
+                // 参考用途
+                creferencepurpose: {
+                    type: "input",
+                    placeholder: "参考用途",
+                    maxLength: 127
+                },
+                // 备注
+                cmemo: {
+                    type: "input",
+                    maxLength: 100
+                },
+                ibudgetmoney: {
+                	summary :[{
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                ibudgetmoneyhidden: {
+                	summary :[{
+                        dir: "h",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "isubitem==0?ibudgetmoneyhidden:0",
+                    },{
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum",
+                        syncval: "#ibudgetmoney"
+                    }]
+                },                
+                ibudgetalreadypurchasemoney: {
+                	summary : [{
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum",
+                        syncval: "#ibudgetalreadypurchasemoney"
+                    }]
+                }                
+            }
+        };
+        return editableTableOptions;
+    }
+
+    // 拆子项
+    function copySelected(ele){
+    	var needAttr = ["itaxrate","cvencode","cvenname","ccurrency","inatsum","nflat","cbudgetno","ibudgetmoney","ibudgetmoneyhidden","isourcetype","isourceid","iprojectcardid","isubitem"];
+        var rowData = jboltTableGetCheckedData(ele,needAttr);
+        if (rowData)
+        {
+            rowData.isubitem = 1;
+        	jboltTableInsertRowAfterChecked('#jbolt_table_#(pageId)', rowData);
+        }
+    }
+
+    // 详情页面构建
+    #if(details)
+    var hiprintTemplate_#(pageId);
+        $(function() {
+            var tplContentJson = #include("../../../assets/printtpl/purchasem.json");
+
+            hiprintTemplate_#(pageId) = new hiprint.PrintTemplate({
+                template: tplContentJson,
+                settingContainer: '#PrintElementOptionSetting_#(pageId)',
+                paginationContainer: '#hiprint-printPagination_#(pageId)'
+            });
+        });
+
+        var print = function () {
+            var index = LayerMsgBox.loading('正在获取打印数据...');
+            Ajax.get("admin/purchasem/printData?iautoid=#(purchasem.iautoid??)", function (res) {
+                // 关闭加载层
+                LayerMsgBox.close(index);
+
+                if (res.state === 'ok') {
+                    var html = hiprintTemplate_#(pageId).getHtml(res.data.purchasem).html()
+                    layer.open({
+                        type: 1,
+                        content: html,
+                        title: '预览',
+                        btn: ['打印', '取消'],
+                        yes: function (layero, index) {
+                            hiprintTemplate_#(pageId).print(res.data.purchasem)
+                        }
+                    });
+                } else {
+                    LayerMsgBox.error(res.msg);
+                }
+            });
+        };
+
+        // 打印预览
+        addParentLayerDialogBtn("打印预览", "lay_primary", function () {
+            print();
+        });
+    #end
+
+    // 新增页面构建
+    #if(add)
+    var processTableListDatas_#(pageId) = #json(purchaseds);
+    function tableAjaxSuccessHandler_#(pageId)(table)
+    {
+    	console.log('refbudget proposalds: ' + JSON.stringify(processTableListDatas_#(pageId)));
+        jboltTableInsertRow(table, processTableListDatas_#(pageId));
+    }
+    addParentLayerDialogBtn("确定", "layui-layer-btn0", function () {
+        jboltTableSubmit('#jbolt_table_#(pageId)');
+    });
+
+    // 导入细项
+    function insertAttachment(data, ele) {
+        if (!data) {
+            LayerMsgBox.alert("导入数据异常", 2);
+            return false;
+        }
+
+        var rowData = jboltTableGetCheckedData(ele);
+        var isourcetype = rowData.isourcetype;
+        var cbudgetno = rowData.cbudgetno;
+
+        if (rowData) {
+            // 设置预算类型与预选编码
+            for (const proposald of data) {
+                proposald.isourcetype = isourcetype;
+                proposald.cbudgetno = cbudgetno;
+            }
+        } else {
+            data = null;
+        }
+
+        jboltTableInsertRow('#jbolt_table_#(pageId)', data);
+    }
+    #end
+
+    //申购金额（本币无税），修改监听：
+    $("input[name='purchasem.inatmoney']").change(function () {
+        //申购金额(本币无税)
+        var inatmoney = $(this).val();
+        $("#inatmoneyshow").val(numberFormat(inatmoney,2,'.',','));
+        //预算已申购金额(本币无税)
+        var ibudgetalreadypurchasemoney = $("#ibudgetalreadypurchasemoney").val();
+      	//预算累计申购金额(本币无税)
+        var ibudgettotalpurchasemoney = (parseFloat(inatmoney) + parseFloat(ibudgetalreadypurchasemoney)).toFixed(2);
+        $("#ibudgettotalpurchasemoney").val(ibudgettotalpurchasemoney);
+        $("#ibudgettotalpurchasemoneyshow").val(numberFormat(ibudgettotalpurchasemoney,2,'.',','));
+        //预算金额(原币无税)
+        var ibudgetmoney = $("#ibudgetmoney").val();
+        //剩余预算金额(原币无税)=预算金额(原币无税) - 预算累计申购金额(原币无税)
+        var iremainbudgetmoney = (parseFloat(ibudgetmoney) - parseFloat(ibudgettotalpurchasemoney)).toFixed(2);
+        $("#iremainbudgetmoney").val(iremainbudgetmoney);
+        $("#iremainbudgetmoneyshow").val(numberFormat(iremainbudgetmoney,2,'.',','));
+     });
+	$("#ibudgetmoney").change(function () {
+		//预算金额(本币无税)
+        var ibudgetmoney = $(this).val();
+        $("#ibudgetmoneyshow").val(numberFormat(ibudgetmoney,2,'.',','));
+	});		
+    
+    function deleteRow(ele) {
+        var row = jboltTableGetCheckedData(ele);
+        if (row) {
+            var allTableDatas = jboltTableGetAllDatas(ele);
+            var count = 0;
+            if(allTableDatas){
+                for(var i=0;i<allTableDatas.length;i++){
+                	if(allTableDatas[i].cbudgetno == row.cbudgetno) count++; 
+                }
+            }
+            //删除的是父项并且表格中并不只有这一行时提示不能删除
+            if(row.isubitem == 0 && count>1) {
+           	 	LayerMsgBox.alert('只能删除子项目！', 2);
+             	return false;
+            }
+            jboltTableRemoveCheckedRow(ele);
+        }
+        return false;
+    }
+    //追加项目
+	function appendItemRowDatas(rowDatas){
+		var allTableDatas = getJboltTableAllDatas("#jbolt_table_#(pageId)",["iprojectcardid"]);
+		rowDatas.forEach((item,index)=>{
+			allTableDatas.forEach((item1,index1)=>{
+				if(item.iprojectcardid == item1.iprojectcardid) {
+					item.ibudgetalreadypurchasemoney = 0;
+				}
+			});
+		});
+		jboltTableInsertRow("#jbolt_table_#(pageId)", rowDatas);
+	}
+
+    function refBudgetPurchasedDatasExport(){
+    	var tableDatas_#(pageId) = jboltTableGetAllDatas('#jbolt_table_#(pageId)');
+		$("#tabledatas_#(pageId)").val(JSON.stringify(tableDatas_#(pageId)));
+		$("#refBudgetPurchasedExportBtn").click();
+    }
+
+    function uploadHandlerSuccess(uploader,type,fileInput,res){
+    	clearJboltTable("#jbolt_table_#(pageId)");
+    	jboltTableInsertRow('#jbolt_table_#(pageId)', res.rows);
+    }
+    function uploadHandlerFail(uploader,type,fileInput,res){
+    	LayerMsgBox.alert(res.msg,2);
+    } 
+</script>
+#end
+

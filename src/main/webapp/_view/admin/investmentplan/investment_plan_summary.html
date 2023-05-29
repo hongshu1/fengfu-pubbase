@@ -1,0 +1,186 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+<div class="jbolt_page_title">
+	<div class="row">
+		<div class="col-md-auto text-left">
+			<form class="form-inline" id="investmentSummaryForm_#(pageId)"  onsubmit="return false;" method="post">
+				<input type="text" class="form-control"
+                           data-date
+                           data-type="year"
+                           data-rule="required"
+                           placeholder="=预算年度="
+                           data-change-handler="ibudgetyear_change_#(pageId)"
+                           name="ibudgetyear">
+                <select class="form-control"
+                        data-select-type="select2"
+                        name="cgroupkey"
+                        data-autoload
+                        data-rule="required"
+                        data-tips="字段筛选"
+                        data-url="admin/dictionary/options?key=investment_summary_group_option"
+                        data-text="=字段筛选="
+                        data-text-attr="name"
+                        data-value-attr="sn"
+                        data-value=""
+                        data-width="120">
+                 </select>
+				<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+				<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+			</form>
+		</div>
+	</div>
+</div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_rowtpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+			<td>${data.cgroupname}</td>
+			<td>$${data.ibudgettype|iBudgetTypeInvestmentGroupSummary}</td>
+			<td>${data.ifirstyearmonthamount1|kFormat}</td>
+			<td>${data.ifirstyearmonthamount2|kFormat}</td>
+			<td>${data.ifirstyearmonthamount3|kFormat}</td>
+			<td>${data.ifirstyearmonthamount4|kFormat}</td>
+			<td>${data.ifirstyearmonthamount5|kFormat}</td>
+			<td>${data.ifirstyearmonthamount6|kFormat}</td>
+			<td>${data.ifirstyearmonthamount7|kFormat}</td>
+			<td>${data.ifirstyearmonthamount8|kFormat}</td>
+			<td>${data.ifirstyearmonthamount9|kFormat}</td>
+			<td>${data.ifirstyearmonthamount10|kFormat}</td>
+			<td>${data.ifirstyearmonthamount11|kFormat}</td>
+			<td>${data.ifirstyearmonthamount12|kFormat}</td>
+			<td>${data.ifirstyearfirsthalfofyearamount|kFormat}</td>
+			<td>${data.ifirstyearsecondhalfofyearamount|kFormat}</td>
+			<td>${data.ifirstyearallofyearamount|kFormat}</td>
+			<td>${data.isecondyearmonthamount1|kFormat}</td>
+			<td>${data.isecondyearmonthamount2|kFormat}</td>
+			<td>${data.isecondyearmonthamount3|kFormat}</td>
+			<td>${data.isecondyearmonthamount4|kFormat}</td>
+			<td>${data.isecondyearmonthamount5|kFormat}</td>
+			<td>${data.isecondyearmonthamount6|kFormat}</td>
+			<td>${data.isecondyearmonthamount7|kFormat}</td>
+			<td>${data.isecondyearmonthamount8|kFormat}</td>
+			<td>${data.isecondyearmonthamount9|kFormat}</td>
+			<td>${data.isecondyearmonthamount10|kFormat}</td>
+			<td>${data.isecondyearmonthamount11|kFormat}</td>
+			<td>${data.isecondyearmonthamount12|kFormat}</td>
+			<td>${data.isecondyearfirsthalfofyearamount|kFormat}</td>
+			<td>${data.isecondyearsecondhalfofyearamount|kFormat}</td>
+			<td>${data.isecondyearallofyearamount|kFormat}</td>
+			<td>${data.ithirdyearmonthamount1|kFormat}</td>
+			<td>${data.ithirdyearmonthamount2|kFormat}</td>
+			<td>${data.ithirdyearmonthamount3|kFormat}</td>
+			<td>${data.ithirdyearmonthamount4|kFormat}</td>
+			<td>${data.ithirdyearmonthamount5|kFormat}</td>
+			<td>${data.ithirdyearmonthamount6|kFormat}</td>
+			<td>${data.ithirdyearmonthamount7|kFormat}</td>
+			<td>${data.ithirdyearmonthamount8|kFormat}</td>
+			<td>${data.ithirdyearmonthamount9|kFormat}</td>
+			<td>${data.ithirdyearmonthamount10|kFormat}</td>
+			<td>${data.ithirdyearmonthamount11|kFormat}</td>
+			<td>${data.ithirdyearmonthamount12|kFormat}</td>
+			<td>${data.ithirdyearfirsthalfofyearamount|kFormat}</td>
+			<td>${data.ithirdyearsecondhalfofyearamount|kFormat}</td>
+			<td>${data.ithirdyearallofyearamount|kFormat}</td>
+            </tr>
+            {@/each}
+        </script>
+
+        <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
+               data-jbolttable
+               id="jbolt_Table_#(pageId)"
+               data-autoload="false"
+               data-ajax="true"
+               data-url="/admin/investmentplan/findInvestmentPlanGroupSummaryDatas"
+               data-column-resize="true"
+               data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+               data-rowtpl="jboltTable_rowtpl_#(pageId)"
+               data-column-prepend="1:checkbox:true"
+               data-height="fill"
+               data-ajax-success-handler="ajaxSuccessHandler_#(pageId)"
+               data-conditions-form="investmentSummaryForm_#(pageId)"
+        >
+            <thead class="fw_normal">
+            <tr>
+	            <th data-width="100" data-column="cgroupname" rowspan="2">项目</th>
+	            <th data-width="100" data-column="ibudgettype" rowspan="2">预算类型</th>
+	            <th data-width="100" data-column="" colspan="15" id="ifirstyearthead"></th>
+	            <th data-width="100" data-column="" colspan="15" id="isecondyearthead"></th>
+	            <th data-width="100" data-column="" colspan="15" id="ithirdyearthead"></th>
+            </tr>
+            <tr>
+            	<th data-width="50" data-column="ifirstyearmonthamount1">1月</th>
+            	<th data-width="50" data-column="ifirstyearmonthamount2">2月</th>
+            	<th data-width="50" data-column="ifirstyearmonthamount3">3月</th>
+            	<th data-width="50" data-column="ifirstyearmonthamount4">4月</th>
+            	<th data-width="50" data-column="ifirstyearmonthamount5">5月</th>
+            	<th data-width="50" data-column="ifirstyearmonthamount6">6月</th>
+            	<th data-width="50" data-column="ifirstyearmonthamount7">7月</th>
+            	<th data-width="50" data-column="ifirstyearmonthamount8">8月</th>
+            	<th data-width="50" data-column="ifirstyearmonthamount9">9月</th>
+            	<th data-width="50" data-column="ifirstyearmonthamount10">10月</th>
+            	<th data-width="50" data-column="ifirstyearmonthamount11">11月</th>
+            	<th data-width="50" data-column="ifirstyearmonthamount12">12月</th>
+            	<th data-width="50" data-column="ifirstyearfirsthalfofyearamount">上半年</th>
+            	<th data-width="50" data-column="ifirstyearsecondhalfofyearamount">下半年</th>
+            	<th data-width="50" data-column="ifirstyearallofyearamount">合计</th>
+            	<th data-width="50" data-column="isecondyearmonthamount1">1月</th>
+            	<th data-width="50" data-column="isecondyearmonthamount2">2月</th>
+            	<th data-width="50" data-column="isecondyearmonthamount3">3月</th>
+            	<th data-width="50" data-column="isecondyearmonthamount4">4月</th>
+            	<th data-width="50" data-column="isecondyearmonthamount5">5月</th>
+            	<th data-width="50" data-column="isecondyearmonthamount6">6月</th>
+            	<th data-width="50" data-column="isecondyearmonthamount7">7月</th>
+            	<th data-width="50" data-column="isecondyearmonthamount8">8月</th>
+            	<th data-width="50" data-column="isecondyearmonthamount9">9月</th>
+            	<th data-width="50" data-column="isecondyearmonthamount10">10月</th>
+            	<th data-width="50" data-column="isecondyearmonthamount11">11月</th>
+            	<th data-width="50" data-column="isecondyearmonthamount12">12月</th>
+            	<th data-width="50" data-column="isecondyearfirsthalfofyearamount">上半年</th>
+            	<th data-width="50" data-column="isecondyearsecondhalfofyearamount">下半年</th>
+            	<th data-width="50" data-column="isecondyearallofyearamount">合计</th>
+            	<th data-width="50" data-column="ithirdyearmonthamount1">1月</th>
+            	<th data-width="50" data-column="ithirdyearmonthamount2">2月</th>
+            	<th data-width="50" data-column="ithirdyearmonthamount3">3月</th>
+            	<th data-width="50" data-column="ithirdyearmonthamount4">4月</th>
+            	<th data-width="50" data-column="ithirdyearmonthamount5">5月</th>
+            	<th data-width="50" data-column="ithirdyearmonthamount6">6月</th>
+            	<th data-width="50" data-column="ithirdyearmonthamount7">7月</th>
+            	<th data-width="50" data-column="ithirdyearmonthamount8">8月</th>
+            	<th data-width="50" data-column="ithirdyearmonthamount9">9月</th>
+            	<th data-width="50" data-column="ithirdyearmonthamount10">10月</th>
+            	<th data-width="50" data-column="ithirdyearmonthamount11">11月</th>
+            	<th data-width="50" data-column="ithirdyearmonthamount12">12月</th>
+            	<th data-width="50" data-column="ithirdyearfirsthalfofyearamount">上半年</th>
+            	<th data-width="50" data-column="ithirdyearsecondhalfofyearamount">下半年</th>
+            	<th data-width="50" data-column="ithirdyearallofyearamount">合计</th>            	
+            </tr>
+            </thead>
+            <tbody id="datatr1"></tbody>
+        </table>
+    </div>
+
+</div>
+#end
+#define js()
+<script>
+function ajaxSuccessHandler_#(pageId)(table) {
+	   $('.jbolt_table').tablesMergeCell({
+	      cols: [1,2]
+	   })
+}
+function ibudgetyear_change_#(pageId)(ele){
+	var ibudgetyear_#(pageId) = ele.val();
+	if(ibudgetyear_#(pageId)){
+		ibudgetyear_#(pageId) = parseInt(ibudgetyear_#(pageId));
+		$("#ifirstyearthead").html(ibudgetyear_#(pageId));
+		$("#isecondyearthead").html(ibudgetyear_#(pageId) + 1);
+		$("#ithirdyearthead").html(ibudgetyear_#(pageId) + 2);
+	}
+}
+</script>
+
+#end
+

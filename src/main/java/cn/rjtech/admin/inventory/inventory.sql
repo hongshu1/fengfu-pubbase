@@ -48,6 +48,21 @@ left join bd_uom u1 on u1.iAutoId = i.iInventoryUomId1
 where i.isEnabled = '1' and i.isDeleted = '0'
 #end
 
+#sql("getInventoryList")
+SELECT inv.cinvcode, inv.cinvname, inv.cinvstd, inv.cinvaddcode, inv.cAddress, inv.itaxrate
+FROM bd_Inventory inv
+WHERE 1 = 1
+#if(q)
+    AND (cInvCode like CONCAT ('%', #para(q), '%')
+    OR  cInvName like CONCAT ('%', #para(q), '%')
+    OR  cInvStd like CONCAT ('%', #para(q), '%'))
+#end
+#if(cinvccode)
+ AND cInvCCode LIKE CONCAT (#para(cinvccode), '%')
+#end
+ORDER BY inv.cinvcode ASC
+#end
+
 #sql("findCapacityByInvId")
 	SELECT
 	bd_wms.cWorkShiftCode,
@@ -57,8 +72,8 @@ FROM
 	Bd_InventoryCapacity ic
 	INNER JOIN Bd_WorkShiftM bd_wms ON bd_wms.iAutoId = ic.iWorkShiftMid
 WHERE
-	bd_wms.isEnabled = 1
-	AND bd_wms.isDeleted = 0
+	bd_wms.isEnabled = '1'
+	AND bd_wms.isDeleted = '0'
 	AND bd_wms.iOrgId = 1
 	#if(invId)
 	    AND ic.iInventoryId = #para(invId)

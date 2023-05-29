@@ -1,0 +1,65 @@
+
+<div class="jbolt_page_title">
+    <div class="row">
+
+        <div class="col-12 form-inline">
+
+            <div class="col-4">
+                <h3>基础信息</h3>
+            </div>
+
+            <div class="col-8 text-right">
+                ###permission(PermissionKey.permissionKeyName)
+                 ###定义权限控制的按钮
+                ###end
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+
+<form onsubmit="return false;" id="investmentplanMonthAdjustmentItemdForm" action="#(action)" method="post">
+#if(investmentplanMonthAdjustmentItemd.iautoid??)
+	<input type="hidden" name="investmentplanMonthAdjustmentItemd.iautoid" value="#(investmentplanMonthAdjustmentItemd.iautoid??)" />
+#end
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">调整项目表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入调整项目表ID" maxlength="19" name="investmentplanMonthAdjustmentItemd.iadjustmentitemid" value="#(investmentplanMonthAdjustmentItemd.iadjustmentitemid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">期数</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入期数"  maxlength="10" name="investmentplanMonthAdjustmentItemd.iperiodnum" value="#(investmentplanMonthAdjustmentItemd.iperiodnum??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">日程</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入日程" maxlength="20" name="investmentplanMonthAdjustmentItemd.cperiodprogress" value="#(investmentplanMonthAdjustmentItemd.cperiodprogress??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">日期</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="investmentplanMonthAdjustmentItemd.dperioddate" value="#(investmentplanMonthAdjustmentItemd.dperioddate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">金额</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;"  data-notnull="false" placeholder="请输入金额"  maxlength="30" name="investmentplanMonthAdjustmentItemd.iamount" value="#(investmentplanMonthAdjustmentItemd.iamount??)"/>
+		</div>
+	</div>
+</form>
+</div>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="investmentplanMonthAdjustmentItemdForm")
+#end
+
