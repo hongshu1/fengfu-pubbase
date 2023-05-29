@@ -1,7 +1,10 @@
 package cn.rjtech.admin.transvouch;
 
+import cn.hutool.core.date.DateUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.SystemLog;
+import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
@@ -11,15 +14,16 @@ import cn.rjtech.model.momdata.TransVouch;
 import cn.rjtech.model.momdata.TransVouchDetail;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.HttpApiUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 出库管理-调拨单列表 Service
@@ -248,6 +252,7 @@ public class TransVouchService extends BaseService<TransVouch> {
 					transVouch.setModifyPerson(userName);
 					update(transVouch);
 					headerId = transVouch.getAutoID();
+					Ret ret = pushU8(headerId);
 				}
 			}
 
@@ -255,9 +260,9 @@ public class TransVouchService extends BaseService<TransVouch> {
 			if (jBoltTable.saveIsNotBlank()) {
 				List<TransVouchDetail> lines = jBoltTable.getSaveModelList(TransVouchDetail.class);
 
-				Long finalHeaderId = Long.valueOf(headerId);
+				String finalHeaderId = headerId;
 				lines.forEach(transVouchDetail -> {
-					transVouchDetail.setMasID(finalHeaderId);
+					transVouchDetail.setMasID(Long.valueOf(finalHeaderId));
 					transVouchDetail.setCreateDate(nowDate);
 					transVouchDetail.setCreatePerson(userName);
 					transVouchDetail.setModifyDate(nowDate);
@@ -268,12 +273,13 @@ public class TransVouchService extends BaseService<TransVouch> {
 			// 获取待更新数据 执行更新
 			if (jBoltTable.updateIsNotBlank()) {
 				List<TransVouchDetail> lines = jBoltTable.getUpdateModelList(TransVouchDetail.class);
-
+				String finalHeaderId = headerId;
 				lines.forEach(transVouchDetail -> {
 					transVouchDetail.setModifyDate(nowDate);
 					transVouchDetail.setModifyPerson(userName);
 				});
 				transVouchDetailService.batchUpdate(lines);
+				Ret ret = pushU8(finalHeaderId);
 			}
 			// 获取待删除数据 执行删除
 			if (jBoltTable.deleteIsNotBlank()) {
@@ -354,5 +360,125 @@ public class TransVouchService extends BaseService<TransVouch> {
 	}
 
 
+
+	public Ret pushU8(String id) {
+		List<Record> list = dbTemplate("transvouch.pushU8List", Kv.by("autoid", id)).find();
+		if (list.size() > 0) {
+//          接口参数
+			User user = JBoltUserKit.getUser();
+			String url = "http://localhost:8081/api/erp/common/vouchProcessDynamicSubmit";
+			String userCode = user.getUsername();
+			Long userId = user.getId();
+			String Password = user.getPassword();
+			String type = "TransVouch";
+			Record record1 = list.get(0);
+			String organizecode = record1.get("organizecode");
+			String nowDate = DateUtil.format(new Date(), "yyyy-MM-dd");
+
+			JSONObject preAllocate = new JSONObject();
+			preAllocate.put("userCode",userCode);
+			preAllocate.put("Password",Password);
+			preAllocate.put("organizeCode",organizecode);
+			preAllocate.put("CreatePerson",userId);
+			preAllocate.put("CreatePersonName",user.getName());
+			preAllocate.put("loginDate", nowDate);
+			preAllocate.put("tag",type);
+			preAllocate.put("type",type);
+
+			JSONArray mainData = new JSONArray();
+			list.forEach(record -> {
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("invstd", record.get("invstd"));
+				jsonObject.put("iwhname", record.get("iwhname"));
+				jsonObject.put("iposcode", record.get("iposcode"));
+				jsonObject.put("iposname", record.get("iposname"));
+				jsonObject.put("owhcode", record.get("owhcode"));
+				jsonObject.put("owhname", record.get("owhname"));
+				jsonObject.put("oposcode", record.get("oposcode"));
+				jsonObject.put("invname", record.get("invname"));
+				jsonObject.put("userCode", userCode);
+				jsonObject.put("ispack", record.get("ispack"));
+				jsonObject.put("organizeCode", organizecode);
+				jsonObject.put("qty", record.get("qty"));
+				jsonObject.put("tag", type);
+				jsonObject.put("barcode", record.get("spotTicket"));
+				jsonObject.put("oposname", record.get("oposname"));
+				jsonObject.put("ORdType", record.get("ordtype"));
+				jsonObject.put("ORdName", record.get("ordname"));
+				jsonObject.put("ORdCode", record.get("ordcode"));
+				jsonObject.put("ODeptName", record.get("odeptname"));
+				jsonObject.put("ODeptCode", record.get("odeptcode"));
+				jsonObject.put("IDeptName", record.get("ideptname"));
+				jsonObject.put("IDeptCode", record.get("ideptcode"));
+				jsonObject.put("IRdName", record.get("irdname"));
+				jsonObject.put("IRdCode", record.get("irdcode"));
+				mainData.add(jsonObject);
+
+			});
+
+//            参数装载
+			Map<String, Object> data = new HashMap<>();
+			data.put("organizeCode", organizecode);
+			data.put("userCode", userCode);
+			data.put("PreAllocate", preAllocate);
+			data.put("MainData", mainData);
+
+//            请求头
+			Map<String, String> header = new HashMap<>(5);
+			header.put("Content-Type", "application/json");
+
+
+			SystemLog systemLog = new SystemLog();
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("<span class='text-danger'>[调拨单推U8操作]</span>");
+//            stringBuilder.append("<span class='text-primary'>[url="+url+"]</span>");
+//            stringBuilder.append("<span class='text-danger'>[参数={"+JSONObject.toJSONString(data)+"}]</span>");
+			systemLog.setType(2);
+			systemLog.setCreateTime(new Date());
+			systemLog.setUserId(JBoltUserKit.getUserId());
+			systemLog.setUserName(JBoltUserKit.getUserUserName());
+			systemLog.setOpenType(1);
+			systemLog.setTargetId(1L);
+			systemLog.setTargetType(1);
+			Ret ret = new Ret();
+			try {
+				String post = HttpApiUtils.httpHutoolPost(url, data, header);
+				if (isOk(post)) {
+					JSONObject parseObject = JSONObject.parseObject(post);
+					stringBuilder.append("<span class='text-primary'>[成功返回参数=").append(post).append("]</span>");
+					String code = parseObject.getString("code");
+					String msg = parseObject.getString("message");
+
+					LOG.info("data====" + data);
+					if ("200".equals(code)) {
+						String[] s = msg.split(",");
+						String bill = s[0];
+						LOG.info("s===>" + bill);
+						LOG.info("data====" + data);
+
+						int update = update("update T_Sys_SOReturn set U9BillNo = '" + bill + "', status = '2' where" + " AutoID " + "= " + "'" + id + "'");
+
+						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
+								"推送数据失败," + "失败原因" + msg);
+					}
+					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
+				} else {
+					stringBuilder.append("<span class='text-primary'>[失败返回参数=").append(post).append("]</span>");
+					return fail("请求失败");
+				}
+			} catch (Exception e) {
+				stringBuilder.append("<span class='text-primary'>[失败异常=").append(e.getMessage()).append("]</span>");
+				e.printStackTrace();
+			} finally {
+				systemLog.setTitle(stringBuilder.toString());
+				systemLog.save();
+			}
+			return fail("请求失败");
+		} else {
+			ValidationUtils.error("查无此单");
+		}
+
+		return SUCCESS;
+	}
 
 }

@@ -1,0 +1,145 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+		<div class="col-md-auto text-left">
+			<form  class="form-inline" id="investmentPlanForm_#(pageId)"   onsubmit="return false;" method="post">
+				<input type="text" class="form-control"
+                           data-date
+                           data-type="year"
+                           placeholder="=预算年度="
+                           name="ibudgetyear">
+                <select class="form-control"
+                		data-select-type="select2"
+                        name="cdepcode"
+                        data-autoload
+                        data-tips="u8部门"
+                        data-url="admin/department/getTreeTableDatas"
+                        data-text="=u8部门="
+                        data-text-attr="cdepname"
+                        data-value-attr="cdepcode"
+                        data-setvalueto="cdepcode"
+                        data-value=""
+                        data-width="200">
+                </select>
+                <select class="form-control"
+                    		data-select-type="select2"
+                            name="ibudgettype"
+                            data-autoload
+                            data-tips="预算类型"
+                            data-url="admin/dictionary/options?key=investment_budget_type"
+                            data-text="=预算类型="
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-value=""
+                            data-width="200">
+                </select>
+                <input name="iauditstatus" type="hidden" value="0,3" />
+                <input id="iplanid_#(pageId)" name="iplanid" type="hidden" value="" />
+				<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+				<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="investmentPlanRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cdepcode}</td>
+<td>${data.cdepname}</td>
+<td>$${data.ibudgettype|BudgetType}</td>
+<td>${data.ibudgetyear}</td>
+<td>$${data.iauditstatus|AuditStatus}</td>
+<td>${data.daudittime|date_ymd}</td>
+<td>${data.dcreatetime|date_ymd}</td>
+<td>${data.cusername}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="investmentPlan_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="创建投资计划"  data-url="admin/investmentplan/choosePeriodPage" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshPjaxContainer" data-title="编辑投资计划" data-check-handler="jboltTableGetCheckedId" data-url="admin/investmentplan/edit/" class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i>详情</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/investmentplan/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="admin/investmentplan/submitAudit/" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 提交审核</button>
+		<button onclick="investmentPlanIndexExportClick()" class="btn btn-outline-primary btn-sm" ><i class="fa fa-file-excel-o"></i> 导出</button>
+		<a hidden id="investmentPlanIndexExportBtn" data-downloadbtn href="admin/investmentplan/exportInvestmentPlanDatas" data-form="investmentPlanForm_#(pageId)" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> 导出</a>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center"
+data-jbolttable
+data-height="fill"
+id="jbolt_table_#(pageId)"
+data-ajax="true"
+data-width="auto"
+data-autoload="false"
+data-url="admin/investmentplan/datas"
+data-column-resize="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="investmentPlanForm_#(pageId)"
+data-rowtpl="investmentPlanRowtpl_#(pageId)"
+data-page="investmentPlanPage_#(pageId)"
+data-pagesize="50"
+data-toolbar="investmentPlan_toolbar_#(pageId)"
+data-fixed-columns-left="1,2,3"
+data-row-dblclick-active = "true"
+data-row-dblclick-handler = "jbolt_table_dblclickhandler_#(pageId)"
+>
+<thead class="fw-normal">
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="150" data-column="cdepcode">部门编码</th>
+	<th data-width="150" data-column="cdepname">部门名称</th>
+	<th data-width="150" data-column="ibudgettype">预算类型</th>
+	<th data-width="150" data-column="ibudgetyear">预算年份</th>
+	<th data-width="150" data-column="iauditstatus">审核状态</th>
+	<th data-width="150" data-column="daudittime">审核时间</th>
+	<th data-width="150" data-column="dcreatetime">创建时间</th>
+	<th data-width="150" data-column="cusername">创建人</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+	<script type="text/javascript">
+		function uploadSuccess(){
+			refreshJBoltTable();
+		}
+		function investmentPlanIndexExportClick(){
+			var iplanid_#(pageId) = jboltTableGetCheckedId('#jbolt_table_#(pageId)');
+			if(!iplanid_#(pageId)) return;
+			$("#iplanid_#(pageId)").val(iplanid_#(pageId));
+			$("#investmentPlanIndexExportBtn").click();
+		}
+		function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+			$(tempTr1).data('url', 'admin/investmentplan/edit/' + rowData.iautoid)
+					.data('offset', '0.2,0')
+					.data('area', '100%,100%')
+					.data('title', '投资计划详情');
+
+			DialogUtil.openBy(tempTr1);
+	    }
+	</script>
+#end

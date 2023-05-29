@@ -1,0 +1,170 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+<div class="jbolt_page_title">
+	<div class="row">
+		<div class="col-md-auto text-left">
+			<form class="form-inline" id="budgetActualDifferenceForm_#(pageId)"  onsubmit="return false;" method="post">
+				<input type="text" class="form-control"
+                           data-date
+                           data-type="year"
+                           data-rule="required"
+                           placeholder="=预算年度="
+                           name="ibudgetyear">
+                <select class="form-control"
+                		data-select-type="select2"
+                        name="cdepcode"
+                        data-autoload
+                        data-tips="u8部门"
+                        data-url="admin/department/getTreeTableDatas"
+                        data-text="=u8部门="
+                        data-text-attr="cdepname"
+                        data-value-attr="cdepcode"
+                        data-setvalueto="cdepcode"
+                        data-value=""
+                        data-width="200">
+                </select>
+				<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+				<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+			</form>
+		</div>
+	</div>
+</div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_rowtpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.cdepname}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.cinvestmenttypedesc}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.cproductline}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.careertypedesc}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.cinvestmentdistinctiondesc}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.cplanno}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.citemname}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>$${data.isimport|isLargeAmountExpense}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.iquantity}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.cunit}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.cassettypedesc}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.cpurpose}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.ceffectamount}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.creclaimyear}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.clevel}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>$${data.ispriorreport|isLargeAmountExpense}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.cpaymentprogressdesc}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.itotalamountplan}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.itotalamountactual}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.itotalamountdiff}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.itotalamountdiffreason}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.iyeartotalamountplan}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.iyeartotalamountactual}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.iyeartotalamountdiff}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.iyeartotalamountdiffreason}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.cedittypedesc}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>$${data.isscheduled|isscheduled}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.cmemo}</td>{@/if}
+			{@if data.rownum1 == 1}<td rowspan='13'>${data.iitemyear}</td>{@/if}
+			{@if data.rownum2 == 1 && data.ibudgettype1 == 1}<td rowspan='4'>$${data.ibudgettype1|iBudgetType1}</td>{@/if}
+			{@if data.rownum2 == 1 && data.ibudgettype1 == 2}<td rowspan='9'>$${data.ibudgettype1|iBudgetType1}</td>{@/if}
+			<td>$${data.ibudgettype2|iBudgetType2}</td>
+			{@if data.ibudgettype1 == 2}<td>${data.imonthamount1|kFormat}</td>{@else}<td>${data.imonthamount1}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.imonthamount2|kFormat}</td>{@else}<td>${data.imonthamount2}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.imonthamount3|kFormat}</td>{@else}<td>${data.imonthamount3}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.imonthamount4|kFormat}</td>{@else}<td>${data.imonthamount4}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.imonthamount5|kFormat}</td>{@else}<td>${data.imonthamount5}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.imonthamount6|kFormat}</td>{@else}<td>${data.imonthamount6}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.imonthamount7|kFormat}</td>{@else}<td>${data.imonthamount7}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.imonthamount8|kFormat}</td>{@else}<td>${data.imonthamount8}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.imonthamount9|kFormat}</td>{@else}<td>${data.imonthamount9}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.imonthamount10|kFormat}</td>{@else}<td>${data.imonthamount10}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.imonthamount11|kFormat}</td>{@else}<td>${data.imonthamount11}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.imonthamount12|kFormat}</td>{@else}<td>${data.imonthamount12}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.ifirsthalfofyear|kFormat}</td>{@else}<td>${data.ifirsthalfofyear}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.isecondhalfofyear|kFormat}</td>{@else}<td>${data.isecondhalfofyear}</td>{@/if}
+			{@if data.ibudgettype1 == 2}<td>${data.iallofyear|kFormat}</td>{@else}<td>${data.iallofyear}</td>{@/if}
+            </tr>
+            {@/each}
+        </script>
+
+        <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
+               data-jbolttable
+               id="jbolt_Table_#(pageId)"
+               data-autoload="false"
+               data-ajax="true"
+               data-url="/admin/investmentplan/findBudgetActualDifferenceDatas"
+               data-column-resize="true"
+               data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+               data-rowtpl="jboltTable_rowtpl_#(pageId)"
+               data-column-prepend="1:checkbox:true"
+               data-height="fill"
+               data-conditions-form="budgetActualDifferenceForm_#(pageId)"
+        >
+            <thead class="fw_normal">
+            <tr>
+	            <th data-width="100" data-column="cdepname" rowspan="2">部门</th>
+	            <th data-width="100" data-column="cinvestmenttypedesc" rowspan="2">投资类型</th>
+	            <th data-width="100" data-column="cproductline" rowspan="2">生产线</th>
+	            <th data-width="100" data-column="careertypedesc" rowspan="2">事业区分</th>
+	            <th data-width="90" data-column="cinvestmentdistinctiondesc" rowspan="2">投资区分</th>
+	            <th colspan="9">内容</th>
+	            <th data-width="100" data-column="clevel" rowspan="2">等级区分</th>
+	            <th data-width="130" data-column="ispriorreport" rowspan="2">是否需要做事前报告</th>
+	            <th data-width="130" data-column="cpaymentprogressdesc" rowspan="2">实施阶段</th>
+	            <th colspan="4">项目总金额(含税)</th>
+	            <th colspan="4">年度总金额(含税)</th>
+	            <th data-width="100" data-column="cedittypedesc" rowspan="2">修订区分</th>
+	            <th data-width="25" data-column="isscheduled" rowspan="2">计划内/外</th>
+	            <th data-width="25" data-column="cmemo" rowspan="2">备注</th>
+	            <th data-width="50" data-column="iitemyear" rowspan="2">立项年份</th>
+	            <th colspan="2">预算类型</th>
+	            <th data-width="50" data-column="imonthamount1" rowspan="2">1月</th>
+	            <th data-width="50" data-column="imonthamount2" rowspan="2">2月</th>
+	            <th data-width="50" data-column="imonthamount3" rowspan="2">3月</th>
+	            <th data-width="50" data-column="imonthamount4" rowspan="2">4月</th>
+	            <th data-width="50" data-column="imonthamount5" rowspan="2">5月</th>
+	            <th data-width="50" data-column="imonthamount6" rowspan="2">6月</th>
+	            <th data-width="50" data-column="imonthamount7" rowspan="2">7月</th>
+	            <th data-width="50" data-column="imonthamount8" rowspan="2">8月</th>
+	            <th data-width="50" data-column="imonthamount9" rowspan="2">9月</th>
+	            <th data-width="50" data-column="imonthamount10" rowspan="2">10月</th>
+	            <th data-width="50" data-column="imonthamount11" rowspan="2">11月</th>
+	            <th data-width="50" data-column="imonthamount12" rowspan="2">12月</th>
+	            <th data-width="50" data-column="ifirsthalfofyear" rowspan="2">上半年</th>
+	            <th data-width="50" data-column="isecondhalfofyear" rowspan="2">下半年</th>
+	            <th data-width="50" data-column="iallofyear" rowspan="2">全年合计</th>
+            </tr>
+            <tr>
+            	<th data-width="50" data-column="cplanno">投资No.</th>
+            	<th data-width="50" data-column="citemname">项目细项名称</th>
+            	<th data-width="50" data-column="isimport">是否进口</th>
+            	<th data-width="50" data-column="iquantity">数量</th>
+            	<th data-width="50" data-column="cunit">单位</th>
+            	<th data-width="50" data-column="cassettypedesc">资产类别</th>
+            	<th data-width="50" data-column="cpurpose">目的</th>
+            	<th data-width="50" data-column="ceffectamount">效果金额</th>
+            	<th data-width="50" data-column="creclaimyear">回收年限</th>
+            	<th data-width="50" data-column="itotalamountplan">计划</th>
+            	<th data-width="50" data-column="itotalamountactual">实绩/预测/修订</th>
+            	<th data-width="50" data-column="itotalamountdiff">差异</th>
+            	<th data-width="50" data-column="itotalamountdiffreason">差异原因</th>
+            	<th data-width="50" data-column="iyeartotalamountplan">计划</th>
+            	<th data-width="50" data-column="iyeartotalamountactual">实绩/预测/修订</th>
+            	<th data-width="50" data-column="iyeartotalamountdiff">差异</th>
+            	<th data-width="50" data-column="iyeartotalamountdiffreason">差异原因</th>
+            	<th data-width="50" data-column="ibudgettype1">日程</th>
+            	<th data-width="50" data-column="ibudgettype2">类型</th>
+            </tr>
+            </thead>
+            <tbody id="datatr1"></tbody>
+        </table>
+    </div>
+
+</div>
+#end
+#define js()
+<script>
+</script>
+
+#end
+

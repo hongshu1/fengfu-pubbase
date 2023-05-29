@@ -146,4 +146,11 @@ public class VendorAdminController extends BaseAdminController {
     public void options() {
         renderJsonData(service.options());
     }
+    
+    /**
+     * 选项列表
+     */
+    public void autocomplete() {
+        renderJsonData(service.getAutocompleteList(get("q"), getInt("limit", 10)));
+    }
 }

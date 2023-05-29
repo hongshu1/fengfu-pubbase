@@ -10,3 +10,9 @@
            and iautoid = #para(id)
 		#end
 #end
+
+#sql("getAllCexchName")
+SELECT cexch_name
+FROM Bd_ForeignCurrency
+GROUP BY cexch_name
+#end

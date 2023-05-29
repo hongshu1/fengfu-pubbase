@@ -67,7 +67,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 		if ("2".equals(edit)) {
 			render("edit2.html");
 		}else {
-			render("add.html");
+			render("edit1.html");
 		}
 
 	}
@@ -153,6 +153,19 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 			return;
 		}
 		renderJson(service.recall(iAutoId));
+	}
+
+
+	/**
+	 * 查看所以退货出库单列表明细
+	 */
+	public void getmaterialReturnLists() {
+		String autoid = get("autoid");
+		String OrgCode = getOrgCode();
+		Kv kv = new Kv();
+		kv.set("autoid",autoid== null? "" :autoid);
+		kv.set("OrgCode",OrgCode);
+		renderJsonData(service.getmaterialReturnLists(getPageNumber(), getPageSize(), kv));
 	}
 
 	/**

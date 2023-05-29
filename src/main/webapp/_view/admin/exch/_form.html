@@ -1,0 +1,132 @@
+<form onsubmit="return false;" id="exchForm" action="#(action)" method="post">
+<input type="hidden" name="exch.iautoid" value="#(exch.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织ID" maxlength="19" name="exch.iorgid" value="#(exch.iorgid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织编码</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织编码" maxlength="40" name="exch.corgcode" value="#(exch.corgcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">组织名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织名称" maxlength="40" name="exch.corgname" value="#(exch.corgname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">币种名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入币种名称" maxlength="8" name="exch.cexchname" value="#(exch.cexchname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">会计期间</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入会计期间"  maxlength="10" name="exch.iperiod" value="#(exch.iperiod??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">汇率类型</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入汇率类型"  maxlength="10" name="exch.itype" value="#(exch.itype??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">日期</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入日期" maxlength="10" name="exch.cdate" value="#(exch.cdate??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">汇率</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入汇率" maxlength="53" name="exch.nflat" value="#(exch.nflat??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">年</label>
+		<div class="col">
+			<input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" placeholder="请设置年" data-tips="请设置年" maxlength="10" name="exch.iyear" value="#(exch.iyear??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">来源;1. MES 2. U8</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber"  data-notnull="false" placeholder="请输入来源;1. MES 2. U8"  maxlength="10" name="exch.isource" value="#(exch.isource??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">来源ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入来源ID" maxlength="32" name="exch.isourceid" value="#(exch.isourceid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人ID" maxlength="19" name="exch.icreateby" value="#(exch.icreateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建人名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人名称" maxlength="40" name="exch.ccreatename" value="#(exch.ccreatename??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">创建时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="exch.dcreatetime" value="#(exch.dcreatetime??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新人ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人ID" maxlength="19" name="exch.iupdateby" value="#(exch.iupdateby??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新人名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人名称" maxlength="40" name="exch.cupdatename" value="#(exch.cupdatename??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">更新时间</label>
+		<div class="col">
+			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置更新时间" data-tips="请设置更新时间" maxlength="23" name="exch.dupdatetime" value="#(exch.dupdatetime??)"/>
+		</div>
+	</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(exch.isdeleted??)"
+    	data-name="exch.isdeleted"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >删除状态;0. 未删除 1. 已删除</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_true" type="radio" name="exch.isdeleted" value="true"/>
+					<label for="r_isdeleted_true">是</label>
+				</div>
+				
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isdeleted_false" type="radio" name="exch.isdeleted" value="false"/>
+					<label for="r_isdeleted_false">否</label>
+				</div>
+			</div>
+		</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="exchForm")
+#end
+

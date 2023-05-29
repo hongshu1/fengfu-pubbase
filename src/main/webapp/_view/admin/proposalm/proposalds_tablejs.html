@@ -1,0 +1,529 @@
+<script>
+
+    #if(!proposalm.iautoid??)
+        var processTableListDatas_#(pageId) = #json(proposalds);
+
+        console.log('proposalds: ' + JSON.stringify(processTableListDatas_#(pageId)));
+    #end
+
+    // 获得配置参数
+    function getEditableTableOptions_#(pageId)() {
+        var editableTableOptions = {
+            trigger:"click",
+            // 初始行数
+            initRowCount:0,
+            // 限制最大数 默认30
+            maxRowCount:30,
+            // keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+            // requiredCellClass:"jb_editable_required_cell",//必填单元格默认样式
+            // unrequiredCellClass:"",//非必填的单元格默认样式
+            // uneditableCellCalss:"bg-light",//不可填样式
+            submit:{
+                withForm: ["proposalmForm_#(pageId)"],
+                type: "multi",//cell|all,
+                name: 'proposalds',
+                //params:{"orderId":3},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+                /*url: "admin/proposalm/saveTableSubmit",
+                success: function (ret) {
+                    LayerMsgBox.success("提交成功", 600, function () {
+                        #if(proposalm.iautoid??)
+                            refreshPjaxContainer();
+                        #else
+                            location.href = '/admin/proposalm/edit/' + ret.data.iautoid + '-_jb_rqtype_dialog';
+                        #end
+                    });
+                }*/
+            },
+            hsummaryFirstByAutoCalc: true,
+            // 插入数据时默认属性值
+            // insertDefaultValues: {age:10,briefInfo:"xxxxx"},
+            cols:{
+                iautoid: {
+                    submitAttr: "iautoid",
+                },
+                ibudgetmoney: {
+                    summary: [{
+                        dir: "h",
+                        tofixed: 2,
+                        removezero: true
+                    }, {
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum",
+                        syncval: "#ibudgetmoney"
+                    }]
+                },
+                ibudgetsum: {
+                    summary: [{
+                        dir: "h",
+                        tofixed: 2,
+                        removezero: true
+                    }, {
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum",
+                        syncval: "#ibudgetsum"
+                    }]
+                },                
+                citemname: {
+                    type: 'input',
+                    placeholder: "名称"
+                },
+                iquantity: {
+                    type: "input_number",
+                    required: true,
+                    rule:"pznumber",
+                    placeholder: "数量"
+                },
+                cunit: {
+                    type: 'input',
+                    placeholder: "单位"
+                },
+                ccurrency: {
+                    type: "select",
+                    url: "/admin/dictionary/options?key=currency",
+                    valueAttr: "name",
+                    textAttr: "name",
+                    placeholder: "=请选择=",
+                    handler: function (table, td, text, value, trJsonData) {
+                        // 设置汇率
+                        Ajax.get("admin/purchasem/getNflat?cexchname=" + value, function (ret) {
+                            if (ret.state === 'ok') {
+                                jboltTableUpdateOtherColumns(table, td.parent(), ret.data, [{
+                                    column: "nflat",
+                                    use: "nflat"
+                                }]);
+                            } else {
+                                LayerMsgBox.alert(ret.msg, 2)
+                            }
+                        });
+                    }
+                },
+                iunitprice: {
+                    placeholder: "=单价=",
+                    type: "input_number",
+                    required: true,
+                    rule:"pznumber",
+                    editorFormat: function (table, td, text, value, trJsonData) {
+                        //编辑器内显示格式化
+                        if (!value) {
+                            return "";
+                        }
+                        value = value.replaceAll(",", "");
+                        return removeFixedNumberAllZero(value, 2);
+                    },
+                },
+                nflat: {
+                    type: "input_number",
+                    required: true,
+                    rule:"pznumber",
+                    placeholder:"请输入汇率"
+                },
+                itaxrate: {
+                    type: "input_number",
+                    required: true,
+                    rule:"pznumber",
+                    min:0,
+                    max:100,
+                    placeholder:"请输入税率",
+                    handler: function(table, td, text, value, trJsonData){
+                    }
+                },                
+                cvencode: {
+                    type: "autocomplete",
+                    url: "/admin/vendor/autocomplete",
+                    columnAttr: "cvencode,cvenname",
+                    valueAttr: "cvencode",
+                    textAttr: "cvenname",
+                    width: 300,
+                    placeholder: "=请选择=",
+                    dialog: {
+                        url: "admin/purchasem/chooseVendor",
+                        area: "80%,80%",
+                        btn: "确定,关闭",
+                        title:"选择供应商"
+                    },
+                    filterHandler: 'filterTable',
+                    textFormat: function (table, td, text, value, trJsonData) {
+                        if (text && value) {
+                            return text;
+                        }
+                        if (trJsonData.cvenname) {
+                            return trJsonData.cvenname;
+                        }
+                        return '';
+                    },
+                    editorFormat:function(table,td,text,value,trJsonData){
+                        // 编辑器内显示格式化
+                        if(!value){return "";}
+                        return trJsonData.cvenname?trJsonData.cvenname:'';
+                    }
+                },
+                ddemanddate: {
+                    submitAttr: "ddemanddate",
+                    type: "date"
+                },
+                cbudgetdepcode: {
+                    type: "select",
+                    url: "admin/department/getTreeTableDatas",
+                    valueAttr: "cdepcode",
+                    textAttr: "cdepname",
+                    placeholder: "=请选择=",
+                },                
+                itax: {
+                    summary:[{
+                        dir:"h",
+                        tofixed:2,
+                        removezero:true,
+                        formula:"iunitprice*iquantity*itaxrate/100"
+                    },{
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                isum:{
+                    summary:[{
+                        dir:"h",
+                        tofixed:2,
+                        removezero:true,
+                        formula:"iunitprice*iquantity*(1+itaxrate/100)"
+                    },{
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                imoney:{
+                    summary:[{
+                        dir:"h",
+                        tofixed:2,
+                        removezero:true,
+                        formula:"iunitprice*iquantity"
+                    },{
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum",
+                        syncval:"#imoney"
+                    }]
+                },
+                inatunitprice:{
+                    summary:[{
+                        dir:"h",
+                        tofixed:2,
+                        removezero:true,
+                        formula:"iunitprice*nflat",
+                    }, {
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                inattax:{
+                    summary:[{
+                        dir:"h",
+                        tofixed:2,
+                        removezero:true,
+                        formula:"inatunitprice*iquantity*itaxrate/100",
+                    },{
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum"
+                    }]
+                },
+                inatmoney:{
+                    summary: [{
+                        dir: "h",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "inatunitprice*iquantity",
+                    }, {
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum",
+                        syncval: '#inatmoney'
+                    }]
+                },
+                inatsum: {
+                    summary:[{
+                        dir:"h",
+                        tofixed:2,
+                        removezero:true,
+                        formula:"inatunitprice*iquantity*(1+itaxrate/100)",
+                    }, {
+                        dir: "v",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "sum",
+                        syncval: '#inatsum'
+                    }]
+                }
+                
+            }
+        };
+        return editableTableOptions;
+    }
+
+    function tableAjaxSuccessHandler_#(pageId)(table) {
+        // 插入默认数据
+        jboltTableInsertRow(table, processTableListDatas_#(pageId),false,false,true);
+    }
+    //追加禀议-增行新费用/投资
+    function insertSupplementalItem(datas) {
+        // 插入默认数据
+    	jboltTableInsertRow('#jbolt_table_#(pageId)', datas);
+    }
+
+    //判定是否能拆子项：能拆子项目的判定逻辑：1.是否子项为否（即勾选行为父项）， 2.是否子项为是并且同一个预算编号只有勾选行这一个子项 
+    function validateIsCanSubItem(rowData,ele){
+    	//isubitem=1为子项,  =0为父项
+    	if(rowData.isubitem == 0) return true;
+    	//勾选行的项目卡片ID
+    	var iprojectcardid = rowData.iprojectcardid;
+    	var allTableDatas = jboltTableGetAllDatas(ele);
+    	var count = 0;
+    	if(allTableDatas){
+        	for(var i=0;i<allTableDatas.length;i++){
+        		if(iprojectcardid == allTableDatas[i].iprojectcardid) count++;
+            }
+        }
+    	if(rowData.isubitem == 1 && count == 1) return true;
+        return false;
+    }
+    function supplementalSplitSelected(ele){
+    	// 获取选中行
+        var rowData = jboltTableGetCheckedData(ele);
+        if (rowData) {
+            // 判定是否能拆子项
+            if(!validateIsCanSubItem(rowData)) {
+                LayerMsgBox.alert('勾选行不能拆子项目!', 2);
+                return false;
+            }
+            if(rowData.isubitem == 1 && rowData.itype == 2)
+				setFatherItemRowTableOption(ele);
+          	//以选中的父项目行构造子项目行数据
+            rowData.itype = 2;//追加禀议书拆子项设置类型为新增
+            rowData.isubitem = 1;  // 设置为子项
+            // 去除主键,预算总金额（不含税）,预算总金额（含税）
+            rowData.iautoid = undefined;
+            rowData.cbudgetno = undefined;
+            rowData.ibudgetmoney = undefined;
+            rowData.ibudgetsum = undefined;
+            rowData.iquantity = undefined;
+            rowData.iunitprice = undefined;
+            rowData.citemname = undefined;
+            rowData.cunit = undefined;
+            rowData.ccurrency = '人民币';
+            rowData.nflat = 1;
+            rowData.itaxrate = undefined;
+            rowData.cvencode = undefined;
+            rowData.ddemanddate = undefined;
+            rowData.cbudgetdepcode = undefined;
+            //jboltTableInsertRowAfterChecked(ele, rowData, null,null,true);
+          	//插入到选中行的子项的最后一行后面
+            insertCheckedSubItemRowAppend(ele,rowData);
+        } 
+        return false;
+    }
+    //拆子项操作，修改父项目的行属性
+	function setFatherItemRowTableOption(ele){
+		var checkedTr = jBGetCheckedTr(ele);
+        var changeData = {
+        	citemname : undefined,
+        	iquantityText : '-',
+        	iquantityValue : 0,
+        	cunit : undefined,
+        	ccurrency : undefined,
+        	iunitpriceText : '-',
+        	iunitpriceValue : 0,
+        	nflatText : '-',
+        	nflatValue : 0,
+        	itaxrateText : '-',
+        	itaxrateValue : 0,
+        	cvencode : undefined,
+        	ddemanddate : undefined,
+        	isubitem : 0,
+        	cbudgetdepcode : undefined,
+        	iquantityValue : 0
+        }
+        var changeColumns = [{
+        	column: "citemname",
+            use: "citemname",
+            editable: false
+        },{
+        	column: "iquantity",
+            use: "iquantityText:iquantityValue",
+            editable: false
+        },{
+        	column: "cunit",
+            use: "cunit",
+            editable: false
+        },{
+        	column: "ccurrency",
+            use: "ccurrency",
+            editable: false
+        },{
+        	column: "iunitprice",
+            use: "iunitpriceText:iunitpriceValue",
+            editable: false
+        },{
+        	column: "nflat",
+            use: "nflatText:nflatValue",
+            editable: false
+        },{
+        	column: "itaxrate",
+            use: "itaxrateText:itaxrateValue",
+            editable: false
+        },{
+        	column: "cvencode",
+            use: "cvencode",
+            editable: false
+        },{
+        	column: "ddemanddate",
+            use: "ddemanddate",
+            editable: false
+        },{
+        	column: "cbudgetdepcode",
+            use: "cbudgetdepcode",
+            editable: false
+        },{
+        	column: "isubitem",
+            use: "isubitem"
+        }];
+        jboltTableUpdateOtherColumns(getJBoltTable(ele).jboltTable("inst"), checkedTr, changeData, changeColumns);
+	}
+    
+    function editProposalmSplitSelected(ele) {
+        // 获取选中行
+        var rowData = jboltTableGetCheckedData(ele);
+        if (rowData) {
+            // 判定是否能拆子项
+            if(!validateIsCanSubItem(rowData)) {
+                LayerMsgBox.alert('勾选行不能拆子项目!', 2);
+                return false;
+            }
+			//被选中行    为原禀议并且是父项，被选中设置为不可编辑并且单价，数量等数据设置为空
+			setFatherItemRowTableOption(ele);
+           	//以选中行数据构造子项目行数据
+            rowData.itype = 1; //原禀议书拆子项设置类型为原禀议
+            rowData.isubitem = 1;// 设置为子项
+            // 去除主键,预算总金额（不含税）,预算总金额（含税）
+            rowData.iautoid = undefined;
+            rowData.cbudgetno = undefined;
+            rowData.ibudgetmoney = undefined;
+            rowData.ibudgetsum = undefined;
+            rowData.iquantity = undefined;
+            rowData.iunitprice = undefined;
+            rowData.citemname = undefined;
+            rowData.cunit = undefined;
+            rowData.ccurrency = '人民币';
+            rowData.nflat = 1;
+            rowData.itaxrate = undefined;
+            rowData.cvencode = undefined;
+            rowData.ddemanddate = undefined;
+            rowData.cbudgetdepcode = undefined;
+            //jboltTableInsertRowAfterChecked(ele, rowData, null,null,true);
+            //插入到选中行的子项的最后一行后面
+            insertCheckedSubItemRowAppend(ele,rowData);
+        } 
+        return false;
+    }
+  	//插入到选中行的子项的最后一行后面
+    function insertCheckedSubItemRowAppend(ele,copyData){
+    	var jboltTable = getJBoltTable(ele).jboltTable("inst");
+    	var allTableTds = jboltTable.tbody.find("tr>td[data-col-index='1']");
+    	var maxIndex = 0;
+    	var datas = jboltTable.tableListDatas;
+    	var checkedTr = jboltTable.me.getCheckedTr(jboltTable);
+    	var checkedProjectCardId = datas[checkedTr.data('index')]['iprojectcardid'];
+    	allTableTds.each(function(i){
+			var tableTr = allTableTds.eq(i).closest("tr");
+			var trDataIndex = tableTr.data("index");
+			var rowProjectCardId = datas[trDataIndex]['iprojectcardid']
+	    	if(rowProjectCardId == checkedProjectCardId && maxIndex <= trDataIndex)
+	    		maxIndex = trDataIndex;
+		});
+    	var firstTr;
+    	allTableTds.each(function(i){
+    		var tableTr = allTableTds.eq(i).closest("tr");
+			var trDataIndex = tableTr.data("index");
+    		if(trDataIndex == maxIndex) firstTr = tableTr;
+    	});
+		var tempTr = jboltTable.me.insertRowData(jboltTable,firstTr,copyData,false,false);
+		if(isOk(tempTr)){
+			jboltTable.me.processTableIndexColumn(jboltTable);
+			jboltTable.me.processInsertRowTableListData(jboltTable,tempTr,copyData,false);
+			jboltTable.me.initEditableHSummarys(jboltTable,tempTr);
+			jboltTable.me.processTfootSummarys(jboltTable);
+			//处理change状态
+			jboltTable.me.processNewInsertTrEditableTdsChanged(jboltTable,tempTr,copyData,false);
+			//处理新插入的行重新设置宽度
+			jboltTable.me.resizeTrByOldWidth(jboltTable,tempTr);
+			//处理动态插入数据后的handler
+			jboltTable.me.processEditableTableAfterInsertRowHandler(jboltTable,tempTr);
+		}
+    }
+	//获取选择的行tr            
+	function jBGetCheckedTr(ele){
+		var table=getJBoltTable(ele);
+    	if(isOk(table)){
+    		var jboltTable=table.jboltTable("inst");
+    		if(jboltTable){
+    			var tr=jboltTable.me.getCheckedTr(jboltTable);
+    			return tr;
+    		}
+    	}
+	}
+    function deleteRow(ele, confirm) {
+        var rows = jboltTableGetCheckedDatas(ele);
+        if (rows) {
+            rows.forEach((row,index)=>{
+	            #if(proposalm.issupplemental??)
+	            if (row.itype === 1) {
+	                LayerMsgBox.alert('只能删除追加的项目！', 2);
+	                return false;
+	            }
+	            #end
+	            var allTableDatas = jboltTableGetAllDatas(ele);
+	            var count = 0;
+	            if(allTableDatas){
+	                for(var i=0;i<allTableDatas.length;i++){
+	                	if(allTableDatas[i].cbudgetno == row.cbudgetno) count++; 
+	                }
+	            }
+	            //删除的是父项并且表格中并不只有这一行时提示不能删除
+	            if(row.isubitem == 0 && count>1) {
+	           	 	LayerMsgBox.alert('只能删除子项目！', 2);
+	             	return false;
+	            }
+	            jboltTableRemoveCheckedRow(ele, confirm, function () {
+	                //updateBudgetSum();
+	            });
+            });
+        }
+        return false;
+    }
+
+    //编制禀议书界面新增项目前的触发事件：拼接表格中所有的预算编号的iprojectcardid,在选择项目时排除这些项目
+	function editProposalmChooseItemCheckHandler(ele){
+		var allTableDatas = jboltTableGetAllDatas(ele);
+		console.log(allTableDatas);
+		var iprojectcardids = '';
+		if(allTableDatas){
+			for(var i=0;i<allTableDatas.length;i++){
+				iprojectcardids += allTableDatas[i].iprojectcardid + ',';
+			}
+		}
+		iprojectcardids = iprojectcardids.substring(0,iprojectcardids.lastIndexOf(','));
+		return iprojectcardids;
+	}
+</script>

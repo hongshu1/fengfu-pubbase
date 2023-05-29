@@ -29,6 +29,7 @@ FROM
         LEFT JOIN T_Sys_PUInStoreDetail t22 ON  t11.AutoID = t22.MasID
         LEFT JOIN Bd_Warehouse t6 ON t22.Whcode = t6.cWhCode
 WHERE 1 = 1
+  AND t22.Qty < 0
     #if(deptcode)
   AND  t3.cDepName like '%#(deptcode)%'
     #end
@@ -71,6 +72,63 @@ GROUP BY
     t11.ModifyDate
 order by t11.ModifyDate desc
     #end
+
+
+    #sql("getmaterialReturnLists")
+SELECT
+    t4.iQty,
+    t2.Qty AS qtys,
+    t2.Memo,
+    t2.MasID,
+    t2.spotTicket,
+    t2.Whcode,
+    t2.SourceBillDid,
+    t2.SourceBillNoRow,
+    t2.SourceBillType,
+    t2.SourceBillNo,
+    u.cUomClassName,
+    t3.cInvCCode,
+    t3.cInvCName,
+    i.cInvCode,
+    i.cInvName,
+    i.cInvCode1,
+    i.cInvName1
+FROM
+    T_Sys_PUInStore t1,
+    T_Sys_PUInStoreDetail t2
+        LEFT JOIN (
+        SELECT
+            iAutoId as PoId,
+            iPurchaseOrderDid,
+            iinventoryId,
+            cBarcode,
+            iQty,
+            cSourceld,
+            cSourceBarcode
+        FROM
+            PS_PurchaseOrderDBatch UNION ALL
+        SELECT
+            iAutoId as PoId,
+            iSubcontractOrderDid,
+            iinventoryId,
+            cBarcode,
+            iQty,
+            cSourceld,
+            cSourceBarcode
+        FROM
+            PS_SubcontractOrderDBatch
+    ) t4 ON t2.spotTicket = t4.cbarcode
+        LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
+        LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
+        LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
+WHERE
+        t1.AutoID = t2.MasID
+        AND  t1.AutoID = '#(autoid)'
+    #if(OrgCode)
+        AND t1.OrganizeCode = #para(OrgCode)
+    #end
+    #end
+
 
 #sql("getmaterialReturnListLines")
 SELECT

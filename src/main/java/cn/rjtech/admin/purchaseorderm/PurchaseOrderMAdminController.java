@@ -8,6 +8,7 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
+import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.person.PersonService;
@@ -18,6 +19,7 @@ import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.enums.SourceTypeEnum;
+import cn.rjtech.model.momdata.Exch;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.Vendor;
@@ -65,7 +67,10 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
     @Inject
     private InventoryChangeService inventoryChangeService;
-
+    @Inject
+    private ExchService exchService;
+    
+    
     /**
      * 首页
      */
@@ -103,6 +108,12 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         }
         
         record.set(PurchaseOrderM.CCURRENCY, vendor.getCCurrency());
+        Exch exch = exchService.getNameByLatestExch(getOrgId(), vendor.getCCurrency());
+        // 汇率
+        if (ObjectUtil.isNotNull(exch)){
+            record.set(PurchaseOrderM.IEXCHANGERATE, exch.getNflat());
+        }
+        
         record.set(PurchaseOrderM.IDUTYUSERID, vendor.getIDutyPersonId());
         Person person = personService.findById(vendor.getIDutyPersonId());
         if (ObjectUtil.isNotNull(person)) {
