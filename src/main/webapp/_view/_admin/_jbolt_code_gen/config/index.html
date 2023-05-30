@@ -6,9 +6,9 @@
 		<h1><i class="jbicon2 jbi-setting"></i> #(codeGen.mainTableName+"_"+(codeGen.mainTableRemark?(codeGen.mainTableRemark+"_"):'')+"详细配置、设计、代码生成")</h1>
 	</div>
 	<div class="jbolt_page_content jb_vbody">
-		<div class="jbolt_tab_view jbolt_tab_border_none jb_vflex">
+		<div data-keep-active="true" class="jbolt_tab_view jbolt_tab_border_none jb_vflex">
 			<div class="jbolt_tab_links   jb_vheader text-center">
-			  <a class="jbolt_tab_link active"  href="#jbolt_codegen_base_#(pageId)">基础配置</a>
+			  <a class="jbolt_tab_link"  href="#jbolt_codegen_base_#(pageId)">基础配置</a>
 			  <a class="jbolt_tab_link"  href="#jbolt_codegen_model_#(pageId)">字段属性配置</a>
 			  <a class="jbolt_tab_link"  href="#jbolt_codegen_table_#(pageId)">表格配置</a>
 				#if(codeGen.isCrud??)
@@ -26,7 +26,7 @@
 			  <a class="jbolt_tab_link"  href="#jbolt_codegen_genconfig_#(pageId)">执行生成</a>
 			</div>
 			<div class="jbolt_tab_contents jb_vbody">
-				<div class="jbolt_tab_content active overflow-auto" id="jbolt_codegen_base_#(pageId)">
+				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_base_#(pageId)">
 				#include("_base.html")
 				</div>
 				<div class="jbolt_tab_content overflow-auto" id="jbolt_codegen_model_#(pageId)">
@@ -641,6 +641,45 @@ function changeIsKeyCache_#(pageId)(r,v){
 	changeFormControlRequiredState("#key_cache_autocomplete_#(pageId)",(v=="true"));
 }
 
+
+function changeIsReturnOptionType_#(pageId)(r,v){
+	var formGroups = r.closest("form").find(".option_column_setting_box");
+	if(v=="true"){
+		formGroups.removeClass("d-none");
+	}else{
+		formGroups.addClass("d-none");
+	}
+}
+function changeIsGenAutocompleteAction_#(pageId)(r,v){
+	var formGroups = r.closest("form").find(".autocomplete_column_setting_box");
+	if(v=="true"){
+		formGroups.removeClass("d-none");
+		changeFormControlRequired("#autocompleteColumnsSelect")
+	}else{
+		formGroups.addClass("d-none");
+		changeFormControlNotRequired("#autocompleteColumnsSelect")
+	}
+}
+function changeIsGenOptionsAction_#(pageId)(r,v){
+	var formGroups = r.closest("form").find(".options_setting_box");
+	if(v=="true"){
+		formGroups.removeClass("d-none");
+	}else{
+		formGroups.addClass("d-none");
+	}
+}
+
+function toggleTableSetCard(btnEle){
+	var btn = $(btnEle);
+	var card = btn.closest(".card_left_box");
+	card.toggleClass("jb_card_shrink_left");
+	card.toggleClass("col-4");
+	if(card.hasClass("jb_card_shrink_left")){
+		card.find(".toggleCardOpenBtn").removeClass("d-none");
+	}else{
+		card.find(".toggleCardOpenBtn").addClass("d-none");
+	}
+}
 
 function changeIsGenModel_#(pageId)(r,v){
 	var gen_model_box = r.closest("form").find(".gen_model_box");
@@ -1554,6 +1593,27 @@ function updateProjectPath(){
 		display: inline-block;
 		position:absolute;
 		z-index: 999999999;
+	}
+	.card_left_box.jb_card_shrink_left{
+		width: 40px;
+		overflow: hidden;
+	}
+	.card_left_box.jb_card_shrink_left .card-header,
+	.card_left_box.jb_card_shrink_left .card-body{
+		display: none;
+	}
+	.card_left_box.jb_card_shrink_left{
+		text-align: center;
+	}
+	.card_left_box.jb_card_shrink_left .toggleCardOpenBtn button{
+		margin:15px auto;
+		width: 30px;
+	}
+	.card_left_box.jb_card_shrink_left .toggleCardOpenBtn .title{
+		width: 30px;
+		writing-mode: vertical-rl;
+		letter-spacing: 10px;
+		font-size: 16px;
 	}
 </style>
 #end

@@ -414,6 +414,71 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 		sql.select("col_name","remark","java_type");
 		return find(sql);
 	}
+	/**
+	 * 获取指定表的Autocomplete接口配置匹配的columns
+	 * @param codeGenId
+	 * @return
+	 */
+	public List<CodeGenModelAttr> getAutocompleteColumns(Long codeGenId) {
+		if(notOk(codeGenId)) {
+			return Collections.emptyList();
+		}
+		Sql sql = selectSql().eq("code_gen_id", codeGenId);
+		sql.eq("is_pkey", FALSE);
+		sql.notIn("col_name", "id","ID","create_time","CREATE_TIME","update_time","UPDATE_TIME","update_user_id","UPDATE_USER_ID","create_user_id","CREATE_USER_ID","is_deleted","IS_DELETED","enable","ENABLE");
+		sql.orderBySortRank();
+		sql.select("col_name","remark","java_type");
+		return find(sql);
+	}
+
+	/**
+	 * 获取指定表的options Autocomplete下拉使用的columns
+	 * @param codeGenId
+	 * @param column
+	 * @param limit
+	 * @param keywords
+	 * @return
+	 */
+	public List<CodeGenModelAttr> getOptionsTextColumnsAutocomplete(Long codeGenId,String column,int limit, String keywords) {
+		if(notOk(codeGenId)) {
+			return Collections.emptyList();
+		}
+		Sql sql = selectSql().eq("code_gen_id", codeGenId);
+		sql.likeMulti(keywords, "col_name","attr_name");
+		sql.eq("is_pkey", FALSE);
+		sql.notIn("col_name", "id","ID","create_time","CREATE_TIME","update_time","UPDATE_TIME","update_user_id","UPDATE_USER_ID","create_user_id","CREATE_USER_ID","is_deleted","IS_DELETED","enable","ENABLE");
+		if(isOk(column)) {
+			sql.notEq("col_name", column);
+		}
+		sql.orderBySortRank();
+		sql.firstPage(limit);
+		sql.select("col_name","remark","java_type");
+		return find(sql);
+	}
+
+	/**
+	 * 获取指定表的options value Autocomplete下拉使用的columns
+	 * @param codeGenId
+	 * @param column
+	 * @param limit
+	 * @param keywords
+	 * @return
+	 */
+	public List<CodeGenModelAttr> getOptionsValueColumnsAutocomplete(Long codeGenId,String column,int limit, String keywords) {
+		if(notOk(codeGenId)) {
+			return Collections.emptyList();
+		}
+		Sql sql = selectSql().eq("code_gen_id", codeGenId);
+		sql.likeMulti(keywords, "col_name","attr_name");
+		sql.notIn("col_name", "create_time","CREATE_TIME","update_time","UPDATE_TIME","update_user_id","UPDATE_USER_ID","create_user_id","CREATE_USER_ID","is_deleted","IS_DELETED","enable","ENABLE");
+		if(isOk(column)) {
+			sql.notEq("col_name", column);
+		}
+		sql.orderBySortRank();
+		sql.firstPage(limit);
+		sql.select("col_name","remark","java_type");
+		return find(sql);
+	}
 
 	public void deleteByCodeGenId(Long codeGenId) {
 		if(isOk(codeGenId)) {
@@ -1341,6 +1406,15 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 	}
 
 	/**
+	 * 检测是否存在enable字段
+	 * @param codeGenId
+	 * @return
+	 */
+	public boolean checkHasEnableColumn(Long codeGenId) {
+		return exists(selectSql().eq("code_gen_id",codeGenId).bracketLeft().eq("col_name","enable").or().eq("col_name","ENABLE").bracketRight());
+	}
+
+	/**
 	 * 检测是否存在is_keywords_column字段
 	 * @param codeGenId
 	 * @return
@@ -1425,5 +1499,14 @@ public class CodeGenModelAttrService extends JBoltBaseService<CodeGenModelAttr> 
 			throw new RuntimeException("未找到代码生成的基础配置");
 		}
 		return find(selectSql().eq("code_gen_id", codeGenId).eq("is_form_ele", TRUE).isNotNull(CodeGenModelAttr.FORM_UPLOAD_URL));
+	}
+
+	public List<CodeGenModelAttr> getNeedCheckExistsColumns(Long codeGenId) {
+		if(notOk(codeGenId)) {return new ArrayList<>();}
+		CodeGen codeGen = codeGenService.findById(codeGenId);
+		if(codeGen == null) {
+			throw new RuntimeException("未找到代码生成的基础配置");
+		}
+		return find(selectSql().eq("code_gen_id", codeGenId).eqBooleanToChar(CodeGenModelAttr.IS_NEED_CHECK_EXISTS,true));
 	}
 }

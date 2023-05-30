@@ -228,6 +228,7 @@ public class FormService extends BaseService<Form> {
         Form form = findById(iautoid);
         ValidationUtils.notNull(form, JBoltMsg.DATA_NOT_EXIST);
         ValidationUtils.isTrue(!form.getIsDeleted(), JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.isTrue(formFieldService.notExists(iautoid), "表单已存在字段，若要重新生成，请清空后再生成");
 
         TableMeta tableMeta = JBoltTableMetaUtil.getTableMeta(dataSourceConfigName(), dbType(), table(), false);
         ValidationUtils.notNull(tableMeta, "获取数据表元数据失败");

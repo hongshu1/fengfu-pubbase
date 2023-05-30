@@ -36,7 +36,14 @@ public class CodeGenModelAttrAdminController extends JBoltBaseController {
 	public void toggleIsPkey() {
 		renderJson(service.toggleAttrBoolean("is_pkey",getLong(0),getLong(1)));
 	}
-	
+	/**
+	 * isNeedCheckExists切换boolean
+	 */
+	@Before(Tx.class)
+	public void toggleIsNeedCheckExists() {
+		renderJson(service.toggleAttrBoolean("is_need_check_exists",getLong(0),getLong(1)));
+	}
+
 	/**
 	 * is_table_col切换boolean
 	 */
