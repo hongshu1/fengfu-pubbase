@@ -8,9 +8,13 @@ import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.barcodedetail.BarcodedetailService;
+import cn.rjtech.admin.barcodemaster.BarcodemasterService;
+import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
 import cn.rjtech.base.service.BaseService;
 import cn.rjtech.common.model.Barcodemaster;
 
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -35,6 +39,12 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
+    @Inject
+    private BarcodemasterService barcodemasterService;//条码表
+    @Inject
+    private BarcodedetailService barcodedetailService;//条码明细表
+    @Inject
+    private StockBarcodePositionService barcodePositionService;//条码库存表
     /**
      * 数据源
      */

@@ -28,6 +28,7 @@
           <form class="form-inline" id="inventoryForm_#(pageId)" onsubmit="return false;" method="post" style="width: 1200px">
             <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
                    maxlength="50" name="cinvaddcode" value="#(cinvaddcode??)"/>
+              <input type="text" id="barcode-input">
             <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>查询</button>
             <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>重置</button>
           </form>
@@ -76,6 +77,24 @@
   </div>
 </div>
 <script>
+    var barcodeInput = document.getElementById("barcode-input");
+
+    // 监听键盘事件
+    document.addEventListener("keydown", function(event) {
+        if (event.keyCode === 13) {  // 如果是回车键
+            event.preventDefault();  // 防止浏览器默认行为
+
+            var barcode = barcodeInput.value.trim();
+            if (barcode.length > 0) {
+                // 处理扫描数据
+                console.log("Scanned barcode: " + barcode);
+
+                // 清空输入框
+                barcodeInput.value = barcode;
+            }
+        }
+    });
+
   /*去后端执行提交功能*/
   function getEditableTableOptions_split_#(pageId)(){
       var editableTableOptions={

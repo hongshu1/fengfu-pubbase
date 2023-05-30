@@ -302,6 +302,7 @@ SELECT
     a.iSaleType,  ###销售类型
     e.cProdCalendarTypeSn,  ###生产日历
     e.cSupplyCalendarTypeSn,  ###供应日历
+    f.iInnerInStockDays,  ###标准在库天数
     f.iMinInStockDays,  ###最小在库天数
     f.iMaxInStockDays,  ###最大在库天数
     b.iWorkRegionMid,  ###默认产线id
