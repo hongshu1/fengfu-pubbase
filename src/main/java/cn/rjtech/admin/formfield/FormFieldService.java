@@ -158,5 +158,9 @@ public class FormFieldService extends BaseService<FormField> {
 
         return findRecord(sql);
     }
+
+    public boolean notExists(Long iformid) {
+        return null == queryInt("SELECT TOP 1 1 FROM Bd_FormField WHERE iformid = ? ", iformid);
+    }
     
 }
