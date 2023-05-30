@@ -279,8 +279,7 @@ public class FormService extends BaseService<Form> {
                     .setIAutoId(JBoltSnowflakeKit.me.nextId())
                     .setCFieldCode(meta.name)
                     .setCFieldName(meta.remarks)
-                    .setIsImportField(false)
-                    .setIsDeleted(false);
+                    .setIsImportField(false);
 
             switch (javaType) {
                 case "java.lang.string":

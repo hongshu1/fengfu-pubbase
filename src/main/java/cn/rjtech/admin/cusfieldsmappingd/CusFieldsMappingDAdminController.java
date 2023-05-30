@@ -102,7 +102,6 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
         if (ObjUtil.isNotNull(cusFieldsMappingD.getIFormFieldId())) {
             FormField formField = formFieldService.findById(cusFieldsMappingD.getIFormFieldId());
             ValidationUtils.notNull(formField, "表单字段不存在");
-            ValidationUtils.isTrue(!formField.getIsDeleted(), "表单字段已被删除");
             set("formField", formField);
         }
         
@@ -180,7 +179,6 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
             if (ObjUtil.isNotNull(cusFieldsMappingD.getIFormFieldId())) {
                 FormField formField = formFieldService.findById(cusFieldsMappingD.getIFormFieldId());
                 ValidationUtils.notNull(formField, "表单字段不存在");
-                ValidationUtils.isTrue(!formField.getIsDeleted(), "表单字段已被删除");
                 set("formField", formField);
             }
 
