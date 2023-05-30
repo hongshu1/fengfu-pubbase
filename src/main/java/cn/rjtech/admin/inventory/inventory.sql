@@ -74,7 +74,6 @@ FROM
 WHERE
 	bd_wms.isEnabled = '1'
 	AND bd_wms.isDeleted = '0'
-	AND bd_wms.iOrgId = 1
 	#if(invId)
 	    AND ic.iInventoryId = #para(invId)
 	#end
