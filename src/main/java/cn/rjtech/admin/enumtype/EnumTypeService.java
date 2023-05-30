@@ -119,19 +119,13 @@ public class EnumTypeService extends BaseService<EnumType> {
 			EnumVals enumVals = enumValsService.findById(lenumVals.get(i).getIAutoId());
 			enumVals.setIEnumTypeId(Long.valueOf(enumType.getCEnumTypeCode()));
 			enumVals.update();
-
 		}
-
-
-
 
 		boolean success=enumType.update();
 		if(success) {
 			//添加日志
 			//addUpdateSystemLog(enumType.getIAutoId(), JBoltUserKit.getUserId(), enumType.getName());
 		}
-
-
 		return ret(success);
 	}
 
