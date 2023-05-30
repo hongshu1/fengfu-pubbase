@@ -19,6 +19,7 @@
 <td>${data.attrLength}</td>
 <td>${data.attrFixed}</td>
 <td><img data-switchbtn data-handler="refreshJBoltTable" data-value="${data.isPkey}" data-url="admin/codegen/modelattr/toggleIsPkey/${data.id}-#(codeGenId?? 0)"/></td>
+<td><img {@if data.isPkey}class="d-none"{@/if} tooltip data-title="开启后 在save和update时 检测此表中其它数据此列是否存在相同值" data-switchbtn data-value="${data.isNeedCheckExists}" data-url="admin/codegen/modelattr/toggleIsNeedCheckExists/${data.id}-#(codeGenId?? 0)"/></td>
 <td><img data-switchbtn data-value="${data.isTableCol}" data-url="admin/codegen/modelattr/toggleIsTableCol/${data.id}-#(codeGenId?? 0)"/></td>
 <td><img data-switchbtn data-value="${data.isSortable}" data-url="admin/codegen/modelattr/toggleIsSortable/${data.id}-#(codeGenId?? 0)"/></td>
 <td><img data-switchbtn data-value="${data.isImportCol}" data-url="admin/codegen/modelattr/toggleIsImportCol/${data.id}-#(codeGenId?? 0)"/></td>
@@ -84,6 +85,7 @@
 <th rowspan="2" data-width="60" data-column="attr_length">长度</th>
 <th rowspan="2" data-width="70" data-column="attr_fixed">小数点</th>
 <th rowspan="2" data-width="80" data-column="is_pkey">主键</th>
+<th rowspan="2" data-width="110" data-column="is_need_check_exists">唯一性检测</th>
 <th colspan="7" class="bg-primary text-white">列表页基础配置</th>
 <th colspan="4" class="bg-info text-white">列翻译配置</th>
 <th colspan="12" class="bg-success text-white">查询条件配置</th>

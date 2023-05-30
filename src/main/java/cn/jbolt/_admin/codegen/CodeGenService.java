@@ -1207,6 +1207,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         data.set("paramIdType", getParamIdTypeByGenMode(codeGen.getMainTableIdgenmode()));
         data.set("needSort", codeGen.getIsShowOptcol() && codeGen.getIsShowOptcolSort());
         data.set("sortableColumns", codeGenModelAttrService.getSortableColumnsStr(codeGen.getId()));
+        data.set("checkExistsColumns", codeGenModelAttrService.getNeedCheckExistsColumns(codeGen.getId()));
         List<CodeGenModelAttr> conditions = codeGenModelAttrService.getCodeGenSearchConditionsAttrs(codeGen.getId());
         List<CodeGenModelAttr> keywordsSearchColumns = codeGenModelAttrService.getCodeGenSearchKeywordsColumnAttrs(codeGen.getId());
         processHasDateTimeColumn(conditions, data);
@@ -1335,6 +1336,16 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
                 genMehtods.add(new CodeGenMethod("recover"));
                 genMehtods.add(new CodeGenMethod("realDelete"));
             }
+        }
+
+        if(codeGen.getIsGenAutocompleteAction()){
+            genMehtods.add(new CodeGenMethod("autocompleteDatas"));
+        }
+        if(codeGen.getIsGenOptionsAction()){
+            CodeGenMethod method =new CodeGenMethod("options");
+            method.setHasIsDeletedColumn(hasIsDeletedColumn);
+            method.setHasEnableColumn(codeGenModelAttrService.checkHasEnableColumn(codeGen.getId()));
+            genMehtods.add(method);
         }
         return genMehtods;
     }
@@ -1826,5 +1837,14 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
                 codeGen.update();
             }
         }
+    }
+
+    public String getLastMainJavaPackage() {
+        CodeGen codeGen = findFirst(selectSql().orderById(true).isDeletedEq(false).select("id",CodeGen.MAIN_JAVA_PACKAGE));
+        return codeGen==null?null:codeGen.getMainJavaPackage();
+    }
+
+    public CodeGen getLastEnableCodeGen() {
+        return findFirst(selectSql().orderById(true).isDeletedEq(false));
     }
 }
