@@ -1,7 +1,7 @@
 <service>
-    <id>jbolt_pro</id>
-    <name>jbolt_pro</name>
-    <description>jbolt_pro</description>
+    <id>fengfu_pubbase</id>
+    <name>fengfu_pubbase</name>
+    <description>fengfu_pubbase</description>
     <executable>java</executable>
     <log mode="roll"/>
     <env name="MAIN_CLASS" value="cn.jbolt.starter.Starter"/>
