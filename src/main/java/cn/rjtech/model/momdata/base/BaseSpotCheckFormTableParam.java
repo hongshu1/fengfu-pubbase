@@ -141,7 +141,7 @@ public abstract class BaseSpotCheckFormTableParam<M extends BaseSpotCheckFormTab
 	/**
 	 * 列表可选值，多个";"分隔
 	 */
-	@JBoltField(name="coptions" ,columnName="cOptions",type="String", remark="列表可选值，多个";"分隔", required=false, maxLength=500, fixed=0, order=7)
+	@JBoltField(name="coptions" ,columnName="cOptions",type="String", remark="列表可选值，多个';'分隔", required=false, maxLength=500, fixed=0, order=7)
 	@JSONField(name = "coptions")
 	public java.lang.String getCOptions() {
 		return getStr("cOptions");
