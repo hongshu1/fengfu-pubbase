@@ -78,9 +78,9 @@ public class QcInspectionApiService extends JBoltApiBaseService {
     /**
      * 上传文件
      */
-    public JBoltApiRet flies(UploadFile file, String folde, Integer type) {
+    public JBoltApiRet flies(UploadFile file, String folder, Integer type) {
         UploadController uploadController = new UploadController();
-        uploadController.uploadFile(file,folde,type);
+        uploadController.uploadFile(file,folder,type);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(uploadController);
     }
 
