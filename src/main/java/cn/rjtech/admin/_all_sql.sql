@@ -632,3 +632,7 @@
 #namespace("momaterialscanusedlog")
 #include("momaterialscanusedlog/momaterialscanusedlog.sql")
 #end
+
+#namespace("depref")
+#include("depref/depref.sql")
+#end

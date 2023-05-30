@@ -198,7 +198,7 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
                     String[] split = saveRecord.getStr("ioperationid").split(",");
                     for (String ioperationid : split) {
                         InventoryspotcheckformOperation operation = new InventoryspotcheckformOperation();
-                        saveSpotCheckFormOperationModel(operation,checkForm.getIAutoId(),Long.valueOf(ioperationid));
+                        saveSpotCheckFormOperationModel(operation, checkForm.getIAutoId(), Long.valueOf(ioperationid));
                         operationList.add(operation);
                     }
                 }
@@ -219,13 +219,14 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
                     //变更工序
                     List<InventoryspotcheckformOperation> operations = checkformOperationService
                         .listByIinventorySpotCheckFormId(checkForm.getIAutoId());
-                    List<String> collect = operations.stream().map(e -> String.valueOf(e.getIAutoId())).collect(Collectors.toList());
-                    checkformOperationService.deleteByIds(String.join(",",collect));
+                    List<String> collect = operations.stream().map(e -> String.valueOf(e.getIAutoId()))
+                        .collect(Collectors.toList());
+                    checkformOperationService.deleteByIds(String.join(",", collect));
                     String[] split = splitIOperationId(updateRecord.getStr("ioperationid"));
                     ArrayList<InventoryspotcheckformOperation> list = new ArrayList<>();
                     for (String ioperationid : split) {
                         InventoryspotcheckformOperation operation = new InventoryspotcheckformOperation();
-                        saveSpotCheckFormOperationModel(operation,checkForm.getIAutoId(),Long.valueOf(ioperationid));
+                        saveSpotCheckFormOperationModel(operation, checkForm.getIAutoId(), Long.valueOf(ioperationid));
                         list.add(operation);
                     }
                     checkformOperationService.batchSave(list);
@@ -240,7 +241,7 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
         return ioperationid.split(",");
     }
 
-    public void saveSpotCheckFormOperationModel(InventoryspotcheckformOperation operation,Long iautoid,Long ioperationid){
+    public void saveSpotCheckFormOperationModel(InventoryspotcheckformOperation operation, Long iautoid, Long ioperationid) {
         operation.setIAutoId(JBoltSnowflakeKit.me.nextId());
         operation.setIInventorySpotCheckFormId(iautoid);
         operation.setIOperationId(Long.valueOf(ioperationid));

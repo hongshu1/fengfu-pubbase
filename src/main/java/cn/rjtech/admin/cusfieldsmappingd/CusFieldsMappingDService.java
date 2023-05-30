@@ -16,7 +16,6 @@ import cn.rjtech.admin.cusfieldsmappingdcodingrule.CusfieldsmappingdCodingruleSe
 import cn.rjtech.admin.cusfieldsmappingform.CusfieldsmappingFormService;
 import cn.rjtech.admin.cusfieldsmappingm.CusFieldsMappingMService;
 import cn.rjtech.admin.form.FormService;
-import cn.rjtech.admin.formfield.FormFieldService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.CusFieldsMappingRuleEnum;
 import cn.rjtech.enums.CusfieldsMappingCharEnum;
@@ -55,8 +54,6 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
     @Inject
     private FormService formService;
     @Inject
-    private FormFieldService formFieldService;
-    @Inject
     private CusFieldsMappingMService cusFieldsMappingMService;
     @Inject
     private CusfieldsmappingFormService cusfieldsmappingFormService;
@@ -78,7 +75,7 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
      *
      * @param pageNumber           第几页
      * @param pageSize             每页几条数据
-     * @param icusfieldsmappingmid
+     * @param icusfieldsmappingmid 映射主表ID
      * @param keywords             关键词
      * @param isEncoded            是否转换编码：0. 否 1. 是
      * @param isEnabled            是否启用：0. 否 1. 是
@@ -347,7 +344,7 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
     /**
      * 根据上传的文件及导入格式名
      *
-     * @param file        上传的文件
+     * @param file              上传的文件
      * @param cusFieldsMappingM 格式名
      * @return 导入的数据
      */
@@ -463,7 +460,7 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         CusFieldsMappingM m = cusFieldsMappingMService.findByCformatName(cformatname);
         ValidationUtils.notNull(m, "导入模板不存在");
         ValidationUtils.isTrue(!m.getIsDeleted(), "导入模板已被删除");
-        
+
         List<Map<String, Object>> rowDatas = getImportDataMaps(file, m);
 
         return successWithData(rowDatas);
