@@ -424,8 +424,8 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 				continue;
 			}
 			Subjectm hsubject = subjectmService.findHighestSubjectByLowestSubjectName(cLowestSubjectName);
-			row.set("ihighestsubjectid",hsubject != null ? hsubject.getIautoid():null);
-			row.set("ilowestsubjectid",lsubject.getIautoid());
+			row.set("ihighestsubjectid",hsubject != null ? hsubject.getIAutoId():null);
+			row.set("ilowestsubjectid",lsubject.getIAutoId());
 			//事业类型中文转sn
 			String careerTypeName = row.getStr(FullYearBudgetEnum.CAREERTYPENAME.getField());
 			row.set("careertype",JBoltStringUtil.isBlank(careerTypeName) ? null:dictionaryRecord.getStr(careerTypeName));

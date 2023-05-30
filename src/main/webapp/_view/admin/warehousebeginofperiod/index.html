@@ -71,9 +71,9 @@
   <td title="${data.cinvstd}">${data.cinvstd}</td>
   <td title="${data.cuomname}">${data.cuomname}</td>
   <td title="${data.qty}">${data.qty, 2|number_format}</td>
-  <td title="${data.availableqty}">${data.availableqty, 2|number_format}</td>
-  <td title="${data.availablenum}">${data.availablenum, 2|number_format}</td>
-  <td title="${data.num}">${data.num, 2|number_format}</td>
+  <td title="${data.ungeneratedstockqty}">${data.ungeneratedstockqty, 2|number_format}</td>
+  <td title="${data.generatedstockqty}">${data.generatedstockqty, 2|number_format}</td>
+  <td title="${data.availablestockqty}">${data.availablestockqty, 2|number_format}</td>
 </tr>
 {@/each}
 </textarea>
@@ -120,9 +120,9 @@
         <th data-width="150" data-column="cInvStd">规格</th>
         <th data-width="120" data-column="cUomName">主计量单位</th>
         <th data-width="150" data-column="qty" title="期初库存数量">期初库存数量</th>
-        <th data-width="150" data-column="availableqty" title="未生成条码库存数量">未生成条码库存数量</th>
-        <th data-min-width="160" data-column="availablenum" title="已生成条码库存数量">已生成条码库存数量</th>
-        <th data-width="100" data-column="num" title="可用条码数">可用条码数</th>
+        <th data-width="150" data-column="ungeneratedstockqty" title="未生成条码库存数量">未生成条码库存数量</th>
+        <th data-min-width="160" data-column="generatedstockqty" title="已生成条码库存数量">已生成条码库存数量</th>
+        <th data-width="100" data-column="availablestockqty" title="可用条码数">可用条码数</th>
       </tr>
       </thead>
       <tbody></tbody>

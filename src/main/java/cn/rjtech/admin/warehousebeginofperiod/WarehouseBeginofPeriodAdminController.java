@@ -2,6 +2,7 @@ package cn.rjtech.admin.warehousebeginofperiod;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -28,29 +29,39 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     @Inject
     WarehouseBeginofPeriodService service;
 
+    /*
+     * 主页面
+     * */
     public void index() {
         render("index.html");
     }
 
     /**
-     * 新增期初库存
+     * 新增期初库存页面
      */
     public void add() {
         render("add.html");
     }
 
     /*
-     * 新增期初条码
+     * 新增期初条码页面
      * */
     public void addBarcode() {
         render("addBarcode.html");
     }
 
     /*
-     * 条码明细
+     * 条码明细页面
      * */
     public void detail() {
         render("detail.html");
+    }
+
+    /*
+     * 自动条码明细页面加载数据
+     * */
+    public void detailDatas() {
+        renderJsonData(service.detailDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
     /**
@@ -60,28 +71,23 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         renderJsonData(service.datas(getPageNumber(), getPageSize(), getKv()));
     }
 
+    /*public void save(JBoltTable jBoltTable) {
+        List<Record> saveRecordList = jBoltTable.getSaveRecordList();
+        renderJson(service.save());
+    }*/
+
     /*
      * 保存新增期初库存
      * */
-    public void save() {
-        Kv kv = getKv();
-        renderJson(service.save());
-    }
-
-    /*
-     * 提交
-     * */
-    public void submitAll() {
-        Kv kv = getKv();
-        renderJsonData("提交成功");
+    public void submitStock(JBoltPara jBoltPara) {
+        renderJsonData(service.submitStock(jBoltPara));
     }
 
     /*
      * 保存新增期初条码
      * */
-    public void saveBarcode() {
-        Kv kv = getKv();
-        renderJsonData("提交成功");
+    public void saveBarcode(JBoltPara jBoltPara) {
+        renderJsonData(service.saveBarcode(jBoltPara));
     }
 
     /*
@@ -125,5 +131,13 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
      * */
     public void whoptions() {
         renderJsonData(service.whoptions());
+    }
+
+    /*
+    * 根据仓库编码查询库区编码
+    * */
+    public void findAreaByWhcode(){
+        String cwhcode = get("cwhcode");
+        renderJsonData(service.findAreaByWhcode(cwhcode));
     }
 }

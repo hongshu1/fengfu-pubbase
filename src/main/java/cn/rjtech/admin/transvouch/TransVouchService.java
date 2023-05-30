@@ -166,6 +166,13 @@ public class TransVouchService extends BaseService<TransVouch> {
 		return dbTemplate("transvouch.workRegionMList", kv).find();
 	}
 
+	/**
+	 * 转出仓库
+	 */
+	public List<Record> warehouse(Kv kv) {
+		return dbTemplate("transvouch.warehouse", kv.set("OrgCode",getOrgCode())).find();
+	}
+
 
 	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, Integer param, String revokeVal) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
@@ -252,7 +259,6 @@ public class TransVouchService extends BaseService<TransVouch> {
 					transVouch.setModifyPerson(userName);
 					update(transVouch);
 					headerId = transVouch.getAutoID();
-					Ret ret = pushU8(headerId);
 				}
 			}
 
@@ -279,7 +285,6 @@ public class TransVouchService extends BaseService<TransVouch> {
 					transVouchDetail.setModifyPerson(userName);
 				});
 				transVouchDetailService.batchUpdate(lines);
-				Ret ret = pushU8(finalHeaderId);
 			}
 			// 获取待删除数据 执行删除
 			if (jBoltTable.deleteIsNotBlank()) {
@@ -312,6 +317,7 @@ public class TransVouchService extends BaseService<TransVouch> {
 					transVouch.setAuditDate(nowDate);
 					transVouch.setAuditPerson(userName);
 					success= transVouch.update();
+					this.pushU8(iAutoId);
 				}
 			}
 
@@ -366,7 +372,7 @@ public class TransVouchService extends BaseService<TransVouch> {
 		if (list.size() > 0) {
 //          接口参数
 			User user = JBoltUserKit.getUser();
-			String url = "http://localhost:8081/api/erp/common/vouchProcessDynamicSubmit";
+			String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
 			String userCode = user.getUsername();
 			Long userId = user.getId();
 			String Password = user.getPassword();
@@ -389,6 +395,7 @@ public class TransVouchService extends BaseService<TransVouch> {
 			list.forEach(record -> {
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("invstd", record.get("invstd"));
+				jsonObject.put("iwhcode", record.get("iwhcode"));
 				jsonObject.put("iwhname", record.get("iwhname"));
 				jsonObject.put("iposcode", record.get("iposcode"));
 				jsonObject.put("iposname", record.get("iposname"));
@@ -396,12 +403,15 @@ public class TransVouchService extends BaseService<TransVouch> {
 				jsonObject.put("owhname", record.get("owhname"));
 				jsonObject.put("oposcode", record.get("oposcode"));
 				jsonObject.put("invname", record.get("invname"));
+				jsonObject.put("vt_id", "");
+				jsonObject.put("billDate", record.get("billdate"));
+				jsonObject.put("invcode", record.get("invcode"));
 				jsonObject.put("userCode", userCode);
-				jsonObject.put("ispack", record.get("ispack"));
+				jsonObject.put("ispack", "0");
 				jsonObject.put("organizeCode", organizecode);
 				jsonObject.put("qty", record.get("qty"));
 				jsonObject.put("tag", type);
-				jsonObject.put("barcode", record.get("spotTicket"));
+				jsonObject.put("barcode", record.get("barcode"));
 				jsonObject.put("oposname", record.get("oposname"));
 				jsonObject.put("ORdType", record.get("ordtype"));
 				jsonObject.put("ORdName", record.get("ordname"));
@@ -456,10 +466,10 @@ public class TransVouchService extends BaseService<TransVouch> {
 						LOG.info("s===>" + bill);
 						LOG.info("data====" + data);
 
-						int update = update("update T_Sys_SOReturn set U9BillNo = '" + bill + "', status = '2' where" + " AutoID " + "= " + "'" + id + "'");
+//						int update = update("update T_Sys_SOReturn set U9BillNo = '" + bill + "', status = '2' where" + " AutoID " + "= " + "'" + id + "'");
 
-						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
-								"推送数据失败," + "失败原因" + msg);
+//						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
+//								"推送数据失败," + "失败原因" + msg);
 					}
 					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
 				} else {
