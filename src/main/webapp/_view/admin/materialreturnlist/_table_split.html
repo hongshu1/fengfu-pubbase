@@ -93,81 +93,81 @@
               name:"table2"
           },
       cols: {
-          spotticket: { //现品票条码
-              maxLength: 100,
-              required: false,
-              placeholder: "=请选择=",
-              type: "autocomplete",
-              url: "admin/otherout/barcodeDatas",
-              textAttr: "spotticket",
-              width: 800,
-              sync: "",
-              valueAttr: "spotticket",
-              columnAttr: "barcode,cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid,qty",
-              header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
-              changeColumns: [{column: "spotticket", use: "barcode"},
-                  {column: "cinvcode", use: "cinvaddcode"},
-                  {column: "cinvname", use: "cinvname"},
-                  {column: "cinvcode1", use: "cinvcode1"},
-                  {column: "cinvname1", use: "cinvname1"},
-                  {column: "cinvstd", use: "cinvstd"},
-                  {column: "pingpai", use: "cinvname1"},
-                  {column: "iqty", use: "qty"},
-                  {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
-
-          },
-          cinvcode: {
-              type: "autocomplete",
-              url: "admin/otherout/autocomplete",
-              maxLength: 100,
-              required: false,
-              placeholder: "=请选择=",
-              textAttr: "cinvcode",
-              width: 800,
-              valueAttr: "cinvcode",
-              columnAttr: "cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid,qty",
-              header: '存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
-              changeColumns: [{column: "cinvcode", use: "cinvaddcode"},
-                  {column: "cinvname", use: "cinvname"},
-                  {column: "cinvcode1", use: "cinvcode1"},
-                  {column: "cinvname1", use: "cinvname1"},
-                  {column: "cinvstd", use: "cinvstd"},
-                  {column: "pingpai", use: "cinvname1"},
-                  {column: "iqty", use: "qty"},
-                  {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
-          },
+          // spotticket: { //现品票条码
+          //     maxLength: 100,
+          //     required: false,
+          //     placeholder: "=请选择=",
+          //     type: "autocomplete",
+          //     url: "admin/otherout/barcodeDatas",
+          //     textAttr: "spotticket",
+          //     width: 800,
+          //     sync: "",
+          //     valueAttr: "spotticket",
+          //     columnAttr: "barcode,cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid,qty",
+          //     header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
+          //     changeColumns: [{column: "spotticket", use: "barcode"},
+          //         {column: "cinvcode", use: "cinvaddcode"},
+          //         {column: "cinvname", use: "cinvname"},
+          //         {column: "cinvcode1", use: "cinvcode1"},
+          //         {column: "cinvname1", use: "cinvname1"},
+          //         {column: "cinvstd", use: "cinvstd"},
+          //         {column: "pingpai", use: "cinvname1"},
+          //         {column: "iqty", use: "qty"},
+          //         {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
+          //
+          // },
+          // cinvcode: {
+          //     type: "autocomplete",
+          //     url: "admin/otherout/autocomplete",
+          //     maxLength: 100,
+          //     required: false,
+          //     placeholder: "=请选择=",
+          //     textAttr: "cinvcode",
+          //     width: 800,
+          //     valueAttr: "cinvcode",
+          //     columnAttr: "cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid,qty",
+          //     header: '存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
+          //     changeColumns: [{column: "cinvcode", use: "cinvaddcode"},
+          //         {column: "cinvname", use: "cinvname"},
+          //         {column: "cinvcode1", use: "cinvcode1"},
+          //         {column: "cinvname1", use: "cinvname1"},
+          //         {column: "cinvstd", use: "cinvstd"},
+          //         {column: "pingpai", use: "cinvname1"},
+          //         {column: "iqty", use: "qty"},
+          //         {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
+          // },
           /*        ipurchaseuomid: {
                     type: "amount",//类型
                     placeholder: "采购单位",
                     tooltip: "采购单位",
                   },*/
-          qty: {
-              type:"input",
-              submitAttr:"qty",
-              required:true,
-              handler:function (table,td,text,value,jsonData) {
-                  let iqty =  jsonData.iqty;
-                  console.log(iqty);
-                  let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
-                  console.log('退货数量===>',qty);
-                  if (qty > 0){
-                      showFormEleErrorStyle(td,"请输入小于或等于0的数量！！！");
-                      return false;
-                  }
-                  let cha = iqty- (qty);
-                  if (cha > iqty*2){
-                      showFormEleErrorStyle(td,"可退数量为"+iqty+",退货数量已超出！！！");
-                      return false;
-                  }
-              }
-          },
-          qtys: {
-              submitAttr:"qtys",
-          },
-          memo: {
-              type:"input",
-              submitAttr:"memo",
-          },
+          // qty: {
+          //     type:"input",
+          //     submitAttr:"qty",
+          //     required:true,
+          //     handler:function (table,td,text,value,jsonData) {
+          //         let iqty =  jsonData.iqty;
+          //         console.log(iqty);
+          //         let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
+          //         console.log('退货数量===>',qty);
+          //         if (qty > 0){
+          //             showFormEleErrorStyle(td,"请输入小于或等于0的数量！！！");
+          //             return false;
+          //         }
+          //         let cha = iqty- (qty);
+          //         if (cha > iqty*2){
+          //             showFormEleErrorStyle(td,"可退数量为"+iqty+",退货数量已超出！！！");
+          //             return false;
+          //         }
+          //     }
+          // },
+          // qtys: {
+          //     submitAttr:"qtys",
+          // },
+          // memo: {
+          //     type:"input",
+          //     submitAttr:"memo",
+          // },
       }
     };
     return editableTableOptions;
