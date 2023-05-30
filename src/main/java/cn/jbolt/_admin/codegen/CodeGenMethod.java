@@ -16,6 +16,8 @@ public class CodeGenMethod {
     private String value;
     private boolean isToggle;
     private boolean isUploadAction;
+    private boolean hasEnableColumn;
+    private boolean hasIsDeletedColumn;
 
     private String uploadDataName;
     private String uploadColName;
@@ -124,4 +126,19 @@ public class CodeGenMethod {
         this.uploadDataName = uploadDataName;
     }
 
+    public boolean getHasEnableColumn() {
+        return hasEnableColumn;
+    }
+
+    public void setHasEnableColumn(boolean hasEnableColumn) {
+        this.hasEnableColumn = hasEnableColumn;
+    }
+
+    public boolean getHasIsDeletedColumn() {
+        return hasIsDeletedColumn;
+    }
+
+    public void setHasIsDeletedColumn(boolean hasIsDeletedColumn) {
+        this.hasIsDeletedColumn = hasIsDeletedColumn;
+    }
 }

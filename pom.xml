@@ -929,7 +929,7 @@
             <id>cdev</id>
             <properties>
                 <pdev>cdev</pdev>
-                <service.env>dev</service.env>
+                <service.env>prod</service.env>
                 <log4j2.level>INFO</log4j2.level>
                 <log.path>/rj-tech/logs/</log.path>
                 <log.file.name>${project.artifactId}-prod.log</log.file.name>

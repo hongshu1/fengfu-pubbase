@@ -158,6 +158,8 @@ public abstract class BaseCodeGenModelAttr<M extends BaseCodeGenModelAttr<M>> ex
     public static final String QINIU_BUCKET_SN = "qiniu_bucket_sn";
     /**七牛file key*/
     public static final String QINIU_FILE_KEY = "qiniu_file_key";
+    /**是否检测数据重复字段*/
+    public static final String IS_NEED_CHECK_EXISTS = "is_need_check_exists";
 	/**
 	 * 主键ID
 	 */
@@ -1342,6 +1344,22 @@ public abstract class BaseCodeGenModelAttr<M extends BaseCodeGenModelAttr<M>> ex
 	@JBoltField(name="qiniuFileKey" ,columnName="qiniu_file_key",type="String", remark="七牛file key", required=false, maxLength=100, fixed=0, order=74)
 	public java.lang.String getQiniuFileKey() {
 		return getStr("qiniu_file_key");
+	}
+
+	/**
+	 * 是否检测数据重复字段
+	 */
+	public M setIsNeedCheckExists(java.lang.Boolean isNeedCheckExists) {
+		set("is_need_check_exists", isNeedCheckExists);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否检测数据重复字段
+	 */
+	@JBoltField(name="isNeedCheckExists" ,columnName="is_need_check_exists",type="Boolean", remark="是否检测数据重复字段", required=true, maxLength=1, fixed=0, order=75)
+	public java.lang.Boolean getIsNeedCheckExists() {
+		return getBoolean("is_need_check_exists");
 	}
 
 }

@@ -20,6 +20,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
@@ -59,7 +60,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
      * @param pageNumber 第几页
      * @param pageSize   每页几条数据
      */
-    public Object getAdminDatas(int pageNumber, int pageSize, Kv kv) {
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
         return dbTemplate("weekorderm.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
     }
 
