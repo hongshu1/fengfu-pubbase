@@ -503,6 +503,4 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 		return dept;
 	}
 
-
-
 }

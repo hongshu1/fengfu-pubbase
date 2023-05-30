@@ -17,7 +17,9 @@ import cn.rjtech.admin.operation.OperationService;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.model.momdata.InventorySpotCheckForm;
 import cn.rjtech.model.momdata.InventoryspotcheckformOperation;
+import cn.rjtech.model.momdata.Operation;
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -28,6 +30,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 质量建模-点检适用标准
@@ -86,6 +89,26 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
     public Page<Record> pageList(Kv kv) {
         Page<Record> recordPage = dbTemplate("inventoryspotcheckform.list", kv)
             .paginate(kv.getInt("page"), kv.getInt("pageSize"));
+        for (Record record : recordPage.getList()) {
+            List<InventoryspotcheckformOperation> spotCheckFormOperationList = checkformOperationService
+                .listByIinventorySpotCheckFormId(record.get("iautoid"));
+            String coperationname = "";
+            for (InventoryspotcheckformOperation checkformOperation : spotCheckFormOperationList) {
+                Operation operation = operationService.findById(checkformOperation.getIOperationId());
+                coperationname += operation.getCoperationname() + ",";
+            }
+            //去除最后一个逗号
+            if (coperationname.endsWith(",")) {
+                coperationname = coperationname.substring(0, coperationname.length() - 1);
+            }
+            List<String> collect = spotCheckFormOperationList
+                .stream()
+                .map(e -> String.valueOf(e.getIOperationId()))
+                .collect(Collectors.toList());
+            record.set("ioperationid", String.join(",", collect));
+            record.set("iinventoryspotcheckformid", spotCheckFormOperationList.get(0).getIInventorySpotCheckFormId());
+            record.set("coperationname", coperationname);
+        }
         return recordPage;
     }
 
@@ -155,6 +178,74 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
         return null;
     }
 
+    public Ret updateTable(JBoltTable jBoltTable) {
+        if (jBoltTable == null || jBoltTable.isBlank()) {
+            return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
+        }
+        Date now = new Date();
+        InventorySpotCheckForm spotCheckForm = jBoltTable.getFormModel(InventorySpotCheckForm.class);
+        tx(() -> {
+            //1、保存
+            ArrayList<InventorySpotCheckForm> checkFormList = new ArrayList<>();//点检适用标准表
+            ArrayList<InventoryspotcheckformOperation> operationList = new ArrayList<>();
+            if (jBoltTable.saveIsNotBlank()) {
+                List<Record> saveRecordList = jBoltTable.getSaveRecordList();
+                for (Record saveRecord : saveRecordList) {
+                    InventorySpotCheckForm checkForm = new InventorySpotCheckForm();
+                    saveInventorySpotCheckForm(checkForm, saveRecord.getLong("iautoid"), now, spotCheckForm);
+                    checkFormList.add(checkForm);
+
+                    String[] split = saveRecord.getStr("ioperationid").split(",");
+                    for (String ioperationid : split) {
+                        InventoryspotcheckformOperation operation = new InventoryspotcheckformOperation();
+                        saveSpotCheckFormOperationModel(operation,checkForm.getIAutoId(),Long.valueOf(ioperationid));
+                        operationList.add(operation);
+                    }
+                }
+                //保存在【Bd_InventorySpotCheckForm】表
+                batchSave(checkFormList);
+                //保存在【Bd_InventorySpotCheckForm_Operation】表
+                checkformOperationService.batchSave(operationList);
+            }
+            //2、更新
+            if (jBoltTable.updateIsNotBlank()) {
+                List<Record> updateRecordList = jBoltTable.getUpdateRecordList();
+                for (Record updateRecord : updateRecordList) {
+                    InventorySpotCheckForm checkForm = findById(updateRecord.getStr("iautoid"));
+                    saveModel(checkForm, now, JBoltUserKit.getUserId(), JBoltUserKit.getUserName(), checkForm.getIType(),
+                        checkForm.getISpotCheckFormId());
+                    update(checkForm);
+
+                    //变更工序
+                    List<InventoryspotcheckformOperation> operations = checkformOperationService
+                        .listByIinventorySpotCheckFormId(checkForm.getIAutoId());
+                    List<String> collect = operations.stream().map(e -> String.valueOf(e.getIAutoId())).collect(Collectors.toList());
+                    checkformOperationService.deleteByIds(String.join(",",collect));
+                    String[] split = splitIOperationId(updateRecord.getStr("ioperationid"));
+                    ArrayList<InventoryspotcheckformOperation> list = new ArrayList<>();
+                    for (String ioperationid : split) {
+                        InventoryspotcheckformOperation operation = new InventoryspotcheckformOperation();
+                        saveSpotCheckFormOperationModel(operation,checkForm.getIAutoId(),Long.valueOf(ioperationid));
+                        list.add(operation);
+                    }
+                    checkformOperationService.batchSave(list);
+                }
+            }
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    public String[] splitIOperationId(String ioperationid) {
+        return ioperationid.split(",");
+    }
+
+    public void saveSpotCheckFormOperationModel(InventoryspotcheckformOperation operation,Long iautoid,Long ioperationid){
+        operation.setIAutoId(JBoltSnowflakeKit.me.nextId());
+        operation.setIInventorySpotCheckFormId(iautoid);
+        operation.setIOperationId(Long.valueOf(ioperationid));
+    }
+
     public Ret updateEditTable(JBoltTable jBoltTable, Long userId, Date now, Kv kv) {
         if (jBoltTable == null || jBoltTable.isBlank()) {
             return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
@@ -163,22 +254,16 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
         if (jBoltTable.saveIsNotBlank()) {
             //头表：bd_inventorySpotCheckForm
             InventorySpotCheckForm spotCheckForm = jBoltTable.getFormModel(InventorySpotCheckForm.class);
-            if (notOk(spotCheckForm.getISpotCheckFormId())) {
-                return fail("点检表格名称不能为空");
-            }
             //表单：从bd_inventory表获取数据
             List<Inventory> saveModelList = jBoltTable.getSaveModelList(Inventory.class);
-            if (saveModelList.isEmpty()) {
-                return fail("适用存货不能为空");
-            }
             String userName = JBoltUserKit.getUserName();
-            List<InventoryspotcheckformOperation> operationList =  getcheckformOperation(jBoltTable);//存货点检工序表
+            List<InventoryspotcheckformOperation> operationList = getcheckformOperation(jBoltTable);//存货点检工序表
             ArrayList<InventorySpotCheckForm> checkFormList = new ArrayList<>();//点检适用标准表
             ArrayList<InventoryspotcheckformOperation> formOperationList = new ArrayList<>();
             for (Inventory inventory : saveModelList) {
                 InventorySpotCheckForm checkForm = new InventorySpotCheckForm();
-                saveInventorySpotCheckForm(checkForm, inventory, userId, now, userName, spotCheckForm.getIType(),
-                    spotCheckForm.getISpotCheckFormId());
+//                saveInventorySpotCheckForm(checkForm, inventory.getIAutoId(), userId, now, userName, spotCheckForm.getIType(),
+//                    spotCheckForm.getISpotCheckFormId());
                 checkFormList.add(checkForm);
                 //添加到【质量建模-存货点检工序】表
                 InventoryspotcheckformOperation operation = operationList.stream()
@@ -191,16 +276,16 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
                 formOperationList.add(formOperation);
             }
             //保存在【Bd_InventorySpotCheckForm】表
-            batchSave(checkFormList);
+            // batchSave(checkFormList);
             //保存在【Bd_InventorySpotCheckForm_Operation】表
-            checkformOperationService.batchSave(formOperationList);
+            //checkformOperationService.batchSave(formOperationList);
         }
         //2、更新
         if (jBoltTable.updateIsNotBlank()) {
             //获取表头
             InventorySpotCheckForm spotCheckForm = jBoltTable.getFormBean(InventorySpotCheckForm.class);
             List<InventorySpotCheckForm> updateModelList = jBoltTable.getUpdateModelList(InventorySpotCheckForm.class);
-            List<InventoryspotcheckformOperation> operationList =  getcheckformOperation(jBoltTable);//存货点检工序表
+            List<InventoryspotcheckformOperation> operationList = getcheckformOperation(jBoltTable);//存货点检工序表
             List<InventoryspotcheckformOperation> formOperationList = new ArrayList<>();
             for (InventorySpotCheckForm checkForm : updateModelList) {
                 checkForm.setIType(spotCheckForm.getIType());
@@ -210,34 +295,37 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
                 checkForm.setCUpdateName(JBoltUserKit.getUserName());
                 //查询[质量建模-存货点检工序]
                 List<InventoryspotcheckformOperation> operations = checkformOperationService
-                    .listByIinventorySpotCheckFormId(checkForm.getIAutoId().toString());
+                    .listByIinventorySpotCheckFormId(checkForm.getIAutoId());
                 InventoryspotcheckformOperation operation = operationList.stream()
-                    .filter(e -> e.getIInventorySpotCheckFormId().equals(checkForm.getIAutoId())).findFirst().orElse(new InventoryspotcheckformOperation());
+                    .filter(e -> e.getIInventorySpotCheckFormId().equals(checkForm.getIAutoId())).findFirst()
+                    .orElse(new InventoryspotcheckformOperation());
                 for (InventoryspotcheckformOperation op : operations) {
                     op.setIOperationId(operation.getIOperationId());//更新工序主键id
                 }
                 formOperationList.addAll(operations);
             }
             //更新【Bd_InventorySpotCheckForm】表
-            batchUpdate(updateModelList);
+            //batchUpdate(updateModelList);
             //更新【Bd_InventorySpotCheckForm_Operation】表
-            checkformOperationService.batchUpdate(formOperationList);
+            //checkformOperationService.batchUpdate(formOperationList);
         }
         return SUCCESS;
     }
 
     /**
-    * 获取存货点检工序表
-    * */
-    public List<InventoryspotcheckformOperation> getcheckformOperation(JBoltTable jBoltTable ){
-        if (jBoltTable.saveIsNotBlank()){
+     * 获取存货点检工序表
+     */
+    public List<InventoryspotcheckformOperation> getcheckformOperation(JBoltTable jBoltTable) {
+        if (jBoltTable.saveIsNotBlank()) {
             return jBoltTable.getSaveModelList(InventoryspotcheckformOperation.class);
         }
         return jBoltTable.getUpdateModelList(InventoryspotcheckformOperation.class);
     }
 
-    public void saveInventorySpotCheckForm(InventorySpotCheckForm checkForm, Inventory inventory,
-                                           Long userId, Date now, String userName, int iType, Long iSpotCheckFormId) {
+    public void saveInventorySpotCheckForm(InventorySpotCheckForm checkForm, Long inventoryiautoid,
+                                           Date now, InventorySpotCheckForm spotCheckForm) {
+        Long userId = JBoltUserKit.getUserId();
+        String userName = JBoltUserKit.getUserName();
         checkForm.setIAutoId(JBoltSnowflakeKit.me.nextId());
         checkForm.setICreateBy(userId);
         checkForm.setDCreateTime(now);
@@ -245,32 +333,28 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
         checkForm.setIOrgId(getOrgId());
         checkForm.setCOrgCode(getOrgCode());
         checkForm.setCOrgName(getOrgName());
+        checkForm.setIsDeleted(false);
+        checkForm.setIInventoryId(inventoryiautoid);//iInventoryId 存货ID
+        //
+        saveModel(checkForm, now, userId, userName, spotCheckForm.getIType(), spotCheckForm.getISpotCheckFormId());
+    }
+
+    public void saveModel(InventorySpotCheckForm checkForm, Date now, Long userId,
+                          String userName, int iType, Long iSpotCheckFormId) {
         checkForm.setDUpdateTime(now);
         checkForm.setIUpdateBy(userId);
         checkForm.setCUpdateName(userName);
-
         checkForm.setIType(iType);//点检业务
         checkForm.setISpotCheckFormId(iSpotCheckFormId);//iSpotCheckFormId 点检表格ID
-        checkForm.setIInventoryId(inventory.getIAutoId());//iInventoryId 存货ID
     }
 
-    public List<InventorySpotCheckForm> list(Kv kv){
-        return find("SELECT t1.*, t2.iautoid as spotcheckformiautoid, t2.cSpotCheckFormName, \n"
-            + "t3.iautoid as inventoryiautoid, t3.cInvCode, t3.cInvName, t3.cInvCode1, t3.cInvAddCode,\n"
-            + "t3.cInvName1, t3.iEquipmentModelId, t3.cInvStd, t3.iUomClassId, t3.iInventoryUomId1, \n"
-            + "t3.iInventoryUomClassId2, t4.cEquipmentModelCode, t4.cEquipmentModelName,t5.cUomCode,t5.cUomName\n"
-            + "FROM Bd_InventorySpotCheckForm t1 \n"
-            + "LEFT JOIN Bd_SpotCheckForm t2 on t1.iSpotCheckFormId = t2.iAutoId\n "
-            + "LEFT JOIN Bd_Inventory t3 on  t1.iInventoryId = t3.iAutoId \n"
-            + "LEFT JOIN Bd_EquipmentModel t4 on t3.iEquipmentModelId = t4.iAutoId \n"
-            + "LEFT JOIN Bd_Uom t5 on t3.iInventoryUomId1 = t5.iAutoId \n"
-            + "WHERE t1.IsDeleted='0' and t1.iautoid=?\n"
-            + "ORDER BY t1.dUpdateTime DESC", kv.get("iautoid"));
+    public List<Record> list(Kv kv) {
+        return dbTemplate("inventoryspotcheckform.exportList", kv).find();
     }
 
     /**
      * 导出excel文件
-     * */
+     */
     public JBoltExcel exportExcelTpl(List<InventorySpotCheckForm> datas) {
         //2、创建JBoltExcel
         JBoltExcel jBoltExcel = JBoltExcel
@@ -278,10 +362,10 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
             .addSheet(//设置sheet
                 JBoltExcelSheet.create("供应商分类")//创建sheet name保持与模板中的sheet一致
                     .setHeaders(//sheet里添加表头
-                        JBoltExcelHeader.create("fathercvccode", "父级供应商分类编码",25),
-                        JBoltExcelHeader.create("fathercvcname", "父级供应商分类名称",25),
-                        JBoltExcelHeader.create("childcvccoded", "供应商分类编码",25),
-                        JBoltExcelHeader.create("childcvcnamed", "供应商分类名称",25)
+                        JBoltExcelHeader.create("fathercvccode", "父级供应商分类编码", 25),
+                        JBoltExcelHeader.create("fathercvcname", "父级供应商分类名称", 25),
+                        JBoltExcelHeader.create("childcvccoded", "供应商分类编码", 25),
+                        JBoltExcelHeader.create("childcvcnamed", "供应商分类名称", 25)
                     )
                     .setDataChangeHandler((data, index) -> {//设置数据转换处理器
                         //将user_id转为user_name
@@ -317,10 +401,9 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
 
     /**
      * 供应商分类excel导入数据库
-     * */
+     */
     public Ret importExcelData(File file) {
         StringBuilder errorMsg = new StringBuilder();
-        Date date = new Date();
         JBoltExcel jBoltExcel = JBoltExcel
             //从excel文件创建JBoltExcel实例
             .from(file)
@@ -382,7 +465,7 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
                 vendorClass.setISource(SourceEnum.MES.getValue());
             }*/
         }
-        
+
         // 执行批量操作
         boolean success = tx(() -> {
             batchSave(models);

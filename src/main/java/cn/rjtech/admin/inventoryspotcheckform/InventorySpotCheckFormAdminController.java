@@ -4,7 +4,6 @@ import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -24,6 +23,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -144,7 +144,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
         String[] ids = get("ids").split(",");
         for (String id : ids) {
             List<InventoryspotcheckformOperation> list = inventoryspotcheckformOperationService
-                .listByIinventorySpotCheckFormId(id);
+                .listByIinventorySpotCheckFormId(Long.valueOf(id));
             for (InventoryspotcheckformOperation operation : list) {
                 inventoryspotcheckformOperationService.delete(operation.getIAutoId());
             }
@@ -168,7 +168,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
     }
 
     public void updateEditTable() {
-        renderJson(service.updateEditTable(getJBoltTable(), JBoltUserKit.getUserId(), new Date(), getKv()));
+        renderJson(service.updateTable(getJBoltTable()));
     }
 
     /**
@@ -177,8 +177,12 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
     @SuppressWarnings("unchecked")
     public void dataExport() throws Exception {
         //1、查询全部
-        List<InventorySpotCheckForm> list = service.list(getKv());
+        List<Record> recordList = service.list(getKv());
         //2、生成excel文件
+        ArrayList<InventorySpotCheckForm> list = new ArrayList<>();
+        recordList.stream().forEach(e->{
+            list.add(service.findById(e.get("iautoid")));
+        });
         JBoltExcel jBoltExcel = service.exportExcelTpl(list);
         //3、导出
         renderBytesToExcelXlsFile(jBoltExcel);

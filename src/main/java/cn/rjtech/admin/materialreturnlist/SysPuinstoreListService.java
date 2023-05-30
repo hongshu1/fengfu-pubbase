@@ -300,7 +300,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					for (int i = 0; i < jBoltTableSaveRecordList.size(); i++) {
 						k++;
 						Record record = jBoltTableSaveRecordList.get(i);
-						if (isNull(record.get("masid"))){
+						if (!isNull(record.get("iqty"))){
 							//输入数量
 							BigDecimal qty = record.getBigDecimal("qty");
 							//当前单行数量
@@ -340,6 +340,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					materialsOutDetail.setSourceBillID(finalDetailByParam.getStr("sourcebillid")); //来源单据ID(订单id)
 					materialsOutDetail.setSourceBillDid(finalDetailByParam.getStr("sourcebilldid")); //来源单据DID;采购或委外单身ID
 					materialsOutDetail.setRowNo(lines.indexOf(materialsOutDetail)+1); //来源单据单行;
+					materialsOutDetail.setMasID(finalHeaderId);
 					materialsOutDetail.setWhcode(finalWhcodes);
 					materialsOutDetail.setCreateDate(nowDate);
 					materialsOutDetail.setCreatePerson(userName);
@@ -458,7 +459,16 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	public Page<Record> getmaterialReturnLists(int pageNumber, int pageSize, Kv kv){
 		return dbTemplate("materialreturnlist.getmaterialReturnLists",kv).paginate(pageNumber, pageSize);
 
-	}/**
+	}
+	/**
+	 * 查询头表编码的名称明细
+	 */
+	public Record getstockoutQcFormMList(String autoid,String OrgCode){
+		return dbTemplate("materialreturnlist.getmaterialReturnLists", Kv.by("autoid",autoid).set("OrgCode",OrgCode)).findFirst();
+	}
+
+
+	/**
 	 * 材料出库单列表 明细
 	 * @param pageNumber
 	 * @param pageSize
@@ -471,7 +481,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	}
 
 	/**
-	 * 材料出库单列表 明细
+	 * 整单退货出库单列表 明细
 	 * @param pageNumber
 	 * @param pageSize
 	 * @param kv

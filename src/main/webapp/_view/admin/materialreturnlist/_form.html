@@ -70,41 +70,24 @@
 
                 <label class="col-sm-2 col-form-label">部门：</label>
                 <div class="col-sm-2 col-form-label">
-                    <select class="form-control ml-4"
-                            id="deptcode"
-                            name="puinstore.deptcode"
-                            data-autoload
-                            data-url="admin/department/getTreeTableDatas"
-                            data-select-type="select2"
-                            data-text="=请选择部门="
-                            data-value-attr="cdepcode"
-                            data-text-attr="cdepname"
-                            data-select="#(puinstore.deptcode??)">
-                    </select>
+                    <input required type="text" class="form-control border-none"
+                           readonly="readonly" placeholder=""
+                           value="#(puinstoreName.cdepname??)"/>
                 </div>
 
                 <label class="col-sm-2 col-form-label">采购类型：</label>
                 <div class="col-sm-2 col-form-label">
-                    <select class="form-control"
-                            name="puinstore.billtype"
-                            data-autoload
-                            data-url="admin/purchasetype/selectAll"
-                            data-select-type="select2"
-                            data-text="=请选择采购类型="
-                            data-value=""
-                            data-value-attr="iautoid"
-                            data-text-attr="cptname"
-                            data-select="#(puinstore.billtype??)"></select>
+                    <input required type="text"  class="form-control border-none"
+                           readonly="readonly" placeholder=""
+                           value="#(puinstoreName.cptname??)"/>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">供货单位：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input id="venname" name="cvenname" type="text" readonly="readonly"
-                           autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.cvenname??)"/>
-                    <input id="vencode" name="puinstore.vencode" type="hidden" readonly="readonly"
-                           autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.vencode??)"/>
+                    <input   type="text" readonly="readonly"
+                           autocomplete="off" class="form-control" maxlength="40" value="#(puinstoreName.cvenname??)"/>
                 </div>
 
                 <label class="col-sm-2 col-form-label">审批日期：</label>
@@ -115,16 +98,9 @@
 
                 <label class="col-sm-2 col-form-label">入库类别：</label>
                 <div class="col-sm-2 col-form-label">
-                    <select class="form-control"
-                            name="puinstore.rdcode"
-                            data-autoload
-                            data-url="admin/purchasetype/selectAll"
-                            data-select-type="select2"
-                            data-text="=请选择采购类型="
-                            data-value=""
-                            data-value-attr="crdcode"
-                            data-text-attr="crdname"
-                            data-select="#(puinstore.rdcode??)"></select>
+                    <input required type="text"  class="form-control border-none"
+                           readonly="readonly" placeholder=""
+                           value="#(puinstoreName.crdname??)"/>
                 </div>
             </div>
 

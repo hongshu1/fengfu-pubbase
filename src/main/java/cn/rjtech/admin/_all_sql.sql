@@ -628,3 +628,7 @@
 #namespace("exch")
 #include("exch/exch.sql")
 #end
+
+#namespace("momaterialscanusedlog")
+#include("momaterialscanusedlog/momaterialscanusedlog.sql")
+#end
