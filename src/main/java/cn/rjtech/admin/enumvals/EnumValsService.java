@@ -62,7 +62,6 @@ public class EnumValsService extends BaseService<EnumVals> {
 			page.getList().forEach(row -> {
 				//查询关联字段
 				String strEnumName = service.find("SELECT cEnumTypeName FROM Bd_EnumType WHERE cEnumTypeCode = ?",row.getStr("iEnumTypeId")).get(0).toString();
-				//剔除多余字符
 				strEnumName=strEnumName.replace("{cenumtypename:","").replace("}","");
 				row.set("cenumtypename",strEnumName);
 			});

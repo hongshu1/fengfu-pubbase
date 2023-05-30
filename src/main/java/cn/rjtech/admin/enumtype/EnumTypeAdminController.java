@@ -71,8 +71,7 @@ public class EnumTypeAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		System.out.println("aaaaaaaaaaa"+enumType.getCEnumTypeCode());
-
+//		System.out.println("aaaaaaaaaaa"+enumType.getCEnumTypeCode());
 		set("enumType",enumType);
 		render("edit.html");
 	}

@@ -114,6 +114,10 @@ public class EnumTypeService extends BaseService<EnumType> {
 		//if(existsName(enumType.getName(), enumType.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 
 
+//		List<EnumVals> lenumVals = enumValsService.find("SELECT * FROM Bd_EnumVals WHERE iEnumTypeId = ?",befenumtypecode);
+//		for (EnumVals enumVals : lenumVals) {
+//			enumVals.setIEnumTypeId(Long.valueOf(enumType.getCEnumTypeCode()));
+//		}
 
 
 
@@ -122,11 +126,6 @@ public class EnumTypeService extends BaseService<EnumType> {
 			//添加日志
 			//addUpdateSystemLog(enumType.getIAutoId(), JBoltUserKit.getUserId(), enumType.getName());
 		}
-
-
-
-
-
 
 
 		return ret(success);
