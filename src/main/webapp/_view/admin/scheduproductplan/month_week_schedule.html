@@ -168,6 +168,54 @@
             transform: translateY(0);
         }
     }
+    /* 遮罩层样式 */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9;
+        display: none;
+    }
+
+    /* 弹出框样式 */
+    .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        display: none;
+    }
+    .popup p{
+        margin-bottom: 10px;
+        margin-top: 0px;
+        display: flex;
+        line-height: 45px;
+        font-size: 16px;
+    }
+    .popup p span:nth-child(1){
+        flex: 1;
+    }
+    .popup p span:nth-child(2){
+        font-size: 30px;
+        cursor: pointer;
+    }
+    /* 输入框样式 */
+    input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
 </style>
 #end
 
@@ -208,8 +256,8 @@
                 <!-- 表格工具开始 -->
                 <div class="but_box">
                     <button onClick="openPopup()">排产</button>
-                    <button>数据导出</button>
-                    <button>数据导入</button>
+                    <button onClick="excelFileSave()">数据导出</button>
+                    <button id="loadExcel">数据导入</button>
                     <button>保存层级</button>
                     <button>计划使用刷新</button>
                     <button id="content" onClick="lock()">锁定</button>
@@ -288,12 +336,30 @@
             </div>
         </div>
         <!--消息提示框结束-->
+        <!--导出弹出框开始-->
+        <div class="overlay" id="overlay"></div>
+        <div class="popup" id="popup">
+            <p><span>请输入导出表格名称</span><span onClick="hidePopup()">x</span></p>
+            <input type="text" placeholder="请输入名称" id="input">
+            <button onclick="submit()" class="button" style="float: right;width: 60px">确定</button>
+        </div>
+        <!--导出弹出框结束-->
+        <!--导入弹出框开始-->
+        <div class="overlay" id="overlay"></div>
+        <div class="popup" id="popup1">
+            <p><span>请上传要导入的文件</span><span onClick="hidePopup()">x</span></p>
+            <input type="file" id="fileDemo" class="input">
+            <button onclick="importSubmit()" class="button" style="float: right;width: 60px">确定</button>
+        </div>
+        <!--导入弹出框结束-->
     </div>
 </div>
 #end
 
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
+<script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.excelio.16.0.2.min.js"></script>
+<script type="text/javascript" src="assets/plugins/Grape/FileSaver.min.js"></script>
 <script type="text/javascript">
     /**
      * @param Api 公共接口
@@ -315,7 +381,8 @@
             initData(iWeekScheduleId,ilevel);
         }
     }
-    var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
+    var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1,calcOnDemand: true});
+    var excelIo = new GC.Spread.Excel.IO();
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取表单
@@ -326,11 +393,14 @@
     //状态栏
     statusBar.bind(spread);
     spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
+    spread.getSheet(0).options.isProtected = true;//表单设为保护状态
+    spread.getSheet(0).options.protectionOptions = {allowFilter: true};//保护状态允许筛选
+    spread.getSheet(0).getDefaultStyle().locked = false;//默认样式设为非锁定
     var parmsDefault = {
         id:null,                //全局公共id
         level:'',               //排场层级
         resourcesList: [],      //资源列表
-        RowCount:500,           //一列多少单元格
+        RowCount:27,           //一列多少单元格
         ColumnCount:41,         //一行多少单元格
         countday: 93,			//展示天数
         monthday: [],			//每月天数
@@ -359,8 +429,6 @@
     var parms = parmsArr[0];
     //设置全局表单的背景颜色
     spread.options.grayAreaBackColor = '#fff';
-    //勾选check按钮
-    // sheet.getCell(0, 0	).value(1);
     /*工作簿暂停活性*/
     function spreadSuspend() {
         spread.suspendPaint(); //渲染前失活(提升性能)
@@ -373,7 +441,61 @@
     }
     // var colCount = sheet.getColumnCount(GC.Spread.Sheets.SheetArea.viewport);//获取列数
     // var rowCount = sheet.getRowCount();//获取行数
+    /**
+     * 数据导入
+     * @param loadExcel 按钮节点
+     */
+    document.getElementById('loadExcel').onclick = function () {
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById("popup1").style.display = "block";
+    };
+    /**
+     * 表格数据导出
+     * @param excelFileSave
+     */
+    function excelFileSave() {
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById("popup").style.display = "block";
+    };
 
+    /**
+     * 提交输入框内容
+     * @param submit
+     */
+    function submit() {
+        var fileName = document.getElementById("input").value;
+        if(fileName!=''){
+            fileName += '.xlsx';
+            var json = spread.toJSON();//转为json格式
+            excelIo.save(json, function (blob) {
+                saveAs(blob, fileName);//转成xlsx
+            });
+            hidePopup();
+        }
+    }
+    /**
+     * 确定导入文件
+     * @param importSubmit
+     */
+    function importSubmit() {
+        var excelFile = document.getElementById("fileDemo").files[0];//获取用户上传文件
+        excelIo.open(excelFile, function (json) {
+            var workbookObj = json;
+            spread.fromJSON(workbookObj);
+        }, function (e) {
+            alert(e.errorMessage);
+        });
+        hidePopup();
+    }
+    /**
+     * 隐藏数据导出弹出框
+     * @param hidePopup
+     */
+    function hidePopup() {
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("popup").style.display = "none";
+        document.getElementById("popup1").style.display = "none";
+    }
     /**
      * 初始化产线数据
      * @param loadInit
@@ -461,6 +583,8 @@
                 spreadSuspend();//暂停绘制
                 let rowIndex = 3;
                 let colIndex = 0;
+                console.log(res);
+
                 for (let i = 0; i < res.length; i++) {
                     //定义多选按钮
                     var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();
@@ -493,6 +617,20 @@
                     parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划使用");
                     parms.activeSheet.setColumnWidth(parms.planListRowIndex, 70);//设置指定单元格的width
                     parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/1S");
+                    // let cell_T13 = parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex);//计划变更数
+                    // cell_T13.value('计划/1S').locked(true);
+                    // let style_T13 = new GC.Spread.Sheets.Style();
+                    // style_T13.font = '0 15pt 宋体';
+                    // style_T13.locked = true;
+                    // style_T13.backColor = "#FFE1CC"
+                    // // //设置边框线
+                    // var border = new GC.Spread.Sheets.LineBorder
+                    // border.color = "#000";
+                    // border.style = GC.Spread.Sheets.LineStyle.thin;
+                    // cell_T13.setBorder(new GC.Spread.Sheets.LineBorder("#D0D7E5",GC.Spread.Sheets.LineStyle.thick), { all:true });
+                    //
+                    // parms.activeSheet.setStyle(parms.planListRowIndex++, parms.planListColIndex,style_T13);
+
                     parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/2S");
                     parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/3S");
                     parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划在库");
@@ -519,7 +657,16 @@
                             sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, res[i].day[j].tianshu);
                         }
                     }
+                    var addCol = res.length+6,addRow = 41;
+                    var row = parms.ColumnCount+addRow;
+                    var col = parms.RowCount+addCol;
+                    spread.getSheet(0).setRowCount(col); //设置一列单元格的个数
+                    spread.getSheet(0).setColumnCount(row); //设置一行有多少个单元格
+                    parms.RowCount=col;
+                    parms.ColumnCount=row;
                 }
+                let cell_T17 = parms.activeSheet.getCell(7,9);//保留数
+                cell_T17.formula(`=SUM(R${6}:C${5},R${7}:C${5})`);
                 spreadResume();// 恢复绘制
             }, error: function () {
                 console.log('error')
@@ -673,6 +820,31 @@
         //每次添加之后往数组内进行存储
         parms.tableData.push(a);
     });
+    //spread获取当前点击的单元格
+    sheet.bind(GC.Spread.Sheets.Events.CellClick, function (e, info) {
+        if (info.sheetArea === GC.Spread.Sheets.SheetArea.viewport) {
+            parms.info=info;
+            let {row,col} = parms.info;
+            let a = {
+                row:row,
+                col:col
+            }
+            //每次添加之后往数组内进行存储
+            parms.lockCells.push(a);
+            //数组去重处理
+            const unique = [];
+            for (const item of parms.lockCells) {
+                const duplicate = unique.find((key) => key.row === item.row && key.col === item.col);
+                if (!duplicate) {
+                    unique.push(item);
+                }
+            }
+            parms.lockCells=unique;
+            console.log(parms.lockCells,"获取当前点击的单元格")
+        }
+    });
+
+
     //锁定弹出框
     var myAlert = document.getElementById("alert");
     var reg = document.getElementById("content");
@@ -844,15 +1016,6 @@
                 console.log(error);
             }
         })
-        spreadSuspend();
-        var addCol = 100,addRow = 32;
-        var row = parms.ColumnCount+addRow;
-        var col = parms.RowCount+addCol;
-        spread.getSheet(0).setRowCount(col); //设置一列单元格的个数
-        spread.getSheet(0).setColumnCount(row); //设置一行有多少个单元格
-        parms.RowCount=col;
-        parms.ColumnCount=row;
-        spreadResume();
     }
     const messageBox = document.getElementById('message-box');
     /**

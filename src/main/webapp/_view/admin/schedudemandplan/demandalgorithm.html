@@ -249,7 +249,7 @@
                 <!-- 表格工具开始 -->
                 <div class="but_box">
                     <button id="content">计划生成</button>
-                    <button>数据导出</button>
+                    <button onClick="excelFileSave()">数据导出</button>
                     <button id="indicate_save">预示保存</button>
                     <button>到货计划保存</button>
                 </div>
@@ -304,6 +304,8 @@
 
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
+<script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.excelio.16.0.2.min.js"></script>
+<script type="text/javascript" src="assets/plugins/Grape/FileSaver.min.js"></script>
 <script type="text/javascript">
     /**
      * @param Api 公共接口
@@ -311,7 +313,7 @@
     var Api = 'http://localhost:8081/';
 
 
-    var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
+    var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1,calcOnDemand: true});
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取活动表单
@@ -416,6 +418,21 @@
         spread.resumeCalcService(); //开启计算服务
         spread.resumePaint(); //恢复绘制
     }
+
+    /**
+     * 数据导出
+     * @param excelFileSave
+     */
+    function excelFileSave() {
+        var excelIo = new GC.Spread.Excel.IO();
+        var json = spread.toJSON();//转为json格式
+        excelIo.save(json, function (blob) {
+            saveAs(blob, 'dad');//转成xlsx
+        }, function (e) {
+            console.log(e);
+        });
+    };
+
     /**
      * 获取接口返回的日期数据渲染
      * @param initDate
