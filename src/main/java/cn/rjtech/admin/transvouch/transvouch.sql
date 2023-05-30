@@ -90,7 +90,43 @@ WHERE
         t1.AutoID = t2.MasID AND  t1.AutoID = '#(autoid)'
     #end
 
-#sql("pushU8List")
+#sql("warehouse")
+SELECT
+    t2.WhCode AS cwhcode,
+    t7.cWhName AS cwhname
+FROM
+    T_Sys_BarcodeDetail t1
+        LEFT JOIN T_Sys_StockBarcodePosition t2 ON t1.Barcode = t2.Barcode
+        LEFT JOIN Bd_Warehouse t7 ON t2.WhCode = t7.cWhCode
+WHERE
+    1=1
 
+#end
+
+#sql("pushU8List")
+SELECT
+    t1.OrganizeCode,
+    t1.IWhCode,
+    (SELECT cWhName FROM Bd_Warehouse WHERE t1.IWhCode = cWhCode) AS iwhname,
+    t2.PosCode AS iposcode,
+    t1.OWhCode,
+    (SELECT cWhName FROM Bd_Warehouse WHERE t1.OWhCode = cWhCode) AS owhname,
+    t2.PosCode AS oposcode,
+    t3.cInvName AS invname,
+    t1.BillDate,
+    t2.InvCode,
+    t2.Qty,
+    t2.Barcode,
+    (SELECT cRdName FROM Bd_Rd_Style WHERE t1.ORdCode = cRdCode) AS ORdName,
+    t1.ORdCode,
+    (SELECT cDepName FROM Bd_Department WHERE t1.ODeptCode = cDepCode) AS ODeptName,
+    t1.ODeptCode,
+    (SELECT cRdName FROM Bd_Rd_Style WHERE t1.IRdCode = cRdCode) AS IRdName,
+    t1.IRdCode
+FROM
+    T_Sys_TransVouch t1
+        LEFT JOIN T_Sys_TransVouchDetail t2 ON t1.AutoID = t2.MasID
+        LEFT JOIN Bd_Inventory t3 ON t3.cInvCode  = t2.InvCode
+WHERE t1.AutoID = '#(autoid)'
 
 #end
