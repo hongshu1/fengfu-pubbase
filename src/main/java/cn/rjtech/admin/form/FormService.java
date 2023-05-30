@@ -311,4 +311,9 @@ public class FormService extends BaseService<Form> {
         return SUCCESS;
     }
 
+    public Form findByCformSn(String tableName) {
+        Sql sql = selectSql().eq(Form.CFORMCODE, tableName).eq(Form.ISDELETED, ZERO_STR).first();
+        return findFirst(sql);
+    }
+    
 }
