@@ -1,4 +1,14 @@
 #set(pageId=RandomUtil.random(6))
+<style>
+    .card-body overflow-auto{
+        max-width: 400px;
+        border: 1px solid #ff0000;
+        white-space: nowrap;
+        text-overflow:ellipsis;
+        overflow: hidden;
+    }
+</style>
+
 <div class="row">
     <div class="col-auto mb-3" style="width:30%;">
         <div class="card">
@@ -8,7 +18,6 @@
                     <form class="form-inline" autocomplete="off" id="bomMaster_1_"  onsubmit="return false;" method="post">
                         <input type="text" class="form-control"  id="searchBackGoodsTypeInput_2"
                                placeholder="输入关键字过滤" name="keyWords" value="" oninput="keyWordsOnChange()"/>
-
                         <input type="hidden" name="enableIcon"
                                value="
 								  <a tooltip='' data-title='查看' data-dialogbtn='' data-area='90%,90%' href='admin/bommaster/info/?'> <i class='fa fa-eye c-info' style='position: absolute;left: 71%;'></i></a>
@@ -18,8 +27,9 @@
                     </form>
                 </div>
             </div>
-            <div class="card-body overflow-auto" style="width:600px; max-height: 750px">
-                <div id="bommasterBackCategoryTree"></div>
+
+            <div   class="card-body overflow-auto" style="width:400px; max-height: 750px">
+                <div  id="bommasterBackCategoryTree"></div>
             </div>
         </div>
     </div>
@@ -30,5 +40,8 @@
 
 #define js()
 <script type="text/javascript">
+
+
 </script>
 #end
+
