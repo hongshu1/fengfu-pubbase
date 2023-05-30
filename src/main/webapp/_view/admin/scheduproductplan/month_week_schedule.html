@@ -607,11 +607,11 @@
                     //客户部番
                     sheet.setValue(rowIndex, 5 + colIndex, res[i].cInvCode1);
                     parms.activeSheet.addSpan(rowIndex, 5 + colIndex, 6, 1);
-                    parms.activeSheet.setColumnWidth(5 + colIndex, 180);//设置指定单元格的width
+                    parms.activeSheet.setColumnWidth(5 + colIndex, 140);//设置指定单元格的width
                     //部品名称
                     sheet.setValue(rowIndex, 6 + colIndex, res[i].cInvName1);
                     parms.activeSheet.addSpan(rowIndex, 6 + colIndex, 6, 1);
-                    parms.activeSheet.setColumnWidth(6 + colIndex, 100);//设置指定单元格的width
+                    parms.activeSheet.setColumnWidth(6 + colIndex, 180);//设置指定单元格的width
                     rowIndex += 6;
 
                     parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划使用");
@@ -639,13 +639,17 @@
                     let shiyongRow = 3;//计划使用行下标
                     let shiyongCol = 9;
                     let zaikuCol = 8;
+                    sheet.options.isProtected = true;//开启表单保护
                     //渲染计划数据
                     for (var j = 0; j < res[i].day.length; j++) {
                         if (i == 0) {
                             sheet.setValue(shiyongRow, shiyongCol + j, res[i].day[j].shiyong);
                             sheet.setValue(1 + shiyongRow, shiyongCol + j, res[i].day[j].one);
+                            sheet.getCell(shiyongRow,shiyongCol).locked(res[i].day[j].lock);
                             sheet.setValue(2 + shiyongRow, shiyongCol + j, res[i].day[j].two);
+                            sheet.getCell(shiyongRow,shiyongCol).locked(res[i].day[j].lock);
                             sheet.setValue(3 + shiyongRow, shiyongCol + j, res[i].day[j].three);
+                            sheet.getCell(shiyongRow,shiyongCol).locked(res[i].day[j].lock);
                             sheet.setValue(4 + shiyongRow, zaikuCol, res[i].day[j].zaiku);
                             sheet.setValue(5 + shiyongRow, shiyongCol + j, res[i].day[j].tianshu);
                         } else {
@@ -656,7 +660,37 @@
                             sheet.setValue(6 * i + shiyongRow + 4, zaikuCol, res[i].day[j].zaiku);
                             sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, res[i].day[j].tianshu);
                         }
+                        if(res[i].day[j].lock){
+                            if(i==0){
+                                let style_1S = new GC.Spread.Sheets.Style();
+                                style_1S.locked = res[i].day[j].lock;
+                                style_1S.backColor = "#F0F0F0";
+                                parms.activeSheet.setStyle(1+shiyongRow, shiyongCol+j,style_1S);
+                                let style_2S = new GC.Spread.Sheets.Style();
+                                style_2S.locked = res[i].day[j].lock;
+                                style_2S.backColor = "#F0F0F0";
+                                parms.activeSheet.setStyle(2+shiyongRow, shiyongCol+j,style_2S);
+                                let style_3S = new GC.Spread.Sheets.Style();
+                                style_3S.locked = res[i].day[j].lock;
+                                style_3S.backColor = "#F0F0F0";
+                                parms.activeSheet.setStyle(3+shiyongRow, shiyongCol+j,style_3S);
+                            }else{
+                                let style_1S = new GC.Spread.Sheets.Style();
+                                style_1S.locked = res[i].day[j].lock;
+                                style_1S.backColor = "#F0F0F0";
+                                parms.activeSheet.setStyle(6*i+shiyongRow+1, shiyongCol+j,style_1S);
+                                let style_2S = new GC.Spread.Sheets.Style();
+                                style_2S.locked = res[i].day[j].lock;
+                                style_2S.backColor = "#F0F0F0";
+                                parms.activeSheet.setStyle(6*i+shiyongRow+2, shiyongCol+j,style_2S);
+                                let style_3S = new GC.Spread.Sheets.Style();
+                                style_3S.locked = res[i].day[j].lock;
+                                style_3S.backColor = "#F0F0F0";
+                                parms.activeSheet.setStyle(6*i+shiyongRow+3, shiyongCol+j,style_3S);
+                            }
+                        }
                     }
+                    // 根据数据长度添加表格行列
                     var addCol = res.length+6,addRow = 41;
                     var row = parms.ColumnCount+addRow;
                     var col = parms.RowCount+addCol;
@@ -673,13 +707,6 @@
             }
         })
     }
-    const myTable = document.getElementById('popup_table');
-    const tableContainer = document.getElementById('popup-layer');
-    // 添加滚动事件处理程序
-    tableContainer.addEventListener('scroll', function() {
-        // 获取表头元素
-        const tableHeader = myTable.querySelector('thead');
-    });
     /**
      * 打开弹出层
      * @param openPopup
@@ -789,12 +816,10 @@
             type:'post',
             dataType:'json',
             success:function (res){
-                if(res.data.msg=="操作成功"){
                     loadInit(parms);
                     initDate(parms,sheet);
                     initData();
                     closePopup();//隐藏弹出层
-                }
                 showMessage(res.data.msg);
             },error: function(error) {
                 console.log(error);
@@ -819,29 +844,32 @@
         }
         //每次添加之后往数组内进行存储
         parms.tableData.push(a);
+    //
+        let s = sheet.comments.get(info.row, info.col).locked(true).displayMode(1);
+        console.log(a,"parms.tableData")
     });
     //spread获取当前点击的单元格
     sheet.bind(GC.Spread.Sheets.Events.CellClick, function (e, info) {
-        if (info.sheetArea === GC.Spread.Sheets.SheetArea.viewport) {
-            parms.info=info;
-            let {row,col} = parms.info;
-            let a = {
-                row:row,
-                col:col
-            }
-            //每次添加之后往数组内进行存储
-            parms.lockCells.push(a);
-            //数组去重处理
-            const unique = [];
-            for (const item of parms.lockCells) {
-                const duplicate = unique.find((key) => key.row === item.row && key.col === item.col);
-                if (!duplicate) {
-                    unique.push(item);
-                }
-            }
-            parms.lockCells=unique;
-            console.log(parms.lockCells,"获取当前点击的单元格")
-        }
+        // if (info.sheetArea === GC.Spread.Sheets.SheetArea.viewport) {
+        //     parms.info=info;
+        //     let {row,col} = parms.info;
+        //     let a = {
+        //         row:row,
+        //         col:col
+        //     }
+        //     //每次添加之后往数组内进行存储
+        //     parms.lockCells.push(a);
+        //     //数组去重处理
+        //     const unique = [];
+        //     for (const item of parms.lockCells) {
+        //         const duplicate = unique.find((key) => key.row === item.row && key.col === item.col);
+        //         if (!duplicate) {
+        //             unique.push(item);
+        //         }
+        //     }
+        //     parms.lockCells=unique;
+        //     console.log(parms.lockCells,"获取当前点击的单元格")
+        // }
     });
 
 
@@ -875,7 +903,7 @@
             document.body.appendChild(mybg);
             document.body.style.overflow = "hidden";
             //锁定截止日期
-            let url = Api+"admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=1659809519734398976";
+            let url = Api+`admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=${parms.id}`;
             $.ajax({
                 url,
                 type:'post',
@@ -919,8 +947,8 @@
     function save(){
         const datetimeLocalInput = document.getElementById('mySelect');
         const myVal = datetimeLocalInput.value.substring(0,10);
-        let url = alertTitle.innerText == "锁定计划"?Api+`admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`
-            :Api+`admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=${myVal}`;
+        let url = alertTitle.innerText == "锁定计划"?Api+`admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=${parms.id}&endDate=${myVal}`
+            :Api+`admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=${parms.id}&endDate=${myVal}`;
         $.ajax({
             url,
             type:'post',
@@ -928,6 +956,7 @@
             success:function (res){
                 myAlert.style.display = "none";
                 mybg.style.display = "none";
+                initData();
                 //设置表单保护，单元格不可编辑
                 for (let i = 0; i < 3; i++) {
                     for (let j = 0; j < 7; j++) {
@@ -982,7 +1011,7 @@
         mybg.style.opacity = "0.3";
         document.body.appendChild(mybg);
         document.body.style.overflow = "hidden";
-        let url = Api+"admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=1659809519734398976";
+        let url = Api+`admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=${parms.id}`;
         $.ajax({
             url,
             type:'post',
@@ -1017,6 +1046,18 @@
             }
         })
     }
+
+    //给排产弹窗添加一个滑动区域，避免数据太长而造成样式崩塌
+    const myTable = document.getElementById('popup_table');
+    const tableContainer = document.getElementById('popup-layer');
+    // 添加滚动事件处理程序
+    tableContainer.addEventListener('scroll', function() {
+        // 获取表头元素
+        const tableHeader = myTable.querySelector('thead');
+    });
+    /**
+     * @param messageBox 消息弹窗节点
+     */
     const messageBox = document.getElementById('message-box');
     /**
      * @param showMessage 消息提示框显示

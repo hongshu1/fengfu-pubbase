@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.6.0";
+var jbolt_admin_js_version="6.6.1";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -17380,9 +17380,15 @@ var JBoltTabViewUtil={
 					tv.children(".jbolt_tab_links").attr("data-view-id",viewId).find(".jbolt_tab_link").attr("data-view-id",viewId);
 					tv.children(".jbolt_tab_contens").attr("data-view-id",viewId).children(".jbolt_tab_conten").attr("data-view-id",viewId);
 					tva = tv.find(".jbolt_tab_links[data-view-id='"+viewId+"']>.jbolt_tab_link.active");
-					if(!isOk(tva)){
+					if(!isOk(tva) || tv.data("keep-active")){
 						//没有active的就得判断data-active-index=""
 						activeIndex=tv.data("active-index");
+						if(typeof(activeIndex)=="undefined" && self.location.hash && self.location.hash.indexOf("activeindex=")!=-1){
+							activeIndex = self.location.hash.substring(13);
+							if(isNaN(activeIndex)){
+								activeIndex = 0;
+							}
+						}
 						if(typeof(activeIndex)=="undefined" || activeIndex<=0){
 							activeIndex=0;
 						}
@@ -17401,6 +17407,7 @@ var JBoltTabViewUtil={
 					return false;
 				}
 				var tabView=link.closest(".jbolt_tab_view");
+				var keepActive = tabView.data("data-keep-active");
 				var viewId = tabView[0].id;
 				var activeLink=tabView.find(".jbolt_tab_links[data-view-id='"+viewId+"']>.jbolt_tab_link.active");
 				var handler=tabView.data("handler");
@@ -17423,6 +17430,7 @@ var JBoltTabViewUtil={
 				if(exe_handler && typeof(exe_handler)=="function"){
 					exe_handler(tabContentId,link.index());
 				}
+				self.location.hash="activeindex="+link.index()
 			});
 		},active:function(tabView,tabIndex){
 			var tabLink=tabView.find('.jbolt_tab_links[data-view-id="'+tabView[0].id+'"]>.jbolt_tab_link:eq('+tabIndex+')');

@@ -123,7 +123,19 @@
 		if(#(fctucName)==null || isOk(#(fctucName).#(getIdMethodName?? 'getId')())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
+		#if(checkExistsColumns??)
+		#for(cec:checkExistsColumns)
+		#if(cec.colName=="name")
+		if(existsName(#(fctucName).getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		#else if(cec.colName=="sn")
+		if(existsSn(#(fctucName).getSn())) {return fail(JBoltMsg.DATA_SAME_SN_EXIST);}
+		#else
+		if(exists(#(codeGen.modelName).#(cec.colName.toUpperCase()),#(fctucName).get#(firstCharToUpperCase(cec.attrName??))())) {return fail("存在#(cec.formLabel?? (cec.attrName?? cec.colName??))重复数据数据，请更换");}
+		#end
+		#end
+		#else
 		//if(existsName(#(fctucName).getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		#end
 		#if(needSort)
 		#(fctucName).setSortRank(getNextSortRank());
 		#end
@@ -155,7 +167,19 @@
 		//更新时需要判断数据存在
 		#(codeGen.modelName) #(dbModelName)=findById(#(fctucName).#(getIdMethodName?? 'getId')());
 		if(#(dbModelName)==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		//if(existsName(#(fctucName).getName(), #(fctucName).#(getIdMethodName?? 'getId')())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		#if(checkExistsColumns??)
+        #for(cec:checkExistsColumns)
+        #if(cec.colName=="name")
+        if(existsName(#(fctucName).getName(), #(fctucName).#(getIdMethodName?? 'getId')())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+        #else if(cec.colName=="sn")
+        if(existsSn(#(fctucName).getSn(), #(fctucName).#(getIdMethodName?? 'getId')())) {return fail(JBoltMsg.DATA_SAME_SN_EXIST);}
+        #else
+        if(exists(#(codeGen.modelName).#(cec.colName.toUpperCase()),#(fctucName).get#(firstCharToUpperCase(cec.attrName??))(), #(fctucName).#(getIdMethodName?? 'getId')())) {return fail("存在#(cec.formLabel?? (cec.attrName?? cec.colName??))重复数据数据，请更换");}
+        #end
+        #end
+        #else
+        //if(existsName(#(fctucName).getName(), #(fctucName).#(getIdMethodName?? 'getId')())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+        #end
 		boolean success=#(fctucName).update();
 		if(success) {
 			//添加日志

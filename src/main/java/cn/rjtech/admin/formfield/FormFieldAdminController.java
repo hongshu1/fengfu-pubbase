@@ -46,7 +46,7 @@ public class FormFieldAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getLong("iformid"), getKeywords(), get("cFieldTypeSn"), getBoolean("isImportField"), getBoolean("isDeleted")));
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getLong("iformid"), getKeywords(), get("cFieldTypeSn"), getBoolean("isImportField")));
     }
 
     /**

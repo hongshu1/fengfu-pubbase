@@ -181,7 +181,7 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">Main Java Package</label>
 		<div class="col-6">
-			<input type="text" data-autocomplete data-mustmatch="false" data-url="admin/codegen/javaPackageAutocomplete" autocomplete="off" id="mainJavaPackageInput"  class="form-control" data-rule="required"  placeholder="请输入java主package" data-tips="请输入版本号(数字)" maxlength="100" name="codeGen.mainJavaPackage" value="#(codeGen.mainJavaPackage?? 'cn.rjtech.admin')" />
+			<input type="text" data-autocomplete data-mustmatch="false" data-url="admin/codegen/javaPackageAutocomplete" autocomplete="off" id="mainJavaPackageInput"  class="form-control" data-rule="required"  placeholder="请输入java主package" data-tips="请输入版本号(数字)" maxlength="100" name="codeGen.mainJavaPackage" value="#(codeGen.mainJavaPackage?? (lastMainJavaPackage?? 'cn.rjtech.admin'))" />
 			<small class="text-danger">注意:java 默认生成的主package 默认值<span id="defaultMainJavaPackageText">cn.jbolt.admin</span></small>
 		</div>
 	</div>
@@ -189,7 +189,7 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">Model Package</label>
 		<div class="col-sm-4">
-			<input type="text" data-autocomplete data-mustmatch="false" data-url="admin/codegen/javaPackageAutocomplete"  data-tips="请输入Model生成到哪个package" class="form-control" name="codeGen.modelPackage" value="#(codeGen.modelPackage?? 'cn.rjtech.model.momdata')" autocomplete="off" />
+			<input type="text" data-autocomplete data-mustmatch="false" data-url="admin/codegen/javaPackageAutocomplete"  data-tips="请输入Model生成到哪个package" class="form-control" name="codeGen.modelPackage" value="#(codeGen.modelPackage?? (lastModelPackage?? 'cn.rjtech.model.momdata'))" autocomplete="off" />
 		</div>
 	</div>
 

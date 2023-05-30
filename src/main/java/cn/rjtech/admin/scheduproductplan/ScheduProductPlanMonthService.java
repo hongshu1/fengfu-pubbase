@@ -398,7 +398,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                             "CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )\n" +
                             "ELSE CAST(iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN iDate<10 THEN '0'+CAST(iDate AS NVARCHAR(30) )\n" +
                             "ELSE CAST(iDate AS NVARCHAR(30) )\n" +
-                            "END AS NVARCHAR(30)) ) > ? AND iWeekScheduleDid = ? ",DateUtils.formatDate(apsWeekschedule.getDLockEndTime(),"yyyy-MM-dd"),apsWeekscheduledetails.getIAutoId());
+                            "END AS NVARCHAR(30)) > ? AND iWeekScheduleDid = ? ",DateUtils.formatDate(apsWeekschedule.getDLockEndTime(),"yyyy-MM-dd"),apsWeekscheduledetails.getIAutoId());
                 }
             }
             return true;
@@ -820,6 +820,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 int[] invPlan2S = invPlanMap2S.get(inv);
                 int[] invPlan3S = invPlanMap3S.get(inv);
                 BigDecimal qiChuZaiKu = BigDecimal.valueOf(inventory_originalMap.get(inv));
+                int iInnerInStockDays = info.get("iInnerInStockDays") != null ? info.getInt("iInnerInStockDays") : 1;
 
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     String date = scheduDateList.get(i);
@@ -832,6 +833,17 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     BigDecimal two = BigDecimal.valueOf(invPlan2S[i]);
                     BigDecimal three = BigDecimal.valueOf(invPlan3S[i]);
                     BigDecimal zaiKu = qiChuZaiKu.add(one).add(two).add(three).subtract(xuQiu);
+                    BigDecimal tianShu = BigDecimal.ZERO;
+
+                    BigDecimal sumQty = BigDecimal.ZERO;
+                    for (int j = 1; j <= iInnerInStockDays; j++) {
+                        BigDecimal qty = BigDecimal.valueOf(invPlan[i+j]);
+                        sumQty = sumQty.add(qty);
+                    }
+                    BigDecimal avgQty = sumQty.divide(BigDecimal.valueOf(iInnerInStockDays),2,BigDecimal.ROUND_HALF_DOWN);
+                    if (avgQty.compareTo(BigDecimal.ZERO) > 0){
+                        tianShu = zaiKu.divide(avgQty,2,BigDecimal.ROUND_HALF_DOWN);
+                    }
 
                     ApsWeekscheduledQty scheduledQty = new ApsWeekscheduledQty();
                     scheduledQty.setIWeekScheduleDid(iWeekScheduleDid);
@@ -843,7 +855,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     scheduledQty.setIQty3(two);
                     scheduledQty.setIQty4(three);
                     scheduledQty.setIQty5(zaiKu);
-                    scheduledQty.setIQty6(BigDecimal.valueOf(0));
+                    scheduledQty.setIQty6(tianShu);
                     detailsQtyList.add(scheduledQty);
                     qiChuZaiKu = zaiKu;
                 }
@@ -994,11 +1006,11 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * 获取计划
      */
     public List<Map<String,Object>> getScheduPlanMonthList(Kv kv) {
+        if (kv.get("iWeekScheduleId").equals("undefined") || notOk(kv.getLong("iWeekScheduleId"))){
+            return new ArrayList<>();
+        }
         //排产纪录id
         Long iWeekScheduleId = kv.getLong("iWeekScheduleId");
-        if (notOk(iWeekScheduleId)){
-            return null;
-        }
         //TODO:查询排产开始日期与截止日期
         ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleBeginTime,dScheduleEndTime FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId);
         int iLevel = apsWeekschedule.getILevel();
@@ -1082,8 +1094,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             lastDateZKQtyMap.put(cInvCode,iQty5);
         }
         //上次锁定截止日期
-
-
         Calendar calendar2 = Calendar.getInstance();
         calendar2.setTime(new Date());
         calendar2.add(Calendar.DATE,-1);//日期-1
@@ -1132,8 +1142,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     dataMap.put("tianshu",record.getBigDecimal("iQty6"));
                     dataMap.put("date",date);
                     dataMap.put("lock",false);
-
-
 
                     if (DateUtils.parseDate(date).getTime() <= lockPreDate.getTime()){
                         dataMap.put("lock",true);
