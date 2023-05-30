@@ -471,7 +471,6 @@ public class InventoryService extends BaseService<Inventory> {
 			}else if (ObjectUtil.isNotNull(inventoryMfgInfo.getIAutoId())){
 				inventoryMfgInfoService.update(inventoryMfgInfo);
 			}
-			
 			// 料品库存档案
 			inventorystockconfig.setIInventoryId(inventory.getIAutoId());
 			if (ObjectUtil.isNull(inventorystockconfig.getIAutoId())){
@@ -479,7 +478,10 @@ public class InventoryService extends BaseService<Inventory> {
 			}else if (ObjectUtil.isNotNull(inventorystockconfig.getIAutoId())){
 				inventoryStockConfigService.update(inventorystockconfig);
 			}
-			
+			// 删除 料品生产--所属生产线
+			if (ArrayUtil.isNotEmpty(delete)) {
+				deleteMultiByIds(delete);
+			}
 			// 料品生产--所属生产线修改
 			if(inventoryWorkRegions != null && inventoryWorkRegions.size() > 0){
 				for (InventoryWorkRegion workRegion : inventoryWorkRegions) {
@@ -494,10 +496,6 @@ public class InventoryService extends BaseService<Inventory> {
 					workRegion.setIsDeleted(false);
 				}
 				inventoryWorkRegionService.batchSave(newInventoryWorkRegions);
-			}
-			// 删除 料品生产--所属生产线
-			if (ArrayUtil.isNotEmpty(delete)) {
-				deleteMultiByIds(delete);
 			}
 			// 工艺路线操作
 			inventoryRoutingOperation(inventory, inventoryRoutingJboltTable);
@@ -1232,7 +1230,7 @@ public class InventoryService extends BaseService<Inventory> {
         Page<Record> page = dbTemplate("inventory.getInventoryList", kv).paginate(pageNumber, pageSize);
         ValidationUtils.notNull(page, JBoltMsg.DATA_NOT_EXIST);
         return page;
-    }   
+    }
     
 }
 
