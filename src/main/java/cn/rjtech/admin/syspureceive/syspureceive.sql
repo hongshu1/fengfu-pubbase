@@ -34,16 +34,24 @@ ORDER BY so.ModifyDate DESC
 
 #sql("dList")
 SELECT  a.*,
-        i.*,
-       u.cUomClassName,
-       t3.cInvCCode,
-       t3.cInvCName,
-       t1.Qty as qtys
+    m.cOrderNo as sourcebillno,
+    aa.cBarcode as barcode,
+    b.cInvCode ,
+    b.cInvCode1,
+    b.cInvName1,
+    aa.dPlanDate as plandate,
+    aa.iQty as qtys,
+    m.cOrderNo as SourceBillNo,
+    m.iBusType as SourceBillType,
+    d.iAutoId as SourceBillNoRow,
+    m.cOrderNo as SourceBillID,
+    d.iAutoId as SourceBillDid,
+    m.iVendorId
 FROM T_Sys_PUReceiveDetail a
-         LEFT JOIN V_Sys_BarcodeDetail t1 ON a.Barcode = t1.Barcode
-         LEFT JOIN bd_inventory i ON i.cinvcode = t1.Invcode
-         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
-         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
+LEFT JOIN PS_PurchaseOrderDBatch aa on aa.cBarcode = a.Barcode
+LEFT JOIN Bd_Inventory b on aa.iinventoryId = b.iAutoId
+LEFT JOIN PS_PurchaseOrderD d on aa.iPurchaseOrderDid = d.iAutoId
+LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 where 1=1
 	#if(masid)
 		and a.MasID = #para(masid)
@@ -68,11 +76,92 @@ where 1=1
 
 
 #sql("Whcode")
-SELECT  a.*
-FROM V_Sys_WareHouse a
+SELECT  a.*,a.cWhCode as whcode,a.cWhName as whname
+FROM Bd_Warehouse a
 where 1=1
 	#if(q)
-		and (a.whcode like concat('%',#para(q),'%') OR a.whName like concat('%',#para(q),'%'))
+		and (a.cWhCode like concat('%',#para(q),'%') OR a.cWhName like concat('%',#para(q),'%'))
 	#end
 #end
+
+
+#sql("wareHousepos")
+SELECT  a.*
+FROM Bd_Warehouse_Shelves a
+where 1=1
+
+	#if(q)
+		and (a.cShelvesCode like concat('%',#para(q),'%') OR a.cShelvesName like concat('%',#para(q),'%'))
+	#end
+	#if(whcodeid)
+		and a.iWarehouseId = #para(whcodeid)
+	#end
+#end
+
+
+
+#sql("getBarcodeDatas")
+select top #(limit)
+    m.cOrderNo as sourcebillno,
+    a.cBarcode as barcode,
+    b.cInvCode ,
+    b.cInvCode1,
+    b.cInvName1,
+    a.dPlanDate as plandate,
+    a.iQty as qtys,
+    m.cOrderNo as SourceBillNo,
+    m.iBusType as SourceBillType,
+    d.iAutoId as SourceBillNoRow,
+    m.cOrderNo as SourceBillID,
+    d.iAutoId as SourceBillDid,
+    m.iVendorId
+FROM PS_PurchaseOrderDBatch a
+LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
+LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
+LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+where 1=1
+    #if(q)
+		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
+			or b.cinvname1 like concat('%',#para(q),'%') or a.cBarcode like concat('%',#para(q),'%')
+		)
+	#end
+	 AND b.cOrgCode = #(orgCode)
+
+	#if(vencode)
+		and m.iVendorId = #para(vencode)
+	#end
+#end
+
+
+
+#sql("getsourcebillno")
+SELECT  a.*
+FROM V_Sys_PODetail a
+where 1=1
+	#if(sourcebillno)
+		and a.SourceBillNo = #para(sourcebillno)
+	#end
+#end
+
+
+
+
+#sql("selectRdCode")
+SELECT
+    p.*,
+    s.iAutoId as iAutoId2,
+    s.cRdName,
+    s.cRdCode
+FROM
+    Bd_PurchaseType p
+        LEFT JOIN Bd_Rd_Style s ON s.cRdCode = p.cRdCode
+WHERE p.IsDeleted = '0'
+#if(cPTCode)
+  and p.cPTCode like CONCAT('%', #para(cPTCode), '%')
+#end
+#if(cPTName)
+and p.cPTName like CONCAT('%', #para(cPTName), '%')
+#end
+#end
+
 
