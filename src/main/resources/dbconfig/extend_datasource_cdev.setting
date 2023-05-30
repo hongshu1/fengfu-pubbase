@@ -47,9 +47,9 @@ db_type = sqlserver
 db_name = UGCFF_MOM_DATA
 db_schema = dbo
 dev_mode = true
-jdbc_url = jdbc:sqlserver://172.23.119.50:1433; DatabaseName=UGCFF_MOM_DATA;trustServerCertificate=true
+jdbc_url = jdbc:sqlserver://127.0.0.1:1433; DatabaseName=UGCFF_MOM_DATA;trustServerCertificate=true
 user = c2e3ca7016138e81
-password = 7e49b8b1a4b6f345883456093b060d0be7297a614abc7682
+password = 6a9b7490d1dcfad4f24a1ab26bfa15fe
 is_encrypted = true
 id_gen_mode = snowflake
 model_package=cn.rjtech.model.momdata,cn.rjtech.common.model
@@ -57,12 +57,13 @@ model_package=cn.rjtech.model.momdata,cn.rjtech.common.model
 [u8]
 enable = true
 db_type = sqlserver
-db_name = U9CTest
+db_name = UFDATA_993_2023
 db_schema = dbo
 dev_mode = true
-jdbc_url = jdbc:sqlserver://172.23.119.50:1433; DatabaseName=U9CTest;trustServerCertificate=true
+jdbc_url = jdbc:sqlserver://127.0.0.1:1433; DatabaseName=UFDATA_993_2023;trustServerCertificate=true
 user = c2e3ca7016138e81
-password = 7e49b8b1a4b6f345883456093b060d0be7297a614abc7682
+password = 6a9b7490d1dcfad4f24a1ab26bfa15fe
 is_encrypted = true
 id_gen_mode = snowflake
-model_package=cn.rjtech.model.u9
+# U8请勿使用model模式
+model_package=cn.rjtech.model.u8,cn.rjtech.common.model
