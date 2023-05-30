@@ -8,9 +8,11 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Form;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 
 /**
  * 表单管理 Controller
@@ -96,6 +98,15 @@ public class FormAdminController extends BaseAdminController {
      */
     public void toggleIsDeleted() {
         renderJson(service.toggleIsDeleted(getLong(0)));
+    }
+
+    /**
+     * 自动生成字段
+     */
+    public void autoGen(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.validateId(iautoid, "iautoid");
+        
+        renderJson(service.autoGen(iautoid));
     }
 
 }

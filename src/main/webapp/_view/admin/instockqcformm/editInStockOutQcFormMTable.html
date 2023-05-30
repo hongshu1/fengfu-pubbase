@@ -464,6 +464,7 @@
       isok: isok,
       instockqcformmiautoid: iautoid
     };
+    LayerMsgBox.loading("正在更新,请稍等...", 30000);
     Ajax.post("admin/instockqcformm/saveEditTable", submitDatas, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {

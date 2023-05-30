@@ -93,10 +93,17 @@
 
         <div class="jbolt_table_toolbar" id="PurchaseOrderM_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+
                 <button data-dialogbtn data-area="90%,90%" data-handler="jboltTablePageToFirst" id="consummate#(pageId)"
-                        data-title="订单作成" data-url="admin/purchaseorderm/consummate"
+                        data-title="订单作成" data-url="admin/purchaseorderm/consummate?iSourceType=0"
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 订单作成
                 </button>
+
+                <button data-dialogbtn data-area="90%,90%" data-handler="jboltTablePageToFirst" id="purchase_add#(pageId)"
+                        data-title="新增空白采购" data-url="admin/purchaseorderm/consummate?iSourceType=1"
+                        class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增空白采购
+                </button>
+
                 <!--<button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="b"
                         data-title="新增采购/委外订单-采购订单主表" data-url="admin/purchaseorderm/add"
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 批量审批

@@ -1,5 +1,8 @@
 package cn.rjtech.admin.scheduproductplan;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -11,8 +14,19 @@ import cn.rjtech.admin.apsweekschedule.ApsWeekscheduleService;
 import cn.rjtech.admin.apsweekscheduledetails.ApsWeekscheduledetailsService;
 import cn.rjtech.admin.apsweekscheduledqty.ApsWeekscheduledQtyService;
 import cn.rjtech.admin.calendar.CalendarService;
+import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
+import cn.rjtech.admin.inventoryroutingconfigoperation.InventoryroutingconfigOperationService;
+import cn.rjtech.admin.inventoryroutingequipment.InventoryRoutingEquipmentService;
+import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
+import cn.rjtech.admin.inventoryroutingsop.InventoryRoutingSopService;
 import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.momoroutingsop.MoMoroutingsopService;
 import cn.rjtech.admin.momotask.MoMotaskService;
+import cn.rjtech.admin.morouting.MoMoroutingService;
+import cn.rjtech.admin.moroutingcinve.MoMoroutinginvcService;
+import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
+import cn.rjtech.admin.moroutingconfigequipment.MoMoroutingequipmentService;
+import cn.rjtech.admin.moroutingconfigoperation.MoMoroutingconfigOperationService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
@@ -34,6 +48,8 @@ import java.util.Calendar;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 
 /**
@@ -75,7 +91,28 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
     private MoMotaskService motaskService;
     @Inject
     private MoDocService moDocService;
-
+    @Inject
+    private InventoryRoutingConfigService inventoryRoutingConfigService;
+    @Inject
+    private InventoryroutingconfigOperationService inventoryroutingconfigOperationService;
+    @Inject
+    private InventoryRoutingEquipmentService inventoryRoutingEquipmentService;
+    @Inject
+    private InventoryRoutingInvcService inventoryRoutingInvcService;
+    @Inject
+    private InventoryRoutingSopService inventoryRoutingSopService;
+    @Inject
+    private MoMoroutingService moMoroutingService;
+    @Inject
+    private MoMoroutingconfigService moMoroutingconfigService;
+    @Inject
+    private MoMoroutingconfigOperationService moMoroutingconfigOperationService;
+    @Inject
+    private MoMoroutingequipmentService moMoroutingequipmentService;
+    @Inject
+    private MoMoroutinginvcService moMoroutinginvcService;
+    @Inject
+    private MoMoroutingsopService moMoroutingsopService;
 
     /**
      * 后台管理分页查询
@@ -339,6 +376,35 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         return dbTemplate("scheduproductplan.getApsWeekscheduleList").find();
     }
 
+    public Ret deleteApsWeekschedule(Kv kv) {
+        //排产纪录id
+        Long iWeekScheduleId = kv.getLong("iWeekScheduleId");
+        if (notOk(iWeekScheduleId)){
+            return fail("排产纪录不能为空！");
+        }
+        tx(() -> {
+            ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleEndTime,dLockEndTime FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId);
+            ApsWeekscheduledetails apsWeekscheduledetails = apsWeekscheduledetailsService.findFirst("SELECT iAutoId FROM Aps_WeekScheduleDetails WHERE iWeekScheduleId = ? ",iWeekScheduleId);
+            if (apsWeekschedule.getDLockEndTime() == null){
+                delete("DELETE FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId);
+                delete("DELETE FROM Aps_WeekScheduleDetails WHERE iWeekScheduleId = ? ",iWeekScheduleId);
+                if (apsWeekscheduledetails != null){
+                    delete("DELETE FROM Aps_WeekScheduleD_Qty WHERE iWeekScheduleDid = ? ",apsWeekscheduledetails.getIAutoId());
+                }
+            }else {
+                update("UPDATE Aps_WeekSchedule SET dScheduleEndTime = ? WHERE iAutoId = ? ",apsWeekschedule.getDLockEndTime(),iWeekScheduleId);
+                if (apsWeekscheduledetails != null){
+                    delete("DELETE FROM Aps_WeekScheduleD_Qty WHERE " +
+                            "CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )\n" +
+                            "ELSE CAST(iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN iDate<10 THEN '0'+CAST(iDate AS NVARCHAR(30) )\n" +
+                            "ELSE CAST(iDate AS NVARCHAR(30) )\n" +
+                            "END AS NVARCHAR(30)) ) > ? AND iWeekScheduleDid = ? ",DateUtils.formatDate(apsWeekschedule.getDLockEndTime(),"yyyy-MM-dd"),apsWeekscheduledetails.getIAutoId());
+                }
+            }
+            return true;
+        });
+        return SUCCESS;
+    }
 
     /**
      * 月周度生产计划逻辑处理
@@ -673,7 +739,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 int[] capabilityArrar = new int[3];
                 List<Record> capacityList = invCapacityListMap.get(inv) != null ? invCapacityListMap.get(inv) : new ArrayList<>();
                 for (int i = 0; i < capacityList.size(); i++) {
-                    String cWorkShiftCode = capacityList.get(i).getStr("capacityList");
+                    String cWorkShiftCode = capacityList.get(i).getStr("capacityList") != null ? capacityList.get(i).getStr("capacityList") : "";
                     int iCapacity = capacityList.get(i).getInt("iCapacity");
                     if (cWorkShiftCode.contains("1S")){
                         capabilityArrar[0] = iCapacity;
@@ -753,6 +819,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 int[] invPlan1S = invPlanMap1S.get(inv);
                 int[] invPlan2S = invPlanMap2S.get(inv);
                 int[] invPlan3S = invPlanMap3S.get(inv);
+                BigDecimal qiChuZaiKu = BigDecimal.valueOf(inventory_originalMap.get(inv));
 
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     String date = scheduDateList.get(i);
@@ -760,18 +827,25 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     int month = Integer.parseInt(date.substring(5,7));
                     int day = Integer.parseInt(date.substring(8,10));
 
+                    BigDecimal xuQiu = BigDecimal.valueOf(invPlan[i]);
+                    BigDecimal one = BigDecimal.valueOf(invPlan1S[i]);
+                    BigDecimal two = BigDecimal.valueOf(invPlan2S[i]);
+                    BigDecimal three = BigDecimal.valueOf(invPlan3S[i]);
+                    BigDecimal zaiKu = qiChuZaiKu.add(one).add(two).add(three).subtract(xuQiu);
+
                     ApsWeekscheduledQty scheduledQty = new ApsWeekscheduledQty();
                     scheduledQty.setIWeekScheduleDid(iWeekScheduleDid);
                     scheduledQty.setIYear(year);
                     scheduledQty.setIMonth(month);
                     scheduledQty.setIDate(day);
-                    scheduledQty.setIQty1(BigDecimal.valueOf(invPlan[i]));
-                    scheduledQty.setIQty2(BigDecimal.valueOf(invPlan1S[i]));
-                    scheduledQty.setIQty3(BigDecimal.valueOf(invPlan2S[i]));
-                    scheduledQty.setIQty4(BigDecimal.valueOf(invPlan3S[i]));
-                    scheduledQty.setIQty5(BigDecimal.valueOf(0));
+                    scheduledQty.setIQty1(xuQiu);
+                    scheduledQty.setIQty2(one);
+                    scheduledQty.setIQty3(two);
+                    scheduledQty.setIQty4(three);
+                    scheduledQty.setIQty5(zaiKu);
                     scheduledQty.setIQty6(BigDecimal.valueOf(0));
                     detailsQtyList.add(scheduledQty);
+                    qiChuZaiKu = zaiKu;
                 }
             }
         }
@@ -919,8 +993,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
     /**
      * 获取计划
      */
-    public List<Map<String,Object>> getScheduPlanMonthList(Long iWeekScheduleId) {
-
+    public List<Map<String,Object>> getScheduPlanMonthList(Kv kv) {
+        //排产纪录id
+        Long iWeekScheduleId = kv.getLong("iWeekScheduleId");
+        if (notOk(iWeekScheduleId)){
+            return null;
+        }
         //TODO:查询排产开始日期与截止日期
         ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleBeginTime,dScheduleEndTime FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId);
         int iLevel = apsWeekschedule.getILevel();
@@ -936,9 +1014,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         int lastmonth = Integer.parseInt(DateUtils.formatDate(lastDate,"MM"));
         int lastday = Integer.parseInt(DateUtils.formatDate(lastDate,"dd"));
 
-
+        kv.set("level",iLevel).set("startdate",startDate).set("enddate",endDate);
         //TODO:根据层级及日期获取月周生产计划表数据
-        List<Record> getWeekScheduPlanList = getWeekScheduPlanList(Okv.by("level",iLevel).set("startdate",startDate).set("enddate",endDate));
+        List<Record> getWeekScheduPlanList = getWeekScheduPlanList(kv);
 
         //key:产线id   value:List物料集
         Map<Long,List<String>> workInvListMap = new HashMap<>();
@@ -1003,6 +1081,22 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             int iQty5 = record.getBigDecimal("iQty5").intValue();
             lastDateZKQtyMap.put(cInvCode,iQty5);
         }
+        //上次锁定截止日期
+
+
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.setTime(new Date());
+        calendar2.add(Calendar.DATE,-1);//日期-1
+        Date lockPreDate = calendar2.getTime();
+        //TODO:获取当前层级上次排产锁定日期
+        ApsWeekschedule weekscheduleLock = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level",iLevel)).findFirst();
+        if (weekscheduleLock != null && weekscheduleLock.getDLockEndTime() != null){
+            Date preLock = DateUtils.parseDate(DateUtils.formatDate(weekscheduleLock.getDLockEndTime(),"yyyy-MM-dd"));
+            if (preLock.getTime() >= DateUtils.parseDate(DateUtils.formatDate(new Date(),"yyyy-MM-d")).getTime()){
+                lockPreDate = weekscheduleLock.getDLockEndTime();
+            }
+        }
+        lockPreDate = DateUtils.parseDate(DateUtils.formatDate(lockPreDate,"yyyy-MM-dd"));
 
 
         List<Map<String,Object>> dataList = new ArrayList<>();
@@ -1037,6 +1131,13 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     dataMap.put("zaiku",record.getBigDecimal("iQty5"));
                     dataMap.put("tianshu",record.getBigDecimal("iQty6"));
                     dataMap.put("date",date);
+                    dataMap.put("lock",false);
+
+
+
+                    if (DateUtils.parseDate(date).getTime() <= lockPreDate.getTime()){
+                        dataMap.put("lock",true);
+                    }
                     objectList.add(dataMap);
                 }
                 map.put("day",objectList);
@@ -1046,31 +1147,39 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         return dataList;
     }
 
-
     /**
      * 锁定计划
      */
     public Ret lockScheduPlan(Kv kv) {
-        //排产层级
-        int level = kv.getInt("level");
+        //排产纪录id
+        Long iWeekScheduleId = kv.getLong("iWeekScheduleId");
+        if (notOk(iWeekScheduleId)){
+            return fail("排产纪录id不能为空！");
+        }
         //锁定截止日期
-        String lockEndDate = kv.getStr("lockenddate");
+        String lockEndDate = kv.getStr("endDate");
+        if (StringUtils.isBlank(lockEndDate)){
+            return fail("锁定截止日期不能为空！");
+        }
+        //排产层级
+        int level = apsWeekscheduleService.findFirst("SELECT iLevel FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId).getILevel();
 
         //TODO:获取当前层级上次排产锁定日期+1
         ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock",Kv.by("level",level)).findFirst();
         //锁定开始日期
         Date startDate;
-        if (apsWeekschedule != null){
+        if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
             Date dLockEndTime = apsWeekschedule.getDLockEndTime();
             Calendar calendar = Calendar.getInstance();
-            Date date = cn.rjtech.util.DateUtils.parseDate(dLockEndTime);//yyyy-MM-dd
-            calendar.setTime(date);
+            calendar.setTime(dLockEndTime);
             calendar.add(Calendar.DATE,1);//日期+1
             startDate = DateUtils.parseDate(DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd"));
         }else {
             startDate = DateUtils.parseDate(DateUtils.formatDate(new Date(),"yyyy-MM-dd"));
         }
         String lockStartDate = DateUtils.formatDate(startDate,"yyyy-MM-dd");
+        //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+        List<String> scheduDateList = Util.getBetweenDate(lockStartDate,lockEndDate);
 
 
         //TODO:根据层级及日期获取月周生产计划表数据及部门信息
@@ -1087,11 +1196,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         Map<String,Record> invInfoMap = new HashMap<>();
         //本次排产物料id集
         String idsJoin = "(";
+        //本次排产物料工艺路线id集
+        String routingIdsJoin = "(";
         List<Long> idList = new ArrayList<>();
         for (Record record : apsPlanQtyList){
             Long iDepId = record.getLong("iDepId");
             Long invId = record.getLong("invId");
             String cInvCode = record.getStr("cInvCode");
+            Long iInventoryRoutingId = record.getLong("iInventoryRoutingId");//存货工艺路线
             String iYear = record.getStr("iYear");
             int iMonth = record.getInt("iMonth");
             int iDate = record.getInt("iDate");
@@ -1146,16 +1258,28 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             if (!idList.contains(invId)){
                 idsJoin = idsJoin + invId + ",";
                 idList.add(invId);
+                if (isOk(iInventoryRoutingId)){
+                    routingIdsJoin = routingIdsJoin + iInventoryRoutingId + ",";
+                }
             }
         }
         idsJoin = idsJoin + "601)";
+        routingIdsJoin = routingIdsJoin + "601)";
 
 
         //TODO:周分类
         //key:1   value:日期集 有序
         Map<Integer,List<String>> weekDateMap = new HashMap<>();
-
-
+        int weekNum = 1; //周次
+        for (String date : scheduDateList) {
+            List<String> list = weekDateMap.containsKey(weekNum) ? weekDateMap.get(weekNum) : new ArrayList<>();
+            list.add(date);
+            weekDateMap.put(weekNum,list);
+            String weekDay = DateUtils.formatDate(DateUtils.parseDate(date),"E");
+            if (weekDay.equals("星期日")){
+                weekNum ++;
+            }
+        }
         //TODO:根据物料集查询各班次
         List<Record> invCapacityList = dbTemplate("scheduproductplan.getInvCapacityList",Kv.by("ids",idsJoin)).find();
         //key:inv    value:iWorkShiftMid
@@ -1179,9 +1303,112 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
         }
 
+        //TODO:根据工艺路线id集查询各存货工艺路线
+        List<Record> invRoutingList = dbTemplate("scheduproductplan.getInvRoutingList",Kv.by("ids",routingIdsJoin)).find();
+        //key:inv    value:record
+        Map<String,Record> invRoutingMap = new HashMap<>();
+        for (Record record : invRoutingList){
+            String cInvCode = record.getStr("cInvCode");
+            invRoutingMap.put(cInvCode,record);
+        }
+        //TODO:根据工艺路线id集查询各存货工艺路线配置
+        List<InventoryRoutingConfig> getInvRoutingConfigList = inventoryRoutingConfigService.daoTemplate("scheduproductplan.getInvRoutingConfigList",Kv.by("ids",routingIdsJoin)).find();
+        //key:invRoutingId    value:List<InventoryRoutingConfig>
+        Map<Long,List<InventoryRoutingConfig>> invRoutingConfigListMap = new HashMap<>();
+        String routingConfigIds = "(";
+        for (InventoryRoutingConfig invRoutingConfig : getInvRoutingConfigList){
+            Long iInventoryRoutingId = invRoutingConfig.getIInventoryRoutingId();
+            if (invRoutingConfigListMap.containsKey(iInventoryRoutingId)){
+                List<InventoryRoutingConfig> list = invRoutingConfigListMap.get(iInventoryRoutingId);
+                list.add(invRoutingConfig);
+            }else {
+                List<InventoryRoutingConfig> list = new ArrayList<>();
+                list.add(invRoutingConfig);
+                invRoutingConfigListMap.put(iInventoryRoutingId,list);
+            }
+            Long iAutoId = invRoutingConfig.getIAutoId();
+            routingConfigIds = routingConfigIds + iAutoId + ",";
+        }
+        routingConfigIds = routingConfigIds + "601)";
+        //TODO:根据工艺路线配置id集查询各工艺工序
+        List<InventoryroutingconfigOperation> getInvRoutingConfigOperationList = inventoryroutingconfigOperationService.daoTemplate("scheduproductplan.getInvRoutingConfigOperationList",Kv.by("ids",routingConfigIds)).find();
+        //key:invRoutingConfigId    value:List<InventoryroutingconfigOperation>
+        Map<Long,List<InventoryroutingconfigOperation>> invRoutingConfigOperationListMap = new HashMap<>();
+        for (InventoryroutingconfigOperation entity : getInvRoutingConfigOperationList){
+            Long iInventoryRoutingConfigId = entity.getIInventoryRoutingConfigId();
+            if (invRoutingConfigOperationListMap.containsKey(iInventoryRoutingConfigId)){
+                List<InventoryroutingconfigOperation> list = invRoutingConfigOperationListMap.get(iInventoryRoutingConfigId);
+                list.add(entity);
+            }else {
+                List<InventoryroutingconfigOperation> list = new ArrayList<>();
+                list.add(entity);
+                invRoutingConfigOperationListMap.put(iInventoryRoutingConfigId,list);
+            }
+        }
+        //TODO:根据工艺路线配置id集查询各工艺设备
+        List<InventoryRoutingEquipment> getInvRoutingConfigEquipmentList = inventoryRoutingEquipmentService.daoTemplate("scheduproductplan.getInvRoutingConfigEquipmentList",Kv.by("ids",routingConfigIds)).find();
+        //key:invRoutingConfigId    value:List<InventoryRoutingEquipment>
+        Map<Long,List<InventoryRoutingEquipment>> invRoutingConfigEquipmentListMap = new HashMap<>();
+        for (InventoryRoutingEquipment entity : getInvRoutingConfigEquipmentList){
+            Long iInventoryRoutingConfigId = entity.getIInventoryRoutingConfigId();
+            if (invRoutingConfigEquipmentListMap.containsKey(iInventoryRoutingConfigId)){
+                List<InventoryRoutingEquipment> list = invRoutingConfigEquipmentListMap.get(iInventoryRoutingConfigId);
+                list.add(entity);
+            }else {
+                List<InventoryRoutingEquipment> list = new ArrayList<>();
+                list.add(entity);
+                invRoutingConfigEquipmentListMap.put(iInventoryRoutingConfigId,list);
+            }
+        }
+        //TODO:根据工艺路线配置id集查询各工艺物料
+        List<InventoryRoutingInvc> getInvRoutingConfigInvcList = inventoryRoutingInvcService.daoTemplate("scheduproductplan.getInvRoutingConfigInvcList",Kv.by("ids",routingConfigIds)).find();
+        //key:invRoutingConfigId    value:List<InventoryRoutingInvc>
+        Map<Long,List<InventoryRoutingInvc>> invRoutingConfigInvcListMap = new HashMap<>();
+        for (InventoryRoutingInvc entity : getInvRoutingConfigInvcList){
+            Long iInventoryRoutingConfigId = entity.getIInventoryRoutingConfigId();
+            if (invRoutingConfigInvcListMap.containsKey(iInventoryRoutingConfigId)){
+                List<InventoryRoutingInvc> list = invRoutingConfigInvcListMap.get(iInventoryRoutingConfigId);
+                list.add(entity);
+            }else {
+                List<InventoryRoutingInvc> list = new ArrayList<>();
+                list.add(entity);
+                invRoutingConfigInvcListMap.put(iInventoryRoutingConfigId,list);
+            }
+        }
+        //TODO:根据工艺路线配置id集查询各工艺作业指导书
+        List<InventoryRoutingSop> getInvRoutingConfigSopList = inventoryRoutingSopService.daoTemplate("scheduproductplan.getInvRoutingConfigSopList",Kv.by("ids",routingConfigIds)).find();
+        //key:invRoutingConfigId    value:List<InventoryRoutingSop>
+        Map<Long,List<InventoryRoutingSop>> invRoutingConfigSopListMap = new HashMap<>();
+        for (InventoryRoutingSop entity : getInvRoutingConfigSopList){
+            Long iInventoryRoutingConfigId = entity.getIInventoryRoutingConfigId();
+            if (invRoutingConfigSopListMap.containsKey(iInventoryRoutingConfigId)){
+                List<InventoryRoutingSop> list = invRoutingConfigSopListMap.get(iInventoryRoutingConfigId);
+                list.add(entity);
+            }else {
+                List<InventoryRoutingSop> list = new ArrayList<>();
+                list.add(entity);
+                invRoutingConfigSopListMap.put(iInventoryRoutingConfigId,list);
+            }
+        }
+
+
+        //任务单
         List<MoMotask> moTaskList = new ArrayList<>();
+        //工单
         List<MoDoc> moDocList = new ArrayList<>();
 
+        List<MoMorouting> moMoroutingList = new ArrayList<>();
+        List<MoMoroutingconfig> moMoroutingConfigList = new ArrayList<>();
+        List<MoMoroutingconfigOperation> moMoroutingconfigOperationList = new ArrayList<>();
+        List<MoMoroutingequipment> moMoroutingequipmentList = new ArrayList<>();
+        List<MoMoroutinginvc> moMoroutinginvcList = new ArrayList<>();
+        List<MoMoroutingsop> moMoroutingsopList = new ArrayList<>();
+
+        Long userId = JBoltUserKit.getUserId();
+        String userName = JBoltUserKit.getUserName();
+        String orgCode = getOrgCode();
+        String orgName = getOrgName();
+        Long orgId = getOrgId();
         Date nowDate = new Date();
         String dateStr = DateUtils.formatDate(nowDate,"yyyyMMdd");
         //对部门逐个处理
@@ -1205,15 +1432,15 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 motask.setIStatus(1);
                 motask.setIAuditStatus(0);
                 motask.setIAuditWay(1);
-                motask.setICreateBy(JBoltUserKit.getUserId());
+                motask.setICreateBy(userId);
                 motask.setDCreateTime(nowDate);
-                motask.setCCreateName(JBoltUserKit.getUserName());
-                motask.setIUpdateBy(JBoltUserKit.getUserId());
+                motask.setCCreateName(userName);
+                motask.setIUpdateBy(userId);
                 motask.setDUpdateTime(nowDate);
-                motask.setCUpdateName(JBoltUserKit.getUserName());
-                motask.setIOrgId(getOrgId());
-                motask.setCOrgCode(getOrgCode());
-                motask.setCOrgName(getOrgName());
+                motask.setCUpdateName(userName);
+                motask.setIOrgId(orgId);
+                motask.setCOrgCode(orgCode);
+                motask.setCOrgName(orgName);
                 moTaskList.add(motask);
 
                 //inv集
@@ -1221,17 +1448,67 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 for (String inv : recordList){
                     //inv信息
                     Record invInfo = invInfoMap.get(inv);
-                    //key:yyyy-MM-dd   value:qty1S
+                    Long iInventoryRoutingId = invInfo.getLong("iInventoryRoutingId");
+                    //工艺路线
+                    Record invRouting = invRoutingMap.get(inv);
+                    //工艺路线配置
+                    List<InventoryRoutingConfig> invRoutingConfigList = invRoutingConfigListMap.get(iInventoryRoutingId) != null ? invRoutingConfigListMap.get(iInventoryRoutingId) : new ArrayList<>();
+
+                    addOrder(inv,invInfo,dateList,dateStr,userId,userName,nowDate,
+                            taskId,deptId,iInventoryRoutingId,invRouting,
+                            invPlanDate1SMap,
+                            invCapacity1SMap,
+                            invRoutingConfigList,
+                            invRoutingConfigOperationListMap,
+                            invRoutingConfigEquipmentListMap,
+                            invRoutingConfigInvcListMap,
+                            invRoutingConfigSopListMap,
+                            moDocList,moMoroutingList,
+                            moMoroutingConfigList,
+                            moMoroutingconfigOperationList,
+                            moMoroutingequipmentList,
+                            moMoroutinginvcList,
+                            moMoroutingsopList);
+                    addOrder(inv,invInfo,dateList,dateStr,userId,userName,nowDate,
+                            taskId,deptId,iInventoryRoutingId,invRouting,
+                            invPlanDate2SMap,
+                            invCapacity2SMap,
+                            invRoutingConfigList,
+                            invRoutingConfigOperationListMap,
+                            invRoutingConfigEquipmentListMap,
+                            invRoutingConfigInvcListMap,
+                            invRoutingConfigSopListMap,
+                            moDocList,moMoroutingList,
+                            moMoroutingConfigList,
+                            moMoroutingconfigOperationList,
+                            moMoroutingequipmentList,
+                            moMoroutinginvcList,
+                            moMoroutingsopList);
+                    addOrder(inv,invInfo,dateList,dateStr,userId,userName,nowDate,
+                            taskId,deptId,iInventoryRoutingId,invRouting,
+                            invPlanDate3SMap,
+                            invCapacity3SMap,
+                            invRoutingConfigList,
+                            invRoutingConfigOperationListMap,
+                            invRoutingConfigEquipmentListMap,
+                            invRoutingConfigInvcListMap,
+                            invRoutingConfigSopListMap,
+                            moDocList,moMoroutingList,
+                            moMoroutingConfigList,
+                            moMoroutingconfigOperationList,
+                            moMoroutingequipmentList,
+                            moMoroutinginvcList,
+                            moMoroutingsopList);
+
+                    /*//key:yyyy-MM-dd   value:qty1S
                     Map<String,BigDecimal> dateQtyMap = invPlanDate1SMap.get(inv);
                     //班次ID 1S
                     Long iWorkShiftMid = invCapacity1SMap.get(inv);
 
                     Long invId = invInfo.getLong("invId");
                     Long iWorkRegionMid = invInfo.getLong("iWorkRegionMid");
-                    Long iInventoryRoutingId = invInfo.getLong("iInventoryRoutingId");
                     String cRoutingName = invInfo.getStr("cRoutingName");
                     String cVersion = invInfo.getStr("cVersion");
-
                     for (String date : dateList){
                         Date dPlanDate = DateUtils.parseDate(date);
                         int year = Integer.parseInt(date.substring(0,4));
@@ -1242,8 +1519,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                             //任务单号
                             String planNo2 = momDataFuncService.getNextRouteNo(1L, "MOD"+dateStr, 3);
 
+                            Long moDocId = JBoltSnowflakeKit.me.nextId();
                             MoDoc moDoc = new MoDoc();
-                            moDoc.setIAutoId(JBoltSnowflakeKit.me.nextId());
+                            moDoc.setIAutoId(moDocId);
                             moDoc.setIType(1);
                             moDoc.setIMoTaskId(taskId);
                             moDoc.setIWorkRegionMid(iWorkRegionMid);
@@ -1261,14 +1539,302 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                             moDoc.setCRoutingName(cRoutingName);
                             moDoc.setCVersion(cVersion);
                             moDocList.add(moDoc);
+
+                            //工艺路线
+                            if (invRouting != null){
+                                Long moRoutingId = JBoltSnowflakeKit.me.nextId();
+                                MoMorouting moMorouting = new MoMorouting();
+                                moMorouting.setIAutoId(moRoutingId);
+                                moMorouting.setIMoDocId(moDocId);
+                                moMorouting.setIInventoryRoutingId(iInventoryRoutingId);
+                                moMorouting.setIInventoryId(invId);
+                                moMorouting.setCRoutingName(invRouting.getStr("cRoutingName"));
+                                moMorouting.setCVersion(invRouting.getStr("cVersion"));
+                                moMorouting.setIFinishedRate(invRouting.getBigDecimal("iFinishedRate"));
+                                moMorouting.setCRequirement(invRouting.getStr("cRequirement"));
+                                moMorouting.setCMemo(invRouting.getStr("cMemo"));
+                                moMoroutingList.add(moMorouting);
+
+                                //工艺路线配置
+                                for (InventoryRoutingConfig invRoutingConfig : invRoutingConfigList){
+                                    Long moRoutingConfigId = JBoltSnowflakeKit.me.nextId();
+                                    MoMoroutingconfig moMoroutingconfig = new MoMoroutingconfig();
+                                    moMoroutingconfig.setIAutoId(moRoutingConfigId);
+                                    moMoroutingconfig.setIMoRoutingId(moRoutingId);
+                                    moMoroutingconfig.setIInventoryRoutingId(iInventoryRoutingId);
+                                    moMoroutingconfig.setISeq(invRoutingConfig.getISeq());
+                                    moMoroutingconfig.setCMergedSeq(invRoutingConfig.getCMergedSeq());
+                                    moMoroutingconfig.setCOperationName(invRoutingConfig.getCOperationName());
+                                    moMoroutingconfig.setIType(invRoutingConfig.getIType());
+                                    moMoroutingconfig.setIRsInventoryId(invRoutingConfig.getIRsInventoryId());
+                                    moMoroutingconfig.setCProductSn(invRoutingConfig.getCProductSn());
+                                    moMoroutingconfig.setCProductTechSn(invRoutingConfig.getCProductTechSn());
+                                    moMoroutingconfig.setIMergedNum(invRoutingConfig.getIMergedNum());
+                                    moMoroutingconfig.setIMergeRate(invRoutingConfig.getIMergeRate());
+                                    moMoroutingconfig.setIMergeSecs(invRoutingConfig.getIMergeSecs());
+                                    moMoroutingconfig.setISecs(invRoutingConfig.getISecs());
+                                    moMoroutingconfig.setCMemo(invRoutingConfig.getCMemo());
+                                    moMoroutingconfig.setICreateBy(userId);
+                                    moMoroutingconfig.setCCreateName(userName);
+                                    moMoroutingconfig.setDCreateTime(nowDate);
+                                    moMoroutingConfigList.add(moMoroutingconfig);
+
+                                    //工艺工序
+                                    List<InventoryroutingconfigOperation> invRoutingConfigOperationList = invRoutingConfigOperationListMap.get(invRoutingConfig.getIAutoId());
+                                    if (invRoutingConfigOperationList != null){
+                                        for (InventoryroutingconfigOperation invOperation : invRoutingConfigOperationList){
+                                            MoMoroutingconfigOperation moMoroutingconfigOperation = new MoMoroutingconfigOperation();
+                                            moMoroutingconfigOperation.setIMoInventoryRoutingId(moRoutingConfigId);
+                                            moMoroutingconfigOperation.setIInventoryRoutingConfigId(invOperation.getIInventoryRoutingConfigId());
+                                            moMoroutingconfigOperation.setIOperationId(invOperation.getIOperationId());
+                                            moMoroutingconfigOperationList.add(moMoroutingconfigOperation);
+                                        }
+                                    }
+                                    //工艺设备
+                                    List<InventoryRoutingEquipment> invRoutingConfigEquipmentList = invRoutingConfigEquipmentListMap.get(invRoutingConfig.getIAutoId());
+                                    if (invRoutingConfigEquipmentList != null){
+                                        for (InventoryRoutingEquipment invEquipment : invRoutingConfigEquipmentList){
+                                            MoMoroutingequipment moMoroutingconfigEquipment = new MoMoroutingequipment();
+                                            moMoroutingconfigEquipment.setIMoRoutingConfigId(moRoutingConfigId);
+                                            moMoroutingconfigEquipment.setIEquipmentId(invEquipment.getIEquipmentId());
+                                            moMoroutingequipmentList.add(moMoroutingconfigEquipment);
+                                        }
+                                    }
+                                    //工艺物料
+                                    List<InventoryRoutingInvc> invRoutingConfigInvcList = invRoutingConfigInvcListMap.get(invRoutingConfig.getIAutoId());
+                                    if (invRoutingConfigInvcList != null){
+                                        for (InventoryRoutingInvc invInvc : invRoutingConfigInvcList){
+                                            MoMoroutinginvc moMoroutinginvc = new MoMoroutinginvc();
+                                            moMoroutinginvc.setIMoRoutingConfigId(moRoutingConfigId);
+                                            moMoroutinginvc.setIInventoryRoutingConfigId(invInvc.getIInventoryRoutingConfigId());
+                                            moMoroutinginvc.setIInventoryId(invInvc.getIInventoryId());
+                                            moMoroutinginvc.setIUsageUOM(invInvc.getIUsageUOM());
+                                            moMoroutinginvc.setCMemo(invInvc.getCMemo());
+                                            moMoroutinginvc.setICreateBy(userId);
+                                            moMoroutinginvc.setCCreateName(userName);
+                                            moMoroutinginvc.setDCreateTime(nowDate);
+                                            moMoroutinginvcList.add(moMoroutinginvc);
+                                        }
+                                    }
+                                    //工艺作业指导书
+                                    List<InventoryRoutingSop> invRoutingConfigSopList = invRoutingConfigSopListMap.get(invRoutingConfig.getIAutoId());
+                                    if (invRoutingConfigSopList != null){
+                                        for (InventoryRoutingSop invSop : invRoutingConfigSopList){
+                                            MoMoroutingsop moMoroutingsop = new MoMoroutingsop();
+                                            moMoroutingsop.setIMoRoutingConfigId(moRoutingConfigId);
+                                            moMoroutingsop.setIInventoryRoutingConfigId(invSop.getIInventoryRoutingConfigId());
+                                            moMoroutingsop.setCName(invSop.getCName());
+                                            moMoroutingsop.setCPath(invSop.getCPath());
+                                            moMoroutingsop.setCSuffix(invSop.getCSuffix());
+                                            moMoroutingsop.setISize(invSop.getISize());
+                                            moMoroutingsop.setIVersion(invSop.getIVersion());
+                                            moMoroutingsop.setDFromDate(invSop.getDFromDate());
+                                            moMoroutingsop.setDToDate(invSop.getDToDate());
+                                            moMoroutingsopList.add(moMoroutingsop);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }*/
+                }
+            }
+        }
+        tx(() -> {
+            update("UPDATE Aps_WeekSchedule SET dLockEndTime = ? WHERE iAutoId = ? ",DateUtils.parseDate(lockEndDate),iWeekScheduleId);
+            motaskService.batchSave(moTaskList);
+            moDocService.batchSave(moDocList);
+
+            moMoroutingService.batchSave(moMoroutingList);
+            moMoroutingconfigService.batchSave(moMoroutingConfigList);
+            moMoroutingconfigOperationService.batchSave(moMoroutingconfigOperationList);
+            moMoroutingequipmentService.batchSave(moMoroutingequipmentList);
+            moMoroutinginvcService.batchSave(moMoroutinginvcList);
+            moMoroutingsopService.batchSave(moMoroutingsopList);
+            return true;
+        });
+        return SUCCESS;
+    }
+    public void addOrder(String inv,Record invInfo,List<String> dateList,String dateStr,Long userId,String userName,Date nowDate,
+                         Long taskId,Long deptId,Long iInventoryRoutingId,Record invRouting,
+                         Map<String,Map<String,BigDecimal>> invPlanDate1SMap,
+                         Map<String,Long> invCapacity1SMap,
+                         List<InventoryRoutingConfig> invRoutingConfigList,
+                         Map<Long,List<InventoryroutingconfigOperation>> invRoutingConfigOperationListMap,
+                         Map<Long,List<InventoryRoutingEquipment>> invRoutingConfigEquipmentListMap,
+                         Map<Long,List<InventoryRoutingInvc>> invRoutingConfigInvcListMap,
+                         Map<Long,List<InventoryRoutingSop>> invRoutingConfigSopListMap,
+                         List<MoDoc> moDocList,List<MoMorouting> moMoroutingList,
+                         List<MoMoroutingconfig> moMoroutingConfigList,
+                         List<MoMoroutingconfigOperation> moMoroutingconfigOperationList,
+                         List<MoMoroutingequipment> moMoroutingequipmentList,
+                         List<MoMoroutinginvc> moMoroutinginvcList,
+                         List<MoMoroutingsop> moMoroutingsopList){
+        //key:yyyy-MM-dd   value:qty1S
+        Map<String,BigDecimal> dateQtyMap = invPlanDate1SMap.get(inv);
+        //班次ID 1S
+        Long iWorkShiftMid = invCapacity1SMap.get(inv);
+
+        Long invId = invInfo.getLong("invId");
+        Long iWorkRegionMid = invInfo.getLong("iWorkRegionMid");
+        String cRoutingName = invInfo.getStr("cRoutingName");
+        String cVersion = invInfo.getStr("cVersion");
+        for (String date : dateList){
+            Date dPlanDate = DateUtils.parseDate(date);
+            int year = Integer.parseInt(date.substring(0,4));
+            int month = Integer.parseInt(date.substring(5,7));
+            int day = Integer.parseInt(date.substring(8,10));
+            BigDecimal qty = dateQtyMap.get(date);
+            if (qty != null && (qty.compareTo(BigDecimal.ZERO) > 0)){
+                //任务单号
+                String planNo2 = momDataFuncService.getNextRouteNo(1L, "MOD"+dateStr, 3);
+
+                Long moDocId = JBoltSnowflakeKit.me.nextId();
+                MoDoc moDoc = new MoDoc();
+                moDoc.setIAutoId(moDocId);
+                moDoc.setIType(1);
+                moDoc.setIMoTaskId(taskId);
+                moDoc.setIWorkRegionMid(iWorkRegionMid);
+                moDoc.setIInventoryId(invId);
+                moDoc.setCMoDocNo(planNo2);
+                moDoc.setDPlanDate(dPlanDate);
+                moDoc.setIYear(year);
+                moDoc.setIMonth(month);
+                moDoc.setIDate(day);
+                moDoc.setIDepartmentId(deptId);
+                moDoc.setIWorkShiftMid(iWorkShiftMid);
+                moDoc.setIQty(qty);
+                moDoc.setIStatus(1);
+                moDoc.setIInventoryRouting(iInventoryRoutingId);
+                moDoc.setCRoutingName(cRoutingName);
+                moDoc.setCVersion(cVersion);
+                moDocList.add(moDoc);
+
+                //工艺路线
+                if (invRouting != null){
+                    Long moRoutingId = JBoltSnowflakeKit.me.nextId();
+                    MoMorouting moMorouting = new MoMorouting();
+                    moMorouting.setIAutoId(moRoutingId);
+                    moMorouting.setIMoDocId(moDocId);
+                    moMorouting.setIInventoryRoutingId(iInventoryRoutingId);
+                    moMorouting.setIInventoryId(invId);
+                    moMorouting.setCRoutingName(invRouting.getStr("cRoutingName"));
+                    moMorouting.setCVersion(invRouting.getStr("cVersion"));
+                    moMorouting.setIFinishedRate(invRouting.getBigDecimal("iFinishedRate"));
+                    moMorouting.setCRequirement(invRouting.getStr("cRequirement"));
+                    moMorouting.setCMemo(invRouting.getStr("cMemo"));
+                    moMoroutingList.add(moMorouting);
+
+                    //工艺路线配置
+                    for (InventoryRoutingConfig invRoutingConfig : invRoutingConfigList){
+                        Long moRoutingConfigId = JBoltSnowflakeKit.me.nextId();
+                        MoMoroutingconfig moMoroutingconfig = new MoMoroutingconfig();
+                        moMoroutingconfig.setIAutoId(moRoutingConfigId);
+                        moMoroutingconfig.setIMoRoutingId(moRoutingId);
+                        moMoroutingconfig.setIInventoryRoutingId(iInventoryRoutingId);
+                        moMoroutingconfig.setISeq(invRoutingConfig.getISeq());
+                        moMoroutingconfig.setCMergedSeq(invRoutingConfig.getCMergedSeq());
+                        moMoroutingconfig.setCOperationName(invRoutingConfig.getCOperationName());
+                        moMoroutingconfig.setIType(invRoutingConfig.getIType());
+                        moMoroutingconfig.setIRsInventoryId(invRoutingConfig.getIRsInventoryId());
+                        moMoroutingconfig.setCProductSn(invRoutingConfig.getCProductSn());
+                        moMoroutingconfig.setCProductTechSn(invRoutingConfig.getCProductTechSn());
+                        moMoroutingconfig.setIMergedNum(invRoutingConfig.getIMergedNum());
+                        moMoroutingconfig.setIMergeRate(invRoutingConfig.getIMergeRate());
+                        moMoroutingconfig.setIMergeSecs(invRoutingConfig.getIMergeSecs());
+                        moMoroutingconfig.setISecs(invRoutingConfig.getISecs());
+                        moMoroutingconfig.setCMemo(invRoutingConfig.getCMemo());
+                        moMoroutingconfig.setICreateBy(userId);
+                        moMoroutingconfig.setCCreateName(userName);
+                        moMoroutingconfig.setDCreateTime(nowDate);
+                        moMoroutingConfigList.add(moMoroutingconfig);
+
+                        //工艺工序
+                        List<InventoryroutingconfigOperation> invRoutingConfigOperationList = invRoutingConfigOperationListMap.get(invRoutingConfig.getIAutoId());
+                        if (invRoutingConfigOperationList != null){
+                            for (InventoryroutingconfigOperation invOperation : invRoutingConfigOperationList){
+                                MoMoroutingconfigOperation moMoroutingconfigOperation = new MoMoroutingconfigOperation();
+                                moMoroutingconfigOperation.setIMoInventoryRoutingId(moRoutingConfigId);
+                                moMoroutingconfigOperation.setIInventoryRoutingConfigId(invOperation.getIInventoryRoutingConfigId());
+                                moMoroutingconfigOperation.setIOperationId(invOperation.getIOperationId());
+                                moMoroutingconfigOperationList.add(moMoroutingconfigOperation);
+                            }
+                        }
+                        //工艺设备
+                        List<InventoryRoutingEquipment> invRoutingConfigEquipmentList = invRoutingConfigEquipmentListMap.get(invRoutingConfig.getIAutoId());
+                        if (invRoutingConfigEquipmentList != null){
+                            for (InventoryRoutingEquipment invEquipment : invRoutingConfigEquipmentList){
+                                MoMoroutingequipment moMoroutingconfigEquipment = new MoMoroutingequipment();
+                                moMoroutingconfigEquipment.setIMoRoutingConfigId(moRoutingConfigId);
+                                moMoroutingconfigEquipment.setIEquipmentId(invEquipment.getIEquipmentId());
+                                moMoroutingequipmentList.add(moMoroutingconfigEquipment);
+                            }
+                        }
+                        //工艺物料
+                        List<InventoryRoutingInvc> invRoutingConfigInvcList = invRoutingConfigInvcListMap.get(invRoutingConfig.getIAutoId());
+                        if (invRoutingConfigInvcList != null){
+                            for (InventoryRoutingInvc invInvc : invRoutingConfigInvcList){
+                                MoMoroutinginvc moMoroutinginvc = new MoMoroutinginvc();
+                                moMoroutinginvc.setIMoRoutingConfigId(moRoutingConfigId);
+                                moMoroutinginvc.setIInventoryRoutingConfigId(invInvc.getIInventoryRoutingConfigId());
+                                moMoroutinginvc.setIInventoryId(invInvc.getIInventoryId());
+                                moMoroutinginvc.setIUsageUOM(invInvc.getIUsageUOM());
+                                moMoroutinginvc.setCMemo(invInvc.getCMemo());
+                                moMoroutinginvc.setICreateBy(userId);
+                                moMoroutinginvc.setCCreateName(userName);
+                                moMoroutinginvc.setDCreateTime(nowDate);
+                                moMoroutinginvcList.add(moMoroutinginvc);
+                            }
+                        }
+                        //工艺作业指导书
+                        List<InventoryRoutingSop> invRoutingConfigSopList = invRoutingConfigSopListMap.get(invRoutingConfig.getIAutoId());
+                        if (invRoutingConfigSopList != null){
+                            for (InventoryRoutingSop invSop : invRoutingConfigSopList){
+                                MoMoroutingsop moMoroutingsop = new MoMoroutingsop();
+                                moMoroutingsop.setIMoRoutingConfigId(moRoutingConfigId);
+                                moMoroutingsop.setIInventoryRoutingConfigId(invSop.getIInventoryRoutingConfigId());
+                                moMoroutingsop.setCName(invSop.getCName());
+                                moMoroutingsop.setCPath(invSop.getCPath());
+                                moMoroutingsop.setCSuffix(invSop.getCSuffix());
+                                moMoroutingsop.setISize(invSop.getISize());
+                                moMoroutingsop.setIVersion(invSop.getIVersion());
+                                moMoroutingsop.setDFromDate(invSop.getDFromDate());
+                                moMoroutingsop.setDToDate(invSop.getDToDate());
+                                moMoroutingsopList.add(moMoroutingsop);
+                            }
                         }
                     }
                 }
             }
         }
+    }
+    /**
+     * 解锁计划
+     */
+    public Ret unLockScheduPlan(Kv kv) {
+        //排产纪录id
+        Long iWeekScheduleId = kv.getLong("iWeekScheduleId");
+        if (notOk(iWeekScheduleId)){
+            return fail("排产纪录id不能为空！");
+        }
+        //解锁开始日期
+        String unLockStartDate = kv.getStr("endDate");
+        if (StringUtils.isBlank(unLockStartDate)){
+            return fail("解锁开始日期不能为空！");
+        }
+
+        //TODO:查询任务工单表结束日期 > 解锁开始日期&&未审核数据
+        List<MoMotask> getMotaskByEndDateList =  motaskService.daoTemplate("scheduproductplan.getMotaskByEndDateList",Kv.by("unlockstartdate",unLockStartDate)).find();
+        List<Long> taskIdList = new ArrayList<>();
+        for (MoMotask motask : getMotaskByEndDateList) {
+            taskIdList.add(motask.getIAutoId());
+        }
+
         tx(() -> {
-            motaskService.batchSave(moTaskList);
-            moDocService.batchSave(moDocList);
+            if (taskIdList.size() > 0) {
+                update("UPDATE Mo_MoTask SET IsDeleted = 1 WHERE iAutoId IN (" + CollUtil.join(taskIdList, COMMA) + ") ");
+                update("UPDATE Aps_WeekSchedule SET dLockEndTime = ? WHERE iAutoId = ? ",DateUtils.parseDate(unLockStartDate),iWeekScheduleId);
+            }
             return true;
         });
         return SUCCESS;
@@ -1280,7 +1846,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * 月周计划汇总
      */
     public List<Record> getApsMonthPlanSumPage(int pageNumber, int pageSize, Kv kv) {
-        List<Record> scheduProductPlanMonthList = new ArrayList<>();
+        List<Record> dataList = new ArrayList<>();
 
         String startDate = kv.getStr("startdate");
         String endDate = kv.getStr("enddate");
@@ -1293,8 +1859,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         pageSize = pageSize * 15;
 
         //TODO:根据日期及条件获取月周生产计划表数据三班汇总
-        Page<Record> recordPage = dbTemplate("scheduproductplan.getApsMonthPlanSumList",kv).paginate(pageNumber,pageSize);
-        List<Record> apsPlanQtyList = recordPage.getList();
+        List<Record> recordPage = dbTemplate("scheduproductplan.getApsMonthPlanSumList",kv).find();
+        List<Record> apsPlanQtyList = recordPage;
 
         //key:产线id   value:List物料集
         Map<Long,List<String>> workInvListMap = new HashMap<>();
@@ -1349,7 +1915,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 Map<String,BigDecimal> dateQtyMap = invPlanDateMap.get(inv);
 
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyMap,null);
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyMap,null);
 
                 /*Record planRecord = new Record();
                 planRecord.set("cInvCode",inv);
@@ -1396,39 +1962,21 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
         }
 
-        Record planRecord = new Record();
-        planRecord.set("cInvCode","物料编码");
-        planRecord.set("cInvCode1","存货");
-        planRecord.set("cInvName1","部番");
-        planRecord.set("cWorkName","产线");
-        planRecord.set("qty1",1);
-        planRecord.set("qty2",2);
-        planRecord.set("qty3",3);
-        planRecord.set("qty4",4);
-        planRecord.set("qty5",5);
-        planRecord.set("qty6",6);
-        planRecord.set("qty7",7);
-        planRecord.set("qty8",8);
-        planRecord.set("qty9",9);
-        planRecord.set("qty10",10);
-
-
-        scheduProductPlanMonthList.add(planRecord);
-
         Page<Record> page = new Page<>();
-        page.setPageNumber(recordPage.getPageNumber());
-        page.setPageSize(recordPage.getPageSize() / 15);
-        page.setTotalPage(recordPage.getTotalPage());
-        page.setTotalRow(recordPage.getTotalRow() /15);
-        page.setList(scheduProductPlanMonthList);
+        page.setPageNumber(pageNumber);
+        page.setPageSize(pageSize);
+        int num = (int) Math.ceil(dataList.size() / 15);
+        page.setTotalPage(num);
+        page.setTotalRow(dataList.size());
+        page.setList(dataList);
 
-        return scheduProductPlanMonthList;
+        return dataList;
     }
     /**
      * 月周人数汇总
      */
     public List<Record> getApsMonthPeopleSumPage(int pageNumber, int pageSize, Kv kv) {
-        List<Record> scheduProductPeopleMonthList = new ArrayList<>();
+        List<Record> dataList = new ArrayList<>();
 
         String startDate = kv.getStr("startdate");
         String endDate = kv.getStr("enddate");
@@ -1441,8 +1989,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         pageSize = pageSize * 15;
 
         //TODO:根据日期及条件获取月周生产计划表数据三班汇总
-        Page<Record> recordPage = dbTemplate("scheduproductplan.getApsMonthPlanSumList",kv).paginate(pageNumber,pageSize);
-        List<Record> apsPlanQtyList = recordPage.getList();
+        List<Record> recordPage = dbTemplate("scheduproductplan.getApsMonthPlanSumList",kv).find();
+        List<Record> apsPlanQtyList = recordPage;
 
         //key:产线id   value:List物料集
         Map<Long,List<String>> workInvListMap = new HashMap<>();
@@ -1563,37 +2111,19 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     planRecord.set("qty"+seq,qty);
                 }
 
-                scheduProductPeopleMonthList.add(planRecord);
+                dataList.add(planRecord);
             }
         }
 
-        Record planRecord = new Record();
-        planRecord.set("cInvCode","物料编码");
-        planRecord.set("cInvCode1","存货");
-        planRecord.set("cInvName1","部番");
-        planRecord.set("cWorkName","产线");
-        planRecord.set("qty1",1);
-        planRecord.set("qty2",1);
-        planRecord.set("qty3",1);
-        planRecord.set("qty4",1);
-        planRecord.set("qty5",1);
-        planRecord.set("qty6",1);
-        planRecord.set("qty7",1);
-        planRecord.set("qty8",1);
-        planRecord.set("qty9",1);
-        planRecord.set("qty10",1);
-
-
-        scheduProductPeopleMonthList.add(planRecord);
-
         Page<Record> page = new Page<>();
-        page.setPageNumber(recordPage.getPageNumber());
-        page.setPageSize(recordPage.getPageSize() / 15);
-        page.setTotalPage(recordPage.getTotalPage());
-        page.setTotalRow(recordPage.getTotalRow() /15);
-        page.setList(scheduProductPeopleMonthList);
+        page.setPageNumber(pageNumber);
+        page.setPageSize(pageSize);
+        int num = (int) Math.ceil(dataList.size() / 15);
+        page.setTotalPage(num);
+        page.setTotalRow(dataList.size());
+        page.setList(dataList);
 
-        return scheduProductPeopleMonthList;
+        return dataList;
     }
 
 
@@ -1604,7 +2134,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * 生产计划及实绩管理
      */
     public List<Record> getApsPlanAndActualPage(int pageNumber, int pageSize, Kv kv) {
-        List<Record> scheduProductPlanMonthList = new ArrayList<>();
+        List<Record> dataList = new ArrayList<>();
 
         String startDate = kv.getStr("startdate");
         String endDate = kv.getStr("enddate");
@@ -1617,8 +2147,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         pageSize = pageSize * 15;
 
         //TODO:根据日期及条件获取月周生产计划表数据
-        Page<Record> recordPage = dbTemplate("scheduproductplan.getApsMonthPlanList",kv).paginate(pageNumber,pageSize);
-        List<Record> apsPlanQtyList = recordPage.getList();
+        List<Record> recordPage = dbTemplate("scheduproductplan.getApsMonthPlanList",kv).find();
+        List<Record> apsPlanQtyList = recordPage;
 
         //key:inv，   value:<yyyy-MM-dd，QtyPP> 计划使用
         Map<String,Map<String,BigDecimal>> invPlanDatePPMap = new HashMap<>();
@@ -1818,80 +2348,61 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 //key:yyyy-MM-dd   value:qty  计划使用
                 Map<String,BigDecimal> dateQtyPPMap = invPlanDatePPMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyPPMap,"计划使用");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyPPMap,"计划使用");
 
                 //key:yyyy-MM-dd   value:qty  计划/1S
                 Map<String,BigDecimal> dateQty1SMap = invPlanDate1SMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQty1SMap,"计划/1S");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQty1SMap,"计划/1S");
 
                 //key:yyyy-MM-dd   value:qty  计划/2S
                 Map<String,BigDecimal> dateQty2SMap = invPlanDate2SMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQty2SMap,"计划/2S");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQty2SMap,"计划/2S");
 
                 //key:yyyy-MM-dd   value:qty  计划/3S
                 Map<String,BigDecimal> dateQty3SMap = invPlanDate3SMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQty3SMap,"计划/3S");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQty3SMap,"计划/3S");
 
                 //key:yyyy-MM-dd   value:qty  实绩/1S
                 Map<String,BigDecimal> dateQtyActual1SMap = invActualDate1SMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyActual1SMap,"实绩/1S");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyActual1SMap,"实绩/1S");
 
                 //key:yyyy-MM-dd   value:qty  实绩/2S
                 Map<String,BigDecimal> dateQtyActual2SMap = invActualDate2SMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyActual2SMap,"实绩/2S");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyActual2SMap,"实绩/2S");
 
                 //key:yyyy-MM-dd   value:qty  实绩/3S
                 Map<String,BigDecimal> dateQtyActual3SMap = invActualDate3SMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyActual3SMap,"实绩/3S");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyActual3SMap,"实绩/3S");
 
                 //key:yyyy-MM-dd   value:qty  计划汇总
                 Map<String,BigDecimal> dateQtyPlanSUMMap = invPlanDateSUMMap.get(inv);
                 //key:yyyy-MM-dd   value:qty  实绩汇总
                 Map<String,BigDecimal> dateQtyActualSUMMap = invActualDateSUMMap.get(inv);
                 //数据处理 行转列并赋值 实绩汇总-计划汇总(合计差异)
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyActualSUMMap,dateQtyPlanSUMMap,"合计差异");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyActualSUMMap,dateQtyPlanSUMMap,"合计差异");
 
                 //key:yyyy-MM-dd   value:qty  计划在库
                 Map<String,BigDecimal> dateQtyZKMap = invPlanDateZKMap.get(inv);
                 //数据处理 行转列并赋值
-                scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyZKMap,"计划在库");
+                scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyZKMap,"计划在库");
             }
         }
 
-        Record planRecord = new Record();
-        planRecord.set("cInvCode","物料编码");
-        planRecord.set("cInvCode1","存货");
-        planRecord.set("cInvName1","部番");
-        planRecord.set("cWorkName","产线");
-        planRecord.set("colName","计划使用");
-        planRecord.set("qty1",1);
-        planRecord.set("qty2",2);
-        planRecord.set("qty3",3);
-        planRecord.set("qty4",4);
-        planRecord.set("qty5",5);
-        planRecord.set("qty6",6);
-        planRecord.set("qty7",7);
-        planRecord.set("qty8",8);
-        planRecord.set("qty9",9);
-        planRecord.set("qty10",10);
-
-
-        scheduProductPlanMonthList.add(planRecord);
-
         Page<Record> page = new Page<>();
-        page.setPageNumber(recordPage.getPageNumber());
-        page.setPageSize(recordPage.getPageSize() / 15);
-        page.setTotalPage(recordPage.getTotalPage());
-        page.setTotalRow(recordPage.getTotalRow() /15);
-        page.setList(scheduProductPlanMonthList);
+        page.setPageNumber(pageNumber);
+        page.setPageSize(pageSize);
+        int num = (int) Math.ceil(dataList.size() / 15);
+        page.setTotalPage(num);
+        page.setTotalRow(dataList.size());
+        page.setList(dataList);
 
-        return scheduProductPlanMonthList;
+        return dataList;
     }
 
     /**
@@ -1911,6 +2422,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         if (StringUtils.isNotBlank(colName)){
             planRecord.set("colName",colName);
         }
+        dateQtyMap = dateQtyMap != null ? dateQtyMap : new HashMap<>();
 
         //key:yyyy-MM   value:qtySum
         Map<String,BigDecimal> monthQtyMap = new LinkedHashMap<>();
@@ -1967,6 +2479,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         if (StringUtils.isNotBlank(colName)){
             planRecord.set("colName",colName);
         }
+        dateQtyMap = dateQtyMap != null ? dateQtyMap : new HashMap<>();
+        dateQtyMap2 = dateQtyMap2 != null ? dateQtyMap2 : new HashMap<>();
 
         //key:yyyy-MM   value:qtySum
         Map<String,BigDecimal> monthQtyMap = new LinkedHashMap<>();
@@ -2025,7 +2539,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         return dbTemplate("scheduproductplan.getWeekScheduSumList", okv).find();
     }
 
-    public List<Record> getWeekScheduPlanList(Okv okv){
+    public List<Record> getWeekScheduPlanList(Kv okv){
         return dbTemplate("scheduproductplan.getWeekScheduPlanList", okv).find();
     }
     /**

@@ -128,8 +128,7 @@ public class ListUtils extends org.apache.commons.collections.ListUtils {
      * @param valuePropertyName 要提取为Map中的Value值的属性名.
      */
     @SuppressWarnings("unchecked")
-    public static Map extractToMap(final Collection collection, final String keyPropertyName,
-                                   final String valuePropertyName) {
+    public static Map extractToMap(final Collection collection, final String keyPropertyName, final String valuePropertyName) {
         Map map = new HashMap(collection.size());
         try {
             for (Object obj : collection) {
@@ -142,15 +141,16 @@ public class ListUtils extends org.apache.commons.collections.ListUtils {
         return map;
     }
 
-    public static Map dealWithReturnData(JSONObject plugReturnData) throws RuntimeException {
-        Map map = new HashMap();
+    public static Map<String, Object> dealWithReturnData(JSONObject plugReturnData) throws RuntimeException {
+        Map<String, Object> map = new HashMap<>(20);
+        if (plugReturnData == null) {
+            return map;
+        }
 
         try {
-            if (plugReturnData == null) {
-                return map;
-            }
             for (Object str : plugReturnData.keySet()) {
-                switch (String.valueOf(str)) {
+                String s = String.valueOf(str); 
+                switch (s) {
                     case "department":
                         map.put("department", getJSONArray(plugReturnData, "department", "deptCode"));
                         break;
@@ -206,7 +206,8 @@ public class ListUtils extends org.apache.commons.collections.ListUtils {
                         map.put("vt_id",getJSONArray(plugReturnData, "vt_id", "vtCode"));
                         break;
                     default:
-                        map.put(str, plugReturnData.get(str));
+                        map.put(s, plugReturnData.get(s));
+                        break;
                 }
             }
         } catch (RuntimeException e) {
@@ -216,7 +217,7 @@ public class ListUtils extends org.apache.commons.collections.ListUtils {
     }
 
     private static Object getJSONArray(JSONObject plugReturnData, String key1, String key2) throws RuntimeException {
-        return plugReturnData.get(key1).toString().indexOf(key2) != -1 ?
+        return plugReturnData.get(key1).toString().contains(key2) ?
                 plugReturnData.getJSONArray(key1).getJSONObject(0).get(key2) :
                 plugReturnData.get(key1).toString();
     }
@@ -251,8 +252,7 @@ public class ListUtils extends org.apache.commons.collections.ListUtils {
      * @param prefix       符合前缀的信息(为空则忽略前缀)
      * @param isNotBlank   仅包含不为空值(空字符串也排除)
      */
-    public static List<String> extractToList(final Collection collection, final String propertyName,
-                                             final String prefix, final boolean isNotBlank) {
+    public static List<String> extractToList(final Collection collection, final String propertyName, final String prefix, final boolean isNotBlank) {
         List<String> list = new ArrayList<String>(collection.size());
         try {
             for (Object obj : collection) {

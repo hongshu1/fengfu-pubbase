@@ -1,0 +1,94 @@
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="jboltTable_rowtpl_situation_#(pageId)1">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+			<td>${data.cinvestmenttypedesc}</td>
+            <td>${data.careertypedesc}</td>
+            <td>${data.cinvestmentdistinctiondesc}</td>
+			<td>${data.cplanno}</td>
+			<td>${data.citemname}</td>
+            <td>${data.iquantity}</td>
+            <td>${data.cunit}</td>
+			<td>${data.cassettypedesc}</td>
+			<td>${data.iitemyear}</td>
+			<td>$${data.isscheduled|isscheduled}</td>
+			<td>${data.itotalamountplan}</td>
+			<td>$${data.ibudgettype1|iBudgetType1}</td>
+			<td>$${data.citemtype|cItemTypeSituation}</td>
+			<td>${data.cbudgettypedesc}</td>
+			{@if data.ibudgettype1 == 2}<td>${data.previousamounttotal|kFormat}</td>{@else}<td>${data.previousamounttotal}</td>{@/if}
+			#if(monthcolumntxtlist)
+                #for(monthcolumntxt : monthcolumntxtlist)
+				{@if data.ibudgettype1 == 2}<td>${data.#(monthcolumntxt.datacolumn)|kFormat}</td>{@else}<td>${data.#(monthcolumntxt.datacolumn)}</td>{@/if}
+				#if(monthcolumntxt.totaldatacolumn)
+				{@if data.ibudgettype1 == 2}<td>${data.#(monthcolumntxt.totaldatacolumn)|kFormat}</td>{@else}<td>${data.#(monthcolumntxt.totaldatacolumn)}</td>{@/if}
+				#end
+                #end
+            #end
+            {@if data.ibudgettype1 == 2}<td>${data.afteramounttotal|kFormat}</td>{@else}<td>${data.afteramounttotal}</td>{@/if}		
+            </tr>
+            {@/each}
+        </textarea>
+
+        <table class="jbolt_table jbolt_main_ table-center"
+               data-jbolttable
+               id="jbolt_Table_situation_#(pageId)1"
+               data-ajax="true"
+               #if(daterecord??)
+               data-autoload="true"
+               data-url="/admin/investmentplan/findInvestmentPlanItemSituationDatas"
+               #else
+               data-autoload="false"
+               #end
+               data-column-resize="true"
+               data-conditions-form="investmentSituationForm"
+               data-rowtpl="jboltTable_rowtpl_situation_#(pageId)1"
+               data-column-prepend="1:checkbox:true"
+               data-height="fill"
+        >
+            <thead class="fw_normal">
+            <tr>
+	            <th data-width="100" data-column="iinvestmenttype" rowspan="2">投资类型</th>
+	            <th data-width="130" data-column="icareertype" rowspan="2">事业区分</th>
+	            <th data-width="130" data-column="iinvestmentdistinction" rowspan="2">投资区分</th>
+	            <th data-width="130" data-column="cplanno" rowspan="2">投资NO.</th>
+	            <th data-width="130" data-column="citemname" rowspan="2">名称</th>
+	            <th data-width="25" data-column="iquantity" rowspan="2">数量</th>
+	            <th data-width="25" data-column="cunit" rowspan="2">单位</th>
+	            <th data-width="50" data-column="cassettype" rowspan="2">资产类别</th>
+	            <th data-width="50" data-column="iitemyear" rowspan="2">立项年份</th>
+	            <th data-width="50" data-column="citemtype" rowspan="2">计划内/外</th>
+	            <th data-width="50" data-column="itotalamountplan" rowspan="2">项目总金额</th>
+	            <th data-width="50" data-column="ibudgettype1" rowspan="2">日程/付款</th>
+	            <th data-width="50" data-column="citemtypedesc" rowspan="2">类型</th>
+	            <th data-width="100" data-column="cbudgettypedesc" rowspan="2">预算编制时点</th>
+	            <th data-width="80" data-column="previousamounttotal" rowspan="2">前期合计</th>
+	            #if(yearcolumntxtlist??)
+                    #for(yearcolumntxt : yearcolumntxtlist)
+                    	<th data-width="90" colspan="#(yearcolumntxt.colspan)">#(yearcolumntxt.colname)</th>
+                    	<th data-width="80" data-column="#(yearcolumntxt.totaldatacolumn)" rowspan="2">合计</th>
+                    #end
+                #end
+                <th data-width="80" data-column="afteramounttotal" rowspan="2">后期合计</th>	            
+            </tr>
+            <tr>
+            	#if(monthcolumntxtlist??)
+                    #for(monthcolumntxt : monthcolumntxtlist)
+                    	<th data-width="50" data-column="#(monthcolumntxt.datacolumn)">#(monthcolumntxt.colname)</th>
+                    #end
+                #end
+            </tr>
+            </thead>
+            <tbody id="datatr1"></tbody>
+        </table>
+#define js()
+<script>
+function ajaxSuccessHandler_#(pageId)(table) {
+	   $('.jbolt_table').tablesMergeCell({
+	      cols: [1,2]
+	   })
+	   
+}
+</script>
+#end
+

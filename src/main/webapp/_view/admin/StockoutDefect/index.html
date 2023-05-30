@@ -10,15 +10,15 @@
 	</div>
 	<div class="col">
 		<form class="form-inline" id="stockoutDefectForm_#(pageId)"   onsubmit="return false;" method="post">
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="=异常品单号=" name="cDocNo" value="" />
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="=工单号=" name="iMoDocId" value="" />
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="=客户部番=" name="cInvCode1" value="" />
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="=存货编码编码=" name="cInvCode" value="" />
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="=部品名称=" name="cInvName" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=异常品单号=" name="cdocno" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=工单号=" name="imodocid" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=客户部番=" name="cinvcode1" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=存货编码编码=" name="cinvcode" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="=部品名称=" name="cinvname" value="" />
 			<select style="width:150px" class="form-control"
 					data-autoload
 					data-text="=状态="
-					name="iStatus"
+					name="istatus"
 			>
 				<option value="">=状态=</option>
 				<option value="0">待记录</option>
@@ -46,6 +46,7 @@
 	{@if data.istatus==1}
 		<a href="admin/stockoutdefect/add2?iautoid=${data.iautoid}&stockoutQcFormMid=${data.stockoutqcformmid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判定" class="jbolt_table_editbtn">异常品判定</a>
 	{@else if data.istatus==2}
+	<a href="common/qrcode?code=${data.cdocno}" data-photobtn tooltip data-title="点击查看二维码"><i style="font-size:20px;" class="fa fa-qrcode"></i></a>
 		<a href="admin/stockoutdefect/add2?iautoid=${data.iautoid}&stockoutQcFormMid=${data.stockoutqcformmid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
 	{@else}
 		<a href="admin/stockoutdefect/add2?iautoid=${data.iautoid}&stockoutQcFormMid=${data.stockoutqcformmid}" data-area="80%,100%"  tooltip data-title="检验"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">异常品记录</a>
@@ -68,7 +69,14 @@
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="stockoutDefect_toolbar_#(pageId)">
 	<div class="" role="group" aria-label="btn-group">
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-id="erm" data-check-handler="jboltTableGetCheckedId" data-url="admin/stockoutdefect/erm/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i>二维码</button>
+		<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">打印二维码</button>
+			<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+				<button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds" onclick="containerPrint_#(pageId)('check')"><i class="fa fa-download"></i> 打印勾选行</button>
+				<button class="btn dropdown-item" onclick="containerPrint_#(pageId)('page')"><i class="fa fa-download"></i> 打印当前页</button>
+			</div>
+		</div>
+<!--		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-id="erm" data-check-handler="jboltTableGetCheckedId" data-url="admin/stockoutdefect/erm/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i>二维码</button>-->
 	</div>
 
 	<div class="clearfix"></div>
@@ -124,16 +132,34 @@ data-row-dblclick-active="true"
 
 #define js()
 <script type="text/javascript">
+	// 打印
+	function containerPrint_#(pageId)(mark) {
+		let rows;
+		if (mark == 'check') {
+			rows = jboltTableGetCheckedDatas();
+			if (rows == null) {
+				return;
+			}
+		} else {
+			rows = jboltTableGetAllDatas();
+		}
 
-	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
-		console.log(JSON.stringify(rowData));
+		let code = [];
+		var k=0;
+		for (let i in rows) {
+			k++;
+			let rowdata = rows[i];
+			var ccode = rowdata.iautoid;
+			var istatus = rowdata.istatus;
+			var cdocno = rowdata.cdocno;
+			if (istatus != 2){
+				LayerMsgBox.error("第"+k+"行["+cdocno+"]异常单,请审核再打印！！！",3000);
+				return false;
+			}
 
-		$(tempTr1).data('url', '/admin/admin/StockoutDefect/edit/' + rowData.iautoid)
-			.data('area', '1200,800')
-			.data('title', '出库异常记录')
-			.data('btn', '保存,关闭');
-
-		DialogUtil.openBy(tempTr1);
+			code.push(ccode);
+		}
+		jboltHiprintWebPrint('doc_defect', 'url', 'admin/stockoutdefect/QRCode?ids=' + code.join(",") + "&&mark=" + mark);
 	}
 </script>
 #end

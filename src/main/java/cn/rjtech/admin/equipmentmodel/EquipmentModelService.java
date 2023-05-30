@@ -8,7 +8,11 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.model.momdata.EquipmentModel;
+import cn.rjtech.model.momdata.Workshiftm;
+import com.alibaba.fastjson.JSON;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.IAtom;
@@ -37,7 +41,8 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
-
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingdService;
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
@@ -153,30 +158,19 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
                     );
     }
 
+
     /**
 	 * 读取excel文件
 	 * @param file
 	 * @return
 	 */
-	public Ret importExcel(File file) {
+	public Ret importExcel(File file, String cformatName) {
 		StringBuilder errorMsg=new StringBuilder();
-		JBoltExcel jBoltExcel=JBoltExcel
-		//从excel文件创建JBoltExcel实例
-		.from(file)
-		//设置工作表信息
-		.setSheets(
-				JBoltExcelSheet.create()
-				//设置列映射 顺序 标题名称
-                .setHeaders(1,
-                        JBoltExcelHeader.create("cEquipmentModelCode","机型编码"),
-                        JBoltExcelHeader.create("cEquipmentModelName","机型名称"),
-                        JBoltExcelHeader.create("cMemo","备注")
-                        )
-				//从第三行开始读取
-				.setDataStartRow(2)
-				);
-		//从指定的sheet工作表里读取数据
-		List<EquipmentModel> equipmentModels=JBoltExcelUtil.readModels(jBoltExcel,1, EquipmentModel.class,errorMsg);
+		//使用字段配置维护
+		Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
+//		String docInfoRelaStrings= JSON.toJSONStringWithDateFormat(importData,"HH:mm");
+		String docInfoRelaStrings= JSON.toJSONString(importData);
+		List<EquipmentModel> equipmentModels = JSON.parseArray(docInfoRelaStrings, EquipmentModel.class);
 		if(notOk(equipmentModels)) {
 			if(errorMsg.length()>0) {
 				return fail(errorMsg.toString());

@@ -19,25 +19,25 @@ FROM
         LEFT JOIN Bd_Inventory t3 ON t3.iAutoId = t1.iInventoryId
 WHERE
         1 = 1
-    #if(cDocNo)
-  AND t2.cDocNo like '%#(cDocNo)%'
+    #if(cdocno)
+  AND t2.cDocNo like '%#(cdocno)%'
   #end
-#if(iMoDocId)
-  AND  t1.cInvQcFormNo like '%#(iMoDocId)%'
+#if(imodocid)
+  AND  t1.cInvQcFormNo like '%#(imodocid)%'
   #end
-#if(cInvCode1)
-  AND t3.cInvCode1 like '%#(cInvCode1)%'
+#if(cinvcode1)
+  AND t3.cInvCode1 like '%#(cinvcode1)%'
   #end
-#if(iInventoryId)
-  AND t3.cInvCode like '%#(cInvCode)%'
+#if(cinvcode)
+  AND t3.cInvCode like '%#(cinvcode)%'
   #end
-#if(cInvName)
-  AND t3.cInvName like '%#(cInvName)%'
+#if(cinvname)
+  AND t3.cInvName like '%#(cinvname)%'
   #end
-  #if(iStatus != '0' && iStatus)
-  AND t2.iStatus = '#(iStatus)'
+  #if(istatus != '0' && istatus)
+  AND t2.iStatus = '#(istatus)'
   #end
-  #if(iStatus == '0' && iStatus)
+  #if(istatus == '0' && istatus)
   AND t2.iStatus  is null
   #end
 
@@ -82,13 +82,27 @@ FROM
         LEFT JOIN Bd_Inventory t3 ON t3.iAutoId = t1.iInventoryId
 WHERE
         1 = 1
-    #if(selectparam)
-    AND (t2.cDocNo LIKE CONCAT('%',#para(selectparam), '%')
-    OR t1.cInvQcFormNo LIKE CONCAT('%', #para(selectparam), '%')
-    OR t3.cInvCode1 LIKE CONCAT('%', #para(selectparam), '%')
-    OR t3.cInvCode LIKE CONCAT('%',#para(selectparam), '%')
-    OR t3.cInvName LIKE CONCAT('%', #para(selectparam), '%'))
-    #end
+    #if(cdocno)
+  AND t2.cDocNo like '%#(cdocno)%'
+  #end
+#if(imodocid)
+  AND  t1.cInvQcFormNo like '%#(imodocid)%'
+  #end
+#if(cinvcode1)
+  AND t3.cInvCode1 like '%#(cinvcode1)%'
+  #end
+#if(cinvcode)
+  AND t3.cInvCode like '%#(cinvcode)%'
+  #end
+#if(cinvname)
+  AND t3.cInvName like '%#(cinvname)%'
+  #end
+  #if(istatus != '0' && istatus)
+  AND t2.iStatus = '#(istatus)'
+  #end
+  #if(istatus == '0' && istatus)
+  AND t2.iStatus  is null
+  #end
 #if(startdate)
     and CONVERT(VARCHAR(10),t2.dUpdateTime,23) >='#(startdate)'
 #end
@@ -97,4 +111,12 @@ WHERE
 #end
 ORDER BY
     t2.dUpdateTime DESC
+#end
+
+
+#sql("containerPrintData")
+SELECT t1.* FROM PL_InStockDefect t1 WHERE 1=1
+    #if(ids)
+      AND t1.iAutoId  in (#(ids))
+    #end
 #end

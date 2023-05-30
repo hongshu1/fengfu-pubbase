@@ -10,7 +10,7 @@ select so.AutoID, CASE so.state
         '审批不通过'
         END AS statename,so.state,so.BillNo as billno,so.CreateDate as createdate,
         so.VenCode as vencode
-		,p.name,s.name as sname,v.cVenName as venname
+		,p.name,s.name as sname,v.cVenName as venname,so.Type as type
 FROM T_Sys_PUReceive so
 LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.CreatePerson = p.username
 LEFT JOIN #(getBaseDbName()).dbo.jb_user s on so.AuditPerson = s.username

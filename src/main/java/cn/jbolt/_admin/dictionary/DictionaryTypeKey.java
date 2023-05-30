@@ -579,5 +579,101 @@ public enum DictionaryTypeKey {
     /**
      * 制造工单审批状态
      */
-    motask_audit;
+    motask_audit,
+    /**
+     * 物料到货计划订单状态
+     */
+    mrpDemandPlanM_istatus,
+    /**
+     * 特殊领料单处置意见
+     */
+    opinion,
+    /**
+     * 导入字段-定制规则
+     */
+    cusmappingd_rule_type,
+    /**
+     * 采购入库单状态
+     */
+    puinstore_state,
+    /**
+     * 制造工单状态
+     */
+    modoc_state,
+    /**
+     * 转换方式
+     */
+    convert,
+    /**
+     * 盘点方式
+     */
+    stockcheckType,
+    /**
+     * 库存盘点的状态
+     */
+    stockcheck_state,
+    /**
+     * 现品票
+     */
+    cash_ticket_type,
+    /**
+     * 禀议业务类型
+     */
+    service_type,
+    /**
+     * 费用预算预算类型
+     */
+    expense_budget_type,
+    /**
+     * 投资计划预算类型
+     */
+    investment_budget_type,
+    /**
+     * 日期格式
+     */
+    cdateformat,
+    /**
+     * 是否进口
+     */
+    is_import,
+    /**
+     * 事业区分
+     */
+    career_type,
+    /**
+     * 发运方式
+     */
+    shipped_type,
+    /**
+     * 生效状态
+     */
+    effective_status,
+    /**
+     * 费用月度实绩生效状态
+     */
+    adjust_effective_status,
+    /**
+     * 预算系统审核状态
+     */
+    audit_status,
+    /**
+     * 追加项目计划类型
+     */
+    append_item_isscheduled,
+    /**
+     * 事业计划内/外
+     */
+    isscheduled,
+    /**
+     * 禀议系统币种
+     */
+    currency,
+    /**
+     * 单据类型
+     */
+    VouchType,
+    /**
+     * 单据业务类型
+     */
+    cbtchname;
 }

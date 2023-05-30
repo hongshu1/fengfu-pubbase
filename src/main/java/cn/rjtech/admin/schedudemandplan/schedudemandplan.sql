@@ -196,6 +196,35 @@ WHERE 1 = 1
       END AS NVARCHAR(30)) ) <= #para(enddate)
 #end
 
+
+#sql("getDemandComputeDByVendorIdList")
+###根据供应商集查询物料需求计划
+SELECT
+    b.iYear,
+    b.iMonth,
+    b.iDate,
+    b.iQty1,
+    b.iQty2,
+    b.iQty3,
+    b.iQty4,
+    b.iQty5,
+    b.iInventoryId AS invId,
+    b.iVendorId
+FROM Mrp_DemandComputeD AS b
+WHERE 1 = 1
+  AND b.iVendorId IN #(ivendorids)
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) >= #para(startdate)
+  AND
+      (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
+      ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
+      ELSE CAST(b.iDate AS NVARCHAR(30) )
+      END AS NVARCHAR(30)) ) <= #para(enddate)
+#end
+
 //-----------------------------------------------------------------物料需求计划预示-----------------------------------------------
 
 

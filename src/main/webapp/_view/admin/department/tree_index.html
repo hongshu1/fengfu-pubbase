@@ -1,0 +1,188 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>部门档案</h1></div>
+			<div class="col">
+				<form class="form-inline text-left" id="Department_form_#(pageId)">
+					<input data-clear-handler="onkeyup" onkeyup="jboltTableFilterByKeywords('department_table_#(pageId)',this.value,[1,2,4,5])" data-with-clearbtn="true" autocomplete="off"  class="form-control d-inline-block ml-2"  placeholder="输入关键字 进行过滤"/>
+
+
+					<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=部门编码=" maxlength="50" name="depCode" value="#(cdepcode??)"/>
+					<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=部门名称=" maxlength="50" name="depName" value="#(cdepname??)"/>
+					<select class="form-control" data-url="admin/department/findPersonAll" name="depPerson" data-autoload data-text="=负责人=" data-value-attr="cpsnname" data-text-attr="cpsnname"></select>
+					<select class="form-control" name="isEnabled"
+							data-autoload
+							data-url="admin/dictionary/options?key=options_enable"
+							data-select-type="select"
+							data-text="=是否启用="
+							data-value=""
+							data-value-attr="sn"
+					></select>
+
+					<select class="form-control" name="isApsInvoled"
+							data-autoload
+							data-url="admin/dictionary/options?key=options_boolean"
+							data-select-type="select"
+							data-text="=是否参与排产="
+							data-value=""
+							data-value-attr="sn"
+					></select>
+
+					<!--<select class="form-control" name="isDeleted"-->
+					<!--	data-autoload-->
+					<!--	data-url="admin/dictionary/options?key=options_boolean"-->
+					<!--	data-select-type="select"-->
+					<!--	data-text="=是否删除="-->
+					<!--	data-value=""-->
+					<!--	data-value-attr="sn"-->
+					<!--	></select>-->
+
+					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+					<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+				</form>
+			</div>
+			<div class="col-sm-auto text-right">
+
+				<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/department/add" data-handler="jboltTablePageToFirst" data-area="90%,90%" tooltip data-title="新增组织建模-部门档案"><i class="fa fa-plus"></i></button>
+				<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+			</div>
+		</div>
+	</div>
+
+	<div class="jbolt_page_content">
+
+		<!-- JBoltTable的数据模板定义-->
+		<textarea class="jb_tpl_box" id="FormCategory_tpl_#(pageId)">
+
+            <tr data-id="${iautoid}" data-pid="${ipid}" data-level="${eachLevel}" data-hasitems="${items&&items.length>0}">
+
+			<td class="text-left"><span>(${cdepname})${cdepcode}</span></td>
+			<td>
+				{@if isDeleted}
+				<a class="text-info mr-1" data-openpage="dialog" href="admin/department/edit/${iautoid}" data-area="90%,90%" data-title="部门档案"><i class="fa fa-eye"></i></a>
+				{@else}
+				<a class="jbolt_table_editbtn" href="admin/department/edit/${iautoid}" data-handler="refreshJBoltTable" data-area="90%,90%" data-title="编辑组织建模-部门档案"><i class="fa fa-edit"></i>编辑</a>
+				{@/if}
+				<a class="jbolt_table_delbtn" href="admin/department/${isDeleted?'realDelete':'delete'}/${iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger">删除</i></a>
+			</td>
+			<td>${cdepname}</td>
+			<td>${typename}</td>
+			<td>${cpersonname}</td>
+			<td>${cdepmemo}</td>
+			<td><img data-switchbtn data-confirm="确定切换是否启用：0. 否 1. 是？" data-value="${isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/department/toggleIsEnabled/${iautoid}"/></td>
+			<td><img data-switchbtn data-confirm="确定切换是否参与排产：0. 否 1. 是？" data-value="${isapsinvoled}"  data-handler="refreshJBoltTable"  data-url="admin/department/toggleIsApsInvoled/${iautoid}"/></td>
+
+			<td>${dcreatetime}</td>
+            </tr>
+
+            {@if items&&items.length>0}
+            {@each items as son}
+            {@include "#FormCategory_tpl_#(pageId)",son}
+            {@/each}
+            {@/if}
+        </textarea>
+
+		<textarea class="jb_tpl_box" id="deptRowtpl_#(pageId)">
+            {@each datas as data,index}
+            {# 先循环第一级}
+            {@include "#FormCategory_tpl_#(pageId)",data}
+            {@/each}
+        </textarea>
+
+		<div class="jbolt_table_toolbar" id="Department_toolbar_#(pageId)">
+			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+
+
+
+
+				#permission(PermissionKey.DEPARTMENT_ADD)
+				<button data-dialogbtn data-area="90%,90%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增组织建模-部门档案" data-url="admin/department/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+				#end
+
+				#permission(PermissionKey.DEPARTMENT_EDIT)
+				<button data-dialogbtn data-area="90%,90%"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑组织建模-部门档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/department/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+				#end
+
+				#permission(PermissionKey.DEPARTMENT_DEL)
+				<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/department/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+				#end
+
+				#permission(PermissionKey.DEPARTMENT_EXPORT)
+				<div class="btn-group dropdown">
+					<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+					<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+						<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/department/exportExcelByIds"><i class="fa fa-download"></i> 导出选中</button>
+						<button class="btn dropdown-item" data-downloadbtn data-url="admin/department/exportExcelAll" data-form="workregionmForm_#(pageId)"><i class="fa fa-download"></i> 导出全部</button>
+					</div>
+				</div>
+				#end
+
+				#permission(PermissionKey.DEPARTMENT_IMPORT)
+				<div class="btn-group dropdown">
+					<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
+					<div class="dropdown-menu" aria-labelledby="importMenuButton">
+						<a data-downloadbtn href="/admin/department/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+						<div class="j_upload_file_box"
+							 data-name="file"
+							 data-btn-class="btn dropdown-item"
+							 data-placeholder="上传导入"
+							 data-confirm="确认导入数据？"
+							 data-accept="excel"
+							 data-maxsize="20480"
+							 data-handler="uploadFile"
+							 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+							 data-url="/admin/department/findPersonPage">
+						</div>
+					</div>
+				</div>
+				#end
+				<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+			</div>
+		</div>
+
+		<table class="jbolt_table jbolt_main_table  table-center "
+			   id="department_table_#(pageId)"
+			   data-jbolttable
+			   data-width="auto"
+			   data-height="auto"
+			   data-ajax="true"
+			   data-conditions-form="Department_form_#(pageId)"
+			   data-url="admin/department/treeDatas"
+			   data-rowtpl="deptRowtpl_#(pageId)"
+			   data-copy-to-excel="false"
+			   ###data-page="FormCategory_page"
+			   data-column-resize="true"
+			   data-toolbar="Department_toolbar_#(pageId)"
+			   ###data-column-prepend="1:checkbox:true:false:false"
+			   data-row-click-active="true"
+			   ###设置是treetable 默认显示到第一级 操作列在第一列
+			   data-treetable="all:1"
+			   ###data-fixed-columns-left="1"
+			   ###data-fixed-columns-right="6,7"
+		>
+			<thead>
+			<tr>
+				<th data-width="200" data-column="cDepCode">部门编码</th>
+				<th data-width="120">操作</th>
+				<th data-width="150" data-column="cDepName">部门名称</th>
+				<th data-width="150" data-column="typename">组织类型</th>
+				<th data-width="150" data-column="cDepPerson">负责人</th>
+				<th data-width="150" data-column="cDepMemo">备注</th>
+				<th data-width="120" data-column="isEnabled">是否启用</th>
+				<th data-width="120" data-column="isApsInvoled">是否参与排产</th>
+				<th data-min-width="160" data-column="dCreateTime">创建时间</th>
+			</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

@@ -1,0 +1,340 @@
+<div class="jbolt_page_title">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="col">
+            <div class="btn-group dropdown">
+              <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+              </button>
+              <div class="dropdown-menu" aria-labelledby="importMenuButton">
+                <a data-downloadbtn href="/admin/warehousebeginofperiod/downloadTpl" class="btn dropdown-item"><i
+                    class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+                <div class="j_upload_file_box"
+                     data-name="file"
+                     data-btn-class="btn dropdown-item"
+                     data-placeholder="上传导入"
+                     data-confirm="确认导入数据？"
+                     data-accept="excel"
+                     data-maxsize="20480"
+                     data-handler="uploadFile"
+                     data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                     data-url="/admin/warehousebeginofperiod/importExcel">
+                </div>
+              </div>
+            </div>
+            <!--<button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
+                class="fa fa-refresh"></i> 保存
+            </button>-->
+            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
+                class="fa fa-close"></i> 关闭
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<textarea class="jb_tpl_box" id="warehousebeginForm_tpl_#(pageId)">
+  {@each datas as data,index}
+    <tr data-id="${data.iautoid}">
+      <td>${pageNumber,pageSize,index | rownum}</td>
+      <td title="${data.cwhcode}">${data.cwhcode}</td>
+      <td title="${data.cwhname}">${data.cwhname}</td>
+      <td title="${data.careacode}">${data.careacode}</td>
+      <td title="${data.careaname}">${data.careaname}</td>
+      <td title="${data.cinvcode}">${data.cinvcode}</td>
+      <td title="${data.cinvcode1}">${data.cinvcode1}</td>
+      <td title="${data.cinvname1}">${data.cinvname1}</td>
+      <td title="${data.cinvstd}">${data.cinvstd}</td>
+      <td title="${data.cuomname}">${data.cuomname}</td>
+      <td title="${data.cvencode}">${data.cvencode}</td>
+      <td title="${data.cvenname}">${data.cvenname}</td>
+      <td title="${data.stockqty}">${data.stockqty}</td>
+      <td title="${data.ungeneratedstockqty}">${data.ungeneratedstockqty}</td>
+      <td title="${data.generatedstockqty}">${data.generatedstockqty}</td>
+      <td title="${data.cbarcode}">${data.cbarcode}</td>
+      <td title="${data.batch}">${data.batch}</td>
+      <td title="${data.createdate}">${data.createdate}</td>
+      <td title="${data.printtepl}">${data.printtepl}</td>
+    </tr>
+  {@/each}
+</textarea>
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="jbolt_table_toolbar" id="warehousebeginform_toolbar_#(pageId)" style="display: flex">
+          <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">新增行</button>
+            <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i
+                class="fa fa-trash"></i>
+              批量删除
+            </button>
+          </div>
+        </div>
+        <table class="jbolt_table jbolt_main_table  table-center"
+               id="warehousebeginform_TableId_#(pageId)"
+               data-jbolttable
+               data-ajax="true"
+               data-url="admin/warehousebeginofperiod/findDetails"
+               data-height="300"
+               data-column-resize="true"
+               data-conditions-form="warehousebeginformtable_form_#(pageId)"
+               data-page="warehousebeginform_page_#(pageId)"
+               data-column-prepend="1:checkbox:true"
+               data-rowtpl="warehousebeginForm_tpl_#(pageId)"
+               data-toolbar="warehousebeginform_toolbar_#(pageId)"
+               data-editable="true"
+               data-editable-option="getJBoltTableEditableColsOpton">
+          <thead>
+          <tr>
+            <th data-width="30px">序号</th>
+            <th data-width="150" data-column="cwhcode">仓库编码</th>
+            <th data-width="100" data-column="cwhname">仓库名称</th>
+            <th data-width="150" data-column="careacode">库区编码</th>
+            <th data-width="150" data-column="careaname">库区名称</th>
+            <th data-width="150" data-column="cinvcode">存货编码</th>
+            <th data-width="150" data-column="cinvcode1">客户部番</th>
+            <th data-width="100" data-column="cinvname1">部品名称</th>
+            <th data-width="100" data-column="cinvstd">规格</th>
+            <th data-width="150" data-column="cuomname">主计量单位</th>
+            <th data-width="150" data-column="cvencode">供应商编码</th>
+            <th data-width="150" data-column="cvenname">供应商名称</th>
+            <th data-width="150" data-column="stockQty" title="">期初库存数量</th>
+            <th data-width="180" data-column="unGeneratedStockQty" title="">未生成条码库存数量</th>
+            <th data-width="180" data-column="generatedStockQty" title="">生成条码库存数量</th>
+            <th data-width="150" data-column="cbarcode">条码号</th>
+            <th data-width="100" data-column="batch">批次号</th>
+            <th data-width="150" data-column="createdate">生产日期</th>
+            <th data-width="150" data-column="printtepl" title="">标签打印模板</th>
+          </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">打印数量:</label>
+            <div class="col-3" style="right: 20px;">
+              <input type="number" id="printQty" autocomplete="off" class="form-control" placeholder=""
+                     data-tips="" maxlength="23" name="printqty" value="#(printqty??)" required="true"/>
+            </div>
+            <div class="col-2" style="right: 35px;">
+              <button type="button" class="btn btn-outline-secondary" id="createButton" name="createButton"
+                      onclick="createButton(this)">生成
+              </button>
+            </div>
+            <div class="col-2" style="margin-top: 8px;right: 75px;">
+              <input id="autoprint" type="checkbox" name="autoprint" value="#(autoprint??)"/><span>自动打印</span>
+            </div>
+            <div class="col-3" style="right: 95px;">
+              <button type="button" class="btn btn-outline-secondary" id="printButton" name="printButton"
+                      onclick="printButton()">打印
+              </button>
+              <button type="reset" onclick="resetButton()" class="btn btn-outline-secondary">重置</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+#define js()
+<script>
+  hideParentLayerDialogBtn(0);
+  hideParentLayerDialogBtn(1);
+
+  function submitThisForm() {
+    jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");
+  }
+
+  function getJBoltTableEditableColsOpton() {
+    var editableTableOptions = {
+      submit: {
+        withForm: ["warehousebeginofperiod_#(pageId)"],
+        name: 'warehousebeginofperiod',
+        type: "all",
+        url: "/admin/warehousebeginofperiod/submitAll",
+        success: function (res) {
+          LayerMsgBox.success("提交成功", 600, function () {
+            parent.refreshPjaxContainer();
+            refreshAllDatas();
+            // parent.layer.closeAll();
+          });
+        }
+      },
+      cols: {
+        iautoid: {
+          submitAttr: "iautoid",
+        },
+        cwhcode: { //仓库编码
+          maxLength: 100,
+          required: true,
+          placeholder: "=请选择仓库编码=",
+          type: "autocomplete",
+          url: "admin/warehouse/options",
+          textAttr: "cwhcode",
+          width: 300,
+          valueAttr: "cwhcode",
+          columnAttr: "cwhcode,cwhname",
+          header: '仓库编码,仓库名称',
+          changeColumns: [{column: "cwhcode", use: "cwhcode"},
+            {column: "cwhname", use: "cwhname"}]
+        },
+        careacode: { //库区编码
+          type: "autocomplete",
+          url: "admin/warehousearea/options",
+          maxLength: 100,
+          required: false,
+          placeholder: "=请选择库区编码=",
+          textAttr: "careacode",
+          width: 200,
+          valueAttr: "careacode",
+          columnAttr: "careacode,careaname",
+          header: '库区编码,库区名称',
+          changeColumns: [{column: "careacode", use: "careacode"},
+            {column: "careaname", use: "careaname"}]
+        },
+        cinvcode: {
+          type: "autocomplete",
+          url: "admin/inventory/autocomplete",
+          maxLength: 100,
+          required: true,
+          placeholder: "=请选择存货编码=",
+          textAttr: "cinvcode",
+          width: 800,
+          valueAttr: "cinvcode",
+          columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname,ipkgqty",
+          header: '存货编码,客户部番,部品名称,规格型号,主计量单位,包装数量',
+          changeColumns: [{column: "cinvcode", use: "cinvcode"},
+            {column: "cinvcode1", use: "cinvcode1"},
+            {column: "cinvname1", use: "cinvname1"},
+            {column: "cinvstd", use: "cinvstd"},
+            {column: "cuomname", use: "cuomname"},
+            {column: "ipkgqty", use: "ipkgqty"}]
+        },
+        cvencode: {
+          type: "autocomplete",
+          url: "admin/vendor/options",
+          maxLength: 100,
+          required: false,
+          placeholder: "=请选择库区编码=",
+          textAttr: "cvencode",
+          width: 300,
+          valueAttr: "cvencode",
+          columnAttr: "cvencode,cvenname",
+          header: '供应商编码,供应商名称',
+          changeColumns: [{column: "cvencode", use: "cvencode"},
+            {column: "cvenname", use: "cvenname"}]
+        },
+        batch: {
+          type: "amount",//类型
+          placeholder: "批次号",
+          tooltip: "批次号",
+        },
+        cbarcode:{
+          required:true,
+          type: "amount",//类型
+          placeholder: "条码号",
+          tooltip: "条码号",
+        },
+        createdate: {
+          type: "date",//类型
+          placeholder: "生产日期",
+          tooltip: "生产日期",
+        },
+        generatedStockQty: {
+          required:true,
+          type: "input_number",//类型
+          placeholder: "=生成条码库存数量=",
+          tooltip: "=生成条码库存数量=",
+        },
+        /*iPkgQty:{
+          required: true,
+          type:"input",
+          placeholder: "包装数量",
+          tooltip: "包装数量",
+        },*/
+        printtepl: { //标签打印模板
+          required: true,
+          type: "select",//类型
+          placeholder: "=标签打印模板=",
+          tooltip: "=标签打印模板=",
+        },
+      },
+    };
+    return editableTableOptions;
+  }
+
+  /*
+  * 关闭
+  * */
+  function closeHandler() {
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+    window.parent.refreshJBoltTable();
+  }
+
+  /**
+   * 删除选中的行
+   * @param ele
+   * @param confirm
+   * @param callback
+   * @returns
+   */
+  function jboltTableRemoveCheckedRow(ele, confirm, callback) {
+    var action = getRealJqueryObject(ele);
+    if (isOk(action)) {
+      var success = checkMasterTableId(action);
+      if (!success) {
+        return false;
+      }
+    }
+    var isCheckedNone = jboltTableIsCheckedNone(ele);
+    if (isCheckedNone) {
+      LayerMsgBox.alert("请至少选择一行数据", 2);
+    } else {
+      var ids = jboltTableGetCheckedIds(ele, true);
+      if (ids) {
+        LayerMsgBox.confirm("所选数据中包含数据库已存数据，确定删除吗？", function () {
+          removeJBoltTableCheckedTr(ele, false, callback);
+        });
+      } else {
+        removeJBoltTableCheckedTr(ele, confirm, callback);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  /*
+  * 打印按钮
+  * */
+  function printButton() {
+    alert("点击打印");
+  }
+
+  /*
+  * 生成按钮
+  * */
+  function createButton(o) {
+    alert("点击生成");
+  }
+  
+  /*
+  * 重置
+  * */
+  function resetButton() {
+    $("#printQty").val("");
+    let autoprint = $("#autoprint").val("");
+    console.log(autoprint)
+  }
+
+</script>
+<!--#include("/_view/_admin/common/_formjs.html",formId="warehouseAreaForm")-->
+#end
+

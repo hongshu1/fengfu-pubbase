@@ -513,6 +513,18 @@ FROM Aps_WeekScheduleDetails AS a
          LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId AND e.isDeleted = 0
 WHERE a.isDeleted = '0'
   AND a.iLevel = #para(level)
+    #if(cworkname)
+        AND e.cWorkName LIKE CONCAT('%', #para(cworkname), '%')
+    #end
+    #if(cinvcode)
+        AND c.cInvCode LIKE CONCAT('%', #para(cinvcode), '%')
+    #end
+    #if(cinvcode1)
+        AND c.cInvCode1 LIKE CONCAT('%', #para(cinvcode1), '%')
+    #end
+    #if(cinvname1)
+        AND c.cInvName1 LIKE CONCAT('%', #para(cinvname1), '%')
+    #end
   AND
       (CAST(b.iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN b.iMonth<10 THEN '0'+CAST(b.iMonth AS NVARCHAR(30) )
       ELSE CAST(b.iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN b.iDate<10 THEN '0'+CAST(b.iDate AS NVARCHAR(30) )
@@ -577,6 +589,59 @@ WHERE a.isDeleted = '0'
         END AS NVARCHAR(30)) ) <= #para(enddate)
 #end
 
+#sql("getInvRoutingList")
+###根据工艺路线id集查询各存货工艺路线
+SELECT b.cInvCode,a.*
+FROM Bd_InventoryRouting AS a
+         LEFT JOIN Bd_Inventory AS b ON a.iInventoryId = b.iAutoId
+WHERE a.iAutoId IN #(ids)
+#end
+
+#sql("getInvRoutingConfigList")
+###根据工艺路线id集查询各存货工艺路线配置
+SELECT *
+FROM Bd_InventoryRoutingConfig
+WHERE isEnabled = 1
+  AND iInventoryRoutingId IN #(ids)
+#end
+
+#sql("getInvRoutingConfigOperationList")
+###根据工艺路线配置id集查询各工艺工序
+SELECT *
+FROM Bd_InventoryRoutingConfig_Operation
+WHERE iInventoryRoutingConfigId IN #(ids)
+#end
+
+#sql("getInvRoutingConfigEquipmentList")
+###根据工艺路线配置id集查询各工艺设备
+SELECT *
+FROM Bd_InventoryRoutingEquipment
+WHERE iInventoryRoutingConfigId IN #(ids)
+#end
+
+#sql("getInvRoutingConfigInvcList")
+###根据工艺路线配置id集查询各工艺物料
+SELECT *
+FROM Bd_InventoryRoutingInvc
+WHERE iInventoryRoutingConfigId IN #(ids)
+#end
+
+#sql("getInvRoutingConfigSopList")
+###根据工艺路线配置id集查询各工艺作业指导书
+SELECT *
+FROM Bd_InventoryRoutingSop
+WHERE isEnabled = 1
+  AND iInventoryRoutingConfigId IN #(ids)
+#end
+
+
+#sql("getMotaskByEndDateList")
+###查询任务工单表结束日期 > 解锁开始日期&&未审核数据
+SELECT iAutoId,dBeginDate,dEndDate
+FROM Mo_MoTask
+WHERE iAuditStatus = 0
+  AND CONVERT(VARCHAR(10),dEndDate,120) > #para(unlockstartdate)
+#end
 
 ###---------------------------------------------------------月周生产计划汇总---------------------
 

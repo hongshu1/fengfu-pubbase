@@ -1,0 +1,561 @@
+{
+  "panels": [
+    {
+      "index": 0,
+      "height": 400,
+      "width": 320,
+      "paperHeader": 43.5,
+      "paperFooter": 1133.8582677165355,
+      "printElements": [
+        {
+          "options": {
+            "left": 15,
+            "top": 19.5,
+            "height": 9,
+            "width": 871.5
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 886.5,
+            "top": 19.5,
+            "height": 414,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 19.5,
+            "height": 415.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 406.5,
+            "top": 33,
+            "height": 9.75,
+            "width": 67.5,
+            "title": "申 购 单",
+            "fontSize": 15,
+            "fontWeight": "bold"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 54,
+            "height": 9,
+            "width": 873
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 222,
+            "top": 61.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "业务类型",
+            "field": "cservicetypename"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 411,
+            "top": 61.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "单据号",
+            "field": "cpurchaseno"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 625.5,
+            "top": 61.5,
+            "height": 9.75,
+            "width": 135,
+            "title": "日期",
+            "field": "cpurchasedate",
+            "dataType": "datetime",
+            "format": "yyyy-MM-dd"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 22.5,
+            "top": 61.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "请购人员",
+            "field": "cbudgettype"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 222,
+            "top": 94.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "请购人员",
+            "field": "cpersonname"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 411,
+            "top": 94.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "采购类型",
+            "field": "cservicetypename"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 22.5,
+            "top": 94.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "请购部门",
+            "field": "cdepname"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 625.5,
+            "top": 94.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "是否经采购",
+            "field": "ispurchased"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 112.5,
+            "height": 9,
+            "width": 873
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 222,
+            "top": 121.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "禀议金额",
+            "field": "iproposalmoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 411,
+            "top": 121.5,
+            "height": 9.75,
+            "width": 157.5,
+            "title": "禀议项目累计申购金额",
+            "field": "iproposaltotalpurchasemoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 625.5,
+            "top": 121.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "剩余禀议金额",
+            "field": "iremainproposalmoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 22.5,
+            "top": 121.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "禀议书NO",
+            "field": "cproposalno"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 222,
+            "top": 151.5,
+            "height": 9.75,
+            "width": 156,
+            "title": "预算累计申购金额",
+            "field": "ibudgettotalpurchasemoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 22.5,
+            "top": 151.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "预算金额",
+            "field": "ibudgetmoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 625.5,
+            "top": 151.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "剩余预算金额",
+            "field": "iremainbudgetmoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 174,
+            "height": 165,
+            "width": 873,
+            "field": "purchaseds",
+            "columns": [
+              [
+                {
+                  "width": 25.71833431051762,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "序号",
+                  "field": "index"
+                },
+                {
+                  "width": 62.11080925318891,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "预算编码",
+                  "field": "cbudgetno"
+                },
+                {
+                  "width": 56.117078365746515,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "存货编码",
+                  "field": "cinvcode"
+                },
+                {
+                  "width": 52.580756184606614,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "存货名称",
+                  "field": "cinvname"
+                },
+                {
+                  "width": 50.921545657876116,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "规格型号",
+                  "field": "cinvstd"
+                },
+                {
+                  "width": 38.41966769171336,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "数量",
+                  "field": "iquantity"
+                },
+                {
+                  "width": 37.843573328959245,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "单位",
+                  "field": "cunit"
+                },
+                {
+                  "width": 59.08480886595468,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "含税单价",
+                  "field": "iprice"
+                },
+                {
+                  "width": 60.511090472462776,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "含税总额",
+                  "field": "itaxexclusivetotalamount"
+                },
+                {
+                  "width": 39.65468658418358,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "税率",
+                  "field": "itaxrate"
+                },
+                {
+                  "width": 74.85117482809675,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "不含税总额",
+                  "field": "itotalamount"
+                },
+                {
+                  "width": 79.6560338943351,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "需求日期",
+                  "field": "ddemandate"
+                },
+                {
+                  "width": 91.42650770811933,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "供应商",
+                  "field": "cvenname"
+                },
+                {
+                  "width": 71.87616220700956,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "币种",
+                  "field": "ccurrency"
+                },
+                {
+                  "width": 72.22777064722979,
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center",
+                  "title": "备注",
+                  "field": "cmemo"
+                }
+              ]
+            ]
+          },
+          "printElementType": {
+            "title": "表格",
+            "type": "tableCustom"
+          }
+        },
+        {
+          "options": {
+            "left":  13.5,
+            "top": 348,
+            "height": 9.75,
+            "width": 37.5,
+            "title": "合计",
+            "fontSize": 12.75
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 275,
+            "top": 349.5,
+            "height": 9.75,
+            "width": 31.5,
+            "field": "totalcount"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 413,
+            "top": 349.5,
+            "height": 9.75,
+            "width": 49.5,
+            "field": "sumitaxexclusivetotalamount"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 519,
+            "top": 348,
+            "height": 9.75,
+            "width": 58.5,
+            "field": "sumitotalamount"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 15,
+            "top": 364.5,
+            "height": 9,
+            "width": 873
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 174,
+            "top": 394.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "系长："
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 339,
+            "top": 394.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "科长："
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 502.5,
+            "top": 394.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "部长："
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 678,
+            "top": 394.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "（副）总经理："
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 22.5,
+            "top": 394.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "作成："
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 22.5,
+            "top": 418.5,
+            "height": 9.75,
+            "width": 727.5,
+            "title": "申购核准权限：总价＜1000元，由部长承认；1000元≤总价＜3000元，由副总经理承认；总价≥3000元，由总经理承认。"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 433.5,
+            "height": 9,
+            "width": 873
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        }
+      ],
+      "paperNumberLeft": 877,
+      "paperNumberTop": 1111
+    }
+  ]
+}

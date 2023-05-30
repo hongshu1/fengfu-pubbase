@@ -200,7 +200,7 @@
       iautoid: iautoid,
       cqcformname: cqcformname
     }
-
+    LayerMsgBox.loading("正在查询,请稍等...", 30000);
     Ajax.post('/admin/rcvdocqcformm/createTable', para, function (res) {
       if (res.state === "ok") {
         LayerMsgBox.success(res.msg, 1000, function () {

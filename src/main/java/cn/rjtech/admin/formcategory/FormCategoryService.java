@@ -151,7 +151,7 @@ public class FormCategoryService extends BaseService<FormCategory> {
         return null;
     }
 
-    public List<FormCategory> getTreeDatas(String keywords) {
+    public List<FormCategory> getTreeDatas(String keywords, Boolean withEmpty) {
         Sql sql = selectSql().eq(FormCategory.ISDELETED, ZERO_STR);
         
         if (StrUtil.isNotBlank(keywords)) {
@@ -163,7 +163,17 @@ public class FormCategoryService extends BaseService<FormCategory> {
         }
 
         List<FormCategory> datas = find(sql);
-        return convertToModelTree(datas, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
+        
+        List<FormCategory> list = convertToModelTree(datas, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
+        
+        List<FormCategory> options = new ArrayList<>();
+        if (withEmpty) {
+            options.add(new FormCategory().setIAutoId(0L).setCName("=无上级="));
+        }
+        if (CollUtil.isNotEmpty(list)) {
+            options.addAll(list);
+        }
+        return options;
     }
 
     public List<Record> getTreeDatas() {

@@ -5,7 +5,10 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.operation.OperationService;
 import cn.rjtech.admin.specmaterialsrcvm.SpecMaterialsRcvMService;
+import cn.rjtech.model.momdata.Equipment;
+import cn.rjtech.model.momdata.Operation;
 import cn.rjtech.model.momdata.ProcessDefect;
 import cn.rjtech.model.momdata.SpecMaterialsRcvM;
 import cn.rjtech.util.BillNoUtils;
@@ -32,6 +35,9 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 
 	@Inject
 	private SpecMaterialsRcvMService specMaterialsRcvMService;      ////制造工单-来料表
+
+	@Inject
+	private OperationService operationService;//工序
 
 	@Override
 	protected ProcessDefect dao() {
@@ -98,11 +104,27 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 
 	/**
 	 * 删除
-	 * @param id
+	 * @param iautoid
 	 * @return
 	 */
-	public Ret delete(Long id) {
-		return deleteById(id,true);
+	public Ret delete(Long iautoid) {
+		if(notOk(iautoid)){
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		//更新时需要判断数据存在
+		ProcessDefect processDefect=findById(iautoid);
+		if(processDefect==null) {
+			return fail(JBoltMsg.DATA_NOT_EXIST);
+		}
+		//已审批
+		if(processDefect.getIStatus()!=null&&processDefect.getIStatus().equals(3)) {
+			return fail("单据已审批,不允许删除");
+		}
+		//更新删除状态
+		processDefect.setIsDeleted(true);
+		processDefect.update();
+		return  SUCCESS;
+		//return deleteById(id,true);
 	}
 
 	/**
@@ -226,7 +248,7 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 
 		//录入填写的数据
 		processDefect.setIStatus(1);
-		processDefect.setProcessName(formRecord.getStr("processname"));
+		//processDefect.setProcessName(formRecord.getStr("processname"));
 		processDefect.setIDqQty(formRecord.getBigDecimal("idqqty"));
 		processDefect.setIRespType(formRecord.getInt("iresptype"));
 		processDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
@@ -250,7 +272,118 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 		processDefect.save();
 	}
 
+   public  Ret saveprocessDefect(ProcessDefect processDefect){
+	   if(processDefect==null) {
+		   return fail(JBoltMsg.PARAM_ERROR);
+	   }
 
+		//工序
+	  /*if(!isOk(processDefect.getIOperationId())){
+		  return fail("指定工序信息");
+	   }*/
+	   if(isOk(processDefect.getIOperationId())) {
+		   Operation operation = operationService.findById(processDefect.getIOperationId());
+		   if (operation != null) {
+			   processDefect.setCoperationname(operation.getCoperationname());//工序名称
+		   }
+	   }
+       Date now=new Date();
+	   String billNo = BillNoUtils.getcDocNo(getOrgId(), "YCP", 5);
+	   processDefect.setIStatus(1);
+	   processDefect.setCDocNo(billNo);
+	   processDefect.setIOrgId(getOrgId());
+	   processDefect.setCOrgCode(getOrgCode());
+	   processDefect.setCOrgName(getOrgName());
+	   processDefect.setICreateBy(JBoltUserKit.getUserId());
+	   processDefect.setCCreateName(JBoltUserKit.getUserName());
+	   processDefect.setDCreateTime(now);
+	   processDefect.setIUpdateBy(JBoltUserKit.getUserId());
+	   processDefect.setCUpdateName(JBoltUserKit.getUserName());
+	   processDefect.setDUpdateTime(now);
+	   processDefect.setDDemandDate(now);//需求日期
+	   processDefect.save();
+
+
+
+      return  SUCCESS;
+   }
+	public  Ret updateprocessDefect(ProcessDefect processDefect){
+		if(processDefect==null || notOk(processDefect.getIAutoId())) {
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		//更新时需要判断数据存在
+		ProcessDefect record=findById(processDefect.getIAutoId());
+		if(record==null) {
+			return fail(JBoltMsg.DATA_NOT_EXIST);
+		}
+		//已审批
+		if(record.getIStatus()!=null&&record.getIStatus().equals(3)) {
+			return fail("单据已审批,不允许操作");
+		}
+		//工序
+	  /*if(!isOk(processDefect.getIOperationId())){
+		  return fail("指定工序信息");
+	   }*/
+		if(isOk(processDefect.getIOperationId())) {
+			Operation operation = operationService.findById(processDefect.getIOperationId());
+			if (operation != null) {
+				processDefect.setCoperationname(operation.getCoperationname());//工序名称
+			}
+		}
+
+
+
+
+		processDefect.setIUpdateBy(JBoltUserKit.getUserId());
+		processDefect.setCUpdateName(JBoltUserKit.getUserName());
+		processDefect.setDUpdateTime(new Date());
+
+		processDefect.update();
+		return  SUCCESS;
+
+
+
+	}
+
+	public Ret subprocessDefect(ProcessDefect processDefect){
+		if(processDefect==null) {
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		if(notOk(processDefect.getIAutoId())){
+			Date now = new Date();
+			String billNo = BillNoUtils.getcDocNo(getOrgId(), "YCP", 5);
+			processDefect.setIStatus(2);
+			processDefect.setCDocNo(billNo);
+			processDefect.setIOrgId(getOrgId());
+			processDefect.setCOrgCode(getOrgCode());
+			processDefect.setCOrgName(getOrgName());
+			processDefect.setICreateBy(JBoltUserKit.getUserId());
+			processDefect.setCCreateName(JBoltUserKit.getUserName());
+			processDefect.setDCreateTime(now);
+			processDefect.setIUpdateBy(JBoltUserKit.getUserId());
+			processDefect.setCUpdateName(JBoltUserKit.getUserName());
+			processDefect.setDUpdateTime(now);
+			processDefect.setDDemandDate(now);//需求日期
+			processDefect.save();
+		}else{
+			//更新时需要判断数据存在
+			ProcessDefect record=findById(processDefect.getIAutoId());
+			if(record==null) {
+				return fail(JBoltMsg.DATA_NOT_EXIST);
+			}
+			//已审批
+			if(record.getIStatus()!=null&&record.getIStatus().equals(3)) {
+				return fail("单据已审批,不允许操作");
+			}
+			processDefect.setIStatus(2);
+			processDefect.setIUpdateBy(JBoltUserKit.getUserId());
+			processDefect.setCUpdateName(JBoltUserKit.getUserName());
+			processDefect.setDUpdateTime(new Date());
+
+			processDefect.update();
+		}
+		return  SUCCESS;
+	}
 
 
 	/**
@@ -290,6 +423,15 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 			map.put("iresptype", (processDefect.getIRespType() == 1) ? "本工序" : "其他");
 		}
 		return map;
+	}
+
+	/**
+	 * 打印数据
+	 * @param kv 参数
+	 * @return
+	 */
+	public Object getQRCodeCheck(Kv kv) {
+		return dbTemplate("processdefect.containerPrintData",kv).find();
 	}
 
 

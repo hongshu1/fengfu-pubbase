@@ -6,19 +6,19 @@
 		<div class="row">
 			<!--<div class="col-md-auto"><h1><i class="jbicon2 jbi-appstore"></i>生产计划及实绩管理</h1></div>-->
 			<div class="col">
-<!--				<form class="form-inline" id="apsAnnualplanmFormsum_#(pageId)"   onsubmit="return false;" method="post">-->
-<!--					<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" id="startdate" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>-->
-<!--					<span style="margin-top: 5px">至</span>-->
-<!--					<input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" id="enddate" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>-->
+				<form class="form-inline" id="apsAnnualplanmFormsum_#(pageId)"   onsubmit="return false;" method="post">
+					<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" id="startdate" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
+					<span style="margin-top: 5px">至</span>
+					<input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" id="enddate" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
 
-<!--					<input type="text" class="form-control" data-with-clearbtn="true" placeholder="产线名称" id="cworkname" name="cworkname" value="#(cworkname??)" />-->
-<!--					<input type="text" class="form-control" placeholder="存货编码" id="cinvcode" name="cinvcode" value="#(cinvcode??)" />-->
-<!--					<input type="text" class="form-control" placeholder="客户部番" id="cinvcode1" name="cinvcode1" value="#(cinvcode1??)" />-->
-<!--					<input type="text" class="form-control" placeholder="部品名称" id="cinvname1" name="cinvname1" value="#(cinvname1??)" />-->
+					<input type="text" class="form-control" data-with-clearbtn="true" placeholder="产线名称" id="cworkname" name="cworkname" value="#(cworkname??)" />
+					<input type="text" class="form-control" placeholder="存货编码" id="cinvcode" name="cinvcode" value="#(cinvcode??)" />
+					<input type="text" class="form-control" placeholder="客户部番" id="cinvcode1" name="cinvcode1" value="#(cinvcode1??)" />
+					<input type="text" class="form-control" placeholder="部品名称" id="cinvname1" name="cinvname1" value="#(cinvname1??)" />
 
-<!--					<button type="submit" onclick="selectMonthPlanBtn2(this)" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>-->
-<!--					<button type="button" onclick="clearFormBtn2(this)" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>-->
-<!--				</form>-->
+					<button type="submit" onclick="selectMonthPlanBtn2(this)" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+					<button type="button" onclick="clearFormBtn2(this)" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+				</form>
 			</div>
 			<div class="col-md-auto">
 			</div>
@@ -36,7 +36,7 @@
 				<td>${data.colname}</td>
 
 				#for(datetr:collist)
-				<td>${data.#(datetr)}</td>
+				<td>${data.#(datetr),0|number_format}</td>
 				#end
 			</tr>
 			{@/each}

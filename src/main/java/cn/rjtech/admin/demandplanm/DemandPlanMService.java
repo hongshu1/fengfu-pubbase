@@ -25,6 +25,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -187,7 +188,7 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 			}
 			
 			BigDecimal[] arr = new BigDecimal[calendarMap.keySet().size()];
-			record.set(PurchaseOrderM.ARR, arr);
+			
 			// 存货编码为key，可以获取存货编码下 所有日期范围的值
 			if (!demandPlanDMap.containsKey(invId)){
 				continue;
@@ -196,11 +197,10 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 			List<PurchaseorderdQty> purchaseorderdQtyList = new ArrayList<>();
 			
 			List<SubcontractorderdQty> subcontractOrderdQtyList = new ArrayList<>();
-			
 			// 当前日期下的数量
 			Map<String, BigDecimal> dateQtyMap = demandPlanDMap.get(invId);
-			// 统计合计数量
-			BigDecimal amount = BigDecimal.ZERO;
+			// 统计每个月合计数量
+			Map<String, BigDecimal> monthSumQtyMap = new HashMap<>();
 			
 			for (String dateStr : dateQtyMap.keySet()){
 				// 原数量
@@ -213,8 +213,11 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 				String monthStr = DateUtil.format(dateTime, "MM");
 				String dayStr = DateUtil.format(dateTime, "dd");
 				
+				String ymKey = yearStr.concat(monthStr);
 				// 当前日期存在，则取值
 				if (calendarMap.containsKey(formatDateStr)){
+					BigDecimal sum = monthSumQtyMap.containsKey(ymKey) ? monthSumQtyMap.get(ymKey) : BigDecimal.ZERO;
+					monthSumQtyMap.put(ymKey, sum.add(qty));
 					Integer index = calendarMap.get(formatDateStr);
 					arr[index] = qty;
 					
@@ -234,9 +237,6 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 						);
 						subcontractOrderdQtyList.add(subcontractOrderdQty);
 					}
-					// 统计数量汇总
-					
-					amount = amount.add(qty);
 				}
 			}
 			
@@ -250,8 +250,8 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 					record.set(SubcontractOrderD.SUBCONTRACTORDERD_QTY_LIST, subcontractOrderdQtyList);
 				}
 			}
-			
-			record.set(PurchaseOrderD.ISUM, amount);
+			record.set(PurchaseOrderM.ARR, arr);
+//			record.set(PurchaseOrderD.ISUM, amount);
 		}
 	}
 	

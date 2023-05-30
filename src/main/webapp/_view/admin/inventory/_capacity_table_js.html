@@ -1,0 +1,45 @@
+<script>
+    function getEditableTableOptions_capacity_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "click",
+            submit: {
+                name: "inventoryCapacity",
+                type: "all",
+                url: "/admin/inventory/formSubmit",
+                success: function (res, table, td) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success(res.msg, 1000, function () {
+                            parent.LayerMsgBox.closeAll();
+                            parent.refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid"
+                },
+                cworkshiftcode:{
+                    type:"select",
+                    required:true,
+                    url:"admin/inventorycapacity/getSelect",
+                    valueAttr:"cworkshiftcode",
+                    textAttr:"cworkshiftcode",
+                    changeColumns: [
+                        {column:"cworkshiftname",use:"cworkshiftname"},
+                        // {column:"cworkshiftcode",use:"cworkshiftcode"},
+                        {column:"iworkshiftmid",use:"iautoid"}
+                    ]
+                },
+                icapacity:{
+                    type:"input_number",
+                    required:true
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+
+</script>

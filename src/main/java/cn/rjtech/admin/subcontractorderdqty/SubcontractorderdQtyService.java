@@ -6,6 +6,7 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.PurchaseorderdQty;
 import cn.rjtech.model.momdata.SubcontractOrderD;
 import cn.rjtech.model.momdata.SubcontractorderdQty;
 import com.alibaba.fastjson.JSONArray;
@@ -125,6 +126,12 @@ public class SubcontractorderdQtyService extends BaseService<SubcontractorderdQt
 		return subcontractorderdQty;
 	}
 	
+	public SubcontractorderdQty create(Long iSubcontractOrderDid, int year, int month, int day, BigDecimal qty){
+		SubcontractorderdQty subcontractorderdQty = createSubcontractOrderdQty(year, month, day, qty);
+		subcontractorderdQty.setISubcontractOrderDid(iSubcontractOrderDid);
+		return subcontractorderdQty;
+	}
+	
 	public List<SubcontractorderdQty> getSubcontractOrderdQty(Long iSubcontractOrderDid, JSONArray subcontractorderdQtyJsonArray){
 		List<SubcontractorderdQty> list = new ArrayList<>();
 		if (CollectionUtil.isEmpty(subcontractorderdQtyJsonArray)){
@@ -150,5 +157,18 @@ public class SubcontractorderdQtyService extends BaseService<SubcontractorderdQt
 	
 	public List<SubcontractorderdQty> findBySubcontractOrderDId(Long iSubcontractOrderDid){
 		return find("SELECT * FROM PS_SubcontractOrderD_Qty WHERE iSubcontractOrderDid = ?", iSubcontractOrderDid);
+	}
+	
+	public int delBySubcontractOrderDid(Long subcontractOrderDid){
+		Sql sql = deleteSql().eq(SubcontractorderdQty.ISUBCONTRACTORDERDID, subcontractOrderDid);
+		return delete(sql);
+	}
+	
+	public int delete(Long subcontractOrderDid, int year, int month, int date){
+		Sql sql = deleteSql().eq(SubcontractorderdQty.ISUBCONTRACTORDERDID, subcontractOrderDid);
+		sql.eq(PurchaseorderdQty.IYEAR, year);
+		sql.eq(PurchaseorderdQty.IMONTH, month);
+		sql.eq(PurchaseorderdQty.IDATE, date);
+		return delete(sql);
 	}
 }

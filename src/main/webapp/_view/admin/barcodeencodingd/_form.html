@@ -1,0 +1,65 @@
+
+<div class="jbolt_page_title">
+    <div class="row">
+
+        <div class="col-12 form-inline">
+
+            <div class="col-4">
+                <h3>基础信息</h3>
+            </div>
+
+            <div class="col-8 text-right">
+                ###permission(PermissionKey.permissionKeyName)
+                 ###定义权限控制的按钮
+                ###end
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+
+<form onsubmit="return false;" id="barcodeencodingdForm" action="#(action)" method="post">
+
+	<input hidden name="barcodeencodingd.iautoid" value="#(barcodeencodingd.iautoid??)" />
+
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">主表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入主表ID" maxlength="19" name="barcodeencodingd.mid" value="#(barcodeencodingd.mid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">项目</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入项目" maxlength="255" name="barcodeencodingd.projectcode" value="#(barcodeencodingd.projectcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">返回值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入返回值" maxlength="255" name="barcodeencodingd.projectvalue" value="#(barcodeencodingd.projectvalue??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">格式(参数)值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入格式(参数)值" maxlength="255" name="barcodeencodingd.seletevalue" value="#(barcodeencodingd.seletevalue??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">排序</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入排序"  maxlength="10" name="barcodeencodingd.sort" value="#(barcodeencodingd.sort??)"/>
+		</div>
+	</div>
+</form>
+</div>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="barcodeencodingdForm")
+#end
+

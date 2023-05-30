@@ -26,20 +26,41 @@ public class ProcessDefectApiController extends BaseApiController {
 
     /**
      * 查询主表明细
-     * @param pageNumber 页码
-     * @param pageSize 每页显示条数
-     * @param selectparam 搜索条件
+     * @param pageNumber         页码
+     * @param pageSize          每页显示条数
+     * @param cdocno            制造品单号
+     * @param imodocid          工单号
+     * @param cinvname          部品名称
+     * @param cinvcode          存货编码编码
+     * @param cinvcode1         客户部番
+     * @param istatus           状态
+     * @param startdate         开始时间
+     * @param enddate          结束时间
      */
     @ApiDoc(result = ProcessDefect.class)
     @UnCheck
     public void datas(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
                       @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
-                      @Para(value = "selectparam") String selectparam,
+                      @Para(value = "cdocno") String cdocno,
+                      @Para(value = "imodocid") String imodocid,
+                      @Para(value = "cinvname") String cinvname,
+                      @Para(value = "cinvcode") String cinvcode,
+                      @Para(value = "cinvcode1") String cinvcode1,
+                      @Para(value = "istatus") String istatus,
                       @Para(value = "startdate") String startdate,
                       @Para(value = "enddate") String enddate) {
         ValidationUtils.validateIdInt(pageNumber,"页码");
         ValidationUtils.validateIdInt(pageSize,"每页显示条数");
-        renderJBoltApiRet(processdefectapiservice.getAdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectparam).set("startdate",startdate).set("enddate",enddate)));
+        Kv kv = new Kv();
+        kv.set("cdocno", cdocno);
+        kv.set("imodocid", imodocid);
+        kv.set("cinvname", cinvname);
+        kv.set("cinvcode", cinvcode);
+        kv.set("cinvcode1", cinvcode1);
+        kv.set("istatus", istatus);
+        kv.set("startdate", startdate);
+        kv.set("enddate", enddate);
+        renderJBoltApiRet(processdefectapiservice.getAdminDatas(pageNumber,pageSize,kv));
     }
 
 
@@ -90,21 +111,16 @@ public class ProcessDefectApiController extends BaseApiController {
         kv.set("iissueid", iissueid);
         renderJBoltApiRet(processdefectapiservice.update(kv));
     }
+
     /**
-     * 二维码
-     * @param iautoid     来料异常品ID
-     * @param width       宽
-     * @param height      高
+     * 打印二维码
+     * @param ids    异常品id 可多个
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void qrcode(
-            @Para(value = "width", defaultValue = "200") Integer width,
-            @Para(value = "height", defaultValue = "200") Integer height,
-            @Para(value = "iautoid") Long iautoid){
-        String code = processdefectapiservice.processdefectId(iautoid);
-        renderQrCode(code, width, height);
+    public void QRCode(@Para(value = "ids") Long ids) {
+        Kv kv = new Kv();
+        kv.set("ids", ids);
+        renderJBoltApiRet(processdefectapiservice.QRCode(kv));
     }
-
-
 }

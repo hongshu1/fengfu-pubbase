@@ -4,6 +4,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.instockdefect.InStockDefectService;
 import cn.rjtech.base.controller.BaseApiController;
+import cn.rjtech.config.AppConfig;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.instockdefect.InStockDefect;
 import cn.rjtech.util.ValidationUtils;
@@ -12,7 +13,10 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import io.github.yedaxia.apidocs.ApiDoc;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 在库异常品管理api接口
@@ -29,22 +33,41 @@ public class InStockDefectApiController extends BaseApiController {
 
     /**
      * 查询主表明细
-     * @param pageNumber 页码
-     * @param pageSize 每页显示条数
-     * @param selectparam 搜索条件
-     * @param startdate 開始時間
-     * @param enddate 結束時間
+     * @param pageNumber         页码
+     * @param pageSize          每页显示条数
+     * @param cdocno            异常品单号
+     * @param imodocid          工单号
+     * @param cinvname          部品名称
+     * @param cinvcode          存货编码编码
+     * @param cinvcode1         客户部番
+     * @param istatus           状态
+     * @param startdate         开始时间
+     * @param enddate          结束时间
      */
     @ApiDoc(result = InStockDefect.class)
     @UnCheck
     public void datas(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
-                         @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
-                         @Para(value = "selectparam") String selectparam,
-                         @Para(value = "startdate") String startdate,
-                         @Para(value = "enddate") String enddate){
+                      @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
+                      @Para(value = "cdocno") String cdocno,
+                      @Para(value = "imodocid") String imodocid,
+                      @Para(value = "cinvname") String cinvname,
+                      @Para(value = "cinvcode") String cinvcode,
+                      @Para(value = "cinvcode1") String cinvcode1,
+                      @Para(value = "istatus") String istatus,
+                      @Para(value = "startdate") String startdate,
+                      @Para(value = "enddate") String enddate){
         ValidationUtils.validateIdInt(pageNumber,"页码");
         ValidationUtils.validateIdInt(pageSize,"每页显示条数");
-        renderJBoltApiRet(inStockDefectApiService.AdminDatas(pageNumber,pageSize, Kv.by("selectparam",selectparam).set("startdate",startdate).set("enddate",enddate)));
+        Kv kv = new Kv();
+        kv.set("cdocno", cdocno);
+        kv.set("imodocid", imodocid);
+        kv.set("cinvname", cinvname);
+        kv.set("cinvcode", cinvcode);
+        kv.set("cinvcode1", cinvcode1);
+        kv.set("istatus", istatus);
+        kv.set("startdate", startdate);
+        kv.set("enddate", enddate);
+        renderJBoltApiRet(inStockDefectApiService.AdminDatas(pageNumber,pageSize, kv));
     }
 
     /**
@@ -54,9 +77,7 @@ public class InStockDefectApiController extends BaseApiController {
     @UnCheck
     public void addlist(@Para(value = "iautoid") Long iautoid,
                     @Para(value = "iinstockqcformmid") Long iinstockqcformmid,
-                    @Para(value = "type", defaultValue = "0") String type) {
-        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(iinstockqcformmid, JBoltMsg.PARAM_ERROR);
+                        @Para(value = "type") String type) {
         renderJBoltApiRet(inStockDefectApiService.add(iautoid, iinstockqcformmid, type));
     }
 
@@ -95,23 +116,19 @@ public class InStockDefectApiController extends BaseApiController {
     }
 
 
+
     /**
-     * 二维码
-     * @param iautoid     来料异常品ID
-     * @param width       宽
-     * @param height      高
+     * 打印二维码
+     * @param ids   异常品id 可多个
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void qrcode(
-                       @Para(value = "width", defaultValue = "200") Integer width,
-                       @Para(value = "height", defaultValue = "200") Integer height,
-                       @Para(value = "iautoid") Long iautoid){
-         ValidationUtils.notNull(iautoid, "缺少参数iautoid");
-         String code = inStockDefectApiService.inStockDefectId(iautoid);
-         ValidationUtils.notBlank(code, "缺少参数code");
-         renderQrCode(code, width, height);
+    public void QRCode(@Para(value = "ids") Long ids) {
+        Kv kv = new Kv();
+        kv.set("ids", ids);
+        renderJBoltApiRet(inStockDefectApiService.QRCode(kv));
     }
+
 
 
 

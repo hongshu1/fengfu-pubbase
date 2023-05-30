@@ -25,10 +25,12 @@ import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
+import cn.rjtech.admin.inventorycapacity.InventoryCapacityService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
 import cn.rjtech.admin.inventoryplan.InventoryPlanService;
 import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
 import cn.rjtech.admin.inventoryroutingconfigoperation.InventoryroutingconfigOperationService;
+import cn.rjtech.admin.inventoryroutingequipment.InventoryRoutingEquipmentService;
 import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
 import cn.rjtech.admin.inventorystockconfig.InventoryStockConfigService;
 import cn.rjtech.admin.inventoryworkregion.InventoryWorkRegionService;
@@ -36,6 +38,7 @@ import cn.rjtech.admin.invpart.InvPartService;
 import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.enums.InvPartTypeEnum;
 import cn.rjtech.enums.InventoryTableTypeEnum;
+import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.OperationTypeEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
@@ -89,9 +92,12 @@ public class InventoryService extends BaseService<Inventory> {
     private InventoryRoutingConfigService inventoryRoutingConfigService;
     @Inject
     private InventoryRoutingInvcService inventoryRoutingInvcService;
-	
 	@Inject
 	private InventoryroutingconfigOperationService inventoryroutingconfigOperationService;
+	@Inject
+	private InventoryRoutingEquipmentService inventoryRoutingEquipmentService;
+	@Inject
+	private InventoryCapacityService inventoryCapacityService;
 
 	@Override
 	protected Inventory dao() {
@@ -438,7 +444,7 @@ public class InventoryService extends BaseService<Inventory> {
 
 	public Ret updateForm(Inventory inventory, InventoryAddition inventoryAddition, InventoryPlan inventoryPlan, InventoryMfgInfo inventoryMfgInfo,
 						  InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions, List<InventoryWorkRegion> newInventoryWorkRegions,
-						  Object[] delete, JBoltTable inventoryRoutingJboltTable) {
+						  Object[] delete, JBoltTable inventoryRoutingJboltTable, JBoltTable inventoryCapacityJboltTable) {
 		tx(() -> {
 			Ret inventoryRet = update(inventory);
 			// 存货档案-附加
@@ -495,11 +501,43 @@ public class InventoryService extends BaseService<Inventory> {
 			}
 			// 工艺路线操作
 			inventoryRoutingOperation(inventory, inventoryRoutingJboltTable);
+			// 班次
+			operationCapacity(inventory.getIAutoId(), inventoryCapacityJboltTable);
 			return true;
 		});
 
 		return SUCCESS;
 	}
+	
+	public void operationCapacity(Long invId, JBoltTable inventoryCapacityJboltTable){
+		if (ObjectUtil.isNull(inventoryCapacityJboltTable)){
+			return;
+		}
+		List<InventoryCapacity> updateInventoryCapacityList = inventoryCapacityJboltTable.getUpdateBeanList(InventoryCapacity.class);
+		List<InventoryCapacity> saveInventoryCapacityList = inventoryCapacityJboltTable.getSaveBeanList(InventoryCapacity.class);
+		Object[] delCapacityIds = inventoryCapacityJboltTable.getDelete();
+		
+		if (CollectionUtil.isNotEmpty(saveInventoryCapacityList)){
+			setInventoryId(invId, saveInventoryCapacityList);
+			inventoryCapacityService.batchSave(saveInventoryCapacityList);
+		}
+		
+		if (CollectionUtil.isNotEmpty(updateInventoryCapacityList)){
+			setInventoryId(invId, updateInventoryCapacityList);
+			inventoryCapacityService.batchUpdate(updateInventoryCapacityList);
+		}
+		
+		if (ArrayUtil.isNotEmpty(delCapacityIds)){
+			inventoryCapacityService.deleteByIds(delCapacityIds);
+		}
+	}
+	
+	private void setInventoryId(Long invId, List<InventoryCapacity> capacityList){
+		for (InventoryCapacity capacity :capacityList){
+			capacity.setIInventoryId(invId);
+		}
+	}
+	
 	
 	/**
 	 *
@@ -507,6 +545,9 @@ public class InventoryService extends BaseService<Inventory> {
 	 * @param inventoryRoutingJboltTable
 	 */
 	public void  inventoryRoutingOperation(Inventory inventory, JBoltTable inventoryRoutingJboltTable){
+		if (ObjectUtil.isNull(inventoryRoutingJboltTable)){
+			return;
+		}
 		List<Record> recordList = new ArrayList<>();
 		ValidationUtils.notNull(inventory, "未获取到存货档案数据");
 		ValidationUtils.notNull(inventory.getIAutoId(), "未获取到存货档案id数据");
@@ -526,6 +567,21 @@ public class InventoryService extends BaseService<Inventory> {
 		
 		// 获取删除数据
 		Object[] deleteRoutingConfig = inventoryRoutingJboltTable.getDelete();
+		
+		// 先删除
+		if (ArrayUtil.isNotEmpty(deleteRoutingConfig)){
+			inventoryRoutingConfigService.deleteByIds(deleteRoutingConfig);
+			// 先删除改工艺路线下所有物料数据
+			invPartService.deleteByRoutingConfigIds(deleteRoutingConfig);
+			// 关联工序表删除
+			inventoryroutingconfigOperationService.deleteByRoutingConfigIds(deleteRoutingConfig);
+			// 物料集
+			inventoryRoutingInvcService.deleteByRoutingConfigIds(deleteRoutingConfig);
+			// 设备集
+			inventoryRoutingEquipmentService.deleteByRoutingConfigIds(deleteRoutingConfig);
+			// 作业指导书
+			
+		}
 		// 为空无需操作
 		if (CollectionUtil.isEmpty(recordList)){
 			return;
@@ -547,20 +603,6 @@ public class InventoryService extends BaseService<Inventory> {
 		
 		// 添加物料中间表
 		List<InvPart> invPartList = operation(masterInvId, recordList);
-		// 先删除
-		if (ArrayUtil.isNotEmpty(deleteRoutingConfig)){
-			inventoryRoutingConfigService.deleteByIds(deleteRoutingConfig);
-			// 先删除改工艺路线下所有物料数据
-			invPartService.deleteByRoutingConfigIds(deleteRoutingConfig);
-			// 关联工序表删除
-			inventoryroutingconfigOperationService.deleteByRoutingConfigIds(deleteRoutingConfig);
-			// 物料集
-			inventoryRoutingInvcService.deleteByRoutingConfigIds(deleteRoutingConfig);
-			// 设备集
-			
-			// 作业指导书
-			
-		}
 		// 保存
 		invPartService.batchSave(invPartList);
 		
@@ -569,7 +611,7 @@ public class InventoryService extends BaseService<Inventory> {
 		// 物料集
 		inventoryRoutingInvcService.saveRoutingInv(userId, userName, date, recordList);
 		// 保存设备集
-		
+		inventoryRoutingEquipmentService.saveRoutingEquipment(userId, userName, date, recordList);
 		// 保存作业指导书
 		
 	}
@@ -580,6 +622,13 @@ public class InventoryService extends BaseService<Inventory> {
 		Integer minSeq = getMinSeq(recordList);
 		// 最后一道工序次序
 		Integer maxSeq = getMaxSeq(recordList);*/
+		
+		/*// 校验是否新增，全是新增的话，无需查数据；
+		boolean flag = recordList.stream().allMatch(record -> ObjectUtil.isNull(record.getLong(InventoryRoutingConfig.IAUTOID)));
+		if (!flag){
+			inventoryRoutingConfigService
+		}*/
+		
 		Long orgId = getOrgId();
 		// 获取第一个第一个物料集
 		Map<Integer, Record> seqMap = recordList.stream().collect(Collectors.toMap(record -> record.getInt(InventoryRoutingConfig.ISEQ.toLowerCase()), record -> record));
@@ -904,7 +953,8 @@ public class InventoryService extends BaseService<Inventory> {
 	}
 
 	public Ret saveForm(Inventory inventory, InventoryAddition inventoryAddition, InventoryPlan inventoryPlan, InventoryMfgInfo inventoryMfgInfo,
-						InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions, JBoltTable inventoryRoutingJboltTable) {
+						InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions,
+						JBoltTable inventoryRoutingJboltTable, JBoltTable inventoryCapacityJboltTable) {
 		AtomicReference<Ret> res = new AtomicReference<>();
 		res.set(SUCCESS);
 		tx(() -> {
@@ -960,6 +1010,8 @@ public class InventoryService extends BaseService<Inventory> {
 			}
 			// 工艺路线操作
 			inventoryRoutingOperation(inventory, inventoryRoutingJboltTable);
+			// 班次
+			operationCapacity(inventory.getIAutoId(), inventoryCapacityJboltTable);
 			return true;
 		});
 
@@ -1008,8 +1060,9 @@ public class InventoryService extends BaseService<Inventory> {
 	 * @param kv
 	 * @return
 	 */
-	public List<Record> inventorySpotCheckList(Kv kv) {
-        return dbTemplate("inventoryclass.inventorySpotCheckList", kv).find();
+	public Page<Record> inventorySpotCheckList(Kv kv) {
+		return dbTemplate("inventoryclass.inventorySpotCheckList", kv).paginate(kv.getInt("page"), kv.getInt(
+			"pageSize"));
 	}
 	
 	/**
@@ -1019,7 +1072,11 @@ public class InventoryService extends BaseService<Inventory> {
 	public Inventory findBycInvAddCode(String cInvAddCode){
 		return findFirst("SELECT * FROM Bd_Inventory WHERE cInvCode1 = ? OR cInvAddCode1 = ?", cInvAddCode, cInvAddCode);
 	}
-
+	
+	public Inventory findBycInvCode(String cInvCode){
+		return findFirst("SELECT top 1 * FROM Bd_Inventory WHERE cInvCode = ?", cInvCode);
+	}
+	
     public Ret batchFetch(String column, String values) {
         List<Record> inventories = findByColumnsAndValues(column, values);
         return successWithData(inventories);
@@ -1082,10 +1139,12 @@ public class InventoryService extends BaseService<Inventory> {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
 		//这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
-		
+		// 工艺路线
 		JBoltTable inventoryRoutingJboltTable = getJboltTable(jboltTableMulti, InventoryTableTypeEnum.INVENTORROUTING.getText());
-		
+		// 所属生产线
 		JBoltTable inventoryWorkRegionJboltTable = getJboltTable(jboltTableMulti, InventoryTableTypeEnum.INVENTORYWORKREGION.getText());
+		// 班组产能
+		JBoltTable inventoryCapacity = getJboltTable(jboltTableMulti, InventoryTableTypeEnum.INVENTORYCAPACITY.getText());
 		
 		ValidationUtils.notNull(inventoryWorkRegionJboltTable, "未获取到产线table");
 		ValidationUtils.notNull(inventoryRoutingJboltTable, "未获取到工序table");
@@ -1103,10 +1162,10 @@ public class InventoryService extends BaseService<Inventory> {
 			List<InventoryWorkRegion> inventoryWorkRegions = inventoryWorkRegionJboltTable.getUpdateBeanList(InventoryWorkRegion.class);
 			List<InventoryWorkRegion> saveBeanList = inventoryWorkRegionJboltTable.getSaveBeanList(InventoryWorkRegion.class);
 			Object[] delete = inventoryWorkRegionJboltTable.getDelete();
-			return updateForm(inventory,inventoryAddition,inventoryPlan,inventoryMfgInfo,inventorystockconfig,inventoryWorkRegions,saveBeanList,delete, inventoryRoutingJboltTable);
+			return updateForm(inventory,inventoryAddition,inventoryPlan,inventoryMfgInfo,inventorystockconfig,inventoryWorkRegions,saveBeanList,delete, inventoryRoutingJboltTable, inventoryCapacity);
 		}
 		List<InventoryWorkRegion> inventoryWorkRegions = inventoryWorkRegionJboltTable.getSaveBeanList(InventoryWorkRegion.class);
-		return	saveForm(inventory,inventoryAddition,inventoryPlan,inventoryMfgInfo,inventorystockconfig,inventoryWorkRegions, inventoryRoutingJboltTable);
+		return	saveForm(inventory,inventoryAddition,inventoryPlan,inventoryMfgInfo,inventorystockconfig,inventoryWorkRegions, inventoryRoutingJboltTable, inventoryCapacity);
 	}
 	
 	public JBoltTable getJboltTable(JBoltTableMulti jboltTableMulti, String type){
@@ -1152,5 +1211,28 @@ public class InventoryService extends BaseService<Inventory> {
 		}
 		return splitCOperationName[0];
 	}
+
+	public Record findByCinvcode(String cinvcode) {
+		return findFirstRecord(selectSql().eq("cinvcode", cinvcode).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("isenabled", IsEnableEnum.NO.getValue()));
+	}
+
+    /**
+     * 获取存货信息Autocomplete
+     */
+    public List<Record> getInventoryAutocomplete(Kv kv) {
+        Page<Record> page = dbTemplate("inventory.getInventoryList", kv).paginate(1, 100);
+        ValidationUtils.notNull(page, JBoltMsg.DATA_NOT_EXIST);
+        return page.getList();
+    }
+
+    /**
+     * 获取存货信息分页
+     */
+    public Page<Record> getInventoryPaginate(Integer pageNumber, Integer pageSize, Kv kv) {
+        Page<Record> page = dbTemplate("inventory.getInventoryList", kv).paginate(pageNumber, pageSize);
+        ValidationUtils.notNull(page, JBoltMsg.DATA_NOT_EXIST);
+        return page;
+    }   
+    
 }
 

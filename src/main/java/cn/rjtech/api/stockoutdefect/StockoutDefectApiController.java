@@ -24,20 +24,37 @@ public class StockoutDefectApiController extends BaseApiController {
 
     /**
      * 查询主表明细
-     * @param pageNumber 页码
-     * @param pageSize 每页显示条数
-     * @param selectparam 搜索条件
+     * @param pageNumber         页码
+     * @param pageSize          每页显示条数
+     * @param cdocno            异常品单号
+     * @param imodocid          工单号
+     * @param cinvname          部品名称
+     * @param cinvcode          存货编码编码
+     * @param cinvcode1         客户部番
+     * @param istatus           状态
+     * @param startdate         开始时间
+     * @param enddate          结束时间
      */
     @ApiDoc(result = StockoutDefectVo.class)
     @UnCheck
     public void datas(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
                       @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
-                      @Para(value = "selectparam") String selectparam,
+                      @Para(value = "cdocno") String cdocno,
+                      @Para(value = "imodocid") String imodocid,
+                      @Para(value = "cinvname") String cinvname,
+                      @Para(value = "cinvcode") String cinvcode,
+                      @Para(value = "cinvcode1") String cinvcode1,
+                      @Para(value = "istatus") String istatus,
                       @Para(value = "startdate") String startdate, @Para(value = "enddate") String enddate) {
         ValidationUtils.validateIdInt(pageNumber,"页码");
         ValidationUtils.validateIdInt(pageSize,"每页显示条数");
         Kv kv = new Kv();
-        kv.set("selectparam", selectparam);
+        kv.set("cdocno", cdocno);
+        kv.set("imodocid", imodocid);
+        kv.set("cinvname", cinvname);
+        kv.set("cinvcode", cinvcode);
+        kv.set("cinvcode1", cinvcode1);
+        kv.set("istatus", istatus);
         kv.set("startdate", startdate);
         kv.set("enddate", enddate);
         renderJBoltApiRet(stockoutDefectApiService.getAdminDatas(pageNumber,pageSize,kv));
@@ -51,16 +68,14 @@ public class StockoutDefectApiController extends BaseApiController {
     public void addlist(@Para(value = "iautoid") Long iautoid,
                     @Para(value = "stockoutqcformmid") Long stockoutqcformmid,
                     @Para(value = "type") String type) {
-        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(stockoutqcformmid, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(stockoutDefectApiService.add(iautoid, stockoutqcformmid, type));
     }
 
     /**
      *
      *
-     * @param iautoid              来料异常品ID
-     * @param stockoutqcformmid     在库表ID
+     * @param iautoid              在库异常品ID
+     * @param stockoutqcformmid     在库检ID
      * @param capproach            处置区分
      * @param idqqty               不良数量
      * @param iresptype            责任区：1. 工程内 2. 其他
@@ -87,26 +102,22 @@ public class StockoutDefectApiController extends BaseApiController {
         kv.set("isfirsttime", isfirsttime);
         kv.set("cbadnesssns", cbadnesssns);
         kv.set("cdesc", cdesc);
-        kv.set("ircvdocqcformmid", stockoutqcformmid);
+        kv.set("stockoutqcformmid", stockoutqcformmid);
         renderJBoltApiRet(stockoutDefectApiService.update(kv));
     }
 
+
     /**
-     * 二维码
-     * @param iautoid     来料异常品ID
-     * @param width       宽
-     * @param height      高
+     * 打印二维码
+     * @param ids    异常品id 可多个
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void qrcode(
-            @Para(value = "width", defaultValue = "200") Integer width,
-            @Para(value = "height", defaultValue = "200") Integer height,
-            @Para(value = "iautoid") Long iautoid){
-        ValidationUtils.notNull(iautoid, "缺少参数iautoid");
-        String code = stockoutDefectApiService.stockoutDefectId(iautoid);
-        ValidationUtils.notBlank(code, "缺少参数code");
-        renderQrCode(code, width, height);
+    public void QRCode(@Para(value = "ids") Long ids) {
+        Kv kv = new Kv();
+        kv.set("ids", ids);
+        renderJBoltApiRet(stockoutDefectApiService.QRCode(kv));
     }
+
 
 }

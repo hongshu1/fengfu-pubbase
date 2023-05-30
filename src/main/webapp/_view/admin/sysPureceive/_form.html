@@ -4,9 +4,14 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="save()" class="btn btn-success btn-sm"><i class=" fa fa-refresh"></i>保存</button>
-                        <button onclick="submitThisForm()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>提交审批</button>
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>关闭</button>
+                        <button onclick="save()" class="btn btn-success btn-sm" "><i
+                                class=" fa fa-refresh"></i> 保存</button>
+                        <button onclick="submitThisForm()" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 提交审批
+                        </button>
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 关闭
+                        </button>
                     </div>
                 </div>
             </div>
@@ -18,6 +23,7 @@
                         #if(sysPureceive.AutoID??)
                         <input type="hidden" name="sysPureceive.AutoID" value="#(sysPureceive.AutoID??)" />
                         #end
+                        <input type="hidden" name="sysPureceive.Type" value="PUReceive" />
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -30,6 +36,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">收料日期</label>
@@ -40,7 +47,9 @@
                                     </div>
                                 </div>
                             </div>
+
                             <!--
+
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <input type="hidden" name="Whcode" value="#(Whcode??)"
@@ -56,6 +65,9 @@
                                     </div>
                                 </div>
                             </div> -->
+
+
+
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <input type="hidden" name="sysPureceive.VenCode" value="#(sysPureceive.VenCode??)"
@@ -71,6 +83,9 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">收料人</label>
@@ -81,6 +96,10 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
+
                         </div>
                         <input id="operationType" type="hidden" name="operationType" value="#(operationType??)">
                     </form>
@@ -95,10 +114,10 @@
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="admin/sysPureceivedetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " 
-                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" 
+                <a href="admin/sysPureceivedetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
+                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
                 class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-   
+
             </td>
             <td>${data.sourcebillno}</td>
             <td>${data.barcode}</td>
@@ -110,6 +129,7 @@
             <td>${data.qty}</td>
             <td>${data.whcode}</td>
             <td><img data-switchbtn data-value="${data.isinitial}" data-handler="switchEditableTd"/></td>
+
         </tr>
         {@/each}
     </script>
@@ -135,7 +155,9 @@
                 id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysPureceivedetail/deleteByIds?ids="
                 data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
         </div>
+
     </div>
+
     <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysPureceive.AutoID??)
         data-ajax="true" data-url="admin/sysPureceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)" #end
         id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
@@ -158,6 +180,7 @@
             </tr>
         </thead>
     </table>
+
 </div>
 #define js()
 <script>
@@ -174,6 +197,7 @@
 
     function getJBoltTableEditableColsOpton() {
         var editableTableOptions = {
+
             submit: {
                 withForm: ["sysPureceive_#(pageId)"],
                 name: 'sysPureceive',
@@ -213,6 +237,7 @@
                     header: '仓库编码,仓库名称',
                     changeColumns: [{ column: "whcode", use: "whcode" }]
                 },
+
                 barcode: { //条码
                     maxLength: 100,
                     required: true,
@@ -231,6 +256,26 @@
                     { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
                     {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
                     {column: "sourcebillnorow", use: "sourcebillnorow"},{column: "sourcebillid", use: "sourcebillid"},{column: "qtys", use: "qty"}]
+
+                },
+                cinvcode:{
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "=请选择=",
+                    type: "autocomplete",
+                    url: "admin/otherout/barcodeDatas",
+                    textAttr: "barcode",
+                    width: 800,
+                    sync: "",
+                    valueAttr: "barcode",
+                    columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,cuomclassname,cinvccode,cinvcname,sourcebilltype",
+                    header: '订单编号,条码,存货编码,客户部番,部品名称,规格型号,库存主单位,项目大类编码,项目大类名称',
+                    changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
+                        { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
+                        { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
+                        { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
+                        {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
+                        {column: "sourcebillnorow", use: "sourcebillnorow"},{column: "sourcebillid", use: "sourcebillid"},{column: "qtys", use: "qty"}]
 
                 },
             }

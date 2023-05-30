@@ -12,14 +12,18 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.admin.vendorclass.VendorClassService;
 import cn.rjtech.admin.warehouse.WarehouseService;
+import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
@@ -46,13 +50,13 @@ public class VendorService extends BaseService<Vendor> {
     @Inject
     private VendorClassService vendorClassService;
     @Inject
-    private VendorAddrService vendorAddrService;
+    private VendorAddrService  vendorAddrService;
     @Inject
-    private WarehouseService warehouseService;
+    private WarehouseService   warehouseService;
     @Inject
-    private PersonService personService;
+    private PersonService      personService;
     @Inject
-    private DepartmentService departmentService;
+    private DepartmentService  departmentService;
 
     @Override
     protected int systemLogTargetType() {
@@ -114,8 +118,6 @@ public class VendorService extends BaseService<Vendor> {
         //供应商编码不能重复
         ValidationUtils.isTrue(StringUtils.isBlank(findcVenCodeInfo(vendor.getCVenCode())), vendor.getCVenCode() + " 供应商编码不能重复！");
 
-        //供应商简称不能重复
-
         //查询默认委外仓
         Warehouse warehouse = warehouseService.findByWhCode(vendor.getCOMWhCode());
         saveVendorModel(vendor, warehouse);
@@ -161,15 +163,33 @@ public class VendorService extends BaseService<Vendor> {
             //获取表单Form对应的数据--bd_vendoradd
             List<VendorAddr> vendorAddrs = jBoltTable.getSaveModelList(VendorAddr.class);
             //获取表头对应的数据--bd_vendor
-//			Vendor vendor = new Vendor();
             if (jBoltTable.formIsNotBlank()) {
                 //这里需要根据自己的需要 从Form这个JSON里去获取自己需要的数据
-                Vendor vendor = jBoltTable.getFormModel(Vendor.class);
-                if (StringUtils.isNotBlank(vendor.getCProvince())) {
-                    String[] split = vendor.getCProvince().split(",");
-                    vendor.setCProvince(split[0]);//省份
-                    vendor.setCCity(split[1]);//城市
-                    vendor.setCCounty(StringUtils.isNotBlank(split[2]) ? split[2] : "");//区县
+                Record fromRecord = jBoltTable.getFormRecord();
+                Vendor vendor = new Vendor();
+                vendor.setCVenCode(fromRecord.getStr("cvencode"));
+                vendor.setCVenPPerson(fromRecord.getStr("cvenpperson"));
+                vendor.setCVenDepart(fromRecord.getStr("cVenDepart"));
+                vendor.setCOMWhCode(fromRecord.getStr("comwhcode"));
+                vendor.setITaxRate(fromRecord.getBigDecimal("itaxrate"));
+                vendor.setCProvince(fromRecord.getStr("cprovince"));
+                vendor.setCVenName(fromRecord.getStr("cvenname"));
+                vendor.setCVenAbbName(fromRecord.getStr("cvenabbname"));
+                vendor.setDVenDevDate(StringUtils.isNotBlank(fromRecord.getStr("dvendevdate")) ?
+                    fromRecord.getDate("dvendevdate") : new Date());
+                vendor.setCCurrency(fromRecord.getStr("ccurrency"));
+                vendor.setCVCCode(fromRecord.getStr("cvccode"));
+                vendor.setCVenMnemCode(fromRecord.getStr("cVenMnemCode"));
+                vendor.setCMemo(fromRecord.getStr("cmemo"));
+                vendor.setCProperty(fromRecord.getStr("cproperty2"));
+                vendor.setIsEnabled(true);
+                if (StringUtils.isNotBlank(fromRecord.getStr("cprovince"))) {
+                    String[] split = fromRecord.getStr("cprovince").split(",");
+                    for (int i = 0; i < split.length; i++) {
+                        vendor.setCProvince(split.length > 0 ? split[0] : "");//省份
+                        vendor.setCCity(split.length > 1 ? split[1] : "");//城市
+                        vendor.setCCounty(split.length > 2 ? split[2] : "");//区县
+                    }
                 }
                 if (!vendorAddrs.isEmpty()) {
                     VendorAddr vendorAddr = vendorAddrs.get(0);
@@ -180,15 +200,19 @@ public class VendorService extends BaseService<Vendor> {
                     vendor.setCVenEmail(vendorAddr.getCEmail());//email地址
                     vendor.setCVenPerson(vendorAddr.getCContactName());//联系人
                     vendor.setCVenHand(vendorAddr.getCMobile());//手机、移动电话
-
                 }
                 Record record = vendorClassService.findRecordByCVCCode(vendor.getCVCCode());
                 vendor.setIVendorClassId(record != null ? record.get("iautoid") : new Long(0));
-                //供应商分类id
-                //表头保存
-                Ret retVendor = save(vendor);
-                if (retVendor.isFail()) {
-                    return retVendor;
+                Vendor checkVendorIsBlank = findById(fromRecord.get("iautoid"));
+                if (null== checkVendorIsBlank){
+                    //表头保存
+                    Ret retVendor = save(vendor);
+                    if (retVendor.isFail()) {
+                        return retVendor;
+                    }
+                }else {
+                    vendor.setIAutoId(fromRecord.getLong("iautoid"));
+                    update(vendor);
                 }
                 //表单保存
                 for (VendorAddr vendorAddr : vendorAddrs) {
@@ -206,7 +230,7 @@ public class VendorService extends BaseService<Vendor> {
             Vendor vendor1 = findById(vendor.getIAutoId());
             if (!vendor1.getCVenCode().equals(vendor.getCVenCode())) {
                 ValidationUtils
-                        .isTrue(StringUtils.isBlank(findcVenCodeInfo(vendor.getCVenCode())), vendor.getCVenCode() + " 供应商编码不能重复！");
+                    .isTrue(StringUtils.isBlank(findcVenCodeInfo(vendor.getCVenCode())), vendor.getCVenCode() + " 供应商编码不能重复！");
             }
             if (StringUtils.isNotBlank(vendor.getCProvince())) {
                 String[] split = vendor.getCProvince().split(",");
@@ -224,6 +248,8 @@ public class VendorService extends BaseService<Vendor> {
             vendor.setDUpdateTime(new Date());
             vendor.setCOrgName(getOrgName());
             vendor.setCOrgCode(getOrgCode());
+            Record formRecord = jBoltTable.getFormRecord();
+            vendor.setCProperty(formRecord.getStr("cproperty2"));//供应商属性
 
             //获取表单
             List<VendorAddr> updateModelList1 = jBoltTable.getUpdateModelList(VendorAddr.class);
@@ -310,6 +336,25 @@ public class VendorService extends BaseService<Vendor> {
     public Vendor findByName(String vendorName) {
         return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvenname = ?", vendorName);
     }
+    public Vendor findByCode(String cvencode) {
+        return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvencode = ?", cvencode);
+    }
 
+	public Record getRecprdByCVenCode(String cvencode) {
+		return findFirstRecord(selectSql().eq("cvencode", cvencode).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("isenabled", IsEnableEnum.NO.getValue()));
+	}
+
+    public List<Record> getVendorList(Kv kv) {
+        return dbTemplate("vendor.getVendorList", kv).find();
+    }
+    public Page<Record> getVendorPaginate(Integer pageNumber,Integer pageSize, Kv kv) {
+        return dbTemplate("vendor.getVendorList", kv).paginate(pageNumber, pageSize);
+    }
+    public List<Record> getAutocompleteList(String q, int limit) {
+        Okv para = Okv.by("q", q)
+                .set("limit", limit);
+
+        return dbTemplate("vendor.getAutocompleteList", para).find();
+    }
 
 }

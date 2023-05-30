@@ -1,5 +1,6 @@
 package cn.rjtech.admin.inventoryclass;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.db.sql.Sql;
@@ -12,6 +13,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.InventoryClass;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Record;
@@ -269,4 +271,26 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 	public List<Record> selectClassList(Kv kv) {
 		return dbTemplate("inventoryclass.list",kv).find();
 	}
+
+    public List<JsTreeBean> getTreeList() {
+        List<JsTreeBean> treeBeans = new ArrayList<>();
+        // 根节点
+        treeBeans.add(new JsTreeBean(0, "#", "存货分类档案", true, "root_opened", true));
+        appendSubTree(treeBeans, 0L);
+        return treeBeans;
+    }
+    private void appendSubTree(List<JsTreeBean> treeBeans, Long pid) {
+    	List<Record> subList =  getSubList(pid);
+    	if(CollUtil.isEmpty(subList)) return;
+        for (Record row : subList) {
+            // 当前节点
+            treeBeans.add(new JsTreeBean(row.getStr("cinvccode"), pid, row.getStr("cinvcname") + "(" + row.getStr("cinvccode") + ")", "default", null, true));
+            // 追加子节点
+            appendSubTree(treeBeans, row.getLong("iautoid"));
+        }
+    }
+    private List<Record> getSubList(Long pid) {
+        Okv para = Okv.by("pid", pid);
+        return dbTemplate("inventoryclass.getSubList", para).find();
+    }
 }

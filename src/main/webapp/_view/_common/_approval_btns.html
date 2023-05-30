@@ -1,0 +1,21 @@
+### 未提审
+#if(iauditstatus??0 == 0 || iauditstatus??0 == 4)
+
+    <button data-ajaxbtn data-url="#(uri)/submit?iautoid=#(iautoid)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" #if(!iautoid??) disabled #end>提交审批</button>
+
+### 审核中
+#else
+
+    #switch(iauditway??)
+        ### 审批按钮
+        #case(1)
+
+            <button data-ajaxbtn data-url="#(uri)/approve?ids=#(iautoid)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审批通过</button>
+            <button data-ajaxbtn data-url="#(uri)/reject?ids=#(iautoid)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审批不通过</button>
+    
+        ### 审批流操作, 不放置按钮，通过列表操作
+        #case(2)
+    
+    #end
+
+#end

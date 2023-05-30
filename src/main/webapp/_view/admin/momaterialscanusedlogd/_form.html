@@ -1,0 +1,39 @@
+<form onsubmit="return false;" id="moMaterialscanusedlogdForm" action="#(action)" method="post">
+<input type="hidden" name="moMaterialscanusedlogd.iautoid" value="#(moMaterialscanusedlogd.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">材料耗用主表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入材料耗用主表ID" maxlength="19" name="moMaterialscanusedlogd.imaterialscanusedlogmid" value="#(moMaterialscanusedlogd.imaterialscanusedlogmid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货ID" maxlength="19" name="moMaterialscanusedlogd.iinventoryid" value="#(moMaterialscanusedlogd.iinventoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">现品票</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入现品票" maxlength="40" name="moMaterialscanusedlogd.cbarcode" value="#(moMaterialscanusedlogd.cbarcode??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">现品票数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入现品票数量"  maxlength="24" name="moMaterialscanusedlogd.iqty" value="#(moMaterialscanusedlogd.iqty??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">耗用数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入耗用数量"  maxlength="24" name="moMaterialscanusedlogd.iscannedqty" value="#(moMaterialscanusedlogd.iscannedqty??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="moMaterialscanusedlogdForm")
+#end
+

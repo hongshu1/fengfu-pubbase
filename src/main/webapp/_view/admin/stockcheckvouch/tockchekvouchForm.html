@@ -1,0 +1,96 @@
+<div class="jbolt_page_title" >
+  <div class="row">
+    <div class="col-md-auto">
+      <h5>条码明细</h5>
+    </div>
+    <div class="col-md-auto">
+    </div>
+  </div>
+</div>
+
+<div class="jbolt_page_content">
+  <div class="row">
+    <div class="col-10 text-left">
+      <form class="form-inline text-left" onsubmit="return false;" id="tockchekvouchForm" action="#(action)" method="post">
+        <input hidden id='stockcheckvouchdid' name="stockcheckvouchdid">
+        <input hidden id='whcode' name="whcode" value="#(stockcheckvouch.whcode)">
+        <input type="text" autocomplete="off" class="form-control" placeholder="=条码=" name="barcode" value=""/>
+        <button type="submit" class="btn btn-light" id="dTable"><i class="fa fa-search"></i> 查询</button>
+
+      </form>
+    </div>
+  </div>
+</div>
+<div class="jbolt_page_content">
+  <!-- JBoltTable的数据模板定义-->
+  <textarea class="jb_tpl_box" id="stock_#(pageId)">
+		{@each datas as data,index}
+    <tr data-id="${data.autoid}">
+      <td>${pageNumber,pageSize,index | rownum}</td>
+      <td>${data.invcode}</td>
+			<td>${data.invname}</td>
+			<td>${data.invstd}</td>
+			<td>${data.unitname}</td>
+			<td>${data.realqty2}</td>
+			<td>${data.qty}</td>
+			<td>${data.adjustqty2}</td>
+			<td>${data.barcode}</td>
+			<td>${data.batch}</td>
+			<td>${data.createdate}</td>
+		</tr>
+		{@/each}
+	</textarea>
+  <!-- 工具条 toolbar -->
+  <div class="jbolt_table_toolbar" id="stock_toolbar_#(pageId)">
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+  <table class="jbolt_table jbolt_main_table table-center"
+         id="stock__table_#(pageId)"
+         data-jbolttable
+         data-height="250"
+         data-ajax="true"
+         data-width="auto"
+         data-url="admin/stockcheckvouch/datas"
+         data-column-resize="true"
+         data-column-prepend="1:checkbox:true"
+         data-conditions-form="tockchekvouchForm"
+         data-rowtpl="stock_#(pageId)"
+         data-toolbar="stock_toolbar_#(pageId)"
+         data-page="PuDeliveryDetailPage_#(pageId)"
+         data-editable-option="currentstock_Barcode_#(pageId)"
+         data-editable="true"
+  >
+    <thead>
+    <tr>
+      <th data-width="30" data-min-width="60" data-column="index">序号</th>
+      <th data-width="150" data-column="posname">库区名称</th>
+      <th data-width="150" data-column="cinvcode">存货编码</th>
+      <th data-width="150" data-column="cinvcode">存货编码</th>
+      <th data-width="150" data-column="cInvCode1">客户部番</th>
+      <th data-width="150" data-column="cInvName1">部品名称</th>
+      <th data-width="150" data-column="invstd">规格</th>
+      <th data-width="110" data-column="unitname">主计量单位</th>
+      <th data-width="110" data-column="qty">数量</th>
+      <th data-width="110" data-column="realqty2">实盘数量</th>
+      <th data-width="320" data-column="barcode">现品票</th>
+      <th data-width="110" data-column="batch">批次号</th>
+      <th data-width="200" data-column="createdate">生产日期</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <div class="form-group row" style="margin-top: 20px">
+    <label class="col-sm-2 col-form-label" style="margin-right: 150px">盘点备注</label>
+    <div class="col" style="right: 150px">
+      <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"
+             placeholder="请输入备注" maxlength="255" name="memo" value="#(memo??)" />
+    </div>
+  </div>
+
+</div>
+

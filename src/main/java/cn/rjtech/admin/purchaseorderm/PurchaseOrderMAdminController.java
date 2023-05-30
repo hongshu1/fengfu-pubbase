@@ -8,7 +8,9 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
+import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
+import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
 import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionService;
@@ -16,6 +18,8 @@ import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.enums.SourceTypeEnum;
+import cn.rjtech.model.momdata.Exch;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.Vendor;
@@ -61,7 +65,12 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     private PurchaseOrderDBatchService purchaseOrderDBatchService;
     @Inject
     private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
-
+    @Inject
+    private InventoryChangeService inventoryChangeService;
+    @Inject
+    private ExchService exchService;
+    
+    
     /**
      * 首页
      */
@@ -82,28 +91,62 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     public void add(@Para(value = "beginDate") String beginDate,
                     @Para(value = "endDate") String endDate,
                     @Para(value = "iVendorId") String iVendorId,
-                    @Para(value = "processType") Integer processType) {
+                    @Para(value = "processType") Integer processType,
+                    @Para(value = "iSourceType") Integer iSourceType) {
 
         Vendor vendor = vendorService.findById(iVendorId);
+        ValidationUtils.notNull(vendor, "供应商记录不存在");
         Record record = new Record();
+        setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType, iSourceType));
+        record.set(PurchaseOrderM.ITYPE, iSourceType);
         record.set(PurchaseOrderM.IVENDORID, vendor.getIAutoId());
-        record.set(Vendor.CVENNAME, vendor.getCVenName());
         record.set(PurchaseOrderM.DBEGINDATE, beginDate);
         record.set(PurchaseOrderM.DENDDATE, endDate);
-        setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType));
+    
+        if (ObjectUtil.isNotNull(vendor.getITaxRate())){
+            record.set(PurchaseOrderM.ITAXRATE, vendor.getITaxRate().stripTrailingZeros().stripTrailingZeros());
+        }
+        
+        record.set(PurchaseOrderM.CCURRENCY, vendor.getCCurrency());
+        Exch exch = exchService.getNameByLatestExch(getOrgId(), vendor.getCCurrency());
+        // 汇率
+        if (ObjectUtil.isNotNull(exch)){
+            record.set(PurchaseOrderM.IEXCHANGERATE, exch.getNflat());
+        }
+        
+        record.set(PurchaseOrderM.IDUTYUSERID, vendor.getIDutyPersonId());
+        Person person = personService.findById(vendor.getIDutyPersonId());
+        if (ObjectUtil.isNotNull(person)) {
+            set("personname", person.getCpsnName());
+        }
+        record.set(PurchaseOrderM.IDEPARTMENTID, vendor.getCVenDepart());
+        // 带出供应商下的业务员，币种，税率
         set("purchaseOrderM", record);
+    
+        set(Vendor.CVENNAME, vendor.getCVenName());
+        if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == iSourceType){
+            render("blank_add.html");
+            return;
+        }
         render("add.html");
     }
 
     public void checkData(@Para(value = "beginDate") String beginDate,
                           @Para(value = "endDate") String endDate,
                           @Para(value = "iVendorId") String iVendorId,
-                          @Para(value = "processType") Integer processType) {
+                          @Para(value = "processType") Integer processType,
+                          @Para(value = "iSourceType") Integer iSourceType) {
         ValidationUtils.notBlank(beginDate, "请选择日期范围");
         ValidationUtils.notBlank(endDate, "请选择日期范围");
         ValidationUtils.notBlank(iVendorId, "请选择供应商");
-        List<Record> list = demandPlanMService.getVendorDateList(beginDate, endDate, iVendorId, processType);
-        ValidationUtils.notEmpty(list, "该时间范围未找到该供应商所需求物料");
+     
+        ValidationUtils.notNull(iSourceType, "缺少来源类型");
+        SourceTypeEnum sourceTypeEnum = SourceTypeEnum.toEnum(iSourceType);
+        ValidationUtils.notNull(sourceTypeEnum, "未知来源类型");
+        if (SourceTypeEnum.MATERIAL_PLAN_TYPE.getValue() == iSourceType){
+            List<Record> list = demandPlanMService.getVendorDateList(beginDate, endDate, iVendorId, processType);
+            ValidationUtils.notEmpty(list, "该时间范围未找到该供应商所需求物料");
+        }
         ok();
     }
 
@@ -134,8 +177,18 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         if (StrUtil.isNotBlank(isView)) {
             set("isView", 1);
         }
+        if (ObjectUtil.isNotNull(purchaseOrderM.getITaxRate())){
+            purchaseOrderM.setITaxRate( purchaseOrderM.getITaxRate().stripTrailingZeros());
+        }
+        if (ObjectUtil.isNotNull(purchaseOrderM.getIExchangeRate())){
+            purchaseOrderM.setIExchangeRate( purchaseOrderM.getIExchangeRate().stripTrailingZeros());
+        }
         set("purchaseOrderM", purchaseOrderM);
         setAttrs(service.getDateMap(purchaseOrderM));
+        if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == purchaseOrderM.getIType()){
+            render("blank_edit.html");
+            return;
+        }
         render("edit.html");
     }
 
@@ -182,6 +235,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
      * 新增作成页面
      */
     public void consummate() {
+        keepPara();
         render("consummate.html");
     }
 
@@ -262,8 +316,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     public void batchDel(@Para(value = "ids") String ids) {
         renderJsonData(service.batchDel(ids));
     }
-
-
+    
     public void findPurchaseOrderDBatch() {
         renderJsonData(purchaseOrderDBatchService.findByPurchaseOrderMId(getPageNumber(), getPageSize(), getKv()));
     }
@@ -283,4 +336,25 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     public void findPurchaseOrderDBatchVersion() {
         renderJsonData(purchaseOrderDBatchVersionService.findByPurchaseOrderMid(getPageNumber(), getPageSize(), getKv()));
     }
+    
+    public void saveSubmit(){
+        renderJson(service.saveSubmit(getJBoltTable()));
+    }
+    
+    public void findPurchaseOrderD(@Para(value = "purchaseOrderMId") Long purchaseOrderMId){
+        renderJsonData(service.findPurchaseOrderD(purchaseOrderMId));
+    }
+    
+    public void inventory_dialog_index(){
+        keepPara();
+        render("inventory_dialog_index.html");
+    }
+    
+    /**
+     * 默认给1-100个数据
+     */
+    public void inventoryPage() {
+        renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
+    }
+    
 }

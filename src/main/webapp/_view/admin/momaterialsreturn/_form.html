@@ -1,0 +1,110 @@
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page">
+
+    <div class="jbolt_page_content">
+        <form onsubmit="return false;" id="PuinstoreForm" action="#(action)" method="post">
+            <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
+                <div class="col-md-l pt-2" role="group" aria-label="btn-group">
+                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
+                            data-id="1" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i>
+                        保存
+                    </button>
+                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
+                            data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
+                            class="fa fa-window-maximize"></i> 提交审核
+                    </button>
+                    <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
+                        关闭
+                    </button>
+                </div>
+            </div>
+            #if(puinstore.AutoID??)
+            <input type="hidden" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
+            #end
+
+
+
+
+			<div class="form-group row">
+				<div class="col-11" style="margin-left: 180px;">
+					<div class="jbolt_page_content">
+						#render("_table_split.html")
+					</div>
+				</div>
+			</div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">备注：</label>
+                <div class="col-sm-2 col-form-label">
+                    </textarea>
+                    <textarea id="memo" name="puinstore.memo" class="form-control" placeholder="=请输入备注="
+                              type="text" maxlength="300"
+                              value="#(puinstore.memo??)">#(puinstore.memo??)</textarea>
+                </div>
+
+
+            </div>
+	<!--		<div class="form-group row">
+				<label class="col-sm-2 col-form-label">制单人：</label>
+				<div class="col-sm-2 col-form-label">
+					<input type="text" class="form-control border-none" readonly="readonly" placeholder=""
+						   value="#(puinstore.createperson??)"/>
+				</div>
+				<label class="col-sm-2 col-form-label">审核人：</label>
+				<div class="col-sm-2 col-form-label">
+					<input type="text" class="form-control border-none" readonly="readonly" placeholder=""
+						   value="#(puinstore.auditperson??)"/>
+				</div>
+			</div>-->
+		</form>
+    </div>
+</div>
+#define js()
+<script>
+    hideParentLayerDialogBtn();
+
+
+    function submitAllTables_#(pageId)(ele){
+        var action = getRealJqueryObject(ele);
+        debugger;
+        var id = action.data("id");
+        var value = action.data("value");
+        var tables = ["Puinstoreform_TableId_#(pageId)"];
+        if (checkTds()) {
+            jboltTableSubmitMulti(tables, "/admin/materialreturnlist/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
+                if (res.state == "ok") {
+                    LayerMsgBox.success(res.msg, 600, function () {
+                        parent.refreshPjaxContainer();
+                        parent.layer.close(parent.layer.getFrameIndex(window.name));
+                    })
+                } else {
+                    LayerMsgBox.error(res.msg);
+                }
+            });
+        }
+
+    }
+
+
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+    /**
+     * 获得选中的订单号数据
+     * @param data
+     */
+    function setChooseDialogSelectResultFromSupplier(data) {
+        $("#deptcode").val(data.deptcode);
+        $("#deptname").val(data.deptname);
+        $("#venname").val(data.venname);
+        $("#vencode").val(data.vencode);
+        $("#invname").val(data.invname);
+        $("#defwhname").val(data.defwhname);
+        $("#sourcebillno").val(data.sourcebillno);
+        $("#billno").val(data.billno);
+    }
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="PuinstoreForm")
+#end
+

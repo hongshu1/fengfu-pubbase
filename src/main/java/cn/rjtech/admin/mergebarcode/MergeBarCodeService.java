@@ -54,10 +54,6 @@ public class MergeBarCodeService extends BaseService<Inventory> {
 
     public String SubmitStripForm(Kv kv) {
         //获取表头数据
-        String invcodes = kv.getStr("cinvcode");
-        String barcodes = kv.getStr("cbarcode");
-        int qtys = kv.getInt("qtys");
-        String invnames = kv.getStr("cinvname");
         String datas = kv.getStr("datas");
         List<Kv> jsonArray = JSON.parseArray(datas, Kv.class);
         String organizecode = getOrgCode();
@@ -131,13 +127,13 @@ public class MergeBarCodeService extends BaseService<Inventory> {
         JSONObject res = JSON.parseObject(post);
         ValidationUtils.notNull(res, "解析JSON为空");
 
-        String code = res.getString("code");
+        String state = res.getString("state");
         String message = res.getString("message");
         if (message == null) {
             message = res.getString("msg");
         }
-        ValidationUtils.notNull(code, "json:" + json + ";" + message);
-        ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);
+        ValidationUtils.notNull(state, "json:" + json + ";" + message);
+        ValidationUtils.equals(state, "ok", state + ";" + "json:" + json + ";" + message);
         return post;
     }
 

@@ -1,12 +1,18 @@
 package cn.rjtech.admin.inventorycapacity;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.InventoryCapacity;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
 /**
  * 物料班次产能 Service
  * @ClassName: InventoryCapacityService
@@ -115,12 +121,18 @@ public class InventoryCapacityService extends BaseService<InventoryCapacity> {
 	}
 
 	/**
-	 * 设置返回二开业务所属的关键systemLog的targetType 
+	 * 设置返回二开业务所属的关键systemLog的targetType
 	 * @return
 	 */
 	@Override
 	protected int systemLogTargetType() {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
-
+	
+	public List<Record> findByInvId(Long invId) {
+		if (ObjectUtil.isNull(invId)){
+			return null;
+		}
+		return dbTemplate("inventory.findCapacityByInvId", Okv.by("invId", invId)).find();
+	}
 }

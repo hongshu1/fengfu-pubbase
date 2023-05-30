@@ -1,5 +1,6 @@
 package cn.rjtech.admin.bommaster;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
@@ -256,15 +257,19 @@ public class BomMasterAdminController extends BaseAdminController {
         keepPara();
         render("inventory_dialog_index.html");
     }
-
-    /**
-     * 默认给1-100个数据
-     */
+    
     public void inventoryPage() {
         renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
     }
 
     public void test(@Para(value = "id") Long id) {
         renderJson(service.test(id));
+    }
+    
+    /**
+     * 下载导入模板
+     */
+    public void downloadTpl() throws Exception {
+        renderJxls("bomMasterImportTpl.xlsx", getKv(), "物料清单_导入模板_" + DateUtil.today() + ".xlsx");
     }
 }

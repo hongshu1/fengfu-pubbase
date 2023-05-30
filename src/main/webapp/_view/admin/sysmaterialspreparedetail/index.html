@@ -35,7 +35,7 @@
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysmaterialspreparedetail/edit1/${data.autoid}" data-area="100%,100%" data-title="备料一览表详情"><i class="fa fa-eye">查看</i></a>
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysmaterialspreparedetail/edit1/${data.autoid}"  data-fs="true" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="备料一览表详情"><i class="fa fa-eye">查看</i></a>
 </td>
 <td>${data.billno}</td>
 <td>${data.billno}</td>

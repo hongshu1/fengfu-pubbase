@@ -37,12 +37,10 @@ public class RcvDocDefectApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS;
     }
 
-    public String rcvDocDefectId(Long id){
-        ValidationUtils.notNull(id, JBoltMsg.PARAM_ERROR);
-        RcvDocDefect byId = rcvDocDefectService.findById(id);
-        String cDocNo = byId.getCDocNo();
-        return cDocNo;
-    }
 
+    public JBoltApiRet QRCode(Kv kv) {
+        rcvDocDefectService.getQRCodeCheck(kv);
+        return JBoltApiRet.API_SUCCESS;
+    }
 
 }

@@ -44,7 +44,7 @@ public class DepartmentAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index.html");
+        render("tree_index.html");
     }
 
     /**
@@ -53,6 +53,14 @@ public class DepartmentAdminController extends BaseAdminController {
     @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv(), getSortColumn("iAutoId"), getSortType("desc")));
+    }
+
+    /**
+     * 数据源
+     */
+    @UnCheck
+    public void treeDatas() {
+        renderJsonData(service.getTreeTableDatas(getKv()));
     }
 
     /**

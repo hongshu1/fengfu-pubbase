@@ -11,8 +11,11 @@ import cn.rjtech.model.momdata.StockoutDefect;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
+
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 
 /**
  * 出库异常记录 Controller
@@ -44,15 +47,15 @@ public class StockoutDefectAdminController extends BaseAdminController {
      */
     public void datas() {
         Okv kv = new Okv();
-        kv.setIfNotNull("cDocNo", get("cDocNo"));
-        kv.setIfNotNull("iMoDocId", get("iMoDocId"));
-        kv.setIfNotNull("cInvCode", get("cInvCode"));
-        kv.setIfNotNull("cInvCode1", get("cInvCode1"));
-        kv.setIfNotNull("cInvName", get("cInvName"));
-        if (isNull(get("iStatus"))) {
-            kv.setIfNotNull("iStatus", get(0));
+        kv.setIfNotNull("cdocno", get("cdocno"));
+        kv.setIfNotNull("imodocid", get("imodocid"));
+        kv.setIfNotNull("cinvcode", get("cinvcode"));
+        kv.setIfNotNull("cinvcode1", get("cinvcode1"));
+        kv.setIfNotNull("cinvname", get("cinvname"));
+        if (isNull(get("istatus"))) {
+            kv.setIfNotNull("istatus", get(0));
         } else {
-            kv.setIfNotNull("iStatus", get("iStatus"));
+            kv.setIfNotNull("istatus", get("istatus"));
         }
         kv.setIfNotNull("startdate", get("startdate"));
         kv.setIfNotNull("enddate", get("enddate"));
@@ -156,13 +159,10 @@ public class StockoutDefectAdminController extends BaseAdminController {
     /**
      * 生成二维码
      */
-    public void erm() {
-        StockoutDefect stockoutDefect = service.findById(getLong(0));
-        if (stockoutDefect == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        renderQrCode(stockoutDefect.getCDocNo(), 500, 600);
+    public void QRCode() {
+        Kv kv = new Kv();
+        kv.setIfNotNull("ids", get("ids"));
+        renderJsonData(service.getQRCodeCheck(kv));
     }
 
 }

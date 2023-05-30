@@ -5,6 +5,8 @@
     #end
     <input type="hidden" name="dBeginDate" value="#(purchaseOrderM.dbegindate??)"/>
     <input type="hidden" name="dEndDate" value="#(purchaseOrderM.denddate??)"/>
+    <input type="hidden" name="iType" value="#(purchaseOrderM.itype??)"/>
+
     <div class="row">
 
         <div class="col">
@@ -40,7 +42,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">业务员</label>
                 <div class="col-6">
-                    <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId" value="#(workregionm.ipersonid??)" />
+                    <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId" value="#(purchaseOrderM.iDutyUserId??)" />
                     <input type="text" autocomplete="off" value="#(personname??)" class="form-control"
                            placeholder="==请选择人员=="
                            data-rule="required"
@@ -82,13 +84,13 @@
                 <label class="col-sm-3 col-form-label">供应商名称</label>
                 <div class="col-6">
                     <input hidden type="text" name="iVendorId" value="#(purchaseOrderM.iVendorId??)">
-                    <input readonly type="text" autocomplete="off" class="form-control" value="#(purchaseOrderM.cVenName??)">
+                    <input readonly type="text" autocomplete="off" class="form-control" value="#(cVenName??)">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">税率</label>
                 <div class="col-6">
-                    <input type="text" autocomplete="off" class="form-control" data-rule="pnumber"  data-notnull="false"
+                    <input type="text" autocomplete="off" class="form-control" data-rule="money"  data-notnull="false"
                            placeholder="请输入税率" maxlength="40" name="iTaxRate"
                            value="#(purchaseOrderM.iTaxRate??)"/>
                 </div>
@@ -96,7 +98,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">汇率</label>
                 <div class="col-6">
-                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="pnumber"
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="money_4"
                            placeholder="请输入汇率" maxlength="40" name="iExchangeRate"
                            value="#(purchaseOrderM.iExchangeRate??)"/>
                 </div>
@@ -123,7 +125,7 @@
                             data-value=""
                             data-value-attr="iautoid"
                             data-text-attr="cdepname"
-                            data-select="#(workregionm.idepid??)">
+                            data-select="#(purchaseOrderM.iDepartmentId??)">
                     </select>
                 </div>
             </div>
@@ -136,6 +138,7 @@
                             data-url="admin/dictionary/options?key=purchase_coping_type"
                             data-select-type="select"
                             data-text="==请选择=="
+                            data-select="#(purchaseOrderM.iPayableType??)"
                             data-text-attr="name"
                             data-value-attr="sn">
                     </select>
@@ -155,6 +158,7 @@
 
 <div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
         <button onclick="jboltTableRemoveCheckedRow(this,true,false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
         </button>
     </div>
@@ -177,29 +181,26 @@
         <th hidden rowspan="2">存货id</th>
         <th data-width="60"  rowspan="2" data-column="index">序号</th>
         <th data-width="80"  rowspan="2">操作</th>
-        <th data-width="150" rowspan="2" data-column="cInventoryCode">存货编码</th>
-        <th data-width="150" rowspan="2" data-column="cInvCode1">客户部番</th>
-        <th data-width="150" rowspan="2" data-column="cInvName1">部品名称</th>
+        <th data-width="150" rowspan="2" data-column="cinventorycode">存货编码</th>
+        <th data-width="150" rowspan="2" data-column="cinvcode1">客户部番</th>
+        <th data-width="150" rowspan="2" data-column="cinvname1">部品名称</th>
 
-        <th data-width="150" rowspan="2" data-column="cInvStd">规格</th>
-        <th data-width="150" rowspan="2" data-column="iPurchaseUomId">采购单位</th>
-        <th data-width="150" rowspan="2" data-column="iPkgQty">包装数量</th>
-        <th data-width="100" rowspan="2" data-column="isPresent">是否赠品</th>
+        <th data-width="150" rowspan="2" data-column="cinvstd">规格</th>
+        <th data-width="150" rowspan="2" data-column="ipurchaseuomid">采购单位</th>
+        <th data-width="150" rowspan="2" data-column="ipkgqty">包装数量</th>
+        <th data-width="100" rowspan="2" data-column="ispresent">是否赠品</th>
         <th data-width="150" rowspan="2" data-column="cMemo">备注</th>
-        <th data-width="200" rowspan="2" data-column="iVendorAddrId" class="is_required">供应商地址</th>
+        <th data-width="200" rowspan="2" data-column="ivendoraddrid" class="is_required">到货地点</th>
         <!--   显示日期 -->
-        #for(key:tableHeadMap.keySet())
-            <th data-width="80" colspan="#(tableHeadMap.get(key).size())">#(key)</th>
+        #for(dateHead:monthHeadList)
+            <th data-width="80" colspan="#(dateHead.size)">#(dateHead.dateStr)</th>
         #end
     </tr>
 
     <tr>
-        #for(data:tableHeadMap.keySet())
-            #for(day: tableHeadMap.get(data))
-              <th data-width="80" data-column="#(day)">#(day)</th>
-            #end
+        #for(day: dateHeadList)
+          <th data-width="80" data-column="#(day)">#(day)</th>
         #end
-        <th data-width="80">合计</th>
     </tr>
     </thead>
     <tbody>
@@ -241,7 +242,6 @@
                 #for(qty:data.arr??)
                  <td>#(qty)</td>
                 #end
-                <td>#(data.isum??)</td>
             </tr>
         #end
     </tbody>
@@ -299,7 +299,7 @@
     // 隐藏第一个按钮
     hideParentLayerDialogBtn(0);
 
-    #if(view??0 !=1)
+    #if(isView??0 !=1)
         addParentLayerDialogBtn("保存","lay_success",function(){
             if (!FormChecker.check("#PurchaseOrderM_Form")){
                 return;

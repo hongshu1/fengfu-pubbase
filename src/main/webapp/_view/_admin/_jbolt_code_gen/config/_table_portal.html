@@ -289,11 +289,13 @@ headBox内容自行填写
 	#if(codeGen.isTablePrependColumn)
 	   data-column-prepend="#(codeGen.tablePrependColumnIndex?? 1):#(codeGen.tablePrependColumnType?? 'checkbox'):#(codeGen.isTablePrependColumnClickActive?? false):#(codeGen.isTablePrependColumnLinkparent?? false):#(codeGen.isTablePrependColumnLinkson?? false)"
 	#end
+	#if(!editMode??)
 	#if(codeGen.tableFixedColumnLeft)
 	   data-fixed-columns-left="#(codeGen.tableFixedColumnLeft)"
 	#end
 	#if(codeGen.tableFixedColumnRight)
 	   data-fixed-columns-right="#(codeGen.tableFixedColumnRight)"
+	#end
 	#end
 	#if(codeGen.isHeadbox)
 	   data-headbox="#(codeGen.modelName)_headbox#if(codeGenServiceMode??)_#[[#]]#(pageId)#end"
@@ -327,13 +329,20 @@ headBox内容自行填写
 	   #if(codeGen.activeTrFrColor??)
 	   data-row-click-active-frcolor="#(codeGen.activeTrFrColor??)"
 	   #end
+	   #if(editMode??)
+	   data-ajax-success-handler="tablePortalTableAjaxSuccessHandler"
+	   #end
 >
 <thead class="fw-normal" #if(codeGen.theadBgColor && codeGen.theadFrColor) style="background-color: #(codeGen.theadBgColor)!important;color: #(codeGen.theadFrColor)!important;" #end >
 #if(editMode??)
-<tr>
+<tr class="sortable_tr">
 	<th data-width="60" data-column="index"></th>
 	#for(col:cols)
-	<th data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)"><a data-attr-id="#(col.id??)" tooltip data-title="编辑列属性值" onclick="showTableColEditor(this)" class="d-inline-block mx-1" href="javascript:void(0)"><i class="fa fa-edit text-danger"></i></a>#if(!for.first)<a class="mx-1" tooltip data-title="左移" data-ajaxbtn href="admin/codegen/modelattr/tableColUp/#(col.id)"  data-success-time="200"  data-handler="changeTablePreviewMode(true)"><i class="fa fa-arrow-left text-primary"></i></a>#end #if(!for.last)<a class="mx-1" tooltip data-title="右移"  data-ajaxbtn href="admin/codegen/modelattr/tableColDown/#(col.id)" data-success-time="200" data-handler="changeTablePreviewMode(true)"><i class="fa fa-arrow-right text-primary"></i></a>#end</th>
+	<th data-editmode-index="#(for.index)" data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)" draggable="true" data-sort-div-width="#(col.tableColWidth?? 100)" data-text="#(col.tableLabel?? col.attrName)" class="sortable_th" data-id="#(col.id)">
+	<a data-attr-id="#(col.id??)" tooltip data-title="编辑列属性值" onclick="showTableColEditor(this)" class="d-inline-block mx-1" href="javascript:void(0)"><i class="fa fa-edit text-danger"></i></a>
+	### #if(!for.first)<a class="mx-1" tooltip data-title="左移" data-ajaxbtn href="admin/codegen/modelattr/tableColUp/#(col.id)"  data-success-time="200"  data-handler="changeTablePreviewMode(true)"><i class="fa fa-arrow-left text-primary"></i></a>#end #if(!for.last)<a class="mx-1" tooltip data-title="右移"  data-ajaxbtn href="admin/codegen/modelattr/tableColDown/#(col.id)" data-success-time="200" data-handler="changeTablePreviewMode(true)"><i class="fa fa-arrow-right text-primary"></i></a>#end
+	<a class="d-inline-block mx-1 jbicon2 jbi-drag text-info jbolt_drag_trigger" tooltip draggable="true" data-title="拖动排序"></a>
+	</th>
 	#end
 	#if(codeGen.isShowOptcol??)<th data-width="#(codeGen.tableOptcolWidth?? 70)"></th>#end
 </tr>
@@ -346,7 +355,7 @@ headBox内容自行填写
 #end
 <th data-width="60" data-column="index">序号</th>
 #for(col:cols)
-	<th data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)" data-column="#(col.colName)">#(col.tableLabel?? col.attrName)</th>
+	<th #if(editMode??)data-editmode-index="#(for.index)"#end  data#(col.isNeedFixedWidth?'-':'-min-')width="#(col.tableColWidth?? 100)" data-column="#(col.colName)">#(col.tableLabel?? col.attrName)#if(editMode??)[#(col.sortRankIntable)]#end </th>
 #end
 #if(codeGen.isShowOptcol??)<th data-width="#(codeGen.tableOptcolWidth?? 70)">操作</th>#end
 </tr>

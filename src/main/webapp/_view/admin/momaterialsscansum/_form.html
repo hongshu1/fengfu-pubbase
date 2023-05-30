@@ -1,0 +1,33 @@
+<form onsubmit="return false;" id="moMaterialsscansumForm" action="#(action)" method="post">
+<input type="hidden" name="moMaterialsscansum.iautoid" value="#(moMaterialsscansum.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">生产工单ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入生产工单ID" maxlength="19" name="moMaterialsscansum.imodocid" value="#(moMaterialsscansum.imodocid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">存货ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入存货ID" maxlength="19" name="moMaterialsscansum.iinventoryid" value="#(moMaterialsscansum.iinventoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">计划数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;" placeholder="请输入计划数量"  maxlength="18" name="moMaterialsscansum.iplanqty" value="#(moMaterialsscansum.iplanqty??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">已扫数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=2;" placeholder="请输入已扫数量"  maxlength="18" name="moMaterialsscansum.iscannedqty" value="#(moMaterialsscansum.iscannedqty??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="moMaterialsscansumForm")
+#end
+

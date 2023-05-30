@@ -47,6 +47,7 @@ public class OtherOutAdminController extends BaseAdminController {
 		kv.setIfNotNull("iorderstatus", get("iorderstatus"));
 		kv.setIfNotNull("startdate", get("startdate"));
 		kv.setIfNotNull("enddate", get("enddate"));
+		kv.setIfNotNull("sourcebilldid", get("sourcedilldid"));//来源单号ID
 		renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), kv));
 
 	}
@@ -70,6 +71,8 @@ public class OtherOutAdminController extends BaseAdminController {
 		Date nowDate = new Date();
 		otherOut.setBillNo(billNo);
 		otherOut.setBillDate(nowDate);
+		otherOut.setSourceBillType("手动新增");
+		otherOut.setType("OtherOutMES");
 		set("otherOut",otherOut);
 		render("add.html");
 	}
@@ -202,13 +205,9 @@ public class OtherOutAdminController extends BaseAdminController {
 
 			return;
 		}
-		if (otherOut.getStatus() == 3){
+//		if (otherOut.getStatus() == 3){
 			renderQrCode(otherOut.getBillNo(),200,200);
-		}else {
-			renderFail("请审批再打印！！！");
-			return;
-		}
-
+//		}
 	}
 
 }

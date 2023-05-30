@@ -2,101 +2,147 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey??)">
-<div class="jbolt_page_title">
-<div class="row">
-	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>盘点单</h1></div>
-	<div class="col">
-	<form class="form-inline" id="StockCheckVouch_form_#(pageId)">
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col">
+        <form class="form-inline" id="StockCheckVouch_form_#(pageId)" style="left: 100px;text-align: left">
+          <select class="form-control"
+                  name="whcode"
+                  data-autoload
+                  data-url="admin/SysEnumeration/wareHouse"
+                  data-select-type="select2"
+                  data-text="=请选择仓库名称="
+                  data-value=""
+                  data-value-attr="whcode"
+                  data-text-attr="whname"
+                  data-select="#(whcode??)"></select>
 
-<select class="form-control" name="CheckType"
-	data-autoload
-	data-url="admin/dictionary/options?key=null"
-	data-select-type="select"
-	data-text="=盘点方式;0 明盘 1 暗盘="
-	data-value=""
-	data-value-attr="sn"
-	></select>
-		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-	</form>
-	</div>
-	<div class="col-sm-auto text-right">
-	
-	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/stockcheckvouch/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增盘点单"><i class="fa fa-plus"></i></button>
-	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
-	
-	
-	</div>
-</div>
-</div>
-<div class="jbolt_page_content">
-<!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="StockCheckVouch_tpl_#(pageId)">
+          <input type="text" autocomplete="off" class="form-control" placeholder="=盘点单号=" name="billno" value=""/>
+          <select class="form-control"
+                  name="checktype"
+                  data-autoload
+                  style="width: 120px"
+                  data-url="admin/dictionary/options?key=stockcheckType"
+                  data-select-type="select2"
+                  data-text="=盘点方式="
+                  data-value=""
+                  data-value-attr="sn"
+                  data-text-attr="name"
+                  data-select="#(checktype??)"
+          ></select>
+          <select class="form-control"
+                  name="state"
+                  data-autoload
+                  style="width: 120px"
+                  data-url="admin/dictionary/options?key=stockcheck_state"
+                  data-select-type="select2"
+                  data-text="=状态="
+                  data-value=""
+                  data-value-attr="sn"
+                  data-text-attr="name"
+                  data-select="#(state??)"
+          ></select>
+          <input type="text" data-date class="form-control ml-2" placeholder="=开始日期=" maxlength="20"
+                 name="startTime" value=""/>
+          <span class="ml-1 mr-1">至</span>
+          <input type="text" data-date class="form-control" placeholder="截止日期=" maxlength="20" name="endTime"
+                 value=""/>
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- 定义JBoltTable使用的数据渲染模板 -->
+    <textarea class="jb_tpl_box" id="StockCheckVouch_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.id}">
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.OrganizeCode}</td>
-<td>${data.CheckType}</td>
-<td>${data.BillNo}</td>
-<td>${data.BillDate}</td>
-<td>${data.CheckPerson}</td>
-<td>${data.WhCode}</td>
-<td>${data.CreatePerson}</td>
-<td>${data.CreateDate}</td>
-<td>${data.ModifyPerson}</td>
-<td>${data.ModifyDate}</td>
-<td>${data.Autoid}</td>
-<td>
-	{@if data.isDeleted}
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/stockcheckvouch/edit/${data.id}" data-area="800,600" data-title="查看盘点单"><i class="fa fa-eye"></i></a>
-	{@else}
-	<a class="jbolt_table_editbtn" href="admin/stockcheckvouch/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑盘点单"><i class="fa fa-edit"></i></a>
-	{@/if}
-	<a class="jbolt_table_delbtn" href="admin/stockcheckvouch/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
-</td>
+<tr data-id="${data.autoid}">
+  <td>${pageNumber,pageSize,index | rownum}</td>
+  <td>
+    <a href="admin/stockcheckvouch/keepCheckVouch/${data.autoid}" data-area="98%,98%" tooltip data-title="继续盘点"
+           data-handler="refreshJBoltTable" data-dialog-title="继续盘点" class="jbolt_table_editbtn">继续盘点</a>
+    <a href="admin/stockcheckvouch/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
+       data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+    <!--{@if data.state == '0'}
+    <a href="admin/purchaseReceiptList/keepCheckVouch/${data.autoid}" data-area="100%,100%" tooltip data-title="继续盘点"
+       data-handler="refreshJBoltTable" data-dialog-title="继续盘点" class="jbolt_table_editbtn">继续盘点</a>
+    <a href="admin/stockcheckvouch/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
+       data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+    {@/if}
+    {@if data.state == '1'}
+    <a href="admin/purchaseReceiptList/keepCheckVouch/${data.autoid}" data-area="100%,100%" tooltip data-title="审核"
+       data-handler="refreshJBoltTable" data-dialog-title="编辑库存盘点单" class="jbolt_table_editbtn">审核</a>
+    <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
+       data-handler="refreshJBoltTable" data-dialog-title="编辑库存盘点单" class="jbolt_table_editbtn">编辑</a>
+    {@/if}
+    {@if data.state == '2'}
+    <a href="admin/purchaseReceiptList/onlysee/${data.autoid}" data-area="100%,100%" tooltip data-title="查看"
+       data-handler="refreshJBoltTable" data-dialog-title="查看库存盘点单" class="jbolt_table_editbtn">查看</a>
+    {@/if}-->
+  </td>
+  <td title="${data.whcode}">${data.whcode}</td>
+  <td title="${data.cwhname}">${data.cwhname}</td>
+  <td title="${data.billno}">${data.billno}</td>
+  <td title="${data.checktype}">${data.checktype}</td>
+  <td title="">${data.modifydate}</td>
+  <td title="">${data.modifydate}</td>
+  <td title="">${data.modifydate}</td>
+  <td title="">${data.modifydate}</td>
+  <td title="">${data.modifydate}</td>
+  <td title="">${data.modifydate}</td>
+  <td title="${data.checkperson}">${data.checkperson}</td>
+  <td title="${data.memo}">${data.memo}</td>
+  <td title="${data.modifydate}">${data.modifydate}</td>
 </tr>
 {@/each}
 </textarea>
-<div class="jbolt_table_toolbar" id="StockCheckVouch_toolbar_#(pageId)">
-<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增盘点单" data-url="admin/stockcheckvouch/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
-	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑盘点单" data-check-handler="jboltTableGetCheckedId" data-url="admin/stockcheckvouch/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
-	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/stockcheckvouch/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
-<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
-</div>
+    <div class="jbolt_table_toolbar" id="StockCheckVouch_toolbar_#(pageId)">
+      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
+                data-title="新增盘点单" data-url="admin/stockcheckvouch/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i>
+          新增
+        </button>
+      </div>
 
-</div>
-<table class="jbolt_table jbolt_main_table  table-center "
-	   data-jbolttable
-	   data-width="fill"
-	   data-height="fill"
-	   data-ajax="true"
-	   data-conditions-form="StockCheckVouch_form_#(pageId)"
-	   data-url="admin/stockcheckvouch/datas"
-	   data-rowtpl="StockCheckVouch_tpl_#(pageId)"
-	   data-copy-to-excel="false"
-	   data-page="StockCheckVouch_page"
-	   data-toolbar="StockCheckVouch_toolbar_#(pageId)"
->
-<thead>
-<tr>
-<th data-width="60" data-column="index">序号</th>
-	<th data-width="150" data-column="OrganizeCode">组织编码</th>
-	<th data-width="150" data-column="CheckType">盘点方式;0 明盘 1 暗盘</th>
-	<th data-width="150" data-column="BillNo">单号</th>
-	<th data-width="150" data-column="BillDate">单据日期</th>
-	<th data-width="150" data-column="CheckPerson">盘点人</th>
-	<th data-width="100" data-column="WhCode">仓库编码</th>
-	<th data-width="150" data-column="CreatePerson">创建人</th>
-	<th data-min-width="160" data-column="CreateDate">创建时间</th>
-	<th data-width="150" data-column="ModifyPerson">更新人</th>
-	<th data-min-width="160" data-column="ModifyDate">更新时间</th>
-	<th data-width="100" data-column="Autoid">主键id</th>
-<th data-width="80">操作</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
+    </div>
+    <table class="jbolt_table jbolt_main_table  table-center "
+           id="stockcheckvouchtable_#(pageId)"
+           data-jbolttable
+           data-width="fill"
+           data-height="fill"
+           data-ajax="true"
+           data-conditions-form="StockCheckVouch_form_#(pageId)"
+           data-url="admin/stockcheckvouch/datas"
+           data-rowtpl="StockCheckVouch_tpl_#(pageId)"
+           data-copy-to-excel="false"
+           data-page="StockCheckVouch_page"
+           data-toolbar="StockCheckVouch_toolbar_#(pageId)"
+           data-column-prepend="1:checkbox:true"
+           data-column-resize="true"
+    >
+      <thead>
+      <tr>
+        <th data-width="60" data-column="index">序号</th>
+        <th data-width="150">操作</th>
+        <th data-width="100" data-column="WhCode">仓库编码</th>
+        <th data-width="100" data-column="cWhName">仓库名称</th>
+        <th data-width="150" data-column="BillNo">盘点单号</th>
+        <th data-width="150" data-column="CheckType">盘点方式</th>
+        <th data-width="150" data-column="">应盘料品</th>
+        <th data-width="150" data-column="">已盘料品</th>
+        <th data-width="150" data-column="">未盘料品</th>
+        <th data-width="150" data-column="">盘盈料品</th>
+        <th data-width="150" data-column="">盘亏料品</th>
+        <th data-width="150" data-column="">盘点状态</th>
+        <th data-width="150" data-column="CheckPerson">盘点人</th>
+        <th data-width="150" data-column="Memo">盘点备注</th>
+        <th data-width="150" data-column="ModifyDate">盘点时间</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </div>
 #end
 

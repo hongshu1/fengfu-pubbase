@@ -1,0 +1,138 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col">
+        <form class="form-inline" id="warehousebeginFrom_#(pageId)" style="left: 30px;text-align: left">
+          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
+
+          <select class="form-control"
+                  name="cinvccode"
+                  data-autoload
+                  data-url="admin/inventoryclass/options"
+                  data-select-type="select2"
+                  data-text="=存货分类="
+                  data-value-attr="cinvccode"
+                  data-text-attr="cinvcname"
+                  data-select="#(cinvccode??)"></select>
+
+          <select class="form-control"
+                  name="whcode"
+                  data-autoload
+                  data-url="admin/SysEnumeration/wareHouse"
+                  data-select-type="select2"
+                  data-text="=请选择仓库名称="
+                  data-value=""
+                  data-value-attr="whcode"
+                  data-text-attr="whname"
+                  data-select="#(whcode??)"></select>
+
+          <select class="form-control"
+                  data-autoload
+                  name="iwarehouseareaid"
+                  data-select-type="select2"
+                  data-tips="所属库区"
+                  data-url="admin/warehousearea/list?isdeleted=0"
+                  data-text="=所属库区="
+                  data-value-attr="iautoid"
+                  data-text-attr="careacode,careaname"
+                  data-value=""
+                  data-select="#(iwarehouseareaid??)"></select>
+
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- 定义JBoltTable使用的数据渲染模板 -->
+    <textarea class="jb_tpl_box" id="warehousebeginFormMtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+  <td>
+    <a tooltip title="条码明细" href="admin/warehousebeginofperiod/detail" data-scroll="yes"
+       data-handler="refreshJBoltTable" data-title="条码明细" data-area="95%,95%" class="jbolt_table_editbtn">条码明细</a>
+  </td>
+  <td title="${data.whcode}">${data.whcode}</td>
+  <td title="${data.whname}">${data.whname}</td>
+  <td title="${data.careacode}">${data.careacode}</td>
+  <td title="${data.careaname}">${data.careaname}</td>
+  <td title="${data.cinvcname}">${data.cinvcname}</td>
+  <td title="${data.invcode}">${data.invcode}</td>
+  <td title="${data.cinvcode1}">${data.cinvcode1}</td>
+  <td title="${data.cinvname1}">${data.cinvname1}</td>
+  <td title="${data.cinvstd}">${data.cinvstd}</td>
+  <td title="${data.cuomname}">${data.cuomname}</td>
+  <td title="${data.qty}">${data.qty, 2|number_format}</td>
+  <td title="${data.availableqty}">${data.availableqty, 2|number_format}</td>
+  <td title="${data.availablenum}">${data.availablenum, 2|number_format}</td>
+  <td title="${data.num}">${data.num, 2|number_format}</td>
+</tr>
+{@/each}
+</textarea>
+
+    <div class="jbolt_table_toolbar" id="warehousebeginFormM_toolbar_#(pageId)">
+      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
+                data-title="新增期初库存" data-url="admin/warehousebeginofperiod/add" class="btn btn-outline-primary"><i
+            class="fa fa-plus"></i>
+          新增期初库存
+        </button>
+        <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)2"
+                data-title="新增期初条码" data-url="admin/warehousebeginofperiod/addBarcode" class="btn btn-outline-primary"><i
+            class="fa fa-plus"></i>
+          新增期初条码
+        </button>
+      </div>
+    </div>
+
+    <table class="jbolt_table jbolt_main_table  table-center"
+           data-jbolttable
+           data-width="fill"
+           data-height="fill"
+           data-ajax="true"
+           data-conditions-form="warehousebeginFrom_#(pageId)"
+           data-url="admin/warehousebeginofperiod/datas?"
+           data-rowtpl="warehousebeginFormMtpl_#(pageId)"
+           data-column-prepend="1:checkbox:true"
+           data-copy-to-excel="false"
+           data-page="warehousebeginFormM_page#(pageId)"
+           data-toolbar="warehousebeginFormM_toolbar_#(pageId)">
+      <thead>
+      <tr>
+        <th data-width="60" data-column="index">序号</th>
+        <th data-width="150">操作</th>
+        <th data-width="120" data-column="WhCode">仓库编码</th>
+        <th data-width="150" data-column="WhName">仓库名称</th>
+        <th data-width="150" data-column="cAreaCode">库区编码</th>
+        <th data-width="150" data-column="cAreaName">库区名称</th>
+        <th data-width="150" data-column="cInvCName">存货分类名称</th>
+        <th data-width="150" data-column="InvCode">存货编码</th>
+        <th data-width="180" data-column="cInvCode1">客户部番</th>
+        <th data-width="180" data-column="cInvName1">部品名称</th>
+        <th data-width="150" data-column="cInvStd">规格</th>
+        <th data-width="120" data-column="cUomName">主计量单位</th>
+        <th data-width="150" data-column="qty" title="期初库存数量">期初库存数量</th>
+        <th data-width="150" data-column="availableqty" title="未生成条码库存数量">未生成条码库存数量</th>
+        <th data-min-width="160" data-column="availablenum" title="已生成条码库存数量">已生成条码库存数量</th>
+        <th data-width="100" data-column="num" title="可用条码数">可用条码数</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+</script>
+#end

@@ -1,5 +1,4 @@
-<div class="jbolt_page_content">
-    <textarea class="jb_tpl_box" id="cash_tpl_#(pageId)">
+<textarea class="jb_tpl_box" id="cash_tpl_#(pageId)">
         {@each datas as data,index}
             <tr data-id="${data.iautoid}">
                 <td>${pageNumber,pageSize,index | rownum}</td>
@@ -35,7 +34,7 @@
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <form id="form_#(pageId)">
                 <input hidden name="isEffective" id="isEnabled_#(pageId)" value="#(purchaseOrderM.hideinvalid??'0'=='1'?true:false)">
-                <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(purchaseOrderM.hideinvalid??'0'=='1'?true:false)"/>已失效隐藏
+                <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(purchaseOrderM.hideinvalid??'0'=='1'?true:false)" data-text="已失效显示:已失效隐藏"/>
             </form>
         </div>
     </div>
@@ -71,4 +70,3 @@
         <tbody>
         </tbody>
     </table>
-</div>

@@ -1,37 +1,40 @@
 #sql("paginateAdminDatas")
-select * from bd_person where 1=1 and isDeleted = '0'
+select p.*, d.cdepname
+from bd_person p
+LEFT JOIN Bd_Department d ON p.cdept_num = d.cdepcode AND p.corgcode = '#(corgcode)' AND d.isDeleted = '0'
+WHERE p.isDeleted = '0'
 	#if(iorgid)
-		and iorgid = #para(iorgid)
+		and p.iorgid = #para(iorgid)
 	#end
 	#if(cpsnnum)
-		and cpsn_num like concat('%',#para(cpsnnum),'%')
+		and p.cpsn_num like concat('%',#para(cpsnnum),'%')
 	#end
 	#if(cpsnname)
-		and cpsn_name like concat('%',#para(cpsnname),'%')
+		and p.cpsn_name like concat('%',#para(cpsnname),'%')
 	#end	
 	#if(cpsnmobilephone)
-		and cpsnmobilephone like concat('%',#para(cpsnmobilephone),'%')
+		and p.cpsnmobilephone like concat('%',#para(cpsnmobilephone),'%')
 	#end
 	#if(jobnumber)
-		and jobnumber like concat('%',#para(jobnumber),'%')
+		and p.jobnumber like concat('%',#para(jobnumber),'%')
 	#end
 	#if(cecardno)
-		and cecardno like concat('%',#para(cecardno),'%')
+		and p.cecardno like concat('%',#para(cecardno),'%')
 	#end	
 	#if(isenabled)
-		and isenabled = #para(isenabled)
+		and p.isenabled = #para(isenabled)
 	#end
 	#if(cdeptnum)
-		and cDept_num = #para(cdeptnum)
+		and p.cDept_num = #para(cdeptnum)
 	#end
 	#if(remploystate)
-		and remploystate = #para(remploystate)
+		and p.remploystate = #para(remploystate)
 	#end
 	#if(starttime)
-		and convert(date,dhiredate) >= convert(date,#para(starttime))
+		and convert(date,p.dhiredate) >= convert(date,#para(starttime))
 	#end
 	#if(endtime)
-		and convert(date,dhiredate) <= convert(date,#para(endtime))
+		and convert(date,p.dhiredate) <= convert(date,#para(endtime))
 	#end
 #end
 
@@ -60,4 +63,18 @@ FROM
 	LEFT JOIN Bd_Department ment ON ment.cDepCode= person.cDept_num
 WHERE
 	cPsn_Num =#para(cpsnnum)
+#end
+
+#sql("getAutocompleteListWithDept")
+SELECT TOP #(limit) hp.cpsn_num, hp.cpsn_name, d.cdepcode, d.cdepname
+FROM Bd_Person hp
+    INNER JOIN bd_Department d ON hp.cdept_num = d.cdepcode
+WHERE 1=1
+    #if(q)
+        AND ( hp.cpsn_num LIKE CONCAT('%', #para(q), '%') OR hp.cpsn_name LIKE CONCAT('%', #para(q), '%') )
+    #end
+    #if(cdepcode)
+    	and d.cdepcode = #para(cdepcode)
+    #end
+ORDER BY hp.cpsn_num
 #end

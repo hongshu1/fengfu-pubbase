@@ -60,6 +60,13 @@ where 1=1
 
 #sql("paginateAdminDatas")
 SELECT
+        AuditState =
+        CASE
+            WHEN t1.Status=1 THEN '已保存'
+            WHEN t1.Status=2 THEN '待审批'
+            WHEN t1.Status=7 THEN '关闭'
+            WHEN t1.Status=5 THEN '已出库'
+            WHEN t1.Status=3 THEN '已审批 /未完成' END,
       t1.*,
       t4.cDepName
 FROM
@@ -82,17 +89,24 @@ WHERE 1 = 1
 #if(enddate)
     and CONVERT(VARCHAR(10),t1.ModifyDate,23) <='#(enddate)'
 #end
-order by t1.ModifyDate desc
+#if(sourcebilldid)
+    and   AND t1.SourceBillDid = #para(sourcebilldid)
+#end
+order by t1.CreateDate desc,t1.BillNo desc
     #end
 
 
 
 #sql("getOtherOutLines")
-SELECT t2.*,
-       i.*,
-       u.cUomClassName,
-       t3.cInvCCode,
-       t3.cInvCName
+SELECT
+    i.*,
+    u.cUomClassName,
+    t3.cInvCCode,
+    t3.cInvCName,
+    t2.Qty AS qtys,
+    0-t2.Qty as qty,
+    t2.Barcode,
+    t2.InvCode
 FROM T_Sys_OtherOut t1,
      T_Sys_OtherOutDetail t2
          LEFT JOIN bd_inventory i ON i.cinvcode = t2.Invcode

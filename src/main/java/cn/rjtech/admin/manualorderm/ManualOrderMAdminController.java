@@ -8,7 +8,10 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.ManualOrderStatusEnum;
 import cn.rjtech.model.momdata.ManualOrderM;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -33,6 +36,8 @@ public class ManualOrderMAdminController extends BaseAdminController {
 
     @Inject
     private ManualOrderMService service;
+    @Inject
+    private CusOrderSumService cusOrderSumService;
 
     /**
      * 首页
@@ -93,10 +98,13 @@ public class ManualOrderMAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        manualOrderM.setIAuditStatus(2);
-        manualOrderM.setIOrderStatus(3);
+        
+        manualOrderM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+        manualOrderM.setIOrderStatus(ManualOrderStatusEnum.AUDITTED.getValue());
         Ret stockoutQcFormM = service.createStockoutQcFormM(manualOrderM.getICustomerId(), manualOrderM.getIAutoId());
-        service.handleCusOrderByManual(manualOrderM);
+        
+        cusOrderSumService.algorithmSum();
+        
         if (stockoutQcFormM.isFail())
             renderJson(stockoutQcFormM);
         else

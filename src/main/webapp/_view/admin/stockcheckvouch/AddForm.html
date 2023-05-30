@@ -1,0 +1,85 @@
+<div class="jbolt_page_title">
+  <div class="row">
+    <div class="col-12 form-inline">
+    </div>
+  </div>
+</div>
+
+<div class="jbolt_page_content">
+
+  <form onsubmit="return false;" id="stockCheckVouchAddForm" action="#(action)" method="post">
+
+    <div class="form-group">
+      <label class="col-2 col-form-label">盘点仓库</label>
+      <div class="col-10">
+        <select class="form-control"
+                data-autoload
+                name="whcode"
+                data-select-type="select2"
+                data-rule="select"
+                data-tips="所属仓库"
+                data-url="admin/warehouse/list?isdeleted=0"
+                data-text="=所属仓库="
+                data-value-attr="cwhcode"
+                data-text-attr="cwhname"
+                data-value=""
+                data-select="#(whcode??)">
+        </select>
+      </div>
+      <label class="col-2 col-form-label">库位名称</label>
+      <div class="col-10">
+        <select class="form-control"
+                data-autoload
+                name="iwarehouseareaid"
+                multiple
+                data-select-type="select2"
+                data-tips="所属库区"
+                data-url="admin/warehousearea/list?isdeleted=0"
+                data-text="=所属库区="
+                data-text-attr="careacode,careaname"
+                data-value=""
+                data-value-attr="iautoid"
+                data-select="#(iwarehouseareaid??)">
+        </select>
+      </div>
+      <label class="col-2 col-form-label">盘点方式</label>
+      <div class="col-sm-4" style="padding-top: 1px;">
+        <div class="form-group row"
+             data-name="checktype"
+             data-radio
+             data-value-attr="sn"
+             data-text-attr="name"
+             data-url="admin/dictionary/options?key=stockcheckType"
+             data-width="col-sm-2,col-10"
+             data-value="#(checktype??)"
+             data-rule="radio"
+             data-notnull="true"
+             data-tips="盘点方式"
+             data-inline="true">
+        </div>
+      </div>
+      <label class="col-2 col-form-label">盘点人</label>
+      <div class="col-10">
+        <select class="form-control"
+                name="checkperson"
+                data-autoload
+                data-select-type="select2"
+                data-url="admin/approvald/selectPerson"
+                data-text="=请选择盘点人="
+                data-value=""
+                data-setvalueto="odeptcode"
+                data-text-attr="cpsnname"
+                data-value-attr="ipersonid"
+                data-select="#(checkperson??)">
+        </select>
+      </div>
+
+    </div>
+  </form>
+</div>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="stockCheckVouchAddForm")
+#end
+

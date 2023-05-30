@@ -1,0 +1,52 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+	    <div class="jbolt_page_title">
+	    </div>
+	    <div class="jbolt_page_content">
+	    	<div class="jbolt_tab_view">
+				  <div class="jbolt_tab_links">
+				  	#if(expenseBudgetPeriod??)
+					  <a class="jbolt_tab_link active"  href="#jbolt_tabcontent1_#(pageId)">费用预算</a>
+					#end
+					#if(investmentPlanPeriod??)
+					  <a class="jbolt_tab_link"  href="#jbolt_tabcontent2_#(pageId)">投资计划</a>
+					#end
+				  </div>
+				  <div class="jbolt_tab_contents">
+				  	#if(expenseBudgetPeriod??)
+					  <div class="jbolt_tab_content active" id="jbolt_tabcontent1_#(pageId)">
+						<div data-ajaxportal data-url="/admin/purchasem/chooseExpenseBudget?iperiodid=#(expenseBudgetPeriod.iautoid??)&cdepcode=#(cdepcode??)"></div>
+					  </div>
+					#end
+					#if(investmentPlanPeriod??)
+					  <div class="jbolt_tab_content" id="jbolt_tabcontent2_#(pageId)">
+						<div data-ajaxportal data-url="/admin/purchasem/chooseInvestmentPlan?iperiodid=#(investmentPlanPeriod.iautoid??)&cdepcode=#(cdepcode??)"></div>
+					  </div>
+					#end
+				  </div>
+			</div>
+	    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+function submitThisForm() {
+	var index = LayerMsgBox.loading('执行中...');
+	var columnAtt = ["cbudgetno","isourcetype","isourceid","iprojectcardid","itaxrate","isubitem","ibudgetmoney","ibudgetmoneyhidden","ibudgetalreadypurchasemoney"];
+	var expenseBudgetDatas = jboltTableGetCheckedDatas("#jbolt_Table_purchase_add_choose_expensebudget",columnAtt,true);
+	var investmentPlanDatas = jboltTableGetCheckedDatas("#jbolt_Table_proposal_add_choose_investmentplan",columnAtt,true);
+	if(!(expenseBudgetDatas || investmentPlanDatas)){
+		LayerMsgBox.error("请选择至少一行数据!");
+		return;
+	}
+	var allCheckedDatas = [];
+	if(expenseBudgetDatas) allCheckedDatas = allCheckedDatas.concat(expenseBudgetDatas);
+	if(investmentPlanDatas) allCheckedDatas = allCheckedDatas.concat(investmentPlanDatas);
+	parent.appendItemRowDatas(allCheckedDatas);
+	parent.layer.close(parent.layer.getFrameIndex(window.name));
+}
+</script>
+#end

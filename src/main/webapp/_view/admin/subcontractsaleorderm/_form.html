@@ -108,13 +108,13 @@
 									data-select="#(subcontractsaleorderm.iDepartmentId??)">
 								</select>									
 							</div>		
-							<input type="hidden" name="subcontractsaleorderm.iBusUserId" value="#(subcontractsaleorderm.iBusUserId??)" id="iBusUserId" data-value-attr="id"/>
+							<input type="hidden" name="subcontractsaleorderm.iBusPersonId" value="#(subcontractsaleorderm.iBusPersonId??)" id="iBusPersonId" data-value-attr="id"/>
 							<label class="col-sm-1 col-form-label">业务员</label>
 							<div class="col">
 								<input type="text" class="form-control"
 									   data-autocomplete
 									   data-url="admin/user/autocomplete"
-									   data-hidden-input="iBusUserId"
+									   data-hidden-input="iBusPersonId"
 									   data-text-attr="name"
 									   data-column-attr="username,name,phone"
 									   placeholder="请选择"
@@ -278,7 +278,7 @@
            data-rowtpl="jboltTable_demotpl_#(pageId)"
            data-toolbar="subcontractsaleorderm_toolbar_#(pageId)"
            data-editable="true"
-           data-height="400"
+           data-height="190%"
            ###data-fixed-columns-right="-1"
            data-editable-option="getEditableTableOptions_#(pageId)">
         <thead>

@@ -1,20 +1,29 @@
-var jbolt_table_js_version="3.4.2";
+var jbolt_table_js_version="3.5.0";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
+
+/**
+ * 清空当前可编辑表格正在键盘操作的表格对象
+ */
 function clearJBoltCurrentEditableAndKeyEventTable(){
 	JBoltCurrentEditableAndKeyEventTable=null;
 }
+
+/**
+ * 切换当前可编辑表格正在键盘操作的表格对象
+ * @param table  切换为哪个新表格
+ */
 function changeJBoltCurrentEditableAndKeyEventTable(table){
 	JBoltCurrentEditableAndKeyEventTable=table;
 }
 
 /**
  * 表格设置指定行指定属性的值 用于不在表格显示的列
- * @param tableEle
- * @param tr
- * @param attr
- * @param value
- * @param dontExeValueChangeHandler
+ * @param tableEle     表格对象 组件 或者关联了data-table-id的元素
+ * @param tr           指定行tr
+ * @param attr         指定Json中的属性名称
+ * @param value        指定属性的值
+ * @param dontExeValueChangeHandler    改变单元格的值 但是不触发任何changeColumns和handler事件
  */
 function jboltTableSetAttrValue(tableEle,tr,attr,value,dontExeValueChangeHandler){
 	var table=getJBoltTable(tableEle);
@@ -31,10 +40,10 @@ function jboltTableSetAttrValue(tableEle,tr,attr,value,dontExeValueChangeHandler
 
 /**
  * 表格设置指定行的指定属性的值 用于不在表格显示的列
- * @param tableEle
- * @param tr
- * @param attrValues //{attr:"age",value:1}
- * @param dontExeValueChangeHandler
+ * @param tableEle            表格对象 组件 或者关联了data-table-id的元素
+ * @param tr                  指定行
+ * @param attrValues          //{attr:"age",value:1}
+ * @param dontExeValueChangeHandler      改变单元格的值 但是不触发任何changeColumns和handler事件
  */
 function jboltTableSetAttrsValue(tableEle,tr,attrValues,dontExeValueChangeHandler){
 	var table=getJBoltTable(tableEle);
@@ -58,7 +67,7 @@ function jboltTableSetAttrsValue(tableEle,tr,attrValues,dontExeValueChangeHandle
 
 /**
  * 表格选中行转为上一行
- * @param tableEle
+ * @param tableEle         表格对象 组件 或者关联了data-table-id的元素
  */
 function jboltTableActivePrevTr(tableEle){
 	var table=getJBoltTableInst(tableEle);
@@ -71,7 +80,7 @@ function jboltTableActivePrevTr(tableEle){
 
 /**
  * 表格选中行转为下一行
- * @param tableEle
+ * @param tableEle        表格对象 组件 或者关联了data-table-id的元素
  */
 function jboltTableActiveNextTr(tableEle){
 	var table=getJBoltTableInst(tableEle);
@@ -84,9 +93,9 @@ function jboltTableActiveNextTr(tableEle){
 
 /**
  * 获取指定行的json数据
- * @param tableEle
- * @param rowOrIndex
- * @param dontShowError
+ * @param tableEle             表格对象 组件 或者关联了data-table-id的元素
+ * @param rowOrIndex           指定行对象或者data-index值
+ * @param dontShowError        如果出现错误 不显示错误信息
  * @returns {null|*}
  */
 function jboltTableGetRowJsonData(tableEle,rowOrIndex,dontShowError){
@@ -101,9 +110,9 @@ function jboltTableGetRowJsonData(tableEle,rowOrIndex,dontShowError){
 }
 /**
  * 移除表格的指定id 的keep selected item
- * @param tableEle
- * @param removeId
- * @param dontShowError
+ * @param tableEle           表格对象 组件 或者关联了data-table-id的元素
+ * @param removeId           删除数据的ID
+ * @param dontShowError      如果出现错误 不显示错误信息
  * @returns {null}
  */
 function jboltTableRemoveKeepSelectedItem(tableEle,removeId,dontShowError){
@@ -123,9 +132,9 @@ function jboltTableRemoveKeepSelectedItem(tableEle,removeId,dontShowError){
 
 /**
  * 获取所有keep selected 数据 json数据
- * @param tableEle
- * @param needAttrs
- * @param dontShowError
+ * @param tableEle         表格对象 组件 或者关联了data-table-id的元素
+ * @param needAttrs        //格式["name:name","xxxId:id"]
+ * @param dontShowError    如果出现错误 不显示错误信息
  * @returns {boolean|*}
  */
 function jboltTableGetKeepSelectedDatas(tableEle,needAttrs,dontShowError){
@@ -141,8 +150,8 @@ function jboltTableGetKeepSelectedDatas(tableEle,needAttrs,dontShowError){
 
 /**
  * 获取所有 keep selected数据ids
- * @param tableEle
- * @param dontShowError
+ * @param tableEle          表格对象 组件 或者关联了data-table-id的元素
+ * @param dontShowError     如果出现错误 不显示错误信息
  * @returns {boolean|*}
  */
 function jboltTableGetKeepSelectedIds(tableEle,dontShowError){
@@ -158,8 +167,8 @@ function jboltTableGetKeepSelectedIds(tableEle,dontShowError){
 
 /**
  * 获取所有 keep selected数据的显示文本texts
- * @param tableEle
- * @param dontShowError
+ * @param tableEle          表格对象 组件 或者关联了data-table-id的元素
+ * @param dontShowError     如果出现错误 不显示错误信息
  * @returns {boolean|*}
  */
 function jboltTableGetKeepSelectedTexts(tableEle,dontShowError){
@@ -175,10 +184,10 @@ function jboltTableGetKeepSelectedTexts(tableEle,dontShowError){
 
 /**
  * 处理完成可编辑表格当前正在编辑的单元格 完成回显
- * @param tableEle
- * @param dontProcessExtraSomthing
+ * @param tableEle                     表格对象 组件 或者关联了data-table-id的元素
+ * @param dontProcessExtraSomething    不执行其他操作
  */
-function finishEditingCells(tableEle,dontProcessExtraSomthing){
+function finishEditingCells(tableEle,dontProcessExtraSomething){
 	var table=getJBoltTableInst(tableEle);
 	if(!isOk(table)){
 		LayerMsgBox.alert("表格配置异常，无法找到对应表格",2);
@@ -188,12 +197,12 @@ function finishEditingCells(tableEle,dontProcessExtraSomthing){
 		LayerMsgBox.alert("只要可编辑表格才能使用processEditingTds",2);
 		return false;
 	}
-	return table.me.processEditingTds(table,dontProcessExtraSomthing);
+	return table.me.processEditingTds(table,dontProcessExtraSomething);
 }
 
 /**
  * 检测可编辑表格选中的tr里的单元格required
- * @param tableEle
+ * @param tableEle          表格对象 组件 或者关联了data-table-id的元素
  * @returns {boolean}
  */
 function checkEditableCheckedTrCellRequired(tableEle) {
@@ -211,7 +220,7 @@ function checkEditableCheckedTrCellRequired(tableEle) {
 
 /**
  * 检测可编辑表格单元格required
- * @param tableEle
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @param trs 非必填 限定tr范围
  * @returns {boolean}
  */
@@ -232,6 +241,7 @@ function checkEditableCellRequired(tableEle,trs) {
 
 /**
  * 重新更改设置表格可编辑配置options
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @param newOptions
  */
 function changeJBoltTableEditableOptions(tableEle,newOptions){
@@ -253,8 +263,8 @@ function changeJBoltTableEditableOptions(tableEle,newOptions){
 }
 /**
  * 表格tr 上移
- * @param trEle
- * @param forceTrChange
+ * @param trEle           指定上移的tr
+ * @param forceTrChange   强制tr变红
  * @param jsonAttrName   指定JSON数据里定义的属性名称
  * @param column         指定cols里定义的操作列名称
  * @returns
@@ -280,8 +290,8 @@ function jboltTableTrMoveUp(trEle,forceTrChange,jsonAttrName,column){
 }
 /**
  * 表格tr 下移
- * @param trEle
- * @param forceTrChange
+ * @param trEle           指定下移的tr
+ * @param forceTrChange   强制tr变红
  * @param jsonAttrName   指定JSON数据里定义的属性名称
  * @param column         指定cols里定义的操作列名称
  * @returns
@@ -307,8 +317,8 @@ function jboltTableTrMoveDown(trEle,forceTrChange,jsonAttrName,column){
 }
 /**
  * jbolttable表格隐藏box
- * @param tableEle
- * @param boxType
+ * @param tableEle    表格对象 组件 或者关联了data-table-id的元素
+ * @param boxType     四种headbox footbox leftbox rightbox
  * @returns
  */
 function jboltTableHideBox(tableEle,boxType){
@@ -321,7 +331,7 @@ function jboltTableHideBox(tableEle,boxType){
 }
 /**
  * jbolttable表格隐藏headbox
- * @param tableEle
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableHideHeadbox(tableEle){
@@ -329,7 +339,7 @@ function jboltTableHideHeadbox(tableEle){
 }
 /**
  * jbolttable表格隐藏footBox
- * @param tableEle
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableHideFootbox(tableEle){
@@ -337,7 +347,7 @@ function jboltTableHideFootbox(tableEle){
 }
 /**
  * jbolttable表格隐藏leftbox
- * @param tableEle
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableHideLeftbox(tableEle){
@@ -345,7 +355,7 @@ function jboltTableHideLeftbox(tableEle){
 }
 /**
  * jbolttable表格隐藏rightbox
- * @param tableEle
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableHideRightbox(tableEle){
@@ -354,8 +364,8 @@ function jboltTableHideRightbox(tableEle){
 
 /**
  * jbolttable表格显示box
- * @param tableEle
- * @param boxType
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
+ * @param boxType  四种headbox footbox leftbox rightbox
  * @returns
  */
 function jboltTableShowBox(tableEle,boxType){
@@ -369,7 +379,7 @@ function jboltTableShowBox(tableEle,boxType){
 
 /**
  * jbolttable表格显示 headbox
- * @param tableEle
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableShowHeadbox(tableEle){
@@ -377,7 +387,7 @@ function jboltTableShowHeadbox(tableEle){
 }
 /**
  * jbolttable表格显示 footbox
- * @param tableEle
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableShowFootbox(tableEle){
@@ -385,7 +395,7 @@ function jboltTableShowFootbox(tableEle){
 }
 /**
  * jbolttable表格显示 leftbox
- * @param tableEle
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableShowLeftbox(tableEle){
@@ -393,7 +403,7 @@ function jboltTableShowLeftbox(tableEle){
 }
 /**
  * jbolttable表格显示 rightbox
- * @param tableEle
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableShowRightbox(tableEle){
@@ -401,8 +411,8 @@ function jboltTableShowRightbox(tableEle){
 }
 /**
  * jbolttable表格 toggle切换 显示/隐藏box
- * @param tableEle
- * @param boxType
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
+ * @param boxType  四种headbox footbox leftbox rightbox
  * @returns
  */
 function jboltTableToggleBox(tableEle,boxType){
@@ -416,7 +426,7 @@ function jboltTableToggleBox(tableEle,boxType){
 
 /**
  * jbolttable表格toggle headbox
- * @param tableEle
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableToggleHeadbox(tableEle){
@@ -424,7 +434,7 @@ function jboltTableToggleHeadbox(tableEle){
 }
 /**
  * jbolttable表格显示 footbox
- * @param tableEle
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableToggleFootbox(tableEle){
@@ -432,7 +442,7 @@ function jboltTableToggleFootbox(tableEle){
 }
 /**
  * jbolttable表格显示 leftbox
- * @param tableEle
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableToggleLeftbox(tableEle){
@@ -440,7 +450,7 @@ function jboltTableToggleLeftbox(tableEle){
 }
 /**
  * jbolttable表格显示 rightbox
- * @param tableEle
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableToggleRightbox(tableEle){
@@ -449,7 +459,7 @@ function jboltTableToggleRightbox(tableEle){
 /**
  * 获取可编辑表格的可提交数据
  * 包含需要删除 需要更新 需要保存 和关联forms所有数据
- * @param tableEle
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableGetSubmitData(tableEle){
@@ -465,7 +475,7 @@ function jboltTableGetSubmitData(tableEle){
 /**
  * 获取可编辑表格的可提交数据 多表格
  * 包含需要删除 需要更新 需要保存 和关联forms所有数据
- * @param tableEles
+ * @param tableEles 数组 表格对象数组 组件 或者关联了data-table-id的元素数组
  * @returns
  */
 function jboltTableGetSubmitDataMulti(tableEles){
@@ -490,6 +500,7 @@ function jboltTableGetSubmitDataMulti(tableEles){
 }
 /**
  * 显示设置列的dialog组件
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableShowColumnConfigDialog(tableEle){
@@ -554,6 +565,11 @@ function jboltTableShowColumnConfigDialog(tableEle){
 	return true;
 }
 
+/**
+ * 处理表格thead的列显示和隐藏的配置对象
+ * @param jboltTable  表格对象 组件 或者关联了data-table-id的元素
+ * @returns {*[]|null}
+ */
 function processJboltTableVisibleColumnsByThead(jboltTable){
 	var columns = jboltTable.thead.find("th[data-column][data-col-index]");
 	if(!isOk(columns)){return null;}
@@ -576,7 +592,7 @@ function processJboltTableVisibleColumnsByThead(jboltTable){
 }
 /**
  * 表格菜单清空过滤条件
- * @param tableEle
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableMenuClearFilter(tableEle){
@@ -595,7 +611,7 @@ function jboltTableMenuClearFilter(tableEle){
 }
 /**
  * 获取单元格里选择的数据
- * @param td
+ * @param td  单元格对象
  * @returns
  */
 function jboltTableGetCellSelectText(td){
@@ -612,7 +628,7 @@ function jboltTableGetCellSelectText(td){
 }
 /**
  * 主动提交表格绑定的查询表单
- * @param submitConditionsForm
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableSubmitConditionsForm(tableEle){
@@ -630,7 +646,7 @@ function jboltTableSubmitConditionsForm(tableEle){
 }
 /**
  * 表格菜单 filterbox执行查询
- * @param tableEle
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
 function jboltTableMenuFilter(tableEle){
@@ -699,10 +715,10 @@ function jboltTableMenuFilter(tableEle){
 
 /**
  * 表格关键词内容过滤
- * @param tableEle
- * @param keywords
- * @param include
- * @param pageSize
+ * @param tableEle   表格对象 组件 或者关联了data-table-id的元素
+ * @param keywords   关键词
+ * @param include    是否包含
+ * @param pageSize   每页个数
  * @returns
  */
 function jboltTableMenuFilterByKeywords(tableEle,keywords,include,pageSize){
@@ -741,10 +757,10 @@ function jboltTableMenuFilterByKeywords(tableEle,keywords,include,pageSize){
 }
 /**
  * JBoltTable菜单增加筛选条件
- * @param tableEle
- * @param column
- * @param comparison
- * @param value
+ * @param tableEle   表格对象 组件 或者关联了data-table-id的元素
+ * @param column     列属性名
+ * @param comparison 比较符
+ * @param value      值
  * @returns
  */
 function jboltTableMenuAddFilterItem(tableEle,column,comparison,value){
@@ -887,6 +903,11 @@ function jboltTableMenuAddFilterItem(tableEle,column,comparison,value){
 	return true;
 }
 
+/**
+ * 表格右键菜单filterbox top位置变更
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
+ * @returns {boolean}
+ */
 function jboltTableMenuOffsetTopChange(tableEle){
 	var table=getJBoltTable(tableEle);
 	if(!isOk(table)){
@@ -906,6 +927,11 @@ function jboltTableMenuOffsetTopChange(tableEle){
 		jboltTable.menus.css(cm_pos);
 	}
 }
+
+/**
+ * 获取当前可编辑表格键盘锁定操作的表格数组
+ * @returns {any[]|boolean}
+ */
 function getCurrentEditableAndKeyEventJBoltTables(){
 	var pbox;
 	if(jboltWithTabs){
@@ -926,6 +952,11 @@ function getCurrentEditableAndKeyEventJBoltTables(){
 	});
 	return tableArray;
 }
+
+/**
+ * 获取当前可编辑表格键盘锁定操作的表格 单个
+ * @returns {null}
+ */
 function getCurrentEditableAndKeyEventJBoltTable(){
 	if(!JBoltCurrentEditableAndKeyEventTable){
 		var pbox;
@@ -949,7 +980,7 @@ function getCurrentEditableAndKeyEventJBoltTable(){
 }
 /**
  * 设置表格单元格数据
- * @param tableEle 表格或者关联元素 能找到表格的ele
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @param tr       修改的单元格所在行
  * @param column   列名
  * @param text     显示文本
@@ -970,7 +1001,7 @@ function jboltTableSetCell(tableEle,tr,column,text,value,dontExeValueChangeHandl
 }
 /**
  * 设置表格单元格是否可编辑
- * @param tableEle 表格或者关联元素 能找到表格的ele
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @param tr       修改的单元格所在行
  * @param column   列名
  * @param editable     是否可编辑
@@ -992,9 +1023,8 @@ function jboltTableSetCellEditable(tableEle,tr,column,editable,falseClear,clearV
 }
 /**
  * 批量设置表格单元格是否可编辑
- * @param tableEle 表格或者关联元素 能找到表格的ele
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @param tr       修改的单元格所在行
- * @param column   列名
  * @param columnsJsonData 数组格式 [{column:"colname",falseClear:"否清空数据",clearValue:"用什么值替换清空"}]
  * @param dontExeValueChangeHandler   改变单元格的值 但是不触发任何changeColumns和handler事件
  * @returns
@@ -1021,7 +1051,7 @@ function jboltTableSetCellsEditable(tableEle,tr,columnsJsonData,dontExeValueChan
 
 /**
  * 设置表格单元格数据
- * @param tableEle 表格或者关联元素 能找到表格的ele
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @param tr       修改的单元格所在行
  * @param columnsJsonData 数组格式 [{column:"colname",text:"显示文本",value:"值"}]
  * @param dontExeValueChangeHandler 改变单元格的值 但是不触发任何changeColumns和handler事件
@@ -1048,11 +1078,11 @@ function jboltTableSetCells(tableEle,tr,columnsJsonData,dontExeValueChangeHandle
 }
 /**
  * 关闭jbolttable的菜单
- * @param ele
+ * @param tableEle   表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
-function closeJBoltTableMenu(ele){
-	var table=getJBoltTable(ele);
+function closeJBoltTableMenu(tableEle){
+	var table=getJBoltTable(tableEle);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
@@ -1064,8 +1094,8 @@ function closeJBoltTableMenu(ele){
 }
 /**
  * 方向键left处理
- * @param table
- * @param e
+ * @param table 表格对象
+ * @param e     键盘事件event
  * @returns
  */
 function jboltEditableFocusTurnLeftByDir(table,e){
@@ -1104,8 +1134,8 @@ function jboltEditableFocusTurnLeftByDir(table,e){
 }
 /**
  * 方向键down处理
- * @param table
- * @param e
+ * @param table  表格对象
+ * @param e      键盘事件event
  * @returns
  */
 function jboltEditableFocusTurnDownByDir(table,e){
@@ -1160,6 +1190,8 @@ function jboltEditableFocusTurnDownByDir(table,e){
 }
 /**
  * 多实例情况 焦点转移到上一个或者下一个表格
+ * @param currentTable 当前焦点表格
+ * @param up           是否向上
  * @returns
  */
 function jboltEditableFocusTurnTableByDir(currentTable,up){
@@ -1200,8 +1232,8 @@ function jboltEditableFocusTurnTableByDir(currentTable,up){
 
 /**
  * 方向键up处理
- * @param table
- * @param e
+ * @param table  表格对象
+ * @param e      键盘事件event
  * @returns
  */
 function jboltEditableFocusTurnUpByDir(table,e){
@@ -1255,8 +1287,8 @@ function jboltEditableFocusTurnUpByDir(table,e){
 }
 /**
  * 方向键right处理
- * @param table
- * @param e
+ * @param table 表格对象
+ * @param e     键盘事件event
  * @returns
  */
 function jboltEditableFocusTurnRightByDir(table,e){
@@ -1303,9 +1335,9 @@ function jboltEditableFocusTurnRightByDir(table,e){
 
 /**
  * 列批量赋值
- * @param tableEle
- * @param columnsJsonData {column:xxx,text:xxx,value:xxx}
- * @param dontExeValueChangeHandler
+ * @param tableEle               表格对象 组件 或者关联了data-table-id的元素
+ * @param columnsJsonData               //样式{column:xxx,text:xxx,value:xxx}
+ * @param dontExeValueChangeHandler  改变单元格的值 但是不触发任何changeColumns和handler事件
  * @returns
  */
 function jboltTableBatchSetColumns(tableEle,columnsJsonData,dontExeValueChangeHandler){
@@ -1335,10 +1367,10 @@ function jboltTableBatchSetColumns(tableEle,columnsJsonData,dontExeValueChangeHa
 }
 /**
  * 列批量赋值
- * @param tableEle
- * @param text
- * @param value
- * @param dontExeValueChangeHandler
+ * @param tableEle    表格对象 组件 或者关联了data-table-id的元素
+ * @param text        显示文本
+ * @param value       值
+ * @param dontExeValueChangeHandler  改变单元格的值 但是不触发任何changeColumns和handler事件
  * @returns
  */
 function jboltTableBatchSetColumn(tableEle,column,text,value,dontExeValueChangeHandler){
@@ -1365,9 +1397,9 @@ function jboltTableBatchSetColumn(tableEle,column,text,value,dontExeValueChangeH
 }
 /**
  * 列批量赋值
- * @param tableEle
- * @param useTd
- * @param dontExeValueChangeHandler
+ * @param tableEle                   表格对象 组件 或者关联了data-table-id的元素
+ * @param useTd                       用哪一个单元格做数据
+ * @param dontExeValueChangeHandler  改变单元格的值 但是不触发任何changeColumns和handler事件
  * @returns
  */
 function jboltTableColumnBatchAssignUseTd(tableEle,useTd,dontExeValueChangeHandler){
@@ -1402,7 +1434,8 @@ function jboltTableColumnBatchAssignUseTd(tableEle,useTd,dontExeValueChangeHandl
 }
 /**
  * 回车键处理
- * @param e
+ * @param jboltTable  表格对象
+ * @param e           回车键盘事件event
  * @returns
  */
 function jboltEditableEnterKeyProcess(jboltTable,e){
@@ -1443,8 +1476,8 @@ function jboltEditableEnterKeyProcess(jboltTable,e){
 }
 /**
  * 处理直接按enter和tab的默认行为
- * @param table
- * @param e
+ * @param table   表格对象
+ * @param e       键盘事件event
  * @returns
  */
 function processEditableKeyEventDefaultEditorOk(table,e){
@@ -1514,8 +1547,8 @@ function processEditableKeyEventDefaultEditorOk(table,e){
 }
 /**
  * tab处理
- * @param jboltTable
- * @param e
+ * @param jboltTable  表格对象
+ * @param e           键盘事件
  * @returns
  */
 function jboltEditableTabKeyProcess(jboltTable,e){
@@ -1583,8 +1616,12 @@ function initJBoltEditableKeyEvent(){
 	});
 
 }
+
 /**
- * Jbolt-table组件的封装
+ * 检测tbody有没有滚动条
+ * @param table       表格对象
+ * @param direction   方向 横h 纵v
+ * @returns {boolean}
  */
 function checkTableBodyHasScrollBar(table,direction){
 	var ele=table.table_body[0];
@@ -1623,11 +1660,11 @@ function jboltTableSaveFormToTableCurrentActiveTr(formEle,confirm,dontProcessIfN
 
 /**
  * 复制选中行 并且前插
- * @param ele
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
-function jboltTableCopyCheckedRowInsertBefore(ele){
-	var table=getJBoltTable(ele);
+function jboltTableCopyCheckedRowInsertBefore(tableEle){
+	var table=getJBoltTable(tableEle);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
@@ -1639,11 +1676,11 @@ function jboltTableCopyCheckedRowInsertBefore(ele){
 }
 /**
  * 复制选中行 并且指定插入
- * @param ele
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
-function jboltTableCopyCheckedRowPrepend(ele){
-	var table=getJBoltTable(ele);
+function jboltTableCopyCheckedRowPrepend(tableEle){
+	var table=getJBoltTable(tableEle);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
@@ -1655,11 +1692,11 @@ function jboltTableCopyCheckedRowPrepend(ele){
 }
 /**
  * 复制选中行 并且后插
- * @param ele
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
-function jboltTableCopyCheckedRowInsertAfter(ele){
-	var table=getJBoltTable(ele);
+function jboltTableCopyCheckedRowInsertAfter(tableEle){
+	var table=getJBoltTable(tableEle);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
@@ -1671,11 +1708,11 @@ function jboltTableCopyCheckedRowInsertAfter(ele){
 }
 /**
  * 复制选中行 并且插入到最后
- * @param ele
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
-function jboltTableCopyCheckedRowAppend(ele){
-	var table=getJBoltTable(ele);
+function jboltTableCopyCheckedRowAppend(tableEle){
+	var table=getJBoltTable(tableEle);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
@@ -1687,16 +1724,16 @@ function jboltTableCopyCheckedRowAppend(ele){
 }
 /**
  * 前端快速过滤
- * @param ele
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @param keywords
  * @param colIndexArr 指定列执行过滤
  * @returns
  */
-function jboltTableFilterByKeywords(ele,keywords,colIndexArr){
+function jboltTableFilterByKeywords(tableEle,keywords,colIndexArr){
 	if(!((event && event.which==13) ||  !keywords)){
 		return false;
 	}
-	var table=getJBoltTable(ele);
+	var table=getJBoltTable(tableEle);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
@@ -1708,11 +1745,11 @@ function jboltTableFilterByKeywords(ele,keywords,colIndexArr){
 }
 /**
  * JBolt表格treetable 所有节点全部展开
- * @param ele
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
-function jboltTableExpandAll(ele){
-	var table=getJBoltTable(ele);
+function jboltTableExpandAll(tableEle){
+	var table=getJBoltTable(tableEle);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
@@ -1724,11 +1761,11 @@ function jboltTableExpandAll(ele){
 }
 /**
  * JBolt表格treetable 所有节点全部闭合
- * @param ele
+ * @param tableEle 表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
-function jboltTableCollapseAll(ele){
-	var table=getJBoltTable(ele);
+function jboltTableCollapseAll(tableEle){
+	var table=getJBoltTable(tableEle);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
@@ -1783,7 +1820,7 @@ function jboltTableProcessTdByDialogChooser(text,value,data){
  * @param ele
  * @returns
  */
-function jboltTableChooseAndInsert(ele,confirm,multi){
+function jboltTableChooseAndInsert(ele){
 	var action=getRealJqueryObject(ele);
 	if(!isOk(action)){LayerMsgBox.alert("参数异常",2);return false;}
 	var tableId=action.data("jbolt-table-id");
@@ -1807,8 +1844,7 @@ function jboltTableChooseAndInsert(ele,confirm,multi){
  * 弹出选择器选择数据后提交
  * @param action
  * @param datas
- * @param limitChecked
- * @param insertToBefore
+ * @param insertType
  * @param keepId
  * @param dontProcessChange
  * @param forceTrChange
@@ -1903,7 +1939,7 @@ function jboltTableMaximize(ele){
 /**
  * 使用json conditions出发表格重新查询加载数据
  * @param ele 绑定有data-table-id属性的组件或者tableId 字符串等
- * @param conditions
+ * @param conditions json查询条件
  * @returns
  */
 function jboltTableReadByConditions(ele,conditions){
@@ -1935,7 +1971,7 @@ function jboltTableSubmit(ele){
 }
 /**
  * 提交可编辑表格 多表格
- * @param ele 表格id或者元素对象 数组
+ * @param arr 表格id或者元素对象 数组
  * @param url url地址
  * @param successCallback 成功回调
  * @param failCallback 失败回调
@@ -1957,11 +1993,11 @@ function jboltTableSubmitMulti(arr,url,successCallback,failCallback){
 }
 /**
  * 是否全选
- * @param ele
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
-function jboltTableIsCheckedAll(ele){
-	var table=getJBoltTable(ele);
+function jboltTableIsCheckedAll(tableEle){
+	var table=getJBoltTable(tableEle);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
@@ -1972,11 +2008,11 @@ function jboltTableIsCheckedAll(ele){
 }
 /**
  * 全选所有checkbox
- * @param ele
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
-function jboltTableCheckAll(ele){
-	var table=getJBoltTable(ele);
+function jboltTableCheckAll(tableEle){
+	var table=getJBoltTable(tableEle);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
@@ -1986,11 +2022,11 @@ function jboltTableCheckAll(ele){
 }
 /**
  * 取消全选所有checkbox
- * @param ele
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
-function jboltTableUncheckAll(ele){
-	var table=getJBoltTable(ele);
+function jboltTableUncheckAll(tableEle){
+	var table=getJBoltTable(tableEle);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
@@ -2000,11 +2036,11 @@ function jboltTableUncheckAll(ele){
 }
 /**
  * 反选所有checkbox
- * @param ele
+ * @param tableEle  表格对象 组件 或者关联了data-table-id的元素
  * @returns
  */
-function jboltTableConvertCheckAll(ele){
-	var table=getJBoltTable(ele);
+function jboltTableConvertCheckAll(tableEle){
+	var table=getJBoltTable(tableEle);
 	if(isOk(table)){
 		var jboltTable=table.jboltTable("inst");
 		if(jboltTable){
@@ -2053,7 +2089,7 @@ function removeJBoltTableCheckedTr(ele,confirm,callback){
 /**
  * 检测jbolttable是否选中了一条数据数据
  * 返回id
- * @param table
+ * @param ele
  * @param dontShowError
  * @returns
  */
@@ -2102,7 +2138,7 @@ function jboltTableGetCheckedData(ele,needAttrs,dontShowError){
 }
 /**
  * 检测jbolttable是否选中并返回所有id
- * @param table
+ * @param ele
  * @param dontShowError
  * @returns
  */
@@ -2119,7 +2155,7 @@ function jboltTableGetCheckedIds(ele,dontShowError){
 }
 /**
  * 检测jbolttable是否选中并返回所有指定的column
- * @param table
+ * @param ele
  * @param column
  * @param dontShowError
  * @returns
@@ -2137,7 +2173,7 @@ function jboltTableGetCheckedCols(ele,column,dontShowError){
 }
 /**
  * 检测jbolttable是否选中并返回所有data-text
- * @param table
+ * @param ele
  * @param dontShowError
  * @returns
  */
@@ -2285,7 +2321,7 @@ function jboltTablePrependEmptyRow(ele,forceTrChange){
 }
 /**
  * 检测是否需要检查masterId
- * @param action
+ * @param actionEle
  * @returns
  */
 function checkMasterTableId(actionEle){
@@ -2442,13 +2478,13 @@ function jboltTableInsertRow(ele,data,keepId,dontProcessChange,forceTrChange){
 }
 
 /**
- * Tbody最后append数据行
- * @param ele
- * @param data
- * @param keepId
- * @param dontProcessChange
- * @param forceTrChange
- * @param theTr
+ * Tbody最后append数据行 指定了theTr 就在theTr 后
+ * @param ele                可以找到表格的属性、元素等
+ * @param data               json数据
+ * @param keepId             是否保留数据里的ID
+ * @param dontProcessChange  不处理tr td标红处理
+ * @param forceTrChange      强制tr标红 dontProcessChange不是true才有效
+ * @param theTr              强制指定tr
  * @returns
  */
 function jboltTableAppendRow(ele,data,keepId,dontProcessChange,forceTrChange,theTr){
@@ -2486,12 +2522,41 @@ function jboltTableAppendRow(ele,data,keepId,dontProcessChange,forceTrChange,the
 }
 
 /**
- * tbody最前添加数据行
+ * 在指定的tr前插入
+ * @param ele                  可以找到表格的属性、元素等
+ * @param theTr                强制指定在哪个tr前插入
+ * @param data                 数据
+ * @param keepId               是否保留数据里的ID
+ * @param dontProcessChange    不处理tr td标红处理
+ * @param forceTrChange        强制tr标红 dontProcessChange不是true才有效
+ * @returns {boolean|*|boolean}
+ */
+function jboltTableInsertBeforeRow(ele,theTr,data,keepId,dontProcessChange,forceTrChange){
+	return jboltTablePrependRow(ele,data,keepId,dontProcessChange,forceTrChange,theTr);
+}
+
+/**
+ * 在指定的tr后插入
+ * @param ele                  可以找到表格的属性、元素等
+ * @param theTr                强制指定在哪个tr后插入
+ * @param data                 数据
+ * @param keepId               是否保留数据里的ID
+ * @param dontProcessChange    不处理tr td标红处理
+ * @param forceTrChange        强制tr标红 dontProcessChange不是true才有效
+ * @returns {boolean|*|boolean}
+ */
+function jboltTableInsertAfterRow(ele,theTr,data,keepId,dontProcessChange,forceTrChange){
+	return jboltTableAppendRow(ele,data,keepId,dontProcessChange,forceTrChange,theTr);
+}
+
+/**
+ * tbody最前添加数据行 如果指定了theTr 就在theTr前插入
  * @param ele                可以找到表格的属性、元素等
+ * @param data               json数据
  * @param keepId             是否保留数据里的ID
  * @param dontProcessChange  不处理tr td标红处理
  * @param forceTrChange      强制tr标红 dontProcessChange不是true才有效
- * @param theTr      强制指定tr
+ * @param theTr              强制指定tr
  * @returns
  */
 function jboltTablePrependRow(ele,data,keepId,dontProcessChange,forceTrChange,theTr){
@@ -2825,6 +2890,12 @@ function jboltTableIsCheckedNone(ele){
 	}
 	return false;
 }
+
+/**
+ * 获取JBoltTable实例
+ * @param ele
+ * @returns {*|null}
+ */
 function getJBoltTableInst(ele){
 	var table=getJBoltTable(ele);
 	if(isOk(table)){
@@ -2833,6 +2904,11 @@ function getJBoltTableInst(ele){
 	return null;
 }
 
+/**
+ * 获取JBoltTable对象
+ * @param ele
+ * @returns {*|[]|jQuery}
+ */
 function getJBoltTable(ele){
 	var table;
 	if(ele){
@@ -2851,7 +2927,11 @@ function getJBoltTable(ele){
 	return table;
 }
 
-
+/**
+ * 获取组件所在或者绑定的jbolttable对象
+ * @param ele
+ * @returns {*|jQuery|HTMLElement}
+ */
 function getRealJboltTableByEle(ele){
 	var action=getRealJqueryObject(ele);
 	var table;
@@ -2884,7 +2964,7 @@ function getRealJboltTableByEle(ele){
 }
 /**
  * 得到选中的行数
- * @param table
+ * @param ele
  * @returns
  */
 function jboltTableGetCheckedCount(ele){
@@ -3032,7 +3112,7 @@ function resetJBolttableSlaveBox(masterTable){
 }
 /**
  * 主从样式 主表点击 驱动从表区域table和ajaxportal加载
- * @param tr
+ * @param ele
  * @param id
  * @param masterOtherParams
  * @param tableCallback
@@ -14131,7 +14211,9 @@ function getScrollBarHeight(ele){
 							sameCols.addClass("resizing");
 						}
 					}
-					return false;
+					if(!(e.target.tagName == "A" && e.target.className.indexOf(" jbolt_drag_trigger")!=-1)){
+						return false;
+					}
 				}).on("mouseup",function(e){
 					e.preventDefault();
 					var currentBox=$(this);

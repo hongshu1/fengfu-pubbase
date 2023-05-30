@@ -1,8 +1,13 @@
 package cn.rjtech.routes;
 
+import cn.rjtech.api.general.GeneralApiController;
+import cn.rjtech.api.modoc.ModocApiController;
+import cn.rjtech.api.momaterialsscansum.MoMaterialsscansumApiController;
+import cn.rjtech.api.nfcswipecard.NfcSwipeCardApiController;
 import cn.rjtech.api.instockdefect.InStockDefectApiController;
 import cn.rjtech.api.instockqcformm.InStockQcFormMApiController;
 import cn.rjtech.api.modoc.ModocApiController;
+import cn.rjtech.api.momaterialsscansum.MoMaterialsscansumApiController;
 import cn.rjtech.api.nfcswipecard.NfcSwipeCardApiController;
 import cn.rjtech.api.org.OrgApiController;
 import cn.rjtech.api.processdefect.ProcessDefectApiController;
@@ -29,6 +34,9 @@ public class ApiRoutes extends Routes {
     this.add("/api/user", UserApiController.class);
     this.add("/api/erp/common", CommonApiController.class);
 
+    //通用接口
+    this.add("/api/general", GeneralApiController.class);
+
     //NFC刷卡
     this.add("/api/nfcswipecard", NfcSwipeCardApiController.class);
     //制造工单
@@ -43,6 +51,7 @@ public class ApiRoutes extends Routes {
     this.add("/api/stockoutdefect", StockoutDefectApiController.class);
     this.add("/api/qcinspection", QcInspectionApiController.class);
     this.add("/api/workregionm", WorkRegionmApiController.class);//产线
+    this.add("/api/momaterialsscansum", MoMaterialsscansumApiController.class);//齐料检查
 
 
   }

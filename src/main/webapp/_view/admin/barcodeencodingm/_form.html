@@ -1,0 +1,214 @@
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page_title">
+    <div class="row">
+
+        <div class="col-12 form-inline">
+
+        </div>
+
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+
+    <form onsubmit="return false;" id="barcodeencodingmForm_#(pageId)" action="#(action)" method="post">
+
+        <div class="form-group row">
+            <input hidden type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"    placeholder="iautoid" maxlength="255" name="barcodeencodingm.iautoid" value="#(barcodeencodingm.iautoid??)"/>
+            <label class="col-1 col-form-label">应用模块</label>
+            <div class="col-2">
+                <select class="form-control"
+                        data-autoload
+                        data-url="admin/enums/item"
+                        name="barcodeencodingm.citem"
+                        data-text="=请选择应用模块="
+                        data-value=""
+                        data-select="#(barcodeencodingm.citem??)">
+                </select>
+            </div>
+            <!-- <label class="col-1 col-form-label">是否箱码</label>
+            <div class="col-2">
+                <div class="form-group"
+                     data-default="options_last"
+                     data-name="barcodeencodingm.isbox"
+                     data-radio
+                     data-rule="radio"
+                     data-value="#(barcodeencodingm.isbox??)"
+                >
+                    <div class="radio radio-primary radio-inline">
+                        <input id="r_ctype_true" name="barcodeencodingm.isbox" type="radio" value="1"  />
+                        <label for="r_ctype_true">是</label>
+                    </div>
+                    <div class="radio radio-primary radio-inline">
+                        <input id="r_ctype_false" name="barcodeencodingm.isbox" type="radio" value="0" />
+                        <label for="r_ctype_false">否</label>
+                    </div>
+                </div>
+            </div> -->
+            <label class="col-1 col-form-label">是否启用</label>
+            <div class="col-2">
+                <div class="form-group"
+                     data-default="options_first"
+                     data-name="barcodeencodingm.istate"
+                     data-radio
+                     data-rule="radio"
+                     data-value="#(barcodeencodingm.istate??)"
+                >
+                    <div class="radio radio-primary radio-inline">
+                        <input id="r_istate_true" name="barcodeencodingm.istate" type="radio" value="1"  />
+                        <label for="r_istate_true">启用</label>
+                    </div>
+                    <div class="radio radio-primary radio-inline">
+                        <input id="r_istate_false" name="barcodeencodingm.istate" type="radio" value="0" />
+                        <label for="r_istate_false">禁用</label>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+
+    </form>
+</div>
+
+<div class="jbolt_page_content">
+
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="barcodeencodingmRowtpl_#(pageId)">
+		{@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+        	<td>${data.iseq}</td>
+			<td>${data.text}</td>
+			<td>${data.cprojectvalue}</td>
+			<td>${data.csuffix}</td>
+			<td>${data.cdateformat}</td>
+			<td>${data.ibillnolen}</td>
+		</tr>
+		{@/each}
+	</textarea>
+
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="barcodeencodingm_toolbar_#(pageId)">
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>新增</button>
+            <button onclick="jboltTableRemoveCheckedRow(this,true,false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+            <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+
+    <table class="jbolt_table jbolt_main_table table-center"
+           id="jbolt_table_#(pageId)"
+           data-jbolttable
+           data-height="fill"
+           data-ajax="true"
+           data-width="auto"
+           data-url="admin/barcodeencodingd/datas?ibarcodeencodingmid=#(barcodeencodingm.iautoid??)"
+           data-column-resize="true"
+           data-column-prepend="1:checkbox:true"
+           data-conditions-form="barcodeencodingmForm_#(pageId)"
+           data-rowtpl="barcodeencodingmRowtpl_#(pageId)"
+           data-page="barcodeencodingmPage_#(pageId)"
+           data-pagesize="15"
+           data-toolbar="barcodeencodingm_toolbar_#(pageId)"
+           data-editable-option="getEditableTableOptions_#(pageId)"
+           data-editable="true"
+           ###data-fixed-columns-left="1,2,3"
+    >
+        <thead class="fw-normal">
+        <tr>
+        	<th data-width="150" data-column="iseq">排序</th>
+            <th data-width="150" data-column="cprojectcode">项目</th>
+            <th data-width="150" data-column="cprojectvalue">项目值</th>
+            <th data-width="150" data-column="csuffix">后缀字符</th>
+            <th data-width="150" data-column="cdateformat">日期格式</th>
+            <th data-width="150" data-column="ibillnolen">流水号位数</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+#define js()
+<script>
+    function submitThisForm() {
+        jboltTableSubmit('#jbolt_table_#(pageId)');
+    }
+
+    function getEditableTableOptions_#(pageId)(){
+        var editableTableOptions = {
+            trigger: "click",
+            //初始行数
+            initRowCount: 0,
+            //限制最大数 默认30
+            //maxRowCount:15,
+            //keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+            //requiredCellClass:"jb_editable_required_cell",//必填单元格默认样式
+            //unrequiredCellClass:"",//非必填的单元格默认样式
+            //uneditableCellCalss:"bg-light",//不可填样式
+            submit: {
+                withForm: ["barcodeencodingmForm_#(pageId)"],
+                type: "all",//cell|all
+                url: "admin/barcodeencodingm/saveTableSubmit",
+                success: function (res) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success("提交成功", 600, function () {
+                            //location.href = 'admin/barcodeencodingm/edit/' + res.data.iautoid;
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                            window.parent.refreshJBoltTable();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols: {
+            	iautoid: {
+                    submitAttr: "iautoid"
+                },
+                cprojectcode : {
+                    type: "select",
+                    url:"admin/enums/barCode",
+                    valueAttr:"value",
+                    required:true,
+                    textAttr: "text",
+                   	submitAttr: "cprojectcode"
+                },
+                cprojectvalue : {
+                    type: "input",
+                    submitAttr: "cprojectvalue"
+                },
+                iseq : {
+                    type: "input",
+                    rule:"pnumber",
+                    required:true,
+                    submitAttr: "iseq"
+                },
+                csuffix: {
+                    type: "input",
+                    submitAttr: "csuffix"
+                },
+                cdateformat : {
+                    type: 'select',
+                    url: "admin/dictionary/options?key=cdateformat",
+                    valueAttr: 'sn',
+                    textAttr: 'sn',
+                    placeholder:'=日期格式=',
+                    submitAttr: "cdateformat"
+                },
+                ibillnolen : {
+                	type: "input",
+                    rule:"pint",
+                    submitAttr: "ibillnolen"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>
+#end
+

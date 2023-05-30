@@ -2,20 +2,24 @@ package cn.rjtech.admin.schedudemandplan;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.bommaster.BomMasterService;
+import cn.rjtech.admin.mrpdemandforecastd.MrpDemandforecastdService;
+import cn.rjtech.admin.mrpdemandpland.MrpDemandplandService;
 import cn.rjtech.admin.scheduproductplan.CollectionUtils;
 import cn.rjtech.admin.mrpdemandcomputed.MrpDemandcomputedService;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 
-import cn.rjtech.model.momdata.BomMaster;
-import cn.rjtech.model.momdata.MrpDemandcomputed;
-import cn.rjtech.model.momdata.MrpDemandcomputem;
+import cn.rjtech.model.momdata.*;
 
+import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -56,6 +60,15 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 
 	@Inject
 	private MrpDemandcomputedService mrpDemandcomputedService;
+
+	@Inject
+	private MomDataFuncService momDataFuncService;
+
+	@Inject
+	private MrpDemandforecastdService mrpDemandforecastdService;
+
+	@Inject
+	private MrpDemandplandService mrpDemandplandService;
 
 	@Override
 	protected MrpDemandcomputem dao() {
@@ -360,7 +373,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 	public Ret refreshBOM(List<String> masInvIdList) {
 		//查出全部BOM主表集合 父级物料
 		List<BomMaster> bomMasterList = bomMasterService.find("SELECT iAutoId,iInventoryId FROM Bd_BOMMaster WHERE isDeleted = '0' AND isEffective = 1 " +
-				                                                   "AND iInventoryId IN (" + CollUtil.join(masInvIdList, COMMA) + ") ");
+				"AND iInventoryId IN (" + CollUtil.join(masInvIdList, COMMA) + ") ");
 		//查询子级物料相关信息
 		List<Record> bomCompareList = dbTemplate("schedudemandplan.selectBOMCompare").find();
 		List<BOMCompareDTO> bomCompareDTOList = new ArrayList<>();
@@ -572,8 +585,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		}
 
 		//TODO: 判断该件是否为内作件：
-				//是则找出该件层级的排产截止日期，小于等于截止日期取月周计划，大于截止日期则取客户计划+(父级qty*用量)。
-				//否则直接取父级qty*用量。
+		//是则找出该件层级的排产截止日期，小于等于截止日期取月周计划，大于截止日期则取客户计划+(父级qty*用量)。
+		//否则直接取父级qty*用量。
 		for (ScheduDemandTempDTO invInfo : groupInList){
 			Long invId = invInfo.getInvId();
 			String cInvCode = invInfo.getInvCode();
@@ -1117,6 +1130,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		//开始日期到截止日期集合
 		List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
 
+		//TODO:根据条件查询物料需求计划
 		List<Record> demandList = dbTemplate("schedudemandplan.getDemandComputeDList",kv).find();
 		Map<String,Record> invInfoMap = new HashMap<>();
 		Map<String,Map<String,Record>> invPlanMap = new HashMap<>();
@@ -1174,9 +1188,186 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 	}
 
 	public Ret saveForetell(Kv kv) {
+		String startdate = kv.getStr("startdate");
+		String enddate = kv.getStr("enddate");
+		//供应商id数组json
+		String data = kv.getStr("data");
+		if (StringUtils.isBlank(startdate) || StringUtils.isBlank(enddate) || data.equals("[]")){
+			return fail("请先选择保存条件！");
+		}
+
+		JSONArray idJSONArr = JSONArray.parseArray(data);
+		String iVendorIds = "(601";
+		for (int i = 0; i < idJSONArr.size(); i++) {
+			iVendorIds = iVendorIds + "," + idJSONArr.get(i);
+		}
+		iVendorIds = iVendorIds + ")";
+
+		//TODO:根据供应商集查询物料需求计划
+		List<MrpDemandcomputed> demandcomputedList = mrpDemandcomputedService.daoTemplate("schedudemandplan.getDemandComputeDByVendorIdList",
+				Kv.by("ivendorids",iVendorIds).set("startdate",startdate).set("enddate",enddate)).find();
+
+
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		Date newDate = new Date();
+		String orgCode = getOrgCode();
+		String orgName = getOrgName();
+		Long orgId = getOrgId();
+		Long iDemandForecastMid = JBoltSnowflakeKit.me.nextId();
+
+		//计划单号
+		String dateStr = DateUtils.formatDate(new Date(),"yyyyMMdd");
+		String planNo = momDataFuncService.getNextRouteNo(1L, "YS"+dateStr, 2);
+		//预示主表
+		MrpDemandforecastm forecastm = new MrpDemandforecastm();
+		forecastm.setIOrgId(orgId);
+		forecastm.setCOrgCode(orgCode);
+		forecastm.setCOrgName(orgName);
+		forecastm.setICreateBy(userId);
+		forecastm.setCCreateName(userName);
+		forecastm.setDCreateTime(newDate);
+		forecastm.setIUpdateBy(userId);
+		forecastm.setCUpdateName(userName);
+		forecastm.setDUpdateTime(newDate);
+		forecastm.setIAutoId(iDemandForecastMid);
+		forecastm.setDBeginDate(DateUtils.parseDate(startdate));
+		forecastm.setDEndDate(DateUtils.parseDate(enddate));
+		forecastm.setCForecastNo(planNo);
+		forecastm.setDPlanDate(new Date());
+		//预示子表
+		List<MrpDemandforecastd> forecastdList = new ArrayList<>();
+		for (MrpDemandcomputed computed : demandcomputedList){
+			MrpDemandforecastd forecastd = new MrpDemandforecastd();
+			forecastd.setIDemandForecastMid(iDemandForecastMid);
+			forecastd.setIYear(computed.getIYear());
+			forecastd.setIMonth(computed.getIMonth());
+			forecastd.setIDate(computed.getIDate());
+			forecastd.setIVendorId(computed.getIVendorId());
+			forecastd.setIInventoryId(computed.getIInventoryId());
+			forecastd.setIQty1(computed.getIQty1());
+			forecastd.setIQty2(computed.getIQty2());
+			forecastd.setIQty3(computed.getIQty5());
+			forecastdList.add(forecastd);
+		}
+
+		tx(() -> {
+			//int num = dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
+			forecastm.save();
+			if (forecastdList.size() == 0){
+				return true;
+			}
+			List<List<MrpDemandforecastd>> groupCusOrderSumList = CollectionUtils.partition(forecastdList,300);
+			CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
+			ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
+			for(List<MrpDemandforecastd> cusOrderSums :groupCusOrderSumList){
+				executorService.execute(()->{
+					mrpDemandforecastdService.batchSave(cusOrderSums);
+				});
+				countDownLatch.countDown();
+			}
+			try {
+				countDownLatch.await();
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+			executorService.shutdown();
+
+			return true;
+		});
+
 		return SUCCESS;
 	}
 	public Ret saveArrival(Kv kv) {
+		String startdate = kv.getStr("startdate");
+		String enddate = kv.getStr("enddate");
+		//供应商id数组json
+		String data = kv.getStr("data");
+		if (StringUtils.isBlank(startdate) || StringUtils.isBlank(enddate) || data.equals("[]")){
+			return fail("请先选择保存条件！");
+		}
+
+		JSONArray idJSONArr = JSONArray.parseArray(data);
+		String iVendorIds = "(601";
+		for (int i = 0; i < idJSONArr.size(); i++) {
+			iVendorIds = iVendorIds + "," + idJSONArr.get(i);
+		}
+		iVendorIds = iVendorIds + ")";
+
+		//TODO:根据供应商集查询物料需求计划
+		List<MrpDemandcomputed> demandcomputedList = mrpDemandcomputedService.daoTemplate("schedudemandplan.getDemandComputeDByVendorIdList",
+				Kv.by("ivendorids",iVendorIds).set("startdate",startdate).set("enddate",enddate)).find();
+
+
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		Date newDate = new Date();
+		String orgCode = getOrgCode();
+		String orgName = getOrgName();
+		Long orgId = getOrgId();
+		Long iDemandPlanMid = JBoltSnowflakeKit.me.nextId();
+
+		//计划单号
+		String dateStr = DateUtils.formatDate(new Date(),"yyyyMMdd");
+		String planNo = momDataFuncService.getNextRouteNo(1L, "DH"+dateStr, 2);
+		//到货主表
+		MrpDemandplanm planm = new MrpDemandplanm();
+		planm.setIOrgId(orgId);
+		planm.setCOrgCode(orgCode);
+		planm.setCOrgName(orgName);
+		planm.setICreateBy(userId);
+		planm.setCCreateName(userName);
+		planm.setDCreateTime(newDate);
+		planm.setIUpdateBy(userId);
+		planm.setCUpdateName(userName);
+		planm.setDUpdateTime(newDate);
+		planm.setIAutoId(iDemandPlanMid);
+		planm.setDBeginDate(DateUtils.parseDate(startdate));
+		planm.setDEndDate(DateUtils.parseDate(enddate));
+		planm.setCPlanNo(planNo);
+		planm.setIStatus(1);
+		planm.setDPlanDate(new Date());
+		//到货子表
+		List<MrpDemandpland> forecastdList = new ArrayList<>();
+		for (MrpDemandcomputed computed : demandcomputedList){
+			MrpDemandpland pland = new MrpDemandpland();
+			pland.setIDemandPlanMid(iDemandPlanMid);
+			pland.setIYear(computed.getIYear());
+			pland.setIMonth(computed.getIMonth());
+			pland.setIDate(computed.getIDate());
+			pland.setIVendorId(computed.getIVendorId());
+			pland.setIInventoryId(computed.getIInventoryId());
+			pland.setIQty(computed.getIQty2());
+			pland.setIStatus(1);
+			pland.setIGenType(0);
+			forecastdList.add(pland);
+		}
+
+		tx(() -> {
+			//int num = dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
+			planm.save();
+			if (forecastdList.size() == 0){
+				return true;
+			}
+			List<List<MrpDemandpland>> groupCusOrderSumList = CollectionUtils.partition(forecastdList,300);
+			CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
+			ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
+			for(List<MrpDemandpland> cusOrderSums :groupCusOrderSumList){
+				executorService.execute(()->{
+					mrpDemandplandService.batchSave(cusOrderSums);
+				});
+				countDownLatch.countDown();
+			}
+			try {
+				countDownLatch.await();
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+			executorService.shutdown();
+
+			return true;
+		});
+
 		return SUCCESS;
 	}
 
@@ -1196,7 +1387,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 	 * 物料需求计划预示明细
 	 */
 	public List<Record> getMrpDemandForecastDList(int pageNumber, int pageSize, Kv kv) {
-		List<Record> scheduProductPlanMonthList = new ArrayList<>();
+		List<Record> dataList = new ArrayList<>();
 
 		String startDate = kv.getStr("startdate");
 		String endDate = kv.getStr("enddate");
@@ -1263,19 +1454,19 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				Map<String,BigDecimal> dateQtyMap = invPlanDateMap.get(inv);
 
 				//数据处理 行转列并赋值
-				scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyMap,"到货预示");
+				scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyMap,"到货预示");
 			}
 		}
 
 		Page<Record> page = new Page<>();
 		page.setPageNumber(pageNumber);
 		page.setPageSize(pageSize);
-		int num = (int) Math.ceil(scheduProductPlanMonthList.size() / 15);
+		int num = (int) Math.ceil(dataList.size() / 15);
 		page.setTotalPage(num);
-		page.setTotalRow(scheduProductPlanMonthList.size());
-		page.setList(scheduProductPlanMonthList);
+		page.setTotalRow(dataList.size());
+		page.setList(dataList);
 
-		return scheduProductPlanMonthList;
+		return dataList;
 	}
 
 	/**
@@ -1297,6 +1488,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		if (StringUtils.isNotBlank(colName)){
 			planRecord.set("colName",colName);
 		}
+		dateQtyMap = dateQtyMap != null ? dateQtyMap : new HashMap<>();
 
 		//key:yyyy-MM   value:qtySum
 		Map<String,BigDecimal> monthQtyMap = new LinkedHashMap<>();
@@ -1352,10 +1544,10 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 	}
 
 	/**
-	 * 物料需求计划预示明细
+	 * 物料需求计划到货明细
 	 */
 	public List<Record> getMrpDemandPlanDList(int pageNumber, int pageSize, Kv kv) {
-		List<Record> scheduProductPlanMonthList = new ArrayList<>();
+		List<Record> dataList = new ArrayList<>();
 
 		String startDate = kv.getStr("startdate");
 		String endDate = kv.getStr("enddate");
@@ -1422,24 +1614,270 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				Map<String,BigDecimal> dateQtyMap = invPlanDateMap.get(inv);
 
 				//数据处理 行转列并赋值
-				scheduRowToColumn(scheduProductPlanMonthList,scheduDateList,invInfo,dateQtyMap,"到货计划");
+				scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyMap,"到货计划");
 			}
 		}
 
 		Page<Record> page = new Page<>();
 		page.setPageNumber(pageNumber);
 		page.setPageSize(pageSize);
-		int num = (int) Math.ceil(scheduProductPlanMonthList.size() / 15);
+		int num = (int) Math.ceil(dataList.size() / 15);
 		page.setTotalPage(num);
-		page.setTotalRow(scheduProductPlanMonthList.size());
-		page.setList(scheduProductPlanMonthList);
+		page.setTotalRow(dataList.size());
+		page.setList(dataList);
 
-		return scheduProductPlanMonthList;
+		return dataList;
 	}
 
 
 	//-----------------------------------------------------------------物料需求计划汇总-----------------------------------------------
 
+	/**
+	 * 生产计划及实绩管理
+	 */
+	public List<Record> getDemandPlanSumPage(int pageNumber, int pageSize, Kv kv) {
+		List<Record> dataList = new ArrayList<>();
+
+		String startDate = kv.getStr("startdate");
+		String endDate = kv.getStr("enddate");
+		if (notOk(startDate) || notOk(endDate)){
+			ValidationUtils.error("开始日期-结束日期不能为空！");
+		}
+		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+		List<String> scheduDateList = DateUtils.getBetweenDate(startDate,endDate);
+
+		pageSize = pageSize * 15;
+
+		//TODO:根据条件查询物料需求计划
+		List<Record> demandList = dbTemplate("schedudemandplan.getDemandComputeDList",kv).find();
+
+		//key:inv，   value:<yyyy-MM-dd，QtyPP> 实绩需求
+		Map<String,Map<String,BigDecimal>> invPlanDateXuQiuMap = new HashMap<>();
+		//key:inv，   value:<yyyy-MM-dd，Qty1S> 到货计划
+		Map<String,Map<String,BigDecimal>> invPlanDateDaoHuoMap = new HashMap<>();
+		//key:inv，   value:<yyyy-MM-dd，Qty2S> 到货实绩
+		Map<String,Map<String,BigDecimal>> invPlanDateShiJiMap = new HashMap<>();
+		//key:inv，   value:<yyyy-MM-dd，Qty3S> 差异数量
+		Map<String,Map<String,BigDecimal>> invPlanDateChaYiMap = new HashMap<>();
+		//key:inv，   value:<yyyy-MM-dd，QtyZK> 计划在库
+		Map<String,Map<String,BigDecimal>> invPlanDateZaiKuMap = new HashMap<>();
+		//key:供应商id   value:List物料集
+		Map<Long,List<String>> venInvListMap = new HashMap<>();
+		//key:inv   value:info
+		Map<String,Record> invInfoMap = new HashMap<>();
+		String invIds = "(";
+		List<Long> invIdList = new ArrayList<>();
+		for (Record record : demandList){
+			Long iVendorId = record.getLong("iVendorId");
+			Long invId = record.getLong("invId");
+			String cInvCode = record.getStr("cInvCode");
+			BigDecimal XuQiu = record.getBigDecimal("iQty1");
+			BigDecimal DaoHuo = record.getBigDecimal("iQty2");
+			BigDecimal ShiJi = record.getBigDecimal("iQty3");
+			BigDecimal ChaYi = record.getBigDecimal("iQty4");
+			BigDecimal ZaiKu = record.getBigDecimal("iQty5");
+			//yyyy-MM-dd
+			String dateKey = record.getStr("planDate");
+
+			if (venInvListMap.containsKey(iVendorId)){
+				List<String> list = venInvListMap.get(iVendorId);
+				if (!list.contains(cInvCode)){
+					list.add(cInvCode);
+				}
+			}else {
+				List<String> list = new ArrayList<>();
+				list.add(cInvCode);
+				venInvListMap.put(iVendorId,list);
+			}
+
+			if (invPlanDateXuQiuMap.containsKey(cInvCode)){
+				//key:yyyy-MM-dd   value:XuQiu
+				Map<String,BigDecimal> dateQtyPPMap = invPlanDateXuQiuMap.get(cInvCode);
+				dateQtyPPMap.put(dateKey,XuQiu);
+
+				//key:yyyy-MM-dd   value:DaoHuo
+				Map<String,BigDecimal> dateQty1SMap = invPlanDateDaoHuoMap.get(cInvCode);
+				dateQty1SMap.put(dateKey,DaoHuo);
+
+				//key:yyyy-MM-dd   value:ShiJi
+				Map<String,BigDecimal> dateQty2SMap = invPlanDateShiJiMap.get(cInvCode);
+				dateQty2SMap.put(dateKey,ShiJi);
+
+				//key:yyyy-MM-dd   value:ChaYi
+				Map<String,BigDecimal> dateQty3SMap = invPlanDateChaYiMap.get(cInvCode);
+				dateQty3SMap.put(dateKey,ChaYi);
+
+				//key:yyyy-MM-dd   value:ZaiKu
+				Map<String,BigDecimal> dateQtyZKMap = invPlanDateZaiKuMap.get(cInvCode);
+				dateQtyZKMap.put(dateKey,ZaiKu);
+			}else {
+				//key:yyyy-MM-dd   value:XuQiu
+				Map<String,BigDecimal> dateQtyPPMap = new HashMap<>();
+				dateQtyPPMap.put(dateKey,XuQiu);
+				invPlanDateXuQiuMap.put(cInvCode,dateQtyPPMap);
+
+				//key:yyyy-MM-dd   value:DaoHuo
+				Map<String,BigDecimal> dateQty1SMap = new HashMap<>();
+				dateQty1SMap.put(dateKey,DaoHuo);
+				invPlanDateDaoHuoMap.put(cInvCode,dateQty1SMap);
+
+				//key:yyyy-MM-dd   value:ShiJi
+				Map<String,BigDecimal> dateQty2SMap = new HashMap<>();
+				dateQty2SMap.put(dateKey,ShiJi);
+				invPlanDateShiJiMap.put(cInvCode,dateQty2SMap);
+
+				//key:yyyy-MM-dd   value:ChaYi
+				Map<String,BigDecimal> dateQty3SMap = new HashMap<>();
+				dateQty3SMap.put(dateKey,ChaYi);
+				invPlanDateChaYiMap.put(cInvCode,dateQty3SMap);
+
+				//key:yyyy-MM-dd   value:ZaiKu
+				Map<String,BigDecimal> dateQtyZKMap = new HashMap<>();
+				dateQtyZKMap.put(dateKey,ZaiKu);
+				invPlanDateZaiKuMap.put(cInvCode,dateQtyZKMap);
+			}
+			invInfoMap.put(cInvCode,record);
+			if (!invIdList.contains(invId)){
+				invIds = invIds + invId + ",";
+				invIdList.add(invId);
+			}
+		}
+		invIds = invIds + "601)";
+
+
+		//TODO:获取当前物料集的父级与用量   key: inv   value:<pinv,Record>
+		Map<String,Map<String,Record>> pInvByInvInMap = new HashMap<>();
+		//本次全部母件物料
+		String pinvIds = "(";
+		List<Long> pinvIdList = new ArrayList<>();
+		//查询本次排程所有物料的所有父级物料及其用量提前期信息
+		List<Record> pInvInfoList = dbTemplate("schedudemandplan.getPinvInfoList",Okv.by("ids",invIds)).find();
+		for (Record record : pInvInfoList){
+			String inv = record.get("invCode");
+			String pinv = record.get("pInvCode");
+			Long pInvId = record.getLong("pInvId");
+			if (pInvByInvInMap.containsKey(inv)) {
+				Map<String,Record> map = pInvByInvInMap.get(inv);
+				map.put(pinv,record);
+				pInvByInvInMap.put(inv, map);
+			} else {
+				Map<String,Record> map = new HashMap<>();
+				map.put(pinv,record);
+				pInvByInvInMap.put(inv, map);
+			}
+			if (!pinvIdList.contains(pInvId)){
+				pinvIds = pinvIds + pInvId + ",";
+				pinvIdList.add(pInvId);
+			}
+		}
+		pinvIds = pinvIds + "601)";
+
+
+		//TODO:根据物料集id及日期查询月周排产计划数据三班汇总
+		List<Record> apsPlanQtyList = dbTemplate("schedudemandplan.getApsMonthPlanSumList",Kv.by("ids",pinvIds).set("startdate",startDate).set("enddate",endDate)).find();
+		//key:inv，   value:<yyyy-MM-dd，qty>
+		Map<String,Map<String, BigDecimal>> invPlanDateApsMap = new HashMap<>();
+		for (Record record : apsPlanQtyList){
+			String cInvCode = record.getStr("cInvCode");
+			String iYear = record.getStr("iYear");
+			int iMonth = record.getInt("iMonth");
+			int iDate = record.getInt("iDate");
+			BigDecimal planQty = record.getBigDecimal("iQty3");
+			//yyyy-MM-dd
+			String dateKey = iYear;
+			dateKey = iMonth < 10 ? dateKey + "-0" + iMonth : dateKey + "-" + iMonth;
+			dateKey = iDate < 10 ? dateKey + "-0" + iDate : dateKey + "-" + iDate;
+
+			if (invPlanDateApsMap.containsKey(cInvCode)){
+				//key:yyyy-MM-dd   value:qty
+				Map<String,BigDecimal> dateQtyMap = invPlanDateApsMap.get(cInvCode);
+				dateQtyMap.put(dateKey,planQty);
+			}else {
+				Map<String,BigDecimal> dateQtyMap = new HashMap<>();
+				dateQtyMap.put(dateKey,planQty);
+				invPlanDateApsMap.put(cInvCode,dateQtyMap);
+			}
+		}
+		//TODO:根据物料集id及日期获取客户计划汇总表数据
+		List<Record> getCusOrderSumList = scheduProductPlanMonthService.getCusOrderSumList(Okv.by("ids",pinvIds).set("startdate",startDate).set("enddate",endDate));
+		//key:inv，   value:<yyyy-MM-dd，qty>
+		Map<String,Map<String,BigDecimal>> invPlanDateCusMap = new HashMap<>();
+		for (Record record : getCusOrderSumList){
+			String cInvCode = record.getStr("cInvCode");
+			String iYear = record.getStr("iYear");
+			int iMonth = record.getInt("iMonth");
+			int iDate = record.getInt("iDate");
+			BigDecimal planQty = record.getBigDecimal("iQty3");
+			//yyyy-MM-dd
+			String dateKey = iYear;
+			dateKey = iMonth < 10 ? dateKey + "-0" + iMonth : dateKey + "-" + iMonth;
+			dateKey = iDate < 10 ? dateKey + "-0" + iDate : dateKey + "-" + iDate;
+
+			if (invPlanDateCusMap.containsKey(cInvCode)){
+				//key:yyyy-MM-dd   value:qty
+				Map<String,BigDecimal> dateQtyMap = invPlanDateCusMap.get(cInvCode);
+				dateQtyMap.put(dateKey,planQty);
+			}else {
+				Map<String,BigDecimal> dateQtyMap = new HashMap<>();
+				dateQtyMap.put(dateKey,planQty);
+				invPlanDateCusMap.put(cInvCode,dateQtyMap);
+			}
+		}
+
+
+
+		//对产线逐个处理
+		for (Long key : venInvListMap.keySet()) {
+			List<String> recordList = venInvListMap.get(key);
+			for (String inv : recordList){
+				//inv信息
+				Record invInfo = invInfoMap.get(inv);
+
+				Map<String,Record> pinvMap = pInvByInvInMap.get(inv) != null ? pInvByInvInMap.get(inv) : new HashMap<>();
+				int num = 1;
+				for (String pinv : pinvMap.keySet()){
+					Map<String,BigDecimal> dateQtyApsMap = invPlanDateApsMap.get(pinv) != null ? invPlanDateApsMap.get(pinv) : invPlanDateCusMap.get(pinv);
+					//数据处理 行转列并赋值
+					scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyApsMap,"母件"+ num++ +"计划1S/2S/3S");
+				}
+
+				//key:yyyy-MM-dd   value:qty  实绩需求
+				Map<String,BigDecimal> dateQtyPPMap = invPlanDateXuQiuMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyPPMap,"实绩需求");
+
+				//key:yyyy-MM-dd   value:qty  到货计划
+				Map<String,BigDecimal> dateQty1SMap = invPlanDateDaoHuoMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(dataList,scheduDateList,invInfo,dateQty1SMap,"到货计划");
+
+				//key:yyyy-MM-dd   value:qty  到货实绩
+				Map<String,BigDecimal> dateQty2SMap = invPlanDateShiJiMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(dataList,scheduDateList,invInfo,dateQty2SMap,"到货实绩");
+
+				//key:yyyy-MM-dd   value:qty  差异数量
+				Map<String,BigDecimal> dateQty3SMap = invPlanDateChaYiMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(dataList,scheduDateList,invInfo,dateQty3SMap,"差异数量");
+
+				//key:yyyy-MM-dd   value:qty  计划在库
+				Map<String,BigDecimal> dateQtyZKMap = invPlanDateZaiKuMap.get(inv);
+				//数据处理 行转列并赋值
+				scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyZKMap,"计划在库");
+			}
+		}
+
+		Page<Record> page = new Page<>();
+		page.setPageNumber(pageNumber);
+		page.setPageSize(pageSize);
+		int num = (int) Math.ceil(dataList.size() / 15);
+		page.setTotalPage(num);
+		page.setTotalRow(dataList.size());
+		page.setList(dataList);
+
+		return dataList;
+	}
 
 
 }

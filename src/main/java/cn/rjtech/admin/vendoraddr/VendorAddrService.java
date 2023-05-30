@@ -207,4 +207,8 @@ public class VendorAddrService extends BaseService<VendorAddr> {
 		return dbTemplate("vendoraddr.findList", kv).find();
 	}
 
+	public List<VendorAddr> findByIds(List<Long> ids){
+		Sql sql = selectSql().in(VendorAddr.IAUTOID, ids);
+		return find(sql);
+	}
 }

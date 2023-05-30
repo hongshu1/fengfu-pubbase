@@ -5,7 +5,9 @@ import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.enums.AndOrEnum;
+import cn.rjtech.enums.BarCodeEnum;
 import cn.rjtech.enums.BoolCharEnum;
+import cn.rjtech.enums.ItemEnum;
 import cn.rjtech.enums.ThirdpartySystemEnum;
 import com.jfinal.core.Path;
 
@@ -45,5 +47,11 @@ public class EnumsAdminController extends JBoltBaseController {
     public void andor() {
         renderJsonData(JBoltEnum.getEnumOptionList(AndOrEnum.class));
     }
-
+    
+    public void item() {
+    	renderJsonData(JBoltEnum.getEnumOptionList(ItemEnum.class));
+    }
+    public void barCode() {
+    	renderJsonData(JBoltEnum.getEnumOptionList(BarCodeEnum.class));
+    }
 }

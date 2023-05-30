@@ -1,0 +1,3458 @@
+{
+  "panels": [
+    {
+      "index": 0,
+      "height": 460,
+      "width": 340,
+      "paperHeader": 19.5,
+      "paperFooter": 1303.937007874016,
+      "printElements": [
+        {
+          "options": {
+            "left": 10.5,
+            "top": 33,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 943.5,
+            "top": 33,
+            "height": 1246.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 33,
+            "height": 1246.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 337.5,
+            "top": 46.5,
+            "height": 9.75,
+            "width": 256.5,
+            "title": "追加禀议书（追加稟議書）",
+            "fontSize": 16.5,
+            "fontWeight": "bold",
+            "textAlign": "center"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 633,
+            "top": 55.5,
+            "height": 10.5,
+            "width": 27,
+            "title": "No.",
+            "fontSize": 14.25,
+            "fontWeight": "bold"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 882,
+            "top": 55.5,
+            "height": 9.75,
+            "width": 52.5,
+            "title": "单位：元"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 655.5,
+            "top": 55.5,
+            "height": 9.75,
+            "width": 120,
+            "field": "cproposalno",
+            "fontSize": 14.25,
+            "fontWeight": "bold"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 576,
+            "top": 69,
+            "height": 51,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 499.5,
+            "top": 69,
+            "height": 51,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 162,
+            "top": 69,
+            "height": 25.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 654,
+            "top": 69,
+            "height": 25.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 78,
+            "top": 69,
+            "height": 130.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 751.5,
+            "top": 69,
+            "height": 27,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 69,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 672,
+            "top": 70.5,
+            "height": 9.75,
+            "width": 43.5,
+            "title": "申请日期"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 21,
+            "top": 70.5,
+            "height": 9.75,
+            "width": 45,
+            "title": "申请部门"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 517.5,
+            "top": 72,
+            "height": 9.75,
+            "width": 39,
+            "title": "申请人"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 592.5,
+            "top": 76.5,
+            "height": 9.75,
+            "width": 45,
+            "field": "capplypersonname"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 783,
+            "top": 78,
+            "height": 9.75,
+            "width": 124.5,
+            "field": "dapplydate",
+            "dataType": "datetime",
+            "format": "yyyy-MM-dd"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 85.5,
+            "top": 78,
+            "height": 9.75,
+            "width": 70.5,
+            "field": "cdepname"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 196.5,
+            "top": 79.5,
+            "height": 9.75,
+            "width": 120,
+            "title": "总务科"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 664.5,
+            "top": 81,
+            "height": 9.75,
+            "width": 60,
+            "title": "（申請日付）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 510,
+            "top": 82.5,
+            "height": 9.75,
+            "width": 55.5,
+            "title": "（申請人）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 82.5,
+            "height": 9.75,
+            "width": 61.5,
+            "title": "（申請部門）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 94.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 513,
+            "top": 96,
+            "height": 9.75,
+            "width": 46.5,
+            "title": "项目编码"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 592.5,
+            "top": 103.5,
+            "height": 9.75,
+            "width": 120,
+            "field": "cprojectname"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 24,
+            "top": 103.5,
+            "height": 9.75,
+            "width": 40.5,
+            "title": "项目名称"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 85.5,
+            "top": 103.5,
+            "height": 9.75,
+            "width": 120,
+            "field": "cprojectname"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 504,
+            "top": 108,
+            "height": 9.75,
+            "width": 67.5,
+            "title": "（項目コード）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 120,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 15,
+            "top": 121.5,
+            "height": 9.75,
+            "width": 58.5,
+            "title": "目的区分（目的区分）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 85.5,
+            "top": 124.5,
+            "height": 9.75,
+            "width": 652.5,
+            "title": "1.能力扩大（能力拡大）2.改善合理化（改善合理化）3.品质向上（品質向上）4.环境改善（環境改善）5.更新（更新）6.其它（その他）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 141,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 85.5,
+            "top": 145.5,
+            "height": 9.75,
+            "width": 618,
+            "title": "1.新机种投资（新機種投資）：A.设备（設備）B.模具（金型）C.治具（治具）D.检具（検具）E.L/0F.立上（立上げ）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 154.5,
+            "height": 9.75,
+            "width": 60,
+            "title": "类别区分（類別区分）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 85.5,
+            "top": 159,
+            "height": 9.75,
+            "width": 838.5,
+            "title": "2.一般投资（一般投資）：A.土地（土地）B.房屋及建筑物（部屋及び建物）C.公共设施（公共施設）D.生产设备（生産設備）E.检验设备（検査設備）F.模检治具（型検治具）G.运输设备（輸送設備）H.办公设备（オフィス設備）I.事务用品（事務用品）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 85.5,
+            "top": 183,
+            "height": 9.75,
+            "width": 444,
+            "title": "3.费用（費用）4.基础合同（基礎契約）5.资产处置（資産処置）6.其他（その他）　"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 682.5,
+            "top": 199.5,
+            "height": 414,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 772.5,
+            "top": 199.5,
+            "height": 390,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 706.5,
+            "top": 199.5,
+            "height": 9.75,
+            "width": 43.5,
+            "title": "事业计划"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 199.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 18,
+            "top": 204,
+            "height": 9.75,
+            "width": 66,
+            "title": "说明（説明）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 886.5,
+            "top": 204,
+            "height": 10.5,
+            "width": 10.5
+          },
+          "printElementType": {
+            "type": "rect"
+          }
+        },
+        {
+          "options": {
+            "left": 802.5,
+            "top": 205.5,
+            "height": 10.5,
+            "width": 10.5
+          },
+          "printElementType": {
+            "type": "rect"
+          }
+        },
+        {
+          "options": {
+            "left": 822,
+            "top": 205.5,
+            "height": 9.75,
+            "width": 16.5,
+            "title": "内"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 900,
+            "top": 205.5,
+            "height": 9.75,
+            "width": 12,
+            "title": "外"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 702,
+            "top": 210,
+            "height": 9.75,
+            "width": 60,
+            "title": "（事業計画）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 25.5,
+            "top": 219,
+            "height": 90,
+            "width": 625.5,
+            "field": "cdesc"
+          },
+          "printElementType": {
+            "type": "longText"
+          }
+        },
+        {
+          "options": {
+            "left": 682.5,
+            "top": 222,
+            "height": 9,
+            "width": 261
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 856.5,
+            "top": 222,
+            "height": 367.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 778.5,
+            "top": 223.5,
+            "height": 9.75,
+            "width": 72,
+            "title": "不含税金额（税抜金額）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 867,
+            "top": 223.5,
+            "height": 9.75,
+            "width": 66,
+            "title": "含税金额（税込金額）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 699,
+            "top": 228,
+            "height": 9.75,
+            "width": 63,
+            "title": "项目（項目）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 682.5,
+            "top": 243,
+            "height": 9,
+            "width": 261
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 696,
+            "top": 244.5,
+            "height": 9.75,
+            "width": 66,
+            "title": "原申请金额"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 792,
+            "top": 252,
+            "height": 9.75,
+            "width": 40.5,
+            "field": "inatmoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 874.5,
+            "top": 250.5,
+            "height": 9.75,
+            "width": 46.5,
+            "field": "inatsum"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 688.5,
+            "top": 255,
+            "height": 9.75,
+            "width": 76.5,
+            "title": "（計画申請金額）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 682.5,
+            "top": 265.5,
+            "height": 9,
+            "width": 261
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 685.5,
+            "top": 270,
+            "height": 9.75,
+            "width": 87,
+            "title": "该项目事业计划预算总金额（当該項目事業計画予算総金額）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 792,
+            "top": 282,
+            "height": 9.75,
+            "width": 40.5,
+            "field": "ibudgetmoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 874.5,
+            "top": 282,
+            "height": 9.75,
+            "width": 46.5,
+            "field": "ibudgetsum"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 705,
+            "top": 306,
+            "height": 9.75,
+            "width": 60,
+            "title": "E评价总金额"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 682.5,
+            "top": 306,
+            "height": 9,
+            "width": 261
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 696,
+            "top": 316.5,
+            "height": 9.75,
+            "width": 73.5,
+            "title": "（E評価総金額）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 700.5,
+            "top": 327,
+            "height": 9.75,
+            "width": 66,
+            "title": "追加禀议金额"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 327,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 874.5,
+            "top": 330,
+            "height": 9.75,
+            "width": 46.5,
+            "field": "isupplementalsum"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 792,
+            "top": 331.5,
+            "height": 9.75,
+            "width": 40.5,
+            "field": "isupplementalmoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 18,
+            "top": 333,
+            "height": 9.75,
+            "width": 120,
+            "title": "追加说明（追加説明）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 684,
+            "top": 337.5,
+            "height": 9.75,
+            "width": 85.5,
+            "title": "（累計予算総金額）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 682.5,
+            "top": 346.5,
+            "height": 9,
+            "width": 261
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 27,
+            "top": 346.5,
+            "height": 42,
+            "width": 615,
+            "field": "csupplementaldesc"
+          },
+          "printElementType": {
+            "type": "longText"
+          }
+        },
+        {
+          "options": {
+            "left": 700.5,
+            "top": 348,
+            "height": 9.75,
+            "width": 64.5,
+            "title": "累计申请金额"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 874.5,
+            "top": 354,
+            "height": 9.75,
+            "width": 46.5,
+            "field": "itotalsum"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 792,
+            "top": 357,
+            "height": 9.75,
+            "width": 40.5,
+            "field": "itotalmoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 690,
+            "top": 358.5,
+            "height": 9.75,
+            "width": 78,
+            "title": "（追加稟議金額）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 682.5,
+            "top": 370.5,
+            "height": 9,
+            "width": 261
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 705,
+            "top": 372,
+            "height": 9.75,
+            "width": 63,
+            "title": "剩余预算金额"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 874.5,
+            "top": 378,
+            "height": 9.75,
+            "width": 46.5,
+            "field": "ibudgetremainsum"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 792,
+            "top": 381,
+            "height": 9.75,
+            "width": 40.5,
+            "field": "ibudgetremainmoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 690,
+            "top": 382.5,
+            "height": 9.75,
+            "width": 78,
+            "title": "（累計申請金額）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 306,
+            "top": 394.5,
+            "height": 219,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 394.5,
+            "height": 9,
+            "width": 934.5
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 697.5,
+            "top": 396,
+            "height": 9.75,
+            "width": 69,
+            "title": "剩余预算金额"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 384,
+            "top": 399,
+            "height": 9.75,
+            "width": 142.5,
+            "title": "本次申请信息（今回申請データ）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 85.5,
+            "top": 402,
+            "height": 9.75,
+            "width": 120,
+            "title": "预算信息（予算データ）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 792,
+            "top": 403.5,
+            "height": 9.75,
+            "width": 40.5,
+            "field": "ibudgetremainmoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 874.5,
+            "top": 403.5,
+            "height": 9.75,
+            "width": 46.5,
+            "field": "ibudgetremainsum"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 687,
+            "top": 408,
+            "height": 9.75,
+            "width": 76.5,
+            "title": "（剰余予算金額）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 498,
+            "top": 417,
+            "height": 9.75,
+            "width": 21,
+            "title": "汇率"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 448.5,
+            "top": 417,
+            "height": 261,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 423,
+            "top": 418.5,
+            "height": 171,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 495,
+            "top": 418.5,
+            "height": 171,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 367.5,
+            "top": 418.5,
+            "height": 171,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 528,
+            "top": 417,
+            "height": 195,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 217.5,
+            "top": 418.5,
+            "height": 195,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 528,
+            "top": 417,
+            "height": 9.75,
+            "width": 60,
+            "title": "申请金额(不含税）（申請金額（税抜））"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 151.5,
+            "top": 418.5,
+            "height": 171,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 588,
+            "top": 417,
+            "height": 195,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 67.5,
+            "top": 418.5,
+            "height": 171,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 616.5,
+            "top": 417,
+            "height": 195,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 30,
+            "top": 418.5,
+            "height": 171,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 618,
+            "top": 417,
+            "height": 9.75,
+            "width": 66,
+            "title": "申请金额(含税）申請金額（税込）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 418.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 453,
+            "top": 418.5,
+            "height": 9.75,
+            "width": 37.5,
+            "title": "外币金额"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 396,
+            "top": 418.5,
+            "height": 171,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 307.5,
+            "top": 420,
+            "height": 9.75,
+            "width": 60,
+            "title": "项目细项名称"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 870,
+            "top": 421.5,
+            "height": 9.75,
+            "width": 60,
+            "title": "预算对应部门"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 399,
+            "top": 421.5,
+            "height": 9.75,
+            "width": 25.5,
+            "title": "单位"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 370.5,
+            "top": 421.5,
+            "height": 9.75,
+            "width": 21,
+            "title": "数量"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 426,
+            "top": 421.5,
+            "height": 9.75,
+            "width": 22.5,
+            "title": "币种"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 222,
+            "top": 423,
+            "height": 9.75,
+            "width": 85.5,
+            "title": "预算金额（不含税）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 591,
+            "top": 421.5,
+            "height": 9.75,
+            "width": 24,
+            "title": "税率"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 166.5,
+            "top": 423,
+            "height": 9.75,
+            "width": 40.5,
+            "title": "明细科目"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 91.5,
+            "top": 423,
+            "height": 9.75,
+            "width": 36,
+            "title": "预算NO."
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 796.5,
+            "top": 423,
+            "height": 9.75,
+            "width": 37.5,
+            "title": "需求日"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 37.5,
+            "top": 423,
+            "height": 9.75,
+            "width": 31.5,
+            "title": "类型"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 697.5,
+            "top": 423,
+            "height": 9.75,
+            "width": 57,
+            "title": "预定供货商"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 307.5,
+            "top": 429,
+            "height": 9.75,
+            "width": 55.5,
+            "title": "（項目細い項名称）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 495,
+            "top": 427.5,
+            "height": 9.75,
+            "width": 34.5,
+            "title": "(為替レート)"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 444,
+            "top": 430.5,
+            "height": 9.75,
+            "width": 57,
+            "title": "（外貨金額）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 15,
+            "top": 432,
+            "height": 9.75,
+            "width": 16.5,
+            "title": "No."
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 361.5,
+            "top": 433.5,
+            "height": 9.75,
+            "width": 37.5,
+            "title": "（数量）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 391.5,
+            "top": 433.5,
+            "height": 9.75,
+            "width": 37.5,
+            "title": "（単位）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 159,
+            "top": 435,
+            "height": 9.75,
+            "width": 58.5,
+            "title": "（明細科目）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 417,
+            "top": 433.5,
+            "height": 9.75,
+            "width": 39,
+            "title": "（貨種）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 82.5,
+            "top": 435,
+            "height": 9.75,
+            "width": 58.5,
+            "title": "（予算NO.）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 219,
+            "top": 436.5,
+            "height": 9.75,
+            "width": 96,
+            "title": "（予算金額（税抜））"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 691.5,
+            "top": 435,
+            "height": 9.75,
+            "width": 73.5,
+            "title": "（予定メーカー）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 787.5,
+            "top": 436.5,
+            "height": 9.75,
+            "width": 54,
+            "title": "（需要日）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 28.5,
+            "top": 436.5,
+            "height": 9.75,
+            "width": 42,
+            "title": "（類別）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 861,
+            "top": 436.5,
+            "height": 9.75,
+            "width": 76.5,
+            "title": "（予算対応部門）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 448.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 309,
+            "top": 459,
+            "height": 9.75,
+            "width": 57,
+            "field": "citemname0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 76.5,
+            "top": 459,
+            "height": 9.75,
+            "width": 55.5,
+            "field": "cbudgetno0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 160.5,
+            "top": 459,
+            "height": 9.75,
+            "width": 54,
+            "field": "clowestsubjectname0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 36,
+            "top": 459,
+            "height": 9.75,
+            "width": 28.5,
+            "field": "itypename0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 693,
+            "top": 457.5,
+            "height": 9.75,
+            "width": 60,
+            "field": "cvenname0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 459,
+            "height": 9.75,
+            "width": 12,
+            "title": "1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 399,
+            "top": 457.5,
+            "height": 9.75,
+            "width": 21,
+            "field": "cunit0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 540,
+            "top": 457.5,
+            "height": 9.75,
+            "width": 37.5,
+            "field": "inatmoney0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 370.5,
+            "top": 457.5,
+            "height": 9.75,
+            "width": 19.5,
+            "field": "iquantity0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 238.5,
+            "top": 459,
+            "height": 9.75,
+            "width": 48,
+            "field": "ibudgetmoney0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 451.5,
+            "top": 457.5,
+            "height": 9.75,
+            "width": 42,
+            "field": "iunitprice0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 778.5,
+            "top": 459,
+            "height": 9.75,
+            "width": 72,
+            "field": "ddemanddate0",
+            "dataType": "datetime",
+            "format": "yyyy-MM-dd"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 621,
+            "top": 457.5,
+            "height": 9.75,
+            "width": 55.5,
+            "field": "inatsum0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 868.5,
+            "top": 459,
+            "height": 9.75,
+            "width": 64.5,
+            "field": "cbudgetdepname0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 427.5,
+            "top": 457.5,
+            "height": 9.75,
+            "width": 18,
+            "field": "ccurrency0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 591,
+            "top": 457.5,
+            "height": 9.75,
+            "width": 24,
+            "field": "itaxrate0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 498,
+            "top": 457.5,
+            "height": 9.75,
+            "width": 27,
+            "field": "nflat0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 478.5,
+            "height": 9,
+            "width": 930
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 621,
+            "top": 484.5,
+            "height": 9.75,
+            "width": 55.5,
+            "field": "inatsum1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 865.5,
+            "top": 486,
+            "height": 9.75,
+            "width": 67.5,
+            "field": "cbudgetdepname1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 399,
+            "top": 486,
+            "height": 9.75,
+            "width": 19.5,
+            "field": "cunit1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 426,
+            "top": 486,
+            "height": 9.75,
+            "width": 19.5,
+            "field": "ccurrency1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 372,
+            "top": 486,
+            "height": 9.75,
+            "width": 18,
+            "field": "iquantity1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 309,
+            "top": 487.5,
+            "height": 9.75,
+            "width": 57,
+            "field": "citemname1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 451.5,
+            "top": 486,
+            "height": 9.75,
+            "width": 39,
+            "field": "iunitprice1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 238.5,
+            "top": 487.5,
+            "height": 9.75,
+            "width": 48,
+            "field": "ibudgetmoney1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 498,
+            "top": 486,
+            "height": 9.75,
+            "width": 27,
+            "field": "nflat0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 160.5,
+            "top": 487.5,
+            "height": 9.75,
+            "width": 54,
+            "field": "clowestsubjectname1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 537,
+            "top": 486,
+            "height": 9.75,
+            "width": 42,
+            "field": "inatmoney1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 76.5,
+            "top": 487.5,
+            "height": 9.75,
+            "width": 55.5,
+            "field": "cbudgetno1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 591,
+            "top": 486,
+            "height": 9.75,
+            "width": 22.5,
+            "field": "itaxrate1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 36,
+            "top": 487.5,
+            "height": 9.75,
+            "width": 27,
+            "field": "itypename1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 693,
+            "top": 486,
+            "height": 9.75,
+            "width": 60,
+            "field": "cvenname1"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 487.5,
+            "height": 9.75,
+            "width": 12,
+            "title": "2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 778.5,
+            "top": 489,
+            "height": 9.75,
+            "width": 70.5,
+            "field": "ddemanddate1",
+            "dataType": "datetime",
+            "format": "yyyy-MM-dd"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 505.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 451.5,
+            "top": 514.5,
+            "height": 9.75,
+            "width": 39,
+            "field": "iunitprice2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 778.5,
+            "top": 516,
+            "height": 9.75,
+            "width": 70.5,
+            "field": "ddemanddate2",
+            "dataType": "datetime",
+            "format": "yyyy-MM-dd"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 309,
+            "top": 516,
+            "height": 9.75,
+            "width": 57,
+            "field": "citemname2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 865.5,
+            "top": 516,
+            "height": 9.75,
+            "width": 67.5,
+            "field": "cbudgetdepname2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 516,
+            "height": 9.75,
+            "width": 12,
+            "title": "3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 426,
+            "top": 516,
+            "height": 9.75,
+            "width": 19.5,
+            "field": "ccurrency2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 400.5,
+            "top": 516,
+            "height": 9.75,
+            "width": 19.5,
+            "field": "cunit2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 372,
+            "top": 516,
+            "height": 9.75,
+            "width": 19.5,
+            "field": "iquantity2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 498,
+            "top": 516,
+            "height": 9.75,
+            "width": 27,
+            "field": "nflat0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 238.5,
+            "top": 517.5,
+            "height": 9.75,
+            "width": 48,
+            "field": "ibudgetmoney2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 537,
+            "top": 516,
+            "height": 9.75,
+            "width": 43.5,
+            "field": "inatmoney2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 159,
+            "top": 517.5,
+            "height": 9.75,
+            "width": 54,
+            "field": "clowestsubjectname2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 591,
+            "top": 516,
+            "height": 9.75,
+            "width": 22.5,
+            "field": "itaxrate2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 76.5,
+            "top": 517.5,
+            "height": 9.75,
+            "width": 55.5,
+            "field": "cbudgetno2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 691.5,
+            "top": 516,
+            "height": 9.75,
+            "width": 60,
+            "field": "cvenname2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 36,
+            "top": 517.5,
+            "height": 9.75,
+            "width": 27,
+            "field": "itypename2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 621,
+            "top": 517.5,
+            "height": 9.75,
+            "width": 55.5,
+            "field": "inatsum2"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 535.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 373.5,
+            "top": 543,
+            "height": 9.75,
+            "width": 19.5,
+            "field": "iquantity3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 309,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 57,
+            "field": "citemname3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 427.5,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 19.5,
+            "field": "ccurrency3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 499.5,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 27,
+            "field": "nflat0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 538.5,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 43.5,
+            "field": "inatmoney3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 453,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 39,
+            "field": "iunitprice3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 400.5,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 18,
+            "field": "cunit3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 238.5,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 48,
+            "field": "ibudgetmoney3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 592.5,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 21,
+            "field": "itaxrate3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 159,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 54,
+            "field": "clowestsubjectname3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 693,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 58.5,
+            "field": "cvenname3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 778.5,
+            "top": 546,
+            "height": 9.75,
+            "width": 72,
+            "field": "ddemanddate3",
+            "dataType": "datetime",
+            "format": "yyyy-MM-dd"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 76.5,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 55.5,
+            "field": "cbudgetno3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 864,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 67.5,
+            "field": "cbudgetdepname3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 36,
+            "top": 544.5,
+            "height": 9.75,
+            "width": 27,
+            "field": "itypename3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 622.5,
+            "top": 546,
+            "height": 9.75,
+            "width": 55.5,
+            "field": "inatsum3"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 546,
+            "height": 9.75,
+            "width": 12,
+            "title": "4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 562.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 540,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 42,
+            "field": "inatmoney4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 592.5,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 21,
+            "field": "itaxrate4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 622.5,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 55.5,
+            "field": "inatsum4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 238.5,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 48,
+            "field": "ibudgetmoney4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 453,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 39,
+            "field": "iunitprice4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 427.5,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 19.5,
+            "field": "ccurrency4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 76.5,
+            "top": 570,
+            "height": 9.75,
+            "width": 55.5,
+            "field": "cbudgetno4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 499.5,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 27,
+            "field": "nflat0"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 36,
+            "top": 570,
+            "height": 9.75,
+            "width": 27,
+            "field": "itypename4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 864,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 67.5,
+            "field": "cbudgetdepname4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 13.5,
+            "top": 570,
+            "height": 9.75,
+            "width": 12,
+            "title": "5"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 373.5,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 19.5,
+            "field": "iquantity4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 309,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 55.5,
+            "field": "citemname4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 400.5,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 19.5,
+            "field": "cunit4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 159,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 54,
+            "field": "clowestsubjectname4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 778.5,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 72,
+            "field": "ddemanddate4",
+            "dataType": "datetime",
+            "format": "yyyy-MM-dd"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 693,
+            "top": 571.5,
+            "height": 9.75,
+            "width": 58.5,
+            "field": "cvenname4"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 589.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 622.5,
+            "top": 595.5,
+            "height": 9.75,
+            "width": 54,
+            "field": "suminat"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 538.5,
+            "top": 598.5,
+            "height": 9.75,
+            "width": 48,
+            "field": "suminatmoney"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 25.5,
+            "top": 597,
+            "height": 9.75,
+            "width": 171,
+            "title": "合计（合計）",
+            "fontSize": 12.75,
+            "letterSpacing": 12
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 130.5,
+            "top": 613.5,
+            "height": 84,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 613.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 253.5,
+            "top": 618,
+            "height": 9.75,
+            "width": 61.5,
+            "title": "科长（課長）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 687,
+            "top": 618,
+            "height": 9.75,
+            "width": 70.5,
+            "title": "部长（部長）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 130.5,
+            "top": 630,
+            "height": 9,
+            "width": 813
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 24,
+            "top": 640.5,
+            "height": 9.75,
+            "width": 99,
+            "title": "部门确认（部門確認）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 679.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 36,
+            "top": 682.5,
+            "height": 9.75,
+            "width": 57,
+            "title": "日期（日付）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 733.5,
+            "top": 682.5,
+            "height": 9.75,
+            "width": 129,
+            "title": "2022年10月10日（年月日）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 304.5,
+            "top": 684,
+            "height": 9.75,
+            "width": 127.5,
+            "title": "2022年10月10日（年月日）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 697.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 402,
+            "top": 702,
+            "height": 9.75,
+            "width": 105,
+            "title": "会签栏（署名欄）",
+            "fontSize": 12,
+            "fontWeight": "bold"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 369,
+            "top": 715.5,
+            "height": 168,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 556.5,
+            "top": 715.5,
+            "height": 166.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 703.5,
+            "top": 715.5,
+            "height": 166.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 450,
+            "top": 715.5,
+            "height": 166.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 268.5,
+            "top": 715.5,
+            "height": 166.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 85.5,
+            "top": 715.5,
+            "height": 166.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 768,
+            "top": 715.5,
+            "height": 166.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 717,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 708,
+            "top": 718.5,
+            "height": 9.75,
+            "width": 57,
+            "title": "签名（署名）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 822,
+            "top": 718.5,
+            "height": 9.75,
+            "width": 67.5,
+            "title": "日期（日付）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 291,
+            "top": 720,
+            "height": 9.75,
+            "width": 57,
+            "title": "签名（署名）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 382.5,
+            "top": 720,
+            "height": 9.75,
+            "width": 60,
+            "title": "日期（日付）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 151.5,
+            "top": 720,
+            "height": 9.75,
+            "width": 58.5,
+            "title": "意见（意見）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 606,
+            "top": 720,
+            "height": 9.75,
+            "width": 60,
+            "title": "意见（意見）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 556.5,
+            "top": 732,
+            "height": 9,
+            "width": 387
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 85.5,
+            "top": 732,
+            "height": 9,
+            "width": 364.5
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 529.5,
+            "top": 747,
+            "height": 9.75,
+            "width": 15,
+            "title": "部"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 72,
+            "top": 751.5,
+            "height": 9.75,
+            "width": 15,
+            "title": "部"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 483,
+            "top": 756,
+            "height": 9,
+            "width": 42
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 24,
+            "top": 762,
+            "height": 9,
+            "width": 43.5
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 796.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 288,
+            "top": 799.5,
+            "height": 9.75,
+            "width": 58.5,
+            "title": "签名（署名）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 151.5,
+            "top": 801,
+            "height": 9.75,
+            "width": 57,
+            "title": "意见（意見）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 606,
+            "top": 801,
+            "height": 9.75,
+            "width": 60,
+            "title": "意见（意見）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 709.5,
+            "top": 801,
+            "height": 9.75,
+            "width": 58.5,
+            "title": "签名（署名）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 822,
+            "top": 801,
+            "height": 9.75,
+            "width": 60,
+            "title": "日期（日付）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 382.5,
+            "top": 801,
+            "height": 9.75,
+            "width": 58.5,
+            "title": "日期（日付）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 556.5,
+            "top": 814.5,
+            "height": 9,
+            "width": 387
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 85.5,
+            "top": 814.5,
+            "height": 9,
+            "width": 364.5
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 481.5,
+            "top": 826.5,
+            "height": 9.75,
+            "width": 57,
+            "title": "经营管理部"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 16.5,
+            "top": 840,
+            "height": 9.75,
+            "width": 61.5,
+            "title": "营业采购部"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 882,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 405,
+            "top": 885,
+            "height": 9.75,
+            "width": 118.5,
+            "title": "裁决栏（決裁欄）",
+            "fontSize": 12,
+            "fontWeight": "bold"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 333,
+            "top": 898.5,
+            "height": 97.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 642,
+            "top": 898.5,
+            "height": 97.5,
+            "width": 9
+          },
+          "printElementType": {
+            "type": "vline"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 898.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 120,
+            "top": 903,
+            "height": 9.75,
+            "width": 97.5,
+            "title": "副总经理（副総経理）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 454.5,
+            "top": 903,
+            "height": 9.75,
+            "width": 75,
+            "title": "总经理（総経理）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 759,
+            "top": 903,
+            "height": 9.75,
+            "width": 79.5,
+            "title": "本部长（本部長）"
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 918,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 978,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 24,
+            "top": 981,
+            "height": 9.75,
+            "width": 76.5,
+            "title": "日期（日付）："
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 646.5,
+            "top": 981,
+            "height": 9.75,
+            "width": 102,
+            "title": "日期（日付）："
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 339,
+            "top": 982.5,
+            "height": 9.75,
+            "width": 87,
+            "title": "日期（日付）："
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 9,
+            "top": 994.5,
+            "height": 9,
+            "width": 934.5
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 21,
+            "top": 1000.5,
+            "height": 9.75,
+            "width": 30,
+            "title": "説明："
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 39,
+            "top": 1011,
+            "height": 117,
+            "width": 747,
+            "title": "1、[禀议书]要求填写含税金额(包含增值税、关税等)及不含税金额；\n2、[禀议书]提出时需附上[报价单]、[投资企划书]、[供应商选定表](预定)、或前购资料、[维修维护修缮企划书]、[E评价本部长承认资料]等作为禀议裁决依据；\n3、审批流程：①审批金额（含税）≥3500元，<20万元：申请部门→关联部门会签→副总经理→总经理裁决；\n②审批金额（含税）≥20万元（新机种项目除外）：申请部门→关联部门会签→在经营管理部登记→副总经理→总经理→本部长裁决→作成[地域本部长承认记录](中日文)\n→将[地域本部长承认记录]交经营管理部→经营管理部汇总[地域本部长承认记录]备存；\n4、[禀议书]一式三联：第1联申请部门（存档）；第2联采购联；第3联财务联；\n5、项目申购金额超出[禀议书]申请金额的10％或500元以上时（满足其中之一），须追加[禀议书]，再作呈批；\n6、项目申购中如有细项数量增加，或新增计划外的细项，需对增加细项追加禀议；\n7、禀议细项如超出10项，请另附清单。",
+            "lineHeight": 12.75
+          },
+          "printElementType": {
+            "type": "longText"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 1128,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        },
+        {
+          "options": {
+            "left": 21,
+            "top": 1134,
+            "height": 9.75,
+            "width": 42,
+            "title": "説明："
+          },
+          "printElementType": {
+            "type": "text"
+          }
+        },
+        {
+          "options": {
+            "left": 39,
+            "top": 1147.5,
+            "height": 129,
+            "width": 855,
+            "title": "１、「稟議書」にて税込金額（増値税、通関税など含め）及び税抜金額を記入してください。\n２、「稟議書」提出する同時に、「見積書」、「投資企画書」、「メーカー選定表」（予定）、又はその前の購入資料、「修理メンテ修繕企画書」、「E評価本部長承認資料」なども稟議決裁根拠として提出してください。\n３、　稟議プロセス：①稟議金額（税込）≧3500元、＜20万元の場合：申請部門→関連部門署名→副総経理→総経理決裁。\n　　　　　　　　　　　　②稟議金額（税込）≧20万元（新機種項目を除く）の場合：申請部門→関連部門署名→経営管理部で登録→副総経理→総経理→本部長決裁→[地域本部長承認記録](中日資料)作成\n→[地域本部長承認記録]を経営管理部へ送付→経営管理部は[地域本部長承認記録]を収集・保管する。\n４、「稟議書」一式三部：第一部申請部門（保管）、第二部購買連、第三部財務連,\n５、　項目申請購買金額は「稟議書」の申請金額より10％又は500元をオーバーする場合（１つ満足場合）、「稟議書」を追加提出・再稟議審査してはいけない。\n６、　項目申請購買時、細い項目の数量を増加する場合又は計画外の細い項目を新規増加する場合、その増加された細い項目に対する稟議は追加してはいけない。\n７、　稟議の細い項目は10項目を超える場合、リストは別途添付してください。",
+            "lineHeight": 12.75
+          },
+          "printElementType": {
+            "type": "longText"
+          }
+        },
+        {
+          "options": {
+            "left": 10.5,
+            "top": 1279.5,
+            "height": 9,
+            "width": 933
+          },
+          "printElementType": {
+            "type": "hline"
+          }
+        }
+      ],
+      "paperNumberLeft": 933,
+      "paperNumberTop": 1281
+    }
+  ]
+}
