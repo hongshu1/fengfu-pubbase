@@ -1143,14 +1143,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     dataMap.put("date",date);
                     dataMap.put("lock",false);
 
-                    if (seq == 2){
-                        if (DateUtils.parseDate(date).getTime() <= lockPreDate.getTime()){
-                            dataMap.put("lock",true);
-                        }
-                    }else {
-                        if (DateUtils.parseDate(date).getTime() >= lockPreDate.getTime()){
-                            dataMap.put("lock",true);
-                        }
+                    if (DateUtils.parseDate(date).getTime() <= lockPreDate.getTime()){
+                        dataMap.put("lock",true);
                     }
                     objectList.add(dataMap);
                 }
