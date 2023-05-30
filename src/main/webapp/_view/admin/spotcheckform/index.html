@@ -1,127 +1,78 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey)" >
+<div class="jbolt_page" data-key="#(pmkey??)">
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>点检表格</h1></div>
+			<div class="col">
+				<form class="form-inline" id="spot_check_form_#(pageId)">
+					<input type="text" autocomplete="off" class="form-control" placeholder="=点检表格名称=" name="cSpotCheckFormName" id="cSpotCheckFormName" value=""/>
 
-<div class="jbolt_page_title">
-	<div class="row">
-	<div class="col-md-auto">
-	<h1>点检表格</h1>
-	</div>
-	<div class="col">
-		<form class="form-inline text-left" id="spotCheckFormForm_#(pageId)"   onsubmit="return false;" method="post">
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
-		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-		</form>
-	</div>
-	<div class="col-md-auto">
-	</div>
-	</div>
-</div>
-<div class="jbolt_page_content">
-<!-- JBoltTable的数据模板定义-->
-<textarea class="jb_tpl_box" id="spotCheckFormRowtpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.iautoid}" >
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.iorgid}</td>
-<td>${data.corgcode}</td>
-<td>${data.corgname}</td>
-<td>${data.cspotcheckformname}</td>
-<td>${data.icreateby}</td>
-<td>${data.ccreatename}</td>
-<td>${data.dcreatetime}</td>
-<td>${data.iupdateby}</td>
-<td>${data.cupdatename}</td>
-<td>${data.dupdatetime}</td>
-<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isdeleted}"  data-handler="refreshJBoltTable"  data-url="admin/spotcheckform/toggleIsdeleted/${data.id}"/></td>
-<td><img data-switchbtn data-confirm="确定切换是否启用：0. 否 1. 是？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/spotcheckform/toggleIsenabled/${data.id}"/></td>
-<td>${data.cmemo}</td>
-<td>
-	<a href="admin/spotcheckform/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改点检表格" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
-    <a href="admin/spotcheckform/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
-</td>
-</tr>
-{@/each}
-</textarea>
-
-<!-- 工具条 toolbar -->
-<div class="jbolt_table_toolbar" id="spotCheckForm_toolbar_#(pageId)">
-	<div class="" role="group" aria-label="btn-group">
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增点检表格"  data-url="admin/spotcheckform/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改点检表格" data-check-handler="jboltTableGetCheckedId" data-url="admin/spotcheckform/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
-		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/spotcheckform/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
-		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+					<button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+					<button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+				</form>
+			</div>
+		</div>
 	</div>
 
-	<div class="clearfix"></div>
-</div>
+	<div class="jbolt_page_content">
 
+		<!-- 定义JBoltTable使用的数据渲染模板 -->
+		<textarea class="jb_tpl_box" id="spot_check_form_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a tooltip title="编辑" href="admin/spotcheckform/edit/${data.iautoid}" data-scroll="yes" data-handler="refreshJBoltTable"data-title="编辑" data-area="100%,100%" class="jbolt_table_editbtn">编辑</a>
+                <a tooltip title="删除" href="admin/spotcheckform/delete/${data.iautoid}" data-handler="refreshJBoltTable" class="jbolt_table_delbtn">删除</a>
+            </td>
+            <td>${data.cspotcheckformname}</td>
+            <td>${data.ccreatename}</td>
+            <td>${data.dcreatetime}</td>
+        </tr>
+        {@/each}
+        </textarea>
 
+		<div class="jbolt_table_toolbar" id="spot_check_form_toolbar_#(pageId)">
+			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+				<button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增点检表格" data-url="admin/spotcheckform/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+				<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑点检表格" data-check-handler="jboltTableGetCheckedId" data-url="admin/spotcheckform/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+				<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/spotcheckform/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
+				<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+			</div>
+		</div>
 
-<table class="jbolt_table jbolt_main_table table-center hover_info"
-data-jbolttable
-data-height="fill"
-data-ajax="true"
-data-url="admin/spotcheckform/datas"
-data-column-resize="true"
-data-row-click-active="true"
-data-column-prepend="1:checkbox:true"
-data-conditions-form="spotCheckFormForm_#(pageId)"
-data-rowtpl="spotCheckFormRowtpl_#(pageId)"
-data-page="spotCheckFormPage_#(pageId)"
-data-toolbar="spotCheckForm_toolbar_#(pageId)"
-
-
-
-
-data-fixed-columns-left="1,2,3"
-data-fixed-columns-right="-1"
-data-row-dblclick-active="true"
-data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
->
-<thead>
-<tr>
-	<th data-width="60">序号</th>
-	<th data-min-width="150" data-column="iOrgId">组织ID</th>
-	<th data-width="150" data-column="cOrgCode">组织编码</th>
-	<th data-width="150" data-column="cOrgName">组织名称</th>
-	<th data-width="150" data-column="cSpotCheckFormName">检验表格名称</th>
-	<th data-width="150" data-column="iCreateBy">创建人ID</th>
-	<th data-width="150" data-column="cCreateName">创建人名称</th>
-	<th data-width="150" data-column="dCreateTime">创建时间</th>
-	<th data-width="150" data-column="iUpdateBy">更新人ID</th>
-	<th data-width="150" data-column="cUpdateName">更新人名称</th>
-	<th data-width="150" data-column="dUpdateTime">更新时间</th>
-	<th data-width="150" data-column="isDeleted">删除状态：0. 未删除 1. 已删除</th>
-	<th data-width="150" data-column="isEnabled">是否启用：0. 否 1. 是</th>
-	<th data-width="150" data-column="cMemo">备注</th>
-	<th data-width="100">操作</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-
-
-
-</div>
+		<table class="jbolt_table jbolt_main_table  table-center "
+			   data-jbolttable
+			   data-width="auto"
+			   data-height="fill"
+			   data-ajax="true"
+			   data-conditions-form="spot_check_form_#(pageId)"
+			   data-url="admin/spotcheckform/datas"
+			   data-rowtpl="spot_check_form_tpl_#(pageId)"
+			   data-copy-to-excel="false"
+			   data-page="spot_check_form_page"
+			   data-toolbar="spot_check_form_toolbar_#(pageId)"
+			   data-column-resize="true"
+			   data-column-prepend="1:checkbox:true"
+			   data-fixed-columns-left="1,2,3">
+			<thead>
+			<tr>
+				<th data-width="60" data-column="index">序号</th>
+				<th data-width="130">操作</th>
+				<th data-width="120" data-column="cSpotCheckFormName">点检表格名称</th>
+				<th data-width="120" data-column="ccreatename">创建人名称</th>
+				<th data-width="150" data-column="dcreatetime">创建时间</th>
+			</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
 </div>
 #end
 
 #define js()
 <script type="text/javascript">
-
-	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
-		console.log(JSON.stringify(rowData));
-
-		$(tempTr1).data('url', '/admin/admin/spotcheckform/edit/' + rowData.iautoid)
-			.data('area', '1200,800')
-			.data('title', '点检表格')
-			.data('btn', '保存,关闭');
-
-		DialogUtil.openBy(tempTr1);
-	}
 </script>
 #end

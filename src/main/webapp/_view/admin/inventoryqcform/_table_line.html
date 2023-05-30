@@ -18,6 +18,7 @@
                    <i class="fa fa-files-o c-danger"></i>
                    {@/if}
                </a>
+
 <!--                 <a tooltip title="上传图片" href="admin/inventoryqcform/openFileDialog?invId=${data.iinventoryid}&cpics=data.cpics"-->
 <!--                    data-btn="yes" data-title="上传图片" data-area="30%,60%" class="jbolt_table_editbtn">-->
 <!--                    {@if data.cpics} <i class="fa fa-files-o c-primary"></i>-->
@@ -25,6 +26,8 @@
 <!--                   <i class="fa fa-files-o c-danger"></i>-->
 <!--                   {@/if}-->
 <!--               </a>-->
+
+
             </td>
             <td>${data.cdccode}</td>
             <td>${data.cmeasure}</td>
@@ -96,7 +99,7 @@
                         <th data-width="150" data-column="componentname">部品名称</th>
                         <th data-width="150" data-column="cinvstd">规格</th>
                         <th data-width="120" data-column="cuomname">主计量单位</th>
-<!--                        <th data-min-width="200" data-column="inspectiontype">检验类型</th>-->
+<!--                    <th data-min-width="200" data-column="inspectiontype">检验类型</th>-->
                         <th data-width="120" data-column="cpicsstr">图片</th>
                         <th data-width="120" data-column="cdccode">设变号</th>
                         <th data-width="120" data-column="cmeasure">测试理由</th>
@@ -285,6 +288,10 @@
                 //     multiple:"multiple"
                 // },
                 // cpicsstr: {
+                //   type:"dialogbtn",
+                //
+                // },
+                // cpicsstr: {
                 //     submitAttr: "cpicsstr",
                 //     type:"dialogbtn",
                 //     placeholder:"上传图片",
@@ -311,6 +318,9 @@
         };
         return editableTableOptions;
     }
+
+
+
 
 </script>
 

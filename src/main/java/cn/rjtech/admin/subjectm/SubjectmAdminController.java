@@ -7,6 +7,8 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.spire.xls.Validation;
+
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.jbolttablemenufilter.JBoltTableMenuFilter;
@@ -42,7 +44,7 @@ public class SubjectmAdminController extends BaseAdminController {
 	*/
 	public void index() {
 		Subjectm subjectm = service.findFirst("select * from Bas_SubjectM where isenabled =1");
-		if(subjectm != null) set("cversion",subjectm.getCversion());
+		if(subjectm != null) set("cversion",subjectm.getCVersion());
 		else set("cversion",JBoltDateUtil.getNowStr("yyyy"));
 		render("index.html");
 	}
@@ -63,26 +65,20 @@ public class SubjectmAdminController extends BaseAdminController {
 		//String cversion = getLong(2, 2L).toString();
 		if (id!=0){
 			Subjectm bySubjectCode = service.findById(id);
-			Record maxClevel = service.getMaxClevel(bySubjectCode.getIautoid());
+			Integer clevel = bySubjectCode.getCLevel();
+			ValidationUtils.notNull(clevel, "上级科目等级为空，请检查!");
 			//根据上级id来获取最大等级
-			if (maxClevel.getStr("clevel")!=null) {
-				set("clevel",("0"+ (Integer.parseInt(maxClevel.getStr("clevel")) + 1)));
-			}else {
-				set("clevel",(bySubjectCode.getClevel())+"01") ;
-
-			}
-			set("csubjectname",bySubjectCode.getCsubjectname());
-			set("isend",bySubjectCode.getIsend());
+			set("clevel",clevel+1) ;
+			set("csubjectname",bySubjectCode.getCSubjectName());
+			set("isend",bySubjectCode.getIsEnd());
 			set("pid",id);
 		}else {
 			if (!"2".equals(kv.getStr("cversion"))){
 				set("cversions",kv.getStr("cversion"));
 			}
 			set("cversion",1);
-			set("clevel","01");
+			set("clevel",1);
 		}
-
-
 		render("add.html");
 	}
 
@@ -92,13 +88,13 @@ public class SubjectmAdminController extends BaseAdminController {
 	public void edit() {
 		Subjectm subjectm = service.findById(useIfPresent(getLong(0)));
 		ValidationUtils.notNull(subjectm, JBoltMsg.DATA_NOT_EXIST);
-		set("iparentid",subjectm.getIparentid());
-		set("clevel", subjectm.getClevel());
-		if (subjectm.getIparentid()!=null){
-			set("csubjectname",service.findById(subjectm.getIparentid()).getCsubjectname());
+		set("iparentid",subjectm.getIParentId());
+		set("clevel", subjectm.getCLevel());
+		if (subjectm.getIParentId()!=null){
+			set("csubjectname",service.findById(subjectm.getIParentId()).getCSubjectName());
 		}
 
-		set("ccodename", subjectdService.jointSubjectName(subjectm.getIautoid()));
+		set("ccodename", subjectdService.jointSubjectName(subjectm.getIAutoId()));
 		set("subjectm", subjectm);
 		render("edit.html");
 	}

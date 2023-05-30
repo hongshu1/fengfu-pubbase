@@ -66,6 +66,16 @@ public class QcInspectionApiService extends JBoltApiBaseService {
     }
 
     /**
+     * 查询人员和部门
+     * */
+    public JBoltApiRet DepartmentList(Kv kv) {
+        List<Record> list = qcInspectionService.DepartmentList(kv);
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(list);
+    }
+
+
+
+    /**
      * 上传文件
      */
     public JBoltApiRet flies(UploadFile file, String folde, Integer type) {

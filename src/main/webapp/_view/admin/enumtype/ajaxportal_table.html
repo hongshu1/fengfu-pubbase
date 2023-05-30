@@ -1,0 +1,16 @@
+<table class="table table-bordered table-hover table-sm table-striped text-center text-nowrap">
+    <thead>
+    <!--<th style="width:60px">序号</th>-->
+    <th style="width:150px">名称</th>
+    <!--<th style="width:60px">编码</th>-->
+    </thead>
+    <tbody>
+    #for(data:users)
+    <tr class="hand" data-json='#json(data,"iAutoId,cEnumTypeName,cEnumTypeCode")' data-jboltinput-setvalue-trigger data-text="#(data.cenumtypename)" data-value="#(data.cenumtypecode)">
+        <!--<td>#(for.count)</td>-->
+        <td>#(data.cenumtypename??)</td>
+        <!--<td>#(data.cenumtypecode)</td>-->
+    </tr>
+    #end
+    </tbody>
+</table>

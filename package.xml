@@ -88,6 +88,16 @@
 			<directory>${basedir}/lib</directory>
 			<outputDirectory>lib</outputDirectory>
 		</fileSet>
+
+        <!-- service脚本  -->
+        <fileSet>
+            <directory>${basedir}/target</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>*.xml</include>
+            </includes>
+        </fileSet>
+
 	</fileSets>
 
 	<!-- 依赖的 jar 包 copy 到 lib 目录下 -->
