@@ -1,8 +1,5 @@
 #sql("list")
 SELECT
-    jd.cDepName cDepName,
-    jd.cDepCode cDepCode,
-    per.cPsn_Name  cPersonName,
     ware.cWhCode,
     ware.cWhName,
     m.*

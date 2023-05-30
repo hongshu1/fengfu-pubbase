@@ -363,4 +363,23 @@ public class WarehouseService extends BaseService<Warehouse> {
         update("UPDATE Bd_Warehouse SET isDeleted = 1 WHERE iAutoId IN (" + ids + ") ");
         return SUCCESS;
     }
+
+    /**
+     * 通过仓库名称查找仓库ID
+     * @param cWarehouseName
+     * @return
+     */
+    public Long findIdByWhName(String cWarehouseName){
+       return queryColumn("select iAutoId FROM Bd_Warehouse WHERE cWhName=?",cWarehouseName);
+    }
+
+    /**
+     * 通过仓库名称查找仓库编码
+     * @param cWarehouseName
+     * @return
+     */
+    public String findCodeByWhName(String cWarehouseName){
+        return queryColumn("select cWhCode FROM Bd_Warehouse WHERE cWhName=?",cWarehouseName);
+    }
+
 }

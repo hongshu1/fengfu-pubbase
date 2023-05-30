@@ -339,6 +339,7 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         ValidationUtils.notNull(cusfieldsmappingForm, "导入配置记录不存在");
 
         CusFieldsMappingM cusFieldsMappingM = cusFieldsMappingMService.findById(cusfieldsmappingForm.getICusFieldMappingMid());
+        System.out.println(cusFieldsMappingM);
 
         return getImportRecords(file, cusFieldsMappingM);
     }
