@@ -75,3 +75,31 @@ where 1=1
     and t1.MasID = #para(masId)
 #end
 #end
+
+
+
+
+
+
+
+#sql("pushu")
+SELECT
+    t1.*
+FROM
+    T_Sys_SaleDeliver t1
+WHERE 1=1
+#if(ids)
+    AND t1.AutoID in (#para(ids))
+#end
+#end
+
+#sql("pushudetail")
+SELECT
+    t1.*
+FROM
+    T_Sys_SaleDeliverDetail t1
+WHERE 1=1
+#if(id)
+    AND t1.MasID = #para(id)
+#end
+#end

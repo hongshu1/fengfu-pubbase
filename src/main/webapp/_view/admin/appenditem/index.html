@@ -1,0 +1,189 @@
+#@adminLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+		<div class="col-md-auto text-left">
+			<form class="form-inline" id="appendItemForm_#(pageId)"   onsubmit="return false;" method="post">
+				<select class="form-control"
+                		data-select-type="select2"
+                        name="cdepcode"
+                        data-autoload
+                        data-tips="u8部门"
+                        data-url="admin/department/getTreeTableDatas"
+                        data-text="=u8部门="
+                        data-text-attr="cdepname"
+                        data-value-attr="cdepcode"
+                        data-setvalueto="cdepcode"
+                        data-value=""
+                        data-width="200">
+                </select>
+                <select class="form-control"
+                    		data-select-type="select2"
+                            name="iservicetype"
+                            data-autoload
+                            data-tips="费用/投资"
+                            data-url="admin/dictionary/options?key=service_type"
+                            data-text="=费用/投资="
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-value=""
+                            data-width="200">
+                </select>
+                <select class="form-control"
+                    		data-select-type="select2"
+                            name="ibudgettype"
+                            data-autoload
+                            data-tips="预算类型"
+                            data-url="admin/dictionary/options?key=investment_budget_type"
+                            data-text="=预算类型="
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-value=""
+                            data-width="200">
+                </select>
+				<input type="text" class="form-control"
+                           data-date
+                           data-type="year"
+                           placeholder="=预算年度="
+                           name="ibudgetyear">
+				<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+				<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="appendItemRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cdepcode}</td>
+<td>${data.cdepname}</td>
+<td>$${data.iservicetype|serviceType}</td>
+<td>$${data.ibudgettype|BudgetType}</td>
+<td>${data.ibudgetyear}</td>
+<td>${data.ccode}</td>
+<td>$${data.isscheduled|isscheduled}</td>
+<td>${data.ibudgetmoney|kFormat}</td>
+<td>${data.cmemo}</td>
+<td>$${data.ieffectivestatus|EffectiveStatus}</td>
+<td>${data.cusername}</td>
+<td>${data.dcreatedate|date_ymd}</td>
+
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="appendItem_toolbar_#(pageId)">
+	<div class="btn-group" role="group" aria-label="btn-group">
+		<div class="btn-group dropdown">
+	        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            	新增
+	        </button>
+	        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+	            <a class="dropdown-item" data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%" href="/admin/appenditem/add?iservicetype=1" data-handler="refreshJBoltTable">费用预算</a>
+	            <a class="dropdown-item" data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%" href="/admin/appenditem/add?iservicetype=2" data-handler="refreshJBoltTable">投资计划</a>
+	        </div>
+        </div>
+		<button data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%"  data-handler="refreshJBoltTable" data-title="修改追加项目" data-check-handler="jboltTableGetCheckedId" data-url="admin/appenditem/edit/" class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i> 修改</button>
+		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/appenditem/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+		<button data-ajaxbtn data-area="700,400" data-title="生效" data-handler="refreshJBoltTable" data-check-handler="effectiveValidate_#(pageId)" data-url="/admin/appenditem/effect/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 生效</button>
+		<button data-ajaxbtn data-area="700,400" data-title="撤销" data-handler="refreshJBoltTable" data-check-handler="unEffectiveValidate_#(pageId)" data-url="/admin/appenditem/unEffect/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 撤销</button>
+		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+
+<table class="jbolt_table jbolt_main_table table-center"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-width="auto"
+data-url="admin/appenditem/datas"
+data-column-resize="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="appendItemForm_#(pageId)"
+data-rowtpl="appendItemRowtpl_#(pageId)"
+data-page="appendItemPage_#(pageId)"
+data-pagesize="50"
+data-toolbar="appendItem_toolbar_#(pageId)"
+data-row-dblclick-active = "true"
+data-row-dblclick-handler = "jbolt_table_dblclickhandler_#(pageId)"
+###data-fixed-columns-left="1,2,3"
+>
+<thead class="fw-normal">
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="150" data-column="cdepcode">部门编码</th>
+	<th data-width="150" data-column="cdepname">部门编码</th>
+	<th data-width="150" data-column="iservicetype">费用/投资</th>
+	<th data-width="150" data-column="ibudgettype">预算类型</th>
+	<th data-width="150" data-column="ibudgetyear">预算年份</th>
+	<th data-width="150" data-column="ccode">预算编号</th>
+	<th data-width="150" data-column="isscheduled">计划类型</th>
+	<th data-width="150" data-column="ibudgetmoney">预算总金额(不含税)</th>
+	<th data-width="150" data-column="cmemo">备注</th>
+	<th data-width="150" data-column="ieffectivestatus">生效状态</th>
+	<th data-width="150" data-column="cusername">创建人</th>
+	<th data-width="150" data-column="dcreatedate">创建时间</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+/**
+ * 生效校验
+ */
+function effectiveValidate_#(pageId)(ele) {
+    var row = jboltTableGetCheckedData(ele);
+    if (!row) {
+        LayerMsgBox.alert('请选择一行数据', 2);
+        return false;
+    }
+    if (row.ieffectivestatus === '2') {
+        LayerMsgBox.alert('已生效记录无法操作', 2);
+        return false;
+    }
+    return row.iautoid;
+}
+function unEffectiveValidate_#(pageId)(ele){
+	var row = jboltTableGetCheckedData(ele);
+    if (!row) {
+        LayerMsgBox.alert('请选择一行数据', 2);
+        return false;
+    }
+    if (row.ieffectivestatus === '1') {
+        LayerMsgBox.alert('未生效记录无法操作', 2);
+        return false;
+    }
+    return row.iautoid;
+}
+function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+	$(tempTr1).data('url', 'admin/appenditem/edit/' + rowData.iautoid)
+			.data('offset', '0.2,0')
+			.data('area', '100%,100%')
+			.data('handler','refreshJBoltTable')
+			.data('title', '详情');
+
+	DialogUtil.openBy(tempTr1);
+}
+</script>
+
+#end
+
+

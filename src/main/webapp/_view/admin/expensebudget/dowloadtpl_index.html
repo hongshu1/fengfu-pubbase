@@ -1,0 +1,97 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+	<div class="jbolt_page_title">
+	<button hidden id="expenseBudgetDownTplBtn" data-downloadbtn data-url="admin/expensebudget/dowloadTplPageSubmit" data-form="expenseBudgetForm_#(pageId)" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> 导出</button>
+		<form onsubmit="return false;" id="expenseBudgetForm_#(pageId)" action="#" method="post">
+			<div class="form-group row">
+				<input type ="hidden" name="periodId" value="#(periodRc.iautoid??)" />
+	            <label class="col-1 col-form-label">部门</label>
+	            <div class="col-3">
+	                <select class="form-control"
+                    		data-select-type="select2"
+                            name="cdepcode"
+                            data-autoload
+                            data-tips="u8部门"
+                            data-url="admin/department/getTreeTableDatas"
+                            data-text="=u8部门="
+                            data-text-attr="cdepname"
+                            data-value-attr="cdepcode"
+                            data-setvalueto="cdepcode"
+                            data-value=""
+                            data-rule="required"
+                            data-width="200">
+                    </select>
+	            </div>			
+				<label class="col-1 col-form-label">预算年度</label>
+	            <div class="col-2">
+	                <input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" class="form-control" 
+	                	 placeholder="请设置年份" data-tips="请设置年份" maxlength="10" name="budgetYear" value="#(periodRc.ibudgetyear??)" disabled
+	                	>
+	            </div>
+	            <label class="col-1 col-form-label">预算类型</label>
+	            <div class="col-2">
+	                <select class="form-control"
+	                    		data-select-type="select2"
+	                            name="ibudgettype"
+	                            data-autoload
+	                            data-tips="预算类型"
+	                            data-url="admin/dictionary/options?key=expense_budget_type"
+	                            data-text="=预算类型="
+	                            data-text-attr="name"
+	                            data-value-attr="sn"
+	                            data-value=""
+	                            data-select="#(periodRc.ibudgettype??)"
+	                            data-width="200"
+	                            disabled
+	                            >
+	                </select>
+	            </div>	            
+			</div>
+			<div class="form-group row">
+				<label class="col-1 col-form-label">开始年月</label>
+	            <div class="col-2">
+	                <input disabled type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="200" name="dstarttime" 
+	                	value="#date(periodRc.dstarttime,'yyyy-MM')"
+	                >
+	            </div>
+	            <label class="col-1 col-form-label">截至年月</label>
+	            <div class="col-2">
+	                <input disabled type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="200" name="dendtime"
+	                	value="#date(periodRc.dendtime,'yyyy-MM')"
+	                >
+	            </div>
+			</div>
+				<!-- <div class="form-group row text-left"
+                         data-radio
+                         data-rule="radio"
+                         ###data-value="#(investmentProposalm.isurgent??)"
+                         data-name="iBudgetType"
+                         ###data-default="options_first"
+                         data-width="col-sm-2,col"
+                    >
+                        <label class="col-sm-2 col-form-label" >预算类型</label>
+                        <div class="col"  style="padding-top: 1px;">
+                         <div class="radio radio-primary  radio-inline">
+                                <input id="r_isurgent_false" type="radio" name="iBudgetType" value="1"/>
+                                <label for="r_isurgent_false">全年预算</label>
+                            </div>
+                            <div class="radio radio-primary  radio-inline">
+                                <input id="r_isurgent_true" type="radio" name="iBudgetType" value="2"/>
+                                <label for="r_isurgent_true">下期修改</label>
+                            </div>
+                        </div>
+                </div> -->
+		</form>
+	</div>
+</div>
+#end
+
+#define js()
+	<script type="text/javascript">
+		function submitThisForm(){
+			$("#expenseBudgetDownTplBtn").click();
+		}
+	</script>
+#end

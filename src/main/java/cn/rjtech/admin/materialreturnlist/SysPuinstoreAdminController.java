@@ -67,7 +67,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 		if ("2".equals(edit)) {
 			render("edit2.html");
 		}else {
-			render("add.html");
+			render("edit1.html");
 		}
 
 	}
@@ -81,7 +81,11 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		String autoid = puinstore.getAutoID();
+		String OrgCode = getOrgCode();
+		Record puinstoreName = service.getstockoutQcFormMList(autoid,OrgCode);
 		set("type", get("type"));
+		set("puinstoreName",puinstoreName);
 		set("puinstore",puinstore);
 		render("edit.html");
 	}
@@ -155,6 +159,19 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 		renderJson(service.recall(iAutoId));
 	}
 
+
+	/**
+	 * 查看所以退货出库单列表明细
+	 */
+	public void getmaterialReturnLists() {
+		String autoid = get("autoid");
+		String OrgCode = getOrgCode();
+		Kv kv = new Kv();
+		kv.set("autoid",autoid== null? "" :autoid);
+		kv.set("OrgCode",OrgCode);
+		renderJsonData(service.getmaterialReturnLists(getPageNumber(), getPageSize(), kv));
+	}
+
 	/**
 	 * 退货出库单列表明细
 	 */
@@ -170,12 +187,12 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	 * 整单退货出库单列表明细
 	 */
 	public void getmaterialLines() {
-		String autoid = get("puinstore.autoid");
+		String autoid = get("autoid");
 		String OrgCode = getOrgCode();
 		Kv kv = new Kv();
 		kv.set("autoid",autoid== null? "" :autoid);
 		kv.set("OrgCode",OrgCode);
-		renderJsonData(service.getmaterialReturnListLines(getPageNumber(), getPageSize(), kv));
+		renderJsonData(service.getmaterialLines(getPageNumber(), getPageSize(), kv));
 	}
 
 

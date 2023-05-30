@@ -1,0 +1,130 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto text-left"></div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="barcodeencodingmRowtpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.citemname}</td>
+                <td>${data.tag}</td>
+                <td><img data-switchbtn  data-value="${data.istate == 1}"
+                         data-handler="refreshJBoltTable" data-url="admin/barcodeencodingm/istate?iautoid=${data.iautoid}"/></td>
+                <td>${data.createname}</td>
+                <td>${data.dcreatetime|date_ymd}</td>
+                <td>${data.updatename}</td>
+                <td>${data.dupdatetime|date_ymd}</td>
+            </tr>
+            {@/each}
+        </script>
+
+
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="barcodeencodingm_toolbar_#(pageId)">
+            <div class="btn-group" role="group" aria-label="btn-group">
+                <button data-openpage="dialog" data-fs="true" data-area="80%,80%"
+                        data-handler="jboltTablePageToFirst" data-title="新增编码规则" data-url="admin/barcodeencodingm/add"
+                        class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增
+                </button>
+                <button data-openpage="dialog" data-fs="true" data-area="80%,80%" data-handler="refreshJBoltTable"
+                        data-title="修改编码规则" data-check-handler="jboltTableGetCheckedId"
+                        data-url="admin/barcodeencodingm/edit/" class="btn btn-outline-info btn-sm"><i
+                        class="fa fa-edit"></i> 修改
+                </button>
+                <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr"
+                        data-check-handler="jboltTableGetCheckedIds" data-url="admin/barcodeencodingm/deleteByIds?ids="
+                        data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除
+                </button>
+                <button onclick="refreshtable()" class="btn btn-outline-info btn-sm"><i
+                        class="fa fa-refresh"></i> 刷新
+                </button>
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="jbolt_table_view">
+            <div class="jbolt_table_box">
+                <div class="jbolt_table_body">
+                    <table data-theme="bootstrap"
+                           class="table-striped table-hover border-dark jbolt_table   jbolt_main_table table_striped thead_font_normal table-center"
+                           data-jbolttable
+                           id="barcodeencodingm_table_#(pageId)"
+                           data-height="fill"
+                           data-ajax="true"
+                           data-width="auto"
+                           data-url="admin/barcodeencodingm/datas"
+                           data-column-resize="true"
+                           data-column-prepend="1:checkbox:true"
+
+                           data-rowtpl="barcodeencodingmRowtpl_#(pageId)"
+                           data-page="barcodeencodingmPage_#(pageId)"
+                           data-pagesize="10"
+                           data-toolbar="barcodeencodingm_toolbar_#(pageId)"
+                           data-row-dblclick-active="true"
+                           data-row-dblclick-handler="jbolt_table_dblclickhandler_barcodeencodingm_#(pageId)"
+
+                           data-fixed-columns-left="1,2,3"
+                    >
+                        <thead class="fw-normal">
+                        <tr>
+                            <th data-width="60">序号</th>
+                            <th data-min-width="150" data-column="citemname">应用模块</th>
+                            <th data-min-width="350" data-column="tag">编码规则</th>
+                            <th data-min-width="150" data-column="istate">是否启用</th>
+                            <th data-width="130" data-column="icreateby">创建人</th>
+                            <th data-width="150" data-column="dcreatetime">创建时间</th>
+                            <th data-width="130" data-column="iupdateby">更新人</th>
+                            <th data-width="150" data-column="dupdatetime">更新时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+#end
+<style>
+    .ac_input_box {
+        display: inline;
+    }
+</style>
+#define js()
+<script>
+
+    function refreshtable() {
+        refreshJBoltTableById("barcodeencodingm_table_#(pageId)");
+    }
+
+    $(function () {
+    });
+
+
+    function jbolt_table_dblclickhandler_barcodeencodingm_#(pageId)(table, tempTr1, trId1, rowData){
+        console.log(JSON.stringify(rowData));
+
+        $(tempTr1).data('url', 'admin/barcodeencodingm/edit/' + rowData.iautoid)
+            .data('area', "100%,100%")
+            .data('title', '编码规则')
+            .data('closeHandler', 'window.parent.refreshPjaxContainer()');
+
+        DialogUtil.openBy(tempTr1);
+    }
+
+</script>
+#end

@@ -1,11 +1,8 @@
 package cn.rjtech.admin.department;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.poi.excel.JBoltExcel;
@@ -13,9 +10,8 @@ import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.model.momdata.Department;
-import cn.rjtech.model.momdata.Form;
-import cn.rjtech.model.momdata.FormCategory;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -23,7 +19,6 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -246,12 +241,34 @@ public class DepartmentService extends BaseService<Department> {
         return findFirst(selectSql().eq(Department.IORGID, orgId).eq(Department.CDEPCODE, cdepcode).eq(Department.ISDELETED, ZERO_STR).first());
     }
 
+    /**
+     * 通过部门编码查询部门
+     *
+     * @param cdepcode 部门编码
+     * @return 部门档案记录
+     */
+    public Department findByCdepcode(String cdepcode) {
+        return findByCdepcode(getOrgId(), cdepcode);
+    }
 
     public List<Department> getTreeTableDatas(Kv kv) {
-
         List<Department> datas = daoTemplate("department.list",kv).find();
         return convertToModelTree(datas, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
-
-        
     }
+
+    /**
+     * 根据部门编码查询部门名称 
+     */
+	public String getCdepName(String cdepcode) {
+		Department department = findFirst(selectSql().eq("cdepcode", cdepcode).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("iorgid", getOrgId()));
+		if(department != null) return department.getCDepName();
+		return null;
+	}
+
+	public String getCdepCodeByName(String cdepname) {
+		Department department = findFirst(selectSql().eq("cdepname", cdepname).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("iorgid", getOrgId()));
+		if(department != null) return department.getCDepCode();
+		return null;
+	}
+    
 }

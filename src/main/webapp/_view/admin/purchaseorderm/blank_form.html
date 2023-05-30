@@ -18,7 +18,7 @@
                             data-url="admin/dictionary/options?key=purchase_business_type"
                             data-select-type="select"
                             data-text="==请选择=="
-                            data-select="#(purchaseOrderM.ibustype??)"
+                            data-select="#(purchaseOrderM.iBusType??)"
                             data-text-attr="iautoid"
                             data-value-attr="sn">
                     </select>
@@ -33,7 +33,7 @@
                             data-rule="required"
                             data-url="admin/purchaseorderm/findPurchaseType"
                             data-select-type="select"
-                            data-select="#(purchaseOrderM.ipurchasetypeid??)"
+                            data-select="#(purchaseOrderM.iPurchaseTypeId??)"
                             data-text="==请选择=="
                             data-value-attr="iautoid"
                             data-text-attr="cptname">
@@ -43,7 +43,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">业务员</label>
                 <div class="col-6">
-                    <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId" value="#(purchaseOrderM.idutyuserid??)" />
+                    <input type="hidden" id="ipersonid_#(pageId)" name="iDutyUserId" value="#(purchaseOrderM.iDutyUserId??)" />
                     <input type="text" autocomplete="off" value="#(personname??)" class="form-control"
                            placeholder="==请选择人员=="
                            data-rule="required"
@@ -79,30 +79,30 @@
                 <label class="col-sm-3 col-form-label">订单日期</label>
                 <div class="col-6">
                     <input type="text" readonly data-notnull="true" autocomplete="off" class="form-control" maxlength="20" name="dOrderDate"
-                           value="#datetime(purchaseOrderM.dorderdate??,'yyyy-MM-dd')"/>
+                           value="#datetime(purchaseOrderM.dOrderDate??,'yyyy-MM-dd')"/>
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">供应商名称</label>
                 <div class="col-6">
-                    <input hidden type="text" name="iVendorId" value="#(purchaseOrderM.ivendorid??)">
-                    <input readonly type="text" autocomplete="off" class="form-control" value="#(purchaseOrderM.cvenname??)">
+                    <input hidden type="text" name="iVendorId" value="#(purchaseOrderM.iVendorId??)">
+                    <input readonly type="text" autocomplete="off" class="form-control" value="#(cVenName??)">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">税率</label>
                 <div class="col-6">
-                    <input type="text" autocomplete="off" class="form-control" data-rule="pnumber"  data-notnull="false"
+                    <input type="text" autocomplete="off" class="form-control" data-rule="money" data-notnull="false"
                            placeholder="请输入税率" maxlength="40" name="iTaxRate"
-                           value="#(purchaseOrderM.itaxrate??)"/>
+                           value="#(purchaseOrderM.iTaxRate??)"/>
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">汇率</label>
                 <div class="col-6">
-                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="pnumber"
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="money_4"
                            placeholder="请输入汇率" maxlength="40" name="iExchangeRate"
-                           value="#(purchaseOrderM.iexchangerate??)"/>
+                           value="#(purchaseOrderM.iExchangeRate??)"/>
                 </div>
             </div>
         </div>
@@ -111,7 +111,7 @@
                 <label class="col-sm-3 col-form-label">订单编号</label>
                 <div class="col-6">
                     <input type="text" data-notnull="true" data-tips="请输入订单编号" autocomplete="off" class="form-control"
-                           placeholder="请输入订单编号" maxlength="40" name="cOrderNo"  readonly="readonly" value="#(purchaseOrderM.corderno??)"/>
+                           placeholder="请输入订单编号" maxlength="40" name="cOrderNo"  readonly="readonly" value="#(purchaseOrderM.cOrderNo??)"/>
                 </div>
             </div>
             <div class="form-group row">
@@ -127,7 +127,7 @@
                             data-value=""
                             data-value-attr="iautoid"
                             data-text-attr="cdepname"
-                            data-select="#(purchaseOrderM.idepartmentid??)">
+                            data-select="#(purchaseOrderM.iDepartmentId??)">
                     </select>
                 </div>
             </div>
@@ -139,7 +139,7 @@
                             data-rule="required"
                             data-url="admin/dictionary/options?key=purchase_coping_type"
                             data-select-type="select"
-                            data-select="#(purchaseOrderM.ipayabletype??)"
+                            data-select="#(purchaseOrderM.iPayableType??)"
                             data-text="==请选择=="
                             data-text-attr="name"
                             data-value-attr="sn">
@@ -333,7 +333,7 @@
     // 隐藏第一个按钮
     hideParentLayerDialogBtn(0);
 
-    #if(view??0 !=1)
+    #if(isView??0 !=1)
         addParentLayerDialogBtn("保存","lay_success",function(){
             if (!FormChecker.check("#PurchaseOrderM_Form")){
                 return;

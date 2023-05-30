@@ -1,5 +1,6 @@
 package cn.rjtech.admin.vendorclass;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
@@ -10,9 +11,13 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.*;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.model.momdata.CustomerClass;
 import cn.rjtech.model.momdata.VendorClass;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSON;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -45,7 +50,8 @@ public class VendorClassService extends BaseService<VendorClass> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
-
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingdService;
     /**
      * 后台管理数据查询
      *
@@ -180,48 +186,14 @@ public class VendorClassService extends BaseService<VendorClass> {
     /**
      * 供应商分类excel导入数据库
      */
-    public Ret importExcelData(File file) {
+    public Ret importExcelData(File file, String cformatName) {
         StringBuilder errorMsg = new StringBuilder();
-        Date date = new Date();
-        JBoltExcel jBoltExcel = JBoltExcel
-            //从excel文件创建JBoltExcel实例
-            .from(file)
-            //设置工作表信息
-            .setSheets(
-                JBoltExcelSheet.create("供应商分类")
-                    //设置列映射 顺序 标题名称
-                    .setHeaders(
-                        JBoltExcelHeader.create("ipid", "父级供应商分类编码"),
-                        JBoltExcelHeader.create("cvccode", "供应商分类编码"),
-                        JBoltExcelHeader.create("cvcname", "供应商分类名称")
-                    )
-                    //特殊数据转换器
-                    .setDataChangeHandler((data, index) -> {
-                        //非空判断
-                        ValidationUtils.notNull(data.get("ipid"), "父级供应商分类编码为空！");
-                        ValidationUtils.notNull(data.get("cvccode"), "供应商分类编码为空！");
-                        ValidationUtils.notNull(data.get("cvcname"), "供应商分类名称为空！");
-                        //子级供应商编码不能重复
-                        ValidationUtils.isTrue(StringUtils.isBlank(findCVCCodeInfo(data.getStr("cvccode"))),
-                            data.getStr("cvccode")+" 供应商分类编码重复");
-                        if (!"父级供应商分类编码".equals(data.getStr("ipid"))){
-                            VendorClass vendorClass = findFirst(Okv.by("cVCCode", data.getStr("ipid")), "iautoid", "desc");
-                            ValidationUtils.isTrue(null != vendorClass, data.getStr("ipid")+" 父级供应商分类不存在，请手动添加！");
-                        }
-                        VendorClass vendorClass = findFirst(Okv.by("cVCCode", data.getStr("ipid")), "iautoid", "desc");
-                        if (null != vendorClass){
-                            data.change("ipid",vendorClass.getIAutoId());
-                        }
-                        data.change("icreateby", JBoltUserKit.getUserId());
-                        data.change("ccreatename", JBoltUserKit.getUserName());
-                        data.change("cupdatename",JBoltUserKit.getUserName());
-                        data.change("iupdateby",JBoltUserKit.getUserId());
-                    })
-                    //从第2行开始读取
-                    .setDataStartRow(2)
-            );
+        //使用字段配置维护
+        Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
+        String docInfoRelaStrings= JSON.toJSONString(importData);
         // 从指定的sheet工作表里读取数据
-        List<VendorClass> models = JBoltExcelUtil.readModels(jBoltExcel, "供应商分类", VendorClass.class, errorMsg);
+        List<VendorClass> models = JSON.parseArray(docInfoRelaStrings, VendorClass.class);
+        Date date = new Date();
         if (notOk(models)) {
             if (errorMsg.length() > 0) {
                 return fail(errorMsg.toString());
@@ -233,14 +205,32 @@ public class VendorClassService extends BaseService<VendorClass> {
         if (models.size() > 0) {
             Date now = new Date();
             for (VendorClass vendorClass : models) {
+
+                if(notOk(vendorClass.getCVCCode())){
+                    return fail("编码不能为空");
+                }
+                if(notOk(vendorClass.getCVCName())){
+                    return fail("名称不能为空");
+                }
+                ValidationUtils.isTrue(findFirst(Okv.by("CVCCode", vendorClass.getCVCCode()), "iautoid", "asc")==null, vendorClass.getCVCCode()+
+                        "编码重复");
                 vendorClass.setIAutoId(JBoltSnowflakeKit.me.nextId());
                 vendorClass.setDCreateTime(now);
+                vendorClass.setICreateBy(JBoltUserKit.getUserId());
+                vendorClass.setCCreateName(JBoltUserKit.getUserName());
                 vendorClass.setDUpdateTime(date);
                 vendorClass.setIOrgId(getOrgId());
                 vendorClass.setCOrgCode(getOrgCode());
                 vendorClass.setCOrgName(getOrgName());
+                vendorClass.setIUpdateBy(JBoltUserKit.getUserId());
+                vendorClass.setIOrgId(getOrgId());
+                vendorClass.setCOrgCode(getOrgCode());
+                vendorClass.setCOrgName(getOrgName());
+                vendorClass.setCUpdateName(JBoltUserKit.getUserName());
                 vendorClass.setIsDeleted(false);
                 vendorClass.setISource(SourceEnum.MES.getValue());
+                vendorClass.setDUpdateTime(now);
+
             }
         }
         
@@ -367,4 +357,26 @@ public class VendorClassService extends BaseService<VendorClass> {
                     .setMerges(JBoltExcelMerge.create("A", "C", 1, 1, "供应商分类"))
             );
     }
+
+    public List<JsTreeBean> getTreeList() {
+        List<JsTreeBean> treeBeans = new ArrayList<>();
+        // 根节点
+        treeBeans.add(new JsTreeBean(0, "#", "供应商分类档案", true, "root_opened", true));
+        appendSubTree(treeBeans,0L);
+        return treeBeans;
+    }
+    private void appendSubTree(List<JsTreeBean> treeBeans, Long pid) {
+    	List<Record> subList = getSubList(pid);
+    	if(CollUtil.isEmpty(subList)) return;
+        for (Record row : subList) {
+            // 当前节点
+            treeBeans.add(new JsTreeBean(row.getStr("cvccode"), pid, row.getStr("cvcname") + "(" + row.getStr("cvccode") + ")","default", null, true));
+            // 追加子节点
+            appendSubTree(treeBeans,row.getLong("iautoid"));
+        }
+    }
+    private List<Record> getSubList(Long pid) {
+        Okv para = Okv.by("pid", pid);
+        return dbTemplate("vendorclass.getSubList", para).find();
+    }     
 }

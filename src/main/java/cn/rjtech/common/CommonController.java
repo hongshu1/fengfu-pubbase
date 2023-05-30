@@ -1,5 +1,6 @@
 package cn.rjtech.common;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import cn.jbolt.core.api.JBoltApiRet;
@@ -116,11 +117,11 @@ public class CommonController extends BaseRestController {
      */
     @JBoltApplyJWT
     public void vouchProcessSubmit() {
-        Map map = commonService.vouchProcessSubmit(getKv());
-        if ("200".equals(map.get("code").toString())) {
-            renderJsonSuccess(map);
+        Kv result = commonService.vouchProcessSubmit(getKv());
+        if (ObjUtil.equals("200", result.getStr("code"))) {
+            renderJsonSuccess(result);
         } else {
-            renderJson(Kv.by("code", map.get("code").toString()).set("data", map));
+            renderJson(Kv.by("code", result.getStr("code")).set("data", result));
         }
     }
 
@@ -201,12 +202,12 @@ public class CommonController extends BaseRestController {
         Kv kv = getKv();
         String type = kv.getStr("type");//类型
         String queryCode = kv.getStr("queryCode");//编码
-        String queryID = kv.getStr("queryID");//名称
+        String queryId = kv.getStr("queryID");//名称
         String queryName = kv.getStr("queryName");
         String extData = kv.getStr("extData");
         String flag = kv.getStr("flag");
         if (JBoltStringUtil.isNotBlank(queryName)) {
-            queryID = queryName;
+            queryId = queryName;
         }
         ValidationUtils.notBlank(type, "请检查传入的类型！");
         Map<String, Object> generalQuerySeting = commonService.generalQuerySeting(type);
@@ -220,7 +221,7 @@ public class CommonController extends BaseRestController {
         paramMap.put("processName", generalQuerySeting.get("process").toString());
         paramMap.put("OrganizeCode", orgApp.getOrganizecode());
         paramMap.put("QueryCode", queryCode);
-        paramMap.put("QueryID", queryID);
+        paramMap.put("QueryID", queryId);
         paramMap.put("ExtData", extData);
         paramMap.put("Flag", flag);
         paramMap.put("erpdbalias", orgApp.getErpdbalias());
@@ -240,11 +241,11 @@ public class CommonController extends BaseRestController {
 
     @UnCheck
     public void vouchProcessDynamicSubmit(@Para("") JSONObject para) {
-        Map map = commonService.vouchProcessDynamicSubmit(Kv.create().set(para));
-        if ("200".equals(map.get("code").toString())) {
-            renderJsonData(JBoltApiRet.API_SUCCESS_WITH_DATA(map));
+        Kv result = commonService.vouchProcessDynamicSubmit(Kv.create().set(para));
+        if (ObjUtil.equals("200", result.getStr("code"))) {
+            renderJsonData(JBoltApiRet.API_SUCCESS_WITH_DATA(result));
         } else {
-            renderJson(Kv.by("code", map.get("code").toString()).set("data", map));
+            renderJson(Kv.by("code", result.getStr("code")).set("data", result));
         }
     }
 

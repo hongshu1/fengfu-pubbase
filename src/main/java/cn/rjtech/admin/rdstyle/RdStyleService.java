@@ -11,8 +11,11 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.DbTemplate;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -315,4 +318,21 @@ public class RdStyleService extends BaseService<RdStyle> {
 	}
 
 
+	public List<Record> getCvrrcodeType(String cRdName,String iPid) {
+		Okv data=Okv.by("crdname",cRdName)
+				.set("ipid",iPid);
+		Long ipid= dbTemplate("rdstyle.getipidType",data).queryLong();
+		Kv para=Kv.by("ipid",ipid);
+		List<Record> list = dbTemplate("rdstyle.getCvrrcodeType", para).find();
+		return list;
+	}
+
+	public List<Record> getCvrscodeType(String cRdName,String iPid) {
+		Okv data=Okv.by("crdname",cRdName)
+				.set("ipid",iPid);
+		BigDecimal ipid= dbTemplate("rdstyle.getipidType",data).queryBigDecimal();
+		Kv para=Kv.by("ipid",ipid);
+		List<Record> list = dbTemplate("rdstyle.getCvrscodeType", para).find();
+		return list;
+	}
 }

@@ -4,7 +4,9 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
+import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
+import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.subcontractorderdbatch.SubcontractOrderDBatchService;
@@ -12,9 +14,8 @@ import cn.rjtech.admin.subcontractorderdbatchversion.SubcontractOrderDBatchVersi
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.model.momdata.Person;
-import cn.rjtech.model.momdata.SubcontractOrderM;
-import cn.rjtech.model.momdata.Vendor;
+import cn.rjtech.enums.SourceTypeEnum;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -51,6 +52,11 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 	private SubcontractOrderDBatchVersionService subcontractOrderDBatchVersionService;
 	@Inject
 	private SubcontractOrderDBatchService subcontractOrderDBatchService;
+	@Inject
+	private InventoryChangeService inventoryChangeService;
+	@Inject
+	private ExchService exchService;
+	
 	
 	/**
 	 * 首页
@@ -71,28 +77,55 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 	public void add(@Para(value = "beginDate") String beginDate,
 					@Para(value = "endDate") String endDate,
 					@Para(value = "iVendorId") String iVendorId,
-					@Para(value = "processType") Integer processType) {
+					@Para(value = "processType") Integer processType,
+					@Para(value = "iSourceType") Integer iSourceType) {
 		
 		Vendor vendor = vendorService.findById(iVendorId);
 		Record record = new Record();
 		record.set(SubcontractOrderM.IVENDORID, vendor.getIAutoId());
-		record.set(Vendor.CVENNAME, vendor.getCVenName());
 		record.set(SubcontractOrderM.DBEGINDATE, beginDate);
 		record.set(SubcontractOrderM.DENDDATE, endDate);
-		setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType));
+		
+		if (ObjectUtil.isNotNull(vendor.getITaxRate())){
+			record.set(SubcontractOrderM.ITAXRATE, vendor.getITaxRate().stripTrailingZeros().stripTrailingZeros());
+		}
+		
+		record.set(SubcontractOrderM.CCURRENCY, vendor.getCCurrency());
+		Exch exch = exchService.getNameByLatestExch(getOrgId(), vendor.getCCurrency());
+		// 汇率
+		if (ObjectUtil.isNotNull(exch)){
+			record.set(PurchaseOrderM.IEXCHANGERATE, exch.getNflat());
+		}
+		record.set(SubcontractOrderM.IDEPARTMENTID, vendor.getCVenDepart());
+		record.set(SubcontractOrderM.IDUTYUSERID, vendor.getIDutyPersonId());
+		
+		Person person = personService.findById(vendor.getIDutyPersonId());
+		if (ObjectUtil.isNotNull(person)){
+			set("personname",person.getCpsnName());
+		}
 		set("subcontractOrderM", record);
+		record.set(SubcontractOrderM.ITYPE, iSourceType);
+		setAttrs(service.getDateMap(beginDate, endDate, iVendorId, processType, iSourceType));
+		
+		if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == iSourceType){
+			render("blank_add.html");
+			return;
+		}
 		render("add.html");
 	}
 	
 	public void checkData(@Para(value = "beginDate") String beginDate,
 						  @Para(value = "endDate") String endDate,
 						  @Para(value = "iVendorId") String iVendorId,
-						  @Para(value = "processType") Integer processType){
+						  @Para(value = "processType") Integer processType,
+						  @Para(value = "iSourceType") Integer iSourceType){
 		ValidationUtils.notBlank(beginDate, "请选择日期范围");
 		ValidationUtils.notBlank(endDate, "请选择日期范围");
 		ValidationUtils.notBlank(iVendorId, "请选择供应商");
-		List<Record> list = demandPlanMService.getVendorDateList(beginDate, endDate, iVendorId, processType);
-		ValidationUtils.notEmpty(list, "该时间范围未找到该供应商所需求物料");
+		if (SourceTypeEnum.MATERIAL_PLAN_TYPE.getValue() == iSourceType){
+			List<Record> list = demandPlanMService.getVendorDateList(beginDate, endDate, iVendorId, processType);
+			ValidationUtils.notEmpty(list, "该时间范围未找到该供应商所需求物料");
+		}
 		ok();
 	}
 	
@@ -117,8 +150,18 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 		if (StrUtil.isNotBlank(isView)){
 			set("isView", 1);
 		}
+		if (ObjectUtil.isNotNull(subcontractOrderM.getITaxRate())){
+			subcontractOrderM.setITaxRate( subcontractOrderM.getITaxRate().stripTrailingZeros());
+		}
+		if (ObjectUtil.isNotNull(subcontractOrderM.getIExchangeRate())){
+			subcontractOrderM.setIExchangeRate( subcontractOrderM.getIExchangeRate().stripTrailingZeros());
+		}
 		set("subcontractOrderM",subcontractOrderM);
 		setAttrs(service.getDateMap(subcontractOrderM));
+		if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == subcontractOrderM.getIType()){
+			render("blank_edit.html");
+			return;
+		}
 		render("edit.html");
 	}
 	
@@ -158,6 +201,7 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 	 * 新增作成页面
 	 */
 	public void consummate() {
+		keepPara();
 		render("consummate.html");
 	}
 	
@@ -259,6 +303,24 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 	public void findSubcontractOrderDBatchVersion(){
 		renderJsonData(subcontractOrderDBatchVersionService.findBySubcontractOrderMid(getPageNumber(), getPageSize(), getKv()));
 	}
-
-
+	
+	public void saveSubmit(){
+		renderJson(service.saveSubmit(getJBoltTable()));
+	}
+	
+	public void findPurchaseOrderD(@Para(value = "purchaseOrderMId") Long purchaseOrderMId){
+		renderJsonData(service.findPurchaseOrderD(purchaseOrderMId));
+	}
+	
+	public void inventory_dialog_index(){
+		keepPara();
+		render("inventory_dialog_index.html");
+	}
+	
+	/**
+	 * 默认给1-100个数据
+	 */
+	public void inventoryPage() {
+		renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
+	}
 }

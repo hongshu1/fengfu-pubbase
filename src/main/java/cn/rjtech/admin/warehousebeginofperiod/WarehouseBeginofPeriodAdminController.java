@@ -61,10 +61,27 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     }
 
     /*
-     * 保存
+     * 保存新增期初库存
      * */
     public void save() {
+        Kv kv = getKv();
         renderJson(service.save());
+    }
+
+    /*
+     * 提交
+     * */
+    public void submitAll() {
+        Kv kv = getKv();
+        renderJsonData("提交成功");
+    }
+
+    /*
+     * 保存新增期初条码
+     * */
+    public void saveBarcode() {
+        Kv kv = getKv();
+        renderJsonData("提交成功");
     }
 
     /*
@@ -78,7 +95,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
      * 模板下载
      * */
     @SuppressWarnings("unchecked")
-    public void downloadTpl() throws Exception{
+    public void downloadTpl() throws Exception {
         renderJxls("warehousearea_import.xlsx", Kv.by("rows", null), "仓库期初导入模板.xlsx");
     }
 
@@ -97,16 +114,16 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     }
 
     /*
-     * 提交
-     * */
-    public void submitAll() {
-        renderJsonData("提交成功");
-    }
-
-    /*
      * 打印
      * */
     public void printtpl() {
         renderJsonData(service.printtpl(getLong(0)));
+    }
+
+    /*
+     * 期初库存的仓库编码
+     * */
+    public void whoptions() {
+        renderJsonData(service.whoptions());
     }
 }

@@ -366,6 +366,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	}
 	
 	public Map<String, Object> getDateMap(PurchaseOrderM purchaseOrderM){
+		
 		Map<String, Object> repMap = new HashMap<>();
 		Map<String, List<Record>> listMap = setDate(DateUtil.formatDate(purchaseOrderM.getDBeginDate()), DateUtil.formatDate(purchaseOrderM.getDEndDate()));
 		if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == purchaseOrderM.getIType()){
@@ -373,10 +374,9 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			repMap.put("tableData", purchaseOrderDList);
 			repMap.put("tableDataStr", JSONObject.toJSONString(purchaseOrderDList));
 		}
+		
 		repMap.put("monthHeadList", listMap.get(PurchaseOrderM.MONTHFIELD));
 		repMap.put("dateHeadList", listMap.get(PurchaseOrderM.DATEFIELD));
-		
-		
 		return repMap;
 	}
 	
@@ -984,7 +984,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 							purchaseorderdQtyService.delete(purchaseOrderD.getIAutoId(), purchaseorderdQty.getIYear(), purchaseorderdQty.getIMonth(), purchaseorderdQty.getIDate());
 							break;
 					}
-					purchaseOrderQtyList.add(purchaseorderdQty);
+					if (qty.compareTo(BigDecimal.ZERO) > 0)
+						purchaseOrderQtyList.add(purchaseorderdQty);
 				}
 			}
 		}

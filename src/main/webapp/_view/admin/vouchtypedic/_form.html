@@ -6,25 +6,18 @@
     
     <div class="row">
         <div class="col">
-
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">单据业务类型</label>
-                <div class="col-10">
-                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入单据业务类型" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入单据业务类型" maxlength="40" name="vouchTypeDic.cvbtid" value="#(vouchTypeDic.cvbtid??)"/>
-                </div>
-            </div>
-
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">单据类型中文名</label>
                 <div class="col-10">
                     <select class="form-control"
                             data-autoload
+                            data-rule="required"
                             name="vouchTypeDic.cvtid"
                             data-url="admin/dictionary/options?key=VouchType"
                             data-value-attr="sn"
                             data-text-attr="name"
                             data-text="=请选择="
-                            data-select="#(vouchtypedic.cvtid??)">
+                            data-select="#(vouchTypeDic.cvtid??)">
                     </select>
                 </div>
             </div>
@@ -33,16 +26,18 @@
                 <label class="col-sm-2 col-form-label">业务类型中文名</label>
                 <div class="col-10">
                     <select class="form-control"
+                            data-rule="required"
                             data-autoload
                             name="vouchTypeDic.cbtid"
                             data-url="admin/dictionary/options?key=cbtchname"
                             data-value-attr="sn"
                             data-text-attr="name"
                             data-text="=请选择="
-                            data-select="#(vouchtypedic.cbtid??)">
+                            data-select="#(vouchTypeDic.cbtid??)">
                     </select>
                 </div>
             </div>
+
 
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">（业务类型）备注</label>
@@ -64,6 +59,7 @@
 
 #define js()
 <script>
+    console.log(#json(vouchTypeDic))
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="VouchTypeDic_Form")
 #end

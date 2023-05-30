@@ -6,16 +6,22 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.syssaledeliverdetail.SysSaledeliverdetailService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysSaledeliver;
+import cn.rjtech.model.momdata.SysSaledeliverdetail;
 import cn.rjtech.util.Util;
+import cn.smallbun.screw.core.util.CollectionUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,6 +38,9 @@ public class SysSaledeliverAdminController extends BaseAdminController {
 
     @Inject
     private SysSaledeliverService service;
+
+    @Inject
+    private SysSaledeliverdetailService syssaledeliverdetailservice;
 
     /**
      * 首页
@@ -157,6 +166,25 @@ public class SysSaledeliverAdminController extends BaseAdminController {
      */
     public void delete() {
         renderJson(service.deleteById(getLong(0)));
+    }
+
+    public void pushu(){
+        Kv kv = new Kv();
+        kv.set("ids",get("ids"));
+        List<SysSaledeliver> getpushu = service.getpushu(kv);
+        if(!CollectionUtils.isNotEmpty(getpushu)){
+            return ;
+        }
+        getpushu.stream().forEach(s -> {
+            Kv kv1 = new Kv();
+            kv1.set("id",s.getAutoID());
+            List<SysSaledeliverdetail> getpushudetail1 = syssaledeliverdetailservice.getpushudetail(kv1);
+//            System.out.println("开始u8，开始u8，开始u8，开始u8，开始u8"+new Date());
+            Ret ret = service.pushU8(s, getpushudetail1);
+            renderJson(ret);
+//            System.out.println(ret);
+//            System.out.println("结束u8，结束u8，结束u8，结束u8，结束u8"+new Date());
+        });
     }
 
 

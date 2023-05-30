@@ -98,11 +98,15 @@ order by t1.CreateDate desc,t1.BillNo desc
 
 
 #sql("getOtherOutLines")
-SELECT t2.*,
-       i.*,
-       u.cUomClassName,
-       t3.cInvCCode,
-       t3.cInvCName
+SELECT
+    i.*,
+    u.cUomClassName,
+    t3.cInvCCode,
+    t3.cInvCName,
+    t2.Qty AS qtys,
+    0-t2.Qty as qty,
+    t2.Barcode,
+    t2.InvCode
 FROM T_Sys_OtherOut t1,
      T_Sys_OtherOutDetail t2
          LEFT JOIN bd_inventory i ON i.cinvcode = t2.Invcode

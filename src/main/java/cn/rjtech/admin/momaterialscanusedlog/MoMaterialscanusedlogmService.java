@@ -1,5 +1,8 @@
 package cn.rjtech.admin.momaterialscanusedlog;
 
+import cn.rjtech.model.momdata.MoMaterialscanusedlogd;
+import cn.rjtech.model.momdata.MoMaterialsscansum;
+import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,6 +12,11 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoMaterialscanusedlogm;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.math.BigDecimal;
+import java.util.List;
+
 /**
  * 制造工单-材料耗用主表 Service
  * @ClassName: MoMaterialscanusedlogmService
@@ -23,6 +31,9 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 	protected MoMaterialscanusedlogm dao() {
 		return dao;
 	}
+
+	@Inject
+	private  MoMaterialscanusedlogdService moMaterialscanusedlogdService;
 
 	/**
 	 * 后台管理分页查询
@@ -166,4 +177,49 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 		return null;
 	}
 
+    public List<Record> getMaterialscanList(Kv kv) {
+		return  dbTemplate("momaterialscanusedlog.getMaterialscanList",kv).find();
+    }
+
+	public Page<Record> getMaterialsPrepareList(int pageNumber, int pageSize, Kv kv){
+		return dbTemplate("momaterialscanusedlog.getMaterialsPrepareList",kv).paginate(pageNumber,pageSize);
+	}
+
+	public Page<Record> getMoMaterialscanusedlogList(int pageNumber, int pageSize, Kv kv){
+		return dbTemplate("momaterialscanusedlog.getMoMaterialscanusedlogList",kv).paginate(pageNumber,pageSize);
+	}
+	/**
+	 * 通过现票获取存货信息
+	 * @param barcode
+	 * @return
+	 */
+	public Record  getBarcode(String barcode){
+		return  dbTemplate("momaterialscanusedlog.findByBarcode",
+				Kv.create().set("barcode",barcode)).findFirst();
+	}
+
+	public Ret addBarcode(String barcode,Long iMaterialScanUsedLogMid){
+		Record record=getBarcode(barcode);
+		if(record!=null){
+			if(isOk(record.getLong("iinventoryid"))) {
+				MoMaterialscanusedlogd moMaterialscanusedlogd=moMaterialscanusedlogdService.findFirst(Okv.create().
+						set(MoMaterialscanusedlogd.IINVENTORYID,record.getLong("iinventoryid")).
+						set(MoMaterialscanusedlogd.IMATERIALSCANUSEDLOGMID,iMaterialScanUsedLogMid),
+						MoMaterialsscansum.IAUTOID,"DESC");
+				if(moMaterialscanusedlogd!=null) {
+					moMaterialscanusedlogd = new MoMaterialscanusedlogd();
+					moMaterialscanusedlogd.setIInventoryId(record.getLong("iinventoryid"));
+					moMaterialscanusedlogd.setIAutoId(iMaterialScanUsedLogMid);
+					moMaterialscanusedlogd.setCBarcode(barcode);
+					moMaterialscanusedlogd.setIQty(record.getBigDecimal("qty"));
+					moMaterialscanusedlogd.setIScannedQty(new BigDecimal(1));
+				}else{
+					moMaterialscanusedlogd.setIScannedQty(moMaterialscanusedlogd.getIScannedQty().add(new BigDecimal(1)));
+					moMaterialscanusedlogd.update();
+				}
+			}
+
+		}
+		return  SUCCESS;
+	}
 }

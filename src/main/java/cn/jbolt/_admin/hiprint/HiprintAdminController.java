@@ -4,8 +4,6 @@ import cn.jbolt.core.permission.UnCheck;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.ActionKey;
-import com.jfinal.core.Path;
-
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.model.HiprintTpl;
 import cn.jbolt.core.controller.base.JBoltBaseController;
@@ -14,12 +12,11 @@ import cn.jbolt.core.permission.OnlySaasPlatform;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 /**
  * jbolt hiprint 封装
- * @ClassName:  JBoltHiprintAdminController   
+ * @ClassName:  HiprintAdminController
  * @author: JFinal学院-小木 QQ：909854136 
  * @date:   2021年8月28日   
  *    
  */
-@Path(value = "/admin/hiprint",viewPath = "/hiprint/")
 @CheckPermission(PermissionKey.HIPRINT_DESIGN)
 @UnCheckIfSystemAdmin
 @OnlySaasPlatform
