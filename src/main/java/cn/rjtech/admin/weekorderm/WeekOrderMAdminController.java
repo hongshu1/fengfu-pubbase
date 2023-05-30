@@ -13,6 +13,9 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -67,12 +70,10 @@ public class WeekOrderMAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        WeekOrderM weekOrderM = service.findById(getLong(0));
-        if (weekOrderM== null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        set("weekOrderM", weekOrderM);
+        Page<Record> datas = service.getAdminDatas(1, 1, Kv.by("iAutoId", getLong(0)));
+        ValidationUtils.notNull(datas, JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.isTrue(datas.getList().size() > 0, JBoltMsg.DATA_NOT_EXIST);
+        set("weekOrderM", datas.getList().get(0));
         render("edit.html");
     }
 

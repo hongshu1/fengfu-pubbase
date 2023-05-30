@@ -326,7 +326,6 @@
                     submitAttr:"qty",
                     required:true,
                     handler:function (table,td,text,value,jsonData) {
-                        debugger
                         let qtys =  jsonData.qtys;
                         console.log(qtys);
                         let qty = (typeof +value === 'number' && !isNaN(value))?value:0;

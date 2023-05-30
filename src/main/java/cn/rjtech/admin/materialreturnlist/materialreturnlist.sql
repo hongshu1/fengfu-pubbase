@@ -81,7 +81,6 @@ SELECT
     t2.Memo,
     t2.MasID,
     t2.spotTicket,
-    t2.Whcode,
     t2.SourceBillDid,
     t2.SourceBillNoRow,
     t2.SourceBillType,
@@ -101,7 +100,9 @@ SELECT
     t1.DeptCode,
     t7.cDepName,
     t1.VenCode,
-    t6.cVenName
+    t6.cVenName,
+    t2.Whcode,
+    t9.cWhName
 FROM
     T_Sys_PUInStoreDetail t2
         LEFT JOIN (
@@ -128,6 +129,7 @@ FROM
     ) t4 ON t2.spotTicket = t4.cbarcode
         LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
+        LEFT JOIN Bd_Warehouse t9 ON t2.Whcode = t9.cWhCode
         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid,
     T_Sys_PUInStore t1
 	left join Bd_Rd_Style t5 on t1.RdCode = t5.cRdCode
@@ -192,7 +194,7 @@ FROM
         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
 WHERE
         t1.AutoID = t2.MasID
-  AND ( SELECT SUM ( Qty ) FROM T_Sys_PUInStoreDetail WHERE t1.AutoID = MasID AND spotTicket = t2.spotTicket ) > 0
+  AND ( SELECT SUM ( Qty ) FROM T_Sys_PUInStoreDetail WHERE  spotTicket = t2.spotTicket ) > 0
   AND t2.Qty > 0
   AND  t1.AutoID = '#(autoid)'
     #if(OrgCode)
@@ -222,6 +224,7 @@ from T_Sys_PUInStore t1
 
 where 1 =1
     AND t2.Qty > 0
+    AND (SELECT SUM(Qty) FROM T_Sys_PUInStoreDetail WHERE spotTicket = t2.spotTicket) > 0
     #if(billno)
         AND t1.billno = #para(billno)
     #end
@@ -247,7 +250,7 @@ GROUP BY
 
 
 #sql("getmaterialLines")
-SELECT (SELECT SUM(Qty) FROM T_Sys_PUInStoreDetail WHERE t1.AutoID = MasID AND spotTicket = t2.spotTicket) AS qtys,
+SELECT (SELECT SUM(Qty) FROM T_Sys_PUInStoreDetail WHERE spotTicket = t2.spotTicket) AS qtys,
        t2.Memo,
        t2.spotTicket,
        t2.SourceBillDid,
@@ -288,8 +291,7 @@ FROM T_Sys_PUInStore t1,
 WHERE
         t1.AutoID = t2.MasID
   AND t1.AutoID = '#(autoid)'
-  AND ISNULL((SELECT SUM (Qty) FROM T_Sys_PUInStoreDetail WHERE t1.AutoID = MasID
-  AND spotTicket =t2.spotTicket ), 0)> 0
+  AND (SELECT SUM (Qty) FROM T_Sys_PUInStoreDetail WHERE  spotTicket =t2.spotTicket )> 0
     #if(OrgCode)
   AND t1.OrganizeCode = #para(OrgCode)
     #end
