@@ -80,7 +80,7 @@ public class EnumTypeService extends BaseService<EnumType> {
 		enumType.setIUpdateBy(userId);
 		enumType.setDUpdateTime(now);
 		enumType.setCUpdateName(userName);
-		enumType.setIsDeleted(false);
+//		enumType.setIsDeleted(false);
 		// 组织信息
 		enumType.setCOrgCode(getOrgCode());
 		enumType.setCOrgName(getOrgName());
@@ -88,7 +88,7 @@ public class EnumTypeService extends BaseService<EnumType> {
 
 		//校验编码是否重复
 		List<EnumType> ifenumtypeid = service.find("SELECT * FROM Bd_EnumType WHERE cEnumTypeCode = ?",enumType.getCEnumTypeCode());
-		if(ifenumtypeid.size()>0){
+		if(!ifenumtypeid.isEmpty()){
 			return fail(JBoltMsg.DATA_SAME_NAME_EXIST);
 		}
 		boolean success = enumType.save();
@@ -104,7 +104,7 @@ public class EnumTypeService extends BaseService<EnumType> {
 	 * @param enumType
 	 * @return
 	 */
-	public Ret update(EnumType enumType) {
+	public Ret update(EnumType enumType,String befenum) {
 		if(enumType==null || notOk(enumType.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
@@ -113,11 +113,15 @@ public class EnumTypeService extends BaseService<EnumType> {
 		if(dbEnumType==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		//if(existsName(enumType.getName(), enumType.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 
+		//关联修改enumvals表字段
+		List<EnumVals> lenumVals = enumValsService.find("SELECT * FROM Bd_EnumVals WHERE iEnumTypeId = ?",befenum);
+		for (int i=0;i<lenumVals.size();i++) {
+			EnumVals enumVals = enumValsService.findById(lenumVals.get(i).getIAutoId());
+			enumVals.setIEnumTypeId(Long.valueOf(enumType.getCEnumTypeCode()));
+			enumVals.update();
 
-//		List<EnumVals> lenumVals = enumValsService.find("SELECT * FROM Bd_EnumVals WHERE iEnumTypeId = ?",befenumtypecode);
-//		for (EnumVals enumVals : lenumVals) {
-//			enumVals.setIEnumTypeId(Long.valueOf(enumType.getCEnumTypeCode()));
-//		}
+		}
+
 
 
 

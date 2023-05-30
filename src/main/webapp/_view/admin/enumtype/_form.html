@@ -1,6 +1,7 @@
 <form onsubmit="return false;" id="EnumType_Form" action="#(action)" method="post">
 	#if(enumType.iAutoId??)
 	<input type="hidden" name="enumType.iAutoId" value="#(enumType.iAutoId??)" />
+	<input type="hidden" name="befn" value="#(enumType.cEnumTypeCode)"/>
 	#end
 <div class="row">
 <div class="col" >

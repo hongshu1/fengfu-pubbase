@@ -10,6 +10,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -29,6 +30,7 @@ import java.util.List;
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/enumType", viewPath = "/_view/admin/enumtype")
 public class EnumTypeAdminController extends BaseAdminController {
+
 
 	@Inject
 	private EnumTypeService service;
@@ -71,7 +73,6 @@ public class EnumTypeAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-//		System.out.println("aaaaaaaaaaa"+enumType.getCEnumTypeCode());
 		set("enumType",enumType);
 		render("edit.html");
 	}
@@ -79,8 +80,9 @@ public class EnumTypeAdminController extends BaseAdminController {
    /**
 	* 更新
 	*/
-	public void update() {
-		renderJson(service.update(getModel(EnumType.class, "enumType")));
+	public void update(@Para("befn")String befn) {
+		//修改前编码
+		renderJson(service.update(getModel(EnumType.class, "enumType"),befn));
 	}
 
    /**
