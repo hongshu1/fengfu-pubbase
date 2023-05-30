@@ -116,12 +116,25 @@ public class QcInspectionApiController extends BaseApiController{
     }
 
 
+    /**
+     * 查询人员和部门
+     *  @param cus        输入人员或者部门搜索
+     * */
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+    public void DepartmentList(@Para(value = "cus") String cus){
+        Kv kv = new Kv();
+        kv.set("cus", cus);
+        renderJBoltApiRet(qcInspectionApiService.DepartmentList(kv));
+    }
+
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
     public void deletes(@Para(value = "iautoid") String iautoid){
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(qcInspectionApiService.deletes(iautoid));
     }
+
 
     /**
      * 上传文件

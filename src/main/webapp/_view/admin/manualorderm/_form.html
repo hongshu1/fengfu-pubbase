@@ -23,48 +23,164 @@
         <div class="card">
             <div class="card-body">
                 <input type="hidden" name="manualOrderM.iOrderStatus" value="#(manualOrderM.iOrderStatus??)" id="iOrderStatus"/>
-                <div class="row">
-                    <div class="form-group row col-6" >
-                        <label class="col-sm-3 col-form-label">客户名称</label>
-
-                        <div class="col-9">
-                            <select class="form-control"
-                                    data-autoload
-                                    data-url="/admin/customer/list"
-                                    data-select-type="select"
-                                    name="manualOrderM.iCustomerId"
-                                    data-refresh="true"
-                                    data-rule="select"
-                                    data-notnull="true"
-                                    data-tips="请选择客户ID"
-                                    data-text="=请选择="
-                                    data-value-attr="iautoid"
-                                    data-text-attr="ccusname"
-                                    data-value=""
-                                    data-select="#(manualOrderM.iCustomerId??)"
-
-                            ></select>
+                <div class="form-group row">
+                            <label class="col-sm-1 col-form-label">订单号</label>
+                            <div class="col">
+                                <input type="text" data-rule="required" data-notnull="true" data-tips="请输入订单号"
+                                       data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                       placeholder="请输入订单号" maxlength="40" name="manualOrderM.cOrderNo"
+                                       value="#(manualOrderM.cOrderNo??)"/>
+                            </div>
+                            <label class="col-sm-1 col-form-label">订单日期</label>
+                            <div class="col">
+                                <input type="text"
+                                       data-rule="required"
+                                       data-date
+                                       autocomplete="off"
+                                       class="form-control"
+                                       disabled
+                                       maxlength="20"
+                                       value="#datetime(manualOrderM.dOrderDate??DateUtil.getNow(),'yyyy-MM-dd')"/>
+                            </div>
+                            <label class="col-sm-1 col-form-label">业务类型</label>
+                            <div class="col">
+                                <select class="form-control"
+                                        name="manualOrderM.iBusType"
+                                        data-autoload
+                                        data-url="admin/dictionary/options?key=iBusType"
+                                        data-value-attr="sn"
+                                        data-text-attr="name"
+                                        data-text="=请选择="
+                                        data-select="#(manualOrderM.iBusType??)">
+                                </select>
+                            </div>
+                            <label class="col-sm-1 col-form-label">销售类型</label>
+                            <div class="col">
+                                <select class="form-control"
+                                        name="manualOrderM.iSaleTypeId"
+                                        data-autoload
+                                        data-url="/admin/saletype/selectData"
+                                        data-value-attr="iautoid"
+                                        data-text-attr="cstname"
+                                        data-text="=请选择="
+                                        data-select="#(manualOrderM.iSaleTypeId??)">
+                                </select>
+                            </div>
                         </div>
+                <div class="form-group row">
+                    <label class="col-sm-1 col-form-label">客户名称</label>
+                    <div class="col">
+                        <select class="form-control"
+                                data-autoload
+                                data-url="/admin/customer/list"
+                                data-select-type="select"
+                                name="manualOrderM.iCustomerId"
+                                data-refresh="true"
+                                data-rule="select"
+                                data-notnull="true"
+                                data-tips="请选择客户ID"
+                                data-text="=请选择="
+                                data-value-attr="iautoid"
+                                data-text-attr="ccusname"
+                                data-value=""
+                                data-select="#(manualOrderM.iCustomerId??)"
+                        ></select>
                     </div>
-                    <div class="form-group row col-6" >
-                        <label class="col-sm-3 col-form-label">订单号</label>
-                        <div class="col-9">
-                            <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入订单号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入订单号" maxlength="40" name="manualOrderM.cOrderNo" value="#(manualOrderM.cOrderNo??)"/>
-                        </div>
+                    <label class="col-sm-1 col-form-label">付款条件</label>
+                    <div class="col">
+                        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                               placeholder="请输入付款条件" maxlength="100" name="manualOrderM.cPaymentTerm"
+                               value="#(manualOrderM.cPaymentTerm??)"/>
                     </div>
-                    <div class="form-group row col-6" >
-                        <label class="col-sm-3 col-form-label">年份</label>
-                        <div class="col-9">
-                            <input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入年份" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入年份" maxlength="20" name="manualOrderM.iYear"    value="#datetime(manualOrderM.iYear??,'yyyy')"/>
-                        </div>
+                    <label class="col-sm-1 col-form-label">销售部门</label>
+                    <div class="col">
+                        <select class="form-control" name="manualOrderM.iDepartmentId"
+                                data-autoload
+                                data-with-clearbtn="true"
+                                data-select-type="select2"
+                                data-tips="请选择"
+                                data-url="admin/dept/enableOptions"
+                                data-text="=请选择="
+                                data-text-attr="name"
+                                data-value-attr="id"
+                                data-width="218"
+                                data-select="#(manualOrderM.iDepartmentId??)">
+                        </select>
                     </div>
-                    <div class="form-group row col-6" >
-                        <label class="col-sm-3 col-form-label">月份</label>
-                        <div class="col-9">
-                            <input type="text" data-date data-type="month" data-with-clearbtn="true" data-fmt="MM" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入月份" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入月份" maxlength="20" name="manualOrderM.iMonth"    value="#datetime(manualOrderM.iMonth??,'MM')"/>
-                        </div>
+                    <label class="col-sm-1 col-form-label">业务员</label>
+                    <input type="hidden" name="manualOrderM.iBusPersonId"
+                           value="#(manualOrderM.iBusPersonId??)" id="ipersonid_#(pageId)"
+                           data-value-attr="id"/>
+                    <div class="col">
+                        <input type="text" autocomplete="off"
+                               class="form-control"
+                               placeholder="==请选择人员=="
+                               data-jboltinput
+                               data-width="600"
+                               data-height="450"
+                               data-refresh="true"
+                               data-hidden-input="ipersonid_#(pageId)"
+                               data-load-type="ajaxportal"
+                               data-url="admin/workregionm/personTable"
+                               value="#(manualOrderM.cpsnname??)"
+                        />
                     </div>
-            </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-1 col-form-label">税率</label>
+                    <div class="col">
+                        <input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false"
+                               autocomplete="off" class="form-control" placeholder="请输入税率" maxlength="6"
+                               name="manualOrderM.iTaxRate"
+                               value="#(manualOrderM.iTaxRate??)"/>
+                    </div>
+                    <label class="col-sm-1 col-form-label">币种</label>
+                    <div class="col">
+                        <select class="form-control"
+                                name="manualOrderM.cCurrency"
+                                data-autoload
+                                data-url="admin/dictionary/options?key=cCurrency"
+                                data-value-attr="sn"
+                                data-text-attr="name"
+                                data-text="=请选择="
+                                data-select="#(manualOrderM.cCurrency??)">
+                        </select>
+                    </div>
+                    <label class="col-sm-1 col-form-label">汇率</label>
+                    <div class="col">
+                        <input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false"
+                               autocomplete="off" class="form-control" placeholder="请输入汇率" maxlength="10"
+                               name="manualOrderM.iExchangeRate"
+                               value="#(manualOrderM.iExchangeRate??)"/>
+                    </div>
+                    <label class="col-sm-1 col-form-label">备注</label>
+                    <div class="col">
+                                <textarea class="form-control" style="height:80px" placeholder="请输入备注" data-tips="请输入备注"
+                                          maxlength="200" name="manualOrderM.cMemo">#(manualOrderM.cMemo??)</textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-1 col-form-label">年份</label>
+                    <div class="col-2">
+                        <input type="text"
+                               data-rule="required"
+                               data-date
+                               data-type="year"
+                               data-fmt="yyyy"
+                               autocomplete="off"
+                               class="form-control"
+                               maxlength="20"
+                               name="manualOrderM.iYear"
+                               value="#datetime(manualOrderM.iYear??DateUtil.getNow(),'yyyy')"/>
+                    </div>
+                    <label class="col-sm-1 col-form-label">月份</label>
+                    <div class="col-2">
+                        <input type="text" data-date data-type="month" data-with-clearbtn="true" data-fmt="MM"
+                               readonly="readonly" data-rule="required" data-notnull="true" data-tips="请输入月份"
+                               data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入月份"
+                               maxlength="20" name="manualOrderM.iMonth" value="#datetime(manualOrderM.iMonth??DateUtil.getNow(),'MM')"/>
+                    </div>
+                </div>
         </div>
     </div>
 

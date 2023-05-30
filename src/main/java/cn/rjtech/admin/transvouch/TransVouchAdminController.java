@@ -174,4 +174,12 @@ public class TransVouchAdminController extends BaseAdminController {
 	}
 
 
+	/**
+	 * 转出仓库
+	 */
+	public void warehouse() {
+		renderJsonData(service.warehouse(getKv()));
+	}
+
+
 }
