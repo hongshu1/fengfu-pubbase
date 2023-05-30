@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -23,8 +22,6 @@ public abstract class BaseFormField<M extends BaseFormField<M>> extends JBoltBas
     public static final String CFIELDTYPESN = "cFieldTypeSn";
     /**是否导入字段：0. 否 1. 是*/
     public static final String ISIMPORTFIELD = "isImportField";
-    /**删除状态：0. 未删除 1. 已删除*/
-    public static final String ISDELETED = "isDeleted";
 	/**
 	 * 主键ID
 	 */
@@ -125,23 +122,6 @@ public abstract class BaseFormField<M extends BaseFormField<M>> extends JBoltBas
 	@JSONField(name = "isimportfield")
 	public java.lang.Boolean getIsImportField() {
 		return getBoolean("isImportField");
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	public M setIsDeleted(java.lang.Boolean isDeleted) {
-		set("isDeleted", isDeleted);
-		return (M)this;
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=7)
-	@JSONField(name = "isdeleted")
-	public java.lang.Boolean getIsDeleted() {
-		return getBoolean("isDeleted");
 	}
 
 }

@@ -23,7 +23,7 @@ import java.util.List;
  * @date: 2023-04-29 20:18
  */
 public class FormFieldService extends BaseService<FormField> {
-    
+
     private final FormField dao = new FormField().dao();
 
     @Override
@@ -41,28 +41,27 @@ public class FormFieldService extends BaseService<FormField> {
      *
      * @param pageNumber    第几页
      * @param pageSize      每页几条数据
-     * @param iformid
+     * @param iformid       表单ID
      * @param keywords      关键词
      * @param cFieldTypeSn  字段类型
      * @param isImportField 是否导入字段
-     * @param isDeleted     删除状态
      */
-    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Long iformid, String keywords, String cFieldTypeSn, Boolean isImportField, Boolean isDeleted) {
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Long iformid, String keywords, String cFieldTypeSn, Boolean isImportField) {
         // 创建sql对象
         Sql sql = selectSql().page(pageNumber, pageSize);
 
         sql.eq(FormField.IFORMID, iformid);
-        
-        //sql条件处理
+
+        // sql条件处理
         sql.eq("cFieldTypeSn", cFieldTypeSn);
         sql.eqBooleanToChar("isImportField", isImportField);
-        sql.eqBooleanToChar("isDeleted", isDeleted);
-        
-        //关键词模糊查询
+
+        // 关键词模糊查询
         sql.like("cFieldName", keywords);
-        
-        //排序
+
+        // 排序
         sql.desc("iAutoId");
+
         Page<Record> page = paginateRecord(sql);
         if (CollUtil.isNotEmpty(page.getList())) {
             for (Record row : page.getList()) {
@@ -83,7 +82,7 @@ public class FormFieldService extends BaseService<FormField> {
         boolean success = formField.save();
         if (success) {
             //添加日志
-            //addSaveSystemLog(formField.getIAutoId(), JBoltUserKit.getUserId(), formField.getName());
+            //addSaveSystemLog(formField.getIAutoId(), JBoltUserKit.getUserId(), formField.getName())
         }
         return ret(success);
     }
@@ -104,7 +103,7 @@ public class FormFieldService extends BaseService<FormField> {
         boolean success = formField.update();
         if (success) {
             //添加日志
-            //addUpdateSystemLog(formField.getIAutoId(), JBoltUserKit.getUserId(), formField.getName());
+            //addUpdateSystemLog(formField.getIAutoId(), JBoltUserKit.getUserId(), formField.getName())
         }
         return ret(success);
     }
@@ -117,7 +116,7 @@ public class FormFieldService extends BaseService<FormField> {
      */
     @Override
     protected String afterDelete(FormField formField, Kv kv) {
-        //addDeleteSystemLog(formField.getIAutoId(), JBoltUserKit.getUserId(),formField.getName());
+        // addDeleteSystemLog(formField.getIAutoId(), JBoltUserKit.getUserId(),formField.getName())
         return null;
     }
 
@@ -138,7 +137,7 @@ public class FormFieldService extends BaseService<FormField> {
      */
     @Override
     protected String afterToggleBoolean(FormField formField, String column, Kv kv) {
-        //addUpdateSystemLog(formField.getIAutoId(), JBoltUserKit.getUserId(), formField.getName(),"的字段["+column+"]值:"+formField.get(column));
+        // addUpdateSystemLog(formField.getIAutoId(), JBoltUserKit.getUserId(), formField.getName(),"的字段["+column+"]值:"+formField.get(column))
         /*
          switch(column){
          case "isImportField":
@@ -150,7 +149,6 @@ public class FormFieldService extends BaseService<FormField> {
 
     public List<Record> getAutocompleteList(long iformid, String isimportfield, String keywords, Integer limit) {
         Sql sql = selectSql()
-                .eq(FormField.ISDELETED, ZERO_STR)
                 .eq(FormField.IFORMID, iformid)
                 .eq(FormField.ISIMPORTFIELD, isimportfield)
                 .likeMulti(keywords, FormField.CFIELDCODE, FormField.CFIELDNAME)
@@ -158,5 +156,9 @@ public class FormFieldService extends BaseService<FormField> {
 
         return findRecord(sql);
     }
-    
+
+    public boolean notExists(Long iformid) {
+        return null == queryInt("SELECT TOP 1 1 FROM Bd_FormField WHERE iformid = ? ", iformid);
+    }
+
 }

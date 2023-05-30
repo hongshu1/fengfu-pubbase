@@ -13,15 +13,15 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.util.JBoltListMap;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingdcodingrule.CusfieldsmappingdCodingruleService;
+import cn.rjtech.admin.cusfieldsmappingform.CusfieldsmappingFormService;
 import cn.rjtech.admin.cusfieldsmappingm.CusFieldsMappingMService;
+import cn.rjtech.admin.form.FormService;
 import cn.rjtech.admin.formfield.FormFieldService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.CusFieldsMappingRuleEnum;
 import cn.rjtech.enums.CusfieldsMappingCharEnum;
 import cn.rjtech.enums.SeparatorCharEnum;
-import cn.rjtech.model.momdata.CusFieldsMappingD;
-import cn.rjtech.model.momdata.CusFieldsMappingM;
-import cn.rjtech.model.momdata.CusfieldsmappingdCodingrule;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.AutoExcelUtil;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -53,9 +53,13 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
     private final CusFieldsMappingD dao = new CusFieldsMappingD().dao();
 
     @Inject
+    private FormService formService;
+    @Inject
     private FormFieldService formFieldService;
     @Inject
     private CusFieldsMappingMService cusFieldsMappingMService;
+    @Inject
+    private CusfieldsmappingFormService cusfieldsmappingFormService;
     @Inject
     private CusfieldsmappingdCodingruleService cusfieldsmappingdCodingruleService;
 
@@ -321,36 +325,67 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
     }
 
     /**
-     * 导入映射
+     * 根据上传的文件及导入格式名
+     *
+     * @param file      上传的文件
+     * @param tableName 表名
+     * @return 导入的数据
      */
-    public Ret getImportDatas(File file, String cformatname) {
-        // 根据指定的模板名，获取导入的字段
-        CusFieldsMappingM m = cusFieldsMappingMService.findByCformatName(cformatname);
-        ValidationUtils.notNull(m, "导入模板不存在");
-        ValidationUtils.isTrue(!m.getIsDeleted(), "导入模板已被删除");
+    public List<Record> getImportRecordsByTableName(File file, String tableName) {
+        Form form = formService.findByCformSn(tableName);
+        ValidationUtils.notNull(form, "表单不存在");
 
+        CusfieldsmappingForm cusfieldsmappingForm = cusfieldsmappingFormService.findFirstByIformId(form.getIAutoId());
+        ValidationUtils.notNull(cusfieldsmappingForm, "导入配置记录不存在");
+
+        CusFieldsMappingM cusFieldsMappingM = cusFieldsMappingMService.findById(cusfieldsmappingForm.getICusFieldMappingMid());
+
+        return getImportRecords(file, cusFieldsMappingM);
+    }
+
+    /**
+     * 根据上传的文件及导入格式名
+     *
+     * @param file        上传的文件
+     * @param cusFieldsMappingM 格式名
+     * @return 导入的数据
+     */
+    public List<Record> getImportRecords(File file, CusFieldsMappingM cusFieldsMappingM) {
+        List<Map<String, Object>> rowDatas = getImportDataMaps(file, cusFieldsMappingM);
+
+        List<Record> rows = new ArrayList<>();
+        for (Map<String, Object> row : rowDatas) {
+            rows.add(new Record().setColumns(row));
+        }
+        return rows;
+    }
+
+    /**
+     * 获取导入的数据
+     */
+    public List<Map<String, Object>> getImportDataMaps(File file, CusFieldsMappingM cusFieldsMappingM) {
         // 获取导入字段列表
-        List<CusFieldsMappingD> cusFieldsMappingDs = findByIcusFieldsMappingMid(m.getIAutoId());
+        List<CusFieldsMappingD> cusFieldsMappingDs = findByIcusFieldsMappingMid(cusFieldsMappingM.getIAutoId());
         ValidationUtils.notEmpty(cusFieldsMappingDs, "导入字段列表未定义");
 
         List<ImportPara> importParas = new ArrayList<ImportPara>() {{
             add(new ImportPara(0, genFieldSettings(cusFieldsMappingDs), 1, 2));
         }};
-        
+
         DataSet dataSet = AutoExcelUtil.readExcel(file.getAbsolutePath(), importParas);
-        
+
         Set<String> set = dataSet.getSheets();
         ValidationUtils.isTrue(set.size() == 1, "导入Excel的工作簿只能定义一个");
 
         String sheet = set.iterator().next();
 
         List<Map<String, Object>> rows = dataSet.get(sheet);
-        
+
         ValidationUtils.notEmpty(rows, String.format("Excel工作簿 “%s”，导入数据不能为空", sheet));
 
         // 编码规则
         JBoltListMap<String, CusfieldsmappingdCodingrule> ruleMap = new JBoltListMap<>();
-        
+
         // 检查是否存在编码转换的字段
         for (CusFieldsMappingD cusFieldsMappingD : cusFieldsMappingDs) {
             // 编码字段
@@ -366,17 +401,17 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         }
 
         List<Map<String, Object>> rowDatas = new ArrayList<>();
-        
+
         // 处理空行数据
         for (Map<String, Object> rowData : rows) {
             // 移除null的所有键值对
             MapUtil.removeNullValue(rowData);
-            
+
             if (MapUtil.isNotEmpty(rowData)) {
                 rowDatas.add(rowData);
             }
         }
-        
+
         if (CollUtil.isNotEmpty(ruleMap)) {
             // 转换编码字段
             for (Map<String, Object> row : rowDatas) {
@@ -416,6 +451,19 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
                 }
             }
         }
+        return rowDatas;
+    }
+
+    /**
+     * 导入映射
+     */
+    public Ret getImportDatas(File file, String cformatname) {
+        // 根据指定的模板名，获取导入的字段
+        CusFieldsMappingM m = cusFieldsMappingMService.findByCformatName(cformatname);
+        ValidationUtils.notNull(m, "导入模板不存在");
+        ValidationUtils.isTrue(!m.getIsDeleted(), "导入模板已被删除");
+        
+        List<Map<String, Object>> rowDatas = getImportDataMaps(file, m);
 
         return successWithData(rowDatas);
     }
@@ -437,9 +485,9 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         // 定制字段类型处理
         // -------------------------------------
         CusFieldsMappingD lastCusFieldsMappingD = cusFieldsMappingDs.get(cusFieldsMappingDs.size() - 1);
-        
+
         CusFieldsMappingRuleEnum ruleType = CusFieldsMappingRuleEnum.toEnum(lastCusFieldsMappingD.getIRuleType());
-        
+
         switch (ruleType) {
             case NONE:
             default:
@@ -460,12 +508,12 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
                 }
                 break;
         }
-        
+
         return fieldSettings;
     }
 
     private List<CusFieldsMappingD> findByIcusFieldsMappingMid(long iCusFieldsMappingMid) {
         return find(selectSql().eq(CusFieldsMappingD.ICUSFIELDSMAPPINGMID, iCusFieldsMappingMid).asc("iseq"));
     }
-    
+
 }
