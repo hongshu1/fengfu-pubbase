@@ -320,6 +320,20 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
     public static final String IS_CACHE_GET_BY_SN = "is_cache_get_by_sn";
     /**模型名称*/
     public static final String MODEL_TITLE = "model_title";
+    /**是否生成options接口*/
+    public static final String IS_GEN_OPTIONS_ACTION = "is_gen_options_action";
+    /**是否返回Option类型*/
+    public static final String IS_RETURN_OPTION_TYPE = "is_return_option_type";
+    /**options接口text用哪一列*/
+    public static final String OPTIONS_TEXT_COLUMN = "options_text_column";
+    /**options接口value用哪一列*/
+    public static final String OPTIONS_VALUE_COLUMN = "options_value_column";
+    /**是否生成Autocomplete接口*/
+    public static final String IS_GEN_AUTOCOMPLETE_ACTION = "is_gen_autocomplete_action";
+    /**autocomplete接口limit*/
+    public static final String AUTOCOMPLETE_LIMIT = "autocomplete_limit";
+    /**autocomplete接口匹配字段*/
+    public static final String AUTOCOMPLETE_MATCH_COLUMNS = "autocomplete_match_columns";
 	/**
 	 * 主键ID
 	 */
@@ -2805,6 +2819,118 @@ public abstract class BaseCodeGen<M extends BaseCodeGen<M>> extends JBoltBaseMod
 	@JBoltField(name="modelTitle" ,columnName="model_title",type="String", remark="模型名称", required=false, maxLength=40, fixed=0, order=155)
 	public java.lang.String getModelTitle() {
 		return getStr("model_title");
+	}
+
+	/**
+	 * 是否生成options接口
+	 */
+	public M setIsGenOptionsAction(java.lang.Boolean isGenOptionsAction) {
+		set("is_gen_options_action", isGenOptionsAction);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生成options接口
+	 */
+	@JBoltField(name="isGenOptionsAction" ,columnName="is_gen_options_action",type="Boolean", remark="是否生成options接口", required=true, maxLength=1, fixed=0, order=156)
+	public java.lang.Boolean getIsGenOptionsAction() {
+		return getBoolean("is_gen_options_action");
+	}
+
+	/**
+	 * 是否返回Option类型
+	 */
+	public M setIsReturnOptionType(java.lang.Boolean isReturnOptionType) {
+		set("is_return_option_type", isReturnOptionType);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否返回Option类型
+	 */
+	@JBoltField(name="isReturnOptionType" ,columnName="is_return_option_type",type="Boolean", remark="是否返回Option类型", required=false, maxLength=1, fixed=0, order=157)
+	public java.lang.Boolean getIsReturnOptionType() {
+		return getBoolean("is_return_option_type");
+	}
+
+	/**
+	 * options接口text用哪一列
+	 */
+	public M setOptionsTextColumn(java.lang.String optionsTextColumn) {
+		set("options_text_column", optionsTextColumn);
+		return (M)this;
+	}
+	
+	/**
+	 * options接口text用哪一列
+	 */
+	@JBoltField(name="optionsTextColumn" ,columnName="options_text_column",type="String", remark="options接口text用哪一列", required=false, maxLength=40, fixed=0, order=158)
+	public java.lang.String getOptionsTextColumn() {
+		return getStr("options_text_column");
+	}
+
+	/**
+	 * options接口value用哪一列
+	 */
+	public M setOptionsValueColumn(java.lang.String optionsValueColumn) {
+		set("options_value_column", optionsValueColumn);
+		return (M)this;
+	}
+	
+	/**
+	 * options接口value用哪一列
+	 */
+	@JBoltField(name="optionsValueColumn" ,columnName="options_value_column",type="String", remark="options接口value用哪一列", required=false, maxLength=40, fixed=0, order=159)
+	public java.lang.String getOptionsValueColumn() {
+		return getStr("options_value_column");
+	}
+
+	/**
+	 * 是否生成Autocomplete接口
+	 */
+	public M setIsGenAutocompleteAction(java.lang.Boolean isGenAutocompleteAction) {
+		set("is_gen_autocomplete_action", isGenAutocompleteAction);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否生成Autocomplete接口
+	 */
+	@JBoltField(name="isGenAutocompleteAction" ,columnName="is_gen_autocomplete_action",type="Boolean", remark="是否生成Autocomplete接口", required=true, maxLength=1, fixed=0, order=160)
+	public java.lang.Boolean getIsGenAutocompleteAction() {
+		return getBoolean("is_gen_autocomplete_action");
+	}
+
+	/**
+	 * autocomplete接口limit
+	 */
+	public M setAutocompleteLimit(java.lang.Integer autocompleteLimit) {
+		set("autocomplete_limit", autocompleteLimit);
+		return (M)this;
+	}
+	
+	/**
+	 * autocomplete接口limit
+	 */
+	@JBoltField(name="autocompleteLimit" ,columnName="autocomplete_limit",type="Integer", remark="autocomplete接口limit", required=true, maxLength=10, fixed=0, order=161)
+	public java.lang.Integer getAutocompleteLimit() {
+		return getInt("autocomplete_limit");
+	}
+
+	/**
+	 * autocomplete接口匹配字段
+	 */
+	public M setAutocompleteMatchColumns(java.lang.String autocompleteMatchColumns) {
+		set("autocomplete_match_columns", autocompleteMatchColumns);
+		return (M)this;
+	}
+	
+	/**
+	 * autocomplete接口匹配字段
+	 */
+	@JBoltField(name="autocompleteMatchColumns" ,columnName="autocomplete_match_columns",type="String", remark="autocomplete接口匹配字段", required=false, maxLength=255, fixed=0, order=162)
+	public java.lang.String getAutocompleteMatchColumns() {
+		return getStr("autocomplete_match_columns");
 	}
 
 }
