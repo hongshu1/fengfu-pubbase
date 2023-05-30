@@ -13,11 +13,14 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.ManualOrderStatusEnum;
 import cn.rjtech.model.momdata.ManualOrderM;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
 
@@ -80,12 +83,10 @@ public class ManualOrderMAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        ManualOrderM manualOrderM = service.findById(getLong(0));
-        if (manualOrderM == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        set("manualOrderM", manualOrderM);
+        Page<Record> datas = service.getAdminDatas(1, 1, Kv.by("iAutoId", getLong(0)));
+        ValidationUtils.notNull(datas, JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.isTrue(datas.getList().size() > 0, JBoltMsg.DATA_NOT_EXIST);
+        set("manualOrderM", datas.getList().get(0));
         render("edit.html");
     }
 
@@ -141,12 +142,10 @@ public class ManualOrderMAdminController extends BaseAdminController {
      * 查看
      */
     public void info() {
-        ManualOrderM manualOrderM = service.findById(getLong(0));
-        if (manualOrderM == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        set("manualOrderM", manualOrderM);
+        Page<Record> datas = service.getAdminDatas(1, 1, Kv.by("iAutoId", getLong(0)));
+        ValidationUtils.notNull(datas, JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.isTrue(datas.getList().size() > 0, JBoltMsg.DATA_NOT_EXIST);
+        set("manualOrderM", datas.getList().get(0));
         set("view", 1);
         render("edit.html");
     }
