@@ -107,7 +107,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
         Date date = new Date();
         manualOrderM.setDCreateTime(date);
         manualOrderM.setDUpdateTime(date);
-        manualOrderM.setdOrderDate(date);
+        manualOrderM.setDOrderDate(date);
         return manualOrderM;
     }
 

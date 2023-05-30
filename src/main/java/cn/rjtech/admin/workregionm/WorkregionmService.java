@@ -13,7 +13,9 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.datapermission.DataPermissionService;
+import cn.rjtech.model.momdata.CusFieldsMappingD;
 import cn.rjtech.model.momdata.Workregionm;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -40,10 +42,11 @@ import static cn.hutool.core.text.StrPool.COMMA;
 public class WorkregionmService extends BaseService<Workregionm> {
 
     private final Workregionm dao = new Workregionm().dao();
+    
     @Inject
     private DataPermissionService dataPermissionService;
-    
-
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingDService;
 
     @Override
     protected Workregionm dao() {
@@ -221,6 +224,15 @@ public class WorkregionmService extends BaseService<Workregionm> {
         return dbTemplate("workregionm.list", kv).find();
     }
 
+    /**
+     * 从系统导入字段配置，获得导入的数据
+     */
+    public Ret importExcel(File file) {
+        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+
+        return SUCCESS;
+    }
+    
     public Ret importExcelData(File file) {
         StringBuilder errorMsg = new StringBuilder();
         JBoltExcel jBoltExcel = JBoltExcel
