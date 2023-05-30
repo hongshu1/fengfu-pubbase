@@ -2,6 +2,7 @@ package cn.rjtech.admin.modoc;
 
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
 import cn.rjtech.admin.inventoryroutingequipment.InventoryRoutingEquipmentService;
@@ -25,6 +26,8 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 
 import com.jfinal.plugin.activerecord.Record;
+import com.sun.jna.platform.win32.WinDef;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
@@ -66,6 +69,8 @@ public class MoDocAdminController extends BaseAdminController {
 
 	@Inject
 	private MoMoroutingService moMoroutingService; //工艺路线
+	@Inject
+	private DepartmentService departmentService;
 
 
 	/**
@@ -382,23 +387,32 @@ public class MoDocAdminController extends BaseAdminController {
 	 * 特殊领料界面
 	 */
        public void  othermaterialindex(){
-		set("imdocid",getLong("imdocid"));
+		set("imodocid",getLong("imodocid"));
 		render("other_dialog_index.html");
 	   }
 	/**
 	 * 特殊领料界面-新增
 	 */
 	public void  othermaterialadd(){
+		 Long imodocid=getLong("imodocid");
 		OtherOut otherOut = new OtherOut();
 		String billNo = BillNoUtils.getcDocNo(getOrgId(), "LLD", 5);
 		Date nowDate = new Date();
 		otherOut.setBillNo(billNo);
+		MoDoc modoc=service.findById(imodocid);
+		if(modoc!=null) {
+			Department department=departmentService.findById(modoc.getIDepartmentId());
+			if(department!=null) {
+				otherOut.setSourceBillDid(String.valueOf(imodocid));
+				otherOut.setDeptCode(department.getCDepCode());
+			}
+		}
 		otherOut.setBillDate(nowDate);
 		otherOut.setSourceBillType("生产工单");
 		otherOut.setType("OtherOutMES");
 		set("otherOut",otherOut);
 
-		set("imdocid",getLong("imdocid"));
+		//set("imdocid",getLong("imdocid"));
 		render("other_dialog_add.html");
 	}
 	/**

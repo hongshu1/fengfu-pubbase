@@ -14,8 +14,9 @@
   <div class="row">
     <div class="col">
       <form class="form-inline" onsubmit="return false;" id="stockForm" action="#(action)" method="post">
-        <input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" name="" value=""/>
-        <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 搜索</button>
+        <input type="hidden" id="iModocId" value="#(moMaterialscanusedlogm.imodocid??)">
+        <input type="text" id="barcode" autocomplete="off" class="form-control" placeholder="=现品票=" name="" value=""/>
+        <button id="serarch()" type="submit" class="btn btn-light"><i class="fa fa-search"></i>搜索</button>
       </form>
     </div>
   </div>
@@ -87,6 +88,15 @@
 #include("tockchekvouchForm.html")
 #define js()
 <script>
+  function serarch(){
+      var barcode=$("#barcode").val();
+      var imodocid=$("#imodocid").val();
+      Ajax.post("admin/momaterialscanusedlog/addBarcode?barcode="+barcode+"imodocid="+imodocid,function(res){
+          LayerMsgBox.success("操作成功",500,function(){
+              refreshJBoltTable();
+          });
+      });
+  }
   function submitThisForm() {
     jboltTableSubmit('#jbolt_table_#(pageId)');
   }
