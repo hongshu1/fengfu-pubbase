@@ -29,21 +29,24 @@
 		#end
 		<div class="form-group row">
 			<label class="col-form-label col-sm-2">上级科目</label>
-			<div class="col-md-6 col-lg-4 col-sm-10">
+			<div class="col">
+				<input type="text" autocomplete="off"  class="form-control" readonly="readonly" maxlength="30" name="csubjectname" value="#(csubjectname??)"/>
+			</div>
+<!-- 			<div class="col-md-6 col-lg-4 col-sm-10">
 				<select  data-refresh="true"
 						 data-live-search="true"
 						 readonly="readonly"
 						 class="form-control"
 						 name="csubjectname"
 						 data-text="=上级科目="
-						 data-value=" "
-						 data-select="#(csubjectname?? )"
+						 data-value="#(csubjectname??)"
+						 ###data-select="#(csubjectname??)"
 						 data-autoload
 						 data-text-attr="csubjectname"
 						 data-value-attr="csubjectname"
 						 data-url="admin/subjectm/options"></select>
 
-			</div>
+			</div> -->
 
 			<div class="col-auto">
 				<a hidden class="btn btn-danger btn-sm mt-1" data-openpage="dialog" data-target="parent" data-area="1080,750" href="admin/subjectm/add" tooltip data-title="添加新上级资源"><i class="fa fa-plus"></i></a>
@@ -109,7 +112,7 @@
 		<div class="form-group row"
 			 data-radio
 			 data-rule="radio"
-			 data-value="#(subjectm.isend??)"
+			 data-value="#(subjectm.isend??'0' == '0'? 'false' : 'true')"
 			 data-name="subjectm.isend"
 			 data-default="options_first"
 			 data-width="col-sm-2,col"

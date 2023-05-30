@@ -230,7 +230,7 @@ public class FormService extends BaseService<Form> {
         ValidationUtils.isTrue(!form.getIsDeleted(), JBoltMsg.DATA_NOT_EXIST);
         ValidationUtils.isTrue(formFieldService.notExists(iautoid), "表单已存在字段，若要重新生成，请清空后再生成");
 
-        TableMeta tableMeta = JBoltTableMetaUtil.getTableMeta(dataSourceConfigName(), dbType(), table(), false);
+        TableMeta tableMeta = JBoltTableMetaUtil.getTableMeta(dataSourceConfigName(), dbType(), form.getCFormCode(), false);
         ValidationUtils.notNull(tableMeta, "获取数据表元数据失败");
 
         List<ColumnMeta> columnMetas = tableMeta.columnMetas;
@@ -311,4 +311,9 @@ public class FormService extends BaseService<Form> {
         return SUCCESS;
     }
 
+    public Form findByCformSn(String tableName) {
+        Sql sql = selectSql().eq(Form.CFORMCODE, tableName).eq(Form.ISDELETED, ZERO_STR).first();
+        return findFirst(sql);
+    }
+    
 }

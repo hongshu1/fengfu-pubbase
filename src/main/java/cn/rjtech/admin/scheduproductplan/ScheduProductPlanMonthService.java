@@ -1141,10 +1141,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     dataMap.put("zaiku",record.getBigDecimal("iQty5"));
                     dataMap.put("tianshu",record.getBigDecimal("iQty6"));
                     dataMap.put("date",date);
-                    dataMap.put("lock",false);
+                    dataMap.put("lock",true);
 
                     if (DateUtils.parseDate(date).getTime() <= lockPreDate.getTime()){
-                        dataMap.put("lock",true);
+                        dataMap.put("lock",false);
                     }
                     objectList.add(dataMap);
                 }
