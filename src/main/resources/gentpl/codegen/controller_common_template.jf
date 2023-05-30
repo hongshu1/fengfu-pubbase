@@ -88,8 +88,8 @@
 	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
 	#end
-	public void save() {
-		renderJson(service.save(getModel(#(codeGen.modelName).class, "#(firstCharToLowerCase(codeGen.modelName))")));
+	public void save(@Para("#(firstCharToLowerCase(codeGen.modelName))")#(codeGen.modelName) #(firstCharToLowerCase(codeGen.modelName))) {
+		renderJson(service.save(#(firstCharToLowerCase(codeGen.modelName))));
 	}
 #end
 
@@ -100,8 +100,8 @@
 	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
 	#end
-	public void update() {
-		renderJson(service.update(getModel(#(codeGen.modelName).class, "#(firstCharToLowerCase(codeGen.modelName))")));
+	public void update(@Para("#(firstCharToLowerCase(codeGen.modelName))")#(codeGen.modelName) #(firstCharToLowerCase(codeGen.modelName))) {
+		renderJson(service.update(#(firstCharToLowerCase(codeGen.modelName))));
 	}
 #end
 
@@ -382,12 +382,62 @@
 #end
 
 
-#define c_options(modelName)
+#define c_options(hasEnable,hasIsDeleted)
    /**
-	* 得到树形结构数据
+	* 得到select radio checkbox专用options数据
 	*/
 	public void options() {
-		renderJson(service.getOptionList());
+	#if(codeGen.isReturnOptionType??)
+	    #if(codeGen.optionsTextColumn?? && codeGen.optionsValueColumn??)
+	        #if(hasEnable && hasIsDeleted)
+       renderJson(service.getOptionList("#(codeGen.optionsTextColumn??)","#(codeGen.optionsValueColumn??)",true,false));
+            #else if(hasEnable && !hasIsDeleted)
+       renderJson(service.getOptionListEnable("#(codeGen.optionsTextColumn??)","#(codeGen.optionsValueColumn??)"));
+            #else if(!hasEnable && hasIsDeleted)
+       renderJson(service.getOptionListIsDeletedFalse("#(codeGen.optionsTextColumn??)","#(codeGen.optionsValueColumn??)"));
+            #else
+       renderJson(service.getOptionList("#(codeGen.optionsTextColumn??)","#(codeGen.optionsValueColumn??)"));
+            #end
+	    #else
+	        #if(hasEnable && hasIsDeleted)
+       renderJson(service.getOptionList("name","id",true,false));
+            #else if(hasEnable && !hasIsDeleted)
+       renderJson(service.getOptionListEnable("name","id"));
+            #else if(!hasEnable && hasIsDeleted)
+       renderJson(service.getOptionListIsDeletedFalse("name","id"));
+            #else
+       renderJson(service.getOptionList("name","id"));
+            #end
+	    #end
+	#else
+	    #if(hasEnable && hasIsDeleted)
+	    renderJson(service.findAll(true,false));
+	    #else if(hasEnable && !hasIsDeleted)
+	    renderJson(service.findAllEnable());
+	    #else if(!hasEnable && hasIsDeleted)
+	    renderJson(service.findAllIsDeletedFalse());
+	    #else
+	    renderJson(service.findAll());
+	    #end
+	#end
+	}
+#end
+
+#define c_autocompleteDatas(hasEnable,hasIsDeleted)
+   /**
+	* autocomplete组件专用数据
+	*/
+	public void autocompleteDatas() {
+        #if(hasEnable && hasIsDeleted)
+        renderJsonData(service.getAutocompleteList(get("q"), getInt("limit",#(codeGen.autocompleteLimit?? 20)),true,"#(codeGen.autocompleteMatchColumns??)",service.selectSql().enableEq(true).isDeletedEq(false)));
+        #else if(hasEnable && !hasIsDeleted)
+        renderJsonData(service.getAutocompleteList(get("q"), getInt("limit",#(codeGen.autocompleteLimit?? 20)),true,"#(codeGen.autocompleteMatchColumns??)",service.selectSql().enableEq(true)));
+        #else if(!hasEnable && hasIsDeleted)
+        renderJsonData(service.getAutocompleteList(get("q"), getInt("limit",#(codeGen.autocompleteLimit?? 20)),true,"#(codeGen.autocompleteMatchColumns??)",service.selectSql().isDeletedEq(false)));
+        #else
+        renderJsonData(service.getAutocompleteList(get("q"), getInt("limit",#(codeGen.autocompleteLimit?? 20)),true,"#(codeGen.autocompleteMatchColumns??)"));
+        #end
+
 	}
 #end
 
@@ -484,7 +534,9 @@
 		#case("tree")
 			#@c_tree()
 		#case("options")
-			#@c_options()
+			#@c_options(method.hasEnableColumn,method.hasIsDeletedColumn)
+        #case("autocompleteDatas")
+            #@c_autocompleteDatas(method.hasEnableColumn,method.hasIsDeletedColumn)
 		#default
 			#@c_genOtherMethod(method)
 	#end

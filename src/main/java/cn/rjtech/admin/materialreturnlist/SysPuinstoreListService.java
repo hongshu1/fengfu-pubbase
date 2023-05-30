@@ -278,7 +278,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					save(puinstore);
 					headerId = puinstore.getAutoID();
 				}else {
-					if ( param == "2" ){
+					Integer  a = Integer.valueOf(param);
+					if ( a  == 2){
 						puinstore.setAuditDate(nowDate);
 						puinstore.setAuditPerson(userName);
 					}
@@ -503,6 +504,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 	public Ret pushU8(String id) {
 		List<Record> list = findRecord("select " + "t1.BillDate,\n" + "t2.BillNo,\n" + "t2.BillRowNo,\n" + "t1.CusCode,\n" + "t2.Barcode,\n" + "t1.CreatePerson,\n" + "t2.InvCode,\n" + "t2.WhCode as IWhCode,\n" + "t2.DeliveryQty,\n" + "t2.Price,\n" + "t1.OrganizeCode \n" + "from " + "T_Sys_SOReturn t1, " + "T_Sys_SOReturnDetail t2\n" + "where t1.AutoID = t2.MasID and MasID = '" + id + "'");
+
 
 		if (list.size() > 0) {
 //          接口参数
