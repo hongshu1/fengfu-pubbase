@@ -45,7 +45,6 @@
 	 {@if data.state == '1'||data.state == '4'}
 	<a class="jbolt_table_editbtn" href="admin/materialreturnlist/edit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑物料退货列表">编辑</i></a>
 	 {@else if data.state == '2'}
-	<a class="jbolt_table_delbtn" href="admin/materialreturnlist/approve?mark=2&&iAutoId=${data.autoid}"  data-confirm="确定审核此选项？"  data-fs="true" data-handler="refreshJBoltTable"  data-title="审核物料退货列表">审核</i></a>
 	<a class="jbolt_table_delbtn" href="admin/materialreturnlist/recall?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
 	 {@/if}
 </td>
