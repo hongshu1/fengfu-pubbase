@@ -42,34 +42,35 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">转入仓库：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text"
-				   data-autocomplete
-				   required
-				   data-url="admin/transvouch/workRegionMList"
-				   data-header="产线编码,产线名称"
-				   data-column-attr="cworkcode,cworkname"
-				   data-text-attr="cworkname"
-				   data-value-attr="cworkcode"
-				   data-sync-ele="#iwhcode"
-				   data-rule="required"
-				   data-notnull="true"
-				   autocomplete="off" class="form-control" maxlength="30" value="#(transVouch.iwhcode??)"/>
-			<input type="hidden" data-sync-attr="cworkcode" id="iwhcode" name="transVouch.iwhcode" value="#(transVouch.iwhcode??)" />
+			<select class="form-control"
+					data-autoload
+					name="transVouch.iwhcode"
+					data-select-type="select2"
+					data-rule="select"
+					data-tips="所属仓库"
+					data-url="admin/warehouse/list?isDeleted=0"
+					data-text="=所属仓库="
+					data-text-attr="cwhcode,cwhname"
+					data-value=""
+					data-value-attr="cwhcode"
+					data-select="#(transVouch.iwhcode??)">
+			</select>
 		</div>
 		<label class="col-sm-2 col-form-label">转出仓库：</label>
 		<div class="col-sm-2 col-form-label">
-			<input type="text"
-				   data-autocomplete
-				   data-url="admin/transvouch/workRegionMList"
-				   data-header="产线编码,产线名称"
-				   data-column-attr="cworkcode,cworkname"
-				   data-text-attr="cworkname"
-				   data-value-attr="cworkcode"
-				   data-sync-ele="#owhcode"
-				   data-rule="required"
-				   data-notnull="true"
-				   autocomplete="off" class="form-control" maxlength="30" value="#(transVouch.owhcode??)"/>
-			<input type="hidden" data-sync-attr="cworkcode" id="owhcode" name="transVouch.owhcode" value="#(transVouch.iwhcode??)" />
+			<select class="form-control"
+					data-autoload
+					name="transVouch.owhcode"
+					data-select-type="select2"
+					data-rule="select"
+					data-tips="所属仓库"
+					data-url="admin/transvouch/warehouse"
+					data-text="=所属仓库="
+					data-text-attr="cwhcode,cwhname"
+					data-value=""
+					data-value-attr="cwhcode"
+					data-select="#(transVouch.owhcode??)">
+			</select>
 		</div>
 
 		<label class="col-sm-2 col-form-label">入库类别：</label>
