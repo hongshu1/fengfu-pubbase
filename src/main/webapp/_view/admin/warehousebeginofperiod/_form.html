@@ -98,17 +98,17 @@
             <th data-width="150" data-column="cinvcode">存货编码</th>
             <th data-width="180" data-column="cinvcode1">客户部番</th>
             <th data-width="180" data-column="cinvname1">部品名称</th>
-            <th data-width="100" data-column="cinvstd">规格</th>
+            <th data-width="150" data-column="cinvstd">规格</th>
             <th data-width="120" data-column="cuomname">主计量单位</th>
             <th data-width="150" data-column="cvencode">供应商编码</th>
             <th data-width="150" data-column="cvenname">供应商名称</th>
-            <th data-width="150" data-column="qty" title="">期初库存数量</th>
-            <th data-width="150" data-column="availableqty" title="">未生成条码库存数量</th>
-            <th data-width="150" data-column="availablenum" title="">生成条码库存数量</th>
+            <th data-width="150" data-column="qty" title="期初库存数量">期初库存数量</th>
+            <th data-width="150" data-column="availableqty" title="未生成条码库存数量">未生成条码库存数量</th>
+            <th data-width="150" data-column="availablenum" title="生成条码库存数量">生成条码库存数量</th>
             <th data-width="130" data-column="ipkgqty">包装数量</th>
             <th data-width="150" data-column="batch">批次号</th>
             <th data-width="150" data-column="createdate">生产日期</th>
-            <th data-width="150" data-column="printtepl" title="">标签打印模板</th>
+            <th data-width="150" data-column="printtepl" title="标签打印模板">标签打印模板</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -197,7 +197,7 @@
           placeholder: "=请选择库区编码=",
           textAttr: "careacode",
           width: 200,
-          linkColumn:"cwhcode",
+          linkColumn: "cwhcode",
           valueAttr: "careacode",
           columnAttr: "careacode,careaname",
           header: '库区编码,库区名称',
@@ -238,7 +238,7 @@
         },
         batch: {
           type: "amount",//类型
-          placeholder: "批次号",
+          placeholder: "=请输入批次号=",
           tooltip: "批次号",
         },
         createdate: {
@@ -256,7 +256,7 @@
           required: true,
           type: "select",//类型
           placeholder: "=标签打印模板=",
-          tooltip: "=标签打印模板=",
+          tooltip: "标签打印模板不能为空",
         },
       },
     };
