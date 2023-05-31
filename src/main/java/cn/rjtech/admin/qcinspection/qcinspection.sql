@@ -75,5 +75,5 @@ SELECT file_name as fileName,
        local_url as localNrl,
     local_path as localPath
 FROM UGCFF_MOM_System.dbo.jb_jbolt_file
-WHERE id IN (#(supplierInfoId))
+WHERE local_url IN (#(urls))
 #end

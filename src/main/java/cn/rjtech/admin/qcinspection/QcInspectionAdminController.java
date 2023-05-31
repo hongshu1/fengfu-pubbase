@@ -1,5 +1,6 @@
 package cn.rjtech.admin.qcinspection;
 
+import cn.hutool.core.text.StrSplitter;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -11,6 +12,7 @@ import cn.jbolt.core.service.JBoltFileService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.QcInspection;
 import cn.rjtech.wms.utils.StringUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -20,6 +22,8 @@ import com.jfinal.upload.UploadFile;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 工程内品质巡查 Controller
@@ -89,9 +93,16 @@ public class QcInspectionAdminController extends BaseAdminController {
             render("add2.html");
         } else {
             String supplierInfoId = qcInspection.get("cmeasureattachments");
+           List<String> url = new ArrayList<>();
+            for (String idStr : StrSplitter.split(supplierInfoId, COMMA, true, true)) {
+                url.add("'"+idStr+"'");
+            }
+
+            String urls = String.join(",",url);
+            System.out.println("===="+urls);
 
             if (qcInspection.get("cmeasureattachments") != null) {
-                List<Record> files = service.getFilesById(supplierInfoId);
+                List<Record> files = service.getFilesById(urls);
                 set("files", files);
             }
             set("qcInspection", qcInspection);
