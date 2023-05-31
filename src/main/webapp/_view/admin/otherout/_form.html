@@ -44,7 +44,7 @@
 					data-select="#(otherOut.deptcode??)">
 			</select>
 		</div>
-		<input type="hidden" id="cbadnesssns" name="cbadnesssns" value="#(otherOut.cbadnesssns??)"/>
+		<input type="hidden" id="cbadnesssns" name="otherOut.memo" value="#(otherOut.memo??)"/>
 		<label class="col-sm-2 col-form-label">处置意见：</label>
 		<div class="col-sm-5 col-form-label">
 			<div class="form-group row"
@@ -56,7 +56,7 @@
 				 data-value-attr="name"
 				 data-text-attr="cbadnesssns"
 				 data-inline="true"
-				 data-value="#(otherOut.cbadnesssns??)"
+				 data-value="#(otherOut.memo??)"
 				 data-name="cbadnesssns">
 			</div>
 		</div>
@@ -66,7 +66,7 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">要求原因分析：</label>
 			<div class="col-sm-2 col-form-label"  style="margin-right: 100px">
-				<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请输入要求原因分析=" type="text" maxlength="300" class="form-control border-none" name="otherOut.memo" placeholder="" value="#(otherOut.memo??)">#(otherOut.memo??)</textarea>
+				<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请输入要求原因分析=" type="text" maxlength="300" class="form-control border-none" name="otherOut.reason" placeholder="" value="#(otherOut.reason??)">#(otherOut.reason??)</textarea>
 			</div>
 	</div>
 

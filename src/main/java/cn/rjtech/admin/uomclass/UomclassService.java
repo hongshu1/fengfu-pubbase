@@ -11,10 +11,13 @@ import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.base.service.BaseService;
 import cn.rjtech.model.momdata.Uomclass;
+import cn.rjtech.model.momdata.VendorClass;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -45,7 +48,8 @@ public class UomclassService extends BaseService<Uomclass> {
 		return dao;
 	}
 	@Inject private UomService uomService;
-
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingdService;
 	/**
 	 * 后台管理分页查询
 	 * @param pageNumber
@@ -289,31 +293,13 @@ public class UomclassService extends BaseService<Uomclass> {
 		return findRecord(sql);
 	}
 
-	public Ret importExcelData(File file) {
+	public Ret importExcelData(File file,  String cformatName) {
 		StringBuilder errorMsg=new StringBuilder();
-		JBoltExcel jBoltExcel= JBoltExcel
-				//从excel文件创建JBoltExcel实例
-				.from(file)
-				//设置工作表信息
-				.setSheets(
-						JBoltExcelSheet.create("sheet1")
-								//设置列映射 顺序 标题名称
-								.setHeaders(
-										JBoltExcelHeader.create("cuomclasscode","计量单位组编码"),
-										JBoltExcelHeader.create("cuomclassname","计量单位组名称"),
-										JBoltExcelHeader.create("cuomclasssn","计量单位类型"),
-										JBoltExcelHeader.create("isdefault","是否默认")
-								)
-								//特殊数据转换器
-								.setDataChangeHandler((data,index) ->{
-									//如果没有填写默认就全部设为0
-									data.change("isdefault", StringUtils.equals("1",data.getStr("isdefault"))?"1":"0");
-								})
-								//从第三行开始读取
-								.setDataStartRow(2)
-				);
-		//从指定的sheet工作表里读取数据
-		List<Uomclass> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", Uomclass.class, errorMsg);
+		//使用字段配置维护
+		Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
+		String docInfoRelaStrings= JSON.toJSONString(importData);
+		// 从指定的sheet工作表里读取数据
+		List<Uomclass> models = JSON.parseArray(docInfoRelaStrings, Uomclass.class);
 		if(notOk(models)) {
 			if(errorMsg.length()>0) {
 				return fail(errorMsg.toString());
@@ -361,6 +347,7 @@ public class UomclassService extends BaseService<Uomclass> {
 			if(u.getIsDefault()){
 				finalDefaultCode=u.getCUomClassCode();
 			}
+			u.setISource(1);
 			saveUomClassHandle(u,userId,new Date(),userName,getOrgId(),getOrgCode(), getOrgName());
 		}
 		if(StringUtils.isNotBlank(finalDefaultCode)){

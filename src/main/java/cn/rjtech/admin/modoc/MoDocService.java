@@ -17,6 +17,7 @@ import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
 import cn.rjtech.admin.moroutingconfigequipment.MoMoroutingequipmentService;
 import cn.rjtech.admin.moroutingconfigperson.MoMoroutingconfigPersonService;
 import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.entity.vo.instockqcformm.MoDocFormVo;
 import cn.rjtech.model.momdata.*;
@@ -84,6 +85,9 @@ public class MoDocService extends BaseService<MoDoc> {
 
   @Inject
   private InventoryService inventoryService; //存货档案
+
+  @Inject
+  private WorkregionmService workregionmService; //产线
 
 
   private final MoDoc dao = new MoDoc().dao();
@@ -947,5 +951,17 @@ public class MoDocService extends BaseService<MoDoc> {
       return true;
     });
     return  SUCCESS;
+  }
+
+  /**
+   * 获取工单对应产线关联所属仓库信息
+   * @param imdcocid
+   */
+  public void  getModocWarehouse(Long imdcocid){
+   MoDoc moDoc=findById(imdcocid);
+   //获取产线
+    if(moDoc!=null){
+
+    }
   }
 }

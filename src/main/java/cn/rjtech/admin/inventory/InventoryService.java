@@ -690,6 +690,7 @@ public class InventoryService extends BaseService<Inventory> {
 				 * 	2.半成品名称必须为产品名称
 				 * 	3.当前物料集必须包含上一级半成品
 				 */
+				ValidationUtils.notNull(type, "工序类型不能为空");
 				ValidationUtils.isTrue(OperationTypeEnum.bunchSequence.getValue() == type, "最后一道工序的工序类型，必须为串序");
 				ValidationUtils.isTrue(masterInvId.equals(iRsInventoryId) , "最后一道工序的半成品名称，必须为当前产品存货名称");
 			}

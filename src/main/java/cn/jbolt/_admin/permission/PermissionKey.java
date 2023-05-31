@@ -2001,4 +2001,8 @@ public class PermissionKey {
 	 * 作废
 	 */
 	public static final String INVESTMENT_PLAN_MANAGE_CANCLE = "investment_plan_manage_cancle";
+	/**
+	 * 作废
+	 */
+	public static final String DEPREF = "depref";
 }
