@@ -257,7 +257,7 @@
             <td>${data.iqty}</td>
             <!--<td>${data.isalesuomid}</td>-->
 
-            <td>${data.dplanaogdate}</td>
+            <td>${data.dplanaogdate,'yyyy-MM-dd'|date}</td>
             <td>${data.cplanaogtime}</td>
             <td>${data.ccode}</td>
             <td>${data.cversion}</td>
@@ -510,11 +510,11 @@
                             if (row.cnt === 0) {
                                 r.error = '部品番号不存在！';
                             } else if (row.cnt === 1) {
+                                r.cdefine1= row.cinvaddcode;
                                 r.iinventoryid = row.iautoid;
                                 r.cinvcode = row.cinvcode;
                                 r.cinvname1 = row.cinvname1;
                                 r.cinvstd = row.cinvstd;
-                                r.cuomname = row.cuomname;
                             } else {
                                 r.error = '存在' + row.cnt + '条匹配的存货记录，请手工选择存货！';
                             }
