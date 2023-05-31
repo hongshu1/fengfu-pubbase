@@ -667,7 +667,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	public Ret audit(Long id){
 		DateTime date = DateUtil.date();
 		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
-		purchaseOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+		purchaseOrderM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
 		purchaseOrderM.setDAuditTime(date);
 		purchaseOrderM.setDSubmitTime(date);
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());

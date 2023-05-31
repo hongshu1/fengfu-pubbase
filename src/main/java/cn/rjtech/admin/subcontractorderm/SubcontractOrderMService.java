@@ -678,7 +678,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 	public Ret audit(Long id){
 		DateTime date = DateUtil.date();
 		SubcontractOrderM subcontractOrderM = getSubcontractOrderM(id);
-		subcontractOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+		subcontractOrderM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
 		subcontractOrderM.setDAuditTime(date);
 		subcontractOrderM.setDSubmitTime(date);
 		subcontractOrderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
