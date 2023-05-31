@@ -1,5 +1,6 @@
 package cn.rjtech.admin.qcinspection;
 
+import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -12,8 +13,10 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
+import static cn.hutool.core.text.StrPool.COMMA;
+
 
 /**
  * 工程内品质巡查 Service
@@ -201,8 +204,8 @@ public class QcInspectionService extends BaseService<QcInspection> {
 					qcInspection.setCChainName(formRecord.getStr("cchainname"));
 					qcInspection.setIsFirstCase(formRecord.getBoolean("isfirstcase"));
 					qcInspection.setDRecordDate(formRecord.getDate("drecorddate"));
-					qcInspection.setIQcDutyPersonId(formRecord.getLong("depnameid"));    //人员
-					qcInspection.setIQcDutyDepartmentId(formRecord.getLong("psnnameid"));    //部门
+					qcInspection.setIQcDutyPersonId(formRecord.getLong("psnnameid"));    //人员
+					qcInspection.setIQcDutyDepartmentId(formRecord.getLong("depnameid"));    //部门
 					qcInspection.setCPlace(formRecord.getStr("cplace"));
 					qcInspection.setCProblem(formRecord.getStr("cproblem"));
 					qcInspection.setCAnalysis(formRecord.getStr("canalysis"));
@@ -243,8 +246,8 @@ public class QcInspectionService extends BaseService<QcInspection> {
 		qcInspection.setCChainName(formRecord.getStr("cchainname"));
 		qcInspection.setIsFirstCase(formRecord.getBoolean("isfirstcase"));
 		qcInspection.setDRecordDate(formRecord.getDate("drecorddate"));
-		qcInspection.setIQcDutyPersonId(formRecord.getLong("depnameid"));    //人员
-		qcInspection.setIQcDutyDepartmentId(formRecord.getLong("psnnameid"));    //部门
+		qcInspection.setIQcDutyPersonId(formRecord.getLong("psnnameid"));    //人员
+		qcInspection.setIQcDutyDepartmentId(formRecord.getLong("depnameid"));    //部门
 		qcInspection.setCPlace(formRecord.getStr("cplace"));
 		qcInspection.setCProblem(formRecord.getStr("cproblem"));
 		qcInspection.setCAnalysis(formRecord.getStr("canalysis"));
@@ -282,11 +285,36 @@ public class QcInspectionService extends BaseService<QcInspection> {
 	}
 
 
+
+	/**
+	 * 制程异常品查看明细api
+	 */
+	public Map<String, Object> getqcinspectionApi(Long iautoid){
+
+		Map<String, Object> map = new HashMap<>();
+		Record qcInspection =this.getQcInspectionList(iautoid);
+		map.put("qcInspection", qcInspection);
+		String supplierInfoId = qcInspection.get("cmeasureattachments");
+		List<String> url = new ArrayList<>();
+		for (String idStr : StrSplitter.split(supplierInfoId, COMMA, true, true)) {
+			url.add("'"+idStr+"'");
+		}
+		String urls = String.join(",",url);
+		System.out.println("===="+urls);
+
+		if (qcInspection.get("cmeasureattachments") != null) {
+			List<Record> files = this.getFilesById(urls);
+			map.put("files", files);
+		}
+		return map;
+	}
+
+
 	/**
 	 * 获取附件信息
 	 * @return
 	 */
-	public List<Record> getFilesById(String supplierInfoId){
-		return dbTemplate("qcinspection.getFilesById", Kv.by("supplierInfoId", supplierInfoId)).find();
+	public List<Record> getFilesById(String urls){
+		return dbTemplate("qcinspection.getFilesById", Kv.by("urls", urls)).find();
 	}
 }

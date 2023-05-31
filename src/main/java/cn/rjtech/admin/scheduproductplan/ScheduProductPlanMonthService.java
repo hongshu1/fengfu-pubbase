@@ -865,12 +865,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             weekschedule.save();
             apsWeekscheduledetailsService.batchSave(detailsList);
             if (detailsQtyList.size() > 0){
-                List<List<ApsWeekscheduledQty>> groupCusOrderSumList = CollectionUtils.partition(detailsQtyList,300);
-                CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
-                ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
-                for(List<ApsWeekscheduledQty> cusOrderSums :groupCusOrderSumList){
+                List<List<ApsWeekscheduledQty>> groupList = CollectionUtils.partition(detailsQtyList,300);
+                CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
+                ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
+                for(List<ApsWeekscheduledQty> dataList :groupList){
                     executorService.execute(()->{
-                        apsWeekscheduledQtyService.batchSave(cusOrderSums);
+                        apsWeekscheduledQtyService.batchSave(dataList);
                     });
                     countDownLatch.countDown();
                 }

@@ -629,10 +629,26 @@
 #include("exch/exch.sql")
 #end
 
+#namespace("formuploadcategory")
+#include("formuploadcategory/formuploadcategory.sql")
+#end
+
 #namespace("momaterialscanusedlog")
 #include("momaterialscanusedlog/momaterialscanusedlog.sql")
 #end
 
+#namespace("formuploadm")
+#include("formuploadm/formuploadm.sql")
+#end
+
+#namespace("formuploadd")
+#include("formuploadd/formuploadd.sql")
+#end
+
 #namespace("depref")
 #include("depref/depref.sql")
+#end
+
+#namespace("momoinvbatch")
+#include("momoinvbatch/momoinvbatch.sql")
 #end

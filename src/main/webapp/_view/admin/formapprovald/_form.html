@@ -171,9 +171,15 @@
 <script>
 
 	hideParentLayerDialogBtn(0);
-	/*addParentLayerDialogBtn("保存","lay_primary",function () {
+	#if(approvaling>0??)
+	addParentLayerDialogBtn("该节点已在审批中，不予修改","lay_danger",function () {
+
+	});
+	#else
+	addParentLayerDialogBtn("保存","lay_primary",function () {
 		submitThisForm_approval_d();
-	});*/
+	});
+	#end
 
 	/**
 	 * 提交方法

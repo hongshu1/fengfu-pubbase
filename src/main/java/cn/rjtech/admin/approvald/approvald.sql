@@ -71,7 +71,7 @@ left join #(getBaseDbName()).dbo.jb_dept t2 on t2.sn = t1.cDept_num
 left join #(getBaseDbName()).dbo.jb_user t3 on t3.id = t1.iUserId
 where t1.isDeleted = '0' and t1.iUserId is not null
 ) t on t1.iPersonId = t.ipersonid
-where t1.iApprovalDid = '#(mid)'
+where t1.iApprovalDid = '#(mid)' order by t1.iSeq asc
 #end
 
 #sql("roleDatas")

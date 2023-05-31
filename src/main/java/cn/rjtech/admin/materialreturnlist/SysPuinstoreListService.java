@@ -368,7 +368,6 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					materialsOutDetail.setModifyPerson(userName);
 				});
 				syspuinstoredetailservice.batchUpdate(lines);
-				Ret ret = pushU8(finalHeaderId);
 			}
 			// 获取待删除数据 执行删除
 			if (jBoltTable.deleteIsNotBlank()) {
@@ -402,6 +401,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				puinstore.setAuditDate(nowDate);
 				puinstore.setAuditPerson(userName);
 				success= puinstore.update();
+				this.pushU8(iAutoId);
 			}
 		}
 
@@ -503,13 +503,12 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 
 	public Ret pushU8(String id) {
-		List<Record> list = findRecord("select " + "t1.BillDate,\n" + "t2.BillNo,\n" + "t2.BillRowNo,\n" + "t1.CusCode,\n" + "t2.Barcode,\n" + "t1.CreatePerson,\n" + "t2.InvCode,\n" + "t2.WhCode as IWhCode,\n" + "t2.DeliveryQty,\n" + "t2.Price,\n" + "t1.OrganizeCode \n" + "from " + "T_Sys_SOReturn t1, " + "T_Sys_SOReturnDetail t2\n" + "where t1.AutoID = t2.MasID and MasID = '" + id + "'");
-
+		List<Record> list = dbTemplate("materialreturnlist.pushU8List", Kv.by("autoid", id)).find();
 
 		if (list.size() > 0) {
 //          接口参数
 			User user = JBoltUserKit.getUser();
-			String url = "http://localhost:8081/api/erp/common/vouchProcessDynamicSubmit";
+			String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
 			String userCode = user.getUsername();
 			Long userId = user.getId();
 			String type = "PUInStore";
@@ -528,9 +527,10 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 			JSONArray mainData = new JSONArray();
 			list.forEach(record -> {
 				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("IsWhpos", record.get("iswhpos"));
+				jsonObject.put("IsWhpos","1");
 				jsonObject.put("iwhcode", record.get("iwhcode"));
 				jsonObject.put("InvName", record.get("invname"));
+				jsonObject.put("VenName", record.get("venname"));
 				jsonObject.put("VenCode", record.get("vencode"));
 				jsonObject.put("Qty", record.get("qty"));
 				jsonObject.put("organizeCode", organizecode);
@@ -538,7 +538,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				jsonObject.put("Num", "0");
 				jsonObject.put("index", "1");
 				jsonObject.put("PackRate", "0");
-				jsonObject.put("ISsurplusqty", record.get("false"));
+				jsonObject.put("ISsurplusqty", "false");
 				jsonObject.put("CreatePerson", userCode);
 				jsonObject.put("BarCode", record.get("spotTicket"));
 				jsonObject.put("BillNo", record.get("billno"));
@@ -552,8 +552,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				jsonObject.put("sourceBillType", record.get("sourcebilltype"));
 				jsonObject.put("SourceBillNoRow", record.get("sourcebillnorow"));
 				jsonObject.put("tag", type);
-				jsonObject.put("IcRdCode", record.get("rdcode"));
-				jsonObject.put("iposcode", record.get("poscode"));
+				jsonObject.put("IcRdCode", record.get("icrdcode"));
+				jsonObject.put("iposcode", record.get("iposcode"));
 				mainData.add(jsonObject);
 
 			});
@@ -572,7 +572,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 			SystemLog systemLog = new SystemLog();
 			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append("<span class='text-danger'>[销售退回处理单推U9操作]</span>");
+			stringBuilder.append("<span class='text-danger'>[材料退货列表推U8操作]</span>");
 //            stringBuilder.append("<span class='text-primary'>[url="+url+"]</span>");
 //            stringBuilder.append("<span class='text-danger'>[参数={"+JSONObject.toJSONString(data)+"}]</span>");
 			systemLog.setType(2);
@@ -598,10 +598,10 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 						LOG.info("s===>" + bill);
 						LOG.info("data====" + data);
 
-						int update = update("update T_Sys_SOReturn set U9BillNo = '" + bill + "', status = '2' where" + " AutoID " + "= " + "'" + id + "'");
+//						int update = update("update T_Sys_SOReturn set U9BillNo = '" + bill + "', status = '2' where" + " AutoID " + "= " + "'" + id + "'");
 
-						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
-								"推送数据失败," + "失败原因" + msg);
+//						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
+//								"推送数据失败," + "失败原因" + msg);
 					}
 					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
 				} else {

@@ -1,7 +1,9 @@
 package cn.rjtech.admin.sysassem;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -10,21 +12,22 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.SysAssem;
-import cn.rjtech.model.momdata.SysAssemdetail;
-import cn.rjtech.model.momdata.SysOtherindetail;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.HttpApiUtils;
+import cn.smallbun.screw.core.util.CollectionUtils;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.json.JSONArray;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 组装拆卸及形态转换单
@@ -38,6 +41,8 @@ public class SysAssemService extends BaseService<SysAssem> {
 	protected SysAssem dao() {
 		return dao;
 	}
+	@Inject
+	private PersonService personservice;
 
 	@Inject
 	private SysAssemdetailService sysassemdetailservice;
@@ -286,9 +291,13 @@ public class SysAssemService extends BaseService<SysAssem> {
 
 			sysAssemdetails.add(sysAssemdetail);
 
-			sysAssemdetails.add(sysAssemdetail);
 		}
 		sysassemdetailservice.batchUpdate(sysAssemdetails);
+
+		// 测试调用接口
+		System.out.println("开始上传u8开始上传u8开始上传u8开始上传u8开始上传u8开始上传u8"+ new Date());
+		Ret ret = pushU8(sysotherin, sysAssemdetails);
+		System.out.println(new Date()+"u8上传结束，u8上传结束，u8上传结束，u8上传结束，u8上传结束"+ret);
 	}
 	//可编辑表格提交-删除数据
 	private void deleteTableSubmitDatas(JBoltTable jBoltTable){
@@ -310,5 +319,93 @@ public class SysAssemService extends BaseService<SysAssem> {
 	}
 
 
+	//推送u8数据接口
+	public Ret pushU8(SysAssem sysassem, List<SysAssemdetail> sysassemdetail) {
+		if(!CollectionUtils.isNotEmpty(sysassemdetail)){
+			return Ret.ok().msg("数据不能为空");
+		}
+
+		User user = JBoltUserKit.getUser();
+		Map<String, Object> data = new HashMap<>();
+
+		data.put("userCode",user.getUsername());
+		data.put("organizeCode",this.getdeptid());
+		data.put("token","");
+
+		JSONObject preallocate = new JSONObject();
+
+
+		preallocate.set("userCode",user.getUsername());
+		preallocate.set("password","123456");
+		preallocate.set("organizeCode",this.getdeptid());
+		preallocate.set("CreatePerson",user.getId());
+		preallocate.set("CreatePersonName",user.getName());
+		preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
+		preallocate.set("tag","AssemVouch");
+		preallocate.set("type","AssemVouch");
+
+		data.put("PreAllocate",preallocate);
+
+		JSONArray maindata = new JSONArray();
+		sysassemdetail.stream().forEach(s -> {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.set("IWhCode",s.getWhCode());
+			jsonObject.set("iwhname","");
+			jsonObject.set("invcode","");
+			jsonObject.set("userCode",user.getUsername());
+			jsonObject.set("organizeCode",this.getdeptid());
+			jsonObject.set("OWhCode",s.getPosCode());
+			jsonObject.set("owhname","");
+			jsonObject.set("barcode",s.getBarcode());
+			jsonObject.set("invstd","");
+			jsonObject.set("invname","");
+			jsonObject.set("CreatePerson",s.getCreatePerson());
+			jsonObject.set("BillType",s.getAssemType());
+			jsonObject.set("qty",s.getQty());
+			jsonObject.set("CreatePersonName",user.getName());
+			jsonObject.set("IRdName","");
+			jsonObject.set("IRdType",sysassem.getIRdCode());
+			jsonObject.set("ORdName","");
+			jsonObject.set("ORdType",sysassem.getORdCode());
+			jsonObject.set("Tag","AssemVouch");
+			jsonObject.set("IDeptCode",sysassem.getDeptCode());
+			jsonObject.set("ODeptCode",sysassem.getDeptCode());
+			jsonObject.set("VouchTemplate","");
+			jsonObject.set("RowNo",s.getRowNo());
+
+			maindata.put(jsonObject);
+		});
+		data.put("MainData",maindata);
+
+		//            请求头
+		Map<String, String> header = new HashMap<>(5);
+		header.put("Content-Type", "application/json");
+		String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
+
+		try {
+			String post = HttpApiUtils.httpHutoolPost(url, data, header);
+			com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
+			if (isOk(post)) {
+				if ("201".equals(jsonObject.getString("code"))) {
+					return Ret.ok().setOk().data(jsonObject);
+				}
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return Ret.msg("上传u8失败");
+	}
+
+
+	//通过当前登录人名称获取部门id
+	public String getdeptid(){
+		String dept = "001";
+		User user = JBoltUserKit.getUser();
+		Person person = personservice.findFirstByUserId(user.getId());
+		if(null != person && "".equals(person)){
+			dept = person.getCOrgCode();
+		}
+		return dept;
+	}
 
 }

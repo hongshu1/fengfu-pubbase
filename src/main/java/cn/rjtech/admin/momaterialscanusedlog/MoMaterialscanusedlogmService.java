@@ -71,6 +71,7 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 
 
 
+
 	/**
 	 * 后台管理分页查询
 	 * @param pageNumber
