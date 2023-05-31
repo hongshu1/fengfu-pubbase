@@ -26,6 +26,8 @@ import com.jfinal.plugin.activerecord.Record;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -85,16 +87,13 @@ public class VendorService extends BaseService<Vendor> {
         //关键词模糊查询
         sql.likeMulti(keywords, "cOrgName", "cVenName", "cVenAbbName", "cCreateName", "cUpdateName");
         //排序
-        sql.desc("iAutoId");
+        sql.desc("dUpdateTime");
         Page<Vendor> paginate = paginate(sql);
         for (Vendor vendor : paginate.getList()) {
             Department dept = departmentService.findById(vendor.getCVenDepart());
             vendor.setCVenDepart(null != dept ? dept.getCDepName() : "");
-
-            List<Person> personList = personService.list(kv.set("iuserid", vendor.getIDutyPersonId()));
-            if (!personList.isEmpty()) {
-                vendor.set("cvenpperson", personList.get(0).getCpsnName());
-            }
+            Person person = personService.findById(vendor.getIDutyPersonId());
+            vendor.set("cvenpperson", person != null ? person.getCpsnName() : "");
         }
         return paginate;
     }
@@ -143,7 +142,8 @@ public class VendorService extends BaseService<Vendor> {
         vendor.setIOMWhId(warehouse.getIAutoId());//委外仓id
         vendor.setCOMWhCode(warehouse.getCWhCode());//委外仓编码
         vendor.setCCountry(StringUtils.isNotBlank(vendor.getCCountry()) ? vendor.getCCountry() : "中国");
-        vendor.setIDutyPersonId(userId);//专管业务员，系统用户id
+        Person person = personService.findById(vendor.getIDutyPersonId());
+        vendor.setCVenPPerson(null != person ? person.getCpsnNum() : ""); //专管业务员编码
     }
 
     public String findcVenCodeInfo(String cvencode) {
@@ -168,7 +168,6 @@ public class VendorService extends BaseService<Vendor> {
                 Record fromRecord = jBoltTable.getFormRecord();
                 Vendor vendor = new Vendor();
                 vendor.setCVenCode(fromRecord.getStr("cvencode"));
-                vendor.setCVenPPerson(fromRecord.getStr("cvenpperson"));
                 vendor.setCVenDepart(fromRecord.getStr("cVenDepart"));
                 vendor.setCOMWhCode(fromRecord.getStr("comwhcode"));
                 vendor.setITaxRate(fromRecord.getBigDecimal("itaxrate"));
@@ -183,13 +182,11 @@ public class VendorService extends BaseService<Vendor> {
                 vendor.setCMemo(fromRecord.getStr("cmemo"));
                 vendor.setCProperty(fromRecord.getStr("cproperty2"));
                 vendor.setIsEnabled(true);
+                Long idutypersonid = fromRecord.getLong("idutypersonid");
+                vendor.setIDutyPersonId(idutypersonid);//专管业务员id
                 if (StringUtils.isNotBlank(fromRecord.getStr("cprovince"))) {
                     String[] split = fromRecord.getStr("cprovince").split(",");
-                    for (int i = 0; i < split.length; i++) {
-                        vendor.setCProvince(split.length > 0 ? split[0] : "");//省份
-                        vendor.setCCity(split.length > 1 ? split[1] : "");//城市
-                        vendor.setCCounty(split.length > 2 ? split[2] : "");//区县
-                    }
+                    setSplitCProvince(vendor,split);
                 }
                 if (!vendorAddrs.isEmpty()) {
                     VendorAddr vendorAddr = vendorAddrs.get(0);
@@ -204,13 +201,13 @@ public class VendorService extends BaseService<Vendor> {
                 Record record = vendorClassService.findRecordByCVCCode(vendor.getCVCCode());
                 vendor.setIVendorClassId(record != null ? record.get("iautoid") : new Long(0));
                 Vendor checkVendorIsBlank = findById(fromRecord.get("iautoid"));
-                if (null== checkVendorIsBlank){
+                if (null == checkVendorIsBlank) {
                     //表头保存
                     Ret retVendor = save(vendor);
                     if (retVendor.isFail()) {
                         return retVendor;
                     }
-                }else {
+                } else {
                     vendor.setIAutoId(fromRecord.getLong("iautoid"));
                     update(vendor);
                 }
@@ -232,24 +229,17 @@ public class VendorService extends BaseService<Vendor> {
                 ValidationUtils
                     .isTrue(StringUtils.isBlank(findcVenCodeInfo(vendor.getCVenCode())), vendor.getCVenCode() + " 供应商编码不能重复！");
             }
-            if (StringUtils.isNotBlank(vendor.getCProvince())) {
-                String[] split = vendor.getCProvince().split(",");
-                vendor.setCProvince(split[0]);//省份
-                vendor.setCCity(split[1]);//城市
-                vendor.setCCounty(StringUtils.isNotBlank(split[2]) ? split[2] : "");//区县
-            }
-            Long userId = JBoltUserKit.getUserId();
-            String userName = JBoltUserKit.getUserName();
-            vendor.setICreateBy(userId);
-            vendor.setIUpdateBy(userId);
-            vendor.setCCreateName(userName);
-            vendor.setCUpdateName(userName);
-            vendor.setDCreateTime(vendor1.getDCreateTime());
+            String[] split = vendor.getCProvince().split(",");
+            setSplitCProvince(vendor,split);
+            vendor.setIUpdateBy(JBoltUserKit.getUserId());
+            vendor.setCUpdateName(JBoltUserKit.getUserName());
             vendor.setDUpdateTime(new Date());
             vendor.setCOrgName(getOrgName());
             vendor.setCOrgCode(getOrgCode());
             Record formRecord = jBoltTable.getFormRecord();
             vendor.setCProperty(formRecord.getStr("cproperty2"));//供应商属性
+            Person person = personService.findById(vendor.getIDutyPersonId());
+            vendor.setCVenPPerson(person.getCpsnNum());
 
             //获取表单
             List<VendorAddr> updateModelList1 = jBoltTable.getUpdateModelList(VendorAddr.class);
@@ -261,6 +251,14 @@ public class VendorService extends BaseService<Vendor> {
         }
 
         return SUCCESS;
+    }
+
+    public void setSplitCProvince(Vendor vendor,String[] split){
+        for (int i = 0; i < split.length; i++) {
+            vendor.setCProvince(split.length > 0 ? split[0] : "");//省份
+            vendor.setCCity(split.length > 1 ? split[1] : "");//城市
+            vendor.setCCounty(split.length > 2 ? split[2] : "");//区县
+        }
     }
 
     /**
@@ -336,23 +334,27 @@ public class VendorService extends BaseService<Vendor> {
     public Vendor findByName(String vendorName) {
         return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvenname = ?", vendorName);
     }
+
     public Vendor findByCode(String cvencode) {
         return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvencode = ?", cvencode);
     }
 
-	public Record getRecprdByCVenCode(String cvencode) {
-		return findFirstRecord(selectSql().eq("cvencode", cvencode).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("isenabled", IsEnableEnum.NO.getValue()));
-	}
+    public Record getRecprdByCVenCode(String cvencode) {
+        return findFirstRecord(selectSql().eq("cvencode", cvencode).eq("isdeleted", IsEnableEnum.NO.getValue())
+            .eq("isenabled", IsEnableEnum.NO.getValue()));
+    }
 
     public List<Record> getVendorList(Kv kv) {
         return dbTemplate("vendor.getVendorList", kv).find();
     }
-    public Page<Record> getVendorPaginate(Integer pageNumber,Integer pageSize, Kv kv) {
+
+    public Page<Record> getVendorPaginate(Integer pageNumber, Integer pageSize, Kv kv) {
         return dbTemplate("vendor.getVendorList", kv).paginate(pageNumber, pageSize);
     }
+
     public List<Record> getAutocompleteList(String q, int limit) {
         Okv para = Okv.by("q", q)
-                .set("limit", limit);
+            .set("limit", limit);
 
         return dbTemplate("vendor.getAutocompleteList", para).find();
     }
