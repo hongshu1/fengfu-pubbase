@@ -13,14 +13,11 @@ SELECT mp.AutoID,
        mp.ModifyDate,
        mp.SourceBillNo,
        mp.SourceBillID,
-       mpd.InvCode,
-       mpd.Barcode,
-       mpd.Qty,
-       mpd.Qty * md.iQty AS totalQty,
        md.cMoDocNo,
        md.dPlanDate,
        md.iQty,
        md.iStatus,
+       it.cInvCode,
        it.cInvCode1,
        it.cInvName1,
        it.cInvStd,
@@ -30,16 +27,19 @@ SELECT mp.AutoID,
        uom.cUomName,
        wrm.cWorkName,
        wrm.cWorkCode,
+       md.iQty * iri.iUsageUOM AS totalQty,
        emm.cEquipmentModelName
 FROM T_Sys_MaterialsPrepare mp
-         LEFT JOIN T_Sys_MaterialsPrepareDetail mpd ON mpd.MasID = mp.AutoID
-         LEFT JOIN Mo_MoDoc md ON md.iAutoId = mp.SourceBillID
-         LEFT JOIN Bd_Inventory it ON it.iAutoId = md.iInventoryId
-         LEFT JOIN Bd_Department dpm ON dpm.iAutoId = md.iDepartmentId
-         LEFT JOIN Bd_WorkShiftM wsm ON wsm.iAutoId = md.iWorkShiftMid
-         LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iManufactureUomId
-         LEFT JOIN Bd_WorkRegionM wrm ON wrm.iAutoId = md.iWorkRegionMid
-         LEFT JOIN Bd_EquipmentModel emm ON emm.iAutoId = it.iEquipmentModelId
+         LEFT JOIN Mo_MoDoc md ON mp.SourceBillID = md.iAutoId
+         LEFT JOIN Bd_Inventory it ON md.iInventoryId = it.iAutoId
+         LEFT JOIN Bd_Department dpm ON md.iDepartmentId = dpm.iAutoId
+         LEFT JOIN Bd_WorkShiftM wsm ON md.iWorkShiftMid = wsm.iAutoId
+         LEFT JOIN Bd_Uom uom ON it.iManufactureUomId = uom.iAutoId
+         LEFT JOIN Bd_WorkRegionM wrm ON md.iWorkRegionMid = wrm.iAutoId
+         LEFT JOIN Bd_EquipmentModel emm ON it.iEquipmentModelId = emm.iAutoId
+         LEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting=ir.iAutoId
+         LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId=irc.iInventoryRoutingId
+         LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId=iri.iInventoryRoutingConfigId
 WHERE 1 = 1
   #if(billno)
   AND BillNo = #para(billno)
@@ -47,8 +47,8 @@ WHERE 1 = 1
   #if(cmodocno)
   AND cMoDocNo = #para(cmodocno)
   #end
-  #if(invcode)
-  AND InvCode = #para(invcode)
+  #if(cinvcode)
+  AND InvCode = #para(cinvcode)
   #end
   #if(cinvcode1)
   AND cInvCode1 = #para(cinvcode1)
@@ -90,14 +90,14 @@ SELECT md.iAutoId,
        md.iQty * iri.iUsageUOM AS totalQty,
        uom.cUomName
 FROM Mo_MoDoc md
-         LEFT JOIN Bd_Department dpm ON md.iDepartmentId=dpm.iAutoId
-         LEFT JOIN Bd_WorkShiftM wsm ON md.iWorkShiftMid=wsm.iAutoId
-         LEFT JOIN Bd_Inventory it ON md.iInventoryId=it.iAutoId
-         LEFT JOIN Bd_Uom uom ON it.iManufactureUomId=uom.iAutoId
-         LEFT JOIN Bd_WorkRegionM wrm ON md.iWorkRegionMid=wrm.iAutoId
          LEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting=ir.iAutoId
          LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId=irc.iInventoryRoutingId
          LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId=iri.iInventoryRoutingConfigId
+         LEFT JOIN Bd_Department dpm ON md.iDepartmentId=dpm.iAutoId
+         LEFT JOIN Bd_WorkShiftM wsm ON md.iWorkShiftMid=wsm.iAutoId
+         LEFT JOIN Bd_Inventory it ON iri.iInventoryId=it.iAutoId
+         LEFT JOIN Bd_Uom uom ON it.iManufactureUomId=uom.iAutoId
+         LEFT JOIN Bd_WorkRegionM wrm ON md.iWorkRegionMid=wrm.iAutoId
 WHERE 1 = 1
   AND md.iStatus = 2
     #if(dplandate)
