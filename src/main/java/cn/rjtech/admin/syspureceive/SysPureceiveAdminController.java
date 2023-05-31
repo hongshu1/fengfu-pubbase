@@ -13,11 +13,13 @@ import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 /**
@@ -196,6 +198,10 @@ public class SysPureceiveAdminController extends BaseAdminController {
         String orgCode =  getOrgCode();
         String vencode1 = get("vencode1");
         Vendor first1 = vendorservice.findFirst("select * from Bd_Vendor where cVenCode = ?", vencode1);
+        if(null == first1){
+            ValidationUtils.assertNull(false, "请选择供应商");
+            return;
+        }
         String s = String.valueOf(first1.getIAutoId());
         renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit",10),get("orgCode",orgCode),s));
     }
