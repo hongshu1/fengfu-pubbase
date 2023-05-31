@@ -106,23 +106,6 @@ FROM
 WHERE mr.iMoDocId = #para(docId) order by  mrc.iSeq
 #end
 
-#sql("getModocDateDatas")
-SELECT DISTINCT
-	doc.iYear,
-	doc.iMonth,
-	doc.iDate,
-	doc.iWorkShiftMid,
-	shiftm.cWorkShiftCode,
-	shiftm.cWorkShiftName,
-	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) dates
-FROM
-	Mo_MoDoc doc
-	LEFT JOIN Bd_WorkShiftM shiftm ON doc.iWorkShiftMid= shiftm.iAutoId
-WHERE
-	iMoTaskId=#(taskid)
-ORDER BY shiftm.cWorkShiftCode ASC
-#end
-
 #sql("getModocDatas")
 SELECT DISTINCT
 	modoc.iWorkRegionMid ,
@@ -139,53 +122,74 @@ WHERE
 	modoc.iMoTaskId=#(taskid)
 #end
 
-#sql("getModocid")
+#sql("getModocDateShiftDatas")
 SELECT DISTINCT
-	iAutoId
+    doc.iAutoId,
+	doc.iYear,
+	doc.iMonth,
+	doc.iDate,
+	doc.iWorkShiftMid,
+	shiftm.cWorkShiftCode,
+	shiftm.cWorkShiftName,
+	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) dates
 FROM
-	Mo_MoDoc
+	Mo_MoDoc doc
+	LEFT JOIN Bd_WorkShiftM shiftm ON doc.iWorkShiftMid= shiftm.iAutoId
 WHERE
-	iMoTaskId = #(taskid)
-	AND iWorkRegionMid = #(iworkregionmid)
-	AND iInventoryId = #(iinventoryid)
+	iMoTaskId=#(taskid)
+ORDER BY shiftm.cWorkShiftCode ASC
 #end
 
-#sql("getMoroutingconfigDatas")
+#sql("getModocAllDatasByTaskid")
+SELECT * FROM Mo_MoDoc WHERE iMoTaskId = #(taskid)
+#end
+
+#sql("getModocConfigtypeByModocid")
 SELECT DISTINCT
 	moconfig.iAutoId,
-	moconfig.iType
+	moconfig.iType,
+	routing.iMoDocId
 FROM
 	Mo_MoRoutingConfig moconfig
+	LEFT JOIN Mo_MoRouting AS routing ON moconfig.iMoRoutingId = routing.iAutoId
 WHERE
-	moconfig.iMoRoutingId = ( SELECT iAutoId FROM Mo_MoRouting WHERE iMoDocId = #(modocid) )
+	moconfig.iMoRoutingId IN ( SELECT iAutoId FROM Mo_MoRouting WHERE iMoDocId IN (#(imodocid)) )
 #end
 
-#sql("getMoequipmentDatas")
-SELECT  DISTINCT
-    moment.iEquipmentId,
-	ment.cEquipmentName
+#sql("getEquipmentnameByConfigid")
+SELECT DISTINCT
+	moment.iEquipmentId,
+	ment.cEquipmentName,
+	moment.iMoRoutingConfigId
 FROM
 	Mo_MoRoutingEquipment moment
 	LEFT JOIN Bd_Equipment ment ON moment.iEquipmentId= ment.iAutoId
 WHERE
-	moment.iMoRoutingConfigId = #(moconfigid)
+	moment.iMoRoutingConfigId IN (#(configid))
 #end
 
-#sql("getMooperationDatas")
-SELECT  DISTINCT
-    operation.iOperationId,
-	bdop.cOperationName
+#sql("getOperationnameByConfigid")
+SELECT DISTINCT
+	operation.iOperationId,
+	bdop.cOperationName,
+	operation.iMoRoutingConfigId
 FROM
 	Mo_MoRoutingConfig_Operation operation
 	LEFT JOIN Bd_Operation bdop ON operation.iOperationId= bdop.iAutoId
 WHERE
-	operation.iMoInventoryRoutingConfigId = #(moconfigid)
+	operation.iMoRoutingConfigId IN (#(configid))
 #end
 
-#sql("getModocpersonnelDatas")
+#sql("getModocPersonnameByDocid")
 SELECT DISTINCT
+	doc.iAutoId,
+	doc.iYear,
+	doc.iMonth,
+	doc.iDate,
+	doc.iWorkShiftMid,
 	bdperson.cPsn_Num psnnum,
-	bdperson.cPsn_Name psnname
+	bdperson.cPsn_Name psnname,
+	concat ( doc.iYear, doc.iMonth, doc.iDate, doc.iWorkShiftMid ) dateSplicing
 FROM
 	Mo_MoDoc doc
 	LEFT JOIN Mo_MoRouting routing ON routing.iMoDocId= doc.iAutoId
@@ -193,41 +197,52 @@ FROM
 	LEFT JOIN Mo_MoRoutingConfig_Person moperson ON moperson.iMoRoutingConfigId= config.iAutoId
 	LEFT JOIN Bd_Person bdperson ON moperson.iPersonId= bdperson.iAutoId
 WHERE
-    doc.iAutoId = #para(docid)
+	doc.iAutoId IN (#(docid))
 #end
 
-#sql("getModocidBydates")
+#sql("getModocDutyPersonnameByDocid")
 SELECT DISTINCT
-    doc.iAutoId
-FROM
-	Mo_MoDoc doc
-WHERE
-	doc.iYear = #para(iyear)
-	AND doc.iMonth = #para(imonth)
-	AND doc.iDate = #para(idate)
-	AND doc.iWorkShiftMid = #para(iworkshiftmid)
-	AND doc.iMoTaskId= #para(taskid)
-#end
-
-#sql("getModocnoByid")
-SELECT cMoDocNo FROM Mo_MoDoc WHERE iAutoId = #para(docid)
-#end
-
-#sql("getModociqtyByid")
-SELECT iQty FROM Mo_MoDoc WHERE iAutoId = #para(docid)
-#end
-
-#sql("getModocpernumByid")
-SELECT iPersonNum FROM Mo_MoDoc WHERE iAutoId = #para(docid)
-#end
-
-#sql("getModocpersonByid")
-SELECT DISTINCT
+	modoc.iAutoId,
 	modoc.iDutyPersonId,
 	person.cPsn_Name
 FROM
 	Mo_MoDoc modoc
 	LEFT JOIN Bd_Person person ON modoc.iDutyPersonId= person.iAutoId
 WHERE
-	modoc.iAutoId= #para(docid)
+	modoc.iAutoId IN (#(docid))
 #end
+
+#sql("getModocNoQtyNumByDocid")
+SELECT
+	iAutoId,
+	cMoDocNo,
+	iQty,
+	iPersonNum,
+	iYear,
+	iMonth,
+	iDate,
+	iWorkShiftMid,
+	concat ( iYear, iMonth, iDate, iWorkShiftMid ) dateSplicing
+FROM
+	Mo_MoDoc
+WHERE
+	iAutoId IN (#(docid))
+#end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

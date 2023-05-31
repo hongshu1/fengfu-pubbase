@@ -12,9 +12,12 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.JBoltBaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.model.momdata.Uom;
+import cn.rjtech.model.momdata.Uomclass;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -46,6 +49,8 @@ public class UomService extends JBoltBaseService<Uom> {
     @Inject
     private PersonService personService;
 
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingdService;
     /**
      * 后台管理分页查询
      */
@@ -253,38 +258,11 @@ public class UomService extends JBoltBaseService<Uom> {
 
     public Ret importExcelData(File file) {
         StringBuilder errorMsg = new StringBuilder();
-        JBoltExcel jBoltExcel = JBoltExcel
-                //从excel文件创建JBoltExcel实例
-                .from(file)
-                //设置工作表信息
-                .setSheets(
-                        JBoltExcelSheet.create("sheet1")
-                                //设置列映射 顺序 标题名称
-                                .setHeaders(
-                                        JBoltExcelHeader.create("iuomclassid", "计量单位组编码"),
-                                        JBoltExcelHeader.create("cuomcode", "计量单位编码"),
-                                        JBoltExcelHeader.create("cuomname", "计量单位名称"),
-                                        JBoltExcelHeader.create("iratiotobase", "换算率"),
-                                        JBoltExcelHeader.create("cmemo", "换算说明"),
-                                        JBoltExcelHeader.create("isbase", "是否默认主计量单位")
-                                )
-                                //特殊数据转换器
-                                .setDataChangeHandler((data, index) -> {
-                                    //如果没有填写默认就全部设为0
-                                    data.change("isbase", StrUtil.equals("1", data.getStr("isbase")) ? "1" : "0");
-                                    Long pid = CACHE.me.getUomClassIdByCode(data.getStr("iuomclassid"));
-                                    if (notOk(pid)) {
-                                        //传入编码不存在时不进行数据转换，让程序报错
-                                        errorMsg.append("导入计量单位组编码：" + data.getStr("iuomclassid") + "不存在，导入失败");
-                                    }
-                                    data.change("iuomclassid", pid);
-
-                                })
-                                //从第三行开始读取
-                                .setDataStartRow(2)
-                );
+        //使用字段配置维护
+        Object importData =  cusFieldsMappingdService.getImportDatas(file, "计量单位").get("data");
+        String docInfoRelaStrings= JSON.toJSONString(importData);
         //从指定的sheet工作表里读取数据
-        List<Uom> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", Uom.class, errorMsg);
+        List<Uom> models = JSON.parseArray(docInfoRelaStrings, Uom.class);
         if (notOk(models)) {
             if (errorMsg.length() > 0) {
                 return fail(errorMsg.toString());
@@ -293,6 +271,8 @@ public class UomService extends JBoltBaseService<Uom> {
             }
         }
         for (Uom model : models) {
+            Long pid = CACHE.me.getUomClassIdByCode(model.getCUpdateName());
+            model.setIUomClassId(pid);
             setUomclass(model);
         }
         if (errorMsg.length() > 0) {
@@ -307,11 +287,14 @@ public class UomService extends JBoltBaseService<Uom> {
                 if (notOk(u.getCUomName())) {
                     return fail("计量单位名称不能为空");
                 }
-                if (notOk(u.getIUomClassId())) {
-                    return fail("计量单位组不能为空");
-                }
                 if (notOk(u.getIRatioToBase())) {
                     return fail("换算率不能为空");
+                }
+                Long pid = CACHE.me.getUomClassIdByCode(u.getCUpdateName());
+                if (notOk(pid)) {
+                    //传入编码不存在时不进行数据转换，让程序报错
+                    fail("导入计量单位组编码"+u.getCUpdateName()+"不存在，导入失败");
+
                 }
             }
         }

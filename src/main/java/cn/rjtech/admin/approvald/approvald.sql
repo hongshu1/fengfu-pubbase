@@ -35,7 +35,7 @@ order by t1.dUpdateTime
 #end
 
 #sql("selectPerson")
-select t1.iAutoId as ipersonid, t1.cPsn_Name as cpsnname
+select t1.iAutoId as ipersonid, t1.cPsn_Name as cpsnname,t1.cPsn_Num as cpsnnum
 from Bd_Person t1
 where t1.isDeleted = '0' and t1.iUserId is not null
 #if(orgCode)
@@ -71,7 +71,7 @@ left join #(getBaseDbName()).dbo.jb_dept t2 on t2.sn = t1.cDept_num
 left join #(getBaseDbName()).dbo.jb_user t3 on t3.id = t1.iUserId
 where t1.isDeleted = '0' and t1.iUserId is not null
 ) t on t1.iPersonId = t.ipersonid
-where t1.iApprovalDid = '#(mid)'
+where t1.iApprovalDid = '#(mid)' order by t1.iSeq asc
 #end
 
 #sql("roleDatas")

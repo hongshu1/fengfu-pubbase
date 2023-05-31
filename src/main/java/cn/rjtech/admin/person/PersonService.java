@@ -519,5 +519,24 @@ public class PersonService extends BaseService<Person> {
 	public List<Record> getAutocompleteListWithDept(String cdepcode,String q, Integer limit) {
 	    return dbTemplate("person.getAutocompleteListWithDept", Okv.by("q", q).set("limit", limit).set("cdepcode", cdepcode)).find();
 	}
+
+    /**
+     *根据名字查询ID
+     * @param name
+     * @return
+     */
+    public Long findIdByName(String name){
+       return   queryColumn("select iAutoId FROM Bd_Person WHERE cPsn_Name=?",name);
+    }
+
+    /**
+     * 根据名字查询人员编码
+     * @param name
+     * @return
+     */
+    public String findCodeByName(String name){
+        return queryColumn("select cPsn_Num FROM Bd_Person WHERE cPsn_Name=?",name);
+    }
+
     
 }

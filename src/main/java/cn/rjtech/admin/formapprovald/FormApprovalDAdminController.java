@@ -64,10 +64,14 @@ public class FormApprovalDAdminController extends BaseAdminController {
      */
     public void edit() {
         FormApprovalD approvalD = service.findById(getLong(0));
+
         if (approvalD == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
+        Integer approvaling = service.isApprovaling(getLong(0));
+
+        set("approvaling",approvaling);
         set("formApprovalD", approvalD);
         render("edit.html");
     }

@@ -362,10 +362,6 @@
 <script type="text/javascript" src="assets/plugins/Grape/FileSaver.min.js"></script>
 <script type="text/javascript">
     /**
-     * @param Api 公共接口
-     */
-    const Api = 'http://localhost:8081/';
-    /**
      * @param urlParams 获取跳转携带的参数
      * @param id 跳转携带的id
      */
@@ -392,9 +388,13 @@
     //状态栏
     statusBar.bind(spread);
     spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
-    spread.getSheet(0).options.isProtected = true;//表单设为保护状态
-    spread.getSheet(0).options.protectionOptions = {allowFilter: true};//保护状态允许筛选
-    spread.getSheet(0).getDefaultStyle().locked = false;//默认样式设为非锁定
+    // spread.getSheet(0).options.isProtected = true;//表单设为保护状态
+    // spread.getSheet(0).options.protectionOptions = {allowFilter: true};//保护状态允许筛选
+    // spread.getSheet(0).getDefaultStyle().locked = false;//默认样式设为非锁定
+    // sheet.options.isProtected = true;//开启表单保护
+    var defaultStyle = sheet.getDefaultStyle();
+    defaultStyle.locked = true;
+    sheet.setDefaultStyle(defaultStyle);
     var parmsDefault = {
         id:null,                //全局公共id
         level:'',               //排场层级
@@ -541,7 +541,7 @@
      * @param initDate
      */
     function initDate() {
-        let url = Api+"admin/scheduproductplanmonth/getTableHead";
+        let url = "/admin/scheduproductplanmonth/getTableHead";
         //获取接口数据
         Ajax.get(url,(res)=>{
             spreadSuspend();//暂停绘制
@@ -581,7 +581,7 @@
      * @param initData
      */
     function initData(id,ilevel){
-        let url = Api + `admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=${id}&level=${ilevel}&cworkname=${searchData.cworkname}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`;
+        let url = `/admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=${id}&level=${ilevel}&cworkname=${searchData.cworkname}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`;
         $.ajax({
             url,
             type: 'get',
@@ -645,17 +645,14 @@
                     let shiyongRow = 3;//计划使用行下标
                     let shiyongCol = 9;
                     let zaikuCol = 8;
-                    sheet.options.isProtected = true;//开启表单保护
+                    //
                     //渲染计划数据
                     for (var j = 0; j < res[i].day.length; j++) {
                         if (i == 0) {
                             sheet.setValue(shiyongRow, shiyongCol + j, res[i].day[j].shiyong);
                             sheet.setValue(1 + shiyongRow, shiyongCol + j, res[i].day[j].one);
-                            sheet.getCell(shiyongRow,shiyongCol).locked(res[i].day[j].lock);
                             sheet.setValue(2 + shiyongRow, shiyongCol + j, res[i].day[j].two);
-                            sheet.getCell(shiyongRow,shiyongCol).locked(res[i].day[j].lock);
                             sheet.setValue(3 + shiyongRow, shiyongCol + j, res[i].day[j].three);
-                            sheet.getCell(shiyongRow,shiyongCol).locked(res[i].day[j].lock);
                             sheet.setValue(4 + shiyongRow, zaikuCol, res[i].day[j].zaiku);
                             sheet.setValue(5 + shiyongRow, shiyongCol + j, res[i].day[j].tianshu);
                         } else {
@@ -666,36 +663,41 @@
                             sheet.setValue(6 * i + shiyongRow + 4, zaikuCol, res[i].day[j].zaiku);
                             sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, res[i].day[j].tianshu);
                         }
-                        if(res[i].day[j].lock){
+                        // if(res[i].day[j].lock){
                             if(i==0){
                                 // 设定锁定样式
-                                let style_1S = new GC.Spread.Sheets.Style();
-                                style_1S.locked = res[i].day[j].lock;
-                                style_1S.backColor = "#F0F0F0";
+                                const style_1S = new GC.Spread.Sheets.Style();
+                                style_1S.backColor = res[i].day[j].lock==true?"#F0F0F0":'';
+                                sheet.getCell(1+shiyongRow, shiyongCol+j).locked(res[i].day[j].lock);
+                                style_1S.locked = res[i].day[j].lock==true?true:false;
                                 parms.activeSheet.setStyle(1+shiyongRow, shiyongCol+j,style_1S);
-                                let style_2S = new GC.Spread.Sheets.Style();
-                                style_2S.locked = res[i].day[j].lock;
-                                style_2S.backColor = "#F0F0F0";
+
+                                const style_2S = new GC.Spread.Sheets.Style();
+                                // sheet.getCell(2+shiyongRow, shiyongCol+j).locked(res[i].day[j].lock);
+                                style_2S.locked = res[i].day[j].lock==true?true:false;
+                                style_2S.backColor = res[i].day[j].lock==true?"#F0F0F0":'';
                                 parms.activeSheet.setStyle(2+shiyongRow, shiyongCol+j,style_2S);
-                                let style_3S = new GC.Spread.Sheets.Style();
-                                style_3S.locked = res[i].day[j].lock;
-                                style_3S.backColor = "#F0F0F0";
+
+                                const style_3S = new GC.Spread.Sheets.Style();
+                                // sheet.getCell(3+shiyongRow, shiyongCol+j).locked(res[i].day[j].lock);
+                                style_3S.locked = res[i].day[j].lock==true?true:false;
+                                style_3S.backColor = res[i].day[j].lock==true?"#F0F0F0":'';
                                 parms.activeSheet.setStyle(3+shiyongRow, shiyongCol+j,style_3S);
                             }else{
-                                let style_1S = new GC.Spread.Sheets.Style();
-                                style_1S.locked = res[i].day[j].lock;
-                                style_1S.backColor = "#F0F0F0";
+                                const style_1S = new GC.Spread.Sheets.Style();
+                                style_1S.locked = res[i].day[j].lock==true?true:false;
+                                style_1S.backColor = res[i].day[j].lock==true?"#F0F0F0":'';
                                 parms.activeSheet.setStyle(6*i+shiyongRow+1, shiyongCol+j,style_1S);
-                                let style_2S = new GC.Spread.Sheets.Style();
-                                style_2S.locked = res[i].day[j].lock;
-                                style_2S.backColor = "#F0F0F0";
+                                const style_2S = new GC.Spread.Sheets.Style();
+                                style_2S.locked = res[i].day[j].lock==true?true:false;
+                                style_2S.backColor = res[i].day[j].lock==true?"#F0F0F0":'';
                                 parms.activeSheet.setStyle(6*i+shiyongRow+2, shiyongCol+j,style_2S);
-                                let style_3S = new GC.Spread.Sheets.Style();
-                                style_3S.locked = res[i].day[j].lock;
-                                style_3S.backColor = "#F0F0F0";
+                                const style_3S = new GC.Spread.Sheets.Style();
+                                style_3S.locked = res[i].day[j].lock==true?true:false;
+                                style_3S.backColor = res[i].day[j].lock==true?"#F0F0F0":'';
                                 parms.activeSheet.setStyle(6*i+shiyongRow+3, shiyongCol+j,style_3S);
                             }
-                        }
+                        // }
                     }
                     // 根据数据长度添加表格行列
                     var addCol = res.length+6,addRow = 41;
@@ -723,7 +725,7 @@
         popup.style.display = 'block';
         popup.style.position = "absolute";
         popup.style.top = "35%";
-        popup.style.left = "50%";
+        popup.style.left = "40%";
         popup.style.marginTop = "-75px";
         popup.style.marginLeft = "-150px";
         mybgs = document.createElement("div");
@@ -738,7 +740,7 @@
         mybgs.style.opacity = "0.3";
         document.body.appendChild(mybgs);
         document.body.style.overflow = "hidden";
-        let url = Api+"admin/scheduproductplanmonth/getApsWeekscheduleList";
+        let url = "/admin/scheduproductplanmonth/getApsWeekscheduleList";
         $.ajax({
             url,
             type:'post',
@@ -772,7 +774,7 @@
     //删除表格数据
     function levelDelete(index){
         let id = parms.dschedulebeginData[index].iautoid;
-        let url = Api+`admin/scheduproductplanmonth/deleteApsWeekschedule?iWeekScheduleId=${id}`;
+        let url = `/admin/scheduproductplanmonth/deleteApsWeekschedule?iWeekScheduleId=${id}`;
         $.ajax({
             url,
             type:'post',
@@ -817,7 +819,7 @@
         const datetimeLocalInput = document.getElementById('datetime-local');
         const myVal = datetimeLocalInput.value.substring(0,10);
         const level = document.getElementById('level').value;
-        let url = Api+`admin/scheduproductplanmonth/scheduPlanMonth?level=${level}&endDate=${myVal}`;
+        let url = `/admin/scheduproductplanmonth/scheduPlanMonth?level=${level}&endDate=${myVal}`;
         $.ajax({
             url,
             type:'post',
@@ -851,9 +853,14 @@
         }
         //每次添加之后往数组内进行存储
         parms.tableData.push(a);
-    //
-        let s = sheet.comments.get(info.row, info.col).locked(true).displayMode(1);
-        console.log(a,"parms.tableData")
+        var rowData = sheet.getArray(info.row,0, 1, sheet.getColumnCount());
+        console.log(rowData);
+        // var dataSource = spread.getActiveSheet().getDataSource();
+        // dataSource[0][0] = "new value";
+        // var originalData = spread.getActiveSheet().getDataSource();
+        // var isDataChanged = JSON.stringify(dataSource) !== JSON.stringify(originalData);
+        // console.log("数据是否被修改：" + isDataChanged);
+        // console.log(dataSource)
     });
     //spread获取当前点击的单元格
     sheet.bind(GC.Spread.Sheets.Events.CellClick, function (e, info) {
@@ -910,7 +917,7 @@
             document.body.appendChild(mybg);
             document.body.style.overflow = "hidden";
             //锁定截止日期
-            let url = Api+`admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=${parms.id}`;
+            let url = `/admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=${parms.id}`;
             $.ajax({
                 url,
                 type:'post',
@@ -954,8 +961,8 @@
     function save(){
         const datetimeLocalInput = document.getElementById('mySelect');
         const myVal = datetimeLocalInput.value.substring(0,10);
-        let url = alertTitle.innerText == "锁定计划"?Api+`admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=${parms.id}&endDate=${myVal}`
-            :Api+`admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=${parms.id}&endDate=${myVal}`;
+        let url = alertTitle.innerText == "锁定计划"?`/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=${parms.id}&endDate=${myVal}`
+            :`/admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=${parms.id}&endDate=${myVal}`;
         $.ajax({
             url,
             type:'post',
@@ -965,20 +972,20 @@
                 mybg.style.display = "none";
                 initData();
                 //设置表单保护，单元格不可编辑
-                for (let i = 0; i < 3; i++) {
-                    for (let j = 0; j < 7; j++) {
-                        // 修改sheet默认locked为false
-                        var defaultStyle = new GC.Spread.Sheets.Style();
-                        defaultStyle.locked = false;
-                        sheet.setDefaultStyle(defaultStyle, GC.Spread.Sheets.SheetArea.viewport);//设置第1行不可编辑
-                        var style = new GC.Spread.Sheets.Style();
-                        style.locked = true;
-                        style.backColor = "#F0F0F0";
-                        sheet.setStyle(i+4, j+9, style);
-                        // 设置表单保护
-                        sheet.options.isProtected = true;
-                    }
-                }
+                // for (let i = 0; i < 3; i++) {
+                //     for (let j = 0; j < 7; j++) {
+                //         // 修改sheet默认locked为false
+                //         var defaultStyle = new GC.Spread.Sheets.Style();
+                //         defaultStyle.locked = false;
+                //         sheet.setDefaultStyle(defaultStyle, GC.Spread.Sheets.SheetArea.viewport);//设置第1行不可编辑
+                //         var style = new GC.Spread.Sheets.Style();
+                //         style.locked = true;
+                //         style.backColor = "#F0F0F0";
+                //         sheet.setStyle(i+4, j+9, style);
+                //         // 设置表单保护
+                //         // sheet.options.isProtected = true;
+                //     }
+                // }
             },error: function(error) {
                 console.log(error);
             }
@@ -1018,7 +1025,7 @@
         mybg.style.opacity = "0.3";
         document.body.appendChild(mybg);
         document.body.style.overflow = "hidden";
-        let url = Api+`admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=${parms.id}`;
+        let url = `/admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=${parms.id}`;
         $.ajax({
             url,
             type:'post',
@@ -1039,7 +1046,7 @@
     }
     //测试向后端发送数据
     function edit(){
-        let url = Api+"admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=2023-05-28";
+        let url = "/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=2023-05-28";
         $.ajax({
             url,
             type:'post',

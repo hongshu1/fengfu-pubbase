@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.bean.MultipleUploadFile;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.service.JBoltFileService;
@@ -39,7 +40,8 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	private JBoltFileService jBoltFileService;
 	@Inject
 	private QcFormService qcFormService;
-	
+	@Inject
+	private JBoltFileService jboltFileService;
 
 
    /**
@@ -281,7 +283,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	/**
 	 * 打开文件上传Dialog
 	 */
-	public void openFileDialog(@Para(value = "invId") Long invId, @Para(value = "cpics") String cpics){
+	public void openFileDialog(@Para(value = "iinventoryid") Long invId, @Para(value = "cpics") String cpics){
 		keepPara();
 		render("file_dialog.html");
 	}
@@ -336,5 +338,25 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	 */
 	public void deleteFile(){
 		renderJson(service.deleteFile(getKv()));
+	}
+
+	/**
+	 * 上传文件 同步批量上传文件
+	 */
+	public void upload() {
+		//上传到今天的文件夹下
+		String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_FILE_UPLOADER);
+		List<UploadFile> files = getFiles(uploadPath);
+		if (!isOk(files)) {
+			renderBootFileUploadFail("文件上传失败!");
+			return;
+		}
+		List<MultipleUploadFile> retFiles = new ArrayList<MultipleUploadFile>();
+		Ret ret;
+		for (UploadFile uploadFile : files) {
+			ret = jboltFileService.saveVideoFile(uploadFile, uploadPath);
+			retFiles.add(new MultipleUploadFile(uploadFile.getOriginalFileName(), uploadFile.getOriginalFileName(), ret.getStr("data")));
+		}
+		renderJsonData(retFiles);
 	}
 }
