@@ -186,8 +186,10 @@ public class CodeGenAdminController extends JBoltBaseController {
 		set("isSubTable", false);
 		set("projectPath",FileUtil.normalize(System.getProperty("user.dir")));
 		CodeGen lastEnable = service.getLastEnableCodeGen();
-		set("lastMainJavaPackage",lastEnable.getMainJavaPackage());
-		set("lastModelPackage",lastEnable.getModelPackage());
+		if(lastEnable!=null){
+			set("lastMainJavaPackage",lastEnable.getMainJavaPackage());
+			set("lastModelPackage",lastEnable.getModelPackage());
+		}
 		render("add.html");
 	}
 	/**
