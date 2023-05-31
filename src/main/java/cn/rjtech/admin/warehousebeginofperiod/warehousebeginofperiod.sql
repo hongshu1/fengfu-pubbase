@@ -43,3 +43,14 @@ where 1=1
 and t1.cwhcode = #para(cwhcode)
 #end
 #end
+
+#sql("findPosCodeByWhcodeAndInvcode")
+select * from UFDATA_001_2023.dbo.V_Sys_CurrentStock t1
+where 1=1
+#if(whcode)
+and t1.whcode = #para(whcode)
+#end
+#if(invcode)
+and t1.invcode = #para(invcode)
+#end
+#end
