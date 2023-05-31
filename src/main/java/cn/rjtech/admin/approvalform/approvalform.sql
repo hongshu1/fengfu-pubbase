@@ -7,7 +7,9 @@ where t1.iApprovalMid = '#(id)'
 
 #sql("resourceList")
 select t1.iAutoId as iFormId, t1.cFormCode as cFormSn, t1.cFormName
-from Bd_Form t1 where IsDeleted = '0' and not exists(select 1 from Bd_ApprovalForm t2 where t1.iAutoId = t2.iFormId)
+from Bd_Form t1 where IsDeleted = '0' and isApproval = '1' and not exists(select 1 from Bd_ApprovalForm t2 where t1
+.iAutoId = t2
+.iFormId)
 #if(itemHidden)
 and t1.iAutoId not in (#(itemHidden))
 #end

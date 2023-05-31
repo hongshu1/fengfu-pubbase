@@ -21,6 +21,7 @@ import com.jfinal.plugin.activerecord.Page;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 审批流主表 Service
@@ -252,6 +253,8 @@ public class ApprovalMService extends BaseService<ApprovalM> {
 		System.out.println("deleteTable===>"+jBoltTable.getDelete());
 		System.out.println("form===>"+jBoltTable.getForm());
 
+		AtomicReference<Long> id = new AtomicReference<>();
+
 		Db.use(dataSourceConfigName()).tx(() -> {
 			ApprovalM approvalM = jBoltTable.getFormModel(ApprovalM.class, "approvalM");
 			Long headerId;
@@ -273,6 +276,7 @@ public class ApprovalMService extends BaseService<ApprovalM> {
 				approvalM.update();
 			}
 			headerId = approvalM.getIAutoId();
+			id.set(approvalM.getIAutoId());
 
 			if (jBoltTable.saveIsNotBlank()){
 				List<ApprovalForm> saveModelList = jBoltTable.getSaveModelList(ApprovalForm.class);
@@ -286,11 +290,11 @@ public class ApprovalMService extends BaseService<ApprovalM> {
 			}
 
 			if (jBoltTable.deleteIsNotBlank()){
-				approvalFormService.deleteByIds(jBoltTable.getDelete());
+				approvalFormService.realDeleteByIds(jBoltTable.getDelete());
 			}
 			return true;
 		});
-		return SUCCESS;
+		return SUCCESS.set("id",id);
 	}
 
 	/**
