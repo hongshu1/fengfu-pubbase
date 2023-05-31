@@ -28,6 +28,8 @@ public class MoMaterialscanusedlogmAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
+		MoMaterialscanusedlogm moMaterialscanusedlogm=service.addDoc(getLong("imodocid"));
+		set("moMaterialscanusedlogm",moMaterialscanusedlogm);
 		render("index.html");
 	}
   	
@@ -111,6 +113,31 @@ public class MoMaterialscanusedlogmAdminController extends BaseAdminController {
 	 */
 	public void getMoMaterialscanusedlogList(){
 		renderJsonData(service.getMoMaterialscanusedlogList(getPageNumber(),getPageSize(),getKv()));
+	}
+
+	/**
+	 * 现品票扫描
+	 */
+	public  void  addBarcode(){
+		String barcode=get("barcode");
+		Long imaterialscanUsedlogmid=getLong("imaterialscanusedlogmid");
+         renderJsonData(service.addBarcode(barcode,imaterialscanUsedlogmid));
+	}
+	/**
+	 * 新增单据
+	 */
+	public  void  addDoc(Long imodocid){
+		service.addDoc(imodocid);
+
+	}
+
+	/**
+	 * 保存产生出库单
+	 */
+	public void createOutDoc(){
+		String cdocno=get("cdocno");
+		Long imaterialscanUsedlogmid=getLong("imaterialscanusedlogmid");
+		renderJsonData(service.createOutDoc(cdocno,imaterialscanUsedlogmid));
 	}
 
 }

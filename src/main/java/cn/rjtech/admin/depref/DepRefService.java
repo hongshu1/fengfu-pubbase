@@ -1,8 +1,13 @@
 package cn.rjtech.admin.depref;
 
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+
+import java.util.List;
+
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
@@ -169,6 +174,16 @@ public class DepRefService extends BaseService<DepRef> {
 	public String checkInUse(DepRef depRef, Kv kv) {
 		//这里用来覆盖 检测DepRef是否被其它表引用
 		return null;
+	}
+	/**
+	 * 部门对照表查询部门档案中应用于禀议系统的部门（带层级关系）
+	 * */
+	public List<Record> findAllProposalData(Kv para) {
+		para.set("iorgid",getOrgId());
+		List<Record> records = dbTemplate("depref.findAllProposalData", para).find();
+		return this.convertToRecordTree(records, "iautoid", "ipid", (px) -> {
+			return this.notOk(px.getStr("ipid"));
+		});		
 	}
 
 }
