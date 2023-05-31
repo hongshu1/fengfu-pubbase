@@ -1,84 +1,99 @@
 <div>
-    <div class="py-2" style="padding:.5rem 0rem;">
-        <!--<span class="py-1"><strong>附加信息</strong></span>-->
+  <div class="py-2" style="padding:.5rem 0rem;">
+    <!--<span class="py-1"><strong>附加信息</strong></span>-->
+  </div>
+  <input type="hidden" name="inventoryaddition.iAutoId" value="#(inventoryaddition.iAutoId??)"/>
+  <div class="row">
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">长</label>
+        <div class="col">
+          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
+                 placeholder="0" maxlength="24" name="inventoryaddition.iLength"
+                 value="#(inventoryaddition.iLength??)"/>
+        </div>
+      </div>
     </div>
-    <input type="hidden" name="inventoryaddition.iAutoId" value="#(inventoryaddition.iAutoId??)" />
-    <div class="row">
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">长</label>
-                <div class="col">
-                    <input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control"  data-notnull="false" placeholder="0"  maxlength="24" name="inventoryaddition.iLength" value="#(inventoryaddition.iLength??)"/>
-                </div>
-            </div>
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">宽</label>
+        <div class="col">
+          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
+                 placeholder="0" maxlength="24" name="inventoryaddition.iWidth" value="#(inventoryaddition.iWidth??)"/>
         </div>
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">宽</label>
-                <div class="col">
-                    <input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control"  data-notnull="false" placeholder="0"  maxlength="24" name="inventoryaddition.iWidth" value="#(inventoryaddition.iWidth??)"/>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">高</label>
-                <div class="col">
-                    <input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control"  data-notnull="false" placeholder="0"  maxlength="24" name="inventoryaddition.iHeight" value="#(inventoryaddition.iHeight??)"/>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-    <div class="row">
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">空间值</label>
-                <div class="col">
-                    <input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control"  data-notnull="false" placeholder="0"  maxlength="24" name="inventoryaddition.iSpace" value="#(inventoryaddition.iSpace??)"/>
-                </div>
-            </div>
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">高</label>
+        <div class="col">
+          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
+                 placeholder="0" maxlength="24" name="inventoryaddition.iHeight"
+                 value="#(inventoryaddition.iHeight??)"/>
         </div>
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">单位体积</label>
-                <div class="col">
-                    <input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control"  data-notnull="false" placeholder="0"  maxlength="24" name="inventoryaddition.iVolume" value="#(inventoryaddition.iVolume??)"/>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">启用时间</label>
-                <div class="col">
-                    <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"   placeholder="启用时间" data-tips="启用时间" maxlength="23" name="inventoryaddition.dFromDate" value="#(inventoryaddition.dFromDate??)"/>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">停用时间</label>
-                <div class="col">
-                    <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"   placeholder="停用时间" data-tips="停用时间" maxlength="23" name="inventoryaddition.dToDate" value="#(inventoryaddition.dToDate??)"/>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-    <div class="row">
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">要求</label>
-                <div class="col">
-                    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="要求" maxlength="255" name="inventoryaddition.cDescription" value="#(inventoryaddition.cDescription??)"/>
-                </div>
-            </div>
+  </div>
+  <div class="row">
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">空间值</label>
+        <div class="col">
+          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
+                 placeholder="0" maxlength="24" name="inventoryaddition.iSpace" value="#(inventoryaddition.iSpace??)"/>
         </div>
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">步距</label>
-                <div class="col">
-                    <input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control"  data-notnull="false" placeholder="0"  maxlength="24" name="inventoryaddition.iStepDistance" value="#(inventoryaddition.iStepDistance??)"/>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">单位体积</label>
+        <div class="col">
+          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
+                 placeholder="0" maxlength="24" name="inventoryaddition.iVolume"
+                 value="#(inventoryaddition.iVolume??)"/>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">启用时间</label>
+        <div class="col">
+          <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+                 class="form-control" placeholder="启用时间" data-tips="启用时间" maxlength="23"
+                 name="inventoryaddition.dFromDate" value="#(inventoryaddition.dFromDate??)"/>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">停用时间</label>
+        <div class="col">
+          <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+                 class="form-control" placeholder="停用时间" data-tips="停用时间" maxlength="23"
+                 name="inventoryaddition.dToDate" value="#(inventoryaddition.dToDate??)"/>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">要求</label>
+        <div class="col">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="要求"
+                 maxlength="255" name="inventoryaddition.cDescription" value="#(inventoryaddition.cDescription??)"/>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">步距</label>
+        <div class="col">
+          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
+                 placeholder="0" maxlength="24" name="inventoryaddition.iStepDistance"
+                 value="#(inventoryaddition.iStepDistance??)"/>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
