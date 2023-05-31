@@ -1398,6 +1398,10 @@ public class PermissionKey {
 	 */
 	public static final String ENUM_TYPE = "enum_type";
 	/**
+	 * 关于我们
+	 */
+	public static final String ABOUT_US = "about_us";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
@@ -1929,4 +1933,8 @@ public class PermissionKey {
 	 * 作废
 	 */
 	public static final String INVESTMENT_PLAN_MANAGE_CANCLE = "investment_plan_manage_cancle";
+	/**
+	 * 上传记录
+	 */
+	public static final String FORMUPLOADM = "form_uploadm";
 }

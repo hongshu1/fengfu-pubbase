@@ -18,6 +18,7 @@ import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.barcodeencodingm.BarcodeencodingmService;
 import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.depref.DepRefService;
 import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
 import cn.rjtech.admin.expensebudgetitem.ExpenseBudgetItemService;
 import cn.rjtech.admin.investmentplan.InvestmentPlanService;
@@ -66,6 +67,8 @@ public class PurchasedService extends BaseService<Purchased> {
     private DepartmentService departmentService;
     @Inject
     private ProjectCardService projectCardService;
+    @Inject
+    private DepRefService depRefService;
 
     /**
      * 后台管理分页查询
@@ -292,12 +295,14 @@ public class PurchasedService extends BaseService<Purchased> {
     			if(ObjectUtil.equal(projectcard.getIservicetype(), ServiceTypeEnum.EXPENSE_BUDGET.getValue())){
     				ExpenseBudgetItem expenseBudgetItem =  expenseBudgetItemService.findById(purchased.getIsourceid());
     				ExpenseBudget expenseBudget = expenseBudgetService.findById(expenseBudgetItem.getIexpenseid());
-    				purchased.put("cdepname",departmentService.getCdepName(expenseBudget.getCdepcode()));
+    				Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(expenseBudget.getCdepcode());
+    				purchased.put("cdepname",refDepartmentRc.getStr("cdepname"));
     				purchased.put("cbudgetno",expenseBudgetItem.getCbudgetno());
     			}else{
     				InvestmentPlanItem investmentPlanItem =  investmentPlanItemService.findById(purchased.getIsourceid());
     				InvestmentPlan investmentPlan = investmentPlanService.findById(investmentPlanItem.getIplanid());
-    				purchased.put("cdepname",departmentService.getCdepName(investmentPlan.getCdepcode()));
+    				Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(investmentPlan.getCdepcode());
+    				purchased.put("cdepname",refDepartmentRc.getStr("cdepname"));
     				purchased.put("cbudgetno",investmentPlanItem.getCplanno());
     			}
 			}
