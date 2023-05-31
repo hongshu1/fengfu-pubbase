@@ -142,20 +142,14 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
      * 根据层级获取最近锁定时间
      */
     public void getLockDate() {
-        //排产纪录id
-        Long iWeekScheduleId = getLong("iWeekScheduleId");
+        //排产层级
+        String level = get("level");
+        //TODO:获取当前层级上次排产锁定日期
+        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level",level)).findFirst();
         //上次锁定截止日期
         Date lockPreDate;
-        if (isOk(iWeekScheduleId)){
-            //排产层级
-            int level = apsWeekscheduleService.findFirst("SELECT iLevel FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId).getILevel();
-            //TODO:获取当前层级上次排产锁定日期
-            ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level",level)).findFirst();
-            if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
-                lockPreDate = apsWeekschedule.getDLockEndTime();
-            }else {
-                lockPreDate = new Date();
-            }
+        if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
+            lockPreDate = apsWeekschedule.getDLockEndTime();
         }else {
             lockPreDate = new Date();
         }
@@ -182,20 +176,14 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
      * 根据层级获取最近解锁时间
      */
     public void getUnLockDate() {
-        //排产纪录id
-        Long iWeekScheduleId = getLong("iWeekScheduleId");
+        //排产层级
+        String level = get("level");
         //上次锁定截止日期
         Date lockPreDate;
-        if (isOk(iWeekScheduleId)){
-            //排产层级
-            int level = apsWeekscheduleService.findFirst("SELECT iLevel FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId).getILevel();
-            //TODO:获取当前层级上次排产锁定日期
-            ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level",level)).findFirst();
-            if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
-                lockPreDate = apsWeekschedule.getDLockEndTime();
-            }else {
-                lockPreDate = new Date();
-            }
+        //TODO:获取当前层级上次排产锁定日期
+        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level",level)).findFirst();
+        if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
+            lockPreDate = apsWeekschedule.getDLockEndTime();
         }else {
             lockPreDate = new Date();
         }
@@ -237,9 +225,19 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
      * 获取表格表头日期展示
      */
     public void getTableHead() {
-        String startDate = get("startDate");
-        String endDate = get("endDate");
+        //排产层级
+        String level = get("level");
+        //TODO:查询排产开始日期与截止日期
+        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleBeginTime,dScheduleEndTime FROM Aps_WeekSchedule WHERE iLevel = ? ",level);
+        String startDate = "";
+        String endDate = "";
+        if (apsWeekschedule != null){
+            startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(),"yyyy-MM-dd");
+            endDate = DateUtils.formatDate(apsWeekschedule.getDScheduleEndTime(),"yyyy-MM-dd");
+        }
 
+        startDate = isOk(get("startDate")) ? get("startDate") : startDate;
+        endDate = isOk(get("endDate")) ? get("endDate") : endDate;
         LocalDate localDate = LocalDate.now();
         if (StringUtils.isBlank(startDate)){
             startDate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();

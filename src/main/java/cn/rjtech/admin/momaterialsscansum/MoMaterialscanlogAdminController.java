@@ -6,8 +6,7 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
+
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoMaterialscanlog;
 /**
@@ -86,5 +85,25 @@ public class MoMaterialscanlogAdminController extends BaseAdminController {
 		renderJson(service.delete(getLong(0)));
 	}
 
+	/**
+	 * 获取备料现品票明细（未扫描）
+	 */
+	public void getMoMaterialNotScanLogList(){
+		renderJsonData(service.getMoMaterialNotScanLogList(getPageNumber(),getPageSize(),getKv()));
+	}
+	/**
+	 * 获取备料现品票明细（已扫描）
+	 */
+	public void getMoMaterialScanLogList(){
+		renderJsonData(service.getMoMaterialScanLogList(getPageNumber(),getPageSize(),getKv()));
+	}
+	/**
+	 * 材料汇总-现品票扫描
+	 */
+	public  void  addBarcode(){
+		String barcode=get("barcode");
+		Long imodocid=getLong("imodocid");
+		renderJsonData(service.addBarcode(barcode,imodocid));
+	}
 
 }

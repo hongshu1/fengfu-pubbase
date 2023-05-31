@@ -160,6 +160,14 @@
 #include("spotcheckform/spotcheckform.sql")
 #end
 
+#namespace("spotcheckformitem")
+#include("spotcheckformitem/spotcheckformitem.sql")
+#end
+
+#namespace("spotcheckformparam")
+#include("spotcheckformparam/spotcheckformparam.sql")
+#end
+
 ###采购类型
 #namespace("purchasetype")
 #include("purchasetype/purchasetype.sql")
@@ -651,4 +659,8 @@
 
 #namespace("form")
 #include("form/form.sql")
+#end
+
+#namespace("momoinvbatch")
+#include("momoinvbatch/momoinvbatch.sql")
 #end

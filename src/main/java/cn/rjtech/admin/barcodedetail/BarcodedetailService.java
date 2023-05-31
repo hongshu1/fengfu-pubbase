@@ -127,19 +127,20 @@ public class BarcodedetailService extends BaseService<Barcodedetail> {
     /*
      * 传参
      * */
-    public void saveBarcodedetailModel(Barcodedetail barcodedetail, Long masid, Date now,Kv kv){
+    public void saveBarcodedetailModel(Barcodedetail barcodedetail, Long masid, Date now,Kv kv,Integer printnum){
         barcodedetail.setAutoid(JBoltSnowflakeKit.me.nextId());
         barcodedetail.setMasid(String.valueOf(masid));
         barcodedetail.setVencode(kv.getStr("cvencode"));
-        barcodedetail.setBarcode("");
+        barcodedetail.setBarcode("barcode");
         barcodedetail.setInvcode(kv.getStr("cinvcode"));
         barcodedetail.setBarcodedate(now);
         barcodedetail.setBatch(kv.getStr("batch"));
         barcodedetail.setQty(kv.getBigDecimal("generatedStockQty"));
-        barcodedetail.setPrintnum(kv.getInt("printnum"));
+        barcodedetail.setPrintnum(printnum);
         barcodedetail.setCreateperson(JBoltUserKit.getUserName());
         barcodedetail.setCreatedate(now);
         barcodedetail.setModifyperson(JBoltUserKit.getUserName());
         barcodedetail.setModifydate(now);
+        barcodedetail.setReportFileName(kv.getStr("reportfilename"));
     }
 }

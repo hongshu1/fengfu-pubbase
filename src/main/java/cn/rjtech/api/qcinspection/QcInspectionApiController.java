@@ -65,8 +65,8 @@ public class QcInspectionApiController extends BaseApiController{
      * @param cchainno             连锁号
      * @param cchainname           连锁名称
      * @param drecorddate          发现日期
-     * @param depnameid            担当人员ID
-     * @param psnnameid            部门ID
+     * @param psnnameid            担当人员ID
+     * @param depnameid            部门ID
      * @param cplace               位置区域
      * @param cproblem             问题点
      * @param canalysis            原因分析
@@ -83,10 +83,9 @@ public class QcInspectionApiController extends BaseApiController{
                                 @Para(value = "cchainname") String cchainname,
                                 @Para(value = "isfirstcase") Boolean isfirstcase,
                                 @Para(value = "drecorddate") Date drecorddate,
-                                @Para(value = "depnameid") Long depnameid,
                                 @Para(value = "psnnameid") Long psnnameid,
+                                @Para(value = "depnameid") Long depnameid,
                                 @Para(value = "cplace") Long cplace,
-                                @Para(value = "cdesc") String cdesc,
                                 @Para(value = "cproblem") String cproblem,
                                 @Para(value = "canalysis") String canalysis,
                                 @Para(value = "cmeasure") String cmeasure,
@@ -103,7 +102,6 @@ public class QcInspectionApiController extends BaseApiController{
         kv.set("drecorddate", drecorddate);
         kv.set("depnameid", depnameid);
         kv.set("psnnameid", psnnameid);
-        kv.set("cdesc", cdesc);
         kv.set("cplace", cplace);
         kv.set("cproblem", cproblem);
         kv.set("canalysis", canalysis);
