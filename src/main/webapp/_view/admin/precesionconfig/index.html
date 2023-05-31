@@ -1,0 +1,33 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title" id="jbolt_page_title_#(pageId)">
+        <div class="row">
+            <div class="col-sm-auto">
+                <h1><i class="jbicon2 jbi-team"></i>精度设置</h1>
+            </div>
+        </div>
+</div>
+    <button onclick="submitThisForm()">保存</button>
+<form >
+    #for(config :configs)
+    <div>
+        <div class="form-group">
+            <label>xxx</label>
+            <input name="#(config.name)" value="#(config.value)">
+        </div>
+    </div>
+    #end
+</form>
+
+
+</div>
+#end
+#define js()
+
+    <script>
+        $(function(){
+        });
+    </script>
+    #end
