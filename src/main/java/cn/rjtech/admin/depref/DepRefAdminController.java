@@ -4,6 +4,7 @@ import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
@@ -100,6 +101,10 @@ public class DepRefAdminController extends BaseAdminController {
 	public void toggleIsDefault() {
 		renderJson(service.toggleIsDefault(getLong(0)));
 	}
-
+	
+	@UnCheck
+	public void findAllProposalData(){
+		renderJsonData(service.findAllProposalData(getKv()));
+	}
 
 }
