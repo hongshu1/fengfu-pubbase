@@ -12,26 +12,21 @@
             <td>${data.cinvstd}</td>
             <td>${data.cuomname}</td>
             <td>
-            <a title="上传图片" class="jbolt_table_editbtn">
-                    {@if data.cpics} <i class="fa fa-files-o c-primary"></i>
-                    {@else}
-                   <i class="fa fa-files-o c-danger"></i>
-                   {@/if}
-               </a>
-
-<!--                 <a tooltip title="上传图片" href="admin/inventoryqcform/openFileDialog?invId=${data.iinventoryid}&cpics=data.cpics"-->
-<!--                    data-btn="yes" data-title="上传图片" data-area="30%,60%" class="jbolt_table_editbtn">-->
-<!--                    {@if data.cpics} <i class="fa fa-files-o c-primary"></i>-->
-<!--                    {@else}-->
-<!--                   <i class="fa fa-files-o c-danger"></i>-->
-<!--                   {@/if}-->
-<!--               </a>-->
-
-
+              {@if data.cpics != null}
+            <div class="float-right">
+               {@each data.cpics.split(",") as url}
+                <img data-photobtn tooltip data-title="点击查看图片"  style="width: 60px;height: 60px;border-radius:50%;" src="${url|real_image}"
+                     onerror="this.src='assets/img/avatar.jpg'"/>
+               {@/each}
+            </div>
+            {@/if}
             </td>
             <td>${data.cdccode}</td>
             <td>${data.cmeasure}</td>
-            <td style="display: none">${data.iinventoryid}</td>
+            <td style="display: none" hidden>${data.iinventoryid}</td>
+             <td>
+                   <i class="fa fa-files-o c-danger"></i>
+            </td>
         </tr>
     {@/each}
 </textarea>
@@ -100,9 +95,11 @@
                         <th data-width="150" data-column="cinvstd">规格</th>
                         <th data-width="120" data-column="cuomname">主计量单位</th>
 <!--                    <th data-min-width="200" data-column="inspectiontype">检验类型</th>-->
-                        <th data-width="120" data-column="cpicsstr">图片</th>
+                        <th data-width="540" data-column="cpics">图片</th>
                         <th data-width="120" data-column="cdccode">设变号</th>
                         <th data-width="120" data-column="cmeasure">测试理由</th>
+                        <th data-width="120" hidden data-column="iinventoryid">存货id</th>
+                        <th data-width="120" data-column="cpicsstr">操作</th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -303,8 +300,20 @@
                 //         btn:"确定,关闭"
                 //     }
                 // },
-                cpics:{
-                    submitAttr: "cpics",
+                cpicsstr:{
+                    submitAttr: "cpicsstr",
+                    type:"dialogbtn",
+                    placeholder:"=上传图片=",
+                    linkColumn:'iinventoryid,cpics',
+                    dialog:{
+                        url:"admin/inventoryqcform/openFileDialog",
+                        area:"80%,80%",
+                        title:"上传图片",
+                        btn:"选择,关闭"
+                    },
+                    changeColumns:[
+                        {column: "cpics", use: "cpics"}
+                    ]
                 },
                 cdccode: {
                     type:"input",
