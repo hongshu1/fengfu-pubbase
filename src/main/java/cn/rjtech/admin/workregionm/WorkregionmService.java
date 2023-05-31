@@ -268,6 +268,11 @@ public class WorkregionmService extends BaseService<Workregionm> {
                 if (ObjectUtil.isNull(record.getStr("iPsLevel"))){
                     return fail("排产层级不能为空");
                 }
+
+                String ipslevel="1,2,3,4,5,6,7";
+                if(ipslevel.indexOf(record.getStr("iPsLevel"))==-1){
+                    return fail("排产层级只能输入1至7");
+                }
                 if (ObjectUtil.isNull(record.getStr("cWarehouseName"))){
                     return fail("关联仓库名称不能为空");
                 }
@@ -315,8 +320,7 @@ public class WorkregionmService extends BaseService<Workregionm> {
         }
         // 执行批量操作
         boolean success = tx(() -> {
-            System.out.println(records);
-           batchSaveRecords(records);
+            batchSaveRecords(records);
             return true;
         });
         return SUCCESS;
