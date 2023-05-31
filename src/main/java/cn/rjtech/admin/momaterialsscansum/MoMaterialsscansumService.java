@@ -183,4 +183,5 @@ public class MoMaterialsscansumService extends BaseService<MoMaterialsscansum> {
 		}
 		return  SUCCESS;
 	}
+
 }

@@ -648,3 +648,7 @@
 #namespace("depref")
 #include("depref/depref.sql")
 #end
+
+#namespace("momoinvbatch")
+#include("momoinvbatch/momoinvbatch.sql")
+#end
