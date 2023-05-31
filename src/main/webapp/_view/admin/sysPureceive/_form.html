@@ -191,7 +191,7 @@
                 <th data-width="150" data-column="cinvcode">存货编码</th>
                 <th data-width="150" data-column="cinvcode1">客户部番</th>
                 <th data-width="150" data-column="cinvname1">部品名称</th>
-                <th data-width="100" data-column="planDate">计划到货日期</th>
+                <th data-width="100" data-column="plandate">计划到货日期</th>
                 <th data-width="100" data-column="qtys">数量</th>
                 <th data-width="100" data-column="qty">实收数量</th>
                 <th data-width="100" data-column="whcode">入库库区</th>
@@ -290,7 +290,7 @@
                     columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty",
                     header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量',
                     changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
-                    { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
+                    { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },{ column: "plandate", use: "plandate" },
                     { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
                     { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
                     {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
@@ -299,7 +299,7 @@
                 },
                 cinvcode:{
                     // linkPara:"#sysPureceive.VenCode",
-                    linkPara:"input[name='sysPureceive.VenCode']",
+                    linkPara:"input[name='vencode1']",
                     maxLength: 100,
                     // required: true,
                     placeholder: "=请选择=",
@@ -312,7 +312,7 @@
                     columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty",
                     header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量',
                     changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
-                        { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
+                        { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },{ column: "plandate", use: "plandate" },
                         { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
                         { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
                         {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},

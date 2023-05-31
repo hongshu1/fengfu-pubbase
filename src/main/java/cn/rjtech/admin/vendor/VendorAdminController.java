@@ -17,6 +17,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -91,6 +92,10 @@ public class VendorAdminController extends BaseAdminController {
         List<VendorAddr> list = vendorAddrService.list(kv);
         String addr = vendor.getCProvince() + "," + vendor.getCCity() + "," + vendor.getCCounty();
         vendor.setCProvince(addr);
+        BigDecimal iTaxRate = vendor.getITaxRate();
+        if(iTaxRate != null){
+            vendor.setITaxRate(iTaxRate.setScale(2, BigDecimal.ROUND_DOWN));
+        }
         set("vendor", vendor);
         set("vendoraddr", !list.isEmpty() ? list.get(0) : "");
         render("edit.html");

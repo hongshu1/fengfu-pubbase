@@ -1063,24 +1063,6 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		for (MrpDemandcomputed demandcomputed : mrpDemandMap.values()){
 			list.add(demandcomputed);
 		}
-		if (list.size() > 0){
-			MrpDemandcomputed demandcomputed = list.get(0);
-			if (demandcomputed.getIQty1() == null){
-				demandcomputed.setIQty1(BigDecimal.ZERO);
-			}
-			if (demandcomputed.getIQty2() == null){
-				demandcomputed.setIQty2(BigDecimal.ZERO);
-			}
-			if (demandcomputed.getIQty3() == null){
-				demandcomputed.setIQty3(BigDecimal.ZERO);
-			}
-			if (demandcomputed.getIQty4() == null){
-				demandcomputed.setIQty4(BigDecimal.ZERO);
-			}
-			if (demandcomputed.getIQty5() == null){
-				demandcomputed.setIQty5(BigDecimal.ZERO);
-			}
-		}
 		if (list.size() == 0){
 			tx(() -> {
 				int num = dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
@@ -1091,12 +1073,28 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 
 		tx(() -> {
 			int num = dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
-			List<List<MrpDemandcomputed>> groupCusOrderSumList = CollectionUtils.partition(list,300);
-			CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
-			ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
-			for(List<MrpDemandcomputed> cusOrderSums :groupCusOrderSumList){
+			List<List<MrpDemandcomputed>> groupList = CollectionUtils.partition(list,300);
+			CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
+			ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
+			for(List<MrpDemandcomputed> dataList :groupList){
 				executorService.execute(()->{
-					mrpDemandcomputedService.batchSave(cusOrderSums);
+					MrpDemandcomputed demandcomputed = dataList.get(0);
+					if (demandcomputed.getIQty1() == null){
+						demandcomputed.setIQty1(BigDecimal.ZERO);
+					}
+					if (demandcomputed.getIQty2() == null){
+						demandcomputed.setIQty2(BigDecimal.ZERO);
+					}
+					if (demandcomputed.getIQty3() == null){
+						demandcomputed.setIQty3(BigDecimal.ZERO);
+					}
+					if (demandcomputed.getIQty4() == null){
+						demandcomputed.setIQty4(BigDecimal.ZERO);
+					}
+					if (demandcomputed.getIQty5() == null){
+						demandcomputed.setIQty5(BigDecimal.ZERO);
+					}
+					mrpDemandcomputedService.batchSave(dataList);
 				});
 				countDownLatch.countDown();
 			}
@@ -1257,12 +1255,12 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			if (forecastdList.size() == 0){
 				return true;
 			}
-			List<List<MrpDemandforecastd>> groupCusOrderSumList = CollectionUtils.partition(forecastdList,300);
-			CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
-			ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
-			for(List<MrpDemandforecastd> cusOrderSums :groupCusOrderSumList){
+			List<List<MrpDemandforecastd>> groupList = CollectionUtils.partition(forecastdList,300);
+			CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
+			ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
+			for(List<MrpDemandforecastd> dataList :groupList){
 				executorService.execute(()->{
-					mrpDemandforecastdService.batchSave(cusOrderSums);
+					mrpDemandforecastdService.batchSave(dataList);
 				});
 				countDownLatch.countDown();
 			}
@@ -1349,12 +1347,12 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			if (forecastdList.size() == 0){
 				return true;
 			}
-			List<List<MrpDemandpland>> groupCusOrderSumList = CollectionUtils.partition(forecastdList,300);
-			CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
-			ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
-			for(List<MrpDemandpland> cusOrderSums :groupCusOrderSumList){
+			List<List<MrpDemandpland>> groupList = CollectionUtils.partition(forecastdList,300);
+			CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
+			ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
+			for(List<MrpDemandpland> dataList :groupList){
 				executorService.execute(()->{
-					mrpDemandplandService.batchSave(cusOrderSums);
+					mrpDemandplandService.batchSave(dataList);
 				});
 				countDownLatch.countDown();
 			}

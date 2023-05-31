@@ -1,73 +1,58 @@
 #@jboltLayout()
 #define main()
-<div class="jbolt_page">
-  <div class="jbolt_page_content">
-    <input type="hidden" readonly="readonly" name="fileUploaderIds" id="fileUploaderIds_#(pageId)" value="#(fileUploaderIds??)" class="form-control"/>
-    <div class="col-sm-12">
-<!--      <div class="card">-->
-<!--        <div class="card-body">-->
-<!--          <div class="j_upload_file_box"-->
-<!--               data-name="file"-->
-<!--               data-multi="true"-->
-<!--               data-limit="10"-->
-<!--               data-value-attr="id"-->
-<!--               data-filebox="filebox_#(pageId)"-->
-<!--               data-btn-class="btn btn-primary"-->
-<!--               data-maxsize="20480"-->
-<!--               data-handler="uploadMultipleFile"-->
-<!--               data-placeholder="选择文件上传,文件大小限制20M以内"-->
-<!--               data-url="admin/inventoryqcform/uploadFileAndSave?lineId=#(lineId??)"-->
-<!--               data-remove-url="admin/inventoryqcform/deleteFile?fileId=[file]&lineId=#(lineId??)"-->
-<!--               data-hiddeninput="fileUploaderIds_#(pageId)"-->
-<!--          ></div>-->
+#setLocal(inputId=RandomUtil.random(6))
+<input type="hidden" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required" readonly="readonly" id="fileSyncUploaderDemo" name="inventoryqcform.cpics" value="#(inventoryqcform.cpics??)"/>
 
-<!--          <div class="j_upload_filebox_multi  mt-3">-->
-<!--            <ul class="j_filebox" id="filebox_#(pageId)" data-remove-confirm="true">-->
-<!--              #for(data : files)-->
-<!--                <li data-filebox="filebox_#(pageId)" data-hiddeninput="fileUploaderIds_#(pageId)"><a target="_blank" data-path="#(data.id)" href="#realImage(data.localUrl)">#(data.fileName)</a><i title="删除" onclick="removeUploadFileBoxLi(this)" class="fa fa-trash text-danger ml-3"></i></li>-->
-<!--              #end-->
-<!--            </ul>-->
-<!--          </div>-->
-
-<!--        </div>-->
-<!--      </div>-->
-
-      <input name="cpics" id="cattachments1" value="#(cpics??)">
-      <fieldset class="form-page-fieldset">
-        <div class="j_upload_imgbox_multi row">
-          <div class="col-sm-6">
-            <div class="j_img_uploder" data-multi="true" data-imgbox="imgbox" data-upload-success-handler="uploadHandler" data-url="/admin/inventoryqcform/uploadFileAndSave"   data-handler="uploadMultipleFile"  data-hiddeninput="cattachments1"  data-area="80,80" data-maxsize="2000" data-type=""></div>
-          </div>
-          <div class="col-sm-6">
-            <ul class="j_imgbox" style="border:1px dashed #ddd;" id="imgbox" data-remove-confirm="true" data-imgstyle="width:100px;height:100px;" ></ul>
-          </div>
-        </div>
-      </fieldset>
+<fieldset class="form-page-fieldset" style="width: 90%;margin-left: 8%;">
+    <legend>上传图片</legend>
+    
+    #if(msg)
+    <div class="alert alert-danger">
+        #(msg??)
     </div>
-  </div>
-</div>
+    #end
+    
+    <!--  data-theme="explorer-fa" 居中 data-multiplefileinput 样式 -->
+    <div class="form-group text-center">
+        <input type="file" id="fileInput_#(inputId)" class="file-loading" data-max-filecount="8"
+               data-uploadurl="/admin/inventoryqcform/upload" data-choosebtntext="选择文件"
+               data-theme="explorer-fa" multiple="multiple" data-multiplefileinput name="file" accept="*"
+               data-max-filesize="20971520" data-sync="true" data-extrahandler="processExtraHandler1"
+               data-handler="setValueTo" data-delete-url="/admin/inventoryqcform/upload" data-setvalueto="fileSyncUploaderDemo"/>
+    </div>
+</fieldset>
+
 #end
 
 <script>
 
   function uploadHandler(type,fileInput,res){
-    //alert(JSON.stringify(res))
   }
-  function submitThisForm(callback){
 
-      parent.test('#(invId)',$("#cattachments1").val());
-      // parent.RefreshJboltTable();
-      parent.layer.close(parent.layer.getFrameIndex(window.name));
+  function processExtraHandler1() {
+      
   }
-  /**
-   * 选中按钮
-   */
-  $(function(){
-    hideParentLayerDialogBtn(1);
-    addParentLayerDialogBtn("关闭","layui-layer-btn1",function(){
-      parent.RefreshJboltTable();
-      parent.layer.close(parent.layer.getFrameIndex(window.name));
+  
+  function submitThisForm() {
+      var url = $('#fileSyncUploaderDemo').val();
+      console.log(url);
+      
+      if (url) {
+          var data = {
+              cpics: url
+          };
 
-    });
-  });
+          // 获取到打开dialog的按钮
+          var action = parent.DialogUtil.getCurrentTriggerEle();
+          // 获取按钮所在td
+          var td = action.closest("td");
+          
+          parent.jboltTableInsertRowsByDialogChooser(td, data, "merge");
+
+          parent.layer.close(parent.layer.getFrameIndex(window.name));
+      } else {
+          LayerMsgBox.alert('请上传图片', 2);
+      }
+  }
+ 
 </script>

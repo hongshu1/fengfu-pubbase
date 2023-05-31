@@ -119,11 +119,12 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         renderJson("导入成功");
     }
 
-    /*
-     * 打印
-     * */
-    public void printtpl() {
-        renderJsonData(service.printtpl(getLong(0)));
+    /**
+     * 库区打印数据
+     *
+     */
+    public void printData(){
+        renderJsonData(service.printtpl(getKv()));
     }
 
     /*

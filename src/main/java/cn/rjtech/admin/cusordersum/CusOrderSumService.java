@@ -467,18 +467,6 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
             }
             cusOrderSumList.add(cusOrderSum);
         }
-        if (cusOrderSumList.size() > 0){
-            CusOrderSum cusOrderSum = cusOrderSumList.get(0);
-            if (cusOrderSum.getIQty1() == null){
-                cusOrderSum.setIQty1(BigDecimal.ZERO);
-            }
-            if (cusOrderSum.getIQty2() == null){
-                cusOrderSum.setIQty2(BigDecimal.ZERO);
-            }
-            if (cusOrderSum.getIQty3() == null){
-                cusOrderSum.setIQty3(BigDecimal.ZERO);
-            }
-        }
         if (cusOrderSumList.size() == 0){
             tx(() -> {
                 delete("DELETE FROM Co_CusOrderSum WHERE iYear >= ? ",curYear);
@@ -493,6 +481,17 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
             CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
             ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
             for(List<CusOrderSum> cusOrderSums :groupCusOrderSumList){
+                CusOrderSum cusOrderSum = cusOrderSums.get(0);
+                if (cusOrderSum.getIQty1() == null){
+                    cusOrderSum.setIQty1(BigDecimal.ZERO);
+                }
+                if (cusOrderSum.getIQty2() == null){
+                    cusOrderSum.setIQty2(BigDecimal.ZERO);
+                }
+                if (cusOrderSum.getIQty3() == null){
+                    cusOrderSum.setIQty3(BigDecimal.ZERO);
+                }
+
                 executorService.execute(()->{
                     batchSave(cusOrderSums);
                 });

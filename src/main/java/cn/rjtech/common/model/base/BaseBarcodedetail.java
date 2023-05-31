@@ -103,6 +103,8 @@ public abstract class BaseBarcodedetail<M extends BaseBarcodedetail<M>> extends 
     public static final String MODIFYPERSON = "ModifyPerson";
     /**更新时间*/
     public static final String MODIFYDATE = "ModifyDate";
+    /*标签打印模板*/
+    public static final String REPORTFILENAME = "reportFileName";
 	/**
 	 * AutoID
 	 */
@@ -843,5 +845,21 @@ public abstract class BaseBarcodedetail<M extends BaseBarcodedetail<M>> extends 
 		return getDate("ModifyDate");
 	}
 
+	/**
+	 * 标签打印模板
+	 */
+	public M setReportFileName(String reportFileName) {
+		set("ReportFileName", reportFileName);
+		return (M)this;
+	}
+
+	/**
+	 * 标签打印模板
+	 */
+	@JBoltField(name="reportfilename" ,columnName="ReportFileName",type="String", remark="标签打印模板", required=false, maxLength=60, fixed=0, order=47)
+	@JSONField(name = "reportfilename")
+	public String getReportFileName() {
+		return getStr("ReportFileName");
+	}
 }
 

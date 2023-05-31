@@ -108,7 +108,8 @@ select top #(limit)
     b.cInvCode1,
     b.cInvName1,
     a.dPlanDate as plandate,
-    a.iQty as qtys,
+    b.cInvStd as cinvstd,
+    a.iQty as qty,
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
     d.iAutoId as SourceBillNoRow,
@@ -119,7 +120,7 @@ FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
-where 1=1
+where a.isEffective = '1'
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
 			or b.cinvname1 like concat('%',#para(q),'%') or a.cBarcode like concat('%',#para(q),'%')

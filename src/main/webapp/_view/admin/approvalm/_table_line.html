@@ -99,9 +99,11 @@
                 success: function (res, table, td) {
                     if (res.state === 'ok') {
                         LayerMsgBox.success(res.msg, 1000, function () {
-                            refreshPjaxContainer();
-                            parent.LayerMsgBox.closeAll();
-                            parent.refreshPjaxContainer();
+                            // refreshPjaxContainer();
+                            console.log('res',res)
+                            // parent.LayerMsgBox.closeAll();
+                            location.href = '/admin/approvalm/edit/' + res.id + '-_jb_rqtype_dialog';
+                            // parent.refreshPjaxContainer();
                         });
                     } else {
                         LayerMsgBox.alert(res.msg, 2);

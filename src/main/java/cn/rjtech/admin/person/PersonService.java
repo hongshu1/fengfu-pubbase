@@ -55,6 +55,8 @@ import java.util.Objects;
  */
 public class PersonService extends BaseService<Person> {
 
+    private final Person dao = new Person().dao();
+    
     @Inject
     private UserService userService;
     @Inject
@@ -70,8 +72,6 @@ public class PersonService extends BaseService<Person> {
     @Inject
     private CusFieldsMappingDService cusFieldsMappingdService;
 
-    private final Person dao = new Person().dao();
-
     @Override
     protected Person dao() {
         return dao;
@@ -85,6 +85,7 @@ public class PersonService extends BaseService<Person> {
                 .set("corgcode", getOrgCode());
 
         Boolean isenabled = para.getBoolean("isenabled");
+        
         // 是否启用boolean转char
         para.set("isenabled", isenabled == null ? null : (isenabled ? "1" : "0"));
         Page<Record> pageList = dbTemplate("person.paginateAdminDatas", para).paginate(pageNumber, pageSize);
@@ -372,12 +373,18 @@ public class PersonService extends BaseService<Person> {
      * 导入功能-校验每行数据的有效性：非空 ，数字等
      */
     public void constructPersonModelCheckDatasEffectiveColumnByExcelDatas(List<Person> excelRecordList, StringBuilder errorMsg, int startRow) {
-        if (CollUtil.isEmpty(excelRecordList)) return;
+        if (CollUtil.isEmpty(excelRecordList)) {
+            return;
+        }
         for (Person excelRecord : excelRecordList) {
             String cpsnNum = excelRecord.getStr("cpsn_num");
             String cpsnName = excelRecord.getStr("cpsn_name");
-            if (JBoltStringUtil.isBlank(cpsnNum)) errorMsg.append("第").append(startRow).append("行,[人员编码]为空,请检查!<br/>");
-            if (JBoltStringUtil.isBlank(cpsnName)) errorMsg.append("第").append(startRow).append("行,[姓名]为空,请检查!<br/>");
+            if (JBoltStringUtil.isBlank(cpsnNum)) {
+                errorMsg.append("第").append(startRow).append("行,[人员编码]为空,请检查!<br/>");
+            }
+            if (JBoltStringUtil.isBlank(cpsnName)) {
+                errorMsg.append("第").append(startRow).append("行,[姓名]为空,请检查!<br/>");
+            }
             try {
                 excelRecord.getDate("dhiredate");
             } catch (Exception e) {
@@ -388,7 +395,6 @@ public class PersonService extends BaseService<Person> {
             } catch (Exception e) {
                 errorMsg.append("第").append(startRow).append("行,[出生日期]格式不正确,请检查!<br/>");
             }
-
         }
     }
 
@@ -396,14 +402,18 @@ public class PersonService extends BaseService<Person> {
      * 导入功能-构造model
      */
     public void constructPersonModelByExcelDatas(List<Person> excelRecordList, List<Person> personList, List<PersonEquipment> personEquipmentList) {
-        if (CollUtil.isEmpty(excelRecordList)) return;
+        if (CollUtil.isEmpty(excelRecordList)) {
+            return;
+        }
         for (Person excelRecord : excelRecordList) {
             Person person = new Person();
             Long personId = JBoltSnowflakeKit.me.nextId();
             person.setIAutoId(personId);
             String username = excelRecord.getStr("iuserid");
             User user = userService.getUserByUserName(username);
-            if (user != null) person.setIUserId(user.getId());
+            if (user != null) {
+                person.setIUserId(user.getId());
+            }
             person.setCpsnNum(excelRecord.getStr("cpsn_num"));
             person.setCpsnName(excelRecord.getStr("cpsn_name"));
             person.setVIDNo(excelRecord.getStr("vidno"));
@@ -427,7 +437,9 @@ public class PersonService extends BaseService<Person> {
             person.setDHireDate(excelRecord.getDate("dhiredate"));
             String cWorkClassCode = excelRecord.getStr("iworkclassid");
             Workclass workClass = workClassService.findModelByCode(cWorkClassCode);
-            if (workClass != null) person.setIWorkClassId(workClass.getIautoid());
+            if (workClass != null) {
+                person.setIWorkClassId(workClass.getIautoid());
+            }
             person.setDBirthDate(excelRecord.getStr("dbirthdate"));
             person.setCPsnEmail(excelRecord.getStr("cpsnemail"));
             String isenabled = excelRecord.getStr("isenabled");
@@ -448,10 +460,14 @@ public class PersonService extends BaseService<Person> {
             personList.add(person);
             //借用字段
             String cequipmentcodes = excelRecord.getStr("cregion");
-            if (JBoltStringUtil.isBlank(cequipmentcodes)) return;
+            if (JBoltStringUtil.isBlank(cequipmentcodes)) {
+                return;
+            }
             for (String cequipmentcode : cequipmentcodes.split(",")) {
                 Equipment equipment = equipmentService.findModelByCode(cequipmentcode);
-                if (equipment == null) continue;
+                if (equipment == null) {
+                    continue;
+                }
                 PersonEquipment personEquipment = new PersonEquipment();
                 personEquipment.setIAutoId(JBoltSnowflakeKit.me.nextId());
                 personEquipment.setIPersonId(personId);
@@ -485,7 +501,9 @@ public class PersonService extends BaseService<Person> {
      * 计算工龄
      */
     public BigDecimal calcSysworkage(Date date) {
-        if (date == null) return null;
+        if (date == null) {
+            return null;
+        }
         return BigDecimal.valueOf(JBoltDateUtil.daysBetween(date, new Date()) / 365d).setScale(2, RoundingMode.HALF_UP);
     }
 
@@ -512,31 +530,16 @@ public class PersonService extends BaseService<Person> {
         return findFirst("select * from Bd_Person where iUserId = ? AND isDeleted = ?  ", userId, ZERO_STR);
     }
 
-	public Record findFirstByCuserid(Long iuserid) {
-		return findFirstRecord(selectSql().eq("iuserid", iuserid).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("isenabled", IsEnableEnum.NO.getValue()));
-	}
-	
-	public List<Record> getAutocompleteListWithDept(String cdepcode,String q, Integer limit) {
-	    return dbTemplate("person.getAutocompleteListWithDept", Okv.by("q", q).set("limit", limit).set("cdepcode", cdepcode)).find();
-	}
-
-    /**
-     *根据名字查询ID
-     * @param name
-     * @return
-     */
-    public Long findIdByName(String name){
-       return   queryColumn("select iAutoId FROM Bd_Person WHERE cPsn_Name=?",name);
+    public Record findFirstByCuserid(Long iuserid) {
+        return findFirstRecord(selectSql().eq("iuserid", iuserid).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("isenabled", IsEnableEnum.NO.getValue()));
     }
 
-    /**
-     * 根据名字查询人员编码
-     * @param name
-     * @return
-     */
-    public String findCodeByName(String name){
-        return queryColumn("select cPsn_Num FROM Bd_Person WHERE cPsn_Name=?",name);
+    public List<Record> getAutocompleteListWithDept(String cdepcode, String q, Integer limit) {
+        return dbTemplate("person.getAutocompleteListWithDept", Okv.by("q", q).set("limit", limit).set("cdepcode", cdepcode)).find();
     }
 
-    
+    public Person findByCpersonName(String cpersonname) {
+        return findFirst(selectSql().eq(Person.CPSN_NAME, cpersonname).eq(Person.IORGID, getOrgId()).eq(Person.ISDELETED, ZERO_STR).first());
+    }
+
 }

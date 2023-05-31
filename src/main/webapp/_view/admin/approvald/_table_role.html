@@ -12,6 +12,10 @@
                     data-title="用户列表" data-area="90%,90%" class="jbolt_table_btn"><i
                         class="fa fa-users c-danger"></i></a>
             </td>
+                        <td>
+                <a tooltip data-title="上移" href="javascript:void(0)" onclick="jboltTableTrMoveUp(this, true, 'iseq');"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+                <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true, 'iseq');" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+            </td>
             <td style="display: none">${data.iroleid}</td>
         </tr>
     {@/each}
@@ -61,6 +65,7 @@
                         <th data-min-width="100" data-column="rolesn">角色编码</th>
                         <th data-min-width="200" data-column="rolename">角色名称</th>
                         <th data-min-width="200" data-column="rolesuser">用户列表</th>
+                        <th data-width="140" data-column="optcol">操作</th>
                     </tr>
                     </thead>
                     <tbody></tbody>

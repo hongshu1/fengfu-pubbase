@@ -755,7 +755,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                             nodeIsOk = collectSize <= 1;
 
                         } else {
-                            ValidationUtils.error("上一审批人还未审批");
+                            ValidationUtils.error("您不是当前审批节点的审批人");
                         }
                         break;
                     // 会签
@@ -769,7 +769,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                             }
                         }
                         if (approvalFlowDList.size() <= 0) {
-                            ValidationUtils.error("上一审批人还未审批");
+                            ValidationUtils.error("您不是当前审批节点的审批人");
                         }
                         break;
                     // 或签
@@ -783,7 +783,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                             }
                         }
                         if (approvalFlowDList.size() <= 0) {
-                            ValidationUtils.error("上一审批人还未审批");
+                            ValidationUtils.error("您不是当前审批节点的审批人");
                         }
                         break;
                     default:
@@ -791,7 +791,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 }
 
             } else {
-                ValidationUtils.error("上一审批人还未审批");
+                ValidationUtils.error("您不是当前审批节点的审批人");
             }
 
             // 节点 更新审批状态
