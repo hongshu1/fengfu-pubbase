@@ -106,5 +106,18 @@ public class DepRefAdminController extends BaseAdminController {
 	public void findAllProposalData(){
 		renderJsonData(service.findAllProposalData(getKv()));
 	}
+	@UnCheck
+	public void findEndDepData(){
+		renderJsonData(service.findEndDepData(getKv()));
+	}
+	@UnCheck
+	public void saveTableDatas(){
+		renderJson(service.saveTableDatas(getKv()));
+	}
+	@UnCheck
+	public void findCheckedIds(){
+		renderJson(service.findCheckedIds(getKv()));
+	}
+	
 
 }

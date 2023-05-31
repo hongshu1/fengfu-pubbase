@@ -37,7 +37,7 @@ public class StockBarcodePositionService extends BaseService<StockBarcodePositio
      * 后台管理分页查询
      */
     public Page<StockBarcodePosition> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-        return paginateByKeywords("iAutoId", "DESC", pageNumber, pageSize, keywords, "iAutoId");
+        return paginateByKeywords("AutoId", "DESC", pageNumber, pageSize, keywords, "AutoId");
     }
 
     /**
@@ -134,19 +134,18 @@ public class StockBarcodePositionService extends BaseService<StockBarcodePositio
      * 传参
      * */
     public void saveBarcodePositionModel(StockBarcodePosition position, Kv kv, Date now) {
-        position.setAutoID(JBoltSnowflakeKit.me.nextId());
+        //position.setAutoID(JBoltSnowflakeKit.me.nextId());
         position.setOrganizeCode(getOrgCode());
         position.setInvCode(kv.getStr("cinvcode"));
         position.setVenCode(kv.getStr("cvencode"));
-        position.setVenPosCode(kv.getStr(""));
+        //position.setVenPosCode(kv.getStr(""));
         position.setWhCode(kv.getStr("cwhcode"));
-        position.setPosCode(kv.getStr(""));
+        position.setPosCode(kv.getStr("poscode"));
         //position.setState();
-        position.setBarcode(kv.getStr(""));
+        position.setBarcode(kv.getStr("barcode"));
         position.setQty(kv.getBigDecimal("generatedStockQty"));
         position.setBatch(kv.getStr("batch"));
         position.setChgDate(now);
-
     }
 
 }
