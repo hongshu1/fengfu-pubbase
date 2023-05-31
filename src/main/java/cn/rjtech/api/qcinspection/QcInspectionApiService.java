@@ -36,17 +36,7 @@ public class QcInspectionApiService extends JBoltApiBaseService {
      * 点击查看/修改按钮，跳转到“查看”页面
      */
     public JBoltApiRet edit(Long iautoid) {
-        //1、查询跳转到另一页面需要的数据
-        QcInspection qcInspection = qcInspectionService.findById(iautoid);
-        String supplierInfoId;
-        if (qcInspection.getCMeasureAttachments() != null){
-            supplierInfoId = qcInspection.getCMeasureAttachments();
-        } else {
-            supplierInfoId = "0";
-        }
-        List<Record> files = qcInspectionService.getFilesById(supplierInfoId);
-        return JBoltApiRet.API_SUCCESS;
-
+        return JBoltApiRet.successWithData(qcInspectionService.getqcinspectionApi(iautoid));
     }
 
     /**
