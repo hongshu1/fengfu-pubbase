@@ -1,6 +1,5 @@
 package cn.rjtech.admin.warehouse;
 
-import cn.jbolt._admin.dept.DeptService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -34,7 +33,7 @@ import java.util.List;
  * @date: 2023-03-20 16:47
  */
 public class WarehouseService extends BaseService<Warehouse> {
-    
+
     private final Warehouse dao = new Warehouse().dao();
 
     @Inject
@@ -54,9 +53,6 @@ public class WarehouseService extends BaseService<Warehouse> {
     }
 
 
-    @Inject
-    private DeptService deptService;
-
     /**
      * 后台管理数据查询
      *
@@ -64,7 +60,7 @@ public class WarehouseService extends BaseService<Warehouse> {
      * @param pageSize          每页几条数据
      * @param keywords          关键词
      * @param bFreeze           是否冻结
-     * @param bMRP              是否参与MRP运算
+     * @param bmrp              是否参与MRP运算
      * @param bShop             是否门店
      * @param bInCost           记入成本
      * @param bInAvailCalcu     纳入可用量计算
@@ -75,12 +71,12 @@ public class WarehouseService extends BaseService<Warehouse> {
      * @param bEB               电商仓
      * @param isDeleted         删除状态: 0. 未删除 1. 已删除
      */
-    public Page<Warehouse> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean bFreeze, Boolean bMRP, Boolean bShop, Boolean bInCost, Boolean bInAvailCalcu, Boolean bProxyWh, Boolean bBondedWh, Boolean bWhAsset, Boolean bCheckSubitemCost, Boolean bEB, Boolean isDeleted) {
+    public Page<Warehouse> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean bFreeze, Boolean bmrp, Boolean bShop, Boolean bInCost, Boolean bInAvailCalcu, Boolean bProxyWh, Boolean bBondedWh, Boolean bWhAsset, Boolean bCheckSubitemCost, Boolean bEB, Boolean isDeleted) {
         //创建sql对象
         Sql sql = selectSql().page(pageNumber, pageSize);
         //sql条件处理
         sql.eqBooleanToChar("bFreeze", bFreeze);
-        sql.eqBooleanToChar("bMRP", bMRP);
+        sql.eqBooleanToChar("bMRP", bmrp);
         sql.eqBooleanToChar("bShop", bShop);
         sql.eqBooleanToChar("bInCost", bInCost);
         sql.eqBooleanToChar("bInAvailCalcu", bInAvailCalcu);
@@ -99,9 +95,6 @@ public class WarehouseService extends BaseService<Warehouse> {
 
     /**
      * 保存
-     *
-     * @param warehouse
-     * @return
      */
     public Ret save(Warehouse warehouse) {
         if (warehouse == null || isOk(warehouse.getIAutoId())) {
@@ -132,16 +125,13 @@ public class WarehouseService extends BaseService<Warehouse> {
 
         if (success) {
             //添加日志
-            //addSaveSystemLog(warehouse.getIAutoId(), JBoltUserKit.getUserId(), warehouse.getName());
+            //addSaveSystemLog(warehouse.getIAutoId(), JBoltUserKit.getUserId(), warehouse.getName())
         }
         return ret(success);
     }
 
     /**
      * 更新
-     *
-     * @param warehouse
-     * @return
      */
     public Ret update(Warehouse warehouse) {
         if (warehouse == null || notOk(warehouse.getIAutoId())) {
@@ -165,7 +155,7 @@ public class WarehouseService extends BaseService<Warehouse> {
         boolean success = warehouse.update();
         if (success) {
             //添加日志
-            //addUpdateSystemLog(warehouse.getIAutoId(), JBoltUserKit.getUserId(), warehouse.getName());
+            //addUpdateSystemLog(warehouse.getIAutoId(), JBoltUserKit.getUserId(), warehouse.getName())
         }
         return ret(success);
     }
@@ -175,11 +165,10 @@ public class WarehouseService extends BaseService<Warehouse> {
      *
      * @param warehouse 要删除的model
      * @param kv        携带额外参数一般用不上
-     * @return
      */
     @Override
     protected String afterDelete(Warehouse warehouse, Kv kv) {
-        //addDeleteSystemLog(warehouse.getIAutoId(), JBoltUserKit.getUserId(),warehouse.getName());
+        //addDeleteSystemLog(warehouse.getIAutoId(), JBoltUserKit.getUserId(),warehouse.getName())
         return null;
     }
 
@@ -188,7 +177,6 @@ public class WarehouseService extends BaseService<Warehouse> {
      *
      * @param warehouse model
      * @param kv        携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkInUse(Warehouse warehouse, Kv kv) {
@@ -201,8 +189,8 @@ public class WarehouseService extends BaseService<Warehouse> {
      */
     @Override
     protected String afterToggleBoolean(Warehouse warehouse, String column, Kv kv) {
-        //addUpdateSystemLog(warehouse.getIAutoId(), JBoltUserKit.getUserId(), warehouse.getName(),"的字段["+column+"]值:"+warehouse.get(column));
-        /**
+        //addUpdateSystemLog(warehouse.getIAutoId(), JBoltUserKit.getUserId(), warehouse.getName(),"的字段["+column+"]值:"+warehouse.get(column))
+        /*
          switch(column){
          case "bFreeze":
          break;
@@ -238,19 +226,13 @@ public class WarehouseService extends BaseService<Warehouse> {
 
     /**
      * 后台管理分页查询
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @param kv
-     * @return
      */
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
         return dbTemplate("warehouse.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
     }
 
     public Object dataList() {
-        Okv kv = Okv.create();
-        kv.set("isDeleted", false);
+        Okv kv = Okv.by("isDeleted", ZERO_STR);
         return getCommonList(kv, "iAutoId", "asc");
     }
 
@@ -260,15 +242,12 @@ public class WarehouseService extends BaseService<Warehouse> {
 
     /**
      * 仓库档案导入
-     *
-     * @param file
-     * @return
      */
     public Ret importExcelData(File file) {
         StringBuilder errorMsg = new StringBuilder();
 
         Date now = new Date();
-        
+
         JBoltExcel jBoltExcel = JBoltExcel
                 //从excel文件创建JBoltExcel实例
                 .from(file)
@@ -301,10 +280,10 @@ public class WarehouseService extends BaseService<Warehouse> {
 
                                     String cdepcode = data.getStr("cDepCode");
                                     ValidationUtils.notBlank(cdepcode, "部门编码不能为空");
-                                    
+
                                     Department dept = departmentService.findByCdepcode(getOrgId(), cdepcode);
                                     ValidationUtils.notNull(dept, String.format("“%s”部门编码不存在！", cdepcode));
-                                    
+
                                     // 创建相关信息
                                     data.change("iCreateBy", JBoltUserKit.getUserId());
                                     data.change("cCreateName", JBoltUserKit.getUserName());
@@ -322,7 +301,7 @@ public class WarehouseService extends BaseService<Warehouse> {
                                 //从第三行开始读取
                                 .setDataStartRow(3)
                 );
-        
+
         //从指定的sheet工作表里读取数据
         List<Warehouse> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", Warehouse.class, errorMsg);
         if (notOk(models)) {
@@ -339,7 +318,6 @@ public class WarehouseService extends BaseService<Warehouse> {
                 batchSave(models);
                 return true;
             });
-
         }
 
         return SUCCESS;
@@ -355,31 +333,19 @@ public class WarehouseService extends BaseService<Warehouse> {
 
     /**
      * 批量删除（逻辑）
-     *
-     * @param ids
-     * @return
      */
     public Ret deleteByBatchIds(String ids) {
-        update("UPDATE Bd_Warehouse SET isDeleted = 1 WHERE iAutoId IN (" + ids + ") ");
+        update("UPDATE Bd_Warehouse SET isDeleted = '1' WHERE iAutoId IN (" + ids + ") ");
         return SUCCESS;
     }
 
-    /**
-     * 通过仓库名称查找仓库ID
-     * @param cWarehouseName
-     * @return
-     */
-    public Long findIdByWhName(String cWarehouseName){
-       return queryColumn("select iAutoId FROM Bd_Warehouse WHERE cWhName=?",cWarehouseName);
-    }
+    public Warehouse findByWhName(String cwhname) {
+        Sql sql = selectSql()
+                .eq(Warehouse.CWHNAME, cwhname)
+                .eq(Warehouse.IORGID, getOrgId())
+                .eq(Warehouse.ISDELETED, ZERO_STR);
 
-    /**
-     * 通过仓库名称查找仓库编码
-     * @param cWarehouseName
-     * @return
-     */
-    public String findCodeByWhName(String cWarehouseName){
-        return queryColumn("select cWhCode FROM Bd_Warehouse WHERE cWhName=?",cWarehouseName);
+        return findFirst(sql);
     }
 
 }
