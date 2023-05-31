@@ -93,7 +93,7 @@ FROM
         LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iManufactureUomId
 where 1=1
     #if(imodocid)
-and  t1.SourceBillDid=#para(imodocid)
+and  md.iAutoId=#para(imodocid)
 #end
 
 #end
@@ -107,7 +107,8 @@ SELECT
     md.iAutoId as iMoDocId,
     it.cInvCode1,
     it.cInvName1,
-    it.iAutoID as iInventoryId
+    it.iAutoID as iInventoryId,
+    mpd.AutoID as iMaterialsPrepairDid
 
 FROM
     T_Sys_MaterialsPrepareDetail mpd
