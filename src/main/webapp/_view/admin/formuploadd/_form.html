@@ -1,0 +1,39 @@
+<form onsubmit="return false;" id="FormUploadD_Form" action="#(action)" method="post">
+	#if(formUploadD.iAutoId??)
+	<input type="hidden" name="formUploadD.iAutoId" value="#(formUploadD.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="formUploadD.iAutoId" value="#(formUploadD.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">上传记录主表ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入上传记录主表ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入上传记录主表ID" maxlength="40" name="formUploadD.iFormUploadMid" value="#(formUploadD.iFormUploadMid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">附件;多个“,”分隔</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入附件;多个“,”分隔" maxlength="200" name="formUploadD.cAttachments">#(formUploadD.cAttachments??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="formUploadD.cMemo">#(formUploadD.cMemo??)</textarea>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="FormUploadD_Form")
+#end
+
