@@ -1,0 +1,48 @@
+<script>
+    // 检验表格参数提交
+    function getQcFormParamTableOptions_split() {
+        return {
+            // trigger: "click",
+            // insertDefaultValues: {username: '#(JBoltUserKit.getUserName())'},
+            submit: {
+                withForm: ["QcFormForm"],
+                type: "all",
+                url: "/admin/spotcheckform/QcFormParamJBoltTable",
+                success: function (res, table, td) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success(res.msg, 1000, function () {
+                            window.location.reload();
+                            parent.refreshPjaxContainer();
+                            // parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid",
+                },
+                iqcformid: {
+                    submitAttr: "iqcformitemid",
+                },
+                cqcitemnames: {
+                    submitAttr: "cqcitemnames",
+                    type: "input"
+                },
+                iqcparamid: {
+                    submitAttr: "iqcparamid",
+                },
+                cqcparamnames: {
+                    submitAttr: "cqcparamnames",
+                },
+                iitemseq: {
+                    submitAttr: "iitemseq",
+                    type: "input"
+                },
+
+            }
+        };
+    }
+</script>
