@@ -60,7 +60,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 			//获取上级科目名称
 			if (record.getLong("iparentid")!=null) {
 				Subjectm parent = findById(record.getLong("iparentid"));
-				if(parent!=null) record.set("parentname",parent.getCsubjectname());
+				if(parent!=null) record.set("parentname",parent.getCSubjectName());
 			}
 			//获取创建人名称
 			String icreateby = JBoltUserCache.me.getUserName(record.getLong("icreateby"));
@@ -88,20 +88,20 @@ public class SubjectmService extends BaseService<Subjectm> {
 	 * @return
 	 */
 	public Ret save(Subjectm subjectm,Kv kv) {
-		if(subjectm==null || isOk(subjectm.getIautoid())) {
+		if(subjectm==null || isOk(subjectm.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		//如果新增数据版本和启用版本一直默认为启用状态
 		List<Subjectm> subjectmList = find("select * from Bas_SubjectM where isenabled =1");
 		if (CollUtil.isNotEmpty(subjectmList)) {
-			if (subjectmList.get(0).getCversion().equals(kv.getStr("cversion"))) {
-				subjectm.setIsenabled(true);
+			if (subjectmList.get(0).getCVersion().equals(kv.getStr("cversion"))) {
+				subjectm.setIsEnabled(true);
 			}
 		}
 
 		//判断是否选择的是末级并且是否选择u8科目
 		if (kv.getStr("ccodename")==null) {
-			ValidationUtils.isTrue(!subjectm.getIsend(),"该科目已为末级科目请选择u8对应科目");
+			ValidationUtils.isTrue(!subjectm.getIsEnd(),"该科目已为末级科目请选择u8对应科目");
 		}
 
 		//判断是否存在上级
@@ -109,28 +109,24 @@ public class SubjectmService extends BaseService<Subjectm> {
 
 			Subjectm csubjectname = findById(subjectm.getStr("iparentid"));
 			//根据上级id来获取最大等级
-			Record maxClevel = getMaxClevel(subjectm.getIparentid());
-			if (maxClevel.getStr("clevel")!=null) {
-				subjectm.setClevel("0"+ (Integer.parseInt(maxClevel.getStr("clevel")) + 1));
-			}else {
-				subjectm.setClevel(csubjectname.getClevel()+"01");
-			}
-			subjectm.setIparentid(csubjectname.getIautoid());
-			subjectm.setCversion(csubjectname.getCversion());
-			subjectm.setIsenabled(csubjectname.getIsenabled());
+			Subjectm parentSubjectm = findById(subjectm.getIParentId());
+			subjectm.setCLevel(parentSubjectm.getCLevel()+1);
+			subjectm.setIParentId(csubjectname.getIAutoId());
+			subjectm.setCVersion(csubjectname.getCVersion());
+			subjectm.setIsEnabled(csubjectname.getIsEnabled());
 		}
 		//没有上级id的默认为1级
-		if (subjectm.getIparentid()==null){
-			subjectm.setClevel("01");
+		if (subjectm.getIParentId()==null){
+			subjectm.setCLevel(1);
 		}
 		//基础数据
-		subjectm.setCorgcode(getOrgCode());
-		subjectm.setIorgid(getOrgId());
-		subjectm.setCreatetime(new Date());
-		subjectm.setIcreateby(JBoltUserKit.getUserId());
+		subjectm.setCOrgCode(getOrgCode());
+		subjectm.setIOrgId(getOrgId());
+		subjectm.setCreateTime(new Date());
+		subjectm.setICreateBy(JBoltUserKit.getUserId());
 		subjectm.setIsDelete(0);
-		if (subjectm.getCversion()==null) {
-			subjectm.setCversion(kv.getStr("cversion"));
+		if (subjectm.getCVersion()==null) {
+			subjectm.setCVersion(kv.getStr("cversion"));
 		}
 		tx(() -> {
 			ValidationUtils.isTrue(subjectm.save(), ErrorMsg.SAVE_FAILED);
@@ -139,7 +135,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 			List<String> ccodenames = StrSplitter.split(kv.getStr("ccodename"), COMMA, true, true);
 			for (int i = 0; i < ccodenames.size(); i++) {
 				Subjectd subjectd = new Subjectd();
-				subjectd.setIsubjectmid(subjectm.getIautoid());
+				subjectd.setIsubjectmid(subjectm.getIAutoId());
 				subjectd.setCsubjectname(ccodenames.get(i));
 				subjectd.setCsubjectcode(ccodes.get(i));
 				subjectd.setCreatetime(new Date());
@@ -153,7 +149,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 		});
 
 		// 添加日志
-		// addSaveSystemLog(subjectm.getIautoid(), JBoltUserKit.getUserId(), subjectm.getName());
+		// addSaveSystemLog(subjectm.getIAutoId(), JBoltUserKit.getUserId(), subjectm.getName());
 		return SUCCESS;
 	}
 
@@ -161,34 +157,34 @@ public class SubjectmService extends BaseService<Subjectm> {
 	 * 更新
 	 */
 	public Ret update(Subjectm subjectm,Kv kv) {
-		if(subjectm==null || notOk(subjectm.getIautoid())) {
+		if(subjectm==null || notOk(subjectm.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		if (subjectm.getIsend()) {
-			List<Subjectm> byPid = findByPid(subjectm.getIautoid());
+		if (subjectm.getIsEnd()) {
+			List<Subjectm> byPid = findByPid(subjectm.getIAutoId());
 			if (CollUtil.isNotEmpty(byPid)) {
 				return fail("存在下级科目不可选择末级科目");
 			}
 		}
 		//不是末级查询明细数据并删除
 		//处理细表数据
-		List<Subjectd> subjectdList = subjectdService.findBySubjectMId(subjectm.getIautoid());
+		List<Subjectd> subjectdList = subjectdService.findBySubjectMId(subjectm.getIAutoId());
 		for (Subjectd subjectd : subjectdList) {
 			subjectd.delete();
 		}
 
 		//基础数据
-		subjectm.setCorgcode(getOrgCode());
-		subjectm.setIorgid(getOrgId());
-		subjectm.setIupdateby(JBoltUserKit.getUserId());
-		subjectm.setUpdatetime(new Date());
+		subjectm.setCOrgCode(getOrgCode());
+		subjectm.setIOrgId(getOrgId());
+		subjectm.setIUpdateBy(JBoltUserKit.getUserId());
+		subjectm.setUpdateTime(new Date());
 		if (kv.getStr("ccode")!=null){
 
 			List<String> ccodes = StrSplitter.split(kv.getStr("ccode"), COMMA, true, true);
 			List<String> ccodenames = StrSplitter.split(kv.getStr("ccodename"), COMMA, true, true);
 			for (int i = 0; i < ccodenames.size(); i++) {
 				Subjectd subjectd = new Subjectd();
-				subjectd.setIsubjectmid(subjectm.getIautoid());
+				subjectd.setIsubjectmid(subjectm.getIAutoId());
 				subjectd.setCsubjectname(ccodenames.get(i));
 				subjectd.setCsubjectcode(ccodes.get(i));
 				subjectd.setIcreateby(JBoltUserKit.getUserId());
@@ -200,7 +196,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 		}
 		tx(() -> {
 			// 更新时需要判断数据存在
-			Subjectm dbSubjectm = findById(subjectm.getIautoid());
+			Subjectm dbSubjectm = findById(subjectm.getIAutoId());
 			ValidationUtils.notNull(dbSubjectm, JBoltMsg.DATA_NOT_EXIST);
 			// TODO 其他业务代码实现
 			// ValidationUtils.isTrue(notExists(columnName, value), JBoltMsg.DATA_SAME_NAME_EXIST);
@@ -210,7 +206,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 		});
 
 		//添加日志
-		//addUpdateSystemLog(subjectm.getIautoid(), JBoltUserKit.getUserId(), subjectm.getName());
+		//addUpdateSystemLog(subjectm.getIAutoId(), JBoltUserKit.getUserId(), subjectm.getName());
 		return SUCCESS;
 	}
 
@@ -222,10 +218,10 @@ public class SubjectmService extends BaseService<Subjectm> {
 			for (String idStr : StrSplitter.split(ids, COMMA, true, true)) {
 				long iAutoId = Long.parseLong(idStr);
 				Subjectm dbSubjectm = findById(iAutoId);
-				//ValidationUtils.isTrue(!dbSubjectm.getCversion().equals(String.valueOf(DateUtil.year(new Date()))),"该数据版本还处于生效，不可删除！");
+				//ValidationUtils.isTrue(!dbSubjectm.getCVersion().equals(String.valueOf(DateUtil.year(new Date()))),"该数据版本还处于生效，不可删除！");
 				ValidationUtils.notNull(dbSubjectm, JBoltMsg.DATA_NOT_EXIST);
 				//删除对应下级科目数据
-				List<Subjectm> list = recursion(dbSubjectm.getIautoid(), new ArrayList<>());
+				List<Subjectm> list = recursion(dbSubjectm.getIAutoId(), new ArrayList<>());
 				for (Subjectm subjectm : list) {
 					if (subjectm!=null) {
 						subjectm.setIsDelete(1).update();
@@ -252,7 +248,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 		if (CollUtil.isNotEmpty(subjectms)){
 			for (Subjectm subjectm : subjectms) {
 				list.add(subjectm);
-				recursion(subjectm.getIautoid(),list);
+				recursion(subjectm.getIAutoId(),list);
 			}
 		} return list;
 	}
@@ -271,7 +267,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 	 */
 	@Override
 	protected String afterDelete(Subjectm subjectm, Kv kv) {
-		//addDeleteSystemLog(subjectm.getIautoid(), JBoltUserKit.getUserId(),subjectm.getName());
+		//addDeleteSystemLog(subjectm.getIAutoId(), JBoltUserKit.getUserId(),subjectm.getName());
 		return null;
 	}
 
@@ -320,7 +316,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 	 */
 	@Override
 	protected String afterToggleBoolean(Subjectm subjectm, String column, Kv kv) {
-		//addUpdateSystemLog(subjectm.getIautoid(), JBoltUserKit.getUserId(), subjectm.getName(),"的字段["+column+"]值:"+subjectm.get(column));
+		//addUpdateSystemLog(subjectm.getIAutoId(), JBoltUserKit.getUserId(), subjectm.getName(),"的字段["+column+"]值:"+subjectm.get(column));
 		return null;
 	}
 
@@ -349,7 +345,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 	private void processParentSubjectm(List<Subjectm> subjectms, List<Subjectm> parents) {
 		for(int i = 0; i < subjectms.size(); ++i) {
 			Subjectm subjectm = (Subjectm)subjectms.get(i);
-			if ("1".equals(subjectm.getClevel()) && this.notOk(subjectm.getIparentid())) {
+			if ("1".equals(subjectm.getCLevel()) && this.notOk(subjectm.getIParentId())) {
 				parents.add(subjectm);
 				subjectms.remove(i);
 				--i;
@@ -364,7 +360,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 		Subjectm p;
 		while(var4.hasNext()) {
 			p = (Subjectm)var4.next();
-			map.addItem("p_" + p.getIparentid(), p);
+			map.addItem("p_" + p.getIParentId(), p);
 		}
 
 		var4 = parents.iterator();
@@ -375,7 +371,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 		}
 	}
 	private void processSubItems(JBoltListMap<String, Subjectm> map, Subjectm subjectm) {
-		List<Subjectm> items = (List)map.get("p_" + subjectm.getIautoid());
+		List<Subjectm> items = (List)map.get("p_" + subjectm.getIAutoId());
 		if (items != null && items.size() > 0) {
 			Iterator var4 = items.iterator();
 
@@ -443,13 +439,13 @@ public class SubjectmService extends BaseService<Subjectm> {
 		if (kv.getInt("senabled")==1){
 			List<Subjectm> subjectmList = find("select * from Bas_SubjectM where isenabled =1");
 			if (subjectmList.size()>0){
-				ValidationUtils.isTrue(false,"已启用："+subjectmList.get(0).getCversion()+",请先停用在启用！");
+				ValidationUtils.isTrue(false,"已启用："+subjectmList.get(0).getCVersion()+",请先停用在启用！");
 			}
 		}
 		List<Subjectm> subjectms = new ArrayList<>();
 		for (Record record : list) {
 			Subjectm subjectm = findById(record.get("iautoid"));
-			subjectm.setIsenabled("1".equals(kv.getStr("senabled")));
+			subjectm.setIsEnabled("1".equals(kv.getStr("senabled")));
 			subjectms.add(subjectm);
 		}
 		tx(() -> {
@@ -473,7 +469,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 		ArrayList<Subjectm> subjectms1 = new ArrayList<>();
 		for (Record record : records) {
 			Subjectm subjectm = findById(record.getStr("iautoid"));
-			subjectm.setIsenabled(false);
+			subjectm.setIsEnabled(false);
 			subjectms1.add(subjectm);
 		}
 		List<Subjectm> subjectms = new ArrayList<>();
@@ -485,22 +481,22 @@ public class SubjectmService extends BaseService<Subjectm> {
 				//根据id获取数据
 				Subjectm subjectm = findById(record.getStr("iautoid"));
 				//获取所有下级数据
-				List<Subjectm> recursion = recursion(subjectm.getIautoid(), new ArrayList<>());
+				List<Subjectm> recursion = recursion(subjectm.getIAutoId(), new ArrayList<>());
 				//根据id获取细表数据
-				List<Subjectd> subjectdList = subjectdService.findBySubjectMId(subjectm.getIautoid());
+				List<Subjectd> subjectdList = subjectdService.findBySubjectMId(subjectm.getIAutoId());
 
-				subjectm.setIautoid(JBoltSnowflakeKit.me.nextId());
+				subjectm.setIAutoId(JBoltSnowflakeKit.me.nextId());
 				//基础数据
-				subjectm.setCorgcode(getOrgCode());
-				subjectm.setIorgid(getOrgId());
-				subjectm.setCreatetime(new Date());
-				subjectm.setIcreateby(JBoltUserKit.getUserId());
-				subjectm.setIsenabled(true);
-				subjectm.setCversion(String.valueOf(Integer.parseInt(str)+1));
+				subjectm.setCOrgCode(getOrgCode());
+				subjectm.setIOrgId(getOrgId());
+				subjectm.setCreateTime(new Date());
+				subjectm.setICreateBy(JBoltUserKit.getUserId());
+				subjectm.setIsEnabled(true);
+				subjectm.setCVersion(String.valueOf(Integer.parseInt(str)+1));
 
 				//处理明细数据
 				for (Subjectd subjectd : subjectdList) {
-					subjectd.setIsubjectmid(subjectm.getIautoid());
+					subjectd.setIsubjectmid(subjectm.getIAutoId());
 					subjectd.setIautoid(JBoltSnowflakeKit.me.nextId());
 					//基础数据
 					subjectd.setCreatetime(new Date());
@@ -514,22 +510,22 @@ public class SubjectmService extends BaseService<Subjectm> {
 				for (int i = 0; i < recursion.size(); i++) {
 					Subjectm sm = recursion.get(i);
 
-					if (sm.getIparentid().equals(record.getLong("iautoid"))) {
+					if (sm.getIParentId().equals(record.getLong("iautoid"))) {
 						//根据id获取细表数据
-						List<Subjectd> dList = subjectdService.findBySubjectMId(sm.getIautoid());
+						List<Subjectd> dList = subjectdService.findBySubjectMId(sm.getIAutoId());
 
-						id= String.valueOf(sm.getIautoid());
-						sm.setIautoid(JBoltSnowflakeKit.me.nextId());
-						sm.setIparentid(subjectm.getIautoid());
-						sm.setCversion(subjectm.getCversion());
-						sm.setCorgcode(getOrgCode());
-						sm.setIorgid(getOrgId());
-						sm.setCreatetime(new Date());
-						sm.setIsenabled(true);
-						sm.setIcreateby(JBoltUserKit.getUserId());
+						id= String.valueOf(sm.getIAutoId());
+						sm.setIAutoId(JBoltSnowflakeKit.me.nextId());
+						sm.setIParentId(subjectm.getIAutoId());
+						sm.setCVersion(subjectm.getCVersion());
+						sm.setCOrgCode(getOrgCode());
+						sm.setIOrgId(getOrgId());
+						sm.setCreateTime(new Date());
+						sm.setIsEnabled(true);
+						sm.setICreateBy(JBoltUserKit.getUserId());
 						//根据id获取细表数据
 						for (Subjectd subjectd : dList) {
-							subjectd.setIsubjectmid(sm.getIautoid());
+							subjectd.setIsubjectmid(sm.getIAutoId());
 							subjectd.setIautoid(JBoltSnowflakeKit.me.nextId());
 							//基础数据
 							subjectd.setCreatetime(new Date());
@@ -537,21 +533,21 @@ public class SubjectmService extends BaseService<Subjectm> {
 							subjectds.add(subjectd);
 						}
 						subjectms.add(sm);
-					}else if (sm.getIparentid().equals(Long.parseLong(id))){
+					}else if (sm.getIParentId().equals(Long.parseLong(id))){
 						//根据id获取细表数据
-						List<Subjectd> dList = subjectdService.findBySubjectMId(sm.getIautoid());
-							id= String.valueOf(sm.getIautoid());
-							sm.setIparentid(recursion.get(i-1).getIautoid());
-							sm.setIautoid(JBoltSnowflakeKit.me.nextId());
-							sm.setCversion(recursion.get(i-1).getCversion());
-							sm.setCorgcode(getOrgCode());
-							sm.setIorgid(getOrgId());
-							sm.setCreatetime(new Date());
-							sm.setIsenabled(true);
-							sm.setIcreateby(JBoltUserKit.getUserId());
+						List<Subjectd> dList = subjectdService.findBySubjectMId(sm.getIAutoId());
+							id= String.valueOf(sm.getIAutoId());
+							sm.setIParentId(recursion.get(i-1).getIAutoId());
+							sm.setIAutoId(JBoltSnowflakeKit.me.nextId());
+							sm.setCVersion(recursion.get(i-1).getCVersion());
+							sm.setCOrgCode(getOrgCode());
+							sm.setIOrgId(getOrgId());
+							sm.setCreateTime(new Date());
+							sm.setIsEnabled(true);
+							sm.setICreateBy(JBoltUserKit.getUserId());
 						//根据id获取细表数据
 						for (Subjectd subjectd : dList) {
-							subjectd.setIsubjectmid(sm.getIautoid());
+							subjectd.setIsubjectmid(sm.getIAutoId());
 							subjectd.setIautoid(JBoltSnowflakeKit.me.nextId());
 							//基础数据
 							subjectd.setCreatetime(new Date());
@@ -580,16 +576,12 @@ public class SubjectmService extends BaseService<Subjectm> {
 	public Subjectm findHighestSubjectByLowestSubjectName(String cLowestSubjectName) {
 		Subjectm lSubjectm = findByName(cLowestSubjectName);
 		if(lSubjectm == null) return null;
-		Record rc = dbTemplate("subjectm.getHighestSubject",Kv.by("ilowestsubjectid", lSubjectm.getIautoid())).findFirst();
+		Record rc = dbTemplate("subjectm.getHighestSubject",Kv.by("ilowestsubjectid", lSubjectm.getIAutoId())).findFirst();
 		Long ihighestsubjectid = rc.getLong("ihighestsubjectid");
 		if(ihighestsubjectid!=null) return findById(ihighestsubjectid);
 		return null;
 	}
 
- public Record getMaxClevel(Long pid){
-	 Subjectm first = findFirst("select max(Clevel) as Clevel  from Bas_SubjectM  where iparentid=?", pid);
-	 return new Record().set("clevel",first.getClevel());
- }
  
 	public List<Record> u8SubjectAutocomplete(String keyword, Integer limit) {
 		return dbTemplate(u8SourceConfigName(),"subjectm.u8SubjectAutocomplete",Kv.by("keywords", keyword).set("limit",limit)).find();

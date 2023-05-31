@@ -27,7 +27,7 @@ public class MomDataModelGenerator extends JFinalModelGenerator{
 		//是否包含数据库视图生成 默认不生
 		boolean generateView = false;
 		//生成的Model java类需要去掉的前缀 多个用逗号隔开 内置已经去掉了核心表的前缀jb_
-		String removedTableNamePrefixes="jb_,Bd_,T_Sys_,FA_,PL_,srm_,_QC,Co_";
+		String removedTableNamePrefixes="jb_,Bd_,T_Sys_,FA_,PL_,srm_,_QC,Co_,Bas";
 		//默认ID生成模式
 		String idGenMode=JBoltIDGenMode.SNOWFLAKE;//auto|snowflake|sequence
 		//生成Model放在哪个包下

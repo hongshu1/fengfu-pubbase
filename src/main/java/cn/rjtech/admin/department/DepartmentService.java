@@ -58,8 +58,21 @@ public class DepartmentService extends BaseService<Department> {
     }
 
     public List<Record> findAll(Kv kv) {
+
         return dbTemplate("department.list", kv.set("orgId", getOrgId())).find();
     }
+
+    //根据部门名称查询部门编码
+    public String findCodeByDepName(String cDepName){
+        return queryColumn("select cDepCode from Bd_Department where cDepName=?",cDepName);
+    }
+
+    //根据部门名称查询部门ID
+    public Long findIdByDepName(String cDepName){
+        return queryColumn("select iAutoId from Bd_Department where cDepName=?",cDepName);
+    }
+
+
 
     /**
      * 保存

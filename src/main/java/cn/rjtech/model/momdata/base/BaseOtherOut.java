@@ -370,7 +370,7 @@ public abstract class BaseOtherOut<M extends BaseOtherOut<M>> extends JBoltBaseM
 
 
 	/**
-	 * 备注
+	 * 备注-处置意见
 	 */
 	public M setMemo(java.lang.String Memo) {
 		set("Memo", Memo);
@@ -378,7 +378,7 @@ public abstract class BaseOtherOut<M extends BaseOtherOut<M>> extends JBoltBaseM
 	}
 
 	/**
-	 * 备注
+	 * 备注-处置意见
 	 */
 	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=32, fixed=0, order=15)
 	@JSONField(name = "memo")
@@ -404,5 +404,21 @@ public abstract class BaseOtherOut<M extends BaseOtherOut<M>> extends JBoltBaseM
 		return getStr("Type");
 	}
 
+	/**
+	 * 原因
+	 */
+	public M setReson(java.lang.String Reason) {
+		set("Reason", Reason);
+		return (M)this;
+	}
+
+	/**
+	 * 原因
+	 */
+	@JBoltField(name="" ,columnName="Reason",type="String", remark="备注", required=false, maxLength=32, fixed=0, order=15)
+	@JSONField(name = "reason")
+	public java.lang.String getResosn() {
+		return getStr("Reason");
+	}
 }
 

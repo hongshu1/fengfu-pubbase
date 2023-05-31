@@ -10,8 +10,10 @@ select so.AutoID, CASE so.state
 				WHEN 4 THEN
         '审批不通过'
         END AS statename,so.state,so.BillNo as billno,so.CreateDate as createdate,so.DeptCode as deptcode,
-				so.IRdCode as irdcode,so.ORdCode as ordcode,so.AuditPerson as auditperson,so.AuditDate as auditdate,so.Memo as memo,so.CreatePerson as createperson
+				so.IRdCode as irdcode,so.ORdCode as ordcode,so.AuditPerson as auditperson,so.AuditDate as auditdate,so.Memo as memo,so.CreatePerson as createperson,
+				a.name as billtypename
 FROM T_Sys_Assem so
+LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary a ON so.BillType = a.id
 
 where 1=1
 	#if(billno)
