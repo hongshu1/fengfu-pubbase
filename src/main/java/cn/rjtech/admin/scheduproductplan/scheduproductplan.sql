@@ -506,7 +506,8 @@ SELECT
     d.iWorkRegionMid,
     e.cWorkCode,
     e.cWorkName,
-    e.iPsLevel
+    a.iLevel AS iPsLevel
+    ###e.iPsLevel
 FROM Aps_WeekScheduleDetails AS a
          LEFT JOIN Aps_WeekScheduleD_Qty AS b ON a.iAutoId = b.iWeekScheduleDid
          LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
