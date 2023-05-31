@@ -68,10 +68,12 @@ SELECT
             WHEN t1.Status=5 THEN '已出库'
             WHEN t1.Status=3 THEN '已审批 /未完成' END,
       t1.*,
-      t4.cDepName
+      t4.cDepName,
+    m.cMoDocNo  ###工单号
 FROM
     T_Sys_OtherOut t1
-    LEFT JOIN Bd_Department t4 ON t4.iAutoId = t1.DeptCode
+    LEFT JOIN Bd_Department t4 ON t4.cDepCode = t1.DeptCode
+    LEFT JOIN  Mo_MoDoc m ON t1.sourcebilldid=m.iAutoId
 WHERE 1 = 1
     AND t1.Type = 'OtherOutMES'
     #if(selectparam)
@@ -90,7 +92,10 @@ WHERE 1 = 1
     and CONVERT(VARCHAR(10),t1.ModifyDate,23) <='#(enddate)'
 #end
 #if(sourcebilldid)
-    and   AND t1.SourceBillDid = #para(sourcebilldid)
+    and    t1.SourceBillDid = #para(sourcebilldid)
+#end
+#if(idepartmentid)
+  AND  t4.iDepartmentId =#para(idepartmentid)
 #end
 order by t1.CreateDate desc,t1.BillNo desc
     #end

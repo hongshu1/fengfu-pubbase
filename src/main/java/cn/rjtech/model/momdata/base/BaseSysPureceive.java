@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 
 /**
  * 采购收料单
@@ -12,7 +12,11 @@ import com.alibaba.fastjson.annotation.JSONField;
 public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JBoltBaseModel<M>{
     /**主键ID*/
     public static final String AUTOID = "AutoID";
-    /**到货单类型;采购PO  委外OM*/
+    /**收发类别*/
+    public static final String RDCODE = "RdCode";
+    /**部门*/
+    public static final String DEPTCODE = "DeptCode";
+    /**类型;采购PO  委外OM*/
     public static final String BILLTYPE = "BillType";
     /**组织编码*/
     public static final String ORGANIZECODE = "OrganizeCode";
@@ -20,6 +24,10 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
     public static final String BILLNO = "BillNo";
     /**单据日期*/
     public static final String BILLDATE = "BillDate";
+    /***/
+    public static final String SOURCEBILLNO = "SourceBillNo";
+    /***/
+    public static final String SOURCEBILLID = "SourceBillID";
     /**供应商编码*/
     public static final String VENCODE = "VenCode";
     /**备注*/
@@ -37,7 +45,9 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
     /**修改时间*/
     public static final String MODIFYDATE = "ModifyDate";
     /**状态 1已保存 2待审批 3已审批 4审批不通过 */
-    public static final String STATE = "state";
+    public static final String STATE = "State";
+    /**收料单：PUReceive，双单位收料单：PUReceiveSpecial*/
+    public static final String TYPE = "Type";
 	/**
 	 * 主键ID
 	 */
@@ -56,7 +66,41 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	}
 
 	/**
-	 * 到货单类型;采购PO  委外OM
+	 * 收发类别
+	 */
+	public M setRdCode(java.lang.String RdCode) {
+		set("RdCode", RdCode);
+		return (M)this;
+	}
+
+	/**
+	 * 收发类别
+	 */
+	@JBoltField(name="rdcode" ,columnName="RdCode",type="String", remark="收发类别", required=false, maxLength=50, fixed=0, order=2)
+	@JSONField(name = "rdcode")
+	public java.lang.String getRdCode() {
+		return getStr("RdCode");
+	}
+
+	/**
+	 * 部门
+	 */
+	public M setDeptCode(java.lang.String DeptCode) {
+		set("DeptCode", DeptCode);
+		return (M)this;
+	}
+
+	/**
+	 * 部门
+	 */
+	@JBoltField(name="deptcode" ,columnName="DeptCode",type="String", remark="部门", required=false, maxLength=50, fixed=0, order=3)
+	@JSONField(name = "deptcode")
+	public java.lang.String getDeptCode() {
+		return getStr("DeptCode");
+	}
+
+	/**
+	 * 类型;采购PO  委外OM
 	 */
 	public M setBillType(java.lang.String BillType) {
 		set("BillType", BillType);
@@ -64,9 +108,9 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	}
 
 	/**
-	 * 到货单类型;采购PO  委外OM
+	 * 类型;采购PO  委外OM
 	 */
-	@JBoltField(name="billtype" ,columnName="BillType",type="String", remark="到货单类型;采购PO  委外OM", required=false, maxLength=30, fixed=0, order=2)
+	@JBoltField(name="billtype" ,columnName="BillType",type="String", remark="类型;采购PO  委外OM", required=false, maxLength=30, fixed=0, order=4)
 	@JSONField(name = "billtype")
 	public java.lang.String getBillType() {
 		return getStr("BillType");
@@ -83,7 +127,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 组织编码
 	 */
-	@JBoltField(name="organizecode" ,columnName="OrganizeCode",type="String", remark="组织编码", required=false, maxLength=30, fixed=0, order=3)
+	@JBoltField(name="organizecode" ,columnName="OrganizeCode",type="String", remark="组织编码", required=false, maxLength=30, fixed=0, order=5)
 	@JSONField(name = "organizecode")
 	public java.lang.String getOrganizeCode() {
 		return getStr("OrganizeCode");
@@ -100,7 +144,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 收料单号
 	 */
-	@JBoltField(name="billno" ,columnName="BillNo",type="String", remark="收料单号", required=false, maxLength=30, fixed=0, order=4)
+	@JBoltField(name="billno" ,columnName="BillNo",type="String", remark="收料单号", required=false, maxLength=30, fixed=0, order=6)
 	@JSONField(name = "billno")
 	public java.lang.String getBillNo() {
 		return getStr("BillNo");
@@ -117,10 +161,32 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 单据日期
 	 */
-	@JBoltField(name="billdate" ,columnName="BillDate",type="String", remark="单据日期", required=false, maxLength=30, fixed=0, order=5)
+	@JBoltField(name="billdate" ,columnName="BillDate",type="String", remark="单据日期", required=false, maxLength=30, fixed=0, order=7)
 	@JSONField(name = "billdate")
 	public java.lang.String getBillDate() {
 		return getStr("BillDate");
+	}
+
+	public M setSourceBillNo(java.lang.String SourceBillNo) {
+		set("SourceBillNo", SourceBillNo);
+		return (M)this;
+	}
+
+	@JBoltField(name="sourcebillno" ,columnName="SourceBillNo",type="String", remark="SOURCEBILLNO", required=false, maxLength=50, fixed=0, order=8)
+	@JSONField(name = "sourcebillno")
+	public java.lang.String getSourceBillNo() {
+		return getStr("SourceBillNo");
+	}
+
+	public M setSourceBillID(java.lang.String SourceBillID) {
+		set("SourceBillID", SourceBillID);
+		return (M)this;
+	}
+
+	@JBoltField(name="sourcebillid" ,columnName="SourceBillID",type="String", remark="SOURCEBILLID", required=false, maxLength=50, fixed=0, order=9)
+	@JSONField(name = "sourcebillid")
+	public java.lang.String getSourceBillID() {
+		return getStr("SourceBillID");
 	}
 
 	/**
@@ -134,7 +200,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 供应商编码
 	 */
-	@JBoltField(name="vencode" ,columnName="VenCode",type="String", remark="供应商编码", required=false, maxLength=30, fixed=0, order=6)
+	@JBoltField(name="vencode" ,columnName="VenCode",type="String", remark="供应商编码", required=false, maxLength=30, fixed=0, order=10)
 	@JSONField(name = "vencode")
 	public java.lang.String getVenCode() {
 		return getStr("VenCode");
@@ -151,7 +217,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 备注
 	 */
-	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=32, fixed=0, order=7)
+	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=32, fixed=0, order=11)
 	@JSONField(name = "memo")
 	public java.lang.String getMemo() {
 		return getStr("Memo");
@@ -168,7 +234,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 创建人
 	 */
-	@JBoltField(name="createperson" ,columnName="CreatePerson",type="String", remark="创建人", required=false, maxLength=30, fixed=0, order=8)
+	@JBoltField(name="createperson" ,columnName="CreatePerson",type="String", remark="创建人", required=false, maxLength=30, fixed=0, order=12)
 	@JSONField(name = "createperson")
 	public java.lang.String getCreatePerson() {
 		return getStr("CreatePerson");
@@ -185,7 +251,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 创建日期
 	 */
-	@JBoltField(name="createdate" ,columnName="CreateDate",type="Date", remark="创建日期", required=false, maxLength=23, fixed=3, order=9)
+	@JBoltField(name="createdate" ,columnName="CreateDate",type="Date", remark="创建日期", required=false, maxLength=23, fixed=3, order=13)
 	@JSONField(name = "createdate")
 	public java.util.Date getCreateDate() {
 		return getDate("CreateDate");
@@ -202,7 +268,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 审核人
 	 */
-	@JBoltField(name="auditperson" ,columnName="AuditPerson",type="String", remark="审核人", required=false, maxLength=30, fixed=0, order=10)
+	@JBoltField(name="auditperson" ,columnName="AuditPerson",type="String", remark="审核人", required=false, maxLength=30, fixed=0, order=14)
 	@JSONField(name = "auditperson")
 	public java.lang.String getAuditPerson() {
 		return getStr("AuditPerson");
@@ -219,7 +285,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 审核日期
 	 */
-	@JBoltField(name="auditdate" ,columnName="AuditDate",type="Date", remark="审核日期", required=false, maxLength=23, fixed=3, order=11)
+	@JBoltField(name="auditdate" ,columnName="AuditDate",type="Date", remark="审核日期", required=false, maxLength=23, fixed=3, order=15)
 	@JSONField(name = "auditdate")
 	public java.util.Date getAuditDate() {
 		return getDate("AuditDate");
@@ -236,7 +302,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 修改人
 	 */
-	@JBoltField(name="modifyperson" ,columnName="ModifyPerson",type="String", remark="修改人", required=false, maxLength=30, fixed=0, order=12)
+	@JBoltField(name="modifyperson" ,columnName="ModifyPerson",type="String", remark="修改人", required=false, maxLength=30, fixed=0, order=16)
 	@JSONField(name = "modifyperson")
 	public java.lang.String getModifyPerson() {
 		return getStr("ModifyPerson");
@@ -253,7 +319,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 修改时间
 	 */
-	@JBoltField(name="modifydate" ,columnName="ModifyDate",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=13)
+	@JBoltField(name="modifydate" ,columnName="ModifyDate",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=17)
 	@JSONField(name = "modifydate")
 	public java.util.Date getModifyDate() {
 		return getDate("ModifyDate");
@@ -262,18 +328,35 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 状态 1已保存 2待审批 3已审批 4审批不通过 
 	 */
-	public M setState(java.lang.String state) {
-		set("state", state);
+	public M setState(java.lang.String State) {
+		set("State", State);
 		return (M)this;
 	}
 
 	/**
 	 * 状态 1已保存 2待审批 3已审批 4审批不通过 
 	 */
-	@JBoltField(name="state" ,columnName="state",type="String", remark="状态 1已保存 2待审批 3已审批 4审批不通过 ", required=false, maxLength=30, fixed=0, order=14)
+	@JBoltField(name="state" ,columnName="State",type="String", remark="状态 1已保存 2待审批 3已审批 4审批不通过 ", required=false, maxLength=30, fixed=0, order=18)
 	@JSONField(name = "state")
 	public java.lang.String getState() {
-		return getStr("state");
+		return getStr("State");
+	}
+
+	/**
+	 * 收料单：PUReceive，双单位收料单：PUReceiveSpecial
+	 */
+	public M setType(java.lang.String Type) {
+		set("Type", Type);
+		return (M)this;
+	}
+
+	/**
+	 * 收料单：PUReceive，双单位收料单：PUReceiveSpecial
+	 */
+	@JBoltField(name="type" ,columnName="Type",type="String", remark="收料单：PUReceive，双单位收料单：PUReceiveSpecial", required=false, maxLength=50, fixed=0, order=19)
+	@JSONField(name = "type")
+	public java.lang.String getType() {
+		return getStr("Type");
 	}
 
 }

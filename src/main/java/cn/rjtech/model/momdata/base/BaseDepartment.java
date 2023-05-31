@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -99,6 +98,12 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
     public static final String CDEPFAX = "cDepFax";
     /**上级部门ID*/
     public static final String IPID = "iPid";
+    /**来源: 1. MES 2. U8*/
+    public static final String ISOURCE = "iSource";
+    /**来源ID*/
+    public static final String ISOURCEID = "iSourceId";
+    /**是否禀议：0. 否 1. 是*/
+    public static final String ISPROPOSAL = "isProposal";
 	/**
 	 * 主键ID
 	 */
@@ -178,7 +183,7 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
 	/**
 	 * 是否末级：0. 否 1. 是
 	 */
-	@JBoltField(name="bdepend" ,columnName="bDepEnd",type="Boolean", remark="是否末级：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=5)
+	@JBoltField(name="bdepend" ,columnName="bDepEnd",type="Boolean", remark="是否末级：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=5)
 	@JSONField(name = "bdepend")
 	public java.lang.Boolean getBDepEnd() {
 		return getBoolean("bDepEnd");
@@ -569,7 +574,7 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
 	/**
 	 * 部门序号
 	 */
-	@JBoltField(name="ideporder" ,columnName="iDepOrder",type="Integer", remark="部门序号", required=true, maxLength=10, fixed=0, order=28)
+	@JBoltField(name="ideporder" ,columnName="iDepOrder",type="Integer", remark="部门序号", required=false, maxLength=10, fixed=0, order=28)
 	@JSONField(name = "ideporder")
 	public java.lang.Integer getIDepOrder() {
 		return getInt("iDepOrder");
@@ -603,7 +608,7 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
 	/**
 	 * 类型：字典配置，参照jb_dept的类型
 	 */
-	@JBoltField(name="ctype" ,columnName="cType",type="String", remark="类型：字典配置，参照jb_dept的类型", required=false, maxLength=10, fixed=0, order=30)
+	@JBoltField(name="ctype" ,columnName="cType",type="String", remark="类型：字典配置，参照jb_dept的类型", required=true, maxLength=10, fixed=0, order=30)
 	@JSONField(name = "ctype")
 	public java.lang.String getCType() {
 		return getStr("cType");
@@ -654,7 +659,7 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
 	/**
 	 * 负责人，用户ID
 	 */
-	@JBoltField(name="idutyuserid" ,columnName="iDutyUserId",type="Long", remark="负责人，用户ID", required=true, maxLength=19, fixed=0, order=33)
+	@JBoltField(name="idutyuserid" ,columnName="iDutyUserId",type="Long", remark="负责人，用户ID", required=false, maxLength=19, fixed=0, order=33)
 	@JSONField(name = "idutyuserid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIDutyUserId() {
 		return getLong("iDutyUserId");
@@ -845,6 +850,57 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
 	@JSONField(name = "ipid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIPid() {
 		return getLong("iPid");
+	}
+
+	/**
+	 * 来源: 1. MES 2. U8
+	 */
+	public M setISource(java.lang.Integer iSource) {
+		set("iSource", iSource);
+		return (M)this;
+	}
+
+	/**
+	 * 来源: 1. MES 2. U8
+	 */
+	@JBoltField(name="isource" ,columnName="iSource",type="Integer", remark="来源: 1. MES 2. U8", required=true, maxLength=10, fixed=0, order=45)
+	@JSONField(name = "isource")
+	public java.lang.Integer getISource() {
+		return getInt("iSource");
+	}
+
+	/**
+	 * 来源ID
+	 */
+	public M setISourceId(java.lang.String iSourceId) {
+		set("iSourceId", iSourceId);
+		return (M)this;
+	}
+
+	/**
+	 * 来源ID
+	 */
+	@JBoltField(name="isourceid" ,columnName="iSourceId",type="String", remark="来源ID", required=false, maxLength=32, fixed=0, order=46)
+	@JSONField(name = "isourceid")
+	public java.lang.String getISourceId() {
+		return getStr("iSourceId");
+	}
+
+	/**
+	 * 是否禀议：0. 否 1. 是
+	 */
+	public M setIsProposal(java.lang.Boolean isProposal) {
+		set("isProposal", isProposal);
+		return (M)this;
+	}
+
+	/**
+	 * 是否禀议：0. 否 1. 是
+	 */
+	@JBoltField(name="isproposal" ,columnName="isProposal",type="Boolean", remark="是否禀议：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=47)
+	@JSONField(name = "isproposal")
+	public java.lang.Boolean getIsProposal() {
+		return getBoolean("isProposal");
 	}
 
 }

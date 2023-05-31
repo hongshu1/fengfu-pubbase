@@ -357,8 +357,8 @@
 #end
 
 #define js()
-<script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
-<script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.excelio.16.0.2.min.js"></script>
+<script type="text/javascript" src="assets/plugins/Grape/gc.spread.sheets.all.12.0.7.min.js"></script>
+<script type="text/javascript" src="assets/plugins/Grape/gc.spread.excelio.12.0.7.min.js"></script>
 <script type="text/javascript" src="assets/plugins/Grape/FileSaver.min.js"></script>
 <script type="text/javascript">
     /**
@@ -386,8 +386,7 @@
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取表单
-    //设置全局内容水平垂直居中
-    sheet.getRange(-1,-1,-1,-1).hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
+
     //设置全局的字体样式
     sheet.getRange(-1, -1,-1,-1).font('宋体 bold 10px');
     //状态栏
@@ -506,6 +505,13 @@
         sheet.defaults.rowHeight = 25;
         spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
         spread.getSheet(0).setColumnCount(parms.ColumnCount); //设置一行有多少个单元格
+        //设置单元格内容的对齐方式
+        var style = new GC.Spread.Sheets.Style();
+        style.hAlign = GC.Spread.Sheets.HorizontalAlign.center;
+        style.vAlign = GC.Spread.Sheets.VerticalAlign.center;
+        spread.sheets.forEach(function(sheet) {
+            sheet.setDefaultStyle(style, GC.Spread.Sheets.SheetArea.viewport);
+        });
         var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
         //设置value值和该单元格的对齐方式
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex).cellType(cellType);
@@ -528,6 +534,7 @@
         parms.activeSheet.addSpan(0,6,3,1);
         parms.activeSheet.setColumnWidth(parms.columnindex+6, 150);//设置指定单元格的width
         parms.activeSheet.setColumnWidth(parms.columnindex+8, 70);//设置指定单元格的width
+
     }
     /**
      * 获取接口返回的日期数据
@@ -584,7 +591,6 @@
                 let rowIndex = 3;
                 let colIndex = 0;
                 console.log(res);
-
                 for (let i = 0; i < res.length; i++) {
                     //定义多选按钮
                     var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();
@@ -662,6 +668,7 @@
                         }
                         if(res[i].day[j].lock){
                             if(i==0){
+                                // 设定锁定样式
                                 let style_1S = new GC.Spread.Sheets.Style();
                                 style_1S.locked = res[i].day[j].lock;
                                 style_1S.backColor = "#F0F0F0";
