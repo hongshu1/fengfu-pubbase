@@ -314,42 +314,6 @@ public class PermissionKey {
 	 */
 	public static final String MO_DOC = "mo_doc";
 	/**
-	 * 生产工位派工
-	 */
-	public static final String PRODUCTION_PRODUCTION = "production_production";
-	/**
-	 * 分条加工
-	 */
-	public static final String CUTSTRIPPROCESS = "cutstripprocess";
-	/**
-	 * 片料加工
-	 */
-	public static final String SLICEINVPROCESS = "sliceinvprocess";
-	/**
-	 * 板料加工
-	 */
-	public static final String PIECEINVPROCESS = "pieceinvprocess";
-	/**
-	 * 生产工序报工
-	 */
-	public static final String PRODUCTION_REPORT = "production_report";
-	/**
-	 * 生产完工
-	 */
-	public static final String PRODUCTION_COMPLETE = "production_complete";
-	/**
-	 * 返修工单管理
-	 */
-	public static final String REWORKORDER = "reworkorder";
-	/**
-	 * 委外工单管理
-	 */
-	public static final String PMISSUEM = "pmissuem";
-	/**
-	 * 员工计件工资
-	 */
-	public static final String PIECE_RATE = "piece_rate";
-	/**
 	 * 设备管理
 	 */
 	public static final String EQUIPMENT_MANAGE = "equipment_manage";
@@ -414,41 +378,9 @@ public class PermissionKey {
 	 */
 	public static final String BUS_OBJECT = "bus_object";
 	/**
-	 * 生产派工单明细
-	 */
-	public static final String ASSIGNORDERCHILDINV = "assignorderchildinv";
-	/**
 	 * 客户档案明细
 	 */
 	public static final String CUSTOMERD = "customerd";
-	/**
-	 * 返修工单工艺
-	 */
-	public static final String REWORKORDERROUTING = "reworkorderrouting";
-	/**
-	 * 工序报工条码
-	 */
-	public static final String ROUTEREPORTBARCODE = "routereportbarcode";
-	/**
-	 * 工序报工不良明细
-	 */
-	public static final String ROUTEREPORTSCRAPD = "routereportscrapd";
-	/**
-	 * 工序报工不良
-	 */
-	public static final String ROUTEREPORTSCRAPM = "routereportscrapm";
-	/**
-	 * 报工记录隔离明细
-	 */
-	public static final String ROUTEREPORTSEPARATED = "routereportseparated";
-	/**
-	 * 报工记录隔离
-	 */
-	public static final String ROUTEREPORTSEPARATEM = "routereportseparatem";
-	/**
-	 * 片料加工余料
-	 */
-	public static final String SLICEINVPROCESSSTUFF = "sliceinvprocessstuff";
 	/**
 	 * 新增
 	 */
@@ -746,10 +678,6 @@ public class PermissionKey {
 	 */
 	public static final String API_REPAIR_APPLY_PR = "api_repair_apply_pr";
 	/**
-	 * 扫码报工
-	 */
-	public static final String CBARCODEROUTEREPORT = "cbarcoderoutereport";
-	/**
 	 * 设备维修
 	 */
 	public static final String API_REPAIR_RECORD = "api_repair_record";
@@ -762,10 +690,6 @@ public class PermissionKey {
 	 */
 	public static final String BOMCOMPARE = "bomcompare";
 	/**
-	 * 生产报工
-	 */
-	public static final String ROUTEREPORT = "routereport";
-	/**
 	 * 生产备料单
 	 */
 	public static final String MOPICKLIST = "mopicklist";
@@ -773,10 +697,6 @@ public class PermissionKey {
 	 * 参数配置
 	 */
 	public static final String SYSSETTING = "syssetting";
-	/**
-	 * 委外条码管理
-	 */
-	public static final String OM = "om";
 	/**
 	 * 计量单位档案
 	 */
@@ -790,29 +710,13 @@ public class PermissionKey {
 	 */
 	public static final String BARCODEENCODINGDETAIL = "barcodeencodingdetail";
 	/**
-	 * 交班记录明细
-	 */
-	public static final String PLSHIFTWORKGROUPD = "plshiftworkgroupd";
-	/**
 	 * 位置档案
 	 */
 	public static final String LOCLISTCN = "loclistcn";
 	/**
-	 * 派工工艺文件记录
-	 */
-	public static final String ASSIGNDRAWINGRECORD = "assigndrawingrecord";
-	/**
 	 * 敏感词词库
 	 */
 	public static final String SENSITIVE_WORD = "sensitive_word";
-	/**
-	 * 派工工位记录
-	 */
-	public static final String PLASSIGNPOSITIONRECORD = "plassignpositionrecord";
-	/**
-	 * 加工实物耗用记录
-	 */
-	public static final String CUTBARCODECONSUMPTION = "cutbarcodeconsumption";
 	/**
 	 * 菜单按钮
 	 */
@@ -1330,10 +1234,6 @@ public class PermissionKey {
 	 */
 	public static final String PATCHWORK_BARCODE = "patchwork_barcode";
 	/**
-	 * 系统管理-枚举类别
-	 */
-	public static final String ENUM_TYPE = "enum_type";
-	/**
 	 * 月周排产记录时间
 	 */
 	public static final String APS_WEEK_SCHEDULE = "aps_week_schedule";
@@ -1469,6 +1369,34 @@ public class PermissionKey {
 	 * 记录上传
 	 */
 	public static final String FORM_UPLOADM = "form_uploadm";
+	/**
+	 * 点检表格
+	 */
+	public static final String SPOTCHECK_FORM = "spotcheck_form";
+	/**
+	 * 拓展字段配置
+	 */
+	public static final String FIELD_CONFIG = "field_config";
+	/**
+	 * 部门对照表
+	 */
+	public static final String DEPREF = "depref";
+	/**
+	 * 拓展字段配置
+	 */
+	public static final String FORM_EXTEND_FIELDS = "form_extend_fields";
+	/**
+	 * 精度设置
+	 */
+	public static final String PRECISION_CONFIG = "precision_config";
+	/**
+	 * 上传记录-分类管理
+	 */
+	public static final String FORM_UPLOAD_CATEGORY = "form_upload_category";
+	/**
+	 * 枚举类型
+	 */
+	public static final String ENUM_TYPE = "enum_type";
 	/**
 	 * 新增
 	 */
@@ -2001,8 +1929,4 @@ public class PermissionKey {
 	 * 作废
 	 */
 	public static final String INVESTMENT_PLAN_MANAGE_CANCLE = "investment_plan_manage_cancle";
-	/**
-	 * 作废
-	 */
-	public static final String DEPREF = "depref";
 }

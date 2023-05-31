@@ -17,4 +17,9 @@ public class MomConfigKey {
      */
     public static final String TAX_RATE = "tax_rate";
 
+    /**
+     * 精度配置
+     */
+    public static final String PRECISION_CONFIG = "precision_config";
+
 }

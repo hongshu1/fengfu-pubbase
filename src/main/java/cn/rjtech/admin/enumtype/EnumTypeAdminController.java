@@ -1,30 +1,30 @@
 package cn.rjtech.admin.enumtype;
 
-import cn.rjtech.admin.enumvals.EnumValsService;
-import cn.rjtech.model.momdata.EnumVals;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import com.jfinal.core.paragetter.Para;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.enumvals.EnumValsService;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.EnumType;
+import cn.rjtech.model.momdata.EnumVals;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 
 import java.util.List;
 
 /**
  * 系统管理-枚举类别
+ *
  * @ClassName: EnumTypeAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-22 09:08
  */
+@UnCheck
 @CheckPermission(PermissionKey.ENUM_TYPE)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
