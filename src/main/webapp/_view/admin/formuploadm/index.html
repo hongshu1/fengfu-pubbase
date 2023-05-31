@@ -1,0 +1,120 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1>记录上传</h1></div>
+	<div class="col">
+	<form class="form-inline" id="FormUploadM_form_#(pageId)">
+		<select class="form-control" name="iCategoryId"
+	data-autoload
+	data-url="admin/formUploadCategory/options"
+	data-select-type="select"
+	data-text="=目录名称="
+	data-value=""
+	data-text-attr="ccategoryname"
+	data-value-attr="iautoid"
+	></select>
+
+<select class="form-control" name="iWorkRegionMid"
+	data-autoload
+	data-url="admin/workregionm/options"
+	data-select-type="select2"
+	data-text="=产线名称="
+	data-value=""
+	data-text-attr="cworkname"
+	data-value-attr="iautoid"
+	></select>
+		<input type="text" autocomplete="off"  class="form-control" style="width: 120px;" placeholder="=创建人=" name="ccreatename" value="" />
+		日期：
+		<input type="text" style="height: 30px; font-size: 12px; width: 120px;" data-date data-type="date" data-fmt="yyyy-MM-dd" autocomplete="off" class="form-control" placeholder="开始日期" maxlength="23" name="dcreatetime" value=""/>
+		至
+		<input type="text" style="height: 30px; font-size: 12px; width: 120px;" data-date data-type="date" data-fmt="yyyy-MM-dd" autocomplete="off" class="form-control" placeholder="结束日期" maxlength="23" name="ecreatetime" value=""/>
+		<div class="btn-group text-center mx-1">
+			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
+		</div>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	
+	
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="FormUploadM_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+{@if data.iauditstatus == 0}
+<a class="jbolt_table_editbtn" href="admin/formUploadM/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="编辑"><i class="fa fa-edit"></i></a>
+<a class="jbolt_table_delbtn" href="admin/formUploadM/delete/${data.iautoid}" data-handler="refreshJBoltTable" data-title="删除" ><i class="fa fa-remove c-danger"></i></a>
+{@/if}
+{@if data.iauditstatus != 0}
+<a class="jbolt_table_editbtn" href="admin/formUploadM/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="查看"><i class="fa fa-edit"></i></a>
+
+{@/if}
+
+</td>
+<td>$${data.statename}</td>
+<td>${data.iworkregionmid}</td>
+<td>${data.icategoryid}</td>
+<td>${data.dsubmittime|date_ymd}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime|date_ymd}</td>
+<td>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="FormUploadM_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="100%,100%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增记录上传" data-url="admin/formUploadM/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchAuditBtn_#(pageId)" data-url="admin/formUploadM/batchAudit?ids=" data-confirm="确定审核选中数据？" class="btn btn-outline-primary" ><i class="fa fa-edit"></i> 批量审核</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchAntiAuditBtn_#(pageId)" data-url="admin/formUploadM/batchAntiAudit?ids=" data-confirm="确定反审核选中数据？" class="btn btn-outline-primary" ><i class="fa fa-edit"></i> 批量反审核</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="FormUploadM_form_#(pageId)"
+	   data-url="admin/formUploadM/datas"
+	   data-rowtpl="FormUploadM_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="FormUploadM_page"
+	   data-toolbar="FormUploadM_toolbar_#(pageId)"
+	   data-column-prepend="1:checkbox:true:false:false"
+>
+<thead class="fw-normal" >
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-width="150">操作</th>
+	<th data-width="100" data-column="iAuditStatus">状态</th>
+	<th data-width="100" data-column="iWorkRegionMid">产线名称</th>
+	<th data-width="100" data-column="iCategoryId">目录名称</th>
+	<th data-width="100" data-column="dSubmitTime">日期</th>
+	<th data-width="100" data-column="cCreateName">创建人</th>
+	<th data-width="100" data-column="dCreateTime">创建时间</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
