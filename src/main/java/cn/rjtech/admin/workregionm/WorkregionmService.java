@@ -10,10 +10,7 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
+import cn.jbolt.core.poi.excel.*;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
@@ -495,7 +492,7 @@ public class WorkregionmService extends BaseService<Workregionm> {
 //                                    data.changeWithKey("user_id", "user_username", CACHE.me.getUserUsername(data.get("user_id")));
 //                                    data.changeBooleanToStr("is_deleted", "是", "否");
                                 })
-                                .setRecordDatas(2,datas)//设置数据
+                                .setRecordDatas(3,datas)//设置数据
                 )
                 .setXlsx(true)
                 .setFileName("产线档案"+ "_"+ DateUtil.today());
@@ -512,7 +509,7 @@ public class WorkregionmService extends BaseService<Workregionm> {
      */
     private JBoltExcelSheet createJboltExcelSheetTpl(){
         JBoltExcelSheet jBoltExcelSheet = JBoltExcelSheet.create("sheet");
-        jBoltExcelSheet.setHeaders(
+        jBoltExcelSheet.setHeaders(1,
                 JBoltExcelHeader.create("cworkcode", "产线编码", 20),
                 JBoltExcelHeader.create("cworkname", "产线名称", 20),
                 JBoltExcelHeader.create("cdepname", "所属部门", 20),
@@ -520,7 +517,8 @@ public class WorkregionmService extends BaseService<Workregionm> {
                 JBoltExcelHeader.create("ipslevel", "排产层级", 15),
                 JBoltExcelHeader.create("cwhname", "关联仓库名称", 20),
                 JBoltExcelHeader.create("cmemo", "备注",20)
-        );
+        ).setMerges(JBoltExcelMerge.create(0,0,6,"产线档案"))
+        ;
         return jBoltExcelSheet;
     }
 
