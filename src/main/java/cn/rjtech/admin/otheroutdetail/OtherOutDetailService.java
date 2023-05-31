@@ -4,10 +4,14 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.OtherOutDetail;
+import cn.rjtech.model.momdata.SysSaledeliverdetail;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+
+import java.util.List;
+
 /**
  * 出库管理-特殊领料单列表 Service
  * @ClassName: OtherOutDetailService
@@ -127,6 +131,11 @@ public class OtherOutDetailService extends BaseService<OtherOutDetail> {
 	@Override
 	protected int systemLogTargetType() {
 		return ProjectSystemLogTargetType.NONE.getValue();
+	}
+
+	public List<OtherOutDetail> getpushudetail(Kv kv) {
+		List<OtherOutDetail> datas = daoTemplate("otheroutreturnlist.pushudetail",kv).find();
+		return datas;
 	}
 
 }
