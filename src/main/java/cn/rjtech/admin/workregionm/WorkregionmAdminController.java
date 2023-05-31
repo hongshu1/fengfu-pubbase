@@ -25,6 +25,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -160,7 +161,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
             return;
         }
         
-        renderBytesToExcelXlsFile(service.exportExcelTpl(rows));
+        renderBytesToExcelXlsxFile(service.exportExcelTpl(rows));
 //        renderJxls("workregionm.xlsx", Kv.by("rows", rows), "产线档案_" + DateUtil.today() + ".xlsx");
     }
     
@@ -168,7 +169,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
 
     @SuppressWarnings("unchecked")
     public void downloadTpl() throws Exception {
-        renderBytesToExcelXlsFile(service.exportExcelTpl(null));
+        renderBytesToExcelXlsxFile(service.exportExcelTpl(null));
     }
 
     public void importExcel() {
@@ -178,7 +179,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
             renderJsonFail("请上传excel文件");
             return;
         }
-        renderJson(service.importExcelData(file.getFile()));
+        renderJson(service.importExcel(file.getFile()));
     }
 
     @NotAction
@@ -268,4 +269,10 @@ public class WorkregionmAdminController extends JBoltBaseController {
         }
         renderJsonData(retFiles,errormsg.toString());
     }
+
+
+
+
+
+
 }

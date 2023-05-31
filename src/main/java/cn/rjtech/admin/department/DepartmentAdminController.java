@@ -164,6 +164,13 @@ public class DepartmentAdminController extends BaseAdminController {
     public void toggleIsDeleted() {
         renderJson(service.toggleBoolean(getLong(0), "isDeleted"));
     }
+    
+    /**
+     * 切换isProposal
+     */
+    public void toggleIsProposal() {
+        renderJson(service.toggleBoolean(getLong(0), "isProposal"));
+    }
 
     /**
      * 人员列表

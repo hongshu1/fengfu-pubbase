@@ -11,7 +11,7 @@
             <div class="col">
                 <form class="form-inline" id="otherOutForm_#(pageId)"   onsubmit="return false;" method="post">
                     <input type="text" autocomplete="off"  class="form-control"  placeholder="=领料单号=" name="billno" value="" />
-
+                    <input type="hidden" id="" name="sourcebilldid" value="#(imodocid??)">
 
                     <select style="width:150px" class="form-control"
                             data-autoload
@@ -67,7 +67,7 @@
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="otherOut_toolbar_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
-                <button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="特殊领料单-新增"  data-url="admin/modoc/othermaterialadd" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+                <button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="特殊领料单-新增"  data-url="admin/modoc/othermaterialadd?imodocid=#(imodocid??)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 
                 <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/otherout/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 批量删除</button>
 

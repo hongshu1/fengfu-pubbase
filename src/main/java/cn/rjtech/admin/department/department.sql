@@ -27,7 +27,9 @@ where
     #if(isApsInvoled)
         and dep.isApsInvoled = #para(isApsInvoled == 'true' ? 1 : 0)
     #end
-
+    #if(isProposal)
+        and dep.isProposal = #para(isProposal == 'true' ? 1 : 0)
+    #end
     #if(excludeId)
         and dep.iAutoId <> #para(excludeId)
     #end

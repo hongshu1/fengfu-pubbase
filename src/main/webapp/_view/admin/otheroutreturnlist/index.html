@@ -11,7 +11,17 @@
 	<div class="col">
 		<form class="form-inline" id="otherOutForm_#(pageId)"   onsubmit="return false;" method="post">
 			<input type="text" autocomplete="off"  class="form-control"  placeholder="=领料单号=" name="billno" value="" />
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="=生产部门=" name="deptname" value="" />
+			<!--<input type="text" autocomplete="off"  class="form-control"  placeholder="=生产部门=" name="deptname" value="" />-->
+			<select class="form-control"
+					data-autoload
+					name="idepartmentid"
+					data-url="admin/department/getTreeTableDatas?isApsInvoled="
+					data-text="=生产部门="
+					data-text-attr="cdepname"
+					data-value-attr="iautoid"
+					data-value=""
+					data-value-attr="iautoid">
+			</select>
 			<input type="text" autocomplete="off"  class="form-control"  placeholder="=来源=" name="sourcebilltype" value="" />
 			<select style="width:150px" class="form-control"
 					data-autoload

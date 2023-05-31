@@ -103,8 +103,8 @@
             <th data-width="150" data-column="cvencode">供应商编码</th>
             <th data-width="150" data-column="cvenname">供应商名称</th>
             <th data-width="150" data-column="qty" title="期初库存数量">期初库存数量</th>
-            <th data-width="150" data-column="availableqty" title="未生成条码库存数量">未生成条码库存数量</th>
-            <th data-width="150" data-column="availablenum" title="生成条码库存数量">生成条码库存数量</th>
+            <th data-width="150" data-column="ungeneratedstockqty" title="未生成条码库存数量">未生成条码库存数量</th>
+            <th data-width="150" data-column="generatedStockQty" title="生成条码库存数量">生成条码库存数量</th>
             <th data-width="130" data-column="ipkgqty">包装数量</th>
             <th data-width="150" data-column="batch">批次号</th>
             <th data-width="150" data-column="createdate">生产日期</th>
@@ -119,8 +119,8 @@
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">打印数量:</label>
             <div class="col-3" style="right: 20px;">
-              <input type="number" id="printQty" autocomplete="off" class="form-control" placeholder=""
-                     data-tips="" maxlength="23" name="printqty" value="#(printqty??)" required="true"/>
+              <input type="number" id="printnum" autocomplete="off" class="form-control" placeholder=""
+                     data-tips="" maxlength="23" name="printnum" value="#(printnum??)" required="true"/>
             </div>
             <div class="col-2" style="right: 35px;">
               <button type="button" class="btn btn-outline-secondary" id="createButton" name="createButton"
@@ -153,6 +153,7 @@
   * 生成
   * */
   function submitThisForm() {
+    var printnum = $('#printnum').val();
     jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");
   }
 
@@ -162,7 +163,8 @@
         withForm: ["warehousebeginofperiod_#(pageId)"],
         name: 'warehousebeginofperiod',
         type: "all",
-        url: "/admin/warehousebeginofperiod/submitAll",
+        params:{printnum:$('#printnum').val()},//携带其他额外参数
+        url: "/admin/warehousebeginofperiod/submitStock",
         success: function (res) {
           LayerMsgBox.success("提交成功", 600, function () {
             parent.refreshPjaxContainer();
@@ -191,7 +193,7 @@
         },
         careacode: { //库区编码
           type: "autocomplete",
-          url: "admin/warehousearea/options",
+          url: "admin/warehousebeginofperiod/findAreaByWhcode",
           maxLength: 100,
           required: false,
           placeholder: "=请选择库区编码=",
@@ -206,21 +208,23 @@
         },
         cinvcode: {
           type: "autocomplete",
-          url: "admin/inventory/autocomplete",
-          maxLength: 100,
+          url: "admin/warehousebeginofperiod/whoptions",
+          maxLength: 150,
           required: true,
           placeholder: "=请选择存货编码=",
           textAttr: "cinvcode",
-          width: 800,
+          width: 900,
           valueAttr: "cinvcode",
-          columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname,ipkgqty",
-          header: '存货编码,客户部番,部品名称,规格型号,主计量单位,包装数量',
-          changeColumns: [{column: "cinvcode", use: "cinvcode"},
+          columnAttr: "invcode,cinvcode1,cinvname1,cinvstd,cuomname,ipkgqty,qty,ungeneratedstockqty",
+          header: '存货编码,客户部番,部品名称,规格型号,主计量单位,包装数量,期初库存数量,未生成条码库存数量',
+          changeColumns: [{column: "cinvcode", use: "invcode"},
             {column: "cinvcode1", use: "cinvcode1"},
             {column: "cinvname1", use: "cinvname1"},
             {column: "cinvstd", use: "cinvstd"},
             {column: "cuomname", use: "cuomname"},
-            {column: "ipkgqty", use: "ipkgqty"}]
+            {column: "ipkgqty", use: "ipkgqty"},
+            {column: "qty", use: "qty"},
+            {column: "ungeneratedstockqty", use: "ungeneratedstockqty"}]
         },
         cvencode: {
           type: "autocomplete",
@@ -248,12 +252,13 @@
         },
         generatedStockQty: {
           required: true,
-          type: "input_number",//类型
+          type: "input",//类型
+          rule:"int",
           placeholder: "=生成条码库存数量=",
-          tooltip: "=生成条码库存数量=",
+          tooltip: "",
         },
         printtepl: { //标签打印模板
-          required: true,
+          // required: true,
           type: "select",//类型
           placeholder: "=标签打印模板=",
           tooltip: "标签打印模板不能为空",
@@ -314,7 +319,7 @@
   * 重置
   * */
   function resetButton() {
-    $("#printQty").val("");
+    $("#printnum").val("");
     let autoprint = $("#autoprint").val("");
     console.log(autoprint)
   }
