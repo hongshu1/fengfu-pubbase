@@ -1,39 +1,29 @@
 
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="PheDeliveryLines_tpl_#(pageId)">
-    {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
-            <td>${pageNumber,pageSize,index | rownum}</td>
-            <td>${data.machinename}</td>
-            <td data-editable="false">${data.cinvcode}</td>
-            <td>${data.cinvname}</td>
-            <td>${data.cinvcode1}</td>
-            <td>${data.cinvname1}</td>
-            <td>${data.cinvstd}</td>
-            <td>${data.cuomname}</td>
-            <td>
-            <a title="上传图片" class="jbolt_table_editbtn">
-                    {@if data.cpics} <i class="fa fa-files-o c-primary"></i>
-                    {@else}
-                   <i class="fa fa-files-o c-danger"></i>
-                   {@/if}
-               </a>
-
-<!--                 <a tooltip title="上传图片" href="admin/inventoryqcform/openFileDialog?invId=${data.iinventoryid}&cpics=data.cpics"-->
-<!--                    data-btn="yes" data-title="上传图片" data-area="30%,60%" class="jbolt_table_editbtn">-->
-<!--                    {@if data.cpics} <i class="fa fa-files-o c-primary"></i>-->
-<!--                    {@else}-->
-<!--                   <i class="fa fa-files-o c-danger"></i>-->
-<!--                   {@/if}-->
-<!--               </a>-->
-
-
-            </td>
-            <td>${data.cdccode}</td>
-            <td>${data.cmeasure}</td>
-            <td style="display: none">${data.iinventoryid}</td>
-        </tr>
-    {@/each}
+{@each datas as data,index}
+    <tr data-id="${data.iautoid}">
+        <td>${pageNumber,pageSize,index | rownum}</td>
+        <td>${data.machinename}</td>
+        <td data-editable="false">${data.cinvcode}</td>
+        <td>${data.cinvname}</td>
+        <td>${data.cinvcode1}</td>
+        <td>${data.cinvname1}</td>
+        <td>${data.cinvstd}</td>
+        <td>${data.cuomname}</td>
+        <td>
+            {@if data.cpics}
+                {@each data.cpics.split(",") as url}
+                    <img data-photobtn tooltip data-title="点击查看大图"  style="width: 60px;height: 60px;" src="${url|real_image}" onerror="this.src='assets/img/noimg.png'"/>
+                {@/each}
+            {@/if}
+	        <a class="btn btn-outline  btn-sm" data-dialogbtn data-url="admin/inventoryqcform/openFileDialog" data-area="500,500"><i class="fa fa-upload"></i></a>
+        </td>
+        <td>${data.cdccode}</td>
+        <td>${data.cmeasure}</td>
+        <td style="display: none" hidden>${data.iinventoryid}</td>
+    </tr>
+{@/each}
 </textarea>
 
 <div class="row">
@@ -50,22 +40,22 @@
                                 data-area="90%,90%" data-btn="选中,取消" data-title="批量选择资源" class="btn btn-success btn-sm"><i
                                 class="fa fa-folder-open-o"></i> 获取资源
                         </button>
-                        <button onclick="jboltTableRemoveCheckedRow(this, true)"
-                                class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+                        <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
                     </div>
+                    
                     <div class="clearfix" style="padding-left: 15%">
                         <form class="form-inline" id="PheDeliveryLines_form_#(pageId)">
                             #if(inventoryQcForm.iQcFormId??)
                             <input type="hidden" name="iQcFormId" value="#(inventoryQcForm.iQcFormId??)" />
                             #end
+                            
                             <input hidden name="isAdd" value="#(isAdd??)" />
                             <input type="hidden" id="itemHidden" name="itemHidden" value=""/>
-                            <input type="text" autocomplete="off"  class="form-control"  placeholder="存货编码/名称"
-                                   name="item" value="" />
-                            <input type="text" autocomplete="off"  class="form-control"  placeholder="客户部番"
-                                   name="cInvCode1" value="" />
-                            <input type="text" autocomplete="off"  class="form-control"  placeholder="部品名称" name="cInvName1"
-                                   value="" />
+                            
+                            <input type="text" autocomplete="off"  class="form-control"  placeholder="存货编码/名称" name="item" value="" />
+                            <input type="text" autocomplete="off"  class="form-control"  placeholder="客户部番" name="cInvCode1" value="" />
+                            <input type="text" autocomplete="off"  class="form-control"  placeholder="部品名称" name="cInvName1" value="" />
+                            
                             <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
                             <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
                         </form>
@@ -100,9 +90,10 @@
                         <th data-width="150" data-column="cinvstd">规格</th>
                         <th data-width="120" data-column="cuomname">主计量单位</th>
 <!--                    <th data-min-width="200" data-column="inspectiontype">检验类型</th>-->
-                        <th data-width="120" data-column="cpicsstr">图片</th>
+                        <th data-width="540" data-column="cpics">图片</th>
                         <th data-width="120" data-column="cdccode">设变号</th>
                         <th data-width="120" data-column="cmeasure">测试理由</th>
+                        <th data-width="120" hidden data-column="iinventoryid">存货id</th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -196,8 +187,7 @@
      * 返回 jbolttable的id
      * */
     function getJboltId(){
-        var id = "jbolt_table_pheDeliveryLines_#(pageId)";
-        return id;
+        return "jbolt_table_pheDeliveryLines_#(pageId)";
     }
 
     /**
@@ -216,7 +206,7 @@
      * */
     function tableDataSuccess() {
         let result = jboltTableGetAllDatas(getJboltId(), ["iinventoryid"]);
-        let array = new Array();
+        let array = [];
         if (result != null) {
             for (let i = 0; i < result.length; i++) {
                 array.push("'" + result[i].iinventoryid + "'");
@@ -303,9 +293,16 @@
                 //         btn:"确定,关闭"
                 //     }
                 // },
-                cpics:{
-                    submitAttr: "cpics",
-                },
+               /* cpics:{
+                    type: "dialogbtn",
+                    linkColumn: 'iinventoryid',
+                    dialog: {
+                        url: "admin/inventoryqcform/openFileDialog",
+                        area: "80%,80%",
+                        title: "上传图片",
+                        btn: "选择,关闭"
+                    }
+                },*/
                 cdccode: {
                     type:"input",
                     submitAttr: "cDcCode"

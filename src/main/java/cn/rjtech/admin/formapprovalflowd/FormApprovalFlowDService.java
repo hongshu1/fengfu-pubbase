@@ -1,12 +1,25 @@
 package cn.rjtech.admin.formapprovalflowd;
 
+import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.FormApprovalFlowD;
+import cn.rjtech.model.momdata.Operation;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static cn.hutool.core.text.StrPool.COMMA;
+
 /**
  * 单据审批流 Service
  * @ClassName: FormApprovalFlowDService
@@ -21,6 +34,9 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 	protected FormApprovalFlowD dao() {
 		return dao;
 	}
+
+	@Inject
+	private FormApprovalService formApprovalService;
 
 	/**
 	 * 后台管理分页查询
@@ -123,4 +139,49 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
+	/**
+	 * 根据节点ID与人员ID删除流程从表数据
+	 * @param Did
+	 * @param userIds
+	 */
+	public void deleteByMidAndUserId(Long Did, String userIds){
+		for (String id : StrSplitter.split(userIds, COMMA, true, true)) {
+			delete("delete\n" +
+					"from Bd_FormApprovalFlowD\n" +
+					"where iFormApprovalFlowMid = (select t1.iAutoId\n" +
+					"                              from Bd_FormApprovalFlowM t1\n" +
+					"                              where iApprovalDid = '"+Did+"')\n" +
+					"  and iUserId = '"+id+"'");
+		}
+	}
+
+	/**
+	 * 根据节点ID与角色ID找出用户 删除流程从表数据
+	 * @param Did
+	 * @param roleIds
+	 */
+	public void deleteByMidAndRoleId(Long Did, String roleIds){
+		for (String id : StrSplitter.split(roleIds, COMMA, true, true)) {
+
+			List<User> users = formApprovalService.getRoles(Long.valueOf(id));
+
+			if (users.size() > 0) {
+				List<String> userIds = new ArrayList<>();
+				users.forEach(u -> {
+					userIds.add(u.getId().toString());
+				});
+
+				String join = String.join(",", userIds);
+				deleteByMidAndUserId(Did, join);
+			}
+		}
+	}
+
+	/**
+	 * 根据主表ID 删除流程从表数据
+	 * @param Mid
+	 */
+	public void deleteByMid(Long Mid){
+		delete("delete from Bd_FormApprovalFlowD where iFormApprovalFlowMid = "+Mid);
+	}
 }

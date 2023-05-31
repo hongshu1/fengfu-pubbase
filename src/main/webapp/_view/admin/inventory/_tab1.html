@@ -1,488 +1,497 @@
 <div>
-    <div class="py-2" style="padding:.5rem 0rem;">
-        <span class="py-1"><strong>基本信息</strong></span>
-    </div>
+  <div class="py-2" style="padding:.5rem 0rem;">
+    <span class="py-1"><strong>基本信息</strong></span>
+  </div>
 
-    <div class="form-group row">
-        <label class="col-sm-1 col-form-label" >存货属性</label>
-        <div class="col"  style="padding-top: 1px;">
-            <input type="hidden" name="inventory.itemAttributes" id="itemAttribute" >
-            
-            <div class="form-group row"
-                 data-checkbox
-                 data-rule="checkbox"
-                 data-hidden-input="itemAttribute"
-                 data-value-attr="sn"
-                 data-value="#(inventory.itemAttributes??)"
-                 data-name="itemAttributes"
-                 ###data-default=""
-                 data-url="/admin/dictionary/options?key=iItem_attribute"
-                 data-inline="true"
-            >
-            </div>
-        </div>
+  <div class="form-group row">
+    <label class="col-sm-1 col-form-label">存货属性</label>
+    <div class="col" style="padding-top: 1px;">
+      <input type="hidden" name="inventory.itemAttributes" id="itemAttribute">
+
+      <div class="form-group row"
+           data-checkbox
+           data-rule="checkbox"
+           data-hidden-input="itemAttribute"
+           data-value-attr="sn"
+           data-value="#(inventory.itemAttributes??)"
+           data-name="itemAttributes"
+           ###data-default=""
+           data-url="/admin/dictionary/options?key=iItem_attribute"
+           data-inline="true"
+      >
+      </div>
     </div>
-    <div class="row">
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">材料类别</label>
-                <div class="col">
-                    <select class="form-control" data-tips="请选择材料类别" data-url="admin/dictionary/options?key=material_type"
-                            name="inventory.iPartType" data-autoload data-text="=请选择材料类别=" data-value-attr="sn" data-value=""
-                            data-select="#(inventory.iPartType??)"></select>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">容器类型</label>
-                <div class="col">
-                    <select class="form-control" data-tips="请选择容器类型" data-url="admin/container/options"
-                            name="inventory.iContainerClassId" data-autoload data-text="=请选择容器类型=" data-value-attr="iautoid" data-text-attr="ccontainername" data-value=""
-                            data-select="#(inventory.iContainerClassId??)"></select>                                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">包装数量</label>
-                <div class="col">
-                    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入存货条形码" maxlength="255" name="inventory.iPkgQty" value="#(inventory.iPkgQty??)"/>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">量产状态</label>
-                <div class="col">
-                    <select class="form-control" data-tips="请选择量产状态" data-url="admin/dictionary/options?key=production_state"
-                            name="inventory.iMPstate" data-autoload data-text="=请选择量产状态=" data-value-attr="sn" data-value=""
-                            data-select="#(inventory.iMPstate??)"></select>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
+  </div>
+  <div class="row">
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">材料类别</label>
         <div class="col">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">销售类型</label>
-                <div class="col">
-                    <select class="form-control" data-tips="请选择销售类型" data-url="admin/dictionary/options?key=sale_type"
-                            name="inventory.iSaleType" data-autoload data-text="=请选择销售类型=" data-value-attr="sn" data-value=""
-                            data-select="#(inventory.iSaleType??)"></select>
-                </div>
-            </div>
+          <select class="form-control" data-tips="请选择材料类别" data-url="admin/dictionary/options?key=material_type"
+                  name="inventory.iPartType" data-autoload data-text="=请选择材料类别=" data-value-attr="sn" data-value=""
+                  data-select="#(inventory.iPartType??)"></select>
         </div>
-        <div class="col" >
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">加工类型</label>
-                <div class="col">
-                    <select class="form-control" data-tips="请选择加工类型" data-url="admin/dictionary/options?key=processing_type"
-                            name="inventory.iProcessType" data-autoload data-text="=请选择加工类型=" data-value-attr="sn" data-value=""
-                            data-select="#(inventory.iProcessType??)"></select>                                </div>
-            </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">容器类型</label>
+        <div class="col">
+          <select class="form-control" data-tips="请选择容器类型" data-url="admin/container/options"
+                  name="inventory.iContainerClassId" data-autoload data-text="=请选择容器类型=" data-value-attr="iautoid"
+                  data-text-attr="ccontainername" data-value=""
+                  data-select="#(inventory.iContainerClassId??)"></select></div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">包装数量</label>
+        <div class="col">
+          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入包装数量"
+                 maxlength="255" name="inventory.iPkgQty" value="#(inventory.iPkgQty??)"/>
         </div>
-        <!--<div class="col" >
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">内作在库天数</label>
-                <div class="col">
-                    <input type="number" autocomplete="off"  class="form-control" placeholder="请输入内作在库天数" data-tips="请输入内作在库天数"  maxlength="10" name="inventory.iInstockDays" value="#(inventory.iInstockDays??)">
-                </div>
-            </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">量产状态</label>
+        <div class="col">
+          <select class="form-control" data-tips="请选择量产状态" data-url="admin/dictionary/options?key=production_state"
+                  name="inventory.iMPstate" data-autoload data-text="=请选择量产状态=" data-value-attr="sn" data-value=""
+                  data-select="#(inventory.iMPstate??)"></select>
         </div>
-        <div class="col" >
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">销售在库天数</label>
-                <div class="col">
-                    <input type="number" autocomplete="off"  class="form-control"  placeholder="请输入销售在库天数" data-tips="请输入销售在库天数"  maxlength="10" name="inventory.iSaleInStockDays" value="#(inventory.iSaleInStockDays??)">
-                </div>
-            </div>
-        </div>-->
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">支给件是否赠品</label>
-                <div class="col">
-                    <select data-rule="required" class="form-control" data-tips="请选择" data-url="admin/dictionary/options?key=options_boolean"
-                            name="inventory.isGavePresent" data-autoload data-text="=请选择=" data-value-attr="sn" data-select="#(inventory.isGavePresent??)"></select>
-                </div>
-            </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">销售类型</label>
+        <div class="col">
+          <select class="form-control" data-tips="请选择销售类型" data-url="admin/dictionary/options?key=sale_type"
+                  name="inventory.iSaleType" data-autoload data-text="=请选择销售类型=" data-value-attr="sn" data-value=""
+                  data-select="#(inventory.iSaleType??)"></select>
         </div>
-
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">客户产品号</label>
-                <div class="col">
-                    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入客户产品号" maxlength="255" name="inventory.cCustItemCode" value="#(inventory.cCustItemCode??)"/>
-                </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">加工类型</label>
+        <div class="col">
+          <select class="form-control" data-tips="请选择加工类型" data-url="admin/dictionary/options?key=processing_type"
+                  name="inventory.iProcessType" data-autoload data-text="=请选择加工类型=" data-value-attr="sn" data-value=""
+                  data-select="#(inventory.iProcessType??)"></select></div>
+      </div>
+    </div>
+    <!--<div class="col" >
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label">内作在库天数</label>
+            <div class="col">
+                <input type="number" autocomplete="off"  class="form-control" placeholder="请输入内作在库天数" data-tips="请输入内作在库天数"  maxlength="10" name="inventory.iInstockDays" value="#(inventory.iInstockDays??)">
             </div>
         </div>
     </div>
-    <div class="row">
-
-        <div class="col-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">存货条形码</label>
-                <div class="col">
-                    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入存货条形码" maxlength="255" name="inventory.cBarcode" value="#(inventory.cBarcode??)"/>
-                </div>
+    <div class="col" >
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label">销售在库天数</label>
+            <div class="col">
+                <input type="number" autocomplete="off"  class="form-control"  placeholder="请输入销售在库天数" data-tips="请输入销售在库天数"  maxlength="10" name="inventory.iSaleInStockDays" value="#(inventory.iSaleInStockDays??)">
             </div>
         </div>
+    </div>-->
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">支给件是否赠品</label>
+        <div class="col">
+          <select data-rule="required" class="form-control" data-tips="请选择"
+                  data-url="admin/dictionary/options?key=options_boolean"
+                  name="inventory.isGavePresent" data-autoload data-text="=请选择=" data-value-attr="sn"
+                  data-select="#(inventory.isGavePresent??)"></select>
+        </div>
+      </div>
     </div>
+
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">客户产品号</label>
+        <div class="col">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入客户产品号"
+                 maxlength="255" name="inventory.cCustItemCode" value="#(inventory.cCustItemCode??)"/>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+
+    <div class="col-3">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">存货条形码</label>
+        <div class="col">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入存货条形码"
+                 maxlength="255" name="inventory.cBarcode" value="#(inventory.cBarcode??)"/>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div>
-    <div class="py-2" style="padding:.5rem 0rem;">
-        <span class="py-1"><strong>计量单位</strong></span>
-    </div>
-    <div class="form-group row"
-         data-width="col-sm-2,col">
-        <label class="col-sm-1 col-form-label" >单位类型</label>
-        <div class="col"  >
-            <div class="form-group row"
-                 data-checkbox
-                 data-rule="checkbox"
+  <div class="py-2" style="padding:.5rem 0rem;">
+    <span class="py-1"><strong>计量单位</strong></span>
+  </div>
+  <div class="form-group row"
+       data-width="col-sm-2,col">
+    <label class="col-sm-1 col-form-label">单位类型</label>
+    <div class="col">
+      <div class="form-group row"
+           data-checkbox
+           data-rule="checkbox"
 
-                 data-value-attr="sn"
-                 data-value="#(inventory.iUomType??)"
-                 data-name="inventory.iUomType"
-                 data-default=""
-                 data-url="/admin/dictionary/options?key=iuom_type"
-                 data-inline="true"
-            >
-            </div>
-        </div>
+           data-value-attr="sn"
+           data-value="#(inventory.iUomType??)"
+           data-name="inventory.iUomType"
+           data-default=""
+           data-url="/admin/dictionary/options?key=iuom_type"
+           data-inline="true"
+      >
+      </div>
     </div>
-    <div class="form-group row" >
-        <div class="col-3 row" style="padding: 0px;margin: 0px">
-            <label class="col-sm-4 col-form-label" >库存主单位</label>
-            <div class="col "  style="display:flex;justify-content: flex-start">
-                <select class="form-control" name="inventory.iUomClassId"
-                        data-autoload
-                        data-url="admin/uomclass/options"
-                        data-select-type="select"
-                        data-text="=计量单位组="
-                        data-value=""
-                        data-select="#(inventory.iUomClassId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomclassname"
-                        data-linkage="true"
-                        data-sonid="iInventoryUomId1"
-                ></select>
-                <select class="form-control" name="inventory.iInventoryUomId1"
-                        data-origin-url="admin/uom/options?pid="
-                        data-select-type="select"
-                        data-text="=计量单位名称="
-                        data-value=""
-                        data-select="#(inventory.iInventoryUomId1??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomname"
-                        data-linkage="true"
-                        id="iInventoryUomId1"
-                ></select>
-            </div>
-        </div>
-        <div class="col-3 row" style="padding: 0px;margin: 0px">
-            <label class="col-sm-3 col-form-label" >库存单位</label>
-            <div class="col "  style="display:flex;justify-content: flex-start">
-                <select class="form-control" name="inventory.iInventoryUomClassId2"
-                        data-autoload
-                        data-url="admin/uomclass/options"
-                        data-select-type="select"
-                        data-text="=计量单位组="
-                        data-value=""
-                        data-select="#(inventory.iInventoryUomClassId2??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomclassname"
-                        data-linkage="true"
-                        data-sonid="iInventoryUomId2"
-                ></select>
-                <select class="form-control" name="inventory.iInventoryUomId2"
-                        id="iInventoryUomId2"
-                        data-origin-url="admin/uom/options?pid="
-                        data-select-type="select"
-                        data-text="=计量单位名称="
-                        data-value=""
-                        data-select="#(inventory.iInventoryUomId2??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomname"
-                        data-linkage="true"
-                        id="iInventoryUomId2"
-                ></select>
-            </div>
-        </div>
-        <div class="col-3 row" style="padding: 0px;margin: 0px">
-            <label class="col-sm-3 col-form-label" >销售单位</label>
-            <div class="col "  style="display:flex;justify-content: flex-start">
-                <select class="form-control" name="inventory.iSalesUomClassId"
-                        data-autoload
-                        data-url="admin/uomclass/options"
-                        data-select-type="select"
-                        data-text="=计量单位组="
-                        data-value=""
-                        data-select="#(inventory.iSalesUomClassId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomclassname"
-                        data-linkage="true"
-                        data-sonid="iSalesUomId"
-                ></select>
-                <select class="form-control" name="inventory.iSalesUomId"
-                        data-url="admin/uom/options?pid="
-                        data-select-type="select"
-                        data-text="=计量单位名称="
-                        data-value=""
-                        data-select="#(inventory.iSalesUomId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomname"
-                        data-linkage="true"
-                        id="iSalesUomId"
-                ></select>
-            </div>
-        </div>
-        <div class="col-3 row" style="padding: 0px;margin: 0px">
-            <label class="col-sm-3 col-form-label" >采购单位</label>
-            <div class="col "  style="display:flex;justify-content: flex-start">
-                <select class="form-control" name="inventory.iPurchaseUomClassId"
-                        data-autoload
-                        data-url="admin/uomclass/options"
-                        data-select-type="select"
-                        data-text="=计量单位组="
-                        data-value=""
-                        data-select="#(inventory.iPurchaseUomClassId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomclassname"
-                        data-linkage="true"
-                        data-sonid="iPurchaseUomId"
-                ></select>
-                <select class="form-control" name="inventory.iPurchaseUomId"
-                        data-url="admin/uom/options?pid="
-                        data-select-type="select"
-                        data-text="=计量单位名称="
-                        data-value=""
-                        data-select="#(inventory.iPurchaseUomId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomname"
-                        data-linkage="true"
-                        id="iPurchaseUomId"
-                ></select>
-            </div>
-        </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-3 row" style="padding: 0px;margin: 0px">
+      <label class="col-sm-4 col-form-label">库存主单位</label>
+      <div class="col " style="display:flex;justify-content: flex-start">
+        <select class="form-control" name="inventory.iUomClassId"
+                data-autoload
+                data-url="admin/uomclass/options"
+                data-select-type="select"
+                data-text="=计量单位组="
+                data-value=""
+                data-select="#(inventory.iUomClassId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomclassname"
+                data-linkage="true"
+                data-sonid="iInventoryUomId1"
+        ></select>
+        <select class="form-control" name="inventory.iInventoryUomId1"
+                data-origin-url="admin/uom/options?pid="
+                data-select-type="select"
+                data-text="=计量单位名称="
+                data-value=""
+                data-select="#(inventory.iInventoryUomId1??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomname"
+                data-linkage="true"
+                id="iInventoryUomId1"
+        ></select>
+      </div>
+    </div>
+    <div class="col-3 row" style="padding: 0px;margin: 0px">
+      <label class="col-sm-3 col-form-label">库存单位</label>
+      <div class="col " style="display:flex;justify-content: flex-start">
+        <select class="form-control" name="inventory.iInventoryUomClassId2"
+                data-autoload
+                data-url="admin/uomclass/options"
+                data-select-type="select"
+                data-text="=计量单位组="
+                data-value=""
+                data-select="#(inventory.iInventoryUomClassId2??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomclassname"
+                data-linkage="true"
+                data-sonid="iInventoryUomId2"
+        ></select>
+        <select class="form-control" name="inventory.iInventoryUomId2"
+                id="iInventoryUomId2"
+                data-origin-url="admin/uom/options?pid="
+                data-select-type="select"
+                data-text="=计量单位名称="
+                data-value=""
+                data-select="#(inventory.iInventoryUomId2??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomname"
+                data-linkage="true"
+                id="iInventoryUomId2"
+        ></select>
+      </div>
+    </div>
+    <div class="col-3 row" style="padding: 0px;margin: 0px">
+      <label class="col-sm-3 col-form-label">销售单位</label>
+      <div class="col " style="display:flex;justify-content: flex-start">
+        <select class="form-control" name="inventory.iSalesUomClassId"
+                data-autoload
+                data-url="admin/uomclass/options"
+                data-select-type="select"
+                data-text="=计量单位组="
+                data-value=""
+                data-select="#(inventory.iSalesUomClassId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomclassname"
+                data-linkage="true"
+                data-sonid="iSalesUomId"
+        ></select>
+        <select class="form-control" name="inventory.iSalesUomId"
+                data-url="admin/uom/options?pid="
+                data-select-type="select"
+                data-text="=计量单位名称="
+                data-value=""
+                data-select="#(inventory.iSalesUomId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomname"
+                data-linkage="true"
+                id="iSalesUomId"
+        ></select>
+      </div>
+    </div>
+    <div class="col-3 row" style="padding: 0px;margin: 0px">
+      <label class="col-sm-3 col-form-label">采购单位</label>
+      <div class="col " style="display:flex;justify-content: flex-start">
+        <select class="form-control" name="inventory.iPurchaseUomClassId"
+                data-autoload
+                data-url="admin/uomclass/options"
+                data-select-type="select"
+                data-text="=计量单位组="
+                data-value=""
+                data-select="#(inventory.iPurchaseUomClassId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomclassname"
+                data-linkage="true"
+                data-sonid="iPurchaseUomId"
+        ></select>
+        <select class="form-control" name="inventory.iPurchaseUomId"
+                data-url="admin/uom/options?pid="
+                data-select-type="select"
+                data-text="=计量单位名称="
+                data-value=""
+                data-select="#(inventory.iPurchaseUomId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomname"
+                data-linkage="true"
+                id="iPurchaseUomId"
+        ></select>
+      </div>
+    </div>
 
+  </div>
+  <div class="form-group row">
+    <div class="col-3 row" style="padding: 0px;margin: 0px">
+      <label class="col-sm-4 col-form-label">计价单位</label>
+      <div class="col " style="display:flex;justify-content: flex-start">
+        <select class="form-control" name="inventory.iPriceUomClassId"
+                data-autoload
+                data-url="admin/uomclass/options"
+                data-select-type="select"
+                data-text="=计量单位组="
+                data-value=""
+                data-select="#(inventory.iPriceUomClassId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomclassname"
+                data-linkage="true"
+                data-sonid="iPriceUomId"
+        ></select>
+        <select class="form-control" name="inventory.iPriceUomId"
+                data-url="admin/uom/options?pid="
+                data-select-type="select"
+                data-text="=计量单位名称="
+                data-value=""
+                data-select="#(inventory.iPriceUomId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomname"
+                data-linkage="true"
+                id="iPriceUomId"
+        ></select>
+      </div>
     </div>
-    <div class="form-group row" >
-        <div class="col-3 row" style="padding: 0px;margin: 0px">
-            <label class="col-sm-4 col-form-label" >计价单位</label>
-            <div class="col "  style="display:flex;justify-content: flex-start">
-                <select class="form-control" name="inventory.iPriceUomClassId"
-                        data-autoload
-                        data-url="admin/uomclass/options"
-                        data-select-type="select"
-                        data-text="=计量单位组="
-                        data-value=""
-                        data-select="#(inventory.iPriceUomClassId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomclassname"
-                        data-linkage="true"
-                        data-sonid="iPriceUomId"
-                ></select>
-                <select class="form-control" name="inventory.iPriceUomId"
-                        data-url="admin/uom/options?pid="
-                        data-select-type="select"
-                        data-text="=计量单位名称="
-                        data-value=""
-                        data-select="#(inventory.iPriceUomId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomname"
-                        data-linkage="true"
-                        id="iPriceUomId"
-                ></select>
-            </div>
-        </div>
-        <div class="col-3 row" style="padding: 0px;margin: 0px">
-            <label class="col-sm-3 col-form-label" >生产单位</label>
-            <div class="col "  style="display:flex;justify-content: flex-start">
-                <select class="form-control" name="inventory.iManufactureUomClassId"
-                        data-autoload
-                        data-url="admin/uomclass/options"
-                        data-select-type="select"
-                        data-text="=计量单位组="
-                        data-value=""
-                        data-select="#(inventory.iManufactureUomClassId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomclassname"
-                        data-linkage="true"
-                        data-sonid="iManufactureUomId"
-                ></select>
-                <select class="form-control" name="inventory.iManufactureUomId"
-                        data-url="admin/uom/options?pid="
-                        data-select-type="select"
-                        data-text="=计量单位名称="
-                        data-value=""
-                        data-select="#(inventory.iManufactureUomId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomname"
-                        data-linkage="true"
-                        id="iManufactureUomId"
-                ></select>
-            </div>
-        </div>
-        <div class="col-3 row" style="padding: 0px;margin: 0px">
-            <label class="col-sm-3 col-form-label" >领料单位</label>
-            <div class="col "  style="display:flex;justify-content: flex-start">
-                <select class="form-control" name="inventory.iMaterialOutUomClassId"
-                        data-autoload
-                        data-url="admin/uomclass/options"
-                        data-select-type="select"
-                        data-text="=计量单位组="
-                        data-value=""
-                        data-select="#(inventory.iMaterialOutUomClassId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomclassname"
-                        data-linkage="true"
-                        data-sonid="iMaterialOutUomId"
-                ></select>
-                <select class="form-control" name="inventory.iMaterialOutUomId"
-                        data-url="admin/uom/options?pid="
-                        data-select-type="select"
-                        data-text="=计量单位名称="
-                        data-value=""
-                        data-select="#(inventory.iMaterialOutUomId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomname"
-                        data-linkage="true"
-                        id="iMaterialOutUomId"
-                ></select>
-            </div>
-        </div>
-        <div class="col-3 row" style="padding: 0px;margin: 0px">
-            <label class="col-sm-3 col-form-label" >成本单位</label>
-            <div class="col "  style="display:flex;justify-content: flex-start">
-                <select class="form-control" name="inventory.iCostUomClassId"
-                        data-autoload
-                        data-url="admin/uomclass/options"
-                        data-select-type="select"
-                        data-text="=计量单位组="
-                        data-value=""
-                        data-select="#(inventory.iCostUomClassId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomclassname"
-                        data-linkage="true"
-                        data-sonid="iCostUomId"
-                ></select>
-                <select class="form-control" name="inventory.iCostUomId"
-                        data-url="admin/uom/options?pid="
-                        data-select-type="select"
-                        data-text="=计量单位名称="
-                        data-value=""
-                        data-select="#(inventory.iCostUomId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomname"
-                        data-linkage="true"
-                        id="iCostUomId"
-                ></select>
-            </div>
-        </div>
+    <div class="col-3 row" style="padding: 0px;margin: 0px">
+      <label class="col-sm-3 col-form-label">生产单位</label>
+      <div class="col " style="display:flex;justify-content: flex-start">
+        <select class="form-control" name="inventory.iManufactureUomClassId"
+                data-autoload
+                data-url="admin/uomclass/options"
+                data-select-type="select"
+                data-text="=计量单位组="
+                data-value=""
+                data-select="#(inventory.iManufactureUomClassId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomclassname"
+                data-linkage="true"
+                data-sonid="iManufactureUomId"
+        ></select>
+        <select class="form-control" name="inventory.iManufactureUomId"
+                data-url="admin/uom/options?pid="
+                data-select-type="select"
+                data-text="=计量单位名称="
+                data-value=""
+                data-select="#(inventory.iManufactureUomId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomname"
+                data-linkage="true"
+                id="iManufactureUomId"
+        ></select>
+      </div>
+    </div>
+    <div class="col-3 row" style="padding: 0px;margin: 0px">
+      <label class="col-sm-3 col-form-label">领料单位</label>
+      <div class="col " style="display:flex;justify-content: flex-start">
+        <select class="form-control" name="inventory.iMaterialOutUomClassId"
+                data-autoload
+                data-url="admin/uomclass/options"
+                data-select-type="select"
+                data-text="=计量单位组="
+                data-value=""
+                data-select="#(inventory.iMaterialOutUomClassId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomclassname"
+                data-linkage="true"
+                data-sonid="iMaterialOutUomId"
+        ></select>
+        <select class="form-control" name="inventory.iMaterialOutUomId"
+                data-url="admin/uom/options?pid="
+                data-select-type="select"
+                data-text="=计量单位名称="
+                data-value=""
+                data-select="#(inventory.iMaterialOutUomId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomname"
+                data-linkage="true"
+                id="iMaterialOutUomId"
+        ></select>
+      </div>
+    </div>
+    <div class="col-3 row" style="padding: 0px;margin: 0px">
+      <label class="col-sm-3 col-form-label">成本单位</label>
+      <div class="col " style="display:flex;justify-content: flex-start">
+        <select class="form-control" name="inventory.iCostUomClassId"
+                data-autoload
+                data-url="admin/uomclass/options"
+                data-select-type="select"
+                data-text="=计量单位组="
+                data-value=""
+                data-select="#(inventory.iCostUomClassId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomclassname"
+                data-linkage="true"
+                data-sonid="iCostUomId"
+        ></select>
+        <select class="form-control" name="inventory.iCostUomId"
+                data-url="admin/uom/options?pid="
+                data-select-type="select"
+                data-text="=计量单位名称="
+                data-value=""
+                data-select="#(inventory.iCostUomId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomname"
+                data-linkage="true"
+                id="iCostUomId"
+        ></select>
+      </div>
+    </div>
 
+  </div>
+  <div class="form-group row">
+    <div class="col-3 row" style="padding: 0px;margin: 0px">
+      <label class="col-sm-4 col-form-label">重量单位</label>
+      <div class="col " style="display:flex;justify-content: flex-start">
+        <select class="form-control" name="inventory.iWeightUomClassId"
+                data-autoload
+                data-url="admin/uomclass/options"
+                data-select-type="select"
+                data-text="=计量单位组="
+                data-value=""
+                data-select="#(inventory.iWeightUomClassId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomclassname"
+                data-linkage="true"
+                data-sonid="iWeightUomId"
+        ></select>
+        <select class="form-control" name="inventory.iWeightUomId"
+                data-url="admin/uom/options?pid="
+                data-select-type="select"
+                data-text="=计量单位名称="
+                data-value=""
+                data-select="#(inventory.iWeightUomId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomname"
+                data-linkage="true"
+                id="iWeightUomId"
+        ></select>
+      </div>
     </div>
-    <div class="form-group row" >
-        <div class="col-3 row" style="padding: 0px;margin: 0px">
-            <label class="col-sm-4 col-form-label" >重量单位</label>
-            <div class="col "  style="display:flex;justify-content: flex-start">
-                <select class="form-control" name="inventory.iWeightUomClassId"
-                        data-autoload
-                        data-url="admin/uomclass/options"
-                        data-select-type="select"
-                        data-text="=计量单位组="
-                        data-value=""
-                        data-select="#(inventory.iWeightUomClassId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomclassname"
-                        data-linkage="true"
-                        data-sonid="iWeightUomId"
-                ></select>
-                <select class="form-control" name="inventory.iWeightUomId"
-                        data-url="admin/uom/options?pid="
-                        data-select-type="select"
-                        data-text="=计量单位名称="
-                        data-value=""
-                        data-select="#(inventory.iWeightUomId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomname"
-                        data-linkage="true"
-                        id="iWeightUomId"
-                ></select>
-            </div>
-        </div>
-        <div class="col-3 row" style="padding: 0px;margin: 0px">
-            <label class="col-sm-3 col-form-label" >库存单位重量</label>
-            <div class="col "  style="display:flex;justify-content: flex-start">
-                <input type="number" autocomplete="off"  class="form-control"  placeholder="请输入数量" data-tips="请输入数量"  maxlength="10" name="number" value="#(number??)">
-            </div>
-        </div>
-        <div class="col-3 row" style="padding: 0px;margin: 0px">
-            <label class="col-sm-3 col-form-label" >体积单位</label>
-            <div class="col "  style="display:flex;justify-content: flex-start">
-                <select class="form-control" name="inventory.iBulkUomClassId"
-                        data-autoload
-                        data-url="admin/uomclass/options"
-                        data-select-type="select"
-                        data-text="=计量单位组="
-                        data-value=""
-                        data-select="#(inventory.iBulkUomClassId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomclassname"
-                        data-linkage="true"
-                        data-sonid="iBulkUomId"
-                ></select>
-                <select class="form-control" name="inventory.iBulkUomId"
-                        data-url="admin/uom/options?pid="
-                        data-select-type="select"
-                        data-text="=计量单位名称="
-                        data-value=""
-                        data-select="#(inventory.iBulkUomId??)"
-                        data-value-attr="iautoid"
-                        data-text-attr="cuomname"
-                        data-linkage="true"
-                        id="iBulkUomId"
-                ></select>
-            </div>
-        </div>
-        <div class="col-3 row" style="padding: 0px;margin: 0px">
-            <label class="col-sm-3 col-form-label" >库存单位体积</label>
-            <div class="col "  style="display:flex;justify-content: flex-start">
-                <input type="number" autocomplete="off"  class="form-control"  placeholder="请输入数量" data-tips="请输入数量"  maxlength="10" name="number" value="#(number??)">
-            </div>
-        </div>
+    <div class="col-3 row" style="padding: 0px;margin: 0px">
+      <label class="col-sm-3 col-form-label">库存单位重量</label>
+      <div class="col " style="display:flex;justify-content: flex-start">
+        <input type="number" autocomplete="off" class="form-control" placeholder="请输入数量" data-tips="请输入数量"
+               maxlength="10" name="number" value="#(number??)">
+      </div>
+    </div>
+    <div class="col-3 row" style="padding: 0px;margin: 0px">
+      <label class="col-sm-3 col-form-label">体积单位</label>
+      <div class="col " style="display:flex;justify-content: flex-start">
+        <select class="form-control" name="inventory.iBulkUomClassId"
+                data-autoload
+                data-url="admin/uomclass/options"
+                data-select-type="select"
+                data-text="=计量单位组="
+                data-value=""
+                data-select="#(inventory.iBulkUomClassId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomclassname"
+                data-linkage="true"
+                data-sonid="iBulkUomId"
+        ></select>
+        <select class="form-control" name="inventory.iBulkUomId"
+                data-url="admin/uom/options?pid="
+                data-select-type="select"
+                data-text="=计量单位名称="
+                data-value=""
+                data-select="#(inventory.iBulkUomId??)"
+                data-value-attr="iautoid"
+                data-text-attr="cuomname"
+                data-linkage="true"
+                id="iBulkUomId"
+        ></select>
+      </div>
+    </div>
+    <div class="col-3 row" style="padding: 0px;margin: 0px">
+      <label class="col-sm-3 col-form-label">库存单位体积</label>
+      <div class="col " style="display:flex;justify-content: flex-start">
+        <input type="number" autocomplete="off" class="form-control" placeholder="请输入数量" data-tips="请输入数量"
+               maxlength="10" name="number" value="#(number??)">
+      </div>
+    </div>
 
-    </div>
+  </div>
 </div>
 
 <div>
-    <div class="py-2" style="padding:.5rem 0rem;">
-        <span class="py-1"><strong>其它信息</strong></span>
+  <div class="py-2" style="padding:.5rem 0rem;">
+    <span class="py-1"><strong>其它信息</strong></span>
+  </div>
+  <div class="form-group row"
+       data-radio
+       data-rule="radio"
+       data-value="#(inventory.isenabled??'1'=='1'?true:false)"
+       data-name="inventory.isenabled"
+       data-default="options_first"
+       data-width="col-sm-2,col">
+    <label class="col-sm-1 col-form-label">是否启用</label>
+    <div class="col" style="padding-top: 1px;">
+      <div class="radio radio-primary  radio-inline">
+        <input id="r_isenabled_true" type="radio" name="inventory.isenabled" value="true"/>
+        <label for="r_isenabled_true">是</label>
+      </div>
+      <div class="radio radio-primary  radio-inline">
+        <input id="r_isenabled_false" type="radio" name="inventory.isenabled" value="false"/>
+        <label for="r_isenabled_false">否</label>
+      </div>
     </div>
-    <div class="form-group row"
-         data-radio
-         data-rule="radio"
-         data-value="#(inventory.isenabled??'1'=='1'?true:false)"
-         data-name="inventory.isenabled"
-         data-default="options_first"
-         data-width="col-sm-2,col">
-        <label class="col-sm-1 col-form-label" >是否启用</label>
-        <div class="col"  style="padding-top: 1px;">
-            <div class="radio radio-primary  radio-inline">
-                <input  id="r_isenabled_true" type="radio" name="inventory.isenabled" value="true"/>
-                <label for="r_isenabled_true">是</label>
-            </div>
-            <div class="radio radio-primary  radio-inline">
-                <input  id="r_isenabled_false" type="radio" name="inventory.isenabled" value="false"/>
-                <label for="r_isenabled_false">否</label>
-            </div>
-        </div>
+  </div>
+  <div class="form-group row"
+       data-width="col-sm-2,col">
+    <label class="col-sm-1 col-form-label">描述</label>
+    <div class="col" style="padding-top: 1px;">
+      <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="描述"
+                maxlength="255" name="inventory.cMemo">#(inventory.cMemo??)</textarea>
     </div>
-    <div class="form-group row"
-         data-width="col-sm-2,col">
-        <label class="col-sm-1 col-form-label" >描述</label>
-        <div class="col"  style="padding-top: 1px;">
-            <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="描述" maxlength="255" name="inventory.cMemo">#(inventory.cMemo??)</textarea>
-        </div>
-    </div>
+  </div>
 </div>
