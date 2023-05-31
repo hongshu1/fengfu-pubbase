@@ -364,7 +364,7 @@
     /**
      * @param Api 公共接口
      */
-    const Api = 'http://localhost:8081/';
+    const Api = 'http://ugcff.kephon.com/';
     /**
      * @param urlParams 获取跳转携带的参数
      * @param id 跳转携带的id
@@ -667,41 +667,41 @@
                             sheet.setValue(6 * i + shiyongRow + 4, zaikuCol, res[i].day[j].zaiku);
                             sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, res[i].day[j].tianshu);
                         }
-                        if(!res[i].day[j].lock){
+                        // if(res[i].day[j].lock){
                             if(i==0){
                                 // 设定锁定样式
                                 const style_1S = new GC.Spread.Sheets.Style();
-                                style_1S.backColor = "#F0F0F0";
-                                sheet.getCell(1+shiyongRow, shiyongCol+j).locked(!res[i].day[j].lock);
-                                style_1S.locked = !res[i].day[j].lock;
+                                style_1S.backColor = res[i].day[j].lock==true?"#F0F0F0":'';
+                                sheet.getCell(1+shiyongRow, shiyongCol+j).locked(res[i].day[j].lock);
+                                style_1S.locked = res[i].day[j].lock==true?true:false;
                                 parms.activeSheet.setStyle(1+shiyongRow, shiyongCol+j,style_1S);
 
                                 const style_2S = new GC.Spread.Sheets.Style();
-                                sheet.getCell(2+shiyongRow, shiyongCol+j).locked(!res[i].day[j].lock);
-                                style_2S.locked = !res[i].day[j].lock;
-                                style_2S.backColor = "#F0F0F0";
+                                // sheet.getCell(2+shiyongRow, shiyongCol+j).locked(res[i].day[j].lock);
+                                style_2S.locked = res[i].day[j].lock==true?true:false;
+                                style_2S.backColor = res[i].day[j].lock==true?"#F0F0F0":'';
                                 parms.activeSheet.setStyle(2+shiyongRow, shiyongCol+j,style_2S);
 
                                 const style_3S = new GC.Spread.Sheets.Style();
-                                sheet.getCell(3+shiyongRow, shiyongCol+j).locked(!res[i].day[j].lock);
-                                style_3S.locked = !res[i].day[j].lock;
-                                style_3S.backColor = "#F0F0F0";
+                                // sheet.getCell(3+shiyongRow, shiyongCol+j).locked(res[i].day[j].lock);
+                                style_3S.locked = res[i].day[j].lock==true?true:false;
+                                style_3S.backColor = res[i].day[j].lock==true?"#F0F0F0":'';
                                 parms.activeSheet.setStyle(3+shiyongRow, shiyongCol+j,style_3S);
                             }else{
                                 const style_1S = new GC.Spread.Sheets.Style();
-                                style_1S.locked = !res[i].day[j].lock;
-                                style_1S.backColor = "#F0F0F0";
+                                style_1S.locked = res[i].day[j].lock==true?true:false;
+                                style_1S.backColor = res[i].day[j].lock==true?"#F0F0F0":'';
                                 parms.activeSheet.setStyle(6*i+shiyongRow+1, shiyongCol+j,style_1S);
                                 const style_2S = new GC.Spread.Sheets.Style();
-                                style_2S.locked = !res[i].day[j].lock;
-                                style_2S.backColor = "#F0F0F0";
+                                style_2S.locked = res[i].day[j].lock==true?true:false;
+                                style_2S.backColor = res[i].day[j].lock==true?"#F0F0F0":'';
                                 parms.activeSheet.setStyle(6*i+shiyongRow+2, shiyongCol+j,style_2S);
                                 const style_3S = new GC.Spread.Sheets.Style();
-                                style_3S.locked = !res[i].day[j].lock;
-                                style_3S.backColor = "#F0F0F0";
+                                style_3S.locked = res[i].day[j].lock==true?true:false;
+                                style_3S.backColor = res[i].day[j].lock==true?"#F0F0F0":'';
                                 parms.activeSheet.setStyle(6*i+shiyongRow+3, shiyongCol+j,style_3S);
                             }
-                        }
+                        // }
                     }
                     // 根据数据长度添加表格行列
                     var addCol = res.length+6,addRow = 41;
@@ -857,14 +857,14 @@
         }
         //每次添加之后往数组内进行存储
         parms.tableData.push(a);
-        // var rowData = sheet.getArray(info.row, info.col, 1, sheet.getColumnCount());
-        // console.log(rowData);
-        var dataSource = spread.getActiveSheet().getDataSource();
+        var rowData = sheet.getArray(info.row,0, 1, sheet.getColumnCount());
+        console.log(rowData);
+        // var dataSource = spread.getActiveSheet().getDataSource();
         // dataSource[0][0] = "new value";
         // var originalData = spread.getActiveSheet().getDataSource();
         // var isDataChanged = JSON.stringify(dataSource) !== JSON.stringify(originalData);
         // console.log("数据是否被修改：" + isDataChanged);
-        console.log(dataSource)
+        // console.log(dataSource)
     });
     //spread获取当前点击的单元格
     sheet.bind(GC.Spread.Sheets.Events.CellClick, function (e, info) {
