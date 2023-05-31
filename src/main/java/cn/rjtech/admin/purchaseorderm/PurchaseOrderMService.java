@@ -17,6 +17,7 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.purchaseorderd.PurchaseOrderDService;
 import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
 import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionService;
@@ -71,7 +72,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	private PurchaseOrderDBatchService purchaseOrderDBatchService;
 	@Inject
 	private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
-	
+	@Inject
+	private InventoryService inventoryService;
 	
 	@Override
 	protected PurchaseOrderM dao() {
@@ -957,14 +959,13 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			}
 			
 			purchaseOrderDList.add(purchaseOrderD);
-			
 			// 删除qty里的数据重新添加
 			/*switch (type){
 				case 2:
 					purchaseorderdQtyService.delByPurchaseOrderDId(record.getLong(PurchaseOrderD.IAUTOID));
 					break;
 			}*/
-			
+			boolean flag = false;
 			String[] columnNames = record.getColumnNames();
 			for (String columnName : columnNames){
 				if (columnName.contains("日")){
@@ -984,9 +985,15 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 							purchaseorderdQtyService.delete(purchaseOrderD.getIAutoId(), purchaseorderdQty.getIYear(), purchaseorderdQty.getIMonth(), purchaseorderdQty.getIDate());
 							break;
 					}
-					if (qty.compareTo(BigDecimal.ZERO) > 0)
+					if (qty.compareTo(BigDecimal.ZERO) > 0){
 						purchaseOrderQtyList.add(purchaseorderdQty);
+						flag = true;
+					}
 				}
+			}
+			if (!flag){
+				Inventory inventory = inventoryService.findById(purchaseOrderD.getIInventoryId());
+				ValidationUtils.isTrue(flag, "存货编码【"+inventory.getCInvCode()+"】日期数量不能全部为空");
 			}
 		}
 		
