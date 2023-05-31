@@ -21,5 +21,9 @@ public class MomConfigKey {
      * 精度配置
      */
     public static final String PRECISION_CONFIG = "precision_config";
+    /**
+     * 关于我们
+     */
+    public static final String ABOUT_US="about_us";
 
 }
