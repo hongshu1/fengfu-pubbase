@@ -5,18 +5,21 @@ import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.sysenumeration.SysEnumerationService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.model.momdata.SysPureceive;
-import cn.rjtech.model.momdata.SysPureceivedetail;
-import cn.rjtech.model.momdata.Vendor;
-import cn.rjtech.model.momdata.Warehouse;
+import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 /**
@@ -46,6 +49,10 @@ public class SysPureceiveAdminController extends BaseAdminController {
 
     @Inject
     private WarehouseService warehouseservice;
+
+    @Inject
+    private PurchaseTypeService purchasetypeservice;
+
 
     /**
      * 首页
@@ -99,6 +106,13 @@ public class SysPureceiveAdminController extends BaseAdminController {
             Vendor first1 = vendorservice.findFirst("select * from Bd_Vendor where cVenCode = ?", sysPureceive.getVenCode());
             set("venname", first1.getCVenName());
         }
+        //查询入库类别
+        if (null != sysPureceive.getRdCode()) {
+            PurchaseType first1 = purchasetypeservice.findFirst("select * from Bd_PurchaseType where iRdStyleId = ?", sysPureceive.getRdCode());
+            set("cptname", first1.getCPTName());
+        }
+
+
         set("sysPureceive", sysPureceive);
         render("edit.html");
     }
@@ -152,5 +166,43 @@ public class SysPureceiveAdminController extends BaseAdminController {
      */
     public void Whcode() {
         renderJsonData(service.getWhcodeDatas(getKv()));
+    }
+
+    /**
+     * 入库类别
+     */
+    public void selectRdCode() {
+        renderJsonData(service.selectRdCode(getKv()));
+    }
+
+
+    /**
+     * 库区数据源
+     */
+    public void wareHousepos() {
+        String whcode = get("whcode");
+        Kv kv = getKv();
+        if(null != whcode && !"".equals(whcode)){
+            Warehouse first1 = warehouseservice.findFirst("select *   from Bd_Warehouse where cWhCode=?", whcode);
+            kv.set("whcodeid",first1.getIAutoId());
+        }
+        renderJsonData(service.getwareHousepos(kv));
+    }
+
+
+    /**
+     * 条码数据源
+     */
+    @UnCheck
+    public void barcodeDatas() {
+        String orgCode =  getOrgCode();
+        String vencode1 = get("vencode1");
+        Vendor first1 = vendorservice.findFirst("select * from Bd_Vendor where cVenCode = ?", vencode1);
+        if(null == first1){
+            ValidationUtils.assertNull(false, "请选择供应商");
+            return;
+        }
+        String s = String.valueOf(first1.getIAutoId());
+        renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit",10),get("orgCode",orgCode),s));
     }
 }

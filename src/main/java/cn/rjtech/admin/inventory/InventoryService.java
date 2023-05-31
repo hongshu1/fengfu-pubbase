@@ -471,7 +471,6 @@ public class InventoryService extends BaseService<Inventory> {
 			}else if (ObjectUtil.isNotNull(inventoryMfgInfo.getIAutoId())){
 				inventoryMfgInfoService.update(inventoryMfgInfo);
 			}
-			
 			// 料品库存档案
 			inventorystockconfig.setIInventoryId(inventory.getIAutoId());
 			if (ObjectUtil.isNull(inventorystockconfig.getIAutoId())){
@@ -479,7 +478,10 @@ public class InventoryService extends BaseService<Inventory> {
 			}else if (ObjectUtil.isNotNull(inventorystockconfig.getIAutoId())){
 				inventoryStockConfigService.update(inventorystockconfig);
 			}
-			
+			// 删除 料品生产--所属生产线
+			if (ArrayUtil.isNotEmpty(delete)) {
+				deleteMultiByIds(delete);
+			}
 			// 料品生产--所属生产线修改
 			if(inventoryWorkRegions != null && inventoryWorkRegions.size() > 0){
 				for (InventoryWorkRegion workRegion : inventoryWorkRegions) {
@@ -494,10 +496,6 @@ public class InventoryService extends BaseService<Inventory> {
 					workRegion.setIsDeleted(false);
 				}
 				inventoryWorkRegionService.batchSave(newInventoryWorkRegions);
-			}
-			// 删除 料品生产--所属生产线
-			if (ArrayUtil.isNotEmpty(delete)) {
-				deleteMultiByIds(delete);
 			}
 			// 工艺路线操作
 			inventoryRoutingOperation(inventory, inventoryRoutingJboltTable);
@@ -692,6 +690,7 @@ public class InventoryService extends BaseService<Inventory> {
 				 * 	2.半成品名称必须为产品名称
 				 * 	3.当前物料集必须包含上一级半成品
 				 */
+				ValidationUtils.notNull(type, "工序类型不能为空");
 				ValidationUtils.isTrue(OperationTypeEnum.bunchSequence.getValue() == type, "最后一道工序的工序类型，必须为串序");
 				ValidationUtils.isTrue(masterInvId.equals(iRsInventoryId) , "最后一道工序的半成品名称，必须为当前产品存货名称");
 			}
@@ -1232,7 +1231,7 @@ public class InventoryService extends BaseService<Inventory> {
         Page<Record> page = dbTemplate("inventory.getInventoryList", kv).paginate(pageNumber, pageSize);
         ValidationUtils.notNull(page, JBoltMsg.DATA_NOT_EXIST);
         return page;
-    }   
+    }
     
 }
 

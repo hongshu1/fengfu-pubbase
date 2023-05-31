@@ -193,6 +193,26 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList() == null) {
             return Ret.msg("行数据不能为空");
         }
+        //采购订单推u8才可以添加
+        List<Record> list = jBoltTable.getSaveRecordList();
+        for (int i = 0; i < list.size(); i++) {
+            String sourcebillno1 = list.get(i).getStr("sourcebillno");
+            Boolean sourcebillno = this.getsourcebillno(sourcebillno1);
+            if(!sourcebillno){
+                return Ret.msg("订单编号："+sourcebillno1+" 没有推U8");
+            }
+        }
+        List<Record> list1 = jBoltTable.getUpdateRecordList();
+        for (int i = 0; i < list1.size(); i++) {
+            String sourcebillno1 = list1.get(i).getStr("sourcebillno");
+            Boolean sourcebillno = this.getsourcebillno(sourcebillno1);
+            if(!sourcebillno){
+                return Ret.msg("订单编号："+sourcebillno1+" 没有推U8");
+            }
+        }
+
+
+
         SysPureceive sysotherin = jBoltTable.getFormModel(SysPureceive.class, "sysPureceive");
         String whcode = jBoltTable.getForm().getString("Whcode");
         // 获取当前用户信息？
@@ -208,6 +228,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 sysotherin.setModifyPerson(user.getUsername());
                 sysotherin.setState("1");
                 sysotherin.setModifyDate(now);
+                sysotherin.setBillNo(String.valueOf(JBoltSnowflakeKit.me.nextId()));
                 // 主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
             } else {
@@ -263,6 +284,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
 			// sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
             sysPureceivedetail.setWhcode(row.getStr("whcode"));
+            sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
             sysPureceivedetail.setCreateDate(now);
@@ -298,6 +320,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
 			// sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
             sysPureceivedetail.setWhcode(row.getStr("whcode"));
+            sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
             sysPureceivedetail.setCreateDate(now);
@@ -333,7 +356,25 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
      * @return
      */
     public List<Record> getWhcodeDatas(Kv kv) {
-        return dbTemplate(u8SourceConfigName(), "syspureceive.Whcode", kv).find();
+        return dbTemplate("syspureceive.Whcode", kv).find();
+    }
+    /**
+     * 后台管理数据查询
+     *
+     * @return
+     */
+    public List<Record> selectRdCode(Kv kv) {
+        return dbTemplate("syspureceive.selectRdCode", kv).find();
+    }
+
+
+    /**
+     * 货区
+     *
+     * @return
+     */
+    public List<Record> getwareHousepos(Kv kv) {
+        return dbTemplate("syspureceive.wareHousepos", kv).find();
     }
 
     /**
@@ -393,6 +434,32 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         rcvDocQcFormM.setDUpdateTime(date);
         rcvDocQcFormM.setIsDeleted(false);
         rcvdocqcformmservice.save(rcvDocQcFormM);
+    }
+
+    /**
+     * 获取条码列表
+     * 通过关键字匹配
+     * autocomplete组件使用
+     */
+    public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode,String vencode) {
+        //.set("vencode",vencode)
+        return dbTemplate("syspureceive.getBarcodeDatas",Kv.by("q", q).set("limit",limit).set("orgCode",orgCode).set("vencode",vencode)).find();
+    }
+
+
+    /**
+     *  通过采购订单判断u8是否有数据
+     *  * @param kv
+     * @return
+     */
+    public Boolean getsourcebillno(String sourcebillno) {
+        Kv kv = new Kv();
+        kv.set("sourcebillno",sourcebillno);
+        List<Record> records = dbTemplate(u8SourceConfigName(), "syspureceive.getsourcebillno", kv).find();
+        if(records.isEmpty()){
+            return false;
+        }
+        return true;
     }
 
 }

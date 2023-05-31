@@ -86,6 +86,10 @@
             initRowCount:0,
             maxRowCount:30,
             keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+            // before:function(table,datas){
+            //     batchSetColumns('#itemroutingconfigid');
+            //     return false;
+            // },
             submit:{
 
                 /*withForm:[""],*/
@@ -108,34 +112,47 @@
                 id:{
                     submitAttr:"iautoid",
                 },
-                iitemroutingid:{type:"input", required:true},
-                cmergedseq:{type:"input"},
-                imergednum:{
-                    type:"input_number",
+                iitemroutingid:{
+                    type:"input",
+                    required:true,
                     handler:function(table,td,text,value,trJsonData){
-                        batchSetColumns('#itemroutingconfigid');
-                    }},
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
+                    }
+                },
+                cmergedseq:{
+                    type:"input",
+                    handler:function(table,td,text,value,trJsonData){
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
+                    }
+                },
+                imergednum: {
+                    type: "input_number",
+                    handler:function(table,td,text,value,trJsonData){
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
+                    }
+                },
                 imergerate:{
                     type:"input_number",
                     handler:function(table,td,text,value,trJsonData){
-                        batchSetColumns('#itemroutingconfigid');
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
                     }
                 },
                 imergesecs:{
                     type:"input_number",
                     handler:function(table,td,text,value,trJsonData){
-                        batchSetColumns('#itemroutingconfigid');
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
                     }
                 },
                 isecs:{
                     type:"input_number",
                     handler:function(table,td,text,value,trJsonData){
-                        batchSetColumns('#itemroutingconfigid');
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
                     }
                 },
                 //iseq:{type:"input", required:true},
                 coperationname:{  //工序名称
                     type:"dialogbtn",
+                    required: true,
                     placeholder:"选择工序",
                     maxLength:100,
                     dialog:{
@@ -145,7 +162,7 @@
                         btn:"选择,关闭"
                     },
                     handler:function(table,td,text,value,trJsonData){
-                        batchSetColumns('#itemroutingconfigid');
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
                     }
                 },
                 irsinventoryid:{  //半成品/成品名称
@@ -162,40 +179,43 @@
                         btn:"选择,关闭"
                     },
                     handler:function(table,td,text,value,trJsonData){
-                        batchSetColumns('#itemroutingconfigid');
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
                     }
                 },
                 itype:{  //工序类型
                     type:"select",
+                    required: true,
                     url:"admin/dictionary/options?key=process_type",
                     maxLength:100,
                     placeholder:"请输入",
                     textAttr: "name",
                     valueAttr:"sn",
                     handler:function(table,td,text,value,trJsonData){
-                        batchSetColumns('#itemroutingconfigid');
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000);
                     }
                 },
                 cproducttechsn:{  //工序类型
                     type:"select",
+                    required: true,
                     url:"admin/dictionary/options?key=product_tech",
                     maxLength:100,
                     placeholder:"请输入",
                     textAttr: "name",
                     valueAttr:"sn",
                     handler:function(table,td,text,value,trJsonData){
-                        batchSetColumns('#itemroutingconfigid');
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
                     }
                 },
                 cproductsn:{  //生产方式
                     type:"select",
+                    required: true,
                     url:"admin/dictionary/options?key=cproductsn_type",
                     maxLength:100,
                     placeholder:"请输入",
                     textAttr: "name",
                     valueAttr:"sn",
                     handler:function(table,td,text,value,trJsonData){
-                        batchSetColumns('#itemroutingconfigid');
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
                     }
                 },
                 invcs:{  //所需物料集
@@ -217,7 +237,7 @@
                         btn:"确定,关闭"
                     },
                     handler:function(table,td,text,value,trJsonData){
-                        batchSetColumns('#itemroutingconfigid');
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},1000)
                     }
                 },
                 equipments:{  //所需设备集
@@ -239,7 +259,7 @@
                         btn:"确定,关闭"
                     },
                     handler:function(table,td,text,value,trJsonData){
-                        batchSetColumns('#itemroutingconfigid');
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},1000)
                     }
                 },
                 drawings:{  //工艺文件
@@ -261,7 +281,7 @@
                         btn:"确定,关闭"
                     },
                     handler:function(table,td,text,value,trJsonData){
-                        batchSetColumns('#itemroutingconfigid');
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},1000)
                     }
                 }
             }

@@ -35,7 +35,7 @@ order by t1.dUpdateTime
 #end
 
 #sql("selectPerson")
-select t1.iAutoId as ipersonid, t1.cPsn_Name as cpsnname
+select t1.iAutoId as ipersonid, t1.cPsn_Name as cpsnname,t1.cPsn_Num as cpsnnum
 from Bd_Person t1
 where t1.isDeleted = '0' and t1.iUserId is not null
 #if(orgCode)

@@ -58,7 +58,7 @@ WHERE 1 = 1 and t2.IsDeleted=0
     and CONVERT(VARCHAR(10),t2.dCreateTime,23) <='#(enddate)'
 #end
 #if(idepartmentid)
-  AND  md.iDepartmentId =#para(idepartmentid)
+  AND  m.iDepartmentId =#para(idepartmentid)
     #end
 order by t2.dCreateTime desc,t2.iAutoId desc
     #end

@@ -1,7 +1,20 @@
 package cn.rjtech.admin.momaterialscanusedlog;
 
-import cn.rjtech.model.momdata.MoMaterialscanusedlogd;
-import cn.rjtech.model.momdata.MoMaterialsscansum;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.materialsout.MaterialsOutService;
+import cn.rjtech.admin.materialsoutdetail.MaterialsOutDetailService;
+import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.otherout.OtherOutService;
+import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
+import cn.rjtech.admin.sysmaterialsprepare.SysMaterialspreparedetailService;
+import cn.rjtech.admin.sysmaterialsprepare.SysMaterialspreparedetailService1;
+import cn.rjtech.admin.warehouse.WarehouseService;
+import cn.rjtech.admin.warehousearea.WarehouseAreaService;
+import cn.rjtech.admin.workregionm.WorkregionmService;
+import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -11,11 +24,11 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.MoMaterialscanusedlogm;
 import com.jfinal.plugin.activerecord.Record;
+import com.sun.jna.platform.win32.WinDef;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.*;
 
 /**
  * 制造工单-材料耗用主表 Service
@@ -34,6 +47,29 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 
 	@Inject
 	private  MoMaterialscanusedlogdService moMaterialscanusedlogdService;
+	@Inject
+	private MoDocService moDocService;
+
+	@Inject
+	private DepartmentService departmentService; //部门
+	@Inject
+	private WarehouseService warehouseService; //仓库
+	@Inject
+	private WorkregionmService workregionmService;//产线
+
+	@Inject
+	private MaterialsOutService materialsOutService;//出库单
+
+	@Inject
+	private MaterialsOutDetailService materialsOutDetailService;//出库单明细
+
+	@Inject
+	private SysMaterialspreparedetailService1 sysMaterialspreparedetailService;
+
+	@Inject
+	private WarehouseAreaService warehouseAreaService; //库区
+
+
 
 	/**
 	 * 后台管理分页查询
@@ -222,4 +258,215 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 		}
 		return  SUCCESS;
 	}
+
+	public MoMaterialscanusedlogm addDoc(Long imodocid) {
+		if(notOk(imodocid)){
+			ValidationUtils.notNull(imodocid,"缺少工单信息");
+		}
+		//先去了
+	/*	MoDoc m=moDocService.findById(imodocid);
+		if(m==null){
+			ValidationUtils.notNull(imodocid,"缺少工单信息");
+		}*/
+		Date now=new Date();
+		MoMaterialscanusedlogm moMaterialscanusedlogm=new MoMaterialscanusedlogm();
+		moMaterialscanusedlogm.setIOrgId(getOrgId());
+		moMaterialscanusedlogm.setCOrgCode(getOrgCode());
+		moMaterialscanusedlogm.setCOrgName(getOrgName());
+		moMaterialscanusedlogm.setIMoDocId(imodocid);
+		String billNo = BillNoUtils.getcDocNo(getOrgId(), "CLCK", 5);
+		moMaterialscanusedlogm.setCDocNo(billNo); //材料出库单号
+		moMaterialscanusedlogm.setICreateBy(JBoltUserKit.getUserId());
+		moMaterialscanusedlogm.setCCreateName(JBoltUserKit.getUserUserName());
+		moMaterialscanusedlogm.setDCreateTime(now);
+		moMaterialscanusedlogm.setIUpdateBy(JBoltUserKit.getUserId());
+		moMaterialscanusedlogm.setCUpdateName(JBoltUserKit.getUserName());
+		moMaterialscanusedlogm.setDUpdateTime(now);
+		moMaterialscanusedlogm.save();
+		return  moMaterialscanusedlogm;
+	}
+	public  Ret createOutDoc1(String cdocno,Long imaterialscanusedlogmid){
+	   //OtherOutService
+		Date now=new Date();
+		MaterialsOut materialsOut=new MaterialsOut();
+		materialsOut.setSourceBillType("生产工单");
+		MoMaterialscanusedlogm moMaterialscanusedlogm=findById(imaterialscanusedlogmid);
+		if(moMaterialscanusedlogm!=null) {
+			materialsOut.setSourceBillDid(String.valueOf(moMaterialscanusedlogm.getIMoDocId()));
+			materialsOut.setOrganizeCode(getOrgCode());
+		}
+		materialsOut.setRdCode("");
+		materialsOut.setBillNo(cdocno);//出库单号
+		materialsOut.setBillType("材料出库单");
+		materialsOut.setBillDate(now);
+		materialsOut.setWhcode("");//仓库
+		//工单
+		MoDoc moDoc=moDocService.findById(moMaterialscanusedlogm.getIMoDocId());
+		if(moDoc!=null){
+			//取部门
+			Department department=departmentService.findById(moDoc.getIDepartmentId());
+			if(department!=null) {
+				materialsOut.setDeptCode(department.getCDepCode());
+			}
+		}
+		materialsOut.setCreatePerson(JBoltUserKit.getUserName());
+		materialsOut.setCreateDate(now);
+		materialsOut.setState(2);//待审核
+		//materialsOut.save();
+		//处理明细
+		List<MoMaterialscanusedlogd> rows=moMaterialscanusedlogdService.find("SELECT * FROM Mo_MaterialScanUsedLogD where iMaterialScanUsedLogMid= ?",imaterialscanusedlogmid);
+		if(!rows.isEmpty()) {
+			List<MaterialsOutDetail> materialsOutDetails = new ArrayList<>();
+			MaterialsOutDetail materialsOutDetail;
+			for (MoMaterialscanusedlogd moMaterialscanusedlogd : rows) {
+				SysMaterialspreparedetail sysMaterialspreparedetail =
+						sysMaterialspreparedetailService.findFirst(Okv.create().set(SysMaterialspreparedetail.SOURCEBILLNO, moDoc.getCMoDocNo()).
+										set(SysMaterialspreparedetail.SOURCEBILLID, String.valueOf(moDoc.getIAutoId())).set
+												(SysMaterialspreparedetail.BARCODE, moMaterialscanusedlogd.getCBarcode()),
+								SysMaterialspreparedetail.AUTOID, "desc");
+
+				materialsOutDetail = new MaterialsOutDetail();
+				materialsOutDetail.setMasID(materialsOut.getAutoID());
+				materialsOutDetail.setPosCode(sysMaterialspreparedetail.getPosCode());
+				materialsOutDetail.setBarcode(moMaterialscanusedlogd.getCBarcode());
+				materialsOutDetail.setNum(new BigDecimal(0));//备料件数
+				materialsOutDetail.setQty(moMaterialscanusedlogd.getIScannedQty());//取耗费数量
+				materialsOutDetail.setSourceBillType("制造工单");
+				materialsOutDetail.setSourceBillNo(moDoc.getCMoDocNo());//来源单号
+				materialsOutDetail.setSourceBillID(String.valueOf(moDoc.getIAutoId()));
+				materialsOutDetail.setCreatePerson(JBoltUserKit.getUserName());
+				materialsOutDetail.setCreateDate(now);
+				materialsOutDetails.add(materialsOutDetail);
+			}
+		}
+
+
+
+
+
+
+
+
+      return  SUCCESS;
+	}
+	public   Ret createOutDoc(String cdocno,Long imaterialscanusedlogmid){
+		Date now=new Date();
+		MoMaterialscanusedlogm moMaterialscanusedlogm=findById(imaterialscanusedlogmid);
+
+
+		//工单
+		MoDoc moDoc=moDocService.findById(moMaterialscanusedlogm.getIMoDocId());
+		String deptcode="";
+		Department department=departmentService.findById(moDoc.getIDepartmentId());
+		if(department!=null) {
+			//otherOut.setDeptCode(department.getCDepCode());
+			deptcode=department.getCDepCode();
+		}
+
+		//materialsOut.save();
+		//处理明细
+		List<MoMaterialscanusedlogd> rows=moMaterialscanusedlogdService.find("SELECT * FROM Mo_MaterialScanUsedLogD where iMaterialScanUsedLogMid= ?",imaterialscanusedlogmid);
+		if(!rows.isEmpty()) {
+			List<MaterialsOutDetail> materialsOutDetails = new ArrayList<>();
+			MaterialsOutDetail materialsOutDetail;
+			for (MoMaterialscanusedlogd moMaterialscanusedlogd : rows) {
+				SysMaterialspreparedetail sysMaterialspreparedetail =
+						sysMaterialspreparedetailService.findFirst(Okv.create().set(SysMaterialspreparedetail.SOURCEBILLNO, moDoc.getCMoDocNo()).
+										set(SysMaterialspreparedetail.SOURCEBILLID, String.valueOf(moDoc.getIAutoId())).set
+												(SysMaterialspreparedetail.BARCODE, moMaterialscanusedlogd.getCBarcode()),
+								SysMaterialspreparedetail.AUTOID, "desc");
+
+				materialsOutDetail = new MaterialsOutDetail();
+
+				materialsOutDetail.setPosCode(sysMaterialspreparedetail.getPosCode());
+				materialsOutDetail.setBarcode(moMaterialscanusedlogd.getCBarcode());
+				materialsOutDetail.setNum(new BigDecimal(0));//备料件数
+				materialsOutDetail.setQty(moMaterialscanusedlogd.getIScannedQty());//取耗费数量
+				materialsOutDetail.setSourceBillType("制造工单");
+				materialsOutDetail.setSourceBillNo(moDoc.getCMoDocNo());//来源单号
+				materialsOutDetail.setSourceBillID(String.valueOf(moDoc.getIAutoId()));
+				materialsOutDetail.setCreatePerson(JBoltUserKit.getUserName());
+				materialsOutDetail.setCreateDate(now);
+				materialsOutDetails.add(materialsOutDetail);
+			}
+			Map<Long,List<MaterialsOutDetail>>  map=datas(materialsOutDetails);
+			MaterialsOut materialsOut;
+			for (Map.Entry<Long, List<MaterialsOutDetail>> entry : map.entrySet()) {
+				  Warehouse warehouse=warehouseService.findById(entry.getKey());
+				   materialsOut=new MaterialsOut();
+				   materialsOut.setSourceBillType("制造工单");
+				   materialsOut.setRdCode("");
+				   materialsOut.setOrganizeCode(getOrgCode());
+				   String billNo = BillNoUtils.getcDocNo(getOrgId(), "CLCK", 5);
+				   materialsOut.setBillNo(billNo);
+				   materialsOut.setBillType("材料出库单");
+				   materialsOut.setBillDate(now);
+				   materialsOut.setDeptCode(deptcode);
+				   materialsOut.setCreatePerson(JBoltUserKit.getUserName());
+				   materialsOut.setCreateDate(now);
+				   materialsOut.setState(2);
+				  materialsOut.save();
+				MaterialsOut finalMaterialsOut = materialsOut;
+				List<MaterialsOutDetail> materials=entry.getValue();
+				materials.stream().forEach(obj -> obj.setMasID(finalMaterialsOut.getAutoID()));
+				materialsOutDetailService.batchSave(materials);
+
+			}
+		}
+		return  SUCCESS;
+
+	}
+	public Map<Long,List<MaterialsOutDetail>> datas(List<MaterialsOutDetail> materialsOutDetails){
+		List<List<MaterialsOutDetail>> result = new ArrayList<>();
+		Map<Long,List<MaterialsOutDetail>> map = new HashMap<>();
+//userList是要操作的list集合
+		for (MaterialsOutDetail materialsOutDetail:materialsOutDetails) {
+			String posCode =materialsOutDetail.getPosCode();
+			//仓库
+			WarehouseArea warehouseArea=warehouseAreaService.findByWhAreaCode(posCode);
+			List<MaterialsOutDetail> detailList;
+			if (map.containsKey(warehouseArea.getIwarehouseid())) {
+				detailList= map.get(warehouseArea.getIwarehouseid());
+			}else{
+				detailList= new ArrayList<>();
+			}
+			detailList.add(materialsOutDetail);
+			map.put(warehouseArea.getIwarehouseid(),detailList);
+		}
+		return  map;
+
+	}
+	public void test(){
+		Date now=new Date();
+		OtherOut otherOut=new OtherOut();
+		MoMaterialscanusedlogm moMaterialscanusedlogm=findById(0);
+		otherOut.setSourceBillDid(String.valueOf(moMaterialscanusedlogm.getIAutoId()));
+		otherOut.setOrganizeCode(moMaterialscanusedlogm.getCOrgCode());
+		otherOut.setBillNo("");
+		otherOut.setBillType("材料出库单"); //sn=11
+		otherOut.setBillDate(now);
+		//读取工单信息
+		MoDoc moDoc=moDocService.findById(moMaterialscanusedlogm.getIMoDocId());
+		//读取工单信息
+		//MoDoc moDoc=moDocService.findById(0);
+		if(moDoc!=null) {
+			//取部门
+			Department department=departmentService.findById(moDoc.getIDepartmentId());
+			if(department!=null) {
+				//otherOut.setDeptCode(department.getCDepCode());
+			}
+			//获取产线
+			Workregionm workregionm=workregionmService.findById(moDoc.getIWorkRegionMid());
+			if(workregionm!=null){
+				//仓库
+				Warehouse warehouse=warehouseService.findById(workregionm.getIWarehouseId());
+
+			}
+
+
+
+		}
+	}
+
+
 }

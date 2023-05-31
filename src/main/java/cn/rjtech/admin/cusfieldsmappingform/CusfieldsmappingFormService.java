@@ -109,5 +109,9 @@ public class CusfieldsmappingFormService extends BaseService<CusfieldsmappingFor
     public List<Long> getIformIdsByMid(long mid) {
         return query(selectSql().select(CusfieldsmappingForm.IFORMID).eq(CusfieldsmappingForm.ICUSFIELDMAPPINGMID, mid));
     }
+
+    public CusfieldsmappingForm findFirstByIformId(Long iformId) {
+        return findFirst(selectSql().eq(CusfieldsmappingForm.IFORMID, iformId));
+    }
     
 }
