@@ -204,8 +204,8 @@ public class QcInspectionService extends BaseService<QcInspection> {
 					qcInspection.setCChainName(formRecord.getStr("cchainname"));
 					qcInspection.setIsFirstCase(formRecord.getBoolean("isfirstcase"));
 					qcInspection.setDRecordDate(formRecord.getDate("drecorddate"));
-					qcInspection.setIQcDutyPersonId(formRecord.getLong("depnameid"));    //人员
-					qcInspection.setIQcDutyDepartmentId(formRecord.getLong("psnnameid"));    //部门
+					qcInspection.setIQcDutyPersonId(formRecord.getLong("psnnameid"));    //人员
+					qcInspection.setIQcDutyDepartmentId(formRecord.getLong("depnameid"));    //部门
 					qcInspection.setCPlace(formRecord.getStr("cplace"));
 					qcInspection.setCProblem(formRecord.getStr("cproblem"));
 					qcInspection.setCAnalysis(formRecord.getStr("canalysis"));
@@ -246,8 +246,8 @@ public class QcInspectionService extends BaseService<QcInspection> {
 		qcInspection.setCChainName(formRecord.getStr("cchainname"));
 		qcInspection.setIsFirstCase(formRecord.getBoolean("isfirstcase"));
 		qcInspection.setDRecordDate(formRecord.getDate("drecorddate"));
-		qcInspection.setIQcDutyPersonId(formRecord.getLong("depnameid"));    //人员
-		qcInspection.setIQcDutyDepartmentId(formRecord.getLong("psnnameid"));    //部门
+		qcInspection.setIQcDutyPersonId(formRecord.getLong("psnnameid"));    //人员
+		qcInspection.setIQcDutyDepartmentId(formRecord.getLong("depnameid"));    //部门
 		qcInspection.setCPlace(formRecord.getStr("cplace"));
 		qcInspection.setCProblem(formRecord.getStr("cproblem"));
 		qcInspection.setCAnalysis(formRecord.getStr("canalysis"));
