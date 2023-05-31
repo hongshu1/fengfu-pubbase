@@ -40,3 +40,25 @@ WHERE 1 = 1
 order by t1.ModifyDate desc
     #end
 
+#sql("pushu")
+SELECT
+    t1.*
+FROM
+    T_Sys_OtherOut t1
+WHERE 1=1
+#if(ids)
+    AND t1.AutoID in (#para(ids))
+#end
+#end
+
+
+#sql("pushudetail")
+SELECT
+    t1.*
+FROM
+    T_Sys_OtherOutDetail t1
+WHERE 1=1
+#if(id)
+    AND t1.MasID = #para(id)
+#end
+#end

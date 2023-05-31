@@ -16,6 +16,7 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.subcontractorderd.SubcontractOrderDService;
 import cn.rjtech.admin.subcontractorderdbatch.SubcontractOrderDBatchService;
 import cn.rjtech.admin.subcontractorderdbatchversion.SubcontractOrderDBatchVersionService;
@@ -70,6 +71,8 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 	private SubcontractOrderDBatchService subcontractOrderDBatchService;
 	@Inject
 	private SubcontractOrderDBatchVersionService subcontractOrderDBatchVersionService;
+	@Inject
+	private InventoryService inventoryService;
 	
 	@Override
 	protected SubcontractOrderM dao() {
@@ -675,7 +678,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 	public Ret audit(Long id){
 		DateTime date = DateUtil.date();
 		SubcontractOrderM subcontractOrderM = getSubcontractOrderM(id);
-		subcontractOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+		subcontractOrderM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
 		subcontractOrderM.setDAuditTime(date);
 		subcontractOrderM.setDSubmitTime(date);
 		subcontractOrderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
@@ -735,7 +738,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 			// 源数量
 			BigDecimal sourceQty = record.getBigDecimal(SubcontractorderdQty.IQTY);
 			Long subcontractOrderDid = record.getLong(SubcontractorderdQty.ISUBCONTRACTORDERDID);
-			Long inventoryId = record.getLong(SubcontractOrderD.IVENDORADDRID);
+			Long inventoryId = record.getLong(SubcontractOrderD.IINVENTORYID);
 			
 			String dateStr = demandPlanDService.getDate(record.getStr(PurchaseorderdQty.IYEAR), record.getInt(PurchaseorderdQty.IMONTH), record.getInt(PurchaseorderdQty.IDATE));
 			DateTime planDate = DateUtil.parse(dateStr, DatePattern.PURE_DATE_PATTERN);
@@ -941,7 +944,6 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 		Map<Long, VendorAddr> vendorAddrMap = vendorAddrList.stream().collect(Collectors.toMap(VendorAddr::getIAutoId, vendorAddr -> vendorAddr));
 		
 		for (Record record : recordList){
-			
 			String isPresentStr = record.getStr(PurchaseOrderD.ISPRESENT);
 			VendorAddr vendorAddr = vendorAddrMap.get(record.getLong(PurchaseOrderD.IVENDORADDRID));
 			ValidationUtils.notNull(vendorAddr, "供应商地址不存在");
@@ -968,16 +970,14 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 							record.getStr(PurchaseOrderD.CMEMO),
 							IsOkEnum.toEnum(isPresent).getText());
 			}
-			
 			subcontractOrderDList.add(subcontractOrderD);
-			
 			// 删除qty里的数据重新添加
 			/*switch (type){
 				case 2:
 					purchaseorderdQtyService.delByPurchaseOrderDId(record.getLong(PurchaseOrderD.IAUTOID));
 					break;
 			}*/
-			
+			boolean flag = false;
 			String[] columnNames = record.getColumnNames();
 			for (String columnName : columnNames){
 				if (columnName.contains("日")){
@@ -991,15 +991,20 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 							Integer.parseInt(monthStr),
 							Integer.parseInt(dayStr),
 							qty);
-					
 					switch (type){
 						case 2:
 							subcontractorderdQtyService.delete(subcontractOrderD.getIAutoId(), subcontractorderdQty.getIYear(), subcontractorderdQty.getIMonth(), subcontractorderdQty.getIDate());
 							break;
 					}
-					if (qty.compareTo(BigDecimal.ZERO)>0)
-					subcontractorderdQtyList.add(subcontractorderdQty);
+					if (qty.compareTo(BigDecimal.ZERO)>0){
+						subcontractorderdQtyList.add(subcontractorderdQty);
+						flag = true;
+					}
 				}
+			}
+			if (!flag){
+				Inventory inventory = inventoryService.findById(subcontractOrderD.getIInventoryId());
+				ValidationUtils.isTrue(flag, "存货编码【"+inventory.getCInvCode()+"】日期数量不能全部为空");
 			}
 		}
 		
