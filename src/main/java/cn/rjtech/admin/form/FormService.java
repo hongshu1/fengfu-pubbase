@@ -21,6 +21,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.generator.ColumnMeta;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,8 +48,17 @@ public class FormService extends BaseService<Form> {
     /**
      * 后台管理分页查询
      */
-    public Page<Form> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-        return paginateByKeywords("iAutoId", "DESC", pageNumber, pageSize, keywords, "cFormCode,cFormName");
+    public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, String keywords,Kv para) {
+
+        Page<Record> list = dbTemplate("form.paginateAdminDatas").paginate(pageNumber,pageSize);
+        for (Record row : list.getList()) {
+            BigDecimal iformcategoryid = row.getBigDecimal("iformcategoryid");
+            para.set("iatuoid",iformcategoryid);
+            String Cname = dbTemplate("form.getFormCategoryByCname", para).queryStr();
+            row.set("Cname",Cname);
+        }
+//        return paginateByKeywords("iAutoId", "DESC", pageNumber, pageSize, keywords, "cFormCode,cFormName");
+        return list;
     }
 
     /**

@@ -648,3 +648,7 @@
 #namespace("depref")
 #include("depref/depref.sql")
 #end
+
+#namespace("form")
+#include("form/form.sql")
+#end

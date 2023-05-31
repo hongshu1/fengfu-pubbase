@@ -30,17 +30,23 @@
         {@each datas as data,index}
         <tr data-id="${data.iautoid}" >
             <td>${pageNumber,pageSize,index | rownum}</td>
+
+            <td>
+	            <a href="admin/form/edit/${data.iautoid}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改人员档案" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>修改</a>
+                <a href="admin/form/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+            </td>
+
+            <td>${data.cname}</td>
             <td>${data.cformcode}</td>
             <td>${data.cformname}</td>
+            <td>${data.ccode}</td>
+            <td>${data.cformtypesn==1?'基础档案类':'单据类'}</td>
             <td>${data.ccreatename}</td>
             <td>${data.dcreatetime}</td>
             <td>${data.cupdatename}</td>
             <td>${data.dupdatetime}</td>
-            <td>
-            <!--	<a href="admin/form/edit/${data.iautoid}" data-area="80%,80%"  tooltip data-title="修改"-->
-            <!--	   data-handler="refreshJBoltTable" data-dialog-title="修改表单管理" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>-->
-                <a href="admin/form/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
-            </td>
+            <td>${data.isapproval==0?'否':'是'}</td>
+
         </tr>
         {@/each}
         </textarea>
@@ -81,13 +87,18 @@
             <thead>
             <tr>
                 <th data-width="60">序号</th>
+                <th data-width="150">操作</th>
+                <th data-width="150" data-column="iFormCategoryId">表单类别</th>
                 <th data-width="150" data-column="cFormCode">表单编码</th>
                 <th data-width="150" data-column="cFormName">表单名称</th>
+                <th data-width="150" data-column="cCode">编码字段名称</th>
+                <th data-width="150" data-column="cFormTypeSn">表单类型</th>
                 <th data-width="150" data-column="cCreateName">创建人名称</th>
                 <th data-width="150" data-column="dCreateTime">创建时间</th>
                 <th data-width="150" data-column="cUpdateName">更新人名称</th>
                 <th data-width="150" data-column="dUpdateTime">更新时间</th>
-                <th data-width="100">操作</th>
+                <th data-width="150" data-column="isApproval">是否支持审批</th>
+
             </tr>
             </thead>
             <tbody>
