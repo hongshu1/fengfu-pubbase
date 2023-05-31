@@ -7,6 +7,7 @@ import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
 import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
@@ -74,6 +75,9 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 
     @Inject
     private EquipmentModelService equipmentModelService;
+
+    @Inject
+    private StockBarcodePositionService stockBarcodePositionService;
 
     /**
      * 首页
@@ -268,12 +272,11 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
      * 编辑
      */
     public void edit2() {
-        SysMaterialsprepare sysMaterialsprepare = service.findById(getLong(0));
-        if (sysMaterialsprepare == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        set("sysMaterialsprepare", sysMaterialsprepare);
+        String CIN=get("cinvcode");
+        Inventory inventory = invent.findFirst("select *   from Bd_Inventory where cInvCode=?", get("cinvcode"));
+        StockBarcodePosition stockBarcodePosition = stockBarcodePositionService.findFirst("select *   from T_Sys_StockBarcodePosition where InvCode=?", get("cinvcode"));
+        set("inventory", inventory);
+        set("stockBarcodePosition", stockBarcodePosition);
         render("edit2.html");
     }
 
@@ -351,6 +354,13 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
         Kv kv = new Kv();
         kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
         renderJsonData(service.getMaterialsOutLines1(getPageNumber(), getPageSize(), kv));
+    }
+
+    public void getMaterialsOutLines2() {
+        String invcode = get("invcode");
+        Kv kv = new Kv();
+        kv.set("invcode", invcode == null ? "" : invcode);
+        renderJsonData(service.getMaterialsOutLines2(getPageNumber(), getPageSize(), kv));
     }
 
 }

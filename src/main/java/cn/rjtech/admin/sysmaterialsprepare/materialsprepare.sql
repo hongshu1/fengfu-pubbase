@@ -180,6 +180,15 @@ WHERE 1 = 1
   AND md.cMoDocNo = '#(cmodocno)' #end
 
 
+
+  #sql("getMaterialsOutLines2")
+SELECT *
+FROM T_Sys_StockBarcodePosition sbp
+         LEFT JOIN Bd_Warehouse wh ON sbp.WhCode=wh.cWhCode
+WHERE 1 = 1
+  AND sbp.InvCode = '#(invcode)' #end
+
+
 #sql("findColumns")
 SELECT *
 FROM Bd_WorkRegionM wrm
