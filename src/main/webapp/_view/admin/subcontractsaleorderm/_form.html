@@ -829,9 +829,9 @@
                             } else if (row.cnt === 1) {
                                 r.iinventoryid = row.iautoid;
                                 r.cinvcode = row.cinvcode;
+                                r.cinvcode1 = row.cinvaddcode;
                                 r.cinvname1 = row.cinvname1;
                                 r.cinvstd = row.cinvstd;
-                                r.cuomname = row.cuomname;
                             } else {
                                 r.error = '存在' + row.cnt + '条匹配的存货记录，请手工选择存货！';
                             }

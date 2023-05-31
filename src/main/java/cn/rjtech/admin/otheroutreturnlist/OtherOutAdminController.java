@@ -1,5 +1,10 @@
 package cn.rjtech.admin.otheroutreturnlist;
 
+import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
+import cn.rjtech.model.momdata.OtherOutDetail;
+import cn.rjtech.model.momdata.SysSaledeliver;
+import cn.rjtech.model.momdata.SysSaledeliverdetail;
+import cn.smallbun.screw.core.util.CollectionUtils;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -8,10 +13,14 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.OtherOut;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 出库管理-特殊领料出库 Controller
@@ -26,6 +35,9 @@ public class OtherOutAdminController extends BaseAdminController {
 
 	@Inject
 	private OtherOutService service;
+
+	@Inject
+	private OtherOutDetailService otherOutDetailService;
 
    /**
 	* 首页
@@ -111,6 +123,25 @@ public class OtherOutAdminController extends BaseAdminController {
 	 */
 	public void deleteList() {
 		renderJson(service.deleteList(get(0)));
+	}
+
+	public void pushu(){
+		Kv kv = new Kv();
+		kv.set("ids",get("ids"));
+		List<OtherOut> getpushu = service.getpushu(kv);
+		if(!CollectionUtils.isNotEmpty(getpushu)){
+			return ;
+		}
+		getpushu.stream().forEach(s -> {
+			Kv kv1 = new Kv();
+			kv1.set("id",s.getAutoID());
+			List<OtherOutDetail> getpushudetail1 = otherOutDetailService.getpushudetail(kv1);
+            System.out.println("开始u8，开始u8，开始u8，开始u8，开始u8"+new Date());
+			Ret ret = service.pushU8(s, getpushudetail1);
+			renderJson(ret);
+            System.out.println(ret);
+            System.out.println("结束u8，结束u8，结束u8，结束u8，结束u8"+new Date());
+		});
 	}
 
 }
