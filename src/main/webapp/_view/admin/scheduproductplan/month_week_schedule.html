@@ -362,10 +362,6 @@
 <script type="text/javascript" src="assets/plugins/Grape/FileSaver.min.js"></script>
 <script type="text/javascript">
     /**
-     * @param Api 公共接口
-     */
-    const Api = 'http://ugcff.kephon.com/';
-    /**
      * @param urlParams 获取跳转携带的参数
      * @param id 跳转携带的id
      */
@@ -545,7 +541,7 @@
      * @param initDate
      */
     function initDate() {
-        let url = Api+"admin/scheduproductplanmonth/getTableHead";
+        let url = "/admin/scheduproductplanmonth/getTableHead";
         //获取接口数据
         Ajax.get(url,(res)=>{
             spreadSuspend();//暂停绘制
@@ -585,7 +581,7 @@
      * @param initData
      */
     function initData(id,ilevel){
-        let url = Api + `admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=${id}&level=${ilevel}&cworkname=${searchData.cworkname}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`;
+        let url = `/admin/scheduproductplanmonth/getScheduPlanMonthList?iWeekScheduleId=${id}&level=${ilevel}&cworkname=${searchData.cworkname}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`;
         $.ajax({
             url,
             type: 'get',
@@ -744,7 +740,7 @@
         mybgs.style.opacity = "0.3";
         document.body.appendChild(mybgs);
         document.body.style.overflow = "hidden";
-        let url = Api+"admin/scheduproductplanmonth/getApsWeekscheduleList";
+        let url = "/admin/scheduproductplanmonth/getApsWeekscheduleList";
         $.ajax({
             url,
             type:'post',
@@ -778,7 +774,7 @@
     //删除表格数据
     function levelDelete(index){
         let id = parms.dschedulebeginData[index].iautoid;
-        let url = Api+`admin/scheduproductplanmonth/deleteApsWeekschedule?iWeekScheduleId=${id}`;
+        let url = `/admin/scheduproductplanmonth/deleteApsWeekschedule?iWeekScheduleId=${id}`;
         $.ajax({
             url,
             type:'post',
@@ -823,7 +819,7 @@
         const datetimeLocalInput = document.getElementById('datetime-local');
         const myVal = datetimeLocalInput.value.substring(0,10);
         const level = document.getElementById('level').value;
-        let url = Api+`admin/scheduproductplanmonth/scheduPlanMonth?level=${level}&endDate=${myVal}`;
+        let url = `/admin/scheduproductplanmonth/scheduPlanMonth?level=${level}&endDate=${myVal}`;
         $.ajax({
             url,
             type:'post',
@@ -921,7 +917,7 @@
             document.body.appendChild(mybg);
             document.body.style.overflow = "hidden";
             //锁定截止日期
-            let url = Api+`admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=${parms.id}`;
+            let url = `/admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=${parms.id}`;
             $.ajax({
                 url,
                 type:'post',
@@ -965,8 +961,8 @@
     function save(){
         const datetimeLocalInput = document.getElementById('mySelect');
         const myVal = datetimeLocalInput.value.substring(0,10);
-        let url = alertTitle.innerText == "锁定计划"?Api+`admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=${parms.id}&endDate=${myVal}`
-            :Api+`admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=${parms.id}&endDate=${myVal}`;
+        let url = alertTitle.innerText == "锁定计划"?`/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=${parms.id}&endDate=${myVal}`
+            :`/admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=${parms.id}&endDate=${myVal}`;
         $.ajax({
             url,
             type:'post',
@@ -1029,7 +1025,7 @@
         mybg.style.opacity = "0.3";
         document.body.appendChild(mybg);
         document.body.style.overflow = "hidden";
-        let url = Api+`admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=${parms.id}`;
+        let url = `/admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=${parms.id}`;
         $.ajax({
             url,
             type:'post',
@@ -1050,7 +1046,7 @@
     }
     //测试向后端发送数据
     function edit(){
-        let url = Api+"admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=2023-05-28";
+        let url = "/admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=1659809519734398976&endDate=2023-05-28";
         $.ajax({
             url,
             type:'post',
