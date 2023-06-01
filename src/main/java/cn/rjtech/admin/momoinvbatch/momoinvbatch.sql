@@ -1,5 +1,6 @@
 #sql("findByImdocId")
 SELECT
+    a.iautoid,
     a.iSeq,
     a.cBarcode,
     a.iQty,
