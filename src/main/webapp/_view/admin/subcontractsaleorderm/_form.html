@@ -1,5 +1,8 @@
 #set(pageId=RandomUtil.random(6))
 #set(iYear=DateUtil.getYear())
+#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
+#set(precisionConfig4=JBoltGlobalConfigCache.getConfigValue("precision_config4"))
+#set(precisionConfig5=JBoltGlobalConfigCache.getConfigValue("precision_config5"))
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
@@ -127,7 +130,7 @@
 						<div class="form-group row">
 							<label class="col-sm-1 col-form-label">税率</label>
 							<div class="col">
-								<input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入税率" maxlength="6" name="subcontractsaleorderm.iTaxRate" value="#(subcontractsaleorderm.iTaxRate??)"/>		  	
+								<input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig5)" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入税率" maxlength="6" name="subcontractsaleorderm.iTaxRate" value="#(subcontractsaleorderm.iTaxRate??)"/>
 							</div>	
 							<label class="col-sm-1 col-form-label">币种</label>
 							<div class="col">
@@ -143,7 +146,7 @@
 							</div>
 							<label class="col-sm-1 col-form-label">汇率</label>
 							<div class="col">
-								<input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入汇率" maxlength="10" name="subcontractsaleorderm.iExchangeRate" value="#(subcontractsaleorderm.iExchangeRate??)"/>		  									
+								<input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig4)" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入汇率" maxlength="10" name="subcontractsaleorderm.iExchangeRate" value="#(subcontractsaleorderm.iExchangeRate??)"/>
 							</div>		
 							<label class="col-sm-1 col-form-label">备注</label>
 							<div class="col">
@@ -428,9 +431,10 @@
                 iqty1: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -439,9 +443,10 @@
                 iqty2: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -450,9 +455,10 @@
                 iqty3: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -461,9 +467,10 @@
                 iqty4: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -472,9 +479,10 @@
                 iqty5: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -483,9 +491,10 @@
                 iqty6: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -494,9 +503,10 @@
                 iqty7: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -505,9 +515,10 @@
                 iqty8: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -516,9 +527,10 @@
                 iqty9: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -527,9 +539,10 @@
                 iqty10: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -538,9 +551,10 @@
                 iqty11: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -549,9 +563,10 @@
                 iqty12: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -560,9 +575,10 @@
                 iqty13: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -571,9 +587,10 @@
                 iqty14: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -582,9 +599,10 @@
                 iqty15: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -593,9 +611,10 @@
                 iqty16: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -604,9 +623,10 @@
                 iqty17: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -615,9 +635,10 @@
                 iqty18: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -626,9 +647,10 @@
                 iqty19: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -637,9 +659,10 @@
                 iqty20: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -648,9 +671,10 @@
                 iqty21: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -659,9 +683,10 @@
                 iqty22: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -670,9 +695,10 @@
                 iqty23: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -681,9 +707,10 @@
                 iqty24: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -692,9 +719,10 @@
                 iqty25: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -703,9 +731,10 @@
                 iqty26: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -714,9 +743,10 @@
                 iqty27: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -725,9 +755,10 @@
                 iqty28: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -736,9 +767,10 @@
                 iqty29: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -747,9 +779,10 @@
                 iqty30: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -758,9 +791,10 @@
                 iqty31: {
                     type: "amount",
                     placeholder: '数量',
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -769,14 +803,14 @@
                 isum: {
                     summary: [{
                         dir: "h",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "iqty1+iqty2+iqty3+iqty4+iqty5+iqty6+iqty7+iqty8+iqty9+iqty10+iqty11+iqty12+iqty13+iqty14+iqty15+iqty16+iqty17+iqty18+iqty19+iqty20+iqty21+iqty22+iqty23+iqty24+iqty25+iqty26+iqty27+iqty28+iqty29+iqty30+iqty31"
                     }],
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
+                        tofixed: #(precisionConfig1),
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
