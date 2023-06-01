@@ -1973,12 +1973,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     String date = scheduDateList.get(i);
                     String month = date.substring(0,7);
-                    BigDecimal qty = dateQtyMap.get(date);
+                    BigDecimal qty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
                     if (monthQtyMap.containsKey(month)){
                         BigDecimal monthSum = monthQtyMap.get(month);
-                        monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                        monthQtyMap.put(month,monthSum.add(qty));
                     }else {
-                        monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                        monthQtyMap.put(month,qty);
                     }
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
@@ -2116,21 +2116,22 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 planRecord.set("cWorkName",invInfo.getStr("cWorkName"));
 
                 //key:yyyy-MM   value:qtySum
-                Map<String,BigDecimal> monthQtyMap = new LinkedHashMap<>();
+                Map<String,Integer> monthQtyMap = new LinkedHashMap<>();
                 int monthCount = 1;
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     String date = scheduDateList.get(i);
                     String month = date.substring(0,7);
-                    BigDecimal qty = dateQtyMap.get(date);
-                    if (qty != null && (qty.compareTo(BigDecimal.ZERO)) == 1){
-                        qty = mergeRateSum;
+                    BigDecimal bigqty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
+                    if ((bigqty.compareTo(BigDecimal.ZERO)) == 1){
+                        bigqty = mergeRateSum;
                     }
+                    int qty = bigqty.intValue();
 
                     if (monthQtyMap.containsKey(month)){
-                        BigDecimal monthSum = monthQtyMap.get(month);
-                        monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                        int monthSum = monthQtyMap.get(month);
+                        monthQtyMap.put(month,monthSum + qty);
                     }else {
-                        monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                        monthQtyMap.put(month,qty);
                     }
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
@@ -2474,12 +2475,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         for (int i = 0; i < scheduDateList.size(); i++) {
             String date = scheduDateList.get(i);
             String month = date.substring(0,7);
-            BigDecimal qty = dateQtyMap.get(date);
+            BigDecimal qty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
             if (monthQtyMap.containsKey(month)){
                 BigDecimal monthSum = monthQtyMap.get(month);
-                monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                monthQtyMap.put(month,monthSum.add(qty));
             }else {
-                monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                monthQtyMap.put(month,qty);
             }
             int seq = i + 1;
             int day = Integer.parseInt(date.substring(8));
