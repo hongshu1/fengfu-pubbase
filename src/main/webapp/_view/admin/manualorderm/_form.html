@@ -203,7 +203,7 @@
 
     function submitThisForm() {
         $("#iOrderStatus").val(1)
-        jboltTableSubmit("#manualorderd_#(pageId)");
+        $('#save_btn_#(pageId)').click();
         parent.refreshPjaxContainer();
     }
 

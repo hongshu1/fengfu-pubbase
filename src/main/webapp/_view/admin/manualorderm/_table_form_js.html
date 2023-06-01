@@ -486,6 +486,71 @@
         });
     }
 
+    /**
+     * 检查明细
+     */
+    function checkDetails(ele) {
+        var rowDatas = jboltTableGetAllDatas(ele);
 
+        if (rowDatas && rowDatas.length > 0) {
+            $.each(rowDatas, function (idx, row) {
+
+                if (row.iinventoryid) {
+                    removeClass(idx);
+                }
+            });
+        } else {
+            LayerMsgBox.alert('请维护导入数据!', 2);
+        }
+    }
+
+    function removeClass(idx) {
+        console.log(idx);
+        var $tr = $('tr[data-index="' + idx + '"]');
+        $tr.removeAttr('tooltip');
+        $tr.removeAttr('title');
+        $tr.removeClass('table-danger');
+    }
+
+    /**
+     * 保存清空错误数据
+     * @param ele
+     */
+    function saveData(ele) {
+        var rowDatas = jboltTableGetAllDatas(ele);
+        removeEmptyRow(ele, rowDatas);
+        jboltTableSubmit(ele);
+    }
+
+    function removeEmptyRow(ele, datas) {
+        var count = 0;
+        $.each(datas, function (idx, row) {
+            if (!row.iiventoryid) {
+                count++;
+            }
+        });
+
+        for (var i = 0; i < count; i++) {
+            delRow(ele);
+        }
+    }
+
+    function delRow(ele) {
+        var datas = jboltTableGetAllDatas(ele);
+        if (datas && datas.length > 0) {
+            var jboltTable = getJBoltTable(ele)
+            var table = getJBoltTableInst(jboltTable);
+
+            for (var i = 0; i < datas.length; i++) {
+                var data = datas[i];
+                if (!data.iinventoryid) {
+                    table.me.removeRow(table, i);
+                    break;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
 </script>
