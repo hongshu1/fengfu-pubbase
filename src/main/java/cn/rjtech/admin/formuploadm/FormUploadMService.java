@@ -11,24 +11,20 @@ import cn.rjtech.admin.formuploadd.FormUploadDService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.model.momdata.FormUploadD;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.FormUploadM;
 import com.jfinal.plugin.activerecord.Record;
-import org.jetbrains.annotations.NotNull;
+
 
 /**
  * 记录上传
@@ -281,5 +277,95 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 
 		deleteById(id);
 		return ret(true);
+	}
+
+	/**
+	 *Api接口首页数据
+	 */
+	public Page<Record> getApiAdminDatas(Integer pageNumber, Integer pageSize, Kv para) {
+		Page<Record> paginate = dbTemplate("formuploadm.getAdminDatas", para).paginate(pageNumber, pageSize);
+		for (Record record : paginate.getList()) {
+			if (ObjectUtil.isNotNull(workregionmService.findById(record.getStr("iworkregionmid")))){
+				record.set("iworkregionmname",workregionmService.findById(record.getStr("iworkregionmid")).getCWorkName());
+			}
+			if (ObjUtil.isNotNull(formUploadCategoryService.findById(record.getStr("icategoryid")))){
+				record.set("icategoryidname",formUploadCategoryService.findById(record.getStr("icategoryid")).getCCategoryName());
+			}
+		}
+		return  paginate;
+	}
+
+	/**
+	 * 主表数据
+	 */
+	public Ret saveTableSubmitApi(Kv kv) {
+
+		Record record = JSON.parseObject(kv.getStr("formuploadm"), Record.class);
+		List<Kv> array = JSON.parseArray("formuploadds", Kv.class);
+		tx(() -> {
+			//修改
+			if (ObjUtil.isNotNull(record.getStr("iautoid"))){
+				FormUploadM formUploadM = findById(record.getStr("iautoid"));
+				formUploadM.setIWorkRegionMid(record.getLong("iworkregionmid"));
+				formUploadM.setICategoryId(record.getLong("icategoryid"));
+				formUploadM.setDDate(record.getDate("ddate"));
+				formUploadM.setDUpdateTime(new Date());
+				formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
+				formUploadM.setCUpdateName(JBoltUserKit.getUserName());
+				//细表数据
+				for (Kv kv1 : array) {
+					FormUploadD formUploadD = formUploadDService.findById(kv1.getStr("iautoid"));
+					formUploadD.setCMemo(kv1.getStr("cmemo"));
+					formUploadD.setCAttachments(kv1.getStr("cattachments"));
+				}
+
+				//新增
+			}else {
+				FormUploadM formUploadM = new FormUploadM();
+				//基础数据
+				formUploadM.setCOrgCode(getOrgCode());
+				formUploadM.setCOrgName(getOrgName());
+				formUploadM.setCFormSn("PL_FormUploadM");
+				formUploadM.setIOrgId(getOrgId());
+				formUploadM.setICreateBy(JBoltUserKit.getUserId());
+				formUploadM.setCCreateName(JBoltUserKit.getUserName());
+				formUploadM.setDCreateTime(new Date());
+				formUploadM.setCUpdateName(JBoltUserKit.getUserName());
+				formUploadM.setDUpdateTime(new Date());
+				formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
+				formUploadM.setIWorkRegionMid(record.getLong("iworkregionmid"));
+				formUploadM.setICategoryId(record.getLong("icategoryid"));
+				formUploadM.setDDate(record.getDate("ddate"));
+				formUploadM.setIAuditStatus(0);
+				ValidationUtils.isTrue(formUploadM.save(), "保存失败");
+				//子表数据
+				ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
+				for (Kv kv1 : array) {
+					FormUploadD formUploadD = new FormUploadD();
+					formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
+					formUploadD.setCMemo(kv1.getStr("cmemo"));
+					formUploadD.setCAttachments(kv1.getStr("cattachments"));
+					formUploadDS.add(formUploadD);
+				}
+				formUploadDService.batchSave(formUploadDS);
+			}
+
+
+
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	/**
+	 * 修改详情API接口
+	 */
+	public Map<String,Object> detailsApi(Integer pageNumber, Integer pageSize, Kv iautoid) {
+		Map<String, Object> map = new HashMap<>();
+		FormUploadM formUploadM = findById(iautoid);
+		map.put("formuploadm",formUploadM);
+		Page<Record> page = formUploadDService.findByPid2(pageNumber, pageSize, formUploadM.getIAutoId());
+		map.put("page",page);
+		return map;
 	}
 }
