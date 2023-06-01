@@ -127,7 +127,8 @@
                       onclick="submitThisForm()">生成
               </button>
             </div>
-            <div class="col-2" style="margin-top: 8px;right: 75px;" data-require-plugin="hiprint" aria-labelledby="exportMenuButton">
+            <div class="col-2" style="margin-top: 8px;right: 75px;" data-require-plugin="hiprint"
+                 aria-labelledby="exportMenuButton">
               <!--<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
                 <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印</button>
                 <div class="dropdown-menu" aria-labelledby="exportMenuButton">
@@ -166,13 +167,25 @@
     }
     var autoprint = $('input[name="autoprint"]').is(':checked');
     var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
+    for (let arr = 0; arr < allDatas.length; arr++) {
+      let element = allDatas[arr];
+      let ungeneratedstockqty = element.ungeneratedstockqty;//未生成条码库存数
+      let generatedstockqty = element.generatedstockqty;//  生成条码库存数
+      if (generatedstockqty == 0) {
+        LayerMsgBox.alert("生成条码库存数量不能为0", 2);
+        return;
+      }
+      //如果库存数量不足，报错
+      if (generatedstockqty > ungeneratedstockqty) {
+        LayerMsgBox.alert("未生成条码库存数量不足，请重新输入生成条码库存数", 2);
+        return;
+      }
+    }
     var para = {
       datas: JSON.stringify(allDatas),
       printnum: printnum,
       autoprint: autoprint
-    }
-    jboltHiprintWebPrint('kqda_key', 'url', allDatas);
-    // jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=1640995130939412480'+ "&&mark=check");
+    };
     Ajax.post('admin/warehousebeginofperiod/submitStock', para, function (ret) {
       if (ret.state === 'ok') {
         LayerMsgBox.success("生成成功", 1000, function () {
@@ -188,6 +201,8 @@
               //社内现品票：029587，采购现品票：109607
               jboltHiprintWebPrint('109607', 'url', 'admin/warehousebeginofperiod/printData?ids=');
               //jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=');
+              //jboltHiprintWebPrint('kqda_key', 'url', allDatas);
+              // jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=1640995130939412480'+ "&&mark=check");
             }
           }
         }*/
@@ -295,12 +310,12 @@
           tooltip: "",
         },
         reportFileName: { //标签打印模板
-          type:"select2",
-          required:true,
+          type: "select2",
+          required: true,
           placeholder: "=标签打印模板=",
-          url:"admin/dictionary/options?key=beginningofperiod",
-          valueAttr:"sn",
-          textAttr:"name"
+          url: "admin/dictionary/options?key=beginningofperiod",
+          valueAttr: "sn",
+          textAttr: "name"
         }
       },
     };

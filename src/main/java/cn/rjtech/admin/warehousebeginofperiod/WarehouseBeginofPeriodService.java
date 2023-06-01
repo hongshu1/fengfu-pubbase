@@ -70,7 +70,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         Page<Record> paginate = dbTemplate("warehousebeginofperiod.datas", kv).paginate(pageNumber, pageSize);
         for (Record record : paginate.getList()) {
             List<StockBarcodePosition> barcodePositionList = barcodePositionList(record.getStr("whcode"),
-                record.getStr("invcode"));
+                record.getStr("invcode"), record.getStr("poscode"));
             Long generatedstockqty = barcodePositionList.stream().map(e -> e.getQty()).count();
             Long qty = record.getLong("qty");
             if (null == generatedstockqty) {
@@ -83,8 +83,8 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         return paginate;
     }
 
-    public List<StockBarcodePosition> barcodePositionList(String whcode, String invcode) {
-        return barcodePositionService.findByWhCodeAndInvCode(whcode, invcode);
+    public List<StockBarcodePosition> barcodePositionList(String whcode, String invcode, String poscode) {
+        return barcodePositionService.findByWhCodeAndInvCode(whcode, invcode, poscode);
     }
 
     /*
@@ -131,23 +131,43 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             ArrayList<Barcodedetail> barcodedetails = new ArrayList<>();
             ArrayList<StockBarcodePosition> positions = new ArrayList<>();
             for (Kv kv : kvList) {
-                //生成条码
-                String barcode = BillNoUtils.getcDocNo(getOrgId(), "WL", 5);//todo 生成条码的功能未完成，待改
-                kv.set("barcode", barcode);
-                //2、T_Sys_BarcodeDetail--条码明细表
-                Barcodedetail barcodedetail = new Barcodedetail();
-                barcodedetailService.saveBarcodedetailModel(barcodedetail, barcodemaster.getAutoid(), now, kv, printnum);
-                barcodedetails.add(barcodedetail);
+                //生成条码库存数量
+                BigDecimal generatedStockQty = kv.getBigDecimal("generatedStockQty");
+                //包装数量
+                BigDecimal ipkgqty = kv.getBigDecimal("ipkgqty");
 
-                //3、T_Sys_StockBarcodePosition--条码库存表s
-                StockBarcodePosition position = new StockBarcodePosition();
-                Record record = findPosCodeByWhcodeAndInvcode(kv.getStr("cwhcode"), kv.getStr("cinvcode"));
-                kv.set("poscode", null != record ? record.getStr("poscode") : "");
-                barcodePositionService.saveBarcodePositionModel(position, kv, now);
-                positions.add(position);
+                //generatedStockQty ÷ ipkgqty
+                BigDecimal divide = generatedStockQty.divide(ipkgqty, 0, BigDecimal.ROUND_UP);
+                BigDecimal remainder = generatedStockQty.remainder(ipkgqty).setScale(6, BigDecimal.ROUND_HALF_UP);
+                BigDecimal lastScale = remainder.compareTo(new BigDecimal("0")) == 0 ? ipkgqty : remainder;//余数，最后一张条码要打印的数量
+
+                int parseInt = Integer.parseInt(divide.toString());//要生成几次条码
+                for (int i = 0; i < parseInt; i++) {
+                    // 生成条码
+                    String barcode = BillNoUtils.getcDocNo(getOrgId(), "WL", 5);//todo 生成条码的功能未完成，待改
+                    kv.set("barcode", barcode);
+                    int j = i;
+                    if ((j + 1) == parseInt) {
+                        kv.set("qty", lastScale);
+                    } else {
+                        kv.set("qty", ipkgqty);
+                    }
+
+                    //2、T_Sys_BarcodeDetail--条码明细表
+                    Barcodedetail barcodedetail = new Barcodedetail();
+                    barcodedetailService.saveBarcodedetailModel(barcodedetail, barcodemaster.getAutoid(), now, kv, printnum);
+                    barcodedetails.add(barcodedetail);
+
+                    //3、T_Sys_StockBarcodePosition--条码库存表s
+                    StockBarcodePosition position = new StockBarcodePosition();
+                    Record record = findPosCodeByWhcodeAndInvcode(kv.getStr("cwhcode"), kv.getStr("cinvcode"));
+                    kv.set("poscode", null != record ? record.getStr("poscode") : "");
+                    barcodePositionService.saveBarcodePositionModel(position, kv, now);
+                    positions.add(position);
+                }
             }
-            barcodedetailService.batchSave(barcodedetails);
-            barcodePositionService.batchSave(positions);
+            //barcodedetailService.batchSave(barcodedetails);
+            //barcodePositionService.batchSave(positions);
             return true;
         });
         return ret(true);
@@ -242,12 +262,12 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         List<Record> recordList = dbTemplate("warehousebeginofperiod.whoptions").find();
         for (Record record : recordList) {
             List<StockBarcodePosition> barcodePositionList = barcodePositionList(record.getStr("whcode"),
-                record.getStr("invcode"));
+                record.getStr("invcode"), record.getStr("poscode"));
             Long generatedstockqty = barcodePositionList.stream().map(e -> e.getQty()).count();
             if (null == generatedstockqty) {
                 generatedstockqty = 0l;
             }
-            record.set("qty",record.getBigDecimal("qty").stripTrailingZeros().toPlainString());
+            record.set("qty", record.getBigDecimal("qty").stripTrailingZeros().toPlainString());
             record.set("ungeneratedstockqty", record.getLong("qty") - generatedstockqty);//未生成条码库存数量
         }
         return recordList;

@@ -134,9 +134,10 @@ public class BarcodedetailService extends BaseService<Barcodedetail> {
         barcodedetail.setBarcode("barcode");
         barcodedetail.setInvcode(kv.getStr("cinvcode"));
         barcodedetail.setBarcodedate(now);
+        //barcodedetail.setPackrate(kv.getBigDecimal("ipkgqty"));//包装比例
         barcodedetail.setBatch(kv.getStr("batch"));
-        barcodedetail.setQty(kv.getBigDecimal("generatedStockQty"));
-        barcodedetail.setPrintnum(printnum);
+        barcodedetail.setQty(kv.getBigDecimal("qty"));//每张条码分配的数量
+        barcodedetail.setPrintnum(printnum);//每张条码需要打印的次数
         barcodedetail.setCreateperson(JBoltUserKit.getUserName());
         barcodedetail.setCreatedate(now);
         barcodedetail.setModifyperson(JBoltUserKit.getUserName());

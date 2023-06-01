@@ -126,8 +126,8 @@ public class StockBarcodePositionService extends BaseService<StockBarcodePositio
     /*
      * 根据仓库编码+存货编码查询条码和数量
      * */
-    public List<StockBarcodePosition> findByWhCodeAndInvCode(String whcode, String invcode) {
-        return find("select * from T_Sys_StockBarcodePosition where WhCode = ? and InvCode=?", whcode, invcode);
+    public List<StockBarcodePosition> findByWhCodeAndInvCode(String whcode, String invcode,String poscode) {
+        return find("select * from T_Sys_StockBarcodePosition where WhCode = ? and InvCode=? and poscode=?", whcode, invcode,poscode);
     }
 
     /*
@@ -143,7 +143,7 @@ public class StockBarcodePositionService extends BaseService<StockBarcodePositio
         position.setPosCode(kv.getStr("poscode"));
         //position.setState();
         position.setBarcode(kv.getStr("barcode"));
-        position.setQty(kv.getBigDecimal("generatedStockQty"));
+        position.setQty(kv.getBigDecimal("qty")); //每张条码需要打印的数量
         position.setBatch(kv.getStr("batch"));
         position.setChgDate(now);
     }
