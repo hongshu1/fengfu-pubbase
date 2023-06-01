@@ -1,4 +1,7 @@
 #set(pageId=RandomUtil.random(6))
+#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
+#set(precisionConfig4=JBoltGlobalConfigCache.getConfigValue("precision_config4"))
+#set(precisionConfig5=JBoltGlobalConfigCache.getConfigValue("precision_config5"))
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
@@ -21,7 +24,6 @@
             <div class="card">
                 <div class="card-body">
                     <form onsubmit="return false;" id="WeekOrderM_Form" action="#(action)" method="post">
-
                         #if(weekOrderM.iAutoId??)
                         <input type="hidden" name="weekOrderM.iAutoId" value="#(weekOrderM.iautoid??)"/>
                         #end
@@ -157,7 +159,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">税率</label>
                                     <div class="col-8">
-                                        <input type="text" autocomplete="off" class="form-control" data-rule="money"
+                                        <input type="text" autocomplete="off" class="form-control" data-rule="pnumber;fix<=#(precisionConfig5)"
                                                data-notnull="false"
                                                placeholder="请输入税率" maxlength="40" name="weekOrderM.iTaxRate"
                                                value="#(weekOrderM.iTaxRate??)"/>
@@ -189,8 +191,9 @@
                                     <label class="col-sm-3 col-form-label">汇率</label>
                                     <div class="col-8">
                                         <input type="text" data-with-clearbtn="true" autocomplete="off"
-                                               class="form-control" data-rule="money_4"
+                                               class="form-control" data-rule="pnumber;fix<=#(precisionConfig4)"
                                                data-notnull="false"
+                                               data-filebox=""
                                                placeholder="请输入汇率" maxlength="40" name="weekOrderM.iExchangeRate"
                                                value="#(weekOrderM.iExchangeRate??)"/>
                                     </div>
@@ -398,9 +401,9 @@
                     type: "amount",
                     placeholder: '数量',
                     required: true,
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"

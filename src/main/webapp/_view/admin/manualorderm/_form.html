@@ -1,3 +1,6 @@
+#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
+#set(precisionConfig4=JBoltGlobalConfigCache.getConfigValue("precision_config4"))
+#set(precisionConfig5=JBoltGlobalConfigCache.getConfigValue("precision_config5"))
 <form onsubmit="return false;" id="ManualOrderM_Form_#(pageId)" action="#(action)" method="post">
 	#if(manualOrderM.iAutoId??)
 	<input type="hidden" name="manualOrderM.iAutoId" id="manualiautoid" value="#(manualOrderM.iAutoId??)" />
@@ -129,7 +132,7 @@
                 <div class="form-group row">
                     <label class="col-sm-1 col-form-label">税率</label>
                     <div class="col">
-                        <input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false"
+                        <input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig5)" data-notnull="false"
                                autocomplete="off" class="form-control" placeholder="请输入税率" maxlength="6"
                                name="manualOrderM.iTaxRate"
                                value="#(manualOrderM.iTaxRate??)"/>
@@ -148,7 +151,7 @@
                     </div>
                     <label class="col-sm-1 col-form-label">汇率</label>
                     <div class="col">
-                        <input type="text" data-with-clearbtn="true" data-rule="pnumber" data-notnull="false"
+                        <input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig4)" data-notnull="false"
                                autocomplete="off" class="form-control" placeholder="请输入汇率" maxlength="10"
                                name="manualOrderM.iExchangeRate"
                                value="#(manualOrderM.iExchangeRate??)"/>
