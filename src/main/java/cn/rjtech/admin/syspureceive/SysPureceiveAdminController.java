@@ -180,7 +180,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
      * 库区数据源
      */
     public void wareHousepos() {
-        String whcode = get("whcode");
+        String whcode = get("whcode1");
         Kv kv = getKv();
         if(null != whcode && !"".equals(whcode)){
             Warehouse first1 = warehouseservice.findFirst("select *   from Bd_Warehouse where cWhCode=?", whcode);
@@ -204,5 +204,20 @@ public class SysPureceiveAdminController extends BaseAdminController {
         }
         String s = String.valueOf(first1.getIAutoId());
         renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit",10),get("orgCode",orgCode),s));
+    }
+
+    /**
+     * 根据条码带出其他数据
+     */
+    @UnCheck
+    public void barcode() {
+        String barcode = get("barcode");
+        if(null == barcode){
+            ValidationUtils.assertNull(false, "请扫码");
+            return;
+        }
+        Kv kv = new Kv();
+        kv.set("barcode",barcode);
+        renderJsonData(service.barcode(kv));
     }
 }

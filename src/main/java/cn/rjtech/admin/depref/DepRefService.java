@@ -204,16 +204,7 @@ public class DepRefService extends BaseService<DepRef> {
 		//这里用来覆盖 检测DepRef是否被其它表引用
 		return null;
 	}
-	/**
-	 * 部门对照表查询部门档案中应用于禀议系统的部门（带层级关系）
-	 * */
-	public List<Record> findAllProposalData(Kv para) {
-		para.set("iorgid",getOrgId());
-		List<Record> records = dbTemplate("depref.findAllProposalData", para).find();
-		return this.convertToRecordTree(records, "iautoid", "ipid", (px) -> {
-			return this.notOk(px.getStr("ipid"));
-		});		
-	}
+
 	/**
 	 * 部门对照表查询部门档案的末级部门（带层级关系）
 	 * */

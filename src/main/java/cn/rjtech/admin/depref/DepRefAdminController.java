@@ -101,11 +101,7 @@ public class DepRefAdminController extends BaseAdminController {
 	public void toggleIsDefault() {
 		renderJson(service.toggleIsDefault(getLong(0)));
 	}
-	
-	@UnCheck
-	public void findAllProposalData(){
-		renderJsonData(service.findAllProposalData(getKv()));
-	}
+
 	@UnCheck
 	public void findEndDepData(){
 		renderJsonData(service.findEndDepData(getKv()));
