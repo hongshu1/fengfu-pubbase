@@ -124,7 +124,7 @@
 
     <script type="text/template" id="jboltTable_demotpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
+        <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
                 <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
@@ -176,7 +176,8 @@
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-xs">添加行</button>
             <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除行</button>
-
+            <button onclick="checkDetails(this)" class="btn btn-secondary btn-sm">检查明细</button>
+            <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
             <div class="j_upload_file_box"
                  data-name="file"
                  data-btn-class="btn dropdown-item"
@@ -308,7 +309,74 @@
     hideParentLayerDialogBtn(1);
     
     function submitThisForm(){
-        jboltTableSubmit("#jbolt_Table_#(pageId)");
+        $('#save_btn_#(pageId)').click();
+    }
+
+    /**
+     * 检查明细
+     */
+    function checkDetails(ele) {
+        var rowDatas = jboltTableGetAllDatas(ele);
+
+        if (rowDatas && rowDatas.length > 0) {
+            $.each(rowDatas, function (idx, row) {
+
+                if (row.iinventoryid) {
+                    removeClass(idx);
+                }
+            });
+        } else {
+            LayerMsgBox.alert('请维护导入数据!', 2);
+        }
+    }
+
+    function removeClass(idx) {
+        console.log(idx);
+        var $tr = $('tr[data-index="' + idx + '"]');
+        $tr.removeAttr('tooltip');
+        $tr.removeAttr('title');
+        $tr.removeClass('table-danger');
+    }
+
+    /**
+     * 保存清空错误数据
+     * @param ele
+     */
+    function saveData(ele) {
+        var rowDatas = jboltTableGetAllDatas(ele);
+        removeEmptyRow(ele, rowDatas);
+        jboltTableSubmit(ele);
+    }
+
+    function removeEmptyRow(ele, datas) {
+        var count = 0;
+        $.each(datas, function (idx, row) {
+            if (!row.iiventoryid) {
+                count++;
+            }
+        });
+
+        for (var i = 0; i < count; i++) {
+            delRow(ele);
+        }
+    }
+
+    function delRow(ele) {
+        var datas = jboltTableGetAllDatas(ele);
+        if (datas && datas.length > 0) {
+            var jboltTable = getJBoltTable(ele)
+            var table = getJBoltTableInst(jboltTable);
+
+            for (var i = 0; i < datas.length; i++) {
+                var data = datas[i];
+                if (!data.iinventoryid) {
+                    table.me.removeRow(table, i);
+                    break;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     function submitApproveMonth() {
