@@ -1,119 +1,55 @@
 <form onsubmit="return false;" id="moMoinvbatchForm" action="#(action)" method="post">
 <input type="hidden" name="moMoinvbatch.iautoid" value="#(moMoinvbatch.iautoid??)" />
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">组织ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织ID" maxlength="19" name="moMoinvbatch.iorgid" value="#(moMoinvbatch.iorgid??)"/>
-		</div>
+
+		<button onclick="submitForm()" class="btn btn-warning btn-sm"><i class="fa fa-check"></i>提交打印</button>
+		<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>关闭</button>
 	</div>
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">组织编码</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织编码" maxlength="40" name="moMoinvbatch.corgcode" value="#(moMoinvbatch.corgcode??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">组织名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入组织名称" maxlength="40" name="moMoinvbatch.corgname" value="#(moMoinvbatch.corgname??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">生产订单ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入生产订单ID" maxlength="19" name="moMoinvbatch.imodocid" value="#(moMoinvbatch.imodocid??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
+		<input type="hidden" name="moMoinvbatch.iautoid" value="#(moMoinvbatch.iautoid??)" />
 		<label class="col-sm-2 col-form-label">序号</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入序号"  maxlength="10" name="moMoinvbatch.iseq" value="#(moMoinvbatch.iseq??)"/>
+			<input type="text" readonly="readonly" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入序号"  maxlength="10" name="moMoinvbatch.iseq" value="#(moMoinvbatch.iseq??)"/>
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">现品票</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入现品票" maxlength="40" name="moMoinvbatch.cbarcode" value="#(moMoinvbatch.cbarcode??)"/>
+			<input type="text" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入现品票" maxlength="40" name="moMoinvbatch.cbarcode" value="#(moMoinvbatch.cbarcode??)"/>
 		</div>
 	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">数量</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入数量"  maxlength="24" name="moMoinvbatch.iqty" value="#(moMoinvbatch.iqty??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">打印状态;1. 未打印 2. 已打印</label>
-		<div class="col input-group">
-			<select class="form-control"  data-autoload data-url="替换为自己的数据源地址"  name="moMoinvbatch.iprintstatus" data-refresh="true"  data-rule="select"  data-tips="请选择打印状态;1. 未打印 2. 已打印" data-text="=请选择="  data-value="" data-select="#( moMoinvbatch.iprintstatus ??)"></select>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">状态;0. 未报工 1. 已报工</label>
-		<div class="col input-group">
-			<select class="form-control"  data-autoload data-url="替换为自己的数据源地址"  name="moMoinvbatch.istatus" data-refresh="true"  data-rule="select"  data-tips="请选择状态;0. 未报工 1. 已报工" data-text="=请选择="  data-value="" data-select="#( moMoinvbatch.istatus ??)"></select>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">创建人ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人ID" maxlength="19" name="moMoinvbatch.icreateby" value="#(moMoinvbatch.icreateby??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">创建人名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入创建人名称" maxlength="40" name="moMoinvbatch.ccreatename" value="#(moMoinvbatch.ccreatename??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">创建时间</label>
-		<div class="col">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置创建时间" data-tips="请设置创建时间" maxlength="23" name="moMoinvbatch.dcreatetime" value="#(moMoinvbatch.dcreatetime??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">更新人ID</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人ID" maxlength="19" name="moMoinvbatch.iupdateby" value="#(moMoinvbatch.iupdateby??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">更新人名称</label>
-		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入更新人名称" maxlength="40" name="moMoinvbatch.cupdatename" value="#(moMoinvbatch.cupdatename??)"/>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">更新时间</label>
-		<div class="col">
-			<input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置更新时间" data-tips="请设置更新时间" maxlength="23" name="moMoinvbatch.dupdatetime" value="#(moMoinvbatch.dupdatetime??)"/>
-		</div>
-	</div>
-    <div class="form-group row"
-    	data-radio
-    	data-rule="radio"
-    	data-value="#(moMoinvbatch.isdeleted??)"
-    	data-name="moMoinvbatch.isdeleted"
-    	data-default="options_first"
-    	data-width="col-sm-2,col"
-		>
-			<label class="col-sm-2 col-form-label" >删除状态;0. 未删除 1. 已删除</label>
-			<div class="col"  style="padding-top: 1px;">
-				<div class="radio radio-primary  radio-inline">
-					<input  id="r_isdeleted_true" type="radio" name="moMoinvbatch.isdeleted" value="true"/>
-					<label for="r_isdeleted_true">是</label>
-				</div>
-				
-				<div class="radio radio-primary  radio-inline">
-					<input  id="r_isdeleted_false" type="radio" name="moMoinvbatch.isdeleted" value="false"/>
-					<label for="r_isdeleted_false">否</label>
-				</div>
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">生产组长</label>
+			<div class="col">
+				<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="" maxlength="40" name="moMoinvbatch.workleader" value="#(moMoinvbatch.workdleader??)"/>
 			</div>
 		</div>
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">作业员</label>
+			<div class="col">
+				<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="" maxlength="40" name="moMoinvbatch.workleader" value="#(moMoinvbatch.workdleader??)"/>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">打印数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入数量"  maxlength="24" name="moMoinvbatch.jobname" value="#(moMoinvbatch.jboname??)"/>
+		</div>
+	</div>
+
+
+
 </form>
 #define js()
+#@hiprintjs()
 <script>
+	hideParentLayerDialogBtn(0);
+	function closeHandler() {
+
+
+		parent.layer.close(parent.layer.getFrameIndex(window.name));
+		//window.parent.refreshJBoltTable();
+	}
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="moMoinvbatchForm")
 #end
