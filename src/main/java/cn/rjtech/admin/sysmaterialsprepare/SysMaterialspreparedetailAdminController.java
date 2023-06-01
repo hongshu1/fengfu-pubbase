@@ -356,6 +356,13 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
         renderJsonData(service.getMaterialsOutLines1(getPageNumber(), getPageSize(), kv));
     }
 
+    public void getMaterialsOutLines3() {
+        String autoid = get("autoid");
+        Kv kv = new Kv();
+        kv.set("autoid", autoid == null ? "" : autoid);
+        renderJsonData(service.getMaterialsOutLines3(getPageNumber(), getPageSize(), kv));
+    }
+
     public void getMaterialsOutLines2() {
         String invcode = get("invcode");
         Kv kv = new Kv();

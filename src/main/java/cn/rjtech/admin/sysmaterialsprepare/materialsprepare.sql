@@ -189,6 +189,15 @@ WHERE 1 = 1
   AND sbp.InvCode = '#(invcode)' #end
 
 
+
+  #sql("getMaterialsOutLines3")
+SELECT *
+FROM T_Sys_MaterialsPrepareDetail mpd
+WHERE 1 = 1
+  AND mpd.MasID = '#(autoid)' #end
+
+
+
 #sql("findColumns")
 SELECT *
 FROM Bd_WorkRegionM wrm
