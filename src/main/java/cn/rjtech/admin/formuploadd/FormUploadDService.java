@@ -117,4 +117,11 @@ public class FormUploadDService extends BaseService<FormUploadD> {
 	public List<Record> findByPid(Long pid){
 	return 	dbTemplate("formuploadd.getAdminDatas",Kv.by("pid",pid)).find();
 	}
+
+	/**
+	 * 根据主id API接口使用
+	 */
+	public Page<Record> findByPid2(Integer pageNumber, Integer pageSize,Long pid){
+		return 	dbTemplate("formuploadd.getAdminDatas",Kv.by("pid",pid)).paginate(pageNumber,pageSize);
+	}
 }
