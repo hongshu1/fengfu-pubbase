@@ -15,12 +15,27 @@
             
             #for(config :configs)
 
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">#(config.name)</label>
-                <div class="col-4">
-                   <input type="text" name="#(config.id)" value="#(config.config_value)" data-rule="required">
-                </div>
-            </div>
+                #switch(config.config_key)
+            
+                    #case('about_us1')
+
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">#(config.name)</label>
+                            <div class="col-4">
+                                <textarea name="#(config.id)" style="height:100px;width:450px"  data-rule="required"  data-notnull="true">#(config.config_value)</textarea>
+                            </div>
+                        </div>
+            
+                    #default
+            
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">#(config.name)</label>
+                            <div class="col-4">
+                               <input type="text" name="#(config.id)" value="#(config.config_value)" data-rule="required">
+                            </div>
+                        </div>
+            
+                #end
 
             #end
         </form>
