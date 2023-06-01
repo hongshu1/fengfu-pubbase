@@ -653,7 +653,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         }
         jBoltExcelSheet.setMerges().setHeaders(1,headerList);
 
-        List<Record> recordList = service.getApsPlanAndActualPage(getPageNumber(),getPageSize(),getKv());
+        List<Record> recordList = service.getApsPlanAndActualPage(1,15,getKv());
         jBoltExcelSheet.setRecordDatas(2,recordList);
         jBoltExcel.addSheet(jBoltExcelSheet);
 
