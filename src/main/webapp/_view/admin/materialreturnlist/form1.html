@@ -1,0 +1,114 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page">
+    <div class="jbolt_page_content">
+
+        <div class="clearfix" style="padding-left: 3%">
+            <form class="form-inline" id="PheDeliveryLines_form_#(pageId)">
+                <select style="width:150px" class="form-control"
+                        data-autoload
+                        data-text="=状态="
+                        name="iorderstatus">
+                    <option value="">=状态=</option>
+                    <option value="1">生成</option>
+                    <option value="2">出货准备</option>
+                    <option value="3">出货扫码</option>
+                    <option value="4">已出货</option>
+                    <option value="5">已核对</option>
+                    <option value="6">已失效</option>
+                </select>
+                <input type="text" autocomplete="off" class="form-control" placeholder="=单据来源=" name="sourcebillno" value=""/>
+                <input type="text" autocomplete="off"  class="form-control"  placeholder="=单号=" name="cinvname1" value="" />
+                <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=开始时间=" name="startdate" data-tips="开始时间" maxlength="23" value="">至
+                <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=结束时间=" name="enddate" data-tips="结束时间" maxlength="23" value="">
+                <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button
+            </form>
+        </div>
+
+
+        <div class="jbolt_page_content">
+            <table data-jbolttable class="text-center thin" id="jboltTable_#(pageId)_1"
+
+                   ### 可排序列 定义 多个用逗号隔开
+                   ### 启用动态调整列宽
+                   data-column-resize="true"
+                   ### 设置为异步加载数据
+                   data-ajax="true"
+                   data-ajax-success-handler=""
+                   ### 数据接口地址
+                   data-url="srm/accountStatementReceipt/getListAllPage"
+                   ### 分页 data-page="jbolt_page_#(pageId)"
+                   ### 数据渲染模板的ID
+                   data-rowtpl="jbolttable_tpl_#(pageId)_1"
+                   data-conditions-form="PheDeliveryLines_form_#(pageId)"
+                   ### 禁止回车键新增行
+                   data-auto-create-empty-tr="false"
+                   ### 加Toolbar
+                   data-toolbar="jbolt_table_toolbar_#(pageId)_1"
+                   ### 加一列checkbox
+                   data-column-prepend="checkbox"
+                   data-tfoot-fixed="true"
+                   data-fixed-columns-left="1,2,3,4,5,6,7,8"
+                   ### 开启可编辑特性
+                   data-editable="true"
+                   data-editable-option="getEditableTableOptions_#(pageId)_1"
+                   data-sortable-columns="bill_date,delivery_number,item_code,item_name,supplier_confirms_unit_price"
+                   data-default-sort-column="bill_date"
+                   data-sort="#(sortColumn):#(sortType)"
+            >
+
+                <thead>
+                <tr>
+                    <th data-width="60" data-column="index">序号</th>
+                    <th data-width="150" data-column="">状态</th>
+                    <th data-width="150" data-column="">单据来源</th>
+                    <th data-width="150" data-column="">单号</th>
+                    <th data-width="150" data-column="">ERP单号</th>
+                    <th data-width="150" data-column="">记录时间</th>
+                    <th data-width="150" data-column="">计划到货日期</th>
+                    <th data-width="100" data-column="">客户编码</th>
+                    <th data-width="100" data-column="">客户名称</th>
+                    <th data-width="100" data-column="">存货编码</th>
+                    <th data-width="100" data-column="cinvcode1">客户部番</th>
+                    <th data-width="100" data-column="cinvname1">部品名称</th>
+                    <th data-width="150" data-column="cinvstd">规格</th>
+                    <th data-width="120" data-column="cuomname">主计量单位</th>
+                    <th data-width="100" data-column="cBarcode">现品票</th>
+                    <th data-width="100" data-column="cVersion">版本号</th>
+                    <th data-width="100" data-column="qty">数量</th>
+                    <th data-width="100" data-column="">批次号</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+</div>
+<textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
+   {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+    <td>${data.spotticket}</td>
+    <td>${data.cinvcode}</td>
+    <td>${data.cinvname}</td>
+    <td>${data.cinvcode1}</td>
+    <td>${data.cinvname1}</td>
+    <td>${data.cinvstd}</td>
+    <td>品牌</td>
+    <td>${data.ipurchaseuomid}</td>
+    <td>${data.qty}</td>
+    <td>${data.memo}</td>
+    <td hidden>${data.qtys}</td>
+  </tr>
+    {@/each}
+</textarea>
+
+#define js()
+<script>
+    hideParentLayerDialogBtn();
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="PuinstoreForm")
+#end
+#end
+
