@@ -46,12 +46,15 @@ SELECT  a.*,
     d.iAutoId as SourceBillNoRow,
     m.cOrderNo as SourceBillID,
     d.iAutoId as SourceBillDid,
-    m.iVendorId
+    m.iVendorId,
+	v.cVenCode as vencode,
+	v.cVenName as venname
 FROM T_Sys_PUReceiveDetail a
 LEFT JOIN PS_PurchaseOrderDBatch aa on aa.cBarcode = a.Barcode
 LEFT JOIN Bd_Inventory b on aa.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on aa.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 where 1=1
 	#if(masid)
 		and a.MasID = #para(masid)
@@ -118,11 +121,14 @@ select top #(limit)
     d.iAutoId as SourceBillNoRow,
     m.cOrderNo as SourceBillID,
     d.iAutoId as SourceBillDid,
-    m.iVendorId
+    m.iVendorId,
+	v.cVenCode as vencode,
+	v.cVenName as venname
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 where a.isEffective = '1'
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
@@ -191,11 +197,14 @@ select
     d.iAutoId as SourceBillNoRow,
     m.cOrderNo as SourceBillID,
     d.iAutoId as SourceBillDid,
-    m.iVendorId
+    m.iVendorId,
+	v.cVenCode as vencode,
+	v.cVenName as venname
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 where a.isEffective = '1'
 
 	#if(barcode)

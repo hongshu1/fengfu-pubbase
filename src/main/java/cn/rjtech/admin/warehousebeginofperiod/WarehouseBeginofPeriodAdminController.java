@@ -1,5 +1,7 @@
 package cn.rjtech.admin.warehousebeginofperiod;
 
+import java.util.List;
+
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.para.JBoltPara;
@@ -7,6 +9,8 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.common.model.Barcodemaster;
+import cn.rjtech.wms.utils.StringUtils;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -54,6 +58,12 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
      * 条码明细页面
      * */
     public void detail() {
+        List<Barcodemaster> barcodemasters = service.findBySourceId(String.valueOf(getLong(0)));
+        if (barcodemasters.isEmpty()){
+//            fail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        set("sourceid",getLong(0));
         render("detail.html");
     }
 
@@ -61,7 +71,12 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
      * 自动条码明细页面加载数据
      * */
     public void detailDatas() {
-        renderJsonData(service.detailDatas(getPageNumber(), getPageSize(), getKv()));
+        Kv kv = getKv();
+        if (StringUtils.isBlank(kv.getStr("sourceid"))){
+            renderJsonData(null);
+            return;
+        }
+        renderJsonData(service.detailDatas(getPageNumber(), getPageSize(), kv));
     }
 
     /**
@@ -120,10 +135,9 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     }
 
     /**
-     * 库区打印数据
-     *
+     * 打印条码明细
      */
-    public void printData(){
+    public void detailPrintData(){
         renderJsonData(service.printtpl(getKv()));
     }
 
@@ -131,7 +145,8 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
      * 期初库存的仓库编码
      * */
     public void whoptions() {
-        renderJsonData(service.whoptions());
+        String cwhcode = get("cwhcode");
+        renderJsonData(service.whoptions(Kv.by("whcode",cwhcode)));
     }
 
     /*
