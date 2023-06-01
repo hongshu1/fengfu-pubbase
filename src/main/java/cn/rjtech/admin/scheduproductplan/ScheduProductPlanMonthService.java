@@ -688,6 +688,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             weekschedule.setIsLocked(false);
         }
 
+        //TODO:根据排产纪录id查询已排产过物料纪录
+        List<Record> getDetailsList = findRecords("SELECT iAutoId,iInventoryId FROM Aps_WeekScheduleDetails WHERE iWeekScheduleId = ? ",iWeekScheduleId);
+        //key:invId   value:iWeekScheduleDid
+        Map<Long,Long> invScheduleDidMap = new HashMap<>();
+        for (Record record : getDetailsList){
+            invScheduleDidMap.put(record.getLong("iInventoryId"),record.getLong("iAutoId"));
+        }
+
         //排产物料明细表
         List<ApsWeekscheduledetails> detailsList = new ArrayList<>();
         //排产数量明细表
@@ -802,23 +810,29 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             //循环物料
             for (String inv : invList){
                 Record info = invInfoMap.get(inv);
+                Long invId = info.getLong("invId");
 
-                Long iWeekScheduleDid = JBoltSnowflakeKit.me.nextId();
-                ApsWeekscheduledetails scheduleDetails = new ApsWeekscheduledetails();
-                scheduleDetails.setIOrgId(orgId);
-                scheduleDetails.setCOrgCode(orgCode);
-                scheduleDetails.setCOrgName(orgName);
-                scheduleDetails.setICreateBy(userId);
-                scheduleDetails.setCCreateName(userName);
-                scheduleDetails.setDCreateTime(newDate);
-                scheduleDetails.setIUpdateBy(userId);
-                scheduleDetails.setCUpdateName(userName);
-                scheduleDetails.setDUpdateTime(newDate);
-                scheduleDetails.setIAutoId(iWeekScheduleDid);
-                scheduleDetails.setIWeekScheduleId(iWeekScheduleId);
-                scheduleDetails.setILevel(level);
-                scheduleDetails.setIInventoryId(info.getLong("invId"));
-                detailsList.add(scheduleDetails);
+                Long iWeekScheduleDid;
+                if (invScheduleDidMap.containsKey(invId)){
+                    iWeekScheduleDid = invScheduleDidMap.get(invId);
+                }else {
+                    iWeekScheduleDid = JBoltSnowflakeKit.me.nextId();
+                    ApsWeekscheduledetails scheduleDetails = new ApsWeekscheduledetails();
+                    scheduleDetails.setIOrgId(orgId);
+                    scheduleDetails.setCOrgCode(orgCode);
+                    scheduleDetails.setCOrgName(orgName);
+                    scheduleDetails.setICreateBy(userId);
+                    scheduleDetails.setCCreateName(userName);
+                    scheduleDetails.setDCreateTime(newDate);
+                    scheduleDetails.setIUpdateBy(userId);
+                    scheduleDetails.setCUpdateName(userName);
+                    scheduleDetails.setDUpdateTime(newDate);
+                    scheduleDetails.setIAutoId(iWeekScheduleDid);
+                    scheduleDetails.setIWeekScheduleId(iWeekScheduleId);
+                    scheduleDetails.setILevel(level);
+                    scheduleDetails.setIInventoryId(invId);
+                    detailsList.add(scheduleDetails);
+                }
 
                 int[] invPlan = planMap.get(inv);
                 int[] invPlan1S = invPlanMap1S.get(inv);
