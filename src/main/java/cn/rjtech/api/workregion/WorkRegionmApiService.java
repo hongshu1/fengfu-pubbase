@@ -5,6 +5,8 @@ import cn.jbolt.core.api.JBoltApiRet;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.model.momdata.Workregionm;
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 
 import java.util.List;
 
@@ -23,4 +25,11 @@ public class WorkRegionmApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(list);
     }
 
+    /**
+     *记录上传使用
+     */
+    public JBoltApiRet getOptions2(Kv kv) {
+        kv.set("isenabled", "true");
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(workregionmService.list(kv));
+    }
 }

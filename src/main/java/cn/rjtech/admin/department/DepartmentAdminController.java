@@ -1,14 +1,17 @@
 package cn.rjtech.admin.department;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.util.JBoltStringUtil;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.config.MesConfigKey;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.Util;
@@ -39,6 +42,8 @@ public class DepartmentAdminController extends BaseAdminController {
     private DepartmentService service;
     @Inject
     private PersonService personService;
+    @Inject
+    private GlobalConfigService globalConfigService;
 
     /**
      * 首页
@@ -62,7 +67,17 @@ public class DepartmentAdminController extends BaseAdminController {
     public void treeDatas() {
         renderJsonData(service.getTreeTableDatas(getKv()));
     }
-
+    /**
+     * 数据源
+     */
+    @UnCheck
+    public void treeDatasForProposalSystem() {
+    	Kv para = getKv();
+    	String depGrade = globalConfigService.getConfigValue(MesConfigKey.DEP_GRADE);
+    	depGrade = JBoltStringUtil.isBlank(depGrade) ? "3" : depGrade;
+    	para.set("idepgrade",depGrade);
+        renderJsonData(service.treeDatasForProposalSystem(para));
+    }
     /**
      * 新增
      */
