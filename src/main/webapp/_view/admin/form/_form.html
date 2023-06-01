@@ -38,6 +38,27 @@
 				   maxlength="50" name="form.ccode" value="#(form.ccode??)"/>
 		</div>
 	</div>
+	<div class="form-group row"
+		 data-radio
+		 data-rule="radio"
+		 data-value="#(form.cFormTypeSn??)"
+		 data-name="form.isapproval"
+		 data-default="options_first"
+		 data-width="col-sm-2,col"
+	>
+		<label class="col-sm-2 col-form-label" >是否支持审批</label>
+		<div class="col"  style="padding-top: 1px;">
+			<div class="radio radio-primary  radio-inline">
+				<input   id="r_isapproval_true"  type="radio" name="form.isapproval" value="1"/>
+				<label for="r_isapproval_true">是</label>
+			</div>
+
+			<div class="radio radio-primary  radio-inline">
+				<input id="r_isapproval_false" type="radio" name="form.isapproval" value="0"/>
+				<label for="r_isapproval_false">否</label>
+			</div>
+		</div>
+	</div>
 
 	<div class="form-group row"
 		 data-radio
