@@ -1,0 +1,84 @@
+<script>
+    // 检验表格录入方式提交
+    function getqcformtableparamTableOptions_split() {
+        var editableTableOptions = {
+            // trigger: "click",
+            submit: {
+                withForm: ["QcFormForm"],
+                type: "all",
+                url: "/admin/spotcheckform/QcFormTableParamJBoltTable",
+                success: function (res, table, td) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success(res.msg, 1000, function () {
+                            parent.LayerMsgBox.closeAll();
+                            parent.refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                // iType: {
+                //     type: "select",
+                //     required: true,
+                //     url: "admin/dictionary/options?key=rcvDocQcFormd_itype",
+                //     valueAttr: "sn",
+                //     textAttr: "name",
+                //     submitAttr: 'itype',
+                //     changeColumns:[
+                //         {column: "itypestr", use: "name"}
+                //     ],
+                //     handler: function (table, td, text, value, trJsonData) {
+                //         console.log(value);
+                //         // 不为CPK数值，最大最小值都不能输入
+                //         if (value == '1'){
+                //             jboltTableUpdateOtherColumns(table, td.parent(), trJsonData, [
+                //                 {column: 'iStdVal', editable: true},
+                //                 {column: 'iMaxVal',  editable: true},
+                //                 {column: 'iMinVal',  editable: true},
+                //                 {column: 'cOptions',  editable: false}
+                //             ]);
+                //         } else if (value != '1') {
+                //             jboltTableUpdateOtherColumns(table, td.parent(), trJsonData, [
+                //                 {column: 'iStdVal', editable: false},
+                //                 {column: 'iMaxVal', editable: false},
+                //                 {column: 'iMinVal', editable: false},
+                //             ]);
+                //             // 取消输入框可编辑
+                //             var flag = true;
+                //             if (value === '2' || value === '3' || value === '7' || value === '8'){
+                //                 flag = false;
+                //             }
+                //             jboltTableUpdateOtherColumns(table, td.parent(), trJsonData, [
+                //                 {column: 'cOptions', use: 'coptions', editable: flag}
+                //             ]);
+                //         }
+                //     }
+                // },
+                // iStdVal: {
+                //     submitAttr: "istdval",
+                //     type: "input_number",
+                //     placeholder: "=标准值="
+                // },
+                // iMaxVal: {
+                //     submitAttr: "imaxval",
+                //     type: "input_number",
+                //     placeholder: "=最大设定值="
+                // },
+                // iMinVal: {
+                //     submitAttr: "iminval",
+                //     type: "input_number",
+                //     placeholder: "=最小设定值="
+                // },
+                // cOptions: {
+                //     submitAttr: "coptions",
+                //     type: "input"
+                // }
+            }
+        };
+        return editableTableOptions;
+    }
+
+
+</script>

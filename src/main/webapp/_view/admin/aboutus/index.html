@@ -2,11 +2,11 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)" >
-    
-    <div class="jbolt_page_title">
-        
+
+    <div>
+
         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
-        
+
     </div>
 
     <div class="jbolt_page_content">
@@ -15,17 +15,33 @@
             
             #for(config :configs)
 
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">#(config.name)</label>
-                <div class="col-4">
-                   <input type="text" name="#(config.id)" value="#(config.config_value)" data-rule="required">
-                </div>
-            </div>
+                #switch(config.config_key)
+            
+                    #case('about_us1')
+
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">#(config.name)</label>
+                            <div class="col-4">
+                                <textarea name="#(config.id)" style="height:100px;width:450px"  data-rule="required"  data-notnull="true">#(config.config_value)</textarea>
+                            </div>
+                        </div>
+            
+                    #default
+            
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">#(config.name)</label>
+                            <div class="col-4">
+                               <input type="text" name="#(config.id)" value="#(config.config_value)" data-rule="required">
+                            </div>
+                        </div>
+            
+                #end
 
             #end
         </form>
 
     </div>
+
 </div>
 #end
 

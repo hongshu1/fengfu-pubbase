@@ -1,0 +1,72 @@
+<form onsubmit="return false;" id="SpotCheckFormParam_Form" action="#(action)" method="post">
+	#if(spotCheckFormParam.iAutoId??)
+	<input type="hidden" name="spotCheckFormParam.iAutoId" value="#(spotCheckFormParam.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="spotCheckFormParam.iAutoId" value="#(spotCheckFormParam.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">参数项目ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入参数项目ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入参数项目ID" maxlength="40" name="spotCheckFormParam.iSpotCheckFormItemId" value="#(spotCheckFormParam.iSpotCheckFormItemId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">参数名称ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入参数名称ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入参数名称ID" maxlength="40" name="spotCheckFormParam.iSpotCheckParamId" value="#(spotCheckFormParam.iSpotCheckParamId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">参数项目顺序值，表格项目修改顺序时，同步此值</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入参数项目顺序值，表格项目修改顺序时，同步此值"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入参数项目顺序值，表格项目修改顺序时，同步此值" maxlength="40" name="spotCheckFormParam.iItemSeq" value="#(spotCheckFormParam.iItemSeq??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">参数名称顺序值</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入参数名称顺序值"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入参数名称顺序值" maxlength="40" name="spotCheckFormParam.iItemParamSeq" value="#(spotCheckFormParam.iItemParamSeq??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="spotCheckFormParam.isDeleted"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="删除状态: 0. 未删除 1. 已删除"
+data-width="col-sm-2,col-10"
+data-value="#(spotCheckFormParam.isDeleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入删除状态: 0. 未删除 1. 已删除"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">检验表格ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入检验表格ID" maxlength="40" name="spotCheckFormParam.iSpotCheckFormId" value="#(spotCheckFormParam.iSpotCheckFormId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">检验项目ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入检验项目ID" maxlength="40" name="spotCheckFormParam.iQcItemId" value="#(spotCheckFormParam.iQcItemId??)"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="SpotCheckFormParam_Form")
+#end
+

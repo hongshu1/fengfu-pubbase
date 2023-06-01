@@ -51,13 +51,13 @@
       <td title="${data.cuomname}">${data.cuomname}</td>
       <td title="${data.cvencode}">${data.cvencode}</td>
       <td title="${data.cvenname}">${data.cvenname}</td>
-      <td title="${data.stockqty}">${data.stockqty}</td>
-      <td title="${data.ungeneratedstockqty}">${data.ungeneratedstockqty}</td>
-      <td title="${data.generatedstockqty}">${data.generatedstockqty}</td>
-      <td title="${data.ipkgqty}">${data.ipkgqty}</td>
+      <td title="${data.stockqty, 0|number_format}">${data.stockqty}</td>
+      <td title="${data.ungeneratedstockqty, 0|number_format}">${data.ungeneratedstockqty}</td>
+      <td title="${data.generatedstockqty, 0|number_format}">${data.generatedstockqty}</td>
+      <td title="${data.ipkgqty, 0|number_format}">${data.ipkgqty}</td>
       <td title="${data.batch}">${data.batch}</td>
       <td title="${data.createdate}">${data.createdate}</td>
-      <td title="${data.printtepl}">${data.printtepl}</td>
+      <td title="${data.reportfilename}">${data.reportfilename}</td>
     </tr>
   {@/each}
 </textarea>
@@ -108,7 +108,7 @@
             <th data-width="130" data-column="ipkgqty">包装数量</th>
             <th data-width="150" data-column="batch">批次号</th>
             <th data-width="150" data-column="createdate">生产日期</th>
-            <th data-width="150" data-column="printtepl" title="标签打印模板">标签打印模板</th>
+            <th data-width="150" data-column="reportFileName" title="标签打印模板">标签打印模板</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -120,16 +120,23 @@
             <label class="col-sm-2 col-form-label">打印数量:</label>
             <div class="col-3" style="right: 20px;">
               <input type="number" id="printnum" autocomplete="off" class="form-control" placeholder=""
-                     data-tips="" maxlength="23" name="printnum" value="#(printnum??)" required="true"/>
+                     data-tips="" maxlength="23" name="printnum" value="#(printnum??)" required="true" data-rule="int"/>
             </div>
             <div class="col-2" style="right: 35px;">
               <button type="button" class="btn btn-outline-secondary" id="createButton" name="createButton"
                       onclick="submitThisForm()">生成
               </button>
             </div>
-            <div class="col-2" style="margin-top: 8px;right: 75px;">
-              <input id="autoprint" type="checkbox" name="autoprint" value="#(cwhcode??)"/><span>自动打印</span>
+            <div class="col-2" style="margin-top: 8px;right: 75px;" data-require-plugin="hiprint" aria-labelledby="exportMenuButton">
+              <!--<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印</button>
+                <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+                  <button class="btn dropdown-item" onclick="submitThisForm()"> 生成</button>
+                </div>
+              </div>-->
+              <input id="autoprint" type="checkbox" name="autoprint" value="#(autoprint??)"/><span>自动打印</span>
             </div>
+
             <div class="col-3" style="right: 95px;">
               <button type="button" class="btn btn-outline-secondary" id="printButton" name="printButton"
                       onclick="printButton()">打印
@@ -154,7 +161,41 @@
   * */
   function submitThisForm() {
     var printnum = $('#printnum').val();
-    jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");
+    if (printnum == null) {
+      printnum = 1;
+    }
+    var autoprint = $('input[name="autoprint"]').is(':checked');
+    var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
+    var para = {
+      datas: JSON.stringify(allDatas),
+      printnum: printnum,
+      autoprint: autoprint
+    }
+    jboltHiprintWebPrint('kqda_key', 'url', allDatas);
+    // jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=1640995130939412480'+ "&&mark=check");
+    Ajax.post('admin/warehousebeginofperiod/submitStock', para, function (ret) {
+      if (ret.state === 'ok') {
+        LayerMsgBox.success("生成成功", 1000, function () {
+          parent.refreshPjaxContainer();
+          // parent.layer.closeAll();
+        });
+        //如果勾选了自动打印，在生成成功后要自动打印
+        /*if (autoprint) {
+          for (let i = 0; i < printnum; i++) {
+            for (let j = 0; j < allDatas.length; j++) {
+              var data = allDatas[j];
+              var reportFileName = data.reportFileName;
+              //社内现品票：029587，采购现品票：109607
+              jboltHiprintWebPrint('109607', 'url', 'admin/warehousebeginofperiod/printData?ids=');
+              //jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=');
+            }
+          }
+        }*/
+      } else {
+        LayerMsgBox.alert(ret.msg, 2);
+      }
+    });
+    //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");
   }
 
   function getJBoltTableEditableColsOpton() {
@@ -163,13 +204,9 @@
         withForm: ["warehousebeginofperiod_#(pageId)"],
         name: 'warehousebeginofperiod',
         type: "all",
-        params:{printnum:$('#printnum').val()},//携带其他额外参数
         url: "/admin/warehousebeginofperiod/submitStock",
         success: function (res) {
           LayerMsgBox.success("提交成功", 600, function () {
-            parent.refreshPjaxContainer();
-            refreshAllDatas();
-            // parent.layer.closeAll();
           });
         }
       },
@@ -253,16 +290,18 @@
         generatedStockQty: {
           required: true,
           type: "input",//类型
-          rule:"int",
+          rule: "int",
           placeholder: "=生成条码库存数量=",
           tooltip: "",
         },
-        printtepl: { //标签打印模板
-          // required: true,
-          type: "select",//类型
+        reportFileName: { //标签打印模板
+          type:"select2",
+          required:true,
           placeholder: "=标签打印模板=",
-          tooltip: "标签打印模板不能为空",
-        },
+          url:"admin/dictionary/options?key=beginningofperiod",
+          valueAttr:"sn",
+          textAttr:"name"
+        }
       },
     };
     return editableTableOptions;

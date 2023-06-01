@@ -1,8 +1,12 @@
 package cn.rjtech.admin.purchaseorderm;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt._admin.hiprint.HiprintAdminController;
+import cn.jbolt._admin.hiprint.HiprintTplService;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.common.model.HiprintTpl;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -28,10 +32,16 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -66,11 +76,14 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     @Inject
     private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
     @Inject
+    private HiprintTplService tplService;
+
+    @Inject
     private InventoryChangeService inventoryChangeService;
     @Inject
     private ExchService exchService;
-    
-    
+
+
     /**
      * 首页
      */
@@ -102,18 +115,18 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         record.set(PurchaseOrderM.IVENDORID, vendor.getIAutoId());
         record.set(PurchaseOrderM.DBEGINDATE, beginDate);
         record.set(PurchaseOrderM.DENDDATE, endDate);
-    
+
         if (ObjectUtil.isNotNull(vendor.getITaxRate())){
             record.set(PurchaseOrderM.ITAXRATE, vendor.getITaxRate().stripTrailingZeros().stripTrailingZeros());
         }
-        
+
         record.set(PurchaseOrderM.CCURRENCY, vendor.getCCurrency());
         Exch exch = exchService.getNameByLatestExch(getOrgId(), vendor.getCCurrency());
         // 汇率
         if (ObjectUtil.isNotNull(exch)){
             record.set(PurchaseOrderM.IEXCHANGERATE, exch.getNflat());
         }
-        
+
         record.set(PurchaseOrderM.IDUTYUSERID, vendor.getIDutyPersonId());
         Person person = personService.findById(vendor.getIDutyPersonId());
         if (ObjectUtil.isNotNull(person)) {
@@ -122,7 +135,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         record.set(PurchaseOrderM.IDEPARTMENTID, vendor.getCVenDepart());
         // 带出供应商下的业务员，币种，税率
         set("purchaseOrderM", record);
-    
+
         set(Vendor.CVENNAME, vendor.getCVenName());
         if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == iSourceType){
             render("blank_add.html");
@@ -139,7 +152,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         ValidationUtils.notBlank(beginDate, "请选择日期范围");
         ValidationUtils.notBlank(endDate, "请选择日期范围");
         ValidationUtils.notBlank(iVendorId, "请选择供应商");
-     
+
         ValidationUtils.notNull(iSourceType, "缺少来源类型");
         SourceTypeEnum sourceTypeEnum = SourceTypeEnum.toEnum(iSourceType);
         ValidationUtils.notNull(sourceTypeEnum, "未知来源类型");
@@ -316,7 +329,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     public void batchDel(@Para(value = "ids") String ids) {
         renderJsonData(service.batchDel(ids));
     }
-    
+
     public void findPurchaseOrderDBatch() {
         renderJsonData(purchaseOrderDBatchService.findByPurchaseOrderMId(getPageNumber(), getPageSize(), getKv()));
     }
@@ -336,25 +349,66 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     public void findPurchaseOrderDBatchVersion() {
         renderJsonData(purchaseOrderDBatchVersionService.findByPurchaseOrderMid(getPageNumber(), getPageSize(), getKv()));
     }
-    
+
     public void saveSubmit(){
         renderJson(service.saveSubmit(getJBoltTable()));
     }
-    
+
     public void findPurchaseOrderD(@Para(value = "purchaseOrderMId") Long purchaseOrderMId){
         renderJsonData(service.findPurchaseOrderD(purchaseOrderMId));
     }
-    
+
     public void inventory_dialog_index(){
         keepPara();
         render("inventory_dialog_index.html");
     }
-    
+
     /**
      * 默认给1-100个数据
      */
     public void inventoryPage() {
         renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
     }
-    
+
+
+    public void findPrintPurchaseorderm(){
+//          获取模板
+//        HiprintTpl hiprintTpl= tplService.getCacheByKey("109607");
+//        hiprintTpl.getContent();
+//        set("hiprintTpl",hiprintTpl.getContent());
+//         Kv kv = getKv();
+        Page<Record> byPurchaseOrderMId = purchaseOrderDBatchService.findByPurchaseOrderMId(getPageNumber(), getPageSize(), getKv());
+        renderJsonData(byPurchaseOrderMId.getList().get(1));
+    }
+    public void pushPurchase(@Para(value = "iautoid") Long iautoid){
+        renderJsonData(service.pushPurchase(iautoid));
+    }
+
+    /**
+     * 导出数据
+     */
+    @SuppressWarnings("unchecked")
+    public void purchaseordermOne() throws Exception {
+        List<Record> rows = service.findByMidxlxs();
+        List<Record> leftData = new ArrayList<>();
+        List<Record> rightData = new ArrayList<>();
+        int counter = 0;
+        for (Record row : rows) {
+            if (counter < 100) {
+                leftData.add(row);
+            } else {
+                rightData.add(row);
+            }
+            counter++;
+            if (counter == 200) {
+                break;
+            }
+        }
+        Map<String, List<Record>> datas = new HashMap<>();
+        datas.put("left", leftData);
+        datas.put("right", rightData);
+        System.out.print(datas.get("right"));
+        renderJxlsToPdf("purchaseOrderDBatch.xlsx", Kv.by("rows", datas), "订货清单.pdf");
+
+    }
 }

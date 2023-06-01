@@ -18,7 +18,7 @@
         <!-- JBoltTable的数据模板定义-->
         <textarea class="jb_tpl_box" id="itemroutingRowtpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.iautoid}" >
+        <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
                 <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
@@ -74,7 +74,8 @@
                         <button onclick="jboltTableRemoveCheckedRow(this, true, false)"
                                 data-confirm="确定删除选中数据？" class="btn btn-danger btn-sm" >
                             <i class="fa fa-trash"></i> 删除行</button>
-
+                        <button onclick="checkDetails(this)" class="btn btn-secondary btn-sm">检查明细</button>
+                        <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
                         <div class="j_upload_file_box"
                              data-name="file"
                              data-btn-class="btn dropdown-item"

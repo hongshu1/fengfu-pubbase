@@ -13763,6 +13763,14 @@ var DialogUtil={
 					  btn:btn, 
 					  btnAlign:btnAlign,
 					  success:function(obj,index){
+						  var top = $(obj).offset().top;
+						  var left = $(obj).offset().left;
+						  if(top < 0) {
+							  layer.style(index, {top:'0px'});
+						  }
+			  				if(left < 0) {
+								layer.style(index, {left:'0px'});
+							}
 //						  if(type==2){
 //							  var iframeWin = window[$(".layui-layer-iframe").find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
 ////							  iframeWin.focus();
@@ -13777,7 +13785,7 @@ var DialogUtil={
 							  }
 							 
 						  }
-						  
+
 						  if(options.successHandler){
 							  that.exeBindHandler(options.successHandler,options);
 						  }
