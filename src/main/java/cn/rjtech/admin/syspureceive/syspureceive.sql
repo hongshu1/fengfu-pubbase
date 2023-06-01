@@ -76,22 +76,24 @@ where 1=1
 
 
 #sql("Whcode")
-SELECT  a.*,a.cWhCode as whcode,a.cWhName as whname
+SELECT  a.*,a.cWhCode as whcode,a.cWhName as whname,dt.cDepName
 FROM Bd_Warehouse a
-where 1=1
+LEFT JOIN bd_department dt ON a.cDepCode = dt.iAutoId and dt.isDeleted = 0
+where a.isDeleted = 0
 	#if(q)
 		and (a.cWhCode like concat('%',#para(q),'%') OR a.cWhName like concat('%',#para(q),'%'))
 	#end
+	ORDER BY a.cWhCode DESC
 #end
 
 
 #sql("wareHousepos")
 SELECT  a.*
-FROM Bd_Warehouse_Shelves a
-where 1=1
-
+FROM Bd_Warehouse_Area a
+LEFT JOIN Bd_Warehouse wh ON a.iWarehouseId = wh.iAutoId
+where a.isDeleted = 0
 	#if(q)
-		and (a.cShelvesCode like concat('%',#para(q),'%') OR a.cShelvesName like concat('%',#para(q),'%'))
+		and (a.cAreaCode like concat('%',#para(q),'%') OR a.cOrgName like concat('%',#para(q),'%'))
 	#end
 	#if(whcodeid)
 		and a.iWarehouseId = #para(whcodeid)
@@ -126,11 +128,14 @@ where a.isEffective = '1'
 			or b.cinvname1 like concat('%',#para(q),'%') or a.cBarcode like concat('%',#para(q),'%')
 		)
 	#end
-	 AND b.cOrgCode = #(orgCode)
+
+		AND b.cOrgCode = #(orgCode)
+
 
 	#if(vencode)
 		and m.iVendorId = #para(vencode)
 	#end
+
 #end
 
 
@@ -163,6 +168,38 @@ WHERE p.IsDeleted = '0'
 #if(cPTName)
 and p.cPTName like CONCAT('%', #para(cPTName), '%')
 #end
+#end
+
+
+
+
+
+#sql("barcode")
+select
+    m.cOrderNo as sourcebillno,
+    a.cBarcode as barcode,
+    b.cInvCode ,
+    b.cInvCode1,
+    b.cInvName1,
+    a.dPlanDate as plandate,
+    b.cInvStd as cinvstd,
+    a.iQty as qtys,
+    m.cOrderNo as SourceBillNo,
+    m.iBusType as SourceBillType,
+    d.iAutoId as SourceBillNoRow,
+    m.cOrderNo as SourceBillID,
+    d.iAutoId as SourceBillDid,
+    m.iVendorId
+FROM PS_PurchaseOrderDBatch a
+LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
+LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
+LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+where a.isEffective = '1'
+
+	#if(barcode)
+		and a.cBarcode = #para(barcode)
+	#end
+
 #end
 
 

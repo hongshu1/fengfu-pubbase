@@ -48,6 +48,10 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
     public static final String STATE = "State";
     /**收料单：PUReceive，双单位收料单：PUReceiveSpecial*/
     public static final String TYPE = "Type";
+    /***/
+    public static final String WHCODE = "WhCode";
+    /***/
+    public static final String WHNAME = "WhName";
 	/**
 	 * 主键ID
 	 */
@@ -357,6 +361,28 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	@JSONField(name = "type")
 	public java.lang.String getType() {
 		return getStr("Type");
+	}
+
+	public M setWhCode(java.lang.String WhCode) {
+		set("WhCode", WhCode);
+		return (M)this;
+	}
+
+	@JBoltField(name="whcode" ,columnName="WhCode",type="String", remark="WHCODE", required=false, maxLength=50, fixed=0, order=20)
+	@JSONField(name = "whcode")
+	public java.lang.String getWhCode() {
+		return getStr("WhCode");
+	}
+
+	public M setWhName(java.lang.String WhName) {
+		set("WhName", WhName);
+		return (M)this;
+	}
+
+	@JBoltField(name="whname" ,columnName="WhName",type="String", remark="WHNAME", required=false, maxLength=50, fixed=0, order=21)
+	@JSONField(name = "whname")
+	public java.lang.String getWhName() {
+		return getStr("WhName");
 	}
 
 }
