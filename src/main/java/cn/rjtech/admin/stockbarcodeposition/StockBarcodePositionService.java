@@ -2,18 +2,11 @@ package cn.rjtech.admin.stockbarcodeposition;
 
 import java.util.Date;
 import java.util.List;
-
 import com.jfinal.plugin.activerecord.Page;
-
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
-
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.StockBarcodePosition;
 
@@ -121,13 +114,6 @@ public class StockBarcodePositionService extends BaseService<StockBarcodePositio
     @Override
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
-    }
-
-    /*
-     * 根据仓库编码+存货编码查询条码和数量
-     * */
-    public List<StockBarcodePosition> findByWhCodeAndInvCode(String whcode, String invcode,String poscode) {
-        return find("select * from T_Sys_StockBarcodePosition where WhCode = ? and InvCode=? and poscode=?", whcode, invcode,poscode);
     }
 
     /*

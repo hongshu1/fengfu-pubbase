@@ -8,15 +8,10 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
-
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.common.model.Barcodedetail;
-import cn.rjtech.common.model.Barcodemaster;
 
 /**
  * 条码明细表 Service
@@ -131,7 +126,7 @@ public class BarcodedetailService extends BaseService<Barcodedetail> {
         barcodedetail.setAutoid(JBoltSnowflakeKit.me.nextId());
         barcodedetail.setMasid(String.valueOf(masid));
         barcodedetail.setVencode(kv.getStr("cvencode"));
-        barcodedetail.setBarcode("barcode");
+        barcodedetail.setBarcode(kv.getStr("barcode"));
         barcodedetail.setInvcode(kv.getStr("cinvcode"));
         barcodedetail.setBarcodedate(now);
         //barcodedetail.setPackrate(kv.getBigDecimal("ipkgqty"));//包装比例
@@ -142,6 +137,6 @@ public class BarcodedetailService extends BaseService<Barcodedetail> {
         barcodedetail.setCreatedate(now);
         barcodedetail.setModifyperson(JBoltUserKit.getUserName());
         barcodedetail.setModifydate(now);
-        barcodedetail.setReportFileName(kv.getStr("reportfilename"));
+        barcodedetail.setReportFileName(kv.getStr("reportFileName"));
     }
 }
