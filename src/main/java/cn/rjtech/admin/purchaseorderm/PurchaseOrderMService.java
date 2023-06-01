@@ -1037,7 +1037,6 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 				jsonObject.put("cPersonCode", order.get("cPersonCode"));
 				jsonObject.put("cBusType", order.get("cBusType"));
 				jsonObject.put("cPTCode", order.get("cPTCode"));
-
 				jsonObject.put("iExchRate", order.get("iExchRate"));
 				jsonObject.put("iTaxRate", order.get("iTaxRate"));
 				jsonObject.put("cexch_name", order.get("cexch_name"));
@@ -1056,12 +1055,17 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			}
 			JSONObject params = new JSONObject();
 			params.put("data",jsonArray);
-			try {
-				HttpUtil.post("http://120.24.44.82:8099/api/cwapi/PODocAdd?dbname=U8Context", params.toString());
-			} catch (Exception e) {
-				throw new ParameterException("API响应结果失败");
+			String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/PODocAdd?dbname=U8Context", params.toString());
+			JSONObject jsonObject = JSONObject.parseObject(result);
+			String remark="";
+			if(jsonObject.getString("status").equals("S")){
+				remark=jsonObject.getString("remark").split(":")[2];
+				map.put("remark",remark);
+			}else {
+				remark=jsonObject.getString("remark");
+				map.put("remark",remark);
 			}
-			map.put("code","200");
+			map.put("json",params.toString());
 			return map;
 	}
 	public List<Record> findByMidxlxs(){
