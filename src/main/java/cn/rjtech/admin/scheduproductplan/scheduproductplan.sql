@@ -413,7 +413,7 @@ WHERE a.isDeleted = '0'
 
 #sql("getApsWeekschedule")
 ###获取当前层级上次排产截止日期
-SELECT TOP 1 iLevel,dScheduleEndTime,dLockEndTime
+SELECT TOP 1 *
 FROM Aps_WeekSchedule
 WHERE IsDeleted = 0 AND iLevel = #para(level)
 ORDER BY dCreateTime DESC
@@ -506,7 +506,8 @@ SELECT
     d.iWorkRegionMid,
     e.cWorkCode,
     e.cWorkName,
-    e.iPsLevel
+    a.iLevel AS iPsLevel
+    ###e.iPsLevel
 FROM Aps_WeekScheduleDetails AS a
          LEFT JOIN Aps_WeekScheduleD_Qty AS b ON a.iAutoId = b.iWeekScheduleDid
          LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId

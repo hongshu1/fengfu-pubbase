@@ -70,7 +70,69 @@
 
                     </div>
                 </div>
-            </div>    		
+            </div>
+
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">所有末级部门</div>
+                    <div class="card-body">
+
+                        <form class="form-inline jbolt_page_title" id="DepRefEndDepartmentForm_#(pageId)" onsubmit="return false;" method="post">
+                            <input type="text" autocomplete="off" class="form-control ml-xl-1" placeholder="=编码/名称=" name="enddepkeywords" value=""/>
+                            <input type="hidden" autocomplete="off" class="form-control ml-xl-1" name="sourceidepid" value=""/>
+                            <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
+                            <button type="reset" class="btn btn-light"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+                            <button type="button" class="btn btn-light" onclick="saveDepRef()">保存</button>
+                        </form>
+                        
+                        
+                        <!-- JBoltTable的数据模板定义-->
+                        <script type="text/template" id="DepRefEndDepartmentRowtpl_#(pageId)">
+                            {@each datas as data,index}
+                            <tr data-id="${data.iautoid}">
+                                <td>${data.cdepcode}</td>
+                                <td>${data.cdepname}</td>
+								<td>
+									<img data-switchbtn data-confirm="确定切换是否默认？" data-value="${data.isdefault}"  data-handler="refreshJBoltTable"  data-url="admin/depref/toggleIsDefault/${data.ideprefid}"/>
+								</td>
+                            </tr>
+                            {@/each}
+                        </script>
+
+                        <div class="jbolt_table_view">
+                            <div class="jbolt_table_box">
+                                <div class="jbolt_table_body">
+                                    <table class="jbolt_table jbolt_main_table table-center"
+                                           id="jbolt_table_enddep_#(pageId)"
+                                           data-jbolttable
+                                           data-ajax="true"
+                                           data-width="auto"
+                                           data-autoload="false"
+                                           data-column-prepend="1:checkbox"
+                                           data-column-resize="true"
+                                           data-url="admin/depref/findEndDepData"
+                                           data-ajax-success-handler="tableAjaxSuccessHandler_#(pageId)"
+                                           data-conditions-form="DepRefEndDepartmentForm_#(pageId)"
+                                           data-rowtpl="DepRefEndDepartmentRowtpl_#(pageId)"
+                                    >
+                                        <thead>
+                                        <tr>
+                                            <th data-width="150" data-column="cdepcode">部门编码</th>
+                                            <th data-width="200" data-column="cdepname">部门名称</th>
+                                            <th data-width="150" data-column="isdefault">是否默认</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>  
+            
     	</div>
     </div>
 </div>
@@ -80,13 +142,47 @@
 <script type="text/javascript">
 
 	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
-		alert("点击了!");
-		/* $(tempTr1).data('url', '/admin/admin/depref/edit/' + rowData.iautoid)
-			.data('area', '1200,800')
-			.data('title', '部门对照档案')
-			.data('btn', '保存,关闭');
-
-		DialogUtil.openBy(tempTr1); */
+		$('input[name="sourceidepid"]').val(rowData.iautoid);
+		refreshJBoltTable("#jbolt_table_enddep_#(pageId)");
 	}
+	function saveDepRef(){
+		var ireldepids = getJboltTableCheckedIds("#jbolt_table_enddep_#(pageId)",false);
+		if(!ireldepids) return;
+		
+		var idepid = $('input[name="sourceidepid"]').val();
+        var para = {
+        		ireldepids: ireldepids.join(','),
+        		idepid: idepid
+        };
+        //保存部门对照表数据
+        Ajax.post('/admin/depref/saveTableDatas', para, function (ret) {
+            if (ret.state === 'ok') {
+            	LayerMsgBox.success("保存成功");
+            	refreshJBoltTable("#jbolt_table_enddep_#(pageId)");
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        });
+	}
+    function tableAjaxSuccessHandler_#(pageId)(table) {
+    	var idepid = $('input[name="sourceidepid"]').val();
+    	var para = {
+    		idepid:idepid
+    	};
+        Ajax.post('/admin/depref/findCheckedIds', para, function (ret) {
+            if (ret.state === 'ok') {
+            	var ids = ret.data.ids;
+                if (ids) {
+                	var idsArr = ids.split(',');
+                    setTimeout(function (){
+                    	jboltTableSetCheckedIds(table,idsArr);
+                    },100)
+                }
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        });
+    }
+
 </script>
 #end
