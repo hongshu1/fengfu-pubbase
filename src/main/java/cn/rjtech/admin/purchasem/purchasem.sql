@@ -202,7 +202,7 @@ ORDER BY pd.iautoid
 	bsl.cSubjectName clowestsubjectname,ebi.citemname,ebi.ihighestsubjectid,ebi.ilowestsubjectid,
 	ebi.careertype,ebi.isLargeAmountExpense,ebi.cuse,ebi.cmemo,ebi.iprice,ebi.cunit,ebi.iCarryForward,ebi.icreateby,ebi.dcreatetime,
 	ebi.iamounttotal ibudgetmoney,ebi.isscheduled,1 isourcetype,ebi.iautoid isourceid,ebi.iprojectcardid,
-	(select config_value from #(AppConfig.getJBoltDbName()).dbo.jb_global_config where config_key = 'tax_rate') itaxrate,0 isubitem,
+	(select config_value from #(getBaseDbName()).dbo.jb_global_config where config_key = 'tax_rate') itaxrate,0 isubitem,
 	isnull((select sum(inatmoney) from pl_purchased where iprojectcardid = ebi.iprojectcardid),0) ibudgetalreadypurchasemoney
 	#if(monthlist && monthlist.size() > 0)
 		#for(monthnum:monthlist)
@@ -327,7 +327,7 @@ where 1=1 and pm.iorgid = #para(iorgid)
 
 #sql("refBudgetItemDatas")
 	select iautoid,cbudgetno,1 isourcetype,iamounttotal ibudgetmoney,iprojectcardid,
-	(select config_value from #(AppConfig.getJBoltDbName()).dbo.jb_global_config where config_key = 'tax_rate') itaxrate,
+	(select config_value from #(getBaseDbName()).dbo.jb_global_config where config_key = 'tax_rate') itaxrate,
 	isnull((select sum(inatmoney) from pl_purchased where iprojectcardid = ebi.iprojectcardid),0) ibudgetalreadypurchasemoney
 	from pl_expense_budget_item ebi where iautoid in (#(budgetitemids))
 	union all

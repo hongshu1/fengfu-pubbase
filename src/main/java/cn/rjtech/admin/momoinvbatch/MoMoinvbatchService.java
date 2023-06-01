@@ -1,15 +1,28 @@
 package cn.rjtech.admin.momoinvbatch;
 
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.sysmaterialsprepare.SysMaterialsprepareService;
+import cn.rjtech.model.momdata.Inventory;
+import cn.rjtech.model.momdata.MoDoc;
+import cn.rjtech.model.momdata.SysMaterialsprepare;
+import cn.rjtech.util.BillNoUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
+
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoMoinvbatch;
 import com.jfinal.plugin.activerecord.Record;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 工单现品票 Service
@@ -25,6 +38,14 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 	protected MoMoinvbatch dao() {
 		return dao;
 	}
+
+	@Inject
+	private MoDocService moDocService;
+	@Inject
+	private SysMaterialsprepareService sysMaterialsprepareService; //备料单
+	@Inject
+	private InventoryService inventoryService; //存货档案
+
 
 	/**
 	 * 后台管理分页查询
@@ -166,6 +187,91 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 	public String checkInUse(MoMoinvbatch moMoinvbatch, Kv kv) {
 		//这里用来覆盖 检测MoMoinvbatch是否被其它表引用
 		return null;
+	}
+	public Ret createBarcode(Long imodocid) {
+		if (notOk(imodocid)) {
+			return fail("缺少工单ID");
+		}
+		MoDoc moDoc = moDocService.findById(imodocid);
+		if (moDoc == null) {
+			return fail("工单信息不存在");
+		}
+
+		List<Record> rows=findRecord("select iAutoId from   Mo_MoInvBatch where iMoDocId="+moDoc.getIAutoId());
+		if(!rows.isEmpty()){
+			return  fail("已生成现品票");
+		}
+
+		//通过工单找备料单号
+		SysMaterialsprepare sysMaterialsprepare = sysMaterialsprepareService.findFirst(Okv.create()
+				.setIfNotNull(SysMaterialsprepare.SOURCEBILLID, moDoc.getIAutoId()).
+				setIfNotNull(SysMaterialsprepare.SOURCEBILLNO, moDoc.getCMoDocNo()), SysMaterialsprepare.AUTOID, "desc");
+		if (sysMaterialsprepare == null) {
+			return fail("还未生产备料单,请稍后重试");
+		}
+		Inventory inventory = inventoryService.findById(moDoc.getIInventoryId());
+		if (inventory == null) {
+			return fail("存货信息不存在");
+		}
+		//包装数量
+		if (isOk(moDoc.getIQty()) && isOk(inventory.getIPkgQty())) {
+			int a = moDoc.getIQty().intValue();
+			int b = inventory.getIPkgQty().intValue();
+			int c = a % b;
+			MoMoinvbatch moMoinvbatch;
+			int seq=0;
+			Date now=new Date();
+			if (c > 0) {
+				moMoinvbatch = new MoMoinvbatch();
+				moMoinvbatch.setIOrgId(getOrgId());
+				moMoinvbatch.setCOrgCode(getOrgCode());
+				moMoinvbatch.setCOrgName(getOrgName());
+				moMoinvbatch.setIMoDocId(moDoc.getIAutoId());
+				//moMoinvbatch.seti
+				String barcode = BillNoUtils.genCassiGnOrderNo(getOrgId(), "CP", 7);
+				moMoinvbatch.setISeq(1); //数量
+				seq=1;
+				moMoinvbatch.setIQty(new BigDecimal(c));
+				moMoinvbatch.setCBarcode(barcode);
+				moMoinvbatch.setIPrintStatus(1);
+				moMoinvbatch.setIStatus(0);
+				moMoinvbatch.setICreateBy(JBoltUserKit.getUserId());
+				moMoinvbatch.setCCreateName(JBoltUserKit.getUserUserName());
+				moMoinvbatch.setDCreateTime(now);
+				moMoinvbatch.setIUpdateBy(JBoltUserKit.getUserId());
+				moMoinvbatch.setCUpdateName(JBoltUserKit.getUserName());
+				moMoinvbatch.setDUpdateTime(now);
+				moMoinvbatch.save();
+			}
+
+			c = a / b;
+
+			for (int i = 0; i < c; i++) {
+				moMoinvbatch = new MoMoinvbatch();
+				moMoinvbatch.setIOrgId(getOrgId());
+				moMoinvbatch.setCOrgCode(getOrgCode());
+				moMoinvbatch.setCOrgName(getOrgName());
+				moMoinvbatch.setIMoDocId(moDoc.getIAutoId());
+				String barcode = BillNoUtils.genCassiGnOrderNo(getOrgId(), "CP", 7);
+				moMoinvbatch.setCBarcode(barcode);
+				moMoinvbatch.setIQty(new BigDecimal(b));
+				seq=seq+i;
+				moMoinvbatch.setISeq(Integer.valueOf(seq));
+				moMoinvbatch.setIPrintStatus(1);
+				moMoinvbatch.setIStatus(0);
+				moMoinvbatch.setICreateBy(JBoltUserKit.getUserId());
+				moMoinvbatch.setCCreateName(JBoltUserKit.getUserUserName());
+				moMoinvbatch.setDCreateTime(now);
+				moMoinvbatch.setIUpdateBy(JBoltUserKit.getUserId());
+				moMoinvbatch.setCUpdateName(JBoltUserKit.getUserName());
+				moMoinvbatch.setDUpdateTime(now);
+				moMoinvbatch.save();
+
+			}
+
+
+		}
+		return SUCCESS;
 	}
 
 }

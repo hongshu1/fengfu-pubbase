@@ -1,5 +1,6 @@
 package cn.rjtech.admin.momoinvbatch;
 
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -7,6 +8,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoMoinvbatch;
@@ -28,7 +30,14 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
-		render("index.html");
+		Long imodocid=getLong("imodocid");
+	  Ret r=service.createBarcode(imodocid);
+	  if(r.isOk()==true) {
+		  render("index.html");
+	  }else{
+		  ValidationUtils.error(r.getStr("msg"));
+		  return;
+	  }
 	}
   	
   	/**
@@ -93,5 +102,11 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
 
-
+	/**
+	 * 创建工单现品票
+	 */
+	public  void createBarcode(){
+		Long imodocid=getLong("imodocid");
+		//renderJsonData(service.createBarcode(imodocid));
+	}
 }
