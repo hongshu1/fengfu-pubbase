@@ -603,7 +603,63 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         renderJsonData(service.getApsPlanAndActualPage(getPageNumber(),getPageSize(),getKv()));
     }
 
+    /**
+     * 导出数据
+     */
+    @SuppressWarnings("unchecked")
+    public void dataExportActual() throws Exception {
+        String startdate = get("startdate");
+        String enddate = get("enddate");
+        LocalDate localDate = LocalDate.now();
+        if (StringUtils.isBlank(startdate)){
+            startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
+        }
+        if (StringUtils.isBlank(enddate)){
+            enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
+        }
+        //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+        List<String> scheduDateList = DateUtils.getBetweenDate(startdate,enddate);
 
+        String fileName = "生产计划及实绩";
+        JBoltExcel jBoltExcel = JBoltExcel.create();
+        JBoltExcelSheet jBoltExcelSheet = JBoltExcelSheet.create(fileName);
+
+        List<JBoltExcelHeader> headerList = new ArrayList<>();
+        headerList.add(JBoltExcelHeader.create("cworkname","产线名称"));
+        headerList.add(JBoltExcelHeader.create("cinvcode","存货编码"));
+        headerList.add(JBoltExcelHeader.create("cinvcode1","客户部番"));
+        headerList.add(JBoltExcelHeader.create("cinvname1","部品名称"));
+        headerList.add(JBoltExcelHeader.create("colname","项目"));
+
+        int monthCount = 1;
+        for (int i = 0; i < scheduDateList.size(); i++) {
+            String date = scheduDateList.get(i);
+            String yearMonth = date.substring(0,7);
+
+            int seq = i + 1;
+            int day = Integer.parseInt(date.substring(8));
+            if (i != 0 && day == 1){
+                headerList.add(JBoltExcelHeader.create("qtysum"+monthCount,yearMonth.concat("合计")));
+                headerList.add(JBoltExcelHeader.create("qty"+seq,date));
+                monthCount ++;
+                continue;
+            }
+            if (seq == scheduDateList.size()){
+                headerList.add(JBoltExcelHeader.create("qty"+seq,date));
+                headerList.add(JBoltExcelHeader.create("qtysum"+monthCount,yearMonth.concat("合计")));
+                continue;
+            }
+            headerList.add(JBoltExcelHeader.create("qty"+seq,date));
+        }
+        jBoltExcelSheet.setMerges().setHeaders(1,headerList);
+
+        List<Record> recordList = service.getApsPlanAndActualPage(getPageNumber(),getPageSize(),getKv());
+        jBoltExcelSheet.setRecordDatas(2,recordList);
+        jBoltExcel.addSheet(jBoltExcelSheet);
+
+        jBoltExcel.setFileName(fileName+DateUtils.getDate("yyyy-MM-dd"));
+        renderBytesToExcelXlsFile(jBoltExcel);
+    }
 
 
 
