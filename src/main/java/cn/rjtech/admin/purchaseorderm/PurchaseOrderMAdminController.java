@@ -392,23 +392,41 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         List<Record> rows = service.findByMidxlxs();
         List<Record> leftData = new ArrayList<>();
         List<Record> rightData = new ArrayList<>();
+        List<String> sheetNames = new ArrayList<>();
+        List<Kv> datas = new ArrayList<>(); // 改用List<List<Record>>来表示多个数据集合
         int counter = 0;
+        int i = 0;
+
         for (Record row : rows) {
-            if (counter < 100) {
+            if (counter < 15) {
                 leftData.add(row);
             } else {
                 rightData.add(row);
             }
             counter++;
-            if (counter == 200) {
-                break;
+            if (counter == 30) {
+                String sheetName = "订货清单" + (i + 1);
+                sheetNames.add(sheetName);
+                datas.add(Kv.by("leftData",leftData));
+                datas.add(Kv.by("rightData",rightData));
+                leftData = new ArrayList<>();
+                rightData = new ArrayList<>();
+                counter = 0;
+                i++;
             }
         }
-        Map<String, List<Record>> datas = new HashMap<>();
-        datas.put("left", leftData);
-        datas.put("right", rightData);
-        System.out.print(datas.get("right"));
-        renderJxlsToPdf("purchaseOrderDBatch.xlsx", Kv.by("rows", datas), "订货清单.pdf");
 
+         // 如果 rows 的数量不是 30 的整数倍，将剩余的数据添加到 datas 中
+        if (!leftData.isEmpty()) {
+            datas.add(Kv.by("leftData",leftData));
+        }
+        if (!rightData.isEmpty()) {
+            datas.add(Kv.by("rightData",rightData));
+        }
+
+        System.out.print(datas);
+        renderJxlsToPdf("purchaseOrderDBatch.xlsx", Kv.by("rows", datas).set("sheetNames", sheetNames)
+                .set("leftData",leftData).set("rightData",rightData), "订货清单.pdf");
     }
 }
+
