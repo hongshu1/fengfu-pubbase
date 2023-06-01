@@ -15,6 +15,10 @@ public class MesConfigKey {
      * 默认税率
      */
     public static final String TAX_RATE = "tax_rate";
+    /**
+     * 部门层级
+     */
+    public static final String DEP_GRADE = "dep_grade";
 
     private MesConfigKey() {
         // ignored

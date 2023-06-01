@@ -17,22 +17,13 @@
                         
                         
                         <!-- JBoltTable的数据模板定义-->
-		<script type="text/template" id="DepRefDepartmentRowtpl_#(pageId)">
-			{@each datas as data,index}
-			{# 先循环第一级}
-			{@include "#DepRefDepartmentRowtpl_tr_#(pageId)",data}
-			{@/each}
-		</script>                        
-                        <script type="text/template" id="DepRefDepartmentRowtpl_tr_#(pageId)">
-                            <tr data-id="${iautoid}" data-pid="${ipid}" data-hasitems="${items&&items.length>0}">
-                                <td>${cdepcode}</td>
-                                <td>${cdepname}</td>
+                        <script type="text/template" id="DepRefDepartmentRowtpl_#(pageId)">
+                            {@each datas as data,index}
+                            <tr data-id="${data.iautoid}">
+                                <td>${data.cdepcode}</td>
+                                <td>${data.cdepname}</td>
                             </tr>
-							{@if items&&items.length>0}
-							{@each items as son}
-							{@include "#DepRefDepartmentRowtpl_tr_#(pageId)",son}
-							{@/each}
-							{@/if}
+                            {@/each}
                         </script>
 
                         <div class="jbolt_table_view">
@@ -41,12 +32,11 @@
                                     <table class="jbolt_table jbolt_main_table table-center"
                                            id="jbolt_table_#(pageId)"
                                            data-jbolttable
-                                           data-treetable="all:1"
                                            data-ajax="true"
                                            data-width="auto"
                                            data-column-resize="true"
                                            ###data-bind-elements="#rolepermissionAddBtn_#(pageId)1"
-                                           data-url="admin/depref/findAllProposalData"
+                                           data-url="admin/department/treeDatasForProposalSystem?isProposal=true"
                                            data-autoload="true"
                                            data-conditions-form="DepRefDepartmentForm_#(pageId)"
                                            data-rowtpl="DepRefDepartmentRowtpl_#(pageId)"
