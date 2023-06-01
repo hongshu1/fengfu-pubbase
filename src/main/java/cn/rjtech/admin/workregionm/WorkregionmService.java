@@ -262,9 +262,9 @@ public class WorkregionmService extends BaseService<Workregionm> {
             if (StrUtil.isBlank(record.getStr("cDepName"))) {
                 return fail("所属部门不能为空");
             }
-            if (StrUtil.isBlank(record.getStr("cPersonName"))) {
-                return fail("产线长不能为空");
-            }
+//            if (StrUtil.isBlank(record.getStr("cPersonName"))) {
+//                return fail("产线长不能为空");
+//            }
             if (StrUtil.isBlank(record.getStr("iPsLevel"))) {
                 return fail("排产层级不能为空");
             }
