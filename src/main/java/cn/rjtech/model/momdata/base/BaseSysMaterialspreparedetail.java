@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -47,8 +46,8 @@ public abstract class BaseSysMaterialspreparedetail<M extends BaseSysMaterialspr
     public static final String MODIFYPERSON = "ModifyPerson";
     /**更新时间*/
     public static final String MODIFYDATE = "ModifyDate";
-	/**状态：1=已扫描，0=未扫描*/
-	public static final String STATE = "State";
+    /**状态：1=已扫描，0=未扫描*/
+    public static final String STATE = "State";
 	/**
 	 * AutoID
 	 */
@@ -366,7 +365,7 @@ public abstract class BaseSysMaterialspreparedetail<M extends BaseSysMaterialspr
 	/**
 	 * 状态：1=已扫描，0=未扫描
 	 */
-	@JBoltField(name="state" ,columnName="State",type="String", remark="状态", required=false, maxLength=30, fixed=0, order=19)
+	@JBoltField(name="state" ,columnName="State",type="String", remark="状态：1=已扫描，0=未扫描", required=false, maxLength=50, fixed=0, order=19)
 	@JSONField(name = "state")
 	public java.lang.String getState() {
 		return getStr("State");

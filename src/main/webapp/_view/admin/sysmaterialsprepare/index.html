@@ -2,165 +2,107 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey??)">
-    <div class="jbolt_page_title">
-        <div class="row">
-            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>生产备料</h1></div>
-            <div class="col-sm-auto">
-                <form class="form-inline" id="SysMaterialsprepare_form_#(pageId)">
-                    <input type="text" class="form-control ml-2" placeholder="备料单号"
-                           maxlength="40"
-                           name="billno"
-                           value=""
-                           data-dialogbtn data-area="100%,100%"
-                           data-handler="jboltTablePageToFirst"
-                           id="billno"
-                           data-title="选择备料单"
-                           data-url="admin/productionMaterial/formD"
-                           readonly
-                           style="background-color: white"
-                    />
-                    <input type="text" class="form-control ml-2" placeholder="现品票扫码"
-                           maxlength="40"
-                           name=""
-                           value=""
-                    />
-                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索
-                    </button>
-                    <button type="reset" class="btn btn-outline-secondary"> 重置
-                    </button>
-                    <button type="submit" class="btn btn-outline-secondary"> 提交备料
-                    </button>
-                </form>
-            </div>
-            <div class="col-sm-auto text-right" style="visibility: hidden">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>材料备料表</h1></div>
+	<div class="col">
+	<form class="form-inline" id="SysMaterialsprepare_form_#(pageId)">
 
-                <button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/productionMaterial/add"
-                        data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增材料备料表"><i
-                        class="fa fa-plus"></i></button>
-                <button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip
-                        data-title="刷新数据"><i class="fa fa-refresh"></i></button>
-            </div>
-        </div>
-    </div>
-    <div class="jbolt_page_content">
-        <!-- 定义JBoltTable使用的数据渲染模板 -->
-        <textarea class="jb_tpl_box" id="SysMaterialsprepare_tpl_#(pageId)">
+<select class="form-control" name="BillType"
+	data-autoload
+	data-url="admin/dictionary/options?key=null"
+	data-select-type="select"
+	data-text="=单据类型;MO 生产订单  SoDeliver销售发货单="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+		<div class="btn-group text-center mx-1">
+			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
+		</div>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/sysMaterialsprepare/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增材料备料表"><i class="fa fa-plus"></i></button>
+	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="SysMaterialsprepare_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.autoid}">
+<tr data-id="${data.AutoID}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.billno}</td>
-<td>${data.cmodocno}</td>
-<td>${data.invcode}</td>
-<td>${data.cinvcode1}</td>
-<td>${data.cinvname1}</td>
-<td>${data.cinvstd}</td>
-<td>${data.cuomname}</td>
-<td>${data.出库仓库}</td>
-<td>${data.出库库区}</td>
-<td>${data.totalqty}</td>
-<td>${data.已备料数量}</td>
-<td>${data.qty}</td>
-<td>${data.可用批次号}</td>
+<td>${data.AutoID}</td>
+<td>${data.OrganizeCode}</td>
+<td>${data.BillNo}</td>
+<td>${data.BillType}</td>
+<td>${data.BillDate}</td>
+<td>${data.AuditPerson}</td>
+<td>${data.AuditDate}</td>
+<td>${data.CreatePerson}</td>
+<td>${data.CreateDate}</td>
+<td>${data.ModifyPerson}</td>
+<td>${data.ModifyDate}</td>
+<td>${data.SourceBillNo}</td>
+<td>${data.SourceBillID}</td>
+<td>
+	<a class="jbolt_table_editbtn" href="admin/sysMaterialsprepare/edit/${data.AutoID}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑材料备料表"><i class="fa fa-edit"></i></a>
+	<a class="jbolt_table_delbtn" href="admin/sysMaterialsprepare/delete/${data.AutoID}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
 </tr>
 {@/each}
 </textarea>
-        <div class="jbolt_table_toolbar" id="SysMaterialsprepare_toolbar_#(pageId)">
-            物料明细
-        </div>
-        <table class="jbolt_table jbolt_main_table  table-center"
-               data-jbolttable
-               data-width="fill"
-               data-height="55%"
-               data-ajax="true"
-               data-conditions-form="SysMaterialsprepare_form_#(pageId)"
-               data-url="admin/sysmaterialspreparedetail/datas?pageSize=10"
-               data-rowtpl="SysMaterialsprepare_tpl_#(pageId)"
-               data-copy-to-excel="false"
-               data-page="SysMaterialsprepare_page"
-               data-column-prepend="1:checkbox:true"
-               data-toolbar="SysMaterialsprepare_toolbar_#(pageId)"
-        >
-            <thead class="fw-normal">
-            <tr>
-                <th data-width="60" data-column="">序号</th>
-                <th data-width="150" data-column="">备料单号</th>
-                <th data-width="150" data-column="">工单号</th>
-                <th data-width="150" data-column="">存货编码</th>
-                <th data-width="150" data-column="">客户部番</th>
-                <th data-width="150" data-column="">部品名称</th>
-                <th data-width="150" data-column="">规格</th>
-                <th data-width="150" data-column="">主计量单位</th>
-                <th data-width="150" data-column="">出库仓库</th>
-                <th data-min-width="150" data-column="">出库库区</th>
-                <th data-width="150" data-column="">需求数量</th>
-                <th data-min-width="150" data-column="">已备料数量</th>
-                <th data-min-width="150" data-column="">扫描数量</th>
-                <th data-min-width="150" data-column="">可用批次号</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        <div style="margin-top: 10px">
-        <textarea class="jb_tpl_box" id="SysMaterialsprepare1_tpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.autoid}">
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.现品票}</td>
-<td>${data.存货编码}</td>
-<td>${data.客户部番}</td>
-<td>${data.部品名称}</td>
-<td>${data.规格}</td>
-<td>${data.主计量单位}</td>
-<td>${data.数量}</td>
-<td>${data.批次号}</td>
-<td>${data.生产日期}</td>
-</tr>
-{@/each}
-</textarea>
-            <div class="jbolt_table_toolbar" id="SysMaterialsprepare1_toolbar_#(pageId)">
-                <div class="row">
+<div class="jbolt_table_toolbar" id="SysMaterialsprepare_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增材料备料表" data-url="admin/sysMaterialsprepare/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑材料备料表" data-check-handler="jboltTableGetCheckedId" data-url="admin/sysMaterialsprepare/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysMaterialsprepare/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
 
-                    <div class="col-auto">
-                        <form class="form-inline" id="SysOtherin_form_#(pageId)">
-                            <div style="margin-right: 30px">
-                                <label>条码明细</label>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <table class="jbolt_table jbolt_main_table  table-center "
-                   data-jbolttable
-                   data-width="fill"
-                   data-height="20%"
-                   data-ajax="true"
-                   data-conditions-form="SysMaterialsprepare_form_#(pageId)"
-                   data-url="admin/productionMaterial/datas?pageSize=5"
-                   data-rowtpl="SysMaterialsprepare1_tpl_#(pageId)"
-                   data-copy-to-excel="false"
-                   data-page="SysMaterialsprepare_page"
-                   data-toolbar="SysMaterialsprepare1_toolbar_#(pageId)"
-            >
-                <thead class="fw-normal">
-                <tr>
-                    <th data-width="60" data-column="">序号</th>
-                    <th data-width="150" data-column="">现品票</th>
-                    <th data-width="150" data-column="">存货编码</th>
-                    <th data-width="150" data-column="">客户部番</th>
-                    <th data-width="150" data-column="">部品名称</th>
-                    <th data-width="150" data-column="">规格</th>
-                    <th data-width="150" data-column="">主计量单位</th>
-                    <th data-width="150" data-column="">数量</th>
-                    <th data-min-width="150" data-column="">批次号</th>
-                    <th data-width="150" data-column="">生产日期</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="SysMaterialsprepare_form_#(pageId)"
+	   data-url="admin/sysMaterialsprepare/datas"
+	   data-rowtpl="SysMaterialsprepare_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="SysMaterialsprepare_page"
+	   data-toolbar="SysMaterialsprepare_toolbar_#(pageId)"
+>
+<thead class="fw-normal" >
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th  data-width="150" data-column="AutoID">AutoID</th>
+	<th  data-width="150" data-column="OrganizeCode">组织代码</th>
+	<th  data-width="150" data-column="BillNo">单号</th>
+	<th  data-width="150" data-column="BillType">单据类型;MO 生产订单  SoDeliver销售发货单</th>
+	<th  data-width="150" data-column="BillDate">单据日期</th>
+	<th  data-width="150" data-column="AuditPerson">审核人</th>
+	<th  data-width="150" data-column="AuditDate">审核日期</th>
+	<th  data-width="150" data-column="CreatePerson">创建人</th>
+	<th  data-min-width="160" data-column="CreateDate">创建时间</th>
+	<th  data-width="150" data-column="ModifyPerson">更新人</th>
+	<th  data-min-width="160" data-column="ModifyDate">更新时间</th>
+	<th  data-width="150" data-column="SourceBillNo">SourceBillNo</th>
+	<th  data-width="150" data-column="SourceBillID">SourceBillID</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
 </div>
 #end
+
 #define js()
 <script type="text/javascript">
 </script>

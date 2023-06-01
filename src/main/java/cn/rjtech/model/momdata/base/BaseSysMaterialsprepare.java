@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 
 /**
  * 材料备料表
@@ -32,10 +32,10 @@ public abstract class BaseSysMaterialsprepare<M extends BaseSysMaterialsprepare<
     public static final String MODIFYPERSON = "ModifyPerson";
     /**更新时间*/
     public static final String MODIFYDATE = "ModifyDate";
-	/**源单号*/
-	public static final String SOURCEBILLNO = "SourceBillNo";
-	/**源单id*/
-	public static final String SOURCEBILLID = "SourceBillID";
+    /***/
+    public static final String SOURCEBILLNO = "SourceBillNo";
+    /***/
+    public static final String SOURCEBILLID = "SourceBillID";
 	/**
 	 * AutoID
 	 */
@@ -223,35 +223,23 @@ public abstract class BaseSysMaterialsprepare<M extends BaseSysMaterialsprepare<
 		return getDate("ModifyDate");
 	}
 
-	/**
-	 * 源单号
-	 */
 	public M setSourceBillNo(java.lang.String SourceBillNo) {
 		set("SourceBillNo", SourceBillNo);
 		return (M)this;
 	}
 
-	/**
-	 * 源单号
-	 */
-	@JBoltField(name="sourcebillno" ,columnName="SourceBillNo",type="String", remark="源单号", required=false, maxLength=30, fixed=0, order=12)
+	@JBoltField(name="sourcebillno" ,columnName="SourceBillNo",type="String", remark="SOURCEBILLNO", required=false, maxLength=50, fixed=0, order=12)
 	@JSONField(name = "sourcebillno")
 	public java.lang.String getSourceBillNo() {
 		return getStr("SourceBillNo");
 	}
 
-	/**
-	 * 源单id
-	 */
 	public M setSourceBillID(java.lang.String SourceBillID) {
 		set("SourceBillID", SourceBillID);
 		return (M)this;
 	}
 
-	/**
-	 * 源单id
-	 */
-	@JBoltField(name="sourcebillid" ,columnName="SourceBillID",type="String", remark="源单id", required=false, maxLength=30, fixed=0, order=13)
+	@JBoltField(name="sourcebillid" ,columnName="SourceBillID",type="String", remark="SOURCEBILLID", required=false, maxLength=50, fixed=0, order=13)
 	@JSONField(name = "sourcebillid")
 	public java.lang.String getSourceBillID() {
 		return getStr("SourceBillID");

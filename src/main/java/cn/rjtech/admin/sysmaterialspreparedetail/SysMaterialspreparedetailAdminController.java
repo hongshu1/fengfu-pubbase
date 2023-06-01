@@ -1,4 +1,4 @@
-package cn.rjtech.admin.sysmaterialsprepare;
+package cn.rjtech.admin.sysmaterialspreparedetail;
 
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -10,21 +10,21 @@ import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.SysMaterialsprepare;
+import cn.rjtech.model.momdata.SysMaterialspreparedetail;
 /**
- * 材料备料表
- * @ClassName: SysMaterialsprepareAdminController
+ * 备料单明细
+ * @ClassName: SysMaterialspreparedetailAdminController
  * @author: 佛山市瑞杰科技有限公司
- * @date: 2023-06-02 00:06
+ * @date: 2023-06-01 23:50
  */
-@CheckPermission(PermissionKey.ADMIN_SYSMATERIALSPREPARE)
+@CheckPermission(PermissionKey.ADMIN_SYSMATERIALSPREPAREDETAIL)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
-@Path(value = "/admin/sysmaterialspreparedetail", viewPath = "/_view/admin/sysmaterialsprepare")
-public class SysMaterialsprepareAdminController extends BaseAdminController {
+@Path(value = "/admin/productionMaterial", viewPath = "/_view/admin/sysmaterialspreparedetail")
+public class SysMaterialspreparedetailAdminController extends BaseAdminController {
 
 	@Inject
-	private SysMaterialsprepareService service;
+	private SysMaterialspreparedetailService service;
    /**
 	* 首页
 	*/
@@ -35,7 +35,7 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("BillType")));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("SourceBillType"), get("State")));
 	}
 
    /**
@@ -48,28 +48,28 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
    /**
 	* 保存
 	*/
-	public void save(SysMaterialsprepare sysMaterialsprepare) {
-		renderJson(service.save(sysMaterialsprepare));
+	public void save(SysMaterialspreparedetail sysMaterialspreparedetail) {
+		renderJson(service.save(sysMaterialspreparedetail));
 	}
 
    /**
 	* 编辑
 	*/
 	public void edit() {
-		SysMaterialsprepare sysMaterialsprepare=service.findById(getLong(0));
-		if(sysMaterialsprepare == null){
+		SysMaterialspreparedetail sysMaterialspreparedetail=service.findById(getLong(0));
+		if(sysMaterialspreparedetail == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("sysMaterialsprepare",sysMaterialsprepare);
+		set("sysMaterialspreparedetail",sysMaterialspreparedetail);
 		render("edit.html");
 	}
 
    /**
 	* 更新
 	*/
-	public void update(SysMaterialsprepare sysMaterialsprepare) {
-		renderJson(service.update(sysMaterialsprepare));
+	public void update(SysMaterialspreparedetail sysMaterialspreparedetail) {
+		renderJson(service.update(sysMaterialspreparedetail));
 	}
 
    /**
