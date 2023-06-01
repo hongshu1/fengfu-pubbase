@@ -1,4 +1,7 @@
 #set(pageId=RandomUtil.random(6))
+#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
+#set(precisionConfig4=JBoltGlobalConfigCache.getConfigValue("precision_config4"))
+#set(precisionConfig5=JBoltGlobalConfigCache.getConfigValue("precision_config5"))
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
@@ -21,7 +24,6 @@
             <div class="card">
                 <div class="card-body">
                     <form onsubmit="return false;" id="WeekOrderM_Form" action="#(action)" method="post">
-
                         #if(weekOrderM.iAutoId??)
                         <input type="hidden" name="weekOrderM.iAutoId" value="#(weekOrderM.iautoid??)"/>
                         #end
@@ -157,7 +159,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">税率</label>
                                     <div class="col-8">
-                                        <input type="text" autocomplete="off" class="form-control" data-rule="money"
+                                        <input type="text" autocomplete="off" class="form-control" data-rule="pnumber;fix<=#(precisionConfig5)"
                                                data-notnull="false"
                                                placeholder="请输入税率" maxlength="40" name="weekOrderM.iTaxRate"
                                                value="#(weekOrderM.iTaxRate??)"/>
@@ -189,8 +191,9 @@
                                     <label class="col-sm-3 col-form-label">汇率</label>
                                     <div class="col-8">
                                         <input type="text" data-with-clearbtn="true" autocomplete="off"
-                                               class="form-control" data-rule="money_4"
+                                               class="form-control" data-rule="pnumber;fix<=#(precisionConfig4)"
                                                data-notnull="false"
+                                               data-filebox=""
                                                placeholder="请输入汇率" maxlength="40" name="weekOrderM.iExchangeRate"
                                                value="#(weekOrderM.iExchangeRate??)"/>
                                     </div>
@@ -241,7 +244,7 @@
 
     <script type="text/template" id="jboltTable_demotpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
+        <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
                 <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
@@ -272,7 +275,8 @@
             <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？"
                     class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除行
             </button>
-
+            <button onclick="checkDetails(this)" class="btn btn-secondary btn-sm">检查明细</button>
+            <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
             <div class="j_upload_file_box"
                  data-name="file"
                  data-btn-class="btn dropdown-item"
@@ -377,7 +381,7 @@
                     header: '存货编码,客户部番,部品名称,规格,销售单位',
                     changeColumns: [{column: "cinvcode", use: "cinvcode"}, {column: "cdefine1", use: "cinvcode1"},
                         {column: "cdefine2", use: "cinvname1"}, {column: "cdefine3", use: "cinvstd"},
-                        {column: "cdefine4", use: "isalesuomid"}, {column: "iInventoryId", use: "iautoid"}]
+                        {column: "cdefine4", use: "isalesuomid"}, {column: "iinventoryid", use: "iautoid"}]
                 },
                 cdefine1: {
                     type: "text",
@@ -398,9 +402,9 @@
                     type: "amount",
                     placeholder: '数量',
                     required: true,
+                    rule: "fix<= #(precisionConfig1)",
                     summary: [{
                         dir: "v",
-                        tofixed: 2,
                         roundtag: "round",
                         removezero: true,
                         formula: "sum"
@@ -452,6 +456,73 @@
             }
         };
         return editableTableOptions;
+    }
+
+    /**
+     * 检查明细
+     */
+    function checkDetails(ele) {
+        var rowDatas = jboltTableGetAllDatas(ele);
+
+        if (rowDatas && rowDatas.length > 0) {
+            $.each(rowDatas, function (idx, row) {
+
+                if (row.iinventoryid) {
+                    removeClass(idx);
+                }
+            });
+        } else {
+            LayerMsgBox.alert('请维护导入数据!', 2);
+        }
+    }
+
+    function removeClass(idx) {
+        console.log(idx);
+        var $tr = $('tr[data-index="' + idx + '"]');
+        $tr.removeAttr('tooltip');
+        $tr.removeAttr('title');
+        $tr.removeClass('table-danger');
+    }
+
+    /**
+     * 保存清空错误数据
+     * @param ele
+     */
+    function saveData(ele) {
+        var rowDatas = jboltTableGetAllDatas(ele);
+        removeEmptyRow(ele, rowDatas);
+        jboltTableSubmit(ele);
+    }
+
+    function removeEmptyRow(ele, datas) {
+        var count = 0;
+        $.each(datas, function (idx, row) {
+            if (!row.iiventoryid) {
+                count++;
+            }
+        });
+
+        for (var i = 0; i < count; i++) {
+            delRow(ele);
+        }
+    }
+
+    function delRow(ele) {
+        var datas = jboltTableGetAllDatas(ele);
+        if (datas && datas.length > 0) {
+            var jboltTable = getJBoltTable(ele)
+            var table = getJBoltTableInst(jboltTable);
+
+            for (var i = 0; i < datas.length; i++) {
+                var data = datas[i];
+                if (!data.iinventoryid) {
+                    table.me.removeRow(table, i);
+                    break;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     function uploadHandler(uploader, type, fileInput, res) {
@@ -549,8 +620,7 @@
     }
 
     function submitThisForm() {
-        console.log("......执行");
-        jboltTableSubmit("#jbolt_Table_#(pageId)");
+        $('#save_btn_#(pageId)').click();
     }
 
     var $approve = $('#approve');

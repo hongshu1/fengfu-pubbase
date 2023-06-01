@@ -214,7 +214,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
 
         SysPureceive sysotherin = jBoltTable.getFormModel(SysPureceive.class, "sysPureceive");
-        String whcode = jBoltTable.getForm().getString("Whcode");
         // 获取当前用户信息？
         User user = JBoltUserKit.getUser();
         Date now = new Date();
@@ -283,7 +282,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
 			// sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
-            sysPureceivedetail.setWhcode(row.getStr("whcode"));
+//            sysPureceivedetail.setWhcode(row.getStr("whcode"));
+            sysPureceivedetail.setVenCode(row.getStr("vencode"));
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
@@ -319,7 +319,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
 			// sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
-            sysPureceivedetail.setWhcode(row.getStr("whcode"));
+//            sysPureceivedetail.setWhcode(row.getStr("whcode"));
+            sysPureceivedetail.setVenCode(row.getStr("vencode"));
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
@@ -444,6 +445,19 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode,String vencode) {
         //.set("vencode",vencode)
         return dbTemplate("syspureceive.getBarcodeDatas",Kv.by("q", q).set("limit",limit).set("orgCode",orgCode).set("vencode",vencode)).find();
+    }
+
+    /**
+     * 获取条码列表
+     * 通过关键字匹配
+     * autocomplete组件使用
+     */
+    public Record barcode(Kv kv) {
+        Record first = dbTemplate("syspureceive.barcode", kv).findFirst();
+        if(null == first){
+            ValidationUtils.assertNull(false, "条码数据有误");
+        }
+        return first;
     }
 
 

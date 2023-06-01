@@ -1494,12 +1494,12 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		for (int i = 0; i < scheduDateList.size(); i++) {
 			String date = scheduDateList.get(i);
 			String month = date.substring(0,7);
-			BigDecimal qty = dateQtyMap.get(date);
+			BigDecimal qty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
 			if (monthQtyMap.containsKey(month)){
 				BigDecimal monthSum = monthQtyMap.get(month);
-				monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+				monthQtyMap.put(month,monthSum.add(qty));
 			}else {
-				monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+				monthQtyMap.put(month,qty);
 			}
 			int seq = i + 1;
 			int day = Integer.parseInt(date.substring(8));

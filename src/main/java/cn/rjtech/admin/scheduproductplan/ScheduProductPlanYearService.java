@@ -1,5 +1,6 @@
 package cn.rjtech.admin.scheduproductplan;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -29,6 +30,8 @@ import org.apache.commons.lang.StringUtils;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 生产计划排程 Service
@@ -968,12 +971,12 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
     //-----------------------------------------------------------------年度生产计划汇总-----------------------------------------------
 
 
-    public Page<ScheduProductYearViewDTO> getApsYearPlanSumPage(int pageNumber, int pageSize, Kv kv) {
+    public List<ScheduProductYearViewDTO> getApsYearPlanSumPage(int pageNumber, int pageSize, Kv kv) {
         List<ScheduProductYearViewDTO> scheduProductPlanYearList = new ArrayList<>();
 
         String startYear = kv.getStr("startyear");
         if (notOk(startYear)){
-            ValidationUtils.isTrue(false,"查询条件不能为空!");
+            ValidationUtils.isTrue(false,"查询年份不能为空!");
             //throw new RuntimeException("该客户无订单计划！");
         }
 
@@ -981,8 +984,8 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
         pageSize = pageSize * 15;
 
         kv.set("endyear",endYear);
-        Page<Record> recordPage = dbTemplate("scheduproductplan.getApsYearPlanSumList",kv).paginate(pageNumber,pageSize);
-        List<Record> apsYearPlanQtyList = recordPage.getList();
+        List<Record> recordPage = dbTemplate("scheduproductplan.getApsYearPlanSumList",kv).find();
+        List<Record> apsYearPlanQtyList = recordPage;
 
         try {
             //key:物料id+产线id   value:List<Record>
@@ -1049,16 +1052,9 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
                 }
             }
         }catch (Exception e){
-            throw new RuntimeException("获取年度生产计划汇总出差！"+e.getMessage());
+            throw new RuntimeException("获取年度生产计划汇总出错！"+e.getMessage());
         }
-        Page<ScheduProductYearViewDTO> yearViewDTOPage = new Page<>();
-        yearViewDTOPage.setPageNumber(recordPage.getPageNumber());
-        yearViewDTOPage.setPageSize(recordPage.getPageSize() / 15);
-        yearViewDTOPage.setTotalPage(recordPage.getTotalPage());
-        yearViewDTOPage.setTotalRow(recordPage.getTotalRow() /15);
-        yearViewDTOPage.setList(scheduProductPlanYearList);
-
-        return yearViewDTOPage;
+        return scheduProductPlanYearList;
     }
 
 

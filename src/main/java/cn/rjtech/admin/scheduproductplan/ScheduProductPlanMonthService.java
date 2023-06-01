@@ -688,6 +688,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             weekschedule.setIsLocked(false);
         }
 
+        //TODO:根据排产纪录id查询已排产过物料纪录
+        List<Record> getDetailsList = findRecords("SELECT iAutoId,iInventoryId FROM Aps_WeekScheduleDetails WHERE iWeekScheduleId = ? ",iWeekScheduleId);
+        //key:invId   value:iWeekScheduleDid
+        Map<Long,Long> invScheduleDidMap = new HashMap<>();
+        for (Record record : getDetailsList){
+            invScheduleDidMap.put(record.getLong("iInventoryId"),record.getLong("iAutoId"));
+        }
+
         //排产物料明细表
         List<ApsWeekscheduledetails> detailsList = new ArrayList<>();
         //排产数量明细表
@@ -802,23 +810,29 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             //循环物料
             for (String inv : invList){
                 Record info = invInfoMap.get(inv);
+                Long invId = info.getLong("invId");
 
-                Long iWeekScheduleDid = JBoltSnowflakeKit.me.nextId();
-                ApsWeekscheduledetails scheduleDetails = new ApsWeekscheduledetails();
-                scheduleDetails.setIOrgId(orgId);
-                scheduleDetails.setCOrgCode(orgCode);
-                scheduleDetails.setCOrgName(orgName);
-                scheduleDetails.setICreateBy(userId);
-                scheduleDetails.setCCreateName(userName);
-                scheduleDetails.setDCreateTime(newDate);
-                scheduleDetails.setIUpdateBy(userId);
-                scheduleDetails.setCUpdateName(userName);
-                scheduleDetails.setDUpdateTime(newDate);
-                scheduleDetails.setIAutoId(iWeekScheduleDid);
-                scheduleDetails.setIWeekScheduleId(iWeekScheduleId);
-                scheduleDetails.setILevel(level);
-                scheduleDetails.setIInventoryId(info.getLong("invId"));
-                detailsList.add(scheduleDetails);
+                Long iWeekScheduleDid;
+                if (invScheduleDidMap.containsKey(invId)){
+                    iWeekScheduleDid = invScheduleDidMap.get(invId);
+                }else {
+                    iWeekScheduleDid = JBoltSnowflakeKit.me.nextId();
+                    ApsWeekscheduledetails scheduleDetails = new ApsWeekscheduledetails();
+                    scheduleDetails.setIOrgId(orgId);
+                    scheduleDetails.setCOrgCode(orgCode);
+                    scheduleDetails.setCOrgName(orgName);
+                    scheduleDetails.setICreateBy(userId);
+                    scheduleDetails.setCCreateName(userName);
+                    scheduleDetails.setDCreateTime(newDate);
+                    scheduleDetails.setIUpdateBy(userId);
+                    scheduleDetails.setCUpdateName(userName);
+                    scheduleDetails.setDUpdateTime(newDate);
+                    scheduleDetails.setIAutoId(iWeekScheduleDid);
+                    scheduleDetails.setIWeekScheduleId(iWeekScheduleId);
+                    scheduleDetails.setILevel(level);
+                    scheduleDetails.setIInventoryId(invId);
+                    detailsList.add(scheduleDetails);
+                }
 
                 int[] invPlan = planMap.get(inv);
                 int[] invPlan1S = invPlanMap1S.get(inv);
@@ -1959,12 +1973,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     String date = scheduDateList.get(i);
                     String month = date.substring(0,7);
-                    BigDecimal qty = dateQtyMap.get(date);
+                    BigDecimal qty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
                     if (monthQtyMap.containsKey(month)){
                         BigDecimal monthSum = monthQtyMap.get(month);
-                        monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                        monthQtyMap.put(month,monthSum.add(qty));
                     }else {
-                        monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                        monthQtyMap.put(month,qty);
                     }
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
@@ -2102,21 +2116,22 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 planRecord.set("cWorkName",invInfo.getStr("cWorkName"));
 
                 //key:yyyy-MM   value:qtySum
-                Map<String,BigDecimal> monthQtyMap = new LinkedHashMap<>();
+                Map<String,Integer> monthQtyMap = new LinkedHashMap<>();
                 int monthCount = 1;
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     String date = scheduDateList.get(i);
                     String month = date.substring(0,7);
-                    BigDecimal qty = dateQtyMap.get(date);
-                    if (qty != null && (qty.compareTo(BigDecimal.ZERO)) == 1){
-                        qty = mergeRateSum;
+                    BigDecimal bigqty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
+                    if ((bigqty.compareTo(BigDecimal.ZERO)) == 1){
+                        bigqty = mergeRateSum;
                     }
+                    int qty = bigqty.intValue();
 
                     if (monthQtyMap.containsKey(month)){
-                        BigDecimal monthSum = monthQtyMap.get(month);
-                        monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                        int monthSum = monthQtyMap.get(month);
+                        monthQtyMap.put(month,monthSum + qty);
                     }else {
-                        monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                        monthQtyMap.put(month,qty);
                     }
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
@@ -2460,12 +2475,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         for (int i = 0; i < scheduDateList.size(); i++) {
             String date = scheduDateList.get(i);
             String month = date.substring(0,7);
-            BigDecimal qty = dateQtyMap.get(date);
+            BigDecimal qty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
             if (monthQtyMap.containsKey(month)){
                 BigDecimal monthSum = monthQtyMap.get(month);
-                monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                monthQtyMap.put(month,monthSum.add(qty));
             }else {
-                monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                monthQtyMap.put(month,qty);
             }
             int seq = i + 1;
             int day = Integer.parseInt(date.substring(8));

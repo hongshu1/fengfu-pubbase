@@ -6,8 +6,11 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.http.HttpUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
+import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
@@ -28,8 +31,10 @@ import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.HttpApiUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.beust.jcommander.ParameterException;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -672,6 +677,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		purchaseOrderM.setDSubmitTime(date);
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
 		purchaseOrderM.update();
+		pushPurchase(id);
 		return SUCCESS;
 	}
 	
@@ -1011,5 +1017,58 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		if (CollUtil.isNotEmpty(purchaseOrderQtyList)){
 			purchaseorderdQtyService.batchSave(purchaseOrderQtyList, 500);
 		}
+	}
+
+	/**
+	 * U8推单
+	 * @param iautoid
+	 * @return
+	 */
+	public Map<String, String> pushPurchase(Long iautoid){
+		List<Record> orderList = dbTemplate("purchaseorderm.findBycOrder", Kv.by("iautoid",iautoid)).find();
+		Map<String,String> map =new HashMap<>();
+			JSONArray jsonArray = new JSONArray();
+			for (Record order : orderList) {
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("DocNo", order.get("DocNo"));
+				jsonObject.put("cvencode", order.get("cvencode"));
+				jsonObject.put("cmaker", order.get("cmaker"));
+				jsonObject.put("dDate", order.get("dDate"));
+				jsonObject.put("cPersonCode", order.get("cPersonCode"));
+				jsonObject.put("cBusType", order.get("cBusType"));
+				jsonObject.put("cPTCode", order.get("cPTCode"));
+				jsonObject.put("iExchRate", order.get("iExchRate"));
+				jsonObject.put("iTaxRate", order.get("iTaxRate"));
+				jsonObject.put("cexch_name", order.get("cexch_name"));
+				jsonObject.put("cmemo", order.get("cmemo"));
+				jsonObject.put("inum", order.get("inum"));
+				jsonObject.put("iQuantity", order.get("iQuantity"));
+				jsonObject.put("cInvCode", order.get("cInvCode"));
+				jsonObject.put("cInvName", order.get("cInvName"));
+				jsonObject.put("dPlanDate", order.get("dPlanDate"));
+				jsonObject.put("iQuotedPrice", order.get("iQuotedPrice"));
+				jsonObject.put("irowno", order.get("irowno"));
+				jsonObject.put("KL", order.get("KL"));
+				jsonObject.put("iNatDisCount", order.get("iNatDisCount"));
+				// 将其他字段也添加到 jsonObject 中
+				jsonArray.add(jsonObject);
+			}
+			JSONObject params = new JSONObject();
+			params.put("data",jsonArray);
+			String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/PODocAdd?dbname=U8Context", params.toString());
+			JSONObject jsonObject = JSONObject.parseObject(result);
+			String remark="";
+			if(jsonObject.getString("status").equals("S")){
+				remark=jsonObject.getString("remark").split(":")[2];
+				map.put("remark",remark);
+			}else {
+				remark=jsonObject.getString("remark");
+				map.put("remark",remark);
+			}
+			map.put("json",params.toString());
+			return map;
+	}
+	public List<Record> findByMidxlxs(){
+		return dbTemplate("purchaseorderm.findBycOrderNo").find();
 	}
 }

@@ -1,7 +1,11 @@
 package cn.rjtech.admin.purchaseorderm;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt._admin.hiprint.HiprintTplService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -24,13 +28,17 @@ import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -66,11 +74,14 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     @Inject
     private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
     @Inject
+    private HiprintTplService tplService;
+
+    @Inject
     private InventoryChangeService inventoryChangeService;
     @Inject
     private ExchService exchService;
-    
-    
+
+
     /**
      * 首页
      */
@@ -102,18 +113,18 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         record.set(PurchaseOrderM.IVENDORID, vendor.getIAutoId());
         record.set(PurchaseOrderM.DBEGINDATE, beginDate);
         record.set(PurchaseOrderM.DENDDATE, endDate);
-    
-        if (ObjectUtil.isNotNull(vendor.getITaxRate())){
+
+        if (ObjectUtil.isNotNull(vendor.getITaxRate())) {
             record.set(PurchaseOrderM.ITAXRATE, vendor.getITaxRate().stripTrailingZeros().stripTrailingZeros());
         }
-        
+
         record.set(PurchaseOrderM.CCURRENCY, vendor.getCCurrency());
         Exch exch = exchService.getNameByLatestExch(getOrgId(), vendor.getCCurrency());
         // 汇率
-        if (ObjectUtil.isNotNull(exch)){
+        if (ObjectUtil.isNotNull(exch)) {
             record.set(PurchaseOrderM.IEXCHANGERATE, exch.getNflat());
         }
-        
+
         record.set(PurchaseOrderM.IDUTYUSERID, vendor.getIDutyPersonId());
         Person person = personService.findById(vendor.getIDutyPersonId());
         if (ObjectUtil.isNotNull(person)) {
@@ -122,9 +133,9 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         record.set(PurchaseOrderM.IDEPARTMENTID, vendor.getCVenDepart());
         // 带出供应商下的业务员，币种，税率
         set("purchaseOrderM", record);
-    
+
         set(Vendor.CVENNAME, vendor.getCVenName());
-        if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == iSourceType){
+        if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == iSourceType) {
             render("blank_add.html");
             return;
         }
@@ -139,11 +150,11 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         ValidationUtils.notBlank(beginDate, "请选择日期范围");
         ValidationUtils.notBlank(endDate, "请选择日期范围");
         ValidationUtils.notBlank(iVendorId, "请选择供应商");
-     
+
         ValidationUtils.notNull(iSourceType, "缺少来源类型");
         SourceTypeEnum sourceTypeEnum = SourceTypeEnum.toEnum(iSourceType);
         ValidationUtils.notNull(sourceTypeEnum, "未知来源类型");
-        if (SourceTypeEnum.MATERIAL_PLAN_TYPE.getValue() == iSourceType){
+        if (SourceTypeEnum.MATERIAL_PLAN_TYPE.getValue() == iSourceType) {
             List<Record> list = demandPlanMService.getVendorDateList(beginDate, endDate, iVendorId, processType);
             ValidationUtils.notEmpty(list, "该时间范围未找到该供应商所需求物料");
         }
@@ -177,15 +188,15 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         if (StrUtil.isNotBlank(isView)) {
             set("isView", 1);
         }
-        if (ObjectUtil.isNotNull(purchaseOrderM.getITaxRate())){
-            purchaseOrderM.setITaxRate( purchaseOrderM.getITaxRate().stripTrailingZeros());
+        if (ObjectUtil.isNotNull(purchaseOrderM.getITaxRate())) {
+            purchaseOrderM.setITaxRate(purchaseOrderM.getITaxRate().stripTrailingZeros());
         }
-        if (ObjectUtil.isNotNull(purchaseOrderM.getIExchangeRate())){
-            purchaseOrderM.setIExchangeRate( purchaseOrderM.getIExchangeRate().stripTrailingZeros());
+        if (ObjectUtil.isNotNull(purchaseOrderM.getIExchangeRate())) {
+            purchaseOrderM.setIExchangeRate(purchaseOrderM.getIExchangeRate().stripTrailingZeros());
         }
         set("purchaseOrderM", purchaseOrderM);
         setAttrs(service.getDateMap(purchaseOrderM));
-        if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == purchaseOrderM.getIType()){
+        if (SourceTypeEnum.BLANK_PURCHASE_TYPE.getValue() == purchaseOrderM.getIType()) {
             render("blank_edit.html");
             return;
         }
@@ -316,7 +327,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     public void batchDel(@Para(value = "ids") String ids) {
         renderJsonData(service.batchDel(ids));
     }
-    
+
     public void findPurchaseOrderDBatch() {
         renderJsonData(purchaseOrderDBatchService.findByPurchaseOrderMId(getPageNumber(), getPageSize(), getKv()));
     }
@@ -336,25 +347,104 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     public void findPurchaseOrderDBatchVersion() {
         renderJsonData(purchaseOrderDBatchVersionService.findByPurchaseOrderMid(getPageNumber(), getPageSize(), getKv()));
     }
-    
-    public void saveSubmit(){
+
+    public void saveSubmit() {
         renderJson(service.saveSubmit(getJBoltTable()));
     }
-    
-    public void findPurchaseOrderD(@Para(value = "purchaseOrderMId") Long purchaseOrderMId){
+
+    public void findPurchaseOrderD(@Para(value = "purchaseOrderMId") Long purchaseOrderMId) {
         renderJsonData(service.findPurchaseOrderD(purchaseOrderMId));
     }
-    
-    public void inventory_dialog_index(){
+
+    public void inventory_dialog_index() {
         keepPara();
         render("inventory_dialog_index.html");
     }
-    
+
     /**
      * 默认给1-100个数据
      */
     public void inventoryPage() {
         renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
     }
-    
+
+
+    public void findPrintPurchaseorderm() {
+//          获取模板
+//        HiprintTpl hiprintTpl= tplService.getCacheByKey("109607");
+//        hiprintTpl.getContent();
+//        set("hiprintTpl",hiprintTpl.getContent());
+//         Kv kv = getKv();
+        Page<Record> byPurchaseOrderMId = purchaseOrderDBatchService.findByPurchaseOrderMId(getPageNumber(), getPageSize(), getKv());
+        renderJsonData(byPurchaseOrderMId.getList().get(1));
+    }
+
+    public void pushPurchase(@Para(value = "iautoid") Long iautoid) {
+        renderJsonData(service.pushPurchase(iautoid));
+    }
+
+    /**
+     * 导出数据
+     */
+    @SuppressWarnings("unchecked")
+    public void purchaseordermOne() throws Exception {
+        List<Record> rowDatas = service.findByMidxlxs();
+
+        List<String> sheetNames = new ArrayList<>();
+        // 改用List<List<Record>>来表示多个数据集合
+        List<Kv> rows = new ArrayList<>();
+
+        List<Record> leftDatas = new ArrayList<>();
+        List<Record> rightDatas = new ArrayList<>();
+
+        int counter = 0;
+        int i = 0;
+
+        for (Record row : rowDatas) {
+
+            if (counter < 15) {
+                leftDatas.add(row);
+            } else {
+                rightDatas.add(row);
+            }
+
+            counter++;
+
+            if (counter == 30) {
+                String sheetName = "订货清单" + (i + 1);
+                sheetNames.add(sheetName);
+                rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
+
+                leftDatas = new ArrayList<>();
+                rightDatas = new ArrayList<>();
+                counter = 0;
+                i++;
+            }
+
+        }
+
+        // 如果 rows 的数量不是 30 的整数倍，将剩余的数据添加到 datas 中
+        Kv remainData = Kv.create();
+
+        if (CollUtil.isNotEmpty(leftDatas)) {
+            remainData.set("leftDatas", leftDatas);
+        }
+        if (CollUtil.isNotEmpty(rightDatas)) {
+            remainData.set("rightDatas", rightDatas);
+        }
+
+        if (MapUtil.isNotEmpty(remainData)) {
+            rows.add(remainData);
+        }
+
+        LOG.info(JSON.toJSONString(rows));
+
+        Kv data = Kv.by("rows", rows)
+                .set("sheetNames", sheetNames);
+
+//        renderJxlsToPdf("purchaseOrderDBatch.xlsx", data, "订货清单.pdf");
+        renderJxls("purchaseOrderDBatch.xlsx", data, String.format("订货清单_%s.xlsx", DateUtil.today()));
+    }
+
 }
+

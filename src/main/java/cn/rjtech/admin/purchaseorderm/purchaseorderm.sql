@@ -56,3 +56,54 @@ WHERE
 	#end
  order by a.dCreateTime desc
 #end
+
+#sql("findBycOrder")
+   SELECT
+ orderm.cOrderNo DocNo,
+ ven.cVenCode cvencode,
+ orderm.cCreateName cmaker,
+ orderm.dOrderDate dDate,
+ '' cPersonCode,
+ '普通采购' cBusType,
+ '普通销售' cPTCode,
+ 	'' inum,
+  orderm.cCurrency cexch_name,
+	orderm.iExchangeRate iExchRate,
+	orderm.iTaxRate iTaxRate,
+	orderm.cMemo cmemo,
+	inv.cInvCode cInvCode,
+	inv.cInvName cInvName,
+	Qty.iQty iQuantity,
+	 CONCAT(Qty.iYear,'-',Qty.iMonth,'-',Qty.iMonth)dPlanDate,
+		0 iQuotedPrice,
+	 (ROW_NUMBER() OVER (ORDER BY Qty.iYear, Qty.iMonth, Qty.iDate) - 1) * 10 + 10  irowno,
+	100 KL,
+	0 iNatDisCount
+FROM
+ PS_PurchaseOrderD_Qty qty
+ INNER JOIN PS_PurchaseOrderD orderd ON orderd.iAutoId = qty.iPurchaseOrderDid
+ INNER JOIN PS_PurchaseOrderM orderm ON orderm.iAutoId = orderd.iPurchaseOrderMid
+ INNER JOIN Bd_Inventory inv ON inv.iAutoId = orderd.iInventoryId
+ LEFT JOIN Bd_Vendor ven ON ven.iAutoId = orderm.iVendorId
+ LEFT JOIN bd_person per ON per.iAutoId= orderm.iDutyUserId
+WHERE
+ orderm.IAUTOID = #para(iautoid)
+ ORDER BY Qty.iYear, Qty.iMonth, Qty.iDate
+#end
+
+
+#sql("findBycOrderNo")
+SELECT
+	ROW_NUMBER() OVER (ORDER BY inv.cInvCode) AS SequenceNumber,
+	CONCAT(a.cBarcode,'-',cVersion)cBarcode,
+	inv.cInvCode1,
+	dPlanDate,
+	iQty
+FROM
+	PS_PurchaseOrderDBatch a
+	INNER JOIN PS_PurchaseOrderD d ON d.iAutoId = a.iPurchaseOrderDid
+	INNER JOIN Bd_Inventory inv ON inv.iAutoId = a.iinventoryId
+	INNER JOIN PS_PurchaseOrderM M ON M.iAutoId=d.iPurchaseOrderMid
+WHERE
+	d.isDeleted = 0
+#end

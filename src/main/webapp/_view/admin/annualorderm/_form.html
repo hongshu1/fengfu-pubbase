@@ -1,5 +1,6 @@
 #set(pageId=RandomUtil.random(6))
 #set(iYear=DateUtil.getYear())
+#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
@@ -429,9 +430,10 @@
                 iqty1: {
 					type:"amount",
 					placeholder:'数量',
+                    rule: "fix<= #(precisionConfig1)",
 					summary:[{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
@@ -440,9 +442,10 @@
 				iqty2: {
 					type:"amount",
 					placeholder:'数量',
+                    rule: "fix<= #(precisionConfig1)",
 					summary:[{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
@@ -451,9 +454,10 @@
 				iqty3: {
 					type:"amount",
 					placeholder:'数量',
+                    rule: "fix<= #(precisionConfig1)",
 					summary:[{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
@@ -462,9 +466,10 @@
 				iqty4: {
 					type:"amount",
 					placeholder:'数量',
+                    rule: "fix<= #(precisionConfig1)",
 					summary:[{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
@@ -473,9 +478,10 @@
 				iqty5: {
 					type:"amount",
 					placeholder:'数量',
+                    rule: "fix<= #(precisionConfig1)",
 					summary:[{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
@@ -484,9 +490,10 @@
 				iqty6: {
 					type:"amount",
 					placeholder:'数量',
+                    rule: "fix<= #(precisionConfig1)",
 					summary:[{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
@@ -495,9 +502,10 @@
 				iqty7: {
 					type:"amount",
 					placeholder:'数量',
+                    rule: "fix<= #(precisionConfig1)",
 					summary:[{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
@@ -506,9 +514,10 @@
 				iqty8: {
 					type:"amount",
 					placeholder:'数量',
+                    rule: "fix<= #(precisionConfig1)",
 					summary:[{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
@@ -517,9 +526,10 @@
 				iqty9: {
 					type:"amount",
 					placeholder:'数量',
+                    rule: "fix<= #(precisionConfig1)",
 					summary:[{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
@@ -528,9 +538,10 @@
 				iqty10: {
 					type:"amount",
 					placeholder:'数量',
+                    rule: "fix<= #(precisionConfig1)",
 					summary:[{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
@@ -539,9 +550,10 @@
 				iqty11: {
 					type:"amount",
 					placeholder:'数量',
+                    rule: "fix<= #(precisionConfig1)",
 					summary:[{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
@@ -550,9 +562,10 @@
 				iqty12: {
 					type:"amount",
 					placeholder:'数量',
+                    rule: "fix<= #(precisionConfig1)",
 					summary:[{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
@@ -561,13 +574,13 @@
 				iqtytotal: {
 					summary:[{
                         dir:"h",
-                        tofixed:2,
+                        tofixed: #(precisionConfig1),
                         roundtag:"round",
                         removezero:true,
                         formula:"iqty1+iqty2+iqty3+iqty4+iqty5+iqty6+iqty7+iqty8+iqty9+iqty10+iqty11+iqty12"
                     },{
 						dir:"v",
-						tofixed:2,
+						tofixed: #(precisionConfig1),
 						roundtag:"round",
 						removezero:true,
 						formula:"sum"
