@@ -283,6 +283,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
 			// sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
 //            sysPureceivedetail.setWhcode(row.getStr("whcode"));
+            sysPureceivedetail.setVenCode(row.getStr("vencode"));
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
@@ -319,6 +320,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
 			// sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
 //            sysPureceivedetail.setWhcode(row.getStr("whcode"));
+            sysPureceivedetail.setVenCode(row.getStr("vencode"));
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
