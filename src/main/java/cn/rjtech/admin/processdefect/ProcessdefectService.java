@@ -390,7 +390,7 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 	 * 获取制造工单信息
 	 */
 	public List<Record> OneMaterialTitle(String iissueid){
-		return dbTemplate("ProcessDefect.OneMaterialTitle", Kv.by("iissueid", iissueid)).find();
+		return dbTemplate("processdefect.OneMaterialTitle", Kv.by("iissueid", iissueid)).find();
 	}
 
 	//API制程异常品主页查询
