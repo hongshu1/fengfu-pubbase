@@ -1,5 +1,6 @@
 #sql("paginateAdminDatas")
 SELECT co.*,
+       c.ccuscode,
        c.cCusName,
        w.cwhname,
        d.cdepname,
