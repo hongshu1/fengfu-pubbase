@@ -27,6 +27,7 @@ import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionServ
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.admin.purchaseorderref.PurchaseOrderRefService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
+import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
@@ -676,8 +677,12 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		purchaseOrderM.setDAuditTime(date);
 		purchaseOrderM.setDSubmitTime(date);
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+		Map<String, String> stringStringMap = pushPurchase(id);
+		purchaseOrderM.setCDocNo(stringStringMap.get("remark"));
+		purchaseOrderM.setIPushTo(PushToTypeEnum.U8.getValue());
 		purchaseOrderM.update();
-		pushPurchase(id);
+
+
 		return SUCCESS;
 	}
 	
@@ -1055,20 +1060,25 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			}
 			JSONObject params = new JSONObject();
 			params.put("data",jsonArray);
-			String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/PODocAdd?dbname=U8Context", params.toString());
-			JSONObject jsonObject = JSONObject.parseObject(result);
-			String remark="";
-			if(jsonObject.getString("status").equals("S")){
-				remark=jsonObject.getString("remark").split(":")[2];
+			tx(() -> {
+				String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/PODocAdd?dbname=U8Context", params.toString());
+				JSONObject jsonObject = JSONObject.parseObject(result);
+				String remark=jsonObject.getString("remark");
+				if(!jsonObject.getString("status").equals("S")){
+					ValidationUtils.error(remark);
+				}
 				map.put("remark",remark);
-			}else {
-				remark=jsonObject.getString("remark");
-				map.put("remark",remark);
-			}
-			map.put("json",params.toString());
+				map.put("json",params.toString());
+				return true;
+			});
 			return map;
 	}
-	public List<Record> findByMidxlxs(){
-		return dbTemplate("purchaseorderm.findBycOrderNo").find();
+	public List<Record> findByMidxlxs(Long iautoid){
+		return dbTemplate("purchaseorderm.findBycOrderNo",Kv.by("iautoid",iautoid)).find();
+	}
+
+	public List<Record> findByBarcode(Long iautoid){
+		return  dbTemplate("purchaseorderm.findByBarcodeOnOrder",Kv.by("iautoid",iautoid)).find();
+
 	}
 }
