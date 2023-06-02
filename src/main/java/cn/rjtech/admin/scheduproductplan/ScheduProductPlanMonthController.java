@@ -1,7 +1,6 @@
 package cn.rjtech.admin.scheduproductplan;
 
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -15,21 +14,14 @@ import cn.rjtech.model.momdata.ApsAnnualplanm;
 import cn.rjtech.model.momdata.ApsWeekschedule;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
-import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONException;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.HttpKit;
-import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
@@ -236,13 +228,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
     /**
      * 保存层级
      */
-    public void saveLevel() throws ServletException, IOException {
-        HttpServletRequest request = getRequest();
-        System.out.println(request.getHeader("jsonArrar"));
-
-
-
-
+    public void saveLevel() {
         renderJson(service.saveLevel(getKv()));
     }
 
