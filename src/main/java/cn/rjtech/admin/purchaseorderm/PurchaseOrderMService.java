@@ -27,6 +27,7 @@ import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionServ
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.admin.purchaseorderref.PurchaseOrderRefService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
+import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
@@ -128,6 +129,11 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			}
 			if (purchaseBusinessTypeMap.containsKey(iBusType)){
 				record.set(PurchaseOrderM.BUSTYPETEXT, purchaseBusinessTypeMap.get(iBusType).getName());
+			}
+			Integer type = record.getInt(PurchaseOrderM.ITYPE);
+			SourceTypeEnum sourceTypeEnum = SourceTypeEnum.toEnum(type);
+			if (ObjectUtil.isNotNull(sourceTypeEnum)){
+				record.set(PurchaseOrderM.TYPESTR, sourceTypeEnum.getText());
 			}
 		}
 	}
@@ -498,7 +504,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		// 校验采购合同号是否存在
 		Integer count = findOderNoIsNotExists(purchaseOrderM.getCOrderNo());
 		ValidationUtils.isTrue(ObjectUtil.isEmpty(count) || count == 0, "采购订单号已存在");
-		
+		int seq = 0;
 		for (Long inventoryId : invTableMap.keySet()){
 			// 记录供应商地址及备注
 			JSONObject invJsonObject = invTableMap.get(inventoryId);
@@ -522,7 +528,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			
 			// 创建采购订单明细数量
 			JSONArray purchaseOrderdQtyJsonArray = dataJsonObject.getJSONArray(PurchaseOrderD.PURCHASEORDERD_QTY_LIST.toLowerCase());
-			List<PurchaseorderdQty> createPurchaseOrderdQtyList = purchaseorderdQtyService.getPurchaseorderdQty(purchaseOrderDId, purchaseOrderdQtyJsonArray);
+			List<PurchaseorderdQty> createPurchaseOrderdQtyList = purchaseorderdQtyService.getPurchaseorderdQty(purchaseOrderDId, purchaseOrderdQtyJsonArray, seq);
 			
 			// 创建采购订单与到货计划关联
 			JSONArray purchaseOrderRefJsonArray = dataJsonObject.getJSONArray(PurchaseOrderM.PURCHASEORDERREFLIST.toLowerCase());
@@ -676,8 +682,12 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		purchaseOrderM.setDAuditTime(date);
 		purchaseOrderM.setDSubmitTime(date);
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+		Map<String, String> stringStringMap = pushPurchase(id);
+		purchaseOrderM.setCDocNo(stringStringMap.get("remark"));
+		purchaseOrderM.setIPushTo(PushToTypeEnum.U8.getValue());
 		purchaseOrderM.update();
-		pushPurchase(id);
+
+
 		return SUCCESS;
 	}
 	
@@ -934,7 +944,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		List<Long> vendorAdIds = recordList.stream().map(record -> record.getLong(PurchaseOrderD.IVENDORADDRID)).collect(Collectors.toList());
 		List<VendorAddr> vendorAddrList = vendorAddrService.findByIds(vendorAdIds);
 		Map<Long, VendorAddr> vendorAddrMap = vendorAddrList.stream().collect(Collectors.toMap(VendorAddr::getIAutoId, vendorAddr -> vendorAddr));
-		
+		int seq = 0;
 		for (Record record : recordList){
 			
 			String isPresentStr = record.getStr(PurchaseOrderD.ISPRESENT);
@@ -972,9 +982,11 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 					break;
 			}*/
 			boolean flag = false;
+			
 			String[] columnNames = record.getColumnNames();
 			for (String columnName : columnNames){
 				if (columnName.contains("日")){
+					seq+=10;
 					DateTime dateTime = DateUtil.parseDate(columnName);
 					String yearStr = DateUtil.format(dateTime, DatePattern.NORM_YEAR_PATTERN);
 					String monthStr = DateUtil.format(dateTime, "MM");
@@ -984,8 +996,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 							Integer.parseInt(yearStr),
 							Integer.parseInt(monthStr),
 							Integer.parseInt(dayStr),
-							qty);
-					
+							qty,
+							seq);
 					switch (type){
 						case 2:
 							purchaseorderdQtyService.delete(purchaseOrderD.getIAutoId(), purchaseorderdQty.getIYear(), purchaseorderdQty.getIMonth(), purchaseorderdQty.getIDate());
@@ -1055,20 +1067,25 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			}
 			JSONObject params = new JSONObject();
 			params.put("data",jsonArray);
-			String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/PODocAdd?dbname=U8Context", params.toString());
-			JSONObject jsonObject = JSONObject.parseObject(result);
-			String remark="";
-			if(jsonObject.getString("status").equals("S")){
-				remark=jsonObject.getString("remark").split(":")[2];
+			tx(() -> {
+				String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/PODocAdd?dbname=U8Context", params.toString());
+				JSONObject jsonObject = JSONObject.parseObject(result);
+				String remark=jsonObject.getString("remark");
+				if(!jsonObject.getString("status").equals("S")){
+					ValidationUtils.error(remark);
+				}
 				map.put("remark",remark);
-			}else {
-				remark=jsonObject.getString("remark");
-				map.put("remark",remark);
-			}
-			map.put("json",params.toString());
+				map.put("json",params.toString());
+				return true;
+			});
 			return map;
 	}
-	public List<Record> findByMidxlxs(){
-		return dbTemplate("purchaseorderm.findBycOrderNo").find();
+	public List<Record> findByMidxlxs(Long iautoid){
+		return dbTemplate("purchaseorderm.findBycOrderNo",Kv.by("iautoid",iautoid)).find();
+	}
+
+	public List<Record> findByBarcode(Long iautoid){
+		return  dbTemplate("purchaseorderm.findByBarcodeOnOrder",Kv.by("iautoid",iautoid)).find();
+
 	}
 }

@@ -1,8 +1,6 @@
 package cn.rjtech.admin.scheduproductplan;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.text.StrSplitter;
-import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -33,6 +31,7 @@ import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -40,6 +39,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -1881,6 +1881,152 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
             return true;
         });
+        return SUCCESS;
+    }
+    /**
+     * 保存层级
+     */
+    public Ret saveLevel(Kv kv) {
+        String jsonDate = kv.getStr("data");
+        if (jsonDate.equals("[]") || StringUtils.isBlank(jsonDate)){
+            return SUCCESS;
+        }
+        JSONArray jsonArray = JSONArray.parseArray(jsonDate);
+        List<Map> dataList = jsonArray.toJavaList(Map.class);
+
+        System.out.println(dataList);
+        for (Map<String,Object> map : dataList){
+            String cInvCode = map.get("cInvCode").toString();
+            String date = map.get("date").toString();
+            String day = map.get("day").toString();
+            String newValue = map.get("newValue").toString();
+            String plan = map.get("plan").toString();
+
+            if (!NumberUtils.isNumber(newValue)){
+                return fail("请检查表中非数值类型数据！");
+            }
+           /* BigDecimal newValue = new BigDecimal(map.get("newValue").toString());
+
+            dataMap.put("shiyong",record.getBigDecimal("iQty1"));
+            dataMap.put("one",record.getBigDecimal("iQty2"));
+            dataMap.put("two",record.getBigDecimal("iQty3"));
+            dataMap.put("three",record.getBigDecimal("iQty4"));
+            dataMap.put("zaiku",record.getBigDecimal("iQty5"));
+            dataMap.put("tianshu",record.getBigDecimal("iQty6"));*/
+
+
+        }
+
+        /*Long iWeekScheduleId;
+        //排产主表
+        ApsWeekschedule weekschedule = new ApsWeekschedule();
+        if (apsWeekschedule != null){
+            iWeekScheduleId = apsWeekschedule.getIAutoId();
+            apsWeekschedule.setDScheduleEndTime(endDate);
+        }else {
+            iWeekScheduleId = JBoltSnowflakeKit.me.nextId();
+            weekschedule.setIOrgId(orgId);
+            weekschedule.setCOrgCode(orgCode);
+            weekschedule.setCOrgName(orgName);
+            weekschedule.setICreateBy(userId);
+            weekschedule.setCCreateName(userName);
+            weekschedule.setDCreateTime(newDate);
+            weekschedule.setIUpdateBy(userId);
+            weekschedule.setCUpdateName(userName);
+            weekschedule.setDUpdateTime(newDate);
+            weekschedule.setIAutoId(iWeekScheduleId);
+            weekschedule.setILevel(level);
+            weekschedule.setDScheduleBeginTime(startDate);
+            weekschedule.setDScheduleEndTime(endDate);
+            weekschedule.setIsLocked(false);
+        }
+
+        //TODO:根据排产纪录id查询已排产过物料纪录
+        List<Record> getDetailsList = findRecords("SELECT iAutoId,iInventoryId FROM Aps_WeekScheduleDetails WHERE iWeekScheduleId = ? ",iWeekScheduleId);
+        //key:invId   value:iWeekScheduleDid
+        Map<Long,Long> invScheduleDidMap = new HashMap<>();
+        for (Record record : getDetailsList){
+            invScheduleDidMap.put(record.getLong("iInventoryId"),record.getLong("iAutoId"));
+        }
+
+        //排产物料明细表
+        List<ApsWeekscheduledetails> detailsList = new ArrayList<>();
+        //排产数量明细表
+        List<ApsWeekscheduledQty> detailsQtyList = new ArrayList<>();
+
+
+
+
+
+        Record info = invInfoMap.get(inv);
+        Long invId = info.getLong("invId");
+
+        Long iWeekScheduleDid;
+        if (invScheduleDidMap.containsKey(invId)){
+            iWeekScheduleDid = invScheduleDidMap.get(invId);
+        }else {
+            iWeekScheduleDid = JBoltSnowflakeKit.me.nextId();
+            ApsWeekscheduledetails scheduleDetails = new ApsWeekscheduledetails();
+            scheduleDetails.setIOrgId(orgId);
+            scheduleDetails.setCOrgCode(orgCode);
+            scheduleDetails.setCOrgName(orgName);
+            scheduleDetails.setICreateBy(userId);
+            scheduleDetails.setCCreateName(userName);
+            scheduleDetails.setDCreateTime(newDate);
+            scheduleDetails.setIUpdateBy(userId);
+            scheduleDetails.setCUpdateName(userName);
+            scheduleDetails.setDUpdateTime(newDate);
+            scheduleDetails.setIAutoId(iWeekScheduleDid);
+            scheduleDetails.setIWeekScheduleId(iWeekScheduleId);
+            scheduleDetails.setILevel(level);
+            scheduleDetails.setIInventoryId(invId);
+            detailsList.add(scheduleDetails);
+        }
+
+
+
+
+        ApsWeekscheduledQty scheduledQty = new ApsWeekscheduledQty();
+        scheduledQty.setIWeekScheduleDid(iWeekScheduleDid);
+        scheduledQty.setIYear(year);
+        scheduledQty.setIMonth(month);
+        scheduledQty.setIDate(day);
+        scheduledQty.setIQty1(xuQiu);
+        scheduledQty.setIQty2(one);
+        scheduledQty.setIQty3(two);
+        scheduledQty.setIQty4(three);
+        scheduledQty.setIQty5(zaiKu);
+        scheduledQty.setIQty6(tianShu);
+        detailsQtyList.add(scheduledQty);
+
+
+
+        tx(() -> {
+            if (apsWeekschedule != null){
+                apsWeekschedule.update();
+            }else {
+                weekschedule.save();
+            }
+            apsWeekscheduledetailsService.batchSave(detailsList);
+            if (detailsQtyList.size() > 0){
+                List<List<ApsWeekscheduledQty>> groupList = CollectionUtils.partition(detailsQtyList,300);
+                CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
+                ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
+                for(List<ApsWeekscheduledQty> dataList :groupList){
+                    executorService.execute(()->{
+                        apsWeekscheduledQtyService.batchSave(dataList);
+                    });
+                    countDownLatch.countDown();
+                }
+                try {
+                    countDownLatch.await();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                executorService.shutdown();
+            }
+            return true;
+        });*/
         return SUCCESS;
     }
 

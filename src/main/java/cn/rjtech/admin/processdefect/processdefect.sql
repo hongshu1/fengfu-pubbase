@@ -89,15 +89,25 @@ SELECT
     t2.iStatus,
     t2.iAutoId,
     t2.cDocNo,
-    t2.ProcessName,
     t2.iDqQty,
     t2.cApproach,
     t2.cCreateName,
-    t2.dCreateTime
+    t2.dCreateTime,
+    o.cOperationName AS ProcessName,###工序名称
+    m.cMoDocNo,
+    bi.cInvCode,
+    bi.cInvCode1,
+    bi.cInvName1,
+    bd.cDepName
 FROM
-    Mo_SpecMaterialsRcvM t1
-        LEFT JOIN Mo_ProcessDefect t2 ON t2.iIssueId = t1.iAutoId
+    Mo_ProcessDefect t2
+        LEFT JOIN Mo_MoDoc m ON t2.imodocid= m.iAutoId
+        LEFT JOIN Mo_SpecMaterialsRcvM t1 ON t2.iIssueId = t1.iAutoId
+        LEFT JOIN Bd_Operation o ON t2.iOperationId= o.iAutoId
+        LEFT JOIN Bd_Inventory bi ON t2.iInventoryId = bi.iAutoId
+        LEFT JOIN Bd_Department bd ON t2.iDepartmentId = bd.iAutoId
 WHERE 1 = 1
+  AND t2.IsDeleted= 0
 
     #if(cdocno)
   AND t2.cDocNo like '%#(cdocno)%'
