@@ -74,6 +74,10 @@ public abstract class BasePurchaseOrderM<M extends BasePurchaseOrderM<M>> extend
     public static final String DSUBMITTIME = "dSubmitTime";
     /**来源类型：1. 空白采购 2. 物料到货计划*/
     public static final String ITYPE = "iType";
+    /**推送单据到：1. U8, 默认为1*/
+    public static final String IPUSHTO = "iPushTo";
+    /**单号*/
+    public static final String CDOCNO = "cDocNo";
 	/**
 	 * 主键ID
 	 */
@@ -616,6 +620,40 @@ public abstract class BasePurchaseOrderM<M extends BasePurchaseOrderM<M>> extend
 	@JSONField(name = "itype")
 	public java.lang.Integer getIType() {
 		return getInt("iType");
+	}
+
+	/**
+	 * 推送单据到：1. U8, 默认为1
+	 */
+	public M setIPushTo(java.lang.Integer iPushTo) {
+		set("iPushTo", iPushTo);
+		return (M)this;
+	}
+
+	/**
+	 * 推送单据到：1. U8, 默认为1
+	 */
+	@JBoltField(name="ipushto" ,columnName="iPushTo",type="Integer", remark="推送单据到：1. U8, 默认为1", required=false, maxLength=10, fixed=0, order=33)
+	@JSONField(name = "ipushto")
+	public java.lang.Integer getIPushTo() {
+		return getInt("iPushTo");
+	}
+
+	/**
+	 * 单号
+	 */
+	public M setCDocNo(java.lang.String cDocNo) {
+		set("cDocNo", cDocNo);
+		return (M)this;
+	}
+
+	/**
+	 * 单号
+	 */
+	@JBoltField(name="cdocno" ,columnName="cDocNo",type="String", remark="单号", required=false, maxLength=32, fixed=0, order=34)
+	@JSONField(name = "cdocno")
+	public java.lang.String getCDocNo() {
+		return getStr("cDocNo");
 	}
 
 }
