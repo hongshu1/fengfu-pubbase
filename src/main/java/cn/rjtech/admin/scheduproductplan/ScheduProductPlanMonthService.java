@@ -1890,6 +1890,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
     public Ret saveLevel(Kv kv) {
 
 
+        Object data = kv.get("data");
+        System.out.println(data);
 
        /* System.out.println(array);
         System.out.println(data);*/
