@@ -615,7 +615,7 @@
             success: function (respons) {
                 parms['scheduplanmonth'] = respons;
                 if(parms['scheduplanmonth'].length>0){
-                    // spreadSuspend();//暂停绘制
+                    spreadSuspend();//暂停绘制
                     let rowIndex = 3;
                     let colIndex = 0;
                     for (let i = 0; i < parms['scheduplanmonth'].length; i++) {
@@ -751,7 +751,7 @@
                     }
                     // let cell_T17 = parms.activeSheet.getCell(7,10);//保留数
                     // cell_T17.formula(`=SUM(R${6}:C${5},R${7}:C${5})`);
-                    // spreadResume();// 恢复绘制
+                    spreadResume();// 恢复绘制
                 }
             }, error: function () {
                 console.log('error')

@@ -303,22 +303,20 @@
 #end
 
 #define js()
-<script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.sheets.all.16.0.2.min.js"></script>
-<script type="text/javascript" src="assets/plugins/Grape/16.0.2/js/gc.spread.excelio.16.0.2.min.js"></script>
-<script type="text/javascript" src="assets/plugins/Grape/FileSaver.min.js"></script>
+    <script type="text/javascript" src="assets/plugins/Grape/gc.spread.sheets.all.12.0.7.min.js"></script>
+    <script type="text/javascript" src="assets/plugins/Grape/gc.spread.excelio.12.0.7.min.js"></script>
+    <script type="text/javascript" src="assets/plugins/Grape/FileSaver.min.js"></script>
 <script type="text/javascript">
     /**
      * @param Api 公共接口
      */
     var Api = '/';
-
-
+    //创建表单实列
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1,calcOnDemand: true});
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取活动表单
     //设置全局内容水平垂直居中
-    sheet.getRange(-1,-1,-1,-1).hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
     //设置全局的字体样式
     sheet.getRange(-1, -1,-1,-1).font('宋体 bold 10px');
     //状态栏
@@ -375,6 +373,15 @@
         sheet.defaults.rowHeight = 25;
         spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
         spread.getSheet(0).setColumnCount(parms.ColumnCount); //设置一行有多少个单元格
+
+        //设置单元格内容的对齐方式
+        var style = new GC.Spread.Sheets.Style();
+        style.hAlign = GC.Spread.Sheets.HorizontalAlign.center;
+        style.vAlign = GC.Spread.Sheets.VerticalAlign.center;
+        spread.sheets.forEach(function(sheet) {
+            sheet.setDefaultStyle(style, GC.Spread.Sheets.SheetArea.viewport);
+        });
+
         var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
         //设置value值
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex).cellType(cellType);
@@ -496,6 +503,15 @@
             cinvcode1,
             cinvname1
         }
+        var json = sheet.toJSON();//储存表单数据
+        sheet.fromJSON(json);//清空表单数据
+        sheet.reset();//重置表单
+        //从新赋值到原始渲染位置
+        parms.planListRowIndex=3;
+        parms.dayRow=10;
+        parms.weekRow=10;
+        initDate();
+        loadInit();
         initData();
     }
     /**
@@ -503,44 +519,50 @@
      * @param initData
      */
     function initData(){
+        spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
+        sheet.options.isProtected = true; // 开启工作表保护
+        sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+        sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+        sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
         // let url = Api+`admin/schedudemandplan/getDemandList?startdate=2023-05-15&enddate=2023-06-30&cvenname=${searchData.cvenname}&cinvcode=&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`;
         let url = Api+`admin/schedudemandplan/getDemandList?startdate=2023-05-15&enddate=2023-06-30&cvenname=&cinvcode=&cinvcode1=&cinvname1=`;
         $.ajax({
             url,
             type:'get',
             dataType:'json',
-            success:function (res){
+            success:function (respons){
+                parms['scheduplanmonth'] = respons;
                 spreadSuspend();//暂停绘制
                 let rowIndex = 3;
                 let colIndex=0;
                 let serialCol = 1;
                 let iPsLevelCol = 2;
                 let cInvCodeCol = 3;
-                let cInvName1Col = 5;
                 let cInvCode1Col = 4;
+                let cInvName1Col = 5;
                 let iPkgQtyCol = 6;
                 let iInnerInStockDaysCol = 7;
-                for (let i = 0; i <res.data.length; i++) {
+                for (let i = 0; i <parms['scheduplanmonth'].data.length; i++) {
                     //设置value值和该单元格的对齐方式
                     var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
                     parms.activeSheet.getCell(rowIndex, colIndex).cellType(cellType);
                     sheet.addSpan(rowIndex,colIndex,3,1);
-                    sheet.setValue(rowIndex, serialCol,res.data[i].seq);//序号
+                    sheet.setValue(rowIndex, serialCol,parms['scheduplanmonth'].data[i].seq);//序号
                     parms.activeSheet.addSpan(rowIndex,serialCol,3,1);
-                    sheet.setValue(rowIndex, iPsLevelCol,res.data[i].cVenName);//供应商名称
-                    parms.activeSheet.addSpan(rowIndex,iPsLevelCol,3,1);
-                    sheet.setValue(rowIndex, cInvCodeCol,res.data[i].cInvCode);//存货编码
-                    parms.activeSheet.addSpan(rowIndex,cInvCodeCol,3,1);
-                    sheet.setValue(rowIndex, cInvCode1Col,res.data[i].cInvCode1);//客户部番
-                    parms.activeSheet.addSpan(rowIndex,cInvCode1Col,3,1);
+                    sheet.setValue(rowIndex, serialCol+1,parms['scheduplanmonth'].data[i].cVenName);//供应商名称
+                    parms.activeSheet.addSpan(rowIndex,serialCol+1,3,1);
+                    sheet.setValue(rowIndex, serialCol+2,parms['scheduplanmonth'].data[i].cInvCode);//存货编码
+                    parms.activeSheet.addSpan(rowIndex,serialCol+2,3,1);
+                    sheet.setValue(rowIndex, serialCol+3,parms['scheduplanmonth'].data[i].cInvCode1);//客户部番
+                    parms.activeSheet.addSpan(rowIndex,serialCol+3,3,1);
                     parms.activeSheet.setColumnWidth(cInvCode1Col, 120);//设置指定单元格的width
-                    sheet.setValue(rowIndex, cInvName1Col,res.data[i].cInvName1);//部品名称
-                    parms.activeSheet.addSpan(rowIndex,cInvName1Col,3,1);
+                    sheet.setValue(rowIndex, serialCol+4,parms['scheduplanmonth'].data[i].cInvName1);//部品名称
+                    parms.activeSheet.addSpan(rowIndex,serialCol+4,3,1);
                     parms.activeSheet.setColumnWidth(cInvName1Col, 120);//设置指定单元格的width
-                    sheet.setValue(rowIndex, iPkgQtyCol,res.data[i].iPkgQty);//包装数量
-                    parms.activeSheet.addSpan(rowIndex,iPkgQtyCol,3,1);
-                    sheet.setValue(rowIndex, iInnerInStockDaysCol,res.data[i].iInnerInStockDays);//标准在库天数
-                    parms.activeSheet.addSpan(rowIndex,iInnerInStockDaysCol,3,1);
+                    sheet.setValue(rowIndex, serialCol+5,parms['scheduplanmonth'].data[i].iPkgQty);//包装数量
+                    parms.activeSheet.addSpan(rowIndex,serialCol+5,3,1);
+                    sheet.setValue(rowIndex, serialCol+6,parms['scheduplanmonth'].data[i].iInnerInStockDays);//标准在库天数
+                    parms.activeSheet.addSpan(rowIndex,serialCol+6,3,1);
                     parms.activeSheet.setColumnWidth(iInnerInStockDaysCol, 120);//设置指定单元格的width
                     rowIndex+=3;
 
@@ -552,15 +574,15 @@
                     let yisRow = 4;//1s使用行下标
                     let ersRow = 5;//2s使用行下标
                     let shiyongCol = 10;
-                    for (var j = 0; j < res.data[i].day.length; j++) {
+                    for (var j = 0; j < parms['scheduplanmonth'].data[i].day.length; j++) {
                         if(i==0){
-                            sheet.setValue(shiyongRow,shiyongCol+j,res.data[i].day[j].xuqiu);
-                            sheet.setValue(yisRow,shiyongCol+j,res.data[i].day[j].jihua);
-                            sheet.setValue(ersRow,shiyongCol+j,res.data[i].day[j].zaiku);
+                            sheet.setValue(shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
+                            sheet.setValue(yisRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].jihua);
+                            sheet.setValue(ersRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
                         }else{
-                            sheet.setValue(3*i+shiyongRow,shiyongCol+j,res.data[i].day[j].xuqiu);
-                            sheet.setValue(3*i+yisRow,shiyongCol+j,res.data[i].day[j].jihua);
-                            sheet.setValue(3*i+ersRow,shiyongCol+j,res.data[i].day[j].zaiku);
+                            sheet.setValue(3*i+shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
+                            sheet.setValue(3*i+yisRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].jihua);
+                            sheet.setValue(3*i+ersRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
                         }
                     }
                 }
