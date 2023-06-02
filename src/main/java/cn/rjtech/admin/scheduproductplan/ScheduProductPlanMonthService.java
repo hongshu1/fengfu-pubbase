@@ -1,8 +1,6 @@
 package cn.rjtech.admin.scheduproductplan;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.text.StrSplitter;
-import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -41,6 +39,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -1888,11 +1887,35 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * 保存层级
      */
     public Ret saveLevel(Kv kv) {
+        String jsonDate = kv.getStr("data");
+        if (jsonDate.equals("[]") || StringUtils.isBlank(jsonDate)){
+            return SUCCESS;
+        }
+        JSONArray jsonArray = JSONArray.parseArray(jsonDate);
+        List<Map> dataList = jsonArray.toJavaList(Map.class);
+
+        System.out.println(dataList);
+        for (Map<String,Object> map : dataList){
+            String cInvCode = map.get("cInvCode").toString();
+            String date = map.get("date").toString();
+            String day = map.get("day").toString();
+            String newValue = map.get("newValue").toString();
+            String plan = map.get("plan").toString();
+
+            if (!NumberUtils.isNumber(newValue)){
+                return fail("请检查表中非数值类型数据！");
+            }
+           /* BigDecimal newValue = new BigDecimal(map.get("newValue").toString());
+
+            dataMap.put("shiyong",record.getBigDecimal("iQty1"));
+            dataMap.put("one",record.getBigDecimal("iQty2"));
+            dataMap.put("two",record.getBigDecimal("iQty3"));
+            dataMap.put("three",record.getBigDecimal("iQty4"));
+            dataMap.put("zaiku",record.getBigDecimal("iQty5"));
+            dataMap.put("tianshu",record.getBigDecimal("iQty6"));*/
 
 
-
-       /* System.out.println(array);
-        System.out.println(data);*/
+        }
 
         /*Long iWeekScheduleId;
         //排产主表
