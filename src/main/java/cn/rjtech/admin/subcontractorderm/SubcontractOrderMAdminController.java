@@ -302,9 +302,10 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
    */
   @SuppressWarnings("unchecked")
   public void orderDBatchExport() throws Exception {
-//        renderJxlsToPdf("orderDBatchExport.xlsx", data, "订货清单.pdf");
-    renderJxls("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas(getKv()),
-        "委外订单订货清单.xlsx");
+//    renderJxls("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas1(getKv()),
+//        "委外订单订货清单.xlsx");
+    renderJxlsToPdf("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas1(getKv()),
+        "委外订单订货清单.pdf");
   }
 
   public void updateHideInvalid(@Para(value = "id") Long id,

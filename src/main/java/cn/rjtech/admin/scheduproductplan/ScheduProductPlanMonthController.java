@@ -258,6 +258,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
             endDate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
         }
 
+        List<Record> monthlist = new ArrayList<>();
         List<String> namelist = new ArrayList<>();
         List<String> weeklist = new ArrayList<>();
         if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)){
@@ -279,6 +280,17 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
 
             List<String> name2listStr = new ArrayList<>();
             for (int i = 0; i < scheduDateList.size(); i++) {
+                String year = scheduDateList.get(i).substring(0,4);
+                int month = Integer.parseInt(scheduDateList.get(i).substring(5,7));
+                String yearMonth = year + "年" + month + "月";
+                if (!name2listStr.contains(yearMonth)){
+                    name2listStr.add(yearMonth);
+                    Record record = new Record();
+                    record.set("colname",yearMonth);
+                    record.set("colsum",yearMonthMap.get(yearMonth));
+                    monthlist.add(record);
+                }
+
                 String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDateList.get(i)),"E");
                 String weekType = "";
                 if (weekDay.equals("星期一")){weekType = "Mon";}
@@ -296,13 +308,12 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
             }
         }
         Map<String,Object> map = new HashMap<>();
+        map.put("month",monthlist);
         map.put("day",namelist);
         map.put("week",weeklist);
 
         renderJsonData(map);
     }
-
-
 
     //-----------------------------------------------------------------月周生产计划汇总-----------------------------------------------
 
