@@ -384,14 +384,16 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     }
 
     /**
-     * 导出数据
+     * 一页导出一个条码数据
      */
     @SuppressWarnings("unchecked")
-    public void purchaseordermOne() throws Exception {
-        List<Record> rowDatas = service.findByMidxlxs();
-
+    public void purchaseordermOne(@Para(value = "iautoid") Long iautoid) throws Exception {
+        //采购现品票明细数据
+        List<Record> rowDatas = service.findByMidxlxs(iautoid);
+        //采购现品票条码数据
+        List<Record> barcodeDatas=service.findByBarcode(iautoid);
+        //采购现品票明细数据sheet分页数组
         List<String> sheetNames = new ArrayList<>();
-        // 改用List<List<Record>>来表示多个数据集合
         List<Kv> rows = new ArrayList<>();
 
         List<Record> leftDatas = new ArrayList<>();
@@ -420,7 +422,6 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
                 counter = 0;
                 i++;
             }
-
         }
 
         // 如果 rows 的数量不是 30 的整数倍，将剩余的数据添加到 datas 中
@@ -436,15 +437,28 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         if (MapUtil.isNotEmpty(remainData)) {
             rows.add(remainData);
         }
+        List<Record> rows2 = new ArrayList<>();
+        //条码数据
+        Record barcodeRecords=new Record();
+        //采购现品票明细条码数据sheet分页数组
+        List<String> sheetNames2 = new ArrayList<>();
+        int j = 0;
 
-        LOG.info(JSON.toJSONString(rows));
+        for (Record row : barcodeDatas) {
+                String sheetName2 = "订货条码" + (j + 1);
+                sheetNames2.add(sheetName2);
+                row.set("sheetName2",sheetName2);
+                rows2.add(row);
+                j++;
+        }
+        LOG.info(JSON.toJSONString(rows2));
 
         Kv data = Kv.by("rows", rows)
-                .set("sheetNames", sheetNames);
-
-//        renderJxlsToPdf("purchaseOrderDBatch.xlsx", data, "订货清单.pdf");
-        renderJxls("purchaseOrderDBatch.xlsx", data, String.format("订货清单_%s.xlsx", DateUtil.today()));
+                .set("sheetNames", sheetNames)
+                .set("rows2",rows2);
+        LOG.info(JSON.toJSONString(data));
+        renderJxlsToPdf("purchaseOrderDBatch.xlsx", data, String.format("订货清单_%s.pdf", DateUtil.today()));
     }
-
 }
+
 

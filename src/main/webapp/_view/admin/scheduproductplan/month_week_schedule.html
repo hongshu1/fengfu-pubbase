@@ -279,7 +279,7 @@
                     <button onClick="openPopup()">排产</button>
                     <button onClick="excelFileSave()">数据导出</button>
                     <button id="loadExcel">数据导入</button>
-                    <button>保存层级</button>
+                    <button onClick="saveLevel()">保存层级</button>
                     <button>计划使用刷新</button>
                     <button id="content" onClick="lock()">锁定</button>
                     <button onClick="unLock()">解锁</button>
@@ -392,14 +392,13 @@
      */
     window.onload=function () {
         const urlParams = new URLSearchParams(window.location.search);
-        const iWeekScheduleId = urlParams.get('iWeekScheduleId');
         const ilevel = urlParams.get('level');
-        if(iWeekScheduleId!=null){
+        console.log(ilevel)
+        if(ilevel!=null){
             loadInit();
             initDate();
-            parms.id=iWeekScheduleId;
             parms.level=ilevel;
-            initData(iWeekScheduleId,ilevel);
+            initData(ilevel);
         }
     }
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1,calcOnDemand: true});
@@ -407,23 +406,17 @@
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取表单
-
     //设置全局的字体样式
     sheet.getRange(-1, -1,-1,-1).font('宋体 bold 10px');
-    //状态栏
-    statusBar.bind(spread);
+    statusBar.bind(spread);//状态栏
     spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
-    // spread.getSheet(0).options.isProtected = true;//表单设为保护状态
-    // spread.getSheet(0).options.protectionOptions = {allowFilter: true};//保护状态允许筛选
-    // spread.getSheet(0).getDefaultStyle().locked = false;//默认样式设为非锁定
-    // sheet.options.isProtected = true;//开启表单保护
     sheet.options.isProtected = true; // 开启工作表保护
     sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
     sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
     sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
-    var defaultStyle = sheet.getDefaultStyle();
-    defaultStyle.locked = true;
-    sheet.setDefaultStyle(defaultStyle);
+    // var defaultStyle = sheet.getDefaultStyle();
+    // defaultStyle.locked = true;
+    // sheet.setDefaultStyle(defaultStyle);
     var parmsDefault = {
         id:null,                //全局公共id
         level:'',               //排场层级
@@ -443,7 +436,7 @@
         weekRow:10,              //week渲染起始下标
         info:{},                //存储单击之后的单元格
         lockCells:[],           //存储选中的单元格
-        tableData:{},           //接收添加的数据
+        tableData:[],           //接收添加的数据
         planListRowIndex:3,     //计划排产列表起始行下标
         planListColIndex:7,     //计划排产列表起始列下标
         openBoxTime:'',         //打开锁定弹框的时间戳
@@ -467,8 +460,6 @@
         spread.resumeCalcService(); //开启计算服务
         spread.resumePaint(); //恢复绘制
     }
-    // var colCount = sheet.getColumnCount(GC.Spread.Sheets.SheetArea.viewport);//获取列数
-    // var rowCount = sheet.getRowCount();//获取行数
     /**
      * 数据导入
      * @param loadExcel 按钮节点
@@ -491,7 +482,7 @@
      * @param submit
      */
     function submit() {
-        var fileName = document.getElementById("input").value;
+        var fileName = document.getElementById("input").value;//获取用户输入的表格导出名称
         if(fileName!=''){
             fileName += '.xlsx';
             var json = spread.toJSON();//转为json格式
@@ -610,8 +601,13 @@
      * 初始化产线数据
      * @param initData
      */
-    function initData(id,ilevel){
-        let url = Api + `admin/scheduproductplanmonth/getScheduPlanMonthList?level=${ilevel==null||undefined?'1':ilevel}&startdate=${'2023-05-30'}&enddate=${'2023-06-10'}&cworkname=${searchData.cworkname}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`
+    function initData(ilevel){
+        spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
+        sheet.options.isProtected = true; // 开启工作表保护
+        sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+        sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+        sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
+        let url = Api + `admin/scheduproductplanmonth/getScheduPlanMonthList?level=${ilevel==null||undefined?'1':ilevel}&startdate=${searchData.searchStartTime}&enddate=${searchData.searchEndTime}&cworkname=${searchData.cworkname}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`
         $.ajax({
             url,
             type: 'get',
@@ -800,7 +796,7 @@
                                 <td>${res.data[i].dscheduleendtime}</td>
                                 <td>${res.data[i].dlockendtime==undefined?'':res.data[i].dlockendtime}</td>
                                 <td width='130px'>
-                                  <span onClick='levelSearch(${i},${res.data[i].ilevel})' style="margin-right:10px;cursor: pointer;color: #0000FF;">查看</span>
+                                  <span onClick='levelSearch(${res.data[i].ilevel})' style="margin-right:10px;cursor: pointer;color: #0000FF;">查看</span>
                                   <span style="margin-right:10px;cursor: pointer;color: #0000FF;">编辑</span>
                                   <span onClick='levelDelete(${i})'style="cursor: pointer;color: #0000FF;">删除</span>
                                  </td>
@@ -813,9 +809,8 @@
         })
     }
     //表格数据查看
-    function levelSearch(index,ilevel){
-        let id = parms.dschedulebeginData[index].iautoid;
-        window.location.replace(`admin/scheduproductplanmonth/monthweekSchedule?_jb_rqtype_=iframe&iWeekScheduleId=${id}&level=${ilevel}`);
+    function levelSearch(ilevel){
+        window.location.replace(`admin/scheduproductplanmonth/monthweekSchedule?_jb_rqtype_=iframe&level=${ilevel}`);
     }
     //删除表格数据
     function levelDelete(index){
@@ -841,6 +836,9 @@
         cinvcode:'',
         cinvcode1:'',
         cinvname1:'',
+        searchStartTime:'',
+        searchEndTime:'',
+        searchLevel:''
     }
     /**
      * 搜索事件
@@ -859,12 +857,21 @@
             cworkname,
             cinvcode,
             cinvcode1,
-            cinvname1
+            cinvname1,
+            searchStartTime,
+            searchEndTime,
+            searchLevel
         }
-        var tableName = sheet.tables.getTableName(0);
-        var table = sheet.tables.findByName(tableName);
-        table.refresh();
-        initData(parms.id,parms.level);
+        var json = sheet.toJSON();//储存表单数据
+        sheet.fromJSON(json);//清空表单数据
+        sheet.reset();//重置表单
+        //从新赋值到原始渲染位置
+        parms.planListRowIndex=3;
+        parms.dayRow=10;
+        parms.weekRow=10;
+        initData(searchLevel);
+        initDate();
+        loadInit();
     }
     //排场确定事件
     function savePopup(){
@@ -882,7 +889,7 @@
                     // initDate(parms,sheet);
                     // initData();
                     closePopup();//隐藏弹出层
-                LayerMsgBox.success(res.data.msg);
+                LayerMsgBox.success(res.msg);
             },error: function(error) {
                 console.log(error);
             }
@@ -903,13 +910,13 @@
         var rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取行数据
         var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
         //每次添加之后往数组内进行存储
-        parms.tableData={
+        parms.tableData.push({
             plan:rowData[0][7],//计划
             cInvCode:rowData[0][8],//存户编码
             newValue:rowData[0][col],//修改后的值
             date:new Date(),//获取当前年月
             day:colData[1][0],//日
-        }
+        })
         console.log(parms.tableData)
     });
     //spread获取当前点击的单元格
@@ -967,7 +974,7 @@
             document.body.appendChild(mybg);
             document.body.style.overflow = "hidden";
             //锁定截止日期
-            let url = Api+`admin/scheduproductplanmonth/getLockDate?iWeekScheduleId=${parms.id}`;
+            let url = Api+`admin/scheduproductplanmonth/getLockDate?level=${parms.level}`;
             $.ajax({
                 url,
                 type:'post',
@@ -1011,8 +1018,8 @@
     function save(){
         const datetimeLocalInput = document.getElementById('mySelect');
         const myVal = datetimeLocalInput.value.substring(0,10);
-        let url = alertTitle.innerText == "锁定计划"?Api+`admin/scheduproductplanmonth/lockScheduPlan?iWeekScheduleId=${parms.id}&endDate=${myVal}`
-            :Api+`admin/scheduproductplanmonth/unLockScheduPlan?iWeekScheduleId=${parms.id}&endDate=${myVal}`;
+        let url = alertTitle.innerText == "锁定计划"?Api+`admin/scheduproductplanmonth/lockScheduPlan?level=${parms.level}&endDate=${myVal}`
+            :Api+`admin/scheduproductplanmonth/unLockScheduPlan?level=${parms.level}&endDate=${myVal}`;
         $.ajax({
             url,
             type:'post',
@@ -1020,22 +1027,7 @@
             success:function (res){
                 myAlert.style.display = "none";
                 mybg.style.display = "none";
-                initData();
-                //设置表单保护，单元格不可编辑
-                // for (let i = 0; i < 3; i++) {
-                //     for (let j = 0; j < 7; j++) {
-                //         // 修改sheet默认locked为false
-                //         var defaultStyle = new GC.Spread.Sheets.Style();
-                //         defaultStyle.locked = false;
-                //         sheet.setDefaultStyle(defaultStyle, GC.Spread.Sheets.SheetArea.viewport);//设置第1行不可编辑
-                //         var style = new GC.Spread.Sheets.Style();
-                //         style.locked = true;
-                //         style.backColor = "#F0F0F0";
-                //         sheet.setStyle(i+4, j+9, style);
-                //         // 设置表单保护
-                //         // sheet.options.isProtected = true;
-                //     }
-                // }
+                res.msg=="操作成功"?LayerMsgBox.success(res.msg):LayerMsgBox.error(res.msg,500);;
             },error: function(error) {
                 console.log(error);
             }
@@ -1075,7 +1067,7 @@
         mybg.style.opacity = "0.3";
         document.body.appendChild(mybg);
         document.body.style.overflow = "hidden";
-        let url = Api+`admin/scheduproductplanmonth/getUnLockDate?iWeekScheduleId=${parms.id}`;
+        let url = Api+`admin/scheduproductplanmonth/getUnLockDate?level=${parms.level}`;
         $.ajax({
             url,
             type:'post',
@@ -1089,6 +1081,26 @@
                     options += "<option value='" + res.data[i].unLockDate + "'>" + res.data[i].unLockDate + "</option>";
                 }
                 $("#mySelect").html(options);
+            },error: function(error) {
+                console.log(error);
+            }
+        })
+    }
+    /**
+     * @param 保存层级
+     */
+    function saveLevel(){
+        // let jsonArray = JSON.stringify(parms.tableData)
+        let url = Api+ `admin/scheduproductplanmonth/saveLevel`;
+        $.ajax({
+            url,
+            data:{
+                data:parms.tableData.length>0?parms.tableData:[]
+            },
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                console.log(res);
             },error: function(error) {
                 console.log(error);
             }
