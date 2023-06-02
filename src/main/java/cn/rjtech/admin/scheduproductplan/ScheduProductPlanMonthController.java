@@ -272,7 +272,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
                 String yearMonth = year + "年" + month + "月";
                 if (yearMonthMap.containsKey(yearMonth)) {
                     int count = yearMonthMap.get(yearMonth);
-                    yearMonthMap.put(yearMonth, count);
+                    yearMonthMap.put(yearMonth, count + 1);
                 } else {
                     yearMonthMap.put(yearMonth, 1);
                 }
