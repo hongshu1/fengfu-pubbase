@@ -9,6 +9,7 @@ from
     left join #(getBaseDbName()).dbo.jb_dictionary jd on dep.cType  = jd.sn and jd.type_key = 'org_type'
 where
     dep.isDeleted = '0'
+
     #if(orgId)
         and dep.iOrgId = #para(orgId)
     #end
@@ -39,8 +40,18 @@ where
     #if(null != sortColumn)
     order by #(sortColumn) #(sortType)
     #end
+
+    order by cdepcode ASC
 #end
 
 #sql("checkRepetitionData")
 SELECT COUNT(1) FROM  Bd_Department WHERE #(keyField) = #para(value) AND  isDeleted ='1'
+#end
+
+#sql("getSelectIpid")
+select * from Bd_Department where ipid=#para(ipid)
+#end
+
+#sql("getListIpid")
+select * from Bd_Department where ipid=0
 #end

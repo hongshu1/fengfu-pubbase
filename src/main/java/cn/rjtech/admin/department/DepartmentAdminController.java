@@ -52,7 +52,7 @@ public class DepartmentAdminController extends BaseAdminController {
      */
     @UnCheck
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv(), getSortColumn("iAutoId"), getSortType("desc")));
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv(),getSortColumn("iAutoId"), getSortType("desc")));
     }
 
     /**
