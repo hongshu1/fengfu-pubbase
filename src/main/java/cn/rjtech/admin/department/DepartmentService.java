@@ -90,27 +90,27 @@ public class DepartmentService extends BaseService<Department> {
      */
     public Ret save(Department department) {
 
-//        Short idepgrade=1;
-//        Long iPid = department.getIPid();
-//        if (iPid==null){
-//            department.setIDepGrade(idepgrade);
-//        }else {
-//
-//            Kv para=Kv.by("ipid",iPid);
-//            List<Record> list = dbTemplate("department.getSelectIpid",para).find();
-//            if (list!=null){
-//                department.setIDepGrade(Short.parseShort("2"));
-//            }else {
-//                department.setIDepGrade(Short.parseShort("3"));
-//            }
-//
-//        }
-//        Short no=3;
-//        if (department.getIDepGrade()==no){
-//            department.setBDepEnd(true);
-//        }else {
-//            department.setBDepEnd(false);
-//        }
+        Short idepgrade=1;
+        Long iPid = department.getIPid();
+        if (iPid==null){
+            department.setIDepGrade(idepgrade);
+        }else {
+
+            Kv para=Kv.by("ipid",iPid);
+            List<Record> list = dbTemplate("department.getSelectIpid",para).find();
+            if (list!=null){
+                department.setIDepGrade(Short.parseShort("2"));
+            }else {
+                department.setIDepGrade(Short.parseShort("3"));
+            }
+
+        }
+        Short no=3;
+        if (department.getIDepGrade()==no){
+            department.setBDepEnd(true);
+        }else {
+            department.setBDepEnd(false);
+        }
 
         verifyData(department);
         User user = JBoltUserKit.getUser();
