@@ -76,7 +76,7 @@ WHERE
 	Qty.iQty iQuantity,
 	 CONCAT(Qty.iYear,'-',Qty.iMonth,'-',Qty.iMonth)dPlanDate,
 		0 iQuotedPrice,
-	 (ROW_NUMBER() OVER (ORDER BY Qty.iYear, Qty.iMonth, Qty.iDate) - 1) * 10 + 10  irowno,
+	 iSeq irowno,
 	100 KL,
 	0 iNatDisCount
 FROM
@@ -105,5 +105,29 @@ FROM
 	INNER JOIN Bd_Inventory inv ON inv.iAutoId = a.iinventoryId
 	INNER JOIN PS_PurchaseOrderM M ON M.iAutoId=d.iPurchaseOrderMid
 WHERE
-	d.isDeleted = 0
+	cVersion = 00
+	and M.iautoid=#para(iautoid)
+#end
+
+#sql("findByBarcodeOnOrder")
+ SELECT
+	CONCAT(a.cBarcode,'-',cVersion)cBarcode,
+	cInvCode1,
+	cInvName1,
+	cInvStd,
+	d.cAddress,
+	dPlanDate,
+	M.dOrderDate,
+	cVenName,
+	iQty,
+	cOrderNo
+FROM
+	PS_PurchaseOrderDBatch a
+	INNER JOIN PS_PurchaseOrderD d ON d.iAutoId = a.iPurchaseOrderDid
+	INNER JOIN Bd_Inventory inv ON inv.iAutoId = a.iinventoryId
+	INNER JOIN PS_PurchaseOrderM M ON M.iAutoId=d.iPurchaseOrderMid
+	INNER JOIN Bd_Vendor V on V.iAutoId = M.iVendorId
+WHERE
+	cVersion=00
+	and M.iautoid=#para(iautoid)
 #end

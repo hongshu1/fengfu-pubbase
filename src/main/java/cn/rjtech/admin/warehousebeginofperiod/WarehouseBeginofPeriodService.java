@@ -1,11 +1,14 @@
 package cn.rjtech.admin.warehousebeginofperiod;
 
+import static cn.hutool.core.text.StrPool.COMMA;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.model.Dictionary;
@@ -18,10 +21,12 @@ import cn.rjtech.admin.barcodedetail.BarcodedetailService;
 import cn.rjtech.admin.barcodemaster.BarcodemasterService;
 import cn.rjtech.admin.codingrulem.CodingRuleMService;
 import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
+import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.base.service.BaseService;
 import cn.rjtech.common.model.Barcodedetail;
 import cn.rjtech.common.model.Barcodemaster;
 import cn.rjtech.model.momdata.StockBarcodePosition;
+import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.util.BillNoUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -59,6 +64,8 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
     private StockBarcodePositionService barcodePositionService;//条码库存表
     @Inject
     private CodingRuleMService          codingRuleMService;//编码规则
+    @Inject
+    private WarehouseService            warehouseService;//仓库档案
 
     /**
      * 数据源
@@ -87,8 +94,8 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         return dbTemplate("warehousebeginofperiod.findByWhCodeAndInvCode", kv).find();
     }
 
-    public List<Barcodemaster> findBySourceId(String id){
-        return find("select * from T_Sys_BarcodeMaster where SourceID = ?",id);
+    public List<Barcodemaster> findBySourceId(String id) {
+        return find("select * from T_Sys_BarcodeMaster where SourceID = ?", id);
     }
 
     /*
@@ -96,12 +103,12 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
      * */
     public Page<Record> detailDatas(Integer pageNumber, Integer pageSize, Kv kv) {
         Page<Record> paginate = dbTemplate("warehousebeginofperiod.detailDatas", kv).paginate(pageNumber, pageSize);
-        List<Dictionary> dictionaries = JBoltDictionaryCache.me.getListByTypeKey("beginningofperiod",true);
+        List<Dictionary> dictionaries = JBoltDictionaryCache.me.getListByTypeKey("beginningofperiod", true);
         for (Record record : paginate.getList()) {
             Dictionary dictionary = dictionaries.stream().filter(e -> e.getSn().equals(record.getStr("reportFileName")))
                 .findFirst().orElse(new Dictionary());
-            record.set("sn",record.getStr("reportFileName"));
-            record.set("reportFileName",dictionary.getName());
+            record.set("sn", record.getStr("reportFileName"));
+            record.set("reportFileName", dictionary.getName());
         }
         return paginate;
     }
@@ -122,6 +129,19 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         return ret(success);
     }
 
+    /**
+     * 删除 指定多个ID
+     */
+    public Ret deleteByBatchIds(String ids) {
+        tx(() -> {
+            for (String idStr : StrSplitter.split(ids, COMMA, true, true)) {
+                String autoId = idStr;
+            }
+            return true;
+        });
+        return SUCCESS;
+    }
+
     /* -> 109607
      * 保存新增期初库存
      * */
@@ -138,7 +158,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
                 //1、T_Sys_BarcodeMaster--条码表
                 Barcodemaster barcodemaster = new Barcodemaster();
                 Record record = findPosCodeByWhcodeAndInvcode(kv.getStr("cwhcode"), kv.getStr("cinvcode"));
-                barcodemasterService.saveBarcodemasterModel(barcodemaster, now,record);
+                barcodemasterService.saveBarcodemasterModel(barcodemaster, now, record);
                 Ret masterRet = barcodemasterService.save(barcodemaster);
                 if (masterRet.isFail()) {
                     return false;
@@ -288,13 +308,14 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         return recordList;
     }
 
-    public String stripTrailingZeros(BigDecimal bigDecimal){
+    public String stripTrailingZeros(BigDecimal bigDecimal) {
         return bigDecimal.stripTrailingZeros().toPlainString();
     }
 
-    public List<Record> findAreaByWhcode(String cwhcode) {
-        return dbTemplate("warehousebeginofperiod.findAreaByWhcode", Kv.by("cwhcode", cwhcode)).find();
+    public List<Record> findAreaByWhcode() {
+        return dbTemplate("warehousebeginofperiod.findAreaByWhcode").find();
     }
+
 
     public Record findPosCodeByWhcodeAndInvcode(String whcode, String invcode) {
         Kv kv = new Kv();
@@ -303,4 +324,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         return dbTemplate("warehousebeginofperiod.findPosCodeByWhcodeAndInvcode", kv).findFirst();
     }
 
+    public Page<Record> inventoryAutocomplete(int pageNumber, int pageSize, Kv kv) {
+        return dbTemplate("warehousebeginofperiod.inventoryAutocomplete", kv).paginate(pageNumber, pageSize);
+    }
 }

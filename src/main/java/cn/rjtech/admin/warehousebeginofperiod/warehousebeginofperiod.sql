@@ -61,24 +61,10 @@ and t1.whcode = #para(whcode)
 #end
 
 #sql("findAreaByWhcode")
-select t2.cAreaCode,t2.cAreaName,t2.iWarehouseId
-from Bd_Warehouse t1
-left join Bd_Warehouse_Area t2 on t1.iAutoId = t2.iWarehouseId
+select t1.*
+from Bd_Warehouse_Area t1
 where 1=1
-#if(cwhcode)
-and t1.cwhcode = #para(cwhcode)
-#end
-#end
-
-#sql("findPosCodeByWhcodeAndInvcode")
-select * from UFDATA_001_2023.dbo.V_Sys_CurrentStock t1
-where 1=1
-#if(whcode)
-and t1.whcode = #para(whcode)
-#end
-#if(invcode)
-and t1.invcode = #para(invcode)
-#end
+order by t1.dUpdateTime desc
 #end
 
 #sql("printData")
@@ -100,4 +86,17 @@ from T_Sys_BarcodeMaster t1
          and CHARINDEX(','+cast((select t1.autoid) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
 #end
 order by t3.CreateDate
+#end
+
+
+#sql("warehouseareaoptions")
+SELECT
+wa.cAreaCode,wa.cAreaName,wa.iWarehouseId
+FROM
+Bd_Warehouse_Area wa
+where wa.isEnabled = '1' and wa.isDeleted = '0'
+    #if(iwarehouseid)
+    wa.iWarehouseId = #para(iwarehouseid)
+    #end
+order by wa.dUpdateTime desc
 #end

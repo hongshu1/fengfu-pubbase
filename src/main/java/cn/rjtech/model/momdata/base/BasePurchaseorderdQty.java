@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -23,6 +22,8 @@ public abstract class BasePurchaseorderdQty<M extends BasePurchaseorderdQty<M>> 
     public static final String IDATE = "iDate";
     /**数量*/
     public static final String IQTY = "iQty";
+    /**序号*/
+    public static final String ISEQ = "iSeq";
 	/**
 	 * 主键ID
 	 */
@@ -123,6 +124,23 @@ public abstract class BasePurchaseorderdQty<M extends BasePurchaseorderdQty<M>> 
 	@JSONField(name = "iqty")
 	public java.math.BigDecimal getIQty() {
 		return getBigDecimal("iQty");
+	}
+
+	/**
+	 * 序号
+	 */
+	public M setISeq(java.lang.Integer iSeq) {
+		set("iSeq", iSeq);
+		return (M)this;
+	}
+
+	/**
+	 * 序号
+	 */
+	@JBoltField(name="iseq" ,columnName="iSeq",type="Integer", remark="序号", required=true, maxLength=10, fixed=0, order=7)
+	@JSONField(name = "iseq")
+	public java.lang.Integer getISeq() {
+		return getInt("iSeq");
 	}
 
 }

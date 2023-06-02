@@ -1,0 +1,84 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col">
+        <form class="form-inline text-left" id="inventorydialogForm_#(pageId)" onsubmit="return false;" method="post">
+          <input type="text" autocomplete="off" class="form-control" placeholder="输入仓库编码" name="cInvCode" value="#(cwhcode)"/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="输入仓库名称" name="cInvName" value="#(cwhname)"/>
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+        </form>
+      </div>
+      <div class="col-md-auto">
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="inventorydialogRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.itemid}">
+  <td>${pageNumber,pageSize,index | rownum}</td>
+  <td>${data.cwhcode}</td>
+  <td>${data.cwhname}</td>
+  <td>
+    <a tooltip href="javascript:void(0)" onclick="checkThis(${index})" class="jbolt_table_btn">选择</a>
+  </td>
+</tr>
+{@/each}
+</textarea>
+
+    <!-- 工具条 toolbar -->
+    <table class="jbolt_table jbolt_main_table table-center"
+           data-jbolttable
+           data-height="fill"
+           data-ajax="true"
+           data-url="admin/warehouse/datas"
+           data-column-resize="true"
+           data-column-prepend="1:radio:true"
+           data-page="inventorydialogForm_page"
+           data-conditions-form="inventorydialogForm_#(pageId)"
+           data-rowtpl="inventorydialogRowtpl_#(pageId)"
+           data-toolbar="inventorydialog_toolbar_#(pageId)"
+           id="inventorydialogtableid_#(pageId)"
+    >
+      <thead class="fw-normal">
+      <tr>
+        <th data-width="60" data-column="index">序号</th>
+        <th data-width="300" data-column="cwhcode">仓库编码</th>
+        <th data-width="400" data-column="cwhname">仓库名称</th>
+        <th data-column="cOperationName">操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+
+  </div>
+</div>
+<script>
+  function submitThisForm(callback) {
+    var data = getJboltTableCheckedData("inventorydialogtableid_#(pageId)");
+    console.log(JSON.stringify(data))
+    if (data) {
+      parent.setWhcodeChooseDialogSelectResult(data, '#(index??)', '#(type??)');
+      if (callback) {
+        callback();
+      }
+    }
+  }
+
+  function checkThis(index) {
+    if (index) {
+      parent.setWhcodeChooseDialogSelectResult(jboltTableGetRowJsonData("inventorydialogtableid_#(pageId)", index), '#(index??)',
+          '#(type??)');
+      parent.LayerMsgBox.closeAll();
+    }
+  }
+</script>
+#end
+
