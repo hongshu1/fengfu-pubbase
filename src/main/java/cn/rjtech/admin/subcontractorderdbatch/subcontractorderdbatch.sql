@@ -1,5 +1,6 @@
 #sql("findBySubcontractOrderMId")
 SELECT
+    ROW_NUMBER() OVER (ORDER BY inv.cInvCode) AS SequenceNumber,
 	inv.cInvCode,
 	inv.cInvName,
 	inv.cInvCode1,

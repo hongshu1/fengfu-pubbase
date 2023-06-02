@@ -108,7 +108,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
         }
         //查询入库类别
         if (null != sysPureceive.getRdCode()) {
-            PurchaseType first1 = purchasetypeservice.findFirst("select * from Bd_PurchaseType where iRdStyleId = ?", sysPureceive.getRdCode());
+            PurchaseType first1 = purchasetypeservice.findFirst("select * from Bd_PurchaseType where cRdCode = ?", sysPureceive.getRdCode());
             set("cptname", first1.getCPTName());
         }
 
