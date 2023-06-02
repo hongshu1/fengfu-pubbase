@@ -1,9 +1,9 @@
 package cn.rjtech.admin.department;
-
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
+import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -23,7 +23,6 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
@@ -321,7 +320,13 @@ public class DepartmentService extends BaseService<Department> {
         }
         return convertToModelTree(departmentList, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
     }
+    
+    public List<Department> treeDatasForProposalSystem(Kv kv) {
+        List<Department> datas = daoTemplate("department.list", kv).find();
+        return datas;
+    }
 
+    
     /**
      * 根据部门编码查询部门名称
      */

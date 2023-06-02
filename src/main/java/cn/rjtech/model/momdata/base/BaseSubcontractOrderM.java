@@ -74,6 +74,10 @@ public abstract class BaseSubcontractOrderM<M extends BaseSubcontractOrderM<M>> 
     public static final String DSUBMITTIME = "dSubmitTime";
     /**来源类型：1. 空白采购 2. 物料到货计划*/
     public static final String ITYPE = "iType";
+    /**推送单据到： 1. U8, 默认为1*/
+    public static final String IPUSHTO = "iPushTo";
+    /**推送单号*/
+    public static final String CDOCNO = "cDocNo";
 	/**
 	 * 主键ID
 	 */
@@ -578,7 +582,7 @@ public abstract class BaseSubcontractOrderM<M extends BaseSubcontractOrderM<M>> 
 	/**
 	 * 审批方式：0. 未定义 1. 审批状态 2. 审批流
 	 */
-	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：0. 未定义 1. 审批状态 2. 审批流", required=true, maxLength=10, fixed=0, order=30)
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：0. 未定义 1. 审批状态 2. 审批流", required=false, maxLength=10, fixed=0, order=30)
 	@JSONField(name = "iauditway")
 	public java.lang.Integer getIAuditWay() {
 		return getInt("iAuditWay");
@@ -616,6 +620,40 @@ public abstract class BaseSubcontractOrderM<M extends BaseSubcontractOrderM<M>> 
 	@JSONField(name = "itype")
 	public java.lang.Integer getIType() {
 		return getInt("iType");
+	}
+
+	/**
+	 * 推送单据到： 1. U8, 默认为1
+	 */
+	public M setIPushTo(java.lang.Integer iPushTo) {
+		set("iPushTo", iPushTo);
+		return (M)this;
+	}
+
+	/**
+	 * 推送单据到： 1. U8, 默认为1
+	 */
+	@JBoltField(name="ipushto" ,columnName="iPushTo",type="Integer", remark="推送单据到： 1. U8, 默认为1", required=false, maxLength=10, fixed=0, order=33)
+	@JSONField(name = "ipushto")
+	public java.lang.Integer getIPushTo() {
+		return getInt("iPushTo");
+	}
+
+	/**
+	 * 推送单号
+	 */
+	public M setCDocNo(java.lang.String cDocNo) {
+		set("cDocNo", cDocNo);
+		return (M)this;
+	}
+
+	/**
+	 * 推送单号
+	 */
+	@JBoltField(name="cdocno" ,columnName="cDocNo",type="String", remark="推送单号", required=false, maxLength=40, fixed=0, order=34)
+	@JSONField(name = "cdocno")
+	public java.lang.String getCDocNo() {
+		return getStr("cDocNo");
 	}
 
 }

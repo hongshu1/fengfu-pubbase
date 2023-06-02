@@ -12,10 +12,12 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.admin.vendor.VendorService;
+import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.model.momdata.SysPureceive;
 import cn.rjtech.model.momdata.SysPureceivedetail;
+import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -39,6 +41,10 @@ import java.util.List;
 public class SysPureceiveService extends BaseService<SysPureceive> {
 
     private final SysPureceive dao = new SysPureceive().dao();
+
+    @Inject
+    private WarehouseService warehouseservice;
+
 
     @Override
     protected SysPureceive dao() {
@@ -236,8 +242,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 // 主表修改
                 ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
             }
-            // 查出供应商id
-            Long veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", sysotherin.getVenCode()).getIAutoId();
+            // 查出供应商id ---(供应商字段主表去掉)
+            Long veniAutoId = null;
+            if(null != sysotherin.getVenCode()) {
+                veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", sysotherin.getVenCode()).getIAutoId();
+            }
             // 从表的操作
             // 获取保存数据（执行保存，通过 getSaveRecordList）
             saveTableSubmitDatas(jBoltTable, sysotherin, veniAutoId);
@@ -271,6 +280,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 row.set("IsInitial", false);
                 sysPureceivedetail.setIsInitial("0");
             } else {
+                //获取供应商字段
+                String vencode = row.getStr("vencode");
+                veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", vencode).getIAutoId();
+                if(null == vencode){
+                    ValidationUtils.assertNull(false, "条码："+row.get("barcode")+" 供应商数据不能为空");
+                }
                 // 推送初物 PL_RcvDocQcFormM 来料
                 this.insertRcvDocQcFormM(row, sysotherin, veniAutoId);
                 sysPureceivedetail.setIsInitial("1");
@@ -283,6 +298,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
 			// sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
 //            sysPureceivedetail.setWhcode(row.getStr("whcode"));
+            sysPureceivedetail.setVenCode(row.getStr("vencode"));
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
@@ -308,6 +324,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 row.set("IsInitial", false);
             } else {
                 // 推送初物 PL_RcvDocQcFormM 来料
+                String vencode = row.getStr("vencode");
+                veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", vencode).getIAutoId();
+                if(null == vencode){
+                    ValidationUtils.assertNull(false, "条码："+row.get("barcode")+" 供应商数据不能为空");
+                }
                 this.insertRcvDocQcFormM(row, sysotherin, veniAutoId);
                 sysPureceivedetail.setIsInitial("1");
             }
@@ -319,6 +340,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
 			// sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
 //            sysPureceivedetail.setWhcode(row.getStr("whcode"));
+            sysPureceivedetail.setVenCode(row.getStr("vencode"));
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
@@ -380,7 +402,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
      * 时间转字符串
      */
     public String dateToString(Date date) {
-        SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd");
         return sdf3.format(date);
     }
 
@@ -474,4 +496,137 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         return true;
     }
 
+    // 业务逻辑发送改变，以下重新开发一个保存功能
+    public Ret submit(JBoltTable jBoltTable) {
+        if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList() == null) {
+            return Ret.msg("行数据不能为空");
+        }
+        SysPureceive sysPureceive = jBoltTable.getFormModel(SysPureceive.class, "sysPureceive");
+        // 从表的操作 获取新增数据
+        saveData(jBoltTable,sysPureceive);
+        // 获取修改数据（执行修改）
+        updateData(jBoltTable,sysPureceive);
+        // 获取删除数据（执行删除）
+        deleteData(jBoltTable);
+
+        return SUCCESS;
+    }
+    private void saveData(JBoltTable jBoltTable,SysPureceive sysPureceive){
+        List<Record> list = jBoltTable.getSaveRecordList();
+        if (CollUtil.isEmpty(list)) return;
+        ArrayList<SysPureceivedetail> sysdetaillist = new ArrayList<>();
+        Date now = new Date();
+        for (int i = 0; i < list.size(); i++) {
+            SysPureceivedetail sysPureceivedetail = new SysPureceivedetail();
+            Record row = list.get(i);
+            sysPureceivedetail.setSourceBillType(row.getStr("sourcebilltype"));
+            sysPureceivedetail.setSourceBillNo(row.getStr("sourcebillno"));
+            sysPureceivedetail.setSourceBillNoRow(row.getStr("sourcebillnorow"));
+            sysPureceivedetail.setSourceBillDid(row.getStr("sourcebilldid"));
+            sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
+            sysPureceivedetail.setVenCode(row.getStr("vencode"));
+            sysPureceivedetail.setPosCode(row.getStr("poscode"));
+            sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
+            sysPureceivedetail.setBarcode(row.get("barcode"));
+            sysPureceivedetail.setCreateDate(now);
+            sysPureceivedetail.setModifyDate(now);
+            String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row);
+            sysPureceivedetail.setMasID(s);
+            if (null == row.get("isinitial") || "".equals(row.get("isinitial"))) {
+                sysPureceivedetail.setIsInitial("0");
+            } else {
+                //获取供应商字段
+                String vencode = row.getStr("vencode");
+                if(null == vencode){
+                    ValidationUtils.assertNull(false, "条码："+row.get("barcode")+" 供应商数据不能为空");
+                }
+                Long veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", vencode).getIAutoId();
+                // 推送初物 PL_RcvDocQcFormM 来料
+                SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?", sysPureceivedetail.getSourceBillNo());
+                this.insertRcvDocQcFormM(row, first, veniAutoId);
+                sysPureceivedetail.setIsInitial("1");
+            }
+            sysdetaillist.add(sysPureceivedetail);
+        }
+        syspureceivedetailservice.batchSave(sysdetaillist);
+    }
+
+    private void updateData(JBoltTable jBoltTable,SysPureceive sysPureceive){
+        List<Record> list = jBoltTable.getUpdateRecordList();
+        if (CollUtil.isEmpty(list)) return;
+        ArrayList<SysPureceivedetail> sysdetaillist = new ArrayList<>();
+        Date now = new Date();
+        for (int i = 0; i < list.size(); i++) {
+            SysPureceivedetail sysPureceivedetail = new SysPureceivedetail();
+            Record row = list.get(i);
+            sysPureceivedetail.setAutoID(row.getStr("autoid"));
+            sysPureceivedetail.setSourceBillType(row.getStr("sourcebilltype"));
+            sysPureceivedetail.setSourceBillNo(row.getStr("sourcebillno"));
+            sysPureceivedetail.setSourceBillNoRow(row.getStr("sourcebillnorow"));
+            sysPureceivedetail.setSourceBillDid(row.getStr("sourcebilldid"));
+            sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
+            sysPureceivedetail.setVenCode(row.getStr("vencode"));
+            sysPureceivedetail.setPosCode(row.getStr("poscode"));
+            sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
+            sysPureceivedetail.setBarcode(row.get("barcode"));
+            sysPureceivedetail.setModifyDate(now);
+            String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row);
+            sysPureceivedetail.setMasID(s);
+            if (null == row.get("isinitial") || "".equals(row.get("isinitial")) || "0".equals(row.get("isinitial"))) {
+                sysPureceivedetail.setIsInitial("0");
+            } else {
+                //获取供应商字段
+                String vencode = row.getStr("vencode");
+                if(null == vencode){
+                    ValidationUtils.assertNull(false, "条码："+row.get("barcode")+" 供应商数据不能为空");
+                }
+                Long veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", vencode).getIAutoId();
+                // 推送初物 PL_RcvDocQcFormM 来料
+                SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?", sysPureceivedetail.getSourceBillNo());
+                this.insertRcvDocQcFormM(row, first, veniAutoId);
+                sysPureceivedetail.setIsInitial("1");
+            }
+            sysdetaillist.add(sysPureceivedetail);
+        }
+        syspureceivedetailservice.batchUpdate(sysdetaillist);
+    }
+
+    private void deleteData(JBoltTable jBoltTable){
+        Object[] ids = jBoltTable.getDelete();
+        if (ArrayUtil.isEmpty(ids)) return;
+        syspureceivedetailservice.deleteByIds(ids);
+    }
+
+    // 根据行表数据 通过SourceBillNo(取MES的采购订单)判断头表是否需要添加头表数据，返回 头表id
+    public String insertSysPureceive(SysPureceivedetail sysPureceivedetail,SysPureceive sysPureceive,Record record){
+        SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?", sysPureceivedetail.getSourceBillNo());
+        if(null != first){
+            return first.getAutoID();
+        }else {
+            User user = JBoltUserKit.getUser();
+            Date now = new Date();
+            //需要先创建头表数据
+            sysPureceive.setSourceBillNo(sysPureceivedetail.getSourceBillNo());
+            sysPureceive.setVenCode(sysPureceivedetail.getVenCode());
+            Warehouse first1 = warehouseservice.findFirst("select *   from Bd_Warehouse where cWhCode=?", sysPureceive.getWhCode());
+            sysPureceive.setWhName(first1.getCWhName());
+            sysPureceive.setRdCode(record.getStr("rdcode"));
+            sysPureceive.setOrganizeCode(getOrgCode());
+            sysPureceive.setCreatePerson(user.getUsername());
+            sysPureceive.setCreateDate(now);
+            sysPureceive.setBillDate(dateToString(now));
+            sysPureceive.setModifyPerson(user.getUsername());
+            sysPureceive.setState("1");
+            sysPureceive.setModifyDate(now);
+            sysPureceive.setBillNo(String.valueOf(JBoltSnowflakeKit.me.nextId()));
+            String s = String.valueOf(JBoltSnowflakeKit.me.nextId());
+            sysPureceive.setAutoID(s);
+            sysPureceive.save();
+            return s;
+        }
+    }
+
+
+
 }
+

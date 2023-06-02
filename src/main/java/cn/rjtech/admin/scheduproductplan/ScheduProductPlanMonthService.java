@@ -1,8 +1,6 @@
 package cn.rjtech.admin.scheduproductplan;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.text.StrSplitter;
-import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -33,6 +31,7 @@ import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -40,7 +39,9 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -48,6 +49,8 @@ import java.util.Calendar;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -395,10 +398,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 update("UPDATE Aps_WeekSchedule SET dScheduleEndTime = ? WHERE iAutoId = ? ",apsWeekschedule.getDLockEndTime(),iWeekScheduleId);
                 if (apsWeekscheduledetails != null){
                     delete("DELETE FROM Aps_WeekScheduleD_Qty WHERE " +
-                            "CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )\n" +
+                            "(CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )\n" +
                             "ELSE CAST(iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN iDate<10 THEN '0'+CAST(iDate AS NVARCHAR(30) )\n" +
                             "ELSE CAST(iDate AS NVARCHAR(30) )\n" +
-                            "END AS NVARCHAR(30)) > ? AND iWeekScheduleDid = ? ",DateUtils.formatDate(apsWeekschedule.getDLockEndTime(),"yyyy-MM-dd"),apsWeekscheduledetails.getIAutoId());
+                            "END AS NVARCHAR(30)) ) > ? AND iWeekScheduleDid = ? ",DateUtils.formatDate(apsWeekschedule.getDLockEndTime(),"yyyy-MM-dd"),apsWeekscheduledetails.getIAutoId());
                 }
             }
             return true;
@@ -1883,6 +1886,167 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         });
         return SUCCESS;
     }
+    /**
+     * 保存层级
+     */
+    public Ret saveLevel(Kv kv) {
+        String jsonDate = kv.getStr("data");
+        if (jsonDate.equals("[]") || StringUtils.isBlank(jsonDate)){
+            return SUCCESS;
+        }
+        JSONArray jsonArray = JSONArray.parseArray(jsonDate);
+        List<Map> dataList = jsonArray.toJavaList(Map.class);
+
+
+        String invJoin = "('601'";
+        List<String> invList = new ArrayList<>();
+        for (Map<String,Object> map : dataList) {
+            String cInvCode = map.get("cInvCode").toString();
+            if (!invList.contains(cInvCode)){
+                invJoin = invJoin + ",'" + cInvCode + "'";
+                invList.add(cInvCode);
+            }
+        }
+        invJoin = invJoin.concat(")");
+        //TODO:根据物料集查询排产物料明细
+        List<Record> getScheduDByinvsList =  dbTemplate("scheduproductplan.getScheduDByinvsList",Kv.by("invs",invJoin)).find();
+        //key:inv   value:iWeekScheduleDid
+        Map<String,Long> invScheduleDidMap = new HashMap<>();
+        String scheduDidJoin = "(601";
+        for (Record record : getScheduDByinvsList){
+            String cInvCode = record.getStr("cInvCode");
+            Long iWeekScheduleDid = record.getLong("iWeekScheduleDid");
+            invScheduleDidMap.put(cInvCode,iWeekScheduleDid);
+            scheduDidJoin = scheduDidJoin + "," + iWeekScheduleDid;
+        }
+        scheduDidJoin = scheduDidJoin.concat(")");
+        //TODO:根据排产明细id查询排产结果纪录
+        List<Record> getScheduPlanBydidsList =  dbTemplate("scheduproductplan.getScheduPlanBydidsList",Kv.by("schedudids",scheduDidJoin)).find();
+        //key:iWeekScheduleDid   value:Map<date,qtyId>
+        Map<Long,Map<String,Long>> scheduDqtyIdMap = new HashMap<>();
+        for (Record record : getScheduPlanBydidsList){
+            Long iWeekScheduleDid = record.getLong("iWeekScheduleDid");
+            String planDate = record.getStr("planDate");
+            Long qtyId = record.getLong("qtyId");
+            if (scheduDqtyIdMap.containsKey(iWeekScheduleDid)){
+                Map<String,Long> map = scheduDqtyIdMap.get(iWeekScheduleDid);
+                map.put(planDate,qtyId);
+            }else {
+                Map<String,Long> map = new HashMap<>();
+                map.put(planDate,qtyId);
+                scheduDqtyIdMap.put(iWeekScheduleDid,map);
+            }
+        }
+
+
+        //key: invcode+date  value:ApsWeekscheduledQty
+        Map<String,ApsWeekscheduledQty> detailsQtyAddMap = new HashMap<>();
+        //key: invcode+date  value:ApsWeekscheduledQty
+        Map<String,ApsWeekscheduledQty> detailsQtyUpdMap = new HashMap<>();
+
+        final String shiYong = "计划使用";
+        final String oneS = "计划/1S";
+        final String twoS = "计划/2S";
+        final String threeS = "计划/3S";
+        final String zaiKu = "计划在库";
+        final String tianShu = "在库天数";
+        //正则用于提取数字
+        String regEx = "[^0-9]";
+        Pattern p = Pattern.compile(regEx);
+        try {
+            for (Map<String,Object> map : dataList){
+                String cInvCode = map.get("cInvCode").toString();
+                String yearMonthStr = map.get("date").toString();
+                String day = map.get("day").toString();
+                String newValue = map.get("newValue").toString();
+                String plan = map.get("plan").toString();
+
+                Matcher m = p.matcher(day);
+                String resultDay = m.replaceAll("").trim();
+
+                Date date = DateUtils.parseDate(yearMonthStr);
+                String yearMonth = DateUtils.formatDate(date,"yyyy-MM");
+                int year = Integer.parseInt(DateUtils.formatDate(date,"yyyy"));
+                int month = Integer.parseInt(DateUtils.formatDate(date,"MM"));
+                int iday = Integer.parseInt(resultDay);
+
+                if (!NumberUtils.isNumber(newValue)){
+                    return fail("请检查表中非数值类型数据！");
+                }
+                BigDecimal qty = new BigDecimal(newValue);
+
+                Long iWeekScheduleDid = invScheduleDidMap.get(cInvCode);
+                Map<String,Long> qtyIdMap = scheduDqtyIdMap.get(iWeekScheduleDid) != null ? scheduDqtyIdMap.get(iWeekScheduleDid) : new HashMap<>();
+
+                int type;
+                switch (plan){
+                    case shiYong:
+                        type = 1;
+                        break;
+                    case oneS:
+                        type = 2;
+                        break;
+                    case twoS:
+                        type = 3;
+                        break;
+                    case threeS:
+                        type = 4;
+                        break;
+                    case zaiKu:
+                        type = 5;
+                        break;
+                    case tianShu:
+                        type = 6;
+                        break;
+                    default:
+                        return fail("数据不匹配！");
+                }
+                String dateKey = yearMonth;
+                if (iday < 10){
+                    dateKey = dateKey.concat("-0").concat(resultDay);
+                }else {
+                    dateKey = dateKey.concat("-").concat(resultDay);
+                }
+                String key = cInvCode.concat(dateKey);
+
+                ApsWeekscheduledQty scheduledQty;
+                if (qtyIdMap.containsKey(dateKey)){
+                    if (detailsQtyUpdMap.containsKey(key)){
+                        scheduledQty = detailsQtyUpdMap.get(key);
+                    }else {
+                        scheduledQty = new ApsWeekscheduledQty();
+                    }
+                    Long qtyId = qtyIdMap.get(dateKey);
+                    scheduledQty.setIAutoId(qtyId);
+                    scheduledQty.getClass().getMethod("setIQty"+type,new Class[]{BigDecimal.class}).invoke(scheduledQty, qty);
+                    detailsQtyUpdMap.put(key,scheduledQty);
+                }else {
+                    if (detailsQtyAddMap.containsKey(key)){
+                        scheduledQty = detailsQtyAddMap.get(key);
+                    }else {
+                        scheduledQty = new ApsWeekscheduledQty();
+                    }
+                    scheduledQty.setIWeekScheduleDid(iWeekScheduleDid);
+                    scheduledQty.setIYear(year);
+                    scheduledQty.setIMonth(month);
+                    scheduledQty.setIDate(iday);
+                    scheduledQty.getClass().getMethod("setIQty"+type,new Class[]{BigDecimal.class}).invoke(scheduledQty, qty);
+                    detailsQtyAddMap.put(key,scheduledQty);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        List<ApsWeekscheduledQty> detailsQtyAddList = new ArrayList<>(detailsQtyAddMap.values());
+        List<ApsWeekscheduledQty> detailsQtyUpdList = new ArrayList<>(detailsQtyUpdMap.values());
+
+        tx(() -> {
+            apsWeekscheduledQtyService.batchSave(detailsQtyAddList);
+            apsWeekscheduledQtyService.batchUpdate(detailsQtyUpdList);
+            return true;
+        });
+        return SUCCESS;
+    }
 
     //-----------------------------------------------------------------月周生产计划汇总-----------------------------------------------
 
@@ -1973,12 +2137,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     String date = scheduDateList.get(i);
                     String month = date.substring(0,7);
-                    BigDecimal qty = dateQtyMap.get(date);
+                    BigDecimal qty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
                     if (monthQtyMap.containsKey(month)){
                         BigDecimal monthSum = monthQtyMap.get(month);
-                        monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                        monthQtyMap.put(month,monthSum.add(qty));
                     }else {
-                        monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                        monthQtyMap.put(month,qty);
                     }
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
@@ -2116,21 +2280,22 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 planRecord.set("cWorkName",invInfo.getStr("cWorkName"));
 
                 //key:yyyy-MM   value:qtySum
-                Map<String,BigDecimal> monthQtyMap = new LinkedHashMap<>();
+                Map<String,Integer> monthQtyMap = new LinkedHashMap<>();
                 int monthCount = 1;
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     String date = scheduDateList.get(i);
                     String month = date.substring(0,7);
-                    BigDecimal qty = dateQtyMap.get(date);
-                    if (qty != null && (qty.compareTo(BigDecimal.ZERO)) == 1){
-                        qty = mergeRateSum;
+                    BigDecimal bigqty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
+                    if ((bigqty.compareTo(BigDecimal.ZERO)) == 1){
+                        bigqty = mergeRateSum;
                     }
+                    int qty = bigqty.intValue();
 
                     if (monthQtyMap.containsKey(month)){
-                        BigDecimal monthSum = monthQtyMap.get(month);
-                        monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                        int monthSum = monthQtyMap.get(month);
+                        monthQtyMap.put(month,monthSum + qty);
                     }else {
-                        monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                        monthQtyMap.put(month,qty);
                     }
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
@@ -2474,12 +2639,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         for (int i = 0; i < scheduDateList.size(); i++) {
             String date = scheduDateList.get(i);
             String month = date.substring(0,7);
-            BigDecimal qty = dateQtyMap.get(date);
+            BigDecimal qty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
             if (monthQtyMap.containsKey(month)){
                 BigDecimal monthSum = monthQtyMap.get(month);
-                monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                monthQtyMap.put(month,monthSum.add(qty));
             }else {
-                monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                monthQtyMap.put(month,qty);
             }
             int seq = i + 1;
             int day = Integer.parseInt(date.substring(8));

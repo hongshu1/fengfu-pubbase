@@ -10,7 +10,7 @@ select so.AutoID, CASE so.state
         '审批不通过'
         END AS statename,so.state,so.BillNo as billno,so.CreateDate as createdate,
         so.VenCode as vencode
-		,p.name,s.name as sname,v.cVenName as venname,so.Type as type
+		,p.name,s.name as sname,v.cVenName as venname,so.Type as type,so.SourceBillNo
 FROM T_Sys_PUReceive so
 LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.CreatePerson = p.username
 LEFT JOIN #(getBaseDbName()).dbo.jb_user s on so.AuditPerson = s.username
@@ -46,12 +46,15 @@ SELECT  a.*,
     d.iAutoId as SourceBillNoRow,
     m.cOrderNo as SourceBillID,
     d.iAutoId as SourceBillDid,
-    m.iVendorId
+    m.iVendorId,
+	v.cVenCode as vencode,
+	v.cVenName as venname
 FROM T_Sys_PUReceiveDetail a
 LEFT JOIN PS_PurchaseOrderDBatch aa on aa.cBarcode = a.Barcode
 LEFT JOIN Bd_Inventory b on aa.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on aa.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 where 1=1
 	#if(masid)
 		and a.MasID = #para(masid)
@@ -118,15 +121,19 @@ select top #(limit)
     d.iAutoId as SourceBillNoRow,
     m.cOrderNo as SourceBillID,
     d.iAutoId as SourceBillDid,
-    m.iVendorId
+    m.iVendorId,
+	v.cVenCode as vencode,
+	v.cVenName as venname
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 where a.isEffective = '1'
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
 			or b.cinvname1 like concat('%',#para(q),'%') or a.cBarcode like concat('%',#para(q),'%')
+			or v.cVenCode like concat('%',#para(q),'%')
 		)
 	#end
 
@@ -191,11 +198,14 @@ select
     d.iAutoId as SourceBillNoRow,
     m.cOrderNo as SourceBillID,
     d.iAutoId as SourceBillDid,
-    m.iVendorId
+    m.iVendorId,
+	v.cVenCode as vencode,
+	v.cVenName as venname
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 where a.isEffective = '1'
 
 	#if(barcode)

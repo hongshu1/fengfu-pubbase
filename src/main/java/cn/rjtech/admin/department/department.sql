@@ -31,6 +31,9 @@ where
     #if(isProposal)
         and dep.isProposal = #para(isProposal == 'true' ? 1 : 0)
     #end
+    #if(idepgrade)
+        and dep.iDepGrade = #para(idepgrade)
+    #end
     #if(excludeId)
         and dep.iAutoId <> #para(excludeId)
     #end

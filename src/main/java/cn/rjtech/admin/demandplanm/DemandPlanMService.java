@@ -179,6 +179,7 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 	public void setVendorDateList(int type, List<Record> vendorDateList , Map<Long, Map<String, BigDecimal>> demandPlanDMap, Map<String, Integer> calendarMap,  Map<Long, List<PurchaseOrderRef>> puOrderRefMap){
 		// 同一种的存货编码需要汇总在一起。
 		// 将日期设值。
+		int seq = 0;
 		for (Record record : vendorDateList){
 			// 存货id
 			Long invId = record.getLong(PurchaseOrderD.IINVENTORYID);
@@ -216,6 +217,8 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 				String ymKey = yearStr.concat(monthStr);
 				// 当前日期存在，则取值
 				if (calendarMap.containsKey(formatDateStr)){
+					
+					seq+=10;
 					BigDecimal sum = monthSumQtyMap.containsKey(ymKey) ? monthSumQtyMap.get(ymKey) : BigDecimal.ZERO;
 					monthSumQtyMap.put(ymKey, sum.add(qty));
 					Integer index = calendarMap.get(formatDateStr);
@@ -226,14 +229,16 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 						PurchaseorderdQty purchaseorderdQty = purchaseorderdQtyService.createPurchaseorderdQty(Integer.parseInt(yearStr),
 								Integer.parseInt(monthStr),
 								Integer.parseInt(dayStr),
-								qty
+								qty,
+								seq
 						);
 						purchaseorderdQtyList.add(purchaseorderdQty);
 					}else if (type == 2){
 						SubcontractorderdQty subcontractOrderdQty = subcontractorderdQtyService.createSubcontractOrderdQty(Integer.parseInt(yearStr),
 								Integer.parseInt(monthStr),
 								Integer.parseInt(dayStr),
-								qty
+								qty,
+								seq
 						);
 						subcontractOrderdQtyList.add(subcontractOrderdQty);
 					}

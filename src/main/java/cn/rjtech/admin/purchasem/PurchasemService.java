@@ -563,9 +563,9 @@ public class PurchasemService extends BaseService<Purchasem> {
                 // 删除请购细表数据
                 deletenumber = dbTemplate(u8SourceConfigName(), "purchasem.delectAppVouchsByids", kv).delete();
                 ValidationUtils.isTrue(deletenumber != 0, JBoltMsg.FAIL);
-                // 删除请购额外表数据
+              /*  // 删除请购额外表数据
                 deletenumber = dbTemplate(u8SourceConfigName(), "purchasem.delectAppVouchExtraDefineByids", kv).delete();
-                ValidationUtils.isTrue(deletenumber != 0, JBoltMsg.FAIL);
+                ValidationUtils.isTrue(deletenumber != 0, JBoltMsg.FAIL);*/
                 return true;
             });
 

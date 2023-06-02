@@ -1,18 +1,13 @@
 package cn.rjtech.admin.barcodemaster;
 
 import java.util.Date;
-
 import com.jfinal.plugin.activerecord.Page;
-
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
-
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.common.model.Barcodemaster;
@@ -167,10 +162,11 @@ public class BarcodemasterService extends BaseService<Barcodemaster> {
     /*
      * 传参
      * */
-    public void saveBarcodemasterModel(Barcodemaster barcodemaster, Date now) {
-        barcodemaster.setAutoid(JBoltSnowflakeKit.me.nextId());
+    public void saveBarcodemasterModel(Barcodemaster barcodemaster, Date now, Record record) {
+        //barcodemaster.setAutoid(JBoltSnowflakeKit.me.nextId());
         barcodemaster.setOrganizecode(getOrgCode());
-//        barcodemaster.setVencode();
+        barcodemaster.setSourceid(record.getStr("id"));//来源id
+        //barcodemaster.setVencode();
         barcodemaster.setCreateperson(JBoltUserKit.getUserName());
         barcodemaster.setCreatedate(now);
         barcodemaster.setModifyperson(JBoltUserKit.getUserName());

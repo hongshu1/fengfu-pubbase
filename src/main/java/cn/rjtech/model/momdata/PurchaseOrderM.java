@@ -38,6 +38,8 @@ public class PurchaseOrderM extends BasePurchaseOrderM<PurchaseOrderM> {
     // 记录每月加合计的总长
     public static final String SIZE = "size";
     
+    public static final String TYPESTR ="typeStr";
+    
     private boolean isAdd;
     
     public boolean isAdd() {
