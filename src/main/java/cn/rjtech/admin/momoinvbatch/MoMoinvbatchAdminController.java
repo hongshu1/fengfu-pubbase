@@ -3,6 +3,7 @@ package cn.rjtech.admin.momoinvbatch;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.momoinvbatch.vo.SubPrintReqVo;
 import cn.rjtech.admin.morouting.MoMoroutingService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.uom.UomService;
@@ -17,6 +18,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 
@@ -230,7 +232,21 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
 		  }
 		  set("moMoinvbatch",moMoinvbatchRecord);
 		  render("edit.html");
-
-
 	  }
+
+	/**
+	 * 提交打印
+	 */
+	public void subPrint( ){
+		SubPrintReqVo subPrintReqVo=new SubPrintReqVo();
+		subPrintReqVo.setIseq(getInt("moMoinvbatch.iseq"));
+		subPrintReqVo.setIautoid(getLong("moMoinvbatch.iautoid"));
+
+		subPrintReqVo.setCbarcode(get("moMoinvbatch.cbarcode"));
+		subPrintReqVo.setJobname(get("moMoinvbatch.jobname"));
+		subPrintReqVo.setIqty(getBigDecimal("moMoinvbatch.iqty"));
+		subPrintReqVo.setWorkheader(get("moMoinvbatch.workleader"));
+		renderJson(service.subPrint(subPrintReqVo));
+   }
+
 }

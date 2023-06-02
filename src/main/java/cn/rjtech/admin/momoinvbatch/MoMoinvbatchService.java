@@ -1,13 +1,17 @@
 package cn.rjtech.admin.momoinvbatch;
 
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.momoinvbatch.vo.ModocResVo;
+import cn.rjtech.admin.momoinvbatch.vo.SubPrintReqVo;
 import cn.rjtech.admin.sysmaterialsprepare.SysMaterialsprepareService;
-import cn.rjtech.model.momdata.Inventory;
-import cn.rjtech.model.momdata.MoDoc;
-import cn.rjtech.model.momdata.SysMaterialsprepare;
+import cn.rjtech.admin.workregionm.WorkregionmService;
+import cn.rjtech.admin.workshiftm.WorkshiftmService;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.DateUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -17,10 +21,10 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.MoMoinvbatch;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +49,11 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 	private SysMaterialsprepareService sysMaterialsprepareService; //备料单
 	@Inject
 	private InventoryService inventoryService; //存货档案
+	@Inject
+	private WorkshiftmService workshiftmService; //班次
+
+	@Inject
+	private WorkregionmService workregionmService; //产线
 
 
 	/**
@@ -241,6 +250,8 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 				moMoinvbatch.setIUpdateBy(JBoltUserKit.getUserId());
 				moMoinvbatch.setCUpdateName(JBoltUserKit.getUserName());
 				moMoinvbatch.setDUpdateTime(now);
+				moMoinvbatch.setCVersion("00");//版本号
+				moMoinvbatch.setIsEffective(true);
 				moMoinvbatch.save();
 			}
 
@@ -265,6 +276,8 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 				moMoinvbatch.setIUpdateBy(JBoltUserKit.getUserId());
 				moMoinvbatch.setCUpdateName(JBoltUserKit.getUserName());
 				moMoinvbatch.setDUpdateTime(now);
+				moMoinvbatch.setCVersion("00");//版本号
+				moMoinvbatch.setIsEffective(true);
 				moMoinvbatch.save();
 
 			}
@@ -274,4 +287,135 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 		return SUCCESS;
 	}
 
+	/**
+	 * 获取最后工序操作人员
+	 * @param imodocid
+	 * @return
+	 */
+	public  StringBuffer   getModocLastProcessPerson(Long imodocid){
+		StringBuffer stringBuffer=new StringBuffer();
+		List<Record> rows=dbTemplate("momoinvbatch.findProcessPerson",Okv.create().set("imodocid",imodocid)).find();
+		if(!rows.isEmpty()){
+			if(rows.size()==1){
+			  Record record1=dbTemplate("momoinvbatch.findLastProcess",Okv.create().set("imodocid",imodocid)).findFirst();
+			  if(record1!=null){
+				  //比较
+				Long personiMoRoutingConfigId=rows.get(0).getLong("imoroutingconfigid");
+				Long processiMoRoutingConfigId=record1.getLong("iautoid");
+				if(personiMoRoutingConfigId.equals(processiMoRoutingConfigId)){
+					stringBuffer.append(rows.get(0).getStr("jobanme"));
+				}
+			  }
+			}else{
+				for(Record record:rows){
+					Record record1=dbTemplate("momoinvbatch.findLastProcess",Okv.create().set("imodocid",imodocid)).findFirst();
+					if(record1!=null) {
+						Long personiMoRoutingConfigId = record.getLong("imoroutingconfigid");
+						Long processiMoRoutingConfigId = record1.getLong("iautoid");
+						if (personiMoRoutingConfigId.equals(processiMoRoutingConfigId)) {
+							stringBuffer.append(record.getStr("jobanme"));
+							stringBuffer.append(",");
+						}
+					}
+				}
+			}
+		}
+      return stringBuffer;
+	}
+  public Ret subPrint(SubPrintReqVo subPrintReqVo ){
+	  if(subPrintReqVo==null || notOk(subPrintReqVo.getIautoid())) {
+		  return fail(JBoltMsg.PARAM_ERROR);
+	  }
+	  //更新时需要判断数据存在
+	  MoMoinvbatch dbMoMoinvbatch=findById(subPrintReqVo.getIautoid());
+	  if(dbMoMoinvbatch==null)
+	  {return fail(JBoltMsg.DATA_NOT_EXIST);}
+	  //查询当前
+	  Sql sql=selectSql().select(MoMoinvbatch.IAUTOID,MoMoinvbatch.IPRINTSTATUS).from(table()).
+			  eq(MoMoinvbatch.IMODOCID,dbMoMoinvbatch.getIAutoId())
+			  .eq(MoMoinvbatch.ISEQ,dbMoMoinvbatch.getISeq()-1);
+
+	  MoMoinvbatch frontMoMoinvbatch=findFirst(sql);
+	  if(frontMoMoinvbatch!=null){
+		  if(frontMoMoinvbatch.getIPrintStatus().equals(1)){
+			  return fail("请按顺序打印");
+		  }
+	  }
+	  ModocResVo modocResVo=getModoc(dbMoMoinvbatch.getIMoDocId());
+	  //处理返回打印数据
+	  int sum=subPrintReqVo.getIqty().intValue();
+	  //SubPrintReqVo subPrintReqVo1;
+	  List<SubPrintReqVo> subPrintReqVos=new ArrayList<>();
+	  for(int i=0;i<sum;i++){
+		  SubPrintReqVo  subPrintReqVo1=new SubPrintReqVo();
+		  subPrintReqVo1.setCbarcode(dbMoMoinvbatch.getCBarcode()+"-"+dbMoMoinvbatch.getCVersion());
+		  subPrintReqVo1.setNum("0"+(i+1));
+		  subPrintReqVo1.setWorkheader(subPrintReqVo.getWorkheader());
+		  subPrintReqVo1.setJobname(subPrintReqVo.getJobname());
+		  subPrintReqVo1.setCinvname1(modocResVo.getCinvname1());
+		  subPrintReqVo1.setCinvcode1(modocResVo.getCinvcode1());
+		  subPrintReqVo1.setCworkname(modocResVo.getCworkname());
+		  subPrintReqVo1.setCworkshiftname(modocResVo.getCworkshiftname());
+		  subPrintReqVo1.setProduceddate(modocResVo.getProduceddate());
+		  subPrintReqVo1.setPlaniqty(modocResVo.getPlaniqty());
+		  subPrintReqVos.add(subPrintReqVo1);
+	  }
+
+
+   return successWithData(subPrintReqVos);
+
+  }
+
+	/**
+	 * 获取工单上的信息
+	 * @param imodocid
+	 * @return
+	 */
+	private ModocResVo getModoc(Long imodocid){
+		ModocResVo modocResVo=new ModocResVo();
+		MoDoc moDoc=moDocService.findById(imodocid);
+		if(moDoc.getDPlanDate()!=null){
+		modocResVo.setProduceddate(DateUtils.formatDate(moDoc.getDPlanDate(),"yyyy-MM-dd"));
+		}
+		if(moDoc.getIQty()!=null){
+			modocResVo.setPlaniqty(moDoc.getIQty().intValue());
+		}
+
+		if(isOk(moDoc.getIInventoryId())){
+			//存货
+			Inventory inventory = inventoryService.findById(moDoc.getIInventoryId());
+			if(inventory!=null){
+
+
+				//客户部番
+
+				modocResVo.setCinvcode1(inventory.getCInvCode1());
+				//部品名称
+				modocResVo.setCinvcode1(inventory.getCInvName1());
+
+
+
+			}
+			//工艺路线
+
+
+		}
+
+		//产线
+		if(isOk(moDoc.getIWorkRegionMid())){
+			Workregionm workregionm=workregionmService.findById(moDoc.getIWorkRegionMid());
+			if(workregionm!=null){
+				modocResVo.setCworkname(workregionm.getCWorkName());
+
+			}
+		}
+		//班次
+		if(isOk(moDoc.getIWorkShiftMid())){
+			Workshiftm  workshiftm=workshiftmService.findById(moDoc.getIWorkShiftMid());
+			if(workshiftm!=null){
+				modocResVo.setCworkshiftname(workshiftm.getCworkshiftname());
+			}
+		}
+	   return modocResVo;
+	}
 }
