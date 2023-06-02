@@ -1090,10 +1090,13 @@
      * @param 保存层级
      */
     function saveLevel(){
-        let jsonArray = JSON.stringify(parms.tableData)
-        let url = Api+ `admin/scheduproductplanmonth/saveLevel?data=${parms.tableData.length>0?jsonArray:[]}`;
+        // let jsonArray = JSON.stringify(parms.tableData)
+        let url = Api+ `admin/scheduproductplanmonth/saveLevel`;
         $.ajax({
             url,
+            data:{
+                data:parms.tableData.length>0?parms.tableData:[]
+            },
             type:'post',
             dataType:'json',
             success:function (res){
