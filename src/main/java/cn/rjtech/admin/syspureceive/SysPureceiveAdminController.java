@@ -150,7 +150,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
      */
     @Before(Tx.class)
     public void submitAll() {
-        renderJson(service.submitByJBoltTable(getJBoltTable()));
+        renderJson(service.submit(getJBoltTable()));
     }
 
     /**

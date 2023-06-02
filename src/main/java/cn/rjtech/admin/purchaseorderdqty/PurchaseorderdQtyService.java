@@ -1,6 +1,7 @@
 package cn.rjtech.admin.purchaseorderdqty;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -115,35 +116,42 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 		return null;
 	}
 	
-	public PurchaseorderdQty createPurchaseorderdQty(int year, int month, int day, BigDecimal qty){
+	public PurchaseorderdQty createPurchaseorderdQty(int year, int month, int day, BigDecimal qty, int seq){
 		PurchaseorderdQty purchaseorderdQty = new PurchaseorderdQty();
 		purchaseorderdQty.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		purchaseorderdQty.setIYear(year);
 		purchaseorderdQty.setIMonth(month);
 		purchaseorderdQty.setIDate(day);
 		purchaseorderdQty.setIQty(qty);
+		purchaseorderdQty.setISeq(seq);
 		return purchaseorderdQty;
 	}
 	
-	public PurchaseorderdQty create(Long purchaseOrderDId, int year, int month, int day, BigDecimal qty){
-		PurchaseorderdQty purchaseorderdQty = createPurchaseorderdQty(year, month, day, qty);
+	public PurchaseorderdQty create(Long purchaseOrderDId, int year, int month, int day, BigDecimal qty, int seq){
+		PurchaseorderdQty purchaseorderdQty = createPurchaseorderdQty(year, month, day, qty, seq);
 		purchaseorderdQty.setIPurchaseOrderDid(purchaseOrderDId);
 		return purchaseorderdQty;
 	}
 	
-	public List<PurchaseorderdQty> getPurchaseorderdQty(Long purchaseOrderDId, JSONArray purchaseorderdQtyJsonArray){
+	public List<PurchaseorderdQty> getPurchaseorderdQty(Long purchaseOrderDId, JSONArray purchaseorderdQtyJsonArray, int seq){
 		List<PurchaseorderdQty> list = new ArrayList<>();
 		if (CollectionUtil.isEmpty(purchaseorderdQtyJsonArray)){
-		
+			return null;
 		}
 		for (int i=0; i<purchaseorderdQtyJsonArray.size(); i++){
 			JSONObject jsonObject = purchaseorderdQtyJsonArray.getJSONObject(i);
+			BigDecimal qty = jsonObject.getBigDecimal(PurchaseorderdQty.IQTY.toLowerCase());
+			if (ObjectUtil.isNull(qty) || BigDecimal.ZERO.compareTo(qty) == 0){
+				continue;
+			}
+			seq+=10;
 			PurchaseorderdQty purchaseOrderdQty = create(
 					purchaseOrderDId,
 					jsonObject.getIntValue(PurchaseorderdQty.IYEAR.toLowerCase()),
 					jsonObject.getIntValue(PurchaseorderdQty.IMONTH.toLowerCase()),
 					jsonObject.getIntValue(PurchaseorderdQty.IDATE.toLowerCase()),
-					jsonObject.getBigDecimal(PurchaseorderdQty.IQTY.toLowerCase())
+					qty,
+					seq
 					);
 			list.add(purchaseOrderdQty);
 		}
