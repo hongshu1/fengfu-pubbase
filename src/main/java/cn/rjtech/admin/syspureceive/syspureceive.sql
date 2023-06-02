@@ -28,7 +28,7 @@ where 1=1
 	#if(endTime)
 		and so.CreateDate <= #para(endTime)
 	#end
-ORDER BY so.ModifyDate DESC
+ORDER BY so.CreateDate DESC
 #end
 
 
