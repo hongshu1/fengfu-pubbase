@@ -6,8 +6,11 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.http.HttpUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
+import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
@@ -17,6 +20,7 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.purchaseorderd.PurchaseOrderDService;
 import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
 import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionService;
@@ -27,8 +31,10 @@ import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.HttpApiUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.beust.jcommander.ParameterException;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -71,7 +77,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	private PurchaseOrderDBatchService purchaseOrderDBatchService;
 	@Inject
 	private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
-	
+	@Inject
+	private InventoryService inventoryService;
 	
 	@Override
 	protected PurchaseOrderM dao() {
@@ -665,11 +672,12 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	public Ret audit(Long id){
 		DateTime date = DateUtil.date();
 		PurchaseOrderM purchaseOrderM = getPurchaseOrderM(id);
-		purchaseOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+		purchaseOrderM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
 		purchaseOrderM.setDAuditTime(date);
 		purchaseOrderM.setDSubmitTime(date);
 		purchaseOrderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
 		purchaseOrderM.update();
+		pushPurchase(id);
 		return SUCCESS;
 	}
 	
@@ -957,14 +965,13 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			}
 			
 			purchaseOrderDList.add(purchaseOrderD);
-			
 			// 删除qty里的数据重新添加
 			/*switch (type){
 				case 2:
 					purchaseorderdQtyService.delByPurchaseOrderDId(record.getLong(PurchaseOrderD.IAUTOID));
 					break;
 			}*/
-			
+			boolean flag = false;
 			String[] columnNames = record.getColumnNames();
 			for (String columnName : columnNames){
 				if (columnName.contains("日")){
@@ -984,9 +991,15 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 							purchaseorderdQtyService.delete(purchaseOrderD.getIAutoId(), purchaseorderdQty.getIYear(), purchaseorderdQty.getIMonth(), purchaseorderdQty.getIDate());
 							break;
 					}
-					if (qty.compareTo(BigDecimal.ZERO) > 0)
+					if (qty.compareTo(BigDecimal.ZERO) > 0){
 						purchaseOrderQtyList.add(purchaseorderdQty);
+						flag = true;
+					}
 				}
+			}
+			if (!flag){
+				Inventory inventory = inventoryService.findById(purchaseOrderD.getIInventoryId());
+				ValidationUtils.isTrue(flag, "存货编码【"+inventory.getCInvCode()+"】日期数量不能全部为空");
 			}
 		}
 		
@@ -1004,5 +1017,58 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		if (CollUtil.isNotEmpty(purchaseOrderQtyList)){
 			purchaseorderdQtyService.batchSave(purchaseOrderQtyList, 500);
 		}
+	}
+
+	/**
+	 * U8推单
+	 * @param iautoid
+	 * @return
+	 */
+	public Map<String, String> pushPurchase(Long iautoid){
+		List<Record> orderList = dbTemplate("purchaseorderm.findBycOrder", Kv.by("iautoid",iautoid)).find();
+		Map<String,String> map =new HashMap<>();
+			JSONArray jsonArray = new JSONArray();
+			for (Record order : orderList) {
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("DocNo", order.get("DocNo"));
+				jsonObject.put("cvencode", order.get("cvencode"));
+				jsonObject.put("cmaker", order.get("cmaker"));
+				jsonObject.put("dDate", order.get("dDate"));
+				jsonObject.put("cPersonCode", order.get("cPersonCode"));
+				jsonObject.put("cBusType", order.get("cBusType"));
+				jsonObject.put("cPTCode", order.get("cPTCode"));
+				jsonObject.put("iExchRate", order.get("iExchRate"));
+				jsonObject.put("iTaxRate", order.get("iTaxRate"));
+				jsonObject.put("cexch_name", order.get("cexch_name"));
+				jsonObject.put("cmemo", order.get("cmemo"));
+				jsonObject.put("inum", order.get("inum"));
+				jsonObject.put("iQuantity", order.get("iQuantity"));
+				jsonObject.put("cInvCode", order.get("cInvCode"));
+				jsonObject.put("cInvName", order.get("cInvName"));
+				jsonObject.put("dPlanDate", order.get("dPlanDate"));
+				jsonObject.put("iQuotedPrice", order.get("iQuotedPrice"));
+				jsonObject.put("irowno", order.get("irowno"));
+				jsonObject.put("KL", order.get("KL"));
+				jsonObject.put("iNatDisCount", order.get("iNatDisCount"));
+				// 将其他字段也添加到 jsonObject 中
+				jsonArray.add(jsonObject);
+			}
+			JSONObject params = new JSONObject();
+			params.put("data",jsonArray);
+			String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/PODocAdd?dbname=U8Context", params.toString());
+			JSONObject jsonObject = JSONObject.parseObject(result);
+			String remark="";
+			if(jsonObject.getString("status").equals("S")){
+				remark=jsonObject.getString("remark").split(":")[2];
+				map.put("remark",remark);
+			}else {
+				remark=jsonObject.getString("remark");
+				map.put("remark",remark);
+			}
+			map.put("json",params.toString());
+			return map;
+	}
+	public List<Record> findByMidxlxs(){
+		return dbTemplate("purchaseorderm.findBycOrderNo").find();
 	}
 }

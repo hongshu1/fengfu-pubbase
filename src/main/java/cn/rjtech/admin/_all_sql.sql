@@ -160,6 +160,14 @@
 #include("spotcheckform/spotcheckform.sql")
 #end
 
+#namespace("spotcheckformitem")
+#include("spotcheckformitem/spotcheckformitem.sql")
+#end
+
+#namespace("spotcheckformparam")
+#include("spotcheckformparam/spotcheckformparam.sql")
+#end
+
 ###采购类型
 #namespace("purchasetype")
 #include("purchasetype/purchasetype.sql")
@@ -629,10 +637,30 @@
 #include("exch/exch.sql")
 #end
 
+#namespace("formuploadcategory")
+#include("formuploadcategory/formuploadcategory.sql")
+#end
+
 #namespace("momaterialscanusedlog")
 #include("momaterialscanusedlog/momaterialscanusedlog.sql")
 #end
 
+#namespace("formuploadm")
+#include("formuploadm/formuploadm.sql")
+#end
+
+#namespace("formuploadd")
+#include("formuploadd/formuploadd.sql")
+#end
+
 #namespace("depref")
 #include("depref/depref.sql")
+#end
+
+#namespace("form")
+#include("form/form.sql")
+#end
+
+#namespace("momoinvbatch")
+#include("momoinvbatch/momoinvbatch.sql")
 #end

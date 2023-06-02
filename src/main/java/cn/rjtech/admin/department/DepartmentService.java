@@ -2,7 +2,9 @@ package cn.rjtech.admin.department;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.poi.excel.JBoltExcel;
@@ -10,9 +12,9 @@ import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -29,11 +31,8 @@ import java.util.List;
  * @date: 2023-03-22 11:55
  */
 public class DepartmentService extends BaseService<Department> {
+    
     private final Department dao = new Department().dao();
-    // 证正校验规则
-    private final String postCodeRegex = "";
-    private final String emailRegex = "^(\\w+([-.][A-Za-z0-9]+)*){3,18}@\\w+([-.][A-Za-z0-9]+)*\\.\\w+([-.][A-Za-z0-9]+)*$";
-    private final String phoneRegex = "0\\d{2,3}[-]?\\d{7,8}|0\\d{2,3}\\s?\\d{7,8}|13[0-9]\\d{8}|15[1089]\\d{8}";
 
     @Override
     protected Department dao() {
@@ -58,21 +57,8 @@ public class DepartmentService extends BaseService<Department> {
     }
 
     public List<Record> findAll(Kv kv) {
-
         return dbTemplate("department.list", kv.set("orgId", getOrgId())).find();
     }
-
-    //根据部门名称查询部门编码
-    public String findCodeByDepName(String cDepName){
-        return queryColumn("select cDepCode from Bd_Department where cDepName=?",cDepName);
-    }
-
-    //根据部门名称查询部门ID
-    public Long findIdByDepName(String cDepName){
-        return queryColumn("select iAutoId from Bd_Department where cDepName=?",cDepName);
-    }
-
-
 
     /**
      * 保存
@@ -236,7 +222,15 @@ public class DepartmentService extends BaseService<Department> {
      */
     private JBoltExcelSheet createJboltExcelSheetTpl() {
         JBoltExcelSheet jBoltExcelSheet = JBoltExcelSheet.create("sheet");
-        jBoltExcelSheet.setHeaders(JBoltExcelHeader.create("cdepcode", "部门编码", 20), JBoltExcelHeader.create("cdepname", "部门名称", 20), JBoltExcelHeader.create("cdeptype", "部门类型", 20), JBoltExcelHeader.create("cpersonname", "负责人", 20), JBoltExcelHeader.create("isapsinvoled", "是否参与排产", 15), JBoltExcelHeader.create("dcreatetime", "创建时间", 20), JBoltExcelHeader.create("cdepmemo", "备注", 20));
+        jBoltExcelSheet.setHeaders(
+                JBoltExcelHeader.create("cdepcode", "部门编码", 20), 
+                JBoltExcelHeader.create("cdepname", "部门名称", 20), 
+                JBoltExcelHeader.create("cdeptype", "部门类型", 20), 
+                JBoltExcelHeader.create("cpersonname", "负责人", 20), 
+                JBoltExcelHeader.create("isapsinvoled", "是否参与排产", 15), 
+                JBoltExcelHeader.create("dcreatetime", "创建时间", 20), 
+                JBoltExcelHeader.create("cdepmemo", "备注", 20)
+        );
         return jBoltExcelSheet;
     }
 
@@ -265,23 +259,44 @@ public class DepartmentService extends BaseService<Department> {
     }
 
     public List<Department> getTreeTableDatas(Kv kv) {
-        List<Department> datas = daoTemplate("department.list",kv).find();
+        List<Department> datas = daoTemplate("department.list", kv).find();
         return convertToModelTree(datas, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
     }
-
-    /**
-     * 根据部门编码查询部门名称 
-     */
-	public String getCdepName(String cdepcode) {
-		Department department = findFirst(selectSql().eq("cdepcode", cdepcode).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("iorgid", getOrgId()));
-		if(department != null) return department.getCDepName();
-		return null;
-	}
-
-	public String getCdepCodeByName(String cdepname) {
-		Department department = findFirst(selectSql().eq("cdepname", cdepname).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("iorgid", getOrgId()));
-		if(department != null) return department.getCDepCode();
-		return null;
-	}
     
+    public List<Department> treeDatasForProposalSystem(Kv kv) {
+        List<Department> datas = daoTemplate("department.list", kv).find();
+        return datas;
+    }
+
+    
+    /**
+     * 根据部门编码查询部门名称
+     */
+    public String getCdepName(String cdepcode) {
+        Sql sql = selectSql().select(Department.CDEPNAME)
+                .eq("cdepcode", cdepcode)
+                .eq("isdeleted", ZERO_STR)
+                .eq("iorgid", getOrgId());
+
+        return queryColumn(sql);
+    }
+
+    public String getCdepCodeByName(String cdepname) {
+        Sql sql = selectSql().select(Department.CDEPCODE)
+                .eq("cdepname", cdepname)
+                .eq("isdeleted", ZERO_STR)
+                .eq("iorgid", getOrgId());
+
+        return queryColumn(sql);
+    }
+    
+    public Department findByCdepName(String cdepname) {
+        Sql sql = selectSql()
+                .eq("cdepname", cdepname)
+                .eq("isdeleted", ZERO_STR)
+                .eq("iorgid", getOrgId());
+
+        return findFirst(sql);
+    }
+
 }

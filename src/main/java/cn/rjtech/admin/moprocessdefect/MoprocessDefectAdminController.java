@@ -65,9 +65,9 @@ public class MoprocessDefectAdminController extends BaseAdminController {
      */
     public void index() {
         set("imodocid",getLong("imodocid"));
-
         render("index.html");
     }
+
 
     /**
      * 数据源

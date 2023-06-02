@@ -316,4 +316,52 @@ GROUP BY
 
 
 
+#sql("pushU8List")
+SELECT
+    t1.OrganizeCode,
+    t2.MasID,
+    t2.Whcode AS iwhcode,
+    (SELECT cWhName FROM Bd_Warehouse WHERE t2.Whcode = cWhCode) AS iwhname,
+    t1.VenCode,
+    (SELECT cVenName FROM Bd_Vendor WHERE t1.VenCode = cVenCode) AS VenName,
+    t2.Qty,
+    i.cInvCode AS InvCode,
+    t1.BillNo,
+    t1.BillDate,
+    t2.SourceBillNo,
+    t2.SourceBillID,
+    t2.SourceBillDid,
+    t2.SourceBillType,
+    t2.SourceBillNoRow,
+    t1.RdCode AS IcRdCode,
+    t2.PosCode
+
+FROM
+    T_Sys_PUInStore t1
+        LEFT JOIN T_Sys_PUInStoreDetail t2 ON t2.MasID = t1.AutoID
+        LEFT JOIN (
+        SELECT
+            iPurchaseOrderDid,
+            iinventoryId,
+            cBarcode,
+            iQty,
+            cSourceld,
+            cSourceBarcode
+        FROM
+            PS_PurchaseOrderDBatch UNION ALL
+        SELECT
+            iSubcontractOrderDid,
+            iinventoryId,
+            cBarcode,
+            iQty,
+            cSourceld,
+            cSourceBarcode
+        FROM
+            PS_SubcontractOrderDBatch
+    ) t4 ON t2.spotTicket = t4.cbarcode
+        LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
+WHERE t1.AutoID = '#(autoid)'
+  AND t2.Qty < 0
+
+#end
 

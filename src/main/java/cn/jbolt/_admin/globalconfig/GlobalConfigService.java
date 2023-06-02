@@ -3,10 +3,13 @@ package cn.jbolt._admin.globalconfig;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 import cn.jbolt.core.service.JBoltGlobalConfigService;
 import cn.rjtech.config.MesConfigKey;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 全局配置 service
@@ -31,4 +34,16 @@ public class GlobalConfigService extends JBoltGlobalConfigService {
         ValidationUtils.isTrue(itaxrate.compareTo(BigDecimal.valueOf(0.5)) < 0, "税率超过了50%");
         return itaxrate;
     }
+
+    public Ret updateRecords(List<Record> recordList) {
+        tx(() -> {
+
+            batchUpdateRecords(recordList);
+            
+            return true;
+        });
+
+        return SUCCESS;
+    }
+    
 }

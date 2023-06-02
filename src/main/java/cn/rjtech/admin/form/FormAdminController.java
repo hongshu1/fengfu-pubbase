@@ -42,7 +42,7 @@ public class FormAdminController extends BaseAdminController {
      */
     @UnCheck
     public void datas() {
-        renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKeywords()));
+        renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKeywords(),getKv()));
     }
 
     /**

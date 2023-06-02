@@ -1,0 +1,56 @@
+<form onsubmit="return false;" id="moMoinvbatchForm" action="#(action)" method="post">
+<input type="hidden" name="moMoinvbatch.iautoid" value="#(moMoinvbatch.iautoid??)" />
+	<div class="form-group row">
+
+		<button onclick="submitForm()" class="btn btn-warning btn-sm"><i class="fa fa-check"></i>提交打印</button>
+		<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>关闭</button>
+	</div>
+	<div class="form-group row">
+		<input type="hidden" name="moMoinvbatch.iautoid" value="#(moMoinvbatch.iautoid??)" />
+		<label class="col-sm-2 col-form-label">序号</label>
+		<div class="col">
+			<input type="text" readonly="readonly" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入序号"  maxlength="10" name="moMoinvbatch.iseq" value="#(moMoinvbatch.iseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">现品票</label>
+		<div class="col">
+			<input type="text" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入现品票" maxlength="40" name="moMoinvbatch.cbarcode" value="#(moMoinvbatch.cbarcode??)"/>
+		</div>
+	</div>
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">生产组长</label>
+			<div class="col">
+				<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="" maxlength="40" name="moMoinvbatch.workleader" value="#(moMoinvbatch.workdleader??)"/>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">作业员</label>
+			<div class="col">
+				<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="" maxlength="40" name="moMoinvbatch.workleader" value="#(moMoinvbatch.workdleader??)"/>
+			</div>
+		</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">打印数量</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入数量"  maxlength="24" name="moMoinvbatch.jobname" value="#(moMoinvbatch.jboname??)"/>
+		</div>
+	</div>
+
+
+
+</form>
+#define js()
+#@hiprintjs()
+<script>
+	hideParentLayerDialogBtn(0);
+	function closeHandler() {
+
+
+		parent.layer.close(parent.layer.getFrameIndex(window.name));
+		//window.parent.refreshJBoltTable();
+	}
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="moMoinvbatchForm")
+#end
+

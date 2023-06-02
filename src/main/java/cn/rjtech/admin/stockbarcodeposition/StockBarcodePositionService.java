@@ -2,18 +2,11 @@ package cn.rjtech.admin.stockbarcodeposition;
 
 import java.util.Date;
 import java.util.List;
-
 import com.jfinal.plugin.activerecord.Page;
-
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
-
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.StockBarcodePosition;
 
@@ -37,7 +30,7 @@ public class StockBarcodePositionService extends BaseService<StockBarcodePositio
      * 后台管理分页查询
      */
     public Page<StockBarcodePosition> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-        return paginateByKeywords("iAutoId", "DESC", pageNumber, pageSize, keywords, "iAutoId");
+        return paginateByKeywords("AutoId", "DESC", pageNumber, pageSize, keywords, "AutoId");
     }
 
     /**
@@ -124,29 +117,21 @@ public class StockBarcodePositionService extends BaseService<StockBarcodePositio
     }
 
     /*
-     * 根据仓库编码+存货编码查询条码和数量
-     * */
-    public List<StockBarcodePosition> findByWhCodeAndInvCode(String whcode, String invcode) {
-        return find("select * from T_Sys_StockBarcodePosition where WhCode = ? and InvCode=?", whcode, invcode);
-    }
-
-    /*
      * 传参
      * */
     public void saveBarcodePositionModel(StockBarcodePosition position, Kv kv, Date now) {
-        position.setAutoID(JBoltSnowflakeKit.me.nextId());
+        //position.setAutoID(JBoltSnowflakeKit.me.nextId());
         position.setOrganizeCode(getOrgCode());
         position.setInvCode(kv.getStr("cinvcode"));
         position.setVenCode(kv.getStr("cvencode"));
-        position.setVenPosCode(kv.getStr(""));
+        //position.setVenPosCode(kv.getStr(""));
         position.setWhCode(kv.getStr("cwhcode"));
-        position.setPosCode(kv.getStr(""));
+        position.setPosCode(kv.getStr("poscode"));
         //position.setState();
-        position.setBarcode(kv.getStr(""));
-        position.setQty(kv.getBigDecimal("generatedStockQty"));
+        position.setBarcode(kv.getStr("barcode"));
+        position.setQty(kv.getBigDecimal("qty")); //每张条码需要打印的数量
         position.setBatch(kv.getStr("batch"));
         position.setChgDate(now);
-
     }
 
 }

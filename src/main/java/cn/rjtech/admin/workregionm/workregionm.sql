@@ -14,6 +14,9 @@ WHERE m.isDeleted = '0'
     #if(cworkcode)
         AND m.cworkcode = #para(cworkcode)
     #end
+    #if(cwhname)
+        AND ware.cwhname=#para(cwhname)
+    #end
     #if(cworkname)
         AND m.cworkname = #para(cworkname)
     #end

@@ -430,7 +430,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         String startDateStr = DateUtils.formatDate(startDate,"yyyy-MM-dd");
         //排产截止年月日
         Date endDate = DateUtils.parseDate(endDateStr);
-        if (startDate.getTime() >= endDate.getTime()){
+        if (startDate.getTime() > endDate.getTime()){
             return fail("截止日期不能小于上次排产截止日期");
         }
 
@@ -663,30 +663,43 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         String orgCode = getOrgCode();
         String orgName = getOrgName();
         Long orgId = getOrgId();
-        Long iWeekScheduleId = JBoltSnowflakeKit.me.nextId();
 
+        Long iWeekScheduleId;
         //排产主表
         ApsWeekschedule weekschedule = new ApsWeekschedule();
-        weekschedule.setIOrgId(orgId);
-        weekschedule.setCOrgCode(orgCode);
-        weekschedule.setCOrgName(orgName);
-        weekschedule.setICreateBy(userId);
-        weekschedule.setCCreateName(userName);
-        weekschedule.setDCreateTime(newDate);
-        weekschedule.setIUpdateBy(userId);
-        weekschedule.setCUpdateName(userName);
-        weekschedule.setDUpdateTime(newDate);
-        weekschedule.setIAutoId(iWeekScheduleId);
-        weekschedule.setILevel(level);
-        weekschedule.setDScheduleBeginTime(startDate);
-        weekschedule.setDScheduleEndTime(endDate);
-        weekschedule.setIsLocked(false);
+        if (apsWeekschedule != null){
+            iWeekScheduleId = apsWeekschedule.getIAutoId();
+            apsWeekschedule.setDScheduleEndTime(endDate);
+        }else {
+            iWeekScheduleId = JBoltSnowflakeKit.me.nextId();
+            weekschedule.setIOrgId(orgId);
+            weekschedule.setCOrgCode(orgCode);
+            weekschedule.setCOrgName(orgName);
+            weekschedule.setICreateBy(userId);
+            weekschedule.setCCreateName(userName);
+            weekschedule.setDCreateTime(newDate);
+            weekschedule.setIUpdateBy(userId);
+            weekschedule.setCUpdateName(userName);
+            weekschedule.setDUpdateTime(newDate);
+            weekschedule.setIAutoId(iWeekScheduleId);
+            weekschedule.setILevel(level);
+            weekschedule.setDScheduleBeginTime(startDate);
+            weekschedule.setDScheduleEndTime(endDate);
+            weekschedule.setIsLocked(false);
+        }
+
+        //TODO:根据排产纪录id查询已排产过物料纪录
+        List<Record> getDetailsList = findRecords("SELECT iAutoId,iInventoryId FROM Aps_WeekScheduleDetails WHERE iWeekScheduleId = ? ",iWeekScheduleId);
+        //key:invId   value:iWeekScheduleDid
+        Map<Long,Long> invScheduleDidMap = new HashMap<>();
+        for (Record record : getDetailsList){
+            invScheduleDidMap.put(record.getLong("iInventoryId"),record.getLong("iAutoId"));
+        }
 
         //排产物料明细表
         List<ApsWeekscheduledetails> detailsList = new ArrayList<>();
         //排产数量明细表
         List<ApsWeekscheduledQty> detailsQtyList = new ArrayList<>();
-
         int seq = 1;
         //循环产线
         for (Long WorkIdKey : workInvListMap.keySet()){
@@ -797,23 +810,29 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             //循环物料
             for (String inv : invList){
                 Record info = invInfoMap.get(inv);
+                Long invId = info.getLong("invId");
 
-                Long iWeekScheduleDid = JBoltSnowflakeKit.me.nextId();
-                ApsWeekscheduledetails scheduleDetails = new ApsWeekscheduledetails();
-                scheduleDetails.setIOrgId(orgId);
-                scheduleDetails.setCOrgCode(orgCode);
-                scheduleDetails.setCOrgName(orgName);
-                scheduleDetails.setICreateBy(userId);
-                scheduleDetails.setCCreateName(userName);
-                scheduleDetails.setDCreateTime(newDate);
-                scheduleDetails.setIUpdateBy(userId);
-                scheduleDetails.setCUpdateName(userName);
-                scheduleDetails.setDUpdateTime(newDate);
-                scheduleDetails.setIAutoId(iWeekScheduleDid);
-                scheduleDetails.setIWeekScheduleId(iWeekScheduleId);
-                scheduleDetails.setILevel(level);
-                scheduleDetails.setIInventoryId(info.getLong("invId"));
-                detailsList.add(scheduleDetails);
+                Long iWeekScheduleDid;
+                if (invScheduleDidMap.containsKey(invId)){
+                    iWeekScheduleDid = invScheduleDidMap.get(invId);
+                }else {
+                    iWeekScheduleDid = JBoltSnowflakeKit.me.nextId();
+                    ApsWeekscheduledetails scheduleDetails = new ApsWeekscheduledetails();
+                    scheduleDetails.setIOrgId(orgId);
+                    scheduleDetails.setCOrgCode(orgCode);
+                    scheduleDetails.setCOrgName(orgName);
+                    scheduleDetails.setICreateBy(userId);
+                    scheduleDetails.setCCreateName(userName);
+                    scheduleDetails.setDCreateTime(newDate);
+                    scheduleDetails.setIUpdateBy(userId);
+                    scheduleDetails.setCUpdateName(userName);
+                    scheduleDetails.setDUpdateTime(newDate);
+                    scheduleDetails.setIAutoId(iWeekScheduleDid);
+                    scheduleDetails.setIWeekScheduleId(iWeekScheduleId);
+                    scheduleDetails.setILevel(level);
+                    scheduleDetails.setIInventoryId(invId);
+                    detailsList.add(scheduleDetails);
+                }
 
                 int[] invPlan = planMap.get(inv);
                 int[] invPlan1S = invPlanMap1S.get(inv);
@@ -862,15 +881,19 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
         }
         tx(() -> {
-            weekschedule.save();
+            if (apsWeekschedule != null){
+                apsWeekschedule.update();
+            }else {
+                weekschedule.save();
+            }
             apsWeekscheduledetailsService.batchSave(detailsList);
             if (detailsQtyList.size() > 0){
-                List<List<ApsWeekscheduledQty>> groupCusOrderSumList = CollectionUtils.partition(detailsQtyList,300);
-                CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
-                ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
-                for(List<ApsWeekscheduledQty> cusOrderSums :groupCusOrderSumList){
+                List<List<ApsWeekscheduledQty>> groupList = CollectionUtils.partition(detailsQtyList,300);
+                CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
+                ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
+                for(List<ApsWeekscheduledQty> dataList :groupList){
                     executorService.execute(()->{
-                        apsWeekscheduledQtyService.batchSave(cusOrderSums);
+                        apsWeekscheduledQtyService.batchSave(dataList);
                     });
                     countDownLatch.countDown();
                 }
@@ -1006,13 +1029,16 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * 获取计划
      */
     public List<Map<String,Object>> getScheduPlanMonthList(Kv kv) {
-        if (kv.get("iWeekScheduleId").equals("undefined") || notOk(kv.getLong("iWeekScheduleId"))){
+        if (notOk(kv.get("level"))){
             return new ArrayList<>();
         }
-        //排产纪录id
-        Long iWeekScheduleId = kv.getLong("iWeekScheduleId");
+        //排产层级
+        int level = kv.getInt("level");
         //TODO:查询排产开始日期与截止日期
-        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleBeginTime,dScheduleEndTime FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId);
+        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleBeginTime,dScheduleEndTime FROM Aps_WeekSchedule WHERE iLevel = ? ",level);
+        if (apsWeekschedule == null){
+            return new ArrayList<>();
+        }
         int iLevel = apsWeekschedule.getILevel();
         String startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(),"yyyy-MM-dd");
         String endDate = DateUtils.formatDate(apsWeekschedule.getDScheduleEndTime(),"yyyy-MM-dd");
@@ -1026,7 +1052,13 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         int lastmonth = Integer.parseInt(DateUtils.formatDate(lastDate,"MM"));
         int lastday = Integer.parseInt(DateUtils.formatDate(lastDate,"dd"));
 
-        kv.set("level",iLevel).set("startdate",startDate).set("enddate",endDate);
+        kv.set("level",iLevel);
+        if (notOk(kv.get("startdate"))){
+            kv.set("startdate",startDate);
+        }
+        if (notOk(kv.get("enddate"))){
+            kv.set("enddate",endDate);
+        }
         //TODO:根据层级及日期获取月周生产计划表数据
         List<Record> getWeekScheduPlanList = getWeekScheduPlanList(kv);
 
@@ -1159,10 +1191,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * 锁定计划
      */
     public Ret lockScheduPlan(Kv kv) {
-        //排产纪录id
-        Long iWeekScheduleId = kv.getLong("iWeekScheduleId");
-        if (notOk(iWeekScheduleId)){
-            return fail("排产纪录id不能为空！");
+        if (notOk(kv.get("level"))){
+            return fail("排产层级不能为空！");
         }
         //锁定截止日期
         String lockEndDate = kv.getStr("endDate");
@@ -1170,10 +1200,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             return fail("锁定截止日期不能为空！");
         }
         //排产层级
-        int level = apsWeekscheduleService.findFirst("SELECT iLevel FROM Aps_WeekSchedule WHERE iAutoId = ? ",iWeekScheduleId).getILevel();
-
+        int level = kv.getInt("level");
         //TODO:获取当前层级上次排产锁定日期+1
         ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock",Kv.by("level",level)).findFirst();
+        if (apsWeekschedule == null){
+            return fail("当前层级暂无排产纪录！");
+        }
         //锁定开始日期
         Date startDate;
         if (apsWeekschedule != null && apsWeekschedule.getDLockEndTime() != null){
@@ -1649,7 +1681,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
         }
         tx(() -> {
-            update("UPDATE Aps_WeekSchedule SET dLockEndTime = ? WHERE iAutoId = ? ",DateUtils.parseDate(lockEndDate),iWeekScheduleId);
+            update("UPDATE Aps_WeekSchedule SET dLockEndTime = ? WHERE iLevel = ? ",DateUtils.parseDate(lockEndDate),level);
             motaskService.batchSave(moTaskList);
             moDocService.batchSave(moDocList);
 
@@ -1820,15 +1852,20 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * 解锁计划
      */
     public Ret unLockScheduPlan(Kv kv) {
-        //排产纪录id
-        Long iWeekScheduleId = kv.getLong("iWeekScheduleId");
-        if (notOk(iWeekScheduleId)){
-            return fail("排产纪录id不能为空！");
+        if (notOk(kv.get("level"))){
+            return fail("排产层级不能为空！");
         }
         //解锁开始日期
         String unLockStartDate = kv.getStr("endDate");
         if (StringUtils.isBlank(unLockStartDate)){
             return fail("解锁开始日期不能为空！");
+        }
+        //排产层级
+        int level = kv.getInt("level");
+        //TODO:获取当前层级上次排产锁定日期+1
+        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock",Kv.by("level",level)).findFirst();
+        if (apsWeekschedule == null){
+            return fail("当前层级暂无排产纪录！");
         }
 
         //TODO:查询任务工单表结束日期 > 解锁开始日期&&未审核数据
@@ -1837,11 +1874,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         for (MoMotask motask : getMotaskByEndDateList) {
             taskIdList.add(motask.getIAutoId());
         }
-
         tx(() -> {
             if (taskIdList.size() > 0) {
                 update("UPDATE Mo_MoTask SET IsDeleted = 1 WHERE iAutoId IN (" + CollUtil.join(taskIdList, COMMA) + ") ");
-                update("UPDATE Aps_WeekSchedule SET dLockEndTime = ? WHERE iAutoId = ? ",DateUtils.parseDate(unLockStartDate),iWeekScheduleId);
+                update("UPDATE Aps_WeekSchedule SET dLockEndTime = ? WHERE iLevel = ? ",DateUtils.parseDate(unLockStartDate),level);
             }
             return true;
         });
@@ -1937,12 +1973,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     String date = scheduDateList.get(i);
                     String month = date.substring(0,7);
-                    BigDecimal qty = dateQtyMap.get(date);
+                    BigDecimal qty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
                     if (monthQtyMap.containsKey(month)){
                         BigDecimal monthSum = monthQtyMap.get(month);
-                        monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                        monthQtyMap.put(month,monthSum.add(qty));
                     }else {
-                        monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                        monthQtyMap.put(month,qty);
                     }
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
@@ -2080,21 +2116,22 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 planRecord.set("cWorkName",invInfo.getStr("cWorkName"));
 
                 //key:yyyy-MM   value:qtySum
-                Map<String,BigDecimal> monthQtyMap = new LinkedHashMap<>();
+                Map<String,Integer> monthQtyMap = new LinkedHashMap<>();
                 int monthCount = 1;
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     String date = scheduDateList.get(i);
                     String month = date.substring(0,7);
-                    BigDecimal qty = dateQtyMap.get(date);
-                    if (qty != null && (qty.compareTo(BigDecimal.ZERO)) == 1){
-                        qty = mergeRateSum;
+                    BigDecimal bigqty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
+                    if ((bigqty.compareTo(BigDecimal.ZERO)) == 1){
+                        bigqty = mergeRateSum;
                     }
+                    int qty = bigqty.intValue();
 
                     if (monthQtyMap.containsKey(month)){
-                        BigDecimal monthSum = monthQtyMap.get(month);
-                        monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                        int monthSum = monthQtyMap.get(month);
+                        monthQtyMap.put(month,monthSum + qty);
                     }else {
-                        monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                        monthQtyMap.put(month,qty);
                     }
                     int seq = i + 1;
                     int day = Integer.parseInt(date.substring(8));
@@ -2438,12 +2475,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         for (int i = 0; i < scheduDateList.size(); i++) {
             String date = scheduDateList.get(i);
             String month = date.substring(0,7);
-            BigDecimal qty = dateQtyMap.get(date);
+            BigDecimal qty = dateQtyMap.get(date) != null ? dateQtyMap.get(date) : BigDecimal.ZERO;
             if (monthQtyMap.containsKey(month)){
                 BigDecimal monthSum = monthQtyMap.get(month);
-                monthQtyMap.put(month,monthSum.add(qty != null ? qty : BigDecimal.ZERO));
+                monthQtyMap.put(month,monthSum.add(qty));
             }else {
-                monthQtyMap.put(month,qty != null ? qty : BigDecimal.ZERO);
+                monthQtyMap.put(month,qty);
             }
             int seq = i + 1;
             int day = Integer.parseInt(date.substring(8));

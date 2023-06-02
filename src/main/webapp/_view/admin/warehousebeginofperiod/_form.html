@@ -24,11 +24,7 @@
                 </div>
               </div>
             </div>
-            <!--<button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
-                class="fa fa-refresh"></i> 保存
-            </button>-->
-            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
-                class="fa fa-close"></i> 关闭
+            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-close"></i> 关闭
             </button>
           </div>
         </div>
@@ -51,13 +47,13 @@
       <td title="${data.cuomname}">${data.cuomname}</td>
       <td title="${data.cvencode}">${data.cvencode}</td>
       <td title="${data.cvenname}">${data.cvenname}</td>
-      <td title="${data.stockqty}">${data.stockqty}</td>
-      <td title="${data.ungeneratedstockqty}">${data.ungeneratedstockqty}</td>
-      <td title="${data.generatedstockqty}">${data.generatedstockqty}</td>
-      <td title="${data.ipkgqty}">${data.ipkgqty}</td>
+      <td title="${data.qty, 0|number_format}">${data.qty}</td>
+      <td title="${data.ungeneratedstockqty, 0|number_format}">${data.ungeneratedstockqty}</td>
+      <td title="${data.generatedstockqty, 0|number_format}">${data.generatedstockqty}</td>
+      <td title="${data.ipkgqty, 0|number_format}">${data.ipkgqty}</td>
       <td title="${data.batch}">${data.batch}</td>
       <td title="${data.createdate}">${data.createdate}</td>
-      <td title="${data.printtepl}">${data.printtepl}</td>
+      <td title="${data.reportfilename}">${data.reportfilename}</td>
     </tr>
   {@/each}
 </textarea>
@@ -108,7 +104,7 @@
             <th data-width="130" data-column="ipkgqty">包装数量</th>
             <th data-width="150" data-column="batch">批次号</th>
             <th data-width="150" data-column="createdate">生产日期</th>
-            <th data-width="150" data-column="printtepl" title="标签打印模板">标签打印模板</th>
+            <th data-width="150" data-column="reportFileName" title="标签打印模板">标签打印模板</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -119,17 +115,25 @@
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">打印数量:</label>
             <div class="col-3" style="right: 20px;">
-              <input type="number" id="printnum" autocomplete="off" class="form-control" placeholder=""
-                     data-tips="" maxlength="23" name="printnum" value="#(printnum??)" required="true"/>
+              <input type="number" id="printnum" name="printnum" data-with-clearbtn="true" autocomplete="off" required="true"
+                     class="form-control" placeholder="请输入打印数量" maxlength="40" value="#(printnum??)" data-rule="int"/>
             </div>
             <div class="col-2" style="right: 35px;">
               <button type="button" class="btn btn-outline-secondary" id="createButton" name="createButton"
                       onclick="submitThisForm()">生成
               </button>
             </div>
-            <div class="col-2" style="margin-top: 8px;right: 75px;">
-              <input id="autoprint" type="checkbox" name="autoprint" value="#(cwhcode??)"/><span>自动打印</span>
+            <div class="col-2" style="margin-top: 8px;right: 75px;" data-require-plugin="hiprint"
+                 aria-labelledby="exportMenuButton">
+              <!--<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印</button>
+                <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+                  <button class="btn dropdown-item" onclick="submitThisForm()"> 生成</button>
+                </div>
+              </div>-->
+              <input id="autoprint" type="checkbox" name="autoprint" value="#(autoprint??)"/><span>自动打印</span>
             </div>
+
             <div class="col-3" style="right: 95px;">
               <button type="button" class="btn btn-outline-secondary" id="printButton" name="printButton"
                       onclick="printButton()">打印
@@ -148,13 +152,92 @@
 <script>
   hideParentLayerDialogBtn(0);
   hideParentLayerDialogBtn(1);
+  
+  function checkisNull(ele) {
+    if(ele == null || ele == undefined || ele == ''){
+      return true;
+    }
+  }
+
+  var submitState = false;
 
   /*
   * 生成
   * */
   function submitThisForm() {
     var printnum = $('#printnum').val();
-    jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");
+    if (printnum == null) {
+      printnum = 1;
+    }
+    var autoprint = $('input[name="autoprint"]').is(':checked');
+    var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
+    if (allDatas == null || allDatas.length == 0) {
+      LayerMsgBox.alert("数据为空", 2);
+      return;
+    }
+    for (let arr = 0; arr < allDatas.length; arr++) {
+      let element = allDatas[arr];
+      if (element == null || element == undefined) {
+        LayerMsgBox.alert("数据为空", 2);
+        return;
+      }
+
+      let ungeneratedstockqty = element.ungeneratedstockqty;//未生成条码库存数
+      let generatedstockqty = element.generatedStockQty;//  生成条码库存数
+      if (checkisNull(element.cwhcode)){
+        LayerMsgBox.alert("仓库编码不能为空", 2);
+        return;
+      }
+      if (checkisNull(element.cinvcode)){
+        LayerMsgBox.alert("存货编码不能为空", 2);
+        return;
+      }
+      if (checkisNull(generatedstockqty)){
+        LayerMsgBox.alert("生成条码库存数量不能为0", 2);
+        return;
+      }
+      if (checkisNull(element.reportFileName)){
+        LayerMsgBox.alert("标签打印模板不能为空", 2);
+        return;
+      }
+
+      //如果库存数量不足，报错
+      if (generatedstockqty > ungeneratedstockqty) {
+        LayerMsgBox.alert("未生成条码库存数量不足，请重新输入生成条码库存数", 2);
+        return;
+      }
+    }
+    var para = {
+      datas: JSON.stringify(allDatas),
+      printnum: printnum,
+      autoprint: autoprint
+    };
+    Ajax.post('admin/warehousebeginofperiod/submitStock', para, function (ret) {
+      if (ret.state === 'ok') {
+        submitState = true;
+        LayerMsgBox.success("生成成功", 1000, function () {
+          parent.refreshPjaxContainer();
+          // parent.layer.closeAll();
+        });
+        //如果勾选了自动打印，在生成成功后要自动打印
+        /*if (autoprint) {
+          for (let i = 0; i < printnum; i++) {
+            for (let j = 0; j < allDatas.length; j++) {
+              var data = allDatas[j];
+              var reportFileName = data.reportFileName;
+              //社内现品票：029587，采购现品票：109607
+              jboltHiprintWebPrint('109607', 'url', 'admin/warehousebeginofperiod/printData?ids=');
+              //jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=');
+              //jboltHiprintWebPrint('kqda_key', 'url', allDatas);
+              // jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=1640995130939412480'+ "&&mark=check");
+            }
+          }
+        }*/
+      } else {
+        LayerMsgBox.alert(ret.msg, 2);
+      }
+    });
+    //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");
   }
 
   function getJBoltTableEditableColsOpton() {
@@ -163,13 +246,9 @@
         withForm: ["warehousebeginofperiod_#(pageId)"],
         name: 'warehousebeginofperiod',
         type: "all",
-        params:{printnum:$('#printnum').val()},//携带其他额外参数
         url: "/admin/warehousebeginofperiod/submitStock",
         success: function (res) {
           LayerMsgBox.success("提交成功", 600, function () {
-            parent.refreshPjaxContainer();
-            refreshAllDatas();
-            // parent.layer.closeAll();
           });
         }
       },
@@ -212,8 +291,9 @@
           maxLength: 150,
           required: true,
           placeholder: "=请选择存货编码=",
+          linkColumn: "cwhcode",
           textAttr: "cinvcode",
-          width: 900,
+          width: 1100,
           valueAttr: "cinvcode",
           columnAttr: "invcode,cinvcode1,cinvname1,cinvstd,cuomname,ipkgqty,qty,ungeneratedstockqty",
           header: '存货编码,客户部番,部品名称,规格型号,主计量单位,包装数量,期初库存数量,未生成条码库存数量',
@@ -253,16 +333,20 @@
         generatedStockQty: {
           required: true,
           type: "input",//类型
-          rule:"int",
+          rule: "int",
           placeholder: "=生成条码库存数量=",
+          tooltip:"生成条码库存数量不能为空",
           tooltip: "",
         },
-        printtepl: { //标签打印模板
-          // required: true,
-          type: "select",//类型
+        reportFileName: { //标签打印模板
+          type: "select2",
+          required: true,
           placeholder: "=标签打印模板=",
-          tooltip: "标签打印模板不能为空",
-        },
+          tooltip:"标签打印模板不能为空",
+          url: "admin/dictionary/options?key=beginningofperiod",
+          valueAttr: "sn",//sn
+          textAttr: "name"
+        }
       },
     };
     return editableTableOptions;
@@ -312,6 +396,10 @@
   * 打印按钮
   * */
   function printButton() {
+    if (submitState!=true) {
+      LayerMsgBox.alert("请先点击生成按钮，生成期初库存，再打印模板标签", 2);
+      return;
+    }
     alert("点击打印");
   }
 

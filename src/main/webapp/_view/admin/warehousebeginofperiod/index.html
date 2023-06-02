@@ -1,7 +1,7 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page" data-key="#(pmkey??)" data-require-plugin="hiprint">
   <div class="jbolt_page_title">
     <div class="row">
       <div class="col">
@@ -57,7 +57,7 @@
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
-    <a tooltip title="条码明细" href="admin/warehousebeginofperiod/detail" data-scroll="yes"
+    <a tooltip title="条码明细" href="admin/warehousebeginofperiod/detail/${data.id}" data-scroll="yes"
        data-handler="refreshJBoltTable" data-title="条码明细" data-area="95%,95%" class="jbolt_table_editbtn">条码明细</a>
   </td>
   <td title="${data.whcode}">${data.whcode}</td>
@@ -70,10 +70,10 @@
   <td title="${data.cinvname1}">${data.cinvname1}</td>
   <td title="${data.cinvstd}">${data.cinvstd}</td>
   <td title="${data.cuomname}">${data.cuomname}</td>
-  <td title="${data.qty}">${data.qty, 2|number_format}</td>
-  <td title="${data.ungeneratedstockqty}">${data.ungeneratedstockqty, 2|number_format}</td>
-  <td title="${data.generatedstockqty}">${data.generatedstockqty, 2|number_format}</td>
-  <td title="${data.availablestockqty}">${data.availablestockqty, 2|number_format}</td>
+  <td title="${data.qty, 0|number_format}">${data.qty, 0|number_format}</td>
+  <td title="${data.ungeneratedstockqty, 0|number_format}">${data.ungeneratedstockqty, 0|number_format}</td>
+  <td title="${data.generatedstockqty, 0|number_format}">${data.generatedstockqty, 0|number_format}</td>
+  <td title="${data.availablestockqty, 0|number_format}">${data.availablestockqty, 0|number_format}</td>
 </tr>
 {@/each}
 </textarea>

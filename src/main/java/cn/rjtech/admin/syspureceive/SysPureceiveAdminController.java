@@ -13,11 +13,13 @@ import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 /**
@@ -178,7 +180,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
      * 库区数据源
      */
     public void wareHousepos() {
-        String whcode = get("whcode");
+        String whcode = get("whcode1");
         Kv kv = getKv();
         if(null != whcode && !"".equals(whcode)){
             Warehouse first1 = warehouseservice.findFirst("select *   from Bd_Warehouse where cWhCode=?", whcode);
@@ -196,7 +198,26 @@ public class SysPureceiveAdminController extends BaseAdminController {
         String orgCode =  getOrgCode();
         String vencode1 = get("vencode1");
         Vendor first1 = vendorservice.findFirst("select * from Bd_Vendor where cVenCode = ?", vencode1);
+        if(null == first1){
+            ValidationUtils.assertNull(false, "请选择供应商");
+            return;
+        }
         String s = String.valueOf(first1.getIAutoId());
         renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit",10),get("orgCode",orgCode),s));
+    }
+
+    /**
+     * 根据条码带出其他数据
+     */
+    @UnCheck
+    public void barcode() {
+        String barcode = get("barcode");
+        if(null == barcode){
+            ValidationUtils.assertNull(false, "请扫码");
+            return;
+        }
+        Kv kv = new Kv();
+        kv.set("barcode",barcode);
+        renderJsonData(service.barcode(kv));
     }
 }

@@ -1,0 +1,298 @@
+<div class="jbolt_page_title">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        #if(iauditstatus==false)
+                        #if(formUploadM.iauditstatus!=0)
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 关闭
+                        </button>
+                        <button onclick="submitThisForm(2)" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 审核
+                        </button>
+                        <button onclick="submitThisForm(10)" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 反审核
+                        </button>
+                        #else
+                        <button onclick="save()" class="btn btn-success btn-sm" ><i
+                                class=" fa fa-refresh"></i> 保存</button>
+                        <button onclick="submitThisForm(1)" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 提交审核
+                        </button>
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 关闭
+                        </button>
+                        #end
+                        #end
+                        #if(iauditstatus==true)
+                        <button onclick="save()" class="btn btn-success btn-sm" ><i
+                                class=" fa fa-refresh"></i> 保存</button>
+                        <button onclick="submitThisForm(1)" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 提交审核
+                        </button>
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
+                                class="fa fa-window-maximize"></i> 关闭
+                        </button>
+                        #end
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form onsubmit="return false;" id="sysPureceive_#(pageId)" action="#(action)" method="post">
+                        #if(formUploadM.iautoid??)
+                        <input type="hidden" name="formUploadM.iAutoId" value="#(formUploadM.iautoid??)" />
+                        #end
+                        <div class="row">
+                            <div class="col" >
+                                <div class="form-group row" >
+                                    <label class="col-sm-2 col-form-label">类别名称</label>
+                                    <div class="col-2">
+                                        <select class="form-control"
+                                                data-height="30"
+                                                data-width="220"
+                                                data-autoload
+                                                data-url="admin/formUploadCategory/options"
+                                                data-select-type="select2"
+                                                name="formUploadM.iCategoryId"
+                                                data-refresh="true"
+                                                data-rule="select"
+                                                data-notnull="true"
+                                                data-tips="请选择目录名称"
+                                                data-text="=请选择="
+                                                data-value-attr="iautoid"
+                                                data-text-attr="ccategoryname"
+                                                data-select="#(formUploadM.icategoryid??)"
+                                                #if(iauditstatus==false)  #if(formUploadM.iauditstatus!=0) disabled #end #end
+                                        ></select>
+                                    </div>
+                                        <a data-dialogbtn href="admin/formUploadCategory/index" data-area="80%,80%" data-title="分类管理" data-handler="refreshJBoltTable" ><i class="jbicon jb-shezhi3"></i></a>
+                                    <label class="col-sm-2 col-form-label" >产线名称</label>
+                                    <div class="col-2">
+                                        <select class="form-control"
+                                                data-height="30"
+                                                data-width="220"
+                                                data-autoload
+                                                data-url="admin/workregionm/options"
+                                                data-select-type="select2"
+                                                name="formUploadM.iWorkRegionMid"
+                                                data-refresh="true"
+                                                data-rule="select"
+                                                data-notnull="true"
+                                                data-tips="请选择产线名称"
+                                                data-text="=请选择="
+                                                data-value-attr="iautoid"
+                                                data-text-attr="cworkname"
+                                                data-select="#(formUploadM.iworkregionmid??)"
+                                                #if(iauditstatus==false)  #if(formUploadM.iauditstatus!=0) disabled #end #end
+                                        ></select>
+                                    </div>
+                                </div>
+                                <div class="form-group row" >
+                                    <label class="col-sm-2 col-form-label">日期</label>
+                                    <div class="col-2">
+                                        <input type="text" data-date data-type="date"   #if(iauditstatus==false)  #if(formUploadM.iauditstatus!=0) disabled #end #end data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="formUploadM.ddate" value="#(formUploadM.ddate??)"/>
+                                    </div>
+                                    #if(iauditstatus==false)
+                                    #if(formUploadM.iauditstatus!=0)
+                                    <label class="col-sm-2 col-form-label">状态</label>
+                                    <div class="col-2">
+                                        <input type="text"    autocomplete="off"  hidden   #if(iauditstatus==false)  #if(formUploadM.iauditstatus!=0) disabled #end #end class="form-control"    maxlength="10" name="formUploadM.iAuditStatus" value="#(formUploadM.iauditstatus??)"/>
+                                        <input type="text"    autocomplete="off"      #if(iauditstatus==false)  #if(formUploadM.iauditstatus!=0) disabled #end #end class="form-control"    maxlength="10" name="status" value="#(status??)"/>
+                                    </div>
+                                    #end
+                                    #end
+                                </div>
+                                #if(iauditstatus==false)
+                                #if(formUploadM.iauditstatus!=0)
+                                <div class="form-group row" >
+                                    <label class="col-sm-2 col-form-label">创建人</label>
+                                    <div class="col-2">
+                                        <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="10" name="formUploadM.cCreateName" value="#(formUploadM.ccreatename??)"/>
+                                    </div>
+                                    <label class="col-sm-2 col-form-label">创建时间</label>
+                                    <div class="col-2">
+                                        <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" disabled autocomplete="off" class="form-control"  placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="formUploadM.dCreateTime" value="#(formUploadM.dcreatetime??)"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row" >
+                                    <label class="col-sm-2 col-form-label">审核人</label>
+                                    <div class="col-2">
+                                        <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="10" name="formUploadM.cAuditName" value="#(formUploadM.cauditname??)"/>
+                                    </div>
+                                    <label class="col-sm-2 col-form-label">审核时间</label>
+                                    <div class="col-2">
+                                        <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" disabled autocomplete="off" class="form-control"  placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="formUploadM.dAuditTime" value="#(formUploadM.daudittime??)"/>
+                                    </div>
+                                </div>
+                                #end
+                                #end
+
+                            </div>
+                        </div>
+                        <input id="operationType" type="hidden" name="operationType" value="#(operationType??)">
+                        <input id="cattachments" type="hidden" name="cattachments" value="#(cattachments??)">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jbolt_page_content">
+    <script type="text/template" id="sysPureceive_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            #if(iauditstatus==false)
+            #if(formUploadM.iauditstatus==0)
+            <td>
+                <a href="admin/formUploadD/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+            </td>
+            #end
+            #end
+            #if(iauditstatus==true)
+            <td>
+            <a href="admin/formUploadD/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+            </td>
+            #end
+            <td >
+                {@if data.cattachments != null}
+                <div  class="float-right">
+                    {@each data.cattachments.split(",") as url}
+                    {@if url.
+                    indexOf('png') != -1 || url.indexOf('jpg')!=-1}
+                    <img  data-photobtn tooltip data-title="点击查看图片"  style="width: 60px;height: 60px;border-radius:50%;" src="${url|real_image}" onerror="this.src='assets/img/avatar.jpg'"/>
+                    {@/if}
+                    {@/each}
+                </div>
+                {@/if}
+            </td>
+            <td>${data.cmemo}</td>
+        </tr>
+        {@/each}
+    </script>
+    <div class="jbolt_table_toolbar" id="sysPureceive_toolbar_#(pageId)">
+
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button data-openpage="dialog" data-area="700,800" data-handler="jboltTablePageToFirst" #if(iauditstatus==false) #if(formUploadM.iauditstatus!=0) style="display:none;" #end  #end
+                    data-title="新增记录" data-url="admin/formUploadM/attachment"
+                    class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增数据
+            </button>
+        </div>
+
+    </div>
+
+    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(formUploadM.iautoid??)
+           data-ajax="true" data-url="admin/formUploadD/datas?pid=#(formUploadM.iautoid??)" #end
+           id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
+           data-rowtpl="sysPureceive_tpl_#(pageId)" data-toolbar="sysPureceive_toolbar_#(pageId)" data-editable="true"
+           data-page="sysPureceive_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
+        <thead class="fw_normal">
+        <tr>
+            <th data-width="60" data-column="index">序号</th>
+
+            #if(iauditstatus==false)
+            #if(formUploadM.iauditstatus==0)
+            <th data-width="150" data-column="cattachments">操作</th>
+            #end
+            #end
+            #if(iauditstatus==true)
+            <th data-width="150" data-column="cattachments">操作</th>
+            #end
+
+            <th data-width="150"  data-column="cattachments">附件</th>
+            <th data-width="150" data-column="cmemo">备注</th>
+        </tr>
+        </thead>
+    </table>
+
+</div>
+#define js()
+<script>
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+    function save() {
+        $("#operationType").val("");
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
+    function submitThisForm(iauditstatus) {
+        $("#operationType").val(iauditstatus);
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+        $("#operationType").val();
+    }
+
+    function getJBoltTableEditableColsOpton() {
+        var editableTableOptions = {
+
+            submit: {
+                withForm: ["sysPureceive_#(pageId)"],
+                name: 'sysPureceive',
+                type: "all",
+                url: "admin/formUploadM/saveTableSubmit",
+                success: function (res) {
+                    console.log(res);
+                    if (res.data.msg=='附件不可为空！'||res.data.msg=='请先保存数据！'){
+                        LayerMsgBox.alert(res.data.msg,600,function (){
+                            parent.refreshPjaxContainer();
+                        });
+                    }else {
+                        LayerMsgBox.success("提交成功", 600, function () {
+                            parent.refreshPjaxContainer();
+                            parent.LayerMsgBox.closeAll();
+                        });
+                    }
+
+                }
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid"
+                },
+                cmemo: {
+                    placeholder: "请输入",
+                    type: "input",
+                    submitAttr:"cmemo"
+                },
+                cattachments: {
+                    type: "img",
+                    submitAttr:"cattachments"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+    // 新增插入数据
+    function insertDatas(data) {
+        if (!data) {
+            LayerMsgBox.alert("导入数据异常", 2);
+            return;
+        }
+        var datas=[];
+        var cattachments="";
+        for (var i = 0; i < data.length; i++) {
+            if (i > 0) {
+                var datum = data[i];
+                cattachments +=  datum.url + ",";
+            }
+        }
+        if (cattachments.length > 0) {
+            cattachments = cattachments.substr(0,cattachments.length - 1);
+        }
+        datas.push({'cattachments':cattachments})
+        // 插入数据
+        jboltTableInsertRow('#jbolt_Table_#(pageId)', datas);
+        $("#cattachments").val(cattachments);
+    }
+
+</script>
+#end

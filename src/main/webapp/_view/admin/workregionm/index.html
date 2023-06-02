@@ -9,6 +9,7 @@
 		<form class="form-inline text-left" id="workregionmForm_#(pageId)"   onsubmit="return false;" method="post">
 			<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=产线编码=" maxlength="50" name="cworkcode" value="#(cworkcode??)"/>
 			<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=产线名称=" maxlength="50" name="cworkname" value="#(cworkname??)"/>
+			<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=关联仓库=" maxlength="50" name="cwhname" value="#(cwhname??)"/>
 			<select class="form-control"
 					data-select-type="select2"
 					data-autoload
@@ -55,7 +56,7 @@
 <div class="jbolt_table_toolbar" id="workregionm_toolbar_#(pageId)">
 	<div class="" role="group" aria-label="btn-group">
 		#permission(PermissionKey.WORKREGIONM_ADD)
-		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增产线档案"  data-url="admin/workregionm/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-openpage="dialog" data-fs="true" data-handler="jboltTablePageToFirst" data-title="新增产线档案"  data-url="admin/workregionm/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		#end
 		#permission(PermissionKey.WORKREGIONM_EDIT)
 		<button data-openpage="dialog" data-area="100%,100%"  data-handler="refreshJBoltTable" data-title="修改产线档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/workregionm/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
@@ -77,7 +78,7 @@
 		<div class="btn-group dropdown">
 			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
 			<div class="dropdown-menu" aria-labelledby="importMenuButton">
-				<a data-downloadbtn href="/admin/workregionm/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+				<a  href="assets/exceltpl/workregionm.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
 				<div class="j_upload_file_box"
 					 data-name="file"
 					 data-btn-class="btn dropdown-item"

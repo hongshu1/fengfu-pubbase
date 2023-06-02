@@ -45,6 +45,7 @@ import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.barcodeencodingm.BarcodeencodingmService;
 import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.depref.DepRefService;
 import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
 import cn.rjtech.admin.inventory.InventoryService;
@@ -129,6 +130,8 @@ public class PurchasemService extends BaseService<Purchasem> {
     private ExchService exchService;
     @Inject
     private VendorClassService vendorclassService;
+    @Inject
+    private DepRefService depRefService;
     
     /**
      * 后台管理分页查询
@@ -496,7 +499,9 @@ public class PurchasemService extends BaseService<Purchasem> {
                 // 校验是否存在
                 Record checkRecord = dbTemplate(u8SourceConfigName(), "purchasem.getAppVouchId", Kv.by("ccode", purchasem.getCpurchaseno())).findFirst();
                 ValidationUtils.isTrue(checkRecord == null, "该单据已存在U8请购单中");
-
+                //查询申购单表头部门在部门对照表中的末级部门
+                Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(purchasem.getCdepcode());
+                purchasem.put("cenddepcode", refDepartmentRc.getStr("cdepcode"));
                 // 推送U8及校验
                 ValidationUtils.equals("ok", PurchaseAppApi.add(purchasem, purchaseds), JBoltMsg.FAIL);
                 Record record = dbTemplate(u8SourceConfigName(), "purchasem.getAppVouchId", Kv.by("ccode", purchasem.getCpurchaseno())).findFirst();
@@ -558,9 +563,9 @@ public class PurchasemService extends BaseService<Purchasem> {
                 // 删除请购细表数据
                 deletenumber = dbTemplate(u8SourceConfigName(), "purchasem.delectAppVouchsByids", kv).delete();
                 ValidationUtils.isTrue(deletenumber != 0, JBoltMsg.FAIL);
-                // 删除请购额外表数据
+              /*  // 删除请购额外表数据
                 deletenumber = dbTemplate(u8SourceConfigName(), "purchasem.delectAppVouchExtraDefineByids", kv).delete();
-                ValidationUtils.isTrue(deletenumber != 0, JBoltMsg.FAIL);
+                ValidationUtils.isTrue(deletenumber != 0, JBoltMsg.FAIL);*/
                 return true;
             });
 

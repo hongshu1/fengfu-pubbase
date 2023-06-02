@@ -12,12 +12,12 @@
                     </button>
                     <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
                             data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
-                            class="fa fa-window-maximize"></i> 提交审核
+                            class="fa fa-window-maximize"></i> 提交
                     </button>
 
-                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
+                    <button onclick="audit_#(pageId)(this)" #if(type=="0") style="display: none" #end
                             data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
-                            class="fa fa-window-maximize"></i> 反审核
+                            class="fa fa-window-maximize"></i> 审核
                     </button>
                     <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
                         关闭
@@ -25,7 +25,7 @@
                 </div>
             </div>
             #if(puinstore.AutoID??)
-            <input type="hidden" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
+            <input type="hidden" id="puinstoreautoid" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
             #end
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">入库单号：</label>
@@ -152,6 +152,31 @@
 #define js()
 <script>
     hideParentLayerDialogBtn();
+
+
+    /**
+     * 审核
+     * */
+    function audit_#(pageId)(ele) {
+        var action = getRealJqueryObject(ele);
+        var iAutoId = $("#puinstoreautoid").val();
+        var mark = action.data("id");
+        if (!isEmpty(iAutoId)) {
+            Ajax.post("/admin/materialreturnlist/approve", {"iAutoId":iAutoId, "mark":mark},function (res) {
+                LayerMsgBox.success(res.msg,1000,function () {
+                    //window.location.reload();
+                    // parent.refreshPjaxContainer();
+                    // parent.layer.close(parent.layer.getFrameIndex(window.name));
+                    parent.refreshPjaxContainer();
+                    dialogClose();
+                })
+            },function (err) {
+                LayerMsgBox.error("请保存提交。后审核！！！",2000)
+            })
+        } else {
+            LayerMsgBox.error("未找到此单据",1000)
+        }
+    }
 
 
     function submitAllTables_#(pageId)(ele){

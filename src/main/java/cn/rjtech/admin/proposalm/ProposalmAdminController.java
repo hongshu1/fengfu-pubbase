@@ -108,30 +108,6 @@ public class ProposalmAdminController extends BaseAdminController {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
-    /**
-     * 新增禀议书-参照预算
-     */
-    public void addBudget(@Para(value = "cdepcode") String cdepcode,
-                          @Para(value = "iexpensebudgetitemids") String iexpensebudgetitemids) {
-        ValidationUtils.notBlank(cdepcode, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notBlank(iexpensebudgetitemids, "缺少预算项目ID");
-        User user = JBoltUserKit.getUser();
-        Proposalm proposalm = new Proposalm();
-        proposalm.setDapplydate(new Date());
-        proposalm.setCdepcode(cdepcode);
-        proposalm.setIssupplemental(false);
-
-        Record contro = personService.findFirstByCuserid(user.getId());
-        if (null != contro) {
-            proposalm.setCapplypersoncode(contro.getStr("cpsn_num"));
-            proposalm.setCapplypersonname(user.getName());
-        }
-
-        set("proposalds", getBudgetProposaldDatas(iexpensebudgetitemids, proposalm));
-        set("proposalm", proposalm);
-        set("cdepname", departmentService.getCdepName(proposalm.getCdepcode()));
-        render("add.html");
-    }
 
     /**
      * 新增禀议书-参照预算/投资
@@ -193,47 +169,6 @@ public class ProposalmAdminController extends BaseAdminController {
         return proposalds;
     }
 
-    private List<Record> getBudgetProposaldDatas(String iexpensebudgetitemids, Proposalm proposalm) {
-        List<Record> items = expenseBudgetItemService.findByIautoids(iexpensebudgetitemids);
-        ValidationUtils.notEmpty(items, "预算项目不存在");
-
-        List<Record> proposalds = new ArrayList<>();
-
-        BigDecimal ibudgetmoneySum = BigDecimal.ZERO;
-
-        BigDecimal iTaxRate = globalConfigService.getTaxRate();
-
-        for (Record item : items) {
-            // 主表记录
-            ExpenseBudget eb = expenseBudgetService.findById(item.getLong("iexpenseid"));
-            // 预算金额
-            BigDecimal ibudgetmoney = expenseBudgetItemdService.getAmountSum(item.getLong("iautoid"));
-
-            // 累计预算金额
-            ibudgetmoneySum = ibudgetmoneySum.add(ibudgetmoney);
-
-            proposalds.add(new Record()
-                    .set("isourceid", item.getLong("iautoid"))
-                    .set("itype", ProposaldTypeEnum.SOURCE.getValue())
-                    .set("cbudgetno", item.getStr("cbudgetno"))
-                    .set("clowestsubjectname", subjectmService.getName(item.getLong("ilowestsubjectid")))
-                    .set("ibudgetmoney", ibudgetmoney)
-                    .set("citemname", item.getStr("citemname"))
-                    .set("cunit", item.getStr("cunit"))
-                    .set("ccurrency", "人民币")
-                    .set("nflat", 1)
-                    .set("itaxrate", iTaxRate)
-                    .set("cBudgetDepCode", eb.getStr("cdepcode"))
-                    .set("cbudgetdepname", departmentService.getCdepName(eb.getStr("cdepcode")))
-                    .set("isubitem", 0)
-            );
-        }
-
-        proposalm.setIbudgetmoney(ibudgetmoneySum);
-        proposalm.setIbudgetsum(ibudgetmoneySum.multiply(iTaxRate));
-
-        return proposalds;
-    }
 
     /**
      * 新增禀议书-参照预算/投资: 设置禀议书新增界面的内容，包括项目和表单的数据
@@ -323,31 +258,6 @@ public class ProposalmAdminController extends BaseAdminController {
         return proposalds;
     }
 
-    /**
-     * 新增禀议书-参照投资计划
-     */
-    public void addInvestmentPlan(@Para(value = "cdepcode") String cdepcode,
-                                  @Para(value = "iinvestmentplanitemids") String iinvestmentplanitemids) {
-        ValidationUtils.notBlank(cdepcode, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notBlank(iinvestmentplanitemids, "缺少计划项目ID");
-        User user = JBoltUserKit.getUser();
-        Proposalm proposalm = new Proposalm();
-        proposalm.setDapplydate(new Date());
-        proposalm.setCdepcode(cdepcode);
-        proposalm.setIssupplemental(false);
-
-        Record contro = personService.findFirstByCuserid(user.getId());
-        if (null != contro) {
-            proposalm.setCapplypersoncode(contro.getStr("cpsn_num"));
-            proposalm.setCapplypersonname(user.getName());
-        }
-
-        set("proposalds", getInvestmentPlanProposaldDatas(iinvestmentplanitemids, proposalm));
-        set("proposalm", proposalm);
-        set("cdepname", departmentService.getCdepName(proposalm.getCdepcode()));
-        render("add.html");
-    }
-
     private List<Record> getInvestmentPlanProposaldDatas(String iinvestmentplanitemids) {
         List<Record> items = investmentPlanItemService.findByIautoids(iinvestmentplanitemids);
         ValidationUtils.notEmpty(items, "计划项目不存在");
@@ -379,46 +289,6 @@ public class ProposalmAdminController extends BaseAdminController {
         return proposalds;
     }
 
-    private List<Record> getInvestmentPlanProposaldDatas(String iinvestmentplanitemids, Proposalm proposalm) {
-        List<Record> items = investmentPlanItemService.findByIautoids(iinvestmentplanitemids);
-        ValidationUtils.notEmpty(items, "计划项目不存在");
-
-        List<Record> proposalds = new ArrayList<>();
-
-        BigDecimal ibudgetmoneySum = BigDecimal.ZERO;
-
-        for (Record item : items) {
-            // 主表记录
-            InvestmentPlan plan = investmentPlanService.findById(item.getLong("iplanid"));
-            // 项目金额
-            BigDecimal ibudgetmoney = investmentPlanItemdService.getAmountSum(item.getLong("iautoid"));
-
-            // 预算合计
-            ibudgetmoneySum = ibudgetmoneySum.add(ibudgetmoney);
-
-            proposalds.add(new Record()
-                    .set("isourceid", item.getLong("iautoid"))
-                    .set("itype", ProposaldTypeEnum.SOURCE.getValue())
-                    .set("cbudgetno", item.getStr("cplanno"))
-                    .set("ibudgetmoney", ibudgetmoney)
-                    .set("citemname", item.getStr("citemname"))
-                    .set("iquantity", 0)
-                    .set("iunitprice", 0)
-                    .set("cunit", item.getStr("cunit"))
-                    .set("ccurrency", "人民币")
-                    .set("nflat", 1)
-                    .set("itaxrate", item.getBigDecimal("itaxrate"))
-                    .set("cbudgetdepcode", plan.getStr("cdepcode"))
-                    .set("cbudgetdepname", departmentService.getCdepName(plan.getStr("cdepcode")))
-                    .set("isubitem", 0)
-            );
-        }
-
-        proposalm.setIbudgetmoney(ibudgetmoneySum);
-        proposalm.setIbudgetsum(ibudgetmoneySum.multiply(globalConfigService.getTaxRate()).setScale(2, RoundingMode.HALF_UP));
-        return proposalds;
-    }
-
     public void checkBudgetItem(@Para(value = "cdepcode") String cdepcode,
                                 @Para(value = "iexpensebudgetitemids") String iexpensebudgetitemids) {
         ValidationUtils.notBlank(cdepcode, "缺少部门编码参数");
@@ -447,7 +317,7 @@ public class ProposalmAdminController extends BaseAdminController {
         if (JBoltStringUtil.isNotBlank(investmentplanitemid)) allItemIds += investmentplanitemid + ",";
         ValidationUtils.notBlank(allItemIds, "请选择费用/计划");
         allItemIds = allItemIds.substring(0, allItemIds.lastIndexOf(","));
-        String cdepcode = service.isSameCdepCode(allItemIds);
+        //String cdepcode = service.isSameCdepCode(allItemIds);
         // 校验用户数据权限
         //DataPermissionKit.validateAccess(JBoltUserKit.getUser(), cdepcode);
         List<Record> proposalds = null;

@@ -28,8 +28,15 @@
         </textarea>
     <!-- 定义JBoltTable使用的数据渲染模板 -->
     <div class="jbolt_table_toolbar" id="PurchaseOrderBatch_toolbar_#(pageId)">
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button class="btn btn-danger btn-sm"> 导出PDF</button>
+        <button class="btn btn-success" onclick="useTestJsonDataToPdf_#(pageId)()"><i class="fa fa-file-pdf-o"></i> 测试-导出PDF</button>
+
+<!--        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">-->
+<!--            <button class="btn dropdown-item" onclick="containerPrint('')"><i class="fa fa-download"></i> 打印当前页</button>-->
+<!--        </div>-->
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportContainerButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 导出PDF</button>
+        <div class="dropdown-menu" aria-labelledby="exportContainerButton">
+            <button class="btn dropdown-item" data-downloadbtn data-url="/admin/purchaseorderm/purchaseordermOne?iautoid=#(purchaseOrderM.iautoid??)" data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 导出(一页)</button>
+            <button class="btn dropdown-item" data-downloadbtn data-url="/admin/purchaseorderm/purchaseordermEight?iautoid=#(purchaseOrderM.iautoid??)" data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 导出(八页)</button>
         </div>
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <form id="form_#(pageId)">

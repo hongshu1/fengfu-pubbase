@@ -9,7 +9,7 @@ FROM
 	Co_CusOrderSum ccs
 	LEFT JOIN Bd_Inventory bi ON ccs.iInventoryId = bi.iAutoId
 	AND bi.isDeleted=0
-WHERE NOT EXISTS ( SELECT 1 FROM Co_CusOrderSum WHERE iInventoryId = ccs.iInventoryId AND iAutoId < ccs.iAutoId )
+WHERE 1=1 ###NOT EXISTS ( SELECT 1 FROM Co_CusOrderSum WHERE iInventoryId = ccs.iInventoryId AND iAutoId < ccs.iAutoId )
    #if(cinvcode)
       and  bi.cinvcode  LIKE CONCAT('%',#para(cinvcode), '%')
   #end
@@ -25,7 +25,13 @@ WHERE NOT EXISTS ( SELECT 1 FROM Co_CusOrderSum WHERE iInventoryId = ccs.iInvent
        #(for.first ? "" : "or") (iYear = '#(d.key)' and iMonth in ( #(d.value) ))
     #end )
   #end
-ORDER BY ccs.dCreateTime
+GROUP BY
+    ccs.iInventoryId,
+    ccs.iYear,
+    bi.cinvcode,
+    bi.cinvcode1,
+    bi.cinvname1
+ORDER BY bi.cinvcode
 #end
 
 #sql("getYearMouth")

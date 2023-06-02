@@ -272,6 +272,19 @@
                 </button>
 
             </div>
+            <div class="btn-group" role="group" aria-label="btn-group">
+
+                <button
+                        data-openpage="dialog"
+                        data-area="1400,1000"
+                        data-handler="jboltTablePageToFirst"
+                        data-title="工单现品票生成"
+                        data-url="admin/momoinvbatch/index?imodocid=#(moDoc.iautoid??)"
+                        class="btn btn-outline-primary btn-sm">
+                    工单现品票生成
+                </button>
+
+            </div>
          <!--   <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 
                 <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>
@@ -320,7 +333,8 @@
                 <td>#(productionTasks.actual2)</td>
                 <td>#(productionTasks.sate2)</td>
                 <td>#(productionTasks.time2)</td>
-                <td><a data-url="">作成</a></td>
+                <td><a data-url="admin/momoinvbatch/add?imodocid=#(moDoc.iautoid??)"  data-area="1600,800"  tooltip data-title="作成"
+                       data-handler="refreshJBoltTable" data-dialog-title="作成" class="jbolt_table_editbtn">作成</a></td>
             </tr>
             <tr>
                 <td>3</td>

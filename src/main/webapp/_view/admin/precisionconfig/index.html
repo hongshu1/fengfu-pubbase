@@ -1,0 +1,37 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+    
+    <div class="jbolt_page_title">
+        
+        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
+        
+    </div>
+
+    <div class="jbolt_page_content">
+
+        <form onsubmit="return false;" id="precision_config_form_#(pageId)" action="admin/precisionconfig/save" method="post">
+            
+            #for(config :configs)
+
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">#(config.name)</label>
+                <div class="col">
+                   <input type="number" name="#(config.id)" value="#(config.config_value)" data-rule="required">
+                </div>
+            </div>
+
+            #end
+        </form>
+
+    </div>
+</div>
+#end
+
+#define js()
+<script>
+</script>
+
+#include("/_view/_admin/common/_formjs.html",formId="precision_config_form_" + pageId)
+#end
