@@ -71,39 +71,39 @@
                             </div>
 
 
-<!--                            <div class="col-md-4">-->
-<!--                                <div class="form-group row">-->
-<!--                                    <input type="hidden" name="sysPureceive.VenCode" value="#(sysPureceive.VenCode??)"-->
-<!--                                           id="vencode" data-value-attr="vencode"/>-->
-<!--                                    <input type="hidden" name="vencode1" value="#(sysPureceive.VenCode??)"-->
-<!--                                           id="vencode1" data-sync-attr="vencode"/>-->
-<!--                                    <label class="col-sm-3 col-form-label">供应商名称</label>-->
-<!--                                    <div class="col-9">-->
-<!--                                        <input type="text" class="form-control" data-autocomplete-->
-<!--                                               data-url="admin/materialReceiptList/venCode" data-rule="required"-->
-<!--                                               data-text-attr="venname"-->
-<!--                                               data-sync-ele="#vencode,vencode1"-->
-<!--                                               data-column-attr="vencode,venname" placeholder="请选择供应商名称"-->
-<!--                                               data-tips="请选择供应商名称" data-header="供应商编码,供应商名称" maxlength="40"-->
-<!--                                               value="#(venname??)">-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                                <div class="form-group row">-->
-<!--                                    <input type="hidden" name="sysPureceive.RdCode" value="#(sysPureceive.RdCode??)"-->
-<!--                                           id="rdcode" data-value-attr="crdcode"/>-->
-<!--                                    <label class="col-sm-3 col-form-label">入库类型</label>-->
-<!--                                    <div class="col-9">-->
-<!--                                        <input type="text" class="form-control" data-autocomplete-->
-<!--                                               data-url="admin/materialReceiptList/selectRdCode" data-rule="required"-->
-<!--                                               data-hidden-input="rdcode" data-text-attr="cptname"-->
-<!--                                               data-column-attr="crdcode,cptname" placeholder="请选择入库类型"-->
-<!--                                               data-tips="请选择入库类型" data-header="入库类型编码,入库类型名称" maxlength="40"-->
-<!--                                               value="#(cptname??)">-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
+                            <!--                            <div class="col-md-4">-->
+                            <!--                                <div class="form-group row">-->
+                            <!--                                    <input type="hidden" name="sysPureceive.VenCode" value="#(sysPureceive.VenCode??)"-->
+                            <!--                                           id="vencode" data-value-attr="vencode"/>-->
+                            <!--                                    <input type="hidden" name="vencode1" value="#(sysPureceive.VenCode??)"-->
+                            <!--                                           id="vencode1" data-sync-attr="vencode"/>-->
+                            <!--                                    <label class="col-sm-3 col-form-label">供应商名称</label>-->
+                            <!--                                    <div class="col-9">-->
+                            <!--                                        <input type="text" class="form-control" data-autocomplete-->
+                            <!--                                               data-url="admin/materialReceiptList/venCode" data-rule="required"-->
+                            <!--                                               data-text-attr="venname"-->
+                            <!--                                               data-sync-ele="#vencode,vencode1"-->
+                            <!--                                               data-column-attr="vencode,venname" placeholder="请选择供应商名称"-->
+                            <!--                                               data-tips="请选择供应商名称" data-header="供应商编码,供应商名称" maxlength="40"-->
+                            <!--                                               value="#(venname??)">-->
+                            <!--                                    </div>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
+                            <!--                            <div class="col-md-4">-->
+                            <!--                                <div class="form-group row">-->
+                            <!--                                    <input type="hidden" name="sysPureceive.RdCode" value="#(sysPureceive.RdCode??)"-->
+                            <!--                                           id="rdcode" data-value-attr="crdcode"/>-->
+                            <!--                                    <label class="col-sm-3 col-form-label">入库类型</label>-->
+                            <!--                                    <div class="col-9">-->
+                            <!--                                        <input type="text" class="form-control" data-autocomplete-->
+                            <!--                                               data-url="admin/materialReceiptList/selectRdCode" data-rule="required"-->
+                            <!--                                               data-hidden-input="rdcode" data-text-attr="cptname"-->
+                            <!--                                               data-column-attr="crdcode,cptname" placeholder="请选择入库类型"-->
+                            <!--                                               data-tips="请选择入库类型" data-header="入库类型编码,入库类型名称" maxlength="40"-->
+                            <!--                                               value="#(cptname??)">-->
+                            <!--                                    </div>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
 
 
                             <div class="col-md-4">
@@ -174,6 +174,27 @@
                             data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
                     </button>
                 </div>
+
+                <label class="col-sm-3 col-form-label">库区</label>
+                <div class="col-5">
+                    <input type="hidden" name="careacode" value="#(careacode??)"
+                           id="careacode" data-value-attr="careacode"/>
+                    <input type="hidden" name="careaname" value="#(careaname??)"
+                           id="careaname" data-sync-attr="careaname"/>
+                    <input type="text" class="form-control" data-autocomplete
+                           data-sync-ele="#careacode,careaname"
+                           data-link-para-ele="#whcode1"
+                           data-url="admin/materialReceiptList/wareHousepos"
+                           data-hidden-input="rdcode" data-text-attr="careaname"
+                           data-column-attr="careacode,careaname" placeholder="请选择库区"
+                           data-tips="请选择库区" data-header="请选择库区,库名称" maxlength="40"
+                           value="#(careaname??)">
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                    <button onclick="coverall()" class="btn btn-primary btn-sm">覆盖</button>
+                </div>
+
+
             </div>
         </div>
 
@@ -214,7 +235,6 @@
         if (barcode) {
             Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode},
                 function (res) {
-                    console.log(res.data);
                     jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
                     $("#barcode").val('');
                 }, function (err) {
@@ -222,6 +242,14 @@
         } else {
             LayerMsgBox.alert("请输入条码")
         }
+    }
+    function coverall() {
+        var careacode = $("#careacode").val();
+        var careaname = $("#careaname").val();
+        console.log(careacode  +careaname  );
+        let data = [{"column":"poscode","text":careacode,"value":careacode}];
+        jboltTableBatchSetColumns(jbolt_Table_#(pageId),data,true);
+
     }
 
     function save() {
