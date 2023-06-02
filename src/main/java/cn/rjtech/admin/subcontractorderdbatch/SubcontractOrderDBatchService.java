@@ -190,6 +190,129 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
    * @param kv
    * @return
    */
+  public Kv orderDBatchExportDatas1(Kv kv) {
+    // 为true 说明是看所有的
+    if (Boolean.parseBoolean(kv.getStr("isEffective"))) {
+      kv.remove("isEffective");
+    } else {
+      kv.set("isEffective", "1");
+    }
+    List<Record> rowDatas = dbTemplate("subcontractorderdbatch.findBySubcontractOrderMId", kv).find();
+    Record record = new Record();
+    record.set("SequenceNumber", "序号");
+    record.set("cBarcode", "现品票");
+    record.set("cInvCode1", "客户部番");
+    record.set("dPlanDate", "计划到货日期");
+    record.set("cOrderNo", "订单编号");
+    record.set("iQty", "数量");
+    record.set("cVersion", "版本");
+    List<String> sheetNames = new ArrayList<>();
+
+    List<Kv> rows = new ArrayList<>();
+
+    List<Record> leftDatas = new ArrayList<>();
+    List<Record> rightDatas = new ArrayList<>();
+    leftDatas.add(record);
+    rightDatas.add(record);
+    int counter = 0;
+    int i = 1;
+
+    for (int j = 0; j < rowDatas.size(); j++) {
+      rowDatas.get(j).set("dPlanDate", rowDatas.get(j).getStr("dPlanDate") + "");
+      if (i % 2 != 0) {
+        leftDatas.add(rowDatas.get(j));
+        if (j == 0) {
+          continue;
+        }
+        int pageCount = i * 14 + (i - 1);
+        if (j % pageCount == 0) {
+          i += 1;
+        }
+      } else {
+        rightDatas.add(rowDatas.get(j));
+        int pageCount = (i / 2) * 29 + ((i / 2) - 1);
+        if (j % pageCount == 0) {
+          i += 1;
+        }
+      }
+      if (j == 0) {
+        continue;
+      }
+      if (j % 29 == 0) {
+        counter += 1;
+        String sheetName = "订货清单" + counter;
+        sheetNames.add(sheetName);
+        rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
+        leftDatas = new ArrayList<>();
+        rightDatas = new ArrayList<>();
+        leftDatas.add(record);
+        rightDatas.add(record);
+      }
+      if (j == (rowDatas.size() - 1)) {
+        if (leftDatas.size() > 1 || rightDatas.size() > 1) {
+          counter += 1;
+          String sheetName = "订货清单" + counter;
+          sheetNames.add(sheetName);
+          Kv kv1 = Kv.by("sheetName", sheetName);
+          if (leftDatas.size() > 1) {
+            kv1.put("leftDatas", leftDatas);
+          }
+          if (rightDatas.size() > 1) {
+            kv1.put("leftDatas", rightDatas);
+          }
+          rows.add(kv1);
+        }
+      }
+    }
+
+//    for (Record row : rowDatas) {
+//      row.set("dPlanDate", row.getStr("dPlanDate") + "");
+//      if (counter < 15) {
+//        leftDatas.add(row);
+//      } else {
+//        rightDatas.add(row);
+//      }
+//
+//      counter++;
+//
+//      if (counter == 30) {
+//        String sheetName = "订货清单" + i;
+//        sheetNames.add(sheetName);
+//        rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
+//
+//        leftDatas = new ArrayList<>();
+//        rightDatas = new ArrayList<>();
+//        leftDatas.add(record);
+//        rightDatas.add(record);
+//        counter = 0;
+//        i++;
+//      }
+//
+//    }
+
+    // 如果 rows 的数量不是 30 的整数倍，将剩余的数据添加到 datas 中
+//    Kv remainData = Kv.create();
+//
+//    if (CollUtil.isNotEmpty(leftDatas)) {
+//      remainData.set("leftDatas", leftDatas);
+//    }
+//    if (CollUtil.isNotEmpty(rightDatas)) {
+//      remainData.set("rightDatas", rightDatas);
+//    }
+//
+//    if (MapUtil.isNotEmpty(remainData)) {
+//      rows.add(remainData);
+//    }
+    return Kv.by("rows", rows).set("sheetNames", sheetNames);
+  }
+
+
+  /**
+   * 导出PDF数据源
+   *
+   * @param kv
+   * @return
+   */
   public Kv orderDBatchExportDatas(Kv kv) {
     // 为true 说明是看所有的
     if (Boolean.parseBoolean(kv.getStr("isEffective"))) {
@@ -214,7 +337,7 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     leftDatas.add(record);
     rightDatas.add(record);
     int counter = 0;
-    int i = 0;
+    int i = 1;
 
     for (Record row : rowDatas) {
       row.set("dPlanDate", row.getStr("dPlanDate") + "");
@@ -227,7 +350,7 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
       counter++;
 
       if (counter == 30) {
-        String sheetName = "订货清单" + (i + 1);
+        String sheetName = "订货清单" + i;
         sheetNames.add(sheetName);
         rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
 
