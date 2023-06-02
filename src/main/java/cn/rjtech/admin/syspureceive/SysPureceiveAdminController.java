@@ -108,7 +108,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
         }
         //查询入库类别
         if (null != sysPureceive.getRdCode()) {
-            PurchaseType first1 = purchasetypeservice.findFirst("select * from Bd_PurchaseType where iRdStyleId = ?", sysPureceive.getRdCode());
+            PurchaseType first1 = purchasetypeservice.findFirst("select * from Bd_PurchaseType where cRdCode = ?", sysPureceive.getRdCode());
             set("cptname", first1.getCPTName());
         }
 
@@ -197,12 +197,13 @@ public class SysPureceiveAdminController extends BaseAdminController {
     public void barcodeDatas() {
         String orgCode =  getOrgCode();
         String vencode1 = get("vencode1");
-        Vendor first1 = vendorservice.findFirst("select * from Bd_Vendor where cVenCode = ?", vencode1);
-        if(null == first1){
-            ValidationUtils.assertNull(false, "请选择供应商");
-            return;
-        }
-        String s = String.valueOf(first1.getIAutoId());
+//        Vendor first1 = vendorservice.findFirst("select * from Bd_Vendor where cVenCode = ?", vencode1);
+//        if(null == first1){
+//            ValidationUtils.assertNull(false, "请选择供应商");
+//            return;
+//        }
+//        String s = String.valueOf(first1.getIAutoId());
+        String s = null;
         renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit",10),get("orgCode",orgCode),s));
     }
 

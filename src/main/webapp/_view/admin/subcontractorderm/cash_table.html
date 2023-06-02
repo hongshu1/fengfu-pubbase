@@ -13,62 +13,78 @@
                     {@if data.iautoid}
                         ${data.iqty}
                     {@else}
-                        <input id="${data.csourceld}" type="text" data-rule="<=${data.iqty}" data-with-clearbtn="true" name="iQty" autocomplete="off" data-rule="number" class="form-control" value="${data.iqty}"/>
+                        <input id="${data.csourceld}" type="text" data-rule="<=${data.iqty}" data-with-clearbtn="true"
+                               name="iQty" autocomplete="off" data-rule="number" class="form-control"
+                               value="${data.iqty}"/>
                     {@/if}
                 </td>
                 <td>
                     {@if data.iautoid}
-                        <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="添加一行"  onclick="InsertEmptyRow('${data.iautoid}','${data.cversion}','${data.iqty}', '${data.iseffective}', this)"><i class="fa fa-plus"> 修改</i></a>
+                        <a tabindex="-1" href="javascript:void(0)" tooltip data-title="添加一行"
+                           onclick="InsertEmptyRow('${data.iautoid}','${data.cversion}','${data.iqty}', '${data.iseffective}', this)"><i
+                            class="fa fa-plus"> 修改</i></a>
                     {@else}
-                        <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="保存当前行"  onclick="saveRow('#(subcontractOrderM.iautoid??)','${data.csourceld}','${data.cversion}')"><i class="fa fa-plus"> 保存</i></a>
-                        <a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="取消当前行" onclick="removeRow(this)" ><i class="fa fa-trash text-danger"> 取消</i></a>
+                        <a tabindex="-1" href="javascript:void(0)" tooltip data-title="保存当前行"
+                           onclick="saveRow('#(subcontractOrderM.iautoid??)','${data.csourceld}','${data.cversion}')"><i
+                            class="fa fa-plus"> 保存</i></a>
+                        <a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="取消当前行"
+                           onclick="removeRow(this)"><i class="fa fa-trash text-danger"> 取消</i></a>
                     {@/if}
                 </td>
             </tr>
         {@/each}
         </textarea>
-    <!-- 定义JBoltTable使用的数据渲染模板 -->
-    <div class="jbolt_table_toolbar" id="subcontractOrderBatch_toolbar_#(pageId)">
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button class="btn btn-danger btn-sm"> 导出PDF</button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <form id="form_#(pageId)">
-                <input hidden name="isEffective" id="isEnabled_#(pageId)" value="#(subcontractOrderM.hideinvalid??'0'=='1'?true:false)">
-                <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(subcontractOrderM.hideinvalid??'0'=='1'?true:false)" data-text="已失效显示:已失效隐藏"/>
-            </form>
-        </div>
+  <!-- 定义JBoltTable使用的数据渲染模板 -->
+  <div class="jbolt_table_toolbar" id="subcontractOrderBatch_toolbar_#(pageId)">
+<!--    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">-->
+<!--      <button class="btn btn-danger btn-sm"> 导出PDF1</button>-->
+<!--    </div>-->
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+      <button class="btn dropdown-item" data-downloadbtn
+              data-url="admin/subcontractorderm/orderDBatchExport?iSubcontractOrderMid=#(subcontractOrderM.iautoid??)&hideinvalid=#(subcontractOrderM.hideinvalid??)"
+      ><i class="fa fa-download"></i>按照查询条件导出
+      </button>
     </div>
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+      <form id="form_#(pageId)">
+        <input hidden name="isEffective" id="isEnabled_#(pageId)"
+               value="#(subcontractOrderM.hideinvalid??'0'=='1'?true:false)">
+        <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled" data-switchbtn
+             data-nomsg="true" data-value="#(subcontractOrderM.hideinvalid??'0'=='1'?true:false)"
+             data-text="已失效显示:已失效隐藏"/>
+      </form>
+    </div>
+  </div>
 
-    <table class="jbolt_table jbolt_main_table  table-center "
-           id="subcontractOrderM_Table2_#(pageId)"
-           data-jbolttable
-           data-ajax="true"
-           data-width="fill"
-           data-height="fill"
-           data-url="admin/subcontractorderm/findSubcontractOrderDBatch?iSubcontractOrderMid=#(subcontractOrderM.iautoid??)"
-           data-conditions-form="form_#(pageId)"
-           data-column-resize="true"
-           data-rowtpl="cash_tpl_2#(pageId)"
-           data-toolbar="subcontractOrderBatch_toolbar_#(pageId)"
-           data-editable="true"
-           data-editable-option="getEditableTableOptions2_#(pageId)"
-           data-page="subcontractOrderM_page1_#(pageId)"
-    >
-        <thead>
-        <tr>
-            <th data-width="60" data-column="index">序号</th>
-            <th data-width="150" data-column="cInvCode">存货编码</th>
-            <th data-width="150" data-column="cInvCode1">客户部番</th>
-            <th data-width="150" data-column="cInvName1">部品名称</th>
-            <th data-width="150" data-column="dPlanDate">计划到货日期</th>
-            <th data-width="150" data-column="cBarcode">现品票</th>
-            <th data-width="100" data-column="cVersion">版本</th>
-            <th data-width="150" data-column="iQty">数量</th>
-            <th data-width="200">操作</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+  <table class="jbolt_table jbolt_main_table  table-center "
+         id="subcontractOrderM_Table2_#(pageId)"
+         data-jbolttable
+         data-ajax="true"
+         data-width="fill"
+         data-height="fill"
+         data-url="admin/subcontractorderm/findSubcontractOrderDBatch?iSubcontractOrderMid=#(subcontractOrderM.iautoid??)"
+         data-conditions-form="form_#(pageId)"
+         data-column-resize="true"
+         data-rowtpl="cash_tpl_2#(pageId)"
+         data-toolbar="subcontractOrderBatch_toolbar_#(pageId)"
+         data-editable="true"
+         data-editable-option="getEditableTableOptions2_#(pageId)"
+         data-page="subcontractOrderM_page1_#(pageId)"
+  >
+    <thead>
+    <tr>
+      <th data-width="60" data-column="index">序号</th>
+      <th data-width="150" data-column="cInvCode">存货编码</th>
+      <th data-width="150" data-column="cInvCode1">客户部番</th>
+      <th data-width="150" data-column="cInvName1">部品名称</th>
+      <th data-width="150" data-column="dPlanDate">计划到货日期</th>
+      <th data-width="150" data-column="cBarcode">现品票</th>
+      <th data-width="100" data-column="cVersion">版本</th>
+      <th data-width="150" data-column="iQty">数量</th>
+      <th data-width="200">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
 </div>

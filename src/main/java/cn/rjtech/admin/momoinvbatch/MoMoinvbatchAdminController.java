@@ -1,5 +1,14 @@
 package cn.rjtech.admin.momoinvbatch;
 
+import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.morouting.MoMoroutingService;
+import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.admin.uom.UomService;
+import cn.rjtech.admin.workregionm.WorkregionmService;
+import cn.rjtech.admin.workshiftm.WorkshiftmService;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -7,11 +16,15 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
+
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.tx.Tx;
+
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.MoMoinvbatch;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.math.BigDecimal;
+
 /**
  * 工单现品票 Controller
  * @ClassName: MoMoinvbatchAdminController
@@ -25,9 +38,29 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
 
 	@Inject
 	private MoMoinvbatchService service;
+	@Inject
+	private MoDocService moDocService; //工单
+	@Inject
+	private InventoryService inventoryService; //存货档案
+	@Inject
+	private UomService uomService; //单位
+
+	@Inject
+	private MoMoroutingService moMoroutingService; //工艺路线
+
+	@Inject
+	private WorkshiftmService workshiftmService; //班次
+
+	@Inject
+	private WorkregionmService workregionmService; //产线
+	@Inject
+	DepartmentService departmentService;
+	@Inject
+	PersonService personService;
+
 
    /**
-	* 首页
+	* 首页 工单现品票做成页面
 	*/
 	public void index() {
 		Long imodocid=getLong("imodocid");
@@ -51,7 +84,9 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
-		render("add.html");
+		set("imodocid",getLong("imodocid"));
+		getModoc(getLong("imodocid"));
+		render("add2.html");
 	}
 
    /**
@@ -109,4 +144,93 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
 		Long imodocid=getLong("imodocid");
 		//renderJsonData(service.createBarcode(imodocid));
 	}
+
+	/**
+	 * 获取工单信息
+	 * @param imodocid
+	 */
+	public void getModoc(Long imodocid){
+		MoDoc moDoc=moDocService.findById(imodocid);
+		if(moDoc == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		Record moRecod=moDoc.toRecord();
+		if(isOk(moDoc.getIInventoryId())){
+			//存货
+			Inventory inventory = inventoryService.findById(moDoc.getIInventoryId());
+			if(inventory!=null){
+				//料品编码
+				moRecod.set("cinvcode",inventory.getCInvCode());
+				//客户部番
+				moRecod.set("cinvcode1",inventory.getCInvCode1());
+				//部品名称
+				moRecod.set("cinvname1",inventory.getCInvName1());
+				Uom uom=uomService.findFirst(Okv.create().
+						setIfNotNull(Uom.IAUTOID,inventory.getICostUomId()),Uom.IAUTOID,"desc");
+				if(uom!=null) {
+					//生产单位
+					moRecod.set("manufactureuom", uom.getCUomName());
+				}
+				//规格
+				moRecod.set("cinvstd",inventory.getCInvStd());
+
+			}
+			//工艺路线
+
+
+		}
+		//差异数量
+		if(moDoc.getIQty()!=null&&moDoc.getICompQty()!=null) {
+			BigDecimal cyqty =moDoc.getIQty().subtract(moDoc.getICompQty());
+			moRecod.set("cyqty",cyqty);
+		}
+		//产线
+		if(isOk(moDoc.getIWorkRegionMid())){
+			Workregionm workregionm=workregionmService.findById(moDoc.getIWorkRegionMid());
+			if(workregionm!=null){
+				moRecod.set("cworkname",workregionm.getCWorkName());
+			}
+		}
+		//班次
+		if(isOk(moDoc.getIWorkShiftMid())){
+			Workshiftm  workshiftm=workshiftmService.findById(moDoc.getIWorkShiftMid());
+			if(workshiftm!=null){
+				moRecod.set("cworkshiftname",workshiftm.getCworkshiftname());
+			}
+		}
+		//部门
+		if(isOk(moDoc.getIDepartmentId())){
+			Department department=departmentService.findById(moDoc.getIDepartmentId());
+			if(department!=null){
+				moRecod.set("cdepname",department.getCDepName());
+			}
+		}
+		set("moDoc",moRecod);
+	}
+      public void editprint(){
+		  MoMoinvbatch moMoinvbatch=service.findById(getLong(0));
+		  if(moMoinvbatch == null){
+			  renderFail(JBoltMsg.DATA_NOT_EXIST);
+			  return;
+		  }
+		  Record moMoinvbatchRecord=moMoinvbatch.toRecord();
+		  MoDoc moDoc=moDocService.findById(moMoinvbatch.getIMoDocId());
+		  if(moDoc!=null){
+			  //产线
+			  if(isOk(moDoc.getIWorkRegionMid())){
+				  Workregionm workregionm=workregionmService.findById(moDoc.getIWorkRegionMid());
+				  if(workregionm!=null){
+					 if(isOk(workregionm.getIPersonId())){
+						  Person person = personService.findFirstByUserId(workregionm.getIPersonId());
+						  moMoinvbatchRecord.set("workleader",person);
+					  }
+				  }
+			  }
+		  }
+		  set("moMoinvbatch",moMoinvbatchRecord);
+		  render("edit.html");
+
+
+	  }
 }

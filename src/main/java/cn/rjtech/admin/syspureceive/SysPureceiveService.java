@@ -236,8 +236,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 // 主表修改
                 ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
             }
-            // 查出供应商id
-            Long veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", sysotherin.getVenCode()).getIAutoId();
+            // 查出供应商id ---(供应商字段主表去掉)
+            Long veniAutoId = null;
+            if(null != sysotherin.getVenCode()) {
+                veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", sysotherin.getVenCode()).getIAutoId();
+            }
             // 从表的操作
             // 获取保存数据（执行保存，通过 getSaveRecordList）
             saveTableSubmitDatas(jBoltTable, sysotherin, veniAutoId);
@@ -271,6 +274,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 row.set("IsInitial", false);
                 sysPureceivedetail.setIsInitial("0");
             } else {
+                //获取供应商字段
+                String vencode = row.getStr("vencode");
+                veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", vencode).getIAutoId();
+                if(null == vencode){
+                    ValidationUtils.assertNull(false, "条码："+row.get("barcode")+" 供应商数据不能为空");
+                }
                 // 推送初物 PL_RcvDocQcFormM 来料
                 this.insertRcvDocQcFormM(row, sysotherin, veniAutoId);
                 sysPureceivedetail.setIsInitial("1");
@@ -309,6 +318,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 row.set("IsInitial", false);
             } else {
                 // 推送初物 PL_RcvDocQcFormM 来料
+                String vencode = row.getStr("vencode");
+                veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", vencode).getIAutoId();
+                if(null == vencode){
+                    ValidationUtils.assertNull(false, "条码："+row.get("barcode")+" 供应商数据不能为空");
+                }
                 this.insertRcvDocQcFormM(row, sysotherin, veniAutoId);
                 sysPureceivedetail.setIsInitial("1");
             }

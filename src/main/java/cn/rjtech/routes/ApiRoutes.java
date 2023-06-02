@@ -1,5 +1,6 @@
 package cn.rjtech.routes;
 
+import cn.rjtech.api.appversion.AppversionApiController;
 import cn.rjtech.api.formuploadcategory.FormUploadCategoryApiController;
 import cn.rjtech.api.formuploadm.FormUploadMApiController;
 import cn.rjtech.api.general.GeneralApiController;
@@ -34,6 +35,7 @@ public class ApiRoutes extends Routes {
         this.add("/api/user", UserApiController.class);
         this.add("/api/upload", UploadApiController.class);
         this.add("/api/erp/common", CommonApiController.class);
+        this.add("/api/appversion", AppversionApiController.class);
 
         // 通用接口
         this.add("/api/general", GeneralApiController.class);
