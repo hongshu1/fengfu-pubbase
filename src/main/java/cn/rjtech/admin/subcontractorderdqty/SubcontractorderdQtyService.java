@@ -1,6 +1,7 @@
 package cn.rjtech.admin.subcontractorderdqty;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -116,34 +117,41 @@ public class SubcontractorderdQtyService extends BaseService<SubcontractorderdQt
 		return null;
 	}
 	
-	public SubcontractorderdQty createSubcontractOrderdQty(int year, int month, int day, BigDecimal qty){
+	public SubcontractorderdQty createSubcontractOrderdQty(int year, int month, int day, BigDecimal qty, int seq){
 		SubcontractorderdQty subcontractorderdQty = new SubcontractorderdQty();
 		subcontractorderdQty.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		subcontractorderdQty.setIYear(year);
 		subcontractorderdQty.setIMonth(month);
 		subcontractorderdQty.setIDate(day);
 		subcontractorderdQty.setIQty(qty);
+		subcontractorderdQty.setISeq(seq);
 		return subcontractorderdQty;
 	}
 	
-	public SubcontractorderdQty create(Long iSubcontractOrderDid, int year, int month, int day, BigDecimal qty){
-		SubcontractorderdQty subcontractorderdQty = createSubcontractOrderdQty(year, month, day, qty);
+	public SubcontractorderdQty create(Long iSubcontractOrderDid, int year, int month, int day, BigDecimal qty, int seq){
+		SubcontractorderdQty subcontractorderdQty = createSubcontractOrderdQty(year, month, day, qty, seq);
 		subcontractorderdQty.setISubcontractOrderDid(iSubcontractOrderDid);
 		return subcontractorderdQty;
 	}
 	
-	public List<SubcontractorderdQty> getSubcontractOrderdQty(Long iSubcontractOrderDid, JSONArray subcontractorderdQtyJsonArray){
+	public List<SubcontractorderdQty> getSubcontractOrderdQty(Long iSubcontractOrderDid, JSONArray subcontractorderdQtyJsonArray, int seq){
 		List<SubcontractorderdQty> list = new ArrayList<>();
 		if (CollectionUtil.isEmpty(subcontractorderdQtyJsonArray)){
 			return list;
 		}
 		for (int i=0; i<subcontractorderdQtyJsonArray.size(); i++){
 			JSONObject jsonObject = subcontractorderdQtyJsonArray.getJSONObject(i);
+			BigDecimal qty = jsonObject.getBigDecimal(SubcontractorderdQty.IQTY.toLowerCase());
+			if (ObjectUtil.isNull(qty) || BigDecimal.ZERO.compareTo(qty) == 0){
+				continue;
+			}
+			seq+=10;
 			SubcontractorderdQty subcontractorderdQty = createSubcontractOrderdQty(
 					jsonObject.getIntValue(SubcontractorderdQty.IYEAR.toLowerCase()),
 					jsonObject.getIntValue(SubcontractorderdQty.IMONTH.toLowerCase()),
 					jsonObject.getIntValue(SubcontractorderdQty.IDATE.toLowerCase()),
-					jsonObject.getBigDecimal(SubcontractorderdQty.IQTY.toLowerCase())
+					qty,
+					seq
 			);
 			subcontractorderdQty.setISubcontractOrderDid(iSubcontractOrderDid);
 			list.add(subcontractorderdQty);
