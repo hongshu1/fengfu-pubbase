@@ -1,6 +1,8 @@
 #sql("recpor")
 SELECT
-    t1.*,
+    t1.AutoID,t1.BillType,t1.OrganizeCode,t1.BillDate,t1.RdCode,
+    t1.DeptCode,t1.SourceBillNo,t1.SourceBillID,t1.VenCode,t1.Memo,
+    t1.AuditPerson,t1.AuditDate,t1.ModifyDate,t1.ModifyPerson,t1.State,
     t2.cRdCode,t2.cRdName,
     t3.Whcode,
     t4.cWhName,

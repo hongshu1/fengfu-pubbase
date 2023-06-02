@@ -48,7 +48,7 @@
 		</script>
 		<div class="jbolt_table_toolbar" id="AnnualOrderM_toolbarsum_#(pageId)">
 			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-				<div class="btn-group dropdown">
+				<!--<div class="btn-group dropdown">
 					<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
 							id="exportMenuBadnessButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						数据导出
@@ -61,7 +61,9 @@
 								data-form="basisForm_#(pageId)"><i class="fa fa-download"></i> 全部导出
 						</button>
 					</div>
-				</div>
+				</div>-->
+				<button data-downloadbtn data-form="apsAnnualplanmFormsum_#(pageId)"
+						data-url="admin/schedudemandplan/dataExportPlan" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
 			</div>
 		</div>
 		<table class="jbolt_table thead_font_normal table-bordered table-center"
@@ -73,7 +75,6 @@
 			   data-column-resize="true"
 			   data-tfoot-fixed="true"
 			   data-column-prepend="1:checkbox"
-			   data-page="apsAnnualplanm_page#(pageId)"
 			   data-rowtpl="jboltTable_demotplsum_#(pageId)"
 			   data-toolbar="AnnualOrderM_toolbarsum_#(pageId)"
 		>

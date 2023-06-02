@@ -4,8 +4,9 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="save()" class="btn btn-success btn-sm" "><i
-                                class=" fa fa-refresh"></i> 保存</button>
+                        <button onclick="save()" class="btn btn-success btn-sm"
+                        "><i
+                            class=" fa fa-refresh"></i> 保存</button>
                         <button onclick="submitThisForm()" class="btn btn-info btn-sm"><i
                                 class="fa fa-window-maximize"></i> 提交审批
                         </button>
@@ -21,18 +22,18 @@
                 <div class="card-body">
                     <form onsubmit="return false;" id="sysPureceive_#(pageId)" action="#(action)" method="post">
                         #if(sysPureceive.AutoID??)
-                        <input type="hidden" name="sysPureceive.AutoID" value="#(sysPureceive.AutoID??)" />
+                        <input type="hidden" name="sysPureceive.AutoID" value="#(sysPureceive.AutoID??)"/>
                         #end
-                        <input type="hidden" name="sysPureceive.Type" value="PUReceive" />
+                        <input type="hidden" name="sysPureceive.Type" value="PUReceive"/>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">收料单号</label>
                                     <div class="col-9">
                                         <input type="text" data-notnull="true" data-tips="请输入收料单号" disabled
-                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
-                                            placeholder="请输入收料单号" maxlength="40" name="sysPureceive.BillNo"
-                                            value="#(sysPureceive.BillNo??)" />
+                                               data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                               placeholder="请输入收料单号" maxlength="40" name="sysPureceive.BillNo"
+                                               value="#(sysPureceive.BillNo??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -42,60 +43,62 @@
                                     <label class="col-sm-3 col-form-label">收料日期</label>
                                     <div class="col-9">
                                         <input type="text" data-date class="form-control ml-2" placeholder="收料日期"
-                                            maxlength="20" name="sysPureceive.createdate" disabled
-                                            value="#(sysPureceive.createdate??)" />
+                                               maxlength="20" name="sysPureceive.createdate" disabled
+                                               value="#(sysPureceive.createdate??)"/>
                                     </div>
                                 </div>
                             </div>
 
-                            <!--
 
                             <div class="col-md-4">
                                 <div class="form-group row">
-                                    <input type="hidden" name="Whcode" value="#(Whcode??)"
-                                    id="whcode" data-value-attr="whcode" />
+                                    <input type="hidden" name="sysPureceive.WhCode" value="#(sysPureceive.WhCode??)"
+                                           id="whcode" data-value-attr="whcode"/>
+                                    <input type="hidden" name="whcode1" value="#(sysPureceive.WhCode??)"
+                                           id="whcode1" data-sync-attr="whcode"/>
                                     <label class="col-sm-3 col-form-label">仓库名称</label>
                                     <div class="col-9">
                                         <input type="text" class="form-control" data-autocomplete
-                                            data-url="admin/SysEnumeration/wareHouse" data-rule="required"
-                                            data-hidden-input="whcode" data-text-attr="whname"
-                                            data-column-attr="whcode,whname" placeholder="请选择仓库名称"
-                                            data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
-                                            value="#(whname??)">
+                                               data-url="admin/materialReceiptList/Whcode" data-rule="required"
+                                               data-hidden-input="whcode"
+                                               data-sync-ele="#whcode,whcode1"
+                                               data-text-attr="whname" name="sysPureceive.WhName"
+                                               data-column-attr="whcode,whname" placeholder="请选择仓库名称"
+                                               data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
+                                               value="#(sysPureceive.WhName??)">
                                     </div>
                                 </div>
-                            </div> -->
-
-
-
-                            <div class="col-md-4">
-                            <div class="form-group row">
-                                <input type="hidden" name="sysPureceive.VenCode" value="#(sysPureceive.VenCode??)"
-                                       id="vencode" data-value-attr="vencode" />
-                                <input type="hidden" name="vencode1" value="#(sysPureceive.VenCode??)"
-                                       id="vencode1" data-sync-attr="vencode"/>
-                                <label class="col-sm-3 col-form-label">供应商名称</label>
-                                <div class="col-9">
-                                    <input type="text" class="form-control" data-autocomplete
-                                           data-url="admin/materialReceiptList/venCode" data-rule="required"
-                                           data-text-attr="venname"
-                                           data-sync-ele="#vencode,vencode1"
-                                           data-column-attr="vencode,venname" placeholder="请选择供应商名称"
-                                           data-tips="请选择供应商名称" data-header="供应商编码,供应商名称" maxlength="40"
-                                           value="#(venname??)">
-                                </div>
                             </div>
-                        </div>
+
+
+<!--                            <div class="col-md-4">-->
+<!--                                <div class="form-group row">-->
+<!--                                    <input type="hidden" name="sysPureceive.VenCode" value="#(sysPureceive.VenCode??)"-->
+<!--                                           id="vencode" data-value-attr="vencode"/>-->
+<!--                                    <input type="hidden" name="vencode1" value="#(sysPureceive.VenCode??)"-->
+<!--                                           id="vencode1" data-sync-attr="vencode"/>-->
+<!--                                    <label class="col-sm-3 col-form-label">供应商名称</label>-->
+<!--                                    <div class="col-9">-->
+<!--                                        <input type="text" class="form-control" data-autocomplete-->
+<!--                                               data-url="admin/materialReceiptList/venCode" data-rule="required"-->
+<!--                                               data-text-attr="venname"-->
+<!--                                               data-sync-ele="#vencode,vencode1"-->
+<!--                                               data-column-attr="vencode,venname" placeholder="请选择供应商名称"-->
+<!--                                               data-tips="请选择供应商名称" data-header="供应商编码,供应商名称" maxlength="40"-->
+<!--                                               value="#(venname??)">-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <input type="hidden" name="sysPureceive.RdCode" value="#(sysPureceive.RdCode??)"
-                                           id="rdcode" data-value-attr="irdstyleid" />
+                                           id="rdcode" data-value-attr="crdcode"/>
                                     <label class="col-sm-3 col-form-label">入库类型</label>
                                     <div class="col-9">
                                         <input type="text" class="form-control" data-autocomplete
                                                data-url="admin/materialReceiptList/selectRdCode" data-rule="required"
                                                data-hidden-input="rdcode" data-text-attr="cptname"
-                                               data-column-attr="irdstyleid,cptname" placeholder="请选择入库类型"
+                                               data-column-attr="crdcode,cptname" placeholder="请选择入库类型"
                                                data-tips="请选择入库类型" data-header="入库类型编码,入库类型名称" maxlength="40"
                                                value="#(cptname??)">
                                     </div>
@@ -103,19 +106,17 @@
                             </div>
 
 
-
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">收料人</label>
                                     <div class="col-9">
                                         <input type="text" data-notnull="true" data-tips="请输收料人" disabled
-                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
-                                            placeholder="请输收料人" maxlength="40" name="username" value="#(username??)" />
+                                               data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                               placeholder="请输收料人" maxlength="40" name="username"
+                                               value="#(username??)"/>
                                     </div>
                                 </div>
                             </div>
-
-
 
 
                         </div>
@@ -133,8 +134,8 @@
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
                 <a href="admin/sysPureceivedetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
-                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
-                class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+                   tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
+                   class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 
             </td>
             <td>${data.sourcebillno}</td>
@@ -145,8 +146,8 @@
             <td>${data.plandate}</td>
             <td>${data.qtys}</td>
             <td>${data.qty}</td>
-            <td>${data.whcode}</td>
             <td>${data.poscode}</td>
+            <td>${data.venname}</td>
             <td><img data-switchbtn data-value="${data.isinitial}" data-handler="switchEditableTd"/></td>
 
         </tr>
@@ -156,48 +157,49 @@
         <div class="col-md-4">
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">现品票扫码</label>
-                <div class="col-9">
+                <div class="col-5">
                     <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
-                        autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
-                        name="sysPureceive.warehousingNo" value="#(sysPureceive.warehousingNo??)" />
+                           autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
+                           id="barcode" name="barcode" value="#(barcode??)"/>
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                    <button onclick="barcode()" class="btn btn-primary btn-sm">搜索</button>
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                    <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                    <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                            id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysPureceivedetail/deleteByIds?ids="
+                            data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
+                    </button>
                 </div>
             </div>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">搜索</button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysPureceivedetail/deleteByIds?ids="
-                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
         </div>
 
     </div>
 
     <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysPureceive.AutoID??)
-        data-ajax="true" data-url="admin/sysPureceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)" #end
-        id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
-        data-rowtpl="sysPureceive_tpl_#(pageId)" data-toolbar="sysPureceive_toolbar_#(pageId)" data-editable="true"
-        data-page="sysPureceive_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
+           data-ajax="true" data-url="admin/sysPureceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)" #end
+           id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
+           data-rowtpl="sysPureceive_tpl_#(pageId)" data-toolbar="sysPureceive_toolbar_#(pageId)" data-editable="true"
+           data-page="sysPureceive_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
         <thead class="fw_normal">
-            <tr>
-                <th data-width="60">序号</th>
-                <th data-width="150">操作</th>
-                <th data-width="100" data-column="sourcebillno">订单编号</th>
-                <th data-width="100" data-column="barcode">现品票</th>
-                <th data-width="150" data-column="cinvcode">存货编码</th>
-                <th data-width="150" data-column="cinvcode1">客户部番</th>
-                <th data-width="150" data-column="cinvname1">部品名称</th>
-                <th data-width="100" data-column="plandate">计划到货日期</th>
-                <th data-width="100" data-column="qtys">数量</th>
-                <th data-width="100" data-column="qty">实收数量</th>
-                <th data-width="100" data-column="whcode">入库库区</th>
-                <th data-width="100" data-column="poscode">库位</th>
-                <th data-width="100" data-column="isinitial" data-editable="false">是否初物</th>
-            </tr>
+        <tr>
+            <th data-width="60">序号</th>
+            <th data-width="150">操作</th>
+            <th data-width="100" data-column="sourcebillno">订单编号</th>
+            <th data-width="100" data-column="barcode">现品票</th>
+            <th data-width="150" data-column="cinvcode">存货编码</th>
+            <th data-width="150" data-column="cinvcode1">客户部番</th>
+            <th data-width="150" data-column="cinvname1">部品名称</th>
+            <th data-width="100" data-column="plandate">计划到货日期</th>
+            <th data-width="100" data-column="qtys">数量</th>
+            <th data-width="100" data-column="qty">实收数量</th>
+            <th data-width="100" data-column="poscode">库区</th>
+            <th data-width="100" data-column="venname">供应商</th>
+            <th data-width="100" data-column="isinitial" data-editable="false">是否初物</th>
+        </tr>
         </thead>
     </table>
 
@@ -206,9 +208,26 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
+
+    function barcode() {
+        var barcode = $("#barcode").val();
+        if (barcode) {
+            Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode},
+                function (res) {
+                    console.log(res.data);
+                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
+                    $("#barcode").val('');
+                }, function (err) {
+                })
+        } else {
+            LayerMsgBox.alert("请输入条码")
+        }
+    }
+
     function save() {
         jboltTableSubmit("#jbolt_Table_#(pageId)");
     }
+
     function submitThisForm() {
         $("#operationType").val("submit");
         jboltTableSubmit("#jbolt_Table_#(pageId)");
@@ -255,31 +274,32 @@
                     valueAttr: "whcode",//选择赋值的字段
                     columnAttr: "iautoid,whcode,whname",//下来看的时候显示哪些字段
                     header: '仓库ID,仓库编码,仓库名称',
-                    changeColumns: [{ column: "whcode", use: "whcode" }]
+                    changeColumns: [{column: "whcode", use: "whcode"}]
                 },
                 poscode: {
+                    linkPara: "input[name='whcode1']",
                     placeholder: "库区", //输入提示，里面
                     tooltip: "库区",//输入提示，上方
                     type: "autocomplete",
                     //根据仓库过滤
-                    linkColumn:"whcode",
+                    // linkColumn:"whcode",
                     url: "admin/materialReceiptList/wareHousepos",
                     maxLength: 100,
                     required: true,
                     placeholder: "请选择库区编码",
-                    textAttr: "cshelvescode",
+                    textAttr: "careacode",
                     width: 500,
-                    valueAttr: "cshelvescode",//选择赋值的字段
-                    columnAttr: "cshelvescode,cshelvesname",//下来看的时候显示哪些字段
+                    valueAttr: "careacode",//选择赋值的字段
+                    columnAttr: "careacode,careaname",//下来看的时候显示哪些字段
                     header: '库区,库区名称',
-                    changeColumns: [{ column: "poscode", use: "cshelvescode" }]
+                    changeColumns: [{column: "poscode", use: "careacode"}]
                 },
 
                 barcode: { //条码
                     // linkPara:"#vencode1",
-                    linkPara:"input[name='vencode1']",
+                    linkPara: "input[name='vencode1']",
                     maxLength: 100,
-                    // required: true,
+                    required: true,
                     placeholder: "=请选择=",
                     type: "autocomplete",
                     url: "admin/materialReceiptList/barcodeDatas",
@@ -287,21 +307,36 @@
                     width: 800,
                     sync: "",
                     valueAttr: "barcode",
-                    columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty",
-                    header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量',
-                    changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
-                    { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },{ column: "plandate", use: "plandate" },
-                    { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
-                    { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
-                    {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
-                    {column: "sourcebillnorow", use: "sourcebillnorow"},{column: "sourcebillid", use: "sourcebillid"},{column: "qtys", use: "qty"}]
+                    columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty,venname",
+                    header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量,供应商',
+                    changeColumns: [{column: "barcode", use: "barcode"}, {
+                        column: "cinvcode",
+                        use: "cinvcode"
+                    }, {column: "cinvcode1", use: "cinvcode1"},
+                        {column: "cinvname1", use: "cinvname1"}, {
+                            column: "cinvstd",
+                            use: "cinvstd"
+                        }, {column: "plandate", use: "plandate"},
+                        {column: "cinvccode", use: "cinvccode"}, {
+                            column: "cinvcname",
+                            use: "cinvcname"
+                        }, {column: "vencode", use: "vencode"}, {column: "venname", use: "venname"},
+                        {column: "cuomclassname", use: "cuomclassname"}, {
+                            column: "iinventoryid",
+                            use: "iautoid"
+                        }, {column: "sourcebilltype", use: "sourcebilltype"},
+                        {column: "sourcebillno", use: "sourcebillno"}, {column: "sourcebilldid", use: "sourcebilldid"},
+                        {column: "sourcebillnorow", use: "sourcebillnorow"}, {
+                            column: "sourcebillid",
+                            use: "sourcebillid"
+                        }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}]
 
                 },
-                cinvcode:{
+                cinvcode: {
                     // linkPara:"#sysPureceive.VenCode",
-                    linkPara:"input[name='vencode1']",
+                    linkPara: "input[name='vencode1']",
                     maxLength: 100,
-                    // required: true,
+                    required: true,
                     placeholder: "=请选择=",
                     type: "autocomplete",
                     url: "admin/materialReceiptList/barcodeDatas",
@@ -309,20 +344,36 @@
                     width: 800,
                     sync: "",
                     valueAttr: "barcode",
-                    columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty",
-                    header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量',
-                    changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
-                        { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },{ column: "plandate", use: "plandate" },
-                        { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
-                        { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
-                        {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
-                        {column: "sourcebillnorow", use: "sourcebillnorow"},{column: "sourcebillid", use: "sourcebillid"},{column: "qtys", use: "qty"}]
+                    columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty,venname",
+                    header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量,供应商',
+                    changeColumns: [{column: "barcode", use: "barcode"}, {
+                        column: "cinvcode",
+                        use: "cinvcode"
+                    }, {column: "cinvcode1", use: "cinvcode1"},
+                        {column: "cinvname1", use: "cinvname1"}, {
+                            column: "cinvstd",
+                            use: "cinvstd"
+                        }, {column: "plandate", use: "plandate"},
+                        {column: "cinvccode", use: "cinvccode"}, {column: "cinvcname", use: "cinvcname"},
+                        {column: "cuomclassname", use: "cuomclassname"}, {
+                            column: "iinventoryid",
+                            use: "iautoid"
+                        }, {column: "sourcebilltype", use: "sourcebilltype"},
+                        {column: "sourcebillno", use: "sourcebillno"}, {
+                            column: "sourcebilldid",
+                            use: "sourcebilldid"
+                        }, {column: "vencode", use: "vencode"}, {column: "venname", use: "venname"},
+                        {column: "sourcebillnorow", use: "sourcebillnorow"}, {
+                            column: "sourcebillid",
+                            use: "sourcebillid"
+                        }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}]
 
                 },
             }
         };
         return editableTableOptions;
     }
+
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();

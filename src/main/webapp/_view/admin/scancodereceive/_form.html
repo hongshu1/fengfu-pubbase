@@ -281,17 +281,15 @@
                     ],
                     handler:function(table,td,text,value,trJsonData){
                         var cinvcode = trJsonData.cinvcode;
-                        console.log('cinvcode',cinvcode)
-                        Ajax.post("admin/scancodereceive/getBarCodeData",{"itemCode":cinvcode},function (res) {
+                        console.log('trJsonData',trJsonData)
+
+                        jboltTableInsertRowAfterChecked(table,trJsonData,true,true,true);
+
+                        /*Ajax.post("admin/scancodereceive/getBarCodeData",{"itemCode":cinvcode},function (res) {
                             console.log('res',res)
                             jboltTableInsertRowAfterChecked(table,res.data,true,true,true);
-                        })
+                        })*/
 
-                        console.log('table',table)
-                        console.log('td',td)
-                        console.log('text',text)
-                        console.log('value',value)
-                        console.log('trJsonData',trJsonData)
                     }
                 },
             }

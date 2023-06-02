@@ -2,6 +2,7 @@ package cn.rjtech.admin.department;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -13,6 +14,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -260,7 +262,13 @@ public class DepartmentService extends BaseService<Department> {
         List<Department> datas = daoTemplate("department.list", kv).find();
         return convertToModelTree(datas, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
     }
+    
+    public List<Department> treeDatasForProposalSystem(Kv kv) {
+        List<Department> datas = daoTemplate("department.list", kv).find();
+        return datas;
+    }
 
+    
     /**
      * 根据部门编码查询部门名称
      */

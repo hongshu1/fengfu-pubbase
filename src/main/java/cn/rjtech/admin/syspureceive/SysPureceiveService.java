@@ -214,7 +214,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
 
         SysPureceive sysotherin = jBoltTable.getFormModel(SysPureceive.class, "sysPureceive");
-        String whcode = jBoltTable.getForm().getString("Whcode");
         // 获取当前用户信息？
         User user = JBoltUserKit.getUser();
         Date now = new Date();
@@ -237,8 +236,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 // 主表修改
                 ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
             }
-            // 查出供应商id
-            Long veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", sysotherin.getVenCode()).getIAutoId();
+            // 查出供应商id ---(供应商字段主表去掉)
+            Long veniAutoId = null;
+            if(null != sysotherin.getVenCode()) {
+                veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", sysotherin.getVenCode()).getIAutoId();
+            }
             // 从表的操作
             // 获取保存数据（执行保存，通过 getSaveRecordList）
             saveTableSubmitDatas(jBoltTable, sysotherin, veniAutoId);
@@ -272,6 +274,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 row.set("IsInitial", false);
                 sysPureceivedetail.setIsInitial("0");
             } else {
+                //获取供应商字段
+                String vencode = row.getStr("vencode");
+                veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", vencode).getIAutoId();
+                if(null == vencode){
+                    ValidationUtils.assertNull(false, "条码："+row.get("barcode")+" 供应商数据不能为空");
+                }
                 // 推送初物 PL_RcvDocQcFormM 来料
                 this.insertRcvDocQcFormM(row, sysotherin, veniAutoId);
                 sysPureceivedetail.setIsInitial("1");
@@ -283,7 +291,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
 			// sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
-            sysPureceivedetail.setWhcode(row.getStr("whcode"));
+//            sysPureceivedetail.setWhcode(row.getStr("whcode"));
+            sysPureceivedetail.setVenCode(row.getStr("vencode"));
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
@@ -309,6 +318,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 row.set("IsInitial", false);
             } else {
                 // 推送初物 PL_RcvDocQcFormM 来料
+                String vencode = row.getStr("vencode");
+                veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", vencode).getIAutoId();
+                if(null == vencode){
+                    ValidationUtils.assertNull(false, "条码："+row.get("barcode")+" 供应商数据不能为空");
+                }
                 this.insertRcvDocQcFormM(row, sysotherin, veniAutoId);
                 sysPureceivedetail.setIsInitial("1");
             }
@@ -319,7 +333,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
 			// sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
-            sysPureceivedetail.setWhcode(row.getStr("whcode"));
+//            sysPureceivedetail.setWhcode(row.getStr("whcode"));
+            sysPureceivedetail.setVenCode(row.getStr("vencode"));
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
@@ -444,6 +459,19 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode,String vencode) {
         //.set("vencode",vencode)
         return dbTemplate("syspureceive.getBarcodeDatas",Kv.by("q", q).set("limit",limit).set("orgCode",orgCode).set("vencode",vencode)).find();
+    }
+
+    /**
+     * 获取条码列表
+     * 通过关键字匹配
+     * autocomplete组件使用
+     */
+    public Record barcode(Kv kv) {
+        Record first = dbTemplate("syspureceive.barcode", kv).findFirst();
+        if(null == first){
+            ValidationUtils.assertNull(false, "条码数据有误");
+        }
+        return first;
     }
 
 

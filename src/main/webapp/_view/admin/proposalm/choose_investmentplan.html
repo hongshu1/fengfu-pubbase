@@ -12,7 +12,7 @@
                         name="cdepcode"
                         data-autoload
                         data-tips="u8部门"
-                        data-url="admin/department/getTreeTableDatas?isProposal=true"
+                        data-url="admin/department/treeDatasForProposalSystem?isProposal=true"
                         data-text="=u8部门="
                         data-text-attr="cdepname"
                         data-value-attr="cdepcode"
@@ -100,6 +100,8 @@
                data-conditions-form="expenseBudgetForm_#(pageId)"
                ###data-toolbar="jbolt_table_toolbar_#(pageId)"
                data-height="500"
+				data-page="proposalmPage_#(pageId)"
+               data-pagesize="50"               
         >
             <thead class="fw_normal">
             <tr>
@@ -167,58 +169,6 @@
 #define js()
 <script type="text/javascript">
 
-   /*  function submitThisForm() {
-        var iautoids = jboltTableGetCheckedIds('jbolt_table_#(pageId)');
-        if (iautoids && iautoids.length > 0) {
-
-            var ids = iautoids.join(',');
-
-            #if(cdepcode || iproposalmid)
-                Ajax.post('/admin/proposalm/planData', { iinvestmentplanitemids: ids }, function (ret) {
-                    if (ret.state === 'ok') {
-                        // 追加禀议项目
-                        if (parent.insertRow(ret.data)) {
-                            // 关闭
-                            parent.layer.close(parent.layer.getFrameIndex(window.name));
-                        }
-                    } else {
-                        LayerMsgBox.alert(ret.msg, 2);
-                    }
-                });
-            #else
-                // 新增禀议书，选择项目
-                var firstCdepcode;
-                // 获取勾选的记录
-                var rows = jboltTableGetCheckedDatas('jbolt_table_#(pageId)');
-
-                try {
-                    $.each(rows, function (idx, row) {
-                        if (idx === 0) {
-                            firstCdepcode = row.cdepcode;
-                        } else {
-                            if (firstCdepcode !== row.cdepcode) {
-                                throw new Error('选定的部门不同')
-                            }
-                        }
-                    });
-                } catch (e) {
-                    LayerMsgBox.alert(e.message, 2);
-                    return;
-                }
-
-                // 校验勾选的项目是否存在编辑状态的禀议书
-                Ajax.post('/admin/proposalm/checkPlanItem', {cdepcode: firstCdepcode, iinvestmentplanitemids: ids}, function (ret) {
-                    if (ret.state === 'ok') {
-                        // 跳转新增页面
-                        location.href = '/admin/proposalm/addInvestmentPlan?iinvestmentplanitemids=' + ids + '&cdepcode=' + firstCdepcode + '&_jb_rqtype_=dialog';
-                    } else {
-                        LayerMsgBox.alert(ret.msg, 2);
-                    }
-                });
-
-            #end
-        }
-    } */
 
 </script>
 #end

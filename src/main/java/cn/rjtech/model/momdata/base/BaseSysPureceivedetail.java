@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 
 /**
  * 采购收料单明细
@@ -46,10 +46,16 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
     public static final String MODIFYPERSON = "ModifyPerson";
     /**修改时间*/
     public static final String MODIFYDATE = "ModifyDate";
+    /**条码类型*/
+    public static final String BARCODETYPE = "BarcodeType";
     /**现品票*/
     public static final String BARCODE = "Barcode";
     /**是否初物*/
     public static final String ISINITIAL = "IsInitial";
+    /**组号*/
+    public static final String COMBINATION = "Combination";
+    /***/
+    public static final String VENCODE = "VenCode";
 	/**
 	 * AutoID
 	 */
@@ -357,6 +363,23 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
 	}
 
 	/**
+	 * 条码类型
+	 */
+	public M setBarcodeType(java.lang.String BarcodeType) {
+		set("BarcodeType", BarcodeType);
+		return (M)this;
+	}
+
+	/**
+	 * 条码类型
+	 */
+	@JBoltField(name="barcodetype" ,columnName="BarcodeType",type="String", remark="条码类型", required=true, maxLength=50, fixed=0, order=19)
+	@JSONField(name = "barcodetype")
+	public java.lang.String getBarcodeType() {
+		return getStr("BarcodeType");
+	}
+
+	/**
 	 * 现品票
 	 */
 	public M setBarcode(java.lang.String Barcode) {
@@ -367,7 +390,7 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
 	/**
 	 * 现品票
 	 */
-	@JBoltField(name="barcode" ,columnName="Barcode",type="String", remark="现品票", required=false, maxLength=30, fixed=0, order=19)
+	@JBoltField(name="barcode" ,columnName="Barcode",type="String", remark="现品票", required=false, maxLength=50, fixed=0, order=20)
 	@JSONField(name = "barcode")
 	public java.lang.String getBarcode() {
 		return getStr("Barcode");
@@ -384,10 +407,38 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
 	/**
 	 * 是否初物
 	 */
-	@JBoltField(name="isinitial" ,columnName="IsInitial",type="String", remark="是否初物", required=false, maxLength=30, fixed=0, order=20)
+	@JBoltField(name="isinitial" ,columnName="IsInitial",type="String", remark="是否初物", required=false, maxLength=30, fixed=0, order=21)
 	@JSONField(name = "isinitial")
 	public java.lang.String getIsInitial() {
 		return getStr("IsInitial");
+	}
+
+	/**
+	 * 组号
+	 */
+	public M setCombination(java.lang.String Combination) {
+		set("Combination", Combination);
+		return (M)this;
+	}
+
+	/**
+	 * 组号
+	 */
+	@JBoltField(name="combination" ,columnName="Combination",type="String", remark="组号", required=false, maxLength=50, fixed=0, order=22)
+	@JSONField(name = "combination")
+	public java.lang.String getCombination() {
+		return getStr("Combination");
+	}
+
+	public M setVenCode(java.lang.String VenCode) {
+		set("VenCode", VenCode);
+		return (M)this;
+	}
+
+	@JBoltField(name="vencode" ,columnName="VenCode",type="String", remark="VENCODE", required=false, maxLength=50, fixed=0, order=23)
+	@JSONField(name = "vencode")
+	public java.lang.String getVenCode() {
+		return getStr("VenCode");
 	}
 
 }

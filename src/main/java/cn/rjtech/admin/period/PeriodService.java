@@ -12,6 +12,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
 import cn.hutool.core.text.StrSplitter;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltDateUtil;
@@ -47,9 +48,9 @@ public class PeriodService extends BaseService<Period> {
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
 		Page<Record> paginate = dbTemplate("period.paginateAdminDatas", para).paginate(pageNumber, pageSize);
 		for (Record record : paginate.getList()) {
-			record.set("icreateby",userService.findById( record.getStr("iCreateBy")).getUsername());
+			record.set("icreateby",JBoltUserCache.me.getUserName(record.getLong("icreateby")));
 			if ( record.getStr("iUpdateBy")!=null){
-				record.set("iupdateby", userService.findById( record.getStr("iUpdateBy")).getUsername());
+				record.set("iupdateby", JBoltUserCache.me.getUserName(record.getLong("iupdateby")));
 			}
 			String dstarttime = JBoltDateUtil.format(record.getDate("dstarttime"), "yyyy-MM");
 			String dendtime = JBoltDateUtil.format(record.getDate("dendtime"), "yyyy-MM");

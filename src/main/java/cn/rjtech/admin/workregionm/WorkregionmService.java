@@ -36,7 +36,6 @@ import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 工段档案 Service
- *
  * @ClassName: WorkregionmService
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-11-01 20:42
@@ -243,7 +242,6 @@ public class WorkregionmService extends BaseService<Workregionm> {
         String ipslevel = "1,2,3,4,5,6,7";
         
         Date now = new Date();
-
         // 部门
         Map<String, Department> departmentMap = new HashMap<>();
         // 仓库
@@ -262,9 +260,9 @@ public class WorkregionmService extends BaseService<Workregionm> {
             if (StrUtil.isBlank(record.getStr("cDepName"))) {
                 return fail("所属部门不能为空");
             }
-            if (StrUtil.isBlank(record.getStr("cPersonName"))) {
-                return fail("产线长不能为空");
-            }
+//            if (StrUtil.isBlank(record.getStr("cPersonName"))) {
+//                return fail("产线长不能为空");
+//            }
             if (StrUtil.isBlank(record.getStr("iPsLevel"))) {
                 return fail("排产层级不能为空");
             }
@@ -301,7 +299,6 @@ public class WorkregionmService extends BaseService<Workregionm> {
             if (ObjUtil.isNull(warehouse)) {
                 warehouse = warehouseService.findByWhName(cWarehouseName);
                 ValidationUtils.notNull(warehouse, "仓库不存在");
-
                 warehouseMap.put(cWarehouseName, warehouse);
             }
 

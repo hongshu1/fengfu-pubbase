@@ -51,6 +51,6 @@ left join bd_department bd on dr.idepid = bd.iautoid
 left join bd_department endbd on dr.iRelDepId = endbd.iautoid and endbd.isDeleted = '0' and endbd.isEnabled = '1'
 where bd.isDeleted = '0' and bd.isEnabled = '1' and dr.isdefault = '1'
 #if(cdepcode)
-	bd.cdepcode = #para(cdepcode)
+	and bd.cdepcode = #para(cdepcode)
 #end
 #end
