@@ -2,8 +2,8 @@ package cn.rjtech.admin.department;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
-import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -16,15 +16,12 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.druid.sql.visitor.functions.Char;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,7 +39,7 @@ public class DepartmentService extends BaseService<Department> {
     private DictionaryService dictionaryService;
 
 
-    
+
     private final Department dao = new Department().dao();
 
     @Override
@@ -90,28 +87,21 @@ public class DepartmentService extends BaseService<Department> {
      */
     public Ret save(Department department) {
 
-        Short idepgrade=1;
+        short depGrade = 0;
         Long iPid = department.getIPid();
-        if (iPid==null){
-            department.setIDepGrade(idepgrade);
-        }else {
-
-            Kv para=Kv.by("ipid",iPid);
-            List<Record> list = dbTemplate("department.getSelectIpid",para).find();
-            if (list!=null){
-                department.setIDepGrade(Short.parseShort("2"));
-            }else {
-                department.setIDepGrade(Short.parseShort("3"));
+        if (ObjectUtil.isNotNull(iPid)){
+            Department pDepartment = findById(iPid);
+            if(pDepartment.getIDepGrade()==null){
+                pDepartment.setIDepGrade(depGrade);
             }
-
+            depGrade = (short)(pDepartment.getIDepGrade()+1);
+            // 当前添加的父级是末级，更改状态
+            if (pDepartment.getBDepEnd()){
+                pDepartment.setBDepEnd(false);
+            }
         }
-        Short no=3;
-        if (department.getIDepGrade()==no){
-            department.setBDepEnd(true);
-        }else {
-            department.setBDepEnd(false);
-        }
-
+        boolean isDepEnd = true;
+        department.setBDepEnd(isDepEnd);
         verifyData(department);
         User user = JBoltUserKit.getUser();
         DateTime date = DateUtil.date();
@@ -125,7 +115,8 @@ public class DepartmentService extends BaseService<Department> {
         department.setCUpdateName(user.getUsername());
         department.setIsDeleted(false);
         department.setIsDeleted(true);
-        //if(existsName(department.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+        department.setIDepGrade(depGrade);
+//      if(existsName(department.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = department.save();
         if (success) {
             //添加日志

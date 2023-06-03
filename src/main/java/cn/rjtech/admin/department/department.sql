@@ -43,7 +43,6 @@ where
     #if(null != sortColumn)
     order by #(sortColumn) #(sortType)
     #end
-
     order by cdepcode ASC
 #end
 
@@ -53,8 +52,4 @@ SELECT COUNT(1) FROM  Bd_Department WHERE #(keyField) = #para(value) AND  isDele
 
 #sql("getSelectIpid")
 select * from Bd_Department where ipid=#para(ipid)
-#end
-
-#sql("getListIpid")
-select * from Bd_Department where ipid=0
 #end
