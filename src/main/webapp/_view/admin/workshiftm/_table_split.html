@@ -109,7 +109,7 @@
                         if(trJsonData.dstarttime!=null && trJsonData.dendtime!=null){
                             var stime = new Date(dstarttime+" "+trJsonData.dstarttime+":00");
                             var etime = new Date(dendtime+" "+trJsonData.dendtime+":00");
-                            if(etime > stime){
+                            if(etime >= stime){
                                 iminute = parseInt((Math.abs(etime.getTime() - stime.getTime())) / (1000 * 60));
                             }else {
                                 etime = new Date(dendtime2+" "+trJsonData.dendtime+":00");
@@ -137,7 +137,7 @@
                         if(trJsonData.dstarttime!=null && trJsonData.dendtime!=null){
                             var stime = new Date(dstarttime+" "+trJsonData.dstarttime+":00");
                             var etime = new Date(dendtime+" "+trJsonData.dendtime+":00");
-                            if(etime > stime){
+                            if(etime >= stime){
                                 iminute = parseInt((Math.abs(etime.getTime() - stime.getTime())) / (1000 * 60));
                             }else {
                                 etime = new Date(dendtime2+" "+trJsonData.dendtime+":00");
