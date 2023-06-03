@@ -1125,6 +1125,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			endDate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
 		}
 
+		kv.set("startdate",startDate);
+		kv.set("enddate",endDate);
 		//开始日期到截止日期集合
 		List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
 
