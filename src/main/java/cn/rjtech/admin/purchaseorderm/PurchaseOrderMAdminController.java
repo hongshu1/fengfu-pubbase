@@ -29,7 +29,6 @@ import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
 import com.google.zxing.BarcodeFormat;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -44,6 +43,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -393,12 +393,13 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
      */
     @SuppressWarnings("unchecked")
     public void purchaseordermOne(@Para(value = "iautoid") Long iautoid) throws Exception {
-        //采购现品票明细数据
+        // 采购现品票明细数据
         List<Record> rowDatas = service.findByMidxlxs(iautoid);
-        //采购现品票条码数据
+        // 采购现品票条码数据
         List<Record> barcodeDatas=service.findByBarcode(iautoid);
-        //采购现品票明细数据sheet分页数组
+        // 采购现品票明细数据sheet分页数组
         List<String> sheetNames = new ArrayList<>();
+        
         List<Kv> rows = new ArrayList<>();
 
         List<Record> leftDatas = new ArrayList<>();
@@ -442,35 +443,41 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
             rows.add(remainData);
         }
 
-        List<Kv> rows2 = new ArrayList<>();
-        //采购现品票明细条码数据sheet分页数组
+        List<Kv> kvs = new ArrayList<>();
+        
+        // 采购现品票明细条码数据sheet分页数组
         List<String> sheetNames2 = new ArrayList<>();
         int j = 0;
 
         for (Record row : barcodeDatas) {
-            List<Record> barcodeRecords = new ArrayList<>();
-            String sheetName2 = "订货条码" + (j + 1);
-            sheetNames2.add(sheetName2);
-            BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39, 1800, 20);
-            BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE, 50, 50);
+
+            String sheetName = "订货条码" + (j + 1); 
+            sheetNames2.add(sheetName);
+            
+            BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39, 1800, 1000);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            ByteArrayOutputStream os2 = new ByteArrayOutputStream();
             ImageIO.write(bufferedImage, "jpeg", os);
+            row.set("img", os.toByteArray());
+
+            BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE, 250, 250);
+            ByteArrayOutputStream os2 = new ByteArrayOutputStream();
             ImageIO.write(bufferedImage2, "jpeg", os2);
-            row.set("img",os.toByteArray());
-            row.set("img2",os2.toByteArray());
-            row.set("index",j);
-            barcodeRecords.add(row);
-            rows2.add(Kv.by("barcodeRecords", barcodeRecords));
+            row.set("img2", os2.toByteArray());
+
+            kvs.add(Kv.by("sheetName", sheetName).set("barcodeRecords", Collections.singletonList(row)));
+            
             j++;
         }
+
         Kv data = Kv.by("rows", rows)
                 .set("sheetNames", sheetNames)
-                .set("rows2",rows2)
-                .set("sheetNames2",sheetNames2);
-        LOG.info(JSON.toJSONString(data));
+                .set("rows2", kvs)
+                .set("sheetNames2", sheetNames2);
+//        LOG.info(JSON.toJSONString(data));
+
         renderJxlsToPdf("purchaseOrderDBatch.xlsx", data, String.format("订货清单_%s.pdf", DateUtil.today()));
     }
+    
 }
 
 
