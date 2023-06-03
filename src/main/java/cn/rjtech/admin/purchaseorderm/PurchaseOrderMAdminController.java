@@ -451,14 +451,15 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
             List<Record> barcodeRecords = new ArrayList<>();
             String sheetName2 = "订货条码" + (j + 1);
             sheetNames2.add(sheetName2);
-            BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39, 1800, 1000);
-            BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE, 250, 250);
+            BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39, 1800, 20);
+            BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE, 50, 50);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ByteArrayOutputStream os2 = new ByteArrayOutputStream();
             ImageIO.write(bufferedImage, "jpeg", os);
             ImageIO.write(bufferedImage2, "jpeg", os2);
             row.set("img",os.toByteArray());
             row.set("img2",os2.toByteArray());
+            row.set("index",j);
             barcodeRecords.add(row);
             rows2.add(Kv.by("barcodeRecords", barcodeRecords));
             j++;
