@@ -74,9 +74,9 @@ WHERE
 	inv.cInvCode cInvCode,
 	inv.cInvName cInvName,
 	Qty.iQty iQuantity,
-	 CONCAT(Qty.iYear,'-',Qty.iMonth,'-',Qty.iMonth)dPlanDate,
-		0 iQuotedPrice,
-	 iSeq irowno,
+	CONCAT(Qty.iYear,'-',Qty.iMonth,'-',Qty.iMonth)dPlanDate,
+	0 iQuotedPrice,
+	iSeq irowno,
 	100 KL,
 	0 iNatDisCount
 FROM

@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.jbolt._admin.hiprint.HiprintTplService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -29,6 +30,7 @@ import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
+import com.google.zxing.BarcodeFormat;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -37,6 +39,9 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -409,18 +414,17 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
             } else {
                 rightDatas.add(row);
             }
-
             counter++;
-
             if (counter == 30) {
                 String sheetName = "订货清单" + (i + 1);
                 sheetNames.add(sheetName);
                 rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
-
                 leftDatas = new ArrayList<>();
                 rightDatas = new ArrayList<>();
                 counter = 0;
                 i++;
+            }else{
+                sheetNames.add("sheetd1");
             }
         }
 
@@ -437,25 +441,32 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         if (MapUtil.isNotEmpty(remainData)) {
             rows.add(remainData);
         }
-        List<Record> rows2 = new ArrayList<>();
-        //条码数据
-        Record barcodeRecords=new Record();
+
+        List<Kv> rows2 = new ArrayList<>();
         //采购现品票明细条码数据sheet分页数组
         List<String> sheetNames2 = new ArrayList<>();
         int j = 0;
 
         for (Record row : barcodeDatas) {
-                String sheetName2 = "订货条码" + (j + 1);
-                sheetNames2.add(sheetName2);
-                row.set("sheetName2",sheetName2);
-                rows2.add(row);
-                j++;
+            List<Record> barcodeRecords = new ArrayList<>();
+            String sheetName2 = "订货条码" + (j + 1);
+            sheetNames2.add(sheetName2);
+            BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39, 1800, 1000);
+            BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE, 250, 250);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "jpeg", os);
+            ImageIO.write(bufferedImage2, "jpeg", os2);
+            row.set("img",os.toByteArray());
+            row.set("img2",os2.toByteArray());
+            barcodeRecords.add(row);
+            rows2.add(Kv.by("barcodeRecords", barcodeRecords));
+            j++;
         }
-        LOG.info(JSON.toJSONString(rows2));
-
         Kv data = Kv.by("rows", rows)
                 .set("sheetNames", sheetNames)
-                .set("rows2",rows2);
+                .set("rows2",rows2)
+                .set("sheetNames2",sheetNames2);
         LOG.info(JSON.toJSONString(data));
         renderJxlsToPdf("purchaseOrderDBatch.xlsx", data, String.format("订货清单_%s.pdf", DateUtil.today()));
     }
