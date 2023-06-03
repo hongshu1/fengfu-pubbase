@@ -409,14 +409,13 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 
         for (Record row : rowDatas) {
 
-            if (counter < 5) {
+            if (counter < 15) {
                 leftDatas.add(row);
             } else {
                 rightDatas.add(row);
             }
             counter++;
-
-            if (counter == 10) {
+            if (counter == 30) {
                 String sheetName = "订货清单" + (i + 1);
                 sheetNames.add(sheetName);
                 rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
@@ -424,8 +423,8 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
                 rightDatas = new ArrayList<>();
                 counter = 0;
                 i++;
-            }else {
-                sheetNames.add("sheet1");
+            }else{
+                sheetNames.add("sheetd1");
             }
         }
 
@@ -444,27 +443,25 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         }
 
         List<Kv> rows2 = new ArrayList<>();
-        //条码数据
-        List<Record> barcodeRecords=new ArrayList<>();
         //采购现品票明细条码数据sheet分页数组
         List<String> sheetNames2 = new ArrayList<>();
         int j = 0;
 
         for (Record row : barcodeDatas) {
-                String sheetName2 = "订货条码" + (j + 1);
-                BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39, 1800, 5);
-                BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE, 250, 250);
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                ByteArrayOutputStream os2 = new ByteArrayOutputStream();
-                ImageIO.write(bufferedImage, "jpeg", os);
-                ImageIO.write(bufferedImage2, "jpeg", os2);
-                row.set("img",os.toByteArray());
-                row.set("img2",os2.toByteArray());
-                sheetNames2.add(sheetName2);
-                barcodeRecords.add(row);
-                rows2.add(Kv.by("barcodeRecords",barcodeRecords));
-                barcodeRecords = new ArrayList<>();
-                j++;
+            List<Record> barcodeRecords = new ArrayList<>();
+            String sheetName2 = "订货条码" + (j + 1);
+            sheetNames2.add(sheetName2);
+            BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39, 1800, 1000);
+            BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE, 250, 250);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "jpeg", os);
+            ImageIO.write(bufferedImage2, "jpeg", os2);
+            row.set("img",os.toByteArray());
+            row.set("img2",os2.toByteArray());
+            barcodeRecords.add(row);
+            rows2.add(Kv.by("barcodeRecords", barcodeRecords));
+            j++;
         }
         Kv data = Kv.by("rows", rows)
                 .set("sheetNames", sheetNames)
