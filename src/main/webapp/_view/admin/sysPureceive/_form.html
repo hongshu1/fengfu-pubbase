@@ -256,9 +256,10 @@
     }
 
     function submitThisForm() {
-        $("#operationType").val("submit");
-        jboltTableSubmit("#jbolt_Table_#(pageId)");
-        $("#operationType").val();
+        LayerMsgBox.alert("模块待开发")
+        // $("#operationType").val("submit");
+        // jboltTableSubmit("#jbolt_Table_#(pageId)");
+        // $("#operationType").val();
     }
 
     function getJBoltTableEditableColsOpton() {
