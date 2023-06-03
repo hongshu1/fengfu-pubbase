@@ -114,6 +114,22 @@
 </form>
 #define js()
 <script>
+	function  submitThisForms(url){
+		var formData = formToJson('moMoinvbatchForm');
+		var data = {};
+		var s = {
+			"delete": null, "update": null, "save": null,
+			"form": formData
+		}
+		data.jboltTable = JSON.stringify(s);
+		Ajax.post(url, data, function (res) {
+			LayerMsgBox.success("提交成功", 300, function () {
+				jboltHiprintWebRender('029587',)
+				//jboltHiprintWebPrint('029587', "json", res.data, true)
+				//parent.refreshJBoltTable();
+			})
+		})
+	}
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="moMoinvbatchForm")
 #end

@@ -1,11 +1,13 @@
 package cn.rjtech.admin.department;
-
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -14,14 +16,18 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.util.ValidationUtils;
-
+import com.alibaba.druid.sql.visitor.functions.Char;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 组织建模-部门档案
@@ -31,6 +37,11 @@ import java.util.List;
  * @date: 2023-03-22 11:55
  */
 public class DepartmentService extends BaseService<Department> {
+
+    @Inject
+    private DictionaryService dictionaryService;
+
+
     
     private final Department dao = new Department().dao();
 
@@ -53,7 +64,21 @@ public class DepartmentService extends BaseService<Department> {
      * @param sortType   排序方式 asc desc
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv, String sortColumn, String sortType) {
-        return dbTemplate("department.list", kv.set("sortColumn", sortColumn).set("sortType", sortType).set("orgId", getOrgId())).paginate(pageNumber, pageSize);
+        Page<Record> paginate = dbTemplate("department.list", kv.set("sortColumn", sortColumn).set("sortType", sortType).set("orgId", getOrgId())).paginate(pageNumber, pageSize);
+        if (CollectionUtil.isNotEmpty(paginate.getList())){
+            List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey("org_type", true);
+            if (CollectionUtil.isEmpty(dictionaryList)){
+                return paginate;
+            }
+            Map<String, Dictionary> dictionaryMap = dictionaryList.stream().collect(Collectors.toMap(Dictionary::getSn, dictionary -> dictionary));
+            for (Record record : paginate.getList()){
+             String type = record.getStr(Department.CTYPE);
+             if (dictionaryMap.containsKey(type)){
+                 record.set(Department.CTYPE, dictionaryMap.get(type).getName());
+             }
+         }
+        }
+        return paginate;
     }
 
     public List<Record> findAll(Kv kv) {
@@ -64,6 +89,29 @@ public class DepartmentService extends BaseService<Department> {
      * 保存
      */
     public Ret save(Department department) {
+
+        Short idepgrade=1;
+        Long iPid = department.getIPid();
+        if (iPid==null){
+            department.setIDepGrade(idepgrade);
+        }else {
+
+            Kv para=Kv.by("ipid",iPid);
+            List<Record> list = dbTemplate("department.getSelectIpid",para).find();
+            if (list!=null){
+                department.setIDepGrade(Short.parseShort("2"));
+            }else {
+                department.setIDepGrade(Short.parseShort("3"));
+            }
+
+        }
+        Short no=3;
+        if (department.getIDepGrade()==no){
+            department.setBDepEnd(true);
+        }else {
+            department.setBDepEnd(false);
+        }
+
         verifyData(department);
         User user = JBoltUserKit.getUser();
         DateTime date = DateUtil.date();
@@ -259,8 +307,18 @@ public class DepartmentService extends BaseService<Department> {
     }
 
     public List<Department> getTreeTableDatas(Kv kv) {
-        List<Department> datas = daoTemplate("department.list", kv).find();
-        return convertToModelTree(datas, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
+        List<Department> departmentList = daoTemplate("department.list", kv).find();
+        if (CollectionUtil.isNotEmpty(departmentList)){
+            List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey("org_type", true);
+            Map<String, Dictionary> dictionaryMap = dictionaryList.stream().collect(Collectors.toMap(Dictionary::getSn, dictionary -> dictionary));
+            for (Department department : departmentList){
+                String type =  department.getCType();
+                if (dictionaryMap.containsKey(type)){
+                    department.setCType(dictionaryMap.get(type).getName());
+                }
+            }
+        }
+        return convertToModelTree(departmentList, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
     }
     
     public List<Department> treeDatasForProposalSystem(Kv kv) {
