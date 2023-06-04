@@ -62,6 +62,8 @@ public class SubPrintReqVo  {
     private String memo;
     /** 编号***/
     private String num;
+    /** 总计数量 **/
+    private Integer total;
 
     public Long getIautoid() {
         return iautoid;
@@ -175,5 +177,13 @@ public class SubPrintReqVo  {
 
     public void setPlaniqty(Integer planiqty) {
         this.planiqty = planiqty;
+    }
+
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
     }
 }
