@@ -261,7 +261,8 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
 		 String workleader=get("workleader");
 		 String jobname=get("jobname");
 		String memo=get("memo");
-		renderJson(service.subListPrint(ids,imodocid,workleader,memo));	}
+		renderJson(service.subListPrint(ids,imodocid,workleader,memo));
+	}
 	/**
 	 * 提交批量打印界面
 	 */
@@ -314,8 +315,11 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
 	 *  更新状态
 	 */
 	public void updateStatus(){
+		Long iautoid=getLong("moMoinvbatch.iautoid");
+		BigDecimal iqty=getBigDecimal("moMoinvbatch.iqty");
+		renderJson(service.updateStatus(iautoid,iqty));
 
-   }
+	}
 
 	/**
 	 *

@@ -478,4 +478,56 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 	   }
 	   return successWithData(subPrintReqVos);
    }
+
+    public Ret updateStatus(Long iautoid, BigDecimal iqty) {
+		if(notOk(iautoid)){
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		MoMoinvbatch dbMoMoinvbatch=findById(iautoid);
+		if(dbMoMoinvbatch==null) {
+			return fail(JBoltMsg.DATA_NOT_EXIST);}
+		MoDoc moDoc = moDocService.findById(dbMoMoinvbatch.getIMoDocId());
+		if (moDoc == null) {
+			return fail("工单信息不存在");
+		}
+
+		if(notOk(iqty)){
+			return fail("缺少数量");
+		}
+		if(iqty.compareTo(dbMoMoinvbatch.getIQty())==1){
+			return fail("不允许超原数量");
+		}
+		if(iqty.compareTo(dbMoMoinvbatch.getIQty())==-1) {
+           BigDecimal a=dbMoMoinvbatch.getIQty().subtract(iqty);
+		    int num=a.intValue();
+			MoMoinvbatch moMoinvbatch;
+			Date now=new Date();
+
+
+				moMoinvbatch = new MoMoinvbatch();
+				moMoinvbatch.setIOrgId(getOrgId());
+				moMoinvbatch.setCOrgCode(getOrgCode());
+				moMoinvbatch.setCOrgName(getOrgName());
+				moMoinvbatch.setIMoDocId(moDoc.getIAutoId());
+				//moMoinvbatch.seti
+				String barcode = BillNoUtils.genCassiGnOrderNo(getOrgId(), "CP", 7);
+				moMoinvbatch.setISeq(1); //X
+
+				moMoinvbatch.setIQty(a);
+				moMoinvbatch.setCBarcode(barcode);
+				moMoinvbatch.setIPrintStatus(1);
+				moMoinvbatch.setIStatus(0);
+				moMoinvbatch.setICreateBy(JBoltUserKit.getUserId());
+				moMoinvbatch.setCCreateName(JBoltUserKit.getUserUserName());
+				moMoinvbatch.setDCreateTime(now);
+				moMoinvbatch.setIUpdateBy(JBoltUserKit.getUserId());
+				moMoinvbatch.setCUpdateName(JBoltUserKit.getUserName());
+				moMoinvbatch.setDUpdateTime(now);
+				moMoinvbatch.setCVersion("00");//版本号
+				moMoinvbatch.setIsEffective(true);
+				moMoinvbatch.save();
+
+		}
+		return  SUCCESS;
+    }
 }

@@ -35,12 +35,12 @@
 
 
         parent.layer.close(parent.layer.getFrameIndex(window.name));
-        //window.parent.refreshJBoltTable();
+        window.parent.refreshJBoltTable();
     }
     function submitForm(){
         LayerMsgBox.confirm("确认提交此数据?",function(){
             // submitThisForms();
-            submitThisForms("admin/momoinvbatch/subPrint");
+            submitThisForms("admin/momoinvbatch/updateStatus");
 
         });
     }
@@ -56,9 +56,9 @@
                 if(res.state=="ok"){
                     //parent.layer.close(parent.layer.getFrameIndex(window.name))
                     LayerMsgBox.success("保存成功",300,function(){
+                        parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        window.parent.refreshJBoltTable();
 
-                        //jboltHiprintWebRender(ele,'029587',"json",data.data)
-                        //parent.refreshJBoltTable();
                     })
 
                 }else{
