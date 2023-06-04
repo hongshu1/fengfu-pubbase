@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cn.jbolt</groupId>
 	<artifactId>jbolt_pro</artifactId>
-	<version>4.1.2</version>
+	<version>5.0.0</version>
 	<packaging>jar</packaging>
 	<name>jbolt_pro</name>
 	<description>JBolt-基于JFinal的极速开发框架</description>
@@ -15,7 +15,7 @@
 		<junit.version>5.8.1</junit.version>
 		<cglib.version>3.3.0</cglib.version>
 		<javassist.version>3.29.2-GA</javassist.version>
-		<jfinal.version>5.1.0</jfinal.version>
+		<jfinal.version>5.1.1</jfinal.version>
 		<oshi.version>6.1.2</oshi.version>
 		<jna.version>5.10.0</jna.version>
 		<cos.version>2022.2</cos.version>
@@ -58,7 +58,7 @@
 		<ttl.version>2.14.2</ttl.version>
 		<toolgood_words.version>3.1.0.0</toolgood_words.version>
 		<codehighlight.version>1.0.3</codehighlight.version>
-		<jboltcore.version>4.1.2</jboltcore.version>
+		<jboltcore.version>5.0.0</jboltcore.version>
 	</properties>
 
 	<!-- 使用阿里 maven 库 -->
