@@ -142,4 +142,38 @@ public class WeekOrderMAdminController extends BaseAdminController {
         renderJson(service.closeWeekOrder(iAutoId));
     }
 
+    /**
+     * 调整计划时间
+     */
+    public void updateCplanTime() {
+        render("update_cplan_time.html");
+    }
+
+    /**
+     * 调整计划时间数据源
+     */
+    public void updateCplanTimeDatas(){
+        renderJsonData(service.updateCplanTimeDatas(getPageNumber(), getPageSize(), getKv()));
+    }
+
+    /**
+     * 调整计划时间下一步
+     */
+    public void updateCplanTimeNext()
+    {
+        render("update_cplan_time_next.html");
+    }
+
+    /**
+     * 模板下载
+     */
+    @SuppressWarnings("unchecked")
+    public void downloadTpl() {
+        try {
+            renderJxls("weekorderm.xlsx", Kv.by("rows", null), "周间客户订单.xlsx");
+        }catch (Exception e)
+        {
+            ValidationUtils.isTrue(false, "模板下载失败");
+        }
+    }
 }

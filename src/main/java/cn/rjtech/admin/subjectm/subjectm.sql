@@ -7,7 +7,7 @@ where
   	and isDelete=#para(isdelete)
  #end
  #if(keywords)
-  	and cSubjectCode like concat('%',#para(keywords),'%') or   cSubjectName like concat('%',#para(keywords),'%')
+  	and (cSubjectCode like concat('%',#para(keywords),'%') or cSubjectName like concat('%',#para(keywords),'%'))
   #end
  #if(cversion)
  	and cversion =#para(cversion)
