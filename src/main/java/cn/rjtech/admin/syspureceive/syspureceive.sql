@@ -209,12 +209,13 @@ LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
+LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode
 where a.isEffective = '1'
 
 	#if(barcode)
 		and a.cBarcode = #para(barcode)
 	#end
-
+        AND pd.AutoID IS NULL
 #end
 
 
