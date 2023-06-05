@@ -41,3 +41,13 @@ WHERE
     #end
 	ORDER BY co.dCreateTime DESC
 #end
+
+#sql("updateCplanTimeDatas")
+SELECT wod.iautoid, wod.ccode, wod.cinvcode1, wod.cinvname1, wod.dplanaogdate, wod.cplanaogtime
+FROM Co_WeekOrderM wom
+LEFT JOIN Co_WeekOrderD wod ON wom.iAutoId = wod.iWeekOrderMid
+WHERE wom.IsDeleted = 0
+    #if(corderno)
+    AND wom.corderno LIKE CONCAT('%', #para(corderno), '%')
+    #end
+#end

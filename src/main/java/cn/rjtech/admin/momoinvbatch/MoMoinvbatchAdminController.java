@@ -322,10 +322,15 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
 	}
 
 	/**
-	 *
+	 * 报工
 	 */
-	public void Status(){
-
+	public void updateWork(){
+		MoMoinvbatch moMoinvbatch=service.findById(getLong(0));
+		if(moMoinvbatch == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		renderJson(service.updateWork(moMoinvbatch));
 	}
 
 

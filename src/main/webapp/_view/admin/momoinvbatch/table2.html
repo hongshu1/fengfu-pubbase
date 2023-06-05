@@ -21,14 +21,18 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 
 <td>${data.cbarcode}</td>
-  <td>${data.cversion}</td>
+ <td>${data.cversion}</td>
 <td>${data.iqty}</td>
 <td>${data.iprintstatusname}</td>
 
 
 <td>
-	<a href="admin/momoinvbatch/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改工单现品票" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i>报工</a>
-    <a href="admin/momoinvbatch/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+    {@if data.istatus==0}
+      <a href="admin/momoinvbatch/updateWork/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="确定报工" data-handler="refreshJBoltTable" data-confirm="确定报工？" class="jbolt_table_delbtn"><i class="fa fa-pencil"></i>报工</a>
+   {@/if}
+             {@if data.istatus==1}
+	<a href=""><i class=""></i>已报工</a>
+     {@/if}
 </td>
 </tr>
 {@/each}

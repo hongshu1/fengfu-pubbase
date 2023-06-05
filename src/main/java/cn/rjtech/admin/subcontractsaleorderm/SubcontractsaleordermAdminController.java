@@ -18,6 +18,7 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
 /**
@@ -132,4 +133,16 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
         renderJsonSuccess();
     }
 
+    /**
+     * 模板下载
+     */
+    @SuppressWarnings("unchecked")
+    public void downloadTpl() {
+        try {
+            renderJxls("subcontractsaleorderm.xlsx", Kv.by("rows", null), "委外销售订单.xlsx");
+        }catch (Exception e)
+        {
+            ValidationUtils.isTrue(false, "模板下载失败");
+        }
+    }
 }
