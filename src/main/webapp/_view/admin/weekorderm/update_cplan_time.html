@@ -1,0 +1,102 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page_title">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        <button data-dialogbtn data-handler="jboltTablePageToFirst" data-area="1050,600" data-title="调整信息确认" data-url="admin/weekorderm/updateCplanTimeNext" class="btn btn-outline-secondary btn-xs" data-btn-align="center">下一步</button>
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="jbolt_tab_view">
+                <div class="jbolt_tab_links">
+                    <a class="jbolt_tab_link active" href="#jbolt_tabcontent1">批量调整</a>
+                    <a class="jbolt_tab_link" href="#jbolt_tabcontent2">指定存货调整</a>
+                </div>
+                <div class="jbolt_tab_contents">
+                    <div class="jbolt_tab_content active" id="jbolt_tabcontent1">
+                        <!--批量调整-->
+                        #include("batch_update.html")
+                        34567890
+                    </div>
+                    <div class="jbolt_tab_content" id="jbolt_tabcontent2">
+                        <!--指定存货调整-->
+                        #include("cinv_update.html")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+#end
+#define js()
+<script>
+    //下一步
+    function nexttStep()
+    {
+        //提交请求数据
+
+    }
+    // 关闭
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+    //获得配置参数
+    function getEditableTableOptions_#(pageId)()
+    {
+        var editableTableOptions = {
+            submit: {
+                withForm: ["WeekOrderM_form_#(pageId)"],
+                name: 'WeekOrderMForm'
+            },
+            maxRowCount: 9999,
+            cols: {
+                ccode: {
+                    type: "input",
+                    placeholder: '传票号',
+                    required: true
+                },
+                cinvcode1: {
+                    type: "input",
+                    placeholder: '客户部番',
+                    required: true
+                },
+                cinvname1: {
+                    type: "input",
+                    placeholder: '部品名称',
+                    required: true
+                },
+                dplanaogdate: {
+                    type: "date",
+                    placeholder: '计划日期',
+                    required: true,
+                },
+                cplanaogtime: {
+                    type: "time",
+                    placeholder: '计划时间',
+                    required: true,
+                },
+                updatedplanaogdate: {
+                    type: "date",
+                    placeholder: '调整日期',
+                    required: true,
+                },
+                updatecplanaogtime: {
+                    type: "time",
+                    placeholder: '调整时间',
+                    required: true,
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>
+#end
