@@ -553,6 +553,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 ValidationUtils.assertNull(false, "条码：" + row.get("barcode") + " 供应商数据不能为空");
             }
             sysPureceivedetail.setVenCode(vencode);
+            sysPureceivedetail.setWhcode(sysPureceive.getWhCode());
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
@@ -594,6 +595,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 ValidationUtils.assertNull(false, "条码：" + row.get("barcode") + " 供应商数据不能为空");
             }
             sysPureceivedetail.setVenCode(vencode);
+            sysPureceivedetail.setWhcode(sysPureceive.getWhCode());
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
