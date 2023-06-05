@@ -278,14 +278,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * @param kv
      * @return
      */
-    public synchronized List<ScheduProductYearViewDTO> scheduPlanMonthTest(Kv kv) {
+    public synchronized List<ScheduProductYearViewDTO> scheduPlanMonthTest() {
         //年度生产计划集合
         List<ScheduProductYearViewDTO> scheduProductPlanYearList = new ArrayList<>();
         try {
-
-            //根据产线进行循环排程
-
-
             //同一产线的物料
             String[] product_type = {"a", "b", "c", "d"};
 
@@ -1472,7 +1468,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 //主表
                 MoMotask motask = new MoMotask();
                 motask.setIAutoId(taskId);
-                motask.setIOrgId(deptId);
+                motask.setIDepartmentId(deptId);
                 motask.setCMoPlanNo(planNo);
                 motask.setDBeginDate(startdate);
                 motask.setDEndDate(endDate);
