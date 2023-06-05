@@ -2,7 +2,6 @@
 <div class="jbolt_page_title">
 	<div class="row">
 	<div class="col-md-auto">
-	<h1>审批/审核配置</h1>
 	</div>
 	<div class="col">
 		<form class="form-inline" id="auditFormConfigForm_#(pageId)"   onsubmit="return false;" method="post">
@@ -31,10 +30,9 @@
 <td>${data.cupdatename}</td>
 <td>${data.dupdatetime}</td>
 <td>
-	<a href="admin/auditformconfig/edit/${data.iautoid}" data-area="80%,80%"  tooltip data-title="修改"
-	   data-handler="refreshJBoltTable" data-dialog-title="修改审批/审核配置" class="jbolt_table_editbtn"><i
+	<a href="admin/auditformconfig/edit/${data.iautoid}" data-area="80%,80%"  tooltip data-title="编辑"
+	   data-handler="refreshJBoltTable" data-dialog-title="编辑审批/审核配置" class="jbolt_table_editbtn"><i
 			class="fa fa-pencil"></i></a>
-    <a href="admin/auditformconfig/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
 </td>
 </tr>
 {@/each}

@@ -348,4 +348,8 @@ public class WarehouseService extends BaseService<Warehouse> {
         return findFirst(sql);
     }
 
+    public Warehouse findByCwhcode(String cwhcode) {
+        return findFirst("SELECT * FROM Bd_Warehouse WHERE cwhcode = ? AND corgcode = ? AND isDeleted = ? ", cwhcode, getOrgCode(), ZERO_STR);
+    }
+    
 }

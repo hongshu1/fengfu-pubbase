@@ -138,4 +138,8 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
         return null;
     }
 
+    public SysPureceivedetail findFirstByMasId(String masId) {
+        return findFirst("select * from  T_Sys_PUReceiveDetail where MasID = ? ", masId);
+    }
+    
 }

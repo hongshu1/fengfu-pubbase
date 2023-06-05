@@ -43,7 +43,7 @@ SELECT  a.*,
     aa.iQty as qtys,
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
-    d.iAutoId as SourceBillNoRow,
+    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
     m.cOrderNo as SourceBillID,
     d.iAutoId as SourceBillDid,
     m.iVendorId,
@@ -55,6 +55,7 @@ LEFT JOIN Bd_Inventory b on aa.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on aa.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
+LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = aa.iPurchaseOrderdQtyId
 where 1=1
 	#if(masid)
 		and a.MasID = #para(masid)
@@ -118,7 +119,7 @@ select top #(limit)
     a.iQty as qtys,
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
-    d.iAutoId as SourceBillNoRow,
+    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
     m.cOrderNo as SourceBillID,
     d.iAutoId as SourceBillDid,
     m.iVendorId,
@@ -130,6 +131,7 @@ LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode
+LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
 where a.isEffective = '1'
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
@@ -195,7 +197,7 @@ select
     a.iQty as qty,
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
-    d.iAutoId as SourceBillNoRow,
+    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
     m.cOrderNo as SourceBillID,
     d.iAutoId as SourceBillDid,
     m.iVendorId,
@@ -206,11 +208,23 @@ LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
+LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
+LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode
 where a.isEffective = '1'
 
 	#if(barcode)
 		and a.cBarcode = #para(barcode)
 	#end
+        AND pd.AutoID IS NULL
+#end
+
+#sql("paginateAdminDatas")
+SELECT wa.*,wh.cWhCode,wh.cWhName
+FROM
+	Bd_Warehouse_Area wa
+LEFT JOIN Bd_Warehouse wh ON wa.iWarehouseId = wh.iAutoId
+WHERE wa.isDeleted = 0
+    AND wa.cAreaCode = #para(careacode)
 
 #end
 

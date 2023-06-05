@@ -27,8 +27,14 @@
 
 
 <td>
+    {@if data.iprintstatus==1}
 	<a href="admin/momoinvbatch/editprint/${data.iautoid}" data-area="50%,100%"  tooltip data-title="打印"  data-handler="refreshJBoltTable" data-dialog-title="打印" class="jbolt_table_editbtn"><i class="fa fa-print"></i>打印</a>
     <a href="admin/momoinvbatch/updatePage/${data.iautoid}" data-area="50%,100%"  tooltip data-title="修改数量" data-handler="refreshJBoltTable"  class="jbolt_table_editbtn"><i class="fa fa-pencil"></i>修改数量</a>
+  {@/if}
+      {@if data.iprintstatus==2}
+	<a href=""><i class=""></i>已打印</a>
+
+  {@/if}
 </td>
 </tr>
 {@/each}

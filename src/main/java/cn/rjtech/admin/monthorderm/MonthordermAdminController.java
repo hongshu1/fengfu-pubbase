@@ -14,6 +14,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
 /**
@@ -137,5 +138,17 @@ public class MonthordermAdminController extends BaseAdminController {
 
         renderJson(service.withdraw(iautoid));
     }
-    
+
+	/**
+	 * 模板下载
+	 */
+	@SuppressWarnings("unchecked")
+	public void downloadTpl() {
+		try {
+			renderJxls("monthorderm.xlsx", Kv.by("rows", null), "月度计划订单.xlsx");
+		}catch (Exception e)
+		{
+			ValidationUtils.isTrue(false, "模板下载失败");
+		}
+	}
 }
