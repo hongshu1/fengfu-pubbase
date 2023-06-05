@@ -24,6 +24,7 @@ public class FormUploadMApiController  extends BaseApiController {
      * 页面数据
      */
     @ApiDoc(result = FormUploadVo.class)
+    @UnCheck
     public void  datas(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
                        @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
                        @Para(value = "icategoryid") String icategoryid,

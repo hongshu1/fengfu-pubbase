@@ -538,7 +538,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setSourceBillNoRow(row.getStr("sourcebillnorow"));
             sysPureceivedetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
-            sysPureceivedetail.setVenCode(row.getStr("vencode"));
+            //获取供应商字段
+            String vencode = row.getStr("vencode");
+            if(null == vencode){
+                ValidationUtils.assertNull(false, "条码："+row.get("barcode")+" 供应商数据不能为空");
+            }
+            sysPureceivedetail.setVenCode(vencode);
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
@@ -549,11 +554,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             if (null == row.get("isinitial") || "".equals(row.get("isinitial"))) {
                 sysPureceivedetail.setIsInitial("0");
             } else {
-                //获取供应商字段
-                String vencode = row.getStr("vencode");
-                if(null == vencode){
-                    ValidationUtils.assertNull(false, "条码："+row.get("barcode")+" 供应商数据不能为空");
-                }
                 Long veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", vencode).getIAutoId();
                 // 推送初物 PL_RcvDocQcFormM 来料
                 SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?", sysPureceivedetail.getSourceBillNo());
@@ -579,7 +579,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setSourceBillNoRow(row.getStr("sourcebillnorow"));
             sysPureceivedetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
-            sysPureceivedetail.setVenCode(row.getStr("vencode"));
+            //获取供应商字段
+            String vencode = row.getStr("vencode");
+            if(null == vencode){
+                ValidationUtils.assertNull(false, "条码："+row.get("barcode")+" 供应商数据不能为空");
+            }
+            sysPureceivedetail.setVenCode(vencode);
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
@@ -589,11 +594,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             if (null == row.get("isinitial") || "".equals(row.get("isinitial")) || "0".equals(row.get("isinitial"))) {
                 sysPureceivedetail.setIsInitial("0");
             } else {
-                //获取供应商字段
-                String vencode = row.getStr("vencode");
-                if(null == vencode){
-                    ValidationUtils.assertNull(false, "条码："+row.get("barcode")+" 供应商数据不能为空");
-                }
                 Long veniAutoId = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", vencode).getIAutoId();
                 // 推送初物 PL_RcvDocQcFormM 来料
                 SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?", sysPureceivedetail.getSourceBillNo());
@@ -611,9 +611,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         syspureceivedetailservice.deleteByIds(ids);
     }
 
-    // 根据行表数据 通过SourceBillNo(取MES的采购订单)判断头表是否需要添加头表数据，返回 头表id
+    // 根据行表数据 通过 供应商(取MES的采购订单)判断头表是否需要添加头表数据，返回 头表id
     public String insertSysPureceive(SysPureceivedetail sysPureceivedetail,SysPureceive sysPureceive,Record record,String operationType){
-        SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?", sysPureceivedetail.getSourceBillNo());
+        SysPureceive first = findFirst("select *  from T_Sys_PUReceive where VenCode=?", sysPureceivedetail.getVenCode());
         if(null != first){
             return first.getAutoID();
         }else {
