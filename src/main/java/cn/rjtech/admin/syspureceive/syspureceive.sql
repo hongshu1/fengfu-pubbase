@@ -218,4 +218,14 @@ where a.isEffective = '1'
         AND pd.AutoID IS NULL
 #end
 
+#sql("paginateAdminDatas")
+SELECT wa.*,wh.cWhCode,wh.cWhName
+FROM
+	Bd_Warehouse_Area wa
+LEFT JOIN Bd_Warehouse wh ON wa.iWarehouseId = wh.iAutoId
+WHERE wa.isDeleted = 0
+    AND wa.cAreaCode = #para(careacode)
+
+#end
+
 

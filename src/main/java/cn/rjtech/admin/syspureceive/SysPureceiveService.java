@@ -554,6 +554,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             }
             sysPureceivedetail.setVenCode(vencode);
             sysPureceivedetail.setWhcode(sysPureceive.getWhCode());
+            this.determineQty(row,i);
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
@@ -596,6 +597,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             }
             sysPureceivedetail.setVenCode(vencode);
             sysPureceivedetail.setWhcode(sysPureceive.getWhCode());
+            this.determineQty(row,i);
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
@@ -662,5 +664,19 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         return s;
 
     }
+    //查询当前入库数量是否大于仓库最大存储数
+    public void determineQty(Record row,int i){
+        Kv kv = new Kv();
+        kv.set("careacode",row.getStr("poscode"));
+        Record first = dbTemplate("syspureceive.paginateAdminDatas", kv).findFirst();
+        if(null != first && null != first.getStr("imaxcapacity")  && !"".equals(first.getStr("imaxcapacity"))){
+            String imaxcapacity = first.getStr("imaxcapacity");
+            String qty = row.getStr("qty");
+            if(Integer.valueOf(imaxcapacity) < Integer.valueOf(qty)){
+                ValidationUtils.assertNull(false, "第" + i+1 + "行"+row.get("barcode")+"现品票号实收数量超出对应库存最大存储量，请选择其他库区录入" );
+            }
+        }
+    }
+
 }
 
