@@ -7,6 +7,7 @@ SELECT
     a.iPrintStatus,
     a.iStatus,
     a.iMoDocId,
+    a.cversion,
     CASE
         a.iPrintStatus
         WHEN '1' THEN

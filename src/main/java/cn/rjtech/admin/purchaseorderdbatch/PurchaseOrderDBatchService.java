@@ -9,7 +9,6 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionService;
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
-import cn.rjtech.model.momdata.InventoryChange;
 import cn.rjtech.model.momdata.PurchaseOrderDBatch;
 import cn.rjtech.model.momdata.PurchaseOrderDBatchVersion;
 import cn.rjtech.model.momdata.PurchaseorderdQty;
@@ -156,9 +155,10 @@ public class PurchaseOrderDBatchService extends BaseService<PurchaseOrderDBatch>
 //		return purchaseOrderDBatch;
 //	}
 	
-	public PurchaseOrderDBatch createPurchaseOrderDBatch(Long purchaseOrderDid, Long inventoryId, Date planDate, BigDecimal qty, String barcode){
+	public PurchaseOrderDBatch createPurchaseOrderDBatch(Long purchaseOrderDid, Long iPurchaseOrderdQtyId, Long inventoryId, Date planDate, BigDecimal qty, String barcode){
 		PurchaseOrderDBatch purchaseOrderDBatch = new PurchaseOrderDBatch();
 		purchaseOrderDBatch.setIPurchaseOrderDid(purchaseOrderDid);
+		purchaseOrderDBatch.setIPurchaseOrderdQtyId(iPurchaseOrderdQtyId);
 		purchaseOrderDBatch.setIinventoryId(inventoryId);
 		purchaseOrderDBatch.setDPlanDate(planDate);
 		purchaseOrderDBatch.setIQty(qty);
@@ -193,15 +193,13 @@ public class PurchaseOrderDBatchService extends BaseService<PurchaseOrderDBatch>
         ValidationUtils.isTrue(qty.compareTo(orderDBatch.getIQty()) <= 0, "现品票的数量不可大于包装数量，只可小于包装数量");
         // 新增一个现成票后，再生产一个版本记录表，及修改详情；
         String barCode = generateBarCode();
-        PurchaseOrderDBatch newBatch = createPurchaseOrderDBatch(orderDBatch.getIPurchaseOrderDid(), orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, barCode);
+        PurchaseOrderDBatch newBatch = createPurchaseOrderDBatch(orderDBatch.getIPurchaseOrderDid(), orderDBatch.getIPurchaseOrderdQtyId(), orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, barCode);
         // 设置新版本号
         newBatch.setCVersion(cVersion);
         // 添加来源id
         newBatch.setCSourceld(String.valueOf(id));
         // 将旧的改为失效
         orderDBatch.setIsEffective(false);
-		// 查存货
-		InventoryChange inventoryChange = inventoryChangeService.findByBeforeInventoryId(orderDBatch.getIinventoryId());
 		
 		// 将计划类型拆分成 年月日
 		String yearStr = DateUtil.format(orderDBatch.getDPlanDate(), "yyyy");

@@ -1,5 +1,6 @@
 package cn.rjtech.admin.enumvals;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -93,6 +94,11 @@ public class EnumValsAdminController extends BaseAdminController {
 
 	public void submitAll() {
 		renderJson(service.submitByJBoltTable(getJBoltTable()));
+	}
+
+	@UnCheck
+	public void enumvalsoptions() {
+		renderJsonData(service.getCommonList("cEnumCode,cEnumName"));
 	}
 
 

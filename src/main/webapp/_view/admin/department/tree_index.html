@@ -6,50 +6,50 @@
 		<div class="row">
 			<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>部门档案</h1></div>
 			<div class="col">
-				<form class="form-inline text-left" id="Department_form_#(pageId)">
-					<input data-clear-handler="onkeyup" onkeyup="jboltTableFilterByKeywords('department_table_#(pageId)',this.value,[1,2,4,5])" data-with-clearbtn="true" autocomplete="off"  class="form-control d-inline-block ml-2"  placeholder="输入关键字 进行过滤"/>
+				<label class="d-inline-block">筛选:</label>
+				<input data-clear-handler="onkeyup" onkeyup="jboltTableFilterByKeywords('department_table_#(pageId)',this.value,[1,2,4,5])" data-with-clearbtn="true" autocomplete="off"  class="form-control d-inline-block ml-2"  placeholder="输入关键字 进行过滤"/>
+<!--				<form class="form-inline text-left" id="Department_form_#(pageId)">-->
 
+<!--					<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=部门编码=" maxlength="50" name="depCode" value="#(cdepcode??)"/>-->
+<!--					<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=部门名称=" maxlength="50" name="depName" value="#(cdepname??)"/>-->
+<!--					<select class="form-control" data-url="admin/department/findPersonAll" name="depPerson" data-autoload data-text="=负责人=" data-value-attr="cpsnname" data-text-attr="cpsnname"></select>-->
+<!--					<select class="form-control" name="isEnabled"-->
+<!--							data-autoload-->
+<!--							data-url="admin/dictionary/options?key=options_enable"-->
+<!--							data-select-type="select"-->
+<!--							data-text="=是否启用="-->
+<!--							data-value=""-->
+<!--							data-value-attr="sn"-->
+<!--					></select>-->
 
-					<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=部门编码=" maxlength="50" name="depCode" value="#(cdepcode??)"/>
-					<input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=部门名称=" maxlength="50" name="depName" value="#(cdepname??)"/>
-					<select class="form-control" data-url="admin/department/findPersonAll" name="depPerson" data-autoload data-text="=负责人=" data-value-attr="cpsnname" data-text-attr="cpsnname"></select>
-					<select class="form-control" name="isEnabled"
-							data-autoload
-							data-url="admin/dictionary/options?key=options_enable"
-							data-select-type="select"
-							data-text="=是否启用="
-							data-value=""
-							data-value-attr="sn"
-					></select>
+<!--					<select class="form-control" name="isApsInvoled"-->
+<!--							data-autoload-->
+<!--							data-url="admin/dictionary/options?key=options_boolean"-->
+<!--							data-select-type="select"-->
+<!--							data-text="=是否参与排产="-->
+<!--							data-value=""-->
+<!--							data-value-attr="sn"-->
+<!--					></select>-->
+<!--					<select class="form-control" name="isProposal"-->
+<!--							data-autoload-->
+<!--							data-url="admin/dictionary/options?key=options_boolean"-->
+<!--							data-select-type="select"-->
+<!--							data-text="=是否应用禀议="-->
+<!--							data-value=""-->
+<!--							data-value-attr="sn"-->
+<!--					></select>-->
+<!--					&lt;!&ndash;<select class="form-control" name="isDeleted"&ndash;&gt;-->
+<!--					&lt;!&ndash;	data-autoload&ndash;&gt;-->
+<!--					&lt;!&ndash;	data-url="admin/dictionary/options?key=options_boolean"&ndash;&gt;-->
+<!--					&lt;!&ndash;	data-select-type="select"&ndash;&gt;-->
+<!--					&lt;!&ndash;	data-text="=是否删除="&ndash;&gt;-->
+<!--					&lt;!&ndash;	data-value=""&ndash;&gt;-->
+<!--					&lt;!&ndash;	data-value-attr="sn"&ndash;&gt;-->
+<!--					&lt;!&ndash;	></select>&ndash;&gt;-->
 
-					<select class="form-control" name="isApsInvoled"
-							data-autoload
-							data-url="admin/dictionary/options?key=options_boolean"
-							data-select-type="select"
-							data-text="=是否参与排产="
-							data-value=""
-							data-value-attr="sn"
-					></select>
-					<select class="form-control" name="isProposal"
-							data-autoload
-							data-url="admin/dictionary/options?key=options_boolean"
-							data-select-type="select"
-							data-text="=是否应用禀议="
-							data-value=""
-							data-value-attr="sn"
-					></select>
-					<!--<select class="form-control" name="isDeleted"-->
-					<!--	data-autoload-->
-					<!--	data-url="admin/dictionary/options?key=options_boolean"-->
-					<!--	data-select-type="select"-->
-					<!--	data-text="=是否删除="-->
-					<!--	data-value=""-->
-					<!--	data-value-attr="sn"-->
-					<!--	></select>-->
-
-					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-					<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-				</form>
+<!--					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>-->
+<!--					<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>-->
+<!--				</form>-->
 			</div>
 			<div class="col-sm-auto text-right">
 
@@ -153,23 +153,15 @@
 
 		<table class="jbolt_table jbolt_main_table  table-center "
 			   id="department_table_#(pageId)"
-			   data-jbolttable
-			   data-width="auto"
-			   data-height="auto"
-			   data-ajax="true"
-			   data-conditions-form="Department_form_#(pageId)"
 			   data-url="admin/department/treeDatas"
 			   data-rowtpl="deptRowtpl_#(pageId)"
 			   data-copy-to-excel="false"
-			   ###data-page="FormCategory_page"
-			   data-column-resize="true"
 			   data-toolbar="Department_toolbar_#(pageId)"
-			   ###data-column-prepend="1:checkbox:true:false:false"
-			   data-row-click-active="true"
+			   data-jbolttable
+			   data-ajax="true"
 			   ###设置是treetable 默认显示到第一级 操作列在第一列
 			   data-treetable="all:1"
-			   ###data-fixed-columns-left="1"
-			   ###data-fixed-columns-right="6,7"
+			   data-fixed-columns-left="1,2,3"
 		>
 			<thead>
 			<tr>
