@@ -426,6 +426,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 			}
 			Subjectm hsubject = subjectmService.findHighestSubjectByLowestSubjectName(cLowestSubjectName);
 			row.set("ihighestsubjectid",hsubject != null ? hsubject.getIAutoId():null);
+			row.set("chighestsubjectname",hsubject != null ? hsubject.getCSubjectName():null);
 			row.set("ilowestsubjectid",lsubject.getIAutoId());
 			//事业类型中文转sn
 			String careerTypeName = row.getStr(FullYearBudgetEnum.CAREERTYPENAME.getField());
