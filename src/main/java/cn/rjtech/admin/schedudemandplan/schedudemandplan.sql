@@ -225,6 +225,32 @@ WHERE 1 = 1
       END AS NVARCHAR(30)) ) <= #para(enddate)
 #end
 
+#sql("getDemandPlanByinvList")
+###根据物料集和日期查询物料到货计划Sum
+SELECT
+    (CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )
+    ELSE CAST(iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN iDate<10 THEN '0'+CAST(iDate AS NVARCHAR(30) )
+    ELSE CAST(iDate AS NVARCHAR(30) )
+    END AS NVARCHAR(30)) ) AS planDate,
+    iInventoryId,
+    SUM(iQty) AS iQty
+FROM Mrp_DemandPlanD
+WHERE
+     iInventoryId IN #(invs)
+  AND
+    (CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )
+    ELSE CAST(iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN iDate<10 THEN '0'+CAST(iDate AS NVARCHAR(30) )
+    ELSE CAST(iDate AS NVARCHAR(30) )
+    END AS NVARCHAR(30)) ) >= #para(startdate)
+  AND
+    (CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )
+    ELSE CAST(iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN iDate<10 THEN '0'+CAST(iDate AS NVARCHAR(30) )
+    ELSE CAST(iDate AS NVARCHAR(30) )
+    END AS NVARCHAR(30)) ) <= #para(enddate)
+GROUP BY
+    iYear,iMonth,iDate,iInventoryId
+#end
+
 //-----------------------------------------------------------------物料需求计划预示-----------------------------------------------
 
 

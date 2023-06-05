@@ -226,7 +226,7 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
     public Ret importExcelData(File file) {
         StringBuilder errorMsg = new StringBuilder();
 
-        Date now = new Date();
+
 
         JBoltExcel jBoltExcel = JBoltExcel
                 //从excel文件创建JBoltExcel实例
@@ -239,25 +239,35 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
                                         JBoltExcelHeader.create("careacode", "库区编码"),
                                         JBoltExcelHeader.create("careaname", "库区名称"),
                                         JBoltExcelHeader.create("cwhcode", "所属仓库编码"),
+                                        JBoltExcelHeader.create("imaxcapacity","最大存储数"),
                                         JBoltExcelHeader.create("cmemo", "备注")
+
                                 )
                                 //特殊数据转换器
                                 .setDataChangeHandler((data, index) -> {
+
+                                    /**
+                                     * 非空判断
+                                     */
                                     ValidationUtils.notNull(data.get("careacode"), "库区编码为空！");
                                     ValidationUtils.notNull(data.get("careaname"), "库区名称为空！");
                                     ValidationUtils.notNull(data.get("cwhcode"), "仓库编码为空！");
 
+                                    /**
+                                     * 判断编码是否重复
+                                     */
                                     ValidationUtils.isTrue(findByWhAreaCode(data.getStr("careacode")) == null, data.getStr("careacode") + " 编码重复");
 
+                                    /**
+                                     * 判断是否存在这个仓库编码
+                                     */
                                     Warehouse warehouse = warehouseService.findByWhCode(data.getStr("cwhcode"));
                                     ValidationUtils.notNull(warehouse, data.getStr("cwhcode") + JBoltMsg.DATA_NOT_EXIST);
 
                                     data.change("iwarehouseid", warehouse.getIAutoId());
                                     data.remove("cwhcode");
-
                                     data.change("icreateby", JBoltUserKit.getUserId());
                                     data.change("ccreatename", JBoltUserKit.getUserName());
-                                    data.change("dcreatetime", now);
                                     data.change("corgcode", getOrgCode());
                                     data.change("corgname", getOrgName());
                                     data.change("iorgid", getOrgId());
@@ -275,6 +285,12 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
             } else {
                 return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
             }
+        }
+        /**
+         *
+         */
+        for (WarehouseArea model : models) {
+            model.set("dCreateTime",new Date());
         }
 
         //读取数据没有问题后判断必填字段

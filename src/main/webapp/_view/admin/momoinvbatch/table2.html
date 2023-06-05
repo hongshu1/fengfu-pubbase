@@ -21,12 +21,13 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 
 <td>${data.cbarcode}</td>
+  <td>${data.cversion}</td>
 <td>${data.iqty}</td>
 <td>${data.iprintstatusname}</td>
 
 
 <td>
-	<a href="admin/momoinvbatch/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改工单现品票" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+	<a href="admin/momoinvbatch/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改工单现品票" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i>报工</a>
     <a href="admin/momoinvbatch/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
 </td>
 </tr>
@@ -36,7 +37,7 @@
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="moMoinvbatch_toolbar1_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
-                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i>批量报工</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/momoinvbatch/workByIds?ids=" data-confirm="批量报工？" class="btn btn-primary btn-sm" ><i class="fa fa-print"></i>批量报工</button>
 
             </div>
 
@@ -72,6 +73,7 @@
 
 
                 <th data-width="150" data-column="cBarcode">现品票</th>
+                <th data-width="150" data-column="cversion">版本号</th>
                 <th data-width="50" data-column="iQty">数量</th>
                 <th data-width="50" data-column="iPrintStatus">打印状态</th>
                 <th data-width="150" >操作</th>

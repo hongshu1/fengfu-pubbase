@@ -28,7 +28,7 @@ where 1=1
 	#if(endTime)
 		and so.CreateDate <= #para(endTime)
 	#end
-ORDER BY so.ModifyDate DESC
+ORDER BY so.CreateDate DESC
 #end
 
 
@@ -133,6 +133,7 @@ where a.isEffective = '1'
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
 			or b.cinvname1 like concat('%',#para(q),'%') or a.cBarcode like concat('%',#para(q),'%')
+			or v.cVenCode like concat('%',#para(q),'%')
 		)
 	#end
 

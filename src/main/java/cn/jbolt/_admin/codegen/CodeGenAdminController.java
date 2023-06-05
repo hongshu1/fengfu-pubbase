@@ -334,7 +334,6 @@ public class CodeGenAdminController extends JBoltBaseController {
 		set("tableFullName", StrKit.isBlank(codeGen.getMainTableRemark())?null:(codeGen.getMainTableName()+"["+codeGen.getMainTableRemark()+"]"));
 		render("config/index.html");
 	}
-
 	/**
 	 * keycache column数据源
 	 */

@@ -3,6 +3,7 @@ package cn.rjtech.admin.momoinvbatch;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.momoinvbatch.vo.SubPrintReqVo;
 import cn.rjtech.admin.morouting.MoMoroutingService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.uom.UomService;
@@ -16,6 +17,7 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
+
 
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -223,14 +225,108 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
 				  if(workregionm!=null){
 					 if(isOk(workregionm.getIPersonId())){
 						  Person person = personService.findFirstByUserId(workregionm.getIPersonId());
-						  moMoinvbatchRecord.set("workleader",person);
+						  moMoinvbatchRecord.set("workleader",person.getCpsnName());
 					  }
 				  }
 			  }
+			  //作业员
+			  String jobname=service.getModocLastProcessPerson(moDoc.getIAutoId()).toString();
+			  moMoinvbatchRecord.set("jobname",jobname);
 		  }
 		  set("moMoinvbatch",moMoinvbatchRecord);
 		  render("edit.html");
-
-
 	  }
+
+	/**
+	 * 提交打印
+	 */
+	public void subPrint(){
+		SubPrintReqVo subPrintReqVo=new SubPrintReqVo();
+		subPrintReqVo.setIseq(getInt("moMoinvbatch.iseq"));
+		subPrintReqVo.setIautoid(getLong("moMoinvbatch.iautoid"));
+		subPrintReqVo.setMemo(get("moMoinvbatch.memo"));
+		subPrintReqVo.setCbarcode(get("moMoinvbatch.cbarcode"));
+		subPrintReqVo.setJobname(get("moMoinvbatch.jobname"));
+		subPrintReqVo.setIqty(getBigDecimal("moMoinvbatch.iqty"));
+		subPrintReqVo.setWorkheader(get("moMoinvbatch.workleader"));
+		renderJson(service.subPrint(subPrintReqVo));
+   }
+
+	/**
+	 *提交打印
+	 */
+	public  void subListPrint(){
+		 String ids=get("ids");
+		 Long imodocid=getLong("imodocid");
+		 String workleader=get("workleader");
+		 String jobname=get("jobname");
+		String memo=get("memo");
+		renderJson(service.subListPrint(ids,imodocid,workleader,memo));
+	}
+	/**
+	 * 提交批量打印界面
+	 */
+	public void subListPrintPage(){
+		String ids=get("ids");
+		set("ids",ids);
+		MoDoc moDoc=moDocService.findById(getLong("imodocid"));
+		if(moDoc!=null){
+			//产线
+			if(isOk(moDoc.getIWorkRegionMid())){
+				Workregionm workregionm=workregionmService.findById(moDoc.getIWorkRegionMid());
+				if(workregionm!=null){
+					if(isOk(workregionm.getIPersonId())){
+						Person person = personService.findFirstByUserId(workregionm.getIPersonId());
+						set("workleader",person.getCpsnName());
+					}
+				}
+			}
+			//作业员
+			String jobname=service.getModocLastProcessPerson(moDoc.getIAutoId()).toString();
+			set("jobname",jobname);
+		}
+		render("listprint.html");
+   }
+
+	/**
+	 * 打印模板测试数据
+	 */
+   public void printdataList(){
+	   renderJson(service.printdataList());
+   }
+
+	/**
+	 * 更新数量
+	 */
+	public void  updatePage(){
+		MoMoinvbatch moMoinvbatch=service.findById(getLong(0));
+		if(moMoinvbatch == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		set("moMoinvbatch",moMoinvbatch);
+		render("update.html");
+
+
+
+   }
+
+	/**
+	 *  更新状态
+	 */
+	public void updateStatus(){
+		Long iautoid=getLong("moMoinvbatch.iautoid");
+		BigDecimal iqty=getBigDecimal("moMoinvbatch.iqty");
+		renderJson(service.updateStatus(iautoid,iqty));
+
+	}
+
+	/**
+	 *
+	 */
+	public void Status(){
+
+	}
+
+
 }

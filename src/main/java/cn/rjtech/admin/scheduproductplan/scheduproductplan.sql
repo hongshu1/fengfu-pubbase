@@ -645,6 +645,28 @@ WHERE iAuditStatus = 0
   AND CONVERT(VARCHAR(10),dEndDate,120) > #para(unlockstartdate)
 #end
 
+#sql("getScheduDByinvsList")
+###根据物料集查询排产物料明细
+SELECT
+    c.cInvCode,b.iAutoId AS iWeekScheduleDid
+FROM Aps_WeekScheduleDetails AS b
+         LEFT JOIN Bd_Inventory AS c ON b.iInventoryId = c.iAutoId
+WHERE c.cInvCode IN #(invs)
+#end
+
+#sql("getScheduPlanBydidsList")
+###根据排产明细id查询排产结果纪录
+SELECT
+    (CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )
+    ELSE CAST(iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN iDate<10 THEN '0'+CAST(iDate AS NVARCHAR(30) )
+    ELSE CAST(iDate AS NVARCHAR(30) )
+    END AS NVARCHAR(30)) ) AS planDate,
+    iWeekScheduleDid,iAutoId AS qtyId
+FROM Aps_WeekScheduleD_Qty
+WHERE iWeekScheduleDid IN #(schedudids)
+#end
+
+
 ###---------------------------------------------------------月周生产计划汇总---------------------
 
 #sql("getApsMonthPlanSumList")

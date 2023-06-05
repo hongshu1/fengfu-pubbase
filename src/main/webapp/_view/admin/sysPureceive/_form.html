@@ -4,8 +4,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="save()" class="btn btn-success btn-sm"
-                        "><i
+                        <button onclick="save()" class="btn btn-success btn-sm"><i
                             class=" fa fa-refresh"></i> 保存</button>
                         <button onclick="submitThisForm()" class="btn btn-info btn-sm"><i
                                 class="fa fa-window-maximize"></i> 提交审批
@@ -138,6 +137,7 @@
                    class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 
             </td>
+            <td>${data.venname}</td>
             <td>${data.sourcebillno}</td>
             <td>${data.barcode}</td>
             <td>${data.cinvcode}</td>
@@ -147,7 +147,6 @@
             <td>${data.qtys}</td>
             <td>${data.qty}</td>
             <td>${data.poscode}</td>
-            <td>${data.venname}</td>
             <td><img data-switchbtn data-value="${data.isinitial}" data-handler="switchEditableTd"/></td>
 
         </tr>
@@ -209,6 +208,7 @@
         <tr>
             <th data-width="60">序号</th>
             <th data-width="150">操作</th>
+            <th data-width="100" data-column="venname">供应商</th>
             <th data-width="100" data-column="sourcebillno">订单编号</th>
             <th data-width="100" data-column="barcode">现品票</th>
             <th data-width="150" data-column="cinvcode">存货编码</th>
@@ -218,7 +218,6 @@
             <th data-width="100" data-column="qtys">数量</th>
             <th data-width="100" data-column="qty">实收数量</th>
             <th data-width="100" data-column="poscode">库区</th>
-            <th data-width="100" data-column="venname">供应商</th>
             <th data-width="100" data-column="isinitial" data-editable="false">是否初物</th>
         </tr>
         </thead>
@@ -257,9 +256,10 @@
     }
 
     function submitThisForm() {
-        $("#operationType").val("submit");
-        jboltTableSubmit("#jbolt_Table_#(pageId)");
-        $("#operationType").val();
+        LayerMsgBox.alert("模块待开发")
+        // $("#operationType").val("submit");
+        // jboltTableSubmit("#jbolt_Table_#(pageId)");
+        // $("#operationType").val();
     }
 
     function getJBoltTableEditableColsOpton() {
@@ -335,8 +335,8 @@
                     width: 800,
                     sync: "",
                     valueAttr: "barcode",
-                    columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty,venname",
-                    header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量,供应商',
+                    columnAttr: "venname,sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty",
+                    header: '供应商,订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量',
                     changeColumns: [{column: "barcode", use: "barcode"}, {
                         column: "cinvcode",
                         use: "cinvcode"
@@ -372,8 +372,8 @@
                     width: 800,
                     sync: "",
                     valueAttr: "barcode",
-                    columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty,venname",
-                    header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量,供应商',
+                    columnAttr: "venname,sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty",
+                    header: '供应商,订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量',
                     changeColumns: [{column: "barcode", use: "barcode"}, {
                         column: "cinvcode",
                         use: "cinvcode"

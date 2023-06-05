@@ -1125,14 +1125,20 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			endDate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
 		}
 
+		kv.set("startdate",startDate);
+		kv.set("enddate",endDate);
 		//开始日期到截止日期集合
 		List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
 
 		//TODO:根据条件查询物料需求计划
 		List<Record> demandList = dbTemplate("schedudemandplan.getDemandComputeDList",kv).find();
 		Map<String,Record> invInfoMap = new HashMap<>();
+		//key:inv   value:<yyyy-MM-dd,record>
 		Map<String,Map<String,Record>> invPlanMap = new HashMap<>();
+		String idsJoin = "(";
+		List<Long> idList = new ArrayList<>();
 		for (Record record : demandList){
+			Long invId = record.getLong("invId");
 			String inv = record.getStr("cInvCode");
 			String planDate = record.getStr("planDate");
 			invInfoMap.put(inv,record);
@@ -1144,7 +1150,30 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				dateMap.put(planDate,record);
 				invPlanMap.put(inv,dateMap);
 			}
+			if (!idList.contains(invId)){
+				idsJoin = idsJoin + invId + ",";
+				idList.add(invId);
+			}
 		}
+		idsJoin = idsJoin + "601)";
+
+		//TODO:根据物料集和日期查询物料到货计划Sum
+		List<Record> getDemandPlanByinvList = dbTemplate("schedudemandplan.getDemandPlanByinvList",kv.set("invs",idsJoin)).find();
+		//key:invId    value:List<yyyy-MM-dd>
+		Map<Long,List<String>> invLockDateListMap = new HashMap<>();
+		for (Record record : getDemandPlanByinvList){
+			Long iInventoryId = record.getLong("iInventoryId");
+			String planDate = record.getStr("planDate");
+			if (invLockDateListMap.containsKey(iInventoryId)){
+				List<String> list = invLockDateListMap.get(iInventoryId);
+				list.add(planDate);
+			}else {
+				List<String> list = new ArrayList<>();
+				list.add(planDate);
+				invLockDateListMap.put(iInventoryId,list);
+			}
+		}
+
 
 		int seq = 1;
 		//循环物料
@@ -1160,19 +1189,26 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			map.put("iPkgQty", info.get("iPkgQty") != null ? info.get("iPkgQty") : 0);
 			map.put("iInnerInStockDays", info.get("iInnerInStockDays") != null ? info.get("iInnerInStockDays") : 0);
 
+			//计划
 			Map<String,Record> planMap = invPlanMap.get(inv);
+			//已生成到货计划日期
+			List<String> dateList = invLockDateListMap.get(info.getLong("invId")) != null ? invLockDateListMap.get(info.getLong("invId")) : new ArrayList<>();
 
 			List<Object> objectList = new ArrayList<>();
 			for (String date : scheduDateList) {
 				Record qtyInfo = planMap.get(date) != null ? planMap.get(date) : new Record();
 
-				Map<String,Object> record = new HashMap<>();
-				record.put("xuqiu",qtyInfo.get("iQty1") != null ? qtyInfo.get("iQty1") : BigDecimal.ZERO);
-				record.put("jihua",qtyInfo.get("iQty2") != null ? qtyInfo.get("iQty2") : BigDecimal.ZERO);
-				record.put("zaiku",qtyInfo.get("iQty5") != null ? qtyInfo.get("iQty5") : BigDecimal.ZERO);
-				record.put("date",date);
+				Map<String,Object> dataMap = new HashMap<>();
+				dataMap.put("xuqiu",qtyInfo.get("iQty1") != null ? qtyInfo.get("iQty1") : 0);
+				dataMap.put("jihua",qtyInfo.get("iQty2") != null ? qtyInfo.get("iQty2") : 0);
+				dataMap.put("zaiku",qtyInfo.get("iQty5") != null ? qtyInfo.get("iQty5") : 0);
+				dataMap.put("date",date);
+				dataMap.put("lock",false);//未锁定可编辑
 
-				objectList.add(record);
+				if (dateList.contains(date)){
+					dataMap.put("lock",true);//已锁定不可编辑
+				}
+				objectList.add(dataMap);
 			}
 			map.put("day",objectList);
 			dataList.add(map);

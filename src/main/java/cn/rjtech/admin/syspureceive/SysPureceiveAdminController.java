@@ -91,7 +91,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        // 关联查询出仓库编码,然后换数据源U8 查其名称
+        // 关联查询出仓库查其名称
         SysPureceivedetail first = syspureceivedetailservice.findFirst("select * from  T_Sys_PUReceiveDetail where MasID = ?", sysPureceive.getAutoID());
         if (first != null && null != first.getWhcode()) {
             Warehouse first1 = warehouseservice.findFirst("select *   from Bd_Warehouse where cWhCode=?", first.getWhcode());
@@ -102,15 +102,15 @@ public class SysPureceiveAdminController extends BaseAdminController {
             set("username", sysenumerationservice.getUserName(sysPureceive.getCreatePerson()));
         }
         // 查供应商名称
-        if (null != sysPureceive.getVenCode()) {
-            Vendor first1 = vendorservice.findFirst("select * from Bd_Vendor where cVenCode = ?", sysPureceive.getVenCode());
-            set("venname", first1.getCVenName());
-        }
+//        if (null != sysPureceive.getVenCode()) {
+//            Vendor first1 = vendorservice.findFirst("select * from Bd_Vendor where cVenCode = ?", sysPureceive.getVenCode());
+//            set("venname", first1.getCVenName());
+//        }
         //查询入库类别
-        if (null != sysPureceive.getRdCode()) {
-            PurchaseType first1 = purchasetypeservice.findFirst("select * from Bd_PurchaseType where cRdCode = ?", sysPureceive.getRdCode());
-            set("cptname", first1.getCPTName());
-        }
+//        if (null != sysPureceive.getRdCode()) {
+//            PurchaseType first1 = purchasetypeservice.findFirst("select * from Bd_PurchaseType where cRdCode = ?", sysPureceive.getRdCode());
+//            set("cptname", first1.getCPTName());
+//        }
 
 
         set("sysPureceive", sysPureceive);

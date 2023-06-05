@@ -41,6 +41,7 @@ import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -48,6 +49,8 @@ import java.util.Calendar;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -395,10 +398,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 update("UPDATE Aps_WeekSchedule SET dScheduleEndTime = ? WHERE iAutoId = ? ",apsWeekschedule.getDLockEndTime(),iWeekScheduleId);
                 if (apsWeekscheduledetails != null){
                     delete("DELETE FROM Aps_WeekScheduleD_Qty WHERE " +
-                            "CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )\n" +
+                            "(CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )\n" +
                             "ELSE CAST(iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN iDate<10 THEN '0'+CAST(iDate AS NVARCHAR(30) )\n" +
                             "ELSE CAST(iDate AS NVARCHAR(30) )\n" +
-                            "END AS NVARCHAR(30)) > ? AND iWeekScheduleDid = ? ",DateUtils.formatDate(apsWeekschedule.getDLockEndTime(),"yyyy-MM-dd"),apsWeekscheduledetails.getIAutoId());
+                            "END AS NVARCHAR(30)) ) > ? AND iWeekScheduleDid = ? ",DateUtils.formatDate(apsWeekschedule.getDLockEndTime(),"yyyy-MM-dd"),apsWeekscheduledetails.getIAutoId());
                 }
             }
             return true;
@@ -1894,139 +1897,154 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         JSONArray jsonArray = JSONArray.parseArray(jsonDate);
         List<Map> dataList = jsonArray.toJavaList(Map.class);
 
-        System.out.println(dataList);
-        for (Map<String,Object> map : dataList){
+
+        String invJoin = "('601'";
+        List<String> invList = new ArrayList<>();
+        for (Map<String,Object> map : dataList) {
             String cInvCode = map.get("cInvCode").toString();
-            String date = map.get("date").toString();
-            String day = map.get("day").toString();
-            String newValue = map.get("newValue").toString();
-            String plan = map.get("plan").toString();
-
-            if (!NumberUtils.isNumber(newValue)){
-                return fail("请检查表中非数值类型数据！");
+            if (!invList.contains(cInvCode)){
+                invJoin = invJoin + ",'" + cInvCode + "'";
+                invList.add(cInvCode);
             }
-           /* BigDecimal newValue = new BigDecimal(map.get("newValue").toString());
-
-            dataMap.put("shiyong",record.getBigDecimal("iQty1"));
-            dataMap.put("one",record.getBigDecimal("iQty2"));
-            dataMap.put("two",record.getBigDecimal("iQty3"));
-            dataMap.put("three",record.getBigDecimal("iQty4"));
-            dataMap.put("zaiku",record.getBigDecimal("iQty5"));
-            dataMap.put("tianshu",record.getBigDecimal("iQty6"));*/
-
-
         }
-
-        /*Long iWeekScheduleId;
-        //排产主表
-        ApsWeekschedule weekschedule = new ApsWeekschedule();
-        if (apsWeekschedule != null){
-            iWeekScheduleId = apsWeekschedule.getIAutoId();
-            apsWeekschedule.setDScheduleEndTime(endDate);
-        }else {
-            iWeekScheduleId = JBoltSnowflakeKit.me.nextId();
-            weekschedule.setIOrgId(orgId);
-            weekschedule.setCOrgCode(orgCode);
-            weekschedule.setCOrgName(orgName);
-            weekschedule.setICreateBy(userId);
-            weekschedule.setCCreateName(userName);
-            weekschedule.setDCreateTime(newDate);
-            weekschedule.setIUpdateBy(userId);
-            weekschedule.setCUpdateName(userName);
-            weekschedule.setDUpdateTime(newDate);
-            weekschedule.setIAutoId(iWeekScheduleId);
-            weekschedule.setILevel(level);
-            weekschedule.setDScheduleBeginTime(startDate);
-            weekschedule.setDScheduleEndTime(endDate);
-            weekschedule.setIsLocked(false);
+        invJoin = invJoin.concat(")");
+        //TODO:根据物料集查询排产物料明细
+        List<Record> getScheduDByinvsList =  dbTemplate("scheduproductplan.getScheduDByinvsList",Kv.by("invs",invJoin)).find();
+        //key:inv   value:iWeekScheduleDid
+        Map<String,Long> invScheduleDidMap = new HashMap<>();
+        String scheduDidJoin = "(601";
+        for (Record record : getScheduDByinvsList){
+            String cInvCode = record.getStr("cInvCode");
+            Long iWeekScheduleDid = record.getLong("iWeekScheduleDid");
+            invScheduleDidMap.put(cInvCode,iWeekScheduleDid);
+            scheduDidJoin = scheduDidJoin + "," + iWeekScheduleDid;
         }
-
-        //TODO:根据排产纪录id查询已排产过物料纪录
-        List<Record> getDetailsList = findRecords("SELECT iAutoId,iInventoryId FROM Aps_WeekScheduleDetails WHERE iWeekScheduleId = ? ",iWeekScheduleId);
-        //key:invId   value:iWeekScheduleDid
-        Map<Long,Long> invScheduleDidMap = new HashMap<>();
-        for (Record record : getDetailsList){
-            invScheduleDidMap.put(record.getLong("iInventoryId"),record.getLong("iAutoId"));
-        }
-
-        //排产物料明细表
-        List<ApsWeekscheduledetails> detailsList = new ArrayList<>();
-        //排产数量明细表
-        List<ApsWeekscheduledQty> detailsQtyList = new ArrayList<>();
-
-
-
-
-
-        Record info = invInfoMap.get(inv);
-        Long invId = info.getLong("invId");
-
-        Long iWeekScheduleDid;
-        if (invScheduleDidMap.containsKey(invId)){
-            iWeekScheduleDid = invScheduleDidMap.get(invId);
-        }else {
-            iWeekScheduleDid = JBoltSnowflakeKit.me.nextId();
-            ApsWeekscheduledetails scheduleDetails = new ApsWeekscheduledetails();
-            scheduleDetails.setIOrgId(orgId);
-            scheduleDetails.setCOrgCode(orgCode);
-            scheduleDetails.setCOrgName(orgName);
-            scheduleDetails.setICreateBy(userId);
-            scheduleDetails.setCCreateName(userName);
-            scheduleDetails.setDCreateTime(newDate);
-            scheduleDetails.setIUpdateBy(userId);
-            scheduleDetails.setCUpdateName(userName);
-            scheduleDetails.setDUpdateTime(newDate);
-            scheduleDetails.setIAutoId(iWeekScheduleDid);
-            scheduleDetails.setIWeekScheduleId(iWeekScheduleId);
-            scheduleDetails.setILevel(level);
-            scheduleDetails.setIInventoryId(invId);
-            detailsList.add(scheduleDetails);
+        scheduDidJoin = scheduDidJoin.concat(")");
+        //TODO:根据排产明细id查询排产结果纪录
+        List<Record> getScheduPlanBydidsList =  dbTemplate("scheduproductplan.getScheduPlanBydidsList",Kv.by("schedudids",scheduDidJoin)).find();
+        //key:iWeekScheduleDid   value:Map<date,qtyId>
+        Map<Long,Map<String,Long>> scheduDqtyIdMap = new HashMap<>();
+        for (Record record : getScheduPlanBydidsList){
+            Long iWeekScheduleDid = record.getLong("iWeekScheduleDid");
+            String planDate = record.getStr("planDate");
+            Long qtyId = record.getLong("qtyId");
+            if (scheduDqtyIdMap.containsKey(iWeekScheduleDid)){
+                Map<String,Long> map = scheduDqtyIdMap.get(iWeekScheduleDid);
+                map.put(planDate,qtyId);
+            }else {
+                Map<String,Long> map = new HashMap<>();
+                map.put(planDate,qtyId);
+                scheduDqtyIdMap.put(iWeekScheduleDid,map);
+            }
         }
 
 
+        //key: invcode+date  value:ApsWeekscheduledQty
+        Map<String,ApsWeekscheduledQty> detailsQtyAddMap = new HashMap<>();
+        //key: invcode+date  value:ApsWeekscheduledQty
+        Map<String,ApsWeekscheduledQty> detailsQtyUpdMap = new HashMap<>();
 
+        final String shiYong = "计划使用";
+        final String oneS = "计划/1S";
+        final String twoS = "计划/2S";
+        final String threeS = "计划/3S";
+        final String zaiKu = "计划在库";
+        final String tianShu = "在库天数";
+        //正则用于提取数字
+        String regEx = "[^0-9]";
+        Pattern p = Pattern.compile(regEx);
+        try {
+            for (Map<String,Object> map : dataList){
+                String cInvCode = map.get("cInvCode").toString();
+                String yearMonthStr = map.get("date").toString();
+                String day = map.get("day").toString();
+                String newValue = map.get("newValue").toString();
+                String plan = map.get("plan").toString();
 
-        ApsWeekscheduledQty scheduledQty = new ApsWeekscheduledQty();
-        scheduledQty.setIWeekScheduleDid(iWeekScheduleDid);
-        scheduledQty.setIYear(year);
-        scheduledQty.setIMonth(month);
-        scheduledQty.setIDate(day);
-        scheduledQty.setIQty1(xuQiu);
-        scheduledQty.setIQty2(one);
-        scheduledQty.setIQty3(two);
-        scheduledQty.setIQty4(three);
-        scheduledQty.setIQty5(zaiKu);
-        scheduledQty.setIQty6(tianShu);
-        detailsQtyList.add(scheduledQty);
+                Matcher m = p.matcher(day);
+                String resultDay = m.replaceAll("").trim();
 
+                Date date = DateUtils.parseDate(yearMonthStr);
+                String yearMonth = DateUtils.formatDate(date,"yyyy-MM");
+                int year = Integer.parseInt(DateUtils.formatDate(date,"yyyy"));
+                int month = Integer.parseInt(DateUtils.formatDate(date,"MM"));
+                int iday = Integer.parseInt(resultDay);
 
+                if (!NumberUtils.isNumber(newValue)){
+                    return fail("请检查表中非数值类型数据！");
+                }
+                BigDecimal qty = new BigDecimal(newValue);
+
+                Long iWeekScheduleDid = invScheduleDidMap.get(cInvCode);
+                Map<String,Long> qtyIdMap = scheduDqtyIdMap.get(iWeekScheduleDid) != null ? scheduDqtyIdMap.get(iWeekScheduleDid) : new HashMap<>();
+
+                int type;
+                switch (plan){
+                    case shiYong:
+                        type = 1;
+                        break;
+                    case oneS:
+                        type = 2;
+                        break;
+                    case twoS:
+                        type = 3;
+                        break;
+                    case threeS:
+                        type = 4;
+                        break;
+                    case zaiKu:
+                        type = 5;
+                        break;
+                    case tianShu:
+                        type = 6;
+                        break;
+                    default:
+                        return fail("数据不匹配！");
+                }
+                String dateKey = yearMonth;
+                if (iday < 10){
+                    dateKey = dateKey.concat("-0").concat(resultDay);
+                }else {
+                    dateKey = dateKey.concat("-").concat(resultDay);
+                }
+                String key = cInvCode.concat(dateKey);
+
+                ApsWeekscheduledQty scheduledQty;
+                if (qtyIdMap.containsKey(dateKey)){
+                    if (detailsQtyUpdMap.containsKey(key)){
+                        scheduledQty = detailsQtyUpdMap.get(key);
+                    }else {
+                        scheduledQty = new ApsWeekscheduledQty();
+                    }
+                    Long qtyId = qtyIdMap.get(dateKey);
+                    scheduledQty.setIAutoId(qtyId);
+                    scheduledQty.getClass().getMethod("setIQty"+type,new Class[]{BigDecimal.class}).invoke(scheduledQty, qty);
+                    detailsQtyUpdMap.put(key,scheduledQty);
+                }else {
+                    if (detailsQtyAddMap.containsKey(key)){
+                        scheduledQty = detailsQtyAddMap.get(key);
+                    }else {
+                        scheduledQty = new ApsWeekscheduledQty();
+                    }
+                    scheduledQty.setIWeekScheduleDid(iWeekScheduleDid);
+                    scheduledQty.setIYear(year);
+                    scheduledQty.setIMonth(month);
+                    scheduledQty.setIDate(iday);
+                    scheduledQty.getClass().getMethod("setIQty"+type,new Class[]{BigDecimal.class}).invoke(scheduledQty, qty);
+                    detailsQtyAddMap.put(key,scheduledQty);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        List<ApsWeekscheduledQty> detailsQtyAddList = new ArrayList<>(detailsQtyAddMap.values());
+        List<ApsWeekscheduledQty> detailsQtyUpdList = new ArrayList<>(detailsQtyUpdMap.values());
 
         tx(() -> {
-            if (apsWeekschedule != null){
-                apsWeekschedule.update();
-            }else {
-                weekschedule.save();
-            }
-            apsWeekscheduledetailsService.batchSave(detailsList);
-            if (detailsQtyList.size() > 0){
-                List<List<ApsWeekscheduledQty>> groupList = CollectionUtils.partition(detailsQtyList,300);
-                CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
-                ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
-                for(List<ApsWeekscheduledQty> dataList :groupList){
-                    executorService.execute(()->{
-                        apsWeekscheduledQtyService.batchSave(dataList);
-                    });
-                    countDownLatch.countDown();
-                }
-                try {
-                    countDownLatch.await();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                executorService.shutdown();
-            }
+            apsWeekscheduledQtyService.batchSave(detailsQtyAddList);
+            apsWeekscheduledQtyService.batchUpdate(detailsQtyUpdList);
             return true;
-        });*/
+        });
         return SUCCESS;
     }
 
