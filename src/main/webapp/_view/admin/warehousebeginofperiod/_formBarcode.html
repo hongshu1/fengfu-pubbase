@@ -77,14 +77,13 @@
                          autocomplete="off"
                          class="form-control"
                          maxlength="40"
-                         value="${data.careacode}"
                          data-url="admin/warehousearea/options"
-                         data-sync-ele="#careacode${data.index},#careaname${data.index}"
+                         data-sync-ele="#careacode${data.index},#careaname${data.index},#cwhcode${data.index},#icwhcode${data.index}"
                          data-text-attr="careacode"
                          data-column-attr="careacode"/>
                   <div class="input-group-append">
-                      <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#careacode${data.index}"
-                              data-area="1280,600" data-title="选择数据（单选）"
+                      <button class="btn btn-outline-secondary" data-dialogbtn data-area="1280,600" data-title="选择数据（单选）"
+                              data-link-para-ele="#careacode${data.index},#cwhcode${data.index},#icwhcode${data.index}"
                               data-url="admin/warehousebeginofperiod/warehouseAreaDialogIndex?index=${data.index}&type=0">
                         <i class="fa fa-search"></i></button>
                   </div>
@@ -164,30 +163,27 @@
         <input type="text" data-sync-attr="cvenname" id="cvenname${data.index}" data-tips="" data-notnull="true"
                autocomplete="off" class="form-control" maxlength="40" name="cvenname" value="${data.cvenname}" readonly/>
       </td>
-      <!--      <td title="${data.qty}">${data.qty}</td>-->
-      <!--      <td title="${data.ungeneratedstockqty}">${data.ungeneratedstockqty}</td>-->
       <td>
         <input type="number" data-sync-attr="generatedstockqty" id="generatedstockqty${data.index}" data-tips=""
-               data-notnull="true" placeholder="=生成库存条码数量=" autocomplete="off" class="form-control"
+               data-notnull="true" placeholder="=生成库存条码数量=" autocomplete="off" class="form-control" data-rule="int"
                maxlength="40" name="generatedstockqty" value="${data.generatedstockqty}"/>
       </td>
       <td >
-        <input type="text" data-sync-attr="cbarcode" id="cbarcode${data.cbarcode}" data-tips=""
+        <input type="text" data-sync-attr="barcode" id="barcode${data.barcode}" data-tips=""
                data-notnull="true" placeholder="=条码=" autocomplete="off" class="form-control"
-               maxlength="40" name="cbarcode" value="${data.cbarcode}"/>
+               maxlength="40" name="barcode" value="${data.barcode}"/>
       </td>
       <td >
         <input type="text" data-sync-attr="batch" id="batch${data.index}" data-tips="" data-notnull="true" placeholder="=批次="
                autocomplete="off" class="form-control" maxlength="40" name="batch" value="${data.batch}"/>
       </td>
       <td>
-        <input id="createdate" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"
-                placeholder="=选择生产日期=" name="createdate" data-tips="" maxlength="23" value="">
+        <input id="createdate${data.index}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"
+               placeholder="=选择生产日期=" name="createdate" data-tips="" maxlength="23" value="">
       </td>
       <td>
-       <select id="reportfilename${data.index}" class="form-control" data-url="admin/dictionary/options?key=beginningofperiod" name="reportfilename" data-autoload
-               data-text="=选择模板打印标签=" data-value-attr="sn" data-text-attr="name" data-value="${data.reportfilename}" data-select-type="select2"
-               data-select="#(reportfilename??)" autocomplete="off" ></select>
+        <select class="form-control" data-url="admin/dictionary/options?key=beginningofperiod" name="reportfilename" data-autoload
+                data-text="=请选择模板打印标签=" data-value-attr="sn" id="reportfilename" data-value="" data-select="${data.reportfilename}"></select>
       </td>
     </tr>
   {@/each}
@@ -234,10 +230,8 @@
             <th data-width="150" data-column="cuomname">主计量单位</th>
             <th data-width="180" data-column="cvencode">供应商编码</th>
             <th data-width="200" data-column="cvenname">供应商名称</th>
-            <!--            <th data-width="150" data-column="qty" title="">期初库存数量</th>-->
-            <!--            <th data-width="180" data-column="ungeneratedstockqty" title="未生成条码库存数量">未生成条码库存数量</th>-->
             <th data-width="180" data-column="generatedStockQty" title="生成条码库存数量">生成条码库存数量</th>
-            <th data-width="180" data-column="cbarcode">条码号</th>
+            <th data-width="180" data-column="barcode">条码号</th>
             <th data-width="180" data-column="batch">批次号</th>
             <th data-width="180" data-column="createdate">生产日期</th>
             <th data-width="200" data-column="reportfilename" title="标签打印模板">标签打印模板</th>
@@ -252,7 +246,7 @@
             <label class="col-sm-2 col-form-label">打印数量:</label>
             <div class="col-3" style="right: 20px;">
               <input type="number" id="printnum" name="printnum" data-with-clearbtn="true" autocomplete="off" required="true"
-                     class="form-control" placeholder="请输入打印数量" maxlength="40" value="#(printnum??)" data-rule="int"/>
+                     class="form-control" placeholder="=默认为1张=" maxlength="40" value="#(printnum??)" data-rule="int"/>
             </div>
             <div class="col-2" style="right: 35px;">
               <button type="button" class="btn btn-outline-secondary" id="createButton" name="createButton"
@@ -302,7 +296,7 @@
   * */
   function submitThisForm() {
     var printnum = $('#printnum').val();
-    if (printnum == null) {
+    if (printnum == null || printnum == undefined || printnum == '') {
       printnum = 1;
     }
     var autoprint = $('input[name="autoprint"]').is(':checked');
@@ -328,10 +322,24 @@
         LayerMsgBox.alert("生成条码库存数量不能为0", 2);
         return;
       }
+      if (checkisNull(element.barcode)) {
+        LayerMsgBox.alert("条码号不能为空", 2);
+        return;
+      }
       if (checkisNull(element.reportfilename)) {
         LayerMsgBox.alert("标签打印模板不能为空", 2);
         return;
       }
+    }
+
+    let names = tableData.map(item => item["barcode"]);
+    let nameSet = new Set(names);
+
+    if (nameSet.size == names.length) {
+      console.log("无重复");
+    } else {
+      LayerMsgBox.alert("条码号不能重复", 2);
+      return;
     }
 
     var para = {
@@ -339,13 +347,9 @@
       printnum: printnum,
       autoprint: autoprint
     };
-    Ajax.post('admin/warehousebeginofperiod/submitStock', para, function (ret) {
+    /*Ajax.post('admin/warehousebeginofperiod/submitAddBarcode', para, function (ret) {
       if (ret.state === 'ok') {
         submitState = true;
-        LayerMsgBox.success("生成成功", 1000, function () {
-          parent.refreshPjaxContainer();
-          // parent.layer.closeAll();
-        });
         //如果勾选了自动打印，在生成成功后要自动打印
         if (autoprint) {
           for (let i = 0; i < printnum; i++) {
@@ -358,10 +362,14 @@
             }
           }
         }
+        LayerMsgBox.success("生成成功", 1000, function () {
+          parent.refreshPjaxContainer();
+          // parent.layer.closeAll();
+        });
       } else {
         LayerMsgBox.alert(ret.msg, 2);
       }
-    });
+    });*/
   }
 
   function getTableData() {

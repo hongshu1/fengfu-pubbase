@@ -36,24 +36,154 @@
   {@each datas as data,index}
     <tr data-id="${data.iautoid}">
       <td>${pageNumber,pageSize,index | rownum}</td>
-      <td title="${data.cwhcode}">${data.cwhcode}</td>
-      <td title="${data.cwhname}">${data.cwhname}</td>
-      <td title="${data.careacode}">${data.careacode}</td>
-      <td title="${data.careaname}">${data.careaname}</td>
-      <td title="${data.cinvcode}">${data.cinvcode}</td>
-      <td title="${data.cinvcode1}">${data.cinvcode1}</td>
-      <td title="${data.cinvname1}">${data.cinvname1}</td>
-      <td title="${data.cinvstd}">${data.cinvstd}</td>
-      <td title="${data.cuomname}">${data.cuomname}</td>
-      <td title="${data.cvencode}">${data.cvencode}</td>
-      <td title="${data.cvenname}">${data.cvenname}</td>
-      <td title="${data.qty, 0|number_format}">${data.qty}</td>
-      <td title="${data.ungeneratedstockqty, 0|number_format}">${data.ungeneratedstockqty}</td>
-      <td title="${data.generatedstockqty, 0|number_format}">${data.generatedstockqty}</td>
-      <td title="${data.ipkgqty, 0|number_format}">${data.ipkgqty}</td>
-      <td title="${data.batch}">${data.batch}</td>
-      <td title="${data.createdate}">${data.createdate}</td>
-      <td title="${data.reportfilename}">${data.reportfilename}</td>
+      <td >
+        <input type="text" hidden data-sync-attr="cwhcode" id="cwhcode${data.index}" data-tips="仓库" data-notnull="true"
+               autocomplete="off" class="form-control" maxlength="40" name="cwhcode" value="${data.cwhcode}"/>
+        <div class="input-group">
+                  <input type="text"
+                         id="icwhcode${data.index}"
+                         data-autocomplete
+                         data-notnull="true"
+                         data-tips="请选择仓库编码"
+                         autocomplete="off"
+                         class="form-control"
+                         maxlength="40"
+                         value="${data.cwhcode}"
+                         data-url="admin/warehouse/options"
+                         data-sync-ele="#cwhcode${data.index},#cwhname${data.index}"
+                         data-text-attr="cwhcode"
+                         data-column-attr="cwhcode"/>
+                  <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#cwhcode${data.index}"
+                              data-area="1280,600" data-title="选择数据（单选）"
+                              data-url="admin/warehousebeginofperiod/warehouseDialogIndex?index=${data.index}&type=0">
+                        <i class="fa fa-search"></i></button>
+                  </div>
+              </div>
+      </td>
+      <td>
+        <input type="text" data-sync-attr="cwhname" id="cwhname${data.index}" data-tips="仓库名称" data-notnull="true"
+               autocomplete="off" class="form-control" maxlength="40" name="cwhname" value="${data.cwhname}" readonly/>
+      </td>
+      <td>
+        <input type="text" hidden data-sync-attr="careacode" id="careacode${data.index}" data-tips="库区编码" data-notnull="true"
+               autocomplete="off" class="form-control" maxlength="40" name="careacode" value="${data.careacode}"/>
+        <div class="input-group">
+                  <input type="text"
+                         id="icareacode${data.index}"
+                         data-autocomplete
+                         data-notnull="true"
+                         data-tips="请选择库区编码"
+                         autocomplete="off"
+                         class="form-control"
+                         maxlength="40"
+                         data-url="admin/warehousearea/options"
+                         data-sync-ele="#careacode${data.index},#careaname${data.index},#cwhcode${data.index},#icwhcode${data.index}"
+                         data-text-attr="careacode"
+                         data-column-attr="careacode"/>
+                  <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" data-dialogbtn data-area="1280,600" data-title="选择数据（单选）"
+                              data-link-para-ele="#careacode${data.index},#cwhcode${data.index},#icwhcode${data.index}"
+                              data-url="admin/warehousebeginofperiod/warehouseAreaDialogIndex?index=${data.index}&type=0">
+                        <i class="fa fa-search"></i></button>
+                  </div>
+              </div>
+      </td>
+      <td>
+        <input type="text" data-sync-attr="careaname" id="careaname${data.index}" data-tips="库区名称" data-notnull="true"
+               autocomplete="off" class="form-control" maxlength="40" name="careaname" value="${data.careaname}" readonly/>
+      <td>
+      <input type="text" hidden data-sync-attr="cinvcode" id="cinvcode${data.index}" data-tips="存货编码" data-notnull="true"
+             autocomplete="off" class="form-control" maxlength="40" name="cinvcode" value="${data.cinvcode}"/>
+        <div class="input-group">
+                  <input type="text"
+                         id="icinvcode${data.index}"
+                         data-autocomplete
+                         data-notnull="true"
+                         data-tips="请选择存货编码"
+                         autocomplete="off"
+                         class="form-control"
+                         maxlength="40"
+                         value="${data.cinvcode}"
+                         data-url="admin/bommaster/inventoryAutocomplete"
+                         data-sync-ele="#cinvcode${data.index},#cinvcode1${data.index},cinvstd${data.index},cuomname${data.index},#cInvName${data.index},#cInvAddName${data.index},#cInvAddCode${data.index},#InvName${data.index}"
+                         data-text-attr="cinvcode"
+                         data-column-attr="cinvcode"/>
+                  <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" data-dialogbtn
+                              data-link-para-ele="#iBeforeInventoryId${data.index}"
+                              data-area="1280,600" data-title="选择数据（单选）"
+                              data-url="admin/warehousebeginofperiod/inventoryDialogIndex?index=${data.index}&type=0">
+                        <i class="fa fa-search"></i></button>
+                  </div>
+              </div>
+      </td>
+      <td>
+        <input type="text" data-sync-attr="cinvcode1" id="cinvcode1${data.index}" data-tips="客户部番" data-notnull="true"
+               autocomplete="off" class="form-control" maxlength="40" name="cinvcode1" value="${data.cinvcode1}" readonly/>
+      </td>
+      <td>
+        <input type="text" data-sync-attr="cinvname1" id="cInvAddName${data.index}" data-tips="部品名称" data-notnull="true"
+               autocomplete="off" class="form-control" maxlength="40" name="cinvname1" value="${data.cinvname1}" readonly/>
+      </td>
+      <td>
+        <input type="text" data-sync-attr="cinvstd" id="cinvstd${data.index}" data-tips="规格" data-notnull="true"
+               autocomplete="off" class="form-control" maxlength="40" name="cinvstd" value="${data.cinvstd}" readonly/>
+      </td>
+      <td>
+        <input type="text" data-sync-attr="cuomname" id="cuomname${data.index}" data-tips="单位" data-notnull="true"
+               autocomplete="off" class="form-control" maxlength="40" name="cuomname" value="${data.cuomname}" readonly/>
+      </td>
+      <td>
+        <input type="text" hidden data-sync-attr="cvencode" id="cvencode${data.index}" data-tips="供应商编码" data-notnull="true"
+               autocomplete="off" class="form-control" maxlength="40" name="cvencode" value="${data.cvencode}"/>
+        <div class="input-group">
+                  <input type="text"
+                         id="icvencode${data.index}"
+                         data-autocomplete
+                         data-notnull="true"
+                         data-tips="请选择供应商编码"
+                         autocomplete="off"
+                         class="form-control"
+                         maxlength="40"
+                         value="${data.cvencode}"
+                         data-url="admin/vendor/options"
+                         data-sync-ele="#cvencode${data.index},#cvenname${data.index}"
+                         data-text-attr="cvencode"
+                         data-column-attr="cvencode"/>
+                  <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#cvencode${data.index}"
+                              data-area="1280,600" data-title="选择数据（单选）"
+                              data-url="admin/warehousebeginofperiod/cvencodeDialogIndex?index=${data.index}&type=0">
+                        <i class="fa fa-search"></i></button>
+                  </div>
+              </div>
+      </td>
+      <td>
+        <input type="text" data-sync-attr="cvenname" id="cvenname${data.index}" data-tips="" data-notnull="true"
+               autocomplete="off" class="form-control" maxlength="40" name="cvenname" value="${data.cvenname}" readonly/>
+      </td>
+      <td>
+        <input type="number" data-sync-attr="generatedstockqty" id="generatedstockqty${data.index}" data-tips=""
+               data-notnull="true" placeholder="=生成库存条码数量=" autocomplete="off" class="form-control" data-rule="int"
+               maxlength="40" name="generatedstockqty" value="${data.generatedstockqty}"/>
+      </td>
+      <td >
+        <input type="text" data-sync-attr="ipkgqty" id="ipkgqty${data.index}" data-tips="" data-notnull="true"
+               autocomplete="off" class="form-control" maxlength="40" name="ipkgqty" value="${data.ipkgqty}" readonly/>
+      </td>
+      <td >
+        <input type="text" data-sync-attr="batch" id="batch${data.index}" data-tips="" data-notnull="true" placeholder="=批次="
+               autocomplete="off" class="form-control" maxlength="40" name="batch" value="${data.batch}"/>
+      </td>
+      <td>
+        <input id="createdate${data.index}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"
+               placeholder="=选择生产日期=" name="createdate" data-tips="" maxlength="23" value="">
+      </td>
+      <td>
+        <select class="form-control" data-url="admin/dictionary/options?key=beginningofperiod" name="reportfilename" data-autoload
+                data-text="=请选择模板打印标签=" data-value-attr="sn" id="reportfilename" data-value="" data-select="${data.reportfilename}"></select>
+      </td>
     </tr>
   {@/each}
 </textarea>
@@ -63,14 +193,14 @@
       <div class="card-body">
         <div class="jbolt_table_toolbar" id="warehousebeginform_toolbar_#(pageId)" style="display: flex">
           <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">新增行</button>
+            <button onclick="insertEmptyRow(this)" class="btn btn-primary btn-sm">新增行</button>
             <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i
                 class="fa fa-trash"></i>
               批量删除
             </button>
           </div>
         </div>
-        <table class="jbolt_table jbolt_main_table  table-center"
+        <table class="jbolt_table jbolt_main_table  table-center thead_font_normal"
                id="warehousebeginform_TableId_#(pageId)"
                data-jbolttable
                data-ajax="true"
@@ -83,7 +213,8 @@
                data-rowtpl="warehousebeginForm_tpl_#(pageId)"
                data-toolbar="warehousebeginform_toolbar_#(pageId)"
                data-editable="true"
-               data-editable-option="getJBoltTableEditableColsOpton">
+               data-tfoot-fixed="true"
+               data-editable-option="getEditableTableOptions_#(pageId)">
           <thead>
           <tr>
             <th data-width="30px">序号</th>
@@ -98,13 +229,13 @@
             <th data-width="120" data-column="cuomname">主计量单位</th>
             <th data-width="150" data-column="cvencode">供应商编码</th>
             <th data-width="150" data-column="cvenname">供应商名称</th>
-            <th data-width="150" data-column="qty" title="期初库存数量">期初库存数量</th>
-            <th data-width="150" data-column="ungeneratedstockqty" title="未生成条码库存数量">未生成条码库存数量</th>
+<!--            <th data-width="150" data-column="qty" title="期初库存数量">期初库存数量</th>-->
+<!--            <th data-width="150" data-column="ungeneratedstockqty" title="未生成条码库存数量">未生成条码库存数量</th>-->
             <th data-width="150" data-column="generatedStockQty" title="生成条码库存数量">生成条码库存数量</th>
             <th data-width="130" data-column="ipkgqty">包装数量</th>
             <th data-width="150" data-column="batch">批次号</th>
             <th data-width="150" data-column="createdate">生产日期</th>
-            <th data-width="150" data-column="reportFileName" title="标签打印模板">标签打印模板</th>
+            <th data-width="150" data-column="reportfilename" title="标签打印模板">标签打印模板</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -116,7 +247,7 @@
             <label class="col-sm-2 col-form-label">打印数量:</label>
             <div class="col-3" style="right: 20px;">
               <input type="number" id="printnum" name="printnum" data-with-clearbtn="true" autocomplete="off" required="true"
-                     class="form-control" placeholder="请输入打印数量" maxlength="40" value="#(printnum??)" data-rule="int"/>
+                     class="form-control" placeholder="=默认为1张=" maxlength="40" value="#(printnum??)" data-rule="int"/>
             </div>
             <div class="col-2" style="right: 35px;">
               <button type="button" class="btn btn-outline-secondary" id="createButton" name="createButton"
@@ -166,188 +297,111 @@
   * */
   function submitThisForm() {
     var printnum = $('#printnum').val();
-    if (printnum == null) {
+    if (printnum == null || printnum == undefined || printnum == '') {
       printnum = 1;
     }
     var autoprint = $('input[name="autoprint"]').is(':checked');
+    //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*/
     var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
-    if (allDatas == null || allDatas.length == 0) {
-      LayerMsgBox.alert("数据为空", 2);
+    if (!allDatas || allDatas.length ==0){
+      LayerMsgBox.alert("表格数据不能为空",2);
       return;
     }
-    for (let arr = 0; arr < allDatas.length; arr++) {
-      let element = allDatas[arr];
-      if (element == null || element == undefined) {
-        LayerMsgBox.alert("数据为空", 2);
-        return;
-      }
-
-      let ungeneratedstockqty = element.ungeneratedstockqty;//未生成条码库存数
-      let generatedstockqty = element.generatedStockQty;//  生成条码库存数
-      if (checkisNull(element.cwhcode)){
+    var flag;
+    var tableData = getTableData();
+    for(let i = 0;i<tableData.length;i++){
+      let element = tableData[i];
+      if (checkisNull(element.cwhcode)) {
         LayerMsgBox.alert("仓库编码不能为空", 2);
         return;
       }
-      if (checkisNull(element.cinvcode)){
+      if (checkisNull(element.cinvcode)) {
         LayerMsgBox.alert("存货编码不能为空", 2);
         return;
       }
-      if (checkisNull(generatedstockqty)){
+      if (checkisNull(element.generatedstockqty)) {
         LayerMsgBox.alert("生成条码库存数量不能为0", 2);
         return;
       }
-      if (checkisNull(element.reportFileName)){
+      if (checkisNull(element.reportfilename)) {
         LayerMsgBox.alert("标签打印模板不能为空", 2);
         return;
       }
-
-      //如果库存数量不足，报错
-      if (generatedstockqty > ungeneratedstockqty) {
-        LayerMsgBox.alert("未生成条码库存数量不足，请重新输入生成条码库存数", 2);
-        return;
-      }
     }
+
     var para = {
-      datas: JSON.stringify(allDatas),
+      datas: JSON.stringify(tableData),
       printnum: printnum,
       autoprint: autoprint
     };
     Ajax.post('admin/warehousebeginofperiod/submitStock', para, function (ret) {
       if (ret.state === 'ok') {
         submitState = true;
+        //如果勾选了自动打印，在生成成功后要自动打印
+        if (autoprint) {
+          for (let i = 0; i < printnum; i++) {
+            for (let j = 0; j < allDatas.length; j++) {
+              var data = allDatas[j];
+              var reportfilename = data.reportfilename;
+              //社内现品票：029587，采购现品票：109607
+              //jboltHiprintWebPrint('109607', 'url', 'admin/warehousebeginofperiod/printData?ids=');
+              // jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=1640995130939412480'+ "&&mark=check");
+            }
+          }
+        }
         LayerMsgBox.success("生成成功", 1000, function () {
           parent.refreshPjaxContainer();
           // parent.layer.closeAll();
         });
-        //如果勾选了自动打印，在生成成功后要自动打印
-        /*if (autoprint) {
-          for (let i = 0; i < printnum; i++) {
-            for (let j = 0; j < allDatas.length; j++) {
-              var data = allDatas[j];
-              var reportFileName = data.reportFileName;
-              //社内现品票：029587，采购现品票：109607
-              jboltHiprintWebPrint('109607', 'url', 'admin/warehousebeginofperiod/printData?ids=');
-              //jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=');
-              //jboltHiprintWebPrint('kqda_key', 'url', allDatas);
-              // jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=1640995130939412480'+ "&&mark=check");
-            }
-          }
-        }*/
       } else {
         LayerMsgBox.alert(ret.msg, 2);
       }
     });
-    //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");
   }
 
-  function getJBoltTableEditableColsOpton() {
-    var editableTableOptions = {
-      submit: {
-        withForm: ["warehousebeginofperiod_#(pageId)"],
-        name: 'warehousebeginofperiod',
-        type: "all",
-        url: "/admin/warehousebeginofperiod/submitStock",
-        success: function (res) {
-          LayerMsgBox.success("提交成功", 600, function () {
-          });
+  function getTableData() {
+    var alldatas = $("#warehousebeginform_TableId_#(pageId)");
+    var rows = [];
+    alldatas.children("tbody").children("tr").each(function () {
+      var row = {};
+      // 获取input标签 class属性还有form-control
+      $(this).find('td').each(function () {
+        var inputs = $(this).find("input[class*='form-control']");
+        getField(row, inputs);
+        var selects = $(this).find("select[class='form-control']");
+        getField(row, selects);
+
+      });
+      rows.push(row);
+    });
+    return rows;
+  };
+
+  function getField(row, labels) {
+    if (labels && labels.length > 0) {
+      $.each(labels, function (idx, v) {
+        if (v.name && v.name !== '' && v.value) {
+          row[v.name] = row[v.name] ? (row[v.name] + ',' + v.value) : v.value;
         }
-      },
+      });
+    }
+  }
+
+  function getEditableTableOptions_#(pageId)(){
+    var editableTableOptions = {
+      trigger: "click",
+      //初始行数
+      initRowCount: 0,
+      //插入数据时默认属性值
+      //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
       cols: {
-        iautoid: {
+        id: {
           submitAttr: "iautoid",
         },
-        cwhcode: { //仓库编码
-          maxLength: 100,
-          required: true,
-          placeholder: "=请选择仓库编码=",
-          type: "autocomplete",
-          url: "admin/warehousebeginofperiod/whoptions",
-          textAttr: "cwhcode",
-          width: 300,
-          valueAttr: "cwhcode",
-          columnAttr: "whcode,whname",
-          header: '仓库编码,仓库名称',
-          changeColumns: [{column: "cwhcode", use: "whcode"},
-            {column: "cwhname", use: "whname"}]
-        },
-        careacode: { //库区编码
-          type: "autocomplete",
-          url: "admin/warehousebeginofperiod/findAreaByWhcode",
-          maxLength: 100,
-          required: false,
-          placeholder: "=请选择库区编码=",
-          textAttr: "careacode",
-          width: 200,
-          linkColumn: "cwhcode",
-          valueAttr: "careacode",
-          columnAttr: "careacode,careaname",
-          header: '库区编码,库区名称',
-          changeColumns: [{column: "careacode", use: "careacode"},
-            {column: "careaname", use: "careaname"}]
-        },
-        cinvcode: {
-          type: "autocomplete",
-          url: "admin/warehousebeginofperiod/whoptions",
-          maxLength: 150,
-          required: true,
-          placeholder: "=请选择存货编码=",
-          linkColumn: "cwhcode",
-          textAttr: "cinvcode",
-          width: 1100,
-          valueAttr: "cinvcode",
-          columnAttr: "invcode,cinvcode1,cinvname1,cinvstd,cuomname,ipkgqty,qty,ungeneratedstockqty",
-          header: '存货编码,客户部番,部品名称,规格型号,主计量单位,包装数量,期初库存数量,未生成条码库存数量',
-          changeColumns: [{column: "cinvcode", use: "invcode"},
-            {column: "cinvcode1", use: "cinvcode1"},
-            {column: "cinvname1", use: "cinvname1"},
-            {column: "cinvstd", use: "cinvstd"},
-            {column: "cuomname", use: "cuomname"},
-            {column: "ipkgqty", use: "ipkgqty"},
-            {column: "qty", use: "qty"},
-            {column: "ungeneratedstockqty", use: "ungeneratedstockqty"}]
-        },
-        cvencode: {
-          type: "autocomplete",
-          url: "admin/vendor/options",
-          maxLength: 100,
-          required: false,
-          placeholder: "=请选择库区编码=",
-          textAttr: "cvencode",
-          width: 300,
-          valueAttr: "cvencode",
-          columnAttr: "cvencode,cvenname",
-          header: '供应商编码,供应商名称',
-          changeColumns: [{column: "cvencode", use: "cvencode"},
-            {column: "cvenname", use: "cvenname"}]
-        },
-        batch: {
-          type: "amount",//类型
-          placeholder: "=请输入批次号=",
-          tooltip: "批次号",
-        },
-        createdate: {
-          type: "date",//类型
-          placeholder: "生产日期",
-          tooltip: "生产日期",
-        },
-        generatedStockQty: {
-          required: true,
-          type: "input",//类型
-          rule: "int",
-          placeholder: "=生成条码库存数量=",
-          tooltip:"生成条码库存数量不能为空",
-          tooltip: "",
-        },
-        reportFileName: { //标签打印模板
-          type: "select2",
-          required: true,
-          placeholder: "=标签打印模板=",
-          tooltip:"标签打印模板不能为空",
-          url: "admin/dictionary/options?key=beginningofperiod",
-          valueAttr: "sn",//sn
-          textAttr: "name"
+        index: {
+          submitAttr: "index"
         }
-      },
+      }
     };
     return editableTableOptions;
   }
@@ -396,7 +450,7 @@
   * 打印按钮
   * */
   function printButton() {
-    if (submitState!=true) {
+    if (submitState != true) {
       LayerMsgBox.alert("请先点击生成按钮，生成期初库存，再打印模板标签", 2);
       return;
     }
@@ -410,6 +464,97 @@
     $("#printnum").val("");
     let autoprint = $("#autoprint").val("");
     console.log(autoprint)
+  }
+
+  var index = #(index ?? 0);
+
+  function setChooseDialogSelectResult(data, index, type) {
+    $("#iBeforeInventoryId" + index).val(data.itemid);
+    $("#cinvcode" + index).val(data.cinvcode);
+    $("#icinvcode" + index).val(data.cinvcode);
+    $("#cInvName" + index).val(data.cinvname);//存货名称
+    $("#cinvcode1" + index).val(data.cinvcode1);//存货编码
+    $("#cuomname" + index).val(data.cuomname);//单位
+    $("#cInvAddName" + index).val(data.cinvname1);
+    $("#cInvAddCode" + index).val(data.cinvaddcode1);
+    $("#InvName" + index).val(data.cinvname2);
+    $("#iWeight" + index).val(data.iweight);
+    $("#iVendorId" + index).val(data.venid);
+    $("#cinvstd" + index).val(data.cinvstd);//规格
+    $("#iVendorName" + index).val(data.cvenname);
+    $("#ipkgqty" + index).val(data.ipkgqty);
+  }
+
+  function setWhcodeChooseDialogSelectResult(data, index, type) {
+    $("#cwhcode" + index).val(data.cwhcode);//仓库编码
+    $("#icwhcode" + index).val(data.cwhcode);//仓库编码
+    $("#cwhname" + index).val(data.cwhname);//仓库名称
+  }
+
+  function setCareacodeChooseDialogSelectResult(data, index, type) {
+    $("#careacode" + index).val(data.careacode);//库区编码
+    $("#icareacode" + index).val(data.careacode);//库区编码
+    $("#careaname" + index).val(data.careaname);//库区编码
+  }
+
+  function setCvencodeChooseDialogSelectResult(data, index, type) {
+    $("#cvencode" + index).val(data.cvencode);//供应商编码
+    $("#icvencode" + index).val(data.cvencode);//供应商编码
+    $("#cvenname" + index).val(data.cvenname);//供应商名称
+  }
+
+  function insertEmptyRow(ele, forceTrChange) {
+    var table = getJBoltTable(ele);
+    if (isOk(table)) {
+      index += 1;
+      var jboltTable = table.jboltTable("inst");
+      if (jboltTable) {
+        var action = getRealJqueryObject(ele), tr;
+        if (isOk(action)) {
+          var success = checkMasterTableId(action);
+          if (!success) {
+            return false;
+          }
+          //如果是在表格里触发的
+          if (isOk(action.closest("table[data-jbolttable]"))) {
+            tr = action.closest("tr");
+          } else if (isOk(action.closest(".jbolt_table_fixed"))) {
+            var fixtr = action.closest("tr");
+            var fixTrIndex = fixtr.index();
+            tr = jboltTable.tbody.find("tr:nth-child(" + (fixTrIndex + 1) + ")");
+          }
+        }
+        return insertRows(jboltTable, tr, {index: index}, true, forceTrChange);
+      }
+    }
+  }
+
+  function insertRows(table, tr, insertEmptyData, insertToBefore, forceTrChange) {
+    var canInsertTr = table.me.checkCanInsertNewTr(table, 1);
+    if (canInsertTr) {
+      //处理thead里的checkbox uncheck
+      table.me.processUnCheckTheadCheckbox(table);
+
+      var insertDefaultValues = table.editableOptions.insertDefaultValues;
+      if (insertDefaultValues) {
+        insertEmptyData = table.me.deepClone(insertDefaultValues);
+      }
+      var tempTr = table.me.insertRowData(table, tr, insertEmptyData, false, insertToBefore);
+      if (isOk(tempTr)) {
+        table.me.processTableIndexColumn(table);
+        table.me.processInsertRowTableListData(table, tempTr, insertEmptyData, insertToBefore);
+        table.me.initEditableHSummarys(table, tempTr);
+        table.me.processTfootSummarys(table);
+        //处理change状态
+        table.me.processNewInsertTrEditableTdsChanged(table, tempTr, insertEmptyData, forceTrChange);
+        //处理新插入的行重新设置宽度
+        table.me.resizeTrByOldWidth(table, tempTr);
+        //处理动态插入数据后的handler
+        table.me.processEditableTableAfterInsertRowHandler(table, tempTr);
+      }
+      return tempTr;
+    }
+    return false;
   }
 
 </script>

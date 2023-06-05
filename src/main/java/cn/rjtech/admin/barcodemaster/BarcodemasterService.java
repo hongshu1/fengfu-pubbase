@@ -162,15 +162,15 @@ public class BarcodemasterService extends BaseService<Barcodemaster> {
     /*
      * 传参
      * */
-    public void saveBarcodemasterModel(Barcodemaster barcodemaster, Date now, Record record) {
+    public void saveBarcodemasterModel(Barcodemaster barcodemaster, Date now) {
         //barcodemaster.setAutoid(JBoltSnowflakeKit.me.nextId());
         barcodemaster.setOrganizecode(getOrgCode());
-        barcodemaster.setSourceid(record.getStr("id"));//来源id
         //barcodemaster.setVencode();
         barcodemaster.setCreateperson(JBoltUserKit.getUserName());
         barcodemaster.setCreatedate(now);
         barcodemaster.setModifyperson(JBoltUserKit.getUserName());
         barcodemaster.setModifydate(now);
+        barcodemaster.setMemo("仓库期初");
     }
 
 }
