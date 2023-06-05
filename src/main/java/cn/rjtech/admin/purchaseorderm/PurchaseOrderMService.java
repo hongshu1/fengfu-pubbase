@@ -743,6 +743,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			// 源数量
 			BigDecimal sourceQty = record.getBigDecimal(PurchaseorderdQty.IQTY);
 			Long purchaseOrderDId = record.getLong(PurchaseorderdQty.IPURCHASEORDERDID);
+			Long iPurchaseOrderdQtyId = record.getLong(PurchaseorderdQty.IAUTOID);
 			Long inventoryId = record.getLong(PurchaseOrderD.IINVENTORYID);
 			
 			String dateStr = demandPlanDService.getDate(record.getStr(PurchaseorderdQty.IYEAR), record.getInt(PurchaseorderdQty.IMONTH), record.getInt(PurchaseorderdQty.IDATE));
@@ -752,7 +753,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			// 包装数量为空或者为0，生成一张条码，原始数量/打包数量
 			if (ObjectUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceQty.compareTo(pkgQty)<=0){
 				String barCode = purchaseOrderDBatchService.generateBarCode();
-				PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, inventoryId, planDate, sourceQty, barCode);
+				PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, iPurchaseOrderdQtyId, inventoryId, planDate, sourceQty, barCode);
 				purchaseOrderDBatchList.add(purchaseOrderDBatch);
 				continue;
 			}
@@ -763,11 +764,11 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 				String barCode = purchaseOrderDBatchService.generateBarCode();
 				if (i == count-1){
 					BigDecimal qty = sourceQty.subtract(BigDecimal.valueOf(i).multiply(pkgQty));
-					PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, inventoryId, planDate, qty, barCode);
+					PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, iPurchaseOrderdQtyId, inventoryId, planDate, qty, barCode);
 					purchaseOrderDBatchList.add(purchaseOrderDBatch);
 					break;
 				}
-				PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, inventoryId, planDate, pkgQty, barCode);
+				PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, iPurchaseOrderdQtyId, inventoryId, planDate, pkgQty, barCode);
 				purchaseOrderDBatchList.add(purchaseOrderDBatch);
 			}
 			

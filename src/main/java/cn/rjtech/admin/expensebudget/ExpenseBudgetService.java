@@ -408,19 +408,20 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 		Record dictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKeyEnum.CAREERTYPE.getValue());
 		Date cbeginDate = expenseBudget.getCbegindate();
 		Date cendDate = expenseBudget.getCenddate();
+		int nowReadRowNum = dataStartRowNum;
 		for (int i = 0; i < excelRecords.size(); i++) {
-			dataStartRowNum = dataStartRowNum+i;
+			nowReadRowNum = dataStartRowNum + i;
 			Record row = excelRecords.get(i);
 			//检验科目大类,明细科目
 			//String cHighestSubjectName = row.get(FullYearBudgetEnum.CHIGHESTSUBJECTNAME.getField());
 			String cLowestSubjectName = row.get(FullYearBudgetEnum.CLOWESTSUBJECTNAME.getField());
 			if(JBoltStringUtil.isBlank(cLowestSubjectName)){
-				errorMsg.append("第").append(dataStartRowNum+"行,").append("明细科目不能为空,请检查!<br/>");
+				errorMsg.append("第").append(nowReadRowNum+"行,").append("明细科目不能为空,请检查!<br/>");
 				continue;
 			}
 			Subjectm lsubject = subjectmService.findByName(cLowestSubjectName);
 			if(lsubject == null){
-				errorMsg.append("第").append(dataStartRowNum+"行,").append(FullYearBudgetEnum.CLOWESTSUBJECTNAME.getText()).append("在科目对照表中不存在,请检查!<br/>");
+				errorMsg.append("第").append(nowReadRowNum+"行,").append(FullYearBudgetEnum.CLOWESTSUBJECTNAME.getText()).append("在科目对照表中不存在,请检查!<br/>");
 				continue;
 			}
 			Subjectm hsubject = subjectmService.findHighestSubjectByLowestSubjectName(cLowestSubjectName);
@@ -435,7 +436,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 			//单价
 			String ipriceStr = row.getStr(FullYearBudgetEnum.IPRICE.getField());
 			if(JBoltStringUtil.isNotBlank(ipriceStr) && !NumberUtil.isNumber(ipriceStr))
-				errorMsg.append("第").append(dataStartRowNum).append("行,").append(FullYearBudgetEnum.IPRICE.getText()).append("非数字,请检查!<br/>");
+				errorMsg.append("第").append(nowReadRowNum).append("行,").append(FullYearBudgetEnum.IPRICE.getText()).append("非数字,请检查!<br/>");
 			//计划内/外
 			row.set("isscheduled",IsScheduledEnum.WITHIN_PLAN.getValue());
 			//转换费用预算项目明细
@@ -453,12 +454,12 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 				try {
 					iquantity = row.getBigDecimal("iquantity"+j);
 				} catch (Exception e) {
-					errorMsg.append("第").append(dataStartRowNum).append("行,").append(nowMonth).append("月数量不合法,请检查!<br/>");
+					errorMsg.append("第").append(nowReadRowNum).append("行,").append(nowMonth).append("月数量不合法,请检查!<br/>");
 				}
 				try {
 					iamount = row.getBigDecimal("iamount"+j);
 				} catch (Exception e) {
-					errorMsg.append("第").append(dataStartRowNum).append("行,").append(nowMonth).append("月金额不合法,请检查!<br/>");
+					errorMsg.append("第").append(nowReadRowNum).append("行,").append(nowMonth).append("月金额不合法,请检查!<br/>");
 				}
 				row.remove("iquantity"+j,"iamount"+j);
 				row.set("iquantity"+nowYear+nowMonth, iquantity);

@@ -198,6 +198,17 @@ public class DepartmentAdminController extends BaseAdminController {
         renderJsonData(personService.paginateDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
+
+    /**
+     * 下拉框选择人员数据源
+     */
+    public void selectPerson() {
+        String key = get("key");
+        Kv kv = new Kv();
+        kv.setIfNotNull("cpersonname", key);
+        renderJsonData(personService.findAll(kv));
+    }
+
     public void findPersonAll() {
         renderJsonData(personService.findAll(getKv()));
     }

@@ -755,7 +755,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 int[] capabilityArrar = new int[3];
                 List<Record> capacityList = invCapacityListMap.get(inv) != null ? invCapacityListMap.get(inv) : new ArrayList<>();
                 for (int i = 0; i < capacityList.size(); i++) {
-                    String cWorkShiftCode = capacityList.get(i).getStr("capacityList") != null ? capacityList.get(i).getStr("capacityList") : "";
+                    String cWorkShiftCode = capacityList.get(i).getStr("cWorkShiftCode") != null ? capacityList.get(i).getStr("cWorkShiftCode") : "";
                     int iCapacity = capacityList.get(i).getInt("iCapacity");
                     if (cWorkShiftCode.contains("1S")){
                         capabilityArrar[0] = iCapacity;
@@ -859,7 +859,11 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
                     BigDecimal sumQty = BigDecimal.ZERO;
                     for (int j = 1; j <= iInnerInStockDays; j++) {
-                        BigDecimal qty = BigDecimal.valueOf(invPlan[i+j]);
+                        int nextDay = i + j;
+                        if (nextDay >= scheduDateList.size()){
+                            continue;
+                        }
+                        BigDecimal qty = BigDecimal.valueOf(invPlan[nextDay]);
                         sumQty = sumQty.add(qty);
                     }
                     BigDecimal avgQty = sumQty.divide(BigDecimal.valueOf(iInnerInStockDays),2,BigDecimal.ROUND_HALF_DOWN);

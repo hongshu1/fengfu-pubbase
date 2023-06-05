@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -33,6 +32,8 @@ public abstract class BasePurchaseOrderDBatch<M extends BasePurchaseOrderDBatch<
     public static final String CSOURCEBARCODE = "cSourceBarcode";
     /**拆分次数*/
     public static final String CSEQ = "cSeq";
+    /**采购明细数量记录ID*/
+    public static final String IPURCHASEORDERDQTYID = "iPurchaseOrderdQtyId";
 	/**
 	 * 主键ID
 	 */
@@ -146,7 +147,7 @@ public abstract class BasePurchaseOrderDBatch<M extends BasePurchaseOrderDBatch<
 	/**
 	 * 数量
 	 */
-	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="数量", required=true, maxLength=10, fixed=0, order=7)
+	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="数量", required=true, maxLength=18, fixed=2, order=7)
 	@JSONField(name = "iqty")
 	public java.math.BigDecimal getIQty() {
 		return getBigDecimal("iQty");
@@ -218,6 +219,23 @@ public abstract class BasePurchaseOrderDBatch<M extends BasePurchaseOrderDBatch<
 	@JSONField(name = "cseq")
 	public java.lang.String getCSeq() {
 		return getStr("cSeq");
+	}
+
+	/**
+	 * 采购明细数量记录ID
+	 */
+	public M setIPurchaseOrderdQtyId(java.lang.Long iPurchaseOrderdQtyId) {
+		set("iPurchaseOrderdQtyId", iPurchaseOrderdQtyId);
+		return (M)this;
+	}
+
+	/**
+	 * 采购明细数量记录ID
+	 */
+	@JBoltField(name="ipurchaseorderdqtyid" ,columnName="iPurchaseOrderdQtyId",type="Long", remark="采购明细数量记录ID", required=false, maxLength=19, fixed=0, order=12)
+	@JSONField(name = "ipurchaseorderdqtyid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIPurchaseOrderdQtyId() {
+		return getLong("iPurchaseOrderdQtyId");
 	}
 
 }
