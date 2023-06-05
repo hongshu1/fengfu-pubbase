@@ -132,10 +132,27 @@ public class DepartmentService extends BaseService<Department> {
         if (department == null || notOk(department.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
+
+        short depGrade = 0;
+        Long iPid = department.getIPid();
+        if (ObjectUtil.isNotNull(iPid)){
+            Department pDepartment = findById(iPid);
+            if(pDepartment.getIDepGrade()==null){
+                pDepartment.setIDepGrade(depGrade);
+            }
+            depGrade = (short)(pDepartment.getIDepGrade()+1);
+            // 当前添加的父级是末级，更改状态
+            if (pDepartment.getBDepEnd()){
+                pDepartment.setBDepEnd(false);
+            }
+        }
+        boolean isDepEnd = true;
+        department.setBDepEnd(isDepEnd);
         verifyData(department);
         department.setIUpdateBy(JBoltUserKit.getUserId());
         department.setCUpdateName(JBoltUserKit.getUserName());
         department.setDUpdateTime(DateUtil.date());
+        department.setIDepGrade(depGrade);
         //if(existsName(department.getName(), department.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = department.update();
         if (success) {
