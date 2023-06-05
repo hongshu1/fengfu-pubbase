@@ -129,6 +129,7 @@ LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
+LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode
 where a.isEffective = '1'
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
@@ -138,8 +139,7 @@ where a.isEffective = '1'
 	#end
 
 		AND b.cOrgCode = #(orgCode)
-
-
+        AND pd.AutoID IS NULL
 	#if(vencode)
 		and m.iVendorId = #para(vencode)
 	#end
