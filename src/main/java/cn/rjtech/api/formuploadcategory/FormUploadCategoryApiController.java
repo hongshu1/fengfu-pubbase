@@ -1,5 +1,6 @@
 package cn.rjtech.api.formuploadcategory;
 
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.formuploadcategory.FormUploadCategoryVo;
 import com.jfinal.aop.Inject;
@@ -11,6 +12,7 @@ import io.github.yedaxia.apidocs.ApiDoc;
  * @author yjllzy
  */
 @ApiDoc
+@UnCheck
 public class FormUploadCategoryApiController extends BaseApiController {
 
     @Inject
