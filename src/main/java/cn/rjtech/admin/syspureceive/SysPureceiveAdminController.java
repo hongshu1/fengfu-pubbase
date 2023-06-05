@@ -21,6 +21,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 采购收料单
@@ -191,6 +192,44 @@ public class SysPureceiveAdminController extends BaseAdminController {
         ValidationUtils.notBlank(barcode, "请扫码");
 
         renderJsonData(service.barcode(Kv.by("barcode", barcode)));
+    }
+
+    /**
+     * 提审
+     */
+    public void submit(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.validateId(iautoid, "id");
+
+        renderJson(service.submit(iautoid));
+    }
+
+    /**
+     * 撤回已提审
+     */
+    public void withdraw(Long iAutoId) {
+        ValidationUtils.validateId(iAutoId, "iAutoId");
+
+        // renderJson(service.withdraw(iAutoId));
+    }
+
+    /**
+     * 审批通过
+     */
+    public void approve(String ids) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+
+        // renderJson(service.approve(ids));
+    }
+
+    /**
+     * 审批不通过
+     */
+    public void reject(String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            renderFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        // renderJson(service.reject(ids))
     }
 
 }

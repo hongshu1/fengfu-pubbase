@@ -13,6 +13,7 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
@@ -47,6 +48,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     private VendorService vendorservice;
     @Inject
     private WarehouseService warehouseservice;
+    @Inject
+    private FormApprovalService formApprovalService;
     @Inject
     private RcvDocQcFormMService rcvdocqcformmservice;
     @Inject
@@ -706,5 +709,33 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         }
     }
 
+    /**
+     * 更新状态
+     *
+     * @param autoId      主键ID
+     * @param beforeState 审批前状态
+     * @param afterState  审批后状态
+     * @return true, 更新成功
+     */
+    private boolean update(String autoId, String beforeState, String afterState) {
+        return update("UPDATE T_Sys_PUReceive SET State = ? WHERE autoid = ? AND State = ? ", afterState, autoId, beforeState) > 0;
+    }
+
+    /**
+     * 提审
+     */
+    public Ret submit(Long iautoid) {
+        tx(() -> {
+
+            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+
+            // 更新状态
+
+            return true;
+        });
+        return SUCCESS;
+    }
+    
 }
 
