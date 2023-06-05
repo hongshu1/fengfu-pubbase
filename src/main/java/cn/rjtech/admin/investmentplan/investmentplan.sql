@@ -287,18 +287,18 @@ EXEC	[dbo].[P_InvestmentPlanGroupSummary]
 #sql("findInvestmentPlanItemSituationDatas")
 select * from (
 select d.cdepname,ip.iBudgetType,ip.cdepcode,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iInvestmentType') iInvestmentType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iCareerType') iCareerType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iInvestmentDistinction') iInvestmentDistinction,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iInvestmentType') iInvestmentType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iCareerType') iCareerType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iInvestmentDistinction') iInvestmentDistinction,
 	ipi.cplanno,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cItemName') cItemName,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cEditType') cEditType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iQuantity') iQuantity,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cUnit') cUnit,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cAssetType') cAssetType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iItemYear') iItemYear,
-	convert(int,#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'isScheduled')) isScheduled,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iTotalAmountPlan') iTotalAmountPlan,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cItemName') cItemName,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cEditType') cEditType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iQuantity') iQuantity,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cUnit') cUnit,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cAssetType') cAssetType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iItemYear') iItemYear,
+	convert(int,#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'isScheduled')) isScheduled,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iTotalAmountPlan') iTotalAmountPlan,
 	1 ibudgettype1,ipi.citemtype,
 	concat(ip.ibudgetyear,'年',jd_ibt.name) cbudgettypedesc,
 	null previousamounttotal,
@@ -315,28 +315,28 @@ select d.cdepname,ip.iBudgetType,ip.cdepcode,
 			,null 'itotal#(yearnum)'
 		#end
 	#end
-from #(AppConfig.getMesDbName()).dbo.pl_investment_plan_item ipi 
-	inner join #(AppConfig.getMesDbName()).dbo.pl_investment_plan ip ON ipi.iplanid=ip.iautoid 
-	left JOIN #(AppConfig.getMesDbName()).dbo.pl_investment_plan_itemd ipid ON ipid.iplanitemid=ipi.iautoid 
-	left join #(AppConfig.getJBoltDbName()).dbo.jb_dictionary jd_pp on jd_pp.sn=ipid.cperiodprogress and jd_pp.type_key='period_progress'
-	left join #(AppConfig.getJBoltDbName()).dbo.jb_dictionary jd_ibt on jd_ibt.sn=ip.ibudgettype and jd_ibt.type_key='investment_budget_type'
+from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi 
+	inner join #(getMomdataDbName()).dbo.pl_investment_plan ip ON ipi.iplanid=ip.iautoid 
+	left JOIN #(getMomdataDbName()).dbo.pl_investment_plan_itemd ipid ON ipid.iplanitemid=ipi.iautoid 
+	left join #(getBaseDbName()).dbo.jb_dictionary jd_pp on jd_pp.sn=ipid.cperiodprogress and jd_pp.type_key='period_progress'
+	left join #(getBaseDbName()).dbo.jb_dictionary jd_ibt on jd_ibt.sn=ip.ibudgettype and jd_ibt.type_key='investment_budget_type'
 	left join #(AppConfig.getU8DbName()).dbo.department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3 and convert(date,ipid.dPeriodDate) >= convert(date,#para(dstartdate)) and convert(date,ipid.dPeriodDate) <= convert(date,#para(denddate))
 	GROUP BY ip.cdepcode,d.cdepname,ip.ibudgetyear,ip.iBudgetType,ipi.cplanno,ipi.citemtype,jd_ibt.name
 	union all
 	select d.cdepname,ip.iBudgetType,ip.cdepcode,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iInvestmentType') iInvestmentType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iCareerType') iCareerType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iInvestmentDistinction') iInvestmentDistinction,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iInvestmentType') iInvestmentType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iCareerType') iCareerType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iInvestmentDistinction') iInvestmentDistinction,
 	ipi.cplanno,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cItemName') cItemName,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cEditType') cEditType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iQuantity') iQuantity,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cUnit') cUnit,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cAssetType') cAssetType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iItemYear') iItemYear,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'isScheduled') isScheduled,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iTotalAmountPlan') iTotalAmountPlan,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cItemName') cItemName,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cEditType') cEditType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iQuantity') iQuantity,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cUnit') cUnit,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cAssetType') cAssetType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iItemYear') iItemYear,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'isScheduled') isScheduled,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iTotalAmountPlan') iTotalAmountPlan,
 	2 ibudgettype1,ipi.citemtype,
 	concat(ip.ibudgetyear,'年',jd_ibt.name) cbudgettypedesc,
 	convert(varchar(20),sum(isnull(case when ipid.dPeriodDate < convert(date,#para(dstartdate)) then ipid.iamount end,0))) previousamounttotal,
@@ -353,29 +353,29 @@ WHERE 1=1 and ip.iEffectiveStatus != 3 and convert(date,ipid.dPeriodDate) >= con
 			,convert(varchar(20),sum(isnull(case when datepart(year,ipid.dPeriodDate) = datepart(year,dateadd(year,#(for.index),convert(date,#para(dstartdate)))) then ipid.iamount end,0))) 'itotal#(yearnum)'
 		#end
 	#end
-from #(AppConfig.getMesDbName()).dbo.pl_investment_plan_item ipi 
-	inner join #(AppConfig.getMesDbName()).dbo.pl_investment_plan ip ON ipi.iplanid=ip.iautoid 
-	left JOIN #(AppConfig.getMesDbName()).dbo.pl_investment_plan_itemd ipid ON ipid.iplanitemid=ipi.iautoid 
-	left join #(AppConfig.getJBoltDbName()).dbo.jb_dictionary jd_pp on jd_pp.sn=ipid.cperiodprogress and jd_pp.type_key='period_progress'
-	left join #(AppConfig.getJBoltDbName()).dbo.jb_dictionary jd_ibt on jd_ibt.sn=ip.ibudgettype and jd_ibt.type_key='investment_budget_type'
+from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi 
+	inner join #(getMomdataDbName()).dbo.pl_investment_plan ip ON ipi.iplanid=ip.iautoid 
+	left JOIN #(getMomdataDbName()).dbo.pl_investment_plan_itemd ipid ON ipid.iplanitemid=ipi.iautoid 
+	left join #(getBaseDbName()).dbo.jb_dictionary jd_pp on jd_pp.sn=ipid.cperiodprogress and jd_pp.type_key='period_progress'
+	left join #(getBaseDbName()).dbo.jb_dictionary jd_ibt on jd_ibt.sn=ip.ibudgettype and jd_ibt.type_key='investment_budget_type'
 	left join #(AppConfig.getU8DbName()).dbo.department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3
 	GROUP BY ip.cdepcode,d.cdepname,ip.ibudgetyear,ip.iBudgetType,ipi.cplanno,ipi.citemtype,jd_ibt.name
 	union all
 	select d.cdepname,ip.cdepcode,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iBudgetType') iBudgetType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iInvestmentType') iInvestmentType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iCareerType') iCareerType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iInvestmentDistinction') iInvestmentDistinction,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iBudgetType') iBudgetType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iInvestmentType') iInvestmentType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iCareerType') iCareerType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iInvestmentDistinction') iInvestmentDistinction,
 	ipi.cplanno,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cItemName') cItemName,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cEditType') cEditType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iQuantity') iQuantity,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cUnit') cUnit,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cAssetType') cAssetType,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iItemYear') iItemYear,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'isScheduled') isScheduled,
-	#(AppConfig.getMesDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iTotalAmountPlan') iTotalAmountPlan,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cItemName') cItemName,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cEditType') cEditType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iQuantity') iQuantity,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cUnit') cUnit,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'cAssetType') cAssetType,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iItemYear') iItemYear,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'isScheduled') isScheduled,
+	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iTotalAmountPlan') iTotalAmountPlan,
 	2 ibudgettype1,'3' citemtype,
 	'实绩' cbudgettypedesc,
 	convert(varchar(20),sum(#(AppConfig.getU8DbName()).dbo.PL_GetInvestmentPlanActualDatasByDateCompare(ipi.iautoid,convert(date,#para(dstartdate)),1))) previousamounttotal,
@@ -390,8 +390,8 @@ WHERE 1=1 and ip.iEffectiveStatus != 3
 			,convert(varchar(20),sum(#(AppConfig.getU8DbName()).dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ipi.iautoid,datepart(year,dateadd(month,#(for.index),convert(date,#para(dstartdate)))),null))) 'itotal#(yearnum)'
 		#end
 	#end
-from #(AppConfig.getMesDbName()).dbo.pl_investment_plan_item ipi 
-	inner join #(AppConfig.getMesDbName()).dbo.pl_investment_plan ip ON ipi.iplanid=ip.iautoid 
+from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi 
+	inner join #(getMomdataDbName()).dbo.pl_investment_plan ip ON ipi.iplanid=ip.iautoid 
 	left join #(AppConfig.getU8DbName()).dbo.department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3
 	GROUP BY ipi.cplanno,ip.cdepcode,d.cdepname

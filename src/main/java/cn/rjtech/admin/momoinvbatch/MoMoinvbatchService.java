@@ -12,6 +12,8 @@ import cn.rjtech.admin.workshiftm.WorkshiftmService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.DateUtils;
+import cn.rjtech.util.Util;
+import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -344,12 +346,13 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 	  ModocResVo modocResVo=getModoc(dbMoMoinvbatch.getIMoDocId());
 	  //处理返回打印数据
 	  int sum=subPrintReqVo.getIqty().intValue();
-	  //SubPrintReqVo subPrintReqVo1;
+	  SubPrintReqVo subPrintReqVo1;
 	  List<SubPrintReqVo> subPrintReqVos=new ArrayList<>();
 	  for(int i=0;i<sum;i++){
-		  SubPrintReqVo  subPrintReqVo1=new SubPrintReqVo();
+		    subPrintReqVo1=new SubPrintReqVo();
 		  subPrintReqVo1.setCbarcode(dbMoMoinvbatch.getCBarcode()+"-"+dbMoMoinvbatch.getCVersion());
 		  subPrintReqVo1.setNum("0"+(i+1));
+		  subPrintReqVo1.setTotal(sum);
 		  subPrintReqVo1.setWorkheader(subPrintReqVo.getWorkheader());
 		  subPrintReqVo1.setJobname(subPrintReqVo.getJobname());
 		  subPrintReqVo1.setCinvname1(modocResVo.getCinvname1());
@@ -358,6 +361,7 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 		  subPrintReqVo1.setCworkshiftname(modocResVo.getCworkshiftname());
 		  subPrintReqVo1.setProduceddate(modocResVo.getProduceddate());
 		  subPrintReqVo1.setPlaniqty(modocResVo.getPlaniqty());
+		  subPrintReqVo1.setMemo(subPrintReqVo.getMemo());
 		  subPrintReqVos.add(subPrintReqVo1);
 	  }
 
@@ -365,6 +369,40 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
    return successWithData(subPrintReqVos);
 
   }
+	public Ret subListPrint(String ids, Long imodocid, String workleader, String jobname) {
+		if(StringUtils.isBlank(ids)){
+			return  fail("未选中数据");
+		}
+		if(notOk(imodocid)){
+			return  fail("缺少工单ID");
+		}
+		ModocResVo modocResVo=getModoc(imodocid);
+		List<MoMoinvbatch> moMoinvbatches=find("SELECT * FROM Mo_MoInvBatch where iAutoId in "+ Util.getInSqlByIds(ids));
+		SubPrintReqVo subPrintReqVo1;
+		List<SubPrintReqVo> subPrintReqVos=new ArrayList<>();
+		if(!moMoinvbatches.isEmpty()){
+			for(MoMoinvbatch moMoinvbatch:moMoinvbatches){
+				int sum=moMoinvbatch.getIQty().intValue();
+				for(int i=0;i<sum;i++){
+					subPrintReqVo1=new SubPrintReqVo();
+					subPrintReqVo1.setCbarcode(moMoinvbatch.getCBarcode()+"-"+moMoinvbatch.getCVersion());
+					subPrintReqVo1.setNum("0"+(i+1));
+					subPrintReqVo1.setTotal(sum);
+					subPrintReqVo1.setWorkheader(workleader);
+					subPrintReqVo1.setJobname(jobname);
+					subPrintReqVo1.setCinvname1(modocResVo.getCinvname1());
+					subPrintReqVo1.setCinvcode1(modocResVo.getCinvcode1());
+					subPrintReqVo1.setCworkname(modocResVo.getCworkname());
+					subPrintReqVo1.setCworkshiftname(modocResVo.getCworkshiftname());
+					subPrintReqVo1.setProduceddate(modocResVo.getProduceddate());
+					subPrintReqVo1.setPlaniqty(modocResVo.getPlaniqty());
+
+					subPrintReqVos.add(subPrintReqVo1);
+				}
+			}
+		}
+		return successWithData(subPrintReqVos);
+	}
 
 	/**
 	 * 获取工单上的信息
@@ -418,4 +456,78 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 		}
 	   return modocResVo;
 	}
+
+   public  Ret printdataList(){
+	   SubPrintReqVo subPrintReqVo1;
+	   List<SubPrintReqVo> subPrintReqVos=new ArrayList<>();
+	   for(int i=0;i<10;i++){
+		   subPrintReqVo1=new SubPrintReqVo();
+		   subPrintReqVo1.setCbarcode("11111");
+		   subPrintReqVo1.setNum("0"+(i+1));
+		   subPrintReqVo1.setTotal(10);
+		   subPrintReqVo1.setWorkheader("111");
+		   subPrintReqVo1.setJobname("jobname");
+		   subPrintReqVo1.setCinvname1("ddd");
+		   subPrintReqVo1.setCinvcode1("ddd");
+		   subPrintReqVo1.setCworkname("ddd");
+		   subPrintReqVo1.setCworkshiftname("dddd");
+		   subPrintReqVo1.setProduceddate("ddd");
+		   subPrintReqVo1.setPlaniqty(10);
+		   subPrintReqVo1.setMemo("备注");
+		   subPrintReqVos.add(subPrintReqVo1);
+	   }
+	   return successWithData(subPrintReqVos);
+   }
+
+    public Ret updateStatus(Long iautoid, BigDecimal iqty) {
+		if(notOk(iautoid)){
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		MoMoinvbatch dbMoMoinvbatch=findById(iautoid);
+		if(dbMoMoinvbatch==null) {
+			return fail(JBoltMsg.DATA_NOT_EXIST);}
+		MoDoc moDoc = moDocService.findById(dbMoMoinvbatch.getIMoDocId());
+		if (moDoc == null) {
+			return fail("工单信息不存在");
+		}
+
+		if(notOk(iqty)){
+			return fail("缺少数量");
+		}
+		if(iqty.compareTo(dbMoMoinvbatch.getIQty())==1){
+			return fail("不允许超原数量");
+		}
+		if(iqty.compareTo(dbMoMoinvbatch.getIQty())==-1) {
+           BigDecimal a=dbMoMoinvbatch.getIQty().subtract(iqty);
+		    int num=a.intValue();
+			MoMoinvbatch moMoinvbatch;
+			Date now=new Date();
+
+
+				moMoinvbatch = new MoMoinvbatch();
+				moMoinvbatch.setIOrgId(getOrgId());
+				moMoinvbatch.setCOrgCode(getOrgCode());
+				moMoinvbatch.setCOrgName(getOrgName());
+				moMoinvbatch.setIMoDocId(moDoc.getIAutoId());
+				//moMoinvbatch.seti
+				String barcode = BillNoUtils.genCassiGnOrderNo(getOrgId(), "CP", 7);
+				moMoinvbatch.setISeq(1); //X
+
+				moMoinvbatch.setIQty(a);
+				moMoinvbatch.setCBarcode(barcode);
+				moMoinvbatch.setIPrintStatus(1);
+				moMoinvbatch.setIStatus(0);
+				moMoinvbatch.setICreateBy(JBoltUserKit.getUserId());
+				moMoinvbatch.setCCreateName(JBoltUserKit.getUserUserName());
+				moMoinvbatch.setDCreateTime(now);
+				moMoinvbatch.setIUpdateBy(JBoltUserKit.getUserId());
+				moMoinvbatch.setCUpdateName(JBoltUserKit.getUserName());
+				moMoinvbatch.setDUpdateTime(now);
+				moMoinvbatch.setCVersion("00");//版本号
+				moMoinvbatch.setIsEffective(true);
+				moMoinvbatch.save();
+
+		}
+		return  SUCCESS;
+    }
 }
