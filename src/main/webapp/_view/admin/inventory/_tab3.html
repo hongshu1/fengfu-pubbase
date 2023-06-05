@@ -2,14 +2,14 @@
   <div class="py-2" style="padding:.5rem 0rem;">
     <!--<span class="py-1"><strong>信息</strong></span>-->
   </div>
-  <input type="hidden" name="inventorymfginfo.iautoid" value="#(inventorymfginfo.iautoid??)"/>
+  <input type="hidden" name="inventorymfginfo.iAutoId" value="#(inventorymfginfo.iautoid??)"/>
   <div class="row">
     <div class="col-3">
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">生产单价</label>
         <div class="col">
           <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
-                 placeholder="0.00" maxlength="24" name="inventorymfginfo.imfgprice"
+                 placeholder="0.00" maxlength="24" name="inventorymfginfo.iMfgPrice"
                  value="#(inventorymfginfo.imfgprice??)"/>
         </div>
       </div>
@@ -19,7 +19,7 @@
         <label class="col-sm-3 col-form-label">生产提前期(天)</label>
         <div class="col">
           <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="0"
-                 maxlength="255" name="inventorymfginfo.cprodadvance" value="#(inventorymfginfo.cprodadvance??)"/>
+                 maxlength="255" name="inventorymfginfo.cProdAdvance" value="#(inventorymfginfo.cprodadvance??)"/>
         </div>
       </div>
     </div>
@@ -29,7 +29,7 @@
         <label class="col-sm-3 col-form-label">生产工作日历</label>
         <div class="col">
           <select class="form-control" data-tips="请选择生产日历" data-url="admin/dictionary/options?key=prodcalendar_type"
-                  name="inventorymfginfo.cprodcalendartypesn" data-autoload data-text="=请选择生产日历=" data-value-attr="sn"
+                  name="inventorymfginfo.cProdCalendarTypeSn" data-autoload data-text="=请选择生产日历=" data-value-attr="sn"
                   data-value=""
                   data-select="#(inventorymfginfo.cprodcalendartypesn??)"></select>
         </div>
@@ -41,7 +41,7 @@
         <label class="col-sm-3 col-form-label">出货工作日历</label>
         <div class="col">
           <select class="form-control" data-tips="请选择出货日历" data-url="admin/dictionary/options?key=prodcalendar_type"
-                  name="inventorymfginfo.csupplycalendartypesn" data-autoload data-text="=请选择出货日历=" data-value-attr="sn"
+                  name="inventorymfginfo.cSupplyCalendarTypeSn" data-autoload data-text="=请选择出货日历=" data-value-attr="sn"
                   data-value=""
                   data-select="#(inventorymfginfo.csupplycalendartypesn??)"></select>
         </div>
@@ -66,7 +66,7 @@
         <label class="col-sm-3 col-form-label">SPM(计划时间)</label>
         <div class="col">
           <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="0"
-                 maxlength="255" name="inventorymfginfo.ispm" value="#(inventorymfginfo.ispm??)"/>
+                 maxlength="255" name="inventorymfginfo.cSpm" value="#(inventorymfginfo.cspm??)"/>
         </div>
       </div>
     </div>
@@ -78,7 +78,7 @@
           <!--                            name="inventorymfginfo.iPurchasePeriod" data-autoload data-text="=请选择采购周期=" data-value-attr="sn" data-value=""-->
           <!--                            data-select="#(inventorymfginfo.ipurchaseperiod??)" ></select>-->
           <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="0"
-                 maxlength="255" name="inventorymfginfo.ipurchaseperiod" value="#(inventorymfginfo.ipurchaseperiod??)"/>
+                 maxlength="255" name="inventorymfginfo.iPurchasePeriod" value="#(inventorymfginfo.ipurchaseperiod??)"/>
         </div>
       </div>
     </div>
