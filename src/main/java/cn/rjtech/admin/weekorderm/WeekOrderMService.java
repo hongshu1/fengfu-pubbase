@@ -25,6 +25,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -268,7 +269,13 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         weekOrderM.save();
 
         // 保存明细
-        List<WeekOrderD> save = jBoltTable.getSaveBeanList(WeekOrderD.class);
+        List<WeekOrderD> save = new ArrayList<>();
+        try {
+            save = jBoltTable.getSaveBeanList(WeekOrderD.class);
+        }
+        catch (Exception e) {
+            ValidationUtils.isTrue(false, "周间客户订单不合法,请检查订单数据!");
+        }
         ValidationUtils.notEmpty(save, JBoltMsg.PARAM_ERROR);
         
         saveDs(save, weekOrderM.getIAutoId());
@@ -284,13 +291,16 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         weekOrderM.setDUpdateTime(now);
         weekOrderM.setIUpdateBy(JBoltUserKit.getUserId());
         ValidationUtils.isTrue(weekOrderM.update(), ErrorMsg.UPDATE_FAILED);
-
-        List<WeekOrderD> save = jBoltTable.getSaveBeanList(WeekOrderD.class);
-        if (CollUtil.isNotEmpty(save)) {
-            saveDs(save, weekOrderM.getIAutoId());
+        try {
+            List<WeekOrderD> save = jBoltTable.getSaveBeanList(WeekOrderD.class);
+            if (CollUtil.isNotEmpty(save)) {
+                saveDs(save, weekOrderM.getIAutoId());
+            }
+            List<WeekOrderD> updateBeanList = jBoltTable.getUpdateBeanList(WeekOrderD.class);
+            updateDs(updateBeanList);
+        } catch (Exception e) {
+            ValidationUtils.isTrue(false, "周间客户订单不合法,请检查订单数据!");
         }
-        List<WeekOrderD> updateBeanList = jBoltTable.getUpdateBeanList(WeekOrderD.class);
-        updateDs(updateBeanList);
     }
 
     private void saveDs(List<WeekOrderD> save, long iweekordermid) {
