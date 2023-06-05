@@ -142,4 +142,25 @@ public class WeekOrderMAdminController extends BaseAdminController {
         renderJson(service.closeWeekOrder(iAutoId));
     }
 
+    /**
+     * 调整计划时间
+     */
+    public void updateCplanTime() {
+        render("update_cplan_time.html");
+    }
+
+    /**
+     * 调整计划时间数据源
+     */
+    public void updateCplanTimeDatas(){
+        renderJsonData(service.updateCplanTimeDatas(getPageNumber(), getPageSize(), getKv()));
+    }
+
+    /**
+     * 调整计划时间下一步
+     */
+    public void updateCplanTimeNext()
+    {
+        render("update_cplan_time_next.html");
+    }
 }

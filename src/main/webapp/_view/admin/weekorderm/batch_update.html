@@ -1,0 +1,46 @@
+<div class="jbolt_page_content">
+    <script type="text/template" id="batch_update_demotpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="删除"
+                   data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+            </td>
+            <td>${data.dplanaogdate,'yyyy-MM-dd'|date}</td>
+            <td>${data.cplanaogtime}</td>
+            <td>${data.updatedplanaogdate,'yyyy-MM-dd'|date}</td>
+            <td>${data.updatecplanaogtime}</td>
+        </tr>
+        {@/each}
+    </script>
+
+    <div class="jbolt_table_toolbar" id="batch_update_toolbar_#(pageId)">
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button onclick="jboltTableAppendEmptyRow('batch_update_jbolt_table_#(pageId)')" class="btn btn-primary btn-xs">添加行</button>
+        </div>
+    </div>
+
+    <table class="jbolt_table thead_font_normal table-bordered table-center"
+           id="batch_update_jbolt_table_#(pageId)"
+           data-jbolttable
+           data-column-resize="true"
+           data-tfoot-fixed="true"
+           data-rowtpl="batch_update_demotpl_#(pageId)"
+           data-toolbar="batch_update_toolbar_#(pageId)"
+           data-editable="true"
+           data-editable-option="getEditableTableOptions_#(pageId)"
+           data-height="fill"
+    >
+        <thead>
+        <tr>
+            <th data-width="60" data-column="index">序号</th>
+            <th data-width="150">操作</th>
+            <th data-width="160" data-column="dplanaogdate">计划日期</th>
+            <th data-width="160" data-column="cplanaogtime">计划时间</th>
+            <th data-width="160" data-column="updatedplanaogdate">调整日期</th>
+            <th data-width="160" data-column="updatecplanaogtime">调整时间</th>
+        </tr>
+        </thead>
+    </table>
+</div>
