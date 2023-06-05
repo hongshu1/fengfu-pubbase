@@ -14,7 +14,9 @@ import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
+import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
+import cn.rjtech.model.momdata.base.BaseWeekOrderD;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -266,7 +268,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         weekOrderM.save();
 
         // 保存明细
-        List<Record> save = jBoltTable.getSaveRecordList();
+        List<WeekOrderD> save = jBoltTable.getSaveBeanList(WeekOrderD.class);
         ValidationUtils.notEmpty(save, JBoltMsg.PARAM_ERROR);
         
         saveDs(save, weekOrderM.getIAutoId());
@@ -283,26 +285,26 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         weekOrderM.setIUpdateBy(JBoltUserKit.getUserId());
         ValidationUtils.isTrue(weekOrderM.update(), ErrorMsg.UPDATE_FAILED);
 
-        List<Record> save = jBoltTable.getSaveRecordList();
+        List<WeekOrderD> save = jBoltTable.getSaveBeanList(WeekOrderD.class);
         if (CollUtil.isNotEmpty(save)) {
             saveDs(save, weekOrderM.getIAutoId());
         }
-
-        updateDs(jBoltTable.getUpdateRecordList());
+        List<WeekOrderD> updateBeanList = jBoltTable.getUpdateBeanList(WeekOrderD.class);
+        updateDs(updateBeanList);
     }
 
-    private void saveDs(List<Record> save, long iweekordermid) {
-        for (Record row : save) {
+    private void saveDs(List<WeekOrderD> save, long iweekordermid) {
+        for (BaseWeekOrderD row : save) {
             row.set("IWeekOrderMid", iweekordermid)
                     .set("iautoid", JBoltSnowflakeKit.me.nextId())
                     .set("isdeleted", ZERO_STR);
         }
-        weekOrderDService.batchSaveRecords(save);
+        weekOrderDService.batchSave(save);
     }
 
-    private void updateDs(List<Record> update) {
+    private void updateDs(List<WeekOrderD> update) {
         if (CollUtil.isNotEmpty(update)) {
-            weekOrderDService.batchUpdateRecords(update);
+            weekOrderDService.batchUpdate(update);
         }
     }
 
