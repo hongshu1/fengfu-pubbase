@@ -480,7 +480,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public Record barcode(Kv kv) {
         Record first = dbTemplate("syspureceive.barcode", kv).findFirst();
         if (null == first) {
-            ValidationUtils.assertNull(false, "未查到条码为：" + kv.getStr("barcode") + "的数据");
+            ValidationUtils.assertNull(false, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入");
         }
         return first;
     }
