@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.core.base.JBoltMsg;
@@ -79,7 +80,9 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
      */
     public Page<Record> datas(Integer pageNumber, Integer pageSize, Kv kv) {
         Page<Record> paginate = dbTemplate("warehousebeginofperiod.datas", kv).paginate(pageNumber, pageSize);
-        for (Record record : paginate.getList()) {
+        //去重
+        List<Record> list = removeDuplicate(paginate.getList());
+        for (Record record : list) {
             List<Record> records = findGeneratedstockqtyByCodes(kv, record);
             BigDecimal generatedstockqty = records.stream().map(e -> e.getBigDecimal("qty"))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -91,7 +94,19 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             record.set("generatedstockqty", generatedstockqty);//已生成条码库存数量
             record.set("availablestockqty", records.size());//可用条码数
         }
+        paginate.setList(list);
         return paginate;
+    }
+
+    public static List<Record> removeDuplicate(List<Record> list) {
+        ArrayList<Record> listTemp = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            List<String> masid = listTemp.stream().map(e -> e.getStr("masid")).collect(Collectors.toList());
+            if (!masid.contains(list.get(i).getStr("masid"))) {
+                listTemp.add(list.get(i));
+            }
+        }
+        return listTemp;
     }
 
     public List<Record> findGeneratedstockqtyByCodes(Kv kv, Record record) {
@@ -233,8 +248,8 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         List<Kv> kvList = JSON.parseArray(datas, Kv.class);
 
         String barcode = checkByBarcode(kvList);
-        if (StringUtils.isNotBlank(barcode)){
-            fail(barcode+"：已存在此条码，不能重复");
+        if (StringUtils.isNotBlank(barcode)) {
+            fail(barcode + "：已存在此条码，不能重复");
             return ret(false);
         }
 
@@ -293,11 +308,11 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         scanLogService.save(scanLog);
     }
 
-    public String checkByBarcode(List<Kv> kvList){
+    public String checkByBarcode(List<Kv> kvList) {
         //条码不能重复
         for (Kv kv : kvList) {
             Barcodedetail findbyBarcode = barcodedetailService.findbyBarcode(kv.getStr("barcode"));
-            if (null != findbyBarcode){
+            if (null != findbyBarcode) {
                 return findbyBarcode.getBarcode();
             }
         }
