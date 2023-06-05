@@ -1,6 +1,5 @@
-package cn.rjtech.admin.enumvals;
+package cn.rjtech.admin.formextendfields;
 
-import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -9,23 +8,24 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.EnumVals;
+import cn.rjtech.model.momdata.FormExtendFields;
 /**
- * 系统管理-枚举值
- * @ClassName: EnumValsAdminController
+ * 系统管理-拓展字段配置表
+ * @ClassName: FormExtendFieldsAdminController
  * @author: 佛山市瑞杰科技有限公司
- * @date: 2023-05-22 09:35
+ * @date: 2023-06-01 11:37
  */
-@CheckPermission(PermissionKey.ENUM_VALS)
+@CheckPermission(PermissionKey.FORM_EXTEND_FIELDS)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
-@Path(value = "/admin/enumVals", viewPath = "/_view/admin/enumvals")
-public class EnumValsAdminController extends BaseAdminController {
+@Path(value = "/admin/formExtendFields", viewPath = "/_view/admin/formextendfields")
+public class FormExtendFieldsAdminController extends BaseAdminController {
 
 	@Inject
-	private EnumValsService service;
+	private FormExtendFieldsService service;
    /**
 	* 首页
 	*/
@@ -36,7 +36,7 @@ public class EnumValsAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getLong("iEnumTypeId")));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getLong("iFormId"), getLong("iFormFieldId"), get("cFieldCode"), get("cFieldName")));
 	}
 
    /**
@@ -49,28 +49,28 @@ public class EnumValsAdminController extends BaseAdminController {
    /**
 	* 保存
 	*/
-	public void save() {
-		renderJson(service.save(getModel(EnumVals.class, "enumVals")));
+	public void save(@Para("formExtendFields")FormExtendFields formExtendFields) {
+		renderJson(service.save(formExtendFields));
 	}
 
    /**
 	* 编辑
 	*/
 	public void edit() {
-		EnumVals enumVals=service.findById(getLong(0));
-		if(enumVals == null){
+		FormExtendFields formExtendFields=service.findById(getLong(0));
+		if(formExtendFields == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("enumVals",enumVals);
+		set("formExtendFields",formExtendFields);
 		render("edit.html");
 	}
 
    /**
 	* 更新
 	*/
-	public void update() {
-		renderJson(service.update(getModel(EnumVals.class, "enumVals")));
+	public void update(@Para("formExtendFields")FormExtendFields formExtendFields) {
+		renderJson(service.update(formExtendFields));
 	}
 
    /**
@@ -85,20 +85,6 @@ public class EnumValsAdminController extends BaseAdminController {
 	*/
 	public void delete() {
 		renderJson(service.deleteById(getLong(0)));
-	}
-
-	/**
-	 * 新增-可编辑表格-批量提交
-	 */
-	@Before(Tx.class)
-
-	public void submitAll() {
-		renderJson(service.submitByJBoltTable(getJBoltTable()));
-	}
-
-	@UnCheck
-	public void enumvalsoptions() {
-		renderJsonData(service.getCommonList("cEnumCode,cEnumName"));
 	}
 
 

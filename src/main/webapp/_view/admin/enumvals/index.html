@@ -1,20 +1,9 @@
-#@jboltLayout()
-#define main()
-#set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey??)">
+
 <div class="jbolt_page_title">
 <div class="row">
 	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>系统管理-枚举值</h1></div>
 	<form class="form-inline" id="EnumVals_form_#(pageId)">
 		<h5>选择分类：
-		<!--<select class="form-control" name="iEnumTypeId"-->
-				<!--data-autoload-->
-				<!--data-url="admin/dictionary/options?key=null"-->
-				<!--data-select-type="select"-->
-				<!--data-text="=枚举类型ID="-->
-				<!--data-value=""-->
-				<!--data-value-attr="sn"-->
-		<!--&gt;</select>-->
 			<select class="form-control"
 			name="iEnumTypeId"
 			data-autoload
@@ -30,8 +19,6 @@
 		</div></h5>
 	</form>
 
-	<!--<div class="col">-->
-	<!--</div>-->
 	<div class="col-sm-auto text-right">
 
 	</div>
@@ -103,10 +90,8 @@
 <tbody></tbody>
 </table>
 </div>
-</div>
-#end
 
-#define js()
+
 <script type="text/javascript">
 
     function submitThisForm() {
@@ -176,4 +161,4 @@
         return editableTableOptions;
     }
 </script>
-#end
+

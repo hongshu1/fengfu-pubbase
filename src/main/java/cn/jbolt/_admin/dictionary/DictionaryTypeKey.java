@@ -5,6 +5,30 @@ package cn.jbolt._admin.dictionary;
  **/
 public enum DictionaryTypeKey {
     /**
+     * 投资类型
+     */
+    investment_type,
+    /**
+     * 投资区分
+     */
+    investment_distinction,
+    /**
+     * 资产类别
+     */
+    asset_type,
+    /**
+     * 目的区分
+     */
+    purpose,
+    /**
+     * 年度区分
+     */
+    annual_distinguish,
+    /**
+     * 申购业务类型
+     */
+    purchase_service_type,
+    /**
      * 选项_Boolean值
      */
     options_boolean,
@@ -101,9 +125,45 @@ public enum DictionaryTypeKey {
      */
     extend_dic_demo,
     /**
+     * 类别区分（禀议）
+     */
+    proposalm_type,
+    /**
+     * 是否生效
+     */
+    iseffective,
+    /**
+     * 实施阶段
+     */
+    payment_progress,
+    /**
+     * 修订区分
+     */
+    edit_type,
+    /**
+     * 日程
+     */
+    period_progress,
+    /**
+     * 等级区分
+     */
+    level,
+    /**
      * 工作类型
      */
     worktype,
+    /**
+     * 大额费用
+     */
+    large_cost,
+    /**
+     * 禀议参照类型
+     */
+    proposal_choose_type,
+    /**
+     * 是否启用
+     */
+    whether_enable,
     /**
      * 在职状态
      */
@@ -285,6 +345,10 @@ public enum DictionaryTypeKey {
      */
     equipmentteam_moulds_type,
     /**
+     * 投资汇总表分组选项
+     */
+    investment_summary_group_option,
+    /**
      * 载具库存记录分类
      */
     inventory_type,
@@ -301,6 +365,14 @@ public enum DictionaryTypeKey {
      */
     equipmentallocation_istate,
     /**
+     * 投资计划类型
+     */
+    investment_item_type,
+    /**
+     * 支付情况
+     */
+    payment_status,
+    /**
      * 料品附加结算模式
      */
     settlementMode_type,
@@ -312,6 +384,10 @@ public enum DictionaryTypeKey {
      * 来料检验不良类型
      */
     rcvrpt_type,
+    /**
+     * 消息分类
+     */
+    msg_tpl_type,
     /**
      * 工作日
      */
@@ -501,6 +577,10 @@ public enum DictionaryTypeKey {
      */
     iAuditStatus,
     /**
+     * 是否子项
+     */
+    isubitem,
+    /**
      * 应付类型
      */
     iPayableType ,
@@ -675,5 +755,37 @@ public enum DictionaryTypeKey {
     /**
      * 单据业务类型
      */
-    cbtchname;
+    cbtchname,
+    /**
+     * 仓库期初模板标签
+     */
+    beginningofperiod,
+    /**
+     * 接收者类型
+     */
+    receivertype,
+    /**
+     * 可否编辑
+     */
+    is_edit,
+    /**
+     * 是否必填
+     */
+    is_required,
+    /**
+     * 拓展字段类型
+     */
+    extend_field_type,
+    /**
+     * 值来源
+     */
+    value_source,
+    /**
+     * 是否显示
+     */
+    is_visible,
+    /**
+     * 显示位置
+     */
+    visible_position;
 }
