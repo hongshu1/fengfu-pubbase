@@ -74,12 +74,19 @@
 			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入数量"  maxlength="24" name="moMoinvbatch.iqty" value="#(moMoinvbatch.iqty??)"/>
 		</div>
 	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">备注</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder=""  maxlength="24" name="moMoinvbatch.memo" value="#(moMoinvbatch.memo??)"/>
+		</div>
+	</div>
 
 
 
 </form>
 #define js()
 #@hiprintjs()
+
 <script>
 	hideParentLayerDialogBtn(0);
 	function closeHandler() {
@@ -103,17 +110,20 @@
 			dataType: "json",
 			//contentType: "application/json; charset=utf-8",
 			data:$('#moMoinvbatchForm').serialize(),//传送的数据
-			success: function (data) {//执行成功
-				if(data.state=="ok"){
+			success: function (res) {//执行成功
+				if(res.state=="ok"){
 					//parent.layer.close(parent.layer.getFrameIndex(window.name))
 					LayerMsgBox.success("保存成功",300,function(){
-						jboltHiprintWebPrint('029587',"json",data.data)
+						setTimeout(function () {
+							jboltHiprintWebPrint('029587', "json", res.data)
+							//jboltHiprintWebPrint('029587', "url", "admin/momoinvbatch/printdataList")
+						},1000);
 						//jboltHiprintWebRender(ele,'029587',"json",data.data)
 						//parent.refreshJBoltTable();
 					})
 
 				}else{
-					LayerMsgBox.alert(data.msg,2);
+					LayerMsgBox.alert(res.msg,2);
 
 				}
 			},

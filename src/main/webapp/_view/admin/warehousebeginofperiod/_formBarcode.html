@@ -306,40 +306,7 @@
       printnum = 1;
     }
     var autoprint = $('input[name="autoprint"]').is(':checked');
-    /*var para = {
-      datas: JSON.stringify(allDatas),
-      printnum: printnum,
-      autoprint: autoprint
-    };
-    Ajax.post('admin/warehousebeginofperiod/submitStock', para, function (ret) {
-      if (ret.state === 'ok') {
-        submitState = true;
-        LayerMsgBox.success("生成成功", 1000, function () {
-          parent.refreshPjaxContainer();
-          // parent.layer.closeAll();
-        });
-        //如果勾选了自动打印，在生成成功后要自动打印
-        /!*if (autoprint) {
-          for (let i = 0; i < printnum; i++) {
-            for (let j = 0; j < allDatas.length; j++) {
-              var data = allDatas[j];
-              var reportfilename = data.reportfilename;
-              //社内现品票：029587，采购现品票：109607
-              jboltHiprintWebPrint('109607', 'url', 'admin/warehousebeginofperiod/printData?ids=');
-              //jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=');
-              //jboltHiprintWebPrint('kqda_key', 'url', allDatas);
-              // jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=1640995130939412480'+ "&&mark=check");
-            }
-          }
-        }
-      } else {
-        LayerMsgBox.alert(ret.msg, 2);
-      }
-    });*/
     //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*/
-
-    let serializeArray = $('#warehousebeginform_TableId_#(pageId)').serializeArray();
-
     var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
     if (!allDatas || allDatas.length ==0){
       LayerMsgBox.alert("表格数据不能为空",2);
@@ -366,6 +333,35 @@
         return;
       }
     }
+
+    var para = {
+      datas: JSON.stringify(tableData),
+      printnum: printnum,
+      autoprint: autoprint
+    };
+    Ajax.post('admin/warehousebeginofperiod/submitStock', para, function (ret) {
+      if (ret.state === 'ok') {
+        submitState = true;
+        LayerMsgBox.success("生成成功", 1000, function () {
+          parent.refreshPjaxContainer();
+          // parent.layer.closeAll();
+        });
+        //如果勾选了自动打印，在生成成功后要自动打印
+        if (autoprint) {
+          for (let i = 0; i < printnum; i++) {
+            for (let j = 0; j < allDatas.length; j++) {
+              var data = allDatas[j];
+              var reportfilename = data.reportfilename;
+              //社内现品票：029587，采购现品票：109607
+              //jboltHiprintWebPrint('109607', 'url', 'admin/warehousebeginofperiod/printData?ids=');
+              // jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=1640995130939412480'+ "&&mark=check");
+            }
+          }
+        }
+      } else {
+        LayerMsgBox.alert(ret.msg, 2);
+      }
+    });
   }
 
   function getTableData() {

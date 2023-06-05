@@ -1,0 +1,119 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_content">
+    <form onsubmit="return false;" id="moMoinvbatchForm" action="#(action)" method="post">
+    <input type="hidden" name="ids" value="#(ids??)" />
+    <div class="form-group row">
+
+        <button onclick="submitForm(this)" class="btn btn-warning btn-sm"><i class="fa fa-check"></i>提交打印</button>
+        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>关闭</button>
+    </div>
+
+
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">产线长</label>
+        <div class="col">
+            <input type="hidden" id="ipersonid" name="workregionm.ipersonid" value="#(workregionm.ipersonid??)" />
+            <input type="text" autocomplete="off" value="#(workleader??)" class="form-control"  name="workleader"
+                   placeholder=""
+                   data-jboltinput
+                   data-rule="required"
+                   data-width="300"
+                   data-height="105"
+                   data-refresh="true"
+                   data-hidden-input="ipersonid"
+                   data-load-type="ajaxportal"
+                   data-url="admin/workregionm/personTable"
+            />
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">作业员</label>
+        <div class="col">
+            <input type="text" autocomplete="off" class="form-control"
+                   data-autocomplete
+                   name="jobname"
+                   readonly="readonly"
+                   data-rule="required"
+                   data-url="admin/person/autocomplete"
+                   data-link-para-ele="#capplypersoncode"
+                   data-sync-ele="capplypersoncode"
+                   data-text-attr="cpsnname"
+                   data-value-attr="cpsnnum"
+                   placeholder="=作业人员="
+                   value="#(jobname??)"
+                   data-column-attr="cpsnnum,cpsnname">
+
+            <input type="text" name="capplypersoncode" id="capplypersoncode" data-sync-attr="cpsnnum" hidden>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">打印数量</label>
+        <div class="col">
+            <input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入数量"  maxlength="24" name="moMoinvbatch.iqty" value="#(moMoinvbatch.iqty??)"/>
+        </div>
+    </div>
+
+
+
+</form>
+</div>
+</div>
+</div>
+#end
+#define js()
+#@hiprintjs()
+<script>
+    hideParentLayerDialogBtn(0);
+    function closeHandler() {
+
+
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        //window.parent.refreshJBoltTable();
+    }
+    function submitForm(ele){
+        LayerMsgBox.confirm("确认提交此数据?",function(){
+            // submitThisForms();
+            submitThisForms("admin/momoinvbatch/subPrint",ele);
+
+        });
+    }
+    function  submitThisForms(url,ele){
+        var formData = formToJson('moMoinvbatchForm');
+        $.ajax({
+            url: url,
+            type: "post",
+            dataType: "json",
+            //contentType: "application/json; charset=utf-8",
+            data:$('#moMoinvbatchForm').serialize(),//传送的数据
+            success: function (res) {//执行成功
+                if(res.state=="ok"){
+                    //parent.layer.close(parent.layer.getFrameIndex(window.name))
+                    LayerMsgBox.success("保存成功",300,function(){
+                        jboltHiprintWebPrint('029587',"json",res.data)
+                        //jboltHiprintWebRender(ele,'029587',"json",data.data)
+                        //parent.refreshJBoltTable();
+                    })
+
+                }else{
+                    LayerMsgBox.alert(res.msg,2);
+
+                }
+            },
+            error: function () {//执行失败
+                LayerMsgBox.alert("网络通讯异常",2);
+
+            },
+            complete: function (res) { //不管成功还是失败后
+
+            }
+        });
+    }
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="moMoinvbatchForm")
+#end
+
