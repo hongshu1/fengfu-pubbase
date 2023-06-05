@@ -132,6 +132,12 @@ public class DepartmentAdminController extends BaseAdminController {
         renderJson(service.update(getModel(Department.class, "department")));
     }
 
+
+    public void refreshAllEndGrade() {
+        renderJson(service.refreshAllEndGrade());
+    }
+
+
     /**
      * 批量删除
      */
