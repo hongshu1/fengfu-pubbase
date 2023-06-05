@@ -140,6 +140,7 @@ public class PurchasemService extends BaseService<Purchasem> {
      * @return
      */
     public List<Record> paginateAdminDatas(Kv kv) {
+    	kv.set("iorgid",getOrgId());
         Page<Record> pages = dbTemplate("purchasem.paginateAdminDatas", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
         ValidationUtils.notNull(pages, JBoltMsg.DATA_NOT_EXIST);
         for (Record row : pages.getList()) {

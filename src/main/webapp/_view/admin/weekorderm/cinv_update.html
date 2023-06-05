@@ -1,0 +1,76 @@
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <form class="form-inline  text-left" onsubmit="return false" id="WeekOrderM_form_#(pageId)">
+                <input type="text" autocomplete="off" class="form-control" placeholder="=现品票扫码=" name="corderno" value=""/>
+                <button type="submit" class="btn btn-outline-secondary">搜索</button>
+                <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+        </form>
+    </div>
+    <div class="jbolt_page_content">
+        <script type="text/template" id="jboltTable_demotpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>
+                    <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="删除"
+                       data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+                </td>
+                <td>${data.ccode}</td>
+                <td>${data.cinvcode1}</td>
+                <td>${data.cinvname1}</td>
+                <td>${data.dplanaogdate,'yyyy-MM-dd'|date}</td>
+                <td>${data.cplanaogtime}</td>
+                <td>${data.updatedplanaogdate,'yyyy-MM-dd'|date}</td>
+                <td>${data.updatecplanaogtime}</td>
+            </tr>
+            {@/each}
+        </script>
+
+        <div class="jbolt_table_toolbar" id="cinv_update_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button onclick="jboltTableAppendEmptyRow('cinv_update_jbolt_table_#(pageId)')" class="btn btn-primary btn-xs">添加行</button>
+                <div class="j_upload_file_box"
+                     data-name="file"
+                     data-btn-class="btn dropdown-item"
+                     data-placeholder="上传导入"
+                     data-form="WeekOrderM_Form_#(pageId)"
+                     data-confirm="确认导入数据？"
+                     data-accept="excel"
+                     data-maxsize="20480"
+                     data-handler="uploadFile"
+                     data-upload-success-handler="uploadHandler"
+                     data-url="/admin/dataimport/importExcelData">
+                </div>
+            </div>
+        </div>
+
+        <table class="jbolt_table thead_font_normal table-bordered table-center"
+               id="cinv_update_jbolt_table_#(pageId)"
+               data-jbolttable
+               data-column-resize="true"
+               data-tfoot-fixed="true"
+               data-conditions-form="WeekOrderM_form_#(pageId)"
+               data-url="admin/weekorderm/updateCplanTimeDatas"
+               data-rowtpl="jboltTable_demotpl_#(pageId)"
+               data-toolbar="cinv_update_toolbar_#(pageId)"
+               data-editable="true"
+               data-editable-option="getEditableTableOptions_#(pageId)"
+               data-height="fill"
+               data-page="cinv_update_page"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="150">操作</th>
+                <th data-width="150" data-column="ccode">传票号</th>
+                <th data-width="150" data-column="cinvcode1">客户部番</th>
+                <th data-width="150" data-column="cinvname1">部品名称</th>
+                <th data-width="160" data-column="dplanaogdate">计划日期</th>
+                <th data-width="160" data-column="cplanaogtime">计划时间</th>
+                <th data-width="160" data-column="updatedplanaogdate">调整日期</th>
+                <th data-width="160" data-column="updatecplanaogtime">调整时间</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>

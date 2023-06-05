@@ -305,5 +305,8 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             weekOrderDService.batchUpdateRecords(update);
         }
     }
-    
+
+    public Page<Record> updateCplanTimeDatas(Integer pageNumber, Integer pageSize, Kv kv) {
+        return dbTemplate("weekorderm.updateCplanTimeDatas", kv).paginate(pageNumber, pageSize);
+    }
 }
