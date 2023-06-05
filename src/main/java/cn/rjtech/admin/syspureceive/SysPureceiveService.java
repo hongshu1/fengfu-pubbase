@@ -475,7 +475,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public Record barcode(Kv kv) {
         Record first = dbTemplate("syspureceive.barcode", kv).findFirst();
         if(null == first){
-            ValidationUtils.assertNull(false, "条码数据有误");
+            ValidationUtils.assertNull(false, "未查到条码为："+kv.getStr("barcode")+"的数据");
         }
         return first;
     }
@@ -498,20 +498,34 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
     // 业务逻辑发送改变，以下重新开发一个保存功能
     public Ret submit(JBoltTable jBoltTable) {
-        if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList() == null) {
-            return Ret.msg("行数据不能为空");
+        String operationType = jBoltTable.getFormRecord().getStr("operationType");
+        if(!"submit".equals(operationType)){
+            if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList() == null) {
+                return Ret.msg("行数据不能为空");
+            }
         }
         SysPureceive sysPureceive = jBoltTable.getFormModel(SysPureceive.class, "sysPureceive");
+        User user = JBoltUserKit.getUser();
+        Date now = new Date();
+        if (sysPureceive.getAutoID() != null){
+            sysPureceive.setModifyPerson(user.getUsername());
+            sysPureceive.setModifyDate(now);
+            if("submit".equals(operationType)){
+                sysPureceive.setState("2");
+            }
+            // 主表修改
+            sysPureceive.update();
+        }
         // 从表的操作 获取新增数据
-        saveData(jBoltTable,sysPureceive);
+        saveData(jBoltTable,sysPureceive,operationType);
         // 获取修改数据（执行修改）
-        updateData(jBoltTable,sysPureceive);
+        updateData(jBoltTable,sysPureceive,operationType);
         // 获取删除数据（执行删除）
         deleteData(jBoltTable);
 
         return SUCCESS;
     }
-    private void saveData(JBoltTable jBoltTable,SysPureceive sysPureceive){
+    private void saveData(JBoltTable jBoltTable,SysPureceive sysPureceive,String operationType){
         List<Record> list = jBoltTable.getSaveRecordList();
         if (CollUtil.isEmpty(list)) return;
         ArrayList<SysPureceivedetail> sysdetaillist = new ArrayList<>();
@@ -530,7 +544,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setBarcode(row.get("barcode"));
             sysPureceivedetail.setCreateDate(now);
             sysPureceivedetail.setModifyDate(now);
-            String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row);
+            String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row,operationType);
             sysPureceivedetail.setMasID(s);
             if (null == row.get("isinitial") || "".equals(row.get("isinitial"))) {
                 sysPureceivedetail.setIsInitial("0");
@@ -551,7 +565,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         syspureceivedetailservice.batchSave(sysdetaillist);
     }
 
-    private void updateData(JBoltTable jBoltTable,SysPureceive sysPureceive){
+    private void updateData(JBoltTable jBoltTable,SysPureceive sysPureceive,String operationType){
         List<Record> list = jBoltTable.getUpdateRecordList();
         if (CollUtil.isEmpty(list)) return;
         ArrayList<SysPureceivedetail> sysdetaillist = new ArrayList<>();
@@ -570,7 +584,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
             sysPureceivedetail.setModifyDate(now);
-            String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row);
+            String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row,operationType);
             sysPureceivedetail.setMasID(s);
             if (null == row.get("isinitial") || "".equals(row.get("isinitial")) || "0".equals(row.get("isinitial"))) {
                 sysPureceivedetail.setIsInitial("0");
@@ -598,7 +612,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     }
 
     // 根据行表数据 通过SourceBillNo(取MES的采购订单)判断头表是否需要添加头表数据，返回 头表id
-    public String insertSysPureceive(SysPureceivedetail sysPureceivedetail,SysPureceive sysPureceive,Record record){
+    public String insertSysPureceive(SysPureceivedetail sysPureceivedetail,SysPureceive sysPureceive,Record record,String operationType){
         SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?", sysPureceivedetail.getSourceBillNo());
         if(null != first){
             return first.getAutoID();
@@ -616,7 +630,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceive.setCreateDate(now);
             sysPureceive.setBillDate(dateToString(now));
             sysPureceive.setModifyPerson(user.getUsername());
-            sysPureceive.setState("1");
+            if("".equals(operationType)){
+                //待后续审批流修改状态
+                sysPureceive.setState("2");
+            }else {
+                sysPureceive.setState("1");
+            }
             sysPureceive.setModifyDate(now);
             sysPureceive.setBillNo(String.valueOf(JBoltSnowflakeKit.me.nextId()));
             String s = String.valueOf(JBoltSnowflakeKit.me.nextId());
