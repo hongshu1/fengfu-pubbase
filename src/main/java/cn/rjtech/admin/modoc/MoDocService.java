@@ -3,6 +3,7 @@ package cn.rjtech.admin.modoc;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.User;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
@@ -10,6 +11,7 @@ import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
 import cn.rjtech.admin.inventoryroutingequipment.InventoryRoutingEquipmentService;
 import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
 import cn.rjtech.admin.inventoryroutingsop.InventoryRoutingSopService;
+import cn.rjtech.admin.modoc.vo.PushU8ReqVo;
 import cn.rjtech.admin.momoroutingsop.MoMoroutingsopService;
 import cn.rjtech.admin.morouting.MoMoroutingService;
 import cn.rjtech.admin.moroutingcinve.MoMoroutinginvcService;
@@ -27,8 +29,14 @@ import cn.rjtech.model.momdata.MoMoroutingconfig;
 import cn.rjtech.model.momdata.MoMoroutingequipment;
 import cn.rjtech.model.momdata.MoMoroutingconfigPerson;
 import cn.rjtech.service.func.mom.MomDataFuncService;
+import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.rjtech.wms.utils.StringUtils;
+import cn.smallbun.screw.core.util.CollectionUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.beust.ah.A;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Page;
@@ -38,12 +46,11 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import com.jfinal.plugin.activerecord.Record;
+import org.json.JSONArray;
 
 import java.math.BigDecimal;
+import java.util.*;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * 工单管理 Service
@@ -963,5 +970,68 @@ public class MoDocService extends BaseService<MoDoc> {
     if(moDoc!=null){
 
     }
+  }
+
+  //推送u8数据接口
+  public Ret pushU8(MoDoc moDoc) {
+
+   List<PushU8ReqVo> rows=new ArrayList();
+    PushU8ReqVo pushU8ReqVo=new PushU8ReqVo();
+    pushU8ReqVo.setDocno(moDoc.getCMoDocNo());
+    pushU8ReqVo.setDdate(DateUtils.formatDate(moDoc.getDCreateTime(),"yyyy-MM-dd"));
+    pushU8ReqVo.setcWhCode("");
+    Inventory inventory=inventoryService.findById(moDoc.getIInventoryId());
+    if(inventory!=null) {
+      pushU8ReqVo.setCinvcode(inventory.getCInvCode());
+      pushU8ReqVo.setcInvName(inventory.getCInvName());
+      pushU8ReqVo.setcInvStd(inventory.getCInvStd());
+    }
+    if(moDoc.getICompQty()!=null){
+      pushU8ReqVo.setIquantity(Integer.valueOf(moDoc.getICompQty().intValue()));
+    }
+    if(isOk(moDoc.getDPlanDate())){
+      pushU8ReqVo.setDStartDate(DateUtils.formatDate(moDoc.getDCreateTime(),"yyyy-MM-dd"));
+      pushU8ReqVo.setDdate(DateUtils.formatDate(moDoc.getDCreateTime(),"yyyy-MM-dd"));
+    }
+    pushU8ReqVo.setIrowno("1");
+    pushU8ReqVo.setcBatch("");
+    rows.add(pushU8ReqVo);
+    Map map=new HashMap();
+  map.put("data",rows);
+
+
+
+
+
+
+    //            请求头
+    Map<String, String> header = new HashMap<>(5);
+    header.put("Content-Type", "application/json");
+    String url ="http://192.168.1.19:8090/api/cwapi/AddMoToERP?dbname=U8Context";
+
+    try {
+      String post = HttpApiUtils.httpHutoolPost(url, map, header);
+      com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
+      if (isOk(post)) {
+        if ("201".equals(jsonObject.getString("code"))) {
+          System.out.println(jsonObject);
+          return Ret.ok("提交成功");
+        }
+      }
+    }catch (Exception e){
+      e.printStackTrace();
+    }
+    return Ret.fail("上传u8失败");
+  }
+
+  //通过当前登录人名称获取部门id
+  public String getdeptid(){
+    String dept = "001";
+    User user = JBoltUserKit.getUser();
+    Person person = personService.findFirstByUserId(user.getId());
+    if(null != person && "".equals(person)){
+      dept = person.getCOrgCode();
+    }
+    return dept;
   }
 }

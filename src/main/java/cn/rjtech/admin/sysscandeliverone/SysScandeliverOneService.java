@@ -193,7 +193,7 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 	 */
 	public Ret submitByJBoltTable(JBoltTable jBoltTable) {
 		if(jBoltTable.getSaveRecordList()==null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList()==null){
-			return Ret.msg("行数据不能为空");
+			return fail("行数据不能为空");
 		}
 		SysScandeliver sysotherin = jBoltTable.getFormModel(SysScandeliver.class,"sysscandeliver");
 		//获取当前用户信息？
@@ -239,7 +239,7 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 		for (int i=0;i<list.size();i++) {
 			Record row = list.get(i);
 			SysScandeliverdetail sysdetail = new SysScandeliverdetail();
-			sysdetail.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
+			sysdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
 //            row.set("iautoid", JBoltSnowflakeKit.me.nextId());
 			sysdetail.setBarcode(row.get("barcode"));
 			sysdetail.setPackBarcode(row.get("ccontainercode"));

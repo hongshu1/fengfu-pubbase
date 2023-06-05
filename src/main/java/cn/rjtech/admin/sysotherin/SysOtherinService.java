@@ -163,7 +163,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
         if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList() == null) {
-            return Ret.msg("行数据不能为空");
+            return fail("行数据不能为空");
         }
         SysOtherin sysotherin = jBoltTable.getFormModel(SysOtherin.class, "sysotherin");
         // 获取当前用户信息？
@@ -345,7 +345,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
         }catch (Exception e){
             e.printStackTrace();
         }
-        return Ret.msg("上传u8失败");
+        return fail("上传u8失败");
     }
 
 
