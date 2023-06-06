@@ -105,6 +105,7 @@ order by t1.CreateDate desc,t1.BillNo desc
 #sql("getOtherOutLines")
 SELECT
     i.*,
+    t2.AutoID,
     u.cUomClassName,
     t3.cInvCCode,
     t3.cInvCName,
