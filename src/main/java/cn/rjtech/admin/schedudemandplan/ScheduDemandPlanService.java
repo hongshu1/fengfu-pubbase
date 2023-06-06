@@ -310,7 +310,9 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			//子件去重并取值拼接 顺序号取最大值
 			if (invListMap.containsKey(dto.getInvCode())) { //&& StringUtils.isNotBlank(tmpUser.getInvCode()) && StringUtils.isNotBlank(tmpUser.getPinvCode())
 				ScheduDemandTempDTO tmpUser = invListMap.get(dto.getInvCode());
-				tmpUser.setPinvCode(tmpUser.getPinvCode().concat(",").concat(dto.getPinvCode()));
+				String tmpPinv = tmpUser.getPinvCode() != null ? tmpUser.getPinvCode() : "";
+				String dtoPinv = dto.getPinvCode() != null ? dto.getPinvCode() : "";
+				tmpUser.setPinvCode(tmpPinv.concat(",").concat(dtoPinv));
 				if (dto.getSort() > tmpUser.getSort()){
 					tmpUser.setSort(dto.getSort());
 				}
@@ -622,7 +624,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 						BigDecimal cusQty = dateQtyCusMap.get(date) != null ? dateQtyCusMap.get(date) : BigDecimal.ZERO;
 						BigDecimal sumPQty = BigDecimal.ZERO;
 						//循环父级并相加
-						Map<String,Record> pInvMap = pInvByInvInMap.get(cInvCode);
+						Map<String,Record> pInvMap = pInvByInvInMap.get(cInvCode) != null ? pInvByInvInMap.get(cInvCode) : new HashMap<>();
 						for (String pInv : pInvMap.keySet()){
 							BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
 							//父级需求计划
@@ -642,11 +644,11 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				for (String date : scheduDateList){
 					BigDecimal sumPQty = BigDecimal.ZERO;
 					//循环父级并相加
-					Map<String,Record> pInvMap = pInvByInvInMap.get(cInvCode);
+					Map<String,Record> pInvMap = pInvByInvInMap.get(cInvCode) != null ? pInvByInvInMap.get(cInvCode) : new HashMap<>();
 					for (String pInv : pInvMap.keySet()){
-						BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
+						BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty") != null ? pInvMap.get(pInv).getBigDecimal("Realqty") : BigDecimal.ONE;
 						//父级需求计划
-						Map<String,BigDecimal> datePQtyAllMap = invPlanDateInAllMap.get(pInv);
+						Map<String,BigDecimal> datePQtyAllMap = invPlanDateInAllMap.get(pInv) != null ? invPlanDateInAllMap.get(pInv) : new HashMap<>();
 						BigDecimal pQty = datePQtyAllMap.get(date);
 						if (pQty != null){
 							BigDecimal qty = pQty.multiply(realQty);
@@ -748,7 +750,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 					for (String pInv : pInvMap.keySet()){
 						BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty") != null ? pInvMap.get(pInv).getBigDecimal("Realqty") : BigDecimal.ONE;
 						//父级需求计划
-						Map<String,BigDecimal> datePQtyAllMap = invPlanDateOutAllMap.get(pInv);
+						Map<String,BigDecimal> datePQtyAllMap = invPlanDateOutAllMap.get(pInv) != null ? invPlanDateOutAllMap.get(pInv) : new HashMap<>();
 						BigDecimal pQty = datePQtyAllMap.get(date);
 						if (pQty != null){
 							BigDecimal qty = pQty.multiply(realQty);

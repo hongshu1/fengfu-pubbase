@@ -12,6 +12,7 @@ import cn.jbolt.core.poi.excel.*;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.CustomerClass;
 import cn.rjtech.model.momdata.VendorClass;
@@ -40,6 +41,9 @@ import java.util.List;
 public class VendorClassService extends BaseService<VendorClass> {
 
     private final VendorClass dao = new VendorClass().dao();
+
+    @Inject
+   private VendorService vendorService;
 
     @Override
     protected VendorClass dao() {
@@ -251,6 +255,7 @@ public class VendorClassService extends BaseService<VendorClass> {
      * 树结构数据源
      */
     public List<JsTreeBean> getMgrTree(Long checkedId, int openLevel) {
+        List<Record> list = vendorService.List();
         List<VendorClass> supplierclasses = getMgrList();
         List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
         for (VendorClass vendorClass : supplierclasses) {
@@ -261,6 +266,17 @@ public class VendorClassService extends BaseService<VendorClass> {
             }
             String text = "[" + vendorClass.getCVCCode() + "]" + vendorClass.getCVCName();
             String type = vendorClass.getCVCCode();
+            JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text, type, "", false);
+            jsTreeBeanList.add(jsTreeBean);
+        }
+        for (Record record :list){
+            Long id=record.get("iAutoId");
+            Object pid=record.get("iVendorClassId");
+            if (pid == null) {
+                pid = "#";
+            }
+            String text = "[" + record.get("cVenCode") + "]" + record.get("cVenName");
+            String type = record.get("cVenCode");
             JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text, type, "", false);
             jsTreeBeanList.add(jsTreeBean);
         }

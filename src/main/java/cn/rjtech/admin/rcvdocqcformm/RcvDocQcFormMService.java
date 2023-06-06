@@ -268,7 +268,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         sysPuinstore.setAuditDate(date);//审核日期
         sysPuinstore.setModifyDate(date);//修改日期
         sysPuinstore.setModifyPerson("");//修改人
-        sysPuinstore.setState("1");//状态 1已保存 2待审批 3已审批 4审批不通过
+        sysPuinstore.setIAuditStatus(1);//状态 1已保存 2待审批 3已审批 4审批不通过
     }
 
     /**

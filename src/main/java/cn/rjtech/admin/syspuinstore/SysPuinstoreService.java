@@ -132,7 +132,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
 
     public Ret resetAutitById(String autoid) {
         SysPuinstore sysPuinstore = findById(autoid);
-        if (sysPuinstore.getState().equals("4")) {
+        if (sysPuinstore.getIAuditStatus().equals("4")) {
             return fail("当前状态为审批不通过，无法继续审批!");
         }
         //1、更新审核人、审核时间、状态
@@ -141,7 +141,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         sysPuinstore.setAuditDate(date);
         sysPuinstore.setModifyPerson(JBoltUserKit.getUserName());
         sysPuinstore.setModifyDate(date);
-        sysPuinstore.setState(countDeleteState(sysPuinstore.getState()));
+        String iAuditStatus = String.valueOf(sysPuinstore.getIAuditStatus());
+        sysPuinstore.setIAuditStatus(Integer.valueOf(countDeleteState(iAuditStatus)));
         Ret ret = update(sysPuinstore);
         return ret;
     }
@@ -157,7 +158,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         sysPuinstore.setAuditDate(date);
         sysPuinstore.setModifyPerson(JBoltUserKit.getUserName());
         sysPuinstore.setModifyDate(date);
-        sysPuinstore.setState(countAddState(sysPuinstore.getState()));
+        String iAuditStatus = String.valueOf(sysPuinstore.getIAuditStatus());
+        sysPuinstore.setIAuditStatus(Integer.valueOf(countAddState(iAuditStatus)));
         Ret ret = update(sysPuinstore);
         //2、推送u8入库
         /*String json = getSysPuinstoreDto(sysPuinstore);
@@ -459,7 +461,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         puinstore.setCreateDate(date);
         puinstore.setAuditPerson(getOrgName()); //审核人
         puinstore.setAuditDate(date); //审核时间
-        puinstore.setState("1");
+        puinstore.setIAuditStatus(1);
 
     }
 

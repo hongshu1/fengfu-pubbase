@@ -392,90 +392,16 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
      * 一页导出一个条码数据
      */
     @SuppressWarnings("unchecked")
-    public void purchaseordermOne(@Para(value = "iautoid") Long iautoid,@Para(value = "page") Integer page) throws Exception {
-//        // 采购现品票明细数据
-//        List<Record> rowDatas = service.findByMidxlxs(iautoid);
-//        // 采购现品票条码数据
-//        List<Record> barcodeDatas=service.findByBarcode(iautoid);
-//        // 采购现品票明细数据sheet分页数组
-//        List<String> sheetNames = new ArrayList<>();
-//
-//        List<Kv> rows = new ArrayList<>();
-//
-//        List<Record> leftDatas = new ArrayList<>();
-//        List<Record> rightDatas = new ArrayList<>();
-//
-//        int counter = 0;
-//        int i = 0;
-//
-//        for (Record row : rowDatas) {
-//
-//            if (counter < 15) {
-//                leftDatas.add(row);
-//            } else {
-//                rightDatas.add(row);
-//            }
-//            counter++;
-//            if (counter == 30) {
-//                String sheetName = "订货清单" + (i + 1);
-//                sheetNames.add(sheetName);
-//                rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
-//                leftDatas = new ArrayList<>();
-//                rightDatas = new ArrayList<>();
-//                counter = 0;
-//                i++;
-//            }
-//        }
-//
-//        // 如果 rows 的数量不是 30 的整数倍，将剩余的数据添加到 datas 中
-//        Kv remainData = Kv.create();
-//
-//        if (CollUtil.isNotEmpty(leftDatas)) {
-//            remainData.set("leftDatas", leftDatas);
-//        }
-//        if (CollUtil.isNotEmpty(rightDatas)) {
-//            remainData.set("rightDatas", rightDatas);
-//        }
-//
-//        if (MapUtil.isNotEmpty(remainData)) {
-//            rows.add(remainData);
-//        }
-//
-//        if(rowDatas.size()<15){
-//            sheetNames.add("采购清单");
-//        }
-//        List<Kv> kvs = new ArrayList<>();
-//
-//        // 采购现品票明细条码数据sheet分页数组
-//        List<String> sheetNames2 = new ArrayList<>();
-//        int j = 0;
-//
-//        for (Record row : barcodeDatas) {
-//
-//            String sheetName = "订货条码" + (j + 1);
-//            sheetNames2.add(sheetName);
-//
-//            BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39,100,20);
-//            ByteArrayOutputStream os = new ByteArrayOutputStream();
-//            ImageIO.write(bufferedImage, "jpeg", os);
-//            row.set("img", os.toByteArray());
-//
-//            BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE,100, 100);
-//            ByteArrayOutputStream os2 = new ByteArrayOutputStream();
-//            ImageIO.write(bufferedImage2, "jpeg", os2);
-//            row.set("img2", os2.toByteArray());
-//
-//            kvs.add(Kv.by("sheetName", sheetName).set("barcodeRecords", Collections.singletonList(row)));
-//
-//            j++;
-//        }
-//
-//        Kv data = Kv.by("rows", rows)
-//                .set("sheetNames", sheetNames)
-//                .set("rows2", kvs)
-//                .set("sheetNames2", sheetNames2);
-        Kv data = service.pageOnePdf(iautoid, page);
-        renderJxls("purchaseOrderDBatch.xlsx", data, String.format("订货清单_%s.xlsx", DateUtil.today()));
+    public void purchaseordermOne(@Para(value = "iautoid") Long iautoid,@Para(value = "page") Integer page,
+    @Para(value = "type") Integer type) throws Exception {
+        Kv data = service.pageOnePdf(iautoid, page,type);
+        String Version="";
+        if(type==0){
+            Version="purchaseOrderDBatch.xlsx";
+        }else {
+            Version="purchaseOrderDBatchcVersion.xlsx";
+        }
+        renderJxlsToPdf(Version, data, String.format("订货清单_%s.pdf", DateUtil.today()));
     }
 }
 
