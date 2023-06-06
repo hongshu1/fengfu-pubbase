@@ -63,6 +63,9 @@ public class JBoltWebSocketServerEndpoint {
     	List<String> values = hasReqParams?params.get("jbtenantsn"):null;
     	boolean isTenant = values!=null&&values.size()>0;
     	String tenantSn = isTenant?values.get(0):null;
+		if(isTenant){
+			JBoltSaasTenantKit.me.useBySn(tenantSn);
+		}
 		this.jbsession = new JBoltWebSocketSession(session, token,tenantSn);
         JBoltWebSocketUtil.addClient(this);
         LOG.debug("有新连接加入！当前在线人数为" + JBoltWebSocketUtil.getAllClientSize());
