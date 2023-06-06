@@ -108,5 +108,9 @@ public class FormAdminController extends BaseAdminController {
         
         renderJson(service.autoGen(iautoid));
     }
+    
+    public void findByFuzzy(@Para(value = "q") String keywords){
+        renderJsonData(service.findByFuzzy(keywords));
+    }
 
 }

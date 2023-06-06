@@ -1,5 +1,6 @@
 package cn.rjtech.admin.form;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.datasource.JBoltTableMetaUtil;
 import cn.jbolt.core.db.sql.Sql;
@@ -326,4 +327,11 @@ public class FormService extends BaseService<Form> {
         return findFirst(sql);
     }
     
+    public List<Form> findByFuzzy(String keywords){
+        Sql sql = selectSql().eq(Form.ISDELETED, ZERO_STR);
+        if (StrUtil.isNotBlank(keywords)){
+            sql.likeMulti(keywords, Form.CFORMCODE, Form.CFORMNAME);
+        }
+        return find(sql);
+    }
 }
