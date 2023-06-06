@@ -71,7 +71,7 @@
         <commons-pool2.version>2.11.1</commons-pool2.version>
         <jfinal-mail-plugin.version>3.0.2</jfinal-mail-plugin.version>
         <gson.version>2.10.1</gson.version>
-        <jxlss.version>1.0.7</jxlss.version>
+        <jxlss.version>1.0.9</jxlss.version>
         <undertow.version>2.2.24.Final</undertow.version>
         <spire.xls.free.version>5.1.0</spire.xls.free.version>
         <japidocs.version>1.4.4</japidocs.version>

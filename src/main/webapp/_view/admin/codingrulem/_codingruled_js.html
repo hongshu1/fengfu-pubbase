@@ -44,7 +44,7 @@
                         if (value === '1') {
                             data.ccodingtext ='数量';
                             jboltTableUpdateOtherColumns(table, td.parent(), data, [
-                                {column: 'ccodingvalue', use: 'ccodingvalue', editable: false},
+                                {column: 'ccodingvalue', use: 'ccodingvalue', editable: false, required: false},
                                 {column: 'ccodingtext', use: 'ccodingtext', editable: false},
                                 {column: 'ilength', use: 'ilength', editable: true},
                                 {column: 'ibeginvalue', use: 'ibeginvalue', editable: false},
@@ -53,7 +53,7 @@
                         //  手工输入
                         else if (value === '2') {
                             jboltTableUpdateOtherColumns(table, td.parent(), data, [
-                                {column: 'ccodingvalue', use: 'ccodingvalue', editable: true},
+                                {column: 'ccodingvalue', use: 'ccodingvalue', editable: true, required: true},
                                 {column: 'ccodingtext', use: 'ccodingtext', editable: false},
                                 {column: 'ilength', use: 'ilength', editable: false},
                                 {column: 'ibeginvalue', use: 'ibeginvalue', editable: false}
@@ -76,7 +76,7 @@
                             }
                             // 不选择全部为不可编辑
                             jboltTableUpdateOtherColumns(table, td.parent(), data, [
-                                {column: 'ccodingvalue', use: 'ccodingvalue', editable: false},
+                                {column: 'ccodingvalue', use: 'ccodingvalue', editable: false, required: false},
                                 {column: 'ccodingtext', use: 'ccodingtext', editable: false},
                                 {column: 'ilength', use: 'ilength', editable: false},
                                 {column: 'ibeginvalue', use: 'ibeginvalue', editable: false}
@@ -105,13 +105,16 @@
                         }
                     }
                 },
-                cseparator: {
+                cseparatorname: {
                     type:"select",
                     url: "admin/dictionary/options?key=encoding_field_separator",
                     placeholder:"备注",
                     textAttr: "name",
-                    valueAttr: "sn",
-                    submitAttr: "cseparator"
+                    valueAttr: "name",
+                    submitAttr: "cseparatorname",
+                    changeColumns: [
+                        {column:"cseparator",use:"sn"}
+                    ]
                 },
 
             }

@@ -41,14 +41,18 @@ AND i.iAutoId = #para(invId)
 #end
 
 #sql("workRegions")
-select
- iw.*,wr.cWorkName cworkname,wr.cWorkCode cworkcode,p.cPsn_Name cpersonname,
- d.cDepName cdepname,jd.name defaultname
-from Bd_InventoryWorkRegion iw
-inner join Bd_WorkRegionM wr on iw.iWorkRegionMid = wr.iAutoId
-left join Bd_Person p on wr.iPersonId = p.iAutoId
-left join Bd_Department d on iw.iDepId = d.iAutoId
-left join #(getBaseDbName()).dbo.jb_dictionary jd on iw.isDefault + 1 = jd.sort_rank and jd.type_key = 'options_boolean'
+SELECT
+	iw.*,
+	wr.cWorkName cworkname,
+	wr.cWorkCode cworkcode,
+	p.cPsn_Name cpersonname,
+	d.cDepName cdepname,
+	( CASE WHEN iw.isDefault = 1 THEN '是' ELSE '否' END ) defaultname
+FROM
+	Bd_InventoryWorkRegion iw
+	INNER JOIN Bd_WorkRegionM wr ON iw.iWorkRegionMid = wr.iAutoId
+	LEFT JOIN Bd_Person p ON wr.iPersonId = p.iAutoId
+	LEFT JOIN Bd_Department d ON iw.iDepId = d.iAutoId
 where iw.iInventoryId = #para(iInventoryId)
 AND iw.isDeleted = '0'
 #end

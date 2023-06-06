@@ -57,7 +57,7 @@ public class DepartmentAdminController extends BaseAdminController {
      */
     @UnCheck
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv(), getSortColumn("iAutoId"), getSortType("desc")));
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv(),getSortColumn("iAutoId"), getSortType("desc")));
     }
 
     /**
@@ -132,6 +132,12 @@ public class DepartmentAdminController extends BaseAdminController {
         renderJson(service.update(getModel(Department.class, "department")));
     }
 
+
+    public void refreshAllEndGrade() {
+        renderJson(service.refreshAllEndGrade());
+    }
+
+
     /**
      * 批量删除
      */
@@ -196,6 +202,17 @@ public class DepartmentAdminController extends BaseAdminController {
 
     public void findPersonPage() {
         renderJsonData(personService.paginateDatas(getPageNumber(), getPageSize(), getKv()));
+    }
+
+
+    /**
+     * 下拉框选择人员数据源
+     */
+    public void selectPerson() {
+        String key = get("key");
+        Kv kv = new Kv();
+        kv.setIfNotNull("cpersonname", key);
+        renderJsonData(personService.findAll(kv));
     }
 
     public void findPersonAll() {

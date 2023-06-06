@@ -124,6 +124,11 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 			if (purchaseBusinessTypeMap.containsKey(iBusType)){
 				record.set(SubcontractOrderM.BUSTYPETEXT, purchaseBusinessTypeMap.get(iBusType).getName());
 			}
+			Integer type = record.getInt(SubcontractOrderM.ITYPE);
+			SourceTypeEnum sourceTypeEnum = SourceTypeEnum.toEnum(type);
+			if (ObjectUtil.isNotNull(sourceTypeEnum)){
+				record.set(PurchaseOrderM.TYPESTR, sourceTypeEnum.getText());
+			}
 		}
 	}
 	
@@ -505,7 +510,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 		// 校验采购合同号是否存在
 		Integer count = findOderNoIsNotExists(subcontractOrderM.getCOrderNo());
 		ValidationUtils.isTrue(ObjectUtil.isEmpty(count) || count == 0, "采购订单号已存在");
-		
+		int seq = 0;
 		for (Long inventoryId : invTableMap.keySet()){
 			// 记录供应商地址及备注
 			JSONObject invJsonObject = invTableMap.get(inventoryId);
@@ -529,7 +534,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 			
 			// 创建采购订单明细数量
 			JSONArray purchaseOrderdQtyJsonArray = dataJsonObject.getJSONArray(SubcontractOrderD.SUBCONTRACTORDERD_QTY_LIST.toLowerCase());
-			List<SubcontractorderdQty> createPurchaseOrderdQtyList = subcontractorderdQtyService.getSubcontractOrderdQty(subcontractId, purchaseOrderdQtyJsonArray);
+			List<SubcontractorderdQty> createPurchaseOrderdQtyList = subcontractorderdQtyService.getSubcontractOrderdQty(subcontractId, purchaseOrderdQtyJsonArray, seq);
 			
 			// 创建采购订单与到货计划关联
 			JSONArray purchaseOrderRefJsonArray = dataJsonObject.getJSONArray(SubcontractOrderM.PURCHASEORDERREFLIST.toLowerCase());
@@ -738,6 +743,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 			// 源数量
 			BigDecimal sourceQty = record.getBigDecimal(SubcontractorderdQty.IQTY);
 			Long subcontractOrderDid = record.getLong(SubcontractorderdQty.ISUBCONTRACTORDERDID);
+			Long iSubcontractOrderdQtyId = record.getLong(SubcontractorderdQty.IAUTOID);
 			Long inventoryId = record.getLong(SubcontractOrderD.IINVENTORYID);
 			
 			String dateStr = demandPlanDService.getDate(record.getStr(PurchaseorderdQty.IYEAR), record.getInt(PurchaseorderdQty.IMONTH), record.getInt(PurchaseorderdQty.IDATE));
@@ -747,7 +753,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 			// 包装数量为空或者为0，生成一张条码，原始数量/打包数量
 			if (ObjectUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceQty.compareTo(pkgQty)<=0){
 				String barCode = subcontractOrderDBatchService.generateBarCode();
-				SubcontractOrderDBatch subcontractOrderDBatch = subcontractOrderDBatchService.createSubcontractOrderDBatch(subcontractOrderDid, inventoryId, planDate, sourceQty, barCode);
+				SubcontractOrderDBatch subcontractOrderDBatch = subcontractOrderDBatchService.createSubcontractOrderDBatch(subcontractOrderDid, iSubcontractOrderdQtyId, inventoryId, planDate, sourceQty, barCode);
 				subcontractOrderDBatchList.add(subcontractOrderDBatch);
 				continue;
 			}
@@ -758,11 +764,11 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 				String barCode = subcontractOrderDBatchService.generateBarCode();
 				if (i == count-1){
 					BigDecimal qty = sourceQty.subtract(BigDecimal.valueOf(i).multiply(pkgQty));
-					SubcontractOrderDBatch subcontractOrderDBatch = subcontractOrderDBatchService.createSubcontractOrderDBatch(subcontractOrderDid, inventoryId, planDate, qty, barCode);
+					SubcontractOrderDBatch subcontractOrderDBatch = subcontractOrderDBatchService.createSubcontractOrderDBatch(subcontractOrderDid, iSubcontractOrderdQtyId, inventoryId, planDate, qty, barCode);
 					subcontractOrderDBatchList.add(subcontractOrderDBatch);
 					break;
 				}
-				SubcontractOrderDBatch subcontractOrderDBatch = subcontractOrderDBatchService.createSubcontractOrderDBatch(subcontractOrderDid, inventoryId, planDate, pkgQty, barCode);
+				SubcontractOrderDBatch subcontractOrderDBatch = subcontractOrderDBatchService.createSubcontractOrderDBatch(subcontractOrderDid, iSubcontractOrderdQtyId, inventoryId, planDate, pkgQty, barCode);
 				subcontractOrderDBatchList.add(subcontractOrderDBatch);
 			}
 			
@@ -942,7 +948,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 		List<Long> vendorAdIds = recordList.stream().map(record -> record.getLong(PurchaseOrderD.IVENDORADDRID)).collect(Collectors.toList());
 		List<VendorAddr> vendorAddrList = vendorAddrService.findByIds(vendorAdIds);
 		Map<Long, VendorAddr> vendorAddrMap = vendorAddrList.stream().collect(Collectors.toMap(VendorAddr::getIAutoId, vendorAddr -> vendorAddr));
-		
+		int seq = 0;
 		for (Record record : recordList){
 			String isPresentStr = record.getStr(PurchaseOrderD.ISPRESENT);
 			VendorAddr vendorAddr = vendorAddrMap.get(record.getLong(PurchaseOrderD.IVENDORADDRID));
@@ -981,6 +987,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 			String[] columnNames = record.getColumnNames();
 			for (String columnName : columnNames){
 				if (columnName.contains("日")){
+					seq+=10;
 					DateTime dateTime = DateUtil.parseDate(columnName);
 					String yearStr = DateUtil.format(dateTime, DatePattern.NORM_YEAR_PATTERN);
 					String monthStr = DateUtil.format(dateTime, "MM");
@@ -990,7 +997,8 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 							Integer.parseInt(yearStr),
 							Integer.parseInt(monthStr),
 							Integer.parseInt(dayStr),
-							qty);
+							qty,
+							seq);
 					switch (type){
 						case 2:
 							subcontractorderdQtyService.delete(subcontractOrderD.getIAutoId(), subcontractorderdQty.getIYear(), subcontractorderdQty.getIMonth(), subcontractorderdQty.getIDate());

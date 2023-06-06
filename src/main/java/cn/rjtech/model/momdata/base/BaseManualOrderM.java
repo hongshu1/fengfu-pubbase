@@ -130,6 +130,10 @@ public abstract class BaseManualOrderM<M extends BaseManualOrderM<M>> extends JB
     public static final String IAUDITWAY = "iAuditWay";
     /**提审时间*/
     public static final String DSUBMITTIME = "dSubmitTime";
+    /**推送单据到：1. U8, 默认为1*/
+    public static final String IPUSHTO = "iPushTo";
+    /**推送单号*/
+    public static final String CDOCNO = "cDocNo";
 	/**
 	 * 主键ID
 	 */
@@ -1148,6 +1152,40 @@ public abstract class BaseManualOrderM<M extends BaseManualOrderM<M>> extends JB
 	@JSONField(name = "dsubmittime")
 	public java.util.Date getDSubmitTime() {
 		return getDate("dSubmitTime");
+	}
+
+	/**
+	 * 推送单据到：1. U8, 默认为1
+	 */
+	public M setIPushTo(java.lang.Integer iPushTo) {
+		set("iPushTo", iPushTo);
+		return (M)this;
+	}
+
+	/**
+	 * 推送单据到：1. U8, 默认为1
+	 */
+	@JBoltField(name="ipushto" ,columnName="iPushTo",type="Integer", remark="推送单据到：1. U8, 默认为1", required=false, maxLength=10, fixed=0, order=61)
+	@JSONField(name = "ipushto")
+	public java.lang.Integer getIPushTo() {
+		return getInt("iPushTo");
+	}
+
+	/**
+	 * 推送单号
+	 */
+	public M setCDocNo(java.lang.String cDocNo) {
+		set("cDocNo", cDocNo);
+		return (M)this;
+	}
+
+	/**
+	 * 推送单号
+	 */
+	@JBoltField(name="cdocno" ,columnName="cDocNo",type="String", remark="推送单号", required=false, maxLength=40, fixed=0, order=62)
+	@JSONField(name = "cdocno")
+	public java.lang.String getCDocNo() {
+		return getStr("cDocNo");
 	}
 
 }

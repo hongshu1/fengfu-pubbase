@@ -12,7 +12,7 @@
             <select class="form-control" data-tips="请选择上级部门"
                     data-url="admin/department/getTreeTableDatas?excludeId=#(department.iAutoId??)"
                     data-autoload data-text="=请选择上级部门="
-                    data-value=""
+                    data-value="0"
                     name="department.ipid"
                     data-text-attr="cdepname"
                     data-value-attr="iautoid"
@@ -100,21 +100,40 @@
 
     <div class="form-group row">
 
-        <label class="col-sm-1 col-form-label">负责人：</label>
-        <div class="col-sm-3">
-            <input hidden id="idutyuserid" name="department.idutyuserid" value="#(department.idutyuserid??)">
-            <input hidden id="cdepperson" name="department.cdepperson" value="#(department.cdepperson??)">
-            <input type="text" autocomplete="off" value="#(cdeppersonname??)" class="form-control"
-                   placeholder="==请选择负责人=="
-                   data-jboltinput
-                   data-width="600"
-                   data-height="320"
-                   data-refresh="true"
-                   data-hidden-input="idutyuserid"
-                   data-load-type="ajaxportal"
-                   data-url="admin/department/personTable"
-            />
-        </div>
+<!--        <label class="col-sm-1 col-form-label">负责人：</label>-->
+<!--        <div class="col-sm-3">-->
+<!--            <input type="text" id="idutyuserid" name="department.idutyuserid" value="#(department.idutyuserid??)">-->
+<!--            <input hidden id="cdepperson" name="department.cdepperson" value="#(department.cdepperson??)">-->
+<!--            <input type="text" autocomplete="off" value="#(cdeppersonname??)" class="form-control"-->
+<!--                   placeholder="==请选择负责人=="-->
+<!--                   data-jboltinput-->
+<!--                   data-width="600"-->
+<!--                   data-height="320"-->
+<!--                   data-refresh="true"-->
+<!--                   data-hidden-input="idutyuserid"-->
+<!--                   data-load-type="ajaxportal"-->
+<!--                   data-url="admin/department/personTable"-->
+<!--            />-->
+<!--        </div>-->
+         <label class="col-sm-1 col-form-label">负责人：</label>
+            <div class="col-sm-3">
+                <select class="form-control"
+                        data-autoload
+                        data-rule="select"
+                        multiple="multiple"
+                        data-select-type="select2"
+                        data-url="admin/department/selectPerson"
+                        data-text="=请选择="
+                        data-value=""
+                        data-setvalueto="cdepperson"
+                        data-text-attr="cpsnname"
+                        data-value-attr="cpsnnum"
+                        data-select="#(department.cdepperson??)">
+                </select>
+            </div>
+            <input type="hidden" id="cdepperson" name="department.cdepperson" value="#(department.cdepperson??)">
+
+
 
         <label class="col-sm-1 col-form-label">分管领导</label>
         <div class="col-sm-3">

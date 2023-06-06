@@ -1,0 +1,27 @@
+<form onsubmit="return false;" id="approvaldRoleusersForm" action="#(action)" method="post">
+<input type="hidden" name="approvaldRoleusers.iautoid" value="#(approvaldRoleusers.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">审批节点角色ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入审批节点角色ID" maxlength="19" name="approvaldRoleusers.iapprovaldroleid" value="#(approvaldRoleusers.iapprovaldroleid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">顺序值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入顺序值"  maxlength="10" name="approvaldRoleusers.iseq" value="#(approvaldRoleusers.iseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">用户ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入用户ID" maxlength="19" name="approvaldRoleusers.iuserid" value="#(approvaldRoleusers.iuserid??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="approvaldRoleusersForm")
+#end
+

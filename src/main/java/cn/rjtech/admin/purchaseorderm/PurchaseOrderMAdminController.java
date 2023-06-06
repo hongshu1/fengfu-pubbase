@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.jbolt._admin.hiprint.HiprintTplService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -28,7 +29,7 @@ import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
+import com.google.zxing.BarcodeFormat;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -37,8 +38,12 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -384,67 +389,94 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     }
 
     /**
-     * 导出数据
+     * 一页导出一个条码数据
      */
     @SuppressWarnings("unchecked")
-    public void purchaseordermOne() throws Exception {
-        List<Record> rowDatas = service.findByMidxlxs();
-
-        List<String> sheetNames = new ArrayList<>();
-        // 改用List<List<Record>>来表示多个数据集合
-        List<Kv> rows = new ArrayList<>();
-
-        List<Record> leftDatas = new ArrayList<>();
-        List<Record> rightDatas = new ArrayList<>();
-
-        int counter = 0;
-        int i = 0;
-
-        for (Record row : rowDatas) {
-
-            if (counter < 15) {
-                leftDatas.add(row);
-            } else {
-                rightDatas.add(row);
-            }
-
-            counter++;
-
-            if (counter == 30) {
-                String sheetName = "订货清单" + (i + 1);
-                sheetNames.add(sheetName);
-                rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
-
-                leftDatas = new ArrayList<>();
-                rightDatas = new ArrayList<>();
-                counter = 0;
-                i++;
-            }
-
-        }
-
-        // 如果 rows 的数量不是 30 的整数倍，将剩余的数据添加到 datas 中
-        Kv remainData = Kv.create();
-
-        if (CollUtil.isNotEmpty(leftDatas)) {
-            remainData.set("leftDatas", leftDatas);
-        }
-        if (CollUtil.isNotEmpty(rightDatas)) {
-            remainData.set("rightDatas", rightDatas);
-        }
-
-        if (MapUtil.isNotEmpty(remainData)) {
-            rows.add(remainData);
-        }
-
-        LOG.info(JSON.toJSONString(rows));
-
-        Kv data = Kv.by("rows", rows)
-                .set("sheetNames", sheetNames);
-
-//        renderJxlsToPdf("purchaseOrderDBatch.xlsx", data, "订货清单.pdf");
+    public void purchaseordermOne(@Para(value = "iautoid") Long iautoid,@Para(value = "page") Integer page) throws Exception {
+//        // 采购现品票明细数据
+//        List<Record> rowDatas = service.findByMidxlxs(iautoid);
+//        // 采购现品票条码数据
+//        List<Record> barcodeDatas=service.findByBarcode(iautoid);
+//        // 采购现品票明细数据sheet分页数组
+//        List<String> sheetNames = new ArrayList<>();
+//
+//        List<Kv> rows = new ArrayList<>();
+//
+//        List<Record> leftDatas = new ArrayList<>();
+//        List<Record> rightDatas = new ArrayList<>();
+//
+//        int counter = 0;
+//        int i = 0;
+//
+//        for (Record row : rowDatas) {
+//
+//            if (counter < 15) {
+//                leftDatas.add(row);
+//            } else {
+//                rightDatas.add(row);
+//            }
+//            counter++;
+//            if (counter == 30) {
+//                String sheetName = "订货清单" + (i + 1);
+//                sheetNames.add(sheetName);
+//                rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
+//                leftDatas = new ArrayList<>();
+//                rightDatas = new ArrayList<>();
+//                counter = 0;
+//                i++;
+//            }
+//        }
+//
+//        // 如果 rows 的数量不是 30 的整数倍，将剩余的数据添加到 datas 中
+//        Kv remainData = Kv.create();
+//
+//        if (CollUtil.isNotEmpty(leftDatas)) {
+//            remainData.set("leftDatas", leftDatas);
+//        }
+//        if (CollUtil.isNotEmpty(rightDatas)) {
+//            remainData.set("rightDatas", rightDatas);
+//        }
+//
+//        if (MapUtil.isNotEmpty(remainData)) {
+//            rows.add(remainData);
+//        }
+//
+//        if(rowDatas.size()<15){
+//            sheetNames.add("采购清单");
+//        }
+//        List<Kv> kvs = new ArrayList<>();
+//
+//        // 采购现品票明细条码数据sheet分页数组
+//        List<String> sheetNames2 = new ArrayList<>();
+//        int j = 0;
+//
+//        for (Record row : barcodeDatas) {
+//
+//            String sheetName = "订货条码" + (j + 1);
+//            sheetNames2.add(sheetName);
+//
+//            BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39,100,20);
+//            ByteArrayOutputStream os = new ByteArrayOutputStream();
+//            ImageIO.write(bufferedImage, "jpeg", os);
+//            row.set("img", os.toByteArray());
+//
+//            BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE,100, 100);
+//            ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+//            ImageIO.write(bufferedImage2, "jpeg", os2);
+//            row.set("img2", os2.toByteArray());
+//
+//            kvs.add(Kv.by("sheetName", sheetName).set("barcodeRecords", Collections.singletonList(row)));
+//
+//            j++;
+//        }
+//
+//        Kv data = Kv.by("rows", rows)
+//                .set("sheetNames", sheetNames)
+//                .set("rows2", kvs)
+//                .set("sheetNames2", sheetNames2);
+        Kv data = service.pageOnePdf(iautoid, page);
         renderJxls("purchaseOrderDBatch.xlsx", data, String.format("订货清单_%s.xlsx", DateUtil.today()));
     }
-
 }
+
 

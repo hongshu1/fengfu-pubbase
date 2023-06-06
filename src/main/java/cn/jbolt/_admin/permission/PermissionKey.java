@@ -314,6 +314,42 @@ public class PermissionKey {
 	 */
 	public static final String MO_DOC = "mo_doc";
 	/**
+	 * 生产工位派工
+	 */
+	public static final String PRODUCTION_PRODUCTION = "production_production";
+	/**
+	 * 分条加工
+	 */
+	public static final String CUTSTRIPPROCESS = "cutstripprocess";
+	/**
+	 * 片料加工
+	 */
+	public static final String SLICEINVPROCESS = "sliceinvprocess";
+	/**
+	 * 板料加工
+	 */
+	public static final String PIECEINVPROCESS = "pieceinvprocess";
+	/**
+	 * 生产工序报工
+	 */
+	public static final String PRODUCTION_REPORT = "production_report";
+	/**
+	 * 生产完工
+	 */
+	public static final String PRODUCTION_COMPLETE = "production_complete";
+	/**
+	 * 返修工单管理
+	 */
+	public static final String REWORKORDER = "reworkorder";
+	/**
+	 * 委外工单管理
+	 */
+	public static final String PMISSUEM = "pmissuem";
+	/**
+	 * 员工计件工资
+	 */
+	public static final String PIECE_RATE = "piece_rate";
+	/**
 	 * 设备管理
 	 */
 	public static final String EQUIPMENT_MANAGE = "equipment_manage";

@@ -203,7 +203,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
     public void saveSysPuinstoredetailModel(List<SysPuinstoredetail> detailList, Record detailRecord,
                                             SysPuinstore puinstore, String whcode, int i, Record detailByParam) {
         SysPuinstoredetail detail = new SysPuinstoredetail();
-        detail.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
+        detail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
         detail.setSourceBillNoRow(detailByParam.getStr("sourcebillnorow")); //来源单号+行号
         detail.setRowNo(i);  //行号
         savedetailModel2(detail, puinstore, detailRecord, whcode, detailByParam);

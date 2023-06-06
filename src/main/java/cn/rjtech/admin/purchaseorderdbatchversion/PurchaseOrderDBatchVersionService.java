@@ -113,7 +113,7 @@ public class PurchaseOrderDBatchVersionService extends BaseService<PurchaseOrder
 		return null;
 	}
 	
-	public PurchaseOrderDBatchVersion createBatchVersion(Long purchaseOrderMId, Long batchId, Long	inventoryId, Date planDate, String version, String sourceVersion, String barCode, String sourceBarCode, BigDecimal qty, BigDecimal sourceQty){
+	public PurchaseOrderDBatchVersion createBatchVersion(Long purchaseOrderMId, Long batchId, Long	inventoryId, Date planDate, String version, String sourceVersion, String barCode, BigDecimal qty, BigDecimal sourceQty){
 		PurchaseOrderDBatchVersion purchaseOrderDBatchVersion = new PurchaseOrderDBatchVersion();
 		
 		purchaseOrderDBatchVersion.setIPurchaseOrderMid(purchaseOrderMId);
@@ -123,7 +123,7 @@ public class PurchaseOrderDBatchVersionService extends BaseService<PurchaseOrder
 		purchaseOrderDBatchVersion.setCVersion(version);
 		purchaseOrderDBatchVersion.setCSourceVersion(sourceVersion);
 		purchaseOrderDBatchVersion.setCBarcode(barCode);
-		purchaseOrderDBatchVersion.setCSourceBarcode(sourceBarCode);
+		purchaseOrderDBatchVersion.setCSourceBarcode(barCode);
 		purchaseOrderDBatchVersion.setIQty(qty);
 		purchaseOrderDBatchVersion.setISourceQty(sourceQty);
 		purchaseOrderDBatchVersion.setICreateBy(JBoltUserKit.getUserId());

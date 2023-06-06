@@ -42,7 +42,7 @@
             var action=parent.DialogUtil.getCurrentTriggerEle();
             if(isOk(action)){
                 //var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,insertType,false,false,true);
-                var success=parent.jboltTableInsertRowsByDialogChooser(action,data,"prepend");
+                var success=parent.jboltTableInsertRowsByDialogChooser(action,data);
                 if(success){
                     parent.layer.closeAll();
                 }

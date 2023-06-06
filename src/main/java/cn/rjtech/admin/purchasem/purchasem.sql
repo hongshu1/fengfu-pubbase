@@ -1,11 +1,14 @@
 ### 采购管理数据源
 #sql("paginateAdminDatas")
     SELECT pm.*,
-    (SELECT cptname FROM bd_PurchaseType WHERE cptcode = pm.iPurchaseType) AS ipurchasetypename,
-    (SELECT cDepName FROM bd_Department WHERE cDepCode = pm.cdepcode) AS cdepname,
-    (SELECT cpsn_name FROM Bd_Person WHERE cpsn_num = pm.cPersonCode) AS cpersonname
+    (SELECT top 1 cptname FROM bd_PurchaseType pt WHERE pt.cptcode = pm.iPurchaseType) AS ipurchasetypename,
+    (SELECT top 1 cDepName FROM bd_Department WHERE cDepCode = pm.cdepcode) AS cdepname,
+    (SELECT top 1 cpsn_name FROM Bd_Person WHERE cpsn_num = pm.cPersonCode) AS cpersonname
     FROM PL_PurchaseM pm
     WHERE 1 = 1
+#if(iorgid)
+	and pm.iorgid = #para(iorgid)
+#end
 #if(iautoid)
     AND pm.iAutoId = #para(iautoid)
 #end

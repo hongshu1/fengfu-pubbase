@@ -1,8 +1,6 @@
 package cn.rjtech.admin.scheduproductplan;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.text.StrSplitter;
-import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -33,6 +31,7 @@ import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -40,7 +39,9 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -48,6 +49,8 @@ import java.util.Calendar;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -272,17 +275,13 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
     /**
      * 测试
-     * @param kv
+     * @param
      * @return
      */
-    public synchronized List<ScheduProductYearViewDTO> scheduPlanMonthTest(Kv kv) {
+    public synchronized List<ScheduProductYearViewDTO> scheduPlanMonthTest() {
         //年度生产计划集合
         List<ScheduProductYearViewDTO> scheduProductPlanYearList = new ArrayList<>();
         try {
-
-            //根据产线进行循环排程
-
-
             //同一产线的物料
             String[] product_type = {"a", "b", "c", "d"};
 
@@ -332,18 +331,35 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
             ApsScheduling apsScheduling = ApsUtil.apsCalculation(product_type, inventory_original, plan, 2, plan_nextMonthAverage, capability, workday, 0.7, 0.3);
 
+
+            Map<String, int[]> invPlanMap = new HashMap<>();
+            invPlanMap.put("a", new int[31]);
+            invPlanMap.put("b", new int[31]);
+            invPlanMap.put("c", new int[31]);
+            invPlanMap.put("d", new int[31]);
+
             String[] productInformationByShift0 = new String[workday.length];
             int[] productNumberByShift0 = new int[workday.length];
             apsScheduling.getProductInfo(productInformationByShift0, productNumberByShift0, 0);
-            System.out.println("早班："+ Arrays.toString(productInformationByShift0));
-            System.out.println("早班："+ Arrays.toString(productNumberByShift0));
+            //System.out.println("早班："+ Arrays.toString(productInformationByShift0));
+            //System.out.println("早班："+ Arrays.toString(productNumberByShift0));
+            getInvPlanMap(productInformationByShift0,productNumberByShift0,invPlanMap);
+            System.out.println("早班计划a："+ Arrays.toString(invPlanMap.get("a")));
+            System.out.println("早班计划b："+ Arrays.toString(invPlanMap.get("b")));
+            System.out.println("早班计划c："+ Arrays.toString(invPlanMap.get("c")));
+            System.out.println("早班计划d："+ Arrays.toString(invPlanMap.get("d")));
             System.out.println();
 
             String[] productInformationByShift1 = new String[workday.length];
             int[] productNumberByShift1 = new int[workday.length];
             apsScheduling.getProductInfo(productInformationByShift1, productNumberByShift1, 1);
-            System.out.println("中班："+ Arrays.toString(productInformationByShift1));
-            System.out.println("中班："+ Arrays.toString(productNumberByShift1));
+            //System.out.println("中班："+ Arrays.toString(productInformationByShift1));
+            //System.out.println("中班："+ Arrays.toString(productNumberByShift1));
+            getInvPlanMap(productInformationByShift1,productNumberByShift1,invPlanMap);
+            System.out.println("中班计划a："+ Arrays.toString(invPlanMap.get("a")));
+            System.out.println("中班计划b："+ Arrays.toString(invPlanMap.get("b")));
+            System.out.println("中班计划c："+ Arrays.toString(invPlanMap.get("c")));
+            System.out.println("中班计划d："+ Arrays.toString(invPlanMap.get("d")));
             System.out.println();
 
             String[] productInformationByShift2 = new String[workday.length];
@@ -356,8 +372,13 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             String[] productInformationByShift3 = new String[workday.length];
             int[] productNumberByShift3 = new int[workday.length];
             apsScheduling.getProductInfo(productInformationByShift3, productNumberByShift3, 3);
-            System.out.println("晚班："+ Arrays.toString(productInformationByShift3));
-            System.out.println("晚班："+ Arrays.toString(productNumberByShift3));
+            //System.out.println("晚班："+ Arrays.toString(productInformationByShift3));
+            //System.out.println("晚班："+ Arrays.toString(productNumberByShift3));
+            getInvPlanMap(productInformationByShift3,productNumberByShift3,invPlanMap);
+            System.out.println("晚班计划a："+ Arrays.toString(invPlanMap.get("a")));
+            System.out.println("晚班计划b："+ Arrays.toString(invPlanMap.get("b")));
+            System.out.println("晚班计划c："+ Arrays.toString(invPlanMap.get("c")));
+            System.out.println("晚班计划d："+ Arrays.toString(invPlanMap.get("d")));
 
         }catch (Exception e){
             throw new RuntimeException("排程计划出错！"+e.getMessage());
@@ -395,10 +416,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 update("UPDATE Aps_WeekSchedule SET dScheduleEndTime = ? WHERE iAutoId = ? ",apsWeekschedule.getDLockEndTime(),iWeekScheduleId);
                 if (apsWeekscheduledetails != null){
                     delete("DELETE FROM Aps_WeekScheduleD_Qty WHERE " +
-                            "CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )\n" +
+                            "(CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )\n" +
                             "ELSE CAST(iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN iDate<10 THEN '0'+CAST(iDate AS NVARCHAR(30) )\n" +
                             "ELSE CAST(iDate AS NVARCHAR(30) )\n" +
-                            "END AS NVARCHAR(30)) > ? AND iWeekScheduleDid = ? ",DateUtils.formatDate(apsWeekschedule.getDLockEndTime(),"yyyy-MM-dd"),apsWeekscheduledetails.getIAutoId());
+                            "END AS NVARCHAR(30)) ) > ? AND iWeekScheduleDid = ? ",DateUtils.formatDate(apsWeekschedule.getDLockEndTime(),"yyyy-MM-dd"),apsWeekscheduledetails.getIAutoId());
                 }
             }
             return true;
@@ -752,7 +773,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 int[] capabilityArrar = new int[3];
                 List<Record> capacityList = invCapacityListMap.get(inv) != null ? invCapacityListMap.get(inv) : new ArrayList<>();
                 for (int i = 0; i < capacityList.size(); i++) {
-                    String cWorkShiftCode = capacityList.get(i).getStr("capacityList") != null ? capacityList.get(i).getStr("capacityList") : "";
+                    String cWorkShiftCode = capacityList.get(i).getStr("cWorkShiftCode") != null ? capacityList.get(i).getStr("cWorkShiftCode") : "";
                     int iCapacity = capacityList.get(i).getInt("iCapacity");
                     if (cWorkShiftCode.contains("1S")){
                         capabilityArrar[0] = iCapacity;
@@ -856,7 +877,11 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
                     BigDecimal sumQty = BigDecimal.ZERO;
                     for (int j = 1; j <= iInnerInStockDays; j++) {
-                        BigDecimal qty = BigDecimal.valueOf(invPlan[i+j]);
+                        int nextDay = i + j;
+                        if (nextDay >= scheduDateList.size()){
+                            continue;
+                        }
+                        BigDecimal qty = BigDecimal.valueOf(invPlan[nextDay]);
                         sumQty = sumQty.add(qty);
                     }
                     BigDecimal avgQty = sumQty.divide(BigDecimal.valueOf(iInnerInStockDays),2,BigDecimal.ROUND_HALF_DOWN);
@@ -1151,6 +1176,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             //循环物料
             for (String inv : invList){
                 Record info = invInfoMap.get(inv);
+                int qiChuZaiKu = lastDateZKQtyMap.get(info.getStr("cInvCode")) != null ? lastDateZKQtyMap.get(info.getStr("cInvCode")) : 0;
 
                 Map<String,Object> map = new HashMap<>();
                 map.put("seq",seq++);
@@ -1159,6 +1185,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 map.put("cInvCode",info.getStr("cInvCode"));
                 map.put("cInvCode1",info.getStr("cInvCode1"));
                 map.put("cInvName1",info.getStr("cInvName1"));
+                map.put("dayNum",isOk(info.getInt("iInnerInStockDays")) ? info.getInt("iInnerInStockDays") : 1);
+                map.put("qiChuZaiKu",qiChuZaiKu);
 
                 List<Object> objectList = new ArrayList<>();
                 Map<String,Record> planDateMap = invPlanDateMap.get(inv);
@@ -1465,7 +1493,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 //主表
                 MoMotask motask = new MoMotask();
                 motask.setIAutoId(taskId);
-                motask.setIOrgId(deptId);
+                motask.setIDepartmentId(deptId);
                 motask.setCMoPlanNo(planNo);
                 motask.setDBeginDate(startdate);
                 motask.setDEndDate(endDate);
@@ -1879,6 +1907,167 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 update("UPDATE Mo_MoTask SET IsDeleted = 1 WHERE iAutoId IN (" + CollUtil.join(taskIdList, COMMA) + ") ");
                 update("UPDATE Aps_WeekSchedule SET dLockEndTime = ? WHERE iLevel = ? ",DateUtils.parseDate(unLockStartDate),level);
             }
+            return true;
+        });
+        return SUCCESS;
+    }
+    /**
+     * 保存层级
+     */
+    public Ret saveLevel(Kv kv) {
+        String jsonDate = kv.getStr("data");
+        if (jsonDate.equals("[]") || StringUtils.isBlank(jsonDate)){
+            return SUCCESS;
+        }
+        JSONArray jsonArray = JSONArray.parseArray(jsonDate);
+        List<Map> dataList = jsonArray.toJavaList(Map.class);
+
+
+        String invJoin = "('601'";
+        List<String> invList = new ArrayList<>();
+        for (Map<String,Object> map : dataList) {
+            String cInvCode = map.get("cInvCode").toString();
+            if (!invList.contains(cInvCode)){
+                invJoin = invJoin + ",'" + cInvCode + "'";
+                invList.add(cInvCode);
+            }
+        }
+        invJoin = invJoin.concat(")");
+        //TODO:根据物料集查询排产物料明细
+        List<Record> getScheduDByinvsList =  dbTemplate("scheduproductplan.getScheduDByinvsList",Kv.by("invs",invJoin)).find();
+        //key:inv   value:iWeekScheduleDid
+        Map<String,Long> invScheduleDidMap = new HashMap<>();
+        String scheduDidJoin = "(601";
+        for (Record record : getScheduDByinvsList){
+            String cInvCode = record.getStr("cInvCode");
+            Long iWeekScheduleDid = record.getLong("iWeekScheduleDid");
+            invScheduleDidMap.put(cInvCode,iWeekScheduleDid);
+            scheduDidJoin = scheduDidJoin + "," + iWeekScheduleDid;
+        }
+        scheduDidJoin = scheduDidJoin.concat(")");
+        //TODO:根据排产明细id查询排产结果纪录
+        List<Record> getScheduPlanBydidsList =  dbTemplate("scheduproductplan.getScheduPlanBydidsList",Kv.by("schedudids",scheduDidJoin)).find();
+        //key:iWeekScheduleDid   value:Map<date,qtyId>
+        Map<Long,Map<String,Long>> scheduDqtyIdMap = new HashMap<>();
+        for (Record record : getScheduPlanBydidsList){
+            Long iWeekScheduleDid = record.getLong("iWeekScheduleDid");
+            String planDate = record.getStr("planDate");
+            Long qtyId = record.getLong("qtyId");
+            if (scheduDqtyIdMap.containsKey(iWeekScheduleDid)){
+                Map<String,Long> map = scheduDqtyIdMap.get(iWeekScheduleDid);
+                map.put(planDate,qtyId);
+            }else {
+                Map<String,Long> map = new HashMap<>();
+                map.put(planDate,qtyId);
+                scheduDqtyIdMap.put(iWeekScheduleDid,map);
+            }
+        }
+
+
+        //key: invcode+date  value:ApsWeekscheduledQty
+        Map<String,ApsWeekscheduledQty> detailsQtyAddMap = new HashMap<>();
+        //key: invcode+date  value:ApsWeekscheduledQty
+        Map<String,ApsWeekscheduledQty> detailsQtyUpdMap = new HashMap<>();
+
+        final String shiYong = "计划使用";
+        final String oneS = "计划/1S";
+        final String twoS = "计划/2S";
+        final String threeS = "计划/3S";
+        final String zaiKu = "计划在库";
+        final String tianShu = "在库天数";
+        //正则用于提取数字
+        String regEx = "[^0-9]";
+        Pattern p = Pattern.compile(regEx);
+        try {
+            for (Map<String,Object> map : dataList){
+                String cInvCode = map.get("cInvCode").toString();
+                String yearMonthStr = map.get("date").toString();
+                String day = map.get("day").toString();
+                String newValue = map.get("newValue").toString();
+                String plan = map.get("plan").toString();
+
+                Matcher m = p.matcher(day);
+                String resultDay = m.replaceAll("").trim();
+
+                Date date = DateUtils.parseDate(yearMonthStr);
+                String yearMonth = DateUtils.formatDate(date,"yyyy-MM");
+                int year = Integer.parseInt(DateUtils.formatDate(date,"yyyy"));
+                int month = Integer.parseInt(DateUtils.formatDate(date,"MM"));
+                int iday = Integer.parseInt(resultDay);
+
+                if (!NumberUtils.isNumber(newValue)){
+                    return fail("请检查表中非数值类型数据！");
+                }
+                BigDecimal qty = new BigDecimal(newValue);
+
+                Long iWeekScheduleDid = invScheduleDidMap.get(cInvCode);
+                Map<String,Long> qtyIdMap = scheduDqtyIdMap.get(iWeekScheduleDid) != null ? scheduDqtyIdMap.get(iWeekScheduleDid) : new HashMap<>();
+
+                int type;
+                switch (plan){
+                    case shiYong:
+                        type = 1;
+                        break;
+                    case oneS:
+                        type = 2;
+                        break;
+                    case twoS:
+                        type = 3;
+                        break;
+                    case threeS:
+                        type = 4;
+                        break;
+                    case zaiKu:
+                        type = 5;
+                        break;
+                    case tianShu:
+                        type = 6;
+                        break;
+                    default:
+                        return fail("数据不匹配！");
+                }
+                String dateKey = yearMonth;
+                if (iday < 10){
+                    dateKey = dateKey.concat("-0").concat(resultDay);
+                }else {
+                    dateKey = dateKey.concat("-").concat(resultDay);
+                }
+                String key = cInvCode.concat(dateKey);
+
+                ApsWeekscheduledQty scheduledQty;
+                if (qtyIdMap.containsKey(dateKey)){
+                    if (detailsQtyUpdMap.containsKey(key)){
+                        scheduledQty = detailsQtyUpdMap.get(key);
+                    }else {
+                        scheduledQty = new ApsWeekscheduledQty();
+                    }
+                    Long qtyId = qtyIdMap.get(dateKey);
+                    scheduledQty.setIAutoId(qtyId);
+                    scheduledQty.getClass().getMethod("setIQty"+type,new Class[]{BigDecimal.class}).invoke(scheduledQty, qty);
+                    detailsQtyUpdMap.put(key,scheduledQty);
+                }else {
+                    if (detailsQtyAddMap.containsKey(key)){
+                        scheduledQty = detailsQtyAddMap.get(key);
+                    }else {
+                        scheduledQty = new ApsWeekscheduledQty();
+                    }
+                    scheduledQty.setIWeekScheduleDid(iWeekScheduleDid);
+                    scheduledQty.setIYear(year);
+                    scheduledQty.setIMonth(month);
+                    scheduledQty.setIDate(iday);
+                    scheduledQty.getClass().getMethod("setIQty"+type,new Class[]{BigDecimal.class}).invoke(scheduledQty, qty);
+                    detailsQtyAddMap.put(key,scheduledQty);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        List<ApsWeekscheduledQty> detailsQtyAddList = new ArrayList<>(detailsQtyAddMap.values());
+        List<ApsWeekscheduledQty> detailsQtyUpdList = new ArrayList<>(detailsQtyUpdMap.values());
+
+        tx(() -> {
+            apsWeekscheduledQtyService.batchSave(detailsQtyAddList);
+            apsWeekscheduledQtyService.batchUpdate(detailsQtyUpdList);
             return true;
         });
         return SUCCESS;

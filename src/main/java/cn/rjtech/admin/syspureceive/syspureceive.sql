@@ -1,5 +1,5 @@
 #sql("recpor")
-select so.AutoID, CASE so.state
+select so.AutoID, CASE so.iAuditStatus
         WHEN 1 THEN
         '已保存'
 				WHEN 2 THEN
@@ -8,19 +8,19 @@ select so.AutoID, CASE so.state
         '已审批'
 				WHEN 4 THEN
         '审批不通过'
-        END AS statename,so.state,so.BillNo as billno,so.CreateDate as createdate,
+        END AS statename,so.iAuditStatus as state,so.BillNo as billno,so.CreateDate as createdate,
         so.VenCode as vencode
-		,p.name,s.name as sname,v.cVenName as venname,so.Type as type
+		,p.name,s.name as sname,v.cVenName as venname,so.Type as type,so.SourceBillNo
 FROM T_Sys_PUReceive so
 LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.CreatePerson = p.username
 LEFT JOIN #(getBaseDbName()).dbo.jb_user s on so.AuditPerson = s.username
 LEFT JOIN Bd_Vendor v on so.VenCode = v.cVenCode
-where 1=1
+where so.isDeleted = '0'
 	#if(billno)
 		and so.BillNo like concat('%',#para(billno),'%')
 	#end
 	#if(state)
-		and so.state = #para(state)
+		and so.iAuditStatus = #para(state)
 	#end
 	#if(startTime)
 		and so.CreateDate >= #para(startTime)
@@ -28,7 +28,7 @@ where 1=1
 	#if(endTime)
 		and so.CreateDate <= #para(endTime)
 	#end
-ORDER BY so.ModifyDate DESC
+ORDER BY so.CreateDate DESC
 #end
 
 
@@ -43,7 +43,7 @@ SELECT  a.*,
     aa.iQty as qtys,
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
-    d.iAutoId as SourceBillNoRow,
+    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
     m.cOrderNo as SourceBillID,
     d.iAutoId as SourceBillDid,
     m.iVendorId,
@@ -55,7 +55,8 @@ LEFT JOIN Bd_Inventory b on aa.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on aa.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
-where 1=1
+LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = aa.iPurchaseOrderdQtyId
+where a.isDeleted = '0'
 	#if(masid)
 		and a.MasID = #para(masid)
 	#end
@@ -118,7 +119,7 @@ select top #(limit)
     a.iQty as qtys,
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
-    d.iAutoId as SourceBillNoRow,
+    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
     m.cOrderNo as SourceBillID,
     d.iAutoId as SourceBillDid,
     m.iVendorId,
@@ -129,15 +130,18 @@ LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
+LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode AND pd.isDeleted = '0'
+LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
 where a.isEffective = '1'
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
 			or b.cinvname1 like concat('%',#para(q),'%') or a.cBarcode like concat('%',#para(q),'%')
+			or v.cVenCode like concat('%',#para(q),'%')
 		)
 	#end
 
 		AND b.cOrgCode = #(orgCode)
-
+        AND pd.AutoID IS NULL
 
 	#if(vencode)
 		and m.iVendorId = #para(vencode)
@@ -194,7 +198,7 @@ select
     a.iQty as qty,
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
-    d.iAutoId as SourceBillNoRow,
+    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
     m.cOrderNo as SourceBillID,
     d.iAutoId as SourceBillDid,
     m.iVendorId,
@@ -205,11 +209,24 @@ LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
+LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
+LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode  AND pd.isDeleted = '0'
 where a.isEffective = '1'
 
 	#if(barcode)
 		and a.cBarcode = #para(barcode)
 	#end
+        AND pd.AutoID IS NULL
+
+#end
+
+#sql("paginateAdminDatas")
+SELECT wa.*,wh.cWhCode,wh.cWhName
+FROM
+	Bd_Warehouse_Area wa
+LEFT JOIN Bd_Warehouse wh ON wa.iWarehouseId = wh.iAutoId
+WHERE wa.isDeleted = 0
+    AND wa.cAreaCode = #para(careacode)
 
 #end
 
