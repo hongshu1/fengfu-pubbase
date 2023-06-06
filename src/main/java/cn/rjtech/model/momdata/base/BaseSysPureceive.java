@@ -28,8 +28,6 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
     public static final String SOURCEBILLNO = "SourceBillNo";
     /***/
     public static final String SOURCEBILLID = "SourceBillID";
-    /**供应商编码*/
-    public static final String VENCODE = "VenCode";
     /**备注*/
     public static final String MEMO = "Memo";
     /**创建人*/
@@ -44,14 +42,24 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
     public static final String MODIFYPERSON = "ModifyPerson";
     /**修改时间*/
     public static final String MODIFYDATE = "ModifyDate";
-    /**状态 1已保存 2待审批 3已审批 4审批不通过 */
-    public static final String STATE = "State";
     /**收料单：PUReceive，双单位收料单：PUReceiveSpecial*/
     public static final String TYPE = "Type";
     /***/
     public static final String WHCODE = "WhCode";
     /***/
     public static final String WHNAME = "WhName";
+    /**供应商编码*/
+    public static final String VENCODE = "VenCode";
+    /**审批方式：1. 审核 2. 审批流*/
+    public static final String IAUDITWAY = "iAuditWay";
+    /**提审时间*/
+    public static final String DSUBMITTIME = "dSubmitTime";
+    /**审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过*/
+    public static final String IAUDITSTATUS = "iAuditStatus";
+    /**审核时间*/
+    public static final String DAUDITTIME = "dAuditTime";
+    /**是否删除：0. 否 1. 是*/
+    public static final String ISDELETED = "isDeleted";
 	/**
 	 * 主键ID
 	 */
@@ -194,23 +202,6 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	}
 
 	/**
-	 * 供应商编码
-	 */
-	public M setVenCode(java.lang.String VenCode) {
-		set("VenCode", VenCode);
-		return (M)this;
-	}
-
-	/**
-	 * 供应商编码
-	 */
-	@JBoltField(name="vencode" ,columnName="VenCode",type="String", remark="供应商编码", required=false, maxLength=30, fixed=0, order=10)
-	@JSONField(name = "vencode")
-	public java.lang.String getVenCode() {
-		return getStr("VenCode");
-	}
-
-	/**
 	 * 备注
 	 */
 	public M setMemo(java.lang.String Memo) {
@@ -221,7 +212,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 备注
 	 */
-	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=32, fixed=0, order=11)
+	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=32, fixed=0, order=10)
 	@JSONField(name = "memo")
 	public java.lang.String getMemo() {
 		return getStr("Memo");
@@ -238,7 +229,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 创建人
 	 */
-	@JBoltField(name="createperson" ,columnName="CreatePerson",type="String", remark="创建人", required=false, maxLength=30, fixed=0, order=12)
+	@JBoltField(name="createperson" ,columnName="CreatePerson",type="String", remark="创建人", required=false, maxLength=30, fixed=0, order=11)
 	@JSONField(name = "createperson")
 	public java.lang.String getCreatePerson() {
 		return getStr("CreatePerson");
@@ -255,7 +246,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 创建日期
 	 */
-	@JBoltField(name="createdate" ,columnName="CreateDate",type="Date", remark="创建日期", required=false, maxLength=23, fixed=3, order=13)
+	@JBoltField(name="createdate" ,columnName="CreateDate",type="Date", remark="创建日期", required=false, maxLength=23, fixed=3, order=12)
 	@JSONField(name = "createdate")
 	public java.util.Date getCreateDate() {
 		return getDate("CreateDate");
@@ -272,7 +263,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 审核人
 	 */
-	@JBoltField(name="auditperson" ,columnName="AuditPerson",type="String", remark="审核人", required=false, maxLength=30, fixed=0, order=14)
+	@JBoltField(name="auditperson" ,columnName="AuditPerson",type="String", remark="审核人", required=false, maxLength=30, fixed=0, order=13)
 	@JSONField(name = "auditperson")
 	public java.lang.String getAuditPerson() {
 		return getStr("AuditPerson");
@@ -289,7 +280,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 审核日期
 	 */
-	@JBoltField(name="auditdate" ,columnName="AuditDate",type="Date", remark="审核日期", required=false, maxLength=23, fixed=3, order=15)
+	@JBoltField(name="auditdate" ,columnName="AuditDate",type="Date", remark="审核日期", required=false, maxLength=23, fixed=3, order=14)
 	@JSONField(name = "auditdate")
 	public java.util.Date getAuditDate() {
 		return getDate("AuditDate");
@@ -306,7 +297,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 修改人
 	 */
-	@JBoltField(name="modifyperson" ,columnName="ModifyPerson",type="String", remark="修改人", required=false, maxLength=30, fixed=0, order=16)
+	@JBoltField(name="modifyperson" ,columnName="ModifyPerson",type="String", remark="修改人", required=false, maxLength=30, fixed=0, order=15)
 	@JSONField(name = "modifyperson")
 	public java.lang.String getModifyPerson() {
 		return getStr("ModifyPerson");
@@ -323,27 +314,10 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 修改时间
 	 */
-	@JBoltField(name="modifydate" ,columnName="ModifyDate",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=17)
+	@JBoltField(name="modifydate" ,columnName="ModifyDate",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=16)
 	@JSONField(name = "modifydate")
 	public java.util.Date getModifyDate() {
 		return getDate("ModifyDate");
-	}
-
-	/**
-	 * 状态 1已保存 2待审批 3已审批 4审批不通过 
-	 */
-	public M setState(java.lang.String State) {
-		set("State", State);
-		return (M)this;
-	}
-
-	/**
-	 * 状态 1已保存 2待审批 3已审批 4审批不通过 
-	 */
-	@JBoltField(name="state" ,columnName="State",type="String", remark="状态 1已保存 2待审批 3已审批 4审批不通过 ", required=false, maxLength=30, fixed=0, order=18)
-	@JSONField(name = "state")
-	public java.lang.String getState() {
-		return getStr("State");
 	}
 
 	/**
@@ -357,7 +331,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 收料单：PUReceive，双单位收料单：PUReceiveSpecial
 	 */
-	@JBoltField(name="type" ,columnName="Type",type="String", remark="收料单：PUReceive，双单位收料单：PUReceiveSpecial", required=false, maxLength=50, fixed=0, order=19)
+	@JBoltField(name="type" ,columnName="Type",type="String", remark="收料单：PUReceive，双单位收料单：PUReceiveSpecial", required=false, maxLength=50, fixed=0, order=17)
 	@JSONField(name = "type")
 	public java.lang.String getType() {
 		return getStr("Type");
@@ -368,7 +342,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 		return (M)this;
 	}
 
-	@JBoltField(name="whcode" ,columnName="WhCode",type="String", remark="WHCODE", required=false, maxLength=50, fixed=0, order=20)
+	@JBoltField(name="whcode" ,columnName="WhCode",type="String", remark="WHCODE", required=false, maxLength=50, fixed=0, order=18)
 	@JSONField(name = "whcode")
 	public java.lang.String getWhCode() {
 		return getStr("WhCode");
@@ -379,10 +353,112 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 		return (M)this;
 	}
 
-	@JBoltField(name="whname" ,columnName="WhName",type="String", remark="WHNAME", required=false, maxLength=50, fixed=0, order=21)
+	@JBoltField(name="whname" ,columnName="WhName",type="String", remark="WHNAME", required=false, maxLength=50, fixed=0, order=19)
 	@JSONField(name = "whname")
 	public java.lang.String getWhName() {
 		return getStr("WhName");
+	}
+
+	/**
+	 * 供应商编码
+	 */
+	public M setVenCode(java.lang.String VenCode) {
+		set("VenCode", VenCode);
+		return (M)this;
+	}
+
+	/**
+	 * 供应商编码
+	 */
+	@JBoltField(name="vencode" ,columnName="VenCode",type="String", remark="供应商编码", required=false, maxLength=30, fixed=0, order=20)
+	@JSONField(name = "vencode")
+	public java.lang.String getVenCode() {
+		return getStr("VenCode");
+	}
+
+	/**
+	 * 审批方式：1. 审核 2. 审批流
+	 */
+	public M setIAuditWay(java.lang.Integer iAuditWay) {
+		set("iAuditWay", iAuditWay);
+		return (M)this;
+	}
+
+	/**
+	 * 审批方式：1. 审核 2. 审批流
+	 */
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审核 2. 审批流", required=false, maxLength=10, fixed=0, order=21)
+	@JSONField(name = "iauditway")
+	public java.lang.Integer getIAuditWay() {
+		return getInt("iAuditWay");
+	}
+
+	/**
+	 * 提审时间
+	 */
+	public M setDSubmitTime(java.util.Date dSubmitTime) {
+		set("dSubmitTime", dSubmitTime);
+		return (M)this;
+	}
+
+	/**
+	 * 提审时间
+	 */
+	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=22)
+	@JSONField(name = "dsubmittime")
+	public java.util.Date getDSubmitTime() {
+		return getDate("dSubmitTime");
+	}
+
+	/**
+	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+	 */
+	public M setIAuditStatus(java.lang.Integer iAuditStatus) {
+		set("iAuditStatus", iAuditStatus);
+		return (M)this;
+	}
+
+	/**
+	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+	 */
+	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=23)
+	@JSONField(name = "iauditstatus")
+	public java.lang.Integer getIAuditStatus() {
+		return getInt("iAuditStatus");
+	}
+
+	/**
+	 * 审核时间
+	 */
+	public M setDAuditTime(java.util.Date dAuditTime) {
+		set("dAuditTime", dAuditTime);
+		return (M)this;
+	}
+
+	/**
+	 * 审核时间
+	 */
+	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=24)
+	@JSONField(name = "daudittime")
+	public java.util.Date getDAuditTime() {
+		return getDate("dAuditTime");
+	}
+
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
+		return (M)this;
+	}
+
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=25)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("isDeleted");
 	}
 
 }

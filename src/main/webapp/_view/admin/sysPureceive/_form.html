@@ -230,6 +230,7 @@
     hideParentLayerDialogBtn(1);
 
     function barcode() {
+        LayerMsgBox.loading("执行中......",10000);
         var barcode = $("#barcode").val();
         if (barcode) {
             Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode},
@@ -256,10 +257,10 @@
     }
 
     function submitThisForm() {
-        LayerMsgBox.alert("模块待开发")
-        // $("#operationType").val("submit");
-        // jboltTableSubmit("#jbolt_Table_#(pageId)");
-        // $("#operationType").val();
+        // LayerMsgBox.alert("模块待开发")
+        $("#operationType").val("submit");
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+        $("#operationType").val();
     }
 
     function getJBoltTableEditableColsOpton() {

@@ -1,18 +1,40 @@
 #sql("datas")
-select t1.*,
-       t2.cInvName,t2.cInvCode1,t2.cInvName1,t2.iPkgQty,t2.cInvStd,t2.cBarcode,
-       t3.cUomCode,t3.cUomName,
-       t4.cInvCCode,t4.cInvCName,
-       t6.cAreaCode,t6.cAreaName
-from UFDATA_001_2023.dbo.V_Sys_CurrentStock t1
-left join bd_inventory t2 on t1.invcode = t2.cInvCode
-left join Bd_Uom t3 on t2.iInventoryUomId1 = t3.iAutoId
-left join bd_inventoryclass t4 on t2.iAutoId = t4.iPid
-left join Bd_Warehouse t5 on t1.whcode = t5.cwhcode
-left join Bd_Warehouse_Area t6 on  t5.iautoid = t6.iWarehouseId
+SELECT t2.MasID,t2.AutoID,t2.VenCode,t2.Barcode,
+       t2.Invcode,t2.BarcodeDate,t2.Batch,t2.Qty,t2.PrintNum,
+       t2.ReportFileName,t2.CreatePerson,t2.CreateDate,t2.ModifyDate,t2.ModifyPerson,
+       t3.WhCode,t7.cWhName,t3.PosCode,t6.cAreaName,
+       t4.cInvName,t4.cInvCode1,t4.cInvName1,t4.iPkgQty,t4.cInvStd,t4.iInventoryClassId,
+       t5.cUomCode,t5.cUomName,t8.cInvCName
+from T_Sys_BarcodeMaster t1
+         LEFT JOIN T_Sys_BarcodeDetail t2 on t1.AutoID = t2.MasID
+         LEFT JOIN T_Sys_StockBarcodePosition t3 on t2.Barcode = t3.Barcode and t2.Batch = t3.Batch
+         LEFT JOIN bd_inventory t4 on t2.Invcode = t4.cInvCode
+         LEFT JOIN Bd_Uom t5 on t4.iInventoryUomId1 = t5.iAutoId
+         LEFT JOIN Bd_Warehouse_Area t6 on t3.PosCode = t6.cAreaCode
+         LEFT JOIN Bd_Warehouse t7 on t3.WhCode = t7.cWhCode
+         LEFT JOIN Bd_InventoryClass t8 on t4.iInventoryClassId = t8.iAutoId
+WHERE 1=1 and t1.memo = '仓库期初'
+#if(cinvcode)
+  and t2.Invcode = #para(cinvcode)
+#end
+#if(cinvcode1)
+  and t4.cinvcode1 = #para(cinvcode1)
+#end
+#if(cinvname1)
+  and t4.cinvname1 = #para(cinvname1)
+#end
+#if(whcode)
+  and t3.whcode = #para(whcode)
+#end
+#if(careacode)
+  and t3.poscode = #para(careacode)
+#end
+#if(iinventoryclassid)
+  and t4.iInventoryClassId = #para(iinventoryclassid)
+#end
 #end
 
-#sql("findByWhCodeAndInvCode")
+#sql("findGeneratedstockqtyByCodes")
 select * from T_Sys_StockBarcodePosition
 where 1=1
 #if(whcode)
@@ -27,22 +49,22 @@ and poscode = #para(poscode)
 #end
 
 #sql("detailDatas")
-SELECT t1.autoid,t3.masid,t2.*,t3.Barcode,
-       t3.Batch as cbatch,t3.qty as pringqty,t3.BarcodeDate,t3.CreatePerson,t3.CreateDate,t3.ReportFileName,
-       t4.cInvName,t4.cInvCode1,t4.cInvName1,t4.iPkgQty,t4.cInvStd,
-       t5.cUomCode,t5.cUomName,
-       t6.cVenCode,t6.cVenName,
-       t7.autoid as positionautoid
+SELECT
+    t2.AutoID,t2.MasID,t2.VenCode,t6.cvenname,t2.Barcode,
+    t2.Invcode,t2.BarcodeDate,t2.Batch,t2.Qty,t2.PrintNum,
+    t2.ReportFileName,t2.CreatePerson,t2.CreateDate,t2.ModifyDate,t2.ModifyPerson,
+    t3.WhCode,t3.PosCode,
+    t4.cInvName,t4.cInvCode1,t4.cInvName1,t4.iPkgQty,t4.cInvStd,
+    t5.cUomCode,t5.cUomName
 from T_Sys_BarcodeMaster t1
-         inner join UFDATA_001_2023.dbo.V_Sys_CurrentStock t2 on t1.sourceid = t2.id
-         left join T_Sys_BarcodeDetail t3 on t1.autoid = t3.masid
-         left join bd_inventory t4 on t2.invcode = t4.cinvcode
-         left join Bd_Uom t5 on t4.iInventoryUomId1 = t5.iAutoId
-         left join Bd_vendor t6 on t3.VenCode = t6.cVenCode
-         left join T_Sys_StockBarcodePosition t7 on t3.invcode = t7.invcode and t3.Barcode = t7.Barcode
-where 1=1
-#if(sourceid)
-and t1.sourceid = #para(sourceid)
+         LEFT JOIN T_Sys_BarcodeDetail t2 on t1.AutoID = t2.MasID
+         LEFT JOIN T_Sys_StockBarcodePosition t3 on t2.Barcode = t3.Barcode and t2.Batch = t3.Batch
+         LEFT JOIN bd_inventory t4 on t2.Invcode = t4.cInvCode
+         LEFT JOIN Bd_Uom t5 on t4.iInventoryUomId1 = t5.iAutoId
+         LEFT JOIN Bd_vendor t6 on t2.vencode = t6.cvencode
+     where 1=1 and t1.memo = '仓库期初'
+#if(masid)
+and t1.autoid = #para(masid)
 #end
 order by t1.ModifyDate desc
 #end
@@ -68,16 +90,15 @@ order by t1.dUpdateTime desc
 #end
 
 #sql("printData")
-SELECT t1.autoid,t3.masid,t2.*,t3.Barcode,
-       t3.Batch as cbatch,t3.qty as pringqty,t3.BarcodeDate,t3.CreatePerson,t3.CreateDate,t3.ReportFileName,
+SELECT t1.autoid,t3.masid,t3.Barcode as cbarcode,
+       t3.Batch as cbatch,t3.qty as planiqty,t3.BarcodeDate,t3.CreatePerson,t3.CreateDate,t3.ReportFileName,t3.PrintNum,
        t4.cInvName,t4.cInvCode1,t4.cInvName1,t4.iPkgQty,t4.cInvStd,
        t5.cUomCode,t5.cUomName,
        t6.cVenCode,t6.cVenName,
        t7.autoid as positionautoid
 from T_Sys_BarcodeMaster t1
-         inner join UFDATA_001_2023.dbo.V_Sys_CurrentStock t2 on t1.sourceid = t2.id
          left join T_Sys_BarcodeDetail t3 on t1.autoid = t3.masid
-         left join bd_inventory t4 on t2.invcode = t4.cinvcode
+         left join bd_inventory t4 on t3.invcode = t4.cinvcode
          left join Bd_Uom t5 on t4.iInventoryUomId1 = t5.iAutoId
          left join Bd_vendor t6 on t3.VenCode = t6.cVenCode
          left join T_Sys_StockBarcodePosition t7 on t3.invcode = t7.invcode and t3.Barcode = t7.Barcode
@@ -99,4 +120,26 @@ where wa.isEnabled = '1' and wa.isDeleted = '0'
     wa.iWarehouseId = #para(iwarehouseid)
     #end
 order by wa.dUpdateTime desc
+#end
+
+#sql("findPosCodeByWhcodeAndInvcode")
+select t1.* from Bd_Warehouse_Position t1
+where 1=1
+#if(iwarehouseid)
+and t1.iWarehouseId = #para(iwarehouseid)
+#end
+#if(iwarehouseareaid)
+and t1.iwarehouseareaid = #para(iwarehouseareaid)
+#end
+#end
+
+#sql("findBarcodePositionByKvs")
+select t1.* from T_Sys_StockBarcodePosition t1
+where 1=1
+and t1.InvCode = #para(invcode)
+and t1.VenCode = #para(vencode)
+and t1.WhCode = #para(whcode)
+and t1.PosCode = #para(poscode)
+and t1.OrganizeCode = #para(organizecode)
+and t1.LockSource = #para(locksource)
 #end
