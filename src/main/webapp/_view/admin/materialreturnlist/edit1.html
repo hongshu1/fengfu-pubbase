@@ -21,7 +21,7 @@
                 </div>
             </div>
             #if(puinstore.AutoID??)
-            <input type="hidden" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
+            <input type="hidden" id="puinstoreautoid" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
             #end
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">入库单号：</label>
@@ -38,7 +38,7 @@
                 <label class="col-sm-2 col-form-label">仓库名称：</label>
                 <div class="col-sm-2 col-form-label">
                     <select class="form-control"
-                            name="whcode"
+                            name="puinstore.whcode"
                             data-autoload
                             data-url="admin/SysEnumeration/wareHouse"
                             data-select-type="select2"
@@ -230,7 +230,7 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
    {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
+        <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
     <td>
         <a href="admin/materialreturnlist/deleteList/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn">删除</a>
@@ -385,9 +385,19 @@
         if (checkTds()) {
             jboltTableSubmitMulti(tables, "/admin/materialreturnlist/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
                 if (res.state == "ok") {
-                    LayerMsgBox.success(res.msg, 600, function () {
-                        parent.refreshPjaxContainer();
-                        parent.layer.close(parent.layer.getFrameIndex(window.name));
+                    LayerMsgBox.success(res.msg, 2000, function () {
+                        debugger;
+                        let id = res.AutoID;
+                        if (value == "save"){
+                            parent.refreshJBoltTable();
+                            // parent.refreshPjaxContainer();
+                            // parent.refreshCurrentTabContent();//刷新当前页面
+                            self.location.href = "/admin/materialreturnlist/edit/"+id+"-_jb_rqtype_dialog"; //新增的刷新
+                        }else {
+                            parent.refreshCurrentTabContent();//刷新当前页面
+                            // refreshPjaxContainer();
+                            parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                        }
                     })
                 } else {
                     LayerMsgBox.error(res.msg);

@@ -13,6 +13,7 @@ import io.github.yedaxia.apidocs.ApiDoc;
  * @author yjllzy
  */
 @ApiDoc
+@UnCheck
 public class FormUploadCategoryApiController extends BaseApiController {
 
     @Inject
