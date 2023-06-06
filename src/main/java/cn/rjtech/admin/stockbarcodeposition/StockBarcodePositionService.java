@@ -143,7 +143,6 @@ public class StockBarcodePositionService extends BaseService<StockBarcodePositio
         position.setPosCode(kv.getStr("careacode"));
         //position.setState();
         position.setBarcode(kv.getStr("barcode"));
-        position.setQty(kv.getBigDecimal("generatedstockqty")); //每张条码需要打印的数量
         position.setBatch(kv.getStr("batch"));
         position.setChgDate(now);
         position.setLockSource(String.valueOf(masid));

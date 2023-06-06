@@ -1,20 +1,25 @@
 package cn.rjtech.api.formuploadm;
 
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.formuploadm.FormUpload;
 import cn.rjtech.entity.vo.formuploadm.FormUploadVo;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import io.github.yedaxia.apidocs.ApiDoc;
+
+import java.util.Date;
 
 /**
  * 记录上传api接口
  * @author yjllzy
  */
 @ApiDoc
+@UnCheck
 public class FormUploadMApiController  extends BaseApiController {
 
     @Inject
@@ -64,8 +69,17 @@ public class FormUploadMApiController  extends BaseApiController {
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void saveTableSubmit(){
-        renderJBoltApiRet(service.saveTableSubmit(getKv()));
+    public void saveTableSubmit( @Para(value = "icategoryid") String iautoid,
+                                 @Para(value = "iworkregionmid") String iworkregionmid,
+                                 @Para(value = "icategoryid") String icategoryid,
+                                 @Para(value = "ddate") Date ddate,
+                                 @Para(value = "formuploadds") String formuploadds){
+        ValidationUtils.notNull(iworkregionmid, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(icategoryid, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(ddate, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(formuploadds, JBoltMsg.PARAM_ERROR);
+
+        renderJBoltApiRet(service.saveTableSubmit(iautoid,iworkregionmid,icategoryid,ddate,formuploadds));
     }
 
     /**
@@ -91,9 +105,19 @@ public class FormUploadMApiController  extends BaseApiController {
      * 详情数据
      */
     @ApiDoc(result = FormUpload.class)
+    @UnCheck
     public void details(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
                         @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
                         @Para(value = "iautoid") String iautoid){
         renderJBoltApiRet(service.details(pageNumber,pageSize,  Kv.by("iautoid",iautoid)));
+    }
+
+    /**
+     * 行删除
+     */
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+    public void lineDeletion(@Para(value = "iautoid") Long iautoid){
+        renderJBoltApiRet(service.delete2(iautoid));
     }
 }

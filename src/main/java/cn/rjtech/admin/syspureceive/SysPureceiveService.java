@@ -739,10 +739,35 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             Ret ret = formApprovalService.judgeType(table(), iautoid);
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
-            // 更新状态
+            // TODO 更新状态
 
             return true;
         });
+        return SUCCESS;
+    }
+
+    public Ret withdraw(Long iAutoId) {
+        tx(() -> {
+
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 审核通过
+     */
+    public Ret approve(String ids) {
+        tx(() -> {
+
+            return true;
+        });
+        
+        return SUCCESS; 
+    }
+
+    public Ret reject(String ids) {
+
         return SUCCESS;
     }
     
