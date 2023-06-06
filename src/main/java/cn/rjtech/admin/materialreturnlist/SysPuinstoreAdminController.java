@@ -121,7 +121,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	/**
 	 * JBoltTable 可编辑表格整体提交 多表格
 	 */
-	public void submitMulti(String param, String revokeVal) {
+	public void submitMulti(Integer param, String revokeVal) {
 		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal));
 	}
 
