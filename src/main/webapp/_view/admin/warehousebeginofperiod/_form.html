@@ -323,6 +323,10 @@
         LayerMsgBox.alert("生成条码库存数量不能为0", 2);
         return;
       }
+      if (checkisNull(element.ipkgqty)) {
+        LayerMsgBox.alert("新增期初库存包装数量不能为0", 2);
+        return;
+      }
       if (checkisNull(element.reportfilename)) {
         LayerMsgBox.alert("标签打印模板不能为空", 2);
         return;

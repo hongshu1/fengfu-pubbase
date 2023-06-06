@@ -102,7 +102,7 @@ public class VendorClassAdminController extends BaseAdminController {
      * 批量删除
      */
     public void deleteByIds() {
-        renderJson(service.deleteByIds(get("ids")));
+        renderJson(service.deleteVendorClassByIds(get("ids")));
     }
 
     /**
