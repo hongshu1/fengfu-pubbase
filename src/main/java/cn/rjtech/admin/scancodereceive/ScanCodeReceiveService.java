@@ -13,6 +13,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AuditStateEnum;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.model.momdata.SysPureceive;
 import cn.rjtech.model.momdata.SysPureceivedetail;
@@ -216,7 +217,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> {
 				sysotherin.setCreateDate(now);
 				sysotherin.setBillDate(dateToString(now));
 				sysotherin.setModifyPerson(user.getUsername());
-				sysotherin.setState("1");
+				sysotherin.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
 				sysotherin.setModifyDate(now);
 				//主表新增
 				ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
@@ -236,7 +237,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> {
 			//获取删除数据（执行删除，通过 getDelete）
 			deleteTableSubmitDatas(jBoltTable);
 			if("submit".equals(jBoltTable.getForm().getString("operationType"))){
-				sysotherin.setState("2");
+				sysotherin.setIAuditStatus(Integer.valueOf(AuditStateEnum.AWAIT_AUDIT.getValue()));
 				ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
 			}
 			return true;

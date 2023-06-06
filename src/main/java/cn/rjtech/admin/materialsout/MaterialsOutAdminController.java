@@ -158,7 +158,7 @@ public class MaterialsOutAdminController extends BaseAdminController {
 		Kv kv = new Kv();
 		kv.set("autoid",autoid== null? "" :autoid);
 		kv.set("OrgCode",OrgCode);
-		renderJsonData(service.getMaterialsOutLines(getPageNumber(), getPageSize(), kv));
+		renderJsonData(service.getMaterialsOutLines(kv));
 	}
 
 	/**

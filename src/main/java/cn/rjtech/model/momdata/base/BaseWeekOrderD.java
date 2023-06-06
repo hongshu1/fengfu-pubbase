@@ -19,34 +19,92 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
     public static final String CPLANCODE = "cPlanCode";
     /**收货地点ID*/
     public static final String ICUSTOMERADDRID = "iCustomerAddrId";
+    /**收货地址*/
+    public static final String CDISTRICTNAME = "cDistrictName";
     /**存货ID*/
     public static final String IINVENTORYID = "iInventoryId";
-    /**数量*/
-    public static final String IQTY = "iQty";
-    /**计划到货日期*/
-    public static final String DPLANAOGDATE = "dPlanAogDate";
-    /**传票号*/
-    public static final String CCODE = "cCode";
-    /**版本号*/
-    public static final String CVERSION = "cVersion";
-    /**备注*/
-    public static final String CMEMO = "cMemo";
-    /**删除状态：0. 未删除 1. 已删除*/
-    public static final String ISDELETED = "isDeleted";
     /**存货编码*/
     public static final String CINVCODE = "cInvCode";
-    /**存货名称*/
-    public static final String CINVNAME = "cInvName";
     /**客户部番*/
     public static final String CINVCODE1 = "cInvCode1";
     /**部品名称*/
     public static final String CINVNAME1 = "cInvName1";
     /**规格*/
     public static final String CINVSTD = "cInvStd";
-    /**收货地点*/
-    public static final String CDISTRICTNAME = "cDistrictName";
+    /**数量*/
+    public static final String IQTY = "iQty";
+    /**计划到货日期*/
+    public static final String DPLANAOGDATE = "dPlanAogDate";
     /**计划到货时间*/
-    public static final String DPLANAOGTIME = "dPlanAogTime";
+    public static final String CPLANAOGTIME = "cPlanAogTime";
+    /**传票号*/
+    public static final String CCODE = "cCode";
+    /**版本号*/
+    public static final String CVERSION = "cVersion";
+    /**备注*/
+    public static final String CMEMO = "cMemo";
+    /**扩展字段1*/
+    public static final String CDEFINE1 = "cDefine1";
+    /**扩展字段2*/
+    public static final String CDEFINE2 = "cDefine2";
+    /**扩展字段3*/
+    public static final String CDEFINE3 = "cDefine3";
+    /**扩展字段4*/
+    public static final String CDEFINE4 = "cDefine4";
+    /**扩展字段5*/
+    public static final String CDEFINE5 = "cDefine5";
+    /**扩展字段6*/
+    public static final String CDEFINE6 = "cDefine6";
+    /**扩展字段7*/
+    public static final String CDEFINE7 = "cDefine7";
+    /**扩展字段8*/
+    public static final String CDEFINE8 = "cDefine8";
+    /**扩展字段9*/
+    public static final String CDEFINE9 = "cDefine9";
+    /**扩展字段10*/
+    public static final String CDEFINE10 = "cDefine10";
+    /**扩展字段11*/
+    public static final String CDEFINE11 = "cDefine11";
+    /**扩展字段12*/
+    public static final String CDEFINE12 = "cDefine12";
+    /**扩展字段13*/
+    public static final String CDEFINE13 = "cDefine13";
+    /**扩展字段14*/
+    public static final String CDEFINE14 = "cDefine14";
+    /**扩展字段15*/
+    public static final String CDEFINE15 = "cDefine15";
+    /**扩展字段16*/
+    public static final String IDEFINE16 = "iDefine16";
+    /**扩展字段17*/
+    public static final String IDEFINE17 = "iDefine17";
+    /**扩展字段18*/
+    public static final String IDEFINE18 = "iDefine18";
+    /**扩展字段19*/
+    public static final String IDEFINE19 = "iDefine19";
+    /**扩展字段20*/
+    public static final String IDEFINE20 = "iDefine20";
+    /**扩展字段21*/
+    public static final String IDEFINE21 = "iDefine21";
+    /**扩展字段22*/
+    public static final String IDEFINE22 = "iDefine22";
+    /**扩展字段23*/
+    public static final String IDEFINE23 = "iDefine23";
+    /**扩展字段24*/
+    public static final String IDEFINE24 = "iDefine24";
+    /**扩展字段25*/
+    public static final String IDEFINE25 = "iDefine25";
+    /**扩展字段26*/
+    public static final String DDEFINE26 = "dDefine26";
+    /**扩展字段27*/
+    public static final String DDEFINE27 = "dDefine27";
+    /**扩展字段28*/
+    public static final String DDEFINE28 = "dDefine28";
+    /**扩展字段29*/
+    public static final String DDEFINE29 = "dDefine29";
+    /**扩展字段30*/
+    public static final String DDEFINE30 = "dDefine30";
+    /**删除状态;0. 未删除 1. 已删除*/
+    public static final String ISDELETED = "isDeleted";
 	/**
 	 * 主键ID
 	 */
@@ -116,6 +174,23 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	}
 
 	/**
+	 * 收货地址
+	 */
+	public M setCDistrictName(java.lang.String cDistrictName) {
+		set("cDistrictName", cDistrictName);
+		return (M)this;
+	}
+
+	/**
+	 * 收货地址
+	 */
+	@JBoltField(name="cdistrictname" ,columnName="cDistrictName",type="String", remark="收货地址", required=false, maxLength=255, fixed=0, order=5)
+	@JSONField(name = "cdistrictname")
+	public java.lang.String getCDistrictName() {
+		return getStr("cDistrictName");
+	}
+
+	/**
 	 * 存货ID
 	 */
 	public M setIInventoryId(java.lang.Long iInventoryId) {
@@ -126,112 +201,10 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 存货ID
 	 */
-	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="Long", remark="存货ID", required=true, maxLength=19, fixed=0, order=5)
+	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="Long", remark="存货ID", required=true, maxLength=19, fixed=0, order=6)
 	@JSONField(name = "iinventoryid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIInventoryId() {
 		return getLong("iInventoryId");
-	}
-
-	/**
-	 * 数量
-	 */
-	public M setIQty(java.lang.Integer iQty) {
-		set("iQty", iQty);
-		return (M)this;
-	}
-
-	/**
-	 * 数量
-	 */
-	@JBoltField(name="iqty" ,columnName="iQty",type="Integer", remark="数量", required=true, maxLength=10, fixed=0, order=6)
-	@JSONField(name = "iqty")
-	public java.lang.Integer getIQty() {
-		return getInt("iQty");
-	}
-
-	/**
-	 * 计划到货日期
-	 */
-	public M setDPlanAogDate(java.util.Date dPlanAogDate) {
-		set("dPlanAogDate", dPlanAogDate);
-		return (M)this;
-	}
-
-	/**
-	 * 计划到货日期
-	 */
-	@JBoltField(name="dplanaogdate" ,columnName="dPlanAogDate",type="Date", remark="计划到货日期", required=true, maxLength=10, fixed=0, order=7)
-	@JSONField(name = "dplanaogdate")
-	public java.util.Date getDPlanAogDate() {
-		return getDate("dPlanAogDate");
-	}
-
-	/**
-	 * 传票号
-	 */
-	public M setCCode(java.lang.String cCode) {
-		set("cCode", cCode);
-		return (M)this;
-	}
-
-	/**
-	 * 传票号
-	 */
-	@JBoltField(name="ccode" ,columnName="cCode",type="String", remark="传票号", required=true, maxLength=40, fixed=0, order=8)
-	@JSONField(name = "ccode")
-	public java.lang.String getCCode() {
-		return getStr("cCode");
-	}
-
-	/**
-	 * 版本号
-	 */
-	public M setCVersion(java.lang.String cVersion) {
-		set("cVersion", cVersion);
-		return (M)this;
-	}
-
-	/**
-	 * 版本号
-	 */
-	@JBoltField(name="cversion" ,columnName="cVersion",type="String", remark="版本号", required=true, maxLength=10, fixed=0, order=9)
-	@JSONField(name = "cversion")
-	public java.lang.String getCVersion() {
-		return getStr("cVersion");
-	}
-
-	/**
-	 * 备注
-	 */
-	public M setCMemo(java.lang.String cMemo) {
-		set("cMemo", cMemo);
-		return (M)this;
-	}
-
-	/**
-	 * 备注
-	 */
-	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=10)
-	@JSONField(name = "cmemo")
-	public java.lang.String getCMemo() {
-		return getStr("cMemo");
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	public M setIsDeleted(java.lang.Boolean isDeleted) {
-		set("isDeleted", isDeleted);
-		return (M)this;
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=11)
-	@JSONField(name = "isdeleted")
-	public java.lang.Boolean getIsDeleted() {
-		return getBoolean("isDeleted");
 	}
 
 	/**
@@ -245,27 +218,10 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 存货编码
 	 */
-	@JBoltField(name="cinvcode" ,columnName="cInvCode",type="String", remark="存货编码", required=false, maxLength=60, fixed=0, order=12)
+	@JBoltField(name="cinvcode" ,columnName="cInvCode",type="String", remark="存货编码", required=false, maxLength=200, fixed=0, order=7)
 	@JSONField(name = "cinvcode")
 	public java.lang.String getCInvCode() {
 		return getStr("cInvCode");
-	}
-
-	/**
-	 * 存货名称
-	 */
-	public M setCInvName(java.lang.String cInvName) {
-		set("cInvName", cInvName);
-		return (M)this;
-	}
-
-	/**
-	 * 存货名称
-	 */
-	@JBoltField(name="cinvname" ,columnName="cInvName",type="String", remark="存货名称", required=false, maxLength=255, fixed=0, order=13)
-	@JSONField(name = "cinvname")
-	public java.lang.String getCInvName() {
-		return getStr("cInvName");
 	}
 
 	/**
@@ -279,7 +235,7 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 客户部番
 	 */
-	@JBoltField(name="cinvcode1" ,columnName="cInvCode1",type="String", remark="客户部番", required=false, maxLength=255, fixed=0, order=14)
+	@JBoltField(name="cinvcode1" ,columnName="cInvCode1",type="String", remark="客户部番", required=false, maxLength=200, fixed=0, order=8)
 	@JSONField(name = "cinvcode1")
 	public java.lang.String getCInvCode1() {
 		return getStr("cInvCode1");
@@ -296,7 +252,7 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 部品名称
 	 */
-	@JBoltField(name="cinvname1" ,columnName="cInvName1",type="String", remark="部品名称", required=false, maxLength=255, fixed=0, order=15)
+	@JBoltField(name="cinvname1" ,columnName="cInvName1",type="String", remark="部品名称", required=false, maxLength=200, fixed=0, order=9)
 	@JSONField(name = "cinvname1")
 	public java.lang.String getCInvName1() {
 		return getStr("cInvName1");
@@ -313,44 +269,639 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	/**
 	 * 规格
 	 */
-	@JBoltField(name="cinvstd" ,columnName="cInvStd",type="String", remark="规格", required=false, maxLength=255, fixed=0, order=16)
+	@JBoltField(name="cinvstd" ,columnName="cInvStd",type="String", remark="规格", required=false, maxLength=200, fixed=0, order=10)
 	@JSONField(name = "cinvstd")
 	public java.lang.String getCInvStd() {
 		return getStr("cInvStd");
 	}
 
 	/**
-	 * 收货地点
+	 * 数量
 	 */
-	public M setCDistrictName(java.lang.String cDistrictName) {
-		set("cDistrictName", cDistrictName);
+	public M setIQty(java.math.BigDecimal iQty) {
+		set("iQty", iQty);
 		return (M)this;
 	}
 
 	/**
-	 * 收货地点
+	 * 数量
 	 */
-	@JBoltField(name="cdistrictname" ,columnName="cDistrictName",type="String", remark="收货地点", required=false, maxLength=200, fixed=0, order=17)
-	@JSONField(name = "cdistrictname")
-	public java.lang.String getCDistrictName() {
-		return getStr("cDistrictName");
+	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="数量", required=true, maxLength=24, fixed=6, order=11)
+	@JSONField(name = "iqty")
+	public java.math.BigDecimal getIQty() {
+		return getBigDecimal("iQty");
+	}
+
+	/**
+	 * 计划到货日期
+	 */
+	public M setDPlanAogDate(java.util.Date dPlanAogDate) {
+		set("dPlanAogDate", dPlanAogDate);
+		return (M)this;
+	}
+
+	/**
+	 * 计划到货日期
+	 */
+	@JBoltField(name="dplanaogdate" ,columnName="dPlanAogDate",type="Date", remark="计划到货日期", required=true, maxLength=10, fixed=0, order=12)
+	@JSONField(name = "dplanaogdate")
+	public java.util.Date getDPlanAogDate() {
+		return getDate("dPlanAogDate");
 	}
 
 	/**
 	 * 计划到货时间
 	 */
-	public M setCPlanAogTime(java.lang.String dPlanAogTime) {
-		set("dPlanAogTime", dPlanAogTime);
+	public M setCPlanAogTime(java.lang.String cPlanAogTime) {
+		set("cPlanAogTime", cPlanAogTime);
 		return (M)this;
 	}
 
 	/**
 	 * 计划到货时间
 	 */
-	@JBoltField(name="dplanaogtime" ,columnName="dPlanAogTime",type="String", remark="计划到货时间", required=false, maxLength=10, fixed=0, order=18)
-	@JSONField(name = "dplanaogtime")
+	@JBoltField(name="cplanaogtime" ,columnName="cPlanAogTime",type="String", remark="计划到货时间", required=true, maxLength=10, fixed=0, order=13)
+	@JSONField(name = "cplanaogtime")
 	public java.lang.String getCPlanAogTime() {
-		return getStr("dPlanAogTime");
+		return getStr("cPlanAogTime");
+	}
+
+	/**
+	 * 传票号
+	 */
+	public M setCCode(java.lang.String cCode) {
+		set("cCode", cCode);
+		return (M)this;
+	}
+
+	/**
+	 * 传票号
+	 */
+	@JBoltField(name="ccode" ,columnName="cCode",type="String", remark="传票号", required=true, maxLength=40, fixed=0, order=14)
+	@JSONField(name = "ccode")
+	public java.lang.String getCCode() {
+		return getStr("cCode");
+	}
+
+	/**
+	 * 版本号
+	 */
+	public M setCVersion(java.lang.String cVersion) {
+		set("cVersion", cVersion);
+		return (M)this;
+	}
+
+	/**
+	 * 版本号
+	 */
+	@JBoltField(name="cversion" ,columnName="cVersion",type="String", remark="版本号", required=true, maxLength=10, fixed=0, order=15)
+	@JSONField(name = "cversion")
+	public java.lang.String getCVersion() {
+		return getStr("cVersion");
+	}
+
+	/**
+	 * 备注
+	 */
+	public M setCMemo(java.lang.String cMemo) {
+		set("cMemo", cMemo);
+		return (M)this;
+	}
+
+	/**
+	 * 备注
+	 */
+	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=16)
+	@JSONField(name = "cmemo")
+	public java.lang.String getCMemo() {
+		return getStr("cMemo");
+	}
+
+	/**
+	 * 扩展字段1
+	 */
+	public M setCDefine1(java.lang.String cDefine1) {
+		set("cDefine1", cDefine1);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段1
+	 */
+	@JBoltField(name="cdefine1" ,columnName="cDefine1",type="String", remark="扩展字段1", required=false, maxLength=200, fixed=0, order=17)
+	@JSONField(name = "cdefine1")
+	public java.lang.String getCDefine1() {
+		return getStr("cDefine1");
+	}
+
+	/**
+	 * 扩展字段2
+	 */
+	public M setCDefine2(java.lang.String cDefine2) {
+		set("cDefine2", cDefine2);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段2
+	 */
+	@JBoltField(name="cdefine2" ,columnName="cDefine2",type="String", remark="扩展字段2", required=false, maxLength=200, fixed=0, order=18)
+	@JSONField(name = "cdefine2")
+	public java.lang.String getCDefine2() {
+		return getStr("cDefine2");
+	}
+
+	/**
+	 * 扩展字段3
+	 */
+	public M setCDefine3(java.lang.String cDefine3) {
+		set("cDefine3", cDefine3);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段3
+	 */
+	@JBoltField(name="cdefine3" ,columnName="cDefine3",type="String", remark="扩展字段3", required=false, maxLength=200, fixed=0, order=19)
+	@JSONField(name = "cdefine3")
+	public java.lang.String getCDefine3() {
+		return getStr("cDefine3");
+	}
+
+	/**
+	 * 扩展字段4
+	 */
+	public M setCDefine4(java.lang.String cDefine4) {
+		set("cDefine4", cDefine4);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段4
+	 */
+	@JBoltField(name="cdefine4" ,columnName="cDefine4",type="String", remark="扩展字段4", required=false, maxLength=200, fixed=0, order=20)
+	@JSONField(name = "cdefine4")
+	public java.lang.String getCDefine4() {
+		return getStr("cDefine4");
+	}
+
+	/**
+	 * 扩展字段5
+	 */
+	public M setCDefine5(java.lang.String cDefine5) {
+		set("cDefine5", cDefine5);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段5
+	 */
+	@JBoltField(name="cdefine5" ,columnName="cDefine5",type="String", remark="扩展字段5", required=false, maxLength=200, fixed=0, order=21)
+	@JSONField(name = "cdefine5")
+	public java.lang.String getCDefine5() {
+		return getStr("cDefine5");
+	}
+
+	/**
+	 * 扩展字段6
+	 */
+	public M setCDefine6(java.lang.String cDefine6) {
+		set("cDefine6", cDefine6);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段6
+	 */
+	@JBoltField(name="cdefine6" ,columnName="cDefine6",type="String", remark="扩展字段6", required=false, maxLength=200, fixed=0, order=22)
+	@JSONField(name = "cdefine6")
+	public java.lang.String getCDefine6() {
+		return getStr("cDefine6");
+	}
+
+	/**
+	 * 扩展字段7
+	 */
+	public M setCDefine7(java.lang.String cDefine7) {
+		set("cDefine7", cDefine7);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段7
+	 */
+	@JBoltField(name="cdefine7" ,columnName="cDefine7",type="String", remark="扩展字段7", required=false, maxLength=200, fixed=0, order=23)
+	@JSONField(name = "cdefine7")
+	public java.lang.String getCDefine7() {
+		return getStr("cDefine7");
+	}
+
+	/**
+	 * 扩展字段8
+	 */
+	public M setCDefine8(java.lang.String cDefine8) {
+		set("cDefine8", cDefine8);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段8
+	 */
+	@JBoltField(name="cdefine8" ,columnName="cDefine8",type="String", remark="扩展字段8", required=false, maxLength=200, fixed=0, order=24)
+	@JSONField(name = "cdefine8")
+	public java.lang.String getCDefine8() {
+		return getStr("cDefine8");
+	}
+
+	/**
+	 * 扩展字段9
+	 */
+	public M setCDefine9(java.lang.String cDefine9) {
+		set("cDefine9", cDefine9);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段9
+	 */
+	@JBoltField(name="cdefine9" ,columnName="cDefine9",type="String", remark="扩展字段9", required=false, maxLength=200, fixed=0, order=25)
+	@JSONField(name = "cdefine9")
+	public java.lang.String getCDefine9() {
+		return getStr("cDefine9");
+	}
+
+	/**
+	 * 扩展字段10
+	 */
+	public M setCDefine10(java.lang.String cDefine10) {
+		set("cDefine10", cDefine10);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段10
+	 */
+	@JBoltField(name="cdefine10" ,columnName="cDefine10",type="String", remark="扩展字段10", required=false, maxLength=200, fixed=0, order=26)
+	@JSONField(name = "cdefine10")
+	public java.lang.String getCDefine10() {
+		return getStr("cDefine10");
+	}
+
+	/**
+	 * 扩展字段11
+	 */
+	public M setCDefine11(java.lang.String cDefine11) {
+		set("cDefine11", cDefine11);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段11
+	 */
+	@JBoltField(name="cdefine11" ,columnName="cDefine11",type="String", remark="扩展字段11", required=false, maxLength=500, fixed=0, order=27)
+	@JSONField(name = "cdefine11")
+	public java.lang.String getCDefine11() {
+		return getStr("cDefine11");
+	}
+
+	/**
+	 * 扩展字段12
+	 */
+	public M setCDefine12(java.lang.String cDefine12) {
+		set("cDefine12", cDefine12);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段12
+	 */
+	@JBoltField(name="cdefine12" ,columnName="cDefine12",type="String", remark="扩展字段12", required=false, maxLength=500, fixed=0, order=28)
+	@JSONField(name = "cdefine12")
+	public java.lang.String getCDefine12() {
+		return getStr("cDefine12");
+	}
+
+	/**
+	 * 扩展字段13
+	 */
+	public M setCDefine13(java.lang.String cDefine13) {
+		set("cDefine13", cDefine13);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段13
+	 */
+	@JBoltField(name="cdefine13" ,columnName="cDefine13",type="String", remark="扩展字段13", required=false, maxLength=500, fixed=0, order=29)
+	@JSONField(name = "cdefine13")
+	public java.lang.String getCDefine13() {
+		return getStr("cDefine13");
+	}
+
+	/**
+	 * 扩展字段14
+	 */
+	public M setCDefine14(java.lang.String cDefine14) {
+		set("cDefine14", cDefine14);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段14
+	 */
+	@JBoltField(name="cdefine14" ,columnName="cDefine14",type="String", remark="扩展字段14", required=false, maxLength=500, fixed=0, order=30)
+	@JSONField(name = "cdefine14")
+	public java.lang.String getCDefine14() {
+		return getStr("cDefine14");
+	}
+
+	/**
+	 * 扩展字段15
+	 */
+	public M setCDefine15(java.lang.String cDefine15) {
+		set("cDefine15", cDefine15);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段15
+	 */
+	@JBoltField(name="cdefine15" ,columnName="cDefine15",type="String", remark="扩展字段15", required=false, maxLength=500, fixed=0, order=31)
+	@JSONField(name = "cdefine15")
+	public java.lang.String getCDefine15() {
+		return getStr("cDefine15");
+	}
+
+	/**
+	 * 扩展字段16
+	 */
+	public M setIDefine16(java.math.BigDecimal iDefine16) {
+		set("iDefine16", iDefine16);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段16
+	 */
+	@JBoltField(name="idefine16" ,columnName="iDefine16",type="BigDecimal", remark="扩展字段16", required=false, maxLength=24, fixed=6, order=32)
+	@JSONField(name = "idefine16")
+	public java.math.BigDecimal getIDefine16() {
+		return getBigDecimal("iDefine16");
+	}
+
+	/**
+	 * 扩展字段17
+	 */
+	public M setIDefine17(java.math.BigDecimal iDefine17) {
+		set("iDefine17", iDefine17);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段17
+	 */
+	@JBoltField(name="idefine17" ,columnName="iDefine17",type="BigDecimal", remark="扩展字段17", required=false, maxLength=24, fixed=6, order=33)
+	@JSONField(name = "idefine17")
+	public java.math.BigDecimal getIDefine17() {
+		return getBigDecimal("iDefine17");
+	}
+
+	/**
+	 * 扩展字段18
+	 */
+	public M setIDefine18(java.math.BigDecimal iDefine18) {
+		set("iDefine18", iDefine18);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段18
+	 */
+	@JBoltField(name="idefine18" ,columnName="iDefine18",type="BigDecimal", remark="扩展字段18", required=false, maxLength=24, fixed=6, order=34)
+	@JSONField(name = "idefine18")
+	public java.math.BigDecimal getIDefine18() {
+		return getBigDecimal("iDefine18");
+	}
+
+	/**
+	 * 扩展字段19
+	 */
+	public M setIDefine19(java.math.BigDecimal iDefine19) {
+		set("iDefine19", iDefine19);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段19
+	 */
+	@JBoltField(name="idefine19" ,columnName="iDefine19",type="BigDecimal", remark="扩展字段19", required=false, maxLength=24, fixed=6, order=35)
+	@JSONField(name = "idefine19")
+	public java.math.BigDecimal getIDefine19() {
+		return getBigDecimal("iDefine19");
+	}
+
+	/**
+	 * 扩展字段20
+	 */
+	public M setIDefine20(java.math.BigDecimal iDefine20) {
+		set("iDefine20", iDefine20);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段20
+	 */
+	@JBoltField(name="idefine20" ,columnName="iDefine20",type="BigDecimal", remark="扩展字段20", required=false, maxLength=24, fixed=6, order=36)
+	@JSONField(name = "idefine20")
+	public java.math.BigDecimal getIDefine20() {
+		return getBigDecimal("iDefine20");
+	}
+
+	/**
+	 * 扩展字段21
+	 */
+	public M setIDefine21(java.lang.Integer iDefine21) {
+		set("iDefine21", iDefine21);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段21
+	 */
+	@JBoltField(name="idefine21" ,columnName="iDefine21",type="Integer", remark="扩展字段21", required=false, maxLength=10, fixed=0, order=37)
+	@JSONField(name = "idefine21")
+	public java.lang.Integer getIDefine21() {
+		return getInt("iDefine21");
+	}
+
+	/**
+	 * 扩展字段22
+	 */
+	public M setIDefine22(java.lang.Integer iDefine22) {
+		set("iDefine22", iDefine22);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段22
+	 */
+	@JBoltField(name="idefine22" ,columnName="iDefine22",type="Integer", remark="扩展字段22", required=false, maxLength=10, fixed=0, order=38)
+	@JSONField(name = "idefine22")
+	public java.lang.Integer getIDefine22() {
+		return getInt("iDefine22");
+	}
+
+	/**
+	 * 扩展字段23
+	 */
+	public M setIDefine23(java.lang.Integer iDefine23) {
+		set("iDefine23", iDefine23);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段23
+	 */
+	@JBoltField(name="idefine23" ,columnName="iDefine23",type="Integer", remark="扩展字段23", required=false, maxLength=10, fixed=0, order=39)
+	@JSONField(name = "idefine23")
+	public java.lang.Integer getIDefine23() {
+		return getInt("iDefine23");
+	}
+
+	/**
+	 * 扩展字段24
+	 */
+	public M setIDefine24(java.lang.Integer iDefine24) {
+		set("iDefine24", iDefine24);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段24
+	 */
+	@JBoltField(name="idefine24" ,columnName="iDefine24",type="Integer", remark="扩展字段24", required=false, maxLength=10, fixed=0, order=40)
+	@JSONField(name = "idefine24")
+	public java.lang.Integer getIDefine24() {
+		return getInt("iDefine24");
+	}
+
+	/**
+	 * 扩展字段25
+	 */
+	public M setIDefine25(java.lang.Integer iDefine25) {
+		set("iDefine25", iDefine25);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段25
+	 */
+	@JBoltField(name="idefine25" ,columnName="iDefine25",type="Integer", remark="扩展字段25", required=false, maxLength=10, fixed=0, order=41)
+	@JSONField(name = "idefine25")
+	public java.lang.Integer getIDefine25() {
+		return getInt("iDefine25");
+	}
+
+	/**
+	 * 扩展字段26
+	 */
+	public M setDDefine26(java.util.Date dDefine26) {
+		set("dDefine26", dDefine26);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段26
+	 */
+	@JBoltField(name="ddefine26" ,columnName="dDefine26",type="Date", remark="扩展字段26", required=false, maxLength=23, fixed=3, order=42)
+	@JSONField(name = "ddefine26")
+	public java.util.Date getDDefine26() {
+		return getDate("dDefine26");
+	}
+
+	/**
+	 * 扩展字段27
+	 */
+	public M setDDefine27(java.util.Date dDefine27) {
+		set("dDefine27", dDefine27);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段27
+	 */
+	@JBoltField(name="ddefine27" ,columnName="dDefine27",type="Date", remark="扩展字段27", required=false, maxLength=23, fixed=3, order=43)
+	@JSONField(name = "ddefine27")
+	public java.util.Date getDDefine27() {
+		return getDate("dDefine27");
+	}
+
+	/**
+	 * 扩展字段28
+	 */
+	public M setDDefine28(java.util.Date dDefine28) {
+		set("dDefine28", dDefine28);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段28
+	 */
+	@JBoltField(name="ddefine28" ,columnName="dDefine28",type="Date", remark="扩展字段28", required=false, maxLength=23, fixed=3, order=44)
+	@JSONField(name = "ddefine28")
+	public java.util.Date getDDefine28() {
+		return getDate("dDefine28");
+	}
+
+	/**
+	 * 扩展字段29
+	 */
+	public M setDDefine29(java.util.Date dDefine29) {
+		set("dDefine29", dDefine29);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段29
+	 */
+	@JBoltField(name="ddefine29" ,columnName="dDefine29",type="Date", remark="扩展字段29", required=false, maxLength=23, fixed=3, order=45)
+	@JSONField(name = "ddefine29")
+	public java.util.Date getDDefine29() {
+		return getDate("dDefine29");
+	}
+
+	/**
+	 * 扩展字段30
+	 */
+	public M setDDefine30(java.util.Date dDefine30) {
+		set("dDefine30", dDefine30);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段30
+	 */
+	@JBoltField(name="ddefine30" ,columnName="dDefine30",type="Date", remark="扩展字段30", required=false, maxLength=23, fixed=3, order=46)
+	@JSONField(name = "ddefine30")
+	public java.util.Date getDDefine30() {
+		return getDate("dDefine30");
+	}
+
+	/**
+	 * 删除状态;0. 未删除 1. 已删除
+	 */
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
+		return (M)this;
+	}
+
+	/**
+	 * 删除状态;0. 未删除 1. 已删除
+	 */
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态;0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=47)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("isDeleted");
 	}
 
 }

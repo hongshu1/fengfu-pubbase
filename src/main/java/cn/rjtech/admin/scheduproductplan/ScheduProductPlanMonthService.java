@@ -275,17 +275,13 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
     /**
      * 测试
-     * @param kv
+     * @param
      * @return
      */
-    public synchronized List<ScheduProductYearViewDTO> scheduPlanMonthTest(Kv kv) {
+    public synchronized List<ScheduProductYearViewDTO> scheduPlanMonthTest() {
         //年度生产计划集合
         List<ScheduProductYearViewDTO> scheduProductPlanYearList = new ArrayList<>();
         try {
-
-            //根据产线进行循环排程
-
-
             //同一产线的物料
             String[] product_type = {"a", "b", "c", "d"};
 
@@ -335,18 +331,35 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
             ApsScheduling apsScheduling = ApsUtil.apsCalculation(product_type, inventory_original, plan, 2, plan_nextMonthAverage, capability, workday, 0.7, 0.3);
 
+
+            Map<String, int[]> invPlanMap = new HashMap<>();
+            invPlanMap.put("a", new int[31]);
+            invPlanMap.put("b", new int[31]);
+            invPlanMap.put("c", new int[31]);
+            invPlanMap.put("d", new int[31]);
+
             String[] productInformationByShift0 = new String[workday.length];
             int[] productNumberByShift0 = new int[workday.length];
             apsScheduling.getProductInfo(productInformationByShift0, productNumberByShift0, 0);
-            System.out.println("早班："+ Arrays.toString(productInformationByShift0));
-            System.out.println("早班："+ Arrays.toString(productNumberByShift0));
+            //System.out.println("早班："+ Arrays.toString(productInformationByShift0));
+            //System.out.println("早班："+ Arrays.toString(productNumberByShift0));
+            getInvPlanMap(productInformationByShift0,productNumberByShift0,invPlanMap);
+            System.out.println("早班计划a："+ Arrays.toString(invPlanMap.get("a")));
+            System.out.println("早班计划b："+ Arrays.toString(invPlanMap.get("b")));
+            System.out.println("早班计划c："+ Arrays.toString(invPlanMap.get("c")));
+            System.out.println("早班计划d："+ Arrays.toString(invPlanMap.get("d")));
             System.out.println();
 
             String[] productInformationByShift1 = new String[workday.length];
             int[] productNumberByShift1 = new int[workday.length];
             apsScheduling.getProductInfo(productInformationByShift1, productNumberByShift1, 1);
-            System.out.println("中班："+ Arrays.toString(productInformationByShift1));
-            System.out.println("中班："+ Arrays.toString(productNumberByShift1));
+            //System.out.println("中班："+ Arrays.toString(productInformationByShift1));
+            //System.out.println("中班："+ Arrays.toString(productNumberByShift1));
+            getInvPlanMap(productInformationByShift1,productNumberByShift1,invPlanMap);
+            System.out.println("中班计划a："+ Arrays.toString(invPlanMap.get("a")));
+            System.out.println("中班计划b："+ Arrays.toString(invPlanMap.get("b")));
+            System.out.println("中班计划c："+ Arrays.toString(invPlanMap.get("c")));
+            System.out.println("中班计划d："+ Arrays.toString(invPlanMap.get("d")));
             System.out.println();
 
             String[] productInformationByShift2 = new String[workday.length];
@@ -359,8 +372,13 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             String[] productInformationByShift3 = new String[workday.length];
             int[] productNumberByShift3 = new int[workday.length];
             apsScheduling.getProductInfo(productInformationByShift3, productNumberByShift3, 3);
-            System.out.println("晚班："+ Arrays.toString(productInformationByShift3));
-            System.out.println("晚班："+ Arrays.toString(productNumberByShift3));
+            //System.out.println("晚班："+ Arrays.toString(productInformationByShift3));
+            //System.out.println("晚班："+ Arrays.toString(productNumberByShift3));
+            getInvPlanMap(productInformationByShift3,productNumberByShift3,invPlanMap);
+            System.out.println("晚班计划a："+ Arrays.toString(invPlanMap.get("a")));
+            System.out.println("晚班计划b："+ Arrays.toString(invPlanMap.get("b")));
+            System.out.println("晚班计划c："+ Arrays.toString(invPlanMap.get("c")));
+            System.out.println("晚班计划d："+ Arrays.toString(invPlanMap.get("d")));
 
         }catch (Exception e){
             throw new RuntimeException("排程计划出错！"+e.getMessage());
@@ -755,7 +773,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 int[] capabilityArrar = new int[3];
                 List<Record> capacityList = invCapacityListMap.get(inv) != null ? invCapacityListMap.get(inv) : new ArrayList<>();
                 for (int i = 0; i < capacityList.size(); i++) {
-                    String cWorkShiftCode = capacityList.get(i).getStr("capacityList") != null ? capacityList.get(i).getStr("capacityList") : "";
+                    String cWorkShiftCode = capacityList.get(i).getStr("cWorkShiftCode") != null ? capacityList.get(i).getStr("cWorkShiftCode") : "";
                     int iCapacity = capacityList.get(i).getInt("iCapacity");
                     if (cWorkShiftCode.contains("1S")){
                         capabilityArrar[0] = iCapacity;
@@ -859,7 +877,11 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
                     BigDecimal sumQty = BigDecimal.ZERO;
                     for (int j = 1; j <= iInnerInStockDays; j++) {
-                        BigDecimal qty = BigDecimal.valueOf(invPlan[i+j]);
+                        int nextDay = i + j;
+                        if (nextDay >= scheduDateList.size()){
+                            continue;
+                        }
+                        BigDecimal qty = BigDecimal.valueOf(invPlan[nextDay]);
                         sumQty = sumQty.add(qty);
                     }
                     BigDecimal avgQty = sumQty.divide(BigDecimal.valueOf(iInnerInStockDays),2,BigDecimal.ROUND_HALF_DOWN);
@@ -1154,6 +1176,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             //循环物料
             for (String inv : invList){
                 Record info = invInfoMap.get(inv);
+                int qiChuZaiKu = lastDateZKQtyMap.get(info.getStr("cInvCode")) != null ? lastDateZKQtyMap.get(info.getStr("cInvCode")) : 0;
 
                 Map<String,Object> map = new HashMap<>();
                 map.put("seq",seq++);
@@ -1162,6 +1185,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 map.put("cInvCode",info.getStr("cInvCode"));
                 map.put("cInvCode1",info.getStr("cInvCode1"));
                 map.put("cInvName1",info.getStr("cInvName1"));
+                map.put("dayNum",isOk(info.getInt("iInnerInStockDays")) ? info.getInt("iInnerInStockDays") : 1);
+                map.put("qiChuZaiKu",qiChuZaiKu);
 
                 List<Object> objectList = new ArrayList<>();
                 Map<String,Record> planDateMap = invPlanDateMap.get(inv);
@@ -1468,7 +1493,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 //主表
                 MoMotask motask = new MoMotask();
                 motask.setIAutoId(taskId);
-                motask.setIOrgId(deptId);
+                motask.setIDepartmentId(deptId);
                 motask.setCMoPlanNo(planNo);
                 motask.setDBeginDate(startdate);
                 motask.setDEndDate(endDate);

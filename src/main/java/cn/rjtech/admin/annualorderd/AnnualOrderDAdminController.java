@@ -5,9 +5,11 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.AnnualOrderD;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 
 /**
  * 年度计划订单年汇总 Controller
@@ -97,4 +99,17 @@ public class AnnualOrderDAdminController extends BaseAdminController {
         renderJsonData(service.findEditTableDatas(getKv()));
     }
 
+
+    /**
+     * 模板下载
+     */
+    @SuppressWarnings("unchecked")
+    public void downloadTpl() {
+        try {
+            renderJxls("annualorderd.xlsx", Kv.by("rows", null), "年度计划.xlsx");
+        }catch (Exception e)
+        {
+            ValidationUtils.isTrue(false, "模板下载失败");
+        }
+    }
 }

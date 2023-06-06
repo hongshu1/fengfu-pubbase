@@ -230,6 +230,7 @@
     hideParentLayerDialogBtn(1);
 
     function barcode() {
+        LayerMsgBox.loading("执行中......",2000);
         var barcode = $("#barcode").val();
         if (barcode) {
             Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode},
@@ -272,8 +273,9 @@
                 url: "/admin/materialReceiptList/submitAll",
                 success: function (res) {
                     LayerMsgBox.success("提交成功", 600, function () {
+                        parent.refreshCurrentTabContent();//刷新当前页面
                         parent.refreshPjaxContainer();
-                        // parent.layer.closeAll();
+                        parent.layer.closeAll();
                     });
                 }
             },

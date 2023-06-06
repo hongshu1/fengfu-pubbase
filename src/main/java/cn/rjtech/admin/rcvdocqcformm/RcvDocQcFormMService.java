@@ -255,7 +255,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     public void saveSysPuinstoreModel(SysPuinstore sysPuinstore, RcvDocQcFormM docQcFormM) {
         Date date = new Date();
         Vendor vendor = vendorService.findById(docQcFormM.getIVendorId());
-        sysPuinstore.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
+        sysPuinstore.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
         sysPuinstore.setBillType("");//到货单类型：采购PO  委外OM
         sysPuinstore.setOrganizeCode(getOrgCode());//组织编码
         sysPuinstore.setBillNo(""); //入库单号
@@ -268,7 +268,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         sysPuinstore.setAuditDate(date);//审核日期
         sysPuinstore.setModifyDate(date);//修改日期
         sysPuinstore.setModifyPerson("");//修改人
-        sysPuinstore.setState("1");//状态 1已保存 2待审批 3已审批 4审批不通过
+        sysPuinstore.setIAuditStatus(1);//状态 1已保存 2待审批 3已审批 4审批不通过
     }
 
     /**

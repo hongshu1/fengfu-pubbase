@@ -259,7 +259,10 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
                 //key:day  value:qty
                 Map<Integer,BigDecimal> dayMap = invYearMap.containsKey(key) ? invYearMap.get(key) : new HashMap<>();
 
-                BigDecimal monthQty = record.getBigDecimal("month"+i);//月总数量
+                //月总数量
+                BigDecimal monthQty = Optional.ofNullable(record.getBigDecimal("month" + i)).orElse(BigDecimal.ZERO);
+                // 平均数总数
+                BigDecimal avgQtySum = BigDecimal.ZERO;
                 if (monthQty.compareTo(BigDecimal.ZERO) > 0){
                     List<Integer> dayList = workMonthDaysMap.get(yearMonth) != null ? workMonthDaysMap.get(yearMonth) : new ArrayList<>();
                     int workSum = dayList.size();//月工作天数
@@ -267,6 +270,7 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
                     BigDecimal avgQty = monthQty.divide(BigDecimal.valueOf(workSum),0,BigDecimal.ROUND_UP);
 
                     for (Integer day : dayList){
+                        avgQtySum = avgQtySum.add(avgQty);
                         if (dayMap.containsKey(day)){
                             BigDecimal qty = dayMap.get(day).add(avgQty);
                             dayMap.put(day,qty);
@@ -274,6 +278,10 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
                             dayMap.put(day,avgQty);
                         }
                     }
+
+                    System.out.println(avgQtySum);
+                    // 最后一天数量 = 平均数 - （平均数总数 - 月总数） ， 保证总数一致
+                    dayMap.put(dayList.stream().reduce(Integer::max).get(), avgQty.subtract(avgQtySum.subtract(monthQty)));
                 }
                 invYearMap.put(key,dayMap);
                 invMap.put(cInvCode,iInventoryId);
