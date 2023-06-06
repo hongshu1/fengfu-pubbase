@@ -5,15 +5,16 @@
 
 			<div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
 				<div class="col-md-l pt-2" role="group" aria-label="btn-group">
-					<button onclick="submitAllTables_#(pageId)(this)" #if(status =="5") style="display: none" #end data-id="1" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
-					<button onclick="submitAllTables_#(pageId)(this)" #if(status =="5") style="display: none" #end data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交出库</button>
+					#if(otherOut.status!='5'??)
+					<button onclick="submitAllTables_#(pageId)(this)" data-id="1" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+					<button onclick="submitAllTables_#(pageId)(this)" data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交出库</button>
+					#end
 					<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
 				</div>
 			</div>
 			#if(otherOut.autoid??)
 			<input type="hidden" id="otherOutautoid" name="otherOut.autoid" value="#(otherOut.autoid??)" />
 			#end
-
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">领料单号：</label>
 				<div class="col-sm-2 col-form-label">

@@ -62,3 +62,41 @@ WHERE 1=1
     AND t1.MasID = #para(id)
 #end
 #end
+
+#sql("getOtherOutLinesReturnLines")
+SELECT
+    i.*,
+    #if(Detailautoid)
+    t2.AutoID,
+    #end
+    u.cUomClassName,
+    t3.cInvCCode,
+    t3.cInvCName,
+    ( SELECT sum(case when Qty >0 then Qty else 0 end ) FROM T_Sys_OtherOutDetail WHERE  MasID = '#(autoid)' ) AS qtys,
+    ( CASE WHEN t2.Qty > 0 THEN 0 ELSE t2.Qty END ) AS returnqty,
+    t2.Barcode,
+    t2.InvCode
+FROM T_Sys_OtherOut t1,
+     T_Sys_OtherOutDetail t2
+         LEFT JOIN bd_inventory i ON i.cinvcode = t2.Invcode
+         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
+         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
+WHERE
+        t1.AutoID = t2.MasID AND  t1.AutoID = '#(autoid)'
+    #if(Detailautoid == null)
+  AND t2.Qty > 0
+   #end
+    #if(Detailautoid)
+    AND t2.AutoID = #para(Detailautoid)
+    #end
+
+    #end
+
+#sql("treturnQty")
+SELECT
+    *
+FROM
+    T_Sys_OtherOutDetail
+WHERE
+        MasID = '#(autoid)'
+#end
