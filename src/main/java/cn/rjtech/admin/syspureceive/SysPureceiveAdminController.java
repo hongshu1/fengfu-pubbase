@@ -209,7 +209,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     public void withdraw(Long iAutoId) {
         ValidationUtils.validateId(iAutoId, "iAutoId");
 
-        // renderJson(service.withdraw(iAutoId));
+         renderJson(service.withdraw(iAutoId));
     }
 
     /**
@@ -218,7 +218,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     public void approve(String ids) {
         ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
 
-        // renderJson(service.approve(ids));
+         renderJson(service.approve(ids));
     }
 
     /**
@@ -229,7 +229,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
         }
-        // renderJson(service.reject(ids))
+        renderJson(service.reject(ids));
     }
 
 }

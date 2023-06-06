@@ -90,13 +90,9 @@ data-rowtpl="transVouchRowtpl_#(pageId)"
 data-page="transVouchPage_#(pageId)"
 data-toolbar="transVouch_toolbar_#(pageId)"
 
-
-
-
 data-fixed-columns-left="1,2,3"
 data-fixed-columns-right="-1"
 data-row-dblclick-active="true"
-data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 >
 <thead>
 <tr>
@@ -128,16 +124,5 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 
 #define js()
 <script type="text/javascript">
-
-	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
-		console.log(JSON.stringify(rowData));
-
-		$(tempTr1).data('url', '/admin/admin/transvouch/edit/' + rowData.iautoid)
-			.data('area', '1200,800')
-			.data('title', '出库管理-调拨单列表')
-			.data('btn', '保存,关闭');
-
-		DialogUtil.openBy(tempTr1);
-	}
 </script>
 #end

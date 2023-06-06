@@ -3,8 +3,10 @@ package cn.rjtech.api.formuploadm;
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.admin.formuploadd.FormUploadDService;
 import cn.rjtech.admin.formuploadm.FormUploadMService;
 import cn.rjtech.model.momdata.FormUploadM;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
@@ -21,6 +23,8 @@ import java.util.Date;
 public class FormUploadMApiService extends JBoltApiBaseService {
     @Inject
     FormUploadMService formUploadMService;
+    @Inject
+    FormUploadDService formUploadDService;
 
     /**
      *首页数据
@@ -40,8 +44,8 @@ public class FormUploadMApiService extends JBoltApiBaseService {
     /**
      * 批量保存
      */
-    public JBoltApiRet saveTableSubmit(Kv kv) {
-            formUploadMService.saveTableSubmitApi(kv);
+    public JBoltApiRet saveTableSubmit( String iautoid, String iworkregionmid, String icategoryid, Date ddate, String formuploaddsv) {
+            formUploadMService.saveTableSubmitApi(iautoid,iworkregionmid,icategoryid,ddate, JSON.parseArray(formuploaddsv));
         return JBoltApiRet.API_SUCCESS;
     }
 
@@ -71,5 +75,13 @@ public class FormUploadMApiService extends JBoltApiBaseService {
      */
     public JBoltApiRet details(Integer pageNumber, Integer pageSize, Kv iautoid) {
        return JBoltApiRet.successWithData(  formUploadMService.detailsApi(pageNumber,pageSize,iautoid));
+    }
+
+    /**
+     * 行删除
+     */
+    public JBoltApiRet delete2(Long iautoid) {
+        formUploadDService.delete2(iautoid);
+        return JBoltApiRet.API_SUCCESS;
     }
 }

@@ -9,10 +9,10 @@
                 <td>${data.cinvname1}</td>
                 <td>${data.dplandate |date_ymd}</td>
                 <td>${data.cbarcode}</td>
+                <td>${data.csourceversion}</td>
                 <td>${data.cversion}</td>
                 <td>${data.iqty}</td>
-                <td>${data.csourcebarcode}</td>
-                <td>${data.csourceversion}</td>
+<!--                <td>${data.csourcebarcode}</td>-->
                 <td>${data.isourceqty}</td>
             </tr>
         {@/each}
@@ -48,10 +48,10 @@
             <th data-width="150" rowspan="2" data-column="cInvName1">部品名称</th>
             <th data-width="150" rowspan="2" data-column="dPlanDate">计划到货日期</th>
             <th data-width="150" rowspan="2" data-column="cBarcode">现品票</th>
+            <th data-width="100" rowspan="2" data-column="cSourceVersion">原版本号</th>
             <th data-width="100" rowspan="2" data-column="cVersion">版本</th>
             <th data-width="150" rowspan="2" data-column="iQty">数量</th>
-            <th data-width="150" rowspan="2" data-column="cSourceBarcode">替代传票</th>
-            <th data-width="100" rowspan="2" data-column="cSourceVersion">原版本号</th>
+<!--            <th data-width="150" rowspan="2" data-column="cSourceBarcode">替代传票</th>-->
             <th data-width="150" rowspan="2" data-column="iSourceQty">原数量</th>
         </tr>
         </thead>

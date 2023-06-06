@@ -124,4 +124,9 @@ public class FormUploadDService extends BaseService<FormUploadD> {
 	public Page<Record> findByPid2(Integer pageNumber, Integer pageSize,Long pid){
 		return 	dbTemplate("formuploadd.getAdminDatas",Kv.by("pid",pid)).paginate(pageNumber,pageSize);
 	}
+
+	public Ret delete2(Long iautoid) {
+		deleteById(iautoid);
+		return ret(true);
+	}
 }

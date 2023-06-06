@@ -230,4 +230,13 @@ WHERE wa.isDeleted = 0
 
 #end
 
+#sql("barcodeDatas")
+SELECT *
+FROM T_Sys_PUReceiveDetail
+WHERE isDeleted = 0
+   	#if(barcode)
+		and Barcode = #para(barcode)
+	#end
+#end
+
 

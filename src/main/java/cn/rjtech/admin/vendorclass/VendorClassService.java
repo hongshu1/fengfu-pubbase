@@ -12,10 +12,16 @@ import cn.jbolt.core.poi.excel.*;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.admin.vendor.VendorService;
+import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.enums.SourceEnum;
-import cn.rjtech.model.momdata.CustomerClass;
+import cn.rjtech.model.momdata.Vendor;
+import cn.rjtech.model.momdata.VendorAddr;
 import cn.rjtech.model.momdata.VendorClass;
+import cn.rjtech.model.momdata.base.BaseVendor;
+import cn.rjtech.model.momdata.base.BaseVendorAddr;
 import cn.rjtech.util.ValidationUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -23,12 +29,14 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 往来单位-供应商分类
@@ -41,6 +49,9 @@ public class VendorClassService extends BaseService<VendorClass> {
 
     private final VendorClass dao = new VendorClass().dao();
 
+    @Inject
+    private VendorService vendorService;
+
     @Override
     protected VendorClass dao() {
         return dao;
@@ -50,8 +61,12 @@ public class VendorClassService extends BaseService<VendorClass> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
+
     @Inject
     private CusFieldsMappingDService cusFieldsMappingdService;
+    @Inject
+    private VendorAddrService        vendorAddrService;
+
     /**
      * 后台管理数据查询
      *
@@ -87,12 +102,12 @@ public class VendorClassService extends BaseService<VendorClass> {
         //1、判断上级分类id是否存在
         final Ret ret = checkIpidIsEmpty(vendorClass.getIPid());
         Object msg = ret.get("msg");
-        if (ret.isFail()){
+        if (ret.isFail()) {
             return fail((String) msg);
         }
         //2、分类编码不能重复
         String cvcCode = vendorClass.getCVCCode();//分类编码
-        ValidationUtils.isTrue(StringUtils.isBlank(findCVCCodeInfo(cvcCode)), cvcCode+" 分类编码不能重复！");
+        ValidationUtils.isTrue(StringUtils.isBlank(findCVCCodeInfo(cvcCode)), cvcCode + " 分类编码不能重复！");
         //3、给参数赋值
         saveVendorClassModel(vendorClass, new Date());
         boolean success = vendorClass.save();
@@ -139,7 +154,7 @@ public class VendorClassService extends BaseService<VendorClass> {
 
     public Record findRecordByCVCCode(String cvccode) {
         Kv kv = new Kv();
-        kv.set("cvccode",cvccode);
+        kv.set("cvccode", cvccode);
         return dbTemplate("vendorclass.findRecordByCVCCode", kv).findFirst();
     }
 
@@ -157,6 +172,75 @@ public class VendorClassService extends BaseService<VendorClass> {
         }
         boolean success = vendorClass.update();
         return ret(success);
+    }
+
+    public Ret deleteVendorClassByIds(String ids) {
+        String[] split = ids.split(",");
+        String check = checkDelete(split);
+        if (StringUtils.isNotBlank(check)) {
+            return fail(check);
+        }
+        boolean result = tx(() -> {
+            for (String id : split) {
+                //删除分类id
+                VendorClass vendorClass = findById(id);
+                if (vendorClass != null) {
+                    //如果有下级分类，不允许删除
+                    List<VendorClass> classListByIpid = findByIpid(id);
+                    if (!classListByIpid.isEmpty()) {
+                        fail(vendorClass.getCVCName() + "：存在下级分类，不允许删除");
+                        return false;
+                    }
+
+                    //删除分类编码关联的供应商档案Bd_Vendor
+                    List<Vendor> vendors = vendorService
+                        .findByCVCCodeAndiVendorClassId(vendorClass.getCVCCode(), vendorClass.getIAutoId());
+                    for (Vendor vendor : vendors) {
+                        List<VendorAddr> vendorAddrs = vendorAddrService.findByIVendorId(vendor.getIAutoId());
+                        List<Long> vendorAddrscollect = vendorAddrs.stream().map(BaseVendorAddr::getIAutoId)
+                            .collect(Collectors.toList());
+                        List<String> strings = longConversionString(vendorAddrscollect);
+                        String addrIds = String.join(",", strings);
+                        //根据供应商档案删除Bd_VendorAddr
+                        vendorAddrService.deleteByIds(addrIds);
+                    }
+                    //删除供应商档案
+                    if (!vendors.isEmpty()) {
+                        List<Long> vendorcollect = vendors.stream().map(BaseVendor::getIAutoId).collect(Collectors.toList());
+                        List<String> vendorstrings = longConversionString(vendorcollect);
+                        String vendorids = String.join(",", vendorstrings);
+                        vendorService.deleteByIds(vendorids);
+                    }
+                    //删除分类id
+                    delete(vendorClass.getIAutoId());
+                }
+            }
+            return true;
+        });
+        return ret(result);
+    }
+
+    public List<String> longConversionString(List<Long> list) {
+        return list.stream().map(x -> x + "").collect(Collectors.toList());
+    }
+
+    public List<VendorClass> findByIpid(String ipid) {
+        return find("SELECT * from Bd_VendorClass where iPid = ?", ipid);
+    }
+
+    public String checkDelete(String[] split) {
+        for (String id : split) {
+            //删除分类id
+            VendorClass vendorClass = findById(id);
+            if (vendorClass != null) {
+                //如果有下级分类，不允许删除
+                List<VendorClass> classListByIpid = findByIpid(id);
+                if (!classListByIpid.isEmpty()) {
+                    return vendorClass.getCVCName() + "：存在下级分类，不允许删除";
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -189,8 +273,8 @@ public class VendorClassService extends BaseService<VendorClass> {
     public Ret importExcelData(File file, String cformatName) {
         StringBuilder errorMsg = new StringBuilder();
         //使用字段配置维护
-        Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
-        String docInfoRelaStrings= JSON.toJSONString(importData);
+        Object importData = cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
+        String docInfoRelaStrings = JSON.toJSONString(importData);
         // 从指定的sheet工作表里读取数据
         List<VendorClass> models = JSON.parseArray(docInfoRelaStrings, VendorClass.class);
         Date date = new Date();
@@ -206,13 +290,14 @@ public class VendorClassService extends BaseService<VendorClass> {
             Date now = new Date();
             for (VendorClass vendorClass : models) {
 
-                if(notOk(vendorClass.getCVCCode())){
+                if (notOk(vendorClass.getCVCCode())) {
                     return fail("编码不能为空");
                 }
-                if(notOk(vendorClass.getCVCName())){
+                if (notOk(vendorClass.getCVCName())) {
                     return fail("名称不能为空");
                 }
-                ValidationUtils.isTrue(findFirst(Okv.by("CVCCode", vendorClass.getCVCCode()), "iautoid", "asc")==null, vendorClass.getCVCCode()+
+                ValidationUtils.isTrue(findFirst(Okv.by("CVCCode", vendorClass.getCVCCode()), "iautoid", "asc") == null,
+                    vendorClass.getCVCCode() +
                         "编码重复");
                 vendorClass.setIAutoId(JBoltSnowflakeKit.me.nextId());
                 vendorClass.setDCreateTime(now);
@@ -233,17 +318,17 @@ public class VendorClassService extends BaseService<VendorClass> {
 
             }
         }
-        
+
         //执行批量操作
         boolean success = tx(() -> {
             batchSave(models);
             return true;
         });
-        
+
         if (!success) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL);
         }
-        
+
         return SUCCESS;
     }
 
@@ -251,6 +336,7 @@ public class VendorClassService extends BaseService<VendorClass> {
      * 树结构数据源
      */
     public List<JsTreeBean> getMgrTree(Long checkedId, int openLevel) {
+        List<Record> list = vendorService.List();
         List<VendorClass> supplierclasses = getMgrList();
         List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
         for (VendorClass vendorClass : supplierclasses) {
@@ -261,6 +347,17 @@ public class VendorClassService extends BaseService<VendorClass> {
             }
             String text = "[" + vendorClass.getCVCCode() + "]" + vendorClass.getCVCName();
             String type = vendorClass.getCVCCode();
+            JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text, type, "", false);
+            jsTreeBeanList.add(jsTreeBean);
+        }
+        for (Record record : list) {
+            Long id = record.get("iAutoId");
+            Object pid = record.get("iVendorClassId");
+            if (pid == null) {
+                pid = "#";
+            }
+            String text = "[" + record.get("cVenCode") + "]" + record.get("cVenName");
+            String type = record.get("cVenCode");
             JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text, type, "", false);
             jsTreeBeanList.add(jsTreeBean);
         }
@@ -304,11 +401,12 @@ public class VendorClassService extends BaseService<VendorClass> {
         return this.convertToModelTree(vendorClassList, "iAutoId", "iPid", (p) -> this.notOk(p.getIPid()));
     }
 
-    public List<VendorClass> list(Kv kv){
-        return find("SELECT t1.cVCCode as fathercvccode,t1.cVCName as fathercvcname,t2.cVCCode as childcvccoded,t2.cVCName as childcvcnamed FROM "
-            + "Bd_VendorClass t1 LEFT "
-            + "JOIN Bd_VendorClass t2 ON t1.iAutoId = t2.iPid\n"
-            + "WHERE 1=1");
+    public List<VendorClass> list(Kv kv) {
+        return find(
+            "SELECT t1.cVCCode as fathercvccode,t1.cVCName as fathercvcname,t2.cVCCode as childcvccoded,t2.cVCName as childcvcnamed FROM "
+                + "Bd_VendorClass t1 LEFT "
+                + "JOIN Bd_VendorClass t2 ON t1.iAutoId = t2.iPid\n"
+                + "WHERE 1=1");
     }
 
     /**
@@ -321,10 +419,10 @@ public class VendorClassService extends BaseService<VendorClass> {
             .addSheet(//设置sheet
                 JBoltExcelSheet.create("供应商分类")//创建sheet name保持与模板中的sheet一致
                     .setHeaders(//sheet里添加表头
-                        JBoltExcelHeader.create("fathercvccode", "父级供应商分类编码",25),
-                        JBoltExcelHeader.create("fathercvcname", "父级供应商分类名称",25),
-                        JBoltExcelHeader.create("childcvccoded", "供应商分类编码",25),
-                        JBoltExcelHeader.create("childcvcnamed", "供应商分类名称",25)
+                        JBoltExcelHeader.create("fathercvccode", "父级供应商分类编码", 25),
+                        JBoltExcelHeader.create("fathercvcname", "父级供应商分类名称", 25),
+                        JBoltExcelHeader.create("childcvccoded", "供应商分类编码", 25),
+                        JBoltExcelHeader.create("childcvcnamed", "供应商分类名称", 25)
                     )
                     .setDataChangeHandler((data, index) -> {//设置数据转换处理器
                         //将user_id转为user_name
@@ -362,21 +460,28 @@ public class VendorClassService extends BaseService<VendorClass> {
         List<JsTreeBean> treeBeans = new ArrayList<>();
         // 根节点
         treeBeans.add(new JsTreeBean(0, "#", "供应商分类档案", true, "root_opened", true));
-        appendSubTree(treeBeans,0L);
+        appendSubTree(treeBeans, 0L);
         return treeBeans;
     }
+
     private void appendSubTree(List<JsTreeBean> treeBeans, Long pid) {
-    	List<Record> subList = getSubList(pid);
-    	if(CollUtil.isEmpty(subList)) return;
+        List<Record> subList = getSubList(pid);
+        if (CollUtil.isEmpty(subList)) {
+            return;
+        }
         for (Record row : subList) {
             // 当前节点
-            treeBeans.add(new JsTreeBean(row.getStr("cvccode"), pid, row.getStr("cvcname") + "(" + row.getStr("cvccode") + ")","default", null, true));
+            treeBeans.add(
+                new JsTreeBean(row.getStr("cvccode"), pid, row.getStr("cvcname") + "(" + row.getStr("cvccode") + ")",
+                    "default",
+                    null, true));
             // 追加子节点
-            appendSubTree(treeBeans,row.getLong("iautoid"));
+            appendSubTree(treeBeans, row.getLong("iautoid"));
         }
     }
+
     private List<Record> getSubList(Long pid) {
         Okv para = Okv.by("pid", pid);
         return dbTemplate("vendorclass.getSubList", para).find();
-    }     
+    }
 }

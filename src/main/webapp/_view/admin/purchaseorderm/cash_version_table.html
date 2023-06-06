@@ -7,10 +7,10 @@
                 <td>${data.cinvname1}</td>
                 <td>${data.dplandate |date_ymd}</td>
                 <td>${data.cbarcode}</td>
+                <td>${data.csourceversion}</td>
                 <td>${data.cversion}</td>
                 <td>${data.iqty}</td>
-                <td>${data.csourcebarcode}</td>
-                <td>${data.csourceversion}</td>
+<!--                <td>${data.csourcebarcode}</td>-->
                 <td>${data.isourceqty}</td>
             </tr>
         {@/each}
@@ -18,8 +18,10 @@
 
     <!-- 定义JBoltTable使用的数据渲染模板 -->
     <div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar2_#(pageId)">
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button class="btn btn-danger btn-sm"> 导出PDF</button>
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportContainerButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 导出PDF</button>
+        <div class="dropdown-menu" aria-labelledby="exportContainerButton">
+            <button class="btn dropdown-item" data-downloadbtn data-url="/admin/purchaseorderm/purchaseordermOne?iautoid=#(purchaseOrderM.iautoid??)&&page=1&&type=1" data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 导出(一页一个条码)</button>
+            <button class="btn dropdown-item" data-downloadbtn data-url="/admin/purchaseorderm/purchaseordermOne?iautoid=#(purchaseOrderM.iautoid??)&&page=8&&type=1" data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 导出(一页八个条码)</button>
         </div>
     </div>
 
@@ -28,11 +30,11 @@
            data-rowtpl="cashVersion_tpl_#(pageId)"
            data-jbolttable
            data-ajax="true"
+           data-toolbar="PurchaseOrderD_toolbar2_#(pageId)"
            data-url="admin/purchaseorderm/findPurchaseOrderDBatchVersion?iPurchaseOrderMid=#(purchaseOrderM.iautoid??)"
            data-width="fill"
            data-height="fill"
            data-column-resize="true"
-           data-toolbar="PurchaseOrderD_toolbar2_#(pageId)"
            data-column-prepend="1:checkbox:true:false:false"
            data-page="PurchaseOrderM_page2_#(pageId)"
     >
@@ -44,10 +46,10 @@
             <th data-width="150" rowspan="2" data-column="cInvName1">部品名称</th>
             <th data-width="150" rowspan="2" data-column="dPlanDate">计划到货日期</th>
             <th data-width="150" rowspan="2" data-column="cBarcode">现品票</th>
+            <th data-width="100" rowspan="2" data-column="cSourceVersion">原版本号</th>
             <th data-width="100" rowspan="2" data-column="cVersion">版本</th>
             <th data-width="150" rowspan="2" data-column="iQty">数量</th>
-            <th data-width="150" rowspan="2" data-column="cSourceBarcode">替代传票</th>
-            <th data-width="100" rowspan="2" data-column="cSourceVersion">原版本号</th>
+<!--            <th data-width="150" rowspan="2" data-column="cSourceBarcode">替代传票</th>-->
             <th data-width="150" rowspan="2" data-column="iSourceQty">原数量</th>
         </tr>
         </thead>

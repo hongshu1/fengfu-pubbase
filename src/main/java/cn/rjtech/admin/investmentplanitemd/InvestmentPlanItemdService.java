@@ -47,7 +47,7 @@ public class InvestmentPlanItemdService extends BaseService<InvestmentPlanItemd>
 	 * 保存
 	 */
 	public Ret save(InvestmentPlanItemd investmentPlanItemd) {
-		if(investmentPlanItemd==null || isOk(investmentPlanItemd.getIautoid())) {
+		if(investmentPlanItemd==null || isOk(investmentPlanItemd.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 
@@ -70,13 +70,13 @@ public class InvestmentPlanItemdService extends BaseService<InvestmentPlanItemd>
 	 * 更新
 	 */
 	public Ret update(InvestmentPlanItemd investmentPlanItemd) {
-		if(investmentPlanItemd==null || notOk(investmentPlanItemd.getIautoid())) {
+		if(investmentPlanItemd==null || notOk(investmentPlanItemd.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 
 		tx(() -> {
 			// 更新时需要判断数据存在
-			InvestmentPlanItemd dbInvestmentPlanItemd = findById(investmentPlanItemd.getIautoid());
+			InvestmentPlanItemd dbInvestmentPlanItemd = findById(investmentPlanItemd.getIAutoId());
 			ValidationUtils.notNull(dbInvestmentPlanItemd, JBoltMsg.DATA_NOT_EXIST);
 
 			// TODO 其他业务代码实现
