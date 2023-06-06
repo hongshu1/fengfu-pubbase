@@ -1,14 +1,18 @@
 package cn.rjtech.api.formuploadm;
 
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.formuploadm.FormUpload;
 import cn.rjtech.entity.vo.formuploadm.FormUploadVo;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import io.github.yedaxia.apidocs.ApiDoc;
+
+import java.util.Date;
 
 /**
  * 记录上传api接口
@@ -65,8 +69,17 @@ public class FormUploadMApiController  extends BaseApiController {
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void saveTableSubmit(){
-        renderJBoltApiRet(service.saveTableSubmit(getKv()));
+    public void saveTableSubmit( @Para(value = "icategoryid") String iautoid,
+                                 @Para(value = "iworkregionmid") String iworkregionmid,
+                                 @Para(value = "icategoryid") String icategoryid,
+                                 @Para(value = "ddate") Date ddate,
+                                 @Para(value = "formuploadds") String formuploadds){
+        ValidationUtils.notNull(iworkregionmid, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(icategoryid, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(ddate, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(formuploadds, JBoltMsg.PARAM_ERROR);
+
+        renderJBoltApiRet(service.saveTableSubmit(iautoid,iworkregionmid,icategoryid,ddate,formuploadds));
     }
 
     /**

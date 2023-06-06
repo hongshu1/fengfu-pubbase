@@ -12,6 +12,8 @@ import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.model.momdata.FormUploadD;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 
@@ -298,27 +300,29 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 	/**
 	 * 主表数据
 	 */
-	public Ret saveTableSubmitApi(Kv kv) {
+	public Ret saveTableSubmitApi(String iautoid, String iworkregionmid, String icategoryid, Date ddate, JSONArray formuploaddsv) {
 
-		Record record = JSON.parseObject(kv.getStr("formuploadm"), Record.class);
-		List<Kv> array = JSON.parseArray("formuploadds", Kv.class);
 		tx(() -> {
 			//修改
-			if (ObjUtil.isNotNull(record.getStr("iautoid"))){
-				FormUploadM formUploadM = findById(record.getStr("iautoid"));
-				formUploadM.setIWorkRegionMid(record.getLong("iworkregionmid"));
-				formUploadM.setICategoryId(record.getLong("icategoryid"));
-				formUploadM.setDDate(record.getDate("ddate"));
+			if (ObjUtil.isNotNull(iautoid)){
+				FormUploadM formUploadM = findById(iautoid);
+				formUploadM.setIWorkRegionMid(Long.parseLong(iworkregionmid));
+				formUploadM.setICategoryId(Long.parseLong(icategoryid));
+				formUploadM.setDDate(ddate);
 				formUploadM.setDUpdateTime(new Date());
 				formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
 				formUploadM.setCUpdateName(JBoltUserKit.getUserName());
+				ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
 				//细表数据
-				for (Kv kv1 : array) {
-					FormUploadD formUploadD = formUploadDService.findById(kv1.getStr("iautoid"));
-					formUploadD.setCMemo(kv1.getStr("cmemo"));
-					formUploadD.setCAttachments(kv1.getStr("cattachments"));
+				for (int i = 0; i < formuploaddsv.size(); i++) {
+					JSONObject jsonObject = formuploaddsv.getJSONObject(i);
+					FormUploadD formUploadD = formUploadDService.findById(jsonObject.getString("iautoid"));
+					formUploadD.setCMemo(jsonObject.getString("cmemo"));
+					formUploadD.setCAttachments(jsonObject.getString("cattachments"));
+					formUploadDS.add(formUploadD);
 				}
-
+				ValidationUtils.isTrue(formUploadM.update(), "修改失败");
+				formUploadDService.batchUpdate(formUploadDS);
 				//新增
 			}else {
 				FormUploadM formUploadM = new FormUploadM();
@@ -333,18 +337,19 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 				formUploadM.setCUpdateName(JBoltUserKit.getUserName());
 				formUploadM.setDUpdateTime(new Date());
 				formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
-				formUploadM.setIWorkRegionMid(record.getLong("iworkregionmid"));
-				formUploadM.setICategoryId(record.getLong("icategoryid"));
-				formUploadM.setDDate(record.getDate("ddate"));
+				formUploadM.setIWorkRegionMid(Long.parseLong(iworkregionmid));
+				formUploadM.setICategoryId(Long.parseLong(icategoryid));
+				formUploadM.setDDate(ddate);
 				formUploadM.setIAuditStatus(0);
 				ValidationUtils.isTrue(formUploadM.save(), "保存失败");
 				//子表数据
 				ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
-				for (Kv kv1 : array) {
+				for (int i = 0; i < formuploaddsv.size(); i++) {
+					JSONObject jsonObject = formuploaddsv.getJSONObject(i);
 					FormUploadD formUploadD = new FormUploadD();
 					formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
-					formUploadD.setCMemo(kv1.getStr("cmemo"));
-					formUploadD.setCAttachments(kv1.getStr("cattachments"));
+					formUploadD.setCMemo(jsonObject.getString("cmemo"));
+					formUploadD.setCAttachments(jsonObject.getString("cattachments"));
 					formUploadDS.add(formUploadD);
 				}
 				formUploadDService.batchSave(formUploadDS);

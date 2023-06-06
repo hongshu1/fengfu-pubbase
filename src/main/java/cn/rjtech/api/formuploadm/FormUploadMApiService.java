@@ -6,6 +6,7 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.admin.formuploadd.FormUploadDService;
 import cn.rjtech.admin.formuploadm.FormUploadMService;
 import cn.rjtech.model.momdata.FormUploadM;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
@@ -43,8 +44,8 @@ public class FormUploadMApiService extends JBoltApiBaseService {
     /**
      * 批量保存
      */
-    public JBoltApiRet saveTableSubmit(Kv kv) {
-            formUploadMService.saveTableSubmitApi(kv);
+    public JBoltApiRet saveTableSubmit( String iautoid, String iworkregionmid, String icategoryid, Date ddate, String formuploaddsv) {
+            formUploadMService.saveTableSubmitApi(iautoid,iworkregionmid,icategoryid,ddate, JSON.parseArray(formuploaddsv));
         return JBoltApiRet.API_SUCCESS;
     }
 
