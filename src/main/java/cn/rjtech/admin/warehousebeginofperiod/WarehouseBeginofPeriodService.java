@@ -218,16 +218,19 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
 
                     //2、T_Sys_BarcodeDetail--条码明细表
                     Barcodedetail barcodedetail = new Barcodedetail();
+                    barcodedetail.setQty(kv.getBigDecimal("qty"));//每张条码分配的数量
                     barcodedetailService.saveBarcodedetailModel(barcodedetail, masid, now, kv, printnum);
                     barcodedetails.add(barcodedetail);
 
                     //3、T_Sys_StockBarcodePosition--条码库存表
                     StockBarcodePosition position = new StockBarcodePosition();
+                    position.setQty(kv.getBigDecimal("qty")); //每张条码需要打印的数量
                     barcodePositionService.saveBarcodePositionModel(position, kv, now, "新增期初库存", masid);
                     positions.add(position);
+
+                    //4、write log
+                    writeLog(barcodedetail, now);
                 }
-                //4、write log
-                writeLog(barcodedetails, now);
 
                 //5、最终将期初库存保存在条码表和条码库存表
                 barcodedetailService.batchSave(barcodedetails);
@@ -278,17 +281,19 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
 
                 //2、T_Sys_BarcodeDetail--条码明细表
                 Barcodedetail barcodedetail = new Barcodedetail();
+                barcodedetail.setQty(kv.getBigDecimal("generatedstockqty"));//每张条码分配的数量
                 barcodedetailService.saveBarcodedetailModel(barcodedetail, masid, now, kv, printnum);
                 barcodedetails.add(barcodedetail);
 
                 //3、T_Sys_StockBarcodePosition--条码库存表s
                 StockBarcodePosition position = new StockBarcodePosition();
+                position.setQty(kv.getBigDecimal("generatedstockqty")); //每张条码需要打印的数量
                 barcodePositionService.saveBarcodePositionModel(position, kv, now, "新增期初条码", masid);
                 positions.add(position);
-            }
-            //4、记录日志
-            writeLog(barcodedetails, now);
 
+                //4、记录日志
+                writeLog(barcodedetail, now);
+            }
             //5、保存条码表和明细表数据
             barcodedetailService.batchSave(barcodedetails);
             barcodePositionService.batchSave(positions);
@@ -301,10 +306,9 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
     /*
      * write log
      * */
-    public void writeLog(ArrayList<Barcodedetail> barcodedetails, Date now) {
+    public void writeLog(Barcodedetail barcodedetail, Date now) {
         ScanLog scanLog = new ScanLog();
-        Barcodedetail detail = barcodedetails.get(0);
-        scanLogService.saveScanLogModel(scanLog, now, new Gson().toJson(barcodedetails), detail);
+        scanLogService.saveScanLogModel(scanLog, now, barcodedetail);
         scanLogService.save(scanLog);
     }
 
