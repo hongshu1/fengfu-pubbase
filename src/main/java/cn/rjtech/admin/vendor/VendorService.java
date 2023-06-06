@@ -83,7 +83,7 @@ public class VendorService extends BaseService<Vendor> {
         sql.eqBooleanToChar("isDeleted", isDeleted);
         sql.eq("cVenName", kv.get("cvenname"));//供应商编码
         sql.eq("cVenCode", kv.get("cvencode"));//供应商名称
-        sql.eq("iVendorClassId", kv.get("iventorclassid"));//供应商分类id
+        sql.eq("iAutoid", kv.get("iventorclassid"));//供应商分类id
         //关键词模糊查询
         sql.likeMulti(keywords, "cOrgName", "cVenName", "cVenAbbName", "cCreateName", "cUpdateName");
         //排序
@@ -105,6 +105,17 @@ public class VendorService extends BaseService<Vendor> {
             record.set("isource", SourceEnum.toEnum(record.getInt("isource")).getValue());
         }
         return recordPage;
+    }
+
+
+    /**
+     * 获取数据
+     */
+
+    public List<Record>  List(){
+      Kv kv=new Kv();
+        List<Record> records = dbTemplate("vendor.list",kv.set("isenabled","true")).find();
+        return records;
     }
 
     /**
