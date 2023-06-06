@@ -13,10 +13,13 @@ import cn.rjtech.model.momdata.RdStyle;
 import cn.rjtech.model.momdata.SysOtherin;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.model.momdata.Warehouse;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.tx.Tx;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 其它入库单
@@ -130,6 +133,46 @@ public class SysOtherinAdminController extends BaseAdminController {
     @Before(Tx.class)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
+    }
+
+
+
+    /**
+     * 提审
+     */
+    public void submit(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.validateId(iautoid, "id");
+
+        renderJson(service.submit(iautoid));
+    }
+
+    /**
+     * 撤回已提审
+     */
+    public void withdraw(Long iAutoId) {
+        ValidationUtils.validateId(iAutoId, "iAutoId");
+
+        // renderJson(service.withdraw(iAutoId));
+    }
+
+    /**
+     * 审批通过
+     */
+    public void approve(String ids) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+
+        // renderJson(service.approve(ids));
+    }
+
+    /**
+     * 审批不通过
+     */
+    public void reject(String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            renderFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        // renderJson(service.reject(ids))
     }
 
 

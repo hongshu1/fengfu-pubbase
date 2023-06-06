@@ -740,7 +740,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // TODO 更新状态
-
+            SysPureceive byId = findById(iautoid);
+            byId.setIAuditStatus(Integer.valueOf(AuditStateEnum.AWAIT_AUDIT.getValue()));
+            byId.update();
             return true;
         });
         return SUCCESS;
@@ -748,7 +750,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
     public Ret withdraw(Long iAutoId) {
         tx(() -> {
-
+            SysPureceive byId = findById(iAutoId);
+            byId.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
+            byId.update();
             return true;
         });
         return SUCCESS;
@@ -759,7 +763,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
      */
     public Ret approve(String ids) {
         tx(() -> {
-
+            String[] split = ids.split(",");
+            for (String s : split) {
+                SysPureceive byId = findById(s);
+                byId.setIAuditStatus(Integer.valueOf(AuditStateEnum.APPROVED.getValue()));
+                byId.update();
+            }
             return true;
         });
         
@@ -767,7 +776,15 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     }
 
     public Ret reject(String ids) {
-
+        tx(() -> {
+            String[] split = ids.split(",");
+            for (String s : split) {
+                SysPureceive byId = findById(s);
+                byId.setIAuditStatus(Integer.valueOf(AuditStateEnum.REJECTED.getValue()));
+                byId.update();
+            }
+            return true;
+        });
         return SUCCESS;
     }
     
