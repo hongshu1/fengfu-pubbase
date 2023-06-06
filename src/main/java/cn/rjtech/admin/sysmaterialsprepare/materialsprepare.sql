@@ -69,18 +69,8 @@ ORDER BY mp.CreateDate DESC
 
     #sql("recpordetail")
 SELECT mp.AutoID,
-       mp.OrganizeCode,
        mp.BillNo,
-       mp.BillType,
-       mp.BillDate,
-       mp.AuditPerson,
-       mp.AuditDate,
-       mp.CreatePerson,
-       mp.CreateDate,
-       mp.ModifyPerson,
-       mp.ModifyDate,
        mp.SourceBillNo,
-       mp.SourceBillID,
        md.cMoDocNo,
        md.dPlanDate,
        md.iQty,
@@ -145,61 +135,28 @@ ORDER BY mp.CreateDate DESC
 
     #sql("recpor1")
 SELECT mp.AutoID,
-       mp.OrganizeCode,
        mp.BillNo,
-       mp.BillType,
-       mp.BillDate,
-       mp.AuditPerson,
-       mp.AuditDate,
-       mp.CreatePerson,
-       mp.CreateDate,
-       mp.ModifyPerson,
-       mp.ModifyDate,
        mp.SourceBillNo,
-       mp.SourceBillID,
-       md.cMoDocNo,
+       dpm.cDepName,
+       wsm.cWorkShiftName,
        md.dPlanDate,
        md.iQty,
-       md.iStatus,
        it.cInvCode,
        it.cInvCode1,
        it.cInvName1,
-       it.cInvStd,
-       dpm.cDepName,
-       wsm.cWorkShiftName,
-       wsm.cWorkShiftCode,
-       uom.cUomName,
-       wrm.cWorkName,
-       wrm.cWorkCode,
-       md.iQty * iri.iUsageUOM AS totalQty,
-       emm.cEquipmentModelName
+       uom.cUomName
 FROM T_Sys_MaterialsPrepare mp
          LEFT JOIN Mo_MoDoc md ON mp.SourceBillID = md.iAutoId
-         LEFT JOIN Bd_Inventory it ON md.iInventoryId = it.iAutoId
          LEFT JOIN Bd_Department dpm ON md.iDepartmentId = dpm.iAutoId
          LEFT JOIN Bd_WorkShiftM wsm ON md.iWorkShiftMid = wsm.iAutoId
-         LEFT JOIN Bd_Uom uom ON it.iManufactureUomId = uom.iAutoId
          LEFT JOIN Bd_WorkRegionM wrm ON md.iWorkRegionMid = wrm.iAutoId
-         LEFT JOIN Bd_EquipmentModel emm ON it.iEquipmentModelId = emm.iAutoId
+         LEFT JOIN Bd_Inventory it ON md.iInventoryId = it.iAutoId
+         LEFT JOIN Bd_Uom uom ON it.iManufactureUomId = uom.iAutoId
          LEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting = ir.iAutoId
          LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId = irc.iInventoryRoutingId
          LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId = iri.iInventoryRoutingConfigId
 WHERE 1 = 1
-  #if(billno)
-  AND BillNo = #para(billno)
-  #end
-  #if(cmodocno)
-  AND cMoDocNo = #para(cmodocno)
-  #end
-  #if(cinvcode)
-  AND InvCode = #para(cinvcode)
-  #end
-  #if(cinvcode1)
-  AND cInvCode1 = #para(cinvcode1)
-  #end
-  #if(cinvname1)
-  AND cInvName1 = #para(cinvname1)
-  #end
+AND mp.BillNo is not null
   #if(startTime)
   AND dPlanDate >= #para(startTime)
   #end
@@ -215,7 +172,18 @@ WHERE 1 = 1
   #if(cworkcode)
   AND cWorkCode = #para(cworkcode)
   #end
-ORDER BY mp.CreateDate DESC
+GROUP BY mp.AutoID,
+    mp.BillNo,
+    mp.SourceBillNo,
+    dpm.cDepName,
+    wsm.cWorkShiftName,
+    md.dPlanDate,
+    md.iQty,
+    it.cInvCode,
+    it.cInvCode1,
+    it.cInvName1,
+    uom.cUomName
+ORDER BY md.dPlanDate DESC
     #end
 
 
@@ -375,21 +343,17 @@ SELECT it.cInvCode,
        it.cInvName1,
        it.cInvStd,
        uom.cUomName,
-       md.iQty,
-       iri.iUsageUOM,
-       wh.cWhName,
-       wa.cAreaName,
-       md.iQty * iri.iUsageUOM AS totalQty
+       iri.iUsageUOM
 FROM Mo_MoDoc md
          LEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting = ir.iAutoId
          LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId = irc.iInventoryRoutingId
          LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId = iri.iInventoryRoutingConfigId
          LEFT JOIN Bd_Inventory it ON iri.iInventoryId = it.iAutoId
          LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1 = uom.iAutoId
-         LEFT JOIN Bd_Warehouse wh ON it.cBarcode = wh.cBarCode
-         LEFT JOIN Bd_Warehouse_Area wa ON wh.iAutoId = wa.iWarehouseId
 WHERE 1 = 1
-  AND md.cMoDocNo = '#(cmodocno)' #end
+  AND md.cMoDocNo = '#(cmodocno)'
+  AND it.cInvCode is not null
+   #end
 
 
 
