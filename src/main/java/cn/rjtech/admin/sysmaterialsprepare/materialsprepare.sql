@@ -24,25 +24,16 @@ SELECT mp.AutoID,
        dpm.cDepName,
        wsm.cWorkShiftName,
        wsm.cWorkShiftCode,
-       uom.cUomName,
-       wrm.cWorkName,
-       wrm.cWorkCode,
-       md.iQty * iri.iUsageUOM AS totalQty,
-       emm.cEquipmentModelName
+       uom.cUomName
 FROM T_Sys_MaterialsPrepare mp
          LEFT JOIN Mo_MoDoc md ON mp.SourceBillID = md.iAutoId
-         LEFT JOIN Bd_Inventory it ON md.iInventoryId = it.iAutoId
          LEFT JOIN Bd_Department dpm ON md.iDepartmentId = dpm.iAutoId
          LEFT JOIN Bd_WorkShiftM wsm ON md.iWorkShiftMid = wsm.iAutoId
+         LEFT JOIN Bd_Inventory it ON md.iInventoryId = it.iAutoId
          LEFT JOIN Bd_Uom uom ON it.iManufactureUomId = uom.iAutoId
-         LEFT JOIN Bd_WorkRegionM wrm ON md.iWorkRegionMid = wrm.iAutoId
-         LEFT JOIN Bd_EquipmentModel emm ON it.iEquipmentModelId = emm.iAutoId
-         LEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting = ir.iAutoId
-         LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId = irc.iInventoryRoutingId
-         LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId = iri.iInventoryRoutingConfigId
 WHERE 1 = 1
   #if(billno)
-  AND BillNo = ##para(billno)
+  AND BillNo = #para(billno)
   #end
   #if(cmodocno)
   AND cMoDocNo = #para(cmodocno)
@@ -313,20 +304,16 @@ SELECT md.iAutoId,
        it.cInvCode,
        it.cInvCode1,
        it.cInvName1,
-       md.iQty * iri.iUsageUOM AS totalQty,
        uom.cUomName
 FROM Mo_MoDoc md
-         LEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting = ir.iAutoId
-         LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId = irc.iInventoryRoutingId
-         LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId = iri.iInventoryRoutingConfigId
          LEFT JOIN Bd_Department dpm ON md.iDepartmentId = dpm.iAutoId
          LEFT JOIN Bd_WorkShiftM wsm ON md.iWorkShiftMid = wsm.iAutoId
-         LEFT JOIN Bd_Inventory it ON iri.iInventoryId = it.iAutoId
-         LEFT JOIN Bd_Uom uom ON it.iManufactureUomId = uom.iAutoId
          LEFT JOIN Bd_WorkRegionM wrm ON md.iWorkRegionMid = wrm.iAutoId
+         LEFT JOIN Bd_Inventory it ON md.iInventoryId=it.iAutoId
+         LEFT JOIN Bd_Uom uom ON it.iManufactureUomId = uom.iAutoId
 WHERE 1 = 1
   AND md.iStatus = 2
-  AND md.iAutoId is not null #if(dplandate)
+  #if(dplandate)
   AND dPlanDate = #para(dplandate)
   #end
   #if(startTime)

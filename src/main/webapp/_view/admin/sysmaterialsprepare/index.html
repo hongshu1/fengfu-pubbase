@@ -10,9 +10,9 @@
 					<input type="text" autocomplete="off" class="form-control" placeholder="备料单号"
 						   name="billno" value=""/>
 					<input type="text" autocomplete="off" class="form-control" placeholder="工单号"
-						   name="cmodocno" value=""/>
+						   name="sourcebillno" value=""/>
 					<input type="text" autocomplete="off" class="form-control" placeholder="存货编码"
-						   name="invcode" value=""/>
+						   name="cinvcode" value=""/>
 					<input type="text" autocomplete="off" class="form-control" placeholder="客户部番"
 						   name="cinvcode1" value=""/>
 					<input type="text" autocomplete="off" class="form-control" placeholder="部品名称"
@@ -22,15 +22,15 @@
 					<span class="ml-1 mr-1">至</span>
 					<input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20"
 						   name="endTime" value=""/>
-                    <select class="form-control" name="BillType"
-                            data-autoload
-                            data-url="admin/dictionary/options?key=null"
-                            data-select-type="select"
-                            data-text="=单据类型;MO 生产订单  SoDeliver销售发货单="
-                            data-value=""
-                            data-value-attr="sn"
-							style="display: none"
-                    ></select>
+<!--                    <select class="form-control" name="BillType"-->
+<!--                            data-autoload-->
+<!--                            data-url="admin/dictionary/options?key=null"-->
+<!--                            data-select-type="select"-->
+<!--                            data-text="=单据类型;MO 生产订单  SoDeliver销售发货单="-->
+<!--                            data-value=""-->
+<!--                            data-value-attr="sn"-->
+<!--							style="display: none"-->
+<!--                    ></select>-->
                     <div class="btn-group text-center mx-1">
                         <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 搜索</button>
                         <button type="button" onclick="form.reset();refreshJBoltTable(this);"
@@ -62,7 +62,7 @@
 </td>
 <td>${data.状态}</td>
 <td>${data.billno}</td>
-<td>${data.cmodocno}</td>
+<td>${data.sourcebillno}</td>
 <td>${data.cdepname}</td>
 <td>${data.cworkshiftname}</td>
 <td>${data.dplandate}</td>
@@ -70,7 +70,7 @@
 <td>${data.cinvcode1}</td>
 <td>${data.cinvname1}</td>
 <td>${data.cuomname}</td>
-<td>${data.totalqty}</td>
+<td>${data.iqty}</td>
 <td>${data.createperson}</td>
 <td>${data.createdate}</td>
 <!--<td>-->
@@ -129,6 +129,7 @@
                data-page="SysMaterialsprepare_page"
                data-toolbar="SysMaterialsprepare_toolbar_#(pageId)"
 			   data-column-prepend="1:checkbox:true"
+			   id="indextable"
         >
             <thead class="fw-normal">
             <tr>

@@ -198,7 +198,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
 
     public Ret submitByJBoltTable(String id) {
         SysMaterialsprepare sysMaterialsprepare = new SysMaterialsprepare();
-        MoDoc modoc = moDocS.findFirst("select *   from Mo_MoDoc where iAutoId=?", id);
+        MoDoc modoc = moDocS.findFirst("select * from Mo_MoDoc where iAutoId=?", id);
         sysMaterialsprepare.setSourceBillID(id);
         sysMaterialsprepare.setSourceBillNo(modoc.getCMoDocNo());
         //获取当前用户信息？
@@ -206,25 +206,24 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         Date now = new Date();
         tx(() -> {
             //通过 id 判断是新增还是修改
-            if (sysMaterialsprepare.getAutoID() == null) {
-                sysMaterialsprepare.setOrganizeCode(getOrgCode());
-                sysMaterialsprepare.setCreatePerson(user.getName());
-                sysMaterialsprepare.setCreateDate(now);
-                sysMaterialsprepare.setBillNo("BL" + DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
-//				sysMaterialsprepare.setState("1");
-                //主表新增
-                ValidationUtils.isTrue(sysMaterialsprepare.save(), ErrorMsg.SAVE_FAILED);
-            } else {
-                //主表修改
-                ValidationUtils.isTrue(sysMaterialsprepare.update(), ErrorMsg.UPDATE_FAILED);
-            }
+            sysMaterialsprepare.setOrganizeCode(getOrgCode());
+            sysMaterialsprepare.setCreatePerson(user.getName());
+            sysMaterialsprepare.setCreateDate(now);
+            sysMaterialsprepare.setBillNo("BL" + DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
+//		    sysMaterialsprepare.setState("1");
+            //主表新增
+            ValidationUtils.isTrue(sysMaterialsprepare.save(), ErrorMsg.SAVE_FAILED);
             //从表的操作
             // 获取保存数据（执行保存，通过 getSaveRecordList）
             saveTableSubmitDatas(sysMaterialsprepare, id);
+            //修改工单状态
+            modoc.setIStatus(3);
+            modoc.setIUpdateBy(user.getId());
+            modoc.setCUpdateName(user.getName());
+            modoc.setDUpdateTime(now);
+            ValidationUtils.isTrue(modoc.update(), ErrorMsg.UPDATE_FAILED);
             //获取修改数据（执行修改，通过 getUpdateRecordList）
-
             //获取删除数据（执行删除，通过 getDelete）
-
             return true;
         });
         return SUCCESS;
@@ -242,13 +241,11 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                         "\tiri.cCreateName,\n" +
                         "\tiri.dCreateTime \n" +
                         "FROM\n" +
-                        "\tBd_InventoryRoutingInvc iri\n" +
-                        "\tLEFT JOIN Bd_InventoryRoutingConfig irc ON iri.iInventoryRoutingConfigId= irc.iAutoId\n" +
-                        "\tLEFT JOIN Bd_InventoryRouting ir ON irc.iInventoryRoutingId= ir.iAutoId\n" +
-                        "\tLEFT JOIN Mo_MoDoc md ON ir.iAutoId= md.iInventoryRouting\n" +
-                        "\tLEFT JOIN Bd_Inventory it ON iri.iInventoryId= it.iAutoId \n" +
-                        "WHERE\n" +
-                        "\tmd.iAutoId IS NOT NULL \n" +
+                        "\tMo_MoDoc md\n" +
+                        "\tLEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting = ir.iAutoId\n" +
+                        "\tLEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId = irc.iInventoryRoutingId\n" +
+                        "\tLEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId = iri.iInventoryRoutingConfigId\n" +
+                        "WHERE 1=1\n" +
                         "\tAND md.iAutoId= ?", id);
 
         if (CollUtil.isEmpty(inventoryRoutingInvcs)) return;
@@ -260,7 +257,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
 
             Inventory inventory = invent.findById(inventoryRoutingInvcs.get(i).getIInventoryId());
 
-            StockBarcodePosition stockbarcodeposition = stockbarcodepositionservice.findFirst("select * from T_Sys_StockBarcodePosition sbp where InvCode=?", inventory.getCInvCode());
+//            StockBarcodePosition stockbarcodeposition = stockbarcodepositionservice.findFirst("select * from T_Sys_StockBarcodePosition sbp where InvCode=?", inventory.getCInvCode());
 
             SysMaterialspreparedetail sysMaterialspreparedetail = new SysMaterialspreparedetail();
             sysMaterialspreparedetail.setMasID(Long.valueOf(sysMaterialsprepare.getAutoID()));
@@ -270,9 +267,9 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             sysMaterialspreparedetail.setCreatePerson(user.getName());
             sysMaterialspreparedetail.setModifyPerson(user.getName());
             sysMaterialspreparedetail.setMemo(inventoryRoutingInvcs.get(i).getCMemo());
-            sysMaterialspreparedetail.setQty(new BigDecimal(inventoryRoutingInvcs.get(i).getIUsageUOM().toString()));
-            sysMaterialspreparedetail.setInvCode(inventory.getCInvCode());
-            sysMaterialspreparedetail.setBarcode(stockbarcodeposition.getBarcode());
+//          sysMaterialspreparedetail.setQty(new BigDecimal(inventoryRoutingInvcs.get(i).getIUsageUOM().toString()));
+//          sysMaterialspreparedetail.setInvCode(inventory.getCInvCode());
+//          sysMaterialspreparedetail.setBarcode(stockbarcodeposition.getBarcode());
 //          sysMaterialspreparedetail.setSourceBillNoRow(row.get("sourcebillnorow"));
 //			sysMaterialspreparedetail.setSourceType(row.getStr("sourcebilltype"));
 //          sysMaterialspreparedetail.setSourceBillNo(row.getStr("sourcebillno"));
