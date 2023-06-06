@@ -87,23 +87,53 @@
     <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入字段长度" maxlength="40" name="formExtendFields.iMaxLength" value="#(formExtendFields.iMaxLength??)"/>
 </div>
 </div>
+    #if(formExtendFields.iFieldType??!=null)
+    <!--<input type="text" id="aaaa" name="iFieldType" value="#(formExtendFields.iFieldType??)"/>-->
+    #end
 
     <div class="form-group row"
         data-radio
         data-name="formExtendFields.iFieldType"
-        data-value-attr="sn"
-        data-url="admin/dictionary/options?key=extend_field_type"
         data-label="字段类型:"
         data-width="col-sm-2,col-5"
         data-value="#(formExtendFields.iFieldType??)"
         data-inline="true"
 >
+        <!--data-value-attr="sn"-->
+        <!--data-url="admin/dictionary/options?key=extend_field_type"-->
+        <label class="col-sm-2 col-form-label" >字段类型：</label>
+        <div class="col"  style="padding-top: 1px;">
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iFieldType1" type="radio" name="formExtendFields.iFieldType" value="1"/>
+                <label for="iFieldType1">输入框</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iFieldType2" type="radio" name="formExtendFields.iFieldType" value="2"/>
+                <label for="iFieldType2">整数</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iFieldType3" type="radio" name="formExtendFields.iFieldType" value="3"/>
+                <label for="iFieldType3">小数</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iFieldType4" type="radio" name="formExtendFields.iFieldType" value="4"/>
+                <label for="iFieldType4">日期</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iFieldType5" type="radio" name="formExtendFields.iFieldType" value="5"/>
+                <label for="iFieldType5">日期时间</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iFieldType6" type="radio" name="formExtendFields.iFieldType" value="6"/>
+                <label for="iFieldType6">布尔</label>
+            </div>
+        </div>
 </div>
 
     <div class="form-group row" >
         <label class="col-sm-2 col-form-label">小数位:</label>
         <div class="col-1">
-            <input type="number" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="" maxlength="40" name="formExtendFields.iDigit" value="#(formExtendFields.iDigit??)"/>
+            <input type="number" data-rule="pzint" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="" maxlength="40" name="formExtendFields.iDigit" value="#(formExtendFields.iDigit??)"/>
         </div>
     </div>
 
@@ -168,19 +198,37 @@ data-inline="true"
     <div class="form-group row"
          data-radio
          data-name="formExtendFields.iSource"
-         data-default="false"
-         data-url="admin/dictionary/options?key=value_source"
+         data-default=""
          data-label="值来源:"
-         data-value-attr="sn"
          data-width="col-sm-2,col-5"
          data-value="#(formExtendFields.iSource??)"
          data-inline="true"
     >
+        <!--data-value-attr="sn"-->
+        <!--data-url="admin/dictionary/options?key=value_source"-->
+        <label class="col-sm-2 col-form-label" >值来源：</label>
+        <div class="col"  style="padding-top: 1px;">
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iSource1" type="radio" name="formExtendFields.iSource" value="1"/>
+                <label for="iSource1">手工输入</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iSource2" type="radio" name="formExtendFields.iSource" value="2"/>
+                <label for="iSource2">枚举引用</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iSource3" type="radio" name="formExtendFields.iSource" value="3"/>
+                <label for="iSource3">图片上传</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iSource4" type="radio" name="formExtendFields.iSource" value="4"/>
+                <label for="iSource4">附件上传</label>
+            </div>
+        </div>
     </div>
 
     <div class="form-group row" >
 <label class="col-sm-2 col-form-label">值具体:</label>
-
 <div class="col-2">
     <select class="form-control"
             data-autoload
@@ -192,8 +240,7 @@ data-inline="true"
             data-select="#(formExtendFields.iSourceVal??)"
             data-setvalueto="hidiSourceVal"
     ></select>
-
-    <!--<input type="hidden" name="formExtendFields.iSourceVal" id="hidiSourceVal" value="#(formExtendFields.iSourceVal??)"/>-->
+    <input type="hidden" name="formExtendFields.iSourceVal" id="hidiSourceVal" value="#(formExtendFields.iSourceVal??)"/>
 </div>
 </div>
 <div class="form-group row">
