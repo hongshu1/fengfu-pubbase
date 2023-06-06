@@ -220,7 +220,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 sysotherin.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
                 sysotherin.setModifyDate(now);
                 sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
-
+                sysotherin.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
                 // 主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
             }
