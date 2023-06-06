@@ -2,6 +2,7 @@ package cn.rjtech.admin.warehousearea;
 
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -59,6 +60,15 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 
     public WarehouseArea findByWhAreaCode(String careacode) {
         return findFirst(Okv.by("cAreaCode", careacode).set("isDeleted", false), "iautoid", "asc");
+    }
+
+    public List<WarehouseArea> findAreaListByWhName(String carename) {
+        Sql sql = selectSql()
+            .eq(WarehouseArea.CAREANAME, carename)
+            .eq(WarehouseArea.IORGID, getOrgId())
+            .eq(WarehouseArea.ISDELETED, ZERO_STR);
+
+        return find(sql);
     }
 
     /**

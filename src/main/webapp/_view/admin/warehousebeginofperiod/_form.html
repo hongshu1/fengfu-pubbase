@@ -9,7 +9,7 @@
                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
               </button>
               <div class="dropdown-menu" aria-labelledby="importMenuButton">
-                <a data-downloadbtn href="/admin/warehousebeginofperiod/downloadTpl" class="btn dropdown-item"><i
+                <a data-downloadbtn href="/admin/warehousebeginofperiod/downloadStockTpl" class="btn dropdown-item"><i
                     class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
                 <div class="j_upload_file_box"
                      data-name="file"
@@ -20,7 +20,7 @@
                      data-maxsize="20480"
                      data-handler="uploadFile"
                      data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
-                     data-url="/admin/warehousebeginofperiod/importExcel">
+                     data-url="/admin/warehousebeginofperiod/importStockExcel">
                 </div>
               </div>
             </div>
@@ -38,7 +38,7 @@
       <td>${pageNumber,pageSize,index | rownum}</td>
       <td >
         <input type="text" hidden data-sync-attr="cwhcode" id="cwhcode${data.index}" data-tips="仓库" data-notnull="true"
-               autocomplete="off" class="form-control" maxlength="40" name="cwhcode" value="${data.cwhcode}"/>
+               autocomplete="off" class="form-control" maxlength="40" name="cwhcode" value="${data.cwhcode}" required="true"/>
         <div class="input-group">
                   <input type="text"
                          id="icwhcode${data.index}"
