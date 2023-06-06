@@ -69,7 +69,7 @@ public class FormUploadMApiController  extends BaseApiController {
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void saveTableSubmit( @Para(value = "icategoryid") String iautoid,
+    public void saveTableSubmit( @Para(value = "iautoid") String iautoid,
                                  @Para(value = "iworkregionmid") String iworkregionmid,
                                  @Para(value = "icategoryid") String icategoryid,
                                  @Para(value = "ddate") Date ddate,
