@@ -91,6 +91,7 @@ public class FormUploadMApiController  extends BaseApiController {
      * 详情数据
      */
     @ApiDoc(result = FormUpload.class)
+    @UnCheck
     public void details(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
                         @Para(value = "pageSize",defaultValue = "15") Integer pageSize,
                         @Para(value = "iautoid") String iautoid){
