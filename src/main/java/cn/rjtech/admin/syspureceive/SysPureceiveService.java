@@ -458,8 +458,13 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
      * autocomplete组件使用
      */
     public Record barcode(Kv kv) {
-        Record first = dbTemplate("syspureceive.barcode", kv).findFirst();
-        ValidationUtils.notNull(first, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入");
+        //先查询条码是否已添加
+        Record first = dbTemplate("syspureceive.barcodeDatas", kv).findFirst();
+        if(null != first){
+            ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "的数据已经存在，请勿重复录入。");
+        }
+        first = dbTemplate("syspureceive.barcode", kv).findFirst();
+        ValidationUtils.notNull(first, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入。");
         return first;
     }
 
@@ -704,9 +709,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         Record first = dbTemplate("syspureceive.paginateAdminDatas", Kv.by("careacode", row.getStr("poscode"))).findFirst();
 
         Integer imaxcapacity = first.getInt("imaxcapacity");
-
+        BigDecimal bigDecimal = new BigDecimal(imaxcapacity);
+        BigDecimal qty = row.getBigDecimal("qty");
         if (ObjUtil.isNotNull(imaxcapacity)) {
-            if (imaxcapacity < row.getInt("qty")) {
+            if (qty.compareTo(bigDecimal) == 1) {
                 ValidationUtils.error(String.format("第%d行%s现品票号实收数量超出对应库存最大存储量，请选择其他库区录入", i + 1, row.get("barcode")));
             }
         }
