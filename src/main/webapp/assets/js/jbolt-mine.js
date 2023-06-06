@@ -560,6 +560,23 @@ function iPurchaseRefType(val) {
     }
 }
 
+var previewUrl = function (url) {
+    url = getUrl(url.replace('/home', ''));
+
+    return getBaseUrl('8012') + '/onlinePreview?url=' + encodeURIComponent(window.btoa(url));
+};
+
+var getUrl = function (uri) {
+    return location.protocol + '//' + location.host + '/' + uri;
+};
+
+var getBaseUrl = function (port) {
+    if (location.port) {
+        return location.protocol + '//' + location.host.replace(location.port, port);
+    }
+    return location.protocol + "//kkfileview.kephon.com";
+};
+
 /*
  * 数字格式化 清除掉小数点后的无用的0 如果最后是0 转为自定义字符显示
  * 参数说明：
@@ -627,6 +644,7 @@ function initMineJuicer(){
     juicer.register('isubitem', isubitem);
     juicer.register('iPurchaseRefType', iPurchaseRefType);
     juicer.register('numberFormatZeroDefaultChar', numberFormatZeroDefaultChar);
+    juicer.register('previewUrl', previewUrl);
 }
 
 function jboltTableGetSpecCols(ele, colName) {
