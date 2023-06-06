@@ -1,8 +1,6 @@
-#sql("getFormCategoryByCname")
-select cname from BD_formCategory where iautoid=#para(iatuoid)
-#end
-
-
 #sql("paginateAdminDatas")
-select * from Bd_Form
+SELECT f.*, fc.cName AS ccategoryname
+FROM Bd_Form f
+INNER JOIN Bd_FormCategory fc ON f.iformcategoryid = fc.iautoid
+ORDER BY f.iautoid DESC
 #end
