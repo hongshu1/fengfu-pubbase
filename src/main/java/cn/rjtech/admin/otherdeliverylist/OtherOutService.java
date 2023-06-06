@@ -63,13 +63,11 @@ public class OtherOutService extends BaseService<OtherOut> {
 
 	/**
 	 * 其他出库单列表 明细
-	 * @param pageNumber
-	 * @param pageSize
 	 * @param kv
 	 * @return
 	 */
-	public Page<Record> getOtherOutLines(int pageNumber, int pageSize, Kv kv){
-		return dbTemplate("otherdeliverylist.getOtherOutLines",kv).paginate(pageNumber, pageSize);
+	public List<Record> getOtherOutLines(Kv kv){
+		return dbTemplate("otherdeliverylist.getOtherOutLines",kv).find();
 
 	}
 	/**
