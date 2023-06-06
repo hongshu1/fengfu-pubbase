@@ -8,6 +8,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.SysMaterialspreparedetail;
@@ -20,7 +21,7 @@ import cn.rjtech.model.momdata.SysMaterialspreparedetail;
 @CheckPermission(PermissionKey.ADMIN_SYSMATERIALSPREPAREDETAIL)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
-@Path(value = "/admin/productionMaterial", viewPath = "/_view/admin/sysmaterialspreparedetail")
+@Path(value = "/admin/sysMaterialspreparedetail", viewPath = "/_view/admin/sysmaterialspreparedetail")
 public class SysMaterialspreparedetailAdminController extends BaseAdminController {
 
 	@Inject
@@ -86,5 +87,27 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 		renderJson(service.deleteById(getLong(0)));
 	}
 
+	public void MaterialsList() {
+		render("MDetail.html");
+	}
 
+	public void cworkname() {
+		renderJsonData(service.cworkname());
+	}
+
+	public void cworkshiftcode() {
+		renderJsonData(service.cworkshiftcode());
+	}
+
+	public void getMaterialsdetials() {
+		renderJsonData(service.getMaterialsdetials(getPageNumber(), getPageSize(), getKv()));
+	}
+
+	public void getMaterialsdetials1() {
+		renderJsonData(service.getMaterialsdetials1(getPageNumber(), getPageSize(), getKv()));
+	}
+
+	public void getBarcode() {
+		renderJsonData(service.getBarcode(getPageNumber(), getPageSize(), getKv()));
+	}
 }

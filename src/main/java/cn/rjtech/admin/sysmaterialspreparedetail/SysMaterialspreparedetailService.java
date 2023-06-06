@@ -9,6 +9,10 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.SysMaterialspreparedetail;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
 /**
  * 备料单明细
  * @ClassName: SysMaterialspreparedetailService
@@ -107,4 +111,26 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 		return null;
 	}
 
+	public List<Record> cworkname() {
+		return dbTemplate("materialsprepare.cworkname", Kv.of("isenabled", "1")).find();
+	}
+
+	public List<Record> cworkshiftcode() {
+		return dbTemplate("materialsprepare.cworkshiftcode", Kv.of("isenabled", "1")).find();
+	}
+
+	public Page<Record> getMaterialsdetials(int pageNumber, int pageSize, Kv kv) {
+		Page<Record> paginate = dbTemplate("materialsprepare.recpordetail", kv).paginate(pageNumber, pageSize);
+		return paginate;
+	}
+
+	public Page<Record> getMaterialsdetials1(int pageNumber, int pageSize, Kv kv) {
+		Page<Record> paginate = dbTemplate("materialsprepare.recpor1", kv).paginate(pageNumber, pageSize);
+		return paginate;
+	}
+
+	public Page<Record> getBarcode(int pageNumber, int pageSize, Kv kv) {
+		Page<Record> paginate = dbTemplate("materialsprepare.barcode", kv).paginate(pageNumber, pageSize);
+		return paginate;
+	}
 }

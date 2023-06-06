@@ -48,6 +48,8 @@ public abstract class BaseSysMaterialspreparedetail<M extends BaseSysMaterialspr
     public static final String MODIFYDATE = "ModifyDate";
     /**状态：1=已扫描，0=未扫描*/
     public static final String STATE = "State";
+    /**是否删除：0. 否 1. 是*/
+    public static final String ISDELETED = "isDeleted";
 	/**
 	 * AutoID
 	 */
@@ -369,6 +371,23 @@ public abstract class BaseSysMaterialspreparedetail<M extends BaseSysMaterialspr
 	@JSONField(name = "state")
 	public java.lang.String getState() {
 		return getStr("State");
+	}
+
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
+		return (M)this;
+	}
+
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=20)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("isDeleted");
 	}
 
 }
