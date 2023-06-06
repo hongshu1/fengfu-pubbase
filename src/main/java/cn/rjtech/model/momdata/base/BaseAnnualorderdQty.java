@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -102,7 +101,7 @@ public abstract class BaseAnnualorderdQty<M extends BaseAnnualorderdQty<M>> exte
 	/**
 	 * 数量
 	 */
-	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="数量", required=true, maxLength=18, fixed=2, order=5)
+	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="数量", required=true, maxLength=24, fixed=6, order=5)
 	@JSONField(name = "iqty")
 	public java.math.BigDecimal getIQty() {
 		return getBigDecimal("iQty");
