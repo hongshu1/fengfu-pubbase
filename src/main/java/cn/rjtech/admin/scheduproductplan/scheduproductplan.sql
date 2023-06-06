@@ -506,6 +506,7 @@ SELECT
     d.iWorkRegionMid,
     e.cWorkCode,
     e.cWorkName,
+    f.iInnerInStockDays,
     a.iLevel AS iPsLevel
     ###e.iPsLevel
 FROM Aps_WeekScheduleDetails AS a
@@ -513,6 +514,7 @@ FROM Aps_WeekScheduleDetails AS a
          LEFT JOIN Bd_Inventory AS c ON a.iInventoryId = c.iAutoId
          LEFT JOIN Bd_InventoryWorkRegion AS d ON c.iAutoId = d.iInventoryId AND d.isDefault = 1 AND d.isDeleted = 0
          LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId AND e.isDeleted = 0
+         LEFT JOIN Bd_InventoryPlan AS f ON c.iAutoId = f.iInventoryId
 WHERE a.isDeleted = '0'
   AND a.iLevel = #para(level)
     #if(cworkname)

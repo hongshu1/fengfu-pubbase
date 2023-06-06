@@ -2,7 +2,7 @@
 SELECT
     t1.AutoID,t1.BillType,t1.OrganizeCode,t1.BillDate,t1.RdCode,
     t1.DeptCode,t1.SourceBillNo,t1.SourceBillID,t1.VenCode,t1.Memo,
-    t1.AuditPerson,t1.AuditDate,t1.ModifyDate,t1.ModifyPerson,t1.State,
+    t1.AuditPerson,t1.AuditDate,t1.ModifyDate,t1.ModifyPerson,t1.iAuditStatus,
     t2.cRdCode,t2.cRdName,
     t3.Whcode,
     t4.cWhName,
@@ -28,7 +28,7 @@ WHERE 1=1
     and t1.vencode = #para(vencode)
 #end
 #if(state)
-    and t1.state = #para(state)
+    and t1.iAuditStatus = #para(state)
 #end
 #if(whcode)
     and t1.whcode = #para(whcode)

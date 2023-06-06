@@ -375,13 +375,11 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 
 	/**
 	 * 材料出库单列表 明细
-	 * @param pageNumber
-	 * @param pageSize
 	 * @param kv
 	 * @return
 	 */
-	public Page<Record> getMaterialsOutLines(int pageNumber, int pageSize, Kv kv){
-		return dbTemplate("materialsout.getMaterialsOutLines",kv).paginate(pageNumber, pageSize);
+	public List<Record> getMaterialsOutLines(Kv kv){
+		return dbTemplate("materialsout.getMaterialsOutLines",kv).find();
 
 	}
 

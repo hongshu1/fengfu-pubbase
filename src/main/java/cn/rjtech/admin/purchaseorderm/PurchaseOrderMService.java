@@ -1093,20 +1093,37 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		return dbTemplate("purchaseorderm.findBycOrderNo",Kv.by("iautoid",iautoid)).find();
 	}
 
+	public List<Record> findByMidxlxs2(Long iautoid){
+		return dbTemplate("purchaseorderm.findBycOrderNo2",Kv.by("iautoid",iautoid)).find();
+	}
 	public List<Record> findByBarcode(Long iautoid){
 		return  dbTemplate("purchaseorderm.findByBarcodeOnOrder",Kv.by("iautoid",iautoid)).find();
 
 	}
+	public List<Record> findByBarcode2(Long iautoid){
+		return  dbTemplate("purchaseorderm.findByBarcodeOnOrder2",Kv.by("iautoid",iautoid)).find();
 
+	}
 	/**
 	 * 导出pdf条码
 	 * @return
 	 */
-	public Kv pageOnePdf(Long iautoid,int page) throws IOException {
-		// 采购现品票明细数据
-		List<Record> rowDatas = findByMidxlxs(iautoid);
-		// 采购现品票条码数据
-		List<Record> barcodeDatas = findByBarcode(iautoid);
+	public Kv pageOnePdf(Long iautoid,Integer page,Integer type) throws IOException {
+		List<Record> rowDatas = new ArrayList<>();
+		List<Record> barcodeDatas = new ArrayList<>();
+		if(type==0){
+			// 采购现品票清单数据
+			rowDatas = findByMidxlxs(iautoid);
+			// 采购现品票条码数据
+			barcodeDatas=findByBarcode(iautoid);
+		}else {
+			// 采购现品票清单数据
+			rowDatas = findByMidxlxs2(iautoid);
+			// 采购现品票条码数据
+			barcodeDatas=findByBarcode2(iautoid);
+		}
+
+
 		// 采购现品票明细数据sheet分页数组
 		List<String> sheetNames = new ArrayList<>();
 
@@ -1253,6 +1270,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			}
 			Kv remainData2 = Kv.create();
 
+			//
 			if (CollUtil.isNotEmpty(list1)) {
 				remainData2.set("list1", list1);
 			}

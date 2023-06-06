@@ -58,13 +58,11 @@ public class TransVouchService extends BaseService<TransVouch> {
 
 	/**
 	 * 调拨单列表 明细
-	 * @param pageNumber
-	 * @param pageSize
 	 * @param kv
 	 * @return
 	 */
-	public Page<Record> getTransVouchLines(int pageNumber, int pageSize, Kv kv){
-		return dbTemplate("transvouch.getTransVouchLines",kv).paginate(pageNumber, pageSize);
+	public List<Record> getTransVouchLines(Kv kv){
+		return dbTemplate("transvouch.getTransVouchLines",kv).find();
 
 	}
 

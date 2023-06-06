@@ -7,10 +7,13 @@
              <td>${data.rolesn}</td>
             <td>${data.rolename}</td>
             <td>
-                <a  tooltip  href="admin/approvald/roleUsers/${data.iroleid}" data-dialogbtn data-btn="close"
+                <a href="admin/approvald/roleUsers/${data.iroleid}" data-area="95%,95%"  tooltip data-title="修改"
+                   data-handler="refreshJBoltTable" data-dialog-title="用户列表" class="jbolt_table_editbtn"><i
+                        class="fa fa-users c-danger"></i></a>
+                <!--<a  tooltip href="admin/approvald/roleUsers/${data.iroleid}" data-dialogbtn data-btn="close"
                     data-scroll="yes"
                     data-title="用户列表" data-area="90%,90%" class="jbolt_table_btn"><i
-                        class="fa fa-users c-danger"></i></a>
+                        class="fa fa-users c-danger"></i></a>-->
             </td>
             <td style="display: none">${data.iroleid}</td>
         </tr>
