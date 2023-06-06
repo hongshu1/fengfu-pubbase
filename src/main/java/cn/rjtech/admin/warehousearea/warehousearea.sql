@@ -31,6 +31,9 @@ FROM
     #if(ids)
         AND CHARINDEX(','+cast((select wa.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
     #end
+    #if(cwhcode)
+        AND wh.cwhcode LIKE CONCAT('%', #para(cwhcode), '%')
+    #end
 	ORDER BY wa.cAreaCode DESC
 #end
 

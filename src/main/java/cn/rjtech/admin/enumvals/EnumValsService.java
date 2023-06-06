@@ -153,7 +153,7 @@ public class EnumValsService extends BaseService<EnumVals> {
 	 */
 	public Ret submitByJBoltTable(JBoltTable jBoltTable) {
 		if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList() == null) {
-			return Ret.msg("行数据不能为空");
+			return fail("行数据不能为空");
 		}
 		tx(() -> {
 			//新增

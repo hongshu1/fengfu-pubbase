@@ -7,8 +7,9 @@
     <div class="row">
       <div class="col">
         <form class="form-inline text-left" id="inventorydialogForm_#(pageId)" onsubmit="return false;" method="post">
-          <input type="text" autocomplete="off" class="form-control" placeholder="输入库区编码" name="cInvCode" value="#(careacode)"/>
-          <input type="text" autocomplete="off" class="form-control" placeholder="输入库区名称" name="cInvName" value="#(careanname)"/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="输入库区编码" name="careacode" value="#(careacode)"/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="输入库区名称" name="careanname" value="#(careanname)"/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="输入仓库编码" name="cwhcode" value="#(cwhcode)"/>
           <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
         </form>
       </div>
@@ -24,6 +25,8 @@
   <td>${pageNumber,pageSize,index | rownum}</td>
   <td>${data.careacode}</td>
   <td>${data.careaname}</td>
+  <td>${data.cwhcode}</td>
+  <td>${data.cwhname}</td>
   <td>
     <a tooltip href="javascript:void(0)" onclick="checkThis(${index})" class="jbolt_table_btn">选择</a>
   </td>
@@ -48,8 +51,10 @@
       <thead class="fw-normal">
       <tr>
         <th data-width="60" data-column="index">序号</th>
-        <th data-width="300" data-column="careacode">库区编码</th>
-        <th data-width="400" data-column="careaname">库区名称</th>
+        <th data-width="200" data-column="careacode">库区编码</th>
+        <th data-width="200" data-column="careaname">库区名称</th>
+        <th data-width="200" data-column="cwhcode">仓库编码</th>
+        <th data-width="200" data-column="cwhname">仓库名称</th>
         <th data-column="cOperationName">操作</th>
       </tr>
       </thead>
