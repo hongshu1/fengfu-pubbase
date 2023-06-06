@@ -50,12 +50,6 @@ public class Constants {
         row.set("cpaymentprogressdesc",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PAYMENT_PROGRESS.getValue(), row.getStr("cpaymentprogress")));
         row.set("cedittypedesc",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.EDITTYPE.getValue(), row.getStr("cedittype")));
         row.set("citemtypedesc",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.INVESTMENTITEMTYPE.getValue(), row.getStr("citemtype")));
-        row.set("cperiodprogressdesc1",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress1")));
-        row.set("cperiodprogressdesc2",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress2")));
-        row.set("cperiodprogressdesc3",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress3")));
-        row.set("cperiodprogressdesc4",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress4")));
-        row.set("cperiodprogressdesc5",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress5")));
-        row.set("cperiodprogressdesc6",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress6")));
         row.set("itotalamountplan", row.getBigDecimal("itotalamountplan") == null ? null :row.getBigDecimal("itotalamountplan").divide(Constants.RATIO));
         row.set("itotalamountactual", row.getBigDecimal("itotalamountactual") == null ? null:row.getBigDecimal("itotalamountactual").divide(Constants.RATIO));
         row.set("itotalamountdiff", row.getBigDecimal("itotalamountdiff") == null ? null:row.getBigDecimal("itotalamountdiff").divide(Constants.RATIO));

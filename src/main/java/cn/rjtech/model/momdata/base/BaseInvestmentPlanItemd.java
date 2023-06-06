@@ -33,8 +33,8 @@ public abstract class BaseInvestmentPlanItemd<M extends BaseInvestmentPlanItemd<
 	/**
 	 * 主键ID
 	 */
-	public M setIautoid(java.lang.Long iautoid) {
-		set("iAutoId", iautoid);
+	public M setIAutoId(java.lang.Long iAutoId) {
+		set("iAutoId", iAutoId);
 		return (M)this;
 	}
 
@@ -42,16 +42,16 @@ public abstract class BaseInvestmentPlanItemd<M extends BaseInvestmentPlanItemd<
 	 * 主键ID
 	 */
 	@JBoltField(name="iautoid" ,columnName="iAutoId",type="Long", remark="主键ID", required=true, maxLength=19, fixed=0, order=1)
-	@JSONField(serializeUsing= ToStringSerializer.class)
-	public java.lang.Long getIautoid() {
+	@JSONField(name = "iautoid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIAutoId() {
 		return getLong("iAutoId");
 	}
 
 	/**
 	 * 计划项目ID
 	 */
-	public M setIplanitemid(java.lang.Long iplanitemid) {
-		set("iPlanItemId", iplanitemid);
+	public M setIPlanItemId(java.lang.Long iPlanItemId) {
+		set("iPlanItemId", iPlanItemId);
 		return (M)this;
 	}
 
@@ -59,16 +59,16 @@ public abstract class BaseInvestmentPlanItemd<M extends BaseInvestmentPlanItemd<
 	 * 计划项目ID
 	 */
 	@JBoltField(name="iplanitemid" ,columnName="iPlanItemId",type="Long", remark="计划项目ID", required=true, maxLength=19, fixed=0, order=2)
-	@JSONField(serializeUsing= ToStringSerializer.class)
-	public java.lang.Long getIplanitemid() {
+	@JSONField(name = "iplanitemid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIPlanItemId() {
 		return getLong("iPlanItemId");
 	}
 
 	/**
 	 * 期数
 	 */
-	public M setIperiodnum(java.lang.Integer iperiodnum) {
-		set("iPeriodNum", iperiodnum);
+	public M setIPeriodNum(java.lang.Integer iPeriodNum) {
+		set("iPeriodNum", iPeriodNum);
 		return (M)this;
 	}
 
@@ -76,15 +76,16 @@ public abstract class BaseInvestmentPlanItemd<M extends BaseInvestmentPlanItemd<
 	 * 期数
 	 */
 	@JBoltField(name="iperiodnum" ,columnName="iPeriodNum",type="Integer", remark="期数", required=true, maxLength=10, fixed=0, order=3)
-	public java.lang.Integer getIperiodnum() {
+	@JSONField(name = "iperiodnum")
+	public java.lang.Integer getIPeriodNum() {
 		return getInt("iPeriodNum");
 	}
 
 	/**
 	 * 日期
 	 */
-	public M setDperioddate(java.util.Date dperioddate) {
-		set("dPeriodDate", dperioddate);
+	public M setDPeriodDate(java.util.Date dPeriodDate) {
+		set("dPeriodDate", dPeriodDate);
 		return (M)this;
 	}
 
@@ -92,15 +93,16 @@ public abstract class BaseInvestmentPlanItemd<M extends BaseInvestmentPlanItemd<
 	 * 日期
 	 */
 	@JBoltField(name="dperioddate" ,columnName="dPeriodDate",type="Date", remark="日期", required=true, maxLength=10, fixed=0, order=4)
-	public java.util.Date getDperioddate() {
+	@JSONField(name = "dperioddate")
+	public java.util.Date getDPeriodDate() {
 		return getDate("dPeriodDate");
 	}
 
 	/**
 	 * 金额
 	 */
-	public M setIamount(java.math.BigDecimal iamount) {
-		set("iAmount", iamount);
+	public M setIAmount(java.math.BigDecimal iAmount) {
+		set("iAmount", iAmount);
 		return (M)this;
 	}
 
@@ -108,15 +110,16 @@ public abstract class BaseInvestmentPlanItemd<M extends BaseInvestmentPlanItemd<
 	 * 金额
 	 */
 	@JBoltField(name="iamount" ,columnName="iAmount",type="BigDecimal", remark="金额", required=true, maxLength=30, fixed=2, order=5)
-	public java.math.BigDecimal getIamount() {
+	@JSONField(name = "iamount")
+	public java.math.BigDecimal getIAmount() {
 		return getBigDecimal("iAmount");
 	}
 
 	/**
 	 * 创建时间
 	 */
-	public M setDcreatetime(java.util.Date dcreatetime) {
-		set("dCreateTime", dcreatetime);
+	public M setDCreateTime(java.util.Date dCreateTime) {
+		set("dCreateTime", dCreateTime);
 		return (M)this;
 	}
 
@@ -124,15 +127,16 @@ public abstract class BaseInvestmentPlanItemd<M extends BaseInvestmentPlanItemd<
 	 * 创建时间
 	 */
 	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=6)
-	public java.util.Date getDcreatetime() {
+	@JSONField(name = "dcreatetime")
+	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
 	}
 
 	/**
 	 * 更新时间
 	 */
-	public M setDupdatetime(java.util.Date dupdatetime) {
-		set("dUpdateTime", dupdatetime);
+	public M setDUpdateTime(java.util.Date dUpdateTime) {
+		set("dUpdateTime", dUpdateTime);
 		return (M)this;
 	}
 
@@ -140,15 +144,16 @@ public abstract class BaseInvestmentPlanItemd<M extends BaseInvestmentPlanItemd<
 	 * 更新时间
 	 */
 	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=false, maxLength=23, fixed=3, order=7)
-	public java.util.Date getDupdatetime() {
+	@JSONField(name = "dupdatetime")
+	public java.util.Date getDUpdateTime() {
 		return getDate("dUpdateTime");
 	}
 
 	/**
 	 * 创建人
 	 */
-	public M setIcreateby(java.lang.Long icreateby) {
-		set("iCreateBy", icreateby);
+	public M setICreateBy(java.lang.Long iCreateBy) {
+		set("iCreateBy", iCreateBy);
 		return (M)this;
 	}
 
@@ -156,16 +161,16 @@ public abstract class BaseInvestmentPlanItemd<M extends BaseInvestmentPlanItemd<
 	 * 创建人
 	 */
 	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人", required=true, maxLength=19, fixed=0, order=8)
-	@JSONField(serializeUsing= ToStringSerializer.class)
-	public java.lang.Long getIcreateby() {
+	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
 	}
 
 	/**
 	 * 更新人
 	 */
-	public M setIupdateby(java.lang.Long iupdateby) {
-		set("iUpdateBy", iupdateby);
+	public M setIUpdateBy(java.lang.Long iUpdateBy) {
+		set("iUpdateBy", iUpdateBy);
 		return (M)this;
 	}
 
@@ -173,24 +178,25 @@ public abstract class BaseInvestmentPlanItemd<M extends BaseInvestmentPlanItemd<
 	 * 更新人
 	 */
 	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人", required=false, maxLength=19, fixed=0, order=9)
-	@JSONField(serializeUsing= ToStringSerializer.class)
-	public java.lang.Long getIupdateby() {
+	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIUpdateBy() {
 		return getLong("iUpdateBy");
 	}
 
 	/**
 	 * 日程
 	 */
-	public M setCperiodprogress(java.lang.String cperiodprogress) {
-		set("cPeriodProgress", cperiodprogress);
+	public M setCPeriodProgress(java.lang.String cPeriodProgress) {
+		set("cPeriodProgress", cPeriodProgress);
 		return (M)this;
 	}
 
 	/**
 	 * 日程
 	 */
-	@JBoltField(name="cperiodprogress" ,columnName="cPeriodProgress",type="String", remark="日程", required=false, maxLength=10, fixed=0, order=10)
-	public java.lang.String getCperiodprogress() {
+	@JBoltField(name="cperiodprogress" ,columnName="cPeriodProgress",type="String", remark="日程", required=false, maxLength=50, fixed=0, order=10)
+	@JSONField(name = "cperiodprogress")
+	public java.lang.String getCPeriodProgress() {
 		return getStr("cPeriodProgress");
 	}
 
