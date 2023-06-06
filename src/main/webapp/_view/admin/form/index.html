@@ -11,7 +11,16 @@
             
             <div class="col">
                 <form class="form-inline" id="formForm_#(pageId)" onsubmit="return false;" method="post">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="输入表单编码/名称搜索" name="keywords" value=""/>
+                    
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=表单编码=" name="cformcode" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=表单名称=" name="cformname" value=""/>
+
+                    <select name="cformtypesn" class="form-control">
+                        <option value="">=单据类型=</option>
+                        <option value="1">基础档案类</option>
+                        <option value="2">单据类</option>
+                    </select>
+                    
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
                     <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
                 </form>
