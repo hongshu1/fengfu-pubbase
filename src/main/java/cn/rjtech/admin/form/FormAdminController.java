@@ -42,7 +42,7 @@ public class FormAdminController extends BaseAdminController {
      */
     @UnCheck
     public void datas() {
-        renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKeywords(),getKv()));
+        renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
     /**
@@ -105,11 +105,11 @@ public class FormAdminController extends BaseAdminController {
      */
     public void autoGen(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.validateId(iautoid, "iautoid");
-        
+
         renderJson(service.autoGen(iautoid));
     }
-    
-    public void findByFuzzy(@Para(value = "q") String keywords){
+
+    public void findByFuzzy(@Para(value = "q") String keywords) {
         renderJsonData(service.findByFuzzy(keywords));
     }
 
