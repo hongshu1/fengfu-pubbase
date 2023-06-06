@@ -217,7 +217,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 sysotherin.setCreateDate(now);
                 sysotherin.setBillDate(DateUtil.formatDate(now));
                 sysotherin.setModifyPerson(user.getUsername());
-                sysotherin.setState(AuditStateEnum.NOT_AUDIT.getValue());
+                sysotherin.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
                 sysotherin.setModifyDate(now);
                 sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
 
@@ -240,7 +240,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             deleteTableSubmitDatas(jBoltTable);
 
             if (ObjUtil.equals("submit", jBoltTable.getForm().getString("operationType"))) {
-                sysotherin.setState(AuditStateEnum.AWAIT_AUDIT.getValue());
+                sysotherin.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
                 
                 ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
             }
@@ -494,7 +494,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 sysPureceive.setModifyPerson(user.getUsername());
                 sysPureceive.setModifyDate(now);
                 if ("submit".equals(operationType)) {
-                    sysPureceive.setState("2");
+                    // todo 后续业务逻辑确定是哪个状态
+                    sysPureceive.setIAuditStatus(Integer.valueOf(AuditStateEnum.AWAIT_AUDIT.getValue()));
                 }
                 // 主表修改
                 sysPureceive.update();
@@ -548,6 +549,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setBarcode(row.get("barcode"));
             sysPureceivedetail.setCreateDate(now);
             sysPureceivedetail.setModifyDate(now);
+            sysPureceivedetail.setIsDeleted(false);
 
             String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row, operationType, map);
 
@@ -609,9 +611,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setQty(row.getBigDecimal("qty"));
             sysPureceivedetail.setBarcode(row.get("barcode"));
             sysPureceivedetail.setModifyDate(now);
+            sysPureceivedetail.setIsDeleted(false);
 
             String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row, operationType, map);
-
             sysPureceivedetail.setMasID(s);
 
             if (StrUtil.isBlank(row.get("isinitial")) || "0".equals(row.get("isinitial"))) {
@@ -678,14 +680,15 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         
         if ("submit".equals(operationType)) {
             // 待后续审批流修改状态
-            sysPureceive.setState(AuditStateEnum.AWAIT_AUDIT.getValue());
+            sysPureceive.setIAuditStatus(Integer.valueOf(AuditStateEnum.AWAIT_AUDIT.getValue()));
         } else {
-            sysPureceive.setState(AuditStateEnum.NOT_AUDIT.getValue());
+            sysPureceive.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
         }
         
         sysPureceive.setModifyDate(now);
         sysPureceive.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
         sysPureceive.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
+        sysPureceive.setIsDeleted(false);
         
         ValidationUtils.isTrue(sysPureceive.save(), ErrorMsg.SAVE_FAILED);
         
@@ -718,7 +721,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
      * @return true, 更新成功
      */
     private boolean update(String autoId, String beforeState, String afterState) {
-        return update("UPDATE T_Sys_PUReceive SET State = ? WHERE autoid = ? AND State = ? ", afterState, autoId, beforeState) > 0;
+        return update("UPDATE T_Sys_PUReceive SET iAuditStatus = ? WHERE autoid = ? AND iAuditStatus = ? ", afterState, autoId, beforeState) > 0;
     }
 
     /**
