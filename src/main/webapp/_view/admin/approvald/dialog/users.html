@@ -25,6 +25,7 @@
                     <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true, 'iseq');" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
                 </td>
                 <td style="display: none">${data.iuserid}</td>
+                <td hidden></td>
             </tr>
             {@/each}
         </script>
@@ -54,17 +55,22 @@
                data-column-prepend="1:checkbox:true"
                data-url="admin/approvald/roleUserData"
                data-rowtpl="user_rowtpl_#(pageId)"
-               data-page="userPage_#(pageId)"
+               ###data-page="userPage_#(pageId)"
                data-editable="true"
                data-conditions-form="user_form_#(pageId)"
                data-ajax-success-handler="tableDataSuccess"
                data-editable-option="getEditableTableUser_#(pageId)"
         >
             <thead>
-            <tr><th data-width="60" data-column="index">序号</th><th data-min-width="120" data-column="name">姓名</th><th
-                    data-width="60" data-column="sex">性别</th><th
-                    data-min-width="120" data-column="username">
-                用户名</th><th data-width="100" data-column="enable">是否启用</th><th data-width="140" data-column="optcol">操作</th></tr>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-min-width="120" data-column="name">姓名</th>
+                <th data-width="60" data-column="sex">性别</th>
+                <th data-min-width="120" data-column="username">用户名</th>
+                <th data-width="100" data-column="enable">是否启用</th>
+                <th data-width="140" data-column="optcol">操作</th>
+                <th data-width="60" data-column="iseq" hidden></th>
+            </tr>
             </thead>
             <tbody>
             </tbody>
@@ -85,6 +91,12 @@
         var editableTableOptions = {
             trigger: "dbclick",
             insertDefaultValues: {username:'#(JBoltUserKit.getUserName())'},
+            afterInsertRowHandler: function (table, tr) {
+                var trIndex = tr.data("index");
+                
+                var rank = trIndex + 1;
+                jboltTableSetCell(table, tr, 'iseq', rank, rank, true);
+            },
             submit: {
                 withForm: ["user_form_#(pageId)"],
                 type: "all",
@@ -113,7 +125,7 @@
                     submitAttr:"name"
                 },
                 iseq:{
-                    submitAttr:"iSeq"
+                    submitAttr:"iseq"
                 },
                 sex: {
                     submitAttr: "sex"

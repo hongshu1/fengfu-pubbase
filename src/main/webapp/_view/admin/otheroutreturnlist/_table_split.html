@@ -12,8 +12,8 @@
             <td>${data.cinvname1}</td> <!--部品名称-->
             <td>${data.cinvstd}</td> <!--规格-->
             <td>${data.cuomname}</td> <!--主计量单位iinventoryuomid1-->
-            <td>${data.qty}</td>
-            <td hidden >${data.qtys}</td>
+            <td >${data.qtys ,2|number_format}</td>
+            <td>${data.returnqty}</td>
             <td  style="display: none">${data.sourcebilltype}</td> <!--来源单据类型-->
             <td  style="display: none">${data.sourcebillnorow}</td> <!--来源单号+行号-->
             <td  style="display: none">${data.sourcebillid}</td> <!--来源单据ID-->
@@ -50,7 +50,7 @@
                data-height="200"
                data-ajax="true"
                data-column-resize="true"
-               data-url="admin/otherout/getOtherOutLines?autoid=#(otherOut.autoid??)"
+               data-url="admin/otheroutreturnlist/getOtherOutLinesReturnLines?autoid=#(otherOut.autoid??)"
                data-column-prepend="1:checkbox:true"
                data-conditions-form="inventoryForm_#(pageId)"
                data-rowtpl="inventorySplit_tpl_#(pageId)"
@@ -68,6 +68,7 @@
               <th data-width="150" data-column="cinvstd">规格</th>
               <th data-width="100" data-column="cuomclassname">库存主单位</th>
               <th data-width="100" data-column="qty">现存数</th>
+              <th  data-width="100" data-column="returnqty">出库数</th>
               <th hidden data-width="100" data-column="qtys">现存数</th>
           </tr>
           </thead>
@@ -129,7 +130,7 @@
                   {column: "cuomclassname", use: "cuomclassname"},{column: "iinventoryid", use: "iautoid"}
               ]
           },
-          qty: {
+          returnqty: {
               type:"input",
               submitAttr:"qty",
               required:true,
@@ -137,18 +138,21 @@
                   debugger;
                   let qtys =  jsonData.qtys;
                   console.log(qtys);
-                  let refundqty = (typeof +value === 'number' && !isNaN(value))?value:0;
-                  console.log('退货数量===>',refundqty);
-                  if (refundqty > 0){
+                  let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
+                  console.log('退货数量===>',qty);
+                  if (qty > 0){
                       showFormEleErrorStyle(td,"请输入小于或等于0的数量！！！");
                       return false;
                   }
-                  let cha = qtys- (refundqty);
-                      if (cha > qtys*2){
+                  let cha = qtys- (qty);
+                  if (cha < qty*-2){
                       showFormEleErrorStyle(td,"可退数量为"+qtys+",退货数量已超出！！！");
                       return false;
                   }
               }
+          },
+          qtys: {
+              submitAttr:"qtys",
           },
       }
     };
