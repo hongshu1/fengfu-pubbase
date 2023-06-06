@@ -111,4 +111,13 @@ public class FormUploadMApiController  extends BaseApiController {
                         @Para(value = "iautoid") String iautoid){
         renderJBoltApiRet(service.details(pageNumber,pageSize,  Kv.by("iautoid",iautoid)));
     }
+
+    /**
+     * 行删除
+     */
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+    public void lineDeletion(@Para(value = "iautoid") Long iautoid){
+        renderJBoltApiRet(service.delete2(iautoid));
+    }
 }
