@@ -530,4 +530,16 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 		}
 		return  SUCCESS;
     }
+	public Ret updateWork(MoMoinvbatch moMoinvbatch){
+		if(moMoinvbatch.getIStatus().equals(1)){
+			return  fail("未打印现品票");
+		}
+		moMoinvbatch.setIStatus(1);
+		moMoinvbatch.setDUpdateTime(new Date());
+		moMoinvbatch.setIUpdateBy(JBoltUserKit.getUserId());
+		moMoinvbatch.setCUpdateName(JBoltUserKit.getUserName());
+		moMoinvbatch.update();
+		return  SUCCESS;
+
+	}
 }

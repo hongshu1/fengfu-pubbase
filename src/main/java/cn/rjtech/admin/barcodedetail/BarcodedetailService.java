@@ -119,6 +119,10 @@ public class BarcodedetailService extends BaseService<Barcodedetail> {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
+    public Barcodedetail findbyBarcode(String barcode){
+        return findFirst("select * from T_Sys_BarcodeDetail where Barcode = ?",barcode);
+    }
+
     /*
      * 传参
      * */
@@ -131,12 +135,12 @@ public class BarcodedetailService extends BaseService<Barcodedetail> {
         barcodedetail.setBarcodedate(now);
         //barcodedetail.setPackrate(kv.getBigDecimal("ipkgqty"));//包装比例
         barcodedetail.setBatch(kv.getStr("batch"));
-        barcodedetail.setQty(kv.getBigDecimal("qty"));//每张条码分配的数量
+        barcodedetail.setQty(kv.getBigDecimal("generatedstockqty"));//每张条码分配的数量
         barcodedetail.setPrintnum(printnum);//每张条码需要打印的次数
         barcodedetail.setCreateperson(JBoltUserKit.getUserName());
         barcodedetail.setCreatedate(now);
         barcodedetail.setModifyperson(JBoltUserKit.getUserName());
         barcodedetail.setModifydate(now);
-        barcodedetail.setReportFileName(kv.getStr("reportFileName"));
+        barcodedetail.setReportFileName(kv.getStr("reportfilename"));
     }
 }

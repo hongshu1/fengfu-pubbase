@@ -163,4 +163,17 @@ public class WeekOrderMAdminController extends BaseAdminController {
     {
         render("update_cplan_time_next.html");
     }
+
+    /**
+     * 模板下载
+     */
+    @SuppressWarnings("unchecked")
+    public void downloadTpl() {
+        try {
+            renderJxls("weekorderm.xlsx", Kv.by("rows", null), "周间客户订单.xlsx");
+        }catch (Exception e)
+        {
+            ValidationUtils.isTrue(false, "模板下载失败");
+        }
+    }
 }

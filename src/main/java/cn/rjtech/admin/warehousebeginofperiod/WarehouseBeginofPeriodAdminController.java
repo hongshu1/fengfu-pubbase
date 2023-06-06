@@ -1,7 +1,5 @@
 package cn.rjtech.admin.warehousebeginofperiod;
 
-import java.util.List;
-
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
@@ -73,12 +71,12 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
      * 条码明细页面
      * */
     public void detail() {
-        List<Barcodemaster> barcodemasters = service.findBySourceId(String.valueOf(getLong(0)));
-        if (barcodemasters.isEmpty()) {
-//            fail(JBoltMsg.DATA_NOT_EXIST);
+        Barcodemaster barcodemaster = service.findByAutoid(String.valueOf(getLong(0)));
+        if (barcodemaster == null) {
+            fail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("sourceid", getLong(0));
+        set("barcodemaster", barcodemaster);
         render("detail.html");
     }
 
@@ -87,7 +85,8 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
      * */
     public void detailDatas() {
         Kv kv = getKv();
-        if (StringUtils.isBlank(kv.getStr("sourceid"))) {
+        Long aLong = getLong(0);
+        if (StringUtils.isBlank(kv.getStr("masid"))) {
             renderJsonData(null);
             return;
         }
@@ -109,7 +108,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     }
 
     public void delete() {
-        Long aLong = getLong(0);
+        Kv kv = getKv();
         renderJson(true);
     }
 
@@ -128,9 +127,16 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     /*
      * 保存新增期初条码
      * */
-    public void saveBarcode(JBoltPara jBoltPara) {
-        renderJsonData(service.saveBarcode(jBoltPara));
+    public void submitAddBarcode(JBoltPara jBoltPara) {
+        renderJsonData(service.submitAddBarcode(jBoltPara));
     }
+
+    /*
+     * 保存新增期初条码
+     * */
+//    public void saveBarcode(JBoltPara jBoltPara) {
+//        renderJsonData(service.saveBarcode(jBoltPara));
+//    }
 
     /*
      * 新增页加载的数据
@@ -165,7 +171,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
      * 打印条码明细
      */
     public void detailPrintData() {
-        renderJsonData(service.printtpl(getKv()));
+        renderJsonData(service.detailPrintData(getKv()));
     }
 
     /*
@@ -184,7 +190,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     }
 
     public void inventoryDialogIndex(@Para(value = "index") String index, @Para(value = "type") String type) {
-        ValidationUtils.notBlank(index == null ? "1" : index, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notBlank(index, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notBlank(type, JBoltMsg.PARAM_ERROR);
         // 部品存货id
         String invItemId = get("invItemId");
