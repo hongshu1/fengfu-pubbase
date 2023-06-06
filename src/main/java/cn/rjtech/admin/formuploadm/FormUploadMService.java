@@ -360,9 +360,9 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 	/**
 	 * 修改详情API接口
 	 */
-	public Map<String,Object> detailsApi(Integer pageNumber, Integer pageSize, Kv iautoid) {
+	public Map<String,Object> detailsApi(Integer pageNumber, Integer pageSize, Kv kv) {
 		Map<String, Object> map = new HashMap<>();
-		FormUploadM formUploadM = findById(iautoid);
+		FormUploadM formUploadM = findById(kv.getStr("iautoid"));
 		map.put("formuploadm",formUploadM);
 		Page<Record> page = formUploadDService.findByPid2(pageNumber, pageSize, formUploadM.getIAutoId());
 		map.put("page",page);

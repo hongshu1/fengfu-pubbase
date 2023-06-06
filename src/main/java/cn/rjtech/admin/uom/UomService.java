@@ -290,12 +290,12 @@ public class UomService extends JBoltBaseService<Uom> {
                 if (notOk(u.getIRatioToBase())) {
                     return fail("换算率不能为空");
                 }
-                Long pid = CACHE.me.getUomClassIdByCode(u.getCUpdateName());
-                if (notOk(pid)) {
-                    //传入编码不存在时不进行数据转换，让程序报错
-                    fail("导入计量单位组编码"+u.getCUpdateName()+"不存在，导入失败");
-
-                }
+                //Long pid = CACHE.me.getUomClassIdByCode(u.getCUpdateName());
+                //if (notOk(pid)) {
+                //    //传入编码不存在时不进行数据转换，让程序报错
+                //  return   fail("导入计量单位组编码"+u.getCUpdateName()+"不存在，导入失败");
+                //
+                //}
             }
         }
         savaModelHandle(models);
