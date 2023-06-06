@@ -189,7 +189,8 @@ public class ApprovalDAdminController extends BaseAdminController {
      * 查询role上所有用户列表进入页面
      */
     public void roleUsers() {
-        set("roleId", getLong(0));
+        set("autoId", getLong("autoId"));
+        set("roleId", getLong("roleId"));
         render("dialog/users.html");
     }
 
@@ -216,4 +217,47 @@ public class ApprovalDAdminController extends BaseAdminController {
         renderJson(service.down(getLong(0)));
     }
 
+    /**
+     * 角色人员数据源
+     */
+    public void roleUserData(){
+        Long aLong = getLong("autoId");
+        Kv kv = new Kv();
+        kv.set("id",aLong);
+        renderJsonData(service.roleUsers(getPageNumber(), getPageSize(), kv));
+    }
+
+    /**
+     * 打开用户Dialog
+     */
+    public void chooseUsersDialog(){
+        Long roleId = getLong("roleId");
+        Long aLong = getLong("autoId");
+        String itemHidden = get("itemHidden");
+        set("itemHidden",itemHidden);
+        set("roleId", roleId);
+        set("autoId", aLong);
+        render("dialog/choose_role_users.html");
+    }
+
+    /**
+     * 添加角色人员
+     */
+    public void chooseUsers(){
+        Long roleId = getLong("roleId");
+        Long aLong = getLong("autoId");
+        String itemHidden = get("itemHidden");
+        Kv kv = new Kv();
+        kv.set("roleId",roleId);
+        kv.set("autoId",aLong);
+        kv.setIfNotNull("itemHidden",itemHidden);
+        renderJsonData(service.chooseUsers(getPageNumber(), getPageSize(),kv));
+    }
+
+    /**
+     * 保存角色人员方法
+     */
+    public void saveRoleUser(){
+        renderJson(service.saveRoleUser(getJBoltTable()));
+    }
 }
