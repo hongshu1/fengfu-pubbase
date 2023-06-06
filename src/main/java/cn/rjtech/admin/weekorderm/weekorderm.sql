@@ -43,7 +43,7 @@ WHERE
 #end
 
 #sql("updateCplanTimeDatas")
-SELECT wod.iautoid, wod.ccode, wod.cinvcode1, wod.cinvname1, wod.dplanaogdate, wod.cplanaogtime
+SELECT wod.iautoid, wod.ccode,wod.cdefine1, wod.cdefine2, wod.dplanaogdate, wod.cplanaogtime
 FROM Co_WeekOrderM wom
 LEFT JOIN Co_WeekOrderD wod ON wom.iAutoId = wod.iWeekOrderMid
 WHERE wom.IsDeleted = 0
