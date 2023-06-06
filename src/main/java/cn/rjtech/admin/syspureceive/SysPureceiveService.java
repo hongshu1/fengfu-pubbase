@@ -555,7 +555,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
             sysPureceivedetail.setMasID(s);
 
-            if (StrUtil.isBlank(row.get("isinitial"))) {
+            if (StrUtil.isBlank(row.getStr("isinitial"))) {
                 sysPureceivedetail.setIsInitial("0");
             } else {
                 Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
@@ -616,7 +616,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row, operationType, map);
             sysPureceivedetail.setMasID(s);
 
-            if (StrUtil.isBlank(row.get("isinitial")) || "0".equals(row.get("isinitial"))) {
+            if (StrUtil.isBlank(row.getStr("isinitial"))) {
                 sysPureceivedetail.setIsInitial("0");
             } else {
                 Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
