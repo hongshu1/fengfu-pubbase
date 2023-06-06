@@ -316,5 +316,22 @@ public abstract class BaseBarcodemaster<M extends BaseBarcodemaster<M>> extends 
 		return getDate("ModifyDate");
 	}
 
+	/**
+	 * 可填写交换ID之类的信息作为补充
+	 */
+	public M setMemo(String memo) {
+		set("Memo", memo);
+		return (M)this;
+	}
+
+	/**
+	 * 可填写交换ID之类的信息作为补充
+	 */
+	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=30, fixed=0, order =12)
+	@JSONField(name = "memo")
+	public String getMemo() {
+		return getStr("Memo");
+	}
+
 }
 

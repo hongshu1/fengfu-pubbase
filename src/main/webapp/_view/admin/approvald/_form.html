@@ -186,9 +186,14 @@
 				// alert("看到这个消息说明多个表格都提交成功了");
 				if (res.state === 'ok') {
 					LayerMsgBox.success(res.msg, 1000, function () {
+					console.log('res',res)
+					location.href = '/admin/approvald/edit/' + res.iautoid + '-_jb_rqtype_dialog';
+
+
+
 						// refreshPjaxContainer();
-						parent.LayerMsgBox.closeAll();
-						parent.refreshPjaxContainer();
+						// parent.LayerMsgBox.closeAll();
+						// parent.refreshPjaxContainer();
 					});
 				} else {
 					LayerMsgBox.alert(res.msg, 2);

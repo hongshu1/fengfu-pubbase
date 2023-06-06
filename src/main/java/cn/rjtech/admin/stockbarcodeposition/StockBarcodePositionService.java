@@ -2,11 +2,16 @@ package cn.rjtech.admin.stockbarcodeposition;
 
 import java.util.Date;
 import java.util.List;
+
 import com.jfinal.plugin.activerecord.Page;
+
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Record;
+
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.StockBarcodePosition;
 
@@ -116,22 +121,33 @@ public class StockBarcodePositionService extends BaseService<StockBarcodePositio
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
+    public List<Record> findBarcodePositionByKvs(Kv kv) {
+        kv.set("organizecode",getOrgCode());
+        kv.set("invcode",kv.getStr("cinvcode"));
+        kv.set("vencode",kv.getStr("cvencode"));
+        kv.set("whcode",kv.getStr("cwhcode"));
+        kv.set("poscode",kv.getStr("careacode"));
+        return dbTemplate("warehousebeginofperiod.findBarcodePositionByKvs", kv).find();
+    }
+
     /*
      * 传参
      * */
-    public void saveBarcodePositionModel(StockBarcodePosition position, Kv kv, Date now) {
+    public void saveBarcodePositionModel(StockBarcodePosition position, Kv kv, Date now, String lockType,Long masid) {
         //position.setAutoID(JBoltSnowflakeKit.me.nextId());
         position.setOrganizeCode(getOrgCode());
         position.setInvCode(kv.getStr("cinvcode"));
         position.setVenCode(kv.getStr("cvencode"));
         //position.setVenPosCode(kv.getStr(""));
         position.setWhCode(kv.getStr("cwhcode"));
-        position.setPosCode(kv.getStr("poscode"));
+        position.setPosCode(kv.getStr("careacode"));
         //position.setState();
         position.setBarcode(kv.getStr("barcode"));
-        position.setQty(kv.getBigDecimal("qty")); //每张条码需要打印的数量
+        position.setQty(kv.getBigDecimal("generatedstockqty")); //每张条码需要打印的数量
         position.setBatch(kv.getStr("batch"));
         position.setChgDate(now);
+        position.setLockSource(String.valueOf(masid));
+        position.setLockType(lockType);
     }
 
 }

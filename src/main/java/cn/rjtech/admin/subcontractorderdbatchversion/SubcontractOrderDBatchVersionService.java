@@ -114,14 +114,14 @@ public class SubcontractOrderDBatchVersionService extends BaseService<Subcontrac
 		return null;
 	}
 	
-	public SubcontractOrderDBatchVersion createBatchVersion(Long subcontractOrderMid, Long batchId, Long	inventoryId, Date planDate, String version, String sourceVersion, String barCode, String sourceBarCode, BigDecimal qty, BigDecimal sourceQty){
+	public SubcontractOrderDBatchVersion createBatchVersion(Long subcontractOrderMid, Long batchId, Long	inventoryId, Date planDate, String version, String barCode, String sourceBarCode, BigDecimal qty, BigDecimal sourceQty){
 		SubcontractOrderDBatchVersion subcontractOrderDBatchVersion = new SubcontractOrderDBatchVersion();
 		subcontractOrderDBatchVersion.setISubcontractOrderdBatchId(batchId);
 		subcontractOrderDBatchVersion.setISubcontractOrderMid(subcontractOrderMid);
 		subcontractOrderDBatchVersion.setIInventoryId(inventoryId);
 		subcontractOrderDBatchVersion.setDPlanDate(planDate);
 		subcontractOrderDBatchVersion.setCVersion(version);
-		subcontractOrderDBatchVersion.setCSourceVersion(sourceVersion);
+		subcontractOrderDBatchVersion.setCSourceVersion(barCode);
 		subcontractOrderDBatchVersion.setCBarcode(barCode);
 		subcontractOrderDBatchVersion.setCSourceBarcode(sourceBarCode);
 		subcontractOrderDBatchVersion.setIQty(qty);
