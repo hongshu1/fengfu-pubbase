@@ -12,6 +12,7 @@ import cn.rjtech.admin.cusfieldsmappingform.CusfieldsmappingFormService;
 import cn.rjtech.admin.form.FormService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.CusFieldsMappingM;
+import cn.rjtech.model.momdata.CusfieldsmappingForm;
 import cn.rjtech.model.momdata.Form;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -20,6 +21,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -137,22 +139,43 @@ public class CusFieldsMappingMService extends BaseService<CusFieldsMappingM> {
     /**
      * 更新
      */
-    public Ret update(CusFieldsMappingM cusFieldsMappingM) {
+    public Ret update(CusFieldsMappingM cusFieldsMappingM, String iformids) {
         if (cusFieldsMappingM == null || notOk(cusFieldsMappingM.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
+        
         //更新时需要判断数据存在
         CusFieldsMappingM dbCusFieldsMappingM = findById(cusFieldsMappingM.getIAutoId());
         if (dbCusFieldsMappingM == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
-        //if(existsName(cusFieldsMappingM.getName(), cusFieldsMappingM.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-        boolean success = cusFieldsMappingM.update();
-        if (success) {
-            //添加日志
-            //addUpdateSystemLog(cusFieldsMappingM.getIAutoId(), JBoltUserKit.getUserId(), cusFieldsMappingM.getName());
-        }
-        return ret(success);
+        
+        tx(() -> {
+            
+            ValidationUtils.notBlank(iformids, "缺少表单参数");
+            ValidationUtils.isTrue(cusFieldsMappingM.update(), ErrorMsg.UPDATE_FAILED);
+
+            List<String> iformIdStrList = StrSplitter.split(iformids, COMMA, true, true);
+            
+            // 删除
+            cusfieldsmappingFormService.deleteByIcusFieldsMappingMid(cusFieldsMappingM.getIAutoId());
+            // 保存
+            List<CusfieldsmappingForm> cusfieldsmappingForms = new ArrayList<>();
+            
+            for (String iformidStr : iformIdStrList) {
+                CusfieldsmappingForm form = new CusfieldsmappingForm();
+
+                form.setIFormId(Long.parseLong(iformidStr));
+                form.setICusFieldMappingMid(cusFieldsMappingM.getIAutoId());
+
+                cusfieldsmappingForms.add(form);
+            }
+            cusfieldsmappingFormService.batchSave(cusfieldsmappingForms);
+            
+            return true;
+        });
+
+        return SUCCESS;
     }
 
     /**
