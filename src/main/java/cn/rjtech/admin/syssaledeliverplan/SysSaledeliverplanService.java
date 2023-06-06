@@ -207,7 +207,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
         if(jBoltTable.getSaveRecordList()==null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList()==null){
-            return Ret.msg("行数据不能为空");
+            return fail("行数据不能为空");
         }
         SysSaledeliverplan sysotherin = jBoltTable.getFormModel(SysSaledeliverplan.class,"syssaledeliverplan");
         //获取当前用户信息？
@@ -252,7 +252,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
         for (int i=0;i<list.size();i++) {
             Record row = list.get(i);
             SysSaledeliverplandetail sysdetail = new SysSaledeliverplandetail();
-            sysdetail.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
+            sysdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
 //            row.set("iautoid", JBoltSnowflakeKit.me.nextId());
             sysdetail.setBarcode(row.get("barcode"));
             sysdetail.setInvCode(row.get("cinvcode"));

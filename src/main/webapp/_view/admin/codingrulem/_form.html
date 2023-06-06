@@ -158,9 +158,8 @@
         var cashTicketName = formData['cashTicketName']
         if (cFormTypeSn === '1' &&　(!cashTicketName)){
             LayerMsgBox.error('选择的表单没有配置编码字段！！！');
-            return
+            return;
         }
-
         // 编码方式
         if (formData['codingRuleM.iCodingType'] === '1'){
             batchSetIseqColumns('#jbolt_table_coding_#(pageId)');
@@ -179,32 +178,28 @@
         }
         // 判断是存在流水号
         var flag = true;
-        debugger
         for (var i=0; i<datas.length; i++){
             var row = datas[i];
             if (!row.ccodingtype){
-                LayerMsgBox.error('请选择类型');
-                return
+                LayerMsgBox.error('请选择类型!');
+                throw log.error('请选择类型!');
             }
             if (row.ccodingtype === '1'){
                 flag = false;
             }
             if ((!row.ilength) && row.ccodingtype === '1'){
-                LayerMsgBox.error('选择流水号类型时，长度不能为空');
-                return
+                LayerMsgBox.error('选择流水号类型时，长度不能为空!');
+                throw log.error('选择流水号类型时，长度不能为空!');
             }
             if ((!row.ccodingvalue) && row.ccodingtype === '2'){
-                LayerMsgBox.error('选择手工输入类型时，设置值不能为空');
-                return
+                LayerMsgBox.error('选择手工输入类型时，设置值不能为空!');
+                throw log.error('选择手工输入类型时，设置值不能为空!');
             }
         }
         if (flag){
             LayerMsgBox.error('编码配置规则类型必须含有以为流水号类型');
-            return
+            throw log.error('编码配置规则类型必须含有以为流水号类型!');
         }
-        // $.each(datas, function (index, row) {
-        //
-        // })
     }
 
     function batchSetIseqColumns(tableEle,dontExeValueChangeHandler){
@@ -244,7 +239,7 @@
         $.each(datas, function (idx, row) {
             var str = '';
             // 分隔符
-            var cseparator = row.cseparator;
+            var cseparator = row.cseparatorname;
             // 流水号
             if (row.ccodingtype == 1) {
                 str = row.ibeginvalue;
@@ -266,7 +261,7 @@
             }
 
             codeHtml+='<span class="col-md-1" style="width:120px">' + str + '</span>';
-            if (cseparator === '1'){
+            if (cseparator === '空格'){
                 str+=' ';
             } else if (cseparator){
                 str+=cseparator;

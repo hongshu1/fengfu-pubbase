@@ -14,7 +14,9 @@ import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
+import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
+import cn.rjtech.model.momdata.base.BaseWeekOrderD;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -23,6 +25,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -266,7 +269,13 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         weekOrderM.save();
 
         // 保存明细
-        List<Record> save = jBoltTable.getSaveRecordList();
+        List<WeekOrderD> save = new ArrayList<>();
+        try {
+            save = jBoltTable.getSaveBeanList(WeekOrderD.class);
+        }
+        catch (Exception e) {
+            ValidationUtils.isTrue(false, "周间客户订单不合法,请检查订单数据!");
+        }
         ValidationUtils.notEmpty(save, JBoltMsg.PARAM_ERROR);
         
         saveDs(save, weekOrderM.getIAutoId());
@@ -282,27 +291,30 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         weekOrderM.setDUpdateTime(now);
         weekOrderM.setIUpdateBy(JBoltUserKit.getUserId());
         ValidationUtils.isTrue(weekOrderM.update(), ErrorMsg.UPDATE_FAILED);
-
-        List<Record> save = jBoltTable.getSaveRecordList();
-        if (CollUtil.isNotEmpty(save)) {
-            saveDs(save, weekOrderM.getIAutoId());
+        try {
+            List<WeekOrderD> save = jBoltTable.getSaveBeanList(WeekOrderD.class);
+            if (CollUtil.isNotEmpty(save)) {
+                saveDs(save, weekOrderM.getIAutoId());
+            }
+            List<WeekOrderD> updateBeanList = jBoltTable.getUpdateBeanList(WeekOrderD.class);
+            updateDs(updateBeanList);
+        } catch (Exception e) {
+            ValidationUtils.isTrue(false, "周间客户订单不合法,请检查订单数据!");
         }
-
-        updateDs(jBoltTable.getUpdateRecordList());
     }
 
-    private void saveDs(List<Record> save, long iweekordermid) {
-        for (Record row : save) {
+    private void saveDs(List<WeekOrderD> save, long iweekordermid) {
+        for (BaseWeekOrderD row : save) {
             row.set("IWeekOrderMid", iweekordermid)
                     .set("iautoid", JBoltSnowflakeKit.me.nextId())
                     .set("isdeleted", ZERO_STR);
         }
-        weekOrderDService.batchSaveRecords(save);
+        weekOrderDService.batchSave(save);
     }
 
-    private void updateDs(List<Record> update) {
+    private void updateDs(List<WeekOrderD> update) {
         if (CollUtil.isNotEmpty(update)) {
-            weekOrderDService.batchUpdateRecords(update);
+            weekOrderDService.batchUpdate(update);
         }
     }
 

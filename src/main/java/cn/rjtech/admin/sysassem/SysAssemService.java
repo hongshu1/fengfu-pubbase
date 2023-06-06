@@ -237,7 +237,7 @@ public class SysAssemService extends BaseService<SysAssem> {
 			Record row = list.get(i);
 			SysAssemdetail sysAssemdetail = new SysAssemdetail();
 			sysAssemdetail.setMasID(sysotherin.getAutoID());
-			sysAssemdetail.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
+			sysAssemdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
 			sysAssemdetail.setCreateDate(now);
 			sysAssemdetail.setModifyDate(now);
 			sysAssemdetail.setCreatePerson(user.getName());
@@ -393,7 +393,7 @@ public class SysAssemService extends BaseService<SysAssem> {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		return Ret.msg("上传u8失败");
+		return fail("上传u8失败");
 	}
 
 

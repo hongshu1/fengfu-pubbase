@@ -15,7 +15,6 @@ import cn.rjtech.model.momdata.SubcontractOrderDBatchVersion;
 import cn.rjtech.model.momdata.SubcontractorderdQty;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -156,9 +155,10 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     return null;
   }
 
-  public SubcontractOrderDBatch createSubcontractOrderDBatch(Long iSubcontractOrderDid, Long inventoryId, Date planDate, BigDecimal qty, String barcode) {
+  public SubcontractOrderDBatch createSubcontractOrderDBatch(Long iSubcontractOrderDid, Long iSubcontractOrderdQtyId, Long inventoryId, Date planDate, BigDecimal qty, String barcode) {
     SubcontractOrderDBatch subcontractOrderDBatch = new SubcontractOrderDBatch();
     subcontractOrderDBatch.setISubcontractOrderDid(iSubcontractOrderDid);
+    subcontractOrderDBatch.setISubcontractOrderdQtyId(iSubcontractOrderdQtyId);
     subcontractOrderDBatch.setIinventoryId(inventoryId);
     subcontractOrderDBatch.setDPlanDate(planDate);
     subcontractOrderDBatch.setIQty(qty);
@@ -389,7 +389,7 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     ValidationUtils.isTrue(qty.compareTo(orderDBatch.getIQty()) <= 0, "现品票的数量不可大于包装数量，只可小于包装数量");
     // 新增一个现成票后，再生产一个版本记录表，及修改详情；
     String barCode = generateBarCode();
-    SubcontractOrderDBatch newBatch = createSubcontractOrderDBatch(orderDBatch.getISubcontractOrderDid(), orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, barCode);
+    SubcontractOrderDBatch newBatch = createSubcontractOrderDBatch(orderDBatch.getISubcontractOrderDid(), orderDBatch.getISubcontractOrderdQtyId(), orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, barCode);
     // 设置新版本号
     newBatch.setCVersion(cVersion);
     // 添加来源id
@@ -420,7 +420,7 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
         Integer date = subcontractorderdQty.getIDate();
         if (Integer.valueOf(yearStr).equals(year) && Integer.valueOf(monthStr).equals(month) && Integer.valueOf(dateStr).equals(date)) {
           // 总数量 - 更改的数量
-//					BigDecimal num = subcontractorderdQty.getIQty().subtract(orderDBatch.getIQty().subtract(qty));
+//          BigDecimal num = subcontractorderdQty.getIQty().subtract(orderDBatch.getIQty().subtract(qty));
           subcontractorderdQty.setIQty(qty);
           subcontractorderdQty.update();
         }

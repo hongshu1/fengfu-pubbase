@@ -73,7 +73,7 @@ public class DataConversion {
      * @return
      */
     public List<ExchangeTable> getTSysExchangetable(String itemCode, Map preAllocate, JSONArray JSONMainData, JSONArray detailData, JSONArray extData) throws RuntimeException {
-        String exchangeID = String.valueOf(JBoltSnowflakeKit.me.nextId());
+        String exchangeID = JBoltSnowflakeKit.me.nextIdStr();
         List<Record> list = columsmapdetailService.getColumsmapdetailList(preAllocate.get("InitializeMapID").toString(), "");
         //创建返回的list
         List<ExchangeTable> result = new ArrayList<>();

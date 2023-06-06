@@ -368,7 +368,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                 //2、否则新增
                 //2.1、新增主表
                 SysPuinstore puinstore = new SysPuinstore();
-                puinstore.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
+                puinstore.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
                 saveSysPuinstoreModel(puinstore, record, detailByParam);
                 ValidationUtils.isTrue(puinstore.save(), JBoltMsg.FAIL);
                 //2.2、新增明细表

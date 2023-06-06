@@ -4,8 +4,8 @@
       <div class="card">
         <div class="card-body">
           <div class="col">
-            #if(sourceid??)
-            <input id="sourceid" type="hidden" name="autoid" value="#(sourceid??)" />
+            #if(barcodemaster.AutoID??)
+            <input id="autoid" type="hidden" name="autoid" value="#(barcodemaster.AutoID??)" />
             #end
             <div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
               <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印</button>
@@ -38,12 +38,12 @@
       <td title="${data.cinvname1}">${data.cinvname1}</td>
       <td title="${data.cinvstd}">${data.cinvstd}</td>
       <td title="${data.cuomname}">${data.cuomname}</td>
-      <td title="${data.cvencode}">${data.cvencode}</td>
+      <td title="${data.vencode}">${data.vencode}</td>
       <td title="${data.cvenname}">${data.cvenname}</td>
       <td title="${data.ipkgqty,0|number_format}">${data.ipkgqty,0|number_format}</td>
       <td title="${data.barcode}">${data.barcode}</td>
-      <td title="${data.pringqty,0|number_format}">${data.pringqty,0|number_format}</td>
-      <td title="${data.cbatch}">${data.cbatch}</td>
+      <td title="${data.qty,0|number_format}">${data.qty,0|number_format}</td>
+      <td title="${data.batch}">${data.batch}</td>
       <td title="${data.createdate}">${data.createdate}</td>
       <td title="${data.reportfilename}">${data.reportfilename}</td>
       <td title="${data.createperson}">${data.createperson}</td>
@@ -59,7 +59,7 @@
                id="warehousebeginform_TableId_#(pageId)"
                data-jbolttable
                data-ajax="true"
-               data-url="admin/warehousebeginofperiod/detailDatas?sourceid=#(sourceid??)"
+               data-url="admin/warehousebeginofperiod/detailDatas?masid=#(barcodemaster.AutoID??)"
                data-height="300"
                data-column-resize="true"
                data-conditions-form="warehousebeginformtable_form_#(pageId)"
@@ -76,12 +76,12 @@
             <th data-width="180" data-column="cinvname1">部品名称</th>
             <th data-width="150" data-column="cinvstd">规格</th>
             <th data-width="120" data-column="cuomname">主计量单位</th>
-            <th data-width="150" data-column="cvencode">供应商编码</th>
+            <th data-width="150" data-column="vencode">供应商编码</th>
             <th data-width="150" data-column="cvenname">供应商名称</th>
             <th data-width="100" data-column="ipkgqty" title="包装数量">包装数量</th>
             <th data-width="150" data-column="barcode">条码号</th>
-            <th data-width="100" data-column="pringqty">数量</th>
-            <th data-width="150" data-column="cbatch">批次号</th>
+            <th data-width="100" data-column="qty">数量</th>
+            <th data-width="150" data-column="batch">批次号</th>
             <th data-width="150" data-column="createdate">生产日期</th>
             <th data-width="180" data-column="reportfilename" title="标签打印模板">标签打印模板</th>
             <th data-width="120" data-column="createperson">创建人</th>
@@ -134,7 +134,7 @@
         positionautoid:rowdata.positionautoid
       }*/
       sn = rowdata.sn;
-      var autoid = rowdata.autoid;
+      var autoid = rowdata.masid;
       code.push(autoid);
     }
     jboltHiprintWebPrint(sn, 'url', 'admin/warehousebeginofperiod/detailPrintData?ids=' + code.join(",") + "&&mark=" + mark);

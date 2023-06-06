@@ -395,6 +395,7 @@ public class MoDocAdminController extends BaseAdminController {
 	 */
 	public void  othermaterialadd(){
 		 Long imodocid=getLong("imodocid");
+
 		OtherOut otherOut = new OtherOut();
 		String billNo = BillNoUtils.getcDocNo(getOrgId(), "LLD", 5);
 		Date nowDate = new Date();
@@ -460,5 +461,17 @@ public class MoDocAdminController extends BaseAdminController {
 			return;
 		}
 		renderJson(otherOutService.recall(iAutoId));
+	}
+
+	/**
+	 * 推送U8
+	 */
+	public void pushu8(){
+		MoDoc moDoc=service.findById(getLong(0));
+		if(moDoc == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		renderJson(service.pushU8(moDoc));
 	}
 }

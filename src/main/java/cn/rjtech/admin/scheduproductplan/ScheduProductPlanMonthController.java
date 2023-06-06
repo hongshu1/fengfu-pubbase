@@ -113,6 +113,12 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
     }
 
 
+    /**
+     * 测试计划
+     */
+    public void scheduPlanMonthTest() {
+        renderJsonData(service.scheduPlanMonthTest());
+    }
     //-----------------------------------------------------------------月周生产计划排产-----------------------------------------------
 
 
