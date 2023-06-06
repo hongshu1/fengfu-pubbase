@@ -197,12 +197,12 @@
             }
         }
         if (flag){
-            LayerMsgBox.error('编码配置规则类型必须含有以为流水号类型');
+            LayerMsgBox.error('编码配置规则类型必须含有以为流水号类型!');
             throw log.error('编码配置规则类型必须含有以为流水号类型!');
         }
     }
 
-    function batchSetIseqColumns(tableEle,dontExeValueChangeHandler){
+    function batchSetIseqColumns(tableEle, dontExeValueChangeHandler) {
         var table=getJBoltTable(tableEle);
         if(isOk(table)){
             var jboltTable=table.jboltTable("inst");
@@ -212,10 +212,10 @@
                 var seq = Number(0);
                 if(isOk(trs)){
                     var tr;
-                    trs.each(function(){
-                        tr=$(this);
-                        seq = Number(10+seq);
-                        jboltTable.me.setCell(jboltTable,tr,'iseq',seq,seq,dontExeValueChangeHandler);
+                    trs.each(function () {
+                        tr = $(this);
+                        seq = Number(10 + seq);
+                        jboltTable.me.setCell(jboltTable, tr, 'iseq', seq, seq, dontExeValueChangeHandler);
                     });
                     return;
                 }
