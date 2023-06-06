@@ -721,14 +721,14 @@
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
         let {row,col,newValue} = info;
         var rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取行数据
-        var colData = sheet.getArray(0, col-1, sheet.getRowCount(), 1);//获取列数据
-        console.log(colData[0])
+        var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
+        console.log(colData)
         //每次添加之后往数组内进行存储
         parms.tableData.push({
             plan:rowData[0][7],//计划
             cInvCode:rowData[0][8],//存户编码
             newValue:rowData[0][col],//修改后的值
-            date:colData[0][0],//获取当前年月
+            date:colData[1][0],//获取当前年月
             day:colData[2][0],//日
         })
         console.log(parms.tableData)
