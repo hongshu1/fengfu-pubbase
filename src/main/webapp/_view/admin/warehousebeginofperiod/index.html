@@ -11,12 +11,12 @@
           <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
 
           <select class="form-control"
-                  name="cinvccode"
+                  name="iinventoryclassid"
                   data-autoload
                   data-url="admin/inventoryclass/options"
                   data-select-type="select2"
                   data-text="=存货分类="
-                  data-value-attr="cinvccode"
+                  data-value-attr="iautoid"
                   data-text-attr="cinvcname"
                   data-select="#(cinvccode??)"></select>
 
@@ -33,15 +33,15 @@
 
           <select class="form-control"
                   data-autoload
-                  name="iwarehouseareaid"
+                  name="careacode"
                   data-select-type="select2"
                   data-tips="所属库区"
                   data-url="admin/warehousearea/list?isdeleted=0"
                   data-text="=所属库区="
-                  data-value-attr="iautoid"
-                  data-text-attr="careacode,careaname"
+                  data-value-attr="careacode"
+                  data-text-attr="careaname"
                   data-value=""
-                  data-select="#(iwarehouseareaid??)"></select>
+                  data-select="#(careacode??)"></select>
 
           <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
           <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
@@ -54,15 +54,16 @@
     <!-- 定义JBoltTable使用的数据渲染模板 -->
     <textarea class="jb_tpl_box" id="warehousebeginFormMtpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iautoid}">
+<tr data-id="${data.masid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
-    <a tooltip title="条码明细" href="admin/warehousebeginofperiod/detail/${data.id}" data-scroll="yes"
+    <a tooltip title="条码明细" href="admin/warehousebeginofperiod/detail/${data.masid}" data-scroll="yes"
        data-handler="refreshJBoltTable" data-title="条码明细" data-area="95%,95%" class="jbolt_table_editbtn">条码明细</a>
   </td>
+  <td title="${data.state}">${data.state}</td>
   <td title="${data.whcode}">${data.whcode}</td>
-  <td title="${data.whname}">${data.whname}</td>
-  <td title="${data.careacode}">${data.careacode}</td>
+  <td title="${data.cwhname}">${data.cwhname}</td>
+  <td title="${data.poscode}">${data.poscode}</td>
   <td title="${data.careaname}">${data.careaname}</td>
   <td title="${data.cinvcname}">${data.cinvcname}</td>
   <td title="${data.invcode}">${data.invcode}</td>
@@ -109,9 +110,10 @@
       <tr>
         <th data-width="60" data-column="index">序号</th>
         <th data-width="150">操作</th>
+        <th data-width="120" data-column="state">状态</th>
         <th data-width="180" data-column="WhCode">仓库编码</th>
-        <th data-width="180" data-column="WhName">仓库名称</th>
-        <th data-width="180" data-column="cAreaCode">库区编码</th>
+        <th data-width="180" data-column="cWhName">仓库名称</th>
+        <th data-width="180" data-column="PosCode">库区编码</th>
         <th data-width="180" data-column="cAreaName">库区名称</th>
         <th data-width="180" data-column="cInvCName">存货分类名称</th>
         <th data-width="180" data-column="InvCode">存货编码</th>

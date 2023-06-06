@@ -17,7 +17,7 @@
             <div class="card-body">
                 <!-- 工具条 toolbar -->
                 <div class="jbolt_table_toolbar" id="PheDeliveryLines_toolbar_#(pageId)" style="display: flex">
-                    <div class="" role="group" aria-label="btn-group">
+                    <div class="" role="group" aria-label="btn-group" #if(type=='edit') style="display: none" #end>
                         <button onclick="jboltTableChooseAndInsert(this)"
                                 data-url="/admin/auditformconfig/chooseForm"
                                 data-dialogbtn
