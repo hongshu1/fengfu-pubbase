@@ -4,6 +4,7 @@ package cn.rjtech.admin.materialreturnlist;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstore;
@@ -58,10 +59,10 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	 */
 	public void add() {
 		SysPuinstore puinstore = new SysPuinstore();
-		Date nowDate = new Date();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		String time = format.format(nowDate);
-		puinstore.setBillDate(time);
+//		Date nowDate = new Date();
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+//		String time = format.format(nowDate);
+//		puinstore.setBillDate(time);
 		set("puinstore",puinstore);
 		String edit = get("edit");
 		if ("2".equals(edit)) {
@@ -126,6 +127,14 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	}
 
 	/**
+	 * 条码数据源
+	 */
+	@UnCheck
+	public void barcodeDatas() {
+		renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()), null));
+	}
+
+	/**
 	 * 审核
 	 */
 	public void approve(String iAutoId,Integer mark) {
@@ -151,12 +160,12 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	/**
 	 * 撤回
 	 */
-	public void recall(String iAutoId) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(iAutoId)) {
+	public void recall(String AutoId) {
+		if (org.apache.commons.lang3.StringUtils.isEmpty(AutoId)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
-		renderJson(service.recall(iAutoId));
+		renderJson(service.recall(AutoId));
 	}
 
 
@@ -192,7 +201,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 		Kv kv = new Kv();
 		kv.set("autoid",autoid== null? "" :autoid);
 		kv.set("OrgCode",OrgCode);
-		renderJsonData(service.getmaterialLines(getPageNumber(), getPageSize(), kv));
+		renderJsonData(service.getmaterialLines(kv));
 	}
 
 

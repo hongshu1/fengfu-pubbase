@@ -3,32 +3,24 @@
 	<!--<div class="col">-->
 	<form class="form-inline" id="FormExtendFields_form_#(pageId)">
 		<div class="col">
+			<h8>基础档案名称：</h8>
 <select class="form-control" name="iFormId"
 	data-autoload
-	data-url="admin/formExtendFields/optionsiFormId"
+	data-url="admin/formExtendFields/optionsFormId"
 	data-select-type="select"
 	data-text="=系统表单ID="
-		data-text-attr="iformid"
-		data-value-attr="iformid"
+		data-text-attr="cformname"
+		data-value-attr="iautoid"
 	></select>
-
+			<h8>单据档案名称：</h8>
 <select class="form-control" name="iFormFieldId"
 	data-autoload
 	data-url="admin/formExtendFields/optionsiFormFieldId"
 	data-select-type="select"
 	data-text="=系统字段ID="
-		data-text-attr="iformfieldid"
-		data-value-attr="iformfieldid"
+		data-text-attr="cformname"
+		data-value-attr="iautoid"
 	></select>
-			<select class="form-control" name="test"
-					data-autoload
-					data-url="admin/formExtendFields/optionsForm"
-					data-select-type="select"
-					data-text="=test-表单字段ID="
-					data-text-attr="cformname"
-					data-value-attr="iautoid"
-			></select>
-
 <!--<select class="form-control" name="cFieldCode"-->
 	<!--data-autoload-->
 	<!--data-url="admin/dictionary/options?key=null"-->
@@ -61,7 +53,7 @@
 	<a class="jbolt_table_delbtn" href="admin/formExtendFields/delete/${data.iautoid}" data-handler="refreshJBoltTable" ><i class=""></i>删除</a>
 </td>
 <td>${data.iformidname}</td>
-<td>${data.iformfieldid}</td>
+<td>${data.iformfieldidname}</td>
 <!--<td>${data.cfieldcode}</td>-->
 <td>${data.ipositionname}</td>
 <td>${data.cfieldname}</td>

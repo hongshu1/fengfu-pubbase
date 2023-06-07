@@ -140,40 +140,44 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 	}
 
 	/**
-	 * 根据节点ID与人员ID删除流程从表数据
+	 * 根据节点ID与单据人员主键ID删除流程从表数据
 	 * @param Did
 	 * @param userIds
 	 */
-	public void deleteByMidAndUserId(Long Did, String userIds){
+	public Integer deleteByMidAndUserId(Long Did, String userIds){
+		int res = 0;
 		for (String id : StrSplitter.split(userIds, COMMA, true, true)) {
-			delete("delete\n" +
+			res = delete("delete\n" +
 					"from Bd_FormApprovalFlowD\n" +
 					"where iFormApprovalFlowMid = (select t1.iAutoId\n" +
 					"                              from Bd_FormApprovalFlowM t1\n" +
-					"                              where iApprovalDid = '"+Did+"')\n" +
-					"  and iUserId = '"+id+"'");
+					"                              where iApprovalDid = '" + Did + "')\n" +
+					"  and iUserId = (select iUserId from Bd_FormApprovalD_User where iAutoId = '" + id + "')");
 		}
+		return res;
 	}
 
 	/**
-	 * 根据节点ID与角色ID找出用户 删除流程从表数据
+	 * 根据节点ID与角色表主键ID找出用户 删除流程从表数据
 	 * @param Did
 	 * @param roleIds
 	 */
 	public void deleteByMidAndRoleId(Long Did, String roleIds){
 		for (String id : StrSplitter.split(roleIds, COMMA, true, true)) {
 
-			List<User> users = formApprovalService.getRoles(Long.valueOf(id));
+			int delete = delete("delete\n" +
+					"from Bd_FormApprovalFlowD\n" +
+					"where iFormApprovalFlowMid = (select t1.iAutoId\n" +
+					"                              from Bd_FormApprovalFlowM t1\n" +
+					"                              where iApprovalDid = '" + Did + "')\n" +
+					"  and iUserId in (select iUserId from Bd_FormApprovalD_RoleUsers where iFormApprovaldRoleId = '" + id + "')");
 
-			if (users.size() > 0) {
-				List<String> userIds = new ArrayList<>();
-				users.forEach(u -> {
-					userIds.add(u.getId().toString());
-				});
+			if (delete > 0){
 
-				String join = String.join(",", userIds);
-				deleteByMidAndUserId(Did, join);
+				delete("delete from Bd_FormApprovalD_RoleUsers where iFormApprovaldRoleId = '" + id + "'");
+
 			}
+
 		}
 	}
 
