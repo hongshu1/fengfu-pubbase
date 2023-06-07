@@ -14,6 +14,9 @@ from T_Sys_BarcodeMaster t1
          LEFT JOIN Bd_Warehouse t7 on t3.WhCode = t7.cWhCode
          LEFT JOIN Bd_InventoryClass t8 on t4.iInventoryClassId = t8.iAutoId
 WHERE 1=1 and t1.memo = '仓库期初'
+#if(organizecode)
+  and t1.organizecode = #para(organizecode)
+#end
 #if(cinvcode)
   and t2.Invcode = #para(cinvcode)
 #end
@@ -46,6 +49,9 @@ and invcode = #para(invcode)
 #if(poscode)
 and poscode = #para(poscode)
 #end
+#if(organizecode)
+  and organizecode = #para(organizecode)
+#end
 #end
 
 #sql("detailDatas")
@@ -63,8 +69,14 @@ from T_Sys_BarcodeMaster t1
          LEFT JOIN Bd_Uom t5 on t4.iInventoryUomId1 = t5.iAutoId
          LEFT JOIN Bd_vendor t6 on t2.vencode = t6.cvencode
      where 1=1 and t1.memo = '仓库期初'
+#if(organizecode)
+and t1.organizecode = #para(organizecode)
+#end
 #if(masid)
 and t1.autoid = #para(masid)
+#end
+#if(autoid)
+and t2.autoid = #para(autoid)
 #end
 order by t1.ModifyDate desc
 #end
@@ -86,6 +98,9 @@ and t1.whcode = #para(whcode)
 select t1.*
 from Bd_Warehouse_Area t1
 where 1=1
+#if(corgcode)
+and t1.corgcode = #para(corgcode)
+#end
 order by t1.dUpdateTime desc
 #end
 
@@ -102,11 +117,36 @@ from T_Sys_BarcodeMaster t1
          left join Bd_Uom t5 on t4.iInventoryUomId1 = t5.iAutoId
          left join Bd_vendor t6 on t3.VenCode = t6.cVenCode
          left join T_Sys_StockBarcodePosition t7 on t3.invcode = t7.invcode and t3.Barcode = t7.Barcode
+    where 1=1 and t1.memo = '仓库期初'
+#if(ids)
+         and CHARINDEX(','+cast((select t3.autoid) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
+#end
+#if(organizecode)
+    and t1.organizecode = #para(organizecode)
+#end
+order by t3.CreateDate desc
+#end
+
+#sql("addPrintData")
+SELECT t3.autoid,t3.masid,t3.Barcode as cbarcode,
+       t3.Batch as cbatch,t3.qty as planiqty,t3.BarcodeDate,t3.CreatePerson,t3.CreateDate,t3.ReportFileName,t3.PrintNum,
+        t4.cInvName,t4.cInvCode1,t4.cInvName1,t4.iPkgQty,t4.cInvStd,
+        t5.cUomCode,t5.cUomName,
+        t6.cVenCode,t6.cVenName,
+        t7.autoid as positionautoid
+from T_Sys_BarcodeDetail t3
+         left join bd_inventory t4 on t3.invcode = t4.cinvcode
+         left join Bd_Uom t5 on t4.iInventoryUomId1 = t5.iAutoId
+         left join Bd_vendor t6 on t3.VenCode = t6.cVenCode
+         left join T_Sys_StockBarcodePosition t7 on t3.invcode = t7.invcode and t3.Barcode = t7.Barcode
     where 1=1
 #if(ids)
-         and CHARINDEX(','+cast((select t1.autoid) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
+         and CHARINDEX(','+cast((select t3.autoid) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
 #end
-order by t3.CreateDate
+#if(organizecode)
+    and t3.organizecode = #para(organizecode)
+#end
+order by t3.CreateDate desc
 #end
 
 

@@ -15,6 +15,7 @@ import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO.Main;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO.PreAllocate;
 import cn.rjtech.util.ValidationUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -258,9 +259,11 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             podetailKv.set("sourcebillno", record.get("sourcebillno"));
             podetailKv.set("sourcebillid", record.get("sourcebillid"));
             Record detailByParam = findSysPODetailByParam(podetailKv);
-            record.set("invname", detailByParam.get("invname"));
+            if (detailByParam != null) {
+                record.set("invname", detailByParam.get("invname"));
+            }
 //            record.set("venname", detailByParam.get("venname"));
-            if (null != purchaseType){
+            if (null != purchaseType) {
                 record.set("cptcode", purchaseType.getCPTCode());
                 record.set("cptname", purchaseType.getCPTName());
             }

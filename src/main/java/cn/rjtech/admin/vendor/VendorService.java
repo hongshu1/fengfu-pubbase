@@ -74,10 +74,11 @@ public class VendorService extends BaseService<Vendor> {
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEnabled, Boolean isDeleted,
                                       Kv kv) {
+        kv.set("corgcode", getOrgCode());
         Page<Record> paginate = dbTemplate("vendor.getAdminDatas", kv).paginate(pageNumber, pageSize);
         for (Record record : paginate.getList()) {
             Department dept = departmentService.findById(record.getStr("cvendepart"));
-            record.set("cvendepart",null != dept ? dept.getCDepName() : "");
+            record.set("cvendepart", null != dept ? dept.getCDepName() : "");
             Person person = personService.findById(record.getStr("idutypersonid"));
             record.set("cvenpperson", person != null ? person.getCpsnName() : "");
         }
@@ -85,6 +86,7 @@ public class VendorService extends BaseService<Vendor> {
     }
 
     public Page<Record> pageList(Kv kv) {
+        kv.set("corgcode", getOrgCode());
         Page<Record> recordPage = dbTemplate("vendor.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
         List<Record> list = recordPage.getList();
         for (Record record : list) {
@@ -98,9 +100,10 @@ public class VendorService extends BaseService<Vendor> {
      * 获取数据
      */
 
-    public List<Record>  List(){
-      Kv kv=new Kv();
-        List<Record> records = dbTemplate("vendor.list",kv.set("isenabled","true")).find();
+    public List<Record> List() {
+        Kv kv = new Kv();
+        kv.set("corgcode", getOrgCode());
+        List<Record> records = dbTemplate("vendor.list", kv.set("isenabled", "true")).find();
         return records;
     }
 
@@ -329,7 +332,8 @@ public class VendorService extends BaseService<Vendor> {
     }
 
     public Vendor findByName(String vendorName) {
-        return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvenname = ?", vendorName);
+        return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvenname = ? AND v.cOrgCode=?",
+            vendorName,getOrgCode());
     }
 
     public Vendor findByCode(String cvencode) {
@@ -342,6 +346,7 @@ public class VendorService extends BaseService<Vendor> {
     }
 
     public List<Record> getVendorList(Kv kv) {
+        kv.set("corgcode", getOrgCode());
         return dbTemplate("vendor.getVendorList", kv).find();
     }
 
@@ -351,8 +356,7 @@ public class VendorService extends BaseService<Vendor> {
 
     public List<Record> getAutocompleteList(String q, int limit) {
         Okv para = Okv.by("q", q)
-            .set("limit", limit);
-
+            .set("limit", limit).set("corgcode",getOrgCode());
         return dbTemplate("vendor.getAutocompleteList", para).find();
     }
 
