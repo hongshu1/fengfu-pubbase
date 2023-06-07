@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 
 /**
  * 采购入库单明细
@@ -48,6 +48,8 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
     public static final String MODIFYDATE = "ModifyDate";
     /**现品票*/
     public static final String SPOTTICKET = "spotTicket";
+    /**是否删除：0. 否 1. 是*/
+    public static final String ISDELETED = "isDeleted";
 	/**
 	 * AutoID
 	 */
@@ -369,6 +371,23 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
 	@JSONField(name = "spotticket")
 	public java.lang.String getSpotTicket() {
 		return getStr("spotTicket");
+	}
+
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
+		return (M)this;
+	}
+
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=20)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("isDeleted");
 	}
 
 }
