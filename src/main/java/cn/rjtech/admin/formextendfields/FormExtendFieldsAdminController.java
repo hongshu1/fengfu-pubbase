@@ -1,5 +1,7 @@
 package cn.rjtech.admin.formextendfields;
 
+import cn.jbolt.core.permission.UnCheck;
+import cn.rjtech.admin.form.FormService;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -24,6 +26,8 @@ import cn.rjtech.model.momdata.FormExtendFields;
 @Path(value = "/admin/formExtendFields", viewPath = "/_view/admin/formextendfields")
 public class FormExtendFieldsAdminController extends BaseAdminController {
 
+	@Inject
+	private FormService formService;
 	@Inject
 	private FormExtendFieldsService service;
    /**
@@ -87,5 +91,23 @@ public class FormExtendFieldsAdminController extends BaseAdminController {
 		renderJson(service.deleteById(getLong(0)));
 	}
 
+	/**
+	 * 数据源
+	 */
+	public void optionsiFormId(){
+		renderJsonData(service.getCommonList("iFormId"));
+	}
+	public void optionsiFormFieldId(){
+		renderJsonData(service.getCommonList("iFormFieldId"));
+	}
+
+	public void optionsForm(){
+//		service.getCommonList("iFormId");
+//		renderJsonData(service.find("SELECT cFormName,iAutoId FROM FROM WHERE iAutoId = ?"));
+//		renderJsonData(formService.getCommonList("cFormName,iAutoId"));
+	}
+	public void optionsFormId(){
+		renderJsonData(formService.getCommonList("iAutoId,cFormName"));
+	}
 
 }
