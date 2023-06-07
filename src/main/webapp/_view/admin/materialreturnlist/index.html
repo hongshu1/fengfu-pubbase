@@ -36,17 +36,20 @@
 </div>
 <div class="jbolt_page_content">
 <!-- JBoltTable的数据模板定义-->
-<textarea class="jb_tpl_box" id="sysPuinstoreRowtpl_#(pageId)">
+<textarea class="jb_tpl_box"  id="sysPuinstoreRowtpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
   <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-	<a class="jbolt_table_editbtn" href="admin/materialreturnlist/edit/${data.autoid}?&type=0"  data-fs="true" data-handler="refreshJBoltTable" data-title="物料退货列表详情">查看</i></a>
-	 {@if data.iauditstatus == '1'||data.iauditstatus == '4'}
-	<a class="jbolt_table_editbtn" href="admin/materialreturnlist/edit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑物料退货列表">编辑</i></a>
-	 {@else if data.iauditstatus == '2'}
-	<a class="jbolt_table_delbtn" href="admin/materialreturnlist/recall?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
+	 {@if data.iauditstatus != '0'}
+		<a class="jbolt_table_editbtn" href="admin/materialreturnlist/edit/${data.autoid}?&type=0"  data-fs="true" data-handler="refreshJBoltTable" data-title="物料退货列表详情">查看</i></a>
+	{@/if}
+	{@if data.iauditstatus != '2'}
+		<a class="jbolt_table_editbtn" href="admin/materialreturnlist/edit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑物料退货列表">编辑</i></a>
 	 {@/if}
+	<a href="admin/materialreturnlist/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
+                           tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
+                           class="jbolt_table_delbtn">删除</a>
 </td>
   <td title="${data.auditstate}">${data.auditstate}</td>
   <td title="${data.billno}">${data.billno}</td>
