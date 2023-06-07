@@ -62,7 +62,7 @@ SELECT
 FROM
     Bd_Inventory inv
         LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iInventoryUomId1
-        LEFT JOIN Bd_Uom puom ON uom.iAutoId = inv.iPurchaseUomId
+        LEFT JOIN Bd_Uom puom ON puom.iAutoId = inv.iPurchaseUomId
         LEFT JOIN Bd_InventoryStockConfig invstock ON invstock.iInventoryId = inv.iAutoId
         LEFT JOIN Bd_Vendor ven ON ven.iAutoId = invstock.iVendorId
         left join Bd_EquipmentModel t2 on inv.iEquipmentModelId = t2.iAutoId

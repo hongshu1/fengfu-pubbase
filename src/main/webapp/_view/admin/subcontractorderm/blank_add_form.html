@@ -163,9 +163,11 @@
         <tr data-id="${data.iautoid}">
             <td hidden> ${data.iinventoryid}</td>
             <td>${pageNumber,pageSize,index | rownum}</td>
+            #if(isView??0 !=1)
              <td>
                 <a tabindex="-1" class="ml-1 " href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-trash text-danger">删除</i></a>
             </td>
+            #end
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
@@ -192,6 +194,7 @@
     {@/each}
 </textarea>
 
+#if(isView??0 !=1)
 <div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
@@ -199,6 +202,7 @@
         </button>
     </div>
 </div>
+#end
 
 <table class="jbolt_table jbolt_main_table  table-center "
        id="subcontractOrderM_Table_"
@@ -212,16 +216,20 @@
        data-copy-to-excel="false"
        data-column-resize="true"
        data-rowtpl="puraseOrder_tpl_2"
-       data-toolbar="PurchaseOrderD_toolbar_#(pageId)"
        data-column-prepend="1:checkbox:true:false:false"
+       #if(isView??0 !=1)
+       data-toolbar="PurchaseOrderD_toolbar_#(pageId)"
        data-editable="true"
        data-editable-option="getEditableTableOptions1"
+       #end
 >
     <thead>
     <tr>
         <th hidden rowspan="2" data-column="iinventoryid">存货id</th>
         <th data-width="60"  rowspan="2" data-column="index">序号</th>
+        #if(isView??0 !=1)
         <th data-width="80"  rowspan="2">操作</th>
+        #end
         <th data-width="150" rowspan="2" data-column="cinvcode">存货编码</th>
         <th data-width="150" rowspan="2" data-column="cinvcode1">客户部番</th>
         <th data-width="150" rowspan="2" data-column="cinvname1">部品名称</th>

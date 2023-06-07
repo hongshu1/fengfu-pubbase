@@ -288,11 +288,11 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 		return calendar;
 	}
 	
-	public Map<String, Object> getDateMap(String beginDate, String endDate, String iVendorId, Integer processType, Integer iSourceType){
+	public Map<String, Object> getDateMap(String beginDateStr, String endDateStr, String iVendorId, Integer processType, Integer iSourceType){
 		
 		Map<String, Object> repMap = new HashMap<>();
 		// 获取日期
-		Map<String, List<Record>> listMap = setDate(beginDate, endDate);
+		Map<String, List<Record>> listMap = setDate(beginDateStr, endDateStr);
 		List<Record> dateHeadList = listMap.get(SubcontractOrderM.DATEFIELD);
 		List<Record> monthHeadList = listMap.get(SubcontractOrderM.MONTHFIELD);
 		
@@ -301,16 +301,32 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 			Map<String, Record> recordMap = dateHeadList.stream().collect(Collectors.toMap(record -> record.getStr("dateStr"), record -> record));
 			
 			// 主表获取存货数据 table--value
-			List<Record> vendorDateList = demandPlanMService.getVendorDateList(beginDate, endDate, iVendorId, processType);
+			List<Record> vendorDateList = demandPlanMService.getVendorDateList(beginDateStr, endDateStr, iVendorId, processType);
 			// 细表获取存货数量
-			List<Record> demandPlanDList = demandPlanDService.findByDemandPlanMList(beginDate, endDate, iVendorId, processType);
+			List<Record> demandPlanDList = demandPlanDService.findByDemandPlanMList(beginDateStr, endDateStr, iVendorId, processType);
 			// 记录每一个存货中存在多个物料到货计划
 			Map<Long, List<PurchaseOrderRef>> puOrderRefMap = demandPlanDService.getPuOrderRefByInvId(demandPlanDList);
 			// 按存货编码汇总
 			Map<Long, Map<String, BigDecimal>> demandPlanDMap = demandPlanDService.getDemandPlanDMap(demandPlanDList, DemandPlanM.IINVENTORYID);
 			
+			DateTime endDate = DateUtil.parseDate(endDateStr);
+			Map<String, BigDecimal> ymQtyMap = demandPlanDList.stream().filter(
+					record -> {
+						String yearStr = record.getStr(PurchaseorderdQty.IYEAR);
+						String monthStr = String.format("%02d", record.getInt(PurchaseorderdQty.IMONTH));
+						String dateStr = String.format("%02d", record.getInt(PurchaseorderdQty.IDATE));
+						String dateFormStr = yearStr.concat("-").concat(monthStr).concat("-").concat(dateStr);
+						return DateUtil.compare(endDate, DateUtil.parseDate(dateFormStr)) >=0;
+					}
+			).collect(Collectors.groupingBy(record -> {
+				String monthStr = String.format("%02d", record.getInt(PurchaseorderdQty.IMONTH));
+				String invId = record.getStr(PurchaseOrderD.IINVENTORYID);
+				String yearStr = record.getStr(PurchaseorderdQty.IYEAR);
+				return yearStr.concat("年").concat(monthStr).concat("月").concat("_").concat(invId);
+			}, Collectors.mapping(record -> record.getBigDecimal(PurchaseorderdQty.IQTY), Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))));
+			
 			// 设置到货计划明细数量
-//			demandPlanMService.setVendorDateList(OrderGenTypeEnum.SUBCONTRACT_GEN.getValue(), vendorDateList, demandPlanDMap, recordMap, puOrderRefMap);
+			demandPlanMService.setVendorDateList(OrderGenTypeEnum.SUBCONTRACT_GEN.getValue(), vendorDateList, demandPlanDMap, recordMap, puOrderRefMap, ymQtyMap);
 			repMap.put("tableData", vendorDateList);
 			repMap.put("tableDataStr", JSONObject.toJSONString(vendorDateList));
 		}
