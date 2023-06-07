@@ -21,7 +21,7 @@
                 </div>
             </div>
             #if(puinstore.AutoID??)
-            <input type="hidden"  name="puinstore.autoid" value="#(puinstore.autoid??)"/>
+            <input type="hidden" id="puinstoreautoid" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
             #end
             <input type="hidden" id="autoid" name="autoid" value="#(puinstore.autoid??)"/>
             <div class="form-group row">
@@ -46,7 +46,7 @@
                 <label class="col-sm-2 col-form-label">仓库名称：</label>
                 <div class="col-sm-2 col-form-label">
                     <select class="form-control"
-                            name="whcode"
+                            name="puinstore.whcode"
                             data-autoload
                             data-url="admin/SysEnumeration/wareHouse"
                             data-select-type="select2"
@@ -187,7 +187,7 @@
 </div>
 <textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
    {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
+        <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
     <td>${data.spotticket}</td>
     <td>${data.cinvcode}</td>
@@ -218,8 +218,18 @@
             jboltTableSubmitMulti(tables, "/admin/materialreturnlist/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
                 if (res.state == "ok") {
                     LayerMsgBox.success(res.msg, 600, function () {
-                        parent.refreshPjaxContainer();
-                        parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        let id = res.AutoID;
+                        debugger;
+                        if (value == "save"){
+                            parent.refreshPjaxContainer();
+                            parent.refreshCurrentTabContent();//刷新当前页面
+                            self.location.href = "/admin/materialreturnlist/edit/"+id+"-_jb_rqtype_dialog"; //新增的刷新
+                            // parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                        }else {
+                            parent.refreshCurrentTabContent();//刷新当前页面
+                            // refreshPjaxContainer();
+                            parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                        }
                     })
                 } else {
                     LayerMsgBox.error(res.msg);

@@ -739,8 +739,50 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             Ret ret = formApprovalService.judgeType(table(), iautoid);
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
-            // 更新状态
+            // TODO 更新状态
+            SysPureceive byId = findById(iautoid);
+            byId.setIAuditStatus(Integer.valueOf(AuditStateEnum.AWAIT_AUDIT.getValue()));
+            byId.update();
+            return true;
+        });
+        return SUCCESS;
+    }
 
+    public Ret withdraw(Long iAutoId) {
+        tx(() -> {
+            SysPureceive byId = findById(iAutoId);
+            byId.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
+            byId.update();
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 审核通过
+     */
+    public Ret approve(String ids) {
+        tx(() -> {
+            String[] split = ids.split(",");
+            for (String s : split) {
+                SysPureceive byId = findById(s);
+                byId.setIAuditStatus(Integer.valueOf(AuditStateEnum.APPROVED.getValue()));
+                byId.update();
+            }
+            return true;
+        });
+        
+        return SUCCESS; 
+    }
+
+    public Ret reject(String ids) {
+        tx(() -> {
+            String[] split = ids.split(",");
+            for (String s : split) {
+                SysPureceive byId = findById(s);
+                byId.setIAuditStatus(Integer.valueOf(AuditStateEnum.REJECTED.getValue()));
+                byId.update();
+            }
             return true;
         });
         return SUCCESS;

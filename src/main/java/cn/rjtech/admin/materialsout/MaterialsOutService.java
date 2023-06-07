@@ -220,6 +220,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 			recordList.addAll(updateRecordList);
 		}
 
+		final Long[] AutoIDs = {null};
 		tx(()->{
 			Long headerId = null;
 			// 获取Form对应的数据
@@ -261,6 +262,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 					update(materialsOut);
 					headerId = materialsOut.getAutoID();
 				}
+				AutoIDs[0] = materialsOut.getAutoID();
 			}
 
 			// 获取待保存数据 执行保存
@@ -302,7 +304,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 
 			return true;
 		});
-		return SUCCESS;
+		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
 

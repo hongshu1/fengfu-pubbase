@@ -113,5 +113,9 @@ public class CusfieldsmappingFormService extends BaseService<CusfieldsmappingFor
     public CusfieldsmappingForm findFirstByIformId(Long iformId) {
         return findFirst(selectSql().eq(CusfieldsmappingForm.IFORMID, iformId));
     }
+
+    public void deleteByIcusFieldsMappingMid(Long iCusFieldMappingMid) {
+        delete("DELETE FROM Bd_CusFieldsMapping_Form WHERE iCusFieldMappingMid = ? ", iCusFieldMappingMid);
+    }
     
 }

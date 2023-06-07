@@ -11,8 +11,16 @@
             
             <div class="col">
                 <form class="form-inline" id="formForm_#(pageId)" onsubmit="return false;" method="post">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="输入表单编码/名称搜索" name="keywords"
-                           value=""/>
+                    
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=表单编码=" name="cformcode" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=表单名称=" name="cformname" value=""/>
+
+                    <select name="cformtypesn" class="form-control">
+                        <option value="">=单据类型=</option>
+                        <option value="1">基础档案类</option>
+                        <option value="2">单据类</option>
+                    </select>
+                    
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
                     <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
                 </form>
@@ -30,13 +38,11 @@
         {@each datas as data,index}
         <tr data-id="${data.iautoid}" >
             <td>${pageNumber,pageSize,index | rownum}</td>
-
             <td>
 	            <a href="admin/form/edit/${data.iautoid}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改人员档案" class="jbolt_table_editbtn">修改</a>
                 <a href="admin/form/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
             </td>
-
-            <td>${data.cname}</td>
+            <td>${data.ccategoryname}</td>
             <td>${data.cformcode}</td>
             <td>${data.cformname}</td>
             <td>${data.ccode}</td>
