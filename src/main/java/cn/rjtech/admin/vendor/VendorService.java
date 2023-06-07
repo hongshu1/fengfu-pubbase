@@ -72,26 +72,14 @@ public class VendorService extends BaseService<Vendor> {
      * @param isEnabled  是否启用：0. 停用 1. 启用
      * @param isDeleted  删除状态：0. 未删除 1. 已删除
      */
-    public Page<Vendor> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEnabled, Boolean isDeleted,
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEnabled, Boolean isDeleted,
                                       Kv kv) {
-        //创建sql对象
-        Sql sql = selectSql().page(pageNumber, pageSize);
-        //sql条件处理
-        sql.eqBooleanToChar("isEnabled", isEnabled);
-        sql.eqBooleanToChar("isDeleted", isDeleted);
-        sql.eq("cVenName", kv.get("cvenname"));//供应商编码
-        sql.eq("cVenCode", kv.get("cvencode"));//供应商名称
-        sql.eq("iAutoid", kv.get("iventorclassid"));//供应商分类id
-        //关键词模糊查询
-        sql.likeMulti(keywords, "cOrgName", "cVenName", "cVenAbbName", "cCreateName", "cUpdateName");
-        //排序
-        sql.desc("dUpdateTime");
-        Page<Vendor> paginate = paginate(sql);
-        for (Vendor vendor : paginate.getList()) {
-            Department dept = departmentService.findById(vendor.getCVenDepart());
-            vendor.setCVenDepart(null != dept ? dept.getCDepName() : "");
-            Person person = personService.findById(vendor.getIDutyPersonId());
-            vendor.set("cvenpperson", person != null ? person.getCpsnName() : "");
+        Page<Record> paginate = dbTemplate("vendor.getAdminDatas", kv).paginate(pageNumber, pageSize);
+        for (Record record : paginate.getList()) {
+            Department dept = departmentService.findById(record.getStr("cvendepart"));
+            record.set("cvendepart",null != dept ? dept.getCDepName() : "");
+            Person person = personService.findById(record.getStr("idutypersonid"));
+            record.set("cvenpperson", person != null ? person.getCpsnName() : "");
         }
         return paginate;
     }

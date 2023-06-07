@@ -22,7 +22,6 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.generator.ColumnMeta;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,17 +48,8 @@ public class FormService extends BaseService<Form> {
     /**
      * 后台管理分页查询
      */
-    public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, String keywords,Kv para) {
-
-        Page<Record> list = dbTemplate("form.paginateAdminDatas").paginate(pageNumber,pageSize);
-        for (Record row : list.getList()) {
-            BigDecimal iformcategoryid = row.getBigDecimal("iformcategoryid");
-            para.set("iatuoid",iformcategoryid);
-            String Cname = dbTemplate("form.getFormCategoryByCname", para).queryStr();
-            row.set("Cname",Cname);
-        }
-//        return paginateByKeywords("iAutoId", "DESC", pageNumber, pageSize, keywords, "cFormCode,cFormName");
-        return list;
+    public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+        return dbTemplate("form.paginateAdminDatas", para).paginate(pageNumber, pageSize);
     }
 
     /**
@@ -248,11 +238,11 @@ public class FormService extends BaseService<Form> {
         ValidationUtils.notEmpty(columnMetas, "数据表字段不能为空");
 
         List<FormField> formFields = new ArrayList<>();
-        
+
         for (ColumnMeta meta : columnMetas) {
 
             String colLow = meta.name.toLowerCase();
-            
+
             // id字段跳过、状态
             if (colLow.endsWith("id") || colLow.endsWith("status") || colLow.endsWith("state")) {
                 continue;
@@ -275,14 +265,14 @@ public class FormService extends BaseService<Form> {
             }
 
             String javaType = meta.javaType.toLowerCase();
-            
+
             // 跳过指定类型
             switch (javaType) {
                 case "java.lang.boolean":
                 case "java.lang.long":
                     continue;
                 default:
-                     break;
+                    break;
             }
 
             FormField formField = new FormField()
@@ -318,7 +308,7 @@ public class FormService extends BaseService<Form> {
 
             return true;
         });
-        
+
         return SUCCESS;
     }
 
@@ -326,10 +316,10 @@ public class FormService extends BaseService<Form> {
         Sql sql = selectSql().eq(Form.CFORMCODE, tableName).eq(Form.ISDELETED, ZERO_STR).first();
         return findFirst(sql);
     }
-    
-    public List<Form> findByFuzzy(String keywords){
+
+    public List<Form> findByFuzzy(String keywords) {
         Sql sql = selectSql().eq(Form.ISDELETED, ZERO_STR);
-        if (StrUtil.isNotBlank(keywords)){
+        if (StrUtil.isNotBlank(keywords)) {
             sql.likeMulti(keywords, Form.CFORMCODE, Form.CFORMNAME);
         }
         return find(sql);

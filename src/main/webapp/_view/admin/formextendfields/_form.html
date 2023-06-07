@@ -17,11 +17,11 @@
 <div class="col-2">
     <select class="form-control"
             data-autoload
-            data-url="/admin/enumVals/enumvalsoptions"
+            data-url="/admin/formExtendFields/optionsFormId"
             data-select-type="select1"
             name="formExtendFields.iFormId"
-            data-text-attr="cenumname"
-            data-value-attr="cenumcode"
+            data-text-attr="cformname"
+            data-value-attr="iautoid"
             data-select="#(formExtendFields.iFormId??)"
     ></select>
 </div>
@@ -50,7 +50,6 @@
     <div class="form-group row"
          data-radio
          data-name="formExtendFields.iPosition"
-         data-default="false"
          data-url="admin/dictionary/options?key=visible_position"
          data-value-attr="sn"
          data-label="显示位置:"
@@ -133,17 +132,14 @@
     <div class="form-group row" >
         <label class="col-sm-2 col-form-label">小数位:</label>
         <div class="col-1">
-            <input type="number" data-rule="pzint" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="" maxlength="40" name="formExtendFields.iDigit" value="#(formExtendFields.iDigit??)"/>
+            <input type="number" data-rule="pzint" data-notnull="false" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="" maxlength="40" name="formExtendFields.iDigit" value="#(formExtendFields.iDigit??)"/>
         </div>
     </div>
-
-
 
     <div class="form-group row"
 data-radio
 data-name="formExtendFields.isEnabled"
 data-value-attr="sn"
-data-default=""
 data-url="admin/dictionary/options?key=whether_enable"
 data-label="是否启用:"
 data-width="col-sm-2,col-5"
@@ -158,7 +154,6 @@ data-inline="true"
 data-radio
 data-name="formExtendFields.isRequired"
 data-value-attr="sn"
-data-default="false"
 data-url="admin/dictionary/options?key=is_required"
 data-label="是否必填:"
 data-width="col-sm-2,col-5"
@@ -173,7 +168,6 @@ data-inline="true"
 data-radio
 data-name="formExtendFields.isEditable"
 data-value-attr="sn"
-data-default="false"
 data-url="admin/dictionary/options?key=is_edit"
 data-label="是否编辑"
 data-width="col-sm-2,col-5"
@@ -198,7 +192,6 @@ data-inline="true"
     <div class="form-group row"
          data-radio
          data-name="formExtendFields.iSource"
-         data-default=""
          data-label="值来源:"
          data-width="col-sm-2,col-5"
          data-value="#(formExtendFields.iSource??)"
@@ -266,7 +259,6 @@ data-inline="true"
 <!--data-radio-->
 <!--data-name="formExtendFields.isDeleted"-->
 <!--data-value-attr="sn"-->
-<!--data-default="false"-->
 <!--data-url="admin/dictionary/options?key=options_enable"-->
 <!--data-label="删除状态"-->
 <!--data-width="col-sm-2,col-3"-->

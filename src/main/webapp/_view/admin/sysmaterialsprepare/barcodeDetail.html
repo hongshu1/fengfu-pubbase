@@ -1,10 +1,12 @@
+#@jboltLayout()
+#define main()
 <div class="row">
     <div class="col">
         <div class="card" style="margin-bottom: 5px">
             <div class="card-body">
-                <form onsubmit="return false;" id="MoPickItemM_Form" action="#(action)" method="post">
+                <form onsubmit="return false;" id="SysMaterialsprepare_Form" action="#(action)" method="post">
                     #if(sysMaterialsprepare.AutoID??)
-                    <input type="hidden" name="moPickItemM.iAutoId" value="#(sysMaterialsprepare.AutoID??)"/>
+                    <input type="hidden" name="sysMaterialsprepare.iAutoId" value="#(sysMaterialsprepare.AutoID??)"/>
                     #end
                     <div class="row">
                         <div class="col-md-4">
@@ -15,9 +17,9 @@
                                            data-tips=""
                                            data-with-clearbtn="false" autocomplete="off"
                                            class="form-control" placeholder=""
-                                           maxlength="40" name="moPickItemM.cInvCode"
+                                           maxlength="40" name="sysMaterialsprepare.cInvCode"
                                            readonly
-                                           value="#(sysMaterialsprepare.cInvCode??)"/>
+                                           value="#(stockBarcodePosition.InvCode??)"/>
                                 </div>
                             </div>
                         </div>
@@ -29,9 +31,9 @@
                                            data-tips=""
                                            data-with-clearbtn="false" autocomplete="off"
                                            class="form-control" placeholder=""
-                                           maxlength="40" name="moPickItemM.cInvCode1"
+                                           maxlength="40" name="sysMaterialsprepare.cInvCode1"
                                            readonly
-                                           value="#(sysMaterialsprepare.cInvCode1??)"/>
+                                           value="#(inventory.cInvCode1??)"/>
                                 </div>
                             </div>
                         </div>
@@ -43,9 +45,9 @@
                                            data-tips=""
                                            data-with-clearbtn="false" autocomplete="off"
                                            class="form-control" placeholder=""
-                                           maxlength="40" name="moPickItemM.cInvName1"
+                                           maxlength="40" name="sysMaterialsprepare.cInvName1"
                                            readonly
-                                           value="#(sysMaterialsprepare.cInvName1??)"/>
+                                           value="#(inventory.cInvName1??)"/>
                                 </div>
                             </div>
                         </div>
@@ -55,15 +57,15 @@
         </div>
     </div>
 </div>
-<textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
+<textarea class="jb_tpl_box" id="SysMaterialsprepare_tpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.iWarehouseAreaId}</td>
-<td>${data.cbarcode}</td>
+<td>${data.cwhname}</td>
+<td>${data.barcode}</td>
 <td>${data.qty}</td>
 <td>${data.iinventoryuomid1}</td>
-<td>${data.cbatch}</td>
+<td>${data.Batch}</td>
 <td>${data.dproddate}</td>
 </tr>
 {@/each}
@@ -73,12 +75,12 @@
        data-width="fill"
        data-height="60%"
        data-ajax="true"
-       data-url="admin/sysmaterialspreparedetail/datas?cmodocno=#(sysMaterialsprepare.cMoDocNo??)"
-       data-rowtpl="MoPickItemM_tpl_#(pageId)"
+       data-url="admin/sysMaterialsprepare/getBarcode/?invcode=#(stockBarcodePosition.Invcode??)"
+       data-rowtpl="SysMaterialsprepare_tpl_#(pageId)"
        data-copy-to-excel="false"
-       data-page="MoPickItemM_page"
+       data-page="SysMaterialsprepare_page"
        data-column-resize="true"
-       data-toolbar="MoPickItemM_toolbar_#(pageId)"
+       data-toolbar="SysMaterialsprepare_toolbar_#(pageId)"
 >
     <thead class="fw-normal">
     <tr>
@@ -93,8 +95,9 @@
     </thead>
     <tbody></tbody>
 </table>
+#end
 #define js()
-<script>
+<script type="text/javascript">
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
 
@@ -104,6 +107,6 @@
     }
 
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="MoPickItemM_Form")
+#include("/_view/_admin/common/_formjs.html",formId="SysMaterialsprepare_Form")
 #end
 

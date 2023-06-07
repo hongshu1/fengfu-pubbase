@@ -1,6 +1,7 @@
 package cn.rjtech.admin.formapproval;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
@@ -12,12 +13,14 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.approvald.ApprovalDService;
 import cn.rjtech.admin.approvaldrole.ApprovaldRoleService;
+import cn.rjtech.admin.approvaldroleusers.ApprovaldRoleusersService;
 import cn.rjtech.admin.approvalduser.ApprovaldUserService;
 import cn.rjtech.admin.approvalm.ApprovalMService;
 import cn.rjtech.admin.auditformconfig.AuditFormConfigService;
 import cn.rjtech.admin.form.FormService;
 import cn.rjtech.admin.formapprovald.FormApprovalDService;
 import cn.rjtech.admin.formapprovaldrole.FormapprovaldRoleService;
+import cn.rjtech.admin.formapprovaldroleusers.FormapprovaldRoleusersService;
 import cn.rjtech.admin.formapprovalduser.FormapprovaldUserService;
 import cn.rjtech.admin.formapprovalflowd.FormApprovalFlowDService;
 import cn.rjtech.admin.formapprovalflowm.FormApprovalFlowMService;
@@ -37,6 +40,8 @@ import com.jfinal.plugin.activerecord.Record;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 表单审批流 Service
@@ -80,6 +85,10 @@ public class FormApprovalService extends BaseService<FormApproval> {
     private FormApprovalFlowDService flowDService;
     @Inject
     private FormService formService;
+    @Inject
+    private ApprovaldRoleusersService roleusersService;
+    @Inject
+    private FormapprovaldRoleusersService formapprovaldRoleusersService;
 
     /**
      * 后台管理分页查询
@@ -296,7 +305,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                         // 流程子表集合
                         List<FormApprovalFlowD> flowDList = new ArrayList<>();
                         listByMid.forEach(approvalD -> {
-                            /*
+                            /**
                              * 开始梳理审批流的整体流程
                              */
                             // 流程主表
@@ -550,21 +559,37 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                             formapprovaldRole.setISeq(approvaldRole.getISeq());
                                             formapprovaldRole.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                             formapprovaldRole.setIRoleId(approvaldRole.getIRoleId());
-                                            formapprovaldRoleList.add(formapprovaldRole);
-                                            List<User> users = getRoles(approvaldRole.getIRoleId());
+//                                            formapprovaldRoleList.add(formapprovaldRole);
+                                            formapprovaldRole.save();
+
+//                                            List<User> users = getRoles(approvaldRole.getIRoleId());
+
+                                            List<ApprovaldRoleusers> users =
+                                                    roleusersService.getRoleUser(approvaldRole.getIAutoId());
 
                                             if (users.size() > 0) {
+                                                List<FormapprovaldRoleusers> roleusersList = new ArrayList<>();
                                                 users.forEach(u -> {
                                                     FormApprovalFlowD flowD1 = new FormApprovalFlowD();
-                                                    flowD1.setIUserId(u.getId());
+                                                    flowD1.setIUserId(u.getIUserId());
                                                     flowD1.setIFormApprovalFlowMid(flowMId);
                                                     flowD1.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                                                    flowD1.setISeq(1);
+                                                    flowD1.setISeq(u.getISeq());
                                                     flowDList.add(flowD1);
+
+//                                                    单据的角色人员
+                                                    FormapprovaldRoleusers formapprovaldRoleusers =
+                                                            new FormapprovaldRoleusers();
+                                                    formapprovaldRoleusers.setIFormApprovaldRoleId(formapprovaldRole.getIAutoId());
+                                                    formapprovaldRoleusers.setISeq(u.getISeq());
+                                                    formapprovaldRoleusers.setIUserId(u.getIUserId());
+                                                    roleusersList.add(formapprovaldRoleusers);
                                                 });
+                                                formapprovaldRoleusersService.batchSave(roleusersList,
+                                                        roleusersList.size());
                                             }
                                         });
-                                        formapprovaldRoleService.batchSave(formapprovaldRoleList);
+//                                        formapprovaldRoleService.batchSave(formapprovaldRoleList);
                                     } else {
                                         ValidationUtils.error("该审批顺序为" + formApprovalD.getISeq() + "配置的角色未指定角色");
                                     }
@@ -814,7 +839,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
                 // 审批不通过 更新单据状态 时间
                 if (status == 3) {
-                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.NOT_AUDIT.getValue(), now), "更新审核状态失败");
+                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");
 
                     // 更新单据审批流主表
                     formApproval.setIsDeleted(true);
@@ -1049,7 +1074,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
                 // 审批不通过 更新单据状态 时间
                 if (status == 3) {
-                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.NOT_AUDIT.getValue(), now), "更新审核状态失败");
+                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");
 
                     // 更新单据审批流主表
                     formApproval.setIsDeleted(true);
@@ -1084,27 +1109,16 @@ public class FormApprovalService extends BaseService<FormApproval> {
         User user = JBoltUserKit.getUser();
         Long userId = user.getId();
 
-        /*
-         * 1、按顺序查出审批节点
-         * 2、过滤出不通过的节点 若有直接跳出
-         * 3、分组
-         */
 
-        // 1、
+        // 按顺序查出审批节点
         List<FormApprovalD> formApprovalDList = formApprovalDService.findListByMid(mid);
-        // 2、
-        /*List<FormApprovalD> failNode = formApprovalDList.stream().filter(f -> Objects.equals(f.getIStatus(), 3)).collect(Collectors.toList());
-        ValidationUtils.assertEmpty(failNode, "该单据已审批不通过，审批流程已结束！");*/
 
         int size = formApprovalDList.size();
         if (size > 0) {
-            Map<Long, Integer> map = new HashMap<>();
-            for (int i = 0, j = 0; i < size; i++) {
-                ++j;
-                FormApprovalD formApprovalD = formApprovalDList.get(i);
-                map.put(formApprovalD.getIAutoId(),j);
-            }
 
+            /**
+             * 按照倒序找出 最新的一个流程
+             */
             Record record = findFirstRecord("select d.iAutoId       as flowId,\n" +
                     "       fd.iAutoId      as approvalDid,\n" +
                     "       d.iUserId       as userId,\n" +
@@ -1118,44 +1132,42 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     "         left join Bd_FormApprovalD fd on m.iApprovalDid = fd.iAutoId\n" +
                     "where 1 = 1\n" +
                     "  and fd.iFormApprovalId = " + mid + "\n" +
-                    "  and d.iUserId = " + userId + "\n" +
-                    "  and and (d.iAuditStatus = 2 or d.iAuditStatus = 3)\n" +
+                    "  and (d.iAuditStatus = 2 or d.iAuditStatus = 3)\n" +
                     "order by fd.iSeq desc, d.iSeq desc");
 
             if (null == record || CollUtil.isEmpty(record.getColumns())){
                 ValidationUtils.isTrue(false, "你不是当前审批人");
             } else {
+
+//                判断是否当前审批人
+                Long userid = record.getLong("userid");
+                ValidationUtils.isTrue(Objects.equals(userid, userId), "你不是当前审批人");
+
                 Long approvaldid = record.getLong("approvaldid");
-                String approvalstatus = record.getStr("approvalstatus");
                 Long flowid = record.getLong("flowid");
 
-//                节点已审批通过 或者 不通过
-                if (Objects.equals(approvalstatus, "2") || Objects.equals(approvalstatus, "3")){
+                tx(() -> {
+//                反审后 节点与流程的状态都是待审批
+                FormApprovalD approvalD = formApprovalDService.findById(approvaldid);
+                FormApprovalFlowD flowD = flowDService.findById(flowid);
+                approvalD.setIStatus(status);
+                flowD.setIAuditStatus(status);
 
-                    Integer integer = map.get(approvaldid);
-//                   若相等 说明最后一个节点
-                    if (integer == (size-1)){
+                approvalD.update();
+                flowD.update();
 
-                    }
+//                反审后 单据状态都是待审批
+                updateSql().update(formSn)
+                        .set(IAUDITSTATUS, AuditStatusEnum.AWAIT_AUDIT.getValue())
+                        .set(DAUDITTIME, now)
+                        .eq(IAUTOID, formAutoId);
 
-                    FormApprovalD approvalD = formApprovalDService.findById(approvaldid);
-                    FormApprovalFlowD flowD = flowDService.findById(flowid);
-                    approvalD.setIStatus(1);
-                    flowD.setIAuditStatus(1);
-                } else {
-
-                }
-
+                    return true;
+                });
             }
 
-
-            tx(() -> {
-
-                return true;
-            });
-
         } else {
-            ValidationUtils.error("审批流程已结束");
+            ValidationUtils.error("你不是当前审批人");
         }
 
         return SUCCESS;
@@ -1367,4 +1379,63 @@ public class FormApprovalService extends BaseService<FormApproval> {
         }
     }
 
+    /**
+     * 批量审批
+     * @param ids
+     * @param formSn
+     * @param status
+     * @return
+     */
+    public Ret batchApprove(String ids, String formSn, Integer status){
+
+        status = AuditStatusEnum.APPROVED.getValue();
+
+        for (String id : StrSplitter.split(ids, COMMA, true, true)) {
+
+            long aLong = Long.parseLong(id);
+            approve(aLong, formSn, status);
+        }
+
+        return SUCCESS;
+    }
+
+    /**
+     * 批量拒审批
+     * @param ids
+     * @param formSn
+     * @param status
+     * @return
+     */
+    public Ret batchRejectApprove(String ids, String formSn, Integer status){
+
+        status = AuditStatusEnum.REJECTED.getValue();
+
+        for (String id : StrSplitter.split(ids, COMMA, true, true)) {
+
+            long aLong = Long.parseLong(id);
+            rejectApprove(aLong, formSn, status);
+        }
+
+        return SUCCESS;
+    }
+
+    /**
+     * 批量反审批
+     * @param ids
+     * @param formSn
+     * @param status
+     * @return
+     */
+    public Ret batchReverseApprove(String ids, String formSn, Integer status){
+
+        status = AuditStatusEnum.AWAIT_AUDIT.getValue();
+
+        for (String id : StrSplitter.split(ids, COMMA, true, true)) {
+
+            long aLong = Long.parseLong(id);
+            reverseApprove(aLong, formSn, status);
+        }
+
+        return SUCCESS;
+    }
 }
