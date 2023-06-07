@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>cn.jbolt</groupId>
-	<artifactId>jbolt_pro</artifactId>
-	<version>5.0.0</version>
+	<groupId>cn.aihengyi</groupId>
+	<artifactId>fhlm_platform</artifactId>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
-	<name>jbolt_pro</name>
-	<description>JBolt-基于JFinal的极速开发框架</description>
+	<name>fhlm_platform</name>
+	<description>凤凰联盟数字化平台</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -541,7 +541,7 @@
 
 
 	<build>
-		<finalName>jbolt_pro</finalName>
+		<finalName>fhlm_platform</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
