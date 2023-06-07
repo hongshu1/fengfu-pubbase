@@ -9,7 +9,7 @@
                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
               </button>
               <div class="dropdown-menu" aria-labelledby="importMenuButton">
-                <a data-downloadbtn href="/admin/warehousebeginofperiod/downloadTpl" class="btn dropdown-item"><i
+                <a data-downloadbtn href="/admin/warehousebeginofperiod/downloadBarcodeTpl" class="btn dropdown-item"><i
                     class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
                 <div class="j_upload_file_box"
                      data-name="file"
@@ -20,7 +20,7 @@
                      data-maxsize="20480"
                      data-handler="uploadFile"
                      data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
-                     data-url="/admin/warehousebeginofperiod/importExcel">
+                     data-url="/admin/warehousebeginofperiod/importBarcodeExcel">
                 </div>
               </div>
             </div>
@@ -247,7 +247,7 @@
             <div class="col-3" style="right: 20px;">
               <input type="number" id="printnum" name="printnum" data-with-clearbtn="true" autocomplete="off" required="true"
                      class="form-control" placeholder="=默认为1张=" maxlength="40" value="#(printnum??)" data-rule="int"/>
-            </div>   
+            </div>
             <div class="col-2" style="right: 35px;">
               <button type="button" class="btn btn-outline-secondary" id="createButton" name="createButton"
                       onclick="submitThisForm()">生成

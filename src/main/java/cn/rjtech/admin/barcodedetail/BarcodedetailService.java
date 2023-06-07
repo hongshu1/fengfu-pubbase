@@ -135,7 +135,7 @@ public class BarcodedetailService extends BaseService<Barcodedetail> {
         barcodedetail.setBarcodedate(now);
         //barcodedetail.setPackrate(kv.getBigDecimal("ipkgqty"));//包装比例
         barcodedetail.setBatch(kv.getStr("batch"));
-        barcodedetail.setQty(kv.getBigDecimal("generatedstockqty"));//每张条码分配的数量
+
         barcodedetail.setPrintnum(printnum);//每张条码需要打印的次数
         barcodedetail.setCreateperson(JBoltUserKit.getUserName());
         barcodedetail.setCreatedate(now);

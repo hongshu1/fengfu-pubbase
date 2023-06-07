@@ -24,7 +24,6 @@
                     <div class="jbolt_tab_content active" id="jbolt_tabcontent1">
                         <!--批量调整-->
                         #include("batch_update.html")
-                        34567890
                     </div>
                     <div class="jbolt_tab_content" id="jbolt_tabcontent2">
                         <!--指定存货调整-->
@@ -53,25 +52,11 @@
     function getEditableTableOptions_#(pageId)()
     {
         var editableTableOptions = {
-            submit: {
-                withForm: ["WeekOrderM_form_#(pageId)"],
-                name: 'WeekOrderMForm'
-            },
             maxRowCount: 9999,
             cols: {
                 ccode: {
                     type: "input",
                     placeholder: '传票号',
-                    required: true
-                },
-                cinvcode1: {
-                    type: "input",
-                    placeholder: '客户部番',
-                    required: true
-                },
-                cinvname1: {
-                    type: "input",
-                    placeholder: '部品名称',
                     required: true
                 },
                 dplanaogdate: {
@@ -97,6 +82,14 @@
             }
         };
         return editableTableOptions;
+    }
+
+    function submitThisForm(formId) {
+        var corderno = $("#WeekOrderM_form_#(pageId)").find("input[name='corderno']").val();
+        $.getJSON("admin/weekorderm/updateCplanTimeDatas",{"corderno":corderno},function(res){
+           jboltTableInsertRow("cinv_update_jbolt_table_#(pageId)",res.data.list);
+        });
+
     }
 </script>
 #end

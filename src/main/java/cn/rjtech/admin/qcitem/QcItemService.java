@@ -55,7 +55,7 @@ public class QcItemService extends BaseService<QcItem> {
         //sql条件处理
         sql.eqBooleanToChar("isDeleted", isDeleted);
         //关键词模糊查询
-        sql.likeMulti(keywords, "cOrgName", "cQcItemCode", "cQcItemName", "cCreateName", "cUpdatName");
+        sql.likeMulti(keywords, "cOrgName", "cQcItemCode", "cQcItemName", "cCreateName", "cUpdateName");
         //排序
         sql.desc("dupdatetime");
         return paginate(sql);
@@ -88,7 +88,7 @@ public class QcItemService extends BaseService<QcItem> {
         qcItem.setCCreateName(userName);
         qcItem.setDCreateTime(date);
         qcItem.setIUpdateBy(userId);
-        qcItem.setCUpdatName(userName);
+        qcItem.setCUpdateName(userName);
         qcItem.setDUpdateTime(date);
         //2、保存
         boolean result = qcItem.save();

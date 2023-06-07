@@ -36,44 +36,20 @@
             <div class="form-group row" id="codingRulem_form_row">
                 <label class="col-sm-1 col-form-label is_required">表单名称</label>
                 <div class="col-2">
-                    <input type="hidden" name="codingRuleM.iFormId" value="#(codingRuleM.iFormId??)" id="codingRulem_formId">
+                    <input type="hidden" name="codingRuleM.iFormId" data-sync-attr="iautoid" value="#(codingRuleM.iFormId??)" id="codingRulem_formId">
 
                     <select class="form-control" id="codingRulem_formName"
                             data-select-type="select2"
                             data-select="#(codingRuleM.iFormId??)"
                             data-autoload
-                            data-url="admin/formcategory/treeDatas"
-                            data-onlyleaf="true"
-                            data-setvalueto="codingRulem_formId"
-                            data-sync-ele="#codingRulem_cashTicket"
-                            data-text-attr="cname"
-                            data-value-attr="iautoid"
+                            data-url="admin/form/findByFuzzy"
+                            data-sync-ele="#codingRulem_cashTicket,#codingRulem_formId"
+                            data-text-attr="cformname"
                             data-text="=表单名称="
                             data-placeholder="=表单名称=">
                     </select>
                 </div>
             </div>
-
-            <!--<div class="form-group row" id="codingRulem_form_row">
-                <label class="col-sm-1 col-form-label">表单名称</label>
-                <div class="col-2 input-group">
-                    <input id="codingRulem_formName" type="text" readonly="readonly" data-rule="required"  autocomplete="off"
-                           class="form-control"
-                           placeholder="" maxlength="30"
-                           value="#(qcFormName??)">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
-                                data-area="90%,90%"  data-title="选择数据（单选）"
-                                id="qcButton" #if(type=="edit") disabled #end
-                                data-url="/admin/inventoryqcform/chooseFormData"><i
-                                class="fa fa-search mr-1"></i></button>
-                    </div>
-                    <input id="codingRulem_formId" type="hidden" class="form-control"
-                           name="codingRuleM.iFormId"
-                           data-value-attr="formId"
-                           placeholder="检验表格ID" readonly="readonly" value="#(codingRuleM.iFormId??)" />
-                </div>
-            </div>-->
 
             <div class="form-group row" id="codingRulem_cBarcodeTypeSn_row">
                 <label class="col-sm-1 col-form-label is_required">条码类型</label>
@@ -87,7 +63,7 @@
             <div class="form-group row">
                 <label class="col-sm-1 col-form-label">编码字段名称</label>
                 <div class="col-2">
-                    <input readonly type="text" name="cashTicketName" data-sync-attr="ccreatename" autocomplete="off" class="form-control"  id="codingRulem_cashTicket">
+                    <input readonly type="text" name="cashTicketName" data-sync-attr="ccode" autocomplete="off" class="form-control"  id="codingRulem_cashTicket">
                 </div>
             </div>
 
