@@ -11,6 +11,7 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.*;
@@ -44,6 +45,9 @@ public class SysProductinService extends BaseService<SysProductin> {
 
     @Inject
     private PersonService personservice;
+
+    @Inject
+    private FormApprovalService formApprovalService;
 
     @Inject
     private SysProductindetailService sysproductindetailservice;
@@ -402,6 +406,22 @@ public class SysProductinService extends BaseService<SysProductin> {
             dept = person.getCOrgCode();
         }
         return dept;
+    }
+
+    /**
+     * 提审
+     */
+    public Ret submit(Long iautoid) {
+        tx(() -> {
+
+            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+
+            // 更新状态
+
+            return true;
+        });
+        return SUCCESS;
     }
 
 }

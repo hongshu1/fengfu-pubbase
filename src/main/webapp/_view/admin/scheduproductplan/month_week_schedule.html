@@ -568,6 +568,7 @@
             type: 'get',
             dataType: 'json',
             success: function (respons) {
+                console.log(respons)
                 parms['scheduplanmonth'] = respons;
                 if(parms['scheduplanmonth'].length>0){
                     spreadSuspend();//暂停绘制
@@ -633,17 +634,20 @@
                                 sheet.setValue(1 + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].one);
                                 sheet.setValue(2 + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].two);
                                 sheet.setValue(3 + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].three);
-                                // sheet.setValue(4 + shiyongRow, zaikuCol, parms['scheduplanmonth'][i].day[0].zaiku);
                                 sheet.setValue(4 + shiyongRow, shiyongCol+j, parms['scheduplanmonth'][i].day[j].zaiku);
                                 sheet.setValue(5 + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].tianshu);
+                                //
+                                sheet.setValue(8, 9, parms['scheduplanmonth'][i].qiChuZaiKu);
+                                sheet.setValue(9, 9, parms['scheduplanmonth'][i].dayNum);
                             } else {
                                 sheet.setValue(6 * i + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].shiyong);
                                 sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, parms['scheduplanmonth'][i].day[j].one);
                                 sheet.setValue(6 * i + shiyongRow + 2, shiyongCol + j, parms['scheduplanmonth'][i].day[j].two);
                                 sheet.setValue(6 * i + shiyongRow + 3, shiyongCol + j, parms['scheduplanmonth'][i].day[j].three);
-                                // sheet.setValue(6 * i + shiyongRow + 4, zaikuCol, parms['scheduplanmonth'][i].day[0].zaiku);
                                 sheet.setValue(6 * i + shiyongRow + 4, shiyongCol+j, parms['scheduplanmonth'][i].day[j].zaiku);
+                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol-1, parms['scheduplanmonth'][i].qiChuZaiKu);
                                 sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, parms['scheduplanmonth'][i].day[j].tianshu);
+                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol-1, parms['scheduplanmonth'][i].dayNum);
                             }
                             // 条件为false进入
                             if(!parms['scheduplanmonth'][i].day[j].lock){
@@ -707,6 +711,9 @@
                         parms.RowCount=col;
                         parms.ColumnCount=row;
                     }
+                    // parms.activeSheet.getCell(8,10).formula("=SUM(R"+(formularow+1)+"C"+(parms.columnindex+parms.dataStartCol+1)+":R"+(formularow+1)+"C"+(parms.columnindex+parms.dataStartCol+parms.monthday[0]-1+1)+")");
+                    // parms.activeSheet.getCell(8,10).formula("=SUM(R"+(formularow+1)+"C"+(parms.columnindex+parms.dataStartCol+1)+":R"+(formularow+1)+"C"+(parms.columnindex+parms.dataStartCol+parms.monthday[0]-1+1)+")");
+
                     // let cell_T17 = parms.activeSheet.getCell(7,10);//保留数
                     // cell_T17.formula(`=SUM(R${6}:C${5},R${7}:C${5})`);
                     spreadResume();// 恢复绘制
@@ -721,17 +728,15 @@
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
         let {row,col,newValue} = info;
         var rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取行数据
-        var colData = sheet.getArray(0, col-1, sheet.getRowCount(), 1);//获取列数据
-        console.log(colData[0])
+        var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
         //每次添加之后往数组内进行存储
         parms.tableData.push({
             plan:rowData[0][7],//计划
             cInvCode:rowData[0][8],//存户编码
             newValue:rowData[0][col],//修改后的值
-            date:colData[0][0],//获取当前年月
+            date:colData[1][0],//获取当前年月
             day:colData[2][0],//日
         })
-        console.log(parms.tableData)
     });
     /**
      * 打开弹出层
@@ -841,7 +846,7 @@
         sheet.fromJSON(json);//清空表单数据
         sheet.reset();//重置表单
         //从新赋值到原始渲染位置
-        parms.planListRowIndex=3;
+        parms.planListRowIndex=4;
         parms.dayRow=10;
         parms.weekRow=10;
         initData(searchLevel);
@@ -1030,6 +1035,7 @@
             dataType:'json',
             success:function (res){
                 res.msg=="操作成功"?LayerMsgBox.success(res.msg):LayerMsgBox.error(res.msg,500);
+                parms.tableData.length=0;
             },error: function(error) {
                 console.log(error);
             }

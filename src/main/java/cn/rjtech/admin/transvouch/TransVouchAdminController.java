@@ -58,7 +58,7 @@ public class TransVouchAdminController extends BaseAdminController {
 		String autoid = get("autoid");
 		Kv kv = new Kv();
 		kv.set("autoid",autoid== null? "null" :autoid);
-		renderJsonData(service.getTransVouchLines(getPageNumber(), getPageSize(), kv));
+		renderJsonData(service.getTransVouchLines(kv));
 
 	}
 

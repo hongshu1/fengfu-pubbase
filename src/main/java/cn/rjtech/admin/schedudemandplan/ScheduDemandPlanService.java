@@ -1522,8 +1522,11 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		planRecord.set("iPkgQty",invInfo.getStr("iPkgQty"));
 		planRecord.set("iInnerInStockDays",invInfo.getStr("iInnerInStockDays"));
 		if (StringUtils.isNotBlank(colName)){
-			planRecord.set("colName",colName);
+			planRecord.set("colName",colName);  //自定义列名
 		}
+		planRecord.set("seq",invInfo.getInt("seq"));  //用于页面排序
+		planRecord.set("rowSpan",invInfo.getInt("rowSpan"));  //用于页面跨行条数
+		planRecord.set("boolRowSpan",invInfo.getBoolean("boolRowSpan"));  //判断页面数据在第几行时开始跨行
 		dateQtyMap = dateQtyMap != null ? dateQtyMap : new HashMap<>();
 
 		//key:yyyy-MM   value:qtySum
@@ -1861,27 +1864,36 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		}
 
 
-
+		int seq = 1;
 		//对产线逐个处理
 		for (Long key : venInvListMap.keySet()) {
 			List<String> recordList = venInvListMap.get(key);
 			for (String inv : recordList){
 				//inv信息
 				Record invInfo = invInfoMap.get(inv);
+				invInfo.set("seq",seq++);  //用于页面排序
 
 				Map<String,Record> pinvMap = pInvByInvInMap.get(inv) != null ? pInvByInvInMap.get(inv) : new HashMap<>();
+				invInfo.set("rowSpan",pinvMap.keySet().size() + 5);  //用于页面跨行条数
 				int num = 1;
 				for (String pinv : pinvMap.keySet()){
+					//判断页面数据在第几行时开始跨行
+					invInfo = num == 1 ? invInfo.set("boolRowSpan", true) : invInfo.set("boolRowSpan", false);
+
 					Map<String,BigDecimal> dateQtyApsMap = invPlanDateApsMap.get(pinv) != null ? invPlanDateApsMap.get(pinv) : invPlanDateCusMap.get(pinv);
 					//数据处理 行转列并赋值
-					scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyApsMap,"母件"+ num++ +"计划1S/2S/3S");
+					scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyApsMap,"母件"+ num++ +"["+pinv+"]计划1S/2S/3S");
 				}
+
+				//判断页面数据在第几行时开始跨行
+				invInfo = pinvMap.keySet().size() == 0 ? invInfo.set("boolRowSpan", true) : invInfo.set("boolRowSpan", false);
 
 				//key:yyyy-MM-dd   value:qty  实绩需求
 				Map<String,BigDecimal> dateQtyPPMap = invPlanDateXuQiuMap.get(inv);
 				//数据处理 行转列并赋值
 				scheduRowToColumn(dataList,scheduDateList,invInfo,dateQtyPPMap,"实绩需求");
 
+				invInfo.set("boolRowSpan",false);
 				//key:yyyy-MM-dd   value:qty  到货计划
 				Map<String,BigDecimal> dateQty1SMap = invPlanDateDaoHuoMap.get(inv);
 				//数据处理 行转列并赋值

@@ -41,7 +41,7 @@ public class PurchaseAppApi {
         // 单据号 非空、唯一
         handle.setCode(purchasem.getCpurchaseno());
         // 单据日期 非空
-        handle.setDate(JBoltDateUtil.format(purchasem.getDcreatetime(), JBoltDateUtil.YMD));
+        handle.setDate(JBoltDateUtil.format(purchasem.getCpurchasedate(), JBoltDateUtil.YMD));
         // 部门编号 可空
         handle.setDepartmentcode(purchasem.get("cenddepcode"));
         // 职员编号 可空

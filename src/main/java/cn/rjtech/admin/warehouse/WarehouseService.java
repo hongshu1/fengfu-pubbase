@@ -341,11 +341,20 @@ public class WarehouseService extends BaseService<Warehouse> {
 
     public Warehouse findByWhName(String cwhname) {
         Sql sql = selectSql()
-                .eq(Warehouse.CWHNAME, cwhname)
-                .eq(Warehouse.IORGID, getOrgId())
-                .eq(Warehouse.ISDELETED, ZERO_STR);
+            .eq(Warehouse.CWHNAME, cwhname)
+            .eq(Warehouse.IORGID, getOrgId())
+            .eq(Warehouse.ISDELETED, ZERO_STR);
 
         return findFirst(sql);
+    }
+
+    public List<Warehouse> findListByWhName(String cwhname) {
+        Sql sql = selectSql()
+            .eq(Warehouse.CWHNAME, cwhname)
+            .eq(Warehouse.IORGID, getOrgId())
+            .eq(Warehouse.ISDELETED, ZERO_STR);
+
+        return find(sql);
     }
 
     public Warehouse findByCwhcode(String cwhcode) {

@@ -58,13 +58,11 @@ public class TransVouchService extends BaseService<TransVouch> {
 
 	/**
 	 * 调拨单列表 明细
-	 * @param pageNumber
-	 * @param pageSize
 	 * @param kv
 	 * @return
 	 */
-	public Page<Record> getTransVouchLines(int pageNumber, int pageSize, Kv kv){
-		return dbTemplate("transvouch.getTransVouchLines",kv).paginate(pageNumber, pageSize);
+	public List<Record> getTransVouchLines(Kv kv){
+		return dbTemplate("transvouch.getTransVouchLines",kv).find();
 
 	}
 
@@ -218,6 +216,7 @@ public class TransVouchService extends BaseService<TransVouch> {
 			recordList.addAll(updateRecordList);
 		}
 
+		final String[] AutoIDs = {null};
 		tx(()->{
 			String headerId = null;
 			// 获取Form对应的数据
@@ -260,6 +259,7 @@ public class TransVouchService extends BaseService<TransVouch> {
 					update(transVouch);
 					headerId = transVouch.getAutoID();
 				}
+				AutoIDs[0] = transVouch.getAutoID();
 			}
 
 			// 获取待保存数据 执行保存
@@ -293,7 +293,7 @@ public class TransVouchService extends BaseService<TransVouch> {
 
 			return true;
 		});
-		return SUCCESS;
+		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
 

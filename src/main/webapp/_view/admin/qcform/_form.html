@@ -38,7 +38,7 @@
                             </div>
                         </div>
 
-                        <div class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
+                        <div class="card-body overflow-auto" style="height: 300px;">
                             #include("_table1.html")
                         </div>
 
@@ -61,7 +61,7 @@
                             </div>
                         </div>
 
-                        <div class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
+                        <div class="card-body overflow-auto" style="height: 300px;">
                             #include("_table2.html")
                         </div>
 
@@ -84,7 +84,7 @@
                             </div>
                         </div>
 
-                        <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: calc(100vh - #(jboltLayerTop+500)px);">
+                        <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: 300px;">
                             #ajaxPortal("/admin/qcform/table3?iqcformid="+(qcForm.iAutoId??''),"qcformtable_portal_" + pageId, true)
                         </div>
 
@@ -99,7 +99,7 @@
         <div class="col">
 
             <div class="form-group row">
-                <label class="col-sm-1 col-form-label">是否启用#(qcForm.isenabled??)</label>
+                <label class="col-sm-1 col-form-label">是否启用</label>
                 <div class="col-10">
                     <input hidden name="isEnabled" id="isEnabled_#(pageId)" value="#(qcForm.isenabled??'1'=='1'?true:false)">
                     <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(qcForm.isenabled??'1'=='1'?true:false)"/>

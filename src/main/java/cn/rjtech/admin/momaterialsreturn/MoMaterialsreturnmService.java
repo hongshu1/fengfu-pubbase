@@ -9,6 +9,8 @@ import com.jfinal.kit.Ret;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoMaterialsreturnm;
+import com.jfinal.plugin.activerecord.Record;
+
 /**
  * 制造工单-生产退料主表  Service
  * @ClassName: MoMaterialsreturnmService
@@ -28,11 +30,11 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 	 * 后台管理分页查询
 	 * @param pageNumber
 	 * @param pageSize
-	 * @param keywords
+	 * @param kv
 	 * @return
 	 */
-	public Page<MoMaterialsreturnm> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
+	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
+		return  dbTemplate("momaterialsreturn.paginateAdminDatas",kv).paginate(pageNumber,pageSize);
 	}
 
 	/**

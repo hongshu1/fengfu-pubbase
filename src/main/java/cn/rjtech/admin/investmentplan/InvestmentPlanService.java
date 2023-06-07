@@ -24,6 +24,7 @@ import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -861,14 +862,14 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		BigDecimal iamount1 = row.getBigDecimal(InvestmentEnum.IAMOUNT1.getField());
 		if(JBoltStringUtil.isNotBlank(cperiodprogress1) && dperioddate1 != null && iamount1 !=null){
 			InvestmentPlanItemd investmentPlanItemd = new InvestmentPlanItemd();
-			investmentPlanItemd.setIautoid(JBoltSnowflakeKit.me.nextId());
-			investmentPlanItemd.setIplanitemid(iplanitemid);
-			investmentPlanItemd.setIperiodnum(1);
-			investmentPlanItemd.setCperiodprogress(cperiodprogress1);
-			investmentPlanItemd.setDperioddate(dperioddate1);
-			investmentPlanItemd.setIamount(iamount1.multiply(Constants.RATIO));
-			investmentPlanItemd.setIcreateby(JBoltUserKit.getUserId());
-			investmentPlanItemd.setDcreatetime(now);
+			investmentPlanItemd.setIAutoId(JBoltSnowflakeKit.me.nextId());
+			investmentPlanItemd.setIPlanItemId(iplanitemid);
+			investmentPlanItemd.setIPeriodNum(1);
+			investmentPlanItemd.setCPeriodProgress(cperiodprogress1);
+			investmentPlanItemd.setDPeriodDate(dperioddate1);
+			investmentPlanItemd.setIAmount(iamount1.multiply(Constants.RATIO));
+			investmentPlanItemd.setICreateBy(JBoltUserKit.getUserId());
+			investmentPlanItemd.setDCreateTime(now);
 			investmentPlanItemdList.add(investmentPlanItemd);
 		}
 		//第二期
@@ -877,14 +878,14 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		BigDecimal iamount2 = row.getBigDecimal(InvestmentEnum.IAMOUNT2.getField());
 		if(JBoltStringUtil.isNotBlank(cperiodprogress2) && dperioddate2 != null && iamount2 !=null){
 			InvestmentPlanItemd investmentPlanItemd = new InvestmentPlanItemd();
-			investmentPlanItemd.setIautoid(JBoltSnowflakeKit.me.nextId());
-			investmentPlanItemd.setIplanitemid(iplanitemid);
-			investmentPlanItemd.setIperiodnum(2);
-			investmentPlanItemd.setCperiodprogress(cperiodprogress2);
-			investmentPlanItemd.setDperioddate(dperioddate2);
-			investmentPlanItemd.setIamount(iamount2.multiply(Constants.RATIO));
-			investmentPlanItemd.setIcreateby(JBoltUserKit.getUserId());
-			investmentPlanItemd.setDcreatetime(now);
+			investmentPlanItemd.setIAutoId(JBoltSnowflakeKit.me.nextId());
+			investmentPlanItemd.setIPlanItemId(iplanitemid);
+			investmentPlanItemd.setIPeriodNum(2);
+			investmentPlanItemd.setCPeriodProgress(cperiodprogress2);
+			investmentPlanItemd.setDPeriodDate(dperioddate2);
+			investmentPlanItemd.setIAmount(iamount2.multiply(Constants.RATIO));
+			investmentPlanItemd.setICreateBy(JBoltUserKit.getUserId());
+			investmentPlanItemd.setDCreateTime(now);
 			investmentPlanItemdList.add(investmentPlanItemd);
 		}
 		//第三期
@@ -893,14 +894,14 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		BigDecimal iamount3 = row.getBigDecimal(InvestmentEnum.IAMOUNT3.getField());
 		if(JBoltStringUtil.isNotBlank(cperiodprogress3) && dperioddate3 != null && iamount3 !=null){
 			InvestmentPlanItemd investmentPlanItemd = new InvestmentPlanItemd();
-			investmentPlanItemd.setIautoid(JBoltSnowflakeKit.me.nextId());
-			investmentPlanItemd.setIplanitemid(iplanitemid);
-			investmentPlanItemd.setIperiodnum(3);
-			investmentPlanItemd.setCperiodprogress(cperiodprogress3);
-			investmentPlanItemd.setDperioddate(dperioddate3);
-			investmentPlanItemd.setIamount(iamount3.multiply(Constants.RATIO));
-			investmentPlanItemd.setIcreateby(JBoltUserKit.getUserId());
-			investmentPlanItemd.setDcreatetime(now);
+			investmentPlanItemd.setIAutoId(JBoltSnowflakeKit.me.nextId());
+			investmentPlanItemd.setIPlanItemId(iplanitemid);
+			investmentPlanItemd.setIPeriodNum(3);
+			investmentPlanItemd.setCPeriodProgress(cperiodprogress3);
+			investmentPlanItemd.setDPeriodDate(dperioddate3);
+			investmentPlanItemd.setIAmount(iamount3.multiply(Constants.RATIO));
+			investmentPlanItemd.setICreateBy(JBoltUserKit.getUserId());
+			investmentPlanItemd.setDCreateTime(now);
 			investmentPlanItemdList.add(investmentPlanItemd);
 		}
 		//第四期
@@ -909,14 +910,14 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		BigDecimal iamount4 = row.getBigDecimal(InvestmentEnum.IAMOUNT4.getField());
 		if(JBoltStringUtil.isNotBlank(cperiodprogress4) && dperioddate4 != null && iamount4 !=null){
 			InvestmentPlanItemd investmentPlanItemd = new InvestmentPlanItemd();
-			investmentPlanItemd.setIautoid(JBoltSnowflakeKit.me.nextId());
-			investmentPlanItemd.setIplanitemid(iplanitemid);
-			investmentPlanItemd.setIperiodnum(4);
-			investmentPlanItemd.setCperiodprogress(cperiodprogress4);
-			investmentPlanItemd.setDperioddate(dperioddate4);
-			investmentPlanItemd.setIamount(iamount4.multiply(Constants.RATIO));
-			investmentPlanItemd.setIcreateby(JBoltUserKit.getUserId());
-			investmentPlanItemd.setDcreatetime(now);
+			investmentPlanItemd.setIAutoId(JBoltSnowflakeKit.me.nextId());
+			investmentPlanItemd.setIPlanItemId(iplanitemid);
+			investmentPlanItemd.setIPeriodNum(4);
+			investmentPlanItemd.setCPeriodProgress(cperiodprogress4);
+			investmentPlanItemd.setDPeriodDate(dperioddate4);
+			investmentPlanItemd.setIAmount(iamount4.multiply(Constants.RATIO));
+			investmentPlanItemd.setICreateBy(JBoltUserKit.getUserId());
+			investmentPlanItemd.setDCreateTime(now);
 			investmentPlanItemdList.add(investmentPlanItemd);
 		}
 		//第五期
@@ -925,14 +926,14 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		BigDecimal iamount5 = row.getBigDecimal(InvestmentEnum.IAMOUNT5.getField());
 		if(JBoltStringUtil.isNotBlank(cperiodprogress5) && dperioddate5 != null && iamount5 !=null){
 			InvestmentPlanItemd investmentPlanItemd = new InvestmentPlanItemd();
-			investmentPlanItemd.setIautoid(JBoltSnowflakeKit.me.nextId());
-			investmentPlanItemd.setIplanitemid(iplanitemid);
-			investmentPlanItemd.setIperiodnum(5);
-			investmentPlanItemd.setCperiodprogress(cperiodprogress5);
-			investmentPlanItemd.setDperioddate(dperioddate5);
-			investmentPlanItemd.setIamount(iamount5.multiply(Constants.RATIO));
-			investmentPlanItemd.setIcreateby(JBoltUserKit.getUserId());
-			investmentPlanItemd.setDcreatetime(now);
+			investmentPlanItemd.setIAutoId(JBoltSnowflakeKit.me.nextId());
+			investmentPlanItemd.setIPlanItemId(iplanitemid);
+			investmentPlanItemd.setIPeriodNum(5);
+			investmentPlanItemd.setCPeriodProgress(cperiodprogress5);
+			investmentPlanItemd.setDPeriodDate(dperioddate5);
+			investmentPlanItemd.setIAmount(iamount5.multiply(Constants.RATIO));
+			investmentPlanItemd.setICreateBy(JBoltUserKit.getUserId());
+			investmentPlanItemd.setDCreateTime(now);
 			investmentPlanItemdList.add(investmentPlanItemd);
 		}
 		//第六期
@@ -941,14 +942,14 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		BigDecimal iamount6 = row.getBigDecimal(InvestmentEnum.IAMOUNT6.getField());
 		if(JBoltStringUtil.isNotBlank(cperiodprogress6) && dperioddate6 != null && iamount6 !=null){
 			InvestmentPlanItemd investmentPlanItemd = new InvestmentPlanItemd();
-			investmentPlanItemd.setIautoid(JBoltSnowflakeKit.me.nextId());
-			investmentPlanItemd.setIplanitemid(iplanitemid);
-			investmentPlanItemd.setIperiodnum(6);
-			investmentPlanItemd.setCperiodprogress(cperiodprogress6);
-			investmentPlanItemd.setDperioddate(dperioddate6);
-			investmentPlanItemd.setIamount(iamount6.multiply(Constants.RATIO));
-			investmentPlanItemd.setIcreateby(JBoltUserKit.getUserId());
-			investmentPlanItemd.setDcreatetime(now);
+			investmentPlanItemd.setIAutoId(JBoltSnowflakeKit.me.nextId());
+			investmentPlanItemd.setIPlanItemId(iplanitemid);
+			investmentPlanItemd.setIPeriodNum(6);
+			investmentPlanItemd.setCPeriodProgress(cperiodprogress6);
+			investmentPlanItemd.setDPeriodDate(dperioddate6);
+			investmentPlanItemd.setIAmount(iamount6.multiply(Constants.RATIO));
+			investmentPlanItemd.setICreateBy(JBoltUserKit.getUserId());
+			investmentPlanItemd.setDCreateTime(now);
 			investmentPlanItemdList.add(investmentPlanItemd);
 		}
 	}
@@ -959,7 +960,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		if(CollUtil.isEmpty(investmentPlanItemdList)) return BigDecimal.ZERO;
 		BigDecimal rsBigDecial = BigDecimal.ZERO;
 		for (InvestmentPlanItemd investmentPlanItemd : investmentPlanItemdList) {
-			BigDecimal iamount = investmentPlanItemd.getIamount();
+			BigDecimal iamount = investmentPlanItemd.getIAmount();
 			if(iamount == null) continue;
 			rsBigDecial = rsBigDecial.add(iamount);
 		}
@@ -972,8 +973,8 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		if(CollUtil.isEmpty(investmentPlanItemdList)) return BigDecimal.ZERO;
 		BigDecimal rsBigDecial = BigDecimal.ZERO;
 		for (InvestmentPlanItemd investmentPlanItemd : investmentPlanItemdList) {
-			Date dPeriodDate = investmentPlanItemd.getDperioddate();
-			BigDecimal iamount = investmentPlanItemd.getIamount();
+			Date dPeriodDate = investmentPlanItemd.getDPeriodDate();
+			BigDecimal iamount = investmentPlanItemd.getIAmount();
 			if(dPeriodDate == null || iamount == null) continue;
 			if(iBudgetYear == JBoltDateUtil.getCalendarByDate(dPeriodDate).get(Calendar.YEAR))
 				rsBigDecial = rsBigDecial.add(iamount);
@@ -1240,7 +1241,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 	public List<Record> findUnfinishInvestmentPlanItemDatas(Long iplanid) {
 		Kv para = Kv.by("iplanid",iplanid).set("iservicetype",ServiceTypeEnum.INVESTMENT_PLAN.getValue())
 				.set("istatus",FinishStatusEnum.UNFINISHED.getValue());
-		List<Record> list = dbTemplate("investmentplan.findUnfinishInvestmentPlanItemDatas",para).find();
+		List<Record> list = dbTemplate(u8SourceConfigName(),"investmentplan.findUnfinishInvestmentPlanItemDatas",para).find();
 		for (Record record : list) {
             Constants.fillPlanItem(record);
 		}
@@ -1296,6 +1297,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
      * 投资预实差异管理表数据查询
      * */
 	public List<Record> findBudgetActualDifferenceDatas(Kv para) {
+		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
 		List<Record> list = dbTemplate("investmentplan.findBudgetActualDifferenceDatas",para).find();
 		for (Record record : list) {
 			Constants.fillPlanItem(record);
@@ -1306,6 +1308,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
      * 投资汇总表数据查询
      * */
 	public List<Record> findInvestmentPlanGroupSummaryDatas(Kv para) {
+		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
 		List<Record> list = dbTemplate("investmentplan.findInvestmentPlanGroupSummaryDatas",para).find();
 		String cgroupkey = para.getStr("cgroupkey");
 		ValidationUtils.notBlank(cgroupkey, "请选择字段筛选!");

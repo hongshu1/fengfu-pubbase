@@ -223,6 +223,9 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 	}
 
 	public Page<Record> getMoMaterialscanusedlogList(int pageNumber, int pageSize, Kv kv){
+		if(notOk(kv.getLong("imodocid"))){
+			return  new Page<Record>();
+		}
 		return dbTemplate("momaterialscanusedlog.getMoMaterialscanusedlogList",kv).paginate(pageNumber,pageSize);
 	}
 	/**

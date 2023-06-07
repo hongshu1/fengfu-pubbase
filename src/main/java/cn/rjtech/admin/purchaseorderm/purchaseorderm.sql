@@ -109,6 +109,30 @@ WHERE
 	and M.iautoid=#para(iautoid)
 #end
 
+#sql("findBycOrderNo2")
+		SELECT
+	ROW_NUMBER() OVER (ORDER BY inv.cInvCode) AS SequenceNumber,
+	b.iPurchaseOrderdQtyId,
+	inv.cInvCode,
+	inv.cInvCode1,
+	inv.cInvName1,
+	a.dPlanDate,
+		CONCAT(a.cBarcode,'-',a.cVersion)cBarcode,
+		a.iQty,
+		CONCAT(a.cSourceBarcode,'-',a.cSourceVersion)cBarcodeVersion,
+		iSourceQty,
+		iPurchaseOrderdBatchId
+FROM
+	PS_PurchaseOrderDBatchVersion a
+	inner JOIN PS_PurchaseOrderDBatch b on b.iAutoId = a.iPurchaseOrderdBatchId
+	INNER JOIN Bd_Inventory inv ON inv.iAutoId = a.iInventoryId
+WHERE
+	a.cVersion != 00
+	and a.iPurchaseOrderMid =#para(iautoid)
+	order by a.dPlanDate,inv.cInvCode,a.cVersion asc
+#end
+
+
 #sql("findByBarcodeOnOrder")
  SELECT
 	CONCAT(a.cBarcode,'-',cVersion)cBarcode,
@@ -130,4 +154,48 @@ FROM
 WHERE
 	cVersion=00
 	and M.iautoid=#para(iautoid)
+#end
+
+#sql("findByBarcodeOnOrder2")
+ SELECT
+   t.*
+FROM
+    (
+							SELECT
+						b.iPurchaseOrderdQtyId,
+						inv.cInvCode,
+						inv.cInvCode1,
+						inv.cInvName1,
+						cInvStd,
+						a.dPlanDate,
+							CONCAT(a.cBarcode,'-',a.cVersion)cBarcode,
+							a.iQty,
+							a.cVersion,
+							CONCAT(a.cSourceBarcode,'-',a.cSourceVersion)cBarcodeVersion,
+							iSourceQty,
+							 MAX(a.cVersion) OVER (PARTITION BY b.iPurchaseOrderdQtyId) max_version,
+							 V.cVenName,
+							 orderD.cAddress,
+							 M.cOrderNo,
+							 M.dOrderDate
+
+					FROM
+						PS_PurchaseOrderDBatchVersion a
+						inner JOIN PS_PurchaseOrderDBatch b on b.iAutoId = a.iPurchaseOrderdBatchId
+						INNER JOIN Bd_Inventory inv ON inv.iAutoId = a.iInventoryId
+
+						INNER JOIN PS_PurchaseOrderM M ON M.iAutoId = a.iPurchaseOrderMid
+						INNER JOIN PS_PurchaseOrderD orderD on orderD.iPurchaseOrderMid=M.iAutoId
+						INNER JOIN Bd_Vendor V on V.iAutoId = M.iVendorId
+					WHERE
+						a.iPurchaseOrderMid =#para(iautoid)
+						and a.cVersion!=00
+    ) t
+WHERE
+    t.cVersion = t.max_version
+ORDER BY
+    t.dPlanDate,
+    t.cInvCode,
+    t.cVersion ASC
+
 #end

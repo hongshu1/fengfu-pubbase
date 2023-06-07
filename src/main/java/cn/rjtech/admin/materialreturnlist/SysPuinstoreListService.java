@@ -195,7 +195,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	}
 
 
-	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, String param, String revokeVal) {
+	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, Integer param, String revokeVal) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
@@ -238,6 +238,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		if (jBoltTable.updateIsNotBlank()) {
 			recordList.addAll(updateRecordList);
 		}
+		final String[] AutoIDs = {null};
 
 		tx(()->{
 			String headerId = null;
@@ -269,7 +270,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				if (puinstore.getAutoID() == null && "save".equals(revokeVal)) {
 //					保存
 //					订单状态：1=已保存，2=待审核，3=已审核
-					puinstore.setState(param);
+					puinstore.setIAuditStatus(param);
 					puinstore.setCreateDate(nowDate);
 					puinstore.setOrganizeCode(OrgCode);
 					puinstore.setCreatePerson(userName);
@@ -283,12 +284,13 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 						puinstore.setAuditDate(nowDate);
 						puinstore.setAuditPerson(userName);
 					}
-					puinstore.setState(param);
+					puinstore.setIAuditStatus(param);
 					puinstore.setModifyDate(nowDate);
 					puinstore.setModifyPerson(userName);
 					update(puinstore);
 					headerId = puinstore.getAutoID();
 				}
+				AutoIDs[0] = puinstore.getAutoID();
 			}
 
 			// 获取待保存数据 执行保存
@@ -376,7 +378,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 			return true;
 		});
-		return SUCCESS;
+		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
 
@@ -392,12 +394,12 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		List<SysPuinstore> listByIds = getListByIds(iAutoId);
 		if (listByIds.size() > 0) {
 			for (SysPuinstore puinstore : listByIds) {
-				Integer state = Integer.valueOf(puinstore.getState());
+				Integer state = Integer.valueOf(puinstore.getIAuditStatus());
 				if (state != 2) {
 					return warn("订单："+puinstore.getBillNo()+"状态不支持审核操作！");
 				}
 				//订单状态：3. 已审核
-				puinstore.setState("3");
+				puinstore.setIAuditStatus(3);
 				puinstore.setAuditDate(nowDate);
 				puinstore.setAuditPerson(userName);
 				success= puinstore.update();
@@ -417,14 +419,14 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	public Ret NoApprove(String ids) {
 		//TODO数据同步暂未开发 现只修改状态
 		for (SysPuinstore puinstore :  getListByIds(ids)) {
-			Integer state = Integer.valueOf(puinstore.getState());
+			Integer state = Integer.valueOf(puinstore.getIAuditStatus());
 //			订单状态： 3. 已审批
 			if (state != 3) {
 				return warn("订单："+puinstore.getBillNo()+"状态不支持反审批操作！");
 			}
 
 			//订单状态： 2. 待审批
-			puinstore.setState("2");
+			puinstore.setIAuditStatus(2);
 			puinstore.update();
 		}
 		return SUCCESS;
@@ -443,7 +445,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		}
 		SysPuinstore puinstore = findById(iAutoId);
 		//订单状态：2. 待审批
-		puinstore.setState("1");
+		puinstore.setIAuditStatus(1);
 		puinstore.setAuditDate(null);
 		puinstore.setAuditPerson(null);
 		boolean result = puinstore.update();

@@ -3,6 +3,7 @@ package cn.rjtech.admin.scanlog;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.google.gson.Gson;
 import com.jfinal.plugin.activerecord.Page;
 
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -131,7 +132,7 @@ public class ScanLogService extends BaseService<ScanLog> {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
-	public void saveScanLogModel(ScanLog log, Date now, String json, Barcodedetail detail){
+	public void saveScanLogModel(ScanLog log, Date now, Barcodedetail detail){
 		log.setOrganizeCode(getOrgCode());
 		//log.setLogNo();
 		log.setProcessType("InitStock");
@@ -148,7 +149,7 @@ public class ScanLogService extends BaseService<ScanLog> {
 		//log.setIPosCode();
 		//log.setOPosCode();
 		//log.setPBarcode();
-		log.setBarcode(json);
+		log.setBarcode(new Gson().toJson(detail));
 		log.setInvCode(detail.getInvcode());
 		//log.setCurQty();
 		log.setQty(detail.getQty());

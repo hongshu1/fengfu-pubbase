@@ -1,11 +1,11 @@
 #sql("paginateAdminDatas")
 SELECT
         AuditState =
-        CASE WHEN t11.State=1 THEN '已保存'
-             WHEN t11.State=2 THEN '待审核'
-             WHEN t11.State=3 THEN '已审核' END,
+        CASE WHEN t11.iAuditStatus=1 THEN '已保存'
+             WHEN t11.iAuditStatus=2 THEN '待审核'
+             WHEN t11.iAuditStatus=3 THEN '已审核' END,
 
-        t11.State,
+        t11.iAuditStatus,
         t2.cVenName,
         t3.cDepName,
         t4.cPTName,
@@ -43,7 +43,7 @@ WHERE 1 = 1
   AND  t11.SourceBillNo like '%#(sourcebillno)%'
     #end
     #if(iorderstatus)
-  AND t11.State = #para(iorderstatus)
+  AND t11.iAuditStatus = #para(iorderstatus)
     #end
     #if(OrgCode)
   AND t11.OrganizeCode = #para(OrgCode)
@@ -56,7 +56,7 @@ WHERE 1 = 1
     #end
 GROUP BY
     t11.AutoID,
-    t11.State,
+    t11.iAuditStatus,
     t2.cVenName,
     t3.cDepName,
     t4.cPTName,
@@ -76,6 +76,7 @@ order by t11.ModifyDate desc
 
     #sql("getmaterialReturnLists")
 SELECT
+    t2.AutoID,
     t4.iQty,
     t2.Qty AS qtys,
     t2.Memo,

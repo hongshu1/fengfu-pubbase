@@ -81,7 +81,7 @@ public class CusFieldsMappingMAdminController extends BaseAdminController {
      * 更新
      */
     public void update() {
-        renderJson(service.update(getModel(CusFieldsMappingM.class, "cusFieldsMappingM")));
+        renderJson(service.update(getModel(CusFieldsMappingM.class, "cusFieldsMappingM"), get("iformids")));
     }
 
     /**

@@ -43,7 +43,7 @@
                 <div class="col-sm-2 col-form-label">
                     <select class="form-control"
                             readonly="readonly"
-                            name="whcode"
+                            name="puinstore.whcode"
                             data-autoload
                             data-url="admin/SysEnumeration/wareHouse"
                             data-select-type="select2"
@@ -188,8 +188,18 @@
             jboltTableSubmitMulti(tables, "/admin/materialreturnlist/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
                 if (res.state == "ok") {
                     LayerMsgBox.success(res.msg, 600, function () {
-                        parent.refreshPjaxContainer();
-                        parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        debugger;
+                        let id = res.AutoID;
+                        if (value == "save"){
+                            parent.refreshJBoltTable();
+                            // parent.refreshPjaxContainer();
+                            // parent.refreshCurrentTabContent();//刷新当前页面
+                            self.location.href = "/admin/materialreturnlist/edit/"+id+"-_jb_rqtype_dialog"; //新增的刷新
+                        }else {
+                            parent.refreshCurrentTabContent();//刷新当前页面
+                            // refreshPjaxContainer();
+                            parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                        }
                     })
                 } else {
                     LayerMsgBox.error(res.msg);
