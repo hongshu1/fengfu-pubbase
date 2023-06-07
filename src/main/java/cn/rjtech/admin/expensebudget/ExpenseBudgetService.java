@@ -947,7 +947,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 		Kv para = Kv.by("iexpenseid",iexpenseid).set("iservicetype",ServiceTypeEnum.EXPENSE_BUDGET.getValue())
 				.set("istatus",FinishStatusEnum.UNFINISHED.getValue()).set("iorgid",getOrgId());
 		constructDynamicsDbColumn(findById(iexpenseid),para);
-		List<Record> list = dbTemplate("expensebudget.findUnfinishExpenseBudgetItemDatas",para).find();
+		List<Record> list = dbTemplate(u8SourceConfigName(),"expensebudget.findUnfinishExpenseBudgetItemDatas",para).find();
 		fillExpenseBudgetItem(list);
 		return list;
 	}
