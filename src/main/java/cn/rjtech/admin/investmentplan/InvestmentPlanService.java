@@ -1308,6 +1308,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
      * 投资汇总表数据查询
      * */
 	public List<Record> findInvestmentPlanGroupSummaryDatas(Kv para) {
+		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
 		List<Record> list = dbTemplate("investmentplan.findInvestmentPlanGroupSummaryDatas",para).find();
 		String cgroupkey = para.getStr("cgroupkey");
 		ValidationUtils.notBlank(cgroupkey, "请选择字段筛选!");

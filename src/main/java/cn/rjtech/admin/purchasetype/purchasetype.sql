@@ -15,4 +15,5 @@ WHERE p.IsDeleted = '0'
 #if(cPTName)
 and p.cPTName like CONCAT('%', #para(cPTName), '%')
 #end
+Order By p.cPTCode
 #end
