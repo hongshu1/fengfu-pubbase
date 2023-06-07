@@ -244,15 +244,15 @@ public abstract class BaseSysMaterialsprepare<M extends BaseSysMaterialsprepare<
 		return getStr("SourceBillNo");
 	}
 
-	public M setSourceBillID(java.lang.String SourceBillID) {
+	public M setSourceBillID(java.lang.Long SourceBillID) {
 		set("SourceBillID", SourceBillID);
 		return (M)this;
 	}
 
-	@JBoltField(name="sourcebillid" ,columnName="SourceBillID",type="String", remark="SOURCEBILLID", required=false, maxLength=50, fixed=0, order=13)
-	@JSONField(name = "sourcebillid")
-	public java.lang.String getSourceBillID() {
-		return getStr("SourceBillID");
+	@JBoltField(name="sourcebillid" ,columnName="SourceBillID",type="Long", remark="SOURCEBILLID", required=false, maxLength=19, fixed=0, order=13)
+	@JSONField(name = "sourcebillid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getSourceBillID() {
+		return getLong("SourceBillID");
 	}
 
 	/**
