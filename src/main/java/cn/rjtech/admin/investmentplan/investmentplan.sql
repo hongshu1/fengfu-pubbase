@@ -298,7 +298,7 @@ EXEC	[dbo].[P_InvestmentPlanBudgetActualDifference]
 EXEC	[dbo].[P_InvestmentPlanGroupSummary]
 		@cGroupKey = #para(cgroupkey),
 		@iBudgetYear = #(ibudgetyear),
-		@u8DbName = #(AppConfig.getU8DbName())
+		@u8DbName = #para(u8dbname)
 #end
 
 
