@@ -1232,6 +1232,13 @@ public class InventoryService extends BaseService<Inventory> {
         ValidationUtils.notNull(page, JBoltMsg.DATA_NOT_EXIST);
         return page;
     }
+
+	/**
+	 * 获取存货信息
+	 */
+	public Inventory findByiInventoryCode(String cinvcode) {
+		return findFirst(selectSql().eq(Inventory.CINVCODE, cinvcode).eq(Inventory.IORGID, getOrgId()).eq(Inventory.ISDELETED, ZERO_STR).first());
+	}
     
 }
 
