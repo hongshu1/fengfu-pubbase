@@ -141,5 +141,5 @@ and t1.VenCode = #para(vencode)
 and t1.WhCode = #para(whcode)
 and t1.PosCode = #para(poscode)
 and t1.OrganizeCode = #para(organizecode)
-and t1.LockSource = #para(locksource)
+and t1.LockType = #para(locksource)
 #end

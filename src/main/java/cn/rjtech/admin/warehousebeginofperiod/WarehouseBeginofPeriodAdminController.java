@@ -174,7 +174,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
             return;
         }
         renderJson(service.importStockExcel(file.getFile()));
-        renderJson("导入成功");
     }
 
     /*
@@ -188,7 +187,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
             return;
         }
         renderJson(service.importBarcodeExcel(file.getFile()));
-        renderJson("导入成功");
     }
 
     /**
