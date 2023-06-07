@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cn.jbolt</groupId>
 	<artifactId>jbolt_pro</artifactId>
-	<version>4.1.2</version>
+	<version>5.0.0</version>
 	<packaging>jar</packaging>
 	<name>jbolt_pro</name>
 	<description>JBolt-基于JFinal的极速开发框架</description>
@@ -59,7 +59,7 @@
 		<ttl.version>2.14.2</ttl.version>
 		<toolgood_words.version>3.1.0.0</toolgood_words.version>
 		<codehighlight.version>1.0.3</codehighlight.version>
-		<jboltcore.version>4.1.2</jboltcore.version>
+		<jboltcore.version>5.0.0</jboltcore.version>
 
         <kotlin.version>1.8.21</kotlin.version>
         <commons-io.version>2.12.0</commons-io.version>
