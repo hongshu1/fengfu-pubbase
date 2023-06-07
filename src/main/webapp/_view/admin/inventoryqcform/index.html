@@ -50,15 +50,25 @@
 	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/inventoryqcform/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
 </div>
-<!--
-<div class="float-right" role="group" aria-label="btn-group">
-<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" tooltip data-title="导入Excel数据" data-url="admin/inventoryqcform/initImportExcel" data-btn="close" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>
-	<div class="btn-group btn-group-sm">
-		<button tooltip data-title="导出Excel(查询结果)" data-form="InventoryQcForm_form_#(pageId)" class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="admin/inventoryqcform/exportExcelByForm"><i class="fa fa-download"></i></button>
-		<button tooltip data-title="导出Excel(选中行数据)" data-usecheckedids="true" class="btn btn-outline-success btn-sm" data-downloadbtn data-url="admin/inventoryqcform/exportExcelByCheckedIds"><i class="fa fa-download"></i></button>
+	<div class="btn-group dropdown">
+		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+				data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+		</button>
+		<div class="dropdown-menu" aria-labelledby="importMenuButton">
+			<a  href="assets/exceltpl/inventoryqcform.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+			<div class="j_upload_file_box"
+				 data-name="file"
+				 data-btn-class="btn dropdown-item"
+				 data-placeholder="上传导入"
+				 data-confirm="确认导入数据？"
+				 data-accept="excel"
+				 data-maxsize="20480"
+				 data-handler="uploadFile"
+				 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+				 data-url="/admin/inventoryqcform/importExcel">
+			</div>
+		</div>
 	</div>
-</div>
--->
 
 </div>
 <table class="jbolt_table jbolt_main_table  table-center "

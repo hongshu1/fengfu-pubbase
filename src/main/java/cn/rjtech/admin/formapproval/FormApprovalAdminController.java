@@ -139,5 +139,77 @@ public class FormApprovalAdminController extends BaseAdminController {
 
         renderJson(service.approve(formAutoId, formSn, status));
     }
-    
+
+    /**
+     * 拒审
+     *
+     * @param formAutoId 单据ID
+     * @param formSn     表单编码
+     * @param status     审批状态
+     */
+    public void rejectApprove(@Para(value = "formAutoId") Long formAutoId,
+                        @Para(value = "formSn") String formSn,
+                        @Para(value = "status") Integer status) {
+        ValidationUtils.validateId(formAutoId, "单据ID");
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        ValidationUtils.validateIntGt0(status, "审批状态");
+
+        renderJson(service.rejectApprove(formAutoId, formSn, status));
+    }
+
+    /**
+     * 反审批
+     *
+     * @param formAutoId 单据ID
+     * @param formSn     表单编码
+     * @param status     审批状态
+     */
+    public void reverseApprove(@Para(value = "formAutoId") Long formAutoId,
+                        @Para(value = "formSn") String formSn,
+                        @Para(value = "status") Integer status) {
+        ValidationUtils.validateId(formAutoId, "单据ID");
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        ValidationUtils.validateIntGt0(status, "审批状态");
+
+        renderJson(service.reverseApprove(formAutoId, formSn, status));
+    }
+
+    /**
+     * 批量审批
+     * @param ids
+     * @param formSn
+     * @param status
+     */
+    public void batchApprove(@Para(value = "ids") String ids,
+                             @Para(value = "formSn") String formSn,
+                             @Para(value = "status") Integer status){
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        renderJson(service.batchApprove(ids, formSn, status));
+    }
+
+    /**
+     * 批量拒审
+     * @param ids
+     * @param formSn
+     * @param status
+     */
+    public void batchRejectApprove(@Para(value = "ids") String ids,
+                             @Para(value = "formSn") String formSn,
+                             @Para(value = "status") Integer status){
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        renderJson(service.batchRejectApprove(ids, formSn, status));
+    }
+
+    /**
+     * 批量反审批
+     * @param ids
+     * @param formSn
+     * @param status
+     */
+    public void batchReverseApprove(@Para(value = "ids") String ids,
+                             @Para(value = "formSn") String formSn,
+                             @Para(value = "status") Integer status){
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        renderJson(service.batchReverseApprove(ids, formSn, status));
+    }
 }

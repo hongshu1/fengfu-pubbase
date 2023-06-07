@@ -36,10 +36,11 @@ select iAutoId from Bd_FormApprovalFlowM where iApprovalDid = '#(approvalDId)'
 #sql("lineDatas")
 select t1.iAutoId, t1.iSeq, t.* from Bd_FormApprovalD_User t1
 join (
-select t1.iAutoId as ipersonid, t1.cPsn_Num as cpsncode, t1.cPsn_Name as cpsnname, t2.name as cdeptname, t1.iUserId as
+select t1.iAutoId as ipersonid, t1.cPsn_Num as cpsncode, t1.cPsn_Name as cpsnname, t2.cDepName as cdeptname, t1.iUserId as
 iuserid, t3.username
 from Bd_Person t1
-left join #(getBaseDbName()).dbo.jb_dept t2 on t2.sn = t1.cDept_num
+###left join #(getBaseDbName()).dbo.jb_dept t2 on t2.sn = t1.cDept_num
+left join Bd_Department t2 on t2.cDepCode = t1.cDept_num
 left join #(getBaseDbName()).dbo.jb_user t3 on t3.id = t1.iUserId
 where t1.isDeleted = '0' and t1.iUserId is not null
 ) t on t1.iPersonId = t.ipersonid
@@ -55,4 +56,19 @@ sn as rolesn
 from #(getBaseDbName()).dbo.jb_role
 ) t on t1.iRoleId = t.iroleid
 where t1.iFormApprovalDid = '#(mid)'
+#end
+
+#sql("chooseUsers")
+select t1.id as iuserid, t1.sex, t1.name, t1.username, t1.enable from #(getBaseDbName()).dbo.jb_user t1 WHERE roles LIKE
+CONCAT('%', #para(roleId), '%')
+and not exists(select 1 from Bd_FormApprovalD_RoleUsers t2 where t2.iFormApprovaldRoleId = #(autoId) and t1.id = t2.iUserId)
+#if(itemHidden)
+and t1.id not in (#(itemHidden))
+#end
+#end
+
+#sql("roleUsers")
+select t1.iAutoId, t1.iUserId, t3.name,t3.sex, t3.username, t3.enable from Bd_FormApprovalD_RoleUsers t1
+left join #(getBaseDbName()).dbo.jb_user t3 on t3.id = t1.iUserId
+where t1.iFormApprovaldRoleId = '#(id)'
 #end

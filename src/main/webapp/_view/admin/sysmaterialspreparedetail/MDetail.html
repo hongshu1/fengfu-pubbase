@@ -1,0 +1,119 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col-sm-auto">
+        <form class="form-inline" id="SysMaterialsprepare_form_#(pageId)">
+          <input type="text" data-date class="form-control ml-2" placeholder="开始日期"
+                 maxlength="20"
+                 name="startTime" value=""/>
+          <span>至</span>
+          <input type="text" data-date class="form-control ml-2" placeholder="截止日期"
+                 maxlength="20"
+                 name="endTime" value=""/>
+          <select class="form-control"
+                  name="cworkcode"
+                  data-autoload
+                  data-url="admin/sysMaterialspreparedetail/cworkname"
+                  data-select-type="select1"
+                  data-text="=产线名称="
+                  data-value=""
+                  data-value-attr="cworkcode"
+                  data-text-attr="cworkname"
+                  data-select="#(cWorkName??)"
+          ></select>
+          <select class="form-control"
+                  name="cworkshiftcode"
+                  data-autoload
+                  data-url="admin/sysMaterialspreparedetail/cworkshiftcode"
+                  data-select-type="select1"
+                  data-text="=班次名称="
+                  data-value=""
+                  data-value-attr="cworkshiftcode"
+                  data-text-attr="cworkshiftname"
+                  data-select="#(cWorkShiftName??)"
+          ></select>
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索
+          </button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- 定义JBoltTable使用的数据渲染模板 -->
+    <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.autoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a class="text-info mr-1"  href=""  data-fs="true" data-handler="refreshJBoltTable" onclick="getCheckedStrip(this)">选择</a>
+</td>
+<td>${data.状态}</td>
+<td>${data.billno}</td>
+<td>${data.cmodocno}</td>
+<td>${data.cdepname}</td>
+<td>${data.cworkshiftname}</td>
+<td>${data.dplandate}</td>
+<td>${data.invcode}</td>
+<td>${data.cinvcode1}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cuomname}</td>
+<td>${data.iqty}</td>
+</tr>
+{@/each}
+</textarea>
+    <div class="jbolt_table_toolbar" id="MoPickItemM_toolbar_#(pageId)">
+      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+
+      </div>
+    </div>
+    <table class="jbolt_table jbolt_main_table  table-center "
+           data-jbolttable data-width="fill"
+           data-height="fill"
+           data-ajax="true"
+           data-conditions-form="SysMaterialsprepare_form_#(pageId)"
+           data-url="admin/sysMaterialspreparedetail/getMaterialsdetials1"
+           data-rowtpl="MoPickItemM_tpl_#(pageId)"
+           data-copy-to-excel="false"
+           data-page="MoPickItemM_page"
+           data-column-resize="true"
+           data-toolbar="MoPickItemM_toolbar_#(pageId)"
+    >
+      <thead class="fw-normal">
+      <tr>
+        <th data-width="60" data-column="">序号</th>
+        <th data-width="150" data-column="">操作</th>
+        <th data-width="150" data-column="">状态</th>
+        <th data-width="150" data-column="">备料单号</th>
+        <th data-width="150" data-column="">工单号</th>
+        <th data-width="150" data-column="">生产部门</th>
+        <th data-width="150" data-column="">生产班次</th>
+        <th data-width="150" data-column="">计划日期</th>
+        <th data-width="150" data-column="">存货编码</th>
+        <th data-min-width="160" data-column="">客户部番</th>
+        <th data-width="150" data-column="">部品名称</th>
+        <th data-width="150" data-column="">主计量单位</th>
+        <th data-width="150" data-column="">计划数量</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+#end
+#define js()
+<script type="text/javascript">
+  hideParentLayerDialogBtn(0);
+  hideParentLayerDialogBtn(1);
+
+  function getCheckedStrip(val){
+    var value = $(val).parent().parent().find("td");
+    parent.$("#billno").val(value.eq(3).text());
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+  }
+</script>
+#end

@@ -1,0 +1,112 @@
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-12">
+                <form onsubmit="return false;" class="form-inline" id="chooseDataForm"  method="post">
+                    <input type="hidden" name="autoId" value="#(autoId??)"/>
+                    <input type="hidden" name="roleId" value="#(roleId??)"/>
+                    <input type="hidden" name="itemHidden" value="#(itemHidden??)"/>
+                    <!--<input type="text" autocomplete="off"  class="form-control"
+                           placeholder="表单编码/名称"
+                           name="keywords" value="" />
+                    <input type="hidden" name="itemHidden" value="#(itemHidden??)"/>
+                    <button type="submit" class="btn btn-light" ><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-light"><i class="fa fa-reset"></i> 重置</button>-->
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable -->
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="jboltTable_demotpl">
+            {@each datas as data,index}
+            <tr data-id="${data.iUserId}">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.username}</td>
+                <td>${data.name}</td>
+                <td>{@if data.enable}<span class="badge badge-success">启用</span>{@else}<span class="badge badge-light">禁用</span>{@/if}</td>
+            </tr>
+            {@/each}
+        </script>
+        <table class="thead_font_normal"
+               id="chooseDataTable"
+               data-jbolttable
+               data-column-resize="true"
+               data-ajax="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="chooseDataForm"
+               data-page="jboltTablePage_ajax"
+               data-pagesize="20"
+               data-url="/admin/formapprovald/chooseUsers"
+               data-rowtpl="jboltTable_demotpl"
+               data-row-dblclick-active="true"
+               data-row-dblclick-handler="dbClickCheckData"
+        >
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-min-width="100" data-column="username">用户名</th>
+                <th data-min-width="200" data-column="name">姓名</th>
+                <th data-width="100" data-column="enable">是否启用</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script>
+
+    //点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
+    function chooseAndInsert(){
+        var datas=getJboltTableCheckedDatas("chooseDataTable");
+        console.log('datas===',datas);
+
+        if(datas){
+            // LayerMsgBox.confirm("确认选择此数据?",function(){
+            var action=parent.DialogUtil.getCurrentTriggerEle();
+            if(isOk(action)){
+                //var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,insertType,false,false,true);
+                var success=parent.jboltTableInsertRowsByDialogChooser(action,datas);
+                if(success){
+                    parent.layer.closeAll();
+                    parent.tableDataSuccess();
+                }
+            }
+            // });
+        }
+    }
+
+    /**
+     * 选中按钮
+     */
+    $(function(){
+        hideParentLayerDialogBtn(0);
+        addParentLayerDialogBtn("选中","lay_primary text-white",function(){
+            chooseAndInsert();
+        });
+
+    });
+
+    /**
+     * 双击选中方法
+     * @param table
+     * @param tempTr1
+     * @param trId1
+     * @param rowData
+     */
+    function dbClickCheckData(table,tempTr1,trId1,rowData) {
+        var action=parent.DialogUtil.getCurrentTriggerEle();
+        var success=parent.jboltTableInsertRowsByDialogChooser(action,rowData);
+        if(success){
+            parent.layer.closeAll();
+            parent.tableDataSuccess();
+        }
+    }
+
+</script>
+#end

@@ -298,7 +298,7 @@ EXEC	[dbo].[P_InvestmentPlanBudgetActualDifference]
 EXEC	[dbo].[P_InvestmentPlanGroupSummary]
 		@cGroupKey = #para(cgroupkey),
 		@iBudgetYear = #(ibudgetyear),
-		@u8DbName = #(AppConfig.getU8DbName())
+		@u8DbName = #para(u8dbname)
 #end
 
 
@@ -338,7 +338,7 @@ from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi
 	left JOIN #(getMomdataDbName()).dbo.pl_investment_plan_itemd ipid ON ipid.iplanitemid=ipi.iautoid 
 	left join #(getBaseDbName()).dbo.jb_dictionary jd_pp on jd_pp.sn=ipid.cperiodprogress and jd_pp.type_key='period_progress'
 	left join #(getBaseDbName()).dbo.jb_dictionary jd_ibt on jd_ibt.sn=ip.ibudgettype and jd_ibt.type_key='investment_budget_type'
-	left join #(AppConfig.getU8DbName()).dbo.department d on d.cdepcode = ip.cdepcode
+	left join #(getMomdataDbName()).dbo.bd_department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3 and convert(date,ipid.dPeriodDate) >= convert(date,#para(dstartdate)) and convert(date,ipid.dPeriodDate) <= convert(date,#para(denddate))
 	GROUP BY ip.cdepcode,d.cdepname,ip.ibudgetyear,ip.iBudgetType,ipi.cplanno,ipi.citemtype,jd_ibt.name
 	union all
@@ -376,7 +376,7 @@ from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi
 	left JOIN #(getMomdataDbName()).dbo.pl_investment_plan_itemd ipid ON ipid.iplanitemid=ipi.iautoid 
 	left join #(getBaseDbName()).dbo.jb_dictionary jd_pp on jd_pp.sn=ipid.cperiodprogress and jd_pp.type_key='period_progress'
 	left join #(getBaseDbName()).dbo.jb_dictionary jd_ibt on jd_ibt.sn=ip.ibudgettype and jd_ibt.type_key='investment_budget_type'
-	left join #(AppConfig.getU8DbName()).dbo.department d on d.cdepcode = ip.cdepcode
+	left join #(getMomdataDbName()).dbo.bd_department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3
 	GROUP BY ip.cdepcode,d.cdepname,ip.ibudgetyear,ip.iBudgetType,ipi.cplanno,ipi.citemtype,jd_ibt.name
 	union all
@@ -396,21 +396,21 @@ WHERE 1=1 and ip.iEffectiveStatus != 3
 	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iTotalAmountPlan') iTotalAmountPlan,
 	2 ibudgettype1,'3' citemtype,
 	'实绩' cbudgettypedesc,
-	convert(varchar(20),sum(#(AppConfig.getU8DbName()).dbo.PL_GetInvestmentPlanActualDatasByDateCompare(ipi.iautoid,convert(date,#para(dstartdate)),1))) previousamounttotal,
-	convert(varchar(20),sum(#(AppConfig.getU8DbName()).dbo.PL_GetInvestmentPlanActualDatasByDateCompare(ipi.iautoid,convert(date,#para(denddate)),2))) afteramounttotal
+	convert(varchar(20),sum(dbo.PL_GetInvestmentPlanActualDatasByDateCompare(ipi.cplanno,convert(date,#para(dstartdate)),1))) previousamounttotal,
+	convert(varchar(20),sum(dbo.PL_GetInvestmentPlanActualDatasByDateCompare(ipi.cplanno,convert(date,#para(denddate)),2))) afteramounttotal
 	#if(monthlist && monthlist.size() > 0)
 		#for(monthnum:monthlist)
-			,convert(varchar(20),sum(#(AppConfig.getU8DbName()).dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ipi.iautoid,datepart(year,dateadd(month,#(for.index),convert(date,#para(dstartdate)))),datepart(month,dateadd(month,#(for.index),convert(date,#para(dstartdate))))))) 'imonthamount#(monthnum)'			
+			,convert(varchar(20),sum(dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ipi.cplanno,datepart(year,dateadd(month,#(for.index),convert(date,#para(dstartdate)))),datepart(month,dateadd(month,#(for.index),convert(date,#para(dstartdate))))))) 'imonthamount#(monthnum)'			
 		#end
 	#end
 	#if(yearlist && yearlist.size() > 0)
 		#for(yearnum:yearlist)
-			,convert(varchar(20),sum(#(AppConfig.getU8DbName()).dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ipi.iautoid,datepart(year,dateadd(month,#(for.index),convert(date,#para(dstartdate)))),null))) 'itotal#(yearnum)'
+			,convert(varchar(20),sum(dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ipi.cplanno,datepart(year,dateadd(month,#(for.index),convert(date,#para(dstartdate)))),null))) 'itotal#(yearnum)'
 		#end
 	#end
 from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi 
 	inner join #(getMomdataDbName()).dbo.pl_investment_plan ip ON ipi.iplanid=ip.iautoid 
-	left join #(AppConfig.getU8DbName()).dbo.department d on d.cdepcode = ip.cdepcode
+	left join #(getMomdataDbName()).dbo.bd_department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3
 	GROUP BY ipi.cplanno,ip.cdepcode,d.cdepname
 ) T where 1=1
