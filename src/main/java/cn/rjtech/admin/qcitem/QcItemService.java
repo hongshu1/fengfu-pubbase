@@ -273,4 +273,7 @@ public class QcItemService extends BaseService<QcItem> {
         return SUCCESS;
     }
 
+    public QcItem findBycQcItemName(String cqcitemname) {
+        return findFirst(selectSql().eq(QcItem.CQCITEMNAME, cqcitemname).eq(QcItem.IORGID, getOrgId()).eq(QcItem.ISDELETED, ZERO_STR).first());
+    }
 }
