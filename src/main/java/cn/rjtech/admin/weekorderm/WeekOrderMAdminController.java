@@ -159,9 +159,13 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 调整计划时间下一步
      */
-    public void updateCplanTimeNext()
-    {
+    public void updateCplanTimeNext() {
         render("update_cplan_time_next.html");
+    }
+
+    public void saveUpdateCplanTime()
+    {
+        renderJson(service.saveUpdateCplanTime(getJBoltTable()));
     }
 
     /**

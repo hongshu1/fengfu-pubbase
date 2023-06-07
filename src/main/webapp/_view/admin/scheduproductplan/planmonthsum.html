@@ -57,10 +57,10 @@
 			{@each datas as data,index}
 			<tr data-id="${data.iautoid}">
 				<td>${pageNumber,pageSize,index | rownum}</td>
-				<td>${data.cworkname}</td>
-				<td>${data.cinvcode}</td>
-				<td>${data.cinvcode1}</td>
-				<td>${data.cinvname1}</td>
+				<td title="${data.cworkname}">${data.cworkname}</td>
+				<td title="${data.cinvcode}">${data.cinvcode}</td>
+				<td title="${data.cinvcode1}">${data.cinvcode1}</td>
+				<td title="${data.cinvname1}">${data.cinvname1}</td>
 
 				#for(datetr:collist)
 				<td>${data.#(datetr),0|number_format}</td>

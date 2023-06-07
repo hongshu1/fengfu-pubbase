@@ -39,7 +39,7 @@
                                     <label class="col-sm-3 col-form-label">入库日期</label>
                                     <div class="col-9">
                                         <input type="text" class="form-control ml-2" maxlength="20" readonly="readonly"
-                                               name="createdate" value="#(sysPuinstore.createdate??)"/>
+                                               name="createdate" id="createdate" value="#(sysPuinstore.createdate??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -69,6 +69,7 @@
                                                autocomplete="off" readonly="readonly"
                                                class="form-control" maxlength="40"
                                                value="#(sysPuinstore.sourcebillno??)"/>
+                                        <input id="sourcebillid" name="sourcebillid" type="hidden" value="#(sourcebillid??)"/>
                                     </div>
                                     <div style="max-width:2px;right: 40px;" class="input-group-append">
                                         <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
@@ -104,6 +105,7 @@
                                     <label class="col-sm-3 col-form-label">采购类型</label>
                                     <div class="col-3">
                                         <select class="form-control"
+                                                id="billtype"
                                                 name="billtype"
                                                 data-autoload
                                                 data-url="admin/purchasetype/selectAll"
@@ -430,15 +432,25 @@
      * @param data
      */
     function setChooseDialogSelectResultFromSupplier(data) {
+        $("#rdcode").val(data.billType);
+        $("#sourcebillno").val(data.sourcebillno);
+        $("#sourcebillid").val(data.sourcebillid);
+        $("#createdate").val(data.billdate);
         $("#deptcode").val(data.deptcode);
         $("#deptname").val(data.deptname);
-        $("#deptcode").val(data.deptcode);
         $("#venname").val(data.venname);
         $("#vencode").val(data.vencode);
         $("#invname").val(data.invname);
-        $("#defwhname").val(data.defwhname);
-        $("#sourcebillno").val(data.sourcebillno);
-        $("#billno").val(data.billno);
+
+        /*<td data-width="160" data-column="billType">采购类型</td>
+        <th data-width="160" data-column="sourcebillno">采购订单号</th>
+        <th data-min-width="160" data-column="sourcebillid">采购id</th>
+        <th data-min-width="160" data-column="billdate">采购日期</th>
+
+        <th data-min-width="160" data-column="deptname">部门名称</th>
+        <th data-min-width="160" data-column="invname">存货名称</th>
+        <td data-min-width="120" data-column="vencode">供应商编码</td>
+        <td data-min-width="120" data-column="venname">供应商名称</td>*/
     }
 
 </script>

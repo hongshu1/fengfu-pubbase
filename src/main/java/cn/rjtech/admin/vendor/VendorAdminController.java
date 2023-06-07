@@ -15,6 +15,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import java.math.BigDecimal;
@@ -51,7 +52,7 @@ public class VendorAdminController extends BaseAdminController {
      */
     public void datas() {
 //		renderJsonData(service.pageList(getKv()));
-        Page<Vendor> adminDatas = service
+        Page<Record> adminDatas = service
                 .getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isEnabled"), getBoolean("isDeleted"), getKv());
         renderJsonData(adminDatas);
     }

@@ -36,11 +36,11 @@
             {@each datas as data,index}
             <tr data-id="${data.iautoid}">
                 <td>${pageNumber,pageSize,index | rownum}</td>
-                <td>${data.cCusName}</td>
-                <td>${data.cEquipmentModelName}</td>
-                <td>${data.cInvCode}</td>
-                <td>${data.cInvCode1}</td>
-                <td>${data.cInvName1}</td>
+                <td title="${data.cCusName}">${data.cCusName}</td>
+                <td title="${data.cEquipmentModelName}">${data.cEquipmentModelName}</td>
+                <td title="${data.cInvCode}">${data.cInvCode}</td>
+                <td title="${data.cInvCode1}">${data.cInvCode1}</td>
+                <td title="${data.cInvName1}">${data.cInvName1}</td>
                 <th>
                     {@if data.planTypeCode == 'PP'}
                     <span>计划使用</span>

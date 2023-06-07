@@ -1,10 +1,12 @@
 package cn.rjtech.admin.inventoryqcform;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.JboltFile;
@@ -20,9 +22,11 @@ import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.jbolt.core.util.JBoltUploadFileUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryqcformtype.InventoryQcFormTypeService;
-import cn.rjtech.model.momdata.InventoryQcForm;
-import cn.rjtech.model.momdata.InventoryQcFormType;
+import cn.rjtech.admin.qcform.QcFormService;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
@@ -34,6 +38,7 @@ import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+import org.xnio.Options;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -61,11 +66,17 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
     }
 
     @Inject
+    private CusFieldsMappingDService cusFieldsMappingDService;
+    @Inject
     private JBoltFileService jboltFileService;
     @Inject
     private DictionaryService dictionaryService;
     @Inject
     private InventoryQcFormTypeService inventoryQcFormTypeService;
+    @Inject
+    private InventoryService inventoryService;
+    @Inject
+    private QcFormService qcFormService;
 
     /**
      * 后台管理数据查询
@@ -204,60 +215,94 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
                 );
     }
 
+
     /**
-     * 读取excel文件
-     *
-     * @param file
-     * @return
+     * 从系统导入字段配置，获得导入的数据
      */
     public Ret importExcel(File file) {
-        StringBuilder errorMsg = new StringBuilder();
-        JBoltExcel jBoltExcel = JBoltExcel
-                //从excel文件创建JBoltExcel实例
-                .from(file)
-                //设置工作表信息
-                .setSheets(
-                        JBoltExcelSheet.create()
-                                //设置列映射 顺序 标题名称
-                                .setHeaders(1,
-                                        JBoltExcelHeader.create("cCreateName", "创建人名称"),
-                                        JBoltExcelHeader.create("cUpdateName", "更新人名称"),
-                                        JBoltExcelHeader.create("iQcFormName", "检验表格名称"),
-                                        JBoltExcelHeader.create("machineType", "机型"),
-                                        JBoltExcelHeader.create("iInventoryCode", "存货编码"),
-                                        JBoltExcelHeader.create("iInventoryName", "存货名称"),
-                                        JBoltExcelHeader.create("CustomerManager", "客户部番"),
-                                        JBoltExcelHeader.create("componentName", "部品名称"),
-                                        JBoltExcelHeader.create("specs", "规格"),
-                                        JBoltExcelHeader.create("unit", "主计量单位"),
-                                        JBoltExcelHeader.create("inspectionType", "检验类型")
-                                )
-                                //从第三行开始读取
-                                .setDataStartRow(2)
-                );
-        //从指定的sheet工作表里读取数据
-        List<InventoryQcForm> inventoryQcForms = JBoltExcelUtil.readModels(jBoltExcel, 1, InventoryQcForm.class, errorMsg);
-        if (notOk(inventoryQcForms)) {
-            if (errorMsg.length() > 0) {
-                return fail(errorMsg.toString());
-            } else {
-                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-            }
+        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        if (notOk(records)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
-        //执行批量操作
-        boolean success = tx(new IAtom() {
-            @Override
-            public boolean run() throws SQLException {
-                batchSave(inventoryQcForms);
-                return true;
-            }
-        });
 
-        if (!success) {
-            return fail(JBoltMsg.DATA_IMPORT_FAIL);
+        Date now = new Date();
+        //存货ID
+        Map<String, Inventory> inventoryMap = new HashMap<>();
+        //检验表格
+        Map<String, QcForm> qcFormMap = new HashMap<>();
+        for (Record record : records) {
+            //存货编码
+            String cinvcode = record.getStr("iInventoryId");
+            //表格名称
+            String iqcformname = record.getStr("iQcFormId");
+            //检验类型
+            String cTypeNames = record.getStr("cTypeNames");
+
+            Inventory inventory = inventoryMap.get(cinvcode);
+            QcForm qcform = qcFormMap.get(iqcformname);
+            if (ObjUtil.isNull(inventory)) {
+                String[] cinvcodeList = cinvcode.split(",");
+                for (String s : cinvcodeList) {
+                    inventory = inventoryService.findByiInventoryCode(s);
+                    ValidationUtils.notNull(inventory, String.format("存货编码“%s”不存在", inventory));
+                    inventoryMap.put(s, inventory);
+                }
+            }
+            if (ObjUtil.isNull(qcform)) {
+                qcform = qcFormService.findByiInventoryCode(iqcformname);
+                ValidationUtils.notNull(qcform, String.format("检验表格名称“%s”不存在", iqcformname));
+                qcFormMap.put(iqcformname, qcform);
+            }
+            if (StrUtil.isBlank(record.getStr("cTypeNames"))) {
+                return fail("检验类型不能为空");
+            }
+
+            // 检验类型
+            List<Dictionary> inspectionList = dictionaryService.getListByTypeKey("inspection_type");
+            ValidationUtils.notEmpty(inspectionList, "检验类型【inspection_type】字典未配置");
+            String[] typeNames = cTypeNames.split(",");
+            // 记录名称类型
+            String cTypeSN = "";
+            Map<String, String> inspectionMap = new HashMap<>();
+            for (Dictionary dictionary : inspectionList){
+                String name = dictionary.getName();
+                for (String typeName :typeNames){
+                    if (typeName.equals(name)){
+                        cTypeSN+=dictionary.getSn()+",";
+                        inspectionMap.put(name, dictionary.getSn());
+                    }
+                }
+            }
+            if (StrUtil.isNotBlank(cTypeSN)){
+                cTypeSN = cTypeSN.substring(0, cTypeSN.length()-1);
+            }
+            String newTypeSn = cTypeSN;
+
+            record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+            record.set("iInventoryId", inventory.getIAutoId());
+            record.set("iQcFormId", qcform.getIAutoId());
+            record.set("cTypeIds",newTypeSn);
+            record.set("cTypeNames", cTypeNames);
+            record.set("iCreateBy", JBoltUserKit.getUserId());
+            record.set("dCreateTime", now);
+            record.set("cCreateName", JBoltUserKit.getUserName());
+            record.set("iOrgId", getOrgId());
+            record.set("cOrgCode", getOrgCode());
+            record.set("cOrgName", getOrgName());
+            record.set("iUpdateBy", JBoltUserKit.getUserId());
+            record.set("dUpdateTime", now);
+            record.set("cUpdateName", JBoltUserKit.getUserName());
+            record.set("isDeleted",0);
         }
+
+        // 执行批量操作
+        tx(() -> {
+            batchSaveRecords(records);
+            return true;
+        });
         return SUCCESS;
     }
+
 
     /**
      * 生成要导出的Excel

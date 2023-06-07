@@ -45,7 +45,7 @@
 			        <option value="10">10月</option>
 			        <option value="11">11月</option>
 			        <option value="12">12月</option>
-                </select>	                
+                </select>
 				<input type="text" class="form-control" data-with-clearbtn="true" placeholder="创建人" style="width:110px;" name="cCreateName" value="" />
 				<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" name="startTime" value=""/>
                 <span class="ml-1 mr-1">至</span>
@@ -86,9 +86,13 @@
 	<div class="" role="group" aria-label="btn-group">
 		<button data-openpage="dialog" data-area="100%,100%" data-handler="jboltTablePageToFirst" data-title="新增月度计划订单"  data-url="admin/monthorderm/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+
+		#include("/_view/_common/_batch_approval_btns.html", formSn="Co_MonthOrderM")
 	</div>
 
-	<div class="clearfix"></div>
+	<div class="clearfix">
+
+	</div>
 </div>
 
 

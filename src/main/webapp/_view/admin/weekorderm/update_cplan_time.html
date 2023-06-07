@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button data-dialogbtn data-handler="jboltTablePageToFirst" data-area="1050,600" data-title="调整信息确认" data-url="admin/weekorderm/updateCplanTimeNext" class="btn btn-outline-secondary btn-xs" data-btn-align="center">下一步</button>
+                        <button data-dialogbtn data-area="1000,600" data-title="调整信息确认" data-check-handler="getUpdateCplanTimeDatas" data-url="admin/weekorderm/updateCplanTimeNext/" class="btn btn-outline-secondary btn-xs" data-btn-align="center">下一步</button>
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -90,6 +90,17 @@
            jboltTableInsertRow("cinv_update_jbolt_table_#(pageId)",res.data.list);
         });
 
+    }
+
+    var datas = new Array();
+    function getUpdateCplanTimeDatas() {
+        // 获取批量调整
+        var batchUpdateDatas = getJboltTableAllDatas("batch_update_jbolt_table_#(pageId)");
+        // 获取存货信息
+        var cinvUpdateDatas = getJboltTableAllDatas("cinv_update_jbolt_table_#(pageId)");
+        datas.push(batchUpdateDatas);
+        datas.push(cinvUpdateDatas);
+        return true;
     }
 </script>
 #end

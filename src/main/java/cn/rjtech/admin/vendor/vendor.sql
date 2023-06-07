@@ -17,6 +17,9 @@ WHERE v.isDeleted = '0'
   #if(ivendorclassid)
   AND v.ivendorclassid = #para(ivendorclassid)
   #end
+#if(corgcode)
+  and v.corgcode = #para(corgcode)
+#end
 ORDER BY v.dUpdateTime
     DESC
 #end
@@ -33,12 +36,15 @@ WHERE v.isDeleted = '0'
 #sql("getAutocompleteList")
 SELECT TOP #(limit) *
 FROM Bd_Vendor
-WHERE 1=1 and isdeleted = 0 and isenabled = 0
+WHERE 1=1 and isdeleted = 0 and isenabled = 1
     #if(q)
         AND (
             cvencode LIKE CONCAT('%', #para(q), '%') OR
             cvenname LIKE CONCAT('%', #para(q), '%')
         )
+    #end
+    #if(corgcode)
+        and corgcode = #para(corgcode)
     #end
 #end
 
@@ -62,4 +68,25 @@ WHERE  1 = 1
     #if(cvccode)
         AND v.cvccode = #para(cvccode)
     #end
+    #if(corgcode)
+        and v.corgcode = #para(corgcode)
+    #end
+#end
+
+#sql("getAdminDatas")
+select * from bd_Vendor t1
+where 1=1 and isdeleted = 0
+#if(iventorclassid)
+and t1.iVendorClassId = #para(iventorclassid)
+#end
+#if(cvenname)
+    and t1.cvenname = #para(cvenname)
+#end
+#if(cvencode)
+    and t1.cvencode = #para(cvencode)
+#end
+#if(corgcode)
+    and t1.corgcode = #para(corgcode)
+#end
+order by t1.dUpdateTime desc
 #end

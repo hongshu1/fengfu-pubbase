@@ -108,17 +108,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
 
-    public void delete() {
-        Kv kv = getKv();
-        String ids = get("ids");
-        renderJson(true);
-    }
-
-    /*public void save(JBoltTable jBoltTable) {
-        List<Record> saveRecordList = jBoltTable.getSaveRecordList();
-        renderJson(service.save());
-    }*/
-
     /*
      * 保存新增期初库存
      * */
@@ -132,13 +121,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     public void submitAddBarcode(JBoltPara jBoltPara) {
         renderJsonData(service.submitAddBarcode(jBoltPara));
     }
-
-    /*
-     * 保存新增期初条码
-     * */
-//    public void saveBarcode(JBoltPara jBoltPara) {
-//        renderJsonData(service.saveBarcode(jBoltPara));
-//    }
 
     /*
      * 新增页加载的数据
@@ -174,7 +156,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
             return;
         }
         renderJson(service.importStockExcel(file.getFile()));
-        renderJson("导入成功");
     }
 
     /*
@@ -188,7 +169,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
             return;
         }
         renderJson(service.importBarcodeExcel(file.getFile()));
-        renderJson("导入成功");
     }
 
     /**
@@ -198,12 +178,8 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         renderJsonData(service.detailPrintData(getKv()));
     }
 
-    /*
-     * 期初库存的仓库编码
-     * */
-    public void whoptions() {
-        String cwhcode = get("cwhcode");
-        renderJsonData(service.whoptions(Kv.by("whcode", cwhcode)));
+    public void addPrintData(){
+        renderJsonData(service.addPrintData(getKv()));
     }
 
     /*
@@ -277,9 +253,5 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         }
         keepPara();
         render("cvencode_dialog_index.html");
-    }
-
-    public void inventoryPage() {
-        renderJsonData(service.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
     }
 }
