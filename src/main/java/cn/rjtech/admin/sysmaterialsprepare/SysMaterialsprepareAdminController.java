@@ -284,7 +284,7 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     @Before(Tx.class)
     public void submitAll() {
         //工单ID
-        String id = get("id");
+        Long id = Long.valueOf(get("id"));
         renderJson(service.submitByJBoltTable(id));
     }
 }

@@ -196,7 +196,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         return dbTemplate("materialsprepare.getBarcodedatas", kv).paginate(pageNumber, pageSize);
     }
 
-    public Ret submitByJBoltTable(String id) {
+    public Ret submitByJBoltTable(Long id) {
         SysMaterialsprepare sysMaterialsprepare = new SysMaterialsprepare();
         MoDoc modoc = moDocS.findFirst("select * from Mo_MoDoc where iAutoId=?", id);
         sysMaterialsprepare.setSourceBillID(id);
@@ -229,7 +229,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         return SUCCESS;
     }
 
-    private void saveTableSubmitDatas(SysMaterialsprepare sysMaterialsprepare, String id) {
+    private void saveTableSubmitDatas(SysMaterialsprepare sysMaterialsprepare, Long id) {
         List<InventoryRoutingInvc> inventoryRoutingInvcs = inventoryroutinginvcservice.find(
                 "SELECT\n" +
                         "\tiri.iAutoId,\n" +
