@@ -20,19 +20,26 @@
         </tr>
         {@/each}
         </textarea>
+        
+        <form id="condition_form_#(pageId)" onsubmit="return false" method="get"> 
+            <input type="hidden" name="params" >
+        </form>
 
         <table class="jbolt_table jbolt_main_table  table-center"
                id="update_cplan_time_next_jbolt_table_#(pageId)"
                data-jbolttable
                data-width="auto"
+               data-ajax="false"
+               data-autoload="false"
                data-height="fill"
-               ###data-ajax="true"
-               ###data-url="admin/weekorderm/updateCplanTimeDatas"
+               data-url="admin/weekorderm/updateCplanTimeDatas"
+               data-conditions-form="condition_form_#(pageId)"
                data-ajax-success-handler="insertDatas"
                data-column-resize="true"
                data-rowtpl="WeekOrderM_tpl_#(pageId)"
                data-copy-to-excel="false"
                data-page="WeekOrderD_page"
+               data-tabledatas=""
         >
             <thead>
             <tr>
@@ -46,7 +53,9 @@
                 <th data-width="80" data-column="updatecplanaogtime">调整时间</th>
             </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+            
+            </tbody>
         </table>
     </div>
 </div>
@@ -56,12 +65,22 @@
     function submitThisForm() {
         jboltTableSubmit('#jbolt_table_#(pageId)');
     }
+    
+    var getDatas = function () {
+        return parent.datas;
+    }
 
+    $(function () {
+        $('input[name="params"]').val(JSON.stringify(parent.datas));
+
+        $('#condition_form_#(pageId)').submit();
+    });
+    
     // 插入默认数据
     function insertDatas() {
         console.log("插入默认数据");
         console.log(parent.datas);
-        jboltTableInsertRow("update_cplan_time_next_jbolt_table_#(pageId)", parent.datas);
+        //jboltTableInsertRow("update_cplan_time_next_jbolt_table_#(pageId)", parent.datas);
     }
 </script>
 #end
