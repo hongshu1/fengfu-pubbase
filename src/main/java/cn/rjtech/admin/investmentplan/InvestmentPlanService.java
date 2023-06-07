@@ -1372,7 +1372,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		expenseBudget.setCbegindate(JBoltDateUtil.toDate(dstartdate,"yyyy-MM-dd"));
 		expenseBudget.setCenddate(JBoltDateUtil.toDate(denddate,"yyyy-MM-dd"));
 		expenseBudgetService.constructDynamicsDbColumn(expenseBudget, para);
-		List<Record> list = dbTemplate("investmentplan.findInvestmentPlanItemSituationDatas",para).find();
+		List<Record> list = dbTemplate(u8SourceConfigName(),"investmentplan.findInvestmentPlanItemSituationDatas",para).find();
 		if(CollUtil.isNotEmpty(list)){
 			for (Record row : list) {
 				row.set("cinvestmenttypedesc", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.INVESTMENT_TYPE.getValue(), row.getStr("iinvestmenttype")));

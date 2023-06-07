@@ -88,9 +88,7 @@ where 1 =1
 #if(billdid)
     and t1.billdid = #para(billdid)
 #end
-#if(sourcebillid)
-    and t1.sourcebillid = #para((sourcebillid))
-#end
+
 #if(sourcebilldid)
     and t1.sourcebilldid = #para(sourcebilldid)
 #end

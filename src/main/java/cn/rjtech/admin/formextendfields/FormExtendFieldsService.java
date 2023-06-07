@@ -65,6 +65,7 @@ public class FormExtendFieldsService extends BaseService<FormExtendFields> {
 		if (CollUtil.isNotEmpty(page.getList())) {
 			page.getList().forEach(row -> {
 				row.set("iformidname", formService.getOneColumnValueById(row.getStr("iFormId"),"cFormName"));
+				row.set("iformfieldidname", formService.getOneColumnValueById(row.getStr("iFormFieldId"),"cFormName"));
 				row.set("ifieldtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.extend_field_type.name(), row.getStr("iFieldType")));
 				row.set("isenabledname", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.whether_enable.name(), row.getStr("isEnabled")));
 				row.set("isrequiredname", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.is_required.name(), row.getStr("isRequired")));
