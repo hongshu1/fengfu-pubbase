@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>cn.jbolt</groupId>
-	<artifactId>jbolt_pro</artifactId>
-	<version>5.0.0</version>
+	<groupId>cn.aihengyi</groupId>
+	<artifactId>fhlm_platform</artifactId>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
-	<name>jbolt_pro</name>
-	<description>JBolt-基于JFinal的极速开发框架</description>
+	<name>fhlm_platform</name>
+	<description>凤凰联盟数字化平台</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -96,7 +96,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
+    		<artifactId>junit-jupiter-engine</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
@@ -130,9 +130,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.vdurmont</groupId>
-			<artifactId>emoji-java</artifactId>
-			<version>${emoji-java.version}</version>
+		  <groupId>com.vdurmont</groupId>
+		  <artifactId>emoji-java</artifactId>
+		  <version>${emoji-java.version}</version>
 		</dependency>
 		<!-- <dependency>
 			<groupId>log4j</groupId>
@@ -183,24 +183,24 @@
 		    <version>${sqlserver4.version}</version>
 		</dependency> -->
 		<!-- SqlServer 8 -->
-		<!--	<dependency>
-                <groupId>com.microsoft.sqlserver</groupId>
-                <artifactId>mssql-jdbc</artifactId>
-                <version>${sqlserver.version}</version>
-            </dependency>
+	<!--	<dependency>
+		    <groupId>com.microsoft.sqlserver</groupId>
+		    <artifactId>mssql-jdbc</artifactId>
+		    <version>${sqlserver.version}</version>
+		</dependency>
 
-            <dependency>
-                <groupId>org.postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                   <version>${postgresql.version}</version>
-            </dependency>
+		<dependency>
+	    	<groupId>org.postgresql</groupId>
+	   	 	<artifactId>postgresql</artifactId>
+	  	 	<version>${postgresql.version}</version>
+		</dependency>
 
-            <dependency>
-                <groupId>com.dameng</groupId>
-                <artifactId>DmJdbcDriver18</artifactId>
-                <version>${dm.version}</version>
-            </dependency>
-    -->
+		<dependency>
+			<groupId>com.dameng</groupId>
+			<artifactId>DmJdbcDriver18</artifactId>
+			<version>${dm.version}</version>
+		</dependency>
+-->
 
 		<dependency>
 			<groupId>com.belerweb</groupId>
@@ -211,44 +211,44 @@
 		<!-- jwt -->
 
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-api</artifactId>
-			<version>${jwt.version}</version>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt-api</artifactId>
+		    <version>${jwt.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-impl</artifactId>
-			<version>${jwt.version}</version>
-			<scope>runtime</scope>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt-impl</artifactId>
+		    <version>${jwt.version}</version>
+		    <scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-jackson</artifactId>
-			<version>${jwt.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-databind</artifactId>
-				</exclusion>
-			</exclusions>
-			<scope>runtime</scope>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt-jackson</artifactId>
+		    <version>${jwt.version}</version>
+		   <exclusions>
+		    	<exclusion>
+		    		<groupId>com.fasterxml.jackson.core</groupId>
+		    		<artifactId>jackson-databind</artifactId>
+		    	</exclusion>
+		    </exclusions>
+		    <scope>runtime</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
+		  	<groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>${jackson.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.google.zxing</groupId>
-			<artifactId>javase</artifactId>
-			<version>${zxing.version}</version>
+		    <groupId>com.google.zxing</groupId>
+		    <artifactId>javase</artifactId>
+		    <version>${zxing.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>${xerces.version}</version>
+		    <groupId>xerces</groupId>
+		    <artifactId>xercesImpl</artifactId>
+		    <version>${xerces.version}</version>
 		</dependency>
 		<!--<dependency>
 		    <groupId>com.squareup.okhttp3</groupId>
@@ -287,9 +287,9 @@
 
 		<!-- WebSocket 支持 -->
 		<dependency>
-			<groupId>io.undertow</groupId>
-			<artifactId>undertow-websockets-jsr</artifactId>
-			<version>2.2.12.Final</version>
+		    <groupId>io.undertow</groupId>
+		    <artifactId>undertow-websockets-jsr</artifactId>
+		    <version>2.2.12.Final</version>
 		</dependency>
 
 		<!-- 避免控制台输出如下提示信息： SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
@@ -298,9 +298,9 @@
 		<!--slf4j及log4j日志-->
 		<!--门面-->
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		    <version>${slf4j.version}</version>
 		</dependency>
 		<!--桥接器:告诉slf4j使用slf4j-simple 如果需要 请注释下方Log4j2 解开simple-->
 		<!-- <dependency>
@@ -310,26 +310,26 @@
 		</dependency> -->
 		<!--桥接器:告诉slf4j使用Log4j2-->
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j2-impl</artifactId>
-			<version>${log4j2.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-slf4j2-impl</artifactId>
+		    <version>${log4j2.version}</version>
+		    <exclusions>
+		        <exclusion>
+		            <artifactId>slf4j-api</artifactId>
+		            <groupId>org.slf4j</groupId>
+		        </exclusion>
+		    </exclusions>
 		</dependency>
 		<!--具体实现,log4j2-->
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>${log4j2.version}</version>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-api</artifactId>
+		    <version>${log4j2.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>${log4j2.version}</version>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+		    <version>${log4j2.version}</version>
 		</dependency>
 		<!--用于解决web环境下关闭服务器时可能出现的log4j线程无法及时关闭的warn，web工程需要包含log4j-web，非web工程不需要 -->
 		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-web -->
@@ -354,9 +354,9 @@
 
 		<!--自选库 -->
 		<dependency>
-			<groupId>com.jfinal</groupId>
-			<artifactId>jfinal-weixin</artifactId>
-			<version>${jfinalweixin.version}</version>
+		    <groupId>com.jfinal</groupId>
+		    <artifactId>jfinal-weixin</artifactId>
+		    <version>${jfinalweixin.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>it.sauronsoftware.cron4j</groupId>
@@ -403,67 +403,67 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.github.oshi</groupId>
-			<artifactId>oshi-core</artifactId>
-			<version>${oshi.version}</version>
+		    <groupId>com.github.oshi</groupId>
+		    <artifactId>oshi-core</artifactId>
+		    <version>${oshi.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>net.java.dev.jna</groupId>
-			<artifactId>jna</artifactId>
-			<version>${jna.version}</version>
+		    <groupId>net.java.dev.jna</groupId>
+		    <artifactId>jna</artifactId>
+		    <version>${jna.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>net.java.dev.jna</groupId>
-			<artifactId>jna-platform</artifactId>
-			<version>${jna.version}</version>
-		</dependency>
-
-
-		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>HikariCP</artifactId>
-			<version>${hikaricp.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>cn.smallbun.screw</groupId>
-			<artifactId>screw-core</artifactId>
-			<version>${screw.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>ch.qos.logback</groupId>
-					<artifactId>logback-classic</artifactId>
-				</exclusion>
-			</exclusions>
+		    <groupId>net.java.dev.jna</groupId>
+		    <artifactId>jna-platform</artifactId>
+		    <version>${jna.version}</version>
 		</dependency>
 
+
+		 <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${hikaricp.version}</version>
+         </dependency>
 		<dependency>
-			<groupId>org.ocpsoft.prettytime</groupId>
-			<artifactId>prettytime</artifactId>
-			<version>${prettytime.version}</version>
+		    <groupId>cn.smallbun.screw</groupId>
+		    <artifactId>screw-core</artifactId>
+		    <version>${screw.version}</version>
+		    <exclusions>
+		    	<exclusion>
+		    		  <groupId>ch.qos.logback</groupId>
+   					 <artifactId>logback-classic</artifactId>
+		    	</exclusion>
+		    </exclusions>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.ocpsoft.prettytime</groupId>
+		    <artifactId>prettytime</artifactId>
+		    <version>${prettytime.version}</version>
 		</dependency>
 		<!--ureport-->
 		<dependency>
-			<groupId>com.bstek.ureport</groupId>
-			<artifactId>ureport2-console</artifactId>
-			<version>${ureport.version}</version>
+		    <groupId>com.bstek.ureport</groupId>
+		    <artifactId>ureport2-console</artifactId>
+		    <version>${ureport.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.lionsoul</groupId>
-			<artifactId>ip2region</artifactId>
-			<version>${ip2region.version}</version>
+		    <groupId>org.lionsoul</groupId>
+		    <artifactId>ip2region</artifactId>
+		    <version>${ip2region.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>${poi.version}</version>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+		    <version>${poi.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>${poi.version}</version>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>${poi.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -472,56 +472,56 @@
 		</dependency>
 
 		<dependency>
-			<groupId>net.dreamlu</groupId>
-			<artifactId>JFinal-event</artifactId>
-			<version>${jfinalevent.version}</version>
+		    <groupId>net.dreamlu</groupId>
+		    <artifactId>JFinal-event</artifactId>
+		    <version>${jfinalevent.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.qiniu</groupId>
-			<artifactId>qiniu-java-sdk</artifactId>
-			<version>${qiniu.version}</version>
+		  <groupId>com.qiniu</groupId>
+		  <artifactId>qiniu-java-sdk</artifactId>
+		  <version>${qiniu.version}</version>
 		</dependency>
 
 		<!-- apache sentinel-->
 		<dependency>
-			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-core</artifactId>
-			<version>${sentinel.version}</version>
+		    <groupId>com.alibaba.csp</groupId>
+		    <artifactId>sentinel-core</artifactId>
+		    <version>${sentinel.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-cluster-client-default</artifactId>
-			<version>${sentinel.version}</version>
+		    <groupId>com.alibaba.csp</groupId>
+		    <artifactId>sentinel-cluster-client-default</artifactId>
+		    <version>${sentinel.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-web-servlet</artifactId>
-			<version>${sentinel.version}</version>
+		    <groupId>com.alibaba.csp</groupId>
+		    <artifactId>sentinel-web-servlet</artifactId>
+		    <version>${sentinel.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-transport-simple-http</artifactId>
-			<version>${sentinel.version}</version>
+		    <groupId>com.alibaba.csp</groupId>
+		    <artifactId>sentinel-transport-simple-http</artifactId>
+		    <version>${sentinel.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-parameter-flow-control</artifactId>
-			<version>${sentinel.version}</version>
+		    <groupId>com.alibaba.csp</groupId>
+		    <artifactId>sentinel-parameter-flow-control</artifactId>
+		    <version>${sentinel.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>transmittable-thread-local</artifactId>
-			<version>${ttl.version}</version>
+		    <groupId>com.alibaba</groupId>
+		    <artifactId>transmittable-thread-local</artifactId>
+		    <version>${ttl.version}</version>
 		</dependency>
 
 		<dependency>
@@ -531,17 +531,17 @@
 		</dependency>
 
 		<dependency>
-			<groupId>cn.jbolt</groupId>
-			<artifactId>jbolt_core</artifactId>
-			<version>${jboltcore.version}</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/jbolt_core.jar</systemPath>
-		</dependency>
+          <groupId>cn.jbolt</groupId>
+          <artifactId>jbolt_core</artifactId>
+          <version>${jboltcore.version}</version>
+          <scope>system</scope>
+          <systemPath>${project.basedir}/lib/jbolt_core.jar</systemPath>
+       </dependency>
 	</dependencies>
 
 
 	<build>
-		<finalName>jbolt_pro</finalName>
+		<finalName>fhlm_platform</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -564,10 +564,10 @@
 				<version>3.2.0</version>
 				<configuration>
 					<excludes>
-						<exclude>/cn/jbolt/common/gen/</exclude>
-						<exclude>/sql/</exclude>
-						<exclude>/gentpl/</exclude>
-						<exclude>/dbconfig/</exclude>
+					    <exclude>/cn/jbolt/common/gen/</exclude>
+					    <exclude>/sql/</exclude>
+					    <exclude>/gentpl/</exclude>
+					    <exclude>/dbconfig/</exclude>
 						<exclude>*.jf</exclude>
 						<exclude>*.sql</exclude>
 						<exclude>*.json</exclude>
