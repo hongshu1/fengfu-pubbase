@@ -43,7 +43,6 @@ import cn.rjtech.wms.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -190,34 +189,38 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         String datas = jBoltPara.getString("datas");//打印张数
         List<Kv> kvList = JSON.parseArray(datas, Kv.class);
         Date now = new Date();
+        Ret rets = new Ret();
         boolean result = tx(() -> {
+            List<String> list = new ArrayList<>();
             for (Kv kv : kvList) {
-                commonSaveStock(kv, now, printnum);
+                //1、T_Sys_BarcodeMaster--条码表
+                kv.set("locksource", "新增期初库存");
+                Long masid = null;
+                List<Record> positionByKvs = barcodePositionService.findBarcodePositionByKvs(kv);
+                if (positionByKvs.isEmpty()) {
+                    Barcodemaster barcodemaster = new Barcodemaster();
+                    barcodemasterService.saveBarcodemasterModel(barcodemaster, now);
+                    Ret masterRet = barcodemasterService.save(barcodemaster);
+                    if (masterRet.isFail()) {
+                        return false;
+                    }
+                    masid = barcodemaster.getAutoid();
+                } else {
+                    masid = positionByKvs.get(0).getLong("locksource");
+                }
+                commonSaveStock(kv, now, printnum, masid);
+                list.add(String.valueOf(masid));
             }
+            rets.set("ids", String.join(",", list));
             return true;
         });
-        return ret(result);
+        rets.set(ret(result));
+        return rets;
     }
 
-    public boolean commonSaveStock(Kv kv, Date now, int printnum) {
+    public boolean commonSaveStock(Kv kv, Date now, int printnum, Long masid) {
         ArrayList<Barcodedetail> barcodedetails = new ArrayList<>();
         ArrayList<StockBarcodePosition> positions = new ArrayList<>();
-
-        //1、T_Sys_BarcodeMaster--条码表
-        kv.set("locksource", "新增期初库存");
-        Long masid = null;
-        List<Record> positionByKvs = barcodePositionService.findBarcodePositionByKvs(kv);
-        if (positionByKvs.isEmpty()) {
-            Barcodemaster barcodemaster = new Barcodemaster();
-            barcodemasterService.saveBarcodemasterModel(barcodemaster, now);
-            Ret masterRet = barcodemasterService.save(barcodemaster);
-            if (masterRet.isFail()) {
-                return false;
-            }
-            masid = barcodemaster.getAutoid();
-        } else {
-            masid = positionByKvs.get(0).getLong("locksource");
-        }
 
         //2、生成条码库存数量
         BigDecimal generatedStockQty = kv.getBigDecimal("generatedstockqty");
@@ -279,14 +282,18 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         }
 
         Date now = new Date();
+        Ret rets = new Ret();
         boolean result = tx(() -> {
-            boolean save = commonSaveBarcode(kvList, now, printnum);
+            List<String> list = new ArrayList<>();
+            boolean save = commonSaveBarcode(kvList, now, printnum, list);
+            rets.set("ids", String.join(",", list));
             return save;
         });
-        return ret(result);
+        rets.set(ret(result));
+        return rets;
     }
 
-    public boolean commonSaveBarcode(List<Kv> kvList, Date now, int printnum) {
+    public boolean commonSaveBarcode(List<Kv> kvList, Date now, int printnum, List<String> list) {
         ArrayList<Barcodedetail> barcodedetails = new ArrayList<>();
         ArrayList<StockBarcodePosition> positions = new ArrayList<>();
         for (Kv kv : kvList) {
@@ -307,6 +314,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             } else {
                 masid = positionByKvs.get(0).getLong("locksource");
             }
+            list.add(String.valueOf(masid));
 
             //2、T_Sys_BarcodeDetail--条码明细表
             Barcodedetail barcodedetail = new Barcodedetail();
@@ -394,7 +402,20 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
 
             //5、保存
             boolean tx = tx(() -> {
-                boolean result = commonSaveStock(kv, now, 1);
+                Long masid = null;
+                List<Record> positionByKvs = barcodePositionService.findBarcodePositionByKvs(kv);
+                if (positionByKvs.isEmpty()) {
+                    Barcodemaster barcodemaster = new Barcodemaster();
+                    barcodemasterService.saveBarcodemasterModel(barcodemaster, now);
+                    Ret masterRet = barcodemasterService.save(barcodemaster);
+                    if (masterRet.isFail()) {
+                        return false;
+                    }
+                    masid = barcodemaster.getAutoid();
+                } else {
+                    masid = positionByKvs.get(0).getLong("locksource");
+                }
+                boolean result = commonSaveStock(kv, now, 1, masid);
                 return result;
             });
             if (!tx) {
@@ -461,7 +482,8 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
 
         //5、保存
         boolean tx = tx(() -> {
-            boolean save = commonSaveBarcode(kvList, now, 1);
+            List<String> list = new ArrayList<>();
+            boolean save = commonSaveBarcode(kvList, now, 1, list);
             return save;
         });
 

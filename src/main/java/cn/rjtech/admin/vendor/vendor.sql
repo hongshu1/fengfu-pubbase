@@ -33,7 +33,7 @@ WHERE v.isDeleted = '0'
 #sql("getAutocompleteList")
 SELECT TOP #(limit) *
 FROM Bd_Vendor
-WHERE 1=1 and isdeleted = 0 and isenabled = 0
+WHERE 1=1 and isdeleted = 0 and isenabled = 1
     #if(q)
         AND (
             cvencode LIKE CONCAT('%', #para(q), '%') OR
@@ -62,4 +62,19 @@ WHERE  1 = 1
     #if(cvccode)
         AND v.cvccode = #para(cvccode)
     #end
+#end
+
+#sql("getAdminDatas")
+select * from bd_Vendor t1
+where 1=1 and isdeleted = 0
+#if(iventorclassid)
+and t1.iVendorClassId = #para(iventorclassid)
+#end
+#if(cvenname)
+    and t1.cvenname = #para(cvenname)
+#end
+#if(cvencode)
+    and t1.cvencode = #para(cvencode)
+#end
+order by t1.dUpdateTime desc
 #end

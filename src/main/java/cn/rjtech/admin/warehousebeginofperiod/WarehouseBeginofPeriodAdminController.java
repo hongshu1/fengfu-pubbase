@@ -114,11 +114,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         renderJson(true);
     }
 
-    /*public void save(JBoltTable jBoltTable) {
-        List<Record> saveRecordList = jBoltTable.getSaveRecordList();
-        renderJson(service.save());
-    }*/
-
     /*
      * 保存新增期初库存
      * */
@@ -132,13 +127,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     public void submitAddBarcode(JBoltPara jBoltPara) {
         renderJsonData(service.submitAddBarcode(jBoltPara));
     }
-
-    /*
-     * 保存新增期初条码
-     * */
-//    public void saveBarcode(JBoltPara jBoltPara) {
-//        renderJsonData(service.saveBarcode(jBoltPara));
-//    }
 
     /*
      * 新增页加载的数据
