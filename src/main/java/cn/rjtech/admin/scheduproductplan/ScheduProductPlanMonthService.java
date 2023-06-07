@@ -2572,12 +2572,15 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         }
 
 
+        int seq = 1;
         //对产线逐个处理
         for (Long key : workInvListMap.keySet()) {
             List<String> recordList = workInvListMap.get(key);
             for (String inv : recordList){
                 //inv信息
                 Record invInfo = invInfoMap.get(inv);
+                invInfo.set("seq",seq++);  //用于页面排序
+                invInfo.set("rowSpan",9);  //用于页面跨行条数
 
                 //key:yyyy-MM-dd   value:qty  计划使用
                 Map<String,BigDecimal> dateQtyPPMap = invPlanDatePPMap.get(inv);
@@ -2654,8 +2657,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         planRecord.set("cInvName1",invInfo.getStr("cInvName1"));
         planRecord.set("cWorkName",invInfo.getStr("cWorkName"));
         if (StringUtils.isNotBlank(colName)){
-            planRecord.set("colName",colName);
+            planRecord.set("colName",colName);  //自定义列名
         }
+        planRecord.set("seq",invInfo.getInt("seq"));  //用于页面排序
+        planRecord.set("rowSpan",invInfo.getInt("rowSpan"));  //用于页面跨行条数
         dateQtyMap = dateQtyMap != null ? dateQtyMap : new HashMap<>();
 
         //key:yyyy-MM   value:qtySum
@@ -2711,8 +2716,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         planRecord.set("cInvName1",invInfo.getStr("cInvName1"));
         planRecord.set("cWorkName",invInfo.getStr("cWorkName"));
         if (StringUtils.isNotBlank(colName)){
-            planRecord.set("colName",colName);
+            planRecord.set("colName",colName);  //自定义列名
         }
+        planRecord.set("seq",invInfo.getInt("seq"));  //用于页面排序
+        planRecord.set("rowSpan",invInfo.getInt("rowSpan"));  //用于页面跨行条数
         dateQtyMap = dateQtyMap != null ? dateQtyMap : new HashMap<>();
         dateQtyMap2 = dateQtyMap2 != null ? dateQtyMap2 : new HashMap<>();
 

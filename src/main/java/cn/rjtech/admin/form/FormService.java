@@ -49,7 +49,7 @@ public class FormService extends BaseService<Form> {
      * 后台管理分页查询
      */
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
-        return dbTemplate("form.paginateAdminDatas").paginate(pageNumber, pageSize);
+        return dbTemplate("form.paginateAdminDatas", para).paginate(pageNumber, pageSize);
     }
 
     /**

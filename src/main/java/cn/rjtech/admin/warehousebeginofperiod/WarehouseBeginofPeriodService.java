@@ -366,6 +366,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             String cAreaName = trimMethods(record.getStr("cAreaName"));//库区名称
             String createDate = trimMethods(record.getStr("createDate"));//生产日期
             String cVenName = trimMethods(record.getStr("cVenName"));//供应商名称
+            String reportfilename = trimMethods(record.getStr("reportfilename"));//打印模板标签
             if (StrUtil.isBlank(cWhName)) {
                 return fail("仓库名称不能为空");
             }
@@ -377,6 +378,9 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             }
             if (StrUtil.isBlank(batch)) {
                 return fail("批次号不能为空");
+            }
+            if (StrUtil.isBlank(reportfilename)) {
+                return fail("打印模板标签不能为空");
             }
 
             Inventory inventory = inventoryService.findBycInvCode(cInvCode);
@@ -418,21 +422,9 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             kv.set("vencode", vendor.getCVenCode());
             kv.set("ipkgqty", inventory.getIPkgQty());
             kv.set("generatedstockqty", qty);
+            kv.set("reportfilename", getReportFileName(reportfilename));
 
             boolean tx = tx(() -> {
-                Long masid = null;
-                List<Record> positionByKvs = barcodePositionService.findBarcodePositionByKvs(kv);
-                if (positionByKvs.isEmpty()) {
-                    Barcodemaster barcodemaster = new Barcodemaster();
-                    barcodemasterService.saveBarcodemasterModel(barcodemaster, now);
-                    Ret masterRet = barcodemasterService.save(barcodemaster);
-                    if (masterRet.isFail()) {
-                        return false;
-                    }
-                    masid = barcodemaster.getAutoid();
-                } else {
-                    masid = positionByKvs.get(0).getLong("locksource");
-                }
                 boolean result = commonSaveStock(kv, now, 1);
                 return result;
             });
@@ -469,6 +461,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             String createDate = trimMethods(record.getStr("createDate"));//生产日期
             String cVenName = trimMethods(record.getStr("cVenName"));//供应商名称
             String barcode = trimMethods(record.getStr("barcode"));//条码号
+            String reportfilename = trimMethods(record.getStr("reportfilename"));//打印模板标签
             if (StrUtil.isBlank(cWhName)) {
                 return fail("仓库名称不能为空");
             }
@@ -483,6 +476,9 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             }
             if (StrUtil.isBlank(barcode)) {
                 return fail("条码号不能为空");
+            }
+            if (StrUtil.isBlank(reportfilename)) {
+                return fail("打印模板标签不能为空");
             }
 
             Inventory inventory = inventoryService.findBycInvCode(cInvCode);
@@ -522,6 +518,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             kv.set("locksource", "新增期初库存");
             kv.set("vencode", vendor.getCVenCode());
             kv.set("generatedstockqty", qty);
+            kv.set("reportfilename", getReportFileName(reportfilename));
             //
             kvList.add(kv);
         }
@@ -537,6 +534,13 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         });
 
         return ret(tx);
+    }
+
+    public String getReportFileName(String reportfilename){
+        List<Dictionary> dictionaries = JBoltDictionaryCache.me.getListByTypeKey("beginningofperiod", true);
+        Dictionary dictionary = dictionaries.stream().filter(e -> e.getName().equals(reportfilename)).findFirst()
+            .orElse(new Dictionary());
+        return dictionary.getSn();
     }
 
 

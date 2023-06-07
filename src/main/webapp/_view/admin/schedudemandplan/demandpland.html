@@ -32,13 +32,13 @@
 			{@each datas as data,index}
 			<tr data-id="${data.iautoid}">
 				<td>${pageNumber,pageSize,index | rownum}</td>
-				<td>${data.cvenname}</td>
-				<td>${data.cinvcode}</td>
-				<td>${data.cinvcode1}</td>
-				<td>${data.cinvname1}</td>
-				<td>${data.ipkgqty}</td>
-				<td>${data.iinnerinstockdays}</td>
-				<th>${data.colname}</th>
+				<td title="${data.cvenname}">${data.cvenname}</td>
+				<td title="${data.cinvcode}">${data.cinvcode}</td>
+				<td title="${data.cinvcode1}">${data.cinvcode1}</td>
+				<td title="${data.cinvname1}">${data.cinvname1}</td>
+				<td title="${data.ipkgqty}">${data.ipkgqty}</td>
+				<td title="${data.iinnerinstockdays}">${data.iinnerinstockdays}</td>
+				<th title="${data.colname}">${data.colname}</th>
 
 				#for(datetr:collist)
 				<td>${data.#(datetr),0|number_format}</td>

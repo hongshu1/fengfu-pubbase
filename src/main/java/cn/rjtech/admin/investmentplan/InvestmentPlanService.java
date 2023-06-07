@@ -24,6 +24,7 @@ import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -1296,6 +1297,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
      * 投资预实差异管理表数据查询
      * */
 	public List<Record> findBudgetActualDifferenceDatas(Kv para) {
+		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
 		List<Record> list = dbTemplate("investmentplan.findBudgetActualDifferenceDatas",para).find();
 		for (Record record : list) {
 			Constants.fillPlanItem(record);
@@ -1306,6 +1308,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
      * 投资汇总表数据查询
      * */
 	public List<Record> findInvestmentPlanGroupSummaryDatas(Kv para) {
+		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
 		List<Record> list = dbTemplate("investmentplan.findInvestmentPlanGroupSummaryDatas",para).find();
 		String cgroupkey = para.getStr("cgroupkey");
 		ValidationUtils.notBlank(cgroupkey, "请选择字段筛选!");
