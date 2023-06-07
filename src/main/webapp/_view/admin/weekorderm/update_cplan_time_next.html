@@ -21,13 +21,15 @@
         {@/each}
         </textarea>
 
-        <table class="jbolt_table jbolt_main_table  table-center "
+        <table class="jbolt_table jbolt_main_table  table-center"
+               id="update_cplan_time_next_jbolt_table_#(pageId)"
                data-jbolttable
                data-width="auto"
                data-height="fill"
-               data-ajax="true"
+               ###data-ajax="true"
+               ###data-url="admin/weekorderm/updateCplanTimeDatas"
+               data-ajax-success-handler="insertDatas"
                data-column-resize="true"
-               data-url="admin/weekorderm/updateCplanTimeDatas"
                data-rowtpl="WeekOrderM_tpl_#(pageId)"
                data-copy-to-excel="false"
                data-page="WeekOrderD_page"
@@ -37,11 +39,11 @@
                 <th data-width="60" data-column="index">序号</th>
                 <th data-width="150" data-column="ccode">传票号</th>
                 <th data-width="150" data-column="cdefine1">客户部番</th>
-                <th data-width="150" data-column="cdefine2">部品名称</th>
-                <th data-width="160" data-column="dplanaogdate">计划日期</th>
-                <th data-width="160" data-column="cplanaogtime">计划时间</th>
-                <th data-width="160" data-column="updatedplanaogdate">调整日期</th>
-                <th data-width="160" data-column="updatecplanaogtime">调整时间</th>
+                <th data-width="230" data-column="cdefine2">部品名称</th>
+                <th data-width="100" data-column="dplanaogdate">计划日期</th>
+                <th data-width="80" data-column="cplanaogtime">计划时间</th>
+                <th data-width="100" data-column="updatedplanaogdate">调整日期</th>
+                <th data-width="80" data-column="updatecplanaogtime">调整时间</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -49,9 +51,17 @@
     </div>
 </div>
 #end
-
 #define js()
 <script type="text/javascript">
-    
+    function submitThisForm() {
+        jboltTableSubmit('#jbolt_table_#(pageId)');
+    }
+
+    // 插入默认数据
+    function insertDatas() {
+        console.log("插入默认数据");
+        console.log(parent.datas);
+        jboltTableInsertRow("update_cplan_time_next_jbolt_table_#(pageId)", parent.datas);
+    }
 </script>
 #end
