@@ -613,9 +613,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setBarcode(row.get("barcode"));
             sysPureceivedetail.setModifyDate(now);
             sysPureceivedetail.setIsDeleted(false);
-            //编辑的时候不会新增供应商  所以不需要拆分
-//            String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row, operationType, map);
-//            sysPureceivedetail.setMasID(s);
+            //状态为保存状态的可以拆单 其他状态接是修改操作
+            if(AuditStateEnum.NOT_AUDIT.getValue().equals(sysPureceive.getIAuditStatus())){
+                String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row, operationType, map);
+                sysPureceivedetail.setMasID(s);
+            }
             if (StrUtil.isBlank(row.getStr("isinitial"))) {
                 sysPureceivedetail.setIsInitial("0");
             } else {
