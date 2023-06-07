@@ -1,24 +1,36 @@
 package cn.rjtech.admin.qcitem;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.QcItem;
+import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 质量建模-检验项目（分类）
@@ -41,6 +53,8 @@ public class QcItemService extends BaseService<QcItem> {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingDService;
     /**
      * 后台管理数据查询
      *
@@ -217,4 +231,49 @@ public class QcItemService extends BaseService<QcItem> {
         return jBoltExcel;
     }
 
+    /**
+     * 从系统导入字段配置，获得导入的数据
+     */
+    public Ret importExcel(File file) {
+        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        if (notOk(records)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+        }
+
+        Date now = new Date();
+
+        for (Record record : records) {
+
+            if (StrUtil.isBlank(record.getStr("cQcItemCode"))) {
+                return fail("检验项目编码不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("cQcItemName"))) {
+                return fail("检验项目名称不能为空");
+            }
+            record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+            record.set("cQcItemCode", record.getStr("cQcItemCode"));
+            record.set("cQcItemName", record.getStr("cQcItemName"));
+            record.set("iCreateBy", JBoltUserKit.getUserId());
+            record.set("dCreateTime", now);
+            record.set("cCreateName", JBoltUserKit.getUserName());
+            record.set("iOrgId", getOrgId());
+            record.set("cOrgCode", getOrgCode());
+            record.set("cOrgName", getOrgName());
+            record.set("iUpdateBy", JBoltUserKit.getUserId());
+            record.set("dUpdateTime", now);
+            record.set("cUpdateName", JBoltUserKit.getUserName());
+            record.set("isDeleted",0);
+        }
+
+        // 执行批量操作
+        tx(() -> {
+            batchSaveRecords(records);
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    public QcItem findBycQcItemName(String cqcitemname) {
+        return findFirst(selectSql().eq(QcItem.CQCITEMNAME, cqcitemname).eq(QcItem.IORGID, getOrgId()).eq(QcItem.ISDELETED, ZERO_STR).first());
+    }
 }

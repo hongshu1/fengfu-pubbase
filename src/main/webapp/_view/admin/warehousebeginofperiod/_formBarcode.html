@@ -19,7 +19,7 @@
                      data-accept="excel"
                      data-maxsize="20480"
                      data-handler="uploadFile"
-                     data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                     data-upload-success-handler="setTimeout(function(){parent.refreshPjaxContainer();parent.layer.closeAll();},1000)"
                      data-url="/admin/warehousebeginofperiod/importBarcodeExcel">
                 </div>
               </div>

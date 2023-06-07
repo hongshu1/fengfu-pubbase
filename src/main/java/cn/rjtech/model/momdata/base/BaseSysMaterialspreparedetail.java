@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -47,6 +46,10 @@ public abstract class BaseSysMaterialspreparedetail<M extends BaseSysMaterialspr
     public static final String MODIFYPERSON = "ModifyPerson";
     /**更新时间*/
     public static final String MODIFYDATE = "ModifyDate";
+    /**状态：1=已扫描，0=未扫描*/
+    public static final String STATE = "State";
+    /**是否删除：0. 否 1. 是*/
+    public static final String ISDELETED = "isDeleted";
 	/**
 	 * AutoID
 	 */
@@ -351,6 +354,40 @@ public abstract class BaseSysMaterialspreparedetail<M extends BaseSysMaterialspr
 	@JSONField(name = "modifydate")
 	public java.util.Date getModifyDate() {
 		return getDate("ModifyDate");
+	}
+
+	/**
+	 * 状态：1=已扫描，0=未扫描
+	 */
+	public M setState(java.lang.String State) {
+		set("State", State);
+		return (M)this;
+	}
+
+	/**
+	 * 状态：1=已扫描，0=未扫描
+	 */
+	@JBoltField(name="state" ,columnName="State",type="String", remark="状态：1=已扫描，0=未扫描", required=false, maxLength=50, fixed=0, order=19)
+	@JSONField(name = "state")
+	public java.lang.String getState() {
+		return getStr("State");
+	}
+
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
+		return (M)this;
+	}
+
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=20)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("isDeleted");
 	}
 
 }
