@@ -10,10 +10,11 @@ select t1.*, t2.name as stepname,t3.name as way from Bd_ApprovalD t1
 #end
 
 #sql("getPerson")
-select t1.iAutoId as ipersonid, t1.cPsn_Num as cpsncode, t1.cPsn_Name as cpsnname, t2.name as cdeptname, t1.iUserId as
+select t1.iAutoId as ipersonid, t1.cPsn_Num as cpsncode, t1.cPsn_Name as cpsnname, t2.cDepName as cdeptname, t1.iUserId as
 iuserid, t3.username
 from Bd_Person t1
-left join #(getBaseDbName()).dbo.jb_dept t2 on t2.sn = t1.cDept_num
+###left join #(getBaseDbName()).dbo.jb_dept t2 on t2.sn = t1.cDept_num
+left join Bd_Department t2 on t2.cDepCode = t1.cDept_num
 left join #(getBaseDbName()).dbo.jb_user t3 on t3.id = t1.iUserId
 where t1.isDeleted = '0' and t1.iUserId is not null
 #if(itemHidden)

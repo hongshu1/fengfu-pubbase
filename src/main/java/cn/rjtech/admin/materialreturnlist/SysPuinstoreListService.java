@@ -238,6 +238,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		if (jBoltTable.updateIsNotBlank()) {
 			recordList.addAll(updateRecordList);
 		}
+		final String[] AutoIDs = {null};
 
 		tx(()->{
 			String headerId = null;
@@ -289,6 +290,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					update(puinstore);
 					headerId = puinstore.getAutoID();
 				}
+				AutoIDs[0] = puinstore.getAutoID();
 			}
 
 			// 获取待保存数据 执行保存
@@ -376,7 +378,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 			return true;
 		});
-		return SUCCESS;
+		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
 

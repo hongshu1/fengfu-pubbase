@@ -76,6 +76,7 @@ order by t11.ModifyDate desc
 
     #sql("getmaterialReturnLists")
 SELECT
+    t2.AutoID,
     t4.iQty,
     t2.Qty AS qtys,
     t2.Memo,

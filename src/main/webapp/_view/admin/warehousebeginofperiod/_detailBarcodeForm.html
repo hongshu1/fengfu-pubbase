@@ -128,11 +128,6 @@
     let sn = "";
     for (let i in rows) {
       let rowdata = rows[i];
-      /*var param={
-        autoid:rowdata.autoid,
-        masid:rowdata.masid,
-        positionautoid:rowdata.positionautoid
-      }*/
       sn = rowdata.sn;
       var autoid = rowdata.masid;
       code.push(autoid);
@@ -162,8 +157,10 @@
     } else {
       var ids = jboltTableGetCheckedIds(ele, true);
       if (ids) {
-        LayerMsgBox.confirm("所选数据中包含数据库已存数据，确定删除吗？", function () {
-          removeJBoltTableCheckedTr(ele, false, callback);
+        LayerMsgBox.confirm("所选数据中包含数据库已存数据，确定删除吗？",function(){
+          Ajax.get("admin/warehousebeginofperiod/deleteByIds?ids="+ids,function(res){
+            window.parent.refreshPjaxContainer();
+          });
         });
       } else {
         removeJBoltTableCheckedTr(ele, confirm, callback);

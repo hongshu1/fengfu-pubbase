@@ -230,4 +230,47 @@ WHERE wa.isDeleted = 0
 
 #end
 
+#sql("barcodeDatas")
+SELECT *
+FROM T_Sys_PUReceiveDetail
+WHERE isDeleted = 0
+   	#if(barcode)
+		and Barcode = #para(barcode)
+	#end
+#end
+
+
+#sql("purchaseOrderD")
+select
+    d.*,
+    m.*,
+    m.cOrderNo as sourcebillno,
+    a.cBarcode as barcode,
+    b.cInvCode ,
+    b.cInvCode1,
+    b.cInvName1,
+    a.dPlanDate as plandate,
+    b.cInvStd as cinvstd,
+    a.iQty as qtys,
+    a.iQty as qty,
+    m.cOrderNo as SourceBillNo,
+    m.iBusType as SourceBillType,
+    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
+    m.cOrderNo as SourceBillID,
+    d.iAutoId as SourceBillDid,
+    m.iVendorId,
+	v.cVenCode as vencode,
+	v.cVenName as venname
+FROM PS_PurchaseOrderDBatch a
+LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
+LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
+LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
+LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
+where 1=1
+   	#if(barcode)
+		and a.cBarcode = #para(barcode)
+	#end
+#end
+
 

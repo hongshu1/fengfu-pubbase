@@ -10,14 +10,11 @@
             <td data-editable="false">${data.cdeptname}</td>
             <td style="display: none">${data.ipersonid}</td>
             <td style="display: none">${data.iuserid}</td>
-<!--            <td>
-<a tooltip data-title="上移"  href="javascript:void(0)" onclick="jboltTableTrMoveUp(this)"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
-<a tooltip data-title="下移"  href="javascript:void(0)" onclick="jboltTableTrMoveDown(this)"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
-</td>-->
             <td>
                 <a tooltip data-title="上移" href="javascript:void(0)" onclick="jboltTableTrMoveUp(this, true, 'iseq');"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
                 <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true, 'iseq');" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
             </td>
+            <td hidden>${data.iseq}</td>
         </tr>
     {@/each}
 </textarea>
@@ -40,6 +37,7 @@
                         <button onclick="jboltTableRemoveCheckedRow(this, true)"
                                 class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
                         <input type="hidden" id="itemHidden" name="itemHidden" value="#(itemHidden??)"/>
+
                     </div>
                 </div>
 
@@ -68,6 +66,7 @@
                         <th data-min-width="200" data-column="cpsnname">姓名</th>
                         <th data-min-width="200" data-column="cdeptname">所属部门</th>
                         <th data-width="140" data-column="optcol">操作</th>
+                        <th hidden data-column="iseq"></th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -87,6 +86,7 @@
         tableDataSuccess_line();
         jboltTableChooseAndInsert(ele);
     }
+
 
     /**
      * 返回 jbolttable的id
@@ -128,6 +128,12 @@
         var editableTableOptions1 = {
             trigger: "click",
             insertDefaultValues: {username:'#(JBoltUserKit.getUserName())'},
+            afterInsertRowHandler: function (table, tr) {
+                var trIndex = tr.data("index");
+
+                var rank = trIndex + 1;
+                jboltTableSetCell(table, tr, 'iseq', rank, rank, true);
+            },
             submit: {
                 withForm: ["approvalDForm"],
                 type:"multi",//cell|all|multi
@@ -137,12 +143,9 @@
                 iautoid: {
                     submitAttr: "iAutoId"
                 },
-                /*iseq:{
-                    type:"input_number",
-                    rule:"int",
-                    required:true,
+                iseq:{
                     submitAttr: "iSeq"
-                },*/
+                },
                 username:{
                     type:"input",
                     submitAttr:"username"

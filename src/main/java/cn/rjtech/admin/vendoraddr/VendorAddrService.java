@@ -211,4 +211,8 @@ public class VendorAddrService extends BaseService<VendorAddr> {
 		Sql sql = selectSql().in(VendorAddr.IAUTOID, ids);
 		return find(sql);
 	}
+
+	public List<VendorAddr> findByIVendorId(Long ivendorid){
+		return find("select * from Bd_VendorAddr where ivendorid = ?",ivendorid);
+	}
 }

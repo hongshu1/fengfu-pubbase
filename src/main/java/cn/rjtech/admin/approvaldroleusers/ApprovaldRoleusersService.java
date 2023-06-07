@@ -11,6 +11,8 @@ import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.ApprovaldRoleusers;
 
+import java.util.List;
+
 import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
@@ -135,5 +137,14 @@ public class ApprovaldRoleusersService extends BaseService<ApprovaldRoleusers> {
 	 */
 	public void deleteByApprovalId(Object[] ids){
 		delete("DELETE FROM Bd_ApprovalD_RoleUsers WHERE iApprovaldRoleId IN (" + ArrayUtil.join(ids, COMMA) + ")");
+	}
+
+	/**
+	 * 根据外键找数据
+	 * @param id
+	 * @return
+	 */
+	public List<ApprovaldRoleusers> getRoleUser(Long id){
+		return find("select * from Bd_ApprovalD_RoleUsers where iApprovaldRoleId = "+id +" order by iSeq asc");
 	}
 }

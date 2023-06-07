@@ -104,18 +104,15 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
      * 条码明细删除
      * */
     public void deleteByIds() {
+        Kv kv = getKv();
         renderJson(service.deleteByBatchIds(get("ids")));
     }
 
     public void delete() {
         Kv kv = getKv();
+        String ids = get("ids");
         renderJson(true);
     }
-
-    /*public void save(JBoltTable jBoltTable) {
-        List<Record> saveRecordList = jBoltTable.getSaveRecordList();
-        renderJson(service.save());
-    }*/
 
     /*
      * 保存新增期初库存
@@ -132,13 +129,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     }
 
     /*
-     * 保存新增期初条码
-     * */
-//    public void saveBarcode(JBoltPara jBoltPara) {
-//        renderJsonData(service.saveBarcode(jBoltPara));
-//    }
-
-    /*
      * 新增页加载的数据
      * */
     public void findDetails() {
@@ -146,25 +136,45 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     }
 
     /*
-     * 模板下载
+     * 期初库存导入模板
      * */
     @SuppressWarnings("unchecked")
-    public void downloadTpl() throws Exception {
-        renderJxls("warehousearea_import.xlsx", Kv.by("rows", null), "仓库期初导入模板.xlsx");
+    public void downloadStockTpl() throws Exception {
+        renderJxls("warehousebeginstock_import.xlsx", Kv.by("rows", null), "期初库存导入模板.xlsx");
     }
 
     /*
-     * 数据导入
+     * 期初条码导入模板
      * */
-    public void importExcel() {
+    @SuppressWarnings("unchecked")
+    public void downloadBarcodeTpl() throws Exception {
+        renderJxls("warehousebeginbarcode_import.xlsx", Kv.by("rows", null), "期初条码导入模板.xlsx");
+    }
+
+    /*
+     * 期初库存数据导入
+     * */
+    public void importStockExcel() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);
         if (notExcel(file)) {
             renderJsonFail("请上传excel文件");
             return;
         }
-        renderJson(service.importExcelData(file.getFile()));
-        renderJson("导入成功");
+        renderJson(service.importStockExcel(file.getFile()));
+    }
+
+    /*
+     * 期初条码数据导入
+     * */
+    public void importBarcodeExcel() {
+        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+        UploadFile file = getFile("file", uploadPath);
+        if (notExcel(file)) {
+            renderJsonFail("请上传excel文件");
+            return;
+        }
+        renderJson(service.importBarcodeExcel(file.getFile()));
     }
 
     /**

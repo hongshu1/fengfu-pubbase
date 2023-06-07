@@ -234,32 +234,50 @@ pi.iautoid,pi.iinvestmenttype,pi.cproductline,
 	case when pi.iyeartotalamountactual = 0 or pi.iyeartotalamountactual is null then pi.iyeartotalamountplan else pi.iyeartotalamountactual end iyeartotalamountplan,
 	pi.iyeartotalamountactual,(pi.iyeartotalamountplan-pi.iyeartotalamountactual) iyeartotalamountdiff,pi.iyeartotalamountdiffreason,
 	pi.cedittype,pi.cmemo,pi.iitemyear,
-	(select cperiodprogress from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 1) cperiodprogress1,
-	(select dperioddate from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 1) dperioddate1,
-	(select iamount from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 1) iamount1,
-	(select cperiodprogress from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 2) cperiodprogress2,
-	(select dperioddate from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 2) dperioddate2,
-	(select iamount from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 2) iamount2,
-	(select cperiodprogress from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 3) cperiodprogress3,
-	(select dperioddate from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 3) dperioddate3,
-	(select iamount from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 3) iamount3,
-	(select cperiodprogress from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 4) cperiodprogress4,
-	(select dperioddate from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 4) dperioddate4,
-	(select iamount from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 4) iamount4,
-	(select cperiodprogress from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 5) cperiodprogress5,
-	(select dperioddate from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 5) dperioddate5,
-	(select iamount from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 5) iamount5,
-	(select cperiodprogress from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 6) cperiodprogress6,
-	(select dperioddate from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 6) dperioddate6,
-	(select iamount from pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 6) iamount6
-from pl_investment_plan_item pi 
-	inner join pl_investment_plan p on pi.iplanid = p.iautoid
+	case when dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,1,1) is not null then null else  
+	(select cperiodprogress from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 1) end cperiodprogress1,
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,1,1),
+	(select concat(datename(year,dperioddate),'-',datename(month,dperioddate)) from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 1)) dperioddate1,
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,1,2),
+	(select iamount from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 1)) iamount1,
+	case when dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,2,1) is not null then null else  
+	(select cperiodprogress from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 2) end cperiodprogress2,
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,2,1),
+	(select concat(datename(year,dperioddate),'-',datename(month,dperioddate)) from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 2)) dperioddate2,
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,2,2),
+	(select iamount from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 2)) iamount2,
+	case when dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,3,1) is not null then null else  
+	(select cperiodprogress from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 3) end cperiodprogress3,
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,3,1),
+	(select concat(datename(year,dperioddate),'-',datename(month,dperioddate)) from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 3)) dperioddate3,
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,3,2),
+	(select iamount from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 3)) iamount3,
+	case when dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,4,1) is not null then null else  
+	(select cperiodprogress from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 4) end cperiodprogress4,
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,4,1),
+	(select concat(datename(year,dperioddate),'-',datename(month,dperioddate)) from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 4)) dperioddate4,
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,4,2),
+	(select iamount from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 4)) iamount4,
+	case when dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,5,1) is not null then null else  
+	(select cperiodprogress from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 5) end cperiodprogress5,
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,5,1),
+	(select concat(datename(year,dperioddate),'-',datename(month,dperioddate)) from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 5)) dperioddate5,
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,5,2),
+	(select iamount from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 5)) iamount5,
+	case when dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,6,1) is not null then null else  
+	(select cperiodprogress from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 6) end cperiodprogress6,
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,6,1),
+	(select concat(datename(year,dperioddate),'-',datename(month,dperioddate)) from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 6)) dperioddate6,
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,6,2),
+	(select iamount from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 6)) iamount6
+from #(getMomdataDbName()).dbo.pl_investment_plan_item pi 
+	inner join #(getMomdataDbName()).dbo.pl_investment_plan p on pi.iplanid = p.iautoid
 	where 1=1
 	#if(iplanid)
 		and p.iautoid = #para(iplanid)
 	#end
 	and exists (
-		select 1 from bas_project_card pc where pc.ccode = pi.cplanno 
+		select 1 from #(getMomdataDbName()).dbo.bas_project_card pc where pc.ccode = pi.cplanno 
 		#if(istatus)
 			and istatus = #para(istatus)
 		#end
@@ -273,14 +291,14 @@ from pl_investment_plan_item pi
 EXEC	[dbo].[P_InvestmentPlanBudgetActualDifference]
 		@iBudgetYear = #(ibudgetyear),
 		@cDepCode = #para(cdepcode),
-		@u8DbName = #(AppConfig.getU8DbName())
+		@u8DbName = #para(u8dbname)
 #end
 
 #sql("findInvestmentPlanGroupSummaryDatas")
 EXEC	[dbo].[P_InvestmentPlanGroupSummary]
 		@cGroupKey = #para(cgroupkey),
 		@iBudgetYear = #(ibudgetyear),
-		@u8DbName = #(AppConfig.getU8DbName())
+		@u8DbName = #para(u8dbname)
 #end
 
 
@@ -320,7 +338,7 @@ from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi
 	left JOIN #(getMomdataDbName()).dbo.pl_investment_plan_itemd ipid ON ipid.iplanitemid=ipi.iautoid 
 	left join #(getBaseDbName()).dbo.jb_dictionary jd_pp on jd_pp.sn=ipid.cperiodprogress and jd_pp.type_key='period_progress'
 	left join #(getBaseDbName()).dbo.jb_dictionary jd_ibt on jd_ibt.sn=ip.ibudgettype and jd_ibt.type_key='investment_budget_type'
-	left join #(AppConfig.getU8DbName()).dbo.department d on d.cdepcode = ip.cdepcode
+	left join #(getMomdataDbName()).dbo.bd_department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3 and convert(date,ipid.dPeriodDate) >= convert(date,#para(dstartdate)) and convert(date,ipid.dPeriodDate) <= convert(date,#para(denddate))
 	GROUP BY ip.cdepcode,d.cdepname,ip.ibudgetyear,ip.iBudgetType,ipi.cplanno,ipi.citemtype,jd_ibt.name
 	union all
@@ -358,7 +376,7 @@ from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi
 	left JOIN #(getMomdataDbName()).dbo.pl_investment_plan_itemd ipid ON ipid.iplanitemid=ipi.iautoid 
 	left join #(getBaseDbName()).dbo.jb_dictionary jd_pp on jd_pp.sn=ipid.cperiodprogress and jd_pp.type_key='period_progress'
 	left join #(getBaseDbName()).dbo.jb_dictionary jd_ibt on jd_ibt.sn=ip.ibudgettype and jd_ibt.type_key='investment_budget_type'
-	left join #(AppConfig.getU8DbName()).dbo.department d on d.cdepcode = ip.cdepcode
+	left join #(getMomdataDbName()).dbo.bd_department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3
 	GROUP BY ip.cdepcode,d.cdepname,ip.ibudgetyear,ip.iBudgetType,ipi.cplanno,ipi.citemtype,jd_ibt.name
 	union all
@@ -378,21 +396,21 @@ WHERE 1=1 and ip.iEffectiveStatus != 3
 	#(getMomdataDbName()).dbo.PL_GetNewestVersionInvestmentPlanColumnValue(ipi.cplanno,'iTotalAmountPlan') iTotalAmountPlan,
 	2 ibudgettype1,'3' citemtype,
 	'实绩' cbudgettypedesc,
-	convert(varchar(20),sum(#(AppConfig.getU8DbName()).dbo.PL_GetInvestmentPlanActualDatasByDateCompare(ipi.iautoid,convert(date,#para(dstartdate)),1))) previousamounttotal,
-	convert(varchar(20),sum(#(AppConfig.getU8DbName()).dbo.PL_GetInvestmentPlanActualDatasByDateCompare(ipi.iautoid,convert(date,#para(denddate)),2))) afteramounttotal
+	convert(varchar(20),sum(dbo.PL_GetInvestmentPlanActualDatasByDateCompare(ipi.cplanno,convert(date,#para(dstartdate)),1))) previousamounttotal,
+	convert(varchar(20),sum(dbo.PL_GetInvestmentPlanActualDatasByDateCompare(ipi.cplanno,convert(date,#para(denddate)),2))) afteramounttotal
 	#if(monthlist && monthlist.size() > 0)
 		#for(monthnum:monthlist)
-			,convert(varchar(20),sum(#(AppConfig.getU8DbName()).dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ipi.iautoid,datepart(year,dateadd(month,#(for.index),convert(date,#para(dstartdate)))),datepart(month,dateadd(month,#(for.index),convert(date,#para(dstartdate))))))) 'imonthamount#(monthnum)'			
+			,convert(varchar(20),sum(dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ipi.cplanno,datepart(year,dateadd(month,#(for.index),convert(date,#para(dstartdate)))),datepart(month,dateadd(month,#(for.index),convert(date,#para(dstartdate))))))) 'imonthamount#(monthnum)'			
 		#end
 	#end
 	#if(yearlist && yearlist.size() > 0)
 		#for(yearnum:yearlist)
-			,convert(varchar(20),sum(#(AppConfig.getU8DbName()).dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ipi.iautoid,datepart(year,dateadd(month,#(for.index),convert(date,#para(dstartdate)))),null))) 'itotal#(yearnum)'
+			,convert(varchar(20),sum(dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ipi.cplanno,datepart(year,dateadd(month,#(for.index),convert(date,#para(dstartdate)))),null))) 'itotal#(yearnum)'
 		#end
 	#end
 from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi 
 	inner join #(getMomdataDbName()).dbo.pl_investment_plan ip ON ipi.iplanid=ip.iautoid 
-	left join #(AppConfig.getU8DbName()).dbo.department d on d.cdepcode = ip.cdepcode
+	left join #(getMomdataDbName()).dbo.bd_department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3
 	GROUP BY ipi.cplanno,ip.cdepcode,d.cdepname
 ) T where 1=1

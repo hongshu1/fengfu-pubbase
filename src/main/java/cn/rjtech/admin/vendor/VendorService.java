@@ -16,12 +16,14 @@ import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
@@ -70,26 +72,14 @@ public class VendorService extends BaseService<Vendor> {
      * @param isEnabled  是否启用：0. 停用 1. 启用
      * @param isDeleted  删除状态：0. 未删除 1. 已删除
      */
-    public Page<Vendor> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEnabled, Boolean isDeleted,
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEnabled, Boolean isDeleted,
                                       Kv kv) {
-        //创建sql对象
-        Sql sql = selectSql().page(pageNumber, pageSize);
-        //sql条件处理
-        sql.eqBooleanToChar("isEnabled", isEnabled);
-        sql.eqBooleanToChar("isDeleted", isDeleted);
-        sql.eq("cVenName", kv.get("cvenname"));//供应商编码
-        sql.eq("cVenCode", kv.get("cvencode"));//供应商名称
-        sql.eq("iAutoid", kv.get("iventorclassid"));//供应商分类id
-        //关键词模糊查询
-        sql.likeMulti(keywords, "cOrgName", "cVenName", "cVenAbbName", "cCreateName", "cUpdateName");
-        //排序
-        sql.desc("dUpdateTime");
-        Page<Vendor> paginate = paginate(sql);
-        for (Vendor vendor : paginate.getList()) {
-            Department dept = departmentService.findById(vendor.getCVenDepart());
-            vendor.setCVenDepart(null != dept ? dept.getCDepName() : "");
-            Person person = personService.findById(vendor.getIDutyPersonId());
-            vendor.set("cvenpperson", person != null ? person.getCpsnName() : "");
+        Page<Record> paginate = dbTemplate("vendor.getAdminDatas", kv).paginate(pageNumber, pageSize);
+        for (Record record : paginate.getList()) {
+            Department dept = departmentService.findById(record.getStr("cvendepart"));
+            record.set("cvendepart",null != dept ? dept.getCDepName() : "");
+            Person person = personService.findById(record.getStr("idutypersonid"));
+            record.set("cvenpperson", person != null ? person.getCpsnName() : "");
         }
         return paginate;
     }
@@ -193,7 +183,7 @@ public class VendorService extends BaseService<Vendor> {
                 vendor.setIDutyPersonId(idutypersonid);//专管业务员id
                 if (StringUtils.isNotBlank(fromRecord.getStr("cprovince"))) {
                     String[] split = fromRecord.getStr("cprovince").split(",");
-                    setSplitCProvince(vendor,split);
+                    setSplitCProvince(vendor, split);
                 }
                 if (!vendorAddrs.isEmpty()) {
                     VendorAddr vendorAddr = vendorAddrs.get(0);
@@ -237,7 +227,7 @@ public class VendorService extends BaseService<Vendor> {
                     .isTrue(StringUtils.isBlank(findcVenCodeInfo(vendor.getCVenCode())), vendor.getCVenCode() + " 供应商编码不能重复！");
             }
             String[] split = vendor.getCProvince().split(",");
-            setSplitCProvince(vendor,split);
+            setSplitCProvince(vendor, split);
             vendor.setIUpdateBy(JBoltUserKit.getUserId());
             vendor.setCUpdateName(JBoltUserKit.getUserName());
             vendor.setDUpdateTime(new Date());
@@ -260,7 +250,7 @@ public class VendorService extends BaseService<Vendor> {
         return SUCCESS;
     }
 
-    public void setSplitCProvince(Vendor vendor,String[] split){
+    public void setSplitCProvince(Vendor vendor, String[] split) {
         for (int i = 0; i < split.length; i++) {
             vendor.setCProvince(split.length > 0 ? split[0] : "");//省份
             vendor.setCCity(split.length > 1 ? split[1] : "");//城市
@@ -368,6 +358,10 @@ public class VendorService extends BaseService<Vendor> {
 
     public Long queryAutoIdByCvencode(String cvencode) {
         return queryLong("select iautoid from Bd_Vendor where cVenCode = ? AND cOrgCode = ? ", cvencode, getOrgCode());
+    }
+
+    public List<Vendor> findByCVCCodeAndiVendorClassId(String cVCCode, Long iVendorClassId) {
+        return find("select * from bd_vendor where cVCCode = ? and iVendorClassId = ?", cVCCode, iVendorClassId);
     }
 
 }

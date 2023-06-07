@@ -1,4 +1,5 @@
 <form onsubmit="return false;" id="formForm" action="#(action)" method="post">
+    
 <input type="hidden" name="form.iautoid" value="#(form.iautoid??)" />
 
 	<div class="form-group row">
@@ -12,7 +13,7 @@
                     data-text-attr="cname"
                     data-value-attr="iautoid"
                     data-select="#(form.iformcategoryid??)"
-                    data-text="=表单名称=">
+                    data-text="=表单类别=">
             </select>
 		</div>
 	</div>
@@ -20,10 +21,10 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">表单编码</label>
 		<div class="col">
-			<input type="text" class="form-control"   data-rule="required" placeholder="请输入表单编码" maxlength="40"
-				   name="form.cformcode" value="#(form.cformcode??)"/>
+			<input type="text" class="form-control"   data-rule="required" placeholder="请输入表单编码" maxlength="40" name="form.cformcode" value="#(form.cformcode??)"/>
 		</div>
 	</div>
+    
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">表单名称</label>
 		<div class="col">
@@ -34,31 +35,31 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">编码字段</label>
 		<div class="col">
-			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入"
-				   maxlength="50" name="form.ccode" value="#(form.ccode??)"/>
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入" maxlength="50" name="form.ccode" value="#(form.ccode??)"/>
 		</div>
 	</div>
-	<div class="form-group row"
-		 data-radio
-		 data-rule="radio"
-		 data-value="#(form.cFormTypeSn??)"
-		 data-name="form.isapproval"
-		 data-default="options_first"
-		 data-width="col-sm-2,col"
-	>
-		<label class="col-sm-2 col-form-label" >是否支持审批</label>
-		<div class="col"  style="padding-top: 1px;">
-			<div class="radio radio-primary  radio-inline">
-				<input   id="r_isapproval_true"  type="radio" name="form.isapproval" value="1"/>
-				<label for="r_isapproval_true">是</label>
-			</div>
+    
+    <div class="form-group row"
+         data-radio
+         data-rule="radio"
+         data-value="#(form.isapproval??)"
+         data-name="form.isapproval"
+         data-default="options_first"
+         data-width="col-sm-2,col"
+    >
+        <label class="col-sm-2 col-form-label">是否支持审批</label>
+        <div class="col" style="padding-top: 1px;">
+            <div class="radio radio-primary  radio-inline">
+                <input id="r_isapproval_true" type="radio" name="form.isapproval" value="1"/>
+                <label for="r_isapproval_true">是</label>
+            </div>
 
-			<div class="radio radio-primary  radio-inline">
-				<input id="r_isapproval_false" type="radio" name="form.isapproval" value="0"/>
-				<label for="r_isapproval_false">否</label>
-			</div>
-		</div>
-	</div>
+            <div class="radio radio-primary  radio-inline">
+                <input id="r_isapproval_false" type="radio" name="form.isapproval" value="0"/>
+                <label for="r_isapproval_false">否</label>
+            </div>
+        </div>
+    </div>
 
 	<div class="form-group row"
 		 data-radio
@@ -66,15 +67,13 @@
 		 data-value="#(form.cFormTypeSn??)"
 		 data-name="form.cformtypesn"
 		 data-default="options_first"
-		 data-width="col-sm-2,col"
-	>
+		 data-width="col-sm-2,col">
 		<label class="col-sm-2 col-form-label" >表单类型</label>
 		<div class="col"  style="padding-top: 1px;">
 			<div class="radio radio-primary  radio-inline">
 				<input  id="r_isdirectonmissing_true" type="radio" name="form.cformtypesn" value="1"/>
 				<label for="r_isdirectonmissing_true">基础档案类</label>
 			</div>
-
 			<div class="radio radio-primary  radio-inline">
 				<input  id="r_isdirectonmissing_false" type="radio" name="form.cformtypesn" value="2"/>
 				<label for="r_isdirectonmissing_false">单据类</label>
@@ -87,4 +86,3 @@
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="formForm")
 #end
-

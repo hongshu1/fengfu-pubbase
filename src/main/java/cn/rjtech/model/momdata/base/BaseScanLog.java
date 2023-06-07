@@ -368,7 +368,7 @@ public abstract class BaseScanLog<M extends BaseScanLog<M>> extends JBoltBaseMod
 	/**
 	 * 条码
 	 */
-	@JBoltField(name="barcode" ,columnName="Barcode",type="String", remark="条码", required=false, maxLength=300, fixed=0, order=18)
+	@JBoltField(name="barcode" ,columnName="Barcode",type="String", remark="条码", required=false, maxLength=1000, fixed=0, order =18)
 	@JSONField(name = "barcode")
 	public java.lang.String getBarcode() {
 		return getStr("Barcode");

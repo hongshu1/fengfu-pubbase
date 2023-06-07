@@ -98,22 +98,22 @@
 			<td>${data.citemtypedesc}</td>
 			<td>${data.iitemyear}</td>
 			<td>${data.cmemo}</td>
-			<td>${data.cperiodprogressdesc1}</td>
+			<td>${data.cperiodprogress1}</td>
 			<td>${data.dperioddate1|date_ym}</td>
 			<td>${data.iamount1}</td>
-			<td>${data.cperiodprogressdesc2}</td>
+			<td>${data.cperiodprogress2}</td>
 			<td>${data.dperioddate2|date_ym}</td>
 			<td>${data.iamount2}</td>
-			<td>${data.cperiodprogressdesc3}</td>
+			<td>${data.cperiodprogress3}</td>
 			<td>${data.dperioddate3|date_ym}</td>
 			<td>${data.iamount3}</td>
-			<td>${data.cperiodprogressdesc4}</td>
+			<td>${data.cperiodprogress4}</td>
 			<td>${data.dperioddate4|date_ym}</td>
 			<td>${data.iamount4}</td>
-			<td>${data.cperiodprogressdesc5}</td>
+			<td>${data.cperiodprogress5}</td>
 			<td>${data.dperioddate5|date_ym}</td>
 			<td>${data.iamount5}</td>
-			<td>${data.cperiodprogressdesc6}</td>
+			<td>${data.cperiodprogress6}</td>
 			<td>${data.dperioddate6|date_ym}</td>
 			<td>${data.iamount6}</td>
             </tr>
@@ -448,11 +448,11 @@
                     maxLength:50
                 },
                 cperiodprogress1: {
-                    type: 'select',
-                    url: "admin/dictionary/options?key=period_progress",
-                    valueAttr: 'sn',
-                    textAttr: 'name',
-                    placeholder:'=日程='
+                	type:"input",
+	                submitAttr:"cperiodprogress1",
+	                maxLength:50,
+	                placeholder:'=日程='
+	                required:true
                 },
                 dperioddate1:{
 					type:"date",
@@ -471,11 +471,11 @@
 					}]
                 },
                 cperiodprogress2: {
-                    type: 'select',
-                    url: "admin/dictionary/options?key=period_progress",
-                    valueAttr: 'sn',
-                    textAttr: 'name',
-                    placeholder:'=日程='
+                	type:"input",
+	                submitAttr:"cperiodprogress2",
+	                maxLength:50,
+	                placeholder:'=日程='
+	                required:true
                 },
                 dperioddate2:{
 					type:"date",
@@ -494,11 +494,11 @@
 					}]
                 },
                 cperiodprogress3: {
-                    type: 'select',
-                    url: "admin/dictionary/options?key=period_progress",
-                    valueAttr: 'sn',
-                    textAttr: 'name',
-                    placeholder:'=日程='
+                	type:"input",
+	                submitAttr:"cperiodprogress3",
+	                maxLength:50,
+	                placeholder:'=日程='
+	                required:true
                 },
                 dperioddate3:{
 					type:"date",
@@ -517,11 +517,11 @@
 					}]
                 },
                 cperiodprogress4: {
-                    type: 'select',
-                    url: "admin/dictionary/options?key=period_progress",
-                    valueAttr: 'sn',
-                    textAttr: 'name',
-                    placeholder:'=日程='
+                	type:"input",
+	                submitAttr:"cperiodprogress4",
+	                maxLength:50,
+	                placeholder:'=日程='
+	                required:true
                 },
                 dperioddate4:{
 					type:"date",
@@ -540,11 +540,11 @@
 					}]
                 },
                 cperiodprogress5: {
-                    type: 'select',
-                    url: "admin/dictionary/options?key=period_progress",
-                    valueAttr: 'sn',
-                    textAttr: 'name',
-                    placeholder:'=日程='
+                	type:"input",
+	                submitAttr:"cperiodprogress5",
+	                maxLength:50,
+	                placeholder:'=日程='
+	                required:true
                 },
                 dperioddate5:{
 					type:"date",
@@ -563,11 +563,11 @@
 					}]
                 },
                 cperiodprogress6: {
-                    type: 'select',
-                    url: "admin/dictionary/options?key=period_progress",
-                    valueAttr: 'sn',
-                    textAttr: 'name',
-                    placeholder:'=日程='
+                	type:"input",
+	                submitAttr:"cperiodprogress6",
+	                maxLength:50,
+	                placeholder:'=日程='
+	                required:true
                 },
                 dperioddate6:{
 					type:"date",
