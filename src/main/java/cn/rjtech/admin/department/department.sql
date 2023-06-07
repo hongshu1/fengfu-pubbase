@@ -34,6 +34,9 @@ where
     #if(idepgrade)
         and dep.iDepGrade = #para(idepgrade)
     #end
+    #if(bdepend)
+        and dep.bdepend = #para(bdepend)
+    #end    
     #if(excludeId)
         and dep.iAutoId <> #para(excludeId)
     #end

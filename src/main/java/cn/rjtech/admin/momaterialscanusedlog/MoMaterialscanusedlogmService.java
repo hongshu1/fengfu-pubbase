@@ -7,8 +7,7 @@ import cn.rjtech.admin.materialsoutdetail.MaterialsOutDetailService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.otherout.OtherOutService;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
-import cn.rjtech.admin.sysmaterialsprepare.SysMaterialspreparedetailService;
-import cn.rjtech.admin.sysmaterialsprepare.SysMaterialspreparedetailService1;
+import cn.rjtech.admin.sysmaterialspreparedetail.SysMaterialspreparedetailService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
@@ -64,7 +63,7 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 	private MaterialsOutDetailService materialsOutDetailService;//出库单明细
 
 	@Inject
-	private SysMaterialspreparedetailService1 sysMaterialspreparedetailService;
+	private SysMaterialspreparedetailService sysMaterialspreparedetailService;
 
 	@Inject
 	private WarehouseAreaService warehouseAreaService; //库区
@@ -223,6 +222,9 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 	}
 
 	public Page<Record> getMoMaterialscanusedlogList(int pageNumber, int pageSize, Kv kv){
+		if(notOk(kv.getLong("imodocid"))){
+			return  new Page<Record>();
+		}
 		return dbTemplate("momaterialscanusedlog.getMoMaterialscanusedlogList",kv).paginate(pageNumber,pageSize);
 	}
 	/**

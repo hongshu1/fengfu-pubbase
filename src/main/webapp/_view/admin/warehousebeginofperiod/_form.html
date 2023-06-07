@@ -19,7 +19,7 @@
                      data-accept="excel"
                      data-maxsize="20480"
                      data-handler="uploadFile"
-                     data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                     data-upload-success-handler="setTimeout(function(){parent.refreshPjaxContainer();parent.layer.closeAll();},1000)"
                      data-url="/admin/warehousebeginofperiod/importStockExcel">
                 </div>
               </div>
@@ -36,7 +36,7 @@
   {@each datas as data,index}
     <tr data-id="${data.iautoid}">
       <td>${pageNumber,pageSize,index | rownum}</td>
-      <td >
+      <td>
         <input type="text" hidden data-sync-attr="cwhcode" id="cwhcode${data.index}" data-tips="仓库" data-notnull="true"
                autocomplete="off" class="form-control" maxlength="40" name="cwhcode" value="${data.cwhcode}" required="true"/>
         <div class="input-group">
@@ -168,21 +168,23 @@
                data-notnull="true" placeholder="=生成库存条码数量=" autocomplete="off" class="form-control" data-rule="int"
                maxlength="40" name="generatedstockqty" value="${data.generatedstockqty}"/>
       </td>
-      <td >
+      <td>
         <input type="text" data-sync-attr="ipkgqty" id="ipkgqty${data.index}" data-tips="" data-notnull="true"
                autocomplete="off" class="form-control" maxlength="40" name="ipkgqty" value="${data.ipkgqty}" readonly/>
       </td>
-      <td >
+      <td>
         <input type="text" data-sync-attr="batch" id="batch${data.index}" data-tips="" data-notnull="true" placeholder="=批次="
                autocomplete="off" class="form-control" maxlength="40" name="batch" value="${data.batch}"/>
       </td>
       <td>
-        <input id="createdate${data.index}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"
+        <input id="createdate${data.index}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
+               autocomplete="off" class="form-control"
                placeholder="=选择生产日期=" name="createdate" data-tips="" maxlength="23" value="">
       </td>
       <td>
         <select class="form-control" data-url="admin/dictionary/options?key=beginningofperiod" name="reportfilename" data-autoload
-                data-text="=请选择模板打印标签=" data-value-attr="sn" id="reportfilename" data-value="" data-select="${data.reportfilename}"></select>
+                data-text="=请选择模板打印标签=" data-value-attr="sn" id="reportfilename" data-value=""
+                data-select="${data.reportfilename}"></select>
       </td>
     </tr>
   {@/each}
@@ -229,8 +231,8 @@
             <th data-width="120" data-column="cuomname">主计量单位</th>
             <th data-width="150" data-column="cvencode">供应商编码</th>
             <th data-width="150" data-column="cvenname">供应商名称</th>
-<!--            <th data-width="150" data-column="qty" title="期初库存数量">期初库存数量</th>-->
-<!--            <th data-width="150" data-column="ungeneratedstockqty" title="未生成条码库存数量">未生成条码库存数量</th>-->
+            <!--            <th data-width="150" data-column="qty" title="期初库存数量">期初库存数量</th>-->
+            <!--            <th data-width="150" data-column="ungeneratedstockqty" title="未生成条码库存数量">未生成条码库存数量</th>-->
             <th data-width="150" data-column="generatedStockQty" title="生成条码库存数量">生成条码库存数量</th>
             <th data-width="130" data-column="ipkgqty">包装数量</th>
             <th data-width="150" data-column="batch">批次号</th>
@@ -283,9 +285,9 @@
 <script>
   hideParentLayerDialogBtn(0);
   hideParentLayerDialogBtn(1);
-  
+
   function checkisNull(ele) {
-    if(ele == null || ele == undefined || ele == ''){
+    if (ele == null || ele == undefined || ele == '') {
       return true;
     }
   }
@@ -303,13 +305,13 @@
     var autoprint = $('input[name="autoprint"]').is(':checked');
     //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*/
     var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
-    if (!allDatas || allDatas.length ==0){
-      LayerMsgBox.alert("表格数据不能为空",2);
+    if (!allDatas || allDatas.length == 0) {
+      LayerMsgBox.alert("表格数据不能为空", 2);
       return;
     }
     var flag;
     var tableData = getTableData();
-    for(let i = 0;i<tableData.length;i++){
+    for (let i = 0; i < tableData.length; i++) {
       let element = tableData[i];
       if (checkisNull(element.cwhcode)) {
         LayerMsgBox.alert("仓库编码不能为空", 2);
@@ -339,17 +341,23 @@
       autoprint: autoprint
     };
     Ajax.post('admin/warehousebeginofperiod/submitStock', para, function (ret) {
+      console.log("ret=====>" + ret);
       if (ret.state === 'ok') {
         submitState = true;
         //如果勾选了自动打印，在生成成功后要自动打印
         if (autoprint) {
-          for (let i = 0; i < printnum; i++) {
-            for (let j = 0; j < allDatas.length; j++) {
+          var split = ret.ids.split(",");
+          for (let lit=0;lit<split.length;lit++){
+            let code=[];
+            let autoid = split[lit];
+            code.push(autoid);
+            for (let j = 0; j < allDatas.length; j++) {//每行的打印模板
               var data = allDatas[j];
               var reportfilename = data.reportfilename;
-              //社内现品票：029587，采购现品票：109607
-              //jboltHiprintWebPrint('109607', 'url', 'admin/warehousebeginofperiod/printData?ids=');
-              // jboltHiprintWebPrint('kqda_key', 'url', 'admin/warehousearea/printData?ids=1640995130939412480'+ "&&mark=check");
+              for (let printTimes = 0; printTimes < printnum; printTimes++) {//打印次数
+                //社内现品票：029587，采购现品票：109607
+                //jboltHiprintWebPrint(reportfilename, 'url', 'admin/warehousebeginofperiod/detailPrintData?ids=' + code.join(",") + "&&mark=" + mark);
+              }
             }
           }
         }

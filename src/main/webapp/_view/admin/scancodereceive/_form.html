@@ -285,6 +285,8 @@
 
                         jboltTableInsertRowAfterChecked(table,trJsonData,true,true,true);
 
+                        jboltTableInsertAfterRow(table, td.parent(), trJsonData);
+
                         /*Ajax.post("admin/scancodereceive/getBarCodeData",{"itemCode":cinvcode},function (res) {
                             console.log('res',res)
                             jboltTableInsertRowAfterChecked(table,res.data,true,true,true);

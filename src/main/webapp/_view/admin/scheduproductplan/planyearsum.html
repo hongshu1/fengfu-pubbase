@@ -41,10 +41,10 @@
 			{@each datas as data,index}
 			<tr data-id="${data.iautoid}">
 				<td>${pageNumber,pageSize,index | rownum}</td>
-				<td>${data.cWorkName}</td>
-				<td>${data.cInvCode}</td>
-				<td>${data.cInvCode1}</td>
-				<td>${data.cInvName1}</td>
+				<td title="${data.cWorkName}">${data.cWorkName}</td>
+				<td title="${data.cInvCode}">${data.cInvCode}</td>
+				<td title="${data.cInvCode1}">${data.cInvCode1}</td>
+				<td title="${data.cInvName1}">${data.cInvName1}</td>
 				<td>${data.nowmonth1}</td>
 				<td>${data.nowmonth2}</td>
 				<td>${data.nowmonth3}</td>

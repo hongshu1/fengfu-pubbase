@@ -2,65 +2,167 @@
 #set(pageId=RandomUtil.random(6))
 #define main()
 <div class="jbolt_page" data-key="#(pmkey??)">
-<div class="jbolt_page_title">
-<form class="form-inline d-none" id="user_form_#(pageId)">
-<input type="hidden" name="roleId" value="#(roleId??)"/>
-</form>
-</div>
-<div class="jbolt_page_content">
-
-<!-- JBoltTable的数据模板定义-->
-<script type="text/template" id="user_rowtpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.id}">
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.name}</td>
-<td>${data.sex|sex}</td>
-<td>${data.username}</td>
-<td>{@if data.enable}<span class="badge badge-success">启用</span>{@else}<span class="badge badge-light">禁用</span>{@/if}</td>
-</tr>
-{@/each}
-</script>
-
-    <div class="jbolt_table_toolbar" id="jbolt_toolbar_#(pageId)">
-
-        <!--<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button data-dialogbtn data-area="90%,90%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增角色用户" data-url="admin/role/chooseUsers?roleId=#(roleId)" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
-            <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
-        </div>-->
-
+    <div class="jbolt_page_title">
+        <form class="form-inline d-none" id="user_form_#(pageId)">
+            <input type="hidden" name="autoId" value="#(autoId??)"/>
+            <input type="hidden" name="roleId" value="#(roleId??)"/>
+            <input type="hidden" name="itemHidden" value=""/>
+        </form>
     </div>
+    <div class="jbolt_page_content">
 
-<table class="table-center"
-data-jbolttable
-id="role_users_table_#(pageId)"
-data-ajax="true"
-data-width="auto"
-data-height="fill"
-data-toolbar="jbolt_toolbar_#(pageId)"
-data-url="admin/role/userDatas"
-data-rowtpl="user_rowtpl_#(pageId)"
-data-page="userPage_#(pageId)"
-data-conditions-form="user_form_#(pageId)"
-data-ajax-success-handler="initDialogBtns_#(pageId)"
->
-<thead>
-<tr><th data-width="60">序号</th><th data-min-width="120">姓名</th><th data-width="60">性别</th><th data-min-width="120">用户名</th><th data-width="100">是否启用</th></tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-</div>
+        <!-- JBoltTable的数据模板定义-->
+        <script type="text/template" id="user_rowtpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td data-editable="false">${data.name}</td>
+                <td>${data.sex|sex}</td>
+                <td>${data.username}</td>
+                <td>{@if data.enable}<span class="badge badge-success">启用</span>{@else}<span class="badge badge-light">禁用</span>{@/if}</td>
+                <!--<td>
+                    <a tooltip data-title="上移" href="javascript:void(0)" onclick="jboltTableTrMoveUp(this, true, 'iseq');"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+                    <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true, 'iseq');" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+                </td>-->
+                <td style="display: none">${data.iuserid}</td>
+                <td hidden></td>
+            </tr>
+            {@/each}
+        </script>
+
+        <div class="jbolt_table_toolbar" id="jbolt_toolbar_#(pageId)">
+
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="90%,90%" data-handler="jboltTablePageToFirst"
+                        id="toolbar_addBtn_#(pageId)" data-title="新增角色用户" data-form="user_form_#(pageId)"
+                        data-url="admin/formapprovald/chooseUsersDialog" class="btn btn-outline-primary"><i
+                        class="fa fa-plus"></i> 添加</button>
+                <button onclick="jboltTableRemoveCheckedRow(this, true)"
+                        class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+                <!--                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>-->
+            </div>
+
+        </div>
+
+        <table class="table-center"
+               data-jbolttable
+               id="role_users_table_#(pageId)"
+               data-ajax="true"
+               data-width="auto"
+               data-height="fill"
+               data-toolbar="jbolt_toolbar_#(pageId)"
+               ###data-url="admin/role/userDatas"
+               data-column-prepend="1:checkbox:true"
+               data-url="admin/formapprovald/roleUserData"
+               data-rowtpl="user_rowtpl_#(pageId)"
+               ###data-page="userPage_#(pageId)"
+               data-editable="true"
+               data-conditions-form="user_form_#(pageId)"
+               data-ajax-success-handler="tableDataSuccess"
+               data-editable-option="getEditableTableUser_#(pageId)"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-min-width="120" data-column="name">姓名</th>
+                <th data-width="60" data-column="sex">性别</th>
+                <th data-min-width="120" data-column="username">用户名</th>
+                <th data-width="100" data-column="enable">是否启用</th>
+<!--                <th data-width="140" data-column="optcol">操作</th>-->
+                <th data-width="60" data-column="iseq" hidden></th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 </div>
 #end
 #define js()
 <script type="text/javascript">
-$(function(){
-	//系统超管才能出
-})
 
-function initDialogBtns_#(pageId)(table){
+    hideParentLayerDialogBtn(0);
+    #if(approvaling>0??)
+        addParentLayerDialogBtn("该节点已在审批中，不予修改","lay_danger",function () {
 
-}
+        });
+    #else
+    addParentLayerDialogBtn("保存","lay_primary",function () {
+        jboltTableSubmit();
+    });
+    #end
+
+
+    function getEditableTableUser_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "dbclick",
+            insertDefaultValues: {username:'#(JBoltUserKit.getUserName())'},
+            afterInsertRowHandler: function (table, tr) {
+                var trIndex = tr.data("index");
+
+                var rank = trIndex + 1;
+                jboltTableSetCell(table, tr, 'iseq', rank, rank, true);
+            },
+            submit: {
+                withForm: ["user_form_#(pageId)"],
+                type: "all",
+                url: "/admin/formapprovald/saveRoleUser",
+                success: function (res, table, td) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success(res.msg, 1000, function () {
+                            refreshPjaxContainer();
+                            parent.LayerMsgBox.closeAll();
+                            parent.refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iAutoId"
+                },
+                iuserid: {
+                    submitAttr: "iUserId"
+                },
+                name: {
+                    type: "input",
+                    submitAttr:"name"
+                },
+                iseq:{
+                    submitAttr:"iseq"
+                },
+                sex: {
+                    submitAttr: "sex"
+                },
+                username: {
+                    submitAttr: "username"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+
+
+    /**
+     * 获取已选数据函数
+     * */
+    function tableDataSuccess() {
+        let result = jboltTableGetAllDatas("role_users_table_#(pageId)", ["iuserid"]);
+        let array = [];
+        if (result != null) {
+            for (let i = 0; i < result.length; i++) {
+                array.push("'" + result[i].iuserid + "'");
+            }
+            let codes = array.join(',');
+            $("#itemHidden").val(codes);
+        }
+        console.log('iuserid===',$("#itemHidden").val());
+    }
+
+    function initDialogBtns_#(pageId)(table){
+
+    }
 </script>
 #end
