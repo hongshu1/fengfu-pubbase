@@ -542,4 +542,11 @@ public class QcFormService extends BaseService<QcForm> {
         }
         return null;
     }
+
+    /**
+     * 获取存货信息
+     */
+    public QcForm findByiInventoryCode(String cqcformname) {
+        return findFirst(selectSql().eq(QcForm.CQCFORMNAME, cqcformname).eq(QcForm.IORGID, getOrgId()).eq(QcForm.ISDELETED, ZERO_STR).first());
+    }
 }

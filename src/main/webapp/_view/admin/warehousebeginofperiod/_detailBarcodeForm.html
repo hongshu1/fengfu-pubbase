@@ -14,10 +14,7 @@
                 <button class="btn dropdown-item" onclick="containerPrint('page')"><i class="fa fa-download"></i> 打印当前页</button>
               </div>
             </div>
-            <!--<button onclick="printtpl('#(sourceid??)')" class="btn btn-info btn-sm"><i
-                class="fa fa-window-maximize"></i> 打印
-            </button>-->
-            <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-success btn-sm"><i
+            <button onclick="detailJboltTableRemoveCheckedRow(this, true)" class="btn btn-success btn-sm"><i
                 class="fa fa-remove"></i> 删除
             </button>
             <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
@@ -129,11 +126,11 @@
     for (let i in rows) {
       let rowdata = rows[i];
       sn = rowdata.sn;
-      var autoid = rowdata.masid;
+      // var autoid = rowdata.masid;
+      var autoid = rowdata.autoid;
       code.push(autoid);
     }
     jboltHiprintWebPrint(sn, 'url', 'admin/warehousebeginofperiod/detailPrintData?ids=' + code.join(",") + "&&mark=" + mark);
-    //jboltHiprintWebPrint('rqda_key', 'url', 'admin/container/printData?ids=' + code.join(",") + "&&mark=" + mark);
   }
 
   /**
@@ -143,7 +140,7 @@
    * @param callback
    * @returns
    */
-  function jboltTableRemoveCheckedRow(ele, confirm, callback) {
+  function detailJboltTableRemoveCheckedRow(ele, confirm, callback) {
     var action = getRealJqueryObject(ele);
     if (isOk(action)) {
       var success = checkMasterTableId(action);
@@ -158,7 +155,10 @@
       var ids = jboltTableGetCheckedIds(ele, true);
       if (ids) {
         LayerMsgBox.confirm("所选数据中包含数据库已存数据，确定删除吗？",function(){
-          Ajax.get("admin/warehousebeginofperiod/deleteByIds?ids="+ids,function(res){
+          let url = "admin/warehousebeginofperiod/deleteByIds?ids="+ids
+          Ajax.get(url,function(res){
+            //refreshJBoltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
+            refreshPjaxContainer
             window.parent.refreshPjaxContainer();
           });
         });

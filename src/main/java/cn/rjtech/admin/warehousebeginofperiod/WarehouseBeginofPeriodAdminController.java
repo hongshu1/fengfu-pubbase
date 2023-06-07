@@ -108,12 +108,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
 
-    public void delete() {
-        Kv kv = getKv();
-        String ids = get("ids");
-        renderJson(true);
-    }
-
     /*
      * 保存新增期初库存
      * */
@@ -184,12 +178,8 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         renderJsonData(service.detailPrintData(getKv()));
     }
 
-    /*
-     * 期初库存的仓库编码
-     * */
-    public void whoptions() {
-        String cwhcode = get("cwhcode");
-        renderJsonData(service.whoptions(Kv.by("whcode", cwhcode)));
+    public void addPrintData(){
+        renderJsonData(service.addPrintData(getKv()));
     }
 
     /*
@@ -263,9 +253,5 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         }
         keepPara();
         render("cvencode_dialog_index.html");
-    }
-
-    public void inventoryPage() {
-        renderJsonData(service.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
     }
 }

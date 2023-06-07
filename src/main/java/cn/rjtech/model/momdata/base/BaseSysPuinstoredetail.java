@@ -10,46 +10,46 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>> extends JBoltBaseModel<M>{
-    /**AutoID*/
-    public static final String AUTOID = "AutoID";
-    /**来源类型;PO 采购 OM委外*/
-    public static final String SOURCEBILLTYPE = "SourceBillType";
-    /**来源单号（订单号）*/
-    public static final String SOURCEBILLNO = "SourceBillNo";
-    /**来源单号+行号*/
-    public static final String SOURCEBILLNOROW = "SourceBillNoRow";
-    /**来源单据ID*/
-    public static final String SOURCEBILLID = "SourceBillID";
-    /**来源单据DID;采购或委外单身ID*/
-    public static final String SOURCEBILLDID = "SourceBillDid";
-    /**行号*/
-    public static final String ROWNO = "RowNo";
-    /**主表ID;T_Sys_PUInStore.AutoID*/
-    public static final String MASID = "MasID";
-    /**重量*/
-    public static final String WEIGHT = "Weight";
-    /**仓库*/
-    public static final String WHCODE = "Whcode";
-    /**库位*/
-    public static final String POSCODE = "PosCode";
-    /**入库数量*/
-    public static final String QTY = "Qty";
-    /**跟单类型*/
-    public static final String TRACKTYPE = "TrackType";
-    /**备注*/
-    public static final String MEMO = "Memo";
-    /**创建人*/
-    public static final String CREATEPERSON = "CreatePerson";
-    /**创建时间*/
-    public static final String CREATEDATE = "CreateDate";
-    /**修改人*/
-    public static final String MODIFYPERSON = "ModifyPerson";
-    /**修改时间*/
-    public static final String MODIFYDATE = "ModifyDate";
-    /**现品票*/
-    public static final String SPOTTICKET = "spotTicket";
-    /**是否删除：0. 否 1. 是*/
-    public static final String ISDELETED = "isDeleted";
+	/**AutoID*/
+	public static final String AUTOID = "AutoID";
+	/**来源类型;PO 采购 OM委外*/
+	public static final String SOURCEBILLTYPE = "SourceBillType";
+	/**来源单号（订单号）*/
+	public static final String SOURCEBILLNO = "SourceBillNo";
+	/**来源单号+行号*/
+	public static final String SOURCEBILLNOROW = "SourceBillNoRow";
+	/**来源单据ID*/
+	public static final String SOURCEBILLID = "SourceBillID";
+	/**来源单据DID;采购或委外单身ID*/
+	public static final String SOURCEBILLDID = "SourceBillDid";
+	/**行号*/
+	public static final String ROWNO = "RowNo";
+	/**主表ID;T_Sys_PUInStore.AutoID*/
+	public static final String MASID = "MasID";
+	/**重量*/
+	public static final String WEIGHT = "Weight";
+	/**仓库*/
+	public static final String WHCODE = "Whcode";
+	/**库位*/
+	public static final String POSCODE = "PosCode";
+	/**入库数量*/
+	public static final String QTY = "Qty";
+	/**跟单类型*/
+	public static final String TRACKTYPE = "TrackType";
+	/**备注*/
+	public static final String MEMO = "Memo";
+	/**创建人*/
+	public static final String CREATEPERSON = "CreatePerson";
+	/**创建时间*/
+	public static final String CREATEDATE = "CreateDate";
+	/**修改人*/
+	public static final String MODIFYPERSON = "ModifyPerson";
+	/**修改时间*/
+	public static final String MODIFYDATE = "ModifyDate";
+	/**现品票*/
+	public static final String SPOTTICKET = "spotTicket";
+	/**是否删除：0. 否 1. 是*/
+	public static final String ISDELETED = "isDeleted";
 	/**
 	 * AutoID
 	 */

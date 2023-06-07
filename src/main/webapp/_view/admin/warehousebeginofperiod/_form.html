@@ -258,16 +258,10 @@
             </div>
             <div class="col-2" style="margin-top: 8px;right: 75px;" data-require-plugin="hiprint"
                  aria-labelledby="exportMenuButton">
-              <!--<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
-                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印</button>
-                <div class="dropdown-menu" aria-labelledby="exportMenuButton">
-                  <button class="btn dropdown-item" onclick="submitThisForm()"> 生成</button>
-                </div>
-              </div>-->
               <input id="autoprint" type="checkbox" name="autoprint" value="#(autoprint??)"/><span>自动打印</span>
             </div>
 
-            <div class="col-3" style="right: 95px;">
+            <div class="col-3" style="right: 95px;" data-require-plugin="hiprint">
               <button type="button" class="btn btn-outline-secondary" id="printButton" name="printButton"
                       onclick="printButton()">打印
               </button>
@@ -293,6 +287,10 @@
   }
 
   var submitState = false;
+  var submitState = false;
+  var autoidList = null;
+  var tableData = null;
+  var mark = 'page'
 
   /*
   * 生成
@@ -310,7 +308,7 @@
       return;
     }
     var flag;
-    var tableData = getTableData();
+    tableData = getTableData();
     for (let i = 0; i < tableData.length; i++) {
       let element = tableData[i];
       if (checkisNull(element.cwhcode)) {
@@ -341,22 +339,23 @@
       autoprint: autoprint
     };
     Ajax.post('admin/warehousebeginofperiod/submitStock', para, function (ret) {
-      console.log("ret=====>" + ret);
-      if (ret.state === 'ok') {
+      let retdata = ret.data;
+      if (retdata.state === 'ok') {
+        var split = retdata.ids.split(',');
+        autoidList = split;
         submitState = true;
         //如果勾选了自动打印，在生成成功后要自动打印
         if (autoprint) {
-          var split = ret.ids.split(",");
           for (let lit=0;lit<split.length;lit++){
             let code=[];
             let autoid = split[lit];
             code.push(autoid);
-            for (let j = 0; j < allDatas.length; j++) {//每行的打印模板
-              var data = allDatas[j];
+            for (let j = 0; j < tableData.length; j++) {//每行的打印模板
+              var data = tableData[j];
               var reportfilename = data.reportfilename;
               for (let printTimes = 0; printTimes < printnum; printTimes++) {//打印次数
                 //社内现品票：029587，采购现品票：109607
-                //jboltHiprintWebPrint(reportfilename, 'url', 'admin/warehousebeginofperiod/detailPrintData?ids=' + code.join(",") + "&&mark=" + mark);
+                jboltHiprintWebPrint(reportfilename, 'url', 'admin/warehousebeginofperiod/addPrintData?ids=' + code.join(",") + "&&mark=" + mark);
               }
             }
           }
@@ -366,7 +365,7 @@
           // parent.layer.closeAll();
         });
       } else {
-        LayerMsgBox.alert(ret.msg, 2);
+        LayerMsgBox.alert(retdata.msg, 2);
       }
     });
   }
@@ -466,7 +465,25 @@
       LayerMsgBox.alert("请先点击生成按钮，生成期初库存，再打印模板标签", 2);
       return;
     }
-    alert("点击打印");
+    let ids = autoidList;
+    var nums = $('#printnum').val();
+    if (nums == null || nums == undefined || nums == '') {
+      nums = 1;
+    }
+    for (let i = 0; i < ids.length; i++) {
+      let code = [];
+      let autoid = ids[i];
+      code.push(autoid);
+      for (let j = 0; j < tableData.length; j++) {//每行的打印模板
+        var buttonData = tableData[j];
+        var reportfilename = buttonData.reportfilename;
+        for (let printTimes = 0; printTimes < nums; printTimes++) {//打印次数
+          //社内现品票：029587，采购现品票：109607
+          jboltHiprintWebPrint(reportfilename, 'url',
+              'admin/warehousebeginofperiod/addPrintData?ids=' + code.join(",") + "&&mark=" + mark);
+        }
+      }
+    }
   }
 
   /*

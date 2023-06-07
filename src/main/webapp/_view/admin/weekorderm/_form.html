@@ -53,16 +53,16 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row">
-                                    <input type="hidden" name="weekOrderM.ibustype"
+                         <!--           <input type="hidden" name="weekOrderM.ibustype"
                                            value="#(weekOrderM.ibustype??)" id="cwhcode"
-                                           data-value-attr="cwhcode" />
+                                           data-value-attr="cwhcode" />-->
                                     <label class="col-sm-3 col-form-label">业务类型</label>
-                                    <div class="col-8 col-form-label">
-                                        <input type="text" class="form-control" data-autocomplete
-                                               data-url="admin/productInList/getWarehouse" data-rule="required"
-                                               data-hidden-input="cwhcode" data-text-attr="cwhname"
-                                               data-column-attr="cwhcode,cwhname" placeholder="请选择业务类型" data-tips="请选择业务类型"
-                                               data-header="业务类型编码,业务类型" maxlength="40" value="#(weekOrderM.cwhname??)">
+                                    <div class="col-8">
+                                        <select class="form-control" data-rule="required"
+                                                name="weekOrderM.ibustype" data-autoload data-tips="=请选择业务类型="
+                                                data-url="admin/dictionary/options?key=order_business_type" data-text="=请选择业务类型="
+                                                data-value-attr="sn" data-text-attr="name" data-select="#(weekOrderM.ibustype??)">
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -314,7 +314,7 @@
            data-toolbar="WeekOrderM_toolbar_#(pageId)"
            data-editable="true"
            data-editable-option="getEditableTableOptions_#(pageId)"
-           data-height="180%"
+           data-height="500"
     >
         <thead>
         <tr>

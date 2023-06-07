@@ -32,11 +32,11 @@
 <div class="col-2">
     <select class="form-control"
             data-autoload
-            data-url="/admin/enumVals/enumvalsoptions"
+            data-url="/admin/formExtendFields/optionsiFormFieldId"
             data-select-type="select1"
             name="formExtendFields.iFormFieldId"
-            data-text-attr="cenumname"
-            data-value-attr="cenumcode"
+            data-text-attr="cformname"
+            data-value-attr="iautoid"
             data-select="#(formExtendFields.iFormFieldId??)"
     ></select>
 </div>
@@ -86,9 +86,7 @@
     <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入字段长度" maxlength="40" name="formExtendFields.iMaxLength" value="#(formExtendFields.iMaxLength??)"/>
 </div>
 </div>
-    #if(formExtendFields.iFieldType??!=null)
-    <!--<input type="text" id="aaaa" name="iFieldType" value="#(formExtendFields.iFieldType??)"/>-->
-    #end
+    <input type="hidden" id="aaaa" name="iFieldType" value="#(formExtendFields.iFieldType??)"/>
 
     <div class="form-group row"
         data-radio
@@ -97,6 +95,7 @@
         data-width="col-sm-2,col-5"
         data-value="#(formExtendFields.iFieldType??)"
         data-inline="true"
+        onchange="toggleOneInputHidden(aaaa,this.value)"
 >
         <!--data-value-attr="sn"-->
         <!--data-url="admin/dictionary/options?key=extend_field_type"-->
@@ -277,6 +276,18 @@ data-inline="true"
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
+    }
+    function toggleOneInputHidden(id,ads){
+        var input=g(id);
+        console.log(ads)
+        var ads
+        console.log(ads)
+
+        if(input.type=="hidden"){
+            input.type="text";
+        }else{
+            input.type="hidden";
+        }
     }
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="FormExtendFields_Form")

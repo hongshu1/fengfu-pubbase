@@ -87,7 +87,7 @@
 				cuomname: data.purchaseuomname,
 				iinventoryid: data.itemid
 			};
-			parent.jboltTableProcessTdByDialogChooser(data.cinvcode,data.itemid,repData);
+			parent.jboltTableProcessTdByDialogChooser(data.cinvcode,data.cinvcode,repData);
 			if(callback){
 				callback();
 			}
@@ -107,7 +107,7 @@
 				ipkgqty,
 				cinvcode1,
 			};
-			parent.jboltTableProcessTdByDialogChooser(invCode,itemId,repData);
+			parent.jboltTableProcessTdByDialogChooser(invCode,invCode,repData);
 			parent.LayerMsgBox.closeAll();
 		}
 	}

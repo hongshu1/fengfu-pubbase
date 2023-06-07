@@ -8,7 +8,7 @@ select so.AutoID, CASE so.iAuditStatus
         '已审批'
 				WHEN 4 THEN
         '审批不通过'
-        END AS statename,so.iAuditStatus as state,so.BillNo as billno,so.CreateDate as createdate,
+        END AS statename,so.iAuditStatus as state,so.BillNo as billno,so.CreateDate as createdate,so.iAuditStatus,
         so.VenCode as vencode
 		,p.name,s.name as sname,v.cVenName as venname,so.Type as type,so.SourceBillNo
 FROM T_Sys_PUReceive so

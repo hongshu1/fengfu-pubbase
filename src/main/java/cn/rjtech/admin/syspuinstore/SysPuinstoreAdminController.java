@@ -180,6 +180,14 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     }
 
     /*
+     * 获取采购订单视图MES的订单号
+     * */
+    public void getMesSysPODetails() {
+        Page<Record> recordPage = service.getMesSysPODetails(getKv(), getPageNumber(), getPageSize());
+        renderJsonData(recordPage);
+    }
+
+    /*
      * 获取仓库名
      * */
     public void getWareHouseName() {
