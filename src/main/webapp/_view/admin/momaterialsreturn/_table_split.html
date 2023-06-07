@@ -1,214 +1,269 @@
-<!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
-   {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
-            <td>${pageNumber,pageSize,index | rownum}</td>
-    <td>
-        <a href="admin/materialreturnlist/deleteList/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn">删除</a>
-    </td>
-    <td>${data.spotticket}</td>
-    <td>${data.cinvcode}</td>
-    <td>${data.cinvname}</td>
-    <td>${data.cinvcode1}</td>
-    <td>${data.cinvname1}</td>
-    <td>${data.cinvstd}</td>
-    <td>品牌</td>
-    <td>${data.ipurchaseuomid}</td>
-    <td>${data.iqty}</td>
-    <td>${data.refundqty}</td>
-    <td>${data.memo}</td>
-  </tr>
-    {@/each}
-</textarea>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-body">
-        <div class="btn-group">
-          <form class="form-inline" id="inventoryForm_#(pageId)" onsubmit="return false;" method="post" style="width: 1200px">
-            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
-                   maxlength="50" name="barcode" value="#(barcode??)"/>
-            <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>搜索</button>
-            <button type="submit" style="color:red" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>一健退料</button>
-
-          </form>
+<div class="jbolt_page_title">
+    <div class="row">
+        <div class="col-md-auto">
         </div>
-        <!-- 工具条 toolbar -->
-        <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)">
-          <div class="" role="group" aria-label="btn-group">
-              <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-              <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
-          </div>
-          <div class="clearfix"></div>
+        <div class="col-md-auto">
         </div>
-
-          <table id="Puinstoreform_TableId_#(pageId)"
-                 data-jbolttable
-                 data-height="200"
-                 data-ajax="true"
-                 data-column-resize="true"
-                 data-url="admin/materialreturnlist/getmaterialReturnListLines?autoid=#(puinstore.autoid??)"
-                 data-column-prepend="1:checkbox:true"
-                 data-conditions-form="inventoryForm_#(pageId)"
-                 data-rowtpl="inventorySplit_tpl_#(pageId)"
-                 data-toolbar="inventory_split_toolbar_#(pageId)"
-                 data-editable="true"
-                 data-editable-option="getEditableTableOptions_split_#(pageId)"
-                 data-tfoot-fixed="true"
-
-
-
-          >
-          <thead class="fw-normal">
-          <tr>
-              <th data-width="60" data-column="index">序号</th>
-              <th data-width="100">操作</th>
-              <th data-width="100" data-column="spotticket">现品票</th>
-              <th data-width="100" data-column="cinvcode">存货编码</th>
-              <th data-width="100" data-column="cinvname">存货名称</th>
-              <th data-width="100" data-column="cinvcode1">客户部番</th>
-              <th data-width="100" data-column="cinvname1">部品名称</th>
-              <th data-width="100" data-column="cinvstd">规格型号</th>
-              <th data-width="100" data-column="pingpai">品牌</th>
-              <th data-width="100" data-column="ipurchaseuomid">采购单位</th>
-              <th data-width="100" data-column="qty">现存数</th>
-              <th data-width="100" data-column="refund_qty">退货数量</th>
-              <th data-width="100" data-column="memo">备注</th>
-          </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
     </div>
-  </div>
 </div>
+<div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="stock_#(pageId)">
+		 {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.cinvcode}</td>
+                <td>${data.cinvcode1}</td>
+                <td>${data.cinvname1}</td>
+                <td>${data.cinvstd}</td>
+                <td>${data.cuomname}</td>
+                <td>${data.barcode}</td>
+                <td>${data.iqty}</td>
+                <td>${data.iscannedqty}</td>
+
+
+
+
+
+
+            </tr>
+            {@/each}
+	</textarea>
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="stock_toolbar_#(pageId)">
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+<div class="jbolt_page_content">
+    <div class="row">
+        <div class="col">
+            <div class="btn-group">
+            <form class="form-inline" onsubmit="return false;" id="stockForm" action="#(action)" method="post">
+                <input type="hidden" id="iModocId" value="#(moMaterialscanusedlogm.imodocid??)">
+                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
+                       maxlength="50" name="barcode" value="#(barcode??)"/>
+                <button onclick="serarch()" class="btn btn-outline-secondary"><i class="fa fa-search"></i>搜索</button>
+                <button onclick="returnofmaterial()" style="color:red" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>一健退料</button>
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jbolt_page_content">
+
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="fhRowtpl_#(pageId)">
+	   {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.invcode}</td>
+                <td>${data.cinvcode1}</td>
+                <td>${data.cinvname1}</td>
+                <td>${data.cinvstd}</td>
+                <td>${data.cuomname}</td>
+                <td>${data.barcode}</td>
+                <td>${data.iqty}</td>
+                <td>${data.iscannedqty}</td>
+
+
+
+
+
+
+            </tr>
+            {@/each}
+	</textarea>
+    <!-- 工具条 toolbar -->
+
+    <div class="clearfix"></div>
+</div>
+
+<table class="jbolt_table jbolt_main_table table-center"
+       id="jbolt_table_#(pageId)"
+       data-jbolttable
+       data-height="250"
+       data-ajax="true"
+       data-width="auto"
+       data-url="admin/momaterialscanusedlog/getmomaterialscanusedlogList?imodocid=#(imodocid??)"
+       data-column-resize="true"
+       data-column-prepend="1:checkbox:true"
+       data-conditions-form="stockForm"
+       data-rowtpl="fhRowtpl_#(pageId)"
+       data-toolbar="fh_toolbar_#(pageId)"
+       data-page="stockFormPage_#(pageId)"
+
+       data-editable="true"
+>
+    <thead>
+    <tr>
+        <th data-width="100" data-column="index">序号</th>
+        <th data-width="150" data-column="InvCode">存货编码</th>
+        <th data-width="150" data-column="cInvCode1">客户部番</th>
+        <th data-width="150" data-column="cInvName1">部品名称</th>
+        <th data-width="150" data-column="cInvStd">规格</th>
+        <th data-width="150" data-column="cUomName">主计量单位</th>
+        <th data-width="150" data-column="barcode">现品票</th>
+        <th data-width="150" data-column="iqty">现品票数量</th>
+        <th data-width="150" data-column="iscannedqty">耗用数量</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+</div>
+
+#define js()
 <script>
-  /*去后端执行提交功能*/
-  function getEditableTableOptions_split_#(pageId)(){
-      var editableTableOptions={
-          //初始行数
-          // initRowCount:10,
-          //限制最大数 默认30
-          maxRowCount:1000,
-          trigger:"click",
-          submit:{
-              withForm: ["PuinstoreForm"],
-              type:"multi",//cell|all|multi
-              name:"table2"
-          },
-      cols: {
-          spotticket: { //现品票条码
-              maxLength: 100,
-              required: false,
-              placeholder: "=请选择=",
-              type: "autocomplete",
-              url: "admin/otherout/barcodeDatas",
-              textAttr: "spotticket",
-              width: 800,
-              sync: "",
-              valueAttr: "spotticket",
-              columnAttr: "barcode,cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid,qty",
-              header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
-              changeColumns: [{column: "spotticket", use: "barcode"},
-                  {column: "cinvcode", use: "cinvaddcode"},
-                  {column: "cinvname", use: "cinvname"},
-                  {column: "cinvcode1", use: "cinvcode1"},
-                  {column: "cinvname1", use: "cinvname1"},
-                  {column: "cinvstd", use: "cinvstd"},
-                  {column: "pingpai", use: "cinvname1"},
-                  {column: "qty", use: "qty"},
-                  {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
+    $(function(){
 
-          },
-          cinvcode: {
-              type: "autocomplete",
-              url: "admin/otherout/autocomplete",
-              maxLength: 100,
-              required: false,
-              placeholder: "=请选择=",
-              textAttr: "cinvcode",
-              width: 800,
-              valueAttr: "cinvcode",
-              columnAttr: "cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid,qty",
-              header: '存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
-              changeColumns: [{column: "cinvcode", use: "cinvaddcode"},
-                  {column: "cinvname", use: "cinvname"},
-                  {column: "cinvcode1", use: "cinvcode1"},
-                  {column: "cinvname1", use: "cinvname1"},
-                  {column: "cinvstd", use: "cinvstd"},
-                  {column: "pingpai", use: "cinvname1"},
-                  {column: "qty", use: "qty"},
-                  {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
-          },
-          /*        ipurchaseuomid: {
-                    type: "amount",//类型
-                    placeholder: "采购单位",
-                    tooltip: "采购单位",
-                  },*/
-          refund_qty: {
-              type:"input",
-              submitAttr:"qty",
-              handler:function (table,td,text,value,jsonData) {
-                  var qty =  jsonData.qty;
-                  console.log(qty);
-                  let refundqty = (typeof +value === 'number' && !isNaN(value))?value:0;
-                  console.log('退货数量===>',refundqty);
-                  if (refundqty > 0){
-                      showFormEleErrorStyle(td,"请输入大于或等于0的数量！！！");
-                      return false;
-                  }
-                  let cha =  qty + refundqty;
-                  if (cha > 0){
-                      showFormEleErrorStyle(td,"可退数量为"+qty+",退货数量已超出！！！");
-                      return false;
-                  }
-              }
-          },
-          qty: {
-              summary:[{
-                  dir:"v",
-                  tofixed:2,
-                  roundtag:"round",
-                  removezero:true,
-                  formula:"sum"
-              }]
-          },
-          memo: {
-              type:"input",
-              submitAttr:"memo",
-          },
-      }
-    };
-    return editableTableOptions;
-  }
+        jboltTableClear('#jbolt_table_#(pageId)');
+    });
+
+    function serarch(){
+        var barcode=$("#barcode").val();
+        var imodocid=$("#imodocid").val();
+        Ajax.post("admin/momaterialscanusedlog/addBarcode?barcode="+barcode+"imodocid="+imodocid,function(res){
+            LayerMsgBox.success("操作成功",500,function(){
+                refreshJBoltTable();
+            });
+        });
+    }
+    function submitThisForm() {
+        jboltTableSubmit('#jbolt_table_#(pageId)');
+    }
+
+    // 子表查询表单
+    var stockcheckvouchdid = $('#stockcheckvouchdid');
+    // 避免触发重复点击行事件的处理
+    var clicked = false;
+    $(function () {
+        hideParentLayerDialogBtn(0);
 
 
-  /**
-   * 校验单元格
-   * @returns {boolean}
-   */
-  function checkTds(){
-      debugger;
-      //执行item表格 每一个修改了的行里是否有必填的没有填写
-      var trs=$("#Puinstoreform_TableId_#(pageId)").find("tr[data-changed='true']");
-      if(isOk(trs)){
-          var tds,tempTr,tempTd,tempText,hasInvalid=false,count=0;
-          trs.each(function(){
-              tempTr=$(this);
-              tds=tempTr.find("td[data-changed='true'][class='is-invalid']");
-              if(isOk(tds)){
-                  hasInvalid = true;
-                  count++;
-              }
-              console.log('count',count);
-          });
-          if(hasInvalid){
-              LayerMsgBox.error("表格中存在["+count+"]个不符合的数值,请先修改再作提交",2000);
-              return false;
-          }
-      }
-      return true;
-  }
+
+    });
+    //保存记录按钮，保存在条码明细
+
+
+    //条码明细
+    function getEditableTableOptions_#(pageId)()
+    {
+        var editableTableOptions = {
+            trigger: "click",
+            //初始行数
+            initRowCount: 0,
+            submit: {
+                withForm: ["stockForm"],
+                type: "all",//cell|all
+                url: "admin/stockcheckvouch/saveTableSubmit",
+                success: function (res) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success("提交成功", 600, function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                            window.parent.refreshJBoltTable();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            //插入数据时默认属性值
+            cols: {
+                realqty2: {
+                    textAttr: "realqty2",
+                    summary: {
+                        dir: "h",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "qty + adjustqty2"
+                    }
+                },
+                adjustqty2: {
+                    type: "number",
+                    textAttr: "adjustqty2"
+                },
+                qty: {
+                    textAttr: "qty",
+                    summary: {
+                        dir: "v",
+                        removezero: true,
+                        formula: "sum"
+                    }
+                },
+
+            }
+        };
+        return editableTableOptions;
+    }
+
+    //获取条码明细页面的table
+    function currentstock_Barcode_#(pageId)(){
+        var editableTableOptions = {
+            trigger: "click",
+            //初始行数
+            initRowCount: 0,
+            submit: {
+                withForm: ["tockchekvouchForm"],
+                type: "all",//cell|all
+                url: "admin/pudeliverydetail/saveTableSubmit",
+                success: function (res) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success("提交成功", 600, function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                            window.parent.refreshJBoltTable();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            //插入数据时默认属性值
+            cols: {
+                "adjustqty2": {
+                    type: "input",
+                    textAttr: "adjustqty2"
+                },
+
+                "realqty2": {
+                    textAttr: "realqty2",
+                    summary: {
+                        dir: "h",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "qty + adjustqty2"
+                    }
+                },
+                "qty": {
+                    textAttr: "qty",
+                    summary: {
+                        dir: "v",
+                        removezero: true,
+                        formula: "sum"
+                    }
+                },
+
+            }
+        };
+        return editableTableOptions;
+    }
+
+    function masterTableTrTriggerShowSlaveExt(ele, autoid) {
+        if (!clicked) {
+            clicked = true;
+
+            stockcheckvouchdid.val(autoid);
+            // 清空表格数据（再加载）
+            jboltTableClear('#stock__table_#(pageId)');
+
+            $("#dTable").click();
+            clicked = false;
+        }
+    }
 
 </script>
+#end
+

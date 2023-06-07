@@ -234,41 +234,41 @@ pi.iautoid,pi.iinvestmenttype,pi.cproductline,
 	case when pi.iyeartotalamountactual = 0 or pi.iyeartotalamountactual is null then pi.iyeartotalamountplan else pi.iyeartotalamountactual end iyeartotalamountplan,
 	pi.iyeartotalamountactual,(pi.iyeartotalamountplan-pi.iyeartotalamountactual) iyeartotalamountdiff,pi.iyeartotalamountdiffreason,
 	pi.cedittype,pi.cmemo,pi.iitemyear,
-	case when dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,1,1) is not null then null else  
+	case when dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,1,1) is not null then null else  
 	(select cperiodprogress from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 1) end cperiodprogress1,
-	coalesce(dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,1,1),
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,1,1),
 	(select concat(datename(year,dperioddate),'-',datename(month,dperioddate)) from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 1)) dperioddate1,
-	coalesce(dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,1,2),
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,1,2),
 	(select iamount from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 1)) iamount1,
-	case when dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,2,1) is not null then null else  
+	case when dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,2,1) is not null then null else  
 	(select cperiodprogress from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 2) end cperiodprogress2,
-	coalesce(dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,2,1),
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,2,1),
 	(select concat(datename(year,dperioddate),'-',datename(month,dperioddate)) from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 2)) dperioddate2,
-	coalesce(dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,2,2),
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,2,2),
 	(select iamount from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 2)) iamount2,
-	case when dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,3,1) is not null then null else  
+	case when dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,3,1) is not null then null else  
 	(select cperiodprogress from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 3) end cperiodprogress3,
-	coalesce(dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,3,1),
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,3,1),
 	(select concat(datename(year,dperioddate),'-',datename(month,dperioddate)) from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 3)) dperioddate3,
-	coalesce(dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,3,2),
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,3,2),
 	(select iamount from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 3)) iamount3,
-	case when dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,4,1) is not null then null else  
+	case when dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,4,1) is not null then null else  
 	(select cperiodprogress from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 4) end cperiodprogress4,
-	coalesce(dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,4,1),
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,4,1),
 	(select concat(datename(year,dperioddate),'-',datename(month,dperioddate)) from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 4)) dperioddate4,
-	coalesce(dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,4,2),
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,4,2),
 	(select iamount from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 4)) iamount4,
-	case when dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,5,1) is not null then null else  
+	case when dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,5,1) is not null then null else  
 	(select cperiodprogress from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 5) end cperiodprogress5,
-	coalesce(dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,5,1),
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,5,1),
 	(select concat(datename(year,dperioddate),'-',datename(month,dperioddate)) from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 5)) dperioddate5,
-	coalesce(dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,5,2),
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,5,2),
 	(select iamount from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 5)) iamount5,
-	case when dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,6,1) is not null then null else  
+	case when dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,6,1) is not null then null else  
 	(select cperiodprogress from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 6) end cperiodprogress6,
-	coalesce(dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,6,1),
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,6,1),
 	(select concat(datename(year,dperioddate),'-',datename(month,dperioddate)) from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 6)) dperioddate6,
-	coalesce(dbo.PL_GetInvestmentPlanActualDatas(pi.cplanno,6,2),
+	coalesce(dbo.PL_GetInvestmentPlanActualDatasByPeriodNum(pi.cplanno,6,2),
 	(select iamount from #(getMomdataDbName()).dbo.pl_investment_plan_itemd pid where pid.iplanitemid = pi.iautoid and iperiodnum = 6)) iamount6
 from #(getMomdataDbName()).dbo.pl_investment_plan_item pi 
 	inner join #(getMomdataDbName()).dbo.pl_investment_plan p on pi.iplanid = p.iautoid
@@ -291,7 +291,7 @@ from #(getMomdataDbName()).dbo.pl_investment_plan_item pi
 EXEC	[dbo].[P_InvestmentPlanBudgetActualDifference]
 		@iBudgetYear = #(ibudgetyear),
 		@cDepCode = #para(cdepcode),
-		@u8DbName = #(AppConfig.getU8DbName())
+		@u8DbName = #para(u8dbname)
 #end
 
 #sql("findInvestmentPlanGroupSummaryDatas")

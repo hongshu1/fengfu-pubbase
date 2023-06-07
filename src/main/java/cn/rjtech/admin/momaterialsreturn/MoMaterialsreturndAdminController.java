@@ -42,6 +42,7 @@ public class MoMaterialsreturndAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
+		set("imodocid",getLong("imodocid"));
 		render("add.html");
 	}
 
