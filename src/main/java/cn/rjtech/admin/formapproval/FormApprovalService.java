@@ -12,12 +12,14 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.approvald.ApprovalDService;
 import cn.rjtech.admin.approvaldrole.ApprovaldRoleService;
+import cn.rjtech.admin.approvaldroleusers.ApprovaldRoleusersService;
 import cn.rjtech.admin.approvalduser.ApprovaldUserService;
 import cn.rjtech.admin.approvalm.ApprovalMService;
 import cn.rjtech.admin.auditformconfig.AuditFormConfigService;
 import cn.rjtech.admin.form.FormService;
 import cn.rjtech.admin.formapprovald.FormApprovalDService;
 import cn.rjtech.admin.formapprovaldrole.FormapprovaldRoleService;
+import cn.rjtech.admin.formapprovaldroleusers.FormapprovaldRoleusersService;
 import cn.rjtech.admin.formapprovalduser.FormapprovaldUserService;
 import cn.rjtech.admin.formapprovalflowd.FormApprovalFlowDService;
 import cn.rjtech.admin.formapprovalflowm.FormApprovalFlowMService;
@@ -80,6 +82,10 @@ public class FormApprovalService extends BaseService<FormApproval> {
     private FormApprovalFlowDService flowDService;
     @Inject
     private FormService formService;
+    @Inject
+    private ApprovaldRoleusersService roleusersService;
+    @Inject
+    private FormapprovaldRoleusersService formapprovaldRoleusersService;
 
     /**
      * 后台管理分页查询
@@ -550,21 +556,37 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                             formapprovaldRole.setISeq(approvaldRole.getISeq());
                                             formapprovaldRole.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                             formapprovaldRole.setIRoleId(approvaldRole.getIRoleId());
-                                            formapprovaldRoleList.add(formapprovaldRole);
-                                            List<User> users = getRoles(approvaldRole.getIRoleId());
+//                                            formapprovaldRoleList.add(formapprovaldRole);
+                                            formapprovaldRole.save();
+
+//                                            List<User> users = getRoles(approvaldRole.getIRoleId());
+
+                                            List<ApprovaldRoleusers> users =
+                                                    roleusersService.getRoleUser(approvaldRole.getIAutoId());
 
                                             if (users.size() > 0) {
+                                                List<FormapprovaldRoleusers> roleusersList = new ArrayList<>();
                                                 users.forEach(u -> {
                                                     FormApprovalFlowD flowD1 = new FormApprovalFlowD();
-                                                    flowD1.setIUserId(u.getId());
+                                                    flowD1.setIUserId(u.getIUserId());
                                                     flowD1.setIFormApprovalFlowMid(flowMId);
                                                     flowD1.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                                                    flowD1.setISeq(1);
+                                                    flowD1.setISeq(u.getISeq());
                                                     flowDList.add(flowD1);
+
+//                                                    单据的角色人员
+                                                    FormapprovaldRoleusers formapprovaldRoleusers =
+                                                            new FormapprovaldRoleusers();
+                                                    formapprovaldRoleusers.setIFormApprovaldRoleId(formapprovaldRole.getIAutoId());
+                                                    formapprovaldRoleusers.setISeq(u.getISeq());
+                                                    formapprovaldRoleusers.setIUserId(u.getIUserId());
+                                                    roleusersList.add(formapprovaldRoleusers);
                                                 });
+                                                formapprovaldRoleusersService.batchSave(roleusersList,
+                                                        roleusersList.size());
                                             }
                                         });
-                                        formapprovaldRoleService.batchSave(formapprovaldRoleList);
+//                                        formapprovaldRoleService.batchSave(formapprovaldRoleList);
                                     } else {
                                         ValidationUtils.error("该审批顺序为" + formApprovalD.getISeq() + "配置的角色未指定角色");
                                     }

@@ -1,5 +1,7 @@
 package cn.rjtech.admin.formapprovald;
 
+import cn.hutool.core.util.ArrayUtil;
+import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,6 +11,7 @@ import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.formapprovaldrole.FormapprovaldRoleService;
+import cn.rjtech.admin.formapprovaldroleusers.FormapprovaldRoleusersService;
 import cn.rjtech.admin.formapprovalduser.FormapprovaldUserService;
 import cn.rjtech.admin.formapprovalflowd.FormApprovalFlowDService;
 import cn.rjtech.admin.formapprovalflowm.FormApprovalFlowMService;
@@ -16,6 +19,7 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -23,6 +27,8 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.*;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 表单审批流 Service
@@ -51,6 +57,10 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 	private FormApprovalService formApprovalService;
 	@Inject
 	private PersonService personService;
+	@Inject
+	private UserService userService;
+	@Inject
+	private FormapprovaldRoleusersService formapprovaldRoleusersService;
 
 
 
@@ -371,9 +381,11 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 							}
 
 							if (jBoltTable.deleteIsNotBlank()){
-								formapprovaldUserService.deleteByIds(jBoltTable.getDelete());
                                 String deleteIds = JBoltArrayUtil.join(jBoltTable.getDelete(), ",");
-                                flowDService.deleteByMidAndUserId(iApprovalDid,deleteIds);
+								Integer integer = flowDService.deleteByMidAndUserId(iApprovalDid, deleteIds);
+								if (integer > 0){
+									formapprovaldUserService.deleteByIds(jBoltTable.getDelete());
+								}
 							}
 							break;
 						case 5:
@@ -383,20 +395,32 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 									approvaldRole.setIFormApprovalId(iApprovalDid);
 									approvaldRole.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
 
-                                    List<User> users = formApprovalService.getRoles(approvaldRole.getIRoleId());
+									approvaldRole.save();
+									Page<User> userPage = userService.paginateUsersByRoleId(1, 20, approvaldRole.getIRoleId());
+									List<User> userList = userPage.getList();
+									if (userList.size() > 0){
+										List<FormapprovaldRoleusers> list = new ArrayList<>();
+										for (int i = 0; i < userList.size(); i++) {
+											User user = userList.get(i);
+											int j = i + 1;
 
-                                    if (users.size() > 0) {
-                                        users.forEach(u -> {
-                                            FormApprovalFlowD flowD1 = new FormApprovalFlowD();
-                                            flowD1.setIUserId(u.getId());
-                                            flowD1.setIFormApprovalFlowMid(flowMid);
-                                            flowD1.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                                            flowD1.setISeq(1);
-                                            flowDS.add(flowD1);
-                                        });
-                                    }
+											FormapprovaldRoleusers roleusers = new FormapprovaldRoleusers();
+											roleusers.setIFormApprovaldRoleId(approvaldRole.getIAutoId());
+											roleusers.setISeq(j);
+											roleusers.setIUserId(user.getId());
+											list.add(roleusers);
+
+											FormApprovalFlowD flowD1 = new FormApprovalFlowD();
+											flowD1.setIUserId(user.getId());
+											flowD1.setIFormApprovalFlowMid(flowMid);
+											flowD1.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+											flowD1.setISeq(j);
+											flowDS.add(flowD1);
+										}
+										formapprovaldRoleusersService.batchSave(list,list.size());
+									}
 								});
-								formapprovaldRoleService.batchSave(saveModelList,saveModelList.size());
+//								formapprovaldRoleService.batchSave(saveModelList,saveModelList.size());
 
 							}
 							if (jBoltTable2.updateIsNotBlank()){
@@ -621,28 +645,40 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 							List<FormapprovaldRole> saveRoleList =
 									jBoltTable2.getSaveModelList(FormapprovaldRole.class);
 							if (saveRoleList.size() > 0) {
-								List<FormapprovaldRole> formapprovaldRoleList = new ArrayList<>();
+
 								saveRoleList.forEach(approvaldRole -> {
 									FormapprovaldRole formapprovaldRole = new FormapprovaldRole();
 									formapprovaldRole.setIFormApprovalId(Did);
 									formapprovaldRole.setISeq(approvaldRole.getISeq());
 									formapprovaldRole.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
 									formapprovaldRole.setIRoleId(approvaldRole.getIRoleId());
-									formapprovaldRoleList.add(formapprovaldRole);
-									List<User> users = formApprovalService.getRoles(approvaldRole.getIRoleId());
 
-									if (users.size() > 0) {
-										users.forEach(u -> {
+									formapprovaldRole.save();
+									Page<User> userPage = userService.paginateUsersByRoleId(1, 20, approvaldRole.getIRoleId());
+									List<User> userList = userPage.getList();
+									if (userList.size() > 0){
+										List<FormapprovaldRoleusers> list1 = new ArrayList<>();
+										for (int i = 0; i < userList.size(); i++) {
+											User user = userList.get(i);
+											int j = i + 1;
+
+											FormapprovaldRoleusers roleusers = new FormapprovaldRoleusers();
+											roleusers.setIFormApprovaldRoleId(approvaldRole.getIAutoId());
+											roleusers.setISeq(j);
+											roleusers.setIUserId(user.getId());
+											list1.add(roleusers);
+
 											FormApprovalFlowD flowD1 = new FormApprovalFlowD();
-											flowD1.setIUserId(u.getId());
+											flowD1.setIUserId(user.getId());
 											flowD1.setIFormApprovalFlowMid(flowMid);
 											flowD1.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-											flowD1.setISeq(1);
+											flowD1.setISeq(j);
 											flowDList.add(flowD1);
-										});
+										}
+										formapprovaldRoleusersService.batchSave(list1,list1.size());
 									}
+
 								});
-								formapprovaldRoleService.batchSave(formapprovaldRoleList);
 							} else {
 								ValidationUtils.error("该审批顺序为" + approvalD.getISeq() + "配置的角色未指定角色");
 							}
@@ -650,6 +686,7 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 						default:
 							break;
 					}
+					flowDService.batchSave(flowDList,flowDList.size());
 				}
 			}
 
@@ -699,4 +736,99 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 
         return flowDS.size();
     }
+
+	/**
+	 *
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param kv
+	 */
+	public Page<Record> chooseUsers(int pageNumber, int pageSize, Kv kv){
+
+		return dbTemplate("formapprovald.chooseUsers",kv).paginate(pageNumber, pageSize);
+	}
+
+	/**
+	 * 获取角色人员信息
+	 * @return
+	 */
+	public Page<Record> roleUsers(int pageNumber, int pageSize, Kv kv){
+		return dbTemplate("formapprovald.roleUsers",kv).paginate(pageNumber, pageSize);
+	}
+
+	/**
+	 * 保存角色人员方法
+	 * @param jBoltTable
+	 * @return
+	 */
+	public Ret saveRoleUser(JBoltTable jBoltTable) {
+		ValidationUtils.notNull(jBoltTable, JBoltMsg.PARAM_ERROR);
+
+		JSONObject form = jBoltTable.getForm();
+		System.out.println("form===="+form);
+		Long autoId = form.getLong("autoId");
+
+//		查询流程主表ID
+        Record flowM = findFirstRecord("select iAutoId\n" +
+                "from Bd_FormApprovalFlowM\n" +
+                "where iApprovalDid =\n" +
+                "      (select iFormApprovalDid from Bd_FormApprovalD_Role where iAutoId = " + autoId + ")");
+
+        Long flowMId = flowM.getLong("iautoid");
+
+        tx(() -> {
+			if (jBoltTable.saveIsNotBlank()){
+				List<FormapprovaldRoleusers> saveModelList = jBoltTable.getSaveModelList(FormapprovaldRoleusers.class);
+                // 流程子表集合
+                List<FormApprovalFlowD> flowDList = new ArrayList<>();
+				saveModelList.forEach(approvaldRoleusers -> {
+					approvaldRoleusers.setIFormApprovaldRoleId(autoId);
+
+                    FormApprovalFlowD flowD1 = new FormApprovalFlowD();
+                    flowD1.setIUserId(approvaldRoleusers.getIUserId());
+                    flowD1.setIFormApprovalFlowMid(flowMId);
+                    flowD1.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                    flowD1.setISeq(approvaldRoleusers.getISeq());
+                    flowDList.add(flowD1);
+				});
+				flowDService.batchSave(flowDList,flowDList.size());
+				formapprovaldRoleusersService.batchSave(saveModelList,saveModelList.size());
+			}
+			if (jBoltTable.deleteIsNotBlank()){
+
+//			    先删除流程表数据
+				int delete = delete("delete\n" +
+						"from Bd_FormApprovalFlowD\n" +
+						"where iFormApprovalFlowMid = "+flowMId+"\n" +
+						"  and iUserId in (select iUserId\n" +
+						"                  from Bd_FormApprovalD_RoleUsers\n" +
+						"                  where Bd_FormApprovalD_RoleUsers.iAutoId in ("+ ArrayUtil.join(jBoltTable.getDelete(), COMMA)+"))");
+
+				if (delete > 1) {
+					formapprovaldRoleusersService.realDeleteByIds(jBoltTable.getDelete());
+				}
+			}
+
+			List<FormapprovaldRoleusers> roleusers = formapprovaldRoleusersService.find("select * from " +
+					"Bd_FormApprovalD_RoleUsers where" +
+					" " +
+					"iFormApprovaldRoleId" +
+					" = " + autoId + " " +
+					"order by iSeq asc");
+
+			if (roleusers.size() > 0) {
+				List<FormapprovaldRoleusers> roleusersList = new ArrayList<>();
+				for (int j = 0, rank = 0; j < roleusers.size(); j++) {
+					FormapprovaldRoleusers approvaldRoleusers = roleusers.get(j);
+					approvaldRoleusers.setISeq(++rank);
+					roleusersList.add(approvaldRoleusers);
+				}
+				formapprovaldRoleusersService.batchUpdate(roleusersList,roleusersList.size());
+			}
+
+			return true;
+		});
+
+		return SUCCESS;
+	}
 }

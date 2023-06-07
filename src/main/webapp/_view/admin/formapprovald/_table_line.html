@@ -4,16 +4,17 @@
     {@each datas as data,index}
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
-            <td>${data.iseq}</td>
+<!--            <td>${data.iseq}</td>-->
              <td data-editable="false">${data.username}</td>
             <td data-editable="false">${data.cpsnname}</td>
             <td data-editable="false">${data.cdeptname}</td>
             <td style="display: none">${data.ipersonid}</td>
             <td style="display: none">${data.iuserid}</td>
-<!--            <td>
-<a tooltip data-title="上移"  href="javascript:void(0)" onclick="jboltTableTrMoveUp(this)"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
-<a tooltip data-title="下移"  href="javascript:void(0)" onclick="jboltTableTrMoveDown(this)"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
-</td>-->
+            <!--<td>
+                <a tooltip data-title="上移" href="javascript:void(0)" onclick="jboltTableTrMoveUp(this, true, 'iseq');"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+                <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true, 'iseq');" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+            </td>-->
+            <td hidden>${data.iseq}</td>
         </tr>
     {@/each}
 </textarea>
@@ -59,11 +60,12 @@
                     <thead>
                     <tr>
                         <th data-width="60" data-column="index">序号</th>
-                        <th data-min-width="100" data-column="iseq">审批顺序</th>
+<!--                        <th data-min-width="100" data-column="iseq">审批顺序</th>-->
                         <th data-min-width="100" data-column="username">用户名</th>
                         <th data-min-width="200" data-column="cpsnname">姓名</th>
                         <th data-min-width="200" data-column="cdeptname">所属部门</th>
 <!--                        <th data-width="140" data-column="optcol">操作</th>-->
+                        <th hidden data-column="iseq"></th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -124,6 +126,12 @@
         var editableTableOptions1 = {
             trigger: "click",
             insertDefaultValues: {username:'#(JBoltUserKit.getUserName())'},
+            afterInsertRowHandler: function (table, tr) {
+                var trIndex = tr.data("index");
+
+                var rank = trIndex + 1;
+                jboltTableSetCell(table, tr, 'iseq', rank, rank, true);
+            },
             submit: {
                 withForm: ["approvalDForm"],
                 type:"multi",//cell|all|multi
@@ -134,9 +142,6 @@
                     submitAttr: "iAutoId"
                 },
                 iseq:{
-                    type:"input_number",
-                    rule:"int",
-                    required:true,
                     submitAttr: "iSeq"
                 },
                 username:{
