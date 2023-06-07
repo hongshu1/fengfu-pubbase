@@ -1,6 +1,7 @@
 package cn.rjtech.admin.qcitem;
 
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -17,6 +18,7 @@ import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
+import com.jfinal.upload.UploadFile;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -173,5 +175,18 @@ public class QcItemAdminController extends BaseAdminController {
 
     public void options() {
         renderJsonData(service.options());
+    }
+
+    /**
+     * 数据导入
+     */
+    public void importExcel() {
+        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+        UploadFile file = getFile("file", uploadPath);
+        if (notExcel(file)) {
+            renderJsonFail("请上传excel文件");
+            return;
+        }
+        renderJson(service.importExcel(file.getFile()));
     }
 }
