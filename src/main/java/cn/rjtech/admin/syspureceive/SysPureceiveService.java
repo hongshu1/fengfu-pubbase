@@ -591,56 +591,42 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         if (CollUtil.isEmpty(list)) {
             return;
         }
-
         ArrayList<SysPureceivedetail> sysdetaillist = new ArrayList<>();
-
         Date now = new Date();
-
         for (int i = 0; i < list.size(); i++) {
             SysPureceivedetail sysPureceivedetail = new SysPureceivedetail();
-
             Record row = list.get(i);
-
             sysPureceivedetail.setAutoID(row.getStr("autoid"));
             sysPureceivedetail.setSourceBillType(row.getStr("sourcebilltype"));
             sysPureceivedetail.setSourceBillNo(row.getStr("sourcebillno"));
             sysPureceivedetail.setSourceBillNoRow(row.getStr("sourcebillnorow"));
             sysPureceivedetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
-
             // 获取供应商字段
             String vencode = row.getStr("vencode");
             ValidationUtils.notBlank(vencode, "条码：" + row.get("barcode") + " 供应商数据不能为空");
-
             sysPureceivedetail.setVenCode(vencode);
             sysPureceivedetail.setWhcode(sysPureceive.getWhCode());
-
             this.determineQty(row, i);
-
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(row.getBigDecimal("qty"));
             sysPureceivedetail.setBarcode(row.get("barcode"));
             sysPureceivedetail.setModifyDate(now);
             sysPureceivedetail.setIsDeleted(false);
-
-            String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row, operationType, map);
-            sysPureceivedetail.setMasID(s);
-
+            //编辑的时候不会新增供应商  所以不需要拆分
+//            String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row, operationType, map);
+//            sysPureceivedetail.setMasID(s);
             if (StrUtil.isBlank(row.getStr("isinitial"))) {
                 sysPureceivedetail.setIsInitial("0");
             } else {
                 Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
-
                 // 推送初物 PL_RcvDocQcFormM 来料
                 SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?", sysPureceivedetail.getSourceBillNo());
-
                 this.insertRcvDocQcFormM(row, first, user, veniAutoId);
-
                 sysPureceivedetail.setIsInitial("1");
             }
             sysdetaillist.add(sysPureceivedetail);
         }
-
         syspureceivedetailservice.batchUpdate(sysdetaillist);
     }
 
