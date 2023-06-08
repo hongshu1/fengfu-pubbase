@@ -1,5 +1,7 @@
 package cn.rjtech.admin.sysmaterialspreparedetail;
 
+import cn.rjtech.admin.syspureceive.SysPureceiveService;
+import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -21,6 +23,8 @@ import java.util.List;
  */
 public class SysMaterialspreparedetailService extends BaseService<SysMaterialspreparedetail> {
 	private final SysMaterialspreparedetail dao=new SysMaterialspreparedetail().dao();
+	@Inject
+	private SysPureceiveService syspureceiveservice;
 	@Override
 	protected SysMaterialspreparedetail dao() {
 		return dao;
@@ -130,7 +134,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 	}
 
 	public Page<Record> getBarcode(int pageNumber, int pageSize, Kv kv) {
-		Page<Record> paginate = dbTemplate("materialsprepare.barcode", kv).paginate(pageNumber, pageSize);
+		Page<Record> paginate = dbTemplate("materialsprepare.getBarcodedatas", kv).paginate(pageNumber, pageSize);
 		return paginate;
 	}
 }
