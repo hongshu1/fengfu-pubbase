@@ -1,12 +1,5 @@
 package cn.rjtech.admin.proposalcategory;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
 import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -15,6 +8,15 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.Proposalcategory;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import static cn.hutool.core.text.StrPool.COMMA;
 
 /**

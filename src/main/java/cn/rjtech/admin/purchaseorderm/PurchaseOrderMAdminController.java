@@ -1,11 +1,8 @@
 package cn.rjtech.admin.purchaseorderm;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.jbolt._admin.hiprint.HiprintTplService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -29,7 +26,6 @@ import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PurchaseOrderM;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
-import com.google.zxing.BarcodeFormat;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -38,12 +34,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 

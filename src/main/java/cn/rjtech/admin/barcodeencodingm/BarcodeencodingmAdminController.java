@@ -1,17 +1,5 @@
 package cn.rjtech.admin.barcodeencodingm;
 
-import java.util.Date;
-import java.util.List;
-
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
-
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -25,6 +13,17 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.enums.ItemEnum;
 import cn.rjtech.model.momdata.Barcodeencodingm;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 销售报价单明细扩展自定义项管理 Controller
