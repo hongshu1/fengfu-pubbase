@@ -23,13 +23,16 @@
             #if(puinstore.AutoID??)
             <input type="hidden" id="puinstoreautoid" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
             #end
+            <input type="hidden" id="autoid" name="autoid" value="#(puinstore.autoid??)"/>
+            <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
+            <input type="hidden" id="spottickets" name="spottickets"/>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">入库单号：</label>
+                <label class="col-sm-2 col-form-label"><font style="color: red">*</font>入库单号：</label>
                 <div class="col-sm-2 col-form-label">
                     <div class="input-group-append">
-                        <input id="billno" name="puinstore.billno" type="text" readonly autocomplete="off"
+                        <input id="billno" name="puinstore.billno" readonly="readonly" type="text"  autocomplete="off"
                                class="form-control" maxlength="40" value="#(puinstore.billno??)"/>
-                        <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
+                        <button class="btn btn-primary"  data-dialogbtn data-link-para-ele=""
                                 data-area="90%,90%" data-title="选择数据（单选）"
                                 id="supplierButton"
                                 data-url="/admin/materialreturnlist/choosePuinstoreData"><i
@@ -39,8 +42,8 @@
 
                 <label class="col-sm-2 col-form-label">入库日期：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text"  id="purchaseDate"  class="form-control"
-                           placeholder="请输入入库日期" maxlength="30" name="puinstore.billdate"
+                    <input type="text"  id="billdate"  class="form-control" readonly="readonly"
+                           maxlength="30" name="puinstore.billdate"
                            value="#datetime(puinstore.billdate??,'yyyy-MM-dd')">
                 </div>
                 <label class="col-sm-2 col-form-label">仓库名称：</label>
@@ -57,49 +60,47 @@
                             data-text-attr="whname"
                             data-select="#(puinstore.whcode??)"></select>
                     <input type="hidden" data-sync-attr="whname" id="cwhname" name="puinstore.whname"  value="#(puinstore.whname??)" />
-
                 </div>
             </div>
 
             <div class="form-group row">
+                <label class="col-sm-2 col-form-label">订单号：</label>
+                <div class="col-sm-2 col-form-label">
+                    <div class="input-group-append">
+                        <input required type="text" id="sourcebillno" name="puinstore.sourcebillno" class="form-control border-none"
+                               readonly="readonly" placeholder=""
+                               value="#(puinstore.sourcebillno??)"/>
+                        <input required type="hidden" id="billtype" name="puinstore.billtype" class="form-control border-none"
+                               readonly="readonly" placeholder=""
+                               value="#(puinstore.billtype??)"/>
+                    </div>
+                </div>
 
 
 
                 <label class="col-sm-2 col-form-label">部门：</label>
                 <div class="col-sm-2 col-form-label">
-                    <select class="form-control ml-4"
-                            id="deptcode"
-                            name="puinstore.deptcode"
-                            data-autoload
-                            data-url="admin/department/getTreeTableDatas"
-                            data-select-type="select2"
-                            data-text="=请选择部门="
-                            data-value-attr="cdepcode"
-                            data-text-attr="cdepname"
-                            data-select="#(puinstore.deptcode??)">
-                    </select>
+                    <input required type="text" id="cdepname"  class="form-control border-none"
+                           readonly="readonly" placeholder=""
+                           value="#(puinstore.deptcode??)"/>
+                    <input required type="hidden" id="deptcode" name="puinstore.deptcode" class="form-control border-none"
+                           readonly="readonly" placeholder=""
+                           value="#(puinstore.deptcode??)"/>
                 </div>
 
                 <label class="col-sm-2 col-form-label">采购类型：</label>
                 <div class="col-sm-2 col-form-label">
-                    <select class="form-control"
-                            name="puinstore.billtype"
-                            data-autoload
-                            data-url="admin/purchasetype/selectAll"
-                            data-select-type="select2"
-                            data-text="=请选择采购类型="
-                            data-value=""
-                            data-value-attr="iautoid"
-                            data-text-attr="cptname"
-                            data-select="#(puinstore.billtype??)"></select>
+                    <input required type="text" id="cptname"  class="form-control border-none"
+                           readonly="readonly" placeholder="" name="puinstore.billtype"
+                           value="#(puinstore.billtype??)"/>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">供货单位：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input id="venname" name="cvenname" type="text" readonly="readonly"
-                           autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.cvenname??)"/>
+                    <input id="cvenname" name="cvenname" type="text" readonly="readonly"
+                           autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.cdepname??)"/>
                     <input id="vencode" name="puinstore.vencode" type="hidden" readonly="readonly"
                            autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.vencode??)"/>
                 </div>
@@ -112,16 +113,12 @@
 
                 <label class="col-sm-2 col-form-label">入库类别：</label>
                 <div class="col-sm-2 col-form-label">
-                    <select class="form-control"
-                            name="puinstore.rdcode"
-                            data-autoload
-                            data-url="admin/purchasetype/selectAll"
-                            data-select-type="select2"
-                            data-text="=请选择采购类型="
-                            data-value=""
-                            data-value-attr="crdcode"
-                            data-text-attr="crdname"
-                            data-select="#(puinstore.rdcode??)"></select>
+                    <input required type="text" id="crdname" class="form-control border-none"
+                           readonly="readonly" placeholder=""
+                           value="#(puinstore.crdname??)"/>
+                    <input required type="hidden" id="rdcode" name="puinstore.rdcode" class="form-control border-none"
+                           readonly="readonly" placeholder=""
+                           value="#(puinstore.rdcode??)"/>
                 </div>
             </div>
 
@@ -136,7 +133,7 @@
 
                 <label class="col-sm-2 col-form-label">业务员：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input name="createperson" type="text" readonly="readonly" class="form-control" maxlength="20"
+                    <input name="createperson" type="text" id="createperson" readonly="readonly" class="form-control" maxlength="20"
                            value="#(puinstore.createperson??)"/>
                 </div>
             </div>
@@ -149,17 +146,16 @@
                                     <div class="card-body">
                                         <div class="btn-group">
                                             <form class="form-inline" id="inventoryForm_#(pageId)" onsubmit="return false;" method="post" style="width: 1200px">
-                                                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
-                                                       maxlength="50" name="barcode" value="#(barcode??)"/>
-                                                <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>查询</button>
-                                                <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>重置</button>
+                                                    <input #if(puinstore.sourcebillno??) #else style="display: none" #end type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
+                                                           maxlength="50" id="barcode" name="barcode" value="#(barcode??)"/>
+                                                    <button #if(puinstore.sourcebillno??) #else style="display: none" #end id="Search" onclick="barcode_#(pageId)(this)" class="btn btn-outline-secondary"><i class="fa fa-search"></i>搜索</button>
                                             </form>
                                         </div>
                                         <!-- 工具条 toolbar -->
-                                        <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)">
-                                            <div class="" role="group" aria-label="btn-group">
+                                        <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)" #if(puinstore.sourcebillno??) #else style="display: none" #end >
+                                            <div  class="" role="group" aria-label="btn-group" >
                                                 <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-                                                <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
+                                                <button onclick="jboltTableRemoveCheckedRow(this, true, spotTickets)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
                                             </div>
                                             <div class="clearfix"></div>
                                         </div>
@@ -248,6 +244,104 @@
 
 #define js()
 <script>
+
+    function spotTickets(){
+
+        debugger;
+        // //扫入多条现品票判断是否存在
+        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+        var spottickets = $("#spottickets").val();
+        console.log(data);
+        console.log(spottickets);
+        let array = new Array();
+        if (data != null){
+            for (let i = 0; i < data.length; i++) {
+                array.push("'"+data[i].spotticket+"'");
+            }
+            //通过逗号分开，一个一个加进数组中
+            let codes = array.join(',');
+            $("#spottickets").val(codes);
+        } else {
+            $("#spottickets").val('');
+        }
+        return true;
+    }
+
+    function barcode_#(pageId)(ele){
+        debugger;
+        LayerMsgBox.loading("执行中......",2000);
+        var barcode = $("#barcode").val();
+        var autoid = $("#autoid").val();
+        var detailHidden = $("#detailHidden").val();
+
+        //扫入多条现品票判断是否存在
+        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+        let array = new Array();
+        if (data != null){
+            for (let i = 0; i < data.length; i++) {
+                array.push("'"+data[i].spotticket+"'");
+            }
+            for (let i = 0; i < array.length; i++) {
+                let a =  "'"+barcode+"'";
+                if (a == array[i]){
+                    LayerMsgBox.error("已存在相同["+barcode+"]现品票！！！",2000);
+                    return false;
+                }
+
+
+            }
+            //通过逗号分开，一个一个加进数组中
+            let codes = array.join(',');
+            $("#detailHidden").val(codes);
+        } else {
+            $("#detailHidden").val('');
+        }
+        debugger;
+        if (barcode) {
+            Ajax.post("admin/materialreturnlist/barcode", {"barcode": barcode,"autoid":autoid,"detailHidden":detailHidden},
+                function (res) {
+                        jboltTableInsertRow("Puinstoreform_TableId_#(pageId)", res.data, false, true, true)
+                        $("#barcode").val('');
+                }, function (err) {
+                })
+        } else {
+            LayerMsgBox.alert("请输入条码")
+        }
+    }
+
+    /**
+     * 获得选中的订单号数据
+     * @param data
+     */
+    function setChooseDialogSelectResultFromSupplier(data) {
+        //隐藏和显示现品票搜索和添加行
+        if ($("#sourcebillno").val()!=null){
+            $("#Search").attr("style","display:block;");
+            $("#barcode").attr("style","display:block;");
+            $("#inventory_split_toolbar_#(pageId)").attr("style","display:block;");
+        }else {
+            $("#Search").attr("style","display:none;");
+            $("#barcode").attr("style","display:none;");
+            $("#inventory_split_toolbar_#(pageId)").attr("style","display:none;");
+        }
+
+
+        $("#autoid").val(data.autoid);
+        $("#sourcebillno").val(data.sourcebillno);
+        $("#billno").val(data.billno);
+        $("#billdate").val(data.billdate);
+        $("#cptname").val(data.cptname);
+        $("#cdepname").val(data.cdepname);
+        $("#crdname").val(data.crdname);
+        $("#rdcode").val(data.rdcode);
+        $("#billtype").val(data.billtype);
+        $("#deptcode").val(data.deptcode);
+        $("#vencode").val(data.vencode);
+        $("#cvenname").val(data.cvenname);
+        $("#cptname").val(data.cptname);
+        $("#createperson").val(data.createperson);
+    }
+
     /*去后端执行提交功能*/
     function getEditableTableOptions_split_#(pageId)(){
         var editableTableOptions={
@@ -264,6 +358,8 @@
             cols: {
                 spotticket: { //现品票条码
                     maxLength: 100,
+                    linkPara: "#spottickets,#autoid",
+                    syncval:"#spotticket",
                     required: false,
                     placeholder: "=请选择=",
                     type: "autocomplete",
@@ -283,7 +379,25 @@
                         // {column: "pingpai", use: "cinvname1"},
                         {column: "inventorycuomname", use: "inventorycuomname"},
                         {column: "iqty", use: "qty"},
-                    ]
+                    ],
+                    handler:function (table,td,text,value,jsonData) {
+                        debugger;
+                        var spotticket = jsonData.spotticket;
+                        let datas = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+                        console.log("data==>",datas);
+                        let array = new Array();
+                        if (datas != null){
+                            for (var i = 0; i < datas.length; i++){
+                                var data = datas[i];
+                                array.push("'"+data.spotticket+"'");
+                                let codes = array.join(',');
+                                $("#spottickets").val(codes);
+                            }
+                        }else {
+                            $("#spottickets").val('');
+                        }
+
+                    }
 
 
     },
@@ -404,21 +518,6 @@
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
-    }
-
-    /**
-     * 获得选中的订单号数据
-     * @param data
-     */
-    function setChooseDialogSelectResultFromSupplier(data) {
-        $("#deptcode").val(data.deptcode);
-        $("#deptname").val(data.deptname);
-        $("#venname").val(data.venname);
-        $("#vencode").val(data.vencode);
-        $("#invname").val(data.invname);
-        $("#defwhname").val(data.defwhname);
-        $("#sourcebillno").val(data.sourcebillno);
-        $("#billno").val(data.billno);
     }
 
 

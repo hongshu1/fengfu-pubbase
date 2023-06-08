@@ -52,9 +52,11 @@
                             data-select-type="select2"
                             data-text="=请选择仓库名称="
                             data-value=""
+                            data-sync-ele="#cwhname"
                             data-value-attr="whcode"
                             data-text-attr="whname"
-                            data-select="#(puinstore.cwhname??)"></select>
+                            data-select="#(puinstore.whcode??)"></select>
+                    <input type="hidden" data-sync-attr="whname" id="cwhname" name="puinstore.whname"  value="#(puinstore.whname??)" />
                 </div>
             </div>
 
@@ -74,7 +76,7 @@
 
                 <label class="col-sm-2 col-form-label">部门：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input required type="text" id="cdepname" name="puinstore.deptcode" class="form-control border-none"
+                    <input required type="text" id="cdepname"  class="form-control border-none"
                            readonly="readonly" placeholder=""
                            value="#(puinstore.deptcode??)"/>
                     <input required type="hidden" id="deptcode" name="puinstore.deptcode" class="form-control border-none"

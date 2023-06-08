@@ -393,8 +393,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	 * 通过关键字匹配
 	 * autocomplete组件使用
 	 */
-	public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode, String vencode) {
-		return dbTemplate("materialreturnlist.getBarcodeDatas", Kv.by("q", q).set("limit", limit).set("orgCode", orgCode).set("vencode", vencode)).find();
+	public List<Record> getBarcodeDatas(Kv kv) {
+		return dbTemplate("materialreturnlist.getBarcodeDatas",kv).find();
 	}
 
 	/**
@@ -500,8 +500,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 	/**
 	 * 整单退货出库单列表 明细
-	 * @param pageNumber
-	 * @param pageSize
+
 	 * @param kv
 	 * @return
 	 */
@@ -515,6 +514,21 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	 * */
 	public Page<Record> getSysPODetail(Kv kv, int size, int PageSize) {
 		return dbTemplate("materialreturnlist.getSysPODetail", kv).paginate(size, PageSize);
+	}
+
+	/**
+	 * 获取条码列表
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	public Record barcode(Kv kv) {
+////		先查询条码是否已添加
+		Record first = dbTemplate("materialreturnlist.barcodeDatas", kv).findFirst();
+		if(null == first){
+			ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "采购入库没有此数据！！！");
+		}
+		Record first2 = dbTemplate("materialreturnlist.barcode", kv).findFirst();
+		return first2;
 	}
 
 
@@ -557,7 +571,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				jsonObject.put("PackRate", "0");
 				jsonObject.put("ISsurplusqty", "false");
 				jsonObject.put("CreatePerson", userCode);
-				jsonObject.put("BarCode", record.get("spotTicket"));
+				jsonObject.put("BarCode", record.get("barcode"));
 				jsonObject.put("BillNo", record.get("billno"));
 				jsonObject.put("BillID", "1000000003");
 				jsonObject.put("BillNoRow", "PO23050601-1");

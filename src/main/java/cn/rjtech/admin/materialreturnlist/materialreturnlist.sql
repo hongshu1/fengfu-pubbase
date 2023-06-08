@@ -400,29 +400,81 @@ select top #(limit)
        t3.cInvCName,
        t4.cEquipmentModelName,
        (SELECT cUomName FROM Bd_Uom WHERE b.iInventoryUomId1 = iautoid) as InventorycUomName
-FROM PS_PurchaseOrderDBatch a
+FROM T_Sys_PUInStoreDetail pd
+         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.spotTicket = a.cBarcode AND	a.isEffective = '1'
          LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
          LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
          LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
          LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
          LEFT JOIN Bd_InventoryClass t3 ON b.iInventoryClassId = t3.iautoid
          LEFT JOIN Bd_EquipmentModel t4 ON b.iEquipmentModelId = t4.iautoid
-         LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode AND pd.isDeleted = '0'
          LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
-where a.isEffective = '1'
+where
+    1=1
+    AND pd.MasID = '#(autoid)'
+    AND b.cOrgCode = #(orgCode)
+    #if(spottickets != null)
+        AND pd.spotTicket not in ( #(spottickets) )
+    #end
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
 			or b.cinvname1 like concat('%',#para(q),'%') or a.cBarcode like concat('%',#para(q),'%')
 			or v.cVenCode like concat('%',#para(q),'%')
 		)
 	#end
-
-		AND b.cOrgCode = #(orgCode)
-        AND pd.AutoID IS NULL
-
 	#if(vencode)
 		and m.iVendorId = #para(vencode)
 	#end
-
 #end
 
+#sql("barcodeDatas")
+SELECT *
+FROM T_Sys_PUInStoreDetail
+WHERE isDeleted = 0
+    AND MasID = '#(autoid)'
+    #if(barcode)
+		and spotTicket = #para(barcode)
+	#end
+#end
+
+#sql("barcode")
+select
+    m.cOrderNo as sourcebillno,
+    a.cBarcode as spotTicket,
+    b.cInvCode ,
+    b.cInvName ,
+    b.cInvCode1,
+    b.cInvName1,
+    a.dPlanDate as plandate,
+    b.cInvStd as cinvstd,
+    a.iQty as qty,
+    a.iQty as qtys,
+    m.cOrderNo as SourceBillNo,
+    m.iBusType as SourceBillType,
+    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
+    m.cOrderNo as SourceBillID,
+    d.iAutoId as SourceBillDid,
+    m.iVendorId,
+    v.cVenCode as vencode,
+    v.cVenName as venname,
+    t3.cInvCCode,
+    t3.cInvCName,
+    t4.cEquipmentModelName,
+    (SELECT cUomName FROM Bd_Uom WHERE b.iInventoryUomId1 = iautoid) as InventorycUomName
+FROM T_Sys_PUInStoreDetail pd
+         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.spotTicket = a.cBarcode AND	a.isEffective = '1'
+         LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
+         LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
+         LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+         LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
+         LEFT JOIN Bd_InventoryClass t3 ON b.iInventoryClassId = t3.iautoid
+         LEFT JOIN Bd_EquipmentModel t4 ON b.iEquipmentModelId = t4.iautoid
+         LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
+where
+    1=1
+    AND pd.MasID = '#(autoid)'
+    #if(detailHidden != null)
+    AND pd.spotTicket not in ( #(detailHidden) )
+    #end
+
+#end
