@@ -7,6 +7,8 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.Customer;
 import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.util.ValidationUtils;
@@ -97,6 +99,8 @@ public class MonthordermAdminController extends BaseAdminController {
 	* 删除
 	*/
 	public void delete() {
+//		MonthOrderM monthOrderM = service.findById(getLong(0));
+//		ValidationUtils.equals(monthOrderM.getIOrderStatus(), AuditStatusEnum.APPROVED.getValue(), "已审批订单不允许删除");
 		renderJson(service.delete(getLong(0)));
 	}
 
