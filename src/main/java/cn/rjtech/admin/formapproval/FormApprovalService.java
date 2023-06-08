@@ -360,7 +360,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                             // 获取集合里一级数据
                             int getStair = 0;
                             // 获取集合上级数据
-                            int getSuperior = 1;
+                            int getSuperior;
 
                             /*
                              * 审批人设置
@@ -418,7 +418,18 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                      * 		  222、指定人审批
                                      */
 
-                                    switch (iSupervisorType) {
+                                    /**
+                                     * 一级主管（直属主管）：班负责人，班长
+                                     * 二级主管：系负责人，系长
+                                     * 三级主管：科负责人，科长
+                                     * 四级主管：部负责人，部长
+                                     * 五级主管：公司负责人，总经理
+                                     */
+
+                                    getStair = iSupervisorType - 1;
+                                    getSuperior = iSupervisorType;
+
+                                    /*switch (iSupervisorType) {
                                         // 直接主管
                                         case 1:
 
@@ -435,7 +446,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                             break;
                                         default:
                                             break;
-                                    }
+                                    }*/
 
                                     if (size > getStair) {
                                         Record record = list.get(getStair);
