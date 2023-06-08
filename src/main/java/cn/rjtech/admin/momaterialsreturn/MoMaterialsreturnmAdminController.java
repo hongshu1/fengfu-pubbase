@@ -92,5 +92,21 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
 
+	/**
+	 * 新增退料
+	 */
+	public void addMoMaterialsreturn(){
+		Long imodocid=getLong("imodocid");
+		renderJsonData(service.addMoMaterialsreturn(imodocid,getJBoltTable()));
+	}
+
+	/***
+	 * 明细列表
+	 */
+
+	public void getMoMaterialsreturnList(){
+
+		renderJsonData(service.getMoMaterialsreturnList(getPageNumber(),getPageSize(),getKv()));
+	}
 
 }

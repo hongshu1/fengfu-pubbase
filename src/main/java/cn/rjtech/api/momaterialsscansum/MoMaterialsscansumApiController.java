@@ -27,8 +27,9 @@ public class MoMaterialsscansumApiController extends BaseApiController {
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
     @OpenAPI
-    public void addBarcode(@Para(value = "barcode") String  barcoce){
-        renderJBoltApiRet(moMaterialsscansumApiService.add(barcoce));
+    public void addBarcode(@Para(value = "barcode") String  barcoce,
+    @Para(value="imodocid") Long imodocid){
+        renderJBoltApiRet(moMaterialsscansumApiService.add(barcoce,imodocid));
     }
 
 }

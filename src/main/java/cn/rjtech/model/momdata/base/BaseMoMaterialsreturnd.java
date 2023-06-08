@@ -20,6 +20,8 @@ public abstract class BaseMoMaterialsreturnd<M extends BaseMoMaterialsreturnd<M>
     public static final String IINVENTORYID = "iInventoryId";
     /**数量*/
     public static final String IQTY = "iQty";
+	/** 编码**/
+	private  static  String CBARCODE="cBarcode";
 	/**
 	 * 主键ID
 	 */
@@ -104,6 +106,24 @@ public abstract class BaseMoMaterialsreturnd<M extends BaseMoMaterialsreturnd<M>
 	public java.math.BigDecimal getIQty() {
 		return getBigDecimal("iQty");
 	}
+
+	/**
+	 * 条码
+	 */
+	public M setCbarcode(java.lang.String cBarcode) {
+		set("cBarcode", cBarcode);
+		return (M)this;
+	}
+
+	/**
+	 * 条码
+	 */
+	@JBoltField(name="cBarcode" ,columnName="cBarcode",type="String", remark="条码", required=false, maxLength=200, fixed=0, order=10)
+	@JSONField(name = "cBarcode")
+	public java.lang.String getCbarcode() {
+		return getStr("cBarcode");
+	}
+
 
 }
 
