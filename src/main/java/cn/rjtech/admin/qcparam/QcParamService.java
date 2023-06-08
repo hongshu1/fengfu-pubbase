@@ -1,6 +1,8 @@
 package cn.rjtech.admin.qcparam;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -9,23 +11,24 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.qcitem.QcItemService;
 import cn.rjtech.model.momdata.QcItem;
 import cn.rjtech.model.momdata.QcParam;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 质量建模-检验参数
@@ -51,6 +54,8 @@ public class QcParamService extends BaseService<QcParam> {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingDService;
     /**
      * 后台管理数据查询
      *
@@ -196,64 +201,50 @@ public class QcParamService extends BaseService<QcParam> {
      * 上传excel文件
      */
     public Ret importExcelData(File file) {
-        StringBuilder errorMsg = new StringBuilder();
-        JBoltExcel jBoltExcel = JBoltExcel
-            //从excel文件创建JBoltExcel实例
-            .from(file)
-            //设置工作表信息
-            .setSheets(
-                JBoltExcelSheet.create("sheet1")
-                    //设置列映射 顺序 标题名称
-                    .setHeaders(
-                        JBoltExcelHeader.create("iqcitemid", "参数项目名称"),
-                        JBoltExcelHeader.create("cqcparamname", "参数名称")
-                    )
-                    //从第几行开始读取
-                    .setDataStartRow(2)
-            );
-        //从指定的sheet工作表里读取数据
-        List<QcParam> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", QcParam.class, errorMsg);
-        if (notOk(models)) {
-            if (errorMsg.length() > 0) {
-                return fail(errorMsg.toString());
-            } else {
-                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-            }
-        }
-        if (errorMsg.length() > 0) {
-            return fail(errorMsg.toString());
-        }
-        //读取数据没有问题后判断必填字段
-        if (models.size() > 0) {
-            for (QcParam param : models) {
-                if (notOk(param.getIqcitemid())) {
-                    return fail("参数项目名称不能为空");
-                }
-                if (notOk(param.getCQcParamName())) {
-                    return fail("参数名称不能为空");
-                }
-            }
-        }
-        //判断是否存在这个参数项目
-        for (QcParam each : models) {
-            List<QcItem> qcItemList = qcItemService.findQcItemName(each.getIqcitemid().toString());
-            if (notOk(qcItemList)) {
-                return fail(each.getIqcitemid() + "参数项目不存在，请去【检验项目】页面新增！");
-            }
+        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        if (notOk(records)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
 
-        savaModelHandle(models);
-        //执行批量操作
-        boolean success = tx(new IAtom() {
-            @Override
-            public boolean run() throws SQLException {
-                batchSave(models);
-                return true;
+        Date now = new Date();
+        // 检验项目
+        Map<String, QcItem> qcitemMap = new HashMap<>();
+
+        for (Record record : records) {
+            String cqcitemname = record.getStr("iQcItemId");
+
+            QcItem qcitem = qcitemMap.get(cqcitemname);
+
+            if (ObjUtil.isNull(qcitem)) {
+                qcitem = qcItemService.findBycQcItemName(cqcitemname);
+                ValidationUtils.notNull(qcitem, String.format("检验项目“%s”不存在", cqcitemname));
+                qcitemMap.put(cqcitemname, qcitem);
             }
-        });
-        if (!success) {
-            return fail(JBoltMsg.DATA_IMPORT_FAIL);
+            if (StrUtil.isBlank(record.getStr("cQcParamName"))) {
+                return fail("检验参数名称不能为空");
+            }
+
+            record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+            record.set("iQcItemId", qcitem.getIAutoId());
+            record.set("cQcParamName", record.getStr("cQcParamName"));
+            record.set("iCreateBy", JBoltUserKit.getUserId());
+            record.set("dCreateTime", now);
+            record.set("cCreateName", JBoltUserKit.getUserName());
+            record.set("iOrgId", getOrgId());
+            record.set("cOrgCode", getOrgCode());
+            record.set("cOrgName", getOrgName());
+            record.set("iUpdateBy", JBoltUserKit.getUserId());
+            record.set("dUpdateTime", now);
+            record.set("cUpdateName", JBoltUserKit.getUserName());
+            record.set("isDeleted",0);
+            record.set("isEnabled",true);
         }
+
+        // 执行批量操作
+        tx(() -> {
+            batchSaveRecords(records);
+            return true;
+        });
         return SUCCESS;
     }
 

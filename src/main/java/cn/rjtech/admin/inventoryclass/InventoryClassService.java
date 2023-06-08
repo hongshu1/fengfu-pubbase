@@ -284,13 +284,14 @@ public class InventoryClassService extends BaseService<InventoryClass> {
     	if(CollUtil.isEmpty(subList)) return;
         for (Record row : subList) {
             // 当前节点
-            treeBeans.add(new JsTreeBean(row.getStr("cinvccode"), pid, row.getStr("cinvcname") + "(" + row.getStr("cinvccode") + ")", "default", null, true));
+            treeBeans.add(new JsTreeBean(row.getLong("iautoid"), pid, row.getStr("cinvcname") + "(" + row.getStr("cinvccode") + ")", "default", null, true));
             // 追加子节点
             appendSubTree(treeBeans, row.getLong("iautoid"));
         }
     }
     private List<Record> getSubList(Long pid) {
         Okv para = Okv.by("pid", pid);
+        para.set("iorgid",getOrgId());
         return dbTemplate("inventoryclass.getSubList", para).find();
     }
 }

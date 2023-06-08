@@ -64,7 +64,6 @@ public class CodingRuleMAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-
         set("codingRuleM", codingRuleM);
         render("edit.html");
     }

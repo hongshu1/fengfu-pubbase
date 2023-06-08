@@ -181,6 +181,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
      */
     @UnCheck
     public void barcodeDatas() {
+        String detailHidden = get("detailHidden");
         renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()), null));
     }
 

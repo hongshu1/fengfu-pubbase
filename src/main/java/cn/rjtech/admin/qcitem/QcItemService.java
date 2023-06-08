@@ -1,7 +1,6 @@
 package cn.rjtech.admin.qcitem;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
@@ -14,11 +13,7 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
-import cn.rjtech.enums.SourceEnum;
-import cn.rjtech.model.momdata.Department;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.QcItem;
-import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -28,9 +23,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 质量建模-检验项目（分类）
@@ -273,4 +266,7 @@ public class QcItemService extends BaseService<QcItem> {
         return SUCCESS;
     }
 
+    public QcItem findBycQcItemName(String cqcitemname) {
+        return findFirst(selectSql().eq(QcItem.CQCITEMNAME, cqcitemname).eq(QcItem.IORGID, getOrgId()).eq(QcItem.ISDELETED, ZERO_STR).first());
+    }
 }

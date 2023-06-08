@@ -1,19 +1,18 @@
 package cn.rjtech.admin.stockbarcodeposition;
 
-import java.util.Date;
-import java.util.List;
-
-import com.jfinal.plugin.activerecord.Page;
-
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.hutool.core.util.StrUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
-
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.StockBarcodePosition;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.StockBarcodePosition;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 条码库存表 Service
@@ -82,6 +81,12 @@ public class StockBarcodePositionService extends BaseService<StockBarcodePositio
         return deleteByIds(ids, true);
     }
 
+    public int deletByAutoid(String autoid){
+        Sql sql = deleteSql().eq(StockBarcodePosition.AUTOID, autoid);
+        return delete(sql);
+    }
+
+
     /**
      * 删除
      */
@@ -122,31 +127,45 @@ public class StockBarcodePositionService extends BaseService<StockBarcodePositio
     }
 
     public List<Record> findBarcodePositionByKvs(Kv kv) {
-        kv.set("organizecode",getOrgCode());
-        kv.set("invcode",kv.getStr("cinvcode"));
-        kv.set("vencode",kv.getStr("cvencode"));
-        kv.set("whcode",kv.getStr("cwhcode"));
-        kv.set("poscode",kv.getStr("careacode"));
+        String cvencode = kv.getStr("cvencode");
+        if (StrUtil.isBlank(cvencode)) {
+            cvencode = "NULL";
+        }
+        String cwhcode = kv.getStr("cwhcode");
+        if (StrUtil.isBlank(cwhcode)) {
+            cwhcode = "NULL";
+        }
+        String careacode = kv.getStr("careacode");
+        if (StrUtil.isBlank(careacode)) {
+            careacode = "NULL";
+        }
+        kv.set("organizecode", getOrgCode());
+        kv.set("invcode", kv.getStr("cinvcode"));
+        kv.set("vencode", cvencode);
+        kv.set("whcode", cwhcode);
+        kv.set("poscode", careacode);
         return dbTemplate("warehousebeginofperiod.findBarcodePositionByKvs", kv).find();
     }
 
     /*
      * 传参
      * */
-    public void saveBarcodePositionModel(StockBarcodePosition position, Kv kv, Date now, String lockType,Long masid) {
-        //position.setAutoID(JBoltSnowflakeKit.me.nextId());
+    public void saveBarcodePositionModel(StockBarcodePosition position, Kv kv, Date now, String lockType, Long detailId) {
         position.setOrganizeCode(getOrgCode());
         position.setInvCode(kv.getStr("cinvcode"));
-        position.setVenCode(kv.getStr("cvencode"));
-        //position.setVenPosCode(kv.getStr(""));
-        position.setWhCode(kv.getStr("cwhcode"));
-        position.setPosCode(kv.getStr("careacode"));
-        //position.setState();
+        position.setVenCode(StrUtil.isBlank(kv.getStr("cvencode")) ? "NULL" : kv.getStr("cvencode"));
+        position.setWhCode(StrUtil.isBlank(kv.getStr("cwhcode")) ? "NULL" : kv.getStr("cwhcode"));
+        position.setPosCode(StrUtil.isBlank(kv.getStr("careacode")) ? "NULL" : kv.getStr("careacode"));
         position.setBarcode(kv.getStr("barcode"));
         position.setBatch(kv.getStr("batch"));
         position.setChgDate(now);
-        position.setLockSource(String.valueOf(masid));
+        position.setLockSource(String.valueOf(detailId));
         position.setLockType(lockType);
+    }
+
+    public StockBarcodePosition findByLockSource(Long detailAutoid) {
+        return findFirst("select * from T_Sys_StockBarcodePosition where OrganizeCode = ? and LockSource=?",
+            getOrgCode(), detailAutoid);
     }
 
 }

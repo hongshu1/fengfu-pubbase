@@ -2,25 +2,27 @@
 #set(iYear=DateUtil.getYear())
 #set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
 <div class="jbolt_page_title">
-    
+
     <div class="row">
-        
+
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="col">
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
-                        
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", iautoid=monthorderm.iautoid??0)
-                        
+
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm",
+                        formSn="Co_MonthOrderM", iautoid=monthorderm.iautoid??0,
+                        iauditstatus=monthorderm.iAuditStatus,iauditway=monthorderm.iauditway)
+
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
             </div>
         </div>
-        
+
     </div>
-    
+
 </div>
 
 ### 新增之后，并且为审核流
@@ -127,7 +129,7 @@
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+                <a class="btn" onclick="jboltTableRemoveRow(this)"><i class="fa fa-remove c-danger"></i></a>
             </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
@@ -171,7 +173,7 @@
         </tr>
         {@/each}
     </script>
-    
+
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-xs">添加行</button>
@@ -199,7 +201,7 @@
             </div>
         </div>
     </div>
-    
+
     <table class="jbolt_table thead_font_normal table-bordered table-center"
            data-jbolttable
            #if(monthorderm.iAutoId??)
@@ -214,7 +216,7 @@
            data-toolbar="monthorderm_toolbar_#(pageId)"
            data-editable="true"
            data-editable-option="getEditableTableOptions_#(pageId)"
-           data-height="130%"
+           data-height="70%"
     >
         <thead>
         <tr>
@@ -314,7 +316,7 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-    
+
     function submitThisForm(){
         $('#save_btn_#(pageId)').click();
     }
@@ -396,7 +398,7 @@
             });
         }
     }
-    
+
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
@@ -934,7 +936,7 @@
     	parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
     }
-    
+
 </script>
 #end
 

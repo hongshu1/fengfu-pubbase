@@ -16,14 +16,12 @@ import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
@@ -72,31 +70,21 @@ public class VendorService extends BaseService<Vendor> {
      * @param isEnabled  是否启用：0. 停用 1. 启用
      * @param isDeleted  删除状态：0. 未删除 1. 已删除
      */
-    public Page<Vendor> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEnabled, Boolean isDeleted,
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEnabled, Boolean isDeleted,
                                       Kv kv) {
-        //创建sql对象
-        Sql sql = selectSql().page(pageNumber, pageSize);
-        //sql条件处理
-        sql.eqBooleanToChar("isEnabled", isEnabled);
-        sql.eqBooleanToChar("isDeleted", isDeleted);
-        sql.eq("cVenName", kv.get("cvenname"));//供应商编码
-        sql.eq("cVenCode", kv.get("cvencode"));//供应商名称
-        sql.eq("iAutoid", kv.get("iventorclassid"));//供应商分类id
-        //关键词模糊查询
-        sql.likeMulti(keywords, "cOrgName", "cVenName", "cVenAbbName", "cCreateName", "cUpdateName");
-        //排序
-        sql.desc("dUpdateTime");
-        Page<Vendor> paginate = paginate(sql);
-        for (Vendor vendor : paginate.getList()) {
-            Department dept = departmentService.findById(vendor.getCVenDepart());
-            vendor.setCVenDepart(null != dept ? dept.getCDepName() : "");
-            Person person = personService.findById(vendor.getIDutyPersonId());
-            vendor.set("cvenpperson", person != null ? person.getCpsnName() : "");
+        kv.set("corgcode", getOrgCode());
+        Page<Record> paginate = dbTemplate("vendor.getAdminDatas", kv).paginate(pageNumber, pageSize);
+        for (Record record : paginate.getList()) {
+            Department dept = departmentService.findById(record.getStr("cvendepart"));
+            record.set("cvendepart", null != dept ? dept.getCDepName() : "");
+            Person person = personService.findById(record.getStr("idutypersonid"));
+            record.set("cvenpperson", person != null ? person.getCpsnName() : "");
         }
         return paginate;
     }
 
     public Page<Record> pageList(Kv kv) {
+        kv.set("corgcode", getOrgCode());
         Page<Record> recordPage = dbTemplate("vendor.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
         List<Record> list = recordPage.getList();
         for (Record record : list) {
@@ -110,9 +98,10 @@ public class VendorService extends BaseService<Vendor> {
      * 获取数据
      */
 
-    public List<Record>  List(){
-      Kv kv=new Kv();
-        List<Record> records = dbTemplate("vendor.list",kv.set("isenabled","true")).find();
+    public List<Record> List() {
+        Kv kv = new Kv();
+        kv.set("corgcode", getOrgCode());
+        List<Record> records = dbTemplate("vendor.list", kv.set("isenabled", "true")).find();
         return records;
     }
 
@@ -341,7 +330,8 @@ public class VendorService extends BaseService<Vendor> {
     }
 
     public Vendor findByName(String vendorName) {
-        return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvenname = ?", vendorName);
+        return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvenname = ? AND v.cOrgCode=?",
+            vendorName,getOrgCode());
     }
 
     public Vendor findByCode(String cvencode) {
@@ -354,6 +344,7 @@ public class VendorService extends BaseService<Vendor> {
     }
 
     public List<Record> getVendorList(Kv kv) {
+        kv.set("corgcode", getOrgCode());
         return dbTemplate("vendor.getVendorList", kv).find();
     }
 
@@ -363,8 +354,7 @@ public class VendorService extends BaseService<Vendor> {
 
     public List<Record> getAutocompleteList(String q, int limit) {
         Okv para = Okv.by("q", q)
-            .set("limit", limit);
-
+            .set("limit", limit).set("corgcode",getOrgCode());
         return dbTemplate("vendor.getAutocompleteList", para).find();
     }
 

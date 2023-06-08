@@ -58,13 +58,13 @@
       <tr data-id="${data.autoid}">
         <td>${pageNumber,pageSize,index | rownum}</td>
         <td>
-          {@if data.iauditstatus == '1'}
+          {@if data.iauditstatus == '0'}
             <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
                data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
             <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
                data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
           {@/if}
-          {@if data.iauditstatus == '2'}
+          {@if data.iauditstatus == '1'}
             <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
                data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
             <a href="admin/purchaseReceiptList/autit/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="审核"
@@ -72,13 +72,13 @@
             <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
                data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
           {@/if}
-          {@if data.iauditstatus == '3'}
+          {@if data.iauditstatus == '2'}
             <a href="admin/purchaseReceiptList/onlysee/${data.autoid}" data-area="100%,100%" tooltip data-title="查看"
                data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">查看</a>
             <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
                data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
           {@/if}
-          {@if data.iauditstatus == '4'}
+          {@if data.iauditstatus == '3'}
           <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
              data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
           <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
@@ -86,14 +86,14 @@
           {@/if}
         </td>
         <td title="${data.iauditstatus}">
-          {@if data.iauditstatus == '1'}<span>已保存</span>{@/if}
-          {@if data.iauditstatus == '2'}<span>待审批</span>{@/if}
-          {@if data.iauditstatus == '3'}<span>已审批</span>{@/if}
-          {@if data.iauditstatus == '4'}<span>审批不通过 </span>{@/if}
+          {@if data.iauditstatus == '0'}<span>未审核</span>{@/if}
+          {@if data.iauditstatus == '1'}<span>待审核</span>{@/if}
+          {@if data.iauditstatus == '2'}<span>审核通过</span>{@/if}
+          {@if data.iauditstatus == '3'}<span>审核不通过</span>{@/if}
         </td>
         <td title="${data.billno}">${data.billno}</td>
-        <td title="${data.billno}">${data.billno}</td>
         <td title="${data.sourcebillno}">${data.sourcebillno}</td>
+        <td title="${data.billno}">${data.billno}</td>
         <td title="${data.createdate}">${data.createdate}</td>
         <td title="${data.cwhname}">${data.cwhname}</td>
         <td title="${data.cdepname}">${data.cdepname}</td>
@@ -150,16 +150,16 @@
         <th data-width="150" data-column="BillNo">入库单号</th>
         <th data-width="150" data-column="SourceBillNo">订单号</th>
         <th data-width="150" data-column="billno">U8单号</th>
-        <th data-min-width="160" data-column="BillDate">入库日期</th>
-        <th data-width="150" data-column="cwhname">仓库名称</th>
+        <th data-min-width="180" data-column="BillDate">入库日期</th>
+        <th data-width="180" data-column="cwhname">仓库名称</th>
         <th data-width="150" data-column="cDepName">部门名称</th>
         <th data-width="150" data-column="cPTName">采购类型</th>
         <th data-width="150" data-column="cRdName">入库类型</th>
         <th data-width="150" data-column="iBusType">业务类型</th>
         <th data-width="150" data-column="cVenCode">供应商编码</th>
-        <th data-width="150" data-column="cVenName">供应商名称</th>
+        <th data-width="200" data-column="cVenName">供应商名称</th>
         <th data-width="150" data-column="memo">备注</th>
-        <th data-width="150" data-column="CreatePerson">创建人</th>
+        <th data-width="120" data-column="CreatePerson">创建人</th>
         <th data-min-width="160" data-column="CreateDate">创建日期</th>
       </tr>
       </thead>

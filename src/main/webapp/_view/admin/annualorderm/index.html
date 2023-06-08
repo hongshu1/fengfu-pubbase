@@ -50,15 +50,17 @@
             <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a class=jbolt_table_editbtn href="admin/annualorderm/edit/${data.iautoid}" data-fs="true"  data-handler="refreshJBoltTable" data-title="查看客户订单-年度订单"><i class="fa fa-eye"></i>查看</a>
+                <a class=jbolt_table_editbtn href="admin/annualorderm/edit?iautoid=${data.iautoid}" data-fs="true"  data-handler="refreshJBoltTable" data-title="查看客户订单-年度订单"><i class="fa fa-eye"></i>查看</a>
                 {@if data.iauditstatus == '0'}
-                <a class="jbolt_table_editbtn" href="admin/annualorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" data-title="编辑客户订单-年度订单"><i class="fa fa-edit"></i>编辑</a>
+                <a class="jbolt_table_editbtn" href="admin/annualorderm/edit?iautoid=${data.iautoid}&edit=true" data-fs="true" data-handler="refreshJBoltTable" data-title="编辑客户订单-年度订单"><i class="fa fa-edit"></i>编辑</a>
                  {@else if data.iauditstatus == '1'}
                 <a class="jbolt_table_delbtn" href="admin/annualorderm/approve/${data.iautoid}" data-confirm="确定审批此选项？" data-handler="refreshJBoltTable"><i class="fa fa-remove fa-edit">审批</i></a>
                  {@/if}
+            {@if data.iauditstatus != '2'}
                 <a class="jbolt_table_delbtn" href="admin/annualorderm/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable"><i class="fa fa-remove c-danger">删除</i></a>
+            {@/if}
             </td>
-            <td>${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
+            <td>${data.iorderstatus|iOrderStatus}</td>
             <td>${data.cauditprogress}</td>
             <td>${data.corderno}</td>
             <td tooltip title="${data.ccusname}">${data.ccusname}</td>
@@ -72,9 +74,11 @@
         <div class="jbolt_table_toolbar" id="AnnualOrderM_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                 <button data-dialogbtn data-handler="jboltTablePageToFirst" data-fs="true" data-title="新增客户订单-年度订单" data-url="admin/annualorderm/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/annualorderm/deleteByIds?ids=" data-confirm="确定反审批选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 批量删除</button>
+                #include("/_view/_common/_batch_approval_btns.html", formSn="Co_AnnualOrderM")
             </div>
         </div>
-        
+
         <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
                data-jbolttable
                data-width="auto"

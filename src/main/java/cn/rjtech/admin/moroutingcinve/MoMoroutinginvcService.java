@@ -1,26 +1,18 @@
 package cn.rjtech.admin.moroutingcinve;
 
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.admin.department.DepartmentService;
-import cn.rjtech.admin.equipment.EquipmentService;
-import cn.rjtech.admin.inventory.InventoryService;
-import cn.rjtech.admin.inventoryclass.InventoryClassService;
-import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
-import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
-import cn.rjtech.admin.org.OrgService;
-import cn.rjtech.admin.uom.UomService;
-import cn.rjtech.admin.workregionm.WorkregionmService;
-import cn.rjtech.model.momdata.Equipment;
-import cn.rjtech.model.momdata.Inventory;
-import cn.rjtech.model.momdata.Person;
-import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
+import cn.rjtech.admin.uom.UomService;
+import cn.rjtech.model.momdata.Inventory;
+import cn.rjtech.model.momdata.MoMoroutinginvc;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.MoMoroutinginvc;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.List;

@@ -3,7 +3,10 @@ package cn.rjtech.constants;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.model.JboltFile;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
+import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.config.AppConfig;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.enums.DictionaryTypeKeyEnum;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -95,6 +98,45 @@ public class Constants {
 
     public static String getSuccessJson(String data) {
         return String.format("{\"state\":\"ok\",\"data\":%s}", data);
+    }
+
+    /**
+     * 根据审批方式，动态控制显示状态的名称
+     *
+     * @param auditWay    审批方式
+     * @param auditStatus 审核状态
+     */
+    public static String getAuditStatusName(int auditWay, int auditStatus) {
+        switch (AuditWayEnum.toEnum(auditWay)) {
+            case STATUS:
+                // 审核状态
+                switch (AuditStatusEnum.toEnum(auditStatus)) {
+                    case NOT_AUDIT:
+                    case REJECTED:
+                        return "已保存";
+                    case AWAIT_AUDIT:
+                        return "待审核";
+                    case APPROVED:
+                        return "已审核";
+                    default:
+                        throw new ParameterException("未知审核状态");
+                }
+            case FLOW:
+                // 审批流
+                switch (AuditStatusEnum.toEnum(auditStatus)) {
+                    case NOT_AUDIT:
+                    case REJECTED:
+                        return "已保存";
+                    case AWAIT_AUDIT:
+                        return "待审批";
+                    case APPROVED:
+                        return "审批通过";
+                    default:
+                        throw new ParameterException("未知审核状态");
+                }
+            default:
+                throw new ParameterException("未知审批类型");
+        }
     }
 
 }

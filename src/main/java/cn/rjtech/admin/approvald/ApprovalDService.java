@@ -322,11 +322,37 @@ public class ApprovalDService extends BaseService<ApprovalD> {
                 default:
                     break;
             }
+
+//            序列化Iseq
+            List<ApprovaldUser> approvaldUsers = approvaldUserService.find("select * from Bd_ApprovalD_User where iApprovalDid = " + iApprovalDid.get() + " " +
+                    "order by iSeq asc");
+            if (approvaldUsers.size() > 0){
+                for (int i = 0, iSeq = 0; i < approvaldUsers.size(); i++) {
+                    ApprovaldUser approvaldUser = approvaldUsers.get(i);
+                    approvaldUser.setISeq(++iSeq);
+                }
+                approvaldUserService.batchUpdate(approvaldUsers,approvaldUsers.size());
+            }
+
+            List<ApprovaldRole> approvaldRoles =
+                    approvaldRoleService.find("select * from Bd_ApprovalD_Role where iApprovalDid = " + iApprovalDid.get() + " " +
+                    "order by iSeq asc");
+            if (approvaldRoles.size() > 0){
+
+                for (int i = 0, iSeq = 0; i < approvaldRoles.size(); i++) {
+                    ApprovaldRole approvaldRole = approvaldRoles.get(i);
+                    approvaldRole.setISeq(++iSeq);
+                }
+
+                approvaldRoleService.batchUpdate(approvaldRoles,approvaldRoles.size());
+            }
+
             return true;
         });
 
         return SUCCESS.set("iautoid",iApprovalDid.get());
     }
+
 
     /**
      * 人员行数据
@@ -451,6 +477,19 @@ public class ApprovalDService extends BaseService<ApprovalD> {
         if (jBoltTable.deleteIsNotBlank()){
             roleusersService.realDeleteByIds(jBoltTable.getDelete());
         }
+
+            List<ApprovaldRoleusers> roleusers = roleusersService.find("select * from Bd_ApprovalD_RoleUsers where iApprovaldRoleId = " + autoId + " " +
+                    "order by iSeq asc");
+
+            if (roleusers.size() > 0) {
+                List<ApprovaldRoleusers> roleusersList = new ArrayList<>();
+                for (int j = 0, rank = 0; j < roleusers.size(); j++) {
+                    ApprovaldRoleusers approvaldRoleusers = roleusers.get(j);
+                    approvaldRoleusers.setISeq(++rank);
+                    roleusersList.add(approvaldRoleusers);
+                }
+                roleusersService.batchUpdate(roleusersList,roleusersList.size());
+            }
 
             return true;
         });

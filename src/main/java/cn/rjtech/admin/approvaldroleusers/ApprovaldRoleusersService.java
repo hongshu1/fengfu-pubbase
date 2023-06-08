@@ -1,15 +1,15 @@
 package cn.rjtech.admin.approvaldroleusers;
 
 import cn.hutool.core.util.ArrayUtil;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.ApprovaldRoleusers;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+
+import java.util.List;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -135,5 +135,14 @@ public class ApprovaldRoleusersService extends BaseService<ApprovaldRoleusers> {
 	 */
 	public void deleteByApprovalId(Object[] ids){
 		delete("DELETE FROM Bd_ApprovalD_RoleUsers WHERE iApprovaldRoleId IN (" + ArrayUtil.join(ids, COMMA) + ")");
+	}
+
+	/**
+	 * 根据外键找数据
+	 * @param id
+	 * @return
+	 */
+	public List<ApprovaldRoleusers> getRoleUser(Long id){
+		return find("select * from Bd_ApprovalD_RoleUsers where iApprovaldRoleId = "+id +" order by iSeq asc");
 	}
 }

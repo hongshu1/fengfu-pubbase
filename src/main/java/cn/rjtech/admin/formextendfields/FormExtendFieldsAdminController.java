@@ -1,17 +1,18 @@
 package cn.rjtech.admin.formextendfields;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import com.jfinal.core.paragetter.Para;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.form.FormService;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.FormExtendFields;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+
 /**
  * 系统管理-拓展字段配置表
  * @ClassName: FormExtendFieldsAdminController
@@ -24,6 +25,8 @@ import cn.rjtech.model.momdata.FormExtendFields;
 @Path(value = "/admin/formExtendFields", viewPath = "/_view/admin/formextendfields")
 public class FormExtendFieldsAdminController extends BaseAdminController {
 
+	@Inject
+	private FormService formService;
 	@Inject
 	private FormExtendFieldsService service;
    /**
@@ -87,5 +90,14 @@ public class FormExtendFieldsAdminController extends BaseAdminController {
 		renderJson(service.deleteById(getLong(0)));
 	}
 
+	/**
+	 * 数据源
+	 */
+	public void optionsiFormFieldId(){
+		renderJsonData(formService.find("SELECT cFormName,iAutoId FROM Bd_Form WHERE cFormTypeSn = 2"));
+	}
+	public void optionsFormId(){
+		renderJsonData(formService.find("SELECT cFormName,iAutoId FROM Bd_Form WHERE cFormTypeSn = 1"));
+	}
 
 }

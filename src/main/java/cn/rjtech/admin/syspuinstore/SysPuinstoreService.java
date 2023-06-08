@@ -258,9 +258,11 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             podetailKv.set("sourcebillno", record.get("sourcebillno"));
             podetailKv.set("sourcebillid", record.get("sourcebillid"));
             Record detailByParam = findSysPODetailByParam(podetailKv);
-            record.set("invname", detailByParam.get("invname"));
-//            record.set("venname", detailByParam.get("venname"));
-            if (null != purchaseType){
+            if (detailByParam != null) {
+                record.set("invname", detailByParam.get("invname"));
+                record.set("venname", detailByParam.get("venname"));
+            }
+            if (null != purchaseType) {
                 record.set("cptcode", purchaseType.getCPTCode());
                 record.set("cptname", purchaseType.getCPTName());
             }
@@ -345,11 +347,11 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                         detail.setModifyDate(date);
                         detail.setModifyPerson(userName);
                         syspuinstoredetailservice
-                            .savedetailModel2(detail, updateSysPuinstore, updateRecord, whcode, detailByParam);
+                                .savedetailModel2(detail, updateSysPuinstore, updateRecord, whcode, detailByParam);
                         syspuinstoredetailservice.update(detail);
                     } else {
                         syspuinstoredetailservice.saveSysPuinstoredetailModel(detailList, updateRecord,
-                            updateSysPuinstore, whcode, (i + 1), detailByParam);
+                                updateSysPuinstore, whcode, (i + 1), detailByParam);
                     }
                 }
                 if (!detailList.isEmpty()) {
@@ -378,7 +380,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                 for (int i = 0; i < saveRecordList.size(); i++) {
                     Record detailRecord = saveRecordList.get(i);
                     syspuinstoredetailservice
-                        .saveSysPuinstoredetailModel(detailList, detailRecord, puinstore, whcode, (i + 1), detailByParam);
+                            .saveSysPuinstoredetailModel(detailList, detailRecord, puinstore, whcode, (i + 1), detailByParam);
                 }
                 if (!detailList.isEmpty()) {
                     ValidationUtils.isTrue(syspuinstoredetailservice.batchSave(detailList).length != 0, "保存采购入库单失败");
@@ -470,6 +472,13 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      * */
     public Page<Record> getSysPODetail(Kv kv, int size, int PageSize) {
         return dbTemplate(u8SourceConfigName(), "syspuinstore.getSysPODetail", kv).paginate(size, PageSize);
+    }
+
+    /*
+     * 获取mes采购订单视图
+     * */
+    public Page<Record> getMesSysPODetails(Kv kv, int size, int PageSize) {
+        return dbTemplate( "syspuinstore.getMesSysPODetails", kv).paginate(size, PageSize);
     }
 
     /*
