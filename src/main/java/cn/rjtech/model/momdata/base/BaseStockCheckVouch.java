@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -33,6 +32,8 @@ public abstract class BaseStockCheckVouch<M extends BaseStockCheckVouch<M>> exte
     public static final String MODIFYDATE = "ModifyDate";
     /**主键id*/
     public static final String AUTOID = "Autoid";
+    /**盘点备注*/
+    public static final String MEMO = "Memo";
 	/**
 	 * 组织编码
 	 */
@@ -218,6 +219,23 @@ public abstract class BaseStockCheckVouch<M extends BaseStockCheckVouch<M>> exte
 	@JSONField(name = "autoid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getAutoid() {
 		return getLong("Autoid");
+	}
+
+	/**
+	 * 盘点备注
+	 */
+	public M setMemo(java.lang.Boolean Memo) {
+		set("Memo", Memo);
+		return (M)this;
+	}
+
+	/**
+	 * 盘点备注
+	 */
+	@JBoltField(name="memo" ,columnName="Memo",type="Boolean", remark="盘点备注", required=false, maxLength=1, fixed=0, order=12)
+	@JSONField(name = "memo")
+	public java.lang.Boolean getMemo() {
+		return getBoolean("Memo");
 	}
 
 }

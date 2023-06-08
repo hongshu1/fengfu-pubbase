@@ -376,20 +376,24 @@
                     placeholder: '计划代码'
                 },
                 cinvcode: {
-                    type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
-                    maxLength: 100,
-                    required: true,
-                    placeholder: "请选择",
-                    textAttr: "cinvcode",
-                    limit: 10,
-                    width: 500,
-                    valueAttr: "cinvcode",
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,isalesuomid",
-                    header: '存货编码,客户部番,部品名称,规格,销售单位',
-                    changeColumns: [{column: "cinvcode", use: "cinvcode"}, {column: "cdefine1", use: "cinvcode1"},
-                        {column: "cdefine2", use: "cinvname1"}, {column: "cdefine3", use: "cinvstd"},
-                        {column: "cdefine4", use: "isalesuomid"}, {column: "iinventoryid", use: "iautoid"}]
+                    required:true,
+                    type:"dialogbtn",
+                    placeholder:"选择存货",
+                    maxLength:100,
+                    dialog:{
+                        url:"admin/manualorderm/inventory_dialog_index",
+                        area:"80%,80%",
+                        title:"选择存货",
+                        btn:"选择,关闭"
+                    },
+                    columnAttr:"iinventoryid,cinvcode1,cinvname1,cinvstd,cuomname",
+                    changeColumns: [
+                        {column:"cuomname",use:"cuomname"},
+                        {column:"cinvstd",use:"cinvstd"},
+                        {column:"cdefine2",use:"cinvname1"},
+                        {column:"cdefine1",use:"cinvcode1"},
+                        {column:"iinventoryid",use:"iautoid"},
+                    ]
                 },
                 cdefine1: {
                     type: "text",

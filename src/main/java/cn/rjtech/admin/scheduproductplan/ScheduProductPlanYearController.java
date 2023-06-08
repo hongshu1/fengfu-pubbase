@@ -50,6 +50,12 @@ public class ScheduProductPlanYearController extends BaseAdminController {
         }
         set("startyear",startyear);
         set("endyear",Integer.parseInt(startyear) + 1);
+
+        Boolean isedit = getBoolean("isedit");
+        if (isedit == null){
+            isedit = true;
+        }
+        set("isedit",isedit);
         render("planyear_add.html");
     }
 

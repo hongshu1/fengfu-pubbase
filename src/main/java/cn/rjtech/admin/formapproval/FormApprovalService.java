@@ -360,7 +360,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                             // 获取集合里一级数据
                             int getStair = 0;
                             // 获取集合上级数据
-                            int getSuperior = 1;
+                            int getSuperior;
 
                             /*
                              * 审批人设置
@@ -418,7 +418,18 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                      * 		  222、指定人审批
                                      */
 
-                                    switch (iSupervisorType) {
+                                    /**
+                                     * 一级主管（直属主管）：班负责人，班长
+                                     * 二级主管：系负责人，系长
+                                     * 三级主管：科负责人，科长
+                                     * 四级主管：部负责人，部长
+                                     * 五级主管：公司负责人，总经理
+                                     */
+
+                                    getStair = iSupervisorType - 1;
+                                    getSuperior = iSupervisorType;
+
+                                    /*switch (iSupervisorType) {
                                         // 直接主管
                                         case 1:
 
@@ -435,7 +446,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                             break;
                                         default:
                                             break;
-                                    }
+                                    }*/
 
                                     if (size > getStair) {
                                         Record record = list.get(getStair);
@@ -1157,10 +1168,12 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 flowD.update();
 
 //                反审后 单据状态都是待审批
-                updateSql().update(formSn)
-                        .set(IAUDITSTATUS, AuditStatusEnum.AWAIT_AUDIT.getValue())
-                        .set(DAUDITTIME, now)
-                        .eq(IAUTOID, formAutoId);
+                    Sql updateSql = updateSql().update(formSn)
+                            .set(IAUDITSTATUS, AuditStatusEnum.AWAIT_AUDIT.getValue())
+                            .set(DAUDITTIME, now)
+                            .eq(IAUTOID, formAutoId);
+
+                    update(updateSql);
 
                     return true;
                 });
@@ -1437,5 +1450,45 @@ public class FormApprovalService extends BaseService<FormApproval> {
         }
 
         return SUCCESS;
+    }
+
+    /**
+     * 判断审核还是审批
+     * @param formSn
+     * @return
+     */
+    public Ret auditOrApprove(String formSn){
+
+        AuditFormConfig formConfig = auditFormConfigService.findFirst("select * from Bd_AuditFormConfig where IsDeleted = '0' and isEnabled = '1' " +
+                "and cFormSn = '" + formSn + "'");
+
+        Integer iType = 0;
+
+        if (isOk(formConfig)){
+            iType = formConfig.getIType();
+        }
+
+        return SUCCESS.set("iType",iType);
+    }
+
+    /**
+     * 查询审批过程待审批的人员
+     * @param formAutoId
+     * @return
+     */
+    public String approvalProcessUsers(Long formAutoId,Integer size){
+        Kv kv = new Kv();
+        kv.set("formAutoId", isOk(formAutoId) ? formAutoId : ' ');
+        kv.set("size", isOk(size) ? size : 5);
+        String string = new String();
+        List<Record> list = dbTemplate("formapproval.approvalProcessUsers", kv).find();
+        StringBuilder builder = new StringBuilder();
+        if (list.size() > 0) {
+            list.forEach(record -> {
+                builder.append(record.getStr("name")).append(",");
+            });
+            string = builder.substring(1, builder.length() - 1);
+        }
+        return string;
     }
 }

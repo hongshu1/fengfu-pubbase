@@ -260,13 +260,16 @@ select
     d.iAutoId as SourceBillDid,
     m.iVendorId,
 	v.cVenCode as vencode,
-	v.cVenName as venname
+	v.cVenName as venname,
+	u.cUomCode as puunitcode,
+	u.cUomName as puunitname
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
+LEFT JOIN Bd_Uom u on b.iPurchaseUomId = u.iAutoId
 where 1=1
    	#if(barcode)
 		and a.cBarcode = #para(barcode)

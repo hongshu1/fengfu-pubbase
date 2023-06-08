@@ -212,4 +212,19 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(formSn, "表单编码不能为空");
         renderJson(service.batchReverseApprove(ids, formSn, status));
     }
+
+    /**
+     * 判断审核还是审批
+     */
+    public void auditOrApprove(@Para(value = "formSn") String formSn){
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        renderJson(service.auditOrApprove(formSn));
+    }
+
+    /**
+     * 审批过程中待审批的人员
+     */
+    public void approvalProcessUsers(@Para(value = "formAutoId") Long formAutoId,@Para(value = "size") Integer size){
+        renderJsonData(service.approvalProcessUsers(formAutoId,size));
+    }
 }

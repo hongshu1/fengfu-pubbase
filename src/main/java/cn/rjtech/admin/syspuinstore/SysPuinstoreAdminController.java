@@ -7,6 +7,8 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.model.momdata.SysPuinstoredetail;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -17,6 +19,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 
 /**
  * 采购入库单
+ *
  * @ClassName: SysPuinstoreAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 15:38
@@ -72,17 +75,29 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     }
 
     /*
+     * 撤回
+     * */
+    public void backStep() {
+        SysPuinstore puinstore = service.findById(getLong(0));
+        if (puinstore == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        renderJson(service.backStep(puinstore));
+    }
+
+    /*
      * 批量审批
      * */
     public void autitByIds() {
-        renderJson(service.resetAutitByIds(get("ids")));
+        renderJson(service.autitByIds(get("ids")));
     }
 
     /*
      * 批量反审批
      * */
     public void resetAutitByIds() {
-        renderJson(service.autitByIds(get("ids")));
+        renderJson(service.resetAutitByIds(get("ids")));
     }
 
     /*
@@ -94,9 +109,9 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     }
 
     /*
-     * 审批
+     * 编辑页面的审批
      * */
-    public void autit() {
+    public void editAutit() {
         Kv kv = getKv();
         Long aLong = getLong(0);
         Long autoid = null;
@@ -105,7 +120,22 @@ public class SysPuinstoreAdminController extends BaseAdminController {
         } else if (aLong != null) {
             autoid = aLong;
         }
-        renderJson(service.autit(autoid));
+        renderJson(service.editAutit(autoid));
+    }
+
+    /*
+     * 查看页面的审批
+     * */
+    public void onlyseeAutit(){
+        Kv kv = getKv();
+        Long aLong = getLong(0);
+        Long autoid = null;
+        if (kv.getLong("autoid") != null) {
+            autoid = kv.getLong("autoid");
+        } else if (aLong != null) {
+            autoid = aLong;
+        }
+        renderJson(service.onlyseeAutit(autoid));
     }
 
     /*
@@ -192,5 +222,12 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * */
     public void getWareHouseName() {
         renderJson(service.getWareHouseName(getKv()));
+    }
+
+    /*
+     * 获取需要打印的模板数据
+     * */
+    public void getPrintData() {
+        renderJson(service.printData(getKv()));
     }
 }

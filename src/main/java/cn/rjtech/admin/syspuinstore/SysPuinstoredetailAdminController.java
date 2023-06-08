@@ -7,6 +7,7 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -15,6 +16,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 采购入库单明细
+ *
  * @ClassName: SysPuinstoredetailAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 15:39
@@ -40,7 +42,7 @@ public class SysPuinstoredetailAdminController extends BaseAdminController {
      */
     public void datas() {
         renderJsonData(service
-                .getAdminDatas(getPageNumber(), getPageSize(), get("SourceBillType"), get("TrackType"), getBoolean("IsDeleted")));
+            .getAdminDatas(getPageNumber(), getPageSize(), get("SourceBillType"), get("TrackType"), getBoolean("IsDeleted")));
     }
 
     /**
@@ -106,6 +108,4 @@ public class SysPuinstoredetailAdminController extends BaseAdminController {
         Page<Record> recordPage = service.pageDetailList(getKv());
         renderJsonData(recordPage);
     }
-
-
 }

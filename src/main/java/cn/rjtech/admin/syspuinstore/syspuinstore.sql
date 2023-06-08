@@ -39,7 +39,7 @@ WHERE 1=1
 #if(endTime)
     and t1.CreateDate <= #para(endTime)
 #end
-order by t1.ModifyDate,t1.autoid desc
+order by t1.ModifyDate desc
 #end
 
 #sql("dList")
@@ -126,4 +126,12 @@ FROM
 and a.cOrderNo = #para(corderno)
 #end
 ORDER BY a.dUpdateTime DESC
+#end
+
+#sql("getPrintData")
+select * from T_Sys_PUInStore t1
+where 1=1
+#if(ids)
+  AND CHARINDEX(','+cast((select t1.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
+#end
 #end
