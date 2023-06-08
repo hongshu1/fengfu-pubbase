@@ -13,6 +13,8 @@ import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.MonthOrderD;
 import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.util.ValidationUtils;
@@ -218,7 +220,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     private void saveTableSubmitDatas(JBoltTable jBoltTable, MonthOrderM monthorderm) {
         List<Record> list = jBoltTable.getSaveRecordList();
-        if (CollUtil.isEmpty(list)) return;
+        ValidationUtils.notEmpty(list, JBoltMsg.DATA_NOT_EXIST);
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
             if (i == 0) {
@@ -278,9 +280,9 @@ public class MonthordermService extends BaseService<MonthOrderM> {
 		MonthOrderM monthorderm = findById(id);
 
         //2. 审核通过
-        monthorderm.setIAuditStatus(2);
+        monthorderm.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
         // 3. 已审批
-        monthorderm.setIOrderStatus(3);
+        monthorderm.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
         monthorderm.setIUpdateBy(JBoltUserKit.getUserId());
         monthorderm.setCUpdateName(JBoltUserKit.getUserName());
         monthorderm.setDUpdateTime(new Date());
@@ -303,7 +305,10 @@ public class MonthordermService extends BaseService<MonthOrderM> {
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
             
             // 处理其他业务
-                
+            MonthOrderM monthOrderM = findById(iautoid);
+            monthOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+            monthOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+            ValidationUtils.isTrue(monthOrderM.update(),JBoltMsg.FAIL);
             return true;
         });
         
