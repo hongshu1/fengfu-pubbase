@@ -1,6 +1,5 @@
 package cn.rjtech.admin.scheduproductplan;
 
-import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -30,8 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 生产计划排程 Service

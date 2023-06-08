@@ -1,5 +1,10 @@
 package cn.rjtech.admin.sysmaterialsprepare;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
@@ -9,21 +14,15 @@ import cn.rjtech.admin.sysmaterialspreparedetail.SysMaterialspreparedetailServic
 import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
-import cn.rjtech.model.momdata.*;
-import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
+import cn.rjtech.model.momdata.*;
 import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 材料备料表
@@ -186,9 +185,9 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void manualDatas() {
-        String cmodocno = get("cmodocno");
+        String billno = get("billno");
         Kv kv = new Kv();
-        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
+        kv.set("billno", billno == null ? "" : billno);
         renderJsonData(service.getManualdatas(getPageNumber(), getPageSize(), kv));
     }
 
@@ -259,9 +258,9 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void getDetail() {
-        String autoid = get("autoid");
+        String billno = get("billno");
         Kv kv = new Kv();
-        kv.set("autoid", autoid == null ? "" : autoid);
+        kv.set("billno", billno == null ? "" : billno);
         renderJsonData(service.getDetail(getPageNumber(), getPageSize(), kv));
     }
 

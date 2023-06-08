@@ -19,7 +19,6 @@ import cn.rjtech.model.momdata.InventorySpotCheckForm;
 import cn.rjtech.model.momdata.InventoryspotcheckformOperation;
 import cn.rjtech.model.momdata.Operation;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;

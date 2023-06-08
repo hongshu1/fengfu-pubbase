@@ -2,9 +2,12 @@ package cn.rjtech.admin.modoc;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
 import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
@@ -23,34 +26,21 @@ import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.entity.vo.instockqcformm.MoDocFormVo;
 import cn.rjtech.model.momdata.*;
-import cn.rjtech.model.momdata.MoMorouting;
-import cn.rjtech.model.momdata.MoMoroutinginvc;
-import cn.rjtech.model.momdata.MoMoroutingconfig;
-import cn.rjtech.model.momdata.MoMoroutingequipment;
-import cn.rjtech.model.momdata.MoMoroutingconfigPerson;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.DateUtils;
-import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.rjtech.wms.utils.StringUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.beust.ah.A;
 import com.jfinal.aop.Inject;
-import com.jfinal.kit.Okv;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.json.JSONArray;
 
 import java.math.BigDecimal;
-import java.util.*;
 import java.util.Calendar;
+import java.util.*;
 
 /**
  * 工单管理 Service
