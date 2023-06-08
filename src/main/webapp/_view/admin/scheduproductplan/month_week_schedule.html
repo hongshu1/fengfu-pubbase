@@ -748,20 +748,40 @@
             let index = parms.cinvCode.findIndex((item)=>item==rowNewValue[0][4]);
             if(index==0){
                 parms.activeSheet.getCell(row+4,col).formula(`=SUM(${colValue[A][0]}+${colData[5][0]}+${colData[6][0]}+${colData[7][0]}-${colNewValue[row]})`);
-                // parms.activeSheet.getCell(row+5,col).formula(`=SUM(${colValue[B][0]}+${colData[5][0]}+${colData[6][0]}+${colData[7][0]}-${colNewValue[row]})`);
+                let plan1 = sheet.getValue(row+4,col);//获取当天的计划在库
+                let plan3 = sheet.getArray(0, 9, sheet.getRowCount(), 1);//获取后台返回的num
+                const plan2=[];//存储后面天数的计划使用
+                // console.log(plan1)
+                console.log(colValue[6*index+A][0])
+                var L=0;
+                for (let i = 1; i <= colValue[6*index+A][0]; i++) {
+                    plan2.push(parseInt(sheet.getValue(row,col+i)));
+                }
+                console.log(plan2)
+                for (const val of plan2) {
+                    L+=val;
+                }
+                // console.log(plan3[row+4][0]);
+                // const plan2=[];
+                // var L=0;
+                // parms.activeSheet.getCell(row+5,col).formula(`=IF(SUM(${plan1/(${L/colValue[6*index+A][0]}))=#DIV/0!,"0",SUM(${plan3[row+4][0]}/(${L/colValue[6*index+A][0]})))`).formatter('#,##0.00');
             }else{
                 parms.activeSheet.getCell(row+4,col).formula(`=SUM(${colValue[6*index+B][0]}+${colData[6*index+Z][0]}+${colData[6*index+G][0]}+${colData[6*index+T][0]}-${colNewValue[row][0]})`);
                 const plan1 = sheet.getValue(row+4,col);//获取前一天的计划在库
-                console.log(plan1)
+                const plan3 = sheet.getArray(0, 10, sheet.getRowCount(), 1);//获取后台返回的num
+                console.log(plan3[row+4][0]);
                 const plan2=[];
+                var L=0;
                 for (let i = 1; i <= colValue[6*index+A][0]; i++) {
-                    console.log(i)
-                    // const afterValue = sheet.getArray(0, col+i, sheet.getRowCount(), 1);//获取前一列的数据
-                    plan2.push(sheet.getValue(row,col+i));
-
+                    plan2.push(parseInt(sheet.getValue(row,col+i)));
                 }
-                parms.activeSheet.getCell(row+5,col).formula(`=SUM(${plan1}/${})`);
-                console.log(plan2)
+                for (const val of plan2) {
+                    L+=val;
+                }
+                console.log(colValue[6*index+A][0]);
+                // parms.activeSheet.getCell(row+5,col).formula(`=IF(=SUM(${plan3[row+4][0]}/(${L/colValue[6*index+A][0]}))=#DIV/0!,0,=SUM(${plan3[row+4][0]}/(${L/colValue[6*index+A][0]})))`).formatter('#,##0.00');
+                // parms.activeSheet.getCell(row+5,col).formula(`=SUM((${L/colValue[6*index+A][0]}))`).formatter('#,##0.00');
+                parms.activeSheet.getCell(row+5,col).formula(`=IF(SUM(${L/colValue[6*index+A][0]})=#DIV/0!,"0",SUM(${plan3[row+4][0]}/(${L/colValue[6*index+A][0]})))`).formatter('#,##0.00');
             }
             parms.tableData.push({
                 plan:"计划在库",//计划
@@ -826,7 +846,7 @@
                 day:colData[2][0],//日
             })
         }
-        console.log(parms.tableData)
+        // console.log(parms.tableData)
     });
     /**
      * 打开弹出层
@@ -894,6 +914,9 @@
                 if(res.msg=="操作成功"){
                     LayerMsgBox.success(res.msg,500);
                     closePopup();//隐藏弹出层
+                    var json = sheet.toJSON();//储存表单数据
+                    sheet.fromJSON(json);//清空表单数据
+                    sheet.reset();//重置表单
                 }
             },error: function(error) {
                 console.log(error);
