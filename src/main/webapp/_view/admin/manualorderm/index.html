@@ -40,18 +40,18 @@
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-	       <a class="jbolt_table_editbtn" href="admin/manualorderm/info/${data.iautoid}"  data-fs="true" data-handler="refreshJBoltTable" data-title="手配订单详情"><i class="fa fa-eye">查看</i></a>
+	       <a class="jbolt_table_editbtn" href="admin/manualorderm/info/${data.iautoid}"  data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="手配订单详情"><i class="fa fa-eye">查看</i></a>
 		{@if data.iorderstatus == 2}
-			<a class="jbolt_table_delbtn" href="admin/manualorderm/audit/${data.iautoid}"  data-confirm="确定审批此选项？"  data-fs="true" data-handler="refreshJBoltTable"  data-title="审批手配订单"><i class="fa fa-remove fa-edit">审批</i></a>
-			<a class="jbolt_table_delbtn" href="admin/manualorderm/reply/${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger">撤回</i></a>
+			<a class="jbolt_table_delbtn" href="admin/manualorderm/audit/${data.iautoid}"  data-confirm="确定审批此选项？"  data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="审批手配订单"><i class="fa fa-remove fa-edit">审批</i></a>
+			<a class="jbolt_table_delbtn" href="admin/manualorderm/reply/${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="审批手配订单" ><i class="fa fa-remove c-danger">撤回</i></a>
 		{@/if}
 		{@if data.iorderstatus == 3}
-		<a class="jbolt_table_delbtn" href="admin/manualorderm/colse/${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">关闭</i></a>
+		<a class="jbolt_table_delbtn" href="admin/manualorderm/colse/${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" tooltip data-title="关闭手配订单"  class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">关闭</i></a>
 
 		{@/if}
 		{@if data.iorderstatus == 1 || data.iorderstatus == 4}
-		<a class="jbolt_table_editbtn" href="admin/manualorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑订单"> <i class="fa fa-remove fa-edit">编辑</i></a>
-		<a class="jbolt_table_delbtn" href="admin/manualorderm/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable"  class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+		<a class="jbolt_table_editbtn" href="admin/manualorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" tooltip  data-title="编辑手配订单"> <i class="fa fa-remove fa-edit">编辑</i></a>
+		<a class="jbolt_table_delbtn" href="admin/manualorderm/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" tooltip data-title="删除手配订单"  class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 		{@/if}
 </td>
 	<td>${data.statename}</td>

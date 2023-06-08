@@ -58,4 +58,5 @@ public class DeptService extends JBoltDeptService{
 		if(dept == null) return null;
 		return dept.getName();
 	}
+
 }

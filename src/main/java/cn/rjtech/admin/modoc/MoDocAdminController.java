@@ -138,7 +138,12 @@ public class MoDocAdminController extends BaseAdminController {
 		}
 		renderJson(service.updateStatus(moDoc));
 	}
+
+	/**
+	 * 齐料检查界面
+	 */
 	public  void  checkmaterialpage(){
+		set("imodocid",getLong("imodocid"));
 		render("checkmaterialpage.html");
 	}
 

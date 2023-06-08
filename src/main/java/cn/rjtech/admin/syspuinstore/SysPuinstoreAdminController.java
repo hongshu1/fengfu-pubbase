@@ -5,9 +5,14 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.rdstyle.RdStyleService;
+import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.RdStyle;
 import cn.rjtech.model.momdata.SysPuinstore;
-import cn.rjtech.model.momdata.SysPuinstoredetail;
+import cn.rjtech.model.momdata.Vendor;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -32,6 +37,12 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 
     @Inject
     private SysPuinstoreService service;
+    @Inject
+    private VendorService       vendorService;
+    @Inject
+    private DepartmentService   departmentService;
+    @Inject
+    private RdStyleService      rdStyleService;
 
     /**
      * 首页
@@ -70,6 +81,19 @@ public class SysPuinstoreAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
+        Vendor vendor = vendorService.findByCode(sysPuinstore.getVenCode());
+        if (vendor != null) {
+            set("cvenname", vendor.getCVenName());
+        }
+        Department department = departmentService.findByCdepcode(getOrgId(), sysPuinstore.getDeptCode());
+        if (department != null){
+            set("cdepname", department.getCDepName());
+        }
+        RdStyle rdStyle = rdStyleService.findBycSTCode(sysPuinstore.getRdCode());
+        if (rdStyle != null){
+            set("crdname", rdStyle.getCRdName());
+        }
+
         set("sysPuinstore", sysPuinstore);
         render("edit.html");
     }
@@ -126,7 +150,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     /*
      * 查看页面的审批
      * */
-    public void onlyseeAutit(){
+    public void onlyseeAutit() {
         Kv kv = getKv();
         Long aLong = getLong(0);
         Long autoid = null;
@@ -146,6 +170,18 @@ public class SysPuinstoreAdminController extends BaseAdminController {
         if (sysPuinstore == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
+        }
+        Vendor vendor = vendorService.findByCode(sysPuinstore.getVenCode());
+        if (vendor != null) {
+            set("cvenname", vendor.getCVenName());
+        }
+        Department department = departmentService.findByCdepcode(getOrgId(), sysPuinstore.getDeptCode());
+        if (department != null){
+            set("cdepname", department.getCDepName());
+        }
+        RdStyle rdStyle = rdStyleService.findBycSTCode(sysPuinstore.getRdCode());
+        if (rdStyle != null){
+            set("crdname", rdStyle.getCRdName());
         }
         set("sysPuinstore", sysPuinstore);
         render("onlysee.html");
