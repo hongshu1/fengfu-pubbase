@@ -65,7 +65,7 @@
 <td>
 	<a class=jbolt_table_editbtn href="admin/monthorderm/edit?iautoid=${data.iautoid}" data-fs="true"  data-handler="refreshJBoltTable" data-title="查看月度计划订单"><i class="fa fa-eye"></i>查看</a>
 	{@if  data.iorderstatus == '1'}
-	<a href="admin/monthorderm/edit/${data.iautoid}" data-area="100%,100%"  tooltip data-title="编辑月度计划订单"  data-handler="refreshJBoltTable" data-dialog-title="编辑月度计划订单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+	<a href="admin/monthorderm/edit?iautoid=${data.iautoid}&edit=true" data-area="100%,100%"  tooltip data-title="编辑月度计划订单"  data-handler="refreshJBoltTable" data-dialog-title="编辑月度计划订单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
     <a href="admin/monthorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除月度计划订单" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 	{@/if}
 	{@if data.iorderstatus == '2'}
