@@ -8,7 +8,10 @@ import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.*;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelMerge;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
@@ -21,7 +24,6 @@ import cn.rjtech.model.momdata.VendorClass;
 import cn.rjtech.model.momdata.base.BaseVendor;
 import cn.rjtech.model.momdata.base.BaseVendorAddr;
 import cn.rjtech.util.ValidationUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -29,7 +31,6 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -482,6 +483,7 @@ public class VendorClassService extends BaseService<VendorClass> {
 
     private List<Record> getSubList(Long pid) {
         Okv para = Okv.by("pid", pid);
+        para.set("iorgid",getOrgId());
         return dbTemplate("vendorclass.getSubList", para).find();
     }
 }

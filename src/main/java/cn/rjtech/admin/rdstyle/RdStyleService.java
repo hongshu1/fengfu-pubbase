@@ -11,7 +11,6 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.DbTemplate;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -334,5 +333,9 @@ public class RdStyleService extends BaseService<RdStyle> {
 		Kv para=Kv.by("ipid",ipid);
 		List<Record> list = dbTemplate("rdstyle.getCvrscodeType", para).find();
 		return list;
+	}
+
+	public List<Record> getoptions(){
+		return dbTemplate("rdstyle.getoptions").find();
 	}
 }

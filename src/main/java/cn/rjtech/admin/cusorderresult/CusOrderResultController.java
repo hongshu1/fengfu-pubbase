@@ -81,13 +81,13 @@ public class CusOrderResultController extends BaseAdminController {
                     }
 
                     String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDateList.get(i)),"E");
-                    if (weekDay.equals("星期一")){weeklist.add("Mon");}
-                    if (weekDay.equals("星期二")){weeklist.add("Tue");}
-                    if (weekDay.equals("星期三")){weeklist.add("Wed");}
-                    if (weekDay.equals("星期四")){weeklist.add("Thu");}
-                    if (weekDay.equals("星期五")){weeklist.add("Fri");}
-                    if (weekDay.equals("星期六")){weeklist.add("Sat");}
-                    if (weekDay.equals("星期日")){weeklist.add("Sun");}
+                    if (weekDay.equals("星期一") || weekDay.equals("Mon")){weeklist.add("Mon");}
+                    if (weekDay.equals("星期二") || weekDay.equals("Tue")){weeklist.add("Tue");}
+                    if (weekDay.equals("星期三") || weekDay.equals("Wed")){weeklist.add("Wed");}
+                    if (weekDay.equals("星期四") || weekDay.equals("Thu")){weeklist.add("Thu");}
+                    if (weekDay.equals("星期五") || weekDay.equals("Fri")){weeklist.add("Fri");}
+                    if (weekDay.equals("星期六") || weekDay.equals("Sat")){weeklist.add("Sat");}
+                    if (weekDay.equals("星期日") || weekDay.equals("Sun")){weeklist.add("Sun");}
                 }
 
                 int monthCount = 1;

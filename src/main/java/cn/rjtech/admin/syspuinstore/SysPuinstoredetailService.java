@@ -167,6 +167,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
             Record detailByParam = sysPuinstoreService.findSysPODetailByParam(detailKv);
             record.set("invcode", detailByParam.get("invcode"));
             record.set("invname", detailByParam.get("invname"));
+            record.set("qty",record.getBigDecimal("qty").stripTrailingZeros().toPlainString());
         }
         return paginate;
     }

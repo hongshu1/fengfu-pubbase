@@ -188,7 +188,8 @@ public class ManualOrderMAdminController extends BaseAdminController {
     }
 
     public void batchDetect() {
-        renderJson(service.batchDetect(getKv()));
+        renderJson(service.deleteByIds(get("ids")));
+       // renderJson(service.batchDetect(getKv()));
     }
 
     /**

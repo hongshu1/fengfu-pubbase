@@ -9,10 +9,10 @@ public enum AuditStateEnum {
     /**
      * 枚举列表
      */
-    NOT_AUDIT("已保存", "1"),
-    AWAIT_AUDIT("待审核", "2"),
-    APPROVED("已审批", "3"),
-    REJECTED("审批不通过", "4");
+    NOT_AUDIT("已保存", "0"),
+    AWAIT_AUDIT("待审核", "1"),
+    APPROVED("已审批", "2"),
+    REJECTED("审批不通过", "3");
 
     private final String text;
     private final String value;
