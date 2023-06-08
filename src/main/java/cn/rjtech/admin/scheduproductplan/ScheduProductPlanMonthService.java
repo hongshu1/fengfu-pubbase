@@ -536,13 +536,31 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         for (int i = 0; i < scheduDateList.size(); i++) {
             String scheduDate = scheduDateList.get(i);
             String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDate),"E");
-            if (weekDay.equals(oneD)){workday[i] = Weekday.mon;continue;}
-            if (weekDay.equals(twoD)){workday[i] = Weekday.tue;continue;}
-            if (weekDay.equals(threeD)){workday[i] = Weekday.wed;continue;}
-            if (weekDay.equals(fourD)){workday[i] = Weekday.thu;continue;}
-            if (weekDay.equals(fiveD)){workday[i] = Weekday.fri;continue;}
-            if (weekDay.equals(sixD)){workday[i] = Weekday.sat;continue;}
-            if (weekDay.equals(sevenD)){workday[i] = Weekday.sun;}
+            switch (weekDay){
+                case oneD:
+                    workday[i] = Weekday.mon;
+                    break;
+                case twoD:
+                    workday[i] = Weekday.tue;
+                    break;
+                case threeD:
+                    workday[i] = Weekday.wed;
+                    break;
+                case fourD:
+                    workday[i] = Weekday.thu;
+                    break;
+                case fiveD:
+                    workday[i] = Weekday.fri;
+                    break;
+                case sixD:
+                    workday[i] = Weekday.sat;
+                    break;
+                case sevenD:
+                    workday[i] = Weekday.sun;
+                    break;
+                default:
+                    return fail("工作日历数据不匹配！");
+            }
         }
 
         final Log LOG = Log.getLog(ScheduProductPlanMonthService.class);

@@ -15,8 +15,6 @@ public enum Weekday {
     sat(4, "sat"),
     sun(5, "sun");
 
-    private static final Log LOG = Log.getLog(Weekday.class);
-
     private final int code;
     private final String name;
 
@@ -36,7 +34,6 @@ public enum Weekday {
     public static int catchName(Weekday wed) {
         int result = -1;
         for (Weekday weekday : values()) {
-            LOG.info("weekday: {}, wed: {}", weekday, wed);
             if (weekday.getName().equals(wed.getName())) {
                 result = weekday.getCode();
                 break;
