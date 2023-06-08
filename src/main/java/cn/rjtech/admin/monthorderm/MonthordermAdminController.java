@@ -123,7 +123,7 @@ public class MonthordermAdminController extends BaseAdminController {
 	 * 审批
 	 */
 	public void approve() {
-		renderJson(service.approve(getLong("id")));
+		renderJson(service.approve(getLong(0)));
 	}
 
     /**
