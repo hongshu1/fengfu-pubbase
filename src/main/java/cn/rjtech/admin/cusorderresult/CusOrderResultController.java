@@ -81,13 +81,13 @@ public class CusOrderResultController extends BaseAdminController {
                     }
 
                     String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDateList.get(i)),"E");
-                    if (weekDay.equals("星期一") || weekDay.equals("mon")){weeklist.add("Mon");}
-                    if (weekDay.equals("星期二") || weekDay.equals("tue")){weeklist.add("Tue");}
-                    if (weekDay.equals("星期三") || weekDay.equals("wed")){weeklist.add("Wed");}
-                    if (weekDay.equals("星期四") || weekDay.equals("thu")){weeklist.add("Thu");}
-                    if (weekDay.equals("星期五") || weekDay.equals("fri")){weeklist.add("Fri");}
-                    if (weekDay.equals("星期六") || weekDay.equals("sat")){weeklist.add("Sat");}
-                    if (weekDay.equals("星期日") || weekDay.equals("sun")){weeklist.add("Sun");}
+                    if (weekDay.equals("星期一") || weekDay.equals("Mon")){weeklist.add("Mon");}
+                    if (weekDay.equals("星期二") || weekDay.equals("Tue")){weeklist.add("Tue");}
+                    if (weekDay.equals("星期三") || weekDay.equals("Wed")){weeklist.add("Wed");}
+                    if (weekDay.equals("星期四") || weekDay.equals("Thu")){weeklist.add("Thu");}
+                    if (weekDay.equals("星期五") || weekDay.equals("Fri")){weeklist.add("Fri");}
+                    if (weekDay.equals("星期六") || weekDay.equals("Sat")){weeklist.add("Sat");}
+                    if (weekDay.equals("星期日") || weekDay.equals("Sun")){weeklist.add("Sun");}
                 }
 
                 int monthCount = 1;

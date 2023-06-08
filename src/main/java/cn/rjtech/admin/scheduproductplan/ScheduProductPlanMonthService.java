@@ -496,13 +496,13 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         for (int i = 0; i < scheduDateList.size(); i++) {
             String scheduDate = scheduDateList.get(i);
             String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDate), "E");
-            if (weekDay.equals("星期一") || weekDay.equals("mon")){workday[i] = Weekday.mon;continue;}
-            if (weekDay.equals("星期二") || weekDay.equals("tue")){workday[i] = Weekday.tue;continue;}
-            if (weekDay.equals("星期三") || weekDay.equals("wed")){workday[i] = Weekday.wed;continue;}
-            if (weekDay.equals("星期四") || weekDay.equals("thu")){workday[i] = Weekday.thu;continue;}
-            if (weekDay.equals("星期五") || weekDay.equals("fri")){workday[i] = Weekday.fri;continue;}
-            if (weekDay.equals("星期六") || weekDay.equals("sat")){workday[i] = Weekday.sat;continue;}
-            if (weekDay.equals("星期日") || weekDay.equals("sun")){workday[i] = Weekday.sun;}
+            if (weekDay.equals("星期一") || weekDay.equals("Mon")){workday[i] = Weekday.mon;continue;}
+            if (weekDay.equals("星期二") || weekDay.equals("Tue")){workday[i] = Weekday.tue;continue;}
+            if (weekDay.equals("星期三") || weekDay.equals("Wed")){workday[i] = Weekday.wed;continue;}
+            if (weekDay.equals("星期四") || weekDay.equals("Thu")){workday[i] = Weekday.thu;continue;}
+            if (weekDay.equals("星期五") || weekDay.equals("Fri")){workday[i] = Weekday.fri;continue;}
+            if (weekDay.equals("星期六") || weekDay.equals("Sat")){workday[i] = Weekday.sat;continue;}
+            if (weekDay.equals("星期日") || weekDay.equals("Sun")){workday[i] = Weekday.sun;}
             /*switch (weekDay) {
                 case "星期一":
                     workday[i] = Weekday.mon;
@@ -1337,7 +1337,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             list.add(date);
             weekDateMap.put(weekNum, list);
             String weekDay = DateUtils.formatDate(DateUtils.parseDate(date), "E");
-            if (weekDay.equals("星期日") || weekDay.equals("sun")) {
+            if (weekDay.equals("星期日") || weekDay.equals("Sun")) {
                 weekNum++;
             }
         }
