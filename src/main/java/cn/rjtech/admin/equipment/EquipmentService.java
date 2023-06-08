@@ -308,6 +308,7 @@ public class EquipmentService extends BaseService<Equipment> {
 	 * 从系统导入字段配置，获得导入的数据
 	 */
 	public Ret importExcelClass(File file) {
+
 		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
 		if (notOk(records)) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
