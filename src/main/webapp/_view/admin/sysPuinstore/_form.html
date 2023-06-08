@@ -204,8 +204,8 @@
       <td title="${data.cinvcode1}">${data.cinvcode1}</td>
       <td title="${data.cinvname1}">${data.cinvname1}</td>
       <td title="${data.cinvstd}">${data.cinvstd}</td>
-      <td title="">品牌</td>
-      <td title="${data.ipurchaseuomid}">${data.ipurchaseuomid}</td>
+      <td title="${data.brandname}">${data.brandname}</td>
+      <td title="${data.puunitname}">${data.puunitname}</td>
       <td title="${data.qty}">${data.qty}</td>
       <td title="${data.memo}">${data.memo}</td>
     </tr>
@@ -257,8 +257,8 @@
             <th data-width="200" data-column="cinvcode1">客户部番</th>
             <th data-width="200" data-column="cinvname1">部品名称</th>
             <th data-width="200" data-column="cinvstd">规格型号</th>
-            <th data-width="150" data-column="pingpai">品牌</th>
-            <th data-width="120" data-column="ipurchaseuomid">采购单位</th>
+            <th data-width="150" data-column="brandname">品牌</th>
+            <th data-width="120" data-column="puunitname">采购单位</th>
             <th data-width="100" data-column="qty">数量</th>
             <th data-width="100" data-column="memo">备注</th>
           </tr>
@@ -320,7 +320,7 @@
           width: 800,
           sync: "",
           valueAttr: "spotticket",
-          columnAttr: "barcode,cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid",
+          columnAttr: "barcode,cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,purchasecuomname",
           header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位',
           changeColumns: [{column: "spotticket", use: "barcode"},
             {column: "invcode", use: "cinvaddcode"},
@@ -328,9 +328,8 @@
             {column: "cinvcode1", use: "cinvcode1"},
             {column: "cinvname1", use: "cinvname1"},
             {column: "cinvstd", use: "cinvstd"},
-            {column: "pingpai", use: "cinvname1"},
-            {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
-
+            {column: "brandname", use: "cinvname1"},
+            {column: "puunitname", use: "purchasecuomname"}]
         },
         invcode: {
           type: "autocomplete",
@@ -341,21 +340,16 @@
           textAttr: "invcode",
           width: 800,
           valueAttr: "invcode",
-          columnAttr: "cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid",
+          columnAttr: "cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,purchasecuomname",
           header: '存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位',
           changeColumns: [{column: "invcode", use: "cinvaddcode"},
             {column: "cinvname", use: "cinvname"},
             {column: "cinvcode1", use: "cinvcode1"},
             {column: "cinvname1", use: "cinvname1"},
             {column: "cinvstd", use: "cinvstd"},
-            {column: "pingpai", use: "cinvname1"},
-            {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
+            {column: "brandname", use: "cinvname1"},
+            {column: "puunitname", use: "purchasecuomname"}]
         },
-        /*        ipurchaseuomid: {
-                  type: "amount",//类型
-                  placeholder: "采购单位",
-                  tooltip: "采购单位",
-                },*/
         qty: {
           type: "amount",//类型
           placeholder: "数量",
@@ -384,10 +378,7 @@
     if (!autoid) {
       LayerMsgBox.alert("请先保存，再提交审批！", 2);
     }
-    var para = {
-      autoid: autoid
-    };
-    Ajax.post('/admin/purchaseReceiptList/autit?autoid=' + autoid, para, function (ret) {
+    Ajax.post('/admin/purchaseReceiptList/editAutit?autoid=' + autoid, function (ret) {
       if (ret.state === 'ok') {
         parent.LayerMsgBox.closeAll();
         parent.refreshPjaxContainer();
@@ -443,16 +434,6 @@
     $("#venname").val(data.venname);
     $("#vencode").val(data.vencode);
     $("#invname").val(data.invname);
-
-    /*<td data-width="160" data-column="billType">采购类型</td>
-    <th data-width="160" data-column="sourcebillno">采购订单号</th>
-    <th data-min-width="160" data-column="sourcebillid">采购id</th>
-    <th data-min-width="160" data-column="billdate">采购日期</th>
-
-    <th data-min-width="160" data-column="deptname">部门名称</th>
-    <th data-min-width="160" data-column="invname">存货名称</th>
-    <td data-min-width="120" data-column="vencode">供应商编码</td>
-    <td data-min-width="120" data-column="venname">供应商名称</td>*/
   }
 
 </script>
