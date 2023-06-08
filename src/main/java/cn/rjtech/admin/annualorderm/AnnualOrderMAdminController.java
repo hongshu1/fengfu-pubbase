@@ -96,6 +96,13 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     }
 
     /**
+     * 批量删除
+     */
+    public void deleteByIds() {
+        renderJson(service.deleteByIds(get("ids")));
+    }
+
+    /**
      * 新增-可编辑表格-批量提交
      */
     public void submitAll() {
