@@ -107,5 +107,5 @@ select * from pl_expense_budget_item ebi where 1=1
 EXEC	[dbo].[P_ExpenseBudgetActualDifference]
 		@iBudgetYear = #(ibudgetyear),
 		@cDepCode = #para(cdepcode),
-		@u8DbName = #(AppConfig.getU8DbName())
+		@u8DbName = #para(u8dbname)
 #end

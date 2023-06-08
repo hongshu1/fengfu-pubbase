@@ -482,6 +482,7 @@ public class VendorClassService extends BaseService<VendorClass> {
 
     private List<Record> getSubList(Long pid) {
         Okv para = Okv.by("pid", pid);
+        para.set("iorgid",getOrgId());
         return dbTemplate("vendorclass.getSubList", para).find();
     }
 }

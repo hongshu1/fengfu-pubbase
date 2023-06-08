@@ -1,6 +1,12 @@
 package cn.rjtech.admin.scheduproductplan;
 
+import com.jfinal.log.Log;
+
 public enum Weekday {
+
+    /**
+     * 枚举列表
+     */
     mon(1, "mon"),
     tue(1, "tue"),
     wed(1, "wed"),
@@ -9,8 +15,10 @@ public enum Weekday {
     sat(4, "sat"),
     sun(5, "sun");
 
-    private int code;
-    private String name;
+    private static final Log LOG = Log.getLog(Weekday.class);
+
+    private final int code;
+    private final String name;
 
     Weekday(int code, String name) {
         this.code = code;
@@ -28,6 +36,7 @@ public enum Weekday {
     public static int catchName(Weekday wed) {
         int result = -1;
         for (Weekday weekday : values()) {
+            LOG.info("weekday: {}, wed: {}", weekday, wed);
             if (weekday.getName().equals(wed.getName())) {
                 result = weekday.getCode();
                 break;

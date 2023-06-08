@@ -197,6 +197,7 @@ public class BomMasterAdminController extends BaseAdminController {
     }
 
     public void bomMasterIndex() {
+        keepPara();
         render("bommaster_index.html");
     }
 
@@ -250,10 +251,12 @@ public class BomMasterAdminController extends BaseAdminController {
         } else if (StrUtil.isNotBlank(blankingItemId)) {
             invId = blankingItemId;
         }
+        
         if (StrUtil.isNotBlank(invId)) {
             Inventory inventory = inventoryService.findById(invId);
             set("cInvCode", inventory.getCInvCode());
         }
+        
         keepPara();
         render("inventory_dialog_index.html");
     }
