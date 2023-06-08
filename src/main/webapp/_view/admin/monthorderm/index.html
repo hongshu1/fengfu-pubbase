@@ -63,10 +63,10 @@
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a href="admin/monthorderm/edit/${data.iautoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑月度计划订单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
-    <a href="admin/monthorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+	<a href="admin/monthorderm/edit/${data.iautoid}" data-area="100%,100%"  tooltip data-title="编辑月度计划订单"  data-handler="refreshJBoltTable"  data-dialog-title="编辑月度计划订单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+    <a href="admin/monthorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除月度计划订单" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 	{@if data.iauditstatus == '1'}
-	<a class="jbolt_table_delbtn" href="admin/monthorderm/approve/${data.iautoid}" data-confirm="确定审批此选项？" data-handler="refreshJBoltTable"><i class="fa fa-remove fa-edit">审批</i></a>
+	<a class="jbolt_table_delbtn" href="admin/monthorderm/approve/${data.iautoid}" data-confirm="确定审批此选项？" tooltip data-title="审批月度计划订单" data-handler="refreshJBoltTable"><i class="fa fa-remove fa-edit">审批</i></a>
 	{@/if}
 </td>
 <td>$${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
@@ -98,7 +98,7 @@
 
 
 
-<table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
+<table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal "
 data-jbolttable
 data-height="fill"
 data-ajax="true"
