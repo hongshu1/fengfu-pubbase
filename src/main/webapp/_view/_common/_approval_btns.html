@@ -3,10 +3,10 @@
 
 <button id="approve" style="display: none" data-ajaxbtn data-url="#(uri)/submit?iautoid=#(iautoid)"
         data-handler="refreshPjaxContainer"
-         class="btn btn-outline-secondary btn-xs" #if(!iautoid??) disabled #end>提交审批</button>
+         class="btn btn-outline-secondary btn-xs" #if(!iautoid?? || edit??) disabled #end>提交审批</button>
 
 <button id="audit" style="display: none" data-ajaxbtn data-url="#(uri)/submit?iautoid=#(iautoid)" data-handler="refreshPjaxContainer"
-         class="btn btn-outline-secondary btn-xs" #if(!iautoid??) disabled #end>提交审核</button>
+         class="btn btn-outline-secondary btn-xs" #if(!iautoid?? || edit??) disabled #end>提交审核</button>
 
 ### 审核中
 #else
