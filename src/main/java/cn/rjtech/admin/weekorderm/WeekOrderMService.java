@@ -25,9 +25,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 客户订单-周间客户订单
@@ -177,7 +175,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         ValidationUtils.notEmpty(orderms, "订单不存在");
 
         for (WeekOrderM weekOrderM : orderms) {
-            ValidationUtils.equals(WeekOrderStatusEnum.SAVED.getValue(), weekOrderM.getIOrderStatus(), "只能对“已保存”状态的记录进行删除");
+            //ValidationUtils.equals(WeekOrderStatusEnum.SAVED.getValue(), weekOrderM.getIOrderStatus(), "只能对“已保存”状态的记录进行删除");
 
             weekOrderM.setIsDeleted(true);
             weekOrderM.update();

@@ -36,6 +36,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
+import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
@@ -434,6 +435,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * @return
      */
     public synchronized Ret scheduPlanMonth(Integer level,String endDateStr) {
+        final Log LOG = Log.getLog(Weekday.class);
         //TODO:获取当前层级上次排产截止日期+1
         ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekschedule",Kv.by("level",level)).findFirst();
         //排产开始年月日
@@ -522,6 +524,13 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         }
         idsJoin = idsJoin + "601)";
 
+        final String oneD = "星期一";
+        final String twoD = "星期二";
+        final String threeD = "星期三";
+        final String fourD = "星期四";
+        final String fiveD = "星期五";
+        final String sixD = "星期六";
+        final String sevenD = "星期日";
         //TODO: 根据日历类型字典查询工作日历集合
         List<String> calendarList = getCalendarDateList(organizeId,calendarType,DateUtils.formatDate(startDate,"yyyy-MM-dd"),endDateStr);
         //初始化工作日历
@@ -529,14 +538,39 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         for (int i = 0; i < scheduDateList.size(); i++) {
             String scheduDate = scheduDateList.get(i);
             String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDate),"E");
-            if (weekDay.equals("星期一")){workday[i] = Weekday.mon;}
-            if (weekDay.equals("星期二")){workday[i] = Weekday.tue;}
-            if (weekDay.equals("星期三")){workday[i] = Weekday.wed;}
-            if (weekDay.equals("星期四")){workday[i] = Weekday.thu;}
-            if (weekDay.equals("星期五")){workday[i] = Weekday.fri;}
-            if (weekDay.equals("星期六")){workday[i] = Weekday.sat;}
-            if (weekDay.equals("星期日")){workday[i] = Weekday.sun;}
+            /*switch (weekDay){
+                case one:
+                    type = 1;
+                    break;
+                case two:
+                    type = 2;
+                    break;
+                case three:
+                    type = 3;
+                    break;
+                case four:
+                    type = 4;
+                    break;
+                case five:
+                    type = 5;
+                    break;
+                case six:
+                    type = 6;
+                    break;
+                default:
+                    return fail("数据不匹配！");
+            }*/
+            if (weekDay.equals(oneD)){workday[i] = Weekday.mon;continue;}
+            if (weekDay.equals(twoD)){workday[i] = Weekday.tue;continue;}
+            if (weekDay.equals(threeD)){workday[i] = Weekday.wed;continue;}
+            if (weekDay.equals(fourD)){workday[i] = Weekday.thu;continue;}
+            if (weekDay.equals(fiveD)){workday[i] = Weekday.fri;continue;}
+            if (weekDay.equals(sixD)){workday[i] = Weekday.sat;continue;}
+            if (weekDay.equals(sevenD)){workday[i] = Weekday.sun;}
         }
+
+        LOG.info("workday.length:======================================================="+workday.length, workday.length);
+
         //TODO:根据物料集查询各班次产能
         List<Record> invCapacityList = dbTemplate("scheduproductplan.getInvCapacityList",Kv.by("ids",idsJoin)).find();
         //key:inv    value:list

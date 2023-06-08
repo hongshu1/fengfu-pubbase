@@ -10,6 +10,7 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formfield.FormFieldService;
+import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.enums.FormFieldEnum;
 import cn.rjtech.model.momdata.Form;
 import cn.rjtech.model.momdata.FormField;
@@ -259,6 +260,7 @@ public class FormService extends BaseService<Form> {
                 case "dcreatetime":
                 case "dupdatetime":
                 case "isdeleted":
+                case "isource":
                     continue;
                 default:
                     break;
@@ -286,6 +288,8 @@ public class FormService extends BaseService<Form> {
                 case "java.lang.string":
                     formField.setCFieldTypeSn(FormFieldEnum.STRING.getValue());
                     break;
+                case "java.lang.byte":
+                case "java.lang.short":
                 case "java.lang.integer":
                 case "java.lang.float":
                 case "java.lang.double":
@@ -296,7 +300,7 @@ public class FormService extends BaseService<Form> {
                     formField.setCFieldTypeSn(FormFieldEnum.DATE.getValue());
                     break;
                 default:
-                    break;
+                    throw new ParameterException("未知数据类型：" + javaType);
             }
 
             formFields.add(formField);
