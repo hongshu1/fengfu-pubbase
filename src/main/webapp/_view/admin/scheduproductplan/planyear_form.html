@@ -6,14 +6,15 @@
             <div class="card-body">
                 <div class="col">
                     <form class="form-inline" id="apsAnnualplanmFormadd_#(pageId)"   onsubmit="return false;" method="post">
-                        <input type="text" hidden class="form-control" placeholder="计划单号" name="cplanorderno" value="#(cplanorderno)" />
+                        <input type="text" hidden class="form-control" placeholder="计划单号" name="cplanorderno" value="#(cplanorderno)" id="cplanorderno"/>
                         <input type="text" hidden class="form-control" placeholder="客户id" name="icustomerid" value="#(icustomerid)" id="icustomerid"/>
                         <input type="text" hidden class="form-control" placeholder="年份" name="startyear" value="#(startyear)" id="startyear"/>
 
-                        <input type="text" class="form-control" placeholder="存货编码" name="cinvcode" value="" />
-                        <input type="text" class="form-control" placeholder="客户部番" name="cinvcode1" value="" />
-                        <input type="text" class="form-control" placeholder="部品名称" name="cinvname1" value="" />
-                        <select class="form-control"
+                        <input type="text" class="form-control" placeholder="存货编码" name="cinvcode" value="" id="cinvcode"/>
+                        <input type="text" class="form-control" placeholder="客户部番" name="cinvcode1" value="" id="cinvcode1"/>
+                        <input type="text" class="form-control" placeholder="部品名称" name="cinvname1" value="" id="cinvname1"/>
+                       <!-- <select class="form-control"
+                                id=""
                                 name="iplanorderstatus"
                                 data-autoload
                                 data-url="admin/dictionary/options?key=annual_order_auditstatus"
@@ -22,9 +23,9 @@
                                 data-value=""
                                 data-with-clearbtn="true"
                                 data-value-attr="sn"
-                        ></select>
+                        ></select>-->
 
-                        <button  type="submit" id="submitBtn" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                        <button  type="submit" id="submitBtn" onclick="submitBtnSelect(this)" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
                         <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
                     </form>
                 </div>
@@ -35,7 +36,12 @@
         <script type="text/template" id="jboltTable_demotpladd_#(pageId)">
             {@each datas as data,index}
             <tr data-id="${data.iautoid}">
-                <td>${pageNumber,pageSize,index | rownum}</td>
+                {@if index == 0 }
+                <td> </td>
+                {@else}
+                <td>${pageNumber,pageSize,index -1 | rownum}</td>
+                {@/if}
+
                 <td title="${data.cCusName}">${data.cCusName}</td>
                 <td title="${data.cEquipmentModelName}">${data.cEquipmentModelName}</td>
                 <td title="${data.cInvCode}">${data.cInvCode}</td>
@@ -144,7 +150,7 @@
                data-column-prepend="1:checkbox"
                data-rowtpl="jboltTable_demotpladd_#(pageId)"
                data-toolbar="AnnualOrderM_toolbaradd_#(pageId)"
-               data-editable="true"
+               data-editable="#(isedit)"
                data-editable-option="getEditableTableOptions_year"
         >
             <thead>
@@ -438,6 +444,26 @@ function getEditableTableOptions_year() {
 function closeHandler(){
     parent.layer.close(parent.layer.getFrameIndex(window.name));
     window.parent.refreshJBoltTable();
+}
+
+
+function submitBtnSelect(ele){
+/*    let cplanorderno = $("#cplanorderno").val();
+    let icustomerid = $("#icustomerid").val();
+    let startyear = $("#startyear").val();
+    let cinvcode = $("#cinvcode").val();
+    let cinvcode1 = $("#cinvcode1").val();
+    let cinvname1 = $("#cinvname1").val();
+    JBoltTabUtil.currentTabGo(`admin/scheduproductplanyear/addview`,
+        {"cplanorderno":cplanorderno,"icustomerid":icustomerid,"startyear":startyear,"cinvcode":cinvcode,"cinvcode1":cinvcode1,"cinvname1":cinvname1});
+    parent.refreshPjaxContainer();*/
+}
+function clearYearFormBtn(ele){
+    $("#startyear").val('');
+    $("#cworkname").val('');
+    $("#cinvcode").val('');
+    $("#cinvcode1").val('');
+    $("#cinvname1").val('');
 }
 
 
