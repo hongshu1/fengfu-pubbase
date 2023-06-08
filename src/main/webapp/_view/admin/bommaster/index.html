@@ -1,4 +1,17 @@
 #@jboltLayout()
+
+#define css()
+<style>
+	.card-body overflow-auto{
+		max-width: 40%;
+		border: 1px solid #ff0000;
+		white-space: nowrap;
+		text-overflow:ellipsis;
+		overflow: hidden;
+	}
+</style>
+#end
+
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_content">
@@ -10,15 +23,15 @@
 		</div>
 	</nav>
 	<div class="tab-content" style="padding: 0px 1rem">
-			<!--1 物料清单 -->
-			<div class="tab-pane fade show active" id="tab-one_1" role="tabpanel" aria-labelledby="nav-base-tab_one_1">
-				#render("bommaster_index.html")
-			</div>
-			<!--2 版本记录 -->
-			<div class="tab-pane fade" id="tab-two_1" role="tabpanel" aria-labelledby="nav-base-tab_two_1">
-				#ajaxPortal("/admin/bommaster/versionIndex","bommaster_jstree_#(pageId)",true)
-			</div>
+		<!--1 物料清单 -->
+		<div class="tab-pane fade show active" id="tab-one_1" role="tabpanel" aria-labelledby="nav-base-tab_one_1">
+			#render("bommaster_index.html")
 		</div>
+		<!--2 版本记录 -->
+		<div class="tab-pane fade" id="tab-two_1" role="tabpanel" aria-labelledby="nav-base-tab_two_1">
+			#ajaxPortal("/admin/bommaster/versionIndex","bommaster_jstree",true)
+		</div>
+	</div>
 </div>
 #end
 
@@ -28,9 +41,9 @@
 	initTreehandler('');
 
 	function bommaster_jstree(tree, data){
-		$("#bomCompare_pid").val(data.id);
-		$("#bomCompare_submit").click();
+		AjaxPortalUtil.go("bomcompareAjaxPortal1", "/admin/bomcompare/index?invId="+data.id);
 	}
+
 	function initTreehandler(item) {
 		var treeHtmlStr ="<div " +
 				"					data-jstree" +
@@ -41,7 +54,6 @@
 				"                     data-change-handler='bommaster_jstree'" +
 				"                     data-conditions-form='bomMaster_1_'" +
 				"                     data-read-url='admin/bommaster/getDatas?item='+item>";
-
 		$("#bommasterBackCategoryTree").html(treeHtmlStr);
 		JSTreeUtil.init($("#bommasterBackCategoryTree"));
 	}
@@ -50,5 +62,6 @@
 		var item = $("#searchBackGoodsTypeInput_2").val()
 		initTreehandler(item);
 	}
+
 </script>
 #end

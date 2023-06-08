@@ -272,4 +272,9 @@ public class BomMasterAdminController extends BaseAdminController {
     public void downloadTpl() throws Exception {
         renderJxls("bomMasterImportTpl.xlsx", getKv(), "物料清单_导入模板_" + DateUtil.today() + ".xlsx");
     }
+    
+    public void manualForm(){
+        keepPara();
+        render("manual_form.html");
+    }
 }

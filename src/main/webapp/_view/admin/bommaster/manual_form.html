@@ -1,0 +1,71 @@
+#@jboltLayout()
+#set(pageId=RandomUtil.random(6))
+#define main()
+<div class="jbolt_page">
+
+    <div class="jbolt_page_title">
+        <form onsubmit="return false;" id="Copy_Form" action="/admin/bommaster/saveCopy" method="post">
+            <input name="iautoid" hidden value="#(oldId)">
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">母件存货编码：</label>
+                <div class="col-form-label">
+                    <input type="text" name="iInventoryId" value="#(bomMaster.iinventoryid??)" hidden data-sync-attr="itemid" id="iBeforeInveId"  data-notnull="true" data-tips="请输入转换前存货ID" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" />
+                    <div class="input-group">
+                        <input type="text"
+                               data-autocomplete
+                               data-rule="required"
+                               data-tips="请选择存货编码"
+                               autocomplete="off"
+                               class="form-control"
+                               placeholder="请选择存货编码"
+                               value="#(inventory.cinvcode??)"
+                               id="inventoryName"
+                               data-url="admin/bommaster/inventoryAutocomplete"
+                               data-sync-ele="#beforeInvCode,#Weight,#iBeforeInveId,#iEquipmentModelId,#iEquipmentModelName"
+                               data-text-attr="cinvcode"
+                               data-column-attr="cinvcode"
+                        />
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#iBeforeInveId" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/bommaster/inventoryDialogIndex?index=${data.index}&type=4"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="col-sm-2 col-form-label">母件存货名称：</label>
+                <div class="col-form-label">
+                    <span data-sync-attr="cinvcode1"></span>
+                </div>
+
+                <label class="col-sm-2 col-form-label">版本号：</label>
+                <div class="col-form-label">
+                    <input id="cBomVersion" type="text" autocomplete="off"  class="form-control" data-rule="required"  placeholder="输入版本/版次" name="cBomVersion" value="#(bomMaster.cbomversion??)" />
+                </div>
+            </div>
+
+            <div class="form-group row ">
+                <label class="col-sm-2 col-form-label">启用日期：</label>
+                <div class="col-form-label">
+                    <input id="dEnableDate" type="text" class="form-control" data-rule="required"  data-date name="dEnableDate" value="#date(DateUtil.toDate(bomMaster.denabledate??),'yyyy-MM-dd')">
+                </div>
+
+                <label class="col-sm-2 col-form-label">停用日期：</label>
+                <div class="col-form-label">
+                    <input id="dDisableDate" type="text" class="form-control"  data-rule="required;>=#dEnableDate" data-done-handler="checkme" data-date name="dDisableDate" value="#date(DateUtil.toDate(bomMaster.ddisabledate??),'yyyy-MM-dd')">
+                </div>
+
+                <label class="col-sm-2 col-form-label">状态：</label>
+                <div class="col-form-label">
+                    <span></span>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="jbolt_page_content">
+
+    </div>
+</div>
+#include("/_view/_admin/common/_formjs.html",formId="Copy_Form")
+#end
