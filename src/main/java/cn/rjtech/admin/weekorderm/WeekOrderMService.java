@@ -213,7 +213,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
             
             // 更新订单的状态
-            ValidationUtils.isTrue(updateIorderStatus(iautoid, WeekOrderStatusEnum.AWAIT_AUDITED.getValue(), WeekOrderStatusEnum.SAVED.getValue()), ErrorMsg.UPDATE_FAILED);
+            ValidationUtils.isTrue(updateIorderStatus(iautoid, WeekOrderStatusEnum.AWAIT_AUDITED.getValue(), WeekOrderStatusEnum.AWAIT_AUDITED.getValue()), ErrorMsg.UPDATE_FAILED);
 
             return true;
         });

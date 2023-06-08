@@ -143,7 +143,7 @@
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.cinvcode}</td>
+<td>${data.invcode}</td>
 <td>${data.cinvcode1}</td>
 <td>${data.cinvname1}</td>
 <td>${data.cinvstd}</td>
@@ -162,12 +162,11 @@
        data-width="fill"
        data-height="65%"
        data-ajax="true"
-       data-url="admin/sysMaterialsprepare/manualDatas?cmodocno=#(cmodocno??)"
+       data-url="admin/sysMaterialsprepare/manualDatas?billno=#(sysMaterialsprepare.BillNo??)"
        data-rowtpl="SysMaterialsprepare_tpl_#(pageId)"
        data-copy-to-excel="false"
        data-page="SysMaterialsprepare_page"
        data-column-resize="true"
-       data-column-prepend="1:checkbox:true"
        data-toolbar="SysMaterialsprepare_toolbar_#(pageId)"
 >
   <thead class="fw-normal">
