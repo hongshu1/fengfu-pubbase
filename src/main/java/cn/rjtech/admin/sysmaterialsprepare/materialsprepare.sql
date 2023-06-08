@@ -82,7 +82,6 @@ FROM T_Sys_MaterialsPrepareDetail mpd
          LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1 = uom.iAutoId
 WHERE 1 = 1
   AND mp.BillNo = '#(billno)'
-  AND mpd.InvCode is not null
     #end
 
 
