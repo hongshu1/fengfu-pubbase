@@ -113,6 +113,7 @@
   function getCheckedStrip(val){
     var value = $(val).parent().parent().find("td");
     parent.$("#billno").val(value.eq(3).text());
+    window.parent.refreshJBoltTable();
     parent.layer.close(parent.layer.getFrameIndex(window.name));
   }
 </script>

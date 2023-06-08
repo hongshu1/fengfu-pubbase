@@ -490,19 +490,20 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         idsJoin.append("601)");
 
         // TODO: 根据日历类型字典查询工作日历集合
-        // List<String> calendarList = getCalendarDateList(organizeId,calendarType,DateUtils.formatDate(startDate,"yyyy-MM-dd"),endDateStr)
-
+        List<String> calendarList = getCalendarDateList(getOrgId(),calendarType,DateUtils.formatDate(startDate,"yyyy-MM-dd"),endDateStr);
         // 初始化工作日历
         Weekday[] workday = new Weekday[scheduDayNum];
-
         for (int i = 0; i < scheduDateList.size(); i++) {
             String scheduDate = scheduDateList.get(i);
-            LOG.info("scheduDate: {}", scheduDate);
-            
             String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDate), "E");
-            LOG.info("weekDay: {}", weekDay);
-            
-            switch (weekDay) {
+            if (weekDay.equals("星期一") || weekDay.equals("Mon")){workday[i] = Weekday.mon;continue;}
+            if (weekDay.equals("星期二") || weekDay.equals("Tue")){workday[i] = Weekday.tue;continue;}
+            if (weekDay.equals("星期三") || weekDay.equals("Wed")){workday[i] = Weekday.wed;continue;}
+            if (weekDay.equals("星期四") || weekDay.equals("Thu")){workday[i] = Weekday.thu;continue;}
+            if (weekDay.equals("星期五") || weekDay.equals("Fri")){workday[i] = Weekday.fri;continue;}
+            if (weekDay.equals("星期六") || weekDay.equals("Sat")){workday[i] = Weekday.sat;continue;}
+            if (weekDay.equals("星期日") || weekDay.equals("Sun")){workday[i] = Weekday.sun;}
+            /*switch (weekDay) {
                 case "星期一":
                     workday[i] = Weekday.mon;
                     break;
@@ -526,13 +527,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     break;
                 default:
                     return fail("工作日历数据不匹配！");
-            }
+            }*/
         }
-
-        LOG.info("workday.length:=======================================================" + workday.length, workday.length);
-
-        LOG.info("workday:=======================================================" + Arrays.toString(workday), Arrays.toString(workday));
-
 
         //TODO:根据物料集查询各班次产能
         List<Record> invCapacityList = dbTemplate("scheduproductplan.getInvCapacityList", Kv.by("ids", idsJoin.toString())).find();
@@ -1341,7 +1337,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             list.add(date);
             weekDateMap.put(weekNum, list);
             String weekDay = DateUtils.formatDate(DateUtils.parseDate(date), "E");
-            if (weekDay.equals("星期日")) {
+            if (weekDay.equals("星期日") || weekDay.equals("Sun")) {
                 weekNum++;
             }
         }

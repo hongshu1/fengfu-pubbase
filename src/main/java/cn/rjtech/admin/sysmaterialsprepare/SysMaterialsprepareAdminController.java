@@ -185,9 +185,9 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void manualDatas() {
-        String cmodocno = get("cmodocno");
+        String billno = get("billno");
         Kv kv = new Kv();
-        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
+        kv.set("billno", billno == null ? "" : billno);
         renderJsonData(service.getManualdatas(getPageNumber(), getPageSize(), kv));
     }
 
@@ -258,9 +258,9 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void getDetail() {
-        String autoid = get("autoid");
+        String billno = get("billno");
         Kv kv = new Kv();
-        kv.set("autoid", autoid == null ? "" : autoid);
+        kv.set("billno", billno == null ? "" : billno);
         renderJsonData(service.getDetail(getPageNumber(), getPageSize(), kv));
     }
 

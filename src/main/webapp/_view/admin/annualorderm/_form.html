@@ -7,13 +7,9 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
-                        #if(annualOrderM.iAutoId??)
-                        <button onclick="submitApproveYear()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
-                        #else
-                        <button onclick="submitApproveYear()" disabled class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
-                        #end
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" #if(!(!annualOrderM.iAutoId?? || annualOrderM.iOrderStatus??1 == 1)) disabled #end><i class="fa fa-refresh"></i> 保存</button>
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/annualorderm", iautoid=annualOrderM.iautoid??, edit=edit??)
+                        <button onclick="closeHandler()" class="btn btn-danger btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                     </div>
                 </div>
             </div>
@@ -89,6 +85,11 @@
         </div>
     </div>
 </div>
+
+### 新增之后，并且为审核流
+#if(annualOrderM.iautoid?? && annualOrderM.iOrderStatus == 2)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=annualOrderM.iAutoId, formSn="Co_AnnualOrderM", btnNeed=1, pId=pageId)
+#end
 
 <div class="jbolt_page_content">
     
@@ -403,8 +404,8 @@
                 url: "/admin/annualorderm/submitAll",
                 success: function (res) {
                     LayerMsgBox.success("提交成功", 600, function () {
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
+                        window.parent.refreshJBoltTable();
+                        // parent.refreshPjaxContainer();
                     });
                 }
             },
