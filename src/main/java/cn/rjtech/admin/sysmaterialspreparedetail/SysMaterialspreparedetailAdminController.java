@@ -1,6 +1,18 @@
 package cn.rjtech.admin.sysmaterialspreparedetail;
 
+import cn.rjtech.admin.syspureceive.SysPureceiveService;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import com.jfinal.core.Path;
+import com.jfinal.aop.Before;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -24,6 +36,9 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 
 	@Inject
 	private SysMaterialspreparedetailService service;
+
+	@Inject
+	private SysPureceiveService syspureceiveservice;
    /**
 	* 首页
 	*/
@@ -106,6 +121,13 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 	}
 
 	public void getBarcode() {
-		renderJsonData(service.getBarcode(getPageNumber(), getPageSize(), getKv()));
+		String invcode = get("invcode");
+		Kv kv = new Kv();
+		kv.set("invcode", invcode == null ? "" : invcode);
+		renderJsonData(service.getBarcode(getPageNumber(), getPageSize(), kv));
+	}
+	public void barcode(String barcode) {
+		ValidationUtils.notBlank(barcode, "请扫码");
+		renderJsonData(syspureceiveservice.barcode(Kv.by("barcode", barcode)));
 	}
 }
