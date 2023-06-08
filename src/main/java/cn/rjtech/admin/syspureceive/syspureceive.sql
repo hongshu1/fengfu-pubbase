@@ -1,14 +1,14 @@
 #sql("recpor")
 select so.AutoID, CASE so.iAuditStatus
-        WHEN 1 THEN
+        WHEN 0 THEN
         '已保存'
-				WHEN 2 THEN
+				WHEN 1 THEN
         '待审批'
-				WHEN 3 THEN
+				WHEN 2 THEN
         '已审批'
-				WHEN 4 THEN
+				WHEN 3 THEN
         '审批不通过'
-        END AS statename,so.iAuditStatus as state,so.BillNo as billno,so.CreateDate as createdate,so.iAuditStatus,
+        END AS statename,so.iAuditStatus as state,so.BillNo as billno, CONVERT(VARCHAR(10), so.CreateDate, 120) as createdate,so.iAuditStatus,
         so.VenCode as vencode
 		,p.name,s.name as sname,v.cVenName as venname,so.Type as type,so.SourceBillNo
 FROM T_Sys_PUReceive so
@@ -39,7 +39,7 @@ SELECT  a.*,
     b.cInvCode ,
     b.cInvCode1,
     b.cInvName1,
-    aa.dPlanDate as plandate,
+    CONVERT(VARCHAR(10), aa.dPlanDate, 120) as plandate,
     aa.iQty as qtys,
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
@@ -271,6 +271,20 @@ where 1=1
    	#if(barcode)
 		and a.cBarcode = #para(barcode)
 	#end
+#end
+
+
+#sql("inventoryMfgInfo")
+select top 1 o.*
+from Bd_InventoryMfgInfo o
+LEFT JOIN Bd_Inventory y on y.iAutoId = o.iInventoryId
+where 1=1
+   	#if(cinvcode)
+		and y.cInvCode = #para(cinvcode)
+	#end
+
+order by o.iAutoId DESC
+
 #end
 
 
