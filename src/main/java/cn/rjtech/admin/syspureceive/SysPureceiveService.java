@@ -779,6 +779,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
      */
     public Ret approve(String ids) {
         tx(() -> {
+            this.check(ids);
             String[] split = ids.split(",");
             Date now = new Date();
             User user = JBoltUserKit.getUser();
@@ -812,6 +813,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                         sysPuinstoredetail.setCreatePerson(user.getUsername());
                         sysPuinstoredetail.setCreateDate(now);
                         sysPuinstoredetail.setSpotTicket(f.getBarcode());
+                        sysPuinstoredetail.setPuUnitCode(barcode.getStr("puunitcode"));
+                        sysPuinstoredetail.setPuUnitName(barcode.getStr("puunitname"));
                         sysPuinstoredetail.setIsDeleted(false);
                         syspuinstoredetailservice.save(sysPuinstoredetail);
                     }
@@ -826,6 +829,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
     public Ret reject(String ids) {
         tx(() -> {
+            this.check(ids);
             String[] split = ids.split(",");
             for (String s : split) {
                 SysPureceive byId = findById(s);
@@ -870,6 +874,15 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         }
         if(records.getStr("isiqc1").equals("0"))return false;
         return true;
+    }
+
+    public void check(String ids){
+        List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + ids + ")");
+        for (SysPureceive s :sysPureceives){
+            if(!"0".equals(String.valueOf(s.getIAuditStatus()))){
+                ValidationUtils.isTrue( false,"收料编号：" + s.getBillNo() + "单据状态已审核，不可再审！");
+            }
+        }
     }
 }
 
