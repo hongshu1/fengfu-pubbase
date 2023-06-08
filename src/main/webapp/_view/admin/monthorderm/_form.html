@@ -127,7 +127,7 @@
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+                <a class="btn" onclick="jboltTableRemoveRow(this)"><i class="fa fa-remove c-danger"></i></a>
             </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>

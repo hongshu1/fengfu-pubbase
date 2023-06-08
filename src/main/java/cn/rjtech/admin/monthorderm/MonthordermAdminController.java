@@ -97,6 +97,8 @@ public class MonthordermAdminController extends BaseAdminController {
 	* 删除
 	*/
 	public void delete() {
+//		MonthOrderM monthOrderM = service.findById(getLong(0));
+//		ValidationUtils.equals(monthOrderM.getIOrderStatus(), AuditStatusEnum.APPROVED.getValue(), "已审批订单不允许删除");
 		renderJson(service.delete(getLong(0)));
 	}
 

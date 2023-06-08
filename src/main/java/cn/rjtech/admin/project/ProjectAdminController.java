@@ -1,8 +1,5 @@
 package cn.rjtech.admin.project;
 
-import com.jfinal.aop.Inject;
-import com.jfinal.core.Path;
-
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltUserCache;
@@ -12,6 +9,8 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Project;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 
 /**
  * 项目档案 Controller

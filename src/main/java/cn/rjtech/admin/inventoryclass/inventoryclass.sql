@@ -128,7 +128,15 @@ WHERE 1=1 AND i.isenabled = '1'
 #sql("getSubList")
 SELECT *
 FROM bd_InventoryClass
-WHERE ipid = #para(pid)
+WHERE 1=1
+#if(iorgid)
+	and iorgid = #para(iorgid)
+#end
+#if(pid > 0)
+	and ipid = #para(pid)
+#else
+	and (ipid is null or ipid = 0)
+#end
 ORDER BY
     cInvCCode
 #end

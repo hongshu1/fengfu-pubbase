@@ -12,7 +12,6 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MrpDemandcomputem;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
-import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Record;

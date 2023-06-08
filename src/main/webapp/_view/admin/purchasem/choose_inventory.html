@@ -10,7 +10,7 @@
             <div class="col">
                 <form class="form-inline" onsubmit="return false;" id="chooseInventoryForm_#(pageId)"
                       action="admin/purchasem/getInventoryAutocomplete" data-pjaxsubmit method="get">
-                    <input type="hidden" name="cinvccode"/>
+                    <input type="hidden" name="iinventoryclassid"/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="=存货名称/编码/规格=" name="q" value=""/>
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
                 </form>
@@ -98,13 +98,13 @@
      */
     function changeDept_#(pageId)(tree, treeNode)
     {
-        chooseInventoryForm_#(pageId).find("[name='cinvccode']").val(treeNode.id);
+        chooseInventoryForm_#(pageId).find("[name='iinventoryclassid']").val(treeNode.id);
         jboltTablePageToFirst(invTree_#(pageId));
     }
 
     function refreshDeptJsTree_#(pageId)()
     {
-        var deptId = chooseInventoryForm_#(pageId).find("input[name='cinvccode']").val();
+        var deptId = chooseInventoryForm_#(pageId).find("input[name='iinventoryclassid']").val();
         JSTreeUtil.refresh(invTree_#(pageId), deptId ? deptId : 0);
     }
 

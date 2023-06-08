@@ -57,8 +57,8 @@ WHERE 1 = 1
     OR  cInvName like CONCAT ('%', #para(q), '%')
     OR  cInvStd like CONCAT ('%', #para(q), '%'))
 #end
-#if(cinvccode)
- AND cInvCCode LIKE CONCAT (#para(cinvccode), '%')
+#if(iinventoryclassid)
+	AND iInventoryClassId = #para(iinventoryclassid)
 #end
 ORDER BY inv.cinvcode ASC
 #end

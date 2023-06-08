@@ -4,11 +4,7 @@ import cn.jbolt.core.common.enums.DataSourceEnum;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.permission.UnCheck;
-import cn.rjtech.enums.AndOrEnum;
-import cn.rjtech.enums.BarCodeEnum;
-import cn.rjtech.enums.BoolCharEnum;
-import cn.rjtech.enums.ItemEnum;
-import cn.rjtech.enums.ThirdpartySystemEnum;
+import cn.rjtech.enums.*;
 import com.jfinal.core.Path;
 
 /**

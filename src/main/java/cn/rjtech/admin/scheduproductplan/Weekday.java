@@ -1,6 +1,12 @@
 package cn.rjtech.admin.scheduproductplan;
 
+import com.jfinal.log.Log;
+
 public enum Weekday {
+
+    /**
+     * 枚举列表
+     */
     mon(1, "mon"),
     tue(1, "tue"),
     wed(1, "wed"),
@@ -9,8 +15,8 @@ public enum Weekday {
     sat(4, "sat"),
     sun(5, "sun");
 
-    private int code;
-    private String name;
+    private final int code;
+    private final String name;
 
     Weekday(int code, String name) {
         this.code = code;
