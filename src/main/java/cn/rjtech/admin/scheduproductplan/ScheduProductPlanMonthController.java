@@ -171,7 +171,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
             calendar.add(Calendar.DATE,i);//日期+1
 
             String weekDay = DateUtils.formatDate(calendar.getTime(),"E");
-            if (weekDay.equals("星期日")){
+            if (weekDay.equals("星期日") || weekDay.equals("sun")){
                 String lockDate = DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd");
                 Map<String,Object> map = new HashMap<>();
                 map.put("lockDate",lockDate);
@@ -205,7 +205,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
             calendar.add(Calendar.DATE,-i);//日期-1
 
             String weekDay = DateUtils.formatDate(calendar.getTime(),"E");
-            if (weekDay.equals("星期日")){
+            if (weekDay.equals("星期日") || weekDay.equals("sun")){
                 String lockDate = DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd");
                 Map<String,Object> map = new HashMap<>();
                 map.put("unLockDate",lockDate);
@@ -296,13 +296,13 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
 
             String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDateList.get(i)),"E");
             String weekType = "";
-            if (weekDay.equals("星期一")){weekType = "Mon";}
-            if (weekDay.equals("星期二")){weekType = "Tue";}
-            if (weekDay.equals("星期三")){weekType = "Wed";}
-            if (weekDay.equals("星期四")){weekType = "Thu";}
-            if (weekDay.equals("星期五")){weekType = "Fri";}
-            if (weekDay.equals("星期六")){weekType = "Sat";}
-            if (weekDay.equals("星期日")){weekType = "Sun";}
+            if (weekDay.equals("星期一") || weekDay.equals("mon")){weekType = "Mon";}
+            if (weekDay.equals("星期二") || weekDay.equals("tue")){weekType = "Tue";}
+            if (weekDay.equals("星期三") || weekDay.equals("wed")){weekType = "Wed";}
+            if (weekDay.equals("星期四") || weekDay.equals("thu")){weekType = "Thu";}
+            if (weekDay.equals("星期五") || weekDay.equals("fri")){weekType = "Fri";}
+            if (weekDay.equals("星期六") || weekDay.equals("sat")){weekType = "Sat";}
+            if (weekDay.equals("星期日") || weekDay.equals("sun")){weekType = "Sun";}
 
             int day = Integer.parseInt(scheduDateList.get(i).substring(8));
 
@@ -381,13 +381,13 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
 
             String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDateList.get(i)),"E");
             String weekType = "";
-            if (weekDay.equals("星期一")){weekType = "Mon";}
-            if (weekDay.equals("星期二")){weekType = "Tue";}
-            if (weekDay.equals("星期三")){weekType = "Wed";}
-            if (weekDay.equals("星期四")){weekType = "Thu";}
-            if (weekDay.equals("星期五")){weekType = "Fri";}
-            if (weekDay.equals("星期六")){weekType = "Sat";}
-            if (weekDay.equals("星期日")){weekType = "Sun";}
+            if (weekDay.equals("星期一") || weekDay.equals("mon")){weekType = "Mon";}
+            if (weekDay.equals("星期二") || weekDay.equals("tue")){weekType = "Tue";}
+            if (weekDay.equals("星期三") || weekDay.equals("wed")){weekType = "Wed";}
+            if (weekDay.equals("星期四") || weekDay.equals("thu")){weekType = "Thu";}
+            if (weekDay.equals("星期五") || weekDay.equals("fri")){weekType = "Fri";}
+            if (weekDay.equals("星期六") || weekDay.equals("sat")){weekType = "Sat";}
+            if (weekDay.equals("星期日") || weekDay.equals("sun")){weekType = "Sun";}
 
             int seq = i + 1;
             int day = Integer.parseInt(scheduDateList.get(i).substring(8));
@@ -570,13 +570,13 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
 
             String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDateList.get(i)),"E");
             String weekType = "";
-            if (weekDay.equals("星期一")){weekType = "Mon";}
-            if (weekDay.equals("星期二")){weekType = "Tue";}
-            if (weekDay.equals("星期三")){weekType = "Wed";}
-            if (weekDay.equals("星期四")){weekType = "Thu";}
-            if (weekDay.equals("星期五")){weekType = "Fri";}
-            if (weekDay.equals("星期六")){weekType = "Sat";}
-            if (weekDay.equals("星期日")){weekType = "Sun";}
+            if (weekDay.equals("星期一") || weekDay.equals("mon")){weekType = "Mon";}
+            if (weekDay.equals("星期二") || weekDay.equals("tue")){weekType = "Tue";}
+            if (weekDay.equals("星期三") || weekDay.equals("wed")){weekType = "Wed";}
+            if (weekDay.equals("星期四") || weekDay.equals("thu")){weekType = "Thu";}
+            if (weekDay.equals("星期五") || weekDay.equals("fri")){weekType = "Fri";}
+            if (weekDay.equals("星期六") || weekDay.equals("sat")){weekType = "Sat";}
+            if (weekDay.equals("星期日") || weekDay.equals("sun")){weekType = "Sun";}
 
             int seq = i + 1;
             int day = Integer.parseInt(scheduDateList.get(i).substring(8));
