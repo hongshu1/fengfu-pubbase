@@ -1,7 +1,5 @@
 package cn.rjtech.admin.scheduproductplan;
 
-import com.jfinal.log.Log;
-
 public enum Weekday {
 
     /**
