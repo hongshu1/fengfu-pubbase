@@ -100,20 +100,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="btn-group dropdown">
-                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
-                            id="exportMenuBadnessButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        数据导出
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="exportMenuBadnessButton">
-                        <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
-                                data-url="admin/basis/dataExportxxx"><i class="fa fa-download"></i> 导出选中
-                        </button>
-                        <button class="btn dropdown-item" data-downloadbtn data-url="admin/basis/dataExportxxx"
-                                data-form="basisForm_#(pageId)"><i class="fa fa-download"></i> 全部导出
-                        </button>
-                    </div>
-                </div>
                 <button onclick="submitThisFormPlan()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
                 <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
                 #end
@@ -121,20 +107,9 @@
                 #if(cplanorderno != '' && cplanorderno != null)
                 <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 审批</button>
                 <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 反审批</button>
-                <div class="btn-group dropdown">
-                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
-                            id="exportMenuBadnessButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        数据导出
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="exportMenuBadnessButton">
-                        <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
-                                data-url="admin/basis/dataExportxxx"><i class="fa fa-download"></i> 导出选中
-                        </button>
-                        <button class="btn dropdown-item" data-downloadbtn data-url="admin/basis/dataExportxxx"
-                                data-form="basisForm_#(pageId)"><i class="fa fa-download"></i> 全部导出
-                        </button>
-                    </div>
-                </div>
+
+                <button data-downloadbtn data-form="apsAnnualplanmFormadd_#(pageId)"
+                        data-url="admin/scheduproductplanyear/dataExportYear" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
                 #end
                 <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
             </div>
