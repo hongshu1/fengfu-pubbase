@@ -16,7 +16,7 @@ where iFormApprovalFlowMid in (select iAutoId
 
 
 #sql("approvalProcessUsers")
-select name
+select top #(size) name
 from UGCFF_MOM_System.dbo.jb_user where id in
     (select iUserId
      from Bd_FormApprovalFlowD where iFormApprovalFlowMid =
@@ -25,6 +25,6 @@ from UGCFF_MOM_System.dbo.jb_user where id in
               (select top 1 Bd_FormApprovalD.iAutoId
                from Bd_FormApprovalD where iFormApprovalId = (
                    select Bd_FormApproval.iAutoId
-                   from Bd_FormApproval where iFormObjectId = 1665593702973816832 and isDeleted = '0'
+                   from Bd_FormApproval where iFormObjectId = '#(formAutoId)' and isDeleted = '0'
                ) and iStatus = 1 order by iSeq desc)))
 #end
