@@ -103,6 +103,20 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 	}
 
 	/**
+	 * 历史数据源列表
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param kv
+	 * @return
+	 */
+	public Page<Record> historyList(int pageNumber, int pageSize, Kv kv) {
+		Page<Record> paginate = dbTemplate("formapprovald.historyDatas", kv).paginate(pageNumber,
+				pageSize);
+		return paginate;
+
+	}
+
+	/**
 	 * 保存
 	 * @param formApprovalD
 	 * @return

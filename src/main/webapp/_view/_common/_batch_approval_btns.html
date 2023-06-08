@@ -1,19 +1,52 @@
-
+<span id="approve" style="display: none">
 <button data-ajaxbtn data-url="admin/formapproval/batchApprove?formSn=#(formSn??)&ids="
         data-handler="refreshPjaxContainer"
         data-check-handler="jboltTableGetCheckedIds"
-        class="btn btn-outline-secondary btn-sm" >批量审批</button>
+        class="btn btn-outline-secondary btn-sm" >批量审批通过</button>
 <button data-ajaxbtn data-url="admin/formapproval/batchRejectApprove?formSn=#(formSn??)&ids="
         data-handler="refreshPjaxContainer"
         data-check-handler="jboltTableGetCheckedIds"
-        class="btn btn-outline-secondary btn-sm" >批量拒审</button>
+        class="btn btn-outline-secondary btn-sm" >批量审批不通过</button>
 <button data-ajaxbtn data-url="admin/formapproval/batchReverseApprove?formSn=#(formSn??)&ids="
         data-handler="refreshPjaxContainer"
         data-check-handler="jboltTableGetCheckedIds"
         class="btn btn-outline-secondary btn-sm" >批量反审批</button>
-
-
+</span>
+<span id="audit" style="display: none">
+    <button data-ajaxbtn data-url="#(uri)/batchApprove?formSn=#(formSn??)&ids="
+            data-handler="refreshPjaxContainer"
+            data-check-handler="jboltTableGetCheckedIds"
+            class="btn btn-outline-secondary btn-sm" >批量审核通过</button>
+    <button data-ajaxbtn data-url="#(uri)/batchRejectApprove?formSn=#(formSn??)&ids="
+            data-handler="refreshPjaxContainer"
+            data-check-handler="jboltTableGetCheckedIds"
+            class="btn btn-outline-secondary btn-sm" >批量审核不通过</button>
+    <button data-ajaxbtn data-url="#(uri)/batchReverseApprove?formSn=#(formSn??)&ids="
+            data-handler="refreshPjaxContainer"
+            data-check-handler="jboltTableGetCheckedIds"
+            class="btn btn-outline-secondary btn-sm" >批量反审核</button>
+</span>
 
 <script>
+    $(function () {
+        Ajax.post("/admin/formapproval/auditOrApprove",{"formSn":'#(formSn??)'},function (res) {
+            // console.log('res',res)
+            if (res.state === 'ok') {
+                var iType = res.iType;
+                if (iType===1){ //审批流
+                    $("#approve").show();
+                    $("#audit").hide();
 
+                } else if (iType === 2){
+                    $("#approve").hide();
+                    $("#audit").show();
+                } else {
+                    $("#approve").hide();
+                    $("#audit").hide();
+                }
+            }
+        },function (err) {
+
+        })
+    })
 </script>
