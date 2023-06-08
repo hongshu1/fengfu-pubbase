@@ -122,7 +122,8 @@ FROM
         LEFT JOIN Bd_PurchaseType pt ON  a.iPurchaseTypeId = pt.iAutoId
         LEFT JOIN Bd_Vendor ven ON  a.iVendorId = ven.iAutoId
         WHERE 1 = 1
-ORDER BY
-    a.dUpdateTime DESC
-
-    #end
+#if(corderno)
+and a.cOrderNo = #para(corderno)
+#end
+ORDER BY a.dUpdateTime DESC
+#end

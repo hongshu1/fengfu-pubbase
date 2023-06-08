@@ -660,6 +660,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             record.set("workheader", record.getStr("createperson"));//生产组长
             record.set("num", i);//编号
             record.set("total", record.getStr("printnum"));//一共几张
+            record.set("qty",record.getBigDecimal("qty").stripTrailingZeros().toPlainString());
             i++;
         }
         return recordList;
@@ -677,6 +678,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             record.set("workheader", record.getStr("createperson"));//生产组长
             record.set("num", i);//编号
             record.set("total", record.getStr("printnum"));//一共几张
+            record.set("qty",record.getBigDecimal("qty").stripTrailingZeros().toPlainString());
             i++;
         }
         return recordList;

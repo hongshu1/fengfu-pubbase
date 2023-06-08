@@ -335,4 +335,8 @@ public class RdStyleService extends BaseService<RdStyle> {
 		List<Record> list = dbTemplate("rdstyle.getCvrscodeType", para).find();
 		return list;
 	}
+
+	public List<Record> getoptions(){
+		return dbTemplate("rdstyle.getoptions").find();
+	}
 }

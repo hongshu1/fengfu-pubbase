@@ -168,4 +168,8 @@ public class RdStyleAdminController extends BaseAdminController {
         renderJsonData(service.getCvrscodeType("发","0"));
     }
 
+    public void getoptions(){
+        renderJsonData(service.getoptions());
+    }
+
 }
