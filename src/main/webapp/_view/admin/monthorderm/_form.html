@@ -13,7 +13,7 @@
 
                         #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm",
                         formSn="Co_MonthOrderM", iautoid=monthorderm.iautoid??0,
-                        iauditstatus=monthorderm.iAuditStatus,iauditway=monthorderm.iauditway)
+                        iauditstatus=monthorderm.iAuditStatus??0,iauditway=monthorderm.iauditway??0)
 
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
