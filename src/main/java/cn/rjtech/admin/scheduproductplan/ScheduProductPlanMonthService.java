@@ -435,7 +435,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      * @return
      */
     public synchronized Ret scheduPlanMonth(Integer level,String endDateStr) {
-        final Log LOG = Log.getLog(Weekday.class);
         //TODO:获取当前层级上次排产截止日期+1
         ApsWeekschedule apsWeekschedule = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekschedule",Kv.by("level",level)).findFirst();
         //排产开始年月日
@@ -538,28 +537,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         for (int i = 0; i < scheduDateList.size(); i++) {
             String scheduDate = scheduDateList.get(i);
             String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDate),"E");
-            /*switch (weekDay){
-                case one:
-                    type = 1;
-                    break;
-                case two:
-                    type = 2;
-                    break;
-                case three:
-                    type = 3;
-                    break;
-                case four:
-                    type = 4;
-                    break;
-                case five:
-                    type = 5;
-                    break;
-                case six:
-                    type = 6;
-                    break;
-                default:
-                    return fail("数据不匹配！");
-            }*/
             if (weekDay.equals(oneD)){workday[i] = Weekday.mon;continue;}
             if (weekDay.equals(twoD)){workday[i] = Weekday.tue;continue;}
             if (weekDay.equals(threeD)){workday[i] = Weekday.wed;continue;}
@@ -569,7 +546,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             if (weekDay.equals(sevenD)){workday[i] = Weekday.sun;}
         }
 
+        final Log LOG = Log.getLog(ScheduProductPlanMonthService.class);
         LOG.info("workday.length:======================================================="+workday.length, workday.length);
+
+        LOG.info("workday:======================================================="+Arrays.toString(workday), Arrays.toString(workday));
+
+
 
         //TODO:根据物料集查询各班次产能
         List<Record> invCapacityList = dbTemplate("scheduproductplan.getInvCapacityList",Kv.by("ids",idsJoin)).find();
