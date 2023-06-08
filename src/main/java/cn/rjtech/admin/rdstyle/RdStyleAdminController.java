@@ -10,9 +10,6 @@ import cn.rjtech.model.momdata.RdStyle;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.plugin.activerecord.Record;
-
-import java.util.List;
 
 /**
  * 收发类别 Controller

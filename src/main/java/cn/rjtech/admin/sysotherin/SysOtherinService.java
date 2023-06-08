@@ -12,8 +12,6 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.common.CommonController;
-import cn.rjtech.common.columsmap.ColumsmapService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysOtherin;

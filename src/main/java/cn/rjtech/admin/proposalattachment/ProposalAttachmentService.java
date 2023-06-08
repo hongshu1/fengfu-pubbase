@@ -1,12 +1,14 @@
 package cn.rjtech.admin.proposalattachment;
 
-import static cn.hutool.core.text.StrPool.COMMA;
-import java.util.List;
-import com.jfinal.kit.Kv;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.ProposalAttachment;
+import com.jfinal.kit.Kv;
+
+import java.util.List;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 禀议书附件 Service
