@@ -12,3 +12,33 @@ FROM Mo_MaterialsReturnM m
  and m.iMoDocId=#para(imodocid)
 #end
 #end
+
+#sql("#findByImodocId")
+SELECT
+    d.iAutoId
+    a.cMoDocNo,
+        d.cbarcode,
+    i.cInvCode,
+    i.cInvName,
+    i.cInvCode1,
+    i.cInvName1,
+    i.cInvStd,
+    u.cUomName
+
+FROM
+    Mo_MaterialsReturnD d
+        LEFT JOIN Bd_Inventory i ON d.iInventoryId= i.iAutoId
+        LEFT JOIN Bd_Uom u on i.iInventoryUomId1=u.iAutoId
+        LEFT JOIN Mo_MaterialsReturnM m ON d.iMaterialsReturnMid= m.iAutoId
+        LEFT JOIN Mo_MoDoc a ON m.iMoDocId= a.iAutoId
+where  1=1
+    #if(imodocid)
+ and a.iAutoId=#para(imodocid)
+#end
+    #if(cbarcode)
+ and d.cBarcode=#para(cbarcode)
+#end
+  #if(corgcode)
+ and m.cOrgCode=#para(corgcode)
+#end
+    #end
