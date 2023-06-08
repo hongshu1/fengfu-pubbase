@@ -74,9 +74,9 @@
         <tr data-id="${data.iautoid}" >
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="admin/subcontractsaleorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" data-dialog-title="修改委外销售订单主表" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+                <a href="admin/subcontractsaleorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" data-dialog-title="修改委外销售订单主表" class="jbolt_table_editbtn"><i class="fa fa-remove fa-edit">编辑</a>
                 <a href="admin/subcontractsaleorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-                <a href="admin/subcontractsaleorderm/approve/${data.iautoid}" data-ajaxbtn data-loading="执行中" data-handler="refreshJBoltTable" data-confirm="确定审批此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">审批</i></a>
+                <a href="admin/subcontractsaleorderm/approve/${data.iautoid}" data-ajaxbtn data-loading="执行中" data-handler="refreshJBoltTable" data-confirm="确定审批此数据？" <i class="fa fa-remove fa-edit">审批</i></a>
             </td>
             <td>$${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
             <td>${data.cauditprogress}</td>
