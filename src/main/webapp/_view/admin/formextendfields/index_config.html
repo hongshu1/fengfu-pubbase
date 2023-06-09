@@ -6,20 +6,20 @@
 			<h8>基础档案名称：</h8>
 <select class="form-control" name="iFormId"
 	data-autoload
-	data-url="admin/formExtendFields/optionsFormId"
+	data-url="admin/permission/optionsFormId"
 	data-select-type="select"
 	data-text="=系统表单ID="
-		data-text-attr="cformname"
-		data-value-attr="iautoid"
+		data-text-attr="title"
+		data-value-attr="id"
 	></select>
 			<h8>单据档案名称：</h8>
 <select class="form-control" name="iFormFieldId"
 	data-autoload
-	data-url="admin/formExtendFields/optionsiFormFieldId"
+	data-url="admin/permission/optionsFormFieldId"
 	data-select-type="select"
 	data-text="=系统字段ID="
-		data-text-attr="cformname"
-		data-value-attr="iautoid"
+		data-text-attr="title"
+		data-value-attr="id"
 	></select>
 <!--<select class="form-control" name="cFieldCode"-->
 	<!--data-autoload-->
@@ -74,10 +74,11 @@
 </textarea>
 <div class="jbolt_table_toolbar" id="FormExtendFields_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-	<button data-dialogbtn data-area="80%,90%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增系统管理-拓展字段配置表" data-url="admin/formExtendFields/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="80%,90%" data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增系统管理-拓展字段配置表" data-url="admin/formExtendFields/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="80%,90%" data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增系统管理-拓展字段配置表" data-url="admin/formExtendFields/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
 	<!--<button data-dialogbtn data-area="80%,90%"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑系统管理-拓展字段配置表" data-check-handler="jboltTableGetCheckedId" data-url="admin/formExtendFields/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>-->
 	<!--<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/formExtendFields/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>-->
-<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+<!--<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>-->
 </div>
 
 </div>

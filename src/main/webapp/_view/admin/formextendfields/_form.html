@@ -17,11 +17,11 @@
 <div class="col-2">
     <select class="form-control"
             data-autoload
-            data-url="/admin/formExtendFields/optionsFormId"
+            data-url="admin/permission/optionsFormId"
             data-select-type="select1"
             name="formExtendFields.iFormId"
-            data-text-attr="cformname"
-            data-value-attr="iautoid"
+            data-text-attr="title"
+            data-value-attr="id"
             data-select="#(formExtendFields.iFormId??)"
     ></select>
 </div>
@@ -32,11 +32,11 @@
 <div class="col-2">
     <select class="form-control"
             data-autoload
-            data-url="/admin/formExtendFields/optionsiFormFieldId"
+            data-url="admin/permission/optionsFormFieldId"
             data-select-type="select1"
             name="formExtendFields.iFormFieldId"
-            data-text-attr="cformname"
-            data-value-attr="iautoid"
+            data-text-attr="title"
+            data-value-attr="id"
             data-select="#(formExtendFields.iFormFieldId??)"
     ></select>
 </div>
@@ -86,50 +86,49 @@
     <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入字段长度" maxlength="40" name="formExtendFields.iMaxLength" value="#(formExtendFields.iMaxLength??)"/>
 </div>
 </div>
-    <input type="hidden" id="aaaa" name="iFieldType" value="#(formExtendFields.iFieldType??)"/>
-
+    <!--<input type="text" id="aaaa" placeholder="test" name="iFieldType"/>-->
+    <input type="hidden" id="bbbb"/>
     <div class="form-group row"
-        data-radio
-        data-name="formExtendFields.iFieldType"
-        data-label="字段类型:"
-        data-width="col-sm-2,col-5"
-        data-value="#(formExtendFields.iFieldType??)"
-        data-inline="true"
-        onchange="toggleOneInputHidden(aaaa,this.value)"
+         data-radio
+         id="formiFieldType"
+         data-name="formExtendFields.iFieldType"
+         data-width="col-sm-2,col-5"
+         data-value="#(formExtendFields.iFieldType??)"
+         onchange="toggleOneInputHidden()"
 >
         <!--data-value-attr="sn"-->
         <!--data-url="admin/dictionary/options?key=extend_field_type"-->
         <label class="col-sm-2 col-form-label" >字段类型：</label>
         <div class="col"  style="padding-top: 1px;">
             <div class="radio radio-primary  radio-inline">
-                <input  id="iFieldType1" type="radio" name="formExtendFields.iFieldType" value="1"/>
+                <input  id="iFieldType1" type="radio" onclick="sethid(1)" name="formExtendFields.iFieldType" value="1"/>
                 <label for="iFieldType1">输入框</label>
             </div>
             <div class="radio radio-primary  radio-inline">
-                <input  id="iFieldType2" type="radio" name="formExtendFields.iFieldType" value="2"/>
+                <input  id="iFieldType2" type="radio" onclick="sethid(2)" name="formExtendFields.iFieldType" value="2"/>
                 <label for="iFieldType2">整数</label>
             </div>
             <div class="radio radio-primary  radio-inline">
-                <input  id="iFieldType3" type="radio" name="formExtendFields.iFieldType" value="3"/>
+                <input  id="iFieldType3" type="radio" onclick="sethid(3)" name="formExtendFields.iFieldType" value="3"/>
                 <label for="iFieldType3">小数</label>
             </div>
             <div class="radio radio-primary  radio-inline">
-                <input  id="iFieldType4" type="radio" name="formExtendFields.iFieldType" value="4"/>
+                <input  id="iFieldType4" type="radio" onclick="sethid(4)" name="formExtendFields.iFieldType" value="4"/>
                 <label for="iFieldType4">日期</label>
             </div>
             <div class="radio radio-primary  radio-inline">
-                <input  id="iFieldType5" type="radio" name="formExtendFields.iFieldType" value="5"/>
+                <input  id="iFieldType5" type="radio" onclick="sethid(5)" name="formExtendFields.iFieldType" value="5"/>
                 <label for="iFieldType5">日期时间</label>
             </div>
             <div class="radio radio-primary  radio-inline">
-                <input  id="iFieldType6" type="radio" name="formExtendFields.iFieldType" value="6"/>
+                <input  id="iFieldType6" type="radio" onclick="sethid(6)" name="formExtendFields.iFieldType" value="6"/>
                 <label for="iFieldType6">布尔</label>
             </div>
         </div>
 </div>
 
-    <div class="form-group row" >
-        <label class="col-sm-2 col-form-label">小数位:</label>
+    <div class="form-group row"  id="hidDigi" style="visibility: hidden">
+        <label type="hidden" class="col-sm-2 col-form-label">小数位:</label>
         <div class="col-1">
             <input type="number" data-rule="pzint" data-notnull="false" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="" maxlength="40" name="formExtendFields.iDigit" value="#(formExtendFields.iDigit??)"/>
         </div>
@@ -188,6 +187,7 @@ data-inline="true"
         data-value-attr="sn"
     >
 </div>
+    <input type="hidden" id="optioniSource"/>
     <div class="form-group row"
          data-radio
          data-name="formExtendFields.iSource"
@@ -195,31 +195,32 @@ data-inline="true"
          data-width="col-sm-2,col-5"
          data-value="#(formExtendFields.iSource??)"
          data-inline="true"
+         onchange="toggleOneInputHidden2()"
     >
         <!--data-value-attr="sn"-->
         <!--data-url="admin/dictionary/options?key=value_source"-->
         <label class="col-sm-2 col-form-label" >值来源：</label>
         <div class="col"  style="padding-top: 1px;">
             <div class="radio radio-primary  radio-inline">
-                <input  id="iSource1" type="radio" name="formExtendFields.iSource" value="1"/>
+                <input  id="iSource1" type="radio" onclick="sethid2(1)" name="formExtendFields.iSource" value="1"/>
                 <label for="iSource1">手工输入</label>
             </div>
             <div class="radio radio-primary  radio-inline">
-                <input  id="iSource2" type="radio" name="formExtendFields.iSource" value="2"/>
+                <input  id="iSource2" type="radio" onclick="sethid2(2)" name="formExtendFields.iSource" value="2"/>
                 <label for="iSource2">枚举引用</label>
             </div>
             <div class="radio radio-primary  radio-inline">
-                <input  id="iSource3" type="radio" name="formExtendFields.iSource" value="3"/>
+                <input  id="iSource3" type="radio" onclick="sethid2(3)" name="formExtendFields.iSource" value="3"/>
                 <label for="iSource3">图片上传</label>
             </div>
             <div class="radio radio-primary  radio-inline">
-                <input  id="iSource4" type="radio" name="formExtendFields.iSource" value="4"/>
+                <input  id="iSource4" type="radio" onclick="sethid2(4)" name="formExtendFields.iSource" value="4"/>
                 <label for="iSource4">附件上传</label>
             </div>
         </div>
     </div>
 
-    <div class="form-group row" >
+    <div id="hidVal" class="form-group row" style="visibility: hidden">
 <label class="col-sm-2 col-form-label">值具体:</label>
 <div class="col-2">
     <select class="form-control"
@@ -277,16 +278,26 @@ data-inline="true"
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
     }
-    function toggleOneInputHidden(id,ads){
-        var input=g(id);
-        console.log(ads)
-        var ads
-        console.log(ads)
-
-        if(input.type=="hidden"){
-            input.type="text";
+    function sethid(val) {
+        var obj = document.getElementById('bbbb');
+        obj.value=val
+    }
+    function toggleOneInputHidden(){
+        if(bbbb.value == 3){
+            hidDigi.style="visibility: visible";
         }else{
-            input.type="hidden";
+            hidDigi.style="visibility: hidden";
+        }
+    }
+    function sethid2(val) {
+        var obj2 = document.getElementById('optioniSource');
+        obj2.value=val
+    }
+    function toggleOneInputHidden2(){
+        if(optioniSource.value == 2){
+            hidVal.style="visibility: visible";
+        }else{
+            hidVal.style="visibility: hidden";
         }
     }
 </script>
