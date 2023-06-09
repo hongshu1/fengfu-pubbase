@@ -108,7 +108,8 @@ SELECT
     a.dOrderDate AS BillDate,
     a.iPurchaseTypeId,
     ven.cVenCode AS VenCode,
-    ven.cVenName AS VenName
+    ven.cVenName AS VenName,
+    inv.cInvStd,inv.cInvCode,inv.cInvName
 FROM
     PS_PurchaseOrderM a
         LEFT JOIN PS_PurchaseOrderD b ON a.iAutoId= b.iPurchaseOrderMid
