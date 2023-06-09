@@ -22,22 +22,19 @@
   <div class="col-12">
     <div class="card">
       <div class="card-body">
-        <div class="btn-group">
-          <form class="form-inline" id="inventoryForm_#(pageId)" onsubmit="return false;" method="post" style="width: 1200px">
-            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
-                   maxlength="50" name="barcode" value="#(barcode??)"/>
-            <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>查询</button>
-            <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>重置</button>
-          </form>
-        </div>
-        <!-- 工具条 toolbar -->
-        <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)">
-          <div class="" role="group" aria-label="btn-group">
-              <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-              <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
+          <div class="input-group-append">
+              <input #if(materialsOut.sourcebilldid??) #else style="display: none" #end type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
+                      maxlength="50" id="barcode" name="barcode" value="#(barcode??)"/>
+              <button #if(materialsOut.sourcebilldid??) #else style="display: none" #end id="Search" onclick="barcode_#(pageId)(this)" class="btn btn-outline-secondary"><i class="fa fa-search"></i>搜索</button>
           </div>
-          <div class="clearfix"></div>
-        </div>
+          <!-- 工具条 toolbar -->
+          <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)" #if(materialsOut.sourcebilldid??) #else style="display: none" #end >
+              <div  class="" role="group" aria-label="btn-group" >
+                  <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+                  <button onclick="jboltTableRemoveCheckedRow(this, true, barcodes)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
+              </div>
+              <div class="clearfix"></div>
+          </div>
 
         <!---->
         <table class="jbolt_table jbolt_main_table table-center"
@@ -72,6 +69,66 @@
   </div>
 </div>
 <script>
+    function barcode_#(pageId)(ele){
+        LayerMsgBox.loading("执行中......",2000);
+        var barcode = $("#barcode").val();
+        var autoid = $("#autoid").val();
+        var detailHidden = $("#detailHidden").val();
+
+        //扫入多条现品票判断是否存在
+        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["barcode"]);
+        let array = new Array();
+        if (data != null){
+            for (let i = 0; i < data.length; i++) {
+                array.push("'"+data[i].barcode+"'");
+            }
+            for (let i = 0; i < array.length; i++) {
+                let a =  "'"+barcode+"'";
+                if (a == array[i]){
+                    LayerMsgBox.error("已存在相同["+barcode+"]现品票！！！",2000);
+                    return false;
+                }
+
+
+            }
+            //通过逗号分开，一个一个加进数组中
+            let codes = array.join(',');
+            $("#detailHidden").val(codes);
+        } else {
+            $("#detailHidden").val('');
+        }
+        if (barcode) {
+            Ajax.post("admin/materialreturnlist/barcode", {"barcode": barcode,"autoid":autoid,"detailHidden":detailHidden},
+                function (res) {
+                    jboltTableInsertRow("Puinstoreform_TableId_#(pageId)", res.data, false, true, true)
+                    $("#barcode").val('');
+                }, function (err) {
+                })
+        } else {
+            LayerMsgBox.alert("请输入条码")
+        }
+    }
+
+    function barcodes(){
+
+        // //扫入多条现品票判断是否存在
+        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["barcode"]);
+        var spottickets = $("#spottickets").val();
+        console.log(data);
+        console.log(spottickets);
+        let array = new Array();
+        if (data != null){
+            for (let i = 0; i < data.length; i++) {
+                array.push("'"+data[i].barcode+"'");
+            }
+            //通过逗号分开，一个一个加进数组中
+            let codes = array.join(',');
+            $("#barcodes").val(codes);
+        } else {
+            $("#barcodes").val('');
+        }
+        return true;
+    }
   /*去后端执行提交功能*/
   function getEditableTableOptions_split_#(pageId)(){
       var editableTableOptions={

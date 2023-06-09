@@ -32,7 +32,7 @@
                 <div class="col-sm-2 col-form-label">
                     <div class="input-group-append">
                         <input id="billno" name="puinstore.billno"  type="text"  autocomplete="off" placeholder="=请选择入库单号="
-                               data-rule="required" class="form-control" maxlength="40" value="#(puinstore.billno??)"/>
+                               required data-rule="required" class="form-control" maxlength="40" value="#(puinstore.billno??)"/>
                         <button class="btn btn-primary"  data-dialogbtn data-link-para-ele=""
                                 data-area="90%,90%" data-title="选择数据（单选）"
                                 id="supplierButton"
@@ -145,9 +145,9 @@
                                     <div class="card-body">
                                         <div class="btn-group">
                                             <div class="input-group-append">
-                                                    <input  type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
+                                                    <input  #if(puinstore.sourcebillno??) #else style="display: none" #end type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
                                                            maxlength="50" id="barcode" name="barcode" value="#(barcode??)"/>
-                                                    <button id="Search" onclick="barcode_#(pageId)(this)" class="btn btn-outline-secondary"><i class="fa fa-search"></i>搜索</button>
+                                                    <button #if(puinstore.sourcebillno??) #else style="display: none" #end id="Search" onclick="barcode_#(pageId)(this)" class="btn btn-outline-secondary"><i class="fa fa-search"></i>搜索</button>
                                             </div>
                                         </div>
                                         <!-- 工具条 toolbar -->
@@ -155,7 +155,6 @@
                                             <div  class="" role="group" aria-label="btn-group" >
                                                 <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
                                                 <button onclick="jboltTableRemoveCheckedRow(this, true, spotTickets)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
-                                                <button class="btn btn-secondary" onclick="refreshJBoltTable(this)"><i class="fa fa-refresh"></i> 刷新</button>
                                             </div>
                                             <div class="clearfix"></div>
                                         </div>
