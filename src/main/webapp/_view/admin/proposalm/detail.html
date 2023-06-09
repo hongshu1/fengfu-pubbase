@@ -5,8 +5,8 @@
 
     <div class="jbolt_page_title">
         <div class="row">
-            <div class="col text-left">
-                <form class="form-inline" id="proposalDetailForm_#(pageId)" onsubmit="return false;" method="post">
+            <div class="col">
+                <form class="form-inline text-left" id="proposalDetailForm_#(pageId)" onsubmit="return false;" method="post">
                     <select class="form-control"
                             name="cdepcode"
                             data-select-type="select2"
@@ -65,7 +65,6 @@
                 <td>${data.cdepname}${data.cdepcode|bracket}</td>
                 <td>${data.capplypersonname}</td>
                 <td>${data.dapplydate,'yyyy-MM-dd'|date}</td>
-                <td>$${data.iauditstatus,1|AuditStatus}</td>
                 <td>${data.cprojectcode}</td>
                 <td>${data.cprojectname}</td>
                 <td>${data.cpurposename}</td>
@@ -127,7 +126,6 @@
                 <th data-width="150" data-column="cdepcode">部门</th>
                 <th data-width="150" data-column="capplypersonname">申请人</th>
                 <th data-width="150" data-column="dapplydate">申请日期</th>
-                <!-- <th data-width="150" data-column="iauditstatus">审批状态</th> -->
                 <th data-width="150" data-column="cprojectcode">项目编码</th>
                 <th data-width="150" data-column="cprojectname">项目名称</th>
                 <th data-width="150" data-column="cpurposename">目的区分</th>
@@ -159,7 +157,7 @@
 <script type="text/javascript">
 function ajaxSuccessHandler_#(pageId)(table) {
 	   $('.jbolt_table').tablesMergeCell({
-	      cols: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
+	      cols: [1,2,3,4,5,6,7,8,9]
 	   })
 }
 </script>
