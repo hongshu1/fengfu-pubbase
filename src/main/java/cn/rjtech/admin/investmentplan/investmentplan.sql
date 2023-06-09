@@ -86,11 +86,6 @@ where 1=1
 #end	
 #end
 
-#sql("findInvestmentPlanItemdForDetail")
-	select iautoid,iplanitemid,iperiodnum,cperiodprogress,concat(year(dperioddate),'-',month(dperioddate)) dperioddate,
-		iamount from pl_investment_plan_itemd where iplanitemid = #para(investmentplanitemid)
-#end
-
 #sql("findInvestmentNextPeriodEditExportDownTplData")
 	select pi.iautoid,pi.iinvestmenttype,pi.iprojectid,bp.cprojectcode,bp.cprojectname,pi.cproductline,
 	pi.cmodelinvccode,pi.cparts,pi.icareertype,pi.iinvestmentdistinction,pi.cplanno,pi.citemname,
@@ -327,7 +322,7 @@ select d.cdepname,ip.iBudgetType,ip.cdepcode,
 		#for(monthnum:monthlist)
 			,min(case when datepart(year,dateadd(month,#(for.index),convert(date,#para(dstartdate)))) = datepart(year,ipid.dPeriodDate) and
 			datepart(month,dateadd(month,#(for.index),convert(date,#para(dstartdate)))) = datepart(month,ipid.dPeriodDate)
-			then jd_pp.name end) 'imonthamount#(monthnum)'			
+			then ipid.cperiodprogress end) 'imonthamount#(monthnum)'			
 		#end
 	#end
 	#if(yearlist && yearlist.size() > 0)
@@ -338,7 +333,6 @@ select d.cdepname,ip.iBudgetType,ip.cdepcode,
 from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi 
 	inner join #(getMomdataDbName()).dbo.pl_investment_plan ip ON ipi.iplanid=ip.iautoid 
 	left JOIN #(getMomdataDbName()).dbo.pl_investment_plan_itemd ipid ON ipid.iplanitemid=ipi.iautoid 
-	left join #(getBaseDbName()).dbo.jb_dictionary jd_pp on jd_pp.sn=ipid.cperiodprogress and jd_pp.type_key='period_progress'
 	left join #(getBaseDbName()).dbo.jb_dictionary jd_ibt on jd_ibt.sn=ip.ibudgettype and jd_ibt.type_key='investment_budget_type'
 	left join #(getMomdataDbName()).dbo.bd_department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3 and convert(date,ipid.dPeriodDate) >= convert(date,#para(dstartdate)) and convert(date,ipid.dPeriodDate) <= convert(date,#para(denddate))
@@ -376,7 +370,6 @@ WHERE 1=1 and ip.iEffectiveStatus != 3 and convert(date,ipid.dPeriodDate) >= con
 from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi 
 	inner join #(getMomdataDbName()).dbo.pl_investment_plan ip ON ipi.iplanid=ip.iautoid 
 	left JOIN #(getMomdataDbName()).dbo.pl_investment_plan_itemd ipid ON ipid.iplanitemid=ipi.iautoid 
-	left join #(getBaseDbName()).dbo.jb_dictionary jd_pp on jd_pp.sn=ipid.cperiodprogress and jd_pp.type_key='period_progress'
 	left join #(getBaseDbName()).dbo.jb_dictionary jd_ibt on jd_ibt.sn=ip.ibudgettype and jd_ibt.type_key='investment_budget_type'
 	left join #(getMomdataDbName()).dbo.bd_department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3

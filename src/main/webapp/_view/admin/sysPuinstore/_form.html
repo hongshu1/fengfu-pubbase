@@ -70,7 +70,7 @@
             <label class="col-sm-3 col-form-label">供货单位</label>
             <div class="col-7">
               <input id="venname" name="cvenname" type="text" readonly="readonly" autocomplete="off" class="form-control" maxlength="40"
-                     value="#(sysPuinstore.cvenname??)"/>
+                     value="#(cvenname??)"/>
               <input id="vencode" name="vencode" type="hidden" readonly="readonly" autocomplete="off" class="form-control"
                      maxlength="40" value="#(sysPuinstore.vencode??)"/>
             </div>
@@ -378,9 +378,9 @@
     if (!autoid) {
       LayerMsgBox.alert("请先保存，再提交审批！", 2);
     }
-    Ajax.post('/admin/purchaseReceiptList/editAutit?autoid=' + autoid, function (ret) {
+    Ajax.post('/admin/purchaseReceiptList/editAutit?autoid=' + autoid,{}, function (ret) {
       if (ret.state === 'ok') {
-        parent.LayerMsgBox.closeAll();
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
         parent.refreshPjaxContainer();
       } else {
         LayerMsgBox.alert(ret.msg, 2);

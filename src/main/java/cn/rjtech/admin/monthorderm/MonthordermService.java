@@ -9,12 +9,15 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.auditformconfig.AuditFormConfigService;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.enums.OrderStatusEnum;
+import cn.rjtech.model.momdata.AuditFormConfig;
 import cn.rjtech.model.momdata.MonthOrderD;
 import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.util.ValidationUtils;
@@ -27,6 +30,7 @@ import com.jfinal.plugin.activerecord.TableMapping;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -46,6 +50,8 @@ public class MonthordermService extends BaseService<MonthOrderM> {
 	private CusOrderSumService cusOrderSumService;
     @Inject
     private FormApprovalService formApprovalService;
+    @Inject
+    private AuditFormConfigService auditFormConfigService;
     
 	@Override
 	protected MonthOrderM dao() {
@@ -189,6 +195,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         MonthOrderM monthorderm = jBoltTable.getFormModel(MonthOrderM.class, "monthorderm");
         User user = JBoltUserKit.getUser();
         Date now = new Date();
+        AuditFormConfig auditFormConfig = auditFormConfigService.findByFormSn(table());
         tx(() -> {
             if (monthorderm.getIAutoId() == null) {
                 monthorderm.setIOrgId(getOrgId());
@@ -200,6 +207,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
                 monthorderm.setIUpdateBy(user.getId());
                 monthorderm.setCUpdateName(user.getName());
                 monthorderm.setDUpdateTime(now);
+                monthorderm.setIAuditWay(Optional.ofNullable(auditFormConfig).map(AuditFormConfig::getIType).orElse(AuditWayEnum.STATUS.getValue()));
                 ValidationUtils.isTrue(monthorderm.save(), ErrorMsg.SAVE_FAILED);
             } else {
                 monthorderm.setIUpdateBy(user.getId());
@@ -316,7 +324,20 @@ public class MonthordermService extends BaseService<MonthOrderM> {
     }
 
     public Ret withdraw(Long iautoid) {
-        
+        tx(() -> {
+
+            MonthOrderM monthOrderM = findById(iautoid);
+            formApprovalService.withdraw(table(), monthOrderM.getIAutoId(), () -> null, () -> {
+                monthOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                monthOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+                ValidationUtils.isTrue(monthOrderM.update(), "撤回失败");
+
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
+                return null;
+            });
+            return true;
+        });
         return SUCCESS;
     }
     

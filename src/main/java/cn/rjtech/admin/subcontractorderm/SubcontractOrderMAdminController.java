@@ -20,6 +20,7 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
@@ -296,9 +297,8 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
    */
   @SuppressWarnings("unchecked")
   public void orderDBatchExport() throws Exception {
-//    renderJxls("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas1(getKv()),
-//        "委外订单订货清单.xlsx");
-    renderJxlsToPdf("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas1(getKv()),
+    Kv kv = getKv();
+    renderJxlsToPdf("orderDbOneAtchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas(getKv()),
         "委外订单订货清单.pdf");
   }
 

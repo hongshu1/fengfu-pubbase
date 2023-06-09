@@ -1,13 +1,13 @@
 #sql("recpor")
 select so.AutoID, CASE so.iAuditStatus
         WHEN 0 THEN
-        '已保存'
+        '未审核'
 				WHEN 1 THEN
-        '待审批'
+        '待审核'
 				WHEN 2 THEN
-        '已审批'
+        '审核通过'
 				WHEN 3 THEN
-        '审批不通过'
+        '审核不通过'
         END AS statename,so.iAuditStatus as state,so.BillNo as billno, CONVERT(VARCHAR(10), so.CreateDate, 120) as createdate,so.iAuditStatus,
         so.VenCode as vencode
 		,p.name,s.name as sname,v.cVenName as venname,so.Type as type,so.SourceBillNo
@@ -256,13 +256,18 @@ select
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
     m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
-    m.cOrderNo as SourceBillID,
+    m.iAutoId as SourceBillID,
     d.iAutoId as SourceBillDid,
     m.iVendorId,
 	v.cVenCode as vencode,
 	v.cVenName as venname,
 	u.cUomCode as puunitcode,
-	u.cUomName as puunitname
+	u.cUomName as puunitname,
+	p.iAutoId,
+	s.iAutoId as siautoid,
+    s.cRdName as scrdname,
+    s.cRdCode as scrdcode
+
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
@@ -270,6 +275,8 @@ LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
 LEFT JOIN Bd_Uom u on b.iPurchaseUomId = u.iAutoId
+LEFT JOIN Bd_PurchaseType p on p.iAutoId = m.iPurchaseTypeId
+LEFT JOIN Bd_Rd_Style s ON s.cRdCode = p.cRdCode
 where 1=1
    	#if(barcode)
 		and a.cBarcode = #para(barcode)

@@ -179,7 +179,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
                 sysotherin.setCreateDate(now);
                 sysotherin.setModifyPerson(user.getName());
                 sysotherin.setAuditPerson(user.getName());
-                sysotherin.setState("1");
+//                sysotherin.setState("1");
                 sysotherin.setModifyDate(now);
                 // 主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);

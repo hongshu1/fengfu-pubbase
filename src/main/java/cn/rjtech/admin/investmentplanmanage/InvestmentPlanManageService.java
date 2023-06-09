@@ -90,16 +90,7 @@ public class InvestmentPlanManageService extends BaseService<InvestmentPlan>{
 	public List<Record> findInvestmentPlanItemForDetail(Long investmentPlanId) {
 		return investmentPlanService.findInvestmentPlanItemDatas(investmentPlanId);
 	}
-	/**
-	 * 投资计划详情界面查询投资计划项目明细数据
-	 * */
-	public List<Record> findInvestmentPlanItemdForDetail(Long investmentPlanItemId) {
-		List<Record> list = dbTemplate("investmentplanmanage.findInvestmentPlanItemdForDetail",Kv.by("investmentplanitemid", investmentPlanItemId)).find();
-		for (Record record : list) {
-			record.set("cperiodprogressdesc",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), record.getStr("cperiodprogress")));
-		}
-		return list;
-	}
+
 	/**
      *	投资计划生效 
      * */

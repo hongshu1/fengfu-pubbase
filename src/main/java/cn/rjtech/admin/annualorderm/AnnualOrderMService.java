@@ -303,4 +303,22 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         });
         return SUCCESS;
     }
+
+    public Ret withdraw(Long iAutoId) {
+        tx(() -> {
+            AnnualOrderM annualOrderM = findById(iAutoId);
+            formApprovalService.withdraw(table(), annualOrderM.getIAutoId(), () -> null, () -> {
+                annualOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                annualOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+                ValidationUtils.isTrue(annualOrderM.update(), "撤回失败");
+
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
+                return null;
+            });
+            return true;
+        });
+        return SUCCESS;
+
+    }
 }

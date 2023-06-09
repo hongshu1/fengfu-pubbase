@@ -9,10 +9,10 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
+                        #if(!monthorderm.iautoid??||edit??false)
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
-
+                        #end
                         #include("/_view/_common/_approval_btns.html",formSn="Co_MonthOrderM", uri="/admin/monthorderm", iautoid=monthorderm.iautoid??, edit=edit??)
-
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -127,7 +127,9 @@
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
+                #if(!monthorderm.iautoid??||edit??false)
                 <a class="btn" onclick="jboltTableRemoveRow(this)"><i class="fa fa-remove c-danger"></i></a>
+                #end
             </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
@@ -173,6 +175,7 @@
     </script>
     
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
+        #if(!monthorderm.iautoid??||edit??false)
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-xs">添加行</button>
             <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除行</button>
@@ -198,6 +201,7 @@
                 </div>
             </div>
         </div>
+        #end
     </div>
     
     <table class="jbolt_table thead_font_normal table-bordered table-center"

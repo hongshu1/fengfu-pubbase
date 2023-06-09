@@ -118,7 +118,7 @@
                         <label class="col-sm-3 col-form-label">采购类型</label>
                         <div class="col-6">
                             <input class="form-control" name="billtype" type="text" readonly="readonly" maxlength="20"
-                                   value="#(sysPuinstore.billtype??)"/>
+                                   value="#(cptname??)"/>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -228,9 +228,9 @@
             LayerMsgBox.alert("请先保存，再提交审批！", 2);
         }
 
-        Ajax.post('/admin/purchaseReceiptList/onlyseeAutit?autoid=' + autoid, function (ret) {
+        Ajax.post('/admin/purchaseReceiptList/onlyseeAutit?autoid=' + autoid,{}, function (ret) {
             if (ret.state === 'ok') {
-                parent.LayerMsgBox.closeAll();
+                parent.layer.close(parent.layer.getFrameIndex(window.name));
                 parent.refreshPjaxContainer();
             } else {
                 LayerMsgBox.alert(ret.msg, 2);
@@ -242,9 +242,9 @@
     * 反审核
     * */
     function resetSubmitApprove(autoid) {
-        Ajax.post('/admin/purchaseReceiptList/resetAutitById?autoid=' + autoid, function (ret) {
+        Ajax.post('/admin/purchaseReceiptList/resetAutitById?autoid=' + autoid,{}, function (ret) {
             if (ret.state === 'ok') {
-                parent.LayerMsgBox.closeAll();
+                parent.layer.close(parent.layer.getFrameIndex(window.name));
                 parent.refreshPjaxContainer();
             } else {
                 LayerMsgBox.alert(ret.msg, 2);
@@ -260,42 +260,10 @@
             LayerMsgBox.alert("Sir,暂时没有采购入库单的打印模板标签，后续添加此功能...", 2);
             return;
         }
-        let code=[];
         let mark = 'page';
+        let code=[];
         code.push(autoid);
         jboltHiprintWebPrint(reportfilename, 'url', 'admin/purchaseReceiptList/getPrintData?ids=' + code.join(",") + "&&mark=" + mark);
-    }
-
-    /**
-     * 删除选中的行
-     * @param ele
-     * @param confirm
-     * @param callback
-     * @returns
-     */
-    function jboltTableRemoveCheckedRow(ele, confirm, callback) {
-        var action = getRealJqueryObject(ele);
-        if (isOk(action)) {
-            var success = checkMasterTableId(action);
-            if (!success) {
-                return false;
-            }
-        }
-        var isCheckedNone = jboltTableIsCheckedNone(ele);
-        if (isCheckedNone) {
-            LayerMsgBox.alert("请至少选择一行数据", 2);
-        } else {
-            var ids = jboltTableGetCheckedIds(ele, true);
-            if (ids) {
-                LayerMsgBox.confirm("所选数据中包含数据库已存数据，确定删除吗？", function () {
-                    removeJBoltTableCheckedTr(ele, false, callback);
-                });
-            } else {
-                removeJBoltTableCheckedTr(ele, confirm, callback);
-            }
-            return true;
-        }
-        return false;
     }
 
 </script>

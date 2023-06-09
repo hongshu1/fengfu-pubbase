@@ -1,15 +1,15 @@
 
 #sql("recpor")
-select so.AutoID, CASE so.state
-        WHEN 1 THEN
-        '已保存'
+select so.AutoID, CASE so.iAuditStatus
+        WHEN 0 THEN
+        '未审核'
+				WHEN 1 THEN
+        '待审核'
 				WHEN 2 THEN
-        '待审批'
+        '审核通过'
 				WHEN 3 THEN
-        '已审批'
-				WHEN 4 THEN
-        '审批不通过'
-        END AS statename,so.state,so.BillNo,so.CreateDate,so.Whcode,ck.cWhName as whname,so.RdCode,rd.cRdName as rdcodename,
+        '审核不通过'
+        END AS statename,so.iAuditStatus,so.BillNo,so.CreateDate,so.Whcode,ck.cWhName as whname,so.RdCode,rd.cRdName as rdcodename,
 			so.BillType,so.VenCode,v.cVenName as venname,so.ModifyDate,so.memo,so.ModifyPerson,so.CreatePerson,so.AuditPerson,
 			so.AuditDate
 FROM T_Sys_OtherIn so
