@@ -6,10 +6,12 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.PurchaseType;
 import cn.rjtech.model.momdata.RdStyle;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.Vendor;
@@ -43,6 +45,8 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     private DepartmentService   departmentService;
     @Inject
     private RdStyleService      rdStyleService;
+    @Inject
+    private PurchaseTypeService purchaseTypeService;//采购类别
 
     /**
      * 首页
@@ -86,14 +90,13 @@ public class SysPuinstoreAdminController extends BaseAdminController {
             set("cvenname", vendor.getCVenName());
         }
         Department department = departmentService.findByCdepcode(getOrgId(), sysPuinstore.getDeptCode());
-        if (department != null){
+        if (department != null) {
             set("cdepname", department.getCDepName());
         }
         RdStyle rdStyle = rdStyleService.findBycSTCode(sysPuinstore.getRdCode());
-        if (rdStyle != null){
+        if (rdStyle != null) {
             set("crdname", rdStyle.getCRdName());
         }
-
         set("sysPuinstore", sysPuinstore);
         render("edit.html");
     }
@@ -176,12 +179,17 @@ public class SysPuinstoreAdminController extends BaseAdminController {
             set("cvenname", vendor.getCVenName());
         }
         Department department = departmentService.findByCdepcode(getOrgId(), sysPuinstore.getDeptCode());
-        if (department != null){
+        if (department != null) {
             set("cdepname", department.getCDepName());
         }
         RdStyle rdStyle = rdStyleService.findBycSTCode(sysPuinstore.getRdCode());
-        if (rdStyle != null){
+        if (rdStyle != null) {
             set("crdname", rdStyle.getCRdName());
+        }
+        PurchaseType purchaseType = purchaseTypeService.findById(sysPuinstore.getBillType());
+        if (purchaseType != null){
+            set("cptcode",purchaseType.getCPTCode());
+            set("cptname",purchaseType.getCPTName());
         }
         set("sysPuinstore", sysPuinstore);
         render("onlysee.html");

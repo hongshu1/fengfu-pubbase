@@ -601,14 +601,18 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         int i = 1;
         for (SysPuinstoredetail detail : detailList) {
             Main main = new Main();
+            main.setInvName("");
+            main.setInvCode("");
+            main.setBillID("");
+            main.setBillNoRow("");
+            main.setBillDid("");
+
             main.setIsWhpos("1"); //
             main.setIwhcode(detail.getWhcode());
-            main.setInvName("");
             main.setVenName(null != vendor ? vendor.getCVenName() : "");
             main.setVenCode(puinstore.getVenCode());
-            main.setQty(detail.getQty().toString());
+            main.setQty(String.valueOf(detail.getQty()));
             main.setOrganizeCode(getOrgCode());
-            main.setInvCode("");
             main.setNum(0);
             main.setIndex(String.valueOf(i));
             main.setPackRate("0");
@@ -616,10 +620,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             main.setCreatePerson(detail.getCreatePerson());
             main.setBarCode(detail.getSpotTicket()); //现品票
             main.setBillNo(puinstore.getBillNo());
-            main.setBillID("");
-            main.setBillNoRow("");
             main.setBillDate(puinstore.getBillDate());
-            main.setBillDid("");
             main.setSourceBillNo(detail.getSourceBillNo());
             main.setSourceBillDid(detail.getSourceBillDid());
             main.setSourceBillType(detail.getSourceBillType());

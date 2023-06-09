@@ -13,15 +13,15 @@
         class="btn btn-outline-secondary btn-sm" >批量反审批</button>
 </span>
 <span id="audit" style="display: none">
-    <button data-ajaxbtn data-url="#(uri)/batchApprove?formSn=#(formSn??)&ids="
+    <button data-ajaxbtn data-url="#(uri)/batchAudit?formSn=#(formSn??)&ids="
             data-handler="refreshPjaxContainer"
             data-check-handler="jboltTableGetCheckedIds"
             class="btn btn-outline-secondary btn-sm" >批量审核通过</button>
-    <button data-ajaxbtn data-url="#(uri)/batchRejectApprove?formSn=#(formSn??)&ids="
+    <button data-ajaxbtn data-url="#(uri)/batchRejectAudit?formSn=#(formSn??)&ids="
             data-handler="refreshPjaxContainer"
             data-check-handler="jboltTableGetCheckedIds"
             class="btn btn-outline-secondary btn-sm" >批量审核不通过</button>
-    <button data-ajaxbtn data-url="#(uri)/batchReverseApprove?formSn=#(formSn??)&ids="
+    <button data-ajaxbtn data-url="#(uri)/batchReverseAudit?formSn=#(formSn??)&ids="
             data-handler="refreshPjaxContainer"
             data-check-handler="jboltTableGetCheckedIds"
             class="btn btn-outline-secondary btn-sm" >批量反审核</button>

@@ -123,8 +123,12 @@ function situationSubmitClick(){
 	var url="/admin/investmentplan/investmentPlanSituationTableIndex"+paraStr;
  	AjaxPortalUtil.go(investmentPlanSituationTableIndex, url);
 }
-
-
+function ajaxSuccessHandler_situation(table) {
+	   $('.jbolt_table').tablesMergeCell({
+	      cols: [1,2,3,4,5,6,7,8,9,10,12]
+	   })
+	   
+}
 </script>
 
 #end
