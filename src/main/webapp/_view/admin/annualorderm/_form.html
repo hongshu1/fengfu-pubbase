@@ -413,8 +413,8 @@
                 url: "/admin/annualorderm/submitAll",
                 success: function (res) {
                     LayerMsgBox.success("提交成功", 600, function () {
-                        window.parent.refreshJBoltTable();
-                        // parent.refreshPjaxContainer();
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
                     });
                 }
             },
