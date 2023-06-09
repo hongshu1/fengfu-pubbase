@@ -256,71 +256,50 @@ GROUP BY
 
 
 #sql("getmaterialLines")
-SELECT (SELECT SUM(Qty) FROM T_Sys_PUInStoreDetail WHERE spotTicket = t2.spotTicket) AS qtys,
-       0-t2.Qty as qty,
-       t2.Memo,
-       t2.spotTicket,
-       t2.SourceBillDid,
-       t2.SourceBillNoRow,
-       t2.SourceBillType,
-       t2.SourceBillNo,
-       u.cUomName AS inventorycuomname,
-       t3.cInvCCode,
-       t3.cInvCName,
-       i.cInvCode,
-       i.cInvName,
-       i.cInvStd,
-       i.cInvCode1,
-       i.cInvName1
-FROM T_Sys_PUInStore t1,
-     T_Sys_PUInStoreDetail t2
-         LEFT JOIN (
-         SELECT iAutoId AS PoId,
-                iPurchaseOrderDid,
-                iinventoryId,
-                cBarcode,
-                iQty,
-                cSourceld,
-                cSourceBarcode
-         FROM PS_PurchaseOrderDBatch
-         UNION ALL
-         SELECT iAutoId AS PoId,
-                iSubcontractOrderDid,
-                iinventoryId,
-                cBarcode,
-                iQty,
-                cSourceld,
-                cSourceBarcode
-         FROM PS_SubcontractOrderDBatch
-     ) t4 ON t2.spotTicket = t4.cbarcode
-         LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
-         LEFT JOIN Bd_Uom u ON i.iInventoryUomId1 = u.iautoid
-         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
+SELECT
+    ( SELECT SUM ( Qty ) FROM T_Sys_PUInStoreDetail WHERE spotTicket = pd.spotTicket ) AS qtys,
+    0 - pd.Qty AS qty,
+    a.cBarcode AS spotticket,
+    b.cInvCode ,
+    b.cInvName ,
+    b.cInvCode1,
+    b.cInvName1,
+    a.dPlanDate AS plandate,
+    b.cInvStd AS cinvstd,
+    m.cOrderNo AS SourceBillNo,
+    m.iBusType AS SourceBillType,
+    m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+    m.iAutoId AS SourceBillID,
+    d.iAutoId AS SourceBillDid,
+    m.iVendorId,
+    v.cVenCode AS vencode,
+    v.cVenName AS venname,
+    t3.cInvCCode,
+    t3.cInvCName,
+    t4.cEquipmentModelName,
+    ( SELECT cUomName FROM Bd_Uom WHERE b.iInventoryUomId1 = iautoid ) AS InventorycUomName ,
+    ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName ,
+    ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
+FROM
+    T_Sys_PUInStore t1
+        LEFT JOIN T_Sys_PUInStoreDetail pd ON t1.AutoID = pd.MasID
+        LEFT JOIN PS_PurchaseOrderDBatch a ON pd.spotTicket = a.cBarcode
+        AND a.isEffective = '1'
+        LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+        LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
+        LEFT JOIN PS_PurchaseOrderM m ON m.iAutoId = d.iPurchaseOrderMid
+        LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+        LEFT JOIN Bd_InventoryClass t3 ON b.iInventoryClassId = t3.iautoid
+        LEFT JOIN Bd_EquipmentModel t4 ON b.iEquipmentModelId = t4.iautoid
+        LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId
+        AND tc.iAutoId = a.iPurchaseOrderdQtyId
 WHERE
-        t1.AutoID = t2.MasID
+    1 = 1
   AND t1.AutoID = '#(autoid)'
-  AND (SELECT SUM (Qty) FROM T_Sys_PUInStoreDetail WHERE  spotTicket =t2.spotTicket )> 0
+  AND (SELECT SUM (Qty) FROM T_Sys_PUInStoreDetail WHERE  spotTicket =pd.spotTicket )> 0
     #if(OrgCode)
   AND t1.OrganizeCode = #para(OrgCode)
     #end
-GROUP BY
-    t1.AutoID,
-    t2.Memo,
-    t2.MasID,
-    t2.spotTicket,
-    t2.SourceBillDid,
-    t2.SourceBillNoRow,
-    t2.SourceBillType,
-    t2.SourceBillNo,
-    u.cUomName,
-    t3.cInvCCode,
-    t3.cInvCName,
-    i.cInvCode,
-    i.cInvName,
-    i.cInvStd,
-    i.cInvCode1,
-    i.cInvName1,
-    t2.Qty
 #end
 
 
@@ -378,8 +357,7 @@ WHERE t1.AutoID = '#(autoid)'
 
 #sql("getBarcodeDatas")
 select top #(limit)
-    m.cOrderNo as sourcebillno,
-        a.cBarcode as barcode,
+       a.cBarcode as barcode,
        b.cInvCode ,
        b.cInvName ,
        b.cInvCode1,
@@ -391,15 +369,18 @@ select top #(limit)
        m.cOrderNo as SourceBillNo,
        m.iBusType as SourceBillType,
        m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
-       m.cOrderNo as SourceBillID,
-       d.iAutoId as SourceBillDid,
+       tc.iseq as RowNo,
+       m.iAutoId AS SourceBillID,
+       d.iAutoId AS SourceBillDid,
        m.iVendorId,
        v.cVenCode as vencode,
        v.cVenName as venname,
        t3.cInvCCode,
        t3.cInvCName,
        t4.cEquipmentModelName,
-       (SELECT cUomName FROM Bd_Uom WHERE b.iInventoryUomId1 = iautoid) as InventorycUomName
+       (SELECT cUomName FROM Bd_Uom WHERE b.iInventoryUomId1 = iautoid) as InventorycUomName,
+       ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName,
+       ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
 FROM T_Sys_PUInStoreDetail pd
          LEFT JOIN PS_PurchaseOrderDBatch a ON pd.spotTicket = a.cBarcode AND	a.isEffective = '1'
          LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
@@ -439,7 +420,6 @@ WHERE isDeleted = 0
 
 #sql("barcode")
 select
-    m.cOrderNo as sourcebillno,
     a.cBarcode as spotTicket,
     b.cInvCode ,
     b.cInvName ,
@@ -452,15 +432,18 @@ select
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
     m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
-    m.cOrderNo as SourceBillID,
-    d.iAutoId as SourceBillDid,
+    tc.iseq as RowNo,
+    m.iAutoId AS SourceBillID,
+    d.iAutoId AS SourceBillDid,
     m.iVendorId,
     v.cVenCode as vencode,
     v.cVenName as venname,
     t3.cInvCCode,
     t3.cInvCName,
     t4.cEquipmentModelName,
-    (SELECT cUomName FROM Bd_Uom WHERE b.iInventoryUomId1 = iautoid) as InventorycUomName
+    (SELECT cUomName FROM Bd_Uom WHERE b.iInventoryUomId1 = iautoid) as InventorycUomName,
+    ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName ,
+    ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
 FROM T_Sys_PUInStoreDetail pd
          LEFT JOIN PS_PurchaseOrderDBatch a ON pd.spotTicket = a.cBarcode AND	a.isEffective = '1'
          LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId

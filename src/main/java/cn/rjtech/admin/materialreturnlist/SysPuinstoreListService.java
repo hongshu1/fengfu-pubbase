@@ -248,17 +248,15 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		tx(()->{
 			String headerId = null;
 			String whcode = null;
-			Record detailByParam = null;
 			// 获取Form对应的数据
 			if (jBoltTable.formIsNotBlank()) {
 				SysPuinstore puinstore = jBoltTable.getFormModel(SysPuinstore.class,"puinstore");
 				Record record = jBoltTable.getFormRecord();
 				whcode = record.get("whcode");//仓库
-				Kv kv = new Kv();
-				kv.set("billno",puinstore.get("billno"));
-				kv.set("sourcebillno",puinstore.get("sourcebillno"));
 
-				detailByParam = sysPuinstoreService.findSysPODetailByParam(kv);
+
+//				detailByParam = dbTemplate("syspureceive.purchaseOrderD", kv).findFirst();
+//				detailByParam = sysPuinstoreService.findSysPODetailByParam(kv);
 
 				//	行数据为空 不保存
 				if ("save".equals(revokeVal)) {
@@ -339,16 +337,9 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				}
 				String finalHeaderId = headerId;
 				String finalWhcodes = whcode;
-				Record finalDetailByParam = detailByParam;
 				lines.forEach(materialsOutDetail -> {
 					Object qtys = materialsOutDetail.get("qty");
 					System.out.println(qtys);
-
-					materialsOutDetail.setSourceBillType(finalDetailByParam.get("sourcebilltype"));//采购PO  委外OM（采购类型）
-					materialsOutDetail.setSourceBillNo(finalDetailByParam.getStr("sourcebillno")); //来源单号（订单号）
-					materialsOutDetail.setSourceBillID(finalDetailByParam.getStr("sourcebillid")); //来源单据ID(订单id)
-					materialsOutDetail.setSourceBillDid(finalDetailByParam.getStr("sourcebilldid")); //来源单据DID;采购或委外单身ID
-					materialsOutDetail.setRowNo(lines.indexOf(materialsOutDetail)+1); //来源单据单行;
 					materialsOutDetail.setMasID(finalHeaderId);
 					materialsOutDetail.setWhcode(finalWhcodes);
 					materialsOutDetail.setCreateDate(nowDate);
@@ -364,14 +355,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 				String finalHeaderId = headerId;
 				String finalWhcodes1 = whcode;
-				Record finalDetailByParam = detailByParam;
 				lines.forEach(materialsOutDetail -> {
 					materialsOutDetail.setWhcode(finalWhcodes1);
-					materialsOutDetail.setSourceBillType(finalDetailByParam.get("sourcebilltype"));//采购PO  委外OM（采购类型）
-					materialsOutDetail.setSourceBillNo(finalDetailByParam.getStr("sourcebillno")); //来源单号（订单号）
-					materialsOutDetail.setSourceBillID(finalDetailByParam.getStr("sourcebillid")); //来源单据ID(订单id)
-					materialsOutDetail.setSourceBillDid(finalDetailByParam.getStr("sourcebilldid")); //来源单据DID;采购或委外单身ID
-					materialsOutDetail.setRowNo(lines.indexOf(materialsOutDetail)+1); //来源单据单行;
 					materialsOutDetail.setModifyDate(nowDate);
 					materialsOutDetail.setModifyPerson(userName);
 				});
