@@ -68,15 +68,19 @@ from PL_Expense_Budget_Item ebi
 	ebi.careertype,ebi.isLargeAmountExpense,ebi.cuse,ebi.cmemo,ebi.iprice,ebi.cunit,ebi.iCarryForward,ebi.icreateby,ebi.dcreatetime
 	#if(monthlist && monthlist.size() > 0)
 		#for(monthnum:monthlist)
-			,sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),eb.cbegindate)) and ebid.imonth = datepart(month,dateadd(month,#(for.index),eb.cbegindate)) then ebid.iQuantity end) 'iquantity#(monthnum)'
-			,sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),eb.cbegindate)) and ebid.imonth = datepart(month,dateadd(month,#(for.index),eb.cbegindate)) then ebid.iamount end) 'iamount#(monthnum)'
+			,case when dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),eb.cbegindate)),datepart(month,dateadd(month,#(for.index),eb.cbegindate))) > 0
+			then null else
+			sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),eb.cbegindate)) and ebid.imonth = datepart(month,dateadd(month,#(for.index),eb.cbegindate)) then ebid.iQuantity end) end 'iquantity#(monthnum)'
+			,case when dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),eb.cbegindate)),datepart(month,dateadd(month,#(for.index),eb.cbegindate))) > 0
+			then convert(decimal(12,2),dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),eb.cbegindate)),datepart(month,dateadd(month,#(for.index),eb.cbegindate))) / 1000)
+			else sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),eb.cbegindate)) and ebid.imonth = datepart(month,dateadd(month,#(for.index),eb.cbegindate)) then convert(decimal(12,2),ebid.iamount/1000) end) end 'iamount#(monthnum)'
 		#end
 	#end
-from PL_Expense_Budget_Item ebi
-	left join PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
-	left join PL_Expense_Budget_ItemD ebid on ebi.iautoid = ebid.iexpenseitemid
-	left join bas_subjectm bsh on bsh.iautoid = ebi.ihighestsubjectid
-	left join bas_subjectm bsl on bsl.iautoid = ebi.ilowestsubjectid
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget_ItemD ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.bas_subjectm bsh on bsh.iautoid = ebi.ihighestsubjectid
+	left join #(getMomdataDbName()).dbo.bas_subjectm bsl on bsl.iautoid = ebi.ilowestsubjectid
 	where 1=1
 	#if(iexpenseid)
 		and ebi.iexpenseid = #(iexpenseid)
@@ -85,7 +89,7 @@ from PL_Expense_Budget_Item ebi
 		and eb.iorgid = #para(iorgid)
 	#end
 	and exists (
-		select 1 from bas_project_card pc where pc.ccode = ebi.cbudgetno 
+		select 1 from #(getMomdataDbName()).dbo.bas_project_card pc where pc.ccode = ebi.cbudgetno 
 		#if(istatus)
 			and istatus = #para(istatus)
 		#end
@@ -99,12 +103,12 @@ from PL_Expense_Budget_Item ebi
 #end
 
 #sql("findPreviousPeriodExpenseBudgetItemDatas")
-	select ebi.iautoid,ebi.iexpenseid,ebi.cbudgetno,bsh.csubjectname chighestsubjectname,bsl.csubjectname clowestsubjectname,ebi.citemname,ebi.chighestsubjectcode,ebi.clowestsubjectcode,
+	select ebi.iautoid,ebi.iexpenseid,ebi.cbudgetno,bsh.csubjectcode chighestsubjectcode,bsh.csubjectname chighestsubjectname,bsl.csubjectcode clowestsubjectcode,bsl.csubjectname clowestsubjectname,ebi.citemname,
 	ebi.careertype,ebi.isLargeAmountExpense,ebi.cuse,ebi.cmemo,ebi.iprice,ebi.cunit,ebi.iCarryForward,ebi.icreateby,ebi.dcreatetime
 from PL_Expense_Budget_Item ebi
 	left join PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
-	left join bas_subjectm bsh on bsh.csubjectcode = ebi.cHighestSubjectCode
-	left join bas_subjectm bsl on bsl.csubjectcode = ebi.cLowestSubjectCode
+	left join bas_subjectm bsh on bsh.iautoid = ebi.ihighestsubjectid
+	left join bas_subjectm bsl on bsl.iautoid = ebi.ilowestsubjectid
 	where 1=1
 	#if(iexpenseid)
 		and ebi.iexpenseid = #(iexpenseid)
@@ -181,12 +185,12 @@ select * from (
                               Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 3 THEN ebid.iamount END )/1000) 'nextyearmounthamount3',
                               Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 4 THEN ebid.iamount END )/1000) 'nextyearmounthamount4'
                           FROM
-                              #(getMesDbName()).dbo.PL_Expense_Budget_Item ebi
-                                  LEFT JOIN #(getMesDbName()).dbo.PL_Expense_Budget_ItemD ebid ON ebi.iautoid = ebid.iexpenseitemid
-                              LEFT JOIN #(getMesDbName()).dbo.PL_Expense_Budget eb ON eb.iautoid = ebi.iExpenseId
-                              LEFT JOIN #(getMesDbName()).dbo.bas_project bp ON bp.iautoid = ebi.iprojectid
-                              LEFT JOIN #(getMesDbName()).dbo.bas_subjectm bsh ON bsh.csubjectcode = ebi.cHighestSubjectCode
-                              LEFT JOIN #(getMesDbName()).dbo.bas_subjectm bsl ON bsl.csubjectcode = ebi.cLowestSubjectCode
+                              #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+                                  LEFT JOIN #(getMomdataDbName()).dbo.PL_Expense_Budget_ItemD ebid ON ebi.iautoid = ebid.iexpenseitemid
+                              LEFT JOIN #(getMomdataDbName()).dbo.PL_Expense_Budget eb ON eb.iautoid = ebi.iExpenseId
+                              LEFT JOIN #(getMomdataDbName()).dbo.bas_project bp ON bp.iautoid = ebi.iprojectid
+                              LEFT JOIN #(getMomdataDbName()).dbo.bas_subjectm bsh ON bsh.iautoid = ebi.ihighestsubjectid
+                              LEFT JOIN #(getMomdataDbName()).dbo.bas_subjectm bsl ON bsl.iautoid = ebi.ilowestsubjectid
                           WHERE
                               1 = 1
 
@@ -287,12 +291,12 @@ select * from (
                    Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 3 THEN ebid.iamount END )/1000) 'nextyearmounthamount3',
                    Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 4 THEN ebid.iamount END )/1000) 'nextyearmounthamount4'
                FROM
-                   #(getMesDbName()).dbo.PL_Expense_Budget_Item ebi
-                              LEFT JOIN #(getMesDbName()).dbo.PL_Expense_Budget_ItemD ebid ON ebi.iautoid = ebid.iexpenseitemid
-                              LEFT JOIN #(getMesDbName()).dbo.PL_Expense_Budget eb ON eb.iautoid = ebi.iExpenseId
-                              LEFT JOIN #(getMesDbName()).dbo.bas_project bp ON bp.iautoid = ebi.iprojectid
-                              LEFT JOIN #(getMesDbName()).dbo.bas_subjectm bsh ON bsh.csubjectcode = ebi.cHighestSubjectCode
-                              LEFT JOIN #(getMesDbName()).dbo.bas_subjectm bsl ON bsl.csubjectcode = ebi.cLowestSubjectCode
+                   #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+                              LEFT JOIN #(getMomdataDbName()).dbo.PL_Expense_Budget_ItemD ebid ON ebi.iautoid = ebid.iexpenseitemid
+                              LEFT JOIN #(getMomdataDbName()).dbo.PL_Expense_Budget eb ON eb.iautoid = ebi.iExpenseId
+                              LEFT JOIN #(getMomdataDbName()).dbo.bas_project bp ON bp.iautoid = ebi.iprojectid
+                              LEFT JOIN #(getMomdataDbName()).dbo.bas_subjectm bsh ON bsh.iautoid = ebi.ihighestsubjectid
+                              LEFT JOIN #(getMomdataDbName()).dbo.bas_subjectm bsl ON bsl.iautoid = ebi.ilowestsubjectid
                           WHERE
                               1 = 1
                             AND (
@@ -390,12 +394,12 @@ select * from (
                           Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 3 THEN ebid.iamount END )/1000) 'nextyearmounthamount3',
                           Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 4 THEN ebid.iamount END )/1000) 'nextyearmounthamount4'
                   FROM
-                      #(getMesDbName()).dbo.PL_Expense_Budget_Item ebi
-                              LEFT JOIN #(getMesDbName()).dbo.PL_Expense_Budget_ItemD ebid ON ebi.iautoid = ebid.iexpenseitemid
-                      LEFT JOIN #(getMesDbName()).dbo.PL_Expense_Budget eb ON eb.iautoid = ebi.iExpenseId
-                      LEFT JOIN #(getMesDbName()).dbo.bas_project bp ON bp.iautoid = ebi.iprojectid
-                      LEFT JOIN #(getMesDbName()).dbo.bas_subjectm bsh ON bsh.csubjectcode = ebi.cHighestSubjectCode
-                      LEFT JOIN #(getMesDbName()).dbo.bas_subjectm bsl ON bsl.csubjectcode = ebi.cLowestSubjectCode
+                      #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+                              LEFT JOIN #(getMomdataDbName()).dbo.PL_Expense_Budget_ItemD ebid ON ebi.iautoid = ebid.iexpenseitemid
+                      LEFT JOIN #(getMomdataDbName()).dbo.PL_Expense_Budget eb ON eb.iautoid = ebi.iExpenseId
+                      LEFT JOIN #(getMomdataDbName()).dbo.bas_project bp ON bp.iautoid = ebi.iprojectid
+                      LEFT JOIN #(getMomdataDbName()).dbo.bas_subjectm bsh ON bsh.iautoid = ebi.ihighestsubjectid
+                      LEFT JOIN #(getMomdataDbName()).dbo.bas_subjectm bsl ON bsl.iautoid = ebi.ilowestsubjectid
                   WHERE
                       1 = 1
                     AND (

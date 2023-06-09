@@ -1,20 +1,5 @@
 package cn.rjtech.admin.expensebudget;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import org.apache.commons.lang.ArrayUtils;
-import com.alibaba.fastjson.JSONObject;
-import com.jfinal.aop.Inject;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.NumberUtil;
@@ -43,24 +28,26 @@ import cn.rjtech.admin.subjectm.SubjectmService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.Constants;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.BarCodeEnum;
-import cn.rjtech.enums.DictionaryTypeKeyEnum;
-import cn.rjtech.enums.EffectiveStatusEnum;
-import cn.rjtech.enums.ExpenseBudgetTypeEnum;
-import cn.rjtech.enums.FinishStatusEnum;
-import cn.rjtech.enums.FullYearBudgetEnum;
-import cn.rjtech.enums.InvestmentBudgetTypeEnum;
-import cn.rjtech.enums.IsEnableEnum;
-import cn.rjtech.enums.IsScheduledEnum;
-import cn.rjtech.enums.ItemEnum;
-import cn.rjtech.enums.ServiceTypeEnum;
+import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.ExpenseBudget;
 import cn.rjtech.model.momdata.ExpenseBudgetItem;
 import cn.rjtech.model.momdata.ExpenseBudgetItemd;
 import cn.rjtech.model.momdata.Subjectm;
 import cn.rjtech.util.ReadFullYearExpenseBudgetExcelUtil;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+import org.apache.commons.lang.ArrayUtils;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+
 import static cn.hutool.core.text.StrPool.COMMA;
 
 
@@ -947,7 +934,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 		Kv para = Kv.by("iexpenseid",iexpenseid).set("iservicetype",ServiceTypeEnum.EXPENSE_BUDGET.getValue())
 				.set("istatus",FinishStatusEnum.UNFINISHED.getValue()).set("iorgid",getOrgId());
 		constructDynamicsDbColumn(findById(iexpenseid),para);
-		List<Record> list = dbTemplate("expensebudget.findUnfinishExpenseBudgetItemDatas",para).find();
+		List<Record> list = dbTemplate(u8SourceConfigName(),"expensebudget.findUnfinishExpenseBudgetItemDatas",para).find();
 		fillExpenseBudgetItem(list);
 		return list;
 	}

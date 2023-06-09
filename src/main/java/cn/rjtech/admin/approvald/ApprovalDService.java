@@ -1,24 +1,30 @@
 package cn.rjtech.admin.approvald;
 
+import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.approvaldrole.ApprovaldRoleService;
+import cn.rjtech.admin.approvaldroleusers.ApprovaldRoleusersService;
 import cn.rjtech.admin.approvalduser.ApprovaldUserService;
 import cn.rjtech.model.momdata.ApprovalD;
 import cn.rjtech.model.momdata.ApprovaldRole;
+import cn.rjtech.model.momdata.ApprovaldRoleusers;
 import cn.rjtech.model.momdata.ApprovaldUser;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 审批流节点 Service
@@ -40,6 +46,10 @@ public class ApprovalDService extends BaseService<ApprovalD> {
     private ApprovaldUserService approvaldUserService;
     @Inject
     private ApprovaldRoleService approvaldRoleService;
+    @Inject
+    private UserService userService;
+    @Inject
+    private ApprovaldRoleusersService roleusersService;
 
     /**
      * 后台管理分页查询
@@ -235,7 +245,7 @@ public class ApprovalDService extends BaseService<ApprovalD> {
         if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
             return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
         }
-        
+
         // 这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
         // jboltTableMulti.entrySet().forEach(en->{ JBoltTable jBoltTable = en.getValue()
         JBoltTable jBoltTable = jboltTableMulti.getJBoltTable("table1");
@@ -243,7 +253,7 @@ public class ApprovalDService extends BaseService<ApprovalD> {
 
         ApprovalD approvalD = jBoltTable.getFormModel(ApprovalD.class, "approvalD");
         ValidationUtils.notNull(approvalD, JBoltMsg.PARAM_ERROR);
-
+        AtomicReference<Long> iApprovalDid = new AtomicReference<>();
         tx(() -> {
             //修改
             if (isOk(approvalD.getIAutoId())) {
@@ -252,8 +262,8 @@ public class ApprovalDService extends BaseService<ApprovalD> {
                 //新增
                 ValidationUtils.isTrue(approvalD.save(), JBoltMsg.FAIL);
             }
+            iApprovalDid.set(approvalD.getIAutoId());
 
-            Long iApprovalDid = approvalD.getIAutoId();
             Integer iType = approvalD.getIType();
 
             switch (iType) {
@@ -261,7 +271,7 @@ public class ApprovalDService extends BaseService<ApprovalD> {
                     if (jBoltTable.saveIsNotBlank()) {
                         List<ApprovaldUser> saveModelList = jBoltTable.getSaveModelList(ApprovaldUser.class);
                         saveModelList.forEach(approvaldUser -> {
-                            approvaldUser.setIApprovalDid(iApprovalDid);
+                            approvaldUser.setIApprovalDid(iApprovalDid.get());
                         });
                         approvaldUserService.batchSave(saveModelList, saveModelList.size());
                     }
@@ -278,9 +288,25 @@ public class ApprovalDService extends BaseService<ApprovalD> {
                     if (jBoltTable2.saveIsNotBlank()) {
                         List<ApprovaldRole> saveModelList = jBoltTable2.getSaveModelList(ApprovaldRole.class);
                         saveModelList.forEach(approvaldRole -> {
-                            approvaldRole.setIApprovalDid(iApprovalDid);
+                            approvaldRole.setIApprovalDid(iApprovalDid.get());
+                            approvaldRole.save();
+                            Page<User> userPage = userService.paginateUsersByRoleId(1, 20, approvaldRole.getIRoleId());
+                            List<User> userList = userPage.getList();
+                            if (userList.size() > 0){
+                                List<ApprovaldRoleusers> list = new ArrayList<>();
+                                for (int i = 0; i < userList.size(); i++) {
+                                    User user = userList.get(i);
+                                    int j = i;
+                                    ApprovaldRoleusers roleusers = new ApprovaldRoleusers();
+                                    roleusers.setIApprovaldRoleId(approvaldRole.getIAutoId());
+                                    roleusers.setISeq(++j);
+                                    roleusers.setIUserId(user.getId());
+                                    list.add(roleusers);
+                                }
+                                roleusersService.batchSave(list,list.size());
+                            }
                         });
-                        approvaldRoleService.batchSave(saveModelList, saveModelList.size());
+//                        approvaldRoleService.batchSave(saveModelList, saveModelList.size());
                     }
 
                     if (jBoltTable.updateIsNotBlank()) {
@@ -290,16 +316,43 @@ public class ApprovalDService extends BaseService<ApprovalD> {
 
                     if (jBoltTable2.deleteIsNotBlank()) {
                         approvaldRoleService.deleteByIds(jBoltTable2.getDelete());
+                        roleusersService.deleteByApprovalId(jBoltTable2.getDelete());
                     }
                     break;
                 default:
                     break;
             }
+
+//            序列化Iseq
+            List<ApprovaldUser> approvaldUsers = approvaldUserService.find("select * from Bd_ApprovalD_User where iApprovalDid = " + iApprovalDid.get() + " " +
+                    "order by iSeq asc");
+            if (approvaldUsers.size() > 0){
+                for (int i = 0, iSeq = 0; i < approvaldUsers.size(); i++) {
+                    ApprovaldUser approvaldUser = approvaldUsers.get(i);
+                    approvaldUser.setISeq(++iSeq);
+                }
+                approvaldUserService.batchUpdate(approvaldUsers,approvaldUsers.size());
+            }
+
+            List<ApprovaldRole> approvaldRoles =
+                    approvaldRoleService.find("select * from Bd_ApprovalD_Role where iApprovalDid = " + iApprovalDid.get() + " " +
+                    "order by iSeq asc");
+            if (approvaldRoles.size() > 0){
+
+                for (int i = 0, iSeq = 0; i < approvaldRoles.size(); i++) {
+                    ApprovaldRole approvaldRole = approvaldRoles.get(i);
+                    approvaldRole.setISeq(++iSeq);
+                }
+
+                approvaldRoleService.batchUpdate(approvaldRoles,approvaldRoles.size());
+            }
+
             return true;
         });
 
-        return SUCCESS;
+        return SUCCESS.set("iautoid",iApprovalDid.get());
     }
+
 
     /**
      * 人员行数据
@@ -323,20 +376,20 @@ public class ApprovalDService extends BaseService<ApprovalD> {
         if (approvalD == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
-        
+
         Integer iSeq = approvalD.getISeq();
         if (iSeq != null && iSeq > 0) {
             if (iSeq == 1) {
                 return fail("已经是第一个");
-            } 
-            
+            }
+
             Long iApprovalMid = approvalD.getIApprovalMid();
             Integer wSeq = iSeq - 1;
             ApprovalD upApprovalD = findFirst("select * from Bd_ApprovalD where iApprovalMid = '" + iApprovalMid + "' and iSeq = " + wSeq);
             if (upApprovalD == null) {
                 return fail("操作失败，请点击刷新按钮");
-            } 
-            
+            }
+
             upApprovalD.setISeq(iSeq);
             approvalD.setISeq(wSeq);
             upApprovalD.update();
@@ -354,31 +407,93 @@ public class ApprovalDService extends BaseService<ApprovalD> {
         if (approvalD == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
-        
+
         Integer iSeq = approvalD.getISeq();
         Long iApprovalMid = approvalD.getIApprovalMid();
         List<ApprovalD> listByMid = findListByMid(iApprovalMid.toString());
-        
+
         int max = listByMid.size();
-        
+
         if (iSeq != null && iSeq > 0) {
             if (iSeq == max) {
                 return fail("已经是最后一个");
-            } 
-            
+            }
+
             Integer wSeq = iSeq + 1;
             ApprovalD upApprovalD = findFirst("select * from Bd_ApprovalD where iApprovalMid = '" + iApprovalMid + "' and iSeq = " + wSeq);
             if (upApprovalD == null) {
                 return fail("操作失败，请点击刷新按钮");
-            } 
-            
+            }
+
             upApprovalD.setISeq(iSeq);
             approvalD.setISeq(wSeq);
             upApprovalD.update();
             approvalD.update();
             return SUCCESS;
-        } 
+        }
         return fail("操作失败，请点击刷新按钮");
     }
-    
+
+    /**
+     * 获取角色人员信息
+     * @return
+     */
+    public Page<Record> roleUsers(int pageNumber, int pageSize, Kv kv){
+        return roleusersService.dbTemplate("approvald.roleUsers",kv).paginate(pageNumber, pageSize);
+    }
+
+    /**
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param kv
+     */
+    public Page<Record> chooseUsers(int pageNumber, int pageSize, Kv kv){
+
+        return roleusersService.dbTemplate("approvald.chooseUsers",kv).paginate(pageNumber, pageSize);
+    }
+
+    /**
+     * 保存角色人员方法
+     * @param jBoltTable
+     * @return
+     */
+    public Ret saveRoleUser(JBoltTable jBoltTable) {
+        ValidationUtils.notNull(jBoltTable, JBoltMsg.PARAM_ERROR);
+
+        JSONObject form = jBoltTable.getForm();
+        System.out.println("form===="+form);
+        Long autoId = form.getLong("autoId");
+
+        tx(() -> {
+            if (jBoltTable.saveIsNotBlank()){
+            List<ApprovaldRoleusers> saveModelList = jBoltTable.getSaveModelList(ApprovaldRoleusers.class);
+                System.out.println("saveModelList===>"+saveModelList);
+            saveModelList.forEach(approvaldRoleusers -> {
+                approvaldRoleusers.setIApprovaldRoleId(autoId);
+            });
+            roleusersService.batchSave(saveModelList,saveModelList.size());
+        }
+        if (jBoltTable.deleteIsNotBlank()){
+            roleusersService.realDeleteByIds(jBoltTable.getDelete());
+        }
+
+            List<ApprovaldRoleusers> roleusers = roleusersService.find("select * from Bd_ApprovalD_RoleUsers where iApprovaldRoleId = " + autoId + " " +
+                    "order by iSeq asc");
+
+            if (roleusers.size() > 0) {
+                List<ApprovaldRoleusers> roleusersList = new ArrayList<>();
+                for (int j = 0, rank = 0; j < roleusers.size(); j++) {
+                    ApprovaldRoleusers approvaldRoleusers = roleusers.get(j);
+                    approvaldRoleusers.setISeq(++rank);
+                    roleusersList.add(approvaldRoleusers);
+                }
+                roleusersService.batchUpdate(roleusersList,roleusersList.size());
+            }
+
+            return true;
+        });
+
+        return SUCCESS;
+    }
 }

@@ -1,5 +1,7 @@
 package cn.jbolt._admin.hiprint;
 
+import java.util.List;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Okv;
@@ -102,4 +104,7 @@ public class HiprintTplService extends JBoltBaseService<HiprintTpl> {
 		return findFirst(Okv.by("sn", sn),"id","DESC");
 	}
 
+	public List<HiprintTpl> findHiprintTplByName(String name){
+		return find("select id,name,sn from UGCFF_MOM_System.dbo.jb_hiprint_tpl where name=?",name);
+	}
 }

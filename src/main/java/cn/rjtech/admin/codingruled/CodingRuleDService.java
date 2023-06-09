@@ -57,12 +57,12 @@ public class CodingRuleDService extends BaseService<CodingRuleD> {
         if (ObjectUtil.isNull(icodingrulemid)){
             return emptyPage(pageSize);
         }
-        //创建sql对象
+        // 创建sql对象
         Sql sql = selectSql().page(pageNumber, pageSize);
-        //sql条件处理
+        // sql条件处理
         sql.eq("icodingrulemid", icodingrulemid);
-        //排序
-        sql.desc("iAutoId");
+        // 排序
+        sql.asc("iSeq");
         Page<Record> paginates = paginateRecord(sql);
         List<Record> list = paginates.getList();
         list.forEach(row -> {

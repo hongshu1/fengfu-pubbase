@@ -190,17 +190,6 @@ function proposalmSourceType(val) {
     }
 }
 
-function iseffective(val) {
-    switch (val) {
-        case '0':
-            return juicer_bool_html('未生效', val);
-        case '1':
-            return juicer_bool_html('已生效', val);
-        default:
-            return "";
-    }
-}
-
 function isscheduled(val) {
     switch (val) {
         case 0:
@@ -427,18 +416,34 @@ function BudgetType(val) {
     }
 }
 
-function AuditStatus(val) {
-    switch (val) {
-        case 0:
-            return juicer_html('未审核', ++val);
+function AuditStatus(val, way) {
+    switch (way) {
         case 1:
-            return juicer_html('待审核', ++val);
+            switch (val) {
+                case 0:
+                case 3:
+                    return juicer_html('已保存', ++val);
+                case 1:
+                    return juicer_html('待审核', ++val);
+                case 2:
+                    return juicer_html('已审核', ++val);
+                default:
+                    return "审核-未知";
+            }
         case 2:
-            return juicer_html('已审核', ++val);
-        case 3:
-            return juicer_html('不通过', ++val);
+            switch (val) {
+                case 0:
+                case 3:
+                    return juicer_html('已保存', ++val);
+                case 1:
+                    return juicer_html('待审批', ++val);
+                case 2:
+                    return juicer_html('审批通过', ++val);
+                default:
+                    return "审批-未知";
+            }
         default:
-            return "";
+            return '未知';
     }
 }
 
@@ -560,6 +565,23 @@ function iPurchaseRefType(val) {
     }
 }
 
+var previewUrl = function (url) {
+    url = getUrl(url.replace('/home', ''));
+
+    return getBaseUrl('8012') + '/onlinePreview?url=' + encodeURIComponent(window.btoa(url));
+};
+
+var getUrl = function (uri) {
+    return location.protocol + '//' + location.host + '/' + uri;
+};
+
+var getBaseUrl = function (port) {
+    if (location.port) {
+        return location.protocol + '//' + location.host.replace(location.port, port);
+    }
+    return location.protocol + "//kkfileview.kephon.com";
+};
+
 /*
  * 数字格式化 清除掉小数点后的无用的0 如果最后是0 转为自定义字符显示
  * 参数说明：
@@ -600,7 +622,6 @@ function initMineJuicer(){
     juicer.register('iOrderStatus', iOrderStatus);
     juicer.register('isLargeAmountExpense', isLargeAmountExpense);
     juicer.register('proposalmSourceType', proposalmSourceType);
-    juicer.register('iseffective', iseffective);
     juicer.register('isscheduled', isscheduled);
     juicer.register('auditstate', auditstate);
     juicer.register('careertype', careertype);
@@ -627,6 +648,7 @@ function initMineJuicer(){
     juicer.register('isubitem', isubitem);
     juicer.register('iPurchaseRefType', iPurchaseRefType);
     juicer.register('numberFormatZeroDefaultChar', numberFormatZeroDefaultChar);
+    juicer.register('previewUrl', previewUrl);
 }
 
 function jboltTableGetSpecCols(ele, colName) {

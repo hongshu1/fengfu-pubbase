@@ -10,9 +10,8 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.common.CommonController;
-import cn.rjtech.common.columsmap.ColumsmapService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysOtherin;
@@ -47,6 +46,9 @@ public class SysOtherinService extends BaseService<SysOtherin> {
 
     @Inject
     private SysOtherindetailService sysotherindetailservice;
+
+    @Inject
+    private FormApprovalService formApprovalService;
 
     @Inject
     private PersonService personservice;
@@ -358,6 +360,22 @@ public class SysOtherinService extends BaseService<SysOtherin> {
             dept = person.getCOrgCode();
         }
         return dept;
+    }
+
+    /**
+     * 提审
+     */
+    public Ret submit(Long iautoid) {
+        tx(() -> {
+
+            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+
+            // 更新状态
+
+            return true;
+        });
+        return SUCCESS;
     }
 
 }

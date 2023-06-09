@@ -1,7 +1,9 @@
 package cn.rjtech.admin.warehouse;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -9,6 +11,7 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Department;
@@ -35,6 +38,9 @@ import java.util.List;
 public class WarehouseService extends BaseService<Warehouse> {
 
     private final Warehouse dao = new Warehouse().dao();
+
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingDService;
 
     @Inject
     private DepartmentService departmentService;
@@ -228,7 +234,9 @@ public class WarehouseService extends BaseService<Warehouse> {
      * 后台管理分页查询
      */
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
-        return dbTemplate("warehouse.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
+        kv.set("iorgid",getOrgId());
+        Page<Record> paginate = dbTemplate("warehouse.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
+        return  paginate;
     }
 
     public Object dataList() {
@@ -341,15 +349,76 @@ public class WarehouseService extends BaseService<Warehouse> {
 
     public Warehouse findByWhName(String cwhname) {
         Sql sql = selectSql()
-                .eq(Warehouse.CWHNAME, cwhname)
-                .eq(Warehouse.IORGID, getOrgId())
-                .eq(Warehouse.ISDELETED, ZERO_STR);
+            .eq(Warehouse.CWHNAME, cwhname)
+            .eq(Warehouse.IORGID, getOrgId())
+            .eq(Warehouse.ISDELETED, ZERO_STR);
 
         return findFirst(sql);
+    }
+
+    public List<Warehouse> findListByWhName(String cwhname) {
+        Sql sql = selectSql()
+            .eq(Warehouse.CWHNAME, cwhname)
+            .eq(Warehouse.IORGID, getOrgId())
+            .eq(Warehouse.ISDELETED, ZERO_STR);
+
+        return find(sql);
     }
 
     public Warehouse findByCwhcode(String cwhcode) {
         return findFirst("SELECT * FROM Bd_Warehouse WHERE cwhcode = ? AND corgcode = ? AND isDeleted = ? ", cwhcode, getOrgCode(), ZERO_STR);
     }
-    
+    /**
+     * 从系统导入字段配置，获得导入的数据
+     */
+    public Ret importExcelClass(File file) {
+        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        if (notOk(records)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+        }
+
+
+        for (Record record : records) {
+
+            if (StrUtil.isBlank(record.getStr("cWhCode"))) {
+                return fail("仓库编码不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("cWhName"))) {
+                return fail("仓库名称不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("cDepCode"))) {
+                return fail("所属部门名称不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("isStockWarnEnabled"))) {
+                return fail("启用库存预警不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("isSpaceControlEnabled"))) {
+                return fail("启用空间掌控不能为空");
+            }
+
+
+            Date now=new Date();
+
+            record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+            record.set("iOrgId", getOrgId());
+            record.set("cOrgCode", getOrgCode());
+            record.set("cOrgName", getOrgName());
+            record.set("iSource", SourceEnum.MES.getValue());
+            record.set("iCreateBy", JBoltUserKit.getUserId());
+            record.set("dCreateTime", now);
+            record.set("cCreateName", JBoltUserKit.getUserName());
+            record.set("isEnabled",1);
+            record.set("isDeleted",0);
+            record.set("iUpdateBy", JBoltUserKit.getUserId());
+            record.set("dUpdateTime", now);
+            record.set("cUpdateName", JBoltUserKit.getUserName());
+        }
+
+        // 执行批量操作
+        tx(() -> {
+            batchSaveRecords(records);
+            return true;
+        });
+        return SUCCESS;
+    }
 }

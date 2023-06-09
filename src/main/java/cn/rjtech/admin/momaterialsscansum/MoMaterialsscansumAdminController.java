@@ -1,14 +1,13 @@
 package cn.rjtech.admin.momaterialsscansum;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MoMaterialsscansum;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 /**
  * 制造工单-齐料汇总  Controller
  * @ClassName: MoMaterialsscansumAdminController
@@ -86,9 +85,12 @@ public class MoMaterialsscansumAdminController extends BaseAdminController {
 	}
 
 
-	public void getBarcode(String barcode){
-		renderJson(service.getBarcode(barcode));
+	public void getBarcode(){
+		String barcode=get("barcode");
+		Long imodocid=getLong("imodocid");
+		renderJson(service.getBarcode(barcode,imodocid));
 	}
+
 
 
 

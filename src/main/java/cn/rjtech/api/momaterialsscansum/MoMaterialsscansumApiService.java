@@ -15,8 +15,8 @@ public class MoMaterialsscansumApiService extends JBoltApiBaseService {
     @Inject
     private MoMaterialsscansumService moMaterialsscansumService;
 
-    public JBoltApiRet add(String barcoce) {
-        moMaterialsscansumService.add(barcoce);
+    public JBoltApiRet add(String barcoce,Long imodocid) {
+        moMaterialsscansumService.add(barcoce,imodocid);
        return JBoltApiRet.success();
     }
 }

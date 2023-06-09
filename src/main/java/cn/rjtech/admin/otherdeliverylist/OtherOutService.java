@@ -12,7 +12,9 @@ import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.OtherOut;
+import cn.rjtech.model.momdata.OtherOutDetail;
+import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -63,13 +65,11 @@ public class OtherOutService extends BaseService<OtherOut> {
 
 	/**
 	 * 其他出库单列表 明细
-	 * @param pageNumber
-	 * @param pageSize
 	 * @param kv
 	 * @return
 	 */
-	public Page<Record> getOtherOutLines(int pageNumber, int pageSize, Kv kv){
-		return dbTemplate("otherdeliverylist.getOtherOutLines",kv).paginate(pageNumber, pageSize);
+	public List<Record> getOtherOutLines(Kv kv){
+		return dbTemplate("otherdeliverylist.getOtherOutLines",kv).find();
 
 	}
 	/**
@@ -223,6 +223,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 			recordList.addAll(updateRecordList);
 		}
 
+		final String[] AutoIDs = {null};
 		tx(()->{
 			String headerId = null;
 			// 获取Form对应的数据
@@ -265,6 +266,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 					update(otherOut);
 					headerId = otherOut.getAutoID();
 				}
+				AutoIDs[0] = otherOut.getAutoID();
 			}
 
 			// 获取待保存数据 执行保存
@@ -306,7 +308,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 
 			return true;
 		});
-		return SUCCESS;
+		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
 

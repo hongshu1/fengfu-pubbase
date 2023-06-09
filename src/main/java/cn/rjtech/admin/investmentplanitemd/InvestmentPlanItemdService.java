@@ -1,14 +1,5 @@
 package cn.rjtech.admin.investmentplanitemd;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import com.jfinal.aop.Inject;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
-import static cn.hutool.core.text.StrPool.COMMA;
 import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
@@ -18,6 +9,16 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.InvestmentPlanItem;
 import cn.rjtech.model.momdata.InvestmentPlanItemd;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 投资计划项目明细 Service
@@ -47,7 +48,7 @@ public class InvestmentPlanItemdService extends BaseService<InvestmentPlanItemd>
 	 * 保存
 	 */
 	public Ret save(InvestmentPlanItemd investmentPlanItemd) {
-		if(investmentPlanItemd==null || isOk(investmentPlanItemd.getIautoid())) {
+		if(investmentPlanItemd==null || isOk(investmentPlanItemd.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 
@@ -70,13 +71,13 @@ public class InvestmentPlanItemdService extends BaseService<InvestmentPlanItemd>
 	 * 更新
 	 */
 	public Ret update(InvestmentPlanItemd investmentPlanItemd) {
-		if(investmentPlanItemd==null || notOk(investmentPlanItemd.getIautoid())) {
+		if(investmentPlanItemd==null || notOk(investmentPlanItemd.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 
 		tx(() -> {
 			// 更新时需要判断数据存在
-			InvestmentPlanItemd dbInvestmentPlanItemd = findById(investmentPlanItemd.getIautoid());
+			InvestmentPlanItemd dbInvestmentPlanItemd = findById(investmentPlanItemd.getIAutoId());
 			ValidationUtils.notNull(dbInvestmentPlanItemd, JBoltMsg.DATA_NOT_EXIST);
 
 			// TODO 其他业务代码实现

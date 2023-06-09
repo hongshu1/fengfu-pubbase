@@ -1,11 +1,9 @@
 package cn.rjtech.admin.inventoryroutingsop;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.consts.JBoltConst;
@@ -16,25 +14,15 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.model.momdata.Equipment;
-import cn.rjtech.model.momdata.InventoryRoutingConfig;
 import cn.rjtech.model.momdata.InventoryRoutingSop;
-import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import cn.rjtech.model.momdata.InventoryRoutingSop;
-
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
-
-import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

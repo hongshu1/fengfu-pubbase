@@ -53,16 +53,16 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row">
-                                    <input type="hidden" name="weekOrderM.ibustype"
+                         <!--           <input type="hidden" name="weekOrderM.ibustype"
                                            value="#(weekOrderM.ibustype??)" id="cwhcode"
-                                           data-value-attr="cwhcode" />
+                                           data-value-attr="cwhcode" />-->
                                     <label class="col-sm-3 col-form-label">业务类型</label>
-                                    <div class="col-8 col-form-label">
-                                        <input type="text" class="form-control" data-autocomplete
-                                               data-url="admin/productInList/getWarehouse" data-rule="required"
-                                               data-hidden-input="cwhcode" data-text-attr="cwhname"
-                                               data-column-attr="cwhcode,cwhname" placeholder="请选择业务类型" data-tips="请选择业务类型"
-                                               data-header="业务类型编码,业务类型" maxlength="40" value="#(weekOrderM.cwhname??)">
+                                    <div class="col-8">
+                                        <select class="form-control" data-rule="required"
+                                                name="weekOrderM.ibustype" data-autoload data-tips="=请选择业务类型="
+                                                data-url="admin/dictionary/options?key=order_business_type" data-text="=请选择业务类型="
+                                                data-value-attr="sn" data-text-attr="name" data-select="#(weekOrderM.ibustype??)">
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -314,7 +314,7 @@
            data-toolbar="WeekOrderM_toolbar_#(pageId)"
            data-editable="true"
            data-editable-option="getEditableTableOptions_#(pageId)"
-           data-height="180%"
+           data-height="500"
     >
         <thead>
         <tr>
@@ -376,20 +376,24 @@
                     placeholder: '计划代码'
                 },
                 cinvcode: {
-                    type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
-                    maxLength: 100,
-                    required: true,
-                    placeholder: "请选择",
-                    textAttr: "cinvcode",
-                    limit: 10,
-                    width: 500,
-                    valueAttr: "cinvcode",
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,isalesuomid",
-                    header: '存货编码,客户部番,部品名称,规格,销售单位',
-                    changeColumns: [{column: "cinvcode", use: "cinvcode"}, {column: "cdefine1", use: "cinvcode1"},
-                        {column: "cdefine2", use: "cinvname1"}, {column: "cdefine3", use: "cinvstd"},
-                        {column: "cdefine4", use: "isalesuomid"}, {column: "iinventoryid", use: "iautoid"}]
+                    required:true,
+                    type:"dialogbtn",
+                    placeholder:"选择存货",
+                    maxLength:100,
+                    dialog:{
+                        url:"admin/manualorderm/inventory_dialog_index",
+                        area:"80%,80%",
+                        title:"选择存货",
+                        btn:"选择,关闭"
+                    },
+                    columnAttr:"iinventoryid,cinvcode1,cinvname1,cinvstd,cuomname",
+                    changeColumns: [
+                        {column:"cuomname",use:"cuomname"},
+                        {column:"cinvstd",use:"cinvstd"},
+                        {column:"cdefine2",use:"cinvname1"},
+                        {column:"cdefine1",use:"cinvcode1"},
+                        {column:"iinventoryid",use:"iautoid"},
+                    ]
                 },
                 cdefine1: {
                     type: "text",

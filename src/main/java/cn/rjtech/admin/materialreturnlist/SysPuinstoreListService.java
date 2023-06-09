@@ -15,7 +15,6 @@ import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoredetailService;
-import cn.rjtech.model.momdata.SysProductindetail;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
@@ -139,11 +138,17 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 	/**
 	 * 删除
-	 * @param id
+	 * @param autoId
 	 * @return
 	 */
-	public Ret delete(Long id) {
-		return deleteById(id,true);
+	public Ret delete(Long autoId) {
+		tx(() -> {
+			ValidationUtils.notNull(autoId, JBoltMsg.DATA_NOT_EXIST);
+			update("UPDATE T_Sys_PUInStore SET isDeleted ='1' WHERE AutoID='"+autoId+"'");
+			return true;
+		});
+		return SUCCESS;
+//		return deleteById(id,true);
 	}
 
 	/**
@@ -195,7 +200,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	}
 
 
-	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, String param, String revokeVal) {
+	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, Integer param, String revokeVal) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
@@ -238,6 +243,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		if (jBoltTable.updateIsNotBlank()) {
 			recordList.addAll(updateRecordList);
 		}
+		final String[] AutoIDs = {null};
 
 		tx(()->{
 			String headerId = null;
@@ -268,13 +274,14 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 				if (puinstore.getAutoID() == null && "save".equals(revokeVal)) {
 //					保存
-//					订单状态：1=已保存，2=待审核，3=已审核
-					puinstore.setState(param);
+//					订单状态：0=待审核，1=未审核，2=已审核. 3=审核不通过
+					puinstore.setIAuditStatus(param);
 					puinstore.setCreateDate(nowDate);
 					puinstore.setOrganizeCode(OrgCode);
 					puinstore.setCreatePerson(userName);
 					puinstore.setModifyDate(nowDate);
 					puinstore.setModifyPerson(userName);
+					puinstore.setIsDeleted(false);
 					save(puinstore);
 					headerId = puinstore.getAutoID();
 				}else {
@@ -283,12 +290,13 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 						puinstore.setAuditDate(nowDate);
 						puinstore.setAuditPerson(userName);
 					}
-					puinstore.setState(param);
+					puinstore.setIAuditStatus(param);
 					puinstore.setModifyDate(nowDate);
 					puinstore.setModifyPerson(userName);
 					update(puinstore);
 					headerId = puinstore.getAutoID();
 				}
+				AutoIDs[0] = puinstore.getAutoID();
 			}
 
 			// 获取待保存数据 执行保存
@@ -376,9 +384,17 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 			return true;
 		});
-		return SUCCESS;
+		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
+	/**
+	 * 获取条码列表
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode, String vencode) {
+		return dbTemplate("materialreturnlist.getBarcodeDatas", Kv.by("q", q).set("limit", limit).set("orgCode", orgCode).set("vencode", vencode)).find();
+	}
 
 	/**
 	 * 审核
@@ -392,12 +408,12 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		List<SysPuinstore> listByIds = getListByIds(iAutoId);
 		if (listByIds.size() > 0) {
 			for (SysPuinstore puinstore : listByIds) {
-				Integer state = Integer.valueOf(puinstore.getState());
-				if (state != 2) {
+				Integer state = Integer.valueOf(puinstore.getIAuditStatus());
+				if (state != 1) {
 					return warn("订单："+puinstore.getBillNo()+"状态不支持审核操作！");
 				}
-				//订单状态：3. 已审核
-				puinstore.setState("3");
+				//订单状态：2. 已审核
+				puinstore.setIAuditStatus(2);
 				puinstore.setAuditDate(nowDate);
 				puinstore.setAuditPerson(userName);
 				success= puinstore.update();
@@ -417,14 +433,14 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	public Ret NoApprove(String ids) {
 		//TODO数据同步暂未开发 现只修改状态
 		for (SysPuinstore puinstore :  getListByIds(ids)) {
-			Integer state = Integer.valueOf(puinstore.getState());
-//			订单状态： 3. 已审批
-			if (state != 3) {
+			Integer state = Integer.valueOf(puinstore.getIAuditStatus());
+//			订单状态： 2. 已审批
+			if (state != 2) {
 				return warn("订单："+puinstore.getBillNo()+"状态不支持反审批操作！");
 			}
 
-			//订单状态： 2. 待审批
-			puinstore.setState("2");
+			//订单状态： 1. 待审批
+			puinstore.setIAuditStatus(1);
 			puinstore.update();
 		}
 		return SUCCESS;
@@ -443,7 +459,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		}
 		SysPuinstore puinstore = findById(iAutoId);
 		//订单状态：2. 待审批
-		puinstore.setState("1");
+		puinstore.setIAuditStatus(1);
 		puinstore.setAuditDate(null);
 		puinstore.setAuditPerson(null);
 		boolean result = puinstore.update();
@@ -488,8 +504,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	 * @param kv
 	 * @return
 	 */
-	public Page<Record> getmaterialLines(int pageNumber, int pageSize, Kv kv){
-		return dbTemplate("materialreturnlist.getmaterialLines",kv).paginate(pageNumber, pageSize);
+	public List<Record> getmaterialLines(Kv kv){
+		return dbTemplate("materialreturnlist.getmaterialLines",kv).find();
 
 	}
 
@@ -542,10 +558,10 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				jsonObject.put("CreatePerson", userCode);
 				jsonObject.put("BarCode", record.get("spotTicket"));
 				jsonObject.put("BillNo", record.get("billno"));
-				jsonObject.put("BillID", record.get("1000000003"));
-				jsonObject.put("BillNoRow", record.get("PO23050601-1"));
+				jsonObject.put("BillID", "1000000003");
+				jsonObject.put("BillNoRow", "PO23050601-1");
 				jsonObject.put("BillDate", record.get("billdate"));
-				jsonObject.put("BillDid", record.get("1000000003"));
+				jsonObject.put("BillDid", "1000000003");
 				jsonObject.put("sourceBillNo", record.get("sourcebillno"));
 				jsonObject.put("sourceBillDid", record.get("sourcebilldid"));
 				jsonObject.put("sourceBillID", record.get("sourcebillid"));

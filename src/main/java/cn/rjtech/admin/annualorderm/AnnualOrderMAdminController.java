@@ -18,6 +18,8 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import java.util.Optional;
+
 /**
  * 年度计划订单
  *
@@ -69,7 +71,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        AnnualOrderM annualOrderM = service.findById(getLong(0));
+        AnnualOrderM annualOrderM = service.findById(get("iautoid"));
         if (annualOrderM == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -78,6 +80,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
         Customer customer = customerService.findById(annualOrderM.getICustomerId());
         annualOrderMRc.set("ccusname", customer == null ? null : customer.getCCusName());
         set("annualOrderM", annualOrderMRc);
+        set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
         render("edit.html");
     }
 
@@ -96,17 +99,31 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     }
 
     /**
-     * 新增-可编辑表格-批量提交
+     * 批量删除
+     */
+    public void deleteByIds() {
+        renderJson(service.deleteByIds(get("ids")));
+    }
+
+    /**
+     * 保存
      */
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
 
     /**
+     * 提交审批
+     */
+    public void submit() {
+        renderJson(service.submit(getLong("iautoid")));
+    }
+
+    /**
      * 审批
      */
     public void approve() {
-        renderJson(service.approve(getLong("id")));
+        renderJson(service.approve(getLong(0)));
     }
 
     /**

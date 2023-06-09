@@ -1,4 +1,5 @@
 package cn.rjtech.admin.department;
+
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -22,6 +23,7 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -78,6 +80,9 @@ public class DepartmentService extends BaseService<Department> {
         return paginate;
     }
 
+
+
+
     public List<Record> findAll(Kv kv) {
         return dbTemplate("department.list", kv.set("orgId", getOrgId())).find();
     }
@@ -132,10 +137,27 @@ public class DepartmentService extends BaseService<Department> {
         if (department == null || notOk(department.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
+
+        short depGrade = 0;
+        Long iPid = department.getIPid();
+        if (ObjectUtil.isNotNull(iPid)){
+            Department pDepartment = findById(iPid);
+            if(pDepartment.getIDepGrade()==null){
+                pDepartment.setIDepGrade(depGrade);
+            }
+            depGrade = (short)(pDepartment.getIDepGrade()+1);
+            // 当前添加的父级是末级，更改状态
+            if (pDepartment.getBDepEnd()){
+                pDepartment.setBDepEnd(false);
+            }
+        }
+        boolean isDepEnd = true;
+        department.setBDepEnd(isDepEnd);
         verifyData(department);
         department.setIUpdateBy(JBoltUserKit.getUserId());
         department.setCUpdateName(JBoltUserKit.getUserName());
         department.setDUpdateTime(DateUtil.date());
+        department.setIDepGrade(depGrade);
         //if(existsName(department.getName(), department.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = department.update();
         if (success) {
@@ -347,5 +369,253 @@ public class DepartmentService extends BaseService<Department> {
 
         return findFirst(sql);
     }
+
+    public Ret refreshAllEndGrade() {
+        tx(()->{
+            List<Department> departments = daoTemplate("department.refreshAllEndGrade").find();
+
+
+                for (Department department : departments) {
+
+                    Long ipid = department.get("ipid");
+                    if (ipid==0){
+                        department.setIDepGrade(Short.valueOf("1"));
+
+                    }
+                    department.update();
+
+            }
+        return true;
+
+        });
+        return SUCCESS;
+    }
+
+    public Ret refreshAllEndGrade2() {
+        tx(()->{
+            List<Department> ipidList0 = daoTemplate("department.refreshAll0").find();
+            List<Department> departments = daoTemplate("department.refreshAllEndGrade").find();
+
+            for (Department department1 : ipidList0) {
+                Long iautoid = department1.get("iautoid");
+                    for (Department department : departments) {
+                        Long ipid = department.get("iautoid");
+                    if (iautoid.equals(ipid)){
+                        List<Department> departments1 = daoTemplate("department.selectByIautoid",Kv.by("ipid",ipid)).find();
+                        if (departments1.size()==0){
+                           department.setBDepEnd(true);
+                            department.update();
+                        }else {
+                            for (Department department2 : departments1) {
+                                department2.setIDepGrade(Short.valueOf("2"));
+                                department2.update();
+                            }
+                        }
+
+
+                    }
+
+                }
+
+            }
+            return true;
+
+        });
+        return SUCCESS;
+    }
+
+    public Ret refreshAllEndGrade3() {
+        tx(()->{
+            List<Department> ipidList0 = daoTemplate("department.refreshAll0").find();
+            List<Department> departments = daoTemplate("department.refreshAllEndGrade").find();
+
+            for (Department department1 : ipidList0) {
+                Long iautoid = department1.get("iautoid");
+                for (Department department : departments) {
+                    Long ipid = department.get("iautoid");
+                    if (iautoid.equals(ipid)){
+                        List<Department> departments1 = daoTemplate("department.selectByIautoid",Kv.by("ipid",ipid)).find();
+                        for (Department department2 : departments1) {
+                            Long iautoid1 = department2.get("iautoid");
+                            if (ObjectUtil.isNotNull(iautoid)) {
+                                List<Department> departments2 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid1)).find();
+                                if (departments2.size()==0){
+                                    department2.setBDepEnd(true);
+                                    department2.update();
+                                }else {
+                                    for (Department department3 : departments2) {
+                                        department3.setIDepGrade(Short.valueOf("3"));
+                                        department3.update();
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+
+            }
+            return true;
+
+        });
+        return SUCCESS;
+    }
+
+
+    public Ret refreshAllEndGrade4() {
+        tx(()->{
+            List<Department> ipidList0 = daoTemplate("department.refreshAll0").find();
+            List<Department> departments = daoTemplate("department.refreshAllEndGrade").find();
+
+            for (Department department1 : ipidList0) {
+                Long iautoid = department1.get("iautoid");
+                for (Department department : departments) {
+                    Long ipid = department.get("iautoid");
+                    if (iautoid.equals(ipid)){
+                        List<Department> departments1 = daoTemplate("department.selectByIautoid",Kv.by("ipid",ipid)).find();
+                        for (Department department2 : departments1) {
+                            Long iautoid1 = department2.get("iautoid");
+                            if (ObjectUtil.isNotNull(iautoid)) {
+                                List<Department> departments2 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid1)).find();
+                                for (Department department3 : departments2) {
+                                    Long iautoid2 = department3.get("iautoid");
+                                    if (ObjectUtil.isNotNull(iautoid)) {
+                                        List<Department> departments3 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid2)).find();
+                                        if (departments3.size()==0){
+                                            department3.setBDepEnd(true);
+                                            department3.update();
+                                        }else {
+                                            for (Department department4 : departments3) {
+                                                department4.setIDepGrade(Short.valueOf("4"));
+                                                department4.update();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+
+            }
+            return true;
+
+        });
+        return SUCCESS;
+    }
+
+    public Ret refreshAllEndGrade5() {
+        tx(()->{
+            List<Department> ipidList0 = daoTemplate("department.refreshAll0").find();
+            List<Department> departments = daoTemplate("department.refreshAllEndGrade").find();
+
+            for (Department department1 : ipidList0) {
+                Long iautoid = department1.get("iautoid");
+                for (Department department : departments) {
+                    Long ipid = department.get("iautoid");
+                    if (iautoid.equals(ipid)){
+                        List<Department> departments1 = daoTemplate("department.selectByIautoid",Kv.by("ipid",ipid)).find();
+                        for (Department department2 : departments1) {
+                            Long iautoid1 = department2.get("iautoid");
+                            if (ObjectUtil.isNotNull(iautoid)) {
+                                List<Department> departments2 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid1)).find();
+                                for (Department department3 : departments2) {
+                                    Long iautoid2 = department3.get("iautoid");
+                                    if (ObjectUtil.isNotNull(iautoid2)) {
+                                        List<Department> departments3 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid2)).find();
+                                        for (Department department4 : departments3) {
+                                            Long iautoid3 = department4.get("iautoid");
+                                            if (ObjectUtil.isNotNull(iautoid3)){
+                                                List<Department> departments4 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid3)).find();
+                                                if (departments4.size()==0){
+                                                    department4.setBDepEnd(true);
+                                                    department4.update();
+                                                }else {
+                                                    for (Department department5 : departments4) {
+                                                        department5.setIDepGrade(Short.valueOf("5"));
+                                                        department5.update();
+                                                    }
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+
+            }
+            return true;
+
+        });
+        return SUCCESS;
+    }
+
+    public Ret refreshAllEndGrade6() {
+        tx(()->{
+            List<Department> ipidList0 = daoTemplate("department.refreshAll0").find();
+            List<Department> departments = daoTemplate("department.refreshAllEndGrade").find();
+
+            for (Department department1 : ipidList0) {
+                Long iautoid = department1.get("iautoid");
+                for (Department department : departments) {
+                    Long ipid = department.get("iautoid");
+                    if (iautoid.equals(ipid)){
+                        List<Department> departments1 = daoTemplate("department.selectByIautoid",Kv.by("ipid",ipid)).find();
+                        for (Department department2 : departments1) {
+                            Long iautoid1 = department2.get("iautoid");
+                            if (ObjectUtil.isNotNull(iautoid)) {
+                                List<Department> departments2 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid1)).find();
+                                for (Department department3 : departments2) {
+                                    Long iautoid2 = department3.get("iautoid");
+                                    if (ObjectUtil.isNotNull(iautoid2)) {
+                                        List<Department> departments3 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid2)).find();
+                                        for (Department department4 : departments3) {
+                                            Long iautoid3 = department4.get("iautoid");
+                                            if (ObjectUtil.isNotNull(iautoid3)){
+                                                List<Department> departments4 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid3)).find();
+                                                for (Department department5 : departments4) {
+                                                    Long iautoid4 = department5.get("iautoid");
+                                                    if (ObjectUtil.isNotNull(iautoid4)){
+                                                        List<Department> departments5 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid4)).find();
+                                                        if (departments5.size()==0){
+                                                            department5.setBDepEnd(true);
+                                                            department5.update();
+                                                        }else {
+                                                            for (Department department6 : departments5) {
+                                                                department6.setIDepGrade(Short.valueOf("6"));
+                                                                department6.setBDepEnd(true);
+                                                                department6.update();
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+
+            }
+            return true;
+
+        });
+        return SUCCESS;
+    }
+
+
 
 }

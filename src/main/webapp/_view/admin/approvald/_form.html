@@ -80,6 +80,7 @@
 					data-value-attr="sn"
 					data-text-attr="name"
 					data-text=""
+					id="superSelect"
 					data-select="#(approvalD.isupervisortype??)">
 			</select>
 		</div>
@@ -186,9 +187,14 @@
 				// alert("看到这个消息说明多个表格都提交成功了");
 				if (res.state === 'ok') {
 					LayerMsgBox.success(res.msg, 1000, function () {
+					console.log('res',res)
+					location.href = '/admin/approvald/edit/' + res.iautoid + '-_jb_rqtype_dialog';
+
+                        parent.RefreshJboltTable();
+
 						// refreshPjaxContainer();
-						parent.LayerMsgBox.closeAll();
-						parent.refreshPjaxContainer();
+						// parent.LayerMsgBox.closeAll();
+						// parent.refreshPjaxContainer();
 					});
 				} else {
 					LayerMsgBox.alert(res.msg, 2);
@@ -230,6 +236,8 @@
 					$("#ispecuseridDiv").hide(); //选择指定人员
 				}
 
+				$("#superSelect").attr('style','pointer-events: auto;');
+
 				$("#table_line").hide(); //选择人员
 				$("#table_role").hide(); //角色
 				$("#selfChooseDiv").hide(); //选择自己作为审批人
@@ -240,6 +248,8 @@
 				$("#iskiponDiv").show(); // 审核人为空时
 				// $("input[name='approvalD.iskipon']").get(0).checked=true; //默认自动通过
 				$("select[name='approvalD.isupervisortype']").val(1); //默认直接主管
+
+				$("#superSelect").attr('style','pointer-events: none;');
 
 				var checked = $("input[name='approvalD.iskipon']").get(1).checked;
 				console.log('checked',checked);

@@ -346,21 +346,16 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     ValidationUtils.isTrue(qty != null && qty.compareTo(BigDecimal.ZERO) > 0, "版本号未获取到");
     ValidationUtils.isTrue(!cVersion.equals(orderDBatch.getCVersion()), "版本号不能一致");
     ValidationUtils.isTrue(qty.compareTo(orderDBatch.getIQty()) <= 0, "现品票的数量不可大于包装数量，只可小于包装数量");
-    // 新增一个现成票后，再生产一个版本记录表，及修改详情；
-    String barCode = generateBarCode();
-    SubcontractOrderDBatch newBatch = createSubcontractOrderDBatch(orderDBatch.getISubcontractOrderDid(), orderDBatch.getISubcontractOrderdQtyId(), orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, barCode);
+//    // 新增一个现成票后，再生产一个版本记录表，及修改详情；
+//    String barCode = generateBarCode();
+    SubcontractOrderDBatch newBatch = createSubcontractOrderDBatch(orderDBatch.getISubcontractOrderDid(), orderDBatch.getISubcontractOrderdQtyId(),
+            orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, orderDBatch.getCBarcode());
     // 设置新版本号
     newBatch.setCVersion(cVersion);
     // 添加来源id
     newBatch.setCSourceld(String.valueOf(id));
     // 将旧的改为失效
     orderDBatch.setIsEffective(false);
-
-
-    // 将计划类型拆分成 年月日
-    String yearStr = DateUtil.format(orderDBatch.getDPlanDate(), "yyyy");
-    String monthStr = DateUtil.format(orderDBatch.getDPlanDate(), "MM");
-    String dateStr = DateUtil.format(orderDBatch.getDPlanDate(), "dd");
     List<SubcontractorderdQty> subcontractorderdQtyList = subcontractorderdQtyService.findBySubcontractOrderDId(orderDBatch.getISubcontractOrderDid());
 
     tx(() -> {
@@ -368,16 +363,14 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
       newBatch.save();
       // 保存记录
       SubcontractOrderDBatchVersion batchVersion = subcontractOrderDBatchVersionService.createBatchVersion(subcontractOrderMId, id, orderDBatch.getIinventoryId(),
-          orderDBatch.getDPlanDate(), cVersion, orderDBatch.getCVersion(), barCode, orderDBatch.getCBarcode(), qty, orderDBatch.getIQty());
+          orderDBatch.getDPlanDate(), cVersion, orderDBatch.getCVersion(), orderDBatch.getCBarcode(), qty, orderDBatch.getIQty());
       batchVersion.save();
       // 修改
       orderDBatch.update();
 
       for (SubcontractorderdQty subcontractorderdQty : subcontractorderdQtyList) {
-        Integer year = subcontractorderdQty.getIYear();
-        Integer month = subcontractorderdQty.getIMonth();
-        Integer date = subcontractorderdQty.getIDate();
-        if (Integer.valueOf(yearStr).equals(year) && Integer.valueOf(monthStr).equals(month) && Integer.valueOf(dateStr).equals(date)) {
+        Long qtyIAutoId = subcontractorderdQty.getIAutoId();
+        if (qtyIAutoId.equals(orderDBatch.getISubcontractOrderdQtyId())) {
           // 总数量 - 更改的数量
 //          BigDecimal num = subcontractorderdQty.getIQty().subtract(orderDBatch.getIQty().subtract(qty));
           subcontractorderdQty.setIQty(qty);

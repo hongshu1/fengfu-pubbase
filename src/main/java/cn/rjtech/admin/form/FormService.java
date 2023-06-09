@@ -1,5 +1,6 @@
 package cn.rjtech.admin.form;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.datasource.JBoltTableMetaUtil;
 import cn.jbolt.core.db.sql.Sql;
@@ -9,6 +10,7 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formfield.FormFieldService;
+import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.enums.FormFieldEnum;
 import cn.rjtech.model.momdata.Form;
 import cn.rjtech.model.momdata.FormField;
@@ -21,7 +23,6 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.generator.ColumnMeta;
 import com.jfinal.plugin.activerecord.generator.TableMeta;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,17 +49,8 @@ public class FormService extends BaseService<Form> {
     /**
      * 后台管理分页查询
      */
-    public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, String keywords,Kv para) {
-
-        Page<Record> list = dbTemplate("form.paginateAdminDatas").paginate(pageNumber,pageSize);
-        for (Record row : list.getList()) {
-            BigDecimal iformcategoryid = row.getBigDecimal("iformcategoryid");
-            para.set("iatuoid",iformcategoryid);
-            String Cname = dbTemplate("form.getFormCategoryByCname", para).queryStr();
-            row.set("Cname",Cname);
-        }
-//        return paginateByKeywords("iAutoId", "DESC", pageNumber, pageSize, keywords, "cFormCode,cFormName");
-        return list;
+    public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+        return dbTemplate("form.paginateAdminDatas", para).paginate(pageNumber, pageSize);
     }
 
     /**
@@ -247,11 +239,11 @@ public class FormService extends BaseService<Form> {
         ValidationUtils.notEmpty(columnMetas, "数据表字段不能为空");
 
         List<FormField> formFields = new ArrayList<>();
-        
+
         for (ColumnMeta meta : columnMetas) {
 
             String colLow = meta.name.toLowerCase();
-            
+
             // id字段跳过、状态
             if (colLow.endsWith("id") || colLow.endsWith("status") || colLow.endsWith("state")) {
                 continue;
@@ -268,20 +260,21 @@ public class FormService extends BaseService<Form> {
                 case "dcreatetime":
                 case "dupdatetime":
                 case "isdeleted":
+                case "isource":
                     continue;
                 default:
                     break;
             }
 
             String javaType = meta.javaType.toLowerCase();
-            
+
             // 跳过指定类型
             switch (javaType) {
                 case "java.lang.boolean":
                 case "java.lang.long":
                     continue;
                 default:
-                     break;
+                    break;
             }
 
             FormField formField = new FormField()
@@ -295,6 +288,8 @@ public class FormService extends BaseService<Form> {
                 case "java.lang.string":
                     formField.setCFieldTypeSn(FormFieldEnum.STRING.getValue());
                     break;
+                case "java.lang.byte":
+                case "java.lang.short":
                 case "java.lang.integer":
                 case "java.lang.float":
                 case "java.lang.double":
@@ -305,7 +300,7 @@ public class FormService extends BaseService<Form> {
                     formField.setCFieldTypeSn(FormFieldEnum.DATE.getValue());
                     break;
                 default:
-                    break;
+                    throw new ParameterException("未知数据类型：" + javaType);
             }
 
             formFields.add(formField);
@@ -317,7 +312,7 @@ public class FormService extends BaseService<Form> {
 
             return true;
         });
-        
+
         return SUCCESS;
     }
 
@@ -325,5 +320,12 @@ public class FormService extends BaseService<Form> {
         Sql sql = selectSql().eq(Form.CFORMCODE, tableName).eq(Form.ISDELETED, ZERO_STR).first();
         return findFirst(sql);
     }
-    
+
+    public List<Form> findByFuzzy(String keywords) {
+        Sql sql = selectSql().eq(Form.ISDELETED, ZERO_STR);
+        if (StrUtil.isNotBlank(keywords)) {
+            sql.likeMulti(keywords, Form.CFORMCODE, Form.CFORMNAME);
+        }
+        return find(sql);
+    }
 }

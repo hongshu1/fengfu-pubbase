@@ -76,6 +76,8 @@
 				<a class="jbolt_table_delbtn" href="admin/department/${isDeleted?'realDelete':'delete'}/${iautoid}" data-handler="refreshJBoltTable" >删除</a>
 			</td>
 			<td>${cdepname}</td>
+			<td>${idepgrade}</td>
+			<td>${bdepend==0?'否':'是'}</td>
 			<td>${ctype}</td>
 			<td>${cpersonname}</td>
 			<td>${cdepmemo}</td>
@@ -147,6 +149,7 @@
 				</div>
 				#end
 				<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+				<a href="/admin/department/refreshAllEndGrade" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新数据库数据</a>
 			</div>
 		</div>
 
@@ -167,6 +170,8 @@
 				<th data-width="200" data-column="cDepCode">部门编码</th>
 				<th data-width="120">操作</th>
 				<th data-width="150" data-column="cDepName">部门名称</th>
+				<th data-width="150" data-column="iDepGrade">部门层级</th>
+				<th data-width="150" data-column="bDepEnd">是否末级</th>
 				<th data-width="150" data-column="typename">组织类型</th>
 				<th data-width="150" data-column="cDepPerson">负责人</th>
 				<th data-width="150" data-column="cDepMemo">备注</th>

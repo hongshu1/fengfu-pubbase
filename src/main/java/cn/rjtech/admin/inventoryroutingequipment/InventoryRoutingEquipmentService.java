@@ -16,7 +16,6 @@ import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.model.momdata.Equipment;
 import cn.rjtech.model.momdata.InventoryRoutingConfig;
 import cn.rjtech.model.momdata.InventoryRoutingEquipment;
-import cn.rjtech.model.momdata.InventoryRoutingInvc;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -27,7 +26,6 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

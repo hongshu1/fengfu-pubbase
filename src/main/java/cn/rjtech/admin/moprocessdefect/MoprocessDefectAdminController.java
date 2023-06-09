@@ -1,6 +1,5 @@
 package cn.rjtech.admin.moprocessdefect;
 
-import cn.hutool.extra.validation.ValidationUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;

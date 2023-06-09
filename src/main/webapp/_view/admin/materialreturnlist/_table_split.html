@@ -1,7 +1,7 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
    {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
+        <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
     <td>${data.spotticket}</td>
     <td>${data.cinvcode}</td>
@@ -10,7 +10,7 @@
     <td>${data.cinvname1}</td>
     <td>${data.cinvstd}</td>
     <td>品牌</td>
-    <td>${data.ipurchaseuomid}</td>
+    <td>${data.inventorycuomname}</td>
     <td>${data.qtys}</td>
     <td>${data.memo}</td>
     <td hidden>${data.iqty}</td>
@@ -24,17 +24,17 @@
       <div class="card-body">
         <div class="btn-group">
           <form class="form-inline" id="inventoryForm_#(pageId)" onsubmit="return false;" method="post" style="width: 1200px">
-            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
-                   maxlength="50" name="barcode" value="#(barcode??)"/>
-            <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>查询</button>
-            <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>重置</button>
+<!--            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="-->
+<!--                   maxlength="50" name="barcode" value="#(barcode??)"/>-->
+<!--            <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>查询</button>-->
+<!--            <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>重置</button>-->
           </form>
         </div>
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)">
           <div class="" role="group" aria-label="btn-group">
-              <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-              <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
+<!--              <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>-->
+<!--              <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>-->
           </div>
           <div class="clearfix"></div>
         </div>
@@ -93,81 +93,81 @@
               name:"table2"
           },
       cols: {
-          // spotticket: { //现品票条码
-          //     maxLength: 100,
-          //     required: false,
-          //     placeholder: "=请选择=",
-          //     type: "autocomplete",
-          //     url: "admin/otherout/barcodeDatas",
-          //     textAttr: "spotticket",
-          //     width: 800,
-          //     sync: "",
-          //     valueAttr: "spotticket",
-          //     columnAttr: "barcode,cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid,qty",
-          //     header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
-          //     changeColumns: [{column: "spotticket", use: "barcode"},
-          //         {column: "cinvcode", use: "cinvaddcode"},
-          //         {column: "cinvname", use: "cinvname"},
-          //         {column: "cinvcode1", use: "cinvcode1"},
-          //         {column: "cinvname1", use: "cinvname1"},
-          //         {column: "cinvstd", use: "cinvstd"},
-          //         {column: "pingpai", use: "cinvname1"},
-          //         {column: "iqty", use: "qty"},
-          //         {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
+          //  spotticket: { //现品票条码
+          //      maxLength: 100,
+          //      required: false,
+          //      placeholder: "=请选择=",
+          //      type: "autocomplete",
+          //      url: "admin/otherout/barcodeDatas",
+          //      textAttr: "spotticket",
+          //      width: 800,
+          //      sync: "",
+          //      valueAttr: "spotticket",
+          //      columnAttr: "barcode,cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid,qty",
+          //      header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
+          //      changeColumns: [{column: "spotticket", use: "barcode"},
+          //          {column: "cinvcode", use: "cinvaddcode"},
+          //          {column: "cinvname", use: "cinvname"},
+          //          {column: "cinvcode1", use: "cinvcode1"},
+          //          {column: "cinvname1", use: "cinvname1"},
+          //          {column: "cinvstd", use: "cinvstd"},
+          //          {column: "pingpai", use: "cinvname1"},
+          //          {column: "iqty", use: "qty"},
+          //          {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
           //
-          // },
-          // cinvcode: {
-          //     type: "autocomplete",
-          //     url: "admin/otherout/autocomplete",
-          //     maxLength: 100,
-          //     required: false,
-          //     placeholder: "=请选择=",
-          //     textAttr: "cinvcode",
-          //     width: 800,
-          //     valueAttr: "cinvcode",
-          //     columnAttr: "cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid,qty",
-          //     header: '存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
-          //     changeColumns: [{column: "cinvcode", use: "cinvaddcode"},
-          //         {column: "cinvname", use: "cinvname"},
-          //         {column: "cinvcode1", use: "cinvcode1"},
-          //         {column: "cinvname1", use: "cinvname1"},
-          //         {column: "cinvstd", use: "cinvstd"},
-          //         {column: "pingpai", use: "cinvname1"},
-          //         {column: "iqty", use: "qty"},
-          //         {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
-          // },
-          /*        ipurchaseuomid: {
-                    type: "amount",//类型
-                    placeholder: "采购单位",
-                    tooltip: "采购单位",
-                  },*/
-          // qty: {
-          //     type:"input",
-          //     submitAttr:"qty",
-          //     required:true,
-          //     handler:function (table,td,text,value,jsonData) {
-          //         let iqty =  jsonData.iqty;
-          //         console.log(iqty);
-          //         let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
-          //         console.log('退货数量===>',qty);
-          //         if (qty > 0){
-          //             showFormEleErrorStyle(td,"请输入小于或等于0的数量！！！");
-          //             return false;
-          //         }
-          //         let cha = iqty- (qty);
-          //         if (cha > iqty*2){
-          //             showFormEleErrorStyle(td,"可退数量为"+iqty+",退货数量已超出！！！");
-          //             return false;
-          //         }
-          //     }
-          // },
-          // qtys: {
-          //     submitAttr:"qtys",
-          // },
-          // memo: {
-          //     type:"input",
-          //     submitAttr:"memo",
-          // },
+          //  },
+          //  cinvcode: {
+          //      type: "autocomplete",
+          //      url: "admin/otherout/autocomplete",
+          //      maxLength: 100,
+          //      required: false,
+          //      placeholder: "=请选择=",
+          //      textAttr: "cinvcode",
+          //      width: 800,
+          //      valueAttr: "cinvcode",
+          //      columnAttr: "cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid,qty",
+          //      header: '存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
+          //      changeColumns: [{column: "cinvcode", use: "cinvaddcode"},
+          //          {column: "cinvname", use: "cinvname"},
+          //          {column: "cinvcode1", use: "cinvcode1"},
+          //          {column: "cinvname1", use: "cinvname1"},
+          //          {column: "cinvstd", use: "cinvstd"},
+          //          {column: "pingpai", use: "cinvname1"},
+          //          {column: "iqty", use: "qty"},
+          //          {column: "ipurchaseuomid", use: "ipurchaseuomid"}]
+          //  },
+          // /*        ipurchaseuomid: {
+          //           type: "amount",//类型
+          //           placeholder: "采购单位",
+          //           tooltip: "采购单位",
+          //         },*/
+          //  qty: {
+          //      type:"input",
+          //      submitAttr:"qty",
+          //      required:true,
+          //      handler:function (table,td,text,value,jsonData) {
+          //          let iqty =  jsonData.iqty;
+          //          console.log(iqty);
+          //          let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
+          //          console.log('退货数量===>',qty);
+          //          if (qty > 0){
+          //              showFormEleErrorStyle(td,"请输入小于或等于0的数量！！！");
+          //              return false;
+          //          }
+          //          let cha = iqty- (qty);
+          //          if (cha > iqty*2){
+          //              showFormEleErrorStyle(td,"可退数量为"+iqty+",退货数量已超出！！！");
+          //              return false;
+          //          }
+          //      }
+          //  },
+          //  qtys: {
+          //      submitAttr:"qtys",
+          //  },
+          //  memo: {
+          //      type:"input",
+          //      submitAttr:"memo",
+          //  },
       }
     };
     return editableTableOptions;

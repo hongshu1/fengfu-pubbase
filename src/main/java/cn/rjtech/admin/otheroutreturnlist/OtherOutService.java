@@ -2,32 +2,30 @@ package cn.rjtech.admin.otheroutreturnlist;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONObject;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
 import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.model.momdata.OtherOutDetail;
 import cn.rjtech.model.momdata.Person;
-import cn.rjtech.model.momdata.SysSaledeliver;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.OtherOut;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.json.JSONArray;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -152,6 +150,25 @@ public class OtherOutService extends BaseService<OtherOut> {
 	}
 
 
+
+	/**
+	 * 特殊领料单列表 明细
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param kv
+	 * @return
+	 */
+	public Page<Record> getOtherOutLinesReturnLines(int pageNumber, int pageSize, Kv kv){
+		return dbTemplate("otheroutreturnlist.getOtherOutLinesReturnLines",kv).paginate(pageNumber, pageSize);
+
+	}
+
+	public List<Record> treturnQty(Kv kv) {
+		List<Record> treturnQty = dbTemplate("otheroutreturnlist.treturnQty",kv).find();
+	return treturnQty;
+	}
+
+
 	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, String param, String revokeVal, String autoid) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
@@ -211,6 +228,33 @@ public class OtherOutService extends BaseService<OtherOut> {
 
 				if ("submit".equals(revokeVal) && otherOut.getAutoID() == null) {
 					ValidationUtils.isTrue(false, "请保存后提交审核！！！");
+				}
+
+				List<Record> jBoltTableSaveRecordList = jBoltTable.getUpdateRecordList();
+				if (jBoltTableSaveRecordList!= null){
+					int k = 0;
+					for (int i = 0; i < jBoltTableSaveRecordList.size(); i++) {
+						k++;
+						Record record = jBoltTableSaveRecordList.get(i);
+						//输入数量
+						BigDecimal qty = record.getBigDecimal("qty");
+						//可退数量
+						BigDecimal qtys = record.getBigDecimal("qtys");
+
+						if (notNull(record.get("qty"))){
+							BigDecimal num1 = new BigDecimal(-1);
+							BigDecimal value = qtys.multiply(num1);
+							int flag = qty.compareTo(value);
+
+							//物料退货判断
+							if (flag<0){
+								ValidationUtils.isTrue(false, "第" + k + "行退货数量超出现存数（" + qtys + "）！！！");
+							}
+						}else {
+							ValidationUtils.isTrue(false, "第"+k+"行出库数量为空！！！");
+						}
+
+					}
 				}
 				System.out.println("====="+otherOut.getAutoID());
 

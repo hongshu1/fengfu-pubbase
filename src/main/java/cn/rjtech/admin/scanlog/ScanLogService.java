@@ -1,20 +1,17 @@
 package cn.rjtech.admin.scanlog;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import com.jfinal.plugin.activerecord.Page;
-
-import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.common.model.Barcodedetail;
 import cn.rjtech.model.momdata.ScanLog;
+import com.google.gson.Gson;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+
+import java.util.Date;
 /**
  * 扫描日志 Service
  * @ClassName: ScanLogService
@@ -131,7 +128,7 @@ public class ScanLogService extends BaseService<ScanLog> {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
-	public void saveScanLogModel(ScanLog log, Date now, String json, Barcodedetail detail){
+	public void saveScanLogModel(ScanLog log, Date now, Barcodedetail detail){
 		log.setOrganizeCode(getOrgCode());
 		//log.setLogNo();
 		log.setProcessType("InitStock");
@@ -148,7 +145,7 @@ public class ScanLogService extends BaseService<ScanLog> {
 		//log.setIPosCode();
 		//log.setOPosCode();
 		//log.setPBarcode();
-		log.setBarcode(json);
+		log.setBarcode(new Gson().toJson(detail));
 		log.setInvCode(detail.getInvcode());
 		//log.setCurQty();
 		log.setQty(detail.getQty());

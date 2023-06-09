@@ -3,27 +3,27 @@ package cn.rjtech.admin.formuploadm;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formuploadcategory.FormUploadCategoryService;
 import cn.rjtech.admin.formuploadd.FormUploadDService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.model.momdata.FormUploadD;
+import cn.rjtech.model.momdata.FormUploadM;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-
-import java.util.*;
-
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.FormUploadM;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
+import java.util.*;
 
 
 /**
@@ -298,27 +298,29 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 	/**
 	 * 主表数据
 	 */
-	public Ret saveTableSubmitApi(Kv kv) {
+	public Ret saveTableSubmitApi(String iautoid, String iworkregionmid, String icategoryid, Date ddate, JSONArray formuploaddsv) {
 
-		Record record = JSON.parseObject(kv.getStr("formuploadm"), Record.class);
-		List<Kv> array = JSON.parseArray("formuploadds", Kv.class);
 		tx(() -> {
 			//修改
-			if (ObjUtil.isNotNull(record.getStr("iautoid"))){
-				FormUploadM formUploadM = findById(record.getStr("iautoid"));
-				formUploadM.setIWorkRegionMid(record.getLong("iworkregionmid"));
-				formUploadM.setICategoryId(record.getLong("icategoryid"));
-				formUploadM.setDDate(record.getDate("ddate"));
+			if (ObjUtil.isNotNull(iautoid)){
+				FormUploadM formUploadM = findById(iautoid);
+				formUploadM.setIWorkRegionMid(Long.parseLong(iworkregionmid));
+				formUploadM.setICategoryId(Long.parseLong(icategoryid));
+				formUploadM.setDDate(ddate);
 				formUploadM.setDUpdateTime(new Date());
 				formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
 				formUploadM.setCUpdateName(JBoltUserKit.getUserName());
+				ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
 				//细表数据
-				for (Kv kv1 : array) {
-					FormUploadD formUploadD = formUploadDService.findById(kv1.getStr("iautoid"));
-					formUploadD.setCMemo(kv1.getStr("cmemo"));
-					formUploadD.setCAttachments(kv1.getStr("cattachments"));
+				for (int i = 0; i < formuploaddsv.size(); i++) {
+					JSONObject jsonObject = formuploaddsv.getJSONObject(i);
+					FormUploadD formUploadD = formUploadDService.findById(jsonObject.getString("iautoid"));
+					formUploadD.setCMemo(jsonObject.getString("cmemo"));
+					formUploadD.setCAttachments(jsonObject.getString("cattachments"));
+					formUploadDS.add(formUploadD);
 				}
-
+				ValidationUtils.isTrue(formUploadM.update(), "修改失败");
+				formUploadDService.batchUpdate(formUploadDS);
 				//新增
 			}else {
 				FormUploadM formUploadM = new FormUploadM();
@@ -333,18 +335,19 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 				formUploadM.setCUpdateName(JBoltUserKit.getUserName());
 				formUploadM.setDUpdateTime(new Date());
 				formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
-				formUploadM.setIWorkRegionMid(record.getLong("iworkregionmid"));
-				formUploadM.setICategoryId(record.getLong("icategoryid"));
-				formUploadM.setDDate(record.getDate("ddate"));
+				formUploadM.setIWorkRegionMid(Long.parseLong(iworkregionmid));
+				formUploadM.setICategoryId(Long.parseLong(icategoryid));
+				formUploadM.setDDate(ddate);
 				formUploadM.setIAuditStatus(0);
 				ValidationUtils.isTrue(formUploadM.save(), "保存失败");
 				//子表数据
 				ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
-				for (Kv kv1 : array) {
+				for (int i = 0; i < formuploaddsv.size(); i++) {
+					JSONObject jsonObject = formuploaddsv.getJSONObject(i);
 					FormUploadD formUploadD = new FormUploadD();
 					formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
-					formUploadD.setCMemo(kv1.getStr("cmemo"));
-					formUploadD.setCAttachments(kv1.getStr("cattachments"));
+					formUploadD.setCMemo(jsonObject.getString("cmemo"));
+					formUploadD.setCAttachments(jsonObject.getString("cattachments"));
 					formUploadDS.add(formUploadD);
 				}
 				formUploadDService.batchSave(formUploadDS);
@@ -360,9 +363,9 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 	/**
 	 * 修改详情API接口
 	 */
-	public Map<String,Object> detailsApi(Integer pageNumber, Integer pageSize, Kv iautoid) {
+	public Map<String,Object> detailsApi(Integer pageNumber, Integer pageSize, Kv kv) {
 		Map<String, Object> map = new HashMap<>();
-		FormUploadM formUploadM = findById(iautoid);
+		FormUploadM formUploadM = findById(kv.getStr("iautoid"));
 		map.put("formuploadm",formUploadM);
 		Page<Record> page = formUploadDService.findByPid2(pageNumber, pageSize, formUploadM.getIAutoId());
 		map.put("page",page);

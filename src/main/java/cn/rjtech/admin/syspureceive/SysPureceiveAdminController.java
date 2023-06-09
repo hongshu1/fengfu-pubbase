@@ -21,7 +21,12 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * 采购收料单
@@ -181,7 +186,22 @@ public class SysPureceiveAdminController extends BaseAdminController {
      */
     @UnCheck
     public void barcodeDatas() {
-        renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()), null));
+        List<Record> barcodeDatas = service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()), null);
+        String barcode = get("detailHidden");
+        if(null != barcode &&  !"".equals(barcode)){
+            String[] split = barcode.split(",");
+            for (int i = 0; i < split.length; i++) {
+                String s = split[i].replaceAll("'", "");
+                Iterator<Record> iterator = barcodeDatas.iterator();
+                while (iterator.hasNext()) {
+                    Record r = iterator.next();
+                    if (r.getStr("barcode").equals(s)) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+        renderJsonData(barcodeDatas);
     }
 
     /**
@@ -209,7 +229,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     public void withdraw(Long iAutoId) {
         ValidationUtils.validateId(iAutoId, "iAutoId");
 
-        // renderJson(service.withdraw(iAutoId));
+         renderJson(service.withdraw(iAutoId));
     }
 
     /**
@@ -218,7 +238,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     public void approve(String ids) {
         ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
 
-        // renderJson(service.approve(ids));
+         renderJson(service.approve(ids));
     }
 
     /**
@@ -229,7 +249,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
         }
-        // renderJson(service.reject(ids))
+        renderJson(service.reject(ids));
     }
 
 }

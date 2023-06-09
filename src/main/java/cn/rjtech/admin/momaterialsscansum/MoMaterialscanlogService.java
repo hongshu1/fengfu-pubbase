@@ -159,6 +159,7 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 	 * @return
 	 */
 	public Page<Record> getMoMaterialNotScanLogList(int pageNumber, int pageSize, Kv kv) {
+
 		return dbTemplate("momaterialsscansum.getMoMaterialNotScanLogList", kv).paginate(pageNumber, pageSize);
 	}
 
@@ -174,66 +175,68 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 	}
 
 	public Ret addBarcode(String barcode, Long imodocid) {
-		Record record = moMaterialscanusedlogmService.getBarcode(barcode);
+		Record record = moMaterialsscansumService.getBarcode(barcode,imodocid);
 		if(record==null){
 			return  fail("未找到当前现品票");
 		}
 
 		if (record != null) {
 			tx(() -> {
-			MoMaterialscanlog moMaterialscanlog = findFirst(Okv.create().
-					setIfNotNull(MoMaterialscanlog.IMATERIALSPREPAIRDID, record.get("imaterialsprepairdid")).
-					setIfNotNull(MoMaterialscanlog.CBARCODE, record.get("barcode")).
-					setIfNotNull(MoMaterialscanlog.IMODOCID, imodocid), MoMaterialscanlog.IAUTOID, "desc");
-			if (moMaterialscanlog == null) {
-				moMaterialscanlog.setIMoDocId(imodocid);
-				moMaterialscanlog.setIMaterialsPrepairDid(record.get("imaterialsprepairdid"));
-				moMaterialscanlog.setIInventoryId(record.getLong("iinventoryid")); //存货ID
-				moMaterialscanlog.setCBarcode(record.getStr("barcode"));
-				moMaterialscanlog.setIQty(new BigDecimal(1));
-				moMaterialscanlog.setICreateBy(JBoltUserKit.getUserId());
-				moMaterialscanlog.setCCreateName(JBoltUserKit.getUserName());
-				moMaterialscanlog.setDCreateTime(new Date());
-				moMaterialscanlog.save();
+				MoMaterialscanlog moMaterialscanlog = findFirst(Okv.create().
+						setIfNotNull(MoMaterialscanlog.IMATERIALSPREPAIRDID, record.get("imaterialsprepairdid")).
+						setIfNotNull(MoMaterialscanlog.CBARCODE, record.get("barcode")).
+						setIfNotNull(MoMaterialscanlog.IMODOCID, imodocid), MoMaterialscanlog.IAUTOID, "desc");
+				if (moMaterialscanlog == null) {
+					moMaterialscanlog.setIMoDocId(imodocid);
+					moMaterialscanlog.setIMaterialsPrepairDid(record.get("imaterialsprepairdid"));
+					moMaterialscanlog.setIInventoryId(record.getLong("iinventoryid")); //存货ID
+					moMaterialscanlog.setCBarcode(record.getStr("barcode"));
+					//moMaterialscanlog.setIQty(new BigDecimal(1));
+					moMaterialscanlog.setIQty(record.getBigDecimal("qty"));
+					moMaterialscanlog.setICreateBy(JBoltUserKit.getUserId());
+					moMaterialscanlog.setCCreateName(JBoltUserKit.getUserName());
+					moMaterialscanlog.setDCreateTime(new Date());
+					moMaterialscanlog.save();
 
-			} else {
-				moMaterialscanlog.setIQty(moMaterialscanlog.getIQty().add(new BigDecimal(1)));
-				moMaterialscanlog.update();
-			}
-			addMoMaterialsscansum(record);
-			return  true;
-		});
+				} else {
+					//moMaterialscanlog.setIQty(moMaterialscanlog.getIQty().add(new BigDecimal(1)));
+					//moMaterialscanlog.update();
+					fail("已加入");
+				}
+				addMoMaterialsscansum(record);
+				return  true;
+			});
 		}
 
-         return  SUCCESS;
+		return  SUCCESS;
 	}
 
 	public void  addMoMaterialsscansum(Record record){
 
-			if(isOk(record.getLong("iinventoryid"))) {
-				MoMaterialsscansum moMaterialsscansum=moMaterialsscansumService.findFirst(Okv.create().
-						set(MoMaterialsscansum.IINVENTORYID,record.getLong("iinventoryid"))
-								.setIfNotNull(MoMaterialsscansum.IMODOCID,record.getLong("imodocid"))
-						,MoMaterialsscansum.IAUTOID,"DESC");
-				if(moMaterialsscansum!=null) {
-					moMaterialsscansum = new MoMaterialsscansum();
-					moMaterialsscansum.setIInventoryId(record.getLong("iinventoryid"));
-					moMaterialsscansum.setIMoDocId(record.get("imodocid"));
-					//获取工单子件计划数
-                     Record r=getPlanQty(record.get("imodocid"),record.getLong("iinventoryid"));
-					 if(r!=null){
-						 moMaterialsscansum.setIPlanQty(r.getBigDecimal("planiqty")); //计划数
-					 }
-
-					moMaterialsscansum.setIScannedQty(new BigDecimal(1));
-					moMaterialsscansum.save();
-				}else{
-					moMaterialsscansum.setIScannedQty(moMaterialsscansum.getIScannedQty().add(new BigDecimal(1)));
-					moMaterialsscansum.update();
+		if(isOk(record.getLong("iinventoryid"))) {
+			MoMaterialsscansum moMaterialsscansum=moMaterialsscansumService.findFirst(Okv.create().
+							set(MoMaterialsscansum.IINVENTORYID,record.getLong("iinventoryid"))
+							.setIfNotNull(MoMaterialsscansum.IMODOCID,record.getLong("imodocid"))
+					,MoMaterialsscansum.IAUTOID,"DESC");
+			if(moMaterialsscansum!=null) {
+				moMaterialsscansum = new MoMaterialsscansum();
+				moMaterialsscansum.setIInventoryId(record.getLong("iinventoryid"));
+				moMaterialsscansum.setIMoDocId(record.get("imodocid"));
+				//获取工单子件计划数
+				Record r=getPlanQty(record.get("imodocid"),record.getLong("iinventoryid"));
+				if(r!=null){
+					moMaterialsscansum.setIPlanQty(r.getBigDecimal("planiqty")); //计划数
 				}
-			}
 
+				moMaterialsscansum.setIScannedQty(record.getBigDecimal("qty"));
+				moMaterialsscansum.save();
+			}else{
+				//moMaterialsscansum.setIScannedQty(moMaterialsscansum.getIScannedQty().add(new BigDecimal(1)));
+				//moMaterialsscansum.update();
+			}
 		}
+
+	}
 
 	/**
 	 * 获取子件计划数
@@ -241,10 +244,10 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 	 * @param iinventoryid
 	 * @return
 	 */
-		public Record getPlanQty(Long imodocid,Long iinventoryid){
+	public Record getPlanQty(Long imodocid,Long iinventoryid){
 		Kv kv=Kv.create().setIfNotNull("imodocid",imodocid).
 				setIfNotNull("iinventoryid",iinventoryid);
-          Record record=dbTemplate("momaterialsscansum.findInvCodeUseNum",kv).findFirst();
-		  return record;		}
+		Record record=dbTemplate("momaterialsscansum.findInvCodeUseNum",kv).findFirst();
+		return record;		}
 
 }

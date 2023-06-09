@@ -6,7 +6,8 @@ SELECT
     v.cInvCode1,
     a.iPlanQty,
     a.iScannedQty,
-    v.cInvStd
+    v.cInvStd,
+    uom.cUomName
 FROM
     Mo_MaterialsScanSum a
         LEFT JOIN Mo_MoDoc b ON a.iMoDocId= b.iAutoId
@@ -14,14 +15,18 @@ FROM
         LEFT JOIN Mo_MoRoutingConfig d ON d.iMoRoutingId= c.iAutoId
         LEFT JOIN Mo_MoRoutingInvc f ON f.iMoRoutingConfigId= d.iAutoId
         LEFT JOIN Bd_Inventory v ON f.iInventoryId= v.iAutoId
-###单位
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId = v.iInventoryUomId1
+    ###单位
 where  1=1
-#if(iMoDocId)
-AND a.iMoDocId=#para(iMoDocId)
-#end
-#end
+    #if(iMoDocId)
+  AND a.iMoDocId=#para(iMoDocId)
+    #end
+    #if(barcode)
+  AND mpd.Barcode=#para(barcode)
+    #end
+    #end
 
-#sql("findByBarcode")
+    #sql("findByBarcode")
 SELECT
     mpd.InvCode,
     mpd.Barcode,
@@ -40,7 +45,10 @@ FROM
 
 WHERE
         1 = 1
-#if(barcode)
+    #if(imodocid)
+AND md.imodocid=#para(iAutoId)
+#end
+    #if(barcode)
 AND mpd.Barcode=#para(barcode)
 #end
 #end
@@ -60,54 +68,43 @@ FROM
         LEFT JOIN Mo_MoDoc md ON md.iAutoId =m.iMoDocId
         LEFT JOIN T_Sys_MaterialsPrepareDetail mpd  ON m.iMaterialsPrepairDid=mpd.AutoID
         LEFT JOIN Bd_Inventory it ON it.cInvCode = mpd.InvCode
-        LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iManufactureUomId
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iInventoryUomId1
 where 1=1
     #if(imodocid)
 and  md.iAutoId=#para(imodocid)
+#end
+    #if(barcode)
+AND mpd.Barcode=#para(barcode)
 #end
 
 #end
 
 #sql("getMoMaterialNotScanLogList")  ###未扫描
+
 SELECT
-    *
+    mpd.InvCode,
+    mpd.Barcode as barcode,
+    mpd.Qty,
+    md.cMoDocNo,
+    it.cInvCode1,
+    uom.cUomName,
+    it.cInvStd
 FROM
-    (
-        SELECT
-            mpd.InvCode,
-            mpd.cBarcode ad barcode,
-                mpd.Qty,
-            md.cMoDocNo,
-            it.cInvCode1,
-            uom.cUomName,
-            it.cInvStd
-        FROM
-            T_Sys_MaterialsPrepareDetail mpd
-                LEFT JOIN Mo_MoDoc md ON md.iAutoId = mpd.SourceBillID
-                LEFT JOIN Bd_Inventory it ON it.cInvCode = mpd.InvCode
-                LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iManufactureUomId
-        WHERE 1=1
-            #if(imodocid)
+    T_Sys_MaterialsPrepareDetail mpd
+        LEFT JOIN Mo_MoDoc md ON md.iAutoId = mpd.SourceBillID
+        LEFT JOIN Bd_Inventory it ON it.cInvCode = mpd.InvCode
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iInventoryUomId1
+WHERE 1=1
+    #if(imodocid)
 and  md.iAutoId=#para(imodocid)
 #end
-    ) f
-WHERE
-        f.barcode NOT IN (
-        SELECT
-            m.cBarcode AS barcode
-        FROM
-            Mo_MaterialScanLog m
-                LEFT JOIN Mo_MoDoc md ON md.iAutoId = m.iMoDocId
-                LEFT JOIN T_Sys_MaterialsPrepareDetail mpd ON m.iMaterialsPrepairDid= mpd.AutoID
-        WHERE 1=1
-    #if(imodocid)
-  and  md.iAutoId=#para(imodocid)
-    #end
-        GROUP BY barcode
-    )
+    #if(barcode)
+AND mpd.Barcode=#para(barcode)
 #end
+ #end
 
-#sql("findInvCodeUseNum")  ###查找子件物料计划数量
+
+    #sql("findInvCodeUseNum")  ###查找子件物料计划数量
 SELECT
     a.iInventoryId,
     f.cInvCode,
@@ -116,14 +113,18 @@ SELECT
 FROM
     Mo_MoRoutingInvc a   ### 工艺工序物料集
         LEFT JOIN Bd_Inventory f ON a.iInventoryId= f.iAutoId
-        LEFT JOIN Mo_MoRoutingConfig b ON a.iMoRoutingConfigId= b.iAutoId ###工单工艺配置
-        LEFT JOIN Mo_MoRouting c ON b.iMoRoutingId= c.iAutoId   ###工艺路线
-        LEFT JOIN Mo_MoDoc d ON c.iMoDocId= d.iAutoId
- where 1=1
+    LEFT JOIN Mo_MoRoutingConfig b ON a.iMoRoutingConfigId= b.iAutoId ###工单工艺配置
+    LEFT JOIN Mo_MoRouting c ON b.iMoRoutingId= c.iAutoId   ###工艺路线
+    LEFT JOIN Mo_MoDoc d ON c.iMoDocId= d.iAutoId
+where 1=1
     #if(imodocid)
   and  d.iAutoId=#para(imodocid)
     #end
-     #if(iinventoryid)
+    #if(iinventoryid)
   and  a.iInventoryId=#para(iinventoryid)
     #end
-#end
+    #end
+
+
+
+

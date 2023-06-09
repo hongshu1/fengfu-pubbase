@@ -34,6 +34,9 @@ where
     #if(idepgrade)
         and dep.iDepGrade = #para(idepgrade)
     #end
+    #if(bdepend)
+        and dep.bdepend = #para(bdepend)
+    #end    
     #if(excludeId)
         and dep.iAutoId <> #para(excludeId)
     #end
@@ -53,3 +56,23 @@ SELECT COUNT(1) FROM  Bd_Department WHERE #(keyField) = #para(value) AND  isDele
 #sql("getSelectIpid")
 select * from Bd_Department where ipid=#para(ipid)
 #end
+
+
+#sql("refreshAllEndGrade")
+select * from Bd_Department
+#end
+
+
+#sql ("updateEndGrade")
+update Bd_Department set iDepGrade=1 where iAutoId=#para(iautoid)
+#end
+
+#sql("refreshAll0")
+select * from Bd_Department where ipid=0
+#end
+
+#sql("selectByIautoid")
+select * from Bd_Department where ipid=#para(ipid)
+#end
+
+

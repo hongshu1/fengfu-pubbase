@@ -232,6 +232,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 			recordList.addAll(updateRecordList);
 		}
 
+		final String[] AutoIDs = {null};
 		tx(()->{
 			String headerId = null;
 			// 获取Form对应的数据
@@ -280,6 +281,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 					update(otherOut);
 					headerId = otherOut.getAutoID();
 				}
+				AutoIDs[0] = otherOut.getAutoID();
 			}
 
 			// 获取待保存数据 执行保存
@@ -313,7 +315,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 
 			return true;
 		});
-		return SUCCESS;
+		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
 

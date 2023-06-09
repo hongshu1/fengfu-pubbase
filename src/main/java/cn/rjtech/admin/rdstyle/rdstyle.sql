@@ -13,4 +13,8 @@ where ipid=#para(ipid)
   and cRdName=#para(crdname)
 #end
 
+#sql("getoptions")
+select * from Bd_Rd_Style where bRdFlag ='1' and IsDeleted='0'
+order by dUpdateTime desc
+#end
 

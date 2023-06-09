@@ -33,7 +33,6 @@ select top #(limit)
        t1.MasID as SourceBillDid,
        t1.pat,
        i.*,
-
        (SELECT cUomName FROM Bd_Uom WHERE i.iInventoryUomId1 = iautoid) as InventorycUomName,
        (SELECT cUomName FROM Bd_Uom WHERE i.iPurchaseUomId = iautoid) as PurchasecUomName,
        (SELECT cContainerCode FROM Bd_Container WHERE i.iContainerClassId = iautoid) as cContainerCode,
@@ -105,11 +104,12 @@ order by t1.CreateDate desc,t1.BillNo desc
 #sql("getOtherOutLines")
 SELECT
     i.*,
+    t2.AutoID,
     u.cUomClassName,
     t3.cInvCCode,
     t3.cInvCName,
     t2.Qty AS qtys,
-    0-t2.Qty as qty,
+    t2.Qty as qty,
     t2.Barcode,
     t2.InvCode
 FROM T_Sys_OtherOut t1,
@@ -119,4 +119,5 @@ FROM T_Sys_OtherOut t1,
          LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
 WHERE
     t1.AutoID = t2.MasID AND  t1.AutoID = '#(autoid)'
+    AND t2.Qty > 0
 #end

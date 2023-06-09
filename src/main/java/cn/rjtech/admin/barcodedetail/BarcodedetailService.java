@@ -1,17 +1,19 @@
 package cn.rjtech.admin.barcodedetail;
 
-import java.util.Date;
-
-import com.jfinal.plugin.activerecord.Page;
-
+import cn.hutool.core.util.StrUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.common.model.Barcodedetail;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.common.model.Barcodedetail;
+import com.jfinal.plugin.activerecord.Page;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 条码明细表 Service
@@ -80,6 +82,11 @@ public class BarcodedetailService extends BaseService<Barcodedetail> {
         return deleteByIds(ids, true);
     }
 
+    public int deletByAutoid(String autoid){
+        Sql sql = deleteSql().eq(Barcodedetail.AUTOID, autoid);
+        return delete(sql);
+    }
+
     /**
      * 删除
      */
@@ -119,23 +126,30 @@ public class BarcodedetailService extends BaseService<Barcodedetail> {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-    public Barcodedetail findbyBarcode(String barcode){
-        return findFirst("select * from T_Sys_BarcodeDetail where Barcode = ?",barcode);
+    public Barcodedetail findbyBarcode(String barcode) {
+        return findFirst("select * from T_Sys_BarcodeDetail where Barcode = ?", barcode);
     }
+
+    public List<Barcodedetail> findbyMasid(String masid) {
+        return find("select * from T_Sys_BarcodeDetail where masid = ?", masid);
+    }
+
+    public Barcodedetail findbyAutoid(String autoid) {
+        return findFirst("select * from T_Sys_BarcodeDetail where autoid = ?", autoid);
+    }
+
 
     /*
      * 传参
      * */
-    public void saveBarcodedetailModel(Barcodedetail barcodedetail, Long masid, Date now,Kv kv,Integer printnum){
+    public void saveBarcodedetailModel(Barcodedetail barcodedetail, Long masid, Date now, Kv kv, Integer printnum) {
         barcodedetail.setAutoid(JBoltSnowflakeKit.me.nextId());
         barcodedetail.setMasid(String.valueOf(masid));
-        barcodedetail.setVencode(kv.getStr("cvencode"));
+        barcodedetail.setVencode(StrUtil.isBlank(kv.getStr("cvencode")) ? "NULL" : kv.getStr("cvencode"));
         barcodedetail.setBarcode(kv.getStr("barcode"));
         barcodedetail.setInvcode(kv.getStr("cinvcode"));
         barcodedetail.setBarcodedate(now);
-        //barcodedetail.setPackrate(kv.getBigDecimal("ipkgqty"));//包装比例
         barcodedetail.setBatch(kv.getStr("batch"));
-        barcodedetail.setQty(kv.getBigDecimal("generatedstockqty"));//每张条码分配的数量
         barcodedetail.setPrintnum(printnum);//每张条码需要打印的次数
         barcodedetail.setCreateperson(JBoltUserKit.getUserName());
         barcodedetail.setCreatedate(now);

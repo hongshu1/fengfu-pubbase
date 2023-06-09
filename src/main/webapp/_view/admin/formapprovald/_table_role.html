@@ -7,10 +7,15 @@
              <td>${data.rolesn}</td>
             <td>${data.rolename}</td>
             <td>
-                <a  tooltip  href="admin/approvald/roleUsers/${data.iroleid}" data-dialogbtn data-btn="close"
+                <a
+                        href="admin/formapprovald/roleUsers?autoId=${data.iautoid}&roleId=${data.iroleid}&approvaling=#(approvaling??)"
+                   data-area="95%,95%"  tooltip data-title="用户列表"
+                   data-handler="refreshJBoltTable" data-dialog-title="用户列表" class="jbolt_table_editbtn"><i
+                        class="fa fa-users c-danger"></i></a>
+                <!--<a  tooltip href="admin/approvald/roleUsers/${data.iroleid}" data-dialogbtn data-btn="close"
                     data-scroll="yes"
                     data-title="用户列表" data-area="90%,90%" class="jbolt_table_btn"><i
-                        class="fa fa-users c-danger"></i></a>
+                        class="fa fa-users c-danger"></i></a>-->
             </td>
             <td style="display: none">${data.iroleid}</td>
         </tr>
@@ -25,7 +30,7 @@
                 <div class="jbolt_table_toolbar" id="PheDeliveryLines_toolbar2_#(pageId)" style="display: flex">
                     <div class="" role="group" aria-label="btn-group">
                         <button onclick="chooseRole(this)"
-                                data-url="/admin/approvald/chooseRole"
+                                data-url="/admin/formapprovald/chooseRole"
                                 data-dialogbtn
                                 data-link-para-ele="#roleHidden" id="buttonDialog_#(pageId)"
                                 data-area="90%,90%" data-btn="选中,取消" data-title="选择角色"

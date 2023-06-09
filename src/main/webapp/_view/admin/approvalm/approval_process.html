@@ -27,10 +27,12 @@
         </form>
 
         #if(btnNeed==1??)
-        <button onclick="judgeType_#(pageId)(this)" data-formsn="#(formSn??1)" data-formautoid="#(formAutoId??1)" class="btn btn-outline-secondary"> 提交审批</button>
-        <button onclick="approveT_#(pageId)(this)" data-formsn="#(formSn??)" data-formautoid="#(formAutoId??)" data-status="2" class="btn btn-outline-secondary"> 审批</button>
-        <button onclick="approveT_#(pageId)(this)" data-formsn="#(formSn??)" data-formautoid="#(formAutoId??)"
-                data-status="3" class="btn btn-outline-secondary"> 拒审</button>
+<!--        <button onclick="judgeType_#(pageId)(this)" data-formsn="#(formSn??1)" data-formautoid="#(formAutoId??1)" class="btn btn-outline-secondary"> 提交审批</button>-->
+        <button onclick="approveT_#(pageId)(this)" data-formsn="#(formSn??)" data-formautoid="#(formAutoId??)" data-status="2" class="btn btn-outline-secondary"> 审批通过</button>
+        <button onclick="rejectApproveT_#(pageId)(this)" data-formsn="#(formSn??)" data-formautoid="#(formAutoId??)"
+                data-status="3" class="btn btn-outline-secondary"> 审批不通过</button>
+        <button onclick="reverseApproveT_#(pageId)(this)" data-formsn="#(formSn??)" data-formautoid="#(formAutoId??)"
+                data-status="1" class="btn btn-outline-secondary"> 反审批</button>
         #end
 
     </div>

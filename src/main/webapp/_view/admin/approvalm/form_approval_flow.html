@@ -38,13 +38,13 @@
     var action
     var index;
     var para;
-    
+
     /**
      * 提交审批
      */
     function judgeType_#(pageId)(ele) {
         action = getRealJqueryObject(ele);
-        
+
         index = LayerMsgBox.loading('执行中...');
 
         para = {
@@ -54,7 +54,7 @@
 
         Ajax.post("/admin/formapproval/judgeType", para, function (ret) {
             LayerMsgBox.close(index);
-            
+
             if (ret.state === 'ok') {
                 LayerMsgBox.success(ret.msg, 1500, function () {
                     parent.refreshPjaxContainer();
@@ -73,7 +73,7 @@
      */
     function approveT_#(pageId)(ele) {
         action = getRealJqueryObject(ele);
-        
+
         index = LayerMsgBox.loading('执行中...');
 
         para = {
@@ -81,8 +81,68 @@
             formAutoId: action.data("formautoid"),
             status: action.data("status")
         };
-        
+
         Ajax.post("/admin/formapproval/approve", para, function (ret) {
+            LayerMsgBox.close(index);
+
+            if (ret.state === 'ok') {
+                LayerMsgBox.success(ret.msg, 1500, function () {
+                    parent.refreshPjaxContainer();
+                    parent.layer.closeAll();
+                });
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        }, function (err) {
+            LayerMsgBox.close(index);
+        });
+    }
+
+    /**
+     * 拒审
+     */
+    function rejectApproveT_#(pageId)(ele) {
+        action = getRealJqueryObject(ele);
+
+        index = LayerMsgBox.loading('执行中...');
+
+        para = {
+            formSn: action.data("formsn"),
+            formAutoId: action.data("formautoid"),
+            status: action.data("status")
+        };
+
+        Ajax.post("/admin/formapproval/rejectApprove", para, function (ret) {
+            LayerMsgBox.close(index);
+
+            if (ret.state === 'ok') {
+                LayerMsgBox.success(ret.msg, 1500, function () {
+                    parent.refreshPjaxContainer();
+                    parent.layer.closeAll();
+                });
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        }, function (err) {
+            LayerMsgBox.close(index);
+        });
+    }
+
+    /**
+     * 反审批
+     */
+    function reverseApproveT_#(pageId)(ele) {
+        action = getRealJqueryObject(ele);
+
+        index = LayerMsgBox.loading('执行中...');
+
+        para = {
+            formSn: action.data("formsn"),
+            formAutoId: action.data("formautoid"),
+            status: action.data("status")
+        };
+
+        Ajax.post("/admin/formapproval/reverseApprove", para, function (ret) {
             LayerMsgBox.close(index);
 
             if (ret.state === 'ok') {

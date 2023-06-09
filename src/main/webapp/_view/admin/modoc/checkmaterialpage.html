@@ -3,77 +3,79 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)" id="jbolttable_mspage_#(pageId)">
 	<div class="jbolt_page_title">
-	<!-- 页面顶部区域内容 -->
+		<!-- 页面顶部区域内容 -->
 		<div class="row">
-		<div class="col-auto">
-		<h1>齐料检查</h1>
+			<!--	<div class="col-auto">
+                <h1>齐料检查</h1>
+                </div>-->
+			<div class="col">
+				<form class="" id="masterSlaveForm_#(pageId)" action=""  method="get">
+					<input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" id="barcode" name="" value=""/>
+					<input type="hidden" id="imodocid" value="#(imodocid??)">
+				</form>
+			</div>
+			<div class="col-auto">
+				<!--<button data-area="600,400" id="jboltTableMasterAddBtn_#(pageId)" data-handler="refreshJBoltTable" data-title="新增版本" data-url="admin/jboltversion/add" class="pull-right jbolt_table_addbtn btn btn-success" ><i class="fa fa-plus"></i> 新增</button>-->
+				<button type="submit" onclick="serarch()" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
+			</div>
 		</div>
-		<div class="col">
-			<form class="" id="masterSlaveForm_#(pageId)" action=""  method="get">
-				<input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" name="" value=""/>
-			</form>
-		</div>
-		<div class="col-auto">
-		<!--<button data-area="600,400" id="jboltTableMasterAddBtn_#(pageId)" data-handler="refreshJBoltTable" data-title="新增版本" data-url="admin/jboltversion/add" class="pull-right jbolt_table_addbtn btn btn-success" ><i class="fa fa-plus"></i> 新增</button>-->
-			<button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
-		</div>
-		</div>
-		</div>
+	</div>
 	<div class="jbolt_page_content">
-<!-- 主表数据模板定义-->
-		<span style="color: red ">物料状态：顶顶顶顶</span>
-<script type="text/template" id="master_demotpl_#(pageId)">
-	{@each datas as data,index}
-	<tr data-id="${data.iautoid}" >
+		<!-- 主表数据模板定义-->
+		<span style="color: red ">物料状态:<span id="vincodeStae"></span> 数量状态:<span id="numStatus"></span></span>
+		<script type="text/template" id="master_demotpl_#(pageId)">
+			{@each datas as data,index}
+			<tr data-id="${data.iautoid}" >
 
-		<td hidden >${data.iautoid}</td>
-		<td >${data.iplanqty}</td>
-		<td>${data.iscannedqty}</td>
-		<td>${data.cinvcode}</td>
-		<td>${data.cinvcode1}</td>
-		<td>${data.cinvname1}</td>
-		<td>${data.cinvstd}</td>
-		<td>${data.cuomname}</td>
+				<td hidden >${data.iautoid}</td>
+				<td >${data.iplanqty}</td>
+				<td>${data.iscannedqty}</td>
+				<td>${data.cinvcode}</td>
+				<td>${data.cinvcode1}</td>
+				<td>${data.cinvname1}</td>
+				<td>${data.cinvstd}</td>
+				<td>${data.cuomname}</td>
 
 
-	</tr>
-	{@/each}
-</script>
-<!-- 子表的数据模板定义 -->
-<script type="text/template" id="slave_demotpl_#(pageId)">
-	{@each datas as data,index}
-	<tr data-id="${data.iautoid}" >
-		<td>${pageNumber,pageSize,index | rownum}</td>
+			</tr>
+			{@/each}
+		</script>
+		<!-- 子表的数据模板定义 -->
+		<script type="text/template" id="slave_demotpl_#(pageId)">
+			{@each datas as data,index}
+			<tr data-id="${data.iautoid}" >
+				<td>${pageNumber,pageSize,index | rownum}</td>
 
-		<td>${data.istatusname}</td>
-		<td>${data.dbegindate|date_ymd}</td>
-		<td>${data.denddate|date_ymd}</td>
-		<td>${data.cmoplanno}</td>
-		<td>${data.cdepname}</td>
-		<td>${data.ccreatename}</td>
-		<td>${data.dcreatetime}</td>
-	</tr>
-	{@/each}
-</script>
+				<td>${data.invcode}</td>
+				<td>${data.cinvcode1}</td>
+				<td>${data.cinvname1}</td>
+				<td>${data.cinvstd}</td>
+				<td>${data.cuomname}</td>
+				<td>${data.barcode}</td>
+				<td>${data.iqty}</td>
+
+			</tr>
+			{@/each}
+		</script>
 
 
 		<!-- 内容区域 使用下方的一个上下结构组件 -->
 		<div class="jbolttable_master_slave_box">
 			<div class="split master">
 				<!-- 主表区域 -->
-				 <table class="jbolt_table thead_font_normal"
-					  data-fixed-columns-left="1,2"
-					  data-fixed-columns-right="7"
-					  data-column-resize="true"
-					  data-height="fill_box"
-					  data-ajax="true"
-					  data-bind-elements="#jboltTableMasterAddBtn_#(pageId)"
-					  data-conditions-form="masterSlaveForm_#(pageId)"
-					  data-page="jboltTablePage_master_#(pageId)"
-					  data-pagesize="10"
-					  data-url="admin/momaterialsscansum/datas"
-					  data-rowtpl="master_demotpl_#(pageId)">
-				<thead>
+				<table class="jbolt_table thead_font_normal"
+					   data-fixed-columns-left="1,2"
+					   data-fixed-columns-right="7"
+					   data-column-resize="true"
+					   data-height="300"
+					   data-ajax="true"
+					   data-bind-elements="#jboltTableMasterAddBtn_#(pageId)"
+					   data-conditions-form="masterSlaveForm_#(pageId)"
+					   data-page="jboltTablePage_master_#(pageId)"
+					   data-pagesize="10"
+					   data-url="admin/momaterialsscansum/datas?imodocid=#(imdocid??)"
+					   data-rowtpl="master_demotpl_#(pageId)">
+					<thead>
 					<tr>
 						<th data-width="60" data-column="index">序号</th>
 						<th data-width="150" data-column="iplanqty">计划数量</th>
@@ -82,80 +84,95 @@
 						<th data-width="110" data-column="cinvcode1">客户部番</th>
 						<th data-width="80" data-column="cinvname1">部品名称</th>
 						<th data-width="80" data-column="cinvstd">规格</th>
-						<th data-width="80" data-column="cuomname">库存单位</th>
+						<th data-width="80" data-column="cuomname">主计量单位</th>
 					</tr>
-				</thead>
-				<tbody></tbody>
+					</thead>
+					<tbody></tbody>
 				</table>
 			</div>
 			<div class="split slave">
 				<!-- 子表区域 -->
 				<!-- 子表区域 -->
 				<div class="jbolt_tab_view">
-				  <div class="jbolt_tab_links">
-				    <a class="jbolt_tab_link active"  href="#jbolt_tabcontent1_#(pageId)">未扫描现品票</a>
-				    <a class="jbolt_tab_link"  href="#jbolt_tabcontent2_#(pageId)">已扫描现品票</a>
-				  </div>
-				<div class="jbolt_tab_contents">
-				  <div class="jbolt_tab_content active" id="jbolt_tabcontent1_#(pageId)">
-				 	<!-- 子表查询表单 -->
-				  <form onsubmit="return false;" class="form-inline d-none" id="jboltversion_JboltTableForm1_ajax_#(pageId)" action="demo/jbolttable/ajaxNoPage"  method="post"></form>
-				<!-- 子表toolbar -->
-				<div class="jbolt_table_toolbar" id="slave_table_toolbar_#(pageId)">
-					<div class="btn-group" role="group" aria-label="btn-group">
+					<div class="jbolt_tab_links">
+						<a class="jbolt_tab_link active"  href="#jbolt_tabcontent1_#(pageId)">未扫描现品票</a>
+						<a class="jbolt_tab_link"  href="#jbolt_tabcontent2_#(pageId)">已扫描现品票</a>
+					</div>
+					<div class="jbolt_tab_contents">
+						<div class="jbolt_tab_content active" id="jbolt_tabcontent1_#(pageId)">
+							<!-- 子表查询表单 -->
+							<form onsubmit="return false;" class="form-inline d-none" id="jboltversion_JboltTableForm1_ajax_#(pageId)" action=""  method="post"></form>
+							<!-- 子表toolbar -->
+							<div class="jbolt_table_toolbar" id="slave_table_toolbar_#(pageId)">
+								<div class="btn-group" role="group" aria-label="btn-group">
 
-						<!--<button data-area="600,400" id="jboltTableAddBtn1_ajax_#(pageId)"  data-handler="jboltTablePageToFirst" data-title="新增版本"  data-origin-url="admin/jboltversion/addFile/[masterId]" data-url="admin/jboltversion/addFile/0" class="jbolt_table_addbtn btn btn-success btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-						<button data-downloadbtn  data-origin-url="demo/masterslave/downloadMainFilesDatas/[masterId]" data-url="demo/masterslave/downloadMainFilesDatas/0" class="btn btn-info btn-sm" ><i class="fa fa-download"></i> 导出Excel</button>-->
+									<!--<button data-area="600,400" id="jboltTableAddBtn1_ajax_#(pageId)"  data-handler="jboltTablePageToFirst" data-title="新增版本"  data-origin-url="admin/jboltversion/addFile/[masterId]" data-url="admin/jboltversion/addFile/0" class="jbolt_table_addbtn btn btn-success btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+                                    <button data-downloadbtn  data-origin-url="demo/masterslave/downloadMainFilesDatas/[masterId]" data-url="demo/masterslave/downloadMainFilesDatas/0" class="btn btn-info btn-sm" ><i class="fa fa-download"></i> 导出Excel</button>-->
+								</div>
+							</div>
+							<div class="jbolt_page" id="">
+								<!-- 子表表格table -->
+								<table class="jbolt_table table_striped thead_font_normal"
+									   data-height="fill_box"
+									   data-ajax="true"
+									   data-toolbar="slave_table_toolbar_#(pageId)"
+									   data-bind-elements="#jboltTableAddBtn1_ajax_#(pageId)"
+									   data-conditions-form="jboltversion_JboltTableForm1_ajax_#(pageId)"
+									   data-origin-url="demo/masterslave/mainFilesDatas/[masterId]"
+									   data-url="admin/momaterialsscanlog/getMoMaterialNotScanLogList?imodocid=#(imodocid??)"
+									   data-rowtpl="slave_demotpl_#(pageId)"
+									   data-page="slave_page_#(pageId)_1"
+									   data-pagesize="10"
+								>
+									<thead>
+									<tr>
+										<th data-width="60">序号</th>
+
+										<th data-width="100" data-column="index">序号</th>
+										<th data-width="150" data-column="InvCode">存货编码</th>
+										<th data-width="150" data-column="cInvCode1">客户部番</th>
+										<th data-width="150" data-column="cInvName1">部品名称</th>
+										<th data-width="150" data-column="cInvStd">规格</th>
+										<th data-width="150" data-column="cUomName">主计量单位</th>
+										<th data-width="150" data-column="barcode">现品票</th>
+										<th data-width="150" data-column="iqty">现品票数量</th>
+									</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+						</div>
+						<div class="jbolt_tab_content" id="jbolt_tabcontent2_#(pageId)">
+
+							#include("operation/checkmaterialitem.html")
+						</div>
 					</div>
 				</div>
-				<!-- 子表表格table -->
-				<table class="jbolt_table table_striped thead_font_normal"
-					  data-height="fill_box"
-					  data-ajax="true"
-					  data-toolbar="slave_table_toolbar_#(pageId)"
-					  data-bind-elements="#jboltTableAddBtn1_ajax_#(pageId)"
-					  data-conditions-form="jboltversion_JboltTableForm1_ajax_#(pageId)"
-					  data-origin-url="demo/masterslave/mainFilesDatas/[masterId]"
-					  data-url="admin/momotask/datas"
-					  data-rowtpl="slave_demotpl_#(pageId)"
-					  data-page="slave_page_#(pageId)_1"
-					  data-pagesize="10"
-					 >
-				<thead>
-				<tr>
-					<th data-width="60">序号</th>
-
-					<th data-width="150" data-column="istatusname">状态</th>
-					<th data-width="150" data-column="dBeginDate">开始日期</th>
-					<th data-width="150" data-column="dEndDate">结束日期</th>
-					<th data-width="150" data-column="cMoPlanNo">任务单号</th>
-					<th data-width="150" data-column="cdepname">生产部门</th>
-					<th data-width="150" data-column="cCreateName">创建人</th>
-					<th data-width="150" data-column="dCreateTime">创建时间</th>
-				</tr>
-				</thead>
-				<tbody></tbody>
-				</table>
-				  </div>
-				  <div class="jbolt_tab_content" id="jbolt_tabcontent2_#(pageId)">
-					<!--<div data-ajaxportal data-origin-url="/demo/masterslave/changelogPortal/[masterId]" data-url="/demo/masterslave/changelogPortal/0"></div>-->
-					  #include("operation/personindex.html")
-				  </div>
-				</div>
-				</div> 
 			</div>
 		</div>
-	
+
 	</div>
 </div>
 #end
 #define js()
 <script>
 	hideParentLayerDialogBtn(0);
-$(function(){
-	//使用JS去初始化这个主从布局 给定所在的jbolt_page的ID
-	MasterSlaveUtil.initJBoltTable("jbolttable_mspage_#(pageId)");
-});
+	$(function(){
+		//使用JS去初始化这个主从布局 给定所在的jbolt_page的ID
+		MasterSlaveUtil.initJBoltTable("jbolttable_mspage_#(pageId)");
+		$('#vincodeStae').html('未齐料');
+		$('#numStatus').html('未齐料');
+
+	});
+	function serarch(){
+		var barcode=$("#barcode").val();
+		var imodocid=$("#imodocid").val();
+		Ajax.post("admin/momaterialsscanlog/addBarcode?barcode="+barcode+"imodocid="+imodocid,function(res){
+			LayerMsgBox.success("操作成功",500,function(){
+				refreshJBoltTable();
+			});
+		});
+	}
 </script>
 #end
 

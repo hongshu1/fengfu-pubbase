@@ -39,7 +39,15 @@ WHERE t1.isDeleted = '0'
 #sql("getSubList")
 SELECT *
 FROM Bd_VendorClass
-WHERE ipid = #para(pid)
+WHERE 1=1
+#if(iorgid)
+	and iorgid = #para(iorgid)
+#end
+#if(pid > 0)
+	and ipid = #para(pid)
+#else
+	and (ipid is null or ipid =0)
+#end
 ORDER BY
     cvccode
 #end

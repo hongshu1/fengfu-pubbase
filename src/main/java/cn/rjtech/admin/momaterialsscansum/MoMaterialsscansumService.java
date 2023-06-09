@@ -1,21 +1,18 @@
 package cn.rjtech.admin.momaterialsscansum;
 
 
-
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.moroutingcinve.MoMoroutinginvcService;
-import com.jfinal.aop.Inject;
-import com.jfinal.kit.Okv;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-
-import com.jfinal.kit.Ret;
-
-import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.MoMaterialsscansum;
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
@@ -163,6 +160,40 @@ public class MoMaterialsscansumService extends BaseService<MoMaterialsscansum> {
 
 	public Ret add(String barcode){
 		Record record=getBarcode(barcode);
+		if(record!=null){
+			if(isOk(record.getLong("iinventoryid"))) {
+				MoMaterialsscansum moMaterialsscansum=findFirst(Okv.create().
+						set(MoMaterialsscansum.IINVENTORYID,record.getLong("iinventoryid")),MoMaterialsscansum.IAUTOID,"DESC");
+				if(moMaterialsscansum!=null) {
+					moMaterialsscansum = new MoMaterialsscansum();
+					moMaterialsscansum.setIInventoryId(record.getLong("iinventoryid"));
+					moMaterialsscansum.setIMoDocId(record.get("imdocid"));
+					moMaterialsscansum.setIPlanQty(record.getBigDecimal("qty"));//计划数 iScannedQty
+					moMaterialsscansum.setIScannedQty(new BigDecimal(1));
+					moMaterialsscansum.save();
+				}else{
+					moMaterialsscansum.setIScannedQty(moMaterialsscansum.getIScannedQty().add(new BigDecimal(1)));
+					moMaterialsscansum.update();
+				}
+			}
+
+		}
+		return  SUCCESS;
+	}
+	/**
+	 * 通过现票获取存货信息
+	 * @param barcode
+	 * @return
+	 */
+	public Record  getBarcode(String barcode,Long imodoid){
+		return  dbTemplate("momaterialsscansum.findByBarcode",
+				Kv.create().set("barcode",barcode)
+						.set("imodocid",imodoid)
+		).findFirst();
+	}
+
+	public Ret add(String barcode,Long imodoid){
+		Record record=getBarcode(barcode,imodoid);
 		if(record!=null){
 			if(isOk(record.getLong("iinventoryid"))) {
 				MoMaterialsscansum moMaterialsscansum=findFirst(Okv.create().

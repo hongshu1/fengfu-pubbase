@@ -55,10 +55,10 @@
 								<select class="form-control"
 										name="subcontractsaleorderm.iBusType"
 										data-autoload
-										data-url="admin/dictionary/options?key=iBusType"
+										data-url="admin/dictionary/options?key=order_business_type"
 										data-value-attr="sn"
 										data-text-attr="name"
-										data-text="=请选择="				
+										data-text="=请选择业务类型="
 										data-select="#(subcontractsaleorderm.iBusType??)">
 								</select>								
 							</div>
@@ -289,7 +289,7 @@
            data-rowtpl="jboltTable_demotpl_#(pageId)"
            data-toolbar="subcontractsaleorderm_toolbar_#(pageId)"
            data-editable="true"
-           data-height="190%"
+           data-height="500"
            ###data-fixed-columns-right="-1"
            data-editable-option="getEditableTableOptions_#(pageId)">
         <thead>
@@ -422,19 +422,24 @@
                     submitAttr: "iautoid",
                 },
                 cinvcode: {
-                    type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
-                    maxLength: 100,
-                    required: true,
-                    placeholder: "请选择",
-                    textAttr: "cinvcode",
-                    width: 500,
-                    valueAttr: "cinvcode",
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
-                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
-                    changeColumns: [{column: "cinvcode", use: "cinvcode"}, {column: "cinvcode1", use: "cinvcode1"},
-                        {column: "cinvname1", use: "cinvname1"}, {column: "cinvstd", use: "cinvstd"},
-                        {column: "cuomname", use: "cuomname"}, {column: "iinventoryid", use: "iautoid"}]
+                    required:true,
+                    type:"dialogbtn",
+                    placeholder:"选择存货",
+                    maxLength:100,
+                    dialog:{
+                        url:"admin/manualorderm/inventory_dialog_index",
+                        area:"80%,80%",
+                        title:"选择存货",
+                        btn:"选择,关闭"
+                    },
+                    columnAttr:"iinventoryid,cinvcode1,cinvname1,cinvstd,cuomname",
+                    changeColumns: [
+                        {column:"cuomname",use:"cuomname"},
+                        {column:"cinvstd",use:"cinvstd"},
+                        {column:"cinvname1",use:"cinvname1"},
+                        {column:"cinvcode1",use:"cinvcode1"},
+                        {column:"iinventoryid",use:"iautoid"},
+                    ]
                 },
                 iqty1: {
                     type: "amount",

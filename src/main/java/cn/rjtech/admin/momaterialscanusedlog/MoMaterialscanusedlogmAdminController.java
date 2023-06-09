@@ -1,15 +1,13 @@
 package cn.rjtech.admin.momaterialscanusedlog;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MoMaterialscanusedlogm;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 /**
  * 制造工单-材料耗用主表 Controller
  * @ClassName: MoMaterialscanusedlogmAdminController
@@ -111,7 +109,7 @@ public class MoMaterialscanusedlogmAdminController extends BaseAdminController {
 	/**
 	 * 获取备料现品票明细（已扫描）
 	 */
-	public void getMoMaterialscanusedlogList(){
+	public void getmomaterialscanusedlogList(){
 		renderJsonData(service.getMoMaterialscanusedlogList(getPageNumber(),getPageSize(),getKv()));
 	}
 

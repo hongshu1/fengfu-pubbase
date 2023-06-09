@@ -4,112 +4,242 @@
 <div class="jbolt_page" data-key="#(pmkey??)">
     <div class="jbolt_page_title">
         <div class="row">
-            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>备料一览表</h1></div>
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>备料扫码</h1></div>
             <div class="col-sm-auto">
-                <form class="form-inline" id="MoPickItemM_form_#(pageId)">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="备料单号"
-                           name="billno" value=""/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="工单号"
-                           name="cmodocno" value=""/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="存货编码"
-                           name="invcode" value=""/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="客户部番"
-                           name="cinvcode1" value=""/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="部品名称"
-                           name="cinvname1" value=""/>
-                    <input type="text" data-date class="form-control ml-2" placeholder="开始日期"
-                           maxlength="20" name="startTime" value=""/>
-                    <span class="ml-1 mr-1">至</span>
-                    <input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20"
-                           name="endTime" value=""/>
-                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
-                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                <form class="form-inline" id="SysMaterialspreparedetail_form_#(pageId)">
+
+                    <!--                    <select class="form-control"-->
+                    <!--                            data-autoload-->
+                    <!--                            data-select-type="select"-->
+                    <!--                            data-text="=备料单号="-->
+                    <!--                            data-value=""-->
+                    <!--                            data-value-attr="sn"-->
+                    <!--                            readonly-->
+                    <!--                            data-dialogbtn-->
+                    <!--                            data-area="50%,50%"-->
+                    <!--                            data-url="admin/sysMaterialspreparedetail/MaterialsList"-->
+                    <!--                            name="billno"-->
+                    <!--                            style="background-color: white"-->
+                    <!--                    ></select>-->
+                    <input type="text" class="form-control ml-2" placeholder="请点击选择备料单号"
+                           maxlength="40"
+                           name="billno"
+                           value=""
+                           data-dialogbtn data-area="80%,60%"
+                           data-handler="jboltTablePageToFirst"
+                           id="billno"
+                           data-title="选择备料单"
+                           data-url="admin/sysMaterialspreparedetail/MaterialsList"
+                           readonly
+                           style="background-color: white"
+                    />
+<!--                    <input class="form-control"-->
+<!--                           data-autoload-->
+<!--                           data-url="admin/dictionary/options?key=null"-->
+<!--                           data-text="=现品票扫码="-->
+<!--                           data-value=""-->
+<!--                           data-value-attr="sn"-->
+<!--                           placeholder="现品票扫码"-->
+<!--                    ></input>-->
+                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
+                           id="barcode" name="barcode" value="#(barcode??)"/>
+                    <div class="btn-group text-center mx-1">
+                        <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
+                        <button type="button" onclick="form.reset();refreshJBoltTable(this);"
+                                class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
+                        </button>
+                        <button type="submit" class="btn btn-outline-secondary"> 提交备料
+                        </button>
+                    </div>
                 </form>
             </div>
+            <!--            <div class="col-sm-auto text-right">-->
+
+            <!--                <button data-dialogbtn class="btn btn-outline-primary btn-sm"-->
+            <!--                        data-url="admin/sysMaterialspreparedetail/add" data-handler="jboltTablePageToFirst"-->
+            <!--                        data-area="800,600" tooltip data-title="新增备料单明细"><i class="fa fa-plus"></i></button>-->
+            <!--                <button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip-->
+            <!--                        data-title="刷新数据"><i class="fa fa-refresh"></i></button>-->
+
+
+            <!--            </div>-->
         </div>
     </div>
     <div class="jbolt_page_content">
         <!-- 定义JBoltTable使用的数据渲染模板 -->
-        <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
+        <textarea class="jb_tpl_box" id="SysMaterialspreparedetail_tpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysmaterialspreparedetail/edit1/${data.autoid}"  data-fs="true" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="备料一览表详情"><i class="fa fa-eye">查看</i></a>
-</td>
 <td>${data.billno}</td>
-<td>${data.billno}</td>
-<td>${data.cmodocno}</td>
-<td>${data.cdepname}</td>
-<td>${data.cworkshiftname}</td>
-<td>${data.dplandate}</td>
+<td>${data.sourcebillid}</td>
 <td>${data.invcode}</td>
 <td>${data.cinvcode1}</td>
-<td>${data.cdepname}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cinvstd}</td>
 <td>${data.cuomname}</td>
-<td>${data.iqty}</td>
-<td>${data.createperson}</td>
-<td>${data.createdate}</td>
+<td>${data.出库仓库}</td>
+<td>${data.出库库区}</td>
+<td>${data.qty}</td>
+<td>${data.已备料数量}</td>
+<td>${data.剩余备料数量}</td>
+<td>${data.可用批次号}</td>
+<!--<td>-->
+<!--	<a class="jbolt_table_editbtn" href="admin/sysMaterialspreparedetail/edit/${data.AutoID}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑备料单明细"><i class="fa fa-edit"></i></a>-->
+<!--	<a class="jbolt_table_delbtn" href="admin/sysMaterialspreparedetail/delete/${data.AutoID}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>-->
+<!--</td>-->
 </tr>
 {@/each}
 </textarea>
-        <div class="jbolt_table_toolbar" id="MoPickItemM_toolbar_#(pageId)">
-            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                <button data-dialogbtn data-area="100%,100%"
-                        data-handler="jboltTablePageToFirst"
-                        id="toolbar_addBtn_#(pageId)"
-                        data-title="备料一览表自动作成"
-                        data-url="admin/sysmaterialspreparedetail/auto"
-                        class="btn btn-outline-primary"><i class="fa "></i> 自动作成
-                </button>
-                <button data-check-handler="jboltTableGetCheckedId"
-                        data-dialogbtn data-area="100%,100%"
-                        data-handler="refreshJBoltTable"
-                        id="toolbar_editBtn_#(pageId)"
-                        data-title="备料一览表手工作成"
-                        data-url="admin/sysmaterialspreparedetail/edit/"
-                        class="btn btn-outline-primary"><i class="fa "></i> 手工作成
-                </button>
+        <div class="jbolt_table_toolbar" id="SysMaterialspreparedetail_toolbar_#(pageId)">
+            <!--            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">-->
+            <!--                                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst"-->
+            <!--                                        id="toolbar_addBtn_#(pageId)" data-title="新增备料单明细"-->
+            <!--                                        data-url="admin/sysMaterialspreparedetail/add" class="btn btn-outline-primary"><i-->
+            <!--                                        class="fa fa-plus"></i> 新增-->
+            <!--                                </button>-->
+            <!--                                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable"-->
+            <!--                                        id="toolbar_editBtn_#(pageId)" data-title="编辑备料单明细"-->
+            <!--                                        data-check-handler="jboltTableGetCheckedId" data-url="admin/sysMaterialspreparedetail/edit/"-->
+            <!--                                        class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑-->
+            <!--                                </button>-->
+            <!--                                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"-->
+            <!--                                        id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysMaterialspreparedetail/deleteByIds?ids="-->
+            <!--                                        data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除-->
+            <!--                                </button>-->
+            <!--                                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新-->
+            <!--                                </button>-->
+            <!--            </div>-->
+            <div class="row">
+
+                <div class="col-auto">
+                    <form class="form-inline" id="SysOtherin1_form_#(pageId)">
+                        <div style="margin-right: 30px">
+                            <label>物料明细</label>
+                        </div>
+                    </form>
+                </div>
             </div>
+
+
         </div>
         <table class="jbolt_table jbolt_main_table  table-center "
-               data-jbolttable data-width="fill"
-               data-height="fill"
+               data-jbolttable
+               data-width="fill"
+               data-height="39%"
                data-ajax="true"
-               data-conditions-form="MoPickItemM_form_#(pageId)"
-               data-url="admin/sysmaterialspreparedetail/datas"
-               data-rowtpl="MoPickItemM_tpl_#(pageId)"
+               data-conditions-form="SysMaterialspreparedetail_form_#(pageId)"
+               data-url="admin/sysMaterialspreparedetail/getMaterialsdetials"
+               data-rowtpl="SysMaterialspreparedetail_tpl_#(pageId)"
                data-copy-to-excel="false"
-               data-page="MoPickItemM_page"
+               data-page="SysMaterialspreparedetail_page"
                data-column-resize="true"
-               data-column-prepend="1:checkbox:true"
-               data-toolbar="MoPickItemM_toolbar_#(pageId)"
+               data-toolbar="SysMaterialspreparedetail_toolbar_#(pageId)"
+               id="MaterialsDetail"
         >
             <thead class="fw-normal">
             <tr>
                 <th data-width="60" data-column="">序号</th>
-                <th data-width="150" data-column="">操作</th>
-                <th data-width="150" data-column="">状态</th>
                 <th data-width="150" data-column="">备料单号</th>
-                <th data-width="150" data-column="">工单号</th>
-                <th data-width="150" data-column="">生产部门</th>
-                <th data-width="150" data-column="">生产班次</th>
-                <th data-width="150" data-column="">计划日期</th>
+                <th data-width="200" data-column="">工单号</th>
                 <th data-width="150" data-column="">存货编码</th>
-                <th data-min-width="160" data-column="">客户部番</th>
-                <th data-width="150" data-column="">部门名称</th>
-                <th data-width="150" data-column="">生产单位</th>
-                <th data-width="150" data-column="">计划数量</th>
-                <th data-width="150" data-column="">创建人</th>
-                <th data-min-width="160" data-column="">创建时间</th>
+                <th data-width="150" data-column="">客户部番</th>
+                <th data-width="150" data-column="">部品名称</th>
+                <th data-width="150" data-column="">规格</th>
+                <th data-width="150" data-column="">主计量单位</th>
+                <th data-width="150" data-column="">出库仓库</th>
+                <th data-width="150" data-column="">出库库区</th>
+                <th data-width="150" data-column="">需求数量</th>
+                <th data-width="150" data-column="">已备料数量</th>
+                <th data-width="150" data-column="">扫描数量</th>
+                <th data-width="150" data-column="">可用批次号</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table>
+
+
+        <div style="margin-top: 10px">
+        <textarea class="jb_tpl_box" id="SysMaterialsprepare1_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.autoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.现品票}</td>
+<td>${data.存货编码}</td>
+<td>${data.客户部番}</td>
+<td>${data.部品名称}</td>
+<td>${data.规格}</td>
+<td>${data.主计量单位}</td>
+<td>${data.数量}</td>
+<td>${data.批次号}</td>
+<td>${data.生产日期}</td>
+</tr>
+{@/each}
+</textarea>
+            <div class="jbolt_table_toolbar" id="SysMaterialsprepare1_toolbar_#(pageId)">
+                <div class="row">
+
+                    <div class="col-auto">
+                        <form class="form-inline" id="SysOtherin_form_#(pageId)">
+                            <div style="margin-right: 30px">
+                                <label>条码明细</label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <table class="jbolt_table jbolt_main_table  table-center "
+                   data-jbolttable
+                   data-width="fill"
+                   data-height="39%"
+                   data-ajax="true"
+                   data-conditions-form="SysMaterialspreparedetail_form_#(pageId)"
+                   data-url="admin/sysMaterialspreparedetail/getBarcode"
+                   data-rowtpl="SysMaterialsprepare1_tpl_#(pageId)"
+                   data-copy-to-excel="false"
+                   data-page="SysMaterialsprepare_page"
+                   data-toolbar="SysMaterialsprepare1_toolbar_#(pageId)"
+                   id="jbolt_Table_#(pageId)"
+            >
+                <thead class="fw-normal">
+                <tr>
+                    <th data-width="60" data-column="">序号</th>
+                    <th data-width="150" data-column="">现品票</th>
+                    <th data-width="150" data-column="">存货编码</th>
+                    <th data-width="150" data-column="">客户部番</th>
+                    <th data-width="150" data-column="">部品名称</th>
+                    <th data-width="150" data-column="">规格</th>
+                    <th data-width="150" data-column="">主计量单位</th>
+                    <th data-width="150" data-column="">数量</th>
+                    <th data-min-width="150" data-column="">批次号</th>
+                    <th data-width="150" data-column="">生产日期</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 </div>
 #end
+
 #define js()
 <script type="text/javascript">
+
+
+    function barcode() {
+        LayerMsgBox.loading("执行中......",2000);
+        var barcode = $("#barcode").val();
+        if (barcode) {
+            Ajax.post("admin/sysMaterialspreparedetail/barcode", {"barcode": barcode},
+                function (res) {
+                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
+                    $("#barcode").val('');
+                }, function (err) {
+                })
+        } else {
+            LayerMsgBox.alert("请输入条码")
+        }
+    }
 </script>
 #end

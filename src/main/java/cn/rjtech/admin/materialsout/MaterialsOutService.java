@@ -12,7 +12,9 @@ import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.materialsoutdetail.MaterialsOutDetailService;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.MaterialsOut;
+import cn.rjtech.model.momdata.MaterialsOutDetail;
+import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -220,6 +222,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 			recordList.addAll(updateRecordList);
 		}
 
+		final Long[] AutoIDs = {null};
 		tx(()->{
 			Long headerId = null;
 			// 获取Form对应的数据
@@ -261,6 +264,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 					update(materialsOut);
 					headerId = materialsOut.getAutoID();
 				}
+				AutoIDs[0] = materialsOut.getAutoID();
 			}
 
 			// 获取待保存数据 执行保存
@@ -302,7 +306,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 
 			return true;
 		});
-		return SUCCESS;
+		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
 
@@ -375,13 +379,11 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 
 	/**
 	 * 材料出库单列表 明细
-	 * @param pageNumber
-	 * @param pageSize
 	 * @param kv
 	 * @return
 	 */
-	public Page<Record> getMaterialsOutLines(int pageNumber, int pageSize, Kv kv){
-		return dbTemplate("materialsout.getMaterialsOutLines",kv).paginate(pageNumber, pageSize);
+	public List<Record> getMaterialsOutLines(Kv kv){
+		return dbTemplate("materialsout.getMaterialsOutLines",kv).find();
 
 	}
 

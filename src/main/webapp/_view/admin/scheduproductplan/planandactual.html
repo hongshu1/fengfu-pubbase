@@ -28,12 +28,21 @@
 		<script type="text/template" id="jboltTable_demotplsum_#(pageId)">
 			{@each datas as data,index}
 			<tr data-id="${data.iautoid}">
-				<td>${pageNumber,pageSize,index | rownum}</td>
-				<td>${data.cworkname}</td>
+				<td hidden>${pageNumber,pageSize,index | rownum}</td>
+
+				{@if (pageNumber,pageSize,index | rownum) % data.rowspan == 0 }
+				<td rowspan="${data.rowspan}">${data.seq}</td>
+				<td rowspan="${data.rowspan}" title="${data.cworkname}">${data.cworkname}</td>
+				<td rowspan="${data.rowspan}" title="${data.cinvcode}">${data.cinvcode}</td>
+				<td rowspan="${data.rowspan}" title="${data.cinvcode1}">${data.cinvcode1}</td>
+				<td rowspan="${data.rowspan}" title="${data.cinvname1}">${data.cinvname1}</td>
+				{@/if}
+				<!--<td>${data.cworkname}</td>
 				<td>${data.cinvcode}</td>
 				<td>${data.cinvcode1}</td>
-				<td>${data.cinvname1}</td>
-				<td>${data.colname}</td>
+				<td>${data.cinvname1}</td>-->
+
+				<th title="${data.colname}">${data.colname}</th>
 
 				#for(datetr:collist)
 				<td>${data.#(datetr),0|number_format}</td>
@@ -75,24 +84,25 @@
 		>
 			<thead>
 			<tr>
-				<th data-width="60" data-column="index" rowspan="3">序号</th>
-				<th data-width="150" data-column="cworkname" rowspan="3">产线名称</th>
-				<th data-width="150" data-column="cinvcode" rowspan="3">存货编码</th>
-				<th data-width="150" data-column="cinvcode1" rowspan="3">客户部番</th>
-				<th data-width="150" data-column="cinvname1" rowspan="3">部品名称</th>
-				<th data-width="150" data-column="colname" rowspan="3">项目</th>
+				<th hidden data-width="130" data-column="index" rowspan="3">序号</th>
+				<th data-width="50" data-column="seq" rowspan="3">序号</th>
+				<th data-width="130" data-column="cworkname" rowspan="3">产线名称</th>
+				<th data-width="130" data-column="cinvcode" rowspan="3">存货编码</th>
+				<th data-width="130" data-column="cinvcode1" rowspan="3">客户部番</th>
+				<th data-width="130" data-column="cinvname1" rowspan="3">部品名称</th>
+				<th data-width="130" data-column="colname" rowspan="3">项目</th>
 				#for(col:colname2list)
 				<th colspan="#(col.colsum)">#(col.colname)</th>
 				#end
 			</tr>
 			<tr>
 				#for(colname:colnamelist)
-				<th data-width="50" data-column="nowmonth1">#(colname)</th>
+				<th data-width="130" data-column="nowmonth1">#(colname)</th>
 				#end
 			</tr>
 			<tr>
 				#for(week:weeklist)
-				<th data-width="50" data-column="nowmonth1">#(week)</th>
+				<th data-width="130" data-column="nowmonth1">#(week)</th>
 				#end
 			</tr>
 			</thead>

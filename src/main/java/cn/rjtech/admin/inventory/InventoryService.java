@@ -9,6 +9,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -24,6 +25,7 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
 import cn.rjtech.admin.inventorycapacity.InventoryCapacityService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
@@ -36,10 +38,7 @@ import cn.rjtech.admin.inventorystockconfig.InventoryStockConfigService;
 import cn.rjtech.admin.inventoryworkregion.InventoryWorkRegionService;
 import cn.rjtech.admin.invpart.InvPartService;
 import cn.rjtech.admin.uom.UomService;
-import cn.rjtech.enums.InvPartTypeEnum;
-import cn.rjtech.enums.InventoryTableTypeEnum;
-import cn.rjtech.enums.IsEnableEnum;
-import cn.rjtech.enums.OperationTypeEnum;
+import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -72,6 +71,8 @@ public class InventoryService extends BaseService<Inventory> {
  
 	private final Inventory dao=new Inventory().dao();
 
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingDService;
     @Inject
     private UomService uomService;
     @Inject
@@ -1232,6 +1233,63 @@ public class InventoryService extends BaseService<Inventory> {
         ValidationUtils.notNull(page, JBoltMsg.DATA_NOT_EXIST);
         return page;
     }
-    
+
+	/**
+	 * 从系统导入字段配置，获得导入的数据
+	 */
+	public Ret importExcelClass(File file) {
+		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+		if (notOk(records)) {
+			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+		}
+
+
+		for (Record record : records) {
+
+			if (StrUtil.isBlank(record.getStr("iInventoryClassId"))) {
+				return fail("所属分类不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("cInvCode"))) {
+				return fail("存货编码不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("cInvName"))) {
+				return fail("存货名称不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("isGavePresent"))) {
+				return fail("支给件是否赠品不能为空");
+			}
+
+
+			Date now=new Date();
+
+			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+			record.set("iOrgId", getOrgId());
+			record.set("cOrgCode", getOrgCode());
+			record.set("cOrgName", getOrgName());
+			record.set("iSource", SourceEnum.MES.getValue());
+			record.set("isEnabled",1);
+			record.set("iCreateBy", JBoltUserKit.getUserId());
+			record.set("dCreateTime", now);
+			record.set("cCreateName", JBoltUserKit.getUserName());
+			record.set("isDeleted",0);
+			record.set("iUpdateBy", JBoltUserKit.getUserId());
+			record.set("dUpdateTime", now);
+			record.set("cUpdateName", JBoltUserKit.getUserName());
+		}
+
+		// 执行批量操作
+		tx(() -> {
+			batchSaveRecords(records);
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	/**
+	 * 获取存货信息
+	 */
+	public Inventory findByiInventoryCode(String cinvcode) {
+		return findFirst(selectSql().eq(Inventory.CINVCODE, cinvcode).eq(Inventory.IORGID, getOrgId()).eq(Inventory.ISDELETED, ZERO_STR).first());
+	}
 }
 

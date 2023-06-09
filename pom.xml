@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.jbolt</groupId>
     <artifactId>fengfu-pubbase</artifactId>
-    <version>4.1.2</version>
+    <version>5.0.0</version>
     <packaging>jar</packaging>
     <name>fengfu-pubbase</name>
     <description>JBolt-基于JFinal的极速开发框架</description>
@@ -59,7 +59,7 @@
 		<ttl.version>2.14.2</ttl.version>
 		<toolgood_words.version>3.1.0.0</toolgood_words.version>
 		<codehighlight.version>1.0.3</codehighlight.version>
-		<jboltcore.version>4.1.2</jboltcore.version>
+		<jboltcore.version>5.0.0</jboltcore.version>
 
         <kotlin.version>1.8.21</kotlin.version>
         <commons-io.version>2.12.0</commons-io.version>
@@ -79,6 +79,7 @@
         <commons-codec.version>1.15</commons-codec.version>
         <commons-text.version>1.10.0</commons-text.version>
         <auto-excel.version>2.0.1</auto-excel.version>
+        <aspose-cells.version>22.6</aspose-cells.version>
 
         <aliyun-java-sdk-core.version>4.6.3</aliyun-java-sdk-core.version>
         <aliyun-java-sdk-sms.version>3.0.0-rc1</aliyun-java-sdk-sms.version>
@@ -672,6 +673,12 @@
             <groupId>net.fenghaitao</groupId>
             <artifactId>auto-excel</artifactId>
             <version>${auto-excel.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aspose</groupId>
+            <artifactId>aspose-cells</artifactId>
+            <version>${aspose-cells.version}</version>
         </dependency>
 
     </dependencies>

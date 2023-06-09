@@ -1,8 +1,8 @@
 #sql("recpor")
 SELECT
-    t1.AutoID,t1.BillType,t1.OrganizeCode,t1.BillDate,t1.RdCode,
-    t1.DeptCode,t1.SourceBillNo,t1.SourceBillID,t1.VenCode,t1.Memo,
-    t1.AuditPerson,t1.AuditDate,t1.ModifyDate,t1.ModifyPerson,t1.State,
+    t1.AutoID,t1.BillType,t1.OrganizeCode,t1.BillDate,t1.RdCode,t1.createdate,t1.createperson,
+    t1.DeptCode,t1.SourceBillNo,t1.SourceBillID,t1.VenCode,t1.Memo,t1.billno,
+    t1.AuditPerson,t1.AuditDate,t1.ModifyDate,t1.ModifyPerson,t1.iAuditStatus,
     t2.cRdCode,t2.cRdName,
     t3.Whcode,
     t4.cWhName,
@@ -28,7 +28,7 @@ WHERE 1=1
     and t1.vencode = #para(vencode)
 #end
 #if(state)
-    and t1.state = #para(state)
+    and t1.iAuditStatus = #para(state)
 #end
 #if(whcode)
     and t1.whcode = #para(whcode)
@@ -39,7 +39,7 @@ WHERE 1=1
 #if(endTime)
     and t1.CreateDate <= #para(endTime)
 #end
-order by t1.ModifyDate,t1.autoid desc
+order by t1.ModifyDate desc
 #end
 
 #sql("dList")
@@ -88,9 +88,7 @@ where 1 =1
 #if(billdid)
     and t1.billdid = #para(billdid)
 #end
-#if(sourcebillid)
-    and t1.sourcebillid = #para((sourcebillid))
-#end
+
 #if(sourcebilldid)
     and t1.sourcebilldid = #para(sourcebilldid)
 #end
@@ -99,5 +97,41 @@ where 1 =1
 #end
 #if(deptcode)
     and t1.deptcode = #para(deptcode)
+#end
+#end
+
+#sql("getMesSysPODetails")
+SELECT
+    pt.cPTName AS BillType,
+    a.cOrderNo AS SourceBillNo,
+    a.iAutoId AS SourceBillID,
+    a.dOrderDate AS BillDate,
+    a.iPurchaseTypeId,
+    ven.cVenCode AS VenCode,
+    ven.cVenName AS VenName
+FROM
+    PS_PurchaseOrderM a
+        LEFT JOIN PS_PurchaseOrderD b ON a.iAutoId= b.iPurchaseOrderMid
+        AND b.isDeleted<> 1
+        LEFT JOIN PS_PurchaseOrderDBatch c ON c.iPurchaseOrderDid = b.iAutoId
+        AND c.isEffective= 1
+        LEFT JOIN dbo.PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = b.iAutoId
+        AND tc.iAutoId = c.iPurchaseOrderdQtyId
+        LEFT JOIN Bd_Inventory inv ON inv.iAutoId = b.iInventoryId
+        AND b.isDeleted<>1
+        LEFT JOIN Bd_PurchaseType pt ON  a.iPurchaseTypeId = pt.iAutoId
+        LEFT JOIN Bd_Vendor ven ON  a.iVendorId = ven.iAutoId
+        WHERE 1 = 1
+#if(corderno)
+and a.cOrderNo = #para(corderno)
+#end
+ORDER BY a.dUpdateTime DESC
+#end
+
+#sql("getPrintData")
+select * from T_Sys_PUInStore t1
+where 1=1
+#if(ids)
+  AND CHARINDEX(','+cast((select t1.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
 #end
 #end

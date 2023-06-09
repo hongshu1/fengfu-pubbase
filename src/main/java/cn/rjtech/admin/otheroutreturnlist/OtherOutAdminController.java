@@ -1,24 +1,21 @@
 package cn.rjtech.admin.otheroutreturnlist;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.model.momdata.OtherOutDetail;
-import cn.rjtech.model.momdata.SysSaledeliver;
-import cn.rjtech.model.momdata.SysSaledeliverdetail;
 import cn.smallbun.screw.core.util.CollectionUtils;
 import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.OtherOut;
-import org.apache.commons.lang3.StringUtils;
+import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -85,14 +82,14 @@ public class OtherOutAdminController extends BaseAdminController {
 	* 保存
 	*/
 	public void save() {
-		renderJson(service.save(getModel(OtherOut.class, "otherOut")));
+		renderJson(service.save(getModel(OtherOut.class, "otheroutreturn")));
 	}
 
    /**
 	* 更新
 	*/
 	public void update() {
-		renderJson(service.update(getModel(OtherOut.class, "otherOut")));
+		renderJson(service.update(getModel(OtherOut.class, "otheroutreturn")));
 	}
 
    /**
@@ -115,6 +112,27 @@ public class OtherOutAdminController extends BaseAdminController {
 	 */
 	public void submitMulti(String param, String revokeVal ,String autoid) {
 		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal,autoid));
+	}
+
+
+	/**
+	 * 特殊领料单列表明细
+	 */
+	public void getOtherOutLinesReturnLines() {
+		String autoid = get("autoid");
+		Kv kv = new Kv();
+		kv.set("autoid",autoid== null? "null" :autoid);
+		List<Record> recordList = service.treturnQty(kv);
+		for (Record Lists : recordList){
+			BigDecimal qty1 = Lists.get("qty");
+			int i = qty1.compareTo(BigDecimal.ZERO);
+			System.out.println(i);
+			if (i < 0){
+				kv.set("Detailautoid",Lists.get("autoid"));
+			}
+		}
+		renderJsonData(service.getOtherOutLinesReturnLines(getPageNumber(), getPageSize(), kv));
+
 	}
 
 

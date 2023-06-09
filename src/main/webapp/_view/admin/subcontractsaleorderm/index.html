@@ -74,9 +74,9 @@
         <tr data-id="${data.iautoid}" >
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="admin/subcontractsaleorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" data-dialog-title="修改委外销售订单主表" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
-                <a href="admin/subcontractsaleorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-                <a href="admin/subcontractsaleorderm/approve/${data.iautoid}" data-ajaxbtn data-loading="执行中" data-handler="refreshJBoltTable" data-confirm="确定审批此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">审批</i></a>
+                <a href="admin/subcontractsaleorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="编辑委外销售订单" data-dialog-title="修改委外销售订单" class="jbolt_table_editbtn"><i class="fa fa-remove fa-edit">编辑</i></a>
+                <a href="admin/subcontractsaleorderm/delete/${data.iautoid}" tooltip data-title="删除委外销售订单" data-ajaxbtn data-loading="执行中 " data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+                <a href="admin/subcontractsaleorderm/approve/${data.iautoid}" data-ajaxbtn tooltip data-title="审批委外销售订单" data-loading="执行中" data-handler="refreshJBoltTable" data-confirm="确定审批此数据？" <i class="fa fa-remove fa-edit">审批</i></a>
             </td>
             <td>$${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
             <td>${data.cauditprogress}</td>
@@ -106,11 +106,12 @@
         <div class="jbolt_table_toolbar" id="subcontractsaleorderm_toolbar_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
                 <button data-openpage="dialog" data-area="100%,100%" data-handler="jboltTablePageToFirst" data-title="新增委外销售订单" data-url="admin/subcontractsaleorderm/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/subcontractsaleorderm/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 批量删除</button>
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
             </div>
         </div>
 
-        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
+        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal"
                data-jbolttable
                data-height="fill"
                data-ajax="true"

@@ -2,16 +2,17 @@ package cn.rjtech.admin.formextendfields;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.dictionary.DictionaryTypeKey;
-import cn.jbolt.core.cache.JBoltDictionaryCache;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.form.FormService;
 import cn.rjtech.model.momdata.FormExtendFields;
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 /**
@@ -22,6 +23,10 @@ import com.jfinal.plugin.activerecord.Record;
  */
 public class FormExtendFieldsService extends BaseService<FormExtendFields> {
 	private final FormExtendFields dao=new FormExtendFields().dao();
+
+	@Inject
+	private FormService formService;
+
 	@Override
 	protected FormExtendFields dao() {
 		return dao;
@@ -58,6 +63,8 @@ public class FormExtendFieldsService extends BaseService<FormExtendFields> {
 		Page<Record> page = paginateRecord(sql);
 		if (CollUtil.isNotEmpty(page.getList())) {
 			page.getList().forEach(row -> {
+				row.set("iformidname", formService.getOneColumnValueById(row.getStr("iFormId"),"cFormName"));
+				row.set("iformfieldidname", formService.getOneColumnValueById(row.getStr("iFormFieldId"),"cFormName"));
 				row.set("ifieldtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.extend_field_type.name(), row.getStr("iFieldType")));
 				row.set("isenabledname", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.whether_enable.name(), row.getStr("isEnabled")));
 				row.set("isrequiredname", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.is_required.name(), row.getStr("isRequired")));
