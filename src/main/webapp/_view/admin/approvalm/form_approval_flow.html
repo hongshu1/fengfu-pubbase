@@ -49,7 +49,8 @@
 
         para = {
             formSn: action.data("formsn"),
-            formAutoId: action.data("formautoid")
+            formAutoId: action.data("formautoid"),
+            primaryKeyName: action.data("primary")
         }
 
         Ajax.post("/admin/formapproval/judgeType", para, function (ret) {
@@ -79,7 +80,8 @@
         para = {
             formSn: action.data("formsn"),
             formAutoId: action.data("formautoid"),
-            status: action.data("status")
+            status: action.data("status"),
+            primaryKeyName: action.data("primary")
         };
 
         Ajax.post("/admin/formapproval/approve", para, function (ret) {
@@ -109,7 +111,8 @@
         para = {
             formSn: action.data("formsn"),
             formAutoId: action.data("formautoid"),
-            status: action.data("status")
+            status: action.data("status"),
+            primaryKeyName: action.data("primary")
         };
 
         Ajax.post("/admin/formapproval/rejectApprove", para, function (ret) {
@@ -139,7 +142,8 @@
         para = {
             formSn: action.data("formsn"),
             formAutoId: action.data("formautoid"),
-            status: action.data("status")
+            status: action.data("status"),
+            primaryKeyName: action.data("primary")
         };
 
         Ajax.post("/admin/formapproval/reverseApprove", para, function (ret) {

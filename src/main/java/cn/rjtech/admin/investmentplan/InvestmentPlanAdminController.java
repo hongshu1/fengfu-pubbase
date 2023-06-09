@@ -307,22 +307,22 @@ public class InvestmentPlanAdminController extends BaseAdminController {
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+28, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.EDITTYPE.getValue(), row.getStr("cedittype"))));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+29, row.getStr("cmemo")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+30, row.getInt("iitemyear")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+31, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress1"))));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+31, row.getStr("cperiodprogress1")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+32, row.getStr("dperioddate1")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+33, row.getBigDecimal("iamount1")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+34, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress2"))));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+34, row.getStr("cperiodprogress2")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+35, row.getStr("dperioddate2")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+36, row.getBigDecimal("iamount2")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+37, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress3"))));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+37, row.getStr("cperiodprogress3")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+38, row.getStr("dperioddate3")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+39, row.getBigDecimal("iamount3")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+40, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress4"))));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+40, row.getStr("cperiodprogress4")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+41, row.getStr("dperioddate4")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+42, row.getBigDecimal("iamount4")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+43, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress5"))));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+43, row.getStr("cperiodprogress5")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+44, row.getStr("dperioddate5")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+45, row.getBigDecimal("iamount5")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+46, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress6"))));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+46, row.getStr("cperiodprogress6")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+47, row.getStr("dperioddate6")));
     			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+48, row.getBigDecimal("iamount6")));
 			}
@@ -341,12 +341,6 @@ public class InvestmentPlanAdminController extends BaseAdminController {
      * */
     public void findInvestmentPlanItemForDetail(@Para("investmentPlanId") Long investmentPlanId) {
         renderJsonData(service.findInvestmentPlanItemForDetail(investmentPlanId));
-    }
-    /**
-     * 投资计划编制详情界面查询投资计划项目明细数据
-     * */
-    public void findInvestmentPlanItemdForDetail() {
-        renderJsonData(service.findInvestmentPlanItemdForDetail(getLong()));
     }
    
     /**

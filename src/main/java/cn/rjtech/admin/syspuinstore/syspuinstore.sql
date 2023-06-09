@@ -108,7 +108,8 @@ SELECT
     a.dOrderDate AS BillDate,
     a.iPurchaseTypeId,
     ven.cVenCode AS VenCode,
-    ven.cVenName AS VenName
+    ven.cVenName AS VenName,
+    inv.cInvStd,inv.cInvCode,inv.cInvName
 FROM
     PS_PurchaseOrderM a
         LEFT JOIN PS_PurchaseOrderD b ON a.iAutoId= b.iPurchaseOrderMid
@@ -134,4 +135,13 @@ where 1=1
 #if(ids)
   AND CHARINDEX(','+cast((select t1.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
 #end
+#end
+
+#sql("findPurchaseOrderDBatchByCBarcode")
+SELECT
+t1.iautoid as batchAutoid,t1.iPurchaseOrderDid,t1.iinventoryId,
+t2.cInvCode,t2.cInvName,t2.cInvName1,t2.cInvCode1,t2.cInvStd
+FROM PS_PurchaseOrderDBatch t1
+left join bd_inventory t2 on t1.iinventoryId = t1.iAutoId
+where 1=1 and t1.cbarcode=#para(cbarcode)
 #end

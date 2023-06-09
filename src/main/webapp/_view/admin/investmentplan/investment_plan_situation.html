@@ -3,121 +3,9 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
 <div class="jbolt_page_title">
-	<!-- <form id="investmentSituationForm" action="#" onsubmit="return false;" method="post">
-		<div class="form-group row col-md-auto">
-				<label class="col-1 col-form-label text-center">起止日期</label>
-				<input id="dstartdate_situation" name="dstartdate" type="text" class="form-control col-1" data-date data-type="month" data-rule="required" placeholder="=请选择=">
-				<span class="col-md-auto col-form-label text-center">至</span>
-                <input id="denddate_situation" type="text" name="denddate" class="form-control col-1" data-date data-type="month" data-rule="required" placeholder="=请选择=">
-	             <label class="col-1 col-form-label text-center">支付年份</label>
-               	<input id="paymentyear_situation" name="paymentyear" type="text" class="form-control col-1" data-date data-type="year" placeholder="=请选择=">
-	             <label class="col-1 col-form-label text-center">预算类型</label>
-                  <select class="form-control"
-                          data-select-type="select2"
-                          name="ibudgettype"
-                          data-autoload
-                          data-url="admin/dictionary/options?key=investment_budget_type"
-                          data-text="=请选择="
-                          data-text-attr="name"
-                          data-value-attr="sn"
-                          data-value=""
-                          data-width="120">
-                  </select>
-				<label class="col-1 col-form-label text-center">部门</label>
-                <select class="form-control"
-                		data-select-type="select2"
-                        data-autoload
-                        name="cdepcode"
-                        data-url="admin/department/treeDatasForProposalSystem?isProposal=true"
-                        data-text="=请选择="
-                        data-text-attr="cdepname"
-                        data-value-attr="cdepcode"
-                        data-setvalueto="cdepcode"
-                        data-value=""
-                        data-width="150">
-                </select>
-		</div>
-		<div class="form-group row col-md-auto">
-           		<label class="col-1 col-form-label text-center">投资类型</label>
-                <select class="form-control"
-                        data-select-type="select2"
-                        data-autoload
-                        name="iinvestmenttype"
-                        data-url="admin/dictionary/options?key=investment_type"
-                        data-text="=请选择="
-                        data-text-attr="name"
-                        data-value-attr="sn"
-                        data-value=""
-                        data-width="130"
-                        >
-                </select>  		
-	             <label class="col-1 col-form-label text-center">修订区分</label>
-                 <select class="form-control"
-                         data-select-type="select2"
-                         data-autoload
-                         name="cedittype"
-                         data-url="admin/dictionary/options?key=edit_type"
-                         data-text="=请选择="
-                         data-text-attr="name"
-                         data-value-attr="sn"
-                         data-value=""
-                         data-width="120">
-                 </select>
-	             <label class="col-1 col-form-label text-center">立项年份</label>
-                 <input name="iitemyear" type="text" class="form-control col-1" data-date data-type="year" placeholder="=请选择=">
-	             <label class="col-1 col-form-label text-center">事业区分</label>
-                 <select class="form-control"
-                         data-select-type="select2"
-                         name="icareertype"
-                         data-autoload
-                         data-url="admin/dictionary/options?key=career_type"
-                         data-text="=请选择="
-                         data-text-attr="name"
-                         data-value-attr="sn"
-                         data-value=""
-                         data-width="120"></select>
-	        <label class="col-1 col-form-label text-center">支付情况</label>
-	        <select class="form-control"
-	                data-select-type="select2"
-	                name="paymentstatus"
-	                data-autoload
-	                data-url="admin/dictionary/options?key=payment_status"
-	                data-text="=请选择="
-	                data-text-attr="name"
-	                data-value-attr="sn"
-	                data-value=""
-	                data-width="120"></select>                         
-		</div>
-		<div class="form-group row col-md-auto">
-	        <label class="col-1 col-form-label text-center">资产类别</label>
-	        <select class="form-control"
-	                data-select-type="select2"
-	                name="cassettype"
-	                data-autoload
-	                data-url="admin/dictionary/options?key=asset_type"
-	                data-text="=请选择="
-	                data-text-attr="name"
-	                data-value-attr="sn"
-	                data-value=""
-	                data-width="120"></select>
-	        <label class="col-1 col-form-label text-center">投资区分</label>
-	        <select class="form-control"
-	                data-select-type="select2"
-	                name="iinvestmentdistinction"
-	                data-autoload
-	                data-url="admin/dictionary/options?key=investment_distinction"
-	                data-text="=请选择="
-	                data-text-attr="name"
-	                data-value-attr="sn"
-	                data-value=""
-	                data-width="120"></select>	
-		    <button type="button" class="btn btn-outline-secondary" style="margin-left: 20px;" onclick="situationSubmitClick()"><i class="fa fa-search"></i> 查询</button>
-			<button type="reset" class="btn btn-outline-secondary" style="margin-left: 10px;"><i class="jbicon jb-11zhongzhi"></i> 重置</button>                	                
-		</div>
-	</form> -->
 	<div class="row">
-		<div class="col-md-auto text-left">
-			<form class="form-inline" id="investmentSituationForm"  onsubmit="return false;" method="post">
+		<div class="col-md-auto">
+			<form class="form-inline text-left" id="investmentSituationForm"  onsubmit="return false;" method="post">
 				<input id="dstartdate_situation" name="dstartdate" type="text" class="form-control" data-date data-type="month" data-rule="required" placeholder="=开始日期=">
 				<span class="col-md-auto col-form-label text-center">至</span>
                 <input id="denddate_situation" type="text" name="denddate" class="form-control" data-date data-type="month" data-rule="required" placeholder="=结束日期=">
@@ -138,7 +26,7 @@
                 		data-select-type="select2"
                         data-autoload
                         name="cdepcode"
-                        data-url="admin/department/treeDatasForProposalSystem?isProposal=true"
+                        data-url="admin/department/treeDatas"
                         data-text="=部门="
                         data-text-attr="cdepname"
                         data-value-attr="cdepcode"
@@ -212,7 +100,6 @@
 		                data-value-attr="sn"
 		                data-value=""
 		                data-width="130"></select>                               
-				<!-- <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button> -->
 				<button type="button" class="btn btn-outline-secondary" style="margin-left: 20px;" onclick="situationSubmitClick()"><i class="fa fa-search"></i> 查询</button>
 				<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
 			</form>
@@ -227,11 +114,6 @@
 #end
 #define js()
 <script>
-/* function ajaxSuccessHandler_#(pageId)(table) {
-	   $('.jbolt_table').tablesMergeCell({
-	      cols: [1,2]
-	   })
-} */
 var investmentPlanSituationTableIndex=$("#investmentPlanSituationTableIndex");
 function situationSubmitClick(){
 	if(!FormChecker.check("#investmentSituationForm")) return;
@@ -239,14 +121,14 @@ function situationSubmitClick(){
 	var denddate_situation = $("#denddate_situation").val();
 	var paraStr = '?dstartdate='+dstartdate_situation+"&denddate="+denddate_situation;
 	var url="/admin/investmentplan/investmentPlanSituationTableIndex"+paraStr;
- 	/* investmentPlanSituationTableIndex.ajaxPortal(true,url,true,function(){
- 	 	//jboltTableRefresh("#jbolt_Table_situation");
- 	 	//$("#situationSubmitId").click();
- 	});  */
  	AjaxPortalUtil.go(investmentPlanSituationTableIndex, url);
 }
-
-
+function ajaxSuccessHandler_situation(table) {
+	   $('.jbolt_table').tablesMergeCell({
+	      cols: [1,2,3,4,5,6,7,8,9,10,12]
+	   })
+	   
+}
 </script>
 
 #end

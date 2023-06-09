@@ -10,7 +10,7 @@
 			</div>
 			<div class="col">
 				<form class="form-inline" id="moMaterialsreturnmForm_#(pageId)"   onsubmit="return false;" method="post">
-					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="=调拨单号=" name="billno" value="" />
 					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 					<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 				</form>
@@ -25,23 +25,24 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	 ###{@if data.istatus < 7}
+	<a href="admin/momaterialsreturn/edit/${data.iautoid}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i>编辑</a>
+    <a href="admin/momaterialsreturn/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger">删除</i></a>
+	<a href="admin/momaterialsreturn/details/${data.iautoid}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i>查看</a>
 
+</td>
 
 
 <td>${data.iauditState}</td>
-<td>${data.daudittime}</td>
-<td>${data.cmemo}</td>
-<td>${data.icreateby}</td>
+<td>${data.cmodocno}</td>
+<td>${data.cdeptname}</td>
+<td>${data.billno}</td>
+
 <td>${data.ccreatename}</td>
 <td>${data.dcreatetime}</td>
-<td>${data.iupdateby}</td>
-<td>${data.cupdatename}</td>
-<td>${data.dupdatetime}</td>
-<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isdeleted}"  data-handler="refreshJBoltTable"  data-url="admin/momaterialsreturn/toggleIsdeleted/${data.id}"/></td>
-<td>
-	<a href="admin/momaterialsreturn/edit/${data.id}" data-area="1200,800"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改质量管理-在库检明细列值" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
-    <a href="admin/momaterialsreturn/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
-</td>
+
+
 </tr>
 {@/each}
 </textarea>
@@ -50,8 +51,10 @@
 		<div class="jbolt_table_toolbar" id="moMaterialsreturnm_toolbar_#(pageId)">
 			<div class="" role="group" aria-label="btn-group">
 				<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title=""  data-url="admin/momaterialsreturn/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-				<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="" data-check-handler="jboltTableGetCheckedId" data-url="admin/momaterialsreturn/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
-				<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/momaterialsreturn/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+				<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/materialreturnlist/approve?mark=2&&iAutoId=" data-confirm="确定审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量审核</button>
+				<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"  data-url="admin/materialreturnlist/NoApprove?ids=" data-confirm="确定反审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量反审核</button>
+				<!--<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="" data-check-handler="jboltTableGetCheckedId" data-url="admin/momaterialsreturn/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>-->
+				<!--<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/momaterialsreturn/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>-->
 				<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 			</div>
 
@@ -85,18 +88,19 @@
 			<tr>
 				<th data-width="60">序号</th>
 
-
+				<th data-width="100">操作</th>
 
 				<th data-width="150" data-column="iauditstate">审核状态</th>
-				<th data-width="150" data-column="dAuditTime">审核时间</th>
-				<th data-width="150" data-column="cMemo">备注</th>
+				<th data-width="150" data-column="BillNo">调拨单号</th>
+				<th data-width="150" data-column="cMoDocNo">工单号</th>
+				<th data-width="150" data-column="cDepName">生产部门</th>
+
 
 				<th data-width="150" data-column="cCreateName">创建人名称</th>
 				<th data-width="150" data-column="dCreateTime">创建时间</th>
-				<th data-width="150" data-column="iUpdateBy">更新人ID</th>
-				<th data-width="150" data-column="cUpdateName">更新人名称</th>
-				<th data-width="150" data-column="dUpdateTime">更新时间</th>
-				<th data-width="100">操作</th>
+				<!--<th data-width="150" data-column="cMemo">备注</th>-->
+
+
 
 			</tr>
 			</thead>

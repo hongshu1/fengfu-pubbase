@@ -215,7 +215,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     }
 
     /**
-     * 提审
+     * 提审批
      */
     public void submit(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.validateId(iautoid, "id");
@@ -224,7 +224,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     }
 
     /**
-     * 撤回已提审
+     * 撤回已提审批
      */
     public void withdraw(Long iAutoId) {
         ValidationUtils.validateId(iAutoId, "iAutoId");
@@ -250,6 +250,39 @@ public class SysPureceiveAdminController extends BaseAdminController {
             return;
         }
         renderJson(service.reject(ids));
+    }
+    /**
+     * 反审批
+     */
+    public void reverseApprove(String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            renderFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        renderJson(service.reverseApprove(ids));
+    }
+
+    /**
+     * 审核通过
+     */
+    public void process(String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            renderFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        renderJson(service.process(ids));
+    }
+
+
+    /**
+     * 审核不通过
+     */
+    public void noProcess(String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            renderFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        renderJson(service.noProcess(ids));
     }
 
 }

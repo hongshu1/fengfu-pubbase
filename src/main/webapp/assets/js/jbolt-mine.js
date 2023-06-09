@@ -323,21 +323,6 @@ function edittype(val){
     }
 }
 
-function periodprogress(val){
-    switch (val){
-        case '1':
-            return juicer_html('发注',++val);
-        case '2':
-            return juicer_html('纳入', ++val);
-        case '3':
-            return juicer_html('验收',++val);
-        case '4':
-            return juicer_html('质保', ++val);
-        default:
-            return ' ';
-    }
-}
-
 function simport(val) {
     switch (val) {
         case '0':
@@ -513,8 +498,8 @@ function iBudgetTypeInvestmentGroupSummary(val) {
 }
 
 var kFormat = function (val) {
-	if (val === 0) {
-		return 0;
+	if (val == 0) {
+		return '-';
 	}
 	return val ? numberFormat((val / 1000), 2) : '';
 };
@@ -630,7 +615,6 @@ function initMineJuicer(){
     juicer.register('spriorreport', spriorreport);
     juicer.register('paymentprogress', paymentprogress);
     juicer.register('edittype', edittype);
-    juicer.register('periodprogress', periodprogress);
     juicer.register('simport', simport);
     juicer.register('proposaldType', proposaldType);
     juicer.register('purchaseState', purchaseState);

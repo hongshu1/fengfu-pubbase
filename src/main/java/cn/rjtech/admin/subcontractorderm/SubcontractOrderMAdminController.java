@@ -20,6 +20,7 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
@@ -292,15 +293,24 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
   }
 
   /**
+   * /
    * 导出PDF
    */
   @SuppressWarnings("unchecked")
   public void orderDBatchExport() throws Exception {
-//    renderJxls("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas1(getKv()),
-//        "委外订单订货清单.xlsx");
-    renderJxlsToPdf("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas1(getKv()),
+    renderJxlsToPdf("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas(getKv(), "未更改清单"),
         "委外订单订货清单.pdf");
   }
+
+  /**
+   * 导出PDF
+   */
+  @SuppressWarnings("unchecked")
+  public void orderDbOneAtchExport() throws Exception {
+    renderJxlsToPdf("orderDbOneAtchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas(getKv(), "已更改清单"),
+        "委外订单已更改清单订货.pdf");
+  }
+
 
   public void updateHideInvalid(@Para(value = "id") Long id,
                                 @Para(value = "hideInvalid") String hideInvalid) {
