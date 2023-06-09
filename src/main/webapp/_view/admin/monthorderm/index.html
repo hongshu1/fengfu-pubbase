@@ -69,7 +69,7 @@
     <a href="admin/monthorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除月度计划订单" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 	{@/if}
 	{@if data.iorderstatus == '2'}
-	<a class="jbolt_table_delbtn" href="admin/monthorderm/withdraw?iAutoId=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回年度订单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
+	<a class="jbolt_table_delbtn" href="admin/monthorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回月度订单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
 	<a class="jbolt_table_delbtn" href="admin/monthorderm/approve/${data.iautoid}" data-confirm="确定审批此选项？" tooltip data-title="审批月度计划订单" data-handler="refreshJBoltTable"><i class="fa fa-remove fa-edit">审批</i></a>
 	{@/if}
 </td>

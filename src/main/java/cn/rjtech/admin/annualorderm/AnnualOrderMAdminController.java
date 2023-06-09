@@ -122,7 +122,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     /**
      * 撤回已提审
      */
-    public void withdraw(Long iAutoId) {
+    public void withdraw(@Para(value = "iautoid") Long iAutoId) {
         ValidationUtils.validateId(iAutoId, "iAutoId");
 
         renderJson(service.withdraw(iAutoId));

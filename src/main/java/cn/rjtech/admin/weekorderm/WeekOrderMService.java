@@ -13,6 +13,7 @@ import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
@@ -114,11 +115,16 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         ValidationUtils.notEmpty(listByIds, "订单不存在");
 
         tx(() -> {
-            
+
             for (WeekOrderM orderM : listByIds) {
 
-                formApprovalService.approveByStatus(table(), orderM.getIAutoId(), () -> null, () -> null);
+                formApprovalService.approveByStatus(table(), orderM.getIAutoId(), () -> null, () -> {
+                    orderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+                    ValidationUtils.isTrue(orderM.update(), "审批失败");
+                    return null;
+                });
 
+                // 修改客户计划汇总
                 cusOrderSumService.algorithmSum();
 
             }
