@@ -8,6 +8,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.materialsout.MaterialsOutService;
+import cn.rjtech.admin.purchaseorderm.PurchaseOrderMService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.vendor.VendorService;
@@ -59,6 +60,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     private RdStyleService            rdStyleService;
     @Inject
     private VendorService             vendorService;
+    @Inject
+    private PurchaseOrderMService     purchaseOrderMService;
 
     @Override
     protected int systemLogTargetType() {
@@ -157,6 +160,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             puinstore.setModifyPerson(JBoltUserKit.getUserName());
             puinstore.setModifyDate(date);
             puinstore.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+            PurchaseOrderM purchaseOrderM = findU8BillNo(puinstore);
+            puinstore.setU8BillNo(purchaseOrderM != null ? purchaseOrderM.getCDocNo() : "");
             //
             puinstoreList.add(puinstore);
         }
@@ -217,7 +222,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         SysPuinstore sysPuinstore = findById(autoid);
         //1、更新审核人、审核时间、状态
         boolean tx = tx(() -> {
-            if (sysPuinstore.getIAuditStatus()==AuditStatusEnum.NOT_AUDIT.getValue()){
+            if (sysPuinstore.getIAuditStatus() == AuditStatusEnum.NOT_AUDIT.getValue()) {
                 Date date = new Date();
                 sysPuinstore.setAuditPerson(JBoltUserKit.getUserName());
                 sysPuinstore.setAuditDate(date);//审核日期
@@ -257,6 +262,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             System.out.println(post);
 
             //3、如果成功，给u8的单据号；不成功，把单据号置为空，状态改为审核不通过
+            PurchaseOrderM purchaseOrderM = findU8BillNo(sysPuinstore);
+            sysPuinstore.setU8BillNo(purchaseOrderM != null ? purchaseOrderM.getCDocNo() : "");
 
             return true;
         });
@@ -358,7 +365,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     public Ret delete(Long id) {
         //从表的数据
         Ret ret = deleteSysPuinstoredetailByMasId(String.valueOf(id));
-        if (ret.isFail()){
+        if (ret.isFail()) {
             return fail(JBoltMsg.FAIL);
         }
         //删除主表数据
@@ -418,7 +425,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                 updateSysPuinstore.setModifyDate(date);
                 saveSysPuinstoreModel(updateSysPuinstore, record, detailByParam);
                 Ret update = update(updateSysPuinstore);
-                if (update.isFail()){
+                if (update.isFail()) {
                     return false;
                 }
 
@@ -600,9 +607,11 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
         int i = 1;
         for (SysPuinstoredetail detail : detailList) {
+            Record record = findPurchaseOrderDBatchByCBarcode(detail.getBrandCode());
+
             Main main = new Main();
-            main.setInvName("");
-            main.setInvCode("");
+            main.setInvName(record.getStr("cinvname"));
+            main.setInvCode(record.getStr("cinvcode"));
             main.setBillID("");
             main.setBillNoRow("");
             main.setBillDid("");
@@ -656,4 +665,13 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         List<Record> recordList = dbTemplate("syspuinstore.getPrintData", kv).find();
         return recordList;
     }
+
+    public Record findPurchaseOrderDBatchByCBarcode(String cbarcode) {
+        return dbTemplate("syspuinstore.findPurchaseOrderDBatchByCBarcode").findFirst();
+    }
+
+    public PurchaseOrderM findU8BillNo(SysPuinstore puinstore) {
+        return purchaseOrderMService.findByCOrerNo(puinstore.getSourceBillNo());
+    }
+
 }
