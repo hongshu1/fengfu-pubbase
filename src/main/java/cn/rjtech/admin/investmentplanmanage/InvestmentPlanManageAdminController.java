@@ -54,12 +54,6 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
         renderJsonData(service.findInvestmentPlanItemForDetail(investmentPlanId));
     }
     /**
-     * 投资计划编制详情界面查询投资计划项目明细数据
-     * */
-    public void findInvestmentPlanItemdForDetail() {
-        renderJsonData(service.findInvestmentPlanItemdForDetail(getLong()));
-    }
-    /**
      *	投资计划生效 
      * */
     @CheckPermission(PermissionKey.INVESTMENT_PLAN_MANAGE_EFFECT)

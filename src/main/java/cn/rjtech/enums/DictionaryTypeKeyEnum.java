@@ -19,7 +19,6 @@ public enum DictionaryTypeKeyEnum {
 	PAYMENT_PROGRESS("实施阶段", "payment_progress"),
 	EDITTYPE("修定区分", "edit_type"),
 	INVESTMENTITEMTYPE("投资计划类型", "investment_item_type"),
-	PERIOD_PROGRESS("日程", "period_progress"),
     AUDIT_STATUS("审核状态", "audit_status");
     private final String text;
     private final String value;
