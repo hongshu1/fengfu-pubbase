@@ -64,13 +64,12 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	<a class=jbolt_table_editbtn href="admin/monthorderm/edit?iautoid=${data.iautoid}" data-fs="true"  data-handler="refreshJBoltTable" data-title="查看月度计划订单"><i class="fa fa-eye"></i>查看</a>
-	{@if  data.iorderstatus == '1'}
+	{@if  data.iorderstatus == '1' || data.iorderstatus == '4'}
 	<a href="admin/monthorderm/edit?iautoid=${data.iautoid}&edit=true" data-area="100%,100%"  tooltip data-title="编辑月度计划订单"  data-handler="refreshJBoltTable" data-dialog-title="编辑月度计划订单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
     <a href="admin/monthorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除月度计划订单" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 	{@/if}
 	{@if data.iorderstatus == '2'}
 	<a class="jbolt_table_delbtn" href="admin/monthorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回月度订单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
-	<a class="jbolt_table_delbtn" href="admin/monthorderm/approve/${data.iautoid}" data-confirm="确定审批此选项？" tooltip data-title="审批月度计划订单" data-handler="refreshJBoltTable"><i class="fa fa-remove fa-edit">审批</i></a>
 	{@/if}
 </td>
 <td>$${data.iorderstatus|iOrderStatus}</td>

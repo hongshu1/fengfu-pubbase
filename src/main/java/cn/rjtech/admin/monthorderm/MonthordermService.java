@@ -17,6 +17,7 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.enums.OrderStatusEnum;
+import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.AuditFormConfig;
 import cn.rjtech.model.momdata.MonthOrderD;
 import cn.rjtech.model.momdata.MonthOrderM;
@@ -340,5 +341,21 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         });
         return SUCCESS;
     }
-    
+
+    /**
+     * 审批不通过
+     * @param iautoid
+     * @return
+     */
+    public Ret reject(Long iautoid) {
+        tx(() -> {
+            formApprovalService.rejectByStatus(table(), iautoid, () -> null, () -> {
+                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED).isOk(), JBoltMsg.FAIL);
+                return null;
+            });
+
+            return true;
+        });
+        return SUCCESS;
+    }
 }
