@@ -26,7 +26,7 @@
                         <input type="hidden" name="sysPureceive.AutoID" value="#(sysPureceive.AutoID??)"/>
                         #end
                         <input type="hidden" name="sysPureceive.Type" value="PUReceive"/>
-<!--                        <input type="test" id="detailHidden" name="detailHidden"/>-->
+                        <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -389,6 +389,21 @@
                             use: "sourcebillid"
                         }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}],
 
+                        handler:function (table,td,text,value,jsonData) {
+                            let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
+                            console.log("data==>",datas);
+                            let array = new Array();
+                            if (datas != null){
+                                for (var i = 0; i < datas.length; i++){
+                                    var data = datas[i];
+                                    array.push("'"+data.barcode+"'");
+                                    let codes = array.join(',');
+                                    $("#detailHidden").val(codes);
+                                }
+                            }else {
+                                $("#detailHidden").val('');
+                            }
+                        }
                 },
                 cinvcode: {
                     // linkPara:"#sysPureceive.VenCode",
@@ -424,8 +439,23 @@
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {
                             column: "sourcebillid",
                             use: "sourcebillid"
-                        }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}]
+                        }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}],
 
+                        handler:function (table,td,text,value,jsonData) {
+                            let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
+                            console.log("data==>",datas);
+                            let array = new Array();
+                            if (datas != null){
+                                for (var i = 0; i < datas.length; i++){
+                                    var data = datas[i];
+                                    array.push("'"+data.barcode+"'");
+                                    let codes = array.join(',');
+                                    $("#detailHidden").val(codes);
+                                }
+                            }else {
+                                $("#detailHidden").val('');
+                            }
+                        }
                 },
             }
         };

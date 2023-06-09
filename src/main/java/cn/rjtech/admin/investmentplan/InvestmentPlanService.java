@@ -1408,6 +1408,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
      * 执行进度跟踪表数据查询
      * */
 	public List<Record> findExecutionProgressTrackingDatas(Kv para) {
+		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
 		return dbTemplate("investmentplan.findExecutionProgressTrackingDatas",para).find();
 	}
 	/**

@@ -5,8 +5,15 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.rdstyle.RdStyleService;
+import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.RdStyle;
 import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.model.momdata.Vendor;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -17,6 +24,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 
 /**
  * 采购入库单
+ *
  * @ClassName: SysPuinstoreAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 15:38
@@ -29,6 +37,12 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 
     @Inject
     private SysPuinstoreService service;
+    @Inject
+    private VendorService       vendorService;
+    @Inject
+    private DepartmentService   departmentService;
+    @Inject
+    private RdStyleService      rdStyleService;
 
     /**
      * 首页
@@ -67,22 +81,47 @@ public class SysPuinstoreAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
+        Vendor vendor = vendorService.findByCode(sysPuinstore.getVenCode());
+        if (vendor != null) {
+            set("cvenname", vendor.getCVenName());
+        }
+        Department department = departmentService.findByCdepcode(getOrgId(), sysPuinstore.getDeptCode());
+        if (department != null){
+            set("cdepname", department.getCDepName());
+        }
+        RdStyle rdStyle = rdStyleService.findBycSTCode(sysPuinstore.getRdCode());
+        if (rdStyle != null){
+            set("crdname", rdStyle.getCRdName());
+        }
+
         set("sysPuinstore", sysPuinstore);
         render("edit.html");
+    }
+
+    /*
+     * 撤回
+     * */
+    public void backStep() {
+        SysPuinstore puinstore = service.findById(getLong(0));
+        if (puinstore == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        renderJson(service.backStep(puinstore));
     }
 
     /*
      * 批量审批
      * */
     public void autitByIds() {
-        renderJson(service.resetAutitByIds(get("ids")));
+        renderJson(service.autitByIds(get("ids")));
     }
 
     /*
      * 批量反审批
      * */
     public void resetAutitByIds() {
-        renderJson(service.autitByIds(get("ids")));
+        renderJson(service.resetAutitByIds(get("ids")));
     }
 
     /*
@@ -94,9 +133,9 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     }
 
     /*
-     * 审批
+     * 编辑页面的审批
      * */
-    public void autit() {
+    public void editAutit() {
         Kv kv = getKv();
         Long aLong = getLong(0);
         Long autoid = null;
@@ -105,7 +144,22 @@ public class SysPuinstoreAdminController extends BaseAdminController {
         } else if (aLong != null) {
             autoid = aLong;
         }
-        renderJson(service.autit(autoid));
+        renderJson(service.editAutit(autoid));
+    }
+
+    /*
+     * 查看页面的审批
+     * */
+    public void onlyseeAutit() {
+        Kv kv = getKv();
+        Long aLong = getLong(0);
+        Long autoid = null;
+        if (kv.getLong("autoid") != null) {
+            autoid = kv.getLong("autoid");
+        } else if (aLong != null) {
+            autoid = aLong;
+        }
+        renderJson(service.onlyseeAutit(autoid));
     }
 
     /*
@@ -116,6 +170,18 @@ public class SysPuinstoreAdminController extends BaseAdminController {
         if (sysPuinstore == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
+        }
+        Vendor vendor = vendorService.findByCode(sysPuinstore.getVenCode());
+        if (vendor != null) {
+            set("cvenname", vendor.getCVenName());
+        }
+        Department department = departmentService.findByCdepcode(getOrgId(), sysPuinstore.getDeptCode());
+        if (department != null){
+            set("cdepname", department.getCDepName());
+        }
+        RdStyle rdStyle = rdStyleService.findBycSTCode(sysPuinstore.getRdCode());
+        if (rdStyle != null){
+            set("crdname", rdStyle.getCRdName());
         }
         set("sysPuinstore", sysPuinstore);
         render("onlysee.html");
@@ -192,5 +258,12 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * */
     public void getWareHouseName() {
         renderJson(service.getWareHouseName(getKv()));
+    }
+
+    /*
+     * 获取需要打印的模板数据
+     * */
+    public void getPrintData() {
+        renderJson(service.printData(getKv()));
     }
 }

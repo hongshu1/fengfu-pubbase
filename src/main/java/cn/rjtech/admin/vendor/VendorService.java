@@ -335,7 +335,8 @@ public class VendorService extends BaseService<Vendor> {
     }
 
     public Vendor findByCode(String cvencode) {
-        return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvencode = ?", cvencode);
+        return findFirst("SELECT * FROM Bd_Vendor v WHERE isDeleted = 0 AND isEnabled = 1 AND v.cvencode = ? and v.cOrgCode=?",
+            cvencode,getOrgCode());
     }
 
     public Record getRecprdByCVenCode(String cvencode) {

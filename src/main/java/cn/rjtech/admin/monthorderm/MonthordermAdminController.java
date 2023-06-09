@@ -17,6 +17,8 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.Optional;
+
 /**
  * 月度计划订单 Controller
  *
@@ -60,7 +62,7 @@ public class MonthordermAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		MonthOrderM monthorderm=service.findById(getLong(0)); 
+		MonthOrderM monthorderm=service.findById(get("iautoid"));
 		if(monthorderm == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
@@ -69,6 +71,7 @@ public class MonthordermAdminController extends BaseAdminController {
         Customer customer = customerService.findById(monthorderm.getICustomerId());
         monthordermRc.set("ccusname", customer == null ? null:customer.getCCusName());
 		set("monthorderm",monthordermRc);
+		set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
 		render("edit.html");
 	}
 
@@ -120,7 +123,7 @@ public class MonthordermAdminController extends BaseAdminController {
 	 * 审批
 	 */
 	public void approve() {
-		renderJson(service.approve(getLong("id")));
+		renderJson(service.approve(getLong(0)));
 	}
 
     /**

@@ -292,12 +292,15 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      * @param iautoid
      */
     public Ret submit(Long iautoid) {
-        Ret ret = formApprovalService.judgeType(table(), iautoid);
-        ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-        AnnualOrderM annualOrderM = findById(iautoid);
-        annualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
-        annualOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-        ValidationUtils.isTrue(annualOrderM.update(), JBoltMsg.FAIL);
+        tx(() -> {
+            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+            AnnualOrderM annualOrderM = findById(iautoid);
+            annualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+            annualOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+            ValidationUtils.isTrue(annualOrderM.update(), JBoltMsg.FAIL);
+            return true;
+        });
         return SUCCESS;
     }
 }

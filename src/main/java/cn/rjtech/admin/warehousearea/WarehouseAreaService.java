@@ -1,16 +1,20 @@
 package cn.rjtech.admin.warehousearea;
 
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.base.service.BaseService;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.model.momdata.WarehouseArea;
 import cn.rjtech.util.ValidationUtils;
@@ -37,6 +41,9 @@ import static cn.hutool.core.text.StrPool.COMMA;
 public class WarehouseAreaService extends BaseService<WarehouseArea> {
 
     private final WarehouseArea dao = new WarehouseArea().dao();
+
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingDService;
 
     @Override
     protected WarehouseArea dao() {
@@ -329,5 +336,53 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 
     public List<Record> options(Kv kv){
         return dbTemplate("warehousearea.options", kv).find();
+    }
+
+    /**
+     * 从系统导入字段配置，获得导入的数据
+     */
+    public Ret importExcelClass(File file) {
+        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        if (notOk(records)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+        }
+
+
+        for (Record record : records) {
+
+            if (StrUtil.isBlank(record.getStr("cAreaCode"))) {
+                return fail("库区编码不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("cAreaName"))) {
+                return fail("库区名称不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("iWarehouseId"))) {
+                return fail("所属仓库不能为空");
+            }
+
+
+            Date now=new Date();
+
+            record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+            record.set("iOrgId", getOrgId());
+            record.set("cOrgCode", getOrgCode());
+            record.set("cOrgName", getOrgName());
+            record.set("iSource", SourceEnum.MES.getValue());
+            record.set("iCreateBy", JBoltUserKit.getUserId());
+            record.set("dCreateTime", now);
+            record.set("cCreateName", JBoltUserKit.getUserName());
+            record.set("isEnabled",1);
+            record.set("isDeleted",0);
+            record.set("iUpdateBy", JBoltUserKit.getUserId());
+            record.set("dUpdateTime", now);
+            record.set("cUpdateName", JBoltUserKit.getUserName());
+        }
+
+        // 执行批量操作
+        tx(() -> {
+            batchSaveRecords(records);
+            return true;
+        });
+        return SUCCESS;
     }
 }

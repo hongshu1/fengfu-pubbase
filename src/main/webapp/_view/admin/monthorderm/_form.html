@@ -11,18 +11,16 @@
                     <div class="col">
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
 
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm",
-                        formSn="Co_MonthOrderM", iautoid=monthorderm.iautoid??0,
-                        iauditstatus=monthorderm.iAuditStatus??0,iauditway=monthorderm.iauditway??0)
+                        #include("/_view/_common/_approval_btns.html",formSn="Co_MonthOrderM", uri="/admin/monthorderm", iautoid=monthorderm.iautoid??, edit=edit??)
 
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
             </div>
         </div>
-
+        
     </div>
-
+    
 </div>
 
 ### 新增之后，并且为审核流
@@ -173,7 +171,7 @@
         </tr>
         {@/each}
     </script>
-
+    
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-xs">添加行</button>
@@ -201,7 +199,7 @@
             </div>
         </div>
     </div>
-
+    
     <table class="jbolt_table thead_font_normal table-bordered table-center"
            data-jbolttable
            #if(monthorderm.iAutoId??)
@@ -316,7 +314,7 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-
+    
     function submitThisForm(){
         $('#save_btn_#(pageId)').click();
     }
@@ -398,7 +396,7 @@
             });
         }
     }
-
+    
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
@@ -410,7 +408,6 @@
                 success: function (res) {
                     LayerMsgBox.success("提交成功", 600, function () {
                         parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
                     });
                 }
             },
@@ -419,23 +416,23 @@
                     submitAttr: "iautoid",
                 },
                 cinvcode: {
-                    type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
-                    maxLength: 100,
-                    required: true,
-                    placeholder: "请选择",
-                    textAttr: "cinvcode",
-                    width: 500,
-                    valueAttr: "cinvcode",
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
-                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
+                    required:true,
+                    type:"dialogbtn",
+                    placeholder:"选择存货",
+                    maxLength:100,
+                    dialog:{
+                        url:"admin/manualorderm/inventory_dialog_index",
+                        area:"80%,80%",
+                        title:"选择存货",
+                        btn:"选择,关闭"
+                    },
+                    columnAttr:"iinventoryid,cinvcode1,cinvname1,cinvstd,cuomname",
                     changeColumns: [
-                        {column: "cinvcode", use: "cinvcode"},
-                        {column: "cinvcode1", use: "cinvcode1"},
-                        {column: "cinvname1", use: "cinvname1"},
-                        {column: "cinvstd", use: "cinvstd"},
-                        {column: "cuomname", use: "cuomname"},
-                        {column: "iinventoryid", use: "iautoid"}
+                        {column:"cuomname",use:"cuomname"},
+                        {column:"cinvstd",use:"cinvstd"},
+                        {column:"cinvname1",use:"cinvname1"},
+                        {column:"cinvcode1",use:"cinvcode1"},
+                        {column:"iinventoryid",use:"iautoid"},
                     ]
                 },
                 iqty1: {
@@ -936,7 +933,7 @@
     	parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
     }
-
+    
 </script>
 #end
 

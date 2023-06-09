@@ -180,5 +180,39 @@ public class MoMaterialsscansumService extends BaseService<MoMaterialsscansum> {
 		}
 		return  SUCCESS;
 	}
+	/**
+	 * 通过现票获取存货信息
+	 * @param barcode
+	 * @return
+	 */
+	public Record  getBarcode(String barcode,Long imodoid){
+		return  dbTemplate("momaterialsscansum.findByBarcode",
+				Kv.create().set("barcode",barcode)
+						.set("imodocid",imodoid)
+		).findFirst();
+	}
+
+	public Ret add(String barcode,Long imodoid){
+		Record record=getBarcode(barcode,imodoid);
+		if(record!=null){
+			if(isOk(record.getLong("iinventoryid"))) {
+				MoMaterialsscansum moMaterialsscansum=findFirst(Okv.create().
+						set(MoMaterialsscansum.IINVENTORYID,record.getLong("iinventoryid")),MoMaterialsscansum.IAUTOID,"DESC");
+				if(moMaterialsscansum!=null) {
+					moMaterialsscansum = new MoMaterialsscansum();
+					moMaterialsscansum.setIInventoryId(record.getLong("iinventoryid"));
+					moMaterialsscansum.setIMoDocId(record.get("imdocid"));
+					moMaterialsscansum.setIPlanQty(record.getBigDecimal("qty"));//计划数 iScannedQty
+					moMaterialsscansum.setIScannedQty(new BigDecimal(1));
+					moMaterialsscansum.save();
+				}else{
+					moMaterialsscansum.setIScannedQty(moMaterialsscansum.getIScannedQty().add(new BigDecimal(1)));
+					moMaterialsscansum.update();
+				}
+			}
+
+		}
+		return  SUCCESS;
+	}
 
 }
