@@ -4,7 +4,7 @@
 <div class="jbolt_page">
     <div style="text-align: center; font-size: 24px; color: red">采购入库单</div>
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="PuinstoreForm" action="#(action)" method="post">
+
             <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
                 <div class="col-md-l pt-2" role="group" aria-label="btn-group">
                     <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
@@ -20,16 +20,20 @@
                     </button>
                 </div>
             </div>
+        <form onsubmit="return false;" id="PuinstoreForm" action="#(action)" method="post">
             #if(puinstore.AutoID??)
             <input type="hidden" id="puinstoreautoid" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
             #end
+            <input type="hidden" id="autoid" name="autoid" value="#(puinstore.autoid??)"/>
+            <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
+            <input type="hidden" id="spottickets" name="spottickets"/>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">入库单号：</label>
+                <label class="col-sm-2 col-form-label"><font style="color: red">*</font>入库单号：</label>
                 <div class="col-sm-2 col-form-label">
                     <div class="input-group-append">
-                        <input id="billno" name="puinstore.billno" type="text" readonly autocomplete="off"
-                               class="form-control" maxlength="40" value="#(puinstore.billno??)"/>
-                        <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
+                        <input id="billno" name="puinstore.billno"  type="text"  autocomplete="off" placeholder="=请选择入库单号="
+                               required data-rule="required" class="form-control" maxlength="40" value="#(puinstore.billno??)"/>
+                        <button class="btn btn-primary"  data-dialogbtn data-link-para-ele=""
                                 data-area="90%,90%" data-title="选择数据（单选）"
                                 id="supplierButton"
                                 data-url="/admin/materialreturnlist/choosePuinstoreData"><i
@@ -39,8 +43,8 @@
 
                 <label class="col-sm-2 col-form-label">入库日期：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text"  id="purchaseDate"  class="form-control"
-                           placeholder="请输入入库日期" maxlength="30" name="puinstore.billdate"
+                    <input type="text"  id="billdate"  class="form-control" readonly="readonly"
+                           maxlength="30" name="puinstore.billdate"
                            value="#datetime(puinstore.billdate??,'yyyy-MM-dd')">
                 </div>
                 <label class="col-sm-2 col-form-label">仓库名称：</label>
@@ -57,49 +61,44 @@
                             data-text-attr="whname"
                             data-select="#(puinstore.whcode??)"></select>
                     <input type="hidden" data-sync-attr="whname" id="cwhname" name="puinstore.whname"  value="#(puinstore.whname??)" />
-
                 </div>
             </div>
 
             <div class="form-group row">
+                <label class="col-sm-2 col-form-label">订单号：</label>
+                <div class="col-sm-2 col-form-label">
+                    <div class="input-group-append">
+                        <input required type="text" id="sourcebillno" name="puinstore.sourcebillno" class="form-control border-none"
+                               readonly="readonly" placeholder=""
+                               value="#(puinstore.sourcebillno??)"/>
+                    </div>
+                </div>
 
 
 
                 <label class="col-sm-2 col-form-label">部门：</label>
                 <div class="col-sm-2 col-form-label">
-                    <select class="form-control ml-4"
-                            id="deptcode"
-                            name="puinstore.deptcode"
-                            data-autoload
-                            data-url="admin/department/getTreeTableDatas"
-                            data-select-type="select2"
-                            data-text="=请选择部门="
-                            data-value-attr="cdepcode"
-                            data-text-attr="cdepname"
-                            data-select="#(puinstore.deptcode??)">
-                    </select>
+                    <input required type="text" id="cdepname"  class="form-control border-none"
+                           readonly="readonly" placeholder=""
+                           value="#(puinstore.deptcode??)"/>
+                    <input required type="hidden" id="deptcode" name="puinstore.deptcode" class="form-control border-none"
+                           readonly="readonly" placeholder=""
+                           value="#(puinstore.deptcode??)"/>
                 </div>
 
                 <label class="col-sm-2 col-form-label">采购类型：</label>
                 <div class="col-sm-2 col-form-label">
-                    <select class="form-control"
-                            name="puinstore.billtype"
-                            data-autoload
-                            data-url="admin/purchasetype/selectAll"
-                            data-select-type="select2"
-                            data-text="=请选择采购类型="
-                            data-value=""
-                            data-value-attr="iautoid"
-                            data-text-attr="cptname"
-                            data-select="#(puinstore.billtype??)"></select>
+                    <input required type="text" id="billtype"  class="form-control border-none"
+                           readonly="readonly" placeholder="" name="puinstore.billtype"
+                           value="#(puinstore.billtype??)"/>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">供货单位：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input id="venname" name="cvenname" type="text" readonly="readonly"
-                           autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.cvenname??)"/>
+                    <input id="cvenname" name="cvenname" type="text" readonly="readonly"
+                           autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.cdepname??)"/>
                     <input id="vencode" name="puinstore.vencode" type="hidden" readonly="readonly"
                            autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.vencode??)"/>
                 </div>
@@ -112,16 +111,12 @@
 
                 <label class="col-sm-2 col-form-label">入库类别：</label>
                 <div class="col-sm-2 col-form-label">
-                    <select class="form-control"
-                            name="puinstore.rdcode"
-                            data-autoload
-                            data-url="admin/purchasetype/selectAll"
-                            data-select-type="select2"
-                            data-text="=请选择采购类型="
-                            data-value=""
-                            data-value-attr="crdcode"
-                            data-text-attr="crdname"
-                            data-select="#(puinstore.rdcode??)"></select>
+                    <input required type="text" id="crdname" class="form-control border-none"
+                           readonly="readonly" placeholder=""
+                           value="#(puinstore.crdname??)"/>
+                    <input required type="hidden" id="rdcode" name="puinstore.rdcode" class="form-control border-none"
+                           readonly="readonly" placeholder=""
+                           value="#(puinstore.rdcode??)"/>
                 </div>
             </div>
 
@@ -136,10 +131,11 @@
 
                 <label class="col-sm-2 col-form-label">业务员：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input name="createperson" type="text" readonly="readonly" class="form-control" maxlength="20"
+                    <input name="createperson" type="text" id="createperson" readonly="readonly" class="form-control" maxlength="20"
                            value="#(puinstore.createperson??)"/>
                 </div>
             </div>
+        </form>
             <div class="form-group row">
                 <div class="col-11" style="margin-left: 180px;">
                     <div class="jbolt_page_content">
@@ -148,21 +144,21 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="btn-group">
-                                            <form class="form-inline" id="inventoryForm_#(pageId)" onsubmit="return false;" method="post" style="width: 1200px">
-                                                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
-                                                       maxlength="50" name="barcode" value="#(barcode??)"/>
-                                                <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>查询</button>
-                                                <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>重置</button>
-                                            </form>
+                                            <div class="input-group-append">
+                                                    <input  #if(puinstore.sourcebillno??) #else style="display: none" #end type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
+                                                           maxlength="50" id="barcode" name="barcode" value="#(barcode??)"/>
+                                                    <button #if(puinstore.sourcebillno??) #else style="display: none" #end id="Search" onclick="barcode_#(pageId)(this)" class="btn btn-outline-secondary"><i class="fa fa-search"></i>搜索</button>
+                                            </div>
                                         </div>
                                         <!-- 工具条 toolbar -->
-                                        <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)">
-                                            <div class="" role="group" aria-label="btn-group">
+                                        <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)" #if(puinstore.sourcebillno??) #else style="display: none" #end >
+                                            <div  class="" role="group" aria-label="btn-group" >
                                                 <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-                                                <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
+                                                <button onclick="jboltTableRemoveCheckedRow(this, true, spotTickets)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
                                             </div>
                                             <div class="clearfix"></div>
                                         </div>
+
 
                                         <table id="Puinstoreform_TableId_#(pageId)"
                                                data-jbolttable
@@ -171,7 +167,7 @@
                                                data-column-resize="true"
                                                data-url="admin/materialreturnlist/getmaterialReturnListLines?autoid=#(puinstore.autoid??)"
                                                data-column-prepend="1:checkbox:true"
-                                               data-conditions-form="inventoryForm_#(pageId)"
+                                               data-conditions-form="PuinstoreForm"
                                                data-rowtpl="inventorySplit_tpl_#(pageId)"
                                                data-toolbar="inventory_split_toolbar_#(pageId)"
                                                data-editable="true"
@@ -192,10 +188,16 @@
                                                 <th data-width="100" data-column="cinvname1">部品名称</th>
                                                 <th data-width="100" data-column="cinvstd">规格型号</th>
                                                 <th data-width="100" data-column="pingpai">品牌</th>
-                                                <th data-width="100" data-column="inventorycuomname">采购单位</th>
+                                                <th data-width="100" data-column="puunitname">采购单位</th>
                                                 <th data-width="100" data-column="qty">现存数</th>
                                                 <th data-width="100" data-column="memo">备注</th>
-                                                <th hidden data-width="100" data-column="qtys"></th>
+                                                <th hidden data-width="100" data-column="puunitcode"></th>
+                                                <th hidden data-width="100" data-column="sourcebillno"></th>
+                                                <th hidden data-width="100" data-column="sourcebillid"></th>
+                                                <th hidden data-width="100" data-column="sourcebilltype"></th>
+                                                <th hidden data-width="100" data-column="sourcebilldid"></th>
+                                                <th hidden data-width="100" data-column="sourcebillnorow"></th>
+                                                <th hidden data-width="100" data-column="rowno"></th>
                                             </tr>
                                             </thead>
                                             <tbody></tbody>
@@ -220,11 +222,12 @@
                            value="#(puinstore.auditperson??)"/>
                 </div>
             </div>
-        </form>
+
     </div>
 </div>
-<!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
+<!-- 定义JBoltTable使用的数据渲染模板-->
+<!--<textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">-->
+<script id="inventorySplit_tpl_#(pageId)" type="text/template">
    {@each datas as data,index}
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
@@ -238,16 +241,147 @@
     <td>${data.cinvname1}</td>
     <td>${data.cinvstd}</td>
     <td>品牌</td>
-    <td>${data.inventorycuomname}</td>
+    <td >${data.puunitname}</td> //采购单位名称
+<!--    <td>${data.inventorycuomname}</td>-->
     <td>${data.qty}</td>
     <td>${data.memo}</td>
     <td hidden>${data.iqty}</td>
+    <td hidden>${data.puunitcode}</td> //采购单位编码
+    <td hidden>${data.sourcebillno}</td> //来源单号（订单号）
+    <td hidden>${data.sourcebillid}</td> //来源单据ID(订单id)
+    <td hidden>${data.sourcebilltype}</td> //采购PO  委外OM（采购类型）
+    <td hidden>${data.sourcebilldid}</td> //来源单据DID;采购或委外单身ID
+    <td hidden>${data.sourcebillnorow}</td> //来源单号+行号
+    <td hidden>${data.rowno}</td> //行号
   </tr>
     {@/each}
-</textarea>
+</script>
+<!--</textarea>-->
 
 #define js()
 <script>
+    /**
+     * 选择其他订单号刷新数据
+     * @private
+     */
+    function Billno(){
+    //重新选择入库单号时刷新
+
+    }
+
+    function spotTickets(){
+
+        debugger;
+        // //扫入多条现品票判断是否存在
+        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+        var spottickets = $("#spottickets").val();
+        console.log(data);
+        console.log(spottickets);
+        let array = new Array();
+        if (data != null){
+            for (let i = 0; i < data.length; i++) {
+                array.push("'"+data[i].spotticket+"'");
+            }
+            //通过逗号分开，一个一个加进数组中
+            let codes = array.join(',');
+            $("#spottickets").val(codes);
+        } else {
+            $("#spottickets").val('');
+        }
+        return true;
+    }
+
+    function barcode_#(pageId)(ele){
+        debugger;
+        LayerMsgBox.loading("执行中......",2000);
+        var barcode = $("#barcode").val();
+        var autoid = $("#autoid").val();
+        var detailHidden = $("#detailHidden").val();
+
+        //扫入多条现品票判断是否存在
+        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+        let array = new Array();
+        if (data != null){
+            for (let i = 0; i < data.length; i++) {
+                array.push("'"+data[i].spotticket+"'");
+            }
+            for (let i = 0; i < array.length; i++) {
+                let a =  "'"+barcode+"'";
+                if (a == array[i]){
+                    LayerMsgBox.error("已存在相同["+barcode+"]现品票！！！",2000);
+                    return false;
+                }
+
+
+            }
+            //通过逗号分开，一个一个加进数组中
+            let codes = array.join(',');
+            $("#detailHidden").val(codes);
+        } else {
+            $("#detailHidden").val('');
+        }
+        if (barcode) {
+            Ajax.post("admin/materialreturnlist/barcode", {"barcode": barcode,"autoid":autoid,"detailHidden":detailHidden},
+                function (res) {
+                        jboltTableInsertRow("Puinstoreform_TableId_#(pageId)", res.data, false, true, true)
+                        $("#barcode").val('');
+                }, function (err) {
+                })
+        } else {
+            LayerMsgBox.alert("请输入条码")
+        }
+    }
+
+    /**
+     * 选择其他订单号刷新数据
+     * @private
+     */
+    function supplierButton(){
+
+        refreshJBoltTable("#Puinstoreform_TableId_#(pageId)");
+
+    }
+
+    /**
+     * 获得选中的订单号数据
+     * @param data
+     */
+    function setChooseDialogSelectResultFromSupplier(data) {
+
+        // let tableId1 = 'Puinstoreform_TableId_#(pageId)';
+        // refreshJBoltTable(tableId1);
+        // refreshJBoltTable("Puinstoreform_TableId_#(pageId)");
+        refreshJBoltTable("#Puinstoreform_TableId_#(pageId)");
+        $("#spottickets").val('');
+
+        //隐藏和显示现品票搜索和添加行
+        if ($("#sourcebillno").val()!=null){
+            $("#Search").attr("style","display:block;");
+            $("#barcode").attr("style","display:block;");
+            $("#inventory_split_toolbar_#(pageId)").attr("style","display:block;");
+        }else {
+            $("#Search").attr("style","display:none;");
+            $("#barcode").attr("style","display:none;");
+            $("#inventory_split_toolbar_#(pageId)").attr("style","display:none;");
+        }
+
+
+        $("#autoid").val(data.autoid);
+        $("#sourcebillno").val(data.sourcebillno);
+        $("#billno").val(data.billno);
+        $("#billdate").val(data.billdate);
+        $("#cptname").val(data.cptname);
+        $("#cdepname").val(data.cdepname);
+        $("#crdname").val(data.crdname);
+        $("#rdcode").val(data.rdcode);
+        $("#billtype").val(data.billtype);
+        $("#deptcode").val(data.deptcode);
+        $("#vencode").val(data.vencode);
+        $("#cvenname").val(data.cvenname);
+        $("#cptname").val(data.cptname);
+        $("#createperson").val(data.createperson);
+    }
+
     /*去后端执行提交功能*/
     function getEditableTableOptions_split_#(pageId)(){
         var editableTableOptions={
@@ -264,6 +398,8 @@
             cols: {
                 spotticket: { //现品票条码
                     maxLength: 100,
+                    linkPara: "#spottickets,#autoid",
+                    syncval:"#spotticket",
                     required: false,
                     placeholder: "=请选择=",
                     type: "autocomplete",
@@ -272,7 +408,7 @@
                     width: 800,
                     sync: "",
                     valueAttr: "spotticket",
-                    columnAttr: "barcode,cinvcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,inventorycuomname,qty",
+                    columnAttr: "barcode,cinvcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,puunitname,qty",
                     header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
                     changeColumns: [{column: "spotticket", use: "barcode"},
                         {column: "cinvcode", use: "cinvcode"},
@@ -281,9 +417,34 @@
                         {column: "cinvname1", use: "cinvname1"},
                         {column: "cinvstd", use: "cinvstd"},
                         // {column: "pingpai", use: "cinvname1"},
-                        {column: "inventorycuomname", use: "inventorycuomname"},
+                        {column: "puunitname", use: "puunitname"},
+                        {column: "puunitcode", use: "puunitcode"},
                         {column: "iqty", use: "qty"},
-                    ]
+                        {column: "sourcebillno", use: "sourcebillno"},
+                        {column: "sourcebillid", use: "sourcebillid"},
+                        {column: "sourcebilltype", use: "sourcebilltype"},
+                        {column: "sourcebilldid", use: "sourcebilldid"},
+                        {column: "sourcebillnorow", use: "sourcebillnorow"},
+                        {column: "rowno", use: "rowno"},
+                    ],
+                    handler:function (table,td,text,value,jsonData) {
+                        debugger;
+                        var spotticket = jsonData.spotticket;
+                        let datas = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+                        console.log("data==>",datas);
+                        let array = new Array();
+                        if (datas != null){
+                            for (var i = 0; i < datas.length; i++){
+                                var data = datas[i];
+                                array.push("'"+data.spotticket+"'");
+                                let codes = array.join(',');
+                                $("#spottickets").val(codes);
+                            }
+                        }else {
+                            $("#spottickets").val('');
+                        }
+
+                    }
 
 
     },
@@ -404,21 +565,6 @@
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
-    }
-
-    /**
-     * 获得选中的订单号数据
-     * @param data
-     */
-    function setChooseDialogSelectResultFromSupplier(data) {
-        $("#deptcode").val(data.deptcode);
-        $("#deptname").val(data.deptname);
-        $("#venname").val(data.venname);
-        $("#vencode").val(data.vencode);
-        $("#invname").val(data.invname);
-        $("#defwhname").val(data.defwhname);
-        $("#sourcebillno").val(data.sourcebillno);
-        $("#billno").val(data.billno);
     }
 
 

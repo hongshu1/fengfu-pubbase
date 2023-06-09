@@ -27,10 +27,11 @@
 		 {@if data.iauditstatus==0 || data.iauditstatus==3}
 			<a data-ajaxbtn href='admin/bommaster/audit?bomMasterId=${data.id}&status=2' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="审批">审批</a>
 			<a class="ml-1"  data-dialogbtn='' data-area='90%,90%' href="admin/bommaster/edit/${data.id}" onclick="" tooltip data-title="编辑" >编辑</a>
-			<a class="text-danger" data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >删除</a>
+<!--			<a class="text-danger" data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >删除</a>-->
 		 {@else if data.iauditstatus==1 }
 			<a data-ajaxbtn href='admin/bommaster/audit?bomMasterId=${data.id}&status=2' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="审批">审批</a>
 		{@/if}
+	<a class="text-danger" data-ajaxbtn href="admin/bommaster/del/${data.id}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >删除</a>
 	</td>
 	<td>${data.auditstatusstr}</td>
 	<td>${data.cinvcode}</td>

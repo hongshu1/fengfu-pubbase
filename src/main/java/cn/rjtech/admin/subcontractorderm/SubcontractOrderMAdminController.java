@@ -293,24 +293,24 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
   }
 
   /**
+   * /
    * 导出PDF
    */
   @SuppressWarnings("unchecked")
   public void orderDBatchExport() throws Exception {
-    Kv kv = getKv();
-    if (kv.getStr("type").equals("1")) {
-      //1条码-1页
-      renderJxls("orderDbOneAtchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas(getKv()),
-          "委外订单订货清单.xlsx");
-//          renderJsonData(subcontractOrderDBatchService.orderDBatchExportDatas(getKv()));
-    } else {
-      //8条码-1页
-//      renderJxlsToPdf("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas(getKv()),
-//          "委外订单订货清单.pdf");
-      renderJsonData(subcontractOrderDBatchService.orderDBatchExportDatas(getKv()));
-    }
-
+    renderJxlsToPdf("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas(getKv(), "未更改清单"),
+        "委外订单订货清单.pdf");
   }
+
+  /**
+   * 导出PDF
+   */
+  @SuppressWarnings("unchecked")
+  public void orderDbOneAtchExport() throws Exception {
+    renderJxlsToPdf("orderDbOneAtchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas(getKv(), "已更改清单"),
+        "委外订单已更改清单订货.pdf");
+  }
+
 
   public void updateHideInvalid(@Para(value = "id") Long id,
                                 @Para(value = "hideInvalid") String hideInvalid) {

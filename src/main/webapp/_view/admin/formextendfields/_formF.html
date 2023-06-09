@@ -1,0 +1,313 @@
+<form onsubmit="return false;" id="FormExtendFields_Form" action="#(action)" method="post">
+	#if(formExtendFields.iAutoId??)
+	<input type="hidden" name="formExtendFields.iAutoId" value="#(formExtendFields.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+    <div class="form-group row">
+        <div class="col">
+            <label class="col-sm-1 col-form-label"></label>
+            <button onclick="submitThisForm()" class="btn btn-success btn-sm" data-jbolt-table-id="jbolt_Table_"><i class="fa fa-refresh"></i> 保存</button>
+            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+        </div>
+    </div>
+<!--<div class="form-group row" >-->
+<!--<label class="col-sm-2 col-form-label">系统表单ID:</label>-->
+
+<!--<div class="col-2">-->
+    <!--<select class="form-control"-->
+            <!--data-autoload-->
+            <!--data-url="admin/permission/optionsFormId"-->
+            <!--data-select-type="select1"-->
+            <!--name="formExtendFields.iFormId"-->
+            <!--data-text-attr="title"-->
+            <!--data-value-attr="id"-->
+            <!--data-select="#(formExtendFields.iFormId??)"-->
+    <!--&gt;</select>-->
+<!--</div>-->
+<!--</div>-->
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">系统字段ID:</label>
+
+<div class="col-2">
+    <select class="form-control"
+            data-autoload
+            data-url="admin/permission/optionsFormFieldId"
+            data-select-type="select1"
+            name="formExtendFields.iFormFieldId"
+            data-text-attr="title"
+            data-value-attr="id"
+            data-rule="require"
+            data-select="#(formExtendFields.iFormFieldId??)"
+    ></select>
+</div>
+</div>
+<!--<div class="form-group row" >-->
+<!--<label class="col-sm-2 col-form-label">系统字段编码:</label>-->
+<!--<div class="col-2">-->
+    <!--<input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入系统字段编码" maxlength="40" name="formExtendFields.cFieldCode" value="#(formExtendFields.cFieldCode??)"/>-->
+<!--</div>-->
+<!--</div>-->
+    <div class="form-group row"
+         data-radio
+         data-name="formExtendFields.iPosition"
+         data-url="admin/dictionary/options?key=visible_position"
+         data-value-attr="sn"
+         data-label="显示位置:"
+         data-rule="require"
+         data-width="col-sm-2,col-5"
+         data-value="#(formExtendFields.iPosition??)"
+         data-inline="true"
+    >
+    </div>
+
+    <div class="form-group row" >
+<label class="col-sm-2 col-form-label">系统字段名称:</label>
+<div class="col-2">
+    <select class="form-control"
+            data-autoload
+            data-url="/admin/enumVals/enumvalsoptions"
+            data-select-type="select1"
+            name="formExtendFields.cFieldName"
+            data-text-attr="cenumname"
+            data-value-attr="cenumcode"
+            data-select="#(formExtendFields.cFieldName??)"
+            data-rule="require"
+    ></select>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">显示名称:</label>
+<div class="col-2">
+    <input type="text"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入显示名称" maxlength="40" name="formExtendFields.cDisplayName" value="#(formExtendFields.cDisplayName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">字段值输入长度:</label>
+<div class="col-2">
+    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入字段长度" maxlength="40" name="formExtendFields.iMaxLength" value="#(formExtendFields.iMaxLength??)"/>
+</div>
+</div>
+    <input type="hidden" id="bbbb"/>
+    <div class="form-group row"
+         data-radio
+         id="formiFieldType"
+         data-name="formExtendFields.iFieldType"
+         data-width="col-sm-2,col-5"
+         data-value="#(formExtendFields.iFieldType??)"
+         data-default="options_first"
+         onchange="toggleOneInputHidden()"
+>
+        <!--data-value-attr="sn"-->
+        <!--data-url="admin/dictionary/options?key=extend_field_type"-->
+        <label class="col-sm-2 col-form-label" >字段类型：</label>
+        <div class="col"  style="padding-top: 1px;">
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iFieldType1" type="radio" onclick="sethid(1)" name="formExtendFields.iFieldType" value="1"/>
+                <label for="iFieldType1">输入框</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iFieldType2" type="radio" onclick="sethid(2)" name="formExtendFields.iFieldType" value="2"/>
+                <label for="iFieldType2">整数</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iFieldType3" type="radio" onclick="sethid(3)" name="formExtendFields.iFieldType" value="3"/>
+                <label for="iFieldType3">小数</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iFieldType4" type="radio" onclick="sethid(4)" name="formExtendFields.iFieldType" value="4"/>
+                <label for="iFieldType4">日期</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iFieldType5" type="radio" onclick="sethid(5)" name="formExtendFields.iFieldType" value="5"/>
+                <label for="iFieldType5">日期时间</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iFieldType6" type="radio" onclick="sethid(6)" name="formExtendFields.iFieldType" value="6"/>
+                <label for="iFieldType6">布尔</label>
+            </div>
+        </div>
+</div>
+
+    <div class="form-group row"  id="hidDigi" style="visibility: hidden">
+        <label type="hidden" class="col-sm-2 col-form-label">小数位:</label>
+        <div class="col-1">
+            <input type="number" data-rule="pzint" data-notnull="false" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="" maxlength="40" name="formExtendFields.iDigit" value="#(formExtendFields.iDigit??)"/>
+        </div>
+    </div>
+
+    <div class="form-group row"
+         data-radio
+         data-name="formExtendFields.isEnabled"
+         data-value-attr="sn"
+         data-url="admin/dictionary/options?key=whether_enable"
+         data-label="是否启用:"
+         data-width="col-sm-2,col-5"
+         data-value="#(formExtendFields.isEnabled??)"
+         data-rule="require"
+         data-tips="请输入是否启用;0. 否 1. 是"
+         data-inline="true"
+>
+    </div>
+    <div class="form-group row"
+data-radio
+data-name="formExtendFields.isRequired"
+data-value-attr="sn"
+data-url="admin/dictionary/options?key=is_required"
+data-label="是否必填:"
+data-width="col-sm-2,col-5"
+data-value="#(formExtendFields.isRequired??)"
+data-rule="radio"
+         data-notnull="true"
+data-tips="请输入是否必填;0. 否 1. 是"
+       data-rule="require"
+data-inline="true"
+>
+</div>
+<div class="form-group row"
+data-radio
+data-name="formExtendFields.isEditable"
+data-value-attr="sn"
+data-url="admin/dictionary/options?key=is_edit"
+data-label="是否编辑"
+data-width="col-sm-2,col-5"
+data-value="#(formExtendFields.isEditable??)"
+data-rule="radio"
+data-notnull="true"
+     data-rule="require"
+data-tips="请输入是否编辑;0. 否 1. 是"
+data-inline="true"
+>
+</div>
+    <div class="form-group row"
+        data-radio
+        data-name="formExtendFields.isDisplayed"
+        data-url="admin/dictionary/options?key=is_visible"
+        data-label="是否显示:"
+        data-width="col-sm-2,col-5"
+        data-value="#(formExtendFields.isDisplayed??)"
+        data-inline="true"
+         data-rule="require"
+        data-value-attr="sn"
+    >
+</div>
+    <input type="hidden" id="optioniSource"/>
+    <div class="form-group row"
+         data-radio
+         data-name="formExtendFields.iSource"
+         data-label="值来源:"
+         data-width="col-sm-2,col-5"
+         data-value="#(formExtendFields.iSource??)"
+         data-inline="true"
+         data-notnull="true"
+         data-rule="require"
+         data-default="options_first"
+         onchange="toggleOneInputHidden2()"
+    >
+        <!--data-value-attr="sn"-->
+        <!--data-url="admin/dictionary/options?key=value_source"-->
+        <label class="col-sm-2 col-form-label" >值来源：</label>
+        <div class="col"  style="padding-top: 1px;">
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iSource1" type="radio" onclick="sethid2(1)" name="formExtendFields.iSource" value="1"/>
+                <label for="iSource1">手工输入</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iSource2" type="radio" onclick="sethid2(2)" name="formExtendFields.iSource" value="2"/>
+                <label for="iSource2">枚举引用</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iSource3" type="radio" onclick="sethid2(3)" name="formExtendFields.iSource" value="3"/>
+                <label for="iSource3">图片上传</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iSource4" type="radio" onclick="sethid2(4)" name="formExtendFields.iSource" value="4"/>
+                <label for="iSource4">附件上传</label>
+            </div>
+        </div>
+    </div>
+
+    <div id="hidVal" class="form-group row" style="visibility: hidden">
+<label class="col-sm-2 col-form-label">值具体:</label>
+<div class="col-2">
+    <select class="form-control"
+            data-autoload
+            data-url="/admin/enumVals/enumvalsoptions"
+            data-select-type="select2"
+            multiple="multiple"
+            data-text-attr="cenumname"
+            data-value-attr="cenumname"
+            data-select="#(formExtendFields.iSourceVal??)"
+            data-setvalueto="hidiSourceVal"
+    ></select>
+    <input type="hidden" name="formExtendFields.iSourceVal" id="hidiSourceVal" value="#(formExtendFields.iSourceVal??)"/>
+</div>
+</div>
+<div class="form-group row">
+<label class="col-sm-2 col-form-label">数据传输:</label>
+
+<div class="col-2">
+    <select class="form-control"
+            data-autoload
+            data-url="/admin/enumVals/enumvalsoptions"
+            data-select-type="select2"
+            multiple="multiple"
+            data-text-attr="cenumname"
+            data-value-attr="cenumcode"
+            data-setvalueto="hidcFlowFormIds"
+            data-select="#(formExtendFields.cFlowFormIds??)"
+    ></select>
+    <input type="hidden" name="formExtendFields.cFlowFormIds" id="hidcFlowFormIds" value="#(formExtendFields.cFlowFormIds??)"/>
+
+</div>
+</div>
+<!--<div class="form-group row"-->
+<!--type="hidden"-->
+<!--data-radio-->
+<!--data-name="formExtendFields.isDeleted"-->
+<!--data-value-attr="sn"-->
+<!--data-url="admin/dictionary/options?key=options_enable"-->
+<!--data-label="删除状态"-->
+<!--data-width="col-sm-2,col-3"-->
+<!--data-value="#(formExtendFields.isDeleted??)"-->
+<!--data-rule="radio"-->
+<!--data-notnull="false"-->
+<!--data-tips="请输入删除状态;0. 未删除 1. 已删除"-->
+<!--data-inline="true"-->
+<!--&gt;-->
+<!--</div>-->
+</div>
+</div>
+</form>
+#define js()
+<script>
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+    function sethid(val) {
+        var obj = document.getElementById('bbbb');
+        obj.value=val
+    }
+    function toggleOneInputHidden(){
+        if(bbbb.value == 3){
+            hidDigi.style="visibility: visible";
+        }else{
+            hidDigi.style="visibility: hidden";
+        }
+    }
+    function sethid2(val) {
+        var obj2 = document.getElementById('optioniSource');
+        obj2.value=val
+    }
+    function toggleOneInputHidden2(){
+        if(optioniSource.value == 2){
+            hidVal.style="visibility: visible";
+        }else{
+            hidVal.style="visibility: hidden";
+        }
+    }
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="FormExtendFields_Form")
+#end
+

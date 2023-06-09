@@ -396,7 +396,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	 * @return
 	 */
 	public Page<Record> moDetailData(int pageNumber, int pageSize, Kv kv) {
-		return dbTemplate(u8SourceConfigName(),"materialsout.moDetailData",kv).paginate(pageNumber, pageSize);
+		return dbTemplate("materialsout.moDetailData",kv).paginate(pageNumber, pageSize);
 	}
 
 

@@ -56,9 +56,8 @@ public class EnumValsService extends BaseService<EnumVals> {
 		if (CollUtil.isNotEmpty(page.getList())) {
 			page.getList().forEach(row -> {
 				//查询关联字段
-				String strEnumName = service.find("SELECT cEnumTypeName FROM Bd_EnumType WHERE cEnumTypeCode = ?",row.getStr("iEnumTypeId")).get(0).toString();
-				strEnumName=strEnumName.replace("{cenumtypename:","").replace("}","");
-				row.set("cenumtypename",strEnumName);
+				List<EnumVals> strEnumName = service.find("SELECT cEnumTypeName FROM Bd_EnumType WHERE cEnumTypeCode = ?",row.getStr("iEnumTypeId"));
+				row.set("cenumtypename",strEnumName.get(0).getStr("cEnumTypeName"));
 			});
 		}
 		return page;

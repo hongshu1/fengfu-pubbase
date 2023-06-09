@@ -1,8 +1,8 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 
 /**
  * 其它入库单
@@ -20,7 +20,7 @@ public abstract class BaseSysOtherin<M extends BaseSysOtherin<M>> extends JBoltB
     public static final String RDCODE = "RdCode";
     /**组织代码*/
     public static final String ORGANIZECODE = "OrganizeCode";
-    /**业务单号*/
+    /**业务单号(入库单号)*/
     public static final String BILLNO = "BillNo";
     /**业务类型*/
     public static final String BILLTYPE = "BillType";
@@ -44,10 +44,18 @@ public abstract class BaseSysOtherin<M extends BaseSysOtherin<M>> extends JBoltB
     public static final String MODIFYPERSON = "ModifyPerson";
     /**更新时间*/
     public static final String MODIFYDATE = "ModifyDate";
-    /**状态 1已保存 2待审批 3已审批 4审批不通过 */
-    public static final String STATE = "state";
     /**备注*/
     public static final String MEMO = "Memo";
+    /**审批方式：1. 审核 2. 审批流*/
+    public static final String IAUDITWAY = "iAuditWay";
+    /**提审时间*/
+    public static final String DSUBMITTIME = "dSubmitTime";
+    /**审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过*/
+    public static final String IAUDITSTATUS = "iAuditStatus";
+    /**审核时间*/
+    public static final String DAUDITTIME = "dAuditTime";
+    /**是否删除：0. 否 1. 是*/
+    public static final String ISDELETED = "isDeleted";
 	/**
 	 * AutoID
 	 */
@@ -134,7 +142,7 @@ public abstract class BaseSysOtherin<M extends BaseSysOtherin<M>> extends JBoltB
 	}
 
 	/**
-	 * 业务单号
+	 * 业务单号(入库单号)
 	 */
 	public M setBillNo(java.lang.String BillNo) {
 		set("BillNo", BillNo);
@@ -142,9 +150,9 @@ public abstract class BaseSysOtherin<M extends BaseSysOtherin<M>> extends JBoltB
 	}
 
 	/**
-	 * 业务单号
+	 * 业务单号(入库单号)
 	 */
-	@JBoltField(name="billno" ,columnName="BillNo",type="String", remark="业务单号", required=false, maxLength=30, fixed=0, order=6)
+	@JBoltField(name="billno" ,columnName="BillNo",type="String", remark="业务单号(入库单号)", required=false, maxLength=30, fixed=0, order=6)
 	@JSONField(name = "billno")
 	public java.lang.String getBillNo() {
 		return getStr("BillNo");
@@ -338,23 +346,6 @@ public abstract class BaseSysOtherin<M extends BaseSysOtherin<M>> extends JBoltB
 	}
 
 	/**
-	 * 状态 1已保存 2待审批 3已审批 4审批不通过 
-	 */
-	public M setState(java.lang.String state) {
-		set("state", state);
-		return (M)this;
-	}
-
-	/**
-	 * 状态 1已保存 2待审批 3已审批 4审批不通过 
-	 */
-	@JBoltField(name="state" ,columnName="state",type="String", remark="状态 1已保存 2待审批 3已审批 4审批不通过 ", required=false, maxLength=30, fixed=0, order=18)
-	@JSONField(name = "state")
-	public java.lang.String getState() {
-		return getStr("state");
-	}
-
-	/**
 	 * 备注
 	 */
 	public M setMemo(java.lang.String Memo) {
@@ -365,10 +356,95 @@ public abstract class BaseSysOtherin<M extends BaseSysOtherin<M>> extends JBoltB
 	/**
 	 * 备注
 	 */
-	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=255, fixed=0, order=19)
+	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=255, fixed=0, order=18)
 	@JSONField(name = "memo")
 	public java.lang.String getMemo() {
 		return getStr("Memo");
+	}
+
+	/**
+	 * 审批方式：1. 审核 2. 审批流
+	 */
+	public M setIAuditWay(java.lang.Integer iAuditWay) {
+		set("iAuditWay", iAuditWay);
+		return (M)this;
+	}
+
+	/**
+	 * 审批方式：1. 审核 2. 审批流
+	 */
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审核 2. 审批流", required=false, maxLength=10, fixed=0, order=19)
+	@JSONField(name = "iauditway")
+	public java.lang.Integer getIAuditWay() {
+		return getInt("iAuditWay");
+	}
+
+	/**
+	 * 提审时间
+	 */
+	public M setDSubmitTime(java.util.Date dSubmitTime) {
+		set("dSubmitTime", dSubmitTime);
+		return (M)this;
+	}
+
+	/**
+	 * 提审时间
+	 */
+	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=20)
+	@JSONField(name = "dsubmittime")
+	public java.util.Date getDSubmitTime() {
+		return getDate("dSubmitTime");
+	}
+
+	/**
+	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+	 */
+	public M setIAuditStatus(java.lang.Integer iAuditStatus) {
+		set("iAuditStatus", iAuditStatus);
+		return (M)this;
+	}
+
+	/**
+	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+	 */
+	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=21)
+	@JSONField(name = "iauditstatus")
+	public java.lang.Integer getIAuditStatus() {
+		return getInt("iAuditStatus");
+	}
+
+	/**
+	 * 审核时间
+	 */
+	public M setDAuditTime(java.util.Date dAuditTime) {
+		set("dAuditTime", dAuditTime);
+		return (M)this;
+	}
+
+	/**
+	 * 审核时间
+	 */
+	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=22)
+	@JSONField(name = "daudittime")
+	public java.util.Date getDAuditTime() {
+		return getDate("dAuditTime");
+	}
+
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
+		return (M)this;
+	}
+
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=23)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("isDeleted");
 	}
 
 }

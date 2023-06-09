@@ -64,12 +64,23 @@ WHERE
 
 
 #sql("moDetailData")
-SELECT *
-FROM V_Sys_MODetail
-WHERE 1 = 1
+SELECT
+    md.iType AS SourceBillType,
+    md.iAutoId AS SourceBillDid,
+    md.cMoDocNo,
+    bt.cDepCode,
+    bt.cDepName,
+    md.iQty
+FROM
+    Mo_MoDoc md
+        LEFT JOIN Bd_Department bt ON bt.iAutoId= md.iDepartmentId
+WHERE
+        1 = 1
     #if(monorow)
-        AND MONoRow like '%#(monorow)%'
+        AND md.cMoDocNo like '%#(monorow)%'
     #end
+ORDER BY
+    md.dUpdateTime DESC
 #end
 
 

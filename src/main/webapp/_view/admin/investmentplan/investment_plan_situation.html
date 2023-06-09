@@ -4,7 +4,7 @@
 <div class="jbolt_page">
 <div class="jbolt_page_title">
 	<div class="row">
-		<div class="col-md-auto ">
+		<div class="col-md-auto">
 			<form class="form-inline text-left" id="investmentSituationForm"  onsubmit="return false;" method="post">
 				<input id="dstartdate_situation" name="dstartdate" type="text" class="form-control" data-date data-type="month" data-rule="required" placeholder="=开始日期=">
 				<span class="col-md-auto col-form-label text-center">至</span>
@@ -26,7 +26,7 @@
                 		data-select-type="select2"
                         data-autoload
                         name="cdepcode"
-                        data-url="admin/department/treeDatasForProposalSystem?isProposal=true"
+                        data-url="admin/department/treeDatas"
                         data-text="=部门="
                         data-text-attr="cdepname"
                         data-value-attr="cdepcode"
@@ -123,8 +123,12 @@ function situationSubmitClick(){
 	var url="/admin/investmentplan/investmentPlanSituationTableIndex"+paraStr;
  	AjaxPortalUtil.go(investmentPlanSituationTableIndex, url);
 }
-
-
+function ajaxSuccessHandler_situation(table) {
+	   $('.jbolt_table').tablesMergeCell({
+	      cols: [1,2,3,4,5,6,7,8,9,10,12]
+	   })
+	   
+}
 </script>
 
 #end

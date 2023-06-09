@@ -120,10 +120,27 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     }
 
     /**
+     * 撤回
+     */
+    public void withdraw(@Para(value = "iautoid") Long iAutoId) {
+        ValidationUtils.validateId(iAutoId, "iAutoId");
+
+        renderJson(service.withdraw(iAutoId));
+    }
+
+    /**
      * 审批
      */
     public void approve() {
         renderJson(service.approve(getLong(0)));
+    }
+
+    /**
+     * 审批不通过
+     */
+    public void reject()
+    {
+        renderJson(service.reject(getLong(0)));
     }
 
     /**
