@@ -87,7 +87,7 @@
 	*/
 	@Before(Tx.class)
 	#if(codeGen.isMainDatasource??)
-	@TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
 	#end
 	public void save(@Para("#(firstCharToLowerCase(codeGen.modelName))")#(codeGen.modelName) #(firstCharToLowerCase(codeGen.modelName))) {
 		renderJson(service.save(#(firstCharToLowerCase(codeGen.modelName))));
@@ -129,7 +129,7 @@
    /**
 	* real delete 真删除
 	*/
-	@Before(Tx.class)
+    @Before(Tx.class)
     #if(codeGen.isMainDatasource??)
     @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
     #end
@@ -146,7 +146,7 @@
    /**
 	* 恢复假删数据
 	*/
-	@Before(Tx.class)
+    @Before(Tx.class)
     #if(codeGen.isMainDatasource??)
     @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
     #end
@@ -163,7 +163,7 @@
    /**
 	* 批量删除
 	*/
-	@Before(Tx.class)
+    @Before(Tx.class)
     #if(codeGen.isMainDatasource??)
     @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
     #end
@@ -180,7 +180,7 @@
    /**
 	* 批量 真删除
 	*/
-	@Before(Tx.class)
+    @Before(Tx.class)
     #if(codeGen.isMainDatasource??)
     @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
     #end
@@ -197,7 +197,7 @@
    /**
 	* 批量恢复假删数据
 	*/
-	@Before(Tx.class)
+    @Before(Tx.class)
     #if(codeGen.isMainDatasource??)
     @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
     #end
@@ -214,11 +214,11 @@
    /**
 	* 排序 上移
 	*/
-	@Before(Tx.class)
+    @Before(Tx.class)
     #if(codeGen.isMainDatasource??)
     @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
     #end
-	public void up() {
+    public void up() {
 		renderJson(service.up(get#(getIdType?? 'Long')(0)));
 	}
 #end
@@ -245,7 +245,7 @@
     #if(codeGen.isMainDatasource??)
     @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
     #end
-	public void initSortRank() {
+    public void initSortRank() {
 		renderJson(service.initSortRank());
 	}
 #end
