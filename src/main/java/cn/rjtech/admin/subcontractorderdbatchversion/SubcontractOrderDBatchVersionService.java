@@ -114,16 +114,16 @@ public class SubcontractOrderDBatchVersionService extends BaseService<Subcontrac
 		return null;
 	}
 	
-	public SubcontractOrderDBatchVersion createBatchVersion(Long subcontractOrderMid, Long batchId, Long	inventoryId, Date planDate, String version, String barCode, String sourceBarCode, BigDecimal qty, BigDecimal sourceQty){
+	public SubcontractOrderDBatchVersion createBatchVersion(Long subcontractOrderMid, Long batchId, Long inventoryId, Date planDate, String version, String cSourceVersion, String barCode, BigDecimal qty, BigDecimal sourceQty){
 		SubcontractOrderDBatchVersion subcontractOrderDBatchVersion = new SubcontractOrderDBatchVersion();
 		subcontractOrderDBatchVersion.setISubcontractOrderdBatchId(batchId);
 		subcontractOrderDBatchVersion.setISubcontractOrderMid(subcontractOrderMid);
 		subcontractOrderDBatchVersion.setIInventoryId(inventoryId);
 		subcontractOrderDBatchVersion.setDPlanDate(planDate);
 		subcontractOrderDBatchVersion.setCVersion(version);
-		subcontractOrderDBatchVersion.setCSourceVersion(barCode);
+		subcontractOrderDBatchVersion.setCSourceVersion(cSourceVersion);
 		subcontractOrderDBatchVersion.setCBarcode(barCode);
-		subcontractOrderDBatchVersion.setCSourceBarcode(sourceBarCode);
+		subcontractOrderDBatchVersion.setCSourceBarcode(barCode);
 		subcontractOrderDBatchVersion.setIQty(qty);
 		subcontractOrderDBatchVersion.setISourceQty(sourceQty);
 		subcontractOrderDBatchVersion.setICreateBy(JBoltUserKit.getUserId());
