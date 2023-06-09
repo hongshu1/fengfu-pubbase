@@ -126,11 +126,10 @@
         {@each datas as data,index}
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
-            <td>
-                #if(!monthorderm.iautoid??||edit??false)
-                <a class="btn" onclick="jboltTableRemoveRow(this)"><i class="fa fa-remove c-danger"></i></a>
-                #end
-            </td>
+        <td>
+            <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
+               data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+        </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
