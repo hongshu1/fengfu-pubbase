@@ -790,7 +790,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
      */
     public Ret reject(String ids) {
         tx(() -> {
-            this.passage(ids);
+
             return true;
         });
         return SUCCESS;
