@@ -69,7 +69,7 @@
     <a href="admin/monthorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除月度计划订单" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 	{@/if}
 	{@if data.iorderstatus == '2'}
-	<a class="jbolt_table_delbtn" href="admin/monthorderm/withdraw?iAutoId=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回年度订单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
+	<a class="jbolt_table_delbtn" href="admin/monthorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回年度订单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
 	<a class="jbolt_table_delbtn" href="admin/monthorderm/approve/${data.iautoid}" data-confirm="确定审批此选项？" tooltip data-title="审批月度计划订单" data-handler="refreshJBoltTable"><i class="fa fa-remove fa-edit">审批</i></a>
 	{@/if}
 </td>
@@ -90,7 +90,7 @@
 	<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 		<button data-openpage="dialog" data-area="100%,100%" data-handler="jboltTablePageToFirst" data-title="新增月度计划订单"  data-url="admin/monthorderm/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/monthorderm/deleteByIds?ids=" data-confirm="确定反审批选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 批量删除</button>
-		#include("/_view/_common/_batch_approval_btns.html", formSn="Co_MonthOrderM",uri="admin/monthorderm??")
+		#include("/_view/_common/_batch_approval_btns.html", formSn="Co_MonthOrderM",uri="admin/monthorderm??",primaryKeyName="iAutoId")
 	</div>
 </div>
 

@@ -40,7 +40,7 @@ import java.util.List;
  * @date: 2023-03-23 17:23
  */
 public class AnnualOrderMService extends BaseService<AnnualOrderM> {
-    
+
     private final AnnualOrderM dao = new AnnualOrderM().dao();
 
     @Inject
@@ -67,7 +67,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      */
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
         para.set("iorgid", getOrgId());
-        
+
         return dbTemplate("annualorderm.paginateAdminDatas", para).paginate(pageNumber, pageSize);
     }
 
@@ -293,7 +293,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      */
     public Ret submit(Long iautoid) {
         tx(() -> {
-            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            Ret ret = formApprovalService.judgeType(table(), iautoid, "iAutoId");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
             AnnualOrderM annualOrderM = findById(iautoid);
             annualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());

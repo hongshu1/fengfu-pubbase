@@ -368,7 +368,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            Ret ret = formApprovalService.judgeType(table(), iautoid, "AutoID");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // 更新状态
