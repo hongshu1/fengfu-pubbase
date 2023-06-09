@@ -77,8 +77,7 @@
 		 				data-notnull="false" 
 		 				data-width="500" 
 		 				data-autocomplete 
-		 				data-hidden-input="keyColumnInput_#(pageId)"
-		 				data-url="admin/codegen/keyCacheColumns/#(codeGenId?? 0)" 
+		 				data-url="admin/codegen/keyCacheColumns/#(codeGenId?? 0)"
 		 				data-para-name="column" 
 		 				data-text-attr="colName" 
 		 				data-value-attr="colName" 
@@ -88,7 +87,6 @@
 		 				name="codeGen.keyCacheColumn" 
 		 				value="#(codeGen.keyCacheColumn??)" 
 		 				autocomplete="off" />
-		 				<input type="hidden" value="#(codeGen.keyCacheColumn??)"  data-para-name="column" id="keyColumnInput_#(pageId)" />
 		 		</div>
 		 	</div>
 		 	
@@ -105,7 +103,7 @@
 		 				placeholder="请指定keyCache使用哪个bindColumn"  
 		 				class="form-control" 
 		 				name="codeGen.keyCacheBindColumn" 
-		 				value="#(codeGen.keyCacheColumn??)" 
+		 				value="#(codeGen.keyCacheBindColumn??)"
 		 				autocomplete="off" />
 		 		</div>
 		 	</div>
