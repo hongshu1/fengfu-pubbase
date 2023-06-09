@@ -13,6 +13,7 @@ import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.enums.ThirdpartySystemEnum;
 import cn.rjtech.model.main.UserThirdparty;
+
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
@@ -129,20 +130,20 @@ public class UserThirdpartyService extends JBoltBaseService<UserThirdparty> {
      */
     public JBoltExcel getImportExcelTpl() {
         return JBoltExcel
-                //创建
-                .create()
-                .setSheets(
-                        JBoltExcelSheet.create()
-                                //设置列映射 顺序 标题名称 不处理别名
-                                .setHeaders(1, false,
-                                        JBoltExcelHeader.create("第三方系统(钉钉、微信企业和ERP)", 15),
-                                        JBoltExcelHeader.create("第三方用户编码", 15),
-                                        JBoltExcelHeader.create("第三方用户名称", 15),
-                                        JBoltExcelHeader.create("用户ID", 15),
-                                        JBoltExcelHeader.create("第三方用户密码", 15),
-                                        JBoltExcelHeader.create("备注", 15)
-                                )
-                );
+            //创建
+            .create()
+            .setSheets(
+                JBoltExcelSheet.create()
+                    //设置列映射 顺序 标题名称 不处理别名
+                    .setHeaders(1, false,
+                        JBoltExcelHeader.create("第三方系统(钉钉、微信企业和ERP)", 15),
+                        JBoltExcelHeader.create("第三方用户编码", 15),
+                        JBoltExcelHeader.create("第三方用户名称", 15),
+                        JBoltExcelHeader.create("用户ID", 15),
+                        JBoltExcelHeader.create("第三方用户密码", 15),
+                        JBoltExcelHeader.create("备注", 15)
+                    )
+            );
     }
 
     /**
@@ -151,23 +152,23 @@ public class UserThirdpartyService extends JBoltBaseService<UserThirdparty> {
     public Ret importExcel(File file) {
         StringBuilder errorMsg = new StringBuilder();
         JBoltExcel jBoltExcel = JBoltExcel
-                //从excel文件创建JBoltExcel实例
-                .from(file)
-                //设置工作表信息
-                .setSheets(
-                        JBoltExcelSheet.create()
-                                //设置列映射 顺序 标题名称
-                                .setHeaders(1,
-                                        JBoltExcelHeader.create("thirdparty_system", "第三方系统(钉钉、微信企业和ERP)"),
-                                        JBoltExcelHeader.create("thirdparty_code", "第三方用户编码"),
-                                        JBoltExcelHeader.create("thirdparty_name", "第三方用户名称"),
-                                        JBoltExcelHeader.create("user_id", "用户ID"),
-                                        JBoltExcelHeader.create("thirdparty_pwd", "第三方用户密码"),
-                                        JBoltExcelHeader.create("remark", "备注")
-                                )
-                                //从第三行开始读取
-                                .setDataStartRow(2)
-                );
+            //从excel文件创建JBoltExcel实例
+            .from(file)
+            //设置工作表信息
+            .setSheets(
+                JBoltExcelSheet.create()
+                    //设置列映射 顺序 标题名称
+                    .setHeaders(1,
+                        JBoltExcelHeader.create("thirdparty_system", "第三方系统(钉钉、微信企业和ERP)"),
+                        JBoltExcelHeader.create("thirdparty_code", "第三方用户编码"),
+                        JBoltExcelHeader.create("thirdparty_name", "第三方用户名称"),
+                        JBoltExcelHeader.create("user_id", "用户ID"),
+                        JBoltExcelHeader.create("thirdparty_pwd", "第三方用户密码"),
+                        JBoltExcelHeader.create("remark", "备注")
+                    )
+                    //从第三行开始读取
+                    .setDataStartRow(2)
+            );
         //从指定的sheet工作表里读取数据
         List<UserThirdparty> userThirdpartys = JBoltExcelUtil.readModels(jBoltExcel, 1, UserThirdparty.class, errorMsg);
         if (notOk(userThirdpartys)) {
@@ -194,25 +195,25 @@ public class UserThirdpartyService extends JBoltBaseService<UserThirdparty> {
      */
     public JBoltExcel exportExcel(List<UserThirdparty> datas) {
         return JBoltExcel
-                //创建
-                .create()
-                //设置工作表
-                .setSheets(
-                        //设置工作表 列映射 顺序 标题名称
-                        JBoltExcelSheet
-                                .create()
-                                //表头映射关系
-                                .setHeaders(1,
-                                        JBoltExcelHeader.create("thirdparty_system", "第三方系统(钉钉、微信企业和ERP)", 15),
-                                        JBoltExcelHeader.create("thirdparty_code", "第三方用户编码", 15),
-                                        JBoltExcelHeader.create("thirdparty_name", "第三方用户名称", 15),
-                                        JBoltExcelHeader.create("user_id", "用户ID", 15),
-                                        JBoltExcelHeader.create("thirdparty_pwd", "第三方用户密码", 15),
-                                        JBoltExcelHeader.create("remark", "备注", 15)
-                                )
-                                //设置导出的数据源 来自于数据库查询出来的Model List
-                                .setModelDatas(2, datas)
-                );
+            //创建
+            .create()
+            //设置工作表
+            .setSheets(
+                //设置工作表 列映射 顺序 标题名称
+                JBoltExcelSheet
+                    .create()
+                    //表头映射关系
+                    .setHeaders(1,
+                        JBoltExcelHeader.create("thirdparty_system", "第三方系统(钉钉、微信企业和ERP)", 15),
+                        JBoltExcelHeader.create("thirdparty_code", "第三方用户编码", 15),
+                        JBoltExcelHeader.create("thirdparty_name", "第三方用户名称", 15),
+                        JBoltExcelHeader.create("user_id", "用户ID", 15),
+                        JBoltExcelHeader.create("thirdparty_pwd", "第三方用户密码", 15),
+                        JBoltExcelHeader.create("remark", "备注", 15)
+                    )
+                    //设置导出的数据源 来自于数据库查询出来的Model List
+                    .setModelDatas(2, datas)
+            );
     }
 
     public void deleteByMultiIds(Object[] delete) {
@@ -221,10 +222,10 @@ public class UserThirdpartyService extends JBoltBaseService<UserThirdparty> {
 
     public boolean notExitsDuplicate(long userId) {
         return CollUtil.isEmpty(find(selectSql()
-                .select("thirdparty_system", "thirdparty_code")
-                .eq("user_id", userId)
-                .groupBy("thirdparty_system,thirdparty_code")
-                .having("count(*)>1")
+            .select("thirdparty_system", "thirdparty_code")
+            .eq("user_id", userId)
+            .groupBy("thirdparty_system,thirdparty_code")
+            .having("count(*)>1")
         ));
     }
 
@@ -232,17 +233,23 @@ public class UserThirdpartyService extends JBoltBaseService<UserThirdparty> {
      * 获取该用户的u9用户名
      */
     public String getU9Name(long userId) {
-        List<Record> adminDatas = getAdminDatas(userId);
+        String value = ThirdpartySystemEnum.U9.getValue();
+        Record record = getAdminDatas(userId)
+            .stream().filter(e -> e.getStr("thirdpartySystem").equals(value))
+            .findFirst()
+            .orElse(new Record());
+        return record.getStr("thirdpartyCode");
+    }
 
-        for (Record record : adminDatas) {
-            String thirdpartySystem = record.getStr("thirdpartySystem");
-            String value = ThirdpartySystemEnum.U9.getValue();
-            if(value.equals(thirdpartySystem)){
-                return record.getStr("thirdpartyCode");
-            }
-
-        }
-
-        return null;
+    /*
+     * 获取u8用户名
+     * */
+    public String getU8Name(long userId) {
+        String value = ThirdpartySystemEnum.U8.getValue();
+        Record record = getAdminDatas(userId)
+            .stream().filter(e -> e.getStr("thirdpartySystem").equals(value))
+            .findFirst()
+            .orElse(new Record());
+        return record.getStr("thirdpartyCode");
     }
 }

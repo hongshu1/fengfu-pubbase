@@ -8,11 +8,13 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
+                        #if(!weekOrderM.iAutoId?? || edit??false)
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
-
+                        #end
                         #include("/_view/_common/_approval_btns.html", uri="/admin/weekorderm",
+                        formSn="Co_WeekOrderM",
                         iautoid=weekOrderM.iautoid??0, iauditstatus=weekOrderM.iauditstatus??0,
-                        iauditway=weekOrderM.iauditway??0)
+                        iauditway=weekOrderM.iauditway??, edit=edit??)
 
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>

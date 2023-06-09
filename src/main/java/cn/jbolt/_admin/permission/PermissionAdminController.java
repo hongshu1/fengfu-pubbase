@@ -153,4 +153,13 @@ public class PermissionAdminController extends JBoltBaseController {
         renderJson(service.getUserOrRolePermissions(roletype, id));
     }
 
+	/**
+	 * 数据源
+	 */
+	public void optionsFormId(){
+		renderJsonData(service.getDatas());
+	}
+	public void optionsFormFieldId(){
+		renderJsonData(service.getFormDatas());
+	}
 }

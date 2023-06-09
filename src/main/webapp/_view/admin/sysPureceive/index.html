@@ -80,30 +80,21 @@
                         id="toolbar_addBtn_#(pageId)_1" data-title="新增双单位收货" data-url="admin/scancodereceive/add"
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增双单位收货
                 </button>
-                <!--                <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"-->
-                <!--                        id="toolbar_editBtn_#(pageId)" data-title="批量审批采购收料单"-->
-                <!--                        data-check-handler="jboltTableGetCheckedId"-->
-                <!--                        data-url="admin/materialReceiptList/approve/" class="btn btn-outline-primary"><i-->
-                <!--                        class="fa fa-edit"></i>批量审批-->
-                <!--                </button>-->
-                <!--                <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable"-->
-                <!--                        id="side_toolbar_editBtn_#(pageId)" data-title="批量反审批-采购收料单"-->
-                <!--                        data-check-handler="jboltTableGetCheckedId" data-url="admin/materialReceiptList/edit/"-->
-                <!--                        class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量反审批-->
-                <!--                </button>-->
+
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                         id="toolbar_editBtn_#(pageId)" data-url="admin/materialReceiptList/approve?ids="
-                        data-confirm="确定批量审批选中数据？" class="btn btn-outline-primary"><i class="fa fa-trash"></i> 批量审批
+                        data-confirm="确定批量审核选中数据？" class="btn btn-outline-primary"><i class="fa fa-trash"></i> 批量审核
                 </button>
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                         id="side_toolbar_editBtn_#(pageId)" data-url="admin/materialReceiptList/reject?ids="
-                        data-confirm="确定批量审批不通过数据？" class="btn btn-outline-primary"><i class="fa fa-trash"></i> 批量审批不通过
+                        data-confirm="确定批量审核不通过数据？" class="btn btn-outline-primary"><i class="fa fa-trash"></i> 批量审核不通过
                 </button>
 
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                         id="toolbar_deleteBtn_#(pageId)" data-url="admin/materialReceiptList/deleteByIds?ids="
                         data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
                 </button>
+                #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_PUReceive",uri="admin/materialReceiptList??")
             </div>
         </div>
         <table class="jbolt_table jbolt_main_table  table-center " data-jbolttable data-width="fill" data-height="fill"

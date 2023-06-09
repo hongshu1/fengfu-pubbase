@@ -1,13 +1,14 @@
 <span id="approve" style="display: none">
-<button data-ajaxbtn data-url="admin/formapproval/batchApprove?formSn=#(formSn??)&ids="
+<button data-ajaxbtn
+        data-url="admin/formapproval/batchApprove?primaryKeyName=#(primaryKeyName??)&formSn=#(formSn??)&ids="
         data-handler="refreshPjaxContainer"
         data-check-handler="jboltTableGetCheckedIds"
         class="btn btn-outline-secondary btn-sm" >批量审批通过</button>
-<button data-ajaxbtn data-url="admin/formapproval/batchRejectApprove?formSn=#(formSn??)&ids="
+<button data-ajaxbtn data-url="admin/formapproval/batchRejectApprove?primaryKeyName=#(primaryKeyName??)&formSn=#(formSn??)&ids="
         data-handler="refreshPjaxContainer"
         data-check-handler="jboltTableGetCheckedIds"
         class="btn btn-outline-secondary btn-sm" >批量审批不通过</button>
-<button data-ajaxbtn data-url="admin/formapproval/batchReverseApprove?formSn=#(formSn??)&ids="
+<button data-ajaxbtn data-url="admin/formapproval/batchReverseApprove?primaryKeyName=#(primaryKeyName??)&formSn=#(formSn??)&ids="
         data-handler="refreshPjaxContainer"
         data-check-handler="jboltTableGetCheckedIds"
         class="btn btn-outline-secondary btn-sm" >批量反审批</button>
@@ -17,10 +18,11 @@
             data-handler="refreshPjaxContainer"
             data-check-handler="jboltTableGetCheckedIds"
             class="btn btn-outline-secondary btn-sm" >批量审核通过</button>
-    <button data-ajaxbtn data-url="#(uri)/batchRejectAudit?formSn=#(formSn??)&ids="
+<!--    审核的不需要审核不通过 不需要实现-->
+    <!--<button data-ajaxbtn data-url="#(uri)/batchRejectAudit?formSn=#(formSn??)&ids="
             data-handler="refreshPjaxContainer"
             data-check-handler="jboltTableGetCheckedIds"
-            class="btn btn-outline-secondary btn-sm" >批量审核不通过</button>
+            class="btn btn-outline-secondary btn-sm" >批量审核不通过</button>-->
     <button data-ajaxbtn data-url="#(uri)/batchReverseAudit?formSn=#(formSn??)&ids="
             data-handler="refreshPjaxContainer"
             data-check-handler="jboltTableGetCheckedIds"
