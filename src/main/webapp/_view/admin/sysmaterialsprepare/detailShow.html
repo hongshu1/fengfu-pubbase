@@ -223,17 +223,17 @@
 	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysMaterialsprepare/barcodeDetail/?cinvcode=${data.cinvcode}" data-area="700,800" data-title="现品票明细"><i class="fa fa-eye">现品票明细</i></a>
 </td>
 <td>${data.invcode}</td>
-<td>${data.客户部番}</td>
-<td>${data.部品名称}</td>
-<td>${data.规格}</td>
-<td>${data.主计量单位}</td>
+<td>${data.cinvcode1}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cinvstd}</td>
+<td>${data.cuomname}</td>
 <td>${data.出库仓库}</td>
 <td>${data.出库库区}</td>
-<td>${data.计划数量}</td>
+<td>${data.qty}</td>
 <td>${data.已备料数量}</td>
 <td>${data.剩余备料数量}</td>
 <td>${data.可用批次号}</td>
-<td>${data.齐料扫码检查}</td>
+<td>${data.statename}</td>
 </tr>
 {@/each}
 </textarea>
@@ -247,7 +247,7 @@
        data-width="fill"
        data-height="43%"
        data-ajax="true"
-       data-url="admin/sysMaterialsprepare/getDetail?autoid=#(sysMaterialsprepare.AutoID??)"
+       data-url="admin/sysMaterialsprepare/getDetail?billno=#(sysMaterialsprepare.BillNo??)"
        data-rowtpl="SysMaterialsprepare_tpl_#(pageId)"
        data-copy-to-excel="false"
        data-page="SysMaterialsprepare_page"

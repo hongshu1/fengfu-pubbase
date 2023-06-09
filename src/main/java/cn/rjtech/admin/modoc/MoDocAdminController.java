@@ -1,7 +1,10 @@
 package cn.rjtech.admin.modoc;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
@@ -12,22 +15,15 @@ import cn.rjtech.admin.morouting.MoMoroutingService;
 import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
 import cn.rjtech.admin.otherout.OtherOutService;
 import cn.rjtech.admin.uom.UomService;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.BillNoUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
-import cn.jbolt.core.base.JBoltMsg;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
-
 import com.jfinal.plugin.activerecord.Record;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
@@ -142,7 +138,12 @@ public class MoDocAdminController extends BaseAdminController {
 		}
 		renderJson(service.updateStatus(moDoc));
 	}
+
+	/**
+	 * 齐料检查界面
+	 */
 	public  void  checkmaterialpage(){
+		set("imodocid",getLong("imodocid"));
 		render("checkmaterialpage.html");
 	}
 

@@ -1,7 +1,6 @@
 package cn.rjtech.admin.moroutingconfigoperation;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.MoMoroutingconfigOperation;

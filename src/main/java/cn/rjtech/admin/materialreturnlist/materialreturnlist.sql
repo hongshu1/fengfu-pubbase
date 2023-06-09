@@ -1,9 +1,10 @@
 #sql("paginateAdminDatas")
 SELECT
         AuditState =
-        CASE WHEN t11.iAuditStatus=1 THEN '已保存'
-             WHEN t11.iAuditStatus=2 THEN '待审核'
-             WHEN t11.iAuditStatus=3 THEN '已审核' END,
+        CASE WHEN t11.iAuditStatus=0 THEN '已保存'
+             WHEN t11.iAuditStatus=1 THEN '待审核'
+             WHEN t11.iAuditStatus=2 THEN '已审核'
+             WHEN t11.iAuditStatus=3 THEN '审核不通过'END,
 
         t11.iAuditStatus,
         t2.cVenName,
@@ -74,7 +75,7 @@ order by t11.ModifyDate desc
     #end
 
 
-    #sql("getmaterialReturnLists")
+#sql("getmaterialReturnLists")
 SELECT
     t2.AutoID,
     t4.iQty,
@@ -93,6 +94,8 @@ SELECT
     i.cInvName,
     i.cInvCode1,
     i.cInvName1,
+    i.cInvStd,
+    (SELECT cUomName FROM Bd_Uom WHERE i.iInventoryUomId1 = iautoid) as InventorycUomName,
 
     t1.RdCode,
     t5.cRdName,
@@ -215,7 +218,8 @@ select t1.AutoID,
        t1.BillType,
        t1.DeptCode,
        t1.VenCode,
-       t6.cVenName
+       t6.cVenName,
+       t1.CreatePerson
 from T_Sys_PUInStore t1
     LEFT JOIN T_Sys_PUInStoreDetail t2 ON t1.AutoID = t2.MasID
     LEFT JOIN Bd_Rd_Style t5 ON t1.RdCode = t5.cRdCode
@@ -245,24 +249,27 @@ GROUP BY
     t5.cRdName,
     t3.cDepName,
     t4.cPTName,
-    t6.cVenName
+    t6.cVenName,
+    t1.CreatePerson
     #end
 
 
 
 #sql("getmaterialLines")
 SELECT (SELECT SUM(Qty) FROM T_Sys_PUInStoreDetail WHERE spotTicket = t2.spotTicket) AS qtys,
+       0-t2.Qty as qty,
        t2.Memo,
        t2.spotTicket,
        t2.SourceBillDid,
        t2.SourceBillNoRow,
        t2.SourceBillType,
        t2.SourceBillNo,
-       u.cUomClassName,
+       u.cUomName AS inventorycuomname,
        t3.cInvCCode,
        t3.cInvCName,
        i.cInvCode,
        i.cInvName,
+       i.cInvStd,
        i.cInvCode1,
        i.cInvName1
 FROM T_Sys_PUInStore t1,
@@ -287,7 +294,7 @@ FROM T_Sys_PUInStore t1,
          FROM PS_SubcontractOrderDBatch
      ) t4 ON t2.spotTicket = t4.cbarcode
          LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
-         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
+         LEFT JOIN Bd_Uom u ON i.iInventoryUomId1 = u.iautoid
          LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
 WHERE
         t1.AutoID = t2.MasID
@@ -305,13 +312,15 @@ GROUP BY
     t2.SourceBillNoRow,
     t2.SourceBillType,
     t2.SourceBillNo,
-    u.cUomClassName,
+    u.cUomName,
     t3.cInvCCode,
     t3.cInvCName,
     i.cInvCode,
     i.cInvName,
+    i.cInvStd,
     i.cInvCode1,
-    i.cInvName1
+    i.cInvName1,
+    t2.Qty
 #end
 
 
@@ -363,6 +372,57 @@ FROM
         LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
 WHERE t1.AutoID = '#(autoid)'
   AND t2.Qty < 0
+
+#end
+
+
+#sql("getBarcodeDatas")
+select top #(limit)
+    m.cOrderNo as sourcebillno,
+        a.cBarcode as barcode,
+       b.cInvCode ,
+       b.cInvName ,
+       b.cInvCode1,
+       b.cInvName1,
+       a.dPlanDate as plandate,
+       b.cInvStd as cinvstd,
+       a.iQty as qty,
+       a.iQty as qtys,
+       m.cOrderNo as SourceBillNo,
+       m.iBusType as SourceBillType,
+       m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
+       m.cOrderNo as SourceBillID,
+       d.iAutoId as SourceBillDid,
+       m.iVendorId,
+       v.cVenCode as vencode,
+       v.cVenName as venname,
+       t3.cInvCCode,
+       t3.cInvCName,
+       t4.cEquipmentModelName,
+       (SELECT cUomName FROM Bd_Uom WHERE b.iInventoryUomId1 = iautoid) as InventorycUomName
+FROM PS_PurchaseOrderDBatch a
+         LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
+         LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
+         LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+         LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
+         LEFT JOIN Bd_InventoryClass t3 ON b.iInventoryClassId = t3.iautoid
+         LEFT JOIN Bd_EquipmentModel t4 ON b.iEquipmentModelId = t4.iautoid
+         LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode AND pd.isDeleted = '0'
+         LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
+where a.isEffective = '1'
+    #if(q)
+		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
+			or b.cinvname1 like concat('%',#para(q),'%') or a.cBarcode like concat('%',#para(q),'%')
+			or v.cVenCode like concat('%',#para(q),'%')
+		)
+	#end
+
+		AND b.cOrgCode = #(orgCode)
+        AND pd.AutoID IS NULL
+
+	#if(vencode)
+		and m.iVendorId = #para(vencode)
+	#end
 
 #end
 

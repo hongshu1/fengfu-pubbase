@@ -2,17 +2,17 @@
 #set(iYear=DateUtil.getYear())
 #set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
 <div class="jbolt_page_title">
-    
+
     <div class="row">
-        
+
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="col">
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
-                        
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", iautoid=monthorderm.iautoid??0)
-                        
+
+                        #include("/_view/_common/_approval_btns.html",formSn="Co_MonthOrderM", uri="/admin/monthorderm", iautoid=monthorderm.iautoid??, edit=edit??)
+
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -127,7 +127,7 @@
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+                <a class="btn" onclick="jboltTableRemoveRow(this)"><i class="fa fa-remove c-danger"></i></a>
             </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
@@ -214,7 +214,7 @@
            data-toolbar="monthorderm_toolbar_#(pageId)"
            data-editable="true"
            data-editable-option="getEditableTableOptions_#(pageId)"
-           data-height="130%"
+           data-height="70%"
     >
         <thead>
         <tr>
@@ -408,7 +408,6 @@
                 success: function (res) {
                     LayerMsgBox.success("提交成功", 600, function () {
                         parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
                     });
                 }
             },
@@ -417,23 +416,23 @@
                     submitAttr: "iautoid",
                 },
                 cinvcode: {
-                    type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
-                    maxLength: 100,
-                    required: true,
-                    placeholder: "请选择",
-                    textAttr: "cinvcode",
-                    width: 500,
-                    valueAttr: "cinvcode",
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
-                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
+                    required:true,
+                    type:"dialogbtn",
+                    placeholder:"选择存货",
+                    maxLength:100,
+                    dialog:{
+                        url:"admin/manualorderm/inventory_dialog_index",
+                        area:"80%,80%",
+                        title:"选择存货",
+                        btn:"选择,关闭"
+                    },
+                    columnAttr:"iinventoryid,cinvcode1,cinvname1,cinvstd,cuomname",
                     changeColumns: [
-                        {column: "cinvcode", use: "cinvcode"},
-                        {column: "cinvcode1", use: "cinvcode1"},
-                        {column: "cinvname1", use: "cinvname1"},
-                        {column: "cinvstd", use: "cinvstd"},
-                        {column: "cuomname", use: "cuomname"},
-                        {column: "iinventoryid", use: "iautoid"}
+                        {column:"cuomname",use:"cuomname"},
+                        {column:"cinvstd",use:"cinvstd"},
+                        {column:"cinvname1",use:"cinvname1"},
+                        {column:"cinvcode1",use:"cinvcode1"},
+                        {column:"iinventoryid",use:"iautoid"},
                     ]
                 },
                 iqty1: {

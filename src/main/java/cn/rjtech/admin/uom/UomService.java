@@ -5,17 +5,14 @@ import cn.hutool.core.util.StrUtil;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.JBoltBaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Uom;
-import cn.rjtech.model.momdata.Uomclass;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
@@ -46,6 +43,9 @@ public class UomService extends JBoltBaseService<Uom> {
         return dao;
     }
 
+
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingDService;
     @Inject
     private PersonService personService;
 
@@ -350,5 +350,54 @@ public class UomService extends JBoltBaseService<Uom> {
         return find("SELECT iAutoId,cUomName FROM Bd_Uom WHERE isDeleted = '0' ");
     }
 
+    /**
+     * 从系统导入字段配置，获得导入的数据
+     */
+    public Ret importExcelClass(File file) {
+        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        if (notOk(records)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+        }
+
+
+        for (Record record : records) {
+
+            if (StrUtil.isBlank(record.getStr("iUomClassId"))) {
+                return fail("计量单位组编码不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("cUomCode"))) {
+                return fail("计量单位编码不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("cUomName"))) {
+                return fail("计量单位名称不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("isBase"))) {
+                return fail("默认主计量单位不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("iRatioToBase"))) {
+                return fail("换算率不能为空");
+            }
+
+
+            Date now=new Date();
+
+            record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+            record.set("iSource", SourceEnum.MES.getValue());
+            record.set("iCreateBy", JBoltUserKit.getUserId());
+            record.set("dCreateTime", now);
+            record.set("cCreateName", JBoltUserKit.getUserName());
+            record.set("isDeleted",0);
+            record.set("iUpdateBy", JBoltUserKit.getUserId());
+            record.set("dUpdateTime", now);
+            record.set("cUpdateName", JBoltUserKit.getUserName());
+        }
+
+        // 执行批量操作
+        tx(() -> {
+            batchSaveRecords(records);
+            return true;
+        });
+        return SUCCESS;
+    }
 
 }

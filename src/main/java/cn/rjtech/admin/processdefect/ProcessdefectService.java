@@ -7,7 +7,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.operation.OperationService;
 import cn.rjtech.admin.specmaterialsrcvm.SpecMaterialsRcvMService;
-import cn.rjtech.model.momdata.Equipment;
 import cn.rjtech.model.momdata.Operation;
 import cn.rjtech.model.momdata.ProcessDefect;
 import cn.rjtech.model.momdata.SpecMaterialsRcvM;

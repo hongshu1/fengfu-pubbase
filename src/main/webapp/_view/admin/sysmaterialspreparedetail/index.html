@@ -21,7 +21,7 @@
                     <!--                            name="billno"-->
                     <!--                            style="background-color: white"-->
                     <!--                    ></select>-->
-                    <input type="text" class="form-control ml-2" placeholder="备料单号"
+                    <input type="text" class="form-control ml-2" placeholder="请点击选择备料单号"
                            maxlength="40"
                            name="billno"
                            value=""
@@ -33,15 +33,17 @@
                            readonly
                            style="background-color: white"
                     />
-
-                    <input class="form-control"
-                           data-autoload
-                           data-url="admin/dictionary/options?key=null"
-                           data-text="=现品票扫码="
-                           data-value=""
-                           data-value-attr="sn"
-                           placeholder="现品票扫码"
-                    ></input>
+<!--                    <input class="form-control"-->
+<!--                           data-autoload-->
+<!--                           data-url="admin/dictionary/options?key=null"-->
+<!--                           data-text="=现品票扫码="-->
+<!--                           data-value=""-->
+<!--                           data-value-attr="sn"-->
+<!--                           placeholder="现品票扫码"-->
+<!--                    ></input>-->
+                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
+                           id="barcode" name="barcode" value="#(barcode??)"/>
                     <div class="btn-group text-center mx-1">
                         <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
                         <button type="button" onclick="form.reset();refreshJBoltTable(this);"
@@ -70,19 +72,19 @@
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.autoid}</td>
-<td>${data.masid}</td>
-<td>${data.poscode}</td>
-<td>${data.barcode}</td>
-<td>${data.invcode}</td>
-<td>${data.num}</td>
-<td>${data.qty}</td>
-<td>${data.packrate}</td>
-<td>${data.sourcebilltype}</td>
-<td>${data.sourcebillno}</td>
-<td>${data.sourcebillnorow}</td>
+<td>${data.billno}</td>
 <td>${data.sourcebillid}</td>
-<td>${data.sourcebilldid}</td>
+<td>${data.invcode}</td>
+<td>${data.cinvcode1}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cinvstd}</td>
+<td>${data.cuomname}</td>
+<td>${data.出库仓库}</td>
+<td>${data.出库库区}</td>
+<td>${data.qty}</td>
+<td>${data.已备料数量}</td>
+<td>${data.剩余备料数量}</td>
+<td>${data.可用批次号}</td>
 <!--<td>-->
 <!--	<a class="jbolt_table_editbtn" href="admin/sysMaterialspreparedetail/edit/${data.AutoID}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑备料单明细"><i class="fa fa-edit"></i></a>-->
 <!--	<a class="jbolt_table_delbtn" href="admin/sysMaterialspreparedetail/delete/${data.AutoID}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>-->
@@ -132,6 +134,7 @@
                data-rowtpl="SysMaterialspreparedetail_tpl_#(pageId)"
                data-copy-to-excel="false"
                data-page="SysMaterialspreparedetail_page"
+               data-column-resize="true"
                data-toolbar="SysMaterialspreparedetail_toolbar_#(pageId)"
                id="MaterialsDetail"
         >
@@ -139,18 +142,18 @@
             <tr>
                 <th data-width="60" data-column="">序号</th>
                 <th data-width="150" data-column="">备料单号</th>
-                <th data-width="150" data-column="">工单号</th>
+                <th data-width="200" data-column="">工单号</th>
                 <th data-width="150" data-column="">存货编码</th>
                 <th data-width="150" data-column="">客户部番</th>
                 <th data-width="150" data-column="">部品名称</th>
                 <th data-width="150" data-column="">规格</th>
                 <th data-width="150" data-column="">主计量单位</th>
                 <th data-width="150" data-column="">出库仓库</th>
-                <th data-min-width="150" data-column="">出库库区</th>
+                <th data-width="150" data-column="">出库库区</th>
                 <th data-width="150" data-column="">需求数量</th>
-                <th data-min-width="150" data-column="">已备料数量</th>
-                <th data-min-width="150" data-column="">扫描数量</th>
-                <th data-min-width="150" data-column="">可用批次号</th>
+                <th data-width="150" data-column="">已备料数量</th>
+                <th data-width="150" data-column="">扫描数量</th>
+                <th data-width="150" data-column="">可用批次号</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -197,6 +200,7 @@
                    data-copy-to-excel="false"
                    data-page="SysMaterialsprepare_page"
                    data-toolbar="SysMaterialsprepare1_toolbar_#(pageId)"
+                   id="jbolt_Table_#(pageId)"
             >
                 <thead class="fw-normal">
                 <tr>
@@ -221,5 +225,21 @@
 
 #define js()
 <script type="text/javascript">
+
+
+    function barcode() {
+        LayerMsgBox.loading("执行中......",2000);
+        var barcode = $("#barcode").val();
+        if (barcode) {
+            Ajax.post("admin/sysMaterialspreparedetail/barcode", {"barcode": barcode},
+                function (res) {
+                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
+                    $("#barcode").val('');
+                }, function (err) {
+                })
+        } else {
+            LayerMsgBox.alert("请输入条码")
+        }
+    }
 </script>
 #end

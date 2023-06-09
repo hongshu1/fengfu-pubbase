@@ -190,17 +190,6 @@ function proposalmSourceType(val) {
     }
 }
 
-function iseffective(val) {
-    switch (val) {
-        case '0':
-            return juicer_bool_html('未生效', val);
-        case '1':
-            return juicer_bool_html('已生效', val);
-        default:
-            return "";
-    }
-}
-
 function isscheduled(val) {
     switch (val) {
         case 0:
@@ -334,21 +323,6 @@ function edittype(val){
     }
 }
 
-function periodprogress(val){
-    switch (val){
-        case '1':
-            return juicer_html('发注',++val);
-        case '2':
-            return juicer_html('纳入', ++val);
-        case '3':
-            return juicer_html('验收',++val);
-        case '4':
-            return juicer_html('质保', ++val);
-        default:
-            return ' ';
-    }
-}
-
 function simport(val) {
     switch (val) {
         case '0':
@@ -427,18 +401,34 @@ function BudgetType(val) {
     }
 }
 
-function AuditStatus(val) {
-    switch (val) {
-        case 0:
-            return juicer_html('未审核', ++val);
+function AuditStatus(val, way) {
+    switch (way) {
         case 1:
-            return juicer_html('待审核', ++val);
+            switch (val) {
+                case 0:
+                case 3:
+                    return juicer_html('已保存', ++val);
+                case 1:
+                    return juicer_html('待审核', ++val);
+                case 2:
+                    return juicer_html('已审核', ++val);
+                default:
+                    return "审核-未知";
+            }
         case 2:
-            return juicer_html('已审核', ++val);
-        case 3:
-            return juicer_html('不通过', ++val);
+            switch (val) {
+                case 0:
+                case 3:
+                    return juicer_html('已保存', ++val);
+                case 1:
+                    return juicer_html('待审批', ++val);
+                case 2:
+                    return juicer_html('审批通过', ++val);
+                default:
+                    return "审批-未知";
+            }
         default:
-            return "";
+            return '未知';
     }
 }
 
@@ -617,7 +607,6 @@ function initMineJuicer(){
     juicer.register('iOrderStatus', iOrderStatus);
     juicer.register('isLargeAmountExpense', isLargeAmountExpense);
     juicer.register('proposalmSourceType', proposalmSourceType);
-    juicer.register('iseffective', iseffective);
     juicer.register('isscheduled', isscheduled);
     juicer.register('auditstate', auditstate);
     juicer.register('careertype', careertype);
@@ -626,7 +615,6 @@ function initMineJuicer(){
     juicer.register('spriorreport', spriorreport);
     juicer.register('paymentprogress', paymentprogress);
     juicer.register('edittype', edittype);
-    juicer.register('periodprogress', periodprogress);
     juicer.register('simport', simport);
     juicer.register('proposaldType', proposaldType);
     juicer.register('purchaseState', purchaseState);

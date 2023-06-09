@@ -50,6 +50,14 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
     public static final String SPOTTICKET = "spotTicket";
     /**是否删除：0. 否 1. 是*/
     public static final String ISDELETED = "isDeleted";
+    /**品牌code*/
+    public static final String BRANDCODE = "BrandCode";
+    /**品牌名称*/
+    public static final String BRANDNAME = "BrandName";
+    /**采购单位code*/
+    public static final String PUUNITCODE = "PuUnitCode";
+    /**采购单位名称*/
+    public static final String PUUNITNAME = "PuUnitName";
 	/**
 	 * AutoID
 	 */
@@ -388,6 +396,74 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 品牌code
+	 */
+	public M setBrandCode(java.lang.String BrandCode) {
+		set("BrandCode", BrandCode);
+		return (M)this;
+	}
+
+	/**
+	 * 品牌code
+	 */
+	@JBoltField(name="brandcode" ,columnName="BrandCode",type="String", remark="品牌code", required=false, maxLength=50, fixed=0, order=21)
+	@JSONField(name = "brandcode")
+	public java.lang.String getBrandCode() {
+		return getStr("BrandCode");
+	}
+
+	/**
+	 * 品牌名称
+	 */
+	public M setBrandName(java.lang.String BrandName) {
+		set("BrandName", BrandName);
+		return (M)this;
+	}
+
+	/**
+	 * 品牌名称
+	 */
+	@JBoltField(name="brandname" ,columnName="BrandName",type="String", remark="品牌名称", required=false, maxLength=50, fixed=0, order=22)
+	@JSONField(name = "brandname")
+	public java.lang.String getBrandName() {
+		return getStr("BrandName");
+	}
+
+	/**
+	 * 采购单位code
+	 */
+	public M setPuUnitCode(java.lang.String PuUnitCode) {
+		set("PuUnitCode", PuUnitCode);
+		return (M)this;
+	}
+
+	/**
+	 * 采购单位code
+	 */
+	@JBoltField(name="puunitcode" ,columnName="PuUnitCode",type="String", remark="采购单位code", required=false, maxLength=50, fixed=0, order=23)
+	@JSONField(name = "puunitcode")
+	public java.lang.String getPuUnitCode() {
+		return getStr("PuUnitCode");
+	}
+
+	/**
+	 * 采购单位名称
+	 */
+	public M setPuUnitName(java.lang.String PuUnitName) {
+		set("PuUnitName", PuUnitName);
+		return (M)this;
+	}
+
+	/**
+	 * 采购单位名称
+	 */
+	@JBoltField(name="puunitname" ,columnName="PuUnitName",type="String", remark="采购单位名称", required=false, maxLength=50, fixed=0, order=24)
+	@JSONField(name = "puunitname")
+	public java.lang.String getPuUnitName() {
+		return getStr("PuUnitName");
 	}
 
 }

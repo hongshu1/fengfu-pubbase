@@ -12,7 +12,6 @@ import cn.jbolt.core.service.JBoltFileService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.QcInspection;
 import cn.rjtech.wms.utils.StringUtils;
-import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;

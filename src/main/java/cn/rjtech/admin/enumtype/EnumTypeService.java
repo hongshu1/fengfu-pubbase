@@ -1,25 +1,20 @@
 package cn.rjtech.admin.enumtype;
 
-import cn.jbolt.core.kit.JBoltUserKit;
-import cn.rjtech.admin.enumvals.EnumValsService;
-import cn.rjtech.model.momdata.EnumVals;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.paragetter.Para;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.enumvals.EnumValsService;
 import cn.rjtech.model.momdata.EnumType;
-import com.jfinal.plugin.activerecord.Record;
+import cn.rjtech.model.momdata.EnumVals;
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 
 import java.util.Date;
 import java.util.List;
-
-import static io.netty.util.internal.PlatformDependent.getLong;
 
 /**
  * 系统管理-枚举类别

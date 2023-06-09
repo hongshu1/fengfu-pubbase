@@ -1,12 +1,5 @@
 package cn.rjtech.admin.investmentplanmanage;
 
-import java.util.Date;
-import java.util.List;
-import com.jfinal.aop.Inject;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
@@ -20,14 +13,18 @@ import cn.rjtech.admin.investmentplanitem.InvestmentPlanItemService;
 import cn.rjtech.admin.projectcard.ProjectCardService;
 import cn.rjtech.admin.proposalm.ProposalmService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.DictionaryTypeKeyEnum;
-import cn.rjtech.enums.EffectiveStatusEnum;
-import cn.rjtech.enums.FinishStatusEnum;
-import cn.rjtech.enums.ServiceTypeEnum;
+import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.InvestmentPlan;
 import cn.rjtech.model.momdata.InvestmentPlanItem;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.Date;
+import java.util.List;
 
 public class InvestmentPlanManageService extends BaseService<InvestmentPlan>{
 	private final InvestmentPlan dao = new InvestmentPlan().dao();
@@ -93,16 +90,7 @@ public class InvestmentPlanManageService extends BaseService<InvestmentPlan>{
 	public List<Record> findInvestmentPlanItemForDetail(Long investmentPlanId) {
 		return investmentPlanService.findInvestmentPlanItemDatas(investmentPlanId);
 	}
-	/**
-	 * 投资计划详情界面查询投资计划项目明细数据
-	 * */
-	public List<Record> findInvestmentPlanItemdForDetail(Long investmentPlanItemId) {
-		List<Record> list = dbTemplate("investmentplanmanage.findInvestmentPlanItemdForDetail",Kv.by("investmentplanitemid", investmentPlanItemId)).find();
-		for (Record record : list) {
-			record.set("cperiodprogressdesc",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), record.getStr("cperiodprogress")));
-		}
-		return list;
-	}
+
 	/**
      *	投资计划生效 
      * */

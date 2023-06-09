@@ -86,11 +86,6 @@ where 1=1
 #end	
 #end
 
-#sql("findInvestmentPlanItemdForDetail")
-	select iautoid,iplanitemid,iperiodnum,cperiodprogress,concat(year(dperioddate),'-',month(dperioddate)) dperioddate,
-		iamount from pl_investment_plan_itemd where iplanitemid = #para(investmentplanitemid)
-#end
-
 #sql("findInvestmentNextPeriodEditExportDownTplData")
 	select pi.iautoid,pi.iinvestmenttype,pi.iprojectid,bp.cprojectcode,bp.cprojectname,pi.cproductline,
 	pi.cmodelinvccode,pi.cparts,pi.icareertype,pi.iinvestmentdistinction,pi.cplanno,pi.citemname,
@@ -228,7 +223,7 @@ select
 pi.iautoid,pi.iinvestmenttype,pi.cproductline,
 	pi.cmodelinvccode,pi.cparts,pi.icareertype,pi.iinvestmentdistinction,pi.cplanno,pi.citemname,
 	pi.isimport,pi.iquantity,pi.cunit,pi.cassettype,pi.cpurpose,pi.ceffectamount,pi.creclaimyear,
-	pi.clevel,pi.ispriorreport,pi.cpaymentprogress,(pi.itaxrate*100) itaxrate,
+	pi.clevel,pi.ispriorreport,pi.cpaymentprogress,pi.itaxrate,
 	case when pi.itotalamountactual = 0 or pi.itotalamountactual is null then pi.itotalamountplan else pi.itotalamountactual end itotalamountplan,
 	pi.itotalamountactual,(pi.itotalamountplan-pi.itotalamountactual) itotalamountdiff,pi.itotalamountdiffreason,
 	case when pi.iyeartotalamountactual = 0 or pi.iyeartotalamountactual is null then pi.iyeartotalamountplan else pi.iyeartotalamountactual end iyeartotalamountplan,
@@ -291,6 +286,8 @@ from #(getMomdataDbName()).dbo.pl_investment_plan_item pi
 EXEC	[dbo].[P_InvestmentPlanBudgetActualDifference]
 		@iBudgetYear = #(ibudgetyear),
 		@cDepCode = #para(cdepcode),
+		@investmentdiffbudgettype1 = #para(investmentdiffbudgettype1),
+		@investmentdiffbudgettype2 = #para(investmentdiffbudgettype2),
 		@u8DbName = #para(u8dbname)
 #end
 
@@ -325,7 +322,7 @@ select d.cdepname,ip.iBudgetType,ip.cdepcode,
 		#for(monthnum:monthlist)
 			,min(case when datepart(year,dateadd(month,#(for.index),convert(date,#para(dstartdate)))) = datepart(year,ipid.dPeriodDate) and
 			datepart(month,dateadd(month,#(for.index),convert(date,#para(dstartdate)))) = datepart(month,ipid.dPeriodDate)
-			then jd_pp.name end) 'imonthamount#(monthnum)'			
+			then ipid.cperiodprogress end) 'imonthamount#(monthnum)'			
 		#end
 	#end
 	#if(yearlist && yearlist.size() > 0)
@@ -336,7 +333,6 @@ select d.cdepname,ip.iBudgetType,ip.cdepcode,
 from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi 
 	inner join #(getMomdataDbName()).dbo.pl_investment_plan ip ON ipi.iplanid=ip.iautoid 
 	left JOIN #(getMomdataDbName()).dbo.pl_investment_plan_itemd ipid ON ipid.iplanitemid=ipi.iautoid 
-	left join #(getBaseDbName()).dbo.jb_dictionary jd_pp on jd_pp.sn=ipid.cperiodprogress and jd_pp.type_key='period_progress'
 	left join #(getBaseDbName()).dbo.jb_dictionary jd_ibt on jd_ibt.sn=ip.ibudgettype and jd_ibt.type_key='investment_budget_type'
 	left join #(getMomdataDbName()).dbo.bd_department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3 and convert(date,ipid.dPeriodDate) >= convert(date,#para(dstartdate)) and convert(date,ipid.dPeriodDate) <= convert(date,#para(denddate))
@@ -374,7 +370,6 @@ WHERE 1=1 and ip.iEffectiveStatus != 3 and convert(date,ipid.dPeriodDate) >= con
 from #(getMomdataDbName()).dbo.pl_investment_plan_item ipi 
 	inner join #(getMomdataDbName()).dbo.pl_investment_plan ip ON ipi.iplanid=ip.iautoid 
 	left JOIN #(getMomdataDbName()).dbo.pl_investment_plan_itemd ipid ON ipid.iplanitemid=ipi.iautoid 
-	left join #(getBaseDbName()).dbo.jb_dictionary jd_pp on jd_pp.sn=ipid.cperiodprogress and jd_pp.type_key='period_progress'
 	left join #(getBaseDbName()).dbo.jb_dictionary jd_ibt on jd_ibt.sn=ip.ibudgettype and jd_ibt.type_key='investment_budget_type'
 	left join #(getMomdataDbName()).dbo.bd_department d on d.cdepcode = ip.cdepcode
 WHERE 1=1 and ip.iEffectiveStatus != 3
@@ -448,7 +443,7 @@ order by cplanno,ibudgettype1,citemtype
 #sql("findExecutionProgressTrackingDatas")
 select * from (
 select eb.cdepcode,1 iservicetype,
-	(select top 1 cdepname from #(AppConfig.getU8DbName()).dbo.department where cdepcode =eb.cdepcode) cdepname,
+	(select top 1 cdepname from bd_department where cdepcode =eb.cdepcode) cdepname,
 	eb.ibudgetyear,ebi.cBudgetNo ccode,
 	isnull((select istatus from Bas_Project_Card where ccode = ebi.cBudgetNo and iservicetype = 1),1) finishstatus,
 	(select csubjectname from bas_subjectm where iautoid = min(ebi.iLowestSubjectId)) clowestsubjectname,
@@ -475,14 +470,14 @@ select eb.cdepcode,1 iservicetype,
 	sum(dbo.PL_GetProposalForProgressTracking(1,ebi.iautoid,2)) proposalNatsum,
 	sum(dbo.PL_GetPurchaseForProgressTracking(1,ebi.iautoid,1)) purchaseNatmoney,
 	sum(dbo.PL_GetPurchaseForProgressTracking(1,ebi.iautoid,2)) purchaseNatsum,
-	sum(#(AppConfig.getU8DbName()).dbo.PL_GetPoDetailForProgressTracking(1,ebi.iautoid,1)) podetailsNatmoney,
-	sum(#(AppConfig.getU8DbName()).dbo.PL_GetPoDetailForProgressTracking(1,ebi.iautoid,2)) podetailsNatsum,
+	sum(#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(1,ebi.iautoid,1)) podetailsNatmoney,
+	sum(#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(1,ebi.iautoid,2)) podetailsNatsum,
 	null contractNatmoney,
 	null contractNatsum,
 	(sum(dbo.PL_GetPurchaseForProgressTracking(1,ebi.iautoid,2)) - sum(dbo.PL_GetProposalForProgressTracking(1,ebi.iautoid,2))) diffNatsum,
 	concat(convert(decimal(20,2),isnull(sum(dbo.PL_GetProposalForProgressTracking(1,ebi.iautoid,2)) / sum(dbo.PL_GetPurchaseForProgressTracking(1,ebi.iautoid,2)) * 100,0)),'%') diffratio,
-	sum(#(AppConfig.getU8DbName()).dbo.PL_GetRdRecordsForProgressTracking(1,ebi.iautoid)) RdRecordsNatsum,
-	sum(#(AppConfig.getU8DbName()).dbo.PL_GetPurbillvouchsForProgressTracking(1,ebi.iautoid)) purbillvouchsNatsum,
+	sum(#(u8dbname).dbo.PL_GetRdRecordsForProgressTracking(1,ebi.iautoid)) RdRecordsNatsum,
+	sum(#(u8dbname).dbo.PL_GetPurbillvouchsForProgressTracking(1,ebi.iautoid)) purbillvouchsNatsum,
 	null actualpayamount,
 	null payremain
 from PL_Expense_Budget_Item ebi
@@ -491,20 +486,16 @@ from PL_Expense_Budget_Item ebi
 	group by eb.cdepcode,eb.ibudgetyear,ebi.cBudgetNo
 union all
 select ip.cdepcode,2 iservicetype,
-	(select top 1 cdepname from #(AppConfig.getU8DbName()).dbo.department where cdepcode =ip.cdepcode) cdepname,
+	(select top 1 cdepname from bd_department where cdepcode =ip.cdepcode) cdepname,
 	ip.ibudgetyear,ipi.cplanno ccode,
 	isnull((select istatus from Bas_Project_Card where ccode = ipi.cplanno and iservicetype = 2),1) finishstatus,
 	null clowestsubjectname,min(ipi.citemname) citemname,min(ipi.isScheduled) isScheduled,
-	(
-		select sum(iquantity) from pl_investment_Plan_itemd where iPlanItemId = min(case when ip.ibudgettype = 1 then ipi.iautoid end)
-	) fullyearbudgetQuantity,
+	sum(case when ip.ibudgettype = 1 then ipi.iquantity end) fullyearbudgetQuantity,
 	'千元' fullyearbudgetUnit,
 	(
 		select sum(iamount) from pl_investment_Plan_itemd where iPlanItemId = min(case when ip.ibudgettype = 1 then ipi.iautoid end)
 	) fullyearbudgetAmount,
-	(
-		select sum(iquantity) from pl_investment_Plan_itemd where iPlanItemId = min(case when ip.ibudgettype = 2 then ipi.iautoid end)
-	) nextperiodbudgetQuantity,
+	sum(case when ip.ibudgettype = 2 then ipi.iquantity end) nextperiodbudgetQuantity,
 	'千元' nextperiodbudgetUnit,
 	(
 		select sum(iamount) from pl_investment_Plan_itemd where iPlanItemId = min(case when ip.ibudgettype = 2 then ipi.iautoid end)
@@ -516,14 +507,14 @@ select ip.cdepcode,2 iservicetype,
 	sum(dbo.PL_GetProposalForProgressTracking(2,ipi.iautoid,2)) proposalNatsum,
 	sum(dbo.PL_GetPurchaseForProgressTracking(2,ipi.iautoid,1)) purchaseNatmoney,
 	sum(dbo.PL_GetPurchaseForProgressTracking(2,ipi.iautoid,2)) purchaseNatsum,
-	sum(#(AppConfig.getU8DbName()).dbo.PL_GetPoDetailForProgressTracking(2,ipi.iautoid,1)) podetailsNatmoney,
-	sum(#(AppConfig.getU8DbName()).dbo.PL_GetPoDetailForProgressTracking(2,ipi.iautoid,2)) podetailsNatsum,
+	sum(#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(2,ipi.iautoid,1)) podetailsNatmoney,
+	sum(#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(2,ipi.iautoid,2)) podetailsNatsum,
 	null contractNatmoney,
 	null contractNatsum,
 	(sum(dbo.PL_GetPurchaseForProgressTracking(2,ipi.iautoid,2)) - sum(dbo.PL_GetProposalForProgressTracking(2,ipi.iautoid,2))) diffNatsum,
 	concat(convert(decimal(20,2),isnull(sum(dbo.PL_GetProposalForProgressTracking(2,ipi.iautoid,2)) / sum(dbo.PL_GetPurchaseForProgressTracking(2,ipi.iautoid,2)) * 100,0)),'%') diffratio,
-	sum(#(AppConfig.getU8DbName()).dbo.PL_GetRdRecordsForProgressTracking(2,ipi.iautoid)) RdRecordsNatsum,
-	sum(#(AppConfig.getU8DbName()).dbo.PL_GetPurbillvouchsForProgressTracking(2,ipi.iautoid)) purbillvouchsNatsum,
+	sum(#(u8dbname).dbo.PL_GetRdRecordsForProgressTracking(2,ipi.iautoid)) RdRecordsNatsum,
+	sum(#(u8dbname).dbo.PL_GetPurbillvouchsForProgressTracking(2,ipi.iautoid)) purbillvouchsNatsum,
 	null actualpayamount,
 	null payremain
 from pl_investment_plan_item ipi

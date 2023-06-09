@@ -10,9 +10,10 @@ WHERE 1=1
 
 #sql("inventoryList")
 SELECT
-   i.*,ic.cInvCName cinvcname
+   i.*,ic.cInvCName cinvcname,uom.cUomName
 FROM Bd_Inventory i
 inner join Bd_InventoryClass ic on i.iInventoryClassId = ic.iautoid
+left join Bd_Uom uom on i.iInventoryUomId1 = uom.iautoid
 WHERE 1=1
 #if(iInventoryClassId)
  AND i.iInventoryClassId = #para(iInventoryClassId)
@@ -128,7 +129,15 @@ WHERE 1=1 AND i.isenabled = '1'
 #sql("getSubList")
 SELECT *
 FROM bd_InventoryClass
-WHERE ipid = #para(pid)
+WHERE 1=1
+#if(iorgid)
+	and iorgid = #para(iorgid)
+#end
+#if(pid > 0)
+	and ipid = #para(pid)
+#else
+	and (ipid is null or ipid = 0)
+#end
 ORDER BY
     cInvCCode
 #end

@@ -26,7 +26,10 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -97,6 +100,20 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 	 */
 	public Page<Record> historyDatas(int pageNumber, int pageSize, Kv kv) {
 		Page<Record> paginate = dbTemplate("formapprovald.findRecordsByFormIdHistory", kv).paginate(pageNumber,
+				pageSize);
+		return paginate;
+
+	}
+
+	/**
+	 * 历史数据源列表
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param kv
+	 * @return
+	 */
+	public Page<Record> historyList(int pageNumber, int pageSize, Kv kv) {
+		Page<Record> paginate = dbTemplate("formapprovald.historyDatas", kv).paginate(pageNumber,
 				pageSize);
 		return paginate;
 
@@ -477,7 +494,7 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 					// 获取集合里一级数据
 					int getStair = 0;
 					// 获取集合上级数据
-					int getSuperior = 1;
+					int getSuperior;
 
 					/*
 					 * 审批人设置
@@ -511,7 +528,7 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 							break;
 						case 2: //部门主管
 
-							switch (iSupervisorType) {
+							/*switch (iSupervisorType) {
 								// 直接主管
 								case 1:
 
@@ -528,7 +545,18 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 									break;
 								default:
 									break;
-							}
+							}*/
+
+							/**
+							 * 一级主管（直属主管）：班负责人，班长
+							 * 二级主管：系负责人，系长
+							 * 三级主管：科负责人，科长
+							 * 四级主管：部负责人，部长
+							 * 五级主管：公司负责人，总经理
+							 */
+
+							getStair = iSupervisorType - 1;
+							getSuperior = iSupervisorType;
 
 							if (size > getStair) {
 								Record record = list.get(getStair);

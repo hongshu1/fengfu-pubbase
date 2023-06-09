@@ -175,7 +175,7 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 	}
 
 	public Ret addBarcode(String barcode, Long imodocid) {
-		Record record = moMaterialscanusedlogmService.getBarcode(barcode);
+		Record record = moMaterialsscansumService.getBarcode(barcode,imodocid);
 		if(record==null){
 			return  fail("未找到当前现品票");
 		}
@@ -191,15 +191,17 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 					moMaterialscanlog.setIMaterialsPrepairDid(record.get("imaterialsprepairdid"));
 					moMaterialscanlog.setIInventoryId(record.getLong("iinventoryid")); //存货ID
 					moMaterialscanlog.setCBarcode(record.getStr("barcode"));
-					moMaterialscanlog.setIQty(new BigDecimal(1));
+					//moMaterialscanlog.setIQty(new BigDecimal(1));
+					moMaterialscanlog.setIQty(record.getBigDecimal("qty"));
 					moMaterialscanlog.setICreateBy(JBoltUserKit.getUserId());
 					moMaterialscanlog.setCCreateName(JBoltUserKit.getUserName());
 					moMaterialscanlog.setDCreateTime(new Date());
 					moMaterialscanlog.save();
 
 				} else {
-					moMaterialscanlog.setIQty(moMaterialscanlog.getIQty().add(new BigDecimal(1)));
-					moMaterialscanlog.update();
+					//moMaterialscanlog.setIQty(moMaterialscanlog.getIQty().add(new BigDecimal(1)));
+					//moMaterialscanlog.update();
+					fail("已加入");
 				}
 				addMoMaterialsscansum(record);
 				return  true;
@@ -226,11 +228,11 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 					moMaterialsscansum.setIPlanQty(r.getBigDecimal("planiqty")); //计划数
 				}
 
-				moMaterialsscansum.setIScannedQty(new BigDecimal(1));
+				moMaterialsscansum.setIScannedQty(record.getBigDecimal("qty"));
 				moMaterialsscansum.save();
 			}else{
-				moMaterialsscansum.setIScannedQty(moMaterialsscansum.getIScannedQty().add(new BigDecimal(1)));
-				moMaterialsscansum.update();
+				//moMaterialsscansum.setIScannedQty(moMaterialsscansum.getIScannedQty().add(new BigDecimal(1)));
+				//moMaterialsscansum.update();
 			}
 		}
 

@@ -1,8 +1,5 @@
 package cn.rjtech.admin.subcontractorderm;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
@@ -20,7 +17,6 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.enums.SourceTypeEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
@@ -28,7 +24,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -302,10 +297,19 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
    */
   @SuppressWarnings("unchecked")
   public void orderDBatchExport() throws Exception {
-//    renderJxls("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas1(getKv()),
-//        "委外订单订货清单.xlsx");
-    renderJxlsToPdf("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas1(getKv()),
-        "委外订单订货清单.pdf");
+    Kv kv = getKv();
+    if (kv.getStr("type").equals("1")) {
+      //1条码-1页
+      renderJxls("orderDbOneAtchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas(getKv()),
+          "委外订单订货清单.xlsx");
+//          renderJsonData(subcontractOrderDBatchService.orderDBatchExportDatas(getKv()));
+    } else {
+      //8条码-1页
+//      renderJxlsToPdf("orderDBatchExport.xlsx", subcontractOrderDBatchService.orderDBatchExportDatas(getKv()),
+//          "委外订单订货清单.pdf");
+      renderJsonData(subcontractOrderDBatchService.orderDBatchExportDatas(getKv()));
+    }
+
   }
 
   public void updateHideInvalid(@Para(value = "id") Long id,

@@ -1,9 +1,4 @@
 package cn.rjtech.admin.investmentplanmanage;
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
-import com.jfinal.plugin.activerecord.Record;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.CheckPermission;
@@ -12,6 +7,11 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.base.controller.BaseAdminController;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.plugin.activerecord.Record;
 
 @CheckPermission(PermissionKey.INVESTMENT_PLAN_MANAGE)
 @UnCheckIfSystemAdmin
@@ -52,12 +52,6 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
      * */
     public void findInvestmentPlanItemForDetail(@Para("investmentPlanId") Long investmentPlanId) {
         renderJsonData(service.findInvestmentPlanItemForDetail(investmentPlanId));
-    }
-    /**
-     * 投资计划编制详情界面查询投资计划项目明细数据
-     * */
-    public void findInvestmentPlanItemdForDetail() {
-        renderJsonData(service.findInvestmentPlanItemdForDetail(getLong()));
     }
     /**
      *	投资计划生效 

@@ -1,15 +1,5 @@
 package cn.rjtech.admin.investmentplanitemd;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.Path;
-import com.jfinal.kit.JsonKit;
-import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Record;
-
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
@@ -29,6 +19,15 @@ import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.model.momdata.InvestmentPlanItemd;
 import cn.rjtech.util.ReadInventmentExcelUtil;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.kit.JsonKit;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 投资计划项目明细 Controller
@@ -169,22 +168,22 @@ public class InvestmentPlanItemdAdminController extends BaseAdminController {
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+30, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.EDITTYPE.getValue(), row.getStr("cedittype"))));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+31, row.getStr("cmemo")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+32, row.getInt("iitemyear")));
-				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+33, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress1"))));
+				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+33, row.getStr("cperiodprogress1")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+34, row.getStr("dperioddate1")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+35, row.getBigDecimal("iamount1")));
-				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+36, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress2"))));
+				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+36, row.getStr("cperiodprogress2")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+37, row.getStr("dperioddate2")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+38, row.getBigDecimal("iamount2")));
-				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+39, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress3"))));
+				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+39, row.getStr("cperiodprogress3")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+40, row.getStr("dperioddate3")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+41, row.getBigDecimal("iamount3")));
-				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+42, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress4"))));
+				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+42, row.getStr("cperiodprogress4")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+43, row.getStr("dperioddate4")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+44, row.getBigDecimal("iamount4")));
-				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+45, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress5"))));
+				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+45, row.getStr("cperiodprogress5")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+46, row.getStr("dperioddate5")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+47, row.getBigDecimal("iamount5")));
-				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+48, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress6"))));
+				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+48, row.getStr("cperiodprogress6")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+49, row.getStr("dperioddate6")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+50, row.getBigDecimal("iamount6")));
 				excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+51,JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.AUDIT_STATUS.getValue(), row.getStr("iauditstatus"))));
@@ -227,12 +226,6 @@ public class InvestmentPlanItemdAdminController extends BaseAdminController {
 			record.set("ispriorreport",IsEnableEnum.toEnum(record.getInt("ispriorreport")));
 			record.set("cpaymentprogress",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PAYMENT_PROGRESS.getValue(), record.getStr("cpaymentprogress")));
 			record.set("cedittype",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.EDITTYPE.getValue(), record.getStr("cedittype")));
-			record.set("cperiodprogress1",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), record.getStr("cperiodprogress1")));
-			record.set("cperiodprogress2",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), record.getStr("cperiodprogress2")));
-			record.set("cperiodprogress3",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), record.getStr("cperiodprogress3")));
-			record.set("cperiodprogress4",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), record.getStr("cperiodprogress4")));
-			record.set("cperiodprogress5",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), record.getStr("cperiodprogress5")));
-			record.set("cperiodprogress6",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), record.getStr("cperiodprogress6")));
 		}
 		set("cdepname",departmentService.getCdepName(cdepcode));
 		set("iBudgetType",InvestmentBudgetTypeEnum.toEnum(iBudgetType).getText());

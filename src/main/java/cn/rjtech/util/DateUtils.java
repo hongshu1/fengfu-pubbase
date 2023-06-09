@@ -48,11 +48,6 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	public static String formatDate(Date date, String pattern) {
 		String formatDate = null;
 		if (date != null){
-//			if (StringUtils.isNotBlank(pattern)) {
-//				formatDate = DateFormatUtils.format(date, pattern);
-//			} else {
-//				formatDate = DateFormatUtils.format(date, "yyyy-MM-dd");
-//			}
 			if (StrUtil.isBlank(pattern)) {
 				pattern = "yyyy-MM-dd";
 			}

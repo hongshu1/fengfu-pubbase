@@ -3,16 +3,17 @@
     {@each datas as data,index}
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
-            <td>${data.stepname}</td>
-            <td>${data.cname}</td>
-            <td>${data.way}</td>
-            <td>${data.status}</td>
             <td>
-                <a  tooltip  href="admin/formapprovald/userList/${data.iautoid}" data-dialogbtn data-btn="close"
+                <a  tooltip  href="admin/formapprovald/historyDialog?approvalId=${data.iautoid}" data-dialogbtn
+                    data-btn="close"
                     data-scroll="yes"
-                    data-title="审批人列表" data-area="90%,90%" class="jbolt_table_btn"><i
-                        class="fa fa-users c-danger"></i></a>
+                    data-title="历史审批" data-area="90%,90%" class="jbolt_table_btn">查看</a>
             </td>
+            <td>${data.istatus}</td>
+            <td>${data.istepname}</td>
+            <td>${data.username}</td>
+            <td>${data.daudittime}</td>
+
            <!--<td>
 	<a href="admin/approvald/edit/${data.iautoid}" data-area="95%,95%"  tooltip data-title="编辑"
        data-handler="refreshJBoltTable" data-dialog-title="修改审批节点" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
@@ -42,7 +43,7 @@
                        data-page="PheDeliveryLines_page_#(pageId)"
                        data-column-prepend="1:checkbox:true"
                        data-toolbar="PheDeliveryLines_toolbar_#(pageId)"
-                       data-url="admin/formapprovald/historyDatas"
+                       data-url="admin/formapprovald/historyList"
                        data-conditions-form="approvalMForm_#(pageId)"
                        data-rowtpl="PheDeliveryLines_tpl_#(pageId)"
                        data-column-resize="true"
@@ -51,12 +52,12 @@
                 >
                     <thead>
                     <tr>
-                        <th data-width="100" data-column="index">审批顺序</th>
-                        <th data-min-width="200" data-column="stepname">审批节点</th>
-                        <th data-min-width="200" data-column="cname">审批内容</th>
-                        <th data-min-width="200" data-column="way">审批人设置</th>
-                        <th data-min-width="200" data-column="status">状态</th>
-                        <th data-min-width="200" data-column="person">审批人</th>
+                        <th data-width="100" data-column="index">序号</th>
+                        <th data-min-width="200" data-column="index">操作</th>
+                        <th data-min-width="200" data-column="istatus">审批状态</th>
+                        <th data-min-width="200" data-column="istepname">当前节点</th>
+                        <th data-min-width="200" data-column="username">最后审批人</th>
+                        <th data-min-width="200" data-column="daudittime">最后审批时间</th>
                     </tr>
                     </thead>
                     <tbody></tbody>

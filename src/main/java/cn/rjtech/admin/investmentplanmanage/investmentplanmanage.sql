@@ -29,8 +29,3 @@
 	#end	
 	order by pm.iautoid desc
 #end
-
-#sql("findInvestmentPlanItemdForDetail")
-	select iautoid,iplanitemid,iperiodnum,cperiodprogress,concat(year(dperioddate),'-',month(dperioddate)) dperioddate,
-		iamount from pl_investment_plan_itemd where iplanitemid = #para(investmentplanitemid)
-#end

@@ -1,9 +1,5 @@
 package cn.rjtech.admin.proposalcategory;
 
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.Path;
-import com.jfinal.kit.Kv;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.common.enums.DictionaryTypeMode;
@@ -14,6 +10,10 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Proposalcategory;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 
 /**
  * 禀议类型区分 Controller

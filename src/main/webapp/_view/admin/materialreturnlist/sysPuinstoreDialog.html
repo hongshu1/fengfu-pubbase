@@ -24,7 +24,7 @@
                 <td>${pageNumber,pageSize,index | rownum}</td>
                 <td>${data.sourcebillno}</td>
                 <td>${data.billno}</td>
-                <td>${data.billdate}</td>
+                <td>${data.billdate |date_ymd}</td>
                 <td style="display: none">${data.billtype}</td>
                 <td style="display: none"> ${data.deptcode}</td>
                 <td style="display: none">${data.vencode}</td>
@@ -36,6 +36,7 @@
                 <td style="display: none">${data.cptname}</td>
                 <td style="display: none">${data.autoid}</td>
                 <td style="display: none">${data.billrowno}</td>
+                <td style="display: none">${data.createperson}</td>
 
             </tr>
             {@/each}

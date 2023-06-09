@@ -6,7 +6,7 @@
             <div class="col-12">
                 <form onsubmit="return false;" class="form-inline" id="chooseDataForm" method="post">
                     <input style="width: 400px" type="text" autocomplete="off" class="form-control" placeholder="订单号"
-                           name="keywords" value=""/>
+                           name="corderno" value=""/>
                     #if(sysPuinstore.AutoID??)
                     <input id="autoid" type="hidden" name="autoid" value="#(sysPuinstore.autoid??)"/>
                     #end
@@ -20,16 +20,16 @@
         <!-- JBoltTable的数据模板定义-->
         <script type="text/template" id="jboltTable_demotpl">
             {@each datas as data,index}
-            <tr data-id="${data.id}">
+            <tr data-id="${data.autoid}">
                 <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.billtype}</td> <!-- 采购类型-->
                 <td>${data.sourcebillno}</td>
-                <td>${data.billid}</td>
-                <td>${data.billno}</td>
-                <td>${data.billdate}</td>
-                <td>${data.venname}</td>
+                <td>${data.sourcebillid}</td>
+                <td>${data.billdate}</td><!-- 采购日期-->
+                <td>${data.vencode}</td><!-- 供应商编码-->
+                <td>${data.venname}</td><!-- 供应商名称-->
                 <td>${data.deptname}</td>
                 <td>${data.invname}</td>
-                <td>${data.defwhname}</td>
             </tr>
             {@/each}
         </script>
@@ -37,7 +37,8 @@
                class="jbolt_table jbolt_main_table  table-center"
                data-jbolttable
                data-ajax="true"
-               data-url="admin/purchaseReceiptList/getSysPODetail"
+               data-width="fill"
+               data-url="admin/purchaseReceiptList/getMesSysPODetails"
                data-height="300"
                data-column-resize="true"
                data-conditions-form="chooseDataForm"
@@ -48,15 +49,16 @@
                data-pagesize="30">
             <thead>
             <tr>
-                <th data-width="60">序号</th>
-                <th data-width="160" data-column="sourcebillno">来源单号</th>
-                <th data-min-width="160" data-column="billid">来源单据id</th>
-                <th data-min-width="160" data-column="billno">入库单号</th>
-                <th data-min-width="160" data-column="billdate">单据日期</th>
-                <th data-min-width="160" data-column="venname">供应商名称</th>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="160" data-column="billType">采购类型</th>
+                <th data-width="160" data-column="sourcebillno">采购订单号</th>
+                <th data-min-width="180" data-column="sourcebillid">采购id</th>
+                <th data-min-width="160" data-column="billdate">采购日期</th>
+                <th data-min-width="120" data-column="vencode">供应商编码</th>
+                <th data-min-width="120" data-column="venname">供应商名称</th>
                 <th data-min-width="160" data-column="deptname">部门名称</th>
                 <th data-min-width="160" data-column="invname">存货名称</th>
-                <th data-min-width="160" data-column="defwhname">供货单位</th>
+            </tr>
             </thead>
             <tbody></tbody>
         </table>

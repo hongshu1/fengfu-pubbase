@@ -1,13 +1,5 @@
 package cn.rjtech.admin.proposalattachment;
 
-import java.util.ArrayList;
-
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
-import com.jfinal.upload.UploadFile;
-
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -16,6 +8,13 @@ import cn.jbolt.core.service.JBoltFileService;
 import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.constants.Constants;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.upload.UploadFile;
+
+import java.util.ArrayList;
 
 /**
  * 禀议书附件 Controller
