@@ -7,10 +7,13 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        #if(!annualOrderM.iautoid?? || edit?false)
+                        #if(!annualOrderM.iAutoId?? || edit??false)
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/annualorderm", formSn="Co_AnnualOrderM", iautoid=annualOrderM.iautoid??, edit=edit??)
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/annualorderm",
+                        formSn="Co_AnnualOrderM",
+                        iautoid=annualOrderM.iautoid??,iauditstatus=annualOrderM.iauditstatus??0,
+                        iauditway=annualOrderM.iauditway??, edit=edit??)
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -100,7 +103,7 @@
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                #if(!annualOrderM.iautoid?? || edit?false)
+                #if(!annualOrderM.iautoid?? || edit??false)
                 <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
                 #end
             </td>
@@ -126,7 +129,7 @@
         {@/each}
     </script>
     <div class="jbolt_table_toolbar" id="AnnualOrderM_toolbar_#(pageId)">
-        #if(!annualOrderM.iautoid?? || edit?false)
+        #if(!annualOrderM.iautoid?? || edit??false)
         <div class="btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-secondary btn-sm">添加行</button>
 

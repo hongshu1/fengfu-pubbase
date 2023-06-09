@@ -1,13 +1,13 @@
 #sql("recpor")
 select so.AutoID, CASE so.iAuditStatus
         WHEN 0 THEN
-        '已保存'
+        '未审核'
 				WHEN 1 THEN
-        '待审批'
+        '待审核'
 				WHEN 2 THEN
-        '已审批'
+        '审核通过'
 				WHEN 3 THEN
-        '审批不通过'
+        '审核不通过'
         END AS statename,so.iAuditStatus as state,so.BillNo as billno, CONVERT(VARCHAR(10), so.CreateDate, 120) as createdate,so.iAuditStatus,
         so.VenCode as vencode
 		,p.name,s.name as sname,v.cVenName as venname,so.Type as type,so.SourceBillNo

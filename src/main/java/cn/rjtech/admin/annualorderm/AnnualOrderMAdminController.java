@@ -120,9 +120,9 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     }
 
     /**
-     * 撤回已提审
+     * 撤回
      */
-    public void withdraw(Long iAutoId) {
+    public void withdraw(@Para(value = "iautoid") Long iAutoId) {
         ValidationUtils.validateId(iAutoId, "iAutoId");
 
         renderJson(service.withdraw(iAutoId));
@@ -133,6 +133,14 @@ public class AnnualOrderMAdminController extends BaseAdminController {
      */
     public void approve() {
         renderJson(service.approve(getLong(0)));
+    }
+
+    /**
+     * 审批不通过
+     */
+    public void reject()
+    {
+        renderJson(service.reject(getLong(0)));
     }
 
     /**

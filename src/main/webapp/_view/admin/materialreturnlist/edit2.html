@@ -52,9 +52,11 @@
                             data-select-type="select2"
                             data-text="=请选择仓库名称="
                             data-value=""
+                            data-sync-ele="#cwhname"
                             data-value-attr="whcode"
                             data-text-attr="whname"
-                            data-select="#(puinstore.cwhname??)"></select>
+                            data-select="#(puinstore.whcode??)"></select>
+                    <input type="hidden" data-sync-attr="whname" id="cwhname" name="puinstore.whname"  value="#(puinstore.whname??)" />
                 </div>
             </div>
 
@@ -65,16 +67,13 @@
                         <input required type="text" id="sourcebillno" name="puinstore.sourcebillno" class="form-control border-none"
                                readonly="readonly" placeholder=""
                                value="#(puinstore.sourcebillno??)"/>
-                        <input required type="hidden" id="billtype" name="puinstore.billtype" class="form-control border-none"
-                               readonly="readonly" placeholder=""
-                               value="#(puinstore.billtype??)"/>
                     </div>
                 </div>
 
 
                 <label class="col-sm-2 col-form-label">部门：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input required type="text" id="cdepname" name="puinstore.deptcode" class="form-control border-none"
+                    <input required type="text" id="cdepname"  class="form-control border-none"
                            readonly="readonly" placeholder=""
                            value="#(puinstore.deptcode??)"/>
                     <input required type="hidden" id="deptcode" name="puinstore.deptcode" class="form-control border-none"
@@ -84,7 +83,7 @@
 
                 <label class="col-sm-2 col-form-label">采购类型：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input required type="text" id="cptname"  class="form-control border-none"
+                    <input required type="text" id="billtype"  class="form-control border-none"
                            readonly="readonly" placeholder=""
                            value="#(puinstore.cptname??)"/>
                 </div>
@@ -151,16 +150,23 @@
                             <thead class="fw-normal">
                             <tr >
                                 <th data-width="60" data-column="index">序号</th>
-<!--                                <th data-width="100" data-column="spotticket">现品票</th>-->
                                 <th data-width="100" data-column="cinvcode">存货编码</th>
                                 <th data-width="100" data-column="cinvcode1">存货代码</th>
                                 <th data-width="100" data-column="cinvname">存货名称</th>
                                 <th data-width="100" data-column="cinvstd">规格型号</th>
                                 <th data-width="100" data-column="pingpai">品牌</th>
-                                <th data-width="100" data-column="inventorycuomname">主计量单位</th>
+                                <th data-width="100" data-column="puunitname">主计量单位</th>
                                 <th data-width="100" data-column="qty">现存数</th>
                                 <th data-width="100" data-column="memo">备注</th>
                                 <th hidden data-width="100" data-column="qtys"></th>
+                                <th hidden data-width="100" data-column="spotticket">现品票</th>
+                                <th hidden data-width="100" data-column="puunitcode"></th>
+                                <th hidden data-width="100" data-column="sourcebillno"></th>
+                                <th hidden data-width="100" data-column="sourcebillid"></th>
+                                <th hidden data-width="100" data-column="sourcebilltype"></th>
+                                <th hidden data-width="100" data-column="sourcebilldid"></th>
+                                <th hidden data-width="100" data-column="sourcebillnorow"></th>
+                                <th hidden data-width="100" data-column="rowno"></th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -189,17 +195,24 @@
    {@each datas as data,index}
         <tr data-id="${data.autoid}" data-needsave="true" data-changed="true">
     <td>${pageNumber,pageSize,index | rownum}</td>
-<!--    <td>${data.spotticket}</td>-->
+    <td>${data.spotticket}</td>
     <td>${data.cinvcode}</td>
     <td>${data.cinvcode1}</td>
     <td>${data.cinvname}</td>
 <!--    <td>${data.cinvname1}</td>-->
     <td>${data.cinvstd}</td>
     <td>品牌</td>
-    <td>${data.inventorycuomname}</td>
+    <td >${data.puunitname}</td> //采购单位名称
     <td>${data.qty}</td>
     <td>${data.memo}</td>
     <td hidden>${data.qtys}</td>
+    <td hidden>${data.puunitcode}</td> //采购单位编码
+    <td hidden>${data.sourcebillno}</td> //来源单号（订单号）
+    <td hidden>${data.sourcebillid}</td> //来源单据ID(订单id)
+    <td hidden>${data.sourcebilltype}</td> //采购PO  委外OM（采购类型）
+    <td hidden>${data.sourcebilldid}</td> //来源单据DID;采购或委外单身ID
+    <td hidden>${data.sourcebillnorow}</td> //来源单号+行号
+    <td hidden>${data.rowno}</td> //行号
   </tr>
     {@/each}
 </textarea>
@@ -293,7 +306,7 @@
                     width: 800,
                     sync: "",
                     valueAttr: "spotticket",
-                    columnAttr: "barcode,cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,inventorycuomname,qty",
+                    columnAttr: "barcode,cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,puunitname,qty",
                     header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
                     changeColumns: [{column: "spotticket", use: "barcode"},
                         {column: "cinvcode", use: "cinvaddcode"},
@@ -301,9 +314,18 @@
                         {column: "cinvcode1", use: "cinvcode1"},
                         {column: "cinvname1", use: "cinvname1"},
                         {column: "cinvstd", use: "cinvstd"},
-                        {column: "pingpai", use: "cinvname1"},
+                        // {column: "pingpai", use: "cinvname1"},
                         {column: "qty", use: "qty"},
-                        {column: "inventorycuomname", use: "inventorycuomname"}]
+                        {column: "puunitname", use: "puunitname"},
+                        {column: "puunitcode", use: "puunitcode"},
+                        {column: "sourcebillno", use: "sourcebillno"},
+                        {column: "sourcebillid", use: "sourcebillid"},
+                        {column: "sourcebilltype", use: "sourcebilltype"},
+                        {column: "sourcebilldid", use: "sourcebilldid"},
+                        {column: "sourcebillnorow", use: "sourcebillnorow"},
+                        {column: "rowno", use: "rowno"},
+                    ]
+
 
                 },
                 // cinvcode: {
@@ -324,7 +346,7 @@
                 //         {column: "cinvstd", use: "cinvstd"},
                 //         {column: "pingpai", use: "cinvname1"},
                 //         {column: "qty", use: "qty"},
-                //         {column: "inventorycuomname", use: "inventorycuomname"}]
+                //         {column: "puunitname", use: "puunitname"}]
                 // },
 
 
