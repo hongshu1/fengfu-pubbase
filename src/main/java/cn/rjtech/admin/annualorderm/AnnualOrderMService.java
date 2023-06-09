@@ -266,6 +266,9 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         }
     }
 
+    /**
+     * 审批
+     */
     public Ret approve(Long id) {
         AnnualOrderM annualOrderM = superFindById(id);
         //2. 审核通过
@@ -304,6 +307,11 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         return SUCCESS;
     }
 
+    /**
+     * 撤回(反审批)
+     * @param iAutoId
+     * @return
+     */
     public Ret withdraw(Long iAutoId) {
         tx(() -> {
             AnnualOrderM annualOrderM = findById(iAutoId);
@@ -320,5 +328,22 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         });
         return SUCCESS;
 
+    }
+
+    /**
+     * 审批不通过
+     * @param iAutoId
+     * @return
+     */
+    public Ret reject(Long iAutoId) {
+        tx(() -> {
+            formApprovalService.rejectByStatus(table(), iAutoId, () -> null, () -> {
+                ValidationUtils.isTrue(updateColumn(iAutoId, "iOrderStatus", OrderStatusEnum.REJECTED).isOk(), JBoltMsg.FAIL);
+                return null;
+            });
+
+            return true;
+        });
+        return SUCCESS;
     }
 }

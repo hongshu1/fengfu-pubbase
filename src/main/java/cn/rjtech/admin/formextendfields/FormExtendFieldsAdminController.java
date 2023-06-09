@@ -45,8 +45,12 @@ public class FormExtendFieldsAdminController extends BaseAdminController {
 	public void add() {
 		render("add.html");
 	}
+	public void addForm() {
+		render("addForm.html");
+	}
 
-   /**
+
+	/**
 	* 保存
 	*/
 	public void save(@Para("formExtendFields")FormExtendFields formExtendFields) {

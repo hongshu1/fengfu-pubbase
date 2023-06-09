@@ -145,6 +145,13 @@ public class MonthordermAdminController extends BaseAdminController {
     }
 
 	/**
+	 * 审批不通过
+	 */
+	public void reject() {
+		renderJson(service.reject(getLong(0)));
+	}
+
+	/**
 	 * 模板下载
 	 */
 	@SuppressWarnings("unchecked")
