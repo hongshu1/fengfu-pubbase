@@ -109,4 +109,26 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
 		renderJsonData(service.getMoMaterialsreturnList(getPageNumber(),getPageSize(),getKv()));
 	}
 
+	/**
+	 * 审核
+	 */
+	public void approve(String iAutoId,Integer mark) {
+		if (org.apache.commons.lang3.StringUtils.isEmpty(iAutoId)) {
+			renderFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		renderJson(service.approve(iAutoId,mark));
+	}
+
+	/**
+	 * 反审核
+	 */
+	public void NoApprove(String ids) {
+		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
+			renderFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		///renderJson(service.NoApprove(ids));
+	}
+
 }

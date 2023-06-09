@@ -185,10 +185,10 @@ public class MoMaterialsscansumService extends BaseService<MoMaterialsscansum> {
 	 * @param barcode
 	 * @return
 	 */
-	public Record  getBarcode(String barcode,Long imodoid){
+	public Record  getBarcode(String barcode,Long imodocid){
 		return  dbTemplate("momaterialsscansum.findByBarcode",
 				Kv.create().set("barcode",barcode)
-						.set("imodocid",imodoid)
+						.set("imodocid",imodocid)
 		).findFirst();
 	}
 

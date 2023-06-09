@@ -167,7 +167,7 @@
 	function serarch(){
 		var barcode=$("#barcode").val();
 		var imodocid=$("#imodocid").val();
-		Ajax.post("admin/momaterialsscanlog/addBarcode?barcode="+barcode+"imodocid="+imodocid,function(res){
+		Ajax.post("admin/momaterialsscanlog/addBarcode?barcode="+barcode+"&imodocid="+imodocid,function(res){
 			LayerMsgBox.success("操作成功",500,function(){
 				refreshJBoltTable();
 			});
