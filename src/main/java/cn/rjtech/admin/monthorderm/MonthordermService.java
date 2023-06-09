@@ -39,14 +39,14 @@ import java.util.Set;
 public class MonthordermService extends BaseService<MonthOrderM> {
 
 	private final MonthOrderM dao = new MonthOrderM().dao();
-    
+
 	@Inject
 	private MonthorderdService monthorderdService;
 	@Inject
 	private CusOrderSumService cusOrderSumService;
     @Inject
     private FormApprovalService formApprovalService;
-    
+
 	@Override
 	protected MonthOrderM dao() {
 		return dao;
@@ -301,9 +301,9 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         tx(() -> {
 
             // 根据审批状态
-            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            Ret ret = formApprovalService.judgeType(table(), iautoid, "iAutoId");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-            
+
             // 处理其他业务
             MonthOrderM monthOrderM = findById(iautoid);
             monthOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
@@ -311,12 +311,19 @@ public class MonthordermService extends BaseService<MonthOrderM> {
             ValidationUtils.isTrue(monthOrderM.update(),JBoltMsg.FAIL);
             return true;
         });
-        
+
         return SUCCESS;
     }
 
     public Ret withdraw(Long iautoid) {
         tx(() -> {
+
+            /**
+             * 审批流撤回调用此方法
+             * 单据的状态需要自行更新
+             */
+            Ret ret = formApprovalService.revocationApprove(iautoid);
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             MonthOrderM monthOrderM = findById(iautoid);
             formApprovalService.withdraw(table(), monthOrderM.getIAutoId(), () -> null, () -> {
@@ -332,5 +339,5 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         });
         return SUCCESS;
     }
-    
+
 }
