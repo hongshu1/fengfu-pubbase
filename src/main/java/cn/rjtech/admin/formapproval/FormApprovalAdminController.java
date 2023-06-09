@@ -175,6 +175,20 @@ public class FormApprovalAdminController extends BaseAdminController {
     }
 
     /**
+     * 撤回 审批流
+     *
+     * @param formAutoId 单据ID
+     * @param formSn     表单编码
+     */
+    public void revocationApprove(@Para(value = "formAutoId") Long formAutoId,
+                               @Para(value = "formSn") String formSn) {
+        ValidationUtils.validateId(formAutoId, "单据ID");
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+
+//        renderJson(service.revocationApprove(formAutoId, formSn));
+    }
+
+    /**
      * 批量审批
      * @param ids
      * @param formSn

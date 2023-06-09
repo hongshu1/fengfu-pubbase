@@ -28,3 +28,14 @@ from UGCFF_MOM_System.dbo.jb_user where id in
                    from Bd_FormApproval where iFormObjectId = '#(formAutoId)' and isDeleted = '0'
                ) and iStatus = 1 order by iSeq desc)))
 #end
+
+
+#sql("revocationApprove")
+select * from Bd_FormApprovalFlowD t1 where iFormApprovalFlowMid in (
+    select t2.iAutoId from Bd_FormApprovalFlowM t2 where t2.iApprovalDid in (
+        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = (
+            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '#(formAutoId)' and t4.isDeleted = '0'
+            )
+        )
+    ) and iAuditStatus > 1
+#end

@@ -1187,6 +1187,80 @@ public class FormApprovalService extends BaseService<FormApproval> {
     }
 
     /**
+     * 撤回 审批流
+     * @param formAutoId
+     * @return
+     */
+    public Ret revocationApprove(Long formAutoId){
+
+        Kv kv = new Kv();
+        kv.set("formAutoId",formAutoId);
+        List<FormApprovalFlowD> flowDList = flowDService.daoTemplate("formapproval.revocationApprove", kv).find();
+
+        ValidationUtils.isTrue(!(flowDList.size()>0), "该订单已在审批中，不予撤回！");
+
+        tx(()->{
+
+//            删除流程表
+            int delete = delete("delete from Bd_FormApprovalFlowD where iFormApprovalFlowMid in (\n" +
+                    "    select t2.iAutoId from Bd_FormApprovalFlowM t2 where t2.iApprovalDid in (\n" +
+                    "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = (\n" +
+                    "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '"+formAutoId+"' and t4" +
+                    ".isDeleted = '0'\n" +
+                    "            )\n" +
+                    "        )\n" +
+                    "    )");
+            if (delete>0){
+                int deleteflowM = delete("delete from Bd_FormApprovalFlowM where iApprovalDid in (\n" +
+                        "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = (\n" +
+                        "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '" + formAutoId + "' and t4.isDeleted = '0'\n" +
+                        "            )\n" +
+                        "        )");
+
+                int deletedUser = delete("delete from Bd_FormApprovalD_User where iFormApprovalDid in (\n" +
+                        "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = (\n" +
+                        "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '" + formAutoId + "' and t4.isDeleted = '0'\n" +
+                        "            )\n" +
+                        "        )");
+
+                int deleteRoleUsers = delete("delete from Bd_FormApprovalD_RoleUsers where iFormApprovaldRoleId in" +
+                        " (\n" +
+                        "    select t2.iAutoId from Bd_FormApprovalD_Role t2 where t2.iFormApprovalDid in (\n" +
+                        "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = (\n" +
+                        "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '" + formAutoId + "' and t4.isDeleted = '0'\n" +
+                        "        )\n" +
+                        "        )\n" +
+                        "    )");
+
+                int deleteRole = 0;
+                if (deleteRoleUsers>0){
+                    deleteRole = delete("delete from Bd_FormApprovalD_Role where iFormApprovalDid in (\n" +
+                            "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = (\n" +
+                            "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '"+formAutoId+"' and t4.isDeleted = '0'\n" +
+                            "            )\n" +
+                            "        )");
+                }
+
+                if (deleteflowM>0 || deletedUser>0 || deleteRoleUsers>0 || deleteRole>0){
+
+                    int deleteApprovalD = delete("delete from Bd_FormApprovalD where iFormApprovalId = (\n" +
+                            "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '" + formAutoId + "' and t4.isDeleted = '0'\n" +
+                            "        )");
+
+                    if (deleteApprovalD>0){
+                        delete("delete from Bd_FormApproval where iFormObjectId = " +
+                                "'" + formAutoId + "'");
+                    }
+                }
+            }
+
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    /**
      * 下个节点判断
      */
     public void nextNode(FormApproval formApproval, Long aid, Map<Long, FormApprovalFlowM> flowmMap, Date now) {
