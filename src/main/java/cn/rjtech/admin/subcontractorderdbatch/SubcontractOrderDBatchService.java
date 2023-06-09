@@ -196,14 +196,19 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
    * @param kv
    * @return
    */
-  public Kv orderDBatchExportDatas(Kv kv) throws IOException {
+  public Kv orderDBatchExportDatas(Kv kv, String type) throws IOException {
     // 为true 说明是看所有的
     if (Boolean.parseBoolean(kv.getStr("isEffective"))) {
       kv.remove("isEffective");
     } else {
       kv.set("isEffective", "1");
     }
-    List<Record> rowDatas = dbTemplate("subcontractorderdbatch.getPdfBySubcontractOrderMId", kv).find();
+    List<Record> rowDatas = new ArrayList<>();
+    if ("未更改清单".equals(type)) {
+      rowDatas = dbTemplate("subcontractorderdbatch.getPdfBySubcontractOrderMId", kv).find();
+    } else {
+      rowDatas = dbTemplate("subcontractorderdbatch.getVersionFindBySubcontractOrderMId", kv).find();
+    }
     Record record = new Record();
     record.set("SequenceNumber", "序号");
     record.set("cBarcode", "现品票");
@@ -243,6 +248,8 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     // 采购现品票明细条码数据sheet分页数组
     List<String> sheetNames2 = new ArrayList<>();
 
+    List<String> sheetNames3 = new ArrayList<>();
+    sheetNames3.add("现品票更改清单");
 
     for (int j = 0; j < rowDatas.size(); j++) {
       rowDatas.get(j).set("dPlanDate", rowDatas.get(j).getStr("dPlanDate") + "");
@@ -395,8 +402,13 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     Integer pages = rows.size();
     Date date = new DateTime();
 
-
-    return Kv.by("rows", rows).set("sheetNames", sheetNames).set("rows2", kvs).set("sheetNames2", sheetNames2);
+    if ("未更改清单".equals(type)) {
+      return Kv.by("rows", rows).set("sheetNames", sheetNames).set("rows2", kvs).set("sheetNames2", sheetNames2);
+    } else {
+      Kv kv1 = Kv.by("rows", rows).set("sheetNames", sheetNames).set("rows2", kvs).set("sheetNames2", sheetNames2).
+          set("sheetNames3", sheetNames3).set("rows3", rowDatas);
+      return kv1;
+    }
   }
 
   public Ret updateOrderBatch(Long subcontractOrderMId, Long id, String cVersion, BigDecimal qty) {
