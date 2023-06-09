@@ -117,21 +117,15 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 审批通过
      */
-    public void approve(String ids) {
-        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-        
-        renderJson(service.approve(ids));
+    public void approve() {
+        renderJson(service.approve(getLong(0)));
     }
 
     /**
      * 审批不通过
      */
     public void reject(String ids) {
-        if (StringUtils.isEmpty(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.reject(ids));
+        renderJson(service.reject(getLong(0)));
     }
 
     /**

@@ -328,6 +328,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         tx(() -> {
 
             MonthOrderM monthOrderM = findById(iautoid);
+            ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), monthOrderM.getIOrderStatus(), "只允许待审核状态订单撤回");
             formApprovalService.withdraw(table(), monthOrderM.getIAutoId(), () -> null, () -> {
                 monthOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
                 monthOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
@@ -350,7 +351,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
     public Ret reject(Long iautoid) {
         tx(() -> {
             formApprovalService.rejectByStatus(table(), iautoid, () -> null, () -> {
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED).isOk(), JBoltMsg.FAIL);
+                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
                 return null;
             });
 
