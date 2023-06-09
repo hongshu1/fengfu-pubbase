@@ -90,6 +90,8 @@ public abstract class BaseBomM<M extends BaseBomM<M>> extends JBoltBaseModel<M>{
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态;0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    /**是否显示：0：否 1：是*/
+    public static final String ISVIEW = "isView";
 	/**
 	 * 主键ID
 	 */
@@ -288,7 +290,7 @@ public abstract class BaseBomM<M extends BaseBomM<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 机型ID
 	 */
-	@JBoltField(name="iequipmentmodelid" ,columnName="iEquipmentModelId",type="Long", remark="机型ID", required=true, maxLength=19, fixed=0, order=12)
+	@JBoltField(name="iequipmentmodelid" ,columnName="iEquipmentModelId",type="Long", remark="机型ID", required=false, maxLength=19, fixed=0, order=12)
 	@JSONField(name = "iequipmentmodelid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIEquipmentModelId() {
 		return getLong("iEquipmentModelId");
@@ -305,7 +307,7 @@ public abstract class BaseBomM<M extends BaseBomM<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 文件名称
 	 */
-	@JBoltField(name="cdocname" ,columnName="cDocName",type="String", remark="文件名称", required=true, maxLength=50, fixed=0, order=13)
+	@JBoltField(name="cdocname" ,columnName="cDocName",type="String", remark="文件名称", required=false, maxLength=50, fixed=0, order=13)
 	@JSONField(name = "cdocname")
 	public java.lang.String getCDocName() {
 		return getStr("cDocName");
@@ -322,7 +324,7 @@ public abstract class BaseBomM<M extends BaseBomM<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 文件编码
 	 */
-	@JBoltField(name="cdoccode" ,columnName="cDocCode",type="String", remark="文件编码", required=true, maxLength=50, fixed=0, order=14)
+	@JBoltField(name="cdoccode" ,columnName="cDocCode",type="String", remark="文件编码", required=false, maxLength=50, fixed=0, order=14)
 	@JSONField(name = "cdoccode")
 	public java.lang.String getCDocCode() {
 		return getStr("cDocCode");
@@ -594,7 +596,7 @@ public abstract class BaseBomM<M extends BaseBomM<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 提审方式;1. 审核 2. 审批
 	 */
-	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="提审方式;1. 审核 2. 审批", required=true, maxLength=10, fixed=0, order=30)
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="提审方式;1. 审核 2. 审批", required=false, maxLength=10, fixed=0, order=30)
 	@JSONField(name = "iauditway")
 	public java.lang.Integer getIAuditWay() {
 		return getInt("iAuditWay");
@@ -768,6 +770,23 @@ public abstract class BaseBomM<M extends BaseBomM<M>> extends JBoltBaseModel<M>{
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 是否显示：0：否 1：是
+	 */
+	public M setIsView(java.lang.Boolean isView) {
+		set("isView", isView);
+		return (M)this;
+	}
+
+	/**
+	 * 是否显示：0：否 1：是
+	 */
+	@JBoltField(name="isview" ,columnName="isView",type="Boolean", remark="是否显示：0：否 1：是", required=true, maxLength=1, fixed=0, order=41)
+	@JSONField(name = "isview")
+	public java.lang.Boolean getIsView() {
+		return getBoolean("isView");
 	}
 
 }

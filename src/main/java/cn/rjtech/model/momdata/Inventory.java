@@ -11,6 +11,11 @@ import cn.rjtech.model.momdata.base.BaseInventory;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Bd_Inventory" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class Inventory extends BaseInventory<Inventory> {
+    // 材料类别名称
+    public static final String PARTTYPENAME = "partTypeName";
+    // 虚拟件
+    public static final String ISVIRTALNAME = "isVirtalName";
+    
     public String itemAttributes;
 
     public String getItemAttributes() {
@@ -20,5 +25,6 @@ public class Inventory extends BaseInventory<Inventory> {
     public void setItemAttributes(String itemAttributes) {
         this.itemAttributes = itemAttributes;
     }
+    
 }
 

@@ -1,14 +1,15 @@
 package cn.rjtech.admin.bomd;
 
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
+import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.enums.BoolCharEnum;
 import cn.rjtech.model.momdata.BomD;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 /**
  * 物料建模-BOM明细
  * @ClassName: BomDService
@@ -129,4 +130,13 @@ public class BomDService extends BaseService<BomD> {
 		return null;
 	}
 
+	public boolean deletByIds(Object[] ids){
+		if (ArrayUtil.isEmpty(ids)){
+			return false;
+		}
+		for (Object id : ids){
+			updateColumn(id, BomD.ISDELETED, BoolCharEnum.YES.getValue());
+		}
+		return true;
+	}
 }

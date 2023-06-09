@@ -1,0 +1,160 @@
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="bomcompareSplit_tpl_#(pageId)">
+    {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td hidden>${data.iinventoryid}</td>
+            <td>${data.cinvcode}</td>
+            <td>${data.cinvname}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.cuomname}</td>
+            <td>${data.cversion}</td>
+            <td>${data.parttypename}</td>
+            <td>${data.ibaseqty}</td>
+            <td>${data.iweight}</td>
+            <td>${data.cvenname}</td>
+            <td>${data.bproxyforeign}</td>
+            <td>${data.isvirtalname}</td>
+            <td>${data.cmemo}</td>
+        </tr>
+    {@/each}
+</textarea>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- 工具条 toolbar -->
+                <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
+
+                    <div class="btn-group" role="group" aria-label="btn-group">
+                        <button onclick="addBomcompareTr_#(pageId)(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+                        <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+                        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+                    </div>
+
+                    <div class="clearfix"></div>
+                </div>
+
+                <table class="jbolt_table jbolt_main_table  table-center"
+                       id="jbolt_table_bomcompare_split"
+                       data-jbolttable
+                       data-width="auto"
+                       data-height="600"
+                       #if(iautoid)
+                       data-ajax="true"
+                       data-url="admin/bomcompare/datas"
+                       #end
+                       data-column-prepend="1:checkbox:true"
+                       data-toolbar="bomcompare_split_toolbar_#(pageId)"
+                       data-rowtpl="bomcompareSplit_tpl_#(pageId)"
+                       data-column-resize="true"
+                       data-editable="true"
+                       data-editable-option="getEditableTableOptions_split1_#(pageId)"
+                >
+                    <thead>
+                    <tr>
+                        <th data-width="60" data-column="index">序号</th>
+                        <th data-width="200" hidden data-column="iinventoryid">料品ID</th>
+                        <th data-width="200" data-column="cinvcode">子件存货编码</th>
+                        <th data-width="200" data-column="cinvname">子件存货名称</th>
+                        <th data-width="180" data-column="cinvstd">规格</th>
+                        <th data-width="120" data-column="cuomname">库存主单位</th>
+                        <th data-width="120" data-column="cversion">版本号</th>
+                        <th data-width="150" data-column="iparttype">材料类别</th>
+                        <th data-width="150" data-column="ibaseqty">基本用量</th>
+                        <th data-width="130" data-column="iweight">重量</th>
+                        <th data-min-width="200" data-column="cvenname">部品加工商</th>
+                        <th data-width="130" data-column="bproxyforeign">是否外作</th>
+                        <th data-width="130" data-column="isvirtual">虚拟件</th>
+                        <th data-width="130" data-column="cmemo">备注</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function addBomcompareTr_#(pageId)(ele){
+        var formItemids = getFormItemIds();
+        var url="/admin/bomcompare/chooseItem?ids="+formItemids;
+        $(ele).data("url",url).attr("data-area","60%,60%");
+        DialogUtil.openBy(ele);
+    }
+
+    function getFormItemIds() {
+        const dataList = jboltTableGetAllDatas('#jbolt_table_bomcompare_split', ['iinventoryid']);
+        let FormItemids = '';
+        if (isOk(dataList)) {
+            dataList.forEach((value, index) => {
+                FormItemids = FormItemids.concat(",").concat(value.iinventoryid);
+        })
+        }
+
+        if (isOk(FormItemids)) {
+            FormItemids = FormItemids.concat(",");
+        }
+        return FormItemids;
+    }
+
+    function getEditableTableOptions_split1_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "click",
+            submit: {
+                withForm: ["manual_Form"],
+                type: "all",
+                url: "/admin/bomcompare/submitForm",
+                success: function (res) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success(res.msg, 1000, function () {
+                            // refreshPjaxContainer();
+                            parent.LayerMsgBox.closeAll();
+                            parent.refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid"
+                },
+                ibaseqty: {
+                    type: "amount",
+                    required:true,
+                    placeholder: "=基本用量="
+                },
+                iWeight: {
+                    type: "amount",
+                    required:true,
+                    placeholder: "=重量="
+                },
+                cvenname: {
+                    type:"select",
+                    linkColumn: 'ivendorid',
+                    url:"admin/bommaster/findVendorList",
+                    valueAttr:"cvenname",
+                    textAttr:"cvenname",
+                    changeColumns: [
+                        {column:"ivendorid",use:"iautoid"},
+                        {column:"cvendcode",use:"cvencode"}
+                    ]
+                },
+                bproxyforeign: {
+                    type:"select",
+                    url:"admin/dictionary/options?key=isOutSourcedType",
+                    valueAttr:"sn",
+                    textAttr:"name"
+                },
+                cmemo: {
+                    type: "input",
+                    placeholder: "=备注="
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>

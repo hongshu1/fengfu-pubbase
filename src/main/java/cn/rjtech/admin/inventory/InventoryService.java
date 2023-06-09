@@ -36,10 +36,7 @@ import cn.rjtech.admin.inventorystockconfig.InventoryStockConfigService;
 import cn.rjtech.admin.inventoryworkregion.InventoryWorkRegionService;
 import cn.rjtech.admin.invpart.InvPartService;
 import cn.rjtech.admin.uom.UomService;
-import cn.rjtech.enums.InvPartTypeEnum;
-import cn.rjtech.enums.InventoryTableTypeEnum;
-import cn.rjtech.enums.IsEnableEnum;
-import cn.rjtech.enums.OperationTypeEnum;
+import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -1233,5 +1230,24 @@ public class InventoryService extends BaseService<Inventory> {
         return page;
     }
     
+    public Page<Record> resourceList(Integer pageNumber, Integer pageSize, Kv kv){
+		Page<Record> paginate = dbTemplate("inventory.resourceList", kv).paginate(pageNumber, pageSize);
+		if (CollectionUtil.isNotEmpty(paginate.getList())){
+			for (Record record : paginate.getList()){
+				// 材料类别
+				Integer iPartType = record.getInt(Inventory.IPARTTYPE);
+				if (ObjectUtil.isNotNull(iPartType)){
+					PartTypeEnum partTypeEnum = PartTypeEnum.toEnum(iPartType);
+					ValidationUtils.notNull(partTypeEnum, "未知材料类别");
+					record.set(Inventory.PARTTYPENAME, partTypeEnum.getText());
+				}
+				// 是否虚拟件
+				Integer isVirtal = record.getInt(Inventory.ISVIRTUAL);
+				IsEnableEnum isEnableEnum = IsEnableEnum.toEnum(isVirtal);
+				record.set(Inventory.ISVIRTALNAME, isEnableEnum.getText());
+			}
+		}
+		return paginate;
+	}
 }
 

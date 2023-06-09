@@ -1,0 +1,112 @@
+#@jboltLayout()
+#set(pageId=RandomUtil.random(6))
+#define main()
+<div class="jbolt_page">
+
+    <div class="jbolt_page_title">
+        <form onsubmit="return false;" id="manual_Form" method="post">
+            <input name="iAutoId" hidden value="#(oldId)">
+            <input name="iType" hidden value="2">
+            // 层级
+            <input name="cCode" hidden value="#(cCode??0)">
+            <input name="iCodeLevel" hidden value="#(iCodeLevel??1)">
+
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">母件存货编码：</label>
+                <div class="col-sm-2">
+                    <input type="text" name="iInventoryId" value="#(bomMaster.iinventoryid??)" hidden data-sync-attr="itemid" id="itemId_#(pageId)"  data-notnull="true" data-tips="请输入转换前存货ID" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" />
+                    <div class="input-group">
+                        <input type="text"
+                               data-autocomplete
+                               data-rule="required"
+                               data-tips="请选择存货编码"
+                               autocomplete="off"
+                               class="form-control"
+                               placeholder="请选择存货编码"
+                               value="#(inventory.cinvcode??)"
+                               name="cInvCode"
+                               id="inventoryName_#(pageId)"
+                               data-url="admin/bommaster/inventoryAutocomplete"
+                               data-sync-ele="#cinvname_#(pageId),#itemId_#(pageId)"
+                               data-text-attr="cinvcode"
+                               data-column-attr="cinvcode"
+                        />
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#inventoryName_#(pageId)" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/bommaster/inventoryDialogIndex"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="col-sm-1 col-form-label">母件存货名称：</label>
+                <div class="col-sm-2">
+                   <input type="text" autocomplete="off" name="cInvName" class="form-control" id="cinvname_#(pageId)" data-sync-attr="cinvname" readonly>
+                </div>
+
+                <label class="col-sm-1 col-form-label">版本号：</label>
+                <div class="col-sm-2">
+                    <input id="cVersion" type="text" autocomplete="off"  class="form-control" placeholder="输入版本/版次" name="cVersion" value="#(bomMaster.cversion??)" />
+                </div>
+            </div>
+
+            <div class="form-group row ">
+                <label class="col-sm-1 col-form-label">启用日期：</label>
+                <div class="col-sm-2">
+                    <input id="dEnableDate" type="text" class="form-control" data-rule="required"  data-date name="dEnableDate" value="#date(DateUtil.toDate(bomMaster.denabledate??),'yyyy-MM-dd')"/>
+                </div>
+
+                <label class="col-sm-1 col-form-label">停用日期：</label>
+                <div class="col-sm-2">
+                    <input id="dDisableDate" type="text" class="form-control"  data-rule="required;>=#dEnableDate" data-done-handler="checkme" data-date name="dDisableDate" value="#date(DateUtil.toDate(bomMaster.ddisabledate??),'yyyy-MM-dd')"/>
+                </div>
+
+                <label class="col-sm-1 col-form-label">状态：</label>
+                <div class="col-sm-2">
+                    <input type="text" autocomplete="off"  class="form-control" value="#(bomMaster.cbomversion??)" readonly/>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="jbolt_page_content">
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label">子件物料</label>
+            <div class="col-11">
+                <div class="jbolt_page_content">
+                    #ajaxPortal("/admin/bomcompare/bomcompareSplit?invId=#(invId)","bomcompareSplitAjaxPortal1",true)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+#include("/_view/_admin/common/_formjs.html",formId="manual_Form")
+#end
+#define js()
+<script>
+
+
+    function submitThisForm() {
+
+        var datas = getJboltTableAllDatas('#jbolt_table_bomcompare_split');
+        if (!datas || datas.length == 0){
+            LayerMsgBox.error('请填写子件物料!');
+            throw log.error("请填写子件物料");
+        }
+        for (var i=0; i<datas.length; i++){
+            var item = datas[i];
+            if (!item.ibaseqty){
+                LayerMsgBox.error('请输入基本用量!');
+                throw log.error("请输入基本用量");
+            }
+        }
+        jboltTableSubmit("#jbolt_table_bomcompare_split");
+    }
+
+    function setChooseDialogSelectResult(data){
+        $('#itemId_#(pageId)').val(data.itemid);
+        $('#inventoryName_#(pageId)').val(data.cinvcode);
+        $('#cinvname_#(pageId)').val(data.cinvname);
+    }
+
+</script>
+#end

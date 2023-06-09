@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.BomCompare;
 import com.jfinal.aop.Before;
@@ -24,6 +25,8 @@ public class BomCompareAdminController extends BaseAdminController {
 
 	@Inject
 	private BomCompareService service;
+	@Inject
+	private InventoryService inventoryService;
 
    /**
 	* 首页
@@ -99,6 +102,29 @@ public class BomCompareAdminController extends BaseAdminController {
 	public void toggleIsDeleted() {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
-
-
+	
+	public void manualForm(){
+		keepPara();
+		render("manual_form.html");
+	}
+	
+	public void bomcompareSplit(){
+	    render("_table_split.html");
+    }
+	
+	/**
+	 * 拉取资源Dialog
+	 */
+	public void chooseItem(){
+		keepPara();
+		render("resource_list.html");
+	}
+	
+	public void resourceList(){
+		renderJsonData(inventoryService.resourceList(getPageNumber(), getPageSize(), getKv()));
+	}
+	
+	public void submitForm(){
+		renderJsonData(service.submitForm(getJBoltTable()));
+	}
 }

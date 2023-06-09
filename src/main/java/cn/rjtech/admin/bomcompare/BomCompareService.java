@@ -1,15 +1,26 @@
 package cn.rjtech.admin.bomcompare;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.bomd.BomDService;
+import cn.rjtech.admin.bomm.BomMService;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.BomCompare;
+import cn.rjtech.model.momdata.BomD;
+import cn.rjtech.model.momdata.BomM;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -27,7 +38,14 @@ import java.util.*;
  * @date: 2023-04-01 10:50
  */
 public class BomCompareService extends BaseService<BomCompare> {
+	
 	private final BomCompare dao=new BomCompare().dao();
+	
+	@Inject
+	private BomMService bomMService;
+	@Inject
+	private BomDService bomDService;
+	
 	@Override
 	protected BomCompare dao() {
 		return dao;
@@ -311,4 +329,52 @@ public class BomCompareService extends BaseService<BomCompare> {
         }
 	    return dbTemplate("bomcompare.getCommonInv", okv).find();
     }
+	
+	public Ret submitForm(JBoltTable jBoltTable) {
+		BomM bomM = jBoltTable.getFormBean(BomM.class);
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		DateTime now = DateUtil.date();
+		JSONObject form = jBoltTable.getForm();
+		String codeStr = form.getString(BomD.CCODE);
+		String codeLevelStr = form.getString(BomD.ICODELEVEL);
+
+		tx(() -> {
+			
+			Integer code = 1;
+			Integer codeLevel = 1;
+			if (StrUtil.isNotBlank(codeStr)){
+				code = form.getInteger(BomD.CCODE)+1;
+			}
+			if (StrUtil.isNotBlank(codeLevelStr)){
+				codeLevel = form.getInteger(BomD.ICODELEVEL)+1;
+			}
+			
+			bomMService.save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
+			if (jBoltTable.saveIsNotBlank()){
+				List<BomD> saveModelList = jBoltTable.getSaveModelList(BomD.class);
+				for (BomD bomD :saveModelList){
+					bomD.setIBomMid(bomM.getIAutoId());
+					bomD.setIsDeleted(false);
+					bomD.setCCode(String.valueOf(code));
+					bomD.setICodeLevel(String.valueOf(codeLevel));
+					bomD.setDEnableDate(bomM.getDEnableDate());
+					bomD.setDDisableDate(bomM.getDDisableDate());
+				}
+				bomDService.batchSave(saveModelList);
+			}
+			
+			if (jBoltTable.updateIsNotBlank()){
+				List<BomD> updateModelList = jBoltTable.getUpdateModelList(BomD.class);
+				bomDService.batchUpdate(updateModelList);
+			}
+			
+			if (jBoltTable.deleteIsNotBlank()){
+				Object[] delIds = jBoltTable.getDelete();
+				bomDService.deletByIds(delIds);
+			}
+			return true;
+		});
+		return SUCCESS;
+	}
 }

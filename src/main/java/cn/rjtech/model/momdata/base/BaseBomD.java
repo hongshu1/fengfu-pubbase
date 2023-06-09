@@ -16,6 +16,12 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
     public static final String IBOMMID = "iBomMid";
     /**子件BOM表ID*/
     public static final String IINVPARTBOMMID = "iInvPartBomMid";
+    /**存货ID*/
+    public static final String IINVENTORYID = "iInventoryId";
+    /**编码*/
+    public static final String CCODE = "cCode";
+    /**编码层级*/
+    public static final String ICODELEVEL = "iCodeLevel";
     /**版本号*/
     public static final String CVERSION = "cVersion";
     /**子件存货编码*/
@@ -48,6 +54,8 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
     public static final String BPROXYFOREIGN = "bProxyForeign";
     /**备注*/
     public static final String CMEMO = "cMemo";
+    /**删除状态;0. 未删除  1. 已删除*/
+    public static final String ISDELETED = "isDeleted";
 	/**
 	 * 主键ID
 	 */
@@ -93,10 +101,61 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 子件BOM表ID
 	 */
-	@JBoltField(name="iinvpartbommid" ,columnName="iInvPartBomMid",type="Long", remark="子件BOM表ID", required=true, maxLength=19, fixed=0, order=3)
+	@JBoltField(name="iinvpartbommid" ,columnName="iInvPartBomMid",type="Long", remark="子件BOM表ID", required=false, maxLength=19, fixed=0, order=3)
 	@JSONField(name = "iinvpartbommid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIInvPartBomMid() {
 		return getLong("iInvPartBomMid");
+	}
+
+	/**
+	 * 存货ID
+	 */
+	public M setIInventoryId(java.lang.String iInventoryId) {
+		set("iInventoryId", iInventoryId);
+		return (M)this;
+	}
+
+	/**
+	 * 存货ID
+	 */
+	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="String", remark="存货ID", required=false, maxLength=255, fixed=0, order=4)
+	@JSONField(name = "iinventoryid")
+	public java.lang.String getIInventoryId() {
+		return getStr("iInventoryId");
+	}
+
+	/**
+	 * 编码
+	 */
+	public M setCCode(java.lang.String cCode) {
+		set("cCode", cCode);
+		return (M)this;
+	}
+
+	/**
+	 * 编码
+	 */
+	@JBoltField(name="ccode" ,columnName="cCode",type="String", remark="编码", required=true, maxLength=4, fixed=0, order=5)
+	@JSONField(name = "ccode")
+	public java.lang.String getCCode() {
+		return getStr("cCode");
+	}
+
+	/**
+	 * 编码层级
+	 */
+	public M setICodeLevel(java.lang.String iCodeLevel) {
+		set("iCodeLevel", iCodeLevel);
+		return (M)this;
+	}
+
+	/**
+	 * 编码层级
+	 */
+	@JBoltField(name="icodelevel" ,columnName="iCodeLevel",type="String", remark="编码层级", required=true, maxLength=4, fixed=0, order=6)
+	@JSONField(name = "icodelevel")
+	public java.lang.String getICodeLevel() {
+		return getStr("iCodeLevel");
 	}
 
 	/**
@@ -110,7 +169,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 版本号
 	 */
-	@JBoltField(name="cversion" ,columnName="cVersion",type="String", remark="版本号", required=true, maxLength=10, fixed=0, order=4)
+	@JBoltField(name="cversion" ,columnName="cVersion",type="String", remark="版本号", required=false, maxLength=10, fixed=0, order=7)
 	@JSONField(name = "cversion")
 	public java.lang.String getCVersion() {
 		return getStr("cVersion");
@@ -127,7 +186,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 子件存货编码
 	 */
-	@JBoltField(name="cinvcode" ,columnName="cInvCode",type="String", remark="子件存货编码", required=true, maxLength=255, fixed=0, order=5)
+	@JBoltField(name="cinvcode" ,columnName="cInvCode",type="String", remark="子件存货编码", required=true, maxLength=255, fixed=0, order=8)
 	@JSONField(name = "cinvcode")
 	public java.lang.String getCInvCode() {
 		return getStr("cInvCode");
@@ -144,7 +203,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 子件存货名称
 	 */
-	@JBoltField(name="cinvname" ,columnName="cInvName",type="String", remark="子件存货名称", required=true, maxLength=200, fixed=0, order=6)
+	@JBoltField(name="cinvname" ,columnName="cInvName",type="String", remark="子件存货名称", required=true, maxLength=200, fixed=0, order=9)
 	@JSONField(name = "cinvname")
 	public java.lang.String getCInvName() {
 		return getStr("cInvName");
@@ -161,7 +220,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 子件规格
 	 */
-	@JBoltField(name="cinvstd" ,columnName="cInvStd",type="String", remark="子件规格", required=true, maxLength=200, fixed=0, order=7)
+	@JBoltField(name="cinvstd" ,columnName="cInvStd",type="String", remark="子件规格", required=false, maxLength=200, fixed=0, order=10)
 	@JSONField(name = "cinvstd")
 	public java.lang.String getCInvStd() {
 		return getStr("cInvStd");
@@ -178,7 +237,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 库存计量单位Id
 	 */
-	@JBoltField(name="iinventoryuomid1" ,columnName="iInventoryUomId1",type="Long", remark="库存计量单位Id", required=true, maxLength=19, fixed=0, order=8)
+	@JBoltField(name="iinventoryuomid1" ,columnName="iInventoryUomId1",type="Long", remark="库存计量单位Id", required=false, maxLength=19, fixed=0, order=11)
 	@JSONField(name = "iinventoryuomid1", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIInventoryUomId1() {
 		return getLong("iInventoryUomId1");
@@ -195,7 +254,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 启用日期
 	 */
-	@JBoltField(name="denabledate" ,columnName="dEnableDate",type="Date", remark="启用日期", required=true, maxLength=10, fixed=0, order=9)
+	@JBoltField(name="denabledate" ,columnName="dEnableDate",type="Date", remark="启用日期", required=true, maxLength=10, fixed=0, order=12)
 	@JSONField(name = "denabledate")
 	public java.util.Date getDEnableDate() {
 		return getDate("dEnableDate");
@@ -212,7 +271,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 停用日期
 	 */
-	@JBoltField(name="ddisabledate" ,columnName="dDisableDate",type="Date", remark="停用日期", required=true, maxLength=10, fixed=0, order=10)
+	@JBoltField(name="ddisabledate" ,columnName="dDisableDate",type="Date", remark="停用日期", required=true, maxLength=10, fixed=0, order=13)
 	@JSONField(name = "ddisabledate")
 	public java.util.Date getDDisableDate() {
 		return getDate("dDisableDate");
@@ -229,7 +288,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 材料类别
 	 */
-	@JBoltField(name="iparttype" ,columnName="iPartType",type="Integer", remark="材料类别", required=true, maxLength=10, fixed=0, order=11)
+	@JBoltField(name="iparttype" ,columnName="iPartType",type="Integer", remark="材料类别", required=false, maxLength=10, fixed=0, order=14)
 	@JSONField(name = "iparttype")
 	public java.lang.Integer getIPartType() {
 		return getInt("iPartType");
@@ -246,7 +305,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 基本用量
 	 */
-	@JBoltField(name="ibaseqty" ,columnName="iBaseQty",type="BigDecimal", remark="基本用量", required=true, maxLength=24, fixed=6, order=12)
+	@JBoltField(name="ibaseqty" ,columnName="iBaseQty",type="BigDecimal", remark="基本用量", required=true, maxLength=24, fixed=6, order=15)
 	@JSONField(name = "ibaseqty")
 	public java.math.BigDecimal getIBaseQty() {
 		return getBigDecimal("iBaseQty");
@@ -263,7 +322,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 重量
 	 */
-	@JBoltField(name="iweight" ,columnName="iWeight",type="BigDecimal", remark="重量", required=false, maxLength=24, fixed=6, order=13)
+	@JBoltField(name="iweight" ,columnName="iWeight",type="BigDecimal", remark="重量", required=false, maxLength=24, fixed=6, order=16)
 	@JSONField(name = "iweight")
 	public java.math.BigDecimal getIWeight() {
 		return getBigDecimal("iWeight");
@@ -280,7 +339,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 供应商ID
 	 */
-	@JBoltField(name="ivendorid" ,columnName="iVendorId",type="Long", remark="供应商ID", required=false, maxLength=19, fixed=0, order=14)
+	@JBoltField(name="ivendorid" ,columnName="iVendorId",type="Long", remark="供应商ID", required=false, maxLength=19, fixed=0, order=17)
 	@JSONField(name = "ivendorid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIVendorId() {
 		return getLong("iVendorId");
@@ -297,7 +356,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 供应商编码
 	 */
-	@JBoltField(name="cvendcode" ,columnName="cVendCode",type="String", remark="供应商编码", required=false, maxLength=200, fixed=0, order=15)
+	@JBoltField(name="cvendcode" ,columnName="cVendCode",type="String", remark="供应商编码", required=false, maxLength=200, fixed=0, order=18)
 	@JSONField(name = "cvendcode")
 	public java.lang.String getCVendCode() {
 		return getStr("cVendCode");
@@ -314,7 +373,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 供应商名称
 	 */
-	@JBoltField(name="cvenname" ,columnName="cVenName",type="String", remark="供应商名称", required=false, maxLength=200, fixed=0, order=16)
+	@JBoltField(name="cvenname" ,columnName="cVenName",type="String", remark="供应商名称", required=false, maxLength=200, fixed=0, order=19)
 	@JSONField(name = "cvenname")
 	public java.lang.String getCVenName() {
 		return getStr("cVenName");
@@ -331,7 +390,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 是否虚拟件;0.否 1. 是
 	 */
-	@JBoltField(name="isvirtual" ,columnName="isVirtual",type="Boolean", remark="是否虚拟件;0.否 1. 是", required=false, maxLength=1, fixed=0, order=17)
+	@JBoltField(name="isvirtual" ,columnName="isVirtual",type="Boolean", remark="是否虚拟件;0.否 1. 是", required=false, maxLength=1, fixed=0, order=20)
 	@JSONField(name = "isvirtual")
 	public java.lang.Boolean getIsVirtual() {
 		return getBoolean("isVirtual");
@@ -348,7 +407,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 是否委外;是否外作，0. 否 1. 是
 	 */
-	@JBoltField(name="bproxyforeign" ,columnName="bProxyForeign",type="Boolean", remark="是否委外;是否外作，0. 否 1. 是", required=false, maxLength=1, fixed=0, order=18)
+	@JBoltField(name="bproxyforeign" ,columnName="bProxyForeign",type="Boolean", remark="是否委外;是否外作，0. 否 1. 是", required=false, maxLength=1, fixed=0, order=21)
 	@JSONField(name = "bproxyforeign")
 	public java.lang.Boolean getBProxyForeign() {
 		return getBoolean("bProxyForeign");
@@ -365,10 +424,27 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 备注
 	 */
-	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=19)
+	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=22)
 	@JSONField(name = "cmemo")
 	public java.lang.String getCMemo() {
 		return getStr("cMemo");
+	}
+
+	/**
+	 * 删除状态;0. 未删除  1. 已删除
+	 */
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
+		return (M)this;
+	}
+
+	/**
+	 * 删除状态;0. 未删除  1. 已删除
+	 */
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态;0. 未删除  1. 已删除", required=true, maxLength=1, fixed=0, order=23)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("isDeleted");
 	}
 
 }

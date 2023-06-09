@@ -1,15 +1,13 @@
 package cn.rjtech.admin.bomm;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.BomM;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 /**
  * 物料建模-BOM主表
  * @ClassName: BomMAdminController
@@ -40,13 +38,6 @@ public class BomMAdminController extends BaseAdminController {
 	*/
 	public void add() {
 		render("add.html");
-	}
-
-   /**
-	* 保存
-	*/
-	public void save(@Para("bomM")BomM bomM) {
-		renderJson(service.save(bomM));
 	}
 
    /**

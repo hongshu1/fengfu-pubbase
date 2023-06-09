@@ -1,14 +1,17 @@
 package cn.rjtech.admin.bomm;
 
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.BomM;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+
+import java.util.Date;
+
 /**
  * 物料建模-BOM主表
  * @ClassName: BomMService
@@ -56,10 +59,27 @@ public class BomMService extends BaseService<BomM> {
 	 * @param bomM
 	 * @return
 	 */
-	public Ret save(BomM bomM) {
-		if(bomM==null || isOk(bomM.getIAutoId())) {
+	public Ret save(BomM bomM, Long userId, String userName, Date now, int auditState) {
+		if(bomM==null) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
+		bomM.setICreateBy(userId);
+		bomM.setCCreateName(userName);
+		bomM.setDCreateTime(now);
+		bomM.setISource(SourceEnum.MES.getValue());
+		bomM.setIUpdateBy(userId);
+		bomM.setCUpdateName(userName);
+		bomM.setDUpdateTime(now);
+		bomM.setIsDeleted(false);
+		bomM.setIOrgId(getOrgId());
+		bomM.setCOrgCode(getOrgCode());
+		bomM.setCOrgName(getOrgName());
+		bomM.setIsEffective(false);
+		bomM.setIsView(false);
+		// 设置默认审批流
+		bomM.setIAuditStatus(auditState);
+		//if(existsName(bomMaster.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		
 		boolean success=bomM.save();
 		if(success) {
 			//添加日志

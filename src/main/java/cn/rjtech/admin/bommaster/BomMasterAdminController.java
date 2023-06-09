@@ -228,9 +228,8 @@ public class BomMasterAdminController extends BaseAdminController {
         renderJsonData(customerService.findVendorList(getKv()));
     }
 
-    public void inventoryDialogIndex(@Para(value = "index") String index, @Para(value = "type") String type) {
-        ValidationUtils.notBlank(index, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notBlank(type, JBoltMsg.PARAM_ERROR);
+    public void inventoryDialogIndex() {
+        
         // 部品存货id
         String invItemId = get("invItemId");
         // 原材料存货id
@@ -271,10 +270,5 @@ public class BomMasterAdminController extends BaseAdminController {
      */
     public void downloadTpl() throws Exception {
         renderJxls("bomMasterImportTpl.xlsx", getKv(), "物料清单_导入模板_" + DateUtil.today() + ".xlsx");
-    }
-    
-    public void manualForm(){
-        keepPara();
-        render("manual_form.html");
     }
 }
