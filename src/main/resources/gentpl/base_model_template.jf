@@ -27,7 +27,7 @@ public abstract class #(tableMeta.baseModelName)<M extends #(tableMeta.baseModel
 #else
 public abstract class #(tableMeta.baseModelName)<M extends #(tableMeta.baseModelName)<M>> extends Model<M> implements IBean {
 #end
-    public static final String DATASOURCE_CONFIG_NAME = "#(dataSource?? 'main')";
+    public static final String DATASOURCE_CONFIG_NAME = "#(dataSourceConfigName?? 'main')";
 #if(genColConstant??)
 #for(cm : tableMeta.columnMetas)
     /**#(cm.remarks??)*/
