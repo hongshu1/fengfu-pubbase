@@ -43,7 +43,7 @@ public class MonthordermAdminController extends BaseAdminController {
 	public void index() {
 		render("index.html");
 	}
-  	
+
   	/**
 	* 数据源
 	*/
@@ -131,7 +131,7 @@ public class MonthordermAdminController extends BaseAdminController {
      */
     public void submit(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.validateId(iautoid, "ID");
-        
+
         renderJson(service.submit(iautoid));
     }
 
@@ -147,9 +147,9 @@ public class MonthordermAdminController extends BaseAdminController {
 	/**
 	 * 审批不通过
 	 */
-	public void reject() {
-		renderJson(service.reject(getLong(0)));
-	}
+//	public void reject() {
+//		renderJson(service.reject(getLong(0)));
+//	}
 
 	/**
 	 * 模板下载
