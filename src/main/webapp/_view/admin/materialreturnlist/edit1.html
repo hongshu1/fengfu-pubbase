@@ -4,7 +4,7 @@
 <div class="jbolt_page">
     <div style="text-align: center; font-size: 24px; color: red">采购入库单</div>
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="PuinstoreForm" action="#(action)" method="post">
+
             <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
                 <div class="col-md-l pt-2" role="group" aria-label="btn-group">
                     <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
@@ -20,6 +20,7 @@
                     </button>
                 </div>
             </div>
+        <form onsubmit="return false;" id="PuinstoreForm" action="#(action)" method="post">
             #if(puinstore.AutoID??)
             <input type="hidden" id="puinstoreautoid" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
             #end
@@ -34,7 +35,6 @@
                                data-rule="required" class="form-control" maxlength="40" value="#(puinstore.billno??)"/>
                         <button class="btn btn-primary"  data-dialogbtn data-link-para-ele=""
                                 data-area="90%,90%" data-title="选择数据（单选）"
-                                onclick="Billno()"
                                 id="supplierButton"
                                 data-url="/admin/materialreturnlist/choosePuinstoreData"><i
                                 class="fa fa-search mr-1"></i></button>
@@ -143,13 +143,13 @@
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-body">
-                                            <form onsubmit="return false;"  id="inventoryForm_#(pageId)" action="#(action)" method="post">
-                                                <div class="input-group-append">
+                                        <div class="btn-group">
+                                            <div class="input-group-append">
                                                     <input  type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
-                                                            maxlength="50" id="barcode" name="barcode" value="#(barcode??)"/>
+                                                           maxlength="50" id="barcode" name="barcode" value="#(barcode??)"/>
                                                     <button id="Search" onclick="barcode_#(pageId)(this)" class="btn btn-outline-secondary"><i class="fa fa-search"></i>搜索</button>
-                                                </div>
-                                            </form>
+                                            </div>
+                                        </div>
                                         <!-- 工具条 toolbar -->
                                         <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)" #if(puinstore.sourcebillno??) #else style="display: none" #end >
                                             <div  class="" role="group" aria-label="btn-group" >
@@ -210,6 +210,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">制单人：</label>
                 <div class="col-sm-2 col-form-label">
@@ -222,10 +223,12 @@
                            value="#(puinstore.auditperson??)"/>
                 </div>
             </div>
+
     </div>
 </div>
-<!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
+<!-- 定义JBoltTable使用的数据渲染模板-->
+<!--<textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">-->
+<script id="inventorySplit_tpl_#(pageId)" type="text/template">
    {@each datas as data,index}
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
@@ -253,10 +256,19 @@
     <td hidden>${data.rowno}</td> //行号
   </tr>
     {@/each}
-</textarea>
+</script>
+<!--</textarea>-->
 
 #define js()
 <script>
+    /**
+     * 选择其他订单号刷新数据
+     * @private
+     */
+    function Billno(){
+    //重新选择入库单号时刷新
+
+    }
 
     function spotTickets(){
 
@@ -325,11 +337,9 @@
      * 选择其他订单号刷新数据
      * @private
      */
-    function Billno(){
+    function supplierButton(){
 
-        //重新选择入库单号时刷新
         refreshJBoltTable("#Puinstoreform_TableId_#(pageId)");
-        $("#spottickets").val('');
 
     }
 
@@ -338,6 +348,12 @@
      * @param data
      */
     function setChooseDialogSelectResultFromSupplier(data) {
+
+        // let tableId1 = 'Puinstoreform_TableId_#(pageId)';
+        // refreshJBoltTable(tableId1);
+        // refreshJBoltTable("Puinstoreform_TableId_#(pageId)");
+        refreshJBoltTable("#Puinstoreform_TableId_#(pageId)");
+        $("#spottickets").val('');
 
         //隐藏和显示现品票搜索和添加行
         if ($("#sourcebillno").val()!=null){
