@@ -664,3 +664,7 @@
 #namespace("momoinvbatch")
 #include("momoinvbatch/momoinvbatch.sql")
 #end
+
+#namespace("momaterialsreturn")
+#include("momaterialsreturn/momaterialsreturn.sql")
+#end

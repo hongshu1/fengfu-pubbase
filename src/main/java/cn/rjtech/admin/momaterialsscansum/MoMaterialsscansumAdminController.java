@@ -85,9 +85,12 @@ public class MoMaterialsscansumAdminController extends BaseAdminController {
 	}
 
 
-	public void getBarcode(String barcode){
-		renderJson(service.getBarcode(barcode));
+	public void getBarcode(){
+		String barcode=get("barcode");
+		Long imodocid=getLong("imodocid");
+		renderJson(service.getBarcode(barcode,imodocid));
 	}
+
 
 
 

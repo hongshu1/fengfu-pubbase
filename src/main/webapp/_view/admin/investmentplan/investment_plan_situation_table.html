@@ -45,6 +45,7 @@
                data-conditions-form="investmentSituationForm"
                data-rowtpl="jboltTable_rowtpl_situation_#(pageId)1"
                data-column-prepend="1:checkbox:true"
+               data-ajax-success-handler="ajaxSuccessHandler_#(pageId)1"
                data-height="fill"
         >
             <thead class="fw_normal">
@@ -84,9 +85,9 @@
         </table>
 #define js()
 <script>
-function ajaxSuccessHandler_#(pageId)(table) {
+function ajaxSuccessHandler_#(pageId)1(table) {
 	   $('.jbolt_table').tablesMergeCell({
-	      cols: [1,2]
+	      cols: [1,2,3,4,5,6,7,8,9,10]
 	   })
 	   
 }
