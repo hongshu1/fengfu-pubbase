@@ -801,7 +801,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                         if(once){
                             SysPuinstore sysPuinstore = syspuinstoreservice.findById(autoID);
                             sysPuinstore.setBillType(barcode.getStr("ipurchasetypeid"));
-                            sysPuinstore.setDeptCode(barcode.getStr("idepartmentid"));
+                            sysPuinstore.setDeptCode(barcode.getStr("cdepcode"));
                             sysPuinstore.setIBusType(Integer.valueOf(barcode.getStr("ibustype")));
                             sysPuinstore.setRdCode(barcode.getStr("scrdcode"));
                             syspuinstoreservice.update(sysPuinstore);

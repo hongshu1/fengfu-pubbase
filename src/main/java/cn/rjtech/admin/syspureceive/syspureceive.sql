@@ -266,8 +266,8 @@ select
 	p.iAutoId,
 	s.iAutoId as siautoid,
     s.cRdName as scrdname,
-    s.cRdCode as scrdcode
-
+    s.cRdCode as scrdcode,
+    dep.cdepcode,dep.cdepname
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
@@ -277,6 +277,7 @@ LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iA
 LEFT JOIN Bd_Uom u on b.iPurchaseUomId = u.iAutoId
 LEFT JOIN Bd_PurchaseType p on p.iAutoId = m.iPurchaseTypeId
 LEFT JOIN Bd_Rd_Style s ON s.cRdCode = p.cRdCode
+left join Bd_Department dep on m.idepartmentid = dep.iautoid
 where 1=1
    	#if(barcode)
 		and a.cBarcode = #para(barcode)
