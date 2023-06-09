@@ -223,8 +223,6 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     int counter = 0;
     int i = 1;
 
-    List<Kv> barCoderows = new ArrayList<>();
-    List<Record> barCodeDatas = new ArrayList<>();
     List<String> barCodesheetNames = new ArrayList<>();
     int barcodeqty = 0;
     int barcodecounter = 1;
@@ -232,11 +230,26 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
 
     List<Kv> kvs = new ArrayList<>();
 
+    List<Record> list1 = new ArrayList<>();
+    List<Record> list2 = new ArrayList<>();
+    List<Record> list3 = new ArrayList<>();
+    List<Record> list4 = new ArrayList<>();
+    List<Record> list5 = new ArrayList<>();
+    List<Record> list6 = new ArrayList<>();
+    List<Record> list7 = new ArrayList<>();
+    List<Record> list8 = new ArrayList<>();
+    int cont = 0;
+    int k = 0;
     // 采购现品票明细条码数据sheet分页数组
     List<String> sheetNames2 = new ArrayList<>();
+
+
     for (int j = 0; j < rowDatas.size(); j++) {
       rowDatas.get(j).set("dPlanDate", rowDatas.get(j).getStr("dPlanDate") + "");
+
       if (kv.getStr("type").equals("1")) {
+
+        //<editor-fold desc="生成单个条码数据">
         String sheetName = "订货条码" + (j + 1);
         sheetNames2.add(sheetName);
 
@@ -250,36 +263,88 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
         ImageIO.write(bufferedImage2, "jpeg", os2);
         rowDatas.get(j).set("img2", os2.toByteArray());
 
-        kvs.add(Kv.by("sheetName", sheetName).set("barcodeRecords", Collections.singletonList(rowDatas.get(j))));
+        kvs.add(Kv.by("sheetName", sheetName).set("list1", Collections.singletonList(rowDatas.get(j))));
+        //</editor-fold>
+
       } else {
+
+        //<editor-fold desc="生成多个条码数据">
         String sheetName2 = "条码" + barcodecounter;
+
         if (barcodeqty % 8 == 0) {
           barCodesheetNames.add(sheetName2);
           barcodecounter += 1;
         }
-        BufferedImage bufferedImage = QrCodeUtil.generate(rowDatas.get(j).get("cBarcode"), BarcodeFormat.CODE_39, 1800, 5);
-        BufferedImage bufferedImage2 = QrCodeUtil.generate(rowDatas.get(j).get("cOrderNo"), BarcodeFormat.QR_CODE, 250, 250);
+        //条形码
+        BufferedImage bufferedImage = QrCodeUtil.generate(rowDatas.get(j).get("cBarcode"), BarcodeFormat.CODE_39, 100, 20);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        ByteArrayOutputStream os2 = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "jpeg", os);
-        ImageIO.write(bufferedImage2, "jpeg", os2);
         rowDatas.get(j).set("img", os.toByteArray());
+        //二维码
+        BufferedImage bufferedImage2 = QrCodeUtil.generate(rowDatas.get(j).get("cBarcode"), BarcodeFormat.QR_CODE, 100, 100);
+        ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage2, "jpeg", os2);
         rowDatas.get(j).set("img2", os2.toByteArray());
-        barcodeqty += 1;
-        barCodeDatas.add(rowDatas.get(j));
-        if (barcodeqty == 8) {
-          barcodeqty = 0;
-          barCoderows.add(Kv.by("barcodeRecords" + (barcodecounter - 1), barCodeDatas));
-          barCodeDatas = new ArrayList<>();
-        } else if ((rowDatas.size() - (barCoderows.size() * 8)) <= 8) {
-          if (q == 0 && rowDatas.size() == ((barCoderows.size() * 8) + barCodeDatas.size())) {
-            q += 1;
-            barcodeqty = 0;
-            barCoderows.add(Kv.by("barcodeRecords" + (barcodecounter - 1), barCodeDatas));
-            barCodeDatas = new ArrayList<>();
-          }
+        if (cont < 1) {
+          list1.add(rowDatas.get(j));
+        } else if (cont < 2) {
+          list2.add(rowDatas.get(j));
+        } else if (cont < 3) {
+          list3.add(rowDatas.get(j));
+        } else if (cont < 4) {
+          list4.add(rowDatas.get(j));
+        } else if (cont < 5) {
+          list5.add(rowDatas.get(j));
+        } else if (cont < 6) {
+          list6.add(rowDatas.get(j));
+        } else if (cont < 7) {
+          list7.add(rowDatas.get(j));
+        } else if (cont < 8) {
+          list8.add(rowDatas.get(j));
         }
+
+        cont++;
+        if (cont == 8) {
+          String sheetName = "订货条码" + (k + 1);
+          sheetNames2.add(sheetName);
+          kvs.add(Kv.by("sheetName", sheetName)
+              .set("list1", list1)
+              .set("list2", list2)
+              .set("list3", list3)
+              .set("list4", list4)
+              .set("list5", list5)
+              .set("list6", list6)
+              .set("list7", list7)
+              .set("list8", list8));
+          list1 = new ArrayList<>();
+          list2 = new ArrayList<>();
+          list3 = new ArrayList<>();
+          list4 = new ArrayList<>();
+          list5 = new ArrayList<>();
+          list6 = new ArrayList<>();
+          list7 = new ArrayList<>();
+          list8 = new ArrayList<>();
+          cont = 0;
+          k++;
+        }
+        if ((rowDatas.size() - 1) == j) {
+          String sheetName = "订货条码" + (k + 1);
+          sheetNames2.add(sheetName);
+          kvs.add(Kv.by("sheetName", sheetName)
+              .set("list1", list1)
+              .set("list2", list2)
+              .set("list3", list3)
+              .set("list4", list4)
+              .set("list5", list5)
+              .set("list6", list6)
+              .set("list7", list7)
+              .set("list8", list8));
+        }
+        //</editor-fold>
+
       }
+
+
       if (i % 2 != 0) {
         leftDatas.add(rowDatas.get(j));
         if (j == 0) {
@@ -325,19 +390,13 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
         }
       }
     }
+    //</editor-fold>
     Integer totalQuantity = rowDatas.size() + 1;
     Integer pages = rows.size();
     Date date = new DateTime();
-//    LOG.info(JSON.toJSONString(kvs));
-    LOG.info(JSON.toJSONString(sheetNames2));
-    if (kv.getStr("type").equals("1")) {
 
-      return Kv.by("rows", rows).set("sheetNames", sheetNames).set("rows2", kvs).set("sheetNames2", sheetNames2);
 
-    } else {
-      return Kv.by("rows", rows).set("sheetNames", sheetNames).set("barcoderows", barCoderows).set("barcodesheetNames", barCodesheetNames);
-
-    }
+    return Kv.by("rows", rows).set("sheetNames", sheetNames).set("rows2", kvs).set("sheetNames2", sheetNames2);
   }
 
   public Ret updateOrderBatch(Long subcontractOrderMId, Long id, String cVersion, BigDecimal qty) {
@@ -350,7 +409,7 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
 //    // 新增一个现成票后，再生产一个版本记录表，及修改详情；
 //    String barCode = generateBarCode();
     SubcontractOrderDBatch newBatch = createSubcontractOrderDBatch(orderDBatch.getISubcontractOrderDid(), orderDBatch.getISubcontractOrderdQtyId(),
-            orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, orderDBatch.getCBarcode());
+        orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, orderDBatch.getCBarcode());
     // 设置新版本号
     newBatch.setCVersion(cVersion);
     // 添加来源id
