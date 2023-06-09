@@ -3,7 +3,6 @@ package cn.rjtech.admin.investmentplan;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.jbolt._admin.dictionary.DictionaryService;
-import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
@@ -405,8 +404,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		} catch (Exception e) {
 			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IAMOUNT1.getText()+"不合法<br/>");
 		}
-		excelRow.set("cperiodprogress1",constructDictionarySnByName(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(),
-				excelRow.getStr(InvestmentEnum.CPERIODPROGRESS1.getField()),InvestmentEnum.CPERIODPROGRESS1.getText(),errorMsg,dataStartRow));
+		excelRow.set("cperiodprogress1",excelRow.getStr(InvestmentEnum.CPERIODPROGRESS1.getField()));
 		//第二期
 		try {
 			excelRow.set("dperioddate2",getDate(excelRow.getStr(InvestmentEnum.DPERIODDATE2.getField()),"yyyy-MM"));
@@ -418,8 +416,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		} catch (Exception e) {
 			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IAMOUNT2.getText()+"不合法<br/>");
 		}
-		excelRow.set("cperiodprogress2",constructDictionarySnByName(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(),
-				excelRow.getStr(InvestmentEnum.CPERIODPROGRESS2.getField()),InvestmentEnum.CPERIODPROGRESS2.getText(),errorMsg,dataStartRow));
+		excelRow.set("cperiodprogress2",excelRow.getStr(InvestmentEnum.CPERIODPROGRESS2.getField()));
 		//第三期
 		try {
 			excelRow.set("dperioddate3", getDate(excelRow.getStr(InvestmentEnum.DPERIODDATE3.getField()),"yyyy-MM"));
@@ -431,8 +428,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		} catch (Exception e) {
 			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IAMOUNT3.getText()+"不合法<br/>");
 		}
-		excelRow.set("cperiodprogress3",constructDictionarySnByName(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(),
-				excelRow.getStr(InvestmentEnum.CPERIODPROGRESS3.getField()),InvestmentEnum.CPERIODPROGRESS3.getText(),errorMsg,dataStartRow));
+		excelRow.set("cperiodprogress3",excelRow.getStr(InvestmentEnum.CPERIODPROGRESS3.getField()));
 		//第四期
 		try {
 			excelRow.set("dperioddate4", getDate(excelRow.getStr(InvestmentEnum.DPERIODDATE4.getField()),"yyyy-MM"));
@@ -444,8 +440,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		} catch (Exception e) {
 			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IAMOUNT4.getText()+"不合法<br/>");
 		}
-		excelRow.set("cperiodprogress4",constructDictionarySnByName(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(),
-				excelRow.getStr(InvestmentEnum.CPERIODPROGRESS4.getField()),InvestmentEnum.CPERIODPROGRESS4.getText(),errorMsg,dataStartRow));
+		excelRow.set("cperiodprogress4",excelRow.getStr(InvestmentEnum.CPERIODPROGRESS4.getField()));
 		//第五期
 		try {
 			excelRow.set("dperioddate5", getDate(excelRow.getStr(InvestmentEnum.DPERIODDATE5.getField()),"yyyy-MM"));
@@ -457,8 +452,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		} catch (Exception e) {
 			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IAMOUNT5.getText()+"不合法<br/>");
 		}
-		excelRow.set("cperiodprogress5",constructDictionarySnByName(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(),
-				excelRow.getStr(InvestmentEnum.CPERIODPROGRESS5.getField()),InvestmentEnum.CPERIODPROGRESS5.getText(),errorMsg,dataStartRow));
+		excelRow.set("cperiodprogress5",excelRow.getStr(InvestmentEnum.CPERIODPROGRESS5.getField()));
 		//第六期
 		try {
 			excelRow.set("dperioddate6", getDate(excelRow.getStr(InvestmentEnum.DPERIODDATE6.getField()),"yyyy-MM"));
@@ -470,288 +464,12 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		} catch (Exception e) {
 			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IAMOUNT6.getText()+"不合法<br/>");
 		}
-		excelRow.set("cperiodprogress6",constructDictionarySnByName(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(),
-				excelRow.getStr(InvestmentEnum.CPERIODPROGRESS6.getField()),InvestmentEnum.CPERIODPROGRESS6.getText(),errorMsg,dataStartRow));
+		excelRow.set("cperiodprogress6",excelRow.getStr(InvestmentEnum.CPERIODPROGRESS6.getField()));
 	}
 	
-	/**
-	 * 导入的excel中每行数据构建投资计划项目数据(InvestmentPlanItem)
-	 * */
-	/*private void constructInvestmentPlanItemForImport(Record excelRow,InvestmentPlanItem investmentPlanItem,
-			InvestmentPlan investmentplan,StringBuilder errorMsg,int dataStartRow,Date now) {
-		investmentPlanItem.setIinvestmenttype(constructDictionarySnByName(DictionaryTypeKeyEnum.INVESTMENT_TYPE.getValue(),
-				excelRow.getStr(InvestmentEnum.IINVESTMENTTYPE.getField()),InvestmentEnum.IINVESTMENTTYPE.getText(),errorMsg,dataStartRow));
-		investmentPlanItem.setCproductline(excelRow.getStr(InvestmentEnum.CPRODUCTLINE.getField()));
-		investmentPlanItem.setCmodelinvccode(excelRow.getStr(InvestmentEnum.CMODELINVCCODE.getField()));
-		investmentPlanItem.setCparts(excelRow.getStr(InvestmentEnum.CPARTS.getField()));
-		investmentPlanItem.setIcareertype(constructDictionarySnByName(DictionaryTypeKeyEnum.CAREER_TYPE.getValue(),
-				excelRow.getStr(InvestmentEnum.ICAREERTYPE.getField()),InvestmentEnum.ICAREERTYPE.getText(),errorMsg,dataStartRow));
-		investmentPlanItem.setIinvestmentdistinction(constructDictionarySnByName(DictionaryTypeKeyEnum.INVESTMENT_DISTINCTION.getValue(),
-				excelRow.getStr(InvestmentEnum.IINVESTMENTDISTINCTION.getField()),InvestmentEnum.IINVESTMENTDISTINCTION.getText(),errorMsg,dataStartRow));
-		String cplanno = excelRow.getStr(InvestmentEnum.CPLANNO.getField());
-		investmentPlanItem.setCplanno(JBoltStringUtil.isNotBlank(cplanno) ? cplanno : getCplanno(investmentplan.getCdepcode(),investmentPlanItem.getIinvestmenttype(),investmentplan.getIbudgetyear()));
-		investmentPlanItem.setCitemname(excelRow.getStr(InvestmentEnum.CITEMNAME.getField()));
-		String isImport = excelRow.getStr(InvestmentEnum.ISIMPORT.getField());
-		investmentPlanItem.setIsimport(JBoltStringUtil.isBlank(isImport) ? null: StrGenBooleanEnum.toText(isImport).getValue());
-		try {
-			investmentPlanItem.setIquantity(excelRow.getInt(InvestmentEnum.IQUANTITY.getField()));
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IQUANTITY.getText()+"不合法<br/>");
-		}
-		investmentPlanItem.setCunit(excelRow.getStr(InvestmentEnum.CUNIT.getField()));
-		investmentPlanItem.setCassettype(constructDictionarySnByName(DictionaryTypeKeyEnum.CASSETTYPE.getValue(),
-				excelRow.getStr(InvestmentEnum.CASSETTYPE.getField()),InvestmentEnum.CASSETTYPE.getText(),errorMsg,dataStartRow));
-		investmentPlanItem.setCpurpose(excelRow.getStr(InvestmentEnum.CPURPOSE.getField()));
-		investmentPlanItem.setCeffectamount(excelRow.getStr(InvestmentEnum.CEFFECTAMOUNT.getField()));
-		investmentPlanItem.setCreclaimyear(excelRow.getStr(InvestmentEnum.CRECLAIMYEAR.getField()));
-		investmentPlanItem.setClevel(excelRow.getStr(InvestmentEnum.CLEVEL.getField()));
-		String isperiorReport = excelRow.getStr(InvestmentEnum.ISPRIORREPORT.getField());
-		investmentPlanItem.setIspriorreport(JBoltStringUtil.isBlank(isperiorReport) ? null : StrGenBooleanEnum.toText(isperiorReport).getValue());
-		investmentPlanItem.setCpaymentprogress(constructDictionarySnByName(DictionaryTypeKeyEnum.PAYMENT_PROGRESS.getValue(),
-				excelRow.getStr(InvestmentEnum.CPAYMENTPROGRESS.getField()),InvestmentEnum.CPAYMENTPROGRESS.getText(),errorMsg,dataStartRow));
-		try {
-			investmentPlanItem.setItotalamountplan(excelRow.getBigDecimal(InvestmentEnum.ITOTALAMOUNTPLAN.getField()));
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.ITOTALAMOUNTPLAN.getText()+"不合法<br/>");
-		}
-		try {
-			investmentPlanItem.setItotalamountactual(excelRow.getBigDecimal(InvestmentEnum.ITOTALAMOUNTACTUAL.getField()));
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.ITOTALAMOUNTACTUAL.getText()+"不合法<br/>");
-		}
-		investmentPlanItem.setItotalamountdiffreason(excelRow.getStr(InvestmentEnum.ITOTALAMOUNTDIFFREASON.getField()));
-		try {
-			investmentPlanItem.setIyeartotalamountplan(excelRow.getBigDecimal(InvestmentEnum.IYEARTOTALAMOUNTPLAN.getField()));
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IYEARTOTALAMOUNTPLAN.getText()+"不合法<br/>");
-		}
-		try {
-			investmentPlanItem.setIyeartotalamountactual(excelRow.getBigDecimal(InvestmentEnum.IYEARTOTALAMOUNTACTUAL.getField()));
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IYEARTOTALAMOUNTACTUAL.getText()+"不合法<br/>");
-		}
-		investmentPlanItem.setIyeartotalamountdiffreason(excelRow.getStr(InvestmentEnum.IYEARTOTALAMOUNTDIFFREASON.getField()));
-		investmentPlanItem.setCedittype(constructDictionarySnByName(DictionaryTypeKeyEnum.EDITTYPE.getValue(),
-				excelRow.getStr(InvestmentEnum.CEDITTYPE.getField()),InvestmentEnum.CEDITTYPE.getText(),errorMsg,dataStartRow));
-		investmentPlanItem.setCmemo(excelRow.getStr(InvestmentEnum.CMEMO.getField()));
-		try {
-			investmentPlanItem.setIitemyear(excelRow.getInt(InvestmentEnum.IITEMYEAR.getField()));
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IITEMYEAR.getText()+"不合法<br/>");
-		}
-		//税率:除以100存到数据库
-		try {
-			BigDecimal iTaxRate = excelRow.getBigDecimal(InvestmentEnum.ITAXRATE.getField());
-			if(iTaxRate != null) iTaxRate.divide(new BigDecimal("100"));
-			investmentPlanItem.setItaxrate(iTaxRate);
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.ITAXRATE.getText()+"不合法<br/>");
-		}
-		
-		investmentPlanItem.setIcreateby(JBoltUserKit.getUserId());
-		investmentPlanItem.setDcreatetime(now);
-	}*/
 	
 	
 	
-	/**
-	 * 导入的excel中每行数据构建投资计划项目明细数据(InvestmentPlanItemd)
-	 * */
-	/*private void constructInvestmentPlanitemdForImport(Record excelRow,InvestmentPlanItem investmentPlanItem, InvestmentPlan investmentPlan, List<InvestmentPlanItemd> investmentPlanItemdList,int dataStartRow, StringBuilder errorMsg,Date now){
-		Long iplanitemid = investmentPlanItem.getIautoid();
-		BigDecimal iTotalAmountPlan = BigDecimal.ZERO;
-		BigDecimal iYearTotalAmountPlan = BigDecimal.ZERO;
-		//第一期
-		String cperiodprogress1 = excelRow.getStr(InvestmentEnum.CPERIODPROGRESS1.getField());
-		Date dperioddate1 = null;
-		BigDecimal iamount1 = null;
-		try {
-			dperioddate1 = getDate(excelRow.getStr(InvestmentEnum.DPERIODDATE1.getField()),"yyyy-MM");
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.DPERIODDATE1.getText()+"格式不正确,请参考格式：2022-10<br/>");
-		}
-		try {
-			iamount1 = excelRow.getBigDecimal(InvestmentEnum.IAMOUNT1.getField());
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IAMOUNT1.getText()+"不合法<br/>");
-		}
-		if(JBoltStringUtil.isNotBlank(cperiodprogress1) && dperioddate1 != null && iamount1 !=null){
-			InvestmentPlanItemd investmentPlanItemd = new InvestmentPlanItemd();
-			investmentPlanItemd.setIautoid(JBoltSnowflakeKit.me.nextId());
-			investmentPlanItemd.setIplanitemid(iplanitemid);
-			investmentPlanItemd.setIperiodnum(1);
-			investmentPlanItemd.setCperiodprogress(constructDictionarySnByName(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(),
-					excelRow.getStr(InvestmentEnum.CPERIODPROGRESS1.getField()),InvestmentEnum.CPERIODPROGRESS1.getText(),errorMsg,dataStartRow));
-			investmentPlanItemd.setDperioddate(dperioddate1);
-			investmentPlanItemd.setIamount(iamount1);
-			investmentPlanItemd.setIcreateby(JBoltUserKit.getUserId());
-			investmentPlanItemd.setDcreatetime(now);
-			investmentPlanItemdList.add(investmentPlanItemd);
-			iTotalAmountPlan = iTotalAmountPlan.add(iamount1);
-			if(JBoltDateUtil.format(dperioddate1, JBoltDateUtil.YYYY).equals(investmentPlan.getIbudgetyear().toString())){
-				iYearTotalAmountPlan.add(iamount1);
-			}
-		}
-		//第二期
-		String cperiodprogress2 = excelRow.getStr(InvestmentEnum.CPERIODPROGRESS2.getField());
-		Date dperioddate2 = null;
-		BigDecimal iamount2 = null;
-		try {
-			dperioddate2 = getDate(excelRow.getStr(InvestmentEnum.DPERIODDATE2.getField()),"yyyy-MM");
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.DPERIODDATE2.getText()+"格式不正确,请参考格式：2022-10<br/>");
-		}
-		try {
-			iamount2 = excelRow.getBigDecimal(InvestmentEnum.IAMOUNT2.getField());
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IAMOUNT2.getText()+"不合法<br/>");
-		}
-		if(JBoltStringUtil.isNotBlank(cperiodprogress2) && dperioddate2 != null && iamount2 !=null){
-			InvestmentPlanItemd investmentPlanItemd = new InvestmentPlanItemd();
-			investmentPlanItemd.setIautoid(JBoltSnowflakeKit.me.nextId());
-			investmentPlanItemd.setIplanitemid(iplanitemid);
-			investmentPlanItemd.setIperiodnum(2);
-			investmentPlanItemd.setCperiodprogress(constructDictionarySnByName(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(),
-					excelRow.getStr(InvestmentEnum.CPERIODPROGRESS2.getField()),InvestmentEnum.CPERIODPROGRESS2.getText(),errorMsg,dataStartRow));
-			investmentPlanItemd.setDperioddate(dperioddate2);
-			investmentPlanItemd.setIamount(iamount2);
-			investmentPlanItemd.setIcreateby(JBoltUserKit.getUserId());
-			investmentPlanItemd.setDcreatetime(now);
-			investmentPlanItemdList.add(investmentPlanItemd);
-			iTotalAmountPlan = iTotalAmountPlan.add(iamount2);
-			if(JBoltDateUtil.format(dperioddate2, JBoltDateUtil.YYYY).equals(investmentPlan.getIbudgetyear().toString())){
-				iYearTotalAmountPlan.add(iamount2);
-			}
-		}
-		//第三期
-		String cperiodprogress3 = excelRow.getStr(InvestmentEnum.CPERIODPROGRESS3.getField());
-		Date dperioddate3 = null;
-		BigDecimal iamount3 = null;
-		try {
-			dperioddate3 = getDate(excelRow.getStr(InvestmentEnum.DPERIODDATE3.getField()),"yyyy-MM");
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.DPERIODDATE3.getText()+"格式不正确,请参考格式：2022-10<br/>");
-		}
-		try {
-			iamount3 = excelRow.getBigDecimal(InvestmentEnum.IAMOUNT3.getField());
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IAMOUNT3.getText()+"不合法<br/>");
-		}
-		if(JBoltStringUtil.isNotBlank(cperiodprogress3) && dperioddate3 != null && iamount3 !=null){
-			InvestmentPlanItemd investmentPlanItemd = new InvestmentPlanItemd();
-			investmentPlanItemd.setIautoid(JBoltSnowflakeKit.me.nextId());
-			investmentPlanItemd.setIplanitemid(iplanitemid);
-			investmentPlanItemd.setIperiodnum(3);
-			investmentPlanItemd.setCperiodprogress(constructDictionarySnByName(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(),
-					excelRow.getStr(InvestmentEnum.CPERIODPROGRESS3.getField()),InvestmentEnum.CPERIODPROGRESS3.getText(),errorMsg,dataStartRow));
-			investmentPlanItemd.setDperioddate(dperioddate3);
-			investmentPlanItemd.setIamount(iamount3);
-			investmentPlanItemd.setIcreateby(JBoltUserKit.getUserId());
-			investmentPlanItemd.setDcreatetime(now);
-			investmentPlanItemdList.add(investmentPlanItemd);
-			iTotalAmountPlan = iTotalAmountPlan.add(iamount3);
-			if(JBoltDateUtil.format(dperioddate3, JBoltDateUtil.YYYY).equals(investmentPlan.getIbudgetyear().toString())){
-				iYearTotalAmountPlan.add(iamount3);
-			}
-		}
-		//第四期
-		String cperiodprogress4 = excelRow.getStr(InvestmentEnum.CPERIODPROGRESS4.getField());
-		Date dperioddate4 = null;
-		BigDecimal iamount4 = null;
-		try {
-			dperioddate4 = getDate(excelRow.getStr(InvestmentEnum.DPERIODDATE4.getField()),"yyyy-MM");
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.DPERIODDATE4.getText()+"格式不正确,请参考格式：2022-10<br/>");
-		}
-		try {
-			iamount4 = excelRow.getBigDecimal(InvestmentEnum.IAMOUNT4.getField());
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IAMOUNT4.getText()+"不合法<br/>");
-		}
-		if(JBoltStringUtil.isNotBlank(cperiodprogress4) && dperioddate4 != null && iamount4 !=null){
-			InvestmentPlanItemd investmentPlanItemd = new InvestmentPlanItemd();
-			investmentPlanItemd.setIautoid(JBoltSnowflakeKit.me.nextId());
-			investmentPlanItemd.setIplanitemid(iplanitemid);
-			investmentPlanItemd.setIperiodnum(4);
-			investmentPlanItemd.setCperiodprogress(constructDictionarySnByName(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(),
-					excelRow.getStr(InvestmentEnum.CPERIODPROGRESS4.getField()),InvestmentEnum.CPERIODPROGRESS4.getText(),errorMsg,dataStartRow));
-			investmentPlanItemd.setDperioddate(dperioddate4);
-			investmentPlanItemd.setIamount(iamount4);
-			investmentPlanItemd.setIcreateby(JBoltUserKit.getUserId());
-			investmentPlanItemd.setDcreatetime(now);
-			investmentPlanItemdList.add(investmentPlanItemd);
-			iTotalAmountPlan = iTotalAmountPlan.add(iamount4);
-			if(JBoltDateUtil.format(dperioddate4, JBoltDateUtil.YYYY).equals(investmentPlan.getIbudgetyear().toString())){
-				iYearTotalAmountPlan.add(iamount4);
-			}
-		}
-		//第五期
-		String cperiodprogress5 = excelRow.getStr(InvestmentEnum.CPERIODPROGRESS5.getField());
-		Date dperioddate5 = null;
-		BigDecimal iamount5 = null;
-		try {
-			dperioddate5 = getDate(excelRow.getStr(InvestmentEnum.DPERIODDATE5.getField()),"yyyy-MM");
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.DPERIODDATE5.getText()+"格式不正确,请参考格式：2022-10<br/>");
-		}
-		try {
-			iamount5 = excelRow.getBigDecimal(InvestmentEnum.IAMOUNT5.getField());
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IAMOUNT5.getText()+"不合法<br/>");
-		}
-		if(JBoltStringUtil.isNotBlank(cperiodprogress5) && dperioddate5 != null && iamount5 !=null){
-			InvestmentPlanItemd investmentPlanItemd = new InvestmentPlanItemd();
-			investmentPlanItemd.setIautoid(JBoltSnowflakeKit.me.nextId());
-			investmentPlanItemd.setIplanitemid(iplanitemid);
-			investmentPlanItemd.setIperiodnum(5);
-			investmentPlanItemd.setCperiodprogress(constructDictionarySnByName(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(),
-					excelRow.getStr(InvestmentEnum.CPERIODPROGRESS5.getField()),InvestmentEnum.CPERIODPROGRESS5.getText(),errorMsg,dataStartRow));
-			investmentPlanItemd.setDperioddate(dperioddate5);
-			investmentPlanItemd.setIamount(iamount5);
-			investmentPlanItemd.setIcreateby(JBoltUserKit.getUserId());
-			investmentPlanItemd.setDcreatetime(now);
-			investmentPlanItemdList.add(investmentPlanItemd);
-			iTotalAmountPlan = iTotalAmountPlan.add(iamount5);
-			if(JBoltDateUtil.format(dperioddate5, JBoltDateUtil.YYYY).equals(investmentPlan.getIbudgetyear().toString())){
-				iYearTotalAmountPlan.add(iamount5);
-			}
-		}
-		//第六期
-		String cperiodprogress6 = excelRow.getStr(InvestmentEnum.CPERIODPROGRESS6.getField());
-		Date dperioddate6 = null;
-		BigDecimal iamount6 = null;
-		try {
-			dperioddate6 = getDate(excelRow.getStr(InvestmentEnum.DPERIODDATE6.getField()),"yyyy-MM");
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.DPERIODDATE6.getText()+"格式不正确,请参考格式：2022-10<br/>");
-		}
-		try {
-			iamount6 = excelRow.getBigDecimal(InvestmentEnum.IAMOUNT6.getField());
-		} catch (Exception e) {
-			errorMsg.append("第"+dataStartRow+"行,"+InvestmentEnum.IAMOUNT6.getText()+"不合法<br/>");
-		}
-		if(JBoltStringUtil.isNotBlank(cperiodprogress6) && dperioddate6 != null && iamount6 !=null){
-			InvestmentPlanItemd investmentPlanItemd = new InvestmentPlanItemd();
-			investmentPlanItemd.setIautoid(JBoltSnowflakeKit.me.nextId());
-			investmentPlanItemd.setIplanitemid(iplanitemid);
-			investmentPlanItemd.setIperiodnum(6);
-			investmentPlanItemd.setCperiodprogress(constructDictionarySnByName(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(),
-					excelRow.getStr(InvestmentEnum.CPERIODPROGRESS6.getField()),InvestmentEnum.CPERIODPROGRESS6.getText(),errorMsg,dataStartRow));
-			investmentPlanItemd.setDperioddate(dperioddate6);
-			investmentPlanItemd.setIamount(iamount6);
-			investmentPlanItemd.setIcreateby(JBoltUserKit.getUserId());
-			investmentPlanItemd.setDcreatetime(now);
-			investmentPlanItemdList.add(investmentPlanItemd);
-			iTotalAmountPlan = iTotalAmountPlan.add(iamount6);
-			if(JBoltDateUtil.format(dperioddate6, JBoltDateUtil.YYYY).equals(investmentPlan.getIbudgetyear().toString())){
-				iYearTotalAmountPlan.add(iamount6);
-			}
-		}
-		if(investmentPlan.getIbudgettype() == InvestmentBudgetTypeEnum.FUALL_YEAR_BUDGET.getValue()){
-			investmentPlanItem.setItotalamountplan(iTotalAmountPlan);
-			investmentPlanItem.setIyeartotalamountplan(iYearTotalAmountPlan);
-		}
-	}*/
 
 	/**
 	 * 根据数据字典将导入excel中的name转sn：
@@ -790,18 +508,6 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		return investmentPlan != null;
 	}
 	/**
-	 * 系统按照固定规则获取投资NO.:
-	 * 		投资NO规则：科室-投资类型-年份-流水号，投资NO：QH-I1-2022-001，QH：科室缩写，可以使用U8部门英文名称，
-	 * 			I1：新机种投资，I2：一般投资，2022：年份，001：3位流水码
-	 * */
-/*	public String getCplanno(String cdepcode,String investmentType,int iyear){
-		Record record = departmentService.findByCdepcode(cdepcode);
-		String cdepnameen = record.getStr("cdepnameen");
-		ValidationUtils.notBlank(cdepnameen, record.getStr("cdepname")+"部门的英文名称为空,生成投资NO.失败!");
-		String prefix = cdepnameen + "-" + investmentType + "-" + iyear + "-";
-		return BillNoUtils.genInvestmentPlanNo(getOrgId(),prefix);
-	}*/
-	/**
 	 * 系统根据编码规则配置获取投资NO.:
 	 * 		投资NO规则：科室-投资类型-年份-流水号，投资NO：QH-I1-2022-001，QH：科室缩写，可以使用U8部门英文名称，
 	 * 			I1：新机种投资，I2：一般投资，2022：年份，001：3位流水码
@@ -820,8 +526,6 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		Integer iBudgetType = investmentPlan.getIbudgettype();
 		Integer iBudgetYear = investmentPlan.getIbudgetyear();
 		String cdepcode = investmentPlan.getCdepcode();
-		 // 登录用户
-        User user = CACHE.me.getUser(JBoltUserKit.getUserId());
 		InvestmentPlan investmentPlanDbs = findModelByYearAndType(iBudgetYear, iBudgetType,cdepcode);
 		ValidationUtils.isTrue(investmentPlanDbs == null, "投资计划已创建，请重复操作!");
 		tx(()->{
@@ -1118,85 +822,6 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		}
 		return list;
 	}
-	
-	/**
-	 * 投资计划详情界面查询投资计划项目明细数据
-	 * */
-	public List<Record> findInvestmentPlanItemdForDetail(Long investmentPlanItemId) {
-		List<Record> list = dbTemplate("investmentplan.findInvestmentPlanItemdForDetail",Kv.by("investmentplanitemid", investmentPlanItemId)).find();
-		for (Record record : list) {
-			record.set("cperiodprogressdesc",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), record.getStr("cperiodprogress")));
-		}
-		return list;
-	}
-	/**
-	 * 模板下载，下半年修订，实绩预测数据导出
-	 * */
-	/*public void constructInvestmentExportDownTplData(Integer iBudgetType,Integer iBudgetYear,
-			List<JBoltExcelPositionData> excelPositionDatas) {
-		int startRow = ReadInventmentExcelUtil.START_ROW+1;
-		int startColumn = ReadInventmentExcelUtil.START_COLUMN;
-		//下载 下半年修订模板，导出审核通过生效的并且是未完成的全年预算数据，生效后的全年预算数据才会生成未完成的项目资料
-		if(iBudgetType == InvestmentBudgetTypeEnum.NEXT_PERIOD_EDIT.getValue()){
-			Kv para = Kv.by("ibudgettype", InvestmentBudgetTypeEnum.FUALL_YEAR_BUDGET.getValue()).set("ibudgetyear",iBudgetYear);
-			List<Record> list = dbTemplate("investmentplan.findInvestmentNextPeriodEditExportDownTplData",para).find();
-			for (int i=0;i<list.size();i++) {
-    			Record row = list.get(i);
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn, i+1));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+1, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.INVESTMENT_TYPE.getValue(), row.getStr("iinvestmenttype"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+2, row.getStr("cprojectcode")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+3, row.getStr("cprojectname")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+4, row.getStr("cproductline")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+5, row.getStr("cmodelinvccode")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+6, row.getStr("cparts")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+7, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.CAREER_TYPE.getValue(), row.getStr("icareertype"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+8, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.INVESTMENT_DISTINCTION.getValue(), row.getStr("iinvestmentdistinction"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+9, row.getStr("cplanno")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+10, row.getStr("citemname")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+11, IsEnableEnum.toEnum(row.getInt("isimport")).getText()));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+12, row.getStr("iquantity")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+13, row.getStr("cunit")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+14, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.CASSETTYPE.getValue(), row.getStr("cassettype"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+15, row.getStr("cpurpose")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+16, row.getStr("ceffectamount")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+17, row.getStr("creclaimyear")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+18, row.getStr("clevel")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+19, IsEnableEnum.toEnum(row.getInt("ispriorreport")).getText()));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+20, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PAYMENT_PROGRESS.getValue(), row.getStr("cpaymentprogress"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+21, row.getBigDecimal("itaxrate")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+22, row.getBigDecimal("itotalamountplan")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+23, row.getBigDecimal("itotalamountactual")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+24, row.getBigDecimal("itotalamountdiff")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+25, row.getStr("itotalamountdiffreason")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+26, row.getBigDecimal("iyeartotalamountplan")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+27, row.getBigDecimal("iyeartotalamountactual")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+28, row.getBigDecimal("iyeartotalamountdiff")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+29, row.getStr("iyeartotalamountdiffreason")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+30, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.EDITTYPE.getValue(), row.getStr("cedittype"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+31, row.getStr("cmemo")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+32, row.getInt("iitemyear")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+33, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress1"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+34, row.getStr("dperioddate1")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+35, row.getBigDecimal("iamount1")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+36, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress2"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+37, row.getStr("dperioddate2")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+38, row.getBigDecimal("iamount2")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+39, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress3"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+40, row.getStr("dperioddate3")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+41, row.getBigDecimal("iamount3")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+42, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress4"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+43, row.getStr("dperioddate4")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+44, row.getBigDecimal("iamount4")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+45, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress5"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+46, row.getStr("dperioddate5")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+47, row.getBigDecimal("iamount5")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+48, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), row.getStr("cperiodprogress6"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+49, row.getStr("dperioddate6")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+50, row.getBigDecimal("iamount6")));
-			}
-		}
-		
-	}*/
 
 	public InvestmentPlan findEffectivedInvestmentByDeptCode(Kv para) {
 		String cdepcode = para.getStr("cdepcode");
@@ -1408,6 +1033,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
      * 执行进度跟踪表数据查询
      * */
 	public List<Record> findExecutionProgressTrackingDatas(Kv para) {
+		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
 		return dbTemplate("investmentplan.findExecutionProgressTrackingDatas",para).find();
 	}
 	/**

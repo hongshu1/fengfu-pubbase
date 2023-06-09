@@ -2,8 +2,10 @@ package cn.rjtech.admin.subcontractorderdbatch;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
@@ -15,16 +17,20 @@ import cn.rjtech.model.momdata.SubcontractOrderDBatchVersion;
 import cn.rjtech.model.momdata.SubcontractorderdQty;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSON;
+import com.google.zxing.BarcodeFormat;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 采购/委外管理-采购现品票
@@ -190,14 +196,14 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
    * @param kv
    * @return
    */
-  public Kv orderDBatchExportDatas1(Kv kv) {
+  public Kv orderDBatchExportDatas(Kv kv) throws IOException {
     // 为true 说明是看所有的
     if (Boolean.parseBoolean(kv.getStr("isEffective"))) {
       kv.remove("isEffective");
     } else {
       kv.set("isEffective", "1");
     }
-    List<Record> rowDatas = dbTemplate("subcontractorderdbatch.findBySubcontractOrderMId", kv).find();
+    List<Record> rowDatas = dbTemplate("subcontractorderdbatch.getPdfBySubcontractOrderMId", kv).find();
     Record record = new Record();
     record.set("SequenceNumber", "序号");
     record.set("cBarcode", "现品票");
@@ -217,8 +223,63 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     int counter = 0;
     int i = 1;
 
+    List<Kv> barCoderows = new ArrayList<>();
+    List<Record> barCodeDatas = new ArrayList<>();
+    List<String> barCodesheetNames = new ArrayList<>();
+    int barcodeqty = 0;
+    int barcodecounter = 1;
+    int q = 0;
+
+    List<Kv> kvs = new ArrayList<>();
+
+    // 采购现品票明细条码数据sheet分页数组
+    List<String> sheetNames2 = new ArrayList<>();
     for (int j = 0; j < rowDatas.size(); j++) {
       rowDatas.get(j).set("dPlanDate", rowDatas.get(j).getStr("dPlanDate") + "");
+      if (kv.getStr("type").equals("1")) {
+        String sheetName = "订货条码" + (j + 1);
+        sheetNames2.add(sheetName);
+
+        BufferedImage bufferedImage = QrCodeUtil.generate(rowDatas.get(j).get("cBarcode"), BarcodeFormat.CODE_39, 1800, 1000);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "jpeg", os);
+        rowDatas.get(j).set("img", os.toByteArray());
+
+        BufferedImage bufferedImage2 = QrCodeUtil.generate(rowDatas.get(j).get("cBarcode"), BarcodeFormat.QR_CODE, 250, 250);
+        ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage2, "jpeg", os2);
+        rowDatas.get(j).set("img2", os2.toByteArray());
+
+        kvs.add(Kv.by("sheetName", sheetName).set("barcodeRecords", Collections.singletonList(rowDatas.get(j))));
+      } else {
+        String sheetName2 = "条码" + barcodecounter;
+        if (barcodeqty % 8 == 0) {
+          barCodesheetNames.add(sheetName2);
+          barcodecounter += 1;
+        }
+        BufferedImage bufferedImage = QrCodeUtil.generate(rowDatas.get(j).get("cBarcode"), BarcodeFormat.CODE_39, 1800, 5);
+        BufferedImage bufferedImage2 = QrCodeUtil.generate(rowDatas.get(j).get("cOrderNo"), BarcodeFormat.QR_CODE, 250, 250);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "jpeg", os);
+        ImageIO.write(bufferedImage2, "jpeg", os2);
+        rowDatas.get(j).set("img", os.toByteArray());
+        rowDatas.get(j).set("img2", os2.toByteArray());
+        barcodeqty += 1;
+        barCodeDatas.add(rowDatas.get(j));
+        if (barcodeqty == 8) {
+          barcodeqty = 0;
+          barCoderows.add(Kv.by("barcodeRecords" + (barcodecounter - 1), barCodeDatas));
+          barCodeDatas = new ArrayList<>();
+        } else if ((rowDatas.size() - (barCoderows.size() * 8)) <= 8) {
+          if (q == 0 && rowDatas.size() == ((barCoderows.size() * 8) + barCodeDatas.size())) {
+            q += 1;
+            barcodeqty = 0;
+            barCoderows.add(Kv.by("barcodeRecords" + (barcodecounter - 1), barCodeDatas));
+            barCodeDatas = new ArrayList<>();
+          }
+        }
+      }
       if (i % 2 != 0) {
         leftDatas.add(rowDatas.get(j));
         if (j == 0) {
@@ -258,126 +319,25 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
             kv1.put("leftDatas", leftDatas);
           }
           if (rightDatas.size() > 1) {
-            kv1.put("leftDatas", rightDatas);
+            kv1.put("rightDatas", rightDatas);
           }
           rows.add(kv1);
         }
       }
     }
+    Integer totalQuantity = rowDatas.size() + 1;
+    Integer pages = rows.size();
+    Date date = new DateTime();
+//    LOG.info(JSON.toJSONString(kvs));
+    LOG.info(JSON.toJSONString(sheetNames2));
+    if (kv.getStr("type").equals("1")) {
 
-//    for (Record row : rowDatas) {
-//      row.set("dPlanDate", row.getStr("dPlanDate") + "");
-//      if (counter < 15) {
-//        leftDatas.add(row);
-//      } else {
-//        rightDatas.add(row);
-//      }
-//
-//      counter++;
-//
-//      if (counter == 30) {
-//        String sheetName = "订货清单" + i;
-//        sheetNames.add(sheetName);
-//        rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
-//
-//        leftDatas = new ArrayList<>();
-//        rightDatas = new ArrayList<>();
-//        leftDatas.add(record);
-//        rightDatas.add(record);
-//        counter = 0;
-//        i++;
-//      }
-//
-//    }
+      return Kv.by("rows", rows).set("sheetNames", sheetNames).set("rows2", kvs).set("sheetNames2", sheetNames2);
 
-    // 如果 rows 的数量不是 30 的整数倍，将剩余的数据添加到 datas 中
-//    Kv remainData = Kv.create();
-//
-//    if (CollUtil.isNotEmpty(leftDatas)) {
-//      remainData.set("leftDatas", leftDatas);
-//    }
-//    if (CollUtil.isNotEmpty(rightDatas)) {
-//      remainData.set("rightDatas", rightDatas);
-//    }
-//
-//    if (MapUtil.isNotEmpty(remainData)) {
-//      rows.add(remainData);
-//    }
-    return Kv.by("rows", rows).set("sheetNames", sheetNames);
-  }
-
-
-  /**
-   * 导出PDF数据源
-   *
-   * @param kv
-   * @return
-   */
-  public Kv orderDBatchExportDatas(Kv kv) {
-    // 为true 说明是看所有的
-    if (Boolean.parseBoolean(kv.getStr("isEffective"))) {
-      kv.remove("isEffective");
     } else {
-      kv.set("isEffective", "1");
-    }
-    List<Record> rowDatas = dbTemplate("subcontractorderdbatch.findBySubcontractOrderMId", kv).find();
-    Record record = new Record();
-    record.set("SequenceNumber", "序号");
-    record.set("cBarcode", "现品票");
-    record.set("cInvCode1", "客户部番");
-    record.set("dPlanDate", "计划到货日期");
-    record.set("iQty", "数量");
-    record.set("cVersion", "版本");
-    List<String> sheetNames = new ArrayList<>();
-    // 改用List<List<Record>>来表示多个数据集合
-    List<Kv> rows = new ArrayList<>();
-
-    List<Record> leftDatas = new ArrayList<>();
-    List<Record> rightDatas = new ArrayList<>();
-    leftDatas.add(record);
-    rightDatas.add(record);
-    int counter = 0;
-    int i = 1;
-
-    for (Record row : rowDatas) {
-      row.set("dPlanDate", row.getStr("dPlanDate") + "");
-      if (counter < 15) {
-        leftDatas.add(row);
-      } else {
-        rightDatas.add(row);
-      }
-
-      counter++;
-
-      if (counter == 30) {
-        String sheetName = "订货清单" + i;
-        sheetNames.add(sheetName);
-        rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
-
-        leftDatas = new ArrayList<>();
-        rightDatas = new ArrayList<>();
-        leftDatas.add(record);
-        rightDatas.add(record);
-        counter = 0;
-        i++;
-      }
+      return Kv.by("rows", rows).set("sheetNames", sheetNames).set("barcoderows", barCoderows).set("barcodesheetNames", barCodesheetNames);
 
     }
-
-    // 如果 rows 的数量不是 30 的整数倍，将剩余的数据添加到 datas 中
-    Kv remainData = Kv.create();
-
-    if (CollUtil.isNotEmpty(leftDatas)) {
-      remainData.set("leftDatas", leftDatas);
-    }
-    if (CollUtil.isNotEmpty(rightDatas)) {
-      remainData.set("rightDatas", rightDatas);
-    }
-
-    if (MapUtil.isNotEmpty(remainData)) {
-      rows.add(remainData);
-    }
-    return Kv.by("rows", rows).set("sheetNames", sheetNames);
   }
 
   public Ret updateOrderBatch(Long subcontractOrderMId, Long id, String cVersion, BigDecimal qty) {

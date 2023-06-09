@@ -316,7 +316,20 @@ public class MonthordermService extends BaseService<MonthOrderM> {
     }
 
     public Ret withdraw(Long iautoid) {
-        
+        tx(() -> {
+
+            MonthOrderM monthOrderM = findById(iautoid);
+            formApprovalService.withdraw(table(), monthOrderM.getIAutoId(), () -> null, () -> {
+                monthOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                monthOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+                ValidationUtils.isTrue(monthOrderM.update(), "撤回失败");
+
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
+                return null;
+            });
+            return true;
+        });
         return SUCCESS;
     }
     

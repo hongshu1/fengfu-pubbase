@@ -743,6 +743,12 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
                 }
             }
         }
+        if (annualplandQtyList.size() > 0){
+            ApsAnnualplandQty annualplandQty = annualplandQtyList.get(0);
+            if (annualplandQty.getIQty() == null){
+                annualplandQty.setIQty(0);
+            }
+        }
 
         tx(() -> {
             annualplanm.save();

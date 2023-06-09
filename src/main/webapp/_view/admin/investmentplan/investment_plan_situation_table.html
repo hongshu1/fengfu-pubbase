@@ -12,7 +12,7 @@
 			<td>${data.cassettypedesc}</td>
 			<td>${data.iitemyear}</td>
 			<td>$${data.isscheduled|isscheduled}</td>
-			<td>${data.itotalamountplan}</td>
+			<td>${data.itotalamountplan|kFormat}</td>
 			<td>$${data.ibudgettype1|iBudgetType1}</td>
 			<td>$${data.citemtype|cItemTypeSituation}</td>
 			<td>${data.cbudgettypedesc}</td>
@@ -45,6 +45,7 @@
                data-conditions-form="investmentSituationForm"
                data-rowtpl="jboltTable_rowtpl_situation_#(pageId)1"
                data-column-prepend="1:checkbox:true"
+               data-ajax-success-handler="ajaxSuccessHandler_situation"
                data-height="fill"
         >
             <thead class="fw_normal">
@@ -84,12 +85,7 @@
         </table>
 #define js()
 <script>
-function ajaxSuccessHandler_#(pageId)(table) {
-	   $('.jbolt_table').tablesMergeCell({
-	      cols: [1,2]
-	   })
-	   
-}
+
 </script>
 #end
 
