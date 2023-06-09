@@ -359,6 +359,7 @@
     }
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1,calcOnDemand: true});
     var excelIo = new GC.Spread.Excel.IO();
+    spread.options.referenceStyle = GC.Spread.Sheets.ReferenceStyle.r1c1
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取表单
@@ -366,10 +367,10 @@
     sheet.getRange(-1, -1,-1,-1).font('宋体 bold 10px');
     statusBar.bind(spread);//状态栏
     // spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
-    sheet.options.isProtected = true; // 开启工作表保护
-    sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
-    sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
-    sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
+    // sheet.options.isProtected = true; // 开启工作表保护
+    // sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+    // sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+    // sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
     var parmsDefault = {
         id:null,                //全局公共id
         level:'',               //排场层级
@@ -559,10 +560,20 @@
      */
     function initData(ilevel){
         spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
-        sheet.options.isProtected = true; // 开启工作表保护
-        sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
-        sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
-        sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
+        // var columnName = sheet.getColumnHeader(2);
+        // console.log(columnName); // 输出 C
+        //
+        // var colCount = sheet.getColumnCount();
+        // var columnNames = [];
+        // for (var i = 0; i < colCount; i++) {
+        //     columnNames.push(sheet.getColumnHeader(i));
+        // }
+        // console.log(columnNames); // 输出 ["A", "B", "C", "D", ...]
+        // sheet.options.isProtected = true; // 开启工作表保护
+        // sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+        // sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+        // sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
+
         let url = Api + `admin/scheduproductplanmonth/getScheduPlanMonthList?level=${ilevel==null||undefined?'1':ilevel}&startdate=${searchData.searchStartTime}&enddate=${searchData.searchEndTime}&cworkname=${searchData.cworkname}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`
         $.ajax({
             url,
@@ -628,6 +639,10 @@
                         let shiyongRow = 4;//计划使用行下标
                         let shiyongCol = 10;
                         let zaikuCol = 9;
+                        let B = 9;
+                        let Z = 10;
+                        let jihuaRow = 8;
+                        let jihuaCol = 10;
                         //渲染计划数据
                         for (var j = 0; j < parms['scheduplanmonth'][i].day.length; j++) {
                             if (i == 0) {
@@ -640,6 +655,15 @@
                                 //
                                 sheet.setValue(8, 9, parms['scheduplanmonth'][i].qiChuZaiKu);
                                 sheet.setValue(9, 9, parms['scheduplanmonth'][i].dayNum);
+                                let Num = sheet.getValue(9,9)
+                                let useArray = [];
+                                for (let k = 0; k < Num; k++) {
+                                    useArray.push(`R[-5]C[${k+1}]`)
+                                }
+                                //嵌入计划在库公式
+                                sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
+                                //嵌入在库天数公式
+                                sheet.setFormula(B,Z++,`=IF(${useArray[0]}:${useArray.length>1?useArray.length-1:useArray[0]}/RC[-${j+1}]=0,0,SUM(R[-1]C/(${useArray[0]}:${useArray.length>1?useArray.length-1:useArray[0]}/RC[-${j+1}])))`);
                             } else {
                                 sheet.setValue(6 * i + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].shiyong);
                                 sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, parms['scheduplanmonth'][i].day[j].one);
@@ -649,6 +673,17 @@
                                 sheet.setValue(6 * i + shiyongRow + 4, shiyongCol-1, parms['scheduplanmonth'][i].qiChuZaiKu);
                                 sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, parms['scheduplanmonth'][i].day[j].tianshu);
                                 sheet.setValue(6 * i + shiyongRow + 5, shiyongCol-1, parms['scheduplanmonth'][i].dayNum);
+
+                                let Num = sheet.getValue(6*i+9,9)
+                                console.log(Num)
+                                let useArray = [];
+                                for (let k = 0; k < Num; k++) {
+                                    useArray.push(`R[-5]C[${k+1}]`)
+                                }
+                                //嵌入计划在库公式
+                                sheet.setFormula(6*i+jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
+                                //嵌入在库天数公式
+                                sheet.setFormula(6*i+B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,(SUM(R[-1]C/${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`);
                             }
                             // 条件为false进入
                             if(!parms['scheduplanmonth'][i].day[j].lock){
@@ -726,17 +761,6 @@
     //         console.log(parms['scheduplanmonth'][i])
     //     }
     // });
-    //在库计划嵌入公式
-    function formula(){
-        // console.log("222222222222222222222")
-        // if(parms['scheduplanmonth']?.length>0){
-        //     for (let i = 0; i < parms['scheduplanmonth'].length; i++) {
-        //         console.log(i)
-        //     }
-        // }
-
-    }
-    formula()
     //获取表格中输入或修改的值
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
         // spreadSuspend();//暂停绘制
@@ -754,120 +778,120 @@
             date:colData[1][0],//获取当前年月
             day:colData[2][0],//日
         })
-        //嵌入计划在库公式
-        let colValue = sheet.getArray(0, col-1, sheet.getRowCount(), 1);//获取前一天的数据
-        let colNewValue = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取修改之后的最新列数据
-        let rowNewValue = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取修改之后的最新行数据
-        let valueIndex = 8;
-        if(rowData[0][7]=="计划使用"){
-            let B = 8;
-            let Z = 5;
-            let G = 6;
-            let T = 7;
-            let A = 9;
-            let index = parms.cinvCode.findIndex((item)=>item==rowNewValue[0][4]);
-            if(index==0){
-                // console.log(colValue)
-                let zaiKu = parms.activeSheet.getValue(B,col-1);
-                // console.log(zaiKu)
-                // console.log("=SUM(R"+(8)+"C"+(10)+":R"+(formularow+1)+"C"+(parms.columnindex+parms.dataStartCol+parms.monthday[0]-1+1)+")")
-                // parms.activeSheet.getCell(row+4,col).formula(`=SUM(${colValue[B][0]}+${colData[5][0]}+${colData[6][0]}+${colData[7][0]}-${colNewValue[row]})`).formatter('#,##0.00');
-                // parms.activeSheet.getCell(row+4,col).formula(`=SUM(R${}+${colData[5][0]}+${colData[6][0]}+${colData[7][0]}-${colNewValue[row]})`).formatter('#,##0.00');
-                let plan1 = sheet.getValue(row+4,col);//获取当天的计划在库
-                let plan3 = sheet.getArray(0, 9, sheet.getRowCount(), 1);//获取后台返回的num
-                const plan2=[];//存储后面天数的计划使用
-                let L=0;
-                for (let i = 1; i <= plan3[6*index+A][0]; i++) {
-                    plan2.push(parseInt(sheet.getValue(row,col+i)));
-                }
-                for (const val of plan2) {
-                    L+=val;
-                }
-                parms.activeSheet.getCell(row+5,col).formula(`=IF(${L}/${plan3[9][0]}=0,0,SUM(${plan1}/(${L}/${plan3[9][0]})))`).formatter('#,##0.00');
-
-            }else{
-                parms.activeSheet.getCell(row+4,col).formula(`=SUM(${colValue[6*index+B][0]}+${colData[6*index+Z][0]}+${colData[6*index+G][0]}+${colData[6*index+T][0]}-${colNewValue[row][0]})`).formatter('#,##0.00');
-                let plan1 = sheet.getValue(row+4,col);//获取前一天的计划在库
-                const plan3 = sheet.getArray(0, 9, sheet.getRowCount(), 1);//获取后台返回的num
-                let plan2=[];//存储所需计划天数的值
-                let L=0;//存储计划天数的总值
-                console.log(plan3[6*index+A][0])
-                for (let i = 1; i <= plan3[6*index+A][0]; i++) {
-                    plan2.push(parseInt(sheet.getValue(row,col+i)));
-                    console.log(sheet.getValue(row,col+i))
-                }
-                for (const val of plan2) {
-                    L+=val;
-                }
-                parms.activeSheet.getCell(row+5,col).formula(`=IF(${L}/${plan3[6*index+A][0]}=0,0,SUM(${plan1}/(${L}/${plan3[6*index+A][0]})))`).formatter('#,##0.00');
-
-            }
-            parms.tableData.push({
-                plan:"计划在库",//计划
-                cInvCode:rowNewValue[0][8],//存户编码
-                newValue:sheet.getValue(row+4,col),//修改后的值
-                date:colData[1][0],//获取当前年月
-                day:colData[2][0],//日
-            })
-        }else if(rowData[0][7]=="计划/1S"){
-            let index = parms.cinvCode.findIndex((item)=>item==rowNewValue[0][8]);
-            let B = 8;
-            let Z = 5;
-            let G = 6;
-            let T = 7;
-            if(index==0){
-                parms.activeSheet.getCell(row+3,col).formula(`=SUM(${colValue[B][0]}+${colData[5][0]}+${colData[6][0]}+${colData[7][0]}-${colNewValue[4][0]})`).formatter('#,##0.00');
-            }else{
-                parms.activeSheet.getCell(row+3,col).formula(`=SUM(${colValue[6*index+B][0]}+${colData[6*index+Z][0]}+${colData[6*index+G][0]}+${colData[6*index+T][0]}-${colNewValue[row][0]})`).formatter('#,##0.00');
-            }
-            parms.tableData.push({
-                plan:"计划在库",//计划
-                cInvCode:rowNewValue[0][8],//存户编码
-                newValue:sheet.getValue(row+3,col),//修改后的值
-                date:colData[1][0],//获取当前年月
-                day:colData[2][0],//日
-            })
-        }else if(rowData[0][7]=="计划/2S"){
-            let index = parms.cinvCode.findIndex((item)=>item==rowNewValue[0][8]);
-            let B = 8;
-            let Z = 5;
-            let G = 6;
-            let T = 7;
-            if(index==0){
-                parms.activeSheet.getCell(row+2,col).formula(`=SUM(${colValue[B][0]}+${colData[5][0]}+${colData[6][0]}+${colData[7][0]}-${colNewValue[4][0]})`).formatter('#,##0.00');
-            }else{
-                parms.activeSheet.getCell(row+2,col).formula(`=SUM(${colValue[6*index+B][0]}+${colData[6*index+Z][0]}+${colData[6*index+G][0]}+${colData[6*index+T][0]}-${colNewValue[row][0]})`).formatter('#,##0.00');
-            }
-            parms.tableData.push({
-                plan:"计划在库",//计划
-                cInvCode:rowNewValue[0][8],//存户编码
-                newValue:sheet.getValue(row+2,col),//修改后的值
-                date:colData[1][0],//获取当前年月
-                day:colData[2][0],//日
-            })
-        }else if(rowData[0][7]=="计划/3S"){
-            let index = parms.cinvCode.findIndex((item)=>item==rowNewValue[0][8]);
-            let B = 8;
-            let Z = 5;
-            let G = 6;
-            let T = 7;
-            if(index==0){
-                parms.activeSheet.getCell(row+1,col).formula(`=SUM(${colValue[B][0]}+${colData[5][0]}+${colData[6][0]}+${colData[7][0]}-${colNewValue[4][0]})`).formatter('#,##0.00');
-            }else{
-                parms.activeSheet.getCell(row+1,col).formula(`=SUM(${colValue[6*index+B][0]}+${colData[6*index+Z][0]}+${colData[6*index+G][0]}+${colData[6*index+T][0]}-${colNewValue[row][0]})`).formatter('#,##0.00');
-            }
-            parms.tableData.push({
-                plan:"计划在库",//计划
-                cInvCode:rowNewValue[0][8],//存户编码
-                newValue:sheet.getValue(row+1,col),//修改后的值
-                date:colData[1][0],//获取当前年月
-                day:colData[2][0],//日
-            })
-        }
+        // //嵌入计划在库公式
+        // let colValue = sheet.getArray(0, col-1, sheet.getRowCount(), 1);//获取前一天的数据
+        // let colNewValue = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取修改之后的最新列数据
+        // let rowNewValue = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取修改之后的最新行数据
+        // let valueIndex = 8;
+        // if(rowData[0][7]=="计划使用"){
+        //     let B = 8;
+        //     let Z = 5;
+        //     let G = 6;
+        //     let T = 7;
+        //     let A = 9;
+        //     let index = parms.cinvCode.findIndex((item)=>item==rowNewValue[0][4]);
+        //     if(index==0){
+        //         // console.log(colValue)
+        //         let zaiKu = parms.activeSheet.getValue(B,col-1);
+        //         // console.log(zaiKu)
+        //         // console.log("=SUM(R"+(8)+"C"+(9)+":R"+(5)+"C"+(9)+")")
+        //         // console.log(parms.activeSheet.getValue("R"+(8)+"C"+(9)+":R"+(5)+"C"+(9)+""))
+        //         // parms.activeSheet.getCell(row+4,col).formula(`=SUM(${colValue[B][0]}+${colData[5][0]}+${colData[6][0]}+${colData[7][0]}-${colNewValue[row]})`).formatter('#,##0.00');
+        //         // parms.activeSheet.getCell(row+4,col).formula("=SUM(R"+(8)+"C"+(9)+":R"+(5)+"C"+(9)+")").formatter('#,##0.00');
+        //         let plan1 = sheet.getValue(row+4,col);//获取当天的计划在库
+        //         let plan3 = sheet.getArray(0, 9, sheet.getRowCount(), 1);//获取后台返回的num
+        //         const plan2=[];//存储后面天数的计划使用
+        //         let L=0;
+        //         for (let i = 1; i <= plan3[6*index+A][0]; i++) {
+        //             plan2.push(parseInt(sheet.getValue(row,col+i)));
+        //         }
+        //         for (const val of plan2) {
+        //             L+=val;
+        //         }
+        //         parms.activeSheet.getCell(row+5,col).formula(`=IF(${L}/${plan3[9][0]}=0,0,SUM(${plan1}/(${L}/${plan3[9][0]})))`).formatter('#,##0.00');
+        //
+        //     }else{
+        //         parms.activeSheet.getCell(row+4,col).formula(`=SUM(${colValue[6*index+B][0]}+${colData[6*index+Z][0]}+${colData[6*index+G][0]}+${colData[6*index+T][0]}-${colNewValue[row][0]})`).formatter('#,##0.00');
+        //         let plan1 = sheet.getValue(row+4,col);//获取前一天的计划在库
+        //         const plan3 = sheet.getArray(0, 9, sheet.getRowCount(), 1);//获取后台返回的num
+        //         let plan2=[];//存储所需计划天数的值
+        //         let L=0;//存储计划天数的总值
+        //         console.log(plan3[6*index+A][0])
+        //         for (let i = 1; i <= plan3[6*index+A][0]; i++) {
+        //             plan2.push(parseInt(sheet.getValue(row,col+i)));
+        //             console.log(sheet.getValue(row,col+i))
+        //         }
+        //         for (const val of plan2) {
+        //             L+=val;
+        //         }
+        //         parms.activeSheet.getCell(row+5,col).formula(`=IF(${L}/${plan3[6*index+A][0]}=0,0,SUM(${plan1}/(${L}/${plan3[6*index+A][0]})))`).formatter('#,##0.00');
+        //
+        //     }
+        //     parms.tableData.push({
+        //         plan:"计划在库",//计划
+        //         cInvCode:rowNewValue[0][8],//存户编码
+        //         newValue:sheet.getValue(row+4,col),//修改后的值
+        //         date:colData[1][0],//获取当前年月
+        //         day:colData[2][0],//日
+        //     })
+        // }else if(rowData[0][7]=="计划/1S"){
+        //     let index = parms.cinvCode.findIndex((item)=>item==rowNewValue[0][8]);
+        //     let B = 8;
+        //     let Z = 5;
+        //     let G = 6;
+        //     let T = 7;
+        //     if(index==0){
+        //         parms.activeSheet.getCell(row+3,col).formula(`=SUM(${colValue[B][0]}+${colData[5][0]}+${colData[6][0]}+${colData[7][0]}-${colNewValue[4][0]})`).formatter('#,##0.00');
+        //     }else{
+        //         parms.activeSheet.getCell(row+3,col).formula(`=SUM(${colValue[6*index+B][0]}+${colData[6*index+Z][0]}+${colData[6*index+G][0]}+${colData[6*index+T][0]}-${colNewValue[row][0]})`).formatter('#,##0.00');
+        //     }
+        //     parms.tableData.push({
+        //         plan:"计划在库",//计划
+        //         cInvCode:rowNewValue[0][8],//存户编码
+        //         newValue:sheet.getValue(row+3,col),//修改后的值
+        //         date:colData[1][0],//获取当前年月
+        //         day:colData[2][0],//日
+        //     })
+        // }else if(rowData[0][7]=="计划/2S"){
+        //     let index = parms.cinvCode.findIndex((item)=>item==rowNewValue[0][8]);
+        //     let B = 8;
+        //     let Z = 5;
+        //     let G = 6;
+        //     let T = 7;
+        //     if(index==0){
+        //         parms.activeSheet.getCell(row+2,col).formula(`=SUM(${colValue[B][0]}+${colData[5][0]}+${colData[6][0]}+${colData[7][0]}-${colNewValue[4][0]})`).formatter('#,##0.00');
+        //     }else{
+        //         parms.activeSheet.getCell(row+2,col).formula(`=SUM(${colValue[6*index+B][0]}+${colData[6*index+Z][0]}+${colData[6*index+G][0]}+${colData[6*index+T][0]}-${colNewValue[row][0]})`).formatter('#,##0.00');
+        //     }
+        //     parms.tableData.push({
+        //         plan:"计划在库",//计划
+        //         cInvCode:rowNewValue[0][8],//存户编码
+        //         newValue:sheet.getValue(row+2,col),//修改后的值
+        //         date:colData[1][0],//获取当前年月
+        //         day:colData[2][0],//日
+        //     })
+        // }else if(rowData[0][7]=="计划/3S"){
+        //     let index = parms.cinvCode.findIndex((item)=>item==rowNewValue[0][8]);
+        //     let B = 8;
+        //     let Z = 5;
+        //     let G = 6;
+        //     let T = 7;
+        //     if(index==0){
+        //         parms.activeSheet.getCell(row+1,col).formula(`=SUM(${colValue[B][0]}+${colData[5][0]}+${colData[6][0]}+${colData[7][0]}-${colNewValue[4][0]})`).formatter('#,##0.00');
+        //     }else{
+        //         parms.activeSheet.getCell(row+1,col).formula(`=SUM(${colValue[6*index+B][0]}+${colData[6*index+Z][0]}+${colData[6*index+G][0]}+${colData[6*index+T][0]}-${colNewValue[row][0]})`).formatter('#,##0.00');
+        //     }
+        //     parms.tableData.push({
+        //         plan:"计划在库",//计划
+        //         cInvCode:rowNewValue[0][8],//存户编码
+        //         newValue:sheet.getValue(row+1,col),//修改后的值
+        //         date:colData[1][0],//获取当前年月
+        //         day:colData[2][0],//日
+        //     })
+        // }
         // console.log(parms.tableData)
         // sheet.recalAll();
         // spreadResume();// 恢复绘制
-        console.log(parms.activeSheet.getValue(8,10),"66666")
     });
     /**
      * 打开弹出层
