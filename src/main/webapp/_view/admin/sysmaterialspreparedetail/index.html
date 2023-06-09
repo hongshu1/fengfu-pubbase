@@ -21,11 +21,14 @@
                     <!--                            name="billno"-->
                     <!--                            style="background-color: white"-->
                     <!--                    ></select>-->
-                    <input type="text" class="form-control ml-2" placeholder="请点击选择备料单号"
+                    <input type="text"
+                           class="form-control ml-2"
+                           placeholder="请点击选择备料单号"
                            maxlength="40"
                            name="billno"
                            value=""
-                           data-dialogbtn data-area="80%,60%"
+                           data-dialogbtn
+                           data-area="80%,60%"
                            data-handler="jboltTablePageToFirst"
                            id="billno"
                            data-title="选择备料单"
@@ -33,19 +36,29 @@
                            readonly
                            style="background-color: white"
                     />
-<!--                    <input class="form-control"-->
-<!--                           data-autoload-->
-<!--                           data-url="admin/dictionary/options?key=null"-->
-<!--                           data-text="=现品票扫码="-->
-<!--                           data-value=""-->
-<!--                           data-value-attr="sn"-->
-<!--                           placeholder="现品票扫码"-->
-<!--                    ></input>-->
-                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
-                           autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
-                           id="barcode" name="barcode" value="#(barcode??)"/>
+                    <!--                    <input class="form-control"-->
+                    <!--                           data-autoload-->
+                    <!--                           data-url="admin/dictionary/options?key=null"-->
+                    <!--                           data-text="=现品票扫码="-->
+                    <!--                           data-value=""-->
+                    <!--                           data-value-attr="sn"-->
+                    <!--                           placeholder="现品票扫码"-->
+                    <!--                    ></input>-->
+                    <input type="text"
+                           data-notnull="true"
+                           data-tips="请输入现品票扫码"
+                           data-with-clearbtn="true"
+                           autocomplete="off"
+                           class="form-control"
+                           placeholder="请输入现品票扫码"
+                           maxlength="40"
+                           id="barcode"
+                           name="barcode"
+                           value="#(barcode??)"
+                    />
                     <div class="btn-group text-center mx-1">
-                        <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
+                        <button type="submit" class="btn btn-outline-primary" onclick="barcode()"><i class="fa fa-search"></i> 查询</button>
+                        <button onclick="barcode()"><i class="fa fa-search"></i> 查</button>
                         <button type="button" onclick="form.reset();refreshJBoltTable(this);"
                                 class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
                         </button>
@@ -165,14 +178,14 @@
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.现品票}</td>
-<td>${data.存货编码}</td>
-<td>${data.客户部番}</td>
-<td>${data.部品名称}</td>
-<td>${data.规格}</td>
-<td>${data.主计量单位}</td>
-<td>${data.数量}</td>
-<td>${data.批次号}</td>
+<td>${data.barcode}</td>
+<td>${data.invcode}</td>
+<td>${data.cinvcode1}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cinvstd}</td>
+<td>${data.iinventoryuomid1}</td>
+<td>${data.qty}</td>
+<td>${data.batch}</td>
 <td>${data.生产日期}</td>
 </tr>
 {@/each}
@@ -189,13 +202,13 @@
                     </div>
                 </div>
             </div>
-            <table class="jbolt_table jbolt_main_table  table-center "
+            <table class="jbolt_table jbolt_main_table table-center"
                    data-jbolttable
                    data-width="fill"
                    data-height="39%"
                    data-ajax="true"
                    data-conditions-form="SysMaterialspreparedetail_form_#(pageId)"
-                   data-url="admin/sysMaterialspreparedetail/getBarcode"
+                   data-url="admin/sysMaterialspreparedetail/barcode"
                    data-rowtpl="SysMaterialsprepare1_tpl_#(pageId)"
                    data-copy-to-excel="false"
                    data-page="SysMaterialsprepare_page"
@@ -228,10 +241,28 @@
 
 
     function barcode() {
-        LayerMsgBox.loading("执行中......",2000);
+        //测试
+        console.log(123);
+        LayerMsgBox.loading("执行中......", 2000);
         var barcode = $("#barcode").val();
+        var data = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
+        let array = new Array();
+        if (null != data) {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].barcode == barcode) {
+                    LayerMsgBox.alert("条码已重复")
+                    return;
+                }
+                array.push("'" + data[i].barcode + "'");
+            }
+            let codes = array.join(',');
+            $("#detailHidden").val(codes);
+        } else {
+            $("#detailHidden").val('');
+        }
+
         if (barcode) {
-            Ajax.post("admin/sysMaterialspreparedetail/barcode", {"barcode": barcode},
+            Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode},
                 function (res) {
                     jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
                     $("#barcode").val('');

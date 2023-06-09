@@ -121,9 +121,9 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 	}
 
 	public void getBarcode() {
-		String invcode = get("invcode");
+		String barcode = get("barcode");
 		Kv kv = new Kv();
-		kv.set("invcode", invcode == null ? "" : invcode);
+		kv.set("barcode", barcode == null ? "" : barcode);
 		renderJsonData(service.getBarcode(getPageNumber(), getPageSize(), kv));
 	}
 	public void barcode(String barcode) {

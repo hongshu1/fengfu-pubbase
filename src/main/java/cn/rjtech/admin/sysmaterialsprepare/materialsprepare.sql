@@ -31,8 +31,7 @@ FROM T_Sys_MaterialsPrepare mp
          LEFT JOIN Bd_WorkShiftM wsm ON md.iWorkShiftMid = wsm.iAutoId
          LEFT JOIN Bd_Inventory it ON md.iInventoryId = it.iAutoId
          LEFT JOIN Bd_Uom uom ON it.iManufactureUomId = uom.iAutoId
-WHERE 1 = 1
-  #if(billno)
+WHERE 1 = 1 #if(billno)
   AND BillNo = #para(billno)
   #end
   #if(cmodocno)
@@ -66,7 +65,6 @@ ORDER BY mp.CreateDate DESC
     #end
 
 
-
     #sql("recpordetail")
 SELECT mp.BillNo,
        mp.SourceBillID,
@@ -77,12 +75,11 @@ SELECT mp.BillNo,
        it.cInvStd,
        uom.cUomName
 FROM T_Sys_MaterialsPrepareDetail mpd
-         LEFT JOIN T_Sys_MaterialsPrepare mp ON mpd.MasID=mp.AutoID
+         LEFT JOIN T_Sys_MaterialsPrepare mp ON mpd.MasID = mp.AutoID
          LEFT JOIN Bd_Inventory it ON mpd.InvCode = it.cInvCode
          LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1 = uom.iAutoId
 WHERE 1 = 1
-  AND mp.BillNo = '#(billno)'
-    #end
+  AND mp.BillNo = '#(billno)' #end
 
 
 
@@ -110,8 +107,7 @@ FROM T_Sys_MaterialsPrepare mp
          LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId = irc.iInventoryRoutingId
          LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId = iri.iInventoryRoutingConfigId
 WHERE 1 = 1
-AND mp.BillNo is not null
-  #if(startTime)
+  AND mp.BillNo is not null #if(startTime)
   AND dPlanDate >= #para(startTime)
   #end
   #if(endTime)
@@ -183,8 +179,7 @@ FROM T_Sys_MaterialsPrepare mp
          LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId = irc.iInventoryRoutingId
          LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId = iri.iInventoryRoutingConfigId
 WHERE 1 = 1
-  AND BillNo = '#(billno)'
-  #if(cmodocno)
+  AND BillNo = '#(billno)' #if(cmodocno)
   AND cMoDocNo = #para(cmodocno)
   #end
   #if(cinvcode)
@@ -231,11 +226,10 @@ FROM Mo_MoDoc md
          LEFT JOIN Bd_Department dpm ON md.iDepartmentId = dpm.iAutoId
          LEFT JOIN Bd_WorkShiftM wsm ON md.iWorkShiftMid = wsm.iAutoId
          LEFT JOIN Bd_WorkRegionM wrm ON md.iWorkRegionMid = wrm.iAutoId
-         LEFT JOIN Bd_Inventory it ON md.iInventoryId=it.iAutoId
+         LEFT JOIN Bd_Inventory it ON md.iInventoryId = it.iAutoId
          LEFT JOIN Bd_Uom uom ON it.iManufactureUomId = uom.iAutoId
 WHERE 1 = 1
-  AND md.iStatus = 2
-  #if(dplandate)
+  AND md.iStatus = 2 #if(dplandate)
   AND dPlanDate = #para(dplandate)
   #end
   #if(startTime)
@@ -298,45 +292,55 @@ SELECT mpd.InvCode,
        it.cInvStd,
        uom.cUomName
 FROM T_Sys_MaterialsPrepareDetail mpd
-LEFT JOIN T_Sys_MaterialsPrepare mp ON mpd.MasID=mp.AutoID
-LEFT JOIN Bd_Inventory it ON mpd.InvCode = it.cInvCode
-LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1 = uom.iAutoId
+         LEFT JOIN T_Sys_MaterialsPrepare mp ON mpd.MasID = mp.AutoID
+         LEFT JOIN Bd_Inventory it ON mpd.InvCode = it.cInvCode
+         LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1 = uom.iAutoId
 WHERE 1 = 1
   AND mp.BillNo = '#(billno)'
-  AND mpd.InvCode is not null
-   #end
+  AND mpd.InvCode is not null #end
 
 
 
 #sql("getDetaildatas")
 SELECT mpd.InvCode,
-       mpd.Qty,CASE mpd.State
-                   WHEN 1 THEN
-                       '已扫描'
-                   WHEN 2 THEN
-                       '未扫描'
+       mpd.Qty,
+       CASE mpd.State
+           WHEN 1 THEN
+               '已扫描'
+           WHEN 2 THEN
+               '未扫描'
            END AS statename,
        it.cInvCode1,
        it.cInvName1,
        it.cInvStd,
        uom.cUomName
 FROM T_Sys_MaterialsPrepareDetail mpd
-         LEFT JOIN T_Sys_MaterialsPrepare mp ON mpd.MasID=mp.AutoID
+         LEFT JOIN T_Sys_MaterialsPrepare mp ON mpd.MasID = mp.AutoID
          LEFT JOIN Bd_Inventory it ON mpd.InvCode = it.cInvCode
          LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1 = uom.iAutoId
 WHERE 1 = 1
   AND mp.BillNo = '#(billno)'
-  AND mpd.InvCode is not null
-   #end
+  AND mpd.InvCode is not null #end
 
 
 
   #sql("getBarcodedatas")
-SELECT *
-FROM T_Sys_StockBarcodePosition sbp
-         LEFT JOIN Bd_Warehouse wh ON sbp.WhCode = wh.cWhCode
-WHERE 1 = 1
-  AND sbp.InvCode = '#(invcode)' #end
+SELECT
+    sl.AutoID,
+    sl.Barcode,
+    sl.InvCode,
+    it.iAutoId,
+    it.cInvCode1,
+    it.cInvName1,
+    it.cInvStd,
+    it.iInventoryUomId1,
+    sl.Qty,
+    sl.Batch
+FROM
+    T_Sys_ScanLog sl
+        LEFT JOIN Bd_Inventory it ON sl.InvCode= it.cInvCode
+WHERE
+        sl.Barcode= '#(barcode)' #end
 
 
 
@@ -370,8 +374,7 @@ WHERE wsm.isDeleted = '0' #if(isenabled)
 #sql("barcodeDatas")
 SELECT *
 FROM PS_SubcontractOrderDBatch
-WHERE isEffective = 1
-    #if(barcode)
+WHERE isEffective = 1 #if(barcode)
 		and Barcode = #para(barcode)
 	#end
 #end
