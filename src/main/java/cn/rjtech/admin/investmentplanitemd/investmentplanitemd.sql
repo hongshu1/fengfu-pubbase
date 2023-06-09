@@ -36,7 +36,7 @@ SELECT
     pi.cedittype,
     pi.cmemo,
     pi.iitemyear,
-    (pi.itaxrate*100) itaxrate,
+    pi.itaxrate,
     pm.iauditstatus,
     MIN ( CASE iperiodnum WHEN 1 THEN cperiodprogress END ) cperiodprogress1,
     MIN ( CASE iperiodnum WHEN 1 THEN concat ( YEAR ( dperioddate ), '-', MONTH ( dperioddate )) END ) dperioddate1,
