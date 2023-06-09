@@ -304,9 +304,15 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         return SUCCESS;
     }
 
+    /**
+     * 撤回
+     * @param iAutoId
+     * @return
+     */
     public Ret withdraw(Long iAutoId) {
         tx(() -> {
             AnnualOrderM annualOrderM = findById(iAutoId);
+            ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), annualOrderM.getIOrderStatus(), "只允许待审核状态订单撤回");
             formApprovalService.withdraw(table(), annualOrderM.getIAutoId(), () -> null, () -> {
                 annualOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
                 annualOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
@@ -320,5 +326,22 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         });
         return SUCCESS;
 
+    }
+
+    /**
+     * 审批不通过
+     * @param iAutoId
+     * @return
+     */
+    public Ret reject(Long iAutoId) {
+        tx(() -> {
+            formApprovalService.rejectByStatus(table(), iAutoId, () -> null, () -> {
+                ValidationUtils.isTrue(updateColumn(iAutoId, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+                return null;
+            },"iAutoId");
+
+            return true;
+        });
+        return SUCCESS;
     }
 }

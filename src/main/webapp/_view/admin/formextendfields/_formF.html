@@ -11,55 +11,55 @@
             <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
         </div>
     </div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">系统表单ID:</label>
-
-<div class="col-2">
-    <select class="form-control"
-            data-autoload
-            data-url="admin/permission/optionsFormId"
-            data-select-type="select1"
-            name="formExtendFields.iFormId"
-            data-text-attr="title"
-            data-value-attr="id"
-            data-rule="require"
-            data-select="#(formExtendFields.iFormId??)"
-    ></select>
-</div>
-</div>
 <!--<div class="form-group row" >-->
-<!--<label class="col-sm-2 col-form-label">系统字段ID:</label>-->
+<!--<label class="col-sm-2 col-form-label">系统表单ID:</label>-->
 
 <!--<div class="col-2">-->
     <!--<select class="form-control"-->
             <!--data-autoload-->
-            <!--data-url="admin/permission/optionsFormFieldId"-->
+            <!--data-url="admin/permission/optionsFormId"-->
             <!--data-select-type="select1"-->
-            <!--name="formExtendFields.iFormFieldId"-->
+            <!--name="formExtendFields.iFormId"-->
             <!--data-text-attr="title"-->
             <!--data-value-attr="id"-->
-            <!--data-select="#(formExtendFields.iFormFieldId??)"-->
+            <!--data-select="#(formExtendFields.iFormId??)"-->
     <!--&gt;</select>-->
 <!--</div>-->
 <!--</div>-->
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">系统字段ID:</label>
+
+<div class="col-2">
+    <select class="form-control"
+            data-autoload
+            data-url="admin/permission/optionsFormFieldId"
+            data-select-type="select1"
+            name="formExtendFields.iFormFieldId"
+            data-text-attr="title"
+            data-value-attr="id"
+            data-rule="require"
+            data-select="#(formExtendFields.iFormFieldId??)"
+    ></select>
+</div>
+</div>
 <!--<div class="form-group row" >-->
 <!--<label class="col-sm-2 col-form-label">系统字段编码:</label>-->
 <!--<div class="col-2">-->
     <!--<input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入系统字段编码" maxlength="40" name="formExtendFields.cFieldCode" value="#(formExtendFields.cFieldCode??)"/>-->
 <!--</div>-->
 <!--</div>-->
-    <!--<div class="form-group row"-->
-         <!--data-radio-->
-         <!--data-name="formExtendFields.iPosition"-->
-         <!--data-url="admin/dictionary/options?key=visible_position"-->
-         <!--data-value-attr="sn"-->
-         <!--data-label="显示位置:"-->
-         <!--data-rule="require"-->
-         <!--data-width="col-sm-2,col-5"-->
-         <!--data-value="#(formExtendFields.iPosition??)"-->
-         <!--data-inline="true"-->
-    <!--&gt;-->
-    <!--</div>-->
+    <div class="form-group row"
+         data-radio
+         data-name="formExtendFields.iPosition"
+         data-url="admin/dictionary/options?key=visible_position"
+         data-value-attr="sn"
+         data-label="显示位置:"
+         data-rule="require"
+         data-width="col-sm-2,col-5"
+         data-value="#(formExtendFields.iPosition??)"
+         data-inline="true"
+    >
+    </div>
 
     <div class="form-group row" >
 <label class="col-sm-2 col-form-label">系统字段名称:</label>
@@ -216,14 +216,14 @@ data-inline="true"
                 <input  id="iSource2" type="radio" onclick="sethid2(2)" name="formExtendFields.iSource" value="2"/>
                 <label for="iSource2">枚举引用</label>
             </div>
-            <!--<div class="radio radio-primary  radio-inline">-->
-                <!--<input  id="iSource3" type="radio" onclick="sethid2(3)" name="formExtendFields.iSource" value="3"/>-->
-                <!--<label for="iSource3">图片上传</label>-->
-            <!--</div>-->
-            <!--<div class="radio radio-primary  radio-inline">-->
-                <!--<input  id="iSource4" type="radio" onclick="sethid2(4)" name="formExtendFields.iSource" value="4"/>-->
-                <!--<label for="iSource4">附件上传</label>-->
-            <!--</div>-->
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iSource3" type="radio" onclick="sethid2(3)" name="formExtendFields.iSource" value="3"/>
+                <label for="iSource3">图片上传</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input  id="iSource4" type="radio" onclick="sethid2(4)" name="formExtendFields.iSource" value="4"/>
+                <label for="iSource4">附件上传</label>
+            </div>
         </div>
     </div>
 

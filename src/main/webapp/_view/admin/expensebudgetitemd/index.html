@@ -5,14 +5,14 @@
 
 <div class="jbolt_page_title">
 		<div class="row">
-			<div class="col-md-auto text-left">
-				<form class="form-inline" id="expenseBudgetItemdForm_#(pageId)"   onsubmit="return false;" method="post">
+			<div class="col-md-auto">
+				<form class="form-inline text-left" id="expenseBudgetItemdForm_#(pageId)"   onsubmit="return false;" method="post">
 					<select class="form-control"
 							data-select-type="select2"
 							name="cdepcode"
 							data-autoload
 							data-tips="u8部门"
-							data-url="admin/department/treeDatasForProposalSystem?isProposal=true"
+							data-url="admin/department/treeDatas"
 							data-text="=u8部门="
 							data-text-attr="cdepname"
 							data-value-attr="cdepcode"
@@ -106,56 +106,56 @@
 <td>$${data.islargeamountexpense|isLargeAmountExpense}</td>
 <td>${data.cuse}</td>
 <td>${data.cmemo}</td>
-<td>${data.iprice}</td>
+<td>${data.iprice|kFormat}</td>
 <td>${data.cunit}</td>
 <td>${data.previousremain}</td>
 <td>${data.icarryforward}</td>
 <td>${data.previousyearmounthquantity8}</td>
-<td>${data.previousyearmounthamount8}</td>
+<td>${data.previousyearmounthamount8|kFormat}</td>
 <td>${data.previousyearmounthquantity9}</td>
-<td>${data.previousyearmounthamount9}</td>
+<td>${data.previousyearmounthamount9|kFormat}</td>
 <td>${data.previousyearmounthquantity10}</td>
-<td>${data.previousyearmounthamount10}</td>
+<td>${data.previousyearmounthamount10|kFormat}</td>
 <td>${data.previousyearmounthquantity11}</td>
-<td>${data.previousyearmounthamount11}</td>
+<td>${data.previousyearmounthamount11|kFormat}</td>
 <td>${data.previousyearmounthquantity12}</td>
-<td>${data.previousyearmounthamount12}</td>
+<td>${data.previousyearmounthamount12|kFormat}</td>
 <td>${data.nowyearmounthquantity1}</td>
-<td>${data.nowyearmounthamount1}</td>
+<td>${data.nowyearmounthamount1|kFormat}</td>
 <td>${data.nowyearmounthquantity2}</td>
-<td>${data.nowyearmounthamount2}</td>
+<td>${data.nowyearmounthamount2|kFormat}</td>
 <td>${data.nowyearmounthquantity3}</td>
-<td>${data.nowyearmounthamount3}</td>
+<td>${data.nowyearmounthamount3|kFormat}</td>
 <td>${data.nowyearmounthquantity4}</td>
-<td>${data.nowyearmounthamount4}</td>
+<td>${data.nowyearmounthamount4|kFormat}</td>
 <td>${data.nowyearmounthquantity5}</td>
-<td>${data.nowyearmounthamount5}</td>
+<td>${data.nowyearmounthamount5|kFormat}</td>
 <td>${data.nowyearmounthquantity6}</td>
-<td>${data.nowyearmounthamount6}</td>
+<td>${data.nowyearmounthamount6|kFormat}</td>
 <td>${data.nowyearmounthquantity7}</td>
-<td>${data.nowyearmounthamount7}</td>
+<td>${data.nowyearmounthamount7|kFormat}</td>
 <td>${data.nowyearmounthquantity8}</td>
-<td>${data.nowyearmounthamount8}</td>
+<td>${data.nowyearmounthamount8|kFormat}</td>
 <td>${data.nowyearmounthquantity9}</td>
-<td>${data.nowyearmounthamount9}</td>
+<td>${data.nowyearmounthamount9|kFormat}</td>
 <td>${data.nowyearmounthquantity10}</td>
-<td>${data.nowyearmounthamount10}</td>
+<td>${data.nowyearmounthamount10|kFormat}</td>
 <td>${data.nowyearmounthquantity11}</td>
-<td>${data.nowyearmounthamount11}</td>
+<td>${data.nowyearmounthamount11|kFormat}</td>
 <td>${data.nowyearmounthquantity12}</td>
-<td>${data.nowyearmounthamount12}</td>
+<td>${data.nowyearmounthamount12|kFormat}</td>
 <td>${data.nextyearmounthquantity1}</td>
-<td>${data.nextyearmounthamount1}</td>
+<td>${data.nextyearmounthamount1|kFormat}</td>
 <td>${data.nextyearmounthquantity2}</td>
-<td>${data.nextyearmounthamount2}</td>
+<td>${data.nextyearmounthamount2|kFormat}</td>
 <td>${data.nextyearmounthquantity3}</td>
-<td>${data.nextyearmounthamount3}</td>
+<td>${data.nextyearmounthamount3|kFormat}</td>
 <td>${data.nextyearmounthquantity4}</td>
-<td>${data.nextyearmounthamount4}</td>
+<td>${data.nextyearmounthamount4|kFormat}</td>
 <td>${data.totalquantity1}</td>
-<td>${data.totalamount1}</td>
+<td>${data.totalamount1|kFormat}</td>
 <td>${data.totalquantity2}</td>
-<td>${data.totalamount2}</td>
+<td>${data.totalamount2|kFormat}</td>
 </tr>
 {@/each}
 </textarea>

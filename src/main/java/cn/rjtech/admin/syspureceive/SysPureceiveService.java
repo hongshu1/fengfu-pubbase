@@ -20,7 +20,7 @@ import cn.rjtech.admin.syspuinstore.SysPuinstoredetailService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AuditStateEnum;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -227,10 +227,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 sysotherin.setCreateDate(now);
                 sysotherin.setBillDate(DateUtil.formatDate(now));
                 sysotherin.setModifyPerson(user.getUsername());
-                sysotherin.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
+                sysotherin.setIAuditStatus(Integer.valueOf(AuditStatusEnum.NOT_AUDIT.getValue()));
                 sysotherin.setModifyDate(now);
                 sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
-                sysotherin.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
+                sysotherin.setIAuditStatus(Integer.valueOf(AuditStatusEnum.NOT_AUDIT.getValue()));
                 // 主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
             }
@@ -250,6 +250,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             deleteTableSubmitDatas(jBoltTable);
 
             if (ObjUtil.equals("submit", jBoltTable.getForm().getString("operationType"))) {
+                sysotherin.setIAuditStatus(Integer.valueOf(AuditStatusEnum.NOT_AUDIT.getValue()));
+
                 sysotherin.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
 
                 ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
@@ -510,7 +512,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 sysPureceive.setModifyDate(now);
                 if ("submit".equals(operationType)) {
                     // todo 后续业务逻辑确定是哪个状态
-                    sysPureceive.setIAuditStatus(Integer.valueOf(AuditStateEnum.AWAIT_AUDIT.getValue()));
+                    sysPureceive.setIAuditStatus(Integer.valueOf(AuditStatusEnum.AWAIT_AUDIT.getValue()));
                 }
                 // 主表修改
                 sysPureceive.update();
@@ -626,7 +628,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setModifyDate(now);
             sysPureceivedetail.setIsDeleted(false);
             //状态为保存状态的可以拆单 其他状态接是修改操作
-            if(AuditStateEnum.NOT_AUDIT.getValue().equals(sysPureceive.getIAuditStatus())){
+            if(String.valueOf(AuditStatusEnum.NOT_AUDIT.getValue()).equals(sysPureceive.getIAuditStatus())){
                 String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row, operationType, map);
                 sysPureceivedetail.setMasID(s);
             }
@@ -701,9 +703,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
         if ("submit".equals(operationType)) {
             // 待后续审批流修改状态
-            sysPureceive.setIAuditStatus(Integer.valueOf(AuditStateEnum.AWAIT_AUDIT.getValue()));
+            sysPureceive.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
         } else {
-            sysPureceive.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
+            sysPureceive.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
         }
 
         sysPureceive.setModifyDate(now);
@@ -757,7 +759,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
             // TODO 更新状态
             SysPureceive byId = findById(iautoid);
-            byId.setIAuditStatus(Integer.valueOf(AuditStateEnum.AWAIT_AUDIT.getValue()));
+            byId.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
             byId.update();
             return true;
         });
@@ -767,7 +769,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public Ret withdraw(Long iAutoId) {
         tx(() -> {
             SysPureceive byId = findById(iAutoId);
-            byId.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
+            byId.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
             byId.update();
             return true;
         });
@@ -785,7 +787,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             User user = JBoltUserKit.getUser();
             for (String s : split) {
                 SysPureceive byId = findById(s);
-                byId.setIAuditStatus(Integer.valueOf(AuditStateEnum.APPROVED.getValue()));
+                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
                 byId.update();
                 //根据id查出从表的数据，生成采购入库列表 一个收料单号对应一个入库单号。 排除是初物的数据
                 //根据条码查出 采购订单主表数据，添加到入库主表信息，然后加入从表数据（拆分 原则 是否初物字段）
@@ -801,7 +803,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                         if(once){
                             SysPuinstore sysPuinstore = syspuinstoreservice.findById(autoID);
                             sysPuinstore.setBillType(barcode.getStr("ipurchasetypeid"));
-                            sysPuinstore.setDeptCode(barcode.getStr("idepartmentid"));
+                            sysPuinstore.setDeptCode(barcode.getStr("cdepcode"));
                             sysPuinstore.setIBusType(Integer.valueOf(barcode.getStr("ibustype")));
                             sysPuinstore.setRdCode(barcode.getStr("scrdcode"));
                             syspuinstoreservice.update(sysPuinstore);
@@ -847,7 +849,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             String[] split = ids.split(",");
             for (String s : split) {
                 SysPureceive byId = findById(s);
-                byId.setIAuditStatus(Integer.valueOf(AuditStateEnum.REJECTED.getValue()));
+                byId.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
                 byId.update();
             }
             return true;
