@@ -135,3 +135,12 @@ where 1=1
   AND CHARINDEX(','+cast((select t1.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
 #end
 #end
+
+#sql("findPurchaseOrderDBatchByCBarcode")
+SELECT
+t1.iautoid as batchAutoid,t1.iPurchaseOrderDid,t1.iinventoryId,
+t2.cInvCode,t2.cInvName,t2.cInvName1,t2.cInvCode1,t2.cInvStd
+FROM PS_PurchaseOrderDBatch t1
+left join bd_inventory t2 on t1.iinventoryId = t1.iAutoId
+where 1=1 and t1.cbarcode=#para(cbarcode)
+#end

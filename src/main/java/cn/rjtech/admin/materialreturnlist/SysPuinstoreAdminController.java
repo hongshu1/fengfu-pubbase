@@ -8,8 +8,11 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -127,7 +130,15 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	 */
 	@UnCheck
 	public void barcodeDatas() {
-		renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()), null));
+
+		Kv kv = new Kv();
+		kv.setIfNotNull("autoid",get("autoid"));
+		kv.setIfNotNull("spottickets",get("spottickets"));
+		kv.setIfNotNull("q",get("q"));
+		kv.setIfNotNull("limit",getInt("limit", 10));
+		kv.setIfNotNull("orgCode",getOrgCode());
+
+		renderJsonData(service.getBarcodeDatas(kv));
 	}
 
 	/**
@@ -203,6 +214,18 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 
 	public void deleteList() {
 		renderJson(service.deleteList(get(0)));
+	}
+
+	/**
+	 * 根据条码带出其他数据
+	 */
+	@UnCheck
+	public void barcode(@Para(value = "barcode") String barcode,
+						@Para(value = "autoid") Long autoid,
+						@Para(value = "detailHidden") String detailHidden) {
+		ValidationUtils.notBlank(barcode, "请扫码");
+
+		renderJsonData(service.barcode(Kv.by("barcode", barcode).set("autoid",autoid).set("detailHidden",detailHidden)));
 	}
 
 
