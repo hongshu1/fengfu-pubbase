@@ -11,6 +11,7 @@ import cn.rjtech.admin.materialsout.MaterialsOutService;
 import cn.rjtech.admin.purchaseorderm.PurchaseOrderMService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
+import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
@@ -62,6 +63,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     private VendorService             vendorService;
     @Inject
     private PurchaseOrderMService     purchaseOrderMService;
+    @Inject
+    private UserThirdpartyService     userThirdpartyService;
 
     @Override
     protected int systemLogTargetType() {
@@ -414,7 +417,13 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         Record record = jBoltTable.getFormRecord();
         Record detailByParam = findSysPODetailByParam(getKv(record.get("billno"), record.get("sourcebillno")));
         String whcode = record.get("whcode");//仓库
-        tx(() -> {
+
+        List<Record> saveRecordList = jBoltTable.getSaveRecordList();
+        List<Record> updateRecordList = jBoltTable.getUpdateRecordList();
+        Record formRecord = jBoltTable.getFormRecord();
+
+
+        /*tx(() -> {
             //1、如果存在autoid，更新
             if (isOk(sysPuinstore.getAutoID())) {
                 //更新主表
@@ -490,7 +499,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                 //
             }
             return true;
-        });
+        });*/
         return SUCCESS;
     }
 
@@ -504,8 +513,10 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         }
         MaterialsOut materials = new MaterialsOut();
         materials.setAutoID(JBoltSnowflakeKit.me.nextId());
-        materials.setSourceBillType(detailByParam.getStr("sourcebilltype"));
-        materials.setSourceBillDid(detailByParam.getStr("sourcebilldid"));
+        if (detailByParam != null){
+            materials.setSourceBillType(detailByParam.getStr("sourcebilltype"));
+            materials.setSourceBillDid(detailByParam.getStr("sourcebilldid"));
+        }
         materials.setRdCode(puinstore.getRdCode());
         materials.setOrganizeCode(getOrgCode());
         materials.setBillNo(puinstore.getBillNo());
@@ -547,11 +558,11 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         puinstore.setBillType(record.get("billtype"));//采购类型
         puinstore.setOrganizeCode(getOrgCode());
         puinstore.setBillNo(record.get("billno"));
-        puinstore.setBillDate(detailByParam.getStr("billdate")); //单据日期
+        puinstore.setBillDate(puinstore.getBillDate()); //单据日期
         puinstore.setRdCode(record.get("rdcode"));
         puinstore.setDeptCode(record.get("deptcode"));
         puinstore.setSourceBillNo(record.get("sourcebillno"));//来源单号（订单号）
-        puinstore.setSourceBillID(detailByParam.getStr("sourcebillid"));//来源单据id
+        puinstore.setSourceBillID(puinstore.getSourceBillID());//来源单据id
         puinstore.setVenCode(record.get("vencode")); //供应商
         puinstore.setMemo(record.get("memo"));
         puinstore.setCreatePerson(JBoltUserKit.getUserName());

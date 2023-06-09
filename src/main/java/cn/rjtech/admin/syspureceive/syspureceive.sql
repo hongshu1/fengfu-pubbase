@@ -113,6 +113,7 @@ select top #(limit)
     b.cInvCode ,
     b.cInvCode1,
     b.cInvName1,
+	b.cInvName,
     a.dPlanDate as plandate,
     b.cInvStd as cinvstd,
     a.iQty as qty,
@@ -124,7 +125,8 @@ select top #(limit)
     d.iAutoId as SourceBillDid,
     m.iVendorId,
 	v.cVenCode as vencode,
-	v.cVenName as venname
+	v.cVenName as venname,
+	uom.cUomCode,uom.cUomName as purchasecuomname
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
@@ -132,6 +134,7 @@ LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode AND pd.isDeleted = '0'
 LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
+LEFT JOIN Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
 where a.isEffective = '1'
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
@@ -189,6 +192,9 @@ and p.cPTName like CONCAT('%', #para(cPTName), '%')
 select
     m.cOrderNo as sourcebillno,
     a.cBarcode as barcode,
+    a.cBarcode as spotticket,
+    b.cInvCode as invcode,
+    b.cinvname,
     b.cInvCode ,
     b.cInvCode1,
     b.cInvName1,
@@ -203,7 +209,8 @@ select
     d.iAutoId as SourceBillDid,
     m.iVendorId,
 	v.cVenCode as vencode,
-	v.cVenName as venname
+	v.cVenName as venname,
+    uom.cUomCode,uom.cUomName as purchasecuomname,uom.cUomName as  puunitname
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
@@ -211,6 +218,7 @@ LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
 LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode  AND pd.isDeleted = '0'
+LEFT JOIN Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
 where a.isEffective = '1'
 
 	#if(barcode)
