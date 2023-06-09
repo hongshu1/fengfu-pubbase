@@ -498,8 +498,8 @@ function iBudgetTypeInvestmentGroupSummary(val) {
 }
 
 var kFormat = function (val) {
-	if (val === 0) {
-		return 0;
+	if (val == 0) {
+		return '-';
 	}
 	return val ? numberFormat((val / 1000), 2) : '';
 };

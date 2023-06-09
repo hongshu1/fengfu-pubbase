@@ -73,11 +73,11 @@
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                 <button data-dialogbtn data-handler="jboltTablePageToFirst" data-fs="true" data-title="新增客户订单-年度订单" data-url="admin/annualorderm/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/annualorderm/deleteByIds?ids=" data-confirm="确定反审批选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 批量删除</button>
-                #include("/_view/_common/_batch_approval_btns.html", formSn="Co_AnnualOrderM", uri="admin/annualorderm??")
+                #include("/_view/_common/_batch_approval_btns.html", formSn="Co_AnnualOrderM", uri="admin/annualorderm")
             </div>
         </div>
 
-        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
+        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal"
                data-jbolttable
                data-width="auto"
                data-height="fill"

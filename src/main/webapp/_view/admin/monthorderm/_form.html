@@ -12,20 +12,23 @@
                         #if(!monthorderm.iautoid??||edit??false)
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
-                        #include("/_view/_common/_approval_btns.html",formSn="Co_MonthOrderM", uri="/admin/monthorderm", iautoid=monthorderm.iautoid??, edit=edit??)
+                        #include("/_view/_common/_approval_btns.html",formSn="Co_MonthOrderM",
+                        uri="/admin/monthorderm",
+                        iautoid=monthorderm.iautoid??,iauditstatus=monthorderm.iauditstatus??0,iauditway=monthorderm.iauditway??0, edit=edit??,primaryKeyName="iAutoId")
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
             </div>
         </div>
-        
+
     </div>
-    
+
 </div>
 
 ### 新增之后，并且为审核流
 #if(monthorderm.iautoid?? && monthorderm.iauditway == 2)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM", btnNeed=1, pId=pageId)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM",
+btnNeed=1, pId=pageId, primaryKeyName="iAutoId")
 #end
 
 <div class="jbolt_page_content">
@@ -126,11 +129,10 @@
         {@each datas as data,index}
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
-            <td>
-                #if(!monthorderm.iautoid??||edit??false)
-                <a class="btn" onclick="jboltTableRemoveRow(this)"><i class="fa fa-remove c-danger"></i></a>
-                #end
-            </td>
+        <td>
+            <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
+               data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+        </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
@@ -173,7 +175,7 @@
         </tr>
         {@/each}
     </script>
-    
+
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
         #if(!monthorderm.iautoid??||edit??false)
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
@@ -203,7 +205,7 @@
         </div>
         #end
     </div>
-    
+
     <table class="jbolt_table thead_font_normal table-bordered table-center"
            data-jbolttable
            #if(monthorderm.iAutoId??)
@@ -318,7 +320,7 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-    
+
     function submitThisForm(){
         $('#save_btn_#(pageId)').click();
     }
@@ -400,7 +402,7 @@
             });
         }
     }
-    
+
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
@@ -412,6 +414,7 @@
                 success: function (res) {
                     LayerMsgBox.success("提交成功", 600, function () {
                         parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
                     });
                 }
             },
@@ -937,7 +940,7 @@
     	parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
     }
-    
+
 </script>
 #end
 

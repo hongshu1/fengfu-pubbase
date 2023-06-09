@@ -57,15 +57,15 @@ public class MergeBarCodeService extends BaseService<Inventory> {
         String datas = kv.getStr("datas");
         List<Kv> jsonArray = JSON.parseArray(datas, Kv.class);
         String organizecode = getOrgCode();
-        String u9Name = userThirdpartyService.getU9Name(JBoltUserKit.getUserId());
+        String u8Name = userThirdpartyService.getU8Name(JBoltUserKit.getUserId());
         Date now = new Date();
         String loginDate = JBoltDateUtil.format(now, "yyyy-MM-dd");
         Kv target = new Kv();
         target.set("organizeCode", organizecode);
-        target.set("userCode", u9Name);
+        target.set("userCode", u8Name);
 
         Kv PreAllocate = new Kv();
-        PreAllocate.set("usercode", u9Name);
+        PreAllocate.set("usercode", u8Name);
         PreAllocate.set("organizeCode", organizecode);
         PreAllocate.set("type", "BarcodeMerge");
         PreAllocate.set("loginDate", loginDate);

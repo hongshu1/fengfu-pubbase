@@ -44,7 +44,7 @@ import java.util.Set;
 public class MonthordermService extends BaseService<MonthOrderM> {
 
 	private final MonthOrderM dao = new MonthOrderM().dao();
-    
+
 	@Inject
 	private MonthorderdService monthorderdService;
 	@Inject
@@ -53,7 +53,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
     private FormApprovalService formApprovalService;
     @Inject
     private AuditFormConfigService auditFormConfigService;
-    
+
 	@Override
 	protected MonthOrderM dao() {
 		return dao;
@@ -208,7 +208,6 @@ public class MonthordermService extends BaseService<MonthOrderM> {
                 monthorderm.setIUpdateBy(user.getId());
                 monthorderm.setCUpdateName(user.getName());
                 monthorderm.setDUpdateTime(now);
-                monthorderm.setIAuditWay(Optional.ofNullable(auditFormConfig).map(AuditFormConfig::getIType).orElse(AuditWayEnum.STATUS.getValue()));
                 ValidationUtils.isTrue(monthorderm.save(), ErrorMsg.SAVE_FAILED);
             } else {
                 monthorderm.setIUpdateBy(user.getId());
@@ -310,9 +309,9 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         tx(() -> {
 
             // 根据审批状态
-            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            Ret ret = formApprovalService.judgeType(table(), iautoid, "iAutoId");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-            
+
             // 处理其他业务
             MonthOrderM monthOrderM = findById(iautoid);
             monthOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
@@ -320,14 +319,22 @@ public class MonthordermService extends BaseService<MonthOrderM> {
             ValidationUtils.isTrue(monthOrderM.update(),JBoltMsg.FAIL);
             return true;
         });
-        
+
         return SUCCESS;
     }
 
     public Ret withdraw(Long iautoid) {
         tx(() -> {
 
+            /**
+             * 审批流撤回调用此方法
+             * 单据的状态需要自行更新
+             */
+            Ret ret = formApprovalService.revocationApprove(iautoid);
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+
             MonthOrderM monthOrderM = findById(iautoid);
+            ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), monthOrderM.getIOrderStatus(), "只允许待审核状态订单撤回");
             formApprovalService.withdraw(table(), monthOrderM.getIAutoId(), () -> null, () -> {
                 monthOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
                 monthOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
@@ -342,20 +349,4 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         return SUCCESS;
     }
 
-    /**
-     * 审批不通过
-     * @param iautoid
-     * @return
-     */
-    public Ret reject(Long iautoid) {
-        tx(() -> {
-            formApprovalService.rejectByStatus(table(), iautoid, () -> null, () -> {
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED).isOk(), JBoltMsg.FAIL);
-                return null;
-            });
-
-            return true;
-        });
-        return SUCCESS;
-    }
 }

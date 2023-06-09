@@ -114,13 +114,16 @@ public class FormApprovalAdminController extends BaseAdminController {
      *
      * @param formSn     表单编码
      * @param formAutoId 单据ID
+     * @param primaryKeyName 单据主键名称
      */
     public void judgeType(@Para(value = "formSn") String formSn,
-                          @Para(value = "formAutoId") Long formAutoId) {
+                          @Para(value = "formAutoId") Long formAutoId,
+                          @Para(value = "primaryKeyName") String primaryKeyName) {
         ValidationUtils.notBlank(formSn, "缺少表单编码");
         ValidationUtils.validateId(formAutoId, "单据ID");
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
 
-        renderJson(service.judgeType(formSn, formAutoId));
+        renderJson(service.judgeType(formSn, formAutoId, primaryKeyName));
     }
 
     /**
@@ -129,15 +132,17 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param formAutoId 单据ID
      * @param formSn     表单编码
      * @param status     审批状态
+     * @param primaryKeyName 单据主键名称
      */
     public void approve(@Para(value = "formAutoId") Long formAutoId,
                         @Para(value = "formSn") String formSn,
-                        @Para(value = "status") Integer status) {
+                        @Para(value = "status") Integer status,@Para(value = "primaryKeyName") String primaryKeyName) {
         ValidationUtils.validateId(formAutoId, "单据ID");
         ValidationUtils.notBlank(formSn, "表单编码不能为空");
         ValidationUtils.validateIntGt0(status, "审批状态");
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
 
-        renderJson(service.approve(formAutoId, formSn, status));
+        renderJson(service.approve(formAutoId, formSn, status, primaryKeyName));
     }
 
     /**
@@ -146,15 +151,17 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param formAutoId 单据ID
      * @param formSn     表单编码
      * @param status     审批状态
+     * @param primaryKeyName 单据主键名称
      */
     public void rejectApprove(@Para(value = "formAutoId") Long formAutoId,
                         @Para(value = "formSn") String formSn,
-                        @Para(value = "status") Integer status) {
+                        @Para(value = "status") Integer status,@Para(value = "primaryKeyName") String primaryKeyName) {
         ValidationUtils.validateId(formAutoId, "单据ID");
         ValidationUtils.notBlank(formSn, "表单编码不能为空");
         ValidationUtils.validateIntGt0(status, "审批状态");
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
 
-        renderJson(service.rejectApprove(formAutoId, formSn, status));
+        renderJson(service.rejectApprove(formAutoId, formSn, status,primaryKeyName));
     }
 
     /**
@@ -163,15 +170,31 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param formAutoId 单据ID
      * @param formSn     表单编码
      * @param status     审批状态
+     * @param primaryKeyName 单据主键名称
      */
     public void reverseApprove(@Para(value = "formAutoId") Long formAutoId,
                         @Para(value = "formSn") String formSn,
-                        @Para(value = "status") Integer status) {
+                        @Para(value = "status") Integer status,@Para(value = "primaryKeyName") String primaryKeyName) {
         ValidationUtils.validateId(formAutoId, "单据ID");
         ValidationUtils.notBlank(formSn, "表单编码不能为空");
         ValidationUtils.validateIntGt0(status, "审批状态");
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
 
-        renderJson(service.reverseApprove(formAutoId, formSn, status));
+        renderJson(service.reverseApprove(formAutoId, formSn, status, primaryKeyName));
+    }
+
+    /**
+     * 撤回 审批流
+     *
+     * @param formAutoId 单据ID
+     * @param formSn     表单编码
+     */
+    public void revocationApprove(@Para(value = "formAutoId") Long formAutoId,
+                               @Para(value = "formSn") String formSn) {
+        ValidationUtils.validateId(formAutoId, "单据ID");
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+
+//        renderJson(service.revocationApprove(formAutoId, formSn));
     }
 
     /**
@@ -179,12 +202,15 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param ids
      * @param formSn
      * @param status
+     * @param primaryKeyName 单据主键名称
      */
     public void batchApprove(@Para(value = "ids") String ids,
                              @Para(value = "formSn") String formSn,
-                             @Para(value = "status") Integer status){
+                             @Para(value = "status") Integer status,@Para(value = "primaryKeyName") String primaryKeyName){
         ValidationUtils.notBlank(formSn, "表单编码不能为空");
-        renderJson(service.batchApprove(ids, formSn, status));
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
+
+        renderJson(service.batchApprove(ids, formSn, status,primaryKeyName));
     }
 
     /**
@@ -192,12 +218,15 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param ids
      * @param formSn
      * @param status
+     * @param primaryKeyName 单据主键名称
      */
     public void batchRejectApprove(@Para(value = "ids") String ids,
                              @Para(value = "formSn") String formSn,
-                             @Para(value = "status") Integer status){
+                             @Para(value = "status") Integer status,@Para(value = "primaryKeyName") String primaryKeyName){
         ValidationUtils.notBlank(formSn, "表单编码不能为空");
-        renderJson(service.batchRejectApprove(ids, formSn, status));
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
+
+        renderJson(service.batchRejectApprove(ids, formSn, status,primaryKeyName));
     }
 
     /**
@@ -205,12 +234,15 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param ids
      * @param formSn
      * @param status
+     * @param primaryKeyName 单据主键名称
      */
     public void batchReverseApprove(@Para(value = "ids") String ids,
                              @Para(value = "formSn") String formSn,
-                             @Para(value = "status") Integer status){
+                             @Para(value = "status") Integer status,@Para(value = "primaryKeyName") String primaryKeyName){
         ValidationUtils.notBlank(formSn, "表单编码不能为空");
-        renderJson(service.batchReverseApprove(ids, formSn, status));
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
+
+        renderJson(service.batchReverseApprove(ids, formSn, status,primaryKeyName));
     }
 
     /**
