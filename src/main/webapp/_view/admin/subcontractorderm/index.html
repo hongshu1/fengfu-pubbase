@@ -54,7 +54,7 @@
                 <a class="text-info mr-1" data-openpage="dialog" href="admin/subcontractorderm/edit/${data.iautoid}?isView=1" data-area="90%,90%" data-title="查看">查看</a>
 
                 {@if data.iorderstatus == 1 || data.iorderstatus == 4}
-                    <a class="jbolt_table_delbtn" data-ajaxbtn href="admin/subcontractorderm/arraignment/${data.iautoid}" data-handler='refreshJBoltTable' tooltip data-confirm='确定要执行此操作？' data-title="审批">审批</a>
+                    <a class="jbolt_table_delbtn" data-ajaxbtn href="admin/subcontractorderm/arraignment/${data.iautoid}" data-handler='refreshJBoltTable' tooltip data-confirm='确定要执行此操作？' data-title="提审">提审</a>
                     <a class="jbolt_table_editbtn" href="admin/subcontractorderm/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="90%,90%" data-title="编辑委外订单">编辑</a>
                     <a class="text-danger" data-ajaxbtn href="admin/subcontractorderm/del/${data.iautoid}" data-handler='refreshJBoltTable' tooltip data-confirm='确定要执行此操作？' data-title="删除">刪除</a>
                 {@else if data.iorderstatus == 2 }
