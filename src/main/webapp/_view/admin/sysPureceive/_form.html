@@ -7,7 +7,7 @@
 <!--                        <input value="#(sysPureceive.iAuditStatus??)"/>-->
                         <button onclick="save()" class="btn btn-success btn-sm"  #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end  ><i
                             class=" fa fa-refresh"></i> 保存</button>
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/materialReceiptList", iautoid=sysPureceive.AutoID??0)
+                        #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUReceive",uri="/admin/materialReceiptList", iautoid=sysPureceive.AutoID??, edit=edit??)
 <!--                        <button onclick="submitThisForm()" class="btn btn-info btn-sm"><i-->
 <!--                                class="fa fa-window-maximize"></i> 提交审批-->
 <!--                        </button>-->
@@ -134,6 +134,7 @@
 #if(sysPureceive.AutoID?? && sysPureceive.iauditway == 2)
 #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysPureceive.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId)
 #end
+
 <div class="jbolt_page_content">
     <script type="text/template" id="sysPureceive_tpl_#(pageId)">
         {@each datas as data,index}
@@ -387,7 +388,7 @@
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {
                             column: "sourcebillid",
                             use: "sourcebillid"
-                        }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}],
+                        }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}, {column: "billtype", use: "ipurchasetypeid"}],
 
                         handler:function (table,td,text,value,jsonData) {
                             let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
@@ -439,7 +440,7 @@
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {
                             column: "sourcebillid",
                             use: "sourcebillid"
-                        }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}],
+                        }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}, {column: "billtype", use: "ipurchasetypeid"}],
 
                         handler:function (table,td,text,value,jsonData) {
                             let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);

@@ -690,7 +690,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         
         Warehouse warehouse = warehouseservice.findByCwhcode(sysPureceive.getWhCode());
         ValidationUtils.notNull(warehouse, "仓库记录不存在");
-        
+        sysPureceive.setBillType(record.getStr("billtype"));
         sysPureceive.setWhName(warehouse.getCWhName());
         sysPureceive.setRdCode(record.getStr("rdcode"));
         sysPureceive.setOrganizeCode(getOrgCode());
@@ -792,11 +792,23 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 String autoID = this.installsyspuinstore(byId, now, user);
                 //查从表数据
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s);
-
+                boolean once =true;
                 for(SysPureceivedetail f : firstBy){
                     if(f.getIsInitial().equals("0")){
                         //根据条码查询出采购订单从表以及主表信息
                         Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", f.getBarcode())).findFirst();
+                        //修改主表新增(后加 缺少字段在这里补)
+                        if(once){
+                            SysPuinstore sysPuinstore = syspuinstoreservice.findById(autoID);
+                            sysPuinstore.setBillType(barcode.getStr("ipurchasetypeid"));
+                            sysPuinstore.setDeptCode(barcode.getStr("idepartmentid"));
+                            sysPuinstore.setIBusType(Integer.valueOf(barcode.getStr("ibustype")));
+                            sysPuinstore.setRdCode(barcode.getStr("scrdcode"));
+                            syspuinstoreservice.update(sysPuinstore);
+                            once=false;
+                        }
+
+
                         //往采购订单入库表插入信息
                         SysPuinstoredetail sysPuinstoredetail = new SysPuinstoredetail();
                         sysPuinstoredetail.setMasID(autoID);
@@ -817,6 +829,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                         sysPuinstoredetail.setPuUnitName(barcode.getStr("puunitname"));
                         sysPuinstoredetail.setIsDeleted(false);
                         syspuinstoredetailservice.save(sysPuinstoredetail);
+
+
                     }
                 }
 
@@ -845,7 +859,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public String installsyspuinstore(SysPureceive byId,Date now,User user){
         SysPuinstore sysPuinstore = new SysPuinstore();
         sysPuinstore.setBillNo(byId.getBillNo());
-//        sysPuinstore.setBillType(byId.getBillType());
+        sysPuinstore.setBillType(byId.getBillType());
         sysPuinstore.setBillDate(DateUtil.formatDate(now));
         sysPuinstore.setRdCode(byId.getRdCode());
         sysPuinstore.setOrganizeCode(getOrgCode());
