@@ -16,7 +16,8 @@ public enum ThirdpartySystemEnum {
     E_WECHAT("企业微信", "2"),
     ERP("ERP", "3"),
     U9_SUPPLIER("U9供应商", "4"),
-    U9("U9","5");
+    U9("U9","5"),
+    U8("U8操作员", "6");
 
     private static final Map<String, ThirdpartySystemEnum> THIRDPARTY_SYSTEM_ENUM_MAP = new HashMap<>();
 
