@@ -4,6 +4,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -513,7 +514,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         }
         MaterialsOut materials = new MaterialsOut();
         materials.setAutoID(JBoltSnowflakeKit.me.nextId());
-        if (detailByParam != null){
+        if (detailByParam != null) {
             materials.setSourceBillType(detailByParam.getStr("sourcebilltype"));
             materials.setSourceBillDid(detailByParam.getStr("sourcebilldid"));
         }
@@ -614,24 +615,26 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         kv.set("sourcebilldid", puinstore.getSourceBillID());
         kv.set("deptcode", puinstore.getDeptCode());
 
+        User user = JBoltUserKit.getUser();
         Vendor vendor = vendorService.findByCode(puinstore.getVenCode());
         List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         int i = 1;
         for (SysPuinstoredetail detail : detailList) {
-            Record record = findPurchaseOrderDBatchByCBarcode(detail.getBrandCode());
+            Record record = findPurchaseOrderDBatchByCBarcode(detail.getSpotTicket());
 
             Main main = new Main();
             main.setInvName(record.getStr("cinvname"));
             main.setInvCode(record.getStr("cinvcode"));
-            main.setBillID("");
-            main.setBillNoRow("");
-            main.setBillDid("");
+            main.setBillID(puinstore.getAutoID());//主表id
+            main.setBillDid(detail.getAutoID());//明细表id
+            main.setBillNoRow(puinstore.getBillNo() + "-" + i);//主表billno-明细表rowno
 
             main.setIsWhpos("1"); //
             main.setIwhcode(detail.getWhcode());
             main.setVenName(null != vendor ? vendor.getCVenName() : "");
             main.setVenCode(puinstore.getVenCode());
-            main.setQty(String.valueOf(detail.getQty()));
+            main.setQty(detail.getQty().stripTrailingZeros().toPlainString());
             main.setOrganizeCode(getOrgCode());
             main.setNum(0);
             main.setIndex(String.valueOf(i));
@@ -654,17 +657,17 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
 
         //其它数据
         PreAllocate preAllocate = new PreAllocate();
-        preAllocate.setCreatePerson(puinstore.getCreatePerson());
+        preAllocate.setCreatePerson(user.getUsername());
         preAllocate.setCreatePersonName(puinstore.getCreatePerson());
-        preAllocate.setLoginDate(String.valueOf(puinstore.getCreateDate()));
+        preAllocate.setLoginDate(format.format(puinstore.getCreateDate()));
         preAllocate.setOrganizeCode(puinstore.getOrganizeCode());
         preAllocate.setTag("PUInStore");
         preAllocate.setType("PUInStore");
-        preAllocate.setUserCode(JBoltUserKit.getUserName());
+        preAllocate.setUserCode(user.getUsername());
         //放入dto
         dto.setMainData(MainData);
         dto.setPreAllocate(preAllocate);
-        dto.setUserCode(JBoltUserKit.getUserName());
+        dto.setUserCode(user.getUsername());
         dto.setOrganizeCode(puinstore.getOrganizeCode());
         dto.setToken("");
         //返回
@@ -678,7 +681,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     }
 
     public Record findPurchaseOrderDBatchByCBarcode(String cbarcode) {
-        return dbTemplate("syspuinstore.findPurchaseOrderDBatchByCBarcode").findFirst();
+        return dbTemplate("syspuinstore.findPurchaseOrderDBatchByCBarcode", Kv.by("cbarcode", cbarcode)).findFirst();
     }
 
     public PurchaseOrderM findU8BillNo(SysPuinstore puinstore) {
