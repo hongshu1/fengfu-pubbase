@@ -747,7 +747,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     }
 
     /**
-     * 提审
+     * 提审批
      */
     public Ret submit(Long iautoid) {
         tx(() -> {
@@ -755,105 +755,89 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             Ret ret = formApprovalService.judgeType(table(), iautoid);
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
-            // TODO 更新状态
-            SysPureceive byId = findById(iautoid);
-            byId.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            byId.update();
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    public Ret withdraw(Long iAutoId) {
-        tx(() -> {
-            SysPureceive byId = findById(iAutoId);
-            byId.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-            byId.update();
             return true;
         });
         return SUCCESS;
     }
 
     /**
-     * 审核通过
+     * 撤回提审批流
+     * @param iAutoId
+     * @return
+     */
+    public Ret withdraw(Long iAutoId) {
+        tx(() -> {
+
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 审批通过
      */
     public Ret approve(String ids) {
         tx(() -> {
-            this.check(ids);
-            String[] split = ids.split(",");
-            Date now = new Date();
-            User user = JBoltUserKit.getUser();
-            for (String s : split) {
-                SysPureceive byId = findById(s);
-                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-                byId.update();
-                //根据id查出从表的数据，生成采购入库列表 一个收料单号对应一个入库单号。 排除是初物的数据
-                //根据条码查出 采购订单主表数据，添加到入库主表信息，然后加入从表数据（拆分 原则 是否初物字段）
-                String autoID = this.installsyspuinstore(byId, now, user);
-                //查从表数据
-                List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s);
-                boolean once =true;
-                for(SysPureceivedetail f : firstBy){
-                    if(f.getIsInitial().equals("0")){
-                        //根据条码查询出采购订单从表以及主表信息
-                        Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", f.getBarcode())).findFirst();
-                        //修改主表新增(后加 缺少字段在这里补)
-                        if(once){
-                            SysPuinstore sysPuinstore = syspuinstoreservice.findById(autoID);
-                            sysPuinstore.setBillType(barcode.getStr("ipurchasetypeid"));
-                            sysPuinstore.setDeptCode(barcode.getStr("cdepcode"));
-                            sysPuinstore.setIBusType(Integer.valueOf(barcode.getStr("ibustype")));
-                            sysPuinstore.setRdCode(barcode.getStr("scrdcode"));
-                            syspuinstoreservice.update(sysPuinstore);
-                            once=false;
-                        }
-
-
-                        //往采购订单入库表插入信息
-                        SysPuinstoredetail sysPuinstoredetail = new SysPuinstoredetail();
-                        sysPuinstoredetail.setMasID(autoID);
-                        sysPuinstoredetail.setSourceBillType(f.getSourceBillType());
-                        sysPuinstoredetail.setSourceBillNo(f.getSourceBillNo());
-                        sysPuinstoredetail.setSourceBillNoRow(f.getSourceBillNoRow());
-                        sysPuinstoredetail.setSourceBillDid(f.getSourceBillDid());
-                        sysPuinstoredetail.setSourceBillID(f.getSourceBillID());
-                        sysPuinstoredetail.setRowNo(f.getRowNo());
-                        sysPuinstoredetail.setWhcode(f.getWhcode());
-                        sysPuinstoredetail.setPosCode(f.getPosCode());
-                        sysPuinstoredetail.setQty(f.getQty());
-                        sysPuinstoredetail.setTrackType(f.getTrackType());
-                        sysPuinstoredetail.setCreatePerson(user.getUsername());
-                        sysPuinstoredetail.setCreateDate(now);
-                        sysPuinstoredetail.setSpotTicket(f.getBarcode());
-                        sysPuinstoredetail.setPuUnitCode(barcode.getStr("puunitcode"));
-                        sysPuinstoredetail.setPuUnitName(barcode.getStr("puunitname"));
-                        sysPuinstoredetail.setIsDeleted(false);
-                        syspuinstoredetailservice.save(sysPuinstoredetail);
-
-
-                    }
-                }
-
-            }
+            //业务逻辑
+            this.passage(ids);
             return true;
         });
-        
-        return SUCCESS; 
+        return SUCCESS;
     }
 
+    /**
+     * 审批不通过
+     */
     public Ret reject(String ids) {
+        tx(() -> {
+            this.passage(ids);
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 反审批
+     */
+    public Ret reverseApprove(String ids) {
+        tx(() -> {
+            //状态必须是由审批通过后，进行反审批的 有业务需要进行修改
+
+            return true;
+        });
+        return SUCCESS;
+    }
+    /**
+     * 审核通过
+     */
+    public Ret process(String ids) {
+        tx(() -> {
+            this.passage(ids);
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 审核不通过
+     */
+    public Ret noProcess(String ids) {
         tx(() -> {
             this.check(ids);
             String[] split = ids.split(",");
             for (String s : split) {
                 SysPureceive byId = findById(s);
                 byId.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+                byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
                 byId.update();
             }
+            //业务逻辑
+
             return true;
         });
         return SUCCESS;
     }
+
 
     //往采购订单入库主表插入
     public String installsyspuinstore(SysPureceive byId,Date now,User user){
@@ -897,6 +881,65 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 ValidationUtils.isTrue( false,"收料编号：" + s.getBillNo() + "单据状态已审核，不可再审！");
             }
         }
+    }
+    //审核通过后的业务逻辑
+    public void  passage(String ids){
+        tx(() -> {
+            Date now = new Date();
+            User user = JBoltUserKit.getUser();
+            String[] split = ids.split(",");
+            for (String s : split) {
+                SysPureceive byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+                byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                byId.update();
+                //根据id查出从表的数据，生成采购入库列表 一个收料单号对应一个入库单号。 排除是初物的数据
+                //根据条码查出 采购订单主表数据，添加到入库主表信息，然后加入从表数据（拆分 原则 是否初物字段）
+                String autoID = this.installsyspuinstore(byId, now, user);
+                //查从表数据
+                List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s);
+                boolean once =true;
+                for(SysPureceivedetail f : firstBy){
+                    if(f.getIsInitial().equals("0")){
+                        //根据条码查询出采购订单从表以及主表信息
+                        Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", f.getBarcode())).findFirst();
+                        //修改主表新增(后加 缺少字段在这里补)
+                        if(once){
+                            SysPuinstore sysPuinstore = syspuinstoreservice.findById(autoID);
+                            sysPuinstore.setBillType(barcode.getStr("ipurchasetypeid"));
+                            sysPuinstore.setDeptCode(barcode.getStr("cdepcode"));
+                            sysPuinstore.setIBusType(Integer.valueOf(barcode.getStr("ibustype")));
+                            sysPuinstore.setRdCode(barcode.getStr("scrdcode"));
+                            syspuinstoreservice.update(sysPuinstore);
+                            once=false;
+                        }
+
+                        //往采购订单入库表插入信息
+                        SysPuinstoredetail sysPuinstoredetail = new SysPuinstoredetail();
+                        sysPuinstoredetail.setMasID(autoID);
+                        sysPuinstoredetail.setSourceBillType(f.getSourceBillType());
+                        sysPuinstoredetail.setSourceBillNo(f.getSourceBillNo());
+                        sysPuinstoredetail.setSourceBillNoRow(f.getSourceBillNoRow());
+                        sysPuinstoredetail.setSourceBillDid(f.getSourceBillDid());
+                        sysPuinstoredetail.setSourceBillID(f.getSourceBillID());
+                        sysPuinstoredetail.setRowNo(f.getRowNo());
+                        sysPuinstoredetail.setWhcode(f.getWhcode());
+                        sysPuinstoredetail.setPosCode(f.getPosCode());
+                        sysPuinstoredetail.setQty(f.getQty());
+                        sysPuinstoredetail.setTrackType(f.getTrackType());
+                        sysPuinstoredetail.setCreatePerson(user.getUsername());
+                        sysPuinstoredetail.setCreateDate(now);
+                        sysPuinstoredetail.setSpotTicket(f.getBarcode());
+                        sysPuinstoredetail.setPuUnitCode(barcode.getStr("puunitcode"));
+                        sysPuinstoredetail.setPuUnitName(barcode.getStr("puunitname"));
+                        sysPuinstoredetail.setIsDeleted(false);
+                        syspuinstoredetailservice.save(sysPuinstoredetail);
+                    }
+                }
+
+            }
+            return true;
+        });
     }
 }
 
