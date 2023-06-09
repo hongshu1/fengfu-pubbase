@@ -38,7 +38,7 @@ import java.util.List;
  * @date: 2023-04-10 14:37
  */
 public class WeekOrderMService extends BaseService<WeekOrderM> {
-    
+
     private final WeekOrderM dao = new WeekOrderM().dao();
 
     @Inject
@@ -118,7 +118,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             formApprovalService.approveByStatus(table(), iautoid, () -> null, () -> {
                 ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
                 return null;
-            });
+            },"iAutoId");
 
             // 修改客户计划汇总
             cusOrderSumService.algorithmSum();
@@ -145,13 +145,13 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
                 ValidationUtils.isTrue(weekOrderM.update(), ErrorMsg.UPDATE_FAILED);
 
                 cusOrderSumService.algorithmSum();
-                
+
                 return null;
             });
 
             return true;
         });
-        
+
         return SUCCESS;
     }
 
@@ -195,7 +195,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
                 ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
                 //cusOrderSumService.algorithmSum();
                 return null;
-            });
+            },"");
 
             return true;
         });
@@ -205,9 +205,9 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            Ret ret = formApprovalService.judgeType(table(), iautoid, "iAutoId");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-            
+
             // 更新订单的状态
             ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
 
@@ -230,7 +230,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         Date now = new Date();
 
         tx(() -> {
-            
+
             // 新增
             if (ObjUtil.isNull(weekOrderM.getIAutoId())) {
                 doSave(weekOrderM, jBoltTable, now);
@@ -240,7 +240,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 
             return true;
         });
-        
+
         return SUCCESS;
     }
 
@@ -273,7 +273,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             ValidationUtils.isTrue(false, "周间客户订单不合法,请检查订单数据!");
         }
         ValidationUtils.notEmpty(save, JBoltMsg.PARAM_ERROR);
-        
+
         saveDs(save, weekOrderM.getIAutoId());
     }
 

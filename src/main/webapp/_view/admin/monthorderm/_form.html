@@ -12,20 +12,23 @@
                         #if(!monthorderm.iautoid??||edit??false)
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
-                        #include("/_view/_common/_approval_btns.html",formSn="Co_MonthOrderM", uri="/admin/monthorderm", iautoid=monthorderm.iautoid??, edit=edit??)
+                        #include("/_view/_common/_approval_btns.html",formSn="Co_MonthOrderM",
+                        uri="/admin/monthorderm",
+                        iautoid=monthorderm.iautoid??,iauditstatus=monthorderm.iauditstatus??0,iauditway=monthorderm.iauditway??0, edit=edit??,primaryKeyName="iAutoId")
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
             </div>
         </div>
-        
+
     </div>
-    
+
 </div>
 
 ### 新增之后，并且为审核流
 #if(monthorderm.iautoid?? && monthorderm.iauditway == 2)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM", btnNeed=1, pId=pageId)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM",
+btnNeed=1, pId=pageId, primaryKeyName="iAutoId")
 #end
 
 <div class="jbolt_page_content">
@@ -172,7 +175,7 @@
         </tr>
         {@/each}
     </script>
-    
+
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
         #if(!monthorderm.iautoid??||edit??false)
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
@@ -202,7 +205,7 @@
         </div>
         #end
     </div>
-    
+
     <table class="jbolt_table thead_font_normal table-bordered table-center"
            data-jbolttable
            #if(monthorderm.iAutoId??)
@@ -317,7 +320,7 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-    
+
     function submitThisForm(){
         $('#save_btn_#(pageId)').click();
     }
@@ -399,7 +402,7 @@
             });
         }
     }
-    
+
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
@@ -937,7 +940,7 @@
     	parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
     }
-    
+
 </script>
 #end
 

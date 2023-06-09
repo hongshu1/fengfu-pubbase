@@ -40,7 +40,7 @@ import java.util.List;
  * @date: 2023-03-23 17:23
  */
 public class AnnualOrderMService extends BaseService<AnnualOrderM> {
-    
+
     private final AnnualOrderM dao = new AnnualOrderM().dao();
 
     @Inject
@@ -67,7 +67,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      */
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
         para.set("iorgid", getOrgId());
-        
+
         return dbTemplate("annualorderm.paginateAdminDatas", para).paginate(pageNumber, pageSize);
     }
 
@@ -266,9 +266,6 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         }
     }
 
-    /**
-     * 审批
-     */
     public Ret approve(Long id) {
         AnnualOrderM annualOrderM = superFindById(id);
         //2. 审核通过
@@ -296,7 +293,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      */
     public Ret submit(Long iautoid) {
         tx(() -> {
-            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            Ret ret = formApprovalService.judgeType(table(), iautoid, "iAutoId");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
             AnnualOrderM annualOrderM = findById(iautoid);
             annualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
@@ -341,7 +338,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
             formApprovalService.rejectByStatus(table(), iAutoId, () -> null, () -> {
                 ValidationUtils.isTrue(updateColumn(iAutoId, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
                 return null;
-            });
+            },"iAutoId");
 
             return true;
         });
