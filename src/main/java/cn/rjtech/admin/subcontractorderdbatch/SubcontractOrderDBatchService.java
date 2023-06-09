@@ -328,7 +328,8 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     Integer totalQuantity = rowDatas.size() + 1;
     Integer pages = rows.size();
     Date date = new DateTime();
-    LOG.info(JSON.toJSONString(kvs));
+//    LOG.info(JSON.toJSONString(kvs));
+    LOG.info(JSON.toJSONString(sheetNames2));
     if (kv.getStr("type").equals("1")) {
 
       return Kv.by("rows", rows).set("sheetNames", sheetNames).set("rows2", kvs).set("sheetNames2", sheetNames2);
