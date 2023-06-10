@@ -4,7 +4,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
+                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end ><i
                                 class="fa fa-refresh"></i> 保存
                         </button>
                         #include("/_view/_common/_approval_btns.html", uri="/admin/productInList", iautoid=sysProductin.AutoID??0)
@@ -30,7 +30,7 @@
                                     <label class="col-sm-3 col-form-label">入库单号</label>
                                     <div class="col-9">
                                         <input type="text" data-notnull="true"
-                                               data-tips="请输入入库单号" data-with-clearbtn="true" autocomplete="off"
+                                               data-tips="请输入入库单号" data-with-clearbtn="true" autocomplete="off" disabled
                                                class="form-control" placeholder="请输入入库单号" maxlength="40"
                                                name="sysProductin.BillNo" value="#(sysProductin.BillNo??)"/>
                                     </div>
@@ -41,7 +41,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">入库日期</label>
                                     <div class="col-9">
-                                        <input type="text" data-date class="form-control ml-2" placeholder="入库日期"
+                                        <input type="text" data-date class="form-control ml-2" placeholder="入库日期" disabled
                                                maxlength="20" name="sysProductin.CreateDate"
                                                value="#(sysProductin.CreateDate??)"/>
                                     </div>
@@ -59,7 +59,8 @@
                                                data-hidden-input="cwhcode" data-text-attr="cwhname"
                                                data-column-attr="cwhcode,cwhname" placeholder="请选择仓库名称"
                                                data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
-                                               value="#(cwhname??)">
+                                               value="#(cwhname??)"
+                                               #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >
                                     </div>
                                 </div>
                             </div>
@@ -75,7 +76,8 @@
                                                data-hidden-input="crdcode" data-text-attr="crdname"
                                                data-column-attr="crdcode,crdname" placeholder="请选择入库类别"
                                                data-tips="请选择入库类别" data-header="入库编码,入库类别" maxlength="40"
-                                               value="#(crdname??)">
+                                               value="#(crdname??)"
+                                               #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >
                                     </div>
                                 </div>
                             </div>

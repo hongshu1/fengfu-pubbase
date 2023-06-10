@@ -915,8 +915,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public void check(String ids) {
         List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + ids + ")");
         for (SysPureceive s : sysPureceives) {
-            if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
-                ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据状态已审核，不可再审！");
+            if ("2".equals(String.valueOf(s.getIAuditStatus())) || "3".equals(String.valueOf(s.getIAuditStatus())) ) {
+                ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "流程已结束！！");
             }
         }
     }

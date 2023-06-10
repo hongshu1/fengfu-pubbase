@@ -59,15 +59,6 @@
                            data-handler="refreshJBoltTable" data-dialog-title="编辑收料单列表"
                            class="jbolt_table_editbtn">查看</a>
                       {@/if}
-                      {@if data.iauditstatus == '1'}
-                        <a href="admin/materialReceiptList/autit/${data.autoid}" data-ajaxbtn
-                           data-loading="执行中 "
-                           tooltip
-                           data-title="审核"
-                           data-handler="refreshJBoltTable" data-confirm="确定审核此数据？"
-                           class="jbolt_table_delbtn">审核</a>
-                      {@/if}
-
 
 
 					</td>
@@ -92,10 +83,10 @@
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增双单位收货
                 </button>
 
-                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                        id="toolbar_editBtn_#(pageId)" data-url="admin/materialReceiptList/batchAudit?ids="
-                        data-confirm="确定批量审核选中数据？" class="btn btn-outline-primary"><i class="fa fa-trash"></i> 批量审核
-                </button>
+<!--                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"-->
+<!--                        id="toolbar_editBtn_#(pageId)" data-url="admin/materialReceiptList/batchAudit?ids="-->
+<!--                        data-confirm="确定批量审核选中数据？" class="btn btn-outline-primary"><i class="fa fa-trash"></i> 批量审核-->
+<!--                </button>-->
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                         id="side_toolbar_editBtn_#(pageId)" data-url="admin/materialReceiptList/batchReverseAudit?ids="
                         data-confirm="确定批量审核不通过数据？" class="btn btn-outline-primary"><i class="fa fa-trash"></i> 批量审核不通过
@@ -105,7 +96,7 @@
                         id="toolbar_deleteBtn_#(pageId)" data-url="admin/materialReceiptList/deleteByIds?ids="
                         data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
                 </button>
-                #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_PUReceive",uri="admin/materialReceiptList??",primaryKeyName="AutoID")
+                #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_PUReceive",uri="admin/materialReceiptList",primaryKeyName="AutoID")
             </div>
         </div>
         <table class="jbolt_table jbolt_main_table  table-center " data-jbolttable data-width="fill" data-height="fill"
