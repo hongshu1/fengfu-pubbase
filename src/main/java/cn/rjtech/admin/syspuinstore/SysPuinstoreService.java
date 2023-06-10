@@ -1,9 +1,12 @@
 package cn.rjtech.admin.syspuinstore;
 
+import cn.hutool.core.util.StrUtil;
+import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -14,6 +17,7 @@ import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
 import cn.rjtech.admin.vendor.VendorService;
+import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO;
@@ -34,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -65,7 +70,9 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     @Inject
     private PurchaseOrderMService     purchaseOrderMService;
     @Inject
-    private UserThirdpartyService     userThirdpartyService;
+    private WarehouseService          warehouseService;
+    @Inject
+    private DictionaryService         dictionaryService;
 
     @Override
     protected int systemLogTargetType() {
@@ -75,27 +82,54 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     /**
      * 后台管理数据查询
      *
-     * @param pageNumber      第几页
-     * @param pageSize        每页几条数据
-     * @param keywords        关键词
-     * @param BillType        到货单类型;采购PO  委外OM
-     * @param procureType     采购类型
-     * @param warehousingType 入库类别
+     * @param pageNumber 第几页
+     * @param pageSize   每页几条数据
      */
-    public Page<SysPuinstore> getAdminDatas(int pageNumber, int pageSize, String keywords, String BillType, String procureType,
-                                            String warehousingType) {
-        //创建sql对象
-        Sql sql = selectSql().page(pageNumber, pageSize);
-        //sql条件处理
-        sql.eq("BillType", BillType);
-        sql.eq("procureType", procureType);
-        sql.eq("warehousingType", warehousingType);
-        //关键词模糊查询
-        sql.likeMulti(keywords, "repositoryName", "deptName", "remark");
-        //排序
-        sql.desc("AutoID");
-        return paginate(sql);
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
+        Page<Record> paginate = dbTemplate("syspuinstore.recpor", kv).paginate(pageNumber, pageSize);
+        for (Record record : paginate.getList()) {
+            PurchaseType purchaseType = purchaseTypeService.findById(record.get("billtype"));
+            Kv podetailKv = new Kv();
+            podetailKv.set("vencode", record.get("vencode"));
+            podetailKv.set("billno", record.get("billno"));
+            podetailKv.set("sourcebillno", record.get("sourcebillno"));
+            podetailKv.set("sourcebillid", record.get("sourcebillid"));
+            Record detailByParam = findSysPODetailByParam(podetailKv);
+            if (detailByParam != null) {
+                record.set("invname", detailByParam.get("invname"));
+                record.set("venname", detailByParam.get("venname"));
+            }
+            if (null != purchaseType) {
+                record.set("cptcode", purchaseType.getCPTCode());
+                record.set("cptname", purchaseType.getCPTName());
+            }
+            record.set("ibustype", findIBusTypeKey(record.getStr("ibustype")));
+        }
+        return paginate;
     }
+
+    /*
+     * 业务类型
+     * */
+    public String findIBusTypeKey(String ibustype) {
+        if (StrUtil.isNotBlank(ibustype)) {
+            List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey("purchase_business_type");
+            Dictionary dictionary = dictionaryList.stream().filter(e -> e.getSn().equals(ibustype))
+                .findFirst()
+                .orElse(new Dictionary());
+            return dictionary.getName();
+
+        }
+        return "";
+    }
+
+    /*
+     * 查询edit和onlysee的数据
+     * */
+    public Record findEditAndOnlySeeByAutoid(String autoid) {
+        return dbTemplate("syspuinstore.findEditAndOnlySeeByAutoid", Kv.by("autoid", autoid)).findFirst();
+    }
+
 
     /**
      * 保存
@@ -336,34 +370,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     }
 
     /**
-     * 后台管理数据查询
-     *
-     * @param pageNumber 第几页
-     * @param pageSize   每页几条数据
-     */
-    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-        Page<Record> paginate = dbTemplate("syspuinstore.recpor", kv).paginate(pageNumber, pageSize);
-        for (Record record : paginate.getList()) {
-            PurchaseType purchaseType = purchaseTypeService.findById(record.get("billtype"));
-            Kv podetailKv = new Kv();
-            podetailKv.set("vencode", record.get("vencode"));
-            podetailKv.set("billno", record.get("billno"));
-            podetailKv.set("sourcebillno", record.get("sourcebillno"));
-            podetailKv.set("sourcebillid", record.get("sourcebillid"));
-            Record detailByParam = findSysPODetailByParam(podetailKv);
-            if (detailByParam != null) {
-                record.set("invname", detailByParam.get("invname"));
-                record.set("venname", detailByParam.get("venname"));
-            }
-            if (null != purchaseType) {
-                record.set("cptcode", purchaseType.getCPTCode());
-                record.set("cptname", purchaseType.getCPTName());
-            }
-        }
-        return paginate;
-    }
-
-    /**
      * 删除
      */
     public Ret delete(Long id) {
@@ -416,12 +422,47 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         }
         SysPuinstore sysPuinstore = jBoltTable.getFormModel(SysPuinstore.class);
         Record record = jBoltTable.getFormRecord();
-        Record detailByParam = findSysPODetailByParam(getKv(record.get("billno"), record.get("sourcebillno")));
-        String whcode = record.get("whcode");//仓库
+        //Record detailByParam = findSysPODetailByParam(getKv(record.get("billno"), record.get("sourcebillno")));
 
         List<Record> saveRecordList = jBoltTable.getSaveRecordList();
         List<Record> updateRecordList = jBoltTable.getUpdateRecordList();
-        Record formRecord = jBoltTable.getFormRecord();
+
+        boolean tx = tx(() -> {
+            //1、更新主表
+            if (isOk(sysPuinstore.getAutoID())) {
+                //更新主表
+                SysPuinstore updatePuinstore = findById(sysPuinstore.getAutoID());
+
+                updatePuinstore.setModifyPerson(JBoltUserKit.getUserName());
+                updatePuinstore.setModifyDate(new Date());
+                saveSysPuinstoreModel(updatePuinstore, record);
+                Ret update = update(updatePuinstore);
+                if (update.isFail()) {
+                    return false;
+                }
+            } else {
+                //2、新增主表
+                SysPuinstore savePuinstore = new SysPuinstore();
+                savePuinstore.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
+                savePuinstore.setCreatePerson(JBoltUserKit.getUserName());
+                savePuinstore.setCreateDate(new Date());
+                saveSysPuinstoreModel(savePuinstore, record);
+                ValidationUtils.isTrue(savePuinstore.save(), JBoltMsg.FAIL);
+            }
+
+            if (!saveRecordList.isEmpty()) {
+                List<SysPuinstoredetail> saveList = new ArrayList<>();
+                saveRecordList(saveRecordList, saveList, sysPuinstore);
+                syspuinstoredetailservice.batchSave(saveList);
+            }
+            if (!updateRecordList.isEmpty()) {
+                List<SysPuinstoredetail> updateList = new ArrayList<>();
+                updateRecordList(updateRecordList, updateList,sysPuinstore);
+                syspuinstoredetailservice.batchUpdate(updateList);
+            }
+
+            return true;
+        });
 
 
         /*tx(() -> {
@@ -501,8 +542,39 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             }
             return true;
         });*/
-        return SUCCESS;
+        return ret(tx);
     }
+
+    /*
+     * 保存明细表
+     * */
+    public void saveRecordList(List<Record> saveRecordList, List<SysPuinstoredetail> puinstoredetailList,
+                               SysPuinstore sysPuinstore) {
+        int i = 1;
+        for (Record detailRecord : saveRecordList) {
+            SysPuinstoredetail puinstoredetail = new SysPuinstoredetail();
+            puinstoredetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
+            syspuinstoredetailservice.saveSysPuinstoredetailModel(puinstoredetail, detailRecord, sysPuinstore, i);
+            puinstoredetailList.add(puinstoredetail);
+            i++;
+        }
+    }
+
+    /*
+     * 更新明细表
+     * */
+    public void updateRecordList(List<Record> updateRecordList, List<SysPuinstoredetail> puinstoredetailList,SysPuinstore sysPuinstore) {
+        int i = 1;
+        for (Record updateRecord : updateRecordList) {
+            SysPuinstoredetail puinstoredetail = syspuinstoredetailservice.findById(updateRecord.get("autoid"));
+            puinstoredetail.setModifyDate(new Date());
+            puinstoredetail.setModifyPerson(JBoltUserKit.getUserName());
+            syspuinstoredetailservice.saveSysPuinstoredetailModel(puinstoredetail, updateRecord, sysPuinstore, i);
+            puinstoredetailList.add(puinstoredetail);
+            i++;
+        }
+    }
+
 
     /*
      * 1、外作件入库后倒扣加工供应商仓库存，按物料清单生成材料出库单
@@ -554,23 +626,26 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         return null;
     }
 
-    public void saveSysPuinstoreModel(SysPuinstore puinstore, Record record, Record detailByParam) {
-        Date date = new Date();
+    public void saveSysPuinstoreModel(SysPuinstore puinstore, Record record) {
         puinstore.setBillType(record.get("billtype"));//采购类型
         puinstore.setOrganizeCode(getOrgCode());
-        puinstore.setBillNo(record.get("billno"));
-        puinstore.setBillDate(puinstore.getBillDate()); //单据日期
+        puinstore.setBillNo(UUID.randomUUID().toString());//入库单号，先自己生成
+        puinstore.setBillDate(record.get("billdate")); //单据日期
         puinstore.setRdCode(record.get("rdcode"));
         puinstore.setDeptCode(record.get("deptcode"));
         puinstore.setSourceBillNo(record.get("sourcebillno"));//来源单号（订单号）
-        puinstore.setSourceBillID(puinstore.getSourceBillID());//来源单据id
+        puinstore.setSourceBillID(record.getStr("sourcebillid"));//来源单据id
         puinstore.setVenCode(record.get("vencode")); //供应商
         puinstore.setMemo(record.get("memo"));
-        puinstore.setCreatePerson(JBoltUserKit.getUserName());
-        puinstore.setCreateDate(date);
-        puinstore.setAuditPerson(getOrgName()); //审核人
-        puinstore.setAuditDate(date); //审核时间
-        puinstore.setIAuditStatus(1);
+        //puinstore.setAuditPerson(getOrgName()); //审核人
+        //puinstore.setAuditDate(date); //审核时间
+        puinstore.setIAuditStatus(0);//
+        puinstore.setWhCode(record.getStr("whcode"));
+        Warehouse warehouse = warehouseService.findByCwhcode(record.getStr("whcode"));
+        puinstore.setWhName(warehouse != null ? warehouse.getCWhName() : "");
+        puinstore.setIAuditWay(1);//审批方式：1. 审核 2. 审批流
+        puinstore.setIsDeleted(false);
+        puinstore.setIBusType(record.getInt("ibustype"));//业务类型
 
     }
 

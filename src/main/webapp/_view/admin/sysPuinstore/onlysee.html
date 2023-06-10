@@ -1,5 +1,6 @@
 #@jboltLayout()
 #define main()
+#set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
@@ -44,10 +45,6 @@
                                 <input  required type="text" id="sourcebillno" class="form-control border-none" readonly="readonly" placeholder=""
                                         value="#(sysPuinstore.sourcebillno??)" />
                                 <input id="sourcebillid" name="sourcebillid" type="hidden" value="#(sourcebillid??)"/>
-                                <!--<button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
-                                        data-area="90%,90%" data-title="选择数据（单选）"
-                                        id="sysButton" data-url="/admin/purchaseReceiptList/chooseSysPuinstoreData"><i
-                                    class="fa fa-search mr-1"></i></button>-->
                             </div>
                         </div>
                     </div>
@@ -55,7 +52,7 @@
                         <label class="col-sm-3 col-form-label">供货单位</label>
                         <div class="col-7">
                             <input id="venname" name="cvenname" type="text" readonly="readonly" autocomplete="off" class="form-control" maxlength="40"
-                                   value="#(cvenname??)"/>
+                                   value="#(sysPuinstore.cvenname??)"/>
                             <input id="vencode" name="vencode" type="hidden" readonly="readonly" autocomplete="off" class="form-control" maxlength="40"
                                    value="#(sysPuinstore.vencode??)"/>
                         </div>
@@ -65,7 +62,7 @@
                         <label class="col-sm-3 col-form-label">备注</label>
                         <div class="col-7">
                             <textarea id="memo" name="memo" class="form-control" placeholder="=请输入备注=" readonly
-                                type="text" maxlength="300" value="#(sysPuinstore.memo??)">#(sysPuinstore.memo??)</textarea>
+                                type="text" maxlength="300" value="#(sysPuinstore.memo??)"></textarea>
                         </div>
                     </div>
                 </div>
@@ -76,14 +73,14 @@
                         <label class="col-sm-3 col-form-label">入库日期</label>
                         <div class="col-6">
                             <input id="createdate" name="createdate" type="text" readonly autocomplete="off"
-                                   class="form-control" maxlength="40" value="#(sysPuinstore.createdate??)"/>
+                                   class="form-control" maxlength="40" value="#(sysPuinstore.billdate??)"/>
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">部门</label>
                         <div class="col-6">
-                            <input name="deptcode" id="deptcode" class="form-control" value="#(sysPuinstore.deptcode??)"
+                            <input name="deptcode" id="deptcode" class="form-control" value="#(sysPuinstore.cdepname??)"
                                    readonly/>
                         </div>
                     </div>
@@ -118,14 +115,21 @@
                         <label class="col-sm-3 col-form-label">采购类型</label>
                         <div class="col-6">
                             <input class="form-control" name="billtype" type="text" readonly="readonly" maxlength="20"
-                                   value="#(cptname??)"/>
+                                   value="#(sysPuinstore.cptname??)"/>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">入库类别</label>
                         <div class="col-6">
                             <input class="form-control" name="crdcode" type="text" readonly="readonly" maxlength="20"
-                                   value="#(crdname??)"/>
+                                   value="#(sysPuinstore.crdname??)"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">业务类型</label>
+                        <div class="col-6">
+                            <input class="form-control" name="ibustype" type="text" readonly="readonly" maxlength="20"
+                                   value="#(ibustype??)"/>
                         </div>
                     </div>
                 </div>
@@ -227,7 +231,7 @@
         if (!autoid) {
             LayerMsgBox.alert("请先保存，再提交审批！", 2);
         }
-
+        LayerMsgBox.loading('审核中...');
         Ajax.post('/admin/purchaseReceiptList/onlyseeAutit?autoid=' + autoid,{}, function (ret) {
             if (ret.state === 'ok') {
                 parent.layer.close(parent.layer.getFrameIndex(window.name));
@@ -242,6 +246,7 @@
     * 反审核
     * */
     function resetSubmitApprove(autoid) {
+        LayerMsgBox.loading('反审核中...');
         Ajax.post('/admin/purchaseReceiptList/resetAutitById?autoid=' + autoid,{}, function (ret) {
             if (ret.state === 'ok') {
                 parent.layer.close(parent.layer.getFrameIndex(window.name));
@@ -263,6 +268,7 @@
         let mark = 'page';
         let code=[];
         code.push(autoid);
+        LayerMsgBox.loading('打印中...');
         jboltHiprintWebPrint(reportfilename, 'url', 'admin/purchaseReceiptList/getPrintData?ids=' + code.join(",") + "&&mark=" + mark);
     }
 

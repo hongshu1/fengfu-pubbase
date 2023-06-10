@@ -38,6 +38,9 @@ FROM
         LEFT JOIN Mo_MoDoc a ON m.iMoDocId= a.iAutoId
 
 where  1=1
+    #if(imaterialsreturnmid)
+ and m.iAutoId=#para(imaterialsreturnmid)
+#end
     #if(imodocid)
  and a.iAutoId=#para(imodocid)
 #end

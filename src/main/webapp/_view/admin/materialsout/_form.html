@@ -1,26 +1,42 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="materialsOutForm" action="#(action)" method="post">
-            #if(materialsOut.autoid??)
-            <input type="hidden" name="materialsOut.autoid" value="#(materialsOut.autoid??)"/>
-            #end
+
+
             <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
                 <div class="col-md-l pt-2" role="group" aria-label="btn-group">
+                    #if(!materialsOut.iauditstatus??)
                     <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
-                            data-id="1" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i>
+                            data-id="0" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i>
                         保存
                     </button>
+                    #end
                     <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
-                            data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
+                            data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
                             class="fa fa-window-maximize"></i> 提交审核
                     </button>
+                    #if(materialsOut.iauditstatus??)
+                    <button onclick="audit_#(pageId)(this)"
+                            data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
+                            class="fa fa-window-maximize"></i> 审核
+                    </button>
+                    <button onclick="NoApprove_#(pageId)(this)"
+                            data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
+                            class="fa fa-window-maximize"></i> 反审核
+                    </button>
+                    #end
                     <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
                         关闭
                     </button>
                 </div>
             </div>
+        <form onsubmit="return false;" id="materialsOutForm_#(pageId)" action="#(action)" method="post">
 
+            #if(materialsOut.autoid??)
+            <input type="hidden" id="materialsOutautoid" name="materialsOut.autoid" value="#(materialsOut.autoid??)"/>
+            #end
+            <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
+            <input type="hidden" id="barcodes" name="barcodes"/>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">出库单号：</label>
                 <div class="col-sm-2 col-form-label">
@@ -57,7 +73,7 @@
                 <div class="col-sm-2 col-form-label">
                     <div class="input-group-append">
                         <input  required type="text" id="cmodocno" class="form-control border-none" readonly="readonly" placeholder=""
-                               value="#(MODetail.monorow??)" />
+                               value="#(MODetail.cmodocno??)" />
                         <input  type="hidden" id="sourcebilldid" class="form-control border-none" readonly="readonly" name="materialsOut.sourcebilldid" placeholder=""
                                value="#(materialsOut.sourcebilldid??)" />
                         <input  type="hidden" id="sourcebilltype" class="form-control border-none" readonly="readonly" name="materialsOut.sourcebilltype" placeholder=""
@@ -77,7 +93,7 @@
                 <label class="col-sm-2 col-form-label">生产数量：</label>
                 <div class="col-sm-2 col-form-label">
                     <input type="text"  class="form-control border-none" id="iqty" readonly="readonly" placeholder=""
-                           value="#(MODetail.qty??)"/>
+                           value="#(MODetail.iqty??)"/>
                 </div>
             </div>
 
@@ -98,7 +114,7 @@
                 <label class="col-sm-2 col-form-label">部门名称：</label>
                 <div class="col-sm-2 col-form-label">
                     <input type="text"  id="cdepname" class="form-control border-none" readonly="readonly" placeholder=""
-                           value="#(materialsOut.deptcode??)"/>
+                           value="#(MODetail.cDepName??)"/>
                     <input type="hidden" id="cdepcode" class="form-control border-none" readonly="readonly" placeholder=""
                            name="materialsOut.deptcode" value="#(materialsOut.deptcode??)"/>
                 </div>
@@ -135,6 +151,7 @@
                 </div>
             </div>
 
+        </form>
             <div class="form-group row">
                 <div class="col-11" style="margin-left: 180px;">
                     <div class="jbolt_page_content">
@@ -160,12 +177,54 @@
                            value="#(MODetail.receivedqty??)"/>
                 </div>
             </div>
-        </form>
     </div>
 </div>
 #define js()
 <script>
     hideParentLayerDialogBtn();
+
+    /**
+     * 审核
+     * */
+    function audit_#(pageId)(ele) {
+        var action = getRealJqueryObject(ele);
+        var iAutoId = $("#materialsOutautoid").val();
+        var mark = action.data("id");
+        if (!isEmpty(iAutoId)) {
+            Ajax.post("/admin/materialDeliveryList/approve", {"iAutoId":iAutoId, "mark":mark},function (res) {
+                LayerMsgBox.success(res.msg,1000,function () {
+                    parent.refreshJBoltTable();
+                    parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                })
+            },function (err) {
+                LayerMsgBox.error("请保存提交。后审核！！！",2000)
+            })
+        } else {
+            LayerMsgBox.error("未找到此单据",1000)
+        }
+    }
+
+    /**
+     * 审核
+     * */
+    function NoApprove_#(pageId)(ele) {
+        var action = getRealJqueryObject(ele);
+        var iAutoId = $("#materialsOutautoid").val();
+        var mark = action.data("id");
+        if (!isEmpty(iAutoId)) {
+            debugger;
+            Ajax.post("/admin/materialDeliveryList/NoApprove", {"ids":iAutoId, "mark":mark},function (res) {
+                LayerMsgBox.success(res.msg,1000,function () {
+                    parent.refreshJBoltTable();
+                    parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                })
+            },function (err) {
+                LayerMsgBox.error("请保存提交。后审核！！！",2000)
+            })
+        } else {
+            LayerMsgBox.error("未找到此单据",1000)
+        }
+    }
 
 
     function submitAllTables_#(pageId)(ele){
@@ -209,6 +268,9 @@
      * @param data
      */
     function setChooseDialogSelectResultFromSupplier(data) {
+        //重新选择入库单号时刷新
+        refreshJBoltTable("#jbolt_table_materialsout_split_#(pageId)");
+        $("#barcodes").val('');
         //隐藏和显示现品票搜索和添加行
         if ($("#sourcebilldid").val()!=null){
             $("#Search").attr("style","display:block;");

@@ -1,7 +1,11 @@
 package cn.rjtech.admin.syspuinstore;
 
+import java.util.List;
+
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -85,20 +89,27 @@ public class SysPuinstoreAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        Vendor vendor = vendorService.findByCode(sysPuinstore.getVenCode());
-        if (vendor != null) {
-            set("cvenname", vendor.getCVenName());
-        }
-        Department department = departmentService.findByCdepcode(getOrgId(), sysPuinstore.getDeptCode());
-        if (department != null) {
-            set("cdepname", department.getCDepName());
-        }
-        RdStyle rdStyle = rdStyleService.findBycSTCode(sysPuinstore.getRdCode());
-        if (rdStyle != null) {
-            set("crdname", rdStyle.getCRdName());
-        }
-        set("sysPuinstore", sysPuinstore);
+        Record record = service.findEditAndOnlySeeByAutoid(sysPuinstore.getAutoID());
+        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()));
+        set("ibustype", iBusTypeKey);//业务类型
+        set("sysPuinstore", record);
         render("edit.html");
+    }
+
+    /*
+     * 查看
+     * */
+    public void onlysee() {
+        SysPuinstore sysPuinstore = service.findById(getLong(0));
+        if (sysPuinstore == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        Record record = service.findEditAndOnlySeeByAutoid(sysPuinstore.getAutoID());
+        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()));
+        set("ibustype", iBusTypeKey);//业务类型
+        set("sysPuinstore", record);
+        render("onlysee.html");
     }
 
     /*
@@ -140,14 +151,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * */
     public void editAutit() {
         Kv kv = getKv();
-        Long aLong = getLong(0);
-        Long autoid = null;
-        if (kv.getLong("autoid") != null) {
-            autoid = kv.getLong("autoid");
-        } else if (aLong != null) {
-            autoid = aLong;
-        }
-        renderJson(service.editAutit(autoid));
+        renderJson(service.editAutit(kv.getLong("autoid")));
     }
 
     /*
@@ -155,51 +159,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * */
     public void onlyseeAutit() {
         Kv kv = getKv();
-        Long aLong = getLong(0);
-        Long autoid = null;
-        if (kv.getLong("autoid") != null) {
-            autoid = kv.getLong("autoid");
-        } else if (aLong != null) {
-            autoid = aLong;
-        }
-        renderJson(service.onlyseeAutit(autoid));
-    }
-
-    /*
-     * 查看
-     * */
-    public void onlysee() {
-        SysPuinstore sysPuinstore = service.findById(getLong(0));
-        if (sysPuinstore == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        Vendor vendor = vendorService.findByCode(sysPuinstore.getVenCode());
-        if (vendor != null) {
-            set("cvenname", vendor.getCVenName());
-        }
-        Department department = departmentService.findByCdepcode(getOrgId(), sysPuinstore.getDeptCode());
-        if (department != null) {
-            set("cdepname", department.getCDepName());
-        }
-        RdStyle rdStyle = rdStyleService.findBycSTCode(sysPuinstore.getRdCode());
-        if (rdStyle != null) {
-            set("crdname", rdStyle.getCRdName());
-        }
-        PurchaseType purchaseType = purchaseTypeService.findById(sysPuinstore.getBillType());
-        if (purchaseType != null){
-            set("cptcode",purchaseType.getCPTCode());
-            set("cptname",purchaseType.getCPTName());
-        }
-        set("sysPuinstore", sysPuinstore);
-        render("onlysee.html");
-    }
-
-    /*
-     * 打印
-     * */
-    public void printSysPuinstore() {
-        //TODO 待定
+        renderJson(service.onlyseeAutit(kv.getLong("autoid")));
     }
 
     /**
