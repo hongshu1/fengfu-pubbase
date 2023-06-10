@@ -131,9 +131,6 @@ public class MoDocService extends BaseService<MoDoc> {
 
   /**
    * 保存
-   *
-   * @param
-   * @return
    */
   public Ret save(JBoltTable jBoltTable) {
     MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
@@ -144,9 +141,13 @@ public class MoDocService extends BaseService<MoDoc> {
     moDoc.setIStatus(1);
     moDoc.setIType(2);
     Date date = moDoc.getDPlanDate();
-    moDoc.setIYear(date.getYear());
-    moDoc.setIMonth(date.getMonth());
-    moDoc.setIDate(date.getDay());
+    
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(date);
+      
+    moDoc.setIYear(calendar.get(Calendar.YEAR));
+    moDoc.setIMonth(calendar.get(Calendar.MONTH));
+    moDoc.setIDate(calendar.get(Calendar.DAY_OF_MONTH));
     moDoc.setIPersonNum(0);
     InventoryRouting byId = inventoryRoutingService.findById(moDoc.getIInventoryRouting());
     moDoc.setCVersion(byId.getCVersion());

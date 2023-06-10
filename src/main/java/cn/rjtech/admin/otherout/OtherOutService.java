@@ -243,12 +243,12 @@ public class OtherOutService extends BaseService<OtherOut> {
 				//	行数据为空 不保存
 				if ("save".equals(revokeVal)) {
 					if (otherOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
-						ValidationUtils.isTrue(false, "请先添加行数据！");
+						ValidationUtils.error( "请先添加行数据！");
 					}
 				}
 
 				if ("submit".equals(revokeVal) && otherOut.getAutoID() == null) {
-					ValidationUtils.isTrue(false, "请保存后提交审核！！！");
+					ValidationUtils.error( "请保存后提交审核！！！");
 				}
 				System.out.println("====="+otherOut.getAutoID());
 

@@ -279,7 +279,7 @@ public class BarcodeencodingmService extends BaseService<Barcodeencodingm> {
                 		ValidationUtils.notNull(iinvestmenttype, "投资类型为空");
                         code.append(iinvestmenttype);
                 	}else{
-                		ValidationUtils.isTrue(false, "投资类型编码项目只能用于投资计划No.生成，其它应用模块不需要配置!");
+                		ValidationUtils.error( "投资类型编码项目只能用于投资计划No.生成，其它应用模块不需要配置!");
                 	}
                 	if(JBoltStringUtil.isNotBlank(csuffix)) code.append(csuffix);
                     break;

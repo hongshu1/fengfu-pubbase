@@ -122,7 +122,7 @@ public class FormUploadMAdminController extends BaseAdminController {
 		renderJsonData(service.saveTableSubmit(getJBoltTable()));
 	}
 
-	public void batchAudit() {
+	public void batchApprove() {
 		renderJson(service.batchHandle(getKv(), 2));
 	}
 

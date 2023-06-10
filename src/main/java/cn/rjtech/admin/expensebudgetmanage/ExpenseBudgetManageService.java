@@ -173,7 +173,7 @@ public class ExpenseBudgetManageService extends BaseService<ExpenseBudget>{
 				cproposalNos += record.getStr("cproposalno") + ",";
 			}
 			cproposalNos = cproposalNos.substring(0,cproposalNos.lastIndexOf(","));
-			ValidationUtils.isTrue(false, "费用预算已发生禀议，不能作废，请删除后流程单据后继续操作，禀议书编号为"+cproposalNos);
+			ValidationUtils.error( "费用预算已发生禀议，不能作废，请删除后流程单据后继续操作，禀议书编号为"+cproposalNos);
 		}
 		tx(()->{
 			expenseBudget.setIeffectivestatus(EffectiveStatusEnum.CANCLE.getValue());

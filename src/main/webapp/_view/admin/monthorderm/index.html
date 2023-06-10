@@ -3,135 +3,147 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)" >
 
-<div class="jbolt_page_title">
-	<div class="row">
-		<div class="col-md-auto"><h1><i class="jbicon2 jbi-appstore"></i>月度计划订单</h1></div>
-		<div class="col">
-			<form class="form-inline text-left" id="monthordermForm_#(pageId)"   onsubmit="return false;" method="post">
-				<input type="text" class="form-control" data-with-clearbtn="true" placeholder="订单号" name="cOrderNo" style="width:110px;" value="" />
-				<input type="text" class="form-control" data-with-clearbtn="true" placeholder="客户名称" name="cCusName" style="width:110px;" value="" />
-                <select class="form-control"
-                        name="iAuditStatus"
-                        data-autoload
-                        data-url="admin/dictionary/options?key=annual_order_auditstatus"
-                        data-select-type="select"
-                        data-text="=订单状态="
-                        data-value=""
-                        data-with-clearbtn="true"
-                        data-value-attr="sn"
-                ></select>
-                <input type="text"
-	                data-date
-	                data-type="year"
-	                placeholder="=年份="
-	                style="width:91px!important;"
-	                data-fmt="yyyy"
-	                autocomplete="off"
-	                class="form-control"
-	                maxlength="20"
-	                name="iYear"
-	                value=""/>
-				<select class="form-control" name="iMonth">
-			        <option value="">=月份=</option>
-			        <option value="1">1月</option>
-			        <option value="2">2月</option>
-			        <option value="3">3月</option>
-			        <option value="4">4月</option>
-			        <option value="5">5月</option>
-			        <option value="6">6月</option>
-			        <option value="7">7月</option>
-			        <option value="8">8月</option>
-			        <option value="9">9月</option>
-			        <option value="10">10月</option>
-			        <option value="11">11月</option>
-			        <option value="12">12月</option>
-                </select>
-				<input type="text" class="form-control" data-with-clearbtn="true" placeholder="创建人" style="width:110px;" name="cCreateName" value="" />
-				<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" name="startTime" value=""/>
-                <span class="ml-1 mr-1">至</span>
-                <input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20" name="endTime" value=""/>
-			<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-			<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-			</form>
-		</div>
-	</div>
-</div>
-<div class="jbolt_page_content">
-<!-- JBoltTable的数据模板定义-->
-<textarea class="jb_tpl_box" id="monthordermRowtpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.iautoid}" >
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>
-	<a class=jbolt_table_editbtn href="admin/monthorderm/edit?iautoid=${data.iautoid}" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="月度计划订单详情"><i class="fa fa-eye"></i>查看</a>
-	{@if  data.iorderstatus == '1' || data.iorderstatus == '4'}
-	<a href="admin/monthorderm/edit?iautoid=${data.iautoid}&edit=true" data-area="100%,100%"  tooltip data-title="编辑月度计划订单"  data-handler="refreshJBoltTable" data-dialog-title="编辑月度计划订单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
-    <a href="admin/monthorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除月度计划订单" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-	{@/if}
-	{@if data.iorderstatus == '2'}
-	<a class="jbolt_table_delbtn" href="admin/monthorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回月度订单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
-	{@/if}
-</td>
-<td>$${data.iorderstatus|iOrderStatus}</td>
-<td>$${data.cauditprogress}</td>
-<td>${data.corderno}</td>
-<td>${data.ccusname}</td>
-<td>${data.iyear}</td>
-<td>${data.imonth}</td>
-<td>${data.ccreatename}</td>
-<td>${data.dcreatetime}</td>
-</tr>
-{@/each}
-</textarea>
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto"><h1><i class="jbicon2 jbi-appstore"></i>月度计划订单</h1></div>
+            <div class="col">
+                <form class="form-inline text-left" id="monthordermForm_#(pageId)" onsubmit="return false;" method="post">
+                    
+                    <input type="text" class="form-control" data-with-clearbtn="true" placeholder="订单号" name="cOrderNo" style="width:110px;" value=""/>
+                    <input type="text" class="form-control" data-with-clearbtn="true" placeholder="客户名称" name="cCusName" style="width:110px;" value=""/>
+                    
+                    <select class="form-control"
+                            name="iAuditStatus"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=annual_order_auditstatus"
+                            data-select-type="select"
+                            data-text="=订单状态="
+                            data-value=""
+                            data-with-clearbtn="true"
+                            data-value-attr="sn"
+                    ></select>
+                    
+                    <input type="text"
+                           data-date
+                           data-type="year"
+                           placeholder="=年份="
+                           style="width:91px!important;"
+                           data-fmt="yyyy"
+                           autocomplete="off"
+                           class="form-control"
+                           maxlength="20"
+                           name="iYear"
+                           value=""/>
+                    
+                    <select class="form-control" name="iMonth">
+                        <option value="">=月份=</option>
+                        <option value="1">1月</option>
+                        <option value="2">2月</option>
+                        <option value="3">3月</option>
+                        <option value="4">4月</option>
+                        <option value="5">5月</option>
+                        <option value="6">6月</option>
+                        <option value="7">7月</option>
+                        <option value="8">8月</option>
+                        <option value="9">9月</option>
+                        <option value="10">10月</option>
+                        <option value="11">11月</option>
+                        <option value="12">12月</option>
+                    </select>
+                    
+                    <input type="text" class="form-control" data-with-clearbtn="true" placeholder="创建人" style="width:110px;" name="cCreateName" value=""/>
+                    
+                    <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" name="startTime" value=""/>
+                    <span class="ml-1 mr-1">至</span>
+                    <input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20" name="endTime" value=""/>
+                    
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-<!-- 工具条 toolbar -->
-<div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
-	<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-		<button data-openpage="dialog" data-area="100%,100%" data-handler="jboltTablePageToFirst" data-title="新增月度计划订单"  data-url="admin/monthorderm/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/monthorderm/deleteByIds?ids=" data-confirm="确定反审批选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 批量删除</button>
-		#include("/_view/_common/_batch_approval_btns.html", formSn="Co_MonthOrderM",uri="admin/monthorderm??",primaryKeyName="iAutoId")
-	</div>
-</div>
+    <div class="jbolt_page_content">
+        
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="monthordermRowtpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}" >
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a class=jbolt_table_editbtn href="admin/monthorderm/edit?iautoid=${data.iautoid}" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="月度计划订单详情"><i class="fa fa-eye"></i>查看</a>
+            
+                {@if  data.iorderstatus == '1' || data.iorderstatus == '4'}
+                    <a href="admin/monthorderm/edit?iautoid=${data.iautoid}&edit=true" data-area="100%,100%"  tooltip data-title="编辑月度计划订单"  data-handler="refreshJBoltTable" data-dialog-title="编辑月度计划订单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+                    <a href="admin/monthorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除月度计划订单" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+                {@/if}
+                {@if data.iorderstatus == '2'}
+                    <a class="jbolt_table_delbtn" href="admin/monthorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回月度订单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
+                {@/if}
+            </td>
+            <td>$${data.iorderstatus|iOrderStatus}</td>
+            <td>$${data.cauditprogress}</td>
+            <td>${data.corderno}</td>
+            <td>${data.ccusname}</td>
+            <td>${data.iyear}</td>
+            <td>${data.imonth}</td>
+            <td>${data.ccreatename}</td>
+            <td>${data.dcreatetime}</td>
+        </tr>
+        {@/each}
+        </textarea>
 
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-openpage="dialog" data-area="100%,100%" data-handler="jboltTablePageToFirst" data-title="新增月度计划订单" data-url="admin/monthorderm/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/monthorderm/deleteByIds?ids=" data-confirm="确定反审批选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 批量删除</button>
+                
+                ### 参数列表
+                ### formSn:         表单名
+                ### uri:            接口URI
+                ### primaryKeyName: 表单主键名
+                ### className：     实现审批业务的类名
+                #include("/_view/_common/_batch_approval_btns.html", formSn="Co_MonthOrderM", uri="admin/monthorderm??", primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService")
+                
+            </div>
+        </div>
 
-
-<table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal"
-data-jbolttable
-data-height="fill"
-data-ajax="true"
-data-url="admin/monthorderm/datas"
-data-column-resize="true"
-data-row-click-active="true"
-data-column-prepend="1:checkbox:true"
-data-conditions-form="monthordermForm_#(pageId)"
-data-rowtpl="monthordermRowtpl_#(pageId)"
-data-page="monthordermPage_#(pageId)"
-data-toolbar="monthorderm_toolbar_#(pageId)"
-data-fixed-columns-left="1,2,3"
-data-row-dblclick-active="true"
-data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
->
-<thead>
-<tr>
-	<th data-width="60">序号</th>
-	<th data-width="200">操作</th>
-	<th data-width="150" data-column="iAuditStatus">订单状态</th>
-	<th data-width="100" data-column="cauditprogress">审批进度</th>
-	<th data-width="150" data-column="cOrderNo">订单号</th>
-	<th data-width="150" data-column="ccusname">客户名称</th>
-	<th data-width="150" data-column="iYear">年份</th>
-	<th data-width="150" data-column="iMonth">月份</th>
-	<th data-width="150" data-column="cCreateName">创建人</th>
-	<th data-width="150" data-column="dCreateTime">创建时间</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-
-
-
-</div>
+        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-url="admin/monthorderm/datas"
+               data-column-resize="true"
+               data-row-click-active="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="monthordermForm_#(pageId)"
+               data-rowtpl="monthordermRowtpl_#(pageId)"
+               data-page="monthordermPage_#(pageId)"
+               data-toolbar="monthorderm_toolbar_#(pageId)"
+               data-fixed-columns-left="1,2,3"
+               data-row-dblclick-active="true"
+               data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+        >
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="200">操作</th>
+                <th data-width="150" data-column="iAuditStatus">订单状态</th>
+                <th data-width="100" data-column="cauditprogress">审批进度</th>
+                <th data-width="150" data-column="cOrderNo">订单号</th>
+                <th data-width="150" data-column="ccusname">客户名称</th>
+                <th data-width="150" data-column="iYear">年份</th>
+                <th data-width="150" data-column="iMonth">月份</th>
+                <th data-width="150" data-column="cCreateName">创建人</th>
+                <th data-width="150" data-column="dCreateTime">创建时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 </div>
 #end
 
@@ -139,7 +151,7 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 <script type="text/javascript">
 
 	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
-		$(tempTr1).data('url', '/admin/monthorderm/edit/' + rowData.iautoid)
+		$(tempTr1).data('url', '/admin/monthorderm/edit?iautoid=' + rowData.iautoid)
 			.data('area', '100%,100%')
 			.data('handler','refreshJBoltTable')
 			.data('title', '月度计划订单')

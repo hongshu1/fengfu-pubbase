@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -63,7 +64,7 @@ public class JBoltRoleSnGen {
 		Engine engine = new Engine();
 		engine.addSharedObject("JBoltStringUtil", new JBoltStringUtil());
 		Template template=engine.getTemplate(TPL);
-		BufferedWriter writer=FileUtil.getWriter(TARGET, "utf-8", false);
+		BufferedWriter writer=FileUtil.getWriter(TARGET, StandardCharsets.UTF_8, false);
 		try {
 			writer.write(template.renderToString(Kv.by("roles", roles)));
 			writer.flush();
