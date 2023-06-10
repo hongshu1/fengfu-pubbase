@@ -138,4 +138,8 @@ public class MoMaterialscanusedlogmAdminController extends BaseAdminController {
 		renderJsonData(service.createOutDoc(cdocno,imaterialscanUsedlogmid));
 	}
 
+	public  void details(){
+
+	}
+
 }
