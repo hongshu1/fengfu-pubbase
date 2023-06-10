@@ -99,8 +99,8 @@ public class SysPureceiveAdminController extends BaseAdminController {
         }
 
         // 关联查询用户名字
-        if (null != sysPureceive.getCreatePerson()) {
-            set("username", sysenumerationservice.getUserName(sysPureceive.getCreatePerson()));
+        if (null != sysPureceive.getIcreateby()) {
+            set("username", sysenumerationservice.getUserName(sysPureceive.getIcreateby()));
         }
 
         set("sysPureceive", sysPureceive);
@@ -265,7 +265,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     /**
      * 审核通过
      */
-    public void process(String ids) {
+    public void batchAudit(String ids) {
         if (StringUtils.isEmpty(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
@@ -277,7 +277,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     /**
      * 审核不通过
      */
-    public void noProcess(String ids) {
+    public void batchReverseAudit(String ids) {
         if (StringUtils.isEmpty(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;

@@ -66,7 +66,7 @@ FROM
     ) f ON f.cBarcode= mpd.Barcode
 
     #if(imodocid)
-and  t1.SourceBillDid=#para(imodocid)
+and  mp.SourceBillid=#para(imodocid)
 #end
 
 #end

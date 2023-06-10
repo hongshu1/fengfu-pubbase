@@ -5,6 +5,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.MoMaterialsreturnd;
 import cn.rjtech.model.momdata.MoMaterialsreturnm;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -129,6 +130,15 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
 			return;
 		}
 		///renderJson(service.NoApprove(ids));
+	}
+	public void details() {
+		MoMaterialsreturnm moMaterialsreturnm=service.findById(getLong(0));
+		if(moMaterialsreturnm == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		set("moMaterialsreturnm",moMaterialsreturnm);
+		render("detail.html");
 	}
 
 }

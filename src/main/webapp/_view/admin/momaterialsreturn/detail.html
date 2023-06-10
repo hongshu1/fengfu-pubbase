@@ -1,0 +1,90 @@
+#set(pageId=RandomUtil.random(6))
+#@jboltLayout()
+#define main()
+<div class="jbolt_page">
+
+    <div class="jbolt_page_content">
+        <form onsubmit="return false;" id="" action="#(action)" method="post">
+            <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
+
+
+                    <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
+                        关闭
+                    </button>
+                </div>
+            </div>
+
+            <input type="hidden"  name="moMaterialsreturnm.iautoid" value="#(moMaterialsreturnm.iautoid??)"/>
+
+
+
+
+
+            <div class="form-group row">
+                <div class="col-11" style="margin-left: 180px;">
+                    <div class="jbolt_page_content">
+                        #render("_table_split2.html")
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">备注：</label>
+                <div class="col-sm-2 col-form-label">
+                    </textarea>
+                    <textarea id="memo" name="moMaterialsreturnm.cmemo" class="form-control" placeholder="=请输入备注="
+                              type="text" maxlength="300" readonly="readonly"
+                              value=""></textarea>
+                </div>
+
+
+            </div>
+
+        </form>
+    </div>
+</div>
+#end
+#define js()
+<script>
+    hideParentLayerDialogBtn();
+    $(function(){
+        init();
+
+    });
+
+
+    function  init(){
+        var imaterialsreturnmid=#(moMaterialsreturnm.iautoid??);
+        var  page=$('#gonu').val();
+        var  pageSize=$('#pageSize').val();
+        $.ajax({
+            url: "admin/momaterialsreturn/getMoMaterialsreturnList?page="+page+"&pageSize="+pageSize+"&imaterialsreturnmid="+imaterialsreturnmid,
+            type: 'GET',
+            success: function (ret) {
+                if (ret.state === 'ok') {
+                    var data = ret.data;
+
+                    jboltTableClear('#jbolt_table_#(pageId)');
+
+                    jboltTableInsertRow('#jbolt_table_#(pageId)', data, false, false, true);
+                    // console.log(jboltTableGetSubmitData('#itemroutingconfigid_#(pageId)'));
+                }
+            },
+            error: function () {
+                LayerMsgBox.alert("系统异常,请联系管理员");
+            }
+        });
+    }
+
+
+
+
+
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+
+#include("/_view/_admin/common/_formjs.html",formId="PuinstoreForm")
+#end
+
