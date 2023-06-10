@@ -1,9 +1,10 @@
 #sql("paginateAdminDatas")
 SELECT
         AuditState =
-        CASE WHEN t1.State=1 THEN '已保存'
-             WHEN t1.State=2 THEN '待审核'
-             WHEN t1.State=3 THEN '已审核' END,
+        CASE WHEN t1.iAuditStatus=0 THEN '未审核'
+             WHEN t1.iAuditStatus=1 THEN '待审核'
+             WHEN t1.iAuditStatus=2 THEN '审核通过'
+             WHEN t1.iAuditStatus=3 THEN '审核不通过' END,
     t1.*,
     t3.InvCode as MoInvCode,
     t3.MONoRow,
@@ -28,7 +29,7 @@ WHERE 1 = 1
     )
     #end
    #if(iorderstatus)
-        AND t1.State = #para(iorderstatus)
+        AND t1.iAuditStatus = #para(iorderstatus)
     #end
     #if(OrgCode)
         AND t1.OrganizeCode = #para(OrgCode)
@@ -85,9 +86,20 @@ ORDER BY
 
 
 #sql("getrcvMODetailList")
-SELECT *
-FROM V_Sys_MODetail
-WHERE MOId = #(iautoid)
+SELECT
+    t1.*,
+    md.cMoDocNo,
+    md.iQty,
+    rs.cRdName,
+    dt.cDepName,
+    wh.cWhName
+FROM
+    T_Sys_MaterialsOut t1
+        LEFT JOIN Mo_MoDoc md ON md.iAutoId = t1.SourceBillDid
+        LEFT JOIN Bd_Rd_Style rs ON rs.cRdCode = t1.RdCode
+        LEFT JOIN Bd_Department dt ON dt.cDepCode = t1.DeptCode
+        LEFT JOIN Bd_Warehouse wh ON wh.cWhCode = t1.Whcode
+WHERE t1.AutoID = #(autoid)
 #end
 
 #sql("getRDStyleDatas")

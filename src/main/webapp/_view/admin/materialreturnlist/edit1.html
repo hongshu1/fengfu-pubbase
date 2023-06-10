@@ -260,23 +260,10 @@
 
 #define js()
 <script>
-    /**
-     * 选择其他订单号刷新数据
-     * @private
-     */
-    function Billno(){
-    //重新选择入库单号时刷新
-
-    }
-
     function spotTickets(){
-
-        debugger;
         // //扫入多条现品票判断是否存在
         let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
-        var spottickets = $("#spottickets").val();
         console.log(data);
-        console.log(spottickets);
         let array = new Array();
         if (data != null){
             for (let i = 0; i < data.length; i++) {
@@ -292,7 +279,6 @@
     }
 
     function barcode_#(pageId)(ele){
-        debugger;
         LayerMsgBox.loading("执行中......",2000);
         var barcode = $("#barcode").val();
         var autoid = $("#autoid").val();
@@ -333,24 +319,11 @@
     }
 
     /**
-     * 选择其他订单号刷新数据
-     * @private
-     */
-    function supplierButton(){
-
-        refreshJBoltTable("#Puinstoreform_TableId_#(pageId)");
-
-    }
-
-    /**
      * 获得选中的订单号数据
      * @param data
      */
     function setChooseDialogSelectResultFromSupplier(data) {
-
-        // let tableId1 = 'Puinstoreform_TableId_#(pageId)';
-        // refreshJBoltTable(tableId1);
-        // refreshJBoltTable("Puinstoreform_TableId_#(pageId)");
+        //重新选择入库单号时刷新
         refreshJBoltTable("#Puinstoreform_TableId_#(pageId)");
         $("#spottickets").val('');
 
@@ -428,8 +401,7 @@
                         {column: "rowno", use: "rowno"},
                     ],
                     handler:function (table,td,text,value,jsonData) {
-                        debugger;
-                        var spotticket = jsonData.spotticket;
+                        //选择的现品票后存入spottickets,没有传空
                         let datas = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
                         console.log("data==>",datas);
                         let array = new Array();

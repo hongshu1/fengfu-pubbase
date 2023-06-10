@@ -45,7 +45,7 @@
                data-column-resize="true"
                data-url="admin/materialDeliveryList/getMaterialsOutLines?autoid=#(materialsOut.autoid??)"
                data-column-prepend="1:checkbox:true"
-               data-conditions-form="inventoryForm_#(pageId)"
+               data-conditions-form="materialsOutForm_#(pageId)"
                data-rowtpl="inventorySplit_tpl_#(pageId)"
                data-toolbar="inventory_split_toolbar_#(pageId)"
                data-editable="true"
@@ -76,7 +76,7 @@
         var detailHidden = $("#detailHidden").val();
 
         //扫入多条现品票判断是否存在
-        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["barcode"]);
+        let data = getJboltTableAllDatas("jbolt_table_materialsout_split_#(pageId)",["barcode"]);
         let array = new Array();
         if (data != null){
             for (let i = 0; i < data.length; i++) {
@@ -100,7 +100,7 @@
         if (barcode) {
             Ajax.post("admin/materialreturnlist/barcode", {"barcode": barcode,"autoid":autoid,"detailHidden":detailHidden},
                 function (res) {
-                    jboltTableInsertRow("Puinstoreform_TableId_#(pageId)", res.data, false, true, true)
+                    jboltTableInsertRow("jbolt_table_materialsout_split_#(pageId)", res.data, false, true, true)
                     $("#barcode").val('');
                 }, function (err) {
                 })
@@ -112,10 +112,8 @@
     function barcodes(){
 
         // //扫入多条现品票判断是否存在
-        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["barcode"]);
-        var spottickets = $("#spottickets").val();
+        let data = getJboltTableAllDatas("jbolt_table_materialsout_split_#(pageId)",["barcode"]);
         console.log(data);
-        console.log(spottickets);
         let array = new Array();
         if (data != null){
             for (let i = 0; i < data.length; i++) {
@@ -138,7 +136,7 @@
           maxRowCount:1000,
           trigger:"click",
           submit:{
-              withForm: ["materialsOutForm"],
+              withForm: ["materialsOutForm_#(pageId)"],
               type:"multi",//cell|all|multi
               name:"table2"
           },
@@ -161,7 +159,23 @@
               changeColumns:[{column: "barcode", use: "barcode"},{column: "invcode", use: "cinvcode"},{column: "cinvaddcode", use: "cinvaddcode"},
                   {column: "cinvname", use: "cinvname"},{column: "cuomclassname", use: "cuomclassname"},
                   {column: "qty", use: "qty"},{column: "cequipmentmodelname", use: "cequipmentmodelname"},
-                  ]
+                  ],
+              handler:function (table,td,text,value,jsonData) {
+                  let datas = getJboltTableAllDatas("jbolt_table_materialsout_split_#(pageId)",["barcode"]);
+                  console.log("data==>",datas);
+                  let array = new Array();
+                  if (datas != null){
+                      for (var i = 0; i < datas.length; i++){
+                          var data = datas[i];
+                          array.push("'"+data.barcode+"'");
+                          let codes = array.join(',');
+                          $("#barcodes").val(codes);
+                      }
+                  }else {
+                      $("#barcodes").val('');
+                  }
+
+              }
 
           },
           invcode: {
@@ -177,7 +191,8 @@
               header:'材料编码,材料代码,材料名称,主计量单位,数量,所属机型',
               changeColumns:[{column: "invcode", use: "cinvcode"},{column: "cinvaddcode", use: "cinvaddcode"},
                   {column: "cinvname", use: "cinvname"},{column: "cuomclassname", use: "cuomclassname"},
-                  {column: "qty", use: "qty"},{column: "cequipmentmodelname", use: "cequipmentmodelname"},]
+                  {column: "qty", use: "qty"},{column: "cequipmentmodelname", use: "cequipmentmodelname"},
+              ],
           },
           qty: {
               type:"amount",
