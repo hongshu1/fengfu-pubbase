@@ -38,8 +38,12 @@ import cn.jbolt.common.config.JBoltUploadFolder;
 import com.jfinal.upload.UploadFile;
 import cn.jbolt.core.service.JBoltFileService;
 #end
+import com.jfinal.core.paragetter.Para;
 #if(codeGen.isCrud??)
 import com.jfinal.plugin.activerecord.tx.Tx;
+#if(!codeGen.isMainDataSource??)
+import com.jfinal.plugin.activerecord.tx.TxConfig;
+#end
 import cn.jbolt.core.base.JBoltMsg;
 #if(codeGen.isGenModel??)
 import #(codeGen.modelPackage+"."+codeGen.modelName);
