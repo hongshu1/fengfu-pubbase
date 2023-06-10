@@ -5,7 +5,7 @@
     <div class="jbolt_page_title">
         <div class="row">
             <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>备料扫码</h1></div>
-            <div class="col-sm-auto">
+            <div class="col-sm-auto" style="padding-right: 0px">
                 <form class="form-inline" id="SysMaterialspreparedetail_form_#(pageId)">
 
                     <!--                    <select class="form-control"-->
@@ -56,9 +56,8 @@
                            name="barcode"
                            value="#(barcode??)"
                     />
-                    <div class="btn-group text-center mx-1">
-                        <button type="submit" class="btn btn-outline-primary" onclick="barcode()"><i class="fa fa-search"></i> 查询</button>
-                        <button onclick="barcode()"><i class="fa fa-search"></i> 查</button>
+                    <div class="btn-group text-center mx-1" hidden="hidden">
+                        <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
                         <button type="button" onclick="form.reset();refreshJBoltTable(this);"
                                 class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
                         </button>
@@ -66,6 +65,21 @@
                         </button>
                     </div>
                 </form>
+
+
+            </div>
+
+            <div class="col-sm-auto" style="padding-left: 0px">
+                <div class="btn-group text-center mx-1">
+                    <button type="button" class="btn btn-outline-primary" onclick="barcode()"><i
+                            class="fa fa-search"></i> 查询
+                    </button>
+                    <button type="button" onclick="form.reset();refreshJBoltTable(this);"
+                            class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary"> 提交备料
+                    </button>
+                </div>
             </div>
             <!--            <div class="col-sm-auto text-right">-->
 
@@ -241,8 +255,6 @@
 
 
     function barcode() {
-        //测试
-        console.log(123);
         LayerMsgBox.loading("执行中......", 2000);
         var barcode = $("#barcode").val();
         var data = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
@@ -272,5 +284,7 @@
             LayerMsgBox.alert("请输入条码")
         }
     }
+
+
 </script>
 #end

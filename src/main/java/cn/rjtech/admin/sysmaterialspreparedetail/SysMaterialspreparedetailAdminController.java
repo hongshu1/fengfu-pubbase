@@ -127,7 +127,7 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 		renderJsonData(service.getBarcode(getPageNumber(), getPageSize(), kv));
 	}
 	public void barcode(String barcode) {
-		ValidationUtils.notBlank(barcode, "请扫码");
+//		ValidationUtils.notBlank(barcode, "请扫码");
 		renderJsonData(syspureceiveservice.barcode(Kv.by("barcode", barcode)));
 	}
 }
