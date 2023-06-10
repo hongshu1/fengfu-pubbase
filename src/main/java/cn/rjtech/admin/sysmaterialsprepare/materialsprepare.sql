@@ -372,12 +372,28 @@ WHERE wsm.isDeleted = '0' #if(isenabled)
 
 
 #sql("barcodeDatas")
-SELECT *
-FROM PS_SubcontractOrderDBatch
-WHERE isEffective = 1 #if(barcode)
-		and Barcode = #para(barcode)
-	#end
+SELECT
+    T_Sys_StockBarcodePosition.AutoID,
+    T_Sys_StockBarcodePosition.InvCode,
+    T_Sys_StockBarcodePosition.Barcode,
+    T_Sys_StockBarcodePosition.Batch,
+    Bd_Inventory.iAutoId,
+    Bd_Inventory.cInvCode,
+    Bd_Inventory.cInvCode1,
+    Bd_Inventory.cInvName1,
+    Bd_Inventory.cInvStd,
+    Bd_Inventory.iInventoryUomId1
+FROM
+    dbo.T_Sys_StockBarcodePosition
+        LEFT JOIN
+    dbo.Bd_Inventory ON dbo.T_Sys_StockBarcodePosition.InvCode=dbo.Bd_Inventory.cInvCode
+WHERE
+        1 = 1
+  AND T_Sys_StockBarcodePosition.Barcode='#(barcode)'
+  AND Bd_Inventory.iAutoId IS NOT NULL
 #end
+
+
 
 
 

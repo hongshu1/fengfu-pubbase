@@ -1,6 +1,7 @@
 package cn.rjtech.admin.sysmaterialspreparedetail;
 
 import cn.rjtech.admin.syspureceive.SysPureceiveService;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -141,5 +142,20 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 	public Page<Record> getBarcode(int pageNumber, int pageSize, Kv kv) {
 		Page<Record> paginate = dbTemplate("materialsprepare.getBarcodedatas", kv).paginate(pageNumber, pageSize);
 		return paginate;
+	}
+
+	public Record barcode(Kv kv) {
+		//先查询条码是否已添加
+//		Record first = dbTemplate("syspureceive.barcodeDatas", kv).findFirst();
+//		if (null != first) {
+//			ValidationUtils.isTrue(false, "条码为：" + kv.getStr("barcode") + "的数据已经存在，请勿重复录入。");
+//		}
+//		first = dbTemplate("syspureceive.barcode", kv).findFirst();
+//		ValidationUtils.notNull(first, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入。");
+//		return first;
+
+		Record first = dbTemplate("materialsprepare.barcodeDatas", kv).findFirst();
+		ValidationUtils.notNull(first, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入。");
+		return first;
 	}
 }

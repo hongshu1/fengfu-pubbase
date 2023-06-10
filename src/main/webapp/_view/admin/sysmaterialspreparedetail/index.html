@@ -57,11 +57,13 @@
                            value="#(barcode??)"
                     />
                     <div class="btn-group text-center mx-1" hidden="hidden">
-                        <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
-                        <button type="button" onclick="form.reset();refreshJBoltTable(this);"
-                                class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
+                        <button type="submit" class="btn btn-outline-primary" id="suBmit"><i class="fa fa-search"></i>
+                            查询
                         </button>
-                        <button type="submit" class="btn btn-outline-secondary"> 提交备料
+                        <button type="button" onclick="form.reset();refreshJBoltTable(this);"
+                                class="btn btn-outline-secondary" id="reSet"><i class="fa fa-reply-all"></i> 重置
+                        </button>
+                        <button type="submit" class="btn btn-outline-secondary" id="sumitMaterials"> 提交备料
                         </button>
                     </div>
                 </form>
@@ -72,12 +74,12 @@
             <div class="col-sm-auto" style="padding-left: 0px">
                 <div class="btn-group text-center mx-1">
                     <button type="button" class="btn btn-outline-primary" onclick="barcode()"><i
-                            class="fa fa-search"></i> 查询
+                            class="fa fa-search" id="suBmit1"></i> 查询
                     </button>
-                    <button type="button" onclick="form.reset();refreshJBoltTable(this);"
-                            class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
+                    <button type="button"
+                            class="btn btn-outline-secondary" id="reSet1"><i class="fa fa-reply-all"></i> 重置
                     </button>
-                    <button type="button" class="btn btn-outline-secondary"> 提交备料
+                    <button type="button" class="btn btn-outline-secondary" id="sumitMaterials1"> 提交备料
                     </button>
                 </div>
             </div>
@@ -222,7 +224,7 @@
                    data-height="39%"
                    data-ajax="true"
                    data-conditions-form="SysMaterialspreparedetail_form_#(pageId)"
-                   data-url="admin/sysMaterialspreparedetail/barcode"
+                   data-url="admin/sysMaterialspreparedetail/barcodeNull"
                    data-rowtpl="SysMaterialsprepare1_tpl_#(pageId)"
                    data-copy-to-excel="false"
                    data-page="SysMaterialsprepare_page"
@@ -274,7 +276,7 @@
         }
 
         if (barcode) {
-            Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode},
+            Ajax.post("admin/sysMaterialspreparedetail/barcode", {"barcode": barcode},
                 function (res) {
                     jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
                     $("#barcode").val('');
@@ -284,6 +286,23 @@
             LayerMsgBox.alert("请输入条码")
         }
     }
+
+
+    const BTN1 = document.getElementById('suBmit');
+    const BTN2 = document.getElementById('reSet');
+    const BTN3 = document.getElementById('sumitMaterials');
+    const BTN4 = document.getElementById('suBmit1');
+    const BTN5 = document.getElementById('reSet1');
+    const BTN6 = document.getElementById('sumitMaterials1');
+    // 给按钮 2 添加点击事件
+    BTN5.addEventListener('click', () => {
+        BTN2.onclick(); // 按钮 2 点击后触发按钮 1 的 `onclick`
+        // BTN1.click(); // 按钮 2 点击后触发按钮 1 的 `click`，效果一样
+    });
+    BTN6.addEventListener('click', () => {
+        BTN3.onclick(); // 按钮 2 点击后触发按钮 1 的 `onclick`
+        // BTN1.click(); // 按钮 2 点击后触发按钮 1 的 `click`，效果一样
+    });
 
 
 </script>
