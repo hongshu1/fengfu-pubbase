@@ -99,8 +99,8 @@ public class SysPureceiveAdminController extends BaseAdminController {
         }
 
         // 关联查询用户名字
-        if (null != sysPureceive.getCreatePerson()) {
-            set("username", sysenumerationservice.getUserName(sysPureceive.getCreatePerson()));
+        if (null != sysPureceive.getIcreateby()) {
+            set("username", sysenumerationservice.getUserName(sysPureceive.getIcreateby()));
         }
 
         set("sysPureceive", sysPureceive);

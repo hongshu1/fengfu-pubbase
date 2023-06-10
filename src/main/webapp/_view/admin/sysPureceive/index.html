@@ -46,7 +46,7 @@
                       {@if data.iauditstatus == '0'}
                         <a href="admin/materialReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip
                            data-title="编辑"
-                           data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表"
+                           data-handler="refreshJBoltTable" data-dialog-title="编辑收料单列表"
                            class="jbolt_table_editbtn">编辑</a>
                         <a href="admin/materialReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
                            tooltip
@@ -56,7 +56,7 @@
                       {@if data.iauditstatus != '0'}
                         <a href="admin/materialReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip
                            data-title="查看"
-                           data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表"
+                           data-handler="refreshJBoltTable" data-dialog-title="编辑收料单列表"
                            class="jbolt_table_editbtn">查看</a>
                       {@/if}
                       {@if data.iauditstatus == '1'}

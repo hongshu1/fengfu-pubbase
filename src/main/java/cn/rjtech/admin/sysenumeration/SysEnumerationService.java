@@ -61,8 +61,8 @@ public class SysEnumerationService  extends BaseService {
      * @param username
      * @return
      */
-    public String getUserName(String username) {
-        User user = userService.findFirst("select * from  jb_user where username = ?", username);
+    public String getUserName(Long username) {
+        User user = userService.findFirst("select * from  jb_user where id = ?", username);
         return user.getName();
     }
 

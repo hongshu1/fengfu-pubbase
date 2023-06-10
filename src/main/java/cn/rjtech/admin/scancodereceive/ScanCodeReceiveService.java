@@ -213,17 +213,21 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> {
 			//通过 id 判断是新增还是修改
 			if(sysotherin.getAutoID() == null){
 				sysotherin.setOrganizeCode(getOrgCode());
-				sysotherin.setCreatePerson(user.getUsername());
-				sysotherin.setCreateDate(now);
+				sysotherin.setIcreateby(user.getId());
+				sysotherin.setCcreatename(user.getName());
+				sysotherin.setDcreatetime(now);
+				sysotherin.setIupdateby(user.getId());
+				sysotherin.setCupdatename(user.getName());
+				sysotherin.setDupdatetime(now);
 				sysotherin.setBillDate(dateToString(now));
-				sysotherin.setModifyPerson(user.getUsername());
 				sysotherin.setIAuditStatus(Integer.valueOf(AuditStateEnum.NOT_AUDIT.getValue()));
-				sysotherin.setModifyDate(now);
 				//主表新增
 				ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
 			}else{
-				sysotherin.setModifyPerson(user.getUsername());
-				sysotherin.setModifyDate(now);
+				sysotherin.setIupdateby(user.getId());
+				sysotherin.setCupdatename(user.getName());
+				sysotherin.setDupdatetime(now);
+
 				//主表修改
 				ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
 			}
@@ -385,7 +389,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> {
 			rcvDocQcFormM.setIInventoryId(Long.valueOf(row.getStr("iinventoryid").trim()));
 		}
 		rcvDocQcFormM.setIVendorId(veniAutoId);
-		rcvDocQcFormM.setDRcvDate(sys.getCreateDate());
+		rcvDocQcFormM.setDRcvDate(sys.getDcreatetime());
 		rcvDocQcFormM.setIQty(Double.valueOf(String.valueOf(row.getStr("qty").trim())).intValue());
 		//批次号
 		rcvDocQcFormM.setCBatchNo("1111111Test");

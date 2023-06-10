@@ -8,11 +8,11 @@ select so.AutoID, CASE so.iAuditStatus
         '审核通过'
 				WHEN 3 THEN
         '审核不通过'
-        END AS statename,so.iAuditStatus as state,so.BillNo as billno, CONVERT(VARCHAR(10), so.CreateDate, 120) as createdate,so.iAuditStatus,
+        END AS statename,so.iAuditStatus as state,so.BillNo as billno, CONVERT(VARCHAR(10), so.dcreatetime, 120) as createdate,so.iAuditStatus,
         so.VenCode as vencode
-		,p.name,s.name as sname,v.cVenName as venname,so.Type as type,so.SourceBillNo
+		,so.ccreatename as name,so.cupdatename as sname,v.cVenName as venname,so.Type as type,so.SourceBillNo
 FROM T_Sys_PUReceive so
-LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.CreatePerson = p.username
+LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.icreateby = p.id
 LEFT JOIN #(getBaseDbName()).dbo.jb_user s on so.AuditPerson = s.username
 LEFT JOIN Bd_Vendor v on so.VenCode = v.cVenCode
 where so.isDeleted = '0'
@@ -23,12 +23,12 @@ where so.isDeleted = '0'
 		and so.iAuditStatus = #para(state)
 	#end
 	#if(startTime)
-		and so.CreateDate >= #para(startTime)
+		and so.dcreatetime >= #para(startTime)
 	#end
 	#if(endTime)
-		and so.CreateDate <= #para(endTime)
+		and so.dcreatetime <= #para(endTime)
 	#end
-ORDER BY so.CreateDate DESC
+ORDER BY so.dcreatetime DESC
 #end
 
 
