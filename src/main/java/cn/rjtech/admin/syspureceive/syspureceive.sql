@@ -126,7 +126,7 @@ select top #(limit)
     m.iVendorId,
 	v.cVenCode as vencode,
 	v.cVenName as venname,
-	uom.cUomCode,uom.cUomName as purchasecuomname
+	uom.cUomCode as purchasecuomcode,uom.cUomName as purchasecuomname
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId

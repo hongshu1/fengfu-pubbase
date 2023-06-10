@@ -11,6 +11,7 @@ import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -48,6 +49,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
 
     /**
      * 后台管理数据查询
+     *
      * @param pageNumber     第几页
      * @param pageSize       每页几条数据
      * @param SourceBillType 来源类型;PO 采购 OM委外
@@ -96,6 +98,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
 
     /**
      * 删除数据后执行的回调
+     *
      * @param sysPuinstoredetail 要删除的model
      * @param kv                 携带额外参数一般用不上
      */
@@ -106,6 +109,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
 
     /**
      * 检测是否可以删除
+     *
      * @param sysPuinstoredetail model
      * @param kv                 携带额外参数一般用不上
      */
@@ -143,9 +147,6 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
     }
 
     public Page<Record> pageDetailList(Kv kv) {
-        if (StringUtils.isBlank(kv.getStr("masid")) && StringUtils.isBlank(kv.getStr("spotticket"))) {
-            return null;
-        }
         Page<Record> paginate = dbTemplate("syspuinstore.pageDetailList", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
         for (Record record : paginate.getList()) {
             String spotticket = record.getStr("spotticket");
@@ -167,7 +168,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
             Record detailByParam = sysPuinstoreService.findSysPODetailByParam(detailKv);
             record.set("invcode", detailByParam.get("invcode"));
             record.set("invname", detailByParam.get("invname"));
-            record.set("qty",record.getBigDecimal("qty").stripTrailingZeros().toPlainString());
+            record.set("qty", record.getBigDecimal("qty").stripTrailingZeros().toPlainString());
         }
         return paginate;
     }
@@ -201,31 +202,25 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
     /*
      * 采购入库单明细表的model
      * */
-    public void saveSysPuinstoredetailModel(List<SysPuinstoredetail> detailList, Record detailRecord,
-                                            SysPuinstore puinstore, String whcode, int i, Record detailByParam) {
-        SysPuinstoredetail detail = new SysPuinstoredetail();
-        detail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
-        detail.setSourceBillNoRow(detailByParam.getStr("sourcebillnorow")); //来源单号+行号
+    public void saveSysPuinstoredetailModel(SysPuinstoredetail detail, Record detailRecord,
+                                            SysPuinstore puinstore, int i) {
+        detail.setSourceBillType("");//采购PO  委外OM（采购类型）
+        detail.setSourceBillNo(puinstore.getSourceBillNo()); //来源单号（订单号）
+        detail.setSourceBillNoRow(puinstore.getSourceBillNo() + "-" + i); //来源单号+行号
+        detail.setSourceBillID(""); //来源单据ID(订单id)
+        detail.setSourceBillDid(""); //来源单据DID;采购或委外单身ID
         detail.setRowNo(i);  //行号
-        savedetailModel2(detail, puinstore, detailRecord, whcode, detailByParam);
+        detail.setMasID(puinstore.getAutoID()); //主表ID;T_Sys_PUInStore.AutoID
+        detail.setWhcode(puinstore.getWhCode()); //仓库
+        detail.setQty(detailRecord.getBigDecimal("qty")); //入库数量
         detail.setCreatePerson(JBoltUserKit.getUserName());
         detail.setCreateDate(puinstore.getCreateDate());
-        detailList.add(detail);
-    }
-
-    public void savedetailModel2(SysPuinstoredetail detail, SysPuinstore puinstore, Record detailRecord, String whcode,
-                                 Record detailByParam) {
-        detail.setSourceBillType(detailByParam.get("sourcebilltype"));//采购PO  委外OM（采购类型）
-        detail.setSourceBillNo(detailByParam.getStr("sourcebillno")); //来源单号（订单号）
-        detail.setSourceBillID(detailByParam.getStr("sourcebillid")); //来源单据ID(订单id)
-        detail.setSourceBillDid(detailByParam.getStr("sourcebilldid")); //来源单据DID;采购或委外单身ID
-        detail.setSpotTicket(detailRecord.getStr("spotticket"));
-        detail.setMasID(puinstore.getAutoID()); //主表ID;T_Sys_PUInStore.AutoID
-        //detail.setWeight(""); //重量
-        detail.setWhcode(whcode); //仓库
-        //detail.setPosCode(""); //库位
-        detail.setQty(detailRecord.getBigDecimal("qty")); //入库数量
-        //detail.setTrackType(""); //跟单类型
+        detail.setSpotTicket(detailRecord.getStr("spotticket"));//现品票
+        detail.setIsDeleted(false);
+        detail.setBrandCode("brandcode");//品牌code
+        detail.setBrandName("brandname");//品牌名称
+        detail.setPuUnitCode("purchasecuomcode");//采购单位code
+        detail.setPuUnitName("purchasecuomname");//采购单位名称
         detail.setMemo(detailRecord.getStr("memo"));
     }
 }

@@ -22,13 +22,13 @@ public class BaseInU8Util {
         JSONObject res = JSON.parseObject(post);
         ValidationUtils.notNull(res, "解析JSON为空");
 
-        String state = res.getString("state");
+        String code = res.getString("code");
         String message = res.getString("message");
         if (message == null) {
             message = res.getString("msg");
         }
-        ValidationUtils.notNull(state, "json:" + json + ";" + message);
-        ValidationUtils.equals(state, "ok", state + ";" + "json:" + json + ";" + message);
+        ValidationUtils.notNull(code, "json:" + json + ";" + message);
+        ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);
         return post;
     }
 
