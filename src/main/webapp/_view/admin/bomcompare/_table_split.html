@@ -13,7 +13,7 @@
             <td>${data.ibaseqty}</td>
             <td>${data.iweight}</td>
             <td>${data.cvenname}</td>
-            <td>${data.bproxyforeign}</td>
+            <td>${data.bproxyforeignname}</td>
             <td>${data.isvirtalname}</td>
             <td>${data.cmemo}</td>
         </tr>
@@ -41,9 +41,9 @@
                        data-jbolttable
                        data-width="auto"
                        data-height="600"
-                       #if(iautoid)
+                       #if(iAutoId)
                        data-ajax="true"
-                       data-url="admin/bomcompare/datas"
+                       data-url="admin/bomM/getBomComparePageData?iBomMid=#(iAutoId)"
                        #end
                        data-column-prepend="1:checkbox:true"
                        data-toolbar="bomcompare_split_toolbar_#(pageId)"
@@ -109,9 +109,9 @@
                 success: function (res) {
                     if (res.state === 'ok') {
                         LayerMsgBox.success(res.msg, 1000, function () {
-                            // refreshPjaxContainer();
-                            parent.LayerMsgBox.closeAll();
-                            parent.refreshPjaxContainer();
+                            refreshPjaxContainer();
+                            // parent.LayerMsgBox.closeAll();
+                            // parent.refreshPjaxContainer();
                         });
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
@@ -127,10 +127,20 @@
                     required:true,
                     placeholder: "=基本用量="
                 },
-                iWeight: {
+                iweight: {
                     type: "amount",
                     required:true,
                     placeholder: "=重量="
+                },
+                cversion:{
+                    type:"select",
+                    linkColumn: 'iinventoryid',
+                    url:"admin/bomM/findByVersionList",
+                    valueAttr:"cversion",
+                    textAttr:"cversion",
+                    changeColumns: [
+                        {column:"iinvpartbommid",use:"iautoid"},
+                    ]
                 },
                 cvenname: {
                     type:"select",

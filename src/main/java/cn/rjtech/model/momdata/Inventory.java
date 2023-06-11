@@ -16,6 +16,8 @@ public class Inventory extends BaseInventory<Inventory> {
     // 虚拟件
     public static final String ISVIRTALNAME = "isVirtalName";
     
+    public static final String BPROXYFOREIGNNAME = "bProxyForeignName";
+    
     public String itemAttributes;
 
     public String getItemAttributes() {

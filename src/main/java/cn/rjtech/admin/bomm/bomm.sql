@@ -10,7 +10,9 @@ FROM
 	Bd_BomM master
 WHERE
 	master.IsDeleted = '0'
-	AND master.isView = '1'
+	#if(isView)
+	    AND master.isView = #para(isView)
+	#end
     #if(orgId)
 	AND master.iOrgId = #para(orgId)
 	#end
@@ -69,4 +71,22 @@ WHERE
 	    AND minv.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%')
 	#end
 	ORDER BY master.dCreateTime DESC
+#end
+
+#sql("findByVersion")
+SELECT
+	m.IAUTOID,
+	m.iInventoryId,
+	m.cVersion
+FROM
+	Bd_BomM m
+    INNER JOIN ( SELECT iInventoryId, MAX ( cVersion ) cVersion FROM Bd_BomM WHERE isDeleted = '0' GROUP BY iInventoryId ) m1 ON m1.iInventoryId = m.iInventoryId
+	AND m.cVersion = m1.cVersion
+WHERE m.isDeleted = '0'
+	#if(orgId)
+	    AND m.iOrgId = #para(orgId)
+	#end
+	#if(invId)
+        AND m.iInventoryId = #para(invId)
+	#end
 #end

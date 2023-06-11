@@ -11,5 +11,8 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Bd_BomD" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class BomD extends BaseBomD<BomD> {
+    // 源id
+    public static final String SOURCEID = "sourceId";
+    
 }
 

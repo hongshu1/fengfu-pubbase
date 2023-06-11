@@ -349,8 +349,11 @@ public class BomCompareService extends BaseService<BomCompare> {
 			if (StrUtil.isNotBlank(codeLevelStr)){
 				codeLevel = form.getInteger(BomD.ICODELEVEL)+1;
 			}
-			
-			bomMService.save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
+			if (ObjectUtil.isNull(bomM.getIAutoId())){
+				bomMService.save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
+			}else{
+				bomMService.update(bomM, userId, userName, now);
+			}
 			if (jBoltTable.saveIsNotBlank()){
 				List<BomD> saveModelList = jBoltTable.getSaveModelList(BomD.class);
 				for (BomD bomD :saveModelList){

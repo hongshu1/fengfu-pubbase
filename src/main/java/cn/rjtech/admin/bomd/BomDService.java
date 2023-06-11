@@ -1,16 +1,24 @@
 package cn.rjtech.admin.bomd;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.enums.BoolCharEnum;
+import cn.rjtech.enums.IsEnableEnum;
+import cn.rjtech.enums.PartTypeEnum;
 import cn.rjtech.model.momdata.BomD;
+import cn.rjtech.model.momdata.Inventory;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
 
 /**
  * 物料建模-BOM明细
@@ -143,6 +151,47 @@ public class BomDService extends BaseService<BomD> {
 	}
 	
 	public Page<Record> getBomComparePageData(Integer pageNumber, Integer pageSize, Kv kv) {
-		return null;
+		Page<Record> paginate = dbTemplate("bomd.getBomComparePageData", kv).paginate(pageNumber, pageSize);
+		changeRecord(paginate.getList(), kv.getStr(BomD.CCODE), kv.getStr(BomD.ICODELEVEL));
+		return paginate;
+	}
+	
+	public void changeRecord(List<Record> recordList, String code, String codeLevel){
+		if (CollectionUtil.isEmpty(recordList)){
+			return;
+		}
+		for (Record record : recordList){
+			if (ObjectUtil.isNull(codeLevel)){
+				// 拼接编码key
+				codeLevel = record.getStr(BomD.ICODELEVEL);
+			}
+			if (ObjectUtil.isNull(code)){
+				code =record.getStr(BomD.CCODE);
+			}
+//			// 拼接编码key
+//			String codeLevel = record.getStr(BomD.ICODELEVEL);
+			String codeKey = BomD.CCODE.concat(codeLevel);
+			record.set(codeKey, code);
+			
+			Integer partType = record.getInt(BomD.IPARTTYPE);
+			Integer isVirtual = record.getInt(BomD.ISVIRTUAL);
+			Integer bProxyForeign = record.getInt(BomD.BPROXYFOREIGN);
+			
+			if (ObjectUtil.isNotNull(partType)){
+				PartTypeEnum partTypeEnum = PartTypeEnum.toEnum(partType);
+				ValidationUtils.notNull(partTypeEnum, "未知材料类别");
+				record.set(Inventory.PARTTYPENAME, partTypeEnum.getText());
+			}
+			if (ObjectUtil.isNotNull(isVirtual)){
+				IsEnableEnum isEnableEnum = IsEnableEnum.toEnum(isVirtual);
+				ValidationUtils.notNull(isEnableEnum, "未知虚拟机类型");
+				record.set(Inventory.ISVIRTALNAME, isEnableEnum.getText());
+			}
+			if (ObjectUtil.isNotNull(bProxyForeign)){
+				IsEnableEnum isEnableEnum = IsEnableEnum.toEnum(bProxyForeign);
+				ValidationUtils.notNull(isEnableEnum, "未知虚拟机类型");
+				record.set(Inventory.BPROXYFOREIGNNAME, isEnableEnum.getText());
+			}
+		}
 	}
 }

@@ -41,8 +41,13 @@
 	initTreehandler('');
 
 	function bommaster_jstree(tree, data){
-		debugger;
-		AjaxPortalUtil.go("bomcompareAjaxPortal1", "/admin/bomcompare/index?invId="+data.id);
+		// data.data == id 后台控制的
+		var isChildren = true;
+		if (data.children.length > 0){
+			isChildren = false;
+		}
+		$("#addEmptyBtn_#(pageId)").data("url","admin/bomcompare/manualForm?pid="+data.data+"&isChildren="+isChildren);
+		AjaxPortalUtil.go("bomcompareAjaxPortal1", "/admin/bomcompare/index?id="+data.data+"&isChildren="+isChildren);
 	}
 
 	function initTreehandler(item) {

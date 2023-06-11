@@ -80,6 +80,18 @@ public class BomMasterAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
+    
+//        BomM bomM = bomMService.findById(getLong(0));
+//        ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
+//        BomSourceTypeEnum bomSourceTypeEnum = BomSourceTypeEnum.toEnum(bomM.getIType());
+//        ValidationUtils.notNull(bomSourceTypeEnum, "未知新增类型");
+//        BomSourceTypeEnum manualTypeAdd = BomSourceTypeEnum.MANUAL_TYPE_ADD;
+//        if (manualTypeAdd.getValue() == bomSourceTypeEnum.getValue()){
+//
+//            return;
+//        }
+    
+    
         getBomMaster(getLong(0));
         render("edit.html");
     }

@@ -1,15 +1,22 @@
 package cn.rjtech.admin.bomcompare;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.rjtech.admin.bomm.BomMService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.enums.BomSourceTypeEnum;
 import cn.rjtech.model.momdata.BomCompare;
+import cn.rjtech.model.momdata.BomM;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 
 /**
  * 物料建模-Bom清单
@@ -27,11 +34,18 @@ public class BomCompareAdminController extends BaseAdminController {
 	private BomCompareService service;
 	@Inject
 	private InventoryService inventoryService;
+	@Inject
+	private BomMService bomMService;
 
    /**
 	* 首页
 	*/
-	public void index() {
+	public void index(@Para(value = "id") Long id, @Para(value = "isChildren") Boolean isChildren) {
+		Kv kv = getKv();
+		if (ObjectUtil.isNotNull(id)){
+			bomMService.setBomRecord(id, isChildren, true, kv);
+			setAttrs(kv);
+		}
 		render("index.html");
 	}
    /**
@@ -59,13 +73,34 @@ public class BomCompareAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		BomCompare bomCompare=service.findById(getLong(0));
-		if(bomCompare == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
+		BomM bomM = bomMService.findById(getLong(0));
+		ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
+		BomSourceTypeEnum bomSourceTypeEnum = BomSourceTypeEnum.toEnum(bomM.getIType());
+		ValidationUtils.notNull(bomSourceTypeEnum, "未知新增类型");
+		BomSourceTypeEnum manualTypeAdd = BomSourceTypeEnum.MANUAL_TYPE_ADD;
+		if (manualTypeAdd.getValue() == bomSourceTypeEnum.getValue()){
+			Kv kv = getKv();
+			bomMService.setBomRecord(getLong(0), false, true, kv);
+			setAttrs(kv);
+			render("manual_form.html");
 			return;
 		}
-		set("bomCompare",bomCompare);
-		render("edit.html");
+	}
+	
+	public void info(){
+		BomM bomM = bomMService.findById(getLong(0));
+		ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
+		BomSourceTypeEnum bomSourceTypeEnum = BomSourceTypeEnum.toEnum(bomM.getIType());
+		ValidationUtils.notNull(bomSourceTypeEnum, "未知新增类型");
+		BomSourceTypeEnum manualTypeAdd = BomSourceTypeEnum.MANUAL_TYPE_ADD;
+		if (manualTypeAdd.getValue() == bomSourceTypeEnum.getValue()){
+			Kv kv = getKv();
+			kv.set(BomM.ISVIEW , 1);
+			bomMService.setBomRecord(getLong(0), false, true, kv);
+			setAttrs(kv);
+			render("manual_form.html");
+			return;
+		}
 	}
 
    /**
@@ -103,12 +138,15 @@ public class BomCompareAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 	
-	public void manualForm(){
-		keepPara();
+	public void manualForm(@Para(value = "pid") long pid, @Para(value = "isChildren") boolean isChildren){
+		Kv kv = getKv();
+		bomMService.setBomRecord(pid, isChildren, false, kv);
+		setAttrs(kv);
 		render("manual_form.html");
 	}
 	
 	public void bomcompareSplit(){
+		keepPara();
 	    render("_table_split.html");
     }
 	

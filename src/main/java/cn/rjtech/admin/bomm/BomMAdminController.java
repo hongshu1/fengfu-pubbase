@@ -7,6 +7,7 @@ import cn.rjtech.model.momdata.BomM;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+
 /**
  * 物料建模-BOM主表
  * @ClassName: BomMAdminController
@@ -54,12 +55,12 @@ public class BomMAdminController extends BaseAdminController {
 		render("edit.html");
 	}
 
-   /**
+ /*  *//**
 	* 更新
-	*/
+	*//*
 	public void update(@Para("bomM")BomM bomM) {
 		renderJson(service.update(bomM));
-	}
+	}*/
 
    /**
 	* 批量删除
@@ -103,5 +104,17 @@ public class BomMAdminController extends BaseAdminController {
 	
 	public void getBomComparePageData(){
 		renderJsonData(bomDService.getBomComparePageData(getPageNumber(), getPageSize(), getKv()));
+	}
+	
+	public void findByVersionList(@Para(value = "invId") Long invId){
+		renderJsonData(service.findByVersionList(getOrgId(), invId));
+	}
+	
+	public void audit(@Para(value = "bomMasterId") Long bomMasterId, @Para(value = "status") Integer status) {
+		renderJson(service.audit(bomMasterId, status));
+	}
+	
+	public void del() {
+		renderJson(service.del(getLong(0)));
 	}
 }

@@ -112,7 +112,7 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 存货ID
 	 */
-	public M setIInventoryId(java.lang.String iInventoryId) {
+	public M setIInventoryId(java.lang.Long iInventoryId) {
 		set("iInventoryId", iInventoryId);
 		return (M)this;
 	}
@@ -120,10 +120,10 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 存货ID
 	 */
-	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="String", remark="存货ID", required=false, maxLength=255, fixed=0, order=4)
+	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="Long", remark="存货ID", required=false, maxLength=255, fixed=0, order=4)
 	@JSONField(name = "iinventoryid")
-	public java.lang.String getIInventoryId() {
-		return getStr("iInventoryId");
+	public java.lang.Long getIInventoryId() {
+		return getLong("iInventoryId");
 	}
 
 	/**
