@@ -5,7 +5,7 @@
 <div class="jbolt_page_title">
 <div class="row">
 	<div class="col">
-	<form class="form-inline text-left" id="BomCompare_form_#(pageId)" action="admin/bomM/getVersionRecord">
+	<form class="form-inline text-left" id="BomCompare_version_form_#(pageId)">
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="存货编码" name="cInvCode" value="" />
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="客户部番" name="cInvCode1" value="" />
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="部品名称" name="cInvName1" value="" />
@@ -18,7 +18,7 @@
 </div>
 <div class="jbolt_page_content">
 <!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="BomCompare_tpl_#(pageId)">
+<textarea class="jb_tpl_box" id="BomCompare_version_tpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
@@ -48,7 +48,7 @@
 </tr>
 {@/each}
 </textarea>
-<div class="jbolt_table_toolbar" id="BomCompare_toolbar_#(pageId)">
+<div class="jbolt_table_toolbar" id="BomCompare_version_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 <!--	<button data-dialogbtn data-area="100%,100%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增物料清单" data-url="admin/bommaster/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>-->
 	<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
@@ -56,18 +56,18 @@
 </div>
 
 </div>
-<table class="jbolt_table jbolt_main_table  table-center "
+<table class="jbolt_table jbolt_main_table  table-center " id="12"
 	   data-jbolttable
 	   data-width="fill"
 	   data-height="fill"
 	   data-ajax="true"
        data-column-resize="true"
-	   data-conditions-form="BomCompare_form_#(pageId)"
+	   data-conditions-form="BomCompare_version_form_#(pageId)"
 	   data-url="admin/bomM/getVersionRecord"
-	   data-rowtpl="BomCompare_tpl_#(pageId)"
+	   data-rowtpl="BomCompare_version_tpl_#(pageId)"
 	   data-copy-to-excel="false"
-	   data-page="BomCompare_page"
-	   data-toolbar="BomCompare_toolbar_#(pageId)"
+	   data-page="BomCompare_version_page"
+	   data-toolbar="BomCompare_version_toolbar_#(pageId)"
 >
 <thead>
 <tr>

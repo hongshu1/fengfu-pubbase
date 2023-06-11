@@ -151,6 +151,9 @@ public class BomDService extends BaseService<BomD> {
 	}
 	
 	public Page<Record> getBomComparePageData(Integer pageNumber, Integer pageSize, Kv kv) {
+		if (ObjectUtil.isNull(kv.getLong(BomD.IBOMMID))){
+			return emptyPage(pageSize);
+		}
 		Page<Record> paginate = dbTemplate("bomd.getBomComparePageData", kv).paginate(pageNumber, pageSize);
 		changeRecord(paginate.getList(), kv.getStr(BomD.CCODE), kv.getStr(BomD.ICODELEVEL));
 		return paginate;

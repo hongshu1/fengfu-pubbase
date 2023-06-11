@@ -262,7 +262,10 @@ public class BomMService extends BaseService<BomM> {
         }
     }
     
-    public void setBomRecord(long id, Boolean isChildren, boolean isView, Kv kv){
+    public void setBomRecord(Long id, Boolean isChildren, Boolean isView, Kv kv){
+		if (ObjectUtil.isNull(id)){
+			return;
+		}
         String cInvCode = null;
         String cInvName = null;
         Long iAutoId = null;

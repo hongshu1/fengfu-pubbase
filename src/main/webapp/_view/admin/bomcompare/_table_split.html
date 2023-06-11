@@ -109,9 +109,12 @@
                 success: function (res) {
                     if (res.state === 'ok') {
                         LayerMsgBox.success(res.msg, 1000, function () {
-                            refreshPjaxContainer();
-                            // parent.LayerMsgBox.closeAll();
-                            // parent.refreshPjaxContainer();
+                            #if(iAutoId)
+                                refreshPjaxContainer();
+                            #else
+                                parent.LayerMsgBox.closeAll();
+                                parent.refreshPjaxContainer();
+                            #end
                         });
                     } else {
                         LayerMsgBox.alert(res.msg, 2);

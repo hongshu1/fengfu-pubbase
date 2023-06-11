@@ -138,7 +138,7 @@ public class BomCompareAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 	
-	public void manualForm(@Para(value = "pid") long pid, @Para(value = "isChildren") boolean isChildren){
+	public void manualForm(@Para(value = "pid") Long pid, @Para(value = "isChildren") Boolean isChildren){
 		Kv kv = getKv();
 		bomMService.setBomRecord(pid, isChildren, false, kv);
 		setAttrs(kv);
