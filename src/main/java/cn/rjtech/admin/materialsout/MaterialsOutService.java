@@ -121,7 +121,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 				for (int i = 0; i < state.length; i++) {
 					System.out.println(state[i]);
 					if (state[i] ==materialsOut.getIAuditStatus()){
-						ValidationUtils.isTrue(false, "审核中、已审核的记录不允许删除,修改！！！");
+						ValidationUtils.error( "审核中、已审核的记录不允许删除,修改！！！");
 					}
 				}
 				//删除行数据
@@ -232,12 +232,12 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 				//	行数据为空 不保存
 				if ("save".equals(revokeVal)) {
 					if (materialsOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
-						ValidationUtils.isTrue(false, "请先添加行数据！");
+						ValidationUtils.error( "请先添加行数据！");
 					}
 				}
 
 				if ("submit".equals(revokeVal) && materialsOut.getAutoID() == null) {
-					ValidationUtils.isTrue(false, "请保存后提交审核！！！");
+					ValidationUtils.error( "请保存后提交审核！！！");
 				}
 
 

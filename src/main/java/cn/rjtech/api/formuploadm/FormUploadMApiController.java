@@ -51,7 +51,7 @@ public class FormUploadMApiController  extends BaseApiController {
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void batchAudit() {
+    public void batchApprove() {
         renderJBoltApiRet(service.batchHandle(getKv(), 2));
     }
 

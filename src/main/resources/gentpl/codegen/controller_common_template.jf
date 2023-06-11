@@ -85,8 +85,9 @@
    /**
 	* 保存
 	*/
-	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
+	#if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
 	#end
 	public void save(@Para("#(firstCharToLowerCase(codeGen.modelName))")#(codeGen.modelName) #(firstCharToLowerCase(codeGen.modelName))) {
 		renderJson(service.save(#(firstCharToLowerCase(codeGen.modelName))));
@@ -97,9 +98,10 @@
    /**
 	* 更新
 	*/
-	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
-	#end
+    #if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    #end
 	public void update(@Para("#(firstCharToLowerCase(codeGen.modelName))")#(codeGen.modelName) #(firstCharToLowerCase(codeGen.modelName))) {
 		renderJson(service.update(#(firstCharToLowerCase(codeGen.modelName))));
 	}
@@ -109,9 +111,10 @@
    /**
 	* 删除
 	*/
-	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
-	#end
+    #if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    #end
 	public void delete() {
 	#if(codeGen.isCheckCanDelete??)
 		renderJson(service.deleteById(get#(getIdType?? 'Long')(0),true));
@@ -126,9 +129,10 @@
    /**
 	* real delete 真删除
 	*/
-	#if(codeGen.isMainDatasource??)
-	@Before(Tx.class)
-	#end
+    @Before(Tx.class)
+    #if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    #end
 	public void realDelete() {
 	#if(codeGen.isCheckCanDelete??)
 		renderJson(service.realDeleteById(get#(getIdType?? 'Long')(0),true));
@@ -142,9 +146,10 @@
    /**
 	* 恢复假删数据
 	*/
-	#if(codeGen.isMainDatasource??)
-	@Before(Tx.class)
-	#end
+    @Before(Tx.class)
+    #if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    #end
 	public void recover() {
 	#if(codeGen.isCheckCanRecover??)
 		renderJson(service.recoverById(get#(getIdType?? 'Long')(0),true));
@@ -158,9 +163,10 @@
    /**
 	* 批量删除
 	*/
-	#if(codeGen.isMainDatasource??)
-	@Before(Tx.class)
-	#end
+    @Before(Tx.class)
+    #if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    #end
 	public void deleteByIds() {
 	#if(codeGen.isCheckCanDelete??)
 		renderJson(service.deleteByIds(get("ids"),true));
@@ -174,9 +180,10 @@
    /**
 	* 批量 真删除
 	*/
-	#if(codeGen.isMainDatasource??)
-	@Before(Tx.class)
-	#end
+    @Before(Tx.class)
+    #if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    #end
 	public void realDeleteByIds() {
 	#if(codeGen.isCheckCanDelete??)
 		renderJson(service.realDeleteByIds(get("ids"),true));
@@ -190,9 +197,10 @@
    /**
 	* 批量恢复假删数据
 	*/
-	#if(codeGen.isMainDatasource??)
-	@Before(Tx.class)
-	#end
+    @Before(Tx.class)
+    #if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    #end
 	public void recoverByIds() {
 	#if(codeGen.isCheckCanRecover??)
 		renderJson(service.recoverByIds(get("ids"),true));
@@ -206,10 +214,11 @@
    /**
 	* 排序 上移
 	*/
-	#if(codeGen.isMainDatasource??)
-	@Before(Tx.class)
-	#end
-	public void up() {
+    @Before(Tx.class)
+    #if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    #end
+    public void up() {
 		renderJson(service.up(get#(getIdType?? 'Long')(0)));
 	}
 #end
@@ -218,9 +227,10 @@
    /**
 	* 排序 下移
 	*/
-	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
-	#end
+    #if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    #end
 	public void down() {
 		renderJson(service.down(get#(getIdType?? 'Long')(0)));
 	}
@@ -231,10 +241,11 @@
    /**
 	* 排序 初始化
 	*/
-	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
-	#end
-	public void initSortRank() {
+    #if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    #end
+    public void initSortRank() {
 		renderJson(service.initSortRank());
 	}
 #end
@@ -363,9 +374,10 @@
    /**
 	* 切换启用状态
 	*/
-	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
-	#end
+    #if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    #end
 	public void toggleEnable() {
 		renderJson(service.toggleEnable(get#(getIdType?? 'Long')(0)));
 	}
@@ -445,9 +457,10 @@
    /**
 	* 切换#(colName??)
 	*/
-	#if(codeGen.isMainDatasource??)
 	@Before(Tx.class)
-	#end
+    #if(!codeGen.isMainDatasource??)
+    @TxConfig(#(codeGen.modelName).DATASOURCE_CONFIG_NAME)
+    #end
 	public void #(name)() {
 	    renderJson(service.toggleBoolean(get#(getIdType?? 'Long')(0),"#(colName??)"));
 	}

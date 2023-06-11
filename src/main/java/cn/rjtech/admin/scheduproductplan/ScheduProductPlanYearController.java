@@ -254,7 +254,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     public void dataExport() throws Exception {
         String startYear = get("startyear");
         if (notOk(startYear)){
-            ValidationUtils.isTrue(false,"查询年份不能为空!");
+            ValidationUtils.error("查询年份不能为空!");
         }
         String nextYear = String.valueOf(Integer.parseInt(startYear) + 1);
 

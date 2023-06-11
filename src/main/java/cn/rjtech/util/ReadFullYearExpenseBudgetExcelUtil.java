@@ -88,22 +88,22 @@ public class ReadFullYearExpenseBudgetExcelUtil {
             try{
     	    	budgetStartYear = Integer.parseInt(startYearStr.replace("年", ""));
     	    }catch(Exception e){
-    	    	ValidationUtils.isTrue(false, "预算期间起始年份不合法,请检查导入模板!");
+    	    	ValidationUtils.error( "预算期间起始年份不合法,请检查导入模板!");
     	    }
     	    try{
     	    	budgetStartMonth = Integer.parseInt(startMonthStr.replace("月", ""));
     	    }catch(Exception e){
-    	    	ValidationUtils.isTrue(false, "预算期间起始月份不合法,请检查导入模板!!");
+    	    	ValidationUtils.error( "预算期间起始月份不合法,请检查导入模板!!");
     	    }
     	    try{
     	    	budgetEndYear = Integer.parseInt(endYearStr.replace("年", ""));
     	    }catch(Exception e){
-    	    	ValidationUtils.isTrue(false, "预算期间结束年份不合法,请检查导入模板!");
+    	    	ValidationUtils.error( "预算期间结束年份不合法,请检查导入模板!");
     	    }
     	    try{
     	    	budgetEndMonth = Integer.parseInt(endMonthStr.replace("月", ""));
     	    }catch(Exception e){
-    	    	ValidationUtils.isTrue(false, "预算期间结束月份不合法,请检查导入模板!");
+    	    	ValidationUtils.error( "预算期间结束月份不合法,请检查导入模板!");
     	    }
     	    Date cBeginDate = JBoltDateUtil.getDate(budgetStartYear+"-"+budgetStartMonth+"-01", JBoltDateUtil.YMD);
     	    Date cEndDate = JBoltDateUtil.getDate(budgetEndYear+"-"+budgetEndMonth+"-01", JBoltDateUtil.YMD);

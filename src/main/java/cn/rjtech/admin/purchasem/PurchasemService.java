@@ -361,15 +361,15 @@ public class PurchasemService extends BaseService<Purchasem> {
 			purchaseRatio = new BigDecimal(globalConfigService.getConfigValue("purchase_ratio"));
 			purchaseAmountRatio = new BigDecimal(globalConfigService.getConfigValue("purchase_amount_ratio"));
 		}catch(Exception e){
-			ValidationUtils.isTrue(false, "获取申购金额的金额限制参数出错!");
+			ValidationUtils.error( "获取申购金额的金额限制参数出错!");
 		}
-		if(purchaseRatio == null || purchaseAmountRatio == null) ValidationUtils.isTrue(false, "申购金额的金额限制参数未配置!");
+		if(purchaseRatio == null || purchaseAmountRatio == null) ValidationUtils.error( "申购金额的金额限制参数未配置!");
 		//全局参数配置的限制比例*禀议金额（本币不含税） <= 全局参照配置的限制金额时，以限制比例*禀议金额（本币不含税）作为限制金额，否则直接取全局参数中的限制金额
 		BigDecimal iExceedAmount = iproposalnatmoney.multiply(purchaseRatio);
 		if(iExceedAmount.compareTo(purchaseAmountRatio) == 1) iExceedAmount = purchaseAmountRatio;
 		if(ialreadypurchasenatmoney.subtract(iproposalnatmoney).compareTo(iExceedAmount) == 1) return false;
 		return true;
-		//ValidationUtils.isTrue(false, "申购金额已超禀议金额10%或500,请追加禀议!");
+		//ValidationUtils.error( "申购金额已超禀议金额10%或500,请追加禀议!");
 	}
 	/**
      * 详情
@@ -640,7 +640,7 @@ public class PurchasemService extends BaseService<Purchasem> {
 	    		str = cdepnameen;
 	            break;  
 	        case ORDERYEAR:
-	        	ValidationUtils.isTrue(false, "申购单无法获取"+BarCodeEnum.ORDERYEAR.getText()+",请检查编码规则!");
+	        	ValidationUtils.error( "申购单无法获取"+BarCodeEnum.ORDERYEAR.getText()+",请检查编码规则!");
 	            break;
 	        default:
                 break;

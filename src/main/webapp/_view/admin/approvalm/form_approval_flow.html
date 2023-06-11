@@ -50,7 +50,8 @@
         para = {
             formSn: action.data("formsn"),
             formAutoId: action.data("formautoid"),
-            primaryKeyName: action.data("primary")
+            primaryKeyName: action.data("primary"),
+            className: action.data('class')
         }
 
         Ajax.post("/admin/formapproval/judgeType", para, function (ret) {
@@ -81,7 +82,8 @@
             formSn: action.data("formsn"),
             formAutoId: action.data("formautoid"),
             status: action.data("status"),
-            primaryKeyName: action.data("primary")
+            primaryKeyName: action.data("primary"),
+            className: action.data('class') 
         };
 
         Ajax.post("/admin/formapproval/approve", para, function (ret) {
@@ -101,9 +103,9 @@
     }
 
     /**
-     * 拒审
+     * 审批不通过
      */
-    function rejectApproveT_#(pageId)(ele) {
+    function rejectT_#(pageId)(ele) {
         action = getRealJqueryObject(ele);
 
         index = LayerMsgBox.loading('执行中...');
@@ -112,10 +114,11 @@
             formSn: action.data("formsn"),
             formAutoId: action.data("formautoid"),
             status: action.data("status"),
-            primaryKeyName: action.data("primary")
+            primaryKeyName: action.data("primary"),
+            className: action.data('class')
         };
 
-        Ajax.post("/admin/formapproval/rejectApprove", para, function (ret) {
+        Ajax.post("/admin/formapproval/reject", para, function (ret) {
             LayerMsgBox.close(index);
 
             if (ret.state === 'ok') {

@@ -175,7 +175,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
         render("inventory_dialog_index.html");
     }
 
-    public void batchAudit() {
+    public void batchApprove() {
         renderJson(service.batchHandle(getKv(), 3, new int[]{2}));
     }
 
@@ -201,7 +201,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
             renderJxls("manualorderm.xlsx", Kv.by("rows", null), "手配订单.xlsx");
         }catch (Exception e)
         {
-            ValidationUtils.isTrue(false, "模板下载失败");
+            ValidationUtils.error( "模板下载失败");
         }
     }
 }

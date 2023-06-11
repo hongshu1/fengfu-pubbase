@@ -77,7 +77,7 @@
 <div class="jbolt_table_toolbar" id="FormUploadM_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 	<button data-dialogbtn data-area="100%,100%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增记录上传" data-url="admin/formUploadM/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
-	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchAuditBtn_#(pageId)" data-url="admin/formUploadM/batchAudit?ids=" data-confirm="确定审核选中数据？" class="btn btn-outline-primary" ><i class="fa fa-edit"></i> 批量审核</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchApproveBtn_#(pageId)" data-url="admin/formUploadM/batchApprove?ids=" data-confirm="确定审核选中数据？" class="btn btn-outline-primary" ><i class="fa fa-edit"></i> 批量审核</button>
 	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchAntiAuditBtn_#(pageId)" data-url="admin/formUploadM/batchAntiAudit?ids=" data-confirm="确定反审核选中数据？" class="btn btn-outline-primary" ><i class="fa fa-edit"></i> 批量反审核</button>
 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
 </div>

@@ -1,24 +1,20 @@
 ### 未提审
-#if(iauditstatus??0 == 0 || iauditstatus??0 == 3)
-
-<button id="approve" style="display: none" data-ajaxbtn data-url="#(uri)/submit?iautoid=#(iautoid)"
-        data-handler="refreshPjaxContainer"
-         class="btn btn-outline-secondary btn-xs" #if(!iautoid?? || edit??) disabled #end>提交审批</button>
-
-<button id="audit" style="display: none" data-ajaxbtn data-url="#(uri)/submit?iautoid=#(iautoid)" data-handler="refreshPjaxContainer"
-         class="btn btn-outline-secondary btn-xs" #if(!iautoid?? || edit??) disabled #end>提交审核</button>
-
+#if(o.iauditstatus??0 == 0 || o.iauditstatus??0 == 3)
+    #switch(AuditFormConfigCache.ME.getAuditWay(formSn)??)
+        #case(1)
+            <button data-ajaxbtn data-url="#(uri)/submit?iautoid=#(o.iautoid)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" #if(!(o.iautoid?? || edit??)) disabled #end>提交审批</button>
+        #case(2)
+            <button data-ajaxbtn data-url="#(uri)/submit?iautoid=#(o.iautoid)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" #if(!(o.iautoid?? || edit??)) disabled #end>提交审核</button>
+    #end
 ### 审核中
 #else
 
-    #switch(iauditway??)
-        ### 审批按钮
+    #switch(o.iauditway??)
+        ### 审核按钮
         #case(1)
 
-            <button data-ajaxbtn data-url="#(uri)/approve/#(iautoid)" data-handler="refreshPjaxContainer"
-                    class="btn btn-outline-secondary btn-xs" >审核通过</button>
-            <button data-ajaxbtn data-url="#(uri)/reject/#(iautoid)" data-handler="refreshPjaxContainer"
-                    class="btn btn-outline-secondary btn-xs" >审核不通过</button>
+            <button data-ajaxbtn data-url="#(uri)/approve/#(iautoid)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核通过</button>
+            <button data-ajaxbtn data-url="#(uri)/reject/#(iautoid)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核不通过</button>
 
         ### 审批流操作, 不放置按钮，通过列表操作
         #case(2)
@@ -26,27 +22,3 @@
     #end
 
 #end
-
-
-<script>
-    $(function () {
-        Ajax.post("/admin/formapproval/auditOrApprove",{"formSn":'#(formSn??)'},function (res) {
-            if (res.state === 'ok') {
-                var iType = res.iType;
-                if (iType===1){ //审批流
-                    $("#approve").show();
-                    $("#audit").hide();
-
-                } else if (iType === 2){
-                    $("#approve").hide();
-                    $("#audit").show();
-                } else {
-                    $("#approve").hide();
-                    $("#audit").hide();
-                }
-            }
-        },function (err) {
-
-        })
-    })
-</script>

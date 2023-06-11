@@ -441,7 +441,7 @@ public class SubjectmService extends BaseService<Subjectm> {
 		if (kv.getInt("senabled")==1){
 			List<Subjectm> subjectmList = find("select * from Bas_SubjectM where isenabled =1");
 			if (subjectmList.size()>0){
-				ValidationUtils.isTrue(false,"已启用："+subjectmList.get(0).getCVersion()+",请先停用在启用！");
+				ValidationUtils.error("已启用："+subjectmList.get(0).getCVersion()+",请先停用在启用！");
 			}
 		}
 		List<Subjectm> subjectms = new ArrayList<>();

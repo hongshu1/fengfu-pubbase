@@ -8,16 +8,20 @@ select * from T
 #end
 
 #sql("getSuccessUser")
-select *
-from Bd_FormApprovalFlowD t1
-where iFormApprovalFlowMid in (select iAutoId
- from Bd_FormApprovalFlowM where iApprovalId = '#(Mid)') and t1.iAuditStatus = 2 order by iSeq asc
+SELECT *
+FROM Bd_FormApprovalFlowD t1
+WHERE iFormApprovalFlowMid IN (
+        SELECT iAutoId
+        FROM Bd_FormApprovalFlowM 
+        WHERE iApprovalId = '#(Mid)'
+    ) AND t1.iAuditStatus = 2 
+ORDER BY iSeq ASC
 #end
-
 
 #sql("approvalProcessUsers")
 select top #(size) name
-from UGCFF_MOM_System.dbo.jb_user where id in
+from UGCFF_MOM_System.dbo.jb_user 
+where id in
     (select iUserId
      from Bd_FormApprovalFlowD where iFormApprovalFlowMid =
          (select Bd_FormApprovalFlowM.iAutoId
