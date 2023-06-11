@@ -390,8 +390,41 @@ FROM
 WHERE
         1 = 1
   AND T_Sys_StockBarcodePosition.Barcode='#(barcode)'
-  AND Bd_Inventory.iAutoId IS NOT NULL
+  AND T_Sys_StockBarcodePosition.InvCode IS NOT NULL
 #end
+
+
+
+#sql("getManualAdddatas")
+SELECT mpd.AutoID,
+       mpd.InvCode,
+       it.cInvCode1,
+       it.cInvName1,
+       it.cInvStd,
+       uom.cUomName,
+       em.cEquipmentModelName,
+       wh.cWhName,
+       wp.cPositionName
+FROM T_Sys_MaterialsPrepareDetail mpd
+         LEFT JOIN T_Sys_MaterialsPrepare mp ON mpd.MasID = mp.AutoID
+         LEFT JOIN Bd_Inventory it ON mpd.InvCode = it.cInvCode
+         LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1 = uom.iAutoId
+         LEFT JOIN Bd_EquipmentModel em ON it.iEquipmentModelId = em.iAutoId
+         LEFT JOIN T_Sys_StockBarcodePosition sbp ON mpd.Barcode = sbp.Barcode
+         LEFT JOIN Bd_Warehouse wh ON sbp.WhCode = wh.cWhCode
+         LEFT JOIN Bd_Warehouse_Position wp ON sbp.PosCode = wp.cPositionCode
+WHERE 1 = 1
+  AND mp.BillNo = '#(billno)'
+  #if(invcode)
+  AND mpd.InvCode = '#(invcode)'
+  #end
+  #if(cinvcode1)
+  AND it.cInvCode1 = '#(cinvcode1)'
+  #end
+  #if(cinvname1)
+  AND it.cInvName1 = '#(cinvname1)'
+  #end
+  AND mpd.InvCode is not null #end
 
 
 

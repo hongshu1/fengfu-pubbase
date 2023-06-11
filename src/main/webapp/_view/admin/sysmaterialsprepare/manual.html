@@ -25,7 +25,7 @@
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label">备料单号：</label>
                 <div class="col-10">
-                  <input type="text" data-rule="required" data-notnull="false"
+                  <input type="text"  data-notnull="false"
                          data-tips=""
                          data-with-clearbtn="false" autocomplete="off"
                          class="form-control" placeholder=""
@@ -39,7 +39,7 @@
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label">工单号 ：</label>
                 <div class="col-10">
-                  <input type="text" data-rule="required" data-notnull="false"
+                  <input type="text"  data-notnull="false"
                          data-tips=""
                          data-with-clearbtn="false" autocomplete="off"
                          class="form-control" placeholder=""
@@ -53,7 +53,7 @@
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label">生产部门：</label>
                 <div class="col-10">
-                  <input type="text" data-rule="required" data-notnull="false"
+                  <input type="text"  data-notnull="false"
                          data-tips=""
                          data-with-clearbtn="false" autocomplete="off"
                          class="form-control"
@@ -67,7 +67,7 @@
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label">机型：</label>
                 <div class="col-10">
-                  <input type="text" data-rule="required" data-notnull="false"
+                  <input type="text"  data-notnull="false"
                          data-tips=""
                          data-with-clearbtn="false" autocomplete="off"
                          class="form-control"
@@ -81,7 +81,7 @@
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label">客户部番：</label>
                 <div class="col-10">
-                  <input type="text" data-rule="required" data-notnull="false"
+                  <input type="text"  data-notnull="false"
                          data-tips=""
                          data-with-clearbtn="false" autocomplete="off"
                          class="form-control"
@@ -95,7 +95,7 @@
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label">部品名称：</label>
                 <div class="col-10">
-                  <input type="text" data-rule="required" data-notnull="false"
+                  <input type="text"  data-notnull="false"
                          data-tips=""
                          data-with-clearbtn="false" autocomplete="off"
                          class="form-control"
@@ -109,7 +109,7 @@
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label">计划日期：</label>
                 <div class="col-10">
-                  <input type="text" data-rule="required" data-notnull="false"
+                  <input type="text"  data-notnull="false"
                          data-tips=""
                          data-with-clearbtn="false" autocomplete="off"
                          class="form-control"
@@ -123,7 +123,7 @@
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label">生产班次：</label>
                 <div class="col-10">
-                  <input type="text" data-rule="required" data-notnull="false"
+                  <input type="text"  data-notnull="false"
                          data-tips=""
                          data-with-clearbtn="false" autocomplete="off"
                          class="form-control"
@@ -137,8 +137,28 @@
         </form>
       </div>
     </div>
+
+
+    <div class="card" style="margin-bottom: 5px">
+    <div class="card-body">
+      <div class="col">
+        <button data-dialogbtn
+                data-area="80%,70%"
+                data-handler="jboltTablePageToFirst"
+                data-title="选择存货"
+                data-url="admin/sysMaterialsprepare/MaterialsListchoose?billno=#(sysMaterialsprepare.BillNo??)"
+                class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 新增
+        </button>
+      </div>
+    </div>
+    </div>
+
+
   </div>
 </div>
+
+
+
 <textarea class="jb_tpl_box" id="SysMaterialsprepare_tpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
