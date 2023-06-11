@@ -364,6 +364,9 @@ public class BomCompareService extends BaseService<BomCompare> {
 					bomD.setICodeLevel(String.valueOf(codeLevel));
 					bomD.setDEnableDate(bomM.getDEnableDate());
 					bomD.setDDisableDate(bomM.getDDisableDate());
+					if (ObjectUtil.isNull(bomD.getBProxyForeign())){
+						bomD.setBProxyForeign(false);
+					}
 				}
 				bomDService.batchSave(saveModelList);
 			}

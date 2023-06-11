@@ -17,19 +17,20 @@
 <div class="jbolt_page_content">
 	#setLocal(jboltTabId=(goods.id?? RandomUtil.random(6)))
 	<nav>
-		<div class="nav nav-tabs" id="nav-bom-tab_#(jboltTabId)" role="tablist">
-			<a class="nav-item nav-link active" id="nav-base-tab-bom-one-2" data-toggle="tab" href="#tab-bom-one-2" role="tab" onclick="refreshPjaxContainer()" aria-controls="tab-one" aria-selected="true">物料清单</a>
-			<a class="nav-item nav-link" id="nav-base-tab-bom-two-2" data-toggle="tab" href="#tab-bom-two-2" role="tab" onclick="refreshJBoltTable()" aria-controls="tab-two" aria-selected="false">版本记录</a>
+		<div class="nav nav-tabs" id="nav-tab2_#(jboltTabId)" role="tablist">
+			<a class="nav-item nav-link active" id="nav-base-tab_one_21" data-toggle="tab" href="#tab-one_21" role="tab" onclick="refreshPjaxContainer()" aria-controls="tab-one" aria-selected="true">物料清单</a>
+			<a class="nav-item nav-link" id="nav-base-tab_two_21" data-toggle="tab" href="#tab-two_21" role="tab" onclick="refreshJBoltTable()" aria-controls="tab-two" aria-selected="false">版本记录</a>
 		</div>
 	</nav>
-
-	<!--1 物料清单 -->
-	<div class="tab-pane fade show active" id="tab-bom-one-2" role="tabpanel" aria-labelledby="nav-base-tab-bom-one-2">
-		#render("bommaster_index.html")
-	</div>
-	<!--2 版本记录 -->
-	<div class="tab-pane fade" id="#tab-bom-two-2" role="tabpanel" aria-labelledby="nav-base-tab-bom-two-2">
-		#ajaxPortal("/admin/bommaster/versionIndex","bommaster_version_index",true)
+	<div class="tab-content" style="padding: 0px 1rem">
+		<!--1 物料清单 -->
+		<div class="tab-pane fade show active" id="tab-one_21" role="tabpanel" aria-labelledby="nav-base-tab_one_21">
+			#render("bommaster_index.html")
+		</div>
+		<!--2 版本记录 -->
+		<div class="tab-pane fade" id="tab-two_21" role="tabpanel" aria-labelledby="nav-base-tab_two_21">
+			#ajaxPortal("/admin/bommaster/versionIndex","bomVersionPortal_#(pageId)",true)
+		</div>
 	</div>
 </div>
 #end
