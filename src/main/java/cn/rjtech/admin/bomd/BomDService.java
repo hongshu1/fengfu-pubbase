@@ -10,6 +10,8 @@ import cn.rjtech.model.momdata.BomD;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
 /**
  * 物料建模-BOM明细
  * @ClassName: BomDService
@@ -138,5 +140,9 @@ public class BomDService extends BaseService<BomD> {
 			updateColumn(id, BomD.ISDELETED, BoolCharEnum.YES.getValue());
 		}
 		return true;
+	}
+	
+	public Page<Record> getBomComparePageData(Integer pageNumber, Integer pageSize, Kv kv) {
+		return null;
 	}
 }

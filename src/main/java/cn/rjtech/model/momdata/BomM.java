@@ -11,5 +11,19 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Bd_BomM" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class BomM extends BaseBomM<BomM> {
+    // 页面操作标识
+    public static final String ENABLEICON = "enableIcon";
+    /**机型名称*/
+    public static final String EQUIPMENTMODELNAME = "equipmentModelName";
+    /**客户部番*/
+    public static final String INVCODE1 = "invCode1";
+    /**客户ID*/
+    public static final String USTOMERNAME = "customerName";
+    /**UG部番*/
+    public static final String INVADDCODE1 = "cInvAddCode1";
+    /**审批状态名称*/
+    public static final String AUDITSTATUSSTR = "auditStatusStr";
+    // 来源名称
+    public static final String TYPENAME = "typeName";
 }
 

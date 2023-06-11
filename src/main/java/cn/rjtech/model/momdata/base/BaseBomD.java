@@ -56,6 +56,8 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
     public static final String CMEMO = "cMemo";
     /**删除状态;0. 未删除  1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    /**组织ID（用于条件赛选）*/
+    public static final String IORGID = "iOrgId";
 	/**
 	 * 主键ID
 	 */
@@ -445,6 +447,23 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 组织ID（用于条件赛选）
+	 */
+	public M setIOrgId(java.lang.Long iOrgId) {
+		set("iOrgId", iOrgId);
+		return (M)this;
+	}
+
+	/**
+	 * 组织ID（用于条件赛选）
+	 */
+	@JBoltField(name="iorgid" ,columnName="iOrgId",type="Long", remark="组织ID（用于条件赛选）", required=false, maxLength=19, fixed=0, order=24)
+	@JSONField(name = "iorgid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIOrgId() {
+		return getLong("iOrgId");
 	}
 
 }

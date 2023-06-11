@@ -8,6 +8,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.rjtech.admin.bomcompare.BomCompareService;
+import cn.rjtech.admin.bomm.BomMService;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
@@ -50,6 +51,8 @@ public class BomMasterAdminController extends BaseAdminController {
     private CustomerService customerService;
     @Inject
     private BomCompareService bomCompareService;
+    @Inject
+    private BomMService bomMService;
 
     /**
      * 首页
@@ -205,7 +208,7 @@ public class BomMasterAdminController extends BaseAdminController {
     }
 
     public void getVersionRecord() {
-        renderJsonData(service.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
+        renderJsonData(bomMService.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
     }
 
     public void del() {

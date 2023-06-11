@@ -1,10 +1,9 @@
 package cn.rjtech.admin.bomm;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.rjtech.admin.bomd.BomDService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.BomM;
-import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
@@ -14,12 +13,14 @@ import com.jfinal.core.paragetter.Para;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-06-08 17:03
  */
-@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/bomM", viewPath = "/_view/admin/bomm")
 public class BomMAdminController extends BaseAdminController {
 
 	@Inject
 	private BomMService service;
+	@Inject
+	private BomDService bomDService;
+	
    /**
 	* 首页
 	*/
@@ -88,5 +89,19 @@ public class BomMAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 
-
+	public void getTreeDatas(){
+		renderJsonData(service.getTreeDatas(getKv()));
+	}
+	
+	public void updateIsView(){
+		renderJsonData(service.updateIsView(getLong(0)));
+	}
+	
+	public void getVersionRecord() {
+		renderJsonData(service.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
+	}
+	
+	public void getBomComparePageData(){
+		renderJsonData(bomDService.getBomComparePageData(getPageNumber(), getPageSize(), getKv()));
+	}
 }

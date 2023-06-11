@@ -90,7 +90,7 @@ SELECT
     t1.cInvName1 as cInvName1,
     t1.cInvCode1 as cInvCode1,
     t1.cInvStd as cInvStd,
-    t1.isVirtal as isVirtual,
+    t1.isVirtual as isVirtual,
     t1.iPartType as iPartType,
     t1.iInventoryUomId1 as iInventoryUomId1,
     t3.cUomName as cUomName

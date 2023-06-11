@@ -664,3 +664,11 @@
 #namespace("momoinvbatch")
 #include("momoinvbatch/momoinvbatch.sql")
 #end
+
+#namespace("bomm")
+#include("bomm/bomm.sql")
+#end
+
+#namespace("bomd")
+#include("bomd/bomd.sql")
+#end

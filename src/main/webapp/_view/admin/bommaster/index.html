@@ -41,6 +41,7 @@
 	initTreehandler('');
 
 	function bommaster_jstree(tree, data){
+		debugger;
 		AjaxPortalUtil.go("bomcompareAjaxPortal1", "/admin/bomcompare/index?invId="+data.id);
 	}
 
@@ -53,7 +54,7 @@
 				"                     data-search-input='searchBackGoodsTypeInput_2'" +
 				"                     data-change-handler='bommaster_jstree'" +
 				"                     data-conditions-form='bomMaster_1_'" +
-				"                     data-read-url='admin/bommaster/getDatas?item='+item>";
+				"                     data-read-url='admin/bomM/getTreeDatas?item='+item>";
 		$("#bommasterBackCategoryTree").html(treeHtmlStr);
 		JSTreeUtil.init($("#bommasterBackCategoryTree"));
 	}

@@ -5,9 +5,8 @@
 
     <div class="jbolt_page_title">
         <form onsubmit="return false;" id="manual_Form" method="post">
-            <input name="iAutoId" hidden value="#(oldId)">
+            <input name="iAutoId" hidden value="#(iautoid)">
             <input name="iType" hidden value="2">
-            // 层级
             <input name="cCode" hidden value="#(cCode??0)">
             <input name="iCodeLevel" hidden value="#(iCodeLevel??1)">
 
@@ -83,8 +82,7 @@
 #end
 #define js()
 <script>
-
-
+    
     function submitThisForm() {
 
         var datas = getJboltTableAllDatas('#jbolt_table_bomcompare_split');

@@ -79,7 +79,7 @@ WHERE
 #sql("getVersionRecord")
 SELECT
 	master.iAutoId AS id,
-	master.cBomVersion,
+	master.cVersion,
 	master.dEnableDate,
 	master.dDisableDate,
 	master.iAuditStatus,
@@ -94,7 +94,7 @@ SELECT
 	minv.cInvName2,
 	uom.cUomName
 FROM
-	Bd_BomMaster master
+	Bd_BomM master
 	INNER JOIN Bd_Inventory minv ON minv.iAutoId = master.iInventoryId
 	LEFT JOIN Bd_Uom uom ON uom.iAutoId = minv.iUomClassId
 WHERE

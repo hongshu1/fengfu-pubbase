@@ -354,6 +354,7 @@ public class BomCompareService extends BaseService<BomCompare> {
 			if (jBoltTable.saveIsNotBlank()){
 				List<BomD> saveModelList = jBoltTable.getSaveModelList(BomD.class);
 				for (BomD bomD :saveModelList){
+					bomD.setIOrgId(getOrgId());
 					bomD.setIBomMid(bomM.getIAutoId());
 					bomD.setIsDeleted(false);
 					bomD.setCCode(String.valueOf(code));

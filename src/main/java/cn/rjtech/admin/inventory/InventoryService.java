@@ -1242,8 +1242,8 @@ public class InventoryService extends BaseService<Inventory> {
 					record.set(Inventory.PARTTYPENAME, partTypeEnum.getText());
 				}
 				// 是否虚拟件
-				Integer isVirtal = record.getInt(Inventory.ISVIRTUAL);
-				IsEnableEnum isEnableEnum = IsEnableEnum.toEnum(isVirtal);
+				Integer isVirtual = record.getInt(Inventory.ISVIRTUAL);
+				IsEnableEnum isEnableEnum = IsEnableEnum.toEnum(isVirtual);
 				record.set(Inventory.ISVIRTALNAME, isEnableEnum.getText());
 			}
 		}

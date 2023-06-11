@@ -1,16 +1,27 @@
 package cn.rjtech.admin.bomm;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.BomSourceTypeEnum;
 import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.model.momdata.BomD;
 import cn.rjtech.model.momdata.BomM;
+import cn.rjtech.model.momdata.BomMaster;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 物料建模-BOM主表
@@ -148,5 +159,59 @@ public class BomMService extends BaseService<BomM> {
 		*/
 		return null;
 	}
-
+	
+	public List<JsTreeBean> getTreeDatas(Kv kv) {
+		kv.set("orgId", getOrgId());
+		List<Record> recordList = dbTemplate("bomm.datas", kv).find();
+		if (CollectionUtil.isEmpty(recordList)){
+			return null;
+		}
+		return createJsTreeBean(kv.getStr(BomM.ENABLEICON), recordList);
+	}
+	
+	public List<JsTreeBean> createJsTreeBean(String enableIconStr, List<Record> recordList){
+		List<JsTreeBean> trees = new ArrayList<>();
+		for (Record record : recordList){
+			Long id = record.getLong(BomM.IAUTOID);
+			Object pid = record.get(BomD.IBOMMID);
+			StringBuilder text = new StringBuilder(record.getStr(BomM.CINVNAME));
+			if (pid == null) {
+				pid = "#";
+				if (StrUtil.isNotBlank(enableIconStr)){
+					String enableIcon = enableIconStr;
+					enableIcon = enableIcon.replace("?", record.getStr(BomM.IAUTOID));
+					text.append(enableIcon);
+				}
+			}
+			JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text.toString(), true);
+			trees.add(jsTreeBean);
+		}
+		return trees;
+	}
+	
+	public Page<Record> getVersionRecord(Integer pageNumber, Integer pageSize, Kv kv) {
+		Page<Record> page = dbTemplate("bomm.getVersionRecord", kv.set("orgId", getOrgId())).paginate(pageNumber, pageSize);
+		if (CollectionUtil.isEmpty(page.getList())){
+			return page;
+		}
+		for (Record record : page.getList()){
+			AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(record.getInt(BomM.IAUDITSTATUS));
+			record.set(BomM.AUDITSTATUSSTR, auditStatusEnum.getText());
+			
+			BomSourceTypeEnum bomSourceTypeEnum = BomSourceTypeEnum.toEnum(record.getInt(BomM.ITYPE));
+			record.set(BomM.TYPENAME, bomSourceTypeEnum.getText());
+		}
+		return page;
+	}
+	
+	/**
+	 * 更改是否显示字段
+	 * @param id
+	 * @return
+	 */
+	public Ret updateIsView(Long id){
+		ValidationUtils.notNull(id, JBoltMsg.PARAM_ERROR);
+		return toggleBoolean(id, BomM.ISVIEW);
+	}
+	
 }
