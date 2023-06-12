@@ -202,7 +202,7 @@ public class BomMService extends BaseService<BomM> {
 				if (bomMidcollect.containsKey(iInvPartBomMid)){
 					List<Record> compareList = bomMidcollect.get(iInvPartBomMid);
 					compareList.forEach(compare -> {
-						compare.set(BomD.IBOMMID, id);
+						compare.set(BomD.IPID, id);
 						compare.set(BomD.SOURCEID, compare.getLong(BomD.IAUTOID));
 						compare.set(BomD.IAUTOID, JBoltSnowflakeKit.me.nextId());
 					});
@@ -212,7 +212,7 @@ public class BomMService extends BaseService<BomM> {
 			
 			for (Record record : recordList){
                 Long id = record.getLong(BomM.IAUTOID);
-                Object pid = record.get(BomD.IBOMMID);
+                Object pid = record.get(BomD.IPID);
                 StringBuilder text = new StringBuilder(record.getStr(BomM.CINVNAME));
                 if (pid == null) {
                     pid = "#";

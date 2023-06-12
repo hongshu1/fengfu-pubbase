@@ -1,6 +1,7 @@
 #sql("datas")
 SELECT
 	master.iAutoId,
+	NULL AS iPid,
 	master.iInventoryId,
 	master.cInvCode,
 	master.cInvName,
@@ -19,6 +20,7 @@ WHERE
 UNION ALL
 SELECT
 	compare.iAutoId,
+	compare.iPid,
 	compare.iInventoryId,
 	compare.cInvCode,
 	compare.cInvName,

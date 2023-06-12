@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**BOM主表ID*/
@@ -58,6 +59,8 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
     public static final String ISDELETED = "isDeleted";
     /**组织ID（用于条件赛选）*/
     public static final String IORGID = "iOrgId";
+    /**上级BomId*/
+    public static final String IPID = "iPid";
 	/**
 	 * 主键ID
 	 */
@@ -120,8 +123,8 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 存货ID
 	 */
-	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="Long", remark="存货ID", required=false, maxLength=255, fixed=0, order=4)
-	@JSONField(name = "iinventoryid")
+	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="Long", remark="存货ID", required=false, maxLength=19, fixed=0, order=4)
+	@JSONField(name = "iinventoryid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIInventoryId() {
 		return getLong("iInventoryId");
 	}
@@ -460,10 +463,27 @@ public abstract class BaseBomD<M extends BaseBomD<M>> extends JBoltBaseModel<M>{
 	/**
 	 * 组织ID（用于条件赛选）
 	 */
-	@JBoltField(name="iorgid" ,columnName="iOrgId",type="Long", remark="组织ID（用于条件赛选）", required=false, maxLength=19, fixed=0, order=24)
+	@JBoltField(name="iorgid" ,columnName="iOrgId",type="Long", remark="组织ID（用于条件赛选）", required=true, maxLength=19, fixed=0, order=24)
 	@JSONField(name = "iorgid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIOrgId() {
 		return getLong("iOrgId");
+	}
+
+	/**
+	 * 上级BomId
+	 */
+	public M setIPid(java.lang.Long iPid) {
+		set("iPid", iPid);
+		return (M)this;
+	}
+
+	/**
+	 * 上级BomId
+	 */
+	@JBoltField(name="ipid" ,columnName="iPid",type="Long", remark="上级BomId", required=true, maxLength=19, fixed=0, order=25)
+	@JSONField(name = "ipid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIPid() {
+		return getLong("iPid");
 	}
 
 }
