@@ -827,6 +827,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         tx(() -> {
             //业务逻辑
             this.check(String.valueOf(ids));
+            String[] split = String.valueOf(ids).split(",");
+            for (String s : split) {
+                SysPureceive byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+                byId.update();
+            }
             return true;
         });
         return SUCCESS;
