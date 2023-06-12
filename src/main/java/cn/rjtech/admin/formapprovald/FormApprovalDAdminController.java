@@ -96,20 +96,6 @@ public class FormApprovalDAdminController extends BaseAdminController {
     }
 
     /**
-     * 保存
-     */
-    public void save() {
-        renderJson(service.save(getModel(FormApprovalD.class, "formApprovalD")));
-    }
-
-    /**
-     * 更新
-     */
-    public void update() {
-        renderJson(service.update(getModel(FormApprovalD.class, "formApprovalD")));
-    }
-
-    /**
      * 批量删除
      */
     public void deleteByIds() {

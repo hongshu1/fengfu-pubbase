@@ -1,0 +1,108 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto">
+                <form class="form-inline" id="SysMaterialsprepare_form_#(pageId)">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="存货编码"
+                           name="cinvcode" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="客户部番"
+                           name="cinvcode1" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="部品名称"
+                           name="cinvname1" value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索
+                    </button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" id="choose"><i class="fa fa-reset"></i> 选择
+                    </button>
+                </form>
+                <button type="button" class="btn btn-outline-secondary" hidden="hidden" id="choose1"><i
+                        class="fa fa-reset"></i> 选择
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.autoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a class="text-info mr-1"  href=""  data-fs="true" data-handler="refreshJBoltTable" onclick="getCheckedStrip(this)">选择</a>
+</td>
+<td>${data.状态}</td>
+<td>${data.billno}</td>
+<td>${data.cmodocno}</td>
+<td>${data.cdepname}</td>
+<td>${data.cworkshiftname}</td>
+<td>${data.dplandate}</td>
+<td>${data.invcode}</td>
+<td>${data.cinvcode1}</td>
+</tr>
+{@/each}
+</textarea>
+        <div class="jbolt_table_toolbar" id="MoPickItemM_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+
+            </div>
+        </div>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="SysMaterialsprepare_form_#(pageId)"
+               data-url="admin/sysMaterialsprepare/getManualAdddatas?billno=#(billnoo??)"
+               data-rowtpl="MoPickItemM_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="MoPickItemM_page"
+               data-column-resize="true"
+               data-toolbar="MoPickItemM_toolbar_#(pageId)"
+               data-column-prepend="1:checkbox:true"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60" data-column="">序号</th>
+                <th data-width="150" data-column="">操作</th>
+                <th data-width="150" data-column="">存货编码</th>
+                <th data-min-width="160" data-column="">客户部番</th>
+                <th data-width="150" data-column="">部品名称</th>
+                <th data-width="150" data-column="">规格</th>
+                <th data-width="150" data-column="">主计量单位</th>
+                <th data-width="150" data-column="">机型名称</th>
+                <th data-width="150" data-column="">仓库名称</th>
+                <th data-width="150" data-column="">库位名称</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+#define js()
+<script type="text/javascript">
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+
+    function getCheckedStrip(val) {
+        var value = $(val).parent().parent().find("td");
+        parent.$("#billno").val(value.eq(3).text());
+        window.parent.refreshJBoltTable();
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+    }
+
+    const BTN1 = document.getElementById('choose');
+    const BTN2 = document.getElementById('choose1');
+    // 给按钮 2 添加点击事件
+    BTN1.addEventListener('click', () => {
+        BTN2.onclick();
+    });
+
+    function choose2(){
+
+    }
+</script>
+#end

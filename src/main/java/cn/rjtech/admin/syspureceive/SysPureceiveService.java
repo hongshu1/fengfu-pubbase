@@ -227,12 +227,16 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             // 新增
             if (ObjUtil.isNull(sysotherin.getAutoID())) {
                 sysotherin.setOrganizeCode(getOrgCode());
-                sysotherin.setCreatePerson(user.getUsername());
-                sysotherin.setCreateDate(now);
+
+                sysotherin.setIcreateby(user.getId());
+                sysotherin.setCcreatename(user.getName());
+                sysotherin.setDcreatetime(now);
+                sysotherin.setIupdateby(user.getId());
+                sysotherin.setCupdatename(user.getName());
+                sysotherin.setDupdatetime(now);
+
                 sysotherin.setBillDate(DateUtil.formatDate(now));
-                sysotherin.setModifyPerson(user.getUsername());
                 sysotherin.setIAuditStatus(Integer.valueOf(AuditStatusEnum.NOT_AUDIT.getValue()));
-                sysotherin.setModifyDate(now);
                 sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
                 sysotherin.setIAuditStatus(Integer.valueOf(AuditStatusEnum.NOT_AUDIT.getValue()));
                 // 主表新增
@@ -240,8 +244,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             }
             // 修改
             else {
-                sysotherin.setModifyPerson(user.getUsername());
-                sysotherin.setModifyDate(now);
+
+                sysotherin.setIupdateby(user.getId());
+                sysotherin.setCupdatename(user.getName());
+                sysotherin.setDupdatetime(now);
+
                 // 主表修改
                 ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
             }
@@ -437,7 +444,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         }
 
         rcvDocQcFormM.setIVendorId(veniAutoId);
-        rcvDocQcFormM.setDRcvDate(sys.getCreateDate());
+        rcvDocQcFormM.setDRcvDate(sys.getDcreatetime());
         rcvDocQcFormM.setIQty(Double.valueOf(row.getStr("qty").trim()).intValue());
 
         // 批次号
@@ -513,8 +520,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
         tx(() -> {
             if (sysPureceive.getAutoID() != null) {
-                sysPureceive.setModifyPerson(user.getUsername());
-                sysPureceive.setModifyDate(now);
+                sysPureceive.setIupdateby(user.getId());
+                sysPureceive.setCupdatename(user.getName());
+                sysPureceive.setDupdatetime(now);
+
                 if ("submit".equals(operationType)) {
                     // todo 后续业务逻辑确定是哪个状态
                     sysPureceive.setIAuditStatus(Integer.valueOf(AuditStatusEnum.AWAIT_AUDIT.getValue()));
@@ -708,10 +717,15 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         sysPureceive.setWhName(warehouse.getCWhName());
         sysPureceive.setRdCode(record.getStr("rdcode"));
         sysPureceive.setOrganizeCode(getOrgCode());
-        sysPureceive.setCreatePerson(user.getUsername());
-        sysPureceive.setCreateDate(now);
+        sysPureceive.setIcreateby(user.getId());
+        sysPureceive.setCcreatename(user.getName());
+        sysPureceive.setDcreatetime(now);
+        sysPureceive.setIupdateby(user.getId());
+        sysPureceive.setCupdatename(user.getName());
+        sysPureceive.setDupdatetime(now);
+
         sysPureceive.setBillDate(DateUtil.formatDate(now));
-        sysPureceive.setModifyPerson(user.getUsername());
+
 
         if ("submit".equals(operationType)) {
             // 待后续审批流修改状态
@@ -719,8 +733,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         } else {
             sysPureceive.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
         }
-
-        sysPureceive.setModifyDate(now);
+        sysPureceive.setDupdatetime(now);
         sysPureceive.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
         sysPureceive.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
         sysPureceive.setIsDeleted(false);
@@ -767,7 +780,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid,"");
+            Ret ret = formApprovalService.judgeType(table(), iautoid,primaryKey());
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             return true;
@@ -826,6 +839,15 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
      */
     public Ret process(String ids) {
         tx(() -> {
+            this.check(ids);
+            String[] split = ids.split(",");
+            for (String s : split) {
+                SysPureceive byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+                byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                byId.update();
+            }
+            //业务逻辑
             this.passage(ids);
             return true;
         });
@@ -893,8 +915,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public void check(String ids) {
         List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + ids + ")");
         for (SysPureceive s : sysPureceives) {
-            if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
-                ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据状态已审核，不可再审！");
+            if ("2".equals(String.valueOf(s.getIAuditStatus())) || "3".equals(String.valueOf(s.getIAuditStatus())) ) {
+                ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "流程已结束！！");
             }
         }
     }

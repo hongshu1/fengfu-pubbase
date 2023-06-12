@@ -155,7 +155,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
 
     public void batchDetect() {
         renderJson(service.deleteByIds(get("ids")));
-        // renderJson(service.batchDetect(getKv()));
+       // renderJson(service.batchDetect(getKv()));
     }
 
     /**
@@ -165,8 +165,9 @@ public class ManualOrderMAdminController extends BaseAdminController {
     public void downloadTpl() {
         try {
             renderJxls("manualorderm.xlsx", Kv.by("rows", null), "手配订单.xlsx");
-        } catch (Exception e) {
-            ValidationUtils.isTrue(false, "模板下载失败");
+        }catch (Exception e)
+        {
+            ValidationUtils.error( "模板下载失败");
         }
     }
 }

@@ -286,4 +286,17 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
         Long id = Long.valueOf(get("id"));
         renderJson(service.submitByJBoltTable(id));
     }
+
+    public void MaterialsListchoose() {
+        String billno = get("billno");
+        set("billnoo",billno);
+        render("chooseMaterials.html");
+    }
+
+    public void getManualAdddatas() {
+        String billno = get("billno");
+        Kv kv = new Kv();
+        kv.set("billno", billno == null ? "" : billno);
+        renderJsonData(service.getgetManualAdddatas(getPageNumber(), getPageSize(), kv));
+    }
 }

@@ -3,7 +3,8 @@ package cn.rjtech.admin.formapproval;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
-import cn.jbolt._admin.user.UserService;
+import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.interfaces.ICallbackFunc;
@@ -19,24 +20,28 @@ import cn.rjtech.admin.approvalm.ApprovalMService;
 import cn.rjtech.admin.auditformconfig.AuditFormConfigService;
 import cn.rjtech.admin.form.FormService;
 import cn.rjtech.admin.formapprovald.FormApprovalDService;
-import cn.rjtech.admin.formapprovaldrole.FormapprovaldRoleService;
 import cn.rjtech.admin.formapprovaldroleusers.FormapprovaldRoleusersService;
 import cn.rjtech.admin.formapprovalduser.FormapprovaldUserService;
 import cn.rjtech.admin.formapprovalflowd.FormApprovalFlowDService;
 import cn.rjtech.admin.formapprovalflowm.FormApprovalFlowMService;
 import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.AuditTypeEnum;
 import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Aop;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -60,11 +65,17 @@ public class FormApprovalService extends BaseService<FormApproval> {
     }
 
     @Inject
-    private AuditFormConfigService auditFormConfigService;
+    private FormService formService;
+    @Inject
+    private PersonService personService;
     @Inject
     private ApprovalMService approvalMService;
     @Inject
     private ApprovalDService approvalDService;
+    @Inject
+    private FormApprovalFlowDService flowDService;
+    @Inject
+    private FormApprovalFlowMService flowMService;
     @Inject
     private ApprovaldUserService approvaldUserService;
     @Inject
@@ -72,21 +83,11 @@ public class FormApprovalService extends BaseService<FormApproval> {
     @Inject
     private FormApprovalDService formApprovalDService;
     @Inject
-    private FormapprovaldUserService formapprovaldUserService;
-    @Inject
-    private FormapprovaldRoleService formapprovaldRoleService;
-    @Inject
-    private PersonService personService;
-    @Inject
-    private UserService userService;
-    @Inject
-    private FormApprovalFlowMService flowMService;
-    @Inject
-    private FormApprovalFlowDService flowDService;
-    @Inject
-    private FormService formService;
-    @Inject
     private ApprovaldRoleusersService roleusersService;
+    @Inject
+    private AuditFormConfigService auditFormConfigService;
+    @Inject
+    private FormapprovaldUserService formapprovaldUserService;
     @Inject
     private FormapprovaldRoleusersService formapprovaldRoleusersService;
 
@@ -306,7 +307,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                         // 流程子表集合
                         List<FormApprovalFlowD> flowDList = new ArrayList<>();
                         listByMid.forEach(approvalD -> {
-                            /**
+                            /*
                              * 开始梳理审批流的整体流程
                              */
                             // 流程主表
@@ -564,20 +565,15 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                     // 查询是否存在配置角色信息
                                     List<ApprovaldRole> rolesByDid = approvaldRoleService.findRolesByDid(did);
                                     if (rolesByDid.size() > 0) {
-                                        List<FormapprovaldRole> formapprovaldRoleList = new ArrayList<>();
                                         rolesByDid.forEach(approvaldRole -> {
                                             FormapprovaldRole formapprovaldRole = new FormapprovaldRole();
                                             formapprovaldRole.setIFormApprovalId(formApprovalDid);
                                             formapprovaldRole.setISeq(approvaldRole.getISeq());
                                             formapprovaldRole.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                             formapprovaldRole.setIRoleId(approvaldRole.getIRoleId());
-//                                            formapprovaldRoleList.add(formapprovaldRole);
                                             formapprovaldRole.save();
 
-//                                            List<User> users = getRoles(approvaldRole.getIRoleId());
-
-                                            List<ApprovaldRoleusers> users =
-                                                    roleusersService.getRoleUser(approvaldRole.getIAutoId());
+                                            List<ApprovaldRoleusers> users = roleusersService.getRoleUser(approvaldRole.getIAutoId());
 
                                             if (users.size() > 0) {
                                                 List<FormapprovaldRoleusers> roleusersList = new ArrayList<>();
@@ -597,11 +593,9 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                                     formapprovaldRoleusers.setIUserId(u.getIUserId());
                                                     roleusersList.add(formapprovaldRoleusers);
                                                 });
-                                                formapprovaldRoleusersService.batchSave(roleusersList,
-                                                        roleusersList.size());
+                                                formapprovaldRoleusersService.batchSave(roleusersList, roleusersList.size());
                                             }
                                         });
-//                                        formapprovaldRoleService.batchSave(formapprovaldRoleList);
                                     } else {
                                         ValidationUtils.error("该审批顺序为" + formApprovalD.getISeq() + "配置的角色未指定角色");
                                     }
@@ -627,8 +621,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     break;
                 // 审核
                 case STATUS:
-                    ValidationUtils.isTrue(updateSubmit(formSn, formAutoId, AuditWayEnum.STATUS.getValue(), now,primaryKeyName),
-                            "当前状态不允许提审");
+                    ValidationUtils.isTrue(updateSubmit(formSn, formAutoId, AuditWayEnum.STATUS.getValue(), now,primaryKeyName), "当前状态不允许提审");
                     break;
                 default:
                     break;
@@ -639,17 +632,11 @@ public class FormApprovalService extends BaseService<FormApproval> {
     }
 
     /**
-     * 获取角色人员信息
-     */
-    public List<User> getRoles(Long role) {
-        return userService.find("select * from jb_user where (',' + roles + ',') like '%," + role + ",%' and enable = 1");
-    }
-
-    /**
      * 复制Obj
      */
     public FormApproval copySetObj(ApprovalM approvalM, Long iFormId, Long formAutoId, User user) {
         FormApproval formApproval = new FormApproval();
+
         formApproval.setIOrgId(approvalM.getIOrgId());
         formApproval.setCOrgCode(approvalM.getCOrgCode());
         formApproval.setCOrgName(approvalM.getCOrgName());
@@ -661,14 +648,19 @@ public class FormApprovalService extends BaseService<FormApproval> {
         formApproval.setICreateBy(user.getId());
         formApproval.setCCreateName(user.getName());
         formApproval.setDCreateTime(new Date());
+
         return formApproval;
     }
 
     /**
-     * 状态审批
+     * 审核通过
+     *
+     * @param formSn      表单
+     * @param formAutoId  单据ID
+     * @param preApprove  审批前置工作
+     * @param postApprove 审批后置工作
      */
-    public void approveByStatus(String formSn, Long formAutoId, ICallbackFunc preApprove, ICallbackFunc postApprove,
-                                String primaryKeyName) {
+    public void approveByStatus(String formSn, String primaryKeyName, Long formAutoId, ICallbackFunc preApprove, ICallbackFunc postApprove) {
         Record formData = Db.use(dataSourceConfigName()).findFirst("SELECT * FROM " + formSn + " WHERE iautoid = ? ", formAutoId);
         ValidationUtils.notNull(formData, "单据不存在");
         ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
@@ -679,18 +671,35 @@ public class FormApprovalService extends BaseService<FormApproval> {
         ValidationUtils.assertBlank(msg, msg);
 
         // 更新审核通过
-        ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.APPROVED.getValue(),
-                AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date(), primaryKeyName), "更新审批状态失败");
+        ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.APPROVED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date()), "更新审批状态失败");
 
         msg = postApprove.execute();
         ValidationUtils.assertBlank(msg, msg);
     }
 
     /**
-     * 状态审批
+     * 批量审核通过
+     *
+     * @param formSn      表单
+     * @param formAutoIds 单据IDs
+     * @param preApprove  审批前置工作
+     * @param postApprove 审批后置工作
      */
-    public void rejectByStatus(String formSn, Long formAutoId, ICallbackFunc preReject, ICallbackFunc postReject,
-                               String primaryKeyName) {
+    public void batchApproveByStatus(String formSn, String primaryKeyName, String formAutoIds, ICallbackFunc preApprove, ICallbackFunc postApprove) {
+        for (String iautoid : StrUtil.split(formAutoIds, COMMA, true, true)) {
+            approveByStatus(formSn, primaryKeyName, Long.parseLong(iautoid), preApprove, postApprove);
+        }
+    }
+
+    /**
+     * 审核不通过
+     *
+     * @param formSn     表单
+     * @param formAutoId 单据ID
+     * @param preReject  审批不通过，前置工作
+     * @param postReject 审批不通过，后置工作
+     */
+    public void rejectByStatus(String formSn, String primaryKeyName, Long formAutoId, ICallbackFunc preReject, ICallbackFunc postReject) {
         Record formData = Db.use(dataSourceConfigName()).findFirst("SELECT * FROM " + formSn + " WHERE iautoid = ? ", formAutoId);
         ValidationUtils.notNull(formData, "单据不存在");
         ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
@@ -701,17 +710,35 @@ public class FormApprovalService extends BaseService<FormApproval> {
         ValidationUtils.assertBlank(msg, msg);
 
         // 更新审核通过
-        ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.REJECTED.getValue(),
-                AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date(), primaryKeyName), "更新审批状态失败");
+        ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date()), "更新审批状态失败");
 
         msg = postReject.execute();
         ValidationUtils.assertBlank(msg, msg);
     }
 
     /**
-     * 审批
+     * 批量审核不通过
+     *
+     * @param formSn      表单
+     * @param formAutoIds 单据ID
+     * @param preReject   审批不通过，前置工作
+     * @param postReject  审批不通过，后置工作
      */
-    public Ret approve(Long formAutoId, String formSn, int status, String primaryKeyName) {
+    public void batchRejectByStatus(String formSn, String primaryKeyName, String formAutoIds, ICallbackFunc preReject, ICallbackFunc postReject) {
+        for (String iautoid : StrUtil.split(formAutoIds, COMMA, true, true)) {
+            rejectByStatus(formSn, primaryKeyName, Long.parseLong(iautoid), preReject, postReject);
+        }
+    }
+
+    /**
+     * 审批通过, TODO 未提供审批流，最后一步审批通过的方法处理
+     *
+     * @param formAutoId     单据ID
+     * @param formSn         表单
+     * @param status         状态
+     * @param primaryKeyName 主键名
+     */
+    public Ret approve(Long formAutoId, String formSn, int status, String primaryKeyName, String className) {
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
@@ -728,7 +755,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         Boolean isApprovedOnSame = formApproval.getIsApprovedOnSame();
 
         // 流程主表数据
-        List<FormApprovalFlowM> flowMList = flowMService.find("select * from Bd_FormApprovalFlowM where iApprovalId = " + mid);
+        List<FormApprovalFlowM> flowMList = flowMService.findByIapprovalId(mid);
         Map<Long, FormApprovalFlowM> flowMMap = flowMList.stream().collect(Collectors.toMap(FormApprovalFlowM::getIApprovalDid, Function.identity(), (key1, key2) -> key2));
 
         // 当前登录人
@@ -748,12 +775,15 @@ public class FormApprovalService extends BaseService<FormApproval> {
         ValidationUtils.assertEmpty(failNode, "该单据已审批不通过，审批流程已结束！");
         // 3、
         List<FormApprovalD> processNode = formApprovalDList.stream().filter(f -> Objects.equals(f.getIStatus(), 1)).collect(Collectors.toList());
-        int processNodeSize = processNode.size();
+        
         // 审批
-        if (processNodeSize > 0) {
+        if (CollUtil.isNotEmpty(processNode)) {
             FormApprovalD formApprovalD = processNode.get(0);
+
             Long Did = formApprovalD.getIAutoId();
-            Integer iApprovalWay = formApprovalD.getIApprovalWay(); //多人审批的方式
+
+            // 多人审批的方式
+            Integer iApprovalWay = formApprovalD.getIApprovalWay();
 
             /*
              * 单据流程主表
@@ -856,14 +886,23 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
                 // 审批不通过 更新单据状态 时间
                 if (status == 3) {
-                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.REJECTED.getValue(),
-                            AuditStatusEnum.AWAIT_AUDIT.getValue(), now, primaryKeyName), "更新审核状态失败");
+                    ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");
 
                     // 更新单据审批流主表
                     formApproval.setIsDeleted(true);
                     formApproval.update();
-
+                    
+                    // 审批不通过的，单据业务处理
+                    String msg = invokeMethod(className, "postRejectFunc", formAutoId);
+                    ValidationUtils.assertBlank(msg, msg);
                 } else {
+                    
+                    // TODO 最后一步审批通过时，调用此方法，用于支持审批状态变更外的业务处理，请在合适的地方启用代码块
+                    // if (isAllApproved(formAutoId)) {
+                    //    ValidationUtlis.isTrue(updateAudit(xxx), "更新审批通过失败");
+                    //    String msg = invokeMethod(className, "postApproveFunc", formAutoId);
+                    //    ValidationUtils.assertBlank(msg, msg);
+                    // }
 
                     /*
                      * 判断下一步情况 即当前一步的审批过程已结束
@@ -929,12 +968,12 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
                                 // 再次找出该节点的未审批人
                                 List<FormApprovalFlowD> processFlowD = flowDService.find("select * from Bd_FormApprovalFlowD where iFormApprovalFlowMid =  ? and iAuditStatus = 1 order by iSeq asc", fMid);
-
-                                if (processFlowD.size() <= 0) {
+                                if (CollUtil.isEmpty(processFlowD)) {
                                     // 更新当前节点
                                     formApprovalD.setIStatus(status);
                                     formApprovalD.setDAuditTime(now);
                                     formApprovalD.update();
+                                    
                                     // 判断下一节点
                                     nextNode(formApproval, mid, flowMMap, now, primaryKeyName);
                                 }
@@ -954,9 +993,9 @@ public class FormApprovalService extends BaseService<FormApproval> {
     }
 
     /**
-     * 拒绝审批
+     * 审批不通过
      */
-    public Ret rejectApprove(Long formAutoId, String formSn, int status, String primaryKeyName) {
+    public Ret reject(Long formAutoId, String formSn, int status, String primaryKeyName, String className) {
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
@@ -966,7 +1005,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         Long mid = formApproval.getIAutoId();
 
         // 流程主表数据
-        List<FormApprovalFlowM> flowMList = flowMService.find("select * from Bd_FormApprovalFlowM where iApprovalId = " + mid);
+        List<FormApprovalFlowM> flowMList = flowMService.findByIapprovalId(mid);
         Map<Long, FormApprovalFlowM> flowMMap = flowMList.stream().collect(Collectors.toMap(FormApprovalFlowM::getIApprovalDid, Function.identity(), (key1, key2) -> key2));
 
         // 当前登录人
@@ -986,9 +1025,9 @@ public class FormApprovalService extends BaseService<FormApproval> {
         ValidationUtils.assertEmpty(failNode, "该单据已审批不通过，审批流程已结束！");
         // 3、
         List<FormApprovalD> processNode = formApprovalDList.stream().filter(f -> Objects.equals(f.getIStatus(), 1)).collect(Collectors.toList());
-        int processNodeSize = processNode.size();
+        
         // 审批
-        if (processNodeSize > 0) {
+        if (CollUtil.isNotEmpty(processNode)) {
             FormApprovalD formApprovalD = processNode.get(0);
             Long Did = formApprovalD.getIAutoId();
             Integer iApprovalWay = formApprovalD.getIApprovalWay(); //多人审批的方式
@@ -1092,13 +1131,14 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
                 // 审批不通过 更新单据状态 时间
                 if (status == 3) {
-                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.REJECTED.getValue(),
-                            AuditStatusEnum.AWAIT_AUDIT.getValue(), now,primaryKeyName), "更新审核状态失败");
+                    ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");
 
                     // 更新单据审批流主表
                     formApproval.setIsDeleted(true);
-                    formApproval.update();
-
+                    ValidationUtils.isTrue(formApproval.update(), ErrorMsg.UPDATE_FAILED);
+                    
+                    // 处理审批不通过的额外业务
+                    invokeMethod(className, "postRejectFunc", formAutoId);
                 }
 
                 return true;
@@ -1112,15 +1152,18 @@ public class FormApprovalService extends BaseService<FormApproval> {
     }
 
     /**
-     * 反审
-     * @return
+     * 反审批
+     *
+     * @param formAutoId     单据ID
+     * @param formSn         表单
+     * @param primaryKeyName 主键名
+     * @param status         状态
+     * @param className      处理审批Service的类名
      */
-    public Ret reverseApprove(Long formAutoId, String formSn, int status, String primaryKeyName) {
+    public Ret reverseApprove(Long formAutoId, String formSn, String primaryKeyName, int status, String className) {
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
-
-        Date now = new Date();
 
         Long mid = formApproval.getIAutoId();
 
@@ -1128,37 +1171,33 @@ public class FormApprovalService extends BaseService<FormApproval> {
         User user = JBoltUserKit.getUser();
         Long userId = user.getId();
 
-
         // 按顺序查出审批节点
         List<FormApprovalD> formApprovalDList = formApprovalDService.findListByMid(mid);
+        if (CollUtil.isNotEmpty(formApprovalDList)) {
 
-        int size = formApprovalDList.size();
-        if (size > 0) {
-
-            /**
+            /*
              * 按照倒序找出 最新的一个流程
              */
-            Record record = findFirstRecord("select d.iAutoId       as flowId,\n" +
-                    "       fd.iAutoId      as approvalDid,\n" +
-                    "       d.iUserId       as userId,\n" +
-                    "       d.iAuditStatus  as flowStatus,\n" +
-                    "       fd.iType        as type,\n" +
-                    "       fd.iApprovalWay as way,\n" +
-                    "       fd.iSeq         as seq,\n" +
-                    "       fd.iStatus      as approvalStatus\n" +
-                    "from Bd_FormApprovalFlowD d\n" +
-                    "         left join Bd_FormApprovalFlowM m on d.iFormApprovalFlowMid = m.iAutoId\n" +
-                    "         left join Bd_FormApprovalD fd on m.iApprovalDid = fd.iAutoId\n" +
-                    "where 1 = 1\n" +
-                    "  and fd.iFormApprovalId = " + mid + "\n" +
-                    "  and (d.iAuditStatus = 2 or d.iAuditStatus = 3)\n" +
-                    "order by fd.iSeq desc, d.iSeq desc");
+            Record record = findFirstRecord("select d.iAutoId  AS flowId, " +
+                    "       fd.iAutoId       AS approvalDid, " +
+                    "       d.iUserId        AS userId, " +
+                    "       d.iAuditStatus   AS flowStatus, " +
+                    "       fd.iType         AS type, " +
+                    "       fd.iApprovalWay  AS way, " +
+                    "       fd.iSeq          AS seq, " +
+                    "       fd.iStatus       AS approvalStatus " +
+                    "from Bd_FormApprovalFlowD d " +
+                    "         left join Bd_FormApprovalFlowM m on d.iFormApprovalFlowMid = m.iAutoId " +
+                    "         left join Bd_FormApprovalD fd on m.iApprovalDid = fd.iAutoId " +
+                    "where fd.iFormApprovalId = ? " +
+                    "  and (d.iAuditStatus = 2 or d.iAuditStatus = 3) " +
+                    "order by fd.iSeq desc, d.iSeq desc", mid);
 
-            if (null == record || CollUtil.isEmpty(record.getColumns())){
-                ValidationUtils.isTrue(false, "你不是当前审批人");
+            if (null == record || CollUtil.isEmpty(record.getColumns())) {
+                ValidationUtils.error("你不是当前审批人");
             } else {
 
-//                判断是否当前审批人
+                // 判断是否当前审批人
                 Long userid = record.getLong("userid");
                 ValidationUtils.isTrue(Objects.equals(userid, userId), "你不是当前审批人");
 
@@ -1166,22 +1205,21 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 Long flowid = record.getLong("flowid");
 
                 tx(() -> {
-//                反审后 节点与流程的状态都是待审批
-                FormApprovalD approvalD = formApprovalDService.findById(approvaldid);
-                FormApprovalFlowD flowD = flowDService.findById(flowid);
-                approvalD.setIStatus(status);
-                flowD.setIAuditStatus(status);
+                    // 反审后 节点与流程的状态都是待审批
+                    FormApprovalD approvalD = formApprovalDService.findById(approvaldid);
+                    FormApprovalFlowD flowD = flowDService.findById(flowid);
+                    approvalD.setIStatus(status);
+                    flowD.setIAuditStatus(status);
 
-                approvalD.update();
-                flowD.update();
+                    approvalD.update();
+                    flowD.update();
 
-//                反审后 单据状态都是待审批
-                    Sql updateSql = updateSql().update(formSn)
-                            .set(IAUDITSTATUS, AuditStatusEnum.AWAIT_AUDIT.getValue())
-                            .set(DAUDITTIME, now)
-                            .eq(primaryKeyName, formAutoId);
+                    // TODO 单据的审核状态，是最后一步审核之后的反审时，需更新单据状态
+                    // 反审后 单据状态都是待审批
+                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), primaryKeyName), "更新反审失败");
 
-                    update(updateSql);
+                    // 单据反审时，预留额外业务处理
+                    invokeMethod(className, "postReverseApproveFunc", formAutoId);
 
                     return true;
                 });
@@ -1196,84 +1234,70 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
     /**
      * 撤回 审批流
-     * @param formAutoId
-     * @return
      */
-    public Ret revocationApprove(Long formAutoId){
+    private void revocationApprove(Long formAutoId, ICallbackFunc postWithdraw){
+        List<FormApprovalFlowD> flowDList = flowDService.daoTemplate("formapproval.revocationApprove", Okv.by("formAutoId", formAutoId)).find();
+        ValidationUtils.assertEmpty(flowDList, "该订单已在审批中，不予撤回！");
 
-        Kv kv = new Kv();
-        kv.set("formAutoId",formAutoId);
-        List<FormApprovalFlowD> flowDList = flowDService.daoTemplate("formapproval.revocationApprove", kv).find();
+        // 删除流程表
+        int delete = delete("delete from Bd_FormApprovalFlowD where iFormApprovalFlowMid in ( " +
+                "    select t2.iAutoId from Bd_FormApprovalFlowM t2 where t2.iApprovalDid in ( " +
+                "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = ( " +
+                "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = ? and t4.isDeleted = '0' " +
+                "            ) " +
+                "        ) " +
+                "    )", formAutoId);
+        
+        if (delete > 0) {
+            int deleteflowM = delete("delete from Bd_FormApprovalFlowM where iApprovalDid in ( " +
+                    "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = ( " +
+                    "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = ? and t4.isDeleted = '0' " +
+                    "            ) " +
+                    "        )", formAutoId);
 
-        ValidationUtils.isTrue(!(flowDList.size()>0), "该订单已在审批中，不予撤回！");
+            int deletedUser = delete("delete from Bd_FormApprovalD_User where iFormApprovalDid in ( " +
+                    "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = ( " +
+                    "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = ? and t4.isDeleted = '0' " +
+                    "            ) " +
+                    "        )", formAutoId);
 
-        tx(()->{
+            int deleteRoleUsers = delete("delete from Bd_FormApprovalD_RoleUsers where iFormApprovaldRoleId in" +
+                    " ( " +
+                    "    select t2.iAutoId from Bd_FormApprovalD_Role t2 where t2.iFormApprovalDid in ( " +
+                    "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = ( " +
+                    "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = ? and t4.isDeleted = '0' " +
+                    "        ) " +
+                    "        ) " +
+                    "    )", formAutoId);
 
-//            删除流程表
-            int delete = delete("delete from Bd_FormApprovalFlowD where iFormApprovalFlowMid in (\n" +
-                    "    select t2.iAutoId from Bd_FormApprovalFlowM t2 where t2.iApprovalDid in (\n" +
-                    "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = (\n" +
-                    "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '"+formAutoId+"' and t4" +
-                    ".isDeleted = '0'\n" +
-                    "            )\n" +
-                    "        )\n" +
-                    "    )");
-            if (delete>0){
-                int deleteflowM = delete("delete from Bd_FormApprovalFlowM where iApprovalDid in (\n" +
-                        "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = (\n" +
-                        "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '" + formAutoId + "' and t4.isDeleted = '0'\n" +
-                        "            )\n" +
-                        "        )");
-
-                int deletedUser = delete("delete from Bd_FormApprovalD_User where iFormApprovalDid in (\n" +
-                        "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = (\n" +
-                        "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '" + formAutoId + "' and t4.isDeleted = '0'\n" +
-                        "            )\n" +
-                        "        )");
-
-                int deleteRoleUsers = delete("delete from Bd_FormApprovalD_RoleUsers where iFormApprovaldRoleId in" +
-                        " (\n" +
-                        "    select t2.iAutoId from Bd_FormApprovalD_Role t2 where t2.iFormApprovalDid in (\n" +
-                        "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = (\n" +
-                        "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '" + formAutoId + "' and t4.isDeleted = '0'\n" +
-                        "        )\n" +
-                        "        )\n" +
-                        "    )");
-
-                int deleteRole = 0;
-                if (deleteRoleUsers>0){
-                    deleteRole = delete("delete from Bd_FormApprovalD_Role where iFormApprovalDid in (\n" +
-                            "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = (\n" +
-                            "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '"+formAutoId+"' and t4.isDeleted = '0'\n" +
-                            "            )\n" +
-                            "        )");
-                }
-
-                if (deleteflowM>0 || deletedUser>0 || deleteRoleUsers>0 || deleteRole>0){
-
-                    int deleteApprovalD = delete("delete from Bd_FormApprovalD where iFormApprovalId = (\n" +
-                            "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '" + formAutoId + "' and t4.isDeleted = '0'\n" +
-                            "        )");
-
-                    if (deleteApprovalD>0){
-                        delete("delete from Bd_FormApproval where iFormObjectId = " +
-                                "'" + formAutoId + "'");
-                    }
-                }
+            int deleteRole = 0;
+            if (deleteRoleUsers > 0) {
+                deleteRole = delete("delete from Bd_FormApprovalD_Role where iFormApprovalDid in ( " +
+                        "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = ( " +
+                        "            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = ? and t4.isDeleted = '0' " +
+                        "            ) " +
+                        "        )", formAutoId);
             }
 
-            return true;
-        });
+            if (deleteflowM > 0 || deletedUser > 0 || deleteRoleUsers > 0 || deleteRole > 0) {
 
-        return SUCCESS;
+                int deleteApprovalD = delete("delete from Bd_FormApprovalD where iFormApprovalId = (select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = ? and t4.isDeleted = '0' )", formAutoId);
+
+                if (deleteApprovalD > 0) {
+                    delete("delete from Bd_FormApproval where iFormObjectId = ? ", formAutoId);
+                }
+            }
+        }
+
+        // 更新后业务处理
+        String msg = postWithdraw.execute();
+        ValidationUtils.assertBlank(msg, msg);
     }
 
     /**
      * 下个节点判断
      */
-    public void nextNode(FormApproval formApproval, Long aid, Map<Long, FormApprovalFlowM> flowmMap, Date now,
-                         String primaryKeyName) {
-
+    public void nextNode(FormApproval formApproval, Long aid, Map<Long, FormApprovalFlowM> flowmMap, Date now, String primaryKeyName) {
         /*
          * 找出未审批通过的节点
          */
@@ -1303,7 +1327,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             Long FMid = flowM.getIAutoId();
 
             // 找出该节点的审批人
-            List<FormApprovalFlowD> flowDList = flowDService.find("select * from Bd_FormApprovalFlowD where " + "iFormApprovalFlowMid = " + FMid + " order by iSeq asc");
+            List<FormApprovalFlowD> flowDList = flowDService.find("select * from Bd_FormApprovalFlowD where iFormApprovalFlowMid = ? order by iSeq asc", FMid);
 
             // 过滤出未审核的人员
             List<FormApprovalFlowD> collect = flowDList.stream().filter(f -> Objects.equals(f.getIAuditStatus(), 1)).collect(Collectors.toList());
@@ -1377,22 +1401,14 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 }
             }
         } else {
-
             // 更新单据状态
             Long iFormId = formApproval.getIFormId();
             Long iFormObjectId = formApproval.getIFormObjectId();
             Form form = formService.findById(iFormId);
-            String formSn = form.getCFormCode();
-
-            if (isOk(form)) {
-                ValidationUtils.isTrue(updateAudit(formSn, iFormObjectId, AuditStatusEnum.APPROVED.getValue(),
-                        AuditStatusEnum.AWAIT_AUDIT.getValue(), now, primaryKeyName), "更新审核状态失败");
-            } else {
-                ValidationUtils.error("找不到表单配置");
-            }
+            ValidationUtils.notNull(form, "找不到表单配置");
+            ValidationUtils.isTrue(updateAudit(form.getCFormCode(), primaryKeyName, iFormObjectId, AuditStatusEnum.APPROVED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");  
         }
     }
-
 
     /**
      * 通过formAutoId 单据ID查出单据对应审批流配置
@@ -1418,10 +1434,22 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 更新审批状态
      */
-    public boolean updateAudit(String formSn, long formAutoId, int iAfterStatus, int iBeforeStatus, Date now, String primaryKeyName) {
+    public boolean updateAudit(String formSn, String primaryKeyName, long formAutoId, int iAfterStatus, int iBeforeStatus, Date now) {
         Sql updateSql = updateSql().update(formSn)
                 .set(IAUDITSTATUS, iAfterStatus)
                 .set(DAUDITTIME, now)
+                .eq(primaryKeyName, formAutoId)
+                .eq(IAUDITSTATUS, iBeforeStatus);
+
+        return update(updateSql) > 0;
+    }
+
+    /**
+     * 更新审批状态，不更新审批时间
+     */
+    public boolean updateAudit(String formSn, long formAutoId, int iAfterStatus, int iBeforeStatus, String primaryKeyName) {
+        Sql updateSql = updateSql().update(formSn)
+                .set(IAUDITSTATUS, iAfterStatus)
                 .eq(primaryKeyName, formAutoId)
                 .eq(IAUDITSTATUS, iBeforeStatus);
 
@@ -1441,38 +1469,36 @@ public class FormApprovalService extends BaseService<FormApproval> {
     }
 
     /**
-     * 领导开发的  不敢删！！！
-     * 这个方法不是审批流开发的，大家不要用
+     * 撤回，已适配审核/审批流
      *
-     * 撤销审核，支持逻辑校验处理
-     *
-     * @param formSn       表名
-     * @param formAutoId   单据ID
-     * @param preWithdraw  撤回前校验
-     * @param postWithdraw 更新之后的其他逻辑处理
+     * @param formSn         表名
+     * @param primaryKeyName 主键名
+     * @param formAutoId     单据ID
+     * @param preWithdraw    撤回前校验
+     * @param postWithdraw   更新之后的其他逻辑处理
      */
-    public void withdraw(String formSn, long formAutoId, ICallbackFunc preWithdraw, ICallbackFunc postWithdraw) {
-        Record formData = Db.use(dataSourceConfigName()).findFirst("SELECT * FROM " + formSn + " WHERE iautoid = ? ", formAutoId);
+    public void withdraw(String formSn, String primaryKeyName, long formAutoId, ICallbackFunc preWithdraw, ICallbackFunc postWithdraw) {
+        Record formData = Db.use(dataSourceConfigName()).findFirst(String.format("SELECT * FROM %s WHERE %s = ? ", formSn, primaryKeyName), formAutoId);
         ValidationUtils.notNull(formData, "单据不存在");
         ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
         ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), formData.getInt(IAUDITSTATUS), "非待审核状态");
 
+        // 更新前校验
+        String msg = preWithdraw.execute();
+        ValidationUtils.assertBlank(msg, msg);
+
+        // 执行状态更新
+        ValidationUtils.isTrue(updateWithdraw(formSn, formAutoId), "更新撤回失败");
+
         switch (AuditWayEnum.toEnum(formData.getInt(IAUDITWAY))) {
             // 状态审批
             case STATUS:
-                // 更新前校验
-                String msg = preWithdraw.execute();
-                ValidationUtils.assertBlank(msg, msg);
-
-                // 执行状态更新
-                ValidationUtils.isTrue(updateWithdraw(formSn, formAutoId), "更新撤回失败");
-
                 // 更新后业务处理
                 msg = postWithdraw.execute();
                 ValidationUtils.assertBlank(msg, msg);
             //  审批流
             case FLOW:
-
+                revocationApprove(formAutoId, postWithdraw);
                 break;
             default:
                 break;
@@ -1481,101 +1507,112 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
     /**
      * 批量审批
-     * @param ids
-     * @param formSn
-     * @param status
-     * @return
      */
-    public Ret batchApprove(String ids, String formSn, Integer status, String primaryKeyName){
-
-        status = AuditStatusEnum.APPROVED.getValue();
-
+    public Ret batchApprove(String ids, String formSn, String primaryKeyName, String className) {
+        int status = AuditStatusEnum.APPROVED.getValue();
         for (String id : StrSplitter.split(ids, COMMA, true, true)) {
-
-            long aLong = Long.parseLong(id);
-            approve(aLong, formSn, status, primaryKeyName);
+            approve(Long.parseLong(id), formSn, status, primaryKeyName, className);
         }
-
         return SUCCESS;
     }
 
     /**
      * 批量拒审批
-     * @param ids
-     * @param formSn
-     * @param status
-     * @return
      */
-    public Ret batchRejectApprove(String ids, String formSn, Integer status, String primaryKeyName){
-
-        status = AuditStatusEnum.REJECTED.getValue();
-
+    public Ret batchReject(String ids, String formSn, String primaryKeyName, String className) {
+        int status = AuditStatusEnum.REJECTED.getValue();
         for (String id : StrSplitter.split(ids, COMMA, true, true)) {
-
-            long aLong = Long.parseLong(id);
-            rejectApprove(aLong, formSn, status, primaryKeyName);
+            reject(Long.parseLong(id), formSn, status, primaryKeyName, className);
         }
-
         return SUCCESS;
     }
 
     /**
      * 批量反审批
-     * @param ids
-     * @param formSn
-     * @param status
-     * @return
      */
-    public Ret batchReverseApprove(String ids, String formSn, Integer status, String primaryKeyName){
-
-        status = AuditStatusEnum.AWAIT_AUDIT.getValue();
-
+    public Ret batchReverseApprove(String ids, String formSn, String primaryKeyName, String className) {
+        int status = AuditStatusEnum.AWAIT_AUDIT.getValue();
         for (String id : StrSplitter.split(ids, COMMA, true, true)) {
-
-            long aLong = Long.parseLong(id);
-            reverseApprove(aLong, formSn, status, primaryKeyName);
+            reverseApprove(Long.parseLong(id), formSn, primaryKeyName, status, className);
         }
-
         return SUCCESS;
     }
 
     /**
-     * 判断审核还是审批
-     * @param formSn
-     * @return
+     * 反审核
      */
-    public Ret auditOrApprove(String formSn){
+    public void reverseApproveByStatus(long formAutoId, String formSn, String primaryKeyName, ICallbackFunc preApprove, ICallbackFunc postApprove) {
+        Record formData = Db.use(dataSourceConfigName()).findFirst(String.format("SELECT * FROM %s WHERE %s = ? ", formSn, primaryKeyName), formAutoId);
+        ValidationUtils.notNull(formData, "单据不存在");
+        ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+        ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“反审核”按钮");
+        ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.APPROVED.getValue(), "非审核通过状态");
 
-        AuditFormConfig formConfig = auditFormConfigService.findFirst("select * from Bd_AuditFormConfig where IsDeleted = '0' and isEnabled = '1' " +
-                "and cFormSn = '" + formSn + "'");
+        String msg = preApprove.execute(formAutoId);
+        ValidationUtils.assertBlank(msg, msg);
+
+        // 更新未审核
+        ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), primaryKeyName), "更新审批状态失败");
+
+        msg = postApprove.execute();
+        ValidationUtils.assertBlank(msg, msg);
+    }
+
+//    /**
+//     * 批量反审核
+//     */
+//    public void batchReverseApproveByStatus(String ids, String formSn, String primaryKeyName, ICallbackFunc preReverse, ICallbackFunc postReverse) {
+//        for (String id : StrSplitter.split(ids, COMMA, true, true)) {
+//            reverseApproveByStatus(Long.parseLong(id), formSn, primaryKeyName, preReverse, postReverse);
+//        }
+//    }
+    /**
+     * 判断审核还是审批
+     */
+    public Ret auditOrApprove(String formSn) {
+        AuditFormConfig formConfig = auditFormConfigService.findFirst("select * from Bd_AuditFormConfig where IsDeleted = '0' and isEnabled = '1' and cFormSn = ? ", formSn);
 
         Integer iType = 0;
-
-        if (isOk(formConfig)){
+        if (isOk(formConfig)) {
             iType = formConfig.getIType();
         }
-
-        return SUCCESS.set("iType",iType);
+        return successWithData(Kv.by("iType", iType));
     }
 
     /**
      * 查询审批过程待审批的人员
-     * @param formAutoId
-     * @return
      */
-    public String approvalProcessUsers(Long formAutoId,Integer size){
-        Kv kv = new Kv();
-        kv.set("formAutoId", isOk(formAutoId) ? formAutoId : ' ');
-        kv.set("size", isOk(size) ? size : 5);
-        String string = new String();
-        List<Record> list = dbTemplate("formapproval.approvalProcessUsers", kv).find();
-        StringBuilder builder = new StringBuilder();
-        if (list.size() > 0) {
-            list.forEach(record -> {
-                builder.append(record.getStr("name")).append(",");
-            });
-            string = builder.substring(1, builder.length() - 1);
-        }
-        return string;
+    public String approvalProcessUsers(Long formAutoId, Integer size) {
+        Kv kv = Kv.by("formAutoId", formAutoId)
+                .set("size", size);
+
+        List<String> list = dbTemplate("formapproval.approvalProcessUsers", kv).query();
+        return CollUtil.join(list, COMMA);
     }
+
+    /**
+     * 反射调用审批后的业务方法
+     *
+     * @param className  类名
+     * @param methodName 方法名
+     * @param args       额外参数
+     */
+    private String invokeMethod(String className, String methodName, Object... args) {
+        try {
+            // 获取Class
+            Class<?> clazz = Class.forName(className);
+            // 获取Service实例
+            Object o = Aop.get(clazz);
+
+            // 反审后的处理逻辑
+            Method method = ReflectUtil.getMethodByName(o.getClass(), methodName);
+            ValidationUtils.notNull(method, String.format("必须实现审批变更后的方法“%s”", methodName));
+
+            // 调用方法
+            return (String) method.invoke(o, args);
+        } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e.getLocalizedMessage());
+        }
+    }
+
 }

@@ -46,7 +46,7 @@ FROM
 WHERE
         1 = 1
     #if(imodocid)
-AND md.imodocid=#para(iAutoId)
+AND md.iAutoId=#para(imodocid)
 #end
     #if(barcode)
 AND mpd.Barcode=#para(barcode)

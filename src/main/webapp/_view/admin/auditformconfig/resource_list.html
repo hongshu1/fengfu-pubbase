@@ -5,18 +5,19 @@
         <div class="row">
             <div class="col-12">
                 <form onsubmit="return false;" class="form-inline" id="chooseDataForm"  method="post">
-                    <input type="text" autocomplete="off"  class="form-control"
-                           placeholder="表单编码/名称"
-                           name="keywords" value="" />
+                    <input type="text" autocomplete="off"  class="form-control" placeholder="表单编码/名称" name="keywords" value="" />
+                    
                     <input type="hidden" name="itemHidden" value="#(itemHidden??)"/>
+                    
                     <button type="submit" class="btn btn-light" ><i class="fa fa-search"></i> 查询</button>
                     <button type="reset" class="btn btn-light"><i class="fa fa-reset"></i> 重置</button>
                 </form>
             </div>
         </div>
     </div>
+    
     <div class="jbolt_page_content">
-        <!-- JBoltTable -->
+        
         <!-- JBoltTable的数据模板定义-->
         <script type="text/template" id="jboltTable_demotpl">
             {@each datas as data,index}
@@ -31,6 +32,7 @@
             </tr>
             {@/each}
         </script>
+        
         <table class="thead_font_normal"
                id="chooseDataTable"
                data-jbolttable

@@ -261,12 +261,12 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				//	行数据为空 不保存
 				if ("save".equals(revokeVal)) {
 					if (puinstore.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
-						ValidationUtils.isTrue(false, "请先添加行数据！");
+						ValidationUtils.error( "请先添加行数据！");
 					}
 				}
 
 				if ("submit".equals(revokeVal) && puinstore.getAutoID() == null) {
-					ValidationUtils.isTrue(false, "请保存后提交审核！！！");
+					ValidationUtils.error( "请保存后提交审核！！！");
 				}
 
 
@@ -317,7 +317,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 							double value = iqty.multiply(a).doubleValue();
 							//物料退货判断
 							if (value + cha < 0){
-								ValidationUtils.isTrue(false, "第" + k + "行退货数量超出现存数（" + iqty + "）！！！");
+								ValidationUtils.error( "第" + k + "行退货数量超出现存数（" + iqty + "）！！！");
 							}
 						}else {
 							//输入数量
@@ -330,7 +330,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 							double value = qtys.multiply(a).doubleValue();
 							//整单退货判断
 							if (value + cha < 0){
-								ValidationUtils.isTrue(false, "第" + k + "行退货数量超出现存数（" + qtys + "）！！！");
+								ValidationUtils.error( "第" + k + "行退货数量超出现存数（" + qtys + "）！！！");
 							}
 						}
 					}

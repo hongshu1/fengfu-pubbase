@@ -289,12 +289,12 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
 
     /**
      * 提交审批
-     * @param iautoid
      */
     public Ret submit(Long iautoid) {
         tx(() -> {
-            Ret ret = formApprovalService.judgeType(table(), iautoid, "iAutoId");
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey());
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+            
             AnnualOrderM annualOrderM = findById(iautoid);
             annualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
             annualOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
@@ -306,22 +306,19 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
 
     /**
      * 撤回
-     * @param iAutoId
-     * @return
      */
     public Ret withdraw(Long iAutoId) {
         tx(() -> {
-            AnnualOrderM annualOrderM = findById(iAutoId);
-            ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), annualOrderM.getIOrderStatus(), "只允许待审核状态订单撤回");
-            formApprovalService.withdraw(table(), annualOrderM.getIAutoId(), () -> null, () -> {
+            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
+                AnnualOrderM annualOrderM = findById(formAutoId);
                 annualOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
-                annualOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
                 ValidationUtils.isTrue(annualOrderM.update(), "撤回失败");
 
                 // 修改客户计划汇总
                 cusOrderSumService.algorithmSum();
                 return null;
             });
+            
             return true;
         });
         return SUCCESS;
@@ -330,15 +327,13 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
 
     /**
      * 审批不通过
-     * @param iAutoId
-     * @return
      */
     public Ret reject(Long iAutoId) {
         tx(() -> {
-            formApprovalService.rejectByStatus(table(), iAutoId, () -> null, () -> {
+            formApprovalService.rejectByStatus(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
                 ValidationUtils.isTrue(updateColumn(iAutoId, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
                 return null;
-            },"iAutoId");
+            });
 
             return true;
         });

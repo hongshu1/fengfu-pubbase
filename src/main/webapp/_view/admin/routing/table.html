@@ -3,12 +3,12 @@
         <div class="row">
             <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>子件工艺路线</h1></div>
             <div class="col">
-                <form class="form-inline text-left" id="BomCompare_form_#(pageId)">
+                <form class="form-inline text-left" id="BomCompare_form2_#(pageId)">
                     <input id="bomCompare_pid1" hidden type="text" autocomplete="off"  name="iAutoId" value="">
                     <input type="text" autocomplete="off"  class="form-control"  placeholder="=存货编码=" name="cInvCode" value="" />
                     <input type="text" autocomplete="off"  class="form-control"  placeholder="=客户部番=" name="cInvCode1" value="" />
                     <input type="text" autocomplete="off"  class="form-control"  placeholder="=部品名称=" name="cInvName1" value="" />
-                    <button type="submit" id="bomCompare_submit1" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                    <button type="submit" id="bomCompare_submit2" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
                     <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
                 </form>
             </div>
@@ -16,7 +16,7 @@
     </div>
     <div class="jbolt_page_content">
         <!-- 定义JBoltTable使用的数据渲染模板 -->
-        <textarea class="jb_tpl_box" id="BomCompare_tpl_#(pageId)">
+        <textarea class="jb_tpl_box" id="BomCompare2_tpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.id}">
     <td>${pageNumber,pageSize,index | rownum}</td>
@@ -35,9 +35,8 @@
 </tr>
 {@/each}
 </textarea>
-        <div class="jbolt_table_toolbar" id="BomCompare_toolbar_#(pageId)">
+        <div class="jbolt_table_toolbar" id="BomCompare2_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                <button data-dialogbtn data-btn-align="top" data-area="90%,90%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增物料清单" data-url="admin/bommaster/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
             </div>
@@ -48,10 +47,10 @@
                data-height="fill"
                data-ajax="true"
                data-column-resize="true"
-               data-conditions-form="BomCompare_form_#(pageId)"
+               data-conditions-form="BomCompare_form2_#(pageId)"
                data-url="admin/routing/getRoutingDetails"
-               data-rowtpl="BomCompare_tpl_#(pageId)"
-               data-toolbar="BomCompare_toolbar_#(pageId)"
+               data-rowtpl="BomCompare2_tpl_#(pageId)"
+               data-toolbar="BomCompare2_toolbar_#(pageId)"
         >
             <thead>
             <tr>

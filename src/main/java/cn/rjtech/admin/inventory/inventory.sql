@@ -80,3 +80,41 @@ WHERE
 ORDER BY
 	bd_wms.cWorkShiftCode
 #end
+
+#sql("resourceList")
+SELECT
+    t1.iAutoId as iInventoryId,
+    t1.iWeight as iWeight,
+    t1.cInvCode as cInvCode,
+    t1.cInvName as cInvName,
+    t1.cInvName1 as cInvName1,
+    t1.cInvCode1 as cInvCode1,
+    t1.cInvStd as cInvStd,
+    t1.isVirtual as isVirtual,
+    t1.iPartType as iPartType,
+    t1.iInventoryUomId1 as iInventoryUomId1,
+    t3.cUomName as cUomName
+from
+    Bd_Inventory t1
+    left join Bd_Uom t3 on t1.iInventoryUomId1 = t3.iAutoId
+where
+    t1.isDeleted = '0'
+    #if(ids)
+        AND CHARINDEX(','+cast((select t1.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') = 0
+    #end
+    #if(orgCode)
+       and t1.cOrgCode = #(orgCode)
+    #end
+    #if(itemHidden)
+        and t1.iAutoId not in (#(itemHidden))
+    #end
+    #if(keywords)
+        and (t1.cInvCode like CONCAT('%', #para(keywords), '%') or t1.cInvName like CONCAT('%', #para(keywords), '%'))
+    #end
+    #if(cInvCode1)
+        and t1.cInvCode1 like CONCAT('%',#para(cInvCode1),'%' )
+    #end
+    #if(cInvName1)
+        and t1.cInvName1 like CONCAT('%', #para(cInvName1), '%')
+    #end
+#end

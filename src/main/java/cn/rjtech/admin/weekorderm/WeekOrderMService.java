@@ -137,12 +137,10 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         tx(() -> {
             // 校验订单状态
             ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
-            formApprovalService.withdraw(table(), weekOrderM.getIAutoId(), () -> null, () -> {
+            // 订单状态：2. 待审批
+            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
 
-                // 订单状态：2. 待审批
                 weekOrderM.setIOrderStatus(WeekOrderStatusEnum.SAVED.getValue());
-                weekOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-
                 ValidationUtils.isTrue(weekOrderM.update(), ErrorMsg.UPDATE_FAILED);
 
                 cusOrderSumService.algorithmSum();

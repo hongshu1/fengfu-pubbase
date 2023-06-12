@@ -9,12 +9,20 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        #if(!monthorderm.iautoid??||edit??false)
+                        
+                        #if(!monthorderm.iautoid?? || edit??)
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
-                        #include("/_view/_common/_approval_btns.html",formSn="Co_MonthOrderM",
-                        uri="/admin/monthorderm",
-                        iautoid=monthorderm.iautoid??,iauditstatus=monthorderm.iauditstatus??0,iauditway=monthorderm.iauditway??0, edit=edit??,primaryKeyName="iAutoId")
+                        
+                        #if(monthorderm.iautoid??)
+                            ### 参数列表
+                            ### uri:                接口URI
+                            ### formSn:             表单名
+                            ### o:                  当前表单对象名
+                            ### primaryKeyName:     主键名
+                            #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
+                        #end
+                        
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -27,8 +35,14 @@
 
 ### 新增之后，并且为审核流
 #if(monthorderm.iautoid?? && monthorderm.iauditway == 2)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM",
-btnNeed=1, pId=pageId, primaryKeyName="iAutoId")
+### 参数列表
+### formAutoId:                 单据ID
+### formSn:                     表单名
+### btnNeed:                    是否需要显示审批按钮
+### pId:                        当前页面绑定的pageId
+### primaryKeyName:             主键名
+### className:                  实现审批业务的类名
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService")
 #end
 
 <div class="jbolt_page_content">
@@ -181,16 +195,16 @@ btnNeed=1, pId=pageId, primaryKeyName="iAutoId")
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
         #if(!monthorderm.iautoid??||edit??false)
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-xs">添加行</button>
             <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除行</button>
             <button onclick="checkDetails(this)" class="btn btn-secondary btn-sm">检查明细</button>
             <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
-            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
-            </button>
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导</button>
+            
             <div class="dropdown-menu" aria-labelledby="importMenuButton">
-                <a data-downloadbtn href="/admin/monthorderm/downloadTpl" class="btn dropdown-item"><i
-                        class="fa fa-file-excel-o"></i>模板下载</a>
+                <a data-downloadbtn href="/admin/monthorderm/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>模板下载</a>
+                
                 <div class="j_upload_file_box"
                      data-name="file"
                      data-btn-class="btn dropdown-item"

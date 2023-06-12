@@ -1,7 +1,7 @@
 #sql("paginateAdminDatas")
 SELECT
         AuditState =
-        CASE WHEN t11.iAuditStatus=0 THEN '已保存'
+        CASE WHEN t11.iAuditStatus=0 THEN '未审核'
              WHEN t11.iAuditStatus=1 THEN '待审核'
              WHEN t11.iAuditStatus=2 THEN '已审核'
              WHEN t11.iAuditStatus=3 THEN '审核不通过'END,

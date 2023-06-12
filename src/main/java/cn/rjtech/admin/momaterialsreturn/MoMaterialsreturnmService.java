@@ -5,16 +5,23 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
-import cn.rjtech.model.momdata.Inventory;
-import cn.rjtech.model.momdata.MoMaterialsreturnd;
-import cn.rjtech.model.momdata.MoMaterialsreturnm;
+import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.transvouch.TransVouchService;
+import cn.rjtech.admin.transvouchdetail.TransVouchDetailService;
+import cn.rjtech.admin.warehouse.WarehouseService;
+import cn.rjtech.admin.warehousearea.WarehouseAreaService;
+import cn.rjtech.admin.workregionm.WorkregionmService;
+import cn.rjtech.model.momdata.*;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import jdk.nashorn.internal.ir.ReturnNode;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +42,24 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 
 	@Inject
 	private InventoryService inventoryService;
+	@Inject
+	private TransVouchService transVouchService; //调拨单
+	@Inject
+	private TransVouchDetailService transVouchDetailService;//调拨单明细
+
+	@Inject
+	private DepartmentService departmentService; //部门
+	@Inject
+	private WarehouseService warehouseService; //仓库
+	@Inject
+	private WorkregionmService workregionmService;//产线
+
+	@Inject
+	private WarehouseAreaService warehouseAreaService; //库区
+
+	@Inject
+	private MoDocService moDocService;
+
 
 	/**
 	 * 后台管理分页查询
@@ -101,7 +126,16 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		return deleteById(id,true);
+		if(notOk(id)) {
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		//更新时需要判断数据存在
+		MoMaterialsreturnm dbMoMaterialsreturnm=findById(id);
+		if(dbMoMaterialsreturnm==null) {
+			return fail(JBoltMsg.DATA_NOT_EXIST);}
+		dbMoMaterialsreturnm.setIsDeleted(false);
+		dbMoMaterialsreturnm.update();
+		return SUCCESS;
 	}
 
 	/**
@@ -193,6 +227,7 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 			MoMaterialsreturnm moMaterialsreturnm = new MoMaterialsreturnm();
 			moMaterialsreturnm.setIOrgId(getOrgId());
 			moMaterialsreturnm.setCOrgCode(getOrgCode());
+			moMaterialsreturnm.setCOrgName(getOrgName());
 			moMaterialsreturnm.setIMoDocId(imodocid);
 			//moMaterialsreturnm.setIAuditWay();
 			moMaterialsreturnm.setCMemo(jBoltTable.getFormRecord().getStr("cmemo"));
@@ -237,4 +272,103 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 		Page<Record> rows=dbTemplate("momaterialsreturn.findByImodocId", kv).paginate(pageNumber,pageSize);
 		return rows;
 	}
+
+	public Ret approve(String iAutoId,Integer mark) {
+		boolean success = false;
+		String userName = JBoltUserKit.getUserName();
+		Date nowDate = new Date();
+		//List<SysPuinstore> listByIds = getListByIds(iAutoId);
+		/*if (listByIds.size() > 0) {
+			for (SysPuinstore puinstore : listByIds) {
+				Integer state = Integer.valueOf(puinstore.getIAuditStatus());
+				if (state != 1) {
+					return warn("订单："+puinstore.getBillNo()+"状态不支持审核操作！");
+				}
+				//订单状态：2. 已审核
+				puinstore.setIAuditStatus(2);
+				puinstore.setAuditDate(nowDate);
+				puinstore.setAuditPerson(userName);
+				success= puinstore.update();
+				//this.pushU8(iAutoId);
+			}
+		}*/
+
+		return SUCCESS;
+	}
+
+	/**
+	 * 审核生成调拨单
+	 */
+   public void createTransferDoc(Long iautoId){
+	   Date now=new Date();
+	   MoMaterialsreturnm moMaterialsreturnm=findById(iautoId);
+	   TransVouch transVouch=new TransVouch();
+	   transVouch.setOrganizeCode(moMaterialsreturnm.getCOrgCode());
+	   transVouch.setSourceBillDid(String.valueOf(moMaterialsreturnm.getIMoDocId()));//来源ID的
+	   transVouch.setSourceBillType("生产工单");
+	   transVouch.setIRdCode("");//转入收发类别
+	   transVouch.setORdCode("");//转出收发类别
+	   transVouch.setBillType("");//业务类型
+	   transVouch.setBillDate(now);//单据日期
+	   transVouch.setPersonCode("");//业务员
+	   transVouch.setIDeptCode("");//调入部门
+	   transVouch.setODeptCode("");//调出部门
+	   transVouch.setIWhCode("");//调入仓库编码
+	   transVouch.setOWhCode(""); //调出仓库
+	   transVouch.setMemo(moMaterialsreturnm.getCMemo());
+	   transVouch.setCreatePerson(JBoltUserKit.getUserName());
+	   transVouch.setCreateDate(now);
+	   transVouch.setState(2);//待审核
+	   transVouch.save();
+
+
+   }
+   //BillNoRow=主表RowNo-明细表RowNo
+  public void add(){
+	   Date now=new Date();
+	  TransVouchDetail transVouchDetail=new TransVouchDetail();
+	  transVouchDetail.setMasID(1L);//主表ID
+	  transVouchDetail.setIPosCode("");//入库库区
+	  transVouchDetail.setOPosCode("");//出库库区
+	  transVouchDetail.setInvCode("");//存货编码
+	  transVouchDetail.setBarcode("");//条码
+	  transVouchDetail.setNum(new BigDecimal(1));//件数
+	  transVouchDetail.setQty(new BigDecimal(1));//数量
+	  transVouchDetail.setPackRate(new BigDecimal(0));//包装比率
+	  transVouchDetail.setSourceBillType("生产工单");//来源单据类型
+	  transVouchDetail.setSourceBillNo("");//来源单据ID
+	  transVouchDetail.setSourceBillNo("");//来源单据明细ID
+	  transVouchDetail.setSourceBillID("");//来源单据ID
+	  transVouchDetail.setSourceBillDid("");//来源单据明细ID
+	  transVouchDetail.setMemo("");
+	  transVouchDetail.setCreatePerson(JBoltUserKit.getUserName());
+	  transVouchDetail.setCreateDate(now);
+  }
+	/**
+	 * 设置调出仓-调出部门
+	 * @param transVouch
+	 * @return
+	 */
+   private TransVouch setTransVouchMsg(TransVouch transVouch){
+     MoDoc moDoc=moDocService.findById(transVouch.getAutoID());
+	   if(moDoc!=null) {
+		   //取部门
+		   Department department=departmentService.findById(moDoc.getIDepartmentId());
+		   if(department!=null) {
+			   transVouch.setODeptCode(department.getCDepCode()); //调出部门
+		   }
+		   //获取产线
+		   Workregionm workregionm=workregionmService.findById(moDoc.getIWorkRegionMid());
+		   if(workregionm!=null){
+			   //仓库
+			   Warehouse warehouse=warehouseService.findById(workregionm.getIWarehouseId());
+			   if(warehouse!=null){
+				   transVouch.setOWhCode(warehouse.getCWhCode());//调出仓库
+			   }
+		   }
+
+		   }
+	 return transVouch;
+   }
+
 }

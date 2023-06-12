@@ -234,7 +234,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
         try {
         	ibudgetYearDb = Integer.parseInt(ibudgetyear.replace("年", ""));
 		} catch (Exception e) {
-			ValidationUtils.isTrue(false, "预算年度不合法,请检查导入模板");
+			ValidationUtils.error( "预算年度不合法,请检查导入模板");
 		}
         try {
 	    	for (InvestmentBudgetTypeEnum typeenum : InvestmentBudgetTypeEnum.values()) {
@@ -245,12 +245,12 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 			}
 	    	ValidationUtils.notNull(ibudgetTypeDb, "预算类型不合法,请检查导入模板!");
 		} catch (Exception e) {
-			ValidationUtils.isTrue(false, "预算类型不合法,请检查导入模板!");
+			ValidationUtils.error( "预算类型不合法,请检查导入模板!");
 		}
         try {
         	cdepcodeDb = departmentService.getCdepCodeByName(cdepname);
 		} catch (Exception e) {
-			ValidationUtils.isTrue(false, "预算部门获取失败,请检查导入模板!");
+			ValidationUtils.error( "预算部门获取失败,请检查导入模板!");
 		}
         ValidationUtils.isTrue(!isExistsInvestmentPlan(Kv.by("ibudgetyear", ibudgetYearDb).set("ibudgettype",ibudgetTypeDb).set("cdepcode",cdepcodeDb)),
         		"投资计划已经存在，请勿重复导入!");
@@ -283,7 +283,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
             	investmentPlanItemList.add(investmentPlanItem);
             	constructInvestmentPlanitemdForImport(record,investmentPlanItem,investmentplan,investmentPlanItemdList,msgStartRow,errorMsg,now);
     		}
-            if (errorMsg.toString().length() > 0) ValidationUtils.isTrue(false, errorMsg.toString());
+            if (errorMsg.toString().length() > 0) ValidationUtils.error( errorMsg.toString());
             ValidationUtils.isTrue(investmentplan.save(), ErrorMsg.SAVE_FAILED);
             investmentPlanItemService.batchSave(investmentPlanItemList);
         	investmentPlanItemdService.batchSave(investmentPlanItemdList);
@@ -309,7 +309,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
         try {
         	ibudgetYearDb = Integer.parseInt(ibudgetyear.replace("年", ""));
 		} catch (Exception e) {
-			ValidationUtils.isTrue(false, "预算年度不合法,请检查导入模板");
+			ValidationUtils.error( "预算年度不合法,请检查导入模板");
 		}
         try {
 	    	for (InvestmentBudgetTypeEnum typeenum : InvestmentBudgetTypeEnum.values()) {
@@ -320,12 +320,12 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 			}
 	    	ValidationUtils.notNull(ibudgetTypeDb, "预算类型不合法,请检查导入模板!");
 		} catch (Exception e) {
-			ValidationUtils.isTrue(false, "预算类型不合法,请检查导入模板!");
+			ValidationUtils.error( "预算类型不合法,请检查导入模板!");
 		}
         try {
         	cdepcode = departmentService.getCdepCodeByName(cdepname);
 		} catch (Exception e) {
-			ValidationUtils.isTrue(false, "预算部门获取失败,请检查导入模板!");
+			ValidationUtils.error( "预算部门获取失败,请检查导入模板!");
 		}
         List<Record> excelRowList = (List<Record>)excelMap.get("rows");
         StringBuilder errorMsg = new StringBuilder();

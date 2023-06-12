@@ -1,0 +1,147 @@
+<form onsubmit="return false;" id="BomD_Form" action="#(action)" method="post">
+	#if(bomD.iAutoId??)
+	<input type="hidden" name="bomD.iAutoId" value="#(bomD.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="bomD.iAutoId" value="#(bomD.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">BOM主表ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入BOM主表ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入BOM主表ID" maxlength="40" name="bomD.iBomMid" value="#(bomD.iBomMid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">子件BOM表ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入子件BOM表ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入子件BOM表ID" maxlength="40" name="bomD.iInvPartBomMid" value="#(bomD.iInvPartBomMid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">版本号</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入版本号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入版本号" maxlength="40" name="bomD.cVersion" value="#(bomD.cVersion??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">子件存货编码</label>
+<div class="col-10">
+    <textarea style="height:100px;"  data-rule="required"  data-notnull="true" data-tips="请输入子件存货编码" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入子件存货编码" maxlength="200" name="bomD.cInvCode">#(bomD.cInvCode??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">子件存货名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入子件存货名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入子件存货名称" maxlength="40" name="bomD.cInvName" value="#(bomD.cInvName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">子件规格</label>
+<div class="col-10">
+    <textarea style="height:100px;"  data-rule="required"  data-notnull="true" data-tips="请输入子件规格" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入子件规格" maxlength="200" name="bomD.cInvStd">#(bomD.cInvStd??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">库存计量单位Id</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入库存计量单位Id"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入库存计量单位Id" maxlength="40" name="bomD.iInventoryUomId1" value="#(bomD.iInventoryUomId1??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">启用日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入启用日期" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入启用日期" maxlength="20" name="bomD.dEnableDate"    value="#datetime(bomD.dEnableDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">停用日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入停用日期" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入停用日期" maxlength="20" name="bomD.dDisableDate"    value="#datetime(bomD.dDisableDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">材料类别</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入材料类别"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入材料类别" maxlength="40" name="bomD.iPartType" value="#(bomD.iPartType??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">基本用量</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入基本用量"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入基本用量" maxlength="40" name="bomD.iBaseQty" value="#(bomD.iBaseQty??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">重量</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入重量" maxlength="40" name="bomD.iWeight" value="#(bomD.iWeight??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">供应商ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入供应商ID" maxlength="40" name="bomD.iVendorId" value="#(bomD.iVendorId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">供应商编码</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入供应商编码" maxlength="200" name="bomD.cVendCode">#(bomD.cVendCode??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">供应商名称</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入供应商名称" maxlength="40" name="bomD.cVenName" value="#(bomD.cVenName??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="bomD.isVirtual"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否虚拟件;0.否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(bomD.isVirtual??)"
+data-rule="radio"
+data-notnull="false"
+data-tips="请输入是否虚拟件;0.否 1. 是"
+data-inline="true"
+>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="bomD.bProxyForeign"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否委外;是否外作，0. 否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(bomD.bProxyForeign??)"
+data-rule="radio"
+data-notnull="false"
+data-tips="请输入是否委外;是否外作，0. 否 1. 是"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="bomD.cMemo">#(bomD.cMemo??)</textarea>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="BomD_Form")
+#end
+

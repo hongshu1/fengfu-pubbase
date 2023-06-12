@@ -1327,7 +1327,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
     }
 
     public PurchaseOrderM findByCOrerNo(String corderno) {
-        return findFirst("select * from PS_PurchaseOrderDBatch where corderno=?", corderno);
+        return findFirst("select * from PS_PurchaseOrderM where corderno=?", corderno);
     }
 
 }

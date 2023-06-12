@@ -222,12 +222,12 @@ public class OtherOutService extends BaseService<OtherOut> {
 				//	行数据为空 不保存
 				if ("save".equals(revokeVal)) {
 					if (otherOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
-						ValidationUtils.isTrue(false, "请先添加行数据！");
+						ValidationUtils.error( "请先添加行数据！");
 					}
 				}
 
 				if ("submit".equals(revokeVal) && otherOut.getAutoID() == null) {
-					ValidationUtils.isTrue(false, "请保存后提交审核！！！");
+					ValidationUtils.error( "请保存后提交审核！！！");
 				}
 
 				List<Record> jBoltTableSaveRecordList = jBoltTable.getUpdateRecordList();
@@ -248,10 +248,10 @@ public class OtherOutService extends BaseService<OtherOut> {
 
 							//物料退货判断
 							if (flag<0){
-								ValidationUtils.isTrue(false, "第" + k + "行退货数量超出现存数（" + qtys + "）！！！");
+								ValidationUtils.error( "第" + k + "行退货数量超出现存数（" + qtys + "）！！！");
 							}
 						}else {
-							ValidationUtils.isTrue(false, "第"+k+"行出库数量为空！！！");
+							ValidationUtils.error( "第"+k+"行出库数量为空！！！");
 						}
 
 					}

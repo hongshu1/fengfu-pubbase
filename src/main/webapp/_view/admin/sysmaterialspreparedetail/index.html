@@ -5,7 +5,7 @@
     <div class="jbolt_page_title">
         <div class="row">
             <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>备料扫码</h1></div>
-            <div class="col-sm-auto">
+            <div class="col-sm-auto" style="padding-right: 0px">
                 <form class="form-inline" id="SysMaterialspreparedetail_form_#(pageId)">
 
                     <!--                    <select class="form-control"-->
@@ -21,11 +21,14 @@
                     <!--                            name="billno"-->
                     <!--                            style="background-color: white"-->
                     <!--                    ></select>-->
-                    <input type="text" class="form-control ml-2" placeholder="请点击选择备料单号"
+                    <input type="text"
+                           class="form-control ml-2"
+                           placeholder="请点击选择备料单号"
                            maxlength="40"
                            name="billno"
                            value=""
-                           data-dialogbtn data-area="80%,60%"
+                           data-dialogbtn
+                           data-area="80%,60%"
                            data-handler="jboltTablePageToFirst"
                            id="billno"
                            data-title="选择备料单"
@@ -33,26 +36,52 @@
                            readonly
                            style="background-color: white"
                     />
-<!--                    <input class="form-control"-->
-<!--                           data-autoload-->
-<!--                           data-url="admin/dictionary/options?key=null"-->
-<!--                           data-text="=现品票扫码="-->
-<!--                           data-value=""-->
-<!--                           data-value-attr="sn"-->
-<!--                           placeholder="现品票扫码"-->
-<!--                    ></input>-->
-                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
-                           autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
-                           id="barcode" name="barcode" value="#(barcode??)"/>
-                    <div class="btn-group text-center mx-1">
-                        <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
-                        <button type="button" onclick="form.reset();refreshJBoltTable(this);"
-                                class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
+                    <!--                    <input class="form-control"-->
+                    <!--                           data-autoload-->
+                    <!--                           data-url="admin/dictionary/options?key=null"-->
+                    <!--                           data-text="=现品票扫码="-->
+                    <!--                           data-value=""-->
+                    <!--                           data-value-attr="sn"-->
+                    <!--                           placeholder="现品票扫码"-->
+                    <!--                    ></input>-->
+                    <input type="text"
+                           data-notnull="true"
+                           data-tips="请输入现品票扫码"
+                           data-with-clearbtn="true"
+                           autocomplete="off"
+                           class="form-control"
+                           placeholder="请输入现品票扫码"
+                           maxlength="40"
+                           id="barcode"
+                           name="barcode"
+                           value="#(barcode??)"
+                    />
+                    <div class="btn-group text-center mx-1" hidden="hidden">
+                        <button type="submit" class="btn btn-outline-primary" id="suBmit"><i class="fa fa-search"></i>
+                            查询
                         </button>
-                        <button type="submit" class="btn btn-outline-secondary"> 提交备料
+                        <button type="button" onclick="form.reset();refreshJBoltTable(this);"
+                                class="btn btn-outline-secondary" id="reSet"><i class="fa fa-reply-all"></i> 重置
+                        </button>
+                        <button type="submit" class="btn btn-outline-secondary" id="sumitMaterials"> 提交备料
                         </button>
                     </div>
                 </form>
+
+
+            </div>
+
+            <div class="col-sm-auto" style="padding-left: 0px">
+                <div class="btn-group text-center mx-1">
+                    <button type="button" class="btn btn-outline-primary" onclick="barcode()"><i
+                            class="fa fa-search" id="suBmit1"></i> 查询
+                    </button>
+                    <button type="button"
+                            class="btn btn-outline-secondary" id="reSet1"><i class="fa fa-reply-all"></i> 重置
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" id="sumitMaterials1"> 提交备料
+                    </button>
+                </div>
             </div>
             <!--            <div class="col-sm-auto text-right">-->
 
@@ -165,14 +194,14 @@
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.现品票}</td>
-<td>${data.存货编码}</td>
-<td>${data.客户部番}</td>
-<td>${data.部品名称}</td>
-<td>${data.规格}</td>
-<td>${data.主计量单位}</td>
-<td>${data.数量}</td>
-<td>${data.批次号}</td>
+<td>${data.barcode}</td>
+<td>${data.invcode}</td>
+<td>${data.cinvcode1}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cinvstd}</td>
+<td>${data.iinventoryuomid1}</td>
+<td>${data.qty}</td>
+<td>${data.batch}</td>
 <td>${data.生产日期}</td>
 </tr>
 {@/each}
@@ -189,13 +218,13 @@
                     </div>
                 </div>
             </div>
-            <table class="jbolt_table jbolt_main_table  table-center "
+            <table class="jbolt_table jbolt_main_table table-center"
                    data-jbolttable
                    data-width="fill"
                    data-height="39%"
                    data-ajax="true"
                    data-conditions-form="SysMaterialspreparedetail_form_#(pageId)"
-                   data-url="admin/sysMaterialspreparedetail/getBarcode"
+                   data-url="admin/sysMaterialspreparedetail/barcodeNull"
                    data-rowtpl="SysMaterialsprepare1_tpl_#(pageId)"
                    data-copy-to-excel="false"
                    data-page="SysMaterialsprepare_page"
@@ -205,15 +234,15 @@
                 <thead class="fw-normal">
                 <tr>
                     <th data-width="60" data-column="">序号</th>
-                    <th data-width="150" data-column="">现品票</th>
-                    <th data-width="150" data-column="">存货编码</th>
-                    <th data-width="150" data-column="">客户部番</th>
-                    <th data-width="150" data-column="">部品名称</th>
-                    <th data-width="150" data-column="">规格</th>
-                    <th data-width="150" data-column="">主计量单位</th>
-                    <th data-width="150" data-column="">数量</th>
-                    <th data-min-width="150" data-column="">批次号</th>
-                    <th data-width="150" data-column="">生产日期</th>
+                    <th data-width="150" data-column="barcode">现品票</th>
+                    <th data-width="150" data-column="cinvcode">存货编码</th>
+                    <th data-width="150" data-column="cinvcode1">客户部番</th>
+                    <th data-width="150" data-column="cinvname1">部品名称</th>
+                    <th data-width="150" data-column="cinvstd">规格</th>
+                    <th data-width="150" data-column="iinventoryuomid1">主计量单位</th>
+                    <th data-width="150" data-column="invcode">数量</th>
+                    <th data-min-width="150" data-column="qww">批次号</th>
+                    <th data-width="150" data-column="ewe">生产日期</th>
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -228,8 +257,24 @@
 
 
     function barcode() {
-        LayerMsgBox.loading("执行中......",2000);
+        LayerMsgBox.loading("执行中......", 2000);
         var barcode = $("#barcode").val();
+        var data = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
+        let array = new Array();
+        if (null != data) {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].barcode == barcode) {
+                    LayerMsgBox.alert("条码已重复")
+                    return;
+                }
+                array.push("'" + data[i].barcode + "'");
+            }
+            let codes = array.join(',');
+            $("#detailHidden").val(codes);
+        } else {
+            $("#detailHidden").val('');
+        }
+
         if (barcode) {
             Ajax.post("admin/sysMaterialspreparedetail/barcode", {"barcode": barcode},
                 function (res) {
@@ -241,5 +286,29 @@
             LayerMsgBox.alert("请输入条码")
         }
     }
+
+
+    const BTN1 = document.getElementById('suBmit');
+    const BTN2 = document.getElementById('reSet');
+    const BTN3 = document.getElementById('sumitMaterials');
+    const BTN4 = document.getElementById('suBmit1');
+    const BTN5 = document.getElementById('reSet1');
+    const BTN6 = document.getElementById('sumitMaterials1');
+    // 给按钮 2 添加点击事件
+    BTN5.addEventListener('click', () => {
+        BTN2.onclick(); // 按钮 2 点击后触发按钮 1 的 `onclick`
+        // BTN1.click(); // 按钮 2 点击后触发按钮 1 的 `click`，效果一样
+    });
+    BTN6.addEventListener('click', () => {
+        BTN3.onclick(); // 按钮 2 点击后触发按钮 1 的 `onclick`
+        // BTN1.click(); // 按钮 2 点击后触发按钮 1 的 `click`，效果一样
+    });
+
+
+
+
+
+
+
 </script>
 #end
