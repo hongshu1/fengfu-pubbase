@@ -1619,6 +1619,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             // 调用方法
             return (String) method.invoke(o, args);
         } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
             throw new RuntimeException(e.getLocalizedMessage());
         }
     }
