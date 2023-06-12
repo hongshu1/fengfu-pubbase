@@ -43,7 +43,7 @@
 
                 <label class="col-sm-1 col-form-label">版本号：</label>
                 <div class="col-sm-2">
-                    <input id="cVersion" type="text" autocomplete="off"  class="form-control" placeholder="输入版本/版次" name="cVersion" value="#(cVersion)" />
+                    <input id="cVersion" type="text" autocomplete="off"  class="form-control" placeholder="输入版本/版次" name="cVersion" value="#(cVersion)" #if(iAutoId) readonly #end/>
                 </div>
             </div>
 

@@ -18,7 +18,7 @@ import cn.rjtech.enums.BomSourceTypeEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.BomD;
 import cn.rjtech.model.momdata.BomM;
-import cn.rjtech.model.momdata.BomMaster;
+import cn.rjtech.model.momdata.PurchaseorderdQty;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -202,7 +202,7 @@ public class BomMService extends BaseService<BomM> {
 				if (bomMidcollect.containsKey(iInvPartBomMid)){
 					List<Record> compareList = bomMidcollect.get(iInvPartBomMid);
 					compareList.forEach(compare -> {
-						compare.set(BomD.IBOMMID, id);
+						compare.set(BomD.IPID, id);
 						compare.set(BomD.SOURCEID, compare.getLong(BomD.IAUTOID));
 						compare.set(BomD.IAUTOID, JBoltSnowflakeKit.me.nextId());
 					});
@@ -212,7 +212,7 @@ public class BomMService extends BaseService<BomM> {
 			
 			for (Record record : recordList){
                 Long id = record.getLong(BomM.IAUTOID);
-                Object pid = record.get(BomD.IBOMMID);
+                Object pid = record.get(BomD.IPID);
                 StringBuilder text = new StringBuilder(record.getStr(BomM.CINVNAME));
                 if (pid == null) {
                     pid = "#";
@@ -381,5 +381,69 @@ public class BomMService extends BaseService<BomM> {
 			return true;
 		});
 		return SUCCESS;
+	}
+	
+	public boolean isOverlapping(BomM bomM, Record otherBom) {
+		
+		Date dEnableDate = otherBom.getDate(BomM.DENABLEDATE);
+		Date dDisableDate = otherBom.getDate(BomM.DDISABLEDATE);
+		
+		Date currentDate = bomM.getDEnableDate();
+		Date endDate = bomM.getDDisableDate();
+		
+		//如果当前日期在指定范围内，则不允许添加 启用日期在指定范围内不允许添加
+		if(currentDate.compareTo(dEnableDate) >=0 && currentDate.compareTo(dDisableDate)<=0) {
+			return false;
+		}
+		
+		if (endDate.compareTo(dEnableDate) >=0 && endDate.compareTo(dDisableDate)<=0){
+			return false;
+		}
+		return true;
+	}
+	
+	public List<Record> findByInvId(Long orgId, Long invId, Long iAutoId){
+		ValidationUtils.notNull(invId, "存货id不能为空");
+		Okv okv = Okv.by("orgId", orgId)
+				.set(BomM.IINVENTORYID, invId)
+				.set(BomM.IAUTOID, iAutoId);
+		return dbTemplate("bomm.findByInvId", okv).find();
+	}
+	
+	public List<Record> findVersionByInvId(Long orgId, Long invId, Long iAutoId){
+		ValidationUtils.notNull(invId, "存货id不能为空");
+		Okv okv = Okv.by("orgId", orgId)
+				.set(BomM.IINVENTORYID, invId)
+				.set(BomM.IAUTOID, iAutoId);
+		return dbTemplate("bomm.findVersionByInvId", okv).find();
+	}
+	
+	public String findMaxVersionByInvId(Long orgId, Long invId){
+		Okv okv = Okv.by("orgId", orgId).set(BomM.IINVENTORYID, invId);
+		return dbTemplate("bomm.findMaxVersionByInvId", okv).queryStr();
+	}
+	
+	public String getNextVersion(Long orgId, Long invId){
+		String maxVersion = findMaxVersionByInvId(orgId, invId);
+		// 为空直接返回 最初版本
+		if (StrUtil.isBlank(maxVersion)){
+			return "A/01";
+		}
+		
+		String[] parts = maxVersion.split("/");
+		ValidationUtils.isTrue(parts.length == 2, "版本号格式不正确");
+		
+		String prefix = parts[0];
+		int number = Integer.parseInt(parts[1]);
+		ValidationUtils.isTrue(!(number < 0 || number > 10), "版本号数字流水号不合法");
+		
+		if (number < 10){
+			number+=1;
+			String format = String.format("%02d", number);
+			return prefix.concat("/").concat(format);
+		}
+		char nextPrefix = (char) (prefix.charAt(0) + 1);
+		String netPrefixStr = String.valueOf(nextPrefix);
+		return netPrefixStr.concat("/01");
 	}
 }

@@ -9,6 +9,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.otherout.OtherOutService;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
+import cn.rjtech.model.momdata.SysPureceivedetail;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 
@@ -168,6 +169,10 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
 
     public List<SysPuinstoredetail> findDetailByMasID(String masid) {
         return find("select * from T_Sys_PUInStoreDetail where masid=?", masid);
+    }
+
+    public SysPuinstoredetail findFirstByBarcode(String barcode) {
+        return findFirst("select * from  T_Sys_PUInStoreDetail where spotTicket = ? ", barcode);
     }
 
     /*

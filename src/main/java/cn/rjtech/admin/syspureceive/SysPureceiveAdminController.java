@@ -68,6 +68,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
+
         render("add.html");
     }
 
@@ -233,23 +234,17 @@ public class SysPureceiveAdminController extends BaseAdminController {
     }
 
     /**
-     * 审批通过
+     * 审核通过
      */
     public void approve(String ids) {
-        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-
-         renderJson(service.approve(ids));
+        renderJson(service.approve(getLong(0)));
     }
 
     /**
      * 审批不通过
      */
     public void reject(String ids) {
-        if (StringUtils.isEmpty(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.reject(ids));
+        renderJson(service.reject(getLong(0)));
     }
     /**
      * 反审批
@@ -263,9 +258,9 @@ public class SysPureceiveAdminController extends BaseAdminController {
     }
 
     /**
-     * 审核通过
+     * 批量审核通过
      */
-    public void batchAudit(String ids) {
+    public void batchApprove(@Para(value = "ids") String ids) {
         if (StringUtils.isEmpty(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
@@ -275,9 +270,9 @@ public class SysPureceiveAdminController extends BaseAdminController {
 
 
     /**
-     * 审核不通过
+     * 批量反审核
      */
-    public void batchReverseAudit(String ids) {
+    public void batchReverseApprove(@Para(value = "ids") String ids) {
         if (StringUtils.isEmpty(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;

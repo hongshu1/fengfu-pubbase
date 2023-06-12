@@ -1,6 +1,7 @@
 #sql("datas")
 SELECT
 	master.iAutoId,
+	NULL AS iPid,
 	master.iInventoryId,
 	master.cInvCode,
 	master.cInvName,
@@ -19,6 +20,7 @@ WHERE
 UNION ALL
 SELECT
 	compare.iAutoId,
+	compare.iPid,
 	compare.iInventoryId,
 	compare.cInvCode,
 	compare.cInvName,
@@ -89,4 +91,51 @@ WHERE m.isDeleted = '0'
 	#if(invId)
         AND m.iInventoryId = #para(invId)
 	#end
+#end
+
+#sql("findByInvId")
+SELECT
+     master.cVersion,
+	master.dEnableDate,
+	master.dDisableDate
+FROM
+	Bd_BomM master
+WHERE
+    master.IsDeleted = '0'
+    AND  master.iInventoryId = #para(iInventoryId)
+    #if(orgId)
+	    AND  master.iOrgId = #para(orgId)
+    #end
+    #if(iAutoId)
+     AND  master.iAutoId <> #para(iAutoId)
+    #end
+#end
+
+#sql("findMaxVersionByInvId")
+SELECT
+    MAX(master.cVersion) AS cVersion
+FROM
+    Bd_BomM master
+WHERE
+    master.IsDeleted = '0'
+    AND master.iInventoryId = #para(iInventoryId)
+    #if(orgId)
+	    AND  master.iOrgId = #para(orgId)
+    #end
+#end
+
+#sql("findVersionByInvId")
+SELECT
+    master.cVersion
+FROM
+    Bd_BomM master
+WHERE
+    master.IsDeleted = '0'
+    AND master.iInventoryId = #para(iInventoryId)
+    #if(orgId)
+	    AND  master.iOrgId = #para(orgId)
+    #end
+    #if(iAutoId)
+     AND  master.iAutoId <> #para(iAutoId)
+    #end
 #end

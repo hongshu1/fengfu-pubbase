@@ -15,8 +15,11 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.Subcontractsaleorderm;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -46,6 +49,8 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     private DeptService deptService;
     @Inject
     private CusOrderSumService cusOrderSumService;
+    @Inject
+    private FormApprovalService formApprovalService;
 
     @Override
     protected Subcontractsaleorderm dao() {
@@ -275,5 +280,72 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
             subcontractsaleorderdService.deleteById(id);
         }
     }
-    
+
+    /**
+     * 撤回
+     */
+    public Ret withdraw(Long iAutoId) {
+        tx(() -> {
+            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
+                ValidationUtils.isTrue(updateColumn(iAutoId, "iOrderStatus", OrderStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
+
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
+                return null;
+            });
+
+            return true;
+        });
+        return SUCCESS;
+    }
+
+
+    /**
+     * 提交审批
+     */
+    public Ret submit(Long iautoid) {
+        tx(() -> {
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(), "");
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+
+            Subcontractsaleorderm subcontractsaleorderm = findById(iautoid);
+            subcontractsaleorderm.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+            subcontractsaleorderm.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+            ValidationUtils.isTrue(subcontractsaleorderm.update(), JBoltMsg.FAIL);
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    public Ret approve(Long iautoid) {
+        tx(() -> {
+            // 校验订单状态
+            Subcontractsaleorderm subcontractsaleorderm = findById(iautoid);
+            ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), subcontractsaleorderm.getIOrderStatus(), "订单非待审核状态");
+            formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
+                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
+                return null;
+            });
+
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    public Ret reject(Long iautoid) {
+        tx(() -> {
+            // 数据同步暂未开发 现只修改状态
+            formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
+                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+                //cusOrderSumService.algorithmSum();
+                return null;
+            });
+
+            return true;
+        });
+        return SUCCESS;
+    }
 }
