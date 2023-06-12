@@ -487,9 +487,6 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 实现反审之后的其他业务操作, 如有异常返回错误信息
      */
     public String postReverseApproveFunc(long formAutoId) {
-        MonthOrderM monthOrderM = findById(formAutoId);
-        ValidationUtils.equals(monthOrderM.getIOrderStatus(), OrderStatusEnum.APPROVED.getValue(), "订单非已审核状态");
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", OrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }
 
