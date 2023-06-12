@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -143,7 +142,7 @@ public abstract class BaseInventory<M extends BaseInventory<M>> extends JBoltBas
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
-    /**图片，多张","分隔*/
+    /**图片，多张','分隔*/
     public static final String CPICS = "cPics";
     /**内作在库天数*/
     public static final String IINNERINSTOCKDAYS = "iInnerInStockDays";
@@ -201,6 +200,12 @@ public abstract class BaseInventory<M extends BaseInventory<M>> extends JBoltBas
     public static final String IINVSPRICE = "iInvSPrice";
     /**最新成本*/
     public static final String IINVNCOST = "iInvNCost";
+    /**地址*/
+    public static final String CADDRESS = "cAddress";
+    /**税率*/
+    public static final String ITAXRATE = "iTaxRate";
+    /**是否虚拟件：0. 否 1. 是*/
+    public static final String ISVIRTUAL = "isVirtual";
 	/**
 	 * 主键
 	 */
@@ -331,7 +336,7 @@ public abstract class BaseInventory<M extends BaseInventory<M>> extends JBoltBas
 	/**
 	 * 料品名称
 	 */
-	@JBoltField(name="cinvname" ,columnName="cInvName",type="String", remark="料品名称", required=true, maxLength=100, fixed=0, order=8)
+	@JBoltField(name="cinvname" ,columnName="cInvName",type="String", remark="料品名称", required=true, maxLength=255, fixed=0, order=8)
 	@JSONField(name = "cinvname")
 	public java.lang.String getCInvName() {
 		return getStr("cInvName");
@@ -1324,7 +1329,7 @@ public abstract class BaseInventory<M extends BaseInventory<M>> extends JBoltBas
 	}
 
 	/**
-	 * 图片，多张","分隔
+	 * 图片，多张','分隔
 	 */
 	public M setCPics(java.lang.String cPics) {
 		set("cPics", cPics);
@@ -1332,9 +1337,9 @@ public abstract class BaseInventory<M extends BaseInventory<M>> extends JBoltBas
 	}
 
 	/**
-	 * 图片，多张","分隔
+	 * 图片，多张','分隔
 	 */
-	@JBoltField(name="cpics" ,columnName="cPics",type="String", remark="图片，多张,分隔", required=false, maxLength=1000, fixed=0, order=67)
+	@JBoltField(name="cpics" ,columnName="cPics",type="String", remark="图片，多张','分隔", required=false, maxLength=1000, fixed=0, order=67)
 	@JSONField(name = "cpics")
 	public java.lang.String getCPics() {
 		return getStr("cPics");
@@ -1814,6 +1819,57 @@ public abstract class BaseInventory<M extends BaseInventory<M>> extends JBoltBas
 	@JSONField(name = "iinvncost")
 	public java.math.BigDecimal getIInvNCost() {
 		return getBigDecimal("iInvNCost");
+	}
+
+	/**
+	 * 地址
+	 */
+	public M setCAddress(java.lang.String cAddress) {
+		set("cAddress", cAddress);
+		return (M)this;
+	}
+
+	/**
+	 * 地址
+	 */
+	@JBoltField(name="caddress" ,columnName="cAddress",type="String", remark="地址", required=false, maxLength=255, fixed=0, order=96)
+	@JSONField(name = "caddress")
+	public java.lang.String getCAddress() {
+		return getStr("cAddress");
+	}
+
+	/**
+	 * 税率
+	 */
+	public M setITaxRate(java.math.BigDecimal iTaxRate) {
+		set("iTaxRate", iTaxRate);
+		return (M)this;
+	}
+
+	/**
+	 * 税率
+	 */
+	@JBoltField(name="itaxrate" ,columnName="iTaxRate",type="BigDecimal", remark="税率", required=false, maxLength=24, fixed=6, order=97)
+	@JSONField(name = "itaxrate")
+	public java.math.BigDecimal getITaxRate() {
+		return getBigDecimal("iTaxRate");
+	}
+
+	/**
+	 * 是否虚拟件：0. 否 1. 是
+	 */
+	public M setIsVirtual(java.lang.Boolean isVirtual) {
+		set("isVirtual", isVirtual);
+		return (M)this;
+	}
+
+	/**
+	 * 是否虚拟件：0. 否 1. 是
+	 */
+	@JBoltField(name="isvirtual" ,columnName="isVirtual",type="Boolean", remark="是否虚拟件：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=98)
+	@JSONField(name = "isvirtual")
+	public java.lang.Boolean getIsVirtual() {
+		return getBoolean("isVirtual");
 	}
 
 }

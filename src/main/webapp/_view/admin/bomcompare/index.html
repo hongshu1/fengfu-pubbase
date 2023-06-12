@@ -2,80 +2,145 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey??)">
-<div class="jbolt_page_title">
-<div class="row">
-	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>子件物料清单</h1></div>
-	<div class="col">
-	<form class="form-inline text-left" id="BomCompare_form_#(pageId)">
-        <input id="bomCompare_pid" hidden type="text" autocomplete="off"  name="pid" value="">
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="料号" name="invCode" value="" />
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="品名" name="invName" value="" />
-
-		<button type="submit" id="bomCompare_submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-	</form>
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>子件物料清单</h1></div>
+			<div class="col">
+				<form class="form-inline text-left" id="BomCompare_form_index_#(pageId)">
+					<input id="bomCompare_pid" hidden type="text" autocomplete="off"  name="pid" value="">
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="料号" name="invCode" value="" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="品名" name="invName" value="" />
+					<button type="submit" id="bomCompare_submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+					<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+				</form>
+			</div>
+		</div>
 	</div>
-</div>
-</div>
-<div class="jbolt_page_content">
-<!-- 定义JBoltTable使用的数据渲染模板 -->
-<textarea class="jb_tpl_box" id="BomCompare_tpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.id}">
-<td>${pageNumber,pageSize,index | rownum}</td>
+	<div class="jbolt_page_content">
 
-<td>${data.cinvcode}</td>
-<td>${data.cinvname}</td>
-<td>${data.cinvstd}</td>
-<td>${data.cuomname}</td>
-<td></td>
-<td>${data.iqty}</td>
-<td>${data.iweight}</td>
-<td></td>
-<td></td>
-<td>${data.cbomversion}</td>
-</tr>
-{@/each}
-</textarea>
-<div class="jbolt_table_toolbar" id="BomCompare_toolbar_#(pageId)">
-<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-	<button data-dialogbtn data-btn-align="top" data-area="90%,90%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增物料清单" data-url="admin/bommaster/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
-	<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
-	<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
-</div>
+		<div class="form-group row" style="margin-top: 10px">
+			<label class="col-sm-2 col-form-label">母件存货编码：</label>
+			<div class="col-sm-2">
+				<input type="text" autocomplete="off" class="form-control" value="#(cInvCode)" readonly/>
+			</div>
 
-</div>
-<table class="jbolt_table jbolt_main_table  table-center "
-	   data-jbolttable
-	   data-width="fill"
-	   data-height="fill"
-	   data-ajax="true"
-	   data-column-resize="true"
-	   data-conditions-form="BomCompare_form_#(pageId)"
-	   data-url="admin/bommaster/getPageData"
-	   data-rowtpl="BomCompare_tpl_#(pageId)"
-	   data-copy-to-excel="false"
-	   data-page="BomCompare_page"
-	   data-toolbar="BomCompare_toolbar_#(pageId)"
->
-<thead>
-<tr>
-<th data-width="60" data-column="index">序号</th>
-	<th data-width="150" data-column="cInvCode">子件物料编码</th>
-	<th data-width="150" data-column="cInvName">子件物料名称</th>
-	<th data-width="150" data-column="cInvStd">规格</th>
-	<th data-width="100" data-column="cUomName">计量单位</th>
-	<th data-width="120" data-column="">材料类别</th>
-	<th data-width="100" data-column="iQty">QTY</th>
-	<th data-width="100" data-column="iWeight">重量</th>
-	<th data-width="120" data-column="">单位材料成本</th>
-	<th data-width="120" data-column="">材料成本</th>
-	<th data-width="120" data-column="cBomVersion">版本/版次</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
+			<label class="col-sm-2 col-form-label">母件存货名称：</label>
+			<div class="col-sm-2">
+				<input type="text" autocomplete="off" class="form-control" value="#(cInvName)" readonly/>
+			</div>
+
+			<label class="col-sm-2 col-form-label">版本号：</label>
+			<div class="col-sm-2">
+				<input type="text" autocomplete="off" class="form-control" value="#(cVersion)" readonly/>
+			</div>
+		</div>
+
+		<div class="form-group row ">
+			<label class="col-sm-2 col-form-label">启用日期：</label>
+			<div class="col-sm-2">
+				<input type="text" autocomplete="off" class="form-control" value="#(dEnableDate)" readonly/>
+			</div>
+
+			<label class="col-sm-2 col-form-label">停用日期：</label>
+			<div class="col-sm-2">
+				<input type="text" autocomplete="off" class="form-control" value="#(dDisableDate)" readonly/>
+			</div>
+
+			<label class="col-sm-2 col-form-label">状态：</label>
+			<div class="col-sm-2">
+				<input type="text" autocomplete="off" class="form-control" value="#(auditStatusStr)" readonly/>
+			</div>
+		</div>
+		<!-- 定义JBoltTable使用的数据渲染模板 -->
+		<textarea class="jb_tpl_box" id="BomCompare_tpl_#(pageId)">
+	{@each datas as data,index}
+		<tr data-id="${data.id}">
+			<td>${pageNumber,pageSize,index | rownum}</td>
+			<td>${data.ccode1}</td>
+			<td>${data.ccode2}</td>
+			<td>${data.ccode3}</td>
+			<td>${data.ccode4}</td>
+			<td>${data.ccode5}</td>
+			<td>${data.ccode6}</td>
+			<td>${data.ccode7}</td>
+			<td>${data.ccode8}</td>
+			<td>${data.ccode9}</td>
+			<td>${data.cinvcode}</td>
+			<td>${data.cinvname}</td>
+			<td>${data.cinvstd}</td>
+			<td>${data.cuomname}</td>
+			<td>${data.parttypename}</td>
+			<td>${data.ibaseqty}</td>
+			<td>${data.iweight}</td>
+			<td>${data.cvenname}</td>
+			<td>${data.bproxyforeignname}</td>
+			<td>${data.isvirtalname}</td>
+			<td>${data.cmemo}</td>
+			<td>${data.cversion}</td>
+			<td>${data.denabledate|date_ymd}</td>
+			<td>${data.ddisabledate|date_ymd}</td>
+			<td></td>
+			<td></td>
+		</tr>
+	{@/each}
+	</textarea>
+		<div class="jbolt_table_toolbar" id="BomCompare_toolbar_#(pageId)">
+			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+				<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
+				<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+			</div>
+
+		</div>
+		<table class="jbolt_table jbolt_main_table  table-center "
+			   data-jbolttable
+			   data-width="fill"
+			   data-height="fill"
+			   data-column-resize="true"
+			   data-conditions-form="BomCompare_form_index_#(pageId)"
+			   data-ajax="true"
+			   data-url="admin/bomM/getBomComparePageData?iBomMid=#(iAutoId)&cCode=#(cCode)&iCodeLevel=#(iCodeLevel)"
+			   data-rowtpl="BomCompare_tpl_#(pageId)"
+			   data-copy-to-excel="false"
+			   data-page="BomCompare_page"
+			   data-toolbar="BomCompare_toolbar_#(pageId)"
+		>
+			<thead>
+				<tr>
+					<th rowspan="2" data-width="60" data-column="index">序号</th>
+					<th colspan="9" data-column="cCode" data-width="400">编码</th>
+					<th rowspan="2" data-width="150" data-column="cInvCode">子件物料编码</th>
+					<th rowspan="2" data-width="150" data-column="cInvName">子件物料名称</th>
+					<th rowspan="2" data-width="150" data-column="cInvStd">规格</th>
+					<th rowspan="2" data-width="100" data-column="cUomName">计量单位</th>
+					<th rowspan="2" data-width="120" data-column="iPartType">材料类别</th>
+					<th rowspan="2" data-width="100" data-column="iBaseQty">基本用量</th>
+					<th rowspan="2" data-width="100" data-column="iWeight">重量</th>
+					<th rowspan="2" data-width="150" data-column="cVenName">部品加工商</th>
+					<th rowspan="2" data-width="100" data-column="bProxyForeign">是否外作</th>
+					<th rowspan="2" data-width="100" data-column="isVirtual">虚拟件</th>
+					<th rowspan="2" data-width="150" data-column="cMemo">备注</th>
+					<th rowspan="2" data-width="120" data-column="cBomVersion">版本/版次</th>
+					<th rowspan="2" data-width="120" data-column="dEnableDate">启用日期</th>
+					<th rowspan="2" data-width="120" data-column="dDisableDate">停用日期</th>
+					<th rowspan="2" data-width="120" data-column="">单位材料成本</th>
+					<th rowspan="2" data-width="120" data-column="">材料成本</th>
+				</tr>
+			<tr>
+				<th data-column="code1" data-width="30" data-column="code1">1</th>
+				<th data-column="code2" data-width="30" data-column="code2">2</th>
+				<th data-column="code3" data-width="30">3</th>
+				<th data-column="code4" data-width="30">4</th>
+				<th data-column="code5" data-width="30">5</th>
+				<th data-column="code6" data-width="30">6</th>
+				<th data-column="code7" data-width="30">7</th>
+				<th data-column="code8" data-width="30">8</th>
+				<th data-column="code9" data-width="30">9</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
 </div>
 #end
 
