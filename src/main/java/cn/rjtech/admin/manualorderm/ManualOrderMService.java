@@ -344,10 +344,10 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
             ManualOrderM manualOrderM = findById(iautoid);
             ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), manualOrderM.getIOrderStatus(), "订单非待审核状态");
 
-            formApprovalService.approveByStatus(table(), iautoid, () -> null, () -> {
+            formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
                 ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
                 return null;
-            }, "iAutoId");
+            });
 
 
             // 修改客户计划汇总
@@ -367,7 +367,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
         tx(() -> {
             ManualOrderM manualOrderM = findById(iAutoId);
             ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), manualOrderM.getIOrderStatus(), "只允许待审核状态订单撤回");
-            formApprovalService.withdraw(table(), manualOrderM.getIAutoId(), () -> null, () -> {
+            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
                 manualOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
                 ValidationUtils.isTrue(manualOrderM.update(), "撤回失败");
 

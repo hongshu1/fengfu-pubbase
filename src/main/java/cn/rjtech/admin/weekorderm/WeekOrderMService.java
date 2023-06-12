@@ -115,10 +115,10 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             // 校验订单状态
             WeekOrderM weekOrderM = findById(iautoid);
             ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
-            formApprovalService.approveByStatus(table(), iautoid, () -> null, () -> {
+            formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
                 ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
                 return null;
-            },"iAutoId");
+            });
 
             // 修改客户计划汇总
             cusOrderSumService.algorithmSum();
@@ -190,11 +190,11 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     public Ret reject(Long iautoid) {
         tx(() -> {
             // 数据同步暂未开发 现只修改状态
-            formApprovalService.rejectByStatus(table(), iautoid, () -> null, () -> {
+            formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
                 ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
                 //cusOrderSumService.algorithmSum();
                 return null;
-            },"");
+            });
 
             return true;
         });
@@ -204,7 +204,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid, "iAutoId");
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey());
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // 更新订单的状态
