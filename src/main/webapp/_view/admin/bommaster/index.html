@@ -46,8 +46,9 @@
 		if (data.children.length > 0){
 			isChildren = false;
 		}
-		$("#addEmptyBtn_#(pageId)").data("url","admin/bomcompare/manualForm?pid="+data.data+"&isChildren="+isChildren);
-		AjaxPortalUtil.go("bomcompareAjaxPortal1", "/admin/bomcompare/index?id="+data.data+"&isChildren="+isChildren);
+		var id = data.data;
+		$("#addEmptyBtn_#(pageId)").data("url","admin/bomcompare/manualForm?pid="+id+"&isChildren="+isChildren+"&isAdd=true");
+		AjaxPortalUtil.go("bomcompareAjaxPortal1", "/admin/bomcompare/index?id="+id+"&isChildren="+isChildren);
 	}
 
 	function initTreehandler(item) {
@@ -67,6 +68,17 @@
 	function keyWordsOnChange() {
 		var item = $("#searchBackGoodsTypeInput_2").val()
 		initTreehandler(item);
+	}
+
+	function checkCanOpenDialogHandler_#(pageId)() {
+		var $addEmptyBtn = $("#addEmptyBtn_#(pageId)");
+		var url = $addEmptyBtn.data("url");
+		var indexOf = url.indexOf("isChildren=false");
+		if (indexOf>0){
+			LayerMsgBox.error('当前存货下存在子件，不允许引用手动新增！');
+			throw log.error('当前存货下存在子件，不允许引用手动新增！');
+		}
+		return true;
 	}
 
 </script>

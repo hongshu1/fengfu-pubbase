@@ -336,6 +336,8 @@ public class BomCompareService extends BaseService<BomCompare> {
 		String userName = JBoltUserKit.getUserName();
 		DateTime now = DateUtil.date();
 		JSONObject form = jBoltTable.getForm();
+		// 父id
+		Long pId = form.getLong(BomD.IPID);
 		String codeStr = form.getString(BomD.CCODE);
 		String codeLevelStr = form.getString(BomD.ICODELEVEL);
 
@@ -358,11 +360,19 @@ public class BomCompareService extends BaseService<BomCompare> {
 				String nextVersion = bomMService.getNextVersion(getOrgId(), bomM.getIInventoryId());
 				bomM.setCVersion(nextVersion);
 			}
-			
+			// 保存/修改物料清单主表
 			if (ObjectUtil.isNull(bomM.getIAutoId())){
 				bomMService.save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
 			}else{
 				bomMService.update(bomM, userId, userName, now);
+			}
+			// 更改物料清单细表
+			if (ObjectUtil.isNotNull(pId)){
+				BomD bomD = bomDService.findById(pId);
+				ValidationUtils.notNull(bomD, "未找到引用的子件数据记录");
+				bomD.setIInvPartBomMid(bomM.getIAutoId());
+				bomD.setCVersion(bomM.getCVersion());
+				bomD.update();
 			}
 			if (jBoltTable.saveIsNotBlank()){
 				List<BomD> saveModelList = jBoltTable.getSaveModelList(BomD.class);

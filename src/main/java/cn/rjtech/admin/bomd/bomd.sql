@@ -2,6 +2,7 @@
 SELECT
     d.iAutoId,
 	d.iBomMid,
+	d.iPid,
 	d.cInvCode,
 	d.cInvName,
 	d.cInvStd,
@@ -24,6 +25,12 @@ FROM
 	LEFT JOIN Bd_Uom uom ON uom.iAutoId = d.iInventoryUomId1
 WHERE
 	d.isDeleted = '0'
-	AND d.iBomMid = #para(iBomMid)
+	AND d.iPid = #para(iBomMid)
+	#if(invCode)
+      AND d.cInvCode LIKE CONCAT('%',#para(invCode),'%')
+	#end
+	#if(invName)
+        AND d.cInvName LIKE CONCAT('%',#para(invName),'%')
+	#end
 	ORDER BY d.iAutoId ASC
 #end
