@@ -2,9 +2,9 @@
 #if(o.iauditstatus??0 == 0 || o.iauditstatus??0 == 3)
     #switch(AuditFormConfigCache.ME.getAuditWay(formSn)??)
         #case(1)
-            <button data-ajaxbtn data-url="#(uri)/submit?iautoid=#(o.get(primaryKeyName)??)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" #if(!(o.get(primaryKeyName)?? || edit??)) disabled #end>提交审批</button>
+            <button data-ajaxbtn data-url="#(uri)/submit?iautoid=#(o.get(primaryKeyName))" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" #if(!o.get(primaryKeyName)?? || edit??) disabled #end>提交审批</button>
         #case(2)
-            <button data-ajaxbtn data-url="#(uri)/submit?iautoid=#(o.get(primaryKeyName)??)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" #if(!(o.get(primaryKeyName)?? || edit??)) disabled #end>提交审核</button>
+            <button data-ajaxbtn data-url="#(uri)/submit?iautoid=#(o.get(primaryKeyName))" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" #if(!o.get(primaryKeyName)?? || edit??) disabled #end>提交审核</button>
     #end
 ### 审核中
 #else
@@ -13,8 +13,8 @@
         ### 审核按钮
         #case(1)
 
-            <button data-ajaxbtn data-url="#(uri)/approve/#(o.get(primaryKeyName)??)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核通过</button>
-            <button data-ajaxbtn data-url="#(uri)/reject/#(o.get(primaryKeyName)??)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核不通过</button>
+            <button data-ajaxbtn data-url="#(uri)/approve/#(iautoid)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核通过</button>
+            <button data-ajaxbtn data-url="#(uri)/reject/#(iautoid)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核不通过</button>
 
         ### 审批流操作, 不放置按钮，通过列表操作
         #case(2)

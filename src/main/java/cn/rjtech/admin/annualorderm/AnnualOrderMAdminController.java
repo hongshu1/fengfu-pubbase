@@ -144,6 +144,30 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     }
 
     /**
+     * 批量审核
+     */
+    public void batchApprove()
+    {
+        renderJson(service.batchApprove(get("ids")));
+    }
+
+    /**
+     * 批量反审
+     */
+    public void batchReverseApprove()
+    {
+
+    }
+
+    /**
+     * 批量不通过
+     */
+    public void batchReject()
+    {
+
+    }
+
+    /**
      * 导入Excel数据
      */
     public void importExcel(@Para(value = "file") UploadFile file) {

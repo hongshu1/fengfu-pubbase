@@ -13,13 +13,14 @@
                         #if(!monthorderm.iautoid?? || edit??)
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
-                        
-                        #if(monthorderm.iautoid??)
+
+                        #if(monthorderm.iautoid?? && !edit??)
                             ### 参数列表
                             ### uri:                接口URI
                             ### formSn:             表单名
                             ### o:                  当前表单对象名
                             ### primaryKeyName:     主键名
+                            ### edit:               查看为false,编辑为true
                             #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
                         #end
                         
