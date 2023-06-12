@@ -337,34 +337,34 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 		try{
 	    	budgetStartYear = Integer.parseInt(startyearCell.replace("年", ""));
 	    }catch(Exception e){
-	    	ValidationUtils.isTrue(false, "预算期间起始年份不合法,请检查导入模板!");
+	    	ValidationUtils.error( "预算期间起始年份不合法,请检查导入模板!");
 	    }
 	    try{
 	    	budgetStartMonth = Integer.parseInt(startmonthCell.replace("月", ""));
 	    }catch(Exception e){
-	    	ValidationUtils.isTrue(false, "预算期间起始月份不合法,请检查导入模板!!");
+	    	ValidationUtils.error( "预算期间起始月份不合法,请检查导入模板!!");
 	    }
 	    String cdepname = "";
 	    try {
 	    	cdepname = cdepcodeCell.substring(cdepcodeCell.indexOf("：")+1);
 	    	cdepcode = departmentService.getCdepCodeByName(cdepname);
 		} catch (Exception e) {
-			ValidationUtils.isTrue(false, "预算部门获取失败,请检查导入模板!");
+			ValidationUtils.error( "预算部门获取失败,请检查导入模板!");
 		}
 	    try{
 	    	ibudgetyear = Integer.parseInt(ibudgetyearCell.replace("年", ""));
 	    }catch(Exception e){
-	    	ValidationUtils.isTrue(false, "预算年度不合法,请检查导入模板!");
+	    	ValidationUtils.error( "预算年度不合法,请检查导入模板!");
 	    }
 	    try{
 	    	budgetEndYear = Integer.parseInt(endyearCell.replace("年", ""));
 	    }catch(Exception e){
-	    	ValidationUtils.isTrue(false, "预算期间结束年份不合法,请检查导入模板!");
+	    	ValidationUtils.error( "预算期间结束年份不合法,请检查导入模板!");
 	    }
 	    try{
 	    	budgetEndMonth = Integer.parseInt(endmonthCell.replace("月", ""));
 	    }catch(Exception e){
-	    	ValidationUtils.isTrue(false, "预算期间结束月份不合法,请检查导入模板!");
+	    	ValidationUtils.error( "预算期间结束月份不合法,请检查导入模板!");
 	    }
 	    try {
 	    	for (ExpenseBudgetTypeEnum typeenum : ExpenseBudgetTypeEnum.values()) {
@@ -375,7 +375,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 			}
 	    	ValidationUtils.notNull(cbudgetType, "预算类型不合法,请检查导入模板!");
 		} catch (Exception e) {
-			ValidationUtils.isTrue(false, "预算类型不合法,请检查导入模板!");
+			ValidationUtils.error( "预算类型不合法,请检查导入模板!");
 		}
 	    Record rc = new Record();
 	    rc.set("budgetStartYear", budgetStartYear);

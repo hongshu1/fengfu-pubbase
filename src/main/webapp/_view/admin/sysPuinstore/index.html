@@ -60,7 +60,8 @@
         <td>
           {@if data.iauditstatus == '0'}
             <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
-               data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
+               data-handler="jboltTablePageToFirst" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
+        </button>
             <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
                data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
           {@/if}
@@ -93,7 +94,7 @@
         <td title="${data.cdepname}">${data.cdepname}</td>
         <td title="${data.cptname}">${data.cptname}</td>
         <td title="${data.crdname}">${data.crdname}</td>
-        <td title="${data.iBusType}">${data.iBusType}</td>
+        <td title="${data.ibustype}">${data.ibustype}</td>
         <td title="${data.cvencode}">${data.cvencode}</td>
         <td title="${data.cvenname}">${data.cvenname}</td>
         <td title="${data.memo}">${data.memo}</td>

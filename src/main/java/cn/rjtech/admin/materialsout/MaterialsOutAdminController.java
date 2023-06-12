@@ -72,8 +72,7 @@ public class MaterialsOutAdminController extends BaseAdminController {
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		};
-		System.out.println(materialsOut.getSourceBillDid());
-		Record MODetail = service.getrcvMODetailList(materialsOut.getSourceBillDid());
+		Record MODetail = service.getrcvMODetailList(materialsOut.getAutoID());
 		set("type", get("type"));
 		set("MODetail",MODetail);
 		set("materialsOut",materialsOut);

@@ -407,4 +407,8 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         }
         return dept;
     }
+
+    public Page<Record> getgetManualAdddatas(int pageNumber, int pageSize, Kv kv) {
+        return dbTemplate("materialsprepare.getManualAdddatas", kv).paginate(pageNumber, pageSize);
+    }
 }

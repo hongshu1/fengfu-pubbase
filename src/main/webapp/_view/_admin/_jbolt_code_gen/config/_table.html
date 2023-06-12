@@ -263,7 +263,7 @@
 										<input type="text" class="form-control" id="codeGenActiveTrFrColor" placeholder="请输入文字颜色" data-with-clearbtn="true" name="codeGen.activeTrFrColor" value="#(codeGen.activeTrFrColor??)" autocomplete="off" />
 										<div class="input-group-append">
 											<div class="input-group-text p-0">
-												<input type="color" oninput="$('#codeGenActiveTrBgColor').val(this.value).change();" style="width: 40px;border:none;" value="#(codeGen.activeTrFrColor??)"/>
+												<input type="color" oninput="$('#codeGenActiveTrFrColor').val(this.value).change();" style="width: 40px;border:none;" value="#(codeGen.activeTrFrColor??)"/>
 											</div>
 										</div>
 									</div>
@@ -1048,7 +1048,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="col h-100">
+	<div class="col-8 h-100" id="table_design_right">
 		<div class="card jb_vflex">
 			<div class="card-header jb_vheader_card">
 				<span class="d-inline-block mr-5"><i class="fa fa-eye mr-1"></i>表格预览</span>

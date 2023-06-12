@@ -19,7 +19,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import com.sun.jna.platform.win32.WinDef;
+import jdk.nashorn.internal.ir.ReturnNode;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -126,7 +126,16 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		return deleteById(id,true);
+		if(notOk(id)) {
+			return fail(JBoltMsg.PARAM_ERROR);
+		}
+		//更新时需要判断数据存在
+		MoMaterialsreturnm dbMoMaterialsreturnm=findById(id);
+		if(dbMoMaterialsreturnm==null) {
+			return fail(JBoltMsg.DATA_NOT_EXIST);}
+		dbMoMaterialsreturnm.setIsDeleted(false);
+		dbMoMaterialsreturnm.update();
+		return SUCCESS;
 	}
 
 	/**

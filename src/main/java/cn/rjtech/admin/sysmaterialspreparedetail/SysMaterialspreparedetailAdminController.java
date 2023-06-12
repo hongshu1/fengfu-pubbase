@@ -12,6 +12,7 @@ import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -37,8 +38,6 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 	@Inject
 	private SysMaterialspreparedetailService service;
 
-	@Inject
-	private SysPureceiveService syspureceiveservice;
    /**
 	* 首页
 	*/
@@ -121,13 +120,16 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 	}
 
 	public void getBarcode() {
-		String invcode = get("invcode");
+		String barcode = get("barcode");
 		Kv kv = new Kv();
-		kv.set("invcode", invcode == null ? "" : invcode);
+		kv.set("barcode", barcode == null ? "" : barcode);
 		renderJsonData(service.getBarcode(getPageNumber(), getPageSize(), kv));
 	}
 	public void barcode(String barcode) {
 		ValidationUtils.notBlank(barcode, "请扫码");
-		renderJsonData(syspureceiveservice.barcode(Kv.by("barcode", barcode)));
+		renderJsonData(service.barcode(Kv.by("barcode", barcode)));
+	}
+	public void barcodeNull(String barcode) {
+		renderJsonData(new Record());
 	}
 }

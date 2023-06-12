@@ -253,7 +253,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
             Long customerId = kv.getLong("customerId");      //客户ids
             //判断料号+设备+车型+供应商不能为空
             if (notOk(startYear) || notOk(customerId)){
-                ValidationUtils.isTrue(false,"查询条件不能为空!");
+                ValidationUtils.error("查询条件不能为空!");
             }
             String endYear = getEndYear(startYear);
             String lastYear = getLastYear(startYear);
@@ -309,7 +309,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
             //TODO:查询本次所有客户的订单计划
             List<Record> sourceYearOrderList = getSourceYearOrderList(Okv.by("organizeid",organizeId).set("customerids",customerId).set("startyear",startYear));
             if (sourceYearOrderList.size() < 1){
-                ValidationUtils.isTrue(false,"该客户无订单计划！");
+                ValidationUtils.error("该客户无订单计划！");
                 //throw new RuntimeException("该客户无订单计划！");
             }
 
@@ -771,7 +771,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
 
         if (notOk(cplanorderno) && isOk(icustomerid) && isOk(startYear)){
             return scheduPlanYear(Kv.by("startyear",startYear).set("customerId",icustomerid));
-            //ValidationUtils.isTrue(false,"查询条件不能为空!");
+            //ValidationUtils.error("查询条件不能为空!");
         }else if (notOk(cplanorderno) && notOk(icustomerid) && isOk(startYear)){
             return scheduProductPlanYearList;
         }
@@ -960,7 +960,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
     }*/
     public Ret saveScheduPlanYear(String yearDataArry) {
         if (StringUtils.isBlank(yearDataArry) || yearDataArry.equals("null")){
-            ValidationUtils.isTrue(false,"无计划保存!");
+            ValidationUtils.error("无计划保存!");
         }
         try {
             List<ScheduProductYearViewDTO> list = JSONArray.parseArray(yearDataArry,ScheduProductYearViewDTO.class);
@@ -979,7 +979,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
 
         String startYear = kv.getStr("startyear");
         if (notOk(startYear)){
-            ValidationUtils.isTrue(false,"查询年份不能为空!");
+            ValidationUtils.error("查询年份不能为空!");
             //throw new RuntimeException("该客户无订单计划！");
         }
 

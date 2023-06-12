@@ -109,7 +109,7 @@ public class AnnualOrderDAdminController extends BaseAdminController {
             renderJxls("annualorderd.xlsx", Kv.by("rows", null), "年度计划.xlsx");
         }catch (Exception e)
         {
-            ValidationUtils.isTrue(false, "模板下载失败");
+            ValidationUtils.error( "模板下载失败");
         }
     }
 }

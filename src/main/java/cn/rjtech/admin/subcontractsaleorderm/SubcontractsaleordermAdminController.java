@@ -142,7 +142,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
             renderJxls("subcontractsaleorderm.xlsx", Kv.by("rows", null), "委外销售订单.xlsx");
         }catch (Exception e)
         {
-            ValidationUtils.isTrue(false, "模板下载失败");
+            ValidationUtils.error( "模板下载失败");
         }
     }
 }

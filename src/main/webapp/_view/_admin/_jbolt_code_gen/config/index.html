@@ -634,10 +634,10 @@ function changeIsKeyCache_#(pageId)(r,v){
 	}else{
 		formGroups.addClass("d-none");
 	}
-	formGroups.each(function(){
-		tempInput = $(this).find("input.form-control");
-		tempInput.val("");
-	});
+	// formGroups.each(function(){
+	// 	tempInput = $(this).find("input.form-control");
+	// 	tempInput.val("");
+	// });
 	changeFormControlRequiredState("#key_cache_autocomplete_#(pageId)",(v=="true"));
 }
 
@@ -679,6 +679,7 @@ function toggleTableSetCard(btnEle){
 	}else{
 		card.find(".toggleCardOpenBtn").addClass("d-none");
 	}
+	$("#table_design_right").toggleClass("col").toggleClass("col-8");
 }
 
 function changeIsGenModel_#(pageId)(r,v){

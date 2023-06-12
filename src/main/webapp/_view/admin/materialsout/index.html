@@ -20,9 +20,10 @@
 					name="iorderstatus"
 			>
 				<option value="">=状态=</option>
-				<option value="1">已保存</option>
-				<option value="2">待审核</option>
-				<option value="3">已审核</option>
+				<option value="0">未审核</option>
+				<option value="1">待审核</option>
+				<option value="2">审核通过</option>
+				<option value="3">审核不通过</option>
 			</select>
 			<input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=开始时间=" name="startdate" data-tips="开始时间" maxlength="23" value="">至
 			<input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=结束时间=" name="enddate" data-tips="结束时间" maxlength="23" value="">
@@ -42,10 +43,9 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}?&type=0"  data-fs="true" data-handler="refreshJBoltTable" data-title="材料出库单列表详情">查看</i></a>
-	 {@if data.state == '1'||data.state == '4'}
+	 {@if data.iauditstatus == '0'}
 	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑材料出库单列表">编辑</i></a>
-	 {@else if data.state == '2'}
-	<a class="jbolt_table_delbtn" href="admin/materialDeliveryList/approve?mark=2&&iAutoId=${data.autoid}"  data-confirm="确定审核此选项？"  data-fs="true" data-handler="refreshJBoltTable"  data-title="审核材料出库单列表">审核</i></a>
+	 {@else if data.iauditstatus == '1'}
 	<a class="jbolt_table_delbtn" href="admin/materialDeliveryList/recall?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
 	 {@/if}
 </td>

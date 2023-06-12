@@ -117,11 +117,11 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 				// TODO 可能需要补充校验组织账套权限
 				// TODO 存在关联使用时，校验是否仍在使用
 
-				Integer[] state = {2,3};
+				Integer[] state = {1,2,3};
 				for (int i = 0; i < state.length; i++) {
 					System.out.println(state[i]);
-					if (state[i] ==materialsOut.getState()){
-						ValidationUtils.isTrue(false, "审核中、已审核的记录不允许删除,修改！！！");
+					if (state[i] ==materialsOut.getIAuditStatus()){
+						ValidationUtils.error( "审核中、已审核的记录不允许删除,修改！！！");
 					}
 				}
 				//删除行数据
@@ -232,19 +232,19 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 				//	行数据为空 不保存
 				if ("save".equals(revokeVal)) {
 					if (materialsOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
-						ValidationUtils.isTrue(false, "请先添加行数据！");
+						ValidationUtils.error( "请先添加行数据！");
 					}
 				}
 
 				if ("submit".equals(revokeVal) && materialsOut.getAutoID() == null) {
-					ValidationUtils.isTrue(false, "请保存后提交审核！！！");
+					ValidationUtils.error( "请保存后提交审核！！！");
 				}
 
 
 				if (materialsOut.getAutoID() == null && "save".equals(revokeVal)) {
 //					保存
-//					订单状态：1=已保存，2=待审核，3=已审核
-					materialsOut.setState(param);
+//					审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+					materialsOut.setIAuditStatus(param);
 
 					materialsOut.setCreateDate(nowDate);
 					materialsOut.setOrganizeCode(OrgCode);
@@ -254,11 +254,11 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 					save(materialsOut);
 					headerId = materialsOut.getAutoID();
 				}else {
-					if ( param == 2 ){
+					if ( param == 1 ){
 						materialsOut.setAuditDate(nowDate);
 						materialsOut.setAuditPerson(userName);
 					}
-					materialsOut.setState(param);
+					materialsOut.setIAuditStatus(param);
 					materialsOut.setModifyDate(nowDate);
 					materialsOut.setModifyPerson(userName);
 					update(materialsOut);
@@ -322,11 +322,11 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 		List<MaterialsOut> listByIds = getListByIds(iAutoId);
 		if (listByIds.size() > 0) {
 			for (MaterialsOut materialsOut : listByIds) {
-				if (materialsOut.getState() != 2) {
+				if (materialsOut.getIAuditStatus() != 1) {
 					return warn("订单："+materialsOut.getBillNo()+"状态不支持审核操作！");
 				}
-				//订单状态：3. 已审核
-				materialsOut.setState(3);
+				//订单状态：2. 已审核
+				materialsOut.setIAuditStatus(2);
 				materialsOut.setAuditDate(nowDate);
 				materialsOut.setAuditPerson(userName);
 				success= materialsOut.update();
@@ -345,13 +345,13 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	public Ret NoApprove(String ids) {
 		//TODO数据同步暂未开发 现只修改状态
 		for (MaterialsOut materialsOut :  getListByIds(ids)) {
-//			订单状态： 3. 已审批
-			if (materialsOut.getState() != 3) {
+//			订单状态： 2. 已审核
+			if (materialsOut.getIAuditStatus() != 2) {
 				return warn("订单："+materialsOut.getBillNo()+"状态不支持反审批操作！");
 			}
 
-			//订单状态： 2. 待审批
-			materialsOut.setState(2);
+			//订单状态： 1. 待审核
+			materialsOut.setIAuditStatus(1);
 			materialsOut.update();
 		}
 		return SUCCESS;
@@ -370,7 +370,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 		}
 		MaterialsOut materialsOut = findById(iAutoId);
 		//订单状态：2. 待审批
-		materialsOut.setState(1);
+		materialsOut.setIAuditStatus(0);
 		materialsOut.setAuditDate(null);
 		materialsOut.setAuditPerson(null);
 		boolean result = materialsOut.update();
@@ -402,12 +402,11 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 
 	/**
 	 * 材料出库单生产工单明细查询
-	 * @param iautoid
+	 * @param autoid
 	 * @return
 	 */
-	public Record getrcvMODetailList(String iautoid){
-		System.out.println(iautoid);
-		return dbTemplate(u8SourceConfigName(),"materialsout.getrcvMODetailList", Kv.by("iautoid",iautoid)).findFirst();
+	public Record getrcvMODetailList(Long autoid){
+		return dbTemplate("materialsout.getrcvMODetailList", Kv.by("autoid",autoid)).findFirst();
 	}
 
 	/**

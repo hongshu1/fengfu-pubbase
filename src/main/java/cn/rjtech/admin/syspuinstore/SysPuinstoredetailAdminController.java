@@ -7,10 +7,12 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
+import cn.rjtech.wms.utils.StringUtils;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -105,7 +107,12 @@ public class SysPuinstoredetailAdminController extends BaseAdminController {
     }
 
     public void finddetaildatas() {
-        Page<Record> recordPage = service.pageDetailList(getKv());
+        Kv kv = getKv();
+        if(StringUtils.isBlank(kv.getStr("masid")) && StringUtils.isBlank(kv.getStr("spotticket"))){
+            renderJsonData(null);
+            return;
+        }
+        Page<Record> recordPage = service.pageDetailList(kv);
         renderJsonData(recordPage);
     }
 }

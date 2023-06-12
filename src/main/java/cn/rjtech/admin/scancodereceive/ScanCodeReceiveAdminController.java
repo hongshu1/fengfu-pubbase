@@ -81,8 +81,8 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
             set("whname", sysenumerationservice.getWhname(first.getWhcode()));
         }
         //todo 关联查询用户名字
-        if (null != sysPureceive.getCreatePerson()) {
-            set("username", sysenumerationservice.getUserName(sysPureceive.getCreatePerson()));
+        if (null != sysPureceive.getIcreateby()) {
+            set("username", sysenumerationservice.getUserName(sysPureceive.getIcreateby()));
         }
         //todo 换数据源U8 查供应商名称
         if (null != sysPureceive.getVenCode()) {

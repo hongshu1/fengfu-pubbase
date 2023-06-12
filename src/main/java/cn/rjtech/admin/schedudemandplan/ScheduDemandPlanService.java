@@ -1174,6 +1174,22 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			}
 		}
 
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(DateUtils.parseDate(startDate));
+		calendar.add(Calendar.DATE,-1);//日期-1
+		//前一天
+		String beforeDate = DateUtils.formatDate(calendar.getTime(),"yyyy-MM-dd");
+		//物料期初在库计划
+		Map<String,BigDecimal> qichuDayQty5Map = new HashMap<>();
+		//物料期初差异数量
+		Map<String,BigDecimal> qichuDayQty4Map = new HashMap<>();
+		//TODO:根据日期查询期初物料集需求计划
+		List<Record> demandListQiChu = dbTemplate("schedudemandplan.getDemandComputeDQtyList",Okv.by("ids",idsJoin).set("startdate",beforeDate)).find();
+		for (Record record : demandListQiChu){
+			qichuDayQty5Map.put(record.getStr("cInvCode"),record.getBigDecimal("iQty5"));
+			qichuDayQty4Map.put(record.getStr("cInvCode"),record.getBigDecimal("iQty4"));
+		}
+
 
 		int seq = 1;
 		//循环物料
@@ -1188,6 +1204,9 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			map.put("cInvName1",info.getStr("cInvName1"));
 			map.put("iPkgQty", info.get("iPkgQty") != null ? info.get("iPkgQty") : 0);
 			map.put("iInnerInStockDays", info.get("iInnerInStockDays") != null ? info.get("iInnerInStockDays") : 0);
+			map.put("qiChuChaYi", qichuDayQty4Map.get(info.getStr("cInvCode")) != null ? qichuDayQty4Map.get(info.getStr("cInvCode")) : 0);
+			map.put("qiChuZaiKu", qichuDayQty5Map.get(info.getStr("cInvCode")) != null ? qichuDayQty5Map.get(info.getStr("cInvCode")) : 0);
+
 
 			//计划
 			Map<String,Record> planMap = invPlanMap.get(inv);
@@ -1202,6 +1221,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				dataMap.put("xuqiu",qtyInfo.get("iQty1") != null ? qtyInfo.get("iQty1") : 0);
 				dataMap.put("jihua",qtyInfo.get("iQty2") != null ? qtyInfo.get("iQty2") : 0);
 				dataMap.put("zaiku",qtyInfo.get("iQty5") != null ? qtyInfo.get("iQty5") : 0);
+				dataMap.put("shiji",qtyInfo.get("iQty3") != null ? qtyInfo.get("iQty3") : 0);
+				dataMap.put("chayi",qtyInfo.get("iQty4") != null ? qtyInfo.get("iQty4") : 0);
 				dataMap.put("date",date);
 				dataMap.put("lock",false);//未锁定可编辑
 
