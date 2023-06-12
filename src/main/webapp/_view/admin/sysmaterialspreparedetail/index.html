@@ -230,19 +230,20 @@
                    data-page="SysMaterialsprepare_page"
                    data-toolbar="SysMaterialsprepare1_toolbar_#(pageId)"
                    id="jbolt_Table_#(pageId)"
+                   data-editable="true"
             >
                 <thead class="fw-normal">
                 <tr>
-                    <th data-width="60" data-column="">序号</th>
+                    <th data-width="60" data-column="autoid">序号</th>
                     <th data-width="150" data-column="barcode">现品票</th>
-                    <th data-width="150" data-column="cinvcode">存货编码</th>
-                    <th data-width="150" data-column="cinvcode1">客户部番</th>
-                    <th data-width="150" data-column="cinvname1">部品名称</th>
-                    <th data-width="150" data-column="cinvstd">规格</th>
-                    <th data-width="150" data-column="iinventoryuomid1">主计量单位</th>
-                    <th data-width="150" data-column="invcode">数量</th>
-                    <th data-min-width="150" data-column="qww">批次号</th>
-                    <th data-width="150" data-column="ewe">生产日期</th>
+                    <th data-width="150" data-column="batch">存货编码</th>
+                    <th data-width="150" data-column="cinvcode">客户部番</th>
+                    <th data-width="150" data-column="cinvcode1">部品名称</th>
+                    <th data-width="150" data-column="cinvname1">规格</th>
+                    <th data-width="150" data-column="cinvstd">主计量单位</th>
+                    <th data-width="150" data-column="iautoid">数量</th>
+                    <th data-min-width="150" data-column="iinventoryuomid1">批次号</th>
+                    <th data-width="150" data-column="invcode">生产日期</th>
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -278,7 +279,29 @@
         if (barcode) {
             Ajax.post("admin/sysMaterialspreparedetail/barcode", {"barcode": barcode},
                 function (res) {
-                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
+                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, false, false);
+                    // var table = document.getElementById("jbolt_Table_#(pageId)");
+                    // var row = table.insertRow(0);
+                    // var cell0 = row.insertCell(0);
+                    // var cell1 = row.insertCell(1);
+                    // var cell2 = row.insertCell(2);
+                    // var cell3 = row.insertCell(3);
+                    // var cell4 = row.insertCell(4);
+                    // var cell5 = row.insertCell(5);
+                    // var cell6 = row.insertCell(6);
+                    // var cell7 = row.insertCell(7);
+                    // var cell8 = row.insertCell(8);
+                    // var cell9 = row.insertCell(9);
+                    // cell0.innerText = res.data.autoid;
+                    // cell1.innerText = res.data.barcode;
+                    // cell2.innerText = res.data.batch;
+                    // cell3.innerText = res.data.cinvcode;
+                    // cell4.innerText = res.data.cinvcode1;
+                    // cell5.innerText = res.data.cinvname1;
+                    // cell6.innerText = res.data.cinvstd;
+                    // cell7.innerText = res.data.iautoid;
+                    // cell8.innerText = res.data.iinventoryuomid1;
+                    // cell9.innerText = res.data.invcode;
                     $("#barcode").val('');
                 }, function (err) {
                 })
@@ -304,7 +327,14 @@
         // BTN1.click(); // 按钮 2 点击后触发按钮 1 的 `click`，效果一样
     });
 
-
+    function myCreateFunction() {
+        var table = document.getElementById("test1");
+        var row = table.insertRow(0);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        cell1.innerHTML = "NEW CELL1";
+        cell2.innerHTML = "NEW CELL2";
+    }
 
 
 
