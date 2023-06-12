@@ -131,7 +131,6 @@ public class SubjectmService extends BaseService<Subjectm> {
 			subjectm.setCVersion(kv.getStr("cversion"));
 		}
 		tx(() -> {
-			boolean save = subjectm.save();
 			ValidationUtils.isTrue(subjectm.save(), ErrorMsg.SAVE_FAILED);
 			//处理细表数据
 			List<String> ccodes = StrSplitter.split(kv.getStr("ccode"), COMMA, true, true);
