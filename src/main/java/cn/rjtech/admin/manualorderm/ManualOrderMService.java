@@ -12,6 +12,7 @@ import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryqcform.InventoryQcFormService;
 import cn.rjtech.admin.manualorderd.ManualOrderDService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
@@ -375,6 +376,26 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
                 cusOrderSumService.algorithmSum();
                 return null;
             });
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 提交审批
+     *
+     * @param iautoid
+     * @return
+     */
+    public Ret submit(Long iautoid) {
+        tx(() -> {
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(), "");
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+
+            ManualOrderM manualOrderM = findById(iautoid);
+            manualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+            manualOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+            ValidationUtils.isTrue(manualOrderM.update(), JBoltMsg.FAIL);
             return true;
         });
         return SUCCESS;
