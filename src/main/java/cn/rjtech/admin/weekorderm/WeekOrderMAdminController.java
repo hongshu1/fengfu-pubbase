@@ -124,7 +124,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 审批不通过
      */
-    public void reject(String ids) {
+    public void reject() {
         renderJson(service.reject(getLong(0)));
     }
 

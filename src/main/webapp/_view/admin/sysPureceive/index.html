@@ -97,6 +97,13 @@
                         data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
                 </button>
                 #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_PUReceive",uri="admin/materialReceiptList",primaryKeyName="AutoID")
+                ### 参数列表
+                ### formSn:         表单名
+                ### uri:            接口URI
+                ### primaryKeyName: 表单主键名
+                ### className：     实现审批业务的类名
+                #include("/_view/_common/_batch_approval_btns.html", formSn="Co_MonthOrderM", uri="admin/monthorderm??", primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService", className="cn/rjtech/admin/syspureceive/SysPureceiveService")
+
             </div>
         </div>
         <table class="jbolt_table jbolt_main_table  table-center " data-jbolttable data-width="fill" data-height="fill"

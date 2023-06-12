@@ -83,7 +83,7 @@
             formAutoId: action.data("formautoid"),
             status: action.data("status"),
             primaryKeyName: action.data("primary"),
-            className: action.data('class') 
+            className: action.data('class')
         };
 
         Ajax.post("/admin/formapproval/approve", para, function (ret) {
@@ -146,7 +146,8 @@
             formSn: action.data("formsn"),
             formAutoId: action.data("formautoid"),
             status: action.data("status"),
-            primaryKeyName: action.data("primary")
+            primaryKeyName: action.data("primary"),
+            className: action.data('class')
         };
 
         Ajax.post("/admin/formapproval/reverseApprove", para, function (ret) {
