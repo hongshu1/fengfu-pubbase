@@ -73,11 +73,21 @@ SELECT mp.BillNo,
        it.cInvCode1,
        it.cInvName1,
        it.cInvStd,
-       uom.cUomName
+       uom.cUomName,
+       wh.cWhName,
+       wp.cPositionName,
+       md.iQty * iri.iUsageUOM AS totalQty
 FROM T_Sys_MaterialsPrepareDetail mpd
          LEFT JOIN T_Sys_MaterialsPrepare mp ON mpd.MasID = mp.AutoID
          LEFT JOIN Bd_Inventory it ON mpd.InvCode = it.cInvCode
          LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1 = uom.iAutoId
+         LEFT JOIN T_Sys_StockBarcodePosition sbp ON mpd.Barcode = sbp.Barcode
+         LEFT JOIN Bd_Warehouse wh ON sbp.WhCode = wh.cWhCode
+         LEFT JOIN Bd_Warehouse_Position wp ON sbp.PosCode = wp.cPositionCode
+         LEFT JOIN Mo_MoDoc md ON mp.SourceBillID = md.iAutoId
+         LEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting = ir.iAutoId
+         LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId = irc.iInventoryRoutingId
+         LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId = iri.iInventoryRoutingConfigId
 WHERE 1 = 1
   AND mp.BillNo = '#(billno)' #end
 
@@ -377,16 +387,18 @@ SELECT
     T_Sys_StockBarcodePosition.InvCode,
     T_Sys_StockBarcodePosition.Barcode,
     T_Sys_StockBarcodePosition.Batch,
+    T_Sys_StockBarcodePosition.Qty,
     Bd_Inventory.iAutoId,
     Bd_Inventory.cInvCode,
     Bd_Inventory.cInvCode1,
     Bd_Inventory.cInvName1,
     Bd_Inventory.cInvStd,
-    Bd_Inventory.iInventoryUomId1
+    Bd_Uom.cUomName
 FROM
     dbo.T_Sys_StockBarcodePosition
         LEFT JOIN
     dbo.Bd_Inventory ON dbo.T_Sys_StockBarcodePosition.InvCode=dbo.Bd_Inventory.cInvCode
+LEFT JOIN dbo.Bd_Uom ON dbo.Bd_Inventory.iInventoryUomId1=dbo.Bd_Uom.iAutoId
 WHERE
         1 = 1
   AND T_Sys_StockBarcodePosition.Barcode='#(barcode)'
