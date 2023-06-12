@@ -24,7 +24,9 @@ import cn.rjtech.common.model.Barcodedetail;
 import cn.rjtech.common.model.Barcodemaster;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -214,7 +216,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         return SUCCESS;
     }
 
-    public int deleteByAutoid(String autoid){
+    public int deleteByAutoid(String autoid) {
         Sql sql = deleteSql().eq(Barcodemaster.AUTOID, autoid);
         return delete(sql);
     }
@@ -317,10 +319,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         List<Kv> kvList = JSON.parseArray(datas, Kv.class);
 
         String barcode = checkByBarcode(kvList);
-        if (StringUtils.isNotBlank(barcode)) {
-            fail(barcode + "：条码已存在，不能重复");
-            return ret(false);
-        }
+        ValidationUtils.isTrue(!StringUtils.isNotBlank(barcode), barcode + "：条码已存在，不能重复");
 
         Date now = new Date();
         Ret rets = new Ret();
@@ -348,9 +347,8 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
                 Barcodemaster barcodemaster = new Barcodemaster();
                 barcodemasterService.saveBarcodemasterModel(barcodemaster, now);
                 Ret masterRet = barcodemasterService.save(barcodemaster);
-                if (masterRet.isFail()) {
-                    return false;
-                }
+                ValidationUtils.isTrue(masterRet.isFail(), "保存失败");
+
                 masid = barcodemaster.getAutoid();
             } else {
                 masid = positionByKvs.get(0).getLong("locksource");
@@ -477,11 +475,9 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
                 boolean result = commonSaveStock(kv, now, 1, list);
                 return result;
             });
-            if (!tx) {
-                return fail("导入失败");
-            }
+            ValidationUtils.isTrue(tx, "导入失败");
         }
-        return SUCCESS;
+        return ret(true);
     }
 
     /*
@@ -499,9 +495,10 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             String qty = trimMethods(record.getStr("qty"));//生成条码库存数量
             String barcode = trimMethods(record.getStr("barcode"));//条码号
             String reportfilename = trimMethods(record.getStr("reportFileName"));//打印模板标签
-            if (StrUtil.isBlank(barcode)) {
-                return fail("条码号不能为空");
-            }
+            ValidationUtils.isTrue(StringUtils.isNotBlank(barcode), barcode + "：条码号不能为空");
+//            if (StrUtil.isBlank(barcode)) {
+//                return fail("条码号不能为空");
+//            }
             //2、给kv赋值
             Kv kv = new Kv();
             setKvByRecord(kv, record);
@@ -551,10 +548,11 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             kvList.add(kv);
         }
         String barcode = checkByBarcode(kvList);
-        if (StringUtils.isNotBlank(barcode)) {
+        ValidationUtils.isTrue(StringUtils.isBlank(barcode), barcode + "：库存中已经存在，不能重复");
+        /*if (StringUtils.isNotBlank(barcode)) {
             fail(barcode + "：库存中已经存在，不能重复");
             return ret(false);
-        }
+        }*/
 
         //5、保存
         boolean tx = tx(() -> {
@@ -597,42 +595,28 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
      * */
     public Ret checkImportIsBlank(Kv kv, String qty, String reportfilename, Inventory inventory, List<Warehouse> warehouseList,
                                   List<WarehouseArea> warehouseAreaList, Vendor vendor, List<HiprintTpl> hiprintTpls) {
-        if (StrUtil.isBlank(kv.getStr("cwhname"))) {
-            return fail("仓库名称不能为空");
-        }
-        if (StrUtil.isBlank(kv.getStr("cinvcode"))) {
-            return fail("存货编码不能为空");
-        }
-        if (StrUtil.isBlank(qty)) {
-            return fail("生成条码库存数量不能为空");
-        }
-        if (StrUtil.isBlank(kv.getStr("batch"))) {
-            return fail("批次号不能为空");
-        }
-        if (StrUtil.isBlank(reportfilename)) {
-            return fail("打印模板标签不能为空");
-        }
-        if (inventory == null) {
-            return fail(kv.getStr("cinvcode") + ": 存货编码不存在，请添加存货后再次导入");
-        }
-        if (warehouseList.isEmpty()) {
-            return fail(kv.getStr("cwhname") + ": 仓库名称不存在，请添加仓库后再次导入");
-        } else if (warehouseList.size() > 1) {
-            return fail(kv.getStr("cwhname") + ": 仓库名重复，请修改名称后再次导入");
-        }
-        if (warehouseAreaList.isEmpty()) {
-            return fail(kv.getStr("careaname") + ": 库区名不存在，请添加库区后再次导入");
-        } else if (warehouseAreaList.size() > 1) {
-            return fail(kv.getStr("careaname") + ": 库区名重复，请修改名称后再次导入");
-        }
-        if (vendor == null) {
-            return fail(kv.getStr("cvenname") + ":供应商名不存在，请添加供应商后再次导入");
-        }
-        if (hiprintTpls.isEmpty()) {
-            return fail(reportfilename + ": 打印模板标签不存在，请添加打印模板后再次导入");
-        } else if (hiprintTpls.size() > 1) {
-            return fail(reportfilename + ": 打印模板标签名重复，无法区分，请修改名称后再次导入");
-        }
+        //仓库名称
+        ValidationUtils.notBlank(kv.getStr("cwhname"), "仓库名称不能为空");
+        ValidationUtils.notBlank(kv.getStr("cinvcode"), "存货编码不能为空");
+        //条码库存数量
+        ValidationUtils.notBlank(qty, "生成条码库存数量不能为空");
+        //批次号
+        ValidationUtils.notBlank(kv.getStr("batch"), "批次号不能为空");
+        //打印模板标签
+        ValidationUtils.notBlank(kv.getStr("reportfilename"), "打印模板标签不能为空");
+        ValidationUtils.notNull(inventory, kv.getStr("cinvcode") + ": 存货编码不存在，请添加存货后再次导入");
+        //仓库名称
+        ValidationUtils.notEmpty(warehouseList, kv.getStr("cwhname") + ": 仓库名称不存在，请添加仓库后再次导入");
+        ValidationUtils.isTrue(!(warehouseList.size() > 1), kv.getStr("cwhname") + ": 仓库名重复，请修改名称后再次导入");
+        //库区名
+        ValidationUtils.notEmpty(warehouseAreaList, kv.getStr("careaname") + ": 库区名不存在，请添加库区后再次导入");
+        ValidationUtils.isTrue(!(warehouseAreaList.size() > 1), kv.getStr("careaname") + ": 库区名重复，请修改名称后再次导入");
+        //供应商名
+        ValidationUtils.notNull(vendor, kv.getStr("cvenname") + ":供应商名不存在，请添加供应商后再次导入");
+        //打印模板标签
+        ValidationUtils.notEmpty(hiprintTpls, reportfilename + ": 打印模板标签不存在，请添加打印模板后再次导入");
+        ValidationUtils.isTrue(!(hiprintTpls.size() > 1), reportfilename + ": 打印模板标签名重复，无法区分，请修改名称后再次导入");
+
         return ret(true);
     }
 
@@ -651,7 +635,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             record.set("workheader", record.getStr("createperson"));//生产组长
             record.set("num", i);//编号
             record.set("total", record.getStr("printnum"));//一共几张
-            record.set("qty",record.getBigDecimal("qty").stripTrailingZeros().toPlainString());
+            record.set("qty", record.getBigDecimal("qty").stripTrailingZeros().toPlainString());
             i++;
         }
         return recordList;
@@ -669,7 +653,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             record.set("workheader", record.getStr("createperson"));//生产组长
             record.set("num", i);//编号
             record.set("total", record.getStr("printnum"));//一共几张
-            record.set("qty",record.getBigDecimal("qty").stripTrailingZeros().toPlainString());
+            record.set("qty", record.getBigDecimal("qty").stripTrailingZeros().toPlainString());
             i++;
         }
         return recordList;

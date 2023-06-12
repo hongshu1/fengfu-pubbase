@@ -317,4 +317,8 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 	public InventoryChange findByBeforeInventoryId(Long beforeInventoryId){
 		return findByBeforeInventoryId(beforeInventoryId, null);
 	}
+
+	public List<Record> findInventoryChangeByInventoryId(Long iiventoryid){
+		return dbTemplate("inventorychange.findInventoryChangeByInventoryId",Kv.by("iiventoryid",iiventoryid)).find();
+	}
 }

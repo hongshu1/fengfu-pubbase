@@ -7,7 +7,7 @@ SELECT
     t3.Whcode,
     t4.cWhName,
     t5.cDepName,
-    t6.cPTName,
+    t6.cPTName,t6.cptcode,
     t7.cVenCode,
     t7.cVenName
 FROM T_Sys_PUInStore t1
@@ -15,7 +15,7 @@ FROM T_Sys_PUInStore t1
      LEFT JOIN (SELECT DISTINCT a.MasID,a.Whcode FROM T_Sys_PUInStoreDetail a ) t3 on t1.autoid = t3.MasID
      LEFT JOIN Bd_Warehouse t4 on t3.Whcode = t4.cWhCode
      LEFT JOIN Bd_Department t5 on t1.DeptCode = t5.cDepCode
-     LEFT JOIN Bd_PurchaseType t6 on t1.BillType = t6.cPTName
+     LEFT JOIN Bd_PurchaseType t6 on t1.BillType = t6.iAutoId
      LEFT JOIN Bd_Vendor t7 on t1.VenCode = t7.cVenCode
 WHERE 1=1
 #if(billno)
@@ -58,14 +58,19 @@ order by a.ModifyDate desc
 
 #sql("pageDetailList")
 SELECT
-    a.*
+    a.*,
+    i.cinvname,i.cinvcode1,i.cinvstd,i.cinvname1
 FROM T_Sys_PUInStoreDetail a
+left join bd_inventory i on a.invcode = i.cinvcode
 where 1=1
 #if(masid)
     and a.MasID = #para(masid)
 #end
 #if(spotticket)
     and a.spotticket = #para(spotticket)
+#end
+#if(invcode)
+  and a.invcode = #para(invcode)
 #end
     order by a.ModifyDate desc
 #end

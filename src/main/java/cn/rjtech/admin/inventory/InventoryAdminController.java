@@ -326,6 +326,11 @@ public class InventoryAdminController extends BaseAdminController {
 		renderJsonData(service.getAutocompleteData(get("q"), getInt("limit",10)));
 	}
 
+	@UnCheck
+	public void autocomplete2() {
+		renderJsonData(service.getAutocompleteData2(get("q"), getInt("limit",100)));
+	}
+
 	/**
 	 * 上传图片
 	 */

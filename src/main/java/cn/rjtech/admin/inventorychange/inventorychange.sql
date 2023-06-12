@@ -172,3 +172,14 @@ WHERE
         a.iOrgId = #para(orgId)
   AND a.IsDeleted = 0
     #end
+
+#sql("findInventoryChangeByInventoryId")
+select t1.* from Bd_InventoryChange t1
+where 1=1
+#if(iiventoryid)
+and t1.iAfterInventoryId = #para(iiventoryid)
+#end
+#if(iiventoryid)
+and t1.iBeforeInventoryId = #para(iiventoryid)
+#end
+#end

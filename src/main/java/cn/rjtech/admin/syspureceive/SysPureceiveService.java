@@ -974,6 +974,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                         sysPuinstoredetail.setPuUnitCode(barcode.getStr("puunitcode"));
                         sysPuinstoredetail.setPuUnitName(barcode.getStr("puunitname"));
                         sysPuinstoredetail.setIsDeleted(false);
+                        sysPuinstoredetail.setInvCode(barcode.getStr("cinvcode"));
                         syspuinstoredetailservice.save(sysPuinstoredetail);
                         i++;
                     }
