@@ -9,6 +9,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.otherout.OtherOutService;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
+import cn.rjtech.model.momdata.SysPureceivedetail;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 
@@ -133,41 +134,12 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         return records;
     }
 
-    public Page<SysPuinstoredetail> findSysPuinstoreDetailTableDatas(int pageNumber, int pageSize, String spotticket,
-                                                                     String masid) {
-        //创建sql对象
-        Sql sql = selectSql().page(pageNumber, pageSize);
-        //sql条件处理
-        sql.eq("spotticket", spotticket);//现品票
-        sql.eq("masid", masid); //主键
-        sql.eqBooleanToChar("isDeleted", false);
-        //排序
-        sql.desc("CreateDate");
-        return paginate(sql);
-    }
-
+    /*
+     * 采购入库单明细
+     * */
     public Page<Record> pageDetailList(Kv kv) {
         Page<Record> paginate = dbTemplate("syspuinstore.pageDetailList", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
         for (Record record : paginate.getList()) {
-            String spotticket = record.getStr("spotticket");
-            if (StringUtils.isNotBlank(spotticket)) {
-                List<Record> barcodeDatas = otherOutService.getBarcodeDatas(spotticket, 10, getOrgCode());
-                if (!barcodeDatas.isEmpty()) {
-                    Record barcode = barcodeDatas.get(0);
-                    record.set("invcode", barcode.get("invcode"));
-                    record.set("cinvname", barcode.get("cinvname"));
-                    record.set("cinvcode1", barcode.get("cinvcode1"));
-                    record.set("cinvname1", barcode.get("cinvname1"));
-                    record.set("cinvstd", barcode.get("cinvstd"));
-                }
-            }
-            Kv detailKv = new Kv();
-            detailKv.set("SourceBillNo", record.get("sourcebillno"));
-            detailKv.set("SourceBillID", record.get("sourcebillid"));
-            detailKv.set("SourceBillDid", record.get("sourcebilldid"));
-            Record detailByParam = sysPuinstoreService.findSysPODetailByParam(detailKv);
-            record.set("invcode", detailByParam.get("invcode"));
-            record.set("invname", detailByParam.get("invname"));
             record.set("qty", record.getBigDecimal("qty").stripTrailingZeros().toPlainString());
         }
         return paginate;
@@ -199,6 +171,10 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         return find("select * from T_Sys_PUInStoreDetail where masid=?", masid);
     }
 
+    public SysPuinstoredetail findFirstByBarcode(String barcode) {
+        return findFirst("select * from  T_Sys_PUInStoreDetail where spotTicket = ? ", barcode);
+    }
+
     /*
      * 采购入库单明细表的model
      * */
@@ -222,5 +198,6 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         detail.setPuUnitCode("purchasecuomcode");//采购单位code
         detail.setPuUnitName("purchasecuomname");//采购单位名称
         detail.setMemo(detailRecord.getStr("memo"));
+        detail.setInvCode(detailRecord.getStr("invcode"));
     }
 }

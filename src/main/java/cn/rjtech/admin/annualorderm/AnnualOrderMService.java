@@ -31,6 +31,8 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 年度计划订单
@@ -292,9 +294,9 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      */
     public Ret submit(Long iautoid) {
         tx(() -> {
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey());
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-            
+
             AnnualOrderM annualOrderM = findById(iautoid);
             annualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
             annualOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
@@ -318,7 +320,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
                 cusOrderSumService.algorithmSum();
                 return null;
             });
-            
+
             return true;
         });
         return SUCCESS;
@@ -335,6 +337,27 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
                 return null;
             });
 
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 批量审核
+     * @param ids
+     * @return
+     */
+    public Ret batchApprove(String ids) {
+        tx(() -> {
+            formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> null, (formAutoId) -> {
+                List<AnnualOrderM> list = getListByIds(ids);
+                list = list.stream().filter(Objects::nonNull).map(item -> {
+                    item.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+                    return item;
+                }).collect(Collectors.toList());
+                ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+                return null;
+            });
             return true;
         });
         return SUCCESS;

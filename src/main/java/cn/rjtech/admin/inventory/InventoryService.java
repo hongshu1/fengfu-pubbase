@@ -26,6 +26,7 @@ import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.admin.bomm.BomMService;
 import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
 import cn.rjtech.admin.inventorycapacity.InventoryCapacityService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
@@ -71,8 +72,6 @@ public class InventoryService extends BaseService<Inventory> {
  
 	private final Inventory dao=new Inventory().dao();
 
-	@Inject
-	private CusFieldsMappingDService cusFieldsMappingDService;
     @Inject
     private UomService uomService;
     @Inject
@@ -99,6 +98,10 @@ public class InventoryService extends BaseService<Inventory> {
 	private InventoryRoutingEquipmentService inventoryRoutingEquipmentService;
 	@Inject
 	private InventoryCapacityService inventoryCapacityService;
+	@Inject
+	private BomMService bomMService;
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingDService;
 
 	@Override
 	protected Inventory dao() {
@@ -428,6 +431,10 @@ public class InventoryService extends BaseService<Inventory> {
 
 	public List<Record> getAutocompleteData(String q, Integer limit) {
 		return dbTemplate("inventory.getAutocompleteData",Kv.by("q", q).set("limit",limit)).find();
+	}
+
+	public List<Record> getAutocompleteData2(String q, Integer limit) {
+		return dbTemplate("inventory.getAutocompleteData2",Kv.by("q", q).set("limit",limit)).find();
 	}
 
 	public Inventory saveJBoltFile(UploadFile file, String uploadPath, int fileType) {
@@ -1074,7 +1081,7 @@ public class InventoryService extends BaseService<Inventory> {
 	}
 	
 	public Inventory findBycInvCode(String cInvCode){
-		return findFirst("SELECT top 1 * FROM Bd_Inventory WHERE cInvCode = ?", cInvCode);
+		return findFirst("SELECT top 1 * FROM Bd_Inventory WHERE cInvCode = ? and cOrgCode = ?", cInvCode,getOrgCode());
 	}
 	
     public Ret batchFetch(String column, String values) {
@@ -1290,6 +1297,38 @@ public class InventoryService extends BaseService<Inventory> {
 	 */
 	public Inventory findByiInventoryCode(String cinvcode) {
 		return findFirst(selectSql().eq(Inventory.CINVCODE, cinvcode).eq(Inventory.IORGID, getOrgId()).eq(Inventory.ISDELETED, ZERO_STR).first());
+	}
+    
+    public Page<Record> resourceList(Integer pageNumber, Integer pageSize, Kv kv){
+		Page<Record> paginate = dbTemplate("inventory.resourceList", kv).paginate(pageNumber, pageSize);
+		if (CollectionUtil.isNotEmpty(paginate.getList())){
+			DateTime now = DateUtil.date();
+			
+			Map<Long, Record> versionMap = bomMService.findByVersionMap(getOrgId());
+			
+			
+			for (Record record : paginate.getList()){
+				Long invId = record.getLong(BomD.IINVENTORYID);
+				if (versionMap.containsKey(invId)){
+					Record versionRecord = versionMap.get(invId);
+					record.set(BomD.IINVPARTBOMMID, versionRecord.getLong(BomD.IAUTOID));
+					record.set(BomD.CVERSION, versionRecord.getStr(BomD.CVERSION));
+				}
+				
+				// 材料类别
+				Integer iPartType = record.getInt(Inventory.IPARTTYPE);
+				if (ObjectUtil.isNotNull(iPartType)){
+					PartTypeEnum partTypeEnum = PartTypeEnum.toEnum(iPartType);
+					ValidationUtils.notNull(partTypeEnum, "未知材料类别");
+					record.set(Inventory.PARTTYPENAME, partTypeEnum.getText());
+				}
+				// 是否虚拟件
+				Integer isVirtual = record.getInt(Inventory.ISVIRTUAL);
+				IsEnableEnum isEnableEnum = IsEnableEnum.toEnum(isVirtual);
+				record.set(Inventory.ISVIRTALNAME, isEnableEnum.getText());
+			}
+		}
+		return paginate;
 	}
 }
 

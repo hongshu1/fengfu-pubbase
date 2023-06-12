@@ -10,10 +10,10 @@
                         #if(!annualOrderM.iAutoId?? || edit??false)
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
+                        #if(annualOrderM.iautoid?? && !edit??)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/annualorderm",
-                        formSn="Co_AnnualOrderM",
-                        iautoid=annualOrderM.iautoid??,iauditstatus=annualOrderM.iauditstatus??0,
-                        iauditway=annualOrderM.iauditway??, edit=edit??)
+                        formSn="Co_AnnualOrderM", edit=edit??, primaryKeyName="iAutoId", o=annualOrderM)
+                        #end
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>

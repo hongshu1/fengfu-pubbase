@@ -106,9 +106,12 @@ public class SysPuinstoredetailAdminController extends BaseAdminController {
         renderJsonData(service.findEditTableDatas(getKv()));
     }
 
+    /*
+     * 采购入库单明细
+     * */
     public void finddetaildatas() {
         Kv kv = getKv();
-        if(StringUtils.isBlank(kv.getStr("masid")) && StringUtils.isBlank(kv.getStr("spotticket"))){
+        if (StringUtils.isBlank(kv.getStr("masid")) && StringUtils.isBlank(kv.getStr("spotticket"))) {
             renderJsonData(null);
             return;
         }

@@ -10,13 +10,14 @@
         <div class="card">
             <div class="card-body">
                 <div class="col">
-                    <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i class="fa fa-refresh"></i> 保存</button>
-                    #if(manualOrderM.iAutoId??)
-                    <button onclick="submitApproveManual()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
-                    #else
-                    <button onclick="submitApproveManual()" disabled class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                    #if(!manualOrderM.iAutoId?? || edit??false)
+                    <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-sm" onclick="submitThisForm()">保存</button>
                     #end
-                    <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+                    #if(manualOrderM.iAutoId?? && !edit??)
+                    #include("/_view/_common/_approval_btns.html", uri="/admin/manualorderm",
+                    formSn="Co_ManualOrderM", o=manualOrderM, primaryKeyName="iAutoId", edit=edit??)
+                    #end
+                    <button onclick="closeHandler()" class="btn btn-outline-secondary btn-sm">关闭</button>
                 </div>
             </div>
         </div>
@@ -71,23 +72,22 @@
                             </div>
                         </div>
                 <div class="form-group row">
+                    <input type="hidden" name="manualOrderM.iCustomerId" value="#(manualOrderM.iCustomerId??)" id="iCustomerId" data-value-attr="iautoid"/>
                     <label class="col-sm-1 col-form-label">客户名称</label>
                     <div class="col">
-                        <select class="form-control"
-                                data-autoload
-                                data-url="/admin/customer/list"
-                                data-select-type="select"
-                                name="manualOrderM.iCustomerId"
-                                data-refresh="true"
-                                data-rule="select"
-                                data-notnull="true"
-                                data-tips="请选择客户ID"
-                                data-text="=请选择="
-                                data-value-attr="iautoid"
-                                data-text-attr="ccusname"
-                                data-value=""
-                                data-select="#(manualOrderM.iCustomerId??)"
-                        ></select>
+                        <input type="text" class="form-control"
+                               data-autocomplete
+                               data-url="admin/customer/autocomplete"
+                               data-rule="required"
+                               data-hidden-input="iCustomerId"
+                               data-text-attr="ccusname"
+                               data-column-attr="ccuscode,ccusname,ccusabbname"
+                               placeholder="请选择"
+                               data-tips="请选择"
+                               data-header="客户编码,客户名称,客户简称"
+                               maxlength="40"
+                               value="#(manualOrderM.ccusname??)">
+
                     </div>
                     <label class="col-sm-1 col-form-label">付款条件</label>
                     <div class="col">

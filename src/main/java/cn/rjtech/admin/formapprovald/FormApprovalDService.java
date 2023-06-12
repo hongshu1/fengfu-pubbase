@@ -186,7 +186,7 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
      */
     public FormApprovalD copySetObj(Long mid, ApprovalD approvalD) {
         FormApprovalD formApprovalD = new FormApprovalD();
-        
+
         formApprovalD.setIFormApprovalId(mid);
         formApprovalD.setISeq(approvalD.getISeq());
         formApprovalD.setIStep(approvalD.getIStep());
@@ -201,7 +201,7 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
         formApprovalD.setISingleType(approvalD.getISingleType());
         formApprovalD.setISingleId(approvalD.getISingleId());
         formApprovalD.setIStatus(1);
-        
+
         return formApprovalD;
     }
 
@@ -233,7 +233,7 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
         if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
             return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
         }
-        
+
         // 这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
         JBoltTable jBoltTable = jboltTableMulti.getJBoltTable("table1");
         JBoltTable jBoltTable2 = jboltTableMulti.getJBoltTable("table2");
@@ -243,18 +243,18 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
         ValidationUtils.notNull(approvalD, JBoltMsg.PARAM_ERROR);
 
         // 节点ID
-        Long did = approvalD.getIAutoId(); 
+        Long did = approvalD.getIAutoId();
 
         // 该节点 流程主表信息
         FormApprovalFlowM flowM = flowMService.findFirstByIapprovalDid(did);
         // 流程主表ID
-        Long flowMid = flowM.getIAutoId(); 
+        Long flowMid = flowM.getIAutoId();
 
         // 该审批流的主表
         FormApproval approval = formApprovalService.findById(approvalD.getIFormApprovalId());
         // 提审人
         long iCreateBy = approval.getICreateBy();
-        
+
         Person person = personService.findFirstByUserId(iCreateBy);
 
         tx(() -> {
@@ -263,9 +263,10 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 
             //修改
             if (isOk(approvalD.getIAutoId())) {
+                oldApprovalD = findFirst("select * from Bd_FormApprovalD where iAutoId = " + approvalD.getIAutoId());
+
                 ValidationUtils.isTrue(approvalD.update(), JBoltMsg.FAIL);
 
-                oldApprovalD = findFirst("select * from Bd_FormApprovalD where iAutoId = " + approvalD.getIAutoId());
 
             } else {
                 //新增
@@ -287,7 +288,7 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 
                     switch (iType) {
                         // 指定人员
-                        case 1:  
+                        case 1:
                             if (jBoltTable.saveIsNotBlank()) {
                                 List<FormapprovaldUser> saveModelList = jBoltTable.getSaveModelList(FormapprovaldUser.class);
 
@@ -298,19 +299,19 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
                                 for (FormapprovaldUser approvaldUser : saveModelList) {
                                     approvaldUser.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                     approvaldUser.setIFormApprovalId(iApprovalDid);
-                                    
+
                                     FormApprovalFlowD flowD = new FormApprovalFlowD();
-                                    
+
                                     flowD.setIFormApprovalFlowMid(flowMid);
                                     flowD.setISeq(++size);
                                     flowD.setIUserId(approvaldUser.getIUserId());
                                     flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                                    
+
                                     flowds.add(flowD);
                                 }
                                 formapprovaldUserService.batchSave(saveModelList, saveModelList.size());
                             }
-                            
+
                             if (jBoltTable.updateIsNotBlank()) {
                                 List<FormapprovaldUser> updateModelList = jBoltTable.getUpdateModelList(FormapprovaldUser.class);
                                 formapprovaldUserService.batchUpdate(updateModelList, updateModelList.size());
@@ -690,7 +691,7 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 
         JSONObject form = jBoltTable.getForm();
         LOG.info("form===={}", form);
-        
+
         Long autoId = form.getLong("autoId");
 
 //		查询流程主表ID
@@ -702,13 +703,13 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
         Long flowMId = flowM.getLong("iautoid");
 
         tx(() -> {
-            
+
             if (jBoltTable.saveIsNotBlank()) {
                 List<FormapprovaldRoleusers> saveModelList = jBoltTable.getSaveModelList(FormapprovaldRoleusers.class);
-                
+
                 // 流程子表集合
                 List<FormApprovalFlowD> flowDList = new ArrayList<>();
-                
+
                 saveModelList.forEach(approvaldRoleusers -> {
                     approvaldRoleusers.setIFormApprovaldRoleId(autoId);
 
@@ -719,11 +720,11 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
                     flowD1.setISeq(approvaldRoleusers.getISeq());
                     flowDList.add(flowD1);
                 });
-                
+
                 flowDService.batchSave(flowDList, flowDList.size());
                 formapprovaldRoleusersService.batchSave(saveModelList, saveModelList.size());
             }
-            
+
             if (jBoltTable.deleteIsNotBlank()) {
 
 //			    先删除流程表数据
@@ -756,5 +757,5 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 
         return SUCCESS;
     }
-    
+
 }

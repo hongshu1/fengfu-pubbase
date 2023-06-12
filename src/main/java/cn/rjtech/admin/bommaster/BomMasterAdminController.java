@@ -8,6 +8,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.rjtech.admin.bomcompare.BomCompareService;
+import cn.rjtech.admin.bomm.BomMService;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
@@ -50,6 +51,8 @@ public class BomMasterAdminController extends BaseAdminController {
     private CustomerService customerService;
     @Inject
     private BomCompareService bomCompareService;
+    @Inject
+    private BomMService bomMService;
 
     /**
      * 首页
@@ -77,6 +80,18 @@ public class BomMasterAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
+    
+//        BomM bomM = bomMService.findById(getLong(0));
+//        ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
+//        BomSourceTypeEnum bomSourceTypeEnum = BomSourceTypeEnum.toEnum(bomM.getIType());
+//        ValidationUtils.notNull(bomSourceTypeEnum, "未知新增类型");
+//        BomSourceTypeEnum manualTypeAdd = BomSourceTypeEnum.MANUAL_TYPE_ADD;
+//        if (manualTypeAdd.getValue() == bomSourceTypeEnum.getValue()){
+//
+//            return;
+//        }
+    
+    
         getBomMaster(getLong(0));
         render("edit.html");
     }
@@ -206,7 +221,7 @@ public class BomMasterAdminController extends BaseAdminController {
     }
 
     public void getVersionRecord() {
-        renderJsonData(service.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
+        renderJsonData(bomMService.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
     }
 
     public void del() {
@@ -229,9 +244,8 @@ public class BomMasterAdminController extends BaseAdminController {
         renderJsonData(customerService.findVendorList(getKv()));
     }
 
-    public void inventoryDialogIndex(@Para(value = "index") String index, @Para(value = "type") String type) {
-        ValidationUtils.notBlank(index, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notBlank(type, JBoltMsg.PARAM_ERROR);
+    public void inventoryDialogIndex() {
+        
         // 部品存货id
         String invItemId = get("invItemId");
         // 原材料存货id

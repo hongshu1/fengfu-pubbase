@@ -665,6 +665,15 @@
 #include("momoinvbatch/momoinvbatch.sql")
 #end
 
+#namespace("bomm")
+#include("bomm/bomm.sql")
+#end
+
+#namespace("bomd")
+#include("bomd/bomd.sql")
+#end
+
+
 #namespace("momaterialsreturn")
 #include("momaterialsreturn/momaterialsreturn.sql")
 #end
