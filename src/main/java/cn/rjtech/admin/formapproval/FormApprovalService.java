@@ -241,7 +241,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * 审批的话 保存审批流的基础信息、审批节点信息、节点的详细信息
      * 保存 审批流的审批流程的人员信息
      */
-    public Ret judgeType(String formSn, Long formAutoId, String primaryKeyName) {
+    public Ret judgeType(String formSn, Long formAutoId, String primaryKeyName, String className) {
         FormApproval byFormAutoId = findByFormAutoId(formAutoId);
         ValidationUtils.isTrue((notOk(byFormAutoId)), "该单据已提交审批，请勿重复提交审批！");
 
@@ -613,7 +613,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                         Map<Long, FormApprovalFlowM> flowMMap = flowMList.stream().collect(Collectors.toMap(FormApprovalFlowM::getIApprovalDid, Function.identity(), (key1, key2) -> key2));
 
                         // 判断下一节点
-                        nextNode(formApproval, approvalIautoId, flowMMap, now, primaryKeyName);
+                        nextNode(formApproval, approvalIautoId, flowMMap, now, primaryKeyName, className, formAutoId);
 
                     } else {
                         ValidationUtils.error("提交失败，该审批流未配置具体审批节点");
@@ -775,7 +775,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         ValidationUtils.assertEmpty(failNode, "该单据已审批不通过，审批流程已结束！");
         // 3、
         List<FormApprovalD> processNode = formApprovalDList.stream().filter(f -> Objects.equals(f.getIStatus(), 1)).collect(Collectors.toList());
-        
+
         // 审批
         if (CollUtil.isNotEmpty(processNode)) {
             FormApprovalD formApprovalD = processNode.get(0);
@@ -891,18 +891,11 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     // 更新单据审批流主表
                     formApproval.setIsDeleted(true);
                     formApproval.update();
-                    
+
                     // 审批不通过的，单据业务处理
                     String msg = invokeMethod(className, "postRejectFunc", formAutoId);
                     ValidationUtils.assertBlank(msg, msg);
                 } else {
-                    
-                    // TODO 最后一步审批通过时，调用此方法，用于支持审批状态变更外的业务处理，请在合适的地方启用代码块
-                    // if (isAllApproved(formAutoId)) {
-                    //    ValidationUtlis.isTrue(updateAudit(xxx), "更新审批通过失败");
-                    //    String msg = invokeMethod(className, "postApproveFunc", formAutoId);
-                    //    ValidationUtils.assertBlank(msg, msg);
-                    // }
 
                     /*
                      * 判断下一步情况 即当前一步的审批过程已结束
@@ -913,7 +906,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     // 1、
                     if (finalNodeIsOk) {
                         // 判断下一节点
-                        nextNode(formApproval, mid, flowMMap, now, primaryKeyName);
+                        nextNode(formApproval, mid, flowMMap, now, primaryKeyName, className, formAutoId);
                         // 2、
                     } else {
                         // 判断下一审批人
@@ -973,9 +966,9 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                     formApprovalD.setIStatus(status);
                                     formApprovalD.setDAuditTime(now);
                                     formApprovalD.update();
-                                    
+
                                     // 判断下一节点
-                                    nextNode(formApproval, mid, flowMMap, now, primaryKeyName);
+                                    nextNode(formApproval, mid, flowMMap, now, primaryKeyName, className, formAutoId);
                                 }
                             }
                         }
@@ -1025,7 +1018,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         ValidationUtils.assertEmpty(failNode, "该单据已审批不通过，审批流程已结束！");
         // 3、
         List<FormApprovalD> processNode = formApprovalDList.stream().filter(f -> Objects.equals(f.getIStatus(), 1)).collect(Collectors.toList());
-        
+
         // 审批
         if (CollUtil.isNotEmpty(processNode)) {
             FormApprovalD formApprovalD = processNode.get(0);
@@ -1136,7 +1129,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     // 更新单据审批流主表
                     formApproval.setIsDeleted(true);
                     ValidationUtils.isTrue(formApproval.update(), ErrorMsg.UPDATE_FAILED);
-                    
+
                     // 处理审批不通过的额外业务
                     invokeMethod(className, "postRejectFunc", formAutoId);
                 }
@@ -1164,6 +1157,11 @@ public class FormApprovalService extends BaseService<FormApproval> {
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
+
+        Record formRecord = findFirstRecord("select iAuditStatus as status from " + formSn + " where " + primaryKeyName + " = " + formAutoId);
+
+//        反审前的单据状态
+        String perStatus = formRecord.getStr("status");
 
         Long mid = formApproval.getIAutoId();
 
@@ -1215,11 +1213,14 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     flowD.update();
 
                     // TODO 单据的审核状态，是最后一步审核之后的反审时，需更新单据状态
-                    // 反审后 单据状态都是待审批
-                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), primaryKeyName), "更新反审失败");
+                    if (Objects.equals(perStatus, "2")){
+                        // 反审后 单据状态都是待审批
+                        ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), primaryKeyName), "更新反审失败");
 
-                    // 单据反审时，预留额外业务处理
-                    invokeMethod(className, "postReverseApproveFunc", formAutoId);
+                        // 单据反审时，预留额外业务处理
+                        invokeMethod(className, "postReverseApproveFunc", formAutoId);
+
+                    }
 
                     return true;
                 });
@@ -1247,7 +1248,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 "            ) " +
                 "        ) " +
                 "    )", formAutoId);
-        
+
         if (delete > 0) {
             int deleteflowM = delete("delete from Bd_FormApprovalFlowM where iApprovalDid in ( " +
                     "        select t3.iAutoId from Bd_FormApprovalD t3 where t3.iFormApprovalId = ( " +
@@ -1297,7 +1298,8 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 下个节点判断
      */
-    public void nextNode(FormApproval formApproval, Long aid, Map<Long, FormApprovalFlowM> flowmMap, Date now, String primaryKeyName) {
+    public void nextNode(FormApproval formApproval, Long aid, Map<Long, FormApprovalFlowM> flowmMap, Date now,
+                         String primaryKeyName, String className, Long formAutoId) {
         /*
          * 找出未审批通过的节点
          */
@@ -1396,7 +1398,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                         formApprovalD.setDAuditTime(now);
                         formApprovalD.update();
                         // 判断下一节点
-                        nextNode(formApproval, aid, flowmMap, now, primaryKeyName);
+                        nextNode(formApproval, aid, flowmMap, now, primaryKeyName, className, formAutoId);
                     }
                 }
             }
@@ -1406,7 +1408,13 @@ public class FormApprovalService extends BaseService<FormApproval> {
             Long iFormObjectId = formApproval.getIFormObjectId();
             Form form = formService.findById(iFormId);
             ValidationUtils.notNull(form, "找不到表单配置");
-            ValidationUtils.isTrue(updateAudit(form.getCFormCode(), primaryKeyName, iFormObjectId, AuditStatusEnum.APPROVED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");  
+            ValidationUtils.isTrue(updateAudit(form.getCFormCode(), primaryKeyName, iFormObjectId, AuditStatusEnum.APPROVED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");
+
+            // TODO 最后一步审批通过时，调用此方法，用于支持审批状态变更外的业务处理，请在合适的地方启用代码块
+
+            String msg = invokeMethod(className, "postApproveFunc", formAutoId);
+            ValidationUtils.assertBlank(msg, msg);
+
         }
     }
 
