@@ -7,12 +7,14 @@ SELECT t1.*,
        t3.iInventoryUomId1,
        t3.cInvAddCode,
        t4.cVenName,
-       t6.cEquipmentName
+       t6.cEquipmentName,
+       u.cUomCode,u.cUomName
 FROM PL_RcvDocQcFormM t1
          LEFT JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
          LEFT JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId
          LEFT JOIN Bd_Vendor t4 ON t1.iVendorId = t4.iAutoId
          LEFT JOIN Bd_Equipment t6 ON t3.iEquipmentModelId = t6.iAutoId
+         LEFT JOIN Bd_Uom u on t3.iInventoryUomId1 = u.iautoid
 where t1.IsDeleted = '0'
   #if(iautoid)
   AND t1.iautoid =#para(iautoid)

@@ -11,10 +11,12 @@ import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.util.ValidationUtils;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -105,32 +107,6 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     }
 
     /*
-     * 撤回
-     * */
-    public void backStep() {
-        SysPuinstore puinstore = service.findById(getLong(0));
-        if (puinstore == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        renderJson(service.backStep(puinstore));
-    }
-
-    /*
-     * 批量审批
-     * */
-    public void autitByIds() {
-        renderJson(service.autitByIds(get("ids")));
-    }
-
-    /*
-     * 批量反审批
-     * */
-    public void resetAutitByIds() {
-        renderJson(service.resetAutitByIds(get("ids")));
-    }
-
-    /*
      * 反审批
      * */
     public void resetAutitById() {
@@ -217,5 +193,50 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * */
     public void getPrintData() {
         renderJson(service.printData(getKv()));
+    }
+
+    /*
+     * 批量审核通过
+     * */
+    public void batchApprove(@Para(value = "ids") String ids) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+
+        renderJson(service.batchApprove(ids));
+    }
+
+    /*
+     * 批量反审核
+     * */
+    public void batchReverseApprove(@Para(value = "ids") String ids) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+
+        renderJson(service.batchReverseApprove(ids));
+    }
+
+    /*
+     * 撤回
+     * */
+    public void withdraw(Long autoId) {
+        ValidationUtils.validateId(autoId, "autoId");
+
+        renderJson(service.withdraw(autoId));
+    }
+
+    /*
+     * 反审核
+     * */
+    public void reverseApprove(long autoid){
+        ValidationUtils.validateId(autoid, "autoid");
+
+        renderJson(service.reverseApprove(autoid));
+    }
+
+    /*
+     * 提交审核
+     * */
+    public void submit(@Para(value = "iautoid") Long iautoid){
+        ValidationUtils.validateId(iautoid, "autoid");
+
+        renderJson(service.submit(iautoid));
     }
 }
