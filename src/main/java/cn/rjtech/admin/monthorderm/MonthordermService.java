@@ -296,18 +296,10 @@ public class MonthordermService extends BaseService<MonthOrderM> {
 
                 return null;
             }, (formAutoId) -> {
-                MonthOrderM monthOrderM = findById(formAutoId);
-
-                // 实现通过后的业务处理
-                monthOrderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
-                monthOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-                monthOrderM.setCUpdateName(JBoltUserKit.getUserName());
-                monthOrderM.setDUpdateTime(new Date());
-                monthOrderM.update();
-
-                // 审批通过生成客户计划汇总
-                cusOrderSumService.algorithmSum();
-
+                
+                // 审批通过业务处理
+                postApproveFunc(id);
+                
                 return null;
             });
 
@@ -330,7 +322,6 @@ public class MonthordermService extends BaseService<MonthOrderM> {
             // 处理其他业务
             MonthOrderM monthOrderM = findById(iautoid);
             monthOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
-            monthOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
             ValidationUtils.isTrue(monthOrderM.update(),JBoltMsg.FAIL);
             return true;
         });
@@ -372,6 +363,8 @@ public class MonthordermService extends BaseService<MonthOrderM> {
             formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
 
                 ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+
+                postRejectFunc(iautoid);
 
                 return null;
             });
@@ -485,8 +478,20 @@ public class MonthordermService extends BaseService<MonthOrderM> {
 
     /**
      * 实现反审之后的其他业务操作, 如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
      */
-    public String postReverseApproveFunc(long formAutoId) {
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        // 反审回第一个节点，回退状态为“已保存”
+        if (isFirst) {
+            
+        }
+        // 最后一步通过的，反审，回退状态为“待审核”
+        if (isLast) {
+            
+        }
         return null;
     }
 

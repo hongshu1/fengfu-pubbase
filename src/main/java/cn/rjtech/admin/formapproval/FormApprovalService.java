@@ -1216,9 +1216,18 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     if (Objects.equals(perStatus, "2")){
                         // 反审后 单据状态都是待审批
                         ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), primaryKeyName), "更新反审失败");
-
+                        
+                        // 是否为第一个反审
+                        // if (isFirstReverse()) {
                         // 单据反审时，预留额外业务处理
-                        invokeMethod(className, "postReverseApproveFunc", formAutoId);
+                        // invokeMethod(className, "postReverseApproveFunc", formAutoId, true, false);
+                        // }
+                        
+                        // 是否为最后一个反审
+                        // if (isLastReverse()) {
+                            // 单据反审时，预留额外业务处理
+                            // invokeMethod(className, "postReverseApproveFunc", formAutoId, false, true);
+                        // }
 
                     }
 
