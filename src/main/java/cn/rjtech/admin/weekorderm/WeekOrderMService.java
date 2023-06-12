@@ -112,14 +112,14 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
      */
     public Ret approve(Long iautoid) {
         tx(() -> {
-            
+
             formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
-                
+
                 ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", OrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
 
                 // 修改客户计划汇总
                 cusOrderSumService.algorithmSum();
-                
+
                 return null;
             });
             return true;
@@ -201,7 +201,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey());
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // 更新订单的状态

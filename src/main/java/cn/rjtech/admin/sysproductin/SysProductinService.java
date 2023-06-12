@@ -416,7 +416,7 @@ public class SysProductinService extends BaseService<SysProductin> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey());
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // 更新状态

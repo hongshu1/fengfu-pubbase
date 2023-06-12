@@ -292,9 +292,9 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      */
     public Ret submit(Long iautoid) {
         tx(() -> {
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey());
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-            
+
             AnnualOrderM annualOrderM = findById(iautoid);
             annualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
             annualOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
@@ -318,7 +318,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
                 cusOrderSumService.algorithmSum();
                 return null;
             });
-            
+
             return true;
         });
         return SUCCESS;

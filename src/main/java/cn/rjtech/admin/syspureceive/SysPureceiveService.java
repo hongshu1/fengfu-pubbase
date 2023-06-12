@@ -780,7 +780,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid,primaryKey());
+            Ret ret = formApprovalService.judgeType(table(), iautoid,primaryKey(),"");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             return true;
