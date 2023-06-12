@@ -201,7 +201,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
     }
 
     public SysPuinstoredetail findFirstByBarcode(String barcode) {
-        return findFirst("select * from  T_Sys_PUReceiveDetail where Barcode = ? ", barcode);
+        return findFirst("select * from  T_Sys_PUInStoreDetail where spotTicket = ? ", barcode);
     }
 
     /*
