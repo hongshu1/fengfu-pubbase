@@ -25,19 +25,18 @@
     <div class="card">
       <div class="card-body">
         <div class="btn-group">
-          <form class="form-inline" id="inventoryForm_#(pageId)" onsubmit="return false;" method="post" style="width: 1200px">
-            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
-                   maxlength="50" name="barcode" value="#(barcode??)"/>
-            <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>查询</button>
-            <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>重置</button>
-          </form>
+            <div class="input-group-append">
+                <input  type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
+                       maxlength="50" id="barcode" name="barcode" value="#(barcode??)"/>
+                <button end id="Search" onclick="barcode_#(pageId)(this)" class="btn btn-outline-secondary"><i class="fa fa-search"></i>搜索</button>
+            </div>
         </div>
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)">
-          <div class="" role="group" aria-label="btn-group">
-              <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-              <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
-          </div>
+            <div  class="" role="group" aria-label="btn-group" >
+                <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+                <button onclick="jboltTableRemoveCheckedRow(this, true, otherBarcodes)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
+            </div>
           <div class="clearfix"></div>
         </div>
 
@@ -50,7 +49,7 @@
                data-column-resize="true"
                data-url="admin/otherdeliverylist/getOtherOutLines?autoid=#(otherOut.autoid??)"
                data-column-prepend="1:checkbox:true"
-               data-conditions-form="inventoryForm_#(pageId)"
+               data-conditions-form="otherDeliveryListForm_#(pageId)"
                data-rowtpl="inventorySplit_tpl_#(pageId)"
                data-toolbar="inventory_split_toolbar_#(pageId)"
                data-editable="true"
@@ -76,6 +75,66 @@
   </div>
 </div>
 <script>
+    function barcode_#(pageId)(ele){
+        LayerMsgBox.loading("执行中......",2000);
+        var barcode = $("#barcode").val();
+        var autoid = $("#autoid").val();
+        var detailHidden = $("#detailHidden").val();
+
+        //扫入多条现品票判断是否存在
+        let data = getJboltTableAllDatas("jbolt_table_otherdeliverylist_split_#(pageId)",["barcode"]);
+        let array = new Array();
+        if (data != null){
+            for (let i = 0; i < data.length; i++) {
+                array.push("'"+data[i].barcode+"'");
+            }
+            for (let i = 0; i < array.length; i++) {
+                let a =  "'"+barcode+"'";
+                if (a == array[i]){
+                    LayerMsgBox.error("已存在相同["+barcode+"]现品票！！！",2000);
+                    return false;
+                }
+
+
+            }
+            //通过逗号分开，一个一个加进数组中
+            let codes = array.join(',');
+            $("#detailHidden").val(codes);
+        } else {
+            $("#detailHidden").val('');
+        }
+        if (barcode) {
+            Ajax.post("admin/otherdeliverylist/barcode", {"barcode": barcode,"autoid":autoid,"detailHidden":detailHidden},
+                function (res) {
+                    jboltTableInsertRow("jbolt_table_otherdeliverylist_split_#(pageId)", res.data, false, true, true)
+                    $("#barcode").val('');
+                }, function (err) {
+                })
+        } else {
+            LayerMsgBox.alert("请输入条码")
+        }
+    }
+
+
+    function otherBarcodes(){
+
+        // //扫入多条现品票判断是否存在
+        let data = getJboltTableAllDatas("jbolt_table_otherdeliverylist_split_#(pageId)",["barcode"]);
+        console.log(data);
+        let array = new Array();
+        if (data != null){
+            for (let i = 0; i < data.length; i++) {
+                array.push("'"+data[i].barcode+"'");
+            }
+            //通过逗号分开，一个一个加进数组中
+            let codes = array.join(',');
+            $("#barcodes").val(codes);
+        } else {
+            $("#barcodes").val('');
+        }
+        return true;
+    }
+
   /*去后端执行提交功能*/
   function getEditableTableOptions_split_#(pageId)(){
       var editableTableOptions={
@@ -85,7 +144,7 @@
           maxRowCount:1000,
           trigger:"click",
           submit:{
-              withForm: ["otherDeliveryListForm"],
+              withForm: ["otherDeliveryListForm_#(pageId)"],
               type:"multi",//cell|all|multi
               name:"table2"
           },
@@ -98,7 +157,7 @@
               // required: true,
               placeholder: "=请选择=",
               type:"autocomplete",
-              url: "admin/otherout/barcodeDatas",
+              url: "admin/otherdeliverylist/otherOutBarcodeDatas",
               textAttr: "barcode",
               width: 800,
               sync:"" ,
@@ -109,12 +168,28 @@
                   {column: "cinvname", use: "cinvname"},{column: "cinvstd", use: "cinvstd"},
                   {column: "qty", use: "qty"},{column: "cinvccode", use: "cinvccode"},
                   {column: "cinvcname", use: "cinvcname"},{column: "inventorycuomname", use: "inventorycuomname"},
-                  ]
+                  ],
+              handler:function (table,td,text,value,jsonData) {
+                  let datas = getJboltTableAllDatas("jbolt_table_otherdeliverylist_split_#(pageId)",["barcode"]);
+                  console.log("data==>",datas);
+                  let array = new Array();
+                  if (datas != null){
+                      for (var i = 0; i < datas.length; i++){
+                          var data = datas[i];
+                          array.push("'"+data.barcode+"'");
+                          let codes = array.join(',');
+                          $("#barcodes").val(codes);
+                      }
+                  }else {
+                      $("#barcodes").val('');
+                  }
+
+              }
 
           },
           invcode: {
               type: "autocomplete",
-              url: "admin/otherout/autocomplete",
+              url: "admin/otherdeliverylist/otherOutBarcodeDatas",
               maxLength: 100,
               // required: true,
               placeholder: "=请选择=",
