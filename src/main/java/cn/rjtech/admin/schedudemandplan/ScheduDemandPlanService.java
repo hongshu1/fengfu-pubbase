@@ -1224,6 +1224,9 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				dataMap.put("shiji",qtyInfo.get("iQty3") != null ? qtyInfo.get("iQty3") : 0);
 				dataMap.put("chayi",qtyInfo.get("iQty4") != null ? qtyInfo.get("iQty4") : 0);
 				dataMap.put("date",date);
+				int month = Integer.parseInt(date.substring(5,7));
+				int day = Integer.parseInt(date.substring(8,10));
+				dataMap.put("datestr", date.substring(0,4) +"年"+month+"月"+day+"日");
 				dataMap.put("lock",false);//未锁定可编辑
 
 				if (dateList.contains(date)){

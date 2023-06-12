@@ -202,6 +202,8 @@ select
     b.cInvStd as cinvstd,
     a.iQty as qtys,
     a.iQty as qty,
+    a.iinventoryId,
+    b.iAutoId,
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
     m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
