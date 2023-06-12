@@ -129,7 +129,7 @@ public class FormApprovalAdminController extends BaseAdminController {
     }
 
     /**
-     * 审批
+     * 审批通过
      *
      * @param formAutoId     单据ID
      * @param formSn         表单编码

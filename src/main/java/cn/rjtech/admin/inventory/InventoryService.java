@@ -433,6 +433,10 @@ public class InventoryService extends BaseService<Inventory> {
 		return dbTemplate("inventory.getAutocompleteData",Kv.by("q", q).set("limit",limit)).find();
 	}
 
+	public List<Record> getAutocompleteData2(String q, Integer limit) {
+		return dbTemplate("inventory.getAutocompleteData2",Kv.by("q", q).set("limit",limit)).find();
+	}
+
 	public Inventory saveJBoltFile(UploadFile file, String uploadPath, int fileType) {
 		String localPath = file.getUploadPath() + File.separator + file.getFileName();
 		String localUrl = FileUtil.normalize(JBoltRealUrlUtil.get(JFinal.me().getConstants().getBaseUploadPath() + '/' + uploadPath + '/' + file.getFileName()));
@@ -1077,7 +1081,7 @@ public class InventoryService extends BaseService<Inventory> {
 	}
 	
 	public Inventory findBycInvCode(String cInvCode){
-		return findFirst("SELECT top 1 * FROM Bd_Inventory WHERE cInvCode = ?", cInvCode);
+		return findFirst("SELECT top 1 * FROM Bd_Inventory WHERE cInvCode = ? and cOrgCode = ?", cInvCode,getOrgCode());
 	}
 	
     public Ret batchFetch(String column, String values) {

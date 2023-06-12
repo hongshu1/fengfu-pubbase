@@ -12,15 +12,15 @@ SELECT *
 FROM Bd_FormApprovalFlowD t1
 WHERE iFormApprovalFlowMid IN (
         SELECT iAutoId
-        FROM Bd_FormApprovalFlowM 
+        FROM Bd_FormApprovalFlowM
         WHERE iApprovalId = '#(Mid)'
-    ) AND t1.iAuditStatus = 2 
+    ) AND t1.iAuditStatus = 2
 ORDER BY iSeq ASC
 #end
 
 #sql("approvalProcessUsers")
 select top #(size) name
-from UGCFF_MOM_System.dbo.jb_user 
+from UGCFF_MOM_System.dbo.jb_user
 where id in
     (select iUserId
      from Bd_FormApprovalFlowD where iFormApprovalFlowMid =
@@ -42,4 +42,20 @@ select * from Bd_FormApprovalFlowD t1 where iFormApprovalFlowMid in (
             )
         )
     ) and iAuditStatus > 1
+#end
+
+#sql("isFirstReverse")
+select *
+from Bd_FormApprovalFlowD t1
+where iFormApprovalFlowMid in (
+    select t2.iAutoId
+    from Bd_FormApprovalFlowM t2
+    where t2.iApprovalDid in (
+        select t3.iAutoId
+        from Bd_FormApprovalD t3
+        where t3.iFormApprovalId = (
+            select t4.iAutoId from Bd_FormApproval t4 where iFormObjectId = '#(formId)' and t4.isDeleted = '0'
+        )
+    )
+) and t1.iAuditStatus > 1
 #end

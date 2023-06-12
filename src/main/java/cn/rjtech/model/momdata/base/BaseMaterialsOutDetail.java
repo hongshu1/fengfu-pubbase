@@ -20,7 +20,7 @@ public abstract class BaseMaterialsOutDetail<M extends BaseMaterialsOutDetail<M>
     /**条码*/
     public static final String BARCODE = "Barcode";
     /**存货编码*/
-    public static final String INVCODE = "InvCode";
+	public static final String INVCODE = "InvCode";
     /**件数*/
     public static final String NUM = "Num";
     /**数量*/

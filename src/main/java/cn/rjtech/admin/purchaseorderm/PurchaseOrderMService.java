@@ -10,7 +10,9 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.hutool.http.HttpUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
+import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
@@ -27,14 +29,16 @@ import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionServ
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.admin.purchaseorderref.PurchaseOrderRefService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
+import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.ValidationUtils;
-
+import cn.rjtech.wms.utils.HttpApiUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.beust.jcommander.ParameterException;
 import com.google.zxing.BarcodeFormat;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -55,7 +59,6 @@ import java.util.stream.Collectors;
 
 /**
  * 采购/委外订单-采购订单主表
- *
  * @ClassName: PurchaseOrderMService
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-12 15:19
@@ -1058,273 +1061,276 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
         }
     }
 
-    /**
-     * U8推单
-     */
-    public Map<String, String> pushPurchase(Long iautoid) {
-        List<Record> orderList = dbTemplate("purchaseorderm.findBycOrder", Kv.by("iautoid", iautoid)).find();
-        Map<String, String> map = new HashMap<>();
-        JSONArray jsonArray = new JSONArray();
-        for (Record order : orderList) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("DocNo", order.get("DocNo"));
-            jsonObject.put("cvencode", order.get("cvencode"));
-            jsonObject.put("cmaker", order.get("cmaker"));
-            jsonObject.put("dDate", order.get("dDate"));
-            jsonObject.put("cPersonCode", order.get("cPersonCode"));
-            jsonObject.put("cBusType", order.get("cBusType"));
-            jsonObject.put("cPTCode", order.get("cPTCode"));
-            jsonObject.put("iExchRate", order.get("iExchRate"));
-            jsonObject.put("iTaxRate", order.get("iTaxRate"));
-            jsonObject.put("cexch_name", order.get("cexch_name"));
-            jsonObject.put("cmemo", order.get("cmemo"));
-            jsonObject.put("inum", order.get("inum"));
-            jsonObject.put("iQuantity", order.get("iQuantity"));
-            jsonObject.put("cInvCode", order.get("cInvCode"));
-            jsonObject.put("cInvName", order.get("cInvName"));
-            jsonObject.put("dPlanDate", order.get("dPlanDate"));
-            jsonObject.put("iQuotedPrice", order.get("iQuotedPrice"));
-            jsonObject.put("irowno", order.get("irowno"));
-            jsonObject.put("KL", order.get("KL"));
-            jsonObject.put("iNatDisCount", order.get("iNatDisCount"));
-            // 将其他字段也添加到 jsonObject 中
-            jsonArray.add(jsonObject);
-        }
-        JSONObject params = new JSONObject();
-        params.put("data", jsonArray);
-        tx(() -> {
-            String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/PODocAdd?dbname=U8Context", params.toString());
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            String remark = jsonObject.getString("remark");
-            if (!jsonObject.getString("status").equals("S")) {
-                ValidationUtils.error(remark);
-            }
-            map.put("remark", remark);
-            map.put("json", params.toString());
-            return true;
-        });
-        return map;
-    }
+	/**
+	 * U8推单
+	 * @param iautoid
+	 * @return
+	 */
+	public Map<String, String> pushPurchase(Long iautoid){
+		List<Record> orderList = dbTemplate("purchaseorderm.findBycOrder", Kv.by("iautoid",iautoid)).find();
+		Map<String,String> map =new HashMap<>();
+			JSONArray jsonArray = new JSONArray();
+			for (Record order : orderList) {
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("DocNo", order.get("DocNo"));
+				jsonObject.put("cvencode", order.get("cvencode"));
+				jsonObject.put("cmaker", order.get("cmaker"));
+				jsonObject.put("dDate", order.get("dDate"));
+				jsonObject.put("cPersonCode", order.get("cPersonCode"));
+				jsonObject.put("cBusType", order.get("cBusType"));
+				jsonObject.put("cPTCode", order.get("cPTCode"));
+				jsonObject.put("iExchRate", order.get("iExchRate"));
+				jsonObject.put("iTaxRate", order.get("iTaxRate"));
+				jsonObject.put("cexch_name", order.get("cexch_name"));
+				jsonObject.put("cmemo", order.get("cmemo"));
+				jsonObject.put("inum", order.get("inum"));
+				jsonObject.put("iQuantity", order.get("iQuantity"));
+				jsonObject.put("cInvCode", order.get("cInvCode"));
+				jsonObject.put("cInvName", order.get("cInvName"));
+				jsonObject.put("dPlanDate", order.get("dPlanDate"));
+				jsonObject.put("iQuotedPrice", order.get("iQuotedPrice"));
+				jsonObject.put("irowno", order.get("irowno"));
+				jsonObject.put("KL", order.get("KL"));
+				jsonObject.put("iNatDisCount", order.get("iNatDisCount"));
+				// 将其他字段也添加到 jsonObject 中
+				jsonArray.add(jsonObject);
+			}
+			JSONObject params = new JSONObject();
+			params.put("data",jsonArray);
+			tx(() -> {
+				String url="";
+				String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/PODocAdd?dbname=U8Context", params.toString());
+				JSONObject jsonObject = JSONObject.parseObject(result);
+				String remark=jsonObject.getString("remark");
+				if(!jsonObject.getString("status").equals("S")){
+					ValidationUtils.error(remark);
+				}
+				map.put("remark",remark);
+				map.put("json",params.toString());
+				return true;
+			});
+			return map;
+	}
+	public List<Record> findByMidxlxs(Long iautoid){
+		return dbTemplate("purchaseorderm.findBycOrderNo",Kv.by("iautoid",iautoid)).find();
+	}
 
-    public List<Record> findByMidxlxs(Long iautoid) {
-        return dbTemplate("purchaseorderm.findBycOrderNo", Kv.by("iautoid", iautoid)).find();
-    }
+	public List<Record> findByMidxlxs2(Long iautoid){
+		return dbTemplate("purchaseorderm.findBycOrderNo2",Kv.by("iautoid",iautoid)).find();
+	}
+	public List<Record> findByBarcode(Long iautoid){
+		return  dbTemplate("purchaseorderm.findByBarcodeOnOrder",Kv.by("iautoid",iautoid)).find();
 
-    public List<Record> findByMidxlxs2(Long iautoid) {
-        return dbTemplate("purchaseorderm.findBycOrderNo2", Kv.by("iautoid", iautoid)).find();
-    }
+	}
+	public List<Record> findByBarcode2(Long iautoid){
+		return  dbTemplate("purchaseorderm.findByBarcodeOnOrder2",Kv.by("iautoid",iautoid)).find();
 
-    public List<Record> findByBarcode(Long iautoid) {
-        return dbTemplate("purchaseorderm.findByBarcodeOnOrder", Kv.by("iautoid", iautoid)).find();
+	}
+	/**
+	 * 导出PDF条码
+	 * @return
+	 */
+	public Kv pageOnePdf(Long iautoid,Integer page,Integer type) throws IOException {
+		List<Record> rowDatas = new ArrayList<>();
+		List<Record> barcodeDatas = new ArrayList<>();
+		if(type==0){
+			// 采购现品票清单数据
+			rowDatas = findByMidxlxs(iautoid);
+			// 采购现品票条码数据
+			barcodeDatas=findByBarcode(iautoid);
+		}else {
+			// 采购现品票清单数据
+			rowDatas = findByMidxlxs2(iautoid);
+			// 采购现品票条码数据
+			barcodeDatas=findByBarcode2(iautoid);
+		}
 
-    }
 
-    public List<Record> findByBarcode2(Long iautoid) {
-        return dbTemplate("purchaseorderm.findByBarcodeOnOrder2", Kv.by("iautoid", iautoid)).find();
+		// 采购现品票明细数据sheet分页数组
+		List<String> sheetNames = new ArrayList<>();
 
-    }
+		List<Kv> rows = new ArrayList<>();
 
-    /**
-     * 导出pdf条码
-     */
-    public Kv pageOnePdf(Long iautoid, Integer page, Integer type) throws IOException {
-        List<Record> rowDatas = new ArrayList<>();
-        List<Record> barcodeDatas = new ArrayList<>();
-        if (type == 0) {
-            // 采购现品票清单数据
-            rowDatas = findByMidxlxs(iautoid);
-            // 采购现品票条码数据
-            barcodeDatas = findByBarcode(iautoid);
-        } else {
-            // 采购现品票清单数据
-            rowDatas = findByMidxlxs2(iautoid);
-            // 采购现品票条码数据
-            barcodeDatas = findByBarcode2(iautoid);
-        }
+		List<Record> leftDatas = new ArrayList<>();
+		List<Record> rightDatas = new ArrayList<>();
 
-        // 采购现品票明细数据sheet分页数组
-        List<String> sheetNames = new ArrayList<>();
+		int counter = 0;
+		int i = 0;
 
-        List<Kv> rows = new ArrayList<>();
+		for (Record row : rowDatas) {
 
-        List<Record> leftDatas = new ArrayList<>();
-        List<Record> rightDatas = new ArrayList<>();
+			if (counter < 15) {
+				leftDatas.add(row);
+			} else {
+				rightDatas.add(row);
+			}
+			counter++;
+			if (counter == 30) {
+				String sheetName = "订货清单" + (i + 1);
+				sheetNames.add(sheetName);
+				rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
+				leftDatas = new ArrayList<>();
+				rightDatas = new ArrayList<>();
+				counter = 0;
+				i++;
+			}
+		}
 
-        int counter = 0;
-        int i = 0;
+		// 如果 rows 的数量不是 30 的整数倍，将剩余的数据添加到 datas 中
+		Kv remainData = Kv.create();
 
-        for (Record row : rowDatas) {
+		if (CollUtil.isNotEmpty(leftDatas)) {
+			remainData.set("leftDatas", leftDatas);
+		}
+		if (CollUtil.isNotEmpty(rightDatas)) {
+			remainData.set("rightDatas", rightDatas);
+		}
 
-            if (counter < 15) {
-                leftDatas.add(row);
-            } else {
-                rightDatas.add(row);
-            }
-            counter++;
-            if (counter == 30) {
-                String sheetName = "订货清单" + (i + 1);
-                sheetNames.add(sheetName);
-                rows.add(Kv.by("sheetName", sheetName).set("leftDatas", leftDatas).set("rightDatas", rightDatas));
-                leftDatas  = new ArrayList<>();
-                rightDatas = new ArrayList<>();
-                counter    = 0;
-                i++;
-            }
-        }
+		if (MapUtil.isNotEmpty(remainData)) {
+			rows.add(remainData);
+		}
 
-        // 如果 rows 的数量不是 30 的整数倍，将剩余的数据添加到 datas 中
-        Kv remainData = Kv.create();
+		if (rowDatas.size() < 30) {
+			sheetNames.add("采购清单");
+		}
+		List<Kv> kvs = new ArrayList<>();
 
-        if (CollUtil.isNotEmpty(leftDatas)) {
-            remainData.set("leftDatas", leftDatas);
-        }
-        if (CollUtil.isNotEmpty(rightDatas)) {
-            remainData.set("rightDatas", rightDatas);
-        }
+		// 采购现品票明细条码数据sheet分页数组
+		List<String> sheetNames2 = new ArrayList<>();
 
-        if (MapUtil.isNotEmpty(remainData)) {
-            rows.add(remainData);
-        }
+		List<Record> list1 = new ArrayList<>();
+		List<Record> list2 = new ArrayList<>();
+		List<Record> list3 = new ArrayList<>();
+		List<Record> list4 = new ArrayList<>();
+		List<Record> list5 = new ArrayList<>();
+		List<Record> list6 = new ArrayList<>();
+		List<Record> list7 = new ArrayList<>();
+		List<Record> list8 = new ArrayList<>();
+		int cont = 0;
+		int j = 0;
+		//一页一个条码
+		if (page == 1) {
+			for (Record row : barcodeDatas) {
+				String sheetName = "订货条码" + (j + 1);
+				sheetNames2.add(sheetName);
 
-        if (rowDatas.size() < 30) {
-            sheetNames.add("采购清单");
-        }
-        List<Kv> kvs = new ArrayList<>();
+				BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39,100,20);
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				ImageIO.write(bufferedImage, "jpeg", os);
+				row.set("img", os.toByteArray());
 
-        // 采购现品票明细条码数据sheet分页数组
-        List<String> sheetNames2 = new ArrayList<>();
+				BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE,100, 100);
+				ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+				ImageIO.write(bufferedImage2, "jpeg", os2);
+				row.set("img2", os2.toByteArray());
 
-        List<Record> list1 = new ArrayList<>();
-        List<Record> list2 = new ArrayList<>();
-        List<Record> list3 = new ArrayList<>();
-        List<Record> list4 = new ArrayList<>();
-        List<Record> list5 = new ArrayList<>();
-        List<Record> list6 = new ArrayList<>();
-        List<Record> list7 = new ArrayList<>();
-        List<Record> list8 = new ArrayList<>();
-        int cont = 0;
-        int j = 0;
-        if (page == 1) {
-            for (Record row : barcodeDatas) {
-                String sheetName = "订货条码" + (j + 1);
-                sheetNames2.add(sheetName);
+				kvs.add(Kv.by("sheetName", sheetName).set("list1", Collections.singletonList(row)));
 
-                BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39, 100, 20);
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                ImageIO.write(bufferedImage, "jpeg", os);
-                row.set("img", os.toByteArray());
+				j++;
+			}
+		}
+		//一页八个条码
+		else {
+			for (Record row : barcodeDatas) {
+				//条形码
+				BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39, 100, 20);
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				ImageIO.write(bufferedImage, "jpeg", os);
+				row.set("img", os.toByteArray());
+				//二维码
+				BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE, 100, 100);
+				ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+				ImageIO.write(bufferedImage2, "jpeg", os2);
+				row.set("img2", os2.toByteArray());
+				if (cont < 1) {
+					list1.add(row);
+				} else if (cont < 2) {
+					list2.add(row);
+				} else if (cont < 3) {
+					list3.add(row);
+				} else if (cont < 4) {
+					list4.add(row);
+				} else if (cont < 5) {
+					list5.add(row);
+				} else if (cont < 6) {
+					list6.add(row);
+				} else if (cont < 7) {
+					list7.add(row);
+				} else if (cont < 8) {
+					list8.add(row);
+				}
+				cont++;
+				if (cont == 8) {
+					String sheetName = "订货清单" + (j + 1);
+					sheetNames2.add(sheetName);
+					kvs.add(Kv.by("sheetName", sheetName)
+							.set("list1", list1)
+							.set("list2", list2)
+							.set("list3", list3)
+							.set("list4", list4)
+							.set("list5", list5)
+							.set("list6", list6)
+							.set("list7", list7)
+							.set("list8", list8));
+					list1 = new ArrayList<>();
+					list2 = new ArrayList<>();
+					list3 = new ArrayList<>();
+					list4 = new ArrayList<>();
+					list5 = new ArrayList<>();
+					list6 = new ArrayList<>();
+					list7 = new ArrayList<>();
+					list8 = new ArrayList<>();
+					cont = 0;
+					j++;
+				}
 
-                BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE, 100, 100);
-                ByteArrayOutputStream os2 = new ByteArrayOutputStream();
-                ImageIO.write(bufferedImage2, "jpeg", os2);
-                row.set("img2", os2.toByteArray());
+			}
 
-                kvs.add(Kv.by("sheetName", sheetName).set("list1", Collections.singletonList(row)));
+			if (rowDatas.size() < 8) {
+				sheetNames2.add("订货清单");
+			}
+			if (rowDatas.size() > 8) {
+				sheetNames2.add("订货清单0");
+			}
+			Kv remainData2 = Kv.create();
 
-                j++;
-            }
-        } else {
-            for (Record row : barcodeDatas) {
-                //条形码
-                BufferedImage bufferedImage = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.CODE_39, 100, 20);
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                ImageIO.write(bufferedImage, "jpeg", os);
-                row.set("img", os.toByteArray());
-                //二维码
-                BufferedImage bufferedImage2 = QrCodeUtil.generate(row.get("cBarcode"), BarcodeFormat.QR_CODE, 100, 100);
-                ByteArrayOutputStream os2 = new ByteArrayOutputStream();
-                ImageIO.write(bufferedImage2, "jpeg", os2);
-                row.set("img2", os2.toByteArray());
-                if (cont < 1) {
-                    list1.add(row);
-                } else if (cont < 2) {
-                    list2.add(row);
-                } else if (cont < 3) {
-                    list3.add(row);
-                } else if (cont < 4) {
-                    list4.add(row);
-                } else if (cont < 5) {
-                    list5.add(row);
-                } else if (cont < 6) {
-                    list6.add(row);
-                } else if (cont < 7) {
-                    list7.add(row);
-                } else if (cont < 8) {
-                    list8.add(row);
-                }
+			//
+			if (CollUtil.isNotEmpty(list1)) {
+				remainData2.set("list1", list1);
+			}
+			if (CollUtil.isNotEmpty(list2)) {
+				remainData2.set("list2", list2);
+			}
+			if (CollUtil.isNotEmpty(list3)) {
+				remainData2.set("list3", list3);
+			}
+			if (CollUtil.isNotEmpty(list4)) {
+				remainData2.set("list4", list4);
+			}
+			if (CollUtil.isNotEmpty(list5)) {
+				remainData2.set("list5", list5);
+			}
+			if (CollUtil.isNotEmpty(list6)) {
+				remainData2.set("list6", list6);
+			}
+			if (CollUtil.isNotEmpty(list7)) {
+				remainData2.set("list7", list7);
+			}
+			if (CollUtil.isNotEmpty(list8)) {
+				remainData2.set("list8", list8);
+			}
 
-                cont++;
-                if (cont == 8) {
-                    String sheetName = "订货清单" + (j + 1);
-                    sheetNames2.add(sheetName);
-                    kvs.add(Kv.by("sheetName", sheetName)
-                        .set("list1", list1)
-                        .set("list2", list2)
-                        .set("list3", list3)
-                        .set("list4", list4)
-                        .set("list5", list5)
-                        .set("list6", list6)
-                        .set("list7", list7)
-                        .set("list8", list8));
-                    list1 = new ArrayList<>();
-                    list2 = new ArrayList<>();
-                    list3 = new ArrayList<>();
-                    list4 = new ArrayList<>();
-                    list5 = new ArrayList<>();
-                    list6 = new ArrayList<>();
-                    list7 = new ArrayList<>();
-                    list8 = new ArrayList<>();
-                    cont  = 0;
-                    j++;
-                }
+			if (MapUtil.isNotEmpty(remainData2)) {
+				kvs.add(remainData2);
+			}
+		}
 
-            }
-
-            if (rowDatas.size() < 8) {
-                sheetNames2.add("订货清单");
-            }
-            if (rowDatas.size() > 8) {
-                sheetNames2.add("订货清单0");
-            }
-            Kv remainData2 = Kv.create();
-
-            //
-            if (CollUtil.isNotEmpty(list1)) {
-                remainData2.set("list1", list1);
-            }
-            if (CollUtil.isNotEmpty(list2)) {
-                remainData2.set("list2", list2);
-            }
-            if (CollUtil.isNotEmpty(list3)) {
-                remainData2.set("list3", list3);
-            }
-            if (CollUtil.isNotEmpty(list4)) {
-                remainData2.set("list4", list4);
-            }
-            if (CollUtil.isNotEmpty(list5)) {
-                remainData2.set("list5", list5);
-            }
-            if (CollUtil.isNotEmpty(list6)) {
-                remainData2.set("list6", list6);
-            }
-            if (CollUtil.isNotEmpty(list7)) {
-                remainData2.set("list7", list7);
-            }
-            if (CollUtil.isNotEmpty(list8)) {
-                remainData2.set("list8", list8);
-            }
-
-            if (MapUtil.isNotEmpty(remainData2)) {
-                kvs.add(remainData2);
-            }
-        }
-        LOG.info(JSON.toJSONString(kvs));
-        Kv data = Kv.by("rows", rows)
-            .set("sheetNames", sheetNames)
-            .set("rows2", kvs)
-            .set("sheetNames2", sheetNames2);
-        return data;
-    }
+		Kv data = Kv.by("rows", rows)
+				.set("sheetNames", sheetNames)
+				.set("rows2", kvs)
+				.set("sheetNames2", sheetNames2);
+		return data;
+	}
 
     public PurchaseOrderM findByCOrerNo(String corderno) {
         return findFirst("select * from PS_PurchaseOrderM where corderno=?", corderno);

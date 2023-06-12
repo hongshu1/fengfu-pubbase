@@ -58,6 +58,8 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
     public static final String PUUNITCODE = "PuUnitCode";
     /**采购单位名称*/
     public static final String PUUNITNAME = "PuUnitName";
+	/**存货编码*/
+	public static final String INVCODE = "InvCode";
 	/**
 	 * AutoID
 	 */
@@ -464,6 +466,23 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
 	@JSONField(name = "puunitname")
 	public java.lang.String getPuUnitName() {
 		return getStr("PuUnitName");
+	}
+
+	/**
+	 * 存货编码
+	 */
+	public M setInvCode(java.lang.String InvCode) {
+		set("InvCode", InvCode);
+		return (M)this;
+	}
+
+	/**
+	 * 存货编码
+	 */
+	@JBoltField(name="invcode" ,columnName="InvCode",type="String", remark="存货编码", required=false, maxLength=30, fixed=0, order=5)
+	@JSONField(name = "invcode")
+	public java.lang.String getInvCode() {
+		return getStr("InvCode");
 	}
 
 }

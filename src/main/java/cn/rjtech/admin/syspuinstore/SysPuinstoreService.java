@@ -3,7 +3,6 @@ package cn.rjtech.admin.syspuinstore;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
@@ -11,14 +10,20 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.materialsout.MaterialsOutService;
+import cn.rjtech.admin.materialsoutdetail.MaterialsOutDetailService;
 import cn.rjtech.admin.purchaseorderm.PurchaseOrderMService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
-import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
+import cn.rjtech.admin.sysassem.SysAssemService;
+import cn.rjtech.admin.sysassem.SysAssemdetailService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO.Main;
@@ -33,7 +38,6 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,8 +66,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     @Inject
     private PurchaseTypeService       purchaseTypeService;
     @Inject
-    private MaterialsOutService       materialsOutService;
-    @Inject
     private RdStyleService            rdStyleService;
     @Inject
     private VendorService             vendorService;
@@ -73,6 +75,20 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     private WarehouseService          warehouseService;
     @Inject
     private DictionaryService         dictionaryService;
+    @Inject
+    private MaterialsOutService       materialsOutService; //材料出库单
+    @Inject
+    private MaterialsOutDetailService materialsOutDetailService;//材料出库单从表
+    @Inject
+    private SysAssemService           sysAssemService;//形态转换单主表
+    @Inject
+    private SysAssemdetailService     sysAssemdetailService;//形态转换单从表
+    @Inject
+    private InventoryChangeService    changeService;//物料形态对照表
+    @Inject
+    private InventoryService          inventoryService;
+    @Inject
+    private FormApprovalService       formApprovalService;
 
     @Override
     protected int systemLogTargetType() {
@@ -88,21 +104,11 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
         Page<Record> paginate = dbTemplate("syspuinstore.recpor", kv).paginate(pageNumber, pageSize);
         for (Record record : paginate.getList()) {
-            PurchaseType purchaseType = purchaseTypeService.findById(record.get("billtype"));
             Kv podetailKv = new Kv();
             podetailKv.set("vencode", record.get("vencode"));
             podetailKv.set("billno", record.get("billno"));
             podetailKv.set("sourcebillno", record.get("sourcebillno"));
             podetailKv.set("sourcebillid", record.get("sourcebillid"));
-            Record detailByParam = findSysPODetailByParam(podetailKv);
-            if (detailByParam != null) {
-                record.set("invname", detailByParam.get("invname"));
-                record.set("venname", detailByParam.get("venname"));
-            }
-            if (null != purchaseType) {
-                record.set("cptcode", purchaseType.getCPTCode());
-                record.set("cptname", purchaseType.getCPTName());
-            }
             record.set("ibustype", findIBusTypeKey(record.getStr("ibustype")));
         }
         return paginate;
@@ -147,37 +153,105 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         return ret(success);
     }
 
+
     /*
-     * 回到上一步
+     * 检查是否要生成材料出库单和形态转换单
      * */
-    public Ret backStep(SysPuinstore puinstore) {
-        Integer iAuditStatus = puinstore.getIAuditStatus();
-        puinstore.setIAuditStatus(iAuditStatus - 1);
-        tx(() -> {
-            puinstore.setAuditPerson(JBoltUserKit.getUserName());
-            puinstore.setModifyPerson(JBoltUserKit.getUserName());
-            puinstore.setModifyDate(new Date());
-            update(puinstore);
+    public void checkIsCreateMaterialAndSysAssem(List<SysPuinstore> puinstoreList) {
+        boolean isTwo = false; //单单位、或双单位
+        boolean isOutRdCode = false; //入库类型是否为“外作品入库”
+        boolean puUnitName = false;//采购单位是否为：KG
+        for (SysPuinstore puinstore : puinstoreList) {
+            List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
+            if (!detailList.isEmpty()) {
+                SysPuinstoredetail sysPuinstoredetail = detailList.get(0);
+                isTwo       = CheckIsTwo(sysPuinstoredetail.getInvCode());
+                isOutRdCode = checkIsOutRdCode(puinstore.getRdCode());
+
+                if ("KG".equals(sysPuinstoredetail.getPuUnitName())) {
+                    puUnitName = true;
+                }
+            }
+
+            //2、如果入库类型是外作品入库并且为单单位时：采购入库单“审核通过”生成材料出库单，并且倒扣加工供应商仓库存
+            if (isOutRdCode && !isTwo) {
+                //2.1、材料出库单
+                List<MaterialsOutDetail> materialsOutDetailList = new ArrayList<>();
+                MaterialsOut materials = new MaterialsOut();
+                createMaterialsOut(puinstore, detailList, materials, materialsOutDetailList);
+                materialsOutService.save(materials);
+                materialsOutDetailService.batchSave(materialsOutDetailList);
+
+                //todo 2.2、倒扣加工供应商仓库存
+            }
+            //3、如果单位为重量KG和双单位：采购入库单“审核通过”同时生成材料出库单、形态转换单
+            if (puUnitName && isTwo) {
+                //3.1、材料出库单
+                List<MaterialsOutDetail> materialsOutDetailList = new ArrayList<>();
+                MaterialsOut materials = new MaterialsOut();
+                createMaterialsOut(puinstore, detailList, materials, materialsOutDetailList);
+                materialsOutService.save(materials);
+                materialsOutDetailService.batchSave(materialsOutDetailList);
+
+                //todo 3.2、倒扣加工供应商仓库存
+
+                //3.3、形态转换单
+                SysAssem sysAssem = new SysAssem();
+                List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
+                createSysAssem(sysAssem, detailList, puinstore, sysAssemdetailList);
+                sysAssemService.save(sysAssem);
+                sysAssemdetailService.batchSave(sysAssemdetailList);
+            }
+        }
+    }
+
+    public boolean CheckIsTwo(String invcode) {
+        //1、区分单单位、双单位：基础档案-物料建模-物料形态转换对照表，有维护转换前、转换后的存货就是双单位
+        Inventory inventory = inventoryService.findByiInventoryCode(invcode);
+        List<Record> changeRecordList = changeService.findInventoryChangeByInventoryId(null != inventory ?
+            inventory.getIAutoId() : new Long(0));
+        //双单位
+        if (!changeRecordList.isEmpty()) {
             return true;
-        });
-        return ret(true);
+        }
+        return false;
+    }
+
+    public boolean checkIsOutRdCode(String rdcode) {
+        RdStyle rdStyle = rdStyleService.findBycSTCode(rdcode);
+        if (rdStyle != null && "外作品入库".equals(rdStyle.getCRdName())) {
+            return true;
+        }
+        return false;
     }
 
     /*
-     * 批量审批
+     * 1、外作件入库后倒扣加工供应商仓库存，按物料清单生成材料出库单
      * */
-    public Ret autitByIds(String ids) {
-        tx(() -> {
-            String[] split = ids.split(",");
-            ArrayList<SysPuinstore> puinstoreList = new ArrayList<>();
-            Date date = new Date();
-            for (String id : split) {
-                commonAutitByIds(id, puinstoreList, date);
-            }
-            batchUpdate(puinstoreList);
-            return true;
-        });
-        return ret(true);
+    public void createMaterialsOut(SysPuinstore puinstore, List<SysPuinstoredetail> detailList, MaterialsOut materials,
+                                   List<MaterialsOutDetail> materialsOutDetailList) {
+        //主表
+        materialsOutService.saveMaterialsOutModel(materials, puinstore);
+        //从表
+        for (SysPuinstoredetail puinstoredetail : detailList) {
+            MaterialsOutDetail materialsOutDetail = materialsOutDetailService
+                .saveMaterialsOutDetailModel(puinstoredetail, materials.getAutoID());
+            materialsOutDetailList.add(materialsOutDetail);
+        }
+    }
+
+    /*
+     * 2、如果此物料单位为重量KG，需要将重量KG转换成数量PCS，从“物料形态转换对照表”中取出对应存货编码及转换率，自动生成形态转换单
+     * 创建sysAssemService、sysAssemdetailService
+     * */
+    public void createSysAssem(SysAssem sysAssem, List<SysPuinstoredetail> detailList,
+                               SysPuinstore puinstore, List<SysAssemdetail> sysAssemdetailList) {
+        sysAssemService.commonSaveSysAssemModel(sysAssem, puinstore);//主表
+        for (SysPuinstoredetail puinstoredetail : detailList) {
+            SysAssemdetail sysAssemdetail = sysAssemdetailService
+                .saveSysAssemdetailModel(puinstoredetail, sysAssem.getAutoID());//从表
+            sysAssemdetailList.add(sysAssemdetail);
+        }
     }
 
     /*
@@ -200,28 +274,15 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             puinstore.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
             PurchaseOrderM purchaseOrderM = findU8BillNo(puinstore);
             puinstore.setU8BillNo(purchaseOrderM != null ? purchaseOrderM.getCDocNo() : "");
+            puinstore.setIAuditWay(1);
             //
             puinstoreList.add(puinstore);
         }
     }
 
     /*
-     * 批量反审批
+     * 反审批
      * */
-    public Ret resetAutitByIds(String ids) {
-        tx(() -> {
-            String[] split = ids.split(",");
-            ArrayList<SysPuinstore> puinstoreList = new ArrayList<>();
-            Date date = new Date();
-            for (String id : split) {
-                commonResetAutitById(id, puinstoreList, date);
-            }
-            batchUpdate(puinstoreList);
-            return true;
-        });
-        return ret(true);
-    }
-
     public Ret resetAutitById(String autoid) {
         Date date = new Date();
         boolean tx = tx(() -> {
@@ -457,91 +518,12 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             }
             if (!updateRecordList.isEmpty()) {
                 List<SysPuinstoredetail> updateList = new ArrayList<>();
-                updateRecordList(updateRecordList, updateList,sysPuinstore);
+                updateRecordList(updateRecordList, updateList, sysPuinstore);
                 syspuinstoredetailservice.batchUpdate(updateList);
             }
 
             return true;
         });
-
-
-        /*tx(() -> {
-            //1、如果存在autoid，更新
-            if (isOk(sysPuinstore.getAutoID())) {
-                //更新主表
-                SysPuinstore updateSysPuinstore = findById(sysPuinstore.getAutoID());
-                Date date = new Date();
-                String userName = JBoltUserKit.getUserName();
-                updateSysPuinstore.setModifyPerson(userName);
-                updateSysPuinstore.setModifyDate(date);
-                saveSysPuinstoreModel(updateSysPuinstore, record, detailByParam);
-                Ret update = update(updateSysPuinstore);
-                if (update.isFail()) {
-                    return false;
-                }
-
-                //更新明细表
-                List<Record> updateRecordList = jBoltTable.getUpdateRecordList();
-                if (updateRecordList == null) {
-                    return false;
-                }
-                List<SysPuinstoredetail> detailList = new ArrayList<>();
-                for (int i = 0; i < updateRecordList.size(); i++) {
-                    Record updateRecord = updateRecordList.get(i);
-                    SysPuinstoredetail detail = syspuinstoredetailservice.findById(updateRecord.get("autoid"));
-                    if (null != detail) {
-                        detail.setModifyDate(date);
-                        detail.setModifyPerson(userName);
-                        syspuinstoredetailservice
-                            .savedetailModel2(detail, updateSysPuinstore, updateRecord, whcode, detailByParam);
-                        syspuinstoredetailservice.update(detail);
-                    } else {
-                        syspuinstoredetailservice.saveSysPuinstoredetailModel(detailList, updateRecord,
-                            updateSysPuinstore, whcode, (i + 1), detailByParam);
-                    }
-                }
-                if (!detailList.isEmpty()) {
-                    ValidationUtils.isTrue(syspuinstoredetailservice.batchSave(detailList).length != 0, "保存采购入库单失败");
-                }
-                //外作件入库后倒扣加工供应商仓库存，按物料清单生成材料出库单
-                try {
-                    createMaterialsOut(updateSysPuinstore, whcode, detailByParam);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                List<Record> saveRecordList = jBoltTable.getSaveRecordList();
-                if (saveRecordList == null) {
-                    return false;
-                }
-                //2、否则新增
-                //2.1、新增主表
-                SysPuinstore puinstore = new SysPuinstore();
-                puinstore.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
-                saveSysPuinstoreModel(puinstore, record, detailByParam);
-                ValidationUtils.isTrue(puinstore.save(), JBoltMsg.FAIL);
-                //2.2、新增明细表
-                List<SysPuinstoredetail> detailList = new ArrayList<>();
-                for (int i = 0; i < saveRecordList.size(); i++) {
-                    Record detailRecord = saveRecordList.get(i);
-                    syspuinstoredetailservice
-                        .saveSysPuinstoredetailModel(detailList, detailRecord, puinstore, whcode, (i + 1), detailByParam);
-                }
-                if (!detailList.isEmpty()) {
-                    ValidationUtils.isTrue(syspuinstoredetailservice.batchSave(detailList).length != 0, "保存采购入库单失败");
-                }
-                //外作件入库后倒扣加工供应商仓库存，按物料清单生成材料出库单
-                try {
-                    createMaterialsOut(puinstore, whcode, detailByParam);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                //
-            }
-            return true;
-        });*/
         return ret(tx);
     }
 
@@ -563,7 +545,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     /*
      * 更新明细表
      * */
-    public void updateRecordList(List<Record> updateRecordList, List<SysPuinstoredetail> puinstoredetailList,SysPuinstore sysPuinstore) {
+    public void updateRecordList(List<Record> updateRecordList, List<SysPuinstoredetail> puinstoredetailList,
+                                 SysPuinstore sysPuinstore) {
         int i = 1;
         for (Record updateRecord : updateRecordList) {
             SysPuinstoredetail puinstoredetail = syspuinstoredetailservice.findById(updateRecord.get("autoid"));
@@ -576,54 +559,11 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     }
 
 
-    /*
-     * 1、外作件入库后倒扣加工供应商仓库存，按物料清单生成材料出库单
-     * */
-    public void createMaterialsOut(SysPuinstore puinstore, String whcode, Record detailByParam) throws Exception {
-        RdStyle rdStyle = rdStyleService.findBycSTCode(puinstore.getRdCode());
-        if (!rdStyle.getCRdName().equals("外作品入库")) {
-            return;
-        }
-        MaterialsOut materials = new MaterialsOut();
-        materials.setAutoID(JBoltSnowflakeKit.me.nextId());
-        if (detailByParam != null) {
-            materials.setSourceBillType(detailByParam.getStr("sourcebilltype"));
-            materials.setSourceBillDid(detailByParam.getStr("sourcebilldid"));
-        }
-        materials.setRdCode(puinstore.getRdCode());
-        materials.setOrganizeCode(getOrgCode());
-        materials.setBillNo(puinstore.getBillNo());
-        materials.setBillType(puinstore.getBillType());
-        materials.setBillDate(getBillDate(puinstore.getBillDate()));
-        materials.setDeptCode(puinstore.getDeptCode());
-        materials.setWhcode(whcode);
-        materials.setVenCode(puinstore.getVenCode());
-        materials.setAuditPerson(puinstore.getAuditPerson());
-        materials.setAuditDate(puinstore.getAuditDate());
-        materials.setCreatePerson(puinstore.getCreatePerson());
-        materials.setCreateDate(puinstore.getCreateDate());
-        materials.setModifyPerson(puinstore.getModifyPerson());
-        materials.setModifyDate(puinstore.getModifyDate());
-        materials.setState(1);
-        materials.setMemo(puinstore.getMemo());
-        materialsOutService.save(materials);
-    }
-
     public Kv getKv(String billno, String sourcebillno) {
         Kv kv = new Kv();
         kv.set("billno", billno);
         kv.set("sourcebillno", sourcebillno);
         return kv;
-    }
-
-    public Date getBillDate(String billDate) {
-        SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
-        try {
-            return format.parse(billDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public void saveSysPuinstoreModel(SysPuinstore puinstore, Record record) {
@@ -650,24 +590,10 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     }
 
     /*
-     * 获取采购订单视图
-     * */
-    public Page<Record> getSysPODetail(Kv kv, int size, int PageSize) {
-        return dbTemplate(u8SourceConfigName(), "syspuinstore.getSysPODetail", kv).paginate(size, PageSize);
-    }
-
-    /*
      * 获取mes采购订单视图
      * */
     public Page<Record> getMesSysPODetails(Kv kv, int size, int PageSize) {
         return dbTemplate("syspuinstore.getMesSysPODetails", kv).paginate(size, PageSize);
-    }
-
-    /*
-     * 获取采购订单视图，不分页
-     * */
-    public Record findSysPODetailByParam(Kv kv) {
-        return dbTemplate(u8SourceConfigName(), "syspuinstore.getSysPODetail", kv).findFirst();
     }
 
     /*
@@ -763,4 +689,138 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         return purchaseOrderMService.findByCOrerNo(puinstore.getSourceBillNo());
     }
 
+    /*
+     * 批量审核通过
+     * */
+    public Ret batchApprove(String ids) {
+        tx(() -> {
+            String[] split = ids.split(",");
+            checkIAuditStatus(ids);
+            ArrayList<SysPuinstore> puinstoreList = new ArrayList<>();
+            Date date = new Date();
+            for (String id : split) {
+                commonAutitByIds(id, puinstoreList, date);
+            }
+            //1、批量审核成功
+            batchUpdate(puinstoreList);
+
+            //2、检查是否要生成材料出库单和形态转换单
+            checkIsCreateMaterialAndSysAssem(puinstoreList);
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    /*
+     * 检查批量审核中的所有数据状态
+     * */
+    public void checkIAuditStatus(String ids) {
+        List<SysPuinstore> puinstores = find("select * from T_Sys_PUInStore where autoid in (" + ids + ")");
+        for (SysPuinstore puinstore : puinstores) {
+            //未审核状态下不能批量审核
+            if (puinstore.getIAuditStatus() == AuditStatusEnum.NOT_AUDIT.getValue()) {
+                ValidationUtils.isTrue(false, puinstore.getSourceBillNo() + "：单据未提交审核或审批，不能批量审核！！");
+            } else if (puinstore.getIAuditStatus() == AuditStatusEnum.APPROVED.getValue()
+                || puinstore.getIAuditStatus() == AuditStatusEnum.REJECTED.getValue()) {
+                ValidationUtils.isTrue(false, puinstore.getSourceBillNo() + "：审核流程已结束，不能批量审核！！");
+            }
+        }
+    }
+
+    /*
+     * 批量反审核
+     * */
+    public Ret batchReverseApprove(String ids) {
+        tx(() -> {
+            String[] split = ids.split(",");
+            checkReverseApprove(ids);
+            ArrayList<SysPuinstore> puinstoreList = new ArrayList<>();
+            Date date = new Date();
+            for (String id : split) {
+                commonResetAutitById(id, puinstoreList, date);
+            }
+            //1、批量反审核成功
+            batchUpdate(puinstoreList);
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    public void checkReverseApprove(String ids) {
+        List<SysPuinstore> puinstores = find("select * from T_Sys_PUInStore where autoid in (" + ids + ")");
+        for (SysPuinstore puinstore : puinstores) {
+            //未审核状态下不能批量审核
+            if (puinstore.getIAuditStatus() == AuditStatusEnum.AWAIT_AUDIT.getValue()) {
+                ValidationUtils.isTrue(false, puinstore.getSourceBillNo() + "：待审核状态下，不能批量反审核！！");
+            } else if (puinstore.getIAuditStatus() == AuditStatusEnum.NOT_AUDIT.getValue()) {
+                ValidationUtils.isTrue(false, puinstore.getSourceBillNo() + "：单据未提交审核或审批，不能批量反审核！！");
+            } else if (puinstore.getIAuditStatus() == AuditStatusEnum.REJECTED.getValue()
+                || puinstore.getIAuditStatus() == AuditStatusEnum.REJECTED.getValue()) {
+                ValidationUtils.isTrue(false, puinstore.getSourceBillNo() + "：审核未通过，不能批量反审核！！");
+            }
+        }
+    }
+
+    /**
+     * 撤回提审批流
+     */
+    public Ret withdraw(Long iAutoId) {
+        tx(() -> {
+            SysPuinstore puinstore = findById(iAutoId);
+            ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), puinstore.getIAuditStatus(), "只允许将待审核状态订单撤回");
+            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
+                puinstore.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+                puinstore.setModifyPerson(JBoltUserKit.getUserName());
+                puinstore.setModifyDate(new Date());
+                ValidationUtils.isTrue(puinstore.update(), "撤回失败");
+
+                return null;
+            });
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /*
+     * 反审核
+     * */
+    public Ret reverseApprove(Long autoid) {
+        tx(() -> {
+            SysPuinstore puinstore = findById(autoid);
+            ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), puinstore.getIAuditStatus(), "只允许待审核状态下反审核");
+            formApprovalService.withdraw(table(), primaryKey(), autoid, (formAutoId) -> null, (formAutoId) -> {
+                puinstore.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+                puinstore.setModifyPerson(JBoltUserKit.getUserName());
+                puinstore.setModifyDate(new Date());
+                ValidationUtils.isTrue(puinstore.update(), "撤回失败");
+
+                return null;
+            });
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /*
+     * 提交审核
+     * */
+    public Ret submit(Long autoid){
+        tx(() -> {
+            SysPuinstore puinstore = findById(autoid);
+            ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), puinstore.getIAuditStatus(), "只允许未审核状态下提交审核");
+            formApprovalService.withdraw(table(), primaryKey(), autoid, (formAutoId) -> null, (formAutoId) -> {
+                puinstore.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                puinstore.setModifyPerson(JBoltUserKit.getUserName());
+                puinstore.setModifyDate(new Date());
+                puinstore.setDSubmitTime(new Date());
+                ValidationUtils.isTrue(puinstore.update(), "审核失败");
+
+                return null;
+            });
+            return true;
+        });
+        return SUCCESS;
+    }
 }

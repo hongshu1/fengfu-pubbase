@@ -11,11 +11,10 @@
                         #if(!weekOrderM.iAutoId?? || edit??false)
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
+                        #if(weekOrderM.iAutoId?? && !edit??)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/weekorderm",
-                        formSn="Co_WeekOrderM",
-                        iautoid=weekOrderM.iautoid??0, iauditstatus=weekOrderM.iauditstatus??0,
-                        iauditway=weekOrderM.iauditway??, edit=edit??)
-
+                        formSn="Co_WeekOrderM", o=weekOrderM, primaryKeyName="iAutoId", edit=edit??)
+                        #end
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
