@@ -92,6 +92,13 @@ public class ManualOrderMAdminController extends BaseAdminController {
     }
 
     /**
+     * 提交审批
+     */
+    public void submit() {
+        renderJson(service.submit(getLong("iautoid")));
+    }
+
+    /**
      * 审核
      */
     public void approve() {

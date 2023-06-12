@@ -18,8 +18,11 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
+
+import java.util.Optional;
 
 /**
  * 委外销售订单主表 Controller
@@ -76,6 +79,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
         subcontractsaleordermRc.set("ccusname", customer == null ? null : customer.getCCusName());
         subcontractsaleordermRc.set("cbususername", JBoltUserCache.me.getUserName(subcontractsaleorderm.getIBusPersonId()));
         set("subcontractsaleorderm", subcontractsaleordermRc);
+        set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
         render("edit.html");
     }
 
@@ -115,22 +119,33 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     }
 
     /**
+     * 提交审批
+     */
+    public void submit() {
+        renderJson(service.submit(getLong("iautoid")));
+    }
+
+    /**
      * 审批
      */
     public void approve() {
-        Subcontractsaleorderm subcontractsaleorderm = service.findById(getLong("id"));
-        if (subcontractsaleorderm == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        
-        subcontractsaleorderm.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-        subcontractsaleorderm.setIOrderStatus(SubcontractSaleOrderStatusEnum.AUDITTED.getValue());
-        ValidationUtils.isTrue(subcontractsaleorderm.update(), ErrorMsg.UPDATE_FAILED);
-        
-        cusOrderSumService.algorithmSum();
-        
-        renderJsonSuccess();
+        renderJson(service.approve(getLong(0)));
+    }
+
+    /**
+     * 审批不通过
+     */
+    public void reject() {
+        renderJson(service.reject(getLong(0)));
+    }
+
+    /**
+     * 撤回
+     */
+    public void withdraw(@Para(value = "iautoid") Long iAutoId) {
+        ValidationUtils.validateId(iAutoId, "iAutoId");
+
+        renderJson(service.withdraw(iAutoId));
     }
 
     /**
