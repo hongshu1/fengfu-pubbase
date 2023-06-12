@@ -349,6 +349,16 @@ public class BomCompareService extends BaseService<BomCompare> {
 			if (StrUtil.isNotBlank(codeLevelStr)){
 				codeLevel = form.getInteger(BomD.ICODELEVEL)+1;
 			}
+			
+			String cVersion = bomM.getCVersion();
+			// 校验版本号跟日期范围
+			checkBomDateOrVersion(cVersion, bomM);
+			// 编码为空默认升级
+			if (StrUtil.isBlank(cVersion)){
+				String nextVersion = bomMService.getNextVersion(getOrgId(), bomM.getIInventoryId());
+				bomM.setCVersion(nextVersion);
+			}
+			
 			if (ObjectUtil.isNull(bomM.getIAutoId())){
 				bomMService.save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
 			}else{
@@ -383,5 +393,28 @@ public class BomCompareService extends BaseService<BomCompare> {
 			return true;
 		});
 		return SUCCESS;
+	}
+	
+	public void  checkBomDateOrVersion(String cVersion, BomM bomM){
+		// 校验版本号
+		/*if (StrUtil.isNotBlank(cVersion)){
+			List<Record> versionList = bomMService.findVersionByInvId(getOrgId(), bomM.getIInventoryId(), bomM.getIAutoId());
+			if (CollectionUtil.isNotEmpty(versionList)){
+			
+			}
+		}*/
+		
+		// 校验日期 和 版本号
+		List<Record> invBomList = bomMService.findByInvId(getOrgId(), bomM.getIInventoryId(), bomM.getIAutoId());
+		if (CollectionUtil.isNotEmpty(invBomList)){
+			invBomList.forEach(record -> {
+				boolean overlapping = bomMService.isOverlapping(bomM, record);
+				ValidationUtils.isTrue(overlapping, "启用日期跟禁用日期出现重叠！");
+				String version = record.getStr(BomM.CVERSION);
+				if (StrUtil.isNotBlank(cVersion)){
+					ValidationUtils.isTrue(!cVersion.equals(version), "该版本号已存在！");
+				}
+			});
+		}
 	}
 }
