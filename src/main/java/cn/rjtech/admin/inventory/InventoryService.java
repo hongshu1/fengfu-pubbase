@@ -100,6 +100,8 @@ public class InventoryService extends BaseService<Inventory> {
 	private InventoryCapacityService inventoryCapacityService;
 	@Inject
 	private BomMService bomMService;
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingDService;
 
 	@Override
 	protected Inventory dao() {
