@@ -7,7 +7,7 @@
 <!--                        <input value="#(sysPureceive.iAuditStatus??)"/>-->
                         <button onclick="save()" class="btn btn-success btn-sm"  #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end  ><i
                             class=" fa fa-refresh"></i> 保存</button>
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/materialReceiptList", iautoid=sysPureceive.AutoID??0)
+                        #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUReceive",uri="/admin/materialReceiptList", iautoid=sysPureceive.AutoID??, edit=edit??,primaryKeyName="AutoID")
 <!--                        <button onclick="submitThisForm()" class="btn btn-info btn-sm"><i-->
 <!--                                class="fa fa-window-maximize"></i> 提交审批-->
 <!--                        </button>-->
@@ -26,7 +26,7 @@
                         <input type="hidden" name="sysPureceive.AutoID" value="#(sysPureceive.AutoID??)"/>
                         #end
                         <input type="hidden" name="sysPureceive.Type" value="PUReceive"/>
-                        <input type="test" id="detailHidden" name="detailHidden"/>
+                        <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -45,8 +45,8 @@
                                     <label class="col-sm-3 col-form-label">收料日期</label>
                                     <div class="col-9">
                                         <input type="text" data-date class="form-control ml-2" placeholder="收料日期"
-                                               maxlength="20" name="sysPureceive.createdate" disabled
-                                               value="#(sysPureceive.createdate??)"/>
+                                               maxlength="20" name="sysPureceive.dcreatetime" disabled
+                                               value="#(sysPureceive.dcreatetime??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -131,19 +131,26 @@
     </div>
 </div>
 ### 新增之后，并且为审核流
-#if(sysPureceive.AutoID?? && sysPureceive.iauditway == 2)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysPureceive.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId)
+#if(sysPureceive.AutoID?? && sysPureceive.iauditway == '2')
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysPureceive.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId,primaryKeyName="AutoID")
 #end
+
 <div class="jbolt_page_content">
     <script type="text/template" id="sysPureceive_tpl_#(pageId)">
         {@each datas as data,index}
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
+                #if(!sysPureceive.AutoID??)
+                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
+                   data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"
+                   #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >移除行</a>
+                #end
+                #if(sysPureceive.AutoID??)
                 <a href="admin/sysPureceivedetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
                    tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
                    #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end   class="jbolt_table_delbtn"><i class="fa fa-remove c-danger" >删除</i></a>
-
+                #end
             </td>
             <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.venname}</td>
             <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.sourcebillno}</td>
@@ -155,7 +162,7 @@
             <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end  style="text-align:right;">${data.qtys}</td>
             <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end  style="text-align:right;">${data.qty}</td>
             <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.poscode}</td>
-            <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end ><img data-switchbtn data-value="${data.isinitial}" data-handler="switchEditableTd"/></td>
+            <td  disabled ><img data-switchbtn data-value="${data.isinitial}" data-handler="switchEditableTd" disabled /></td>
 
         </tr>
         {@/each}
@@ -176,10 +183,12 @@
                     <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >添加行</button>
                 </div>
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                    <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                            id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysPureceivedetail/deleteByIds?ids="
-                            data-confirm="确定删除选中数据？" class="btn btn-outline-danger" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end  ><i class="fa fa-trash"></i> 批量删除
-                    </button>
+                    <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end   ><i class="fa fa-trash"></i> 删除行</button>
+
+<!--                    <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"-->
+<!--                            id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysPureceivedetail/deleteByIds?ids="-->
+<!--                            data-confirm="确定删除选中数据？" class="btn btn-outline-danger" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end  ><i class="fa fa-trash"></i> 批量删除-->
+<!--                    </button>-->
                 </div>
 
                 <label class="col-sm-3 col-form-label">库区</label>
@@ -227,7 +236,7 @@
             <th data-width="50" data-column="qtys">数量</th>
             <th data-width="50" data-column="qty" >实收数量</th>
             <th data-width="50" data-column="poscode">库区</th>
-            <th data-width="50" data-column="isinitial" data-editable="false">是否初物</th>
+            <th data-width="50" data-column="isinitial" data-editable="false" disabled>是否初物</th>
         </tr>
         </thead>
     </table>
@@ -387,8 +396,23 @@
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {
                             column: "sourcebillid",
                             use: "sourcebillid"
-                        }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}],
+                        }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}, {column: "billtype", use: "ipurchasetypeid"}],
 
+                        handler:function (table,td,text,value,jsonData) {
+                            let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
+                            console.log("data==>",datas);
+                            let array = new Array();
+                            if (datas != null){
+                                for (var i = 0; i < datas.length; i++){
+                                    var data = datas[i];
+                                    array.push("'"+data.barcode+"'");
+                                    let codes = array.join(',');
+                                    $("#detailHidden").val(codes);
+                                }
+                            }else {
+                                $("#detailHidden").val('');
+                            }
+                        }
                 },
                 cinvcode: {
                     // linkPara:"#sysPureceive.VenCode",
@@ -424,8 +448,23 @@
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {
                             column: "sourcebillid",
                             use: "sourcebillid"
-                        }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}]
+                        }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}, {column: "billtype", use: "ipurchasetypeid"}],
 
+                        handler:function (table,td,text,value,jsonData) {
+                            let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
+                            console.log("data==>",datas);
+                            let array = new Array();
+                            if (datas != null){
+                                for (var i = 0; i < datas.length; i++){
+                                    var data = datas[i];
+                                    array.push("'"+data.barcode+"'");
+                                    let codes = array.join(',');
+                                    $("#detailHidden").val(codes);
+                                }
+                            }else {
+                                $("#detailHidden").val('');
+                            }
+                        }
                 },
             }
         };

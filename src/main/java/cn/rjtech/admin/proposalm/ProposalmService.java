@@ -665,7 +665,7 @@ public class ProposalmService extends BaseService<Proposalm> {
 	    		str = cdepnameen;
 	            break;  
 	        case ORDERYEAR:
-	        	ValidationUtils.isTrue(false, "禀议书无法获取"+BarCodeEnum.ORDERYEAR.getText()+",请检查编码规则!");
+	        	ValidationUtils.error( "禀议书无法获取"+BarCodeEnum.ORDERYEAR.getText()+",请检查编码规则!");
 	            break;
 	        default:
                 break;

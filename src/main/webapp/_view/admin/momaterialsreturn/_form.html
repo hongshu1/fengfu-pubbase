@@ -2,10 +2,10 @@
 <div class="jbolt_page">
 
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="PuinstoreForm" action="#(action)" method="post">
+        <form onsubmit="return false;" id="moMaterialsreturnForm" action="#(action)" method="post">
             <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
                 <div class="col-md-l pt-2" role="group" aria-label="btn-group">
-                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
+                    <button onclick="submitThisForm()" #if(type=="0") style="display: none" #end
                             data-id="1" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i>
                         保存
                     </button>
@@ -13,14 +13,23 @@
                             data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
                             class="fa fa-window-maximize"></i> 提交审核
                     </button>
+                 <!--   <button onclick="audit_#(pageId)(this)"
+                            data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
+                            class="fa fa-window-maximize"></i> 审核
+                    </button>
+                    <button onclick="NoApprove_#(pageId)(this)"
+                            data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
+                            class="fa fa-window-maximize"></i> 反审核
+                    </button>-->
                     <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
                         关闭
                     </button>
                 </div>
             </div>
-            #if(puinstore.AutoID??)
-            <input type="hidden" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
-            #end
+
+            <input type="hidden"  name="moMaterialsreturnm.iautoid" value="#(moMaterialsreturnm.iautoid??)"/>
+            <input type="hidden"  name="moMaterialsreturnm.imodocid" value="#(imodocid??)"/>
+
 
 
 
@@ -36,7 +45,7 @@
                 <label class="col-sm-2 col-form-label">备注：</label>
                 <div class="col-sm-2 col-form-label">
                     </textarea>
-                    <textarea id="memo" name="puinstore.memo" class="form-control" placeholder="=请输入备注="
+                    <textarea id="memo" name="moMaterialsreturnm.cmemo" class="form-control" placeholder="=请输入备注="
                               type="text" maxlength="300"
                               value=""></textarea>
                 </div>
@@ -50,10 +59,50 @@
 #define js()
 <script>
     hideParentLayerDialogBtn();
+    $(function(){
+
+        init();
+
+    });
+    function submitAllTables_#(pageId)(ele){
+
+        var action = getRealJqueryObject(ele);
+        var id = action.data("id");
+        var value = action.data("value");
+        var tables = ["jbolt_table_#(pageId)"];
+        //if (checkTds()) {
+            jboltTableSubmitMulti(tables, "/admin/materialreturnlist/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
+                if (res.state == "ok") {
+                    LayerMsgBox.success(res.msg, 2000, function () {
+                       // debugger;
+                        let id = res.AutoID;
+                        if (value == "save"){
+                            parent.refreshJBoltTable();
+                            // parent.refreshPjaxContainer();
+                            // parent.refreshCurrentTabContent();//刷新当前页面
+                            self.location.href = "/admin/materialreturnlist/edit/"+id+"-_jb_rqtype_dialog"; //新增的刷新
+                        }else {
+                            parent.refreshCurrentTabContent();//刷新当前页面
+                            // refreshPjaxContainer();
+                            parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                        }
+                    })
+                }
+                else {
+                    LayerMsgBox.error(res.msg);
+                }
+            });
+      //  }
+
+    }
+    function submitThisForm() {
+        console.log("提交表单")
+        jboltTableSubmit("#jbolt_table_#(pageId)");
+    }
     function  returnofmaterial(){
-        ;
+        var imodocid=(#(moMaterialsreturnm.imodocid??));
         $.ajax({
-            url: "admin/momaterialscanusedlog/getmomaterialscanusedlogList?imodocid=#(imodocid??)",
+            url: "admin/momaterialscanusedlog/getmomaterialscanusedlogList?imodocid="+imodocid,
             type: 'GET',
             success: function (ret) {
                 if (ret.state === 'ok') {
@@ -66,12 +115,150 @@
                 }
             },
             error: function () {
-
+                LayerMsgBox.alert("系统异常,请联系管理员");
             }
         });
     }
 
+    function  init(){
+        var imaterialsreturnmid=#(moMaterialsreturnm.iautoid??);
+        var  page=$('#gonu').val();
+        var  pageSize=$('#pageSize').val();
+        $.ajax({
+            url: "admin/momaterialsreturn/getMoMaterialsreturnList?page="+page+"&pageSize="+pageSize+"&imaterialsreturnmid="+imaterialsreturnmid,
+            type: 'GET',
+            success: function (ret) {
+                if (ret.state === 'ok') {
+                    var data = ret.data;
 
+                    jboltTableClear('#jbolt_table_#(pageId)');
+
+                    jboltTableInsertRow('#jbolt_table_#(pageId)', data, false, false, true);
+                    // console.log(jboltTableGetSubmitData('#itemroutingconfigid_#(pageId)'));
+                }
+            },
+            error: function () {
+                LayerMsgBox.alert("系统异常,请联系管理员");
+            }
+        });
+    }
+
+    function getEditableTableOptions_split_#(pageId)(){
+        var editableTableOptions={
+            //初始行数
+            // initRowCount:10,
+            //限制最大数 默认30
+            maxRowCount:1000,
+            trigger:"click",
+            submit:{
+                withForm: ["moMaterialsreturnForm"],
+                type:"all",//cell|all|multi
+                //name:"table2"
+            },
+            cols: {
+                spotticket: { //现品票条码
+                    maxLength: 100,
+                    linkPara: "#spottickets,#autoid",
+                    syncval:"#spotticket",
+                    required: false,
+                    placeholder: "=请选择=",
+                    type: "autocomplete",
+                    url: "admin/materialreturnlist/barcodeDatas",
+                    textAttr: "spotticket",
+                    width: 800,
+                    sync: "",
+                    valueAttr: "spotticket",
+                    columnAttr: "barcode,cinvcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,puunitname,qty",
+                    header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
+                    changeColumns: [{column: "spotticket", use: "barcode"},
+                        {column: "cinvcode", use: "cinvcode"},
+                        {column: "cinvname", use: "cinvname"},
+                        {column: "cinvcode1", use: "cinvcode1"},
+                        {column: "cinvname1", use: "cinvname1"},
+                        {column: "cinvstd", use: "cinvstd"},
+                        // {column: "pingpai", use: "cinvname1"},
+                        {column: "puunitname", use: "puunitname"},
+                        {column: "puunitcode", use: "puunitcode"},
+                        {column: "iqty", use: "qty"},
+                        {column: "sourcebillno", use: "sourcebillno"},
+                        {column: "sourcebillid", use: "sourcebillid"},
+                        {column: "sourcebilltype", use: "sourcebilltype"},
+                        {column: "sourcebilldid", use: "sourcebilldid"},
+                        {column: "sourcebillnorow", use: "sourcebillnorow"},
+                        {column: "rowno", use: "rowno"},
+                    ],
+                    handler:function (table,td,text,value,jsonData) {
+                        debugger;
+                        var spotticket = jsonData.spotticket;
+                        let datas = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+                        console.log("data==>",datas);
+                        let array = new Array();
+                        if (datas != null){
+                            for (var i = 0; i < datas.length; i++){
+                                var data = datas[i];
+                                array.push("'"+data.spotticket+"'");
+                                let codes = array.join(',');
+                                $("#spottickets").val(codes);
+                            }
+                        }else {
+                            $("#spottickets").val('');
+                        }
+
+                    }
+
+
+                },
+                cinvcode: {
+                    type: "autocomplete",
+                    url: "admin/materialreturnlist/barcodeDatas",
+                    maxLength: 100,
+                    required: false,
+                    placeholder: "=请选择=",
+                    textAttr: "cinvcode",
+                    width: 800,
+                    valueAttr: "cinvcode",
+                    columnAttr: "cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,inventorycuomname,qty",
+                    header: '存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
+                    changeColumns: [{column: "cinvcode", use: "cinvaddcode"},
+                        {column: "cinvname", use: "cinvname"},
+                        {column: "cinvcode1", use: "cinvcode1"},
+                        {column: "cinvname1", use: "cinvname1"},
+                        {column: "cinvstd", use: "cinvstd"},
+                        {column: "pingpai", use: "cinvname1"},
+                        {column: "iqty", use: "qty"},
+                        {column: "inventorycuomname", use: "inventorycuomname"}]
+                },
+                qty: {
+                    type:"input",
+                    submitAttr:"qty",
+                    required:true,
+                    handler:function (table,td,text,value,jsonData) {
+                        let iqty =  jsonData.iqty;
+                        console.log(iqty);
+                        let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
+                        console.log('退货数量===>',qty);
+                        if (qty > 0){
+                            showFormEleErrorStyle(td,"请输入小于或等于0的数量！！！");
+                            return false;
+                        }
+                        let cha = iqty- (qty);
+                        if (cha > iqty*2){
+                            showFormEleErrorStyle(td,"可退数量为"+iqty+",退货数量已超出！！！");
+                            return false;
+                        }
+                    }
+                },
+                qtys: {
+                    submitAttr:"qtys",
+                },
+                memo: {
+                    type:"input",
+                    submitAttr:"memo",
+                },
+            }
+        };
+        return editableTableOptions;
+    }
 
 
 
@@ -95,6 +282,6 @@
         $("#billno").val(data.billno);
     }
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="PuinstoreForm")
+#include("/_view/_admin/common/_formjs.html",formId="moMaterialsreturnForm")
 #end
 

@@ -16,11 +16,31 @@ select t1.*,
  t2.name as stepname,t3.name as way from Bd_FormApprovalD t1
  left join #(getBaseDbName()).dbo.jb_dictionary t2 on t2.type_key = 'approval_d_name' and t2.sn = t1.iStep
  left join #(getBaseDbName()).dbo.jb_dictionary t3 on t3.type_key = 'approval_person_config' and t3.sn = t1.iType
- where iFormApprovalId = (select top 1 iAutoId from Bd_FormApproval approval where approval.iFormObjectId = '#(formId)' and
- approval.isDeleted =
-  '1' order by approval.dCreateTime desc )
+ where iFormApprovalId = '#(approvalId)'
   order by
  iSeq asc
+#end
+
+#sql("historyDatas")
+select t.*,
+       t2.name                                                   as iStepName,
+       (select top 1 u.name
+        from Bd_FormApprovalFlowD d
+                 left join Bd_FormApprovalFlowM m on d.iFormApprovalFlowMid = m.iAutoId
+                 left join #(getBaseDbName()).dbo.jb_user u on d.iUserId = u.id
+            where m.iApprovalDid = t.did and d.iAuditStatus > 1) as username
+from (select t1.iAutoId,
+             t2.iAutoId as did,
+             t2.dAuditTime,
+             case when t2.iStatus = 2 then '审批通过' when t2.iStatus = 3 then '审批不通过' else '待审批' end
+                        as iStatus,
+             t2.iStep   as iStep
+      from Bd_FormApproval t1
+               left join Bd_FormApprovalD t2 on t1.iAutoId = t2.iFormApprovalId and not exists(select 1
+                                                                                               from Bd_FormApprovalD t3 where t2.iFormApprovalId = t3.iFormApprovalId and t3.dAuditTime > t2.dAuditTime)
+          where t1.iFormObjectId = '#(formId)'
+               and t1.isDeleted = '1') t
+         left join #(getBaseDbName()).dbo.jb_dictionary t2 on t2.type_key = 'approval_d_name' and t2.sn = t.iStep
 #end
 
 #sql("userDatas")

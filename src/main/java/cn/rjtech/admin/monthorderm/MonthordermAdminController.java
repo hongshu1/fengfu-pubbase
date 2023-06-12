@@ -17,6 +17,8 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.Optional;
+
 /**
  * 月度计划订单 Controller
  *
@@ -41,7 +43,7 @@ public class MonthordermAdminController extends BaseAdminController {
 	public void index() {
 		render("index.html");
 	}
-  	
+
   	/**
 	* 数据源
 	*/
@@ -59,16 +61,22 @@ public class MonthordermAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
-	public void edit() {
-		MonthOrderM monthorderm=service.findById(getLong(0)); 
-		if(monthorderm == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
+	public void edit(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.validateId(iautoid, "月度计划订单ID");
+        
+		MonthOrderM monthorderm=service.findById(iautoid);
+        if (monthorderm == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        
 		Record monthordermRc = monthorderm.toRecord();
+
         Customer customer = customerService.findById(monthorderm.getICustomerId());
-        monthordermRc.set("ccusname", customer == null ? null:customer.getCCusName());
-		set("monthorderm",monthordermRc);
+        monthordermRc.set("ccusname", customer == null ? null : customer.getCCusName());
+
+        set("monthorderm", monthordermRc);
+        keepPara();
 		render("edit.html");
 	}
 
@@ -117,10 +125,10 @@ public class MonthordermAdminController extends BaseAdminController {
     }
 
 	/**
-	 * 审批
+	 * 审核通过
 	 */
 	public void approve() {
-		renderJson(service.approve(getLong("id")));
+		renderJson(service.approve(getLong(0)));
 	}
 
     /**
@@ -128,7 +136,7 @@ public class MonthordermAdminController extends BaseAdminController {
      */
     public void submit(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.validateId(iautoid, "ID");
-        
+
         renderJson(service.submit(iautoid));
     }
 
@@ -142,15 +150,45 @@ public class MonthordermAdminController extends BaseAdminController {
     }
 
 	/**
-	 * 模板下载
+	 * 审核不通过
 	 */
-	@SuppressWarnings("unchecked")
-	public void downloadTpl() {
-		try {
-			renderJxls("monthorderm.xlsx", Kv.by("rows", null), "月度计划订单.xlsx");
-		}catch (Exception e)
-		{
-			ValidationUtils.isTrue(false, "模板下载失败");
-		}
+	public void reject() {
+		renderJson(service.reject(getLong(0)));
 	}
+
+    /**
+     * 批量审核
+     */
+    public void batchApprove(@Para(value = "ids") String ids) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+        
+        renderJson(service.batchApprove(ids));
+    }
+
+    /**
+     * 批量反审核
+     */
+    public void batchReverseApprove(@Para(value = "ids") String ids) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+
+        renderJson(service.batchReverseApprove(ids));
+    }
+
+    /**
+     * 批量审核不通过（不需要实现）
+     */
+    public void batchReject(@Para(value = "ids") String ids) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+        
+        renderJson(service.batchReject(ids));
+    }
+
+    /**
+     * 模板下载
+     */
+    @SuppressWarnings("unchecked")
+    public void downloadTpl() throws Exception {
+        renderJxls("monthorderm.xlsx", Kv.by("rows", null), "月度计划订单.xlsx");
+    }
+    
 }

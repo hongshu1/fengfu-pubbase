@@ -672,3 +672,8 @@
 #namespace("bomd")
 #include("bomd/bomd.sql")
 #end
+
+
+#namespace("momaterialsreturn")
+#include("momaterialsreturn/momaterialsreturn.sql")
+#end

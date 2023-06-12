@@ -27,7 +27,6 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,309 +34,240 @@ import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 表单审批流 Service
+ *
  * @ClassName: FormApprovalDService
  * @author: RJ
  * @date: 2023-04-18 17:29
  */
 public class FormApprovalDService extends BaseService<FormApprovalD> {
 
-	private final FormApprovalD dao = new FormApprovalD().dao();
+    private final FormApprovalD dao = new FormApprovalD().dao();
 
-	@Override
-	protected FormApprovalD dao() {
-		return dao;
-	}
+    @Override
+    protected FormApprovalD dao() {
+        return dao;
+    }
 
-	@Inject
-    private FormapprovaldUserService formapprovaldUserService;
-	@Inject
-    private FormapprovaldRoleService formapprovaldRoleService;
-	@Inject
-	private FormApprovalFlowMService flowMService;
-	@Inject
+    @Inject
+    private UserService userService;
+    @Inject
+    private PersonService personService;
+    @Inject
+    private FormApprovalFlowMService flowMService;
+    @Inject
     private FormApprovalFlowDService flowDService;
-	@Inject
-	private FormApprovalService formApprovalService;
-	@Inject
-	private PersonService personService;
-	@Inject
-	private UserService userService;
-	@Inject
-	private FormapprovaldRoleusersService formapprovaldRoleusersService;
-
-
-
-	/**
-	 * 后台管理分页查询
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param keywords
-	 * @return
-	 */
-	public Page<FormApprovalD> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
-	}
+    @Inject
+    private FormApprovalService formApprovalService;
+    @Inject
+    private FormapprovaldUserService formapprovaldUserService;
+    @Inject
+    private FormapprovaldRoleService formapprovaldRoleService;
+    @Inject
+    private FormapprovaldRoleusersService formapprovaldRoleusersService;
 
     /**
      * 后台管理分页查询
-     * @param pageNumber
-     * @param pageSize
-     * @param kv
-     * @return
+     */
+    public Page<FormApprovalD> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
+        return paginateByKeywords("iAutoId", "DESC", pageNumber, pageSize, keywords, "iAutoId");
+    }
+
+    /**
+     * 后台管理分页查询
      */
     public Page<Record> datas(int pageNumber, int pageSize, Kv kv) {
-        Page<Record> paginate = dbTemplate("formapprovald.findRecordsByFormId", kv).paginate(pageNumber, pageSize);
-        return paginate;
+        return dbTemplate("formapprovald.findRecordsByFormId", kv).paginate(pageNumber, pageSize);
 
     }
 
-	/**
-	 * 历史数据源
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
-	 */
-	public Page<Record> historyDatas(int pageNumber, int pageSize, Kv kv) {
-		Page<Record> paginate = dbTemplate("formapprovald.findRecordsByFormIdHistory", kv).paginate(pageNumber,
-				pageSize);
-		return paginate;
+    /**
+     * 历史数据源
+     */
+    public Page<Record> historyDatas(int pageNumber, int pageSize, Kv kv) {
+        return dbTemplate("formapprovald.findRecordsByFormIdHistory", kv).paginate(pageNumber, pageSize);
+    }
 
-	}
+    /**
+     * 历史数据源列表
+     */
+    public Page<Record> historyList(int pageNumber, int pageSize, Kv kv) {
+        return dbTemplate("formapprovald.historyDatas", kv).paginate(pageNumber, pageSize);
+    }
 
-	/**
-	 * 保存
-	 * @param formApprovalD
-	 * @return
-	 */
-	public Ret save(FormApprovalD formApprovalD) {
-		if(formApprovalD==null || isOk(formApprovalD.getIAutoId())) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		//if(existsName(formApprovalD.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		boolean success=formApprovalD.save();
-		if(success) {
-			//添加日志
-			//addSaveSystemLog(formApprovalD.getIautoid(), JBoltUserKit.getUserId(), formApprovalD.getName());
-		}
-		return ret(success);
-	}
+    /**
+     * 删除 指定多个ID
+     */
+    public Ret deleteByBatchIds(String ids) {
+        return deleteByIds(ids, true);
+    }
 
-	/**
-	 * 更新
-	 * @param formApprovalD
-	 * @return
-	 */
-	public Ret update(FormApprovalD formApprovalD) {
-		if(formApprovalD==null || notOk(formApprovalD.getIAutoId())) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		//更新时需要判断数据存在
-		FormApprovalD dbFormApprovalD=findById(formApprovalD.getIAutoId());
-		if(dbFormApprovalD==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		//if(existsName(formApprovalD.getName(), formApprovalD.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		boolean success=formApprovalD.update();
-		if(success) {
-			//添加日志
-			//addUpdateSystemLog(formApprovalD.getIautoid(), JBoltUserKit.getUserId(), formApprovalD.getName());
-		}
-		return ret(success);
-	}
+    /**
+     * 删除
+     */
+    public Ret delete(Long id) {
+        return deleteById(id, true);
+    }
 
-	/**
-	 * 删除 指定多个ID
-	 * @param ids
-	 * @return
-	 */
-	public Ret deleteByBatchIds(String ids) {
-		return deleteByIds(ids,true);
-	}
+    /**
+     * 删除数据后执行的回调
+     *
+     * @param formApprovalD 要删除的model
+     * @param kv            携带额外参数一般用不上
+     */
+    @Override
+    protected String afterDelete(FormApprovalD formApprovalD, Kv kv) {
+        //addDeleteSystemLog(formApprovalD.getIautoid(), JBoltUserKit.getUserId(),formApprovalD.getName());
+        return null;
+    }
 
-	/**
-	 * 删除
-	 * @param id
-	 * @return
-	 */
-	public Ret delete(Long id) {
-		return deleteById(id,true);
-	}
+    /**
+     * 检测是否可以删除
+     *
+     * @param formApprovalD 要删除的model
+     * @param kv            携带额外参数一般用不上
+     */
+    @Override
+    public String checkCanDelete(FormApprovalD formApprovalD, Kv kv) {
+        //如果检测被用了 返回信息 则阻止删除 如果返回null 则正常执行删除
+        return checkInUse(formApprovalD, kv);
+    }
 
-	/**
-	 * 删除数据后执行的回调
-	 * @param formApprovalD 要删除的model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
-	@Override
-	protected String afterDelete(FormApprovalD formApprovalD, Kv kv) {
-		//addDeleteSystemLog(formApprovalD.getIautoid(), JBoltUserKit.getUserId(),formApprovalD.getName());
-		return null;
-	}
+    /**
+     * 设置返回二开业务所属的关键systemLog的targetType
+     */
+    @Override
+    protected int systemLogTargetType() {
+        return ProjectSystemLogTargetType.NONE.getValue();
+    }
 
-	/**
-	 * 检测是否可以删除
-	 * @param formApprovalD 要删除的model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
-	@Override
-	public String checkCanDelete(FormApprovalD formApprovalD, Kv kv) {
-		//如果检测被用了 返回信息 则阻止删除 如果返回null 则正常执行删除
-		return checkInUse(formApprovalD, kv);
-	}
+    /**
+     * 切换isdirectonmissing属性
+     */
+    public Ret toggleIsDirectOnMissing(Long id) {
+        return toggleBoolean(id, "isDirectOnMissing");
+    }
 
-	/**
-	 * 设置返回二开业务所属的关键systemLog的targetType
-	 * @return
-	 */
-	@Override
-	protected int systemLogTargetType() {
-		return ProjectSystemLogTargetType.NONE.getValue();
-	}
+    /**
+     * 检测是否可以toggle操作指定列
+     *
+     * @param formApprovalD 要toggle的model
+     * @param column        操作的哪一列
+     * @param kv            携带额外参数一般用不上
+     */
+    @Override
+    public String checkCanToggle(FormApprovalD formApprovalD, String column, Kv kv) {
+        //没有问题就返回null  有问题就返回提示string 字符串
+        return null;
+    }
 
-	/**
-	 * 切换isdirectonmissing属性
-	 */
-	public Ret toggleIsDirectOnMissing(Long id) {
-		return toggleBoolean(id, "isDirectOnMissing");
-	}
+    /**
+     * toggle操作执行后的回调处理
+     */
+    @Override
+    protected String afterToggleBoolean(FormApprovalD formApprovalD, String column, Kv kv) {
+        //addUpdateSystemLog(formApprovalD.getIautoid(), JBoltUserKit.getUserId(), formApprovalD.getName(),"的字段["+column+"]值:"+formApprovalD.get(column));
+        return null;
+    }
 
-	/**
-	 * 检测是否可以toggle操作指定列
-	 * @param formApprovalD 要toggle的model
-	 * @param column 操作的哪一列
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
-	@Override
-	public String checkCanToggle(FormApprovalD formApprovalD,String column, Kv kv) {
-		//没有问题就返回null  有问题就返回提示string 字符串
-		return null;
-	}
-
-	/**
-	 * toggle操作执行后的回调处理
-	 */
-	@Override
-	protected String afterToggleBoolean(FormApprovalD formApprovalD, String column, Kv kv) {
-		//addUpdateSystemLog(formApprovalD.getIautoid(), JBoltUserKit.getUserId(), formApprovalD.getName(),"的字段["+column+"]值:"+formApprovalD.get(column));
-		return null;
-	}
-
-	/**
-	 * 检测是否可以删除
-	 * @param formApprovalD model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
-	@Override
-	public String checkInUse(FormApprovalD formApprovalD, Kv kv) {
-		//这里用来覆盖 检测FormApprovalD是否被其它表引用
-		return null;
-	}
+    /**
+     * 检测是否可以删除
+     *
+     * @param formApprovalD model
+     * @param kv            携带额外参数一般用不上
+     */
+    @Override
+    public String checkInUse(FormApprovalD formApprovalD, Kv kv) {
+        //这里用来覆盖 检测FormApprovalD是否被其它表引用
+        return null;
+    }
 
     /**
      * 复制相同数据
-     * @param Mid
-     * @param approvalD
-     * @return
      */
-	public FormApprovalD copySetObj(Long Mid, ApprovalD approvalD){
-		FormApprovalD formApprovalD = new FormApprovalD();
-		formApprovalD.setIFormApprovalId(Mid);
-		formApprovalD.setISeq(approvalD.getISeq());
-		formApprovalD.setIStep(approvalD.getIStep());
-		formApprovalD.setCName(approvalD.getCName());
-		formApprovalD.setIType(approvalD.getIType());
-		formApprovalD.setIApprovalWay(approvalD.getIApprovalWay());
-		formApprovalD.setISupervisorType(approvalD.getISupervisorType());
-		formApprovalD.setIsDirectOnMissing(approvalD.getIsDirectOnMissing());
-		formApprovalD.setISkipOn(approvalD.getISkipOn());
-		formApprovalD.setISpecUserId(approvalD.getISpecUserId());
-		formApprovalD.setISelfSelectWay(approvalD.getISelfSelectWay());
-		formApprovalD.setISingleType(approvalD.getISingleType());
-		formApprovalD.setISingleId(approvalD.getISingleId());
-		formApprovalD.setIStatus(1);
-		return formApprovalD;
-	}
+    public FormApprovalD copySetObj(Long mid, ApprovalD approvalD) {
+        FormApprovalD formApprovalD = new FormApprovalD();
+        
+        formApprovalD.setIFormApprovalId(mid);
+        formApprovalD.setISeq(approvalD.getISeq());
+        formApprovalD.setIStep(approvalD.getIStep());
+        formApprovalD.setCName(approvalD.getCName());
+        formApprovalD.setIType(approvalD.getIType());
+        formApprovalD.setIApprovalWay(approvalD.getIApprovalWay());
+        formApprovalD.setISupervisorType(approvalD.getISupervisorType());
+        formApprovalD.setIsDirectOnMissing(approvalD.getIsDirectOnMissing());
+        formApprovalD.setISkipOn(approvalD.getISkipOn());
+        formApprovalD.setISpecUserId(approvalD.getISpecUserId());
+        formApprovalD.setISelfSelectWay(approvalD.getISelfSelectWay());
+        formApprovalD.setISingleType(approvalD.getISingleType());
+        formApprovalD.setISingleId(approvalD.getISingleId());
+        formApprovalD.setIStatus(1);
+        
+        return formApprovalD;
+    }
 
     /**
      * 根据外键获取数据
-     * @param id
-     * @return
      */
-    public List<FormApprovalD> findListByMid(Long id) {
-
-        return find("select * from Bd_FormApprovalD where iFormApprovalId = '"+id+"' order by iSeq asc ");
+    public List<FormApprovalD> findListByMid(long id) {
+        return find("select * from Bd_FormApprovalD where iFormApprovalId = ? order by iSeq asc ", id);
     }
 
-	/**
-	 * 根据外键获取未审批的节点数据
-	 * @param id
-	 * @return
-	 */
-	public List<FormApprovalD> findListByAid(Long id) {
+    /**
+     * 根据外键获取未审批的节点数据
+     */
+    public List<FormApprovalD> findListByAid(long id) {
+        return find("select * from Bd_FormApprovalD where iFormApprovalId = ? and iStatus = 1 order by iSeq asc ", id);
+    }
 
-		return find("select * from Bd_FormApprovalD where iFormApprovalId = '"+id+"' and iStatus = 1 order by iSeq " +
-				"asc ");
-	}
-
-	/**
-	 * 审批人列表数据源
-	 * @param pageNum
-	 * @param pageSize
-	 * @param kv
-	 * @return
-	 */
-	public Page<Record> userDatas(int pageNum, int pageSize, Kv kv){
-		return dbTemplate("formapprovald.userDatas", kv).paginate(pageNum,pageSize);
-	}
-
+    /**
+     * 审批人列表数据源
+     */
+    public Page<Record> userDatas(int pageNum, int pageSize, Kv kv) {
+        return dbTemplate("formapprovald.userDatas", kv).paginate(pageNum, pageSize);
+    }
 
     /**
      * 多个可编辑表格同时提交
-     * @param jboltTableMulti
-     * @return
      */
     public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti) {
-        if(jboltTableMulti==null||jboltTableMulti.isEmpty()) {
+        if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
             return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
         }
-        //这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
-//		jboltTableMulti.entrySet().forEach(en->{
-//			JBoltTable jBoltTable = en.getValue();
+        
+        // 这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
         JBoltTable jBoltTable = jboltTableMulti.getJBoltTable("table1");
         JBoltTable jBoltTable2 = jboltTableMulti.getJBoltTable("table2");
-        Date now = new Date();
 
-//        该节点的基础信息
+        // 该节点的基础信息
         FormApprovalD approvalD = jBoltTable.getFormModel(FormApprovalD.class, "formApprovalD");
         ValidationUtils.notNull(approvalD, JBoltMsg.PARAM_ERROR);
 
-		Long Did = approvalD.getIAutoId(); // 节点ID
+        // 节点ID
+        Long did = approvalD.getIAutoId(); 
 
-//        该节点 流程主表信息
-		FormApprovalFlowM flowM = flowMService.findFirst("select * from Bd_FormApprovalFlowM where iApprovalDid = " + Did);
-		Long flowMid = flowM.getIAutoId(); //流程主表ID
+        // 该节点 流程主表信息
+        FormApprovalFlowM flowM = flowMService.findFirstByIapprovalDid(did);
+        // 流程主表ID
+        Long flowMid = flowM.getIAutoId(); 
 
-//		该审批流的主表
-		FormApproval approval = formApprovalService.findFirst("select * from Bd_FormApproval where iAutoId = " + approvalD.getIFormApprovalId());
+        // 该审批流的主表
+        FormApproval approval = formApprovalService.findById(approvalD.getIFormApprovalId());
+        // 提审人
+        long iCreateBy = approval.getICreateBy();
+        
+        Person person = personService.findFirstByUserId(iCreateBy);
 
-//		提审人
-		Long iCreateBy = approval.getICreateBy();
-		Person person = personService.findFirstByUserId(iCreateBy);
+        tx(() -> {
 
-		tx(() -> {
-
-			FormApprovalD oldApprovalD = null;
+            FormApprovalD oldApprovalD = null;
 
             //修改
-            if(isOk(approvalD.getIAutoId())){
+            if (isOk(approvalD.getIAutoId())) {
                 ValidationUtils.isTrue(approvalD.update(), JBoltMsg.FAIL);
 
-				oldApprovalD = findFirst("select * from Bd_FormApprovalD where iAutoId = "+approvalD.getIAutoId());
+                oldApprovalD = findFirst("select * from Bd_FormApprovalD where iAutoId = " + approvalD.getIAutoId());
 
-            }else{
+            } else {
                 //新增
                 ValidationUtils.isTrue(approvalD.save(), JBoltMsg.FAIL);
             }
@@ -345,176 +275,178 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
             Long iApprovalDid = approvalD.getIAutoId();
             Integer iType = approvalD.getIType();
 
-			/**
-			 * 比较旧配置的审批方式
-			 */
-			if (oldApprovalD != null){
+            /*
+             * 比较旧配置的审批方式
+             */
+            if (oldApprovalD != null) {
 
 //			    相同则为修改（只有新增 或者 删除
-				if (Objects.equals(iType, oldApprovalD.getIType())){
+                if (Objects.equals(iType, oldApprovalD.getIType())) {
 
-                    List<FormApprovalFlowD> flowDS = new ArrayList<>();
+                    List<FormApprovalFlowD> flowds = new ArrayList<>();
 
-					switch (iType){
-						case 1:  //指定人员
-							if (jBoltTable.saveIsNotBlank()){
-								List<FormapprovaldUser> saveModelList = jBoltTable.getSaveModelList(FormapprovaldUser.class);
+                    switch (iType) {
+                        // 指定人员
+                        case 1:  
+                            if (jBoltTable.saveIsNotBlank()) {
+                                List<FormapprovaldUser> saveModelList = jBoltTable.getSaveModelList(FormapprovaldUser.class);
 
-								List<Record> flowDList = findRecord("select * from Bd_FormApprovalFlowD where " +
-										"iFormApprovalFlowMid = " + flowMid);
+                                List<Record> flowDList = findRecords("select * from Bd_FormApprovalFlowD where iFormApprovalFlowMid = ? ", flowMid);
 
-								int size = flowDList.size();
+                                int size = flowDList.size();
 
-								for (FormapprovaldUser approvaldUser : saveModelList) {
-									approvaldUser.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-									approvaldUser.setIFormApprovalId(iApprovalDid);
-									FormApprovalFlowD flowD = new FormApprovalFlowD();
-									flowD.setIFormApprovalFlowMid(flowMid);
-									flowD.setISeq(++size);
-									flowD.setIUserId(approvaldUser.getIUserId());
-									flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-									flowDS.add(flowD);
-								}
-								formapprovaldUserService.batchSave(saveModelList,saveModelList.size());
+                                for (FormapprovaldUser approvaldUser : saveModelList) {
+                                    approvaldUser.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                    approvaldUser.setIFormApprovalId(iApprovalDid);
+                                    
+                                    FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                    
+                                    flowD.setIFormApprovalFlowMid(flowMid);
+                                    flowD.setISeq(++size);
+                                    flowD.setIUserId(approvaldUser.getIUserId());
+                                    flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                    
+                                    flowds.add(flowD);
+                                }
+                                formapprovaldUserService.batchSave(saveModelList, saveModelList.size());
+                            }
+                            
+                            if (jBoltTable.updateIsNotBlank()) {
+                                List<FormapprovaldUser> updateModelList = jBoltTable.getUpdateModelList(FormapprovaldUser.class);
+                                formapprovaldUserService.batchUpdate(updateModelList, updateModelList.size());
+                            }
 
-							}
-							if (jBoltTable.updateIsNotBlank()){
-								List<FormapprovaldUser> updateModelList = jBoltTable.getUpdateModelList(FormapprovaldUser.class);
-								formapprovaldUserService.batchUpdate(updateModelList,updateModelList.size());
-							}
-
-							if (jBoltTable.deleteIsNotBlank()){
+                            if (jBoltTable.deleteIsNotBlank()) {
                                 String deleteIds = JBoltArrayUtil.join(jBoltTable.getDelete(), ",");
-								Integer integer = flowDService.deleteByMidAndUserId(iApprovalDid, deleteIds);
-								if (integer > 0){
-									formapprovaldUserService.deleteByIds(jBoltTable.getDelete());
-								}
-							}
-							break;
-						case 5:
-							if (jBoltTable2.saveIsNotBlank()){
-								List<FormapprovaldRole> saveModelList = jBoltTable2.getSaveModelList(FormapprovaldRole.class);
-								saveModelList.forEach(approvaldRole -> {
-									approvaldRole.setIFormApprovalId(iApprovalDid);
-									approvaldRole.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                Integer integer = flowDService.deleteByMidAndUserId(iApprovalDid, deleteIds);
+                                if (integer > 0) {
+                                    formapprovaldUserService.deleteByIds(jBoltTable.getDelete());
+                                }
+                            }
+                            break;
+                        case 5:
+                            if (jBoltTable2.saveIsNotBlank()) {
+                                List<FormapprovaldRole> saveModelList = jBoltTable2.getSaveModelList(FormapprovaldRole.class);
+                                saveModelList.forEach(approvaldRole -> {
+                                    approvaldRole.setIFormApprovalId(iApprovalDid);
+                                    approvaldRole.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
 
-									approvaldRole.save();
-									Page<User> userPage = userService.paginateUsersByRoleId(1, 20, approvaldRole.getIRoleId());
-									List<User> userList = userPage.getList();
-									if (userList.size() > 0){
-										List<FormapprovaldRoleusers> list = new ArrayList<>();
-										for (int i = 0; i < userList.size(); i++) {
-											User user = userList.get(i);
-											int j = i + 1;
+                                    approvaldRole.save();
+                                    Page<User> userPage = userService.paginateUsersByRoleId(1, 20, approvaldRole.getIRoleId());
+                                    List<User> userList = userPage.getList();
+                                    if (userList.size() > 0) {
+                                        List<FormapprovaldRoleusers> list = new ArrayList<>();
+                                        for (int i = 0; i < userList.size(); i++) {
+                                            User user = userList.get(i);
+                                            int j = i + 1;
 
-											FormapprovaldRoleusers roleusers = new FormapprovaldRoleusers();
-											roleusers.setIFormApprovaldRoleId(approvaldRole.getIAutoId());
-											roleusers.setISeq(j);
-											roleusers.setIUserId(user.getId());
-											list.add(roleusers);
+                                            FormapprovaldRoleusers roleusers = new FormapprovaldRoleusers();
+                                            roleusers.setIFormApprovaldRoleId(approvaldRole.getIAutoId());
+                                            roleusers.setISeq(j);
+                                            roleusers.setIUserId(user.getId());
+                                            list.add(roleusers);
 
-											FormApprovalFlowD flowD1 = new FormApprovalFlowD();
-											flowD1.setIUserId(user.getId());
-											flowD1.setIFormApprovalFlowMid(flowMid);
-											flowD1.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-											flowD1.setISeq(j);
-											flowDS.add(flowD1);
-										}
-										formapprovaldRoleusersService.batchSave(list,list.size());
-									}
-								});
+                                            FormApprovalFlowD flowD1 = new FormApprovalFlowD();
+                                            flowD1.setIUserId(user.getId());
+                                            flowD1.setIFormApprovalFlowMid(flowMid);
+                                            flowD1.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                            flowD1.setISeq(j);
+                                            flowds.add(flowD1);
+                                        }
+                                        formapprovaldRoleusersService.batchSave(list, list.size());
+                                    }
+                                });
 //								formapprovaldRoleService.batchSave(saveModelList,saveModelList.size());
 
-							}
-							if (jBoltTable2.updateIsNotBlank()){
-								List<FormapprovaldRole> updateModelList =
-                                        jBoltTable2.getUpdateModelList(FormapprovaldRole.class);
-								formapprovaldRoleService.batchUpdate(updateModelList,updateModelList.size());
-							}
+                            }
+                            if (jBoltTable2.updateIsNotBlank()) {
+                                List<FormapprovaldRole> updateModelList = jBoltTable2.getUpdateModelList(FormapprovaldRole.class);
+                                formapprovaldRoleService.batchUpdate(updateModelList, updateModelList.size());
+                            }
 
-							if (jBoltTable2.deleteIsNotBlank()){
-								formapprovaldRoleService.deleteByIds(jBoltTable2.getDelete());
+                            if (jBoltTable2.deleteIsNotBlank()) {
+                                formapprovaldRoleService.deleteByIds(jBoltTable2.getDelete());
                                 String deleteIds = JBoltArrayUtil.join(jBoltTable2.getDelete(), ",");
-                                flowDService.deleteByMidAndRoleId(iApprovalDid,deleteIds);
-							}
-							break;
-						default:
-							break;
-					}
+                                flowDService.deleteByMidAndRoleId(iApprovalDid, deleteIds);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
 
-                    flowDService.batchSave(flowDS,flowDS.size());
+                    flowDService.batchSave(flowds, flowds.size());
 
-				} else {
+                } else {
 
 //				    不同则为新增
 //                  需删除之前的流程  新增新的流程
                     flowDService.deleteByMid(flowMid);
 
-					// 流程子表集合
-					List<FormApprovalFlowD> flowDList = new ArrayList<>();
+                    // 流程子表集合
+                    List<FormApprovalFlowD> flowDList = new ArrayList<>();
 
-					/*
-					 * 部门设置的配置信息
-					 */
-					// 主管类型
-					Integer iSupervisorType = approvalD.getISupervisorType();
-					// 是否上级代审
-					Boolean isDirectOnMissing = approvalD.getIsDirectOnMissing();
-					// 为空是否跳过或是指定审批人
-					Integer iSkipOn = approvalD.getISkipOn();
-					// 指定审批人
-					Long iSpecUserId = approvalD.getISpecUserId();
+                    /*
+                     * 部门设置的配置信息
+                     */
+                    // 主管类型
+                    Integer iSupervisorType = approvalD.getISupervisorType();
+                    // 是否上级代审
+                    Boolean isDirectOnMissing = approvalD.getIsDirectOnMissing();
+                    // 为空是否跳过或是指定审批人
+                    Integer iSkipOn = approvalD.getISkipOn();
+                    // 指定审批人
+                    Long iSpecUserId = approvalD.getISpecUserId();
 
-					// 提审人部门
-					String cdeptNum = person.getCdeptNum();
+                    // 提审人部门
+                    String cdeptNum = person.getCdeptNum();
 
-					Kv param = Kv.by("dept", cdeptNum);
+                    Kv param = Kv.by("dept", cdeptNum);
 
-					// 找到上级本级部门主管
-					List<Record> list = dbTemplate("formapproval.getDeptDataTree", param).find();
+                    // 找到上级本级部门主管
+                    List<Record> list = dbTemplate("formapproval.getDeptDataTree", param).find();
 
-					int size = list.size();
+                    int size = list.size();
 
-					// 判断审批人是否为空
-					boolean isNullPerson = false;
-					// 获取集合里一级数据
-					int getStair = 0;
-					// 获取集合上级数据
-					int getSuperior = 1;
+                    // 判断审批人是否为空
+                    boolean isNullPerson = false;
+                    // 获取集合里一级数据
+                    int getStair = 0;
+                    // 获取集合上级数据
+                    int getSuperior;
 
-					/*
-					 * 审批人设置
-					 */
-					switch (iType) {
-						// 指定人员
-						case 1:
-							// 查询是否存在人员配置信息
-							List<FormapprovaldUser> saveModelList = jBoltTable.getSaveModelList(FormapprovaldUser.class);
-							if (saveModelList.size() > 0) {
-								saveModelList.forEach(approvaldUser -> {
-									FormapprovaldUser formapprovaldUser = new FormapprovaldUser();
-									formapprovaldUser.setIFormApprovalId(approvalD.getIAutoId());
-									formapprovaldUser.setISeq(approvaldUser.getISeq());
-									formapprovaldUser.setIUserId(approvaldUser.getIUserId());
-									formapprovaldUser.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-									formapprovaldUser.setIPersonId(approvaldUser.getIPersonId());
+                    /*
+                     * 审批人设置
+                     */
+                    switch (iType) {
+                        // 指定人员
+                        case 1:
+                            // 查询是否存在人员配置信息
+                            List<FormapprovaldUser> saveModelList = jBoltTable.getSaveModelList(FormapprovaldUser.class);
+                            if (saveModelList.size() > 0) {
+                                saveModelList.forEach(approvaldUser -> {
+                                    FormapprovaldUser formapprovaldUser = new FormapprovaldUser();
+                                    formapprovaldUser.setIFormApprovalId(approvalD.getIAutoId());
+                                    formapprovaldUser.setISeq(approvaldUser.getISeq());
+                                    formapprovaldUser.setIUserId(approvaldUser.getIUserId());
+                                    formapprovaldUser.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                    formapprovaldUser.setIPersonId(approvaldUser.getIPersonId());
 
-									FormApprovalFlowD flowD = new FormApprovalFlowD();
-									flowD.setIFormApprovalFlowMid(flowMid);
-									flowD.setISeq(approvaldUser.getISeq());
-									flowD.setIUserId(approvaldUser.getIUserId());
-									flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-									flowDList.add(flowD);
-								});
-								formapprovaldUserService.batchSave(saveModelList);
-							} else {
+                                    FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                    flowD.setIFormApprovalFlowMid(flowMid);
+                                    flowD.setISeq(approvaldUser.getISeq());
+                                    flowD.setIUserId(approvaldUser.getIUserId());
+                                    flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                    flowDList.add(flowD);
+                                });
+                                formapprovaldUserService.batchSave(saveModelList);
+                            } else {
 
-								ValidationUtils.error("该审批顺序为" + approvalD.getISeq() + "配置的指定人员未指定人员");
-							}
-							break;
-						case 2: //部门主管
+                                ValidationUtils.error("该审批顺序为" + approvalD.getISeq() + "配置的指定人员未指定人员");
+                            }
+                            break;
+                        case 2: //部门主管
 
-							switch (iSupervisorType) {
+							/*switch (iSupervisorType) {
 								// 直接主管
 								case 1:
 
@@ -531,167 +463,178 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 									break;
 								default:
 									break;
-							}
+							}*/
 
-							if (size > getStair) {
-								Record record = list.get(getStair);
-								Long idutyuserid = record.getLong("idutyuserid");
-								if (idutyuserid != null) {
-									// 通过人员档案ID 找到 用户表ID
-									Record personUser = findFirstRecord("select * from Bd_Person where iAutoId = ? ", idutyuserid);
-									Long iuserid = personUser.getLong("iuserid");
-									String cpsnname = personUser.getStr("cpsnname");
-									if (iuserid != null) {
-										FormApprovalFlowD flowD = new FormApprovalFlowD();
-										flowD.setIFormApprovalFlowMid(flowMid);
-										flowD.setISeq(1);
-										flowD.setIUserId(iuserid);
-										flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-										flowDList.add(flowD);
-									} else {
-										ValidationUtils.error(cpsnname + "该人员还未匹配所属用户名");
-									}
-								} else {
-									// 为空 检查是否开启上级代审
-									if (isDirectOnMissing && size > getSuperior) {  // 开启 且 存在上级
-										Record record1 = list.get(getSuperior);
-										Long idutyuserid1 = record1.getLong("idutyuserid");
-										if (idutyuserid1 != null) {  // 且上级负责人不为空
-											FormApprovalFlowD flowD = new FormApprovalFlowD();
-											flowD.setIFormApprovalFlowMid(flowMid);
-											flowD.setISeq(1);
-											flowD.setIUserId(idutyuserid1);
-											flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-											flowDList.add(flowD);
-										} else {  // 上级负责人为空
-											isNullPerson = true;
-										}
-									} else { //未开启 或者 上级为空
-										isNullPerson = true;
-									}
+                            /*
+                             * 一级主管（直属主管）：班负责人，班长
+                             * 二级主管：系负责人，系长
+                             * 三级主管：科负责人，科长
+                             * 四级主管：部负责人，部长
+                             * 五级主管：公司负责人，总经理
+                             */
 
-									/*
-									 * 如果 直属主管为空
-									 * (1、开启上级代审 上级主管也为空
-									 * 或
-									 * 2、未开启上级代审)
-									 * 且 开启审批人为空时指定审批人
-									 *
-									 * 否则 检查是否开启审批人为空时自动通过
-									 */
-									if (isNullPerson) {
-										if (iSkipOn == 2 && iSpecUserId != null) {
-											FormApprovalFlowD flowD = new FormApprovalFlowD();
-											flowD.setIFormApprovalFlowMid(flowMid);
-											flowD.setISeq(1);
-											flowD.setIUserId(iSpecUserId);
-											flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-											flowDList.add(flowD);
-										}
+                            getStair = iSupervisorType - 1;
+                            getSuperior = iSupervisorType;
 
-										if (iSkipOn == 1) {
-											FormApprovalFlowD flowD = new FormApprovalFlowD();
-											flowD.setIFormApprovalFlowMid(flowMid);
-											flowD.setISeq(1);
-											flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-											flowDList.add(flowD);
-										}
-									}
-								}
-							}
-							break;
+                            if (size > getStair) {
+                                Record record = list.get(getStair);
+                                Long idutyuserid = record.getLong("idutyuserid");
+                                if (idutyuserid != null) {
+                                    // 通过人员档案ID 找到 用户表ID
+                                    Record personUser = findFirstRecord("select * from Bd_Person where iAutoId = ? ", idutyuserid);
+                                    Long iuserid = personUser.getLong("iuserid");
+                                    String cpsnname = personUser.getStr("cpsnname");
+                                    if (iuserid != null) {
+                                        FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                        flowD.setIFormApprovalFlowMid(flowMid);
+                                        flowD.setISeq(1);
+                                        flowD.setIUserId(iuserid);
+                                        flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                        flowDList.add(flowD);
+                                    } else {
+                                        ValidationUtils.error(cpsnname + "该人员还未匹配所属用户名");
+                                    }
+                                } else {
+                                    // 为空 检查是否开启上级代审
+                                    if (isDirectOnMissing && size > getSuperior) {  // 开启 且 存在上级
+                                        Record record1 = list.get(getSuperior);
+                                        Long idutyuserid1 = record1.getLong("idutyuserid");
+                                        if (idutyuserid1 != null) {  // 且上级负责人不为空
+                                            FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                            flowD.setIFormApprovalFlowMid(flowMid);
+                                            flowD.setISeq(1);
+                                            flowD.setIUserId(idutyuserid1);
+                                            flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                            flowDList.add(flowD);
+                                        } else {  // 上级负责人为空
+                                            isNullPerson = true;
+                                        }
+                                    } else { //未开启 或者 上级为空
+                                        isNullPerson = true;
+                                    }
 
-						// 直属主管
-						case 3:
-							/*
-							 * 直属主管
-							 * 判断 审批人为空的情况
-							 */
-							if (size > getStair) {
-								Record record = list.get(getStair);
-								Long idutyuserid = record.getLong("idutyuserid");
-								if (idutyuserid != null) {
-									FormApprovalFlowD flowD = new FormApprovalFlowD();
-									flowD.setIFormApprovalFlowMid(flowMid);
-									flowD.setISeq(1);
-									flowD.setIUserId(idutyuserid);
-									flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-									flowDList.add(flowD);
-								} else {   //为空
-									/*
-									 * 如果 直属主管为空
-									 * 且 开启审批人为空时指定审批人
-									 */
-									if (iSkipOn == 2 && iSpecUserId != null) {
-										FormApprovalFlowD flowD = new FormApprovalFlowD();
-										flowD.setIFormApprovalFlowMid(flowMid);
-										flowD.setISeq(1);
-										flowD.setIUserId(iSpecUserId);
-										flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-										flowDList.add(flowD);
-									}
-								}
-							}
-							break;
+                                    /*
+                                     * 如果 直属主管为空
+                                     * (1、开启上级代审 上级主管也为空
+                                     * 或
+                                     * 2、未开启上级代审)
+                                     * 且 开启审批人为空时指定审批人
+                                     *
+                                     * 否则 检查是否开启审批人为空时自动通过
+                                     */
+                                    if (isNullPerson) {
+                                        if (iSkipOn == 2 && iSpecUserId != null) {
+                                            FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                            flowD.setIFormApprovalFlowMid(flowMid);
+                                            flowD.setISeq(1);
+                                            flowD.setIUserId(iSpecUserId);
+                                            flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                            flowDList.add(flowD);
+                                        }
 
-						// 发起人自己
-						case 4:
-							FormApprovalFlowD flowD = new FormApprovalFlowD();
-							flowD.setIFormApprovalFlowMid(flowMid);
-							flowD.setISeq(1);
-							flowD.setIUserId(iCreateBy);
-							flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-							flowDList.add(flowD);
-							break;
-						// 角色
-						case 5:
-							List<FormapprovaldRole> saveRoleList =
-									jBoltTable2.getSaveModelList(FormapprovaldRole.class);
-							if (saveRoleList.size() > 0) {
+                                        if (iSkipOn == 1) {
+                                            FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                            flowD.setIFormApprovalFlowMid(flowMid);
+                                            flowD.setISeq(1);
+                                            flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                            flowDList.add(flowD);
+                                        }
+                                    }
+                                }
+                            }
+                            break;
 
-								saveRoleList.forEach(approvaldRole -> {
-									FormapprovaldRole formapprovaldRole = new FormapprovaldRole();
-									formapprovaldRole.setIFormApprovalId(Did);
-									formapprovaldRole.setISeq(approvaldRole.getISeq());
-									formapprovaldRole.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-									formapprovaldRole.setIRoleId(approvaldRole.getIRoleId());
+                        // 直属主管
+                        case 3:
+                            /*
+                             * 直属主管
+                             * 判断 审批人为空的情况
+                             */
+                            if (size > getStair) {
+                                Record record = list.get(getStair);
+                                Long idutyuserid = record.getLong("idutyuserid");
+                                if (idutyuserid != null) {
+                                    FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                    flowD.setIFormApprovalFlowMid(flowMid);
+                                    flowD.setISeq(1);
+                                    flowD.setIUserId(idutyuserid);
+                                    flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                    flowDList.add(flowD);
+                                } else {   //为空
+                                    /*
+                                     * 如果 直属主管为空
+                                     * 且 开启审批人为空时指定审批人
+                                     */
+                                    if (iSkipOn == 2 && iSpecUserId != null) {
+                                        FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                        flowD.setIFormApprovalFlowMid(flowMid);
+                                        flowD.setISeq(1);
+                                        flowD.setIUserId(iSpecUserId);
+                                        flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                        flowDList.add(flowD);
+                                    }
+                                }
+                            }
+                            break;
 
-									formapprovaldRole.save();
-									Page<User> userPage = userService.paginateUsersByRoleId(1, 20, approvaldRole.getIRoleId());
-									List<User> userList = userPage.getList();
-									if (userList.size() > 0){
-										List<FormapprovaldRoleusers> list1 = new ArrayList<>();
-										for (int i = 0; i < userList.size(); i++) {
-											User user = userList.get(i);
-											int j = i + 1;
+                        // 发起人自己
+                        case 4:
+                            FormApprovalFlowD flowD = new FormApprovalFlowD();
+                            flowD.setIFormApprovalFlowMid(flowMid);
+                            flowD.setISeq(1);
+                            flowD.setIUserId(iCreateBy);
+                            flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                            flowDList.add(flowD);
+                            break;
+                        // 角色
+                        case 5:
+                            List<FormapprovaldRole> saveRoleList =
+                                    jBoltTable2.getSaveModelList(FormapprovaldRole.class);
+                            if (saveRoleList.size() > 0) {
 
-											FormapprovaldRoleusers roleusers = new FormapprovaldRoleusers();
-											roleusers.setIFormApprovaldRoleId(approvaldRole.getIAutoId());
-											roleusers.setISeq(j);
-											roleusers.setIUserId(user.getId());
-											list1.add(roleusers);
+                                saveRoleList.forEach(approvaldRole -> {
+                                    FormapprovaldRole formapprovaldRole = new FormapprovaldRole();
+                                    formapprovaldRole.setIFormApprovalId(did);
+                                    formapprovaldRole.setISeq(approvaldRole.getISeq());
+                                    formapprovaldRole.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                    formapprovaldRole.setIRoleId(approvaldRole.getIRoleId());
 
-											FormApprovalFlowD flowD1 = new FormApprovalFlowD();
-											flowD1.setIUserId(user.getId());
-											flowD1.setIFormApprovalFlowMid(flowMid);
-											flowD1.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-											flowD1.setISeq(j);
-											flowDList.add(flowD1);
-										}
-										formapprovaldRoleusersService.batchSave(list1,list1.size());
-									}
+                                    formapprovaldRole.save();
+                                    Page<User> userPage = userService.paginateUsersByRoleId(1, 20, approvaldRole.getIRoleId());
+                                    List<User> userList = userPage.getList();
+                                    if (userList.size() > 0) {
+                                        List<FormapprovaldRoleusers> list1 = new ArrayList<>();
+                                        for (int i = 0; i < userList.size(); i++) {
+                                            User user = userList.get(i);
+                                            int j = i + 1;
 
-								});
-							} else {
-								ValidationUtils.error("该审批顺序为" + approvalD.getISeq() + "配置的角色未指定角色");
-							}
-							break;
-						default:
-							break;
-					}
-					flowDService.batchSave(flowDList,flowDList.size());
-				}
-			}
+                                            FormapprovaldRoleusers roleusers = new FormapprovaldRoleusers();
+                                            roleusers.setIFormApprovaldRoleId(approvaldRole.getIAutoId());
+                                            roleusers.setISeq(j);
+                                            roleusers.setIUserId(user.getId());
+                                            list1.add(roleusers);
+
+                                            FormApprovalFlowD flowD1 = new FormApprovalFlowD();
+                                            flowD1.setIUserId(user.getId());
+                                            flowD1.setIFormApprovalFlowMid(flowMid);
+                                            flowD1.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                            flowD1.setISeq(j);
+                                            flowDList.add(flowD1);
+                                        }
+                                        formapprovaldRoleusersService.batchSave(list1, list1.size());
+                                    }
+
+                                });
+                            } else {
+                                ValidationUtils.error("该审批顺序为" + approvalD.getISeq() + "配置的角色未指定角色");
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    flowDService.batchSave(flowDList, flowDList.size());
+                }
+            }
 
             return true;
         });
@@ -701,91 +644,73 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 
     /**
      * 人员行数据
-     * @param pageNum
-     * @param pageSize
-     * @param kv
-     * @return
      */
-    public Page<Record> lineDatas(int pageNum, int pageSize, Kv kv){
-        return dbTemplate("formapprovald.lineDatas",kv).paginate(pageNum, pageSize);
+    public Page<Record> lineDatas(int pageNum, int pageSize, Kv kv) {
+        return dbTemplate("formapprovald.lineDatas", kv).paginate(pageNum, pageSize);
     }
-
 
     /**
      * 角色行数据
-     * @param pageNum
-     * @param pageSize
-     * @param kv
-     * @return
      */
-    public Page<Record> roleDatas(int pageNum, int pageSize, Kv kv){
-        return dbTemplate("formapprovald.roleDatas",kv).paginate(pageNum, pageSize);
+    public Page<Record> roleDatas(int pageNum, int pageSize, Kv kv) {
+        return dbTemplate("formapprovald.roleDatas", kv).paginate(pageNum, pageSize);
     }
 
     /**
      * 判断该节点是否已在审批中
-     * @param id
-     * @return
      */
-    public Integer isApprovaling(Long id){
-        List<FormApprovalFlowD> flowDS = flowDService.find("select *\n" +
-                "from Bd_FormApprovalFlowD\n" +
-                "where iFormApprovalFlowMid = (\n" +
-                "    select t1.iAutoId\n" +
-                "    from Bd_FormApprovalFlowM t1\n" +
-                "    where iApprovalDid = '" + id + "'\n" +
-                ")\n" +
-                "  and (iAuditStatus = 2 or iAuditStatus = 3)");
+    public Integer isApprovaling(Long id) {
+        List<FormApprovalFlowD> flowds = flowDService.find("select * " +
+                "from Bd_FormApprovalFlowD " +
+                "where iFormApprovalFlowMid = ( " +
+                "    select t1.iAutoId " +
+                "    from Bd_FormApprovalFlowM t1 " +
+                "    where iApprovalDid = ? ) " +
+                "  and (iAuditStatus = 2 or iAuditStatus = 3)", id);
 
-        return flowDS.size();
+        return flowds.size();
     }
 
-	/**
-	 *
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 */
-	public Page<Record> chooseUsers(int pageNumber, int pageSize, Kv kv){
+    public Page<Record> chooseUsers(int pageNumber, int pageSize, Kv kv) {
+        return dbTemplate("formapprovald.chooseUsers", kv).paginate(pageNumber, pageSize);
+    }
 
-		return dbTemplate("formapprovald.chooseUsers",kv).paginate(pageNumber, pageSize);
-	}
+    /**
+     * 获取角色人员信息
+     */
+    public Page<Record> roleUsers(int pageNumber, int pageSize, Kv kv) {
+        return dbTemplate("formapprovald.roleUsers", kv).paginate(pageNumber, pageSize);
+    }
 
-	/**
-	 * 获取角色人员信息
-	 * @return
-	 */
-	public Page<Record> roleUsers(int pageNumber, int pageSize, Kv kv){
-		return dbTemplate("formapprovald.roleUsers",kv).paginate(pageNumber, pageSize);
-	}
+    /**
+     * 保存角色人员方法
+     */
+    public Ret saveRoleUser(JBoltTable jBoltTable) {
+        ValidationUtils.notNull(jBoltTable, JBoltMsg.PARAM_ERROR);
 
-	/**
-	 * 保存角色人员方法
-	 * @param jBoltTable
-	 * @return
-	 */
-	public Ret saveRoleUser(JBoltTable jBoltTable) {
-		ValidationUtils.notNull(jBoltTable, JBoltMsg.PARAM_ERROR);
-
-		JSONObject form = jBoltTable.getForm();
-		System.out.println("form===="+form);
-		Long autoId = form.getLong("autoId");
+        JSONObject form = jBoltTable.getForm();
+        LOG.info("form===={}", form);
+        
+        Long autoId = form.getLong("autoId");
 
 //		查询流程主表ID
-        Record flowM = findFirstRecord("select iAutoId\n" +
-                "from Bd_FormApprovalFlowM\n" +
-                "where iApprovalDid =\n" +
+        Record flowM = findFirstRecord("select iAutoId " +
+                "from Bd_FormApprovalFlowM " +
+                "where iApprovalDid = " +
                 "      (select iFormApprovalDid from Bd_FormApprovalD_Role where iAutoId = " + autoId + ")");
 
         Long flowMId = flowM.getLong("iautoid");
 
         tx(() -> {
-			if (jBoltTable.saveIsNotBlank()){
-				List<FormapprovaldRoleusers> saveModelList = jBoltTable.getSaveModelList(FormapprovaldRoleusers.class);
+            
+            if (jBoltTable.saveIsNotBlank()) {
+                List<FormapprovaldRoleusers> saveModelList = jBoltTable.getSaveModelList(FormapprovaldRoleusers.class);
+                
                 // 流程子表集合
                 List<FormApprovalFlowD> flowDList = new ArrayList<>();
-				saveModelList.forEach(approvaldRoleusers -> {
-					approvaldRoleusers.setIFormApprovaldRoleId(autoId);
+                
+                saveModelList.forEach(approvaldRoleusers -> {
+                    approvaldRoleusers.setIFormApprovaldRoleId(autoId);
 
                     FormApprovalFlowD flowD1 = new FormApprovalFlowD();
                     flowD1.setIUserId(approvaldRoleusers.getIUserId());
@@ -793,45 +718,43 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
                     flowD1.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                     flowD1.setISeq(approvaldRoleusers.getISeq());
                     flowDList.add(flowD1);
-				});
-				flowDService.batchSave(flowDList,flowDList.size());
-				formapprovaldRoleusersService.batchSave(saveModelList,saveModelList.size());
-			}
-			if (jBoltTable.deleteIsNotBlank()){
+                });
+                
+                flowDService.batchSave(flowDList, flowDList.size());
+                formapprovaldRoleusersService.batchSave(saveModelList, saveModelList.size());
+            }
+            
+            if (jBoltTable.deleteIsNotBlank()) {
 
 //			    先删除流程表数据
-				int delete = delete("delete\n" +
-						"from Bd_FormApprovalFlowD\n" +
-						"where iFormApprovalFlowMid = "+flowMId+"\n" +
-						"  and iUserId in (select iUserId\n" +
-						"                  from Bd_FormApprovalD_RoleUsers\n" +
-						"                  where Bd_FormApprovalD_RoleUsers.iAutoId in ("+ ArrayUtil.join(jBoltTable.getDelete(), COMMA)+"))");
+                int delete = delete("delete " +
+                        "from Bd_FormApprovalFlowD " +
+                        "where iFormApprovalFlowMid = " + flowMId +
+                        "  and iUserId in (select iUserId " +
+                        "                  from Bd_FormApprovalD_RoleUsers " +
+                        "                  where Bd_FormApprovalD_RoleUsers.iAutoId in (" + ArrayUtil.join(jBoltTable.getDelete(), COMMA) + "))");
 
-				if (delete > 1) {
-					formapprovaldRoleusersService.realDeleteByIds(jBoltTable.getDelete());
-				}
-			}
+                if (delete > 1) {
+                    formapprovaldRoleusersService.realDeleteByIds(jBoltTable.getDelete());
+                }
+            }
 
-			List<FormapprovaldRoleusers> roleusers = formapprovaldRoleusersService.find("select * from " +
-					"Bd_FormApprovalD_RoleUsers where" +
-					" " +
-					"iFormApprovaldRoleId" +
-					" = " + autoId + " " +
-					"order by iSeq asc");
+            List<FormapprovaldRoleusers> roleusers = formapprovaldRoleusersService.findByIformApprovaldRoleId(autoId);
 
-			if (roleusers.size() > 0) {
-				List<FormapprovaldRoleusers> roleusersList = new ArrayList<>();
-				for (int j = 0, rank = 0; j < roleusers.size(); j++) {
-					FormapprovaldRoleusers approvaldRoleusers = roleusers.get(j);
-					approvaldRoleusers.setISeq(++rank);
-					roleusersList.add(approvaldRoleusers);
-				}
-				formapprovaldRoleusersService.batchUpdate(roleusersList,roleusersList.size());
-			}
+            if (roleusers.size() > 0) {
+                List<FormapprovaldRoleusers> roleusersList = new ArrayList<>();
+                for (int j = 0, rank = 0; j < roleusers.size(); j++) {
+                    FormapprovaldRoleusers approvaldRoleusers = roleusers.get(j);
+                    approvaldRoleusers.setISeq(++rank);
+                    roleusersList.add(approvaldRoleusers);
+                }
+                formapprovaldRoleusersService.batchUpdate(roleusersList, roleusersList.size());
+            }
 
-			return true;
-		});
+            return true;
+        });
 
-		return SUCCESS;
-	}
+        return SUCCESS;
+    }
+    
 }

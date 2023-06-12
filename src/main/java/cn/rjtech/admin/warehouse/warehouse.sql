@@ -3,7 +3,7 @@ SELECT
 	wh.*,
     dt.cDepName
 FROM Bd_Warehouse wh
-     LEFT JOIN bd_department dt ON wh.cDepCode = dt.iAutoId and dt.isDeleted = 0
+     LEFT JOIN bd_department dt ON wh.cDepCode = dt.cDepCode and wh.iOrgId=#(iorgid) and dt.isDeleted = 0
 WHERE wh.isDeleted = 0
 	#if(cwhcode)
 	    AND wh.cWhCode  LIKE CONCAT('%', #para(cwhcode), '%')

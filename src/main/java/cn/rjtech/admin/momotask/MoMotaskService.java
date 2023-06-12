@@ -170,7 +170,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
     String startDate = kv.getStr("startdate");
     String endDate = kv.getStr("enddate");
     if (notOk(startDate) || notOk(endDate)) {
-      ValidationUtils.isTrue(false, "开始日期-结束日期不能为空！");
+      ValidationUtils.error( "开始日期-结束日期不能为空！");
     }
     //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
     List<String> scheduDateList = Util.getBetweenDate(startDate, endDate);

@@ -10,18 +10,19 @@
                 </div>-->
 			<div class="col">
 				<form class="" id="masterSlaveForm_#(pageId)" action=""  method="get">
-					<input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" name="" value=""/>
+					<input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" id="barcode" name="" value=""/>
+					<input type="hidden" id="imodocid" value="#(imodocid??)">
 				</form>
 			</div>
 			<div class="col-auto">
 				<!--<button data-area="600,400" id="jboltTableMasterAddBtn_#(pageId)" data-handler="refreshJBoltTable" data-title="新增版本" data-url="admin/jboltversion/add" class="pull-right jbolt_table_addbtn btn btn-success" ><i class="fa fa-plus"></i> 新增</button>-->
-				<button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
+				<button type="submit" onclick="serarch()" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
 			</div>
 		</div>
 	</div>
 	<div class="jbolt_page_content">
 		<!-- 主表数据模板定义-->
-		<span style="color: red ">物料状态:未齐料 数量状态:未齐料</span>
+		<span style="color: red ">物料状态:<span id="vincodeStae"></span> 数量状态:<span id="numStatus"></span></span>
 		<script type="text/template" id="master_demotpl_#(pageId)">
 			{@each datas as data,index}
 			<tr data-id="${data.iautoid}" >
@@ -72,7 +73,7 @@
 					   data-conditions-form="masterSlaveForm_#(pageId)"
 					   data-page="jboltTablePage_master_#(pageId)"
 					   data-pagesize="10"
-					   data-url="admin/momaterialsscansum/datas"
+					   data-url="admin/momaterialsscansum/datas?imodocid=#(imdocid??)"
 					   data-rowtpl="master_demotpl_#(pageId)">
 					<thead>
 					<tr>
@@ -118,7 +119,7 @@
 									   data-bind-elements="#jboltTableAddBtn1_ajax_#(pageId)"
 									   data-conditions-form="jboltversion_JboltTableForm1_ajax_#(pageId)"
 									   data-origin-url="demo/masterslave/mainFilesDatas/[masterId]"
-									   data-url="admin/momaterialsscanlog/getMoMaterialNotScanLogList"
+									   data-url="admin/momaterialsscanlog/getMoMaterialNotScanLogList?imodocid=#(imodocid??)"
 									   data-rowtpl="slave_demotpl_#(pageId)"
 									   data-page="slave_page_#(pageId)_1"
 									   data-pagesize="10"
@@ -159,7 +160,19 @@
 	$(function(){
 		//使用JS去初始化这个主从布局 给定所在的jbolt_page的ID
 		MasterSlaveUtil.initJBoltTable("jbolttable_mspage_#(pageId)");
+		$('#vincodeStae').html('未齐料');
+		$('#numStatus').html('未齐料');
+
 	});
+	function serarch(){
+		var barcode=$("#barcode").val();
+		var imodocid=$("#imodocid").val();
+		Ajax.post("admin/momaterialsscanlog/addBarcode?barcode="+barcode+"&imodocid="+imodocid,function(res){
+			LayerMsgBox.success("操作成功",500,function(){
+				refreshJBoltTable();
+			});
+		});
+	}
 </script>
 #end
 

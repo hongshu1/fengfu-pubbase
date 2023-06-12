@@ -87,7 +87,7 @@ public class AppendItemService extends BaseService<AppendItem> {
 		BigDecimal iBudgetMoney = appendItem.getIbudgetmoney();
 		//计划类型为提前实施的追加项目的预算总金额必须大于0
 		if(isScheduled == IsScheduledEnum.PREVIOUS_PLAN.getValue() && (iBudgetMoney == null || iBudgetMoney.compareTo(BigDecimal.ZERO)!=1)){
-			ValidationUtils.isTrue(false, "提前实施的追加项目的预算总金额必须大于0!");
+			ValidationUtils.error( "提前实施的追加项目的预算总金额必须大于0!");
 		}
 	}
 	/**

@@ -4,27 +4,22 @@
 </div>
 -->
 
-
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="PheDeliveryLines_tpl2_#(pageId)">
     {@each datas as data,index}
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
-<!--             <td>${data.iseq}</td>-->
+            <!-- <td>${data.iseq}</td>-->
             <td>${data.stepname}</td>
             <td>${data.cname}</td>
             <td>${data.way}</td>
             <td>${data.status}</td>
             <td>
-                <a  tooltip  href="admin/formapprovald/userList/${data.iautoid}" data-dialogbtn data-btn="close"
-                    data-scroll="yes"
-                    data-title="审批人列表" data-area="90%,90%" class="jbolt_table_btn"><i
-                        class="fa fa-users c-danger"></i></a>
+                <a  tooltip  href="admin/formapprovald/userList/${data.iautoid}" data-dialogbtn data-btn="close" data-scroll="yes" data-title="审批人列表" data-area="90%,90%" class="jbolt_table_btn"><i class="fa fa-users c-danger"></i></a>
             </td>
-           <td>
-	<a href="admin/formapprovald/edit/${data.iautoid}" data-area="95%,95%"  tooltip data-title="编辑"
-       data-handler="refreshJBoltTable" data-dialog-title="修改审批节点" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
-</td>
+            <td>
+	            <a href="admin/formapprovald/edit/${data.iautoid}" data-area="95%,95%"  tooltip data-title="编辑" data-handler="refreshJBoltTable" data-dialog-title="修改审批节点" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+            </td>
         </tr>
     {@/each}
 </textarea>
@@ -33,25 +28,20 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
+                
                 <!-- 工具条 toolbar -->
                 <div class="jbolt_table_toolbar" id="PheDeliveryLines_toolbar2_#(pageId)" style="display: flex">
                     <div class="" role="group" aria-label="btn-group">
                         <span>审批进度</span>
+                        
                         <form onsubmit="return false;" id="approvalMForm_#(pageId)" action="#(action)" method="post">
                             <input type="hidden" name="iFormObjectId" value="#(formAutoId??0)" />
                         </form>
+                        
                         #if(btnNeed==1??)
-                        <button onclick="judgeType_#(pageId)(this)" data-formsn="#(formSn??1)"
-                                data-formautoid="#(formAutoId??1)"
-                                class="btn btn-success btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
-
-                        <button onclick="approveT_#(pageId)(this)" data-formsn="#(formSn??)"
-                                data-formautoid="#(formAutoId??)" data-status="2"
-                                class="btn btn-primary btn-sm"><i class="fa fa-window-maximize"></i> 审批</button>
-
-                        <button onclick="approveT_#(pageId)(this)" data-formsn="#(formSn??)"
-                                data-formautoid="#(formAutoId??)" data-status="3"
-                                class="btn btn-danger btn-sm"><i class="fa fa-window-maximize"></i> 拒审</button>
+                        <button onclick="judgeType_#(pageId)(this)" data-formsn="#(formSn??1)" data-formautoid="#(formAutoId??1)" class="btn btn-success btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        <button onclick="approveT_#(pageId)(this)" data-formsn="#(formSn??)" data-formautoid="#(formAutoId??)" data-status="2" class="btn btn-primary btn-sm"><i class="fa fa-window-maximize"></i> 审批通过</button>
+                        <button onclick="approveT_#(pageId)(this)" data-formsn="#(formSn??)" data-formautoid="#(formAutoId??)" data-status="3" class="btn btn-danger btn-sm"><i class="fa fa-window-maximize"></i> 审批不通过</button>
                         #end
                     </div>
                 </div>
@@ -101,17 +91,17 @@
         var formSn = action.data("formsn");
         var formAutoId = action.data("formautoid");
         var index = LayerMsgBox.loading('执行中...');
-        Ajax.post("/admin/formapproval/judgeType",{"formSn":formSn,"formAutoId":formAutoId},function (res) {
+
+        Ajax.post("/admin/formapproval/judgeType", {"formSn": formSn, "formAutoId": formAutoId}, function (res) {
             LayerMsgBox.close(index);
-            LayerMsgBox.success(res.msg,1500,function () {
+            LayerMsgBox.success(res.msg, 1500, function () {
                 parent.refreshPjaxContainer();
                 parent.layer.closeAll();
             })
-        },function (err) {
+        }, function (err) {
             LayerMsgBox.close(index);
             // LayerMsgBox.error(err.msg,2000);
-        })
-
+        });
     }
 
     /**
@@ -123,27 +113,24 @@
         var formAutoId = action.data("formautoid");
         var status = action.data("status");
         var index = LayerMsgBox.loading('执行中...');
-        Ajax.post("/admin/formapproval/approve",{"formSn":formSn,"formAutoId":formAutoId,"status":status},function (res) {
+
+        Ajax.post("/admin/formapproval/approve", {"formSn": formSn, "formAutoId": formAutoId, "status": status}, function (res) {
             LayerMsgBox.close(index);
-            LayerMsgBox.success(res.msg,1500,function () {
+            LayerMsgBox.success(res.msg, 1500, function () {
                 parent.refreshPjaxContainer();
                 parent.layer.closeAll();
             })
-        },function (err) {
+        }, function (err) {
             LayerMsgBox.close(index);
             // LayerMsgBox.error(err.msg,2000);
         })
-
     }
-</script>
 
-<script>
     /**
      * 返回 jbolttable的id
      * */
-    function getJboltId2(){
-        var id = "jbolt_table_pheDeliveryLines2_#(pageId)";
-        return id;
+    function getJboltId2() {
+        return "jbolt_table_pheDeliveryLines2_#(pageId)";
     }
 
     /**
@@ -155,13 +142,10 @@
 
     /**
      * 获取已选数据函数
-     * */
+     */
     function tableDataSuccess2() {
     }
-
-</script>
-
-<script>
+    
     function getEditableTableOptions2_#(pageId)() {
         var editableTableOptions = {
             trigger: "click",

@@ -74,9 +74,9 @@
         <tr data-id="${data.iautoid}" >
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="admin/subcontractsaleorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" data-dialog-title="修改委外销售订单主表" class="jbolt_table_editbtn"><i class="fa fa-remove fa-edit">编辑</a>
-                <a href="admin/subcontractsaleorderm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-                <a href="admin/subcontractsaleorderm/approve/${data.iautoid}" data-ajaxbtn data-loading="执行中" data-handler="refreshJBoltTable" data-confirm="确定审批此数据？" <i class="fa fa-remove fa-edit">审批</i></a>
+                <a href="admin/subcontractsaleorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="编辑委外销售订单" data-dialog-title="修改委外销售订单" class="jbolt_table_editbtn"><i class="fa fa-remove fa-edit">编辑</i></a>
+                <a href="admin/subcontractsaleorderm/delete/${data.iautoid}" tooltip data-title="删除委外销售订单" data-ajaxbtn data-loading="执行中 " data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+                <a href="admin/subcontractsaleorderm/approve/${data.iautoid}" data-ajaxbtn tooltip data-title="审批委外销售订单" data-loading="执行中" data-handler="refreshJBoltTable" data-confirm="确定审批此数据？" <i class="fa fa-remove fa-edit">审批</i></a>
             </td>
             <td>$${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
             <td>${data.cauditprogress}</td>
@@ -111,7 +111,7 @@
             </div>
         </div>
 
-        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
+        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal"
                data-jbolttable
                data-height="fill"
                data-ajax="true"

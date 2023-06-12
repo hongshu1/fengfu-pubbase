@@ -18,46 +18,17 @@ public class BaseInU8Util {
      */
     public String base_in(String json){
         String vouchSumbmitUrl = AppConfig.getVouchProcessDynamicSubmitUrl();
-        System.out.println("----------推单前---------------");
-        System.out.println(json);
-        System.out.println("------------------------------");
-        System.out.println(vouchSumbmitUrl);
-        System.out.println("----------推单前---------------");
-
         String post = HttpUtil.post(vouchSumbmitUrl, json);
-        String post2 = post;
-
-        System.out.println("----------------post返回信息-------------------");
-        System.out.println(post2);
-        System.out.println("----------------post返回信息-------------------");
-
         JSONObject res = JSON.parseObject(post);
         ValidationUtils.notNull(res, "解析JSON为空");
 
         String code = res.getString("code");
-        ValidationUtils.notNull(code, json + ";" + post);
-        JSONObject data = (JSONObject)res.get("data");
-        String message = data.getString("message");
+        String message = res.getString("message");
         if (message == null) {
             message = res.getString("msg");
-            if(message == null){
-                message=post;
-            }
         }
-
-        ValidationUtils.notNull(code, json + ";" + message);
-        ValidationUtils.equals(code, "200",  json + ";" + message);
-        if(code.equals("200")){
-            System.out.println("----------推单成功-------------");
-            System.out.println(json);
-            System.out.println("------------------------------");
-            System.out.println(message);
-            System.out.println("----------推单成功-------------");
-        }
-
-        System.out.println("----------inBase:return-------------");
-        System.out.println(post);
-        System.out.println("----------inBase:return-------------");
+        ValidationUtils.notNull(code, "json:" + json + ";" + message);
+        ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);
         return post;
     }
 

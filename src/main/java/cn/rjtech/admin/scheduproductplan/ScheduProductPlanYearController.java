@@ -50,6 +50,12 @@ public class ScheduProductPlanYearController extends BaseAdminController {
         }
         set("startyear",startyear);
         set("endyear",Integer.parseInt(startyear) + 1);
+
+        Boolean isedit = getBoolean("isedit");
+        if (isedit == null){
+            isedit = true;
+        }
+        set("isedit",isedit);
         render("planyear_add.html");
     }
 
@@ -152,6 +158,63 @@ public class ScheduProductPlanYearController extends BaseAdminController {
         renderJsonData(service.getApsYearPlanMasterPage(getPageNumber(),getPageSize(),getKv()));
     }
 
+    public void dataExportYear() throws Exception {
+        String cplanorderno = get("cplanorderno");
+        Long icustomerid = getLong("icustomerid");
+        String startYear = get("startyear");
+        String nextYear = String.valueOf(Integer.parseInt(startYear) + 1);
+
+        final String fileName = "年度生产计划";
+        JBoltExcel jBoltExcel = JBoltExcel.create();
+        JBoltExcelSheet jBoltExcelSheet = JBoltExcelSheet.create(fileName);
+
+        List<JBoltExcelHeader> headerList = new ArrayList<>();
+        headerList.add(JBoltExcelHeader.create("ccusname","客户名称"));
+        headerList.add(JBoltExcelHeader.create("cequipmentmodelname","机型"));
+        headerList.add(JBoltExcelHeader.create("cinvcode","存货编码"));
+        headerList.add(JBoltExcelHeader.create("cinvcode1","客户部番"));
+        headerList.add(JBoltExcelHeader.create("cinvname1","部品名称"));
+        headerList.add(JBoltExcelHeader.create("plantypecode","项目"));
+        for (int i = 1; i <= 12; i++) {
+            if (i < 10){
+                headerList.add(JBoltExcelHeader.create("nowmonth"+i,startYear.concat("-0").concat(String.valueOf(i))));
+            }else {
+                headerList.add(JBoltExcelHeader.create("nowmonth"+i,startYear.concat("-").concat(String.valueOf(i))));
+            }
+        }
+        headerList.add(JBoltExcelHeader.create("nowmonthsum",startYear.concat("合计")));
+        for (int i = 1; i <= 3; i++) {
+            headerList.add(JBoltExcelHeader.create("nextmonth"+i,nextYear.concat("-0").concat(String.valueOf(i))));
+        }
+        headerList.add(JBoltExcelHeader.create("nextmonthsum",nextYear.concat("合计")));
+
+        jBoltExcelSheet.setMerges().setHeaders(1,headerList);
+        List<ScheduProductYearViewDTO> dataList = service.getApsYearPlanList(cplanorderno,icustomerid,startYear,getKv());
+        for (ScheduProductYearViewDTO data : dataList){
+            if (data.getPlanTypeCode().equals("PP")){
+                data.setPlanTypeCode("计划使用");
+            }
+            if (data.getPlanTypeCode().equals("CP")){
+                data.setPlanTypeCode("计划数量");
+            }
+            if (data.getPlanTypeCode().equals("ZK")){
+                data.setPlanTypeCode("计划在库");
+            }
+            if (data.getPlanTypeCode().equals("CC")){
+                data.setPlanTypeCode("客户行事历");
+            }
+        }
+        List<Record> recordList = new ArrayList<>();
+        for (ScheduProductYearViewDTO data : dataList) {
+            Record record = new Record().setColumns(BeanUtil.beanToMap(data));
+            recordList.add(record);
+        }
+        jBoltExcelSheet.setRecordDatas(2,recordList);
+        jBoltExcel.addSheet(jBoltExcelSheet);
+
+        jBoltExcel.setFileName(fileName+DateUtils.getDate("yyyy-MM-dd"));
+        renderBytesToExcelXlsFile(jBoltExcel);
+    }
 
     //-----------------------------------------------------------------年度生产计划汇总-----------------------------------------------
 
@@ -191,7 +254,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     public void dataExport() throws Exception {
         String startYear = get("startyear");
         if (notOk(startYear)){
-            ValidationUtils.isTrue(false,"查询年份不能为空!");
+            ValidationUtils.error("查询年份不能为空!");
         }
         String nextYear = String.valueOf(Integer.parseInt(startYear) + 1);
 

@@ -54,13 +54,14 @@ ORDER BY m.iautoid DESC
 SELECT  prom.iAutoId, prom.cProposalNo, prom.cDepCode, prom.cApplyPersonName, prom.dApplyDate,
         prom.iAuditStatus, prom.cProjectCode, prom.cProjectName, prom.cPurposeSn,
         prom.iCategoryId, expi.cBudgetNo, prod.cItemName, prod.iQuantity,
-        prod.iNatUnitPrice, prod.cVenCode, prod.dDemandDate, prod.cBudgetDepCode, bpc.cCategoryName,
+        prod.iNatUnitPrice, prod.cVenCode,bv.cvenname, prod.dDemandDate, prod.cBudgetDepCode, bpc.cCategoryName,
        (SELECT cSubjectName FROM Bas_SubjectM WHERE iAutoId = expi.iLowestSubjectId) AS cLowestSubjectCode
 FROM PL_ProposalM prom
     LEFT JOIN PL_ProposalD prod ON prom.iAutoId = prod.iProposalMid
     LEFT JOIN PL_Expense_Budget_Item expi  ON prod.iSourceId = expi.iAutoId
     LEFT JOIN PL_Expense_Budget_ItemD expid ON expi.iAutoId = expid.iExpenseItemId
     LEFT JOIN Bas_ProposalCategory bpc ON prom.iCategoryId = bpc.iAutoId
+    left join bd_vendor bv on bv.cvencode = prod.cVenCode
 WHERE prom.iorgid = #para(iorgid)
 #if(iautoids)
     AND prom.iAutoId IN ( #(iautoids) )
@@ -98,7 +99,7 @@ WHERE prom.iorgid = #para(iorgid)
 GROUP BY prom.iAutoId, prom.cProposalNo, prom.cDepCode, prom.cApplyPersonName, prom.dApplyDate,
     prom.iAuditStatus, prom.cProjectCode, prom.cProjectName, prom.cPurposeSn,
     prom.iCategoryId, expi.cBudgetNo, expi.iLowestSubjectId,prod.cItemName, prod.iQuantity,
-    prod.iNatUnitPrice, prod.cVenCode, prod.dDemandDate, prod.cBudgetDepCode, bpc.cCategoryName
+    prod.iNatUnitPrice, prod.cVenCode,bv.cvenname, prod.dDemandDate, prod.cBudgetDepCode, bpc.cCategoryName
 #end
 
 ### 获取明细金额

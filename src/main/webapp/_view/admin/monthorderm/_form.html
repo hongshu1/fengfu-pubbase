@@ -2,30 +2,47 @@
 #set(iYear=DateUtil.getYear())
 #set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
 <div class="jbolt_page_title">
-    
+
     <div class="row">
-        
+
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", iautoid=monthorderm.iautoid??0)
+                        #if(!monthorderm.iautoid?? || edit??)
+                        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
+                        #end
+                        
+                        #if(monthorderm.iautoid??)
+                            ### 参数列表
+                            ### uri:                接口URI
+                            ### formSn:             表单名
+                            ### o:                  当前表单对象名
+                            ### primaryKeyName:     主键名
+                            #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
+                        #end
                         
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
             </div>
         </div>
-        
+
     </div>
-    
+
 </div>
 
 ### 新增之后，并且为审核流
 #if(monthorderm.iautoid?? && monthorderm.iauditway == 2)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM", btnNeed=1, pId=pageId)
+### 参数列表
+### formAutoId:                 单据ID
+### formSn:                     表单名
+### btnNeed:                    是否需要显示审批按钮
+### pId:                        当前页面绑定的pageId
+### primaryKeyName:             主键名
+### className:                  实现审批业务的类名
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService")
 #end
 
 <div class="jbolt_page_content">
@@ -126,9 +143,10 @@
         {@each datas as data,index}
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
-            <td>
-                <a class="btn" onclick="jboltTableRemoveRow(this)"><i class="fa fa-remove c-danger"></i></a>
-            </td>
+        <td>
+            <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
+               data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+        </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
@@ -171,19 +189,20 @@
         </tr>
         {@/each}
     </script>
-    
+
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
+        #if(!monthorderm.iautoid??||edit??false)
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-xs">添加行</button>
             <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除行</button>
             <button onclick="checkDetails(this)" class="btn btn-secondary btn-sm">检查明细</button>
             <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
-            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
-            </button>
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导</button>
+            
             <div class="dropdown-menu" aria-labelledby="importMenuButton">
-                <a data-downloadbtn href="/admin/monthorderm/downloadTpl" class="btn dropdown-item"><i
-                        class="fa fa-file-excel-o"></i>模板下载</a>
+                <a data-downloadbtn href="/admin/monthorderm/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>模板下载</a>
+                
                 <div class="j_upload_file_box"
                      data-name="file"
                      data-btn-class="btn dropdown-item"
@@ -198,8 +217,9 @@
                 </div>
             </div>
         </div>
+        #end
     </div>
-    
+
     <table class="jbolt_table thead_font_normal table-bordered table-center"
            data-jbolttable
            #if(monthorderm.iAutoId??)
@@ -314,7 +334,7 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-    
+
     function submitThisForm(){
         $('#save_btn_#(pageId)').click();
     }
@@ -396,7 +416,7 @@
             });
         }
     }
-    
+
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
@@ -417,23 +437,23 @@
                     submitAttr: "iautoid",
                 },
                 cinvcode: {
-                    type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
-                    maxLength: 100,
-                    required: true,
-                    placeholder: "请选择",
-                    textAttr: "cinvcode",
-                    width: 500,
-                    valueAttr: "cinvcode",
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
-                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
+                    required:true,
+                    type:"dialogbtn",
+                    placeholder:"选择存货",
+                    maxLength:100,
+                    dialog:{
+                        url:"admin/manualorderm/inventory_dialog_index",
+                        area:"80%,80%",
+                        title:"选择存货",
+                        btn:"选择,关闭"
+                    },
+                    columnAttr:"iinventoryid,cinvcode1,cinvname1,cinvstd,cuomname",
                     changeColumns: [
-                        {column: "cinvcode", use: "cinvcode"},
-                        {column: "cinvcode1", use: "cinvcode1"},
-                        {column: "cinvname1", use: "cinvname1"},
-                        {column: "cinvstd", use: "cinvstd"},
-                        {column: "cuomname", use: "cuomname"},
-                        {column: "iinventoryid", use: "iautoid"}
+                        {column:"cuomname",use:"cuomname"},
+                        {column:"cinvstd",use:"cinvstd"},
+                        {column:"cinvname1",use:"cinvname1"},
+                        {column:"cinvcode1",use:"cinvcode1"},
+                        {column:"iinventoryid",use:"iautoid"},
                     ]
                 },
                 iqty1: {
@@ -934,7 +954,7 @@
     	parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
     }
-    
+
 </script>
 #end
 

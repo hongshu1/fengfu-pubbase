@@ -2,7 +2,7 @@
 SELECT
     t1.AutoID,t1.BillType,t1.OrganizeCode,t1.BillDate,t1.RdCode,t1.createdate,t1.createperson,
     t1.DeptCode,t1.SourceBillNo,t1.SourceBillID,t1.VenCode,t1.Memo,t1.billno,
-    t1.AuditPerson,t1.AuditDate,t1.ModifyDate,t1.ModifyPerson,t1.iAuditStatus,
+    t1.AuditPerson,t1.AuditDate,t1.ModifyDate,t1.ModifyPerson,t1.iAuditStatus,t1.ibustype,t1.U8BillNo,
     t2.cRdCode,t2.cRdName,
     t3.Whcode,
     t4.cWhName,
@@ -39,7 +39,7 @@ WHERE 1=1
 #if(endTime)
     and t1.CreateDate <= #para(endTime)
 #end
-order by t1.ModifyDate,t1.autoid desc
+order by t1.ModifyDate desc
 #end
 
 #sql("dList")
@@ -108,7 +108,8 @@ SELECT
     a.dOrderDate AS BillDate,
     a.iPurchaseTypeId,
     ven.cVenCode AS VenCode,
-    ven.cVenName AS VenName
+    ven.cVenName AS VenName,
+    inv.cInvStd,inv.cInvCode,inv.cInvName
 FROM
     PS_PurchaseOrderM a
         LEFT JOIN PS_PurchaseOrderD b ON a.iAutoId= b.iPurchaseOrderMid
@@ -126,4 +127,35 @@ FROM
 and a.cOrderNo = #para(corderno)
 #end
 ORDER BY a.dUpdateTime DESC
+#end
+
+#sql("getPrintData")
+select * from T_Sys_PUInStore t1
+where 1=1
+#if(ids)
+  AND CHARINDEX(','+cast((select t1.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
+#end
+#end
+
+#sql("findPurchaseOrderDBatchByCBarcode")
+SELECT
+t1.iautoid as batchAutoid,t1.iPurchaseOrderDid,t1.iinventoryId,
+t2.cInvCode,t2.cInvName,t2.cInvName1,t2.cInvCode1,t2.cInvStd
+FROM PS_PurchaseOrderDBatch t1
+left join bd_inventory t2 on t1.iinventoryId = t1.iAutoId
+where 1=1 and t1.cbarcode=#para(cbarcode)
+#end
+
+#sql("findEditAndOnlySeeByAutoid")
+select t1.*,t2.cvenname,t3.cDepName,t4.crdname,t5.cptcode,t5.cptname
+    from T_Sys_PUInStore t1
+    left join bd_vendor t2 on t1.vencode = t2.cvencode
+    left join Bd_Department t3 on t1.DeptCode = t3.cDepCode
+    left join Bd_Rd_Style t4 on t1.RdCode = t4.cRdCode
+    left join Bd_PurchaseType t5 on t1.billtype = t5.iAutoId
+where 1=1
+    #if(autoid)
+    and t1.AutoID = #para(autoid)
+    #end
+    order by t1.ModifyDate desc
 #end

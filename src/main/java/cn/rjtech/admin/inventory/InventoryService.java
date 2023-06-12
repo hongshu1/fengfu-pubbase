@@ -1268,11 +1268,11 @@ public class InventoryService extends BaseService<Inventory> {
 			record.set("cOrgCode", getOrgCode());
 			record.set("cOrgName", getOrgName());
 			record.set("iSource", SourceEnum.MES.getValue());
-			record.set("isEnabled",true);
+			record.set("isEnabled",1);
 			record.set("iCreateBy", JBoltUserKit.getUserId());
 			record.set("dCreateTime", now);
 			record.set("cCreateName", JBoltUserKit.getUserName());
-			record.set("isDeleted", false);
+			record.set("isDeleted",0);
 			record.set("iUpdateBy", JBoltUserKit.getUserId());
 			record.set("dUpdateTime", now);
 			record.set("cUpdateName", JBoltUserKit.getUserName());

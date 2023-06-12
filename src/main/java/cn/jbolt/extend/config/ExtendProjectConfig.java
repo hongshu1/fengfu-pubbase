@@ -7,6 +7,7 @@ import cn.jbolt.core.cache.JBoltDeptCache;
 import cn.jbolt.core.cache.OrgCache;
 import cn.jbolt.core.handler.base.JBoltBaseHandler;
 import cn.jbolt.core.kit.*;
+import cn.rjtech.cache.AuditFormConfigCache;
 import cn.rjtech.config.MomConfigKey;
 import cn.rjtech.config.RedisConfig;
 import cn.rjtech.enjoy.directive.BracketDirective;
@@ -142,6 +143,7 @@ public class ExtendProjectConfig {
         // 添加部门缓存
         me.addSharedObject("DeptCache", JBoltDeptCache.me);
         me.addSharedObject("ObjectUtil", new ObjectUtil());
+        me.addSharedObject("AuditFormConfigCache", AuditFormConfigCache.ME);
 		
 		me.addSharedStaticMethod(Util.class);
         me.addSharedMethod(new ReflectionTemplateFn());

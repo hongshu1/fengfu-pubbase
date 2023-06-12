@@ -58,6 +58,10 @@ public abstract class BaseSysPuinstore<M extends BaseSysPuinstore<M>> extends JB
     public static final String DAUDITTIME = "dAuditTime";
     /**是否删除：0. 否 1. 是*/
     public static final String ISDELETED = "isDeleted";
+    /**U8单据号*/
+    public static final String U8BILLNO = "U8BillNo";
+    /**业务类型*/
+    public static final String IBUSTYPE = "iBusType";
 	/**
 	 * 主键ID
 	 */
@@ -458,6 +462,40 @@ public abstract class BaseSysPuinstore<M extends BaseSysPuinstore<M>> extends JB
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * U8单据号
+	 */
+	public M setU8BillNo(java.lang.String U8BillNo) {
+		set("U8BillNo", U8BillNo);
+		return (M)this;
+	}
+
+	/**
+	 * U8单据号
+	 */
+	@JBoltField(name="u8billno" ,columnName="U8BillNo",type="String", remark="U8单据号", required=false, maxLength=30, fixed=0, order=25)
+	@JSONField(name = "u8billno")
+	public java.lang.String getU8BillNo() {
+		return getStr("U8BillNo");
+	}
+
+	/**
+	 * 业务类型
+	 */
+	public M setIBusType(java.lang.Integer iBusType) {
+		set("iBusType", iBusType);
+		return (M)this;
+	}
+
+	/**
+	 * 业务类型
+	 */
+	@JBoltField(name="ibustype" ,columnName="iBusType",type="Integer", remark="业务类型", required=false, maxLength=10, fixed=0, order=26)
+	@JSONField(name = "ibustype")
+	public java.lang.Integer getIBusType() {
+		return getInt("iBusType");
 	}
 
 }

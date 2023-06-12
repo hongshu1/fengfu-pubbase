@@ -11,9 +11,11 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.annualorderd.AnnualOrderDService;
 import cn.rjtech.admin.annualorderdqty.AnnualorderdQtyService;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AnnualOrderStatusEnum;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.AnnualOrderD;
 import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.AnnualorderdQty;
@@ -38,7 +40,7 @@ import java.util.List;
  * @date: 2023-03-23 17:23
  */
 public class AnnualOrderMService extends BaseService<AnnualOrderM> {
-    
+
     private final AnnualOrderM dao = new AnnualOrderM().dao();
 
     @Inject
@@ -47,6 +49,8 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
     private AnnualOrderDService annualOrderDService;
     @Inject
     private AnnualorderdQtyService annualorderdQtyService;
+    @Inject
+    private FormApprovalService formApprovalService;
 
     @Override
     protected AnnualOrderM dao() {
@@ -63,7 +67,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      */
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
         para.set("iorgid", getOrgId());
-        
+
         return dbTemplate("annualorderm.paginateAdminDatas", para).paginate(pageNumber, pageSize);
     }
 
@@ -283,4 +287,56 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         return SUCCESS;
     }
 
+    /**
+     * 提交审批
+     */
+    public Ret submit(Long iautoid) {
+        tx(() -> {
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey());
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+            
+            AnnualOrderM annualOrderM = findById(iautoid);
+            annualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+            annualOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+            ValidationUtils.isTrue(annualOrderM.update(), JBoltMsg.FAIL);
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 撤回
+     */
+    public Ret withdraw(Long iAutoId) {
+        tx(() -> {
+            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
+                AnnualOrderM annualOrderM = findById(formAutoId);
+                annualOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                ValidationUtils.isTrue(annualOrderM.update(), "撤回失败");
+
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
+                return null;
+            });
+            
+            return true;
+        });
+        return SUCCESS;
+
+    }
+
+    /**
+     * 审批不通过
+     */
+    public Ret reject(Long iAutoId) {
+        tx(() -> {
+            formApprovalService.rejectByStatus(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
+                ValidationUtils.isTrue(updateColumn(iAutoId, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+                return null;
+            });
+
+            return true;
+        });
+        return SUCCESS;
+    }
 }

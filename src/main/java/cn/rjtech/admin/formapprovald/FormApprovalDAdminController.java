@@ -46,10 +46,29 @@ public class FormApprovalDAdminController extends BaseAdminController {
      * 历史数据源
      */
     public void historyDatas() {
+        String approvalId = get("approvalId");
+        Kv kv = new Kv();
+        kv.set("approvalId", isOk(approvalId) ? approvalId : ' ');
+        renderJsonData(service.historyDatas(getPageNumber(), getPageSize(), kv));
+    }
+
+    /**
+     * 历史详情页
+     */
+    public void historyDialog(){
+        String approvalId = get("approvalId");
+        set("approvalId", approvalId);
+        render("../approvalm/approval_history_detail.html");
+    }
+
+    /**
+     * 历史列表
+     */
+    public void historyList(){
         String iFormObjectId = get("iFormObjectId");
         Kv kv = new Kv();
         kv.set("formId", isOk(iFormObjectId) ? iFormObjectId : ' ');
-        renderJsonData(service.historyDatas(getPageNumber(), getPageSize(), kv));
+        renderJsonData(service.historyList(getPageNumber(), getPageSize(), kv));
     }
 
     /**
@@ -74,20 +93,6 @@ public class FormApprovalDAdminController extends BaseAdminController {
         set("approvaling",approvaling);
         set("formApprovalD", approvalD);
         render("edit.html");
-    }
-
-    /**
-     * 保存
-     */
-    public void save() {
-        renderJson(service.save(getModel(FormApprovalD.class, "formApprovalD")));
-    }
-
-    /**
-     * 更新
-     */
-    public void update() {
-        renderJson(service.update(getModel(FormApprovalD.class, "formApprovalD")));
     }
 
     /**

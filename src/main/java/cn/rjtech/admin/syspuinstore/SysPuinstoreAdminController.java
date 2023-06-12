@@ -1,12 +1,25 @@
 package cn.rjtech.admin.syspuinstore;
 
+import java.util.List;
+
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.purchasetype.PurchaseTypeService;
+import cn.rjtech.admin.rdstyle.RdStyleService;
+import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.PurchaseType;
+import cn.rjtech.model.momdata.RdStyle;
 import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.model.momdata.Vendor;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -17,6 +30,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 
 /**
  * 采购入库单
+ *
  * @ClassName: SysPuinstoreAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 15:38
@@ -29,6 +43,14 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 
     @Inject
     private SysPuinstoreService service;
+    @Inject
+    private VendorService       vendorService;
+    @Inject
+    private DepartmentService   departmentService;
+    @Inject
+    private RdStyleService      rdStyleService;
+    @Inject
+    private PurchaseTypeService purchaseTypeService;//采购类别
 
     /**
      * 首页
@@ -67,45 +89,11 @@ public class SysPuinstoreAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("sysPuinstore", sysPuinstore);
+        Record record = service.findEditAndOnlySeeByAutoid(sysPuinstore.getAutoID());
+        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()));
+        set("ibustype", iBusTypeKey);//业务类型
+        set("sysPuinstore", record);
         render("edit.html");
-    }
-
-    /*
-     * 批量审批
-     * */
-    public void autitByIds() {
-        renderJson(service.resetAutitByIds(get("ids")));
-    }
-
-    /*
-     * 批量反审批
-     * */
-    public void resetAutitByIds() {
-        renderJson(service.autitByIds(get("ids")));
-    }
-
-    /*
-     * 反审批
-     * */
-    public void resetAutitById() {
-        Kv kv = getKv();
-        renderJson(service.resetAutitById(kv.getStr("autoid")));
-    }
-
-    /*
-     * 审批
-     * */
-    public void autit() {
-        Kv kv = getKv();
-        Long aLong = getLong(0);
-        Long autoid = null;
-        if (kv.getLong("autoid") != null) {
-            autoid = kv.getLong("autoid");
-        } else if (aLong != null) {
-            autoid = aLong;
-        }
-        renderJson(service.autit(autoid));
     }
 
     /*
@@ -117,15 +105,61 @@ public class SysPuinstoreAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("sysPuinstore", sysPuinstore);
+        Record record = service.findEditAndOnlySeeByAutoid(sysPuinstore.getAutoID());
+        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()));
+        set("ibustype", iBusTypeKey);//业务类型
+        set("sysPuinstore", record);
         render("onlysee.html");
     }
 
     /*
-     * 打印
+     * 撤回
      * */
-    public void printSysPuinstore() {
-        //TODO 待定
+    public void backStep() {
+        SysPuinstore puinstore = service.findById(getLong(0));
+        if (puinstore == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        renderJson(service.backStep(puinstore));
+    }
+
+    /*
+     * 批量审批
+     * */
+    public void autitByIds() {
+        renderJson(service.autitByIds(get("ids")));
+    }
+
+    /*
+     * 批量反审批
+     * */
+    public void resetAutitByIds() {
+        renderJson(service.resetAutitByIds(get("ids")));
+    }
+
+    /*
+     * 反审批
+     * */
+    public void resetAutitById() {
+        Kv kv = getKv();
+        renderJson(service.resetAutitById(kv.getStr("autoid")));
+    }
+
+    /*
+     * 编辑页面的审批
+     * */
+    public void editAutit() {
+        Kv kv = getKv();
+        renderJson(service.editAutit(kv.getLong("autoid")));
+    }
+
+    /*
+     * 查看页面的审批
+     * */
+    public void onlyseeAutit() {
+        Kv kv = getKv();
+        renderJson(service.onlyseeAutit(kv.getLong("autoid")));
     }
 
     /**
@@ -192,5 +226,12 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * */
     public void getWareHouseName() {
         renderJson(service.getWareHouseName(getKv()));
+    }
+
+    /*
+     * 获取需要打印的模板数据
+     * */
+    public void getPrintData() {
+        renderJson(service.printData(getKv()));
     }
 }

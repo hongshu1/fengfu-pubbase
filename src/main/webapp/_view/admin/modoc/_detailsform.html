@@ -266,7 +266,7 @@
                         data-area="1400,1000"
                         data-handler="jboltTablePageToFirst"
                         data-title="生产退料"
-                        data-url="admin/momaterialsreturn/index?imodocid=#(modoc.iautoid??)"
+                        data-url="admin/momaterialsreturn/index?imodocid=#(moDoc.iautoid??)"
                         class="btn btn-outline-primary btn-sm">
                     生产退料
                 </button>
@@ -322,7 +322,7 @@
                 <td>#(productionTasks.actual1)</td>
                 <td>#(productionTasks.sate1)</td>
                 <td>#(productionTasks.time1)</td>
-                <td>	<a href="admin/modoc/checkmaterialpage/#(moDoc.iautoid??)" data-area="100%,100%"  tooltip data-title="作成"  data-handler="refreshJBoltTable" data-dialog-title="齐料检查" class="jbolt_table_editbtn">作成</a>
+                <td>	<a href="admin/modoc/checkmaterialpage?imodocid=#(moDoc.iautoid??)" data-area="100%,100%"  tooltip data-title="作成"  data-handler="refreshJBoltTable" data-dialog-title="齐料检查" class="jbolt_table_editbtn">作成</a>
                 </td>
 
             </tr>

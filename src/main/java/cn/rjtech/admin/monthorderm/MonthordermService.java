@@ -1,6 +1,7 @@
 package cn.rjtech.admin.monthorderm;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -9,10 +10,13 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.auditformconfig.AuditFormConfigService;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.MonthOrderD;
 import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.util.ValidationUtils;
@@ -27,6 +31,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import static cn.hutool.core.text.StrPool.COMMA;
+
 /**
  * 月度计划订单 Service
  *
@@ -37,14 +43,16 @@ import java.util.Set;
 public class MonthordermService extends BaseService<MonthOrderM> {
 
 	private final MonthOrderM dao = new MonthOrderM().dao();
-    
+
 	@Inject
 	private MonthorderdService monthorderdService;
 	@Inject
 	private CusOrderSumService cusOrderSumService;
     @Inject
     private FormApprovalService formApprovalService;
-    
+    @Inject
+    private AuditFormConfigService auditFormConfigService;
+
 	@Override
 	protected MonthOrderM dao() {
 		return dao;
@@ -185,8 +193,11 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
         MonthOrderM monthorderm = jBoltTable.getFormModel(MonthOrderM.class, "monthorderm");
+        
         User user = JBoltUserKit.getUser();
+        
         Date now = new Date();
+        
         tx(() -> {
             if (monthorderm.getIAutoId() == null) {
                 monthorderm.setIOrgId(getOrgId());
@@ -218,7 +229,8 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     private void saveTableSubmitDatas(JBoltTable jBoltTable, MonthOrderM monthorderm) {
         List<Record> list = jBoltTable.getSaveRecordList();
-        if (CollUtil.isEmpty(list)) return;
+        ValidationUtils.notEmpty(list, JBoltMsg.PARAM_ERROR);
+        
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
             if (i == 0) {
@@ -230,6 +242,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
                     }
                 }
             }
+            
             row.keep("iinventoryid", "iqty1", "iqty2", "iqty3", "iqty4", "iqty5", "iqty6", "iqty7", "iqty8", "iqty9", "iqty10", "iqty11", "iqty12",
                     "iqty13", "iqty14", "iqty15", "iqty16", "iqty17", "iqty18", "iqty19", "iqty20", "iqty21", "iqty22", "iqty23", "iqty24", "iqty25",
                     "iqty26", "iqty27", "iqty28", "iqty29", "iqty30", "iqty31", "isum", "cinvcode", "cinvname", "cinvcode1", "cinvname1", "cinvstd", "imonth1qty", "imonth2qty");
@@ -275,20 +288,32 @@ public class MonthordermService extends BaseService<MonthOrderM> {
 	 * 审批
 	 */
 	public Ret approve(Long id) {
-		MonthOrderM monthorderm = findById(id);
+        tx(() -> {
 
-        //2. 审核通过
-        monthorderm.setIAuditStatus(2);
-        // 3. 已审批
-        monthorderm.setIOrderStatus(3);
-        monthorderm.setIUpdateBy(JBoltUserKit.getUserId());
-        monthorderm.setCUpdateName(JBoltUserKit.getUserName());
-        monthorderm.setDUpdateTime(new Date());
-        monthorderm.update();
+            formApprovalService.approveByStatus(table(), primaryKey(), id, (formAutoId) -> {
 
-        cusOrderSumService.algorithmSum();
+                // 实现通过前的业务处理
 
-        //审批通过生成客户计划汇总
+                return null;
+            }, (formAutoId) -> {
+                MonthOrderM monthOrderM = findById(formAutoId);
+
+                // 实现通过后的业务处理
+                monthOrderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+                monthOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+                monthOrderM.setCUpdateName(JBoltUserKit.getUserName());
+                monthOrderM.setDUpdateTime(new Date());
+                monthOrderM.update();
+
+                // 审批通过生成客户计划汇总
+                cusOrderSumService.algorithmSum();
+
+                return null;
+            });
+            
+            return true;
+        });
+
         return SUCCESS;
     }
 
@@ -299,20 +324,160 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         tx(() -> {
 
             // 根据审批状态
-            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey());
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-            
+
             // 处理其他业务
+            MonthOrderM monthOrderM = findById(iautoid);
+            monthOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+            monthOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+            ValidationUtils.isTrue(monthOrderM.update(),JBoltMsg.FAIL);
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    /**
+     * 撤回
+     */
+    public Ret withdraw(Long iautoid) {
+        tx(() -> {
+
+            // 已根据单据的审批方式，适配撤回的处理
+            formApprovalService.withdraw(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
+
+                MonthOrderM monthOrderM = findById(formAutoId);
+                monthOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                ValidationUtils.isTrue(monthOrderM.update(), "撤回失败");
+
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
                 
+                return null;
+            });
+            
             return true;
         });
         
         return SUCCESS;
     }
 
-    public Ret withdraw(Long iautoid) {
+    /**
+     * 审核不通过
+     */
+    public Ret reject(Long iautoid) {
+        tx(() -> {
+            
+            formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
+                
+                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+                
+                return null;
+            });
+
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 批量审核
+     */
+    public Ret batchApprove(String ids) {
+        tx(() -> {
+            
+            formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId)-> {
+                
+                // 审批通过前置工作，如有错误信息，请return msg;
+                
+                return null;
+            }, (formAutoId)-> {
+                
+                // 审批后置工作，如有错误信息，请return msg;
+                
+                return null;
+            });
+
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 批量审核不通过
+     */
+    public Ret batchReject(String ids) {
+        tx(() -> {
+            
+            formApprovalService.batchRejectByStatus(table(), primaryKey(), ids, (formAutoId) -> {
+             
+                // 审批前置工作，如有错误信息，请return msg;
+                
+                return null;
+            }, (formAutoId) -> {
+                
+                // 审批前置工作，如有错误信息，请return msg;
+                
+                return null;
+            });
+
+            return true;
+        });
         
         return SUCCESS;
+    }
+
+    /**
+     * 批量反审
+     */
+    public Ret batchReverseApprove(String ids) {
+        tx(() -> {
+
+            for (String idStr  : StrSplitter.split(ids, COMMA, true, true)) {
+                long id = Long.parseLong(idStr);
+                
+                formApprovalService.reverseApproveByStatus(id, table(), primaryKey(), (formAutoId) -> {
+
+                    // 反审前置工作，如有错误信息，请return msg;
+                    
+                    return null;
+                }, (formAutoId) -> {
+                    
+                    // 反审后置工作，如有错误信息，请return msg;
+                    
+                    return null;
+                });
+            }
+
+            return true;
+        });
+        
+        return SUCCESS;
+    }
+
+    /**
+     * 处理审批通过的其他业务操作，如有异常返回错误信息
+     */
+    public String postApproveFunc(long formAutoId) {
+        
+        return null;
+    }
+
+    /**
+     * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
+     */
+    public String postRejectFunc(long formAutoId) {
+        
+        return null;
+    }
+
+    /**
+     * 实现反审之后的其他业务操作, 如有异常返回错误信息
+     */
+    public String postReverseApproveFunc(long formAutoId) {
+        
+        return null;
     }
     
 }

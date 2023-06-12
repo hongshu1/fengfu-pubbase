@@ -1,32 +1,35 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
+#define css()
 <style>
-	.jbolt_tab_view>.jbolt_tab_contents>.jbolt_tab_content {
-		height: auto !important;
-	}
+    .jbolt_tab_view>.jbolt_tab_contents>.jbolt_tab_content {
+        height: auto !important;
+    }
 </style>
-<div class="jbolt_page" data-key="#(pmkey)" >
+#end
 
-					<div class="jbolt_tab_view">
+<div class="jbolt_page" data-key="#(pmkey)">
 
-						<div class="jbolt_tab_links">
-							<a class="jbolt_tab_link active" href="#jbolt_tabcontent1">审批/审核表单</a>
-							<a class="jbolt_tab_link" href="#jbolt_tabcontent2">审批流配置</a>
-						</div>
+    <div class="jbolt_tab_view">
 
-						<div class="jbolt_tab_contents">
-							<div class="jbolt_tab_content active" id="jbolt_tabcontent1">
-								<!--明细页签-->
-								#include("/_view/admin/auditformconfig/index_config.html")
-							</div>
-							<div class="jbolt_tab_content" id="jbolt_tabcontent2">
-								<!--合行页签-->
-								#include("/_view/admin/approvalm/index_config.html")
-							</div>
-						</div>
+        <div class="jbolt_tab_links">
+            <a class="jbolt_tab_link active" href="#jbolt_tabcontent1">审批/审核表单</a>
+            <a class="jbolt_tab_link" href="#jbolt_tabcontent2">审批流配置</a>
+        </div>
 
-					</div>
+        <div class="jbolt_tab_contents">
+            <div class="jbolt_tab_content active" id="jbolt_tabcontent1">
+                <!--明细页签-->
+                #include("/_view/admin/auditformconfig/index_config.html")
+            </div>
+            <div class="jbolt_tab_content" id="jbolt_tabcontent2">
+                <!--合行页签-->
+                #include("/_view/admin/approvalm/index_config.html")
+            </div>
+        </div>
+
+    </div>
 </div>
 #end
 

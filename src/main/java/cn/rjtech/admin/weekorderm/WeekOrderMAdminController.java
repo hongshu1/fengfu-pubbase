@@ -18,6 +18,8 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Optional;
+
 /**
  * 客户订单-周间客户订单
  *
@@ -70,10 +72,11 @@ public class WeekOrderMAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        Page<Record> datas = service.getAdminDatas(1, 1, Kv.by("iAutoId", getLong(0)));
+        Page<Record> datas = service.getAdminDatas(1, 1, Kv.by("iAutoId", get("iautoid")));
         ValidationUtils.notNull(datas, JBoltMsg.DATA_NOT_EXIST);
         ValidationUtils.isTrue(datas.getList().size() > 0, JBoltMsg.DATA_NOT_EXIST);
         set("weekOrderM", datas.getList().get(0));
+        set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
         render("edit.html");
     }
 
@@ -105,7 +108,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 撤回已提审
      */
-    public void withdraw(Long iAutoId) {
+    public void withdraw(@Para(value = "iautoid") Long iAutoId) {
         ValidationUtils.validateId(iAutoId, "iAutoId");
 
         renderJson(service.withdraw(iAutoId));
@@ -114,27 +117,21 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 审批通过
      */
-    public void approve(String ids) {
-        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-        
-        renderJson(service.approve(ids));
+    public void approve() {
+        renderJson(service.approve(getLong(0)));
     }
 
     /**
      * 审批不通过
      */
     public void reject(String ids) {
-        if (StringUtils.isEmpty(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.reject(ids));
+        renderJson(service.reject(getLong(0)));
     }
 
     /**
      * 手动关闭
      */
-    public void closeWeekOrder(String iAutoId) {
+    public void closeWeekOrder(@Para(value = "iautoid") String iAutoId) {
         if (StringUtils.isEmpty(iAutoId)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
@@ -177,7 +174,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
             renderJxls("weekorderm.xlsx", Kv.by("rows", null), "周间客户订单.xlsx");
         }catch (Exception e)
         {
-            ValidationUtils.isTrue(false, "模板下载失败");
+            ValidationUtils.error( "模板下载失败");
         }
     }
 }

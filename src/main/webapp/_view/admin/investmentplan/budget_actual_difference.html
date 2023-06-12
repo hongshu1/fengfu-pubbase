@@ -4,8 +4,78 @@
 <div class="jbolt_page" data-key="#(pmkey)" >
 <div class="jbolt_page_title">
 	<div class="row">
-		<div class="col-md-auto text-left">
-			<form class="form-inline" id="budgetActualDifferenceForm_#(pageId)"  onsubmit="return false;" method="post">
+		<div class="col-md-auto">
+			<form class="form-inline text-left" id="budgetActualDifferenceForm_#(pageId)"  onsubmit="return false;" method="post">
+					<input hidden type="text" id="ibudgettype1" value="" name="investmentdiffbudgettype1" autocomplete="off" />
+					<input hidden type="text" id="ibudgettype2" value="" name="investmentdiffbudgettype2" autocomplete="off" />
+                    <div class="form-group row text-left"
+                         data-checkbox
+                         ###data-rule="checkbox"
+                         data-value=""
+                         data-hidden-input="ibudgettype1"
+                         data-name="ibudgettype1"
+                         ###data-default="1,2,3,4,5" 
+                         >
+                        <label class="col-auto col-form-label" >日程：</label>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input id="budget_type1_box1" type="checkbox" name="ibudgettype1" value="1"/>
+                            <label for="budget_type1_box1">日程</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input id="budget_type1_box2" type="checkbox" name="ibudgettype1" value="2"/>
+                            <label for="budget_type1_box2">付款</label>
+                        </div>
+                    </div>						
+                    <div class="form-group row text-left"
+                         data-checkbox
+                         ###data-rule="checkbox"
+                         data-value=""
+                         data-hidden-input="ibudgettype2"
+                         data-name="ibudgettype"
+                         ###data-default="1,2,3,4,5" 
+                         >
+                        <label class="col-auto col-form-label" >预算类型：</label>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input id="c1" type="checkbox" name="ibudgettype" value="1"/>
+                            <label for="c1">全年预算a</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input id="c2" type="checkbox" name="ibudgettype" value="2"/>
+                            <label for="c2">下半年修订b</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input id="c4" type="checkbox" name="ibudgettype" value="3"/>
+                            <label for="c4">实绩预测d</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input id="c5" type="checkbox" name="ibudgettype" value="4"/>
+                            <label for="c5">实绩e</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c6" type="checkbox" name="ibudgettype" value="5"/>
+                            <label for="c6">差异A（b-a）</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c10" type="checkbox" name="ibudgettype" value="6"/>
+                            <label for="c10">差异E（d-a）</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c11" type="checkbox" name="ibudgettype" value="7"/>
+                            <label for="c11">差异F（d-b）</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c12" type="checkbox" name="ibudgettype" value="8"/>
+                            <label for="c12">差异G（e-a）</label>
+                        </div>                          
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c12" type="checkbox" name="ibudgettype" value="9"/>
+                            <label for="c12">差异H（e-b）</label>
+                        </div>
+                        <div class="checkbox checkbox-primary  checkbox-inline">
+                            <input  id="c14" type="checkbox" name="ibudgettype" value="10"/>
+                            <label for="c14">差异J（e-d）</label>
+                        </div>
+                    </div>			
 				<input type="text" class="form-control"
                            data-date
                            data-type="year"
@@ -17,7 +87,7 @@
                         name="cdepcode"
                         data-autoload
                         data-tips="u8部门"
-                        data-url="admin/department/treeDatasForProposalSystem?isProposal=true"
+                        data-url="admin/department/treeDatas"
                         data-text="=u8部门="
                         data-text-attr="cdepname"
                         data-value-attr="cdepcode"
@@ -36,37 +106,36 @@
         <script type="text/template" id="jboltTable_rowtpl_#(pageId)">
             {@each datas as data,index}
             <tr data-id="${data.iautoid}">
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.cdepname}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.cinvestmenttypedesc}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.cproductline}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.careertypedesc}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.cinvestmentdistinctiondesc}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.cplanno}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.citemname}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>$${data.isimport|isLargeAmountExpense}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.iquantity}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.cunit}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.cassettypedesc}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.cpurpose}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.ceffectamount}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.creclaimyear}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.clevel}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>$${data.ispriorreport|isLargeAmountExpense}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.cpaymentprogressdesc}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.itotalamountplan}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.itotalamountactual}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.itotalamountdiff}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.itotalamountdiffreason}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.iyeartotalamountplan}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.iyeartotalamountactual}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.iyeartotalamountdiff}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.iyeartotalamountdiffreason}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.cedittypedesc}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>$${data.isscheduled|isscheduled}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.cmemo}</td>{@/if}
-			{@if data.rownum1 == 1}<td rowspan='13'>${data.iitemyear}</td>{@/if}
-			{@if data.rownum2 == 1 && data.ibudgettype1 == 1}<td rowspan='4'>$${data.ibudgettype1|iBudgetType1}</td>{@/if}
-			{@if data.rownum2 == 1 && data.ibudgettype1 == 2}<td rowspan='9'>$${data.ibudgettype1|iBudgetType1}</td>{@/if}
+			<td>${data.cdepname}</td>
+			<td>${data.cinvestmenttypedesc}</td>
+			<td>${data.cproductline}</td>
+			<td>${data.careertypedesc}</td>
+			<td>${data.cinvestmentdistinctiondesc}</td>
+			<td>${data.cplanno}</td>
+			<td>${data.citemname}</td>
+			<td>$${data.isimport|isLargeAmountExpense}</td>
+			<td>${data.iquantity}</td>
+			<td>${data.cunit}</td>
+			<td>${data.cassettypedesc}</td>
+			<td>${data.cpurpose}</td>
+			<td>${data.ceffectamount}</td>
+			<td>${data.creclaimyear}</td>
+			<td>${data.clevel}</td>
+			<td>$${data.ispriorreport|isLargeAmountExpense}</td>
+			<td>${data.cpaymentprogressdesc}</td>
+			<td>${data.itotalamountplan}</td>
+			<td>${data.itotalamountactual}</td>
+			<td>${data.itotalamountdiff}</td>
+			<td>${data.itotalamountdiffreason}</td>
+			<td>${data.iyeartotalamountplan}</td>
+			<td>${data.iyeartotalamountactual}</td>
+			<td>${data.iyeartotalamountdiff}</td>
+			<td>${data.iyeartotalamountdiffreason}</td>
+			<td>${data.cedittypedesc}</td>
+			<td>$${data.isscheduled|isscheduled}</td>
+			<td>${data.cmemo}</td>
+			<td>${data.iitemyear}</td>
+			<td>$${data.ibudgettype1|iBudgetType1}</td>
 			<td>$${data.ibudgettype2|iBudgetType2}</td>
 			{@if data.ibudgettype1 == 2}<td>${data.imonthamount1|kFormat}</td>{@else}<td>${data.imonthamount1}</td>{@/if}
 			{@if data.ibudgettype1 == 2}<td>${data.imonthamount2|kFormat}</td>{@else}<td>${data.imonthamount2}</td>{@/if}
@@ -99,6 +168,7 @@
                data-column-prepend="1:checkbox:true"
                data-height="fill"
                data-conditions-form="budgetActualDifferenceForm_#(pageId)"
+               data-ajax-success-handler="ajaxSuccessHandler_#(pageId)"
         >
             <thead class="fw_normal">
             <tr>
@@ -164,6 +234,11 @@
 #end
 #define js()
 <script>
+function ajaxSuccessHandler_#(pageId)(table) {
+	   $('.jbolt_table').tablesMergeCell({
+	      cols: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
+	   })
+}
 </script>
 
 #end

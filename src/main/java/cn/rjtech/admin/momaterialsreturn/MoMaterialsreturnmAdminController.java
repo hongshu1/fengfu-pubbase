@@ -5,6 +5,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.MoMaterialsreturnd;
 import cn.rjtech.model.momdata.MoMaterialsreturnm;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -92,5 +93,52 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
 
+	/**
+	 * 新增退料
+	 */
+	public void addMoMaterialsreturn(){
+		Long imodocid=getLong("imodocid");
+		renderJsonData(service.addMoMaterialsreturn(imodocid,getJBoltTable()));
+	}
+
+	/***
+	 * 明细列表
+	 */
+
+	public void getMoMaterialsreturnList(){
+
+		renderJsonData(service.getMoMaterialsreturnList(getPageNumber(),getPageSize(),getKv()));
+	}
+
+	/**
+	 * 审核
+	 */
+	public void approve(String iAutoId,Integer mark) {
+		if (org.apache.commons.lang3.StringUtils.isEmpty(iAutoId)) {
+			renderFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		renderJson(service.approve(iAutoId,mark));
+	}
+
+	/**
+	 * 反审核
+	 */
+	public void NoApprove(String ids) {
+		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
+			renderFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		///renderJson(service.NoApprove(ids));
+	}
+	public void details() {
+		MoMaterialsreturnm moMaterialsreturnm=service.findById(getLong(0));
+		if(moMaterialsreturnm == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		set("moMaterialsreturnm",moMaterialsreturnm);
+		render("detail.html");
+	}
 
 }

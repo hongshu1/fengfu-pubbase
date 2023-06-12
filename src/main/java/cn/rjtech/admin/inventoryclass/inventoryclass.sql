@@ -10,9 +10,10 @@ WHERE 1=1
 
 #sql("inventoryList")
 SELECT
-   i.*,ic.cInvCName cinvcname
+   i.*,ic.cInvCName cinvcname,uom.cUomName
 FROM Bd_Inventory i
 inner join Bd_InventoryClass ic on i.iInventoryClassId = ic.iautoid
+left join Bd_Uom uom on i.iInventoryUomId1 = uom.iautoid
 WHERE 1=1
 #if(iInventoryClassId)
  AND i.iInventoryClassId = #para(iInventoryClassId)

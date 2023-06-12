@@ -179,7 +179,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
                 sysotherin.setCreateDate(now);
                 sysotherin.setModifyPerson(user.getName());
                 sysotherin.setAuditPerson(user.getName());
-                sysotherin.setState("1");
+//                sysotherin.setState("1");
                 sysotherin.setModifyDate(now);
                 // 主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
@@ -368,7 +368,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid);
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey());
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // 更新状态

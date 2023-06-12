@@ -90,16 +90,7 @@ public class InvestmentPlanManageService extends BaseService<InvestmentPlan>{
 	public List<Record> findInvestmentPlanItemForDetail(Long investmentPlanId) {
 		return investmentPlanService.findInvestmentPlanItemDatas(investmentPlanId);
 	}
-	/**
-	 * 投资计划详情界面查询投资计划项目明细数据
-	 * */
-	public List<Record> findInvestmentPlanItemdForDetail(Long investmentPlanItemId) {
-		List<Record> list = dbTemplate("investmentplanmanage.findInvestmentPlanItemdForDetail",Kv.by("investmentplanitemid", investmentPlanItemId)).find();
-		for (Record record : list) {
-			record.set("cperiodprogressdesc",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PERIOD_PROGRESS.getValue(), record.getStr("cperiodprogress")));
-		}
-		return list;
-	}
+
 	/**
      *	投资计划生效 
      * */
@@ -151,7 +142,7 @@ public class InvestmentPlanManageService extends BaseService<InvestmentPlan>{
 				cproposalNos += record.getStr("cproposalno") + ",";
 			}
 			cproposalNos = cproposalNos.substring(0, cproposalNos.lastIndexOf(","));
-			ValidationUtils.isTrue(false, "投资计划已发生禀议，不能作废，请删除后流程单据后继续操作，禀议书编号为"+cproposalNos);
+			ValidationUtils.error( "投资计划已发生禀议，不能作废，请删除后流程单据后继续操作，禀议书编号为"+cproposalNos);
 		}
 		
 		tx(()->{

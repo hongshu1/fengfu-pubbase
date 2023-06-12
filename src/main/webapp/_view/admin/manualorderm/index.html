@@ -40,18 +40,18 @@
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-	       <a class="jbolt_table_editbtn" href="admin/manualorderm/info/${data.iautoid}"  data-fs="true" data-handler="refreshJBoltTable" data-title="手配订单详情"><i class="fa fa-eye">查看</i></a>
+	       <a class="jbolt_table_editbtn" href="admin/manualorderm/info/${data.iautoid}"  data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="手配订单详情"><i class="fa fa-eye">查看</i></a>
 		{@if data.iorderstatus == 2}
-			<a class="jbolt_table_delbtn" href="admin/manualorderm/audit/${data.iautoid}"  data-confirm="确定审批此选项？"  data-fs="true" data-handler="refreshJBoltTable"  data-title="审批手配订单"><i class="fa fa-remove fa-edit">审批</i></a>
-			<a class="jbolt_table_delbtn" href="admin/manualorderm/reply/${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger">撤回</i></a>
+			<a class="jbolt_table_delbtn" href="admin/manualorderm/audit/${data.iautoid}"  data-confirm="确定审批此选项？"  data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="审批手配订单"><i class="fa fa-remove fa-edit">审批</i></a>
+			<a class="jbolt_table_delbtn" href="admin/manualorderm/reply/${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="审批手配订单" ><i class="fa fa-remove c-danger">撤回</i></a>
 		{@/if}
 		{@if data.iorderstatus == 3}
-		<a class="jbolt_table_delbtn" href="admin/manualorderm/colse/${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">关闭</i></a>
+		<a class="jbolt_table_delbtn" href="admin/manualorderm/colse/${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" tooltip data-title="关闭手配订单"  class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">关闭</i></a>
 
 		{@/if}
 		{@if data.iorderstatus == 1 || data.iorderstatus == 4}
-		<a class="jbolt_table_editbtn" href="admin/manualorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑订单"> <i class="fa fa-remove fa-edit">编辑</i></a>
-		<a class="jbolt_table_delbtn" href="admin/manualorderm/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable"  class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+		<a class="jbolt_table_editbtn" href="admin/manualorderm/edit/${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" tooltip  data-title="编辑手配订单"> <i class="fa fa-remove fa-edit">编辑</i></a>
+		<a class="jbolt_table_delbtn" href="admin/manualorderm/${data.isDeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" tooltip data-title="删除手配订单"  class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 		{@/if}
 </td>
 	<td>${data.statename}</td>
@@ -81,7 +81,7 @@
 <div class="jbolt_table_toolbar" id="ManualOrderM_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 	<button data-dialogbtn data-area="100%,100%"  data-handler="refreshJBoltTable"  id="toolbar_addBtn_#(pageId)"  data-title="新增手配订单" data-url="admin/manualorderm/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
-	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchAuditBtn_#(pageId)" data-url="admin/manualorderm/batchAudit?ids=" data-confirm="确定审核选中数据？" class="btn btn-outline-info"><i class="fa fa-edit"></i> 批量审核</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchApproveBtn_#(pageId)" data-url="admin/manualorderm/batchApprove?ids=" data-confirm="确定审核选中数据？" class="btn btn-outline-info"><i class="fa fa-edit"></i> 批量审核</button>
 	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchAntiAuditBtn_#(pageId)" data-url="admin/manualorderm/batchAntiAudit?ids=" data-confirm="确定反审核选中数据？" class="btn btn-outline-info"><i class="fa fa-edit"></i> 批量反审核</button>
 	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/manualorderm/batchDetect?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 批量删除</button>
 	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchCloseBtn_#(pageId)" data-url="admin/manualorderm/batchClose?ids=" data-confirm="确定关闭选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 批量关闭</button>

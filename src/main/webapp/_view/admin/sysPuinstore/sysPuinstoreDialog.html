@@ -1,5 +1,6 @@
 #@jboltLayout()
 #define main()
+#set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
     <div class="jbolt_page_title">
         <div class="row">
@@ -43,7 +44,7 @@
                data-column-resize="true"
                data-conditions-form="chooseDataForm"
                data-page="jboltTablePage_ajax"
-               data-column-prepend="1:checkbox:true"
+               data-column-prepend="1:radio:true"
                data-rowtpl="jboltTable_demotpl"
                data-row-dblclick-handler="dbClickCheckData"
                data-pagesize="30">

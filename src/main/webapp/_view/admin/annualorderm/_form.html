@@ -7,13 +7,14 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
-                        #if(annualOrderM.iAutoId??)
-                        <button onclick="submitApproveYear()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
-                        #else
-                        <button onclick="submitApproveYear()" disabled class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                        #if(!annualOrderM.iAutoId?? || edit??false)
+                        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/annualorderm",
+                        formSn="Co_AnnualOrderM",
+                        iautoid=annualOrderM.iautoid??,iauditstatus=annualOrderM.iauditstatus??0,
+                        iauditway=annualOrderM.iauditway??, edit=edit??)
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
             </div>
@@ -90,6 +91,11 @@
     </div>
 </div>
 
+### 新增之后，并且为审核流
+#if(annualOrderM.iautoid?? && annualOrderM.iauditway == 2)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=annualOrderM.iAutoId, formSn="Co_AnnualOrderM", btnNeed=1, pId=pageId)
+#end
+
 <div class="jbolt_page_content">
     
     <script type="text/template" id="jboltTable_demotpl_#(pageId)">
@@ -97,7 +103,9 @@
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
+                #if(!annualOrderM.iautoid?? || edit??false)
                 <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+                #end
             </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
@@ -121,6 +129,7 @@
         {@/each}
     </script>
     <div class="jbolt_table_toolbar" id="AnnualOrderM_toolbar_#(pageId)">
+        #if(!annualOrderM.iautoid?? || edit??false)
         <div class="btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-secondary btn-sm">添加行</button>
 
@@ -152,6 +161,7 @@
             </div>
 
         </div>
+        #end
     </div>
     <table class="jbolt_table thead_font_normal table-bordered table-center"
            data-id="jbolt_table_#(pageId)"
@@ -413,23 +423,23 @@
                     submitAttr: "iautoid",
                 },
                 cinvcode: {
-                    type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
-                    maxLength: 100,
-                    required: true,
-                    placeholder: "请选择",
-                    textAttr: "cinvcode",
-                    width: 500,
-                    valueAttr: "cinvcode",
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
-                    header:'存货编码,客户部番,部品名称,规格,库存主单位',
-                    changeColumns:[
-                        {column: "cinvcode", use: "cinvcode"},
-                        {column: "cinvcode1", use: "cinvcode1"},
-                        {column: "cinvname1", use: "cinvname1"}, 
-                        {column: "cinvstd", use: "cinvstd"},
-                        {column: "cuomname", use: "cuomname"}, 
-                        {column: "iinventoryid", use: "iautoid"}
+                    required:true,
+                    type:"dialogbtn",
+                    placeholder:"选择存货",
+                    maxLength:100,
+                    dialog:{
+                        url:"admin/manualorderm/inventory_dialog_index",
+                        area:"80%,80%",
+                        title:"选择存货",
+                        btn:"选择,关闭"
+                    },
+                    columnAttr:"iinventoryid,cinvcode1,cinvname1,cinvstd,cuomname",
+                    changeColumns: [
+                        {column:"cuomname",use:"cuomname"},
+                        {column:"cinvstd",use:"cinvstd"},
+                        {column:"cinvname1",use:"cinvname1"},
+                        {column:"cinvcode1",use:"cinvcode1"},
+                        {column:"iinventoryid",use:"iautoid"},
                     ]
                 },
                 iqty1: {

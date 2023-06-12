@@ -21,7 +21,12 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * 采购收料单
@@ -94,8 +99,8 @@ public class SysPureceiveAdminController extends BaseAdminController {
         }
 
         // 关联查询用户名字
-        if (null != sysPureceive.getCreatePerson()) {
-            set("username", sysenumerationservice.getUserName(sysPureceive.getCreatePerson()));
+        if (null != sysPureceive.getIcreateby()) {
+            set("username", sysenumerationservice.getUserName(sysPureceive.getIcreateby()));
         }
 
         set("sysPureceive", sysPureceive);
@@ -181,8 +186,22 @@ public class SysPureceiveAdminController extends BaseAdminController {
      */
     @UnCheck
     public void barcodeDatas() {
-        String detailHidden = get("detailHidden");
-        renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()), null));
+        List<Record> barcodeDatas = service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()), null);
+        String barcode = get("detailHidden");
+        if(null != barcode &&  !"".equals(barcode)){
+            String[] split = barcode.split(",");
+            for (int i = 0; i < split.length; i++) {
+                String s = split[i].replaceAll("'", "");
+                Iterator<Record> iterator = barcodeDatas.iterator();
+                while (iterator.hasNext()) {
+                    Record r = iterator.next();
+                    if (r.getStr("barcode").equals(s)) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+        renderJsonData(barcodeDatas);
     }
 
     /**
@@ -196,7 +215,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     }
 
     /**
-     * 提审
+     * 提审批
      */
     public void submit(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.validateId(iautoid, "id");
@@ -205,7 +224,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     }
 
     /**
-     * 撤回已提审
+     * 撤回已提审批
      */
     public void withdraw(Long iAutoId) {
         ValidationUtils.validateId(iAutoId, "iAutoId");
@@ -231,6 +250,39 @@ public class SysPureceiveAdminController extends BaseAdminController {
             return;
         }
         renderJson(service.reject(ids));
+    }
+    /**
+     * 反审批
+     */
+    public void reverseApprove(String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            renderFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        renderJson(service.reverseApprove(ids));
+    }
+
+    /**
+     * 审核通过
+     */
+    public void batchAudit(String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            renderFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        renderJson(service.process(ids));
+    }
+
+
+    /**
+     * 审核不通过
+     */
+    public void batchReverseAudit(String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            renderFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        renderJson(service.noProcess(ids));
     }
 
 }

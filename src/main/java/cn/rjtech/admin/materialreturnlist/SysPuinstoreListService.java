@@ -248,27 +248,25 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		tx(()->{
 			String headerId = null;
 			String whcode = null;
-			Record detailByParam = null;
 			// 获取Form对应的数据
 			if (jBoltTable.formIsNotBlank()) {
 				SysPuinstore puinstore = jBoltTable.getFormModel(SysPuinstore.class,"puinstore");
 				Record record = jBoltTable.getFormRecord();
 				whcode = record.get("whcode");//仓库
-				Kv kv = new Kv();
-				kv.set("billno",puinstore.get("billno"));
-				kv.set("sourcebillno",puinstore.get("sourcebillno"));
 
-				detailByParam = sysPuinstoreService.findSysPODetailByParam(kv);
+
+//				detailByParam = dbTemplate("syspureceive.purchaseOrderD", kv).findFirst();
+//				detailByParam = sysPuinstoreService.findSysPODetailByParam(kv);
 
 				//	行数据为空 不保存
 				if ("save".equals(revokeVal)) {
 					if (puinstore.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
-						ValidationUtils.isTrue(false, "请先添加行数据！");
+						ValidationUtils.error( "请先添加行数据！");
 					}
 				}
 
 				if ("submit".equals(revokeVal) && puinstore.getAutoID() == null) {
-					ValidationUtils.isTrue(false, "请保存后提交审核！！！");
+					ValidationUtils.error( "请保存后提交审核！！！");
 				}
 
 
@@ -319,7 +317,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 							double value = iqty.multiply(a).doubleValue();
 							//物料退货判断
 							if (value + cha < 0){
-								ValidationUtils.isTrue(false, "第" + k + "行退货数量超出现存数（" + iqty + "）！！！");
+								ValidationUtils.error( "第" + k + "行退货数量超出现存数（" + iqty + "）！！！");
 							}
 						}else {
 							//输入数量
@@ -332,23 +330,16 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 							double value = qtys.multiply(a).doubleValue();
 							//整单退货判断
 							if (value + cha < 0){
-								ValidationUtils.isTrue(false, "第" + k + "行退货数量超出现存数（" + qtys + "）！！！");
+								ValidationUtils.error( "第" + k + "行退货数量超出现存数（" + qtys + "）！！！");
 							}
 						}
 					}
 				}
 				String finalHeaderId = headerId;
 				String finalWhcodes = whcode;
-				Record finalDetailByParam = detailByParam;
 				lines.forEach(materialsOutDetail -> {
 					Object qtys = materialsOutDetail.get("qty");
 					System.out.println(qtys);
-
-					materialsOutDetail.setSourceBillType(finalDetailByParam.get("sourcebilltype"));//采购PO  委外OM（采购类型）
-					materialsOutDetail.setSourceBillNo(finalDetailByParam.getStr("sourcebillno")); //来源单号（订单号）
-					materialsOutDetail.setSourceBillID(finalDetailByParam.getStr("sourcebillid")); //来源单据ID(订单id)
-					materialsOutDetail.setSourceBillDid(finalDetailByParam.getStr("sourcebilldid")); //来源单据DID;采购或委外单身ID
-					materialsOutDetail.setRowNo(lines.indexOf(materialsOutDetail)+1); //来源单据单行;
 					materialsOutDetail.setMasID(finalHeaderId);
 					materialsOutDetail.setWhcode(finalWhcodes);
 					materialsOutDetail.setCreateDate(nowDate);
@@ -364,14 +355,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 				String finalHeaderId = headerId;
 				String finalWhcodes1 = whcode;
-				Record finalDetailByParam = detailByParam;
 				lines.forEach(materialsOutDetail -> {
 					materialsOutDetail.setWhcode(finalWhcodes1);
-					materialsOutDetail.setSourceBillType(finalDetailByParam.get("sourcebilltype"));//采购PO  委外OM（采购类型）
-					materialsOutDetail.setSourceBillNo(finalDetailByParam.getStr("sourcebillno")); //来源单号（订单号）
-					materialsOutDetail.setSourceBillID(finalDetailByParam.getStr("sourcebillid")); //来源单据ID(订单id)
-					materialsOutDetail.setSourceBillDid(finalDetailByParam.getStr("sourcebilldid")); //来源单据DID;采购或委外单身ID
-					materialsOutDetail.setRowNo(lines.indexOf(materialsOutDetail)+1); //来源单据单行;
 					materialsOutDetail.setModifyDate(nowDate);
 					materialsOutDetail.setModifyPerson(userName);
 				});
@@ -392,8 +377,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	 * 通过关键字匹配
 	 * autocomplete组件使用
 	 */
-	public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode, String vencode) {
-		return dbTemplate("materialreturnlist.getBarcodeDatas", Kv.by("q", q).set("limit", limit).set("orgCode", orgCode).set("vencode", vencode)).find();
+	public List<Record> getBarcodeDatas(Kv kv) {
+		return dbTemplate("materialreturnlist.getBarcodeDatas",kv).find();
 	}
 
 	/**
@@ -499,8 +484,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 	/**
 	 * 整单退货出库单列表 明细
-	 * @param pageNumber
-	 * @param pageSize
+
 	 * @param kv
 	 * @return
 	 */
@@ -514,6 +498,21 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	 * */
 	public Page<Record> getSysPODetail(Kv kv, int size, int PageSize) {
 		return dbTemplate("materialreturnlist.getSysPODetail", kv).paginate(size, PageSize);
+	}
+
+	/**
+	 * 获取条码列表
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	public Record barcode(Kv kv) {
+////		先查询条码是否已添加
+		Record first = dbTemplate("materialreturnlist.barcodeDatas", kv).findFirst();
+		if(null == first){
+			ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "采购入库没有此数据！！！");
+		}
+		Record first2 = dbTemplate("materialreturnlist.barcode", kv).findFirst();
+		return first2;
 	}
 
 
@@ -556,7 +555,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				jsonObject.put("PackRate", "0");
 				jsonObject.put("ISsurplusqty", "false");
 				jsonObject.put("CreatePerson", userCode);
-				jsonObject.put("BarCode", record.get("spotTicket"));
+				jsonObject.put("BarCode", record.get("barcode"));
 				jsonObject.put("BillNo", record.get("billno"));
 				jsonObject.put("BillID", "1000000003");
 				jsonObject.put("BillNoRow", "PO23050601-1");

@@ -57,6 +57,8 @@ public class MoMaterialsreturndAdminController extends BaseAdminController {
 		render("edit.html");
 	}
 
+
+
   /**
 	* 保存
 	*/
@@ -84,6 +86,12 @@ public class MoMaterialsreturndAdminController extends BaseAdminController {
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
+
+
+
+
+
+
 
 
 }

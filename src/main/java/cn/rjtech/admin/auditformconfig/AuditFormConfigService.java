@@ -294,7 +294,14 @@ public class AuditFormConfigService extends BaseService<AuditFormConfig> {
      * 通过表单编码找到审核审批配置
      */
     public AuditFormConfig findByFormSn(String formSn) {
-        return findFirst("select * from Bd_AuditFormConfig where cFormSn = ? and isEnabled = '1' and IsDeleted = '0' ", formSn);
+        return findFirst("select * from Bd_AuditFormConfig where cFormSn = ? AND isEnabled = '1' AND IsDeleted = '0' ", formSn);
     }
 
+    /**
+     * 获取审批方式
+     */
+    public Integer getAuditWayByCformSn(String cformsn) {
+        return queryInt("SELECT iType FROM Bd_AuditFormConfig WHERE cFormSn = ? AND isEnabled = '1' AND IsDeleted = '0' ", cformsn);
+    }
+    
 }

@@ -258,7 +258,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             sysMaterialspreparedetail.setCreatePerson(user.getName());
             sysMaterialspreparedetail.setModifyPerson(user.getName());
             sysMaterialspreparedetail.setMemo(inventoryRoutingInvcs.get(i).getCMemo());
-//          sysMaterialspreparedetail.setQty(new BigDecimal(inventoryRoutingInvcs.get(i).getIUsageUOM().toString()));
+            sysMaterialspreparedetail.setQty((inventoryRoutingInvcs.get(i).getIUsageUOM()).multiply(moDocS.findFirst("select * from Mo_MoDoc where iAutoId=?", id).getIQty()));
 //          sysMaterialspreparedetail.setInvCode(inventory.getCInvCode());
 //          sysMaterialspreparedetail.setBarcode(stockbarcodeposition.getBarcode());
 //          sysMaterialspreparedetail.setSourceBillNoRow(row.get("sourcebillnorow"));
@@ -406,5 +406,9 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             dept = person.getCOrgCode();
         }
         return dept;
+    }
+
+    public Page<Record> getgetManualAdddatas(int pageNumber, int pageSize, Kv kv) {
+        return dbTemplate("materialsprepare.getManualAdddatas", kv).paginate(pageNumber, pageSize);
     }
 }
