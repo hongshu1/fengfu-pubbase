@@ -808,23 +808,31 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     }
 
     /**
-     * 审批通过
+     * 审核通过
      */
-    public Ret approve(String ids) {
+    public Ret approve(Long ids) {
         tx(() -> {
             //业务逻辑
-            this.passage(ids);
+            this.check(String.valueOf(ids));
+            this.passage(String.valueOf(ids));
             return true;
         });
         return SUCCESS;
     }
 
     /**
-     * 审批不通过
+     * 审核不通过
      */
-    public Ret reject(String ids) {
+    public Ret reject(Long ids) {
         tx(() -> {
-
+            //业务逻辑
+            this.check(String.valueOf(ids));
+            String[] split = String.valueOf(ids).split(",");
+            for (String s : split) {
+                SysPureceive byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+                byId.update();
+            }
             return true;
         });
         return SUCCESS;
@@ -872,8 +880,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             String[] split = ids.split(",");
             for (String s : split) {
                 SysPureceive byId = findById(s);
-                byId.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
-                byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                byId.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+                byId.setIAuditWay(null);
                 byId.update();
             }
             //业务逻辑，删除下游单据
@@ -924,6 +932,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public void check(String ids) {
         List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + ids + ")");
         for (SysPureceive s : sysPureceives) {
+            if("0".equals(String.valueOf(s.getIAuditStatus()))){
+                ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据未提交审核或审批！！");
+            }
             if ("2".equals(String.valueOf(s.getIAuditStatus())) || "3".equals(String.valueOf(s.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "流程已结束！！");
             }
@@ -932,13 +943,16 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public void checkbelow(String ids) {
         List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + ids + ")");
         for (SysPureceive s : sysPureceives) {
+            if(!"2".equals(String.valueOf(s.getIAuditStatus()))){
+                ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，不是审批通过状态！！");
+            }
             //查出从表
             List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.getAutoID());
             if(firstBy.isEmpty()) return;
             for (SysPureceivedetail d : firstBy){
                 SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
                 SysPuinstore byId = syspuinstoreservice.findById(firstByBarcode.getMasID());
-                if(!"0".equals(byId.getIAuditStatus())){
+                if(!"0".equals(String.valueOf(byId.getIAuditStatus()))){
                     ValidationUtils.isTrue(false, "采购入库编号：" + byId.getBillNo() + " 单据，不是未审核状态！！");
                 }
             }
@@ -953,14 +967,17 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             if(firstBy.isEmpty()) return;
             for (SysPureceivedetail d : firstBy){
                 SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
-                SysPuinstore byId = syspuinstoreservice.findById(firstByBarcode.getMasID());
+                String autoID = firstByBarcode.getMasID();
+                //删除从表
+//                syspuinstoredetailservice.find("DELETE T_Sys_PUInStoreDetail   where  AutoID = ?", autoID);
+                syspuinstoredetailservice.deleteByIds(firstByBarcode.getAutoID());
+                SysPuinstore byId = syspuinstoreservice.findById(autoID);
                 List<SysPuinstoredetail> detailByMasID = syspuinstoredetailservice.findDetailByMasID(byId.getAutoID());
                 if(detailByMasID.isEmpty()){
                     // 从表没数据才删除 主表
-                    syspuinstoreservice.delete(Long.valueOf(byId.getAutoID()));
+                    syspuinstoreservice.deleteByIds(byId.getAutoID());
+//                    syspuinstoredetailservice.find("DELETE T_Sys_PUInStore   where  AutoID = ?", byId.getAutoID());
                 }
-                //删除从表
-                syspuinstoredetailservice.delete(Long.valueOf(firstByBarcode.getAutoID()));
             }
         }
     }
@@ -987,7 +1004,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 for (SysPureceivedetail f : firstBy) {
                     Kv kv = new Kv();
                     kv.set("barcode", f.getBarcode());
-                    Record row = dbTemplate("syspureceive.barcode", kv).findFirst();
+                    Record row = dbTemplate("syspureceive.tuibarcode", kv).findFirst();
                     //判断存货开关是否打开,开 推来料检验单，
                     boolean button = this.button(row.getStr("cinvcode"));
                     Long veniAutoId = vendorservice.queryAutoIdByCvencode(f.getVenCode());
@@ -1029,6 +1046,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                             sysPuinstoredetail.setPuUnitCode(barcode.getStr("puunitcode"));
                             sysPuinstoredetail.setPuUnitName(barcode.getStr("puunitname"));
                             sysPuinstoredetail.setIsDeleted(false);
+                            sysPuinstoredetail.setInvCode(barcode.getStr("cinvcode"));
                             syspuinstoredetailservice.save(sysPuinstoredetail);
                             i++;
                         } else {

@@ -1,11 +1,7 @@
 package cn.rjtech.admin.syspuinstore;
 
-import java.util.List;
-
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -14,11 +10,7 @@ import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.model.momdata.Department;
-import cn.rjtech.model.momdata.PurchaseType;
-import cn.rjtech.model.momdata.RdStyle;
 import cn.rjtech.model.momdata.SysPuinstore;
-import cn.rjtech.model.momdata.Vendor;
 
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -203,14 +195,6 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      */
     public void chooseSysPuinstoreData() {
         render("sysPuinstoreDialog.html");
-    }
-
-    /*
-     * 获取采购订单视图的订单号
-     * */
-    public void getSysPODetail() {
-        Page<Record> recordPage = service.getSysPODetail(getKv(), getPageNumber(), getPageSize());
-        renderJsonData(recordPage);
     }
 
     /*

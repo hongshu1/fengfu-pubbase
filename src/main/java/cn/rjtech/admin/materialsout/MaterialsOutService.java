@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
@@ -15,6 +16,7 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.model.momdata.MaterialsOut;
 import cn.rjtech.model.momdata.MaterialsOutDetail;
 import cn.rjtech.model.momdata.Person;
+import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -26,6 +28,8 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.json.JSONArray;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static cn.hutool.core.text.StrPool.COMMA;
@@ -502,6 +506,35 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 			dept = person.getCOrgCode();
 		}
 		return dept;
+	}
+
+	public void saveMaterialsOutModel(MaterialsOut materials,SysPuinstore puinstore){
+		//materials.setAutoID(JBoltSnowflakeKit.me.nextId());
+		materials.setSourceBillType("");
+		materials.setSourceBillDid("");
+		materials.setRdCode(puinstore.getRdCode());
+		materials.setOrganizeCode(getOrgCode());
+		materials.setBillNo(puinstore.getBillNo());
+		materials.setBillType(puinstore.getBillType());
+		materials.setBillDate(getBillDate(puinstore.getBillDate()));
+		materials.setDeptCode(puinstore.getDeptCode());
+		materials.setWhcode(puinstore.getWhCode());
+		materials.setVenCode(puinstore.getVenCode());
+		materials.setCreatePerson(puinstore.getCreatePerson());
+		materials.setCreateDate(puinstore.getCreateDate());
+		materials.setState(1);
+		materials.setIAuditStatus(0);
+		materials.setMemo(puinstore.getMemo());
+	}
+
+	public Date getBillDate(String billDate) {
+		SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+		try {
+			return format.parse(billDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

@@ -3,6 +3,7 @@ package cn.rjtech.admin.otherdeliverylist;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.OtherOut;
@@ -19,10 +20,10 @@ import java.util.Date;
  * @author: RJ
  * @date: 2023-05-17 09:35
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.OTHER_DELIVERY_LIST)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/otherdeliverylist", viewPath = "/_view/admin/otherdeliverylist")
-public class OtherOutAdminController extends BaseAdminController {
+public class OtherOutDeliveryAdminController extends BaseAdminController {
 
 	@Inject
 	private OtherOutService service;
@@ -39,9 +40,9 @@ public class OtherOutAdminController extends BaseAdminController {
 	*/
 	public void datas() {
 		Kv kv =new Kv();
-		kv.setIfNotNull("selectparam", get("billno"));
-		kv.setIfNotNull("selectparam", get("whname"));
-		kv.setIfNotNull("selectparam", get("deptname"));
+		kv.setIfNotNull("billno", get("billno"));
+		kv.setIfNotNull("whname", get("whname"));
+		kv.setIfNotNull("deptname", get("deptname"));
 		kv.setIfNotNull("iorderstatus", get("iorderstatus"));
 		kv.setIfNotNull("startdate", get("startdate"));
 		kv.setIfNotNull("enddate", get("enddate"));
@@ -123,20 +124,33 @@ public class OtherOutAdminController extends BaseAdminController {
 	}
 
 	/**
+	 * 获取条码列表
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	public void otherOutBarcodeDatas() {
+		String orgCode =  getOrgCode();
+		renderJsonData(service.otherOutBarcodeDatas(get("q"),get("orgCode",orgCode)));
+	}
+
+
+
+
+	/**
 	 * 审核
 	 */
-	public void approve(String iAutoId,Integer mark) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(iAutoId)) {
+	public void batchApprove(String ids,Integer mark) {
+		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
-		renderJson(service.approve(iAutoId,mark));
+		renderJson(service.approve(ids,mark));
 	}
 
 	/**
 	 * 反审核
 	 */
-	public void NoApprove(String ids) {
+	public void batchReverseApprove(String ids) {
 		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;

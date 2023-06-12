@@ -72,23 +72,22 @@
                             </div>
                         </div>
                 <div class="form-group row">
+                    <input type="hidden" name="manualOrderM.iCustomerId" value="#(manualOrderM.iCustomerId??)" id="iCustomerId" data-value-attr="iautoid"/>
                     <label class="col-sm-1 col-form-label">客户名称</label>
                     <div class="col">
-                        <select class="form-control"
-                                data-autoload
-                                data-url="/admin/customer/list"
-                                data-select-type="select"
-                                name="manualOrderM.iCustomerId"
-                                data-refresh="true"
-                                data-rule="select"
-                                data-notnull="true"
-                                data-tips="请选择客户ID"
-                                data-text="=请选择="
-                                data-value-attr="iautoid"
-                                data-text-attr="ccusname"
-                                data-value=""
-                                data-select="#(manualOrderM.iCustomerId??)"
-                        ></select>
+                        <input type="text" class="form-control"
+                               data-autocomplete
+                               data-url="admin/customer/autocomplete"
+                               data-rule="required"
+                               data-hidden-input="iCustomerId"
+                               data-text-attr="ccusname"
+                               data-column-attr="ccuscode,ccusname,ccusabbname"
+                               placeholder="请选择"
+                               data-tips="请选择"
+                               data-header="客户编码,客户名称,客户简称"
+                               maxlength="40"
+                               value="#(manualOrderM.ccusname??)">
+
                     </div>
                     <label class="col-sm-1 col-form-label">付款条件</label>
                     <div class="col">

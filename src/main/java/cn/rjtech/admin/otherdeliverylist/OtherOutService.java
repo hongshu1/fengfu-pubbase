@@ -5,6 +5,7 @@ import cn.hutool.core.text.StrSplitter;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.SystemLog;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -245,7 +246,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 				if (otherOut.getAutoID() == null && "save".equals(revokeVal)) {
 //					保存
 //					订单状态：1=已保存，2=待审核，3=已审核
-					otherOut.setStatus(param);
+					otherOut.setAuditStatus(param);
 
 					otherOut.setCreateDate(nowDate);
 					otherOut.setOrganizeCode(OrgCode);
@@ -256,11 +257,11 @@ public class OtherOutService extends BaseService<OtherOut> {
 					save(otherOut);
 					headerId = otherOut.getAutoID();
 				}else {
-					if ( param == 2 ){
+					if ( param == 1 ){
 						otherOut.setAuditDate(nowDate);
 						otherOut.setAuditPerson(userName);
 					}
-					otherOut.setStatus(param);
+					otherOut.setAuditStatus(param);
 					otherOut.setModifyDate(nowDate);
 					otherOut.setModifyPerson(userName);
 					update(otherOut);
@@ -292,13 +293,13 @@ public class OtherOutService extends BaseService<OtherOut> {
 					materialsOutDetail.setModifyPerson(userName);
 				});
 				otherOutDetailService.batchUpdate(lines);
-
 				//测试u8接口
 				OtherOut otherOut = jBoltTable.getFormModel(OtherOut.class, "otherOut");
 				System.out.println("开始u8，开始u8，开始u8，开始u8，开始u8"+new Date());
-				Ret ret = this.pushU8(otherOut, lines);
+				Ret ret = this.pushU8S(otherOut, lines);
 				System.out.println(ret);
-            	System.out.println("结束u8，结束u8，结束u8，结束u8，结束u8"+new Date());
+				System.out.println("结束u8，结束u8，结束u8，结束u8，结束u8"+new Date());
+
 
 			}
 			// 获取待删除数据 执行删除
@@ -311,26 +312,31 @@ public class OtherOutService extends BaseService<OtherOut> {
 		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
+	public List<Record> otherOutBarcodeDatas(String q, String orgCode) {
+		return dbTemplate("otherdeliverylist.otherOutBarcodeDatas",Kv.by("q", q).set("orgCode",orgCode)).find();
+	}
 
 	/**
 	 * 审核
 	 * @param iAutoId
 	 * @return
 	 */
-	public Ret approve(String iAutoId,Integer mark) {
+	public Ret approve(String ids,Integer mark) {
 		boolean success = false;
 		String userName = JBoltUserKit.getUserName();
 		Date nowDate = new Date();
-		List<OtherOut> listByIds = getListByIds(iAutoId);
+		List<OtherOut> listByIds = getListByIds(ids);
 		if (listByIds.size() > 0) {
 			for (OtherOut otherOut : listByIds) {
-				if (otherOut.getStatus() != 2) {
+				//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+				if (otherOut.getAuditStatus() != 1) {
 					return warn("订单："+otherOut.getBillNo()+"状态不支持审核操作！");
 				}
 				//订单状态：3. 已审核
-				otherOut.setStatus(3);
+//				otherOut.setAuditStatus(2);
 				otherOut.setAuditDate(nowDate);
 				otherOut.setAuditPerson(userName);
+				Ret ret = this.pushU8(ids);
 				success= otherOut.update();
 			}
 		}
@@ -347,13 +353,11 @@ public class OtherOutService extends BaseService<OtherOut> {
 	public Ret NoApprove(String ids) {
 		//TODO数据同步暂未开发 现只修改状态
 		for (OtherOut otherOut :  getListByIds(ids)) {
-//			订单状态： 3. 已审批
-			if (otherOut.getStatus() != 3) {
+//			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+			if (otherOut.getAuditStatus() != 2) {
 				return warn("订单："+otherOut.getBillNo()+"状态不支持反审批操作！");
 			}
-
-			//订单状态： 2. 待审批
-			otherOut.setStatus(2);
+			otherOut.setAuditStatus(1);
 			otherOut.update();
 		}
 		return SUCCESS;
@@ -371,8 +375,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		OtherOut otherOut = findById(iAutoId);
-		//订单状态：2. 待审批
-		otherOut.setStatus(1);
+		otherOut.setAuditStatus(0);
 		otherOut.setAuditDate(null);
 		otherOut.setAuditPerson(null);
 		boolean result = otherOut.update();
@@ -380,9 +383,115 @@ public class OtherOutService extends BaseService<OtherOut> {
 	}
 
 
+	public Ret pushU8(String ids) {
+		List<Record> list = dbTemplate("otherdeliverylist.pushU8List", Kv.by("autoid", ids)).find();
+
+		if (list.size() > 0) {
+//          接口参数
+			User user = JBoltUserKit.getUser();
+			String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
+			String userCode = user.getUsername();
+			Long userId = user.getId();
+			String type = "OtherOut";
+			Record record1 = list.get(0);
+			String organizecode = record1.get("organizecode");
+			String nowDate = DateUtil.format(new Date(), "yyyy-MM-dd");
+
+			JSONObject preAllocate = new JSONObject();
+			preAllocate.set("CreatePerson",userId);
+			preAllocate.set("CreatePersonName",user.getName());
+			preAllocate.set("loginDate", nowDate);
+			preAllocate.set("tag",type);
+			preAllocate.set("type",type);
+
+			JSONArray mainData = new JSONArray();
+			list.forEach(record -> {
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.set("invstd","");
+				jsonObject.set("owhcode",record.get("whcode"));
+				jsonObject.set("invname","");
+				jsonObject.set("index","1");
+				jsonObject.set("vt_id","");
+				jsonObject.set("billDate",record.get("billDate"));
+				jsonObject.set("lineColor","");
+				jsonObject.set("invcode",record.get("invcode"));
+				jsonObject.set("userCode",userCode);
+				jsonObject.set("iswhpos","true");
+				jsonObject.set("ispack","0");
+				jsonObject.set("organizeCode",organizecode);
+				jsonObject.set("qty",record.get("qty"));
+				jsonObject.set("Tag","OtherOut");
+				jsonObject.set("oposcode","");
+				jsonObject.set("barcode",record.get("barcode"));
+				jsonObject.set("ORdName",record.get("rdname"));
+				jsonObject.set("ORdCode",record.get("rdcode"));
+				jsonObject.set("ODeptCode",record.get("cdepcode"));
+				jsonObject.set("ODeptName",record.get("cdepname"));
+				jsonObject.set("ORdType",record.get("type"));
+				mainData.put(jsonObject);
+
+			});
+
+//            参数装载
+			Map<String, Object> data = new HashMap<>();
+			data.put("organizeCode", organizecode);
+			data.put("userCode", userCode);
+			data.put("token","");
+			data.put("PreAllocate", preAllocate);
+			data.put("MainData", mainData);
+
+//            请求头
+			Map<String, String> header = new HashMap<>(5);
+			header.put("Content-Type", "application/json");
+
+
+			SystemLog systemLog = new SystemLog();
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("<span class='text-danger'>[其他出库列表推U8操作]</span>");
+			Ret ret = new Ret();
+			try {
+				String post = HttpApiUtils.httpHutoolPost(url, data, header);
+				if (isOk(post)) {
+					com.alibaba.fastjson.JSONObject parseObject = com.alibaba.fastjson.JSONObject.parseObject(post);
+					stringBuilder.append("<span class='text-primary'>[成功返回参数=").append(post).append("]</span>");
+					String code = parseObject.getString("code");
+					String msg = parseObject.getString("message");
+
+					LOG.info("data====" + data);
+					if ("200".equals(code)) {
+						String[] s = msg.split(",");
+						String bill = s[0];
+						LOG.info("s===>" + bill);
+						LOG.info("data====" + data);
+
+//						int update = update("update T_Sys_SOReturn set U9BillNo = '" + bill + "', status = '2' where" + " AutoID " + "= " + "'" + id + "'");
+
+//						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
+//								"推送数据失败," + "失败原因" + msg);
+					}
+					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
+				} else {
+					stringBuilder.append("<span class='text-primary'>[失败返回参数=").append(post).append("]</span>");
+					return fail("请求失败");
+				}
+			} catch (Exception e) {
+				stringBuilder.append("<span class='text-primary'>[失败异常=").append(e.getMessage()).append("]</span>");
+				e.printStackTrace();
+			} finally {
+				systemLog.setTitle(stringBuilder.toString());
+				systemLog.save();
+			}
+			return fail("请求失败");
+		} else {
+			ValidationUtils.error("查无此单");
+		}
+
+		return SUCCESS;
+	}
+
 
 	//推送u8数据接口
-	public Ret pushU8(OtherOut otherout, List<OtherOutDetail> otheroutdetail) {
+	public Ret pushU8S(OtherOut otherout, List<OtherOutDetail> otheroutdetail) {
 		if(!CollectionUtils.isNotEmpty(otheroutdetail)){
 			return Ret.fail("数据不能为空");
 		}
