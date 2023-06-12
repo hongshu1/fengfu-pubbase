@@ -460,7 +460,18 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 处理审批通过的其他业务操作，如有异常返回错误信息
      */
     public String postApproveFunc(long formAutoId) {
+        MonthOrderM monthOrderM = findById(formAutoId);
+        // 订单状态校验
+        ValidationUtils.equals(monthOrderM.getIOrderStatus(), OrderStatusEnum.AWAIT_AUDIT, "订单非待审核状态");
 
+        // 订单状态修改
+        monthOrderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+        monthOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+        monthOrderM.setCUpdateName(JBoltUserKit.getUserName());
+        monthOrderM.setDUpdateTime(new Date());
+        monthOrderM.update();
+        // 审批通过生成客户计划汇总
+        cusOrderSumService.algorithmSum();
         return null;
     }
 
@@ -468,7 +479,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
     public String postRejectFunc(long formAutoId) {
-
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }
 
@@ -476,7 +487,9 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 实现反审之后的其他业务操作, 如有异常返回错误信息
      */
     public String postReverseApproveFunc(long formAutoId) {
-
+        MonthOrderM monthOrderM = findById(formAutoId);
+        ValidationUtils.equals(monthOrderM.getIOrderStatus(), OrderStatusEnum.APPROVED.getValue(), "订单非已审核状态");
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", OrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }
 
