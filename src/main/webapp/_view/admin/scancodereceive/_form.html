@@ -17,18 +17,19 @@
                 <div class="card-body">
                     <form onsubmit="return false;" id="sysPureceive_#(pageId)" action="#(action)" method="post">
                         #if(sysPureceive.AutoID??)
-                        <input type="hidden" name="sysPureceive.AutoID" value="#(sysPureceive.AutoID??)" />
+                        <input type="hidden" name="sysPureceive.AutoID" value="#(sysPureceive.AutoID??)"/>
                         #end
-                        <input type="hidden" name="sysPureceive.Type" value="PUReceiveSpecial"/>
+                        <input type="hidden" name="sysPureceive.Type" value="PUReceive"/>
+                        <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">收料单号</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true" data-tips="请输入收料单号"
-                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
-                                            placeholder="请输入收料单号" maxlength="40" name="sysPureceive.BillNo"
-                                            value="#(sysPureceive.BillNo??)" />
+                                        <input type="text" data-notnull="true" data-tips="请输入收料单号" disabled
+                                               data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                               placeholder="请输入收料单号" maxlength="40" name="sysPureceive.BillNo"
+                                               value="#(sysPureceive.BillNo??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -38,57 +39,81 @@
                                     <label class="col-sm-3 col-form-label">收料日期</label>
                                     <div class="col-9">
                                         <input type="text" data-date class="form-control ml-2" placeholder="收料日期"
-                                            maxlength="20" name="sysPureceive.createdate"
-                                            value="#(sysPureceive.createdate??)" />
+                                               maxlength="20" name="sysPureceive.createdate" disabled
+                                               value="#(sysPureceive.createdate??)"/>
                                     </div>
                                 </div>
                             </div>
 
-                            <!--
 
                             <div class="col-md-4">
                                 <div class="form-group row">
-                                    <input type="hidden" name="Whcode" value="#(Whcode??)"
-                                    id="whcode" data-value-attr="whcode" />
+                                    <input type="hidden" name="sysPureceive.WhCode" value="#(sysPureceive.WhCode??)"
+                                           id="whcode" data-value-attr="whcode"/>
+                                    <input type="hidden" name="whcode1" value="#(sysPureceive.WhCode??)"
+                                           id="whcode1" data-sync-attr="whcode"/>
                                     <label class="col-sm-3 col-form-label">仓库名称</label>
                                     <div class="col-9">
                                         <input type="text" class="form-control" data-autocomplete
-                                            data-url="admin/SysEnumeration/wareHouse" data-rule="required"
-                                            data-hidden-input="whcode" data-text-attr="whname"
-                                            data-column-attr="whcode,whname" placeholder="请选择仓库名称"
-                                            data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
-                                            value="#(whname??)">
-                                    </div>
-                                </div>
-                            </div> -->
-
-
-
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <input type="hidden" name="sysPureceive.VenCode" value="#(sysPureceive.VenCode??)"
-                                        id="vencode" data-value-attr="vencode" />
-                                    <label class="col-sm-3 col-form-label">供应商名称</label>
-                                    <div class="col-9">
-                                        <input type="text" class="form-control" data-autocomplete
-                                            data-url="admin/scancodereceive/venCode" data-rule="required"
-                                            data-hidden-input="vencode" data-text-attr="venname"
-                                            data-column-attr="vencode,venname" placeholder="请选择供应商名称"
-                                            data-tips="请选择供应商名称" data-header="供应商编码,供应商名称" maxlength="40"
-                                            value="#(venname??)">
+                                               data-url="admin/materialReceiptList/Whcode" data-rule="required"
+                                               data-hidden-input="whcode"
+                                               data-sync-ele="#whcode,whcode1"
+                                               data-text-attr="whname" name="sysPureceive.WhName"
+                                               data-column-attr="whcode,whname" placeholder="请选择仓库名称"
+                                               data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
+                                               value="#(sysPureceive.WhName??)"
+                                               #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >
                                     </div>
                                 </div>
                             </div>
+
+
+                            <!--                            <div class="col-md-4">-->
+                            <!--                                <div class="form-group row">-->
+                            <!--                                    <input type="hidden" name="sysPureceive.VenCode" value="#(sysPureceive.VenCode??)"-->
+                            <!--                                           id="vencode" data-value-attr="vencode"/>-->
+                            <!--                                    <input type="hidden" name="vencode1" value="#(sysPureceive.VenCode??)"-->
+                            <!--                                           id="vencode1" data-sync-attr="vencode"/>-->
+                            <!--                                    <label class="col-sm-3 col-form-label">供应商名称</label>-->
+                            <!--                                    <div class="col-9">-->
+                            <!--                                        <input type="text" class="form-control" data-autocomplete-->
+                            <!--                                               data-url="admin/materialReceiptList/venCode" data-rule="required"-->
+                            <!--                                               data-text-attr="venname"-->
+                            <!--                                               data-sync-ele="#vencode,vencode1"-->
+                            <!--                                               data-column-attr="vencode,venname" placeholder="请选择供应商名称"-->
+                            <!--                                               data-tips="请选择供应商名称" data-header="供应商编码,供应商名称" maxlength="40"-->
+                            <!--                                               value="#(venname??)">-->
+                            <!--                                    </div>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
+                            <!--                            <div class="col-md-4">-->
+                            <!--                                <div class="form-group row">-->
+                            <!--                                    <input type="hidden" name="sysPureceive.RdCode" value="#(sysPureceive.RdCode??)"-->
+                            <!--                                           id="rdcode" data-value-attr="crdcode"/>-->
+                            <!--                                    <label class="col-sm-3 col-form-label">入库类型</label>-->
+                            <!--                                    <div class="col-9">-->
+                            <!--                                        <input type="text" class="form-control" data-autocomplete-->
+                            <!--                                               data-url="admin/materialReceiptList/selectRdCode" data-rule="required"-->
+                            <!--                                               data-hidden-input="rdcode" data-text-attr="cptname"-->
+                            <!--                                               data-column-attr="crdcode,cptname" placeholder="请选择入库类型"-->
+                            <!--                                               data-tips="请选择入库类型" data-header="入库类型编码,入库类型名称" maxlength="40"-->
+                            <!--                                               value="#(cptname??)">-->
+                            <!--                                    </div>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
+
 
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">收料人</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true" data-tips="请输收料人" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输收料人" maxlength="40" name="username" value="#(username??)" />
+                                        <input type="text" data-notnull="true" data-tips="请输收料人" disabled
+                                               data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                               placeholder="请输收料人" maxlength="40" name="username"
+                                               value="#(username??)"/>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                         <input id="operationType" type="hidden" name="operationType" value="#(operationType??)">
                     </form>
