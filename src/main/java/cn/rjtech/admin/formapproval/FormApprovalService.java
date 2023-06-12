@@ -891,7 +891,10 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     // 更新单据审批流主表
                     formApproval.setIsDeleted(true);
                     formApproval.update();
-
+                    
+                    // 审批不通过的，单据业务处理
+                    String msg = invokeMethod(className, "postRejectFunc", formAutoId);
+                    ValidationUtils.assertBlank(msg, msg);
                 } else {
                     
                     // TODO 最后一步审批通过时，调用此方法，用于支持审批状态变更外的业务处理，请在合适的地方启用代码块
@@ -1603,7 +1606,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
             // 反审后的处理逻辑
             Method method = ReflectUtil.getMethodByName(o.getClass(), methodName);
-            ValidationUtils.notNull(method, String.format("必须实现反审后的方法“%s”", methodName));
+            ValidationUtils.notNull(method, String.format("必须实现审批变更后的方法“%s”", methodName));
 
             // 调用方法
             return (String) method.invoke(o, args);
