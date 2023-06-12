@@ -1209,28 +1209,34 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     approvalD.setIStatus(status);
                     flowD.setIAuditStatus(status);
 
-                    approvalD.update();
-                    flowD.update();
+                    boolean approvalDUpdate = approvalD.update();
+                    boolean flowDUpdate = flowD.update();
 
-                    // TODO 单据的审核状态，是最后一步审核之后的反审时，需更新单据状态
-                    if (Objects.equals(perStatus, "2")){
-                        // 反审后 单据状态都是待审批
-                        ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), primaryKeyName), "更新反审失败");
-                        
+                    if (flowDUpdate) {
                         // 是否为第一个反审
-                        // if (isFirstReverse()) {
-                        // 单据反审时，预留额外业务处理
-                        // invokeMethod(className, "postReverseApproveFunc", formAutoId, true, false);
-                        // }
-                        
-                        // 是否为最后一个反审
-                        // if (isLastReverse()) {
+                        if (isFirstReverse(formAutoId)) {
+
+                            revocationApprove(formAutoId, null);
+
+                            ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(),
+                                    AuditStatusEnum.AWAIT_AUDIT.getValue(), primaryKeyName), "更新反审失败");
+
                             // 单据反审时，预留额外业务处理
-                            // invokeMethod(className, "postReverseApproveFunc", formAutoId, false, true);
-                        // }
+                            invokeMethod(className, "postReverseApproveFunc", formAutoId, true, false);
+                        }
 
+                        // TODO 单据的审批状态，是最后一步审批之后的反审时，需更新单据状态
+                        if (Objects.equals(perStatus, "2")) {
+                            // 反审后 单据状态都是待审批
+                            ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), primaryKeyName), "更新反审失败");
+
+
+                            // 是否为最后一个反审
+//                         单据反审时，预留额外业务处理
+                            invokeMethod(className, "postReverseApproveFunc", formAutoId, false, true);
+
+                        }
                     }
-
                     return true;
                 });
             }
@@ -1631,6 +1637,24 @@ public class FormApprovalService extends BaseService<FormApproval> {
             e.printStackTrace();
             throw new RuntimeException(e.getLocalizedMessage());
         }
+    }
+
+    /**
+     * 判断是否为审批第一人
+     * @param formId
+     * @return
+     */
+    public Boolean isFirstReverse(Long formId){
+
+        Kv kv = new Kv();
+        kv.set("formId",formId);
+        List<FormApprovalFlowM> approvalFlowMList = flowMService.daoTemplate("formapproval.isFirstReverse", kv).find();
+
+        if (approvalFlowMList.size() == 0){
+            return true;
+        }
+
+        return false;
     }
 
 }

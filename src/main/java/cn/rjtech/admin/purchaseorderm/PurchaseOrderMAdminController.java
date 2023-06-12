@@ -380,7 +380,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     }
 
     /**
-     * 一页导出一个条码数据
+     * 现品票导出PDF
      */
     @SuppressWarnings("unchecked")
     public void purchaseordermOne(@Para(value = "iautoid") Long iautoid,@Para(value = "page") Integer page,

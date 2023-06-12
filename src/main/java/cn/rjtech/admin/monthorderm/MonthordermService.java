@@ -1,7 +1,6 @@
 package cn.rjtech.admin.monthorderm;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -15,7 +14,6 @@ import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.MonthOrderD;
 import cn.rjtech.model.momdata.MonthOrderM;
@@ -30,8 +28,7 @@ import com.jfinal.plugin.activerecord.TableMapping;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
-import static cn.hutool.core.text.StrPool.COMMA;
+import java.util.stream.Collectors;
 
 /**
  * 月度计划订单 Service
@@ -379,16 +376,16 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     public Ret batchApprove(String ids) {
         tx(() -> {
-
-            formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId)-> {
-
+            List<MonthOrderM> list = getListByIds(ids);
+            formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> {
                 // 审批通过前置工作，如有错误信息，请return msg;
-
+                ValidationUtils.notNull(list.stream().filter(item -> !(item.getIOrderStatus() == OrderStatusEnum.AWAIT_AUDIT.getValue())).collect(Collectors.toList()), "订单状态只能为待审批");
                 return null;
-            }, (formAutoId)-> {
-
+            }, (formAutoId) -> {
                 // 审批后置工作，如有错误信息，请return msg;
-
+                for (MonthOrderM monthOrderM : list) {
+                    approve(monthOrderM.getIAutoId());
+                }
                 return null;
             });
 
@@ -402,16 +399,16 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     public Ret batchReject(String ids) {
         tx(() -> {
-
+            List<MonthOrderM> list = getListByIds(ids);
             formApprovalService.batchRejectByStatus(table(), primaryKey(), ids, (formAutoId) -> {
-
                 // 审批前置工作，如有错误信息，请return msg;
-
+                ValidationUtils.notNull(list.stream().filter(item -> !(item.getIOrderStatus() == OrderStatusEnum.AWAIT_AUDIT.getValue())).collect(Collectors.toList()), "订单状态只能为待审批");
                 return null;
             }, (formAutoId) -> {
-
                 // 审批前置工作，如有错误信息，请return msg;
-
+                for (MonthOrderM monthOrderM : list) {
+                    reject(monthOrderM.getIAutoId());
+                }
                 return null;
             });
 
@@ -426,23 +423,28 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     public Ret batchReverseApprove(String ids) {
         tx(() -> {
-
-            for (String idStr  : StrSplitter.split(ids, COMMA, true, true)) {
-                long id = Long.parseLong(idStr);
-
-                formApprovalService.reverseApproveByStatus(id, table(), primaryKey(), (formAutoId) -> {
-
-                    // 反审前置工作，如有错误信息，请return msg;
-
-                    return null;
-                }, (formAutoId) -> {
-
+            // 处理审批流
+            List<MonthOrderM> list = getListByIds(ids);
+            for (MonthOrderM monthOrderM  : list) {
+                formApprovalService.reverseApproveByStatus(monthOrderM.getIAutoId(), table(), primaryKey(), (formAutoId) -> null, (formAutoId) -> {
                     // 反审后置工作，如有错误信息，请return msg;
+                    OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(monthOrderM.getIOrderStatus());
+                    switch (orderStatusEnum) {
+                        case AWAIT_AUDIT:
+                            monthOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                            break;
+                        case APPROVED:
+                            monthOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+                            break;
+                        default:
+                            break;
+                    }
 
                     return null;
                 });
             }
 
+            ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
             return true;
         });
 
@@ -484,13 +486,21 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * @param isLast     是否为审批的最后一个节点
      */
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        // 只有一个审批人
+        if (isFirst && isLast) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", OrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
+        }
         // 反审回第一个节点，回退状态为“已保存”
-        if (isFirst) {
-            
+        else if (isFirst) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", OrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
         }
         // 最后一步通过的，反审，回退状态为“待审核”
-        if (isLast) {
-            
+        else if (isLast) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", OrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
         }
         return null;
     }

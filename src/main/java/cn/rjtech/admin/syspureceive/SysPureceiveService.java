@@ -827,6 +827,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         tx(() -> {
             //业务逻辑
             this.check(String.valueOf(ids));
+            String[] split = String.valueOf(ids).split(",");
+            for (String s : split) {
+                SysPureceive byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+                byId.update();
+            }
             return true;
         });
         return SUCCESS;
@@ -875,7 +881,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             for (String s : split) {
                 SysPureceive byId = findById(s);
                 byId.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-                byId.setIAuditWay(AuditStatusEnum.APPROVED.getValue());
+                byId.setIAuditWay(null);
                 byId.update();
             }
             //业务逻辑，删除下游单据
@@ -926,6 +932,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public void check(String ids) {
         List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + ids + ")");
         for (SysPureceive s : sysPureceives) {
+            if("0".equals(String.valueOf(s.getIAuditStatus()))){
+                ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据未提交审核或审批！！");
+            }
             if ("2".equals(String.valueOf(s.getIAuditStatus())) || "3".equals(String.valueOf(s.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "流程已结束！！");
             }
