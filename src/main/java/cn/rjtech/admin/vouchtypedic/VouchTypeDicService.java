@@ -169,7 +169,8 @@ public class VouchTypeDicService extends BaseService<VouchTypeDic> {
         return null;
     }
 
-    public List<Record> getCvbtId() {
+    public List<Record> getOptionsList() {
         return dbTemplate("vouchtypedic.selectListCvbtid").find();
     }
+    
 }

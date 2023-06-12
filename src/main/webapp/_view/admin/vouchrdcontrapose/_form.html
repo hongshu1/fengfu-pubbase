@@ -1,56 +1,62 @@
 <form onsubmit="return false;" id="vouchRdContraposeForm" action="#(action)" method="post">
-<input type="hidden" name="vouchRdContrapose.iautoid" value="#(vouchRdContrapose.iautoid??)" />
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">收类别编码</label>
-		<div class="col">
-			<select class="form-control"
-					data-autoload
-					name="vouchRdContrapose.cvrrcode"
-					data-url="admin/rdstyle/options"
-					data-value-attr="cvrrcode"
-					data-text-attr="vrrname"
-				   	data-text="=选择收发类别="
-				   	data-select="#(vouchRdContrapose.cvrrcode??)">
-			</select>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">发类别编码</label>
-		<div class="col">
-			<select class="form-control"
-					data-autoload
-					name="vouchRdContrapose.cvrscode"
-					data-url="admin/rdstyle/options1"
-					data-value-attr="cvrscode"
-					data-text-attr="vrsname"
-					data-text="=选择收发类别="
-					data-select="#(vouchRdContrapose.cvrscode??)">
-			</select>
-		</div>
-	</div>
+    
+    <input type="hidden" name="vouchRdContrapose.iautoid" value="#(vouchRdContrapose.iautoid??)"/>
 
-	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">业务类型</label>
-		<div class="col">
-			<select class="form-control"
-					data-rule="required"
-					data-autoload
-					name="vouchRdContrapose.cvbtid"
-					data-url="admin/vouchtypedic/options"
-					data-value-attr="cvbtid"
-					data-text-attr="cvbtid"
-					data-text="=选择业务类型="
-					data-select="#(vouchRdContrapose.cvbtid??)">
-			</select>
-		</div>
-	</div>
-
-
-
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">业务类型</label>
+        <div class="col">
+            <select class="form-control"
+                    data-rule="required"
+                    data-autoload
+                    name="vouchRdContrapose.cvbtid"
+                    data-url="admin/vouchtypedic/options"
+                    data-value-attr="cvbtid"
+                    data-text-attr="cvbtid"
+                    data-text="=选择业务类型="
+                    data-text-format-handler="vbtFormatHandler_#(pageId)"
+                    data-select="#(vouchRdContrapose.cvbtid??)">
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">收类别</label>
+        <div class="col">
+            <select class="form-control"
+                    data-autoload
+                    name="vouchRdContrapose.cvrrcode"
+                    data-url="admin/rdstyle/options"
+                    data-value-attr="cvrrcode"
+                    data-text-attr="vrrname"
+                    data-text="=选择收发类别="
+                    data-select="#(vouchRdContrapose.cvrrcode??)">
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">发类别</label>
+        <div class="col">
+            <select class="form-control"
+                    data-autoload
+                    name="vouchRdContrapose.cvrscode"
+                    data-url="admin/rdstyle/options1"
+                    data-value-attr="cvrscode"
+                    data-text-attr="vrsname"
+                    data-select="#(vouchRdContrapose.cvrscode??)"
+                    data-text="=选择收发类别=">
+            </select>
+        </div>
+    </div>
 
 </form>
 #define js()
 <script>
+
+    console.log(#json(vouchRdContrapose))
+    
+    function vbtFormatHandler_#(pageId)(optionJsonData){
+        return optionJsonData.cvtchname + "-" + optionJsonData.cbtchname;
+    }
+    
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="vouchRdContraposeForm")
 #end
