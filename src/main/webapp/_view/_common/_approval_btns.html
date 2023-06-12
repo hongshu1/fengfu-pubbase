@@ -13,8 +13,8 @@
         ### 审核按钮
         #case(1)
 
-            <button data-ajaxbtn data-url="#(uri)/approve/#(iautoid)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核通过</button>
-            <button data-ajaxbtn data-url="#(uri)/reject/#(iautoid)" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核不通过</button>
+            <button data-ajaxbtn data-url="#(uri)/approve/#(o.get(primaryKeyName))" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核通过</button>
+            <button data-ajaxbtn data-url="#(uri)/reject/#(o.get(primaryKeyName))" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核不通过</button>
 
         ### 审批流操作, 不放置按钮，通过列表操作
         #case(2)
