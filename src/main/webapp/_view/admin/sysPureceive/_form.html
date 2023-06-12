@@ -13,6 +13,8 @@
                         ### formSn:             表单名
                         ### o:                  当前表单对象名
                         ### primaryKeyName:     主键名
+                        ###include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
+
                         #include("/_view/_common/_approval_btns.html", uri="/admin/materialReceiptList", formSn="T_Sys_PUReceive", o=sysPureceive, edit=edit??, primaryKeyName="AutoID")
                         #end
 <!--                        #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUReceive",uri="/admin/materialReceiptList", iautoid=sysPureceive.AutoID??, edit=edit??,primaryKeyName="AutoID")-->
@@ -139,8 +141,10 @@
     </div>
 </div>
 ### 新增之后，并且为审核流
+###if(monthorderm.iautoid?? && monthorderm.iauditway == 2)
 #if(sysPureceive.AutoID?? && sysPureceive.iauditway == '2')
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysPureceive.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId,primaryKeyName="AutoID", className="cn/rjtech/admin/syspureceive/SysPureceiveService")
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysPureceive.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId,primaryKeyName="AutoID", className="cn.rjtech.admin.syspureceive.SysPureceiveService")
+###include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService")
 #end
 
 
