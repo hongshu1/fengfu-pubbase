@@ -549,8 +549,6 @@
             spread.getSheet(0).setColumnCount(row); //设置一行有多少个单元格
             parms.RowCount=col;
             parms.ColumnCount=row;
-            //期初数量
-            parms.activeSheet.getCell(2,9).text("期初数量");
             //设置周六日背景色条件格式
             let style3Sat = new GC.Spread.Sheets.Style();
             style3Sat.foreColor = '#000';
@@ -607,6 +605,8 @@
             let url = searchData!=undefined?Api+`admin/schedudemandplan/getDemandList?startdate=${searchData.searchStartTime}&enddate=${searchData.searchEndTime}&cvenname=${parms.searchSupplier}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`
             :Api+`admin/schedudemandplan/getDemandList?startdate=&enddate=&cvenname=&cinvcode=&cinvcode1=&cinvname1=`
         spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
+        //期初数量
+        parms.activeSheet.getCell(2,9).text("期初数量");
         $.ajax({
             url,
             type:'get',
@@ -652,7 +652,9 @@
                             sheet.setValue(shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
                             sheet.setValue(shiyongRow+1,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].jihua);
                             sheet.setValue(shiyongRow+2,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
+                            sheet.setValue(shiyongRow+2,shiyongCol-1,parms['scheduplanmonth'].data[i].qiChuZaiKu);
                         }else{
+
                             sheet.setValue(3*i+shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
                             sheet.setValue(3*i+shiyongRow+1,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].jihua);
                             sheet.setValue(3*i+shiyongRow+2,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
