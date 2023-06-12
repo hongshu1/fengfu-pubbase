@@ -1,3 +1,4 @@
+#set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
@@ -6,8 +7,6 @@
                     <div class="col">
                         <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
                                 class="fa fa-refresh"></i> 保存</button>
-                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批
-                        </button>
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
                                 class="fa fa-window-maximize"></i> 关闭
                         </button>
@@ -19,63 +18,106 @@
             <div class="card">
                 <div class="card-body">
                     <form onsubmit="return false;" id="sysscandeliver_#(pageId)" action="#(action)" method="post">
-                        #if(sysscandeliver.AutoID??)
-                        <input type="hidden" name="sysscandeliver.AutoID" value="#(sysscandeliver.AutoID??)" />
+                        #if(sysscandeliver.autoid??)
+                        <input type="hidden" name="sysscandeliver.autoid" value="#(sysscandeliver.autoid??)" />
                         #end
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-4 col-form-label">车次号/传票号</label>
-                                    <input type="hidden" id="cbarcode1" class="form-control border-none"
-                                        readonly="readonly" name="sysscandeliver.billno" placeholder=""
-                                        value="#(sysscandeliver.billno??)" />
-                                    <input type="text" data-notnull="true" data-tips="请输入车次号/传票号" id="cbarcode" 
-                                        data-with-clearbtn="true" autocomplete="off" class="form-control" disabled 
-                                        placeholder="请输入车次号/传票号"
-                                        maxlength="40" name="billno" value="#(sysscandeliver.billno??)" />
-                                    <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
-                                        data-area="80%,80%" data-title="选择数据（单选）" id="supplierButton"
-                                        data-url="/admin/scanCodeShipment/orderData"><i
-                                            class="fa fa-search mr-1"></i></button>
-                                </div>
-                            </div>
 
-
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">客户名称</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true" data-tips="请输客户名称" id="ccusname"
-                                            data-with-clearbtn="true" autocomplete="off" class="form-control" disabled
-                                            placeholder="请输客户名称" maxlength="40" name="ccusname" value="#(ccusname??)" />
+                                        <input id="versionCusName" style="width: 100%" data-width="300" type="text"
+                                               data-autocomplete data-url="/admin/scanCodeShipment/getCustomer"
+                                               data-hiddeninput="versionCusCode" class="form-control"
+                                               data-handler=""
+                                               value="#(sysscandeliver.cusname??)"
+                                               placeholder="请选择客户" data-tips="请选择客户" maxlength="40">
+
+                                        <input type="hidden" class="form-control" id="versionCusCode"
+                                               name="sysscandeliver.cuscode"
+                                               placeholder="客户编码"
+                                               data-value-attr="cuscode"
+                                               value="#(sysscandeliver.cuscode??)"/>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-4 col-form-label">客户位置</label>
-                                    <input type="hidden" id="cdistrictcode" class="form-control border-none"
-                                        readonly="readonly" name="sysscandeliver.ReceiveAddress" placeholder=""
-                                        value="#(sysscandeliver.receiveaddress??)" />
-                                    <input type="text" data-notnull="true" data-tips="请输入客户位置" id="cdistrictname"
-                                        data-with-clearbtn="true" autocomplete="off" class="form-control" disabled
-                                        placeholder="请输入客户位置" maxlength="40" name="sysscandeliver.cdistrictname"
-                                        value="#(sysscandeliver.receiveaddress??)" />
-                                    <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
-                                        data-area="80%,80%" data-title="选择数据（单选）" id="supplierButton"
-                                        data-url="/admin/scanCodeShipment/orderDatatwo"><i
+                                    <label class="col-sm-3 col-form-label">客户位置</label>
+                                    <div class="col-9">
+                                        <div class="input-group-append">
+                                    <input type="text" data-notnull="true"
+                                           class="form-control"
+                                           placeholder="请选择客户位置" maxlength="40" name="sysscandeliver.receiveaddress"
+                                           value="#(sysscandeliver.receiveaddress??)" />
+                                    <button class="btn btn-primary" data-dialogbtn data-link-para-ele="#versionCusCode"
+                                            data-area="80%,80%" data-title="选择数据（单选）"
+                                            data-url="/admin/scanCodeShipment/getCusAddress"><i
                                             class="fa fa-search mr-1"></i></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+
+                            <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">仓库名称</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true" data-tips="请输仓库名称" disabled
-                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
-                                            id="cwhname" placeholder="请输仓库名称" maxlength="40" name="cwhname"
-                                            value="#(cwhname??)" />
+                                        <input type="hidden" name="sysscandeliver.whcode"
+                                               value="#(sysscandeliver.whcode??)"/>
+                                        <input type="text" data-notnull="true" data-tips="仓库名称"
+                                               readonly="readonly" class="form-control"
+                                                placeholder="仓库名称"
+                                               value="#(sysscandeliver.whname??)" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">订单号</label>
+                                    <div class="col-9">
+                                        <div class="input-group-append">
+                                            <input type="hidden" id="SourceBillID" class="form-control"
+                                                   name="sysscandeliver.sourcebillid" placeholder="来源ID"
+                                                   value="#(sysscandeliver.sourcebillid??)" />
+                                            <input type="text" id="sourceBillNo"
+                                                   class="form-control"
+                                                   placeholder="请选择订单号"
+                                                   maxlength="40" name="sysscandeliver.sourcebillno"
+                                                   value="#(sysscandeliver.sourcebillno??)" />
+                                            <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
+                                                    data-area="80%,80%" data-title="选择数据（单选）" id="billButton"
+                                                    data-url="/admin/scanCodeShipment/orderData"><i
+                                                    class="fa fa-search mr-1"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">日期</label>
+                                    <div class="col-9">
+                                        <input type="text" data-date data-type="date"
+                                               data-fmt="yyyy-MM-dd"
+                                               class="form-control" placeholder="请设置日期"
+                                               maxlength="10" name="sysscandeliver.billdate"
+                                               value="#date(DateUtil.toDate(sysscandeliver.billdate??DateUtil.getNow()),'yyyy-MM-dd')">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">备注</label>
+                                    <div class="col-9">
+                                        <input type="text"
+                                                class="form-control"
+                                                placeholder="请输备注" maxlength="40" name="sysscandeliver.memo"
+                                               value="#(sysscandeliver.memo??)" />
                                     </div>
                                 </div>
                             </div>
@@ -92,10 +134,10 @@
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="admin/sysscandeliverdetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " 
-                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" 
+                <a href="admin/sysscandeliverdetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
+                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
                 class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-   
+
             </td>
             <!-- <td>${data.whcode}</td>
             <td>${data.whname}</td> -->
@@ -112,61 +154,89 @@
         </tr>
         {@/each}
     </script>
-    <div class="jbolt_table_toolbar" id="sysscandeliver_toolbar_#(pageId)">
-        <div class="col-md-3">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">现品票扫码</label>
-                <div class="col-9">
-                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
-                        autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
-                        name="sysscandeliver.warehousingNo" value="#(sysscandeliver.warehousingNo??)" />
-                </div>
-            </div>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">搜索</button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysscandeliverdetail/deleteByIds?ids="
-                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
-        </div>
+    <div class="jbolt_table_toolbar" id="sysscandeliver_toolbar_#(pageId)" style="display: flex">
 
+        <div class="clearfix">
+            <form class="form-inline" id="sysscandeliver_detail_#(pageId)">
+
+                <input type="text" autocomplete="off" class="form-control"  placeholder="现品票扫码" name="barcode"
+                       value="" />
+                <input type="text" autocomplete="off"  class="form-control"  placeholder="容器扫码" style="display: none"
+                       name="storeNum"
+                       id="storeNum"
+                       value="" />
+                <span style="padding: 0 12px 0 12px">
+                开启容器扫码:
+                <img data-switchbtn data-value="false" id="switchBtn" data-handler="switchFun"/>
+                    </span>
+                <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
+            </form>
+        </div>
+        <div style="padding-left: 65%">
+        <button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-outline-secondary"><i class="fa fa-trash"></i> 删除</button>
+        </div>
+        </div>
     </div>
 
-    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable
-        #if(sysscandeliver.AutoID??) data-ajax="true"
-        data-url="admin/sysscandeliverdetail/findEditTableDatas" #end
-        data-conditions-form="sysscandeliver_#(pageId)"
+<table  class="jbolt_table thead_font_normal table-bordered table-center"
+        ### 可排序列 定义 多个用逗号隔开
+        ### 启用动态调整列宽
+        data-column-resize="true"
+        ### 设置为异步加载数据
+        data-ajax="true"
+        data-ajax-success-handler=""
+        ### 数据接口地址
+        data-url="admin/sysscandeliverdetail/findEditTableDatas"
+        data-conditions-form="sysscandeliver_detail_#(pageId)"
+        ### 禁止回车键新增行
+        data-auto-create-empty-tr="false"
+        ### 加一列checkbox
+        data-column-prepend="1:checkbox"
+        data-tfoot-fixed="true"
+        data-jbolttable
+        id="jbolt_Table_#(pageId)"
+        data-rowtpl="sysscandeliver_tpl_#(pageId)"
+        data-toolbar="sysscandeliver_toolbar_#(pageId)"
+        data-editable="true"
+        data-page="sysscandeliver_tpl_#(pageId)"
+        data-editable-option="getJBoltTableEditableColsOpton">
+    <thead class="fw_normal">
+    <tr>
+        <th data-width="60">序号</th>
+        <th data-width="150">操作</th>
+        <!-- <th data-width="100" data-column="whcode">入库库区</th>
+        <th data-width="100" data-column="whname">仓库名称</th> -->
+        <th data-width="100" data-column="cusbarcode">客户传票号</th>
+        <th data-width="100" data-column="barcode">现品票</th>
+        <th data-width="100" data-column="ccontainercode">容器编码</th>
+        <th data-width="100" data-column="cinvcode">存货编码</th>
+        <th data-width="100" data-column="cinvcode1">客户部番</th>
+        <th data-width="100" data-column="cinvname1">部品名称</th>
+        <th data-width="100" data-column="qty">数量</th>
+        <th data-width="100" data-column="cinvstd">规格型号</th>
+        <th data-width="100" data-column="inventorycuomname">主计量单位</th>
 
-        id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
-        data-rowtpl="sysscandeliver_tpl_#(pageId)" data-toolbar="sysscandeliver_toolbar_#(pageId)" data-editable="true"
-        data-page="sysscandeliver_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
-        <thead class="fw_normal">
-            <tr>
-                <th data-width="60">序号</th>
-                <th data-width="150">操作</th>
-                <!-- <th data-width="100" data-column="whcode">入库库区</th>
-                <th data-width="100" data-column="whname">仓库名称</th> -->
-                <th data-width="100" data-column="cusbarcode">客户传票号</th>
-                <th data-width="100" data-column="barcode">现品票</th>
-                <th data-width="100" data-column="ccontainercode">容器编码</th>
-                <th data-width="100" data-column="cinvcode">存货编码</th>
-                <th data-width="100" data-column="cinvcode1">客户部番</th>
-                <th data-width="100" data-column="cinvname1">部品名称</th>
-                <th data-width="100" data-column="qty">数量</th>
-                <th data-width="100" data-column="cinvstd">规格型号</th>
-                <th data-width="100" data-column="inventorycuomname">主计量单位</th>
-
-            </tr>
-        </thead>
-    </table>
+    </tr>
+    </thead>
+</table>
 
 </div>
 #define js()
+<script>
+    /**
+     * 开启容器扫码
+     * @param ele
+     */
+    function switchFun(ele) {
+        console.log('ele',ele.data("value"));
+        let isOpen = ele.data("value");
+        if (isOpen){
+            $("#storeNum").show();
+        } else {
+            $("#storeNum").hide();
+        }
+    }
+</script>
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);

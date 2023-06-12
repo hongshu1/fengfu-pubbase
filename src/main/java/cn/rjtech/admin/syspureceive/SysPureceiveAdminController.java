@@ -265,7 +265,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     /**
      * 审核通过
      */
-    public void batchAudit(String ids) {
+    public void batchApprove(String ids) {
         if (StringUtils.isEmpty(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
@@ -275,9 +275,9 @@ public class SysPureceiveAdminController extends BaseAdminController {
 
 
     /**
-     * 审核不通过
+     * 批量反审核
      */
-    public void batchReverseAudit(String ids) {
+    public void batchReverseApprove(String ids) {
         if (StringUtils.isEmpty(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;

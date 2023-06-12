@@ -21,7 +21,9 @@
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
+                #if(!manualOrderM.iautoid?? || edit??false)
                 <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+                 #end
             </td>
             <td>${data.cinvcode}</td>
             <td hidden>${data.iinventoryid}</td>
@@ -67,6 +69,7 @@
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="itemrouting_toolbar_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
+                #if(!manualOrderM.iautoid?? || edit??false)
                 <div>
                     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                         <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
@@ -97,6 +100,7 @@
                         </div>
                     </div>
                 </div>
+                #end
             </div>
             <div class="clearfix"></div>
         </div>

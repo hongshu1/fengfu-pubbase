@@ -249,8 +249,10 @@
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
+                #if(!weekOrderM.iautoid?? || edit??false)
                 <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
                    data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+                #end
             </td>
             <td>${data.cdistrictname}</td>
             <td>${data.cplancode}</td>
@@ -272,6 +274,7 @@
     </script>
 
     <div class="jbolt_table_toolbar" id="WeekOrderM_toolbar_#(pageId)">
+        #if(!weekOrderM.iautoid?? || edit??false)
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-xs">添加行</button>
             <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？"
@@ -300,6 +303,7 @@
             </div>
             </div>
         </div>
+        #end
     </div>
 
     <table class="jbolt_table thead_font_normal table-bordered table-center"

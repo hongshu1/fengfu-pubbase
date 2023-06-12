@@ -193,11 +193,11 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
         MonthOrderM monthorderm = jBoltTable.getFormModel(MonthOrderM.class, "monthorderm");
-        
+
         User user = JBoltUserKit.getUser();
-        
+
         Date now = new Date();
-        
+
         tx(() -> {
             if (monthorderm.getIAutoId() == null) {
                 monthorderm.setIOrgId(getOrgId());
@@ -230,7 +230,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
     private void saveTableSubmitDatas(JBoltTable jBoltTable, MonthOrderM monthorderm) {
         List<Record> list = jBoltTable.getSaveRecordList();
         ValidationUtils.notEmpty(list, JBoltMsg.PARAM_ERROR);
-        
+
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
             if (i == 0) {
@@ -242,7 +242,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
                     }
                 }
             }
-            
+
             row.keep("iinventoryid", "iqty1", "iqty2", "iqty3", "iqty4", "iqty5", "iqty6", "iqty7", "iqty8", "iqty9", "iqty10", "iqty11", "iqty12",
                     "iqty13", "iqty14", "iqty15", "iqty16", "iqty17", "iqty18", "iqty19", "iqty20", "iqty21", "iqty22", "iqty23", "iqty24", "iqty25",
                     "iqty26", "iqty27", "iqty28", "iqty29", "iqty30", "iqty31", "isum", "cinvcode", "cinvname", "cinvcode1", "cinvname1", "cinvstd", "imonth1qty", "imonth2qty");
@@ -310,7 +310,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
 
                 return null;
             });
-            
+
             return true;
         });
 
@@ -324,7 +324,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         tx(() -> {
 
             // 根据审批状态
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey());
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"cn.rjtech.admin.monthorderm.MonthordermService");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // 处理其他业务
@@ -353,13 +353,13 @@ public class MonthordermService extends BaseService<MonthOrderM> {
 
                 // 修改客户计划汇总
                 cusOrderSumService.algorithmSum();
-                
+
                 return null;
             });
-            
+
             return true;
         });
-        
+
         return SUCCESS;
     }
 
@@ -368,11 +368,11 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     public Ret reject(Long iautoid) {
         tx(() -> {
-            
+
             formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
-                
+
                 ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
-                
+
                 return null;
             });
 
@@ -386,16 +386,16 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     public Ret batchApprove(String ids) {
         tx(() -> {
-            
+
             formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId)-> {
-                
+
                 // 审批通过前置工作，如有错误信息，请return msg;
-                
+
                 return null;
             }, (formAutoId)-> {
-                
+
                 // 审批后置工作，如有错误信息，请return msg;
-                
+
                 return null;
             });
 
@@ -409,22 +409,22 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     public Ret batchReject(String ids) {
         tx(() -> {
-            
+
             formApprovalService.batchRejectByStatus(table(), primaryKey(), ids, (formAutoId) -> {
-             
+
                 // 审批前置工作，如有错误信息，请return msg;
-                
+
                 return null;
             }, (formAutoId) -> {
-                
+
                 // 审批前置工作，如有错误信息，请return msg;
-                
+
                 return null;
             });
 
             return true;
         });
-        
+
         return SUCCESS;
     }
 
@@ -436,23 +436,23 @@ public class MonthordermService extends BaseService<MonthOrderM> {
 
             for (String idStr  : StrSplitter.split(ids, COMMA, true, true)) {
                 long id = Long.parseLong(idStr);
-                
+
                 formApprovalService.reverseApproveByStatus(id, table(), primaryKey(), (formAutoId) -> {
 
                     // 反审前置工作，如有错误信息，请return msg;
-                    
+
                     return null;
                 }, (formAutoId) -> {
-                    
+
                     // 反审后置工作，如有错误信息，请return msg;
-                    
+
                     return null;
                 });
             }
 
             return true;
         });
-        
+
         return SUCCESS;
     }
 
@@ -460,7 +460,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 处理审批通过的其他业务操作，如有异常返回错误信息
      */
     public String postApproveFunc(long formAutoId) {
-        
+
         return null;
     }
 
@@ -468,7 +468,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
     public String postRejectFunc(long formAutoId) {
-        
+
         return null;
     }
 
@@ -476,8 +476,8 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 实现反审之后的其他业务操作, 如有异常返回错误信息
      */
     public String postReverseApproveFunc(long formAutoId) {
-        
+
         return null;
     }
-    
+
 }

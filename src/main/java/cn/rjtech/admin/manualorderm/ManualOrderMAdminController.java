@@ -10,19 +10,19 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.ManualOrderStatusEnum;
+import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.ManualOrderM;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * 客户订单-手配订单主表
@@ -83,46 +83,27 @@ public class ManualOrderMAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        Page<Record> datas = service.getAdminDatas(1, 1, Kv.by("iAutoId", getLong(0)));
+        Page<Record> datas = service.getAdminDatas(1, 1, Kv.by("iAutoId", get("iautoid")));
         ValidationUtils.notNull(datas, JBoltMsg.DATA_NOT_EXIST);
         ValidationUtils.isTrue(datas.getList().size() > 0, JBoltMsg.DATA_NOT_EXIST);
         set("manualOrderM", datas.getList().get(0));
+        set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
         render("edit.html");
     }
 
     /**
      * 审核
      */
-    public void audit() {
-        ManualOrderM manualOrderM = service.findById(getLong("id"));
-        if (manualOrderM == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        
-        manualOrderM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-        manualOrderM.setIOrderStatus(ManualOrderStatusEnum.AUDITTED.getValue());
-        Ret stockoutQcFormM = service.createStockoutQcFormM(manualOrderM.getICustomerId(), manualOrderM.getIAutoId());
-        
-        cusOrderSumService.algorithmSum();
-        
-        if (stockoutQcFormM.isFail())
-            renderJson(stockoutQcFormM);
-        else
-            renderJson(service.update(manualOrderM));
+    public void approve() {
+        renderJson(service.approve(getLong(0)));
     }
 
     /**
      * 撤回
      */
-    public void reply() {
-        ManualOrderM manualOrderM = service.findById(getLong(0));
-        if (manualOrderM == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        manualOrderM.setIOrderStatus(1);
-        renderJson(service.update(manualOrderM));
+    public void withdraw(@Para(value = "iautoid") Long iAutoId) {
+        ValidationUtils.validateId(iAutoId, "iAutoId");
+        renderJson(service.withdraw(iAutoId));
     }
 
     /**
@@ -130,24 +111,9 @@ public class ManualOrderMAdminController extends BaseAdminController {
      */
     public void colse() {
         ManualOrderM manualOrderM = service.findById(getLong(0));
-        if (manualOrderM == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        manualOrderM.setIOrderStatus(6);
+        ValidationUtils.notNull(manualOrderM, JBoltMsg.FAIL);
+        manualOrderM.setIOrderStatus(OrderStatusEnum.CLOSE.getValue());
         renderJson(service.update(manualOrderM));
-    }
-
-    /**
-     * 查看
-     */
-    public void info() {
-        Page<Record> datas = service.getAdminDatas(1, 1, Kv.by("iAutoId", getLong(0)));
-        ValidationUtils.notNull(datas, JBoltMsg.DATA_NOT_EXIST);
-        ValidationUtils.isTrue(datas.getList().size() > 0, JBoltMsg.DATA_NOT_EXIST);
-        set("manualOrderM", datas.getList().get(0));
-        set("view", 1);
-        render("edit.html");
     }
 
     /**
@@ -175,7 +141,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
         render("inventory_dialog_index.html");
     }
 
-    public void batchApprove() {
+    public void batchAudit() {
         renderJson(service.batchHandle(getKv(), 3, new int[]{2}));
     }
 
