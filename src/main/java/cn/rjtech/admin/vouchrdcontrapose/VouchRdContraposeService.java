@@ -49,40 +49,44 @@ public class VouchRdContraposeService extends BaseService<VouchRdContrapose> {
         if (vouchRdContrapose == null || isOk(vouchRdContrapose.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        VouchRdContrapose flag = selectCvrrcodeAndCvrsCode(vouchRdContrapose.getCVRRCode(), vouchRdContrapose.getCVRSCode());
+        VouchRdContrapose flag = selectCvrrcodeAndCvrsCode(vouchRdContrapose.getCVBTID(), vouchRdContrapose.getCVRRCode(), vouchRdContrapose.getCVRSCode());
 
         if (isOk(flag)) {
             ValidationUtils.error("添加失败，类别已存在");
         }
 
-        User user = JBoltUserKit.getUser();
-        Date now = new Date();
-        vouchRdContrapose.setIOrgId(getOrgId());
-        vouchRdContrapose.setCOrgCode(getOrgCode());
-        vouchRdContrapose.setCOrgName(getOrgName());
-        vouchRdContrapose.setCVRRCode(vouchRdContrapose.getCVRRCode());
-        vouchRdContrapose.setCVBTID(vouchRdContrapose.getCVBTID());
-        vouchRdContrapose.setCVRSCode(vouchRdContrapose.getCVRSCode());
+        tx(() -> {
+            User user = JBoltUserKit.getUser();
+            Date now = new Date();
+            vouchRdContrapose.setIOrgId(getOrgId());
+            vouchRdContrapose.setCOrgCode(getOrgCode());
+            vouchRdContrapose.setCOrgName(getOrgName());
+            vouchRdContrapose.setCVRRCode(vouchRdContrapose.getCVRRCode());
+            vouchRdContrapose.setCVBTID(vouchRdContrapose.getCVBTID());
+            vouchRdContrapose.setCVRSCode(vouchRdContrapose.getCVRSCode());
 
-        vouchRdContrapose.setISource(SourceEnum.MES.getValue());
-        vouchRdContrapose.setIsDeleted(false);
-        vouchRdContrapose.setICreateBy(user.getId());
-        vouchRdContrapose.setCCreateName(user.getName());
-        vouchRdContrapose.setDCreateTime(now);
-        vouchRdContrapose.setIUpdateBy(user.getId());
-        vouchRdContrapose.setCUpdateName(user.getName());
-        vouchRdContrapose.setDUpdateTime(now);
-        boolean success = vouchRdContrapose.save();
-        if (success) {
-            //添加日志
-            //addSaveSystemLog(vouchRdContrapose.getIautoid(), JBoltUserKit.getUserId(), vouchRdContrapose.getName());
-        }
-        return ret(success);
+            vouchRdContrapose.setISource(SourceEnum.MES.getValue());
+            vouchRdContrapose.setIsDeleted(false);
+            vouchRdContrapose.setICreateBy(user.getId());
+            vouchRdContrapose.setCCreateName(user.getName());
+            vouchRdContrapose.setDCreateTime(now);
+            vouchRdContrapose.setIUpdateBy(user.getId());
+            vouchRdContrapose.setCUpdateName(user.getName());
+            vouchRdContrapose.setDUpdateTime(now);
+            ValidationUtils.isTrue(vouchRdContrapose.save(), ErrorMsg.SAVE_FAILED);
+            
+            return true;
+        });
+
+        return SUCCESS;
     }
 
-    private VouchRdContrapose selectCvrrcodeAndCvrsCode(String cvrrCode, String cvrsCode) {
-        Okv data = Okv.by("cvrrCode", cvrrCode)
+    private VouchRdContrapose selectCvrrcodeAndCvrsCode(String cvbtid, String cvrrCode, String cvrsCode) {
+        Okv data = Okv.by("iorgid", getOrgId())
+                .set("cvbtid", cvbtid)
+                .set("cvrrCode", cvrrCode)
                 .set("cvrsCode", cvrsCode);
+        
         return daoTemplate("vouchrdcontrapose.selectCvrrcodeAndCvrsCode", data).findFirst();
     }
 

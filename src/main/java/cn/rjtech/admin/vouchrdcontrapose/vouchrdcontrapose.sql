@@ -18,7 +18,12 @@
 #end
 
  #sql("selectCvrrcodeAndCvrsCode")
- select * from Bd_VouchRdContrapose where cVRRCode=#para(cvrrCode) AND cVRSCode=#para(cvrsCode)
+ SELECT * 
+ FROM Bd_VouchRdContrapose 
+ WHERE iorgid = #para(iorgid)
+    AND cvbtid = #para(cvbtid)
+    AND cVRRCode=#para(cvrrCode) 
+    AND cVRSCode=#para(cvrsCode)
  #end
 
  #sql("selectCvrrcodeOnCvrsCodeList")
