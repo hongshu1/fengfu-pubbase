@@ -602,5 +602,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
 
         return Kv.by("pages", pages).set("sheetNames", sheetNames);
     }
+    public List<RcvDocQcFormM> findFirstBycRcvDocNo(String crcvdocno) {
+        return find("select * from  PL_RcvDocQcFormM where cRcvDocNo = ? ", crcvdocno);
+    }
 
 }
