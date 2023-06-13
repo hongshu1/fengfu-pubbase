@@ -6,17 +6,16 @@ import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.SystemLog;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.materialsoutdetail.MaterialsOutDetailService;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.model.momdata.MaterialsOut;
-import cn.rjtech.model.momdata.MaterialsOutDetail;
-import cn.rjtech.model.momdata.Person;
-import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -43,17 +42,21 @@ import static cn.hutool.core.text.StrPool.COMMA;
 public class MaterialsOutService extends BaseService<MaterialsOut> {
 
 	private final MaterialsOut dao = new MaterialsOut().dao();
+	@Inject
+	private PersonService personservice;
+
+	@Inject
+	private MaterialsOutDetailService materialsOutDetailService;
+
+	@Inject
+	private FormApprovalService formApprovalService;
 
 	@Override
 	protected MaterialsOut dao() {
 		return dao;
 	}
 
-	@Inject
-	private PersonService personservice;
 
-	@Inject
-	private MaterialsOutDetailService materialsOutDetailService;
 
 	/**
 	 * 后台管理分页查询
@@ -250,21 +253,32 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 //					审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
 					materialsOut.setIAuditStatus(param);
 
-					materialsOut.setCreateDate(nowDate);
+					//创建人
+					materialsOut.setIcreateby(userId);
+					materialsOut.setCcreatename(userName);
+					materialsOut.setDcreatetime(nowDate);
+
+					//更新人
+					materialsOut.setIupdateby(userId);
+					materialsOut.setCupdatename(userName);
+					materialsOut.setDupdatetime(nowDate);
+
 					materialsOut.setOrganizeCode(OrgCode);
-					materialsOut.setCreatePerson(userName);
-					materialsOut.setModifyDate(nowDate);
-					materialsOut.setModifyPerson(userName);
+					materialsOut.setIsDeleted(false);
 					save(materialsOut);
 					headerId = materialsOut.getAutoID();
 				}else {
 					if ( param == 1 ){
-						materialsOut.setAuditDate(nowDate);
-						materialsOut.setAuditPerson(userName);
+						//审核人
+						materialsOut.setIAuditBy(userId);
+						materialsOut.setCAuditName(userName);
+						materialsOut.setDAudittime(nowDate);
 					}
 					materialsOut.setIAuditStatus(param);
-					materialsOut.setModifyDate(nowDate);
-					materialsOut.setModifyPerson(userName);
+					//更新人
+					materialsOut.setIupdateby(userId);
+					materialsOut.setCupdatename(userName);
+					materialsOut.setDupdatetime(nowDate);
 					update(materialsOut);
 					headerId = materialsOut.getAutoID();
 				}
@@ -294,14 +308,6 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 					materialsOutDetail.setModifyPerson(userName);
 				});
 				materialsOutDetailService.batchUpdate(lines);
-
-				//测试 推送u8
-				MaterialsOut materialsOut = jBoltTable.getFormModel(MaterialsOut.class,"materialsOut");
-				System.out.println("开始u8，开始u8，开始u8，开始u8，开始u8"+new Date());
-				Ret ret = this.pushU8(materialsOut,lines);
-				System.out.println(ret);
-				System.out.println("结束u8，结束u8，结束u8，结束u8，结束u8"+new Date());
-
 			}
 			// 获取待删除数据 执行删除
 			if (jBoltTable.deleteIsNotBlank()) {
@@ -315,49 +321,121 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 
 
 	/**
-	 * 审核
-	 * @param iAutoId
-	 * @return
+	 * 详情页提审
 	 */
-	public Ret approve(String iAutoId,Integer mark) {
-		boolean success = false;
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		List<MaterialsOut> listByIds = getListByIds(iAutoId);
-		if (listByIds.size() > 0) {
-			for (MaterialsOut materialsOut : listByIds) {
-				if (materialsOut.getIAuditStatus() != 1) {
-					return warn("订单："+materialsOut.getBillNo()+"状态不支持审核操作！");
-				}
-				//订单状态：2. 已审核
-				materialsOut.setIAuditStatus(2);
-				materialsOut.setAuditDate(nowDate);
-				materialsOut.setAuditPerson(userName);
-				success= materialsOut.update();
-			}
-		}
+	public Ret submit(Long iautoid) {
+		tx(() -> {
+			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"T_Sys_OtherOut");
+			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
+			// 处理其他业务
+			MaterialsOut materialsOut = findById(iautoid);
+			materialsOut.setIAuditStatus(1);
+			ValidationUtils.isTrue(materialsOut.update(),JBoltMsg.FAIL);
+			return true;
+		});
 		return SUCCESS;
 	}
 
 
 	/**
-	 * 批量反审批
+	 * 详情页审核
+	 */
+	public Ret approve(String ids) {
+		tx(() -> {
+			boolean success = false;
+			Long userId = JBoltUserKit.getUserId();
+			String userName = JBoltUserKit.getUserName();
+			Date nowDate = new Date();
+			MaterialsOut materialsOut = superFindById(ids);
+			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+			if (materialsOut.getIAuditStatus() != 1) {
+				ValidationUtils.error("订单："+materialsOut.getBillNo()+"状态不支持审核操作！");
+			}
+			//订单状态：3. 已审核
+			materialsOut.setIAuditStatus(2);
+			//审核人
+			materialsOut.setIAuditBy(userId);
+			materialsOut.setCAuditName(userName);
+			materialsOut.setDAudittime(nowDate);
+			Ret ret = this.pushU8(ids);
+			success= materialsOut.update();
+
+			return true;
+		});
+
+		return SUCCESS;
+	}
+
+	/**
+	 * 详情页审核不通过
+	 */
+	public Ret reject(Long ids) {
+		tx(() -> {
+			MaterialsOut materialsOut = superFindById(ids);
+			if (materialsOut.getIAuditStatus() != 2) {
+				ValidationUtils.error("订单："+materialsOut.getBillNo()+"状态不支持反审批操作！");
+			}
+			materialsOut.setIAuditStatus(1);
+			materialsOut.update();
+
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	/**
+	 * 批量审核
 	 * @param ids
 	 * @return
 	 */
-	public Ret NoApprove(String ids) {
-		//TODO数据同步暂未开发 现只修改状态
-		for (MaterialsOut materialsOut :  getListByIds(ids)) {
-//			订单状态： 2. 已审核
-			if (materialsOut.getIAuditStatus() != 2) {
-				return warn("订单："+materialsOut.getBillNo()+"状态不支持反审批操作！");
+	public Ret batchApprove(String ids, Integer mark) {
+		tx(() -> {
+			boolean success = false;
+			Long userId = JBoltUserKit.getUserId();
+			String userName = JBoltUserKit.getUserName();
+			Date nowDate = new Date();
+			List<MaterialsOut> listByIds = getListByIds(ids);
+			if (listByIds.size() > 0) {
+				for (MaterialsOut materialsOut : listByIds) {
+					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+					if (materialsOut.getIAuditStatus() != 1) {
+						ValidationUtils.error("订单：" + materialsOut.getBillNo() + "状态不支持审核操作！");
+					}
+					//订单状态：3. 已审核
+					materialsOut.setIAuditStatus(2);
+					//审核人
+					materialsOut.setIAuditBy(userId);
+					materialsOut.setCAuditName(userName);
+					materialsOut.setDAudittime(nowDate);
+					Ret ret = this.pushU8(ids);
+					success = materialsOut.update();
+				}
+			}
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	/**
+	 * 批量反审核
+	 * @param ids
+	 * @return
+	 */
+	public Ret batchReverseApprove(String ids) {
+		tx(() -> {
+			//TODO数据同步暂未开发 现只修改状态
+			for (MaterialsOut materialsOut :  getListByIds(ids)) {
+//			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+				if (materialsOut.getIAuditStatus() != 2) {
+					ValidationUtils.error("订单："+materialsOut.getBillNo()+"状态不支持反审核操作！");
+				}
+				materialsOut.setIAuditStatus(1);
+				materialsOut.update();
 			}
 
-			//订单状态： 1. 待审核
-			materialsOut.setIAuditStatus(1);
-			materialsOut.update();
-		}
+			return true;
+		});
 		return SUCCESS;
 	}
 
@@ -375,8 +453,10 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 		MaterialsOut materialsOut = findById(iAutoId);
 		//订单状态：2. 待审批
 		materialsOut.setIAuditStatus(0);
-		materialsOut.setAuditDate(null);
-		materialsOut.setAuditPerson(null);
+		//审核人
+		materialsOut.setIAuditBy(null);
+		materialsOut.setCAuditName(null);
+		materialsOut.setDAudittime(null);
 		boolean result = materialsOut.update();
 		return ret(result);
 	}
@@ -421,81 +501,180 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	}
 
 
+	/**
+	 * 获取条码列表
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	public List<Record> getBarcodeDatas(Kv kv) {
+		return dbTemplate("materialsout.getBarcodeDatas",kv).find();
+	}
+
+	public Ret pushU8(String ids) {
+		List<Record> list = dbTemplate("materialsout.pushU8List", Kv.by("autoid", ids)).find();
+
+		if (list.size() > 0) {
+//          接口参数
+			User user = JBoltUserKit.getUser();
+			String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
+
+			JSONObject preAllocate = new JSONObject();
+			preAllocate.set("userCode",user.getUsername());
+			preAllocate.set("organizeCode",this.getdeptid());
+			preAllocate.set("CreatePerson",user.getId());
+			preAllocate.set("CreatePersonName",user.getName());
+			preAllocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
+			preAllocate.set("tag","MaterialOutForMO");
+			preAllocate.set("type","MaterialOutForMO");
+
+			JSONArray mainData = new JSONArray();
+			list.forEach(record -> {
+
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.set("organizeCode",record.get("organizecode"));
+				jsonObject.set("deliverqty","");
+				jsonObject.set("qty",record.get("qty"));
+				jsonObject.set("barcode",record.get("barcode"));
+				jsonObject.set("billrowno",record.get("billno"));
+				jsonObject.set("billid",record.get("billid"));
+				jsonObject.set("billdid",record.get("billdid"));
+				jsonObject.set("billnorow",record.get("billno"));
+				jsonObject.set("billno",record.get("billno"));
+				jsonObject.set("odeptcode",record.get("deptcode"));
+				jsonObject.set("odeptname",record.get("cdepname"));
+				jsonObject.set("owhcode",record.get("whcode"));
+				jsonObject.set("oposcode","");
+				jsonObject.set("invcode",record.get("invcode"));
+				jsonObject.set("invstd","");
+				jsonObject.set("invname","");
+				jsonObject.set("sourcebillno","");
+				jsonObject.set("sourcebillnorow","");
+				jsonObject.set("cusname","");
+				jsonObject.set("cuscode","");
+				jsonObject.set("Tag","MaterialOutForMO");
+				mainData.put(jsonObject);
+
+			});
+
+//            参数装载
+			Map<String, Object> data = new HashMap<>();
+			data.put("userCode",user.getUsername());
+			data.put("organizeCode",this.getdeptid());
+			data.put("token","");
+			data.put("PreAllocate", preAllocate);
+			data.put("MainData", mainData);
+
+//            请求头
+			Map<String, String> header = new HashMap<>(5);
+			header.put("Content-Type", "application/json");
+
+
+			SystemLog systemLog = new SystemLog();
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("<span class='text-danger'>[材料出库列表推U8操作]</span>");
+			systemLog.setType(2);
+			systemLog.setCreateTime(new Date());
+			systemLog.setUserId(JBoltUserKit.getUserId());
+			systemLog.setUserName(JBoltUserKit.getUserUserName());
+			systemLog.setOpenType(1);
+			systemLog.setTargetId(1L);
+			systemLog.setTargetType(1);
+			Ret ret = new Ret();
+
+			try {
+				String post = HttpApiUtils.httpHutoolPost(url, data, header);
+				if (isOk(post)) {
+					com.alibaba.fastjson.JSONObject parseObject = com.alibaba.fastjson.JSONObject.parseObject(post);
+					stringBuilder.append("<span class='text-primary'>[成功返回参数=").append(post).append("]</span>");
+					String code = parseObject.getString("code");
+					String msg = parseObject.getString("message");
+
+					LOG.info("data====" + data);
+					if ("200".equals(code)) {
+						String[] s = msg.split(",");
+						String bill = s[0];
+						LOG.info("s===>" + bill);
+						LOG.info("data====" + data);
+						int update = update("update T_Sys_OtherOut set AuditStatus ='2' where AutoID IN("+ids+")" );
+
+						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
+								"推送数据失败," + "失败原因" + msg);
+					}
+					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
+				} else {
+					stringBuilder.append("<span class='text-primary'>[失败返回参数=").append(post).append("]</span>");
+					return fail("请求失败");
+				}
+			} catch (Exception e) {
+				stringBuilder.append("<span class='text-primary'>[失败异常=").append(e.getMessage()).append("]</span>");
+				e.printStackTrace();
+			} finally {
+				systemLog.setTitle(stringBuilder.toString());
+				systemLog.save();
+			}
+			return fail("请求失败");
+		} else {
+			ValidationUtils.error("查无此单");
+		}
+
+		return SUCCESS;
+	}
+
 
 	//推送u8数据接口
-	public Ret pushU8(MaterialsOut materialsout, List<MaterialsOutDetail> materialsoutdetail) {
-		if(!CollectionUtils.isNotEmpty(materialsoutdetail)){
-			return Ret.fail("数据不能为空");
-		}
-
-		User user = JBoltUserKit.getUser();
-		Map<String, Object> data = new HashMap<>();
-
-		data.put("userCode",user.getUsername());
-		data.put("organizeCode",this.getdeptid());
-		data.put("token","");
-
-		JSONObject preallocate = new JSONObject();
-
-
-		preallocate.set("userCode",user.getUsername());
-		preallocate.set("organizeCode",this.getdeptid());
-		preallocate.set("CreatePerson",user.getId());
-		preallocate.set("CreatePersonName",user.getName());
-		preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
-		preallocate.set("tag","MaterialOutForMO");
-		preallocate.set("type","MaterialOutForMO");
-
-		data.put("PreAllocate",preallocate);
-
-		JSONArray maindata = new JSONArray();
-		materialsoutdetail.stream().forEach(s -> {
-			JSONObject jsonObject = new JSONObject();
-			jsonObject.set("organizeCode",materialsout.getOrganizeCode());
-			jsonObject.set("deliverqty","");
-			jsonObject.set("qty",s.getQty());
-			jsonObject.set("barcode",s.getBarcode());
-			jsonObject.set("billrowno",s.getSourceBIllNoRow());
-			jsonObject.set("billid",s.getSourceBillDid());
-			jsonObject.set("billdid",s.getSourceBillDid());
-			jsonObject.set("billnorow",s.getSourceBIllNoRow());
-			jsonObject.set("billno",s.getSourceBillNo());
-			jsonObject.set("odeptcode",materialsout.getDeptCode());
-			jsonObject.set("odeptname","");
-			jsonObject.set("owhcode",materialsout.getWhcode());
-			jsonObject.set("oposcode","");
-			jsonObject.set("invcode",s.getInvCode());
-			jsonObject.set("invstd","");
-			jsonObject.set("invname","");
-			jsonObject.set("sourcebillno",s.getSourceBillNo());
-			jsonObject.set("sourcebillnorow",s.getSourceBIllNoRow());
-			jsonObject.set("cusname","");
-			jsonObject.set("cuscode","");
-			jsonObject.set("Tag","MaterialOutForMO");
-
-			maindata.put(jsonObject);
-		});
-		data.put("MainData",maindata);
-
-		//            请求头
-		Map<String, String> header = new HashMap<>(5);
-		header.put("Content-Type", "application/json");
-		String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
-
-		try {
-			String post = HttpApiUtils.httpHutoolPost(url, data, header);
-			com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
-			if (isOk(post)) {
-				if ("201".equals(jsonObject.getString("code"))) {
-					System.out.println(jsonObject);
-					return Ret.ok("提交成功");
-				}
-			}
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return Ret.fail("上传u8失败");
-	}
+//	public Ret pushU8(MaterialsOut materialsout, List<MaterialsOutDetail> materialsoutdetail) {
+//		if(!CollectionUtils.isNotEmpty(materialsoutdetail)){
+//			return Ret.fail("数据不能为空");
+//		}
+//
+//		User user = JBoltUserKit.getUser();
+//		Map<String, Object> data = new HashMap<>();
+//
+//		data.put("userCode",user.getUsername());
+//		data.put("organizeCode",this.getdeptid());
+//		data.put("token","");
+//
+//		JSONObject preallocate = new JSONObject();
+//
+//
+//		preallocate.set("userCode",user.getUsername());
+//		preallocate.set("organizeCode",this.getdeptid());
+//		preallocate.set("CreatePerson",user.getId());
+//		preallocate.set("CreatePersonName",user.getName());
+//		preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
+//		preallocate.set("tag","MaterialOutForMO");
+//		preallocate.set("type","MaterialOutForMO");
+//
+//		data.put("PreAllocate",preallocate);
+//
+//		JSONArray maindata = new JSONArray();
+//		materialsoutdetail.stream().forEach(s -> {
+//			JSONObject jsonObject = new JSONObject();
+//
+//
+//			maindata.put(jsonObject);
+//		});
+//		data.put("MainData",maindata);
+//
+//		//            请求头
+//		Map<String, String> header = new HashMap<>(5);
+//		header.put("Content-Type", "application/json");
+//		String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
+//
+//		try {
+//			String post = HttpApiUtils.httpHutoolPost(url, data, header);
+//			com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
+//			if (isOk(post)) {
+//				if ("201".equals(jsonObject.getString("code"))) {
+//					System.out.println(jsonObject);
+//					return Ret.ok("提交成功");
+//				}
+//			}
+//		}catch (Exception e){
+//			e.printStackTrace();
+//		}
+//		return Ret.fail("上传u8失败");
+//	}
 
 	//通过当前登录人名称获取部门id
 	public String getdeptid(){
@@ -520,8 +699,8 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 		materials.setDeptCode(puinstore.getDeptCode());
 		materials.setWhcode(puinstore.getWhCode());
 		materials.setVenCode(puinstore.getVenCode());
-		materials.setCreatePerson(puinstore.getCreatePerson());
-		materials.setCreateDate(puinstore.getCreateDate());
+		materials.setCcreatename(puinstore.getCreatePerson());
+		materials.setDcreatetime(puinstore.getCreateDate());
 		materials.setState(1);
 		materials.setIAuditStatus(0);
 		materials.setMemo(puinstore.getMemo());
