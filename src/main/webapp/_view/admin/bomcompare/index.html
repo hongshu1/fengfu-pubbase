@@ -1,10 +1,17 @@
 #@jboltLayout()
+#define css()
+<style>
+	.spanMarginTop{
+		margin-top: 5px;
+	}
+</style>
+#end
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey??)">
 	<div class="jbolt_page_title">
 		<div class="row">
-			<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>子件物料清单</h1></div>
+			<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>子件</h1></div>
 			<div class="col">
 				<form class="form-inline text-left" id="BomCompare_form_index_#(pageId)">
 					<input id="bomCompare_pid" hidden type="text" autocomplete="off"  name="pid" value="">
@@ -19,36 +26,45 @@
 	<div class="jbolt_page_content">
 
 		<div class="form-group row" style="margin-top: 10px">
-			<label class="col-sm-2 col-form-label">母件存货编码：</label>
-			<div class="col-sm-2">
-				<input type="text" autocomplete="off" class="form-control" value="#(cInvCode)" readonly/>
-			</div>
-
-			<label class="col-sm-2 col-form-label">母件存货名称：</label>
-			<div class="col-sm-2">
-				<input type="text" autocomplete="off" class="form-control" value="#(cInvName)" readonly/>
+			<label class="col-sm-2 col-form-label">母件编码：</label>
+			<div class="col-sm-3 spanMarginTop">
+				<span>#(cInvCode)</span>
+<!--				<input type="text" autocomplete="off" class="form-control" value="#(cInvCode)" readonly/>-->
 			</div>
 
 			<label class="col-sm-2 col-form-label">版本号：</label>
-			<div class="col-sm-2">
-				<input type="text" autocomplete="off" class="form-control" value="#(cVersion)" readonly/>
+			<div class="col-sm-3 spanMarginTop">
+				<span>#(cVersion)</span>
+<!--				<input type="text" autocomplete="off" class="form-control" value="#(cVersion)" readonly/>-->
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">母件名称：</label>
+			<div class="col-sm-3 spanMarginTop">
+				<span style="display: inline-block; width: 450px">#(cInvName)</span>
+<!--				<input style="width: 300px" type="text" autocomplete="off" class="form-control" value="#(cInvName)" readonly/>-->
 			</div>
 		</div>
 
 		<div class="form-group row ">
 			<label class="col-sm-2 col-form-label">启用日期：</label>
-			<div class="col-sm-2">
-				<input type="text" autocomplete="off" class="form-control" value="#(dEnableDate)" readonly/>
+			<div class="col-sm-3 spanMarginTop">
+				<span>#(dEnableDate)</span>
+<!--				<input type="text" autocomplete="off" class="form-control" value="#(dEnableDate)" readonly/>-->
 			</div>
 
 			<label class="col-sm-2 col-form-label">停用日期：</label>
-			<div class="col-sm-2">
-				<input type="text" autocomplete="off" class="form-control" value="#(dDisableDate)" readonly/>
+			<div class="col-sm-3 spanMarginTop">
+				<span>#(dDisableDate)</span>
+<!--				<input type="text" autocomplete="off" class="form-control" value="#(dDisableDate)" readonly/>-->
 			</div>
-
+		</div>
+		<div class="form-group row ">
 			<label class="col-sm-2 col-form-label">状态：</label>
-			<div class="col-sm-2">
-				<input type="text" autocomplete="off" class="form-control" value="#(auditStatusStr)" readonly/>
+			<div class="col-sm-2 spanMarginTop">
+				<span>#(auditStatusStr)</span>
+<!--				<input type="text" autocomplete="off" class="form-control" value="#(auditStatusStr)" readonly/>-->
 			</div>
 		</div>
 		<!-- 定义JBoltTable使用的数据渲染模板 -->
@@ -106,8 +122,8 @@
 		>
 			<thead>
 				<tr>
-					<th rowspan="2" data-width="60"  data-column="index">序号</th>
-					<th colspan="9" data-width="270" data-column="cCode">编码</th>
+					<th rowspan="2" data-width="60" data-column="index">序号</th>
+					<th colspan="9" data-column="cCode">编码</th>
 					<th rowspan="2" data-width="150" data-column="cInvCode">子件物料编码</th>
 					<th rowspan="2" data-width="150" data-column="cInvName">子件物料名称</th>
 					<th rowspan="2" data-width="150" data-column="cInvStd">规格</th>
@@ -126,7 +142,7 @@
 					<th rowspan="2" data-width="120" data-column="">材料成本</th>
 				</tr>
 			<tr>
-				<th data-column="code1">1</th>
+				<th>1</th>
 				<th data-column="code2" data-width="40">2</th>
 				<th data-column="code3" data-width="40">3</th>
 				<th data-column="code4" data-width="40">4</th>

@@ -25,23 +25,12 @@
         font-weight: bold;
     }
 
-    /* 头部用户数据 */
-    .nav_title {
-        text-indent: 1rem;
-        padding: 10px 0px;
-        font-size: 0.9rem;
-        color: #5C5C5C;
-        border: 1px solid #CCCCCC;
-    }
 
     .search {
         display: flex;
+        justify-content: space-between; /* 水平居中 */
+        align-items: center; /* 垂直居中 */
         padding: 10px 0px;
-    }
-
-    /* 下拉框文字样式 */
-    .select {
-        margin-right: 15px;
     }
 
     .span {
@@ -54,7 +43,6 @@
 
     /* 搜索重置按钮样式 */
     .button {
-        margin: 0px 10px;
         padding: 3px 10px;
         background-color: #fff;
         border: #797979 1px solid;
@@ -188,9 +176,9 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)" >
     <div class="jbolt_page_title">
-        <nav>
-            <p class="nav_title">月周生产计划</p>
-        </nav>
+<!--        <nav>-->
+<!--            <p class="nav_title">月周生产计划</p>-->
+<!--        </nav>-->
         <!-- 头部标题结束 -->
         <!-- 搜索工具类开始 -->
         <div class="search">
@@ -221,8 +209,8 @@
                     <option value="5">层级5</option>
                 </select>
             </div>
-            <div class="select">
-                <div class="form-group row">
+            <div class="select" style="display: flex;justify-content: center;align-items: center;">
+                <div class="row">
                     <p>日期：</p>
                     <div class="col" style="display:flex;">
                         <input type="date" id="search_start-time" name="search_start-time">
@@ -231,8 +219,10 @@
                     </div>
                 </div>
             </div>
-            <button class="button" onClick="search()" style="height:26px;">搜索</button>
-            <button class="button" style="height:26px;">重置</button>
+            <div style="margin-left:1rem">
+                <button class="button" onClick="search()" style="height:26px;margin-right: 10px">搜索</button>
+                <button class="button" style="height:26px;">重置</button>
+            </div>
         </div>
     </div>
     <div class="jbolt_page_content">
@@ -359,7 +349,7 @@
     }
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1,calcOnDemand: true});
     var excelIo = new GC.Spread.Excel.IO();
-    spread.options.referenceStyle = GC.Spread.Sheets.ReferenceStyle.r1c1
+    spread.options.referenceStyle = GC.Spread.Sheets.ReferenceStyle.r1c1;
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取表单
@@ -478,8 +468,8 @@
         spread.sheets.forEach(function(sheet) {
             sheet.setDefaultStyle(style, GC.Spread.Sheets.SheetArea.viewport);
         });
-        var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
         //设置value值和该单元格的对齐方式
+        var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex).cellType(cellType);
         parms.activeSheet.setColumnWidth(parms.columnindex, 40);//设置指定单元格的width
         sheet.addSpan(0,0,4,1);
@@ -536,7 +526,7 @@
                     }
                 }
             }
-
+            //设置day，week
             for (let i = 0; i < res.data.day.length; i++) {
                 sheet.setValue(2,parms.dayRow++,res.data.day[i]);
                 sheet.setValue(3,parms.weekRow++,res.data.week[i]);
@@ -630,12 +620,12 @@
                         }
                          //日计划排版
                         let shiyongRow = 4;//计划使用行下标
-                        let shiyongCol = 10;
-                        let zaikuCol = 9;
-                        let B = 9;
-                        let Z = 10;
-                        let jihuaRow = 8;
-                        let jihuaCol = 10;
+                        let shiyongCol = 10;//计划使用列下标
+                        let zaikuCol = 9;//在库下标
+                        let B = 9;//在库天数公式嵌入起始行
+                        let Z = 10;//在库天数公式嵌入起始列
+                        let jihuaRow = 8;//计划在库公式嵌入起始行
+                        let jihuaCol = 10;//计划在库公式嵌入起始列
                         //渲染计划数据
                         for (var j = 0; j < parms['scheduplanmonth'][i].day.length; j++) {
                             if (i == 0) {
@@ -656,7 +646,6 @@
                                 //嵌入计划在库公式
                                 sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //嵌入在库天数公式
-                                // sheet.setFormula(B,Z++,`=IF(${useArray[0]}:${useArray.length>1?useArray.length-1:useArray[0]}/RC[-${j+1}]=0,0,SUM(R[-1]C/(${useArray[0]}:${useArray.length>1?useArray.length-1:useArray[0]}/RC[-${j+1}])))`);
                                 sheet.setFormula(B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,(SUM(R[-1]C/${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`)
                             } else {
                                 sheet.setValue(6 * i + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].shiyong);
@@ -753,6 +742,7 @@
         var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
         let arr = [];
         setTimeout(() => {
+            //获取公式计算之后的最新数据
             arr = sheet.getDirtyCells(-1,-1,-1,-1);
             let newValues = arr.map((item, index) =>{
                 //过滤没发生改变的数据
@@ -766,46 +756,31 @@
                     if(item!=undefined){
                         var rowData = sheet.getArray(item.row,0, 1, sheet.getColumnCount());//获取行数据
                         var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
-                        console.log(colData)
-                        parms.tableData.push({
+                        var colDatas = sheet.getArray(0, item.col, sheet.getRowCount(), 1);//获取列数据
+                        let obj = {
                             plan:rowData[0][7],//计划
                             cInvCode:rowData[0][8],//存户编码
                             newValue:item.newValue,//修改后的值
                             date:colData[1][0],//获取当前年月
-                            day:colData[2][0],//日
-                        })
+                            day:colDatas[2][0],//日
+                        }
+                        // let isDuplicate = false;
+                        // for (let i = 0; i < parms.tableData.length; i++) {
+                                //去重
+                        //     if (JSON.stringify(obj) === JSON.stringify(parms.tableData[i])) {
+                        //         isDuplicate = true;
+                        //         break;
+                        //     }
+                        // }
+                        // if (!isDuplicate) {
+                            parms.tableData.push(obj);
+                        // }
                     }
                 })
                 sheet.clearPendingChanges({clearType: 1, row: -1, rowCount: -1, col: -1, colCount: -1});
             console.log(parms.tableData)
             }, 0);
     });
-    //获取表格中输入或修改的值
-    // sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
-    //     // spreadSuspend();//暂停绘制
-    //     let {row,col,newValue} = info;
-    //     parms['row'] = row;
-    //     parms['col'] = col;
-    //     var rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取行数据
-    //     var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
-    //     //每次添加之后往数组内进行存储
-    //     parms.tableData.push({
-    //         plan:rowData[0][7],//计划
-    //         cInvCode:rowData[0][8],//存户编码
-    //         newValue:rowData[0][col],//修改后的值
-    //         date:colData[1][0],//获取当前年月
-    //         day:colData[2][0],//日
-    //     })
-    //
-    //     //     parms.tableData.push({
-    //     //         plan:"计划在库",//计划
-    //     //         cInvCode:rowNewValue[0][8],//存户编码
-    //     //         newValue:sheet.getValue(row+4,col),//修改后的值
-    //     //         date:colData[1][0],//获取当前年月
-    //     //         day:colData[2][0],//日
-    //     //     })
-    //     console.log(parms.tableData);
-    // });
     /**
      * 打开弹出层
      * @param openPopup
@@ -1117,7 +1092,6 @@
                 }else{
                     LayerMsgBox.error(res.msg,500);
                 }
-                parms.tableData.length=0;
             },error: function(error) {
                 console.log(error);
             }

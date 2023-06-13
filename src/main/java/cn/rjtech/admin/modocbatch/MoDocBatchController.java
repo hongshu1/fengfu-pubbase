@@ -13,6 +13,7 @@ import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -85,36 +86,12 @@ public class MoDocBatchController extends BaseAdminController {
    * 编辑计划
    */
   public void editPlan() {
-    MoMotask moMotask = service.findById(getLong(0));
-    if (moMotask == null) {
-      renderFail(JBoltMsg.DATA_NOT_EXIST);
-      return;
-    }
-    Department byId = departmentService.findById(moMotask.getIDepartmentId());
-    moMotask.setDeptname(byId.getCDepName());
-    set("moMotask", moMotask);
-
-    //拼日期  weeklist  colnamelist colname2list
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    //星期
-    List<String> betweenDate = Util.getBetweenDate(sdf.format(moMotask.getDBeginDate()), sdf.format(moMotask.getDEndDate()));
-    set("daylist", betweenDate);
-    List<String> weeklist = new ArrayList<>();
-    List<String> classlist = new ArrayList<>();
-    for (String s : betweenDate) {
-      String weekDay = DateUtils.formatDate(DateUtils.parseDate(s), "E");
-      weeklist.add(weekDay);
-      classlist.add("1S");
-      classlist.add("2S");
-      classlist.add("3S");
-    }
-    set("weeklist", weeklist);
-    set("classlist", classlist);
+    set("editplanviewdatas", service.getOpenEditPlanViewDatas(getLong(0)));
     render("planform.html");
   }
 
   public void getPlanPage() {
-    renderJsonData(service.getPlanPage(getPageNumber(), getPageSize(), getKv()));
+    renderJsonData(service.getPlanPage(getKv()));
   }
 
   /**
@@ -124,13 +101,14 @@ public class MoDocBatchController extends BaseAdminController {
     renderJson(service.save(getModel(MoMotask.class, "moMotask")));
   }
 
-    /**
-     * 人员编辑
-     */
-    public void personEdit() {
-        keepPara();
-        render("person_edit.html");
-    }
+  /**
+   * 人员编辑
+   */
+  public void personEdit() {
+    set("editplanviewdatas", service.getOpenEditPlanViewDatas(getLong(0)));
+    keepPara();
+    render("person_edit.html");
+  }
 
   /**
    * 制造工单人员批量编辑获取数据源
@@ -138,5 +116,6 @@ public class MoDocBatchController extends BaseAdminController {
   public void getModocStaffEditorDatas() {
     renderJsonData(service.getModocStaffEditorDatas(getKv()));
   }
+
 
 }

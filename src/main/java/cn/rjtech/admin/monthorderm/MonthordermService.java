@@ -14,7 +14,7 @@ import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.OrderStatusEnum;
+import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.MonthOrderD;
 import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.util.ValidationUtils;
@@ -318,7 +318,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
 
             // 处理其他业务
             MonthOrderM monthOrderM = findById(iautoid);
-            monthOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+            monthOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
             ValidationUtils.isTrue(monthOrderM.update(),JBoltMsg.FAIL);
             return true;
         });
@@ -331,17 +331,12 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     public Ret withdraw(Long iautoid) {
         tx(() -> {
-
             // 已根据单据的审批方式，适配撤回的处理
             formApprovalService.withdraw(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
 
                 MonthOrderM monthOrderM = findById(formAutoId);
-                monthOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                monthOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
                 ValidationUtils.isTrue(monthOrderM.update(), "撤回失败");
-
-                // 修改客户计划汇总
-                cusOrderSumService.algorithmSum();
-
                 return null;
             });
 
@@ -356,10 +351,9 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     public Ret reject(Long iautoid) {
         tx(() -> {
-
             formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
 
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
 
                 postRejectFunc(iautoid);
 
@@ -379,7 +373,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
             List<MonthOrderM> list = getListByIds(ids);
             formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> {
                 // 审批通过前置工作，如有错误信息，请return msg;
-                ValidationUtils.notNull(list.stream().filter(item -> !(item.getIOrderStatus() == OrderStatusEnum.AWAIT_AUDIT.getValue())).collect(Collectors.toList()), "订单状态只能为待审批");
+                ValidationUtils.notNull(list.stream().filter(item -> !(item.getIOrderStatus() == WeekOrderStatusEnum.AWAIT_AUDIT.getValue())).collect(Collectors.toList()), "订单状态只能为待审批");
                 return null;
             }, (formAutoId) -> {
                 // 审批后置工作，如有错误信息，请return msg;
@@ -402,7 +396,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
             List<MonthOrderM> list = getListByIds(ids);
             formApprovalService.batchRejectByStatus(table(), primaryKey(), ids, (formAutoId) -> {
                 // 审批前置工作，如有错误信息，请return msg;
-                ValidationUtils.notNull(list.stream().filter(item -> !(item.getIOrderStatus() == OrderStatusEnum.AWAIT_AUDIT.getValue())).collect(Collectors.toList()), "订单状态只能为待审批");
+                ValidationUtils.notNull(list.stream().filter(item -> !(item.getIOrderStatus() == WeekOrderStatusEnum.AWAIT_AUDIT.getValue())).collect(Collectors.toList()), "订单状态只能为待审批");
                 return null;
             }, (formAutoId) -> {
                 // 审批前置工作，如有错误信息，请return msg;
@@ -428,13 +422,13 @@ public class MonthordermService extends BaseService<MonthOrderM> {
             for (MonthOrderM monthOrderM  : list) {
                 formApprovalService.reverseApproveByStatus(monthOrderM.getIAutoId(), table(), primaryKey(), (formAutoId) -> null, (formAutoId) -> {
                     // 反审后置工作，如有错误信息，请return msg;
-                    OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(monthOrderM.getIOrderStatus());
+                    WeekOrderStatusEnum orderStatusEnum = WeekOrderStatusEnum.toEnum(monthOrderM.getIOrderStatus());
                     switch (orderStatusEnum) {
                         case AWAIT_AUDIT:
-                            monthOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                            monthOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
                             break;
                         case APPROVED:
-                            monthOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+                            monthOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
                             break;
                         default:
                             break;
@@ -443,8 +437,13 @@ public class MonthordermService extends BaseService<MonthOrderM> {
                     return null;
                 });
             }
-
             ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
+
+            // 判断订单是否存在已审核的反审批
+            if (list.stream().anyMatch(item -> item.getIOrderStatus() == WeekOrderStatusEnum.AWAIT_AUDIT.getValue())) {
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
+            }
             return true;
         });
 
@@ -457,10 +456,10 @@ public class MonthordermService extends BaseService<MonthOrderM> {
     public String postApproveFunc(long formAutoId) {
         MonthOrderM monthOrderM = findById(formAutoId);
         // 订单状态校验
-        ValidationUtils.equals(monthOrderM.getIOrderStatus(), OrderStatusEnum.AWAIT_AUDIT, "订单非待审核状态");
+        ValidationUtils.equals(monthOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT, "订单非待审核状态");
 
         // 订单状态修改
-        monthOrderM.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+        monthOrderM.setIOrderStatus(WeekOrderStatusEnum.APPROVED.getValue());
         monthOrderM.setIUpdateBy(JBoltUserKit.getUserId());
         monthOrderM.setCUpdateName(JBoltUserKit.getUserName());
         monthOrderM.setDUpdateTime(new Date());
@@ -474,7 +473,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
     public String postRejectFunc(long formAutoId) {
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }
 
@@ -488,17 +487,17 @@ public class MonthordermService extends BaseService<MonthOrderM> {
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         // 只有一个审批人
         if (isFirst && isLast) {
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", OrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
             // 修改客户计划汇总
             cusOrderSumService.algorithmSum();
         }
         // 反审回第一个节点，回退状态为“已保存”
         else if (isFirst) {
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", OrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
         }
         // 最后一步通过的，反审，回退状态为“待审核”
         else if (isLast) {
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", OrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
             // 修改客户计划汇总
             cusOrderSumService.algorithmSum();
         }

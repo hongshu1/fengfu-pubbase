@@ -567,6 +567,20 @@ var getBaseUrl = function (port) {
     return location.protocol + "//kkfileview.kephon.com";
 };
 
+var icontrastnum = function(val){
+    switch (val) {
+	    case 1:
+	        return "①";
+	    case 2:
+	        return "②";
+	    case 3:
+	        return "③";
+	    default:
+	        return "";
+    }	
+}
+
+
 /*
  * 数字格式化 清除掉小数点后的无用的0 如果最后是0 转为自定义字符显示
  * 参数说明：
@@ -633,6 +647,8 @@ function initMineJuicer(){
     juicer.register('iPurchaseRefType', iPurchaseRefType);
     juicer.register('numberFormatZeroDefaultChar', numberFormatZeroDefaultChar);
     juicer.register('previewUrl', previewUrl);
+    juicer.register('icontrastnum', icontrastnum);
+    
 }
 
 function jboltTableGetSpecCols(ele, colName) {

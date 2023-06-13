@@ -2062,8 +2062,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         List<ApsWeekscheduledQty> detailsQtyUpdList = new ArrayList<>(detailsQtyUpdMap.values());
 
         tx(() -> {
-            apsWeekscheduledQtyService.batchSave(detailsQtyAddList);
-            apsWeekscheduledQtyService.batchUpdate(detailsQtyUpdList);
+            //apsWeekscheduledQtyService.batchSave(detailsQtyAddList);
+            for (ApsWeekscheduledQty data : detailsQtyAddList){
+                data.save();
+            }
+            //apsWeekscheduledQtyService.batchUpdate(detailsQtyUpdList);
+            for (ApsWeekscheduledQty data : detailsQtyUpdList){
+                data.update();
+            }
             return true;
         });
         return SUCCESS;
