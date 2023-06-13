@@ -70,13 +70,13 @@ SELECT mp.BillNo,
        mp.SourceBillID,
        mpd.InvCode,
        mpd.Qty,
+       mpd.Num,
        it.cInvCode1,
        it.cInvName1,
        it.cInvStd,
        uom.cUomName,
        wh.cWhName,
-       wp.cPositionName,
-       md.iQty * iri.iUsageUOM AS totalQty
+       wp.cPositionName
 FROM T_Sys_MaterialsPrepareDetail mpd
          LEFT JOIN T_Sys_MaterialsPrepare mp ON mpd.MasID = mp.AutoID
          LEFT JOIN Bd_Inventory it ON mpd.InvCode = it.cInvCode
@@ -84,10 +84,6 @@ FROM T_Sys_MaterialsPrepareDetail mpd
          LEFT JOIN T_Sys_StockBarcodePosition sbp ON mpd.Barcode = sbp.Barcode
          LEFT JOIN Bd_Warehouse wh ON sbp.WhCode = wh.cWhCode
          LEFT JOIN Bd_Warehouse_Position wp ON sbp.PosCode = wp.cPositionCode
-         LEFT JOIN Mo_MoDoc md ON mp.SourceBillID = md.iAutoId
-         LEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting = ir.iAutoId
-         LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId = irc.iInventoryRoutingId
-         LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId = iri.iInventoryRoutingConfigId
 WHERE 1 = 1
   AND mp.BillNo = '#(billno)' #end
 
@@ -336,21 +332,24 @@ WHERE 1 = 1
 
   #sql("getBarcodedatas")
 SELECT
-    sl.AutoID,
-    sl.Barcode,
-    sl.InvCode,
+    sbp.AutoID,
+    sbp.Barcode,
+    sbp.InvCode,
     it.iAutoId,
     it.cInvCode1,
     it.cInvName1,
     it.cInvStd,
     it.iInventoryUomId1,
-    sl.Qty,
-    sl.Batch
+    sbp.Qty,
+    sbp.Batch,
+    uom.cUomName
 FROM
-    T_Sys_ScanLog sl
-        LEFT JOIN Bd_Inventory it ON sl.InvCode= it.cInvCode
+    T_Sys_StockBarcodePosition sbp
+        LEFT JOIN Bd_Inventory it ON sbp.InvCode= it.cInvCode
+        LEFT JOIN Bd_Uom1 uom ON it.iInventoryUomId1=uom.iAutoId
 WHERE
-        sl.Barcode= '#(barcode)' #end
+        sbp.InvCode is not null
+    sbp.Barcode= '#(barcode)' #end
 
 
 
