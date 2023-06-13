@@ -5,7 +5,7 @@
 			<td>${data.chighestsubjectname}</td>
 			<td>${data.clowestsubjectname}</td>
 			<td>${data.icontrastnum|icontrastnum}</td>
-			<td>$${data.ibudgettype|iBudgetType2}</td>
+			<td>$${data.ibudgettype|iPeriodContrastBudgetType}</td>
 			#if(monthcolumntxtlist??)
 	            #for(monthcolumntxt : monthcolumntxtlist)
 	            	<td>${data.#(monthcolumntxt.datacolumn)|kFormat}</td>

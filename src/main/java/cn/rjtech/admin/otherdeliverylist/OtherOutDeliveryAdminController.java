@@ -3,13 +3,14 @@ package cn.rjtech.admin.otherdeliverylist;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 
 import java.util.Date;
@@ -124,6 +125,30 @@ public class OtherOutDeliveryAdminController extends BaseAdminController {
 	}
 
 	/**
+	 * 详情页提审
+	 */
+	public void submit(@Para(value = "iautoid") Long iautoid) {
+		ValidationUtils.validateId(iautoid, "id");
+
+		renderJson(service.submit(iautoid));
+	}
+
+	/**
+	 * 详情页审核通过
+	 */
+	public void approve() {
+		renderJson(service.approve(get(0)));
+	}
+
+	/**
+	 * 详情页审核不通过
+	 */
+	public void reject() {
+		renderJson(service.reject(getLong(0)));
+	}
+
+
+	/**
 	 * 获取条码列表
 	 * 通过关键字匹配
 	 * autocomplete组件使用
@@ -137,25 +162,23 @@ public class OtherOutDeliveryAdminController extends BaseAdminController {
 
 
 	/**
-	 * 审核
+	 * 批量审核
 	 */
 	public void batchApprove(String ids,Integer mark) {
 		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
-		renderJson(service.approve(ids,mark));
+		renderJson(service.batchApprove(ids,mark));
 	}
 
 	/**
-	 * 反审核
+	 * 批量反审核
 	 */
-	public void batchReverseApprove(String ids) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
-			renderFail(JBoltMsg.PARAM_ERROR);
-			return;
-		}
-		renderJson(service.NoApprove(ids));
+	public void batchReverseApprove(@Para(value = "ids") String ids) {
+		ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+
+		renderJson(service.batchReverseApprove(ids));
 	}
 
 
@@ -169,6 +192,7 @@ public class OtherOutDeliveryAdminController extends BaseAdminController {
 		}
 		renderJson(service.recall(iAutoId));
 	}
+
 
 
 
