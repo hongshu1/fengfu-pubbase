@@ -192,9 +192,9 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void manualDatas() {
-        String billno = get("billno");
+        String cmodocno = get("cmodocno");
         Kv kv = new Kv();
-        kv.set("billno", billno == null ? "" : billno);
+        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
         renderJsonData(service.getManualdatas(getPageNumber(), getPageSize(), kv));
     }
 
@@ -295,15 +295,15 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void MaterialsListchoose() {
-        String billno = get("billno");
-        set("billnoo",billno);
+        String cmodocno = get("cmodocno");
+        set("cmodocno",cmodocno);
         render("chooseMaterials.html");
     }
 
     public void getManualAdddatas() {
-        String billno = get("billno");
+        String cmodocno = get("cmodocno");
         Kv kv = new Kv();
-        kv.set("billno", billno == null ? "" : billno);
+        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
         renderJsonData(service.getgetManualAdddatas(getPageNumber(), getPageSize(), kv));
     }
 }

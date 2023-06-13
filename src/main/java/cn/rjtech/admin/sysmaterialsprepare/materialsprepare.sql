@@ -296,9 +296,8 @@ FROM
         LEFT JOIN Mo_MoRouting mr ON mrc.iMoRoutingId= mr.iAutoId
         LEFT JOIN Mo_MoDoc md ON mr.iMoDocId= md.iAutoId
         LEFT JOIN Bd_Uom uom ON uom.iAutoId= it.iInventoryUomId1
-WHERE
-        1 = 1
-  AND  md.iAutoId='#(iautoid)' #end
+WHERE 1 = 1
+  AND  md.cMoDocNo='#(cmodocno)' #end
 
 
 
@@ -402,35 +401,37 @@ WHERE
 
 
 #sql("getManualAdddatas")
-SELECT mpd.AutoID,
-       mpd.InvCode,
-       it.cInvCode1,
-       it.cInvName1,
-       it.cInvStd,
-       uom.cUomName,
-       em.cEquipmentModelName,
-       wh.cWhName,
-       wp.cPositionName
-FROM T_Sys_MaterialsPrepareDetail mpd
-         LEFT JOIN T_Sys_MaterialsPrepare mp ON mpd.MasID = mp.AutoID
-         LEFT JOIN Bd_Inventory it ON mpd.InvCode = it.cInvCode
-         LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1 = uom.iAutoId
-         LEFT JOIN Bd_EquipmentModel em ON it.iEquipmentModelId = em.iAutoId
-         LEFT JOIN T_Sys_StockBarcodePosition sbp ON mpd.Barcode = sbp.Barcode
-         LEFT JOIN Bd_Warehouse wh ON sbp.WhCode = wh.cWhCode
-         LEFT JOIN Bd_Warehouse_Position wp ON sbp.PosCode = wp.cPositionCode
+SELECT
+    it.cInvCode,
+    it.cInvCode1,
+    it.cInvName1,
+    it.cInvStd,
+    uom.cUomName,
+    em.cEquipmentModelName,
+    wh.cWhName,
+    wp.cPositionName
+FROM
+    Mo_MoRoutingInvc mri
+        LEFT JOIN Bd_Inventory it ON mri.iInventoryId= it.iAutoId
+        LEFT JOIN Mo_MoRoutingConfig mrc ON mri.iMoRoutingConfigId= mrc.iAutoId
+        LEFT JOIN Mo_MoRouting mr ON mrc.iMoRoutingId= mr.iAutoId
+        LEFT JOIN Mo_MoDoc md ON mr.iMoDocId= md.iAutoId
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId= it.iInventoryUomId1
+        LEFT JOIN Bd_EquipmentModel em ON em.iAutoId= it.iEquipmentModelId
+        LEFT JOIN T_Sys_StockBarcodePosition sbp ON sbp.InvCode= it.cInvCode
+        LEFT JOIN Bd_Warehouse wh ON wh.cWhCode= sbp.WhCode
+        LEFT JOIN Bd_Warehouse_Position wp ON wp.cPositionCode= sbp.PosCode
 WHERE 1 = 1
-  AND mp.BillNo = '#(billno)'
-  #if(invcode)
-  AND mpd.InvCode = '#(invcode)'
-  #end
-  #if(cinvcode1)
-  AND it.cInvCode1 = '#(cinvcode1)'
-  #end
-  #if(cinvname1)
-  AND it.cInvName1 = '#(cinvname1)'
-  #end
-  AND mpd.InvCode is not null #end
+  #if(cinvcode)
+  AND it.cInvCode=#para(cinvcode)
+    #end
+    #if(cinvcode1)
+  AND it.cInvCode1=#para(cinvcode1)
+    #end
+    #if(cinvname1)
+  AND it.cInvName1=#para(cinvname1)
+    #end
+  AND  md.cMoDocNo='#(cmodocno)' #end
 
 
 

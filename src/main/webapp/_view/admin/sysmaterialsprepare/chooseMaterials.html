@@ -19,7 +19,7 @@
                     <button type="button" class="btn btn-outline-secondary" id="choose"><i class="fa fa-reset"></i> 选择
                     </button>
                 </form>
-                <button type="button" class="btn btn-outline-secondary" hidden="hidden" id="choose1"><i
+                <button type="button" class="btn btn-outline-secondary" hidden="hidden" id="choose1" onclick="choose2()"><i
                         class="fa fa-reset"></i> 选择
                 </button>
             </div>
@@ -32,7 +32,7 @@
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a class="text-info mr-1"  href=""  data-fs="true" data-handler="refreshJBoltTable" onclick="getCheckedStrip(this)">选择</a>
+	<a class="text-info mr-1" type="button" onclick="getCheckedStrip(this)" style="user-select:none">选择</a>
 </td>
 <td>${data.状态}</td>
 <td>${data.billno}</td>
@@ -55,7 +55,7 @@
                data-height="fill"
                data-ajax="true"
                data-conditions-form="SysMaterialsprepare_form_#(pageId)"
-               data-url="admin/sysMaterialsprepare/getManualAdddatas?billno=#(billnoo??)"
+               data-url="admin/sysMaterialsprepare/getManualAdddatas?cmodocno=#(cmodocno??)"
                data-rowtpl="MoPickItemM_tpl_#(pageId)"
                data-copy-to-excel="false"
                data-page="MoPickItemM_page"
@@ -74,7 +74,7 @@
                 <th data-width="150" data-column="">主计量单位</th>
                 <th data-width="150" data-column="">机型名称</th>
                 <th data-width="150" data-column="">仓库名称</th>
-                <th data-width="150" data-column="">库位名称</th>
+                <th data-width="200" data-column="">库位名称</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -88,10 +88,20 @@
     hideParentLayerDialogBtn(1);
 
     function getCheckedStrip(val) {
-        var value = $(val).parent().parent().find("td");
-        parent.$("#billno").val(value.eq(3).text());
-        window.parent.refreshJBoltTable();
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
+
+
+
+        if ($(val).parent().parent().find("td")[0].children[0].getAttribute("class")==="jbolt_table_checkbox checked"){
+            $(val).parent().parent().find("td")[0].children[0].setAttribute("class","jbolt_table_checkbox")
+        }else {
+            $(val).parent().parent().find("td")[0].children[0].setAttribute("class","jbolt_table_checkbox checked")
+        }
+
+        // var value = $(val).parent().parent().find("td");
+        // $(val).parent().parent().find("td:eq(0)").checked;
+        // parent.$("#cmodocno").val(value.eq(3).text());
+        // window.parent.refreshJBoltTable();
+        // parent.layer.close(parent.layer.getFrameIndex(window.name));
     }
 
     const BTN1 = document.getElementById('choose');
