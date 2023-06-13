@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.6.1";
+var jbolt_admin_js_version="6.6.2";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -308,7 +308,8 @@ var jboltPlugins={
 		"hiprint":{"js":['assets/plugins/hiprint/plugins/jspdf/canvas2image.js','assets/plugins/hiprint/plugins/jspdf/canvg.min.js','assets/plugins/hiprint/plugins/jspdf/html2canvas.min.js','assets/plugins/hiprint/plugins/jspdf/jspdf.min.js','assets/plugins/hiprint/polyfill.min.js','assets/plugins/hiprint/hiprint.bundle.js','assets/plugins/hiprint/plugins/JsBarcode.all.min.js','assets/plugins/hiprint/plugins/qrcode.js','assets/plugins/hiprint/plugins/jquery.hiwprint.js'],css:['assets/plugins/hiprint/css/hiprint.css','assets/plugins/hiprint/css/print-lock.css',{url:"assets/plugins/hiprint/css/print-lock.css",media:"print"}]},
 		"qiniu":{"js":['assets/plugins/qiniu/3.4.0/qiniu.min.js']},
 		"clipboardjs":{"js":["assets/plugins/clipboard/clipboard.min.js"]},
-		"jsoneditor":{"js":["assets/plugins/jsoneditor/jsoneditor.min.js"],"css":["assets/plugins/jsoneditor/jsoneditor.min.css"]}
+		"jsoneditor":{"js":["assets/plugins/jsoneditor/jsoneditor.min.js"],"css":["assets/plugins/jsoneditor/jsoneditor.min.css"]},
+		"pinyin":{"js":["assets/plugins/pinyin/pinyin_pro.js"]}
 
 		
 }
