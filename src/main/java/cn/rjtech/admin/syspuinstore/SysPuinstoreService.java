@@ -23,7 +23,6 @@ import cn.rjtech.admin.sysassem.SysAssemdetailService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO.Main;
@@ -300,24 +299,27 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      * */
     public void commonResetAutitById(String autoid, List<SysPuinstore> puinstoreList, Date date) {
         SysPuinstore puinstore = findById(autoid);
-        Integer iAuditStatus = puinstore.getIAuditStatus();
         String userName = JBoltUserKit.getUserName();
-        if (AuditStatusEnum.APPROVED.getValue() == iAuditStatus) { //审核通过状态改为待审核
-            puinstore.setU8BillNo("");//将u8的单据号置为空
-            puinstore.setAuditPerson(userName);
-            puinstore.setAuditDate(date);
-            puinstore.setModifyPerson(userName);
-            puinstore.setModifyDate(date);
-            puinstore.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());//退回待审核
-            //
-            puinstoreList.add(puinstore);
+        if (puinstore.getIAuditStatus() != AuditStatusEnum.APPROVED.getValue() &&
+            puinstore.getIAuditStatus() != AuditStatusEnum.REJECTED.getValue()) {
+            ValidationUtils.isTrue(false, "只有已审核或审核不通过的状态才可以反审核");
         }
+        puinstore.setU8BillNo(null);//将u8的单据号置为空
+        puinstore.setAuditPerson(userName);
+        puinstore.setAuditDate(date);
+        puinstore.setModifyPerson(userName);
+        puinstore.setModifyDate(date);
+//            puinstore.setAuditPerson(null);
+//            puinstore.setAuditDate(null);
+        puinstore.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());//退回待审核
+        //
+        puinstoreList.add(puinstore);
     }
 
     /*
      * 编辑页面的审批
      * */
-    public Ret editAutit(Long autoid) {
+    /*public Ret editAutit(Long autoid) {
         SysPuinstore sysPuinstore = findById(autoid);
         //1、更新审核人、审核时间、状态
         boolean tx = tx(() -> {
@@ -330,15 +332,15 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                 sysPuinstore.setIAuditStatus(sysPuinstore.getIAuditStatus() + 1);
                 Ret ret = update(sysPuinstore);
                 //2、同步u8
-                /*String json = getSysPuinstoreDto(sysPuinstore);
+                *//*String json = getSysPuinstoreDto(sysPuinstore);
                 String post = new BaseInU8Util().base_in(json);
-                System.out.println(post);*/
+                System.out.println(post);*//*
             }
             return true;
         });
 
         return ret(tx);
-    }
+    }*/
 
     /*
      * 查看页面的审批
@@ -349,7 +351,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         //1、更新审核人、审核时间、状态
         boolean tx = tx(() -> {
 
-            sysPuinstore.setAuditPerson(JBoltUserKit.getUserName());
+            checkApproveAndReject(autoid);
+            /*sysPuinstore.setAuditPerson(JBoltUserKit.getUserName());
             sysPuinstore.setAuditDate(date);//审核日期
             sysPuinstore.setModifyPerson(JBoltUserKit.getUserName());
             sysPuinstore.setModifyDate(date);
@@ -362,7 +365,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
 
             //3、如果成功，给u8的单据号；不成功，把单据号置为空，状态改为审核不通过
             PurchaseOrderM purchaseOrderM = findU8BillNo(sysPuinstore);
-            sysPuinstore.setU8BillNo(purchaseOrderM != null ? purchaseOrderM.getCDocNo() : "");
+            sysPuinstore.setU8BillNo(purchaseOrderM != null ? purchaseOrderM.getCDocNo() : "");*/
 
             return true;
         });
@@ -753,31 +756,94 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         for (SysPuinstore puinstore : puinstores) {
             //未审核状态下不能批量审核
             if (puinstore.getIAuditStatus() == AuditStatusEnum.AWAIT_AUDIT.getValue()) {
-                ValidationUtils.isTrue(false, puinstore.getSourceBillNo() + "：待审核状态下，不能批量反审核！！");
+                ValidationUtils.isTrue(false, puinstore.getBillNo() + "：待审核状态下，不能批量反审核！！");
             } else if (puinstore.getIAuditStatus() == AuditStatusEnum.NOT_AUDIT.getValue()) {
-                ValidationUtils.isTrue(false, puinstore.getSourceBillNo() + "：单据未提交审核或审批，不能批量反审核！！");
-            } else if (puinstore.getIAuditStatus() == AuditStatusEnum.REJECTED.getValue()
-                || puinstore.getIAuditStatus() == AuditStatusEnum.REJECTED.getValue()) {
-                ValidationUtils.isTrue(false, puinstore.getSourceBillNo() + "：审核未通过，不能批量反审核！！");
+                ValidationUtils.isTrue(false, puinstore.getBillNo() + "：单据未提交审核或审批，不能批量反审核！！");
+            } else if (puinstore.getIAuditStatus() == AuditStatusEnum.REJECTED.getValue()) {
+                ValidationUtils.isTrue(false, puinstore.getBillNo() + "：审核未通过，不能批量反审核！！");
             }
+        }
+    }
+
+    /*
+     * 审核通过
+     * */
+    public Ret approve(Long autoid) {
+        tx(() -> {
+            // 校验订单状态
+            checkApproveAndReject(autoid);
+            Date date = new Date();
+            User user = JBoltUserKit.getUser();
+            SysPuinstore sysPuinstore = findById(autoid);
+            ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), sysPuinstore.getIAuditStatus(), "订单非待审核状态");
+
+            sysPuinstore.setAuditPerson(user.getUsername());
+            sysPuinstore.setAuditDate(date);//审核日期
+            sysPuinstore.setModifyDate(date);
+            sysPuinstore.setModifyPerson(user.getUsername());
+
+            //2、同步于U8
+            String json = getSysPuinstoreDto(sysPuinstore);
+            String post = new BaseInU8Util().base_in(json);
+            System.out.println(post);
+
+            //3、如果成功，给u8的单据号；不成功，把单据号置为空，状态改为审核不通过
+            PurchaseOrderM purchaseOrderM = findU8BillNo(sysPuinstore);
+            sysPuinstore.setU8BillNo(purchaseOrderM != null ? purchaseOrderM.getCDocNo() : "");
+            ValidationUtils.isTrue(sysPuinstore.update(), "审核通过失败！！");
+
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    /*
+     * 审核不通过
+     * */
+    public Ret reject(Long autoid) {
+        tx(() -> {
+            // 校验订单状态
+            checkApproveAndReject(autoid);
+            Date date = new Date();
+            User user = JBoltUserKit.getUser();
+            SysPuinstore sysPuinstore = findById(autoid);
+            ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), sysPuinstore.getIAuditStatus(), "订单非待审核状态");
+
+            sysPuinstore.setModifyPerson(user.getUsername());
+            sysPuinstore.setAuditPerson(user.getUsername());
+            sysPuinstore.setModifyDate(date);
+            sysPuinstore.setAuditDate(date);
+            sysPuinstore.setDAuditTime(date);
+            sysPuinstore.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+            ValidationUtils.isTrue(sysPuinstore.update(), "审核不通过失败");
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    public void checkApproveAndReject(long id) {
+        SysPuinstore puinstore = findById(id);
+        if (AuditStatusEnum.NOT_AUDIT.getValue() == puinstore.getIAuditStatus()) {
+            ValidationUtils.isTrue(false, "入库单号：" + puinstore.getBillNo() + " 单据未提交审核或审批！！");
+        } else if (AuditStatusEnum.APPROVED.getValue() == puinstore.getIAuditStatus()
+            || AuditStatusEnum.REJECTED.getValue() == puinstore.getIAuditStatus()) {
+            ValidationUtils.isTrue(false, "入库单号：" + puinstore.getBillNo() + " 流程已结束！！");
         }
     }
 
     /**
      * 撤回提审批流
      */
-    public Ret withdraw(Long iAutoId) {
+    public Ret withdraw(Long autoid) {
         tx(() -> {
-            SysPuinstore puinstore = findById(iAutoId);
+            SysPuinstore puinstore = findById(autoid);
             ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), puinstore.getIAuditStatus(), "只允许将待审核状态订单撤回");
-            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
-                puinstore.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-                puinstore.setModifyPerson(JBoltUserKit.getUserName());
-                puinstore.setModifyDate(new Date());
-                ValidationUtils.isTrue(puinstore.update(), "撤回失败");
-
-                return null;
-            });
+            puinstore.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+            puinstore.setModifyPerson(JBoltUserKit.getUserName());
+            puinstore.setModifyDate(new Date());
+            ValidationUtils.isTrue(puinstore.update(), "撤回失败");
             return true;
         });
         return SUCCESS;
@@ -789,7 +855,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     public Ret reverseApprove(Long autoid) {
         tx(() -> {
             SysPuinstore puinstore = findById(autoid);
-            ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), puinstore.getIAuditStatus(), "只允许待审核状态下反审核");
+//            ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), puinstore.getIAuditStatus(), "只允许待审核状态下反审核");
             formApprovalService.withdraw(table(), primaryKey(), autoid, (formAutoId) -> null, (formAutoId) -> {
                 puinstore.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
                 puinstore.setModifyPerson(JBoltUserKit.getUserName());
@@ -806,19 +872,16 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     /*
      * 提交审核
      * */
-    public Ret submit(Long autoid){
+    public Ret submit(Long autoid) {
         tx(() -> {
             SysPuinstore puinstore = findById(autoid);
             ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), puinstore.getIAuditStatus(), "只允许未审核状态下提交审核");
-            formApprovalService.withdraw(table(), primaryKey(), autoid, (formAutoId) -> null, (formAutoId) -> {
-                puinstore.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                puinstore.setModifyPerson(JBoltUserKit.getUserName());
-                puinstore.setModifyDate(new Date());
-                puinstore.setDSubmitTime(new Date());
-                ValidationUtils.isTrue(puinstore.update(), "审核失败");
-
-                return null;
-            });
+            puinstore.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+            puinstore.setModifyPerson(JBoltUserKit.getUserName());
+            puinstore.setModifyDate(new Date());
+            puinstore.setDSubmitTime(new Date());
+            puinstore.setIAuditWay(1);
+            ValidationUtils.isTrue(puinstore.update(), "审核失败");
             return true;
         });
         return SUCCESS;
