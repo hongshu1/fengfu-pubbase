@@ -192,24 +192,27 @@ public class BomMService extends BaseService<BomM> {
 			
 			List<Record> allList = dbTemplate("bomm.datas", Kv.by("orgId", getOrgId())).find();
 			
-			Map<Long, List<Record>> bomMidcollect = allList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IBOMMID))).collect(Collectors.groupingBy(record -> record.getLong(BomD.IBOMMID)));
-			
+			Map<Long, List<Record>> compareCollect = allList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IPID))).collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID)));
+
 			List<Record> invPartBomMidList = recordList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IINVPARTBOMMID))).collect(Collectors.toList());
 			// 设置
+			List<Record> records = new ArrayList<>();
 			for (Record record : invPartBomMidList){
 				Long id = record.getLong(BomD.IAUTOID);
 				Long iInvPartBomMid = record.getLong(BomD.IINVPARTBOMMID);
-				if (bomMidcollect.containsKey(iInvPartBomMid)){
-					List<Record> compareList = bomMidcollect.get(iInvPartBomMid);
+				if (compareCollect.containsKey(iInvPartBomMid)){
+					List<Record> compareList = compareCollect.get(iInvPartBomMid);
 					compareList.forEach(compare -> {
 						compare.set(BomD.IPID, id);
 						compare.set(BomD.SOURCEID, compare.getLong(BomD.IAUTOID));
 						compare.set(BomD.IAUTOID, JBoltSnowflakeKit.me.nextId());
 					});
-					recordList.addAll(compareList);
+//					recordList.addAll(compareList);
+					records.addAll(compareList);
 				}
 			}
 			
+			recordList.addAll(records);
 			for (Record record : recordList){
                 Long id = record.getLong(BomM.IAUTOID);
                 Object pid = record.get(BomD.IPID);
@@ -280,10 +283,15 @@ public class BomMService extends BaseService<BomM> {
             BomM bomM = findById(id);
             if (ObjectUtil.isNull(bomM)){
 				BomD bomD = bomDService.findById(id);
+				ValidationUtils.notNull(bomD, "未找到子件");
 				code = Integer.valueOf(bomD.getCCode())+1;
 				iCodeLevel = Integer.valueOf(bomD.getICodeLevel())+1;
-				ValidationUtils.notNull(bomD, "为找到子件");
-				bomM = findById(bomD.getIBomMid());
+				if (ObjectUtil.isNotNull(bomD.getIInvPartBomMid())){
+					bomM  = findById(bomD.getIInvPartBomMid());
+				}
+				if (ObjectUtil.isNull(bomM)){
+					bomM = findById(bomD.getIPid());
+				}
 			}
             Integer iAuditStatus = bomM.getIAuditStatus();
             AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
@@ -318,6 +326,11 @@ public class BomMService extends BaseService<BomM> {
 			kv.set(BomM.DENABLEDATE, dEnableDate);
 			kv.set(BomM.CVERSION, cVersion);
 		}
+		Boolean isAdd = kv.getBoolean("isAdd");
+		if (ObjectUtil.isNotNull(isAdd) && isAdd){
+        	kv.set(BomD.IPID, id);
+		}
+        
         kv.set(BomM.IINVENTORYID, iInventoryId);
         kv.set(BomM.CINVCODE, cInvCode);
         kv.set(BomM.CINVNAME, cInvName);

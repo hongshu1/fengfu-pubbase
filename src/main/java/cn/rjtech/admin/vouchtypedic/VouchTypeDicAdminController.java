@@ -9,6 +9,7 @@ import cn.rjtech.model.momdata.VouchTypeDic;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Okv;
 
 /**
  * 基础档案-单据业务类型字典
@@ -87,9 +88,8 @@ public class VouchTypeDicAdminController extends BaseAdminController {
         renderJson(service.deleteById(getLong(0)));
     }
 
-
-    public void options(){
-    renderJsonData(service.getCvbtId());
+    public void options() {
+        renderJsonData(service.getCommonList("cvbtid,cvtchname,cbtchname", Okv.by("iorgid", getOrgId())));
     }
 
 }
