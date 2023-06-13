@@ -760,7 +760,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 planMap.put(inv, planArrar);
 
                 //期初库存
-                int stockQty = lastDateZKQtyMap.get(inv) != null ? lastDateZKQtyMap.get(inv) : 0;
+                int stockQty = lastDateZKQtyMap.get(inv) != null ? lastDateZKQtyMap.get(inv) : 2000;
                 inventory_originalMap.put(inv, stockQty);
 
                 //各班次产量数据
@@ -925,108 +925,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
             return true;
         });
-
-        /*try {
-
-            System.out.println();
-            System.out.println();
-            System.out.println();
-            System.out.println();
-            System.out.println();
-
-
-
-            //同一产线的物料
-            String[] product_type = {"a", "b", "c", "d"};
-
-            //期初库存
-            Map<String, Integer> inventory_original = new HashMap<>();
-            inventory_original.put("a", 1719);
-            inventory_original.put("b", 1814);
-            inventory_original.put("c", 2541);
-            inventory_original.put("d", 857);
-
-            //物料月每日需求数
-            Map<String, int[]> plan = new HashMap<>();
-            int plan_a[] = {598, 600, 0, 0, 0, 420, 420, 330, 596, 0, 420, 360, 330, 590, 600, 0, 0, 0, 420, 540, 360, 360, 0, 0, 240, 330, 420, 550, 390, 0, 0}; // 客户需求量
-            int plan_b[] = {0, 800, 0, 0, 0, 270, 288, 342, 341, 0, 0, 300, 420, 120, 360, 0, 0, 240, 120, 360, 240, 120, 240, 0, 300, 300, 540, 300, 240, 0, 0};
-            int plan_c[] = {300, 600, 0, 0, 0, 570, 739, 881, 570, 0, 570, 570, 450, 450, 540, 0, 0, 360, 450, 120, 240, 570, 300, 0, 460, 420, 120, 120, 600, 0, 0};
-            int plan_d[] = {74, 66, 0, 0, 0, 156, 0, 0, 134, 0, 300, 0, 0, 154, 0, 0, 0, 300, 0, 0, 136, 0, 0, 0, 300, 0, 0, 0, 0, 0, 0};
-
-            plan.put("a", plan_a);
-            plan.put("b", plan_b);
-            plan.put("c", plan_c);
-            plan.put("d", plan_d);
-
-            //下月平均计划需求数
-            Map<String, Integer> plan_nextMonthAverage = new HashMap<>();
-            plan_nextMonthAverage.put("a", 633);
-            plan_nextMonthAverage.put("b", 376);
-            plan_nextMonthAverage.put("c", 586);
-            plan_nextMonthAverage.put("d", 57);
-
-            //各物料的各班次产量数据
-            Map<String, int[]> capability = new HashMap<>();
-            int[] capability_a = {450, 450, 329}; // 各型号的各班次的产量数据
-            int[] capability_b = {420, 420, 309};
-            int[] capability_c = {450, 450, 329};
-            int[] capability_d = {369, 369, 267};
-            capability.put("a", capability_a);
-            capability.put("b", capability_b);
-            capability.put("c", capability_c);
-            capability.put("d", capability_d);
-
-            //月星期几
-            Weekday[] workdays = {Weekday.fri, Weekday.sat, Weekday.sun, Weekday.mon, Weekday.tue, Weekday.wed, Weekday.thu, Weekday.fri,
-                    Weekday.sat, Weekday.sun, Weekday.mon, Weekday.tue, Weekday.wed, Weekday.thu, Weekday.fri, Weekday.sat, Weekday.sun,
-                    Weekday.mon, Weekday.tue, Weekday.wed, Weekday.thu, Weekday.fri, Weekday.sat, Weekday.sun, Weekday.mon, Weekday.tue,
-                    Weekday.wed, Weekday.thu, Weekday.fri, Weekday.sat, Weekday.sun};
-
-
-            ApsScheduling apsScheduling = ApsUtil.apsCalculation(product_type, inventory_original, plan, 2, plan_nextMonthAverage, capability, workdays, 0.7, 0.3);
-
-            Map<String, int[]> invPlanMap = new HashMap<>();
-            invPlanMap.put("a", new int[31]);
-            invPlanMap.put("b", new int[31]);
-            invPlanMap.put("c", new int[31]);
-            invPlanMap.put("d", new int[31]);
-
-            String[] productInformationByShift0 = new String[workdays.length];
-            int[] productNumberByShift0 = new int[workdays.length];
-            apsScheduling.getProductInfo(productInformationByShift0, productNumberByShift0, 0);
-            System.out.println("早班："+ Arrays.toString(productInformationByShift0));
-            System.out.println("早班："+ Arrays.toString(productNumberByShift0));
-            getInvPlanMap(productInformationByShift0,productNumberByShift0,invPlanMap);
-            System.out.println("早班计划a："+ Arrays.toString(invPlanMap.get("a")));
-            System.out.println("早班计划b："+ Arrays.toString(invPlanMap.get("b")));
-            System.out.println("早班计划c："+ Arrays.toString(invPlanMap.get("c")));
-            System.out.println("早班计划d："+ Arrays.toString(invPlanMap.get("d")));
-            System.out.println();
-
-            String[] productInformationByShift1 = new String[workdays.length];
-            int[] productNumberByShift1 = new int[workdays.length];
-            apsScheduling.getProductInfo(productInformationByShift1, productNumberByShift1, 1);
-            System.out.println("中班："+ Arrays.toString(productInformationByShift1));
-            System.out.println("中班："+ Arrays.toString(productNumberByShift1));
-            System.out.println();
-
-            String[] productInformationByShift2 = new String[workdays.length];
-            int[] productNumberByShift2 = new int[workdays.length];
-            apsScheduling.getProductInfo(productInformationByShift2, productNumberByShift2, 2);
-            System.out.println("加班："+ Arrays.toString(productInformationByShift2));
-            System.out.println("加班："+ Arrays.toString(productNumberByShift2));
-            System.out.println();
-
-            String[] productInformationByShift3 = new String[workdays.length];
-            int[] productNumberByShift3 = new int[workdays.length];
-            apsScheduling.getProductInfo(productInformationByShift3, productNumberByShift3, 3);
-            System.out.println("晚班："+ Arrays.toString(productInformationByShift3));
-            System.out.println("晚班："+ Arrays.toString(productNumberByShift3));
-
-
-        }catch (Exception e){
-            throw new RuntimeException("排程计划出错！"+e.getMessage());
-        }*/
         return SUCCESS;
     }
 
@@ -1143,6 +1041,22 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             int iQty5 = record.getBigDecimal("iQty5").intValue();
             lastDateZKQtyMap.put(cInvCode, iQty5);
         }
+        //TODO:根据物料集查询各班次产能
+        List<Record> invCapacityList = dbTemplate("scheduproductplan.getInvCapacityList", Kv.by("ids", idsJoin)).find();
+        //key:inv    value:list
+        Map<String, List<Record>> invCapacityListMap = new HashMap<>();
+        for (Record record : invCapacityList) {
+            String cInvCode = record.getStr("cInvCode");
+            if (invCapacityListMap.containsKey(cInvCode)) {
+                List<Record> list = invCapacityListMap.get(cInvCode);
+                list.add(record);
+                invCapacityListMap.put(cInvCode, list);
+            } else {
+                List<Record> list = new ArrayList<>();
+                list.add(record);
+                invCapacityListMap.put(cInvCode, list);
+            }
+        }
         //上次锁定截止日期
         Calendar calendar2 = Calendar.getInstance();
         calendar2.setTime(new Date());
@@ -1165,11 +1079,30 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         for (Long WorkIdKey : workInvListMap.keySet()) {
             //物料集
             List<String> invList = workInvListMap.get(WorkIdKey);
-
             //循环物料
             for (String inv : invList) {
                 Record info = invInfoMap.get(inv);
-                int qiChuZaiKu = lastDateZKQtyMap.get(info.getStr("cInvCode")) != null ? lastDateZKQtyMap.get(info.getStr("cInvCode")) : 0;
+                int qiChuOneS = 0;
+                int qiChuTwoS = 0;
+                int qiChuThreeS = 0;
+                List<Record> capacityList = invCapacityListMap.get(inv) != null ? invCapacityListMap.get(inv) : new ArrayList<>();
+                for (int i = 0; i < capacityList.size(); i++) {
+                    String cWorkShiftCode = capacityList.get(i).getStr("cWorkShiftCode") != null ? capacityList.get(i).getStr("cWorkShiftCode") : "";
+                    int iCapacity = capacityList.get(i).getInt("iCapacity");
+                    if (cWorkShiftCode.contains("1S")) {
+                        qiChuOneS = iCapacity;
+                    }
+                    if (cWorkShiftCode.contains("2S")) {
+                        qiChuTwoS = iCapacity;
+                    }
+                    if (cWorkShiftCode.contains("3S")) {
+                        qiChuThreeS = iCapacity;
+                    }
+                }
+                int iInnerInStockDays = isOk(info.getInt("iInnerInStockDays")) ? info.getInt("iInnerInStockDays") : 1;
+                //期初库存
+                int qiChuZaiKu = lastDateZKQtyMap.get(info.getStr("cInvCode")) != null ? lastDateZKQtyMap.get(info.getStr("cInvCode")) : 2000;
+
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("seq", seq++);
@@ -1178,7 +1111,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 map.put("cInvCode", info.getStr("cInvCode"));
                 map.put("cInvCode1", info.getStr("cInvCode1"));
                 map.put("cInvName1", info.getStr("cInvName1"));
-                map.put("dayNum", isOk(info.getInt("iInnerInStockDays")) ? info.getInt("iInnerInStockDays") : 1);
+                map.put("qiChuOneS", qiChuOneS);
+                map.put("qiChuTwoS", qiChuTwoS);
+                map.put("qiChuThreeS", qiChuThreeS);
+                map.put("dayNum", iInnerInStockDays);
                 map.put("qiChuZaiKu", qiChuZaiKu);
 
                 List<Object> objectList = new ArrayList<>();
@@ -1452,6 +1388,24 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
         }
 
+
+        StringBuilder errorMsg = new StringBuilder();
+        //对部门逐个处理
+        for (Long deptId : deptInvListMap.keySet()) {
+            //inv集
+            List<String> recordList = deptInvListMap.get(deptId);
+            for (String inv : recordList) {
+                //inv信息
+                Record invInfo = invInfoMap.get(inv);
+                Long iInventoryRoutingId = invInfo.getLong("iInventoryRoutingId");
+                if (notOk(iInventoryRoutingId)) {
+                    errorMsg.append("[" + inv + "]物料没有工艺路线不能锁定计划！<br/>");
+                }
+            }
+        }
+        if (errorMsg.length() > 0){
+            return fail(errorMsg.toString());
+        }
 
         //任务单
         List<MoMotask> moTaskList = new ArrayList<>();

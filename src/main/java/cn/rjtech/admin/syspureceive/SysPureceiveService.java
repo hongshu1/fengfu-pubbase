@@ -193,198 +193,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         return ret(true);
     }
 
-    /**
-     * 执行JBoltTable表格整体提交
-     */
-    public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-        if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null
-                && jBoltTable.getUpdateRecordList() == null) {
-            return fail("行数据不能为空");
-        }
-
-        // 采购订单推u8才可以添加
-        List<Record> list = jBoltTable.getSaveRecordList();
-        for (Record record : list) {
-            ValidationUtils
-                    .isTrue(existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
-        }
-
-        List<Record> list1 = jBoltTable.getUpdateRecordList();
-        for (Record record : list1) {
-            ValidationUtils
-                    .isTrue(existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
-        }
-
-        SysPureceive sysotherin = jBoltTable.getFormModel(SysPureceive.class, "sysPureceive");
-
-        // 获取当前用户信息？
-        User user = JBoltUserKit.getUser();
-
-        Date now = new Date();
-
-        tx(() -> {
-
-            // 新增
-            if (ObjUtil.isNull(sysotherin.getAutoID())) {
-                sysotherin.setOrganizeCode(getOrgCode());
-
-                sysotherin.setIcreateby(user.getId());
-                sysotherin.setCcreatename(user.getName());
-                sysotherin.setDcreatetime(now);
-                sysotherin.setIupdateby(user.getId());
-                sysotherin.setCupdatename(user.getName());
-                sysotherin.setDupdatetime(now);
-
-                sysotherin.setBillDate(DateUtil.formatDate(now));
-                sysotherin.setIAuditStatus(Integer.valueOf(AuditStatusEnum.NOT_AUDIT.getValue()));
-                sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
-                sysotherin.setIAuditStatus(Integer.valueOf(AuditStatusEnum.NOT_AUDIT.getValue()));
-                // 主表新增
-                ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
-            }
-            // 修改
-            else {
-
-                sysotherin.setIupdateby(user.getId());
-                sysotherin.setCupdatename(user.getName());
-                sysotherin.setDupdatetime(now);
-
-                // 主表修改
-                ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
-            }
-
-            // 获取保存数据（执行保存，通过 getSaveRecordList）
-            saveTableSubmitDatas(jBoltTable, sysotherin, user, now);
-            // 获取修改数据（执行修改，通过 getUpdateRecordList）
-            updateTableSubmitDatas(jBoltTable, sysotherin, user, now);
-            // 获取删除数据（执行删除，通过 getDelete）
-            deleteTableSubmitDatas(jBoltTable);
-
-            if (ObjUtil.equals("submit", jBoltTable.getForm().getString("operationType"))) {
-                sysotherin.setIAuditStatus(Integer.valueOf(AuditStatusEnum.NOT_AUDIT.getValue()));
-
-                ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
-            }
-
-            return true;
-        });
-
-        return SUCCESS;
-    }
-
-    /**
-     * 可编辑表格提交-新增数据
-     */
-    private void saveTableSubmitDatas(JBoltTable jBoltTable, SysPureceive sysotherin, User user, Date now) {
-        List<Record> list = jBoltTable.getSaveRecordList();
-        if (CollUtil.isEmpty(list)) {
-            return;
-        }
-
-        ArrayList<SysPureceivedetail> sysdetaillist = new ArrayList<>();
-
-        for (Record record : list) {
-            SysPureceivedetail sysPureceivedetail = new SysPureceivedetail();
-
-            record.set("MasID", sysotherin.getAutoID());
-            record.set("AutoID", JBoltSnowflakeKit.me.nextId());
-            record.set("CreateDate", now);
-            record.set("ModifyDate", now);
-
-            if (StrUtil.isBlank(record.get("isinitial"))) {
-                record.set("IsInitial", false);
-                sysPureceivedetail.setIsInitial("0");
-            } else {
-                // 获取供应商字段
-                String vencode = record.getStr("vencode");
-                ValidationUtils.notBlank(vencode, "条码：" + record.get("barcode") + " 供应商数据不能为空");
-
-                Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
-
-                // 推送初物 PL_RcvDocQcFormM 来料
-                this.insertRcvDocQcFormM(record, sysotherin, user, veniAutoId);
-
-                sysPureceivedetail.setIsInitial("1");
-            }
-
-            sysPureceivedetail.setMasID(sysotherin.getAutoID());
-            sysPureceivedetail.setSourceBillType(record.getStr("sourcebilltype"));
-            sysPureceivedetail.setSourceBillNo(record.getStr("sourcebillno"));
-            sysPureceivedetail.setSourceBillNoRow(record.getStr("sourcebillnorow"));
-            sysPureceivedetail.setSourceBillDid(record.getStr("sourcebilldid"));
-            sysPureceivedetail.setSourceBillID(record.getStr("sourcebilldid"));
-            // sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
-//            sysPureceivedetail.setWhcode(row.getStr("whcode"));
-            sysPureceivedetail.setVenCode(record.getStr("vencode"));
-            sysPureceivedetail.setPosCode(record.getStr("poscode"));
-            sysPureceivedetail.setQty(record.getBigDecimal("qty"));
-            sysPureceivedetail.setBarcode(record.get("barcode"));
-            sysPureceivedetail.setCreateDate(now);
-            sysPureceivedetail.setModifyDate(now);
-            sysdetaillist.add(sysPureceivedetail);
-        }
-        syspureceivedetailservice.batchSave(sysdetaillist);
-    }
-
-    /**
-     * 可编辑表格提交-修改数据
-     */
-    private void updateTableSubmitDatas(JBoltTable jBoltTable, SysPureceive sysotherin, User user, Date now) {
-        List<Record> list = jBoltTable.getUpdateRecordList();
-        if (CollUtil.isEmpty(list)) {
-            return;
-        }
-
-        ArrayList<SysPureceivedetail> sysdetaillist = new ArrayList<>();
-
-        for (Record record : list) {
-            SysPureceivedetail sysPureceivedetail = new SysPureceivedetail();
-
-            record.set("ModifyDate", now);
-
-            if (StrUtil.isBlank(record.get("isinitial"))) {
-                record.set("IsInitial", false);
-            } else {
-                // 推送初物 PL_RcvDocQcFormM 来料
-                String vencode = record.getStr("vencode");
-                ValidationUtils.notBlank(vencode, "条码：" + record.get("barcode") + " 供应商数据不能为空");
-
-                Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
-
-                this.insertRcvDocQcFormM(record, sysotherin, user, veniAutoId);
-
-                sysPureceivedetail.setIsInitial("1");
-            }
-
-            sysPureceivedetail.setMasID(sysotherin.getAutoID());
-            sysPureceivedetail.setSourceBillType(record.getStr("sourcebilltype"));
-            sysPureceivedetail.setSourceBillNo(record.getStr("sourcebillno"));
-            sysPureceivedetail.setSourceBillNoRow(record.getStr("sourcebillnorow"));
-            sysPureceivedetail.setSourceBillDid(record.getStr("sourcebilldid"));
-            sysPureceivedetail.setSourceBillID(record.getStr("sourcebilldid"));
-            // sysPureceivedetail.setRowNo(Integer.valueOf(row.getStr("rowno")))
-            // sysPureceivedetail.setWhcode(row.getStr("whcode"))
-            sysPureceivedetail.setVenCode(record.getStr("vencode"));
-            sysPureceivedetail.setPosCode(record.getStr("poscode"));
-            sysPureceivedetail.setQty(record.getBigDecimal("qty"));
-            sysPureceivedetail.setBarcode(record.get("barcode"));
-            sysPureceivedetail.setCreateDate(now);
-            sysPureceivedetail.setModifyDate(now);
-
-            sysdetaillist.add(sysPureceivedetail);
-
-        }
-        syspureceivedetailservice.batchUpdate(sysdetaillist);
-    }
-
-    /**
-     * 可编辑表格提交-删除数据
-     */
-    private void deleteTableSubmitDatas(JBoltTable jBoltTable) {
-        if (ArrayUtil.isNotEmpty(jBoltTable.getDelete())) {
-            syspureceivedetailservice.deleteByIds(jBoltTable.getDelete());
-        }
-    }
 
     /**
      * 后台管理数据查询
@@ -417,7 +225,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     /**
      * 推送 PL_RcvDocQcFormM ;//来料检验
      */
-    public void insertRcvDocQcFormM(Record row, SysPureceive sys, User user, Long veniAutoId) {
+    public RcvDocQcFormM insertRcvDocQcFormM(Record row, SysPureceive sys, User user, Long veniAutoId,Integer qty) {
         Date date = new Date();
 
         RcvDocQcFormM rcvDocQcFormM = new RcvDocQcFormM();
@@ -445,7 +253,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
         rcvDocQcFormM.setIVendorId(veniAutoId);
         rcvDocQcFormM.setDRcvDate(sys.getDcreatetime());
-        rcvDocQcFormM.setIQty(Double.valueOf(row.getStr("qty").trim()).intValue());
+        rcvDocQcFormM.setIQty(qty);
 
         // 批次号
         rcvDocQcFormM.setCBatchNo("1111111Test");
@@ -461,7 +269,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         rcvDocQcFormM.setDUpdateTime(date);
         rcvDocQcFormM.setIsDeleted(false);
 
-        rcvdocqcformmservice.save(rcvDocQcFormM);
+        return rcvDocQcFormM;
     }
 
     /**
@@ -550,64 +358,47 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         ArrayList<SysPureceivedetail> sysdetaillist = new ArrayList<>();
 
         Date now = new Date();
-
+        ArrayList<String> arrayList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             SysPureceivedetail sysPureceivedetail = new SysPureceivedetail();
-
             Record row = list.get(i);
-
             sysPureceivedetail.setSourceBillType(row.getStr("sourcebilltype"));
             sysPureceivedetail.setSourceBillNo(row.getStr("sourcebillno"));
             sysPureceivedetail.setSourceBillNoRow(row.getStr("sourcebillnorow"));
             sysPureceivedetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysPureceivedetail.setSourceBillID(row.getStr("sourcebilldid"));
-
             // 获取供应商字段
             String vencode = row.getStr("vencode");
             ValidationUtils.notBlank(vencode, "条码：" + row.get("barcode") + " 供应商数据不能为空");
-
             sysPureceivedetail.setVenCode(vencode);
             sysPureceivedetail.setWhcode(sysPureceive.getWhCode());
-
             this.determineQty(row, i);
-
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
             sysPureceivedetail.setCreateDate(now);
             sysPureceivedetail.setModifyDate(now);
             sysPureceivedetail.setIsDeleted(false);
-
             String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row, operationType, map);
             sysPureceivedetail.setMasID(s);
-            if (StrUtil.isBlank(row.getStr("isinitial"))) {
+            if (StrUtil.isBlank(row.getStr("isinitial"))|| row.getStr("isinitial").equals("false")) {
                 sysPureceivedetail.setIsInitial("0");
             } else {
                 sysPureceivedetail.setIsInitial("1");
+                arrayList.add(row.getStr("cinvcode"));
             }
-
-
-            // 根据存货编码的初物开关是否打开，打开则全部走初物
-//            boolean button = this.button(row.getStr("cinvcode"));
-//            if (button) {
-//                Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
-//                // 推送初物 PL_RcvDocQcFormM 来料
-//                SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?",
-//                        sysPureceivedetail.getSourceBillNo());
-//                this.insertRcvDocQcFormM(row, first, user, veniAutoId);
-//                sysPureceivedetail.setIsInitial("1");
-//            } else {
-//                if (StrUtil.isBlank(row.getStr("isinitial"))) {
-//                    sysPureceivedetail.setIsInitial("0");
-//                } else {
-//                    Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
-//                    // 推送初物 PL_RcvDocQcFormM 来料
-//                    SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?",
-//                            sysPureceivedetail.getSourceBillNo());
-//                    this.insertRcvDocQcFormM(row, first, user, veniAutoId);
-//                    sysPureceivedetail.setIsInitial("1");
-//                }
-//            }
+            //有一个存货是初物，存货编码一致的都是初物
+            if(null != arrayList){
+                for (String al : arrayList){
+                    for (SysPureceivedetail sd :sysdetaillist){
+                        //通过条码查询 存货id
+                        Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", sd.getBarcode())).findFirst();
+                        if(al.equals(barcode.getStr("cInvCode"))){
+                            sd.setIsInitial("1");
+                        }
+                    }
+                }
+            }
             sysdetaillist.add(sysPureceivedetail);
         }
         syspureceivedetailservice.batchSave(sysdetaillist);
@@ -626,6 +417,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         }
         ArrayList<SysPureceivedetail> sysdetaillist = new ArrayList<>();
         Date now = new Date();
+        //是初物
+        ArrayList<String> arrayList = new ArrayList<>();
+        //不是初物
+        ArrayList<String> noarrayList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             SysPureceivedetail sysPureceivedetail = new SysPureceivedetail();
             Record row = list.get(i);
@@ -647,42 +442,51 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setModifyDate(now);
             sysPureceivedetail.setIsDeleted(false);
             //状态为保存状态的可以拆单 其他状态接是修改操作
-            if (String.valueOf(AuditStatusEnum.NOT_AUDIT.getValue()).equals(sysPureceive.getIAuditStatus())) {
-                String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row, operationType, map);
-                sysPureceivedetail.setMasID(s);
-            }
-            if (StrUtil.isBlank(row.getStr("isinitial"))) {
+//            if (String.valueOf(AuditStatusEnum.NOT_AUDIT.getValue()).equals(sysPureceive.getIAuditStatus())) {
+//                String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row, operationType, map);
+//                sysPureceivedetail.setMasID(s);
+//            }
+            if (StrUtil.isBlank(row.getStr("isinitial")) || row.getStr("isinitial").equals("false")) {
                 sysPureceivedetail.setIsInitial("0");
+                noarrayList.add(row.getStr("cinvcode"));
             } else {
                 sysPureceivedetail.setIsInitial("1");
+                arrayList.add(row.getStr("cinvcode"));
             }
-
-
-            // 根据存货编码的初物开关是否打开，打开则全部走初物
-//            boolean button = this.button(row.getStr("cinvcode"));
-//            if (button) {
-//                Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
-//                // 推送初物 PL_RcvDocQcFormM 来料
-//                SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?",
-//                        sysPureceivedetail.getSourceBillNo());
-//                this.insertRcvDocQcFormM(row, first, user, veniAutoId);
-//                sysPureceivedetail.setIsInitial("1");
-//            } else {
-//                if (StrUtil.isBlank(row.getStr("isinitial"))) {
-//                    sysPureceivedetail.setIsInitial("0");
-//                } else {
-//                    Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
-//                    // 推送初物 PL_RcvDocQcFormM 来料
-//                    SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?",
-//                            sysPureceivedetail.getSourceBillNo());
-//                    this.insertRcvDocQcFormM(row, first, user, veniAutoId);
-//                    sysPureceivedetail.setIsInitial("1");
-//                }
-//            }
-
             sysdetaillist.add(sysPureceivedetail);
         }
         syspureceivedetailservice.batchUpdate(sysdetaillist);
+
+
+        //由于 此表格的数据只读取修改的数据  所以需要查出所有的从表 然后进行修改
+        List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(sysPureceive.getAutoID());
+        //有一个存货是初物，存货编码一致的都是初物
+        if(null != arrayList){
+            for (String al : arrayList){
+                for (SysPureceivedetail sd :firstBy){
+                    //通过条码查询 存货id
+                    Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", sd.getBarcode())).findFirst();
+                    if(al.equals(barcode.getStr("cInvCode"))){
+                        sd.setIsInitial("1");
+                    }
+                }
+            }
+        }
+        //如果修改了一个存货不是初物，所有的存货编码一致的都不是
+        if(null != noarrayList){
+            for (String al : noarrayList){
+                for (SysPureceivedetail sd :firstBy){
+                    //通过条码查询 存货id
+                    Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", sd.getBarcode())).findFirst();
+                    if(al.equals(barcode.getStr("cInvCode"))){
+                        sd.setIsInitial("0");
+                    }
+                }
+            }
+        }
+        syspureceivedetailservice.batchUpdate(firstBy);
+
+
     }
 
     private void deleteData(JBoltTable jBoltTable) {
@@ -891,6 +695,24 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         return SUCCESS;
     }
 
+    /**
+     * 批量审批不通过
+     */
+    public Ret batchReject(String ids) {
+        tx(() -> {
+            //业务逻辑
+            this.check(String.valueOf(ids));
+            String[] split = String.valueOf(ids).split(",");
+            for (String s : split) {
+                SysPureceive byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+                byId.update();
+            }
+            return true;
+        });
+        return SUCCESS;
+    }
+
 
     //往采购订单入库主表插入
     public String installsyspuinstore(SysPureceive byId, Date now, User user,Record barcode) {
@@ -902,10 +724,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         sysPuinstore.setSourceBillNo(byId.getSourceBillNo());
 //        sysPuinstore.setSourceBillID(byId.getSourceBillID());
         sysPuinstore.setVenCode(byId.getVenCode());
-        sysPuinstore.setCreatePerson(user.getName());
-        sysPuinstore.setCreateDate(now);
-        sysPuinstore.setModifyPerson(user.getName());
-        sysPuinstore.setModifyDate(now);
+        sysPuinstore.setCCreateName(user.getName());
+        sysPuinstore.setDCreateTime(now);
+        sysPuinstore.setCUpdateName(user.getName());
+        sysPuinstore.setDUpdateTime(now);
         sysPuinstore.setWhCode(byId.getWhCode());
         sysPuinstore.setWhName(byId.getWhName());
         sysPuinstore.setIAuditStatus(0);
@@ -954,9 +776,22 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             if(firstBy.isEmpty()) return;
             for (SysPureceivedetail d : firstBy){
                 SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
-                SysPuinstore byId = syspuinstoreservice.findById(firstByBarcode.getMasID());
-                if(!"0".equals(String.valueOf(byId.getIAuditStatus()))){
-                    ValidationUtils.isTrue(false, "采购入库编号：" + byId.getBillNo() + " 单据，不是未审核状态！！");
+                if(null != firstByBarcode){
+                    SysPuinstore byId = syspuinstoreservice.findById(firstByBarcode.getMasID());
+                    if(null != byId ){
+                        if(!"0".equals(String.valueOf(byId.getIAuditStatus()))){
+                            ValidationUtils.isTrue(false, "采购入库编号：" + byId.getBillNo() + " 单据，不是未审核状态！！");
+                        }
+                    }
+                }
+            }
+            // 通过主表的入库单号 查质检单数据
+            List<RcvDocQcFormM> firstBycRcvDocNo = rcvdocqcformmservice.findFirstBycRcvDocNo(s.getBillNo());
+            if(null != firstBycRcvDocNo){
+                for(RcvDocQcFormM r : firstBycRcvDocNo){
+                    if(!"0".equals(String.valueOf(r.getIStatus()))){
+                        ValidationUtils.isTrue(false, "来料检 收料单号为：" + r.getCRcvDocNo() + " 单据，已生成下游单据，无法反审！！");
+                    }
                 }
             }
         }
@@ -969,18 +804,28 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.getAutoID());
             if(firstBy.isEmpty()) return;
             for (SysPureceivedetail d : firstBy){
-                SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
-                String autoID = firstByBarcode.getMasID();
-                //删除从表
-//                syspuinstoredetailservice.find("DELETE T_Sys_PUInStoreDetail   where  AutoID = ?", autoID);
-                syspuinstoredetailservice.deleteByIds(firstByBarcode.getAutoID());
-                SysPuinstore byId = syspuinstoreservice.findById(autoID);
-                List<SysPuinstoredetail> detailByMasID = syspuinstoredetailservice.findDetailByMasID(byId.getAutoID());
-                if(detailByMasID.isEmpty()){
-                    // 从表没数据才删除 主表
-                    syspuinstoreservice.deleteByIds(byId.getAutoID());
-//                    syspuinstoredetailservice.find("DELETE T_Sys_PUInStore   where  AutoID = ?", byId.getAutoID());
+                if("0".equals(d.getIsInitial())){
+                    SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
+                    String autoID = firstByBarcode.getMasID();
+                    //删除从表
+                    syspuinstoredetailservice.deleteByIds(firstByBarcode.getAutoID());
+                    SysPuinstore byId = syspuinstoreservice.findById(autoID);
+                    List<SysPuinstoredetail> detailByMasID = syspuinstoredetailservice.findDetailByMasID(byId.getAutoID());
+                    if(detailByMasID.isEmpty()){
+                        // 从表没数据才删除 主表
+                        syspuinstoreservice.deleteByIds(byId.getAutoID());
+
+                    }
+                }else {
+                    // 通过主表的入库单号 查质检单数据
+                    List<RcvDocQcFormM> firstBycRcvDocNo = rcvdocqcformmservice.findFirstBycRcvDocNo(s.getBillNo());
+                    if(null != firstBycRcvDocNo){
+                        for(RcvDocQcFormM r : firstBycRcvDocNo){
+                            rcvdocqcformmservice.deleteByIds(String.valueOf(r.getIAutoId()));
+                        }
+                    }
                 }
+
             }
         }
     }
@@ -999,27 +844,41 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 byId.update();
                 //查从表数据
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s);
+                HashMap<String, Integer> hashMap = new HashMap<>();
                 boolean once = true;
                 String autoID = "";
                 int i = 1;
+                Long veniAutoId = vendorservice.queryAutoIdByCvencode(byId.getVenCode());
                 for (SysPureceivedetail f : firstBy) {
                     Kv kv = new Kv();
                     kv.set("barcode", f.getBarcode());
                     Record row = dbTemplate("syspureceive.tuibarcode", kv).findFirst();
                     //判断存货开关是否打开,开 推来料检验单，
                     boolean button = this.button(row.getStr("cinvcode"));
-                    Long veniAutoId = vendorservice.queryAutoIdByCvencode(f.getVenCode());
+
+                    Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", f.getBarcode())).findFirst();
                     if (button) {
-                        // 推送初物 PL_RcvDocQcFormM 来料
-                        SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?", f.getSourceBillNo());
-                        this.insertRcvDocQcFormM(row, first, user, veniAutoId);
+                        if(null != hashMap && !hashMap.isEmpty()){
+                            Iterator<Map.Entry<String, Integer>> iterator = hashMap.entrySet().iterator();
+                            while (iterator.hasNext()) {
+                                Map.Entry<String, Integer> entry = iterator.next();
+                                String key = entry.getKey();
+                                Integer value = entry.getValue();
+                                // 在遍历过程中进行修改
+                                if (key.equals(barcode.getStr("iinventoryId"))) {
+                                    entry.setValue( this.add(value,f.getQty()));
+                                } else{
+                                    hashMap.put(barcode.getStr("iinventoryId"),f.getQty().intValue());
+                                }
+                            }
+                        }else {
+                            hashMap.put(barcode.getStr("iinventoryId"),f.getQty().intValue());
+                        }
                     } else {
                         if (f.getIsInitial().equals("0")) {
                             //根据id查出从表的数据，生成采购入库列表 一个收料单号对应一个入库单号。 排除是初物的数据
                             //根据条码查出 采购订单主表数据，添加到入库主表信息，然后加入从表数据（拆分 原则 是否初物字段）
-
                             //根据条码查询出采购订单从表以及主表信息
-                            Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", f.getBarcode())).findFirst();
                             //修改主表新增(后加 缺少字段在这里补)
                             if (once) {
                                 autoID = this.installsyspuinstore(byId, now, user,barcode);
@@ -1039,27 +898,68 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                             sysPuinstoredetail.setQty(f.getQty());
                             sysPuinstoredetail.setRowNo(i);
                             sysPuinstoredetail.setTrackType(f.getTrackType());
-                            sysPuinstoredetail.setCreatePerson(user.getUsername());
-                            sysPuinstoredetail.setCreateDate(now);
+                            sysPuinstoredetail.setCCreateName(user.getUsername());
+                            sysPuinstoredetail.setDCreateTime(now);
                             sysPuinstoredetail.setSpotTicket(f.getBarcode());
                             sysPuinstoredetail.setPuUnitCode(barcode.getStr("puunitcode"));
                             sysPuinstoredetail.setPuUnitName(barcode.getStr("puunitname"));
                             sysPuinstoredetail.setIsDeleted(false);
-                            sysPuinstoredetail.setInvCode(barcode.getStr("cinvcode"));
+                            sysPuinstoredetail.setInvcode(barcode.getStr("cinvcode"));
                             syspuinstoredetailservice.save(sysPuinstoredetail);
                             i++;
                         } else {
-                            // 推送初物 PL_RcvDocQcFormM 来料
-                            SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?", f.getSourceBillNo());
-                            this.insertRcvDocQcFormM(row, first, user, veniAutoId);
+                            if(null != hashMap && !hashMap.isEmpty()){
+                                Iterator<Map.Entry<String, Integer>> iterator = hashMap.entrySet().iterator();
+                                while (iterator.hasNext()) {
+                                    Map.Entry<String, Integer> entry = iterator.next();
+                                    String key = entry.getKey();
+                                    Integer value = entry.getValue();
+                                    // 在遍历过程中进行修改
+                                    if (key.equals(barcode.getStr("iinventoryId"))) {
+                                        entry.setValue( this.add(value,f.getQty()));
+                                    } else{
+                                        hashMap.put(barcode.getStr("iinventoryId"),f.getQty().intValue());
+                                    }
+                                }
+                            }else {
+                                hashMap.put(barcode.getStr("iinventoryId"),f.getQty().intValue());
+                            }
+
                         }
                     }
-
                 }
-
+                //推送初物 啊啊
+                ArrayList<RcvDocQcFormM> rcvDocQcFormM = new ArrayList<>();
+                if(null != hashMap && !hashMap.isEmpty()){
+                    Iterator<Map.Entry<String, Integer>> iterator = hashMap.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        Map.Entry<String, Integer> entry = iterator.next();
+                        String key = entry.getKey();
+                        Integer value = entry.getValue();
+                        //通过存货id和主表的masId获取从表的数据
+                        List<SysPureceivedetail> firstByandvencood = syspureceivedetailservice.findFirstByandvencood(byId.getAutoID(),byId.getVenCode());
+                        for (SysPureceivedetail q :firstByandvencood){
+                            Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", q.getBarcode())).findFirst();
+                            if(key.equals(barcode.getStr("iinventoryId"))){
+                                RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(barcode, byId, user, veniAutoId,value);
+                                rcvDocQcFormM.add(rcvDocQcFormM1);
+                                break;
+                            }
+                        }
+                    }
+                    rcvdocqcformmservice.batchSave(rcvDocQcFormM);
+                }
             }
+
+
             return true;
         });
     }
+    public Integer add(Integer in,BigDecimal bi){
+        BigDecimal bigDecimal = new BigDecimal(in.toString());
+        BigDecimal add = bigDecimal.add(bi);
+        return add.intValue();
+    }
+
 }
 

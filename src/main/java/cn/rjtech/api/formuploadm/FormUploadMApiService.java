@@ -84,4 +84,14 @@ public class FormUploadMApiService extends JBoltApiBaseService {
         formUploadDService.delete2(iautoid);
         return JBoltApiRet.API_SUCCESS;
     }
+
+    public JBoltApiRet batchApprove(String ids) {
+        formUploadMService.batchApprove(ids);
+        return JBoltApiRet.API_SUCCESS;
+    }
+
+    public JBoltApiRet batchReverseApprove(String ids) {
+        formUploadMService.batchReverseApprove(ids);
+        return JBoltApiRet.API_SUCCESS;
+    }
 }
