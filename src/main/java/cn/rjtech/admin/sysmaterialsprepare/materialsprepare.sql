@@ -402,6 +402,7 @@ WHERE
 
 #sql("getManualAdddatas")
 SELECT
+    it.iAutoId,
     it.cInvCode,
     it.cInvCode1,
     it.cInvName1,

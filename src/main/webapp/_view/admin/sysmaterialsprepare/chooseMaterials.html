@@ -29,7 +29,7 @@
         <!-- 定义JBoltTable使用的数据渲染模板 -->
         <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.autoid}">
+<tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	<a class="text-info mr-1" type="button" onclick="getCheckedStrip(this)" style="user-select:none">选择</a>
@@ -62,6 +62,7 @@
                data-column-resize="true"
                data-toolbar="MoPickItemM_toolbar_#(pageId)"
                data-column-prepend="1:checkbox:true"
+               id="chooseM"
         >
             <thead class="fw-normal">
             <tr>
@@ -112,7 +113,28 @@
     });
 
     function choose2(){
+        parent.layer.close(parent.layer.getFrameIndex(window.name))
 
+        Ajax.post("admin/sysMaterialspreparedetail/choosemtool", {"it-iautoid": jboltTableGetCheckedIds("chooseM",false).toString()},
+            function (res) {
+                jboltTableInsertRow(window.parent.getJBoltTable("manual") , res.data, false, false, false);
+
+            }, function (err) {
+            })
+        window.parent.refreshJBoltTable();
+    }
+
+
+    function jboltTableGetCheckedIds(ele,dontShowError){
+        var table=getJBoltTable(ele);
+        if(isOk(table)){
+            var jboltTable=table.jboltTable("inst");
+            if(jboltTable){
+                return jboltTable.me.getCheckedIds(jboltTable,dontShowError);
+            }
+        }
+        LayerMsgBox.alert("表格组件配置异常",2);
+        return false;
     }
 </script>
 #end

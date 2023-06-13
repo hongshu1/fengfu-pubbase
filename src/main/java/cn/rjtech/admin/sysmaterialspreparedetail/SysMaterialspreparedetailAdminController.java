@@ -132,4 +132,11 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 	public void barcodeNull(String barcode) {
 		renderJsonData(new Record());
 	}
+
+	public void choosemtool() {
+		String iautoid = get("it-iautoid");
+		Kv kv = new Kv();
+		kv.set("iautoid", iautoid == null ? "" : iautoid);
+		renderJsonData(service.getBarcode(getPageNumber(), getPageSize(), kv));
+	}
 }
