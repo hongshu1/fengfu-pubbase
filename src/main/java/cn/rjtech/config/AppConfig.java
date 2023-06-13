@@ -91,4 +91,12 @@ public class AppConfig {
         return String.format("http://127.0.0.1:%s/api/erp/common/vouchProcessDynamicSubmit", getServerPort());
     }
 
+    /*
+     * 通知U8删除采购入库单
+     * */
+    public static String deleteVouchProcessDynamicSubmitUrl() {
+        String url = "http://172.16.1.194:3013/WEB_INFO/StockAPI.asmx?op=PurchasesInDelete";
+        return url;
+    }
+
 }

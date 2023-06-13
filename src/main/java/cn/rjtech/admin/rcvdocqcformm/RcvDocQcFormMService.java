@@ -262,12 +262,12 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         sysPuinstore.setBillDate(new Date().toString()); //入库日期
         sysPuinstore.setVenCode(vendor.getCVenCode()); //供应商编码
         sysPuinstore.setMemo("");
-        sysPuinstore.setCreatePerson(JBoltUserKit.getUserName());
-        sysPuinstore.setCreateDate(date);
-        sysPuinstore.setAuditPerson("");//审核人
+        sysPuinstore.setCCreateName(JBoltUserKit.getUserName());
+        sysPuinstore.setDCreateTime(date);
+        sysPuinstore.setCAuditName("");//审核人
         sysPuinstore.setAuditDate(date);//审核日期
-        sysPuinstore.setModifyDate(date);//修改日期
-        sysPuinstore.setModifyPerson("");//修改人
+        sysPuinstore.setDUpdateTime(date);//修改日期
+        sysPuinstore.setCUpdateName("");//修改人
         sysPuinstore.setIAuditStatus(1);//状态 1已保存 2待审批 3已审批 4审批不通过
     }
 

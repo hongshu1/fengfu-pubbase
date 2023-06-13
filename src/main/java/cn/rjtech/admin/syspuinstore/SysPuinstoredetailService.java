@@ -186,8 +186,8 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         detail.setMasID(puinstore.getAutoID()); //主表ID;T_Sys_PUInStore.AutoID
         detail.setWhcode(puinstore.getWhCode()); //仓库
         detail.setQty(detailRecord.getBigDecimal("qty")); //入库数量
-        detail.setCreatePerson(JBoltUserKit.getUserName());
-        detail.setCreateDate(puinstore.getCreateDate());
+        detail.setCCreateName(JBoltUserKit.getUserName());
+        detail.setDCreateTime(puinstore.getDCreateTime());
         detail.setSpotTicket(detailRecord.getStr("spotticket"));//现品票
         detail.setIsDeleted(false);
         detail.setBrandCode("brandcode");//品牌code
@@ -195,6 +195,6 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         detail.setPuUnitCode("purchasecuomcode");//采购单位code
         detail.setPuUnitName("purchasecuomname");//采购单位名称
         detail.setMemo(detailRecord.getStr("memo"));
-        detail.setInvCode(detailRecord.getStr("invcode"));
+        detail.setInvcode(detailRecord.getStr("invcode"));
     }
 }

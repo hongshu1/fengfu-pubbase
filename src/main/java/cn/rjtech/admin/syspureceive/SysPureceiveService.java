@@ -902,10 +902,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         sysPuinstore.setSourceBillNo(byId.getSourceBillNo());
 //        sysPuinstore.setSourceBillID(byId.getSourceBillID());
         sysPuinstore.setVenCode(byId.getVenCode());
-        sysPuinstore.setCreatePerson(user.getName());
-        sysPuinstore.setCreateDate(now);
-        sysPuinstore.setModifyPerson(user.getName());
-        sysPuinstore.setModifyDate(now);
+        sysPuinstore.setCCreateName(user.getName());
+        sysPuinstore.setDCreateTime(now);
+        sysPuinstore.setCUpdateName(user.getName());
+        sysPuinstore.setDUpdateTime(now);
         sysPuinstore.setWhCode(byId.getWhCode());
         sysPuinstore.setWhName(byId.getWhName());
         sysPuinstore.setIAuditStatus(0);
@@ -1039,13 +1039,13 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                             sysPuinstoredetail.setQty(f.getQty());
                             sysPuinstoredetail.setRowNo(i);
                             sysPuinstoredetail.setTrackType(f.getTrackType());
-                            sysPuinstoredetail.setCreatePerson(user.getUsername());
-                            sysPuinstoredetail.setCreateDate(now);
+                            sysPuinstoredetail.setCCreateName(user.getUsername());
+                            sysPuinstoredetail.setDCreateTime(now);
                             sysPuinstoredetail.setSpotTicket(f.getBarcode());
                             sysPuinstoredetail.setPuUnitCode(barcode.getStr("puunitcode"));
                             sysPuinstoredetail.setPuUnitName(barcode.getStr("puunitname"));
                             sysPuinstoredetail.setIsDeleted(false);
-                            sysPuinstoredetail.setInvCode(barcode.getStr("cinvcode"));
+                            sysPuinstoredetail.setInvcode(barcode.getStr("cinvcode"));
                             syspuinstoredetailservice.save(sysPuinstoredetail);
                             i++;
                         } else {
