@@ -1,6 +1,7 @@
 #sql("getBomComparePageData")
 SELECT
     d.iAutoId,
+    d.iInventoryId,
 	d.iBomMid,
 	d.iPid,
 	d.cInvCode,

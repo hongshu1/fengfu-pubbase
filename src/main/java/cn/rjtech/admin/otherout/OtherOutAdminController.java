@@ -73,7 +73,6 @@ public class OtherOutAdminController extends BaseAdminController {
 		Date nowDate = new Date();
 		otherOut.setBillNo(billNo);
 		otherOut.setBillDate(nowDate);
-		otherOut.setSourceBillType("手动新增");
 		otherOut.setType("OtherOutMES");
 		set("otherOut",otherOut);
 		render("add.html");

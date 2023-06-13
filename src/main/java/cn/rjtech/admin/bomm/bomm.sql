@@ -35,6 +35,25 @@ WHERE
 	#end
 #end
 
+#sql("findMasterDatas")
+SELECT
+	master.iAutoId,
+	NULL AS iPid,
+	master.iInventoryId,
+	master.cInvCode,
+	master.cInvName,
+	NULL AS iBomMid,
+	NULL AS iInvPartBomMid
+FROM
+	Bd_BomM master
+WHERE
+	master.IsDeleted = '0'
+	AND master.isView = '1'
+    #if(orgId)
+	    AND master.iOrgId = #para(orgId)
+	#end
+#end
+
 #sql("getVersionRecord")
 SELECT
 	master.iAutoId,
