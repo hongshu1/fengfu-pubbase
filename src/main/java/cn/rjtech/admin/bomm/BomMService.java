@@ -17,8 +17,10 @@ import cn.rjtech.admin.bomd.BomDService;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.BomSourceTypeEnum;
 import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.model.momdata.BomCompare;
 import cn.rjtech.model.momdata.BomD;
 import cn.rjtech.model.momdata.BomM;
+import cn.rjtech.model.momdata.BomMaster;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -484,5 +486,50 @@ public class BomMService extends BaseService<BomM> {
 		char nextPrefix = (char) (prefix.charAt(0) + 1);
 		String netPrefixStr = String.valueOf(nextPrefix);
 		return netPrefixStr.concat("/01");
+	}
+	
+	public Ret saveCopy(Long bomMasterId, String dDisableDate, String cVersion) {
+		ValidationUtils.notBlank(dDisableDate, JBoltMsg.JBOLTTABLE_IS_BLANK);
+		ValidationUtils.notBlank(cVersion, JBoltMsg.JBOLTTABLE_IS_BLANK);
+		ValidationUtils.notNull(bomMasterId, JBoltMsg.PARAM_ERROR);
+		BomM bomMaster = findById(bomMasterId);
+		ValidationUtils.notNull(bomMaster, JBoltMsg.DATA_NOT_EXIST);
+		ValidationUtils.isTrue(!cVersion.equals(bomMaster.getCVersion()), "版本号不能一致");
+		
+		// 获取母件所有子件集合
+		tx(() -> {
+			saveCopyBomMaster(bomMasterId, cVersion, bomMaster);
+			return true;
+		});
+		return SUCCESS;
+	}
+	
+	private void saveCopyBomMaster(Long bomMasterId, String cVersion, BomM bomMaster){
+		// 设置新的id
+		long newBomMasterId = JBoltSnowflakeKit.me.nextId();
+		List<BomD> compareList = bomDService.queryBomCompareList(bomMasterId, BomD.IBOMMID);
+		compareList.forEach(bomD -> bomD.setIBomMid(newBomMasterId));
+		operation(bomMasterId, newBomMasterId, cVersion, bomMaster, compareList);
+	}
+	
+	/**
+	 * 操作
+	 * @param bomMasterId
+	 * @param newBomMasterId
+	 * @param cVersion
+	 * @param bomMaster
+	 * @param bomCompareList
+	 */
+	private void operation(Long bomMasterId, Long newBomMasterId, String cVersion, BomM bomMaster, List<BomD> bomCompareList){
+		bomMaster.setIAutoId(newBomMasterId);
+		bomMaster.setCVersion(cVersion);
+		bomMaster.setDAuditTime(null);
+		// 设置copy前的ID
+		bomMaster.setICopyFromId(bomMasterId);
+		DateTime now = DateUtil.date();
+		bomMaster.setDAuditTime(now);
+		bomDService.batchSave(bomCompareList);
+		save(bomMaster,JBoltUserKit.getUserId(),JBoltUserKit.getUserName(), now, AuditStatusEnum.AWAIT_AUDIT.getValue());
+		
 	}
 }

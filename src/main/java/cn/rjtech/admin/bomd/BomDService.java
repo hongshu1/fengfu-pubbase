@@ -199,9 +199,13 @@ public class BomDService extends BaseService<BomD> {
 	}
 	
 	public List<BomD> queryBomByPartBomMid(Long bomId){
+		return queryBomCompareList(bomId, BomD.IINVPARTBOMMID);
+	}
+	
+	public List<BomD> queryBomCompareList(Long bomId, String fieldName){
 		Sql sql = selectSql();
 		sql.eq(BomD.ISDELETED, "0");
-		sql.eq(BomD.IINVPARTBOMMID, bomId);
+		sql.eq(fieldName, bomId);
 		return find(sql);
 	}
 	

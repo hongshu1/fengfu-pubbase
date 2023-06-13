@@ -334,7 +334,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
             // 已根据单据的审批方式，适配撤回的处理
             formApprovalService.withdraw(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
 
-                MonthOrderM monthOrderM = findById(formAutoId);
+                MonthOrderM monthOrderM = findById(iautoid);
                 monthOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
                 ValidationUtils.isTrue(monthOrderM.update(), "撤回失败");
                 return null;
@@ -362,91 +362,6 @@ public class MonthordermService extends BaseService<MonthOrderM> {
 
             return true;
         });
-        return SUCCESS;
-    }
-
-    /**
-     * 批量审核
-     */
-    public Ret batchApprove(String ids) {
-        tx(() -> {
-            List<MonthOrderM> list = getListByIds(ids);
-            formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> {
-                // 审批通过前置工作，如有错误信息，请return msg;
-                ValidationUtils.notNull(list.stream().filter(item -> !(item.getIOrderStatus() == WeekOrderStatusEnum.AWAIT_AUDIT.getValue())).collect(Collectors.toList()), "订单状态只能为待审批");
-                return null;
-            }, (formAutoId) -> {
-                // 审批后置工作，如有错误信息，请return msg;
-                for (MonthOrderM monthOrderM : list) {
-                    approve(monthOrderM.getIAutoId());
-                }
-                return null;
-            });
-
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
-     * 批量审核不通过
-     */
-    public Ret batchReject(String ids) {
-        tx(() -> {
-            List<MonthOrderM> list = getListByIds(ids);
-            formApprovalService.batchRejectByStatus(table(), primaryKey(), ids, (formAutoId) -> {
-                // 审批前置工作，如有错误信息，请return msg;
-                ValidationUtils.notNull(list.stream().filter(item -> !(item.getIOrderStatus() == WeekOrderStatusEnum.AWAIT_AUDIT.getValue())).collect(Collectors.toList()), "订单状态只能为待审批");
-                return null;
-            }, (formAutoId) -> {
-                // 审批前置工作，如有错误信息，请return msg;
-                for (MonthOrderM monthOrderM : list) {
-                    reject(monthOrderM.getIAutoId());
-                }
-                return null;
-            });
-
-            return true;
-        });
-
-        return SUCCESS;
-    }
-
-    /**
-     * 批量反审
-     */
-    public Ret batchReverseApprove(String ids) {
-        tx(() -> {
-            // 处理审批流
-            List<MonthOrderM> list = getListByIds(ids);
-            for (MonthOrderM monthOrderM  : list) {
-                formApprovalService.reverseApproveByStatus(monthOrderM.getIAutoId(), table(), primaryKey(), (formAutoId) -> null, (formAutoId) -> {
-                    // 反审后置工作，如有错误信息，请return msg;
-                    WeekOrderStatusEnum orderStatusEnum = WeekOrderStatusEnum.toEnum(monthOrderM.getIOrderStatus());
-                    switch (orderStatusEnum) {
-                        case AWAIT_AUDIT:
-                            monthOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
-                            break;
-                        case APPROVED:
-                            monthOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
-                            break;
-                        default:
-                            break;
-                    }
-
-                    return null;
-                });
-            }
-            ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
-
-            // 判断订单是否存在已审核的反审批
-            if (list.stream().anyMatch(item -> item.getIOrderStatus() == WeekOrderStatusEnum.AWAIT_AUDIT.getValue())) {
-                // 修改客户计划汇总
-                cusOrderSumService.algorithmSum();
-            }
-            return true;
-        });
-
         return SUCCESS;
     }
 

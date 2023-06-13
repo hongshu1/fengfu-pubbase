@@ -143,10 +143,8 @@ public class MonthordermAdminController extends BaseAdminController {
     /**
      * 撤回
      */
-    public void withdraw(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.validateId(iautoid, "ID");
-
-        renderJson(service.withdraw(iautoid));
+    public void withdraw() {
+        renderJson(service.withdraw(getLong("iautoid")));
     }
 
 	/**
@@ -155,33 +153,6 @@ public class MonthordermAdminController extends BaseAdminController {
 	public void reject() {
 		renderJson(service.reject(getLong(0)));
 	}
-
-    /**
-     * 批量审核
-     */
-    public void batchApprove(@Para(value = "ids") String ids) {
-        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-        
-        renderJson(service.batchApprove(ids));
-    }
-
-    /**
-     * 批量反审核
-     */
-    public void batchReverseApprove(@Para(value = "ids") String ids) {
-        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-
-        renderJson(service.batchReverseApprove(ids));
-    }
-
-    /**
-     * 批量审核不通过（不需要实现）
-     */
-    public void batchReject(@Para(value = "ids") String ids) {
-        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-        
-        renderJson(service.batchReject(ids));
-    }
 
     /**
      * 模板下载
