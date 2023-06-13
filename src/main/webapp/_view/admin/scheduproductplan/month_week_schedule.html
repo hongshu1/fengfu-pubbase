@@ -25,23 +25,12 @@
         font-weight: bold;
     }
 
-    /* 头部用户数据 */
-    .nav_title {
-        text-indent: 1rem;
-        padding: 10px 0px;
-        font-size: 0.9rem;
-        color: #5C5C5C;
-        border: 1px solid #CCCCCC;
-    }
 
     .search {
         display: flex;
+        justify-content: space-between; /* 水平居中 */
+        align-items: center; /* 垂直居中 */
         padding: 10px 0px;
-    }
-
-    /* 下拉框文字样式 */
-    .select {
-        margin-right: 15px;
     }
 
     .span {
@@ -54,7 +43,6 @@
 
     /* 搜索重置按钮样式 */
     .button {
-        margin: 0px 10px;
         padding: 3px 10px;
         background-color: #fff;
         border: #797979 1px solid;
@@ -188,9 +176,9 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)" >
     <div class="jbolt_page_title">
-        <nav>
-            <p class="nav_title">月周生产计划</p>
-        </nav>
+<!--        <nav>-->
+<!--            <p class="nav_title">月周生产计划</p>-->
+<!--        </nav>-->
         <!-- 头部标题结束 -->
         <!-- 搜索工具类开始 -->
         <div class="search">
@@ -221,8 +209,8 @@
                     <option value="5">层级5</option>
                 </select>
             </div>
-            <div class="select">
-                <div class="form-group row">
+            <div class="select" style="display: flex;justify-content: center;align-items: center;">
+                <div class="row">
                     <p>日期：</p>
                     <div class="col" style="display:flex;">
                         <input type="date" id="search_start-time" name="search_start-time">
@@ -231,8 +219,10 @@
                     </div>
                 </div>
             </div>
-            <button class="button" onClick="search()" style="height:26px;">搜索</button>
-            <button class="button" style="height:26px;">重置</button>
+            <div style="margin-left:1rem">
+                <button class="button" onClick="search()" style="height:26px;margin-right: 10px">搜索</button>
+                <button class="button" style="height:26px;">重置</button>
+            </div>
         </div>
     </div>
     <div class="jbolt_page_content">
@@ -359,7 +349,7 @@
     }
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1,calcOnDemand: true});
     var excelIo = new GC.Spread.Excel.IO();
-    spread.options.referenceStyle = GC.Spread.Sheets.ReferenceStyle.r1c1
+    spread.options.referenceStyle = GC.Spread.Sheets.ReferenceStyle.r1c1;
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取表单
@@ -478,8 +468,8 @@
         spread.sheets.forEach(function(sheet) {
             sheet.setDefaultStyle(style, GC.Spread.Sheets.SheetArea.viewport);
         });
-        var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
         //设置value值和该单元格的对齐方式
+        var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex).cellType(cellType);
         parms.activeSheet.setColumnWidth(parms.columnindex, 40);//设置指定单元格的width
         sheet.addSpan(0,0,4,1);
@@ -536,7 +526,7 @@
                     }
                 }
             }
-
+            //设置day，week
             for (let i = 0; i < res.data.day.length; i++) {
                 sheet.setValue(2,parms.dayRow++,res.data.day[i]);
                 sheet.setValue(3,parms.weekRow++,res.data.week[i]);
@@ -776,6 +766,7 @@
                         }
                         // let isDuplicate = false;
                         // for (let i = 0; i < parms.tableData.length; i++) {
+                                //去重
                         //     if (JSON.stringify(obj) === JSON.stringify(parms.tableData[i])) {
                         //         isDuplicate = true;
                         //         break;
@@ -1101,7 +1092,6 @@
                 }else{
                     LayerMsgBox.error(res.msg,500);
                 }
-                parms.tableData.length=0;
             },error: function(error) {
                 console.log(error);
             }
