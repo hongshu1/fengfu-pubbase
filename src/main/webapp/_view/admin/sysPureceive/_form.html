@@ -371,6 +371,34 @@
                     header: '库区,库区名称',
                     changeColumns: [{column: "poscode", use: "careacode"}]
                 },
+                isinitial: {
+                    handler:function (table,td,text,value,jsonData) {
+                        let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["cinvcode"]);
+                        //获取打开初物开关的数据
+                        let arrayisinitial = new Array();
+                        if (datas != null){
+                            for (var i = 0; i < datas.length; i++){
+                                var data = datas[i];
+                                if(data.isinitial != null){
+                                    array.push("'"+data.cinvcode+"'","'"+data.isinitial+"'");
+                                    array.join(',');
+                                }
+                            }
+                        }
+                        console.log("data==>",arrayisinitial);
+                        if(arrayisinitial != null){
+                            for (var i = 0; i < arrayisinitial.length; i++){
+                                var datai = datas[i];
+                                for (var t = 0; t < datas.length; t++){
+                                    var datat = datas[t];
+                                    if(datai.cinvcode == datat.cinvcode){
+                                        datat.isinitial = datai.isinitial;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
 
                 barcode: { //条码
                     // linkPara:"#vencode1",
