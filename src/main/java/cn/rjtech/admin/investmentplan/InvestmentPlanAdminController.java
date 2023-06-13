@@ -446,13 +446,34 @@ public class InvestmentPlanAdminController extends BaseAdminController {
      * */
     @CheckPermission(PermissionKey.EXECUTION_PROGRESS_TRACKING)
     public void executionProgressTrackingIndex(){
-    	render("execution_progress_tracking.html");
+    	render("execution_progress_tracking_V2.html");
     }
     /**
-     * 执行进度跟踪表数据查询
+     * 执行进度跟踪表-费用tab页面
      * */
     @UnCheck
-    public void findExecutionProgressTrackingDatas(){
-    	renderJsonData(service.findExecutionProgressTrackingDatas(getKv()));
+    public void executionProgressTrackingExpense(){
+    	render("execution_progress_tracking_expense.html");
+    }
+    /**
+     * 执行进度跟踪表-投资tab页面
+     * */
+    @UnCheck
+    public void executionProgressTrackingInvestment(){
+    	render("execution_progress_tracking_investment.html");
+    }
+    /**
+     * 执行进度跟踪表-费用tab数据查询
+     * */
+    @UnCheck
+    public void findExecutionProgressTrackingExpenseDatas(){
+    	renderJsonData(service.findExecutionProgressTrackingExpenseDatas(getKv()));
+    }
+    /**
+     * 执行进度跟踪表-投资tab数据查询
+     * */
+    @UnCheck
+    public void findExecutionProgressTrackingInvestmentDatas(){
+    	renderJsonData(service.findExecutionProgressTrackingInvestmentDatas(getKv()));
     }
 }

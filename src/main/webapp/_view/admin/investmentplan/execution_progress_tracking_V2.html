@@ -1,0 +1,30 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+	    <div class="jbolt_page_title">
+	    </div>
+	    <div class="jbolt_page_content">
+	    	<div class="jbolt_tab_view">
+				  <div class="jbolt_tab_links">
+					  <a class="jbolt_tab_link active"  href="#jbolt_tabcontent1_#(pageId)">费用</a>
+					  <a class="jbolt_tab_link"  href="#jbolt_tabcontent2_#(pageId)">投资</a>
+				  </div>
+				  <div class="jbolt_tab_contents">
+					  <div class="jbolt_tab_content active" id="jbolt_tabcontent1_#(pageId)">
+						<div data-ajaxportal data-url="/admin/investmentplan/executionProgressTrackingExpense"></div>
+					  </div>
+					  <div class="jbolt_tab_content" id="jbolt_tabcontent2_#(pageId)">
+						<div data-ajaxportal data-url="/admin/investmentplan/executionProgressTrackingInvestment"></div>
+					  </div>
+				  </div>
+			</div>
+	    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+</script>
+#end
