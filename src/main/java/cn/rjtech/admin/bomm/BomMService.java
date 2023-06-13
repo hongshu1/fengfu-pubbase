@@ -1,5 +1,6 @@
 package cn.rjtech.admin.bomm;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -18,7 +19,6 @@ import cn.rjtech.enums.BomSourceTypeEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.BomD;
 import cn.rjtech.model.momdata.BomM;
-import cn.rjtech.model.momdata.PurchaseorderdQty;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -401,6 +401,14 @@ public class BomMService extends BaseService<BomM> {
 			Integer iAuditStatus = bomMaster.getIAuditStatus();
 //			AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
 //			ValidationUtils.isTrue((AuditStatusEnum.NOT_AUDIT.getValue()==iAuditStatus || AuditStatusEnum.REJECTED.getValue()==iAuditStatus), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行删除");
+			// 校验母件是否有被其他子件引用到
+			List<BomD> bomDList = bomDService.queryBomByPartBomMid(bomMasterId);
+			if (CollectionUtil.isNotEmpty(bomDList)){
+				List<String> invCodeList = bomDList.stream().map(BomD::getCInvCode).collect(Collectors.toList());
+				String format = String.format("该半成品版本记录，有存在其他地方使用【%s】", CollUtil.join(invCodeList, ","));
+				ValidationUtils.isTrue(CollectionUtil.isEmpty(bomDList), format);
+			}
+			
 			// 删除母件
 			bomMaster.setIsDeleted(true);
 			bomMaster.setIUpdateBy(JBoltUserKit.getUserId());

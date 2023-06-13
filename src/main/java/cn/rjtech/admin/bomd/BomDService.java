@@ -187,14 +187,22 @@ public class BomDService extends BaseService<BomD> {
 			}
 			if (ObjectUtil.isNotNull(isVirtual)){
 				IsEnableEnum isEnableEnum = IsEnableEnum.toEnum(isVirtual);
-				ValidationUtils.notNull(isEnableEnum, "未知虚拟机类型");
+				ValidationUtils.notNull(isEnableEnum, "未知虚拟件类型");
 				record.set(Inventory.ISVIRTALNAME, isEnableEnum.getText());
 			}
 			if (ObjectUtil.isNotNull(bProxyForeign)){
 				IsEnableEnum isEnableEnum = IsEnableEnum.toEnum(bProxyForeign);
-				ValidationUtils.notNull(isEnableEnum, "未知虚拟机类型");
+				ValidationUtils.notNull(isEnableEnum, "未知加工类型");
 				record.set(Inventory.BPROXYFOREIGNNAME, isEnableEnum.getText());
 			}
 		}
 	}
+	
+	public List<BomD> queryBomByPartBomMid(Long bomId){
+		Sql sql = selectSql();
+		sql.eq(BomD.ISDELETED, "0");
+		sql.eq(BomD.IINVPARTBOMMID, bomId);
+		return find(sql);
+	}
+	
 }
