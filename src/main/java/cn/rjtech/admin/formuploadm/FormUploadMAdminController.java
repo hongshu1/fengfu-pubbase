@@ -10,14 +10,17 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.JBoltFileService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.FormUploadM;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Ret;
 import com.jfinal.upload.UploadFile;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 记录上传
@@ -81,10 +84,11 @@ public class FormUploadMAdminController extends BaseAdminController {
 		}
 		set("formUploadM",formUploadM);
 		String s = formUploadM.getIAuditStatus() == 0 ?
-				"已保存" : formUploadM.getIAuditStatus() == 1 ?
+				"未审核" : formUploadM.getIAuditStatus() == 1 ?
 				"待审核" : formUploadM.getIAuditStatus() == 2 ? "审核通过" : "审核不通过";
 		set("status",s);
 		set("iauditstatus",false);
+		set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
 		render("edit.html");
 	}
 
@@ -123,13 +127,33 @@ public class FormUploadMAdminController extends BaseAdminController {
 	}
 
 	public void batchApprove() {
-		renderJson(service.batchHandle(getKv(), 2));
+		renderJson(service.batchApprove(get("ids")));
 	}
 
-	public void batchAntiAudit() {
-		renderJson(service.batchHandle(getKv(), 1));
+	public void batchReverseApprove() {
+		renderJson(service.batchReverseApprove(get("ids")));
 	}
 
+	/**
+	 * 提交审批
+	 */
+	public void submit() {
+		renderJson(service.submit(getLong("iautoid")));
+	}
+
+	/**
+	 * 审批通过
+	 */
+	public void approve() {
+		renderJson(service.approve(getLong(0)));
+	}
+
+	/**
+	 * 审批不通过
+	 */
+	public void reject() {
+		renderJson(service.reject(getLong(0)));
+	}
 	/**
 	 * 删除
 	 */

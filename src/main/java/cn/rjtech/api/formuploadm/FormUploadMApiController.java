@@ -51,8 +51,8 @@ public class FormUploadMApiController  extends BaseApiController {
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void batchApprove() {
-        renderJBoltApiRet(service.batchHandle(getKv(), 2));
+    public void batchApprove(@Para(value = "ids") String ids) {
+        renderJBoltApiRet(service.batchApprove(ids));
     }
 
     /**
@@ -60,8 +60,8 @@ public class FormUploadMApiController  extends BaseApiController {
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void batchAntiAudit() {
-        renderJBoltApiRet(service.batchHandle(getKv(), 1));
+    public void batchAntiAudit(@Para(value = "ids") String ids) {
+        renderJBoltApiRet(service.batchReverseApprove(ids));
     }
 
     /**
