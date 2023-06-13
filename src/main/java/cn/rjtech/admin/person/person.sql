@@ -66,10 +66,11 @@ WHERE
 #end
 
 #sql("getAutocompleteListWithDept")
-SELECT TOP #(limit) hp.cpsn_num, hp.cpsn_name, d.cdepcode, d.cdepname
+SELECT TOP #(limit) hp.iautoid, hp.cpsn_num, hp.isex, hp.cpsn_name, d.cdepcode, d.cdepname
 FROM Bd_Person hp
-    INNER JOIN bd_Department d ON hp.cdept_num = d.cdepcode
-WHERE 1=1
+    INNER JOIN bd_Department d ON hp.cdept_num = d.cdepcode AND hp.iorgid = d.iorgid
+WHERE hp.iorgid = #para(iorgid)
+    AND hp.isDeleted = '0'
     #if(q)
         AND ( hp.cpsn_num LIKE CONCAT('%', #para(q), '%') OR hp.cpsn_name LIKE CONCAT('%', #para(q), '%') )
     #end

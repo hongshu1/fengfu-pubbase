@@ -84,16 +84,14 @@ public class PersonService extends BaseService<Person> {
         para.set("iorgid", getOrgId())
                 .set("corgcode", getOrgCode());
 
-        Boolean isenabled = para.getBoolean("isenabled");
-        
         // 是否启用boolean转char
-        para.set("isenabled", isenabled == null ? null : (isenabled ? "1" : "0"));
+        para.set("isenabled", ObjUtil.defaultIfNull(para.getBoolean("isenabled"), "1"));
+        
         Page<Record> pageList = dbTemplate("person.paginateAdminDatas", para).paginate(pageNumber, pageSize);
         for (Record row : pageList.getList()) {
             row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("iuserid")));
             row.set("sysworkage", calcSysworkage(row.getDate("dhiredate")));
         }
-
         return pageList;
     }
 
@@ -535,7 +533,12 @@ public class PersonService extends BaseService<Person> {
     }
 
     public List<Record> getAutocompleteListWithDept(String cdepcode, String q, Integer limit) {
-        return dbTemplate("person.getAutocompleteListWithDept", Okv.by("q", q).set("limit", limit).set("cdepcode", cdepcode)).find();
+        Okv para = Okv.by("q", q)
+                .set("limit", limit)
+                .set("iorgid", getOrgId())
+                .set("cdepcode", cdepcode);
+        
+        return dbTemplate("person.getAutocompleteListWithDept", para).find();
     }
 
     public Person findByCpersonName(String cpersonname) {

@@ -4,7 +4,6 @@
             trigger: "click",
             initRowCount: 0,
             submit: {
-                withForm: ['userForm'],
                 type: "multi",
                 name: 'org'
                 //params:{"orderId":3},//携带其他额外参数
@@ -46,6 +45,24 @@
                     valueAttr: "id",
                     columnAttr: "name,username",
                     header:'名称,登录名'
+                },
+                ipersonid: {
+                    type: "autocomplete",
+                    url: "admin/person/autocompleteWithDept",
+                    colIndex: 1,
+                    maxLength: 100,
+                    placeholder: "请输入",
+                    textAttr: "cpsn_name",
+                    valueAttr: 'iautoid',
+                    width: 500,
+                    columnAttr: "cpsn_num,cpsn_name",
+                    header:'人员编码,人员名称',
+                    dialog: {
+                        url: "admin/person/choose?dialog=1",
+                        area: "100%,100%",
+                        title: '选择人员',
+                        btn: "确定,关闭"
+                    }
                 }
             }
         };

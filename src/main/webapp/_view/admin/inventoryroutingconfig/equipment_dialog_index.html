@@ -29,7 +29,7 @@
 		<td>${data.cdepname}</td>
 		<td>${data.workname}</td>
 		<td>${data.cmemo}</td>
-		#if(ObjectUtil.isEmpty(routingId))
+		#if(ObjUtil.isEmpty(routingId))
 			<td>
 				<a class="btn" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove c-danger"></i></a>
 			</td>
@@ -41,7 +41,7 @@
 		<div class="jbolt_table_toolbar" id="itemrouting_toolbar_#(pageId)">
 			<div class="" role="group" aria-label="btn-group">
 				<div>
-					#if(ObjectUtil.isEmpty(routingId))
+					#if(ObjUtil.isEmpty(routingId))
 						<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 							<button onclick="addTableRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
 							<button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
@@ -78,7 +78,7 @@
 				<th data-column="cdepname">使用部门</th>
 				<th data-column="workname">产线名称</th>
 				<th data-column="cmemo">备注</th>
-				#if(ObjectUtil.isEmpty(routingId))
+				#if(ObjUtil.isEmpty(routingId))
 					<th >操作</th>
 				#end
 			</tr>

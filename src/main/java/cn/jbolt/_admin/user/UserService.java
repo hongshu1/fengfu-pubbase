@@ -3,9 +3,10 @@ package cn.jbolt._admin.user;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.dept.DeptService;
-import cn.jbolt._admin.onlineuser.OnlineUserService;
 import cn.jbolt.common.model.UserExtend;
+import cn.jbolt.core.base.JBoltGlobalConfigKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.*;
 import cn.jbolt.core.db.sql.Sql;
@@ -13,6 +14,7 @@ import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.kit.JBoltCurrentOfModuleKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.kit.OrgAccessKit;
 import cn.jbolt.core.model.Application;
 import cn.jbolt.core.model.Dept;
 import cn.jbolt.core.model.User;
@@ -24,6 +26,7 @@ import cn.jbolt.extend.config.ExtendProjectOfModule;
 import cn.jbolt.extend.user.ExtendUserOfModuleLinkService;
 import cn.rjtech.admin.userorg.UserOrgService;
 import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
+import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.main.UserOrg;
 import cn.rjtech.model.main.UserThirdparty;
 import cn.rjtech.util.ValidationUtils;
@@ -52,11 +55,9 @@ public class UserService extends JBoltUserService {
     @Inject
     private DeptService deptService;
     @Inject
-    private OnlineUserService onlineUserService;
-    @Inject
     private UserExtendService userExtendService;
     @Inject
-    ExtendUserOfModuleLinkService extendUserOfModuleLinkService;
+    private ExtendUserOfModuleLinkService extendUserOfModuleLinkService;
     @Inject
     private UserOrgService userOrgService;
     @Inject
@@ -64,13 +65,9 @@ public class UserService extends JBoltUserService {
 
     /**
      * 保存
-     *
-     * @param user
-     * @return
      */
     public Ret save(User user, UserExtend extend) {
-        if (user == null || isOk(user.getId()) || notOk(user.getName())
-                || notOk(user.getUsername())) {
+        if (user == null || isOk(user.getId()) || notOk(user.getName()) || notOk(user.getUsername())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         boolean userExtendEnable = JBoltGlobalConfigCache.me.userExtendEnable();
@@ -136,41 +133,6 @@ public class UserService extends JBoltUserService {
     }
 
     /**
-     * 更新
-     *
-     * @param user
-     * @return
-     */
-    public Ret update(User user, UserExtend extend) {
-        if (user == null || notOk(user.getId()) || notOk(user.getName())
-                || notOk(user.getUsername())) {
-            return fail(JBoltMsg.PARAM_ERROR);
-        }
-        boolean userExtendEnable = JBoltGlobalConfigCache.me.userExtendEnable();
-        if (userExtendEnable) {
-            if (extend != null && notOk(extend.getId())) {
-                return fail("用户扩展信息" + JBoltMsg.PARAM_ERROR);
-            }
-            if (extend != null && !user.getId().equals(extend.getId())) {
-                return fail("用户扩展信息" + JBoltMsg.PARAM_ERROR + ",与用户主键不一致");
-            }
-        }
-        Ret ret = saveOrUpdate(user);
-        if (ret.isFail()) {
-            return ret;
-        }
-        //添加完user后处理extend
-        if (userExtendEnable && extend != null) {
-            extend.setId(user.getId());
-            ret = userExtendService.updateByUser(extend);
-            if (ret.isFail()) {
-                return ret;
-            }
-        }
-        return SUCCESS;
-    }
-
-    /**
      * saveOrUpdate
      *
      * @param user
@@ -196,18 +158,18 @@ public class UserService extends JBoltUserService {
             }
             dbUser.deleteKeyCache();
             //清理角色变更缓存
-//            if(ObjUtil.notEqual(dbUser.getRoles(), user.getRoles())) {
-//                //存在其他跟自己相同角色的就不清理缓存 不存在说明自己独占 就清理
-//                boolean existSameRoles = existsSameRoles(dbUser.getRoles(),dbUser.getId());
-//                if(!existSameRoles){
-//                    long appId = JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APP_ID);
-//                    long applicationId = JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APPLICATION_ID);
-//
-//                    JBoltPermissionCache.me.removeRolesPermissionKeySet(dbUser.getRoles());
-//                    JBoltPermissionCache.me.removeRolesMenus(dbUser.getId(), appId, applicationId, dbUser.getRoles());
-//                    JBoltPermissionCache.me.removeRolesMenusWithSystemAdminDefault(dbUser.getId(), appId, applicationId, dbUser.getRoles());
-//                }
-//            }
+            if(ObjUtil.notEqual(dbUser.getRoles(), user.getRoles())) {
+                //存在其他跟自己相同角色的就不清理缓存 不存在说明自己独占 就清理
+                boolean existSameRoles = existsSameRoles(dbUser.getRoles(),dbUser.getId());
+                if(!existSameRoles){
+                    long appId = JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APP_ID);
+                    long applicationId = JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APPLICATION_ID);
+
+                    JBoltPermissionCache.me.removeRolesPermissionKeySet(dbUser.getRoles());
+                    JBoltPermissionCache.me.removeRolesMenus(dbUser.getId(), appId, applicationId, dbUser.getRoles());
+                    JBoltPermissionCache.me.removeRolesMenusWithSystemAdminDefault(dbUser.getId(), appId, applicationId, dbUser.getRoles());
+                }
+            }
         } else {
             if (notOk(user.getPassword())) {
                 return fail("请输入用户密码");
@@ -269,6 +231,40 @@ public class UserService extends JBoltUserService {
             }
         }
         return ret(success);
+    }
+
+    /**
+     * 更新
+     *
+     * @param user
+     * @return
+     */
+    public Ret update(User user, UserExtend extend) {
+        if (user == null || notOk(user.getId()) || notOk(user.getName()) || notOk(user.getUsername())) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        boolean userExtendEnable = JBoltGlobalConfigCache.me.userExtendEnable();
+        if (userExtendEnable) {
+            if (extend != null && notOk(extend.getId())) {
+                return fail("用户扩展信息" + JBoltMsg.PARAM_ERROR);
+            }
+            if (extend != null && !user.getId().equals(extend.getId())) {
+                return fail("用户扩展信息" + JBoltMsg.PARAM_ERROR + ",与用户主键不一致");
+            }
+        }
+        Ret ret = saveOrUpdate(user);
+        if (ret.isFail()) {
+            return ret;
+        }
+        //添加完user后处理extend
+        if (userExtendEnable && extend != null) {
+            extend.setId(user.getId());
+            ret = userExtendService.updateByUser(extend);
+            if (ret.isFail()) {
+                return ret;
+            }
+        }
+        return SUCCESS;
     }
 
     /**
@@ -424,41 +420,73 @@ public class UserService extends JBoltUserService {
 
     public Ret saveTableSubmit(JBoltTableMulti jBoltTable, User loginUser, Date now) {
         // 组织表格
-        JBoltTable orgTable = jBoltTable.getJBoltTable("org");
+        JBoltTable thirdpartyTable = jBoltTable.getJBoltTable("thirdparty");
         // 用户信息
-        User userForm = orgTable.getFormModel(User.class, "user");
+        User userForm = thirdpartyTable.getFormModel(User.class, "user");
+        // 用户组织（人员）信息
+        UserOrg userOrg = thirdpartyTable.getFormModel(UserOrg.class, "userorg");
         // 扩展信息
-        UserExtend extend = orgTable.getFormModel(UserExtend.class, "extend");
+        UserExtend extend = thirdpartyTable.getFormModel(UserExtend.class, "extend");
 
         // 第三方账号
-        JBoltTable thirdpartyTable = jBoltTable.getJBoltTable("thirdparty");
+        JBoltTable orgTable = jBoltTable.getJBoltTable("org");
 
+        // 新增
         if (null == userForm.getId()) {
             save(userForm, extend);
 
+            // 用户组织（人员）信息维护
+            if (ObjUtil.isNotNull(userOrg) && ObjUtil.isNotNull(userOrg.getIPersonId())) {
+                userOrg.setUserId(userForm.getId());
+                ValidationUtils.isTrue(userOrg.save(), ErrorMsg.SAVE_FAILED);
+            }
+
             // 新增组织
-            saveOrgs(orgTable.getSaveModelList(UserOrg.class), userForm.getId(), loginUser, now);
-            // 校验组织不能重复
-            ValidationUtils.isTrue(userOrgService.notExistsDuplicate(userForm.getId()), "组织重复定义错误");
+            if (ObjUtil.isNotNull(orgTable)) {
+                saveOrgs(orgTable.getSaveModelList(UserOrg.class), userForm.getId(), loginUser, now);
+                // 校验组织不能重复
+                ValidationUtils.isTrue(userOrgService.notExistsDuplicate(userForm.getId()), "组织重复定义错误");
+            }
 
             // 新增第三方系统账号
             saveThirdpartys(thirdpartyTable.getSaveModelList(UserThirdparty.class), userForm.getId());
-
             // 校验第三方账号不重复
             ValidationUtils.isTrue(userThirdpartyService.notExitsDuplicate(userForm.getId()), "第三方系统账号重复定义错误");
-        } else {
+        }
+        // 修改
+        else {
+            // 用户组织（人员）信息维护
+            if (ObjUtil.isNotNull(userOrg) && ObjUtil.isNotNull(userOrg.getIPersonId())) {
+                UserOrg dbUserOrg = userOrgService.getUserOrg(userForm.getId(), OrgAccessKit.getOrgId());
+                if (ObjUtil.isNull(dbUserOrg)) {
+                    // 校验是否重复
+                    ValidationUtils.isTrue(userOrgService.notExistsDuplicatePerson(OrgAccessKit.getOrgId(), userOrg.getIPersonId()), "选择的人员已被占用");
+                    
+                    ValidationUtils.isTrue(userOrg.save(), ErrorMsg.SAVE_FAILED);
+                } else {
+                    if (ObjUtil.notEqual(dbUserOrg.getIPersonId(), userOrg.getIPersonId())) {
+                        ValidationUtils.isTrue(userOrgService.notExistsDuplicatePerson(OrgAccessKit.getOrgId(), userOrg.getIPersonId()), "选择的人员已被占用");
+                    }
+                    
+                    dbUserOrg.setIPersonId(userOrg.getIPersonId());
+                    ValidationUtils.isTrue(dbUserOrg.update(), ErrorMsg.UPDATE_FAILED);
+                }
+            }
+            
             update(userForm, extend);
 
-            // 新增组织
-            saveOrgs(orgTable.getSaveModelList(UserOrg.class), userForm.getId(), loginUser, now);
-            // 修改组织
-            updateOrgs(orgTable.getUpdateModelList(UserOrg.class), loginUser, now);
-            // 删除组织
-            deleteOrgs(orgTable.getDelete());
-
-            // 校验组织不能重复
-            ValidationUtils.isTrue(userOrgService.notExistsDuplicate(userForm.getId()), "组织重复定义错误");
-
+            // 组织维护
+            if (ObjUtil.isNotNull(orgTable)) {
+                // 新增组织
+                saveOrgs(orgTable.getSaveModelList(UserOrg.class), userForm.getId(), loginUser, now);
+                // 修改组织
+                updateOrgs(orgTable.getUpdateModelList(UserOrg.class), loginUser, now);
+                // 删除组织
+                deleteOrgs(orgTable.getDelete());
+                // 校验组织不能重复
+                ValidationUtils.isTrue(userOrgService.notExistsDuplicate(userForm.getId()), "组织重复定义错误");
+            }
+            
             // 新增第三方系统账号
             saveThirdpartys(thirdpartyTable.getSaveModelList(UserThirdparty.class), userForm.getId());
             // 修改第三方系统账号
@@ -476,6 +504,10 @@ public class UserService extends JBoltUserService {
     private void saveOrgs(List<UserOrg> saveOrgs, Long userId, User user, Date now) {
         if (CollUtil.isNotEmpty(saveOrgs)) {
             for (UserOrg org : saveOrgs) {
+                if (ObjUtil.isNotNull(org.getIPersonId())) {
+                    ValidationUtils.isTrue(userOrgService.notExistsDuplicatePerson(org.getOrgId(), org.getIPersonId()), "选择的人员已被占用");
+                }
+                
                 org.setId(JBoltSnowflakeKit.me.nextId())
                         .setUserId(userId)
                         .setCreateUserId(user.getId())
@@ -491,6 +523,15 @@ public class UserService extends JBoltUserService {
     private void updateOrgs(List<UserOrg> updateOrgs, User user, Date now) {
         if (CollUtil.isNotEmpty(updateOrgs)) {
             for (UserOrg org : updateOrgs) {
+                UserOrg dbUserOrg = userOrgService.findById(org.getId());
+                ValidationUtils.notNull(dbUserOrg, JBoltMsg.DATA_NOT_EXIST);
+                ValidationUtils.isTrue(!dbUserOrg.getIsDeleted(), JBoltMsg.DATA_NOT_EXIST);
+                
+                // 校验人员是否已被占用
+                if (ObjUtil.isNotNull(org.getIPersonId()) && ObjUtil.notEqual(dbUserOrg.getIPersonId(), org.getIPersonId())) {
+                    ValidationUtils.isTrue(userOrgService.notExistsDuplicatePerson(org.getOrgId(), org.getIPersonId()), "选择的人员已被占用");
+                }
+                
                 org.keep("id", "org_id", "position", "is_principal", "parent_psn_id", "version_num")
                         .setLastUpdateId(user.getId())
                         .setLastUpdateName(user.getName())
