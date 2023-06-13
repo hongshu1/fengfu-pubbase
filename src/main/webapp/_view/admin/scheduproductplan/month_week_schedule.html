@@ -629,12 +629,12 @@
                         //渲染计划数据
                         for (var j = 0; j < parms['scheduplanmonth'][i].day.length; j++) {
                             if (i == 0) {
-                                sheet.setValue(shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].shiyong);
-                                sheet.setValue(1 + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].one);
-                                sheet.setValue(2 + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].two);
-                                sheet.setValue(3 + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].three);
-                                sheet.setValue(4 + shiyongRow, shiyongCol+j, parms['scheduplanmonth'][i].day[j].zaiku);
-                                sheet.setValue(5 + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].tianshu);
+                                sheet.setValue(shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].shiyong));
+                                sheet.setValue(1 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].one));
+                                sheet.setValue(2 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].two));
+                                sheet.setValue(3 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].three));
+                                sheet.setValue(4 + shiyongRow, shiyongCol+j, parseFloat(parms['scheduplanmonth'][i].day[j].zaiku));
+                                sheet.setValue(5 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].tianshu));
                                 //
                                 sheet.setValue(8, 9, parms['scheduplanmonth'][i].qiChuZaiKu);
                                 sheet.setValue(9, 9, parms['scheduplanmonth'][i].dayNum);
@@ -647,15 +647,18 @@
                                 sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //嵌入在库天数公式
                                 sheet.setFormula(B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,(SUM(R[-1]C/${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`)
+                                //控制小数位为1位
+                                sheet.setFormatter(4 + shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].zaiku))?"0":"0.0");
+                                sheet.setFormatter(5 + shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0":"0.0");
                             } else {
-                                sheet.setValue(6 * i + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].shiyong);
-                                sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, parms['scheduplanmonth'][i].day[j].one);
-                                sheet.setValue(6 * i + shiyongRow + 2, shiyongCol + j, parms['scheduplanmonth'][i].day[j].two);
-                                sheet.setValue(6 * i + shiyongRow + 3, shiyongCol + j, parms['scheduplanmonth'][i].day[j].three);
-                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol+j, parms['scheduplanmonth'][i].day[j].zaiku);
-                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol-1, parms['scheduplanmonth'][i].qiChuZaiKu);
-                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, parms['scheduplanmonth'][i].day[j].tianshu);
-                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol-1, parms['scheduplanmonth'][i].dayNum);
+                                sheet.setValue(6 * i + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].shiyong));
+                                sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].one));
+                                sheet.setValue(6 * i + shiyongRow + 2, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].two));
+                                sheet.setValue(6 * i + shiyongRow + 3, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].three));
+                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol+j, parseFloat(parms['scheduplanmonth'][i].day[j].zaiku));
+                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol-1, parseFloat(parms['scheduplanmonth'][i].qiChuZaiKu));
+                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].tianshu));
+                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol-1, parseFloat(parms['scheduplanmonth'][i].dayNum));
 
                                 let Num = sheet.getValue(6*i+9,9)
                                 let useArray = [];
@@ -666,6 +669,9 @@
                                 sheet.setFormula(6*i+jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //嵌入在库天数公式
                                 sheet.setFormula(6*i+B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,(SUM(R[-1]C/${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`);
+                                //控制小数位为1位
+                                sheet.setFormatter(6 * i + shiyongRow + 4, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].zaiku))?"0":"0.0");
+                                sheet.setFormatter(6 * i + shiyongRow + 5, shiyongCol + j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0":"0.0");
                             }
                             // 条件为false进入
                             if(!parms['scheduplanmonth'][i].day[j].lock){

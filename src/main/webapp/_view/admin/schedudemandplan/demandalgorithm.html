@@ -37,13 +37,11 @@
 
     .search {
         display: flex;
+        justify-content: space-between; /* 水平居中 */
+        align-items: center; /* 垂直居中 */
         padding: 10px 0px;
     }
 
-    /* 下拉框文字样式 */
-    .select {
-        margin-right: 15px;
-    }
 
     .span {
         color: #333333;
@@ -55,7 +53,6 @@
 
     /* 搜索重置按钮样式 */
     .button {
-        margin: 0px 10px;
         padding: 3px 10px;
         background-color: #fff;
         border: #797979 1px solid;
@@ -295,8 +292,10 @@
                     </div>
                 </div>
             </div>
-            <button class="button" onClick="search()" style="height:26px;">搜索</button>
-            <button class="button" style="height:26px;">重置</button>
+            <div>
+                <button class="button" onClick="search()" style="height:26px;">搜索</button>
+                <button class="button" style="height:26px;">重置</button>
+            </div>
         </div>
     </div>
 
