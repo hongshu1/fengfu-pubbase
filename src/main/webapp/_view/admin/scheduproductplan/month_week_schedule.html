@@ -646,10 +646,9 @@
                                 //嵌入计划在库公式
                                 sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //嵌入在库天数公式
-                                sheet.setFormula(B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,(SUM(R[-1]C/${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`)
+                                sheet.setFormula(B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}])`)
                                 //控制小数位为1位
-                                sheet.setFormatter(4 + shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].zaiku))?"0":"0.0");
-                                sheet.setFormatter(5 + shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0":"0.0");
+                                sheet.setFormatter(5 + shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0.00":"0.00");
                             } else {
                                 sheet.setValue(6 * i + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].shiyong));
                                 sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].one));
@@ -668,10 +667,9 @@
                                 //嵌入计划在库公式
                                 sheet.setFormula(6*i+jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //嵌入在库天数公式
-                                sheet.setFormula(6*i+B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,(SUM(R[-1]C/${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`);
+                                sheet.setFormula(6*i+B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}])`);
                                 //控制小数位为1位
-                                sheet.setFormatter(6 * i + shiyongRow + 4, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].zaiku))?"0":"0.0");
-                                sheet.setFormatter(6 * i + shiyongRow + 5, shiyongCol + j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0":"0.0");
+                                sheet.setFormatter(6 * i + shiyongRow + 5, shiyongCol + j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0.0":"0.00");
                             }
                             // 条件为false进入
                             if(!parms['scheduplanmonth'][i].day[j].lock){
