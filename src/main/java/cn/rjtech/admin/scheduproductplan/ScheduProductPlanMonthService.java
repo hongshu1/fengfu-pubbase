@@ -1041,6 +1041,22 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             int iQty5 = record.getBigDecimal("iQty5").intValue();
             lastDateZKQtyMap.put(cInvCode, iQty5);
         }
+        //TODO:根据物料集查询各班次产能
+        List<Record> invCapacityList = dbTemplate("scheduproductplan.getInvCapacityList", Kv.by("ids", idsJoin)).find();
+        //key:inv    value:list
+        Map<String, List<Record>> invCapacityListMap = new HashMap<>();
+        for (Record record : invCapacityList) {
+            String cInvCode = record.getStr("cInvCode");
+            if (invCapacityListMap.containsKey(cInvCode)) {
+                List<Record> list = invCapacityListMap.get(cInvCode);
+                list.add(record);
+                invCapacityListMap.put(cInvCode, list);
+            } else {
+                List<Record> list = new ArrayList<>();
+                list.add(record);
+                invCapacityListMap.put(cInvCode, list);
+            }
+        }
         //上次锁定截止日期
         Calendar calendar2 = Calendar.getInstance();
         calendar2.setTime(new Date());
@@ -1063,12 +1079,30 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         for (Long WorkIdKey : workInvListMap.keySet()) {
             //物料集
             List<String> invList = workInvListMap.get(WorkIdKey);
-
             //循环物料
             for (String inv : invList) {
                 Record info = invInfoMap.get(inv);
+                int qiChuOneS = 0;
+                int qiChuTwoS = 0;
+                int qiChuThreeS = 0;
+                List<Record> capacityList = invCapacityListMap.get(inv) != null ? invCapacityListMap.get(inv) : new ArrayList<>();
+                for (int i = 0; i < capacityList.size(); i++) {
+                    String cWorkShiftCode = capacityList.get(i).getStr("cWorkShiftCode") != null ? capacityList.get(i).getStr("cWorkShiftCode") : "";
+                    int iCapacity = capacityList.get(i).getInt("iCapacity");
+                    if (cWorkShiftCode.contains("1S")) {
+                        qiChuOneS = iCapacity;
+                    }
+                    if (cWorkShiftCode.contains("2S")) {
+                        qiChuTwoS = iCapacity;
+                    }
+                    if (cWorkShiftCode.contains("3S")) {
+                        qiChuThreeS = iCapacity;
+                    }
+                }
+                int iInnerInStockDays = isOk(info.getInt("iInnerInStockDays")) ? info.getInt("iInnerInStockDays") : 1;
                 //期初库存
                 int qiChuZaiKu = lastDateZKQtyMap.get(info.getStr("cInvCode")) != null ? lastDateZKQtyMap.get(info.getStr("cInvCode")) : 2000;
+
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("seq", seq++);
@@ -1077,7 +1111,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 map.put("cInvCode", info.getStr("cInvCode"));
                 map.put("cInvCode1", info.getStr("cInvCode1"));
                 map.put("cInvName1", info.getStr("cInvName1"));
-                map.put("dayNum", isOk(info.getInt("iInnerInStockDays")) ? info.getInt("iInnerInStockDays") : 1);
+                map.put("qiChuOneS", qiChuOneS);
+                map.put("qiChuTwoS", qiChuTwoS);
+                map.put("qiChuThreeS", qiChuThreeS);
+                map.put("dayNum", iInnerInStockDays);
                 map.put("qiChuZaiKu", qiChuZaiKu);
 
                 List<Object> objectList = new ArrayList<>();
