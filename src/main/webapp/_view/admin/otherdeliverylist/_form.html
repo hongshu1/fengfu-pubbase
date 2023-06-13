@@ -10,19 +10,31 @@
                     保存
                 </button>
                 #end
-                <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
-                        data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
-                        class="fa fa-window-maximize"></i> 提交审核
-                </button>
-                #if(otherOut.iauditstatus??)
-                <button onclick="audit_#(pageId)(this)"
-                        data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
-                        class="fa fa-window-maximize"></i> 审核
-                </button>
-                <button onclick="NoApprove_#(pageId)(this)"
-                        data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
-                        class="fa fa-window-maximize"></i> 反审核
-                </button>
+<!--                <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end-->
+<!--                        data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i-->
+<!--                        class="fa fa-window-maximize"></i> 提交审核-->
+<!--                </button>-->
+<!--                #if(otherOut.iauditstatus??)-->
+<!--                <button onclick="audit_#(pageId)(this)"-->
+<!--                        data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i-->
+<!--                        class="fa fa-window-maximize"></i> 审核-->
+<!--                </button>-->
+<!--                <button onclick="NoApprove_#(pageId)(this)"-->
+<!--                        data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i-->
+<!--                        class="fa fa-window-maximize"></i> 反审核-->
+<!--                </button>-->
+<!--                #end-->
+
+
+                #if(otherOut.autoid??)
+                ### 参数列表
+                ### uri:                接口URI
+                ### formSn:             表单名
+                ### o:                  当前表单对象名
+                ### primaryKeyName:     主键名
+                ###include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
+
+                #include("/_view/_common/_approval_btns.html", uri="/admin/otherdeliverylist", formSn="T_Sys_OtherOut", o=otherOut, edit=edit??, primaryKeyName="AutoID")
                 #end
                 <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
                     关闭
@@ -43,8 +55,8 @@
                 </div>
                 <label class="col-sm-2 col-form-label">出库日期：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" data-date id="purchaseDate" class="form-control"
-                           placeholder="请输入出库日期" maxlength="30" name="otherOut.billdate"
+                    <input type="text"  id="purchaseDate" class="form-control" readonly="readonly"
+                            name="otherOut.billdate"
                            value="#datetime(otherOut.billdate??,'yyyy-MM-dd')">
                 </div>
                 <label class="col-sm-2 col-form-label">仓库名称：</label>
@@ -90,7 +102,7 @@
                 </div>
                 <label class="col-sm-2 col-form-label">业务号：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none" readonly="readonly" placeholder="" value=""/>
+                    <input type="text" class="form-control border-none" placeholder="" value=""/>
                 </div>
             </div>
 
