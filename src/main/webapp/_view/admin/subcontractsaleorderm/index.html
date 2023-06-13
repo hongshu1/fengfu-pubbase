@@ -13,9 +13,9 @@
                     <input type="text" class="form-control" data-with-clearbtn="true" placeholder="客户名称" name="cCusName" style="width:100px;" value=""/>
                     
                     <select class="form-control"
-                            name="iAuditStatus"
+                            name="iOrderStatus"
                             data-autoload
-                            data-url="admin/dictionary/options?key=annual_order_auditstatus"
+                            data-url="admin/dictionary/options?key=iorder_status"
                             data-select-type="select"
                             data-text="=订单状态="
                             data-value=""
@@ -80,6 +80,11 @@
                 <a href="admin/subcontractsaleorderm/delete/${data.iautoid}" tooltip data-title="删除委外销售订单" data-ajaxbtn data-loading="执行中 " data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
                 {@else if data.iorderstatus == '2'}
                 <a class="jbolt_table_delbtn" href="admin/subcontractsaleorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回委外销售订单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
+                {@else if data.iorderstatus == '3'}
+                    <a class="jbolt_table_delbtn" href="admin/subcontractsaleorderm/close?iautoid=${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" tooltip  data-title="关闭周间客户订单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">关闭</i></a>
+                {@/if}
+                {@if data.iorderstatus == '7'}
+                    <a class="jbolt_table_delbtn" href="admin/subcontractsaleorderm/open?iautoid=${data.iautoid}" data-confirm="确定打开此选项？" data-handler="refreshJBoltTable" tooltip  data-title="打开周间客户订单" class="jbolt_table_delbtn"><i class="fa fa-remove fa-edit">打开</i></a>
                 {@/if}
             </td>
             <td>$${data.iorderstatus|iOrderStatus}</td>
@@ -108,7 +113,7 @@
 
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="subcontractsaleorderm_toolbar_#(pageId)">
-            <div class="" role="group" aria-label="btn-group">
+            <div class="btn-group btn-group-sm  " role="group" aria-label="btn-group">
                 <button data-openpage="dialog" data-area="100%,100%" data-handler="jboltTablePageToFirst" data-title="新增委外销售订单" data-url="admin/subcontractsaleorderm/add" class="btn btn-outline-secondary btn-sm">新增</button>
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/subcontractsaleorderm/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-secondary btn-sm" >批量删除</button>
                 #include("/_view/_common/_batch_approval_btns.html", formSn="Co_SubcontractSaleOrderM", uri="admin/subcontractsaleorderm")

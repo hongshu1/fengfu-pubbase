@@ -32,6 +32,7 @@ public class Util {
 
     private static final String WHERE = "WHERE";
     private static final String AND = "AND";
+    public static final int MAXLENGTH = 15;
 
     private Util() {
         // ignored
@@ -197,4 +198,13 @@ public class Util {
         return Kv.by("startdate", beginDateStr).set("enddate", endDateStr);
     }
     
+    public static String getTextName(String text){
+        if (StrUtil.isBlank(text)){
+            return null;
+        }
+        if (text.length() > MAXLENGTH){
+            return text.substring(0, MAXLENGTH) + "...";
+        }
+        return text;
+    }
 }

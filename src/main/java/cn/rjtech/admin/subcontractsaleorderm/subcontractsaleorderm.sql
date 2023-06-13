@@ -11,6 +11,9 @@
 	#if(cCusName)
 		and c.cCusName like concat('%',#para(cCusName),'%') 
 	#end
+    #if(iOrderStatus)
+	    AND scsom.iOrderStatus = #para(iOrderStatus)
+	#end
 	#if(iAuditStatus)
 		and scsom.iAuditStatus = #para(iAuditStatus) 
 	#end

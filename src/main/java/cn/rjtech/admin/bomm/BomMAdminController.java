@@ -106,7 +106,7 @@ public class BomMAdminController extends BaseAdminController {
 		renderJsonData(bomDService.getBomComparePageData(getPageNumber(), getPageSize(), getKv()));
 	}
 	
-	public void findByVersionList(@Para(value = "invId") Long invId){
+	public void findByVersionList(@Para(value = "iinventoryid") Long invId){
 		renderJsonData(service.findByVersionList(getOrgId(), invId));
 	}
 	

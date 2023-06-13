@@ -13,7 +13,7 @@
 
 <select class="form-control" name="iorderstatus"
 	data-autoload
-	data-url="admin/dictionary/options?key=manual_order_state"
+	data-url="admin/dictionary/options?key=iorder_status"
 	data-select-type="select"
 	data-text="=订单状态="
 	data-value=""
@@ -53,7 +53,10 @@
 		{@else if data.iorderstatus == 2}
 			<a class="jbolt_table_delbtn" href="admin/manualorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="审批手配订单" ><i class="fa fa-remove c-danger">撤回</i></a>
 		{@else if data.iorderstatus == 3}
-		<a class="jbolt_table_delbtn" href="admin/manualorderm/colse/${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" tooltip data-title="关闭手配订单"  class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">关闭</i></a>
+		<a class="jbolt_table_delbtn" href="admin/manualorderm/close/${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" tooltip data-title="关闭手配订单"  class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">关闭</i></a>
+		{@/if}
+		{@if data.iorderstatus == '7'}
+			<a class="jbolt_table_delbtn" href="admin/manualorderm/open?iautoid=${data.iautoid}" data-confirm="确定打开此选项？" data-handler="refreshJBoltTable" tooltip  data-title="打开周间客户订单" class="jbolt_table_delbtn"><i class="fa fa-remove fa-edit">打开</i></a>
 		{@/if}
 </td>
 <td>${data.iorderstatus|iOrderStatus}</td>
