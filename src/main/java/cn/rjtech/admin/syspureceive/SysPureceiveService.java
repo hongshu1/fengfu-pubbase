@@ -695,6 +695,24 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         return SUCCESS;
     }
 
+    /**
+     * 批量审批不通过
+     */
+    public Ret batchReject(String ids) {
+        tx(() -> {
+            //业务逻辑
+            this.check(String.valueOf(ids));
+            String[] split = String.valueOf(ids).split(",");
+            for (String s : split) {
+                SysPureceive byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+                byId.update();
+            }
+            return true;
+        });
+        return SUCCESS;
+    }
+
 
     //往采购订单入库主表插入
     public String installsyspuinstore(SysPureceive byId, Date now, User user,Record barcode) {
