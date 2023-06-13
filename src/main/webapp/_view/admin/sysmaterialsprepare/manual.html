@@ -23,7 +23,7 @@
           <div class="row">
             <div class="col-md-4">
               <div class="form-group row">
-                <label class="col-sm-2 col-form-label">备料单号：</label>
+                <label class="col-sm-2 col-form-label">工单号：</label>
                 <div class="col-10">
                   <input type="text"  data-notnull="false"
                          data-tips=""
@@ -31,13 +31,13 @@
                          class="form-control" placeholder=""
                          maxlength="40" name="sysMaterialsprepare.BillNo"
                          readonly
-                         value="#(sysMaterialsprepare.BillNo??)"/>
+                         value="#(cmodocno??)"/>
                 </div>
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-group row">
-                <label class="col-sm-2 col-form-label">工单号 ：</label>
+                <label class="col-sm-2 col-form-label">机型 ：</label>
                 <div class="col-10">
                   <input type="text"  data-notnull="false"
                          data-tips=""
@@ -45,13 +45,13 @@
                          class="form-control" placeholder=""
                          maxlength="40" name="sysMaterialsprepare.cMoDocNo"
                          readonly
-                         value="#(cmodocno??)"/>
+                         value="#(cequipmentmodelname??)"/>
                 </div>
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-group row">
-                <label class="col-sm-2 col-form-label">生产部门：</label>
+                <label class="col-sm-2 col-form-label">存货编码：</label>
                 <div class="col-10">
                   <input type="text"  data-notnull="false"
                          data-tips=""
@@ -59,21 +59,7 @@
                          class="form-control"
                          placeholder="" maxlength="40" name="sysMaterialsprepare.cInvName1"
                          readonly
-                         value="#(cdepname??)"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">机型：</label>
-                <div class="col-10">
-                  <input type="text"  data-notnull="false"
-                         data-tips=""
-                         data-with-clearbtn="false" autocomplete="off"
-                         class="form-control"
-                         placeholder="" maxlength="40" name="sysMaterialsprepare.iEquipmentModelId"
-                         readonly
-                         value="#(cequipmentmodelname??)"/>
+                         value="#(cinvcode??)"/>
                 </div>
               </div>
             </div>
@@ -85,7 +71,7 @@
                          data-tips=""
                          data-with-clearbtn="false" autocomplete="off"
                          class="form-control"
-                         placeholder="" maxlength="40" name="sysMaterialsprepare.cInvCode1"
+                         placeholder="" maxlength="40" name="sysMaterialsprepare.iEquipmentModelId"
                          readonly
                          value="#(cinvcode1??)"/>
                 </div>
@@ -99,9 +85,23 @@
                          data-tips=""
                          data-with-clearbtn="false" autocomplete="off"
                          class="form-control"
-                         placeholder="" maxlength="40" name="sysMaterialsprepare.cDepName"
+                         placeholder="" maxlength="40" name="sysMaterialsprepare.cInvCode1"
                          readonly
                          value="#(cinvname1??)"/>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">计划数量：</label>
+                <div class="col-10">
+                  <input type="text"  data-notnull="false"
+                         data-tips=""
+                         data-with-clearbtn="false" autocomplete="off"
+                         class="form-control"
+                         placeholder="" maxlength="40" name="sysMaterialsprepare.cDepName"
+                         readonly
+                         value="#(iqty??)"/>
                 </div>
               </div>
             </div>
@@ -121,7 +121,35 @@
             </div>
             <div class="col-md-4">
               <div class="form-group row">
-                <label class="col-sm-2 col-form-label">生产班次：</label>
+                <label class="col-sm-2 col-form-label">生产部门：</label>
+                <div class="col-10">
+                  <input type="text"  data-notnull="false"
+                         data-tips=""
+                         data-with-clearbtn="false" autocomplete="off"
+                         class="form-control"
+                         placeholder="" maxlength="40" name="sysMaterialsprepare.cBatch"
+                         readonly
+                         value="#(cdepname??)"/>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">产线名称：</label>
+                <div class="col-10">
+                  <input type="text"  data-notnull="false"
+                         data-tips=""
+                         data-with-clearbtn="false" autocomplete="off"
+                         class="form-control"
+                         placeholder="" maxlength="40" name="sysMaterialsprepare.cBatch"
+                         readonly
+                         value="#(cworkname??)"/>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">班次名称：</label>
                 <div class="col-10">
                   <input type="text"  data-notnull="false"
                          data-tips=""
