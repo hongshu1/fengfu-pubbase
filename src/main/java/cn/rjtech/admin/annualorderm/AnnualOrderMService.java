@@ -15,7 +15,7 @@ import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AnnualOrderStatusEnum;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.OrderStatusEnum;
+import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.AnnualOrderD;
 import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.AnnualorderdQty;
@@ -298,7 +298,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             AnnualOrderM annualOrderM = findById(iautoid);
-            annualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+            annualOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
             annualOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
             ValidationUtils.isTrue(annualOrderM.update(), JBoltMsg.FAIL);
             return true;
@@ -313,7 +313,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         tx(() -> {
             formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
                 AnnualOrderM annualOrderM = findById(formAutoId);
-                annualOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                annualOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
                 ValidationUtils.isTrue(annualOrderM.update(), "撤回失败");
 
                 // 修改客户计划汇总
@@ -333,7 +333,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
     public Ret reject(Long iAutoId) {
         tx(() -> {
             formApprovalService.rejectByStatus(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iAutoId, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+                ValidationUtils.isTrue(updateColumn(iAutoId, "iOrderStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
                 return null;
             });
 
@@ -352,7 +352,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
             formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> null, (formAutoId) -> {
                 List<AnnualOrderM> list = getListByIds(ids);
                 list = list.stream().filter(Objects::nonNull).map(item -> {
-                    item.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+                    item.setIOrderStatus(WeekOrderStatusEnum.APPROVED.getValue());
                     return item;
                 }).collect(Collectors.toList());
                 ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
@@ -381,13 +381,13 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
                         table(), primaryKey(), annualOrderM.getIAuditStatus(), "cn.rjtech.admin.annualorderm.AnnualOrderMService");
 
                 // 处理订单数据
-                OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(annualOrderM.getIOrderStatus());
+                WeekOrderStatusEnum orderStatusEnum = WeekOrderStatusEnum.toEnum(annualOrderM.getIOrderStatus());
                 switch (orderStatusEnum) {
                     case AWAIT_AUDIT:
-                        annualOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                        annualOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
                         break;
                     case APPROVED:
-                        annualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+                        annualOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
                         break;
                     default:
                         break;
@@ -396,7 +396,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
             ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
 
             // 判断订单是否存在已审核的反审批
-            if (list.stream().anyMatch(item -> item.getIOrderStatus() == OrderStatusEnum.AWAIT_AUDIT.getValue())) {
+            if (list.stream().anyMatch(item -> item.getIOrderStatus() == WeekOrderStatusEnum.AWAIT_AUDIT.getValue())) {
                 // 修改客户计划汇总
                 cusOrderSumService.algorithmSum();
             }

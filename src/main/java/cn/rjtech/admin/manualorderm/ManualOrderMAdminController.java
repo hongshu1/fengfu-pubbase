@@ -10,7 +10,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.enums.OrderStatusEnum;
+import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.ManualOrderM;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
@@ -135,8 +135,16 @@ public class ManualOrderMAdminController extends BaseAdminController {
     public void colse() {
         ManualOrderM manualOrderM = service.findById(getLong(0));
         ValidationUtils.notNull(manualOrderM, JBoltMsg.FAIL);
-        manualOrderM.setIOrderStatus(OrderStatusEnum.CLOSE.getValue());
+        manualOrderM.setIOrderStatus(WeekOrderStatusEnum.CLOSE.getValue());
         renderJson(service.update(manualOrderM));
+    }
+
+    /**
+     * 打开
+     */
+    public void open()
+    {
+        renderJson(service.open(get("iautoid")));
     }
 
     /**
