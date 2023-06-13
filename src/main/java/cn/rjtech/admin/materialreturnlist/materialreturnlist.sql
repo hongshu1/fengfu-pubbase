@@ -17,8 +17,8 @@ SELECT
         t11.SourceBillNo,
         t11.VenCode,
         t11.Memo,
-        t11.CreateDate,
-        t11.CreatePerson,
+        t11.dCreateTime,
+        t11.cCreateName,
         t11.AutoID
 FROM
 
@@ -50,10 +50,10 @@ WHERE 1 = 1
   AND t11.OrganizeCode = #para(OrgCode)
     #end
     #if(startdate)
-  and CONVERT(VARCHAR(10),t11.ModifyDate,23) >='#(startdate)'
+  and CONVERT(VARCHAR(10),t11.dCreateTime,23) >='#(startdate)'
     #end
     #if(enddate)
-  and CONVERT(VARCHAR(10),t11.ModifyDate,23) <='#(enddate)'
+  and CONVERT(VARCHAR(10),t11.dCreateTime,23) <='#(enddate)'
     #end
 GROUP BY
     t11.AutoID,
@@ -68,10 +68,9 @@ GROUP BY
     t11.SourceBillNo,
     t11.VenCode,
     t11.Memo,
-    t11.CreateDate,
-    t11.CreatePerson,
-    t11.ModifyDate
-order by t11.ModifyDate desc
+    t11.cCreateName,
+    t11.dCreateTime
+order by t11.dCreateTime desc
     #end
 
 
@@ -219,7 +218,7 @@ select t1.AutoID,
        t1.DeptCode,
        t1.VenCode,
        t6.cVenName,
-       t1.CreatePerson
+       t1.cCreateName
 from T_Sys_PUInStore t1
     LEFT JOIN T_Sys_PUInStoreDetail t2 ON t1.AutoID = t2.MasID
     LEFT JOIN Bd_Rd_Style t5 ON t1.RdCode = t5.cRdCode
@@ -250,7 +249,7 @@ GROUP BY
     t3.cDepName,
     t4.cPTName,
     t6.cVenName,
-    t1.CreatePerson
+    t1.cCreateName
     #end
 
 
@@ -361,6 +360,7 @@ select top #(limit)
        b.cInvCode ,
        b.cInvName ,
        b.cInvCode1,
+       b.cInvAddCode,
        b.cInvName1,
        a.dPlanDate as plandate,
        b.cInvStd as cinvstd,
@@ -382,7 +382,7 @@ select top #(limit)
        ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName,
        ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
 FROM T_Sys_PUInStoreDetail pd
-         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.spotTicket = a.cBarcode AND	a.isEffective = '1'
+         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.spotTicket = a.cBarcode
          LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
          LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
          LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid

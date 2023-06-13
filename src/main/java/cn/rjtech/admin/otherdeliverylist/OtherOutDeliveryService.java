@@ -36,7 +36,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: RJ
  * @date: 2023-05-17 09:35
  */
-public class OtherOutService extends BaseService<OtherOut> {
+public class OtherOutDeliveryService extends BaseService<OtherOut> {
 
 	private final OtherOut dao = new OtherOut().dao();
 
@@ -313,6 +313,9 @@ public class OtherOutService extends BaseService<OtherOut> {
 	}
 
 
+	/**
+	 * 详情页提审
+	 */
 	public Ret submit(Long iautoid) {
 		tx(() -> {
 			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"T_Sys_OtherOut");
@@ -328,7 +331,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 	}
 
 	/**
-	 * 审批
+	 * 详情页审核
 	 */
 	public Ret approve(String ids) {
 		tx(() -> {
@@ -359,10 +362,10 @@ public class OtherOutService extends BaseService<OtherOut> {
 	public Ret reject(Long ids) {
 		tx(() -> {
 			OtherOut otherOut = superFindById(ids);
-			if (otherOut.getAuditStatus() != 2) {
+			if (otherOut.getIAuditStatus() != 2) {
 				ValidationUtils.error("订单："+otherOut.getBillNo()+"状态不支持反审批操作！");
 			}
-			otherOut.setAuditStatus(1);
+			otherOut.setIAuditStatus(1);
 			otherOut.update();
 
 			return true;
@@ -376,28 +379,26 @@ public class OtherOutService extends BaseService<OtherOut> {
 	 * @param ids
 	 * @return
 	 */
-	public Ret batchApprove(String ids,Integer mark) {
+	public Ret batchApprove(String ids, Integer mark) {
 		tx(() -> {
-		boolean success = false;
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		List<OtherOut> listByIds = getListByIds(ids);
-		if (listByIds.size() > 0) {
-			for (OtherOut otherOut : listByIds) {
-				//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-				if (otherOut.getAuditStatus() != 1) {
-					ValidationUtils.error("订单："+otherOut.getBillNo()+"状态不支持审核操作！");
+			boolean success = false;
+			String userName = JBoltUserKit.getUserName();
+			Date nowDate = new Date();
+			List<OtherOut> listByIds = getListByIds(ids);
+			if (listByIds.size() > 0) {
+				for (OtherOut otherOut : listByIds) {
+					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+					if (otherOut.getAuditStatus() != 1) {
+						ValidationUtils.error("订单：" + otherOut.getBillNo() + "状态不支持审核操作！");
+					}
+					//订单状态：3. 已审核
+					otherOut.setAuditStatus(2);
+					otherOut.setAuditDate(nowDate);
+					otherOut.setAuditPerson(userName);
+					Ret ret = this.pushU8(ids);
+					success = otherOut.update();
 				}
-				//订单状态：3. 已审核
-				otherOut.setAuditStatus(2);
-				otherOut.setAuditDate(nowDate);
-				otherOut.setAuditPerson(userName);
-				Ret ret = this.pushU8(ids);
-				success= otherOut.update();
 			}
-		}
-
-
 			return true;
 		});
 		return SUCCESS;

@@ -27,7 +27,7 @@ import java.util.Date;
 public class OtherOutDeliveryAdminController extends BaseAdminController {
 
 	@Inject
-	private OtherOutService service;
+	private OtherOutDeliveryService service;
 
    /**
 	* 首页

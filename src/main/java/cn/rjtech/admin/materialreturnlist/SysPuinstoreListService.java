@@ -274,11 +274,11 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 //					保存
 //					订单状态：0=待审核，1=未审核，2=已审核. 3=审核不通过
 					puinstore.setIAuditStatus(param);
-					puinstore.setCreateDate(nowDate);
+					puinstore.setDCreateTime(nowDate);
 					puinstore.setOrganizeCode(OrgCode);
-					puinstore.setCreatePerson(userName);
-					puinstore.setModifyDate(nowDate);
-					puinstore.setModifyPerson(userName);
+					puinstore.setCCreateName(userName);
+					puinstore.setDUpdateTime(nowDate);
+					puinstore.setCUpdateName(userName);
 					puinstore.setIsDeleted(false);
 					save(puinstore);
 					headerId = puinstore.getAutoID();
@@ -286,11 +286,11 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					Integer  a = Integer.valueOf(param);
 					if ( a  == 2){
 						puinstore.setAuditDate(nowDate);
-						puinstore.setAuditPerson(userName);
+						puinstore.setCAuditName(userName);
 					}
 					puinstore.setIAuditStatus(param);
-					puinstore.setModifyDate(nowDate);
-					puinstore.setModifyPerson(userName);
+					puinstore.setDUpdateTime(nowDate);
+					puinstore.setCUpdateName(userName);
 					update(puinstore);
 					headerId = puinstore.getAutoID();
 				}
@@ -342,10 +342,10 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					System.out.println(qtys);
 					materialsOutDetail.setMasID(finalHeaderId);
 					materialsOutDetail.setWhcode(finalWhcodes);
-					materialsOutDetail.setCreateDate(nowDate);
-					materialsOutDetail.setCreatePerson(userName);
-					materialsOutDetail.setModifyDate(nowDate);
-					materialsOutDetail.setModifyPerson(userName);
+					materialsOutDetail.setDCreateTime(nowDate);
+					materialsOutDetail.setCCreateName(userName);
+					materialsOutDetail.setDUpdateTime(nowDate);
+					materialsOutDetail.setCUpdateName(userName);
 				});
 				syspuinstoredetailservice.batchSave(lines);
 			}
@@ -357,8 +357,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				String finalWhcodes1 = whcode;
 				lines.forEach(materialsOutDetail -> {
 					materialsOutDetail.setWhcode(finalWhcodes1);
-					materialsOutDetail.setModifyDate(nowDate);
-					materialsOutDetail.setModifyPerson(userName);
+					materialsOutDetail.setDUpdateTime(nowDate);
+					materialsOutDetail.setCUpdateName(userName);
 				});
 				syspuinstoredetailservice.batchUpdate(lines);
 			}
@@ -400,7 +400,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				//订单状态：2. 已审核
 				puinstore.setIAuditStatus(2);
 				puinstore.setAuditDate(nowDate);
-				puinstore.setAuditPerson(userName);
+				puinstore.setCAuditName(userName);
 				success= puinstore.update();
 				this.pushU8(iAutoId);
 			}
@@ -446,7 +446,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		//订单状态：2. 待审批
 		puinstore.setIAuditStatus(1);
 		puinstore.setAuditDate(null);
-		puinstore.setAuditPerson(null);
+		puinstore.setCAuditName(null);
 		boolean result = puinstore.update();
 		return ret(result);
 	}
