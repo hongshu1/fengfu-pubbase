@@ -362,18 +362,16 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             List<WeekOrderM> noApprovedDatas = list.stream().filter(item -> !(item.getIOrderStatus() == WeekOrderStatusEnum.APPROVED.getValue())).collect(Collectors.toList());
             ValidationUtils.isTrue(noApprovedDatas.size() <= 0, "存在非已审批数据");
             for (WeekOrderM weekOrderM : list) {
-                formApprovalService.reverseApproveByStatus(weekOrderM.getIAutoId(), table(), primaryKey(), (formAutoId) -> null, (formAutoId) -> {
-                    weekOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
+                Long id = weekOrderM.getIAutoId();
+                formApprovalService.reverseApproveByStatus(id, table(), primaryKey(), (formAutoId) -> null, (formAutoId) -> {
+                    // 处理订单状态
+                    ValidationUtils.isTrue(updateColumn(id, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
                     return null;
                 });
             }
-            ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
 
-            // 判断订单是否存在已审核的反审批
-            if (list.stream().anyMatch(item -> item.getIOrderStatus() == WeekOrderStatusEnum.AWAIT_AUDIT.getValue())) {
-                // 修改客户计划汇总
-                cusOrderSumService.algorithmSum();
-            }
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
             return true;
         });
         return SUCCESS;

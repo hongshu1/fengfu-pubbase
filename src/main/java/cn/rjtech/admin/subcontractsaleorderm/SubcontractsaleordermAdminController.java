@@ -69,7 +69,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        Subcontractsaleorderm subcontractsaleorderm = service.findById(getLong(0));
+        Subcontractsaleorderm subcontractsaleorderm = service.findById(getLong("iautoid"));
         if (subcontractsaleorderm == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
