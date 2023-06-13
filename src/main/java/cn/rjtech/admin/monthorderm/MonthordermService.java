@@ -371,7 +371,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
     public String postApproveFunc(long formAutoId) {
         MonthOrderM monthOrderM = findById(formAutoId);
         // 订单状态校验
-        ValidationUtils.equals(monthOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT, "订单非待审核状态");
+        ValidationUtils.equals(monthOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), "订单非待审核状态");
 
         // 订单状态修改
         monthOrderM.setIOrderStatus(WeekOrderStatusEnum.APPROVED.getValue());
