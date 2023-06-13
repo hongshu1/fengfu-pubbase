@@ -412,4 +412,26 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         });
         return SUCCESS;
     }
+
+    /**
+     * 关闭
+     * @param iautoid
+     * @return
+     */
+    public Ret close(String iautoid) {
+        Subcontractsaleorderm subcontractsaleorderm = findById(iautoid);
+        ValidationUtils.equals(WeekOrderStatusEnum.APPROVED.getValue(), subcontractsaleorderm.getIOrderStatus(), "订单非已审批状态");
+        return updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.CLOSE.getValue());
+    }
+
+    /**
+     * 打开
+     * @param iautoid
+     * @return
+     */
+    public Ret open(String iautoid) {
+        Subcontractsaleorderm subcontractsaleorderm = findById(iautoid);
+        ValidationUtils.equals(WeekOrderStatusEnum.CLOSE.getValue(), subcontractsaleorderm.getIOrderStatus(), "订单非已关闭状态");
+        return updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue());
+    }
 }

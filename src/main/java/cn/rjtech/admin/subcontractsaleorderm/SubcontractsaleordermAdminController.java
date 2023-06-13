@@ -165,6 +165,22 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     }
 
     /**
+     * 关闭
+     */
+    public void close()
+    {
+        renderJson(service.close(get("iautoid")));
+    }
+
+    /**
+     * 打开
+     */
+    public void open()
+    {
+        renderJson(service.open(get("iautoid")));
+    }
+
+    /**
      * 模板下载
      */
     @SuppressWarnings("unchecked")

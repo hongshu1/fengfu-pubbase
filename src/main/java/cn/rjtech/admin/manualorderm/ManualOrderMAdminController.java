@@ -132,7 +132,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
     /**
      * 关闭
      */
-    public void colse() {
+    public void close() {
         ManualOrderM manualOrderM = service.findById(getLong(0));
         ValidationUtils.notNull(manualOrderM, JBoltMsg.FAIL);
         manualOrderM.setIOrderStatus(WeekOrderStatusEnum.CLOSE.getValue());
