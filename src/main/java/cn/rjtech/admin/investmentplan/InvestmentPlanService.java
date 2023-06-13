@@ -1030,12 +1030,20 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
         }
 	}
     /**
-     * 执行进度跟踪表数据查询
+     * 执行进度跟踪表-费用tab数据查询
      * */
-	public List<Record> findExecutionProgressTrackingDatas(Kv para) {
+	public List<Record> findExecutionProgressTrackingExpenseDatas(Kv para) {
 		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
-		return dbTemplate("investmentplan.findExecutionProgressTrackingDatas",para).find();
-	}
+		return dbTemplate("investmentplan.findExecutionProgressTrackingExpenseDatas",para).find();
+	}	
+    /**
+     * 执行进度跟踪表-投资tab数据查询
+     * */
+	public List<Record> findExecutionProgressTrackingInvestmentDatas(Kv para) {
+		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
+		return dbTemplate("investmentplan.findExecutionProgressTrackingInvestmentDatas",para).find();
+	}	
+	
 	/**
 	 * 部门是否存在已生效的投资计划
 	 * */

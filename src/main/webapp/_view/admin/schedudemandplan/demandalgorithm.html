@@ -37,13 +37,11 @@
 
     .search {
         display: flex;
+        justify-content: space-between; /* 水平居中 */
+        align-items: center; /* 垂直居中 */
         padding: 10px 0px;
     }
 
-    /* 下拉框文字样式 */
-    .select {
-        margin-right: 15px;
-    }
 
     .span {
         color: #333333;
@@ -55,7 +53,6 @@
 
     /* 搜索重置按钮样式 */
     .button {
-        margin: 0px 10px;
         padding: 3px 10px;
         background-color: #fff;
         border: #797979 1px solid;
@@ -295,8 +292,10 @@
                     </div>
                 </div>
             </div>
-            <button class="button" onClick="search()" style="height:26px;">搜索</button>
-            <button class="button" style="height:26px;">重置</button>
+            <div>
+                <button class="button" onClick="search()" style="height:26px;">搜索</button>
+                <button class="button" style="height:26px;">重置</button>
+            </div>
         </div>
     </div>
 
@@ -585,7 +584,6 @@
                             sheet.setValue(shiyongRow+2,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
                             //
                             let col = 10;//公式嵌入起始列下标
-                            let beforeLibrary = 5;//前一天计划在库起始坐标
                             let Num = sheet.getValue(6,9);//初次进入获取前一天的计划在库
                             let daoHuoShiJi = parms['scheduplanmonth'].data[i].day[j].shiji;//到货实绩
                             //前一天的到货差异
@@ -611,21 +609,6 @@
                         }
                     }
                 }
-                // let col = 10;
-                // var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
-                // // let colDate = colData[1][0];//获取当前列的date---2023年6月
-                // // let colDay = colData[2][0];//获取当前的day---3日
-                // // let dateStr = colDate+colDay;//合并拼接---2023年6月3日
-                // for (let i = 0; i < parms.scheduplanmonth.data.length; i++) {
-                //     // console.log(i);
-                //      //根据拼接时间查找相应对象
-                //      //var itemObj = parms.scheduplanmonth.data[i].day.find((item,index)=>item.datestr==dateStr);
-                //      //嵌入计划在库公式
-                //      // sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
-                // }
-                // var colData = sheet.getArray(0, col-1, sheet.getRowCount(), 1);//获取前一天的列数据
-                // // console.log(colData)
-                // let beforeLibrary = 5;//前一天计划在库起始坐标
                 spreadResume();// 恢复绘制
             },error: function(error) {
                 console.log(error);
@@ -654,23 +637,6 @@
             })
         }
     }
-    //双击单元格事件
-    sheet.bind(GC.Spread.Sheets.Events.CellDoubleClick, function (sender, args) {
-        // 获取双击的单元格坐标
-        let {row,col} = args;
-        // 处理双击事件
-        // var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
-        // let colDate = colData[1][0];//获取当前列的date---2023年6月
-        // let colDay = colData[2][0];//获取当前的day---3日
-        // let dateStr = colDate+colDay;//合并拼接---2023年6月3日
-        // for (let i = 0; i < parms.scheduplanmonth.data.length; i++) {
-        //     //根据拼接时间查找相应对象
-        //     var itemObj = parms.scheduplanmonth.data[i].day.find((item,index)=>item.datestr==dateStr);
-        // }
-        // var colData = sheet.getArray(0, col-1, sheet.getRowCount(), 1);//获取前一天的列数据
-        // console.log(colData )
-        // let beforeLibrary = 5;//前一天计划在库起始坐标
-    });
     //获取表格中输入或修改的值
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
         let a = {

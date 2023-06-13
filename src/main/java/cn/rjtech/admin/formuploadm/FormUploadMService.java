@@ -1,17 +1,23 @@
 package cn.rjtech.admin.formuploadm;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.formuploadcategory.FormUploadCategoryService;
 import cn.rjtech.admin.formuploadd.FormUploadDService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.WeekOrderStatusEnum;
+import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.FormUploadD;
 import cn.rjtech.model.momdata.FormUploadM;
 import cn.rjtech.util.ValidationUtils;
@@ -24,6 +30,9 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 
 /**
@@ -50,6 +59,8 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 	private WorkregionmService workregionmService;
 	@Inject
 	private FormUploadCategoryService formUploadCategoryService;
+	@Inject
+	private FormApprovalService formApprovalService;
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
@@ -115,25 +126,28 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 		Record formRecord = jBoltTable.getFormRecord();
 		ValidationUtils.notNull(jBoltTable.getFormRecord(), JBoltMsg.PARAM_ERROR);
 		FormUploadM formUploadM = new FormUploadM();
-
+		//图片数据处理
 		List<Record> saveRecords = jBoltTable.getSaveRecordList();
-		if (formRecord.getStr("cattachments")!=null){
+		if (StrUtil.isNotBlank(formRecord.getStr("cattachments"))){
 			if (CollUtil.isNotEmpty(saveRecords)) {
-				Record record = saveRecords.get(saveRecords.size() - 1);
-				if (!Objects.equals(record.getStr("cattachments"), formRecord.getStr("cattachments"))) {
-					saveRecords.add(new Record().set("cattachments",formRecord.getStr("cattachments")));
+				for (Record saveRecord : saveRecords) {
+					if (formRecord.getStr("cattachments").contains(saveRecord.getStr("cattachments"))) {
+						String replace = formRecord.getStr("cattachments").replace(","+saveRecord.getStr("cattachments"), "");
+						formRecord.set("cattachments",replace);
+					}
 				}
 			}
 		}
 		if (jBoltTable.saveIsNotBlank()&&jBoltTable.updateIsBlank()&&!"".equals(formRecord.getStr("operationType"))){
 			return  fail("请先保存数据！");
 		}
-		//附件不可为空
-		if("".equals(formRecord.getStr("formUploadM.iAutoId"))){
-			if (jBoltTable.saveIsBlank()&&jBoltTable.updateIsBlank()) {
+		int size = formUploadDService.findByPid(formRecord.getLong("formUploadM.iAutoId")).size();
+
+		if (jBoltTable.saveIsBlank()&&jBoltTable.updateIsBlank()&& StrUtil.isBlank(formRecord.getStr("cattachments"))
+				&&size<=0) {
 				return  fail("附件不可为空！");
 			}
-		}
+
 		//主表数据
 		User user = JBoltUserKit.getUser();
 		tx(() -> {
@@ -157,31 +171,9 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 				ValidationUtils.isTrue(formUploadM.save(), "保存失败");
 			}else {
 				FormUploadM formUploadM1 = findById(formRecord.getStr("formUploadM.iAutoId"));
-				//审核
-				if (ObjUtil.isNotNull(formRecord.getStr("operationType"))&&!"".equals(formRecord.getStr("operationType"))) {
-					if (formRecord.getInt("operationType")==2||formRecord.getInt("operationType")==3) {
-
-						formUploadM1.setIAuditStatus(formRecord.getInt("operationType"));
-						formUploadM1.setIAuditBy(user.getId());
-						formUploadM1.setCAuditName(user.getName());
-						formUploadM1.setDAuditTime(new Date());
-					}
-				 if(formRecord.getInt("operationType")==1){
-						formUploadM1.setIAuditStatus(formRecord.getInt("operationType"));
-						formUploadM1.setDSubmitTime(new Date());
-					}
-					//反审
-					if (formRecord.getInt("operationType")==10){
-						formUploadM1.setIAuditStatus(1);
-						formUploadM1.setDAuditTime(new Date());
-					}
-				}else {
 					formUploadM1.setIWorkRegionMid(formRecord.getLong("formUploadM.iWorkRegionMid"));
 					formUploadM1.setICategoryId(formRecord.getLong("formUploadM.iCategoryId"));
 					formUploadM1.setDDate(formRecord.getDate("formUploadM.ddate"));
-				}
-
-
 				formUploadM1.update();
 			}
 			if (jBoltTable.saveIsNotBlank()){
@@ -195,6 +187,29 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 					}
 					formUploadD.setCAttachments(saveRecord.getStr("cattachments"));
 					formUploadD.setCMemo(saveRecord.getStr("cmemo"));
+					formUploadDS.add(formUploadD);
+				}
+				for (String cattachment : StrSplitter.split(formRecord.getStr("cattachments"), COMMA, true, true)) {
+					FormUploadD formUploadD = new FormUploadD();
+					if (ObjUtil.isNotNull(formRecord.getStr("formUploadM.iAutoId"))) {
+						formUploadD.setIFormUploadMid(formRecord.getLong("formUploadM.iAutoId"));
+					}else {
+						formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
+					}
+					formUploadD.setCAttachments(cattachment);
+					formUploadDS.add(formUploadD);
+				}
+				formUploadDService.batchSave(formUploadDS);
+			}else {
+				ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
+				for (String cattachment : StrSplitter.split(formRecord.getStr("cattachments"), COMMA, true, true)) {
+					FormUploadD formUploadD = new FormUploadD();
+					if (ObjUtil.isNotNull(formRecord.getStr("formUploadM.iAutoId"))) {
+						formUploadD.setIFormUploadMid(formRecord.getLong("formUploadM.iAutoId"));
+					}else {
+						formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
+					}
+					formUploadD.setCAttachments(cattachment);
 					formUploadDS.add(formUploadD);
 				}
 				formUploadDService.batchSave(formUploadDS);
@@ -260,7 +275,7 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 	public Ret delete(Long id) {
 		FormUploadM formUploadM = findById(id);
 		String s = formUploadM.getIAuditStatus() == 0 ?
-				"已保存" : formUploadM.getIAuditStatus() == 1 ?
+				"未审核" : formUploadM.getIAuditStatus() == 1 ?
 				"待审核" : formUploadM.getIAuditStatus() == 2 ? "审核通过" : "审核不通过";
 		if (formUploadM.getIAuditStatus()!=0) {
 			return  fail("该数据状态为："+s+"不可删除！");
@@ -370,5 +385,111 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 		Page<Record> page = formUploadDService.findByPid2(pageNumber, pageSize, formUploadM.getIAutoId());
 		map.put("page",page);
 		return map;
+	}
+
+	/**
+	 * 提交审批
+	 */
+	public Ret submit(Long iautoid) {
+		tx(() -> {
+			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"");
+			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+
+			FormUploadM formUploadM = findById(iautoid);
+			formUploadM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+			formUploadM.setIAuditWay(1);
+			formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
+			formUploadM.setCUpdateName(JBoltUserKit.getUserName());
+			formUploadM.setDUpdateTime(new Date());
+			ValidationUtils.isTrue(formUploadM.update(), JBoltMsg.FAIL);
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	/**
+	 * 审批通过
+	 */
+	public Ret approve(Long iautoid) {
+		tx(() -> {
+			// 校验订单状态
+			FormUploadM formUploadM = findById(iautoid);
+			ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), formUploadM.getIAuditStatus(), "该记录非待审核状态");
+			formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
+				ValidationUtils.isTrue(updateColumn(iautoid, "iAuditStatus", AuditStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
+				return null;
+			});
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	/**
+	 * 审批不通过
+	 */
+	public Ret reject(Long iautoid) {
+		tx(() -> {
+			// 数据同步暂未开发 现只修改状态
+			formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
+				ValidationUtils.isTrue(updateColumn(iautoid, "iAuditStatus", AuditStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+				return null;
+			});
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	/**
+	 * 批量审核
+	 * @param ids
+	 * @return
+	 */
+	public Ret batchApprove(String ids) {
+		tx(() -> {
+			String table = table();
+			String primaryKey = primaryKey();
+			formApprovalService.batchApproveByStatus(table,primaryKey , ids, (formAutoId) -> null, (formAutoId) -> {
+				List<FormUploadM> list = getListByIds(ids);
+				list = list.stream().filter(Objects::nonNull).map(item -> {
+					item.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+					return item;
+				}).collect(Collectors.toList());
+				ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
+				return null;
+			});
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	/**
+	 * 批量反审批
+	 *
+	 * @param ids
+	 * @return
+	 */
+	public Ret batchReverseApprove(String ids) {
+		tx(() -> {
+			List<FormUploadM> list = getListByIds(ids);
+			// 非已审批数据
+			List<FormUploadM> noApprovedDatas = list.stream().filter(item -> !(item.getIAuditStatus() == AuditStatusEnum.APPROVED.getValue())).collect(Collectors.toList());
+			ValidationUtils.isTrue(noApprovedDatas.size() <= 0, "存在非已审批数据");
+
+			for (FormUploadM formuploadm : list) {
+				// 处理订单审批数据
+				formApprovalService.reverseApproveByStatus(formuploadm.getIAutoId(), table(), primaryKey(), (formAutoId) -> null, (formAutoId) ->
+				{
+					// 处理订单状态
+					formuploadm.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+					return null;
+				});
+			}
+
+			ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
+
+			return true;
+		});
+		return SUCCESS;
 	}
 }

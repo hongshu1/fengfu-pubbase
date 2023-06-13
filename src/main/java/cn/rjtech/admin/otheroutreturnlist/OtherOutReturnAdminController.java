@@ -28,10 +28,10 @@ import java.util.List;
 @CheckPermission(PermissionKey.OTHER_OUT_RETURN_LIST)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/otheroutreturnlist", viewPath = "/_view/admin/otheroutreturnlist")
-public class OtherOutAdminController extends BaseAdminController {
+public class OtherOutReturnAdminController extends BaseAdminController {
 
 	@Inject
-	private OtherOutService service;
+	private OtherOutReturnService service;
 
 	@Inject
 	private OtherOutDetailService otherOutDetailService;

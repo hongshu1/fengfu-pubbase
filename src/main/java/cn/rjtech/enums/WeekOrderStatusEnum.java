@@ -12,13 +12,13 @@ public enum WeekOrderStatusEnum {
     /**
      * 枚举列表：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
      */
-    SAVED("已保存", 1),
-    AWAIT_AUDITED("待审核", 2),
-    AUDITTED("已审批", 3),
-    REJECTED("不通过", 4),
+    NOT_AUDIT("已保存", 1),
+    AWAIT_AUDIT("待审核", 2),
+    APPROVED("已审批", 3),
+    REJECTED("审核不通过", 4),
     DELIVERIED("已发货", 5),
     OK("已核对", 6),
-    CLOSED("已关闭", 7);
+    CLOSE("已关闭", 7);
 
     private static final Map<Integer, WeekOrderStatusEnum> WEEK_ORDER_STATUS_ENUM_MAP = new HashMap<>();
     

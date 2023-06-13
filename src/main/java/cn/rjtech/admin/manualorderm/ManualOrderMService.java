@@ -12,8 +12,7 @@ import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryqcform.InventoryQcFormService;
 import cn.rjtech.admin.manualorderd.ManualOrderDService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
-import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.OrderStatusEnum;
+import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -345,10 +344,10 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
     public Ret approve(Long iautoid) {
         tx(() -> {
             ManualOrderM manualOrderM = findById(iautoid);
-            ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), manualOrderM.getIOrderStatus(), "订单非待审核状态");
+            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), manualOrderM.getIOrderStatus(), "订单非待审核状态");
 
             formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
+                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
                 return null;
             });
 
@@ -369,9 +368,9 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
     public Ret withdraw(Long iAutoId) {
         tx(() -> {
             ManualOrderM manualOrderM = findById(iAutoId);
-            ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), manualOrderM.getIOrderStatus(), "只允许待审核状态订单撤回");
+            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), manualOrderM.getIOrderStatus(), "只允许待审核状态订单撤回");
             formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
-                manualOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                manualOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
                 ValidationUtils.isTrue(manualOrderM.update(), "撤回失败");
 
                 // 修改客户计划汇总
@@ -395,8 +394,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             ManualOrderM manualOrderM = findById(iautoid);
-            manualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
-            manualOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+            manualOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
             ValidationUtils.isTrue(manualOrderM.update(), JBoltMsg.FAIL);
             return true;
         });
@@ -413,7 +411,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
             formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> null, (formAutoId) -> {
                 List<ManualOrderM> list = getListByIds(ids);
                 list = list.stream().filter(Objects::nonNull).map(item -> {
-                    item.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+                    item.setIOrderStatus(WeekOrderStatusEnum.APPROVED.getValue());
                     return item;
                 }).collect(Collectors.toList());
                 ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
@@ -435,33 +433,35 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
     public Ret batchReverseApprove(String ids) {
         tx(() -> {
             List<ManualOrderM> list = getListByIds(ids);
+            // 非已审批数据
+            List<ManualOrderM> noApprovedDatas = list.stream().filter(item -> !(item.getIOrderStatus() == WeekOrderStatusEnum.APPROVED.getValue())).collect(Collectors.toList());
+            ValidationUtils.isTrue(noApprovedDatas.size() <= 0, "存在非已审批数据");
             for (ManualOrderM manualOrderM : list) {
-                // 处理订单审批数据
-                formApprovalService.reverseApprove(manualOrderM.getIAutoId(),
-                        table(), primaryKey(), manualOrderM.getIAuditStatus(), "cn.rjtech.admin.manualorderm.ManualOrderMService");
-
-                // 处理订单数据
-                OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(manualOrderM.getIOrderStatus());
-                switch (orderStatusEnum) {
-                    case AWAIT_AUDIT:
-                        manualOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
-                        break;
-                    case APPROVED:
-                        manualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
-                        break;
-                    default:
-                        break;
-                }
+                Long id = manualOrderM.getIAutoId();
+                formApprovalService.reverseApproveByStatus(id, table(), primaryKey(), (formAutoId) -> null, (formAutoId) -> {
+                    // 处理订单状态
+                    ValidationUtils.isTrue(updateColumn(id, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+                    return null;
+                });
             }
-            ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
 
-            // 判断订单是否存在已审核的反审批
-            if (list.stream().anyMatch(item -> item.getIOrderStatus() == OrderStatusEnum.AWAIT_AUDIT.getValue())) {
-                // 修改客户计划汇总
-                cusOrderSumService.algorithmSum();
-            }
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
             return true;
         });
+        return SUCCESS;
+    }
+
+    /**
+     * 打开
+     * @param iautoid
+     * @return
+     */
+    public Ret open(String iautoid) {
+        ManualOrderM manualOrderM = findById(iautoid);
+        ValidationUtils.equals(WeekOrderStatusEnum.CLOSE.getValue(), manualOrderM.getIOrderStatus(), "订单非已关闭状态");
+        manualOrderM.setIOrderStatus(WeekOrderStatusEnum.APPROVED.getValue());
+        ValidationUtils.isTrue(manualOrderM.update(), JBoltMsg.FAIL);
         return SUCCESS;
     }
 }

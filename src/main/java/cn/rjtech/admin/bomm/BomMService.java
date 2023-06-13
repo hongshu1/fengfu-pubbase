@@ -1,5 +1,6 @@
 package cn.rjtech.admin.bomm;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -16,9 +17,11 @@ import cn.rjtech.admin.bomd.BomDService;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.BomSourceTypeEnum;
 import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.model.momdata.BomCompare;
 import cn.rjtech.model.momdata.BomD;
 import cn.rjtech.model.momdata.BomM;
-import cn.rjtech.model.momdata.PurchaseorderdQty;
+import cn.rjtech.model.momdata.BomMaster;
+import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -181,8 +184,7 @@ public class BomMService extends BaseService<BomM> {
 	
 	public List<JsTreeBean> getTreeDatas(Kv kv) {
 		kv.set("orgId", getOrgId());
-		kv.set("isView", 1);
-		List<Record> recordList = dbTemplate("bomm.datas", kv).find();
+		List<Record> recordList = dbTemplate("bomm.findMasterDatas", kv).find();
 		return createJsTreeBean(kv.getStr(BomM.ENABLEICON), recordList);
 	}
 	
@@ -191,49 +193,67 @@ public class BomMService extends BaseService<BomM> {
 		if (CollectionUtil.isNotEmpty(recordList)){
 			
 			List<Record> allList = dbTemplate("bomm.datas", Kv.by("orgId", getOrgId())).find();
+			Map<Long, List<Record>> compareMap = allList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IPID))).collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID)));
 			
-			Map<Long, List<Record>> compareCollect = allList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IPID))).collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID)));
-
-			List<Record> invPartBomMidList = recordList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IINVPARTBOMMID))).collect(Collectors.toList());
-			// 设置
-			List<Record> records = new ArrayList<>();
-			for (Record record : invPartBomMidList){
-				Long id = record.getLong(BomD.IAUTOID);
-				Long iInvPartBomMid = record.getLong(BomD.IINVPARTBOMMID);
-				if (compareCollect.containsKey(iInvPartBomMid)){
-					List<Record> compareList = compareCollect.get(iInvPartBomMid);
-					compareList.forEach(compare -> {
-						compare.set(BomD.IPID, id);
-						compare.set(BomD.SOURCEID, compare.getLong(BomD.IAUTOID));
-						compare.set(BomD.IAUTOID, JBoltSnowflakeKit.me.nextId());
-					});
-//					recordList.addAll(compareList);
-					records.addAll(compareList);
-				}
-			}
-			
-			recordList.addAll(records);
 			for (Record record : recordList){
-                Long id = record.getLong(BomM.IAUTOID);
-                Object pid = record.get(BomD.IPID);
-                StringBuilder text = new StringBuilder(record.getStr(BomM.CINVNAME));
-                if (pid == null) {
-                    pid = "#";
-                    if (StrUtil.isNotBlank(enableIconStr)){
-                        String enableIcon = enableIconStr;
-                        enableIcon = enableIcon.replace("?", record.getStr(BomM.IAUTOID));
-                        text.append(enableIcon);
-                    }
-                }
-                JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text.toString(), true);
-                if (ObjectUtil.isNotNull(record.getLong(BomD.SOURCEID))){
-					id = record.getLong(BomD.SOURCEID);
+				Long id = record.getLong(BomM.IAUTOID);
+				if (compareMap.containsKey(id)){
+					recursiveTraversal(id, trees, compareMap.get(id), compareMap);
 				}
-                jsTreeBean.setData(id);
-                trees.add(jsTreeBean);
-            }
+				String text = record.getStr(BomM.CINVNAME);
+				// 添加子件
+				addJsTreeBean(id, id, "#", text, enableIconStr, trees);
+			}
         }
 		return trees;
+	}
+	
+	/**
+	 *  递归遍历所有子件
+	 * @param pid  父id
+	 * @param trees 集合
+	 * @param compareList 子件集合
+	 * @param compareMap  key=父id, value = 子件集合
+	 */
+	public void recursiveTraversal(Long pid, List<JsTreeBean> trees, List<Record> compareList, Map<Long, List<Record>> compareMap){
+		for (Record record : compareList){
+			Long id = record.getLong(BomM.IAUTOID);
+			String cInvName = record.getStr(BomM.CINVNAME);
+			// 子件id
+			Long compareId = record.getLong(BomD.IINVPARTBOMMID);
+			// 新id
+			Long newId = JBoltSnowflakeKit.me.nextId();
+			// 判断当前子件是否存在 子件
+			if (compareMap.containsKey(id)){
+				recursiveTraversal(newId, trees, compareMap.get(id), compareMap);
+			}
+			// 判断版本号是否为空
+			if (ObjectUtil.isNotNull(compareId)){
+				recursiveTraversal(newId, trees, compareMap.get(compareId), compareMap);
+			}
+			addJsTreeBean(id, newId, pid, cInvName, null, trees);
+		}
+	}
+	
+	/**
+	 *
+	 * @param sourceId 源id
+	 * @param id	新id
+	 * @param pid	父id
+	 * @param cInvName	显示名称
+	 * @param trees	集合
+	 */
+	public void addJsTreeBean(Long sourceId, Long id, Object pid, String cInvName, String enableIconStr, List<JsTreeBean> trees){
+		String textName = Util.getTextName(cInvName);
+		StringBuilder text = new StringBuilder(textName);
+		if (StrUtil.isNotBlank(enableIconStr)){
+			String enableIcon = enableIconStr;
+			enableIcon = enableIcon.replace("?", String.valueOf(sourceId));
+			text.append(enableIcon);
+		}
+		JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text.toString(), true);
+		jsTreeBean.setData(sourceId);
+		trees.add(jsTreeBean);
 	}
 	
 	public Page<Record> getVersionRecord(Integer pageNumber, Integer pageSize, Kv kv) {
@@ -284,8 +304,8 @@ public class BomMService extends BaseService<BomM> {
             if (ObjectUtil.isNull(bomM)){
 				BomD bomD = bomDService.findById(id);
 				ValidationUtils.notNull(bomD, "未找到子件");
-				code = Integer.valueOf(bomD.getCCode())+1;
-				iCodeLevel = Integer.valueOf(bomD.getICodeLevel())+1;
+				code = ObjectUtil.isNull(kv.getInt(BomD.CCODE)) ? 1 : kv.getInt(BomD.CCODE);
+				iCodeLevel = code;
 				if (ObjectUtil.isNotNull(bomD.getIInvPartBomMid())){
 					bomM  = findById(bomD.getIInvPartBomMid());
 				}
@@ -383,6 +403,14 @@ public class BomMService extends BaseService<BomM> {
 			Integer iAuditStatus = bomMaster.getIAuditStatus();
 //			AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
 //			ValidationUtils.isTrue((AuditStatusEnum.NOT_AUDIT.getValue()==iAuditStatus || AuditStatusEnum.REJECTED.getValue()==iAuditStatus), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行删除");
+			// 校验母件是否有被其他子件引用到
+			List<BomD> bomDList = bomDService.queryBomByPartBomMid(bomMasterId);
+			if (CollectionUtil.isNotEmpty(bomDList)){
+				List<String> invCodeList = bomDList.stream().map(BomD::getCInvCode).collect(Collectors.toList());
+				String format = String.format("该半成品版本记录，有存在其他地方使用【%s】", CollUtil.join(invCodeList, ","));
+				ValidationUtils.isTrue(CollectionUtil.isEmpty(bomDList), format);
+			}
+			
 			// 删除母件
 			bomMaster.setIsDeleted(true);
 			bomMaster.setIUpdateBy(JBoltUserKit.getUserId());
@@ -458,5 +486,50 @@ public class BomMService extends BaseService<BomM> {
 		char nextPrefix = (char) (prefix.charAt(0) + 1);
 		String netPrefixStr = String.valueOf(nextPrefix);
 		return netPrefixStr.concat("/01");
+	}
+	
+	public Ret saveCopy(Long bomMasterId, String dDisableDate, String cVersion) {
+		ValidationUtils.notBlank(dDisableDate, JBoltMsg.JBOLTTABLE_IS_BLANK);
+		ValidationUtils.notBlank(cVersion, JBoltMsg.JBOLTTABLE_IS_BLANK);
+		ValidationUtils.notNull(bomMasterId, JBoltMsg.PARAM_ERROR);
+		BomM bomMaster = findById(bomMasterId);
+		ValidationUtils.notNull(bomMaster, JBoltMsg.DATA_NOT_EXIST);
+		ValidationUtils.isTrue(!cVersion.equals(bomMaster.getCVersion()), "版本号不能一致");
+		
+		// 获取母件所有子件集合
+		tx(() -> {
+			saveCopyBomMaster(bomMasterId, cVersion, bomMaster);
+			return true;
+		});
+		return SUCCESS;
+	}
+	
+	private void saveCopyBomMaster(Long bomMasterId, String cVersion, BomM bomMaster){
+		// 设置新的id
+		long newBomMasterId = JBoltSnowflakeKit.me.nextId();
+		List<BomD> compareList = bomDService.queryBomCompareList(bomMasterId, BomD.IBOMMID);
+		compareList.forEach(bomD -> bomD.setIBomMid(newBomMasterId));
+		operation(bomMasterId, newBomMasterId, cVersion, bomMaster, compareList);
+	}
+	
+	/**
+	 * 操作
+	 * @param bomMasterId
+	 * @param newBomMasterId
+	 * @param cVersion
+	 * @param bomMaster
+	 * @param bomCompareList
+	 */
+	private void operation(Long bomMasterId, Long newBomMasterId, String cVersion, BomM bomMaster, List<BomD> bomCompareList){
+		bomMaster.setIAutoId(newBomMasterId);
+		bomMaster.setCVersion(cVersion);
+		bomMaster.setDAuditTime(null);
+		// 设置copy前的ID
+		bomMaster.setICopyFromId(bomMasterId);
+		DateTime now = DateUtil.date();
+		bomMaster.setDAuditTime(now);
+		bomDService.batchSave(bomCompareList);
+		save(bomMaster,JBoltUserKit.getUserId(),JBoltUserKit.getUserName(), now, AuditStatusEnum.AWAIT_AUDIT.getValue());
+		
 	}
 }
