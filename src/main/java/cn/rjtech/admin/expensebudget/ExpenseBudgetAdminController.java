@@ -1,6 +1,7 @@
 package cn.rjtech.admin.expensebudget;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -14,9 +15,12 @@ import cn.jbolt.core.poi.excel.JBoltExcelMerge;
 import cn.jbolt.core.poi.excel.JBoltExcelPositionData;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.util.JBoltDateUtil;
+import cn.jbolt.core.util.JBoltRandomUtil;
+import cn.jbolt.core.util.JBoltStringUtil;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.expensebudgetitem.ExpenseBudgetItemService;
 import cn.rjtech.admin.expensebudgetmanage.ExpenseBudgetManageService;
+import cn.rjtech.admin.investmentplan.InvestmentPlanService;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.annotations.RequestLimit;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -62,6 +66,8 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     private PeriodService periodService;
     @Inject
     private ExpenseBudgetItemService expenseBudgetItemService;
+    @Inject
+    private InvestmentPlanService investmentPlanService;
 
     private static final String FILE_PATH_MODIFIERS = "\\";
 
@@ -422,20 +428,86 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     	renderJson(service.submitAudit(iexpenseid));
     }
 
-
-    /**
-     * 费用预算期间对比列表
-     */
-    public void periodContrastIndex(){
-        render("contrast_index.html");
-    }
     /**
      * 费用预算期间对比数据源
      */
     public void periodContrastDatas(){
         renderJsonData(service.periodContrastDatas(getPageNumber(),getPageSize(),getKv()));
     }
-
+    /**
+     * 费用预算期间对比页面
+     */
+    public void periodContrastIndex(){
+        render("period_contrast_index.html");
+    }
+    
+	/**
+	 * 费用预算期间对比table页面
+	 * */
+    @UnCheck
+    public void periodContrastTableIndex(){
+    	Kv para = getKv();
+    	String dstarttime1 = para.getStr("dstarttime1");
+    	String dendtime1 = para.getStr("dendtime1");
+    	Integer ibudgettype1 = para.getInt("ibudgettype1");
+    	String dstarttime2 = para.getStr("dstarttime2");
+    	String dendtime2 = para.getStr("dendtime2");
+    	Integer ibudgettype2 = para.getInt("ibudgettype2");
+    	String dstarttime3 = para.getStr("dstarttime3");
+    	String dendtime3 = para.getStr("dendtime3");
+    	Integer ibudgettype3 = para.getInt("ibudgettype3");
+    	//至少选择两种对比方案
+    	Boolean flg = JBoltStringUtil.isNotBlank(dstarttime1) && JBoltStringUtil.isNotBlank(dendtime1) && ObjectUtil.isNotNull(ibudgettype1)
+    			&& JBoltStringUtil.isNotBlank(dstarttime2) && JBoltStringUtil.isNotBlank(dendtime2) && ObjectUtil.isNotNull(ibudgettype2);
+    	ValidationUtils.isTrue(flg, "至少选择两种完善对比方案!");
+    	//选择的对比方案起止日期的月份要一致，并且起止日期包含的月份数量要一致
+    	Date dstarttime1Date = JBoltDateUtil.toDate(dstarttime1,"yyyy-MM");
+    	Date dendtime1Date = JBoltDateUtil.toDate(dendtime1,"yyyy-MM");
+    	Date dstarttime2Date = JBoltDateUtil.toDate(dstarttime2,"yyyy-MM");
+    	Date dendtime2Date = JBoltDateUtil.toDate(dendtime2,"yyyy-MM");
+		LocalDate starTimet1LocalDate = LocalDate.parse(JBoltDateUtil.format(dstarttime1Date,JBoltDateUtil.YMD));
+		LocalDate endTime1LocalDate1 = LocalDate.parse(JBoltDateUtil.format(dendtime1Date,JBoltDateUtil.YMD));
+		LocalDate starTimet2LocalDate = LocalDate.parse(JBoltDateUtil.format(dstarttime2Date,JBoltDateUtil.YMD));
+		LocalDate endTime2LocalDate1 = LocalDate.parse(JBoltDateUtil.format(dendtime2Date,JBoltDateUtil.YMD));
+    	int dstarttime1Month = starTimet1LocalDate.getMonthValue();
+    	int dendtime1Month = endTime1LocalDate1.getMonthValue();
+    	int dstarttime2Month = starTimet2LocalDate.getMonthValue();
+    	int dendtime2Month = endTime2LocalDate1.getMonthValue();
+		long diffMonth1 = ChronoUnit.MONTHS.between(starTimet1LocalDate, endTime1LocalDate1) + 1;
+		long diffMonth2 = ChronoUnit.MONTHS.between(starTimet2LocalDate, endTime2LocalDate1) + 1;
+		Boolean flg2 = ObjectUtil.equal(dstarttime1Month, dstarttime2Month) 
+				&& ObjectUtil.equal(dendtime1Month, dendtime2Month)
+				&& ObjectUtil.equal(diffMonth1, diffMonth2);
+		ValidationUtils.isTrue(flg2, "请正确选择对比方案的起止日期!");
+    	if(JBoltStringUtil.isNotBlank(dstarttime3) && JBoltStringUtil.isNotBlank(dendtime3) && ObjectUtil.isNotNull(ibudgettype3)){
+    		Date dstarttime3Date = JBoltDateUtil.toDate(dstarttime3,"yyyy-MM");
+        	Date dendtime3Date = JBoltDateUtil.toDate(dendtime3,"yyyy-MM");
+    		LocalDate starTimet3LocalDate = LocalDate.parse(JBoltDateUtil.format(dstarttime3Date,JBoltDateUtil.YMD));
+    		LocalDate endTime3LocalDate1 = LocalDate.parse(JBoltDateUtil.format(dendtime3Date,JBoltDateUtil.YMD));
+    		int dstarttime3Month = starTimet3LocalDate.getMonthValue();
+        	int dendtime3Month = endTime3LocalDate1.getMonthValue();
+        	long diffMonth3 = ChronoUnit.MONTHS.between(starTimet3LocalDate, endTime3LocalDate1) + 1;
+    		Boolean flg3 = ObjectUtil.equal(dstarttime1Month, dstarttime3Month) 
+    				&& ObjectUtil.equal(dendtime1Month, dendtime3Month)
+    				&& ObjectUtil.equal(diffMonth1, diffMonth3);
+    		ValidationUtils.isTrue(flg3, "请正确选择第三种对比方案的起止日期!");
+    	}else{
+    		para.remove("dstarttime3");
+    		para.remove("dendtime3");
+    		para.remove("ibudgettype3");
+    	}
+        List<Record> monthColumnTxtList = new ArrayList<Record>();
+    	service.calcDynamicPeriodContrastColumn(dstarttime1Date,dendtime1Date,monthColumnTxtList);
+        set("monthcolumntxtlist",monthColumnTxtList);
+        Record daterecord = new Record();
+        daterecord.set("dstartdate", dstarttime1);
+        daterecord.set("denddate",dendtime1);
+        set("diffMonth", diffMonth1);
+        set("daterecord",daterecord);
+        set("pageId", JBoltRandomUtil.randomNumber(6));
+    	render("period_contrast_index_table.html");
+    }
+    
     /**
      * 费用预算期间对比导出条件
      */
