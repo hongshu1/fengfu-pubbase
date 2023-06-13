@@ -3,11 +3,9 @@ package cn.jbolt._admin.user;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.dept.DeptService;
 import cn.jbolt._admin.onlineuser.OnlineUserService;
 import cn.jbolt.common.model.UserExtend;
-import cn.jbolt.core.base.JBoltGlobalConfigKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.*;
 import cn.jbolt.core.db.sql.Sql;
@@ -198,18 +196,18 @@ public class UserService extends JBoltUserService {
             }
             dbUser.deleteKeyCache();
             //清理角色变更缓存
-            if(ObjUtil.notEqual(dbUser.getRoles(), user.getRoles())) {
-                //存在其他跟自己相同角色的就不清理缓存 不存在说明自己独占 就清理
-                boolean existSameRoles = existsSameRoles(dbUser.getRoles(),dbUser.getId());
-                if(!existSameRoles){
-                    long appId = JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APP_ID);
-                    long applicationId = JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APPLICATION_ID);
-
-                    JBoltPermissionCache.me.removeRolesPermissionKeySet(dbUser.getRoles());
-                    JBoltPermissionCache.me.removeRolesMenus(dbUser.getId(), appId, applicationId, dbUser.getRoles());
-                    JBoltPermissionCache.me.removeRolesMenusWithSystemAdminDefault(dbUser.getId(), appId, applicationId, dbUser.getRoles());
-                }
-            }
+//            if(ObjUtil.notEqual(dbUser.getRoles(), user.getRoles())) {
+//                //存在其他跟自己相同角色的就不清理缓存 不存在说明自己独占 就清理
+//                boolean existSameRoles = existsSameRoles(dbUser.getRoles(),dbUser.getId());
+//                if(!existSameRoles){
+//                    long appId = JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APP_ID);
+//                    long applicationId = JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APPLICATION_ID);
+//
+//                    JBoltPermissionCache.me.removeRolesPermissionKeySet(dbUser.getRoles());
+//                    JBoltPermissionCache.me.removeRolesMenus(dbUser.getId(), appId, applicationId, dbUser.getRoles());
+//                    JBoltPermissionCache.me.removeRolesMenusWithSystemAdminDefault(dbUser.getId(), appId, applicationId, dbUser.getRoles());
+//                }
+//            }
         } else {
             if (notOk(user.getPassword())) {
                 return fail("请输入用户密码");
