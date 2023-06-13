@@ -23,24 +23,46 @@ select t1.*,
 
 #sql("historyDatas")
 select t.*,
-       t2.name                                                   as iStepName,
+       case
+           when t.t_iStatus = 2 then '审批通过'
+           when t.t_iStatus = 3 then '审批不通过'
+           else '待审批' end         as iStatus,
+       t2.name                    as iStepName,
        (select top 1 u.name
         from Bd_FormApprovalFlowD d
                  left join Bd_FormApprovalFlowM m on d.iFormApprovalFlowMid = m.iAutoId
-                 left join #(getBaseDbName()).dbo.jb_user u on d.iUserId = u.id
-            where m.iApprovalDid = t.did and d.iAuditStatus > 1) as username
+                 left join UGCFF_MOM_System.dbo.jb_user u on d.iUserId = u.id
+        where m.iApprovalDid = t.did
+          and d.iAuditStatus > 1) as username
 from (select t1.iAutoId,
-             t2.iAutoId as did,
-             t2.dAuditTime,
-             case when t2.iStatus = 2 then '审批通过' when t2.iStatus = 3 then '审批不通过' else '待审批' end
-                        as iStatus,
-             t2.iStep   as iStep
+             (select top 1 t2.iStep
+              from Bd_FormApprovalD t2
+              where t1.iAutoId = t2.iFormApprovalId
+              order by dAuditTime
+                  desc)                 as t_iStep,
+             (select top 1 t2.iAutoId
+              from Bd_FormApprovalD t2
+              where t1.iAutoId = t2.iFormApprovalId
+              order by dAuditTime
+                  desc)                 as did,
+             (select top 1 t2.iStatus
+              from Bd_FormApprovalD t2
+              where t1.iAutoId = t2.iFormApprovalId
+              order by dAuditTime
+                  desc)                 as t_iStatus,
+             (select top 1 t2.dAuditTime
+              from Bd_FormApprovalD t2
+              where t1.iAutoId = t2.iFormApprovalId
+              order by dAuditTime desc) as dAuditTime,
+             (select top 1 t2.iStep
+              from Bd_FormApprovalD t2
+              where t1.iAutoId = t2.iFormApprovalId
+              order by dAuditTime desc) as iStep
       from Bd_FormApproval t1
-               left join Bd_FormApprovalD t2 on t1.iAutoId = t2.iFormApprovalId and not exists(select 1
-                                                                                               from Bd_FormApprovalD t3 where t2.iFormApprovalId = t3.iFormApprovalId and t3.dAuditTime > t2.dAuditTime)
-          where t1.iFormObjectId = '#(formId)'
-               and t1.isDeleted = '1') t
-         left join #(getBaseDbName()).dbo.jb_dictionary t2 on t2.type_key = 'approval_d_name' and t2.sn = t.iStep
+      where t1.iFormObjectId = '#(formId)'
+        and t1.isDeleted = '1') t
+         left join UGCFF_MOM_System.dbo.jb_dictionary t2
+                   on t2.type_key = 'approval_d_name' and t2.sn = t.t_iStep
 #end
 
 #sql("userDatas")
