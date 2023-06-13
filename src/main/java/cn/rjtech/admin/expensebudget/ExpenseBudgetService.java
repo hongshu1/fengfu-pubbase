@@ -968,85 +968,19 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 		return SUCCESS;
 	}
 
-	/**
-	 *	期间对比数据源
-	 */
-    public Page<Record> periodContrastDatas(int pageNumber, int pageSize, Kv para) {
-		//处理日期
-		para.set("dstarttime1",para.getStr("dstarttime1") ==null ? null:para.getStr("dstarttime1")+"-01");
-		para.set("dendtime1",para.getStr("dendtime1") ==null ? null:para.getStr("dendtime1")+"-01");
-		para.set("dstarttime2",para.getStr("dstarttime2") ==null ? null:para.getStr("dstarttime2")+"-01");
-		para.set("dendtime2",para.getStr("dendtime2") ==null ? null:para.getStr("dendtime2")+"-01");
-		para.set("dstarttime3",para.getStr("dstarttime3") ==null ? null:para.getStr("dstarttime3")+"-01");
-		para.set("dendtime3",para.getStr("dendtime3") ==null ? null:para.getStr("dendtime3")+"-01");
-		if (para.getStr("dstarttime1")==null&&para.getStr("dendtime1")==null) {
-			return new Page<Record>();
-		} else {
-			List<Record> list1 = dbTemplate("expensebudget.periodContrastDatas", para).find();
-			for (Record row : list1) {
-				row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
-				row.set("cdepname", departmentService.getCdepName(row.getStr("cdepcode")));
-				//row.set("beginandenddate", JBoltDateUtil.format(row.getDate("cbegindate"), "yyyy.MM")+"-" + JBoltDateUtil.format(row.getDate("cenddate"), "yyyy.MM"));
-				//row.set("careertypename",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.CAREERTYPE.getValue(), row.getStr("careertype")));
-				BigDecimal nowyearmounthamount1 = row.getBigDecimal("nowyearmounthamount1") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount1");
-				BigDecimal nowyearmounthamount2 = row.getBigDecimal("nowyearmounthamount2") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount2");
-				BigDecimal nowyearmounthamount3 = row.getBigDecimal("nowyearmounthamount3") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount3");
-				BigDecimal nowyearmounthamount4 = row.getBigDecimal("nowyearmounthamount4") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount4");
-				BigDecimal nowyearmounthamount5 = row.getBigDecimal("nowyearmounthamount5") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount5");
-				BigDecimal nowyearmounthamount6 = row.getBigDecimal("nowyearmounthamount6") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount6");
-				BigDecimal nowyearmounthamount7 = row.getBigDecimal("nowyearmounthamount7") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount7");
-				BigDecimal nowyearmounthamount8 = row.getBigDecimal("nowyearmounthamount8") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount8");
-				BigDecimal nowyearmounthamount9 = row.getBigDecimal("nowyearmounthamount9") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount9");
-				BigDecimal nowyearmounthamount10 = row.getBigDecimal("nowyearmounthamount10") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount10");
-				BigDecimal nowyearmounthamount11 = row.getBigDecimal("nowyearmounthamount11") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount11");
-				BigDecimal nowyearmounthamount12 = row.getBigDecimal("nowyearmounthamount12") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount12");
-				BigDecimal totalamount1 = nowyearmounthamount1.add(nowyearmounthamount2).add(nowyearmounthamount3).add(nowyearmounthamount4).add(nowyearmounthamount5)
-						.add(nowyearmounthamount6).add(nowyearmounthamount7).add(nowyearmounthamount8).add(nowyearmounthamount9).add(nowyearmounthamount10)
-						.add(nowyearmounthamount11).add(nowyearmounthamount12);
-				row.set("totalamount1", totalamount1);
-				BigDecimal nextyearmounthamount1 = row.getBigDecimal("nextyearmounthamount1") == null ? BigDecimal.ZERO:row.getBigDecimal("nextyearmounthquantity1");
-				BigDecimal nextyearmounthamount2 = row.getBigDecimal("nextyearmounthamount2") == null ? BigDecimal.ZERO:row.getBigDecimal("nextyearmounthquantity2");
-				BigDecimal nextyearmounthamount3 = row.getBigDecimal("nextyearmounthamount3") == null ? BigDecimal.ZERO:row.getBigDecimal("nextyearmounthquantity3");
-				BigDecimal nextyearmounthamount4 = row.getBigDecimal("nextyearmounthamount4") == null ? BigDecimal.ZERO:row.getBigDecimal("nextyearmounthquantity4");
-				row.set("nextyearmounthamount1",nextyearmounthamount1);
-				row.set("nextyearmounthamount2",nextyearmounthamount2);
-				row.set("nextyearmounthamount3",nextyearmounthamount3);
-				row.set("nextyearmounthamount4",nextyearmounthamount4);
-				BigDecimal totalamount2 = nowyearmounthamount4.add(nowyearmounthamount5).add(nowyearmounthamount6).add(nowyearmounthamount7).add(nowyearmounthamount8)
-						.add(nowyearmounthamount9).add(nowyearmounthamount10).add(nowyearmounthamount11).add(nowyearmounthamount12).add(nextyearmounthamount1)
-						.add(nextyearmounthamount2).add(nextyearmounthamount3);
-				row.set("totalamount2", totalamount2);
-			}
-			//计算对比方案
-			long totalRow;
-			//判断是两个对比期间还是三个
-			List<Record> list = new ArrayList<>();
-			if (para.getStr("dstarttime1")!=null&&para.getStr("dendtime1")!=null
-					&&para.getStr("dstarttime2")!=null&&para.getStr("dendtime2")!=null
-					&&para.getStr("dstarttime3")==null&&para.getStr("dendtime3")==null){
-				 list = contrastScheme(list1,0);
-			}
-			if (para.getStr("dstarttime1")!=null&&para.getStr("dendtime1")!=null
-					&&para.getStr("dstarttime2")!=null&&para.getStr("dendtime2")!=null
-					&&para.getStr("dstarttime3")!=null&&para.getStr("dendtime3")!=null){
-				list = contrastScheme(list1,1);
-			}
-
-			totalRow=list.size();
-			int totalPage = (int) (totalRow / pageSize);
-			if (totalRow % pageSize != 0) {
-				totalPage++;
-			}
-			List<Record> recordArrayList = new ArrayList<>();
-			int pageStart=pageNumber==1?0:(pageNumber-1)*pageSize;//截取的开始位置
-			int pageEnd= Math.min((int) totalRow, pageNumber * pageSize);
-			if(totalRow>pageStart){
-				recordArrayList =list.subList(pageStart, pageEnd);
-			}
-			return  new Page<>(recordArrayList, pageNumber, pageSize, totalPage, (int) totalRow);
-		}
+	public Page<Record> periodContrastDatas(int pageNumber, int pageSize, Kv para) {
+		ExpenseBudget expenseBudget = new ExpenseBudget();
+    	String dstarttime1 = para.getStr("dstarttime1");
+    	String dendtime1 = para.getStr("dendtime1");
+    	Date dstarttime1Date = JBoltDateUtil.toDate(dstarttime1,"yyyy-MM");
+    	Date dendtime1Date = JBoltDateUtil.toDate(dendtime1,"yyyy-MM");
+		expenseBudget.setCbegindate(dstarttime1Date);
+		expenseBudget.setCenddate(dendtime1Date);
+		constructDynamicsDbColumn(expenseBudget,para);
+		Page<Record> list1 = dbTemplate(u8SourceConfigName(),"expensebudget.periodContrastDatas", para).paginate(pageNumber, pageSize);
+		return list1;
 	}
-
+	
 	/**
 	 *增加行
 	 */
@@ -1344,5 +1278,22 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 				.eq("iBudgetType", expenseBudget.getIbudgettype()).eq("iEffectiveStatus", EffectiveStatusEnum.EFFECTIVED.getValue()));
 		if(CollUtil.isNotEmpty(list)) return true;
 		return false;
+	}
+	
+	/**
+	 * 根据起止日期计算费用预算期间对比报表的表头
+	 * */	
+	public void calcDynamicPeriodContrastColumn(Date dstarttime, Date dendtime,List<Record> monthColumnTxtList) {
+		int colspan = 0;
+        Date dendTimeElse = JBoltDateUtil.toDate(JBoltDateUtil.format(dendtime, "yyyy-MM"),"yyyy-MM");
+        while(JBoltDateUtil.toDate(JBoltDateUtil.format(dstarttime, "yyyy-MM"),"yyyy-MM").compareTo(dendTimeElse) != 1){
+        	colspan++;
+        	int dstarttimemonth = Integer.parseInt(JBoltDateUtil.format(dstarttime, JBoltDateUtil.MM));
+        	Record monthRecord = new Record();
+        	monthRecord.set("colname", dstarttimemonth + "月");
+        	monthRecord.set("datacolumn", "imonthamount"+colspan);
+        	monthColumnTxtList.add(monthRecord);
+        	dstarttime = JBoltDateUtil.nextMonthFirstDay(dstarttime);
+        }
 	}
 }

@@ -27,7 +27,9 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static cn.jbolt.core.util.JBoltArrayUtil.COMMA;
 
@@ -396,6 +398,68 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
             manualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
             manualOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
             ValidationUtils.isTrue(manualOrderM.update(), JBoltMsg.FAIL);
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 批量审核
+     * @param ids
+     * @return
+     */
+    public Ret batchApprove(String ids) {
+        tx(() -> {
+            formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> null, (formAutoId) -> {
+                List<ManualOrderM> list = getListByIds(ids);
+                list = list.stream().filter(Objects::nonNull).map(item -> {
+                    item.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+                    return item;
+                }).collect(Collectors.toList());
+                ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
+                return null;
+            });
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 批量反审批
+     * @param ids
+     * @return
+     */
+    public Ret batchReverseApprove(String ids) {
+        tx(() -> {
+            List<ManualOrderM> list = getListByIds(ids);
+            for (ManualOrderM manualOrderM : list) {
+                // 处理订单审批数据
+                formApprovalService.reverseApprove(manualOrderM.getIAutoId(),
+                        table(), primaryKey(), manualOrderM.getIAuditStatus(), "cn.rjtech.admin.manualorderm.ManualOrderMService");
+
+                // 处理订单数据
+                OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(manualOrderM.getIOrderStatus());
+                switch (orderStatusEnum) {
+                    case AWAIT_AUDIT:
+                        manualOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                        break;
+                    case APPROVED:
+                        manualOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
+
+            // 判断订单是否存在已审核的反审批
+            if (list.stream().anyMatch(item -> item.getIOrderStatus() == OrderStatusEnum.AWAIT_AUDIT.getValue())) {
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
+            }
             return true;
         });
         return SUCCESS;

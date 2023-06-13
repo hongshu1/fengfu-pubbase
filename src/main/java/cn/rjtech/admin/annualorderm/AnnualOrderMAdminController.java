@@ -156,7 +156,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
      */
     public void batchReverseApprove()
     {
-
+        renderJson(service.batchReverseApprove(get("ids")));
     }
 
     /**

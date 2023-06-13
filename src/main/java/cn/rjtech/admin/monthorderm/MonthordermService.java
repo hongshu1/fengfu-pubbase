@@ -331,17 +331,12 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     public Ret withdraw(Long iautoid) {
         tx(() -> {
-
             // 已根据单据的审批方式，适配撤回的处理
             formApprovalService.withdraw(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
 
                 MonthOrderM monthOrderM = findById(formAutoId);
                 monthOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
                 ValidationUtils.isTrue(monthOrderM.update(), "撤回失败");
-
-                // 修改客户计划汇总
-                cusOrderSumService.algorithmSum();
-
                 return null;
             });
 
@@ -356,7 +351,6 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     public Ret reject(Long iautoid) {
         tx(() -> {
-
             formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
 
                 ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
@@ -443,8 +437,13 @@ public class MonthordermService extends BaseService<MonthOrderM> {
                     return null;
                 });
             }
-
             ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
+
+            // 判断订单是否存在已审核的反审批
+            if (list.stream().anyMatch(item -> item.getIOrderStatus() == OrderStatusEnum.AWAIT_AUDIT.getValue())) {
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
+            }
             return true;
         });
 
