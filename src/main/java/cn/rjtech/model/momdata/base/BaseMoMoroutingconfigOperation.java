@@ -40,7 +40,7 @@ public abstract class BaseMoMoroutingconfigOperation<M extends BaseMoMoroutingco
 	 * 工单工艺路线ID
 	 */
 	public M setIMoInventoryRoutingId(java.lang.Long iMoInventoryRoutingId) {
-		set("iMoInventoryRoutingId", iMoInventoryRoutingId);
+		set("iMoRoutingConfigId", iMoInventoryRoutingId);
 		return (M)this;
 	}
 
