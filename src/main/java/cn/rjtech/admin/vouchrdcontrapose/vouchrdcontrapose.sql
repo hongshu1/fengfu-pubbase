@@ -1,30 +1,29 @@
 #sql("paginateAdminDatas")
-	select vc.*,VRR.cRdName vrrname,VRS.cRdName vrsname from Bd_VouchRdContrapose vc
-		left join bd_rd_Style VRR on VRR.cRdCode = vc.cVRRCode and VRR.bRdFlag = 1 and VRR.isDeleted = '0'
-	#if(iorgid)
-		and VRR.iorgid = #para(iorgid)
-	#end	
-		left join bd_rd_Style VRS on VRS.cRdCode = vc.cVRSCode and VRS.bRdFlag = 0 and VRS.isDeleted = '0'
-	#if(iorgid)
-		and VRS.iorgid = #para(iorgid)
-	#end	
-	where vc.isDeleted = '0'
+	SELECT vc.*, VRR.cRdName vrrname, VRS.cRdName vrsname, dic.cvtchname, dic.cbtchname
+	FROM Bd_VouchRdContrapose vc
+	LEFT JOIN bd_rd_Style VRR ON VRR.cRdCode = vc.cVRRCode AND VRR.bRdFlag = 1 AND VRR.isDeleted = '0' AND VRR.iorgid = #para(iorgid)
+    LEFT JOIN bd_rd_Style VRS ON VRS.cRdCode = vc.cVRSCode AND VRS.bRdFlag = 0 AND VRS.isDeleted = '0' AND VRS.iorgid = #para(iorgid)
+    LEFT JOIN Bd_VouchTypeDic dic ON vc.cVBTID = dic.cVBTID                    AND dic.isDeleted = '0' AND dic.iorgid = #para(iorgid) 
+	WHERE vc.isDeleted = '0' AND vc.iorgid = #para(iorgid)
 	#if(keywords)
-		and (vc.cVRRCode like concat('%',#para(keywords),'%') or vc.cVRSCode like concat('%',#para(keywords),'%')
+		AND (vc.cVRRCode like concat('%',#para(keywords),'%') or vc.cVRSCode like concat('%',#para(keywords),'%')
 			or VRR.cRdName like concat('%',#para(keywords),'%') or VRS.cRdName like concat('%',#para(keywords),'%')
 		)
 	#end
-	#if(iorgid)
-		and vc.iorgid = #para(iorgid)
-	#end		
+	ORDER BY vc.iautoid DESC
 #end
 
 #sql("getCvrrName")
  select cRdName from Bd_Rd_Style where cRdCode=#para(cvrrcode)
- #end
+#end
 
  #sql("selectCvrrcodeAndCvrsCode")
- select * from Bd_VouchRdContrapose where cVRRCode=#para(cvrrCode) AND cVRSCode=#para(cvrsCode)
+ SELECT * 
+ FROM Bd_VouchRdContrapose 
+ WHERE iorgid = #para(iorgid)
+    AND cvbtid = #para(cvbtid)
+    AND cVRRCode=#para(cvrrCode) 
+    AND cVRSCode=#para(cvrsCode)
  #end
 
  #sql("selectCvrrcodeOnCvrsCodeList")

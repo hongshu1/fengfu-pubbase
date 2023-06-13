@@ -748,41 +748,64 @@
         })
     }
     // 订阅 valueChanged 事件
-    spread.bind(GC.Spread.Sheets.Events.ValueChanged, function (sender, args) {
-        // var row = args.row;
-        // var col = args.col;
-        // var oldValue = args.oldValue;
-        // var newValue = args.newValue;
-        // console.log("Cell (" + row + ", " + col + ") changed from " + oldValue + " to " + newValue);
-        // var dirtyCells = activeSheet.getDirtyCells();
-        // console.log(dirtyCells);
+    sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
+        let {row,col} = info;
+        var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
+        let arr = [];
+        setTimeout(() => {
+            arr = sheet.getDirtyCells(-1,-1,-1,-1);
+            let newValues = arr.map((item, index) =>{
+                //过滤没发生改变的数据
+                if(item.newValue!=item.oldValue){
+                    return {
+                        ...item
+                    }
+                }
+            });
+            let newValueObj = newValues.map(item=>{
+                    if(item!=undefined){
+                        var rowData = sheet.getArray(item.row,0, 1, sheet.getColumnCount());//获取行数据
+                        var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
+                        console.log(colData)
+                        parms.tableData.push({
+                            plan:rowData[0][7],//计划
+                            cInvCode:rowData[0][8],//存户编码
+                            newValue:item.newValue,//修改后的值
+                            date:colData[1][0],//获取当前年月
+                            day:colData[2][0],//日
+                        })
+                    }
+                })
+                sheet.clearPendingChanges({clearType: 1, row: -1, rowCount: -1, col: -1, colCount: -1});
+            console.log(parms.tableData)
+            }, 0);
     });
     //获取表格中输入或修改的值
-    sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
-        // spreadSuspend();//暂停绘制
-        let {row,col,newValue} = info;
-        parms['row'] = row;
-        parms['col'] = col;
-        var rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取行数据
-        var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
-        //每次添加之后往数组内进行存储
-        parms.tableData.push({
-            plan:rowData[0][7],//计划
-            cInvCode:rowData[0][8],//存户编码
-            newValue:rowData[0][col],//修改后的值
-            date:colData[1][0],//获取当前年月
-            day:colData[2][0],//日
-        })
-
-        //     parms.tableData.push({
-        //         plan:"计划在库",//计划
-        //         cInvCode:rowNewValue[0][8],//存户编码
-        //         newValue:sheet.getValue(row+4,col),//修改后的值
-        //         date:colData[1][0],//获取当前年月
-        //         day:colData[2][0],//日
-        //     })
-        console.log(parms.tableData);
-    });
+    // sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
+    //     // spreadSuspend();//暂停绘制
+    //     let {row,col,newValue} = info;
+    //     parms['row'] = row;
+    //     parms['col'] = col;
+    //     var rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取行数据
+    //     var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
+    //     //每次添加之后往数组内进行存储
+    //     parms.tableData.push({
+    //         plan:rowData[0][7],//计划
+    //         cInvCode:rowData[0][8],//存户编码
+    //         newValue:rowData[0][col],//修改后的值
+    //         date:colData[1][0],//获取当前年月
+    //         day:colData[2][0],//日
+    //     })
+    //
+    //     //     parms.tableData.push({
+    //     //         plan:"计划在库",//计划
+    //     //         cInvCode:rowNewValue[0][8],//存户编码
+    //     //         newValue:sheet.getValue(row+4,col),//修改后的值
+    //     //         date:colData[1][0],//获取当前年月
+    //     //         day:colData[2][0],//日
+    //     //     })
+    //     console.log(parms.tableData);
+    // });
     /**
      * 打开弹出层
      * @param openPopup
@@ -1088,8 +1111,9 @@
             dataType:'json',
             success:function (res){
                 if(res.msg=="操作成功"){
-                    LayerMsgBox.success(res.msg);
+                        LayerMsgBox.success(res.msg);
                     initData();
+                    parms.tableData=0;
                 }else{
                     LayerMsgBox.error(res.msg,500);
                 }

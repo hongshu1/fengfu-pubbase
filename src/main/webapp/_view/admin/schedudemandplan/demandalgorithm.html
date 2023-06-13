@@ -379,6 +379,7 @@
     var Api = '/';
     //创建表单实列
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1,calcOnDemand: true});
+    spread.options.referenceStyle = GC.Spread.Sheets.ReferenceStyle.r1c1;
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取活动表单
@@ -398,7 +399,7 @@
         dayRow:10,              //day渲染起始下标
         weekRow:10,             //week渲染起始下标
         tableData:[],           //接收添加的数据
-        planListRowIndex:3,     //计划排产列表起始行下标
+        planListRowIndex:4,     //计划排产列表起始行下标
         planListColIndex:7,     //计划排产列表起始列下标
         supplierData:[],        //所有供应商数据
         supplierValueArray:[],  //存储当前点击选中的供应商
@@ -440,23 +441,23 @@
         var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
         //设置value值
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex).cellType(cellType);
-        sheet.addSpan(0,0,3,1);
+        sheet.addSpan(0,0,4,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+1).text("序号");
-        parms.activeSheet.addSpan(0,1,3,1);
+        parms.activeSheet.addSpan(0,1,4,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+2).text("供应商名称");
-        parms.activeSheet.addSpan(0,2,3,1);
+        parms.activeSheet.addSpan(0,2,4,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+3).text("存货编码");
-        parms.activeSheet.addSpan(0,3,3,1);
+        parms.activeSheet.addSpan(0,3,4,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+4).text("客户部番");
-        parms.activeSheet.addSpan(0,4,3,1);
+        parms.activeSheet.addSpan(0,4,4,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+5).text("部品名称");
-        parms.activeSheet.addSpan(0,5,3,1);
+        parms.activeSheet.addSpan(0,5,4,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+6).text("包装数量");
-        parms.activeSheet.addSpan(0,6,3,1);
+        parms.activeSheet.addSpan(0,6,4,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+7).text("标准在库天数");
-        parms.activeSheet.addSpan(0,7,3,1);
+        parms.activeSheet.addSpan(0,7,4,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+8).text("项目");
-        parms.activeSheet.addSpan(0,8,3,1);
+        parms.activeSheet.addSpan(0,8,4,1);
         parms.activeSheet.setColumnWidth(parms.columnindex, 40);//设置指定单元格的width
         parms.activeSheet.setColumnWidth(parms.columnindex+1, 60);//设置指定单元格的width
         parms.activeSheet.setColumnWidth(parms.columnindex+2, 100);//设置指定单元格的width
@@ -466,6 +467,220 @@
         parms.activeSheet.setColumnWidth(parms.columnindex+8, 150);//设置指定单元格的width
         spreadResume();// 恢复绘制
     }
+    /**
+     * 获取接口返回的日期数据渲染
+     * @param initDate
+     */
+    function initDate(searchData) {
+        let url = searchData!=undefined?Api+`admin/scheduproductplanmonth/getTableHead?startDate=${searchData.searchStartTime}&endDate=${searchData.searchEndTime}`
+            :`admin/scheduproductplanmonth/getTableHead?startDate=&endDate=`;
+        //获取接口数据
+        Ajax.get(url,(res)=>{
+            spreadSuspend();//暂停绘制
+            spread.getActiveSheet().setRowVisible(1, false);//隐藏第2行
+            let date = 1;
+            let dateCol = 10;
+            let C = 10;
+            let numberArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
+            //设置头部年月份
+            for (let i = 0; i < res.data.month.length; i++) {
+                let index = numberArray.findIndex(v=>v==res.data.month[i].colsum);
+                if(index!=1){
+                    date=numberArray[index];
+                    for (let j = 0; j < numberArray[index]; j++) {
+                        sheet.setValue(1,C++,res.data.month[i].colname);
+                    }
+                    if(i==0){
+                        sheet.setValue(0, dateCol,res.data.month[i].colname);//插入数据
+                        sheet.addSpan(0,dateCol,1,i+1*date);//跨行列
+                        dateCol += date;
+                    }else{
+                        sheet.setValue(0, dateCol,res.data.month[i].colname);//插入数据
+                        sheet.addSpan(0,dateCol,1,date);//跨行列
+                        dateCol += date;
+                    }
+                }
+            }
+            for (let i = 0; i < res.data.day.length; i++) {
+                sheet.setValue(2,parms.dayRow++,res.data.day[i]);
+                sheet.setValue(3,parms.weekRow++,res.data.week[i]);
+            }
+            var addCol = res.data.day.length*2,addRow = 41;
+            var row = parms.ColumnCount+addRow;
+            var col = parms.RowCount+addCol;
+            spread.getSheet(0).setRowCount(col); //设置一列单元格的个数
+            spread.getSheet(0).setColumnCount(row); //设置一行有多少个单元格
+            parms.RowCount=col;
+            parms.ColumnCount=row;
+            //设置周六日背景色条件格式
+            let style3Sat = new GC.Spread.Sheets.Style();
+            style3Sat.foreColor = '#000';
+            style3Sat.backColor = "#00FFFF";
+            parms.activeSheet.conditionalFormats.addSpecificTextRule(GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,'Sat',style3Sat,[new GC.Spread.Sheets.Range(3, 10, 1, res.data.day.length)]);
+            let style3Sun = new GC.Spread.Sheets.Style();
+            style3Sun.foreColor = '#000';
+            style3Sun.backColor = "#00FFFF";
+            parms.activeSheet.conditionalFormats.addSpecificTextRule(GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,'Sun',style3Sun,[new GC.Spread.Sheets.Range(3, 10, 1, res.data.day.length)]);
+            spreadResume();// 恢复绘制
+        });
+    }
+    /**
+     * 渲染表格数据
+     * @param initData
+     */
+    function initData(searchData){
+            let url = searchData!=undefined?Api+`admin/schedudemandplan/getDemandList?startdate=${searchData.searchStartTime}&enddate=${searchData.searchEndTime}&cvenname=${parms.searchSupplier}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`
+            :Api+`admin/schedudemandplan/getDemandList?startdate=&enddate=&cvenname=&cinvcode=&cinvcode1=&cinvname1=`
+        spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
+        //期初数量
+        parms.activeSheet.getCell(3,9).text("期初数量");
+        $.ajax({
+            url,
+            type:'get',
+            dataType:'json',
+            success:function (respons){
+                parms['scheduplanmonth'] = respons;
+                console.log(parms['scheduplanmonth'])
+                spreadSuspend();//暂停绘制
+                let rowIndex = 4;
+                let colIndex=0;
+                let serialCol = 1;
+                for (let i = 0; i <parms['scheduplanmonth'].data.length; i++) {
+                    var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
+                    parms.activeSheet.getCell(rowIndex, colIndex).cellType(cellType);
+                    sheet.addSpan(rowIndex,colIndex,3,1);
+                    sheet.setValue(rowIndex, serialCol,parms['scheduplanmonth'].data[i].seq);//序号
+                    parms.activeSheet.addSpan(rowIndex,serialCol,3,1);
+                    sheet.setValue(rowIndex, serialCol+1,parms['scheduplanmonth'].data[i].cVenName);//供应商名称
+                    parms.activeSheet.addSpan(rowIndex,serialCol+1,3,1);
+                    sheet.setValue(rowIndex, serialCol+2,parms['scheduplanmonth'].data[i].cInvCode);//存货编码
+                    parms.activeSheet.addSpan(rowIndex,serialCol+2,3,1);
+                    sheet.setValue(rowIndex, serialCol+3,parms['scheduplanmonth'].data[i].cInvCode1);//客户部番
+                    parms.activeSheet.addSpan(rowIndex,serialCol+3,3,1);
+                    parms.activeSheet.setColumnWidth(serialCol+3, 150);//设置指定单元格的width
+                    sheet.setValue(rowIndex, serialCol+4,parms['scheduplanmonth'].data[i].cInvName1);//部品名称
+                    parms.activeSheet.addSpan(rowIndex,serialCol+4,3,1);
+                    parms.activeSheet.setColumnWidth(serialCol+4, 220);//设置指定单元格的width
+                    sheet.setValue(rowIndex, serialCol+5,parms['scheduplanmonth'].data[i].iPkgQty);//包装数量
+                    parms.activeSheet.addSpan(rowIndex,serialCol+5,3,1);
+                    sheet.setValue(rowIndex, serialCol+6,parms['scheduplanmonth'].data[i].iInnerInStockDays);//标准在库天数
+                    parms.activeSheet.addSpan(rowIndex,serialCol+6,3,1);
+                    parms.activeSheet.setColumnWidth(serialCol+6, 120);//设置指定单元格的width
+                    rowIndex+=3;
+
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex+1).text("实绩需求");
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex+1).text("到货计划");
+                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex+1).text("计划在库");
+                    let shiyongRow = 4;//渲染起始行下标
+                    let shiyongCol = 10;//渲染起始列下标
+                    let B = 5;
+                    let Z = 10;
+                    let jihuaRow = 6;
+                    let jihuaCol = 10;
+                    for (var j = 0; j < parms['scheduplanmonth'].data[i].day.length; j++) {
+                        if(i==0){
+                            sheet.setValue(shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
+                            sheet.setValue(shiyongRow+1,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].jihua);
+                            sheet.setValue(shiyongRow+2,shiyongCol-1,parms['scheduplanmonth'].data[i].qiChuZaiKu);
+                            sheet.setValue(shiyongRow+2,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
+                            //
+                            let col = 10;//公式嵌入起始列下标
+                            let beforeLibrary = 5;//前一天计划在库起始坐标
+                            let Num = sheet.getValue(6,9);//初次进入获取前一天的计划在库
+                            let daoHuoShiJi = parms['scheduplanmonth'].data[i].day[j].shiji;//到货实绩
+                            //前一天的到货差异
+                            let daoHuoChaYi = parms['scheduplanmonth'].data[i].day[j].chayi==null||undefined?parms['scheduplanmonth'].data[i].qiChuChaYi:parms['scheduplanmonth'].data[i].day[j].chayi;
+                            //嵌入计划在库公式
+                            sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1]+${daoHuoShiJi}+${daoHuoChaYi})-R[-2]C`);
+                            //嵌入到货计划公式
+                            sheet.setFormula(B,Z++,`=IF(SUM(R[-1]C,R[-1]C[1],R[-1]C[2])-R[1]C[-1]>0,SUM(R[-1]C,R[-1]C[1],R[-1]C[2])-R[1]C[-1],0)`);
+                        }else{
+                            sheet.setValue(3*i+shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
+                            sheet.setValue(3*i+shiyongRow+1,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].jihua);
+                            sheet.setValue(3*i+shiyongRow+2,shiyongCol-1,parms['scheduplanmonth'].data[i].qiChuZaiKu);
+                            sheet.setValue(3*i+shiyongRow+2,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
+                            //
+                            let Num = sheet.getValue(3*i+6,9);//获取前一天的计划在库
+                            let daoHuoShiJi = parms['scheduplanmonth'].data[i].day[j].shiji;//到货实绩
+                            //前一天的到货差异
+                            let daoHuoChaYi = parms['scheduplanmonth'].data[i].day[j].chayi==null||undefined?parms['scheduplanmonth'].data[i].qiChuChaYi:parms['scheduplanmonth'].data[i].day[j].chayi
+                            //嵌入计划在库公式
+                            sheet.setFormula(3*i+jihuaRow,jihuaCol++,`=SUM(RC[-1]+${daoHuoShiJi}+${daoHuoChaYi})-R[-2]C`);
+                            //嵌入到货计划公式
+                            sheet.setFormula(3*i+B,Z++,`=IF(SUM(R[-1]C,R[-1]C[1],R[-1]C[2])-R[1]C[-1]>0,SUM(R[-1]C,R[-1]C[1],R[-1]C[2])-R[1]C[-1],0)`);
+                        }
+                    }
+                }
+                // let col = 10;
+                // var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
+                // // let colDate = colData[1][0];//获取当前列的date---2023年6月
+                // // let colDay = colData[2][0];//获取当前的day---3日
+                // // let dateStr = colDate+colDay;//合并拼接---2023年6月3日
+                // for (let i = 0; i < parms.scheduplanmonth.data.length; i++) {
+                //     // console.log(i);
+                //      //根据拼接时间查找相应对象
+                //      //var itemObj = parms.scheduplanmonth.data[i].day.find((item,index)=>item.datestr==dateStr);
+                //      //嵌入计划在库公式
+                //      // sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
+                // }
+                // var colData = sheet.getArray(0, col-1, sheet.getRowCount(), 1);//获取前一天的列数据
+                // // console.log(colData)
+                // let beforeLibrary = 5;//前一天计划在库起始坐标
+                spreadResume();// 恢复绘制
+            },error: function(error) {
+                console.log(error);
+            }
+        })
+        //避免重复请求数据
+        if(parms.supplierData.length<=0){
+            //渲染头部搜索区域供应商数据
+            $.ajax({
+                url:Api+"admin/schedudemandplan/getSupplierList",
+                type:'get',
+                dataType:'json',
+                success:function (res){
+                    parms.supplierData=res.data;
+                    for (var i = 0; i < res.data.length; i++) {
+                        var jsonObj = res.data[i];
+                        $("#supplier_id").append(`
+                    <li class="dropdown-item" id="li" onClick='supplierClick("${jsonObj.cvenname}")'
+                     value='${jsonObj.cvenname}' style="display:flex;"><span style=flex:1;>
+                     ${jsonObj.cvenname}
+                     </span></li>`);
+                    }
+                },error: function(error) {
+                    console.log(error,"预示保存弹出层");
+                }
+            })
+        }
+    }
+    //双击单元格事件
+    sheet.bind(GC.Spread.Sheets.Events.CellDoubleClick, function (sender, args) {
+        // 获取双击的单元格坐标
+        let {row,col} = args;
+        // 处理双击事件
+        // var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
+        // let colDate = colData[1][0];//获取当前列的date---2023年6月
+        // let colDay = colData[2][0];//获取当前的day---3日
+        // let dateStr = colDate+colDay;//合并拼接---2023年6月3日
+        // for (let i = 0; i < parms.scheduplanmonth.data.length; i++) {
+        //     //根据拼接时间查找相应对象
+        //     var itemObj = parms.scheduplanmonth.data[i].day.find((item,index)=>item.datestr==dateStr);
+        // }
+        // var colData = sheet.getArray(0, col-1, sheet.getRowCount(), 1);//获取前一天的列数据
+        // console.log(colData )
+        // let beforeLibrary = 5;//前一天计划在库起始坐标
+    });
+    //获取表格中输入或修改的值
+    sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
+        let a = {
+            text:info.newValue,
+            row:info.row,
+            col:info.col
+        }
+        //每次添加之后往数组内进行存储
+        parms.tableData.push(a);
+    });
 
     /*工作簿暂停活性*/
     function spreadSuspend() {
@@ -503,64 +718,16 @@
             hidePopup();
         }
     };
-
+    /**
+     * @param hidePopup 隐藏弹出层
+     * @param overlay 遮罩层节点
+     * @param hidePopuppopup 弹出层节点
+     */
     function hidePopup() {
         document.getElementById("overlay").style.display = "none";
         document.getElementById("popup").style.display = "none";
     }
 
-    /**
-     * 获取接口返回的日期数据渲染
-     * @param initDate
-     */
-    function initDate(searchData) {
-        let url = searchData!=undefined?Api+`admin/scheduproductplanmonth/getTableHead?startDate=${searchData.searchStartTime}&endDate=${searchData.searchEndTime}`
-            :`admin/scheduproductplanmonth/getTableHead?startDate=&endDate=`;
-        //获取接口数据
-        Ajax.get(url,(res)=>{
-            spreadSuspend();//暂停绘制
-            let date = 1;
-            let dateCol = 10;
-            let numberArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
-            //设置头部年月份
-            for (let i = 0; i < res.data.month.length; i++) {
-                let index = numberArray.findIndex(v=>v==res.data.month[i].colsum);
-                if(index!=1){
-                    date=numberArray[index];
-                    if(i==0){
-                        sheet.setValue(0, dateCol,res.data.month[i].colname);//插入数据
-                        sheet.addSpan(0,dateCol,1,i+1*date);//跨行列
-                        dateCol += date;
-                    }else{
-                        sheet.setValue(0, dateCol,res.data.month[i].colname);//插入数据
-                        sheet.addSpan(0,dateCol,1,date);//跨行列
-                        dateCol += date;
-                    }
-                }
-            }
-            for (let i = 0; i < res.data.day.length; i++) {
-                sheet.setValue(1,parms.dayRow++,res.data.day[i]);
-                sheet.setValue(2,parms.weekRow++,res.data.week[i]);
-            }
-            var addCol = res.data.day.length*2,addRow = 41;
-            var row = parms.ColumnCount+addRow;
-            var col = parms.RowCount+addCol;
-            spread.getSheet(0).setRowCount(col); //设置一列单元格的个数
-            spread.getSheet(0).setColumnCount(row); //设置一行有多少个单元格
-            parms.RowCount=col;
-            parms.ColumnCount=row;
-            //设置周六日背景色条件格式
-            let style3Sat = new GC.Spread.Sheets.Style();
-            style3Sat.foreColor = '#000';
-            style3Sat.backColor = "#00FFFF";
-            parms.activeSheet.conditionalFormats.addSpecificTextRule(GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,'Sat',style3Sat,[new GC.Spread.Sheets.Range(2, 10, 1, res.data.day.length)]);
-            let style3Sun = new GC.Spread.Sheets.Style();
-            style3Sun.foreColor = '#000';
-            style3Sun.backColor = "#00FFFF";
-            parms.activeSheet.conditionalFormats.addSpecificTextRule(GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,'Sun',style3Sun,[new GC.Spread.Sheets.Range(2, 10, 1, res.data.day.length)]);
-            spreadResume();// 恢复绘制
-        });
-    }
     /**
      * 搜索
      * @param search
@@ -590,116 +757,13 @@
         sheet.fromJSON(json);//清空表单数据
         sheet.reset();//重置表单
         //从新赋值到原始渲染位置
-        parms.planListRowIndex=3;
+        parms.planListRowIndex=4;
         parms.dayRow=10;
         parms.weekRow=10;
         initDate(searchData);
         loadInit();
         initData(searchData);
     }
-    /**
-     * 渲染表格数据
-     * @param initData
-     */
-    function initData(searchData){
-            let url = searchData!=undefined?Api+`admin/schedudemandplan/getDemandList?startdate=${searchData.searchStartTime}&enddate=${searchData.searchEndTime}&cvenname=${parms.searchSupplier}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`
-            :Api+`admin/schedudemandplan/getDemandList?startdate=&enddate=&cvenname=&cinvcode=&cinvcode1=&cinvname1=`
-        spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
-        //期初数量
-        parms.activeSheet.getCell(2,9).text("期初数量");
-        $.ajax({
-            url,
-            type:'get',
-            dataType:'json',
-            success:function (respons){
-                parms['scheduplanmonth'] = respons;
-                console.log(parms['scheduplanmonth'])
-                spreadSuspend();//暂停绘制
-                let rowIndex = 3;
-                let colIndex=0;
-                let serialCol = 1;
-                for (let i = 0; i <parms['scheduplanmonth'].data.length; i++) {
-                    var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
-                    parms.activeSheet.getCell(rowIndex, colIndex).cellType(cellType);
-                    sheet.addSpan(rowIndex,colIndex,3,1);
-                    sheet.setValue(rowIndex, serialCol,parms['scheduplanmonth'].data[i].seq);//序号
-                    parms.activeSheet.addSpan(rowIndex,serialCol,3,1);
-                    sheet.setValue(rowIndex, serialCol+1,parms['scheduplanmonth'].data[i].cVenName);//供应商名称
-                    parms.activeSheet.addSpan(rowIndex,serialCol+1,3,1);
-                    sheet.setValue(rowIndex, serialCol+2,parms['scheduplanmonth'].data[i].cInvCode);//存货编码
-                    parms.activeSheet.addSpan(rowIndex,serialCol+2,3,1);
-                    sheet.setValue(rowIndex, serialCol+3,parms['scheduplanmonth'].data[i].cInvCode1);//客户部番
-                    parms.activeSheet.addSpan(rowIndex,serialCol+3,3,1);
-                    parms.activeSheet.setColumnWidth(serialCol+3, 120);//设置指定单元格的width
-                    sheet.setValue(rowIndex, serialCol+4,parms['scheduplanmonth'].data[i].cInvName1);//部品名称
-                    parms.activeSheet.addSpan(rowIndex,serialCol+4,3,1);
-                    parms.activeSheet.setColumnWidth(serialCol+4, 120);//设置指定单元格的width
-                    sheet.setValue(rowIndex, serialCol+5,parms['scheduplanmonth'].data[i].iPkgQty);//包装数量
-                    parms.activeSheet.addSpan(rowIndex,serialCol+5,3,1);
-                    sheet.setValue(rowIndex, serialCol+6,parms['scheduplanmonth'].data[i].iInnerInStockDays);//标准在库天数
-                    parms.activeSheet.addSpan(rowIndex,serialCol+6,3,1);
-                    parms.activeSheet.setColumnWidth(serialCol+6, 120);//设置指定单元格的width
-                    rowIndex+=3;
-
-                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex+1).text("实绩需求");
-                    parms.activeSheet.setColumnWidth(parms.planListRowIndex, 70);//设置指定单元格的width
-                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex+1).text("到货计划");
-                    parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex+1).text("计划在库");
-                    let shiyongRow = 3;
-                    let shiyongCol = 10;
-                    for (var j = 0; j < parms['scheduplanmonth'].data[i].day.length; j++) {
-                        if(i==0){
-                            sheet.setValue(shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
-                            sheet.setValue(shiyongRow+1,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].jihua);
-                            sheet.setValue(shiyongRow+2,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
-                            sheet.setValue(shiyongRow+2,shiyongCol-1,parms['scheduplanmonth'].data[i].qiChuZaiKu);
-                        }else{
-
-                            sheet.setValue(3*i+shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
-                            sheet.setValue(3*i+shiyongRow+1,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].jihua);
-                            sheet.setValue(3*i+shiyongRow+2,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
-                        }
-
-                    }
-                }
-                spreadResume();// 恢复绘制
-            },error: function(error) {
-                console.log(error);
-            }
-        })
-        //避免重复请求数据
-        if(parms.supplierData.length<=0){
-            //渲染头部搜索区域供应商数据
-            $.ajax({
-                url:Api+"admin/schedudemandplan/getSupplierList",
-                type:'get',
-                dataType:'json',
-                success:function (res){
-                    parms.supplierData=res.data;
-                    for (var i = 0; i < res.data.length; i++) {
-                        var jsonObj = res.data[i];
-                        $("#supplier_id").append(`
-                    <li class="dropdown-item" id="li" onClick='supplierClick("${jsonObj.cvenname}")'
-                     value='${jsonObj.cvenname}' style="display:flex;"><span style=flex:1;>
-                     ${jsonObj.cvenname}
-                     </span></li>`);
-                    }
-                },error: function(error) {
-                    console.log(error,"预示保存弹出层");
-                }
-            })
-        }
-    }
-    //获取表格中输入或修改的值
-    sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
-        let a = {
-            text:info.newValue,
-            row:info.row,
-            col:info.col
-        }
-        //每次添加之后往数组内进行存储
-        parms.tableData.push(a);
-    });
     //计划生成弹出框
     var myAlert = document.getElementById("alert");
     var reg = document.getElementById("content");

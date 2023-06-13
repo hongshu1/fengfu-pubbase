@@ -60,24 +60,25 @@
         <td>
           {@if data.iauditstatus == '0'}
             <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="编辑"
-               data-handler="jboltTablePageToFirst" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">编辑</a>
+               data-handler="jboltTablePageToFirst" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn"><i class="fa fa-remove fa-edit"></i>编辑</a>
         </button>
             <a href="admin/purchaseReceiptList/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
-               data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+               data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i
+                class="fa fa-remove c-danger"></i>删除</a>
           {@/if}
           {@if data.iauditstatus == '1'}
-            <a href="admin/purchaseReceiptList/onlysee/${data.autoid}" data-area="100%,100%" tooltip data-title="查看"
-               data-handler="refreshJBoltTable" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn">查看</a>
-            <a href="admin/purchaseReceiptList/backStep/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="撤回"
-               data-handler="refreshJBoltTable" data-confirm="确定反审核此数据？" class="jbolt_table_delbtn">撤回</a>
+            <a href="admin/purchaseReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="查看"
+               data-handler="jboltTablePageToFirst" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn"><i class="fa fa-eye"></i>查看</a>
+            <a class="jbolt_table_delbtn" href="admin/purchaseReceiptList/withdraw?autoid=${data.autoid}" data-confirm="确定撤回此选项？"
+               data-handler="refreshJBoltTable" data-loading="执行中 " tooltip data-title="撤回" ><i class="fa fa-remove c-danger">撤回</i></a>
           {@/if}
           {@if data.iauditstatus == '2'}
             <a href="admin/purchaseReceiptList/onlysee/${data.autoid}" data-area="100%,100%" tooltip data-title="查看"
-               data-handler="refreshJBoltTable" data-dialog-title="查看采购入库单列表" class="jbolt_table_editbtn">查看</a>
+               data-handler="refreshJBoltTable" data-dialog-title="查看采购入库单列表" class="jbolt_table_editbtn"><i class="fa fa-eye"></i>查看</a>
           {@/if}
           {@if data.iauditstatus == '3'}
             <a href="admin/purchaseReceiptList/onlysee/${data.autoid}" data-area="100%,100%" tooltip data-title="查看"
-               data-handler="refreshJBoltTable" data-dialog-title="查看采购入库单列表" class="jbolt_table_editbtn">查看</a>
+               data-handler="refreshJBoltTable" data-dialog-title="查看采购入库单列表" class="jbolt_table_editbtn"><i class="fa fa-eye"></i>查看</a>
           {@/if}
         </td>
         <td title="${data.iauditstatus}">
@@ -110,17 +111,23 @@
                 class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
         </button>
         <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                id="toolbar_deleteBtn_#(pageId)" data-url="admin/purchaseReceiptList/deleteByIds?ids="
+                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
+        </button>
+        #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_PUInStore",uri="admin/purchaseReceiptList",primaryKeyName="AutoID", className="cn.rjtech.admin.syspuinstore.SysPuinstoreService")
+        ### 参数列表
+        ### formSn:         表单名
+        ### uri:            接口URI
+        ### primaryKeyName: 表单主键名
+        ### className：     实现审批业务的类名
+        <!--<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                 id="toolbar_autitBtn_#(pageId)" data-url="admin/purchaseReceiptList/autitByIds?ids="
                 data-confirm="确定批量审批选中数据？" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量审核
         </button>
         <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                 id="toolbar_resetAutitBtn_#(pageId)" data-url="admin/purchaseReceiptList/resetAutitByIds?ids="
                 data-confirm="确定批量反审批选中数据？" class="btn btn-outline-primary"><i class="fa fa-reply"></i> 批量反审核
-        </button>
-        <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                id="toolbar_deleteBtn_#(pageId)" data-url="admin/purchaseReceiptList/deleteByIds?ids="
-                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
-        </button>
+        </button>-->
       </div>
     </div>
     <table id="syspuinstore_table_#(pageId)"
