@@ -13,7 +13,7 @@ import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.OrderStatusEnum;
+import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
@@ -116,9 +116,9 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         tx(() -> {
             // 校验订单状态
             WeekOrderM weekOrderM = findById(iautoid);
-            ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
+            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
             formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
+                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
                 return null;
             });
 
@@ -138,11 +138,11 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 
         tx(() -> {
             // 校验订单状态
-            ValidationUtils.equals(OrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
+            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
             // 订单状态：2. 待审批
             formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
 
-                weekOrderM.setIOrderStatus(WeekOrderStatusEnum.SAVED.getValue());
+                weekOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
                 ValidationUtils.isTrue(weekOrderM.update(), ErrorMsg.UPDATE_FAILED);
 
                 cusOrderSumService.algorithmSum();
@@ -178,7 +178,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         ValidationUtils.notEmpty(orderms, "订单不存在");
 
         for (WeekOrderM weekOrderM : orderms) {
-            //ValidationUtils.equals(WeekOrderStatusEnum.SAVED.getValue(), weekOrderM.getIOrderStatus(), "只能对“已保存”状态的记录进行删除");
+            //ValidationUtils.equals(WeekOrderStatusEnum.NOT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "只能对“已保存”状态的记录进行删除");
 
             weekOrderM.setIsDeleted(true);
             weekOrderM.update();
@@ -193,7 +193,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         tx(() -> {
             // 数据同步暂未开发 现只修改状态
             formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", OrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
                 //cusOrderSumService.algorithmSum();
                 return null;
             });
@@ -210,7 +210,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // 更新订单的状态
-            ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
+            ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), "提审失败");
 
             return true;
         });
@@ -247,7 +247,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 
     private void doSave(WeekOrderM weekOrderM, JBoltTable jBoltTable, Date now) {
         weekOrderM.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-        weekOrderM.setIOrderStatus(WeekOrderStatusEnum.SAVED.getValue());
+        weekOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
 
         // 组织信息
         weekOrderM.setIOrgId(getOrgId());
@@ -334,7 +334,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> null, (formAutoId) -> {
                 List<WeekOrderM> list = getListByIds(ids);
                 list = list.stream().filter(Objects::nonNull).map(item -> {
-                    item.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+                    item.setIOrderStatus(WeekOrderStatusEnum.APPROVED.getValue());
                     return item;
                 }).collect(Collectors.toList());
                 ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
@@ -363,13 +363,13 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
                         table(), primaryKey(), weekOrderM.getIAuditStatus(), "cn.rjtech.admin.weekorderm.WeekOrderMService");
 
                 // 处理订单数据
-                OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(weekOrderM.getIOrderStatus());
+                WeekOrderStatusEnum orderStatusEnum = WeekOrderStatusEnum.toEnum(weekOrderM.getIOrderStatus());
                 switch (orderStatusEnum) {
                     case AWAIT_AUDIT:
-                        weekOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                        weekOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
                         break;
                     case APPROVED:
-                        weekOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+                        weekOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
                         break;
                     default:
                         break;
@@ -378,12 +378,25 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
 
             // 判断订单是否存在已审核的反审批
-            if (list.stream().anyMatch(item -> item.getIOrderStatus() == OrderStatusEnum.AWAIT_AUDIT.getValue())) {
+            if (list.stream().anyMatch(item -> item.getIOrderStatus() == WeekOrderStatusEnum.AWAIT_AUDIT.getValue())) {
                 // 修改客户计划汇总
                 cusOrderSumService.algorithmSum();
             }
             return true;
         });
+        return SUCCESS;
+    }
+
+    /**
+     * 打开
+     * @param iautoid
+     * @return
+     */
+    public Ret open(String iautoid) {
+        WeekOrderM weekOrderM = findById(iautoid);
+        ValidationUtils.equals(WeekOrderStatusEnum.CLOSE.getValue(), weekOrderM.getIOrderStatus(), "订单非已关闭状态");
+        weekOrderM.setIOrderStatus(WeekOrderStatusEnum.APPROVED.getValue());
+        ValidationUtils.isTrue(weekOrderM.update(), JBoltMsg.FAIL);
         return SUCCESS;
     }
 }

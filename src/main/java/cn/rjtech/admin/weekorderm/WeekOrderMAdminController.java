@@ -145,7 +145,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
     }
 
     /**
-     * 手动关闭
+     * 关闭
      */
     public void closeWeekOrder(@Para(value = "iautoid") String iAutoId) {
         if (StringUtils.isEmpty(iAutoId)) {
@@ -153,6 +153,14 @@ public class WeekOrderMAdminController extends BaseAdminController {
             return;
         }
         renderJson(service.closeWeekOrder(iAutoId));
+    }
+
+    /**
+     * 打开
+     */
+    public void open()
+    {
+        renderJson(service.open(get("iautoid")));
     }
 
     /**
