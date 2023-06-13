@@ -32,7 +32,7 @@ public class Util {
 
     private static final String WHERE = "WHERE";
     private static final String AND = "AND";
-    public static final int MAXLENGTH = 30;
+    public static final int MAXLENGTH = 20;
 
     private Util() {
         // ignored
