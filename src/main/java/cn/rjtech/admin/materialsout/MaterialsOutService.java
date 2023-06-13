@@ -687,7 +687,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 		return dept;
 	}
 
-	public void saveMaterialsOutModel(MaterialsOut materials,SysPuinstore puinstore){
+	public void saveMaterialsOutModel(MaterialsOut materials,SysPuinstore puinstore,String sourceBillType,String sourceBillDid){
 		//materials.setAutoID(JBoltSnowflakeKit.me.nextId());
 		materials.setSourceBillType("");
 		materials.setSourceBillDid("");
@@ -699,8 +699,8 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 		materials.setDeptCode(puinstore.getDeptCode());
 		materials.setWhcode(puinstore.getWhCode());
 		materials.setVenCode(puinstore.getVenCode());
-		materials.setCcreatename(puinstore.getCreatePerson());
-		materials.setDcreatetime(puinstore.getCreateDate());
+		materials.setCcreatename(puinstore.getCCreateName());
+		materials.setDcreatetime(puinstore.getDCreateTime());
 		materials.setState(1);
 		materials.setIAuditStatus(0);
 		materials.setMemo(puinstore.getMemo());
