@@ -90,7 +90,7 @@
         <td title="${data.billno}">${data.billno}</td>
         <td title="${data.sourcebillno}">${data.sourcebillno}</td>
         <td title="${data.u8billno}">${data.u8billno}</td>
-        <td title="${data.createdate}">${data.createdate}</td>
+        <td title="${data.billdate}">${data.billdate}</td>
         <td title="${data.cwhname}">${data.cwhname}</td>
         <td title="${data.cdepname}">${data.cdepname}</td>
         <td title="${data.cptname}">${data.cptname}</td>
@@ -99,8 +99,8 @@
         <td title="${data.cvencode}">${data.cvencode}</td>
         <td title="${data.cvenname}">${data.cvenname}</td>
         <td title="${data.memo}">${data.memo}</td>
-        <td title="${data.createperson}">${data.createperson}</td>
-        <td title="${data.createdate}">${data.createdate}</td>
+        <td title="${data.ccreatename}">${data.ccreatename}</td>
+        <td title="${data.dcreatetime}">${data.dcreatetime}</td>
       </tr>
     {@/each}
     </textarea>
@@ -110,10 +110,10 @@
                 id="toolbar_addBtn_#(pageId)" data-title="新增采购入库单" data-url="admin/purchaseReceiptList/add"
                 class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
         </button>
-        <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+        <!--<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                 id="toolbar_deleteBtn_#(pageId)" data-url="admin/purchaseReceiptList/deleteByIds?ids="
                 data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
-        </button>
+        </button>-->
         #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_PUInStore",uri="admin/purchaseReceiptList",primaryKeyName="AutoID", className="cn.rjtech.admin.syspuinstore.SysPuinstoreService")
         ### 参数列表
         ### formSn:         表单名
@@ -161,8 +161,8 @@
         <th data-width="150" data-column="cVenCode">供应商编码</th>
         <th data-width="200" data-column="cVenName">供应商名称</th>
         <th data-width="150" data-column="memo">备注</th>
-        <th data-width="120" data-column="CreatePerson">创建人</th>
-        <th data-min-width="160" data-column="CreateDate">创建日期</th>
+        <th data-width="120" data-column="cCreateName">创建人</th>
+        <th data-min-width="160" data-column="dCreateTime">创建日期</th>
       </tr>
       </thead>
       <tbody></tbody>

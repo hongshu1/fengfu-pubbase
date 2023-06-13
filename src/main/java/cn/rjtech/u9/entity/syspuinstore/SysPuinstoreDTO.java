@@ -37,75 +37,10 @@ public class SysPuinstoreDTO {
 
     /*主要数据*/
     public static class Main {
-
-        /*库位编码*/
-        @XmlElement(name = "IsWhpos")
-        @JSONField(name = "IsWhpos")
-        private String IsWhpos;
-        /*仓库编码*/
-        @XmlElement(name = "iwhcode")
-        @JSONField(name = "iwhcode")
-        private String iwhcode;
-        /*存货名称*/
-        @XmlElement(name = "InvName")
-        @JSONField(name = "InvName")
-        private String InvName;
-        /*供应商名称*/
-        @XmlElement(name = "VenName")
-        @JSONField(name = "VenName")
-        private String VenName;
-        /*供应商编码*/
-        @XmlElement(name = "VenCode")
-        @JSONField(name = "VenCode")
-        private String VenCode;
-        /*数量*/
-        @XmlElement(name = "Qty")
-        @JSONField(name = "Qty")
-        private String Qty;
-        /*组织编码*/
-        @XmlElement(name = "organizeCode")
-        @JSONField(name = "organizeCode")
-        private String organizeCode;
-        /*存货编码*/
-        @XmlElement(name = "InvCode")
-        @JSONField(name = "InvCode")
-        private String InvCode;
-        /**/
-        @XmlElement(name = "Num")
-        @JSONField(name = "Num")
-        private Integer Num;
-        /**/
-        @XmlElement(name = "index")
-        @JSONField(name = "index")
-        private String index;
-        /**/
-        @XmlElement(name = "PackRate")
-        @JSONField(name = "PackRate")
-        private String PackRate;
-        /**/
-        @XmlElement(name = "ISsurplusqty")
-        @JSONField(name = "ISsurplusqty")
-        private Boolean ISsurplusqty;
-        /*创建人*/
-        @XmlElement(name = "CreatePerson")
-        @JSONField(name = "CreatePerson")
-        private String CreatePerson;
         /*条码code*/
         @XmlElement(name = "BarCode")
         @JSONField(name = "BarCode")
         private String BarCode;
-        /*入库单号*/
-        @XmlElement(name = "BillNo")
-        @JSONField(name = "BillNo")
-        private String BillNo;
-        /**/
-        @XmlElement(name = "BillID")
-        @JSONField(name = "BillID")
-        private String BillID;
-        /*入库单号+行号*/
-        @XmlElement(name = "BillNoRow")
-        @JSONField(name = "BillNoRow")
-        private String BillNoRow;
         /*单据日期*/
         @XmlElement(name = "BillDate")
         @JSONField(name = "BillDate")
@@ -115,142 +50,90 @@ public class SysPuinstoreDTO {
         @XmlElement(name = "BillDid")
         @JSONField(name = "BillDid")
         private String BillDid;
-        /*来源单号（订单号）*/
-        @XmlElement(name = "sourceBillNo")
-        @JSONField(name = "sourceBillNo")
-        private String sourceBillNo;
-        /*来源单据DID;采购或委外单身ID*/
-        @XmlElement(name = "sourceBillDid")
-        @JSONField(name = "sourceBillDid")
-        private String sourceBillDid;
-        /*来源单据ID*/
-        @XmlElement(name = "sourceBillID")
-        @JSONField(name = "sourceBillID")
-        private String sourceBillID;
-        /*来源类型;PO 采购 OM委外*/
-        @XmlElement(name = "sourceBillType")
-        @JSONField(name = "sourceBillType")
-        private String sourceBillType;
-        /*来源单号+行号*/
-        @XmlElement(name = "SourceBillNoRow")
-        @JSONField(name = "SourceBillNoRow")
-        private String SourceBillNoRow;
-        /*实体类名*/
-        @XmlElement(name = "tag")
-        @JSONField(name = "tag")
-        private String tag;
+        /**/
+        @XmlElement(name = "BillID")
+        @JSONField(name = "BillID")
+        private String BillID;
+        /*入库单号*/
+        @XmlElement(name = "BillNo")
+        @JSONField(name = "BillNo")
+        private String BillNo;
+        /*入库单号+行号*/
+        @XmlElement(name = "BillNoRow")
+        @JSONField(name = "BillNoRow")
+        private String BillNoRow;
+        /*创建人*/
+        @XmlElement(name = "CreatePerson")
+        @JSONField(name = "CreatePerson")
+        private String CreatePerson;
+        /**/
+        @XmlElement(name = "ISsurplusqty")
+        @JSONField(name = "ISsurplusqty")
+        private Boolean ISsurplusqty;
         /*收发类别（入库类别编码）*/
         @XmlElement(name = "IcRdCode")
         @JSONField(name = "IcRdCode")
         private String IcRdCode;
+        /*库位编码*/
+        @XmlElement(name = "IsWhpos")
+        @JSONField(name = "IsWhpos")
+        private String IsWhpos;
+        /**/
+        @XmlElement(name = "Num")
+        @JSONField(name = "Num")
+        private Integer Num;
+        /**/
+        @XmlElement(name = "PackRate")
+        @JSONField(name = "PackRate")
+        private String PackRate;
+        /*数量*/
+        @XmlElement(name = "Qty")
+        @JSONField(name = "Qty")
+        private String Qty;
+        /*来源单号+行号*/
+        @XmlElement(name = "SourceBillNoRow")
+        @JSONField(name = "SourceBillNoRow")
+        private String SourceBillNoRow;
+        /*供应商编码*/
+        @XmlElement(name = "VenCode")
+        @JSONField(name = "VenCode")
+        private String VenCode;
+        /*供应商名称*/
+        @XmlElement(name = "VenName")
+        @JSONField(name = "VenName")
+        private String VenName;
+        /**/
+        @XmlElement(name = "index")
+        @JSONField(name = "index")
+        private String index;
         /**/
         @XmlElement(name = "iposcode")
         @JSONField(name = "iposcode")
         private String iposcode;
-
-        public String getIsWhpos() {
-            return IsWhpos;
-        }
-
-        public void setIsWhpos(String isWhpos) {
-            IsWhpos = isWhpos;
-        }
-
-        public String getIwhcode() {
-            return iwhcode;
-        }
-
-        public void setIwhcode(String iwhcode) {
-            this.iwhcode = iwhcode;
-        }
-
-        public String getInvName() {
-            return InvName;
-        }
-
-        public void setInvName(String invName) {
-            InvName = invName;
-        }
-
-        public String getVenName() {
-            return VenName;
-        }
-
-        public void setVenName(String venName) {
-            VenName = venName;
-        }
-
-        public String getVenCode() {
-            return VenCode;
-        }
-
-        public void setVenCode(String venCode) {
-            VenCode = venCode;
-        }
-
-        public String getQty() {
-            return Qty;
-        }
-
-        public void setQty(String qty) {
-            Qty = qty;
-        }
-
-        public String getOrganizeCode() {
-            return organizeCode;
-        }
-
-        public void setOrganizeCode(String organizeCode) {
-            this.organizeCode = organizeCode;
-        }
-
-        public String getInvCode() {
-            return InvCode;
-        }
-
-        public void setInvCode(String invCode) {
-            InvCode = invCode;
-        }
-
-        public Integer getNum() {
-            return Num;
-        }
-
-        public void setNum(Integer num) {
-            Num = num;
-        }
-
-        public String getIndex() {
-            return index;
-        }
-
-        public void setIndex(String index) {
-            this.index = index;
-        }
-
-        public String getPackRate() {
-            return PackRate;
-        }
-
-        public void setPackRate(String packRate) {
-            PackRate = packRate;
-        }
-
-        public boolean getISsurplusqty() {
-            return ISsurplusqty;
-        }
-
-        public void setISsurplusqty(boolean ISsurplusqty) {
-            this.ISsurplusqty = ISsurplusqty;
-        }
-
-        public String getCreatePerson() {
-            return CreatePerson;
-        }
-
-        public void setCreatePerson(String createPerson) {
-            CreatePerson = createPerson;
-        }
+        /*仓库编码*/
+        @XmlElement(name = "iwhcode")
+        @JSONField(name = "iwhcode")
+        private String iwhcode;
+        /*组织编码*/
+        @XmlElement(name = "organizeCode")
+        @JSONField(name = "organizeCode")
+        private String organizeCode;
+        /*来源单据DID;采购或委外单身ID*/
+        @XmlElement(name = "sourceBillDid")
+        @JSONField(name = "sourceBillDid")
+        private String sourceBillDid;
+        /*来源单号（订单号）*/
+        @XmlElement(name = "sourceBillNo")
+        @JSONField(name = "sourceBillNo")
+        private String sourceBillNo;
+        /*来源类型;PO 采购 OM委外*/
+        @XmlElement(name = "sourceBillType")
+        @JSONField(name = "sourceBillType")
+        private String sourceBillType;
+        /*实体类名*/
+        @XmlElement(name = "tag")
+        @JSONField(name = "tag")
+        private String tag;
 
         public String getBarCode() {
             return BarCode;
@@ -258,30 +141,6 @@ public class SysPuinstoreDTO {
 
         public void setBarCode(String barCode) {
             BarCode = barCode;
-        }
-
-        public String getBillNo() {
-            return BillNo;
-        }
-
-        public void setBillNo(String billNo) {
-            BillNo = billNo;
-        }
-
-        public String getBillID() {
-            return BillID;
-        }
-
-        public void setBillID(String billID) {
-            BillID = billID;
-        }
-
-        public String getBillNoRow() {
-            return BillNoRow;
-        }
-
-        public void setBillNoRow(String billNoRow) {
-            BillNoRow = billNoRow;
         }
 
         public String getBillDate() {
@@ -300,52 +159,44 @@ public class SysPuinstoreDTO {
             BillDid = billDid;
         }
 
-        public String getSourceBillNo() {
-            return sourceBillNo;
+        public String getBillID() {
+            return BillID;
         }
 
-        public void setSourceBillNo(String sourceBillNo) {
-            this.sourceBillNo = sourceBillNo;
+        public void setBillID(String billID) {
+            BillID = billID;
         }
 
-        public String getSourceBillDid() {
-            return sourceBillDid;
+        public String getBillNo() {
+            return BillNo;
         }
 
-        public void setSourceBillDid(String sourceBillDid) {
-            this.sourceBillDid = sourceBillDid;
+        public void setBillNo(String billNo) {
+            BillNo = billNo;
         }
 
-        public String getSourceBillID() {
-            return sourceBillID;
+        public String getBillNoRow() {
+            return BillNoRow;
         }
 
-        public void setSourceBillID(String sourceBillID) {
-            this.sourceBillID = sourceBillID;
+        public void setBillNoRow(String billNoRow) {
+            BillNoRow = billNoRow;
         }
 
-        public String getSourceBillType() {
-            return sourceBillType;
+        public String getCreatePerson() {
+            return CreatePerson;
         }
 
-        public void setSourceBillType(String sourceBillType) {
-            this.sourceBillType = sourceBillType;
+        public void setCreatePerson(String createPerson) {
+            CreatePerson = createPerson;
         }
 
-        public String getSourceBillNoRow() {
-            return SourceBillNoRow;
+        public Boolean getISsurplusqty() {
+            return ISsurplusqty;
         }
 
-        public void setSourceBillNoRow(String sourceBillNoRow) {
-            SourceBillNoRow = sourceBillNoRow;
-        }
-
-        public String getTag() {
-            return tag;
-        }
-
-        public void setTag(String tag) {
-            this.tag = tag;
+        public void setISsurplusqty(Boolean ISsurplusqty) {
+            this.ISsurplusqty = ISsurplusqty;
         }
 
         public String getIcRdCode() {
@@ -356,12 +207,124 @@ public class SysPuinstoreDTO {
             IcRdCode = icRdCode;
         }
 
+        public String getIsWhpos() {
+            return IsWhpos;
+        }
+
+        public void setIsWhpos(String isWhpos) {
+            IsWhpos = isWhpos;
+        }
+
+        public Integer getNum() {
+            return Num;
+        }
+
+        public void setNum(Integer num) {
+            Num = num;
+        }
+
+        public String getPackRate() {
+            return PackRate;
+        }
+
+        public void setPackRate(String packRate) {
+            PackRate = packRate;
+        }
+
+        public String getQty() {
+            return Qty;
+        }
+
+        public void setQty(String qty) {
+            Qty = qty;
+        }
+
+        public String getSourceBillNoRow() {
+            return SourceBillNoRow;
+        }
+
+        public void setSourceBillNoRow(String sourceBillNoRow) {
+            SourceBillNoRow = sourceBillNoRow;
+        }
+
+        public String getVenCode() {
+            return VenCode;
+        }
+
+        public void setVenCode(String venCode) {
+            VenCode = venCode;
+        }
+
+        public String getVenName() {
+            return VenName;
+        }
+
+        public void setVenName(String venName) {
+            VenName = venName;
+        }
+
+        public String getIndex() {
+            return index;
+        }
+
+        public void setIndex(String index) {
+            this.index = index;
+        }
+
         public String getIposcode() {
             return iposcode;
         }
 
         public void setIposcode(String iposcode) {
             this.iposcode = iposcode;
+        }
+
+        public String getIwhcode() {
+            return iwhcode;
+        }
+
+        public void setIwhcode(String iwhcode) {
+            this.iwhcode = iwhcode;
+        }
+
+        public String getOrganizeCode() {
+            return organizeCode;
+        }
+
+        public void setOrganizeCode(String organizeCode) {
+            this.organizeCode = organizeCode;
+        }
+
+        public String getSourceBillDid() {
+            return sourceBillDid;
+        }
+
+        public void setSourceBillDid(String sourceBillDid) {
+            this.sourceBillDid = sourceBillDid;
+        }
+
+        public String getSourceBillNo() {
+            return sourceBillNo;
+        }
+
+        public void setSourceBillNo(String sourceBillNo) {
+            this.sourceBillNo = sourceBillNo;
+        }
+
+        public String getSourceBillType() {
+            return sourceBillType;
+        }
+
+        public void setSourceBillType(String sourceBillType) {
+            this.sourceBillType = sourceBillType;
+        }
+
+        public String getTag() {
+            return tag;
+        }
+
+        public void setTag(String tag) {
+            this.tag = tag;
         }
     }
 

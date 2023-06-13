@@ -270,8 +270,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         if (AuditStatusEnum.AWAIT_AUDIT.getValue() == iAuditStatus) {//待审核状态
             //同步U8
             String json = getSysPuinstoreDto(puinstore);
-            String post = new BaseInU8Util().base_in(json);
-            System.out.println(post);
+            String u8Billno = new BaseInU8Util().base_in(json);
+            System.out.println(u8Billno);
 
             // 状态改为已审核
             puinstore.setCAuditName(JBoltUserKit.getUserName());
@@ -279,8 +279,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             puinstore.setCUpdateName(JBoltUserKit.getUserName());
             puinstore.setDUpdateTime(date);
             puinstore.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-            PurchaseOrderM purchaseOrderM = findU8BillNo(puinstore);
-            puinstore.setU8BillNo(purchaseOrderM != null ? purchaseOrderM.getCDocNo() : "");
+            //PurchaseOrderM purchaseOrderM = findU8BillNo(puinstore);
+            puinstore.setU8BillNo(u8Billno);
             puinstore.setIAuditWay(1);
             //
             puinstoreList.add(puinstore);
@@ -444,9 +444,9 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     /**
      * 删除
      */
-    public Ret delete(Long id) {
+    public Ret deleteByAutoid(Long id) {
         tx(() -> {
-            //未审核状态下才可以删除
+            //1、未审核状态下直接删除
             checkDelete(id);
             //TODO 先通知U8删除
             SysPuinstore puinstore = findById(id);
@@ -484,16 +484,16 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     /**
      * 批量删除主从表
      */
-    public Ret deleteRmRdByIds(String ids) {
+    /*public Ret deleteRmRdByIds(String ids) {
         tx(() -> {
             String[] split = ids.split(",");
             for (String id : split) {
-                this.delete(Long.valueOf(id));
+                this.deleteByAutoid(Long.valueOf(id));
             }
             return true;
         });
         return ret(true);
-    }
+    }*/
 
     /*
      * 获取删除的json
@@ -659,36 +659,31 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         int i = 1;
         for (SysPuinstoredetail detail : detailList) {
-            Record record = findPurchaseOrderDBatchByCBarcode(detail.getSpotTicket());
-
             Main main = new Main();
-            main.setInvName(record.getStr("cinvname"));
-            main.setInvCode(record.getStr("cinvcode"));
-            main.setBillID(puinstore.getAutoID());//主表id
-            main.setBillDid(detail.getAutoID());//明细表id
-            main.setBillNoRow(puinstore.getBillNo() + "-" + i);//主表billno-明细表rowno
-
-            main.setIsWhpos("1"); //
-            main.setIwhcode(detail.getWhcode());
-            main.setVenName(null != vendor ? vendor.getCVenName() : "");
-            main.setVenCode(puinstore.getVenCode());
-            main.setQty(detail.getQty().stripTrailingZeros().toPlainString());
-            main.setOrganizeCode(getOrgCode());
-            main.setNum(0);
-            main.setIndex(String.valueOf(i));
-            main.setPackRate("0");
-            main.setISsurplusqty(false);
-            main.setCreatePerson(detail.getCCreateName());
             main.setBarCode(detail.getSpotTicket()); //现品票
-            main.setBillNo(puinstore.getBillNo());
             main.setBillDate(puinstore.getBillDate());
-            main.setSourceBillNo(detail.getSourceBillNo());
-            main.setSourceBillDid(detail.getSourceBillDid());
-            main.setSourceBillType(detail.getSourceBillType());
-            main.setSourceBillNoRow(detail.getSourceBillNoRow());
-            main.setTag("PUInStore");
+            main.setBillDid(detail.getAutoID());//明细表id
+            main.setBillID(puinstore.getAutoID());//主表id
+            main.setBillNo(puinstore.getBillNo());
+            main.setBillNoRow(puinstore.getBillNo() + "-" + i);//主表billno-明细表rowno
+            main.setCreatePerson(detail.getCCreateName());
+            main.setISsurplusqty(false);
             main.setIcRdCode(puinstore.getRdCode());
-            main.setIposcode(detail.getPosCode()); //库区
+            main.setIsWhpos("1"); //
+            main.setNum(0);
+            main.setPackRate("0");
+            main.setQty(detail.getQty().stripTrailingZeros().toPlainString());
+            main.setSourceBillNoRow(detail.getSourceBillNoRow());
+            main.setVenCode(puinstore.getVenCode());
+            main.setVenName(null != vendor ? vendor.getCVenName() : "");
+            main.setIndex(String.valueOf(i));
+            main.setIposcode(""); //库区
+            main.setIwhcode(detail.getWhcode());
+            main.setOrganizeCode(getOrgCode());
+            main.setSourceBillDid(detail.getSourceBillDid());
+            main.setSourceBillNo(detail.getSourceBillNo());
+            main.setSourceBillType("PO");//采购 =PO,委外=OM
+            main.setTag("PUInStore");
             MainData.add(main);
             i = i + 1;
         }
@@ -716,14 +711,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     public Object printData(Kv kv) {
         List<Record> recordList = dbTemplate("syspuinstore.getPrintData", kv).find();
         return recordList;
-    }
-
-    public Record findPurchaseOrderDBatchByCBarcode(String cbarcode) {
-        return dbTemplate("syspuinstore.findPurchaseOrderDBatchByCBarcode", Kv.by("cbarcode", cbarcode)).findFirst();
-    }
-
-    public PurchaseOrderM findU8BillNo(SysPuinstore puinstore) {
-        return purchaseOrderMService.findByCOrerNo(puinstore.getSourceBillNo());
     }
 
     /*
@@ -818,12 +805,12 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
 
             //2、同步于U8
             String json = getSysPuinstoreDto(sysPuinstore);
-            String post = new BaseInU8Util().base_in(json);
-            System.out.println(post);
+            String u8Billno = new BaseInU8Util().base_in(json);
+            System.out.println(u8Billno);
 
             //3、如果成功，给u8的单据号；不成功，把单据号置为空，状态改为审核不通过
-            PurchaseOrderM purchaseOrderM = findU8BillNo(sysPuinstore);
-            sysPuinstore.setU8BillNo(purchaseOrderM != null ? purchaseOrderM.getCDocNo() : "");
+            //PurchaseOrderM purchaseOrderM = findU8BillNo(sysPuinstore);
+            sysPuinstore.setU8BillNo(u8Billno);
             ValidationUtils.isTrue(sysPuinstore.update(), "审核通过失败！！");
 
             return true;

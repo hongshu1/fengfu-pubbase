@@ -1,5 +1,8 @@
 package cn.rjtech.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import cn.hutool.http.HttpUtil;
 import cn.rjtech.config.AppConfig;
 
@@ -25,12 +28,11 @@ public class BaseInU8Util {
 
         String code = res.getString("code");
         String message = res.getString("message");
-        if (message == null) {
-            message = res.getString("msg");
-        }
+        String u8Billno = extractU8Billno(message.trim());
+
         ValidationUtils.notNull(code, "json:" + json + ";" + message);
         ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);
-        return post;
+        return u8Billno;
     }
 
     /*
@@ -42,15 +44,23 @@ public class BaseInU8Util {
         JSONObject res = JSON.parseObject(post);
 
         ValidationUtils.notNull(res, "解析JSON为空");
-
         String code = res.getString("code");
         String message = res.getString("message");
-        if (message == null) {
-            message = res.getString("msg");
-        }
+
         ValidationUtils.notNull(code, "json:" + json + ";" + message);
         ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);
         return post;
+    }
+
+    /*
+     * 提取字符串里面的数字
+     * */
+    public String extractU8Billno(String message) {
+        String regEx = "[^0-9]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(message);
+        String result = m.replaceAll("").trim();
+        return result;
     }
 
 }

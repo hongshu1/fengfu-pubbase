@@ -1,8 +1,8 @@
 #sql("recpor")
 SELECT
-    t1.AutoID,t1.BillType,t1.OrganizeCode,t1.BillDate,t1.RdCode,t1.createdate,t1.createperson,
+    t1.AutoID,t1.BillType,t1.OrganizeCode,t1.BillDate,t1.RdCode,t1.dCreateTime,t1.cCreateName,
     t1.DeptCode,t1.SourceBillNo,t1.SourceBillID,t1.VenCode,t1.Memo,t1.billno,
-    t1.AuditPerson,t1.AuditDate,t1.ModifyDate,t1.ModifyPerson,t1.iAuditStatus,t1.ibustype,t1.U8BillNo,
+    t1.cAuditName,t1.AuditDate,t1.dUpdateTime,t1.cUpdateName,t1.iAuditStatus,t1.ibustype,t1.U8BillNo,
     t2.cRdCode,t2.cRdName,
     t3.Whcode,
     t4.cWhName,
@@ -34,12 +34,12 @@ WHERE 1=1
     and t1.whcode = #para(whcode)
 #end
 #if(startTime)
-    and t1.CreateDate >= #para(startTime)
+    and t1.dCreateTime >= #para(startTime)
 #end
 #if(endTime)
-    and t1.CreateDate <= #para(endTime)
+    and t1.dCreateTime <= #para(endTime)
 #end
-order by t1.ModifyDate desc
+order by t1.dUpdateTime desc
 #end
 
 #sql("dList")
@@ -49,7 +49,7 @@ where 1=1
 #if(masid)
     and a.MasID = #para(masid)
 #end
-order by a.ModifyDate desc
+order by a.dUpdateTime desc
 #end
 
 #sql("getWareHouseName")
@@ -72,7 +72,7 @@ where 1=1
 #if(invcode)
   and a.invcode = #para(invcode)
 #end
-    order by a.ModifyDate desc
+    order by a.dUpdateTime desc
 #end
 
 #sql("getSysPODetail")
@@ -142,14 +142,14 @@ where 1=1
 #end
 #end
 
-#sql("findPurchaseOrderDBatchByCBarcode")
-SELECT
-t1.iautoid as batchAutoid,t1.iPurchaseOrderDid,t1.iinventoryId,
-t2.cInvCode,t2.cInvName,t2.cInvName1,t2.cInvCode1,t2.cInvStd
-FROM PS_PurchaseOrderDBatch t1
-left join bd_inventory t2 on t1.iinventoryId = t1.iAutoId
-where 1=1 and t1.cbarcode=#para(cbarcode)
-#end
+# #sql("findPurchaseOrderDBatchByCBarcode")
+# SELECT
+# t1.iautoid as batchAutoid,t1.iPurchaseOrderDid,t1.iinventoryId,
+# t2.cInvCode,t2.cInvName,t2.cInvName1,t2.cInvCode1,t2.cInvStd
+# FROM PS_PurchaseOrderDBatch t1
+# left join bd_inventory t2 on t1.iinventoryId = t1.iAutoId
+# where 1=1 and t1.cbarcode=#para(cbarcode)
+# #end
 
 #sql("findEditAndOnlySeeByAutoid")
 select t1.*,t2.cvenname,t3.cDepName,t4.crdname,t5.cptcode,t5.cptname
@@ -162,5 +162,5 @@ where 1=1
     #if(autoid)
     and t1.AutoID = #para(autoid)
     #end
-    order by t1.ModifyDate desc
+    order by t1.dUpdateTime desc
 #end
