@@ -588,26 +588,26 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
 
             // 根据存货编码的初物开关是否打开，打开则全部走初物
-            boolean button = this.button(row.getStr("cinvcode"));
-            if (button) {
-                Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
-                // 推送初物 PL_RcvDocQcFormM 来料
-                SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?",
-                        sysPureceivedetail.getSourceBillNo());
-                this.insertRcvDocQcFormM(row, first, user, veniAutoId);
-                sysPureceivedetail.setIsInitial("1");
-            } else {
-                if (StrUtil.isBlank(row.getStr("isinitial"))) {
-                    sysPureceivedetail.setIsInitial("0");
-                } else {
-                    Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
-                    // 推送初物 PL_RcvDocQcFormM 来料
-                    SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?",
-                            sysPureceivedetail.getSourceBillNo());
-                    this.insertRcvDocQcFormM(row, first, user, veniAutoId);
-                    sysPureceivedetail.setIsInitial("1");
-                }
-            }
+//            boolean button = this.button(row.getStr("cinvcode"));
+//            if (button) {
+//                Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
+//                // 推送初物 PL_RcvDocQcFormM 来料
+//                SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?",
+//                        sysPureceivedetail.getSourceBillNo());
+//                this.insertRcvDocQcFormM(row, first, user, veniAutoId);
+//                sysPureceivedetail.setIsInitial("1");
+//            } else {
+//                if (StrUtil.isBlank(row.getStr("isinitial"))) {
+//                    sysPureceivedetail.setIsInitial("0");
+//                } else {
+//                    Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
+//                    // 推送初物 PL_RcvDocQcFormM 来料
+//                    SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?",
+//                            sysPureceivedetail.getSourceBillNo());
+//                    this.insertRcvDocQcFormM(row, first, user, veniAutoId);
+//                    sysPureceivedetail.setIsInitial("1");
+//                }
+//            }
             sysdetaillist.add(sysPureceivedetail);
         }
         syspureceivedetailservice.batchSave(sysdetaillist);
@@ -659,26 +659,26 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
 
             // 根据存货编码的初物开关是否打开，打开则全部走初物
-            boolean button = this.button(row.getStr("cinvcode"));
-            if (button) {
-                Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
-                // 推送初物 PL_RcvDocQcFormM 来料
-                SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?",
-                        sysPureceivedetail.getSourceBillNo());
-                this.insertRcvDocQcFormM(row, first, user, veniAutoId);
-                sysPureceivedetail.setIsInitial("1");
-            } else {
-                if (StrUtil.isBlank(row.getStr("isinitial"))) {
-                    sysPureceivedetail.setIsInitial("0");
-                } else {
-                    Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
-                    // 推送初物 PL_RcvDocQcFormM 来料
-                    SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?",
-                            sysPureceivedetail.getSourceBillNo());
-                    this.insertRcvDocQcFormM(row, first, user, veniAutoId);
-                    sysPureceivedetail.setIsInitial("1");
-                }
-            }
+//            boolean button = this.button(row.getStr("cinvcode"));
+//            if (button) {
+//                Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
+//                // 推送初物 PL_RcvDocQcFormM 来料
+//                SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?",
+//                        sysPureceivedetail.getSourceBillNo());
+//                this.insertRcvDocQcFormM(row, first, user, veniAutoId);
+//                sysPureceivedetail.setIsInitial("1");
+//            } else {
+//                if (StrUtil.isBlank(row.getStr("isinitial"))) {
+//                    sysPureceivedetail.setIsInitial("0");
+//                } else {
+//                    Long veniAutoId = vendorservice.queryAutoIdByCvencode(vencode);
+//                    // 推送初物 PL_RcvDocQcFormM 来料
+//                    SysPureceive first = findFirst("select *  from T_Sys_PUReceive where SourceBillNo=?",
+//                            sysPureceivedetail.getSourceBillNo());
+//                    this.insertRcvDocQcFormM(row, first, user, veniAutoId);
+//                    sysPureceivedetail.setIsInitial("1");
+//                }
+//            }
 
             sysdetaillist.add(sysPureceivedetail);
         }
@@ -893,12 +893,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
 
     //往采购订单入库主表插入
-    public String installsyspuinstore(SysPureceive byId, Date now, User user) {
+    public String installsyspuinstore(SysPureceive byId, Date now, User user,Record barcode) {
         SysPuinstore sysPuinstore = new SysPuinstore();
         sysPuinstore.setBillNo(byId.getBillNo());
         sysPuinstore.setBillType(byId.getBillType());
         sysPuinstore.setBillDate(DateUtil.formatDate(now));
-        sysPuinstore.setRdCode(byId.getRdCode());
         sysPuinstore.setOrganizeCode(getOrgCode());
         sysPuinstore.setSourceBillNo(byId.getSourceBillNo());
 //        sysPuinstore.setSourceBillID(byId.getSourceBillID());
@@ -911,6 +910,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         sysPuinstore.setWhName(byId.getWhName());
         sysPuinstore.setIAuditStatus(0);
         sysPuinstore.setIsDeleted(false);
+        sysPuinstore.setBillType(barcode.getStr("ipurchasetypeid"));
+        sysPuinstore.setDeptCode(barcode.getStr("cdepcode"));
+        sysPuinstore.setIBusType(Integer.valueOf(barcode.getStr("ibustype")));
+        sysPuinstore.setRdCode(barcode.getStr("scrdcode"));
         syspuinstoreservice.save(sysPuinstore);
         return sysPuinstore.getAutoID();
     }
@@ -994,12 +997,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
                 byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
                 byId.update();
-                //根据id查出从表的数据，生成采购入库列表 一个收料单号对应一个入库单号。 排除是初物的数据
-                //根据条码查出 采购订单主表数据，添加到入库主表信息，然后加入从表数据（拆分 原则 是否初物字段）
-                String autoID = this.installsyspuinstore(byId, now, user);
                 //查从表数据
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s);
                 boolean once = true;
+                String autoID = "";
                 int i = 1;
                 for (SysPureceivedetail f : firstBy) {
                     Kv kv = new Kv();
@@ -1014,16 +1015,14 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                         this.insertRcvDocQcFormM(row, first, user, veniAutoId);
                     } else {
                         if (f.getIsInitial().equals("0")) {
+                            //根据id查出从表的数据，生成采购入库列表 一个收料单号对应一个入库单号。 排除是初物的数据
+                            //根据条码查出 采购订单主表数据，添加到入库主表信息，然后加入从表数据（拆分 原则 是否初物字段）
+
                             //根据条码查询出采购订单从表以及主表信息
                             Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", f.getBarcode())).findFirst();
                             //修改主表新增(后加 缺少字段在这里补)
                             if (once) {
-                                SysPuinstore sysPuinstore = syspuinstoreservice.findById(autoID);
-                                sysPuinstore.setBillType(barcode.getStr("ipurchasetypeid"));
-                                sysPuinstore.setDeptCode(barcode.getStr("cdepcode"));
-                                sysPuinstore.setIBusType(Integer.valueOf(barcode.getStr("ibustype")));
-                                sysPuinstore.setRdCode(barcode.getStr("scrdcode"));
-                                syspuinstoreservice.update(sysPuinstore);
+                                autoID = this.installsyspuinstore(byId, now, user,barcode);
                                 once = false;
                             }
                             //往采购订单入库表插入信息

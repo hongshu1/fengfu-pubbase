@@ -1,0 +1,99 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page">
+<div class="jbolt_page_title">
+			<form class="form-inline text-left" id="periodContrastForm"  onsubmit="return false;" method="post">
+				<div class="form-group row">
+					<label class="col-md-1">对比期间</label>
+					<input type="text" data-date data-type="month" data-fmt="yyyy-MM" autocomplete="off" class="form-control col-1" placeholder="开始年月" data-tips="请选择开始年月" maxlength="10" id="dstarttime1_period_contrast" name="dstarttime1" value="#(dstarttime1??)"/>
+					<input type="text" data-date data-type="month" data-fmt="yyyy-MM" autocomplete="off" class="form-control col-1" placeholder="截止年月" data-tips="请选择截止年月" maxlength="10" id="dendtime1_period_contrast" name="dendtime1" value="#(dendtime1??)"/>
+					<label class="col-md-1">VS</label>
+					<input type="text" data-date data-type="month" data-fmt="yyyy-MM" autocomplete="off" class="form-control col-1" placeholder="开始年月" data-tips="请选择开始年月" maxlength="10" id="dstarttime2_period_contrast" name="dstarttime2" value="#(dstarttime2??)"/>
+					<input type="text" data-date data-type="month" data-fmt="yyyy-MM" autocomplete="off" class="form-control col-1" placeholder="截止年月" data-tips="请选择截止年月" maxlength="10" id="dendtime2_period_contrast" name="dendtime2" value="#(dendtime2??)"/>
+					<label class="col-md-1">VS</label>
+					<input type="text" data-date data-type="month" data-fmt="yyyy-MM" autocomplete="off" class="form-control col-1" placeholder="开始年月" data-tips="请选择开始年月" maxlength="10" id="dstarttime3_period_contrast" name="dstarttime3" value="#(dstarttime3??)"/>
+					<input type="text" data-date data-type="month" data-fmt="yyyy-MM" autocomplete="off" class="form-control col-1" placeholder="截止年月" data-tips="请选择截止年月" maxlength="10" id="dendtime3_period_contrast" name="dendtime3" value="#(dendtime3??)"/>
+					<label class="col-md-1">部门</label>
+					<select class="form-control"
+								name="cdepcode"
+								id="cdepcode_period_contrast"
+								data-select-type="select2"
+								data-autoload
+								data-tips="部门"
+								data-url="admin/department/treeDatas"
+								data-text="=部门="
+								data-text-attr="cdepname"
+								data-value-attr="cdepcode"
+								data-setvalueto="cdepcode"
+								data-value=""
+								data-width="200">
+					</select>						
+				</div>
+				<div class="form-group row">
+					<label class="col-md-1">对比类型</label>
+                    <select class="form-control" data-autoload name="ibudgettype1" id="ibudgettype1_period_contrast" style="width:120px!important">
+                        <option value="">=预算类型=</option>
+                        <option value="1">全年预算</option>
+                        <option value="2">下半年修订</option>
+                        <option value="3">实绩预测</option>
+                        <option value="4">实绩</option>
+                    </select>
+                    <label class="col-md-2"></label>
+                    <select class="form-control" data-autoload name="ibudgettype2" id="ibudgettype2_period_contrast" style="width:120px!important">
+                        <option value="">=预算类型=</option>
+                        <option value="1">全年预算</option>
+                        <option value="2">下半年修订</option>
+                        <option value="3">实绩预测</option>
+                        <option value="4">实绩</option>
+                    </select>	
+                    <label class="col-md-2"></label>
+                    <select class="form-control" data-autoload name="ibudgettype3" id="ibudgettype3_period_contrast" style="width:120px!important">
+                        <option value="">=预算类型=</option>
+                        <option value="1">全年预算</option>
+                        <option value="2">下半年修订</option>
+                        <option value="3">实绩预测</option>
+                        <option value="4">实绩</option>
+                    </select>
+                    <button type="button" class="btn btn-outline-secondary" style="margin-left: 20px;" onclick="periodContrastSubmitClick()"><i class="fa fa-search"></i> 查询</button>
+					<button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>                                        
+				</div>
+			</form>
+</div>
+		
+<div class="jbolt_page_content">
+	 #ajaxPortal("/admin/expensebudget/periodContrastTableIndex","periodContrastTableIndex",true)
+</div>
+</div>
+#end
+#define js()
+<script>
+var periodContrastTableIndex=$("#periodContrastTableIndex");
+function periodContrastSubmitClick(){
+	if(!FormChecker.check("#periodContrastForm")) return;
+	
+	var dstarttime1_period_contrast = $("#dstarttime1_period_contrast").val();
+	var dendtime1_period_contrast = $("#dendtime1_period_contrast").val();
+	var ibudgettype1_period_contrast = $("#ibudgettype1_period_contrast").val();
+	var dstarttime2_period_contrast = $("#dstarttime2_period_contrast").val();
+	var dendtime2_period_contrast = $("#dendtime2_period_contrast").val();
+	var ibudgettype2_period_contrast = $("#ibudgettype2_period_contrast").val();
+	var dstarttime3_period_contrast = $("#dstarttime3_period_contrast").val();
+	var dendtime3_period_contrast = $("#dendtime3_period_contrast").val();
+	var ibudgettype3_period_contrast = $("#ibudgettype3_period_contrast").val();
+	var paraStr = '?dstarttime1='+dstarttime1_period_contrast+"&dendtime1="+dendtime1_period_contrast+"&ibudgettype1="+ibudgettype1_period_contrast
+	+"&dstarttime2="+dstarttime2_period_contrast+"&dendtime2="+dendtime2_period_contrast+"&ibudgettype2="+ibudgettype2_period_contrast
+	+"&dstarttime3="+dstarttime3_period_contrast+"&dendtime3="+dendtime3_period_contrast+"&ibudgettype3="+ibudgettype3_period_contrast;
+	var url="/admin/expensebudget/periodContrastTableIndex"+paraStr;
+ 	AjaxPortalUtil.go(periodContrastTableIndex, url);
+}
+function ajaxSuccessHandler_periodcontrast(table) {
+	   $('.jbolt_table').tablesMergeCell({
+	      cols: [1,2,3]
+	   })
+	   
+}
+</script>
+
+#end
+
