@@ -149,6 +149,22 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     }
 
     /**
+     * 批量审核
+     */
+    public void batchApprove()
+    {
+        renderJson(service.batchApprove(get("ids")));
+    }
+
+    /**
+     * 批量反审
+     */
+    public void batchReverseApprove()
+    {
+        renderJson(service.batchReverseApprove(get("ids")));
+    }
+
+    /**
      * 模板下载
      */
     @SuppressWarnings("unchecked")

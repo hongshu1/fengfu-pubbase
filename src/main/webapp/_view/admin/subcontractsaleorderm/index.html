@@ -108,7 +108,7 @@
 
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="subcontractsaleorderm_toolbar_#(pageId)">
-            <div class="" role="group" aria-label="btn-group">
+            <div class="btn-group btn-group-sm  " role="group" aria-label="btn-group">
                 <button data-openpage="dialog" data-area="100%,100%" data-handler="jboltTablePageToFirst" data-title="新增委外销售订单" data-url="admin/subcontractsaleorderm/add" class="btn btn-outline-secondary btn-sm">新增</button>
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/subcontractsaleorderm/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-secondary btn-sm" >批量删除</button>
                 #include("/_view/_common/_batch_approval_btns.html", formSn="Co_SubcontractSaleOrderM", uri="admin/subcontractsaleorderm")

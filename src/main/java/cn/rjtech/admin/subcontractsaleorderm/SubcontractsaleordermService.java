@@ -20,6 +20,7 @@ import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.OrderStatusEnum;
+import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.Subcontractsaleorderm;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -31,7 +32,9 @@ import com.jfinal.plugin.activerecord.TableMapping;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 委外销售订单主表 Service
@@ -344,6 +347,68 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
                 return null;
             });
 
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 批量审批
+     * @param ids
+     * @return
+     */
+    public Ret batchApprove(String ids) {
+        tx(() -> {
+            formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> null, (formAutoId) -> {
+                List<Subcontractsaleorderm> list = getListByIds(ids);
+                list = list.stream().filter(Objects::nonNull).map(item -> {
+                    item.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+                    return item;
+                }).collect(Collectors.toList());
+                ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
+                return null;
+            });
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 批量反审
+     * @param ids
+     * @return
+     */
+    public Ret batchReverseApprove(String ids) {
+        tx(() -> {
+            List<Subcontractsaleorderm> list = getListByIds(ids);
+            for (Subcontractsaleorderm subcontractsaleorderm : list) {
+                // 处理订单审批数据
+                formApprovalService.reverseApprove(subcontractsaleorderm.getIAutoId(),
+                        table(), primaryKey(), subcontractsaleorderm.getIAuditStatus(), "cn.rjtech.admin.subcontractsaleorderm.SubcontractsaleordermService");
+
+                // 处理订单数据
+                OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(subcontractsaleorderm.getIOrderStatus());
+                switch (orderStatusEnum) {
+                    case AWAIT_AUDIT:
+                        subcontractsaleorderm.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                        break;
+                    case APPROVED:
+                        subcontractsaleorderm.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
+
+            // 判断订单是否存在已审核的反审批
+            if (list.stream().anyMatch(item -> item.getIOrderStatus() == OrderStatusEnum.AWAIT_AUDIT.getValue())) {
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
+            }
             return true;
         });
         return SUCCESS;

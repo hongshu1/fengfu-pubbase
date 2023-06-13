@@ -29,6 +29,8 @@ import com.jfinal.plugin.activerecord.Record;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 客户订单-周间客户订单
@@ -318,6 +320,70 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     }
 
     public Ret saveUpdateCplanTime(JBoltTable jBoltTable) {
+        return SUCCESS;
+    }
+
+    /**
+     * 批量审批
+     *
+     * @param ids
+     * @return
+     */
+    public Ret batchApprove(String ids) {
+        tx(() -> {
+            formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> null, (formAutoId) -> {
+                List<WeekOrderM> list = getListByIds(ids);
+                list = list.stream().filter(Objects::nonNull).map(item -> {
+                    item.setIOrderStatus(OrderStatusEnum.APPROVED.getValue());
+                    return item;
+                }).collect(Collectors.toList());
+                ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+                return null;
+            });
+
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 批量反审批
+     *
+     * @param ids
+     * @return
+     */
+    public Ret batchReverseApprove(String ids) {
+        tx(() -> {
+            List<WeekOrderM> list = getListByIds(ids);
+            for (WeekOrderM weekOrderM : list) {
+                // 处理订单审批数据
+                formApprovalService.reverseApprove(weekOrderM.getIAutoId(),
+                        table(), primaryKey(), weekOrderM.getIAuditStatus(), "cn.rjtech.admin.weekorderm.WeekOrderMService");
+
+                // 处理订单数据
+                OrderStatusEnum orderStatusEnum = OrderStatusEnum.toEnum(weekOrderM.getIOrderStatus());
+                switch (orderStatusEnum) {
+                    case AWAIT_AUDIT:
+                        weekOrderM.setIOrderStatus(OrderStatusEnum.NOT_AUDIT.getValue());
+                        break;
+                    case APPROVED:
+                        weekOrderM.setIOrderStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
+
+            // 判断订单是否存在已审核的反审批
+            if (list.stream().anyMatch(item -> item.getIOrderStatus() == OrderStatusEnum.AWAIT_AUDIT.getValue())) {
+                // 修改客户计划汇总
+                cusOrderSumService.algorithmSum();
+            }
+            return true;
+        });
         return SUCCESS;
     }
 }
