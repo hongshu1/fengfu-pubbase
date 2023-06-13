@@ -384,15 +384,15 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
 
             for (AnnualOrderM annualOrderM : list) {
                 // 处理订单审批数据
-                formApprovalService.reverseApproveByStatus(annualOrderM.getIAutoId(), table(), primaryKey(), (formAutoId) -> null, (formAutoId) ->
+                Long id = annualOrderM.getIAutoId();
+                formApprovalService.reverseApproveByStatus(id, table(), primaryKey(), (formAutoId) -> null, (formAutoId) ->
                 {
                     // 处理订单状态
-                    annualOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
+                    ValidationUtils.isTrue(updateColumn(id, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
                     return null;
                 });
             }
 
-            ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
             // 修改客户计划汇总
             cusOrderSumService.algorithmSum();
             return true;

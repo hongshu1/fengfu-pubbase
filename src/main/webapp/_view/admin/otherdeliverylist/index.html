@@ -72,8 +72,8 @@
 	<div class="jbolt_table_toolbar" id="otherOutList_toolbar_#(pageId)">
 		<div class="" role="group" aria-label="btn-group">
 			<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增出库管理-其他出库单列表"  data-url="admin/otherdeliverylist/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/otherdeliverylist/approve?mark=2&&iAutoId=" data-confirm="确定审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量审核</button>
-			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"  data-url="admin/otherdeliverylist/NoApprove?ids=" data-confirm="确定反审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量反审核</button>
+<!--			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/otherdeliverylist/approve?mark=2&&iAutoId=" data-confirm="确定审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量审核</button>-->
+<!--			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"  data-url="admin/otherdeliverylist/NoApprove?ids=" data-confirm="确定反审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量反审核</button>-->
 			<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/otherdeliverylist/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 批量删除</button>
 			#include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_OtherOut",uri="admin/otherdeliverylist",primaryKeyName="AutoID")
 		</div>

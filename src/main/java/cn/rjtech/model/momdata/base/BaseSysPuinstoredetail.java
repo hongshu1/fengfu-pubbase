@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**AutoID*/
     public static final String AUTOID = "AutoID";
     /**来源类型;PO 采购 OM委外*/
@@ -39,13 +40,13 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
     /**备注*/
     public static final String MEMO = "Memo";
     /**创建人*/
-    public static final String CREATEPERSON = "CreatePerson";
+    public static final String CCREATENAME = "cCreateName";
     /**创建时间*/
-    public static final String CREATEDATE = "CreateDate";
+    public static final String DCREATETIME = "dCreateTime";
     /**修改人*/
-    public static final String MODIFYPERSON = "ModifyPerson";
+    public static final String CUPDATENAME = "cUpdateName";
     /**修改时间*/
-    public static final String MODIFYDATE = "ModifyDate";
+    public static final String DUPDATETIME = "dUpdateTime";
     /**现品票*/
     public static final String SPOTTICKET = "spotTicket";
     /**是否删除：0. 否 1. 是*/
@@ -58,8 +59,8 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
     public static final String PUUNITCODE = "PuUnitCode";
     /**采购单位名称*/
     public static final String PUUNITNAME = "PuUnitName";
-	/**存货编码*/
-	public static final String INVCODE = "InvCode";
+    /**存货编码*/
+    public static final String INVCODE = "invcode";
 	/**
 	 * AutoID
 	 */
@@ -301,69 +302,69 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
 	/**
 	 * 创建人
 	 */
-	public M setCreatePerson(java.lang.String CreatePerson) {
-		set("CreatePerson", CreatePerson);
+	public M setCCreateName(java.lang.String cCreateName) {
+		set("cCreateName", cCreateName);
 		return (M)this;
 	}
 
 	/**
 	 * 创建人
 	 */
-	@JBoltField(name="createperson" ,columnName="CreatePerson",type="String", remark="创建人", required=false, maxLength=30, fixed=0, order=15)
-	@JSONField(name = "createperson")
-	public java.lang.String getCreatePerson() {
-		return getStr("CreatePerson");
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人", required=false, maxLength=30, fixed=0, order=15)
+	@JSONField(name = "ccreatename")
+	public java.lang.String getCCreateName() {
+		return getStr("cCreateName");
 	}
 
 	/**
 	 * 创建时间
 	 */
-	public M setCreateDate(java.util.Date CreateDate) {
-		set("CreateDate", CreateDate);
+	public M setDCreateTime(java.util.Date dCreateTime) {
+		set("dCreateTime", dCreateTime);
 		return (M)this;
 	}
 
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="createdate" ,columnName="CreateDate",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=16)
-	@JSONField(name = "createdate")
-	public java.util.Date getCreateDate() {
-		return getDate("CreateDate");
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=16)
+	@JSONField(name = "dcreatetime")
+	public java.util.Date getDCreateTime() {
+		return getDate("dCreateTime");
 	}
 
 	/**
 	 * 修改人
 	 */
-	public M setModifyPerson(java.lang.String ModifyPerson) {
-		set("ModifyPerson", ModifyPerson);
+	public M setCUpdateName(java.lang.String cUpdateName) {
+		set("cUpdateName", cUpdateName);
 		return (M)this;
 	}
 
 	/**
 	 * 修改人
 	 */
-	@JBoltField(name="modifyperson" ,columnName="ModifyPerson",type="String", remark="修改人", required=false, maxLength=30, fixed=0, order=17)
-	@JSONField(name = "modifyperson")
-	public java.lang.String getModifyPerson() {
-		return getStr("ModifyPerson");
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="修改人", required=false, maxLength=30, fixed=0, order=17)
+	@JSONField(name = "cupdatename")
+	public java.lang.String getCUpdateName() {
+		return getStr("cUpdateName");
 	}
 
 	/**
 	 * 修改时间
 	 */
-	public M setModifyDate(java.util.Date ModifyDate) {
-		set("ModifyDate", ModifyDate);
+	public M setDUpdateTime(java.util.Date dUpdateTime) {
+		set("dUpdateTime", dUpdateTime);
 		return (M)this;
 	}
 
 	/**
 	 * 修改时间
 	 */
-	@JBoltField(name="modifydate" ,columnName="ModifyDate",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=18)
-	@JSONField(name = "modifydate")
-	public java.util.Date getModifyDate() {
-		return getDate("ModifyDate");
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=18)
+	@JSONField(name = "dupdatetime")
+	public java.util.Date getDUpdateTime() {
+		return getDate("dUpdateTime");
 	}
 
 	/**
@@ -471,18 +472,18 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
 	/**
 	 * 存货编码
 	 */
-	public M setInvCode(java.lang.String InvCode) {
-		set("InvCode", InvCode);
+	public M setInvcode(java.lang.String invcode) {
+		set("invcode", invcode);
 		return (M)this;
 	}
 
 	/**
 	 * 存货编码
 	 */
-	@JBoltField(name="invcode" ,columnName="InvCode",type="String", remark="存货编码", required=false, maxLength=30, fixed=0, order=5)
+	@JBoltField(name="invcode" ,columnName="invcode",type="String", remark="存货编码", required=false, maxLength=30, fixed=0, order=25)
 	@JSONField(name = "invcode")
-	public java.lang.String getInvCode() {
-		return getStr("InvCode");
+	public java.lang.String getInvcode() {
+		return getStr("invcode");
 	}
 
 }

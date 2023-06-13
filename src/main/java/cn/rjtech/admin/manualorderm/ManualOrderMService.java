@@ -433,31 +433,20 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
     public Ret batchReverseApprove(String ids) {
         tx(() -> {
             List<ManualOrderM> list = getListByIds(ids);
+            // 非已审批数据
+            List<ManualOrderM> noApprovedDatas = list.stream().filter(item -> !(item.getIOrderStatus() == WeekOrderStatusEnum.APPROVED.getValue())).collect(Collectors.toList());
+            ValidationUtils.isTrue(noApprovedDatas.size() <= 0, "存在非已审批数据");
             for (ManualOrderM manualOrderM : list) {
-                // 处理订单审批数据
-                formApprovalService.reverseApprove(manualOrderM.getIAutoId(),
-                        table(), primaryKey(), manualOrderM.getIAuditStatus(), "cn.rjtech.admin.manualorderm.ManualOrderMService");
-
-                // 处理订单数据
-                WeekOrderStatusEnum orderStatusEnum = WeekOrderStatusEnum.toEnum(manualOrderM.getIOrderStatus());
-                switch (orderStatusEnum) {
-                    case AWAIT_AUDIT:
-                        manualOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
-                        break;
-                    case APPROVED:
-                        manualOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
-                        break;
-                    default:
-                        break;
-                }
+                Long id = manualOrderM.getIAutoId();
+                formApprovalService.reverseApproveByStatus(id, table(), primaryKey(), (formAutoId) -> null, (formAutoId) -> {
+                    // 处理订单状态
+                    ValidationUtils.isTrue(updateColumn(id, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+                    return null;
+                });
             }
-            ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
 
-            // 判断订单是否存在已审核的反审批
-            if (list.stream().anyMatch(item -> item.getIOrderStatus() == WeekOrderStatusEnum.AWAIT_AUDIT.getValue())) {
-                // 修改客户计划汇总
-                cusOrderSumService.algorithmSum();
-            }
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
             return true;
         });
         return SUCCESS;

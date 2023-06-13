@@ -1332,8 +1332,4 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 		return data;
 	}
 
-    public PurchaseOrderM findByCOrerNo(String corderno) {
-        return findFirst("select * from PS_PurchaseOrderM where corderno=?", corderno);
-    }
-
 }

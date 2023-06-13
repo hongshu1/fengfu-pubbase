@@ -308,8 +308,9 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 				materialsOut.setDeptCode(department.getCDepCode());
 			}
 		}
-		materialsOut.setCreatePerson(JBoltUserKit.getUserName());
-		materialsOut.setCreateDate(now);
+		materialsOut.setIcreateby(JBoltUserKit.getUserId());
+		materialsOut.setCcreatename(JBoltUserKit.getUserName());
+		materialsOut.setDcreatetime(now);
 		materialsOut.setState(2);//待审核
 		//materialsOut.save();
 		//处理明细
@@ -401,8 +402,9 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 				   materialsOut.setBillType("材料出库单");
 				   materialsOut.setBillDate(now);
 				   materialsOut.setDeptCode(deptcode);
-				   materialsOut.setCreatePerson(JBoltUserKit.getUserName());
-				   materialsOut.setCreateDate(now);
+				   materialsOut.setIcreateby(JBoltUserKit.getUserId());
+				   materialsOut.setCcreatename(JBoltUserKit.getUserName());
+				   materialsOut.setDcreatetime(now);
 				   materialsOut.setState(2);
 				  materialsOut.save();
 				MaterialsOut finalMaterialsOut = materialsOut;
@@ -443,7 +445,7 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 		otherOut.setOrganizeCode(moMaterialscanusedlogm.getCOrgCode());
 		otherOut.setBillNo("");
 		otherOut.setBillType("材料出库单"); //sn=11
-		otherOut.setBillDate(now);
+		otherOut.setBillDate((now));
 		//读取工单信息
 		MoDoc moDoc=moDocService.findById(moMaterialscanusedlogm.getIMoDocId());
 		//读取工单信息

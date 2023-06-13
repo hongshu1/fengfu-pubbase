@@ -117,10 +117,10 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     /*
      * 编辑页面的审批
      * */
-    public void editAutit() {
+    /*public void editAutit() {
         Kv kv = getKv();
         renderJson(service.editAutit(kv.getLong("autoid")));
-    }
+    }*/
 
     /*
      * 查看页面的审批
@@ -140,15 +140,15 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
-    public void deleteByIds() {
+    /*public void deleteByIds() {
         renderJson(service.deleteRmRdByIds(get("ids")));
-    }
+    }*/
 
     /**
      * 删除
      */
     public void delete() {
-        renderJson(service.delete(getLong(0)));
+        renderJson(service.deleteByAutoid(getLong(0)));
     }
 
     /**
@@ -214,18 +214,32 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     }
 
     /*
+     * 审核通过
+     * */
+    public void approve(long autoid) {
+        renderJson(service.approve(getLong(0)));
+    }
+
+    /*
+     * 审核不通过
+     * */
+    public void reject(long autoid) {
+        renderJson(service.reject(getLong(0)));
+    }
+
+    /*
      * 撤回
      * */
-    public void withdraw(Long autoId) {
-        ValidationUtils.validateId(autoId, "autoId");
+    public void withdraw(Long iAutoId) {
+        ValidationUtils.validateId(iAutoId, "iAutoId");
 
-        renderJson(service.withdraw(autoId));
+        renderJson(service.withdraw(iAutoId));
     }
 
     /*
      * 反审核
      * */
-    public void reverseApprove(long autoid){
+    public void reverseApprove(long autoid) {
         ValidationUtils.validateId(autoid, "autoid");
 
         renderJson(service.reverseApprove(autoid));
@@ -234,7 +248,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     /*
      * 提交审核
      * */
-    public void submit(@Para(value = "iautoid") Long iautoid){
+    public void submit(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.validateId(iautoid, "autoid");
 
         renderJson(service.submit(iautoid));
