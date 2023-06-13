@@ -2,13 +2,20 @@
 #define main()
 <div class="jbolt_page">
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="Copy_Form" action="/admin/bommaster/saveCopy" method="post">
+        <form onsubmit="return false;" id="Copy_Form" action="/admin/bomM/saveCopy" method="post">
             <input name="oldId" hidden value="#(oldId)">
 
             <div class="form-group row" >
                 <label class="col-form-label" style="padding-left: 10px">将拷贝并新增一条新版本的物料清单信息，是否继续？
                 </label>
             </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">停用日期</label>
+                <div class="col-sm-2">
+                    <input id="dDisableDate" type="text" class="form-control"  data-rule="required;>=#dEnableDate" data-done-handler="checkme" data-date name="dDisableDate" value=""/>
+                </div>
+            </div>
+
             <div class="form-group row" >
                 <label class="col-sm-3 col-form-label">新版本号</label>
                 <div class="col">

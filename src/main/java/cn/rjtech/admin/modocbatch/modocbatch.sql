@@ -30,51 +30,58 @@ WHERE mt.IsDeleted = '0' #if(startdate)
     #end
 #end
 
+#sql("editplanviewdatas")
+SELECT DISTINCT
+	doc.iYear,
+	doc.iMonth,
+	doc.iDate,
+	wm.cWorkShiftName,
+	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) YearToDate
+FROM
+	Mo_MoDoc doc
+	LEFT JOIN Bd_WorkShiftM wm ON wm.iAutoId= doc.iWorkShiftMid
+	WHERE doc.iMoTaskId=#(id)
+ORDER BY
+	YearToDate ASC
+#end
 
 #sql("getPersonPage")
 SELECT
-       md.iInventoryId,
-       md.iWorkShiftMid,
-       md.iDepartmentId,
-       bi.cInvName1,
-       bi.cInvCode1,
-       wr.cWorkName
-FROM dbo.Mo_MoDoc AS md
-         LEFT JOIN
-     dbo.Mo_MoTask AS mt
-     ON
-         mt.iAutoId = md.iMoTaskId
-         LEFT JOIN
-     dbo.Bd_Inventory AS bi
-     ON
-         md.iInventoryId = bi.iAutoId
-         LEFT JOIN
-     dbo.Bd_WorkRegionM AS wr
-     ON
-         md.iWorkRegionMid = wr.iAutoId
-
-WHERE mt.iAutoId = #para(iAutoId)
-group by  md.iInventoryId,
-                 md.iWorkShiftMid,
-                 md.iDepartmentId,
-                 bi.cInvName1,
-                 bi.cInvCode1,
-                 wr.cWorkName
+	md.iInventoryId,
+	md.iWorkShiftMid,
+	md.iDepartmentId,
+	bi.cInvName1,
+	bi.cInvCode1,
+	wr.cWorkName
+FROM
+	dbo.Mo_MoDoc AS md
+	LEFT JOIN dbo.Mo_MoTask AS mt ON mt.iAutoId = md.iMoTaskId
+	LEFT JOIN dbo.Bd_Inventory AS bi ON md.iInventoryId = bi.iAutoId
+	LEFT JOIN dbo.Bd_WorkRegionM AS wr ON md.iWorkRegionMid = wr.iAutoId
+WHERE
+	mt.iAutoId = #para(iAutoId)
+GROUP BY
+	md.iInventoryId,
+	md.iWorkShiftMid,
+	md.iDepartmentId,
+	bi.cInvName1,
+	bi.cInvCode1,
+	wr.cWorkName
 #end
 
 #sql("getDocList")
 SELECT
-    doc.cMoDocNo,
-    doc.dPlanDate,
-    doc.iAutoId,
-       doc.iQty
+	doc.cMoDocNo,
+	doc.dPlanDate,
+	doc.iAutoId,
+	doc.iQty
 FROM
-    dbo.Mo_MoDoc AS doc
+	dbo.Mo_MoDoc AS doc
 WHERE
-        doc.iMoTaskId = #para(iMoTaskId)  AND
-        doc.iInventoryId = #para(iInventoryId)
+	doc.iMoTaskId = #para(iMoTaskId)
+	AND doc.iInventoryId = #para(iInventoryId)
 ORDER BY
-    dPlanDate ASC
+	dPlanDate ASC
 #end
 
 
