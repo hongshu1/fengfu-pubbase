@@ -3,12 +3,15 @@ package cn.rjtech.admin.materialsout;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MaterialsOut;
 import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -115,25 +118,74 @@ public class MaterialsOutAdminController extends BaseAdminController {
 	}
 
 	/**
-	 * 审核
+	 * 条码数据源
 	 */
-	public void approve(String iAutoId,Integer mark) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(iAutoId)) {
-			renderFail(JBoltMsg.PARAM_ERROR);
-			return;
-		}
-		renderJson(service.approve(iAutoId,mark));
+	@UnCheck
+	public void barcodeDatas() {
+
+		Kv kv = new Kv();
+		kv.setIfNotNull("barcodes",get("barcodes"));
+		kv.setIfNotNull("q",get("q"));
+		kv.setIfNotNull("orgCode",getOrgCode());
+
+		renderJsonData(service.getBarcodeDatas(kv));
+	}
+
+
+//	/**
+//	 * 审核
+//	 */
+//	public void approve(String iAutoId,Integer mark) {
+//		if (org.apache.commons.lang3.StringUtils.isEmpty(iAutoId)) {
+//			renderFail(JBoltMsg.PARAM_ERROR);
+//			return;
+//		}
+//		renderJson(service.approve(iAutoId,mark));
+//	}
+
+
+	/**
+	 * 详情页提审
+	 */
+	public void submit(@Para(value = "iautoid") Long iautoid) {
+		ValidationUtils.validateId(iautoid, "id");
+
+		renderJson(service.submit(iautoid));
 	}
 
 	/**
-	 * 反审核
+	 * 详情页审核通过
 	 */
-	public void NoApprove(String ids) {
+	public void approve() {
+		renderJson(service.approve(get(0)));
+	}
+
+	/**
+	 * 详情页审核不通过
+	 */
+	public void reject() {
+		renderJson(service.reject(getLong(0)));
+	}
+
+
+	/**
+	 * 批量审核
+	 */
+	public void batchApprove(String ids,Integer mark) {
 		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
-		renderJson(service.NoApprove(ids));
+		renderJson(service.batchApprove(ids,mark));
+	}
+
+	/**
+	 * 批量反审核
+	 */
+	public void batchReverseApprove(@Para(value = "ids") String ids) {
+		ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+
+		renderJson(service.batchReverseApprove(ids));
 	}
 
 

@@ -9,6 +9,18 @@
 		text-overflow:ellipsis;
 		overflow: hidden;
 	}
+
+	/*.jstree-default .jstree-anchor{*/
+	/*	position:relative;*/
+	/*}*/
+
+	/*.jstree-node {*/
+	/*	text-overflow: ellipsis;*/
+	/*	overflow: hidden;*/
+	/*	word-break: break-all;*/
+	/*	white-space: nowrap;*/
+	/*	line-height: 24px;*/
+	/*}*/
 </style>
 #end
 
@@ -47,8 +59,9 @@
 			isChildren = false;
 		}
 		var id = data.data;
+		var cCode = data.parents.length;
 		$("#addEmptyBtn_#(pageId)").data("url","admin/bomcompare/manualForm?pid="+id+"&isChildren="+isChildren+"&isAdd=true");
-		AjaxPortalUtil.go("bomcompareAjaxPortal1", "/admin/bomcompare/index?id="+id+"&isChildren="+isChildren);
+		AjaxPortalUtil.go("bomcompareAjaxPortal1", "/admin/bomcompare/index?id="+id+"&isChildren="+isChildren+"&cCode="+cCode);
 	}
 
 	function initTreehandler(item) {

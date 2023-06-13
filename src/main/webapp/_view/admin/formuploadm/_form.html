@@ -4,40 +4,16 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        #if(iauditstatus==false)
-                        #if(formUploadM.iauditstatus!=0)
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 关闭
-                        </button>
-                        <button onclick="submitThisForm(2)" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 审核
-                        </button>
-                        <button onclick="submitThisForm(10)" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 反审核
-                        </button>
-                        #else
-                        <button onclick="save()" class="btn btn-success btn-sm" ><i
-                                class=" fa fa-refresh"></i> 保存</button>
-                        <button onclick="submitThisForm(1)" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 提交审核
-                        </button>
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 关闭
-                        </button>
+                        <button onclick="submitThisForm()"  class="btn btn-outline-secondary btn-xs"  #if(formUploadM.iauditstatus?? ==2 || formUploadM.iauditstatus?? ==3 || formUploadM.iauditstatus?? ==1) disabled #end>保存</button>
+                        #if(formUploadM.iautoid??)
+                        ### 参数列表
+                        ### uri:                接口URI
+                        ### formSn:             表单名
+                        ### o:                  当前表单对象名
+                        ### primaryKeyName:     主键名
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/formUploadM", formSn="PL_FormUploadM", o=formUploadM, edit=edit??, primaryKeyName="iautoid")
                         #end
-                        #end
-                        #if(iauditstatus==true)
-                        <button onclick="save()" class="btn btn-success btn-sm" ><i
-                                class=" fa fa-refresh"></i> 保存</button>
-                        <button onclick="submitThisForm(1)" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 提交审核
-                        </button>
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 关闭
-                        </button>
-                        #end
-
-
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
             </div>
@@ -45,7 +21,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <form onsubmit="return false;" id="sysPureceive_#(pageId)" action="#(action)" method="post">
+                    <form onsubmit="return false;" id="formUploadM_#(pageId)" action="#(action)" method="post">
                         #if(formUploadM.iautoid??)
                         <input type="hidden" name="formUploadM.iAutoId" value="#(formUploadM.iautoid??)" />
                         #end
@@ -145,7 +121,7 @@
     </div>
 </div>
 <div class="jbolt_page_content">
-    <script type="text/template" id="sysPureceive_tpl_#(pageId)">
+    <script type="text/template" id="formUploadM_tpl_#(pageId)">
         {@each datas as data,index}
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
@@ -177,7 +153,7 @@
         </tr>
         {@/each}
     </script>
-    <div class="jbolt_table_toolbar" id="sysPureceive_toolbar_#(pageId)">
+    <div class="jbolt_table_toolbar" id="formUploadM_toolbar_#(pageId)">
 
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button data-openpage="dialog" data-area="700,800" data-handler="jboltTablePageToFirst" #if(iauditstatus==false) #if(formUploadM.iauditstatus!=0) style="display:none;" #end  #end
@@ -191,8 +167,8 @@
     <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(formUploadM.iautoid??)
            data-ajax="true" data-url="admin/formUploadD/datas?pid=#(formUploadM.iautoid??)" #end
            id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
-           data-rowtpl="sysPureceive_tpl_#(pageId)" data-toolbar="sysPureceive_toolbar_#(pageId)" data-editable="true"
-           data-page="sysPureceive_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
+           data-rowtpl="formUploadM_tpl_#(pageId)" data-toolbar="formUploadM_toolbar_#(pageId)" data-editable="true"
+           data-page="formUploadM_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
         <thead class="fw_normal">
         <tr>
             <th data-width="60" data-column="index">序号</th>
@@ -217,12 +193,9 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-    function save() {
-        $("#operationType").val("");
-        jboltTableSubmit("#jbolt_Table_#(pageId)");
-    }
     function submitThisForm(iauditstatus) {
         $("#operationType").val(iauditstatus);
+
         jboltTableSubmit("#jbolt_Table_#(pageId)");
         $("#operationType").val();
     }
@@ -231,8 +204,8 @@
         var editableTableOptions = {
 
             submit: {
-                withForm: ["sysPureceive_#(pageId)"],
-                name: 'sysPureceive',
+                withForm: ["formUploadM_#(pageId)"],
+                name: 'formUploadM',
                 type: "all",
                 url: "admin/formUploadM/saveTableSubmit",
                 success: function (res) {
@@ -288,10 +261,18 @@
         if (cattachments.length > 0) {
             cattachments = cattachments.substr(0,cattachments.length - 1);
         }
-        datas.push({'cattachments':cattachments})
+        datas.push({cattachments:cattachments})
         // 插入数据
         jboltTableInsertRow('#jbolt_Table_#(pageId)', datas);
-        $("#cattachments").val(cattachments);
+        var val = $("#cattachments").val();
+        if (cattachments.indexOf(",") === -1) {
+            if (val == null) {
+                $("#cattachments").val(cattachments);
+            }else {
+                $("#cattachments").val(val+','+cattachments);
+            }
+        }
+
     }
 
 </script>

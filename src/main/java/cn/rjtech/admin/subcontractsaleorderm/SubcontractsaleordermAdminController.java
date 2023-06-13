@@ -69,7 +69,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        Subcontractsaleorderm subcontractsaleorderm = service.findById(getLong(0));
+        Subcontractsaleorderm subcontractsaleorderm = service.findById(getLong("iautoid"));
         if (subcontractsaleorderm == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -146,6 +146,38 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
         ValidationUtils.validateId(iAutoId, "iAutoId");
 
         renderJson(service.withdraw(iAutoId));
+    }
+
+    /**
+     * 批量审核
+     */
+    public void batchApprove()
+    {
+        renderJson(service.batchApprove(get("ids")));
+    }
+
+    /**
+     * 批量反审
+     */
+    public void batchReverseApprove()
+    {
+        renderJson(service.batchReverseApprove(get("ids")));
+    }
+
+    /**
+     * 关闭
+     */
+    public void close()
+    {
+        renderJson(service.close(get("iautoid")));
+    }
+
+    /**
+     * 打开
+     */
+    public void open()
+    {
+        renderJson(service.open(get("iautoid")));
     }
 
     /**

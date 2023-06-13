@@ -96,7 +96,7 @@ WHERE 1 = 1
 #if(idepartmentid)
   AND  t4.iDepartmentId =#para(idepartmentid)
 #end
-order by t1.CreateDate desc,t1.BillNo desc
+order by t1.dCreateTime desc,t1.BillNo desc
     #end
 
 

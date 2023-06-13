@@ -9,7 +9,9 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
+import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.MoMotask;
+import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -48,15 +50,51 @@ public class MoMotaskService extends BaseService<MoMotask> {
     return dao;
   }
 
+  public Kv getOpenEditPlanViewDatas(Long id) {
+    Kv kv = new Kv();
+    MoMotask moMotask = findById(id);
+    List<Record> records = dbTemplate("modocbatch.editplanviewdatas", Kv.by("id", moMotask.getIAutoId())).find();
+    for (Record record : records) {
+      String weekDay = DateUtils.formatDate(DateUtils.parseDate(record.getStr("yeartodate")), "E");
+      if (weekDay.equals("星期一") || weekDay.equals("Mon")) {
+        record.set("weeks", "星期一");
+      }
+      if (weekDay.equals("星期二") || weekDay.equals("Tue")) {
+        record.set("weeks", "星期二");
+      }
+      if (weekDay.equals("星期三") || weekDay.equals("Wed")) {
+        record.set("weeks", "星期三");
+      }
+      if (weekDay.equals("星期四") || weekDay.equals("Thu")) {
+        record.set("weeks", "星期四");
+      }
+      if (weekDay.equals("星期五") || weekDay.equals("Fri")) {
+        record.set("weeks", "星期五");
+      }
+      if (weekDay.equals("星期六") || weekDay.equals("Sat")) {
+        record.set("weeks", "星期六");
+      }
+      if (weekDay.equals("星期日") || weekDay.equals("Sun")) {
+        record.set("weeks", "星期日");
+      }
+    }
+    Department byId = departmentService.findById(moMotask.getIDepartmentId());
+    kv.put("depname", byId.getCDepName());
+    kv.put("startdate", records.get(0).getStr("yeartodate"));
+    kv.put("stopdate", records.get((records.size() - 1)).getStr("yeartodate"));
+    kv.put("datas", records);
+    return kv;
+  }
+
   /**
    * 编辑计划页面列表数据
    */
-  public Page<Record> getPlanPage(Integer pageNumber, Integer pageSize, Kv kv) {
+  public List<Record> getPlanPage(Kv kv) {
     MoMotask motask = findById(kv.getStr("iAutoId"));
-    Page<Record> moMotaskPage = dbTemplate("modocbatch.getPersonPage", kv).paginate(pageNumber, pageSize);
+    List<Record> moMotaskPage = dbTemplate("modocbatch.getPersonPage", kv).find();
     //拼日期  weeklist  colnamelist colname2list
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    for (Record record : moMotaskPage.getList()) {
+    for (Record record : moMotaskPage) {
       //根据存货记录查,按日期排序
       Kv data = new Kv();
       data.set("iInventoryId", record.getStr("iInventoryId"));
@@ -170,7 +208,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
     String startDate = kv.getStr("startdate");
     String endDate = kv.getStr("enddate");
     if (notOk(startDate) || notOk(endDate)) {
-      ValidationUtils.error( "开始日期-结束日期不能为空！");
+      ValidationUtils.error("开始日期-结束日期不能为空！");
     }
     //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
     List<String> scheduDateList = Util.getBetweenDate(startDate, endDate);
@@ -637,6 +675,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
             } else if (i == (records2.size() + 3)) {
               List<Record> records4 = map6.get(modocid1);
               recordDats.set("personnel", records4);
+            } else {
+              recordDats.set("personnel", new ArrayList<>());
             }
           }
           records3.add(recordDats);

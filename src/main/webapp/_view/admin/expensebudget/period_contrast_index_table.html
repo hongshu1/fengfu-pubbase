@@ -1,0 +1,64 @@
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="jboltTable_rowtpl_situation_#(pageId)1">
+            {@each datas as data,index}
+            <tr data-id="${data.iautoid}">
+			<td>${data.chighestsubjectname}</td>
+			<td>${data.clowestsubjectname}</td>
+			<td>${data.icontrastnum|icontrastnum}</td>
+			<td>$${data.ibudgettype|iPeriodContrastBudgetType}</td>
+			#if(monthcolumntxtlist??)
+	            #for(monthcolumntxt : monthcolumntxtlist)
+	            	<td>${data.#(monthcolumntxt.datacolumn)|kFormat}</td>
+	            #end
+            #end
+            <td>${data.itotalamount|kFormat}</td>	
+            </tr>
+            {@/each}
+        </textarea>
+
+        <table class="jbolt_table jbolt_main_ table-center"
+               data-jbolttable
+               id="jbolt_Table_situation_#(pageId)1"
+               data-ajax="true"
+               #if(daterecord??)
+               data-autoload="true"
+               data-url="/admin/expensebudget/periodContrastDatas"
+               #else
+               data-autoload="false"
+               data-url="/admin/expensebudget/periodContrastDatas"
+               #end
+               data-column-resize="true"
+               data-conditions-form="periodContrastForm"
+               data-rowtpl="jboltTable_rowtpl_situation_#(pageId)1"
+               data-column-prepend="1:checkbox:true"
+               data-ajax-success-handler="ajaxSuccessHandler_periodcontrast"
+               data-height="fill"
+               data-page="periodContrastPage_#(pageId)"
+			   data-pagesize="50"
+        >
+            <thead class="fw_normal">
+            <tr>
+
+                <th data-width="150" data-column="chighestsubjectname" rowspan="2">科目大类</th>
+                <th data-width="150" data-column="clowestsubjectname" rowspan="2">明细科目</th>
+                <th data-width="150" data-column="icontrastnum" rowspan="2">对比案</th>
+                <th data-width="150" data-column="ibudgettype" rowspan="2">预算类型</th>
+                <th data-width="90" colspan="#(diffMonth)">月份</th>
+                <th data-width="150" data-column="itotalamount" rowspan="2">合计</th>	            
+            </tr>
+            <tr>
+            	#if(monthcolumntxtlist??)
+                    #for(monthcolumntxt : monthcolumntxtlist)
+                    	<th data-width="50" data-column="#(monthcolumntxt.datacolumn)">#(monthcolumntxt.colname)</th>
+                    #end
+                #end
+            </tr>
+            </thead>
+            <tbody id="datatr1"></tbody>
+        </table>
+#define js()
+<script>
+
+</script>
+#end
+

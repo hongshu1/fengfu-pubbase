@@ -567,6 +567,40 @@ var getBaseUrl = function (port) {
     return location.protocol + "//kkfileview.kephon.com";
 };
 
+var icontrastnum = function(val){
+    switch (val) {
+	    case 1:
+	        return "①";
+	    case 2:
+	        return "②";
+	    case 3:
+	        return "③";
+	    default:
+	        return "";
+    }	
+}
+function iPeriodContrastBudgetType(val) {
+    switch (val) {
+        case 1:
+            return juicer_html('全年预算a', ++val);
+        case 2:
+            return juicer_html('下半年修订b', ++val);
+        case 3:
+            return juicer_html('实绩预测d', ++val);
+        case 4:
+            return juicer_html('实绩e', ++val);
+        case 5:
+            return juicer_html('差异②-①）', ++val);
+        case 6:
+            return juicer_html('差异③-①', ++val);
+        case 7:
+            return juicer_html('差异③-②', ++val);
+        default:
+            return "";
+    }
+}
+
+
 /*
  * 数字格式化 清除掉小数点后的无用的0 如果最后是0 转为自定义字符显示
  * 参数说明：
@@ -633,6 +667,8 @@ function initMineJuicer(){
     juicer.register('iPurchaseRefType', iPurchaseRefType);
     juicer.register('numberFormatZeroDefaultChar', numberFormatZeroDefaultChar);
     juicer.register('previewUrl', previewUrl);
+    juicer.register('icontrastnum', icontrastnum);
+    juicer.register('iPeriodContrastBudgetType', iPeriodContrastBudgetType);
 }
 
 function jboltTableGetSpecCols(ele, colName) {

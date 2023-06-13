@@ -106,7 +106,7 @@ public class BomMAdminController extends BaseAdminController {
 		renderJsonData(bomDService.getBomComparePageData(getPageNumber(), getPageSize(), getKv()));
 	}
 	
-	public void findByVersionList(@Para(value = "invId") Long invId){
+	public void findByVersionList(@Para(value = "iinventoryid") Long invId){
 		renderJsonData(service.findByVersionList(getOrgId(), invId));
 	}
 	
@@ -116,5 +116,10 @@ public class BomMAdminController extends BaseAdminController {
 	
 	public void del() {
 		renderJson(service.del(getLong(0)));
+	}
+	
+	// 拷贝
+	public void saveCopy(@Para(value = "cversion") String cVersion, @Para(value = "dDisableDate") String dDisableDate,  @Para(value = "oldId") Long oldId) {
+		renderJson(service.saveCopy(oldId, dDisableDate, cVersion));
 	}
 }

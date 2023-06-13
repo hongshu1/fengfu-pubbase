@@ -20,7 +20,7 @@ ORDER BY iSeq ASC
 
 #sql("approvalProcessUsers")
 select top #(size) name
-from UGCFF_MOM_System.dbo.jb_user
+from #(getBaseDbName()).dbo.jb_user
 where id in
     (select iUserId
      from Bd_FormApprovalFlowD where iFormApprovalFlowMid =

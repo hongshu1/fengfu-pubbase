@@ -317,7 +317,8 @@ select
 	s.iAutoId as siautoid,
     s.cRdName as scrdname,
     s.cRdCode as scrdcode,
-    dep.cdepcode,dep.cdepname
+    dep.cdepcode,dep.cdepname,
+    a.iinventoryId
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
@@ -347,5 +348,9 @@ where 1=1
 order by o.iAutoId DESC
 
 #end
+
+
+
+
 
 

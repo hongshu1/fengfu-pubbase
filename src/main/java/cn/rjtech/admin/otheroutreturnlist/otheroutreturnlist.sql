@@ -32,12 +32,12 @@ WHERE 1 = 1
     AND t1.Status = #para(iorderstatus)
     #end
 #if(startdate)
-    and CONVERT(VARCHAR(10),t1.ModifyDate,23) >='#(startdate)'
+    and CONVERT(VARCHAR(10),t1.dCreateTime,23) >='#(startdate)'
 #end
 #if(enddate)
-    and CONVERT(VARCHAR(10),t1.ModifyDate,23) <='#(enddate)'
+    and CONVERT(VARCHAR(10),t1.dCreateTime,23) <='#(enddate)'
 #end
-order by t1.ModifyDate desc
+order by t1.dCreateTime desc
     #end
 
 #sql("pushu")

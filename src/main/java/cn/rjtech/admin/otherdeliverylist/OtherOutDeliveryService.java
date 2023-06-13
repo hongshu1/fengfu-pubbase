@@ -11,11 +11,10 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.model.momdata.OtherOut;
-import cn.rjtech.model.momdata.OtherOutDetail;
-import cn.rjtech.model.momdata.Person;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -37,21 +36,22 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: RJ
  * @date: 2023-05-17 09:35
  */
-public class OtherOutService extends BaseService<OtherOut> {
+public class OtherOutDeliveryService extends BaseService<OtherOut> {
 
 	private final OtherOut dao = new OtherOut().dao();
 
 	@Inject
 	private PersonService personservice;
-
+	@Inject
+	private FormApprovalService formApprovalService;
+	@Inject
+	private OtherOutDetailService otherOutDetailService;
 
 	@Override
 	protected OtherOut dao() {
 		return dao;
 	}
 
-	@Inject
-	private OtherOutDetailService otherOutDetailService;
 
 	/**
 	 * 后台管理分页查询
@@ -248,11 +248,14 @@ public class OtherOutService extends BaseService<OtherOut> {
 //					订单状态：1=已保存，2=待审核，3=已审核
 					otherOut.setAuditStatus(param);
 
-					otherOut.setCreateDate(nowDate);
+					otherOut.setICreateBy(userId);
+					otherOut.setDCreateTime(nowDate);
+					otherOut.setCCreateName(userName);
 					otherOut.setOrganizeCode(OrgCode);
-					otherOut.setCreatePerson(userName);
-					otherOut.setModifyDate(nowDate);
-					otherOut.setModifyPerson(userName);
+					otherOut.setIUpdateBy(userId);
+					otherOut.setDupdateTime(nowDate);
+					otherOut.setCUpdateName(userName);
+					otherOut.setIsDeleted(false);
 					otherOut.setType("OtherOut");
 					save(otherOut);
 					headerId = otherOut.getAutoID();
@@ -262,8 +265,9 @@ public class OtherOutService extends BaseService<OtherOut> {
 						otherOut.setAuditPerson(userName);
 					}
 					otherOut.setAuditStatus(param);
-					otherOut.setModifyDate(nowDate);
-					otherOut.setModifyPerson(userName);
+					otherOut.setIUpdateBy(userId);
+					otherOut.setDupdateTime(nowDate);
+					otherOut.setCUpdateName(userName);
 					update(otherOut);
 					headerId = otherOut.getAutoID();
 				}
@@ -293,14 +297,6 @@ public class OtherOutService extends BaseService<OtherOut> {
 					materialsOutDetail.setModifyPerson(userName);
 				});
 				otherOutDetailService.batchUpdate(lines);
-				//测试u8接口
-				OtherOut otherOut = jBoltTable.getFormModel(OtherOut.class, "otherOut");
-				System.out.println("开始u8，开始u8，开始u8，开始u8，开始u8"+new Date());
-				Ret ret = this.pushU8S(otherOut, lines);
-				System.out.println(ret);
-				System.out.println("结束u8，结束u8，结束u8，结束u8，结束u8"+new Date());
-
-
 			}
 			// 获取待删除数据 执行删除
 			if (jBoltTable.deleteIsNotBlank()) {
@@ -316,50 +312,119 @@ public class OtherOutService extends BaseService<OtherOut> {
 		return dbTemplate("otherdeliverylist.otherOutBarcodeDatas",Kv.by("q", q).set("orgCode",orgCode)).find();
 	}
 
-	/**
-	 * 审核
-	 * @param iAutoId
-	 * @return
-	 */
-	public Ret approve(String ids,Integer mark) {
-		boolean success = false;
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		List<OtherOut> listByIds = getListByIds(ids);
-		if (listByIds.size() > 0) {
-			for (OtherOut otherOut : listByIds) {
-				//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-				if (otherOut.getAuditStatus() != 1) {
-					return warn("订单："+otherOut.getBillNo()+"状态不支持审核操作！");
-				}
-				//订单状态：3. 已审核
-//				otherOut.setAuditStatus(2);
-				otherOut.setAuditDate(nowDate);
-				otherOut.setAuditPerson(userName);
-				Ret ret = this.pushU8(ids);
-				success= otherOut.update();
-			}
-		}
 
+	/**
+	 * 详情页提审
+	 */
+	public Ret submit(Long iautoid) {
+		tx(() -> {
+			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"T_Sys_OtherOut");
+			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+
+			// 处理其他业务
+			OtherOut otherOut = findById(iautoid);
+			otherOut.setIAuditStatus(1);
+			ValidationUtils.isTrue(otherOut.update(),JBoltMsg.FAIL);
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	/**
+	 * 详情页审核
+	 */
+	public Ret approve(String ids) {
+		tx(() -> {
+			boolean success = false;
+			String userName = JBoltUserKit.getUserName();
+			Date nowDate = new Date();
+			OtherOut otherOut = superFindById(ids);
+			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+			if (otherOut.getIAuditStatus() != 1) {
+				ValidationUtils.error("订单："+otherOut.getBillNo()+"状态不支持审核操作！");
+			}
+			//订单状态：3. 已审核
+			otherOut.setIAuditStatus(2);
+			otherOut.setAuditDate(nowDate);
+			otherOut.setAuditPerson(userName);
+			Ret ret = this.pushU8(ids);
+			success= otherOut.update();
+
+			return true;
+		});
+
+		return SUCCESS;
+	}
+
+	/**
+	 * 详情页审核不通过
+	 */
+	public Ret reject(Long ids) {
+		tx(() -> {
+			OtherOut otherOut = superFindById(ids);
+			if (otherOut.getIAuditStatus() != 2) {
+				ValidationUtils.error("订单："+otherOut.getBillNo()+"状态不支持反审批操作！");
+			}
+			otherOut.setIAuditStatus(1);
+			otherOut.update();
+
+			return true;
+		});
 		return SUCCESS;
 	}
 
 
 	/**
-	 * 批量反审批
+	 * 批量审核
 	 * @param ids
 	 * @return
 	 */
-	public Ret NoApprove(String ids) {
+	public Ret batchApprove(String ids, Integer mark) {
+		tx(() -> {
+			boolean success = false;
+			String userName = JBoltUserKit.getUserName();
+			Date nowDate = new Date();
+			List<OtherOut> listByIds = getListByIds(ids);
+			if (listByIds.size() > 0) {
+				for (OtherOut otherOut : listByIds) {
+					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+					if (otherOut.getAuditStatus() != 1) {
+						ValidationUtils.error("订单：" + otherOut.getBillNo() + "状态不支持审核操作！");
+					}
+					//订单状态：3. 已审核
+					otherOut.setAuditStatus(2);
+					otherOut.setAuditDate(nowDate);
+					otherOut.setAuditPerson(userName);
+					Ret ret = this.pushU8(ids);
+					success = otherOut.update();
+				}
+			}
+			return true;
+		});
+		return SUCCESS;
+	}
+
+
+
+	/**
+	 * 批量反审核
+	 * @param ids
+	 * @return
+	 */
+	public Ret batchReverseApprove(String ids) {
+		tx(() -> {
 		//TODO数据同步暂未开发 现只修改状态
 		for (OtherOut otherOut :  getListByIds(ids)) {
 //			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-			if (otherOut.getAuditStatus() != 2) {
-				return warn("订单："+otherOut.getBillNo()+"状态不支持反审批操作！");
+			if (otherOut.getIAuditStatus() != 2) {
+				ValidationUtils.error("订单："+otherOut.getBillNo()+"状态不支持反审批操作！");
 			}
-			otherOut.setAuditStatus(1);
+			otherOut.setIAuditStatus(1);
 			otherOut.update();
 		}
+
+		return true;
+	});
 		return SUCCESS;
 	}
 
@@ -375,7 +440,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		OtherOut otherOut = findById(iAutoId);
-		otherOut.setAuditStatus(0);
+		otherOut.setIAuditStatus(0);
 		otherOut.setAuditDate(null);
 		otherOut.setAuditPerson(null);
 		boolean result = otherOut.update();
@@ -448,7 +513,15 @@ public class OtherOutService extends BaseService<OtherOut> {
 			SystemLog systemLog = new SystemLog();
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder.append("<span class='text-danger'>[其他出库列表推U8操作]</span>");
+			systemLog.setType(2);
+			systemLog.setCreateTime(new Date());
+			systemLog.setUserId(JBoltUserKit.getUserId());
+			systemLog.setUserName(JBoltUserKit.getUserUserName());
+			systemLog.setOpenType(1);
+			systemLog.setTargetId(1L);
+			systemLog.setTargetType(1);
 			Ret ret = new Ret();
+
 			try {
 				String post = HttpApiUtils.httpHutoolPost(url, data, header);
 				if (isOk(post)) {
@@ -463,11 +536,10 @@ public class OtherOutService extends BaseService<OtherOut> {
 						String bill = s[0];
 						LOG.info("s===>" + bill);
 						LOG.info("data====" + data);
+						int update = update("update T_Sys_OtherOut set AuditStatus ='2' where AutoID IN("+ids+")" );
 
-//						int update = update("update T_Sys_SOReturn set U9BillNo = '" + bill + "', status = '2' where" + " AutoID " + "= " + "'" + id + "'");
-
-//						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
-//								"推送数据失败," + "失败原因" + msg);
+						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
+								"推送数据失败," + "失败原因" + msg);
 					}
 					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
 				} else {

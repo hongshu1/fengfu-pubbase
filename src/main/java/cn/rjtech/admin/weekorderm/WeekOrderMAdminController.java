@@ -129,7 +129,23 @@ public class WeekOrderMAdminController extends BaseAdminController {
     }
 
     /**
-     * 手动关闭
+     * 批量审核
+     */
+    public void batchApprove()
+    {
+        renderJson(service.batchApprove(get("ids")));
+    }
+
+    /**
+     * 批量反审
+     */
+    public void batchReverseApprove()
+    {
+        renderJson(service.batchReverseApprove(get("ids")));
+    }
+
+    /**
+     * 关闭
      */
     public void closeWeekOrder(@Para(value = "iautoid") String iAutoId) {
         if (StringUtils.isEmpty(iAutoId)) {
@@ -137,6 +153,14 @@ public class WeekOrderMAdminController extends BaseAdminController {
             return;
         }
         renderJson(service.closeWeekOrder(iAutoId));
+    }
+
+    /**
+     * 打开
+     */
+    public void open()
+    {
+        renderJson(service.open(get("iautoid")));
     }
 
     /**

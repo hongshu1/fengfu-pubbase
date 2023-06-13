@@ -117,322 +117,1093 @@ from PL_Expense_Budget_Item ebi
 		and eb.iorgid = #para(iorgid)
 	#end
 #end
-
-
-
+    
 #sql("periodContrastDatas")
 select * from (
-          SELECT
-              contrast='①',
-              t.cdepcode,
-              t.chighestsubjectname,
-              t.clowestsubjectname,
-              t.ibudgettype,t.iYear,
-              isnull(SUM( t.previousyearmounthamount8 ),0) AS previousyearmounthamount8,
-              isnull(SUM( t.previousyearmounthamount9 ),0) AS previousyearmounthamount9,
-              isnull(SUM( t.previousyearmounthamount10 ),0) AS previousyearmounthamount10,
-              isnull(SUM( t.previousyearmounthamount11 ),0) AS previousyearmounthamount11,
-              isnull(SUM( t.previousyearmounthamount12 ),0) AS previousyearmounthamount12,
-              isnull(SUM( t.nowyearmounthamount1 ),0) AS nowyearmounthamount1,
-              isnull(SUM( t.nowyearmounthamount2 ),0) AS nowyearmounthamount2,
-              isnull(SUM( t.nowyearmounthamount3 ),0) AS nowyearmounthamount3,
-              isnull(SUM( t.nowyearmounthamount4 ),0) AS nowyearmounthamount4,
-              isnull(SUM( t.nowyearmounthamount5 ),0) AS nowyearmounthamount5,
-              isnull(SUM( t.nowyearmounthamount6 ),0) AS nowyearmounthamount6,
-              isnull(SUM( t.nowyearmounthamount7 ),0) AS nowyearmounthamount7,
-              isnull(SUM( t.nowyearmounthamount8 ),0) AS nowyearmounthamount8,
-              isnull(SUM( t.nowyearmounthamount9 ),0) AS nowyearmounthamount9,
-              isnull(SUM( t.nowyearmounthamount10 ),0) AS nowyearmounthamount10,
-              isnull(SUM( t.nowyearmounthamount11 ),0) AS nowyearmounthamount11,
-              isnull(SUM( t.nowyearmounthamount12 ),0) AS nowyearmounthamount12,
-              SUM( t.nextyearmounthamount1 ) AS nextyearmounthamount1,
-              SUM( t.nextyearmounthamount2 ) AS nextyearmounthamount2,
-              SUM( t.nextyearmounthamount3 ) AS nextyearmounthamount3,
-              SUM( t.nextyearmounthamount4 ) AS nextyearmounthamount4
-                  FROM
-                      (
-                          SELECT
-                              bsl.csubjectname clowestsubjectname,
-                              ebi.iautoid,
-                              ebi.iexpenseid,
-                              ebid.iExpenseItemId,
-                              eb.ibudgettype,
-                              eb.cdepcode,
-                              ebi.cbudgetno,
-                              bsh.csubjectname chighestsubjectname,
-                              ebi.icreateby,
-                              ebid.iYear,
-                              ebid.iMonth,
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 8 THEN ebid.iamount END )/1000) 'previousyearmounthamount8',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 9 THEN ebid.iamount END )/1000) 'previousyearmounthamount9',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 10 THEN ebid.iamount END )/1000) 'previousyearmounthamount10',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 11 THEN ebid.iamount END )/1000) 'previousyearmounthamount11',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 12 THEN ebid.iamount END )/1000) 'previousyearmounthamount12',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 1 THEN ebid.iamount END )/1000) 'nowyearmounthamount1',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 2 THEN ebid.iamount END )/1000) 'nowyearmounthamount2',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 3 THEN ebid.iamount END )/1000) 'nowyearmounthamount3',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 4 THEN ebid.iamount END )/1000) 'nowyearmounthamount4',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 5 THEN ebid.iamount END )/1000) 'nowyearmounthamount5',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 6 THEN ebid.iamount END )/1000) 'nowyearmounthamount6',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 7 THEN ebid.iamount END )/1000) 'nowyearmounthamount7',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 8 THEN ebid.iamount END )/1000) 'nowyearmounthamount8',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 9 THEN ebid.iamount END )/1000) 'nowyearmounthamount9',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 10 THEN ebid.iamount END )/1000) 'nowyearmounthamount10',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 11 THEN ebid.iamount END )/1000) 'nowyearmounthamount11',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 12 THEN ebid.iamount END )/1000) 'nowyearmounthamount12',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 1 THEN ebid.iamount END )/1000) 'nextyearmounthamount1',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 2 THEN ebid.iamount END )/1000) 'nextyearmounthamount2',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 3 THEN ebid.iamount END )/1000) 'nextyearmounthamount3',
-                              Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 4 THEN ebid.iamount END )/1000) 'nextyearmounthamount4'
-                          FROM
-                              #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
-                                  LEFT JOIN #(getMomdataDbName()).dbo.PL_Expense_Budget_ItemD ebid ON ebi.iautoid = ebid.iexpenseitemid
-                              LEFT JOIN #(getMomdataDbName()).dbo.PL_Expense_Budget eb ON eb.iautoid = ebi.iExpenseId
-                              LEFT JOIN #(getMomdataDbName()).dbo.bas_project bp ON bp.iautoid = ebi.iprojectid
-                              LEFT JOIN #(getMomdataDbName()).dbo.bas_subjectm bsh ON bsh.iautoid = ebi.ihighestsubjectid
-                              LEFT JOIN #(getMomdataDbName()).dbo.bas_subjectm bsl ON bsl.iautoid = ebi.ilowestsubjectid
-                          WHERE
-                              1 = 1
-
-                            AND (
-                              ebid.iYear >= YEAR ( #para(dstarttime1) )
-                            AND ebid.iMonth >= MONTH ( #para(dstarttime1))
-                             OR (ebid.iYear <= YEAR ( #para(dendtime1) )
-                            AND ebid.iMonth <= MONTH ( #para(dendtime1) ))
-
-                              )
-
-                              #if(cdepcode)
-                            AND eb.cdepcode = #para(cdepcode)
-                              #end
-                              #if(ibudgettype)
-                            AND  eb.ibudgettype = #para(ibudgettype)
-                              #end
-                          GROUP BY
-                              bsl.csubjectname,
-                              ebi.iautoid,
-                              ebi.iexpenseid,
-                              eb.ibudgettype,
-                              eb.cdepcode,
-                              ebi.cbudgetno,
-                              ebid.iExpenseItemId,
-                              ebid.iYear,
-                              ebid.iMonth,
-                              bsh.csubjectname,
-                              ebi.icreateby
-                      ) T
-                  GROUP BY
-                      t.cdepcode,
-                      t.chighestsubjectname,
-                      t.clowestsubjectname,
-                      t.ibudgettype,t.iYear
-
-                  Union all
-                  SELECT
-                      contrast='②',
-                      t.cdepcode,
-                      t.chighestsubjectname,
-                      t.clowestsubjectname,
-                      t.ibudgettype,t.iYear,
-                      isnull(SUM( t.previousyearmounthamount8 ),0) AS previousyearmounthamount8,
-                      isnull(SUM( t.previousyearmounthamount9 ),0) AS previousyearmounthamount9,
-                      isnull(SUM( t.previousyearmounthamount10 ),0) AS previousyearmounthamount10,
-                      isnull(SUM( t.previousyearmounthamount11 ),0) AS previousyearmounthamount11,
-                      isnull(SUM( t.previousyearmounthamount12 ),0) AS previousyearmounthamount12,
-                      isnull(SUM( t.nowyearmounthamount1 ),0) AS nowyearmounthamount1,
-                      isnull(SUM( t.nowyearmounthamount2 ),0) AS nowyearmounthamount2,
-                      isnull(SUM( t.nowyearmounthamount3 ),0) AS nowyearmounthamount3,
-                      isnull(SUM( t.nowyearmounthamount4 ),0) AS nowyearmounthamount4,
-                      isnull(SUM( t.nowyearmounthamount5 ),0) AS nowyearmounthamount5,
-                      isnull(SUM( t.nowyearmounthamount6 ),0) AS nowyearmounthamount6,
-                      isnull(SUM( t.nowyearmounthamount7 ),0) AS nowyearmounthamount7,
-                      isnull(SUM( t.nowyearmounthamount8 ),0) AS nowyearmounthamount8,
-                      isnull(SUM( t.nowyearmounthamount9 ),0) AS nowyearmounthamount9,
-                      isnull(SUM( t.nowyearmounthamount10 ),0) AS nowyearmounthamount10,
-                      isnull(SUM( t.nowyearmounthamount11 ),0) AS nowyearmounthamount11,
-                      isnull(SUM( t.nowyearmounthamount12 ),0) AS nowyearmounthamount12,
-                      SUM( t.nextyearmounthamount1 ) AS nextyearmounthamount1,
-                      SUM( t.nextyearmounthamount2 ) AS nextyearmounthamount2,
-                      SUM( t.nextyearmounthamount3 ) AS nextyearmounthamount3,
-                      SUM( t.nextyearmounthamount4 ) AS nextyearmounthamount4
-                  FROM
-                      (
-               SELECT
-                   bsl.csubjectname clowestsubjectname,
-                   ebi.iautoid,
-                   ebi.iexpenseid,
-                   ebid.iExpenseItemId,
-                   eb.ibudgettype,
-                   eb.cdepcode,
-                   ebi.cbudgetno,
-                   bsh.csubjectname chighestsubjectname,
-                   ebi.icreateby,
-                   ebid.iYear,
-                   ebid.iMonth,
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 8 THEN ebid.iamount END )/1000) 'previousyearmounthamount8',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 9 THEN ebid.iamount END )/1000) 'previousyearmounthamount9',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 10 THEN ebid.iamount END )/1000) 'previousyearmounthamount10',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 11 THEN ebid.iamount END )/1000) 'previousyearmounthamount11',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 12 THEN ebid.iamount END )/1000) 'previousyearmounthamount12',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 1 THEN ebid.iamount END )/1000) 'nowyearmounthamount1',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 2 THEN ebid.iamount END )/1000) 'nowyearmounthamount2',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 3 THEN ebid.iamount END )/1000) 'nowyearmounthamount3',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 4 THEN ebid.iamount END )/1000) 'nowyearmounthamount4',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 5 THEN ebid.iamount END )/1000) 'nowyearmounthamount5',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 6 THEN ebid.iamount END )/1000) 'nowyearmounthamount6',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 7 THEN ebid.iamount END )/1000) 'nowyearmounthamount7',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 8 THEN ebid.iamount END )/1000) 'nowyearmounthamount8',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 9 THEN ebid.iamount END )/1000) 'nowyearmounthamount9',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 10 THEN ebid.iamount END )/1000) 'nowyearmounthamount10',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 11 THEN ebid.iamount END )/1000) 'nowyearmounthamount11',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 12 THEN ebid.iamount END )/1000) 'nowyearmounthamount12',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 1 THEN ebid.iamount END )/1000) 'nextyearmounthamount1',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 2 THEN ebid.iamount END )/1000) 'nextyearmounthamount2',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 3 THEN ebid.iamount END )/1000) 'nextyearmounthamount3',
-                   Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 4 THEN ebid.iamount END )/1000) 'nextyearmounthamount4'
-               FROM
-                   #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
-                              LEFT JOIN #(getMomdataDbName()).dbo.PL_Expense_Budget_ItemD ebid ON ebi.iautoid = ebid.iexpenseitemid
-                              LEFT JOIN #(getMomdataDbName()).dbo.PL_Expense_Budget eb ON eb.iautoid = ebi.iExpenseId
-                              LEFT JOIN #(getMomdataDbName()).dbo.bas_project bp ON bp.iautoid = ebi.iprojectid
-                              LEFT JOIN #(getMomdataDbName()).dbo.bas_subjectm bsh ON bsh.iautoid = ebi.ihighestsubjectid
-                              LEFT JOIN #(getMomdataDbName()).dbo.bas_subjectm bsl ON bsl.iautoid = ebi.ilowestsubjectid
-                          WHERE
-                              1 = 1
-                            AND (
-                                        ebid.iYear >= YEAR ( #para(dstarttime2) )
-                                         AND ebid.iMonth >= MONTH ( #para(dstarttime2))
-                                         OR (ebid.iYear <= YEAR ( #para(dendtime2) )
-                                         AND ebid.iMonth <= MONTH ( #para(dendtime2) ))
-                                )
-
-                          #if(cdepcode)
-                            AND eb.cdepcode = #para(cdepcode)
-                          #end
-                          #if(ibudgettype)
-                            AND  eb.ibudgettype = #para(ibudgettype)
-                          #end
-                             GROUP BY
-                              bsl.csubjectname,
-                              ebi.iautoid,
-                              ebi.iexpenseid,
-                              eb.ibudgettype,
-                              eb.cdepcode,
-                              ebi.cbudgetno,
-                              ebid.iExpenseItemId,
-                              ebid.iYear,
-                              ebid.iMonth,
-                              bsh.csubjectname,
-                              ebi.icreateby
-                      ) T
-                  GROUP BY
-                      t.cdepcode,
-                      t.chighestsubjectname,
-                      t.clowestsubjectname,
-                      t.ibudgettype,t.iYear
-          Union all
-          SELECT
-                  contrast='③',
-                  t.cdepcode,
-                  t.chighestsubjectname,
-                  t.clowestsubjectname,
-                  t.ibudgettype,t.iYear,
-                  isnull(SUM( t.previousyearmounthamount8 ),0) AS previousyearmounthamount8,
-                  isnull(SUM( t.previousyearmounthamount9 ),0) AS previousyearmounthamount9,
-                  isnull(SUM( t.previousyearmounthamount10 ),0) AS previousyearmounthamount10,
-                  isnull(SUM( t.previousyearmounthamount11 ),0) AS previousyearmounthamount11,
-                  isnull(SUM( t.previousyearmounthamount12 ),0) AS previousyearmounthamount12,
-                  isnull(SUM( t.nowyearmounthamount1 ),0) AS nowyearmounthamount1,
-                  isnull(SUM( t.nowyearmounthamount2 ),0) AS nowyearmounthamount2,
-                  isnull(SUM( t.nowyearmounthamount3 ),0) AS nowyearmounthamount3,
-                  isnull(SUM( t.nowyearmounthamount4 ),0) AS nowyearmounthamount4,
-                  isnull(SUM( t.nowyearmounthamount5 ),0) AS nowyearmounthamount5,
-                  isnull(SUM( t.nowyearmounthamount6 ),0) AS nowyearmounthamount6,
-                  isnull(SUM( t.nowyearmounthamount7 ),0) AS nowyearmounthamount7,
-                  isnull(SUM( t.nowyearmounthamount8 ),0) AS nowyearmounthamount8,
-                  isnull(SUM( t.nowyearmounthamount9 ),0) AS nowyearmounthamount9,
-                  isnull(SUM( t.nowyearmounthamount10 ),0) AS nowyearmounthamount10,
-                  isnull(SUM( t.nowyearmounthamount11 ),0) AS nowyearmounthamount11,
-                  isnull(SUM( t.nowyearmounthamount12 ),0) AS nowyearmounthamount12,
-                  SUM( t.nextyearmounthamount1 ) AS nextyearmounthamount1,
-                  SUM( t.nextyearmounthamount2 ) AS nextyearmounthamount2,
-                  SUM( t.nextyearmounthamount3 ) AS nextyearmounthamount3,
-                  SUM( t.nextyearmounthamount4 ) AS nextyearmounthamount4
-          FROM
-              (
-                  SELECT
-                      bsl.csubjectname clowestsubjectname,
-                      ebi.iautoid,
-                      ebi.iexpenseid,
-                      ebid.iExpenseItemId,
-                      eb.ibudgettype,
-                      eb.cdepcode,
-                      ebi.cbudgetno,
-                      bsh.csubjectname chighestsubjectname,
-                      ebi.icreateby,
-                      ebid.iYear,
-                      ebid.iMonth,
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 8 THEN ebid.iamount END )/1000) 'previousyearmounthamount8',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 9 THEN ebid.iamount END )/1000) 'previousyearmounthamount9',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 10 THEN ebid.iamount END )/1000) 'previousyearmounthamount10',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 11 THEN ebid.iamount END )/1000) 'previousyearmounthamount11',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear - 1 AND ebid.imonth = 12 THEN ebid.iamount END )/1000) 'previousyearmounthamount12',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 1 THEN ebid.iamount END )/1000) 'nowyearmounthamount1',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 2 THEN ebid.iamount END )/1000) 'nowyearmounthamount2',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 3 THEN ebid.iamount END )/1000) 'nowyearmounthamount3',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 4 THEN ebid.iamount END )/1000) 'nowyearmounthamount4',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 5 THEN ebid.iamount END )/1000) 'nowyearmounthamount5',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 6 THEN ebid.iamount END )/1000) 'nowyearmounthamount6',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 7 THEN ebid.iamount END )/1000) 'nowyearmounthamount7',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 8 THEN ebid.iamount END )/1000) 'nowyearmounthamount8',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 9 THEN ebid.iamount END )/1000) 'nowyearmounthamount9',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 10 THEN ebid.iamount END )/1000) 'nowyearmounthamount10',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 11 THEN ebid.iamount END )/1000) 'nowyearmounthamount11',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear AND ebid.imonth = 12 THEN ebid.iamount END )/1000) 'nowyearmounthamount12',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 1 THEN ebid.iamount END )/1000) 'nextyearmounthamount1',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 2 THEN ebid.iamount END )/1000) 'nextyearmounthamount2',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 3 THEN ebid.iamount END )/1000) 'nextyearmounthamount3',
-                          Convert(decimal(30,5),SUM( CASE WHEN ebid.iyear = eb.iBudgetYear + 1 AND ebid.imonth = 4 THEN ebid.iamount END )/1000) 'nextyearmounthamount4'
-                  FROM
-                      #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
-                              LEFT JOIN #(getMomdataDbName()).dbo.PL_Expense_Budget_ItemD ebid ON ebi.iautoid = ebid.iexpenseitemid
-                      LEFT JOIN #(getMomdataDbName()).dbo.PL_Expense_Budget eb ON eb.iautoid = ebi.iExpenseId
-                      LEFT JOIN #(getMomdataDbName()).dbo.bas_project bp ON bp.iautoid = ebi.iprojectid
-                      LEFT JOIN #(getMomdataDbName()).dbo.bas_subjectm bsh ON bsh.iautoid = ebi.ihighestsubjectid
-                      LEFT JOIN #(getMomdataDbName()).dbo.bas_subjectm bsl ON bsl.iautoid = ebi.ilowestsubjectid
-                  WHERE
-                      1 = 1
-                    AND (
-                      ebid.iYear >= YEAR ( #para(dstarttime3) )
-                    AND ebid.iMonth >= MONTH ( #para(dstarttime3))
-                     OR (ebid.iYear <= YEAR ( #para(dendtime3) )
-                    AND ebid.iMonth <= MONTH ( #para(dendtime3) ))
-                      )
-
-                      #if(cdepcode)
-                    AND eb.cdepcode = #para(cdepcode)
-                      #end
-                      #if(ibudgettype)
-                    AND  eb.ibudgettype = #para(ibudgettype)
-                      #end
-                  GROUP BY
-                      bsl.csubjectname,
-                      ebi.iautoid,
-                      ebi.iexpenseid,
-                      eb.ibudgettype,
-                      eb.cdepcode,
-                      ebi.cbudgetno,
-                      ebid.iExpenseItemId,
-                      ebid.iYear,
-                      ebid.iMonth,
-                      bsh.csubjectname,
-                      ebi.icreateby
-              ) T
-          GROUP BY
-              t.cdepcode,
-              t.chighestsubjectname,
-              t.clowestsubjectname,
-              t.ibudgettype,t.iYear
-              )A
-              order  by  A.cdepcode, A.clowestsubjectname,A.iYear,A.ibudgettype
-    #end
+select chighestsubjectname,clowestsubjectname,ibudgettype,icontrastnum
+#if(monthlist && monthlist.size() > 0)
+	#for(monthnum:monthlist)
+ 		,imonthamount#(for.index+1)
+ 	#end
+#end
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	#(for.first ? ",(0" : "") +imonthamount#(for.index+1)
+	#(for.last ? ") itotalamount" : "")
+#end
+#end
+from (
+ 		select null chighestsubjectname,null clowestsubjectname,null ibudgettype,null icontrastnum
+ 		#if(monthlist && monthlist.size() > 0)
+ 		#for(monthnum:monthlist)
+ 		,null 'imonthamount#(for.index+1)'
+ 		#end
+ 		#end
+#if(ibudgettype1 == '1')
+union all
+		select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
+		and ibudgettype = 1
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype1 == '2')
+union all		 
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
+		and ibudgettype = 2
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype1 == '3')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,3 ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)		
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))	
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype1 == '4')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,4 ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype2 == '1')
+union all
+		select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
+		and ibudgettype = 1
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype2 == '2')
+union all		 
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
+		and ibudgettype = 2
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype2 == '3')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,3 ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))	
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype2 == '4')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,4 ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)		
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype3 == '1')
+union all
+		select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
+		and ibudgettype = 1
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype3 == '2')
+union all		 
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
+		and ibudgettype = 2
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype3 == '3')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,3 ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))	
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype3 == '4')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,4 ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)		
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+) T where icontrastnum is not null
+union all
+select chighestsubjectname,clowestsubjectname,5 ibudgettype,null icontrastnum
+#if(monthlist && monthlist.size() > 0)
+	#for(monthnum:monthlist)
+ 		,isnull(sum(case when icontrastnum = 2 then imonthamount#(for.index+1) end) - sum(case when icontrastnum = 1 then imonthamount#(for.index+1) end),0) imonthamount#(for.index+1)
+ 	#end
+#end
+,isnull(sum(case when icontrastnum = 2 then itotalamount end) - sum(case when icontrastnum = 1 then itotalamount end),0) itotalamount
+from (
+select T.*
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	#(for.first ? ",(0" : "") +imonthamount#(for.index+1)
+	#(for.last ? ") itotalamount" : "")
+#end
+#end
+from (
+ 		select null chighestsubjectname,null clowestsubjectname,null ibudgettype,null icontrastnum
+ 		#if(monthlist && monthlist.size() > 0)
+ 		#for(monthnum:monthlist)
+ 		,null 'imonthamount#(for.index+1)'
+ 		#end
+ 		#end
+#if(ibudgettype1 == '1')
+union all
+		select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
+		and ibudgettype = 1
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype1 == '2')
+union all		 
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
+		and ibudgettype = 2
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype1 == '3')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,3 ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)		
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))	
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype1 == '4')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,4 ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype2 == '1')
+union all
+		select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
+		and ibudgettype = 1
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype2 == '2')
+union all		 
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
+		and ibudgettype = 2
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype2 == '3')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,3 ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))	
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype2 == '4')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,4 ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)		
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype3 == '1')
+union all
+		select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
+		and ibudgettype = 1
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype3 == '2')
+union all		 
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
+		and ibudgettype = 2
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype3 == '3')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,3 ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))	
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype3 == '4')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,4 ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)		
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+) T where icontrastnum is not null
+) contrastdiff5 group by chighestsubjectname,clowestsubjectname
+having sum(case when icontrastnum = 2 then 1 end) is not null
+		and sum(case when icontrastnum = 1 then 1 end) is not null
+union all
+select chighestsubjectname,clowestsubjectname,6 ibudgettype,null icontrastnum
+#if(monthlist && monthlist.size() > 0)
+	#for(monthnum:monthlist)
+ 		,isnull(sum(case when icontrastnum = 3 then imonthamount#(for.index+1) end) - sum(case when icontrastnum = 1 then imonthamount#(for.index+1) end),0) imonthamount#(for.index+1)
+ 	#end
+#end
+,isnull(sum(case when icontrastnum = 3 then itotalamount end) - sum(case when icontrastnum = 1 then itotalamount end),0) itotalamount
+from (
+select T.*
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	#(for.first ? ",(0" : "") +imonthamount#(for.index+1)
+	#(for.last ? ") itotalamount" : "")
+#end
+#end
+from (
+ 		select null chighestsubjectname,null clowestsubjectname,null ibudgettype,null icontrastnum
+ 		#if(monthlist && monthlist.size() > 0)
+ 		#for(monthnum:monthlist)
+ 		,null 'imonthamount#(for.index+1)'
+ 		#end
+ 		#end
+#if(ibudgettype1 == '1')
+union all
+		select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
+		and ibudgettype = 1
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype1 == '2')
+union all		 
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
+		and ibudgettype = 2
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype1 == '3')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,3 ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)		
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))	
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype1 == '4')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,4 ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype2 == '1')
+union all
+		select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
+		and ibudgettype = 1
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype2 == '2')
+union all		 
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
+		and ibudgettype = 2
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype2 == '3')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,3 ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))	
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype2 == '4')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,4 ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)		
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype3 == '1')
+union all
+		select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
+		and ibudgettype = 1
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype3 == '2')
+union all		 
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
+		and ibudgettype = 2
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype3 == '3')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,3 ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))	
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype3 == '4')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,4 ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)		
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+) T where icontrastnum is not null
+) contrastdiff6 group by chighestsubjectname,clowestsubjectname
+having sum(case when icontrastnum = 3 then 1 end) is not null
+		and sum(case when icontrastnum = 1 then 1 end) is not null	
+union all
+select chighestsubjectname,clowestsubjectname,7 ibudgettype,null icontrastnum
+#if(monthlist && monthlist.size() > 0)
+	#for(monthnum:monthlist)
+ 		,isnull(sum(case when icontrastnum = 3 then imonthamount#(for.index+1) end) - sum(case when icontrastnum = 2 then imonthamount#(for.index+1) end),0) imonthamount#(for.index+1)
+ 	#end
+#end
+,isnull(sum(case when icontrastnum = 3 then itotalamount end) - sum(case when icontrastnum = 2 then itotalamount end),0) itotalamount
+from (
+select T.*
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	#(for.first ? ",(0" : "") +imonthamount#(for.index+1)
+	#(for.last ? ") itotalamount" : "")
+#end
+#end
+from (
+ 		select null chighestsubjectname,null clowestsubjectname,null ibudgettype,null icontrastnum
+ 		#if(monthlist && monthlist.size() > 0)
+ 		#for(monthnum:monthlist)
+ 		,null 'imonthamount#(for.index+1)'
+ 		#end
+ 		#end
+#if(ibudgettype1 == '1')
+union all
+		select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
+		and ibudgettype = 1
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype1 == '2')
+union all		 
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
+		and ibudgettype = 2
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype1 == '3')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,3 ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)		
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))	
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype1 == '4')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,4 ibudgettype,1 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime1),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype2 == '1')
+union all
+		select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
+		and ibudgettype = 1
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype2 == '2')
+union all		 
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
+		and ibudgettype = 2
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype2 == '3')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,3 ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))	
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype2 == '4')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,4 ibudgettype,2 icontrastnum
+#if(monthlist && monthlist.size() > 0)		
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime2),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype3 == '1')
+union all
+		select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
+		and ibudgettype = 1
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype3 == '2')
+union all		 
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,eb.ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,isnull(sum(case when ebid.iyear = datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) and ebid.imonth = datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))) then iamount end),0) 'imonthamount#(for.index+1)'
+#end
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
+		and ibudgettype = 2
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
+#end
+#if(ibudgettype3 == '3')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,3 ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)	
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))	
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+#if(ibudgettype3 == '4')
+union all
+		 select hsm.csubjectname chighestsubjectname,lsm.csubjectname clowestsubjectname,4 ibudgettype,3 icontrastnum
+#if(monthlist && monthlist.size() > 0)		
+#for(monthnum:monthlist)
+	,dbo.PL_GetInvestmentPlanActualDatasByYearAndMonth(ebi.cbudgetno,datepart(year,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01')))),datepart(month,dateadd(month,#(for.index),convert(date,concat(#para(dstarttime3),'-01'))))) 'imonthamount#(for.index+1)'
+#end	
+#end
+from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
+	left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid
+	left join #(getMomdataDbName()).dbo.pl_expense_budget_itemd ebid on ebi.iautoid = ebid.iexpenseitemid
+	left join #(getMomdataDbName()).dbo.Bas_SubjectM hsm on hsm.iautoid = ebi.iHighestSubjectId and hsm.IsEnabled = 1
+	left join #(getMomdataDbName()).dbo.bas_subjectm lsm on lsm.iautoid = ebi.iLowestSubjectId and lsm.isenabled = 1
+		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
+		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
+		#if(cdepcode)
+			and cdepcode = #para(cdepcode)
+		#end		
+		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
+#end
+) T where icontrastnum is not null
+) contrastdiff7 group by chighestsubjectname,clowestsubjectname
+having sum(case when icontrastnum = 3 then 1 end) is not null
+		and sum(case when icontrastnum = 2 then 1 end) is not null
+) RS order by clowestsubjectname asc,icontrastnum desc,ibudgettype desc
+#end

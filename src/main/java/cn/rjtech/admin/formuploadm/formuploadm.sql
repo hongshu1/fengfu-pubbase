@@ -1,7 +1,7 @@
 #sql("getAdminDatas")
 select *,CASE iAuditStatus
              WHEN 0 THEN
-                 '已保存'
+                 '未审核'
              WHEN 1 THEN
                  '待审核'
              WHEN 2 THEN

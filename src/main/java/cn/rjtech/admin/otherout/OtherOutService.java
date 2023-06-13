@@ -258,13 +258,14 @@ public class OtherOutService extends BaseService<OtherOut> {
 					otherOut.setAuditStatus(0);
 					//订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
 					otherOut.setStatus(1);
-					otherOut.setCreateDate(nowDate);
+					otherOut.setICreateBy(userId);
+					otherOut.setDCreateTime(nowDate);
+					otherOut.setCCreateName(userName);
 					otherOut.setOrganizeCode(OrgCode);
-					otherOut.setCreatePerson(userName);
-					otherOut.setModifyDate(nowDate);
-					otherOut.setModifyPerson(userName);
+					otherOut.setIUpdateBy(userId);
+					otherOut.setDupdateTime(nowDate);
+					otherOut.setCUpdateName(userName);
 					otherOut.setType("OtherOutMES");
-					otherOut.setSourceBillType("手动新增");
 					save(otherOut);
 					headerId = otherOut.getAutoID();
 				} else {
@@ -276,8 +277,9 @@ public class OtherOutService extends BaseService<OtherOut> {
 						//订单状态：2. 待审批
 						otherOut.setStatus(2);
 					}
-					otherOut.setModifyDate(nowDate);
-					otherOut.setModifyPerson(userName);
+					otherOut.setIUpdateBy(userId);
+					otherOut.setDupdateTime(nowDate);
+					otherOut.setCUpdateName(userName);
 					update(otherOut);
 					headerId = otherOut.getAutoID();
 				}

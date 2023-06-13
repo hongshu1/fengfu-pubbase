@@ -47,7 +47,6 @@
     var inputId=a.attr("id");
     MultipleFileInputUtil.changeSyncInputFiles(inputId,strs)
     function set1ValueTo1(input,res){
-        console.log(input,res)
         var that=this;
         var setvalueto=input.data("setvalueto");
         if(!setvalueto){
@@ -57,7 +56,6 @@
         var sync=input.data("sync");
         var multipleFiles=null;
         if(sync){
-            console.log(multipleUploadFiles)
             multipleFiles=MultipleFileInputUtil.changeSyncInputFiles(inputId,res.data);
         }else{
             multipleFiles=that.findInputFiles(inputId);
@@ -76,7 +74,6 @@
 
     }
     $('#fileInput_123').on('filepredelete', function(event, key,data) {
-        console.log('Key = ' + key);
         var index = multipleUploadFiles[0].value.findIndex(item => item.url == ress[key])
         multipleUploadFiles[0].value.splice(index,1)
         let strval = multipleUploadFiles[0].value.map(item => item.url).toString()

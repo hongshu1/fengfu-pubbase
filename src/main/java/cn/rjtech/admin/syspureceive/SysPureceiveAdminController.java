@@ -258,7 +258,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     }
 
     /**
-     * 批量审核通过
+     * 批量审核通过（批量审批也走这里）
      */
     public void batchApprove(@Para(value = "ids") String ids) {
         if (StringUtils.isEmpty(ids)) {
@@ -278,6 +278,16 @@ public class SysPureceiveAdminController extends BaseAdminController {
             return;
         }
         renderJson(service.noProcess(ids));
+    }
+    /**
+     * 批量审批不通过
+     */
+    public void batchReject(@Para(value = "ids") String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            renderFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        renderJson(service.batchReject(ids));
     }
 
 }
