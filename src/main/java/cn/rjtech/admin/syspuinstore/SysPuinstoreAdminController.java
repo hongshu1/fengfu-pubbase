@@ -138,13 +138,6 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     }
 
     /**
-     * 批量删除
-     */
-    /*public void deleteByIds() {
-        renderJson(service.deleteRmRdByIds(get("ids")));
-    }*/
-
-    /**
      * 删除
      */
     public void delete() {

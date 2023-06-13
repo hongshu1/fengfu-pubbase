@@ -293,6 +293,11 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     public Ret resetAutitById(String autoid) {
         Date date = new Date();
         boolean tx = tx(() -> {
+            SysPuinstore puinstore = findById(autoid);
+            if (puinstore.getIAuditStatus() != AuditStatusEnum.APPROVED.getValue() &&
+                puinstore.getIAuditStatus() != AuditStatusEnum.REJECTED.getValue()) {
+                ValidationUtils.isTrue(false, "只有已审核或审核不通过的状态才可以反审核");
+            }
             List<SysPuinstore> puinstoreList = new ArrayList<>();
             commonResetAutitById(autoid, puinstoreList, date);
             //
@@ -306,19 +311,19 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      * 批量反审核的公共方法
      * */
     public void commonResetAutitById(String autoid, List<SysPuinstore> puinstoreList, Date date) {
+
         SysPuinstore puinstore = findById(autoid);
+        //todo 打u8接口，通知u8删除单据，然后更新mom平台的数据
+        String json = getSysPuinstoreDeleteDTO(puinstore.getU8BillNo());
+        String post = new BaseInU8Util().deleteVouchProcessDynamicSubmitUrl(json);
+        System.out.println(post);
+        //
         String userName = JBoltUserKit.getUserName();
-        if (puinstore.getIAuditStatus() != AuditStatusEnum.APPROVED.getValue() &&
-            puinstore.getIAuditStatus() != AuditStatusEnum.REJECTED.getValue()) {
-            ValidationUtils.isTrue(false, "只有已审核或审核不通过的状态才可以反审核");
-        }
         puinstore.setU8BillNo(null);//将u8的单据号置为空
         puinstore.setCAuditName(userName);
         puinstore.setAuditDate(date);
         puinstore.setCUpdateName(userName);
         puinstore.setDUpdateTime(date);
-//            puinstore.setAuditPerson(null);
-//            puinstore.setAuditDate(null);
         puinstore.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());//退回待审核
         //
         puinstoreList.add(puinstore);
@@ -340,9 +345,9 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                 sysPuinstore.setIAuditStatus(sysPuinstore.getIAuditStatus() + 1);
                 Ret ret = update(sysPuinstore);
                 //2、同步u8
-                *//*String json = getSysPuinstoreDto(sysPuinstore);
+                String json = getSysPuinstoreDto(sysPuinstore);
                 String post = new BaseInU8Util().base_in(json);
-                System.out.println(post);*//*
+                System.out.println(post);
             }
             return true;
         });
@@ -448,19 +453,15 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         tx(() -> {
             //1、未审核状态下直接删除
             checkDelete(id);
-            //TODO 先通知U8删除
             SysPuinstore puinstore = findById(id);
-            String json = getSysPuinstoreDeleteDTO(puinstore.getBillNo());
-            String post = new BaseInU8Util().deleteVouchProcessDynamicSubmitUrl(json);
-            System.out.println(post);
 
             //从表的数据
-//            Ret ret = deleteSysPuinstoredetailByMasId(String.valueOf(id));
-//            if (ret.isFail()) {
-//                return false;
-//            }
+            Ret ret = deleteSysPuinstoredetailByMasId(String.valueOf(id));
+            if (ret.isFail()) {
+                return false;
+            }
             //删除主表数据
-//            deleteById(id);
+            deleteById(id);
             return true;
         });
         return ret(true);
@@ -480,20 +481,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         }
         return ret(true);
     }
-
-    /**
-     * 批量删除主从表
-     */
-    /*public Ret deleteRmRdByIds(String ids) {
-        tx(() -> {
-            String[] split = ids.split(",");
-            for (String id : split) {
-                this.deleteByAutoid(Long.valueOf(id));
-            }
-            return true;
-        });
-        return ret(true);
-    }*/
 
     /*
      * 获取删除的json
