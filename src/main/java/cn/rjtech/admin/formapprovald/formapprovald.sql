@@ -31,7 +31,7 @@ select t.*,
        (select top 1 u.name
         from Bd_FormApprovalFlowD d
                  left join Bd_FormApprovalFlowM m on d.iFormApprovalFlowMid = m.iAutoId
-                 left join UGCFF_MOM_System.dbo.jb_user u on d.iUserId = u.id
+                 left join #(getBaseDbName()).dbo.jb_user u on d.iUserId = u.id
         where m.iApprovalDid = t.did
           and d.iAuditStatus > 1) as username
 from (select t1.iAutoId,
@@ -61,7 +61,7 @@ from (select t1.iAutoId,
       from Bd_FormApproval t1
       where t1.iFormObjectId = '#(formId)'
         and t1.isDeleted = '1') t
-         left join UGCFF_MOM_System.dbo.jb_dictionary t2
+         left join #(getBaseDbName()).dbo.jb_dictionary t2
                    on t2.type_key = 'approval_d_name' and t2.sn = t.t_iStep
 #end
 
