@@ -134,9 +134,18 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 	}
 
 	public void choosemtool() {
-		String iautoid = get("it-iautoid");
+		String barcodes = get("barcodes");
+		String cmodocno = get("cmodocno");
 		Kv kv = new Kv();
-		kv.set("iautoid", iautoid == null ? "" : iautoid);
-		renderJsonData(service.getBarcode(getPageNumber(), getPageSize(), kv));
+		kv.set("barcodes", barcodes == null ? "" : barcodes);
+		kv.set("cmodocno",cmodocno== null ? "" : cmodocno);
+		renderJsonData(service.getchooseM(kv));
+//		String[] barcodesS = barcodes.split(",");
+//		for (int i=0;i<barcodesS.length;i++){
+//			Kv kv = new Kv();
+//			kv.set("barcodes", barcodesS[i] == null ? "" : barcodesS[i]);
+//			kv.set("cmodocno",cmodocno== null ? "" : cmodocno);
+//			renderJsonData(service.getchooseM(kv));
+//		}
 	}
 }

@@ -199,9 +199,14 @@
 <td>
      <input type="text" class="form-control " placeholder="" maxlength="20" name="iplanqty" value=""/>
 </td>
+  <td>${data.cwhname}</td>
+  <td>${data.cpositionname}</td>
 <td>
-	<a class="jbolt_table_delbtn" href="admin/sysmaterialspreparedetail/${data.isDeleted?'realDelete':'delete'}/${data.autoid}" data-handler="refreshJBoltTable" ><i class="fa c-danger">移除</i></a>
+	<a type="button" onclick="DElete(this)" style="user-select:none"  ><i class="fa c-danger">移除</i></a>
 </td>
+<!--<td>-->
+<!--	<a class="jbolt_table_delbtn" href="admin/sysmaterialspreparedetail/${data.isDeleted?'realDelete':'delete'}/${data.autoid}" data-handler="refreshJBoltTable" ><i class="fa c-danger">移除</i></a>-->
+<!--</td>-->
 </tr>
 {@/each}
 </textarea>
@@ -222,13 +227,15 @@
   <thead class="fw-normal">
   <tr>
     <th data-width="60" data-column="">序号</th>
-    <th data-min-width="100" data-column="">存货编码</th>
-    <th data-min-width="100" data-column="">客户部番</th>
-    <th data-min-width="100" data-column="">部品名称</th>
-    <th data-min-width="100" data-column="">规格</th>
-    <th data-min-width="100" data-column="">主计量单位</th>
-    <th data-min-width="100" data-column="">计划数量</th>
-    <th data-min-width="100" data-column="">操作</th>
+    <th data-width="150" data-column="cinvcode">存货编码</th>
+    <th data-min-width="150" data-column="cinvcode1">客户部番</th>
+    <th data-width="250" data-column="cinvname1">部品名称</th>
+    <th data-width="150" data-column="cinvstd">规格</th>
+    <th data-width="150" data-column="cuomname">主计量单位</th>
+    <th data-width="150" data-column="">计划数量</th>
+    <th data-width="200" data-column="cwhname">仓库名称</th>
+    <th data-width="150" data-column="cpositionname">库区名称</th>
+    <th data-width="150" data-column="">操作</th>
   </tr>
   </thead>
   <tbody></tbody>
@@ -242,6 +249,29 @@
   function closeHandler() {
     parent.layer.close(parent.layer.getFrameIndex(window.name));
     window.parent.refreshJBoltTable();
+  }
+
+  function DElete(val){
+
+  }
+
+  function removeJBoltTableCheckedTr(ele,confirm,callback){
+    var table=getJBoltTable(ele);
+    if(isOk(table)){
+      var jboltTable=table.jboltTable("inst");
+      if(jboltTable){
+        var action=getRealJqueryObject(ele);
+        if(isOk(action)){
+          var success = checkMasterTableId(action);
+          if(!success){
+            return false;
+          }
+        }
+        jboltTable.me.removeJBoltTableCheckedTr(jboltTable,confirm,callback);
+
+      }
+    }
+    return true;
   }
 
 </script>

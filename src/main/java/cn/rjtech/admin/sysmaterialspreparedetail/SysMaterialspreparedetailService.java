@@ -158,4 +158,8 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 		ValidationUtils.notNull(first, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入。");
 		return first;
 	}
+
+	public Record getchooseM(Kv kv) {
+		return dbTemplate("materialsprepare.getChooseM", kv).findFirst();
+	}
 }

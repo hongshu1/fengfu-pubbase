@@ -19,9 +19,11 @@
                     <button type="button" class="btn btn-outline-secondary" id="choose"><i class="fa fa-reset"></i> 选择
                     </button>
                 </form>
-                <button type="button" class="btn btn-outline-secondary" hidden="hidden" id="choose1" onclick="choose2()"><i
+                <button type="button" class="btn btn-outline-secondary" hidden="hidden" id="choose1"
+                        onclick="choose2()"><i
                         class="fa fa-reset"></i> 选择
                 </button>
+                <input id="cmo" hidden="hidden" value="#(cmodocno??)"/>
             </div>
         </div>
     </div>
@@ -29,19 +31,19 @@
         <!-- 定义JBoltTable使用的数据渲染模板 -->
         <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iautoid}">
+<tr data-id="${data.barcode}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	<a class="text-info mr-1" type="button" onclick="getCheckedStrip(this)" style="user-select:none">选择</a>
 </td>
-<td>${data.状态}</td>
-<td>${data.billno}</td>
-<td>${data.cmodocno}</td>
-<td>${data.cdepname}</td>
-<td>${data.cworkshiftname}</td>
-<td>${data.dplandate}</td>
-<td>${data.invcode}</td>
+<td>${data.cinvcode}</td>
 <td>${data.cinvcode1}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cinvstd}</td>
+<td>${data.cuomname}</td>
+<td>${data.cequipmentmodelname}</td>
+<td>${data.cwhname}</td>
+<td>${data.cpositionname}</td>
 </tr>
 {@/each}
 </textarea>
@@ -89,14 +91,13 @@
     hideParentLayerDialogBtn(1);
 
     function getCheckedStrip(val) {
+        $(val).parent().click();
 
-
-
-        if ($(val).parent().parent().find("td")[0].children[0].getAttribute("class")==="jbolt_table_checkbox checked"){
-            $(val).parent().parent().find("td")[0].children[0].setAttribute("class","jbolt_table_checkbox")
-        }else {
-            $(val).parent().parent().find("td")[0].children[0].setAttribute("class","jbolt_table_checkbox checked")
-        }
+        // if ($(val).parent().parent().find("td")[0].children[0].getAttribute("class")==="jbolt_table_checkbox checked"){
+        //     $(val).parent().parent().find("td")[0].children[0].setAttribute("class","jbolt_table_checkbox")
+        // }else {
+        //     $(val).parent().parent().find("td")[0].children[0].setAttribute("class","jbolt_table_checkbox checked")
+        // }
 
         // var value = $(val).parent().parent().find("td");
         // $(val).parent().parent().find("td:eq(0)").checked;
@@ -112,28 +113,31 @@
         BTN2.onclick();
     });
 
-    function choose2(){
-        parent.layer.close(parent.layer.getFrameIndex(window.name))
-
-        Ajax.post("admin/sysMaterialspreparedetail/choosemtool", {"it-iautoid": jboltTableGetCheckedIds("chooseM",false).toString()},
-            function (res) {
-                jboltTableInsertRow(window.parent.getJBoltTable("manual") , res.data, false, false, false);
-
-            }, function (err) {
-            })
-        window.parent.refreshJBoltTable();
+    function choose2() {
+        var barcodes = jboltTableGetCheckedIds("chooseM", false);
+        if (barcodes.toString() == "false" ? false : true) {
+            parent.layer.close(parent.layer.getFrameIndex(window.name));
+            for (i=0;i<barcodes.length;i++){
+                Ajax.post("admin/sysMaterialspreparedetail/choosemtool", {"cmodocno": $(cmo).val(), "barcodes": barcodes[i]},
+                    function (res) {
+                        jboltTableInsertRow(window.parent.getJBoltTable("manual"), res.data, false, false, false);
+                    }, function (err) {
+                    });
+            }
+            // window.parent.refreshJBoltTable();
+        }
     }
 
 
-    function jboltTableGetCheckedIds(ele,dontShowError){
-        var table=getJBoltTable(ele);
-        if(isOk(table)){
-            var jboltTable=table.jboltTable("inst");
-            if(jboltTable){
-                return jboltTable.me.getCheckedIds(jboltTable,dontShowError);
+    function jboltTableGetCheckedIds(ele, dontShowError) {
+        var table = getJBoltTable(ele);
+        if (isOk(table)) {
+            var jboltTable = table.jboltTable("inst");
+            if (jboltTable) {
+                return jboltTable.me.getCheckedIds(jboltTable, dontShowError);
             }
         }
-        LayerMsgBox.alert("表格组件配置异常",2);
+        LayerMsgBox.alert("表格组件配置异常", 2);
         return false;
     }
 </script>

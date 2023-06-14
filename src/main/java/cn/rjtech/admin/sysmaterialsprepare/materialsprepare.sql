@@ -13,8 +13,8 @@ SELECT
     it.cInvName1,
     uom.cUomName,
     md.iQty,
-    mp.CreatePerson,
-    mp.CreateDate
+    mp.ccreatename,
+    mp.dcreatetime
 FROM
     T_Sys_MaterialsPrepare mp
         LEFT JOIN Mo_MoDoc md ON md.iAutoId = mp.SourceBillID
@@ -47,7 +47,7 @@ WHERE 1=1
   #if(dplandate)
   AND md.dPlanDate = #para(dplandate)
   #end
-ORDER BY mp.CreateDate DESC
+ORDER BY mp.dcreatetime DESC
     #end
 
 
@@ -410,7 +410,8 @@ SELECT
     uom.cUomName,
     em.cEquipmentModelName,
     wh.cWhName,
-    wp.cPositionName
+    wp.cPositionName,
+    sbp.Barcode
 FROM
     Mo_MoRoutingInvc mri
         LEFT JOIN Bd_Inventory it ON mri.iInventoryId= it.iAutoId
@@ -433,6 +434,32 @@ WHERE 1 = 1
   AND it.cInvName1=#para(cinvname1)
     #end
   AND  md.cMoDocNo='#(cmodocno)' #end
+
+
+#sql("getChooseM")
+SELECT
+    it.iAutoId,
+    it.cInvCode,
+    it.cInvCode1,
+    it.cInvName1,
+    it.cInvStd,
+    uom.cUomName,
+    wh.cWhName,
+    wp.cPositionName
+FROM
+    Mo_MoRoutingInvc mri
+        LEFT JOIN Bd_Inventory it ON mri.iInventoryId= it.iAutoId
+        LEFT JOIN Mo_MoRoutingConfig mrc ON mri.iMoRoutingConfigId= mrc.iAutoId
+        LEFT JOIN Mo_MoRouting mr ON mrc.iMoRoutingId= mr.iAutoId
+        LEFT JOIN Mo_MoDoc md ON mr.iMoDocId= md.iAutoId
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId= it.iInventoryUomId1
+        LEFT JOIN T_Sys_StockBarcodePosition sbp ON sbp.InvCode= it.cInvCode
+        LEFT JOIN Bd_Warehouse wh ON wh.cWhCode= sbp.WhCode
+        LEFT JOIN Bd_Warehouse_Position wp ON wp.cPositionCode= sbp.PosCode
+WHERE 1 = 1
+  AND  sbp.Barcode='#(barcodes)'
+  AND  md.cMoDocNo='#(cmodocno)'#end
+
 
 
 
