@@ -52,33 +52,7 @@ public class MoDocBatchController extends BaseAdminController {
    */
   public void editPerson() {
     MoMotask moMotask = service.findById(getLong(0));
-    if (moMotask == null) {
-      renderFail(JBoltMsg.DATA_NOT_EXIST);
-      return;
-    }
-    Department byId = departmentService.findById(moMotask.getIDepartmentId());
-    moMotask.setDeptname(byId.getCDepName());
-    set("moMotask", moMotask);
-
-    //表头日期
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    //星期
-    List<String> betweenDate = Util.getBetweenDate(sdf.format(moMotask.getDBeginDate()), sdf.format(moMotask.getDEndDate()));
-    set("daylist", betweenDate);
-    List<String> weeklist = new ArrayList<>();
-    for (String s : betweenDate) {
-      String weekDay = DateUtils.formatDate(DateUtils.parseDate(s), "E");
-      weeklist.add(weekDay);
-    }
-    //工单存货产线列表
-    Page<Record> docPage = service.findDoc(getPageNumber(), getPageSize(), moMotask.getIAutoId());
-    //设备和工序
-    for (Record record : docPage.getList()) {
-      String docId = record.getStr("iautoid");
-      List<Record> rutingConfig = service.findRoutingConfig(docId);
-      // 工序对应的人员
-
-    }
+    set("taskid", getLong(0));
     render("_form.html");
   }
 
