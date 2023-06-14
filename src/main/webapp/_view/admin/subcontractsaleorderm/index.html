@@ -174,7 +174,7 @@
 <script type="text/javascript">
 
 	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
-		$(tempTr1).data('url', '/admin/subcontractsaleorderm/edit/' + rowData.iautoid)
+		$(tempTr1).data('url', '/admin/subcontractsaleorderm/edit?iautoid=' + rowData.iautoid)
 			.data('fs', 'true')
 			.data('handler','refreshJBoltTable')
 			.data('title', '委外销售订单')

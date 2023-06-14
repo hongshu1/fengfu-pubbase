@@ -899,7 +899,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                             sysPuinstoredetail.setMasID(autoID);
                             sysPuinstoredetail.setSourceBillType(f.getSourceBillType());
                             sysPuinstoredetail.setSourceBillNo(f.getSourceBillNo());
-                            sysPuinstoredetail.setSourceBillNoRow(f.getSourceBillNoRow());
+                            sysPuinstoredetail.setSourceBillNoRow(f.getSourceBillNo() + "-" + i);
                             sysPuinstoredetail.setSourceBillDid(f.getSourceBillDid());
                             sysPuinstoredetail.setSourceBillID(f.getSourceBillID());
                             sysPuinstoredetail.setRowNo(f.getRowNo());
