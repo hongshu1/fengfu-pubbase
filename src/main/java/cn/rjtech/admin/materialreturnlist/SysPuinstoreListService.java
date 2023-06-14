@@ -222,8 +222,6 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		}
 
 		//	当前操作人员  当前时间 单号
-		User user = JBoltUserKit.getUser();
-
 		Long userId = JBoltUserKit.getUserId();
 		String userName = JBoltUserKit.getUserName();
 		Date nowDate = new Date();
@@ -471,8 +469,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		SysPuinstore puinstore = findById(iAutoId);
-		//订单状态：2. 待审批
-		puinstore.setIAuditStatus(1);
+		puinstore.setIAuditStatus(0);
+		puinstore.setIAuditBy(null);
 		puinstore.setAuditDate(null);
 		puinstore.setCAuditName(null);
 		boolean result = puinstore.update();
