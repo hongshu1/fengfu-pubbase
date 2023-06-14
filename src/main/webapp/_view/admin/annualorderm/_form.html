@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        #if(!annualOrderM.iAutoId?? || edit??false)
+                        #if(!annualOrderM.iAutoId?? || (edit??false && annualOrderM.iOrderStatus == 1))
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
                         #if(annualOrderM.iautoid?? && !edit?? && annualOrderM.iOrderStatus != 3)
@@ -104,7 +104,7 @@
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
                 #if(!annualOrderM.iautoid?? || edit??false)
-                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+                <a onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="btn btn-danger bat-sm">移除行</a>
                 #end
             </td>
             <td>${data.cinvcode}</td>
@@ -283,6 +283,7 @@
 
     function submitThisForm() {
         $('#save_btn_#(pageId)').click();
+        return true;
     }
 
     function submitApproveYear() {

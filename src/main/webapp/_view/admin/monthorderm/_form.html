@@ -9,21 +9,18 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        
-                        #if(!monthorderm.iautoid?? || edit??)
+                        #if(!monthorderm.iautoid?? ||  (edit??false && monthorderm.iOrderStatus == 1))
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
 
-                        #if(monthorderm.iautoid?? && !edit??)
-                            ### 参数列表
-                            ### uri:                接口URI
-                            ### formSn:             表单名
-                            ### o:                  当前表单对象名
-                            ### primaryKeyName:     主键名
-                            ### edit:               查看为false,编辑为true
-                            #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
-                        #end
-                        
+                        ### 参数列表
+                        ### uri:                接口URI
+                        ### formSn:             表单名
+                        ### o:                  当前表单对象名
+                        ### primaryKeyName:     主键名
+                        ### edit:               查看为false,编辑为true
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
+
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -146,8 +143,8 @@
             <td>${pageNumber,pageSize,index | rownum}</td>
         <td>
             #if(!monthorderm.iautoid?? || edit??false)
-            <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
-               data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+            <a onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
+               data-handler="removeTr" data-confirm="确定删除此数据？" class="btn btn-danger bat-sm">移除行</a>
             #end
         </td>
             <td>${data.cinvcode}</td>
@@ -340,6 +337,7 @@
 
     function submitThisForm(){
         $('#save_btn_#(pageId)').click();
+        return true;
     }
 
     /**

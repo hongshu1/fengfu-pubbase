@@ -14,8 +14,6 @@ import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
-import cn.rjtech.enums.WeekOrderStatusEnum;
-import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
 import cn.rjtech.model.momdata.base.BaseWeekOrderD;
@@ -103,7 +101,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     }
 
     public Ret delete(Long id) {
-        return toggleBoolean(id, "IsDeleted");
+        return updateColumn(id, "IsDeleted", true);
     }
 
     public List<Record> weekOrderMData(Long iWeekOrderMid) {
@@ -175,15 +173,20 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
      * 批量删除
      */
     public Ret deleteByIdS(String ids) {
-        List<WeekOrderM> orderms = getListByIds(ids);
-        ValidationUtils.notEmpty(orderms, "订单不存在");
+        List<WeekOrderM> list = getListByIds(ids);
+        List<WeekOrderM> notAuditList = new ArrayList<>();
 
-        for (WeekOrderM weekOrderM : orderms) {
-            //ValidationUtils.equals(WeekOrderStatusEnum.NOT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "只能对“已保存”状态的记录进行删除");
+        for (WeekOrderM weekOrderM : list) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != weekOrderM.getIOrderStatus()) {
+                notAuditList.add(weekOrderM);
+            }
 
             weekOrderM.setIsDeleted(true);
-            weekOrderM.update();
         }
+
+        ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
+        ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
         return SUCCESS;
     }
 
@@ -296,6 +299,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             }
             List<WeekOrderD> updateBeanList = jBoltTable.getUpdateBeanList(WeekOrderD.class);
             updateDs(updateBeanList);
+            weekOrderDService.deleteByIds(jBoltTable.getDelete());
         } catch (Exception e) {
             ValidationUtils.isTrue(false, "周间客户订单不合法,请检查订单数据!");
         }
