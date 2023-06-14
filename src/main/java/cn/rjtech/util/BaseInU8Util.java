@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.rjtech.config.AppConfig;
 
@@ -25,17 +26,17 @@ public class BaseInU8Util {
      * 推送采购入库单到U8系统
      */
     public String base_in(String json) {
-        String vouchSumbmitUrl = AppConfig.getSysPuinstoreVouchProcessDynamicSubmitUrl();//getSysPuinstoreVouchProcessDynamicSubmitUrl
+        // getSysPuinstoreVouchProcessDynamicSubmitUrl
+        String vouchSumbmitUrl = AppConfig.getSysPuinstoreVouchProcessDynamicSubmitUrl();
         String post = HttpUtil.post(vouchSumbmitUrl, json);
         JSONObject res = JSON.parseObject(post);
+        
         ValidationUtils.notNull(res, "解析JSON为空");
         LOG.info("res: {}", res);
 
         String code = res.getString("code");
-        String message = res.getString("message");
-        if (message == null) {
-            message = res.getString("msg");
-        }
+        String message = StrUtil.nullToDefault(res.getString("message"), res.getString("msg"));
+        
         if (ObjUtil.equal(res.getString("state"), "fail")) {
             ValidationUtils.error(message);
         }
