@@ -348,6 +348,21 @@ order by o.iAutoId DESC
 #end
 
 
+#sql("InventoryQcForm")
+SELECT  qc.iAutoId,qc.cQcFormName,
+inv.cInvCode, inv.cInvCode1, inv.cInvName, inv.cInvName1, inv.cInvStd, uom.cUomName,
+t2.cEquipmentModelName as machineName
+FROM Bd_InventoryQcForm t1
+INNER JOIN Bd_QcForm qc ON qc.iAutoId = t1.iQcFormId
+INNER JOIN Bd_Inventory inv on inv.iAutoId = t1.iInventoryId
+LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iUomClassId
+left join Bd_EquipmentModel t2 on inv.iEquipmentModelId = t2.iAutoId
+WHERE t1.IsDeleted = '0' and t1.cTypeIds ='1'
+   	#if(cinvcode)
+		and inv.cInvCode = #para(cinvcode)
+	#end
+#end
+
 
 
 
