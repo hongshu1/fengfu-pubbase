@@ -1,5 +1,7 @@
 package cn.rjtech.admin.syspuinstore;
 
+import java.util.List;
+
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -178,6 +180,14 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     public void getMesSysPODetails() {
         Page<Record> recordPage = service.getMesSysPODetails(getKv(), getPageNumber(), getPageSize());
         renderJsonData(recordPage);
+    }
+
+    /*
+     * 详情表，新增行获取数据
+     * */
+    public void getInsertPuinstoreDetail() {
+        List<Record> recordList = service.getInsertPuinstoreDetail(getKv());
+        renderJsonData(recordList);
     }
 
     /*

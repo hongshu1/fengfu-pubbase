@@ -5,7 +5,9 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.otherout.OtherOutService;
+import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
@@ -43,7 +45,8 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
     private SysPuinstoreService sysPuinstoreService;
     @Inject
     private OtherOutService     otherOutService;
-
+    @Inject
+    private InventoryService    inventoryService;
 
     /**
      * 后台管理数据查询
@@ -177,11 +180,18 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
      * */
     public void saveSysPuinstoredetailModel(SysPuinstoredetail detail, Record detailRecord,
                                             SysPuinstore puinstore, int i) {
+        Inventory inventory = inventoryService.findBycInvCode(detailRecord.getStr("invcode"));
+        Kv kv = new Kv();
+        kv.set("sourcebillno", puinstore.getSourceBillNo());
+        kv.set("iInventoryId", null != inventory ? inventory.getIAutoId() : "");
+        Record record = dbTemplate("syspuinstore.getSourceBillIdAndDid", kv).findFirst();
+        if (record != null) {
+            detail.setSourceBillID(record.get("sourcebillid")); //来源单据ID(订单id)
+            detail.setSourceBillDid(record.get("sourcebilldid")); //来源单据DID;采购或委外单身ID
+        }
         detail.setSourceBillType(puinstore.get("sourcebilltype"));//采购PO  委外OM（采购类型）
         detail.setSourceBillNo(puinstore.getSourceBillNo()); //来源单号（订单号）
         detail.setSourceBillNoRow(puinstore.getSourceBillNo() + "-" + i); //来源单号+行号
-        detail.setSourceBillID(""); //来源单据ID(订单id)
-        detail.setSourceBillDid(""); //来源单据DID;采购或委外单身ID
         detail.setRowNo(i);  //行号
         detail.setMasID(puinstore.getAutoID()); //主表ID;T_Sys_PUInStore.AutoID
         detail.setWhcode(puinstore.getWhCode()); //仓库

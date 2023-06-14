@@ -21,7 +21,7 @@ public class BaseInU8Util {
      * 推送采购入库单到U8系统
      */
     public String base_in(String json) {
-        String vouchSumbmitUrl = AppConfig.getVouchProcessDynamicSubmitUrl();
+        String vouchSumbmitUrl = AppConfig.getSysPuinstoreVouchProcessDynamicSubmitUrl();//getSysPuinstoreVouchProcessDynamicSubmitUrl
         String post = HttpUtil.post(vouchSumbmitUrl, json);
         JSONObject res = JSON.parseObject(post);
         ValidationUtils.notNull(res, "解析JSON为空");

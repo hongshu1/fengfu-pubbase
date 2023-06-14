@@ -619,6 +619,10 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         return dbTemplate("syspuinstore.getMesSysPODetails", kv).paginate(size, PageSize);
     }
 
+    public List<Record> getInsertPuinstoreDetail(Kv kv) {
+        return dbTemplate("syspuinstore.getInsertPuinstoreDetail", kv.set("limit",20)).find();
+    }
+
     /*
      * 获取仓库名
      * */
@@ -687,17 +691,17 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
 
         //其它数据
         PreAllocate preAllocate = new PreAllocate();
-        preAllocate.setCreatePerson("demo");//user.getUsername()
+        preAllocate.setCreatePerson(user.getUsername());
         preAllocate.setCreatePersonName(puinstore.getCCreateName());
         preAllocate.setLoginDate(format.format(puinstore.getDCreateTime()));
         preAllocate.setOrganizeCode(puinstore.getOrganizeCode());
         preAllocate.setTag("PUInStore");
         preAllocate.setType("PUInStore");
-        preAllocate.setUserCode("demo");//user.getUsername()
+        preAllocate.setUserCode(user.getUsername());
         //放入dto
         dto.setMainData(MainData);
         dto.setPreAllocate(preAllocate);
-        dto.setUserCode("demo");//user.getUsername()
+        dto.setUserCode(user.getUsername());
         dto.setOrganizeCode(puinstore.getOrganizeCode());
         dto.setToken("");
         //返回
