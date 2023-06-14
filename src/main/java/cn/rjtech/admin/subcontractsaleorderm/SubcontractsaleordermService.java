@@ -29,10 +29,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.TableMapping;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -115,7 +112,20 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * 删除 指定多个ID
      */
     public Ret deleteByBatchIds(String ids) {
-        return deleteByIds(ids, true);
+        List<Subcontractsaleorderm> list = getListByIds(ids);
+        List<Subcontractsaleorderm> notAuditList = new ArrayList<>();
+        for (Subcontractsaleorderm subcontractsaleorderm : list) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != subcontractsaleorderm.getIOrderStatus()) {
+                notAuditList.add(subcontractsaleorderm);
+            }
+
+            subcontractsaleorderm.setIsDeleted(true);
+        }
+
+        ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
+        ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
+        return SUCCESS;
     }
 
     /**
@@ -422,5 +432,29 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         Subcontractsaleorderm subcontractsaleorderm = findById(iautoid);
         ValidationUtils.equals(WeekOrderStatusEnum.CLOSE.getValue(), subcontractsaleorderm.getIOrderStatus(), "订单非已关闭状态");
         return updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue());
+    }
+
+    /**
+     * 处理审批通过的其他业务操作，如有异常返回错误信息
+     */
+    public String postApproveFunc(long formAutoId) {
+        return null;
+    }
+    /**
+     * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
+     */
+    public String postRejectFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 实现反审之后的其他业务操作, 如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
     }
 }

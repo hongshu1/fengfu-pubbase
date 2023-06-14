@@ -9,14 +9,11 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        #if(!subcontractsaleorderm.iAutoId?? || edit??false)
-                        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-sx" onclick="submitThisForm()">保存</button>
+                        #if(!subcontractsaleorderm.iAutoId?? || (edit??false && subcontractsaleorderm.iOrderStatus == 1))
+                        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-sx">保存</button>
                         #end
-                        #if(subcontractsaleorderm.iAutoId?? && !edit??)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/subcontractsaleorderm",
-                        formSn="Co_SubcontractSaleOrderM", o=subcontractsaleorderm, primaryKeyName="iAutoId",
-                        edit=edit??)
-                        #end
+                        formSn="Co_SubcontractSaleOrderM", o=subcontractsaleorderm, primaryKeyName="iAutoId", edit=edit??)
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-sx">关闭</button>
                     </div>
                 </div>
@@ -210,7 +207,7 @@
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
                 #if(!subcontractsaleorderm.iAutoId?? || edit??false)
-                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+                <a onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="btn btn-danger bat-sm">移除行</a>
                 #end
             </td>
             <td>${data.cinvcode}</td>
@@ -400,6 +397,7 @@
 
     function submitThisForm() {
         jboltTableSubmit("#jbolt_Table_#(pageId)");
+        return true;
     }
 
     function submitApproveSubSale() {

@@ -1,6 +1,7 @@
 #set(deptEnable=JBoltGlobalConfigCache.deptEnable())
 #set(postEnable=JBoltGlobalConfigCache.postEnable())
 #set(userExtendEnable=JBoltGlobalConfigCache.userExtendEnable())
+#set(pageId=RandomUtil.random(6))
 <form onsubmit="return false;" id="userForm" action="#(action)" method="post">
 	<input type="hidden" name="user.id" value="#(user.id??)" />
 
@@ -27,22 +28,73 @@
                     ></select>
                 </div>
             </div>
+            #if(!isManager)
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">部门档案</label>
+                <div class="col">
+                    <select class="form-control"
+                            id="dep_select_#(pageId)"
+                            data-autoload
+                            data-with-clearbtn="true"
+                            data-select-type="select2"
+                            data-tips="请选择"
+                            data-url="admin/department/getTreeTableDatas"
+                            data-text="=请选择部门="
+                            data-text-attr="cdepname"
+                            data-value-attr="cdepcode"
+                            data-sync-ele="#cdepcode_#(pageId)"
+                            data-select="#(person.cdept_num??)">
+                    </select>
+                    
+                    <input type="hidden" name="cdepcode" value="#(perrson.cdept_num??)" id="cdepcode_#(pageId)" data-sync-attr="cdepcode">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">人员</label>
+                <div class="col">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <input type="text" autocomplete="off" class="form-control"
+                                   id="cpsn_name_#(pageId)"
+                                   data-autocomplete
+                                   data-url="admin/person/autocompleteWithDept"
+                                   data-link-para-ele="#cdepcode_#(pageId)"
+                                   data-text-attr="cpsn_name"
+                                   data-value-attr="iautoid"
+                                   data-column-attr="cpsn_num,cpsn_name,cdepcode,cdepname"
+                                   data-sync-ele="#ipersonid_#(pageId),#name_#(pageId),#sn_#(pageId),#sex_#(pageId)"
+                                   data-rule="required" 
+                                   data-tips="请选择申请人" 
+                                   maxlength="50"
+                                   value="#(person.cpsn_name??)"
+                            >
+                            
+                            <input type="hidden" name="userorg.ipersonid" value="#(person.ipersonid??)" id="ipersonid_#(pageId)" data-sync-attr="iautoid">
+                        </div>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#cdepcode_#(pageId)" data-area="1280,600" data-title="选择数据（单选）" data-url="admin/person/choose"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            #end
+            
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">姓名</label>
 				<div class="col">
-					<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入用户姓名" data-tips="请输入用户姓名" maxlength="20" name="user.name" value="#(user.name??)">
+					<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入用户姓名" data-tips="请输入用户姓名" maxlength="20" name="user.name" value="#(user.name??)" id="name_#(pageId)" data-sync-attr="cpsn_name">
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">编号</label>
 				<div class="col">
-					<input type="text" autocomplete="off"  class="form-control"  placeholder="请输入用户编号或工号" data-tips="请输入用户编号或工号" maxlength="20" name="user.sn" value="#(user.sn??)">
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="请输入用户编号或工号" data-tips="请输入用户编号或工号" maxlength="20" name="user.sn" value="#(user.sn??)" id="sn_#(pageId)" data-sync-attr="cpsn_num">
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">性别</label>
 				<div class="col">
-				<select class="form-control" data-rule="required"  data-tips="请选择性别" data-url="admin/user/sexOptions"  name="user.sex" data-autoload data-text="=请选择=" data-value="" data-select="#(user.sex??)"></select>
+				<select class="form-control" data-rule="required"  data-tips="请选择性别" data-url="admin/user/sexOptions"  name="user.sex" data-autoload data-text="=请选择=" data-value="" data-select="#(user.sex??)" id="sex_#(pageId)" data-sync-attr="isex"></select>
 				</div>
 			</div>
 			<div class="form-group row">
@@ -71,7 +123,7 @@
             </div>
 		</fieldset>
 		<fieldset class="form-page-fieldset">
-			<legend>登录账号、密码、角色配置</legend>
+			<legend>登录账号、密码配置</legend>
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label">用户名</label>
 					<div class="col">
@@ -96,7 +148,6 @@
 								<div class="col">
 									<select class="form-control"
 										data-autoload
-										data-rule="select"
 										data-select-type="select2"
 										multiple="multiple"
 										data-tips="请选择用户角色"
@@ -183,16 +234,20 @@
 <div class="jbolt_tab_view jb_vflex" style="height: 50%">
 
     <div class="jbolt_tab_links jb_vheader">
+        #if(isManager)
         <a class="jbolt_tab_link active" href="#jbolt_tabcontent1">用户组织</a>
+        #end
         <a class="jbolt_tab_link" href="#jbolt_tabcontent2">第三方用户</a>
     </div>
 
     <div class="jbolt_tab_contents jb_vbody">
 
+        #if(isManager)
         <div class="jbolt_tab_content active" id="jbolt_tabcontent1">
             ### 用户组织
             #include("user_org.html")
         </div>
+        #end
 
         <div class="jbolt_tab_content" id="jbolt_tabcontent2">
             ### 第三方用户
@@ -205,14 +260,31 @@
 
 #define js()
 <script>
+    console.log(#json(person));
+    console.log(#json(department));
 
     $(function () {
     });
 
+    function chooseHandler(data) {
+        // 设置部门
+        SelectUtil.setValue('dep_select_#(pageId)', data.cdept_num);
+        // 设置人员
+        $('input[name="userorg.ipersonid"]').val(data.iautoid);
+        // 人员名称
+        $('#cpsn_name_#(pageId)').val(data.cpsn_name);
+        return true;
+    }
+
     function submitThisForm() {
         var index = LayerMsgBox.loading('执行中...');
 
-        var tables = ["jbolt_Table_#(pageId)1", "jbolt_Table_#(pageId)2"];
+        var tables = [
+            #if(isManager)
+            "jbolt_Table_#(pageId)1",
+            #end
+            "jbolt_Table_#(pageId)2"
+        ];
         jboltTableSubmitMulti(tables, "admin/user/saveTableSubmit", function (res) {
 
             LayerMsgBox.close(index);

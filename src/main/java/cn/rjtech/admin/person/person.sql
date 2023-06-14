@@ -2,10 +2,7 @@
 select p.*, d.cdepname
 from bd_person p
 LEFT JOIN Bd_Department d ON p.cdept_num = d.cdepcode AND p.corgcode = '#(corgcode)' AND d.isDeleted = '0'
-WHERE p.isDeleted = '0'
-	#if(iorgid)
-		and p.iorgid = #para(iorgid)
-	#end
+WHERE p.isDeleted = '0' and p.iorgid = #para(iorgid)
 	#if(cpsnnum)
 		and p.cpsn_num like concat('%',#para(cpsnnum),'%')
 	#end
@@ -57,19 +54,17 @@ SELECT
 	jbuser.username,
 	jbuser.name,
 	ment.cDepName
-FROM
-	Bd_Person person
-	LEFT JOIN #(getBaseDbName()).dbo.jb_user jbuser ON jbuser.id= person.iUserId
+FROM Bd_Person person
 	LEFT JOIN Bd_Department ment ON ment.cDepCode= person.cDept_num
-WHERE
-	cPsn_Num =#para(cpsnnum)
+WHERE cPsn_Num =#para(cpsnnum)
 #end
 
 #sql("getAutocompleteListWithDept")
-SELECT TOP #(limit) hp.cpsn_num, hp.cpsn_name, d.cdepcode, d.cdepname
+SELECT TOP #(limit) hp.iautoid, hp.cpsn_num, hp.isex, hp.cpsn_name, d.cdepcode, d.cdepname
 FROM Bd_Person hp
-    INNER JOIN bd_Department d ON hp.cdept_num = d.cdepcode
-WHERE 1=1
+    INNER JOIN bd_Department d ON hp.cdept_num = d.cdepcode AND hp.iorgid = d.iorgid
+WHERE hp.iorgid = #para(iorgid)
+    AND hp.isDeleted = '0'
     #if(q)
         AND ( hp.cpsn_num LIKE CONCAT('%', #para(q), '%') OR hp.cpsn_name LIKE CONCAT('%', #para(q), '%') )
     #end
@@ -77,4 +72,13 @@ WHERE 1=1
     	and d.cdepcode = #para(cdepcode)
     #end
 ORDER BY hp.cpsn_num
+#end
+
+#sql("getPersonByUserOrg")
+SELECT p.*
+FROM Bd_Person p
+    INNER JOIN #(getBaseDbName()).dbo.base_user_org uo ON p.iautoid = uo.ipersonid AND uo.is_deleted = '0'
+WHERE uo.org_id = #para(orgId)
+    AND uo.user_id = #para(userId)
+    AND p.isDeleted = '0'
 #end

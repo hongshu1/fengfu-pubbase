@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String AUTOID = "AutoID";
     /**收发类别*/
@@ -30,12 +31,6 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
     public static final String SOURCEBILLID = "SourceBillID";
     /**备注*/
     public static final String MEMO = "Memo";
-
-    /**审核人*/
-    public static final String AUDITPERSON = "AuditPerson";
-    /**审核日期*/
-    public static final String AUDITDATE = "AuditDate";
-
     /**收料单：PUReceive，双单位收料单：PUReceiveSpecial*/
     public static final String TYPE = "Type";
     /***/
@@ -44,14 +39,12 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
     public static final String WHNAME = "WhName";
     /**供应商编码*/
     public static final String VENCODE = "VenCode";
-    /**审批方式：1. 审核 2. 审批流*/
+    /**审批方式：1. 审批流 2.审核 */
     public static final String IAUDITWAY = "iAuditWay";
     /**提审时间*/
     public static final String DSUBMITTIME = "dSubmitTime";
     /**审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过*/
     public static final String IAUDITSTATUS = "iAuditStatus";
-    /**审核时间*/
-    public static final String DAUDITTIME = "dAuditTime";
     /**是否删除：0. 否 1. 是*/
     public static final String ISDELETED = "isDeleted";
     /**创建人ID*/
@@ -66,6 +59,12 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
     public static final String CUPDATENAME = "cupdatename";
     /**更新时间*/
     public static final String DUPDATETIME = "dupdatetime";
+    /**审核人ID */
+    public static final String IAUDITBY = "iauditby";
+    /**审核人名称*/
+    public static final String CAUDITNAME = "cauditname";
+    /**审核时间*/
+    public static final String DAUDITTIME = "daudittime";
 	/**
 	 * 主键ID
 	 */
@@ -224,42 +223,6 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 		return getStr("Memo");
 	}
 
-
-	/**
-	 * 审核人
-	 */
-	public M setAuditPerson(java.lang.String AuditPerson) {
-		set("AuditPerson", AuditPerson);
-		return (M)this;
-	}
-
-	/**
-	 * 审核人
-	 */
-	@JBoltField(name="auditperson" ,columnName="AuditPerson",type="String", remark="审核人", required=false, maxLength=30, fixed=0, order=13)
-	@JSONField(name = "auditperson")
-	public java.lang.String getAuditPerson() {
-		return getStr("AuditPerson");
-	}
-
-	/**
-	 * 审核日期
-	 */
-	public M setAuditDate(java.util.Date AuditDate) {
-		set("AuditDate", AuditDate);
-		return (M)this;
-	}
-
-	/**
-	 * 审核日期
-	 */
-	@JBoltField(name="auditdate" ,columnName="AuditDate",type="Date", remark="审核日期", required=false, maxLength=23, fixed=3, order=14)
-	@JSONField(name = "auditdate")
-	public java.util.Date getAuditDate() {
-		return getDate("AuditDate");
-	}
-
-
 	/**
 	 * 收料单：PUReceive，双单位收料单：PUReceiveSpecial
 	 */
@@ -271,7 +234,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 收料单：PUReceive，双单位收料单：PUReceiveSpecial
 	 */
-	@JBoltField(name="type" ,columnName="Type",type="String", remark="收料单：PUReceive，双单位收料单：PUReceiveSpecial", required=false, maxLength=50, fixed=0, order=17)
+	@JBoltField(name="type" ,columnName="Type",type="String", remark="收料单：PUReceive，双单位收料单：PUReceiveSpecial", required=false, maxLength=50, fixed=0, order=11)
 	@JSONField(name = "type")
 	public java.lang.String getType() {
 		return getStr("Type");
@@ -282,7 +245,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 		return (M)this;
 	}
 
-	@JBoltField(name="whcode" ,columnName="WhCode",type="String", remark="WHCODE", required=false, maxLength=50, fixed=0, order=18)
+	@JBoltField(name="whcode" ,columnName="WhCode",type="String", remark="WHCODE", required=false, maxLength=50, fixed=0, order=12)
 	@JSONField(name = "whcode")
 	public java.lang.String getWhCode() {
 		return getStr("WhCode");
@@ -293,7 +256,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 		return (M)this;
 	}
 
-	@JBoltField(name="whname" ,columnName="WhName",type="String", remark="WHNAME", required=false, maxLength=50, fixed=0, order=19)
+	@JBoltField(name="whname" ,columnName="WhName",type="String", remark="WHNAME", required=false, maxLength=50, fixed=0, order=13)
 	@JSONField(name = "whname")
 	public java.lang.String getWhName() {
 		return getStr("WhName");
@@ -310,14 +273,14 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 供应商编码
 	 */
-	@JBoltField(name="vencode" ,columnName="VenCode",type="String", remark="供应商编码", required=false, maxLength=30, fixed=0, order=20)
+	@JBoltField(name="vencode" ,columnName="VenCode",type="String", remark="供应商编码", required=false, maxLength=30, fixed=0, order=14)
 	@JSONField(name = "vencode")
 	public java.lang.String getVenCode() {
 		return getStr("VenCode");
 	}
 
 	/**
-	 * 审批方式：1. 审核 2. 审批流
+	 * 审批方式：1. 审批流 2.审核 
 	 */
 	public M setIAuditWay(java.lang.Integer iAuditWay) {
 		set("iAuditWay", iAuditWay);
@@ -325,9 +288,9 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	}
 
 	/**
-	 * 审批方式：1. 审核 2. 审批流
+	 * 审批方式：1. 审批流 2.审核 
 	 */
-	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审核 2. 审批流", required=false, maxLength=10, fixed=0, order=21)
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审批流 2.审核 ", required=false, maxLength=10, fixed=0, order=15)
 	@JSONField(name = "iauditway")
 	public java.lang.Integer getIAuditWay() {
 		return getInt("iAuditWay");
@@ -344,7 +307,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 提审时间
 	 */
-	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=22)
+	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=16)
 	@JSONField(name = "dsubmittime")
 	public java.util.Date getDSubmitTime() {
 		return getDate("dSubmitTime");
@@ -361,27 +324,10 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
 	 */
-	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=23)
+	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=17)
 	@JSONField(name = "iauditstatus")
 	public java.lang.Integer getIAuditStatus() {
 		return getInt("iAuditStatus");
-	}
-
-	/**
-	 * 审核时间
-	 */
-	public M setDAuditTime(java.util.Date dAuditTime) {
-		set("dAuditTime", dAuditTime);
-		return (M)this;
-	}
-
-	/**
-	 * 审核时间
-	 */
-	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=24)
-	@JSONField(name = "daudittime")
-	public java.util.Date getDAuditTime() {
-		return getDate("dAuditTime");
 	}
 
 	/**
@@ -395,7 +341,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 是否删除：0. 否 1. 是
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=25)
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=18)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
@@ -412,7 +358,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 创建人ID
 	 */
-	@JBoltField(name="icreateby" ,columnName="icreateby",type="Long", remark="创建人ID", required=false, maxLength=19, fixed=0, order=26)
+	@JBoltField(name="icreateby" ,columnName="icreateby",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=19)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIcreateby() {
 		return getLong("icreateby");
@@ -429,7 +375,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="ccreatename",type="String", remark="创建人名称", required=false, maxLength=60, fixed=0, order=27)
+	@JBoltField(name="ccreatename" ,columnName="ccreatename",type="String", remark="创建人名称", required=false, maxLength=60, fixed=0, order=20)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCcreatename() {
 		return getStr("ccreatename");
@@ -446,7 +392,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dcreatetime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=28)
+	@JBoltField(name="dcreatetime" ,columnName="dcreatetime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=21)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDcreatetime() {
 		return getDate("dcreatetime");
@@ -463,7 +409,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 更新人ID
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iupdateby",type="Long", remark="更新人ID", required=false, maxLength=19, fixed=0, order=29)
+	@JBoltField(name="iupdateby" ,columnName="iupdateby",type="Long", remark="更新人ID", required=false, maxLength=19, fixed=0, order=22)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIupdateby() {
 		return getLong("iupdateby");
@@ -480,7 +426,7 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 更新人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cupdatename",type="String", remark="更新人名称", required=false, maxLength=60, fixed=0, order=30)
+	@JBoltField(name="cupdatename" ,columnName="cupdatename",type="String", remark="更新人名称", required=false, maxLength=60, fixed=0, order=23)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCupdatename() {
 		return getStr("cupdatename");
@@ -497,10 +443,61 @@ public abstract class BaseSysPureceive<M extends BaseSysPureceive<M>> extends JB
 	/**
 	 * 更新时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dupdatetime",type="Date", remark="更新时间", required=false, maxLength=23, fixed=3, order=31)
+	@JBoltField(name="dupdatetime" ,columnName="dupdatetime",type="Date", remark="更新时间", required=false, maxLength=23, fixed=3, order=24)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDupdatetime() {
 		return getDate("dupdatetime");
+	}
+
+	/**
+	 * 审核人ID 
+	 */
+	public M setIauditby(java.lang.Long iauditby) {
+		set("iauditby", iauditby);
+		return (M)this;
+	}
+
+	/**
+	 * 审核人ID 
+	 */
+	@JBoltField(name="iauditby" ,columnName="iauditby",type="Long", remark="审核人ID ", required=false, maxLength=19, fixed=0, order=25)
+	@JSONField(name = "iauditby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIauditby() {
+		return getLong("iauditby");
+	}
+
+	/**
+	 * 审核人名称
+	 */
+	public M setCauditname(java.lang.String cauditname) {
+		set("cauditname", cauditname);
+		return (M)this;
+	}
+
+	/**
+	 * 审核人名称
+	 */
+	@JBoltField(name="cauditname" ,columnName="cauditname",type="String", remark="审核人名称", required=false, maxLength=60, fixed=0, order=26)
+	@JSONField(name = "cauditname")
+	public java.lang.String getCauditname() {
+		return getStr("cauditname");
+	}
+
+	/**
+	 * 审核时间
+	 */
+	public M setDaudittime(java.util.Date daudittime) {
+		set("daudittime", daudittime);
+		return (M)this;
+	}
+
+	/**
+	 * 审核时间
+	 */
+	@JBoltField(name="daudittime" ,columnName="daudittime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=27)
+	@JSONField(name = "daudittime")
+	public java.util.Date getDaudittime() {
+		return getDate("daudittime");
 	}
 
 }

@@ -25,10 +25,10 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.TableMapping;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 月度计划订单 Service
@@ -102,7 +102,20 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 删除 指定多个ID
      */
     public Ret deleteByBatchIds(String ids) {
-        return deleteByIds(ids, true);
+        List<MonthOrderM> list = getListByIds(ids);
+        List<MonthOrderM> notAuditList = new ArrayList<>();
+        for (MonthOrderM monthOrderM : list) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != monthOrderM.getIOrderStatus()) {
+                notAuditList.add(monthOrderM);
+            }
+
+            monthOrderM.setIsDeleted(true);
+        }
+
+        ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
+        ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
+        return SUCCESS;
     }
 
     /**

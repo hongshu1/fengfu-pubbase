@@ -102,7 +102,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
      * 批量删除
      */
     public void deleteByIds() {
-        renderJson(service.deleteByIds(get("ids")));
+        renderJson(service.deleteByBatchIds(get("ids")));
     }
 
     /**

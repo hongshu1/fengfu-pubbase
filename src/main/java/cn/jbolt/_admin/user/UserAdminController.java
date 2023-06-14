@@ -1,5 +1,7 @@
 package cn.jbolt._admin.user;
 
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.role.RoleService;
 import cn.jbolt.common.config.JBoltUploadFolder;
@@ -9,16 +11,20 @@ import cn.jbolt.core.bean.Option;
 import cn.jbolt.core.bean.OptionBean;
 import cn.jbolt.core.cache.JBoltCacheInterceptor;
 import cn.jbolt.core.cache.JBoltGlobalConfigCache;
-import cn.jbolt.core.enumutil.JBoltEnum;
-import cn.jbolt.extend.config.ExtendProjectOfModule;
 import cn.jbolt.core.cache.JBoltUserCache;
-import cn.jbolt.core.controller.base.JBoltBaseController;
+import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.JBoltFileService;
+import cn.jbolt.extend.config.ExtendProjectOfModule;
+import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.admin.userorg.UserOrgService;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.main.UserOrg;
+import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -33,16 +39,20 @@ import java.util.List;
 
 @CheckPermission(PermissionKey.USER)
 @UnCheckIfSystemAdmin
-public class UserAdminController extends JBoltBaseController {
+public class UserAdminController extends BaseAdminController {
 	@Inject
 	private UserService service;
-	@Inject
-	private UserExtendService userExtendService;
-	@Inject
-	private RoleService roleService;
-	@Inject
+    @Inject
+    private RoleService roleService;
+    @Inject
+    private PersonService personService;
+    @Inject
+    private UserOrgService userOrgService;
+    @Inject
 	private JBoltFileService jboltFileService;
-	/**
+    @Inject
+    private UserExtendService userExtendService;
+    /**
 	 * 用户表数作为选项数据源
 	 */
 	@UnCheck
@@ -250,6 +260,20 @@ public class UserAdminController extends JBoltBaseController {
 			return;
 		}
 		set("user", user);
+
+        // 管理员权限key: manager
+        boolean isManager = JBoltUserKit.isSystemAdmin() || StrUtil.contains(JBoltUserKit.getUserRoleSns(), "manager");
+        set("isManager", isManager);
+        
+        // 当前登录组织绑定的用户信息
+        if (!isManager) {
+            UserOrg userOrg = userOrgService.getUserOrg(user.getId(), getOrgId());
+            if (ObjUtil.isNotNull(userOrg) && ObjUtil.isNotNull(userOrg.getIPersonId())) {
+                Person person = personService.findById(userOrg.getIPersonId());
+                set("person", person);
+            }
+        }
+        
 		render("edit.html");
 	}
 	/**
@@ -257,7 +281,7 @@ public class UserAdminController extends JBoltBaseController {
 	 */
 	@Before(Tx.class)
 	public void save(){
-		renderJson(service.save(getModel(User.class, "user"),getModel(UserExtend.class, "extend")));
+		renderJson(service.save(getModel(User.class, "user"), getModel(UserExtend.class, "extend")));
 	}
 	/**
 	 * 更新

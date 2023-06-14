@@ -106,6 +106,8 @@
 	   data-toolbar="ManualOrderM_toolbar_#(pageId)"
 	   data-column-prepend="1:checkbox:true"
 	   id="manualordermtable_#(pageId)"
+	   data-row-dblclick-active="true"
+	   data-row-dblclick-handler="jbolt_table_dblclickhandlerMmanualorderm_#(pageId)"
 >
 <thead>
 <tr>
@@ -142,5 +144,16 @@
 
 #define js()
 <script type="text/javascript">
+
+
+	function jbolt_table_dblclickhandlerMmanualorderm_#(pageId)(table, tempTr1, trId1, rowData) {
+		$(tempTr1).data('url', 'admin/manualorderm/edit?iautoid=' + rowData.iautoid)
+				.data('fs', 'true')
+				.data('handler','refreshJBoltTable')
+				.data('title', '手配订单')
+				.data('btn', '确认,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
 </script>
 #end

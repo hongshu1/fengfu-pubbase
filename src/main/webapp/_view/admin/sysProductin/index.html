@@ -68,14 +68,14 @@
             </td>
 			<td>${data.statename}</td>
 			<td>${data.billno}</td>
-			<td>${data.createdate}</td>
+			<td>${data.dcreatetime}</td>
 			<td>${data.repositoryname}</td>
 			<td>${data.deptname}</td>
 			<td>${data.rdcodename}</td>
-			<td>${data.auditdate}</td>
+			<td>${data.daudittime}</td>
 			<td>${data.memo}</td>
 			<td>${data.name}</td>
-			<td>${data.createdate}</td>
+			<td>${data.dcreatetime}</td>
 		</tr>
 		{@/each}
 		</textarea>
@@ -91,7 +91,7 @@
                         id="toolbar_deleteBtn_#(pageId)" data-url="admin/productInList/deleteByIds?ids="
                         data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
                 </button>
-                #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_ProductIn",uri="admin/productInList",primaryKeyName="AutoID")
+                #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_ProductIn",uri="admin/productInList",primaryKeyName="AutoID", className="cn.rjtech.admin.sysproductin.SysProductinService")
             </div>
         </div>
         <table class="jbolt_table jbolt_main_table  table-center " data-jbolttable data-width="fill" data-height="fill"

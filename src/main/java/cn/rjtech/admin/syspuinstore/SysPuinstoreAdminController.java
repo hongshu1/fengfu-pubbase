@@ -1,5 +1,7 @@
 package cn.rjtech.admin.syspuinstore;
 
+import java.util.List;
+
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -11,6 +13,7 @@ import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
 
 import com.jfinal.aop.Before;
@@ -84,7 +87,9 @@ public class SysPuinstoreAdminController extends BaseAdminController {
             return;
         }
         Record record = service.findEditAndOnlySeeByAutoid(sysPuinstore.getAutoID());
-        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()));
+        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()), "purchase_business_type");
+        SysPuinstoredetail puinstoredetail = service.getSourceBillType(record.get("autoid"));
+        record.set("sourcebilltype", puinstoredetail != null ? puinstoredetail.getSourceBillType() : "");
         set("ibustype", iBusTypeKey);//业务类型
         set("sysPuinstore", record);
         render("edit.html");
@@ -100,7 +105,10 @@ public class SysPuinstoreAdminController extends BaseAdminController {
             return;
         }
         Record record = service.findEditAndOnlySeeByAutoid(sysPuinstore.getAutoID());
-        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()));
+        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()), "purchase_business_type");
+        SysPuinstoredetail puinstoredetail = service.getSourceBillType(record.get("autoid"));
+        String order_type = service.findIBusTypeKey(puinstoredetail.getSourceBillType(), "order_type");
+        record.set("sourcebilltype", order_type);
         set("ibustype", iBusTypeKey);//业务类型
         set("sysPuinstore", record);
         render("onlysee.html");
@@ -138,13 +146,6 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     }
 
     /**
-     * 批量删除
-     */
-    /*public void deleteByIds() {
-        renderJson(service.deleteRmRdByIds(get("ids")));
-    }*/
-
-    /**
      * 删除
      */
     public void delete() {
@@ -179,6 +180,14 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     public void getMesSysPODetails() {
         Page<Record> recordPage = service.getMesSysPODetails(getKv(), getPageNumber(), getPageSize());
         renderJsonData(recordPage);
+    }
+
+    /*
+     * 详情表，新增行获取数据
+     * */
+    public void getInsertPuinstoreDetail() {
+        List<Record> recordList = service.getInsertPuinstoreDetail(getKv());
+        renderJsonData(recordList);
     }
 
     /*

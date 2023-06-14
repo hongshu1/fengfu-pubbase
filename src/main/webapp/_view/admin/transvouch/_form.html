@@ -1,16 +1,28 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
 <div class="jbolt_page_content">
-<form onsubmit="return false;" id="transVouchForm" action="#(action)" method="post">
+
 	<div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
 		<div class="col-md-l pt-2" role="group" aria-label="btn-group">
 			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="1" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
 			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审核</button>
+			#if(transVouch.autoid??)
+			### 参数列表
+			### uri:                接口URI
+			### formSn:             表单名
+			### o:                  当前表单对象名
+			### primaryKeyName:     主键名
+			###include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
+
+			#include("/_view/_common/_approval_btns.html", uri="/admin/transvouch", formSn="T_Sys_TransVouch", o=transVouch, edit=edit??, primaryKeyName="AutoID")
+			#end
 			<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
 		</div>
 	</div>
 
-
+	<form onsubmit="return false;" id="transVouchForm_#(pageId)" action="#(action)" method="post">
+	<input type="text" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
+	<input type="text" id="barcodes" name="barcodes"/>
 	#if(transVouch.autoid??)
 	<input type="hidden" id="transVouchautoid" name="transVouch.autoid" value="#(transVouch.autoid??)" />
 	#end
@@ -48,7 +60,7 @@
 					data-select-type="select2"
 					data-rule="select"
 					data-tips="所属仓库"
-					data-url="admin/warehouse/list?isDeleted=0"
+					data-url="admin/transvouch/iwarehouse"
 					data-text="=所属仓库="
 					data-text-attr="cwhcode,cwhname"
 					data-value=""
@@ -111,7 +123,7 @@
 			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder="" value="#(transVouch.cdocno??)"/>
 		</div>
 	</div>
-
+	</form>
 	<div class="form-group row">
 		<div class="col-11" style="margin-left: 180px;">
 			<div class="jbolt_page_content">
@@ -119,7 +131,6 @@
 			</div>
 		</div>
 	</div>
-</form>
 </div>
 </div>
 #define js()

@@ -114,7 +114,8 @@ SELECT
     a.iPurchaseTypeId,
     ven.cVenCode AS VenCode,
     ven.cVenName AS VenName,
-    inv.cInvStd,inv.cInvCode,inv.cInvName
+    inv.cInvStd,inv.cInvCode,inv.cInvName,inv.cinvcode1,inv.cinvname1,
+    dep.cDepCode,dep.cDepName
 FROM
     PS_PurchaseOrderM a
         LEFT JOIN PS_PurchaseOrderD b ON a.iAutoId= b.iPurchaseOrderMid
@@ -127,11 +128,18 @@ FROM
         AND b.isDeleted<>1
         LEFT JOIN Bd_PurchaseType pt ON  a.iPurchaseTypeId = pt.iAutoId
         LEFT JOIN Bd_Vendor ven ON  a.iVendorId = ven.iAutoId
+        LEFT JOIN Bd_Department dep on dep.iAutoId = a.iDepartmentId
         WHERE 1 = 1
 #if(corderno)
 and a.cOrderNo = #para(corderno)
 #end
-ORDER BY a.dUpdateTime DESC
+#if(sourcebillno)
+and a.cOrderNo = #para(sourcebillno)
+#end
+#if(cinvcode)
+and inv.cinvcode like concat('%',#para(cinvcode),'%')
+#end
+order by a.dUpdateTime desc
 #end
 
 #sql("getPrintData")
@@ -139,6 +147,48 @@ select * from T_Sys_PUInStore t1
 where 1=1
 #if(ids)
   AND CHARINDEX(','+cast((select t1.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
+#end
+#end
+
+#sql("getInsertPuinstoreDetail")
+SELECT
+    pt.cPTName AS BillType,
+    a.cOrderNo AS SourceBillNo,
+    a.iAutoId AS SourceBillID,
+    a.dOrderDate AS BillDate,
+    a.iPurchaseTypeId,
+    ven.cVenCode AS VenCode,
+    ven.cVenName AS VenName,
+    inv.cInvStd,inv.cInvCode,inv.cInvName,inv.cinvcode1,inv.cinvname1,
+    dep.cDepCode,dep.cDepName,
+    u.cuomname as purchasecuomname,u.cuomcode as purchasecuomcode,
+    c.cbarcode
+FROM
+    PS_PurchaseOrderM a
+        LEFT JOIN PS_PurchaseOrderD b ON a.iAutoId= b.iPurchaseOrderMid
+        AND b.isDeleted<> 1
+        LEFT JOIN PS_PurchaseOrderDBatch c ON c.iPurchaseOrderDid = b.iAutoId
+        AND c.isEffective= 1
+        LEFT JOIN dbo.PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = b.iAutoId
+        AND tc.iAutoId = c.iPurchaseOrderdQtyId
+        LEFT JOIN Bd_Inventory inv ON inv.iAutoId = b.iInventoryId
+        AND b.isDeleted<>1
+        LEFT JOIN Bd_PurchaseType pt ON  a.iPurchaseTypeId = pt.iAutoId
+        LEFT JOIN Bd_Vendor ven ON  a.iVendorId = ven.iAutoId
+        LEFT JOIN Bd_Department dep on dep.iAutoId = a.iDepartmentId
+        LEFT JOIN Bd_uom u on inv.iInventoryUomId1 = u.iautoid
+        WHERE 1 = 1
+#if(corderno)
+and a.cOrderNo = #para(corderno)
+#end
+#if(sourcebillno)
+and a.cOrderNo = #para(sourcebillno)
+#end
+#if(q)
+    and (inv.cinvcode like concat('%',#para(q),'%') or inv.cinvcode1 like concat('%',#para(q),'%')
+        or inv.cinvname1 like concat('%',#para(q),'%') or inv.cinvstd like concat('%',#para(q),'%')
+        )
+    order by inv.dUpdateTime desc
 #end
 #end
 
@@ -163,4 +213,33 @@ where 1=1
     and t1.AutoID = #para(autoid)
     #end
     order by t1.dUpdateTime desc
+#end
+
+#sql("getBarcodeVersion")
+SELECT t1.cOrderNo,t1.iBusType,t1.iPurchaseTypeId,t1.iVendorId,t1.iDepartmentId,t1.cDocNo,
+      t2.sourceid,t2.barcode,t2.invcode
+    from PS_PurchaseOrderM t1
+left join V_Sys_BarcodeDetail t2 on t1.iAutoId = t2.barcodeid
+    where 1=1 and EncodingName = 'PurchaseOrderM'
+    #if(corderno)
+    and t1.corderno = #para(corderno)
+    #end
+    #if(barcode)
+    and t2.barcode like concat('%',#para(barcode),'%')
+    #end
+order by t1.dUpdateTime desc
+#end
+
+#sql("getSourceBillIdAndDid")
+SELECT m.iautoid as SourceBillID ,
+d.iAutoId as SourceBillDid
+from PS_PurchaseOrderM m
+left join PS_PurchaseOrderD d on m.iautoid = d.iPurchaseOrderMid
+where 1=1
+#if(sourcebillno)
+and m.corderno=#para(sourcebillno)
+#end
+#if(iInventoryId)
+and d.iInventoryId=#para(iInventoryId)
+#end
 #end

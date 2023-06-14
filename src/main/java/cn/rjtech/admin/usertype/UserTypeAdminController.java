@@ -8,6 +8,7 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.UserType;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.UserTypeService;
 import com.alibaba.fastjson.JSON;
@@ -208,6 +209,7 @@ public class UserTypeAdminController extends JBoltBaseController {
         renderJson(set);
     }
 
+    @UnCheck
     public void options() {
         renderJsonData(service.getOptionList("usertype_name", "id", Okv.by("is_deleted", "0")));
     }

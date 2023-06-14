@@ -13,6 +13,11 @@
             </div>
         </div>
     </div>
+
+    ### 新增之后，并且为审核流
+    #if(manualOrderM.iautoid?? && manualOrderM.iauditway == 2)
+    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=manualOrderM.iAutoId, formSn="Co_ManualOrderM", btnNeed=1, pId=pageId)
+    #end
     <div class="jbolt_page_content">
         
         <!-- JBoltTable的数据模板定义-->
@@ -22,7 +27,7 @@
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
                 #if(!manualOrderM.iautoid?? || edit??false)
-                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+                <a onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="btn btn-danger bat-sm">移除行</a>
                  #end
             </td>
             <td>${data.cinvcode}</td>
@@ -124,7 +129,7 @@
             <tr>
                 <!--<th data-min-width="150" data-column="iItemId">料品档案ID</th>-->
                 <th data-width="60" data-min-width="60" data-column="index">序号</th>
-                <th data-width="60">操作</th>
+                <th data-width="100">操作</th>
                 <th data-column="cinvcode">存货编码</th>
                 <th data-column="iinventoryid" hidden>存货</th>
                 <th data-column="cinvcode1" >客户部番</th>
