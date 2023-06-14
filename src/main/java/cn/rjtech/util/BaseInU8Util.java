@@ -28,10 +28,19 @@ public class BaseInU8Util {
 
         String code = res.getString("code");
         String message = res.getString("message");
-        String u8Billno = extractU8Billno(message.trim());
-
+        if (message == null) {
+            message = res.getString("msg");
+        }
+        if (res.getString("state").equals("fail")) {
+            ValidationUtils.isTrue(false, json + ";" + message);
+        }
         ValidationUtils.notNull(code, "json:" + json + ";" + message);
         ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);
+
+        String u8Billno = "";
+        if (message != null) {
+            u8Billno = extractU8Billno(message.trim());
+        }
         return u8Billno;
     }
 

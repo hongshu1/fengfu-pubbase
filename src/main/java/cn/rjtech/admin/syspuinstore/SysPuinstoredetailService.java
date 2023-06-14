@@ -177,7 +177,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
      * */
     public void saveSysPuinstoredetailModel(SysPuinstoredetail detail, Record detailRecord,
                                             SysPuinstore puinstore, int i) {
-        detail.setSourceBillType("");//采购PO  委外OM（采购类型）
+        detail.setSourceBillType(puinstore.get("sourcebilltype"));//采购PO  委外OM（采购类型）
         detail.setSourceBillNo(puinstore.getSourceBillNo()); //来源单号（订单号）
         detail.setSourceBillNoRow(puinstore.getSourceBillNo() + "-" + i); //来源单号+行号
         detail.setSourceBillID(""); //来源单据ID(订单id)

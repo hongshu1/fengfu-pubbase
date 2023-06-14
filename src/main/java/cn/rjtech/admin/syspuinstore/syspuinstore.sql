@@ -114,7 +114,8 @@ SELECT
     a.iPurchaseTypeId,
     ven.cVenCode AS VenCode,
     ven.cVenName AS VenName,
-    inv.cInvStd,inv.cInvCode,inv.cInvName
+    inv.cInvStd,inv.cInvCode,inv.cInvName,
+    dep.cDepCode,dep.cDepName
 FROM
     PS_PurchaseOrderM a
         LEFT JOIN PS_PurchaseOrderD b ON a.iAutoId= b.iPurchaseOrderMid
@@ -127,6 +128,7 @@ FROM
         AND b.isDeleted<>1
         LEFT JOIN Bd_PurchaseType pt ON  a.iPurchaseTypeId = pt.iAutoId
         LEFT JOIN Bd_Vendor ven ON  a.iVendorId = ven.iAutoId
+        LEFT JOIN Bd_Department dep on dep.iAutoId = a.iDepartmentId
         WHERE 1 = 1
 #if(corderno)
 and a.cOrderNo = #para(corderno)
@@ -163,4 +165,19 @@ where 1=1
     and t1.AutoID = #para(autoid)
     #end
     order by t1.dUpdateTime desc
+#end
+
+#sql("getBarcodeVersion")
+SELECT t1.cOrderNo,t1.iBusType,t1.iPurchaseTypeId,t1.iVendorId,t1.iDepartmentId,t1.cDocNo,
+      t2.sourceid,t2.barcode,t2.invcode
+    from PS_PurchaseOrderM t1
+left join V_Sys_BarcodeDetail t2 on t1.iAutoId = t2.barcodeid
+    where 1=1 and EncodingName = 'PurchaseOrderM'
+    #if(corderno)
+    and t1.corderno = #para(corderno)
+    #end
+    #if(barcode)
+    and t2.barcode like concat('%',#para(barcode),'%')
+    #end
+order by t1.dUpdateTime desc
 #end

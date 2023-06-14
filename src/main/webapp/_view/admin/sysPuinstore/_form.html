@@ -38,9 +38,9 @@
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">订单号</label>
                   <div class="col-sm-7 col-form-label">
-                    <div class="input-group-append">
-                      <input data-rule="required" type="text" id="sourcebillno" name="sourcebillno" class="form-control border-none"
-                             readonly="readonly" placeholder="" value="#(sysPuinstore.sourcebillno??)"/>
+                    <div class="input-group-append"><!---->
+                      <input  type="text" data-rule="required" id="sourcebillno" name="sourcebillno"
+                              class="form-control border-none" readonly="readonly" placeholder="" value="#(sysPuinstore.sourcebillno??)"/>
                       <input id="sourcebillid" name="sourcebillid" type="hidden" value="#(sourcebillid??)"/>
                       <button class="btn btn-primary" data-dialogbtn data-link-para-ele="" data-area="90%,90%"
                               data-title="选择数据（单选）" id="sysButton" data-url="/admin/purchaseReceiptList/chooseSysPuinstoreData"><i
@@ -83,7 +83,6 @@
                     <select class="form-control"
                             name="deptcode"
                             data-autoload
-                            data-rule="required"
                             data-url="admin/department/getTreeTableDatas"
                             data-select-type="select"
                             data-select="#(sysPuinstore.deptcode??)"
@@ -109,6 +108,25 @@
                            value="#(sysPuinstore.ccreatename??)"/>
                   </div>
                 </div>
+
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label">订单类型</label>
+                  <div class="col-6">
+                    <select class="form-control"
+                            id="sourcebilltype"
+                            name="sourcebilltype"
+                            data-autoload
+                            data-rule="required"
+                            data-url="admin/dictionary/options?key=order_type"
+                            data-select-type="select"
+                            data-text="=请选择订单类型="
+                            data-value=""
+                            data-text-attr="name"
+                            data-value-attr="sn"
+                            data-select="#(sysPuinstore.sourcebilltype??)"
+                    ></select>
+                  </div>
+                </div>
               </div>
 
               <div class="col">
@@ -120,7 +138,7 @@
                             name="whcode"
                             data-tips="请选择仓库名称"
                             data-autoload
-                            data-rule="required"
+                            
                             data-url="admin/SysEnumeration/wareHouse"
                             data-text="=请选择仓库名称="
                             data-value=""
@@ -138,7 +156,7 @@
                             data-autoload
                             name="billtype"
                             data-tips="请选择采购类型"
-                            data-rule="required"
+                            
                             data-url="admin/purchasetype/selectAll"
                             data-text="=请选择采购类型="
                             data-value=""
@@ -154,7 +172,7 @@
                     <select class="form-control"
                             name="rdcode"
                             data-autoload
-                            data-rule="required"
+                            
                             data-url="admin/rdstyle/getoptions"
                             data-select-type="select"
                             data-select="#(sysPuinstore.rdcode??)"
@@ -171,7 +189,7 @@
                     <select class="form-control"
                             name="iBusType"
                             data-autoload
-                            data-rule="required"
+                            
                             data-url="admin/dictionary/options?key=purchase_business_type"
                             data-select-type="select"
                             data-select="#(sysPuinstore.ibustype??)"
@@ -183,6 +201,7 @@
                 </div>
 
               </div>
+
             </div>
             <input id="operationType" type="hidden" name="operationType" value="#(operationType??)">
           </form>
@@ -508,11 +527,12 @@
     $("#sourcebillno").val(data.sourcebillno);//采购订单号=来源单号（订单号）
     $("#sourcebillid").val(data.sourcebillid);//采购id=来源单据ID
     $("#billdate").val(data.billdate);//单据日期
-    $("#deptcode").val(data.deptcode);
-    $("#deptname").val(data.deptname);
+    $("#deptname").val(data.cdepname);
+    $("#deptcode").val(data.cdepcode);
     $("#venname").val(data.venname);
     $("#vencode").val(data.vencode);
-    $("#invname").val(data.invname);
+    $("#invname").val(data.cinvname);
+    $("#invname").val(data.cinvcode);
   }
 
 </script>

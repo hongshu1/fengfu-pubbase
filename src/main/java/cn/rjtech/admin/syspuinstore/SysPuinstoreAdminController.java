@@ -11,6 +11,7 @@ import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
 
 import com.jfinal.aop.Before;
@@ -84,7 +85,9 @@ public class SysPuinstoreAdminController extends BaseAdminController {
             return;
         }
         Record record = service.findEditAndOnlySeeByAutoid(sysPuinstore.getAutoID());
-        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()));
+        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()), "purchase_business_type");
+        SysPuinstoredetail puinstoredetail = service.getSourceBillType(record.get("autoid"));
+        record.set("sourcebilltype", puinstoredetail != null ? puinstoredetail.getSourceBillType() : "");
         set("ibustype", iBusTypeKey);//业务类型
         set("sysPuinstore", record);
         render("edit.html");
@@ -100,7 +103,10 @@ public class SysPuinstoreAdminController extends BaseAdminController {
             return;
         }
         Record record = service.findEditAndOnlySeeByAutoid(sysPuinstore.getAutoID());
-        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()));
+        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()), "purchase_business_type");
+        SysPuinstoredetail puinstoredetail = service.getSourceBillType(record.get("autoid"));
+        String order_type = service.findIBusTypeKey(puinstoredetail.getSourceBillType(), "order_type");
+        record.set("sourcebilltype", order_type);
         set("ibustype", iBusTypeKey);//业务类型
         set("sysPuinstore", record);
         render("onlysee.html");
