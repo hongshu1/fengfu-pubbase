@@ -316,7 +316,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
             manualOrderM.setIsDeleted(true);
         }
 
-        ValidationUtils.notEmpty(notAuditList, "存在非已保存订单");
+        ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
         ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
 
         return SUCCESS;

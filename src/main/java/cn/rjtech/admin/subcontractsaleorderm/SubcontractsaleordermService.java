@@ -122,7 +122,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
             subcontractsaleorderm.setIsDeleted(true);
         }
 
-        ValidationUtils.notEmpty(notAuditList, "存在非已保存订单");
+        ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
         ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
 
         return SUCCESS;
@@ -132,8 +132,6 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * 删除
      */
     public Ret delete(Long id) {
-        Subcontractsaleorderm subcontractsaleorderm = findById(id);
-        ValidationUtils.equals(WeekOrderStatusEnum.NOT_AUDIT.getValue(), subcontractsaleorderm.getIOrderStatus(), "订单非已保存状态");
         return updateColumn(id, "isdeleted", true);
     }
 
