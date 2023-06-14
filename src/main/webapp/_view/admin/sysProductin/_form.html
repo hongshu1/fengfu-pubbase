@@ -4,10 +4,10 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()" #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) disabled #end ><i
+                        <button class="btn btn-success btn-sm" onclick="submitThisForm()" #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) disabled #end ><i
                                 class="fa fa-refresh"></i> 保存
                         </button>
-                        #if(sysPureceive.AutoID??)
+                        #if(sysProductin.AutoID??)
                         ### 参数列表
                         ### uri:                接口URI
                         ### formSn:             表单名
@@ -48,8 +48,8 @@
                                     <label class="col-sm-3 col-form-label">入库日期</label>
                                     <div class="col-9">
                                         <input type="text" data-date class="form-control ml-2" placeholder="入库日期" disabled
-                                               maxlength="20" name="sysProductin.CreateDate"
-                                               value="#(sysProductin.CreateDate??)"/>
+                                               maxlength="20" name="sysProductin.dcreatetime"
+                                               value="#(sysProductin.dcreatetime??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -111,8 +111,8 @@
                                     <label class="col-sm-3 col-form-label">审批日期</label>
                                     <div class="col-9">
                                         <input type="text" data-date class="form-control ml-2" placeholder="审批日期" disabled
-                                               maxlength="20" name="sysProductin.AuditDate"
-                                               value="#(sysProductin.AuditDate??)"/>
+                                               maxlength="20" name="sysProductin.dAuditTime"
+                                               value="#(sysProductin.daudittime??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -137,7 +137,7 @@
                                         <input type="text" data-notnull="true"
                                                data-tips="请输制单人" data-with-clearbtn="true" autocomplete="off" disabled
                                                class="form-control" placeholder="请输制单人" maxlength="40"
-                                               name="sysProductin.createperson" value="#(name??)"/>
+                                               name="sysProductin.ccreatename" value="#(sysProductin.ccreatename??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -149,7 +149,7 @@
                                         <input type="text" data-notnull="true"
                                                data-tips="请输审核人" data-with-clearbtn="true" autocomplete="off" disabled
                                                class="form-control" placeholder="请输审核人" maxlength="40"
-                                               name="sysProductin.auditperson" value="#(sname??)"/>
+                                               name="sysProductin.cAuditname" value="#(sysProductin.cauditname??)"/>
                                     </div>
                                 </div>
                             </div>

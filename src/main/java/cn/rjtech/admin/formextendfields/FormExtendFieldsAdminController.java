@@ -69,7 +69,15 @@ public class FormExtendFieldsAdminController extends BaseAdminController {
 		set("formExtendFields",formExtendFields);
 		render("edit.html");
 	}
-
+	public void editForm() {
+		FormExtendFields formExtendFields=service.findById(getLong(0));
+		if(formExtendFields == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		set("formExtendFields",formExtendFields);
+		render("editForm.html");
+	}
    /**
 	* 更新
 	*/

@@ -1,11 +1,13 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
 <div class="jbolt_page_content">
-
+	<form onsubmit="return false;" id="transVouchForm_#(pageId)" action="#(action)" method="post">
 	<div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
 		<div class="col-md-l pt-2" role="group" aria-label="btn-group">
+			#if(!transVouch.iauditstatus??)
 			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="1" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
-			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审核</button>
+			#end
+			<!--			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审核</button>-->
 			#if(transVouch.autoid??)
 			### 参数列表
 			### uri:                接口URI
@@ -20,9 +22,9 @@
 		</div>
 	</div>
 
-	<form onsubmit="return false;" id="transVouchForm_#(pageId)" action="#(action)" method="post">
-	<input type="text" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
-	<input type="text" id="barcodes" name="barcodes"/>
+
+	<input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
+	<input type="hidden" id="barcodes" name="barcodes"/>
 	#if(transVouch.autoid??)
 	<input type="hidden" id="transVouchautoid" name="transVouch.autoid" value="#(transVouch.autoid??)" />
 	#end
@@ -138,7 +140,9 @@
 	hideParentLayerDialogBtn();
 
 
-
+	function submitThisForm() {
+		return true;
+	}
 	function submitAllTables_#(pageId)(ele){
 		var action = getRealJqueryObject(ele);
 		var autoid = $("#transVouchautoid").val();
@@ -175,6 +179,5 @@
 		window.parent.refreshJBoltTable();
 	}
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="transVouchForm")
 #end
 

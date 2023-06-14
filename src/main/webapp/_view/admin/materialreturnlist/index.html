@@ -50,7 +50,7 @@
                tooltip data-confirm='确定要执行此操作？' data-title="撤回">撤回</a>
 	{@/if}
 	{@if data.iauditstatus != '2'}
-		<a class="jbolt_table_editbtn" href="admin/materialreturnlist/edit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑物料退货列表">编辑</i></a>
+		<a class="jbolt_table_editbtn" href="admin/materialreturnlist/edit/${data.autoid}?&edit=true" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑物料退货列表">编辑</i></a>
 	 {@/if}
 <!--	<a href="admin/materialreturnlist/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "-->
 <!--                           tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"-->

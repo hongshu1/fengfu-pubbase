@@ -280,11 +280,16 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 
 				String finalHeaderId = headerId;
 				lines.forEach(otherOutDetail -> {
+					//创建人
+					otherOutDetail.setIcreateby(userId);
+					otherOutDetail.setDcreatetime(nowDate);
+					otherOutDetail.setCcreatename(userName);
+					//更新人
+					otherOutDetail.setIupdateby(userId);
+					otherOutDetail.setDupdatetime(nowDate);
+					otherOutDetail.setCupdatename(userName);
+
 					otherOutDetail.setMasID(finalHeaderId);
-					otherOutDetail.setCreateDate(nowDate);
-					otherOutDetail.setCreatePerson(userName);
-					otherOutDetail.setModifyDate(nowDate);
-					otherOutDetail.setModifyPerson(userName);
 				});
 				otherOutDetailService.batchSave(lines);
 			}
@@ -293,8 +298,10 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 				List<OtherOutDetail> lines = jBoltTable.getUpdateModelList(OtherOutDetail.class);
 
 				lines.forEach(materialsOutDetail -> {
-					materialsOutDetail.setModifyDate(nowDate);
-					materialsOutDetail.setModifyPerson(userName);
+					//更新人
+					materialsOutDetail.setIupdateby(userId);
+					materialsOutDetail.setDupdatetime(nowDate);
+					materialsOutDetail.setCupdatename(userName);
 				});
 				otherOutDetailService.batchUpdate(lines);
 			}
