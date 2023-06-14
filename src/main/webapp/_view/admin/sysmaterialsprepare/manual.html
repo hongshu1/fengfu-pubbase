@@ -252,27 +252,10 @@
   }
 
   function DElete(val){
-
+    var oParent = val.parentNode.parentNode;
+    oParent.parentNode.removeChild(oParent);
   }
 
-  function removeJBoltTableCheckedTr(ele,confirm,callback){
-    var table=getJBoltTable(ele);
-    if(isOk(table)){
-      var jboltTable=table.jboltTable("inst");
-      if(jboltTable){
-        var action=getRealJqueryObject(ele);
-        if(isOk(action)){
-          var success = checkMasterTableId(action);
-          if(!success){
-            return false;
-          }
-        }
-        jboltTable.me.removeJBoltTableCheckedTr(jboltTable,confirm,callback);
-
-      }
-    }
-    return true;
-  }
 
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="SysMaterialsprepare_Form")
