@@ -71,12 +71,12 @@
                 <th data-width="60" data-column="">序号</th>
                 <th data-width="150" data-column="">操作</th>
                 <th data-width="150" data-column="">存货编码</th>
-                <th data-min-width="160" data-column="">客户部番</th>
-                <th data-width="150" data-column="">部品名称</th>
-                <th data-width="150" data-column="">规格</th>
+                <th data-min-width="200" data-column="">客户部番</th>
+                <th data-width="250" data-column="">部品名称</th>
+                <th data-width="200" data-column="">规格</th>
                 <th data-width="150" data-column="">主计量单位</th>
                 <th data-width="150" data-column="">机型名称</th>
-                <th data-width="150" data-column="">仓库名称</th>
+                <th data-width="200" data-column="">仓库名称</th>
                 <th data-width="200" data-column="">库位名称</th>
             </tr>
             </thead>
@@ -120,6 +120,7 @@
             for (i=0;i<barcodes.length;i++){
                 Ajax.post("admin/sysMaterialspreparedetail/choosemtool", {"cmodocno": $(cmo).val(), "barcodes": barcodes[i]},
                     function (res) {
+                        console.log(res.data);
                         jboltTableInsertRow(window.parent.getJBoltTable("manual"), res.data, false, false, false);
                     }, function (err) {
                     });

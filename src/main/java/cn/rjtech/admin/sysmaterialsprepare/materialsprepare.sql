@@ -95,11 +95,8 @@ FROM T_Sys_MaterialsPrepare mp
          LEFT JOIN Bd_WorkRegionM wrm ON md.iWorkRegionMid = wrm.iAutoId
          LEFT JOIN Bd_Inventory it ON md.iInventoryId = it.iAutoId
          LEFT JOIN Bd_Uom uom ON it.iManufactureUomId = uom.iAutoId
-         LEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting = ir.iAutoId
-         LEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId = irc.iInventoryRoutingId
-         LEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId = iri.iInventoryRoutingConfigId
 WHERE 1 = 1
-  AND mp.BillNo is not null #if(startTime)
+  #if(startTime)
   AND dPlanDate >= #para(startTime)
   #end
   #if(endTime)
@@ -114,17 +111,6 @@ WHERE 1 = 1
   #if(cworkcode)
   AND cWorkCode = #para(cworkcode)
   #end
-GROUP BY mp.AutoID,
-    mp.BillNo,
-    mp.SourceBillNo,
-    dpm.cDepName,
-    wsm.cWorkShiftName,
-    md.dPlanDate,
-    md.iQty,
-    it.cInvCode,
-    it.cInvCode1,
-    it.cInvName1,
-    uom.cUomName
 ORDER BY md.dPlanDate DESC
     #end
 
@@ -464,6 +450,26 @@ WHERE 1 = 1
 
 
 
+#sql("test")
+SELECT
+    iri.iInventoryId,
+    it.cInvCode,
+    iri.iUsageUOM,
+    iri.iUsageUOM * md.iQty AS planIqty,
+    sbp.Barcode,
+    sbp.Qty,
+    sbp.PosCode,
+    sbp.PackRate
+FROM
+    Mo_MoRoutingInvc iri
+        LEFT JOIN Bd_Inventory it ON iri.iInventoryId= it.iAutoId
+        LEFT JOIN Mo_MoRoutingConfig irc ON iri.iMoRoutingConfigId= irc.iAutoId
+        LEFT JOIN Mo_MoRouting ir ON irc.iMoRoutingId= ir.iAutoId
+        LEFT JOIN Mo_MoDoc md ON ir.iMoDocId= md.iAutoId
+        LEFT JOIN T_Sys_StockBarcodePosition sbp ON sbp.InvCode= it.cInvCode
+WHERE 1=1
+  AND  md.iAutoId='#(imodocid)'
+#end
 
 
 
