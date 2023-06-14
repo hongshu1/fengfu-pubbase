@@ -24,6 +24,7 @@ import com.jfinal.plugin.activerecord.Record;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -304,19 +305,20 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
         return SUCCESS;
     }
 
-    public Ret batchDetect(Kv kv) {
-        List<Record> records = getDatasByIds(kv);
-        if (records != null && records.size() > 0) {
-            for (Record record : records) {
-                Integer iorderstatus = record.getInt("iorderstatus");
-                if (iorderstatus != 1 && iorderstatus != 4) {
-                    return fail("订单(" + record.getStr("corderno") + ")不能删除!");
-                }
-
-                record.set("isdeleted", 1);
-                updateRecord(record);
+    public Ret batchDetect(String ids) {
+        List<ManualOrderM> list = getListByIds(ids);
+        List<ManualOrderM> notAuditList = new ArrayList<>();
+        for (ManualOrderM manualOrderM : list) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != manualOrderM.getIOrderStatus()) {
+                notAuditList.add(manualOrderM);
             }
+
+            manualOrderM.setIsDeleted(true);
         }
+
+        ValidationUtils.notEmpty(notAuditList, "存在非已保存订单");
+        ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
         return SUCCESS;
     }
 
@@ -462,6 +464,41 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
         ValidationUtils.equals(WeekOrderStatusEnum.CLOSE.getValue(), manualOrderM.getIOrderStatus(), "订单非已关闭状态");
         manualOrderM.setIOrderStatus(WeekOrderStatusEnum.APPROVED.getValue());
         ValidationUtils.isTrue(manualOrderM.update(), JBoltMsg.FAIL);
+        return SUCCESS;
+    }
+
+    /**
+     * 删除
+     *
+     * @param iautoid
+     * @return
+     */
+    public Ret delete(Long iautoid) {
+        ManualOrderM manualOrderM = findById(iautoid);
+        ValidationUtils.equals(WeekOrderStatusEnum.NOT_AUDIT.getValue(), manualOrderM.getIOrderStatus(), "订单非已保存状态");
+        return updateColumn(iautoid, "isdeleted", true);
+    }
+
+    /**
+     * 批量删除
+     *
+     * @param ids
+     * @return
+     */
+    public Ret batchDeleteByIds(String ids) {
+        List<ManualOrderM> list = getListByIds(ids);
+        List<ManualOrderM> notAuditList = new ArrayList<>();
+        for (ManualOrderM manualOrderM : list) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != manualOrderM.getIOrderStatus()) {
+                notAuditList.add(manualOrderM);
+            }
+
+            manualOrderM.setIsDeleted(true);
+        }
+
+        ValidationUtils.notEmpty(notAuditList, "存在非已保存订单");
+        ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
         return SUCCESS;
     }
 }
