@@ -12,8 +12,6 @@ select so.AutoID, CASE so.iAuditStatus
         so.VenCode as vencode
 		,so.ccreatename as name,so.cupdatename as sname,v.cVenName as venname,so.Type as type,so.SourceBillNo
 FROM T_Sys_PUReceive so
-LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.icreateby = p.id
-LEFT JOIN #(getBaseDbName()).dbo.jb_user s on so.AuditPerson = s.username
 LEFT JOIN Bd_Vendor v on so.VenCode = v.cVenCode
 where so.isDeleted = '0'
 	#if(billno)
@@ -63,7 +61,7 @@ where a.isDeleted = '0'
      #if(spotticket)
     and a.spotticket = #para(spotticket)
      #end
-ORDER BY a.ModifyDate DESC
+ORDER BY a.dupdatetime DESC
 #end
 
 
@@ -317,7 +315,8 @@ select
 	s.iAutoId as siautoid,
     s.cRdName as scrdname,
     s.cRdCode as scrdcode,
-    dep.cdepcode,dep.cdepname
+    dep.cdepcode,dep.cdepname,
+    a.iinventoryId
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
@@ -347,5 +346,9 @@ where 1=1
 order by o.iAutoId DESC
 
 #end
+
+
+
+
 
 

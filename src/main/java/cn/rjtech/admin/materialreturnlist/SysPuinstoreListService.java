@@ -10,11 +10,13 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.materialsout.MaterialsOutService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoredetailService;
+import cn.rjtech.model.momdata.MaterialsOut;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
@@ -57,6 +59,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	private RdStyleService rdStyleService;
 	@Inject
 	private SysPuinstoreService sysPuinstoreService;
+	@Inject
+	private FormApprovalService formApprovalService;
 
 	/**
 	 * 后台管理分页查询
@@ -218,6 +222,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		}
 
 		//	当前操作人员  当前时间 单号
+		User user = JBoltUserKit.getUser();
+
 		Long userId = JBoltUserKit.getUserId();
 		String userName = JBoltUserKit.getUserName();
 		Date nowDate = new Date();
@@ -274,11 +280,19 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 //					保存
 //					订单状态：0=待审核，1=未审核，2=已审核. 3=审核不通过
 					puinstore.setIAuditStatus(param);
-					puinstore.setCreateDate(nowDate);
+
+					//创建人
+					puinstore.setICreateBy(userId);
+					puinstore.setDCreateTime(nowDate);
+					puinstore.setCCreateName(userName);
+
+					//更新人
+					puinstore.setIUpdateBy(userId);
+					puinstore.setDUpdateTime(nowDate);
+					puinstore.setCUpdateName(userName);
+
+
 					puinstore.setOrganizeCode(OrgCode);
-					puinstore.setCreatePerson(userName);
-					puinstore.setModifyDate(nowDate);
-					puinstore.setModifyPerson(userName);
 					puinstore.setIsDeleted(false);
 					save(puinstore);
 					headerId = puinstore.getAutoID();
@@ -286,11 +300,11 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					Integer  a = Integer.valueOf(param);
 					if ( a  == 2){
 						puinstore.setAuditDate(nowDate);
-						puinstore.setAuditPerson(userName);
+						puinstore.setCAuditName(userName);
 					}
 					puinstore.setIAuditStatus(param);
-					puinstore.setModifyDate(nowDate);
-					puinstore.setModifyPerson(userName);
+					puinstore.setDUpdateTime(nowDate);
+					puinstore.setCUpdateName(userName);
 					update(puinstore);
 					headerId = puinstore.getAutoID();
 				}
@@ -342,10 +356,10 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					System.out.println(qtys);
 					materialsOutDetail.setMasID(finalHeaderId);
 					materialsOutDetail.setWhcode(finalWhcodes);
-					materialsOutDetail.setCreateDate(nowDate);
-					materialsOutDetail.setCreatePerson(userName);
-					materialsOutDetail.setModifyDate(nowDate);
-					materialsOutDetail.setModifyPerson(userName);
+					materialsOutDetail.setDCreateTime(nowDate);
+					materialsOutDetail.setCCreateName(userName);
+					materialsOutDetail.setDUpdateTime(nowDate);
+					materialsOutDetail.setCUpdateName(userName);
 				});
 				syspuinstoredetailservice.batchSave(lines);
 			}
@@ -357,8 +371,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				String finalWhcodes1 = whcode;
 				lines.forEach(materialsOutDetail -> {
 					materialsOutDetail.setWhcode(finalWhcodes1);
-					materialsOutDetail.setModifyDate(nowDate);
-					materialsOutDetail.setModifyPerson(userName);
+					materialsOutDetail.setDUpdateTime(nowDate);
+					materialsOutDetail.setCUpdateName(userName);
 				});
 				syspuinstoredetailservice.batchUpdate(lines);
 			}
@@ -382,54 +396,68 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	}
 
 	/**
-	 * 审核
-	 * @param iAutoId
-	 * @return
+	 * 详情页提审
 	 */
-	public Ret approve(String iAutoId,Integer mark) {
-		boolean success = false;
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		List<SysPuinstore> listByIds = getListByIds(iAutoId);
-		if (listByIds.size() > 0) {
-			for (SysPuinstore puinstore : listByIds) {
-				Integer state = Integer.valueOf(puinstore.getIAuditStatus());
-				if (state != 1) {
-					return warn("订单："+puinstore.getBillNo()+"状态不支持审核操作！");
-				}
-				//订单状态：2. 已审核
-				puinstore.setIAuditStatus(2);
-				puinstore.setAuditDate(nowDate);
-				puinstore.setAuditPerson(userName);
-				success= puinstore.update();
-				this.pushU8(iAutoId);
-			}
-		}
+	public Ret submit(Long iautoid) {
+		tx(() -> {
+			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"T_Sys_PUInStore");
+			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
+			// 处理其他业务
+			SysPuinstore sysPuinstore = findById(iautoid);
+			sysPuinstore.setIAuditStatus(1);
+			ValidationUtils.isTrue(sysPuinstore.update(),JBoltMsg.FAIL);
+			return true;
+		});
 		return SUCCESS;
 	}
 
 
 	/**
-	 * 批量反审批
-	 * @param ids
-	 * @return
+	 * 详情页审核
 	 */
-	public Ret NoApprove(String ids) {
-		//TODO数据同步暂未开发 现只修改状态
-		for (SysPuinstore puinstore :  getListByIds(ids)) {
-			Integer state = Integer.valueOf(puinstore.getIAuditStatus());
-//			订单状态： 2. 已审批
-			if (state != 2) {
-				return warn("订单："+puinstore.getBillNo()+"状态不支持反审批操作！");
+	public Ret approve(String ids) {
+		tx(() -> {
+			boolean success = false;
+			Long userId = JBoltUserKit.getUserId();
+			String userName = JBoltUserKit.getUserName();
+			Date nowDate = new Date();
+			SysPuinstore sysPuinstore = superFindById(ids);
+			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+			if (sysPuinstore.getIAuditStatus() != 1) {
+				ValidationUtils.error("订单："+sysPuinstore.getBillNo()+"状态不支持审核操作！");
 			}
+			//订单状态：3. 已审核
+			sysPuinstore.setIAuditStatus(2);
+			//审核人
+			sysPuinstore.setIAuditBy(userId);
+			sysPuinstore.setCAuditName(userName);
+			sysPuinstore.setDAuditTime(nowDate);
+			Ret ret = this.pushU8(ids);
+			success= sysPuinstore.update();
 
-			//订单状态： 1. 待审批
-			puinstore.setIAuditStatus(1);
-			puinstore.update();
-		}
+			return true;
+		});
+
 		return SUCCESS;
 	}
+
+	/**
+	 * 详情页审核不通过
+	 */
+	public Ret reject(Long ids) {
+		tx(() -> {
+			SysPuinstore sysPuinstore = superFindById(ids);
+			if (sysPuinstore.getIAuditStatus() != 2) {
+				ValidationUtils.error("订单："+sysPuinstore.getBillNo()+"状态不支持反审批操作！");
+			}
+			sysPuinstore.setIAuditStatus(1);
+			sysPuinstore.update();
+			return true;
+		});
+		return SUCCESS;
+	}
+
 
 
 
@@ -446,7 +474,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		//订单状态：2. 待审批
 		puinstore.setIAuditStatus(1);
 		puinstore.setAuditDate(null);
-		puinstore.setAuditPerson(null);
+		puinstore.setCAuditName(null);
 		boolean result = puinstore.update();
 		return ret(result);
 	}
@@ -557,10 +585,10 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				jsonObject.put("CreatePerson", userCode);
 				jsonObject.put("BarCode", record.get("barcode"));
 				jsonObject.put("BillNo", record.get("billno"));
-				jsonObject.put("BillID", "1000000003");
-				jsonObject.put("BillNoRow", "PO23050601-1");
+				jsonObject.put("BillID", record.get("billno"));
+				jsonObject.put("BillNoRow", record.get("billnorow"));
 				jsonObject.put("BillDate", record.get("billdate"));
-				jsonObject.put("BillDid", "1000000003");
+				jsonObject.put("BillDid", record.get("billno"));
 				jsonObject.put("sourceBillNo", record.get("sourcebillno"));
 				jsonObject.put("sourceBillDid", record.get("sourcebilldid"));
 				jsonObject.put("sourceBillID", record.get("sourcebillid"));
@@ -587,7 +615,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 			SystemLog systemLog = new SystemLog();
 			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append("<span class='text-danger'>[材料退货列表推U8操作]</span>");
+			stringBuilder.append("<span class='text-danger'>[物料退货列表推U8操作]</span>");
 //            stringBuilder.append("<span class='text-primary'>[url="+url+"]</span>");
 //            stringBuilder.append("<span class='text-danger'>[参数={"+JSONObject.toJSONString(data)+"}]</span>");
 			systemLog.setType(2);
@@ -635,6 +663,61 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 			ValidationUtils.error("查无此单");
 		}
 
+		return SUCCESS;
+	}
+
+	/**
+	 * 批量审核
+	 * @param ids
+	 * @return
+	 */
+	public Ret batchApprove(String ids) {
+		tx(() -> {
+			boolean success = false;
+			Long userId = JBoltUserKit.getUserId();
+			String userName = JBoltUserKit.getUserName();
+			Date nowDate = new Date();
+			List<SysPuinstore> listByIds = getListByIds(ids);
+			if (listByIds.size() > 0) {
+				for (SysPuinstore sysPuinstore : listByIds) {
+					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+					if (sysPuinstore.getIAuditStatus() != 1) {
+						ValidationUtils.error("订单：" + sysPuinstore.getBillNo() + "状态不支持审核操作！");
+					}
+					//订单状态：2. 已审核
+					sysPuinstore.setIAuditStatus(2);
+					//审核人
+					sysPuinstore.setIAuditBy(userId);
+					sysPuinstore.setCAuditName(userName);
+					sysPuinstore.setDAuditTime(nowDate);
+					Ret ret = this.pushU8(ids);
+					success = sysPuinstore.update();
+				}
+			}
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	/**
+	 * 批量反审核
+	 * @param ids
+	 * @return
+	 */
+	public Ret batchReverseApprove(String ids) {
+		tx(() -> {
+			//TODO数据同步暂未开发 现只修改状态
+			for (SysPuinstore sysPuinstore :  getListByIds(ids)) {
+//			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+				if (sysPuinstore.getIAuditStatus() != 2) {
+					ValidationUtils.error("订单："+sysPuinstore.getBillNo()+"状态不支持反审核操作！");
+				}
+				sysPuinstore.setIAuditStatus(1);
+				sysPuinstore.update();
+			}
+
+			return true;
+		});
 		return SUCCESS;
 	}
 

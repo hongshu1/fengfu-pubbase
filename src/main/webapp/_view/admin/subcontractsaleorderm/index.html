@@ -74,15 +74,20 @@
         <tr data-id="${data.iautoid}" >
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-               <a tooltip class=jbolt_table_editbtn href="admin/subcontractsaleorderm/edit?iautoid=${data.iautoid}" data-fs="true"  data-handler="refreshJBoltTable" data-title="查看委外销售订单"><i class="fa fa-eye"></i>查看</a>
+               <a class="jbolt_table_editbtn" href="admin/subcontractsaleorderm/edit?iautoid=${data.iautoid}" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="查看委外销售订单"><i class="fa fa-eye">查看</i></a>
                 {@if  data.iorderstatus == '1' || data.iorderstatus == '4'}
-                <a href="admin/subcontractsaleorderm/edit?iautoid=${data.iautoid}&edit=true" data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="编辑委外销售订单" data-dialog-title="修改委外销售订单" class="jbolt_table_editbtn"><i class="fa fa-remove fa-edit">编辑</i></a>
-                <a href="admin/subcontractsaleorderm/delete/${data.iautoid}" tooltip data-title="删除委外销售订单" data-ajaxbtn data-loading="执行中 " data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+                <a class="jbolt_table_editbtn" href="admin/subcontractsaleorderm/edit?iautoid=${data.iautoid}&edit=true" data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="编辑委外销售订单" data-dialog-title="修改委外销售订单"><i class="fa fa-remove fa-edit">编辑</i></a>
+                <a class="jbolt_table_delbtn" href="admin/subcontractsaleorderm/delete/${data.iautoid}" data-handler="refreshJBoltTable" tooltip data-title="删除委外销售订单" data-ajaxbtn data-loading="执行中 " data-confirm="确定删除此数据？"><i class="fa fa-remove c-danger">删除</i></a>
                 {@else if data.iorderstatus == '2'}
-                <a class="jbolt_table_delbtn" href="admin/subcontractsaleorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回委外销售订单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
+                <a class="jbolt_table_delbtn" href="admin/subcontractsaleorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回委外销售订单"><i class="fa fa-remove c-danger">撤回</i></a>
+                {@else if data.iorderstatus == '3'}
+                    <a class="jbolt_table_delbtn" href="admin/subcontractsaleorderm/close?iautoid=${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" tooltip  data-title="关闭周间客户订单"><i class="fa fa-remove c-danger">关闭</i></a>
+                {@/if}
+                {@if data.iorderstatus == '7'}
+                    <a class="jbolt_table_delbtn" href="admin/subcontractsaleorderm/open?iautoid=${data.iautoid}" data-confirm="确定打开此选项？" data-handler="refreshJBoltTable" tooltip  data-title="打开周间客户订单"><i class="fa fa-remove fa-edit">打开</i></a>
                 {@/if}
             </td>
-            <td>$${data.iorderstatus|iOrderStatus}</td>
+            <td>${data.iorderstatus|iOrderStatus}</td>
             <td>${data.cauditprogress}</td>
             <td>${data.corderno}</td>
             <td>${data.cdocno}</td>
@@ -115,9 +120,10 @@
             </div>
         </div>
 
-        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal"
+        <table class="jbolt_table jbolt_main_table table-center "
                data-jbolttable
-               data-height="fill"
+               data-height="90%"
+               data-width="auto"
                data-ajax="true"
                data-url="admin/subcontractsaleorderm/datas"
                data-column-resize="true"

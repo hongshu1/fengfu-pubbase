@@ -59,14 +59,6 @@ public class UserOrgAdminController extends JBoltBaseController {
     }
 
     /**
-     * 保存
-     */
-    @Before(Tx.class)
-    public void save() {
-        renderJson(service.save(getModel(UserOrg.class, "userOrg")));
-    }
-
-    /**
      * 编辑
      */
     public void edit() {
@@ -77,30 +69,6 @@ public class UserOrgAdminController extends JBoltBaseController {
         }
         set("userOrg", userOrg);
         render("edit.html");
-    }
-
-    /**
-     * 更新
-     */
-    @Before(Tx.class)
-    public void update() {
-        renderJson(service.update(getModel(UserOrg.class, "userOrg")));
-    }
-
-    /**
-     * 批量删除
-     */
-    @Before(Tx.class)
-    public void deleteByIds() {
-        renderJson(service.deleteByIds(get("ids")));
-    }
-
-    /**
-     * 删除
-     */
-    @Before(Tx.class)
-    public void delete() {
-        renderJson(service.deleteById(getLong(0)));
     }
 
     /**
@@ -166,22 +134,5 @@ public class UserOrgAdminController extends JBoltBaseController {
     public void toggleIsPrincipal() {
         renderJson(service.toggleBoolean(getLong(0), "is_principal"));
     }
-
-    /**
-     * 恢复假删数据
-     */
-    @Before(Tx.class)
-    public void recover() {
-        renderJson(service.recoverById(getLong(0)));
-    }
-
-    /**
-     * real delete 真删除
-     */
-    @Before(Tx.class)
-    public void realDelete() {
-        renderJson(service.realDeleteById(getLong(0)));
-    }
-
 
 }

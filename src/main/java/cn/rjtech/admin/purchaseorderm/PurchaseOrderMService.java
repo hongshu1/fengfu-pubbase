@@ -1145,7 +1145,6 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			barcodeDatas=findByBarcode2(iautoid);
 		}
 
-
 		// 采购现品票明细数据sheet分页数组
 		List<String> sheetNames = new ArrayList<>();
 
@@ -1287,10 +1286,10 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			}
 
 			if (rowDatas.size() < 8) {
-				sheetNames2.add("订货清单");
+				sheetNames2.add("订货条码");
 			}
 			if (rowDatas.size() > 8) {
-				sheetNames2.add("订货清单0");
+				sheetNames2.add("订货条码0");
 			}
 			Kv remainData2 = Kv.create();
 
@@ -1335,5 +1334,4 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
     public PurchaseOrderM findByCOrerNo(String corderno) {
         return findFirst("select * from PS_PurchaseOrderM where corderno=?", corderno);
     }
-
 }

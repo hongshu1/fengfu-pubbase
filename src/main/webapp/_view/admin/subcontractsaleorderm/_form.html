@@ -10,14 +10,14 @@
                 <div class="card-body">
                     <div class="col">
                         #if(!subcontractsaleorderm.iAutoId?? || edit??false)
-                        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-sm" onclick="submitThisForm()">保存</button>
+                        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-sx" onclick="submitThisForm()">保存</button>
                         #end
                         #if(subcontractsaleorderm.iAutoId?? && !edit??)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/subcontractsaleorderm",
                         formSn="Co_SubcontractSaleOrderM", o=subcontractsaleorderm, primaryKeyName="iAutoId",
                         edit=edit??)
                         #end
-                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-sm">关闭</button>
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-sx">关闭</button>
                     </div>
                 </div>
             </div>
@@ -428,6 +428,7 @@
                     });
                 }
             },
+            maxRowCount: 9999,
             cols: {
                 iautoid: {
                     submitAttr: "iautoid",

@@ -1,10 +1,10 @@
 #sql("paginateAdminDatas")
 SELECT
         AuditState =
-        CASE WHEN t1.AuditStatus=0 THEN '未审核'
-             WHEN t1.AuditStatus=1 THEN '待审核'
-             WHEN t1.AuditStatus=2 THEN '审核通过'
-             WHEN t1.AuditStatus=3 THEN '审核不通过' END,
+        CASE WHEN t1.iAuditStatus=0 THEN '未审核'
+             WHEN t1.iAuditStatus=1 THEN '待审核'
+             WHEN t1.iAuditStatus=2 THEN '审核通过'
+             WHEN t1.iAuditStatus=3 THEN '审核不通过' END,
         TypeName =
         CASE WHEN t1.Type='OtherOutMES' THEN '特殊领料单'
              WHEN t1.Type='OtherOut' THEN '手动新增'END,
@@ -29,18 +29,18 @@ WHERE 1 = 1
         AND t4.cDepName like '%#(deptname)%'
     #end
    #if(iorderstatus)
-        AND t1.AuditStatus = #para(iorderstatus)
+        AND t1.iAuditStatus = #para(iorderstatus)
     #end
     #if(OrgCode)
         AND t1.OrganizeCode = #para(OrgCode)
     #end
 #if(startdate)
-    and CONVERT(VARCHAR(10),t1.ModifyDate,23) >='#(startdate)'
+    and CONVERT(VARCHAR(10),t1.dCreateTime,23) >='#(startdate)'
 #end
 #if(enddate)
-    and CONVERT(VARCHAR(10),t1.ModifyDate,23) <='#(enddate)'
+    and CONVERT(VARCHAR(10),t1.dCreateTime,23) <='#(enddate)'
 #end
-order by t1.ModifyDate desc
+order by t1.dCreateTime desc
     #end
 
 #sql("getOtherOutLines")

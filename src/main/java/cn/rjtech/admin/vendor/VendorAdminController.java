@@ -10,6 +10,7 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.model.momdata.VendorAddr;
 import cn.rjtech.model.momdata.base.BaseVendorAddr;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 public class VendorAdminController extends BaseAdminController {
 
     @Inject
-    private VendorService service;
+    private VendorService     service;
     @Inject
     private VendorAddrService vendorAddrService;
 
@@ -53,7 +54,8 @@ public class VendorAdminController extends BaseAdminController {
     public void datas() {
 //		renderJsonData(service.pageList(getKv()));
         Page<Record> adminDatas = service
-                .getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isEnabled"), getBoolean("isDeleted"), getKv());
+            .getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isEnabled"), getBoolean("isDeleted"),
+                getKv());
         renderJsonData(adminDatas);
     }
 
@@ -94,7 +96,7 @@ public class VendorAdminController extends BaseAdminController {
         String addr = vendor.getCProvince() + "," + vendor.getCCity() + "," + vendor.getCCounty();
         vendor.setCProvince(addr);
         BigDecimal iTaxRate = vendor.getITaxRate();
-        if(iTaxRate != null){
+        if (iTaxRate != null) {
             vendor.setITaxRate(iTaxRate.setScale(2, BigDecimal.ROUND_DOWN));
         }
         set("vendor", vendor);
@@ -113,19 +115,14 @@ public class VendorAdminController extends BaseAdminController {
      * 批量删除
      */
     public void deleteByIds() {
-        String ids = get("ids");
-        for (String id : ids.split(",")) {
-            deleteVendorAddrById(Long.valueOf(id));
-        }
-        renderJson(service.deleteByIds(ids));
+        renderJson(service.deleteByAutoids(get("ids")));
     }
 
     /**
      * 删除
      */
     public void delete() {
-        deleteVendorAddrById(getLong(0));
-        renderJson(service.deleteById(getLong(0)));
+        renderJson(service.deleteByAutoid(getLong(0)));
     }
 
     /*
@@ -152,7 +149,7 @@ public class VendorAdminController extends BaseAdminController {
     public void options() {
         renderJsonData(service.options());
     }
-    
+
     /**
      * 选项列表
      */

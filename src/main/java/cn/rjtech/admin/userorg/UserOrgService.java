@@ -67,43 +67,6 @@ public class UserOrgService extends JBoltBaseService<UserOrg> {
     }
 
     /**
-     * 保存
-     */
-    public Ret save(UserOrg userOrg) {
-        if (userOrg == null || isOk(userOrg.getId())) {
-            return fail(JBoltMsg.PARAM_ERROR);
-        }
-        //if(existsName(userOrg.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-        boolean success = userOrg.save();
-        if (success) {
-            //添加日志
-            //addSaveSystemLog(userOrg.getId(), JBoltUserKit.getUserId(), userOrg.getName());
-        }
-        return ret(success);
-    }
-
-    /**
-     * 更新
-     */
-    public Ret update(UserOrg userOrg) {
-        if (userOrg == null || notOk(userOrg.getId())) {
-            return fail(JBoltMsg.PARAM_ERROR);
-        }
-        //更新时需要判断数据存在
-        UserOrg dbUserOrg = findById(userOrg.getId());
-        if (dbUserOrg == null) {
-            return fail(JBoltMsg.DATA_NOT_EXIST);
-        }
-        //if(existsName(userOrg.getName(), userOrg.getId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-        boolean success = userOrg.update();
-        if (success) {
-            //添加日志
-            //addUpdateSystemLog(userOrg.getId(), JBoltUserKit.getUserId(), userOrg.getName())
-        }
-        return ret(success);
-    }
-
-    /**
      * 删除数据后执行的回调
      *
      * @param userOrg 要删除的model
@@ -282,4 +245,17 @@ public class UserOrgService extends JBoltBaseService<UserOrg> {
         return null != queryInt(selectSql().select("1").eq(UserOrg.USER_ID, userId).eq(UserOrg.ORG_ID, orgId).eq(UserOrg.IS_DELETED, ZERO_STR).first()) ;
     }
 
+    public UserOrg getUserOrg(long userId, long orgId) {
+        Sql sql = selectSql()
+                .eq(UserOrg.USER_ID, userId)
+                .eq(UserOrg.ORG_ID, orgId)
+                .eq(UserOrg.IS_DELETED, ZERO_STR);
+        
+        return findFirst(sql);
+    }
+
+    public boolean notExistsDuplicatePerson(Long orgId, Long iPersonId) {
+        return null == queryInt("SELECT TOP 1 1 FROM base_user_org WHERE org_id = ? AND ipersonid = ? AND is_deleted = ? ", orgId, iPersonId, ZERO_STR);
+    }
+    
 }

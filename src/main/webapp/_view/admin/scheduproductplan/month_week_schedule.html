@@ -25,23 +25,12 @@
         font-weight: bold;
     }
 
-    /* 头部用户数据 */
-    .nav_title {
-        text-indent: 1rem;
-        padding: 10px 0px;
-        font-size: 0.9rem;
-        color: #5C5C5C;
-        border: 1px solid #CCCCCC;
-    }
 
     .search {
         display: flex;
+        justify-content: space-between; /* 水平居中 */
+        align-items: center; /* 垂直居中 */
         padding: 10px 0px;
-    }
-
-    /* 下拉框文字样式 */
-    .select {
-        margin-right: 15px;
     }
 
     .span {
@@ -54,7 +43,6 @@
 
     /* 搜索重置按钮样式 */
     .button {
-        margin: 0px 10px;
         padding: 3px 10px;
         background-color: #fff;
         border: #797979 1px solid;
@@ -188,9 +176,9 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)" >
     <div class="jbolt_page_title">
-        <nav>
-            <p class="nav_title">月周生产计划</p>
-        </nav>
+<!--        <nav>-->
+<!--            <p class="nav_title">月周生产计划</p>-->
+<!--        </nav>-->
         <!-- 头部标题结束 -->
         <!-- 搜索工具类开始 -->
         <div class="search">
@@ -221,8 +209,8 @@
                     <option value="5">层级5</option>
                 </select>
             </div>
-            <div class="select">
-                <div class="form-group row">
+            <div class="select" style="display: flex;justify-content: center;align-items: center;">
+                <div class="row">
                     <p>日期：</p>
                     <div class="col" style="display:flex;">
                         <input type="date" id="search_start-time" name="search_start-time">
@@ -231,8 +219,10 @@
                     </div>
                 </div>
             </div>
-            <button class="button" onClick="search()" style="height:26px;">搜索</button>
-            <button class="button" style="height:26px;">重置</button>
+            <div style="margin-left:1rem">
+                <button class="button" onClick="search()" style="height:26px;margin-right: 10px">搜索</button>
+                <button class="button" style="height:26px;">重置</button>
+            </div>
         </div>
     </div>
     <div class="jbolt_page_content">
@@ -359,7 +349,7 @@
     }
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1,calcOnDemand: true});
     var excelIo = new GC.Spread.Excel.IO();
-    spread.options.referenceStyle = GC.Spread.Sheets.ReferenceStyle.r1c1
+    spread.options.referenceStyle = GC.Spread.Sheets.ReferenceStyle.r1c1;
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取表单
@@ -478,8 +468,8 @@
         spread.sheets.forEach(function(sheet) {
             sheet.setDefaultStyle(style, GC.Spread.Sheets.SheetArea.viewport);
         });
-        var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
         //设置value值和该单元格的对齐方式
+        var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex).cellType(cellType);
         parms.activeSheet.setColumnWidth(parms.columnindex, 40);//设置指定单元格的width
         sheet.addSpan(0,0,4,1);
@@ -536,7 +526,7 @@
                     }
                 }
             }
-
+            //设置day，week
             for (let i = 0; i < res.data.day.length; i++) {
                 sheet.setValue(2,parms.dayRow++,res.data.day[i]);
                 sheet.setValue(3,parms.weekRow++,res.data.week[i]);
@@ -639,12 +629,12 @@
                         //渲染计划数据
                         for (var j = 0; j < parms['scheduplanmonth'][i].day.length; j++) {
                             if (i == 0) {
-                                sheet.setValue(shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].shiyong);
-                                sheet.setValue(1 + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].one);
-                                sheet.setValue(2 + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].two);
-                                sheet.setValue(3 + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].three);
-                                sheet.setValue(4 + shiyongRow, shiyongCol+j, parms['scheduplanmonth'][i].day[j].zaiku);
-                                sheet.setValue(5 + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].tianshu);
+                                sheet.setValue(shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].shiyong));
+                                sheet.setValue(1 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].one));
+                                sheet.setValue(2 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].two));
+                                sheet.setValue(3 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].three));
+                                sheet.setValue(4 + shiyongRow, shiyongCol+j, parseFloat(parms['scheduplanmonth'][i].day[j].zaiku));
+                                sheet.setValue(5 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].tianshu));
                                 //
                                 sheet.setValue(8, 9, parms['scheduplanmonth'][i].qiChuZaiKu);
                                 sheet.setValue(9, 9, parms['scheduplanmonth'][i].dayNum);
@@ -656,16 +646,18 @@
                                 //嵌入计划在库公式
                                 sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //嵌入在库天数公式
-                                sheet.setFormula(B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,(SUM(R[-1]C/${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`)
+                                sheet.setFormula(B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}])`)
+                                //控制小数位为1位
+                                sheet.setFormatter(5 + shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0.00":"0.00");
                             } else {
-                                sheet.setValue(6 * i + shiyongRow, shiyongCol + j, parms['scheduplanmonth'][i].day[j].shiyong);
-                                sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, parms['scheduplanmonth'][i].day[j].one);
-                                sheet.setValue(6 * i + shiyongRow + 2, shiyongCol + j, parms['scheduplanmonth'][i].day[j].two);
-                                sheet.setValue(6 * i + shiyongRow + 3, shiyongCol + j, parms['scheduplanmonth'][i].day[j].three);
-                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol+j, parms['scheduplanmonth'][i].day[j].zaiku);
-                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol-1, parms['scheduplanmonth'][i].qiChuZaiKu);
-                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, parms['scheduplanmonth'][i].day[j].tianshu);
-                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol-1, parms['scheduplanmonth'][i].dayNum);
+                                sheet.setValue(6 * i + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].shiyong));
+                                sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].one));
+                                sheet.setValue(6 * i + shiyongRow + 2, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].two));
+                                sheet.setValue(6 * i + shiyongRow + 3, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].three));
+                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol+j, parseFloat(parms['scheduplanmonth'][i].day[j].zaiku));
+                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol-1, parseFloat(parms['scheduplanmonth'][i].qiChuZaiKu));
+                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].tianshu));
+                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol-1, parseFloat(parms['scheduplanmonth'][i].dayNum));
 
                                 let Num = sheet.getValue(6*i+9,9)
                                 let useArray = [];
@@ -675,7 +667,9 @@
                                 //嵌入计划在库公式
                                 sheet.setFormula(6*i+jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //嵌入在库天数公式
-                                sheet.setFormula(6*i+B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,(SUM(R[-1]C/${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`);
+                                sheet.setFormula(6*i+B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}])`);
+                                //控制小数位为1位
+                                sheet.setFormatter(6 * i + shiyongRow + 5, shiyongCol + j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0.0":"0.00");
                             }
                             // 条件为false进入
                             if(!parms['scheduplanmonth'][i].day[j].lock){
@@ -776,6 +770,7 @@
                         }
                         // let isDuplicate = false;
                         // for (let i = 0; i < parms.tableData.length; i++) {
+                                //去重
                         //     if (JSON.stringify(obj) === JSON.stringify(parms.tableData[i])) {
                         //         isDuplicate = true;
                         //         break;
@@ -1101,7 +1096,6 @@
                 }else{
                     LayerMsgBox.error(res.msg,500);
                 }
-                parms.tableData.length=0;
             },error: function(error) {
                 console.log(error);
             }

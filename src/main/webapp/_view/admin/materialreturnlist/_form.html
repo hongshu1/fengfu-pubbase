@@ -11,20 +11,28 @@
 <!--                        保存-->
 <!--                    </button>-->
 
-                    <button onclick="submitAllTables_#(pageId)(this)" #if(puinstore.iauditstatus != 0) style="display: none"  #end
-                            data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
-                            class="fa fa-window-maximize"></i> 提交
-                    </button>
+<!--                    <button onclick="submitAllTables_#(pageId)(this)" #if(puinstore.iauditstatus != 0) style="display: none"  #end-->
+<!--                            data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i-->
+<!--                            class="fa fa-window-maximize"></i> 提交-->
+<!--                    </button>-->
+<!--                    <button onclick="audit_#(pageId)(this)"-->
+<!--                            data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i-->
+<!--                            class="fa fa-window-maximize"></i> 审核-->
+<!--                    </button>-->
+<!--                    <button onclick="NoApprove_#(pageId)(this)"-->
+<!--                            data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i-->
+<!--                            class="fa fa-window-maximize"></i> 反审核-->
+<!--                    </button>-->
+                    #if(puinstore.autoid??)
+                    ### 参数列表
+                    ### uri:                接口URI
+                    ### formSn:             表单名
+                    ### o:                  当前表单对象名
+                    ### primaryKeyName:     主键名
+                    ###include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
 
-
-                    <button onclick="audit_#(pageId)(this)"
-                            data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
-                            class="fa fa-window-maximize"></i> 审核
-                    </button>
-                    <button onclick="NoApprove_#(pageId)(this)"
-                            data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
-                            class="fa fa-window-maximize"></i> 反审核
-                    </button>
+                    #include("/_view/_common/_approval_btns.html", uri="/admin/materialreturnlist", formSn="T_Sys_PUInStore", o=puinstore, edit=edit??, primaryKeyName="AutoID")
+                    #end
                     <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
                         关闭
                     </button>
@@ -76,7 +84,7 @@
 
                 <label class="col-sm-2 col-form-label">审批日期：</label>
                 <div class="col-sm-2 col-form-label">
-                    #(puinstore.AuditDate??)
+                    #(puinstore.dCreateTime??)
                 </div>
 
                 <label class="col-sm-2 col-form-label">入库类别：</label>
@@ -107,7 +115,7 @@
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">制单人：</label>
 				<div class="col-sm-2 col-form-label">
-                    #(puinstore.createperson??)
+                    #(puinstore.ccreatename??)
 				</div>
 				<label class="col-sm-2 col-form-label">审核人：</label>
 				<div class="col-sm-2 col-form-label">

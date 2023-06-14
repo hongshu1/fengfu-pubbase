@@ -82,15 +82,16 @@ AND mpd.Barcode=#para(barcode)
 #sql("getMoMaterialNotScanLogList")  ###未扫描
 
 SELECT
-    mpd.InvCode,
-    mpd.Barcode as barcode,
-    mpd.Qty,
-    md.cMoDocNo,
+    s.InvCode,
+    s.Barcode as barcode,
+    s.Qty,
+    s.cMoDocNo,
     it.cInvCode1,
     uom.cUomName,
     it.cInvStd
 FROM
-    T_Sys_MaterialsPrepareDetail mpd
+    T_Sys_MaterialsPrepareScan s
+        LEFT  JOIN    T_Sys_MaterialsPrepareDetail mpd on s.iMaterialsPrepareDetailId=mpd.AutoId
         LEFT JOIN Mo_MoDoc md ON md.iAutoId = mpd.SourceBillID
         LEFT JOIN Bd_Inventory it ON it.cInvCode = mpd.InvCode
         LEFT JOIN Bd_Uom uom ON uom.iAutoId = it.iInventoryUomId1

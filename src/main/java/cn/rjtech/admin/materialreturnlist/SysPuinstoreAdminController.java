@@ -141,26 +141,27 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 		renderJsonData(service.getBarcodeDatas(kv));
 	}
 
+
 	/**
-	 * 审核
+	 * 详情页提审
 	 */
-	public void approve(String iAutoId,Integer mark) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(iAutoId)) {
-			renderFail(JBoltMsg.PARAM_ERROR);
-			return;
-		}
-		renderJson(service.approve(iAutoId,mark));
+	public void submit(@Para(value = "iautoid") Long iautoid) {
+		ValidationUtils.validateId(iautoid, "id");
+		renderJson(service.submit(iautoid));
 	}
 
 	/**
-	 * 反审核
+	 * 详情页审核通过
 	 */
-	public void NoApprove(String ids) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
-			renderFail(JBoltMsg.PARAM_ERROR);
-			return;
-		}
-		renderJson(service.NoApprove(ids));
+	public void approve() {
+		renderJson(service.approve(get(0)));
+	}
+
+	/**
+	 * 详情页审核不通过
+	 */
+	public void reject() {
+		renderJson(service.reject(getLong(0)));
 	}
 
 
@@ -243,6 +244,26 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	public void getSysPODetail() {
 		Page<Record> recordPage = service.getSysPODetail(getKv(), getPageNumber(), getPageSize());
 		renderJsonData(recordPage);
+	}
+
+	/**
+	 * 批量审核
+	 */
+	public void batchApprove(String ids) {
+		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
+			renderFail(JBoltMsg.PARAM_ERROR);
+			return;
+		}
+		renderJson(service.batchApprove(ids));
+	}
+
+	/**
+	 * 批量反审核
+	 */
+	public void batchReverseApprove(@Para(value = "ids") String ids) {
+		ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+
+		renderJson(service.batchReverseApprove(ids));
 	}
 
 

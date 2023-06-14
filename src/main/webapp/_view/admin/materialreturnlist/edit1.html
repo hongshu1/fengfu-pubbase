@@ -11,10 +11,10 @@
                             data-id="0" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i>
                         保存
                     </button>
-                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
-                            data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
-                            class="fa fa-window-maximize"></i> 提交审核
-                    </button>
+<!--                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end-->
+<!--                            data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i-->
+<!--                            class="fa fa-window-maximize"></i> 提交审核-->
+<!--                    </button>-->
                     <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
                         关闭
                     </button>
@@ -214,7 +214,7 @@
                 <label class="col-sm-2 col-form-label">制单人：</label>
                 <div class="col-sm-2 col-form-label">
                     <input type="text" class="form-control border-none" readonly="readonly" placeholder=""
-                           value="#(puinstore.createperson??)"/>
+                           value="#(puinstore.ccreatename??)"/>
                 </div>
                 <label class="col-sm-2 col-form-label">审核人：</label>
                 <div class="col-sm-2 col-form-label">

@@ -5,9 +5,25 @@
 	.card-body overflow-auto{
 		max-width: 40%;
 		border: 1px solid #ff0000;
-		white-space: nowrap;
-		text-overflow:ellipsis;
+	}
+
+	.jstree-node, .jstree-children, .jstree-container-ul{
+		position:relative;
+	}
+	.jstree-default>.jstree-container-ul>.jstree-node{
+		width: 70%;
+		z-index: 555;
+	}
+	.jstree-anchor{
+		/*display: block;*/
+		width: 75%;
+		z-index: 333;
 		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.jstree-hovered{
+
 	}
 </style>
 #end
@@ -47,8 +63,9 @@
 			isChildren = false;
 		}
 		var id = data.data;
+		var cCode = data.parents.length;
 		$("#addEmptyBtn_#(pageId)").data("url","admin/bomcompare/manualForm?pid="+id+"&isChildren="+isChildren+"&isAdd=true");
-		AjaxPortalUtil.go("bomcompareAjaxPortal1", "/admin/bomcompare/index?id="+id+"&isChildren="+isChildren);
+		AjaxPortalUtil.go("bomcompareAjaxPortal1", "/admin/bomcompare/index?id="+id+"&isChildren="+isChildren+"&cCode="+cCode);
 	}
 
 	function initTreehandler(item) {
@@ -68,6 +85,7 @@
 	function keyWordsOnChange() {
 		var item = $("#searchBackGoodsTypeInput_2").val()
 		initTreehandler(item);
+		return false
 	}
 
 	function checkCanOpenDialogHandler_#(pageId)() {
