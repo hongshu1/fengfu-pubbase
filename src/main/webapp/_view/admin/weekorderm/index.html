@@ -117,6 +117,8 @@
                data-copy-to-excel="false"
                data-page="WeekOrderM_page"
                data-toolbar="WeekOrderM_toolbar_#(pageId)"
+               data-row-dblclick-active="true"
+               data-row-dblclick-handler="jbolt_table_dblclickhandlerweekorderm_#(pageId)"
         >
             <thead>
             <tr>
@@ -150,6 +152,15 @@
 
 #define js()
 <script type="text/javascript">
-    
+
+    function jbolt_table_dblclickhandlerweekorderm_#(pageId)(table, tempTr1, trId1, rowData) {
+        $(tempTr1).data('url', 'admin/weekorderm/edit?iautoid=' + rowData.iautoid)
+            .data('fs', 'true')
+            .data('handler','refreshJBoltTable')
+            .data('title', '周间客户订单')
+            .data('btn', '确认,关闭');
+
+        DialogUtil.openBy(tempTr1);
+    }
 </script>
 #end
