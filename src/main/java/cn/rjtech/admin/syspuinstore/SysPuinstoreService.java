@@ -105,22 +105,17 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
         Page<Record> paginate = dbTemplate("syspuinstore.recpor", kv).paginate(pageNumber, pageSize);
         for (Record record : paginate.getList()) {
-            Kv podetailKv = new Kv();
-            podetailKv.set("vencode", record.get("vencode"));
-            podetailKv.set("billno", record.get("billno"));
-            podetailKv.set("sourcebillno", record.get("sourcebillno"));
-            podetailKv.set("sourcebillid", record.get("sourcebillid"));
-            record.set("ibustype", findIBusTypeKey(record.getStr("ibustype")));
+            record.set("ibustype", findIBusTypeKey(record.getStr("ibustype"), "purchase_business_type"));
         }
         return paginate;
     }
 
     /*
-     * 业务类型
+     * 字典维护的数据
      * */
-    public String findIBusTypeKey(String ibustype) {
+    public String findIBusTypeKey(String ibustype, String key) {
         if (StrUtil.isNotBlank(ibustype)) {
-            List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey("purchase_business_type");
+            List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey(key);
             Dictionary dictionary = dictionaryList.stream().filter(e -> e.getSn().equals(ibustype))
                 .findFirst()
                 .orElse(new Dictionary());
@@ -128,6 +123,10 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
 
         }
         return "";
+    }
+
+    public SysPuinstoredetail getSourceBillType(String masid) {
+        return syspuinstoredetailservice.findFirst("select * from T_Sys_PUInStoreDetail where masid = ? ", masid);
     }
 
     /*
@@ -620,6 +619,10 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         return dbTemplate("syspuinstore.getMesSysPODetails", kv).paginate(size, PageSize);
     }
 
+    public List<Record> getInsertPuinstoreDetail(Kv kv) {
+        return dbTemplate("syspuinstore.getInsertPuinstoreDetail", kv.set("limit",20)).find();
+    }
+
     /*
      * 获取仓库名
      * */
@@ -647,7 +650,12 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         int i = 1;
         for (SysPuinstoredetail detail : detailList) {
             Main main = new Main();
-            main.setBarCode(detail.getSpotTicket()); //现品票
+            if (StrUtil.isNotBlank(detail.getSpotTicket())) {
+                Record record = getBarcodeVersion(puinstore.getSourceBillNo(), detail.getSpotTicket());
+                main.setBarCode(record.getStr("barcode")); //现品票+版本号
+            } else {
+                main.setBarCode(detail.getInvcode());//传invcode
+            }
             main.setBillDate(puinstore.getBillDate());
             main.setBillDid(detail.getAutoID());//明细表id
             main.setBillID(puinstore.getAutoID());//主表id
@@ -669,7 +677,13 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             main.setOrganizeCode(getOrgCode());
             main.setSourceBillDid(detail.getSourceBillDid());
             main.setSourceBillNo(detail.getSourceBillNo());
-            main.setSourceBillType("PO");//采购 =PO,委外=OM
+            String order_type = findIBusTypeKey(detail.getSourceBillType(), "order_type");
+            if (StrUtil.isBlank(order_type)) {
+                main.setSourceBillType("PO");//采购=PO,委外=OM
+            } else {
+                main.setSourceBillType(order_type);//采购=PO,委外=OM
+            }
+
             main.setTag("PUInStore");
             MainData.add(main);
             i = i + 1;
@@ -692,6 +706,13 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         dto.setToken("");
         //返回
         return JSON.toJSONString(dto);
+    }
+
+    public Record getBarcodeVersion(String corderno, String barcode) {
+        Kv kv = new Kv();
+        kv.set("corderno", corderno);
+        kv.set("barcode", barcode);
+        return dbTemplate("syspuinstore.getBarcodeVersion", kv).findFirst();
     }
 
 

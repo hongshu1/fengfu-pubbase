@@ -16,10 +16,7 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AnnualOrderStatusEnum;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
-import cn.rjtech.model.momdata.AnnualOrderD;
-import cn.rjtech.model.momdata.AnnualOrderM;
-import cn.rjtech.model.momdata.AnnualorderdQty;
-import cn.rjtech.model.momdata.MonthOrderM;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -30,6 +27,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -423,5 +421,27 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      */
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         return null;
+    }
+
+    /**
+     * 批量删除
+     * @param ids
+     * @return
+     */
+    public Ret deleteByBatchIds(String ids) {
+        List<AnnualOrderM> list = getListByIds(ids);
+        List<AnnualOrderM> notAuditList = new ArrayList<>();
+        for (AnnualOrderM annualOrderM : list) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != annualOrderM.getIOrderStatus()) {
+                notAuditList.add(annualOrderM);
+            }
+
+            annualOrderM.setIsDeleted(true);
+        }
+
+        ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
+        ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
+        return SUCCESS;
     }
 }

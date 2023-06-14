@@ -3,10 +3,10 @@
     #switch(AuditFormConfigCache.ME.getAuditWay(formSn)??)
         ### 审批
         #case(1)
-            <button data-ajaxbtn data-url="#(uri)/submit?iautoid=#(o.get(primaryKeyName)??)" data-check-handler="submitThisForm" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" #if(!o.get(primaryKeyName)??) disabled #end>提交审批</button>
+            <button data-ajaxbtn data-url="#(uri)/submit?iautoid=#(o.get(primaryKeyName)??)" data-check-handler="submitThisForm" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" #if(!o.get(primaryKeyName)?? || !edit) disabled #end>提交审批</button>
         ### 审核
         #case(2)
-            <button data-ajaxbtn data-url="#(uri)/submit?iautoid=#(o.get(primaryKeyName)??)" data-check-handler="submitThisForm" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" #if(!o.get(primaryKeyName)??) disabled #end>提交审核</button>
+            <button data-ajaxbtn data-url="#(uri)/submit?iautoid=#(o.get(primaryKeyName)??)" data-check-handler="submitThisForm" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" #if(!o.get(primaryKeyName)?? || !edit) disabled #end>提交审核</button>
     #end
 ### 审核中
 #else

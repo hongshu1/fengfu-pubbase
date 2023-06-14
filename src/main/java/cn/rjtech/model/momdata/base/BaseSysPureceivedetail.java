@@ -57,11 +57,11 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
     public static final String CCREATENAME = "ccreatename";
     /**创建时间*/
     public static final String DCREATETIME = "dcreatetime";
-    /**修改人id*/
+    /**更新人id*/
     public static final String IUPDATEBY = "iupdateby";
-    /**创建人名称*/
+    /**更新人名称*/
     public static final String CUPDATENAME = "cupdatename";
-    /**创建id*/
+    /**更新时间*/
     public static final String DUPDATETIME = "dupdatetime";
 	/**
 	 * AutoID
@@ -449,7 +449,7 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
 	}
 
 	/**
-	 * 修改人id
+	 * 更新人id
 	 */
 	public M setIupdateby(java.lang.Long iupdateby) {
 		set("iupdateby", iupdateby);
@@ -457,16 +457,16 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
 	}
 
 	/**
-	 * 修改人id
+	 * 更新人id
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iupdateby",type="Long", remark="修改人id", required=false, maxLength=19, fixed=0, order=24)
+	@JBoltField(name="iupdateby" ,columnName="iupdateby",type="Long", remark="更新人id", required=false, maxLength=19, fixed=0, order=24)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIupdateby() {
 		return getLong("iupdateby");
 	}
 
 	/**
-	 * 创建人名称
+	 * 更新人名称
 	 */
 	public M setCupdatename(java.lang.String cupdatename) {
 		set("cupdatename", cupdatename);
@@ -474,16 +474,16 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
 	}
 
 	/**
-	 * 创建人名称
+	 * 更新人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cupdatename",type="String", remark="创建人名称", required=false, maxLength=30, fixed=0, order=25)
+	@JBoltField(name="cupdatename" ,columnName="cupdatename",type="String", remark="更新人名称", required=false, maxLength=30, fixed=0, order=25)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCupdatename() {
 		return getStr("cupdatename");
 	}
 
 	/**
-	 * 创建id
+	 * 更新时间
 	 */
 	public M setDupdatetime(java.util.Date dupdatetime) {
 		set("dupdatetime", dupdatetime);
@@ -491,9 +491,9 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
 	}
 
 	/**
-	 * 创建id
+	 * 更新时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dupdatetime",type="Date", remark="创建id", required=false, maxLength=23, fixed=3, order=26)
+	@JBoltField(name="dupdatetime" ,columnName="dupdatetime",type="Date", remark="更新时间", required=false, maxLength=23, fixed=3, order=26)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDupdatetime() {
 		return getDate("dupdatetime");

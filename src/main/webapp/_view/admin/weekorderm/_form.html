@@ -8,13 +8,11 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        #if(!weekOrderM.iAutoId?? || edit??false)
+                        #if(!weekOrderM.iAutoId?? || (edit??false && weekOrderM.iOrderStatus == 1))
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
-                        #if(weekOrderM.iAutoId?? && !edit??)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/weekorderm",
                         formSn="Co_WeekOrderM", o=weekOrderM, primaryKeyName="iAutoId", edit=edit??)
-                        #end
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -241,6 +239,11 @@
 </div>
 </div>
 
+### 新增之后，并且为审核流
+#if(weekOrderM.iautoid?? && weekOrderM.iauditway == 2)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=weekOrderM.iAutoId, formSn="Co_WeekOrderM", btnNeed=1, pId=pageId)
+#end
+
 <div class="jbolt_page_content">
 
     <script type="text/template" id="jboltTable_demotpl_#(pageId)">
@@ -249,8 +252,8 @@
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
                 #if(!weekOrderM.iautoid?? || edit??false)
-                <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
-                   data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">移除行</a>
+                <a onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
+                   data-handler="removeTr" data-confirm="确定删除此数据？" class="btn btn-danger bat-sm">移除行</a>
                 #end
             </td>
             <td>${data.cdistrictname}</td>
@@ -258,11 +261,7 @@
             <td>${data.cinvcode}</td>
             <td>${data.cdefine1}</td>
             <td>${data.cdefine2}</td>
-            <!--<td>${data.cinvstd}</td>-->
-
             <td>${data.iqty}</td>
-            <!--<td>${data.isalesuomid}</td>-->
-
             <td>${data.dplanaogdate,'yyyy-MM-dd'|date}</td>
             <td>${data.cplanaogtime}</td>
             <td>${data.ccode}</td>
@@ -638,6 +637,7 @@
 
     function submitThisForm() {
         $('#save_btn_#(pageId)').click();
+        return true;
     }
 
     var $approve = $('#approve');

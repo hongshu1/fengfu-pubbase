@@ -9,9 +9,9 @@ select so.AutoID, CASE so.iAuditStatus
         '审核通过'
 				WHEN 3 THEN
         '审核不通过'
-        END AS statename,so.iAuditStatus,so.BillNo,so.CreateDate,so.Whcode,ck.cWhName as whname,so.RdCode,rd.cRdName as rdcodename,
-			so.BillType,so.VenCode,v.cVenName as venname,so.ModifyDate,so.memo,so.ModifyPerson,so.CreatePerson,so.AuditPerson,
-			so.AuditDate
+        END AS statename,so.iAuditStatus,so.BillNo,so.dcreatetime,so.Whcode,ck.cWhName as whname,so.RdCode,rd.cRdName as rdcodename,
+			so.BillType,so.VenCode,v.cVenName as venname,so.dupdatetime,so.memo,so.cupdatename,so.ccreatename,so.cAuditname,
+			so.dAuditTime
 FROM T_Sys_OtherIn so
 LEFT JOIN Bd_Warehouse ck on so.Whcode = ck.cWhCode
 LEFT JOIN Bd_Rd_Style rd on so.RdCode = rd.cRdCode
@@ -27,12 +27,12 @@ where 1=1
     and so.state = #para(state)
 #end
 #if(startTime)
-    and so.CreateDate >= #para(startTime)
+    and so.dcreatetime >= #para(startTime)
 #end
 #if(endTime)
-    and so.CreateDate <= #para(endTime)
+    and so.dcreatetime <= #para(endTime)
 #end
-    order by so.ModifyDate desc
+    order by so.dupdatetime desc
 #end
 
 #sql("dList")

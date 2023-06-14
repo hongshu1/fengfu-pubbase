@@ -13,6 +13,11 @@
             </div>
         </div>
     </div>
+
+    ### 新增之后，并且为审核流
+    #if(manualOrderM.iautoid?? && manualOrderM.iauditway == 2)
+    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=manualOrderM.iAutoId, formSn="Co_ManualOrderM", btnNeed=1, pId=pageId)
+    #end
     <div class="jbolt_page_content">
         
         <!-- JBoltTable的数据模板定义-->

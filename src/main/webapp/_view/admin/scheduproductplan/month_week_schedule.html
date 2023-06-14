@@ -238,6 +238,8 @@
                     <button>计划使用刷新</button>
                     <button id="content" onClick="lock()">锁定</button>
                     <button onClick="unLock()">解锁</button>
+                    <button onClick="freezingCol()">冻结列</button>
+                    <button onClick="removeFreezingCol()">取消冻结列</button>
                 </div>
                 <!-- 创建表格目标DOM元素，id为ss的HTML -->
                 <div id="ss" class="spread-container"></div>
@@ -309,6 +311,7 @@
         <div class="popup" id="popup">
             <p><span>请输入导出表格名称</span><span onClick="hidePopup()">x</span></p>
             <input type="text" placeholder="请输入名称" id="input">
+            <p style="margin: 0px;padding: 0px;"><input type="checkbox" id="checkboxId" checked><span style="font-size: 13px !important;">导出是否开启表单保护</span></p>
             <button onclick="submit()" class="button" style="float: right;width: 60px">确定</button>
         </div>
         <!--导出弹出框结束-->
@@ -320,6 +323,14 @@
             <button onclick="importSubmit()" class="button" style="float: right;width: 60px">确定</button>
         </div>
         <!--导入弹出框结束-->
+        <!--锁定列开始-->
+        <div class="overlay" id="overlay"></div>
+        <div class="popup" id="popup2">
+            <p><span id="colTitle">请选择要锁定的列</span><span onClick="hidePopup()">x</span></p>
+            <input type="text" id="lockCol">
+            <button onclick="lockColSubmit()" class="button" style="float: right;width: 60px">确定</button>
+        </div>
+        <!--锁定列结束-->
     </div>
 </div>
 #end
@@ -365,7 +376,7 @@
         id:null,                //全局公共id
         level:'',               //排场层级
         RowCount:27,           //一列多少单元格
-        ColumnCount:500,         //一行多少单元格
+        ColumnCount:31,         //一行多少单元格
         rowindex:0,				//x轴索引
         columnindex:0,			//y轴索引
         data: [],				//当月时间数据
@@ -397,6 +408,53 @@
         spread.resumePaint(); //恢复绘制
     }
     /**
+     * @param freezingCol 打开锁定了弹出层
+     */
+    function freezingCol(){
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById("popup2").style.display = "block";
+    }
+    /**
+     * @param removeFreezingCol 关闭锁定列弹出层
+     */
+    function removeFreezingCol(){
+        sheet.frozenColumnCount(0);
+    }
+    /**
+     * @param lockColSubmit 提交需锁定的列
+     */
+    function lockColSubmit(){
+        var lockCol = document.getElementById("lockCol").value;
+        if(lockCol!=""){
+            sheet.frozenColumnCount(lockCol);
+            parms.activeSheet.setColumnWidth(5, 210);//设置指定单元格的width
+            hidePopup();
+        }
+    }
+    /**
+     * @param checkbox 导出表单保护按钮节点
+     */
+    var checkbox = document.getElementById("checkboxId");
+    checkbox.addEventListener("click", function() {
+        sheetName = sheet.ITa.name;
+        sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+        sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+        sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
+        if (this.checked) {
+            parms["checkbox"] = true;
+        } else {
+            parms["checkbox"] = false;
+        }
+    });
+    //监听双击单元格
+    sheet.bind(GC.Spread.Sheets.Events.CellDoubleClick, function (e, info) {
+        let {row,col} = info;
+        var cell = sheet.getCell(row,col);
+        if(sheet.options.isProtected == true && cell.locked() == true) {
+            LayerMsgBox.error("禁止修改",1000);
+        }
+    });
+    /**
      * 数据导入
      * @param loadExcel 按钮节点
      */
@@ -411,6 +469,9 @@
     function excelFileSave() {
         document.getElementById("overlay").style.display = "block";
         document.getElementById("popup").style.display = "block";
+        sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+        sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+        sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
     };
 
     /**
@@ -420,11 +481,34 @@
     function submit() {
         var fileName = document.getElementById("input").value;//获取用户输入的表格导出名称
         if(fileName!=''){
-            fileName += '.xlsx';
-            var json = spread.toJSON();//转为json格式
-            excelIo.save(json, function (blob) {
-                saveAs(blob, fileName);//转成xlsx
-            });
+            if(parms["checkbox"]==false){
+                //关闭表单保护
+                sheet.options.isProtected = false; // 开启工作表保护
+                sheet.options.protectionOptions.allowEditObject = false; // 允许编辑对象
+                sheet.options.protectionOptions.allowSelectLockedCells = false; // 允许选择锁定单元格
+                sheet.options.protectionOptions.allowSelectUnlockedCells = false; // 允许选择非锁定单元格
+                fileName += '.xlsx';
+                var json = spread.toJSON();//转为json格式
+                excelIo.save(json, function (blob) {
+                    saveAs(blob, fileName);//转成xlsx
+                });
+                //重新开启表单保护
+                sheet.options.isProtected = true;
+                sheet.options.protectionOptions.allowEditObject = true;
+                sheet.options.protectionOptions.allowSelectLockedCells = true;
+                sheet.options.protectionOptions.allowSelectUnlockedCells = true;
+            }else{
+                //重新开启表单保护
+                sheet.options.isProtected = true;
+                sheet.options.protectionOptions.allowEditObject = true;
+                sheet.options.protectionOptions.allowSelectLockedCells = true;
+                sheet.options.protectionOptions.allowSelectUnlockedCells = true;
+                fileName += '.xlsx';
+                var json = spread.toJSON();//转为json格式
+                excelIo.save(json, function (blob) {
+                    saveAs(blob, fileName);//转成xlsx
+                });
+            }
             hidePopup();
         }
     }
@@ -450,6 +534,10 @@
         document.getElementById("overlay").style.display = "none";
         document.getElementById("popup").style.display = "none";
         document.getElementById("popup1").style.display = "none";
+        document.getElementById("popup2").style.display = "none";
+        sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+        sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+        sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
     }
     /**
      * 初始化产线数据
@@ -457,7 +545,7 @@
      */
     function loadInit(){
         //设置全局的列宽行高
-        sheet.defaults.colWidth = 80;
+        // sheet.defaults.colWidth = 80;
         sheet.defaults.rowHeight = 25;
         spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
         spread.getSheet(0).setColumnCount(parms.ColumnCount); //设置一行有多少个单元格
@@ -468,6 +556,8 @@
         spread.sheets.forEach(function(sheet) {
             sheet.setDefaultStyle(style, GC.Spread.Sheets.SheetArea.viewport);
         });
+        //
+        sheet.frozenRowCount(4); // 将第一行冻结
         //设置value值和该单元格的对齐方式
         var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex).cellType(cellType);
@@ -479,17 +569,17 @@
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+2).text("排产层级");
         parms.activeSheet.addSpan(0,2,4,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+3).text("产线名称");
+        parms.activeSheet.setColumnWidth(parms.columnindex+3, 150);//设置指定单元格的width
         parms.activeSheet.addSpan(0,3,4,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+4).text("存货编码");
-        parms.activeSheet.addSpan(0,4,4,1);
         parms.activeSheet.setColumnWidth(parms.columnindex+4, 100);//设置指定单元格的width
+        parms.activeSheet.addSpan(0,4,4,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+5).text("客户部番");
+        parms.activeSheet.setColumnWidth(parms.columnindex+5, 150);//设置指定单元格的width
         parms.activeSheet.addSpan(0,5,4,1);
-        parms.activeSheet.setColumnWidth(parms.columnindex+5, 120);//设置指定单元格的width
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+6).text("部品名称");
+        parms.activeSheet.setColumnWidth(parms.columnindex+6, 280);//设置指定单元格的width
         parms.activeSheet.addSpan(0,6,4,1);
-        parms.activeSheet.setColumnWidth(parms.columnindex+6, 150);//设置指定单元格的width
-        parms.activeSheet.setColumnWidth(parms.columnindex+8, 70);//设置指定单元格的width
     }
     /**
      * 获取接口返回的日期数据
@@ -584,19 +674,15 @@
                         //产线名称
                         sheet.setValue(rowIndex, 3 + colIndex, parms['scheduplanmonth'][i].cWorkName);
                         parms.activeSheet.addSpan(rowIndex, 3 + colIndex, 6, 1);
-                        parms.activeSheet.setColumnWidth(3 + colIndex, 150);//设置指定单元格的width
                         //存货编码
                         sheet.setValue(rowIndex, 4 + colIndex, parms['scheduplanmonth'][i].cInvCode);
                         parms.activeSheet.addSpan(rowIndex, 4 + colIndex, 6, 1);
-                        parms.activeSheet.setColumnWidth(4 + colIndex, 120);//设置指定单元格的width
                         //客户部番
                         sheet.setValue(rowIndex, 5 + colIndex, parms['scheduplanmonth'][i].cInvCode1);
                         parms.activeSheet.addSpan(rowIndex, 5 + colIndex, 6, 1);
-                        parms.activeSheet.setColumnWidth(5 + colIndex, 180);//设置指定单元格的width
                         //部品名称
                         sheet.setValue(rowIndex, 6 + colIndex, parms['scheduplanmonth'][i].cInvName1);
                         parms.activeSheet.addSpan(rowIndex, 6 + colIndex, 6, 1);
-                        parms.activeSheet.setColumnWidth(6 + colIndex, 300);//设置指定单元格的width
                         rowIndex += 6;
 
                         parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划使用");
@@ -636,6 +722,9 @@
                                 sheet.setValue(4 + shiyongRow, shiyongCol+j, parseFloat(parms['scheduplanmonth'][i].day[j].zaiku));
                                 sheet.setValue(5 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].tianshu));
                                 //
+                                sheet.setValue(5, 9, parms['scheduplanmonth'][i].qiChuOneS);
+                                sheet.setValue(6, 9, parms['scheduplanmonth'][i].qiChuTwoS);
+                                sheet.setValue(7, 9, parms['scheduplanmonth'][i].qiChuThreeS);
                                 sheet.setValue(8, 9, parms['scheduplanmonth'][i].qiChuZaiKu);
                                 sheet.setValue(9, 9, parms['scheduplanmonth'][i].dayNum);
                                 let Num = sheet.getValue(9,9)
@@ -646,19 +735,22 @@
                                 //嵌入计划在库公式
                                 sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //嵌入在库天数公式
-                                sheet.setFormula(B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}])`)
+                                sheet.setFormula(B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`)
                                 //控制小数位为1位
                                 sheet.setFormatter(5 + shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0.00":"0.00");
                             } else {
                                 sheet.setValue(6 * i + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].shiyong));
                                 sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].one));
+                                sheet.setValue(6 * i + shiyongRow + 1, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].qiChuOneS));
                                 sheet.setValue(6 * i + shiyongRow + 2, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].two));
+                                sheet.setValue(6 * i + shiyongRow + 2, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].qiChuTwoS));
                                 sheet.setValue(6 * i + shiyongRow + 3, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].three));
-                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol+j, parseFloat(parms['scheduplanmonth'][i].day[j].zaiku));
-                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol-1, parseFloat(parms['scheduplanmonth'][i].qiChuZaiKu));
+                                sheet.setValue(6 * i + shiyongRow + 3, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].qiChuOneS));
+                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].zaiku));
+                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].qiChuZaiKu));
                                 sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].tianshu));
-                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol-1, parseFloat(parms['scheduplanmonth'][i].dayNum));
-
+                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].dayNum));
+                                //
                                 let Num = sheet.getValue(6*i+9,9)
                                 let useArray = [];
                                 for (let k = 0; k < Num; k++) {
@@ -667,7 +759,7 @@
                                 //嵌入计划在库公式
                                 sheet.setFormula(6*i+jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //嵌入在库天数公式
-                                sheet.setFormula(6*i+B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}])`);
+                                sheet.setFormula(6*i+B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`);
                                 //控制小数位为1位
                                 sheet.setFormatter(6 * i + shiyongRow + 5, shiyongCol + j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0.0":"0.00");
                             }
@@ -725,7 +817,7 @@
                             }
                         }
                         // 根据数据长度添加表格行列
-                        var addCol = parms['scheduplanmonth'].length+6,addRow = 41;
+                        var addCol = parms['scheduplanmonth'].length+6,addRow =1;
                         var row = parms.ColumnCount+addRow;
                         var col = parms.RowCount+addCol;
                         spread.getSheet(0).setRowCount(col); //设置一列单元格的个数
@@ -768,17 +860,7 @@
                             date:colData[1][0],//获取当前年月
                             day:colDatas[2][0],//日
                         }
-                        // let isDuplicate = false;
-                        // for (let i = 0; i < parms.tableData.length; i++) {
-                                //去重
-                        //     if (JSON.stringify(obj) === JSON.stringify(parms.tableData[i])) {
-                        //         isDuplicate = true;
-                        //         break;
-                        //     }
-                        // }
-                        // if (!isDuplicate) {
-                            parms.tableData.push(obj);
-                        // }
+                        parms.tableData.push(obj);
                     }
                 })
                 sheet.clearPendingChanges({clearType: 1, row: -1, rowCount: -1, col: -1, colCount: -1});
@@ -1084,22 +1166,26 @@
     function saveLevel(){
         let jsonArray = JSON.stringify(parms.tableData);
         let url = Api+ `admin/scheduproductplanmonth/saveLevel?data=${jsonArray}`;
-        $.ajax({
-            url,
-            type:'post',
-            dataType:'json',
-            success:function (res){
-                if(res.msg=="操作成功"){
+        if(parms.tableData.length>0){
+            $.ajax({
+                url,
+                type:'post',
+                dataType:'json',
+                success:function (res){
+                    if(res.msg=="操作成功"){
                         LayerMsgBox.success(res.msg);
-                    initData();
-                    parms.tableData=0;
-                }else{
-                    LayerMsgBox.error(res.msg,500);
+                        initData();
+                        parms.tableData.length=0;
+                    }else{
+                        LayerMsgBox.error(res.msg,500);
+                    }
+                },error: function(error) {
+                    console.log(error);
                 }
-            },error: function(error) {
-                console.log(error);
-            }
-        })
+            })
+        }else{
+            LayerMsgBox.error("数据没有发生改变，保存无效",2000);
+        }
     }
 
     //给排产弹窗添加一个滑动区域，避免数据太长而造成样式崩塌
