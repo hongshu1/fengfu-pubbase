@@ -2,7 +2,7 @@
 <div class="jbolt_page">
     <div class="jbolt_page_content">
 
-
+        <form onsubmit="return false;" id="materialsOutForm_#(pageId)" action="#(action)" method="post">
             <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
                 <div class="col-md-l pt-2" role="group" aria-label="btn-group">
                     #if(!materialsOut.iauditstatus??)
@@ -41,7 +41,7 @@
                     </button>
                 </div>
             </div>
-        <form onsubmit="return false;" id="materialsOutForm_#(pageId)" action="#(action)" method="post">
+
 
             #if(materialsOut.autoid??)
             <input type="hidden" id="materialsOutautoid" name="materialsOut.autoid" value="#(materialsOut.autoid??)"/>
@@ -194,6 +194,9 @@
 <script>
     hideParentLayerDialogBtn();
 
+    function submitThisForm() {
+        return true;
+    }
     /**
      * 审核
      * */
@@ -303,6 +306,5 @@
         $("#iqty").val(data.iqty);
     }
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="materialsOutForm")
 #end
 

@@ -334,8 +334,8 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 				materialsOutDetail.setSourceBillType("制造工单");
 				materialsOutDetail.setSourceBillNo(moDoc.getCMoDocNo());//来源单号
 				materialsOutDetail.setSourceBillID(String.valueOf(moDoc.getIAutoId()));
-				materialsOutDetail.setCreatePerson(JBoltUserKit.getUserName());
-				materialsOutDetail.setCreateDate(now);
+				materialsOutDetail.setCcreatename(JBoltUserKit.getUserName());
+				materialsOutDetail.setDcreatetime(now);
 				materialsOutDetails.add(materialsOutDetail);
 			}
 		}
@@ -385,8 +385,8 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 				materialsOutDetail.setSourceBillType("制造工单");
 				materialsOutDetail.setSourceBillNo(moDoc.getCMoDocNo());//来源单号
 				materialsOutDetail.setSourceBillID(String.valueOf(moDoc.getIAutoId()));
-				materialsOutDetail.setCreatePerson(JBoltUserKit.getUserName());
-				materialsOutDetail.setCreateDate(now);
+				materialsOutDetail.setCcreatename(JBoltUserKit.getUserName());
+				materialsOutDetail.setDcreatetime(now);
 				materialsOutDetails.add(materialsOutDetail);
 			}
 			Map<Long,List<MaterialsOutDetail>>  map=datas(materialsOutDetails);

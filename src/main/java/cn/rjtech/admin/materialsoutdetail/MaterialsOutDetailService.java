@@ -42,7 +42,7 @@ public class MaterialsOutDetailService extends BaseService<MaterialsOutDetail> {
      * 保存
      */
     public Ret save(MaterialsOutDetail materialsOutDetail) {
-        if (materialsOutDetail == null || isOk(materialsOutDetail.getAutoID())) {
+        if (materialsOutDetail == null || isOk(materialsOutDetail.getAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         //if(existsName(materialsOutDetail.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
@@ -58,11 +58,11 @@ public class MaterialsOutDetailService extends BaseService<MaterialsOutDetail> {
      * 更新
      */
     public Ret update(MaterialsOutDetail materialsOutDetail) {
-        if (materialsOutDetail == null || notOk(materialsOutDetail.getAutoID())) {
+        if (materialsOutDetail == null || notOk(materialsOutDetail.getAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         //更新时需要判断数据存在
-        MaterialsOutDetail dbMaterialsOutDetail = findById(materialsOutDetail.getAutoID());
+        MaterialsOutDetail dbMaterialsOutDetail = findById(materialsOutDetail.getAutoId());
         if (dbMaterialsOutDetail == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
@@ -144,8 +144,8 @@ public class MaterialsOutDetailService extends BaseService<MaterialsOutDetail> {
         materialsOutDetail.setSourceBillID(puinstoredetail.getSourceBillID());
         materialsOutDetail.setSourceBillDid(puinstoredetail.getSourceBillDid());
         materialsOutDetail.setMemo(puinstoredetail.getMemo());
-        materialsOutDetail.setCreatePerson(JBoltUserKit.getUser().getUsername());
-        materialsOutDetail.setCreateDate(new Date());
+        materialsOutDetail.setCcreatename(JBoltUserKit.getUser().getUsername());
+        materialsOutDetail.setDcreatetime(new Date());
         //
         return materialsOutDetail;
     }
