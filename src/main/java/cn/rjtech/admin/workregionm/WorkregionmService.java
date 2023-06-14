@@ -355,7 +355,7 @@ public class WorkregionmService extends BaseService<Workregionm> {
                                 //特殊数据转换器
                                 .setDataChangeHandler((data, index) -> {
 //                                    data.change("ipersonid", CACHE.me.getPersonIdByCode(data.getStr("ipersonid")));
-                                    data.change("idepid", CACHE.me.getDeptIdByCode(data.getStr("idepid")));
+                                    data.change("idepid", departmentService.getIdepIdByCode(data.getStr("idepid")));
                                 })
                                 //从第三行开始读取
                                 .setDataStartRow(2)

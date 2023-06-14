@@ -2,7 +2,6 @@ package cn.rjtech.admin.uom;
 
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.StrUtil;
-import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -11,6 +10,7 @@ import cn.jbolt.core.service.base.JBoltBaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.cache.UomClassCache;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Uom;
 import cn.rjtech.util.ValidationUtils;
@@ -257,28 +257,20 @@ public class UomService extends JBoltBaseService<Uom> {
     }
 
     public Ret importExcelData(File file) {
-        StringBuilder errorMsg = new StringBuilder();
-        //使用字段配置维护
+        // 使用字段配置维护
         Object importData =  cusFieldsMappingdService.getImportDatas(file, "计量单位").get("data");
         String docInfoRelaStrings= JSON.toJSONString(importData);
-        //从指定的sheet工作表里读取数据
+        // 从指定的sheet工作表里读取数据
         List<Uom> models = JSON.parseArray(docInfoRelaStrings, Uom.class);
         if (notOk(models)) {
-            if (errorMsg.length() > 0) {
-                return fail(errorMsg.toString());
-            } else {
-                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-            }
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
         for (Uom model : models) {
-            Long pid = CACHE.me.getUomClassIdByCode(model.getCUpdateName());
+            Long pid = UomClassCache.ME.getUomClassIdByCode(model.getCUpdateName());
             model.setIUomClassId(pid);
             setUomclass(model);
         }
-        if (errorMsg.length() > 0) {
-            return fail(errorMsg.toString());
-        }
-        //读取数据没有问题后判断必填字段
+        // 读取数据没有问题后判断必填字段
         if (models.size() > 0) {
             for (Uom u : models) {
                 if (notOk(u.getCUomCode())) {

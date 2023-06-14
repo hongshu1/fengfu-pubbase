@@ -3,6 +3,7 @@ package cn.rjtech.admin.spotcheckparam;
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.*;
@@ -141,7 +142,8 @@ public class SpotCheckParamService extends BaseService<SpotCheckParam> {
 	 */
 	public JBoltExcel exportExcelTpl(List<SpotCheckParam> datas) {
 		//2、创建JBoltExcel
-		JBoltExcel jBoltExcel = JBoltExcel
+        //3、返回生成的excel文件
+		return JBoltExcel
 			.create()
 			.addSheet(//设置sheet
 				JBoltExcelSheet.create("检验参数")//创建sheet name保持与模板中的sheet一致
@@ -154,14 +156,12 @@ public class SpotCheckParamService extends BaseService<SpotCheckParam> {
 					)
 					.setDataChangeHandler((data, index) -> {//设置数据转换处理器
 						//将user_id转为user_name
-						data.changeWithKey("user_id", "user_username", CACHE.me.getUserUsername(data.get("user_id")));
+						data.changeWithKey("user_id", "user_username", JBoltUserCache.me.getUserName(data.getLong("user_id")));
 						data.changeBooleanToStr("is_enabled", "是", "否");
 					})
 					.setModelDatas(2, datas)//设置数据
 			)
 			.setFileName("检验参数" + "_" + DateUtil.today());
-		//3、返回生成的excel文件
-		return jBoltExcel;
 	}
 
 	/*

@@ -592,7 +592,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(), "");
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(), "cn.rjtech.admin.syspureceive.SysPureceiveService");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             return true;
@@ -755,42 +755,48 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     }
 
     public void check(String ids) {
-        List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + ids + ")");
-        for (SysPureceive s : sysPureceives) {
-            if("0".equals(String.valueOf(s.getIAuditStatus()))){
-                ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据未提交审核或审批！！");
-            }
-            if ("2".equals(String.valueOf(s.getIAuditStatus())) || "3".equals(String.valueOf(s.getIAuditStatus()))) {
-                ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "流程已结束！！");
+        String[] split = ids.split(",");
+        for (String p : split) {
+            List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
+            for (SysPureceive s : sysPureceives) {
+                if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据未提交审核或审批！！");
+                }
+                if ("2".equals(String.valueOf(s.getIAuditStatus())) || "3".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "流程已结束！！");
+                }
             }
         }
     }
     public void checkbelow(String ids) {
-        List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + ids + ")");
-        for (SysPureceive s : sysPureceives) {
-            if(!"2".equals(String.valueOf(s.getIAuditStatus()))){
-                ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，不是审批通过状态！！");
-            }
-            //查出从表
-            List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.getAutoID());
-            if(firstBy.isEmpty()) return;
-            for (SysPureceivedetail d : firstBy){
-                SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
-                if(null != firstByBarcode){
-                    SysPuinstore byId = syspuinstoreservice.findById(firstByBarcode.getMasID());
-                    if(null != byId ){
-                        if(!"0".equals(String.valueOf(byId.getIAuditStatus()))){
-                            ValidationUtils.isTrue(false, "采购入库编号：" + byId.getBillNo() + " 单据，不是未审核状态！！");
+        String[] split = ids.split(",");
+        for (String p : split) {
+            List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
+            for (SysPureceive s : sysPureceives) {
+                if (!"2".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，不是审批通过状态！！");
+                }
+                //查出从表
+                List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.getAutoID());
+                if (firstBy.isEmpty()) return;
+                for (SysPureceivedetail d : firstBy) {
+                    SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
+                    if (null != firstByBarcode) {
+                        SysPuinstore byId = syspuinstoreservice.findById(firstByBarcode.getMasID());
+                        if (null != byId) {
+                            if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+                                ValidationUtils.isTrue(false, "采购入库编号：" + byId.getBillNo() + " 单据，不是未审核状态！！");
+                            }
                         }
                     }
                 }
-            }
-            // 通过主表的入库单号 查质检单数据
-            List<RcvDocQcFormM> firstBycRcvDocNo = rcvdocqcformmservice.findFirstBycRcvDocNo(s.getBillNo());
-            if(null != firstBycRcvDocNo){
-                for(RcvDocQcFormM r : firstBycRcvDocNo){
-                    if(!"0".equals(String.valueOf(r.getIStatus()))){
-                        ValidationUtils.isTrue(false, "来料检 收料单号为：" + r.getCRcvDocNo() + " 单据，已生成下游单据，无法反审！！");
+                // 通过主表的入库单号 查质检单数据
+                List<RcvDocQcFormM> firstBycRcvDocNo = rcvdocqcformmservice.findFirstBycRcvDocNo(s.getBillNo());
+                if (null != firstBycRcvDocNo) {
+                    for (RcvDocQcFormM r : firstBycRcvDocNo) {
+                        if (!"0".equals(String.valueOf(r.getIStatus()))) {
+                            ValidationUtils.isTrue(false, "来料检 收料单号为：" + r.getCRcvDocNo() + " 单据，已生成下游单据，无法反审！！");
+                        }
                     }
                 }
             }
@@ -798,34 +804,37 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     }
 
     public void delectbelow(String ids) {
-        List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + ids + ")");
-        for (SysPureceive s : sysPureceives) {
-            //查出从表
-            List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.getAutoID());
-            if(firstBy.isEmpty()) return;
-            for (SysPureceivedetail d : firstBy){
-                if("0".equals(d.getIsInitial())){
-                    SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
-                    String autoID = firstByBarcode.getMasID();
-                    //删除从表
-                    syspuinstoredetailservice.deleteByIds(firstByBarcode.getAutoID());
-                    SysPuinstore byId = syspuinstoreservice.findById(autoID);
-                    List<SysPuinstoredetail> detailByMasID = syspuinstoredetailservice.findDetailByMasID(byId.getAutoID());
-                    if(detailByMasID.isEmpty()){
-                        // 从表没数据才删除 主表
-                        syspuinstoreservice.deleteByIds(byId.getAutoID());
+        String[] split = ids.split(",");
+        for (String p : split) {
+            List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
+            for (SysPureceive s : sysPureceives) {
+                //查出从表
+                List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.getAutoID());
+                if (firstBy.isEmpty()) return;
+                for (SysPureceivedetail d : firstBy) {
+                    if ("0".equals(d.getIsInitial())) {
+                        SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
+                        String autoID = firstByBarcode.getMasID();
+                        //删除从表
+                        syspuinstoredetailservice.deleteByIds(firstByBarcode.getAutoID());
+                        SysPuinstore byId = syspuinstoreservice.findById(autoID);
+                        List<SysPuinstoredetail> detailByMasID = syspuinstoredetailservice.findDetailByMasID(byId.getAutoID());
+                        if (detailByMasID.isEmpty()) {
+                            // 从表没数据才删除 主表
+                            syspuinstoreservice.deleteByIds(byId.getAutoID());
 
-                    }
-                }else {
-                    // 通过主表的入库单号 查质检单数据
-                    List<RcvDocQcFormM> firstBycRcvDocNo = rcvdocqcformmservice.findFirstBycRcvDocNo(s.getBillNo());
-                    if(null != firstBycRcvDocNo){
-                        for(RcvDocQcFormM r : firstBycRcvDocNo){
-                            rcvdocqcformmservice.deleteByIds(String.valueOf(r.getIAutoId()));
+                        }
+                    } else {
+                        // 通过主表的入库单号 查质检单数据
+                        List<RcvDocQcFormM> firstBycRcvDocNo = rcvdocqcformmservice.findFirstBycRcvDocNo(s.getBillNo());
+                        if (null != firstBycRcvDocNo) {
+                            for (RcvDocQcFormM r : firstBycRcvDocNo) {
+                                rcvdocqcformmservice.deleteByIds(String.valueOf(r.getIAutoId()));
+                            }
                         }
                     }
-                }
 
+                }
             }
         }
     }

@@ -4,6 +4,8 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.*;
 import cn.jbolt.core.service.base.BaseService;
@@ -317,7 +319,8 @@ public class WorkClassService extends BaseService<Workclass> {
      */
     public JBoltExcel exportExcelTpl(List<Workclass> datas) {
         // 2、创建JBoltExcel
-        JBoltExcel jBoltExcel = JBoltExcel
+        // 3、返回生成的excel文件
+        return JBoltExcel
                 .createByTpl("工种档案导出模板.xls")// 创建JBoltExcel 从模板加载创建
                 .addSheet(// 设置sheet
                         JBoltExcelSheet.create("工种档案")// 创建sheet name保持与模板中的sheet一致
@@ -332,17 +335,26 @@ public class WorkClassService extends BaseService<Workclass> {
                                 )
                                 .setDataChangeHandler((data, index) -> {// 设置数据转换处理器
                                     // 将user_id转为user_name
-                                    data.changeWithKey("user_id", "user_username", CACHE.me.getUserUsername(data.get("user_id")));
+                                    data.changeWithKey("user_id", "user_username", JBoltUserCache.me.getUserName(data.getLong("user_id")));
                                     data.changeBooleanToStr("is_deleted", "是", "否");
                                 })
                                 .setModelDatas(3, datas)// 设置数据
                 )
                 .setFileName("工种档案" + "_" + DateUtil.today());
-        // 3、返回生成的excel文件
-        return jBoltExcel;
     }
 
 	public Workclass findModelByCode(String cWorkClassCode) {
 		return findFirst(selectSql().eq("cworkclasscode", cWorkClassCode));
 	}
+    
+    public String getIdByCode(String code) {
+        Sql sql = selectSql().select(Workclass.IAUTOID)
+                .eq(Workclass.IORGID, getOrgId())
+                .eq(Workclass.CWORKCLASSCODE, code)
+                .eq(Workclass.ISDELETED, ZERO_STR)
+                .first(); 
+        
+        return queryColumn(sql);
+    }
+    
 }
