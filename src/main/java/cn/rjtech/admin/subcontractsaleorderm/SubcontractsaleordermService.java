@@ -29,10 +29,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.TableMapping;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -115,7 +112,20 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * 删除 指定多个ID
      */
     public Ret deleteByBatchIds(String ids) {
-        return deleteByIds(ids, true);
+        List<Subcontractsaleorderm> list = getListByIds(ids);
+        List<Subcontractsaleorderm> notAuditList = new ArrayList<>();
+        for (Subcontractsaleorderm subcontractsaleorderm : list) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != subcontractsaleorderm.getIOrderStatus()) {
+                notAuditList.add(subcontractsaleorderm);
+            }
+
+            subcontractsaleorderm.setIsDeleted(true);
+        }
+
+        ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
+        ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
+        return SUCCESS;
     }
 
     /**

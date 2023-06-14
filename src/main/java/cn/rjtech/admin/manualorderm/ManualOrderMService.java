@@ -304,19 +304,20 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
         return SUCCESS;
     }
 
-    public Ret batchDetect(Kv kv) {
-        List<Record> records = getDatasByIds(kv);
-        if (records != null && records.size() > 0) {
-            for (Record record : records) {
-                Integer iorderstatus = record.getInt("iorderstatus");
-                if (iorderstatus != 1 && iorderstatus != 4) {
-                    return fail("订单(" + record.getStr("corderno") + ")不能删除!");
-                }
-
-                record.set("isdeleted", 1);
-                updateRecord(record);
+    public Ret batchDetect(String ids) {
+        List<ManualOrderM> list = getListByIds(ids);
+        List<ManualOrderM> notAuditList = new ArrayList<>();
+        for (ManualOrderM manualOrderM : list) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != manualOrderM.getIOrderStatus()) {
+                notAuditList.add(manualOrderM);
             }
+
+            manualOrderM.setIsDeleted(true);
         }
+
+        ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
+        ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
         return SUCCESS;
     }
 
