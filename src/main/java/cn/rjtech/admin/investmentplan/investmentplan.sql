@@ -440,13 +440,23 @@ order by cplanno,ibudgettype1,citemtype
 
 #end
 
-#sql("findExecutionProgressTrackingDatas")
-select * from (
-select eb.cdepcode,1 iservicetype,
+#sql("findExecutionProgressTrackingExpenseDatas")
+select *,(podetailsNatsum-actualpayamount) payremain,
+	(purchaseNatsum - proposalNatsum) diffNatsum,
+	case when proposalNatsum = 0 then null else concat(convert(decimal(20,2),(purchaseNatsum - proposalNatsum) / proposalNatsum * 100),'%') end diffratio
+from (
+select eb.cdepcode,
 	(select top 1 cdepname from bd_department where cdepcode =eb.cdepcode) cdepname,
 	eb.ibudgetyear,ebi.cBudgetNo ccode,
 	isnull((select istatus from Bas_Project_Card where ccode = ebi.cBudgetNo and iservicetype = 1),1) finishstatus,
 	(select csubjectname from bas_subjectm where iautoid = min(ebi.iLowestSubjectId)) clowestsubjectname,
+	(
+		select 
+			stuff((select ','+ccode_name from #(u8dbname).dbo.code where ccode = sd.csubjectcode for xml path('')),1,1,'')
+		from Bas_SubjectM sm
+			left join Bas_Subjectd sd on sm.iautoid = sd.iSubjectMId
+		where sm.iautoid = min(ebi.iLowestSubjectId) group by sd.csubjectcode	
+	) cu8subjectname,
 	min(ebi.citemname) citemname,
 	min(ebi.isScheduled) isScheduled,
 	(
@@ -463,29 +473,50 @@ select eb.cdepcode,1 iservicetype,
 	(
 		select sum(iamount) from PL_Expense_Budget_ItemD where iexpenseitemid = min(case when eb.ibudgettype = 2 then ebi.iautoid end)
 	) nextperiodbudgetAmount,
-	null monthplanQuantity,
-	null monthplanUnit,
-	null monthplanAmount,
-	sum(dbo.PL_GetProposalForProgressTracking(1,ebi.iautoid,1)) proposalNatmoney,
-	sum(dbo.PL_GetProposalForProgressTracking(1,ebi.iautoid,2)) proposalNatsum,
-	sum(dbo.PL_GetPurchaseForProgressTracking(1,ebi.iautoid,1)) purchaseNatmoney,
-	sum(dbo.PL_GetPurchaseForProgressTracking(1,ebi.iautoid,2)) purchaseNatsum,
-	sum(#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(1,ebi.iautoid,1)) podetailsNatmoney,
-	sum(#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(1,ebi.iautoid,2)) podetailsNatsum,
-	null contractNatmoney,
-	null contractNatsum,
-	(sum(dbo.PL_GetPurchaseForProgressTracking(1,ebi.iautoid,2)) - sum(dbo.PL_GetProposalForProgressTracking(1,ebi.iautoid,2))) diffNatsum,
-	concat(convert(decimal(20,2),isnull(sum(dbo.PL_GetProposalForProgressTracking(1,ebi.iautoid,2)) / sum(dbo.PL_GetPurchaseForProgressTracking(1,ebi.iautoid,2)) * 100,0)),'%') diffratio,
-	sum(#(u8dbname).dbo.PL_GetRdRecordsForProgressTracking(1,ebi.iautoid)) RdRecordsNatsum,
-	sum(#(u8dbname).dbo.PL_GetPurbillvouchsForProgressTracking(1,ebi.iautoid)) purbillvouchsNatsum,
-	null actualpayamount,
-	null payremain
+	dbo.PL_GetProposalForProgressTracking(1,ebi.cBudgetNo,3) cprojectcode,
+	dbo.PL_GetProposalForProgressTracking(1,ebi.cBudgetNo,4) cprojectname,
+	dbo.PL_GetProposalForProgressTracking(1,ebi.cBudgetNo,5) cproposalno,
+	convert(decimal(20,2),dbo.PL_GetProposalForProgressTracking(1,ebi.cBudgetNo,1)) proposalNatmoney,
+	convert(decimal(20,2),dbo.PL_GetProposalForProgressTracking(1,ebi.cBudgetNo,2)) proposalNatsum,
+	dbo.PL_GetPurchaseForProgressTracking(1,ebi.cBudgetNo,3) cpurchaseno,
+	convert(decimal(20,2),dbo.PL_GetPurchaseForProgressTracking(1,ebi.cBudgetNo,1)) purchaseNatmoney,
+	convert(decimal(20,2),dbo.PL_GetPurchaseForProgressTracking(1,ebi.cBudgetNo,2)) purchaseNatsum,
+	#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(1,ebi.cBudgetNo,3) cpoid,
+	convert(decimal(20,2),#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(1,ebi.cBudgetNo,1)) podetailsNatmoney,
+	convert(decimal(20,2),#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(1,ebi.cBudgetNo,2)) podetailsNatsum,
+	#(u8dbname).dbo.PL_GetRdRecordsForProgressTracking(1,ebi.cBudgetNo) RdRecordsNatsum,
+	#(u8dbname).dbo.PL_GetUapGlDataForProgressTracking(ebi.cBudgetNo) glDataNatMoney,
+	#(u8dbname).dbo.PL_GetApplypayvouchsForProgressTracking(1,ebi.cBudgetNo) applypayvouchsnatsum,
+	isnull((select sum(iAmt) from #(u8dbname).dbo.ap_closebills where cdefine32 = ebi.cBudgetNo),0) actualpayamount
 from PL_Expense_Budget_Item ebi
 	inner join PL_Expense_Budget eb on eb.iautoid = ebi.iexpenseid
 		where eb.iEffectiveStatus != 4
 	group by eb.cdepcode,eb.ibudgetyear,ebi.cBudgetNo
-union all
-select ip.cdepcode,2 iservicetype,
+) T where 1=1
+#if(ibudgetyear)
+	and ibudgetyear = #para(ibudgetyear)
+#end
+#if(cdepcode)
+	and cdepcode = #para(cdepcode)
+#end
+#if(ccode)
+	and ccode like concat('%',#para(ccode),'%')
+#end
+#if(clowestsubject)
+	and clowestsubjectname like concat('%',#para(clowestsubject),'%') 
+#end
+#if(citemname)
+	and citemname like concat('%',#para(citemname),'%') 
+#end
+#end
+
+#sql("findExecutionProgressTrackingInvestmentDatas")
+select *,
+	(podetailsNatsum-actualpayamount) payremain,
+	(purchaseNatsum - proposalNatsum) diffNatsum,
+	case when proposalNatsum = 0 then null else concat(convert(decimal(20,2),(purchaseNatsum - proposalNatsum) / proposalNatsum * 100),'%') end diffratio
+from (
+select ip.cdepcode,
 	(select top 1 cdepname from bd_department where cdepcode =ip.cdepcode) cdepname,
 	ip.ibudgetyear,ipi.cplanno ccode,
 	isnull((select istatus from Bas_Project_Card where ccode = ipi.cplanno and iservicetype = 2),1) finishstatus,
@@ -500,31 +531,24 @@ select ip.cdepcode,2 iservicetype,
 	(
 		select sum(iamount) from pl_investment_Plan_itemd where iPlanItemId = min(case when ip.ibudgettype = 2 then ipi.iautoid end)
 	) nextperiodbudgetAmount,
-	null monthplanQuantity,
-	null monthplanUnit,
-	null monthplanAmount,
-	sum(dbo.PL_GetProposalForProgressTracking(2,ipi.iautoid,1)) proposalNatmoney,
-	sum(dbo.PL_GetProposalForProgressTracking(2,ipi.iautoid,2)) proposalNatsum,
-	sum(dbo.PL_GetPurchaseForProgressTracking(2,ipi.iautoid,1)) purchaseNatmoney,
-	sum(dbo.PL_GetPurchaseForProgressTracking(2,ipi.iautoid,2)) purchaseNatsum,
-	sum(#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(2,ipi.iautoid,1)) podetailsNatmoney,
-	sum(#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(2,ipi.iautoid,2)) podetailsNatsum,
-	null contractNatmoney,
-	null contractNatsum,
-	(sum(dbo.PL_GetPurchaseForProgressTracking(2,ipi.iautoid,2)) - sum(dbo.PL_GetProposalForProgressTracking(2,ipi.iautoid,2))) diffNatsum,
-	concat(convert(decimal(20,2),isnull(sum(dbo.PL_GetProposalForProgressTracking(2,ipi.iautoid,2)) / sum(dbo.PL_GetPurchaseForProgressTracking(2,ipi.iautoid,2)) * 100,0)),'%') diffratio,
-	sum(#(u8dbname).dbo.PL_GetRdRecordsForProgressTracking(2,ipi.iautoid)) RdRecordsNatsum,
-	sum(#(u8dbname).dbo.PL_GetPurbillvouchsForProgressTracking(2,ipi.iautoid)) purbillvouchsNatsum,
-	null actualpayamount,
-	null payremain
+	dbo.PL_GetProposalForProgressTracking(2,ipi.cplanno,3) cprojectcode,
+	dbo.PL_GetProposalForProgressTracking(2,ipi.cplanno,4) cprojectname,
+	dbo.PL_GetProposalForProgressTracking(2,ipi.cplanno,5) cproposalno,	
+	convert(decimal(20,2),dbo.PL_GetProposalForProgressTracking(2,ipi.cplanno,1)) proposalNatmoney,
+	convert(decimal(20,2),dbo.PL_GetProposalForProgressTracking(2,ipi.cplanno,2)) proposalNatsum,
+	dbo.PL_GetPurchaseForProgressTracking(2,ipi.cplanno,3) cpurchaseno,
+	convert(decimal(20,2),dbo.PL_GetPurchaseForProgressTracking(2,ipi.cplanno,1)) purchaseNatmoney,
+	convert(decimal(20,2),dbo.PL_GetPurchaseForProgressTracking(2,ipi.cplanno,2)) purchaseNatsum,
+	#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(2,ipi.cplanno,3) cpoid,
+	convert(decimal(20,2),#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(2,ipi.cplanno,1)) podetailsNatmoney,
+	convert(decimal(20,2),#(u8dbname).dbo.PL_GetPoDetailForProgressTracking(2,ipi.cplanno,2)) podetailsNatsum,
+	#(u8dbname).dbo.PL_GetApplypayvouchsForProgressTracking(1,ipi.cplanno) applypayvouchsnatsum,
+	isnull((select sum(iAmt) from #(u8dbname).dbo.ap_closebills where cdefine32 = ipi.cplanno),0) actualpayamount
 from pl_investment_plan_item ipi
 	inner join pl_investment_plan ip on ip.iautoid = ipi.iplanid
 		where ip.iEffectiveStatus != 4
 	group by ip.cdepcode,ip.ibudgetyear,ipi.cplanno
 ) T where 1=1
-#if(iservicetype)
-	and iservicetype = #para(iservicetype)
-#end
 #if(ibudgetyear)
 	and ibudgetyear = #para(ibudgetyear)
 #end
@@ -533,9 +557,6 @@ from pl_investment_plan_item ipi
 #end
 #if(ccode)
 	and ccode like concat('%',#para(ccode),'%')
-#end
-#if(clowestsubject)
-	and clowestsubjectname like concat('%',#para(clowestsubject),'%') 
 #end
 #if(citemname)
 	and citemname like concat('%',#para(citemname),'%') 

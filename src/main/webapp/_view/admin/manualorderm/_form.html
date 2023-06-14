@@ -10,13 +10,11 @@
         <div class="card">
             <div class="card-body">
                 <div class="col">
-                    #if(!manualOrderM.iAutoId?? || edit??false)
-                    <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs" onclick="submitThisForm()">保存</button>
+                    #if(!manualOrderM.iAutoId?? || (edit??false && manualOrderM.iOrderStatus == 1))
+                    <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                     #end
-                    #if(manualOrderM.iAutoId?? && !edit??)
                     #include("/_view/_common/_approval_btns.html", uri="/admin/manualorderm",
                     formSn="Co_ManualOrderM", o=manualOrderM, primaryKeyName="iAutoId", edit=edit??)
-                    #end
                     <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                 </div>
             </div>
@@ -205,6 +203,7 @@
         $("#iOrderStatus").val(1)
         $('#save_btn_#(pageId)').click();
         parent.refreshPjaxContainer();
+        return true;
     }
 
     function submitApproveManual() {

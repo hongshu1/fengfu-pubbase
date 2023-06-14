@@ -99,4 +99,9 @@ public class AppConfig {
         return url;
     }
 
+    public static String getSysPuinstoreVouchProcessDynamicSubmitUrl(){
+        String url = "http://120.24.44.82:3013/WEB_INFO/StockAPI.asmx?op=PurchasesInAdd";
+        return url;
+    }
+
 }

@@ -10,22 +10,6 @@
     <input type="hidden" name="person.iautoid" value="#(person.iautoid??)"/>
     
     <div class="form-group row">
-        <input type="hidden" name="person.iuserid" value="#(person.iuserid??)" id="iuserid" data-value-attr="id"/>
-        <label class="col-sm-1 col-form-label">所属用户名</label>
-        <div class="col">
-            <input type="text" class="form-control" #if(person.iuserid??) disabled #end
-                   data-autocomplete
-                   data-url="admin/user/autocomplete"
-                   data-hidden-input="iuserid"
-                   data-text-attr="name"
-                   data-column-attr="username,name,phone"
-                   placeholder="请选择"
-                   data-tips="请选择"
-                   data-header="用户名,姓名,电话"
-                   maxlength="40"
-                   value="#(person.cusername??)"
-            >
-        </div>
         <label class="col-sm-1 col-form-label">人员编码</label>
         <div class="col">
             <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required" placeholder="请输入人员编码" maxlength="20" name="person.cPsn_Num" value="#(person.cPsn_Num??)"/>
@@ -33,6 +17,10 @@
         <label class="col-sm-1 col-form-label">姓名</label>
         <div class="col">
             <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required" placeholder="请输入姓名" maxlength="40" name="person.cPsn_Name" value="#(person.cPsn_Name??)"/>
+        </div>
+        <label class="col-sm-1 col-form-label">邮箱</label>
+        <div class="col">
+            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入Email" maxlength="100" name="person.cpsnemail" value="#(person.cpsnemail??)"/>
         </div>
     </div>
     
@@ -139,13 +127,7 @@
             <input type="text" data-date data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入出生日期" maxlength="10" name="person.dbirthdate" value="#datetime(person.dbirthdate??,'yyyy-MM-dd')"/>
         </div>
     </div>
-    
-    <div class="form-group row">
-        <label class="col-sm-1 col-form-label">邮箱</label>
-        <div class="col">
-            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入Email" maxlength="100" name="person.cpsnemail" value="#(person.cpsnemail??)"/>
-        </div>
-    </div>
+
     <div class="form-group row"
          data-radio
          data-rule="radio"
@@ -171,7 +153,7 @@
     <div class="form-group row">
         <label class="col-sm-1 col-form-label">备注</label>
         <div class="col">
-            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入备注" maxlength="200" name="person.cmemo" value="#(person.cmemo??)"/>
+            <textarea type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" maxlength="200" name="person.cmemo">#(person.cmemo??)</textarea>
         </div>
     </div>
     
@@ -314,8 +296,12 @@
                     valueAttr: "cequipmentcode",
                     columnAttr: "cequipmentcode,cequipmentname,cworkname",
                     header: '设备编码,设备名称,产线名称',
-                    changeColumns: [{column: "cequipmentcode", use: "cequipmentcode"}, {column: "cequipmentname", use: "cequipmentname"},
-                        {column: "iequipmentid", use: "iautoid"}, {column: "cworkname", use: "cworkname"}]
+                    changeColumns: [
+                        {column: "cequipmentcode", use: "cequipmentcode"},
+                        {column: "cequipmentname", use: "cequipmentname"},
+                        {column: "iequipmentid", use: "iautoid"},
+                        {column: "cworkname", use: "cworkname"}
+                    ]
                 }
             }
         };

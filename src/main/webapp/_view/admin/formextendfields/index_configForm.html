@@ -1,0 +1,126 @@
+<div class="jbolt_page_title" id="indexFrom2">
+<div class="row">
+	<!--<div class="col">-->
+	<form class="form-inline" id="FormExtendFields_form_#(pageId)2">
+		<div class="col">
+			<!--<h8>基础档案名称：</h8>-->
+<!--<select class="form-control" name="iFormId"-->
+	<!--data-autoload-->
+	<!--data-url="admin/permission/optionsFormId"-->
+	<!--data-select-type="select"-->
+	<!--data-text="=系统表单ID="-->
+		<!--data-text-attr="title"-->
+		<!--data-value-attr="id"-->
+	<!--&gt;</select>-->
+			<h8>单据档案名称：</h8>
+<select class="form-control" name="iFormFieldId"
+	data-autoload
+	data-url="admin/permission/optionsFormFieldId"
+	data-select-type="select"
+	data-text="=系统字段ID="
+		data-text-attr="title"
+		data-value-attr="id"
+	></select>
+<!--<select class="form-control" name="cFieldCode"-->
+	<!--data-autoload-->
+	<!--data-url="admin/dictionary/options?key=null"-->
+	<!--data-select-type="select"-->
+	<!--data-text="=系统字段编码="-->
+	<!--data-value=""-->
+	<!--&gt;</select>-->
+		<h8>字段名称：</h8>
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="=字段名称=" name="keywords" value="" />
+
+		<!--<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入系统字段名称" maxlength="40" name="cFieldName" />-->
+		<div class="btn-group text-center mx-1">
+			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
+
+			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
+		</div>
+		</div>
+	</form>
+	<!--</div>-->
+</div>
+</div>
+<div class="jbolt_page_content" id="index2">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="FormExtendFields_tpl_#(pageId)b">
+{@each datas as data,index}
+<tr data-id="${data.iAutoId}">
+		{@if data.iformidname == null}
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a class="jbolt_table_editbtn" data-btn="no" href="admin/formExtendFields/editForm/${data.iautoid}" data-handler="refreshJBoltTable" data-area="80%,90%" data-title="编辑系统管理-拓展字段配置表"><i class=""></i>编辑02</a>
+	<a class="jbolt_table_delbtn" href="admin/formExtendFields/delete/${data.iautoid}" data-handler="refreshJBoltTable" ><i class=""></i>删除</a>
+</td>
+<td>${data.iformidname}</td>
+<td>${data.iformfieldidname}</td>
+<!--<td>${data.cfieldcode}</td>-->
+<td>${data.ipositionname}</td>
+<td>${data.cfieldname}</td>
+<td>${data.cdisplayname}</td>
+<td>${data.imaxlength}</td>
+<td>${data.ifieldtypename}</td>
+<td>${data.isenabledname}</td>
+<td>${data.isrequiredname}</td>
+<td>${data.iseditablename}</td>
+<td>${data.isdisplayedname}</td>
+<td>${data.isourcename}</td>
+<td>${data.isourceval}</td>
+<td>${data.idigit}</td>
+<td>${data.cflowformids}</td>
+			{@/if}
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="FormExtendFields_toolbar_#(pageId)2">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="80%,90%" data-btn="no" data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)2"  data-title="新增系统管理-拓展字段配置表" data-url="admin/formExtendFields/addForm" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增2</button>
+	<!--<button data-dialogbtn data-area="80%,90%"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑系统管理-拓展字段配置表" data-check-handler="jboltTableGetCheckedId" data-url="admin/formExtendFields/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>-->
+	<!--<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/formExtendFields/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>-->
+<!--<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>-->
+</div>
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="auto"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="FormExtendFields_form_#(pageId)2"
+	   data-url="admin/formExtendFields/datas"
+	   data-rowtpl="FormExtendFields_tpl_#(pageId)b"
+	   data-copy-to-excel="false"
+	   data-page="FormExtendFields_page"
+	   data-pagesize-options="10,20,50,100"
+	   data-column-resize="true"
+	   data-toolbar="FormExtendFields_toolbar_#(pageId)2"
+>
+<thead class="fw-normal" >
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th data-min-width="110">操作</th>
+	<th  data-width="100" data-column="iFormId">系统表单ID</th>
+	<th  data-width="100" data-column="iFormFieldId">系统字段ID</th>
+	<!--<th  data-width="150" data-column="cFieldCode">系统字段编码</th>-->
+	<th  data-width="90" data-column="iPosition">单据位置</th>
+	<th  data-width="150" data-column="cFieldName">字段名称</th>
+	<th  data-width="150" data-column="cDisplayName">显示名称</th>
+	<th  data-min-width="130" data-column="iMaxLength">字段值输入长度</th>
+	<th  data-width="90" data-column="iFieldType">字段类型</th>
+	<th  data-width="90" data-column="isEnabled">是否启用</th>
+	<th  data-width="90" data-column="isRequired">是否必填</th>
+	<th  data-width="90" data-column="isEditable">是否编辑</th>
+	<th  data-width="90" data-column="isDisplayed">是否显示</th>
+	<th  data-width="100" data-column="iSource">值来源</th>
+	<th  data-width="150" data-column="iSourceVal">值具体</th>
+	<th  data-width="70" data-column="iDigit">小数位</th>
+	<th  data-width="150" data-column="cFlowFormIds">数据传输</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+
+<script type="text/javascript">
+</script>
+

@@ -1,4 +1,4 @@
-<div class="jbolt_page_title">
+<div class="jbolt_page_title" id="indexFrom1">
 <div class="row">
 	<!--<div class="col">-->
 	<form class="form-inline" id="FormExtendFields_form_#(pageId)">
@@ -12,15 +12,15 @@
 		data-text-attr="title"
 		data-value-attr="id"
 	></select>
-			<h8>单据档案名称：</h8>
-<select class="form-control" name="iFormFieldId"
-	data-autoload
-	data-url="admin/permission/optionsFormFieldId"
-	data-select-type="select"
-	data-text="=系统字段ID="
-		data-text-attr="title"
-		data-value-attr="id"
-	></select>
+			<!--<h8>单据档案名称：</h8>-->
+<!--<select class="form-control" name="iFormFieldId"-->
+	<!--data-autoload-->
+	<!--data-url="admin/permission/optionsFormFieldId"-->
+	<!--data-select-type="select"-->
+	<!--data-text="=系统字段ID="-->
+		<!--data-text-attr="title"-->
+		<!--data-value-attr="id"-->
+	<!--&gt;</select>-->
 <!--<select class="form-control" name="cFieldCode"-->
 	<!--data-autoload-->
 	<!--data-url="admin/dictionary/options?key=null"-->
@@ -29,7 +29,7 @@
 	<!--data-value=""-->
 	<!--&gt;</select>-->
 		<h8>字段名称：</h8>
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="=字段名称=" name="keywords" value="" />
 
 		<!--<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入系统字段名称" maxlength="40" name="cFieldName" />-->
 		<div class="btn-group text-center mx-1">
@@ -46,10 +46,12 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="FormExtendFields_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iAutoId}">
+<tr data-id="${data.iAutoId}" id="indextr1">
+		{@if data.iformfieldidname == null}
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	<a class="jbolt_table_editbtn" data-btn="no" href="admin/formExtendFields/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="80%,90%" data-title="编辑系统管理-拓展字段配置表"><i class=""></i>编辑</a>
+	<!--<a class="jbolt_table_editbtn" data-btn="no" href="admin/formExtendFields/editForm/${data.iautoid}" data-handler="refreshJBoltTable" data-area="80%,90%" data-title="编辑系统管理-拓展字段配置表"><i class=""></i>编辑02</a>-->
 	<a class="jbolt_table_delbtn" href="admin/formExtendFields/delete/${data.iautoid}" data-handler="refreshJBoltTable" ><i class=""></i>删除</a>
 </td>
 <td>${data.iformidname}</td>
@@ -68,14 +70,14 @@
 <td>${data.isourceval}</td>
 <td>${data.idigit}</td>
 <td>${data.cflowformids}</td>
-
+		{@/if}
 </tr>
 {@/each}
 </textarea>
 <div class="jbolt_table_toolbar" id="FormExtendFields_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 	<button data-dialogbtn data-area="80%,90%" data-btn="no" data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增系统管理-拓展字段配置表" data-url="admin/formExtendFields/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
-	<button data-dialogbtn data-area="80%,90%" data-btn="no" data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)2"  data-title="新增系统管理-拓展字段配置表" data-url="admin/formExtendFields/addForm" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增2</button>
+	<!--<button data-dialogbtn data-area="80%,90%" data-btn="no" data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)2"  data-title="新增系统管理-拓展字段配置表" data-url="admin/formExtendFields/addForm" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增2</button>-->
 	<!--<button data-dialogbtn data-area="80%,90%"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑系统管理-拓展字段配置表" data-check-handler="jboltTableGetCheckedId" data-url="admin/formExtendFields/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>-->
 	<!--<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/formExtendFields/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>-->
 <!--<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>-->

@@ -616,6 +616,14 @@ public class DepartmentService extends BaseService<Department> {
         return SUCCESS;
     }
 
+    public Long getIdepIdByCode(String cdepcode) {
+        Sql sql = selectSql().select(Department.IAUTOID)
+                .eq(Department.CDEPCODE, cdepcode)
+                .eq(Department.IORGID, getOrgId())
+                .eq(Department.ISDELETED, ZERO_STR)
+                .first();
 
-
+        return queryLong(sql);
+    }
+    
 }

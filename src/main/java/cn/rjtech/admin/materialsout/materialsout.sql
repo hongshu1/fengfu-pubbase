@@ -198,9 +198,14 @@ FROM
         AND tc.iAutoId = a.iPurchaseOrderdQtyId
 WHERE
         1 = 1
+    #if(orgCode != null)
   AND b.cOrgCode = #(orgCode)
+  #end
     #if(barcodes != null)
         AND concat ( a.cBarcode, concat ( '-', a.cVersion )) not in ( #(barcodes) )
+    #end
+    #if(detailHidden != null)
+        AND concat ( a.cBarcode, concat ( '-', a.cVersion )) not in ( #(detailHidden) )
     #end
     #if(q)
 		and (concat ( a.cBarcode, concat ( '-', a.cVersion )) like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')

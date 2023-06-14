@@ -280,8 +280,8 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> {
 			sysPureceivedetail.setWhcode(row.getStr("whcode"));
 			sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
 			sysPureceivedetail.setBarcode(row.get("barcode"));
-			sysPureceivedetail.setCreateDate(now);
-			sysPureceivedetail.setModifyDate(now);
+			sysPureceivedetail.setDcreatetime(now);
+			sysPureceivedetail.setDupdatetime(now);
 
 			sysdetaillist.add(sysPureceivedetail);
 
@@ -316,8 +316,8 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> {
 			sysPureceivedetail.setWhcode(row.getStr("whcode"));
 			sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
 			sysPureceivedetail.setBarcode(row.get("barcode"));
-			sysPureceivedetail.setCreateDate(now);
-			sysPureceivedetail.setModifyDate(now);
+			sysPureceivedetail.setDcreatetime(now);
+			sysPureceivedetail.setDupdatetime(now);
 
 			sysdetaillist.add(sysPureceivedetail);
 

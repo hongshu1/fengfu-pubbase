@@ -5,22 +5,26 @@
 	.card-body overflow-auto{
 		max-width: 40%;
 		border: 1px solid #ff0000;
-		white-space: nowrap;
-		text-overflow:ellipsis;
-		overflow: hidden;
 	}
 
-	/*.jstree-default .jstree-anchor{*/
-	/*	position:relative;*/
-	/*}*/
+	.jstree-node, .jstree-children, .jstree-container-ul{
+		position:relative;
+	}
+	.jstree-default>.jstree-container-ul>.jstree-node{
+		width: 70%;
+		z-index: 555;
+	}
+	.jstree-anchor{
+		/*display: block;*/
+		width: 75%;
+		z-index: 333;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.jstree-hovered{
 
-	/*.jstree-node {*/
-	/*	text-overflow: ellipsis;*/
-	/*	overflow: hidden;*/
-	/*	word-break: break-all;*/
-	/*	white-space: nowrap;*/
-	/*	line-height: 24px;*/
-	/*}*/
+	}
 </style>
 #end
 
@@ -81,6 +85,7 @@
 	function keyWordsOnChange() {
 		var item = $("#searchBackGoodsTypeInput_2").val()
 		initTreehandler(item);
+		return false
 	}
 
 	function checkCanOpenDialogHandler_#(pageId)() {

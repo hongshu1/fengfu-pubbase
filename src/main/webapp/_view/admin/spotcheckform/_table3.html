@@ -100,7 +100,7 @@
                 <select class="form-control" name="#(item.iqcitemid)" >
                     <option value="">=请选择#(item.cqcitemname??)=</option>
                     #for(va : item.compares)
-                        #if(ObjectUtil.isEmpty(data))
+                        #if(ObjUtil.isEmpty(data))
                             <option value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
                         #else
                             #for(map:data)
