@@ -389,4 +389,28 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         ValidationUtils.isTrue(weekOrderM.update(), JBoltMsg.FAIL);
         return SUCCESS;
     }
+
+    /**
+     * 处理审批通过的其他业务操作，如有异常返回错误信息
+     */
+    public String postApproveFunc(long formAutoId) {
+        return null;
+    }
+    /**
+     * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
+     */
+    public String postRejectFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 实现反审之后的其他业务操作, 如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
 }
