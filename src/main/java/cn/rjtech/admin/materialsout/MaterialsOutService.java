@@ -292,10 +292,14 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 				Long finalHeaderId = headerId;
 				lines.forEach(otherOutDetail -> {
 					otherOutDetail.setMasID(finalHeaderId);
-					otherOutDetail.setCreateDate(nowDate);
-					otherOutDetail.setCreatePerson(userName);
-					otherOutDetail.setModifyDate(nowDate);
-					otherOutDetail.setModifyPerson(userName);
+					//创建人
+					otherOutDetail.setIcreateby(userId);
+					otherOutDetail.setDcreatetime(nowDate);
+					otherOutDetail.setCcreatename(userName);
+					//更新人
+					otherOutDetail.setIupdateby(userId);
+					otherOutDetail.setDupdatetime(nowDate);
+					otherOutDetail.setCupdatename(userName);
 				});
 				materialsOutDetailService.batchSave(lines);
 			}
@@ -304,8 +308,10 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 				List<MaterialsOutDetail> lines = jBoltTable.getUpdateModelList(MaterialsOutDetail.class);
 
 				lines.forEach(materialsOutDetail -> {
-					materialsOutDetail.setModifyDate(nowDate);
-					materialsOutDetail.setModifyPerson(userName);
+					//更新人
+					materialsOutDetail.setIupdateby(userId);
+					materialsOutDetail.setDupdatetime(nowDate);
+					materialsOutDetail.setCupdatename(userName);
 				});
 				materialsOutDetailService.batchUpdate(lines);
 			}

@@ -4,13 +4,16 @@ package cn.rjtech.admin.transvouch;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.TransVouch;
 import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 
 import java.util.Date;
@@ -88,6 +91,7 @@ public class TransVouchAdminController extends BaseAdminController {
 		}
 		set("transVouch",transVouch);
 		set("type", get("type"));
+		set("edit", get("edit"));
 		render("edit.html");
 	}
 
@@ -140,25 +144,46 @@ public class TransVouchAdminController extends BaseAdminController {
 
 
 	/**
-	 * 审核
+	 * 批量审核
 	 */
-	public void approve(String iAutoId,Integer mark) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(iAutoId)) {
-			renderFail(JBoltMsg.PARAM_ERROR);
-			return;
-		}
-		renderJson(service.approve(iAutoId,mark));
-	}
-
-	/**
-	 * 反审核
-	 */
-	public void NoApprove(String ids) {
+	public void batchApprove(String ids) {
 		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
-		renderJson(service.NoApprove(ids));
+		renderJson(service.batchApprove(ids));
+	}
+
+	/**
+	 * 批量反审核
+	 */
+	public void batchReverseApprove(@Para(value = "ids") String ids) {
+		ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+
+		renderJson(service.batchReverseApprove(ids));
+	}
+
+	/**
+	 * 详情页提审
+	 */
+	public void submit(@Para(value = "iautoid") Long iautoid) {
+		ValidationUtils.validateId(iautoid, "id");
+
+		renderJson(service.submit(iautoid));
+	}
+
+	/**
+	 * 详情页审核通过
+	 */
+	public void approve() {
+		renderJson(service.approve(get(0)));
+	}
+
+	/**
+	 * 详情页审核不通过
+	 */
+	public void reject() {
+		renderJson(service.reject(getLong(0)));
 	}
 
 
@@ -173,12 +198,30 @@ public class TransVouchAdminController extends BaseAdminController {
 		renderJson(service.recall(iAutoId));
 	}
 
+	/**
+	 * 根据条码带出其他数据
+	 */
+	@UnCheck
+	public void barcode(
+						@Para(value = "autoid") Long autoid,
+						@Para(value = "detailHidden") String detailHidden) {
+
+
+		renderJsonData(service.barcode(Kv.by("autoid",autoid).set("detailHidden",detailHidden)));
+	}
 
 	/**
 	 * 转出仓库
 	 */
 	public void warehouse() {
 		renderJsonData(service.warehouse(getKv()));
+	}
+
+	/**
+	 * 转入仓库
+	 */
+	public void iwarehouse() {
+		renderJsonData(service.iwarehouse(getKv()));
 	}
 
 

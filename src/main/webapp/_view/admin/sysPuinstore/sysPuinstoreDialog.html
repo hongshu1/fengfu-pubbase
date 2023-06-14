@@ -8,6 +8,8 @@
                 <form onsubmit="return false;" class="form-inline" id="chooseDataForm" method="post">
                     <input style="width: 400px" type="text" autocomplete="off" class="form-control" placeholder="订单号"
                            name="corderno" value=""/>
+                    <input style="width: 400px" type="text" autocomplete="off" class="form-control" placeholder="存货编码"
+                         name="cinvcode" value=""/>
                     #if(sysPuinstore.AutoID??)
                     <input id="autoid" type="hidden" name="autoid" value="#(sysPuinstore.autoid??)"/>
                     #end
@@ -29,8 +31,10 @@
                 <td>${data.billdate}</td><!-- 采购日期-->
                 <td>${data.vencode}</td><!-- 供应商编码-->
                 <td>${data.venname}</td><!-- 供应商名称-->
-                <td>${data.deptname}</td>
-                <td>${data.invname}</td>
+                <td>${data.cinvname}</td>
+                <td>${data.cinvcode}</td>
+                <td>${data.cdepname}</td>
+                <td>${data.cdepcode}</td>
             </tr>
             {@/each}
         </script>
@@ -57,8 +61,10 @@
                 <th data-min-width="160" data-column="billdate">采购日期</th>
                 <th data-min-width="120" data-column="vencode">供应商编码</th>
                 <th data-min-width="120" data-column="venname">供应商名称</th>
-                <th data-min-width="160" data-column="deptname">部门名称</th>
-                <th data-min-width="160" data-column="invname">存货名称</th>
+                <th data-min-width="160" data-column="cinvname">存货名称</th>
+                <th data-min-width="160" data-column="cinvcode">存货编码</th>
+                <th data-min-width="160" data-column="cDepName">部门名称</th>
+                <th data-min-width="160" data-column="cDepCode">部门编码</th>
             </tr>
             </thead>
             <tbody></tbody>

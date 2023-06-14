@@ -1,23 +1,21 @@
 
 #sql("recpor")
-select so.AutoID, CASE so.state
-        WHEN 1 THEN
-        '已保存'
+select so.AutoID, CASE so.iAuditStatus
+        WHEN 0 THEN
+        '未审核'
+				WHEN 1 THEN
+        '待审核'
 				WHEN 2 THEN
-        '待审批'
+        '审核通过'
 				WHEN 3 THEN
-        '已审批'
-				WHEN 4 THEN
-        '审批不通过'
-        END AS statename,so.state,so.BillNo as billno,so.CreateDate,so.Whcode,ck.cWhName as repositoryname,so.DeptCode,dept.cDepName as deptname,
-				so.RdCode,rd.cRdName as rdcodename, so.AuditDate,so.BillType,so.Memo,p.name,s.name as sname
+        '审核不通过'
+        END AS statename,so.iAuditStatus,so.BillNo as billno,so.dcreatetime,so.Whcode,ck.cWhName as repositoryname,so.DeptCode,dept.cDepName as deptname,
+				so.RdCode,rd.cRdName as rdcodename,so.BillType,so.Memo,so.cupdatename as name,so.cAuditname as sname
 FROM T_Sys_ProductIn so
-LEFT JOIN #(getBaseDbName()).dbo.jb_user p on so.CreatePerson = p.username
-LEFT JOIN #(getBaseDbName()).dbo.jb_user s on so.AuditPerson = s.username
 LEFT JOIN Bd_Warehouse ck on so.Whcode = ck.cWhCode
 LEFT JOIN Bd_Department dept on so.DeptCode =dept.cDepCode
 LEFT JOIN Bd_Rd_Style rd on so.RdCode = rd.cRdCode
-where 1=1
+where so.isDeleted = '0'
 #if(billno)
 	and so.BillNo like concat('%',#para(billno),'%')
 #end
@@ -28,12 +26,12 @@ where 1=1
 	and so.Whcode = #para(whcode)
 #end
 #if(startTime)
-	and so.CreateDate >= #para(startTime)
+	and so.dcreatetime >= #para(startTime)
 #end
 #if(endTime)
-	and so.CreateDate <= #para(endTime)
+	and so.dcreatetime <= #para(endTime)
 #end
-ORDER BY so.ModifyDate DESC
+ORDER BY so.dupdatetime DESC
 #end
 
 
@@ -64,7 +62,7 @@ where 1=1
 #if(masid)
 	and a.MasID = #para(masid)
 #end
-	order by a.ModifyDate desc
+	order by a.dupdatetime desc
 #end
 
 #sql("wareHouse")

@@ -16,6 +16,7 @@
 
 <div class="col-2">
     <select class="form-control"
+            id="formExtendFieldsiFormId"
             data-autoload
             data-url="admin/permission/optionsFormId"
             data-select-type="select1"
@@ -24,6 +25,7 @@
             data-value-attr="id"
             data-rule="require"
             data-select="#(formExtendFields.iFormId??)"
+            onchange="changeHidcFormIds()"
     ></select>
 </div>
 </div>
@@ -164,6 +166,7 @@ data-tips="请输入是否必填;0. 否 1. 是"
 data-inline="true"
 >
 </div>
+
 <div class="form-group row"
 data-radio
 data-name="formExtendFields.isEditable"
@@ -190,7 +193,22 @@ data-inline="true"
          data-rule="require"
         data-value-attr="sn"
     >
-</div>
+    </div>
+        <!--<label class="col-sm-2 col-form-label" >11：</label>-->
+        <!--<div class="col"  style="padding-top: 1px;">-->
+            <!--<div class="radio radio-primary  radio-inline">-->
+                <!--<input  id="a1" type="radio" name="formExtendFields.isDisplayed" value="1"/>-->
+                <!--<label for="a1">11</label>-->
+            <!--</div>-->
+            <!--<div class="radio radio-primary  radio-inline">-->
+                <!--<input  id="a2" type="radio" name="formExtendFields.isDisplayed" value="0"/>-->
+                <!--<label for="a2">00</label>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+
+
     <input type="hidden" id="optioniSource"/>
     <div class="form-group row"
          data-radio
@@ -243,7 +261,7 @@ data-inline="true"
     <input type="hidden" name="formExtendFields.iSourceVal" id="hidiSourceVal" value="#(formExtendFields.iSourceVal??)"/>
 </div>
 </div>
-<div class="form-group row">
+<div class="form-group row" id="hidcFormIds" style="visibility: hidden">
 <label class="col-sm-2 col-form-label">数据传输:</label>
 
 <div class="col-2">
@@ -305,6 +323,13 @@ data-inline="true"
             hidVal.style="visibility: visible";
         }else{
             hidVal.style="visibility: hidden";
+        }
+    }
+    function changeHidcFormIds() {
+        if(formExtendFieldsiFormId.value == 1638721336124084224){
+            hidcFormIds.style="visibility: visible";
+        }else{
+            hidcFormIds.style="visibility: hidden";
         }
     }
 </script>

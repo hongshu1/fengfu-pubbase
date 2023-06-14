@@ -89,7 +89,15 @@ public class FormExtendFieldsService extends BaseService<FormExtendFields> {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		formExtendFields.setIsDeleted(false);
+		//未选择小数、枚举时清空小数位、枚举值
+		if (formExtendFields.getIFieldType() != 3){
+			formExtendFields.setIDigit(null);
+		}
+		if (formExtendFields.getISource() != 2){
+			formExtendFields.setISourceVal(null);
+		}
 		boolean success=formExtendFields.save();
+
 		if(success) {
 			//添加日志
 			//addSaveSystemLog(formExtendFields.getIAutoId(), JBoltUserKit.getUserId(), formExtendFields.getName());
@@ -109,6 +117,14 @@ public class FormExtendFieldsService extends BaseService<FormExtendFields> {
 		//更新时需要判断数据存在
 		FormExtendFields dbFormExtendFields=findById(formExtendFields.getIAutoId());
 		if(dbFormExtendFields==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
+		//未选择小数、枚举时清空小数位、枚举值
+		if (formExtendFields.getIFieldType() != 3){
+			formExtendFields.setIDigit(null);
+		}
+		if (formExtendFields.getISource() != 2){
+			formExtendFields.setISourceVal(null);
+		}
+
 		boolean success=formExtendFields.update();
 		if(success) {
 			//添加日志

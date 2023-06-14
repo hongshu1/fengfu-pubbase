@@ -63,31 +63,31 @@
 			<td>${data.cu8subjectname}</td>
 			<td>${data.citemname}</td>
 			<td>$${data.isscheduled|isscheduled}</td>
-			<td>${data.fullyearbudgetQuantity}</td>
-			<td>${data.fullyearbudgetUnit}</td>
-			<td>${data.fullyearbudgetAmount|kFormat}</td>
-			<td>${data.nextperiodbudgetQuantity}</td>
-			<td>${data.nextperiodbudgetUnit}</td>
-			<td>${data.nextperiodbudgetAmount|kFormat}</td>
+			<td>${data.fullyearbudgetquantity}</td>
+			<td>${data.fullyearbudgetunit}</td>
+			<td>${data.fullyearbudgetamount|kFormat}</td>
+			<td>${data.nextperiodbudgetquantity}</td>
+			<td>${data.nextperiodbudgetunit}</td>
+			<td>${data.nextperiodbudgetamount|kFormat}</td>
 			<td>${data.cprojectcode}</td>
 			<td>${data.cprojectname}</td>
 			<td>${data.cproposalno}</td>
-			<td>${data.proposalNatmoney}</td>
-			<td>${data.proposalNatsum}</td>
+			<td>${data.proposalnatmoney|kFormat}</td>
+			<td>${data.proposalnatsum|kFormat}</td>
 			<td>${data.cpurchaseno}</td>
-			<td>${data.purchaseNatmoney}</td>
-			<td>${data.purchaseNatsum}</td>
+			<td>${data.purchasenatmoney|kFormat}</td>
+			<td>${data.purchasenatsum|kFormat}</td>
 			<td>${data.cpoid}</td>
-			<td>${data.podetailsNatmoney}</td>
-			<td>${data.podetailsNatsum}</td>
-			<td>${data.diffNatsum}</td>
+			<td>${data.podetailsnatmoney|kFormat}</td>
+			<td>${data.podetailsnatsum|kFormat}</td>
+			<td>${data.diffnatsum|kFormat}</td>
 			<td>${data.diffratio}</td>
-			<td>${data.inBoundNatSum}</td>
-			<td>${data.outBoundNatMoney}</td>
-			<td>${data.glDataNatMoney}</td>
-			<td>${data.purbillvouchsNatsum}</td>
-			<td>${data.actualpayamount}</td>
-			<td>${data.payremain}</td>
+			<td>${data.inboundnatsum|kFormat}</td>
+			<td>${data.outboundnatmoney|kFormat}</td>
+			<td>${data.gldatanatmoney|kFormat}</td>
+			<td>${data.applypayvouchsnatsum|kFormat}</td>
+			<td>${data.actualpayamount|kFormat}</td>
+			<td>${data.payremain|kFormat}</td>
             </tr>
             {@/each}
         </script>
@@ -120,12 +120,12 @@
 	            <th data-width="100" colspan="3">修订预算</th>
 	           	<th data-width="100" colspan="5">禀议</th>
 	           	<th data-width="100" colspan="3">申购</th>
-	           	<th data-width="100" colspan="2">发注</th>
+	           	<th data-width="100" colspan="3">发注</th>
 	           	<th data-width="100" colspan="2">差异(申购-禀议)</th>
 	           	<th data-width="100" data-column="inBoundNatSum" rowspan="2">入库情况<br/>(含税金额)</th>
 	           	<th data-width="100" data-column="outBoundNatMoney" rowspan="2">出库<br/>(不含税金额)</th>
 	           	<th data-width="100" data-column="glDataNatMoney" rowspan="2">记账<br/>(不含税金额)</th>
-	           	<th data-width="100" data-column="purbillvouchsNatsum" rowspan="2">请款<br/>(含税金额)</th>
+	           	<th data-width="100" data-column="applypayvouchsnatsum" rowspan="2">请款<br/>(含税金额)</th>
 	           	<th data-width="100" colspan="2">付款实绩</th>
             </tr>
             <tr>

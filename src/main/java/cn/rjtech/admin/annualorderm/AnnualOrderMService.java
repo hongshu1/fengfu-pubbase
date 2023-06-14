@@ -16,9 +16,7 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AnnualOrderStatusEnum;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
-import cn.rjtech.model.momdata.AnnualOrderD;
-import cn.rjtech.model.momdata.AnnualOrderM;
-import cn.rjtech.model.momdata.AnnualorderdQty;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -29,6 +27,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -397,6 +396,52 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
             cusOrderSumService.algorithmSum();
             return true;
         });
+        return SUCCESS;
+    }
+
+    /**
+     * 处理审批通过的其他业务操作，如有异常返回错误信息
+     */
+    public String postApproveFunc(long formAutoId) {
+        return null;
+    }
+    /**
+     * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
+     */
+    public String postRejectFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 实现反审之后的其他业务操作, 如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    /**
+     * 批量删除
+     * @param ids
+     * @return
+     */
+    public Ret deleteByBatchIds(String ids) {
+        List<AnnualOrderM> list = getListByIds(ids);
+        List<AnnualOrderM> notAuditList = new ArrayList<>();
+        for (AnnualOrderM annualOrderM : list) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != annualOrderM.getIOrderStatus()) {
+                notAuditList.add(annualOrderM);
+            }
+
+            annualOrderM.setIsDeleted(true);
+        }
+
+        ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
+        ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
         return SUCCESS;
     }
 }
