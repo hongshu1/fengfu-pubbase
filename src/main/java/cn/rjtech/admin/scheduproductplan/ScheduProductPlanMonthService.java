@@ -46,6 +46,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -728,6 +729,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             //纪录排产之后3S的计划数
             Map<String, int[]> invPlanMap3S = new HashMap<>();
 
+            //过滤出客户需求计划为0的物料
+            invList = invList.stream().filter(inv -> invPlanDateMap.get(inv) != null || invPlanListWeekMap.get(inv) != null).collect(Collectors.toList());
+
             //初始化需排产物料
             String[] invArrar = invList.toArray(new String[0]);
             //各物料期初库存  key:inv
@@ -784,6 +788,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 //下月平均计划需求数
                 int averageQty = nextMonthAvgQtyByinvMap.get(inv) != null ? nextMonthAvgQtyByinvMap.get(inv) : 0;
                 plan_nextMonthAverageMap.put(inv, averageQty);
+            }
+            if (invArrar.length == 0){
+                continue;
             }
             //进行APS算法分析
             ApsScheduling apsScheduling = ApsUtil.apsCalculation(invArrar, inventory_originalMap, planMap, 2, plan_nextMonthAverageMap, capabilityMap, workday, inventoryRate, workFactor);
