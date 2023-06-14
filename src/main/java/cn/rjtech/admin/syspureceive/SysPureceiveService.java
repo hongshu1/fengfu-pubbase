@@ -376,8 +376,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysPureceivedetail.setBarcode(row.get("barcode"));
-            sysPureceivedetail.setCreateDate(now);
-            sysPureceivedetail.setModifyDate(now);
+            sysPureceivedetail.setDcreatetime(now);
+            sysPureceivedetail.setDupdatetime(now);
             sysPureceivedetail.setIsDeleted(false);
             String s = this.insertSysPureceive(sysPureceivedetail, sysPureceive, row, operationType, map);
             sysPureceivedetail.setMasID(s);
@@ -439,7 +439,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             sysPureceivedetail.setPosCode(row.getStr("poscode"));
             sysPureceivedetail.setQty(row.getBigDecimal("qty"));
             sysPureceivedetail.setBarcode(row.get("barcode"));
-            sysPureceivedetail.setModifyDate(now);
+            sysPureceivedetail.setDupdatetime(now);
             sysPureceivedetail.setIsDeleted(false);
             //状态为保存状态的可以拆单 其他状态接是修改操作
 //            if (String.valueOf(AuditStatusEnum.NOT_AUDIT.getValue()).equals(sysPureceive.getIAuditStatus())) {

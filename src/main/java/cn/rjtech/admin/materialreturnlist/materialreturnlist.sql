@@ -316,6 +316,7 @@ SELECT
     i.cInvCode AS InvCode,
     t1.BillNo,
     t1.BillDate,
+    t1.SourceBillNo AS BillNoRow,
     t2.SourceBillNo,
     t2.SourceBillID,
     t2.SourceBillDid,
