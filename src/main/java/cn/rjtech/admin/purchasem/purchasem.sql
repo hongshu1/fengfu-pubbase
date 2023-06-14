@@ -117,12 +117,13 @@ AND isnull( cCloser, '' ) = ''
 
 ### 校验是否有采购单信息
 #sql("checkIsCreataPurchase")
-SELECT app.cCode
-FROM PU_AppVouch app
-LEFT JOIN  PO_Pomain po ON app.cCode = po.cappcode
+SELECT distinct app.cCode
+FROM po_podetails ppds
+	left join PU_AppVouchs pavs on ppds.iappids = pavs.autoid
+	left join PU_AppVouch app on app.id = pavs.id
 WHERE 1 = 1
      #if(ids)
-     AND id in (
+     AND app.id in (
         #for(code:ids)
             '#(code)' #(for.last?'':',')
         #end

@@ -400,8 +400,9 @@ public class VendorService extends BaseService<Vendor> {
         return dbTemplate("vendor.getVendorList", kv).find();
     }
 
-    public Page<Record> getVendorPaginate(Integer pageNumber, Integer pageSize, Kv kv) {
-        return dbTemplate("vendor.getVendorList", kv).paginate(pageNumber, pageSize);
+    public Page<Record> getVendorPaginate(Integer pageNumber, Integer pageSize, Kv para) {
+    	para.set("iorgid",getOrgId());
+        return dbTemplate("vendor.getVendorList", para).paginate(pageNumber, pageSize);
     }
 
     public List<Record> getAutocompleteList(String q, int limit) {
