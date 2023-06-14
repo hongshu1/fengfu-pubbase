@@ -729,7 +729,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             //纪录排产之后3S的计划数
             Map<String, int[]> invPlanMap3S = new HashMap<>();
 
-            //过滤出客户需求计划为0的物料
+            //过滤掉客户需求计划为0的物料
             invList = invList.stream().filter(inv -> invPlanDateMap.get(inv) != null || invPlanListWeekMap.get(inv) != null).collect(Collectors.toList());
 
             //初始化需排产物料
