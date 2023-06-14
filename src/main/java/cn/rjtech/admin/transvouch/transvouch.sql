@@ -1,9 +1,12 @@
 #sql("paginateAdminDatas")
 SELECT
         AuditState =
-        CASE WHEN t1.State=1 THEN '已保存'
-             WHEN t1.State=2 THEN '待审核'
-             WHEN t1.State=3 THEN '已审核' END,
+        CASE WHEN t1.iAuditStatus=0 THEN '未审核'
+             WHEN t1.iAuditStatus=1 THEN '待审核'
+             WHEN t1.iAuditStatus=2 THEN '审核通过'
+             WHEN t1.iAuditStatus=3 THEN '审核不通过' END,
+        TypeName =
+        CASE WHEN t1.BillType='TransVouch' THEN '手动新增'END,
     t1.*,
     ( SELECT t5.cRdName FROM Bd_Rd_Style t5 WHERE t5.cRdCode = t1.IRdCode ) AS IRdName,
     ( SELECT t5.cRdName FROM Bd_Rd_Style t5 WHERE t5.cRdCode = t1.ORdCode ) AS ORdName
@@ -18,15 +21,15 @@ WHERE 1 = 1
     )
     #end
    #if(iorderstatus)
-        AND t1.State = #para(iorderstatus)
+        AND t1.iAuditStatus = #para(iorderstatus)
     #end
 #if(startdate)
-    and CONVERT(VARCHAR(10),t1.ModifyDate,23) >='#(startdate)'
+    and CONVERT(VARCHAR(10),t1.dcreatetime,23) >='#(startdate)'
 #end
 #if(enddate)
-    and CONVERT(VARCHAR(10),t1.ModifyDate,23) <='#(enddate)'
+    and CONVERT(VARCHAR(10),t1.dcreatetime,23) <='#(enddate)'
 #end
-order by t1.ModifyDate desc
+order by t1.dcreatetime desc
     #end
 
 
@@ -80,7 +83,8 @@ SELECT t2.*,
        i.*,
        u.cUomClassName,
        t3.cInvCCode,
-       t3.cInvCName
+       t3.cInvCName,
+       ( SELECT cUomName FROM Bd_Uom WHERE i.iPurchaseUomId = iautoid ) AS PurchasecUomName
 FROM T_Sys_TransVouch t1,
      T_Sys_TransVouchDetail t2
          LEFT JOIN bd_inventory i ON i.cinvcode = t2.Invcode
@@ -102,6 +106,17 @@ WHERE
     1=1
 
 #end
+
+
+#sql("iwarehouse")
+SELECT
+    t7.cWhCode,
+    t7.cWhName
+FROM
+    Bd_Warehouse t7
+WHERE
+        1=1
+    #end
 
 #sql("pushU8List")
 SELECT

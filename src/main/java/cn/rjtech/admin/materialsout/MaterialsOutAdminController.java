@@ -23,7 +23,7 @@ import java.util.Date;
  * @author: RJ
  * @date: 2023-05-13 16:16
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MATERIAL_DELIVERY_LIST)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/materialDeliveryList", viewPath = "/_view/admin/materialsout")
 public class MaterialsOutAdminController extends BaseAdminController {
@@ -125,6 +125,7 @@ public class MaterialsOutAdminController extends BaseAdminController {
 
 		Kv kv = new Kv();
 		kv.setIfNotNull("barcodes",get("barcodes"));
+		kv.setIfNotNull("detailHidden",get("detailHidden"));
 		kv.setIfNotNull("q",get("q"));
 		kv.setIfNotNull("orgCode",getOrgCode());
 

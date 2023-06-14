@@ -2,10 +2,8 @@ package cn.rjtech.admin.person;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
-import cn.jbolt._admin.dept.DeptService;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.dictionary.DictionaryTypeKey;
-import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
@@ -19,6 +17,7 @@ import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.admin.personequipment.PersonEquipmentService;
 import cn.rjtech.admin.workclass.WorkClassService;
@@ -58,13 +57,11 @@ public class PersonService extends BaseService<Person> {
     private final Person dao = new Person().dao();
     
     @Inject
-    private UserService userService;
-    @Inject
-    private DeptService deptService;
-    @Inject
     private EquipmentService equipmentService;
     @Inject
     private WorkClassService workClassService;
+    @Inject
+    private DepartmentService departmentService;
     @Inject
     private DictionaryService dictionaryService;
     @Inject
@@ -102,9 +99,6 @@ public class PersonService extends BaseService<Person> {
         if (person == null || isOk(person.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        if (exists(Person.IUSERID, person.getIUserId())) {
-            return fail(JBoltMsg.DATA_SAME_NAME_EXIST);
-        }
         boolean success = person.save();
         if (success) {
             //添加日志
@@ -124,17 +118,6 @@ public class PersonService extends BaseService<Person> {
         Person dbPerson = findById(person.getIAutoId());
         if (dbPerson == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
-        }
-        if (ObjUtil.isNull(dbPerson.getIUserId())) {
-            if (exists(Person.IUSERID, person.getIUserId())) {
-                return fail(JBoltMsg.DATA_SAME_NAME_EXIST);
-            }
-        } else {
-            if (ObjUtil.notEqual(person.getIUserId(), dbPerson.getIUserId())) {
-                if (exists(Person.IUSERID, person.getIUserId(), dbPerson.getIUserId())) {
-                    return fail(JBoltMsg.DATA_SAME_NAME_EXIST);
-                }
-            }
         }
         boolean success = person.update();
         if (success) {
@@ -286,10 +269,6 @@ public class PersonService extends BaseService<Person> {
 
         tx(() -> {
             if (person.getIAutoId() == null) {
-                if (ObjUtil.isNotNull(person.getIUserId())) {
-                    ValidationUtils.isTrue(!exists(Person.IUSERID, person.getIUserId()), "用户名已被占用");
-                }
-
                 person.setISource(SourceEnum.MES.getValue())
                         .setICreateBy(userid)
                         .setCCreateName(username)
@@ -303,14 +282,6 @@ public class PersonService extends BaseService<Person> {
                 Person dbPerson = findById(person.getIAutoId());
                 ValidationUtils.notNull(dbPerson, "人员记录不存在");
                 ValidationUtils.isTrue(!dbPerson.getIsDeleted(), "人员记录不存在");
-
-                if (ObjUtil.isNull(dbPerson.getIUserId())) {
-                    ValidationUtils.isTrue(!exists(Person.IUSERID, person.getIUserId()), "用户名已被占用");
-                } else {
-                    if (ObjUtil.notEqual(person.getIUserId(), dbPerson.getIUserId())) {
-                        ValidationUtils.isTrue(!exists(Person.IUSERID, person.getIUserId(), dbPerson.getIUserId()), "用户名已被占用");
-                    }
-                }
 
                 person.setIUpdateBy(userid)
                         .setCUpdateName(username)
@@ -405,13 +376,7 @@ public class PersonService extends BaseService<Person> {
         }
         for (Person excelRecord : excelRecordList) {
             Person person = new Person();
-            Long personId = JBoltSnowflakeKit.me.nextId();
-            person.setIAutoId(personId);
-            String username = excelRecord.getStr("iuserid");
-            User user = userService.getUserByUserName(username);
-            if (user != null) {
-                person.setIUserId(user.getId());
-            }
+            person.setIAutoId(JBoltSnowflakeKit.me.nextId());
             person.setCpsnNum(excelRecord.getStr("cpsn_num"));
             person.setCpsnName(excelRecord.getStr("cpsn_name"));
             person.setVIDNo(excelRecord.getStr("vidno"));
@@ -427,7 +392,7 @@ public class PersonService extends BaseService<Person> {
             person.setCPsnMobilePhone(excelRecord.getStr("cpsnmobilephone"));
             person.setJobNumber(excelRecord.getStr("jobnumber"));
             person.setCEcardNo(excelRecord.getStr("cecardno"));
-            person.setCdeptNum(deptService.findNameBySn(excelRecord.getStr("cdeptnum")));
+            person.setCdeptNum(departmentService.getCdepName(excelRecord.getStr("cdeptnum")));
             Record remploystateDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.job_type.name());
             String remploystate = excelRecord.getStr("remploystate");
             remploystate = JBoltStringUtil.isNotBlank(remploystate) ? remploystateDictionaryRecord.getStr(remploystate) : remploystate;
@@ -468,7 +433,7 @@ public class PersonService extends BaseService<Person> {
                 }
                 PersonEquipment personEquipment = new PersonEquipment();
                 personEquipment.setIAutoId(JBoltSnowflakeKit.me.nextId());
-                personEquipment.setIPersonId(personId);
+                personEquipment.setIPersonId(person.getIAutoId());
                 personEquipment.setIEquipmentId(equipment.getIAutoId());
                 personEquipment.setIsDeleted(false);
                 personEquipmentList.add(personEquipment);
@@ -543,6 +508,19 @@ public class PersonService extends BaseService<Person> {
 
     public Person findByCpersonName(String cpersonname) {
         return findFirst(selectSql().eq(Person.CPSN_NAME, cpersonname).eq(Person.IORGID, getOrgId()).eq(Person.ISDELETED, ZERO_STR).first());
+    }
+
+    /**
+     * 通过用户组织获取人员
+     * 
+     * @param userId 用户ID 
+     * @param orgId  组织ID
+     */
+    public Person getPersonByUserOrg(long userId, long orgId) {
+        Okv para = Okv.by("userId", userId)
+                .set("orgId", orgId);
+
+        return daoTemplate("person.getPersonByUserOrg", para).findFirst();
     }
 
 }

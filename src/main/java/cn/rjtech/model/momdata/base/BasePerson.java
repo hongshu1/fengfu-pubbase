@@ -109,8 +109,6 @@ public abstract class BasePerson<M extends BasePerson<M>> extends JBoltBaseModel
     public static final String CREGION = "CRegion";
     /**户口性质*/
     public static final String NATRUETYPE = "NatrueType";
-    /**所属用户ID*/
-    public static final String IUSERID = "iUserId";
     /**性别：1. 男 2. 女*/
     public static final String ISEX = "iSex";
     /**电子卡号*/
@@ -978,23 +976,6 @@ public abstract class BasePerson<M extends BasePerson<M>> extends JBoltBaseModel
 	@JSONField(name = "natruetype")
 	public java.lang.String getNatrueType() {
 		return getStr("NatrueType");
-	}
-
-	/**
-	 * 所属用户ID
-	 */
-	public M setIUserId(java.lang.Long iUserId) {
-		set("iUserId", iUserId);
-		return (M)this;
-	}
-
-	/**
-	 * 所属用户ID
-	 */
-	@JBoltField(name="iuserid" ,columnName="iUserId",type="Long", remark="所属用户ID", required=false, maxLength=19, fixed=0, order=50)
-	@JSONField(name = "iuserid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIUserId() {
-		return getLong("iUserId");
 	}
 
 	/**
