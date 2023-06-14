@@ -1235,8 +1235,9 @@ public class InventoryService extends BaseService<Inventory> {
     /**
      * 获取存货信息分页
      */
-    public Page<Record> getInventoryPaginate(Integer pageNumber, Integer pageSize, Kv kv) {
-        Page<Record> page = dbTemplate("inventory.getInventoryList", kv).paginate(pageNumber, pageSize);
+    public Page<Record> getInventoryPaginate(Integer pageNumber, Integer pageSize, Kv para) {
+    	para.set("iorgid",getOrgId());
+        Page<Record> page = dbTemplate("inventory.getInventoryList", para).paginate(pageNumber, pageSize);
         ValidationUtils.notNull(page, JBoltMsg.DATA_NOT_EXIST);
         return page;
     }

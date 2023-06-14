@@ -56,6 +56,9 @@ SELECT
 v.*
 FROM bd_Vendor v
 WHERE  1 = 1
+#if(iorgid)
+	and v.iorgid = #para(iorgid)
+#end
     #if(q)
         AND  (
             v.cVenCode like CONCAT ('%', #para(q), '%') OR
