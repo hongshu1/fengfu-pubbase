@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -67,6 +68,9 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
+        Record record = new Record();
+        record.set("billno",JBoltSnowflakeKit.me.nextId());
+        set("sysPuinstore", record);
         render("add.html");
     }
 

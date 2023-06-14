@@ -3,6 +3,7 @@ package cn.rjtech.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.http.HttpUtil;
 import cn.rjtech.config.AppConfig;
 
@@ -31,8 +32,8 @@ public class BaseInU8Util {
         if (message == null) {
             message = res.getString("msg");
         }
-        if (res.getString("state").equals("fail")) {
-            ValidationUtils.isTrue(false, json + ";" + message);
+        if (ObjUtil.equal(res.getString("state"), "fail")) {
+            ValidationUtils.error(message);
         }
         ValidationUtils.notNull(code, "json:" + json + ";" + message);
         ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);

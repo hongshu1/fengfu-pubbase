@@ -217,7 +217,8 @@
     <tr data-id="${data.autoid}">
       <td>${pageNumber,pageSize,index | rownum}</td>
       <td>
-        <a href="admin/sysPuinstoredetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
+        <!--href="admin/sysPuinstoredetail/delete/${data.autoid}"-->
+        <a data-ajaxbtn data-loading="执行中 " onclick="jboltTableRemoveRow(this)"
            tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
            class="jbolt_table_delbtn">删除</i></a>
       </td>
@@ -252,7 +253,7 @@
                  value="#(spotticket??)"/>
         </div>
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-          <button onclick="checkSpotticket()" class="btn btn-primary btn-sm">搜索</button>
+          <button onclick="checkSpotticket()" class="btn btn-primary btn-sm">扫码</button>
         </div>
       </div>
     </div>
@@ -364,6 +365,7 @@
     $("#operationType").val("submit");
     jboltTableSubmit("#jbolt_Table_#(pageId)");
     $("#operationType").val();
+    return true;
   }
 
   function getJBoltTableEditableColsOpton() {
@@ -375,11 +377,9 @@
         type: "all",
         url: "/admin/purchaseReceiptList/submitAll", success: function (res) {
           LayerMsgBox.success("提交成功", 600, function () {
-            // parent.refreshCurrentTabContent();//刷新当前页面
-            // parent.refreshPjaxContainer();
+            parent.refreshCurrentTabContent();//刷新当前页面
+            parent.refreshPjaxContainer();
             // parent.layer.closeAll();
-            LayerMsgBox.alert("保存成功", 2);
-            return;
           });
         }
       },

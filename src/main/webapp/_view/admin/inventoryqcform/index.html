@@ -6,10 +6,11 @@
 <div class="row">
 	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>检验适用标准</h1></div>
 	<div class="col">
-	<form class="form-inline text-left" id="InventoryQcForm_form_#(pageId)">
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入标准表格名称" name="keywords" value="" />
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入客户部番" name="cInvCode1" value="" />
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入部品名称" name="cInvName1" value="" />
+		<form class="form-inline text-left" id="InventoryQcForm_form_#(pageId)">
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="输入存货编码" name="cinvcode" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="输入标准表格名称" name="keywords" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="输入客户部番" name="cInvCode1" value="" />
+			<input type="text" autocomplete="off"  class="form-control"  placeholder="输入部品名称" name="cInvName1" value="" />
 
 		<button type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 	</form>
@@ -30,6 +31,7 @@
 <tr data-id="${data.iautoid}">
 	<td>${pageNumber,pageSize,index | rownum}</td>
 	<td>${data.cqcformname}</td>
+	<td>${data.cinvcode}</td>
 	<td>${data.cinvname}</td>
 	<td>${data.cinvcode1}</td>
 	<td>${data.cinvname1}</td>
@@ -92,6 +94,7 @@
 <tr>
 	<th data-width="60" data-column="index">序号</th>
 	<th data-width="150" data-column="cqcformname">标准表格名称</th>
+	<th data-width="150" data-column="cinvcode">存货编码</th>
 	<th data-width="150" data-column="cinvname">存货名称</th>
 	<th data-width="150" data-column="cinvcode1">客户部番</th>
 	<th data-width="150" data-column="cinvname1">部品名称</th>
