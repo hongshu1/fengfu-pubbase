@@ -6,6 +6,7 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
@@ -14,9 +15,11 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
+import cn.rjtech.model.momdata.SysPureceive;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -206,17 +209,21 @@ public class SysProductinService extends BaseService<SysProductin> {
             // 通过 id 判断是新增还是修改
             if (sysotherin.getAutoID() == null) {
                 sysotherin.setOrganizeCode(getOrgCode());
-                sysotherin.setCreatePerson(user.getUsername());
-                sysotherin.setCreateDate(now);
-                sysotherin.setModifyPerson(user.getUsername());
-                sysotherin.setAuditPerson(user.getUsername());
-                sysotherin.setState("1");
-                sysotherin.setModifyDate(now);
+                sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+                sysotherin.setIcreateby(user.getId());
+                sysotherin.setCcreatename(user.getName());
+                sysotherin.setDcreatetime(now);
+                sysotherin.setIupdateby(user.getId());
+                sysotherin.setCupdatename(user.getName());
+                sysotherin.setDupdatetime(now);
+                sysotherin.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+                sysotherin.setIsDeleted(false);
                 // 主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
             } else {
-                sysotherin.setModifyPerson(user.getUsername());
-                sysotherin.setModifyDate(now);
+                sysotherin.setIupdateby(user.getId());
+                sysotherin.setCupdatename(user.getName());
+                sysotherin.setDupdatetime(now);
                 // 主表修改
                 ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
             }
@@ -249,8 +256,9 @@ public class SysProductinService extends BaseService<SysProductin> {
             sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
             sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
-            sysdetail.setCreateDate(now);
-            sysdetail.setModifyDate(now);
+            sysdetail.setDcreatetime(now);
+            sysdetail.setDcreatetime(now);
+            sysdetail.setIsDeleted(false);
             sysproductindetail.add(sysdetail);
         }
         sysproductindetailservice.batchSave(sysproductindetail);
@@ -274,17 +282,13 @@ public class SysProductinService extends BaseService<SysProductin> {
             sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
             sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
-            sysdetail.setCreateDate(now);
-            sysdetail.setModifyDate(now);
+            sysdetail.setDcreatetime(now);
+            sysdetail.setDcreatetime(now);
             sysproductindetail.add(sysdetail);
 
         }
         sysproductindetailservice.batchUpdate(sysproductindetail);
 
-        // 测试调用接口
-        System.out.println("```````````````````````````````"+ new Date());
-        Ret ret = pushU8(sysotherin, sysproductindetail);
-        System.out.println(new Date()+"```````````````````````````````"+ret);
     }
 
     // 可编辑表格提交-删除数据
@@ -383,7 +387,6 @@ public class SysProductinService extends BaseService<SysProductin> {
         Map<String, String> header = new HashMap<>(5);
         header.put("Content-Type", "application/json");
         String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
-
         try {
             String post = HttpApiUtils.httpHutoolPost(url, data, header);
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
@@ -411,19 +414,125 @@ public class SysProductinService extends BaseService<SysProductin> {
     }
 
     /**
-     * 提审
+     * 提审批
      */
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"");
+            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(), "cn.rjtech.admin.sysproductin.SysProductinService");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-            // 更新状态
 
             return true;
         });
         return SUCCESS;
+    }
+
+    /**
+     * 审核通过
+     */
+    public Ret approve(Long ids) {
+        tx(() -> {
+            //业务逻辑
+            this.check(String.valueOf(ids));
+//            this.passage(String.valueOf(ids));
+            String[] split = String.valueOf(ids).split(",");
+            for (String s : split) {
+                SysProductin byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+                byId.update();
+            }
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 审核不通过
+     */
+    public Ret reject(Long ids) {
+        tx(() -> {
+            //业务逻辑
+            this.check(String.valueOf(ids));
+            //调用u8接口删除数据。
+
+            String[] split = String.valueOf(ids).split(",");
+            for (String s : split) {
+                SysProductin byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+                byId.update();
+            }
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 审核通过
+     */
+    public Ret process(String ids) {
+        tx(() -> {
+            this.check(ids);
+            String[] split = ids.split(",");
+            for (String s : split) {
+                SysProductin byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+                byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                byId.update();
+            }
+            //业务逻辑
+            this.passage(ids);
+            return true;
+        });
+        return SUCCESS;
+    }
+    /**
+     * 批量反审核
+     */
+    public Ret noProcess(String ids) {
+        tx(() -> {
+            //反审，调用删除U8数据接口
+
+            String[] split = ids.split(",");
+            for (String s : split) {
+                SysProductin byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+                byId.setIAuditWay(null);
+                byId.update();
+            }
+
+            return true;
+        });
+        return SUCCESS;
+    }
+
+
+    public void check(String ids) {
+        String[] split = ids.split(",");
+        for (String p : split) {
+            List<SysProductin> SysProductin = find("select *  from T_Sys_ProductIn where AutoID in (" + p + ")");
+            for (SysProductin s : SysProductin) {
+                if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据未提交审核或审批！！");
+                }
+                if ("2".equals(String.valueOf(s.getIAuditStatus())) || "3".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "流程已结束！！");
+                }
+            }
+        }
+    }
+
+    //推u8
+    public void passage(String ids){
+        String[] split = ids.split(",");
+        for (String s : split) {
+            SysProductin sysProductin = findFirst("select *  from T_Sys_ProductIn where AutoID in (" + s + ")");
+            List<SysProductindetail> sysProductindetails = sysproductindetailservice.find("select *  from T_Sys_ProductIn where AutoID in (" + sysProductin.getAutoID() + ")");
+            // 测试调用接口
+            System.out.println("```````````````````````````````"+ new Date());
+            Ret ret = pushU8(sysProductin, sysProductindetails);
+            System.out.println(new Date()+"```````````````````````````````"+ret);
+        }
+
     }
 
 }
