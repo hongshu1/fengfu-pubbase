@@ -225,7 +225,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     /**
      * 推送 PL_RcvDocQcFormM ;//来料检验
      */
-    public RcvDocQcFormM insertRcvDocQcFormM(Record row, SysPureceive sys, User user, Long veniAutoId,Integer qty) {
+    public RcvDocQcFormM insertRcvDocQcFormM(Record row, SysPureceive sys, User user, Long veniAutoId) {
         Date date = new Date();
 
         RcvDocQcFormM rcvDocQcFormM = new RcvDocQcFormM();
@@ -253,7 +253,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
 
         rcvDocQcFormM.setIVendorId(veniAutoId);
         rcvDocQcFormM.setDRcvDate(sys.getDcreatetime());
-        rcvDocQcFormM.setIQty(qty);
+        rcvDocQcFormM.setIQty(Double.valueOf(row.getStr("qty").trim()).intValue());
 
         // 批次号
         rcvDocQcFormM.setCBatchNo("1111111Test");
@@ -849,31 +849,32 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 String autoID = "";
                 int i = 1;
                 Long veniAutoId = vendorservice.queryAutoIdByCvencode(byId.getVenCode());
+                ArrayList<RcvDocQcFormM> rcvDocQcFormM = new ArrayList<>();
                 for (SysPureceivedetail f : firstBy) {
                     Kv kv = new Kv();
                     kv.set("barcode", f.getBarcode());
                     Record row = dbTemplate("syspureceive.tuibarcode", kv).findFirst();
                     //判断存货开关是否打开,开 推来料检验单，
                     boolean button = this.button(row.getStr("cinvcode"));
-
+                    List<RcvDocQcFormM> tempForms = new ArrayList<>();
                     Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", f.getBarcode())).findFirst();
                     if (button) {
-                        if(null != hashMap && !hashMap.isEmpty()){
-                            Iterator<Map.Entry<String, Integer>> iterator = hashMap.entrySet().iterator();
-                            while (iterator.hasNext()) {
-                                Map.Entry<String, Integer> entry = iterator.next();
-                                String key = entry.getKey();
-                                Integer value = entry.getValue();
-                                // 在遍历过程中进行修改
-                                if (key.equals(barcode.getStr("iinventoryId"))) {
-                                    entry.setValue( this.add(value,f.getQty()));
-                                } else{
-                                    hashMap.put(barcode.getStr("iinventoryId"),f.getQty().intValue());
+                        if (rcvDocQcFormM != null && !rcvDocQcFormM.isEmpty()) {
+                            for (int t = 0; t < rcvDocQcFormM.size(); t++) {
+                                RcvDocQcFormM formM = rcvDocQcFormM.get(t);
+                                if (String.valueOf(formM.getIInventoryId()).equals(barcode.getStr("iinventoryId"))) {
+                                    formM.setIQty(this.add(formM.getIQty(), f.getQty()));
+                                } else {
+                                    RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(row, byId, user, veniAutoId);
+                                    tempForms.add(rcvDocQcFormM1); // 将需要添加的元素放入临时列表
                                 }
                             }
-                        }else {
-                            hashMap.put(barcode.getStr("iinventoryId"),f.getQty().intValue());
+                        } else {
+                            RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(row, byId, user, veniAutoId);
+                            tempForms.add(rcvDocQcFormM1); // 将需要添加的元素放入临时列表
                         }
+                        // 将临时列表中的元素添加到原始列表中
+                        rcvDocQcFormM.addAll(tempForms);
                     } else {
                         if (f.getIsInitial().equals("0")) {
                             //根据id查出从表的数据，生成采购入库列表 一个收料单号对应一个入库单号。 排除是初物的数据
@@ -908,47 +909,26 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                             syspuinstoredetailservice.save(sysPuinstoredetail);
                             i++;
                         } else {
-                            if(null != hashMap && !hashMap.isEmpty()){
-                                Iterator<Map.Entry<String, Integer>> iterator = hashMap.entrySet().iterator();
-                                while (iterator.hasNext()) {
-                                    Map.Entry<String, Integer> entry = iterator.next();
-                                    String key = entry.getKey();
-                                    Integer value = entry.getValue();
-                                    // 在遍历过程中进行修改
-                                    if (key.equals(barcode.getStr("iinventoryId"))) {
-                                        entry.setValue( this.add(value,f.getQty()));
-                                    } else{
-                                        hashMap.put(barcode.getStr("iinventoryId"),f.getQty().intValue());
+                            if (rcvDocQcFormM != null && !rcvDocQcFormM.isEmpty()) {
+                                for (int t = 0; t < rcvDocQcFormM.size(); t++) {
+                                    RcvDocQcFormM formM = rcvDocQcFormM.get(t);
+                                    if (String.valueOf(formM.getIInventoryId()).equals(barcode.getStr("iinventoryId"))) {
+                                        formM.setIQty(this.add(formM.getIQty(), f.getQty()));
+                                    } else {
+                                        RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(row, byId, user, veniAutoId);
+                                        tempForms.add(rcvDocQcFormM1); // 将需要添加的元素放入临时列表
                                     }
                                 }
-                            }else {
-                                hashMap.put(barcode.getStr("iinventoryId"),f.getQty().intValue());
+                            } else {
+                                RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(row, byId, user, veniAutoId);
+                                tempForms.add(rcvDocQcFormM1); // 将需要添加的元素放入临时列表
                             }
-
+                            // 将临时列表中的元素添加到原始列表中
+                            rcvDocQcFormM.addAll(tempForms);
                         }
                     }
                 }
-                //推送初物 啊啊
-                ArrayList<RcvDocQcFormM> rcvDocQcFormM = new ArrayList<>();
-                if(null != hashMap && !hashMap.isEmpty()){
-                    Iterator<Map.Entry<String, Integer>> iterator = hashMap.entrySet().iterator();
-                    while (iterator.hasNext()) {
-                        Map.Entry<String, Integer> entry = iterator.next();
-                        String key = entry.getKey();
-                        Integer value = entry.getValue();
-                        //通过存货id和主表的masId获取从表的数据
-                        List<SysPureceivedetail> firstByandvencood = syspureceivedetailservice.findFirstByandvencood(byId.getAutoID(),byId.getVenCode());
-                        for (SysPureceivedetail q :firstByandvencood){
-                            Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", q.getBarcode())).findFirst();
-                            if(key.equals(barcode.getStr("iinventoryId"))){
-                                RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(barcode, byId, user, veniAutoId,value);
-                                rcvDocQcFormM.add(rcvDocQcFormM1);
-                                break;
-                            }
-                        }
-                    }
-                    rcvdocqcformmservice.batchSave(rcvDocQcFormM);
-                }
+                rcvdocqcformmservice.batchSave(rcvDocQcFormM);
             }
 
 
