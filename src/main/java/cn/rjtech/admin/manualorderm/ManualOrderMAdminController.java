@@ -164,8 +164,9 @@ public class ManualOrderMAdminController extends BaseAdminController {
     /**
      * 删除
      */
+
     public void delete() {
-        renderJson(service.deleteById(getLong(0)));
+        renderJson(service.delete(getLong(0)));
     }
 
     public void inventory_dialog_index() {
@@ -184,9 +185,11 @@ public class ManualOrderMAdminController extends BaseAdminController {
         renderJson(service.batchHandle(getKv(), 6, new int[]{3}));
     }
 
+    /**
+     * 批量删除
+     */
     public void batchDetect() {
-        renderJson(service.deleteByIds(get("ids")));
-       // renderJson(service.batchDetect(getKv()));
+        renderJson(service.batchDetect(get("ids")));
     }
 
     /**

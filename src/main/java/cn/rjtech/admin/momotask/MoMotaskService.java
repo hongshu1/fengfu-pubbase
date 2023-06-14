@@ -509,14 +509,33 @@ public class MoMotaskService extends BaseService<MoMotask> {
 
       Map<String, String> map1 = new HashMap<>();
       List<String> modocidList = new ArrayList<>();
+
+      Map<String, List<Record>> userMapDatas = new HashMap<>();
+
       for (Record record1 : records1) {
         String iYear = record1.getStr("iYear");
         String iMonth = record1.getStr("iMonth");
         String iDate = record1.getStr("iDate");
         String iWorkShiftMid = record1.getStr("iWorkShiftMid");
         String modocid1 = record1.getStr("iAutoId");
-        map1.put(iYear + iMonth + iDate + iWorkShiftMid, modocid1);
+        String dateSplicing = iYear + iMonth + iDate + iWorkShiftMid;
+        map1.put(dateSplicing, modocid1);
         modocidList.add(modocid);
+
+        //<editor-fold desc="创建人员信息为空的基础信息">
+        List<Record> userDatas = new ArrayList<>();
+        Record user = new Record();
+        user.set("psnnum", "");
+        user.set("psnname", "");
+        user.set("dateSplicing", dateSplicing);
+        user.set("iworkshiftmid", iWorkShiftMid);
+        user.set("iAutoId", modocid1);
+        user.set("iyear", iYear);
+        user.set("imonth", iMonth);
+        user.set("idate", iDate);
+        userDatas.add(user);
+        userMapDatas.put(dateSplicing, userDatas);
+        //</editor-fold>
       }
 
       //<editor-fold desc="3.根据小行的制造工单(modoc)id获取">
@@ -584,6 +603,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
             if (map2.containsKey(dateSplicing)) {
               List<Record> list = map2.get(dateSplicing);
               list.add(record2);
+              map2.put(dateSplicing, list);
             } else {
               List<Record> list = new ArrayList<>();
               list.add(record2);
@@ -594,7 +614,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
 
 
           //<editor-fold desc="6 获取工单号，生产计划量，小计人数">
-          List<Record> list3 = dbTemplate("modocbatch.getModocNoQtyNumByDocid", Kv.by("docid", CollUtil.join(modocidList, ","))).find();
+          List<Record> list3 = dbTemplate("modocbatch.getModocNoQtyNumByDocid", kv).find();
           //key:modocid1  value:cMoDocNo
           Map<String, List<Record>> map3 = new HashMap<>();
           Map<String, List<Record>> map4 = new HashMap<>();
@@ -610,24 +630,24 @@ public class MoMotaskService extends BaseService<MoMotask> {
             record3.set("dateSplicing", recorda3.getStr("dateSplicing"));
             record3.set("iPersonNum", recorda3.getStr("iPersonNum"));
             record3.set("dateSplicing", recorda3.getStr("dateSplicing"));
+            List<Record> lista1 = new ArrayList<>();
+            List<Record> lista2 = new ArrayList<>();
+            List<Record> lista3 = new ArrayList<>();
             if (map3.containsKey(iAutoId)) {
-              List<Record> lista1 = map3.get(iAutoId);
-              List<Record> lista2 = map3.get(iAutoId);
-              List<Record> lista3 = map3.get(iAutoId);
+              lista1 = map3.get(iAutoId);
+              lista2 = map3.get(iAutoId);
+              lista3 = map3.get(iAutoId);
               lista1.add(record1);
               lista2.add(record2);
               lista3.add(record3);
             } else {
-              List<Record> lista1 = new ArrayList<>();
-              List<Record> lista2 = new ArrayList<>();
-              List<Record> lista3 = new ArrayList<>();
               lista1.add(record1);
               lista2.add(record2);
               lista3.add(record3);
-              map3.put(iAutoId, lista1);
-              map4.put(iAutoId, lista2);
-              map5.put(iAutoId, lista3);
             }
+            map3.put(iAutoId, lista1);
+            map4.put(iAutoId, lista2);
+            map5.put(iAutoId, lista3);
           }
           //</editor-fold>
 
@@ -649,7 +669,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
             }
           }
 
-
+          List<Record> userRecord = new ArrayList<>();
           for (Record record1 : records1) {
             String year = record1.getStr("iyear");
             String imonth = record1.getStr("imonth");
@@ -658,27 +678,35 @@ public class MoMotaskService extends BaseService<MoMotask> {
             Kv kv1 = Kv.by("iyear", record1.getStr("iyear")).
                 set("imonth", record1.getStr("imonth")).set("idate", record1.getStr("idate")).
                 set("iworkshiftmid", record1.getStr("iworkshiftmid")).set("taskid", kv.getStr("taskid"));
-            String modocid1 = map1.get(year + imonth + idate + iworkshiftmid);
+            String modocid1 = record1.getStr("iAutoId");
+            String matchingid = year + imonth + idate + iworkshiftmid;
+            boolean bol = false;
+            if (map2.size() > 0) {
+              if (map2.get(matchingid).size() > 0) {
+                bol = true;
+              }
+            }
+            Record record2 = new Record();
             if (i < records2.size()) {
               //读取人员数据
-              List<Record> records4 = map2.get(modocid1);
-              recordDats.set("personnel", records4);
+              List<Record> records4 = bol ? map2.get(matchingid) : userMapDatas.get(matchingid);
+              record2.set("personnel", records4);
             } else if (i == (records2.size())) {
               List<Record> records4 = map3.get(modocid1);
-              recordDats.set("personnel", records4);
+              record2.set("personnel", records4);
             } else if (i == (records2.size() + 1)) {
               List<Record> records4 = map4.get(modocid1);
-              recordDats.set("personnel", records4);
+              record2.set("personnel", records4);
             } else if (i == (records2.size() + 2)) {
               List<Record> records4 = map5.get(modocid1);
-              recordDats.set("personnel", records4);
+              record2.set("personnel", records4);
             } else if (i == (records2.size() + 3)) {
               List<Record> records4 = map6.get(modocid1);
-              recordDats.set("personnel", records4);
-            } else {
-              recordDats.set("personnel", new ArrayList<>());
+              record2.set("personnel", records4);
             }
+            userRecord.add(record2);
           }
+          recordDats.put("user", userRecord);
           records3.add(recordDats);
         }
         record.set("rowdatas", records3);

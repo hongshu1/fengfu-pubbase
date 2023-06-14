@@ -204,7 +204,9 @@ FROM
 	LEFT JOIN Mo_MoRoutingConfig_Person moperson ON moperson.iMoRoutingConfigId= config.iAutoId
 	LEFT JOIN Bd_Person bdperson ON moperson.iPersonId= bdperson.iAutoId
 WHERE
-	doc.iAutoId IN (#(docid))
+	bdperson.cPsn_Num IS NOT NULL
+	AND bdperson.cPsn_Name IS NOT NULL
+	AND doc.iAutoId IN (#(docid))
 #end
 
 #sql("getModocDutyPersonnameByDocid")
@@ -233,7 +235,7 @@ SELECT
 FROM
 	Mo_MoDoc
 WHERE
-	iAutoId IN (#(docid))
+	iMoTaskId = #(taskid)
 #end
 
 
