@@ -446,7 +446,7 @@ select
     ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName ,
     ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
 FROM T_Sys_PUInStoreDetail pd
-         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.spotTicket = a.cBarcode AND	a.isEffective = '1'
+         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.spotTicket = a.cBarcode
          LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
          LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
          LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid

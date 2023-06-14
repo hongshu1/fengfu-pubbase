@@ -316,8 +316,8 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 	   transVouch.setIWhCode("");//调入仓库编码
 	   transVouch.setOWhCode(""); //调出仓库
 	   transVouch.setMemo(moMaterialsreturnm.getCMemo());
-	   transVouch.setCreatePerson(JBoltUserKit.getUserName());
-	   transVouch.setCreateDate(now);
+	   transVouch.setCupdatename(JBoltUserKit.getUserName());
+	   transVouch.setDcreatetime(now);
 	   transVouch.setState(2);//待审核
 	   transVouch.save();
 
@@ -328,8 +328,8 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 	   Date now=new Date();
 	  TransVouchDetail transVouchDetail=new TransVouchDetail();
 	  transVouchDetail.setMasID(1L);//主表ID
-	  transVouchDetail.setIPosCode("");//入库库区
-	  transVouchDetail.setOPosCode("");//出库库区
+	  transVouchDetail.setPosCode("");//入库库区
+//	  transVouchDetail.setOPosCode("");//出库库区
 	  transVouchDetail.setInvCode("");//存货编码
 	  transVouchDetail.setBarcode("");//条码
 	  transVouchDetail.setNum(new BigDecimal(1));//件数
@@ -341,8 +341,8 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 	  transVouchDetail.setSourceBillID("");//来源单据ID
 	  transVouchDetail.setSourceBillDid("");//来源单据明细ID
 	  transVouchDetail.setMemo("");
-	  transVouchDetail.setCreatePerson(JBoltUserKit.getUserName());
-	  transVouchDetail.setCreateDate(now);
+	  transVouchDetail.setCcreatename(JBoltUserKit.getUserName());
+	  transVouchDetail.setDcreatetime(now);
   }
 	/**
 	 * 设置调出仓-调出部门

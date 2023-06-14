@@ -168,11 +168,13 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	/**
 	 * 撤回
 	 */
-	public void recall(String AutoId) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(AutoId)) {
-			renderFail(JBoltMsg.PARAM_ERROR);
+	public void recall() {
+		SysPuinstore puinstore=service.findById(getLong(0));
+		if(puinstore == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
+		String AutoId = puinstore.getAutoID();
 		renderJson(service.recall(AutoId));
 	}
 
