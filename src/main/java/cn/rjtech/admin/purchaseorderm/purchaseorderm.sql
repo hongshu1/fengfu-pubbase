@@ -111,7 +111,7 @@ WHERE
 
 #sql("findBycOrderNo2")
 		SELECT
-	ROW_NUMBER() OVER (ORDER BY inv.cInvCode) AS SequenceNumber,
+	ROW_NUMBER() OVER (ORDER BY a.dPlanDate,inv.cInvCode,a.cVersion) AS SequenceNumber,
 	b.iPurchaseOrderdQtyId,
 	inv.cInvCode,
 	inv.cInvCode1,
@@ -161,7 +161,7 @@ WHERE
    t.*
 FROM
     (
-							SELECT
+						SELECT
 						b.iPurchaseOrderdQtyId,
 						inv.cInvCode,
 						inv.cInvCode1,
@@ -178,12 +178,10 @@ FROM
 							 orderD.cAddress,
 							 M.cOrderNo,
 							 M.dOrderDate
-
 					FROM
 						PS_PurchaseOrderDBatchVersion a
 						inner JOIN PS_PurchaseOrderDBatch b on b.iAutoId = a.iPurchaseOrderdBatchId
 						INNER JOIN Bd_Inventory inv ON inv.iAutoId = a.iInventoryId
-
 						INNER JOIN PS_PurchaseOrderM M ON M.iAutoId = a.iPurchaseOrderMid
 						INNER JOIN PS_PurchaseOrderD orderD on orderD.iPurchaseOrderMid=M.iAutoId
 						INNER JOIN Bd_Vendor V on V.iAutoId = M.iVendorId
@@ -197,5 +195,4 @@ ORDER BY
     t.dPlanDate,
     t.cInvCode,
     t.cVersion ASC
-
 #end
