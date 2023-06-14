@@ -3,7 +3,9 @@ SELECT
 a.UserCode as user_code,
 a.UserName as user_name,
 a.Password as password,
-a.u8_pwd
+a.u8_pwd,
+a.u8_code,
+a.u8_name
 FROM #(erpDBName).#(erpDBSchemas).v_sys_user AS a
 where 1=1
 #if(userCode)

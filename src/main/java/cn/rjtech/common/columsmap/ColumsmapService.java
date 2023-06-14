@@ -1117,8 +1117,8 @@ public class ColumsmapService extends BaseService<Columsmap> {
             //List<Record> processBusMaps = processBusDynamic(id1, seqBusinessID);
             //流程执行
             plugeReturnMap.put("ProcessType", vouchType.get("processtype"));
-            plugeReturnMap.put("CreatePersonName", userApp.getStr("user_name"));
-            plugeReturnMap.put("CreatePerson", userApp.getStr("user_code"));
+            plugeReturnMap.put("CreatePersonName", userApp.getStr("u8_name"));
+            plugeReturnMap.put("CreatePerson", userApp.getStr("u8_code"));
             plugeReturnMap.put("organizeCode", kv.get("organizecode"));
             plugeReturnMap.put("password", userApp.getStr("u8_pwd"));
             AtomicInteger currentSeq = new AtomicInteger();//用于回滚
