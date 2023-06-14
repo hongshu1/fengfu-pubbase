@@ -288,7 +288,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
         return (List<Map<String, Object>>) executeFunc(erpdbalias, (conn) -> {
             List<Map<String, Object>> list = new ArrayList<>();
             String sql = "{ call " + erpDBName + "." + erpDBSchemas + "." + processName + "(?, ?, ?, ?, ?, ?, ?) }";
-            System.err.println(sql);
+            LOG.info(sql);
             CallableStatement proc = conn.prepareCall(sql);
             proc.setString(1, (String) kv.getOrDefault("OrganizeCode", ""));
             proc.setString(2, (String) kv.getOrDefault("QueryCode", ""));
@@ -350,7 +350,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
         return (List<Map<String, Object>>) executeFunc(orgApp.getErpdbalias(), (conn) -> {
             List<Map<String, Object>> list = new ArrayList<>();
             String sql = "{ call " + orgApp.getErpdbname() + "." + orgApp.getErpdbschemas() + ".P_Sys_GetBillInfo" + "(?, ?, ?, ?, ?) }";
-            System.err.println(sql);
+            LOG.info(sql);
             CallableStatement proc = conn.prepareCall(sql);
             proc.setString(1, orgApp.getOrganizecode());
             proc.setString(2, barCode);
@@ -409,7 +409,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
         return (List<Map<String, Object>>) executeFunc(orgApp.getErpdbalias(), (conn) -> {
             List<Map<String, Object>> list = new ArrayList<>();
             String sql = "{ call " + orgApp.getErpdbname() + "." + orgApp.getErpdbschemas() + ".P_Sys_GetBarcodeInfo" + "(?, ?, ?, ?, ?, ?, ?) }";
-            System.err.println(sql);
+            LOG.info(sql);
             CallableStatement proc = conn.prepareCall(sql);
             proc.setString(1, orgApp.getOrganizecode());
             proc.setString(2, barCode);
@@ -466,10 +466,16 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
         Date now = new Date();
 
-        Organize orgApp = organizeService.getOrgByCode((String) kv.get("organizecode"));
+        String orgCode = (String) kv.get("organizecode");
+
+        Organize orgApp = organizeService.getOrgByCode(orgCode);
 
         // 对U8数据源别名做特殊处理，如果是u8开头的数据源别名，结合组织编码定义数据源别名，如u8001
         String erpDbAlias = StrUtil.startWith(orgApp.getErpdbalias(), "u8") ? U8DataSourceKit.ME.use(orgApp.getOrganizecode()) : orgApp.getErpdbalias();
+
+        OrgAccessKit.setOrgCode(orgCode);
+        OrgAccessKit.setOrgId(orgApp.getId());
+        OrgAccessKit.setU8DbAlias(erpDbAlias);
 
         Record userApp = userAppService.getUserByUserCode(erpDbAlias, orgApp.getErpdbname(), orgApp.getErpdbschemas(), (String) kv.get("usercode"));
         ValidationUtils.notNull(userApp, "当前组织下没有该用户！");
@@ -593,7 +599,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     String processvalue = rollbackref.get(0).getStr("processvalue");
                     // map2=JSON.parseObject(processvalue,HashMap.class);
                     JSONObject rojsonObject = JSONObject.parseObject(processvalue);
-                    System.out.println(rojsonObject);
+                    LOG.info("{}", rojsonObject);
                     //回滚api
                     Map roapimap = new HashMap();
                     roapimap.put("tag", rollback.get("tag"));
@@ -602,11 +608,11 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     roapimaps.add(roapimap);
                     //u9调用
                     if (rojsonObject != null){
-                        String message = null;
+                        String message;
                         try {
                             message = HttpApiUtils.u8Api(roapimap.get("url").toString(), rojsonObject);
                             Map processResult = dataConversion.processResult("u9erprecdelete", message);
-                            System.err.println("回滚：" + message);
+                            LOG.info("回滚：" + message);
                             String resultCode = processResult.get("resultCode").toString();
                             message = processResult.get("resultInfo").toString();
                             //日志保存
@@ -665,7 +671,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     return false;
                 }
 
-                System.err.println(recordMap);
+                LOG.info("{}", recordMap);
                 plugeReturnMap.put("ProcessMapID", processBusMap.getStr("initializemapid"));
                 if (null != processBusMap.getStr("url") && "Create".equals(processBusMap.getStr("tag"))) {
                     JSONObject jsonData = dataConversion.InterfaceTransform("", plugeReturnMap, recordMap);
@@ -837,7 +843,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
                     }
                 } else {
                     Map<String, List<Record>> recordMap = queryExchange(erpDBName, orgApp.getErpdbschemas(), result.getStr("resultExchangeID"));
-                    System.out.println(recordMap);
+                    LOG.info("{}", recordMap);
 
                     plugeReturnMap.put("ProcessMapID", processBusMap.getStr("initializemapid"));
                     if (null != processBusMap.getStr("url") && "Create".equals(processBusMap.getStr("tag"))) {
@@ -853,7 +859,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
 
                         String message = null;
                         try {
-                            System.err.println(jsonData);
+                            LOG.info("{}", jsonData);
                             message = HttpApiUtils.u8Api(processBusMap.get("url"), jsonData);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -931,11 +937,11 @@ public class ColumsmapService extends BaseService<Columsmap> {
                 int state = 0;
 
                 Map<String, List<Record>> recordMap = queryExchange(erpDBName, orgApp.getErpdbschemas(), result.getStr("resultExchangeID"));
-                System.out.println(recordMap);
+                LOG.info("{}", recordMap);
                 plugeReturnMap.put("ProcessMapID", processBusMap.get("initializemapid"));
 
                 JSONObject jsonData = dataConversion.InterfaceTransform(processBusMap.get("resulttype").toString(), plugeReturnMap, recordMap);
-                System.out.println(jsonData);
+                LOG.info("{}", jsonData);
 
                 VouchRollBackRef vouchrollbackref = new VouchRollBackRef();
                 vouchrollbackref.setVouchbusinessid(vouchBusinessID);
@@ -956,11 +962,11 @@ public class ColumsmapService extends BaseService<Columsmap> {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println(message);
+                LOG.info(message);
 
                 // 返回解析
                 Map processResult = dataConversion.processResult(processBusMap.getStr("resulttype"), message);
-                //System.out.println(processResult.get("resultCode").toString() + processResult.get("resultInfo").toString());
+                //LOG.info(processResult.get("resultCode").toString() + processResult.get("resultInfo").toString());
                 String resultCode = processResult.get("resultCode").toString();
                 message = processResult.get("resultInfo").toString();
 
@@ -1065,12 +1071,12 @@ public class ColumsmapService extends BaseService<Columsmap> {
         Organize orgApp = organizeService.getOrgByCode(organizecode);
         ValidationUtils.notNull(orgApp, "组织不存在");
         
-        OrgAccessKit.setOrgCode(organizecode);
-        OrgAccessKit.setOrgId(orgApp.getId());
-        OrgAccessKit.setU8DbAlias(U8DataSourceKit.ME.use(organizecode));
-        
         // 对U8数据源别名做特殊处理，如果是u8开头的数据源别名，结合组织编码定义数据源别名，如u8001
         String erpDbAlias = StrUtil.startWith(orgApp.getErpdbalias(), "u8") ? U8DataSourceKit.ME.use(orgApp.getOrganizecode()) : orgApp.getErpdbalias();
+
+        OrgAccessKit.setOrgCode(organizecode);
+        OrgAccessKit.setOrgId(orgApp.getId());
+        OrgAccessKit.setU8DbAlias(erpDbAlias);
         
         Record userApp = userAppService.getUserByUserCode(erpDbAlias, orgApp.getErpdbname(), orgApp.getErpdbschemas(), (String) kv.get("usercode"));
         ValidationUtils.notNull(userApp, "当前组织下没有该用户！");
@@ -1234,7 +1240,7 @@ public class ColumsmapService extends BaseService<Columsmap> {
     private Record StoredProcedure(String dataSourceConfigName, String erpDBName, String erpdbschemas, String processname, String processFlag, String exchangeId) {
         return (Record) executeFunc(dataSourceConfigName, (conn) -> {
             String sql = "{ call " + erpDBName + "." + erpdbschemas + "." + processname + "(?, ?, ?, ?, ?) }";
-            System.err.println(sql);
+            LOG.info(sql);
             CallableStatement proc = conn.prepareCall(sql);
             proc.setString(1, exchangeId);
             proc.setString(2, processFlag);

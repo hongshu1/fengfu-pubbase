@@ -95,7 +95,7 @@ public class AppConfig {
      * 通知U8删除采购入库单
      * */
     public static String deleteVouchProcessDynamicSubmitUrl() {
-        String url = "http://172.16.1.194:3013/WEB_INFO/StockAPI.asmx?op=PurchasesInDelete";
+        String url = "http://120.24.44.82:3013/WEB_INFO/StockAPI.asmx?op=PurchasesInDelete";
         return url;
     }
 

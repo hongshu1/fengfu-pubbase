@@ -9,6 +9,7 @@ import cn.rjtech.config.AppConfig;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.log.Log;
 
 /**
  * @version 1.0
@@ -18,6 +19,8 @@ import com.alibaba.fastjson.JSONObject;
  */
 public class BaseInU8Util {
 
+    private static final Log LOG = Log.getLog(BaseInU8Util.class);
+
     /**
      * 推送采购入库单到U8系统
      */
@@ -26,6 +29,7 @@ public class BaseInU8Util {
         String post = HttpUtil.post(vouchSumbmitUrl, json);
         JSONObject res = JSON.parseObject(post);
         ValidationUtils.notNull(res, "解析JSON为空");
+        LOG.info("res: {}", res);
 
         String code = res.getString("code");
         String message = res.getString("message");
