@@ -24,6 +24,7 @@ import com.jfinal.plugin.activerecord.Record;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -488,5 +489,14 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
      */
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         return null;
+    }
+
+    /**
+     * 删除
+     * @param iautoid
+     * @return
+     */
+    public Ret delete(Long iautoid) {
+        return  updateColumn(iautoid, "IsDeleted", true);
     }
 }
