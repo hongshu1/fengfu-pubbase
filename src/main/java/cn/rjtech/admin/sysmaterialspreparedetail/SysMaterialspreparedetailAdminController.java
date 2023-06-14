@@ -23,6 +23,9 @@ import cn.rjtech.model.momdata.SysMaterialspreparedetail;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+
+import java.util.Map;
+
 /**
  * 备料单明细
  * @ClassName: SysMaterialspreparedetailAdminController
@@ -147,5 +150,11 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 //			kv.set("cmodocno",cmodocno== null ? "" : cmodocno);
 //			renderJsonData(service.getchooseM(kv));
 //		}
+	}
+
+	@Before(Tx.class)
+	public void submitAll() {
+		String map1 = get("data");
+		renderJson(service.submitByJBoltTable(map1));
 	}
 }

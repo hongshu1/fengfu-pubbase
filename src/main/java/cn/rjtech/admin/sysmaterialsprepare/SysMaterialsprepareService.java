@@ -197,6 +197,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             MoDoc modoc = moDocS.findFirst("select * from Mo_MoDoc where iAutoId=?", id);
             sysMaterialsprepare.setSourceBillID(id);
             sysMaterialsprepare.setSourceBillNo(modoc.getCMoDocNo());
+            sysMaterialsprepare.setBillType("自动作成");
             sysMaterialsprepare.setOrganizeCode(getOrgCode());
             sysMaterialsprepare.setCcreatename(user.getName());
             sysMaterialsprepare.setDcreatetime(now);
@@ -239,7 +240,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             sysMaterialspreparedetail.setNum(BigDecimal.valueOf(0));
             sysMaterialspreparedetail.setQty(records.get(i).getBigDecimal("Qty"));
             sysMaterialspreparedetail.setPackRate(records.get(i).getBigDecimal("PackRate"));
-//            sysMaterialspreparedetail.setSourceBillType()
+//            sysMaterialspreparedetail.setSourceBillType();
 //            sysMaterialspreparedetail.setSourceBillNo()
 //            sysMaterialspreparedetail.setSourceBillNoRow()
 //            sysMaterialspreparedetail.setSourceBillID()

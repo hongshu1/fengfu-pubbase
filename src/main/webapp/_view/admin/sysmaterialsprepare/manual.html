@@ -5,8 +5,8 @@
     <div class="card" style="margin-bottom: 5px">
       <div class="card-body">
         <div class="col">
-          <button onclick="submitThisForm()"
-                  class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存
+          <button
+                  class="btn btn-success btn-sm" id="btn1"><i class="fa fa-refresh"></i> 保存
           </button>
           <button onclick="closeHandler()"
                   class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭
@@ -166,6 +166,11 @@
       </div>
     </div>
 
+    <button onclick="submitThisFormtest()"
+            class="btn btn-success btn-sm" hidden="hidden" id="btn2"><i class="fa fa-refresh"></i> 保存
+    </button>
+
+
 
     <div class="card" style="margin-bottom: 5px">
     <div class="card-body">
@@ -201,6 +206,7 @@
 </td>
   <td>${data.cwhname}</td>
   <td>${data.cpositionname}</td>
+  <td>${data.barcode}</td>
 <td>
 	<a type="button" onclick="DElete(this)" style="user-select:none"  ><i class="fa c-danger">移除</i></a>
 </td>
@@ -235,6 +241,7 @@
     <th data-width="150" data-column="">计划数量</th>
     <th data-width="200" data-column="cwhname">仓库名称</th>
     <th data-width="150" data-column="cpositionname">库区名称</th>
+    <th data-width="150" data-column="barcode"  id="barcodes">条码</th>
     <th data-width="150" data-column="">操作</th>
   </tr>
   </thead>
@@ -255,6 +262,38 @@
     var oParent = val.parentNode.parentNode;
     oParent.parentNode.removeChild(oParent);
   }
+  
+  function submitThisFormtest() {
+    var mytable = document.getElementById("manual");
+    var map1 = [];
+    // for(var i=0,rows=mytable.rows.length; i<rows; i++){
+    //   for(var j=0,cells=mytable.rows[i].cells.length; j<cells; j++){
+    //     if(!data[i]){
+    //       data[i] = new Array();
+    //     }
+    //     data[i][j] = mytable.rows[i].cells[j].innerHTML;
+    //   }
+    // }
+    map1[0]="id"+":"+"#(cmodocno??)";
+    for (var i=1,rows=mytable.rows.length;i<rows; i++){
+      map1[i]=mytable.rows[i].cells[9].innerHTML+":"+mytable.rows[i].cells[6].children[0].value;
+    }
+
+    // return data;
+    Ajax.post("admin/sysMaterialspreparedetail/submitAll", {"data":map1.toString()},
+            function (res) {
+      alert("保存成功");
+            }, function (err) {
+            });
+
+  }
+
+  const BTN1 = document.getElementById('btn1');
+  const BTN2 = document.getElementById('btn2');
+  // 给按钮 2 添加点击事件
+  BTN1.addEventListener('click', () => {
+    BTN2.onclick();
+  });
 
 
 </script>

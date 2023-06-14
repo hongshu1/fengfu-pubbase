@@ -4,6 +4,7 @@ SELECT
     mp.AutoID,
     mp.BillNo,
     mp.SourceBillNo,
+    mp.BillType,
     dm.cDepName,
     wsm.cWorkShiftName,
     md.dPlanDate,
@@ -431,7 +432,8 @@ SELECT
     it.cInvStd,
     uom.cUomName,
     wh.cWhName,
-    wp.cPositionName
+    wp.cPositionName,
+    sbp.Barcode
 FROM
     Mo_MoRoutingInvc mri
         LEFT JOIN Bd_Inventory it ON mri.iInventoryId= it.iAutoId
@@ -470,6 +472,29 @@ FROM
 WHERE 1=1
   AND  md.iAutoId='#(imodocid)'
 #end
+
+
+#sql("test1")
+SELECT
+    iri.iInventoryId,
+    it.cInvCode,
+    iri.iUsageUOM,
+    iri.iUsageUOM * md.iQty AS planIqty,
+    sbp.Barcode,
+    sbp.Qty,
+    sbp.PosCode,
+    sbp.PackRate
+FROM
+    Mo_MoRoutingInvc iri
+        LEFT JOIN Bd_Inventory it ON iri.iInventoryId= it.iAutoId
+        LEFT JOIN Mo_MoRoutingConfig irc ON iri.iMoRoutingConfigId= irc.iAutoId
+        LEFT JOIN Mo_MoRouting ir ON irc.iMoRoutingId= ir.iAutoId
+        LEFT JOIN Mo_MoDoc md ON ir.iMoDocId= md.iAutoId
+        LEFT JOIN T_Sys_StockBarcodePosition sbp ON sbp.InvCode= it.cInvCode
+WHERE 1=1
+  AND  md.cMoDocNo='#(cmodocno)'
+  AND  sbp.Barcode='#(barcode)'
+    #end
 
 
 

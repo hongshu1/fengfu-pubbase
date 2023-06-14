@@ -120,7 +120,6 @@
             for (i=0;i<barcodes.length;i++){
                 Ajax.post("admin/sysMaterialspreparedetail/choosemtool", {"cmodocno": $(cmo).val(), "barcodes": barcodes[i]},
                     function (res) {
-                        console.log(res.data);
                         jboltTableInsertRow(window.parent.getJBoltTable("manual"), res.data, false, false, false);
                     }, function (err) {
                     });
