@@ -36,6 +36,7 @@ SELECT DISTINCT
 	doc.iMonth,
 	doc.iDate,
 	wm.cWorkShiftName,
+	wm.cWorkShiftCode,
 	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) YearToDate
 FROM
 	Mo_MoDoc doc
@@ -144,7 +145,7 @@ FROM
 	LEFT JOIN Bd_WorkShiftM shiftm ON doc.iWorkShiftMid= shiftm.iAutoId
 WHERE
 	doc.iMoTaskId=#(taskid) and doc.iInventoryId=#(iinventoryid) and doc.iWorkRegionMid=#(iworkregionmid)
-ORDER BY shiftm.cWorkShiftCode ASC
+ORDER BY dates ASC
 #end
 
 #sql("getModocAllDatasByTaskid")
