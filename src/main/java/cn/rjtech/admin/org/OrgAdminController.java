@@ -28,13 +28,13 @@ import com.jfinal.kit.Okv;
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/org", viewPath = "/_view/admin/org")
 public class OrgAdminController extends BaseAdminController {
-    
+
+    @Inject
+    private OrgService service;
     @Inject
     private JBoltOrgService services;
     @Inject
     private UserOrgService userOrgService;
-    @Inject
-    private OrgService service;
 
     /**
      * 登陆页面下拉框列表

@@ -1,6 +1,6 @@
 package cn.rjtech.u8.constants;
 
-import cn.jbolt.core.base.config.JBoltConfig;
+import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.rjtech.u8.pojo.req.purchaseapp.PurchaseAppReq;
 import cn.rjtech.u8.pojo.req.purchaseorder.PurchaseorderReq;
 import cn.rjtech.util.xml.JaxbUtil;
@@ -22,22 +22,6 @@ public class U8ApiConstants {
 
     public static final String UF_INTERFACE = "ufinterface";
     public static final String ITEM = "item";
-    public static final String U8_KEY = "u8key";
-
-    public static final String USERNAME = "demo";
-
-    /**
-     * U8 API 访问地址
-     */
-    static String BASE = JBoltConfig.prop.get("u8.api.url");
-    /**
-     * 成品入库
-     */
-    public static String PRODUCT_IN_ADD_URL = BASE + "/StockAPI.asmx/ProductInAdd";
-    /**
-     * 材料出库
-     */
-    public static String MATERIAL_OUT_ADD_URL = BASE + "/StockAPI.asmx/MaterialOutAdd";
 
     private U8ApiConstants() {
     }
@@ -47,10 +31,8 @@ public class U8ApiConstants {
     /**
      * U8接口请求地址参数
      */
-    public static final String U8_URL = JBoltConfig.prop.get("u8.service.url") + "/api/moorder/PostMOData";
-
     public static String getU8ServiceUrl(String orgCode) {
-        return String.format("%s?accId=%s", U8_URL, orgCode);
+        return String.format("http://%s/api/moorder/PostMOData?accId=%s", U8DataSourceKit.ME.getU8ApiUrl(orgCode), orgCode);
     }
 
     /**
