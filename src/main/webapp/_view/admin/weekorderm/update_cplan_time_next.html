@@ -64,12 +64,15 @@
 
     // 插入修改数据
     $(function () {
+/*            hideParentLayerDialogBtn(0);
+        addParentLayerDialogBtn("确定","lay_success",function(data){*/
         var params = JSON.stringify(parent.datas);
         $.getJSON("admin/weekorderm/updateCplanTimeDatas", {"params": params}, function (res) {
             // 插入默认数据
             jboltTableInsertRow("update_cplan_time_next_jbolt_table_#(pageId)", res.data.list);
         });
     });
+/*    });*/
 
     // 可编辑表单
     //获得配置参数
