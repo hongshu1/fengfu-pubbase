@@ -243,3 +243,11 @@ and m.corderno=#para(sourcebillno)
 and d.iInventoryId=#para(iInventoryId)
 #end
 #end
+
+#sql("findU8UserByUserCode")
+select u.* from UFDATA_001_2023.dbo.V_Sys_User u where u.userCode = #para(usercode)
+#end
+
+#sql("findU8RdRecord01Id")
+select r.* from UFDATA_001_2023.dbo.RdRecord01 r where r.cCode = #para(cCode)
+#end
