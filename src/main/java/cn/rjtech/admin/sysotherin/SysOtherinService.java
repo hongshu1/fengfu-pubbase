@@ -13,9 +13,8 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.Person;
-import cn.rjtech.model.momdata.SysOtherin;
-import cn.rjtech.model.momdata.SysOtherindetail;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -372,6 +371,79 @@ public class SysOtherinService extends BaseService<SysOtherin> {
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // 更新状态
+
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 审核通过
+     */
+    public Ret process(String ids) {
+        tx(() -> {
+            this.check(ids);
+            String[] split = ids.split(",");
+            for (String s : split) {
+                SysOtherin byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+                byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                byId.update();
+            }
+            //业务逻辑
+            this.passage(ids);
+            return true;
+        });
+        return SUCCESS;
+    }
+
+
+
+
+    public void check(String ids) {
+        String[] split = ids.split(",");
+        for (String p : split) {
+            List<SysOtherin> sysOtherins = find("select *  from T_Sys_ProductIn where AutoID in (" + p + ")");
+            for (SysOtherin s : sysOtherins) {
+                if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据未提交审核或审批！！");
+                }
+                if ("2".equals(String.valueOf(s.getIAuditStatus())) || "3".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "流程已结束！！");
+                }
+            }
+        }
+    }
+
+
+    //推u8
+    public void passage(String ids){
+        String[] split = ids.split(",");
+        for (String s : split) {
+            SysOtherin sysOtherin = findFirst("select *  from T_Sys_ProductIn where AutoID in (" + s + ")");
+            List<SysOtherindetail> sysOtherindetails = sysotherindetailservice.find("select *  from T_Sys_ProductIn where AutoID in (" + sysOtherin.getAutoID() + ")");
+            // 测试调用接口
+            System.out.println("```````````````````````````````"+ new Date());
+            Ret ret = pushU8(sysOtherin, sysOtherindetails);
+            System.out.println(new Date()+"```````````````````````````````"+ret);
+        }
+
+    }
+
+
+    /**
+     * 批量反审核
+     */
+    public Ret noProcess(String ids) {
+        tx(() -> {
+            //反审，调用删除U8数据接口
+            String[] split = ids.split(",");
+            for (String s : split) {
+                SysOtherin byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+                byId.setIAuditWay(null);
+                byId.update();
+            }
 
             return true;
         });
