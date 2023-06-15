@@ -4,10 +4,6 @@ import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.hiprint.HiprintTplService;
 
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.common.model.HiprintTpl;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.bean.JBoltDateRange;
-import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -16,9 +12,7 @@ import cn.rjtech.util.ValidationUtils;
 
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 
