@@ -243,8 +243,14 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         }
 
         // 质检表格ID
-        if(null != barcode && null != barcode.getStr("iautoid")){
-            rcvDocQcFormM.setIQcFormId(barcode.getLong("iautoid"));
+        if(null != barcode && null != barcode.getStr("cinvcode")){
+            Record iq = dbTemplate("syspureceive.InventoryQcForm", Kv.by("cinvcode", barcode.getStr("cinvcode"))).findFirst();
+            if(null != iq && null != iq.getLong("iautoid")) {
+                rcvDocQcFormM.setIQcFormId(iq.getLong("iautoid"));
+                rcvDocQcFormM.setIStatus(1);
+            }
+        }else {
+            rcvDocQcFormM.setIStatus(0);
         }
         rcvDocQcFormM.setIRcvDocId(Long.valueOf(sys.getAutoID()));
         rcvDocQcFormM.setCRcvDocNo(sys.getBillNo());
@@ -255,7 +261,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         // 批次号(收货日期)
         rcvDocQcFormM.setCBatchNo(formatter.format(sys.getDcreatetime()));
-        rcvDocQcFormM.setIStatus(0);
         rcvDocQcFormM.setIsCpkSigned(false);
         rcvDocQcFormM.setIMask(imask);
         rcvDocQcFormM.setIsCpkSigned(false);
@@ -321,13 +326,13 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         List<Record> list = jBoltTable.getSaveRecordList();
         if(null != list) {
             for (Record record : list) {
-                ValidationUtils.isTrue(!this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
+                ValidationUtils.isTrue(this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
             }
         }
         List<Record> list1 = jBoltTable.getUpdateRecordList();
         if(null != list1) {
             for (Record record : list1) {
-                ValidationUtils.isTrue(!this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
+                ValidationUtils.isTrue(this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
             }
         }
 
@@ -784,8 +789,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         for (String p : split) {
             List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
             for (SysPureceive s : sysPureceives) {
-                if (!"2".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，不是审批通过状态！！");
+                if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！");
+                }
+                if ("1".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！");
                 }
                 //查出从表
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.getAutoID());

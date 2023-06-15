@@ -43,7 +43,7 @@
                            class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
                 {@/if}
                 {@if data.iauditstatus != '0'}
-                       	<a href="admin/otherInList/edit/${data.autoid}" data-area="100%,100%" tooltip data-title="查看"
+                       	<a href="admin/otherInList/edit?autoid=${data.autoid}" data-area="100%,100%" tooltip data-title="查看"
                            data-handler="refreshJBoltTable" data-dialog-title="查看其它入库单" class="jbolt_table_editbtn"><i
                                 class="fa fa-edit"></i>查看</a>
                 {@/if}

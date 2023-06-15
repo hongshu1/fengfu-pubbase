@@ -1074,6 +1074,10 @@ public class PermissionKey {
 	 */
 	public static final String BARCODE_REPORT = "barcode_report";
 	/**
+	 * 物料现品票汇总管理
+	 */
+	public static final String INVENTORY_BARCODE_TRACEPAGE = "Inventory_barcode_tracepage";
+	/**
 	 * 仓库报表
 	 */
 	public static final String WAREHOUSE_REPORT = "warehouse_report";

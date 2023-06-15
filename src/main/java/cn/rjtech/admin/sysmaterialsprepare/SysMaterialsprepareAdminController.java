@@ -156,6 +156,10 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
         Inventory inventory = invent.findFirst("select *   from Bd_Inventory where iAutoId=?", modoc.getIInventoryId());
         EquipmentModel equipmentModel = equipmentModelService.findFirst("select *   from Bd_EquipmentModel where iAutoId=?", inventory.getIEquipmentModelId());
         Workshiftm workshiftm = workshiftmService.findFirst("select *   from Bd_WorkShiftM where iAutoId=?", modoc.getIWorkShiftMid());
+        Workregionm workregionm = workregionmService.findFirst("select *   from Bd_WorkRegionM where iAutoId=?", modoc.getIWorkRegionMid());
+        if (null != workregionm && null != workregionm.getCWorkName()) {
+            set("cworkname", workregionm.getCWorkName());
+        }
         if (null != modoc && null != modoc.getCMoDocNo()) {
             set("cmodocno", modoc.getCMoDocNo());
         }
@@ -174,6 +178,9 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
         if (null != inventory && null != inventory.getCInvCode1()) {
             set("cinvcode1", inventory.getCInvCode1());
         }
+        if (null != inventory && null != inventory.getCInvCode()) {
+            set("cinvcode", inventory.getCInvCode());
+        }
         if (null != inventory && null != inventory.getCInvName1()) {
             set("cinvname1", inventory.getCInvName1());
         }
@@ -185,9 +192,9 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void manualDatas() {
-        String billno = get("billno");
+        String cmodocno = get("cmodocno");
         Kv kv = new Kv();
-        kv.set("billno", billno == null ? "" : billno);
+        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
         renderJsonData(service.getManualdatas(getPageNumber(), getPageSize(), kv));
     }
 
@@ -288,15 +295,15 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void MaterialsListchoose() {
-        String billno = get("billno");
-        set("billnoo",billno);
+        String cmodocno = get("cmodocno");
+        set("cmodocno",cmodocno);
         render("chooseMaterials.html");
     }
 
     public void getManualAdddatas() {
-        String billno = get("billno");
+        String cmodocno = get("cmodocno");
         Kv kv = new Kv();
-        kv.set("billno", billno == null ? "" : billno);
+        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
         renderJsonData(service.getgetManualAdddatas(getPageNumber(), getPageSize(), kv));
     }
 }

@@ -79,7 +79,7 @@
                     <button type="button"
                             class="btn btn-outline-secondary" id="reSet1"><i class="fa fa-reply-all"></i> 重置
                     </button>
-                    <button type="button" class="btn btn-outline-secondary" id="sumitMaterials1"> 提交备料
+                    <button type="button" class="btn btn-outline-secondary" id="sumitMaterials1" onclick="go()"> 提交备料
                     </button>
                 </div>
             </div>
@@ -108,12 +108,14 @@
 <td>${data.cinvname1}</td>
 <td>${data.cinvstd}</td>
 <td>${data.cuomname}</td>
-<td>${data.出库仓库}</td>
-<td>${data.出库库区}</td>
+<td>${data.cwhname}</td>
+<td>${data.cpositionname}</td>
 <td>${data.qty}</td>
-<td>${data.已备料数量}</td>
-<td>${data.剩余备料数量}</td>
+<td>${data.num}</td>
+<td name="scanqty">0</td>
 <td>${data.可用批次号}</td>
+<td name="barcodeCols" hidden:"hidden">${data.barcode}</td>
+<td name="mpid" hidden:"hidden">${data.autoid}</td>
 <!--<td>-->
 <!--	<a class="jbolt_table_editbtn" href="admin/sysMaterialspreparedetail/edit/${data.AutoID}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑备料单明细"><i class="fa fa-edit"></i></a>-->
 <!--	<a class="jbolt_table_delbtn" href="admin/sysMaterialspreparedetail/delete/${data.AutoID}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>-->
@@ -173,21 +175,22 @@
                 <th data-width="150" data-column="">备料单号</th>
                 <th data-width="200" data-column="">工单号</th>
                 <th data-width="150" data-column="">存货编码</th>
-                <th data-width="150" data-column="">客户部番</th>
-                <th data-width="150" data-column="">部品名称</th>
-                <th data-width="150" data-column="">规格</th>
-                <th data-width="150" data-column="">主计量单位</th>
-                <th data-width="150" data-column="">出库仓库</th>
+                <th data-width="200" data-column="">客户部番</th>
+                <th data-width="250" data-column="">部品名称</th>
+                <th data-width="200" data-column="">规格</th>
+                <th data-width="100" data-column="">主计量单位</th>
+                <th data-width="200" data-column="">出库仓库</th>
                 <th data-width="150" data-column="">出库库区</th>
-                <th data-width="150" data-column="">需求数量</th>
+                <th data-width="150" data-column="">需求计划数量</th>
                 <th data-width="150" data-column="">已备料数量</th>
                 <th data-width="150" data-column="">扫描数量</th>
                 <th data-width="150" data-column="">可用批次号</th>
+                <th data-width="150" data-column="" hidden="hidden">条码</th>
+                <th data-width="150" data-column="" hidden="hidden">mpid</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table>
-
 
         <div style="margin-top: 10px">
         <textarea class="jb_tpl_box" id="SysMaterialsprepare1_tpl_#(pageId)">
@@ -199,8 +202,8 @@
 <td>${data.cinvcode1}</td>
 <td>${data.cinvname1}</td>
 <td>${data.cinvstd}</td>
-<td>${data.iinventoryuomid1}</td>
-<td>${data.qty}</td>
+<td>${data.cuomname}</td>
+<td name="QTY1">${data.qty}</td>
 <td>${data.batch}</td>
 <td>${data.生产日期}</td>
 </tr>
@@ -230,6 +233,7 @@
                    data-page="SysMaterialsprepare_page"
                    data-toolbar="SysMaterialsprepare1_toolbar_#(pageId)"
                    id="jbolt_Table_#(pageId)"
+                   data-editable="true"
             >
                 <thead class="fw-normal">
                 <tr>
@@ -237,12 +241,12 @@
                     <th data-width="150" data-column="barcode">现品票</th>
                     <th data-width="150" data-column="cinvcode">存货编码</th>
                     <th data-width="150" data-column="cinvcode1">客户部番</th>
-                    <th data-width="150" data-column="cinvname1">部品名称</th>
+                    <th data-min-width="300" data-column="cinvname1">部品名称</th>
                     <th data-width="150" data-column="cinvstd">规格</th>
                     <th data-width="150" data-column="iinventoryuomid1">主计量单位</th>
-                    <th data-width="150" data-column="invcode">数量</th>
-                    <th data-min-width="150" data-column="qww">批次号</th>
-                    <th data-width="150" data-column="ewe">生产日期</th>
+                    <th data-width="150" data-column="qty">数量</th>
+                    <th data-width="150" data-column="batch">批次号</th>
+                    <th data-width="150" data-column="生产日期">生产日期</th>
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -257,7 +261,7 @@
 
 
     function barcode() {
-        LayerMsgBox.loading("执行中......", 2000);
+        LayerMsgBox.loading("查询中......", 500);
         var barcode = $("#barcode").val();
         var data = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
         let array = new Array();
@@ -278,8 +282,17 @@
         if (barcode) {
             Ajax.post("admin/sysMaterialspreparedetail/barcode", {"barcode": barcode},
                 function (res) {
-                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
+                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, false, false);
                     $("#barcode").val('');
+                    var mytable = document.getElementById("MaterialsDetail");
+                    for (var i=1,rows=mytable.rows.length;i<rows; i++){
+                        // map1[i-1]=mytable.rows[i].cells[14].innerHTML
+                        if (document.getElementsByName("barcodeCols")[i-1].innerText == barcode){
+                            document.getElementsByName("scanqty")[i-1].innerText = (parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[i].innerText==""?0:document.getElementsByName("scanqty")[i].innerText)).toString();
+                        }
+                    }
+
+
                 }, function (err) {
                 })
         } else {
@@ -293,21 +306,41 @@
     const BTN3 = document.getElementById('sumitMaterials');
     const BTN4 = document.getElementById('suBmit1');
     const BTN5 = document.getElementById('reSet1');
-    const BTN6 = document.getElementById('sumitMaterials1');
+    // const BTN6 = document.getElementById('sumitMaterials1');
     // 给按钮 2 添加点击事件
     BTN5.addEventListener('click', () => {
         BTN2.onclick(); // 按钮 2 点击后触发按钮 1 的 `onclick`
         // BTN1.click(); // 按钮 2 点击后触发按钮 1 的 `click`，效果一样
     });
-    BTN6.addEventListener('click', () => {
-        BTN3.onclick(); // 按钮 2 点击后触发按钮 1 的 `onclick`
-        // BTN1.click(); // 按钮 2 点击后触发按钮 1 的 `click`，效果一样
-    });
+    // BTN6.addEventListener('click', () => {
+    //     BTN3.onclick(); // 按钮 2 点击后触发按钮 1 的 `onclick`
+    //     // BTN1.click(); // 按钮 2 点击后触发按钮 1 的 `click`，效果一样
+    // });
 
+    function myCreateFunction() {
+        var table = document.getElementById("test1");
+        var row = table.insertRow(0);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        cell1.innerHTML = "NEW CELL1";
+        cell2.innerHTML = "NEW CELL2";
+    }
 
+    function go(){
+        var mytable = document.getElementById("MaterialsDetail");
+        var map1 = [];
+        map1[0]="id"+":"+"id";
+        for (var i=1,rows=mytable.rows.length;i<rows; i++){
+            map1[i]=mytable.rows[i].cells[15].innerHTML+":"+document.getElementsByName("scanqty")[i-1].innerText+":"+document.getElementsByName("barcodeCols")[i-1].innerText;
+        }
 
+        Ajax.post("admin/sysMaterialspreparedetail/go", {"data":map1.toString()},
+            function (res) {
+                console.log("保存成功");
+            }, function (err) {
+            });
 
-
+    }
 
 
 </script>

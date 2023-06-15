@@ -349,7 +349,7 @@ order by o.iAutoId DESC
 
 
 #sql("InventoryQcForm")
-SELECT  qc.iAutoId,qc.cQcFormName,
+SELECT  t1.iAutoId,qc.cQcFormName,
 inv.cInvCode, inv.cInvCode1, inv.cInvName, inv.cInvName1, inv.cInvStd, uom.cUomName,
 t2.cEquipmentModelName as machineName
 FROM Bd_InventoryQcForm t1
