@@ -21,6 +21,8 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Optional;
+
 /**
  * 其它入库单
  * @ClassName: SysOtherinAdminController
@@ -78,7 +80,7 @@ public class SysOtherinAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        SysOtherin sysOtherin = service.findById(getLong(0));
+        SysOtherin sysOtherin = service.findById(getLong("autoid"));
         if (sysOtherin == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -101,6 +103,7 @@ public class SysOtherinAdminController extends BaseAdminController {
                 set("venname", first2.getCVenName());
             }
         }
+        set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
         set("sysotherin", sysOtherin);
         render("edit.html");
     }

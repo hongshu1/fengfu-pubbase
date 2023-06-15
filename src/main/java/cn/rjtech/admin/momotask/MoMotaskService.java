@@ -502,8 +502,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
     Record record4 = new Record();
     record4.set("idutypersonid", " ");
     record4.set("cpsn_name", " ");
-
-    for (int qty = 0; qty < (records.size() + 3); qty++) {
+    int recordssize = records.size() + 3;
+    for (int qty = 0; qty < recordssize; qty++) {
       if (qty < records.size()) {
         List<Record> records1 = dbTemplate("modocbatch.getModocDateShiftDatas", kv.set("iinventoryid",
             records.get(qty).getStr("iinventoryid")).set("iworkregionmid", records.get(qty).getStr("iworkregionmid"))).find();
