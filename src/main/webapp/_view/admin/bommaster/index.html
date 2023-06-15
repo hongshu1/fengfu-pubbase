@@ -53,7 +53,14 @@
 
 #define js()
 <script type="text/javascript">
-
+	function myLink1(event) {
+		event.stopPropagation(); // 阻止事件冒泡
+		return false;
+	};
+	function myLink2(event) {
+		event.stopPropagation(); // 阻止事件冒泡
+		return false;
+	};
 	initTreehandler('');
 
 	function bommaster_jstree(tree, data){
