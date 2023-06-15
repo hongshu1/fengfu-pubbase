@@ -13,7 +13,7 @@
                         ### formSn:             表单名
                         ### o:                  当前表单对象名
                         ### primaryKeyName:     主键名
-                        ###include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
+                        ###include("/_view/_common/_approval_btns.html", uri="/admin/materialReceiptList", formSn="T_Sys_PUReceive", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
 
                         #include("/_view/_common/_approval_btns.html", uri="/admin/materialReceiptList", formSn="T_Sys_PUReceive", o=sysPureceive, edit=edit??, primaryKeyName="AutoID")
                         #end
@@ -308,6 +308,7 @@
         $("#operationType").val("submit");
         jboltTableSubmit("#jbolt_Table_#(pageId)");
         $("#operationType").val();
+        return true;
     }
 
     function getJBoltTableEditableColsOpton() {

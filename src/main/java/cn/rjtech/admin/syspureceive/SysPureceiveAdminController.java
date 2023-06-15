@@ -24,9 +24,11 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.swing.text.html.Option;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 采购收料单
@@ -82,8 +84,8 @@ public class SysPureceiveAdminController extends BaseAdminController {
     /**
      * 编辑
      */
-    public void edit() {
-        SysPureceive sysPureceive = service.findById(getLong(0));
+    public void edit(@Para(value = "autoid") String autoid) {
+        SysPureceive sysPureceive = service.findById(autoid);
         if (sysPureceive == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -103,7 +105,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
         if (null != sysPureceive.getIcreateby()) {
             set("username", sysenumerationservice.getUserName(sysPureceive.getIcreateby()));
         }
-
+        set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
         set("sysPureceive", sysPureceive);
         render("edit.html");
     }
@@ -140,7 +142,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
      * 新增-可编辑表格-批量提交
      */
     public void submitAll() {
-        renderJson(service.submit(getJBoltTable(), JBoltUserKit.getUser()));
+        renderJson(service.submitAll(getJBoltTable(), JBoltUserKit.getUser()));
     }
 
     /**

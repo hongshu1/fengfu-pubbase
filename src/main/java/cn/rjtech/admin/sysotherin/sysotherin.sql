@@ -62,6 +62,6 @@ where 1=1
 #if(masid)
     and a.MasID = #para(masid)
 #end
-    order by a.ModifyDate desc
+    order by a.dupdatetime desc
 #end
 
