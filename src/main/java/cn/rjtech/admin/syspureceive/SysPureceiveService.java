@@ -301,7 +301,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
      */
     public boolean existSourcebillno(String sourcebillno) {
         List<Record> records = dbTemplate(u8SourceConfigName(), "syspureceive.getsourcebillno",
-                Kv.by("mesbillno", sourcebillno)).find();
+                Kv.by("sourcebillno", sourcebillno)).find();
         return CollUtil.isNotEmpty(records);
     }
 
