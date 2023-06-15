@@ -1,40 +1,22 @@
 <div class="jbolt_page_title" id="indexFrom2">
-<div class="row">
+<div class="row" id="row2">
 	<!--<div class="col">-->
 	<form class="form-inline" id="FormExtendFields_form_#(pageId)2">
-		<div class="col">
-			<!--<h8>基础档案名称：</h8>-->
-<!--<select class="form-control" name="iFormId"-->
-	<!--data-autoload-->
-	<!--data-url="admin/permission/optionsFormId"-->
-	<!--data-select-type="select"-->
-	<!--data-text="=系统表单ID="-->
-		<!--data-text-attr="title"-->
-		<!--data-value-attr="id"-->
-	<!--&gt;</select>-->
-			<h8>单据档案名称：</h8>
+		<div class="col" id="col2">
+			<!--<h8>单据档案名称：</h8>-->
 <select class="form-control" name="iFormFieldId"
-	data-autoload
+		data-autoload
 	data-url="admin/permission/optionsFormFieldId"
 	data-select-type="select"
 	data-text="=系统字段ID="
 		data-text-attr="title"
 		data-value-attr="id"
 	></select>
-<!--<select class="form-control" name="cFieldCode"-->
-	<!--data-autoload-->
-	<!--data-url="admin/dictionary/options?key=null"-->
-	<!--data-select-type="select"-->
-	<!--data-text="=系统字段编码="-->
-	<!--data-value=""-->
-	<!--&gt;</select>-->
-		<h8>字段名称：</h8>
+		<!--<h8>字段名称：</h8>-->
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="=字段名称=" name="keywords" value="" />
-
 		<!--<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入系统字段名称" maxlength="40" name="cFieldName" />-->
 		<div class="btn-group text-center mx-1">
 			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
-
 			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
 		</div>
 		</div>
@@ -42,12 +24,11 @@
 	<!--</div>-->
 </div>
 </div>
-<div class="jbolt_page_content" id="index2">
+<div class="jbolt_page_content" id="pageContent2">
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="FormExtendFields_tpl_#(pageId)b">
 {@each datas as data,index}
 <tr data-id="${data.iAutoId}">
-		{@if data.iformidname == null}
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	<a class="jbolt_table_editbtn" data-btn="no" href="admin/formExtendFields/editForm/${data.iautoid}" data-handler="refreshJBoltTable" data-area="80%,90%" data-title="编辑系统管理-拓展字段配置表"><i class=""></i>编辑02</a>
@@ -69,7 +50,6 @@
 <td>${data.isourceval}</td>
 <td>${data.idigit}</td>
 <td>${data.cflowformids}</td>
-			{@/if}
 </tr>
 {@/each}
 </textarea>
@@ -82,12 +62,13 @@
 </div>
 </div>
 <table class="jbolt_table jbolt_main_table  table-center "
+	   id="FormExtendFields_form2"
 	   data-jbolttable
 	   data-width="auto"
 	   data-height="fill"
 	   data-ajax="true"
 	   data-conditions-form="FormExtendFields_form_#(pageId)2"
-	   data-url="admin/formExtendFields/datas"
+	   data-url="admin/formExtendFields/datas?ifform=0"
 	   data-rowtpl="FormExtendFields_tpl_#(pageId)b"
 	   data-copy-to-excel="false"
 	   data-page="FormExtendFields_page"

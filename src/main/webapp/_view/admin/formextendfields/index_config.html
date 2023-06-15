@@ -1,9 +1,9 @@
 <div class="jbolt_page_title" id="indexFrom1">
-<div class="row">
+<div class="row" id="row1">
 	<!--<div class="col">-->
 	<form class="form-inline" id="FormExtendFields_form_#(pageId)">
-		<div class="col">
-			<h8>基础档案名称：</h8>
+		<div class="col" id="col1">
+			<!--<label class="col-sm-3 col-form-label">基础档案名称：</label>-->
 <select class="form-control" name="iFormId"
 	data-autoload
 	data-url="admin/permission/optionsFormId"
@@ -28,9 +28,8 @@
 	<!--data-text="=系统字段编码="-->
 	<!--data-value=""-->
 	<!--&gt;</select>-->
-		<h8>字段名称：</h8>
+		<!--<h8>字段名称：</h8>-->
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="=字段名称=" name="keywords" value="" />
-
 		<!--<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入系统字段名称" maxlength="40" name="cFieldName" />-->
 		<div class="btn-group text-center mx-1">
 			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
@@ -42,12 +41,11 @@
 	<!--</div>-->
 </div>
 </div>
-<div class="jbolt_page_content">
+<div class="jbolt_page_content" id="pageContent1">
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="FormExtendFields_tpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.iAutoId}" id="indextr1">
-		{@if data.iformfieldidname == null}
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	<a class="jbolt_table_editbtn" data-btn="no" href="admin/formExtendFields/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="80%,90%" data-title="编辑系统管理-拓展字段配置表"><i class=""></i>编辑</a>
@@ -70,7 +68,6 @@
 <td>${data.isourceval}</td>
 <td>${data.idigit}</td>
 <td>${data.cflowformids}</td>
-		{@/if}
 </tr>
 {@/each}
 </textarea>
@@ -86,11 +83,12 @@
 </div>
 <table class="jbolt_table jbolt_main_table  table-center "
 	   data-jbolttable
+	   id="FormExtendFields_form1"
 	   data-width="auto"
 	   data-height="fill"
 	   data-ajax="true"
 	   data-conditions-form="FormExtendFields_form_#(pageId)"
-	   data-url="admin/formExtendFields/datas"
+	   data-url="admin/formExtendFields/datas?ifform=1"
 	   data-rowtpl="FormExtendFields_tpl_#(pageId)"
 	   data-copy-to-excel="false"
 	   data-page="FormExtendFields_page"

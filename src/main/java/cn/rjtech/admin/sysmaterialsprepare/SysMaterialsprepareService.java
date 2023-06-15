@@ -189,19 +189,21 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
 
     public Ret submitByJBoltTable(Long id) {
         SysMaterialsprepare sysMaterialsprepare = new SysMaterialsprepare();
-        MoDoc modoc = moDocS.findFirst("select * from Mo_MoDoc where iAutoId=?", id);
-        sysMaterialsprepare.setSourceBillID(id);
-        sysMaterialsprepare.setSourceBillNo(modoc.getCMoDocNo());
         //获取当前用户信息？
         User user = JBoltUserKit.getUser();
         Date now = new Date();
         tx(() -> {
             //通过 id 判断是新增还是修改
+            MoDoc modoc = moDocS.findFirst("select * from Mo_MoDoc where iAutoId=?", id);
+            sysMaterialsprepare.setSourceBillID(id);
+            sysMaterialsprepare.setSourceBillNo(modoc.getCMoDocNo());
+            sysMaterialsprepare.setBillType("自动作成");
             sysMaterialsprepare.setOrganizeCode(getOrgCode());
-            sysMaterialsprepare.setCreatePerson(user.getName());
-            sysMaterialsprepare.setCreateDate(now);
+            sysMaterialsprepare.setCcreatename(user.getName());
+            sysMaterialsprepare.setDcreatetime(now);
+            sysMaterialsprepare.setIcreateby(user.getId());
+            sysMaterialsprepare.setBillDate(DateUtil.format(now, "yyyy-MM-dd HH:mm:ss"));
             sysMaterialsprepare.setBillNo("BL" + DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
-//		    sysMaterialsprepare.setState("1");
             //主表新增
             ValidationUtils.isTrue(sysMaterialsprepare.save(), ErrorMsg.SAVE_FAILED);
             //从表的操作
@@ -221,58 +223,37 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
     }
 
     private void saveTableSubmitDatas(SysMaterialsprepare sysMaterialsprepare, Long id) {
-        List<InventoryRoutingInvc> inventoryRoutingInvcs = inventoryroutinginvcservice.find(
-                "SELECT\n" +
-                        "\tiri.iAutoId,\n" +
-                        "\tiri.iInventoryRoutingConfigId,\n" +
-                        "\tiri.iInventoryId,\n" +
-                        "\tiri.iUsageUOM,\n" +
-                        "\tiri.cMemo,\n" +
-                        "\tiri.iCreateBy,\n" +
-                        "\tiri.cCreateName,\n" +
-                        "\tiri.dCreateTime \n" +
-                        "FROM\n" +
-                        "\tMo_MoDoc md\n" +
-                        "\tLEFT JOIN Bd_InventoryRouting ir ON md.iInventoryRouting = ir.iAutoId\n" +
-                        "\tLEFT JOIN Bd_InventoryRoutingConfig irc ON ir.iAutoId = irc.iInventoryRoutingId\n" +
-                        "\tLEFT JOIN Bd_InventoryRoutingInvc iri ON irc.iAutoId = iri.iInventoryRoutingConfigId\n" +
-                        "WHERE 1=1\n" +
-                        "\tAND md.iAutoId= ?", id);
-
-        if (CollUtil.isEmpty(inventoryRoutingInvcs)) return;
+        Kv kv = new Kv();
+        kv.set("imodocid", String.valueOf(id));
+        List<Record> records = dbTemplate("materialsprepare.test", kv).find();
+        if (CollUtil.isEmpty(records)) return;
         User user = JBoltUserKit.getUser();
         Date now = new Date();
         ArrayList<SysMaterialspreparedetail> sysMaterialspreparedetails = new ArrayList<>();
-        for (int i = 0; i < inventoryRoutingInvcs.size(); i++) {
-
-
-            Inventory inventory = invent.findById(inventoryRoutingInvcs.get(i).getIInventoryId());
-
-//            StockBarcodePosition stockbarcodeposition = stockbarcodepositionservice.findFirst("select * from T_Sys_StockBarcodePosition sbp where InvCode=?", inventory.getCInvCode());
-
+        for (int i = 0; i < records.size(); i++) {
             SysMaterialspreparedetail sysMaterialspreparedetail = new SysMaterialspreparedetail();
             sysMaterialspreparedetail.setMasID(Long.valueOf(sysMaterialsprepare.getAutoID()));
             sysMaterialspreparedetail.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
-            sysMaterialspreparedetail.setCreateDate(now);
-            sysMaterialspreparedetail.setModifyDate(now);
-            sysMaterialspreparedetail.setCreatePerson(user.getName());
-            sysMaterialspreparedetail.setModifyPerson(user.getName());
-            sysMaterialspreparedetail.setMemo(inventoryRoutingInvcs.get(i).getCMemo());
-            sysMaterialspreparedetail.setQty((inventoryRoutingInvcs.get(i).getIUsageUOM()).multiply(moDocS.findFirst("select * from Mo_MoDoc where iAutoId=?", id).getIQty()));
-//          sysMaterialspreparedetail.setInvCode(inventory.getCInvCode());
-//          sysMaterialspreparedetail.setBarcode(stockbarcodeposition.getBarcode());
-//          sysMaterialspreparedetail.setSourceBillNoRow(row.get("sourcebillnorow"));
-//			sysMaterialspreparedetail.setSourceType(row.getStr("sourcebilltype"));
-//          sysMaterialspreparedetail.setSourceBillNo(row.getStr("sourcebillno"));
-//          sysMaterialspreparedetail.setSourceBillDid(row.getStr("sourcebilldid"));
-//          sysMaterialspreparedetail.setSourceBillID(row.getStr("sourcebilldid"));
-//			sysMaterialspreparedetail.setAssemType(row.getStr("assemtype"));
-//			sysMaterialspreparedetail.setWhCode(row.getStr("whcode"));
-//          sysMaterialspreparedetail.setPosCode(row.getStr("poscode"));
-//			sysMaterialspreparedetail.setCombinationNo(Integer.valueOf(row.getStr("combinationno")==null ? "0" : row.getStr("combinationno")));
-//			sysMaterialspreparedetail.setRowNo(Integer.valueOf(row.getStr("rowno")==null ? "0" : row.getStr("rowno")));
-//			sysMaterialspreparedetail.setTrackType(row.getStr("tracktype"));
-
+            sysMaterialspreparedetail.setPosCode(records.get(i).getStr("PosCode"));
+            sysMaterialspreparedetail.setBarcode(records.get(i).getStr("Barcode"));
+            sysMaterialspreparedetail.setInvCode(records.get(i).getStr("cInvCode"));
+            sysMaterialspreparedetail.setNum(new BigDecimal(0));
+            sysMaterialspreparedetail.setQty(records.get(i).getBigDecimal("Qty"));
+            sysMaterialspreparedetail.setPackRate(records.get(i).getBigDecimal("PackRate"));
+//            sysMaterialspreparedetail.setSourceBillType();
+//            sysMaterialspreparedetail.setSourceBillNo()
+//            sysMaterialspreparedetail.setSourceBillNoRow()
+//            sysMaterialspreparedetail.setSourceBillID()
+//            sysMaterialspreparedetail.setSourceBillDid()
+//            sysMaterialspreparedetail.setMemo()
+            sysMaterialspreparedetail.setState(String.valueOf(0));
+            sysMaterialspreparedetail.setIsDeleted(false);
+            sysMaterialspreparedetail.setIcreateby(user.getId());
+            sysMaterialspreparedetail.setCcreatename(user.getName());
+            sysMaterialspreparedetail.setDcreatetime(now);
+//            sysMaterialspreparedetail.setIupdateby()
+//            sysMaterialspreparedetail.setCupdatename()
+//            sysMaterialspreparedetail.setDupdatetime()
             sysMaterialspreparedetails.add(sysMaterialspreparedetail);
         }
         sysmaterialspreparedetailservice.batchSave(sysMaterialspreparedetails);
@@ -288,8 +269,8 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             Record row = list.get(i);
             SysMaterialspreparedetail sysMaterialspreparedetail = new SysMaterialspreparedetail();
             sysMaterialspreparedetail.setMasID(Long.valueOf(sysMaterialsprepare.getAutoID()));
-            sysMaterialspreparedetail.setModifyDate(now);
-            sysMaterialspreparedetail.setModifyPerson(user.getName());
+//            sysMaterialspreparedetail.setModifyDate(now);
+//            sysMaterialspreparedetail.setModifyPerson(user.getName());
             sysMaterialspreparedetail.setBarcode(row.get("barcode"));
             sysMaterialspreparedetail.setSourceBillNoRow(row.get("sourcebillnorow"));
             sysMaterialspreparedetail.setQty(new BigDecimal(row.get("qty").toString()));
@@ -359,7 +340,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             jsonObject.set("barcode", s.getBarcode());
             jsonObject.set("invstd", "");
             jsonObject.set("invname", "");
-            jsonObject.set("CreatePerson", s.getCreatePerson());
+//            jsonObject.set("CreatePerson", s.getCreatePerson());
             jsonObject.set("qty", s.getQty());
             jsonObject.set("CreatePersonName", user.getName());
             jsonObject.set("IRdName", "");

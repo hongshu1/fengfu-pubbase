@@ -23,6 +23,9 @@ import cn.rjtech.model.momdata.SysMaterialspreparedetail;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+
+import java.util.Map;
+
 /**
  * 备料单明细
  * @ClassName: SysMaterialspreparedetailAdminController
@@ -131,5 +134,33 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 	}
 	public void barcodeNull(String barcode) {
 		renderJsonData(new Record());
+	}
+
+	public void choosemtool() {
+		String barcodes = get("barcodes");
+		String cmodocno = get("cmodocno");
+		Kv kv = new Kv();
+		kv.set("barcodes", barcodes == null ? "" : barcodes);
+		kv.set("cmodocno",cmodocno== null ? "" : cmodocno);
+		renderJsonData(service.getchooseM(kv));
+//		String[] barcodesS = barcodes.split(",");
+//		for (int i=0;i<barcodesS.length;i++){
+//			Kv kv = new Kv();
+//			kv.set("barcodes", barcodesS[i] == null ? "" : barcodesS[i]);
+//			kv.set("cmodocno",cmodocno== null ? "" : cmodocno);
+//			renderJsonData(service.getchooseM(kv));
+//		}
+	}
+
+	@Before(Tx.class)
+	public void submitAll() {
+		String map1 = get("data");
+		renderJson(service.submitByJBoltTable(map1));
+	}
+
+	@Before(Tx.class)
+	public void go() {
+		String map1 = get("data");
+		renderJson(service.submitByJBoltTableGo(map1));
 	}
 }

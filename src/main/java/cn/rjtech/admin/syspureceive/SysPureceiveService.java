@@ -243,8 +243,14 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         }
 
         // 质检表格ID
-        if(null != barcode && null != barcode.getStr("iautoid")){
-            rcvDocQcFormM.setIQcFormId(barcode.getLong("iautoid"));
+        if(null != barcode && null != barcode.getStr("cinvcode")){
+            Record iq = dbTemplate("syspureceive.InventoryQcForm", Kv.by("cinvcode", barcode.getStr("cinvcode"))).findFirst();
+            if(null != iq && null != iq.getLong("iautoid")) {
+                rcvDocQcFormM.setIQcFormId(iq.getLong("iautoid"));
+                rcvDocQcFormM.setIStatus(1);
+            }
+        }else {
+            rcvDocQcFormM.setIStatus(0);
         }
         rcvDocQcFormM.setIRcvDocId(Long.valueOf(sys.getAutoID()));
         rcvDocQcFormM.setCRcvDocNo(sys.getBillNo());
@@ -255,7 +261,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         // 批次号(收货日期)
         rcvDocQcFormM.setCBatchNo(formatter.format(sys.getDcreatetime()));
-        rcvDocQcFormM.setIStatus(0);
         rcvDocQcFormM.setIsCpkSigned(false);
         rcvDocQcFormM.setIMask(imask);
         rcvDocQcFormM.setIsCpkSigned(false);

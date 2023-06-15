@@ -28,7 +28,7 @@ public class WorkRegionmApiController extends BaseApiController {
     @ApiDoc(result = WorkRegionmVo.class)
     @UnCheck
     public void options(@Para(value = "idepid") Long idepid) {
-        ValidationUtils.validateId(idepid, "部门ID");
+        //ValidationUtils.validateId(idepid, "部门ID");
 
         renderJBoltApiRet(service.getOptions(idepid));
     }

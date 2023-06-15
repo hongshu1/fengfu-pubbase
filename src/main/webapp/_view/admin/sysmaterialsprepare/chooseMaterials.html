@@ -19,9 +19,11 @@
                     <button type="button" class="btn btn-outline-secondary" id="choose"><i class="fa fa-reset"></i> 选择
                     </button>
                 </form>
-                <button type="button" class="btn btn-outline-secondary" hidden="hidden" id="choose1"><i
+                <button type="button" class="btn btn-outline-secondary" hidden="hidden" id="choose1"
+                        onclick="choose2()"><i
                         class="fa fa-reset"></i> 选择
                 </button>
+                <input id="cmo" hidden="hidden" value="#(cmodocno??)"/>
             </div>
         </div>
     </div>
@@ -29,19 +31,19 @@
         <!-- 定义JBoltTable使用的数据渲染模板 -->
         <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.autoid}">
+<tr data-id="${data.barcode}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a class="text-info mr-1"  href=""  data-fs="true" data-handler="refreshJBoltTable" onclick="getCheckedStrip(this)">选择</a>
+	<a class="text-info mr-1" type="button" onclick="getCheckedStrip(this)" style="user-select:none">选择</a>
 </td>
-<td>${data.状态}</td>
-<td>${data.billno}</td>
-<td>${data.cmodocno}</td>
-<td>${data.cdepname}</td>
-<td>${data.cworkshiftname}</td>
-<td>${data.dplandate}</td>
-<td>${data.invcode}</td>
+<td>${data.cinvcode}</td>
 <td>${data.cinvcode1}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cinvstd}</td>
+<td>${data.cuomname}</td>
+<td>${data.cequipmentmodelname}</td>
+<td>${data.cwhname}</td>
+<td>${data.cpositionname}</td>
 </tr>
 {@/each}
 </textarea>
@@ -55,26 +57,27 @@
                data-height="fill"
                data-ajax="true"
                data-conditions-form="SysMaterialsprepare_form_#(pageId)"
-               data-url="admin/sysMaterialsprepare/getManualAdddatas?billno=#(billnoo??)"
+               data-url="admin/sysMaterialsprepare/getManualAdddatas?cmodocno=#(cmodocno??)"
                data-rowtpl="MoPickItemM_tpl_#(pageId)"
                data-copy-to-excel="false"
                data-page="MoPickItemM_page"
                data-column-resize="true"
                data-toolbar="MoPickItemM_toolbar_#(pageId)"
                data-column-prepend="1:checkbox:true"
+               id="chooseM"
         >
             <thead class="fw-normal">
             <tr>
                 <th data-width="60" data-column="">序号</th>
                 <th data-width="150" data-column="">操作</th>
                 <th data-width="150" data-column="">存货编码</th>
-                <th data-min-width="160" data-column="">客户部番</th>
-                <th data-width="150" data-column="">部品名称</th>
-                <th data-width="150" data-column="">规格</th>
+                <th data-min-width="200" data-column="">客户部番</th>
+                <th data-width="250" data-column="">部品名称</th>
+                <th data-width="200" data-column="">规格</th>
                 <th data-width="150" data-column="">主计量单位</th>
                 <th data-width="150" data-column="">机型名称</th>
-                <th data-width="150" data-column="">仓库名称</th>
-                <th data-width="150" data-column="">库位名称</th>
+                <th data-width="200" data-column="">仓库名称</th>
+                <th data-width="200" data-column="">库位名称</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -88,10 +91,19 @@
     hideParentLayerDialogBtn(1);
 
     function getCheckedStrip(val) {
-        var value = $(val).parent().parent().find("td");
-        parent.$("#billno").val(value.eq(3).text());
-        window.parent.refreshJBoltTable();
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        $(val).parent().click();
+
+        // if ($(val).parent().parent().find("td")[0].children[0].getAttribute("class")==="jbolt_table_checkbox checked"){
+        //     $(val).parent().parent().find("td")[0].children[0].setAttribute("class","jbolt_table_checkbox")
+        // }else {
+        //     $(val).parent().parent().find("td")[0].children[0].setAttribute("class","jbolt_table_checkbox checked")
+        // }
+
+        // var value = $(val).parent().parent().find("td");
+        // $(val).parent().parent().find("td:eq(0)").checked;
+        // parent.$("#cmodocno").val(value.eq(3).text());
+        // window.parent.refreshJBoltTable();
+        // parent.layer.close(parent.layer.getFrameIndex(window.name));
     }
 
     const BTN1 = document.getElementById('choose');
@@ -101,8 +113,33 @@
         BTN2.onclick();
     });
 
-    function choose2(){
+    function choose2() {
+        var barcodes = jboltTableGetCheckedIds("chooseM", false);
+        if (barcodes.toString() == "false" ? false : true) {
+            parent.layer.close(parent.layer.getFrameIndex(window.name));
+            for (i=0;i<barcodes.length;i++){
+                Ajax.post("admin/sysMaterialspreparedetail/choosemtool", {"cmodocno": $(cmo).val(), "barcodes": barcodes[i]},
+                    function (res) {
+                        jboltTableInsertRow(window.parent.getJBoltTable("manual"), res.data, false, false, false);
+                        console.log("插入完毕"+res.data);
+                    }, function (err) {
+                    });
+            }
+            // window.parent.refreshJBoltTable();
+        }
+    }
 
+
+    function jboltTableGetCheckedIds(ele, dontShowError) {
+        var table = getJBoltTable(ele);
+        if (isOk(table)) {
+            var jboltTable = table.jboltTable("inst");
+            if (jboltTable) {
+                return jboltTable.me.getCheckedIds(jboltTable, dontShowError);
+            }
+        }
+        LayerMsgBox.alert("表格组件配置异常", 2);
+        return false;
     }
 </script>
 #end

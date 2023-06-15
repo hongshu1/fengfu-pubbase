@@ -49,9 +49,15 @@ public class FormExtendFieldsService extends BaseService<FormExtendFields> {
      * @param cFieldName 系统字段名称
 	 * @return
 	 */
-	public Page<Record> getAdminDatas(int pageNumber, int pageSize, String keywords, Long iFormId, Long iFormFieldId, String cFieldCode, String cFieldName) {
+	public Page<Record> getAdminDatas(int pageNumber, int pageSize, String keywords, Long iFormId, Long iFormFieldId, String cFieldCode, String cFieldName,String ifform) {
 	    //创建sql对象
 	    Sql sql = selectSql().page(pageNumber,pageSize);
+	    //筛选
+		if(ifform.equals("1")){
+			sql.isNotNull("iFormId");
+		}else {
+			sql.isNotNull("iFormFieldId");
+		}
 	    //sql条件处理
         sql.eq("iFormId",iFormId);
         sql.eq("iFormFieldId",iFormFieldId);

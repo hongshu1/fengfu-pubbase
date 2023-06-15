@@ -446,8 +446,8 @@ public class WorkregionmService extends BaseService<Workregionm> {
     public List<Workregionm> getWorkregionmList(Long orgId, Long idepid) {
         Okv para = Okv.by("isDeleted", false)
                 .set("isEnabled", true)
-                .set("iorgid", orgId)
-                .set("idepid", idepid);
+                .setIfNotNull("iorgid", orgId)
+                .setIfNotNull("idepid", idepid);
 
         return getCommonList("iautoid,cworkname", para, "iautoid", "ASC");
     }

@@ -291,36 +291,39 @@ public class PermissionService extends JBoltPermissionService {
         return this.isOk(ids) ? this.dbTemplate("permission.getPermissionList", Kv.by("permissionkey", permissionKey).set("pkey", pkey).set("ids", ids)).find() : null;
     }
 
-    public List<Record> getDatas() {
-        Sql sql = selectSql().select(Permission.ID).eqOr(Permission.TITLE,"组织建模","排产建模","往来单位","物料建模","仓库建模","生产建模","设备管理","点检建模","禀议建模","容器管理","质量建模","基础档案");
+    public List<Permission> getDatas() {
+        //父级
+        Sql sql = selectSql().select(Permission.TITLE,Permission.ID,Permission.PID).eqOr(Permission.TITLE,"组织建模","排产建模","往来单位","物料建模","仓库建模","生产建模","设备管理","点检建模","禀议建模","容器管理","质量建模","基础档案");
         List<Record> datas = findRecord(sql);
-        List<Record> allDatas = new ArrayList<>();
+        List<Permission> permissionList = find(sql);
 
         if (CollUtil.isNotEmpty(datas)) {
             for (Record data : datas) {
-                Sql sql1 = selectSql().select(Permission.TITLE,Permission.ID).eq(Permission.PID,data.getStr("id"));
-                allDatas.addAll(findRecord(sql1));
+                //子级
+                Sql sql1 = selectSql().select(Permission.TITLE,Permission.ID,Permission.PID).eq(Permission.PID,data.getStr("id"));
+                permissionList.addAll(find(sql1));
             }
         }
-//        Sql sql = selectSql().select(Permission.TITLE,Permission.ID).eqOr(Permission.PID,"1639083401914146816","1637987023822282752","1638440712401674240","1579021081967202304","1585443766611873792","1627837792213430272","1638435898566250496","1627847028037283840","1627849337781776384","1627842330668462080","1627841274437857280","1627839562436210688");
-        return allDatas;
+        return convertToModelTree(permissionList, "id", "pid", (p)->notOk(p.getPid()));
         }
 
-    public List<Record> getFormDatas() {
-        Sql sql = selectSql().select(Permission.ID).eqOr(Permission.TITLE,"质量管理","入库管理","出库管理","发货管理");
+    public List<Permission> getFormDatas() {
+        //父级
+        Sql sql = selectSql().select(Permission.TITLE,Permission.ID,Permission.PID).eqOr(Permission.TITLE,"质量管理","入库管理","出库管理","发货管理");
         List<Record> datas = findRecord(sql);
-        List<Record> allDatas = new ArrayList<>();
+        List<Permission> allDatas = find(sql);
 
         if (CollUtil.isNotEmpty(datas)) {
             for (Record data : datas) {
-                Sql sql1 = selectSql().select(Permission.TITLE,Permission.ID).eq(Permission.PID,data.getStr("id")).notEq(Permission.TITLE,"生产备料").notEq(Permission.TITLE,"扫码出货").notEq(Permission.TITLE,"双码扫码出货");
-                allDatas.addAll(findRecord(sql1));
+                //子级与排除
+                Sql sql1 = selectSql().select(Permission.TITLE,Permission.ID,Permission.PID).eq(Permission.PID,data.getStr("id")).notEq(Permission.TITLE,"生产备料").notEq(Permission.TITLE,"扫码出货").notEq(Permission.TITLE,"双码扫码出货");
+                allDatas.addAll(find(sql1));
             }
         }
-        Sql sql2 = selectSql().select(Permission.TITLE,Permission.ID).eqOr(Permission.TITLE,"采购订单管理","委外订单管理","制造工单批量编辑","制造工单管理");
-        allDatas.addAll(findRecord(sql2));
+        Sql sql2 = selectSql().select(Permission.TITLE,Permission.ID,Permission.PID).eqOr(Permission.TITLE,"采购订单管理","委外订单管理","制造工单批量编辑","制造工单管理");
+        allDatas.addAll(find(sql2));
 
-        return allDatas;
+        return convertToModelTree(allDatas,"id", "pid", (p)->notOk(p.getPid()));
     }
 
     }

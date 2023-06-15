@@ -1,5 +1,6 @@
 package cn.rjtech.admin.syspuinstore;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -180,15 +181,17 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
      * */
     public void saveSysPuinstoredetailModel(SysPuinstoredetail detail, Record detailRecord,
                                             SysPuinstore puinstore, int i) {
-        Inventory inventory = inventoryService.findBycInvCode(detailRecord.getStr("invcode"));
+        /*Inventory inventory = inventoryService.findBycInvCode(detailRecord.getStr("invcode"));
         Kv kv = new Kv();
         kv.set("sourcebillno", puinstore.getSourceBillNo());
         kv.set("iInventoryId", null != inventory ? inventory.getIAutoId() : "");
         Record record = dbTemplate("syspuinstore.getSourceBillIdAndDid", kv).findFirst();
-        if (record != null) {
-            detail.setSourceBillID(record.get("sourcebillid")); //来源单据ID(订单id)
-            detail.setSourceBillDid(record.get("sourcebilldid")); //来源单据DID;采购或委外单身ID
+        if (StrUtil.isBlank(detail.getSourceBillID()) && record != null) {
+            detail.setSourceBillID(record.getStr("sourcebillid")); //来源单据ID(订单id)
         }
+        if (StrUtil.isBlank(detail.getSourceBillDid()) && record != null) {
+            detail.setSourceBillDid(record.getStr("sourcebilldid")); //来源单据DID;采购或委外单身ID
+        }*/
         detail.setSourceBillType(puinstore.get("sourcebilltype"));//采购PO  委外OM（采购类型）
         detail.setSourceBillNo(puinstore.getSourceBillNo()); //来源单号（订单号）
         detail.setSourceBillNoRow(puinstore.getSourceBillNo() + "-" + i); //来源单号+行号
@@ -198,13 +201,13 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         detail.setQty(detailRecord.getBigDecimal("qty")); //入库数量
         detail.setCCreateName(JBoltUserKit.getUserName());
         detail.setDCreateTime(puinstore.getDCreateTime());
-        detail.setSpotTicket(detailRecord.getStr("spotticket"));//现品票
+        detail.setSpotTicket(detailRecord.get("spotticket"));//现品票
         detail.setIsDeleted(false);
-        detail.setBrandCode("brandcode");//品牌code
-        detail.setBrandName("brandname");//品牌名称
-        detail.setPuUnitCode("purchasecuomcode");//采购单位code
-        detail.setPuUnitName("purchasecuomname");//采购单位名称
-        detail.setMemo(detailRecord.getStr("memo"));
-        detail.setInvcode(detailRecord.getStr("invcode"));
+        detail.setBrandCode(detailRecord.get("brandcode"));//品牌code
+        detail.setBrandName(detailRecord.get("brandname"));//品牌名称
+        detail.setPuUnitCode(detailRecord.get("puunitcode"));//采购单位code
+        detail.setPuUnitName(detailRecord.get("puunitname"));//采购单位名称
+        detail.setMemo(detailRecord.get("memo"));
+        detail.setInvcode(detailRecord.get("invcode"));
     }
 }

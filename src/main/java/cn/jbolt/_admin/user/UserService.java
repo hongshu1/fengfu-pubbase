@@ -438,6 +438,7 @@ public class UserService extends JBoltUserService {
             // 用户组织（人员）信息维护
             if (ObjUtil.isNotNull(userOrg) && ObjUtil.isNotNull(userOrg.getIPersonId())) {
                 userOrg.setUserId(userForm.getId());
+                userOrg.setOrgId(OrgAccessKit.getOrgId());
                 ValidationUtils.isTrue(userOrg.save(), ErrorMsg.SAVE_FAILED);
             }
 

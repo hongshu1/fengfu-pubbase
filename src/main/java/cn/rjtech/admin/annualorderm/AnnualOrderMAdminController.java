@@ -174,4 +174,9 @@ public class AnnualOrderMAdminController extends BaseAdminController {
         renderJson(service.importExcel(file.getFile()));
     }
 
+    public void ccusname_dialog_index(){
+        keepPara();
+        render("ccusname_dialog_index.html");
+    }
+
 }

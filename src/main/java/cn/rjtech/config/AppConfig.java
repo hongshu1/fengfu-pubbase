@@ -95,13 +95,13 @@ public class AppConfig {
      * 通知U8删除采购入库单
      * */
     public static String deleteVouchProcessDynamicSubmitUrl() {
-        String url = "http://120.24.44.82:3013/WEB_INFO/StockAPI.asmx?op=PurchasesInDelete";
+        //http://120.24.44.82:3013/WEB_INFO/StockAPI.asmx?op=PurchasesInDeleteV1
+        String url = "http://120.24.44.82:3013/WEB_INFO/StockAPI.asmx?op=PurchasesInDeleteV1";
         return url;
     }
 
     public static String getSysPuinstoreVouchProcessDynamicSubmitUrl(){
 //        String url = "http://120.24.44.82:3013/WEB_INFO/StockAPI.asmx?op=PurchasesInAdd";
-//        String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
         String url = "http://localhost:8081/web/erp/common/vouchProcessSubmit";
         return url;
     }
