@@ -36,7 +36,7 @@ public class FormExtendFieldsAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getLong("iFormId"), getLong("iFormFieldId"), get("cFieldCode"), get("cFieldName")));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getLong("iFormId"), getLong("iFormFieldId"), get("cFieldCode"), get("cFieldName"),get("ifform")));
 	}
 
    /**

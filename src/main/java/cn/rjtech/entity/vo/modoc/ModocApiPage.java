@@ -37,6 +37,10 @@ public class ModocApiPage {
      * 完工数量
      */
     private  BigDecimal iCompQty;
+    /**
+     * 差异数量
+     */
+    private BigDecimal cyqty;
     private  Integer iPersonNum;
     private  Long iDutyPersonId;
     /**
@@ -222,5 +226,13 @@ public class ModocApiPage {
 
     public void setiStatusName(String iStatusName) {
         this.iStatusName = iStatusName;
+    }
+
+    public BigDecimal getCyqty() {
+        return cyqty;
+    }
+
+    public void setCyqty(BigDecimal cyqty) {
+        this.cyqty = cyqty;
     }
 }

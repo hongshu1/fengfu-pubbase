@@ -4,12 +4,14 @@ import cn.jbolt.core.api.OpenAPI;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.modoc.ModocApiPageVo;
+import cn.rjtech.entity.vo.modoc.ModocApiResVo;
 import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocGetCoperationnameByModocIdVo;
 import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocGetMoroutingsopByInventoryroutingconfigIdVo;
 import cn.rjtech.model.momdata.Personswipelog;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
+import com.sun.jna.platform.win32.WinDef;
 import io.github.yedaxia.apidocs.ApiDoc;
 
 import java.util.Date;
@@ -84,5 +86,17 @@ public class ModocApiController extends BaseApiController {
     // ValidationUtils.notNull(iworkregionmid,"缺少产线ID");
     renderJBoltApiRet(moDocApiService.page(page,pageSize,cmodocno,cinvcode,cinvcode1,cinvname1,
             cdepname,iworkregionmid,status,starttime,endtime));
+  }
+
+  /**
+   *  获取工单详情信息
+   * @param imodocid 工单ID
+   */
+  @ApiDoc(result = ModocApiResVo.class)
+  @UnCheck
+  @OpenAPI
+  public void getModocdetails( @Para(value = "imodocid") Long imodocid){
+      ValidationUtils.notNull(imodocid,"缺少工单ID");
+    renderJBoltApiRet(moDocApiService.getModocdetails(imodocid));
   }
 }
