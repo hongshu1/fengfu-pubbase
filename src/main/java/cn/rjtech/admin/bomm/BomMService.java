@@ -14,22 +14,25 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.bomd.BomDService;
+import cn.rjtech.admin.bomdata.BomDataService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.BomSourceTypeEnum;
 import cn.rjtech.enums.SourceEnum;
-import cn.rjtech.model.momdata.BomCompare;
-import cn.rjtech.model.momdata.BomD;
-import cn.rjtech.model.momdata.BomM;
-import cn.rjtech.model.momdata.BomMaster;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.DbTemplate;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,6 +47,10 @@ public class BomMService extends BaseService<BomM> {
 	
 	@Inject
     private BomDService bomDService;
+	@Inject
+	private InventoryService inventoryService;
+	@Inject
+	private BomDataService bomDataService;
 	
 	@Override
 	protected BomM dao() {
@@ -409,6 +416,9 @@ public class BomMService extends BaseService<BomM> {
 				List<String> invCodeList = bomDList.stream().map(BomD::getCInvCode).collect(Collectors.toList());
 				String format = String.format("该半成品版本记录，有存在其他地方使用【%s】", CollUtil.join(invCodeList, ","));
 				ValidationUtils.isTrue(CollectionUtil.isEmpty(bomDList), format);
+				
+				bomDList.forEach(bomD -> bomD.setIsDeleted(true));
+				bomDService.batchUpdate(bomDList);
 			}
 			
 			// 删除母件
@@ -495,41 +505,570 @@ public class BomMService extends BaseService<BomM> {
 		BomM bomMaster = findById(bomMasterId);
 		ValidationUtils.notNull(bomMaster, JBoltMsg.DATA_NOT_EXIST);
 		ValidationUtils.isTrue(!cVersion.equals(bomMaster.getCVersion()), "版本号不能一致");
-		
 		// 获取母件所有子件集合
 		tx(() -> {
-			saveCopyBomMaster(bomMasterId, cVersion, bomMaster);
+			saveCopyBomMaster(bomMasterId, cVersion, dDisableDate, bomMaster);
 			return true;
 		});
 		return SUCCESS;
 	}
 	
-	private void saveCopyBomMaster(Long bomMasterId, String cVersion, BomM bomMaster){
+	private void saveCopyBomMaster(Long bomMasterId, String cVersion, String dDisableDate, BomM bomMaster){
 		// 设置新的id
 		long newBomMasterId = JBoltSnowflakeKit.me.nextId();
-		List<BomD> compareList = bomDService.queryBomCompareList(bomMasterId, BomD.IBOMMID);
-		compareList.forEach(bomD -> bomD.setIBomMid(newBomMasterId));
-		operation(bomMasterId, newBomMasterId, cVersion, bomMaster, compareList);
-	}
-	
-	/**
-	 * 操作
-	 * @param bomMasterId
-	 * @param newBomMasterId
-	 * @param cVersion
-	 * @param bomMaster
-	 * @param bomCompareList
-	 */
-	private void operation(Long bomMasterId, Long newBomMasterId, String cVersion, BomM bomMaster, List<BomD> bomCompareList){
+		DateTime now = DateUtil.date();
 		bomMaster.setIAutoId(newBomMasterId);
-		bomMaster.setCVersion(cVersion);
+		bomMaster.setDDisableDate(DateUtil.parseDate(dDisableDate));
 		bomMaster.setDAuditTime(null);
 		// 设置copy前的ID
 		bomMaster.setICopyFromId(bomMasterId);
-		DateTime now = DateUtil.date();
 		bomMaster.setDAuditTime(now);
-		bomDService.batchSave(bomCompareList);
+		
+		// 校验
+		checkBomDateOrVersion(cVersion, bomMaster);
+		List<BomD> compareList = bomDService.queryBomCompareList(bomMasterId, BomD.IBOMMID);
+		compareList.forEach(bomD -> bomD.setIBomMid(newBomMasterId));
+		bomDService.batchSave(compareList);
 		save(bomMaster,JBoltUserKit.getUserId(),JBoltUserKit.getUserName(), now, AuditStatusEnum.AWAIT_AUDIT.getValue());
 		
+		
+	}
+
+	
+	public void  checkBomDateOrVersion(String cVersion, BomM bomM){
+		// 校验版本号
+		/*if (StrUtil.isNotBlank(cVersion)){
+			List<Record> versionList = bomMService.findVersionByInvId(getOrgId(), bomM.getIInventoryId(), bomM.getIAutoId());
+			if (CollectionUtil.isNotEmpty(versionList)){
+			
+			}
+		}*/
+		
+		// 校验日期 和 版本号
+		List<Record> invBomList = findByInvId(getOrgId(), bomM.getIInventoryId(), bomM.getIAutoId());
+		if (CollectionUtil.isNotEmpty(invBomList)){
+			invBomList.forEach(record -> {
+				boolean overlapping = isOverlapping(bomM, record);
+				ValidationUtils.isTrue(overlapping, "母件不可重复创建版本，启用日期停用日期重叠！");
+				String version = record.getStr(BomM.CVERSION);
+				if (StrUtil.isNotBlank(cVersion)){
+					ValidationUtils.isTrue(!cVersion.equals(version), "该版本号已存在！");
+				}
+			});
+		}
+	}
+	
+	public Ret submitForm(String formJsonData, String tableJsonData) {
+		ValidationUtils.notBlank(formJsonData, JBoltMsg.PARAM_ERROR);
+		ValidationUtils.notBlank(tableJsonData, JBoltMsg.PARAM_ERROR);
+		JSONObject formData = JSONObject.parseObject(formJsonData);
+		JSONArray tableData = JSONObject.parseArray(tableJsonData);
+		
+		// 校验数据
+		verification(formData, tableData);
+		BomM bomMaster = JSONObject.parseObject(formJsonData, BomM.class);
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		DateTime now = DateUtil.date();
+		// 主键id为空为 新增或者为修改
+		if (ObjectUtil.isNull(bomMaster.getIAutoId())){
+			return saveForm(bomMaster, tableData, userId, userName, now);
+		}
+		return updateForm(bomMaster, tableData, userId, userName, now);
+	}
+	
+	public Ret saveForm(BomM bomMaster, JSONArray tableData, Long userId, String userName, DateTime now){
+		// 设置主键id
+		long bomMasterId = JBoltSnowflakeKit.me.nextId();
+		bomMaster.setIAutoId(bomMasterId);
+		List<BomD> bomCompareList =getBomCompareList(bomMasterId, tableData);
+		Inventory inventory = inventoryService.findById(bomMaster.getIInventoryId());
+		ValidationUtils.notNull(inventory, "产成品存货记录不存在");
+		
+		checkBomDateOrVersion(bomMaster.getCVersion(), bomMaster);
+		
+		tx(() -> {
+			bomMaster.setIType(BomSourceTypeEnum.IMPORT_TYPE_ADD.getValue());
+			bomMaster.setCInvName(inventory.getCInvName());
+			bomMaster.setCInvCode(inventory.getCInvCode());
+			if(StrUtil.isBlank(bomMaster.getCVersion())){
+				bomMaster.setCVersion(getNextVersion(getOrgId(), bomMaster.getIInventoryId()));
+			}
+			save(bomMaster, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
+//			bomDService.batchSave(bomCompareList);
+			BomData bomData = bomDataService.create(bomMaster.getIAutoId(), tableData.toJSONString());
+			bomDataService.save(bomData);
+			return true;
+		});
+		return SUCCESS;
+	}
+	
+	public Ret updateForm(BomM bomMaster, JSONArray tableData, Long userId, String userName, DateTime now){
+		BomM oldBomMaster = findById(bomMaster.getIAutoId());
+		Integer iAuditStatus = oldBomMaster.getIAuditStatus();
+		AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
+		ValidationUtils.isTrue((AuditStatusEnum.NOT_AUDIT.getValue()==iAuditStatus || AuditStatusEnum.REJECTED.getValue()==iAuditStatus), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行修改");
+		// 复制
+		copyBomMaster(bomMaster, oldBomMaster);
+		tx(() -> {
+			update(oldBomMaster, userId, userName, now);
+			return true;
+		});
+		return SUCCESS;
+	}
+	
+	public void verification(JSONObject formData, JSONArray tableData){
+		verificationOfForm(formData);
+		verificationOfTable(formData.getString(BomMaster.IINVENTORYID), tableData);
+	}
+	
+	public void verificationOfForm(JSONObject formData){
+		String inventoryId = formData.getString(BomMaster.IINVENTORYID);
+		String equipmentModelId = formData.getString(BomMaster.IEQUIPMENTMODELID);
+		// 普通校验
+		ValidationUtils.notBlank(inventoryId, "产品存货编码为空");
+		ValidationUtils.notBlank(formData.getString(BomMaster.CBOMVERSION), "版本/版次为空");
+//		ValidationUtils.notBlank(equipmentModelId, "机型为空");
+		ValidationUtils.notBlank(formData.getString(BomMaster.CDOCNAME), "文件名称为空");
+		ValidationUtils.notBlank(formData.getString(BomMaster.CDOCCODE), "文件编码为空");
+		ValidationUtils.notBlank(formData.getString(BomMaster.DENABLEDATE), "启用日期为空");
+		ValidationUtils.notBlank(formData.getString(BomMaster.DDISABLEDATE), "停用日期为空");
+		// 校验当前存货是否为当前选择机型下的
+		Inventory inventory = inventoryService.findById(inventoryId);
+		ValidationUtils.notNull(inventory, JBoltMsg.DATA_NOT_EXIST);
+//		ValidationUtils.isTrue(equipmentModelId.equals(String.valueOf(inventory.getIEquipmentModelId())), "机型跟产品编码不匹配");
+	}
+	
+	/**
+	 *
+	 * @param finishedProductId 产品id
+	 * @param tableData 半成品，部品，原材料
+	 */
+	public void verificationOfTable(String finishedProductId, JSONArray tableData){
+		List<String> codes = new ArrayList<>();
+		for (int i=0; i<tableData.size(); i++){
+			JSONObject row = tableData.getJSONObject(i);
+			boolean checkInvCodeFlag = isAdd(row);
+			ValidationUtils.isTrue(!checkInvCodeFlag, "第"+(i+1)+"行存货编码未解析出来");
+			verificationOfTableRow(finishedProductId, row);
+			String code = getCode(row);
+			codes.add(code);
+			// 记录
+			row.put("code", code);
+		}
+		Set<String> codeSet = new HashSet<>(codes);
+		ValidationUtils.isTrue(codes.size() == codeSet.size(), "编码栏不能出现重复");
+	}
+	
+	public void verificationOfTableRow(String finishedProductId, JSONObject row){
+		// 部品
+		String invItemId = row.getString(BomCompare.INVITEMID.toLowerCase());
+		// 片料
+		String blankingItemId = row.getString(BomCompare.BLANKINGITEMID.toLowerCase());
+		// 卷料
+		String originalItemId = row.getString(BomCompare.ORIGINALITEMID.toLowerCase());
+		// 分条料
+		String slicingInvItemId = row.getString(BomCompare.SLICINGINVITEMID.toLowerCase());
+		
+		// 校验母件成品编码不能跟子件编码一致
+		ValidationUtils.isTrue(!finishedProductId.equals(invItemId), "部品存货不能跟成品存货选择一致");
+		ValidationUtils.isTrue(!finishedProductId.equals(blankingItemId), "片料（落料）存货不能跟成品存货选择一致");
+		ValidationUtils.isTrue(!finishedProductId.equals(originalItemId), "卷料（原材料）存货不能跟成品存货选择一致");
+		ValidationUtils.isTrue(!finishedProductId.equals(slicingInvItemId), "分条料存货不能跟成品存货选择一致");
+		
+		// 校验部品存货是否存在一致
+		ValidationUtils.isTrue(!(StrUtil.isNotBlank(invItemId) && invItemId.equals(blankingItemId)), "部品存货不能跟片料（落料）存货选择一致");
+		ValidationUtils.isTrue(!(StrUtil.isNotBlank(invItemId) && invItemId.equals(originalItemId)), "部品存货不能跟卷料（原材料）存货选择一致");
+		ValidationUtils.isTrue(!(StrUtil.isNotBlank(invItemId) && invItemId.equals(slicingInvItemId)), "部品存货不能跟分条料存货选择一致");
+		
+		// 校验（原材料）存货是否存在一致
+		ValidationUtils.isTrue(!(StrUtil.isNotBlank(originalItemId) && originalItemId.equals(slicingInvItemId)), "卷料（原材料）存货不能跟分条料存货选择一致");
+		ValidationUtils.isTrue(!(StrUtil.isNotBlank(originalItemId) && originalItemId.equals(blankingItemId)), "卷料（原材料）存货不能跟片料（落料）存货选择一致");
+		// 分条料 校验
+		ValidationUtils.isTrue(!(StrUtil.isNotBlank(slicingInvItemId) && slicingInvItemId.equals(blankingItemId)), "分条料存货不能跟片料（落料）存货选择一致");
+		
+		String code1 = row.getString(BomCompare.CODE1);
+		String code2 = row.getString(BomCompare.CODE2);
+		String code3 = row.getString(BomCompare.CODE3);
+		String code4 = row.getString(BomCompare.CODE4);
+		String code5 = row.getString(BomCompare.CODE5);
+		String code6 = row.getString(BomCompare.CODE6);
+		
+		// 校验编码栏是否都为空
+		boolean codeFlag = StrUtil.isBlank(code1)
+				&& StrUtil.isBlank(code2)
+				&& StrUtil.isBlank(code3)
+				&& StrUtil.isBlank(code4)
+				&& StrUtil.isBlank(code5)
+				&& StrUtil.isBlank(code6);
+		ValidationUtils.isTrue(!codeFlag, "选择存货后，编码栏不能为空");
+		int count = 0;
+		if (StrUtil.isNotBlank(code1)){
+			count+=1;
+		}
+		
+		if (StrUtil.isNotBlank(code2)){
+			count+=1;
+		}
+		if (StrUtil.isNotBlank(code3)){
+			count+=1;
+		}
+		if (StrUtil.isNotBlank(code4)){
+			count+=1;
+		}
+		if (StrUtil.isNotBlank(code5)){
+			count+=1;
+		}
+		if (StrUtil.isNotBlank(code6)){
+			count+=1;
+		}
+		ValidationUtils.isTrue(count==1, "编号栏只能填写一列");
+		
+		if (StrUtil.isNotBlank(invItemId)){
+			ValidationUtils.notNull(row.getBigDecimal(BomCompare.INVQTY.toLowerCase()), "部品QTY不能为空");
+		}
+		
+	}
+	
+	
+	/**
+	 * 拼接编码栏确保唯一
+	 * @param row
+	 * @return
+	 */
+	public String getCode(JSONObject row){
+		return getCode(row.getString(BomCompare.CODE1), row.getString(BomCompare.CODE2), row.getString(BomCompare.CODE3), row.getString(BomCompare.CODE4)
+				,row.getString(BomCompare.CODE5), row.getString(BomCompare.CODE6));
+	}
+	
+	/**
+	 * 是否添加
+	 * @param row
+	 * @return
+	 */
+	private boolean isAdd(JSONObject row){
+		// 部品
+		String invItemId = row.getString(BomCompare.INVITEMID.toLowerCase());
+		// 片料
+		String blankingItemId = row.getString(BomCompare.BLANKINGITEMID.toLowerCase());
+		// 卷料
+		String originalItemId = row.getString(BomCompare.ORIGINALITEMID.toLowerCase());
+		// 分条料
+		String slicingInvItemId = row.getString(BomCompare.SLICINGINVITEMID.toLowerCase());
+		// 判断物料是否都为空，为空全部跳过
+		return StrUtil.isBlank(blankingItemId) && StrUtil.isBlank(invItemId) && StrUtil.isBlank(originalItemId) &&StrUtil.isBlank(slicingInvItemId);
+	}
+	
+	public String getPerCode(String code){
+		String split = "-";
+		if (!code.contains(split)) return null;
+		return code.substring(0, code.lastIndexOf(split));
+	}
+	
+	/**
+	 * 获取当前部品属于第几层级
+	 * @return
+	 */
+	public String getCode(String code1, String code2, String code3, String code4, String code5, String code6){
+		if (StrUtil.isNotBlank(code6)){
+			return code6;
+		}
+		if (StrUtil.isNotBlank(code5)){
+			return code5;
+		}
+		if (StrUtil.isNotBlank(code4)){
+			return code4;
+		}
+		if (StrUtil.isNotBlank(code3)){
+			return code3;
+		}
+		if (StrUtil.isNotBlank(code2)){
+			return code2;
+		}
+		return code1;
+	}
+	
+	private void copyBomMaster(BomM bomMaster, BomM oldBomMaster){
+		// 机型id
+		oldBomMaster.setIEquipmentModelId(bomMaster.getIEquipmentModelId());
+		// 文件编码
+		oldBomMaster.setCDocCode(bomMaster.getCDocCode());
+		// 文件名称
+		oldBomMaster.setCDocName(bomMaster.getCDocName());
+		// 版本
+		oldBomMaster.setCVersion(bomMaster.getCVersion());
+		// 启用日期
+		oldBomMaster.setDEnableDate(bomMaster.getDEnableDate());
+		// 停用日期
+		oldBomMaster.setDDisableDate(bomMaster.getDDisableDate());
+		// 序号1
+		oldBomMaster.setCNo1(bomMaster.getCNo1());
+		// 序号2
+		oldBomMaster.setCNo2(bomMaster.getCNo2());
+		// 设变号1
+		oldBomMaster.setCDcNo1(bomMaster.getCDcNo1());
+		// 设变号2
+		oldBomMaster.setCDcNo2(bomMaster.getCDcNo2());
+		// 设备日期1
+		oldBomMaster.setDDcDate1(bomMaster.getDDcDate1());
+		// 设备日期2
+		oldBomMaster.setDDcDate2(bomMaster.getDDcDate2());
+		// 存货id
+		oldBomMaster.setIInventoryId(bomMaster.getIInventoryId());
+		// 客户ID
+		oldBomMaster.setICustomerId(bomMaster.getICustomerId());
+		// 共用件备注
+		oldBomMaster.setCCommonPartMemo(bomMaster.getCCommonPartMemo());
+	}
+	
+	private List<BomD> getBomCompareList(long bomMasterId, JSONArray tableData){
+		// 获取有效bom版本
+		Map<Long, Record> effectiveBomMap = getEffectiveBomMap(getOrgId());
+		// 获取有效bom子件
+		Map<Long, List<Record>> effectiveBomCompareMap = bomDService.getEffectiveBomCompareMap(getOrgId());
+		List<BomD> bomCompareList = new ArrayList<>();
+		// 记录每一个编码栏存在的存货
+		Map<String, List<BomD>> CodeBomCompareMap = new HashMap<>();
+		// 记录部品存货栏编码
+		Set<String> codeSet = new HashSet<>();
+		
+		for (int i=0; i<tableData.size(); i++){
+			List<BomD> rowCompareList = new ArrayList<>();
+			JSONObject row = tableData.getJSONObject(i);
+			// 编码
+			String code = getCode(row.getString(BomCompare.CODE1),
+					row.getString(BomCompare.CODE2),
+					row.getString(BomCompare.CODE3),
+					row.getString(BomCompare.CODE4),
+					row.getString(BomCompare.CODE5),
+					row.getString(BomCompare.CODE6));
+			
+			int invLev;
+			if (code.equals(row.getString(BomCompare.CODE6))){
+				invLev = 6;
+			}else if (code.equals(row.getString(BomCompare.CODE5))){
+				invLev = 5;
+			}else if (code.equals(row.getString(BomCompare.CODE4))){
+				invLev = 4;
+			}else if (code.equals(row.getString(BomCompare.CODE3))){
+				invLev = 3;
+			}else if (code.equals(row.getString(BomCompare.CODE2))){
+				invLev = 2;
+			}else{
+				invLev = 1;
+				codeSet.add(code);
+			}
+			
+			BomD compare = null;
+			Long invId = row.getLong(BomCompare.INVITEMID.toLowerCase());
+			// 半成品/部品
+			if (ObjectUtil.isNotNull(invId)){
+				BigDecimal invQty = row.getBigDecimal(BomCompare.INVQTY.toLowerCase());
+				BigDecimal invWeight = row.getBigDecimal(BomCompare.INVWEIGHT.toLowerCase());
+				Long vendorId = row.getLong(BomCompare.IVENDORID.toLowerCase());
+				Boolean isOutSourced = Boolean.valueOf(row.getString(BomCompare.ISOUTSOURCED.toLowerCase()));
+				String cMemo = row.getString(BomCompare.CMEMO.toLowerCase());
+				compare = bomDService.createCompare(null, bomMasterId, null, invId, vendorId, invLev, 0, code, cMemo, invQty, invWeight, isOutSourced);
+				rowCompareList.add(compare);
+			}
+			
+			BomD blankBomCompare = null;
+			Long blankingItemId = row.getLong(BomCompare.BLANKINGITEMID.toLowerCase());
+			// 片料
+			if (ObjectUtil.isNotNull(blankingItemId)){
+				Long pid = null;
+				if (ObjectUtil.isNotNull(compare)){
+					pid = compare.getIAutoId();
+				}
+				BigDecimal blankingQty = row.getBigDecimal(BomCompare.BLANKINGQTY.toLowerCase());
+				BigDecimal blankingWeight = row.getBigDecimal(BomCompare.BLANKINGWEIGHT.toLowerCase());
+				blankBomCompare = bomDService.createCompare(null, bomMasterId, pid, blankingItemId, null, invLev, 1, code, null, blankingQty, blankingWeight, false);
+				rowCompareList.add(blankBomCompare);
+			}
+			
+			
+			// 分条料
+			BomD slicingBomCompare = null;
+			Long slicingInvItemId = row.getLong(BomCompare.SLICINGINVITEMID.toLowerCase());
+			if (ObjectUtil.isNotNull(slicingInvItemId)){
+				Long pid = null;
+				if (ObjectUtil.isNotNull(compare)){
+					pid = compare.getIAutoId();
+				}
+				if (ObjectUtil.isNotNull(blankBomCompare)){
+					pid = blankBomCompare.getIAutoId();
+				}
+				
+				BigDecimal slicingQty = row.getBigDecimal(BomCompare.SLICINGQTY.toLowerCase());
+				BigDecimal slicingWeight = row.getBigDecimal(BomCompare.SLICINGWEIGHT.toLowerCase());
+				slicingBomCompare = bomDService.createCompare(null, bomMasterId, pid, blankingItemId, null, invLev, 2, code, null, slicingQty, slicingWeight, false);
+				rowCompareList.add(slicingBomCompare);
+			}
+			
+			// 卷料(原材料)
+			Long originalItemId = row.getLong(BomCompare.ORIGINALITEMID.toLowerCase());
+			if (ObjectUtil.isNotNull(originalItemId)){
+				Long pid = null;
+				if (ObjectUtil.isNotNull(compare)){
+					pid = compare.getIAutoId();
+				}
+				if (ObjectUtil.isNotNull(blankBomCompare)){
+					pid = blankBomCompare.getIAutoId();
+				}
+				if (ObjectUtil.isNotNull(slicingBomCompare)){
+					pid = slicingBomCompare.getIAutoId();
+				}
+				BigDecimal originalQty = row.getBigDecimal(BomCompare.ORIGINALQTY.toLowerCase());
+				BigDecimal originalWeight = row.getBigDecimal(BomCompare.ORIGINALWEIGHT.toLowerCase());
+				BomD originalBomCompare = bomDService.createCompare(null, bomMasterId, pid, blankingItemId, null, invLev, 3, code, null, originalQty, originalWeight, false);
+				
+				rowCompareList.add(originalBomCompare);
+			}
+			CodeBomCompareMap.put(code, rowCompareList);
+			/*// 记录当前行存在多少存货，存在多个则需要校验，下面是否存在子件，存在则报错
+			if (bomCompareList.size() > 1){
+
+			}*/
+		}
+		List<String> codeList = new ArrayList<>(codeSet);
+		Collections.sort(codeList);
+		for (String code : codeList){
+			List<BomD> bomDList = CodeBomCompareMap.get(code);
+			List<String> nextLevelCodes = findNextLevelCodes(code, CodeBomCompareMap.keySet());
+			BomD firstBomD = getRawTypeBomD(bomDList, 0);
+			ValidationUtils.notNull(firstBomD, "未获取到半成品数据");
+			firstBomD.setIPid(bomMasterId);
+			
+			if (CollUtil.isNotEmpty(nextLevelCodes)){
+				ValidationUtils.isTrue(bomDList.size() == 1, "编码【"+code+"】已存在多个存货，不允许存在下一级");
+				continue;
+			}
+			
+			// 添加
+			bomCompareList.add(firstBomD);
+			Long inventoryId = firstBomD.getIInventoryId();
+			// 存在则一个个去校验是否真确
+			if (effectiveBomMap.containsKey(inventoryId)){
+				String cVersion = firstBomD.getCVersion();
+				setBomVersion(firstBomD, effectiveBomMap);
+				List<Record> recordList = effectiveBomCompareMap.get(firstBomD.getIInvPartBomMid());
+				List<Long> invIds = recordList.stream().map(record -> record.getLong(BomD.IINVENTORYID)).collect(Collectors.toList());
+				List<Long> compareInvIds = bomDList.stream().map(BomD::getIInventoryId).collect(Collectors.toList());
+				ValidationUtils.isTrue(recordList.size() == (bomDList.size()-1), errorMsg(0, code, cVersion));
+				ValidationUtils.isTrue(invIds.equals(compareInvIds), errorMsg(1, code, cVersion));
+			}else{
+			
+			}
+		}
+		
+		for (String code : CodeBomCompareMap.keySet()){
+			List<BomD> bomDList = CodeBomCompareMap.get(code);
+			if (bomDList.size() > 1){
+				List<String> nextLevelCodes = findNextLevelCodes(code, CodeBomCompareMap.keySet());
+			}
+		}
+		
+		return bomCompareList;
+	}
+	
+	private void test(List<BomD> bomDList, Map<Long, Record> effectiveBomMap, Map<Long, List<Record>> effectiveBomCompareMap, BomD firstBomD){
+		Long inventoryId = firstBomD.getIInventoryId();
+		String cInvLev = firstBomD.getCInvLev();
+		// 存在则一个个去校验是否真确
+		if (effectiveBomMap.containsKey(inventoryId)){
+			String cVersion = firstBomD.getCVersion();
+			setBomVersion(firstBomD, effectiveBomMap);
+			List<Record> recordList = effectiveBomCompareMap.get(firstBomD.getIInvPartBomMid());
+			List<Long> invIds = recordList.stream().map(record -> record.getLong(BomD.IINVENTORYID)).collect(Collectors.toList());
+			List<Long> compareInvIds = bomDList.stream().map(BomD::getIInventoryId).collect(Collectors.toList());
+			ValidationUtils.isTrue(recordList.size() == (bomDList.size()-1), errorMsg(0, cInvLev, cVersion));
+			ValidationUtils.isTrue(invIds.equals(compareInvIds), errorMsg(1, cInvLev, cVersion));
+		}else{
+		
+		}
+	}
+	
+	private String errorMsg(int type, String code, String cVersion){
+		if (type == 0){
+			return String.format("编码栏【%s】,母件版本号【%s】子件个数不同，无法保存！", code, cVersion);
+		}else if (type == 1){
+			return String.format("编码栏【%s】,母件版本号【%s】子件不相同，无法保存！", code, cVersion);
+		}
+		return null;
+	}
+	
+	private BomD getRawTypeBomD(List<BomD> bomDList, Integer iRawType){
+		for (BomD bomD : bomDList){
+			//  原材料类型：0.部品 1. 片料 2. 分条料 3. 卷料
+			if (iRawType == bomD.getIRawType()){
+				return bomD;
+			}
+		}
+		return null;
+	}
+	
+	private void checkBomCompareList(){
+	
+	}
+	
+	
+	private void addBomCompare(List<BomD> bomDList, List<BomD> bomCompareList, Long pid, Boolean isFristAdd){
+		
+		BomD bomCompare = getRawTypeBomD(bomDList, 0);
+		if (ObjectUtil.isNotNull(bomCompare)){
+			if (isFristAdd){
+				bomCompare.setIPid(pid);
+				bomCompareList.add(bomCompare);
+			}
+		}
+		
+		// 片料
+		BomD blankBomCompare = getRawTypeBomD(bomDList, 1);
+		if (ObjectUtil.isNotNull(blankBomCompare)){
+		
+		}
+		// 分条料
+		BomD slicingBomCompare = getRawTypeBomD(bomDList, 2);
+		if (ObjectUtil.isNotNull(slicingBomCompare)){
+		
+		}
+		// 卷料
+		BomD originalBomCompare = getRawTypeBomD(bomDList, 3);
+		if (ObjectUtil.isNotNull(originalBomCompare)){
+		
+		}
+	}
+	
+	public void setBomVersion(BomD compare, Map<Long, Record> effectiveBomMap){
+		// 判断部品存货是否存在版本，不存在则添加，存在则添加 版本号
+		if (effectiveBomMap.containsKey(compare.getIInventoryId())){
+			Record record = effectiveBomMap.get(compare.getIInventoryId());
+			compare.setCVersion(record.getStr(BomM.CVERSION));
+			compare.setIInvPartBomMid(record.getLong(BomM.IAUTOID));
+		}
+	}
+	
+	public List<Record> getEffectiveBomList(Long orgId){
+		return dbTemplate("bomm.getEffectiveBomM", Okv.by("orgId", orgId)).find();
+	}
+	
+	public Map<Long, Record> getEffectiveBomMap(Long orgId){
+		List<Record> recordList = getEffectiveBomList(orgId);
+		if (CollectionUtil.isEmpty(recordList)){
+			return new HashMap<>();
+		}
+		return recordList.stream().collect(Collectors.toMap(record -> record.getLong(BomM.IINVENTORYID), record -> record, (record1, record2)-> record1));
+	}
+	
+	public List<String> findNextLevelCodes(String currentCode, Set<String> allCodes) {
+		List<String> nextLevelCodes = new ArrayList<>();
+		for (String code : allCodes) {
+			if (code.startsWith(currentCode + "-")) {
+				if (code.lastIndexOf("-") == currentCode.length()) {
+					nextLevelCodes.add(code);
+				}
+			}
+		}
+		return nextLevelCodes;
 	}
 }

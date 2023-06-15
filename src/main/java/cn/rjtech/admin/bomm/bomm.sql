@@ -158,3 +158,16 @@ WHERE
      AND  master.iAutoId <> #para(iAutoId)
     #end
 #end
+
+#sql("getEffectiveBomM")
+SELECT
+	*
+FROM
+	Bd_BomM
+WHERE
+	isDeleted = '0'
+	AND iOrgId = #para(orgId)
+	AND dEnableDate  <= CONVERT(DATE,  GETDATE())
+	AND dDisableDate >= CONVERT(DATE,  GETDATE())
+	AND iAuditStatus = 2
+#end

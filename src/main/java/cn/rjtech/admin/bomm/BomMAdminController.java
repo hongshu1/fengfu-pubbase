@@ -2,8 +2,12 @@ package cn.rjtech.admin.bomm;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.bomd.BomDService;
+import cn.rjtech.admin.bomdata.BomDataService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.BomData;
 import cn.rjtech.model.momdata.BomM;
+import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
@@ -21,6 +25,8 @@ public class BomMAdminController extends BaseAdminController {
 	private BomMService service;
 	@Inject
 	private BomDService bomDService;
+	@Inject
+	private BomDataService bomDataService;
 	
    /**
 	* 首页
@@ -122,4 +128,16 @@ public class BomMAdminController extends BaseAdminController {
 	public void saveCopy(@Para(value = "cversion") String cVersion, @Para(value = "dDisableDate") String dDisableDate,  @Para(value = "oldId") Long oldId) {
 		renderJson(service.saveCopy(oldId, dDisableDate, cVersion));
 	}
+	
+	public void submitForm(@Para(value = "formJsonData") String formJsonData, @Para(value = "tableJsonData") String tableJsonData) {
+		
+		renderJsonData(service.submitForm(formJsonData, tableJsonData));
+	}
+	
+	public void findByBomMasterId(){
+        Long id = getLong(0);
+        BomData bomData = bomDataService.getBomData(id);
+        ValidationUtils.notNull(bomData, JBoltMsg.DATA_NOT_EXIST);
+        renderJsonData(JSONObject.parseArray(bomData.getCData()));
+    }
 }
