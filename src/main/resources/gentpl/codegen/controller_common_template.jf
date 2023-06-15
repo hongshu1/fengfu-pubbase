@@ -398,6 +398,7 @@
    /**
 	* 得到select radio checkbox专用options数据
 	*/
+	@UnCheck
 	public void options() {
 	#if(codeGen.isReturnOptionType??)
 	    #if(codeGen.optionsTextColumn?? && codeGen.optionsValueColumn??)
@@ -439,6 +440,7 @@
    /**
 	* autocomplete组件专用数据
 	*/
+	@UnCheck
 	public void autocompleteDatas() {
         #if(hasEnable && hasIsDeleted)
         renderJsonData(service.getAutocompleteList(get("q"), getInt("limit",#(codeGen.autocompleteLimit?? 20)),true,"#(codeGen.autocompleteMatchColumns??)",service.selectSql().enableEq(true).isDeletedEq(false)));

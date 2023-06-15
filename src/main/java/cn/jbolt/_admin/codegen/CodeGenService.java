@@ -1155,6 +1155,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         data.set("needSort", codeGen.getIsShowOptcol() && codeGen.getIsShowOptcolSort());
         data.set("sortableColumns", codeGenModelAttrService.getSortableColumnsStr(codeGen.getId()));
         data.set("paramIdType", getParamIdTypeByGenMode(codeGen.getMainTableIdgenmode()));
+        data.set("needUnCheck", (codeGen.getIsGenOptionsAction() || codeGen.getIsGenAutocompleteAction()));
 
         List<CodeGenModelAttr> conditions = codeGenModelAttrService.getCodeGenSearchConditionsAttrs(codeGen.getId());
         List<CodeGenModelAttr> keywordsSearchColumns = codeGenModelAttrService.getCodeGenSearchKeywordsColumnAttrs(codeGen.getId());
