@@ -15,17 +15,17 @@ public class ModocApiResVo {
     /**
      * 工单信息
      */
-    ModocApiPage doc;
+    Record doc;
     /**
      * 生产任务
      */
     List<Record> job;
 
-    public ModocApiPage getDoc() {
+    public Record getDoc() {
         return doc;
     }
 
-    public void setDoc(ModocApiPage doc) {
+    public void setDoc(Record doc) {
         this.doc = doc;
     }
 
