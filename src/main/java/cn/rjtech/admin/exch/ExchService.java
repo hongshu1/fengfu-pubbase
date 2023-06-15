@@ -175,7 +175,7 @@ public class ExchService extends BaseService<Exch> {
         if (JBoltStringUtil.isBlank(cexchname)) {
             return new Record().set("nflat", null);
         }
-        return dbTemplate("exch.getNflat", Kv.by("cexchname", cexchname)).findFirst();
+        return dbTemplate("exch.getNflat", Kv.by("cexchname", cexchname).set("iorgid",getOrgId())).findFirst();
     }
 
         public Exch getNameByLatestExch(Long orgId, String name){

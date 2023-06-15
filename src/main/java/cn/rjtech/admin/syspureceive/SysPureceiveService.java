@@ -31,6 +31,8 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -225,9 +227,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     /**
      * 推送 PL_RcvDocQcFormM ;//来料检验
      */
-    public RcvDocQcFormM insertRcvDocQcFormM(Record row, SysPureceive sys, User user, Long veniAutoId) {
+    public RcvDocQcFormM insertRcvDocQcFormM(Record row, SysPureceive sys, User user, Long veniAutoId,Integer imask) {
         Date date = new Date();
-
+        Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", row.getStr("barcode"))).findFirst();
         RcvDocQcFormM rcvDocQcFormM = new RcvDocQcFormM();
 
         rcvDocQcFormM.setIOrgId(getOrgId());
@@ -241,25 +243,21 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         }
 
         // 质检表格ID
-        rcvDocQcFormM.setIQcFormId(1L);
+        if(null != barcode && null != barcode.getStr("iautoid")){
+            rcvDocQcFormM.setIQcFormId(barcode.getLong("iautoid"));
+        }
         rcvDocQcFormM.setIRcvDocId(Long.valueOf(sys.getAutoID()));
         rcvDocQcFormM.setCRcvDocNo(sys.getBillNo());
-
-        if (StrUtil.isBlank(row.getStr("iinventoryid"))) {
-            rcvDocQcFormM.setIInventoryId(100L);
-        } else {
-            rcvDocQcFormM.setIInventoryId(row.getLong("iinventoryid"));
-        }
-
+        rcvDocQcFormM.setIInventoryId(row.getLong("iinventoryid"));
         rcvDocQcFormM.setIVendorId(veniAutoId);
         rcvDocQcFormM.setDRcvDate(sys.getDcreatetime());
         rcvDocQcFormM.setIQty(Double.valueOf(row.getStr("qty").trim()).intValue());
-
-        // 批次号
-        rcvDocQcFormM.setCBatchNo("1111111Test");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        // 批次号(收货日期)
+        rcvDocQcFormM.setCBatchNo(formatter.format(sys.getDcreatetime()));
         rcvDocQcFormM.setIStatus(0);
         rcvDocQcFormM.setIsCpkSigned(false);
-        rcvDocQcFormM.setIMask(2);
+        rcvDocQcFormM.setIMask(imask);
         rcvDocQcFormM.setIsCpkSigned(false);
         rcvDocQcFormM.setICreateBy(user.getId());
         rcvDocQcFormM.setCCreateName(user.getName());
@@ -874,12 +872,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                                 if (String.valueOf(formM.getIInventoryId()).equals(barcode.getStr("iinventoryId"))) {
                                     formM.setIQty(this.add(formM.getIQty(), f.getQty()));
                                 } else {
-                                    RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(row, byId, user, veniAutoId);
+                                    RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(barcode, byId, user, veniAutoId,1);
                                     tempForms.add(rcvDocQcFormM1); // 将需要添加的元素放入临时列表
                                 }
                             }
                         } else {
-                            RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(row, byId, user, veniAutoId);
+                            RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(barcode, byId, user, veniAutoId,1);
                             tempForms.add(rcvDocQcFormM1); // 将需要添加的元素放入临时列表
                         }
                         // 将临时列表中的元素添加到原始列表中
@@ -924,12 +922,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                                     if (String.valueOf(formM.getIInventoryId()).equals(barcode.getStr("iinventoryId"))) {
                                         formM.setIQty(this.add(formM.getIQty(), f.getQty()));
                                     } else {
-                                        RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(row, byId, user, veniAutoId);
+                                        RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(barcode, byId, user, veniAutoId,2);
                                         tempForms.add(rcvDocQcFormM1); // 将需要添加的元素放入临时列表
                                     }
                                 }
                             } else {
-                                RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(row, byId, user, veniAutoId);
+                                RcvDocQcFormM rcvDocQcFormM1 = this.insertRcvDocQcFormM(barcode, byId, user, veniAutoId,2);
                                 tempForms.add(rcvDocQcFormM1); // 将需要添加的元素放入临时列表
                             }
                             // 将临时列表中的元素添加到原始列表中

@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        #if(!weekOrderM.iAutoId?? || (edit??false && weekOrderM.iOrderStatus == 1))
+                        #if(!weekOrderM.iAutoId?? || (edit??false && (weekOrderM.iOrderStatus == 1 || weekOrderM.iOrderStatus == 4)))
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
                         #include("/_view/_common/_approval_btns.html", uri="/admin/weekorderm",

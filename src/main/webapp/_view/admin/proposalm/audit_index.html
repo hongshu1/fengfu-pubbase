@@ -31,14 +31,14 @@
                     <input type="text" autocomplete="off" class="form-control"
                            data-autocomplete
                            data-url="admin/person/autocomplete"
-                           data-link-para-ele="#capplypersoncode"
-                           data-sync-ele="capplypersoncode"
-                           data-text-attr="cpsn_name"
-                           data-value-attr="cpsn_num"
+                           ###data-link-para-ele="#capplypersoncode"
+                           data-sync-ele="capplypersoncode_#(pageId)"
+                           data-text-attr="cpsnname"
+                           data-value-attr="cpsnnum"
                            placeholder="=申请人="
-                           data-column-attr="cpsn_num,cpsn_name">
+                           data-column-attr="cpsnnum,cpsnname">
 
-                    <input type="text" name="capplypersoncode" id="capplypersoncode" data-sync-attr="cpsn_num" hidden>
+                   <input type="text" name="capplypersoncode" id="capplypersoncode_#(pageId)" data-sync-attr="cpsnnum" hidden>
 
                     <input type="text" autocomplete="off" class="form-control col-md-1" placeholder="=项目编码=" name="cprojectcode" value=""/>
                     <input type="text" autocomplete="off" class="form-control col-md-1" placeholder="=项目名称=" name="cprojectname" value=""/>
@@ -53,8 +53,8 @@
                     ></select>
 
                     <select class="form-control"
-                            data-url="admin/dictionary/options?key=iseffective"
-                            name="iseffective"
+                            data-url="admin/dictionary/options?key=effective_status"
+                            name="ieffectivestatus"
                             data-text-attr="name"
                             data-value-attr="sn"
                             data-text="=生效状态="

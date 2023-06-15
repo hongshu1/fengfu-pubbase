@@ -451,7 +451,7 @@ public class TransVouchService extends BaseService<TransVouch> {
 		}
 		TransVouch transVouch = findById(iAutoId);
 		//订单状态：2. 待审核
-		transVouch.setState(1);
+		transVouch.setIAuditStatus(0);
 		transVouch.setIAuditby(null);
 		transVouch.setDAuditTime(null);
 		transVouch.setCAuditname(null);

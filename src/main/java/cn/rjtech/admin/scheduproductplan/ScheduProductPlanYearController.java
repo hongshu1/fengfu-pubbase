@@ -324,13 +324,13 @@ public class ScheduProductPlanYearController extends BaseAdminController {
 
 
 
-        System.err.println("开始查询排程数据！");
+        LOG.info("开始查询排程数据！");
         long start = System.currentTimeMillis();
 
 
 
         long end = System.currentTimeMillis();
-        System.err.println("查询总时间 = " + (end - start));
+        LOG.info("查询总时间 = " + (end - start));
 
         //data.put("schedulingDataList", schedulingDataList);
 

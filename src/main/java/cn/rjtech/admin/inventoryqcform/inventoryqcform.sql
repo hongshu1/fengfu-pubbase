@@ -33,6 +33,9 @@ WHERE
     #if(iQcFormId)
          and t1.iQcFormId = '#(iQcFormId)'
     #end
+    #if(cinvcode)
+        and inv.cinvcode like '%#(cinvcode)%'
+    #end
     #if(isAdd)
         and t1.iQcFormId = ' '
     #end

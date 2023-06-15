@@ -91,6 +91,7 @@ public class TransVouchAdminController extends BaseAdminController {
 		}
 		set("transVouch",transVouch);
 		set("type", get("type"));
+		set("edit", get("edit"));
 		render("edit.html");
 	}
 

@@ -9,7 +9,9 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
+import cn.rjtech.admin.investmentplan.InvestmentPlanService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.ServiceTypeEnum;
 import cn.rjtech.model.momdata.Period;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -42,7 +44,8 @@ public class PeriodService extends BaseService<Period> {
 	private UserService userService;
 	@Inject
 	private ExpenseBudgetService expenseBudgetService;
-
+	@Inject
+	private InvestmentPlanService investmentPlanService;
 	/**
 	 * 后台管理分页查询
 	 */
@@ -140,10 +143,20 @@ public class PeriodService extends BaseService<Period> {
 				Boolean isenabled = dbPeriod.getIsenabled();
 				ValidationUtils.isTrue(!isenabled,"已经启动的期间不可删除.");
 				ValidationUtils.notNull(dbPeriod, JBoltMsg.DATA_NOT_EXIST);
-
+				Integer iserviceType = dbPeriod.getIservicetype();
+				ServiceTypeEnum serviceTypeEnum = ServiceTypeEnum.toEnum(iserviceType);
+				switch (serviceTypeEnum) {
+				case EXPENSE_BUDGET:
+					ValidationUtils.isTrue(!expenseBudgetService.periodIsExists(dbPeriod), "期间已经应用于费用预算,不能删除!");;
+					break;
+				case INVESTMENT_PLAN:
+					ValidationUtils.isTrue(!investmentPlanService.periodIsExists(dbPeriod), "期间已经应用于投资计划,不能删除!");;
+					break;					
+				default:
+					break;
+				}
 				// TODO 可能需要补充校验组织账套权限
 				// TODO 存在关联使用时，校验是否仍在使用
-
 				ValidationUtils.isTrue(dbPeriod.delete(), JBoltMsg.FAIL);
 			}
 

@@ -77,6 +77,7 @@ public class MaterialsOutAdminController extends BaseAdminController {
 		};
 		Record MODetail = service.getrcvMODetailList(materialsOut.getAutoID());
 		set("type", get("type"));
+		set("edit", get("edit"));
 		set("MODetail",MODetail);
 		set("materialsOut",materialsOut);
 		render("edit.html");

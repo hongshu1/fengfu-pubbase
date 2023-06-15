@@ -33,6 +33,7 @@ import cn.rjtech.model.momdata.ExpenseBudget;
 import cn.rjtech.model.momdata.InvestmentPlan;
 import cn.rjtech.model.momdata.InvestmentPlanItem;
 import cn.rjtech.model.momdata.InvestmentPlanItemd;
+import cn.rjtech.model.momdata.Period;
 import cn.rjtech.util.ReadInventmentExcelUtil;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -1076,5 +1077,12 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
                 break;
 		}
 		return str;
+	}
+	/**
+	 * 期间是否应用于投资计划
+	 * */
+	public boolean periodIsExists(Period dbPeriod) {
+		List<InvestmentPlan> list = find(selectSql().eq("iPeriodId", dbPeriod.getIautoid()));
+		return CollUtil.isNotEmpty(list);
 	}
 }

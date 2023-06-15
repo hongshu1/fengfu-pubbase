@@ -121,7 +121,7 @@ public class CommonController extends BaseRestController {
         if (ObjUtil.equals("200", result.getStr("code"))) {
             renderJsonSuccess(result);
         } else {
-            renderJson(Kv.by("code", result.getStr("code")).set("data", result));
+            renderJson(result);
         }
     }
 

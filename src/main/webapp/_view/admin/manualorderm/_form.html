@@ -10,7 +10,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="col">
-                    #if(!manualOrderM.iAutoId?? || (edit??false && manualOrderM.iOrderStatus == 1))
+                    #if(!manualOrderM.iAutoId?? || (edit??false && (manualOrderM.iOrderStatus == 1 || manualOrderM.iOrderStatus == 4)))
                     <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                     #end
                     #include("/_view/_common/_approval_btns.html", uri="/admin/manualorderm",
