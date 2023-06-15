@@ -74,6 +74,7 @@ public class MoDocBatchController extends BaseAdminController {
     set("editplanviewdatas", service.getOpenEditPlanViewDatas(kv.getLong("taskid")));
     keepPara();
     render("person_edit.html");
+//    renderJsonData(service.getOpenEditPlanViewDatas(kv.getLong("taskid")));
   }
 
   /**
