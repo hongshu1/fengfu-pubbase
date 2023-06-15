@@ -2,6 +2,7 @@ package cn.rjtech.admin.formapproval;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -247,7 +248,8 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
         // 提审人
         User user = JBoltUserKit.getUser();
-        Person person = personService.findFirstByUserId(user.getId());
+//        Person person = personService.findFirstByUserId(user.getId());
+        Person person = findPersonByUserId(user.getId());
         // 获取单据信息
         Record formData = findFirstRecord("select * from " + formSn + " where "+primaryKeyName+" = ? ", formAutoId);
         ValidationUtils.notNull(formData, "单据不存在");
@@ -1176,7 +1178,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             /*
              * 按照倒序找出 最新的一个流程
              */
-            Record record = findFirstRecord("select d.iAutoId  AS flowId, " +
+/*            Record record = findFirstRecord("select d.iAutoId  AS flowId, " +
                     "       fd.iAutoId       AS approvalDid, " +
                     "       d.iUserId        AS userId, " +
                     "       d.iAuditStatus   AS flowStatus, " +
@@ -1189,37 +1191,90 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     "         left join Bd_FormApprovalD fd on m.iApprovalDid = fd.iAutoId " +
                     "where fd.iFormApprovalId = ? " +
                     "  and (d.iAuditStatus = 2 or d.iAuditStatus = 3) " +
-                    "order by fd.iSeq desc, d.iSeq desc", mid);
+                    "order by fd.iSeq desc, d.iSeq desc", mid);*/
 
-            if (null == record || CollUtil.isEmpty(record.getColumns())) {
+            List<Record> list = findRecord("select d.iAutoId  AS flowId, " +
+                    "       fd.iAutoId       AS approvalDid, " +
+                    "       d.iUserId        AS userId, " +
+                    "       d.iAuditStatus   AS flowStatus, " +
+                    "       fd.iType         AS type, " +
+                    "       fd.iApprovalWay  AS way, " +
+                    "       fd.iSeq          AS seq, " +
+                    "       fd.iStatus       AS approvalStatus " +
+                    "from Bd_FormApprovalFlowD d " +
+                    "         left join Bd_FormApprovalFlowM m on d.iFormApprovalFlowMid = m.iAutoId " +
+                    "         left join Bd_FormApprovalD fd on m.iApprovalDid = fd.iAutoId " +
+                    "where fd.iFormApprovalId = "+mid+" " +
+                    "  and (d.iAuditStatus = 2 or d.iAuditStatus = 3) " +
+                    "order by fd.iSeq desc, d.iSeq desc");
+
+            int size = list.size();
+            if (size <= 0) {
+//            if (null == record || CollUtil.isEmpty(record.getColumns())) {
                 ValidationUtils.error("你不是当前审批人");
             } else {
 
-                // 判断是否当前审批人
-                Long userid = record.getLong("userid");
-                ValidationUtils.isTrue(Objects.equals(userid, userId), "你不是当前审批人");
+                List<Long> flowDid = new ArrayList<>();
+                Set<Long> approvalDid = new HashSet<>();
+                Long passUserId = null;
 
-                Long approvaldid = record.getLong("approvaldid");
-                Long flowid = record.getLong("flowid");
+                for (int i = 0; i < size; i++) {
+                    Record record = list.get(i);
+
+                    Long userid = record.getLong("userid");
+                    Long approvaldid = record.getLong("approvaldid");
+                    Long flowid = record.getLong("flowid");
+                    flowDid.add(flowid);
+                    approvalDid.add(approvaldid);
+
+                    if (isOk(userid)){
+                        passUserId = userid;
+                        break;
+                    }
+                }
+
+                // 判断是否当前审批人
+                ValidationUtils.isTrue(Objects.equals(passUserId, userId), "你不是当前审批人");
+
+                String flowIdStr = flowDid.stream().map(String::valueOf).collect(Collectors.joining(","));
+                String approvaldIdStr = approvalDid.stream().map(String::valueOf).collect(Collectors.joining(","));
+
+                Kv kv = new Kv();
+                kv.set("flowIdStr",flowIdStr);
+                kv.set("approvaldIdStr",approvaldIdStr);
+                List<FormApprovalD> approvalDList = formApprovalDService.findListBySid(kv);
+                List<FormApprovalFlowD> flowDList = flowDService.findListBySid(kv);
+
+                approvalDList.forEach(formApprovalD -> {
+                    formApprovalD.setIStatus(status);
+                });
+
+                flowDList.forEach(formApprovalFlowD -> {
+                    formApprovalFlowD.setIAuditStatus(status);
+                });
 
                 tx(() -> {
                     // 反审后 节点与流程的状态都是待审批
-                    FormApprovalD approvalD = formApprovalDService.findById(approvaldid);
-                    FormApprovalFlowD flowD = flowDService.findById(flowid);
-                    approvalD.setIStatus(status);
-                    flowD.setIAuditStatus(status);
+//                    FormApprovalD approvalD = formApprovalDService.findById(approvaldid);
+//                    FormApprovalFlowD flowD = flowDService.findById(flowid);
+//                    approvalD.setIStatus(status);
+//                    flowD.setIAuditStatus(status);
 
-                    boolean approvalDUpdate = approvalD.update();
-                    boolean flowDUpdate = flowD.update();
+//                    boolean approvalDUpdate = approvalD.update();
+//                    boolean flowDUpdate = flowD.update();
 
-                    if (flowDUpdate) {
+                    formApprovalDService.batchUpdate(approvalDList,approvalDList.size());
+                    int[] flowDUpdate = flowDService.batchUpdate(flowDList, flowDList.size());
+
+                    if (flowDUpdate.length != 0) {
                         // 是否为第一个反审
-                        if (isFirstReverse(formAutoId)) {
+                        if (isFirstReverse(formAutoId) && flowDUpdate.length == 1) {
 
-                            revocationApprove(formAutoId, null);
+                            revocationApprove(formAutoId);
 
                             ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(),
-                                    AuditStatusEnum.AWAIT_AUDIT.getValue(), primaryKeyName), "更新反审失败");
+                                     primaryKeyName), "更新反审失败");
+
 
                             // 单据反审时，预留额外业务处理
                             invokeMethod(className, "postReverseApproveFunc", formAutoId, true, false);
@@ -1229,7 +1284,6 @@ public class FormApprovalService extends BaseService<FormApproval> {
                         if (Objects.equals(perStatus, "2")) {
                             // 反审后 单据状态都是待审批
                             ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), primaryKeyName), "更新反审失败");
-
 
                             // 是否为最后一个反审
 //                         单据反审时，预留额外业务处理
@@ -1251,7 +1305,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 撤回 审批流
      */
-    private void revocationApprove(Long formAutoId, ICallbackFunc postWithdraw){
+    private void revocationApprove(Long formAutoId){
         List<FormApprovalFlowD> flowDList = flowDService.daoTemplate("formapproval.revocationApprove", Okv.by("formAutoId", formAutoId)).find();
         ValidationUtils.assertEmpty(flowDList, "该订单已在审批中，不予撤回！");
 
@@ -1306,8 +1360,8 @@ public class FormApprovalService extends BaseService<FormApproval> {
         }
 
         // 更新后业务处理
-        String msg = postWithdraw.execute();
-        ValidationUtils.assertBlank(msg, msg);
+//        String msg = postWithdraw.execute();
+//        ValidationUtils.assertBlank(msg, msg);
     }
 
     /**
@@ -1480,6 +1534,18 @@ public class FormApprovalService extends BaseService<FormApproval> {
     }
 
     /**
+     * 不管之前单据状态
+     * 更新审批状态，不更新审批时间
+     */
+    public boolean updateAudit(String formSn, long formAutoId, int iAfterStatus, String primaryKeyName) {
+        Sql updateSql = updateSql().update(formSn)
+                .set(IAUDITSTATUS, iAfterStatus)
+                .eq(primaryKeyName, formAutoId);
+
+        return update(updateSql) > 0;
+    }
+
+    /**
      * 更新撤销审核
      */
     public boolean updateWithdraw(String formSn, long formAutoId) {
@@ -1521,7 +1587,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 ValidationUtils.assertBlank(msg, msg);
             //  审批流
             case FLOW:
-                revocationApprove(formAutoId, postWithdraw);
+                revocationApprove(formAutoId);
                 break;
             default:
                 break;
@@ -1657,4 +1723,15 @@ public class FormApprovalService extends BaseService<FormApproval> {
         return false;
     }
 
+    /**
+     * 根据用户ID获取人员信息
+     * @param userId
+     * @return
+     */
+    public Person findPersonByUserId(Long userId){
+        Kv kv = new Kv();
+        kv.setIfNotNull("orgId",getOrgId());
+        kv.set("userId",userId);
+        return personService.daoTemplate("formapproval.findPersonByUserId",kv).findFirst();
+    }
 }

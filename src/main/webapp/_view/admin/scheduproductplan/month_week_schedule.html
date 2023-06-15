@@ -364,6 +364,7 @@
     //设置状态栏
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取表单
+    sheet.contextMenuStrip = null; // 禁用右键菜单
     //设置全局的字体样式
     sheet.getRange(-1, -1,-1,-1).font('宋体 bold 10px');
     statusBar.bind(spread);//状态栏
@@ -481,7 +482,7 @@
     function submit() {
         var fileName = document.getElementById("input").value;//获取用户输入的表格导出名称
         if(fileName!=''){
-            if(parms["checkbox"]==false){
+            if(!parms["checkbox"]){
                 //关闭表单保护
                 sheet.options.isProtected = false; // 开启工作表保护
                 sheet.options.protectionOptions.allowEditObject = false; // 允许编辑对象
@@ -545,10 +546,11 @@
      */
     function loadInit(){
         //设置全局的列宽行高
-        // sheet.defaults.colWidth = 80;
+        sheet.defaults.colWidth = 80;
         sheet.defaults.rowHeight = 25;
         spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
         spread.getSheet(0).setColumnCount(parms.ColumnCount); //设置一行有多少个单元格
+        sheet.frozenRowCount(4); // 将第一行冻结
         //设置单元格内容的对齐方式
         var style = new GC.Spread.Sheets.Style();
         style.hAlign = GC.Spread.Sheets.HorizontalAlign.center;
@@ -556,8 +558,6 @@
         spread.sheets.forEach(function(sheet) {
             sheet.setDefaultStyle(style, GC.Spread.Sheets.SheetArea.viewport);
         });
-        //
-        sheet.frozenRowCount(4); // 将第一行冻结
         //设置value值和该单元格的对齐方式
         var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();//定义多选按钮
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex).cellType(cellType);
@@ -578,7 +578,7 @@
         parms.activeSheet.setColumnWidth(parms.columnindex+5, 150);//设置指定单元格的width
         parms.activeSheet.addSpan(0,5,4,1);
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex+6).text("部品名称");
-        parms.activeSheet.setColumnWidth(parms.columnindex+6, 280);//设置指定单元格的width
+        parms.activeSheet.setColumnWidth(parms.columnindex+6, 180);//设置指定单元格的width
         parms.activeSheet.addSpan(0,6,4,1);
     }
     /**
@@ -686,7 +686,7 @@
                         rowIndex += 6;
 
                         parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划使用");
-                        parms.activeSheet.setColumnWidth(parms.planListRowIndex, 70);//设置指定单元格的width
+                        console.log(parms.planListRowIndex)
                         parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/1S");
                         parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/2S");
                         parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/3S");

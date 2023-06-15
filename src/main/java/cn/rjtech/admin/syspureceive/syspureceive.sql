@@ -157,7 +157,7 @@ SELECT  a.*
 FROM V_Sys_PODetail a
 where 1=1
 	#if(sourcebillno)
-		and a.SourceBillNo = #para(sourcebillno)
+		and a.mesbillno = #para(sourcebillno)
 	#end
 #end
 
@@ -349,7 +349,7 @@ order by o.iAutoId DESC
 
 
 #sql("InventoryQcForm")
-SELECT  qc.iAutoId,qc.cQcFormName,
+SELECT  t1.iAutoId,qc.cQcFormName,
 inv.cInvCode, inv.cInvCode1, inv.cInvName, inv.cInvName1, inv.cInvStd, uom.cUomName,
 t2.cEquipmentModelName as machineName
 FROM Bd_InventoryQcForm t1

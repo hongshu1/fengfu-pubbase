@@ -4,12 +4,17 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
-                                class="fa fa-refresh"></i> 保存
+                        <button class="btn btn-success btn-sm" onclick="submitThisForm()" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end><i
+                                class="fa fa-refresh" ></i> 保存
                         </button>
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/otherInList", iautoid=sysotherin.AutoID??0)
-<!--                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批-->
-<!--                        </button>-->
+                        #if(sysotherin.AutoID??)
+                        ### 参数列表
+                        ### uri:                接口URI
+                        ### formSn:             表单名
+                        ### o:                  当前表单对象名
+                        ### primaryKeyName:     主键名
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/otherInList", formSn="T_Sys_OtherIn", o=sysotherin, edit=edit??, primaryKeyName="AutoID")
+                        #end
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
                                 class="fa fa-window-maximize"></i> 关闭
                         </button>
@@ -30,7 +35,7 @@
                                     <label class="col-sm-3 col-form-label">入库单号</label>
                                     <div class="col-9">
                                         <input type="text" data-notnull="true"
-                                               data-tips="请输入入库单号" data-with-clearbtn="true" autocomplete="off"
+                                               data-tips="请输入入库单号" data-with-clearbtn="true" autocomplete="off" disabled
                                                class="form-control" placeholder="请输入入库单号" maxlength="40"
                                                name="sysotherin.BillNo" value="#(sysotherin.BillNo??)"/>
                                     </div>
@@ -41,9 +46,9 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">入库日期</label>
                                     <div class="col-9">
-                                        <input type="text" data-date class="form-control ml-2" placeholder="入库日期"
-                                               maxlength="20" name="sysotherin.createdate"
-                                               value="#(sysotherin.createdate??)"/>
+                                        <input type="text" data-date class="form-control ml-2" placeholder="入库日期" disabled
+                                               maxlength="20" name="sysotherin.dcreatetime"
+                                               value="#(sysotherin.dcreatetime??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -59,7 +64,7 @@
                                                data-hidden-input="cwhcode" data-text-attr="cwhname"
                                                data-column-attr="cwhcode,cwhname" placeholder="请选择仓库名称"
                                                data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
-                                               value="#(cwhname??)">
+                                               value="#(cwhname??)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -75,7 +80,7 @@
                                                data-hidden-input="crdcode" data-text-attr="crdname"
                                                data-column-attr="crdcode,crdname" placeholder="请选择入库类别"
                                                data-tips="请选择入库类别" data-header="入库编码,入库类别" maxlength="40"
-                                               value="#(crdname??)">
+                                               value="#(crdname??)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +108,7 @@
                                         <input type="text" data-notnull="true"
                                                data-tips="请输入业务号" data-with-clearbtn="true" autocomplete="off"
                                                class="form-control" placeholder="请输入业务号" maxlength="40"
-                                               name="yw" value="#(sysotherin.BillNo??)"/>
+                                               name="yw" value="#(sysotherin.BillNo??)"#if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -120,7 +125,7 @@
                                                data-column-attr="vencode,venname" placeholder="请选择供应商名称"
                                                data-tips="请选择供应商名称" data-header="供应商编码,供应商名称"
                                                maxlength="40"
-                                               value="#(venname??)">
+                                               value="#(venname??)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -129,9 +134,9 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">审批日期</label>
                                     <div class="col-9">
-                                        <input type="text" data-date class="form-control ml-2" placeholder="审批日期"
-                                               maxlength="20" name="sysotherin.AuditDate"
-                                               value="#(sysotherin.AuditDate??)"/>
+                                        <input type="text" data-date class="form-control ml-2" placeholder="审批日期" disabled
+                                               maxlength="20" name="sysotherin.dAuditTime"
+                                               value="#(sysotherin.daudittime??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -143,7 +148,7 @@
                                         <input type="text" data-notnull="true"
                                                data-tips="请输入备注" data-with-clearbtn="true" autocomplete="off"
                                                class="form-control" placeholder="请输入备注" maxlength="40"
-                                               name="sysotherin.memo" value="#(sysotherin.memo??)"/>
+                                               name="sysotherin.memo" value="#(sysotherin.memo??)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -153,9 +158,9 @@
                                     <label class="col-sm-3 col-form-label">制单人</label>
                                     <div class="col-9">
                                         <input type="text" data-notnull="true"
-                                               data-tips="请输制单人" data-with-clearbtn="true" autocomplete="off"
+                                               data-tips="请输制单人" data-with-clearbtn="true" autocomplete="off" disabled
                                                class="form-control" placeholder="请输制单人" maxlength="40"
-                                               name="sysotherin.createperson" value="#(sysotherin.createperson??)"/>
+                                               name="sysotherin.ccreatename" value="#(sysotherin.ccreatename??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -165,9 +170,9 @@
                                     <label class="col-sm-3 col-form-label">审核人</label>
                                     <div class="col-9">
                                         <input type="text" data-notnull="true"
-                                               data-tips="请输审核人" data-with-clearbtn="true" autocomplete="off"
+                                               data-tips="请输审核人" data-with-clearbtn="true" autocomplete="off" disabled
                                                class="form-control" placeholder="请输审核人" maxlength="40"
-                                               name="sysotherin.auditperson" value="#(sysotherin.auditperson??)"/>
+                                               name="sysotherin.cauditname" value="#(sysotherin.cauditname??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -178,10 +183,12 @@
         </div>
     </div>
 </div>
+
 ### 新增之后，并且为审核流
 #if(sysotherin.AutoID?? && sysotherin.iauditway == 2)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysotherin.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysotherin.AutoID, formSn="T_Sys_OtherIn", btnNeed=1, pId=pageId,primaryKeyName="AutoID", className="cn.rjtech.admin.sysotherin.SysOtherinService")
 #end
+
 <div class="jbolt_page_content">
     <script type="text/template" id="sysotherin_tpl_#(pageId)">
         {@each datas as data,index}
@@ -193,7 +200,7 @@
                    class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 
             </td>
-            <td>${data.barcode}</td>
+            <td #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) data-editable="false" #end >${data.barcode}</td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvdddcode}</td>
             <td>${data.cinvname}</td>
@@ -210,27 +217,23 @@
         <div class="col-md-4">
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">现品票扫码</label>
-                <div class="col-9">
-                    <input type="text" data-notnull="true"
-                           data-tips="请输入现品票扫码" data-with-clearbtn="true" autocomplete="off"
-                           class="form-control" placeholder="请输入现品票扫码" maxlength="40"
-                           name="sysotherin.warehousingNo" value="#(sysotherin.warehousingNo??)"/>
+                <div class="col-5">
+                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end
+                           id="barcode" name="barcode" value="#(barcode??)"/>
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                    <button onclick="barcode()" class="btn btn-primary btn-sm" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end >搜索</button>
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                    <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end >添加行</button>
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                    <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end   ><i class="fa fa-trash"></i> 删除行</button>
                 </div>
             </div>
         </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">搜索</button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                    id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysotherindetail/deleteByIds?ids="
-                    data-confirm="确定删除选中数据？"
-                    class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
-            </button>
-        </div>
+
     </div>
 
     <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysotherin.AutoID??)
@@ -264,6 +267,7 @@
 
     function submitThisForm() {
         jboltTableSubmit("#jbolt_Table_#(pageId)");
+        return true;
     }
 
     function getJBoltTableEditableColsOpton() {

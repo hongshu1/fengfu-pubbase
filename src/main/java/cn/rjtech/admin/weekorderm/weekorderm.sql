@@ -50,4 +50,11 @@ WHERE wom.IsDeleted = 0
     #if(corderno)
     AND wom.corderno LIKE CONCAT('%', #para(corderno), '%')
     #end
+    #if(timedatas)
+    AND(
+        #for(timedata:timedatas)
+         #(for.first ? "" : "OR") (wod.dPlanAogDate = '#(timedata.split(',')[0])' AND wod.cPlanAogTime = '#(timedata.split(',')[1])')
+        #end
+    )
+    #end
 #end

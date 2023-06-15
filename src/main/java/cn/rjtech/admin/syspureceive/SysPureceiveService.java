@@ -243,8 +243,14 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         }
 
         // 质检表格ID
-        if(null != barcode && null != barcode.getStr("iautoid")){
-            rcvDocQcFormM.setIQcFormId(barcode.getLong("iautoid"));
+        if(null != barcode && null != barcode.getStr("cinvcode")){
+            Record iq = dbTemplate("syspureceive.InventoryQcForm", Kv.by("cinvcode", barcode.getStr("cinvcode"))).findFirst();
+            if(null != iq && null != iq.getLong("iautoid")) {
+                rcvDocQcFormM.setIQcFormId(iq.getLong("iautoid"));
+                rcvDocQcFormM.setIStatus(1);
+            }
+        }else {
+            rcvDocQcFormM.setIStatus(0);
         }
         rcvDocQcFormM.setIRcvDocId(Long.valueOf(sys.getAutoID()));
         rcvDocQcFormM.setCRcvDocNo(sys.getBillNo());
@@ -255,7 +261,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         // 批次号(收货日期)
         rcvDocQcFormM.setCBatchNo(formatter.format(sys.getDcreatetime()));
-        rcvDocQcFormM.setIStatus(0);
         rcvDocQcFormM.setIsCpkSigned(false);
         rcvDocQcFormM.setIMask(imask);
         rcvDocQcFormM.setIsCpkSigned(false);
@@ -308,13 +313,26 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     /**
      * 业务逻辑发送改变，以下重新开发一个保存功能
      */
-    public Ret submit(JBoltTable jBoltTable, User user) {
+    public Ret submitAll(JBoltTable jBoltTable, User user) {
         String operationType = jBoltTable.getFormRecord().getStr("operationType");
 
         if (!"submit".equals(operationType)) {
             if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null
                     && jBoltTable.getUpdateRecordList() == null) {
                 return fail("行数据不能为空");
+            }
+        }
+        // 采购订单推u8才可以添加
+        List<Record> list = jBoltTable.getSaveRecordList();
+        if(null != list) {
+            for (Record record : list) {
+                ValidationUtils.isTrue(this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
+            }
+        }
+        List<Record> list1 = jBoltTable.getUpdateRecordList();
+        if(null != list1) {
+            for (Record record : list1) {
+                ValidationUtils.isTrue(this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
             }
         }
 
@@ -771,8 +789,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         for (String p : split) {
             List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
             for (SysPureceive s : sysPureceives) {
-                if (!"2".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，不是审批通过状态！！");
+                if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！");
+                }
+                if ("1".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！");
                 }
                 //查出从表
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.getAutoID());
@@ -812,15 +833,17 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 for (SysPureceivedetail d : firstBy) {
                     if ("0".equals(d.getIsInitial())) {
                         SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
-                        String autoID = firstByBarcode.getMasID();
-                        //删除从表
-                        syspuinstoredetailservice.deleteByIds(firstByBarcode.getAutoID());
-                        SysPuinstore byId = syspuinstoreservice.findById(autoID);
-                        List<SysPuinstoredetail> detailByMasID = syspuinstoredetailservice.findDetailByMasID(byId.getAutoID());
-                        if (detailByMasID.isEmpty()) {
-                            // 从表没数据才删除 主表
-                            syspuinstoreservice.deleteByIds(byId.getAutoID());
+                        if(null != firstByBarcode && null != firstByBarcode.getAutoID()) {
+                            String autoID = firstByBarcode.getMasID();
+                            //删除从表
+                            syspuinstoredetailservice.deleteByIds(firstByBarcode.getAutoID());
+                            SysPuinstore byId = syspuinstoreservice.findById(autoID);
+                            List<SysPuinstoredetail> detailByMasID = syspuinstoredetailservice.findDetailByMasID(byId.getAutoID());
+                            if (detailByMasID.isEmpty()) {
+                                // 从表没数据才删除 主表
+                                syspuinstoreservice.deleteByIds(byId.getAutoID());
 
+                            }
                         }
                     } else {
                         // 通过主表的入库单号 查质检单数据
