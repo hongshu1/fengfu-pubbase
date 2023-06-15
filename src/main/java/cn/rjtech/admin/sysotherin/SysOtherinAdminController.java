@@ -103,6 +103,7 @@ public class SysOtherinAdminController extends BaseAdminController {
                 set("venname", first2.getCVenName());
             }
         }
+        Boolean edit = getBoolean("edit");
         set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
         set("sysotherin", sysOtherin);
         render("edit.html");
@@ -159,26 +160,6 @@ public class SysOtherinAdminController extends BaseAdminController {
     }
 
     /**
-     * 审批通过
-     */
-    public void approve(String ids) {
-        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-
-        // renderJson(service.approve(ids));
-    }
-
-    /**
-     * 审批不通过
-     */
-    public void reject(String ids) {
-        if (StringUtils.isEmpty(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        // renderJson(service.reject(ids))
-    }
-
-    /**
      * 批量审核通过（批量审批也走这里）
      */
     public void batchApprove(@Para(value = "ids") String ids) {
@@ -199,4 +180,20 @@ public class SysOtherinAdminController extends BaseAdminController {
         }
         renderJson(service.noProcess(ids));
     }
+
+    /**
+     * 审批通过
+     */
+    public void approve(String ids) {
+        renderJson(service.approve(getLong(0)));
+
+    }
+    /**
+     * 审批不通过
+     */
+    public void reject(String ids) {
+        renderJson(service.reject(getLong(0)));
+    }
+
+
 }

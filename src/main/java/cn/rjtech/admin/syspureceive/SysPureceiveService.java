@@ -321,13 +321,13 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         List<Record> list = jBoltTable.getSaveRecordList();
         if(null != list) {
             for (Record record : list) {
-                ValidationUtils.isTrue(!this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
+                ValidationUtils.isTrue(this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
             }
         }
         List<Record> list1 = jBoltTable.getUpdateRecordList();
         if(null != list1) {
             for (Record record : list1) {
-                ValidationUtils.isTrue(!this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
+                ValidationUtils.isTrue(this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
             }
         }
 
@@ -784,8 +784,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         for (String p : split) {
             List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
             for (SysPureceive s : sysPureceives) {
-                if (!"2".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，不是审批通过状态！！");
+                if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！");
+                }
+                if ("1".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！");
                 }
                 //查出从表
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.getAutoID());
