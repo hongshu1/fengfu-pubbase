@@ -4,10 +4,10 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
-                                class="fa fa-refresh"></i> 保存
+                        <button class="btn btn-success btn-sm" onclick="submitThisForm()" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end><i
+                                class="fa fa-refresh" ></i> 保存
                         </button>
-                        #if(sysProductin.AutoID??)
+                        #if(sysotherin.AutoID??)
                         ### 参数列表
                         ### uri:                接口URI
                         ### formSn:             表单名
@@ -64,7 +64,7 @@
                                                data-hidden-input="cwhcode" data-text-attr="cwhname"
                                                data-column-attr="cwhcode,cwhname" placeholder="请选择仓库名称"
                                                data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
-                                               value="#(cwhname??)">
+                                               value="#(cwhname??)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +80,7 @@
                                                data-hidden-input="crdcode" data-text-attr="crdname"
                                                data-column-attr="crdcode,crdname" placeholder="请选择入库类别"
                                                data-tips="请选择入库类别" data-header="入库编码,入库类别" maxlength="40"
-                                               value="#(crdname??)">
+                                               value="#(crdname??)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -108,7 +108,7 @@
                                         <input type="text" data-notnull="true"
                                                data-tips="请输入业务号" data-with-clearbtn="true" autocomplete="off"
                                                class="form-control" placeholder="请输入业务号" maxlength="40"
-                                               name="yw" value="#(sysotherin.BillNo??)"/>
+                                               name="yw" value="#(sysotherin.BillNo??)"#if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -125,7 +125,7 @@
                                                data-column-attr="vencode,venname" placeholder="请选择供应商名称"
                                                data-tips="请选择供应商名称" data-header="供应商编码,供应商名称"
                                                maxlength="40"
-                                               value="#(venname??)">
+                                               value="#(venname??)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -148,7 +148,7 @@
                                         <input type="text" data-notnull="true"
                                                data-tips="请输入备注" data-with-clearbtn="true" autocomplete="off"
                                                class="form-control" placeholder="请输入备注" maxlength="40"
-                                               name="sysotherin.memo" value="#(sysotherin.memo??)"/>
+                                               name="sysotherin.memo" value="#(sysotherin.memo??)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -200,7 +200,7 @@
                    class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 
             </td>
-            <td>${data.barcode}</td>
+            <td #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) data-editable="false" #end >${data.barcode}</td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvdddcode}</td>
             <td>${data.cinvname}</td>
@@ -217,27 +217,23 @@
         <div class="col-md-4">
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">现品票扫码</label>
-                <div class="col-9">
-                    <input type="text" data-notnull="true"
-                           data-tips="请输入现品票扫码" data-with-clearbtn="true" autocomplete="off"
-                           class="form-control" placeholder="请输入现品票扫码" maxlength="40"
-                           name="sysotherin.warehousingNo" value="#(sysotherin.warehousingNo??)"/>
+                <div class="col-5">
+                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end
+                           id="barcode" name="barcode" value="#(barcode??)"/>
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                    <button onclick="barcode()" class="btn btn-primary btn-sm" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end >搜索</button>
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                    <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end >添加行</button>
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                    <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end   ><i class="fa fa-trash"></i> 删除行</button>
                 </div>
             </div>
         </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">搜索</button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                    id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysotherindetail/deleteByIds?ids="
-                    data-confirm="确定删除选中数据？"
-                    class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
-            </button>
-        </div>
+
     </div>
 
     <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysotherin.AutoID??)
