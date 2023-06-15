@@ -290,8 +290,8 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     public void edit() {
         ExpenseBudget expenseBudget = service.findById(useIfPresent(getLong(0)));
         ValidationUtils.notNull(expenseBudget, JBoltMsg.DATA_NOT_EXIST);
-        Date dstarttime = expenseBudget.getCbegindate();
-        Date dendtime = expenseBudget.getCenddate();
+        Date dstarttime = expenseBudget.getCBeginDate();
+        Date dendtime = expenseBudget.getCEndDate();
         List<Record> yearColumnTxtList = new ArrayList<Record>();
         List<String> monthColumnTxtList = new ArrayList<String>();
         List<Record> quantityAndAmountColumnList = new ArrayList<Record>();
@@ -335,8 +335,8 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     	Kv para = getKv();
     	ExpenseBudget unfinishItemExpenseBudget = service.findPreviousPeriodExpenseBudget(para);
     	ValidationUtils.notNull(unfinishItemExpenseBudget,"没有上期预算类型的费用预算数据，不能导入项目");
-    	Date dstarttime = unfinishItemExpenseBudget.getCbegindate();
-        Date dendtime = unfinishItemExpenseBudget.getCenddate();
+    	Date dstarttime = unfinishItemExpenseBudget.getCBeginDate();
+        Date dendtime = unfinishItemExpenseBudget.getCEndDate();
         List<Record> yearColumnTxtList = new ArrayList<Record>();
         List<String> monthColumnTxtList = new ArrayList<String>();
         List<Record> quantityAndAmountColumnList = new ArrayList<Record>();
@@ -423,9 +423,9 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
      * 提交审核
      * */
     @CheckPermission(PermissionKey.EXPENSE_BUDGET_FORMULATE_SUBMITAUDIT)
-    public void submitAudit(){
+    public void submit(){
     	Long iexpenseid = getLong(0);
-    	renderJson(service.submitAudit(iexpenseid));
+    	renderJson(service.submit(iexpenseid));
     }
 
     /**
@@ -589,5 +589,6 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
         //3、导出
         renderBytesToExcelXlsxFile(jBoltExcel);
     }
+
 }
 

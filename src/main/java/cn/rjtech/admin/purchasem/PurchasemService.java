@@ -733,8 +733,8 @@ public class PurchasemService extends BaseService<Purchasem> {
         Long iperiodid = para.getLong("iperiodid");
         ExpenseBudget expenseBudget = new ExpenseBudget();
         Period period = periodService.findById(iperiodid);
-        expenseBudget.setCbegindate(period.getDstarttime());
-        expenseBudget.setCenddate(period.getDendtime());
+        expenseBudget.setCBeginDate(period.getDstarttime());
+        expenseBudget.setCEndDate(period.getDendtime());
         expenseBudgetService.constructDynamicsDbColumn(expenseBudget,para);
         List<Record> list = dbTemplate("purchasem.findExpenseBudgetItemDatas", para).find();
         if (CollUtil.isNotEmpty(list)) {
