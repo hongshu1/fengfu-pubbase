@@ -497,238 +497,219 @@ public class MoMotaskService extends BaseService<MoMotask> {
 
     // <editor-fold desc="1. <records>根据制造工单任务id获取同产线同存货的信息     <records1>根据制造工单任务ID获取年月日数据信息">
     List<Record> records = dbTemplate("modocbatch.getModocDatas", kv).find();
+
+    List<Record> records1 = dbTemplate("modocbatch.getModocDateShiftDatas", kv).find();
     // </editor-fold>
 
-    Record record4 = new Record();
-    record4.set("idutypersonid", " ");
-    record4.set("cpsn_name", " ");
+    for (Record record : records) {
 
-    for (int qty = 0; qty < (records.size() + 3); qty++) {
-      if (qty < records.size()) {
-        List<Record> records1 = dbTemplate("modocbatch.getModocDateShiftDatas", kv.set("iinventoryid",
-            records.get(qty).getStr("iinventoryid")).set("iworkregionmid", records.get(qty).getStr("iworkregionmid"))).find();
+      // <editor-fold desc="2.根据产线id+存货id获得小行的制造工单(modoc)id">
+      String modocid = modocidMap.get(record.getStr("iworkregionmid") + record.getStr("iinventoryid"));
+      // </editor-fold>
 
-        // <editor-fold desc="2.根据产线id+存货id获得小行的制造工单(modoc)id">
-        String modocid = modocidMap.get(records.get(qty).getStr("iworkregionmid") + records.get(qty).getStr("iinventoryid"));
-        // </editor-fold>
+      Map<String, String> map1 = new HashMap<>();
+      List<String> modocidList = new ArrayList<>();
 
-        Map<String, String> map1 = new HashMap<>();
-        List<String> modocidList = new ArrayList<>();
+      Map<String, List<Record>> userMapDatas = new HashMap<>();
 
-        Map<String, List<Record>> userMapDatas = new HashMap<>();
+      for (Record record1 : records1) {
+        String iYear = record1.getStr("iYear");
+        String iMonth = record1.getStr("iMonth");
+        String iDate = record1.getStr("iDate");
+        String iWorkShiftMid = record1.getStr("iWorkShiftMid");
+        String modocid1 = record1.getStr("iAutoId");
+        String dateSplicing = iYear + iMonth + iDate + iWorkShiftMid;
+        map1.put(dateSplicing, modocid1);
+        modocidList.add(modocid);
 
-        for (Record record1 : records1) {
-          String iYear = record1.getStr("iYear");
-          String iMonth = record1.getStr("iMonth");
-          String iDate = record1.getStr("iDate");
-          String iWorkShiftMid = record1.getStr("iWorkShiftMid");
-          String modocid1 = record1.getStr("iAutoId");
-          String dateSplicing = iYear + iMonth + iDate + iWorkShiftMid;
-          map1.put(dateSplicing, modocid1);
-          modocidList.add(modocid);
-
-          //<editor-fold desc="创建人员信息为空的基础信息">
-          List<Record> userDatas = new ArrayList<>();
-          Record user = new Record();
-          user.set("psnnum", "");
-          user.set("psnname", "");
-          user.set("dateSplicing", dateSplicing);
-          user.set("iworkshiftmid", iWorkShiftMid);
-          user.set("iAutoId", modocid1);
-          user.set("iyear", iYear);
-          user.set("imonth", iMonth);
-          user.set("idate", iDate);
-          userDatas.add(user);
-          userMapDatas.put(dateSplicing, userDatas);
-          //</editor-fold>
-        }
-
-        //<editor-fold desc="3.根据小行的制造工单(modoc)id获取">
-        List<Record> records2 = getMoroutingconfigDatasMap.get(modocid) != null ? getMoroutingconfigDatasMap.get(modocid) : new ArrayList<>();
+        //<editor-fold desc="创建人员信息为空的基础信息">
+        List<Record> userDatas = new ArrayList<>();
+        Record user = new Record();
+        user.set("psnnum", "");
+        user.set("psnname", "");
+        user.set("dateSplicing", dateSplicing);
+        user.set("iworkshiftmid", iWorkShiftMid);
+        user.set("iAutoId", modocid1);
+        user.set("iyear", iYear);
+        user.set("imonth", iMonth);
+        user.set("idate", iDate);
+        userDatas.add(user);
+        userMapDatas.put(dateSplicing, userDatas);
         //</editor-fold>
-        if (records2.size() > 0) {
-          List<Record> records3 = new ArrayList<>();
-          for (int i = 0; i < (records2.size() + 4); i++) {
-            Record recordDats = new Record();
-            String iequipmentid = "";
-            String ioperationid = "";
+      }
 
-            //<editor-fold desc="4. 设备名称  工序名称处理">
-            Record cequipmentnameRecord = new Record();
-            Record equipmentnameRecord = new Record();
-            if (i < records2.size()) {
-              if (records2.get(i).getStr("itype") != null) {
-                List<Record> recordsa1 = recordsa1ListMap.get(records2.get(i).getStr("iautoid")) != null ?
-                    recordsa1ListMap.get(records2.get(i).getStr("iautoid")) : new ArrayList<>();
-                StringBuilder sa1 = new StringBuilder();
-                StringBuilder sa2 = new StringBuilder();
-                for (Record recorda1 : recordsa1) {
-                  sa1.append(recorda1.getStr("cequipmentname") != null ? recorda1.getStr("cequipmentname") : "").append("/");
-                  sa2.append(recorda1.getStr("iequipmentid") != null ? recorda1.getStr("iequipmentid") : "").append(",");
-                }
-                String cequipmentname = sa1.toString().endsWith("/") ? sa1.toString().substring(0, sa1.toString().length() - 1) : sa1.toString();//设备名称
-                iequipmentid = sa2.toString().endsWith(",") ? sa2.toString().substring(0, sa2.toString().length() - 1) : sa2.toString();//设备id
-                StringBuilder sb1 = new StringBuilder();
-                StringBuilder sb2 = new StringBuilder();
+      //<editor-fold desc="3.根据小行的制造工单(modoc)id获取">
+      List<Record> records2 = getMoroutingconfigDatasMap.get(modocid) != null ? getMoroutingconfigDatasMap.get(modocid) : new ArrayList<>();
+      //</editor-fold>
+      if (records2.size() > 0) {
+        List<Record> records3 = new ArrayList<>();
+        for (int i = 0; i < (records2.size() + 4); i++) {
+          Record recordDats = new Record();
+          String iequipmentid = "";
+          String ioperationid = "";
 
-                List<Record> recordsb1 = recordsa2ListMap.get(records2.get(i).getStr("iautoid")) != null ?
-                    recordsa2ListMap.get(records2.get(i).getStr("iautoid")) : new ArrayList<>();
-                for (Record recordb1 : recordsb1) {
-                  sb1.append(recordb1.getStr("coperationname") != null ? recordb1.getStr("coperationname") : "").append("/");
-                  sb2.append(recordb1.getStr("ioperationid") != null ? recordb1.getStr("ioperationid") : "").append(",");
-                }
-                String coperationname = sb1.toString().endsWith("/") ? sb1.toString().substring(0, sb1.toString().length() - 1) : sb1.toString();
-                ioperationid = sb2.toString().endsWith(",") ? sb2.toString().substring(0, sb2.toString().length() - 1) : sb2.toString();
-
-                equipmentnameRecord.set("cequipmentname", cequipmentname);
-                equipmentnameRecord.set("iequipmentid", iequipmentid);
-
-
-                cequipmentnameRecord.set("coperationname", coperationname);
-                cequipmentnameRecord.set("ioperationid", ioperationid);
-
-                recordDats.set("cequipment", equipmentnameRecord);
-                recordDats.set("coperation", cequipmentnameRecord);
-              } else {
-                recordDats.set("cequipment", equipmentnameRecord);
-                recordDats.set("coperation", cequipmentnameRecord);
+          //<editor-fold desc="4. 设备名称  工序名称处理">
+          Record cequipmentnameRecord = new Record();
+          Record equipmentnameRecord = new Record();
+          if (i < records2.size()) {
+            if (records2.get(i).getStr("itype") != null) {
+              List<Record> recordsa1 = recordsa1ListMap.get(records2.get(i).getStr("iautoid")) != null ?
+                  recordsa1ListMap.get(records2.get(i).getStr("iautoid")) : new ArrayList<>();
+              StringBuilder sa1 = new StringBuilder();
+              StringBuilder sa2 = new StringBuilder();
+              for (Record recorda1 : recordsa1) {
+                sa1.append(recorda1.getStr("cequipmentname") != null ? recorda1.getStr("cequipmentname") : "").append("/");
+                sa2.append(recorda1.getStr("iequipmentid") != null ? recorda1.getStr("iequipmentid") : "").append(",");
               }
+              String cequipmentname = sa1.toString().endsWith("/") ? sa1.toString().substring(0, sa1.toString().length() - 1) : sa1.toString();//设备名称
+              iequipmentid = sa2.toString().endsWith(",") ? sa2.toString().substring(0, sa2.toString().length() - 1) : sa2.toString();//设备id
+              StringBuilder sb1 = new StringBuilder();
+              StringBuilder sb2 = new StringBuilder();
+
+              List<Record> recordsb1 = recordsa2ListMap.get(records2.get(i).getStr("iautoid")) != null ?
+                  recordsa2ListMap.get(records2.get(i).getStr("iautoid")) : new ArrayList<>();
+              for (Record recordb1 : recordsb1) {
+                sb1.append(recordb1.getStr("coperationname") != null ? recordb1.getStr("coperationname") : "").append("/");
+                sb2.append(recordb1.getStr("ioperationid") != null ? recordb1.getStr("ioperationid") : "").append(",");
+              }
+              String coperationname = sb1.toString().endsWith("/") ? sb1.toString().substring(0, sb1.toString().length() - 1) : sb1.toString();
+              ioperationid = sb2.toString().endsWith(",") ? sb2.toString().substring(0, sb2.toString().length() - 1) : sb2.toString();
+
+              equipmentnameRecord.set("cequipmentname", cequipmentname);
+              equipmentnameRecord.set("iequipmentid", iequipmentid);
+
+
+              cequipmentnameRecord.set("coperationname", coperationname);
+              cequipmentnameRecord.set("ioperationid", ioperationid);
+
+              recordDats.set("cequipment", equipmentnameRecord);
+              recordDats.set("coperation", cequipmentnameRecord);
             } else {
               recordDats.set("cequipment", equipmentnameRecord);
               recordDats.set("coperation", cequipmentnameRecord);
             }
-            //</editor-fold>
-
-
-            //<editor-fold desc="5.获取人员信息 modocid1  value:List<String>">
-            List<Record> list2 = dbTemplate("modocbatch.getModocPersonnameByDocid", Kv.by("docid", CollUtil.join(modocidList, ","))).find();
-            Map<String, List<Record>> map2 = new HashMap<>();
-            for (Record record2 : list2) {
-              String dateSplicing = record2.getStr("dateSplicing");
-              if (map2.containsKey(dateSplicing)) {
-                List<Record> list = map2.get(dateSplicing);
-                list.add(record2);
-                map2.put(dateSplicing, list);
-              } else {
-                List<Record> list = new ArrayList<>();
-                list.add(record2);
-                map2.put(dateSplicing, list);
-              }
-            }
-            //</editor-fold>
-
-
-            //<editor-fold desc="6 获取工单号，生产计划量，小计人数">
-            List<Record> list3 = dbTemplate("modocbatch.getModocNoQtyNumByDocid", kv).find();
-            //key:modocid1  value:cMoDocNo
-            Map<String, List<Record>> map3 = new HashMap<>();
-            Map<String, List<Record>> map4 = new HashMap<>();
-            Map<String, List<Record>> map5 = new HashMap<>();
-            for (Record recorda3 : list3) {
-              String iAutoId = recorda3.getStr("iAutoId");
-              Record record1 = new Record();
-              Record record2 = new Record();
-              Record record3 = new Record();
-              record1.set("cMoDocNo", recorda3.getStr("cMoDocNo"));
-              record3.set("dateSplicing", recorda3.getStr("dateSplicing"));
-              record2.set("iQty", recorda3.getStr("iQty"));
-              record3.set("dateSplicing", recorda3.getStr("dateSplicing"));
-              record3.set("iPersonNum", recorda3.getStr("iPersonNum"));
-              record3.set("dateSplicing", recorda3.getStr("dateSplicing"));
-              List<Record> lista1 = new ArrayList<>();
-              List<Record> lista2 = new ArrayList<>();
-              List<Record> lista3 = new ArrayList<>();
-              if (map3.containsKey(iAutoId)) {
-                lista1 = map3.get(iAutoId);
-                lista2 = map3.get(iAutoId);
-                lista3 = map3.get(iAutoId);
-                lista1.add(record1);
-                lista2.add(record2);
-                lista3.add(record3);
-              } else {
-                lista1.add(record1);
-                lista2.add(record2);
-                lista3.add(record3);
-              }
-              map3.put(iAutoId, lista1);
-              map4.put(iAutoId, lista2);
-              map5.put(iAutoId, lista3);
-            }
-            //</editor-fold>
-
-            List<Record> list6 = dbTemplate("modocbatch.getModocDutyPersonnameByDocid", kv.set("iinventoryid",
-                records.get(qty).getStr("iinventoryid")).set("iworkregionmid", records.get(qty).getStr("iworkregionmid"))).find();
-            //key:modocid1  value:cMoDocNo
-            Map<String, List<Record>> map6 = new HashMap<>();
-            for (Record record3 : list6) {
-              String iAutoId = record3.getStr("iAutoId");
-              Record record1 = new Record();
-              record1.set("iDutyPersonId", record3.getStr("iDutyPersonId") == null ? "" : record3.getStr("iDutyPersonId"));
-              record1.set("cPsn_Name", record3.getStr("cPsn_Name") == null ? "" : record3.getStr("cPsn_Name"));
-              if (map6.containsKey(iAutoId)) {
-                List<Record> list = map6.get(iAutoId);
-                list.add(record1);
-              } else {
-                List<Record> list = new ArrayList<>();
-                list.add(record1);
-                map6.put(iAutoId, list);
-              }
-            }
-
-            List<Record> userRecord = new ArrayList<>();
-            for (Record record1 : records1) {
-              String year = record1.getStr("iyear");
-              String imonth = record1.getStr("imonth");
-              String idate = record1.getStr("idate");
-              String iworkshiftmid = record1.getStr("iworkshiftmid");
-              Kv kv1 = Kv.by("iyear", record1.getStr("iyear")).
-                  set("imonth", record1.getStr("imonth")).set("idate", record1.getStr("idate")).
-                  set("iworkshiftmid", record1.getStr("iworkshiftmid")).set("taskid", kv.getStr("taskid"));
-              String modocid1 = record1.getStr("iAutoId");
-              String matchingid = year + imonth + idate + iworkshiftmid;
-              boolean bol = false;
-              if (map2.size() > 0) {
-                if (map2.get(matchingid).size() > 0) {
-                  bol = true;
-                }
-              }
-              Record record2 = new Record();
-              if (i < records2.size()) {
-                //读取人员数据
-                List<Record> records4 = bol ? map2.get(matchingid) : userMapDatas.get(matchingid);
-                record2.set("personnel", records4);
-              } else if (i == (records2.size())) {
-                List<Record> records4 = map3.get(modocid1);
-                record2.set("personnel", records4);
-              } else if (i == (records2.size() + 1)) {
-                List<Record> records4 = map4.get(modocid1);
-                record2.set("personnel", records4);
-              } else if (i == (records2.size() + 2)) {
-                List<Record> records4 = map5.get(modocid1);
-                record2.set("personnel", records4);
-              } else if (i == (records2.size() + 3)) {
-                List<Record> records4 = map6.get(modocid1);
-                if (records4 == null || records4.size() <= 0) {
-                  records4.add(record4);
-                }
-                record2.set("personnel4", records4);
-              }
-              userRecord.add(record2);
-            }
-            recordDats.put("user", userRecord);
-            records3.add(recordDats);
+          } else {
+            recordDats.set("cequipment", equipmentnameRecord);
+            recordDats.set("coperation", cequipmentnameRecord);
           }
-          records.get(qty).set("rowdatas", records3);
+          //</editor-fold>
+
+
+          //<editor-fold desc="5.获取人员信息 modocid1  value:List<String>">
+          List<Record> list2 = dbTemplate("modocbatch.getModocPersonnameByDocid", Kv.by("docid", CollUtil.join(modocidList, ","))).find();
+          Map<String, List<Record>> map2 = new HashMap<>();
+          for (Record record2 : list2) {
+            String dateSplicing = record2.getStr("dateSplicing");
+            if (map2.containsKey(dateSplicing)) {
+              List<Record> list = map2.get(dateSplicing);
+              list.add(record2);
+              map2.put(dateSplicing, list);
+            } else {
+              List<Record> list = new ArrayList<>();
+              list.add(record2);
+              map2.put(dateSplicing, list);
+            }
+          }
+          //</editor-fold>
+
+
+          //<editor-fold desc="6 获取工单号，生产计划量，小计人数">
+          List<Record> list3 = dbTemplate("modocbatch.getModocNoQtyNumByDocid", kv).find();
+          //key:modocid1  value:cMoDocNo
+          Map<String, List<Record>> map3 = new HashMap<>();
+          Map<String, List<Record>> map4 = new HashMap<>();
+          Map<String, List<Record>> map5 = new HashMap<>();
+          for (Record recorda3 : list3) {
+            String iAutoId = recorda3.getStr("iAutoId");
+            Record record1 = new Record();
+            Record record2 = new Record();
+            Record record3 = new Record();
+            record1.set("cMoDocNo", recorda3.getStr("cMoDocNo"));
+            record3.set("dateSplicing", recorda3.getStr("dateSplicing"));
+            record2.set("iQty", recorda3.getStr("iQty"));
+            record3.set("dateSplicing", recorda3.getStr("dateSplicing"));
+            record3.set("iPersonNum", recorda3.getStr("iPersonNum"));
+            record3.set("dateSplicing", recorda3.getStr("dateSplicing"));
+            List<Record> lista1 = new ArrayList<>();
+            List<Record> lista2 = new ArrayList<>();
+            List<Record> lista3 = new ArrayList<>();
+            if (map3.containsKey(iAutoId)) {
+              lista1 = map3.get(iAutoId);
+              lista2 = map3.get(iAutoId);
+              lista3 = map3.get(iAutoId);
+              lista1.add(record1);
+              lista2.add(record2);
+              lista3.add(record3);
+            } else {
+              lista1.add(record1);
+              lista2.add(record2);
+              lista3.add(record3);
+            }
+            map3.put(iAutoId, lista1);
+            map4.put(iAutoId, lista2);
+            map5.put(iAutoId, lista3);
+          }
+          //</editor-fold>
+
+          List<Record> list6 = dbTemplate("modocbatch.getModocDutyPersonnameByDocid", Kv.by("docid", CollUtil.join(modocidList, ","))).find();
+          //key:modocid1  value:cMoDocNo
+          Map<String, List<Record>> map6 = new HashMap<>();
+          for (Record record3 : list6) {
+            String iAutoId = record3.getStr("iAutoId");
+            Record record1 = new Record();
+            record1.set("iDutyPersonId", record3.getBigDecimal("iDutyPersonId"));
+            record1.set("cPsn_Name", record3.getBigDecimal("cPsn_Name"));
+            if (map6.containsKey(iAutoId)) {
+              List<Record> list = map6.get(iAutoId);
+              list.add(record1);
+            } else {
+              List<Record> list = new ArrayList<>();
+              list.add(record1);
+              map6.put(iAutoId, list);
+            }
+          }
+
+          List<Record> userRecord = new ArrayList<>();
+          for (Record record1 : records1) {
+            String year = record1.getStr("iyear");
+            String imonth = record1.getStr("imonth");
+            String idate = record1.getStr("idate");
+            String iworkshiftmid = record1.getStr("iworkshiftmid");
+            Kv kv1 = Kv.by("iyear", record1.getStr("iyear")).
+                set("imonth", record1.getStr("imonth")).set("idate", record1.getStr("idate")).
+                set("iworkshiftmid", record1.getStr("iworkshiftmid")).set("taskid", kv.getStr("taskid"));
+            String modocid1 = record1.getStr("iAutoId");
+            String matchingid = year + imonth + idate + iworkshiftmid;
+            boolean bol = false;
+            if (map2.size() > 0) {
+              if (map2.get(matchingid).size() > 0) {
+                bol = true;
+              }
+            }
+            Record record2 = new Record();
+            if (i < records2.size()) {
+              //读取人员数据
+              List<Record> records4 = bol ? map2.get(matchingid) : userMapDatas.get(matchingid);
+              record2.set("personnel", records4);
+            } else if (i == (records2.size())) {
+              List<Record> records4 = map3.get(modocid1);
+              record2.set("personnel", records4);
+            } else if (i == (records2.size() + 1)) {
+              List<Record> records4 = map4.get(modocid1);
+              record2.set("personnel", records4);
+            } else if (i == (records2.size() + 2)) {
+              List<Record> records4 = map5.get(modocid1);
+              record2.set("personnel", records4);
+            } else if (i == (records2.size() + 3)) {
+              List<Record> records4 = map6.get(modocid1);
+              record2.set("personnel", records4);
+            }
+            userRecord.add(record2);
+          }
+          recordDats.put("user", userRecord);
+          records3.add(recordDats);
         }
-      } else {
-        Record record = new Record();
-        record.put("cinvcode", "");
-        record.put("cinvcode1", "");
-        record.put("cinvname1", "");
-        record.put("cworkname", "");
-        record.put("iinventoryid", "");
-        record.put("iworkregionmid", "");
-        records.add(record);
+        record.set("rowdatas", records3);
       }
     }
     return records;

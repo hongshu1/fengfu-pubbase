@@ -143,7 +143,7 @@ FROM
 	Mo_MoDoc doc
 	LEFT JOIN Bd_WorkShiftM shiftm ON doc.iWorkShiftMid= shiftm.iAutoId
 WHERE
-	doc.iMoTaskId=#(taskid) and doc.iInventoryId=#(iinventoryid) and doc.iWorkRegionMid=#(iworkregionmid)
+	iMoTaskId=#(taskid)
 ORDER BY shiftm.cWorkShiftCode ASC
 #end
 
@@ -211,14 +211,14 @@ WHERE
 
 #sql("getModocDutyPersonnameByDocid")
 SELECT DISTINCT
-	doc.iAutoId,
-	doc.iDutyPersonId,
+	modoc.iAutoId,
+	modoc.iDutyPersonId,
 	person.cPsn_Name
 FROM
-	Mo_MoDoc doc
-	LEFT JOIN Bd_Person person ON doc.iDutyPersonId= person.iAutoId
+	Mo_MoDoc modoc
+	LEFT JOIN Bd_Person person ON modoc.iDutyPersonId= person.iAutoId
 WHERE
-	doc.iMoTaskId=#(taskid) and doc.iInventoryId=#(iinventoryid) and doc.iWorkRegionMid=#(iworkregionmid)
+	modoc.iAutoId IN (#(docid))
 #end
 
 #sql("getModocNoQtyNumByDocid")
