@@ -3,6 +3,7 @@ package cn.rjtech.admin.weekorderd;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.util.ValidationUtils;
@@ -119,5 +120,14 @@ public class WeekOrderDService extends BaseService<WeekOrderD> {
 
     public List<WeekOrderD> findByMId(Long iAutoId) {
         return find(selectSql().eq("iWeekOrderMid", iAutoId).eq("isDeleted", 0));
+    }
+
+	/**
+	 * 保存调整计划时间数据
+	 * @param jBoltTable
+	 * @return
+	 */
+	public Ret saveUpdateCplanTime(JBoltTable jBoltTable) {
+		return SUCCESS;
     }
 }

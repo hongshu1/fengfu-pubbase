@@ -216,7 +216,9 @@ public class ApprovalDService extends BaseService<ApprovalD> {
      */
     public Page<Record> getPerson(int pageNum, int pageSize, Kv kv) {
         String orgCode = getOrgCode();
+        Long orgId = getOrgId();
         kv.setIfNotNull("orgCode", orgCode);
+        kv.setIfNotNull("orgId", orgId);
         return dbTemplate("approvald.getPerson", kv).paginate(pageNum, pageSize);
     }
 

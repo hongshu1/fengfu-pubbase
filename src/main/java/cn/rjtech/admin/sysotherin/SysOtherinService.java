@@ -164,9 +164,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
      * @return
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-        if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList() == null) {
-            return fail("行数据不能为空");
-        }
+
         SysOtherin sysotherin = jBoltTable.getFormModel(SysOtherin.class, "sysotherin");
 
         // 获取当前用户信息？
@@ -406,6 +404,65 @@ public class SysOtherinService extends BaseService<SysOtherin> {
         });
         return SUCCESS;
     }
+    /**
+     * 审核通过
+     */
+    public Ret approve(Long ids) {
+        tx(() -> {
+            //业务逻辑
+            this.check(String.valueOf(ids));
+//            this.passage(String.valueOf(ids));
+            String[] split = String.valueOf(ids).split(",");
+            for (String s : split) {
+                SysOtherin byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+                byId.update();
+            }
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 审核不通过
+     */
+    public Ret reject(Long ids) {
+        tx(() -> {
+            //业务逻辑
+            this.check(String.valueOf(ids));
+            //调用u8接口删除数据。
+
+            String[] split = String.valueOf(ids).split(",");
+            for (String s : split) {
+                SysOtherin byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+                byId.update();
+            }
+            return true;
+        });
+        return SUCCESS;
+    }
+    /**
+     * 批量反审核
+     */
+    public Ret noProcess(String ids) {
+        tx(() -> {
+            //业务逻辑
+            this.check(String.valueOf(ids));
+            //反审，调用删除U8数据接口
+            String[] split = ids.split(",");
+            for (String s : split) {
+                SysOtherin byId = findById(s);
+                byId.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+                byId.setIAuditWay(null);
+                byId.update();
+            }
+
+            return true;
+        });
+        return SUCCESS;
+    }
+
 
 
 
@@ -413,7 +470,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
     public void check(String ids) {
         String[] split = ids.split(",");
         for (String p : split) {
-            List<SysOtherin> sysOtherins = find("select *  from T_Sys_ProductIn where AutoID in (" + p + ")");
+            List<SysOtherin> sysOtherins = find("select *  from T_Sys_OtherIn where AutoID in (" + p + ")");
             for (SysOtherin s : sysOtherins) {
                 if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
                     ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据未提交审核或审批！！");
@@ -430,8 +487,8 @@ public class SysOtherinService extends BaseService<SysOtherin> {
     public void passage(String ids){
         String[] split = ids.split(",");
         for (String s : split) {
-            SysOtherin sysOtherin = findFirst("select *  from T_Sys_ProductIn where AutoID in (" + s + ")");
-            List<SysOtherindetail> sysOtherindetails = sysotherindetailservice.find("select *  from T_Sys_ProductIn where AutoID in (" + sysOtherin.getAutoID() + ")");
+            SysOtherin sysOtherin = findFirst("select *  from T_Sys_OtherIn where AutoID in (" + s + ")");
+            List<SysOtherindetail> sysOtherindetails = sysotherindetailservice.find("select *  from T_Sys_OtherIn where AutoID in (" + sysOtherin.getAutoID() + ")");
             // 测试调用接口
             System.out.println("```````````````````````````````"+ new Date());
             Ret ret = pushU8(sysOtherin, sysOtherindetails);
@@ -441,23 +498,6 @@ public class SysOtherinService extends BaseService<SysOtherin> {
     }
 
 
-    /**
-     * 批量反审核
-     */
-    public Ret noProcess(String ids) {
-        tx(() -> {
-            //反审，调用删除U8数据接口
-            String[] split = ids.split(",");
-            for (String s : split) {
-                SysOtherin byId = findById(s);
-                byId.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-                byId.setIAuditWay(null);
-                byId.update();
-            }
 
-            return true;
-        });
-        return SUCCESS;
-    }
 
 }
