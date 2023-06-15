@@ -255,7 +255,8 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
         // 提审人
         long iCreateBy = approval.getICreateBy();
 
-        Person person = personService.findFirstByUserId(iCreateBy);
+//        Person person = personService.findFirstByUserId(iCreateBy);
+        Person person = formApprovalService.findPersonByUserId(iCreateBy);
 
         tx(() -> {
 
@@ -758,4 +759,12 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
         return SUCCESS;
     }
 
+    /**
+     * 根据 ids 条件查数据
+     * @param kv
+     * @return
+     */
+    public List<FormApprovalD> findListBySid(Kv kv){
+        return daoTemplate("formapprovald.findListBySid", kv).find();
+    }
 }
