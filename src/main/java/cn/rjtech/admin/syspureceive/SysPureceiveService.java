@@ -308,7 +308,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     /**
      * 业务逻辑发送改变，以下重新开发一个保存功能
      */
-    public Ret submit(JBoltTable jBoltTable, User user) {
+    public Ret submitAll(JBoltTable jBoltTable, User user) {
         String operationType = jBoltTable.getFormRecord().getStr("operationType");
 
         if (!"submit".equals(operationType)) {
@@ -812,15 +812,17 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 for (SysPureceivedetail d : firstBy) {
                     if ("0".equals(d.getIsInitial())) {
                         SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
-                        String autoID = firstByBarcode.getMasID();
-                        //删除从表
-                        syspuinstoredetailservice.deleteByIds(firstByBarcode.getAutoID());
-                        SysPuinstore byId = syspuinstoreservice.findById(autoID);
-                        List<SysPuinstoredetail> detailByMasID = syspuinstoredetailservice.findDetailByMasID(byId.getAutoID());
-                        if (detailByMasID.isEmpty()) {
-                            // 从表没数据才删除 主表
-                            syspuinstoreservice.deleteByIds(byId.getAutoID());
+                        if(null != firstByBarcode && null != firstByBarcode.getAutoID()) {
+                            String autoID = firstByBarcode.getMasID();
+                            //删除从表
+                            syspuinstoredetailservice.deleteByIds(firstByBarcode.getAutoID());
+                            SysPuinstore byId = syspuinstoreservice.findById(autoID);
+                            List<SysPuinstoredetail> detailByMasID = syspuinstoredetailservice.findDetailByMasID(byId.getAutoID());
+                            if (detailByMasID.isEmpty()) {
+                                // 从表没数据才删除 主表
+                                syspuinstoreservice.deleteByIds(byId.getAutoID());
 
+                            }
                         }
                     } else {
                         // 通过主表的入库单号 查质检单数据

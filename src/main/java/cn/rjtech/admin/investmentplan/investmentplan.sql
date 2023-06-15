@@ -491,6 +491,9 @@ select eb.cdepcode,
 from PL_Expense_Budget_Item ebi
 	inner join PL_Expense_Budget eb on eb.iautoid = ebi.iexpenseid
 		where eb.iEffectiveStatus != 4
+#if(ibudgettype)
+	and eb.ibudgettype = #para(ibudgettype)
+#end
 	group by eb.cdepcode,eb.ibudgetyear,ebi.cBudgetNo
 ) T where 1=1
 #if(ibudgetyear)
@@ -508,6 +511,16 @@ from PL_Expense_Budget_Item ebi
 #if(citemname)
 	and citemname like concat('%',#para(citemname),'%') 
 #end
+#if(cproposalno)
+	and cproposalno like concat('%',#para(cproposalno),'%') 
+#end
+#if(cpurchaseno)
+	and cpurchaseno like concat('%',#para(cpurchaseno),'%') 
+#end
+#if(cprojectcode)
+	and cprojectcode like concat('%',#para(cprojectcode),'%') 
+#end
+
 #end
 
 #sql("findExecutionProgressTrackingInvestmentDatas")
@@ -547,6 +560,9 @@ select ip.cdepcode,
 from pl_investment_plan_item ipi
 	inner join pl_investment_plan ip on ip.iautoid = ipi.iplanid
 		where ip.iEffectiveStatus != 4
+#if(ibudgettype)
+	and ip.ibudgettype = #para(ibudgettype)
+#end		
 	group by ip.cdepcode,ip.ibudgetyear,ipi.cplanno
 ) T where 1=1
 #if(ibudgetyear)
@@ -560,5 +576,14 @@ from pl_investment_plan_item ipi
 #end
 #if(citemname)
 	and citemname like concat('%',#para(citemname),'%') 
+#end
+#if(cproposalno)
+	and cproposalno like concat('%',#para(cproposalno),'%') 
+#end
+#if(cpurchaseno)
+	and cpurchaseno like concat('%',#para(cpurchaseno),'%') 
+#end
+#if(cprojectcode)
+	and cprojectcode like concat('%',#para(cprojectcode),'%') 
 #end
 #end

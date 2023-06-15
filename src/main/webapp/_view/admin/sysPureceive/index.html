@@ -44,7 +44,7 @@
 					<td>${pageNumber,pageSize,index | rownum}</td>
 					<td>
                       {@if data.iauditstatus == '0'}
-                        <a href="admin/materialReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip
+                        <a href="admin/materialReceiptList/edit?autoid=${data.autoid}&edit=true" data-area="100%,100%" tooltip
                            data-title="编辑"
                            data-handler="refreshJBoltTable" data-dialog-title="编辑收料单列表"
                            class="jbolt_table_editbtn">编辑</a>
@@ -54,7 +54,7 @@
                            data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
                       {@/if}
                       {@if data.iauditstatus != '0'}
-                        <a href="admin/materialReceiptList/edit/${data.autoid}" data-area="100%,100%" tooltip
+                        <a href="admin/materialReceiptList/edit?autoid=${data.autoid}" data-area="100%,100%" tooltip
                            data-title="查看"
                            data-handler="refreshJBoltTable" data-dialog-title="查看收料单列表"
                            class="jbolt_table_editbtn">查看</a>
@@ -97,13 +97,13 @@
                         id="toolbar_deleteBtn_#(pageId)" data-url="admin/materialReceiptList/deleteByIds?ids="
                         data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
                 </button>
-                #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_PUReceive",uri="admin/materialReceiptList",primaryKeyName="AutoID", className="cn.rjtech.admin.syspureceive.SysPureceiveService", className="cn/rjtech/admin/syspureceive/SysPureceiveService")
+                #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_PUReceive",uri="admin/materialReceiptList",primaryKeyName="AutoID", className="cn.rjtech.admin.syspureceive.SysPureceiveService")
                 ### 参数列表
                 ### formSn:         表单名
                 ### uri:            接口URI
                 ### primaryKeyName: 表单主键名
                 ### className：     实现审批业务的类名
-                ###include("/_view/_common/_batch_approval_btns.html", formSn="Co_MonthOrderM", uri="admin/monthorderm??", primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService", className="cn/rjtech/admin/syspureceive/SysPureceiveService")
+                ###include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_ProductIn",uri="admin/productInList",primaryKeyName="AutoID", className="cn.rjtech.admin.sysproductin.SysProductinService")
 
             </div>
         </div>

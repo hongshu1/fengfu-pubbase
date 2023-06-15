@@ -175,5 +175,25 @@ public class SysOtherinAdminController extends BaseAdminController {
         // renderJson(service.reject(ids))
     }
 
+    /**
+     * 批量审核通过（批量审批也走这里）
+     */
+    public void batchApprove(@Para(value = "ids") String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            renderFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        renderJson(service.process(ids));
+    }
 
+    /**
+     * 批量反审核
+     */
+    public void batchReverseApprove(@Para(value = "ids") String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            renderFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        renderJson(service.noProcess(ids));
+    }
 }
