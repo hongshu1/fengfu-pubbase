@@ -237,7 +237,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             sysMaterialspreparedetail.setPosCode(records.get(i).getStr("PosCode"));
             sysMaterialspreparedetail.setBarcode(records.get(i).getStr("Barcode"));
             sysMaterialspreparedetail.setInvCode(records.get(i).getStr("cInvCode"));
-            sysMaterialspreparedetail.setNum(BigDecimal.valueOf(0));
+            sysMaterialspreparedetail.setNum(new BigDecimal(0));
             sysMaterialspreparedetail.setQty(records.get(i).getBigDecimal("Qty"));
             sysMaterialspreparedetail.setPackRate(records.get(i).getBigDecimal("PackRate"));
 //            sysMaterialspreparedetail.setSourceBillType();

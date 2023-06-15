@@ -157,4 +157,10 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 		String map1 = get("data");
 		renderJson(service.submitByJBoltTable(map1));
 	}
+
+	@Before(Tx.class)
+	public void go() {
+		String map1 = get("data");
+		renderJson(service.submitByJBoltTableGo(map1));
+	}
 }

@@ -53,7 +53,8 @@ ORDER BY mp.dcreatetime DESC
 
 
     #sql("recpordetail")
-SELECT mp.BillNo,
+SELECT mp.AutoID,
+       mp.BillNo,
        mp.SourceBillID,
        mpd.InvCode,
        mpd.Qty,
@@ -364,26 +365,25 @@ WHERE wsm.isDeleted = '0' #if(isenabled)
 
 #sql("barcodeDatas")
 SELECT
-    T_Sys_StockBarcodePosition.AutoID,
-    T_Sys_StockBarcodePosition.InvCode,
-    T_Sys_StockBarcodePosition.Barcode,
-    T_Sys_StockBarcodePosition.Batch,
-    T_Sys_StockBarcodePosition.Qty,
-    Bd_Inventory.iAutoId,
-    Bd_Inventory.cInvCode,
-    Bd_Inventory.cInvCode1,
-    Bd_Inventory.cInvName1,
-    Bd_Inventory.cInvStd,
-    Bd_Uom.cUomName
+    sbp.AutoID,
+    sbp.InvCode,
+    sbp.Barcode,
+    sbp.Batch,
+    sbp.Qty,
+    it.iAutoId,
+    it.cInvCode,
+    it.cInvCode1,
+    it.cInvName1,
+    it.cInvStd,
+    uom.cUomName
 FROM
-    dbo.T_Sys_StockBarcodePosition
-        LEFT JOIN
-    dbo.Bd_Inventory ON dbo.T_Sys_StockBarcodePosition.InvCode=dbo.Bd_Inventory.cInvCode
-LEFT JOIN dbo.Bd_Uom ON dbo.Bd_Inventory.iInventoryUomId1=dbo.Bd_Uom.iAutoId
+    T_Sys_StockBarcodePosition sbp
+        LEFT JOIN Bd_Inventory it ON sbp.InvCode=it.cInvCode
+        LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1=uom.iAutoId
 WHERE
         1 = 1
-  AND T_Sys_StockBarcodePosition.Barcode='#(barcode)'
-  AND T_Sys_StockBarcodePosition.InvCode IS NOT NULL
+  AND sbp.Barcode='#(barcode)'
+  AND sbp.InvCode IS NOT NULL
 #end
 
 
