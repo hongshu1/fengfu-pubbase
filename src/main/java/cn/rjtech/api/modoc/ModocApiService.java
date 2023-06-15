@@ -2,6 +2,7 @@ package cn.rjtech.api.modoc;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.modoc.MoDocService;
@@ -14,6 +15,7 @@ import cn.rjtech.entity.vo.modoc.ModocApiResVo;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
@@ -72,8 +74,8 @@ public class ModocApiService extends JBoltApiBaseService {
       if(moDoc==null){
         return  JBoltApiRet.fail(4000,"工单信息不存在");
       }
-      ModocApiPage modocApiPage=getModoc(moDoc);
-      modocResVo.setDoc(modocApiPage);
+      Record record=getModoc(moDoc);
+      modocResVo.setDoc(record);
       //拼上生产任务数据
       List<Record> rows=moDocService.getMoJobData(imodocid);
       modocResVo.setJob(rows);
@@ -81,11 +83,99 @@ public class ModocApiService extends JBoltApiBaseService {
 
     }
 
+
+  public Record getModoc(MoDoc moDoc){
+
+    Record moRecod=moDoc.toRecord();
+    moRecod.keep("cmodocno","dplandate","iqty","icompqty");
+    if(isOk(moDoc.getIInventoryId())){
+      //存货
+      Inventory inventory = inventoryService.findById(moDoc.getIInventoryId());
+      if(inventory!=null){
+        //料品编码
+        if(StringUtils.isNotBlank(inventory.getCInvCode())) {
+          moRecod.set("cinvcode", inventory.getCInvCode());
+        }else{
+          moRecod.set("cinvcode", "");
+        }
+        //客户部番
+        if(StringUtils.isNotBlank(inventory.getCInvCode1())) {
+          moRecod.set("cinvcode1", inventory.getCInvCode1());
+        }else{
+          moRecod.set("cinvcode1", "");
+        }
+        //部品名称
+        if(StringUtils.isNotBlank(inventory.getCInvCode1())) {
+          moRecod.set("cinvname1", inventory.getCInvName1());
+        }else{
+          moRecod.set("cinvname1", "");
+        }
+      }else{
+        moRecod.set("cinvcode", "");
+        moRecod.set("cinvcode1", "");
+        moRecod.set("cinvname1", "");
+      }
+    }else{
+      moRecod.set("cinvcode", "");
+      moRecod.set("cinvcode1", "");
+      moRecod.set("cinvname1", "");
+    }
+
+
+
+    //差异数量
+    if(moDoc.getIQty()!=null&&moDoc.getICompQty()!=null) {
+      BigDecimal cyqty =moDoc.getIQty().subtract(moDoc.getICompQty());
+      moRecod.set("cyqty",cyqty);
+    }else{
+      moRecod.set("cyqty",new BigDecimal(0));
+    }
+    //产线
+    if(isOk(moDoc.getIWorkRegionMid())){
+      Workregionm workregionm=workregionmService.findById(moDoc.getIWorkRegionMid());
+      if(workregionm!=null){
+        if(StringUtils.isNotBlank(workregionm.getCWorkName())) {
+          moRecod.set("cworkname", workregionm.getCWorkName());
+        }else{
+          moRecod.set("cworkname", "");
+        }
+      }
+    }else{
+      moRecod.set("cworkname", "");
+    }
+    //班次
+    if(isOk(moDoc.getIWorkShiftMid())){
+      Workshiftm  workshiftm=workshiftmService.findById(moDoc.getIWorkShiftMid());
+      if(workshiftm!=null){
+        if(StringUtils.isNotBlank(workshiftm.getCworkshiftname())) {
+        moRecod.set("cworkshiftname",workshiftm.getCworkshiftname());
+      }else{
+          moRecod.set("cworkshiftname", "");
+        }
+      }
+    }else{
+      moRecod.set("cworkshiftname", "");
+    }
+    //部门
+    if(isOk(moDoc.getIDepartmentId())){
+      Department department=departmentService.findById(moDoc.getIDepartmentId());
+      if(department!=null){
+        if(StringUtils.isNotBlank(department.getCDepName())) {
+          moRecod.set("cdepname", department.getCDepName());
+        }else{
+          moRecod.set("cdepname", "");
+        }
+      }
+    }else{
+      moRecod.set("cdepname", "");
+    }
+  return  moRecod;
+  }
   /**
    * 获取工单信息
    * @param moDoc
    */
-  public ModocApiPage getModoc(MoDoc moDoc){
+  public ModocApiPage getModoc1(MoDoc moDoc){
     ModocApiPage modocApiPag=new ModocApiPage();
 
     modocApiPag.setiAutoId(moDoc.getIAutoId());

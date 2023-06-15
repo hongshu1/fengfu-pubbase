@@ -262,7 +262,7 @@ public class AppendItemService extends BaseService<AppendItem> {
 	 * */
 	public String genBudgetNo(ExpenseBudget expenseBudget){
 		//采用编码规则配置生成
-		String barcoade = barcodeencodingmService.genCode(Kv.by("iautoid", expenseBudget.getIautoid()), ItemEnum.EXPENSE_BUDGET_APPENDITEM.getValue());
+		String barcoade = barcodeencodingmService.genCode(Kv.by("iautoid", expenseBudget.getIAutoId()), ItemEnum.EXPENSE_BUDGET_APPENDITEM.getValue());
 		return barcoade;
 	}
 	/**
@@ -291,7 +291,7 @@ public class AppendItemService extends BaseService<AppendItem> {
 				ExpenseBudgetItem expenseBudgetItem = new ExpenseBudgetItem();
 				ExpenseBudget expenseBudget = expenseBudgetService.findEffectivedExpenseBudgetByDeptCode(Kv.by("cdepcode", cdepcode));
 				ValidationUtils.notNull(expenseBudget, "勾选数据未能查询到对应部门生效的预算数据,请检查!");
-				expenseBudgetItem.setIexpenseid(expenseBudget.getIautoid());
+				expenseBudgetItem.setIexpenseid(expenseBudget.getIAutoId());
 				ccode = genBudgetNo(expenseBudget);
 				expenseBudgetItem.setCbudgetno(ccode);
 				expenseBudgetItem.setIhighestsubjectid(appendItem.getIhighestsubjectid());

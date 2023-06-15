@@ -6,6 +6,8 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.ExpenseBudget;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -85,5 +87,12 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
     public void cancle(){
     	renderJson(service.cancle(getLong(0)));
     }
-    
+    /**
+     * 查看审批界面
+     * */
+    public void expenseFormApprovalFlowIndex(){
+    	ExpenseBudget expenseBudget = service.findById(getLong("iautoid"));
+    	set("expenseBudget", expenseBudget);
+    	render("approve_process_index.html");
+    }
 }

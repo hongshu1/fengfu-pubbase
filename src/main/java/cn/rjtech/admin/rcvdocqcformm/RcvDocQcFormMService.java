@@ -2,7 +2,6 @@ package cn.rjtech.admin.rcvdocqcformm;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -13,6 +12,7 @@ import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.inventoryqcform.InventoryQcFormService;
 import cn.rjtech.admin.rcvdocdefect.RcvDocDefectService;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
@@ -66,6 +66,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     private VendorService            vendorService;                       //供应商档案
     @Inject
     private InventoryService         inventoryService;
+    @Inject
+    private InventoryQcFormService   inventoryQcFormService;
 
     @Override
     protected RcvDocQcFormM dao() {
@@ -122,19 +124,21 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
 
         //1、根据表格ID查询数据
         Long iQcFormId = rcvDocQcFormM.getIQcFormId();//表格ID
-        List<Record> recordList = dbTemplate("rcvdocqcformm.getCheckoutList", Kv.by("iqcformid", iQcFormId)).find();
+        InventoryQcForm inventoryQcForm = inventoryQcFormService.findById(iQcFormId);
+        ValidationUtils.notNull(inventoryQcForm, "检验表格不存在，请先维护检验表格！！！");
+
+        List<Record> recordList = dbTemplate("rcvdocqcformm.getCheckoutList", Kv.by("iqcformid", inventoryQcForm.getIQcFormId())).find();
         if (recordList.isEmpty()) {
-            return fail(cqcformname + "：没有检验项目，无法生成来料检查表");
+            return fail(cqcformname + "：没有检验项目，无法生成来料检查表，请先维护检验项目！！！");
         }
         ArrayList<RcvDocQcFormD> rcvDocQcFormDS = new ArrayList<>();
         for (Record record : recordList) {
             RcvDocQcFormD rcvDocQcFormD = new RcvDocQcFormD();//质量管理-来料检单行配置表
             rcvDocQcFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
             rcvDocQcFormD.setIRcvDocQcFormMid(iautoid);//来料检id
-            rcvDocQcFormD.setIQcFormId(iQcFormId);//检验表格ID
+            rcvDocQcFormD.setIQcFormId(inventoryQcForm.getIQcFormId());//检验表格ID
             rcvDocQcFormD.setIFormParamId(record.getLong("iqcformtableitemid"));//检验项目ID
             rcvDocQcFormD.setISeq(record.get("iSeq"));
-//            rcvDocQcFormD.setISubSeq(record.get("iSubSeq"));
             rcvDocQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
             rcvDocQcFormD.setIType(record.get("iType"));
             rcvDocQcFormD.setIStdVal(record.get("iStdVal"));
@@ -145,12 +149,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         }
         rcvDocQcFormDService.batchSave(rcvDocQcFormDS);
 
-        //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检-1”
+        //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检：1”
         rcvDocQcFormM.setIStatus(1);
-        Ret ret = update(rcvDocQcFormM);
-        if (ret.isFail()) {
-            return ret;
-        }
+        ValidationUtils.isTrue(rcvDocQcFormM.update(),"生成失败！");
         return SUCCESS;
     }
 

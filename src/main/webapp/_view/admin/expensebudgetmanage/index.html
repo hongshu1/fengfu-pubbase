@@ -82,11 +82,10 @@
 	<div class="btn-group" role="group" aria-label="btn-group">
 		<button data-dialogbtn data-handler="refreshPjaxContainer" data-offset="0.2,0" data-area="100%,100%" data-title="费用预算详情" data-check-handler="jboltTableGetCheckedId" data-url="admin/expensebudgetmanage/detail/" class="btn btn-outline-primary btn-sm"  data-btn="close"><i class="fa fa-edit"></i>详情</button>
 		<button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
-                        data-check-handler="getIdIfValid_#(pageId)" data-url="admin/verifyprogress/findprocess?cobjecttype=01&iobjectid="
+                        data-check-handler="getIdIfValid_#(pageId)" data-url="admin/expensebudgetmanage/expenseFormApprovalFlowIndex?iautoid="
                         class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i class="fa fa-chain"></i>查看审批</button>
 		<button data-ajaxbtn data-area="700,400" data-title="生效" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/expensebudgetmanage/effect/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 生效</button>
 		<button data-ajaxbtn data-area="700,400" data-title="作废" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/expensebudgetmanage/cancle/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 作废</button>
-		<button data-ajaxbtn data-handler="jboltTableRefresh(this)" data-check-handler="jboltTableGetCheckedId" data-url="admin/expensebudget/submitAudit/" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 重启审批流</button>
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 	</div>
 

@@ -35,17 +35,19 @@ public class BaseInU8Util {
         LOG.info("res: {}", res);
 
         String code = res.getString("code");
+        String data = res.getString("data");
         String message = StrUtil.nullToDefault(res.getString("message"), res.getString("msg"));
-        
+
         if (ObjUtil.equal(res.getString("state"), "fail")) {
             ValidationUtils.error(message);
         }
         ValidationUtils.notNull(code, "json:" + json + ";" + message);
         ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);
 
+        JSONObject dataJson = JSON.parseObject(res.getString("data"));
         String u8Billno = "";
-        if (message != null) {
-            u8Billno = extractU8Billno(message.trim());
+        if (dataJson.getString("code").equals("200")){
+            u8Billno = extractU8Billno(dataJson.getString("message").trim());
         }
         return u8Billno;
     }
@@ -60,7 +62,12 @@ public class BaseInU8Util {
 
         ValidationUtils.notNull(res, "解析JSON为空");
         String code = res.getString("code");
-        String message = res.getString("message");
+        String message = StrUtil.nullToDefault(res.getString("message"), res.getString("msg"));
+        LOG.info("res: {}", res);
+
+        if (ObjUtil.equal(res.getString("state"), "fail")) {
+            ValidationUtils.error(message);
+        }
 
         ValidationUtils.notNull(code, "json:" + json + ";" + message);
         ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);

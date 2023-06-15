@@ -1,13 +1,9 @@
 package cn.rjtech.admin.barcodereport.Inventorybarcodetracepage;
 
-import cn.jbolt.core.db.sql.Sql;
-import cn.jbolt.core.model.Dictionary;
-import cn.jbolt.core.service.JBoltDictionaryService;
 import cn.jbolt.core.util.JBoltRandomUtil;
 import cn.rjtech.base.service.view.BaseU9ViewService;
 import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.wms.utils.StringUtils;
-import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;

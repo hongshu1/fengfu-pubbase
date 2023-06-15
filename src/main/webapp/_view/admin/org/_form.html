@@ -2,28 +2,40 @@
 #if(org.id??)
 	<input type="hidden" name="org.id" value="#(org.id)" />
 #end
+    <div class="form-group row">
+        <label class="col-2 col-form-label">组织账套编码</label>
+        <div class="col-8">
+            <input type="text" autocomplete="off"  class="form-control" data-rule="required" data-tips="请输入组织编码" maxlength="40" name="org.orgCode" value="#(org.orgCode??)">
+        </div>
+    </div>
 	<div class="form-group row">
-		<label class="col-2 col-form-label">组织名称</label>
+		<label class="col-2 col-form-label">组织账套名称</label>
 		<div class="col-8">
-			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入组织名称" data-tips="请输入组织名称" maxlength="40" name="org.orgName" value="#(org.orgName??)">
+			<input type="text" autocomplete="off"  class="form-control" data-rule="required" data-tips="请输入组织名称" maxlength="40" name="org.orgName" value="#(org.orgName??)">
 		</div>
 	</div>
 	<div class="form-group row" hidden>
 		<label class="col-2 col-form-label">U8数据源别名</label>
 		<div class="col-8">
-			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入U8数据源别名" data-tips="请输入U8数据源别名" maxlength="40" name="org.u8Alias" value="#(org.u8Alias??'u8')" readonly>
+			<input type="text" autocomplete="off"  class="form-control" data-rule="required" data-tips="请输入U8数据源别名" maxlength="40" name="org.u8Alias" value="#(org.u8Alias??'u8')" readonly>
 		</div>
 	</div>
-	<div class="form-group row">
-		<label class="col-2 col-form-label">组织编码</label>
-		<div class="col-8">
-			<input type="text" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入组织编码" data-tips="请输入组织编码" maxlength="40" name="org.orgCode" value="#(org.orgCode??)">
-		</div>
-	</div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">U8数据库内网地址</label>
+        <div class="col-8">
+            <input type="text" autocomplete="off"  class="form-control" data-rule="required" data-tips="请输入U8数据库内网地址" maxlength="40" name="org.u8DbUrlInner" value="#(org.u8DbUrlInner??)">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">U8数据库外网地址</label>
+        <div class="col-8">
+            <input type="text" autocomplete="off"  class="form-control" data-tips="请输入U8数据库外网地址" maxlength="40" name="org.u8DbUrlOutter" value="#(org.u8DbUrlOutter??)">
+        </div>
+    </div>
 	<div class="form-group row">
 		<label class="col-2 col-form-label">U8数据库名</label>
 		<div class="col-8">
-            <select class="form-control"
+           <!-- <select class="form-control"
                     data-rule="select"
                     data-url="admin/org/u8dbs"
                     data-text-attr="name"
@@ -38,16 +50,61 @@
                     #end
             ></select>
 
-            <input type="hidden" name="org.u8Dbname" value="#(org.u8Dbname??)" id="u8DbNamme">
+            <input type="hidden" name="org.u8Dbname" value="#(org.u8Dbname??)" id="u8DbNamme">-->
+
+            <input type="text" autocomplete="off"  class="form-control" data-rule="required" data-tips="请输入数据库名" maxlength="40" name="org.u8Dbname" value="#(org.u8Dbname??)">
 		</div>
 	</div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">用户名</label>
+        <div class="col-8">
+            <input type="text" autocomplete="off"  class="form-control" data-rule="required" data-tips="请输入用户名" maxlength="40" name="org.u8DbUser" value="#(org.u8DbUser??)">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">密码</label>
+        <div class="col-8">
+            <input type="text" autocomplete="off"  class="form-control" data-rule="required" data-tips="请输入密码" maxlength="40" name="org.u8DbPassword" value="#(org.u8DbPassword??)">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">U8接口内网地址</label>
+        <div class="col-8">
+            <input type="text" autocomplete="off"  class="form-control" data-rule="required"  data-tips="请输入U8接口内网地址" maxlength="40" name="org.u8ApiUrlInner" value="#(org.u8ApiUrlInner??)">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">U8接口外网地址</label>
+        <div class="col-8">
+            <input type="text" autocomplete="off"  class="form-control" data-tips="请输入U8接口外网地址" maxlength="40" name="org.u8ApiUrlOutter" value="#(org.u8ApiUrlOutter??)">
+        </div>
+    </div>
+    <div class="form-group row"
+         data-radio
+         data-rule="radio"
+         data-value="#(org.isU8ApiEnabled??)"
+         data-name="org.isU8ApiEnabled"
+         data-default="true">
+        <label class="col-2 col-form-label is_required">是否启用U8API</label>
+        <div class="col-2" style="padding-top: 1px;">
+            <div class="radio radio-primary  radio-inline">
+                <input id="isU8ApiEnabled1" type="radio" name="org.isU8ApiEnabled" value="true"/>
+                <label for="isU8ApiEnabled1">是</label>
+            </div>
+            <div class="radio radio-primary  radio-inline">
+                <input id="isU8ApiEnabled0" type="radio" name="org.isU8ApiEnabled" value="false"/>
+                <label for="isU8ApiEnabled0">否</label>
+            </div>
+
+        </div>
+    </div>
     <div class="form-group row"
          data-radio
          data-rule="radio"
          data-value="#(org.isDefault??)"
          data-name="org.isDefault"
          data-default="true">
-        <label class="col-2 col-form-label">是否默认</label>
+        <label class="col-2 col-form-label is_required">是否默认</label>
         <div class="col-2" style="padding-top: 1px;">
             <div class="radio radio-primary  radio-inline">
                 <input id="risdefault1" type="radio" name="org.isDefault" value="true"/>
@@ -66,7 +123,7 @@
          data-value="#(org.enable??)"
          data-name="org.enable"
          data-default="true">
-        <label class="col-2 col-form-label">是否启用</label>
+        <label class="col-2 col-form-label is_required">是否启用</label>
         <div class="col-2" style="padding-top: 1px;">
             <div class="radio radio-primary  radio-inline">
                 <input id="rismenutrue" type="radio" name="org.enable" value="true"/>
@@ -82,7 +139,7 @@
 	<div class="form-group row">
 		<label class="col-2 col-form-label">备注</label>
 		<div class="col-8">
-			<input type="text" autocomplete="off"  class="form-control" placeholder="请输入备注" data-tips="请输入备注" maxlength="40" name="org.remark" value="#(org.remark??)">
+			<input type="text" autocomplete="off"  class="form-control" data-tips="请输入备注" maxlength="40" name="org.remark" value="#(org.remark??)">
 		</div>
 	</div>
 </form>

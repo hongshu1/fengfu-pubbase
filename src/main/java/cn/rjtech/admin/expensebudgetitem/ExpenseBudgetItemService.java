@@ -9,7 +9,6 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
-import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
@@ -135,8 +134,8 @@ public class ExpenseBudgetItemService extends BaseService<ExpenseBudgetItem> {
         Long iperiodid = para.getLong("iperiodid");
         ExpenseBudget expenseBudget = new ExpenseBudget();
         Period period = periodService.findById(iperiodid);
-        expenseBudget.setCbegindate(period.getDstarttime());
-        expenseBudget.setCenddate(period.getDendtime());
+        expenseBudget.setCBeginDate(period.getDstarttime());
+        expenseBudget.setCEndDate(period.getDendtime());
         expenseBudgetService.constructDynamicsDbColumn(expenseBudget,para);
         Page<Record> page = dbTemplate("expensebudgetitem.paginateMdatas", para).paginate(pageNumber, pageSize);
         if (CollUtil.isNotEmpty(page.getList())) {

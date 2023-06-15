@@ -983,8 +983,8 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		denddate = denddate + "-01";
 		para.set("dstartdate",dstartdate);
 		para.set("denddate",denddate);
-		expenseBudget.setCbegindate(JBoltDateUtil.toDate(dstartdate,"yyyy-MM-dd"));
-		expenseBudget.setCenddate(JBoltDateUtil.toDate(denddate,"yyyy-MM-dd"));
+		expenseBudget.setCBeginDate(JBoltDateUtil.toDate(dstartdate,"yyyy-MM-dd"));
+		expenseBudget.setCEndDate(JBoltDateUtil.toDate(denddate,"yyyy-MM-dd"));
 		expenseBudgetService.constructDynamicsDbColumn(expenseBudget, para);
 		List<Record> list = dbTemplate(u8SourceConfigName(),"investmentplan.findInvestmentPlanItemSituationDatas",para).find();
 		if(CollUtil.isNotEmpty(list)){

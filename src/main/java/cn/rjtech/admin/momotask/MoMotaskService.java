@@ -54,7 +54,19 @@ public class MoMotaskService extends BaseService<MoMotask> {
     Kv kv = new Kv();
     MoMotask moMotask = findById(id);
     List<Record> records = dbTemplate("modocbatch.editplanviewdatas", Kv.by("id", moMotask.getIAutoId())).find();
+
+    Map<String, Integer> map = new HashMap<>();
     for (Record record : records) {
+      String dateKey = record.getStr("yeartodate");
+      if (map.containsKey(dateKey)) {
+        map.put(dateKey, map.get(dateKey) + 1);
+      } else {
+        map.put(dateKey, 1);
+      }
+    }
+
+    for (Record record : records) {
+      record.set("count", map.get(record.getStr("yeartodate")));
       String weekDay = DateUtils.formatDate(DateUtils.parseDate(record.getStr("yeartodate")), "E");
       if (weekDay.equals("星期一") || weekDay.equals("Mon")) {
         record.set("weeks", "星期一");
@@ -495,7 +507,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
     }
     //</editor-fold>
 
-    // <editor-fold desc="1. <records>根据制造工单任务id获取同产线同存货的信息     <records1>根据制造工单任务ID获取年月日数据信息">
+    // <editor-fold desc="1. <records>根据制造工单任务id获取同产线同存货的信息     根据制造工单任务ID获取年月日数据信息">
     List<Record> records = dbTemplate("modocbatch.getModocDatas", kv).find();
     // </editor-fold>
 
@@ -696,22 +708,22 @@ public class MoMotaskService extends BaseService<MoMotask> {
               if (i < records2.size()) {
                 //读取人员数据
                 List<Record> records4 = bol ? map2.get(matchingid) : userMapDatas.get(matchingid);
-                record2.set("personnel", records4);
+                record2.set("personnel", records4.get(0));
               } else if (i == (records2.size())) {
                 List<Record> records4 = map3.get(modocid1);
-                record2.set("personnel", records4);
+                record2.set("personnel1", records4.get(0));
               } else if (i == (records2.size() + 1)) {
                 List<Record> records4 = map4.get(modocid1);
-                record2.set("personnel", records4);
+                record2.set("personnel2", records4.get(0));
               } else if (i == (records2.size() + 2)) {
                 List<Record> records4 = map5.get(modocid1);
-                record2.set("personnel", records4);
+                record2.set("personnel3", records4.get(0));
               } else if (i == (records2.size() + 3)) {
                 List<Record> records4 = map6.get(modocid1);
                 if (records4 == null || records4.size() <= 0) {
                   records4.add(record4);
                 }
-                record2.set("personnel4", records4);
+                record2.set("personnel4", records4.get(0));
               }
               userRecord.add(record2);
             }
