@@ -121,6 +121,7 @@
                 Ajax.post("admin/sysMaterialspreparedetail/choosemtool", {"cmodocno": $(cmo).val(), "barcodes": barcodes[i]},
                     function (res) {
                         jboltTableInsertRow(window.parent.getJBoltTable("manual"), res.data, false, false, false);
+                        console.log("插入完毕"+res.data);
                     }, function (err) {
                     });
             }

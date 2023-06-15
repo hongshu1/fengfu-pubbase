@@ -238,7 +238,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 		String[] split = map1.split(",");
 		ArrayList<SysMaterialspreparedetail> sysMaterialspreparedetails = new ArrayList<>();
 		for (int i=1;i<split.length;i++){
-			String[] split1 = split[i].split("|");
+			String[] split1 = split[i].split(":");
 			if (!split1[0].equals("")&&!split1[1].equals("")){
 				Kv kv = new Kv();
 				kv.set("cmodocno", String.valueOf(id));
@@ -249,12 +249,12 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 				SysMaterialspreparedetail sysMaterialspreparedetail = new SysMaterialspreparedetail();
 				sysMaterialspreparedetail.setMasID(Long.valueOf(sysMaterialsprepare.getAutoID()));
 				sysMaterialspreparedetail.setAutoID(String.valueOf(JBoltSnowflakeKit.me.nextId()));
-				sysMaterialspreparedetail.setPosCode(record.getStr("PosCode")==null?null:record.getStr("PosCode"));
-				sysMaterialspreparedetail.setBarcode(record.getStr("Barcode")==null?null:record.getStr("Barcode"));
-				sysMaterialspreparedetail.setInvCode(record.getStr("cInvCode")==null?null:record.getStr("cInvCode"));
+				sysMaterialspreparedetail.setPosCode(record.getStr("PosCode")==null?"":record.getStr("PosCode"));
+				sysMaterialspreparedetail.setBarcode(record.getStr("Barcode")==null?"":record.getStr("Barcode"));
+				sysMaterialspreparedetail.setInvCode(record.getStr("cInvCode")==null?"":record.getStr("cInvCode"));
 				sysMaterialspreparedetail.setNum(BigDecimal.valueOf(0));
 				sysMaterialspreparedetail.setQty(new BigDecimal(split1[1]));
-				sysMaterialspreparedetail.setPackRate(record.getBigDecimal("PackRate")==null?null:record.getBigDecimal("cInvCode"));
+				sysMaterialspreparedetail.setPackRate(record.getBigDecimal("PackRate")==null?new BigDecimal(0):record.getBigDecimal("PackRate"));
 //            sysMaterialspreparedetail.setSourceBillType();
 //            sysMaterialspreparedetail.setSourceBillNo()
 //            sysMaterialspreparedetail.setSourceBillNoRow()

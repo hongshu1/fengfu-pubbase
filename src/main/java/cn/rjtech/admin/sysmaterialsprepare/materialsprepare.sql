@@ -63,7 +63,8 @@ SELECT mp.BillNo,
        it.cInvStd,
        uom.cUomName,
        wh.cWhName,
-       wp.cPositionName
+       wp.cPositionName,
+       sbp.Barcode
 FROM T_Sys_MaterialsPrepareDetail mpd
          LEFT JOIN T_Sys_MaterialsPrepare mp ON mpd.MasID = mp.AutoID
          LEFT JOIN Bd_Inventory it ON mpd.InvCode = it.cInvCode
