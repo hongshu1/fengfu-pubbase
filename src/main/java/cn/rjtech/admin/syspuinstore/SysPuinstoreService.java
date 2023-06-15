@@ -789,7 +789,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             puinstore.setAuditDate(date);
             puinstore.setCUpdateName(JBoltUserKit.getUserName());
             puinstore.setDUpdateTime(date);
-            puinstore.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+            puinstore.setIAuditStatus(2);
             puinstore.setIAuditWay(1);
             //
             puinstoreList.add(puinstore);
