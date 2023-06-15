@@ -301,7 +301,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
      */
     public boolean existSourcebillno(String sourcebillno) {
         List<Record> records = dbTemplate(u8SourceConfigName(), "syspureceive.getsourcebillno",
-                Kv.by("sourcebillno", sourcebillno)).find();
+                Kv.by("mesbillno", sourcebillno)).find();
         return CollUtil.isNotEmpty(records);
     }
 
@@ -315,6 +315,19 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null
                     && jBoltTable.getUpdateRecordList() == null) {
                 return fail("行数据不能为空");
+            }
+        }
+        // 采购订单推u8才可以添加
+        List<Record> list = jBoltTable.getSaveRecordList();
+        if(null != list) {
+            for (Record record : list) {
+                ValidationUtils.isTrue(!this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
+            }
+        }
+        List<Record> list1 = jBoltTable.getUpdateRecordList();
+        if(null != list1) {
+            for (Record record : list1) {
+                ValidationUtils.isTrue(!this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
             }
         }
 

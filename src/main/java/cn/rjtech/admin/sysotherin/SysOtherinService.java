@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
@@ -167,6 +168,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
             return fail("行数据不能为空");
         }
         SysOtherin sysotherin = jBoltTable.getFormModel(SysOtherin.class, "sysotherin");
+
         // 获取当前用户信息？
         User user = JBoltUserKit.getUser();
         Date now = new Date();
@@ -174,17 +176,21 @@ public class SysOtherinService extends BaseService<SysOtherin> {
             // 通过 id 判断是新增还是修改
             if (sysotherin.getAutoID() == null) {
                 sysotherin.setOrganizeCode(getOrgCode());
-                sysotherin.setCreatePerson(user.getName());
-                sysotherin.setCreateDate(now);
-                sysotherin.setModifyPerson(user.getName());
-                sysotherin.setAuditPerson(user.getName());
-//                sysotherin.setState("1");
-                sysotherin.setModifyDate(now);
+                sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+                sysotherin.setIcreateby(user.getId());
+                sysotherin.setCcreatename(user.getName());
+                sysotherin.setDcreatetime(now);
+                sysotherin.setIupdateby(user.getId());
+                sysotherin.setCupdatename(user.getName());
+                sysotherin.setDupdatetime(now);
+                sysotherin.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+                sysotherin.setIsDeleted(false);
                 // 主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
             } else {
-                sysotherin.setModifyPerson(user.getName());
-                sysotherin.setModifyDate(now);
+                sysotherin.setIupdateby(user.getId());
+                sysotherin.setCupdatename(user.getName());
+                sysotherin.setDupdatetime(now);
                 // 主表修改
                 ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
             }
@@ -204,6 +210,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
     private void saveTableSubmitDatas(JBoltTable jBoltTable, SysOtherin sysotherin) {
         List<Record> list = jBoltTable.getSaveRecordList();
         if (CollUtil.isEmpty(list)) return;
+        User user = JBoltUserKit.getUser();
         ArrayList<SysOtherindetail> systailsList = new ArrayList<>();
         Date now = new Date();
         for (int i = 0; i < list.size(); i++) {
@@ -211,11 +218,13 @@ public class SysOtherinService extends BaseService<SysOtherin> {
             SysOtherindetail sysOtherindetail = new SysOtherindetail();
 
             sysOtherindetail.setMasID(Long.valueOf(sysotherin.getAutoID()));
-            sysOtherindetail.setModifyPerson(JBoltUserKit.getUser().getName());
-            sysOtherindetail.setModifyDate(now);
-            sysOtherindetail.setModifyDate(now);
-            sysOtherindetail.setCreateDate(now);
-            sysOtherindetail.setCreatePerson(JBoltUserKit.getUser().getName());
+            sysOtherindetail.setIcreateby(user.getId());
+            sysOtherindetail.setCcreatename(user.getName());
+            sysOtherindetail.setDcreatetime(now);
+            sysOtherindetail.setIupdateby(user.getId());
+            sysOtherindetail.setCupdatename(user.getName());
+            sysOtherindetail.setDupdatetime(now);
+            sysOtherindetail.setIsDeleted(false);
             sysOtherindetail.setBarcode(row.get("barcode"));
             sysOtherindetail.setInvCode(row.get("cinvcode"));
             sysOtherindetail.setQty(new BigDecimal(row.get("qty").toString()));
@@ -234,15 +243,16 @@ public class SysOtherinService extends BaseService<SysOtherin> {
     private void updateTableSubmitDatas(JBoltTable jBoltTable, SysOtherin sysotherin) {
         List<Record> list = jBoltTable.getUpdateRecordList();
         if (CollUtil.isEmpty(list)) return;
+        User user = JBoltUserKit.getUser();
         ArrayList<SysOtherindetail> systailsList = new ArrayList<>();
         Date now = new Date();
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
             SysOtherindetail sysOtherindetail = new SysOtherindetail();
             sysOtherindetail.setMasID(Long.valueOf(sysotherin.getAutoID()));
-            sysOtherindetail.setModifyPerson(JBoltUserKit.getUser().getName());
-            sysOtherindetail.setModifyDate(now);
-            sysOtherindetail.setCreatePerson(JBoltUserKit.getUser().getName());
+            sysOtherindetail.setIupdateby(user.getId());
+            sysOtherindetail.setCupdatename(user.getName());
+            sysOtherindetail.setDupdatetime(now);
             sysOtherindetail.setAutoID(Long.valueOf(row.get("autoid")));
             sysOtherindetail.setBarcode(row.get("barcode"));
             sysOtherindetail.setInvCode(row.get("cinvcode"));
@@ -310,7 +320,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
             jsonObject.set("index","1");
             jsonObject.set("vt_id","");
             jsonObject.set("defwhname","");
-            jsonObject.set("billDate",DateUtil.format(s.getCreateDate(), "yyyy-MM-dd"));
+            jsonObject.set("billDate",DateUtil.format(s.getDcreatetime(), "yyyy-MM-dd"));
             jsonObject.set("invcode",s.getInvCode());
             jsonObject.set("userCode",user.getUsername());
             jsonObject.set("iswhpos","1");
