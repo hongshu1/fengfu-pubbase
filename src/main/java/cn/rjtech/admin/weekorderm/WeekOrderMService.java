@@ -3,6 +3,7 @@ package cn.rjtech.admin.weekorderm;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
@@ -18,6 +19,8 @@ import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
 import cn.rjtech.model.momdata.base.BaseWeekOrderD;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -25,10 +28,8 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -321,7 +322,49 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     }
 
     public Page<Record> updateCplanTimeDatas(Integer pageNumber, Integer pageSize, Kv kv) {
-        return dbTemplate("weekorderm.updateCplanTimeDatas", kv).paginate(pageNumber, pageSize);
+        List<Record> records = new ArrayList<>();
+        Map<String, Record> batchUpdateMap = new HashMap<>();
+        if (notNull(kv.get("params"))) {
+            JSONObject params = JSON.parseObject(kv.getStr("params"));
+            // 批量调整
+            List<Record> batchUpdateDatas = JBoltModelKit.getFromRecords(JSON.parseArray(params.getString("batchUpdateDatas")));
+            if (notNull(batchUpdateDatas)) {
+                List<String> timeDatas = batchUpdateDatas.stream().map(item -> {
+                    return item.getStr("dplanaogdate") + "," + item.getStr("cplanaogtime");
+                }).collect(Collectors.toList());
+                kv.set("timedatas", timeDatas);
+                batchUpdateMap = batchUpdateDatas.stream().collect(Collectors.toMap(record -> {
+                    return record.getStr("dplanaogdate") + "," + record.getStr("cplanaogtime");
+                }, Function.identity(), (key1, key2) -> key1));
+
+            }
+
+            // 存货调整
+            List<Record> cinvUpdateDatas = JBoltModelKit.getFromRecords(JSON.parseArray(params.getString("cinvUpdateDatas")));
+            if (notNull(cinvUpdateDatas)) {
+                records.addAll(cinvUpdateDatas);
+            }
+        }
+        Page<Record> page = dbTemplate("weekorderm.updateCplanTimeDatas", kv).paginate(pageNumber, pageSize);
+
+        if (!batchUpdateMap.isEmpty()) {
+            List<Record> pageList = page.getList();
+            for (Record record : pageList) {
+                String time = record.getStr("dplanaogdate") + "," + record.getStr("cplanaogtime");
+                Record updateRecode = batchUpdateMap.get(time);
+                if (notNull(updateRecode)) {
+                    record.setColumns(updateRecode);
+                }
+            }
+            records.addAll(pageList);
+            // 去重
+            records = records.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(record -> record.getStr("iautoid")))), ArrayList::new));
+        }
+
+        if (!records.isEmpty()) {
+            page.setList(records);
+        }
+        return page;
     }
 
     public Ret saveUpdateCplanTime(JBoltTable jBoltTable) {

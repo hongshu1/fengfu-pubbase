@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        #if(!annualOrderM.iAutoId?? || (edit??false && annualOrderM.iOrderStatus == 1))
+                        #if(!annualOrderM.iAutoId?? || (edit??false && (annualOrderM.iOrderStatus == 1 || annualOrderM.iOrderStatus == 4)))
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
                         #if(annualOrderM.iautoid?? && !edit?? && annualOrderM.iOrderStatus != 3)

@@ -11,6 +11,8 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
+import java.util.List;
+
 import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
@@ -180,5 +182,14 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 	 */
 	public void deleteByMid(Long Mid){
 		delete("delete from Bd_FormApprovalFlowD where iFormApprovalFlowMid = "+Mid);
+	}
+
+	/**
+	 * 根据 ids 条件查数据
+	 * @param kv
+	 * @return
+	 */
+	public List<FormApprovalFlowD> findListBySid(Kv kv){
+		return find("select * from Bd_FormApprovalFlowD where iAutoId in ("+kv.getStr("flowIdStr")+")");
 	}
 }

@@ -432,4 +432,52 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         return null;
     }
 
+    /**
+     * 提审前业务，如有异常返回错误信息
+     */
+    public String preSubmitFunc(long formAutoId) {
+
+        return null;
+    }
+
+    /**
+     * 提审后业务处理，如有异常返回错误信息
+     */
+    public String postSubmitFunc(long formAutoId) {
+
+        return null;
+    }
+
+    /**
+     * 撤回审核业务处理，如有异常返回错误信息
+     */
+    public String postWithdrawFunc(long formAutoId) {
+        
+        return null;
+    }
+    
+    /**
+     * 从审批中，撤回到已保存，业务实现，如有异常返回错误信息
+     */
+    public String withdrawFromAuditting(long formAutoId) {
+        
+        return null;
+    }
+
+    /**
+     * 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
+     */
+    public String preWithdrawFromAuditted(long formAutoId) {
+        
+        return null;
+    }
+
+    /**
+     * 从已审核，撤回到已保存，业务实现，如有异常返回错误信息
+     */
+    public String postWithdrawFromAuditted(long formAutoId) {
+     
+        return null;
+    }
+
 }

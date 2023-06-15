@@ -37,12 +37,6 @@
 #end
 #define js()
 <script>
-    //下一步
-    function nexttStep()
-    {
-        //提交请求数据
-
-    }
     // 关闭
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
@@ -92,14 +86,14 @@
 
     }
 
-    var datas = new Array();
+    var datas;
     function getUpdateCplanTimeDatas() {
+        datas = {};
         // 获取批量调整
         var batchUpdateDatas = getJboltTableAllDatas("batch_update_jbolt_table_#(pageId)");
         if (batchUpdateDatas)
         {
             datas.batchUpdateDatas = batchUpdateDatas;
-            //datas.push(batchUpdateDatas);
         }
 
         // 获取存货信息
@@ -107,7 +101,6 @@
         if (cinvUpdateDatas)
         {
             datas.cinvUpdateDatas = cinvUpdateDatas;
-            // datas.push(cinvUpdateDatas);
         }
         return true;
     }

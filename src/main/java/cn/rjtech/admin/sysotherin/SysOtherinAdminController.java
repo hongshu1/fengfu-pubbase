@@ -21,6 +21,8 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Optional;
+
 /**
  * 其它入库单
  * @ClassName: SysOtherinAdminController
@@ -78,7 +80,7 @@ public class SysOtherinAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        SysOtherin sysOtherin = service.findById(getLong(0));
+        SysOtherin sysOtherin = service.findById(getLong("autoid"));
         if (sysOtherin == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -101,6 +103,8 @@ public class SysOtherinAdminController extends BaseAdminController {
                 set("venname", first2.getCVenName());
             }
         }
+        Boolean edit = getBoolean("edit");
+        set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
         set("sysotherin", sysOtherin);
         render("edit.html");
     }
@@ -156,23 +160,39 @@ public class SysOtherinAdminController extends BaseAdminController {
     }
 
     /**
-     * 审批通过
+     * 批量审核通过（批量审批也走这里）
      */
-    public void approve(String ids) {
-        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-
-        // renderJson(service.approve(ids));
-    }
-
-    /**
-     * 审批不通过
-     */
-    public void reject(String ids) {
+    public void batchApprove(@Para(value = "ids") String ids) {
         if (StringUtils.isEmpty(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
         }
-        // renderJson(service.reject(ids))
+        renderJson(service.process(ids));
+    }
+
+    /**
+     * 批量反审核
+     */
+    public void batchReverseApprove(@Para(value = "ids") String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            renderFail(JBoltMsg.PARAM_ERROR);
+            return;
+        }
+        renderJson(service.noProcess(ids));
+    }
+
+    /**
+     * 审批通过
+     */
+    public void approve(String ids) {
+        renderJson(service.approve(getLong(0)));
+
+    }
+    /**
+     * 审批不通过
+     */
+    public void reject(String ids) {
+        renderJson(service.reject(getLong(0)));
     }
 
 

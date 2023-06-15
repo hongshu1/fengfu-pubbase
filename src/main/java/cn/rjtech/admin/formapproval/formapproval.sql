@@ -59,3 +59,17 @@ where iFormApprovalFlowMid in (
     )
 ) and t1.iAuditStatus > 1
 #end
+
+
+#sql("findPersonByUserId")
+select t1.* from Bd_Person t1
+left join (select g.iPersonId, u.id
+from #(getBaseDbName()).dbo.jb_user u
+         left join #(getBaseDbName()).dbo.base_user_org g on u.id = g.user_id
+         #if(orgId)
+         and g.org_id = '#(orgId)'
+         #end
+         )
+ t3 on t3.iPersonId = t1.iAutoId
+ where 1=1 and t3.id = '#(userId)'
+#end
