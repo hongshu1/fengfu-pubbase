@@ -447,6 +447,14 @@ public class MonthordermService extends BaseService<MonthOrderM> {
 
         return null;
     }
+
+    /**
+     * 撤回审核业务处理，如有异常返回错误信息
+     */
+    public String postWithdrawFunc(long formAutoId) {
+        
+        return null;
+    }
     
     /**
      * 从审批中，撤回到已保存，业务实现，如有异常返回错误信息
