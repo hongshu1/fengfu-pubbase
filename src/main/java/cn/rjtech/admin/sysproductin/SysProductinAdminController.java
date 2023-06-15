@@ -23,6 +23,8 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Optional;
+
 /**
  * 产成品入库单
  * @ClassName: SysProductinAdminController
@@ -81,8 +83,8 @@ public class SysProductinAdminController extends BaseAdminController {
     /**
      * 编辑
      */
-    public void edit() {
-        SysProductin sysProductin = service.findById(getLong(0));
+    public void edit(@Para(value = "autoid") String autoid) {
+        SysProductin sysProductin = service.findById(autoid);
         if (sysProductin == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -103,6 +105,7 @@ public class SysProductinAdminController extends BaseAdminController {
         if (null != first2 && null != first2.getCDepName()) {
             set("cdepname", first2.getCDepName());
         }
+        set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
         set("sysProductin", sysProductin);
         render("edit.html");
     }

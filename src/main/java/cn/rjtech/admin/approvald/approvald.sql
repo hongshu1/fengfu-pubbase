@@ -10,6 +10,38 @@ select t1.*, t2.name as stepname,t3.name as way from Bd_ApprovalD t1
 #end
 
 #sql("getPerson")
+select t1.iAutoId as ipersonid, t1.cPsn_Num as cpsncode, t1.cPsn_Name as cpsnname, t2.cDepName as cdeptname, t3.id as
+iuserid, t3.username
+from Bd_Person t1
+left join Bd_Department t2 on t2.cDepCode = t1.cDept_num
+left join (select g.iPersonId, u.*
+from #(getBaseDbName()).dbo.jb_user u
+         left join #(getBaseDbName()).dbo.base_user_org g on u.id = g.user_id
+         #if(orgId)
+         and g.org_id = '#(orgId)'
+         #end
+         )
+ t3 on t3.iPersonId = t1.iAutoId
+where t1.isDeleted = '0' and t1.iUserId is not null
+#if(itemHidden)
+    and t1.iAutoId not in (#(itemHidden))
+#end
+#if(orgCode)
+and t1.cOrgCode = '#(orgCode)'
+#end
+#if(dept)
+and t1.cDept_num = '#(dept)'
+#end
+#if(keys)
+and (t1.cPsn_Num like '#(keys)%' or t1.cPsn_Name like '%#(keys)%')
+#end
+#if(keywords)
+and (t1.cPsn_Num like '#(keywords)%' or t1.cPsn_Name like '%#(keywords)%')
+#end
+order by t1.dUpdateTime
+#end
+
+#sql("getPerson_bak_2023_6_15")
 select t1.iAutoId as ipersonid, t1.cPsn_Num as cpsncode, t1.cPsn_Name as cpsnname, t2.cDepName as cdeptname, t1.iUserId as
 iuserid, t3.username
 from Bd_Person t1
@@ -34,6 +66,7 @@ and (t1.cPsn_Num like '#(keywords)%' or t1.cPsn_Name like '%#(keywords)%')
 #end
 order by t1.dUpdateTime
 #end
+
 
 #sql("selectPerson")
 select t1.iAutoId as ipersonid, t1.cPsn_Name as cpsnname,t1.cPsn_Num as cpsnnum

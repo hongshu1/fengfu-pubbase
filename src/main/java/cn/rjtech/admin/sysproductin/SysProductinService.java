@@ -198,9 +198,9 @@ public class SysProductinService extends BaseService<SysProductin> {
      * @return
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-        if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList() == null) {
-            return fail("行数据不能为空");
-        }
+//        if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList() == null) {
+//            return fail("行数据不能为空");
+//        }
         SysProductin sysotherin = jBoltTable.getFormModel(SysProductin.class, "sysProductin");
         // 获取当前用户信息？
         User user = JBoltUserKit.getUser();
@@ -491,7 +491,6 @@ public class SysProductinService extends BaseService<SysProductin> {
     public Ret noProcess(String ids) {
         tx(() -> {
             //反审，调用删除U8数据接口
-
             String[] split = ids.split(",");
             for (String s : split) {
                 SysProductin byId = findById(s);

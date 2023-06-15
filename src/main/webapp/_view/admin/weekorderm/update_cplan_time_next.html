@@ -20,9 +20,8 @@
         </tr>
         {@/each}
         </textarea>
-        
-        <form id="condition_form_#(pageId)" onsubmit="return false" method="get"> 
-            <input type="hidden" name="params" >
+
+        <form id="condition_form_#(pageId)" onsubmit="return false" method="post">
         </form>
 
         <table class="jbolt_table jbolt_main_table  table-center"
@@ -32,14 +31,11 @@
                data-ajax="false"
                data-autoload="false"
                data-height="fill"
-               data-url="admin/weekorderm/updateCplanTimeDatas"
-               data-conditions-form="condition_form_#(pageId)"
-               data-ajax-success-handler="insertDatas"
+               data-url="admin/weekorderd/saveUpdateCplanTime"
                data-column-resize="true"
                data-rowtpl="WeekOrderM_tpl_#(pageId)"
-               data-copy-to-excel="false"
-               data-page="WeekOrderD_page"
-               data-tabledatas=""
+               data-editable="true"
+               data-editable-option="getEditableTableOptions_#(pageId)"
         >
             <thead>
             <tr>
@@ -65,22 +61,62 @@
     function submitThisForm() {
         jboltTableSubmit('#jbolt_table_#(pageId)');
     }
-    
-    var getDatas = function () {
-        return parent.datas;
-    }
 
+    // 插入修改数据
     $(function () {
-        $('input[name="params"]').val(JSON.stringify(parent.datas));
-
-        $('#condition_form_#(pageId)').submit();
+        var params = JSON.stringify(parent.datas);
+        $.getJSON("admin/weekorderm/updateCplanTimeDatas", {"params": params}, function (res) {
+            // 插入默认数据
+            jboltTableInsertRow("update_cplan_time_next_jbolt_table_#(pageId)", res.data.list);
+        });
     });
-    
-    // 插入默认数据
-    function insertDatas() {
-        console.log("插入默认数据");
-        console.log(parent.datas);
-        //jboltTableInsertRow("update_cplan_time_next_jbolt_table_#(pageId)", parent.datas);
+
+    // 可编辑表单
+    //获得配置参数
+    function getEditableTableOptions_#(pageId)()
+    {
+        var editableTableOptions = {
+            submit: {
+                withForm: ["condition_form_#(pageId)"],
+                type: "all",
+                url: "/admin/weekorderd/saveUpdateCplanTime",
+                success: function (res) {
+                    LayerMsgBox.success("提交成功", 600, function () {
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
+                    });
+                }
+            },
+            maxRowCount: 9999,
+            cols: {
+                ccode: {
+                    type: "input",
+                    placeholder: '传票号',
+                    required: true
+                },
+                dplanaogdate: {
+                    type: "date",
+                    placeholder: '计划日期',
+                    required: true,
+                },
+                cplanaogtime: {
+                    type: "time",
+                    placeholder: '计划时间',
+                    required: true,
+                },
+                updatedplanaogdate: {
+                    type: "date",
+                    placeholder: '调整日期',
+                    required: true,
+                },
+                updatecplanaogtime: {
+                    type: "time",
+                    placeholder: '调整时间',
+                    required: true,
+                }
+            }
+        };
+        return editableTableOptions;
     }
 </script>
 #end

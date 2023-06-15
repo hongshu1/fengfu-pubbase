@@ -87,4 +87,12 @@ public class WeekOrderDAdminController extends BaseAdminController {
         renderJson(service.delete(getLong(0)));
     }
 
+    /**
+     * 保存调整计划时间
+     */
+    public void saveUpdateCplanTime()
+    {
+        renderJson(service.saveUpdateCplanTime(getJBoltTable()));
+    }
+
 }

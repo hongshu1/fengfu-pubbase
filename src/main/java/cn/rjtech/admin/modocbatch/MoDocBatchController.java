@@ -48,15 +48,6 @@ public class MoDocBatchController extends BaseAdminController {
 
 
   /**
-   * 编辑人员
-   */
-  public void editPerson() {
-    MoMotask moMotask = service.findById(getLong(0));
-    set("taskid", getLong(0));
-    render("_form.html");
-  }
-
-  /**
    * 编辑计划
    */
   public void editPlan() {
@@ -79,7 +70,8 @@ public class MoDocBatchController extends BaseAdminController {
    * 人员编辑
    */
   public void personEdit() {
-    set("editplanviewdatas", service.getOpenEditPlanViewDatas(getLong(0)));
+    Kv kv = getKv();
+    set("editplanviewdatas", service.getOpenEditPlanViewDatas(kv.getLong("taskid")));
     keepPara();
     render("person_edit.html");
   }

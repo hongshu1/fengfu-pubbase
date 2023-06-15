@@ -114,3 +114,7 @@ select t1.iAutoId, t1.iUserId, t3.name,t3.sex, t3.username, t3.enable from Bd_Fo
 left join #(getBaseDbName()).dbo.jb_user t3 on t3.id = t1.iUserId
 where t1.iFormApprovaldRoleId = '#(id)'
 #end
+
+#sql("findListBySid")
+select * from Bd_FormApprovalD where iAutoId in (#(approvaldIdStr))
+#end
