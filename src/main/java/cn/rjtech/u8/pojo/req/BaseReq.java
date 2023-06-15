@@ -1,10 +1,10 @@
 package cn.rjtech.u8.pojo.req;
 
 
-import java.io.Serializable;
-
-import cn.rjtech.config.AppConfig;
+import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.rjtech.util.ValidationUtils;
+
+import java.io.Serializable;
 
 /**
  * 基础请求对象
@@ -13,8 +13,8 @@ import cn.rjtech.util.ValidationUtils;
  */
 public abstract class BaseReq implements Serializable {
 
-    public BaseReq() {
-        ValidationUtils.isTrue(AppConfig.isU8ApiEnabled(), "当前运行配置环境，无法调用U8接口");
+    public BaseReq(String orgCode) {
+        ValidationUtils.isTrue(U8DataSourceKit.ME.getIsU8ApiEnabled(orgCode), "当前运行配置环境，无法调用U8接口");
     }
 
     public abstract String getRequestXml(String orgCode, String proc);
