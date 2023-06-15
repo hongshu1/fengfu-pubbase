@@ -2,6 +2,7 @@ package cn.rjtech.admin.rcvdocqcformm;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -11,6 +12,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.rcvdocdefect.RcvDocDefectService;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
@@ -19,7 +21,9 @@ import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.enums.CMeasurePurposeEnum;
 import cn.rjtech.enums.IsOkEnum;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.excel.SheetPage;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
@@ -30,6 +34,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -59,6 +64,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     private SysPuinstoreService      sysPuinstoreService;      //采购入库单
     @Inject
     private VendorService            vendorService;                       //供应商档案
+    @Inject
+    private InventoryService         inventoryService;
 
     @Override
     protected RcvDocQcFormM dao() {
@@ -110,6 +117,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         if (null == rcvDocQcFormM) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
+        Inventory inventory = inventoryService.findById(rcvDocQcFormM.getIInventoryId());
+        ValidationUtils.notNull(inventory, "存货编码不能为空");
+
         //1、根据表格ID查询数据
         Long iQcFormId = rcvDocQcFormM.getIQcFormId();//表格ID
         List<Record> recordList = dbTemplate("rcvdocqcformm.getCheckoutList", Kv.by("iqcformid", iQcFormId)).find();
@@ -463,7 +473,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         boolean result = tx(() -> {
             for (int i = 0; i < serializeSubmitList.size(); i++) {
                 JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
-                System.out.println("new Gson().toJson(jsonObject)====>"+new Gson().toJson(jsonObject));
+                System.out.println("new Gson().toJson(jsonObject)====>" + new Gson().toJson(jsonObject));
                 String iseq = jsonObject.getString("iseq");
                 Long ircvdocqcformmid = jsonObject.getLong("iautoid");
                 JSONArray cvaluelist = jsonObject.getJSONArray("cvaluelist");
@@ -602,6 +612,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
 
         return Kv.by("pages", pages).set("sheetNames", sheetNames);
     }
+
     public List<RcvDocQcFormM> findFirstBycRcvDocNo(String crcvdocno) {
         return find("select * from  PL_RcvDocQcFormM where cRcvDocNo = ? ", crcvdocno);
     }

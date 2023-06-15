@@ -13,6 +13,9 @@
 
 #sql("getAllCexchName")
 SELECT cexch_name
-FROM Bd_ForeignCurrency
+FROM Bd_ForeignCurrency where 1=1 and isDeleted = 0
+#if(iorgid)
+	and iorgid = #para(iorgid)
+#end
 GROUP BY cexch_name
 #end

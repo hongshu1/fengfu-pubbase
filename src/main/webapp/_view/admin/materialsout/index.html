@@ -44,7 +44,7 @@
 <td>
 	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}?&type=0"  data-fs="true" data-handler="refreshJBoltTable" data-title="材料出库单列表详情">查看</i></a>
 	 {@if data.iauditstatus == '0'}
-	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑材料出库单列表">编辑</i></a>
+	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}?&edit=true" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑材料出库单列表">编辑</i></a>
 	 {@else if data.iauditstatus == '1'}
 	<a class="jbolt_table_delbtn" href="admin/materialDeliveryList/recall?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
 	 {@/if}

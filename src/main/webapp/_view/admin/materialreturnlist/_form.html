@@ -31,14 +31,14 @@
                     ### primaryKeyName:     主键名
                     ###include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
 
-                    #include("/_view/_common/_approval_btns.html", uri="/admin/materialreturnlist", formSn="T_Sys_PUInStore", o=puinstore, edit=edit??, primaryKeyName="AutoID")
+                    #include("/_view/_common/_approval_btns.html", uri="/admin/materialreturnlist", formSn="T_Sys_PUInStore", o=puinstore, edit=edit??, primaryKeyName="autoid")
                     #end
                     <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
                         关闭
                     </button>
                 </div>
             </div>
-            #if(puinstore.AutoID??)
+            #if(puinstore.autoid??)
             <input type="hidden" id="puinstoreautoid" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
             #end
             <div class="form-group row">
@@ -130,6 +130,10 @@
 <script>
     hideParentLayerDialogBtn();
 
+
+    function submitThisForm() {
+        return true;
+    }
 
     /**
      * 审核

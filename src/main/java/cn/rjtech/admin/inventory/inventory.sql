@@ -52,6 +52,9 @@ where i.isEnabled = '1' and i.isDeleted = '0'
 SELECT inv.cinvcode, inv.cinvname, inv.cinvstd, inv.cinvaddcode, inv.cAddress, inv.itaxrate
 FROM bd_Inventory inv
 WHERE 1 = 1
+#if(iorgid)
+	and inv.iorgid = #para(iorgid)
+#end
 #if(q)
     AND (cInvCode like CONCAT ('%', #para(q), '%')
     OR  cInvName like CONCAT ('%', #para(q), '%')

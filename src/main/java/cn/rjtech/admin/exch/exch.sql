@@ -1,6 +1,9 @@
 #sql("getNflat")
 SELECT top 1 nflat
-from exch
-WHERE cexch_name = #para(cexchname)
-ORDER BY i_id DESC, iYear DESC, cdate DESC
+from bd_exch
+WHERE cexch_name = #para(cexchname) and isDeleted = 0
+#if(iorgid)
+	and iorgid = #para(iorgid)
+#end
+ORDER BY iYear DESC, iperiod DESC
 #end

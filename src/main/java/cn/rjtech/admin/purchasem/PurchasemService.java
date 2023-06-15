@@ -540,7 +540,7 @@ public class PurchasemService extends BaseService<Purchasem> {
         // 校验是否有采购单信息
         List<Record> records = dbTemplate(u8SourceConfigName(), "purchasem.checkIsCreataPurchase", Kv.by("ids",ids)).find();
         String purhaseNo = JBoltArrayUtil.join(records.stream().filter(Objects::nonNull).map(item -> item.getStr("ccode")).collect(Collectors.toList()), ",");
-        ValidationUtils.notNull(records, "以下申购单已生成采购单不允许撤销:" + purhaseNo);
+        ValidationUtils.isTrue(CollUtil.isEmpty(records), "以下申购单已生成采购单不允许撤销:" + purhaseNo);
 
         // 获取对应U8采购单信息
         tx(() -> {

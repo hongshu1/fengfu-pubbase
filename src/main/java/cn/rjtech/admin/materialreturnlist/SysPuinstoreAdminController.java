@@ -85,6 +85,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 		String OrgCode = getOrgCode();
 		Record puinstoreName = service.getstockoutQcFormMList(autoid,OrgCode);
 		set("type", get("type"));
+		set("edit", get("edit"));
 		set("puinstoreName",puinstoreName);
 		set("puinstore",puinstore);
 		render("edit.html");

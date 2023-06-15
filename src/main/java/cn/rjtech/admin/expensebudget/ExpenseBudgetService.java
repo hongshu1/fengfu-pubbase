@@ -32,6 +32,7 @@ import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.ExpenseBudget;
 import cn.rjtech.model.momdata.ExpenseBudgetItem;
 import cn.rjtech.model.momdata.ExpenseBudgetItemd;
+import cn.rjtech.model.momdata.Period;
 import cn.rjtech.model.momdata.Subjectm;
 import cn.rjtech.util.ReadFullYearExpenseBudgetExcelUtil;
 import cn.rjtech.util.ValidationUtils;
@@ -1295,5 +1296,12 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
         	monthColumnTxtList.add(monthRecord);
         	dstarttime = JBoltDateUtil.nextMonthFirstDay(dstarttime);
         }
+	}
+	/**
+	 * 期间是否应用于费用预算
+	 * */
+	public Boolean periodIsExists(Period dbPeriod) {
+		List<ExpenseBudget> list = find(selectSql().eq("iPeriodId", dbPeriod.getIautoid()));
+		return CollUtil.isNotEmpty(list);
 	}
 }
