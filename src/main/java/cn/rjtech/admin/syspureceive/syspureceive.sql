@@ -157,7 +157,7 @@ SELECT  a.*
 FROM V_Sys_PODetail a
 where 1=1
 	#if(sourcebillno)
-		and a.SourceBillNo = #para(sourcebillno)
+		and a.mesbillno = #para(sourcebillno)
 	#end
 #end
 
