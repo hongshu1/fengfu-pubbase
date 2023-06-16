@@ -50,14 +50,15 @@ public class MoMotaskService extends BaseService<MoMotask> {
     return dao;
   }
 
-  public Kv getOpenEditPlanViewDatas(Long id) {
-    Kv kv = new Kv();
-    MoMotask moMotask = findById(id);
+  public Record personEditHeaderDatas(Kv kv) {
+    Record record = new Record();
+    ValidationUtils.notBlank(kv.getStr("taskid"), "制造工单任务ID缺失，获取数据异常！！！");
+    MoMotask moMotask = findById(kv.getStr("taskid"));
     List<Record> records = dbTemplate("modocbatch.editplanviewdatas", Kv.by("id", moMotask.getIAutoId())).find();
 
     Map<String, Integer> map = new HashMap<>();
-    for (Record record : records) {
-      String dateKey = record.getStr("yeartodate");
+    for (Record record1 : records) {
+      String dateKey = record1.getStr("yeartodate");
       if (map.containsKey(dateKey)) {
         map.put(dateKey, map.get(dateKey) + 1);
       } else {
@@ -65,37 +66,37 @@ public class MoMotaskService extends BaseService<MoMotask> {
       }
     }
 
-    for (Record record : records) {
-      record.set("count", map.get(record.getStr("yeartodate")));
-      String weekDay = DateUtils.formatDate(DateUtils.parseDate(record.getStr("yeartodate")), "E");
+    for (Record record1 : records) {
+      record1.set("count", map.get(record1.getStr("yeartodate")));
+      String weekDay = DateUtils.formatDate(DateUtils.parseDate(record1.getStr("yeartodate")), "E");
       if (weekDay.equals("星期一") || weekDay.equals("Mon")) {
-        record.set("weeks", "星期一");
+        record1.set("weeks", "星期一");
       }
       if (weekDay.equals("星期二") || weekDay.equals("Tue")) {
-        record.set("weeks", "星期二");
+        record1.set("weeks", "星期二");
       }
       if (weekDay.equals("星期三") || weekDay.equals("Wed")) {
-        record.set("weeks", "星期三");
+        record1.set("weeks", "星期三");
       }
       if (weekDay.equals("星期四") || weekDay.equals("Thu")) {
-        record.set("weeks", "星期四");
+        record1.set("weeks", "星期四");
       }
       if (weekDay.equals("星期五") || weekDay.equals("Fri")) {
-        record.set("weeks", "星期五");
+        record1.set("weeks", "星期五");
       }
       if (weekDay.equals("星期六") || weekDay.equals("Sat")) {
-        record.set("weeks", "星期六");
+        record1.set("weeks", "星期六");
       }
       if (weekDay.equals("星期日") || weekDay.equals("Sun")) {
-        record.set("weeks", "星期日");
+        record1.set("weeks", "星期日");
       }
     }
     Department byId = departmentService.findById(moMotask.getIDepartmentId());
-    kv.put("depname", byId.getCDepName());
-    kv.put("startdate", records.get(0).getStr("yeartodate"));
-    kv.put("stopdate", records.get((records.size() - 1)).getStr("yeartodate"));
-    kv.put("datas", records);
-    return kv;
+    record.put("depname", byId.getCDepName());
+    record.put("startdate", records.get(0).getStr("yeartodate"));
+    record.put("stopdate", records.get((records.size() - 1)).getStr("yeartodate"));
+    record.put("datas", records);
+    return record;
   }
 
   /**
@@ -708,22 +709,22 @@ public class MoMotaskService extends BaseService<MoMotask> {
               if (i < records2.size()) {
                 //读取人员数据
                 List<Record> records4 = bol ? map2.get(matchingid) : userMapDatas.get(matchingid);
-                record2.set("personnel", records4.get(0));
+                record2.set("personne", records4.get(0));
               } else if (i == (records2.size())) {
                 List<Record> records4 = map3.get(modocid1);
-                record2.set("personnel1", records4.get(0));
+                record2.set("personne", records4.get(0));
               } else if (i == (records2.size() + 1)) {
                 List<Record> records4 = map4.get(modocid1);
-                record2.set("personnel2", records4.get(0));
+                record2.set("personne", records4.get(0));
               } else if (i == (records2.size() + 2)) {
                 List<Record> records4 = map5.get(modocid1);
-                record2.set("personnel3", records4.get(0));
+                record2.set("personne", records4.get(0));
               } else if (i == (records2.size() + 3)) {
                 List<Record> records4 = map6.get(modocid1);
                 if (records4 == null || records4.size() <= 0) {
                   records4.add(record4);
                 }
-                record2.set("personnel4", records4.get(0));
+                record2.set("personne", records4.get(0));
               }
               userRecord.add(record2);
             }
