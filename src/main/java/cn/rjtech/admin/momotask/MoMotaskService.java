@@ -467,7 +467,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
    * @return
    */
   public List<Record> getModocStaffEditorDatas(Kv kv) {
-
+    ValidationUtils.notBlank(kv.getStr("taskid"), "制造工单任务ID缺失，获取数据异常！！！");
     // <editor-fold desc="A前置数据源--(iworkregionmid)产线id+(iinventoryid)存货id   根据taskid获取制造工单的产线id和存货id   key:(iworkregionmid)产线id+(iinventoryid)存货id  value:modocid">
     List<Record> docIdList = dbTemplate("modocbatch.getModocAllDatasByTaskid", kv).find();
     Map<String, String> modocidMap = new HashMap<>();
@@ -535,12 +535,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
     // </editor-fold>
 
     //<editor-fold desc="D根据任务单id获取班长maps，其他人员1maps1，其他人员2maps2">
-    Record leaderRec = new Record();
-    leaderRec.put("itype", "");
-    leaderRec.put("ipersonid", "");
-    leaderRec.put("cpsn_num", "");
-    leaderRec.put("cpsn_name", "");
-    List<Record> LeaderRecs = dbTemplate("getModocLeaderByTaskid", kv).find();
+    List<Record> LeaderRecs = dbTemplate("modocbatch.getModocLeaderByTaskid", kv).find();
     Map<String, Record> maps = new HashMap<>();
     Map<String, Record> maps1 = new HashMap<>();
     Map<String, Record> maps2 = new HashMap<>();
@@ -786,15 +781,24 @@ public class MoMotaskService extends BaseService<MoMotask> {
         record.put("cworkname", "");
         record.put("iinventoryid", "");
         record.put("iworkregionmid", "");
-        if (qty == (recordssize - 3)) {
-          for (Record workShift : workShifts) {
-            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec.put("", "").put("", "") : maps.get(workShift.getStr("dataid")));
+
+        for (Record workShift : workShifts) {
+          Record leaderRec = new Record();
+          leaderRec.put("itype", "");
+          leaderRec.put("ipersonid", "");
+          leaderRec.put("cpsn_num", "");
+          leaderRec.put("cpsn_name", "");
+          leaderRec.put("dataid", workShift.getStr("dataid"));
+          leaderRec.put("sdate", workShift.getStr("sdate"));
+          if (qty == (recordssize - 3)) {
+            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+          } else if (qty == (recordssize - 2)) {
+            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+          } else if (qty == (recordssize - 1)) {
+            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
           }
-        } else if (qty == (recordssize - 2)) {
-
-        } else if (qty == (recordssize - 1)) {
-
         }
+        record.put("udes", recordLisc);
         records.add(record);
       }
     }

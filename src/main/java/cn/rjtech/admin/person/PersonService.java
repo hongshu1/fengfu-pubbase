@@ -86,7 +86,7 @@ public class PersonService extends BaseService<Person> {
         
         Page<Record> pageList = dbTemplate("person.paginateAdminDatas", para).paginate(pageNumber, pageSize);
         for (Record row : pageList.getList()) {
-            row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("iuserid")));
+            row.set("cusername", JBoltUserCache.me.getName(row.getLong("iuserid")));
             row.set("sysworkage", calcSysworkage(row.getDate("dhiredate")));
         }
         return pageList;
