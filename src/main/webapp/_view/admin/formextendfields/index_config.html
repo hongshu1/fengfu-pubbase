@@ -1,8 +1,8 @@
-<div class="jbolt_page_title" id="indexFrom1">
-<div class="row" id="row1">
+<div class="jbolt_page_title">
+<div class="row">
 	<!--<div class="col">-->
 	<form class="form-inline" id="FormExtendFields_form_#(pageId)">
-		<div class="col" id="col1">
+		<div class="col">
 			<!--<label class="col-sm-3 col-form-label">基础档案名称：</label>-->
 <select class="form-control" name="iFormId"
 	data-autoload
@@ -12,6 +12,14 @@
 		data-text-attr="title"
 		data-value-attr="id"
 	></select>
+			<select class="form-control" name="test"
+					data-autoload
+					data-url="admin/formExtendFields/test"
+					data-select-type="select"
+					data-text="=test="
+					data-text-attr=""
+					data-value-attr=""
+			></select>
 			<!--<h8>单据档案名称：</h8>-->
 <!--<select class="form-control" name="iFormFieldId"-->
 	<!--data-autoload-->
@@ -41,11 +49,11 @@
 	<!--</div>-->
 </div>
 </div>
-<div class="jbolt_page_content" id="pageContent1">
+<div class="jbolt_page_content" >
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="FormExtendFields_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iAutoId}" id="indextr1">
+<tr data-id="${data.iAutoId}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	<a class="jbolt_table_editbtn" data-btn="no" href="admin/formExtendFields/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="80%,90%" data-title="编辑系统管理-拓展字段配置表"><i class=""></i>编辑</a>
@@ -53,16 +61,16 @@
 	<a class="jbolt_table_delbtn" href="admin/formExtendFields/delete/${data.iautoid}" data-handler="refreshJBoltTable" ><i class=""></i>删除</a>
 </td>
 <td>${data.iformidname}</td>
-<td>${data.iformfieldidname}</td>
+<!--<td>${data.iformfieldidname}</td>-->
 <!--<td>${data.cfieldcode}</td>-->
-<td>${data.ipositionname}</td>
+<!--<td>${data.ipositionname}</td>-->
 <td>${data.cfieldname}</td>
 <td>${data.cdisplayname}</td>
 <td>${data.imaxlength}</td>
 <td>${data.ifieldtypename}</td>
 <td>${data.isenabledname}</td>
 <td>${data.isrequiredname}</td>
-<td>${data.iseditablename}</td>
+<!--<td>${data.iseditablename}</td>-->
 <td>${data.isdisplayedname}</td>
 <td>${data.isourcename}</td>
 <td>${data.isourceval}</td>
@@ -83,7 +91,6 @@
 </div>
 <table class="jbolt_table jbolt_main_table  table-center "
 	   data-jbolttable
-	   id="FormExtendFields_form1"
 	   data-width="auto"
 	   data-height="fill"
 	   data-ajax="true"
@@ -100,17 +107,17 @@
 <tr>
 <th data-width="60" data-column="index">序号</th>
 	<th data-min-width="110">操作</th>
-	<th  data-width="100" data-column="iFormId">系统表单ID</th>
-	<th  data-width="100" data-column="iFormFieldId">系统字段ID</th>
+	<th  data-min-width="200" data-column="iFormId">系统表单ID</th>
+	<!--<th  data-width="100" data-column="iFormFieldId">系统字段ID</th>-->
 	<!--<th  data-width="150" data-column="cFieldCode">系统字段编码</th>-->
-	<th  data-width="90" data-column="iPosition">单据位置</th>
+	<!--<th  data-width="90" data-column="iPosition">单据位置</th>-->
 	<th  data-width="150" data-column="cFieldName">字段名称</th>
 	<th  data-width="150" data-column="cDisplayName">显示名称</th>
 	<th  data-min-width="130" data-column="iMaxLength">字段值输入长度</th>
 	<th  data-width="90" data-column="iFieldType">字段类型</th>
 	<th  data-width="90" data-column="isEnabled">是否启用</th>
 	<th  data-width="90" data-column="isRequired">是否必填</th>
-	<th  data-width="90" data-column="isEditable">是否编辑</th>
+	<!--<th  data-width="90" data-column="isEditable">是否编辑</th>-->
 	<th  data-width="90" data-column="isDisplayed">是否显示</th>
 	<th  data-width="100" data-column="iSource">值来源</th>
 	<th  data-width="150" data-column="iSourceVal">值具体</th>
