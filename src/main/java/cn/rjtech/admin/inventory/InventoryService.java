@@ -454,6 +454,10 @@ public class InventoryService extends BaseService<Inventory> {
 						  InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions, List<InventoryWorkRegion> newInventoryWorkRegions,
 						  Object[] delete, JBoltTable inventoryRoutingJboltTable, JBoltTable inventoryCapacityJboltTable) {
 		tx(() -> {
+			if(inventory.getIUomType()==null){
+				inventory.setIUomType(null);
+			}
+
 			Ret inventoryRet = update(inventory);
 			// 存货档案-附加
 			inventoryAddition.setIInventoryId(inventory.getIAutoId());
