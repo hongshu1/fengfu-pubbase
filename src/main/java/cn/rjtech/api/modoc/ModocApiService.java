@@ -88,6 +88,9 @@ public class ModocApiService extends JBoltApiBaseService {
 
     Record moRecod=moDoc.toRecord();
     moRecod.keep("cmodocno","dplandate","iqty","icompqty");
+    if(notOk(moRecod.getBigDecimal("icompqty"))){
+      moRecod.set("icompqty",new BigDecimal(0));
+    }
     if(isOk(moDoc.getIInventoryId())){
       //存货
       Inventory inventory = inventoryService.findById(moDoc.getIInventoryId());
@@ -137,10 +140,14 @@ public class ModocApiService extends JBoltApiBaseService {
         if(StringUtils.isNotBlank(workregionm.getCWorkName())) {
           moRecod.set("cworkname", workregionm.getCWorkName());
         }else{
+
           moRecod.set("cworkname", "");
         }
+      }else{
+        moRecod.set("cworkname", "");
       }
     }else{
+
       moRecod.set("cworkname", "");
     }
     //班次
@@ -152,6 +159,8 @@ public class ModocApiService extends JBoltApiBaseService {
       }else{
           moRecod.set("cworkshiftname", "");
         }
+      }else{
+        moRecod.set("cworkshiftname", "");
       }
     }else{
       moRecod.set("cworkshiftname", "");
@@ -165,6 +174,8 @@ public class ModocApiService extends JBoltApiBaseService {
         }else{
           moRecod.set("cdepname", "");
         }
+      }else{
+        moRecod.set("cdepname", "");
       }
     }else{
       moRecod.set("cdepname", "");

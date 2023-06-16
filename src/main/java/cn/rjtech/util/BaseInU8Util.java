@@ -1,16 +1,15 @@
 package cn.rjtech.util;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.rjtech.config.AppConfig;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.log.Log;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @version 1.0
@@ -26,11 +25,10 @@ public class BaseInU8Util {
      * 推送采购入库单到U8系统
      */
     public String base_in(String json) {
-        // getSysPuinstoreVouchProcessDynamicSubmitUrl
-        String vouchSumbmitUrl = AppConfig.getSysPuinstoreVouchProcessDynamicSubmitUrl();
+        String vouchSumbmitUrl = AppConfig.getVouchSubmitUrl();
         String post = HttpUtil.post(vouchSumbmitUrl, json);
         JSONObject res = JSON.parseObject(post);
-        
+
         ValidationUtils.notNull(res, "解析JSON为空");
         LOG.info("res: {}", res);
 
@@ -46,7 +44,7 @@ public class BaseInU8Util {
 
         JSONObject dataJson = JSON.parseObject(res.getString("data"));
         String u8Billno = "";
-        if (dataJson.getString("code").equals("200")){
+        if ("200".equals(dataJson.getString("code"))) {
             u8Billno = extractU8Billno(dataJson.getString("message").trim());
         }
         return u8Billno;
@@ -74,15 +72,14 @@ public class BaseInU8Util {
         return post;
     }
 
-    /*
+    /**
      * 提取字符串里面的数字
-     * */
+     */
     public String extractU8Billno(String message) {
         String regEx = "[^0-9]";
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(message);
-        String result = m.replaceAll("").trim();
-        return result;
+        return m.replaceAll("").trim();
     }
 
 }
