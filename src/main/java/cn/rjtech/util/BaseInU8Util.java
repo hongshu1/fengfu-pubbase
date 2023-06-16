@@ -56,14 +56,15 @@ public class BaseInU8Util {
      * 通知U8删除采购入库单
      * */
     public String deleteVouchProcessDynamicSubmitUrl(String json) {
-        String vouchSumbmitUrl = AppConfig.deleteVouchProcessDynamicSubmitUrl();
-        String post = HttpUtil.get(vouchSumbmitUrl + "?dataJson=" + json);
+        //1、先调用采购入库弃审接口
+        String vouchSumbmitUrl = AppConfig.inUnVouchProcessDynamicSubmitUrl();
+        String inUnVouchGet = HttpUtil.get(vouchSumbmitUrl + "?dataJson=" + json);
 //        String post = HttpUtil.post(vouchSumbmitUrl, "dataJson=" + json);
 
-        String res = XmlUtil.readObjectFromXml(post);
+        String res = XmlUtil.readObjectFromXml(inUnVouchGet);
         JSONObject jsonObject = JSON.parseObject(res);
 
-        ValidationUtils.notNull(res, "解析JSON为空");
+        ValidationUtils.notNull(jsonObject, "解析JSON为空");
         String code = jsonObject.getString("code");
         String message = StrUtil.nullToDefault(jsonObject.getString("message"), jsonObject.getString("msg"));
         LOG.info("res: {}", res);
@@ -72,7 +73,25 @@ public class BaseInU8Util {
             ValidationUtils.error(message);
         }
         ValidationUtils.notNull(code, "json:" + json + ";" + message);
-        ValidationUtils.equals(code, "200",message);
+        ValidationUtils.equals(code, "200", message);
+
+        //2、再调用采购入库u8删除接口，删除u8数据
+        String deleteUrl = AppConfig.deleteVouchProcessDynamicSubmitUrl();
+        String deleteGet = HttpUtil.get(deleteUrl + "?dataJson=" + json);
+        String deleteRes = XmlUtil.readObjectFromXml(deleteGet);
+        JSONObject deleteJsonObject = JSON.parseObject(deleteRes);
+
+        ValidationUtils.notNull(deleteJsonObject, "解析JSON为空");
+        String deleteCode = deleteJsonObject.getString("code");
+        String deleteMessage = StrUtil.nullToDefault(deleteJsonObject.getString("message"), deleteJsonObject.getString("msg"));
+        LOG.info("deleteRes: {}", deleteRes);
+
+        if (ObjUtil.equal(deleteJsonObject.getString("state"), "fail")) {
+            ValidationUtils.error(deleteMessage);
+        }
+        ValidationUtils.notNull(deleteCode, "json:" + json + ";" + deleteMessage);
+        ValidationUtils.equals(deleteCode, "200", deleteMessage);
+
         return code;
     }
 

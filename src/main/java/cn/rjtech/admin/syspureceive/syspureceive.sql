@@ -350,7 +350,7 @@ order by o.iAutoId DESC
 
 #sql("InventoryQcForm")
 SELECT  t1.iAutoId,qc.cQcFormName,
-inv.cInvCode, inv.cInvCode1, inv.cInvName, inv.cInvName1, inv.cInvStd, uom.cUomName,
+inv.cInvCode, inv.cInvCode1, inv.cInvName, inv.cInvName1, inv.cInvStd, uom.cUomName,t1.cDcCode,
 t2.cEquipmentModelName as machineName
 FROM Bd_InventoryQcForm t1
 INNER JOIN Bd_QcForm qc ON qc.iAutoId = t1.iQcFormId
