@@ -97,7 +97,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
         	.set("iorgid",getOrgId());
 		Page<Record> page = dbTemplate("investmentplan.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 		for (Record row : page.getList()) {
-			row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
+			row.set("cusername", JBoltUserCache.me.getName(row.getLong("icreateby")));
 			row.set("cdepname", departmentService.getCdepName(row.getStr("cdepcode")));
 		}
 		return page;
@@ -835,7 +835,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		Page<Record> page = dbTemplate("investmentplan.appendItemIndexDatas",para).paginate(pageNumber, pageSize);
 		for (Record row : page.getList()) {
 			row.set("cdepname", departmentService.getCdepName(row.getStr("cdepcode")));
-			row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
+			row.set("cusername", JBoltUserCache.me.getName(row.getLong("icreateby")));
 		}
 		return page;
 	}
@@ -983,8 +983,8 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		denddate = denddate + "-01";
 		para.set("dstartdate",dstartdate);
 		para.set("denddate",denddate);
-		expenseBudget.setCbegindate(JBoltDateUtil.toDate(dstartdate,"yyyy-MM-dd"));
-		expenseBudget.setCenddate(JBoltDateUtil.toDate(denddate,"yyyy-MM-dd"));
+		expenseBudget.setCBeginDate(JBoltDateUtil.toDate(dstartdate,"yyyy-MM-dd"));
+		expenseBudget.setCEndDate(JBoltDateUtil.toDate(denddate,"yyyy-MM-dd"));
 		expenseBudgetService.constructDynamicsDbColumn(expenseBudget, para);
 		List<Record> list = dbTemplate(u8SourceConfigName(),"investmentplan.findInvestmentPlanItemSituationDatas",para).find();
 		if(CollUtil.isNotEmpty(list)){

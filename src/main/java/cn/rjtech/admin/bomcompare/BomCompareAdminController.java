@@ -6,6 +6,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.rjtech.admin.bomm.BomMService;
+import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.enums.BomSourceTypeEnum;
@@ -36,7 +37,10 @@ public class BomCompareAdminController extends BaseAdminController {
 	private InventoryService inventoryService;
 	@Inject
 	private BomMService bomMService;
-
+	@Inject
+	private EquipmentModelService equipmentModelService;
+	
+	
    /**
 	* 首页
 	*/
@@ -85,6 +89,8 @@ public class BomCompareAdminController extends BaseAdminController {
 			render("manual_form.html");
 			return;
 		}
+		getBomMaster(bomM);
+		render("/_view/admin/bommaster/edit.html");
 	}
 	
 	public void info(){
@@ -93,14 +99,23 @@ public class BomCompareAdminController extends BaseAdminController {
 		BomSourceTypeEnum bomSourceTypeEnum = BomSourceTypeEnum.toEnum(bomM.getIType());
 		ValidationUtils.notNull(bomSourceTypeEnum, "未知新增类型");
 		BomSourceTypeEnum manualTypeAdd = BomSourceTypeEnum.MANUAL_TYPE_ADD;
+		Kv kv = getKv();
+		kv.set(BomM.ISVIEW , 1);
 		if (manualTypeAdd.getValue() == bomSourceTypeEnum.getValue()){
-			Kv kv = getKv();
-			kv.set(BomM.ISVIEW , 1);
 			bomMService.setBomRecord(getLong(0), false, true, kv);
 			setAttrs(kv);
 			render("manual_form.html");
 			return;
 		}
+		getBomMaster(bomM);
+		setAttrs(kv);
+		render("/_view/admin/bommaster/edit.html");
+	}
+	
+	private void getBomMaster(BomM bomMaster) {
+		set("equipmentModel", equipmentModelService.findById(bomMaster.getIEquipmentModelId()));
+		set("inventory", inventoryService.findById(bomMaster.getIInventoryId()));
+		set("bomMaster", bomMaster);
 	}
 
    /**

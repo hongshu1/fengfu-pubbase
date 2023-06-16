@@ -1,0 +1,17 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page">
+### 新增之后，并且为审核流
+#if(expenseBudget.iautoid?? && expenseBudget.iauditway == 2)
+### 参数列表
+### formAutoId:                 单据ID
+### formSn:                     表单名
+### btnNeed:                    是否需要显示审批按钮
+### pId:                        当前页面绑定的pageId
+### primaryKeyName:             主键名
+### className:                  实现审批业务的类名
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=expenseBudget.iautoid, formSn="PL_Expense_Budget", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.expensebudget.ExpenseBudgetService")
+#end
+</div>
+#end

@@ -32,7 +32,6 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -608,7 +607,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(), "cn.rjtech.admin.syspureceive.SysPureceiveService");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.syspureceive.SysPureceiveService");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             return true;

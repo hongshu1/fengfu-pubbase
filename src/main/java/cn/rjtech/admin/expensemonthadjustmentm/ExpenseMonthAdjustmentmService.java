@@ -57,8 +57,8 @@ public class ExpenseMonthAdjustmentmService extends BaseService<ExpenseMonthAdju
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
 		Page<Record> pageList = dbTemplate("expensemonthadjustmentm.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 		for (Record row : pageList.getList()) {
-			row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
-			row.set("ceffectiveusername", row.getLong("ieffectiveby") == null ?"":JBoltUserCache.me.getUserName(row.getLong("ieffectiveby")));
+			row.set("cusername", JBoltUserCache.me.getName(row.getLong("icreateby")));
+			row.set("ceffectiveusername", row.getLong("ieffectiveby") == null ?"":JBoltUserCache.me.getName(row.getLong("ieffectiveby")));
 		}
 		return pageList;
 	}

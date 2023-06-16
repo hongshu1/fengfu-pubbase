@@ -14,6 +14,7 @@ import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.BomM;
 import cn.rjtech.model.momdata.BomMaster;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.util.ValidationUtils;
@@ -191,6 +192,10 @@ public class BomMasterAdminController extends BaseAdminController {
     public void copyForm() {
         ValidationUtils.notNull(get(0), "未获取到指定产品id");
         set("oldId", get(0));
+        BomM bomM = bomMService.findById(get(0));
+        ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
+        set(BomM.DENABLEDATE, bomM.getDDisableDate());
+        set(BomM.CVERSION, bomMService.getNextVersion(getOrgId(), bomM.getIInventoryId()));
         render("_copy_form.html");
     }
 

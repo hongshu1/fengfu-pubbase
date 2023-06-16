@@ -203,7 +203,7 @@ public class PurchasemAdminController extends BaseAdminController {
     	InvestmentPlan investmentPlan = investmentPlanService.findEffectivedInvestmentByDeptCode(para);
     	Period expenseBudgetPeriod = null;
     	Period investmentPlanPeriod = null;
-    	if(expenseBudget!=null) expenseBudgetPeriod = periodService.findById(expenseBudget.getIperiodid());
+    	if(expenseBudget!=null) expenseBudgetPeriod = periodService.findById(expenseBudget.getIPeriodId());
     	if(investmentPlan!=null) investmentPlanPeriod = periodService.findById(investmentPlan.getIperiodid());
     	keepPara();
     	set("expenseBudgetPeriod",expenseBudgetPeriod);

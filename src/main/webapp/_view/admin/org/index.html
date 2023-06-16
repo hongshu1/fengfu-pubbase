@@ -7,26 +7,31 @@
         <div class="row">
             <div class="col-12 text-left">
                 <form class="form-inline text-left" id="orgForm_#(pageId)" onsubmit="return false;" method="post">
+                    
                     <input type="text" autocomplete="off" class="form-control" placeholder="=组织编码=" name="orgCode"/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="=组织名称=" name="orgName"/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="=U8数据库名=" name="u8Dbname"/>
+                    
                     <!--<input type="text" autocomplete="off" class="form-control" placeholder="=U8数据源别名=" name="u8Alias"/>-->
+                    
                     <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
                     <button type="reset" class="btn btn-light"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
                 </form>
             </div>
         </div>
     </div>
+    
     <div class="jbolt_page_content">
+        
         <!-- JBoltTable的数据模板定义-->
         <script type="text/template" id="orgRowtpl_#(pageId)">
             {@each datas as data,index}
             <tr data-id="${data.id}">
                 <td>${data.org_code}</td>
                 <td>${data.org_name}</td>
-                <td >${data.u8_dbname}</td>
+                <td>${data.u8_dbname}</td>
                 <!--<td>${data.u8_alias}</td>-->
-                <td >${data.name}</td>
+                <td>${data.name}</td>
                 <td><img data-switchbtn data-confirm="确定切换是否默认？" data-value="${data.is_default == '1'}" data-handler="refreshJBoltTable" data-url="admin/org/toggleIsDefault/${data.id}"/></td>
                 <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.enable == '1'}" data-handler="refreshJBoltTable" data-url="admin/org/toggleEnable/${data.id}"/></td>
                 <td>${data.enable_time}</td>
@@ -34,19 +39,21 @@
             </tr>
             {@/each}
         </script>
+        
         <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
-                <button data-dialogbtn data-fs="true" data-handler="refreshJBoltTable" data-title="新增组织机构" data-url="admin/org/add" class="btn btn-secondary"><i class="fa fa-plus"></i>新增</button>
-                <button data-dialogbtn data-fs="true" data-handler="refreshJBoltTable" data-title="组织机构详情" data-check-handler="jboltTableGetCheckedId" data-url="admin/org/edit/" class="btn btn-secondary"><i class="fa fa-edit"></i>编辑</button>
+                <button data-dialogbtn data-area="80%,80%" data-handler="refreshJBoltTable" data-title="新增组织账套" data-url="admin/org/add" data-close-handler="refreshJBoltTable" class="btn btn-secondary"><i class="fa fa-plus"></i>新增</button>
+                <button data-dialogbtn data-area="80%,80%" data-handler="refreshJBoltTable" data-title="组织账套详情" data-check-handler="jboltTableGetCheckedId" data-url="admin/org/edit/" data-close-handler="refreshJBoltTable" class="btn btn-secondary"><i class="fa fa-edit"></i>编辑</button>
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" data-url="admin/org/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-secondary"><i class="fa fa-trash"></i>删除</button>
             </div>
         </div>
+        
         <div class="jbolt_table_view">
             <div class="jbolt_table_box">
                 <div class="jbolt_table_body">
                     <table class="jbolt_table jbolt_main_table table_striped thead_font_normal table-center"
                            data-jbolttable
-                           data-ajax="true"
+                           data-ajax="true" 
                            data-width="auto"
                            data-column-prepend="1:checkbox:true"
                            data-column-resize="true"
@@ -60,10 +67,10 @@
                         <thead>
                         <tr>
                             <th data-width="80" data-column="org_code">组织编码</th>
-                            <th data-width="150" data-column="org_name">组织名称</th>
+                            <th data-width="200" data-column="org_name">组织名称</th>
                             <th data-width="150" data-column="u8_dbname">U8数据库名</th>
                             <!--<th data-width="110" data-column="u8_alias">U8数据源别名</th>-->
-                            <th data-width="150" data-column="name">创建人</th>
+                            <th data-width="120" data-column="name">创建人</th>
                             <th data-width="100" data-column="enable">是否默认</th>
                             <th data-width="100" data-column="enable">是否启用</th>
                             <th data-width="150" data-column="enable_time">启用时间</th>

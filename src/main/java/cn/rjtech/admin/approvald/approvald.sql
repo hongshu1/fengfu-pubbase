@@ -22,7 +22,7 @@ from #(getBaseDbName()).dbo.jb_user u
          #end
          )
  t3 on t3.iPersonId = t1.iAutoId
-where t1.isDeleted = '0' and t1.iUserId is not null
+where t1.isDeleted = '0' and t3.id is not null
 #if(itemHidden)
     and t1.iAutoId not in (#(itemHidden))
 #end
