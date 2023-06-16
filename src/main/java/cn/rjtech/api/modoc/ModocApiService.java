@@ -108,7 +108,7 @@ public class ModocApiService extends JBoltApiBaseService {
           moRecod.set("cinvcode1", "");
         }
         //部品名称
-        if(StringUtils.isNotBlank(inventory.getCInvCode1())) {
+        if(StringUtils.isNotBlank(inventory.getCInvName1())) {
           moRecod.set("cinvname1", inventory.getCInvName1());
         }else{
           moRecod.set("cinvname1", "");
