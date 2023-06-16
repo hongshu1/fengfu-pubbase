@@ -322,7 +322,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         puinstore.setAuditDate(date);
         puinstore.setCUpdateName(userName);
         puinstore.setDUpdateTime(date);
-        puinstore.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());//退回待审核
+        puinstore.setIAuditStatus(0);//退回待审核，0：反审核状态
         //
         puinstoreList.add(puinstore);
     }
@@ -674,8 +674,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         for (SysPuinstoredetail detail : detailList) {
             Main main = new Main();
             if (StrUtil.isNotBlank(detail.getSpotTicket())) {
-                Record record = getBarcodeVersion(puinstore.getSourceBillNo(), detail.getSpotTicket());
-                main.setBarCode(record.getStr("barcode")); //现品票+版本号
+//                Record record = getBarcodeVersion(puinstore.getSourceBillNo(), detail.getSpotTicket());
+                main.setBarCode(detail.getSpotTicket()); //现品票+版本号
             } else {
                 main.setBarCode(detail.getInvcode());//传invcode
             }
