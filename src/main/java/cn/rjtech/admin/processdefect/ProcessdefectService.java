@@ -232,19 +232,17 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 		processDefect.setIOperationId(formRecord.getLong("ioperationid"));
 		tx(() -> {
 			if (notOk(formRecord.getLong("iautoid"))) {
-				System.out.print("getOrgId()"+getOrgId());
-				String billNo = BillNoUtils.getcDocNo(1, "YCP", 5);
+				String billNo = BillNoUtils.getcDocNo(getOrgId(), "YCP", 5);
 				processDefect.setIStatus(1);
 				processDefect.setCDocNo(billNo);
-				processDefect.setIOrgId(1L);
-				processDefect.setCOrgCode("001");
-				processDefect.setCOrgName("测试组织");
-				processDefect.setICreateBy(1575679899027509248L);
-				System.out.println("JBoltUserKit.getUserName()"+JBoltUserKit.getUserName());
-				processDefect.setCCreateName("测试");
+				processDefect.setIOrgId(getOrgId());
+				processDefect.setCOrgCode(getOrgCode());
+				processDefect.setCOrgName(getOrgName());
+				processDefect.setICreateBy(JBoltUserKit.getUserId());
+				processDefect.setCCreateName(JBoltUserKit.getUserName());
 				processDefect.setDCreateTime(now);
-				processDefect.setIUpdateBy(1575679899027509248L);
-				processDefect.setCUpdateName("测试");
+				processDefect.setIUpdateBy(JBoltUserKit.getUserId());
+				processDefect.setCUpdateName(JBoltUserKit.getUserName());
 				processDefect.setDUpdateTime(now);
 				processDefect.setDDemandDate(now);//需求日期
 				processDefect.save();
@@ -256,8 +254,8 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 				if (record.getIStatus() != null && record.getIStatus().equals(3)) {
 					ValidationUtils.error("单据已审批,不允许操作");
 				}
-				processDefect.setIUpdateBy(1575679899027509248L);
-				processDefect.setCUpdateName("测试");
+				processDefect.setIUpdateBy(JBoltUserKit.getUserId());
+				processDefect.setCUpdateName(JBoltUserKit.getUserName());
 				processDefect.setDUpdateTime(now);
 				processDefect.update();
 
