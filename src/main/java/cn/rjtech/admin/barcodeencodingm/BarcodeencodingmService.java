@@ -76,8 +76,8 @@ public class BarcodeencodingmService extends BaseService<Barcodeencodingm> {
         List<Record> list = paginate.getList();
         for (Record record : list) {
             record.set("citemname", ItemEnum.toEnum(record.getStr("citem")).getText());
-            record.set("createname", JBoltUserCache.me.getUserName(record.getLong("icreateby")));
-            record.set("updatename", JBoltUserCache.me.getUserName(record.getLong("iupdateby")));
+            record.set("createname", JBoltUserCache.me.getName(record.getLong("icreateby")));
+            record.set("updatename", JBoltUserCache.me.getName(record.getLong("iupdateby")));
         }
         return paginate;
     }

@@ -188,7 +188,7 @@ public class ExpenseBudgetItemdService extends BaseService<ExpenseBudgetItemd> {
 	 * 列表数据处理
 	 */
 	public void  dataDispose(Record row){
-		row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
+		row.set("cusername", JBoltUserCache.me.getName(row.getLong("icreateby")));
 		row.set("beginandenddate", JBoltDateUtil.format(row.getDate("cbegindate"), "yyyy.MM")+"-" + JBoltDateUtil.format(row.getDate("cenddate"), "yyyy.MM"));
 		row.set("careertypename",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.CAREERTYPE.getValue(), row.getStr("careertype")));
 		//计算合计列

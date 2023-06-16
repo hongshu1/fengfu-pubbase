@@ -45,7 +45,7 @@
             <td>批次号</td>
             <td>#(record.cbatchno??)</td>
             <td class="x74" width="100px">批次大小</td>
-            <td width="250">#(record.cbatchno??)</td>
+            <td width="250">#(record.iqty??)</td>
             <td class="x74" width="100px">检测日期</td>
             <td width="250">#(record.dupdatetime??)</td>
           </tr>
@@ -57,8 +57,9 @@
             </td>
             <td class="x74">设变号</td>
             <td class="x71" width="250">
-              <input id="cDcNo" type="text" autocomplete="off" placeholder="=请输入设变号=" name="cdcno"
-                     value="#(record.cdcno??)" maxlength="355" data-rule="required"/>
+              <!--<input id="cDcNo" type="text" autocomplete="off" placeholder="=请输入设变号=" name="cdcno"
+                     value="#(record.cdcno??)" maxlength="355" data-rule="required"/>-->
+              #(record.cdcno??)
             </td>
           </tr>
           <tr height="300px">

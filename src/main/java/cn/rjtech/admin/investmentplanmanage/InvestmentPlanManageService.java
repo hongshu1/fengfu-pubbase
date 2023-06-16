@@ -69,7 +69,7 @@ public class InvestmentPlanManageService extends BaseService<InvestmentPlan>{
 	    	.set("iorgid",getOrgId());
 		Page<Record> page = dbTemplate("investmentplanmanage.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 		for (Record row : page.getList()) {
-			row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
+			row.set("cusername", JBoltUserCache.me.getName(row.getLong("icreateby")));
 			row.set("cdepname", departmentService.getCdepName(row.getStr("cdepcode")));
 		}
 		return page;
