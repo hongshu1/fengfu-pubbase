@@ -23,10 +23,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 制造工单任务 Service
@@ -91,7 +88,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
       }
     }
 
-    Map<String, List<Record>> list = new HashMap<>();
+    Map<String, List<Record>> list = new LinkedHashMap<>();
     for (Record record1 : records) {
       if (list.containsKey(record1.getStr("yeartodate"))) {
         List<Record> obj = list.get(record1.getStr("yeartodate"));
