@@ -913,6 +913,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         sysPuinstore.setAuditDate(date);//审核日期
         sysPuinstore.setDUpdateTime(date);
         sysPuinstore.setCUpdateName(user.getUsername());
+        sysPuinstore.setIAuditStatus(2);
         String json = getSysPuinstoreDto(sysPuinstore);
         tx(() -> {
             //2、同步于U8
