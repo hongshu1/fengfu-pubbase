@@ -50,40 +50,74 @@ public class MoMotaskService extends BaseService<MoMotask> {
     return dao;
   }
 
-  public Kv getOpenEditPlanViewDatas(Long id) {
-    Kv kv = new Kv();
-    MoMotask moMotask = findById(id);
+  public Record personEditHeaderDatas(Kv kv) {
+    Record record = new Record();
+    ValidationUtils.notBlank(kv.getStr("taskid"), "制造工单任务ID缺失，获取数据异常！！！");
+    MoMotask moMotask = findById(kv.getStr("taskid"));
     List<Record> records = dbTemplate("modocbatch.editplanviewdatas", Kv.by("id", moMotask.getIAutoId())).find();
-    for (Record record : records) {
-      String weekDay = DateUtils.formatDate(DateUtils.parseDate(record.getStr("yeartodate")), "E");
-      if (weekDay.equals("星期一") || weekDay.equals("Mon")) {
-        record.set("weeks", "星期一");
-      }
-      if (weekDay.equals("星期二") || weekDay.equals("Tue")) {
-        record.set("weeks", "星期二");
-      }
-      if (weekDay.equals("星期三") || weekDay.equals("Wed")) {
-        record.set("weeks", "星期三");
-      }
-      if (weekDay.equals("星期四") || weekDay.equals("Thu")) {
-        record.set("weeks", "星期四");
-      }
-      if (weekDay.equals("星期五") || weekDay.equals("Fri")) {
-        record.set("weeks", "星期五");
-      }
-      if (weekDay.equals("星期六") || weekDay.equals("Sat")) {
-        record.set("weeks", "星期六");
-      }
-      if (weekDay.equals("星期日") || weekDay.equals("Sun")) {
-        record.set("weeks", "星期日");
+    Map<String, Integer> map = new HashMap<>();
+    for (Record record1 : records) {
+      String dateKey = record1.getStr("yeartodate");
+      if (map.containsKey(dateKey)) {
+        map.put(dateKey, map.get(dateKey) + 1);
+      } else {
+        map.put(dateKey, 1);
       }
     }
+
+    for (Record record1 : records) {
+      record1.set("count", map.get(record1.getStr("yeartodate")));
+      String weekDay = DateUtils.formatDate(DateUtils.parseDate(record1.getStr("yeartodate")), "E");
+      if (weekDay.equals("星期一") || weekDay.equals("Mon")) {
+        record1.set("weeks", "星期一");
+      }
+      if (weekDay.equals("星期二") || weekDay.equals("Tue")) {
+        record1.set("weeks", "星期二");
+      }
+      if (weekDay.equals("星期三") || weekDay.equals("Wed")) {
+        record1.set("weeks", "星期三");
+      }
+      if (weekDay.equals("星期四") || weekDay.equals("Thu")) {
+        record1.set("weeks", "星期四");
+      }
+      if (weekDay.equals("星期五") || weekDay.equals("Fri")) {
+        record1.set("weeks", "星期五");
+      }
+      if (weekDay.equals("星期六") || weekDay.equals("Sat")) {
+        record1.set("weeks", "星期六");
+      }
+      if (weekDay.equals("星期日") || weekDay.equals("Sun")) {
+        record1.set("weeks", "星期日");
+      }
+    }
+
+    Map<String, List<Record>> list = new HashMap<>();
+    for (Record record1 : records) {
+      if (list.containsKey(record1.getStr("yeartodate"))) {
+        List<Record> obj = list.get(record1.getStr("yeartodate"));
+        obj.add(record1);
+        list.put(record1.getStr("yeartodate"), obj);
+      } else {
+        List<Record> obj = new ArrayList<>();
+        obj.add(record1);
+        list.put(record1.getStr("yeartodate"), obj);
+      }
+    }
+    List<List<Record>> records1 = new ArrayList<>();
+    for (String str : list.keySet()) {
+      List<Record> obj = list.get(str);
+      Record record1 = new Record();
+      record1.put("yeartodate", obj.get(0).getStr("yeartodate"));
+      obj.add(record1);
+      records1.add(obj);
+    }
+
     Department byId = departmentService.findById(moMotask.getIDepartmentId());
-    kv.put("depname", byId.getCDepName());
-    kv.put("startdate", records.get(0).getStr("yeartodate"));
-    kv.put("stopdate", records.get((records.size() - 1)).getStr("yeartodate"));
-    kv.put("datas", records);
-    return kv;
+    record.put("depname", byId.getCDepName());
+    record.put("startdate", records.get(0).getStr("yeartodate"));
+    record.put("stopdate", records.get((records.size() - 1)).getStr("yeartodate"));
+    record.put("datas", records1);
+    return record;
   }
 
   /**
@@ -495,9 +529,27 @@ public class MoMotaskService extends BaseService<MoMotask> {
     }
     //</editor-fold>
 
-    // <editor-fold desc="1. <records>根据制造工单任务id获取同产线同存货的信息     <records1>根据制造工单任务ID获取年月日数据信息">
+    // <editor-fold desc="1. <records>根据制造工单任务id获取同产线同存货的信息     根据制造工单任务ID获取年+月+日+班次数据信息 workShifts">
     List<Record> records = dbTemplate("modocbatch.getModocDatas", kv).find();
+    List<Record> workShifts = dbTemplate("modocbatch.getModocWorkShifts", kv).find();
     // </editor-fold>
+
+    //<editor-fold desc="D根据任务单id获取班长maps，其他人员1maps1，其他人员2maps2">
+    List<Record> LeaderRecs = dbTemplate("modocbatch.getModocLeaderByTaskid", kv).find();
+    Map<String, Record> maps = new HashMap<>();
+    Map<String, Record> maps1 = new HashMap<>();
+    Map<String, Record> maps2 = new HashMap<>();
+
+    for (Record record1 : LeaderRecs) {
+      if (record1.getStr("itype").equals("1")) {
+        maps.put(record1.getStr("dataid"), record1);
+      } else if (record1.getStr("itype").equals("2")) {
+        maps1.put(record1.getStr("dataid"), record1);
+      } else if (record1.getStr("itype").equals("3")) {
+        maps2.put(record1.getStr("dataid"), record1);
+      }
+    }
+    //</editor-fold>
 
     Record record4 = new Record();
     record4.set("idutypersonid", " ");
@@ -696,22 +748,22 @@ public class MoMotaskService extends BaseService<MoMotask> {
               if (i < records2.size()) {
                 //读取人员数据
                 List<Record> records4 = bol ? map2.get(matchingid) : userMapDatas.get(matchingid);
-                record2.set("personnel", records4);
+                record2.set("personne", records4.get(0));
               } else if (i == (records2.size())) {
                 List<Record> records4 = map3.get(modocid1);
-                record2.set("personnel", records4);
+                record2.set("personne", records4.get(0));
               } else if (i == (records2.size() + 1)) {
                 List<Record> records4 = map4.get(modocid1);
-                record2.set("personnel", records4);
+                record2.set("personne", records4.get(0));
               } else if (i == (records2.size() + 2)) {
                 List<Record> records4 = map5.get(modocid1);
-                record2.set("personnel", records4);
+                record2.set("personne", records4.get(0));
               } else if (i == (records2.size() + 3)) {
                 List<Record> records4 = map6.get(modocid1);
                 if (records4 == null || records4.size() <= 0) {
                   records4.add(record4);
                 }
-                record2.set("personnel4", records4);
+                record2.set("personne", records4.get(0));
               }
               userRecord.add(record2);
             }
@@ -721,6 +773,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
           records.get(qty).set("rowdatas", records3);
         }
       } else {
+        List<Record> recordLisc = new ArrayList<>();
         Record record = new Record();
         record.put("cinvcode", "");
         record.put("cinvcode1", "");
@@ -728,6 +781,24 @@ public class MoMotaskService extends BaseService<MoMotask> {
         record.put("cworkname", "");
         record.put("iinventoryid", "");
         record.put("iworkregionmid", "");
+
+        for (Record workShift : workShifts) {
+          Record leaderRec = new Record();
+          leaderRec.put("itype", "");
+          leaderRec.put("ipersonid", "");
+          leaderRec.put("cpsn_num", "");
+          leaderRec.put("cpsn_name", "");
+          leaderRec.put("dataid", workShift.getStr("dataid"));
+          leaderRec.put("sdate", workShift.getStr("sdate"));
+          if (qty == (recordssize - 3)) {
+            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+          } else if (qty == (recordssize - 2)) {
+            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+          } else if (qty == (recordssize - 1)) {
+            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+          }
+        }
+        record.put("udes", recordLisc);
         records.add(record);
       }
     }

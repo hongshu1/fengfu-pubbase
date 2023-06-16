@@ -5,7 +5,6 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.User;
@@ -41,11 +40,9 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -293,12 +290,12 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      * */
     public Ret resetAutitById(String autoid) {
         Date date = new Date();
+        SysPuinstore puinstore = findById(autoid);
+        if (puinstore.getIAuditStatus() != AuditStatusEnum.APPROVED.getValue() &&
+            puinstore.getIAuditStatus() != AuditStatusEnum.REJECTED.getValue()) {
+            ValidationUtils.isTrue(false, "只有已审核或审核不通过的状态才可以反审核");
+        }
         boolean tx = tx(() -> {
-            SysPuinstore puinstore = findById(autoid);
-            if (puinstore.getIAuditStatus() != AuditStatusEnum.APPROVED.getValue() &&
-                puinstore.getIAuditStatus() != AuditStatusEnum.REJECTED.getValue()) {
-                ValidationUtils.isTrue(false, "只有已审核或审核不通过的状态才可以反审核");
-            }
             List<SysPuinstore> puinstoreList = new ArrayList<>();
             commonResetAutitById(autoid, puinstoreList, date);
             //
@@ -314,18 +311,19 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     public void commonResetAutitById(String autoid, List<SysPuinstore> puinstoreList, Date date) {
 
         SysPuinstore puinstore = findById(autoid);
-        //todo 打u8接口，通知u8删除单据，然后更新mom平台的数据
+        //打u8接口，通知u8删除单据，然后更新mom平台的数据
         String json = getSysPuinstoreDeleteDTO(puinstore.getU8BillNo());
         String post = new BaseInU8Util().deleteVouchProcessDynamicSubmitUrl(json);
         LOG.info(post);
         //
-        String userName = JBoltUserKit.getUserName();
+        User user = JBoltUserKit.getUser();
         puinstore.setU8BillNo(null);//将u8的单据号置为空
-        puinstore.setCAuditName(userName);
+        puinstore.setCAuditName(user.getUsername());
         puinstore.setAuditDate(date);
-        puinstore.setCUpdateName(userName);
+        puinstore.setCUpdateName(user.getUsername());
         puinstore.setDUpdateTime(date);
-        puinstore.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());//退回待审核
+        puinstore.setIUpdateBy(JBoltUserKit.getUserId());
+        puinstore.setIAuditStatus(0);//退回待审核，0：反审核状态
         //
         puinstoreList.add(puinstore);
     }
@@ -486,17 +484,31 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     /*
      * 获取删除的json
      * */
-    public String getSysPuinstoreDeleteDTO(String billno) {
+    public String getSysPuinstoreDeleteDTO(String u8billno) {
         User user = JBoltUserKit.getUser();
+
+        Record userRecord = findU8UserByUserCode(user.getUsername());
+        Record u8Record = findU8RdRecord01Id(u8billno);
+
         SysPuinstoreDeleteDTO deleteDTO = new SysPuinstoreDeleteDTO();
         data data = new data();
         data.setAccid(getOrgCode());
-        data.setPassword(user.getPassword());
-        data.setUserID(user.getUsername());
-        data.setVouchId(billno);
+        data.setPassword(userRecord.get("u8_pwd"));
+//        Long userid = userRecord.getLong("userid");
+        data.setUserID(userRecord.get("u8_code"));
+        Long id = u8Record.getLong("id");
+        data.setVouchId(String.valueOf(id));//u8单据id
         deleteDTO.setData(data);
 
         return JSON.toJSONString(deleteDTO);
+    }
+
+    public Record findU8UserByUserCode(String userCode) {
+        return dbTemplate(u8SourceConfigName(), "syspuinstore.findU8UserByUserCode", Kv.by("usercode", userCode)).findFirst();
+    }
+
+    public Record findU8RdRecord01Id(String cCode) {
+        return dbTemplate(u8SourceConfigName(), "syspuinstore.findU8RdRecord01Id", Kv.by("cCode", cCode)).findFirst();
     }
 
     /**
@@ -522,13 +534,15 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
                 updatePuinstore.setCUpdateName(JBoltUserKit.getUserName());
                 updatePuinstore.setDUpdateTime(new Date());
                 saveSysPuinstoreModel(updatePuinstore, record);
-                ValidationUtils.isTrue(updatePuinstore.update(), "提交审核失败");
+                this.update(updatePuinstore);
+                //ValidationUtils.isTrue(updatePuinstore.update(), "提交审核失败");
             } else {
                 //2、新增主表
                 SysPuinstore savePuinstore = new SysPuinstore();
                 //savePuinstore.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
                 savePuinstore.setCCreateName(JBoltUserKit.getUserName());
                 savePuinstore.setDCreateTime(new Date());
+                savePuinstore.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());//未审核状态
                 saveSysPuinstoreModel(savePuinstore, record);
                 ValidationUtils.isTrue(savePuinstore.save(), JBoltMsg.FAIL);
             }
@@ -562,7 +576,16 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         int i = 1;
         for (Record detailRecord : saveRecordList) {
             SysPuinstoredetail puinstoredetail = new SysPuinstoredetail();
-            puinstoredetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
+//            puinstoredetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
+            Inventory inventory = inventoryService.findBycInvCode(detailRecord.getStr("invcode"));
+            Kv kv = new Kv();
+            kv.set("sourcebillno", sysPuinstore.getSourceBillNo());
+            kv.set("iInventoryId", null != inventory ? inventory.getIAutoId() : "");
+            Record record = dbTemplate("syspuinstore.getSourceBillIdAndDid", kv).findFirst();
+            if (record != null) {
+                puinstoredetail.setSourceBillID(record.getStr("sourcebillid")); //来源单据ID(订单id)
+                puinstoredetail.setSourceBillDid(record.getStr("sourcebilldid")); //来源单据DID;采购或委外单身ID
+            }
             syspuinstoredetailservice.saveSysPuinstoredetailModel(puinstoredetail, detailRecord, sysPuinstore, i);
             puinstoredetailList.add(puinstoredetail);
             i++;
@@ -586,12 +609,12 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     }
 
 
-    public Kv getKv(String billno, String sourcebillno) {
+   /* public Kv getKv(String billno, String sourcebillno) {
         Kv kv = new Kv();
         kv.set("billno", billno);
         kv.set("sourcebillno", sourcebillno);
         return kv;
-    }
+    }*/
 
     public void saveSysPuinstoreModel(SysPuinstore puinstore, Record record) {
         puinstore.setBillType(record.get("billtype"));//采购类型
@@ -604,13 +627,14 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         puinstore.setSourceBillID(record.getStr("sourcebillid"));//来源单据id
         puinstore.setVenCode(record.get("vencode")); //供应商
         puinstore.setMemo(record.get("memo"));
-        puinstore.setIAuditStatus(0);//
         puinstore.setWhCode(record.getStr("whcode"));
         Warehouse warehouse = warehouseService.findByCwhcode(record.getStr("whcode"));
         puinstore.setWhName(warehouse != null ? warehouse.getCWhName() : "");
         puinstore.setIAuditWay(1);//审批方式：1. 审核 2. 审批流
         puinstore.setIsDeleted(false);
-        puinstore.setIBusType(record.getInt("ibustype"));//业务类型
+        if (StrUtil.isNotBlank(record.get("ibustype"))) {
+            puinstore.setIBusType(record.getInt("ibustype"));//业务类型
+        }
     }
 
     /*
@@ -651,8 +675,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         for (SysPuinstoredetail detail : detailList) {
             Main main = new Main();
             if (StrUtil.isNotBlank(detail.getSpotTicket())) {
-                Record record = getBarcodeVersion(puinstore.getSourceBillNo(), detail.getSpotTicket());
-                main.setBarCode(record.getStr("barcode")); //现品票+版本号
+//                Record record = getBarcodeVersion(puinstore.getSourceBillNo(), detail.getSpotTicket());
+                main.setBarCode(detail.getSpotTicket()); //现品票+版本号
             } else {
                 main.setBarCode(detail.getInvcode());//传invcode
             }
@@ -726,24 +750,42 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         String[] split = ids.split(",");
         checkIAuditStatus(ids);
         ArrayList<SysPuinstore> puinstoreList = new ArrayList<>();
-        
         Date date = new Date();
-        
+        for (String id : split) {
+            SysPuinstore puinstore = findById(id);
+            //同步U8
+            String json = getSysPuinstoreDto(puinstore);
+            setSysPuinstoreU8Billno(json, puinstore);
+
+            // 状态改为已审核
+            puinstore.setCAuditName(JBoltUserKit.getUserName());
+            puinstore.setAuditDate(date);
+            puinstore.setCUpdateName(JBoltUserKit.getUserName());
+            puinstore.setDUpdateTime(date);
+            puinstore.setIAuditStatus(2);
+            puinstore.setIAuditWay(1);
+            //
+            puinstoreList.add(puinstore);
+        }
         tx(() -> {
-            
-            for (String id : split) {
-                commonAutitByIds(id, puinstoreList, date);
-            }
-            
             //1、批量审核成功
             batchUpdate(puinstoreList);
 
-            //2、检查是否要生成材料出库单和形态转换单
-            checkIsCreateMaterialAndSysAssem(puinstoreList);
+            //2、todo 委外订单检查是否要生成材料出库单和形态转换单
+            //checkIsCreateMaterialAndSysAssem(puinstoreList);
             return true;
         });
 
         return SUCCESS;
+    }
+
+    public void setSysPuinstoreU8Billno(String json, SysPuinstore puinstore) {
+        tx(() -> {
+            String u8Billno = new BaseInU8Util().base_in(json);
+            System.out.println(u8Billno);
+            puinstore.setU8BillNo(u8Billno);
+            return true;
+        });
     }
 
     /*
@@ -800,26 +842,24 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      * 审核通过
      * */
     public Ret approve(Long autoid) {
+        SysPuinstore sysPuinstore = findById(autoid);
+        // 校验订单状态
+        checkApproveAndReject(autoid);
+        Date date = new Date();
+        User user = JBoltUserKit.getUser();
+        ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), sysPuinstore.getIAuditStatus(), "订单非待审核状态");
+
+        sysPuinstore.setCAuditName(user.getUsername());
+        sysPuinstore.setAuditDate(date);//审核日期
+        sysPuinstore.setDUpdateTime(date);
+        sysPuinstore.setCUpdateName(user.getUsername());
+        sysPuinstore.setIAuditStatus(2);
+        String json = getSysPuinstoreDto(sysPuinstore);
         tx(() -> {
-            // 校验订单状态
-            checkApproveAndReject(autoid);
-            Date date = new Date();
-            User user = JBoltUserKit.getUser();
-            SysPuinstore sysPuinstore = findById(autoid);
-            ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), sysPuinstore.getIAuditStatus(), "订单非待审核状态");
-
-            sysPuinstore.setCAuditName(user.getUsername());
-            sysPuinstore.setAuditDate(date);//审核日期
-            sysPuinstore.setDUpdateTime(date);
-            sysPuinstore.setCUpdateName(user.getUsername());
-
             //2、同步于U8
-            String json = getSysPuinstoreDto(sysPuinstore);
             String u8Billno = new BaseInU8Util().base_in(json);
-            LOG.info(u8Billno);
 
             //3、如果成功，给u8的单据号；不成功，把单据号置为空，状态改为审核不通过
-            //PurchaseOrderM purchaseOrderM = findU8BillNo(sysPuinstore);
             sysPuinstore.setU8BillNo(u8Billno);
             ValidationUtils.isTrue(sysPuinstore.update(), "审核通过失败！！");
 
@@ -874,6 +914,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             puinstore.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
             puinstore.setCUpdateName(JBoltUserKit.getUserName());
             puinstore.setDUpdateTime(new Date());
+            puinstore.setIAuditWay(0);
             ValidationUtils.isTrue(puinstore.update(), "撤回失败");
             return true;
         });
@@ -904,14 +945,14 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
      * 提交审核
      * */
     public Ret submit(Long autoid) {
+        SysPuinstore puinstore = findById(autoid);
+        ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), puinstore.getIAuditStatus(), "只允许未审核状态下提交审核");
+        puinstore.setIAuditStatus(1);
+        puinstore.setCUpdateName(JBoltUserKit.getUserName());
+        puinstore.setDUpdateTime(new Date());
+        puinstore.setDSubmitTime(new Date());
+        puinstore.setIAuditWay(1);
         tx(() -> {
-            SysPuinstore puinstore = findById(autoid);
-            ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), puinstore.getIAuditStatus(), "只允许未审核状态下提交审核");
-            puinstore.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            puinstore.setCUpdateName(JBoltUserKit.getUserName());
-            puinstore.setDUpdateTime(new Date());
-            puinstore.setDSubmitTime(new Date());
-            puinstore.setIAuditWay(1);
 //            boolean update = puinstore.update();
             this.update(puinstore);
 //            ValidationUtils.isTrue(update, "审核失败");

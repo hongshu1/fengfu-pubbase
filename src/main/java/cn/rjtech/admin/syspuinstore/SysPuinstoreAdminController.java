@@ -69,7 +69,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      */
     public void add() {
         Record record = new Record();
-        record.set("billno",JBoltSnowflakeKit.me.nextId());
+        record.set("billno", JBoltSnowflakeKit.me.nextId());
         set("sysPuinstore", record);
         render("add.html");
     }
@@ -85,17 +85,16 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        SysPuinstore sysPuinstore = service.findById(getLong(0));
+        SysPuinstore sysPuinstore = service.findById(getLong("autoid"));
         if (sysPuinstore == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
         Record record = service.findEditAndOnlySeeByAutoid(sysPuinstore.getAutoID());
-        String iBusTypeKey = service.findIBusTypeKey(String.valueOf(sysPuinstore.getIBusType()), "purchase_business_type");
         SysPuinstoredetail puinstoredetail = service.getSourceBillType(record.get("autoid"));
         record.set("sourcebilltype", puinstoredetail != null ? puinstoredetail.getSourceBillType() : "");
-        set("ibustype", iBusTypeKey);//业务类型
         set("sysPuinstore", record);
+        keepPara();
         render("edit.html");
     }
 

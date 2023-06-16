@@ -392,7 +392,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
      */
     public Ret submit(Long iautoid) {
         tx(() -> {
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(), "");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             ManualOrderM manualOrderM = findById(iautoid);

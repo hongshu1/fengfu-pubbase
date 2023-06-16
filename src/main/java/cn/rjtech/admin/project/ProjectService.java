@@ -58,7 +58,7 @@ public class ProjectService extends BaseService<Project> {
 		para.set("iorgid",getOrgId());
 		Page<Record> paginate = dbTemplate("project.paginateAdminDatas", para).paginate(pageNumber, pageSize);
 		for (Record record : paginate.getList()) {
-			record.set("icreateby",JBoltUserCache.me.getUserName(record.getLong("icreateby")));
+			record.set("icreateby",JBoltUserCache.me.getName(record.getLong("icreateby")));
 		}
 		return paginate;
 	}

@@ -35,3 +35,24 @@ WHERE
 	#end
 	ORDER BY d.iAutoId ASC
 #end
+
+#sql("getEffectiveBomCompare")
+SELECT
+	*
+FROM
+	Bd_BomD
+WHERE
+	isDeleted = '0'
+	AND EXISTS (
+	SELECT
+		1
+	FROM
+		Bd_BomM a
+	WHERE
+		a.isDeleted = '0'
+		AND a.iOrgId = #para(orgId)
+		AND a.dEnableDate <= CONVERT ( DATE, GETDATE( ) )
+		AND a.dDisableDate >= CONVERT ( DATE, GETDATE( ) )
+		AND a.iAuditStatus = 2 AND a.iAutoId = iPid
+	)
+#end

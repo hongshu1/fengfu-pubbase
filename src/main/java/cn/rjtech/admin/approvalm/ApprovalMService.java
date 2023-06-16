@@ -306,9 +306,10 @@ public class ApprovalMService extends BaseService<ApprovalM> {
 		return findFirst("select t1.*\n" +
 				"from Bd_ApprovalM t1\n" +
 				"         left join\n" +
-				"         (select * from Bd_ApprovalForm where iFormId = "+formId+") t2\n" +
+				"         Bd_ApprovalForm t2\n" +
 				"         on t1.iAutoId = t2.iApprovalMid\n" +
 				"where t1.isEnabled = '1'\n" +
-				"  and t1.IsDeleted = '0'");
+				"  and t1.IsDeleted = '0'" +
+				"and iFormId = "+formId+"");
 	}
 }

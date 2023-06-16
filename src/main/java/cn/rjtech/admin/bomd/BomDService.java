@@ -5,6 +5,7 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.enums.BoolCharEnum;
@@ -14,11 +15,16 @@ import cn.rjtech.model.momdata.BomD;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 物料建模-BOM明细
@@ -198,10 +204,6 @@ public class BomDService extends BaseService<BomD> {
 		}
 	}
 	
-	public List<BomD> queryBomByPartBomMid(Long bomId){
-		return queryBomCompareList(bomId, BomD.IINVPARTBOMMID);
-	}
-	
 	public List<BomD> queryBomCompareList(Long bomId, String fieldName){
 		Sql sql = selectSql();
 		sql.eq(BomD.ISDELETED, "0");
@@ -209,4 +211,54 @@ public class BomDService extends BaseService<BomD> {
 		return find(sql);
 	}
 	
+	public BomD createCompare(Long orgId, Long bomId, Long pid, Long iInventoryId, Long iVendorId, Integer level, Integer iRawType, String codeLevel, String cMemo,
+							  BigDecimal iBaseQty, BigDecimal iWeight, Boolean bProxyForeign){
+		BomD bomD = new BomD();
+		bomD.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		bomD.setIsDeleted(false);
+		bomD.setIOrgId(orgId);
+		bomD.setIBomMid(bomId);
+		bomD.setIPid(pid);
+		// 存货相关
+		bomD.setIInventoryId(iInventoryId);
+		bomD.setIBaseQty(iBaseQty);
+		bomD.setIWeight(iWeight);
+		
+		bomD.setIRawType(iRawType);
+		bomD.setILevel(level);
+		bomD.setCInvLev(codeLevel);
+		// 供应商
+		bomD.setIVendorId(iVendorId);
+		// 是否委外加工
+		bomD.setBProxyForeign(bProxyForeign);
+		bomD.setCMemo(cMemo);
+		return bomD;
+	}
+	
+	public void setBomCompare(BomD bomD, Integer iPartType, Long iInventoryUomId1, String cInvCode, String cInvName, String cInvStd, String cVendCode, String cVenName, Boolean isVirtual){
+		
+		bomD.setIInventoryUomId1(iInventoryUomId1);
+		bomD.setCInvCode(cInvCode);
+		bomD.setCInvName(cInvName);
+		bomD.setCInvStd(cInvStd);
+		bomD.setIPartType(iPartType);
+		// 是否虚拟件
+		bomD.setIsVirtual(isVirtual);
+		
+		bomD.setCVendCode(cVendCode);
+		bomD.setCVenName(cVenName);
+	}
+	
+	public List<Record> getEffectiveBomCompare(Long orgId){
+        return dbTemplate("bomd.getEffectiveBomCompare", Okv.by("orgId", orgId)).find();
+    }
+    
+    public Map<Long, List<Record>> getEffectiveBomCompareMap(Long orgId){
+        List<Record> recordList = getEffectiveBomCompare(orgId);
+        if (CollectionUtil.isEmpty(recordList)){
+            return new HashMap<>();
+        }
+        return recordList.stream().collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID), Collectors.toList()));
+    }
+    
 }
