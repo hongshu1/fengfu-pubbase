@@ -325,7 +325,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 	 */
 	public Ret submit(Long iautoid) {
 		tx(() -> {
-			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"T_Sys_OtherOut");
+			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"T_Sys_OtherOut");
 			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
 			// 处理其他业务

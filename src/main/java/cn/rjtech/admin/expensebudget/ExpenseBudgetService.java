@@ -95,7 +95,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
         	.set("iorgid",getOrgId());
 		Page<Record> pageRecord =  dbTemplate("expensebudget.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 		for (Record row : pageRecord.getList()) {
-			row.set("cusername",JBoltUserCache.me.getUserName(row.getLong("icreateby")));
+			row.set("cusername",JBoltUserCache.me.getName(row.getLong("icreateby")));
 			row.set("cdepname", departmentService.getCdepName(row.getStr("cdepcode")));
 			row.set("beginandenddate", JBoltDateUtil.format(row.getDate("cbegindate"), "yyyy.MM")+"-" + JBoltDateUtil.format(row.getDate("cenddate"), "yyyy.MM"));
 		}
@@ -959,7 +959,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 		if(AppConfig.isVerifyProgressEnabled()){
 			//verifyprogressService.start(iexpenseid.toString(),getOrgCode(),VeriProgressObjTypeEnum.EXPENSE_BUDGET,JBoltUserKit.getUser(),null,expenseBudget.getCDepCode(),now);
             // 根据审批状态
-            Ret ret = formApprovalService.judgeType(table(), iexpenseid, primaryKey(),"cn.rjtech.admin.expensebudget.ExpenseBudgetService");
+            Ret ret = formApprovalService.submit(table(), iexpenseid, primaryKey(),"cn.rjtech.admin.expensebudget.ExpenseBudgetService");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
             
             //生成待办和发送邮件
@@ -1151,7 +1151,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 
 		List<Record> list = dbTemplate("expensebudget.periodContrastDatas", para).find();
 		for (Record row : list) {
-			row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
+			row.set("cusername", JBoltUserCache.me.getName(row.getLong("icreateby")));
 			row.set("cdepname", departmentService.getCdepName(row.getStr("cdepcode")));
 			//row.set("beginandenddate", JBoltDateUtil.format(row.getDate("cbegindate"), "yyyy.MM")+"-" + JBoltDateUtil.format(row.getDate("cenddate"), "yyyy.MM"));
 			//row.set("careertypename",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.CAREERTYPE.getValue(), row.getStr("careertype")));

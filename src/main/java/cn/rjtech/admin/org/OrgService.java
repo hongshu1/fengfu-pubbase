@@ -47,8 +47,8 @@ public class OrgService extends BaseService<Org> {
         return null == queryInt("SELECT TOP 1 1 FROM jb_org o WHERE o.org_code = ?", orgCode);
     }
 
-    private boolean notExistsU8DbName(String u8DbName) {
-        return null == queryInt("SELECT TOP 1 1 FROM jb_org o WHERE o.u8_dbname = ?", u8DbName);
+    private boolean notExistsU8DbName(String ip, String u8DbName) {
+        return null == queryInt("SELECT TOP 1 1 FROM jb_org o WHERE o.u8_api_url_inner = ? AND o.u8_dbname = ?", ip, u8DbName);
     }
 
     /**
@@ -57,7 +57,7 @@ public class OrgService extends BaseService<Org> {
     public Ret save(Org org) {
         ValidationUtils.assertNull(org.getId(), JBoltMsg.PARAM_ERROR);
         ValidationUtils.isTrue(notExists(org.getOrgCode()), "已存在组织编码");
-        ValidationUtils.isTrue(notExistsU8DbName(org.getU8Dbname()), "已存在同名数据库");
+        ValidationUtils.isTrue(notExistsU8DbName(org.getU8DbUrlInner(), org.getU8Dbname()), "该主机已存在同名数据库");
 
         Date now = new Date();
 
@@ -100,13 +100,17 @@ public class OrgService extends BaseService<Org> {
     public Ret update(Org org) {
         ValidationUtils.validateModel(org, JBoltMsg.PARAM_ERROR);
         ValidationUtils.isTrue(isOk(org.getId()), JBoltMsg.PARAM_ERROR);
-
+        
         Date now = new Date();
 
         tx(() -> {
             // 更新时需要判断数据存在
             Org dbOrg = findById(org.getId());
             ValidationUtils.notNull(dbOrg, JBoltMsg.DATA_NOT_EXIST);
+
+            if (ObjUtil.notEqual(dbOrg.getU8DbUrlInner(), org.getU8DbUrlInner()) || ObjUtil.notEqual(dbOrg.getU8Dbname(), org.getU8Dbname())) {
+                ValidationUtils.isTrue(notExistsU8DbName(org.getU8DbUrlInner(), org.getU8Dbname()), "该主机已存在同名数据库");
+            }
 
             org.setUpdateTime(now);
             org.setUpdateUserId(JBoltUserKit.getUserId());

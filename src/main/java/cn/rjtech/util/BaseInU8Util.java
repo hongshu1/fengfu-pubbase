@@ -4,6 +4,8 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.rjtech.config.AppConfig;
+import cn.rjtech.util.xml.XmlUtil;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.log.Log;
@@ -55,21 +57,23 @@ public class BaseInU8Util {
      * */
     public String deleteVouchProcessDynamicSubmitUrl(String json) {
         String vouchSumbmitUrl = AppConfig.deleteVouchProcessDynamicSubmitUrl();
-        String post = HttpUtil.post(vouchSumbmitUrl, json);
-        JSONObject res = JSON.parseObject(post);
+        String post = HttpUtil.get(vouchSumbmitUrl + "?dataJson=" + json);
+//        String post = HttpUtil.post(vouchSumbmitUrl, "dataJson=" + json);
+
+        String res = XmlUtil.readObjectFromXml(post);
+        JSONObject jsonObject = JSON.parseObject(res);
 
         ValidationUtils.notNull(res, "解析JSON为空");
-        String code = res.getString("code");
-        String message = StrUtil.nullToDefault(res.getString("message"), res.getString("msg"));
+        String code = jsonObject.getString("code");
+        String message = StrUtil.nullToDefault(jsonObject.getString("message"), jsonObject.getString("msg"));
         LOG.info("res: {}", res);
 
-        if (ObjUtil.equal(res.getString("state"), "fail")) {
+        if (ObjUtil.equal(jsonObject.getString("state"), "fail")) {
             ValidationUtils.error(message);
         }
-
         ValidationUtils.notNull(code, "json:" + json + ";" + message);
-        ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);
-        return post;
+        ValidationUtils.equals(code, "200",message);
+        return code;
     }
 
     /**

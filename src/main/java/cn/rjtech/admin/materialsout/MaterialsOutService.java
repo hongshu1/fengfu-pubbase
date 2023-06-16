@@ -4,7 +4,6 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.SystemLog;
 import cn.jbolt.core.model.User;
@@ -18,8 +17,6 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
-import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -331,7 +328,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	 */
 	public Ret submit(Long iautoid) {
 		tx(() -> {
-			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"T_Sys_OtherOut");
+			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"T_Sys_OtherOut");
 			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
 			// 处理其他业务
