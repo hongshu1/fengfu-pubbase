@@ -959,7 +959,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 		if(AppConfig.isVerifyProgressEnabled()){
 			//verifyprogressService.start(iexpenseid.toString(),getOrgCode(),VeriProgressObjTypeEnum.EXPENSE_BUDGET,JBoltUserKit.getUser(),null,expenseBudget.getCDepCode(),now);
             // 根据审批状态
-            Ret ret = formApprovalService.judgeType(table(), iexpenseid, primaryKey(),"cn.rjtech.admin.expensebudget.ExpenseBudgetService");
+            Ret ret = formApprovalService.submit(table(), iexpenseid, primaryKey(),"cn.rjtech.admin.expensebudget.ExpenseBudgetService");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
             
             //生成待办和发送邮件

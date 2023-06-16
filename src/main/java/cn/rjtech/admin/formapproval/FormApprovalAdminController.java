@@ -117,15 +117,16 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param primaryKeyName 单据主键名称
      * @param className      实现审批通过业务的类名
      */
-    public void judgeType(@Para(value = "formSn") String formSn,
-                          @Para(value = "formAutoId") Long formAutoId,
-                          @Para(value = "primaryKeyName") String primaryKeyName,String className) {
+    public void submit(@Para(value = "formSn") String formSn,
+                       @Para(value = "formAutoId") Long formAutoId,
+                       @Para(value = "primaryKeyName") String primaryKeyName,
+                       @Para(value = "className") String className) {
         ValidationUtils.notBlank(formSn, "缺少表单编码");
         ValidationUtils.validateId(formAutoId, "单据ID");
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "缺少实现审批通过业务的类名参数");
 
-        renderJson(service.judgeType(formSn, formAutoId, primaryKeyName,className));
+        renderJson(service.submit(formSn, formAutoId, primaryKeyName, className));
     }
 
     /**

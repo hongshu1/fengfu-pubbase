@@ -16,7 +16,6 @@ import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoredetailService;
-import cn.rjtech.model.momdata.MaterialsOut;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
@@ -398,7 +397,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	 */
 	public Ret submit(Long iautoid) {
 		tx(() -> {
-			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"T_Sys_PUInStore");
+			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"T_Sys_PUInStore");
 			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
 			// 处理其他业务

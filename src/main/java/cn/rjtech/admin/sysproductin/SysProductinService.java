@@ -19,7 +19,6 @@ import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
-import cn.rjtech.model.momdata.SysPureceive;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -419,7 +418,7 @@ public class SysProductinService extends BaseService<SysProductin> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(), "cn.rjtech.admin.sysproductin.SysProductinService");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.sysproductin.SysProductinService");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             return true;
