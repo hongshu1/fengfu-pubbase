@@ -39,6 +39,7 @@ WHERE 1=1
 #if(invId)
 AND i.iAutoId = #para(invId)
 #end
+order by i.dUpdateTime desc
 #end
 
 #sql("workRegions")
