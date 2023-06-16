@@ -204,7 +204,7 @@ public class PurchasemAdminController extends BaseAdminController {
     	Period expenseBudgetPeriod = null;
     	Period investmentPlanPeriod = null;
     	if(expenseBudget!=null) expenseBudgetPeriod = periodService.findById(expenseBudget.getIPeriodId());
-    	if(investmentPlan!=null) investmentPlanPeriod = periodService.findById(investmentPlan.getIperiodid());
+    	if(investmentPlan!=null) investmentPlanPeriod = periodService.findById(investmentPlan.getIPeriodId());
     	keepPara();
     	set("expenseBudgetPeriod",expenseBudgetPeriod);
     	set("investmentPlanPeriod",investmentPlanPeriod);
