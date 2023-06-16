@@ -133,7 +133,7 @@ public class PurchasemService extends BaseService<Purchasem> {
         Page<Record> pages = dbTemplate("purchasem.paginateAdminDatas", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
         ValidationUtils.notNull(pages, JBoltMsg.DATA_NOT_EXIST);
         for (Record row : pages.getList()) {
-        	row.set("createname", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
+        	row.set("createname", JBoltUserCache.me.getName(row.getLong("icreateby")));
 		}
         return pages.getList(); 
     }

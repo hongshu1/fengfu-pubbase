@@ -65,11 +65,11 @@ public class SubjectmService extends BaseService<Subjectm> {
 				if(parent!=null) record.set("parentname",parent.getCSubjectName());
 			}
 			//获取创建人名称
-			String icreateby = JBoltUserCache.me.getUserName(record.getLong("icreateby"));
+			String icreateby = JBoltUserCache.me.getName(record.getLong("icreateby"));
 			record.set("icreateby",icreateby);
 			//获取更新人名称
 			if (record.getLong("iUpdateBy")!=null){
-				String iupdateby = JBoltUserCache.me.getUserName(record.getLong("iUpdateBy"));
+				String iupdateby = JBoltUserCache.me.getName(record.getLong("iUpdateBy"));
 				record.set("iupdateby",iupdateby);
 
 			}

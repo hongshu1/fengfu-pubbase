@@ -57,9 +57,9 @@ public class ProjectAdminController extends BaseAdminController {
         Project project = service.findById(useIfPresent(getLong(0)));
         ValidationUtils.notNull(project, JBoltMsg.DATA_NOT_EXIST);
         set("project", project);
-        set("icreateby", JBoltUserCache.me.getUserName(project.getIcreateby()));
+        set("icreateby", JBoltUserCache.me.getName(project.getIcreateby()));
         if (project.getIupdateby() != null) {
-            set("iupdateby", JBoltUserCache.me.getUserName(project.getIcreateby()));
+            set("iupdateby", JBoltUserCache.me.getName(project.getIcreateby()));
         }
         render("edit.html");
     }

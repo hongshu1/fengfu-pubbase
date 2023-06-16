@@ -68,8 +68,8 @@ public class InvestmentplanMonthAdjustmentmService extends BaseService<Investmen
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv paras) {
 		Page<Record> pageList = dbTemplate("investmentplanmonthadjustmentm.paginateAdminDatas",paras).paginate(pageNumber, pageSize);
 		for (Record row : pageList.getList()) {
-			row.set("createusername", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
-			row.set("effectiveusername", JBoltUserCache.me.getUserName(row.getLong("ieffectiveby")));
+			row.set("createusername", JBoltUserCache.me.getName(row.getLong("icreateby")));
+			row.set("effectiveusername", JBoltUserCache.me.getName(row.getLong("ieffectiveby")));
 		}
 		return pageList;
 	}
