@@ -1025,4 +1025,9 @@ public class MoDocService extends BaseService<MoDoc> {
     }
     return dept;
   }
+
+  public List<Record> getMoJobData(Long imdcocid){
+    List<Record> records = dbTemplate("modoc.findMoJobByImodocId", new Kv().set("imdcocid", imdcocid)).find();
+    return records;
+  }
 }

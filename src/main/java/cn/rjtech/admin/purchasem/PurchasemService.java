@@ -493,7 +493,7 @@ public class PurchasemService extends BaseService<Purchasem> {
                 Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(purchasem.getCdepcode());
                 purchasem.put("cenddepcode", refDepartmentRc.getStr("cdepcode"));
                 // 推送U8及校验
-                ValidationUtils.equals("ok", PurchaseAppApi.add(purchasem, purchaseds), JBoltMsg.FAIL);
+                ValidationUtils.equals("ok", PurchaseAppApi.add(getOrgCode(), purchasem, purchaseds), JBoltMsg.FAIL);
                 Record record = dbTemplate(u8SourceConfigName(), "purchasem.getAppVouchId", Kv.by("ccode", purchasem.getCpurchaseno())).findFirst();
                 ValidationUtils.notNull(record, "推单失败");
 
@@ -733,8 +733,8 @@ public class PurchasemService extends BaseService<Purchasem> {
         Long iperiodid = para.getLong("iperiodid");
         ExpenseBudget expenseBudget = new ExpenseBudget();
         Period period = periodService.findById(iperiodid);
-        expenseBudget.setCbegindate(period.getDstarttime());
-        expenseBudget.setCenddate(period.getDendtime());
+        expenseBudget.setCBeginDate(period.getDstarttime());
+        expenseBudget.setCEndDate(period.getDendtime());
         expenseBudgetService.constructDynamicsDbColumn(expenseBudget,para);
         List<Record> list = dbTemplate("purchasem.findExpenseBudgetItemDatas", para).find();
         if (CollUtil.isNotEmpty(list)) {

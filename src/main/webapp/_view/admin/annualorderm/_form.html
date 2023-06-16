@@ -47,6 +47,7 @@
                                     <label class="col-sm-3 col-form-label">客户名称</label>
                                     <div class="col-9">
 										<input type="text" class="form-control"
+                                               id="ccusname"
 											   data-autocomplete
 											   data-url="admin/customer/autocomplete"
 											   data-rule="required"
@@ -61,10 +62,12 @@
 											   value="#(annualOrderM.ccusname??)">        
                                         
                                         <!--<input type="hidden" name="cformatname" id="cformatname_#(pageId)" data-sync-attr="ccusname">-->
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#iCustomerId" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/annualorderm/ccusname_dialog_index"><i class="fa fa-search"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">年份</label>
@@ -617,6 +620,16 @@
     function closeHandler(){
     	parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
+    }
+    function setChooseDialogSelectResult(data){
+        $('#iCustomerId').val(data.ccusname);
+    }
+
+    // 选择客户名称
+    function instCcusname(data)
+    {
+        $("#iCustomerId").val(data.iautoid);
+        $("#ccusname").val(data.ccusname);
     }
 </script>
 #end

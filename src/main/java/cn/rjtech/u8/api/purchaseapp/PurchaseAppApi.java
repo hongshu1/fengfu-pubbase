@@ -34,8 +34,8 @@ public class PurchaseAppApi {
     /**
      * 创建成品申购单
      */
-    public static String add(Purchasem purchasem, List<Purchased> purchaseds) {
-        PurchaseAppReq purchaseAppReq = new PurchaseAppReq();
+    public static String add(String orgCode, Purchasem purchasem, List<Purchased> purchaseds) {
+        PurchaseAppReq purchaseAppReq = new PurchaseAppReq(orgCode);
         // 构建主表信息
         PurchaseAppHeader handle = new PurchaseAppHeader();
         // 单据号 非空、唯一

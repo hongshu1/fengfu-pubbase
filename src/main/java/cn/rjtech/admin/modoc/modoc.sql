@@ -186,3 +186,19 @@ WHERE 1=1
  and  m.iInventoryRoutingId=#para(iInventoryRoutingId)
 #end
 #end
+
+    #sql("findMoJobByImodocId")
+SELECT m.cMoJobSn,b.name as cMoJobSnName,  m.iPlanQty, m.iRealQty, m.iStatus,
+       CASE m.iStatus
+           WHEN '1' THEN '未完成'
+           WHEN '2' THEN '已完成'
+            ELSE  '' END as iStatusName,
+       m.dUpdateTime
+FROM dbo.Mo_MoJob m
+         LEFT JOIN UGCFF_MOM_System.dbo.jb_dictionary b ON m.cMoJobSn = b.sn
+    AND b.type_key = 'mojob_type'
+WHERE 1=1
+    #if(imodocdd)
+      m.iMoDocId = #para(imodocdd)
+    #end
+#end

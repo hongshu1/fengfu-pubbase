@@ -23,6 +23,7 @@ import cn.rjtech.admin.datapermission.DataPermissionService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.expensebudgetitem.ExpenseBudgetItemService;
 import cn.rjtech.admin.expensebudgetitemd.ExpenseBudgetItemdService;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.admin.subjectm.SubjectmService;
 import cn.rjtech.config.AppConfig;
@@ -77,6 +78,8 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 	private DataPermissionService datapermissionService;
 	@Inject
 	private BarcodeencodingmService barcodeencodingmService;
+	@Inject
+    private FormApprovalService formApprovalService;
 	@Override
 	protected ExpenseBudget dao() {
 		return dao;
@@ -105,7 +108,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 	 * @return
 	 */
 	public Ret save(ExpenseBudget expenseBudget) {
-		if(expenseBudget==null || isOk(expenseBudget.getIautoid())) {
+		if(expenseBudget==null || isOk(expenseBudget.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 
@@ -118,9 +121,6 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 
 			return true;
 		});
-
-		// 添加日志
-		// addSaveSystemLog(expenseBudget.getIautoid(), JBoltUserKit.getUserId(), expenseBudget.getName());
 		return SUCCESS;
 	}
 
@@ -128,13 +128,13 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 	 * 更新
 	 */
 	public Ret update(ExpenseBudget expenseBudget) {
-		if(expenseBudget==null || notOk(expenseBudget.getIautoid())) {
+		if(expenseBudget==null || notOk(expenseBudget.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 
 		tx(() -> {
 			// 更新时需要判断数据存在
-			ExpenseBudget dbExpenseBudget = findById(expenseBudget.getIautoid());
+			ExpenseBudget dbExpenseBudget = findById(expenseBudget.getIAutoId());
 			ValidationUtils.notNull(dbExpenseBudget, JBoltMsg.DATA_NOT_EXIST);
 
 			// TODO 其他业务代码实现
@@ -146,7 +146,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 		});
 
 		//添加日志
-		//addUpdateSystemLog(expenseBudget.getIautoid(), JBoltUserKit.getUserId(), expenseBudget.getName());
+		//addUpdateSystemLog(expenseBudget.getIAutoId(), JBoltUserKit.getUserId(), expenseBudget.getName());
 		return SUCCESS;
 	}
 
@@ -180,7 +180,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 	 */
 	@Override
 	protected String afterDelete(ExpenseBudget expenseBudget, Kv kv) {
-		//addDeleteSystemLog(expenseBudget.getIautoid(), JBoltUserKit.getUserId(),expenseBudget.getName());
+		//addDeleteSystemLog(expenseBudget.getIAutoId(), JBoltUserKit.getUserId(),expenseBudget.getName());
 		return null;
 	}
 
@@ -232,17 +232,17 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 	    List<ExpenseBudgetItem> expenseBudgetItemList = new ArrayList<>();
 	    List<ExpenseBudgetItemd> expenseBudgetItemdList = new ArrayList<>();
 	    Long expenseBudgetId = JBoltSnowflakeKit.me.nextId();
-	    expenseBudget.setIautoid(expenseBudgetId);
-	    expenseBudget.setIorgid(getOrgId());
-	    expenseBudget.setCorgcode(getOrgCode());
-	    expenseBudget.setCdepcode(cdepcode);
-	    expenseBudget.setIbudgettype(ibudgetType);
-	    expenseBudget.setCbegindate(cBeginDate);
-	    expenseBudget.setCenddate(cEndDate);
-	    expenseBudget.setIauditstatus(AuditStatusEnum.NOT_AUDIT.getValue());
-	    expenseBudget.setDcreatetime(now);
-	    expenseBudget.setIcreateby(JBoltUserKit.getUserId());
-	    expenseBudget.setIbudgetyear(ibudgetyear);
+	    expenseBudget.setIAutoId(expenseBudgetId);
+	    expenseBudget.setIOrgId(getOrgId());
+	    expenseBudget.setCOrgCode(getOrgCode());
+	    expenseBudget.setCDepCode(cdepcode);
+	    expenseBudget.setIBudgetType(ibudgetType);
+	    expenseBudget.setCBeginDate(cBeginDate);
+	    expenseBudget.setCEndDate(cEndDate);
+	    expenseBudget.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+	    expenseBudget.setDCreateTime(now);
+	    expenseBudget.setICreateBy(JBoltUserKit.getUserId());
+	    expenseBudget.setIBudgetYear(ibudgetyear);
     	constructFullYearBudgetTypeModel(excelRecords,expenseBudget,cdepcode,expenseBudgetItemList,expenseBudgetItemdList,alertErrorMsg,dataStartRowNum,now);
 	    if(alertErrorMsg.toString().length()>0)
 	    	return fail(alertErrorMsg.toString());
@@ -289,16 +289,16 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 	    Date cBeginDate = JBoltDateUtil.getDate(budgetStartYear+"-"+budgetStartMonth+"-01", JBoltDateUtil.YMD);
 	    Date cEndDate = JBoltDateUtil.getDate(budgetEndYear+"-"+budgetEndMonth+"-01", JBoltDateUtil.YMD);
 	    ExpenseBudget expenseBudget = new ExpenseBudget();
-	    expenseBudget.setIorgid(getOrgId());
-	    expenseBudget.setCorgcode(getOrgCode());
-	    expenseBudget.setCdepcode(cdepcode);
-	    expenseBudget.setIbudgettype(ibudgetType);
-	    expenseBudget.setCbegindate(cBeginDate);
-	    expenseBudget.setCenddate(cEndDate);
-	    expenseBudget.setIauditstatus(AuditStatusEnum.NOT_AUDIT.getValue());
-	    expenseBudget.setDcreatetime(now);
-	    expenseBudget.setIcreateby(JBoltUserKit.getUserId());
-	    expenseBudget.setIbudgetyear(ibudgetyear);
+	    expenseBudget.setIOrgId(getOrgId());
+	    expenseBudget.setCOrgCode(getOrgCode());
+	    expenseBudget.setCDepCode(cdepcode);
+	    expenseBudget.setIBudgetType(ibudgetType);
+	    expenseBudget.setCBeginDate(cBeginDate);
+	    expenseBudget.setCEndDate(cEndDate);
+	    expenseBudget.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+	    expenseBudget.setDCreateTime(now);
+	    expenseBudget.setICreateBy(JBoltUserKit.getUserId());
+	    expenseBudget.setIBudgetYear(ibudgetyear);
         List<Record> excelRowList = (List<Record>)excelMap.get("rows");
         StringBuilder errorMsg = new StringBuilder();
         if(CollUtil.isNotEmpty(excelRowList)){
@@ -309,7 +309,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 	        tx(()->{
 	        	//删除费用预算项目和项目明细数据
 	    		deleteExpenseBudgetItem(iexpenseId);
-	    		expenseBudget.setIautoid(iexpenseId);
+	    		expenseBudget.setIAutoId(iexpenseId);
 	    		saveExpenseBudgetItemForSubmitTable(excelRowList,expenseBudget,JBoltUserKit.getUserId(),now);
 	    		return true;
 	        });
@@ -394,8 +394,8 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 	private void constructJBoltTableExpenseBudgetItem(ExpenseBudget expenseBudget,List<Record> excelRecords,StringBuilder errorMsg, int dataStartRowNum) {
 		//获取封装的事业类型的字典
 		Record dictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKeyEnum.CAREERTYPE.getValue());
-		Date cbeginDate = expenseBudget.getCbegindate();
-		Date cendDate = expenseBudget.getCenddate();
+		Date cbeginDate = expenseBudget.getCBeginDate();
+		Date cendDate = expenseBudget.getCEndDate();
 		int nowReadRowNum = dataStartRowNum;
 		for (int i = 0; i < excelRecords.size(); i++) {
 			nowReadRowNum = dataStartRowNum + i;
@@ -465,8 +465,8 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 			StringBuilder alertErrorMsg,int dataStartRowNum,Date now) {
 		//获取封装的事业类型的字典
 		Record dictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKeyEnum.CAREERTYPE.getValue());
-		Date cbeginDate = expenseBudget.getCbegindate();
-		Date cendDate = expenseBudget.getCenddate();
+		Date cbeginDate = expenseBudget.getCBeginDate();
+		Date cendDate = expenseBudget.getCEndDate();
 		for (int i = 0; i < excelRecords.size(); i++) {
 			dataStartRowNum = dataStartRowNum+1+i;
 			Record row = excelRecords.get(i);
@@ -475,7 +475,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 			StringBuilder errorMsg = new StringBuilder();
 			//检验预算编号:如果为空则生成，不为空则赋值
 			String cbudgetNo = row.get(FullYearBudgetEnum.CBUDGETNO.getField());
-			expenseBudgetItem.setCbudgetno(JBoltStringUtil.isBlank(cbudgetNo) ? genExpenseBudgetNo(cdepcode,expenseBudget.getIbudgetyear()):cbudgetNo);
+			expenseBudgetItem.setCbudgetno(JBoltStringUtil.isBlank(cbudgetNo) ? genExpenseBudgetNo(cdepcode,expenseBudget.getIBudgetYear()):cbudgetNo);
 			//检验科目大类,明细科目
 			String cHighestSubjectName = row.get(FullYearBudgetEnum.CHIGHESTSUBJECTNAME.getField());
 			String cLowestSubjectName = row.get(FullYearBudgetEnum.CLOWESTSUBJECTNAME.getField());
@@ -554,7 +554,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 			Date now) {
 		//获取封装的事业类型的字典
 		Record dictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKeyEnum.CAREERTYPE.getValue());
-		Date cbeginDate = expenseBudget.getCbegindate();
+		Date cbeginDate = expenseBudget.getCBeginDate();
 		for (int i = 0; i < excelRecords.size(); i++) {
 			dataStartRowNum = dataStartRowNum+1+i;
 			Record row = excelRecords.get(i);
@@ -565,14 +565,14 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 			String cprojectcode = row.get(NextEditBudgetEnum.CPROJECTCODE.getField());
 			if(JBoltStringUtil.isBlank(cprojectcode)) errorMsg.append("第").append(dataStartRowNum).append("行,").append(NextEditBudgetEnum.CPROJECTCODE.getText()).append("为空<br/>");
 			else{
-				Project project = projectService.findByProjectCode(cprojectcode,expenseBudget.getCdepcode());
+				Project project = projectService.findByProjectCode(cprojectcode,expenseBudget.getCDepCode());
 				if(project == null) errorMsg.append("第").append(dataStartRowNum).append("行,项目档案中不存在").append(NextEditBudgetEnum.CPROJECTCODE.getText()).append(cprojectcode).append("<br/>");
 				else expenseBudgetItem.setIprojectid(project.getIautoid());
 			}
 			//检验预算编号:如果为空则生成，不为空判断是否有对应的费用预算项目
 			String cbudgetNo = row.get(NextEditBudgetEnum.CBUDGETNO.getField());
 			if(JBoltStringUtil.isBlank(cbudgetNo))
-				expenseBudgetItem.setCbudgetno(genExpenseBudgetNo(cdepcode,expenseBudget.getIbudgetyear()));
+				expenseBudgetItem.setCbudgetno(genExpenseBudgetNo(cdepcode,expenseBudget.getIBudgetYear()));
 			else if(expenseBudgetItemService.isNotExistsBudgetNo(cbudgetNo)) //不存在则提示
 				errorMsg.append("第").append(dataStartRowNum).append("行,").append(NextEditBudgetEnum.CBUDGETNO.getText()).append(cbudgetNo).append("系统中不存在,请检查!<br/>");
 			//检验科目大类,明细科目
@@ -668,13 +668,13 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
     	ValidationUtils.notNull(expenseBudget, "费用预算数据不存在,获取部门英文名称失败!");
 		switch (BarCodeEnum.toEnum(cprojectcode)) {
 	        case DEPT:
-	        	Record record = departmentService.findByCdepcode(getOrgId(),expenseBudget.getCdepcode()).toRecord();
+	        	Record record = departmentService.findByCdepcode(getOrgId(),expenseBudget.getCDepCode()).toRecord();
 	    		String cdepnameen = record.getStr("cdepnameen");
 	    		ValidationUtils.notBlank(cdepnameen, record.getStr("cdepname")+"部门的英文名称为空!");
 	    		str = cdepnameen;
 	            break;  
 	        case ORDERYEAR:
-	        	Integer iBudgetYear = expenseBudget.getIbudgetyear();
+	        	Integer iBudgetYear = expenseBudget.getIBudgetYear();
 	        	ValidationUtils.notNull(iBudgetYear, BarCodeEnum.ORDERYEAR.getText()+"为空!");
 	    		str = iBudgetYear.toString();
 	            break;
@@ -687,26 +687,26 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 		if(CollUtil.isEmpty(listRecord)) return;
 		for (Record row : listRecord) {
 			String cbudgetno = row.getStr("cbudgetno");
-			cbudgetno = JBoltStringUtil.isBlank(cbudgetno) ? genExpenseBudgetNo(Kv.by("iautoid", expenseBudget.getIautoid())) : cbudgetno; 
+			cbudgetno = JBoltStringUtil.isBlank(cbudgetno) ? genExpenseBudgetNo(Kv.by("iautoid", expenseBudget.getIAutoId())) : cbudgetno; 
 			Long iexpenseBudgetItemId = JBoltSnowflakeKit.me.nextId();
 			row.remove("chighestsubjectname","clowestsubjectname")
 			.set("cbudgetno", cbudgetno)
 			.set("icreateby", userId)
 			.set("isscheduled", IsScheduledEnum.WITHIN_PLAN.getValue())
 			.set("dcreatetime",now)
-			.set("iexpenseid", expenseBudget.getIautoid())
+			.set("iexpenseid", expenseBudget.getIAutoId())
 			.set("iautoid", iexpenseBudgetItemId);
 			ExpenseBudgetItem expenseBudgetItem = new ExpenseBudgetItem().put(row);
 			List<ExpenseBudgetItemd> expenseBudgetItemdList = new ArrayList<>();
 			// 转换费用预算项目明细
-			LocalDate startLocalDate = LocalDate.parse(JBoltDateUtil.format(expenseBudget.getCbegindate(),JBoltDateUtil.YMD));
-			LocalDate cutoffLocalDate = LocalDate.parse(JBoltDateUtil.format(expenseBudget.getCenddate(),JBoltDateUtil.YMD));
+			LocalDate startLocalDate = LocalDate.parse(JBoltDateUtil.format(expenseBudget.getCBeginDate(),JBoltDateUtil.YMD));
+			LocalDate cutoffLocalDate = LocalDate.parse(JBoltDateUtil.format(expenseBudget.getCEndDate(),JBoltDateUtil.YMD));
 			// 起止日期计算共多少个月
 			long diffMonth = ChronoUnit.MONTHS.between(startLocalDate, cutoffLocalDate) + 1;
 			BigDecimal iamountTotal = BigDecimal.ZERO; //金额合计
 			BigDecimal iprice = row.getBigDecimal("iprice");
 			for (int j = 1; j <= diffMonth; j++) {
-				Calendar calendarStartDate = JBoltDateUtil.getCalendarByDate(expenseBudget.getCbegindate());
+				Calendar calendarStartDate = JBoltDateUtil.getCalendarByDate(expenseBudget.getCBeginDate());
 				calendarStartDate.add(Calendar.MONTH, j-1);
 				int nowYear = calendarStartDate.get(Calendar.YEAR);
 				int nowMonth = calendarStartDate.get(Calendar.MONTH)+1;
@@ -744,9 +744,9 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 		ValidationUtils.notNull(jBoltTable, "参数不能为空");
 		Date now = new Date();
 		ExpenseBudget expenseBudget = jBoltTable.getFormModel(ExpenseBudget.class, "expenseBudget");
-		String cdepcode = expenseBudget.getCdepcode();
-		Integer iBudgetYear = expenseBudget.getIbudgetyear();
-		Integer iBudgetType = expenseBudget.getIbudgettype();
+		String cdepcode = expenseBudget.getCDepCode();
+		Integer iBudgetYear = expenseBudget.getIBudgetYear();
+		Integer iBudgetType = expenseBudget.getIBudgetType();
 		ValidationUtils.notNull(cdepcode, "预算部门不能为空");
 		ValidationUtils.notNull(iBudgetYear, "预算年度不能为空");
 		ValidationUtils.notNull(iBudgetType, "预算类型不能为空");
@@ -755,11 +755,11 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 			ValidationUtils.isTrue(expenseBudgetDB == null, "费用预算已创建，请重复操作!");
             Long iexpenseBudgetId = JBoltSnowflakeKit.me.nextId();
             Long userId = JBoltUserKit.getUserId();
-            expenseBudget.setIorgid(getOrgId());
-            expenseBudget.setCorgcode(getOrgCode());
-            expenseBudget.setIcreateby(userId);
-            expenseBudget.setDcreatetime(now);
-            expenseBudget.setIautoid(iexpenseBudgetId);
+            expenseBudget.setIOrgId(getOrgId());
+            expenseBudget.setCOrgCode(getOrgCode());
+            expenseBudget.setICreateBy(userId);
+            expenseBudget.setDCreateTime(now);
+            expenseBudget.setIAutoId(iexpenseBudgetId);
             ValidationUtils.isTrue(expenseBudget.save(), ErrorMsg.SAVE_FAILED);
 			List<Record> listRecord = jBoltTable.getSaveRecordList();
 			if(CollUtil.isEmpty(listRecord)) return true;
@@ -777,7 +777,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 		ValidationUtils.notNull(jBoltTable, "参数不能为空");
 		Date now = new Date();
 		ExpenseBudget expenseBudgetForm = jBoltTable.getFormModel(ExpenseBudget.class, "expenseBudget");
-		ExpenseBudget expenseBudget = findById(expenseBudgetForm.getIautoid());
+		ExpenseBudget expenseBudget = findById(expenseBudgetForm.getIAutoId());
 		tx(()->{
 			Long userId = JBoltUserKit.getUserId();
 			//新增行
@@ -795,13 +795,13 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 					List<ExpenseBudgetItemd> expenseBudgetItemdList = new ArrayList<ExpenseBudgetItemd>();
 					//先删除原来的费用预算项目明细,再转换新的费用预算项目明细保存
 					expenseBudgetItemdService.deleteByItemId(iexpenseBudgetItemId);
-					LocalDate startLocalDate = LocalDate.parse(JBoltDateUtil.format(expenseBudget.getCbegindate(),JBoltDateUtil.YMD));
-					LocalDate cutoffLocalDate = LocalDate.parse(JBoltDateUtil.format(expenseBudget.getCenddate(),JBoltDateUtil.YMD));
+					LocalDate startLocalDate = LocalDate.parse(JBoltDateUtil.format(expenseBudget.getCBeginDate(),JBoltDateUtil.YMD));
+					LocalDate cutoffLocalDate = LocalDate.parse(JBoltDateUtil.format(expenseBudget.getCEndDate(),JBoltDateUtil.YMD));
 					//起止日期计算共多少个月
 					long diffMonth = ChronoUnit.MONTHS.between(startLocalDate, cutoffLocalDate) + 1;
 					BigDecimal iamountTotal = BigDecimal.ZERO;
 					for (int j = 1; j <= diffMonth; j++) {
-						Calendar calendarStartDate = JBoltDateUtil.getCalendarByDate(expenseBudget.getCbegindate());
+						Calendar calendarStartDate = JBoltDateUtil.getCalendarByDate(expenseBudget.getCBeginDate());
 						calendarStartDate.add(Calendar.MONTH, j-1);
 						int nowYear = calendarStartDate.get(Calendar.YEAR);
 						int nowMonth = calendarStartDate.get(Calendar.MONTH)+1;
@@ -869,17 +869,17 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 		return list;
 	}
 	public void constructDynamicsDbColumn(ExpenseBudget expenseBudget,Kv para){
-		LocalDate startLocalDate = LocalDate.parse(JBoltDateUtil.format(expenseBudget.getCbegindate(),JBoltDateUtil.YMD));
-		LocalDate cutoffLocalDate = LocalDate.parse(JBoltDateUtil.format(expenseBudget.getCenddate(),JBoltDateUtil.YMD));
+		LocalDate startLocalDate = LocalDate.parse(JBoltDateUtil.format(expenseBudget.getCBeginDate(),JBoltDateUtil.YMD));
+		LocalDate cutoffLocalDate = LocalDate.parse(JBoltDateUtil.format(expenseBudget.getCEndDate(),JBoltDateUtil.YMD));
 		//起止日期计算共跨多少个月
 		long diffMonth = ChronoUnit.MONTHS.between(startLocalDate, cutoffLocalDate) + 1;
 		//起止日期计算共跨多少年
-		int startYear = Integer.parseInt(JBoltDateUtil.format(expenseBudget.getCbegindate(),"YYYY"));
-		int endYear = Integer.parseInt(JBoltDateUtil.format(expenseBudget.getCenddate(),"YYYY"));
+		int startYear = Integer.parseInt(JBoltDateUtil.format(expenseBudget.getCBeginDate(),"YYYY"));
+		int endYear = Integer.parseInt(JBoltDateUtil.format(expenseBudget.getCEndDate(),"YYYY"));
 		long diffYear = endYear - startYear + 1;
 		List<String> monthList = new ArrayList<String>();
 		for (int i=1; i<=diffMonth; i++) {
-			Calendar calendarStartDate = JBoltDateUtil.getCalendarByDate(expenseBudget.getCbegindate());
+			Calendar calendarStartDate = JBoltDateUtil.getCalendarByDate(expenseBudget.getCBeginDate());
 			calendarStartDate.add(Calendar.MONTH, i-1);
 			int nowYear = calendarStartDate.get(Calendar.YEAR);
 			int nowMonth = calendarStartDate.get(Calendar.MONTH)+1;
@@ -952,22 +952,58 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 	/**
      * 提交审核
      * */
-	public Ret submitAudit(Long iexpenseid) {
+	public Ret submit(Long iexpenseid) {
 		Date now = new Date();
 		ValidationUtils.notNull(iexpenseid, "请先保存后再提交");
 		ExpenseBudget expenseBudget = findById(iexpenseid);
 		if(AppConfig.isVerifyProgressEnabled()){
-			//verifyprogressService.start(iexpenseid.toString(),getOrgCode(),VeriProgressObjTypeEnum.EXPENSE_BUDGET,JBoltUserKit.getUser(),null,expenseBudget.getCdepcode(),now);
-			expenseBudget.setIauditstatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-			expenseBudget.setDaudittime(now);
-			ValidationUtils.isTrue(expenseBudget.update(), ErrorMsg.UPDATE_FAILED);
+			//verifyprogressService.start(iexpenseid.toString(),getOrgCode(),VeriProgressObjTypeEnum.EXPENSE_BUDGET,JBoltUserKit.getUser(),null,expenseBudget.getCDepCode(),now);
+            // 根据审批状态
+            Ret ret = formApprovalService.judgeType(table(), iexpenseid, primaryKey(),"cn.rjtech.admin.expensebudget.ExpenseBudgetService");
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+            
+            //生成待办和发送邮件
 		}else{
-			expenseBudget.setIauditstatus(AuditStatusEnum.APPROVED.getValue());
-			expenseBudget.setDaudittime(now);
+			expenseBudget.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+			expenseBudget.setDAuditTime(now);
 			ValidationUtils.isTrue(expenseBudget.update(), ErrorMsg.UPDATE_FAILED);
 		}
 		return SUCCESS;
 	}
+	
+    /**
+     * 处理审批通过的其他业务操作，如有异常返回错误信息
+     */
+    public String postApproveFunc(long formAutoId) {
+  
+        return null;
+    }
+	
+    /**
+     * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
+     */
+    public String postRejectFunc(long formAutoId) {
+        return null;
+    }
+	
+    /**
+     * 实现反审之后的其他业务操作, 如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        // 反审回第一个节点，回退状态为“已保存”
+        if (isFirst) {
+       
+        }
+        // 最后一步通过的，反审，回退状态为“待审核”
+        if (isLast) {
+           
+        }
+        return null;
+    }	
 
 	public Page<Record> periodContrastDatas(int pageNumber, int pageSize, Kv para) {
 		ExpenseBudget expenseBudget = new ExpenseBudget();
@@ -975,8 +1011,8 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
     	String dendtime1 = para.getStr("dendtime1");
     	Date dstarttime1Date = JBoltDateUtil.toDate(dstarttime1,"yyyy-MM");
     	Date dendtime1Date = JBoltDateUtil.toDate(dendtime1,"yyyy-MM");
-		expenseBudget.setCbegindate(dstarttime1Date);
-		expenseBudget.setCenddate(dendtime1Date);
+		expenseBudget.setCBeginDate(dstarttime1Date);
+		expenseBudget.setCEndDate(dendtime1Date);
 		constructDynamicsDbColumn(expenseBudget,para);
 		Page<Record> list1 = dbTemplate(u8SourceConfigName(),"expensebudget.periodContrastDatas", para).paginate(pageNumber, pageSize);
 		return list1;
@@ -1199,11 +1235,11 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 	 * 	list:	导出到excel的数据
 	 * */
 	public void exportExpenseBudgetExcel(ExpenseBudget expenseBudget, List<JBoltExcelPositionData> excelPositionDatas,List<JBoltExcelMerge> mergeList,List<Record> list) {
-		String cdepcode = expenseBudget.getCdepcode();
-    	Integer iBudgetYear = expenseBudget.getIbudgetyear();
-    	Integer iBudgetType = expenseBudget.getIbudgettype();
-    	Date startDate = expenseBudget.getCbegindate();
-        Date cutoffTime = expenseBudget.getCenddate();
+		String cdepcode = expenseBudget.getCDepCode();
+    	Integer iBudgetYear = expenseBudget.getIBudgetYear();
+    	Integer iBudgetType = expenseBudget.getIBudgetType();
+    	Date startDate = expenseBudget.getCBeginDate();
+        Date cutoffTime = expenseBudget.getCEndDate();
         LocalDate startLocalDate = LocalDate.parse(JBoltDateUtil.format(startDate, JBoltDateUtil.YMD));
         LocalDate cutoffLocalDate = LocalDate.parse(JBoltDateUtil.format(cutoffTime, JBoltDateUtil.YMD));
         Calendar calendarStartDate1 = JBoltDateUtil.getCalendarByDate(startDate);
@@ -1275,8 +1311,8 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 	 * 是否存在已生效的部门预算
 	 * */
 	public Boolean isExistsEffectivedExpenseBudget(ExpenseBudget expenseBudget) {
-		List<ExpenseBudget> list = find(selectSql().eq("cdepcode", expenseBudget.getCdepcode()).eq("iBudgetYear", expenseBudget.getIbudgetyear())
-				.eq("iBudgetType", expenseBudget.getIbudgettype()).eq("iEffectiveStatus", EffectiveStatusEnum.EFFECTIVED.getValue()));
+		List<ExpenseBudget> list = find(selectSql().eq("cdepcode", expenseBudget.getCDepCode()).eq("iBudgetYear", expenseBudget.getIBudgetYear())
+				.eq("iBudgetType", expenseBudget.getIBudgetType()).eq("iEffectiveStatus", EffectiveStatusEnum.EFFECTIVED.getValue()));
 		if(CollUtil.isNotEmpty(list)) return true;
 		return false;
 	}
