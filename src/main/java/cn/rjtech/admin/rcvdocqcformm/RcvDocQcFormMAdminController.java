@@ -118,6 +118,7 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     public void checkout() {
         RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
         Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
+//        service.commCreateTable();
         set("rcvdocqcformm", rcvDocQcFormM);
         set("record", record);
         render("checkout.html");

@@ -360,8 +360,8 @@ public class SysAssemService extends BaseService<SysAssem> {
         preallocate.set("type", "AssemVouch");
 
         data.put("PreAllocate", preallocate);
+        ArrayList<Object> maindata = new ArrayList<>();
 
-        JSONArray maindata = new JSONArray();
         sysassemdetail.stream().forEach(s -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("IWhCode", s.getWhCode());
@@ -388,7 +388,7 @@ public class SysAssemService extends BaseService<SysAssem> {
             jsonObject.set("VouchTemplate", "");
             jsonObject.set("RowNo", s.getRowNo());
 
-            maindata.put(jsonObject);
+            maindata.add(jsonObject);
         });
         data.put("MainData", maindata);
 

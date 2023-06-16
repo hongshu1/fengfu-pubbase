@@ -247,6 +247,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             if(null != iq && null != iq.getLong("iautoid")) {
                 rcvDocQcFormM.setIQcFormId(iq.getLong("iautoid"));
                 rcvDocQcFormM.setIStatus(1);
+                //设变号
+                rcvDocQcFormM.setCDcNo(iq.get("cDcCode"));
             }
         }else {
             rcvDocQcFormM.setIStatus(0);
