@@ -89,6 +89,8 @@ public class BomCompareAdminController extends BaseAdminController {
 			render("manual_form.html");
 			return;
 		}
+		getBomMaster(bomM);
+		render("/_view/admin/bommaster/edit.html");
 	}
 	
 	public void info(){
