@@ -51,7 +51,7 @@ public class MoDocBatchController extends BaseAdminController {
    * 编辑计划
    */
   public void editPlan() {
-    set("editplanviewdatas", service.getOpenEditPlanViewDatas(getLong(0)));
+//    set("editplanviewdatas", service.getOpenEditPlanViewDatas(getLong(0)));
     render("planform.html");
   }
 
@@ -70,11 +70,15 @@ public class MoDocBatchController extends BaseAdminController {
    * 人员编辑
    */
   public void personEdit() {
-    Kv kv = getKv();
-    set("editplanviewdatas", service.getOpenEditPlanViewDatas(kv.getLong("taskid")));
     keepPara();
     render("person_edit.html");
-//    renderJsonData(service.getOpenEditPlanViewDatas(kv.getLong("taskid")));
+  }
+
+  /**
+   * 根据taskid获取表头日期信息
+   */
+  public void personEditHeaderDatas() {
+    renderJsonData(service.personEditHeaderDatas(getKv()));
   }
 
   /**
