@@ -1,6 +1,5 @@
 #sql("paginateAdminDatas")
-	select scsom.*,c.cCusCode,c.cCusName,c.cCusAbbName from Co_SubcontractSaleOrderM scsom 
-		left join Bd_Customer c on scsom.icustomerid = c.iautoid
+	select scsom.* from Co_SubcontractSaleOrderM scsom
 	where scsom.isDeleted = '0'
 	#if(iorgid)
 		and scsom.iorgid = #para(iorgid)
@@ -9,7 +8,7 @@
 		and scsom.cOrderNo like concat('%',#para(cOrderNo),'%') 
 	#end
 	#if(cCusName)
-		and c.cCusName like concat('%',#para(cCusName),'%') 
+		and scsom.cCusName like concat('%',#para(cCusName),'%')
 	#end
     #if(iOrderStatus)
 	    AND scsom.iOrderStatus = #para(iOrderStatus)

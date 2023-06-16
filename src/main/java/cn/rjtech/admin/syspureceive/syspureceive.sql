@@ -48,7 +48,7 @@ SELECT  a.*,
 	v.cVenCode as vencode,
 	v.cVenName as venname
 FROM T_Sys_PUReceiveDetail a
-LEFT JOIN PS_PurchaseOrderDBatch aa on aa.cBarcode = a.Barcode
+LEFT JOIN PS_PurchaseOrderDBatch aa on aa.cBarcode = a.Barcode and aa.isEffective = '1'
 LEFT JOIN Bd_Inventory b on aa.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on aa.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid

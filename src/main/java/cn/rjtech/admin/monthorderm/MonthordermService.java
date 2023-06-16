@@ -230,6 +230,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
             saveTableSubmitDatas(jBoltTable, monthorderm);
             updateTableSubmitDatas(jBoltTable);
             deleteTableSubmitDatas(jBoltTable);
+            ValidationUtils.notNull(monthorderdService.findByMid(monthorderm.getIAutoId()), "细项不允许为空");
             return true;
         });
         return SUCCESS;
