@@ -50,8 +50,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
     return dao;
   }
 
-  public Kv getOpenEditPlanViewDatas(Long id) {
-    Kv kv = new Kv();
+  public Record getOpenEditPlanViewDatas(Long id) {
+    Record kv = new Record();
     MoMotask moMotask = findById(id);
     List<Record> records = dbTemplate("modocbatch.editplanviewdatas", Kv.by("id", moMotask.getIAutoId())).find();
 
@@ -708,22 +708,22 @@ public class MoMotaskService extends BaseService<MoMotask> {
               if (i < records2.size()) {
                 //读取人员数据
                 List<Record> records4 = bol ? map2.get(matchingid) : userMapDatas.get(matchingid);
-                record2.set("personnel", records4.get(0));
+                record2.set("personne", records4.get(0));
               } else if (i == (records2.size())) {
                 List<Record> records4 = map3.get(modocid1);
-                record2.set("personnel1", records4.get(0));
+                record2.set("personne", records4.get(0));
               } else if (i == (records2.size() + 1)) {
                 List<Record> records4 = map4.get(modocid1);
-                record2.set("personnel2", records4.get(0));
+                record2.set("personne", records4.get(0));
               } else if (i == (records2.size() + 2)) {
                 List<Record> records4 = map5.get(modocid1);
-                record2.set("personnel3", records4.get(0));
+                record2.set("personne", records4.get(0));
               } else if (i == (records2.size() + 3)) {
                 List<Record> records4 = map6.get(modocid1);
                 if (records4 == null || records4.size() <= 0) {
                   records4.add(record4);
                 }
-                record2.set("personnel4", records4.get(0));
+                record2.set("personne", records4.get(0));
               }
               userRecord.add(record2);
             }
