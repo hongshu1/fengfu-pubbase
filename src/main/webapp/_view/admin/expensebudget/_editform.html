@@ -124,7 +124,7 @@
 	            </div>
 	            <a hidden id="expenseBudgetAddExportBtn" data-downloadbtn href="admin/expensebudget/exportTableExpenseBudgetDatas" data-form="expenseBudgetEditForm" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> 导出</a>
 	            <button id="saveBtn_#(pageId)" onclick="submitThisForm()" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 保存</button>
-	            <button data-ajaxbtn data-handler="closeHandler()" data-url="admin/expensebudget/submitAudit/#(expenseBudget.iautoid)" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 提交审核</button>
+	            <button data-ajaxbtn data-handler="closeHandler()" data-url="admin/expensebudget/submit/#(expenseBudget.iautoid)" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 提交审核</button>
 	            <button onclick="closeHandler()" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 关闭</button>
                 <!-- <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button> -->
                  (单价单位：元， 金额单位：千元)

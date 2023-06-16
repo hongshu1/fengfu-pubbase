@@ -18,6 +18,10 @@ public class PurchaseorderReq extends BaseReq {
     @XmlElement(name = "body")
     private PurchaseorderBody body = new PurchaseorderBody();
 
+    public PurchaseorderReq(String orgCode) {
+        super(orgCode);
+    }
+
     public PurchaseorderHeader getHeader() {
         return header;
     }

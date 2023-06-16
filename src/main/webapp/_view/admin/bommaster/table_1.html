@@ -30,7 +30,7 @@
             <input id="cDocCode" type="text" autocomplete="off" data-rule="required" class="form-control"  placeholder="输入文件编码" name="cDocCode" value="#(bomMaster.cdoccode??)" />
         </td>
         <td>
-            <input id="cBomVersion" type="text" autocomplete="off"  class="form-control" data-rule="required"  placeholder="输入版本/版次" name="cBomVersion" value="#(bomMaster.cbomversion??)" />
+            <input id="cBomVersion" type="text" autocomplete="off"  class="form-control" data-rule="required"  placeholder="输入版本/版次" name="cVersion" value="#(bomMaster.cversion??)" />
         </td>
         <td>
             <input id="dEnableDate" type="text" class="form-control" data-rule="required"  data-date name="dEnableDate" value="#date(DateUtil.toDate(bomMaster.denabledate??),'yyyy-MM-dd')">

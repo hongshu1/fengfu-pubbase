@@ -28,13 +28,6 @@ public class AppConfig {
         return JBoltConfig.prop.getBoolean("u8.debug_env");
     }
 
-    /**
-     * 是否启用U8接口调用
-     */
-    public static boolean isU8ApiEnabled() {
-        return JBoltConfig.prop.getBoolean("u8.api.enabled");
-    }
-
     public static String getServerApiKey() {
         return JBoltConfig.prop.get("server.api.key");
     }
