@@ -10,7 +10,8 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseMonthOrderM<M extends BaseMonthOrderM<M>> extends JBoltBaseModel<M>{
-    /**主键ID*/
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
+    /**客户名称*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
     public static final String IORGID = "iOrgId";
@@ -114,8 +115,12 @@ public abstract class BaseMonthOrderM<M extends BaseMonthOrderM<M>> extends JBol
     public static final String DDEFINE30 = "dDefine30";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "IsDeleted";
+    /**客户编码*/
+    public static final String CCUSCODE = "cCusCode";
+    /**客户名称*/
+    public static final String CCUSNAME = "cCusName";
 	/**
-	 * 主键ID
+	 * 客户名称
 	 */
 	public M setIAutoId(java.lang.Long iAutoId) {
 		set("iAutoId", iAutoId);
@@ -123,9 +128,9 @@ public abstract class BaseMonthOrderM<M extends BaseMonthOrderM<M>> extends JBol
 	}
 
 	/**
-	 * 主键ID
+	 * 客户名称
 	 */
-	@JBoltField(name="iautoid" ,columnName="iAutoId",type="Long", remark="主键ID", required=true, maxLength=19, fixed=0, order=1)
+	@JBoltField(name="iautoid" ,columnName="iAutoId",type="Long", remark="客户名称", required=true, maxLength=19, fixed=0, order=1)
 	@JSONField(name = "iautoid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIAutoId() {
 		return getLong("iAutoId");
@@ -448,7 +453,7 @@ public abstract class BaseMonthOrderM<M extends BaseMonthOrderM<M>> extends JBol
 	/**
 	 * 审批方式：1. 审批状态 2. 审批流
 	 */
-	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审批状态 2. 审批流", required=false, maxLength=10, fixed=0, order=20)
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审批状态 2. 审批流", required=true, maxLength=10, fixed=0, order=20)
 	@JSONField(name = "iauditway")
 	public java.lang.Integer getIAuditWay() {
 		return getInt("iAuditWay");
@@ -996,6 +1001,40 @@ public abstract class BaseMonthOrderM<M extends BaseMonthOrderM<M>> extends JBol
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");
+	}
+
+	/**
+	 * 客户编码
+	 */
+	public M setCCusCode(java.lang.String cCusCode) {
+		set("cCusCode", cCusCode);
+		return (M)this;
+	}
+
+	/**
+	 * 客户编码
+	 */
+	@JBoltField(name="ccuscode" ,columnName="cCusCode",type="String", remark="客户编码", required=false, maxLength=40, fixed=0, order=53)
+	@JSONField(name = "ccuscode")
+	public java.lang.String getCCusCode() {
+		return getStr("cCusCode");
+	}
+
+	/**
+	 * 客户名称
+	 */
+	public M setCCusName(java.lang.String cCusName) {
+		set("cCusName", cCusName);
+		return (M)this;
+	}
+
+	/**
+	 * 客户名称
+	 */
+	@JBoltField(name="ccusname" ,columnName="cCusName",type="String", remark="客户名称", required=false, maxLength=200, fixed=0, order=54)
+	@JSONField(name = "ccusname")
+	public java.lang.String getCCusName() {
+		return getStr("cCusName");
 	}
 
 }
