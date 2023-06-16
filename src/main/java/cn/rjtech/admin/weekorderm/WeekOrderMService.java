@@ -15,6 +15,7 @@ import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
+import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
 import cn.rjtech.model.momdata.base.BaseWeekOrderD;
@@ -441,12 +442,22 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
      * 处理审批通过的其他业务操作，如有异常返回错误信息
      */
     public String postApproveFunc(long formAutoId) {
+        WeekOrderM weekOrderM = findById(formAutoId);
+        ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
+        // 推送U8订单
+
+        // 修改客户计划汇总
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
+        cusOrderSumService.algorithmSum();
         return null;
     }
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
     public String postRejectFunc(long formAutoId) {
+        WeekOrderM weekOrderM = findById(formAutoId);
+        ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), "订单非待审核状态");
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }
 
@@ -458,6 +469,74 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
      * @param isLast     是否为审批的最后一个节点
      */
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        // 只有一个审批人
+        if (isFirst && isLast) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
+        }
+        // 反审回第一个节点，回退状态为“已保存”
+        else if (isFirst) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+        }
+        // 最后一步通过的，反审，回退状态为“待审核”
+        else if (isLast) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
+        }
+        return null;
+    }
+
+    /**
+     * 提审前业务，如有异常返回错误信息
+     */
+    public String preSubmitFunc(long formAutoId) {
+        WeekOrderM weekOrderM = findById(formAutoId);
+        ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.NOT_AUDIT.getValue(), "订单非已保存状态");
+        return null;
+    }
+
+    /**
+     * 提审后业务处理，如有异常返回错误信息
+     */
+    public String postSubmitFunc(long formAutoId) {
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), "提审失败");
+        return null;
+    }
+
+    /**
+     * 撤回审核业务处理，如有异常返回错误信息
+     */
+    public String postWithdrawFunc(long formAutoId) {
+        WeekOrderM weekOrderM = findById(formAutoId);
+        ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), "订单非待审批状态");
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
+        return null;
+    }
+
+    /**
+     * 从审批中，撤回到已保存，业务实现，如有异常返回错误信息
+     */
+    public String withdrawFromAuditting(long formAutoId) {
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+        return null;
+    }
+
+    /**
+     * 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
+     */
+    public String preWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 从已审核，撤回到已保存，业务实现，如有异常返回错误信息
+     */
+    public String postWithdrawFromAuditted(long formAutoId) {
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+        // 修改客户计划汇总
+        cusOrderSumService.algorithmSum();
         return null;
     }
 }
