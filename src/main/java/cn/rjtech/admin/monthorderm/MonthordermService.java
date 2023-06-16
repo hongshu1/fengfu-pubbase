@@ -409,6 +409,21 @@ public class MonthordermService extends BaseService<MonthOrderM> {
     }
 
     /**
+     * 实现反审之前的其他业务操作，如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        // 最后一个节点的反审，校验或其他业务处理
+        if (isLast) {
+            
+        }
+        return null;
+    }
+
+    /**
      * 实现反审之后的其他业务操作, 如有异常返回错误信息
      *
      * @param formAutoId 单据ID
