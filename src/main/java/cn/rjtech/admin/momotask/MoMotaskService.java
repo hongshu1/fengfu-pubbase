@@ -535,12 +535,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
     // </editor-fold>
 
     //<editor-fold desc="D根据任务单id获取班长maps，其他人员1maps1，其他人员2maps2">
-    Record leaderRec = new Record();
-    leaderRec.put("itype", "");
-    leaderRec.put("ipersonid", "");
-    leaderRec.put("cpsn_num", "");
-    leaderRec.put("cpsn_name", "");
-    List<Record> LeaderRecs = dbTemplate("getModocLeaderByTaskid", kv).find();
+    List<Record> LeaderRecs = dbTemplate("modocbatch.getModocLeaderByTaskid", kv).find();
     Map<String, Record> maps = new HashMap<>();
     Map<String, Record> maps1 = new HashMap<>();
     Map<String, Record> maps2 = new HashMap<>();
@@ -786,15 +781,24 @@ public class MoMotaskService extends BaseService<MoMotask> {
         record.put("cworkname", "");
         record.put("iinventoryid", "");
         record.put("iworkregionmid", "");
-        if (qty == (recordssize - 3)) {
-          for (Record workShift : workShifts) {
-            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec.put("", "").put("", "") : maps.get(workShift.getStr("dataid")));
+
+        for (Record workShift : workShifts) {
+          Record leaderRec = new Record();
+          leaderRec.put("itype", "");
+          leaderRec.put("ipersonid", "");
+          leaderRec.put("cpsn_num", "");
+          leaderRec.put("cpsn_name", "");
+          leaderRec.put("dataid", workShift.getStr("dataid"));
+          leaderRec.put("sdate", workShift.getStr("sdate"));
+          if (qty == (recordssize - 3)) {
+            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+          } else if (qty == (recordssize - 2)) {
+            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+          } else if (qty == (recordssize - 1)) {
+            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
           }
-        } else if (qty == (recordssize - 2)) {
-
-        } else if (qty == (recordssize - 1)) {
-
         }
+        record.put("udes", recordLisc);
         records.add(record);
       }
     }

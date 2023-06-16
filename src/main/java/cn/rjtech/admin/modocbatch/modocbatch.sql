@@ -223,7 +223,7 @@ WHERE
 #end
 
 #sql("getModocNoQtyNumByDocid")
-SELECT
+SELECT DISTINCT
 	iAutoId,
 	cMoDocNo,
 	iQty,
@@ -240,7 +240,7 @@ WHERE
 #end
 
 #sql("getModocLeaderByTaskid")
-SELECT
+SELECT DISTINCT
 	concat ( mm.iYear, mm.iMonth, mm.iDate, mm.iWorkShiftMid ) dataid,
 	concat ( mm.iYear, mm.iMonth, mm.iDate ) sdate,
 	md.iType,
@@ -259,7 +259,7 @@ ORDER BY
 #end
 
 #sql("getModocWorkShifts")
-SELECT
+SELECT  DISTINCT
 	concat ( iYear, iMonth, iDate, iWorkShiftMid ) dataid,
 	concat ( iYear, iMonth, iDate ) sdate
 FROM
