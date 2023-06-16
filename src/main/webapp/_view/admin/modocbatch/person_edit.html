@@ -221,6 +221,8 @@
 #define js()
 <script type="text/javascript" src="assets/plugins/Grape/gc.spread.sheets.all.12.0.7.min.js"></script>
 <script type="text/javascript">
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
     /**
      * @param Api 公共接口
      */
@@ -335,13 +337,34 @@
                 depname.value=respons.data.depname;
                 //渲染日期班次
                 let dateCol = 7;
+                let dateRow = 0;
                 // spread.getActiveSheet().setRowVisible(1, false);//隐藏第2行
+
                 for (let i = 0; i < tableHeadArray.length; i++) {
                     for (let j = 0; j < respons.data.datas[i].length; j++) {
-                        console.log(j)
-                        if(j<respons.data.datas[i].length){
-                            sheet.setValue(1, 7,respons.data.datas[i][j].weeks);
+                        if(i==0){
+                            // parms.activeSheet.setColumnWidth(dateCol+j, 150);//设置指定单元格的width
+                            console.log(respons.data.datas[i][j])
+                            sheet.setValue(dateRow, dateCol,respons.data.datas[i][j].yeartodate);
+                            parms.activeSheet.addSpan(0,7,1,respons.data.datas[i].length-1);
+                            // sheet.setValue(dateRow+1, dateCol+j,respons.data.datas[i][respons.data.datas[i].length-1].yeartodate);
+                            // console.log(respons.data.datas[i][j])
+                            // sheet.setValue(dateRow+2, dateCol+j,respons.data.datas[i][j].weeks);
+                            // parms.activeSheet.addSpan(dateRow+2,7,1,respons.data.datas[i].length-1);
+                            // sheet.setValue(dateRow+3, dateCol+j,respons.data.datas[i][j].cworkshiftcode);
+                        }else{
+                            // parms.activeSheet.setColumnWidth((respons.data.datas[i].length-1)*j+dateCol+j, 150);//设置指定单元格的width
+                            sheet.setValue(dateRow,(respons.data.datas[i].length-1)*j+dateCol,respons.data.datas[i][j].yeartodate);
+                            parms.activeSheet.addSpan(dateRow,(respons.data.datas[i].length-1)*j+dateCol,1,respons.data.datas[i].length-1);
+                            // sheet.setValue(dateRow+1,(respons.data.datas[i].length-1)*j+dateCol+j,respons.data.datas[i][j].yeartodate);
+                            // parms.activeSheet.addSpan(dateRow,(respons.data.datas[i].length-1)*j+dateCol,1,respons.data.datas[i].length-1);
+                            // sheet.setValue(dateRow,(respons.data.datas[i].length-1)*j+dateCol,respons.data.datas[i][j].yeartodate);
+                            // parms.activeSheet.addSpan(dateRow,(respons.data.datas[i].length-1)*j+dateCol,1,respons.data.datas[i].length-1);
                         }
+                        // if(j<respons.data.datas[i].length-1){
+
+                        // }
+                        // sheet.setValue(0, dateCol,respons.data.datas[i][j].weeks);
                         // console.log(respons.data.datas[i][j])
                         // sheet.setValue(rowIndex, serialCol,respons.data.datas[i][j]);
                         // parms.activeSheet.addSpan(0,7,1,3);
