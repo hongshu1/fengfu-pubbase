@@ -247,6 +247,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             if(null != iq && null != iq.getLong("iautoid")) {
                 rcvDocQcFormM.setIQcFormId(iq.getLong("iautoid"));
                 rcvDocQcFormM.setIStatus(1);
+                //设变号
+                rcvDocQcFormM.setCDcNo(iq.get("cDcCode"));
             }
         }else {
             rcvDocQcFormM.setIStatus(0);
@@ -402,19 +404,19 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                 sysPureceivedetail.setIsInitial("1");
                 arrayList.add(row.getStr("cinvcode"));
             }
-            //有一个存货是初物，存货编码一致的都是初物
-            if(null != arrayList){
-                for (String al : arrayList){
-                    for (SysPureceivedetail sd :sysdetaillist){
-                        //通过条码查询 存货id
-                        Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", sd.getBarcode())).findFirst();
-                        if(al.equals(barcode.getStr("cInvCode"))){
-                            sd.setIsInitial("1");
-                        }
+            sysdetaillist.add(sysPureceivedetail);
+        }
+        //有一个存货是初物，存货编码一致的都是初物 (第一条是，第二条不是无法guo)
+        if(null != arrayList){
+            for (String al : arrayList){
+                for (SysPureceivedetail sd :sysdetaillist){
+                    //通过条码查询 存货id
+                    Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", sd.getBarcode())).findFirst();
+                    if(al.equals(barcode.getStr("cInvCode"))){
+                        sd.setIsInitial("1");
                     }
                 }
             }
-            sysdetaillist.add(sysPureceivedetail);
         }
         syspureceivedetailservice.batchSave(sysdetaillist);
     }

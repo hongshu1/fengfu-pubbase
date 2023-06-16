@@ -118,3 +118,13 @@ where t1.iFormApprovaldRoleId = '#(id)'
 #sql("findListBySid")
 select * from Bd_FormApprovalD where iAutoId in (#(approvaldIdStr))
 #end
+
+#sql("findPersonUser")
+select t1.cPsn_Name as cpsnname, t2.user_id as iuserid
+from Bd_Person t1
+         left join #(getBaseDbName()).dbo.base_user_org t2 on t2.iPersonId = t1.iAutoId
+where t1.cPsn_Num = '#(code)'
+#if(orgId)
+  and t1.iOrgId = '#(orgId)'
+#end
+#end

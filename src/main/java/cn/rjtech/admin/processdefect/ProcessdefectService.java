@@ -5,12 +5,13 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.operation.OperationService;
 import cn.rjtech.admin.specmaterialsrcvm.SpecMaterialsRcvMService;
-import cn.rjtech.model.momdata.Operation;
-import cn.rjtech.model.momdata.ProcessDefect;
-import cn.rjtech.model.momdata.SpecMaterialsRcvM;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -37,6 +38,11 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 
 	@Inject
 	private OperationService operationService;//工序
+
+	@Inject
+	private MoDocService moDocService;
+	@Inject
+	private DepartmentService departmentService;
 
 	@Override
 	protected ProcessDefect dao() {
@@ -199,7 +205,66 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 		//这里用来覆盖 检测ProcessDefect是否被其它表引用
 		return null;
 	}
+	public void editProcessDefect(Kv formRecord){
+		Date now=new Date();
+		MoDoc moDoc=moDocService.findById(formRecord.getLong("imodocid"));
+		ValidationUtils.notNull(moDoc,"工单信息不存在");
+		ProcessDefect processDefect=new ProcessDefect();
+		processDefect.setIMoDocId(moDoc.getIAutoId());
+		processDefect.setIInventoryId(moDoc.getIInventoryId());
+		//部门
+		processDefect.setIDepartmentId(moDoc.getIDepartmentId());
+		//处置区分
+		processDefect.setCApproach(formRecord.getStr("capproach"));
+		//不良数量
+		processDefect.setIDqQty(formRecord.getBigDecimal("idqqty"));
+		//责任区分
+		processDefect.setIRespType(formRecord.getInt("iresptype"));
+        //不良项目
+		processDefect.setCBadnessSns(formRecord.getStr("cbadnesssns"));
+        //首发
+		processDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
+       //不良内容描述
+		processDefect.setCDesc(formRecord.getStr("cdesc"));
 
+		processDefect.setCoperationname(formRecord.getStr("processname"));
+
+		processDefect.setIOperationId(formRecord.getLong("ioperationid"));
+		tx(() -> {
+			if (notOk(formRecord.getLong("iautoid"))) {
+				String billNo = BillNoUtils.getcDocNo(getOrgId(), "YCP", 5);
+				processDefect.setIStatus(1);
+				processDefect.setIOrgId(getOrgId());
+				processDefect.setCOrgCode(getOrgCode());
+				processDefect.setCOrgName(getOrgName());
+				processDefect.setICreateBy(JBoltUserKit.getUserId());
+				processDefect.setCCreateName(JBoltUserKit.getUserName());
+				processDefect.setDCreateTime(now);
+				processDefect.setIUpdateBy(JBoltUserKit.getUserId());
+				processDefect.setCUpdateName(JBoltUserKit.getUserName());
+				processDefect.setDUpdateTime(now);
+				processDefect.setDDemandDate(now);//需求日期
+				processDefect.save();
+			} else {
+				ProcessDefect record = findById(formRecord.getLong("iautoid"));
+				ValidationUtils.notNull(record, JBoltMsg.DATA_NOT_EXIST);
+
+				//已审批
+				if (record.getIStatus() != null && record.getIStatus().equals(3)) {
+					ValidationUtils.error("单据已审批,不允许操作");
+				}
+				processDefect.setIUpdateBy(JBoltUserKit.getUserId());
+				processDefect.setCUpdateName(JBoltUserKit.getUserName());
+				processDefect.setDUpdateTime(now);
+				processDefect.update();
+
+			}
+			return  true;
+		});
+
+
+
+	}
 	//更新状态并保存数据方法
 	public Ret updateEditTable(Kv formRecord) {
 		Date now = new Date();

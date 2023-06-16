@@ -342,11 +342,11 @@ public class SysAssemService extends BaseService<SysAssem> {
         }
 
         User user = JBoltUserKit.getUser();
-        Map<String, Object> data = new HashMap<>();
+        JSONObject data = new JSONObject();
 
-        data.put("userCode", user.getUsername());
-        data.put("organizeCode", this.getdeptid());
-        data.put("token", "");
+        data.set("userCode", user.getUsername());
+        data.set("organizeCode", this.getdeptid());
+        data.set("token", "");
 
         JSONObject preallocate = new JSONObject();
 
@@ -359,9 +359,9 @@ public class SysAssemService extends BaseService<SysAssem> {
         preallocate.set("tag", "AssemVouch");
         preallocate.set("type", "AssemVouch");
 
-        data.put("PreAllocate", preallocate);
+        data.set("PreAllocate", preallocate);
+        ArrayList<Object> maindata = new ArrayList<>();
 
-        JSONArray maindata = new JSONArray();
         sysassemdetail.stream().forEach(s -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("IWhCode", s.getWhCode());
@@ -388,9 +388,9 @@ public class SysAssemService extends BaseService<SysAssem> {
             jsonObject.set("VouchTemplate", "");
             jsonObject.set("RowNo", s.getRowNo());
 
-            maindata.put(jsonObject);
+            maindata.add(jsonObject);
         });
-        data.put("MainData", maindata);
+        data.set("MainData", maindata);
 
         //            请求头
         Map<String, String> header = new HashMap<>(5);

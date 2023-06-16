@@ -226,6 +226,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
                 monthorderm.setDUpdateTime(now);
                 ValidationUtils.isTrue(monthorderm.update(), ErrorMsg.UPDATE_FAILED);
             }
+
             saveTableSubmitDatas(jBoltTable, monthorderm);
             updateTableSubmitDatas(jBoltTable);
             deleteTableSubmitDatas(jBoltTable);
@@ -239,7 +240,9 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     private void saveTableSubmitDatas(JBoltTable jBoltTable, MonthOrderM monthorderm) {
         List<Record> list = jBoltTable.getSaveRecordList();
-        ValidationUtils.notEmpty(list, JBoltMsg.PARAM_ERROR);
+        if (notOk(list)) {
+            return;
+        }
 
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
