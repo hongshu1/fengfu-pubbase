@@ -985,6 +985,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         //TODO:根据层级及日期获取月周生产计划表数据
         List<Record> getWeekScheduPlanList = getWeekScheduPlanList(kv);
 
+        //key:产线id   value:产线名称
+        Map<Long, String> workMap = new HashMap<>();
         //key:产线id   value:List物料集
         Map<Long, List<String>> workInvListMap = new HashMap<>();
         //key:inv，   value:<yyyy-MM-dd，Record>
@@ -1030,6 +1032,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             if (!invInfoMap.containsKey(cInvCode)) {
                 invInfoMap.put(cInvCode, record);
             }
+            workMap.put(iWorkRegionMid,record.get("cWorkName"));
 
             if (!idList.contains(invId)) {
                 idsJoin = idsJoin + invId + ",";
@@ -1084,6 +1087,11 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         int seq = 1;
         //循环产线
         for (Long WorkIdKey : workInvListMap.keySet()) {
+            //产线包物料集
+            Map<String, Object> masMap = new HashMap<>();
+            masMap.put("cWorkName",workMap.get(WorkIdKey));
+            List<Map> childList = new ArrayList<>();
+
             //物料集
             List<String> invList = workInvListMap.get(WorkIdKey);
             //循环物料
@@ -1111,20 +1119,20 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 int qiChuZaiKu = lastDateZKQtyMap.get(info.getStr("cInvCode")) != null ? lastDateZKQtyMap.get(info.getStr("cInvCode")) : 2000;
 
 
-                Map<String, Object> map = new HashMap<>();
-                map.put("seq", seq++);
-                map.put("iPsLevel", info.getInt("iPsLevel"));
-                map.put("cWorkName", info.getStr("cWorkName"));
-                map.put("cInvCode", info.getStr("cInvCode"));
-                map.put("cInvCode1", info.getStr("cInvCode1"));
-                map.put("cInvName1", info.getStr("cInvName1"));
-                map.put("qiChuOneS", qiChuOneS);
-                map.put("qiChuTwoS", qiChuTwoS);
-                map.put("qiChuThreeS", qiChuThreeS);
-                map.put("dayNum", iInnerInStockDays);
-                map.put("qiChuZaiKu", qiChuZaiKu);
+                Map<String, Object> invObjMap = new HashMap<>();
+                invObjMap.put("seq", seq++);
+                invObjMap.put("iPsLevel", info.getInt("iPsLevel"));
+                invObjMap.put("cWorkName", info.getStr("cWorkName"));
+                invObjMap.put("cInvCode", info.getStr("cInvCode"));
+                invObjMap.put("cInvCode1", info.getStr("cInvCode1"));
+                invObjMap.put("cInvName1", info.getStr("cInvName1"));
+                invObjMap.put("qiChuOneS", qiChuOneS);
+                invObjMap.put("qiChuTwoS", qiChuTwoS);
+                invObjMap.put("qiChuThreeS", qiChuThreeS);
+                invObjMap.put("dayNum", iInnerInStockDays);
+                invObjMap.put("qiChuZaiKu", qiChuZaiKu);
 
-                List<Object> objectList = new ArrayList<>();
+                List<Object> planList = new ArrayList<>();
                 Map<String, Record> planDateMap = invPlanDateMap.get(inv);
                 for (String date : planDateMap.keySet()) {
                     Record record = planDateMap.get(date);
@@ -1142,11 +1150,13 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     if (DateUtils.parseDate(date).getTime() <= lockPreDate.getTime()) {
                         dataMap.put("lock", true);//已锁定不可编辑
                     }
-                    objectList.add(dataMap);
+                    planList.add(dataMap);
                 }
-                map.put("day", objectList);
-                dataList.add(map);
+                invObjMap.put("day", planList);
+                childList.add(invObjMap);
             }
+            masMap.put("childList", childList);
+            dataList.add(masMap);
         }
         return dataList;
     }

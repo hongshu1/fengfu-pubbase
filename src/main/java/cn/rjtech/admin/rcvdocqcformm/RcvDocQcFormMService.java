@@ -127,7 +127,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         InventoryQcForm inventoryQcForm = inventoryQcFormService.findById(iQcFormId);
         ValidationUtils.notNull(inventoryQcForm, "检验表格不存在，请先维护检验表格！！！");
 
-        List<Record> recordList = dbTemplate("rcvdocqcformm.getCheckoutList", Kv.by("iqcformid", inventoryQcForm.getIQcFormId())).find();
+        List<Record> recordList = dbTemplate("rcvdocqcformm.getCheckoutList", Kv.by("iqcformid", inventoryQcForm.getIQcFormId()))
+            .find();
         if (recordList.isEmpty()) {
             return fail(cqcformname + "：没有检验项目，无法生成来料检查表，请先维护检验项目！！！");
         }
@@ -151,8 +152,21 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
 
         //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检：1”
         rcvDocQcFormM.setIStatus(1);
-        ValidationUtils.isTrue(rcvDocQcFormM.update(),"生成失败！");
+        ValidationUtils.isTrue(rcvDocQcFormM.update(), "生成失败！");
         return SUCCESS;
+    }
+
+    /*
+     * 生成的公共方法
+     * */
+    public void commCreateTable(String iqcformid) {
+        List<Record> recordList = dbTemplate("rcvdocqcformm.getCheckoutList", Kv.by("iqcformid", iqcformid))
+            .find();
+        ValidationUtils.notEmpty(recordList,"：没有维护需要检查项目，无法检验！！！");
+        tx(() -> {
+
+            return true;
+        });
     }
 
     /**
@@ -240,24 +254,20 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     /*
      * 判断生成异常品单，还是采购入库单
      * */
-    public Boolean saveSysPuinstore(String isok, Long docqcformmiautoid, RcvDocQcFormM docQcFormM) {
-        boolean flag = true;
-        if (Integer.valueOf(isok).equals(IsOkEnum.NO.getValue())) {//如果结果为不合格，记录不良品
+    public void saveSysPuinstore(String isok, Long docqcformmiautoid, RcvDocQcFormM docQcFormM) {
+        if (Integer.valueOf(isok).equals(IsOkEnum.NO.getValue())) {//如果结果为不合格，生成“来料异常品记录”
             RcvDocDefect defect = rcvDocDefectService
                 .findStockoutDefectByiRcvDocQcFormMid(docqcformmiautoid);
             if (null == defect) {
                 RcvDocDefect rcvDocDefect = new RcvDocDefect();
                 rcvDocDefectService.saveRcvDocDefectModel(rcvDocDefect, docQcFormM);
-                Ret success = rcvDocDefectService.save(rcvDocDefect);
-                flag = success.isOk();
+                ValidationUtils.isTrue(rcvDocDefect.save(), "创建来料异常品记录单据失败");
             }
         } else if (Integer.valueOf(isok).equals(IsOkEnum.YES.getValue())) {//如果合格，自动生成采购入库单
             SysPuinstore sysPuinstore = new SysPuinstore();
             saveSysPuinstoreModel(sysPuinstore, docQcFormM);
-            // Ret success = sysPuinstoreService.save(sysPuinstore);
-            //flag =success.isOk();
+            //ValidationUtils.isTrue(sysPuinstore.save(),"创建采购入库单据失败");
         }
-        return flag;
     }
 
     /*
@@ -269,17 +279,24 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         sysPuinstore.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
         sysPuinstore.setBillType("");//到货单类型：采购PO  委外OM
         sysPuinstore.setOrganizeCode(getOrgCode());//组织编码
-        sysPuinstore.setBillNo(""); //入库单号
-        sysPuinstore.setBillDate(new Date().toString()); //入库日期
+        sysPuinstore.setBillNo(String.valueOf(JBoltSnowflakeKit.me.nextId())); //入库单号
+        sysPuinstore.setBillDate(String.valueOf(date)); //入库日期
+        sysPuinstore.setRdCode("收发类别（入库类别编码）");
         sysPuinstore.setVenCode(vendor.getCVenCode()); //供应商编码
-        sysPuinstore.setMemo("");
+        sysPuinstore.setMemo(docQcFormM.getCMemo());
         sysPuinstore.setCCreateName(JBoltUserKit.getUserName());
         sysPuinstore.setDCreateTime(date);
-        sysPuinstore.setCAuditName("");//审核人
-        sysPuinstore.setAuditDate(date);//审核日期
-        sysPuinstore.setDUpdateTime(date);//修改日期
-        sysPuinstore.setCUpdateName("");//修改人
-        sysPuinstore.setIAuditStatus(1);//状态 1已保存 2待审批 3已审批 4审批不通过
+        //状态 0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+        sysPuinstore.setIAuditStatus(0);
+        sysPuinstore.setDeptCode("部门code");
+        sysPuinstore.setSourceBillNo("");
+        sysPuinstore.setSourceBillID("");
+        sysPuinstore.setWhCode("");
+        sysPuinstore.setWhName("");
+        sysPuinstore.setIAuditWay(0);
+        sysPuinstore.setIsDeleted(false);
+        sysPuinstore.setIBusType(0);
+        sysPuinstore.setICreateBy(JBoltUserKit.getUserId());
     }
 
     /**

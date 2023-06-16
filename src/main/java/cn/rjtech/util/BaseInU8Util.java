@@ -4,6 +4,8 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.rjtech.config.AppConfig;
+import cn.rjtech.util.xml.XmlUtil;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.log.Log;
@@ -54,22 +56,43 @@ public class BaseInU8Util {
      * 通知U8删除采购入库单
      * */
     public String deleteVouchProcessDynamicSubmitUrl(String json) {
-        String vouchSumbmitUrl = AppConfig.deleteVouchProcessDynamicSubmitUrl();
-        String post = HttpUtil.post(vouchSumbmitUrl, json);
-        JSONObject res = JSON.parseObject(post);
+        //1、先调用采购入库弃审接口
+        String vouchSumbmitUrl = AppConfig.inUnVouchProcessDynamicSubmitUrl();
+        String inUnVouchGet = HttpUtil.get(vouchSumbmitUrl + "?dataJson=" + json);
+//        String post = HttpUtil.post(vouchSumbmitUrl, "dataJson=" + json);
 
-        ValidationUtils.notNull(res, "解析JSON为空");
-        String code = res.getString("code");
-        String message = StrUtil.nullToDefault(res.getString("message"), res.getString("msg"));
+        String res = XmlUtil.readObjectFromXml(inUnVouchGet);
+        JSONObject jsonObject = JSON.parseObject(res);
+
+        ValidationUtils.notNull(jsonObject, "解析JSON为空");
+        String code = jsonObject.getString("code");
+        String message = StrUtil.nullToDefault(jsonObject.getString("message"), jsonObject.getString("msg"));
         LOG.info("res: {}", res);
 
-        if (ObjUtil.equal(res.getString("state"), "fail")) {
+        if (ObjUtil.equal(jsonObject.getString("state"), "fail")) {
             ValidationUtils.error(message);
         }
-
         ValidationUtils.notNull(code, "json:" + json + ";" + message);
-        ValidationUtils.equals(code, "200", code + ";" + "json:" + json + ";" + message);
-        return post;
+        ValidationUtils.equals(code, "200", message);
+
+        //2、再调用采购入库u8删除接口，删除u8数据
+        String deleteUrl = AppConfig.deleteVouchProcessDynamicSubmitUrl();
+        String deleteGet = HttpUtil.get(deleteUrl + "?dataJson=" + json);
+        String deleteRes = XmlUtil.readObjectFromXml(deleteGet);
+        JSONObject deleteJsonObject = JSON.parseObject(deleteRes);
+
+        ValidationUtils.notNull(deleteJsonObject, "解析JSON为空");
+        String deleteCode = deleteJsonObject.getString("code");
+        String deleteMessage = StrUtil.nullToDefault(deleteJsonObject.getString("message"), deleteJsonObject.getString("msg"));
+        LOG.info("deleteRes: {}", deleteRes);
+
+        if (ObjUtil.equal(deleteJsonObject.getString("state"), "fail")) {
+            ValidationUtils.error(deleteMessage);
+        }
+        ValidationUtils.notNull(deleteCode, "json:" + json + ";" + deleteMessage);
+        ValidationUtils.equals(deleteCode, "200", deleteMessage);
+
+        return code;
     }
 
     /**

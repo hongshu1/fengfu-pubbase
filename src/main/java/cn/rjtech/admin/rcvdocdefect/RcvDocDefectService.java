@@ -265,29 +265,26 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 	}
 
 	public void saveRcvDocDefectModel(RcvDocDefect rcvDocDefect, RcvDocQcFormM docQcFormM) {
-		rcvDocDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		//rcvDocDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		Date date = new Date();
 		Long userId = JBoltUserKit.getUserId();
 		String userName = JBoltUserKit.getUserName();
 		rcvDocDefect.setCDocNo(docQcFormM.getCRcvDocQcFormNo());     //异常品单号
-		rcvDocDefect.setIRcvDocQcFormMid(docQcFormM.getIAutoId());   //出库检id
+		rcvDocDefect.setIRcvDocQcFormMid(docQcFormM.getIAutoId());   //来料检id
 		rcvDocDefect.setIInventoryId(docQcFormM.getIInventoryId());  //存货ID
 		rcvDocDefect.setIVendorId(docQcFormM.getIVendorId());        //供应商id
 		rcvDocDefect.setIStatus(1);                                  //状态：1. 待记录 2. 待判定 3. 已完成
-		rcvDocDefect.setIDqQty(new BigDecimal(0));                   //不合格数量
+		rcvDocDefect.setIDqQty(new BigDecimal(docQcFormM.getIQty()));//不合格数量
 		rcvDocDefect.setCDesc(docQcFormM.getCMemo());                //不良内容描述
-		rcvDocDefect.setIQcUserId(docQcFormM.getIQcUserId());        //检验用户ID
-		rcvDocDefect.setDQcTime(docQcFormM.getDUpdateTime());        //检验时间
-
 		rcvDocDefect.setICreateBy(userId);
 		rcvDocDefect.setDCreateTime(date);
 		rcvDocDefect.setCCreateName(userName);
 		rcvDocDefect.setIOrgId(getOrgId());
 		rcvDocDefect.setCOrgCode(getOrgCode());
 		rcvDocDefect.setCOrgName(getOrgName());
-		rcvDocDefect.setIUpdateBy(userId);
-		rcvDocDefect.setCUpdateName(userName);
-		rcvDocDefect.setDUpdateTime(date);
+//		rcvDocDefect.setIQcUserId(docQcFormM.getIQcUserId());        //检验用户ID
+//		rcvDocDefect.setDQcTime(docQcFormM.getDUpdateTime());        //检验时间
+//		rcvDocDefect.setCBadnessSns("不良项目");
 	}
 
 	/*

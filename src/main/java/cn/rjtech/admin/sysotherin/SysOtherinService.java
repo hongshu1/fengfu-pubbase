@@ -287,11 +287,12 @@ public class SysOtherinService extends BaseService<SysOtherin> {
         }
 
         User user = JBoltUserKit.getUser();
-        Map<String, Object> data = new HashMap<>();
+        JSONObject data = new JSONObject();
 
-        data.put("userCode",user.getUsername());
-        data.put("organizeCode",this.getdeptid());
-        data.put("token","");
+
+        data.set("userCode",user.getUsername());
+        data.set("organizeCode",this.getdeptid());
+        data.set("token","");
 
         JSONObject preallocate = new JSONObject();
 
@@ -304,9 +305,8 @@ public class SysOtherinService extends BaseService<SysOtherin> {
         preallocate.set("tag","OtherIn");
         preallocate.set("type","OtherIn");
 
-        data.put("PreAllocate",preallocate);
-
-        JSONArray maindata = new JSONArray();
+        data.set("PreAllocate",preallocate);
+        ArrayList<Object> maindata = new ArrayList<>();
         sysotherindetail.stream().forEach(s -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("invstd","");
@@ -334,9 +334,10 @@ public class SysOtherinService extends BaseService<SysOtherin> {
             jsonObject.set("IRdName","其他入库");
             jsonObject.set("IRdCode","101");
 
-            maindata.put(jsonObject);
+            maindata.add(jsonObject);
         });
-        data.put("MainData",maindata);
+        data.set("MainData",maindata);
+        System.out.println(data);
 
         //            请求头
         Map<String, String> header = new HashMap<>(5);
@@ -347,7 +348,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
             String post = HttpApiUtils.httpHutoolPost(url, data, header);
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
-                if ("201".equals(jsonObject.getString("code"))) {
+                if ("200".equals(jsonObject.getString("code"))) {
                     return Ret.ok().setOk().data(jsonObject);
                 }
             }
@@ -375,7 +376,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // 更新状态
@@ -448,7 +449,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
     public Ret noProcess(String ids) {
         tx(() -> {
             //业务逻辑
-            this.check(String.valueOf(ids));
+            this.checkbelow(ids);
             //反审，调用删除U8数据接口
             String[] split = ids.split(",");
             for (String s : split) {
@@ -496,7 +497,21 @@ public class SysOtherinService extends BaseService<SysOtherin> {
         }
 
     }
+    public void checkbelow(String ids) {
+        String[] split = ids.split(",");
+        for (String p : split) {
+            List<SysOtherin> sysOtherins = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
+            for (SysOtherin s : sysOtherins) {
+                if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！");
+                }
+                if ("1".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！");
+                }
 
+            }
+        }
+    }
 
 
 

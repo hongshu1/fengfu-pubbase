@@ -19,7 +19,6 @@ import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
-import cn.rjtech.model.momdata.SysPureceive;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -325,11 +324,11 @@ public class SysProductinService extends BaseService<SysProductin> {
         }
 
         User user = JBoltUserKit.getUser();
-        Map<String, Object> data = new HashMap<>();
+        JSONObject data = new JSONObject();
 
-        data.put("userCode",user.getUsername());
-        data.put("organizeCode",this.getdeptid());
-        data.put("token","");
+        data.set("userCode",user.getUsername());
+        data.set("organizeCode",this.getdeptid());
+        data.set("token","");
 
         JSONObject preallocate = new JSONObject();
 
@@ -344,7 +343,7 @@ public class SysProductinService extends BaseService<SysProductin> {
 
         data.put("PreAllocate",preallocate);
 
-        JSONArray maindata = new JSONArray();
+        ArrayList<Object> maindata = new ArrayList<>();
         sysproductindetail.stream().forEach(s -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("Tag","ProductionIn");
@@ -379,9 +378,9 @@ public class SysProductinService extends BaseService<SysProductin> {
             jsonObject.set("IRdName","生产入库");
             jsonObject.set("IRdCode","101");
 
-            maindata.put(jsonObject);
+            maindata.add(jsonObject);
         });
-        data.put("MainData",maindata);
+        data.set("MainData",maindata);
 
         //            请求头
         Map<String, String> header = new HashMap<>(5);
@@ -419,7 +418,7 @@ public class SysProductinService extends BaseService<SysProductin> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(), "cn.rjtech.admin.sysproductin.SysProductinService");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.sysproductin.SysProductinService");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             return true;
@@ -533,5 +532,19 @@ public class SysProductinService extends BaseService<SysProductin> {
         }
 
     }
+    public void checkbelow(String ids) {
+        String[] split = ids.split(",");
+        for (String p : split) {
+            List<SysProductin> sysProductins = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
+            for (SysProductin s : sysProductins) {
+                if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！");
+                }
+                if ("1".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！");
+                }
 
+            }
+        }
+    }
 }

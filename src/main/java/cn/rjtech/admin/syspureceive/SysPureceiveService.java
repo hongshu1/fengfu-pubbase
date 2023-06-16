@@ -32,7 +32,6 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -248,6 +247,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             if(null != iq && null != iq.getLong("iautoid")) {
                 rcvDocQcFormM.setIQcFormId(iq.getLong("iautoid"));
                 rcvDocQcFormM.setIStatus(1);
+                //设变号
+                rcvDocQcFormM.setCDcNo(iq.get("cDcCode"));
             }
         }else {
             rcvDocQcFormM.setIStatus(0);
@@ -608,7 +609,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(), "cn.rjtech.admin.syspureceive.SysPureceiveService");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.syspureceive.SysPureceiveService");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             return true;

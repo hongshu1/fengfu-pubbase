@@ -325,7 +325,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 	 */
 	public Ret submit(Long iautoid) {
 		tx(() -> {
-			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"T_Sys_OtherOut");
+			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"T_Sys_OtherOut");
 			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
 			// 处理其他业务
@@ -576,11 +576,11 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 		}
 
 		User user = JBoltUserKit.getUser();
-		Map<String, Object> data = new HashMap<>();
+		JSONObject data = new JSONObject();
 
-		data.put("userCode",user.getUsername());
-		data.put("organizeCode",this.getdeptid());
-		data.put("token","");
+		data.set("userCode",user.getUsername());
+		data.set("organizeCode",this.getdeptid());
+		data.set("token","");
 
 		JSONObject preallocate = new JSONObject();
 
@@ -595,7 +595,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 
 		data.put("PreAllocate",preallocate);
 
-		JSONArray maindata = new JSONArray();
+		ArrayList<Object> maindata = new ArrayList<>();
 		otheroutdetail.stream().forEach(s -> {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.set("invstd","");
@@ -620,9 +620,9 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 			jsonObject.set("ODeptName","");
 			jsonObject.set("ORdType",otherout.getType());
 
-			maindata.put(jsonObject);
+			maindata.add(jsonObject);
 		});
-		data.put("MainData",maindata);
+		data.set("MainData",maindata);
 
 		//            请求头
 		Map<String, String> header = new HashMap<>(5);
