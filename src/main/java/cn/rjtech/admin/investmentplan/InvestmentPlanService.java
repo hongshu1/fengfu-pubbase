@@ -21,6 +21,7 @@ import cn.rjtech.admin.barcodeencodingm.BarcodeencodingmService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
 import cn.rjtech.admin.expensebudgetitem.ExpenseBudgetItemService;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.investmentplanitem.InvestmentPlanItemService;
 import cn.rjtech.admin.investmentplanitemd.InvestmentPlanItemdService;
 import cn.rjtech.admin.period.PeriodService;
@@ -78,6 +79,8 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 	private ExpenseBudgetService expenseBudgetService;
 	@Inject
 	private BarcodeencodingmService barcodeencodingmService;
+	@Inject
+    private FormApprovalService formApprovalService;
 	@Override
 	protected InvestmentPlan dao() {
 		return dao;
@@ -109,7 +112,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 	 * @return
 	 */
 	public Ret save(InvestmentPlan investmentPlan) {
-		if(investmentPlan==null || isOk(investmentPlan.getIautoid())) {
+		if(investmentPlan==null || isOk(investmentPlan.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 
@@ -124,7 +127,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		});
 
 		// 添加日志
-		// addSaveSystemLog(investmentPlan.getIautoid(), JBoltUserKit.getUserId(), investmentPlan.getName());
+		// addSaveSystemLog(investmentPlan.getIAutoId(), JBoltUserKit.getUserId(), investmentPlan.getName());
 		return SUCCESS;
 	}
 
@@ -132,13 +135,13 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 	 * 更新
 	 */
 	public Ret update(InvestmentPlan investmentPlan) {
-		if(investmentPlan==null || notOk(investmentPlan.getIautoid())) {
+		if(investmentPlan==null || notOk(investmentPlan.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 
 		tx(() -> {
 			// 更新时需要判断数据存在
-			InvestmentPlan dbInvestmentPlan = findById(investmentPlan.getIautoid());
+			InvestmentPlan dbInvestmentPlan = findById(investmentPlan.getIAutoId());
 			ValidationUtils.notNull(dbInvestmentPlan, JBoltMsg.DATA_NOT_EXIST);
 
 			// TODO 其他业务代码实现
@@ -150,7 +153,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		});
 
 		//添加日志
-		//addUpdateSystemLog(investmentPlan.getIautoid(), JBoltUserKit.getUserId(), investmentPlan.getName());
+		//addUpdateSystemLog(investmentPlan.getIAutoId(), JBoltUserKit.getUserId(), investmentPlan.getName());
 		return SUCCESS;
 	}
 	public void deleteInvestmentPlanItem(Long iplanid){
@@ -194,7 +197,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 	 */
 	@Override
 	protected String afterDelete(InvestmentPlan investmentPlan, Kv kv) {
-		//addDeleteSystemLog(investmentPlan.getIautoid(), JBoltUserKit.getUserId(),investmentPlan.getName());
+		//addDeleteSystemLog(investmentPlan.getIAutoId(), JBoltUserKit.getUserId(),investmentPlan.getName());
 		return null;
 	}
 
@@ -338,10 +341,10 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
         }
         if(iplanid != null){
         	InvestmentPlan investmentPlan = new InvestmentPlan();
-        	investmentPlan.setIautoid(iplanid);
-        	investmentPlan.setCdepcode(cdepcode);
-        	investmentPlan.setIbudgettype(ibudgetTypeDb);
-        	investmentPlan.setIbudgetyear(ibudgetYearDb);
+        	investmentPlan.setIAutoId(iplanid);
+        	investmentPlan.setCDepCode(cdepcode);
+        	investmentPlan.setIBudgetType(ibudgetTypeDb);
+        	investmentPlan.setIBudgetYear(ibudgetYearDb);
         	tx(()->{
         		deleteInvestmentPlanItem(iplanid);
         		saveInvestmentPlanItemForSubmitTable(excelRowList,investmentPlan,JBoltUserKit.getUserId(),new Date());
@@ -524,19 +527,19 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		Date now = new Date();
 		InvestmentPlan investmentPlan = jBoltTable.getFormModel(InvestmentPlan.class, "investmentPlan");
 		//从启用期间中获取预算类型和预算年度
-		Integer iBudgetType = investmentPlan.getIbudgettype();
-		Integer iBudgetYear = investmentPlan.getIbudgetyear();
-		String cdepcode = investmentPlan.getCdepcode();
+		Integer iBudgetType = investmentPlan.getIBudgetType();
+		Integer iBudgetYear = investmentPlan.getIBudgetYear();
+		String cdepcode = investmentPlan.getCDepCode();
 		InvestmentPlan investmentPlanDbs = findModelByYearAndType(iBudgetYear, iBudgetType,cdepcode);
 		ValidationUtils.isTrue(investmentPlanDbs == null, "投资计划已创建，请重复操作!");
 		tx(()->{
 			Long userId = JBoltUserKit.getUserId();
-			investmentPlan.setIorgid(getOrgId());
-			investmentPlan.setCorgcode(getOrgCode());
-			investmentPlan.setIauditstatus(AuditStatusEnum.NOT_AUDIT.getValue());
-			investmentPlan.setIeffectivestatus(EffectiveStatusEnum.INVAILD.getValue());
-			investmentPlan.setIcreateby(userId);
-			investmentPlan.setDcreatetime(now);
+			investmentPlan.setIOrgId(getOrgId());
+			investmentPlan.setCOrgCode(getOrgCode());
+			investmentPlan.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+			investmentPlan.setIEffectiveStatus(EffectiveStatusEnum.INVAILD.getValue());
+			investmentPlan.setICreateBy(userId);
+			investmentPlan.setDCreateTime(now);
 			ValidationUtils.isTrue(investmentPlan.save(), ErrorMsg.SAVE_FAILED);
 			List<Record> listRecord = jBoltTable.getSaveRecordList();
 			saveInvestmentPlanItemForSubmitTable(listRecord,investmentPlan,userId,now);
@@ -702,7 +705,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 			 * 		项目总金额-实绩/预测/修订和预算年份的项目总金额-实绩/预测/修订金额金额为1-6期的金额合计
 			 * */
 			BigDecimal iamountTotal = calculateTotalAmount(investmentPlanItemdList);
-			BigDecimal iamountTotalYear = calculateTotalAmount(investmentPlanItemdList,investmentPlan.getIbudgetyear());
+			BigDecimal iamountTotalYear = calculateTotalAmount(investmentPlanItemdList,investmentPlan.getIBudgetYear());
 			if(JBoltStringUtil.isBlank(cplanno)){
 				iTotalAmountPlan = iamountTotal;
 				iYearTotalAmountPlan = iamountTotalYear;
@@ -713,7 +716,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 				iYearTotalAmountActual = iamountTotalYear;
 			}
 			if(JBoltStringUtil.isBlank(cplanno))
-				cplanno = getCplanno(Kv.by("iautoid", investmentPlan.getIautoid()).set("iinvestmenttype",row.getStr("iinvestmenttype")));
+				cplanno = getCplanno(Kv.by("iautoid", investmentPlan.getIAutoId()).set("iinvestmenttype",row.getStr("iinvestmenttype")));
 			row.set("cplanno", cplanno)
 			.set("isscheduled", IsScheduledEnum.WITHIN_PLAN.getValue())
 			.set("itotalamountplan", iTotalAmountPlan)
@@ -722,7 +725,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 			.set("iYearTotalAmountActual", iYearTotalAmountActual)
 			.set("icreateby", userId)
 			.set("dcreatetime",now)
-			.set("iplanid", investmentPlan.getIautoid())
+			.set("iplanid", investmentPlan.getIAutoId())
 			.set("iamounttotal", iamountTotal)
 			.set("iautoid", iInvestmentPlanItemId);
 			InvestmentPlanItem investmentPlanItem = JBoltModelKit.getFromBean(InvestmentPlanItem.class, JSONObject.parseObject(row.toJson()));
@@ -737,7 +740,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		ValidationUtils.notNull(jBoltTable, "参数不能为空");
 		Date now = new Date();
 		InvestmentPlan investmentPlan = jBoltTable.getFormModel(InvestmentPlan.class, "investmentPlan");
-		Long iInvestmentPlanId = investmentPlan.getIautoid();
+		Long iInvestmentPlanId = investmentPlan.getIAutoId();
 		InvestmentPlan investmentPlanDbs = findById(iInvestmentPlanId);
 		tx(()->{
 			Long userId = JBoltUserKit.getUserId();
@@ -764,7 +767,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 					 * 		项目总金额-实绩/预测/修订和预算年份的项目总金额-实绩/预测/修订金额金额为1-6期的金额合计
 					 * */
 					BigDecimal iamountTotal = calculateTotalAmount(investmentPlanItemdList);
-					BigDecimal iamountTotalYear = calculateTotalAmount(investmentPlanItemdList,investmentPlan.getIbudgetyear());
+					BigDecimal iamountTotalYear = calculateTotalAmount(investmentPlanItemdList,investmentPlan.getIBudgetYear());
 					BigDecimal iTotalAmountActualRow = row.getBigDecimal("itotalamountactual");
 					if(iTotalAmountActualRow == null || iTotalAmountActualRow.compareTo(BigDecimal.ZERO) == 0){
 						iTotalAmountPlan = iamountTotal;
@@ -891,22 +894,58 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 	 * 	2. 调用提交流程方法
 	 * 	3. 更改投资计划审核状态为待审核
 	 * */
-	public Ret submitAudit(Long iplanid) {
+	public Ret submit(Long iplanid) {
 		Date now = new Date();
 		ValidationUtils.notNull(iplanid, "请先保存后再提交");
 		InvestmentPlan investmentPlan = findById(iplanid);
 		if(AppConfig.isVerifyProgressEnabled()){
-			//verifyprogressService.start(iplanid.toString(),getOrgCode(),VeriProgressObjTypeEnum.INVESTMENT_PLAN,JBoltUserKit.getUser(),null,investmentPlan.getCdepcode(),now);
-			investmentPlan.setIauditstatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-			investmentPlan.setDaudittime(now);
-			ValidationUtils.isTrue(investmentPlan.update(), ErrorMsg.UPDATE_FAILED);
+			// 根据审批状态
+            Ret ret = formApprovalService.submit(table(), iplanid, primaryKey(),"cn.rjtech.admin.investmentplan.InvestmentPlanService");
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+            
+            //生成待办和发送邮件
 		}else{
-			investmentPlan.setIauditstatus(AuditStatusEnum.APPROVED.getValue());
-			investmentPlan.setDaudittime(now);
+			investmentPlan.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+			investmentPlan.setDAuditTime(now);
 			ValidationUtils.isTrue(investmentPlan.update(), ErrorMsg.UPDATE_FAILED);
 		}
 		return SUCCESS;
 	}
+	
+    /**
+     * 处理审批通过的其他业务操作，如有异常返回错误信息
+     */
+    public String postApproveFunc(long formAutoId) {
+  
+        return null;
+    }
+	
+    /**
+     * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
+     */
+    public String postRejectFunc(long formAutoId) {
+        return null;
+    }
+	
+    /**
+     * 实现反审之后的其他业务操作, 如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        // 反审回第一个节点，回退状态为“已保存”
+        if (isFirst) {
+       
+        }
+        // 最后一步通过的，反审，回退状态为“待审核”
+        if (isLast) {
+           
+        }
+        return null;
+    }		
+	
 	/**
      * 投资预实差异管理表数据查询
      * */
@@ -1049,8 +1088,8 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 	 * 部门是否存在已生效的投资计划
 	 * */
 	public boolean isExistsEffectivedInvestment(InvestmentPlan investmentPlan) {
-		List<InvestmentPlan> list = find(selectSql().eq("cdepcode", investmentPlan.getCdepcode()).eq("iBudgetYear", investmentPlan.getIbudgetyear())
-				.eq("iBudgetType", investmentPlan.getIbudgettype()).eq("iEffectiveStatus", EffectiveStatusEnum.EFFECTIVED.getValue()));
+		List<InvestmentPlan> list = find(selectSql().eq("cdepcode", investmentPlan.getCDepCode()).eq("iBudgetYear", investmentPlan.getIBudgetYear())
+				.eq("iBudgetType", investmentPlan.getIBudgetType()).eq("iEffectiveStatus", EffectiveStatusEnum.EFFECTIVED.getValue()));
 		if(CollUtil.isNotEmpty(list)) return true;
 		return false;
 	}
@@ -1063,13 +1102,13 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
     	ValidationUtils.notNull(investmentPlan, "投资计划数据不存在,获取部门英文名称失败!");
 		switch (BarCodeEnum.toEnum(cprojectcode)) {
 	        case DEPT:
-	        	Record record = departmentService.findByCdepcode(getOrgId(),investmentPlan.getCdepcode()).toRecord();
+	        	Record record = departmentService.findByCdepcode(getOrgId(),investmentPlan.getCDepCode()).toRecord();
 	    		String cdepnameen = record.getStr("cdepnameen");
 	    		ValidationUtils.notBlank(cdepnameen, record.getStr("cdepname")+"部门的英文名称为空!");
 	    		str = cdepnameen;
 	            break;  
 	        case ORDERYEAR:
-	        	Integer iBudgetYear = investmentPlan.getIbudgetyear();
+	        	Integer iBudgetYear = investmentPlan.getIBudgetYear();
 	        	ValidationUtils.notNull(iBudgetYear, BarCodeEnum.ORDERYEAR.getText()+"为空!");
 	    		str = iBudgetYear.toString();
 	            break;

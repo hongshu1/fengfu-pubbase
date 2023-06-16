@@ -268,9 +268,9 @@ public class InvestmentPlanAdminController extends BaseAdminController {
     }
     private void contrustExportExcelPositionDatas(List<JBoltExcelPositionData> excelPositionDatas,InvestmentPlan investmentPlan,
 			List<Record> itemList) {
-    	excelPositionDatas.add(JBoltExcelPositionData.create(4, 3, investmentPlan.getIbudgetyear()+"年"));
-		excelPositionDatas.add(JBoltExcelPositionData.create(4, 5, InvestmentBudgetTypeEnum.toEnum(investmentPlan.getIbudgettype()).getText()));
-		excelPositionDatas.add(JBoltExcelPositionData.create(4, 7, departmentService.getCdepName(investmentPlan.getCdepcode())));
+    	excelPositionDatas.add(JBoltExcelPositionData.create(4, 3, investmentPlan.getIBudgetYear()+"年"));
+		excelPositionDatas.add(JBoltExcelPositionData.create(4, 5, InvestmentBudgetTypeEnum.toEnum(investmentPlan.getIBudgetType()).getText()));
+		excelPositionDatas.add(JBoltExcelPositionData.create(4, 7, departmentService.getCdepName(investmentPlan.getCDepCode())));
     	if(CollUtil.isNotEmpty(itemList)){
     		int startRow = ReadInventmentExcelUtil.START_ROW+1;
     		int startColumn = ReadInventmentExcelUtil.START_COLUMN;
@@ -372,9 +372,9 @@ public class InvestmentPlanAdminController extends BaseAdminController {
      * 提交审核
      * */
     @CheckPermission(PermissionKey.INVESTMENT_PLAN_FORMULATE_SUBMITAUDIT)
-    public void submitAudit(){
+    public void submit(){
     	Long iplanid = getLong(0);
-    	renderJson(service.submitAudit(iplanid));
+    	renderJson(service.submit(iplanid));
     }
     
     @CheckPermission(PermissionKey.INVESTMENT_BUDGET_ACTUAL_DIFFERENCE)
