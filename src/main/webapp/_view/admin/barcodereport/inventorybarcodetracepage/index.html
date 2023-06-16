@@ -80,7 +80,8 @@
 	<td>
 	<a  tooltip    href="/admin/barcodeReport/InventoryBarcodeTracePage/details?barcode=${data.barcode}" data-area="100%,100%"  class="jbolt_table_editbtn">变更记录</a>
 	</td>
-	<td>${data.billstate}</td> <!--单据来源-->
+	<td>${data.billstate}</td> <!--状态-->
+<!--	<td>${data.billstate}</td>!单据来源-->
 	<td>${data.billno}</td> <!--单据单号-->
 	<td>${data.vencode}</td> <!--供应商编码-->
 	<td>${data.invcode}</td> <!--存货编码-->
@@ -146,9 +147,12 @@
 		   data-conditions-form="InventoryBarcodeTracePageForm_#(pageId)"
 		   data-rowtpl="InventoryBarcodeTracePageRowtpl_#(pageId)"
 		   data-page="salesshipmentplanPage_#(pageId)"
-		   data-pagesize="10"
-		   data-pagesize-options="5,10,15,20,30,40,50,100,500,1000"
 		   data-toolbar="InventoryBarcodeTracePage_toolbar_#(pageId)"
+
+		   data-pagesize="100"
+		   data-pagesize-options="5,10,15,20,30,40,50,100,500,1000"
+		   data-fixed-columns-left="1,2,3"
+		   data-fixed-columns-right="-1"
 	>
 <thead>
 <tr>
