@@ -1,5 +1,6 @@
 package cn.rjtech.admin.formapprovald;
 
+import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
@@ -480,34 +481,58 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 
                             if (size > getStair) {
                                 Record record = list.get(getStair);
-                                Long idutyuserid = record.getLong("idutyuserid");
-                                if (idutyuserid != null) {
-                                    // 通过人员档案ID 找到 用户表ID
-                                    Record personUser = findFirstRecord("select * from Bd_Person where iAutoId = ? ", idutyuserid);
-                                    Long iuserid = personUser.getLong("iuserid");
-                                    String cpsnname = personUser.getStr("cpsnname");
-                                    if (iuserid != null) {
-                                        FormApprovalFlowD flowD = new FormApprovalFlowD();
-                                        flowD.setIFormApprovalFlowMid(flowMid);
-                                        flowD.setISeq(1);
-                                        flowD.setIUserId(iuserid);
-                                        flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                                        flowDList.add(flowD);
-                                    } else {
-                                        ValidationUtils.error(cpsnname + "该人员还未匹配所属用户名");
+                                String cdepperson = record.getStr("cdepperson");
+                                if (cdepperson != null) {
+//                                    改成人员编码匹配
+                                    List<String> stringList = StrSplitter.split(cdepperson, COMMA, true, true);
+                                    for (int i = 0; i < stringList.size(); i++) {
+                                        String code = stringList.get(i);
+                                        // 通过人员档案ID 改成人员编码匹配 找到 用户表ID
+                                        Kv kv = new Kv();
+                                        kv.set("code",code);
+                                        kv.setIfNotNull("orgId", getOrgId());
+                                        Record personUser = dbTemplate("formapprovald.findPersonUser", kv).findFirst();
+                                        Long iuserid = personUser.getLong("iuserid");
+                                        String cpsnname = personUser.getStr("cpsnname");
+                                        if (iuserid != null) {
+                                            FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                            flowD.setIFormApprovalFlowMid(flowMid);
+                                            flowD.setISeq(i);
+                                            flowD.setIUserId(iuserid);
+                                            flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                            flowDList.add(flowD);
+                                        } else {
+                                            ValidationUtils.error(cpsnname + "该人员还未匹配所属用户名");
+                                        }
                                     }
+
                                 } else {
                                     // 为空 检查是否开启上级代审
                                     if (isDirectOnMissing && size > getSuperior) {  // 开启 且 存在上级
                                         Record record1 = list.get(getSuperior);
-                                        Long idutyuserid1 = record1.getLong("idutyuserid");
-                                        if (idutyuserid1 != null) {  // 且上级负责人不为空
-                                            FormApprovalFlowD flowD = new FormApprovalFlowD();
-                                            flowD.setIFormApprovalFlowMid(flowMid);
-                                            flowD.setISeq(1);
-                                            flowD.setIUserId(idutyuserid1);
-                                            flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                                            flowDList.add(flowD);
+                                        String cdepperson1 = record1.getStr("cdepperson");
+                                        if (cdepperson1 != null) {  // 且上级负责人不为空
+                                            List<String> stringList = StrSplitter.split(cdepperson1, COMMA, true, true);
+                                            for (int i = 0; i < stringList.size(); i++) {
+                                                // 通过人员档案ID 改成人员编码匹配 找到 用户表ID
+                                                String code = stringList.get(i);
+                                                Kv kv = new Kv();
+                                                kv.set("code",code);
+                                                kv.setIfNotNull("orgId", getOrgId());
+                                                Record personUser = dbTemplate("formapprovald.findPersonUser", kv).findFirst();
+                                                Long iuserid = personUser.getLong("iuserid");
+                                                String cpsnname = personUser.getStr("cpsnname");
+                                                if (iuserid != null) {
+                                                    FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                                    flowD.setIFormApprovalFlowMid(flowMid);
+                                                    flowD.setISeq(i);
+                                                    flowD.setIUserId(iuserid);
+                                                    flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                                    flowDList.add(flowD);
+                                                } else {
+                                                    ValidationUtils.error(cpsnname + "该人员还未匹配所属用户名");
+                                                }
+                                            }
                                         } else {  // 上级负责人为空
                                             isNullPerson = true;
                                         }
@@ -554,14 +579,30 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
                              */
                             if (size > getStair) {
                                 Record record = list.get(getStair);
-                                Long idutyuserid = record.getLong("idutyuserid");
-                                if (idutyuserid != null) {
-                                    FormApprovalFlowD flowD = new FormApprovalFlowD();
-                                    flowD.setIFormApprovalFlowMid(flowMid);
-                                    flowD.setISeq(1);
-                                    flowD.setIUserId(idutyuserid);
-                                    flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                                    flowDList.add(flowD);
+                                String cdepperson = record.getStr("cdepperson");
+                                if (cdepperson != null) {
+//                                    改成人员编码匹配
+                                    List<String> stringList = StrSplitter.split(cdepperson, COMMA, true, true);
+                                    for (int i = 0; i < stringList.size(); i++) {
+                                        String code = stringList.get(i);
+                                        // 通过人员档案ID 改成人员编码匹配 找到 用户表ID
+                                        Kv kv = new Kv();
+                                        kv.set("code",code);
+                                        kv.setIfNotNull("orgId", getOrgId());
+                                        Record personUser = dbTemplate("formapprovald.findPersonUser", kv).findFirst();
+                                        Long iuserid = personUser.getLong("iuserid");
+                                        String cpsnname = personUser.getStr("cpsnname");
+                                        if (iuserid != null) {
+                                            FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                            flowD.setIFormApprovalFlowMid(flowMid);
+                                            flowD.setISeq(i);
+                                            flowD.setIUserId(iuserid);
+                                            flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                            flowDList.add(flowD);
+                                        } else {
+                                            ValidationUtils.error(cpsnname + "该人员还未匹配所属用户名");
+                                        }
+                                    }
                                 } else {   //为空
                                     /*
                                      * 如果 直属主管为空
