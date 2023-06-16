@@ -5,8 +5,10 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.investmentplan.InvestmentPlanService;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.InvestmentPlan;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -20,6 +22,8 @@ import com.jfinal.plugin.activerecord.Record;
 public class InvestmentPlanManageAdminController extends BaseAdminController {
 	@Inject
 	private InvestmentPlanManageService service;
+	@Inject
+	private InvestmentPlanService investmentPlanService;	
 	@Inject
 	private PeriodService periodService;
 	@Inject
@@ -68,4 +72,12 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
     	renderJson(service.cancle(getLong(0)));
     }
     
+    /**
+     * 查看审批界面
+     * */
+    public void investmentFormApprovalFlowIndex(){
+    	InvestmentPlan investmentPlan = investmentPlanService.findById(getLong("iautoid"));
+    	set("investmentPlan", investmentPlan);
+    	render("approve_process_index.html");
+    }
 }

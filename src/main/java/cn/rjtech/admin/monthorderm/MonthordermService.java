@@ -226,9 +226,11 @@ public class MonthordermService extends BaseService<MonthOrderM> {
                 monthorderm.setDUpdateTime(now);
                 ValidationUtils.isTrue(monthorderm.update(), ErrorMsg.UPDATE_FAILED);
             }
+
             saveTableSubmitDatas(jBoltTable, monthorderm);
             updateTableSubmitDatas(jBoltTable);
             deleteTableSubmitDatas(jBoltTable);
+            ValidationUtils.notEmpty(monthorderdService.findByMid(monthorderm.getIAutoId()), "细项不允许为空");
             return true;
         });
         return SUCCESS;
@@ -239,7 +241,9 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      */
     private void saveTableSubmitDatas(JBoltTable jBoltTable, MonthOrderM monthorderm) {
         List<Record> list = jBoltTable.getSaveRecordList();
-        ValidationUtils.notEmpty(list, JBoltMsg.PARAM_ERROR);
+        if (notOk(list)) {
+            return;
+        }
 
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
@@ -326,7 +330,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         tx(() -> {
 
             // 根据审批状态
-            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"cn.rjtech.admin.monthorderm.MonthordermService");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.monthorderm.MonthordermService");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // 处理其他业务
@@ -346,10 +350,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         tx(() -> {
             // 已根据单据的审批方式，适配撤回的处理
             formApprovalService.withdraw(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
-
-                MonthOrderM monthOrderM = findById(iautoid);
-                monthOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
-                ValidationUtils.isTrue(monthOrderM.update(), "撤回失败");
+                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
                 return null;
             });
 
@@ -406,6 +407,21 @@ public class MonthordermService extends BaseService<MonthOrderM> {
     }
 
     /**
+     * 实现反审之前的其他业务操作，如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        // 最后一个节点的反审，校验或其他业务处理
+        if (isLast) {
+            
+        }
+        return null;
+    }
+
+    /**
      * 实现反审之后的其他业务操作, 如有异常返回错误信息
      *
      * @param formAutoId 单据ID
@@ -436,7 +452,8 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 提审前业务，如有异常返回错误信息
      */
     public String preSubmitFunc(long formAutoId) {
-
+        MonthOrderM monthOrderM = findById(formAutoId);
+        ValidationUtils.equals(monthOrderM.getIOrderStatus(), WeekOrderStatusEnum.NOT_AUDIT.getValue(), "订单非已保存状态");
         return null;
     }
 
@@ -444,7 +461,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 提审后业务处理，如有异常返回错误信息
      */
     public String postSubmitFunc(long formAutoId) {
-
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), "提审失败");
         return null;
     }
 
@@ -452,15 +469,17 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 撤回审核业务处理，如有异常返回错误信息
      */
     public String postWithdrawFunc(long formAutoId) {
-        
+        MonthOrderM monthOrderM = findById(formAutoId);
+        ValidationUtils.equals(monthOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), "订单非待审批状态");
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
         return null;
     }
-    
+
     /**
      * 从审批中，撤回到已保存，业务实现，如有异常返回错误信息
      */
     public String withdrawFromAuditting(long formAutoId) {
-        
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }
 
@@ -468,7 +487,6 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
      */
     public String preWithdrawFromAuditted(long formAutoId) {
-        
         return null;
     }
 
@@ -476,7 +494,9 @@ public class MonthordermService extends BaseService<MonthOrderM> {
      * 从已审核，撤回到已保存，业务实现，如有异常返回错误信息
      */
     public String postWithdrawFromAuditted(long formAutoId) {
-     
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+        // 修改客户计划汇总
+        cusOrderSumService.algorithmSum();
         return null;
     }
 

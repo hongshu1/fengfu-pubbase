@@ -1,8 +1,7 @@
 #sql("paginateAdminDatas")
 	select aom.iautoid,aom.iOrderStatus,'' cAuditProgress,aom.corderno,
-		c.cCusName,aom.iyear,aom.cCreateName,aom.dCreateTime,aom.iAuditStatus
+           aom.cCusName,aom.iyear,aom.cCreateName,aom.dCreateTime,aom.iAuditStatus
 	from Co_AnnualOrderM aom
-		left join Bd_Customer c on aom.iCustomerId = c.iautoid
 	where aom.isDeleted = '0'
 	#if(iorgid)
 		and aom.iorgid = #para(iorgid)
@@ -11,7 +10,7 @@
 		and aom.cOrderNo like concat('%',#para(cOrderNo),'%') 
 	#end
 	#if(cCusName)
-		and c.cCusName like concat('%',#para(cCusName),'%') 
+		and aom.cCusName like concat('%',#para(cCusName),'%')
 	#end
 	#if(iOrderStatus)
 	    AND aom.iOrderStatus = #para(iOrderStatus)
