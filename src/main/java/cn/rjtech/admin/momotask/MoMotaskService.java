@@ -100,7 +100,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
       } else {
         List<Record> obj = new ArrayList<>();
         obj.add(record1);
-        list.put(record1.getStr("yeartodate"), obj);
+        list.put(obj.get(0).getStr("yeartodate"), obj);
       }
     }
     List<List<Record>> records1 = new ArrayList<>();
