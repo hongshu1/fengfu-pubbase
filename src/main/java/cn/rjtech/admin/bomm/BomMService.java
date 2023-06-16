@@ -132,15 +132,10 @@ public class BomMService extends BaseService<BomM> {
 		//更新时需要判断数据存在
 		BomM dbBomM=findById(bomM.getIAutoId());
 		if(dbBomM==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		dbBomM.setIInventoryId(bomM.getIInventoryId());
-		dbBomM.setCInvCode(bomM.getCInvCode());
-		dbBomM.setCInvName(bomM.getCInvName());
-		dbBomM.setDDisableDate(bomM.getDDisableDate());
-		dbBomM.setDEnableDate(bomM.getDEnableDate());
-		dbBomM.setIUpdateBy(userId);
-		dbBomM.setCUpdateName(userName);
-		dbBomM.setDUpdateTime(now);
-		boolean success=dbBomM.update();
+		bomM.setIUpdateBy(userId);
+		bomM.setCUpdateName(userName);
+		bomM.setDUpdateTime(now);
+		boolean success=bomM.update();
 		if(success) {
 			//添加日志
 			//addUpdateSystemLog(bomM.getIAutoId(), JBoltUserKit.getUserId(), bomM.getName());
@@ -411,16 +406,16 @@ public class BomMService extends BaseService<BomM> {
 //			AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
 //			ValidationUtils.isTrue((AuditStatusEnum.NOT_AUDIT.getValue()==iAuditStatus || AuditStatusEnum.REJECTED.getValue()==iAuditStatus), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行删除");
 			// 校验母件是否有被其他子件引用到
-			List<BomD> bomDList = bomDService.queryBomByPartBomMid(bomMasterId);
-			if (CollectionUtil.isNotEmpty(bomDList)){
-				List<String> invCodeList = bomDList.stream().map(BomD::getCInvCode).collect(Collectors.toList());
+			List<BomM> bomMList = findBomByPartBomMid(bomMasterId);
+			if (CollectionUtil.isNotEmpty(bomMList)){
+				List<String> invCodeList = bomMList.stream().map(BomM::getCInvCode).collect(Collectors.toList());
 				String format = String.format("该半成品版本记录，有存在其他地方使用【%s】", CollUtil.join(invCodeList, ","));
-				ValidationUtils.isTrue(CollectionUtil.isEmpty(bomDList), format);
-				
-				bomDList.forEach(bomD -> bomD.setIsDeleted(true));
-				bomDService.batchUpdate(bomDList);
+				ValidationUtils.isTrue(CollectionUtil.isEmpty(bomMList), format);
 			}
-			
+			// 查询子件，将子件状态改为删除
+			List<BomD> compareList = bomDService.queryBomCompareList(bomMasterId, BomD.IBOMMID);
+			compareList.forEach(bomD -> bomD.setIsDeleted(true));
+			bomDService.batchUpdate(compareList);
 			// 删除母件
 			bomMaster.setIsDeleted(true);
 			bomMaster.setIUpdateBy(JBoltUserKit.getUserId());
@@ -560,21 +555,20 @@ public class BomMService extends BaseService<BomM> {
 	
 	public Ret submitForm(String formJsonData, String tableJsonData) {
 		ValidationUtils.notBlank(formJsonData, JBoltMsg.PARAM_ERROR);
-		ValidationUtils.notBlank(tableJsonData, JBoltMsg.PARAM_ERROR);
 		JSONObject formData = JSONObject.parseObject(formJsonData);
-		JSONArray tableData = JSONObject.parseArray(tableJsonData);
-		
-		// 校验数据
-		verification(formData, tableData);
 		BomM bomMaster = JSONObject.parseObject(formJsonData, BomM.class);
 		Long userId = JBoltUserKit.getUserId();
 		String userName = JBoltUserKit.getUserName();
 		DateTime now = DateUtil.date();
 		// 主键id为空为 新增或者为修改
 		if (ObjectUtil.isNull(bomMaster.getIAutoId())){
+			ValidationUtils.notBlank(tableJsonData, JBoltMsg.PARAM_ERROR);
+			JSONArray tableData = JSONObject.parseArray(tableJsonData);
+			// 校验数据
+			verification(formData, tableData);
 			return saveForm(bomMaster, tableData, userId, userName, now);
 		}
-		return updateForm(bomMaster, tableData, userId, userName, now);
+		return updateForm(bomMaster, userId, userName, now);
 	}
 	
 	public Ret saveForm(BomM bomMaster, JSONArray tableData, Long userId, String userName, DateTime now){
@@ -603,7 +597,7 @@ public class BomMService extends BaseService<BomM> {
 		return SUCCESS;
 	}
 	
-	public Ret updateForm(BomM bomMaster, JSONArray tableData, Long userId, String userName, DateTime now){
+	public Ret updateForm(BomM bomMaster, Long userId, String userName, DateTime now){
 		BomM oldBomMaster = findById(bomMaster.getIAutoId());
 		Integer iAuditStatus = oldBomMaster.getIAuditStatus();
 		AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
@@ -1070,5 +1064,18 @@ public class BomMService extends BaseService<BomM> {
 			}
 		}
 		return nextLevelCodes;
+	}
+	
+	public List<BomM> findBomByPartBomMid(Long bomId){
+		String sqlStr = "SELECT " +
+				" m.* " +
+				"FROM " +
+				" Bd_BomM m " +
+				" INNER JOIN Bd_BomD a ON m.iAutoId = a.iBomMid " +
+				"WHERE " +
+				" a.isDeleted = '0' " +
+				" AND m.isDeleted = '0' " +
+				" AND a.iInvPartBomMid = ? ";
+		return find(sqlStr, bomId);
 	}
 }

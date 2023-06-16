@@ -326,7 +326,7 @@ public class MonthordermService extends BaseService<MonthOrderM> {
         tx(() -> {
 
             // 根据审批状态
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"cn.rjtech.admin.monthorderm.MonthordermService");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"cn.rjtech.admin.monthorderm.MonthordermService");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // 处理其他业务

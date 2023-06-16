@@ -73,7 +73,7 @@ public class AppendItemService extends BaseService<AppendItem> {
 		para.set("iorgid",getOrgId());
 		Page<Record> pageList = dbTemplate("appenditem.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 		for (Record row : pageList.getList()) {
-			row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
+			row.set("cusername", JBoltUserCache.me.getName(row.getLong("icreateby")));
 			row.set("cdepname", departmentService.getCdepName(row.getStr("cdepcode")));
 		}
 		return pageList;

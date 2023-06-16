@@ -16,8 +16,6 @@ import cn.rjtech.admin.formuploadcategory.FormUploadCategoryService;
 import cn.rjtech.admin.formuploadd.FormUploadDService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.WeekOrderStatusEnum;
-import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.FormUploadD;
 import cn.rjtech.model.momdata.FormUploadM;
 import cn.rjtech.util.ValidationUtils;
@@ -392,7 +390,7 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 	 */
 	public Ret submit(Long iautoid) {
 		tx(() -> {
-			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"");
+			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"");
 			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
 			FormUploadM formUploadM = findById(iautoid);

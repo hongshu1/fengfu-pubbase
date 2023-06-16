@@ -95,7 +95,7 @@ public class AppversionService extends BaseService<Appversion> {
                                     data.put("isforced", BoolCharEnum.toEnum(data.getStr("isforced")).getText());
                                     data.put("putaway", PutawayEnum.toEnum(data.getInt("putaway")).getText());
                                     // 将user_id转为user_name
-                                    data.changeWithKey("user_id", "user_username", JBoltUserCache.me.getUserName(data.getLong("user_id")));
+                                    data.changeWithKey("user_id", "user_username", JBoltUserCache.me.getName(data.getLong("user_id")));
                                     data.changeBooleanToStr("is_new", "是", "否");
                                 })
                                 //设置导出的数据源 来自于数据库查询出来的Model List
