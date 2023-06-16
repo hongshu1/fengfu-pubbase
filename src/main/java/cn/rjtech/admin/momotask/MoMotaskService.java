@@ -105,7 +105,11 @@ public class MoMotaskService extends BaseService<MoMotask> {
     }
     List<List<Record>> records1 = new ArrayList<>();
     for (String str : list.keySet()) {
-      records1.add(list.get(str));
+      List<Record> obj = list.get(str);
+      Record record1 = new Record();
+      record1.put("yeartodate", obj.get(0).getStr("yeartodate"));
+      obj.add(record1);
+      records1.add(obj);
     }
 
     Department byId = departmentService.findById(moMotask.getIDepartmentId());
@@ -531,7 +535,11 @@ public class MoMotaskService extends BaseService<MoMotask> {
     // </editor-fold>
 
     //<editor-fold desc="D根据任务单id获取班长maps，其他人员1maps1，其他人员2maps2">
-    Record LeaderRec = new Record();
+    Record leaderRec = new Record();
+    leaderRec.put("itype", "");
+    leaderRec.put("ipersonid", "");
+    leaderRec.put("cpsn_num", "");
+    leaderRec.put("cpsn_name", "");
     List<Record> LeaderRecs = dbTemplate("getModocLeaderByTaskid", kv).find();
     Map<String, Record> maps = new HashMap<>();
     Map<String, Record> maps1 = new HashMap<>();
@@ -780,7 +788,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
         record.put("iworkregionmid", "");
         if (qty == (recordssize - 3)) {
           for (Record workShift : workShifts) {
-            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? null : maps.get(workShift.getStr("dataid")));
+            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec.put("", "").put("", "") : maps.get(workShift.getStr("dataid")));
           }
         } else if (qty == (recordssize - 2)) {
 
