@@ -549,6 +549,13 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                                 flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                                 flowDList.add(flowD);
                                             }
+                                            if (iSkipOn == 1) {
+                                                FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                                flowD.setIFormApprovalFlowMid(flowMId);
+                                                flowD.setISeq(1);
+                                                flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                                flowDList.add(flowD);
+                                            }
                                         }
                                     }
                                     break;
