@@ -48,7 +48,7 @@ public class OrgService extends BaseService<Org> {
     }
 
     private boolean notExistsU8DbName(String ip, String u8DbName) {
-        return null == queryInt("SELECT TOP 1 1 FROM jb_org o WHERE o.u8_api_url_inner AND o.u8_dbname = ?", ip, u8DbName);
+        return null == queryInt("SELECT TOP 1 1 FROM jb_org o WHERE o.u8_api_url_inner = ? AND o.u8_dbname = ?", ip, u8DbName);
     }
 
     /**
