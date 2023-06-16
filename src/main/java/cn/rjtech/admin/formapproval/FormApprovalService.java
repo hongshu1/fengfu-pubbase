@@ -2,7 +2,6 @@ package cn.rjtech.admin.formapproval;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
-import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -242,7 +241,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * 审批的话 保存审批流的基础信息、审批节点信息、节点的详细信息
      * 保存 审批流的审批流程的人员信息
      */
-    public Ret judgeType(String formSn, Long formAutoId, String primaryKeyName, String className) {
+    public Ret submit(String formSn, Long formAutoId, String primaryKeyName, String className) {
         FormApproval byFormAutoId = findByFormAutoId(formAutoId);
         ValidationUtils.isTrue((notOk(byFormAutoId)), "该单据已提交审批，请勿重复提交审批！");
 
@@ -546,6 +545,13 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                                 flowD.setIFormApprovalFlowMid(flowMId);
                                                 flowD.setISeq(1);
                                                 flowD.setIUserId(iSpecUserId);
+                                                flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                                                flowDList.add(flowD);
+                                            }
+                                            if (iSkipOn == 1) {
+                                                FormApprovalFlowD flowD = new FormApprovalFlowD();
+                                                flowD.setIFormApprovalFlowMid(flowMId);
+                                                flowD.setISeq(1);
                                                 flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
                                                 flowDList.add(flowD);
                                             }

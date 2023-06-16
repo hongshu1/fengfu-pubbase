@@ -317,7 +317,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      */
     public Ret submit(Long iautoid) {
         tx(() -> {
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(), "");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             Subcontractsaleorderm subcontractsaleorderm = findById(iautoid);

@@ -21,7 +21,7 @@
 #render("empty_tr.html")
 #define js()
 <script>
-    var index = #(index??0);
+    var index = 0;
     var importDatas;
     function getEditableTableOptions_#(pageId)(){
         var editableTableOptions={
@@ -258,7 +258,7 @@
     // 隐藏第一个按钮
     hideParentLayerDialogBtn(0);
 
-    #if(view??0 !=1)
+    #if(isView??0 !=1)
     addParentLayerDialogBtn("保存","lay_success",function(){
         if (!FormChecker.check("#BomMaster_Form")){
             return;
