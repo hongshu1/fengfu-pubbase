@@ -212,9 +212,12 @@ public class SysAssemService extends BaseService<SysAssem> {
             //通过 id 判断是新增还是修改
             if (sysotherin.getAutoID() == null) {
                 sysotherin.setOrganizeCode(getOrgCode());
-                sysotherin.setCreatePerson(user.getName());
-                sysotherin.setCreateDate(now);
-                sysotherin.setState("1");
+                sysotherin.setIcreateby(user.getId());
+                sysotherin.setCcreatename(user.getName());
+                sysotherin.setDcreatetime(now);
+                sysotherin.setIupdateby(user.getId());
+                sysotherin.setCupdatename(user.getName());
+                sysotherin.setDupdatetime(now);
                 //主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
             } else {
@@ -247,10 +250,9 @@ public class SysAssemService extends BaseService<SysAssem> {
             SysAssemdetail sysAssemdetail = new SysAssemdetail();
             sysAssemdetail.setMasID(sysotherin.getAutoID());
             sysAssemdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
-            sysAssemdetail.setCreateDate(now);
-            sysAssemdetail.setModifyDate(now);
-            sysAssemdetail.setCreatePerson(user.getName());
-            sysAssemdetail.setModifyPerson(user.getName());
+            sysotherin.setIupdateby(user.getId());
+            sysotherin.setCupdatename(user.getName());
+            sysotherin.setDupdatetime(now);
             sysAssemdetail.setBarcode(row.get("barcode"));
             sysAssemdetail.setSourceBillNoRow(row.get("sourcebillnorow"));
             sysAssemdetail.setQty(new BigDecimal(row.get("qty").toString()));
@@ -285,8 +287,9 @@ public class SysAssemService extends BaseService<SysAssem> {
             Record row = list.get(i);
             SysAssemdetail sysAssemdetail = new SysAssemdetail();
             sysAssemdetail.setMasID(sysotherin.getAutoID());
-            sysAssemdetail.setModifyDate(now);
-            sysAssemdetail.setModifyPerson(user.getName());
+            sysotherin.setIupdateby(user.getId());
+            sysotherin.setCupdatename(user.getName());
+            sysotherin.setDupdatetime(now);
             sysAssemdetail.setBarcode(row.get("barcode"));
             sysAssemdetail.setSourceBillNoRow(row.get("sourcebillnorow"));
             sysAssemdetail.setQty(new BigDecimal(row.get("qty").toString()));
@@ -374,7 +377,7 @@ public class SysAssemService extends BaseService<SysAssem> {
             jsonObject.set("barcode", s.getBarcode());
             jsonObject.set("invstd", "");
             jsonObject.set("invname", "");
-            jsonObject.set("CreatePerson", s.getCreatePerson());
+            jsonObject.set("CreatePerson", s.getIcreateby());
             jsonObject.set("BillType", s.getAssemType());
             jsonObject.set("qty", s.getQty());
             jsonObject.set("CreatePersonName", user.getName());
@@ -433,8 +436,8 @@ public class SysAssemService extends BaseService<SysAssem> {
         sysAssem.setIRdCode(puinstore.getRdCode());//入库类型
         //sysAssem.setORdCode();//出库类型
         sysAssem.setMemo(puinstore.getMemo());
-        sysAssem.setCreatePerson(JBoltUserKit.getUserName());
-        sysAssem.setCreateDate(new Date());
+        sysAssem.setCcreatename(JBoltUserKit.getUserName());
+        sysAssem.setDcreatetime(new Date());
         //sysAssem.setAuditPerson();
         //sysAssem.setAuditDate();
         sysAssem.setState("1");

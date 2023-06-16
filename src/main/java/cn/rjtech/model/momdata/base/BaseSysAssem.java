@@ -29,14 +29,6 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
     public static final String ORDCODE = "ORdCode";
     /**备注*/
     public static final String MEMO = "Memo";
-    /**创建人*/
-    public static final String CREATEPERSON = "CreatePerson";
-    /**创建日期*/
-    public static final String CREATEDATE = "CreateDate";
-    /**审核人*/
-    public static final String AUDITPERSON = "AuditPerson";
-    /**审核日期*/
-    public static final String AUDITDATE = "AuditDate";
     /**状态 1已保存 2待审批 3已审批 4审批不通过 */
     public static final String STATE = "state";
     /**审批方式：1. 审核 2. 审批流*/
@@ -49,6 +41,22 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
     public static final String DAUDITTIME = "dAuditTime";
     /**是否删除：0. 否 1. 是*/
     public static final String ISDELETED = "isDeleted";
+    /**创建人id*/
+    public static final String ICREATEBY = "icreateby";
+    /**创建人名称*/
+    public static final String CCREATENAME = "ccreatename";
+    /**创建时间*/
+    public static final String DCREATETIME = "dcreatetime";
+    /**修改人id*/
+    public static final String IUPDATEBY = "iupdateby";
+    /**创建人名称*/
+    public static final String CUPDATENAME = "cupdatename";
+    /**创建id*/
+    public static final String DUPDATETIME = "dupdatetime";
+    /**审核人id*/
+    public static final String IAUDITBY = "iAuditby";
+    /**审核名称*/
+    public static final String CAUDITNAME = "cAuditname";
 	/**
 	 * 主键ID
 	 */
@@ -203,74 +211,6 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
 	}
 
 	/**
-	 * 创建人
-	 */
-	public M setCreatePerson(java.lang.String CreatePerson) {
-		set("CreatePerson", CreatePerson);
-		return (M)this;
-	}
-
-	/**
-	 * 创建人
-	 */
-	@JBoltField(name="createperson" ,columnName="CreatePerson",type="String", remark="创建人", required=false, maxLength=30, fixed=0, order=10)
-	@JSONField(name = "createperson")
-	public java.lang.String getCreatePerson() {
-		return getStr("CreatePerson");
-	}
-
-	/**
-	 * 创建日期
-	 */
-	public M setCreateDate(java.util.Date CreateDate) {
-		set("CreateDate", CreateDate);
-		return (M)this;
-	}
-
-	/**
-	 * 创建日期
-	 */
-	@JBoltField(name="createdate" ,columnName="CreateDate",type="Date", remark="创建日期", required=false, maxLength=23, fixed=3, order=11)
-	@JSONField(name = "createdate")
-	public java.util.Date getCreateDate() {
-		return getDate("CreateDate");
-	}
-
-	/**
-	 * 审核人
-	 */
-	public M setAuditPerson(java.lang.String AuditPerson) {
-		set("AuditPerson", AuditPerson);
-		return (M)this;
-	}
-
-	/**
-	 * 审核人
-	 */
-	@JBoltField(name="auditperson" ,columnName="AuditPerson",type="String", remark="审核人", required=false, maxLength=30, fixed=0, order=12)
-	@JSONField(name = "auditperson")
-	public java.lang.String getAuditPerson() {
-		return getStr("AuditPerson");
-	}
-
-	/**
-	 * 审核日期
-	 */
-	public M setAuditDate(java.util.Date AuditDate) {
-		set("AuditDate", AuditDate);
-		return (M)this;
-	}
-
-	/**
-	 * 审核日期
-	 */
-	@JBoltField(name="auditdate" ,columnName="AuditDate",type="Date", remark="审核日期", required=false, maxLength=23, fixed=3, order=13)
-	@JSONField(name = "auditdate")
-	public java.util.Date getAuditDate() {
-		return getDate("AuditDate");
-	}
-
-	/**
 	 * 状态 1已保存 2待审批 3已审批 4审批不通过 
 	 */
 	public M setState(java.lang.String state) {
@@ -281,7 +221,7 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
 	/**
 	 * 状态 1已保存 2待审批 3已审批 4审批不通过 
 	 */
-	@JBoltField(name="state" ,columnName="state",type="String", remark="状态 1已保存 2待审批 3已审批 4审批不通过 ", required=false, maxLength=30, fixed=0, order=14)
+	@JBoltField(name="state" ,columnName="state",type="String", remark="状态 1已保存 2待审批 3已审批 4审批不通过 ", required=false, maxLength=30, fixed=0, order=10)
 	@JSONField(name = "state")
 	public java.lang.String getState() {
 		return getStr("state");
@@ -298,7 +238,7 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
 	/**
 	 * 审批方式：1. 审核 2. 审批流
 	 */
-	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审核 2. 审批流", required=false, maxLength=10, fixed=0, order=15)
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审核 2. 审批流", required=false, maxLength=10, fixed=0, order=11)
 	@JSONField(name = "iauditway")
 	public java.lang.Integer getIAuditWay() {
 		return getInt("iAuditWay");
@@ -315,7 +255,7 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
 	/**
 	 * 提审时间
 	 */
-	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=16)
+	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=12)
 	@JSONField(name = "dsubmittime")
 	public java.util.Date getDSubmitTime() {
 		return getDate("dSubmitTime");
@@ -332,7 +272,7 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
 	/**
 	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
 	 */
-	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=17)
+	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=13)
 	@JSONField(name = "iauditstatus")
 	public java.lang.Integer getIAuditStatus() {
 		return getInt("iAuditStatus");
@@ -349,7 +289,7 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
 	/**
 	 * 审核时间
 	 */
-	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=18)
+	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=14)
 	@JSONField(name = "daudittime")
 	public java.util.Date getDAuditTime() {
 		return getDate("dAuditTime");
@@ -366,10 +306,146 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
 	/**
 	 * 是否删除：0. 否 1. 是
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=19)
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=15)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 创建人id
+	 */
+	public M setIcreateby(java.lang.Long icreateby) {
+		set("icreateby", icreateby);
+		return (M)this;
+	}
+
+	/**
+	 * 创建人id
+	 */
+	@JBoltField(name="icreateby" ,columnName="icreateby",type="Long", remark="创建人id", required=false, maxLength=19, fixed=0, order=16)
+	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIcreateby() {
+		return getLong("icreateby");
+	}
+
+	/**
+	 * 创建人名称
+	 */
+	public M setCcreatename(java.lang.String ccreatename) {
+		set("ccreatename", ccreatename);
+		return (M)this;
+	}
+
+	/**
+	 * 创建人名称
+	 */
+	@JBoltField(name="ccreatename" ,columnName="ccreatename",type="String", remark="创建人名称", required=false, maxLength=30, fixed=0, order=17)
+	@JSONField(name = "ccreatename")
+	public java.lang.String getCcreatename() {
+		return getStr("ccreatename");
+	}
+
+	/**
+	 * 创建时间
+	 */
+	public M setDcreatetime(java.util.Date dcreatetime) {
+		set("dcreatetime", dcreatetime);
+		return (M)this;
+	}
+
+	/**
+	 * 创建时间
+	 */
+	@JBoltField(name="dcreatetime" ,columnName="dcreatetime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=18)
+	@JSONField(name = "dcreatetime")
+	public java.util.Date getDcreatetime() {
+		return getDate("dcreatetime");
+	}
+
+	/**
+	 * 修改人id
+	 */
+	public M setIupdateby(java.lang.Long iupdateby) {
+		set("iupdateby", iupdateby);
+		return (M)this;
+	}
+
+	/**
+	 * 修改人id
+	 */
+	@JBoltField(name="iupdateby" ,columnName="iupdateby",type="Long", remark="修改人id", required=false, maxLength=19, fixed=0, order=19)
+	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIupdateby() {
+		return getLong("iupdateby");
+	}
+
+	/**
+	 * 创建人名称
+	 */
+	public M setCupdatename(java.lang.String cupdatename) {
+		set("cupdatename", cupdatename);
+		return (M)this;
+	}
+
+	/**
+	 * 创建人名称
+	 */
+	@JBoltField(name="cupdatename" ,columnName="cupdatename",type="String", remark="创建人名称", required=false, maxLength=30, fixed=0, order=20)
+	@JSONField(name = "cupdatename")
+	public java.lang.String getCupdatename() {
+		return getStr("cupdatename");
+	}
+
+	/**
+	 * 创建id
+	 */
+	public M setDupdatetime(java.util.Date dupdatetime) {
+		set("dupdatetime", dupdatetime);
+		return (M)this;
+	}
+
+	/**
+	 * 创建id
+	 */
+	@JBoltField(name="dupdatetime" ,columnName="dupdatetime",type="Date", remark="创建id", required=false, maxLength=23, fixed=3, order=21)
+	@JSONField(name = "dupdatetime")
+	public java.util.Date getDupdatetime() {
+		return getDate("dupdatetime");
+	}
+
+	/**
+	 * 审核人id
+	 */
+	public M setIAuditby(java.lang.Long iAuditby) {
+		set("iAuditby", iAuditby);
+		return (M)this;
+	}
+
+	/**
+	 * 审核人id
+	 */
+	@JBoltField(name="iauditby" ,columnName="iAuditby",type="Long", remark="审核人id", required=false, maxLength=19, fixed=0, order=22)
+	@JSONField(name = "iauditby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIAuditby() {
+		return getLong("iAuditby");
+	}
+
+	/**
+	 * 审核名称
+	 */
+	public M setCAuditname(java.lang.String cAuditname) {
+		set("cAuditname", cAuditname);
+		return (M)this;
+	}
+
+	/**
+	 * 审核名称
+	 */
+	@JBoltField(name="cauditname" ,columnName="cAuditname",type="String", remark="审核名称", required=false, maxLength=30, fixed=0, order=23)
+	@JSONField(name = "cauditname")
+	public java.lang.String getCAuditname() {
+		return getStr("cAuditname");
 	}
 
 }
