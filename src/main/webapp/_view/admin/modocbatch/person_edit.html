@@ -324,6 +324,7 @@
             dataType:'json',
             success:function (respons){
                 let tableHeadArray = respons.data.datas;
+                console.log(tableHeadArray)
                 spreadSuspend();//暂停绘制
                 //渲染头部数据
                 let startDate = document.getElementById("cinvcode1");
@@ -336,14 +337,20 @@
                 let dateCol = 7;
                 // spread.getActiveSheet().setRowVisible(1, false);//隐藏第2行
                 for (let i = 0; i < tableHeadArray.length; i++) {
-                    console.log(respons.data.datas[i])
-                    parms.activeSheet.getCell(0, 7).text("2023年1月2日");
-                    parms.activeSheet.addSpan(0,7,1,3);
-                    parms.activeSheet.getCell(1, 7).text("星期一");
-                    parms.activeSheet.addSpan(1,7,1,3);
-                    parms.activeSheet.getCell(2, 7).text("1S");
-                    parms.activeSheet.getCell(2, 8).text("2S");
-                    parms.activeSheet.getCell(2, 9).text("3S");
+                    for (let j = 0; j < respons.data.datas[i].length; j++) {
+                        console.log(j)
+                        if(j<respons.data.datas[i].length){
+                            sheet.setValue(1, 7,respons.data.datas[i][j].weeks);
+                        }
+                        // console.log(respons.data.datas[i][j])
+                        // sheet.setValue(rowIndex, serialCol,respons.data.datas[i][j]);
+                        // parms.activeSheet.addSpan(0,7,1,3);
+                        // parms.activeSheet.getCell(1, 7).text("星期一");
+                        // parms.activeSheet.addSpan(1,7,1,3);
+                        // parms.activeSheet.getCell(2, 7).text("1S");
+                        // parms.activeSheet.getCell(2, 8).text("2S");
+                        // parms.activeSheet.getCell(2, 9).text("3S");
+                    }
                 }
                 // parms.activeSheet.getCell(0, 7).text("2023年1月2日");
                 // parms.activeSheet.addSpan(0,7,1,3);
