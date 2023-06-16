@@ -59,6 +59,9 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
      * */
     public void newdatas(){
         Kv kv = getKv();
+        set("barcode",kv.getStr("barcode"));
+        String startTime =(String) kv.get("starttime");
+        String endtime =(String) kv.get("endtime");
         renderJsonData(service.newdatas(getPageSize(),getPageNumber(),kv));
     }
 
