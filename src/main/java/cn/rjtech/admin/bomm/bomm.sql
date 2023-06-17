@@ -169,5 +169,11 @@ WHERE
 	AND iOrgId = #para(orgId)
 	AND dEnableDate  <= CONVERT(DATE,  GETDATE())
 	AND dDisableDate >= CONVERT(DATE,  GETDATE())
-	AND iAuditStatus = 2
+    #if(invIds)
+        AND iInventoryId NOT IN (
+            #for(id:invIds)
+                '#(id)' #(for.last?'':',')
+            #end
+        )
+    #end
 #end

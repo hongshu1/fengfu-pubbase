@@ -20,13 +20,16 @@ SELECT
 	d.isVirtual,
 	d.bProxyForeign,
 	d.cMemo,
+	d.iInvPartBomMid,
 	uom.cUomName AS cuomname
 FROM
 	Bd_BomD d
 	LEFT JOIN Bd_Uom uom ON uom.iAutoId = d.iInventoryUomId1
 WHERE
 	d.isDeleted = '0'
+	#if(iBomMid)
 	AND d.iPid = #para(iBomMid)
+	#end
 	#if(invCode)
       AND d.cInvCode LIKE CONCAT('%',#para(invCode),'%')
 	#end
@@ -53,6 +56,14 @@ WHERE
 		AND a.iOrgId = #para(orgId)
 		AND a.dEnableDate <= CONVERT ( DATE, GETDATE( ) )
 		AND a.dDisableDate >= CONVERT ( DATE, GETDATE( ) )
-		AND a.iAuditStatus = 2 AND a.iAutoId = iPid
+
+		AND a.iAutoId = iPid
+		#if(invIds)
+            AND iInventoryId NOT IN (
+                #for(id:invIds)
+                    '#(id)' #(for.last?'':',')
+                #end
+            )
+        #end
 	)
 #end
