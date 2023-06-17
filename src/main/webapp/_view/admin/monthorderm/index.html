@@ -72,7 +72,7 @@
         <tr data-id="${data.iautoid}" >
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a class=jbolt_table_editbtn href="admin/monthorderm/edit?iautoid=${data.iautoid}" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="月度计划订单详情"><i class="fa fa-eye"></i>查看</a>
+                <a class=jbolt_table_editbtn href="admin/monthorderm/edit?iautoid=${data.iautoid}&readonly=readonly" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="月度计划订单详情"><i class="fa fa-eye"></i>查看</a>
             
                 {@if  data.iorderstatus == '1' || data.iorderstatus == '4'}
                     <a href="admin/monthorderm/edit?iautoid=${data.iautoid}&edit=true" data-area="100%,100%"  tooltip data-title="编辑月度计划订单"  data-handler="refreshJBoltTable" data-dialog-title="编辑月度计划订单" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
@@ -97,15 +97,16 @@
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                <button data-openpage="dialog" data-area="100%,100%" data-handler="jboltTablePageToFirst" data-title="新增月度计划订单" data-url="admin/monthorderm/add" class="btn btn-outline-secondary btn-sm">新增</button>
+                <button data-openpage="dialog" data-area="99%,99%" data-handler="jboltTablePageToFirst" data-title="新增月度计划订单" data-url="admin/monthorderm/add" class="btn btn-outline-secondary btn-sm">新增</button>
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/monthorderm/deleteByIds?ids=" data-confirm="确定反审批选中数据？" class="btn btn-outline-secondary btn-sm">批量删除</button>
                 
                 ### 参数列表
-                ### formSn:         表单名
-                ### uri:            接口URI
-                ### primaryKeyName: 表单主键名
-                ### className：     实现审批业务的类名
-                #include("/_view/_common/_batch_approval_btns.html", formSn="Co_MonthOrderM", uri="admin/monthorderm??", primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService")
+                ### formSn:                 表单名
+                ### uri:                    接口URI
+                ### primaryKeyName:         表单主键名
+                ### className:              实现审批业务的类名
+                ### permissionKeyPrefix:    权限Key前缀
+                #include("/_view/_common/_batch_approval_btns.html", formSn="Co_MonthOrderM", uri="admin/monthorderm??", primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService", permissionKeyPrefix="monthorderm")
                 
             </div>
         </div>
