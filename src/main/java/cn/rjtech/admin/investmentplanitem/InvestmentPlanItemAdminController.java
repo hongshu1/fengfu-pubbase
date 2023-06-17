@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InvestmentPlanItem;
@@ -94,7 +95,7 @@ public class InvestmentPlanItemAdminController extends BaseAdminController {
     public void toggleIspriorreport() {
         renderJson(service.toggleIspriorreport(getLong(0)));
     }
-
+    @UnCheck
     public void mdatas() {
         renderJsonData(service.paginateMdatas(getPageNumber(), getPageSize(), getKv()));
     }

@@ -4,7 +4,7 @@
     <tr data-id="${data.iautoid}" >
         <td>${pageNumber,pageSize,index | rownum}</td>
         ### 追加禀议，有此字段
-        #if(proposalm.issupplemental??false)
+        #if(proposalm.issupplemental == 1??false)
             <td>$${data.itype|proposaldType}</td>
         #end
         <td>$${data.isourcetype|proposalChooseType}</td>
@@ -12,16 +12,16 @@
         <td>${data.clowestsubjectname}</td>
         <td>${data.ibudgetmoney,2|number_format3}</td>
         <td>${data.ibudgetsum,2|number_format3}</td>
-        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.citemname}</td>
-        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>{@if data.isubitem == 0}${data.iquantity,0,'.',',','round','-'|numberFormatZeroDefaultChar}{@else}${data.iquantity,0,'.',',','round',''|numberFormatZeroDefaultChar}{@/if}</td>
-        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.cunit}</td>
-        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.ccurrency}</td>
-        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>{@if data.isubitem == 0}${data.iunitprice,2,'.',',','round','-'|numberFormatZeroDefaultChar}{@else}${data.iunitprice,0,'.',',','round',''|numberFormatZeroDefaultChar}{@/if}</td>
-        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>{@if data.isubitem == 0}${data.nflat,6,'.',',','round','-'|numberFormatZeroDefaultChar}{@else}${data.nflat,0,'.',',','round',''|numberFormatZeroDefaultChar}{@/if}</td>
-        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>{@if data.isubitem == 0}${data.itaxrate,2,'.',',','round','-'|numberFormatZeroDefaultChar}{@else}${data.itaxrate,0,'.',',','round',''|numberFormatZeroDefaultChar}{@/if}</td>
-        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.cvenname}</td>
-        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.ddemanddate|date_ymd}</td>
-        <td #if(proposalm.issupplemental??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.cbudgetdepname}</td>
+        <td #if(proposalm.issupplemental == 1??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.citemname}</td>
+        <td #if(proposalm.issupplemental == 1??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>{@if data.isubitem == 0}${data.iquantity,0,'.',',','round','-'|numberFormatZeroDefaultChar}{@else}${data.iquantity,0,'.',',','round',''|numberFormatZeroDefaultChar}{@/if}</td>
+        <td #if(proposalm.issupplemental == 1??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.cunit}</td>
+        <td #if(proposalm.issupplemental == 1??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.ccurrency}</td>
+        <td #if(proposalm.issupplemental == 1??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>{@if data.isubitem == 0}${data.iunitprice,2,'.',',','round','-'|numberFormatZeroDefaultChar}{@else}${data.iunitprice,0,'.',',','round',''|numberFormatZeroDefaultChar}{@/if}</td>
+        <td #if(proposalm.issupplemental == 1??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>{@if data.isubitem == 0}${data.nflat,6,'.',',','round','-'|numberFormatZeroDefaultChar}{@else}${data.nflat,0,'.',',','round',''|numberFormatZeroDefaultChar}{@/if}</td>
+        <td #if(proposalm.issupplemental == 1??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>{@if data.isubitem == 0}${data.itaxrate,2,'.',',','round','-'|numberFormatZeroDefaultChar}{@else}${data.itaxrate,0,'.',',','round',''|numberFormatZeroDefaultChar}{@/if}</td>
+        <td #if(proposalm.issupplemental == 1??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.cvenname}</td>
+        <td #if(proposalm.issupplemental == 1??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.ddemanddate|date_ymd}</td>
+        <td #if(proposalm.issupplemental == 1??false||readonly??){@if(data.itype === 1)}data-editable="false"{@/if}#else{@if(data.isubitem == 0)}data-editable="false"{@/if}#end>${data.cbudgetdepname}</td>
         <td>${data.itax}</td>
         <td>${data.imoney}</td>
         <td>${data.isum}</td>
@@ -37,7 +37,7 @@
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="proposald_toolbar_#(pageId)">
     <div class="btn-group" role="group" aria-label="btn-group">
-        #if(proposalm.issupplemental??false)
+        #if(proposalm.issupplemental == 1??false)
         <!-- <button onclick="copySelected(this)" data-btn class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 追加选定</button> -->
         <button data-openpage="dialog" data-area="100%,100%" data-title="新增项目" data-url="/admin/proposalm/chooseEffectivedExpenseBudgetOrInvestmentPlan?isourceproposalid=#(proposalm.isourceproposalid??)" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增项目</button>
         <button onclick="supplementalSplitSelected(this)" data-btn class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 拆子项</button>
@@ -55,7 +55,7 @@
 <table class="jbolt_table jbolt_main_table table-center"
        id="jbolt_table_#(pageId)"
        data-jbolttable
-       data-height="fill"
+       data-height="300"
        data-ajax="true"
        data-width="auto"
        data-url="admin/proposald/list?iproposalmid=#(proposalm.iautoid??)"
@@ -76,7 +76,7 @@
     <tr>
         <th data-width="60" data-column="index">No.</th>
         ### 追加禀议，有此字段
-        #if(proposalm.issupplemental??false)
+        #if(proposalm.issupplemental == 1??false)
         <th data-width="90" data-column="itype">类型</th>
         #end
 		<th data-width="120" data-column="isourcetype">业务类别</th>
@@ -110,7 +110,7 @@
         <th></th>
         <th>合计</th>
         ### 追加禀议，有此字段
-        #if(proposalm.issupplemental??false)
+        #if(proposalm.issupplemental == 1??false)
         <th></th>
         #end
         <th></th>

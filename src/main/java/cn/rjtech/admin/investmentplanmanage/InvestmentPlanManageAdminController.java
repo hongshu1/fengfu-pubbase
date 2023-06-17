@@ -3,6 +3,7 @@ package cn.rjtech.admin.investmentplanmanage;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.investmentplan.InvestmentPlanService;
@@ -75,6 +76,7 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
     /**
      * 查看审批界面
      * */
+    @UnCheck
     public void investmentFormApprovalFlowIndex(){
     	InvestmentPlan investmentPlan = investmentPlanService.findById(getLong("iautoid"));
     	set("investmentPlan", investmentPlan);

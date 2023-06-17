@@ -7,7 +7,6 @@ import cn.jbolt._admin.user.UserService;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltModelKit;
-import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.JboltFile;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -440,11 +439,11 @@ public class PurchasemAdminController extends BaseAdminController {
         ValidationUtils.notEmpty(proposalds, "勾选的禀议书项目数据不存在，请检查!");
         Long iproposalmid = proposalds.get(0).getIproposalmid();
         Proposalm proposalm = proposalmService.findById(iproposalmid);
-        Long ifirstsourceproposalid = proposalm.getIfirstsourceproposalid();
+        Long ifirstsourceproposalid = proposalm.getIFirstSourceProposalId();
         ValidationUtils.notNull(proposalm, "禀议书不存在!");
         Record moneyRc = service.getMoney(Kv.by("ifirstsourceproposalid",ifirstsourceproposalid));
-        moneyRc.set("cdepcode", proposalm.getCdepcode());
-        moneyRc.set("cdepname", departmentService.getCdepName(proposalm.getCdepcode()));
+        moneyRc.set("cdepcode", proposalm.getCDepCode());
+        moneyRc.set("cdepname", departmentService.getCdepName(proposalm.getCDepCode()));
         set("purchasem",moneyRc);
         List<Record> purchaseds = new ArrayList<>();
         for (Proposald proposald : proposalds) {
@@ -495,7 +494,7 @@ public class PurchasemAdminController extends BaseAdminController {
     @CheckPermission(PermissionKey.PURCHASE_INSTRUMENT_EDIT)
     public void instrumentEdit() {
     	Purchasem purchasem = service.findById(useIfPresent(getLong(0)));
-    	PurchaseRefTypeEnum refTypeEnum = PurchaseRefTypeEnum.toEnum(purchasem.getIreftype());
+    	PurchaseRefTypeEnum refTypeEnum = PurchaseRefTypeEnum.toEnum(purchasem.getIRefType());
     	set("edit",true);
     	switch (refTypeEnum) {
 		case PROPOSAL:
@@ -503,7 +502,7 @@ public class PurchasemAdminController extends BaseAdminController {
 			render("edit.html");
 			break;
 		case BUDGET:
-			Record record = service.details(Kv.by("iautoid", purchasem.getIautoid()));
+			Record record = service.details(Kv.by("iautoid", purchasem.getIAutoId()));
 			set("purchasem", record);
 			render("ref_budget_form.html");
 			break;			
@@ -550,7 +549,7 @@ public class PurchasemAdminController extends BaseAdminController {
     @CheckPermission(PermissionKey.PURCHASE_INSTRUMENT_SUBMIT)
     public void submit() {
         ValidationUtils.validateId(getLong("iautoid"), "申购单ID");
-        renderJson(service.submit(getLong("iautoid"), JBoltUserKit.getUser()));
+        renderJson(service.submit(getLong("iautoid")));
     }
     
     /**
@@ -686,5 +685,15 @@ public class PurchasemAdminController extends BaseAdminController {
            return;
        }
        renderJson(service.importRefBudgetPurchasedTplNotSave(file.getFile(),cdepcode));
+   }
+   
+   /**
+    * 查看审批界面
+    * */
+   @UnCheck
+   public void purchasemFormApprovalFlowIndex(){
+   	Purchasem purchasem = service.findById(getLong("iautoid"));
+   	set("purchasem", purchasem);
+   	render("approve_process_index.html");
    }
 }
