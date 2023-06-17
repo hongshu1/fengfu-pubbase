@@ -42,6 +42,7 @@
 			{@each datas as data,index}
 				<tr data-id="${data.autoid}">
 					<td>${pageNumber,pageSize,index | rownum}</td>
+                    {@if data.type=='PUReceive'}
 					<td>
                       {@if data.iauditstatus == '0'}
                         <a href="admin/materialReceiptList/edit?autoid=${data.autoid}&edit=true" data-area="100%,100%" tooltip
@@ -56,12 +57,30 @@
                       {@if data.iauditstatus != '0'}
                         <a href="admin/materialReceiptList/edit?autoid=${data.autoid}" data-area="100%,100%" tooltip
                            data-title="查看"
-                           data-handler="refreshJBoltTable" data-dialog-title="查看收料单列表"
+                           data-handler="refreshJBoltTable" data-dialog-title="查看收料单"
                            class="jbolt_table_editbtn">查看</a>
                       {@/if}
-
-
 					</td>
+                    {@else}
+                    <td>
+                        {@if data.iauditstatus == '0'}
+                        <a href="admin/scancodereceive/edit?autoid=${data.autoid}&edit=true" data-area="100%,100%" tooltip
+                           data-title="编辑"
+                           data-handler="refreshJBoltTable" data-dialog-title="编辑收料单列表"
+                           class="jbolt_table_editbtn">编辑</a>
+                        <a href="admin/scancodereceive/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
+                           tooltip
+                           data-title="删除"
+                           data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+                      {@/if}
+                      {@if data.iauditstatus != '0'}
+                        <a href="admin/scancodereceive/edit?autoid=${data.autoid}" data-area="100%,100%" tooltip
+                           data-title="查看"
+                           data-handler="refreshJBoltTable" data-dialog-title="查看收料单"
+                           class="jbolt_table_editbtn">查看</a>
+                      {@/if}
+                    </td>
+                      {@/if}
 					<td>${data.type=='PUReceive'?'来料收货':'双单位收货'}</td>
 					<td>${data.statename}</td>
 <!--                    <td>${data.iauditstatus|AuditStatus}</td>-->
