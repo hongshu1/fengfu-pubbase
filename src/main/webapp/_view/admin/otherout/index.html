@@ -50,27 +50,24 @@
 {@each datas as data,index}
 <tr data-id="${data.autoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>
+	<td>
 	<a class="jbolt_table_editbtn" href="admin/otherout/edit/${data.autoid}?&type=0"  data-fs="true" data-handler="refreshJBoltTable" data-title="特殊领料单列表详情">查看</i></a>
-	 {@if data.status == '1'||data.status == '4'}
-	<a class="jbolt_table_editbtn" href="admin/otherout/edit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑特殊领料单列表">编辑</i></a>
-	 {@else if data.status == '2'}
-	<a class="jbolt_table_delbtn" href="admin/otherout/approve?mark=2&&iAutoId=${data.autoid}"  data-confirm="确定审批此选项？"  data-fs="true" data-handler="refreshJBoltTable"  data-title="审批特殊领料单列表">审批</i></a>
+	 {@if data.iauditstatus == '0'}
+	<a class="jbolt_table_editbtn" href="admin/otherout/edit/${data.autoid}?&edit=true"" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑特殊领料单列表">编辑</i></a>
+	 {@else if data.iauditstatus == '1'}
 	<a class="jbolt_table_delbtn" href="admin/otherout/recall?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
-	 {@else if data.status == '3'}
-	<a class="jbolt_table_delbtn" href="admin/otherout/closeWeekOrder?iAutoId=${data.autoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" >关闭</i></a>
 	 {@/if}
 </td>
 <td>${data.auditstate}</td>
-<td>${data.sourcebilltype}</td>
+<td>${data.typename}</td>
 <td>${data.billno}</td>
 <td>${data.cmodocno}</td>
 <td>${data.billdate}</td>
 <td>${data.cdepname}</td>
 <td>${data.memo}</td>
 <td>${data.reason}</td>
-<td>${data.createperson}</td>
-<td>${data.createdate}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
 
 </tr>
 {@/each}
@@ -81,6 +78,7 @@
 		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增出库管理-特殊领料单列表"  data-url="admin/otherout/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/otherout/approve?mark=2&&iAutoId=" data-confirm="确定审批选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量审批</button>
 		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"  data-url="admin/otherout/NoApprove?ids=" data-confirm="确定反审批选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量反审批</button>
+		#include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_OtherOut_Mo", uri="admin/otherout??",primaryKeyName="AutoID", className="cn.rjtech.admin.otherout.OtherOutService")
 		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/otherout/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 批量删除</button>
 		<button data-openpage="dialog" data-area="500,500"  data-handler="refreshJBoltTable" data-title="二维码特殊领料单" data-id="erm" data-check-handler="jboltTableGetCheckedId" data-url="admin/otherout/erm/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i>二维码</button>
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>

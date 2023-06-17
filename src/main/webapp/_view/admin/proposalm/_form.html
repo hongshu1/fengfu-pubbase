@@ -8,13 +8,7 @@
 </style>
 #end
 #set(pageId=RandomUtil.random(6))
-<!-- <div class="jbolt_page_title jb_vheader">
-    <div class="row">
-
-    </div>
-</div> -->
-
-<div class="jbolt_page_content">
+<div class="jbolt_page_title">
 
     <form onsubmit="return false;" id="proposalmForm_#(pageId)" action="#(action)" method="post">
 
@@ -29,11 +23,11 @@
 		<input type="hidden" id="imoney" value=""/>
         <div class="form-group row">
             <label class="col-sm-1 col-form-label">申请部门(申請部門)</label>
-            <div class="col">
+            <div class="col-sm-3">
                 <input type="text" autocomplete="off" class="form-control" maxlength="100" value="#(cdepname??)" readonly>
             </div>
             <label class="col-sm-1 col-form-label">申请人(申請人)</label>
-            <div class="col">
+            <div class="col-sm-3">
                 <input type="text" autocomplete="off" class="form-control"
                        data-autocomplete
                        data-url="admin/person/autocompleteWithDept"
@@ -44,7 +38,7 @@
                        data-column-attr="cpsn_num,cpsn_name,cdepcode,cdepname"
                        data-rule="required" data-tips="请选择申请人" maxlength="50"
                        value="#(proposalm.capplypersonname??)"
-                       #if(proposalm.issupplemental)
+                       #if(proposalm.issupplemental == 1)
                             disabled
                        #else
                             #if(readonly) disabled #end
@@ -61,31 +55,15 @@
 
         <div class="form-group row">
             <label class="col-sm-1 col-form-label">项目名称(項目名称)</label>
-            <div class="col">
+            <div class="col-sm-3">
                 <input type="text" autocomplete="off" data-rule="required" class="form-control" maxlength="100" name="proposalm.cprojectname" value="#(proposalm.cprojectname??)" id="cprojectname" data-sync-attr="cprojectname" #(readonly)>
             </div>
              <label class="col-sm-1 col-form-label">项目编码(項目コード)</label>
-           <div class="col">
- <!--                <input type="text" autocomplete="off" class="form-control"
-                       data-autocomplete
-                       data-url="admin/project/autocomplete"
-                       data-link-para-ele="#cprojectcode"
-                       data-sync-ele="cprojectcode,cprojectname"
-                       data-text-attr="cprojectcode"
-                       data-value-attr="cprojectcode"
-                       data-column-attr="cprojectcode,cprojectname"
-                       data-rule="required"
-                       data-tips="请选择项目" maxlength="50" value="#(proposalm.cprojectname??)"
-                       #if(proposalm.issupplemental)
-                            disabled
-                       #else
-                            #if(readonly) disabled #end
-                       #end
-                       >-->
+           <div class="col-sm-3">
                 <input type="text" readonly id="cprojectcode" autocomplete="off" class="form-control" maxlength="100" name="proposalm.cprojectcode" value="#(proposalm.cprojectcode??)" data-sync-attr="cprojectcode">
             </div> 
             <label class="col-sm-1 col-form-label">编号(NO)</label>
-            <div class="col">
+            <div class="col-sm-3">
                 <input type="text" autocomplete="off" class="form-control" maxlength="10" value="#(proposalm.cproposalno??)" disabled>
                 <input type="hidden" autocomplete="off" class="form-control" maxlength="10" name="proposalm.cproposalno" value="#(proposalm.cproposalno??)">
             </div>
@@ -93,7 +71,7 @@
 
         <div class="form-group row">
             <label class="col-sm-1 col-form-label">目的区分(目的区分)</label>
-            <div class="col">
+            <div class="col-sm-3">
                 <select class="form-control"
                         data-rule="select"
                         data-autoload
@@ -103,7 +81,7 @@
                         data-text="=请选择="
                         data-select="#(proposalm.cpurposesn??)"
                         ### 追加禀议，不可编辑，使用隐藏域
-                        #if(proposalm.issupplemental)
+                        #if(proposalm.issupplemental == 1)
                             disabled
                         #else
                             name="proposalm.cpurposesn"
@@ -111,15 +89,16 @@
                         #end
                         ></select>
 
-                #if(proposalm.issupplemental)
+                #if(proposalm.issupplemental == 1)
                 <input type="hidden" name="proposalm.cpurposesn" value="#(proposalm.cpurposesn??)">
                 #end
             </div>
             <label class="col-sm-1 col-form-label">类别区分(類別区分)</label>
-            <div class="col">
+            <div class="col-sm-3">
                 <select class="form-control"
                 		data-select-type="select2"
                         data-rule="required"
+                        data-width="351"
                         data-autoload
                         data-url="admin/proposalcategory/treeSelectOptions"
                         data-value-attr="iautoid"
@@ -129,7 +108,7 @@
 						multiple="multiple"
 						data-setvalueto="multipleInput"
                         ### 追加禀议，不可编辑，使用隐藏域
-                        #if(proposalm.issupplemental)
+                        #if(proposalm.issupplemental == 1)
                             disabled
                         #else
                             #if(readonly) disabled #end
@@ -149,7 +128,7 @@
               data-text="=请选择="
               data-select="#(proposalm.isscheduled??)"
               ### 追加禀议，不可编辑，使用隐藏域
-                    #if(proposalm.issupplemental)
+                    #if(proposalm.issupplemental == 1)
                         disabled
                     #else
                         #if(readonly) disabled #end
@@ -160,14 +139,13 @@
         </div>
 		<input type="hidden" id="isscheduledMultipleInput" name="proposalm.isscheduled" value="#(proposalm.isscheduled??)">
         <div class="row">
-
             <div class="col-4">
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label">说明(説明)</label>
                     <div class="col">
-                        <textarea autocomplete="off" class="form-control" maxlength="1000" style="height: #((proposalm.issupplemental?5:4) * 21.75)px"
+                        <textarea autocomplete="off" class="form-control" maxlength="1000" style="height: #((proposalm.issupplemental == 1?5:4) * 21.75)px"
                                   name="proposalm.cdesc"
-                          #if(proposalm.issupplemental)
+                          #if(proposalm.issupplemental == 1)
                             readonly
                           #else
                             #(readonly)
@@ -175,11 +153,11 @@
                         >#(proposalm.cdesc??)</textarea>
                     </div>
                 </div>
-                #if(proposalm.issupplemental??)
+                #if(proposalm.issupplemental??==1)
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label">追加说明(追加説明)</label>
                     <div class="col">
-                        <textarea autocomplete="off" class="form-control" maxlength="1000" style="height: #((proposalm.issupplemental?5:2) * 21.75)px"
+                        <textarea autocomplete="off" class="form-control" maxlength="1000" style="height: #((proposalm.issupplemental == 1?5:2) * 21.75)px"
                                   name="proposalm.csupplementaldesc" #(readonly)
                         >#(proposalm.csupplementaldesc??)</textarea>
                     </div>
@@ -190,7 +168,7 @@
             <div class="col-8">
 
                 ### 追加禀议
-                #if(proposalm.issupplemental??)
+                #if(proposalm.issupplemental??==1)
 
                 <div class="row">
                     <div class="col-6">
@@ -356,15 +334,15 @@
         </div>
 
     </form>
-
-    <div class="jbolt_tab_view jb_vflex">
-
-        <div class="jbolt_tab_links jb_vheader">
+</div>
+<div class="jbolt_page_content">
+    <div class="jbolt_tab_view">
+        <div class="jbolt_tab_links">
             <a class="jbolt_tab_link active" href="#jbolt_tabcontent1">禀议项目</a>
             <a class="jbolt_tab_link" href="#jbolt_tabcontent2">附件</a>
         </div>
 
-        <div class="jbolt_tab_contents jb_vbody">
+        <div class="jbolt_tab_contents">
 
             <div class="jbolt_tab_content active" id="jbolt_tabcontent1">
                 #include("proposalds.html")
@@ -390,7 +368,7 @@
     var hiprintTemplate_#(pageId);
     $(function () {
         var tplContentJson;
-        if (#(proposalm.issupplemental))
+        if (#(proposalm.issupplemental == 1))
         {
             tplContentJson = #include("../../../assets/printtpl/supplemental_proposalm.json");
         }else{

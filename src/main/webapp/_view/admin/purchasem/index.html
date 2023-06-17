@@ -97,17 +97,17 @@
                 #if(purchaseManagement)
                 <button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
                         data-check-handler="getIdIfValid"
-                        data-url="admin/verifyprogress/findprocess?cobjecttype=04&iobjectid="
+                        data-url="admin/purchasem/purchasemFormApprovalFlowIndex?iautoid="
                         class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i
                         class="fa fa-chain"></i>查看审批
                 </button>
 
-                #permission(PermissionKey.PURCHASE_WITHDRAW)
+<!--                 #permission(PermissionKey.PURCHASE_WITHDRAW)
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId"
                         data-url="/admin/purchasem/withdraw?iautoid=" data-confirm="确定撤销选中数据？"
                         class="btn btn-outline-primary btn-sm"><i class="jbicon jb-jujue"></i> 撤销审批
                 </button>
-                #end
+                #end -->
 
                 #permission(PermissionKey.PURCHASE_MANAGEMENT_SUMBITPURCHASE)
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId"

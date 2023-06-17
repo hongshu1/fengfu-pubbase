@@ -69,7 +69,7 @@ public class InvestmentPlanManageService extends BaseService<InvestmentPlan>{
 	    	.set("iorgid",getOrgId());
 		Page<Record> page = dbTemplate("investmentplanmanage.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 		for (Record row : page.getList()) {
-			row.set("cusername", JBoltUserCache.me.getUserName(row.getLong("icreateby")));
+			row.set("cusername", JBoltUserCache.me.getName(row.getLong("icreateby")));
 			row.set("cdepname", departmentService.getCdepName(row.getStr("cdepcode")));
 		}
 		return page;
@@ -98,9 +98,9 @@ public class InvestmentPlanManageService extends BaseService<InvestmentPlan>{
 		ValidationUtils.notNull(iplanid, "投资计划ID为空");
 		InvestmentPlan investmentPlan = findById(iplanid);
 		Date now = new Date();
-		ValidationUtils.isTrue(investmentPlan.getIauditstatus() == AuditStatusEnum.APPROVED.getValue(), "请选择已审核的投资计划进行生效操作!");
-		ValidationUtils.isTrue(investmentPlan.getIeffectivestatus() == EffectiveStatusEnum.INVAILD.getValue()
-				|| investmentPlan.getIeffectivestatus() == EffectiveStatusEnum.CANCLE.getValue()
+		ValidationUtils.isTrue(investmentPlan.getIAuditStatus() == AuditStatusEnum.APPROVED.getValue(), "请选择已审核的投资计划进行生效操作!");
+		ValidationUtils.isTrue(investmentPlan.getIEffectiveStatus() == EffectiveStatusEnum.INVAILD.getValue()
+				|| investmentPlan.getIEffectiveStatus() == EffectiveStatusEnum.CANCLE.getValue()
 				, "请选择未生效或已作废的投资计划进行生效操作!");
 		ValidationUtils.isTrue(!investmentPlanService.isExistsEffectivedInvestment(investmentPlan), "已存在生效部门，请检查!");
 		tx(()->{
@@ -110,18 +110,18 @@ public class InvestmentPlanManageService extends BaseService<InvestmentPlan>{
 					projectCardService.contructModelAndSave(ServiceTypeEnum.INVESTMENT_PLAN.getValue(), investmentPlanItem, FinishStatusEnum.UNFINISHED.getValue(),now);
 				}
 			}
-			InvestmentPlan previousPeriodInvestmentPlan = investmentPlanService.findPreviousPeriodInvestmentPlan(Kv.by("cdepcode", investmentPlan.getCdepcode())
-					.set("ibudgettype",investmentPlan.getIbudgettype())
-					.set("ibudgetyear",investmentPlan.getIbudgetyear()));
+			InvestmentPlan previousPeriodInvestmentPlan = investmentPlanService.findPreviousPeriodInvestmentPlan(Kv.by("cdepcode", investmentPlan.getCDepCode())
+					.set("ibudgettype",investmentPlan.getIBudgetType())
+					.set("ibudgetyear",investmentPlan.getIBudgetYear()));
 			if(previousPeriodInvestmentPlan!=null){
-				previousPeriodInvestmentPlan.setIupdateby(JBoltUserKit.getUserId());
-				previousPeriodInvestmentPlan.setDupdatetime(now);
-				previousPeriodInvestmentPlan.setIeffectivestatus(EffectiveStatusEnum.EXPIRED.getValue());
+				previousPeriodInvestmentPlan.setIUpdateBy(JBoltUserKit.getUserId());
+				previousPeriodInvestmentPlan.setDUpdateTime(now);
+				previousPeriodInvestmentPlan.setIEffectiveStatus(EffectiveStatusEnum.EXPIRED.getValue());
 				ValidationUtils.isTrue(previousPeriodInvestmentPlan.update(), ErrorMsg.UPDATE_FAILED);
 			}
-			investmentPlan.setIupdateby(JBoltUserKit.getUserId());
-			investmentPlan.setDupdatetime(now);
-			investmentPlan.setIeffectivestatus(EffectiveStatusEnum.EFFECTIVED.getValue());
+			investmentPlan.setIUpdateBy(JBoltUserKit.getUserId());
+			investmentPlan.setDUpdateTime(now);
+			investmentPlan.setIEffectiveStatus(EffectiveStatusEnum.EFFECTIVED.getValue());
 			ValidationUtils.isTrue(investmentPlan.update(), ErrorMsg.UPDATE_FAILED);
 			return true;
 		});
@@ -134,7 +134,7 @@ public class InvestmentPlanManageService extends BaseService<InvestmentPlan>{
 		ValidationUtils.notNull(iplanid, "投资计划ID为空");
 		InvestmentPlan investmentPlan = findById(iplanid);
 		Date now = new Date();
-		ValidationUtils.isTrue(investmentPlan.getIeffectivestatus() == EffectiveStatusEnum.EFFECTIVED.getValue(), "请选择已生效的投资计划进行作废操作!");
+		ValidationUtils.isTrue(investmentPlan.getIEffectiveStatus() == EffectiveStatusEnum.EFFECTIVED.getValue(), "请选择已生效的投资计划进行作废操作!");
 		List<Record> list = proposalmService.findProposalDatasByPlanId(iplanid);
 		if(CollUtil.isNotEmpty(list)){
 			String cproposalNos = "";
@@ -146,9 +146,9 @@ public class InvestmentPlanManageService extends BaseService<InvestmentPlan>{
 		}
 		
 		tx(()->{
-			investmentPlan.setIupdateby(JBoltUserKit.getUserId());
-			investmentPlan.setDupdatetime(now);
-			investmentPlan.setIeffectivestatus(EffectiveStatusEnum.CANCLE.getValue());
+			investmentPlan.setIUpdateBy(JBoltUserKit.getUserId());
+			investmentPlan.setDUpdateTime(now);
+			investmentPlan.setIEffectiveStatus(EffectiveStatusEnum.CANCLE.getValue());
 			ValidationUtils.isTrue(investmentPlan.update(), ErrorMsg.UPDATE_FAILED);
 			return true;
 		});

@@ -301,7 +301,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      */
     public Ret submit(Long iautoid) {
         tx(() -> {
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             AnnualOrderM annualOrderM = findById(iautoid);

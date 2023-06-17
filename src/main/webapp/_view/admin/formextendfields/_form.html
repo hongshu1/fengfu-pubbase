@@ -83,13 +83,13 @@
 <div class="form-group row" >
 <label class="col-sm-2 col-form-label">显示名称:</label>
 <div class="col-2">
-    <input type="text"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入显示名称" maxlength="40" name="formExtendFields.cDisplayName" value="#(formExtendFields.cDisplayName??)"/>
+    <input type="text"  data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入显示名称" maxlength="30" name="formExtendFields.cDisplayName" value="#(formExtendFields.cDisplayName??)"/>
 </div>
 </div>
 <div class="form-group row" >
 <label class="col-sm-2 col-form-label">字段值输入长度:</label>
 <div class="col-2">
-    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入字段长度" maxlength="40" name="formExtendFields.iMaxLength" value="#(formExtendFields.iMaxLength??)"/>
+    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入字段长度" maxlength="10" name="formExtendFields.iMaxLength" value="#(formExtendFields.iMaxLength??)"/>
 </div>
 </div>
     <input type="hidden" id="bbbb"/>
@@ -99,10 +99,11 @@
          data-name="formExtendFields.iFieldType"
          data-width="col-sm-2,col-5"
          data-value="#(formExtendFields.iFieldType??)"
-         data-default="options_first"
+         data-rule="radio"
+         data-notnull="true"
+         data-rule="require"
          onchange="toggleOneInputHidden()"
 >
-        <!--data-value-attr="sn"-->
         <!--data-url="admin/dictionary/options?key=extend_field_type"-->
         <label class="col-sm-2 col-form-label" >字段类型：</label>
         <div class="col"  style="padding-top: 1px;">
@@ -136,7 +137,7 @@
     <div class="form-group row"  id="hidDigi" style="visibility: hidden">
         <label type="hidden" class="col-sm-2 col-form-label">小数位:</label>
         <div class="col-1">
-            <input type="number" data-rule="pzint" data-notnull="false" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="" maxlength="40" name="formExtendFields.iDigit" value="#(formExtendFields.iDigit??)"/>
+            <input type="number" data-notnull="false" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="" maxlength="40" name="formExtendFields.iDigit" value="#(formExtendFields.iDigit??)"/>
         </div>
     </div>
 
@@ -156,13 +157,13 @@
 >
     </div>
     <div class="form-group row"
-data-radio
-data-name="formExtendFields.isRequired"
-data-value-attr="sn"
-data-url="admin/dictionary/options?key=is_required"
-data-label="是否必填:"
-data-width="col-sm-2,col-5"
-data-value="#(formExtendFields.isRequired??)"
+         data-radio
+         data-name="formExtendFields.isRequired"
+         data-value-attr="sn"
+         data-url="admin/dictionary/options?key=is_required"
+         data-label="是否必填:"
+         data-width="col-sm-2,col-5"
+         data-value="#(formExtendFields.isRequired??)"
          data-rule="radio"
          data-notnull="true"
          data-rule="require"
@@ -171,49 +172,20 @@ data-value="#(formExtendFields.isRequired??)"
 >
 </div>
 
-<div class="form-group row"
-data-radio
-data-name="formExtendFields.isEditable"
-data-value-attr="sn"
-data-url="admin/dictionary/options?key=is_edit"
-data-label="是否编辑"
-data-width="col-sm-2,col-5"
-data-value="#(formExtendFields.isEditable??)"
-     data-rule="radio"
-     data-notnull="true"
-     data-rule="require"
-data-tips="请输入是否编辑;0. 否 1. 是"
-data-inline="true"
->
-</div>
     <div class="form-group row"
-        data-radio
-        data-name="formExtendFields.isDisplayed"
-        data-url="admin/dictionary/options?key=is_visible"
-        data-label="是否显示:"
-        data-width="col-sm-2,col-5"
-        data-value="#(formExtendFields.isDisplayed??)"
-        data-inline="true"
+         data-radio
+         data-name="formExtendFields.isDisplayed"
+         data-url="admin/dictionary/options?key=is_visible"
+         data-label="是否显示:"
+         data-width="col-sm-2,col-5"
+         data-value="#(formExtendFields.isDisplayed??)"
+         data-inline="true"
          data-rule="radio"
          data-notnull="true"
          data-rule="require"
          data-value-attr="sn"
     >
     </div>
-        <!--<label class="col-sm-2 col-form-label" >11：</label>-->
-        <!--<div class="col"  style="padding-top: 1px;">-->
-            <!--<div class="radio radio-primary  radio-inline">-->
-                <!--<input  id="a1" type="radio" name="formExtendFields.isDisplayed" value="1"/>-->
-                <!--<label for="a1">11</label>-->
-            <!--</div>-->
-            <!--<div class="radio radio-primary  radio-inline">-->
-                <!--<input  id="a2" type="radio" name="formExtendFields.isDisplayed" value="0"/>-->
-                <!--<label for="a2">00</label>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-
-
 
     <input type="hidden" id="optioniSource"/>
     <div class="form-group row"
@@ -223,11 +195,11 @@ data-inline="true"
          data-width="col-sm-2,col-5"
          data-value="#(formExtendFields.iSource??)"
          data-inline="true"
+         data-rule="radio"
          data-notnull="true"
-         data-default="options_first"
+         data-rule="require"
          onchange="toggleOneInputHidden2()"
     >
-        <!--data-value-attr="sn"-->
         <!--data-url="admin/dictionary/options?key=value_source"-->
         <label class="col-sm-2 col-form-label" >值来源：</label>
         <div class="col"  style="padding-top: 1px;">
@@ -239,14 +211,6 @@ data-inline="true"
                 <input  id="iSource2" type="radio" onclick="sethid2(2)" name="formExtendFields.iSource" value="2"/>
                 <label for="iSource2">枚举引用</label>
             </div>
-            <!--<div class="radio radio-primary  radio-inline">-->
-                <!--<input  id="iSource3" type="radio" onclick="sethid2(3)" name="formExtendFields.iSource" value="3"/>-->
-                <!--<label for="iSource3">图片上传</label>-->
-            <!--</div>-->
-            <!--<div class="radio radio-primary  radio-inline">-->
-                <!--<input  id="iSource4" type="radio" onclick="sethid2(4)" name="formExtendFields.iSource" value="4"/>-->
-                <!--<label for="iSource4">附件上传</label>-->
-            <!--</div>-->
         </div>
     </div>
 

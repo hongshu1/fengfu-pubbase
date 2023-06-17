@@ -1,7 +1,6 @@
 package cn.jbolt.extend.config;
 
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.setting.Setting;
 import cn.jbolt.core.cache.JBoltDeptCache;

@@ -246,7 +246,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 				if (otherOut.getAutoID() == null && "save".equals(revokeVal)) {
 //					保存
 //					订单状态：1=已保存，2=待审核，3=已审核
-					otherOut.setAuditStatus(param);
+					otherOut.setIAuditStatus(param);
 
 					otherOut.setICreateBy(userId);
 					otherOut.setDCreateTime(nowDate);
@@ -264,7 +264,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 						otherOut.setAuditDate(nowDate);
 						otherOut.setAuditPerson(userName);
 					}
-					otherOut.setAuditStatus(param);
+					otherOut.setIAuditStatus(param);
 					otherOut.setIUpdateBy(userId);
 					otherOut.setDupdateTime(nowDate);
 					otherOut.setCUpdateName(userName);
@@ -325,7 +325,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 	 */
 	public Ret submit(Long iautoid) {
 		tx(() -> {
-			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"T_Sys_OtherOut");
+			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"T_Sys_OtherOut");
 			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
 			// 处理其他业务
@@ -395,11 +395,11 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 			if (listByIds.size() > 0) {
 				for (OtherOut otherOut : listByIds) {
 					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-					if (otherOut.getAuditStatus() != 1) {
+					if (otherOut.getIAuditStatus() != 1) {
 						ValidationUtils.error("订单：" + otherOut.getBillNo() + "状态不支持审核操作！");
 					}
 					//订单状态：3. 已审核
-					otherOut.setAuditStatus(2);
+					otherOut.setIAuditStatus(2);
 					otherOut.setAuditDate(nowDate);
 					otherOut.setAuditPerson(userName);
 					Ret ret = this.pushU8(ids);
@@ -543,7 +543,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 						String bill = s[0];
 						LOG.info("s===>" + bill);
 						LOG.info("data====" + data);
-						int update = update("update T_Sys_OtherOut set AuditStatus ='2' where AutoID IN("+ids+")" );
+						int update = update("update T_Sys_OtherOut set IAuditStatus ='2' where AutoID IN("+ids+")" );
 
 						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
 								"推送数据失败," + "失败原因" + msg);
@@ -576,11 +576,11 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 		}
 
 		User user = JBoltUserKit.getUser();
-		Map<String, Object> data = new HashMap<>();
+		JSONObject data = new JSONObject();
 
-		data.put("userCode",user.getUsername());
-		data.put("organizeCode",this.getdeptid());
-		data.put("token","");
+		data.set("userCode",user.getUsername());
+		data.set("organizeCode",this.getdeptid());
+		data.set("token","");
 
 		JSONObject preallocate = new JSONObject();
 
@@ -595,7 +595,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 
 		data.put("PreAllocate",preallocate);
 
-		JSONArray maindata = new JSONArray();
+		ArrayList<Object> maindata = new ArrayList<>();
 		otheroutdetail.stream().forEach(s -> {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.set("invstd","");
@@ -620,9 +620,9 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 			jsonObject.set("ODeptName","");
 			jsonObject.set("ORdType",otherout.getType());
 
-			maindata.put(jsonObject);
+			maindata.add(jsonObject);
 		});
-		data.put("MainData",maindata);
+		data.set("MainData",maindata);
 
 		//            请求头
 		Map<String, String> header = new HashMap<>(5);

@@ -101,7 +101,7 @@ where 1=1
 	#if(ccusname)
 		and cr.cCusName like concat('%',#para(ccusname),'%')
 	#end
-ORDER BY a.ModifyDate DESC
+ORDER BY a.dupdatetime DESC
 #end
 
 
@@ -136,6 +136,6 @@ where 1=1
 	#if(masid)
 		and a.MasID = #para(masid)
 	#end
-ORDER BY a.ModifyDate DESC
+ORDER BY a.dupdatetime DESC
 #end
 

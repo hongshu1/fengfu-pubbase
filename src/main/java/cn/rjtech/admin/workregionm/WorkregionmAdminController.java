@@ -60,6 +60,13 @@ public class WorkregionmAdminController extends JBoltBaseController {
     }
 
     /**
+     * 产线选择
+     * */
+    public void select_dialog_index() {
+        render("select_dialog_index.html");
+    }
+
+    /**
      * 数据源
      */
     public void datas() {

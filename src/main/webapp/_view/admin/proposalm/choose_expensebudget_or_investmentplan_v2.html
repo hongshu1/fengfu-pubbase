@@ -1,10 +1,6 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey)" >
-	    <div class="jbolt_page_title">
-	    </div>
-	    <div class="jbolt_page_content">
 	    	<div class="jbolt_tab_view">
 				  <div class="jbolt_tab_links">
 				  	#if(expenseBudgetPeriod??)
@@ -27,8 +23,6 @@
 					#end
 				  </div>
 			</div>
-	    </div>
-</div>
 #end
 
 #define js()

@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -153,6 +154,7 @@ public class VendorAdminController extends BaseAdminController {
     /**
      * 选项列表
      */
+    @UnCheck
     public void autocomplete() {
         renderJsonData(service.getAutocompleteList(get("q"), getInt("limit", 10)));
     }

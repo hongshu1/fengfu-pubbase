@@ -6,7 +6,7 @@
   <div class="form-group row">
     <label class="col-sm-1 col-form-label">存货属性</label>
     <div class="col" style="padding-top: 1px;">
-      <input type="hidden" name="inventory.itemAttributes" id="itemAttribute">
+      <input hidden name="inventory.itemAttributes" id="itemAttribute" value="#(inventory.itemAttributes)">
 
       <div class="form-group row"
            data-checkbox
@@ -103,7 +103,7 @@
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">支给件是否赠品</label>
         <div class="col">
-          <select data-rule="required" class="form-control" data-tips="请选择"
+          <select  class="form-control" data-tips="请选择"
                   data-url="admin/dictionary/options?key=options_boolean"
                   name="inventory.isGavePresent" data-autoload data-text="=请选择=" data-value-attr="sn"
                   data-select="#(inventory.isGavePresent??)"></select>
@@ -141,11 +141,10 @@
   </div>
   <div class="form-group row"
        data-width="col-sm-2,col">
-    <label class="col-sm-1 col-form-label">单位类型</label>
+    <label class="col-sm-1 col-form-label">单位类型#(inventory.iUomType??)</label>
     <div class="col">
       <div class="form-group row"
            data-checkbox
-           data-rule="checkbox"
 
            data-value-attr="sn"
            data-value="#(inventory.iUomType??)"

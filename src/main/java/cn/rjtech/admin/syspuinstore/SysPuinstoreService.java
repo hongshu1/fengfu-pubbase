@@ -316,12 +316,13 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         String post = new BaseInU8Util().deleteVouchProcessDynamicSubmitUrl(json);
         LOG.info(post);
         //
-        String userName = JBoltUserKit.getUserName();
+        User user = JBoltUserKit.getUser();
         puinstore.setU8BillNo(null);//将u8的单据号置为空
-        puinstore.setCAuditName(userName);
+        puinstore.setCAuditName(user.getUsername());
         puinstore.setAuditDate(date);
-        puinstore.setCUpdateName(userName);
+        puinstore.setCUpdateName(user.getUsername());
         puinstore.setDUpdateTime(date);
+        puinstore.setIUpdateBy(JBoltUserKit.getUserId());
         puinstore.setIAuditStatus(0);//退回待审核，0：反审核状态
         //
         puinstoreList.add(puinstore);
@@ -745,43 +746,15 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     /*
      * 批量审核通过
      * */
-    /*public Ret batchApprove(String ids) {
-        String[] split = ids.split(",");
-        checkIAuditStatus(ids);
-        ArrayList<SysPuinstore> puinstoreList = new ArrayList<>();
-        
-        Date date = new Date();
-        
-        tx(() -> {
-            
-            for (String id : split) {
-                commonAutitByIds(id, puinstoreList, date);
-            }
-            
-            //1、批量审核成功
-            batchUpdate(puinstoreList);
-
-            //2、检查是否要生成材料出库单和形态转换单
-            checkIsCreateMaterialAndSysAssem(puinstoreList);
-            return true;
-        });
-
-        return SUCCESS;
-    }*/
-    /*
-     * 批量审核通过
-     * */
     public Ret batchApprove(String ids) {
         String[] split = ids.split(",");
         checkIAuditStatus(ids);
         ArrayList<SysPuinstore> puinstoreList = new ArrayList<>();
         Date date = new Date();
         for (String id : split) {
-//            commonAutitByIds(id, puinstoreList, date);
             SysPuinstore puinstore = findById(id);
             //同步U8
             String json = getSysPuinstoreDto(puinstore);
-//            String u8Billno = new BaseInU8Util().base_in(json);
             setSysPuinstoreU8Billno(json, puinstore);
 
             // 状态改为已审核
@@ -798,8 +771,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
             //1、批量审核成功
             batchUpdate(puinstoreList);
 
-            //2、检查是否要生成材料出库单和形态转换单
-            checkIsCreateMaterialAndSysAssem(puinstoreList);
+            //2、todo 委外订单检查是否要生成材料出库单和形态转换单
+            //checkIsCreateMaterialAndSysAssem(puinstoreList);
             return true;
         });
 
@@ -868,39 +841,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     /*
      * 审核通过
      * */
-    /*public Ret approve(Long autoid) {
-        tx(() -> {
-            // 校验订单状态
-            checkApproveAndReject(autoid);
-            Date date = new Date();
-            User user = JBoltUserKit.getUser();
-            SysPuinstore sysPuinstore = findById(autoid);
-            ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), sysPuinstore.getIAuditStatus(), "订单非待审核状态");
-
-            sysPuinstore.setCAuditName(user.getUsername());
-            sysPuinstore.setAuditDate(date);//审核日期
-            sysPuinstore.setDUpdateTime(date);
-            sysPuinstore.setCUpdateName(user.getUsername());
-
-            //2、同步于U8
-            String json = getSysPuinstoreDto(sysPuinstore);
-            String u8Billno = new BaseInU8Util().base_in(json);
-            LOG.info(u8Billno);
-
-            //3、如果成功，给u8的单据号；不成功，把单据号置为空，状态改为审核不通过
-            //PurchaseOrderM purchaseOrderM = findU8BillNo(sysPuinstore);
-            sysPuinstore.setU8BillNo(u8Billno);
-            ValidationUtils.isTrue(sysPuinstore.update(), "审核通过失败！！");
-
-            return true;
-        });
-
-        return SUCCESS;
-    }*/
-
-    /*
-     * 审核通过
-     * */
     public Ret approve(Long autoid) {
         SysPuinstore sysPuinstore = findById(autoid);
         // 校验订单状态
@@ -918,7 +858,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         tx(() -> {
             //2、同步于U8
             String u8Billno = new BaseInU8Util().base_in(json);
-            System.out.println(u8Billno);
 
             //3、如果成功，给u8的单据号；不成功，把单据号置为空，状态改为审核不通过
             sysPuinstore.setU8BillNo(u8Billno);

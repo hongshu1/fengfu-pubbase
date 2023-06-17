@@ -88,8 +88,12 @@
                                            id="icustomerid2" data-sync-attr="iautoid"/>
                                     <label class="col-sm-3 col-form-label">客户名称</label>
                                     <div class="col-8">
+                                        <div class="input-group">
+
+                                        <div class="ac_input_box">
                                         <input type="text" class="form-control"
                                                data-autocomplete
+                                               id="ccusname"
                                                data-url="admin/customer/autocomplete"
                                                data-rule="required"
                                                data-sync-ele="#icustomerid,icustomerid2"
@@ -101,6 +105,15 @@
                                                data-header="客户编码,客户名称"
                                                maxlength="40"
                                                value="#(weekOrderM.ccusname??)">
+                                    </div>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" data-dialogbtn
+                                                    data-link-para-ele="#icustomerid" data-area="1280,600"
+                                                    data-title="选择数据（单选）"
+                                                    data-url="admin/annualorderm/ccusname_dialog_index"><i
+                                                    class="fa fa-search"></i></button>
+                                        </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -665,7 +678,16 @@
             }
         });
     }
+    function setChooseDialogSelectResult(data){
+        $('#icustomerid').val(data.ccusname);
+    }
 
+    // 选择客户名称
+    function instCcusname(data)
+    {
+        $("#icustomerid").val(data.iautoid);
+        $("#ccusname").val(data.ccusname);
+    }
 </script>
 #end
 

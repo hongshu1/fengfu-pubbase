@@ -6,6 +6,10 @@ import cn.jbolt._admin.hiprint.HiprintTplService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.util.ValidationUtils;
@@ -16,10 +20,11 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * 条码汇总 Controller
+ * 物料现品票汇总管理 Controller
  *
  * @author Kephon
  */
@@ -59,10 +64,22 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
      * */
     public void newdatas(){
         Kv kv = getKv();
+        set("barcode",kv.getStr("barcode"));
+        String startTime =(String) kv.get("starttime");
+        String endtime =(String) kv.get("endtime");
         renderJsonData(service.newdatas(getPageSize(),getPageNumber(),kv));
     }
 
 
+
+    /**
+     * 生成二维码
+     */
+    public void QRCode() {
+        Kv kv = new Kv();
+        kv.setIfNotNull("ids", get("ids"));
+        renderJsonData(service.getBarcodeTotalList(DataSourceConstants.U8,kv));
+    }
 
 
 
@@ -74,7 +91,7 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
         Kv kv = getKv();
         String ids = kv.getStr("ids");
         if (ids != null) {
-            String[] split = ids.split("。");
+            String[] split = ids.split(",");
             String sqlids = "";
             for (String id : split) {
                 sqlids += "'" + id + "',";
@@ -84,7 +101,32 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
             kv.set("sqlids", sqlids);
         }
         List<Record> records = service.getBarcodeTotalList(DataSourceConstants.U8,kv);
-        renderJxls("barcode.xlsx", Kv.by("rows", records), "条码汇总表_" + DateUtil.today() + ".xlsx");
+        JBoltCamelCaseUtil.keyToCamelCase(records);
+        //2、创建JBoltExcel
+        JBoltExcel jBoltExcel = JBoltExcel
+                .create()//创建JBoltExcel
+                .addSheet(//设置sheet
+                        JBoltExcelSheet.create("物料现品票汇总管理")
+                                .setHeaders(1,//sheet里添加表头
+                                        JBoltExcelHeader.create("billno", "单据单号", 20),
+                                        JBoltExcelHeader.create("vencode", "供应商编码", 20),
+                                        JBoltExcelHeader.create("otherinvcode", "客户部番", 20),
+                                        JBoltExcelHeader.create("otherinvname", "部品名称", 20),
+                                        JBoltExcelHeader.create("invstd", "规格", 40),
+                                        JBoltExcelHeader.create("poscode", "主记录单位编码", 40),
+                                        JBoltExcelHeader.create("barcode", "现品票条码", 40),
+                                        JBoltExcelHeader.create("version", "版本号", 40),
+                                        JBoltExcelHeader.create("qty", "数量", 40),
+                                        JBoltExcelHeader.create("ScheduleDate", "计划到货日期", 40),
+                                        JBoltExcelHeader.create("whname", "仓库名称", 40),
+                                        JBoltExcelHeader.create("posname", "库区名称", 40),
+                                        JBoltExcelHeader.create("createdate", "创建日期", 40)
+                                ).setDataChangeHandler((data, index) -> {
+                        })
+                                .setRecordDatas(2, records)//设置数据
+                ).setFileName("物料现品票汇总管理-" + new SimpleDateFormat("yyyyMMdd").format(new Date()));
+        //3、导出
+        renderBytesToExcelXlsFile(jBoltExcel);
 
     }
 

@@ -117,6 +117,7 @@ WHERE mr.iMoDocId = #para(docId) order by  mrc.iSeq
 #sql("getModocDatas")
 SELECT DISTINCT
 	modoc.iWorkRegionMid ,
+	modoc.iInventoryId,
 	regionm.cWorkName ,
 	modoc.iInventoryId,
 	inventory.cInvCode ,
@@ -144,7 +145,13 @@ FROM
 	Mo_MoDoc doc
 	LEFT JOIN Bd_WorkShiftM shiftm ON doc.iWorkShiftMid= shiftm.iAutoId
 WHERE
-	doc.iMoTaskId=#(taskid) and doc.iInventoryId=#(iinventoryid) and doc.iWorkRegionMid=#(iworkregionmid)
+	doc.iMoTaskId=#(taskid)
+	#if(iinventoryid)
+	and doc.iInventoryId=#(iinventoryid)
+	#end
+	#if(iworkregionmid)
+	and doc.iWorkRegionMid=#(iworkregionmid)
+	#end
 ORDER BY dates ASC
 #end
 
@@ -223,7 +230,7 @@ WHERE
 #end
 
 #sql("getModocNoQtyNumByDocid")
-SELECT
+SELECT DISTINCT
 	iAutoId,
 	cMoDocNo,
 	iQty,
@@ -239,14 +246,47 @@ WHERE
 	iMoTaskId = #(taskid)
 #end
 
+#sql("getModocLeaderByTaskid")
+SELECT DISTINCT
+	concat ( mm.iYear, mm.iMonth, mm.iDate, mm.iWorkShiftMid ) dataid,
+	concat ( mm.iYear, mm.iMonth, mm.iDate ) sdate,
+	md.iType,
+	md.iPersonId,
+	pn.cPsn_Num,
+	pn.cPsn_Name
+FROM
+	Mo_MoWorkShiftM mm
+	LEFT JOIN Mo_MoWorkShiftD md ON mm.iAutoId= md.iMoWorkShiftMid
+	LEFT JOIN Bd_Person pn ON md.iPersonId= pn.iAutoId
+WHERE
+	iMoTaskId = #(taskid)
+ORDER BY
+	sdate,
+	md.iType ASC
+#end
 
+#sql("getModocWorkShifts")
+SELECT  DISTINCT
+	concat ( iYear, iMonth, iDate, iWorkShiftMid ) dataid,
+	concat ( iYear, iMonth, iDate ) sdate
+FROM
+	Mo_MoDOC
+WHERE
+	iMoTaskId = #(taskid)
+ORDER BY sdate ASC
+#end
 
-
-
-
-
-
-
+#sql("getPlanDatasBytaskId")
+SELECT DISTINCT
+	concat ( iWorkRegionMid, iInventoryId ) regtory,
+	concat ( iYear, iMonth, iDate, iWorkShiftMid ) dates,
+	cMoDocNo,
+	iQty
+FROM
+	Mo_MoDoc
+WHERE
+	iMoTaskId = #(taskid)
+#end
 
 
 
