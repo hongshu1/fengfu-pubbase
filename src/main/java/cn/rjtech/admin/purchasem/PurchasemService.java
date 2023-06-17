@@ -303,7 +303,7 @@ public class PurchasemService extends BaseService<Purchasem> {
      */
     public Ret saveTableSubmit(JBoltTable jBoltTable) {
         ValidationUtils.notNull(jBoltTable, JBoltMsg.PARAM_ERROR);
-        Purchasem purchasem = jBoltTable.getFormBean(Purchasem.class, "purchasem");
+        Purchasem purchasem = jBoltTable.getFormModel(Purchasem.class, "purchasem");
         ValidationUtils.notNull(purchasem, JBoltMsg.PARAM_ERROR);
         Boolean flg = true;
         flg = tx(() -> {
