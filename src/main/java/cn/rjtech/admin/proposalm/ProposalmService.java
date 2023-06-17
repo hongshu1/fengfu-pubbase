@@ -22,6 +22,7 @@ import cn.jbolt.core.util.ModelMap;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.barcodeencodingm.BarcodeencodingmService;
 import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.projectcard.ProjectCardService;
 import cn.rjtech.admin.proposalattachment.ProposalAttachmentService;
 import cn.rjtech.admin.proposalcategory.ProposalcategoryService;
@@ -65,7 +66,6 @@ public class ProposalmService extends BaseService<Proposalm> {
     private ProposaldService proposaldService;
     @Inject
     private DictionaryService dictionaryService;
-
     @Inject
     private DepartmentService departmentService;
     @Inject
@@ -76,7 +76,8 @@ public class ProposalmService extends BaseService<Proposalm> {
     private ProposalAttachmentService proposalAttachmentService;
     @Inject
     private ProjectCardService projectCardService;
-
+	@Inject
+    private FormApprovalService formApprovalService;
     @Override
     protected Proposalm dao() {
         return dao;
@@ -138,8 +139,8 @@ public class ProposalmService extends BaseService<Proposalm> {
                 long iAutoId = Long.parseLong(idStr);
                 Proposalm dbProposalm = findById(iAutoId);
                 ValidationUtils.notNull(dbProposalm, JBoltMsg.DATA_NOT_EXIST);
-                ValidationUtils.equals(dbProposalm.getIorgid(), getOrgId(), ErrorMsg.ORG_ACCESS_DENIED);
-                ValidationUtils.equals(dbProposalm.getIauditstatus(), AuditStatusEnum.NOT_AUDIT.getValue(), "只能删除编辑状态的单据");
+                ValidationUtils.equals(dbProposalm.getIOrgId(), getOrgId(), ErrorMsg.ORG_ACCESS_DENIED);
+                ValidationUtils.equals(dbProposalm.getIAuditStatus(), AuditStatusEnum.NOT_AUDIT.getValue(), "只能删除编辑状态的单据");
 
                 // 删除附件
                 proposalAttachmentService.deleteByIproposalmid(iAutoId);
@@ -166,7 +167,7 @@ public class ProposalmService extends BaseService<Proposalm> {
      */
     @Override
     protected String afterDelete(Proposalm proposalm, Kv kv) {
-        //addDeleteSystemLog(proposalm.getIautoid(), JBoltUserKit.getUserId(),proposalm.getName());
+        //addDeleteSystemLog(proposalm.getIAutoId(), JBoltUserKit.getUserId(),proposalm.getName());
         return null;
     }
 
@@ -208,7 +209,7 @@ public class ProposalmService extends BaseService<Proposalm> {
      */
     @Override
     protected String afterToggleBoolean(Proposalm proposalm, String column, Kv kv) {
-        //addUpdateSystemLog(proposalm.getIautoid(), JBoltUserKit.getUserId(), proposalm.getName(),"的字段["+column+"]值:"+proposalm.get(column));
+        //addUpdateSystemLog(proposalm.getIAutoId(), JBoltUserKit.getUserId(), proposalm.getName(),"的字段["+column+"]值:"+proposalm.get(column));
         return null;
     }
 
@@ -280,16 +281,16 @@ public class ProposalmService extends BaseService<Proposalm> {
         JBoltTable proposalTable = tableMulti.getJBoltTable("proposalds");
         Proposalm proposalm = proposalTable.getFormModel(Proposalm.class, "proposalm");
         ValidationUtils.notNull(proposalm, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(proposalm.getDapplydate(), "申请日期不能为空");
-        ValidationUtils.notBlank(proposalm.getCapplypersoncode(), "申请人不能为空");
-        ValidationUtils.notBlank(proposalm.getCprojectname(), "项目名称不能为空");
-        ValidationUtils.notNull(proposalm.getCpurposesn(), "缺少目的区分");
-        ValidationUtils.notNull(proposalm.getIcategoryid(), "缺少类别区分");
-        ValidationUtils.notNull(proposalm.getIsscheduled(), "缺少事业计划");
+        ValidationUtils.notNull(proposalm.getDApplyDate(), "申请日期不能为空");
+        ValidationUtils.notBlank(proposalm.getCApplyPersonCode(), "申请人不能为空");
+        ValidationUtils.notBlank(proposalm.getCProjectName(), "项目名称不能为空");
+        ValidationUtils.notNull(proposalm.getCPurposeSn(), "缺少目的区分");
+        ValidationUtils.notNull(proposalm.getICategoryId(), "缺少类别区分");
+        ValidationUtils.notNull(proposalm.getIsScheduled(), "缺少事业计划");
         JBoltTable attachmentsTable = tableMulti.getJBoltTable("attachments");
-        if (null == proposalm.getIautoid()) {
+        if (null == proposalm.getIAutoId()) {
             // 必填参数检查
-            ValidationUtils.notBlank(proposalm.getCdepcode(), "缺少部门参数");
+            ValidationUtils.notBlank(proposalm.getCDepCode(), "缺少部门参数");
             ValidationUtils.notEmpty(proposalTable.getSaveRecordList(), "禀议书项目不能为空");
             tx(() -> {
                 doSaveTableSubmit(proposalm, proposalTable.getSaveRecordList(), attachmentsTable.getSaveRecordList(), user.getId(), now);
@@ -298,29 +299,29 @@ public class ProposalmService extends BaseService<Proposalm> {
 
             return successWithData(proposalm.keep("iautoid"));
         } else {
-            Proposalm dbProposalm = findById(proposalm.getIautoid());
+            Proposalm dbProposalm = findById(proposalm.getIAutoId());
             ValidationUtils.notNull(dbProposalm, "禀议书不存在");
-            ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), dbProposalm.getIauditstatus(), "当前单据非可编辑状态");
+            ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), dbProposalm.getIAuditStatus(), "当前单据非可编辑状态");
             // 更新主表
             tx(() -> {
                 dbProposalm._setAttrs(proposalm.keep("iautoid","cdepcode", "capplypersoncode", "capplypersonname", "cprojectcode", "cprojectname", "cpurposesn", "icategoryid", "isscheduled", "cdesc", "inatmoney", "inatsum", "ibudgetmoney", "ibudgetsum", "isupplementalmoney", "isupplementalsum", "csupplementaldesc"))
-                        .setIupdateby(user.getId())
-                        .setDupdatetime(now);
+                        .setIUpdateBy(user.getId())
+                        .setDUpdateTime(now);
 
                 ValidationUtils.isTrue(dbProposalm.update(), ErrorMsg.UPDATE_FAILED);
 
                 // 保存明细
-                doSaveProposalds(proposalm.getIautoid(), proposalTable.getSaveRecordList());
+                doSaveProposalds(proposalm.getIAutoId(), proposalTable.getSaveRecordList());
                 // 修改明细
                 doUpdateProposalds(proposalTable.getUpdateRecordList());
                 // 删除明细
                 doDeleteProposalds(proposalTable.getDelete());
 
                 // 校验明细必须要有内容
-                ValidationUtils.isTrue(proposaldService.hasRecords(proposalm.getIautoid()), "禀议项目不能为空");
+                ValidationUtils.isTrue(proposaldService.hasRecords(proposalm.getIAutoId()), "禀议项目不能为空");
 
                 // 保存禀议书附件
-                doSaveProposalAttachment(proposalm.getIautoid(), attachmentsTable.getSaveRecordList());
+                doSaveProposalAttachment(proposalm.getIAutoId(), attachmentsTable.getSaveRecordList());
                 // 删除禀议书附件
                 doDeleteAttachments(attachmentsTable.getDelete());
 
@@ -351,12 +352,12 @@ public class ProposalmService extends BaseService<Proposalm> {
     	Proposalm proposalm = findById(iautoid);
     	ValidationUtils.notNull(proposalm, "禀议书保存失败,禀议书No.未能生成,请检查!");
     	//获取追加禀议No:获取初始禀议书No,后面拼接流水号
-    	if(proposalm.getIssupplemental()){
-    		Long ifirstsourceproposalid = proposalm.getIfirstsourceproposalid();
+    	if(proposalm.getIsSupplemental()){
+    		Long ifirstsourceproposalid = proposalm.getIFirstSourceProposalId();
     		ValidationUtils.notNull(ifirstsourceproposalid, "初始禀议书ID为空,生成追加禀议书No.失败!");
     		Proposalm firstProposalm = findById(ifirstsourceproposalid);
     		ValidationUtils.notNull(firstProposalm, "初始禀议书为空,生成追加禀议书No.失败!");
-    		String cfirstsourceproposalno = firstProposalm.getCproposalno();
+    		String cfirstsourceproposalno = firstProposalm.getCProposalNo();
     		cProposalNo = BillNoUtils.genProposalSystemNo(getOrgId(), cfirstsourceproposalno + "-", false, 2);
     	}else{
     		cProposalNo = barcodeencodingmService.genCode(Kv.by("iautoid", iautoid), ItemEnum.PROPOSAL.getValue());
@@ -366,33 +367,33 @@ public class ProposalmService extends BaseService<Proposalm> {
     }
 
     private void doSaveTableSubmit(Proposalm proposalm, List<Record> proposaldSaveList, List<Record> attachmentSaveList, Long userId, Date now) {
-        proposalm.setIorgid(getOrgId());
-        proposalm.setCorgcode(getOrgCode());
-        proposalm.setCproposalno("");
-        proposalm.setIauditstatus(AuditStatusEnum.NOT_AUDIT.getValue());
-        proposalm.setIeffectivestatus(EffectiveStatusEnum.INVAILD.getValue());
-        proposalm.setDcreatetime(now);
-        proposalm.setDupdatetime(now);
-        proposalm.setIcreateby(userId);
-        proposalm.setIupdateby(userId);
+        proposalm.setIOrgId(getOrgId());
+        proposalm.setCOrgCode(getOrgCode());
+        proposalm.setCProposalNo("");
+        proposalm.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+        proposalm.setIEffectiveStatus(EffectiveStatusEnum.INVAILD.getValue());
+        proposalm.setDCreateTime(now);
+        proposalm.setDUpdateTime(now);
+        proposalm.setICreateBy(userId);
+        proposalm.setIUpdateBy(userId);
         Long iautoid = JBoltSnowflakeKit.me.nextId();
-        proposalm.setIautoid(iautoid);
+        proposalm.setIAutoId(iautoid);
         // 累计申请金额（无税）
-        proposalm.setItotalmoney(proposalm.getInatmoney());
+        proposalm.setITotalMoney(proposalm.getINatMoney());
         // 累计申请金额（含税）
-        proposalm.setItotalsum(proposalm.getInatsum());
+        proposalm.setITotalSum(proposalm.getINatSum());
         //追加禀议需要结转累计申购金额
-        if(!proposalm.getIssupplemental()){
-        	proposalm.setIfirstsourceproposalid(proposalm.getIautoid());
+        if(!proposalm.getIsSupplemental()){
+        	proposalm.setIFirstSourceProposalId(proposalm.getIAutoId());
         }
         // 保存主表
         ValidationUtils.isTrue(proposalm.save(), ErrorMsg.SAVE_FAILED);
-        proposalm.setCproposalno(genProposalNo(Kv.by("iautoid",proposalm.getIautoid())));
+        proposalm.setCProposalNo(genProposalNo(Kv.by("iautoid",proposalm.getIAutoId())));
         ValidationUtils.isTrue(proposalm.update(), ErrorMsg.UPDATE_FAILED);
         // 保存明细
-        doSaveProposalds(proposalm.getIautoid(), proposaldSaveList);
+        doSaveProposalds(proposalm.getIAutoId(), proposaldSaveList);
         // 保存附件明细
-        doSaveProposalAttachment(proposalm.getIautoid(), attachmentSaveList);
+        doSaveProposalAttachment(proposalm.getIAutoId(), attachmentSaveList);
     }
 
     private void doSaveProposalds(Long iproposalmid, List<Record> saveRecordList) {
@@ -458,17 +459,18 @@ public class ProposalmService extends BaseService<Proposalm> {
     public Ret submit(Long iproposalmid, User loginUser) {
         Proposalm proposalm = findById(iproposalmid);
         ValidationUtils.notNull(proposalm, "禀议书记录不存在");
-        ValidationUtils.isTrue(proposalm.getIorgid().equals(getOrgId()), ErrorMsg.ORG_ACCESS_DENIED);
-        ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), proposalm.getIauditstatus(), "非编辑状态，禁止提交审核");
+        ValidationUtils.isTrue(proposalm.getIOrgId().equals(getOrgId()), ErrorMsg.ORG_ACCESS_DENIED);
+        ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), proposalm.getIAuditStatus(), "非编辑状态，禁止提交审核");
 
         tx(() -> {
         	if(AppConfig.isVerifyProgressEnabled()){
-	            // 当前单据，审批状态更新为审批进行中
-	            ValidationUtils.isTrue(updateAuditting(iproposalmid), ErrorMsg.UPDATE_FAILED);
-	            // 调用审批流初始化进度数据
-	            //verifyprogressService.start(String.valueOf(iproposalmid), getOrgCode(), VeriProgressObjTypeEnum.PROPOSAL, loginUser, proposalm.getInatsum(), proposalm.getCdepcode(), new Date());
+        		// 根据审批状态
+                Ret ret = formApprovalService.submit(table(), iproposalmid, primaryKey(),"cn.rjtech.admin.proposalm.ProposalmService");
+                ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+                
+                //生成待办和发送邮件
         	}else{
-        		proposalm.setIauditstatus(AuditStatusEnum.APPROVED.getValue());
+        		proposalm.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
         		ValidationUtils.isTrue(proposalm.update(), ErrorMsg.UPDATE_FAILED);
         	}
             return true;
@@ -476,15 +478,38 @@ public class ProposalmService extends BaseService<Proposalm> {
 
         return SUCCESS;
     }
-
-    private boolean updateAuditting(Long iautoid) {
-        Okv para = Okv.by("iautoid", iautoid)
-                .set("auditting", AuditStatusEnum.AWAIT_AUDIT.getValue())
-                .set("unaudit1", AuditStatusEnum.NOT_AUDIT.getValue())
-                .set("unaudit2", AuditStatusEnum.REJECTED.getValue());
-
-        int affectiveRows = dbTemplate("proposalm.updateAuditting", para).update();
-        return affectiveRows > 0;
+    /**
+     * 处理审批通过的其他业务操作，如有异常返回错误信息
+     */
+    public String postApproveFunc(long formAutoId) {
+  
+        return null;
+    }
+	
+    /**
+     * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
+     */
+    public String postRejectFunc(long formAutoId) {
+        return null;
+    }
+	
+    /**
+     * 实现反审之后的其他业务操作, 如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        // 反审回第一个节点，回退状态为“已保存”
+        if (isFirst) {
+       
+        }
+        // 最后一步通过的，反审，回退状态为“待审核”
+        if (isLast) {
+           
+        }
+        return null;
     }
 
     public Record getDetailsMoney(Kv kv) {
@@ -494,7 +519,7 @@ public class ProposalmService extends BaseService<Proposalm> {
     public Ret withdraw(Long iautoid) {
         Proposalm proposalm = findById(iautoid);
         ValidationUtils.notNull(proposalm, "禀议书不存在");
-        ValidationUtils.equals(proposalm.getIauditstatus(), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态，禁止操作");
+        ValidationUtils.equals(proposalm.getIAuditStatus(), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态，禁止操作");
         //ValidationUtils.isTrue(verifyprogressService.notAuditting(VeriProgressObjTypeEnum.PROPOSAL.getValue(), iautoid), "禀议书已存在审核记录，请进行弃审操作");
         tx(() -> {
 
@@ -530,36 +555,36 @@ public class ProposalmService extends BaseService<Proposalm> {
         tx(() -> {
             Proposalm proposalm = findById(iproposalmid);
             ValidationUtils.notNull(proposalm, "禀议书不存在");
-            ValidationUtils.isTrue(proposalm.getIorgid().equals(getOrgId()), ErrorMsg.ORG_ACCESS_DENIED);
-            ValidationUtils.equals(proposalm.getIauditstatus(), AuditStatusEnum.APPROVED.getValue(), "审核未通过");
-            ValidationUtils.equals(proposalm.getIeffectivestatus(), EffectiveStatusEnum.INVAILD.getValue(), "请选择未生效禀议书进行生效操作");
-            proposalm.setIeffectivestatus(EffectiveStatusEnum.EFFECTIVED.getValue());
-            proposalm.setDeffectivetime(now);
-            proposalm.setDupdatetime(now);
-            proposalm.setIupdateby(JBoltUserKit.getUserId());
+            ValidationUtils.isTrue(proposalm.getIOrgId().equals(getOrgId()), ErrorMsg.ORG_ACCESS_DENIED);
+            ValidationUtils.equals(proposalm.getIAuditStatus(), AuditStatusEnum.APPROVED.getValue(), "审核未通过");
+            ValidationUtils.equals(proposalm.getIEffectiveStatus(), EffectiveStatusEnum.INVAILD.getValue(), "请选择未生效禀议书进行生效操作");
+            proposalm.setIEffectiveStatus(EffectiveStatusEnum.EFFECTIVED.getValue());
+            proposalm.setDEffectiveTime(now);
+            proposalm.setDUpdateTime(now);
+            proposalm.setIUpdateBy(JBoltUserKit.getUserId());
             //追加禀议用原禀议书的项目编码，参照费用/投资计划新增的禀议书需要生成项目档案
-            if(JBoltStringUtil.isBlank(proposalm.getCprojectcode())){
+            if(JBoltStringUtil.isBlank(proposalm.getCProjectCode())){
 	            // 生成项目档案
 	            Project project = new Project();
-	            project.setIorgid(proposalm.getIorgid());
-	            project.setCorgcode(proposalm.getCorgcode());
+	            project.setIorgid(proposalm.getIOrgId());
+	            project.setCorgcode(proposalm.getCOrgCode());
 	            project.setCprojectcode(barcodeencodingmService.genCode(Kv.by("iautoid", iproposalmid), ItemEnum.PROJECT.getValue()));
-	            project.setCprojectname(proposalm.getCprojectname());
-	            project.setCdepcode(proposalm.getCdepcode());
+	            project.setCprojectname(proposalm.getCProjectName());
+	            project.setCdepcode(proposalm.getCDepCode());
 	            project.setDcreatetime(now);
-	            project.setIcreateby(proposalm.getIcreateby());
+	            project.setIcreateby(proposalm.getICreateBy());
 	            ValidationUtils.isTrue(project.save(), "生成项目档案失败");
-	            proposalm.setCprojectcode(project.getCprojectcode());
+	            proposalm.setCProjectCode(project.getCprojectcode());
             }
             ValidationUtils.isTrue(proposalm.update(), ErrorMsg.UPDATE_FAILED);
             //追加禀议生效后需要将原禀议书失效
-            if(proposalm.getIssupplemental()){
-            	Proposalm sourceProposalm = findById(proposalm.getIsourceproposalid());
+            if(proposalm.getIsSupplemental()){
+            	Proposalm sourceProposalm = findById(proposalm.getISourceProposalId());
             	ValidationUtils.notNull(sourceProposalm, "原禀议书为空");
-            	ValidationUtils.isTrue(sourceProposalm.getIeffectivestatus() == EffectiveStatusEnum.EFFECTIVED.getValue(), "原禀议书未生效!");
-            	sourceProposalm.setIeffectivestatus(EffectiveStatusEnum.EXPIRED.getValue());
-            	sourceProposalm.setDupdatetime(now);
-            	sourceProposalm.setIupdateby(JBoltUserKit.getUserId());
+            	ValidationUtils.isTrue(sourceProposalm.getIEffectiveStatus() == EffectiveStatusEnum.EFFECTIVED.getValue(), "原禀议书未生效!");
+            	sourceProposalm.setIEffectiveStatus(EffectiveStatusEnum.EXPIRED.getValue());
+            	sourceProposalm.setDUpdateTime(now);
+            	sourceProposalm.setIUpdateBy(JBoltUserKit.getUserId());
             	ValidationUtils.isTrue(sourceProposalm.update(), "追加禀议书生效操作将原禀议书失效失败!");
             }
             return true;
@@ -659,7 +684,7 @@ public class ProposalmService extends BaseService<Proposalm> {
     	ValidationUtils.notNull(proposalm, "禀议书数据不存在,获取部门英文名称失败!");
 		switch (BarCodeEnum.toEnum(cprojectcode)) {
 	        case DEPT:
-	        	Record record = departmentService.findByCdepcode(getOrgId(),proposalm.getCdepcode()).toRecord();
+	        	Record record = departmentService.findByCdepcode(getOrgId(),proposalm.getCDepCode()).toRecord();
 	    		String cdepnameen = record.getStr("cdepnameen");
 	    		ValidationUtils.notBlank(cdepnameen, record.getStr("cdepname")+"部门的英文名称为空!");
 	    		str = cdepnameen;

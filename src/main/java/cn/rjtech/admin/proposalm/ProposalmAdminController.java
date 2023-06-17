@@ -125,17 +125,17 @@ public class ProposalmAdminController extends BaseAdminController {
         ValidationUtils.notBlank(cdepcode, JBoltMsg.PARAM_ERROR);
         User user = JBoltUserKit.getUser();
         Proposalm proposalm = new Proposalm();
-        proposalm.setDapplydate(new Date());
-        proposalm.setCdepcode(cdepcode);
-        proposalm.setIssupplemental(false);
+        proposalm.setDApplyDate(new Date());
+        proposalm.setCDepCode(cdepcode);
+        proposalm.setIsSupplemental(false);
         Record contro = personService.findFirstByCuserid(user.getId());
         if (null != contro) {
-            proposalm.setCapplypersoncode(contro.getStr("cpsn_num"));
-            proposalm.setCapplypersonname(user.getName());
+            proposalm.setCApplyPersonCode(contro.getStr("cpsn_num"));
+            proposalm.setCApplyPersonName(user.getName());
         }
         set("proposalds", getProposaldDatas(expensebudgetitemid, investmentplanitemid, proposalm, false));
         set("proposalm", proposalm);
-        set("cdepname", departmentService.getCdepName(proposalm.getCdepcode()));
+        set("cdepname", departmentService.getCdepName(proposalm.getCDepCode()));
         render("add.html");
 
     }
@@ -245,16 +245,14 @@ public class ProposalmAdminController extends BaseAdminController {
                         .set("ccurrency", "人民币")
                         .set("nflat", 1)
                         .set("itaxrate", planItemITaxRate)
-                        /*.set("cbudgetdepcode", plan.getStr("cdepcode"))*/
-                        /*.set("cbudgetdepname", departmentService.getCdepName(plan.getStr("cdepcode")))*/
                         .set("isubitem", IsEnableEnum.YES.getValue())
                         .set("isourcetype", 2)
                         .set("iprojectcardid", item.getLong("iprojectcardid"))
                 );
             }
         }
-        proposalm.setIbudgetmoney(ibudgetmoneyTotal);
-        proposalm.setIbudgetsum(ibudgetsumTotal);
+        proposalm.setIBudgetMoney(ibudgetmoneyTotal);
+        proposalm.setIBudgetSum(ibudgetsumTotal);
         return proposalds;
     }
 
@@ -352,17 +350,17 @@ public class ProposalmAdminController extends BaseAdminController {
         ValidationUtils.validateId(iautoid, "禀议书主表ID");
         Proposalm proposalm = service.findById(iautoid);
         ValidationUtils.notNull(proposalm, JBoltMsg.DATA_NOT_EXIST);
-        Long isourceproposalmid = proposalm.getIsourceproposalid();
+        Long isourceproposalmid = proposalm.getISourceProposalId();
         if (isourceproposalmid != null) {
             Proposalm sourceProposalm = service.findById(isourceproposalmid);
-            set("sourceinatmoney", sourceProposalm.getInatmoney());
-            set("sourceinatsum", sourceProposalm.getInatsum());
+            set("sourceinatmoney", sourceProposalm.getINatMoney());
+            set("sourceinatsum", sourceProposalm.getINatSum());
         }
         //keepPara();
         set("proposalm", proposalm);
-        set("cdepname", departmentService.getCdepName(proposalm.getCdepcode()));
+        set("cdepname", departmentService.getCdepName(proposalm.getCDepCode()));
         // 如果是已审核的，设置为只读
-        switch (AuditStatusEnum.toEnum(proposalm.getIauditstatus())) {
+        switch (AuditStatusEnum.toEnum(proposalm.getIAuditStatus())) {
             case AWAIT_AUDIT:
             case APPROVED:
                 set("readonly", "readonly");
@@ -389,7 +387,7 @@ public class ProposalmAdminController extends BaseAdminController {
     /**
      * 选择费用预算列表
      */
-    @CheckPermission(PermissionKey.PROPOSALM_SAVE)
+    @UnCheck
     public void chooseExpenseBudget(@Para(value = "iperiodid") Long iperiodid, @Para(value = "cdepcode") String cdepcode, @Para(value = "isourceproposalid") Long isourceproposalid) {
         Period period = periodService.findById(iperiodid);
         keepPara();
@@ -409,7 +407,7 @@ public class ProposalmAdminController extends BaseAdminController {
     /**
      * 选择投资计划
      */
-    @CheckPermission(PermissionKey.PROPOSALM_SAVE)
+    @UnCheck
     public void chooseInvestmentPlan(@Para(value = "iperiodid") Long iperiodid, @Para(value = "cdepcode") String cdepcode) {
         Period period = periodService.findById(iperiodid);
         keepPara();
@@ -420,6 +418,7 @@ public class ProposalmAdminController extends BaseAdminController {
     /**
      * 参考费用预算或者投资计划按钮点击选择期间页面
      */
+    @CheckPermission(PermissionKey.PROPOSALM_SAVE)
     public void choosePeriod() {
         render("choose_period.html");
     }
@@ -450,7 +449,7 @@ public class ProposalmAdminController extends BaseAdminController {
         ValidationUtils.notNull(isourceproposalid, "原禀议书ID为空!");
         Proposalm proposalm = service.findById(isourceproposalid);
         ValidationUtils.notNull(proposalm, "原禀议书为空!");
-        String cdepcode = proposalm.getCdepcode();
+        String cdepcode = proposalm.getCDepCode();
         Kv para = Kv.by("cdepcode", cdepcode);
         ExpenseBudget expenseBudget = expenseBudgetService.findEffectivedExpenseBudgetByDeptCode(para);
         InvestmentPlan investmentPlan = investmentPlanService.findEffectivedInvestmentByDeptCode(para);
@@ -502,7 +501,7 @@ public class ProposalmAdminController extends BaseAdminController {
         Proposalm proposalm = service.findById(iproposalmid);
         ValidationUtils.notNull(proposalm, "禀议书不存在");
         // 校验数据权限
-        //DataPermissionKit.validateAccess(JBoltUserKit.getUser(), proposalm.getCdepcode());
+        //DataPermissionKit.validateAccess(JBoltUserKit.getUser(), proposalm.getCDepCode());
         //检验是否存在未生效的申购单,存在不能追加禀议
         //service.isExistsInvaildPurchase(iproposalmid);
         // 原禀议项目
@@ -512,22 +511,22 @@ public class ProposalmAdminController extends BaseAdminController {
             proposald.remove("iautoid", "iproposalmid");
         }
 
-        List<ProposalAttachment> attachments = proposalAttachmentService.findByIproposalmid(proposalm.getIautoid());
+        List<ProposalAttachment> attachments = proposalAttachmentService.findByIproposalmid(proposalm.getIAutoId());
         if (CollUtil.isNotEmpty(attachments)) {
             for (ProposalAttachment attachment : attachments) {
                 attachment.remove("iautoid", "iproposalmid");
             }
         }
-        proposalm.setIsourceproposalid(proposalm.getIautoid())
-                .setCsourceproposalno(proposalm.getCproposalno())
-                .setDapplydate(new Date()).setIssupplemental(true)
+        proposalm.setISourceProposalId(proposalm.getIAutoId())
+                .setCSourceProposalNo(proposalm.getCProposalNo())
+                .setDApplyDate(new Date()).setIsSupplemental(true)
                 .remove("iautoid", "cproposalno", "iauditstatus", "ieffectivestatus");
-        set("cdepname", departmentService.getCdepName(proposalm.getCdepcode()));
+        set("cdepname", departmentService.getCdepName(proposalm.getCDepCode()));
         set("proposalm", proposalm);
         set("proposalds", proposalds);
         set("attachments", attachments);
-        set("sourceinatmoney", proposalm.getInatmoney());//原禀议书申请金额(不含税) 只用于展示 不需要保存
-        set("sourceinatsum", proposalm.getInatsum());//原禀议书申请金额(含税) 只用于展示 不需要保存
+        set("sourceinatmoney", proposalm.getINatMoney());//原禀议书申请金额(不含税) 只用于展示 不需要保存
+        set("sourceinatsum", proposalm.getINatSum());//原禀议书申请金额(含税) 只用于展示 不需要保存
         render("add.html");
     }
 
@@ -614,6 +613,15 @@ public class ProposalmAdminController extends BaseAdminController {
     @UnCheck
     public void validateProposalMoneyIsExceed() {
         renderJsonData(service.validateProposalMoneyIsExceed(getKv()));
+    }
+    /**
+     * 查看审批界面
+     * */
+    @UnCheck
+    public void proposalmFormApprovalFlowIndex(){
+    	Proposalm proposalm = service.findById(getLong("iautoid"));
+    	set("proposalm", proposalm);
+    	render("approve_process_index.html");
     }
 
 }

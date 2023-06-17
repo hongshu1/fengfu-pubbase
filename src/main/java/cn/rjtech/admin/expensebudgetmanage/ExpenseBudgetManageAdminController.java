@@ -3,6 +3,7 @@ package cn.rjtech.admin.expensebudgetmanage;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -90,6 +91,7 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
     /**
      * 查看审批界面
      * */
+    @UnCheck
     public void expenseFormApprovalFlowIndex(){
     	ExpenseBudget expenseBudget = service.findById(getLong("iautoid"));
     	set("expenseBudget", expenseBudget);
