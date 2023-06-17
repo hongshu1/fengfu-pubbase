@@ -1,12 +1,17 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
 	<div class="jbolt_page_content">
-<form onsubmit="return false;" id="otherOutForm"  action="#(action)" method="post">
+<form onsubmit="return false;" id="otherOutForm_#(pageId)"  action="#(action)" method="post">
 
 	<div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
 		<div class="col-md-l pt-2" role="group" aria-label="btn-group">
 			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="1" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
-			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+<!--			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>-->
+
+
+			#if(otherOut.autoid??)
+			#include("/_view/_common/_approval_btns.html", uri="/admin/otherout", formSn="T_Sys_OtherOut_Mo", o=otherOut, edit=edit??, primaryKeyName="autoid")
+			#end
 			<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
 		</div>
 	</div>
@@ -69,7 +74,7 @@
 				<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请输入要求原因分析=" type="text" maxlength="300" class="form-control border-none" name="otherOut.reason" placeholder="" value="#(otherOut.reason??)">#(otherOut.reason??)</textarea>
 			</div>
 	</div>
-
+</form>
 	<div class="form-group row">
 		<div class="col-11" style="left: 17px;">
 			<div class="jbolt_page_content">
@@ -89,12 +94,14 @@
 			<input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#date((otherOut.dcreatetime??),'yyyy-MM-dd HH:mm:ss')"/>
 		</div>
 	</div>
-</form>
 	</div>
 </div>
 #define js()
 <script>
 	hideParentLayerDialogBtn();
+	function submitThisForm() {
+		return true;
+	}
 
 
 
@@ -111,7 +118,7 @@
 						if (value == "save"){
 							parent.refreshPjaxContainer();
 							// parent.refreshCurrentTabContent();//刷新当前页面
-							self.location.href = "/admin/otherout/edit/"+id+"-_jb_rqtype_dialog"; //新增的刷新
+							self.location.href = "/admin/otherout/edit/"+id+"-_jb_rqtype_dialog?&edit=true"; //新增的刷新
 							// parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
 						}else {
 							parent.refreshCurrentTabContent();//刷新当前页面
@@ -132,6 +139,5 @@
 		window.parent.refreshJBoltTable();
 	}
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="otherOutForm")
 #end
 

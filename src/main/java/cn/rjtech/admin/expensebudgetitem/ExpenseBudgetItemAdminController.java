@@ -67,6 +67,7 @@ public class ExpenseBudgetItemAdminController extends BaseAdminController {
     /**
      * 禀议参照选择数据
      */
+    @UnCheck
     public void mdatas() {
         renderJsonData(service.paginateMdatas(getPageNumber(), getPageSize(), getKv()));
     }
