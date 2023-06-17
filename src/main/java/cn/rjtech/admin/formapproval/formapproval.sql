@@ -1,5 +1,14 @@
 #sql("getDeptDataTree")
 with T as (
+    select cDepPerson, iPid,cDepCode from Bd_Department where cDepCode = '#(dept)'
+    UNION ALL
+    SELECT a.cDepPerson, a.iPid,a.cDepCode FROM Bd_Department a inner join T on T.iPid = a.iAutoId
+)
+select * from T
+#end
+
+#sql("getDeptDataTree_bak_2023_06_16")
+with T as (
     select iDutyUserId, iPid,cDepCode from Bd_Department where cDepCode = '#(dept)'
     UNION ALL
     SELECT a.iDutyUserId, a.iPid,a.cDepCode FROM Bd_Department a inner join T on T.iPid = a.iAutoId

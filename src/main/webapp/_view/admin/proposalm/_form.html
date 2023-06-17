@@ -8,13 +8,7 @@
 </style>
 #end
 #set(pageId=RandomUtil.random(6))
-<!-- <div class="jbolt_page_title jb_vheader">
-    <div class="row">
-
-    </div>
-</div> -->
-
-<div class="jbolt_page_content">
+<div class="jbolt_page_title">
 
     <form onsubmit="return false;" id="proposalmForm_#(pageId)" action="#(action)" method="post">
 
@@ -356,15 +350,14 @@
         </div>
 
     </form>
-
-    <div class="jbolt_tab_view jb_vflex">
-
-        <div class="jbolt_tab_links jb_vheader">
+</div>
+    <div class="jbolt_tab_view">
+        <div class="jbolt_tab_links">
             <a class="jbolt_tab_link active" href="#jbolt_tabcontent1">禀议项目</a>
             <a class="jbolt_tab_link" href="#jbolt_tabcontent2">附件</a>
         </div>
 
-        <div class="jbolt_tab_contents jb_vbody">
+        <div class="jbolt_tab_contents">
 
             <div class="jbolt_tab_content active" id="jbolt_tabcontent1">
                 #include("proposalds.html")
@@ -378,7 +371,7 @@
         </div>
 
     </div>
-</div>
+
 #define js()
 #@hiprintjs()
 <script>

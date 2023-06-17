@@ -9,8 +9,8 @@ select so.AutoID, CASE so.state
         '已审批'
 				WHEN 4 THEN
         '审批不通过'
-        END AS statename,so.state,so.BillNo as billno,so.CreateDate as createdate,so.DeptCode as deptcode,
-				so.IRdCode as irdcode,so.ORdCode as ordcode,so.AuditPerson as auditperson,so.AuditDate as auditdate,so.Memo as memo,so.CreatePerson as createperson,
+        END AS statename,so.state,so.BillNo as billno,so.dcreatetime as createdate,so.DeptCode as deptcode,
+				so.IRdCode as irdcode,so.ORdCode as ordcode,so.cAuditname as auditperson,so.dAuditTime as auditdate,so.Memo as memo,so.ccreatename as createperson,
 				a.name as billtypename
 FROM T_Sys_Assem so
 LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary a ON so.BillType = a.id
@@ -26,12 +26,12 @@ where 1=1
 		and so.state = #para(state)
 	#end
 	#if(startTime)
-		and so.CreateDate >= #para(startTime)
+		and so.dcreatetime >= #para(startTime)
 	#end
 	#if(endTime)
-		and so.CreateDate <= #para(endTime)
+		and so.dcreatetime <= #para(endTime)
 	#end
-ORDER BY so.CreateDate DESC
+ORDER BY so.dupdatetime DESC
 #end
 
 #sql("dList")
@@ -63,7 +63,7 @@ where 1=1
 	#if(masid)
 		and a.MasID = #para(masid)
 	#end
-ORDER BY a.ModifyDate DESC
+ORDER BY a.dupdatetime DESC
 #end
 
 

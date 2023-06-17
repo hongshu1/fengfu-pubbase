@@ -8,7 +8,7 @@
 </style>
 #end
 
-<div class="jbolt_page_content">
+<div class="jbolt_page_title">
     <form onsubmit="return false;" id="purchasemForm" action="#(action)" method="post">
         #if(purchasem.iautoid??)
         <input type="hidden" name="purchasem.iautoid" value="#(purchasem.iautoid??)"/>
@@ -129,9 +129,9 @@
         	<input id="tabledatas_#(pageId)" name="tabledatas" type="hidden" value="" />
     </form>
 </div>
-
+<div class="jbolt_page_content">
 #include("purchaseds.html")
-
+</div>
 #define js()
 #@hiprintjs()
 <script type="text/javascript">

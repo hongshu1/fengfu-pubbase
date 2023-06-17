@@ -181,8 +181,8 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         sysAssemdetail.setQty(puinstoredetail.getQty());
         sysAssemdetail.setTrackType(puinstoredetail.getTrackType());
         sysAssemdetail.setMemo(puinstoredetail.getMemo());
-        sysAssemdetail.setCreatePerson(JBoltUserKit.getUserName());
-        sysAssemdetail.setCreateDate(new Date());
+        sysAssemdetail.setCcreatename(JBoltUserKit.getUserName());
+        sysAssemdetail.setDcreatetime(new Date());
 		/*sysAssemdetail.setModifyPerson();
 		sysAssemdetail.setModifyDate();
 		sysAssemdetail.setIsDeleted();*/

@@ -1,7 +1,7 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey??)" >
+<div class="jbolt_page" data-key="#(pmkey??)" data-require-plugin="hiprint">
 
 <div class="jbolt_page_title">
 	<div class="row">
@@ -75,7 +75,7 @@
 <!-- JBoltTable的数据模板定义-->
 <textarea class="jb_tpl_box" id="InventoryBarcodeTracePageRowtpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.autoid}">
+<tr data-id="${data.barcode}">
   <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
 	<a  tooltip    href="/admin/barcodeReport/InventoryBarcodeTracePage/details?barcode=${data.barcode}" data-area="100%,100%"  class="jbolt_table_editbtn">变更记录</a>
@@ -115,18 +115,19 @@
 			<div class="btn-group dropdown ">
 				<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportContainerButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
 				<div class="dropdown-menu" aria-labelledby="exportContainerButton">
-					<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="/admin/container/dataExport"><i class="fa fa-download"></i> 导出选中</button>
-					<button class="btn dropdown-item" data-downloadbtn data-url="/admin/container/dataExport" data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
+					<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="/admin/barcodeReport/InventoryBarcodeTracePage/downloadChecked"><i class="fa fa-download"></i> 导出选中</button>
+					<button class="btn dropdown-item" data-downloadbtn data-url="/admin/barcodeReport/InventoryBarcodeTracePage/downloadChecked" data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
 				</div>
 			</div>
 		</div>
 
-		<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
-			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印</button>
-			<div class="dropdown-menu" aria-labelledby="exportMenuButton">
-				<button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds" onclick="containerPrint('check')"><i class="fa fa-download"></i> 打印勾选行</button>
-				<button class="btn dropdown-item" onclick="containerPrint('page')"><i class="fa fa-download"></i> 打印当前页</button>
-			</div>
+
+	</div>
+	<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">打印二维码</button>
+		<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+			<button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds" onclick="containerPrint_#(pageId)('check')"><i class="fa fa-download"></i> 打印勾选行</button>
+			<button class="btn dropdown-item" onclick="containerPrint_#(pageId)('page')"><i class="fa fa-download"></i> 打印当前页</button>
 		</div>
 	</div>
 
@@ -185,5 +186,33 @@
 
 #define js()
 <script type="text/javascript">
+	// 打印
+	function containerPrint_#(pageId)(mark) {
+		let rows;
+		if (mark == 'check') {
+			rows = jboltTableGetCheckedDatas();
+			if (rows == null) {
+				return;
+			}
+		} else {
+			rows = jboltTableGetAllDatas();
+		}
+
+		let code = [];
+		var k=0;
+		for (let i in rows) {
+			k++;
+			let rowdata = rows[i];
+			var ccode = rowdata.barcode;
+			var istatus = rowdata.istatus;
+			var cdocno = rowdata.cdocno;
+			if (ccode == null){
+				LayerMsgBox.error("第"+k+"行["+cdocno+"]异常单,请审核再打印！！！",3000);
+				return false;
+			}
+			code.push(ccode);
+		}
+		jboltHiprintWebPrint('109607', 'url', 'admin/barcodeReport/InventoryBarcodeTracePage/QRCode?ids=' + code.join(",") + "&&mark=" + mark);
+	}
 </script>
 #end

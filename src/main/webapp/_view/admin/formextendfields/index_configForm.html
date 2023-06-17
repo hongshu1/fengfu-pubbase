@@ -1,8 +1,8 @@
-<div class="jbolt_page_title" id="indexFrom2">
-<div class="row" id="row2">
+<div class="jbolt_page_title">
+<div class="row">
 	<!--<div class="col">-->
 	<form class="form-inline" id="FormExtendFields_form_#(pageId)2">
-		<div class="col" id="col2">
+		<div class="col">
 			<!--<h8>单据档案名称：</h8>-->
 <select class="form-control" name="iFormFieldId"
 		data-autoload
@@ -24,7 +24,7 @@
 	<!--</div>-->
 </div>
 </div>
-<div class="jbolt_page_content" id="pageContent2">
+<div class="jbolt_page_content">
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="FormExtendFields_tpl_#(pageId)b">
 {@each datas as data,index}
@@ -34,7 +34,7 @@
 	<a class="jbolt_table_editbtn" data-btn="no" href="admin/formExtendFields/editForm/${data.iautoid}" data-handler="refreshJBoltTable" data-area="80%,90%" data-title="编辑系统管理-拓展字段配置表"><i class=""></i>编辑02</a>
 	<a class="jbolt_table_delbtn" href="admin/formExtendFields/delete/${data.iautoid}" data-handler="refreshJBoltTable" ><i class=""></i>删除</a>
 </td>
-<td>${data.iformidname}</td>
+<!--<td>${data.iformidname}</td>-->
 <td>${data.iformfieldidname}</td>
 <!--<td>${data.cfieldcode}</td>-->
 <td>${data.ipositionname}</td>
@@ -62,7 +62,6 @@
 </div>
 </div>
 <table class="jbolt_table jbolt_main_table  table-center "
-	   id="FormExtendFields_form2"
 	   data-jbolttable
 	   data-width="auto"
 	   data-height="fill"
@@ -80,8 +79,8 @@
 <tr>
 <th data-width="60" data-column="index">序号</th>
 	<th data-min-width="110">操作</th>
-	<th  data-width="100" data-column="iFormId">系统表单ID</th>
-	<th  data-width="100" data-column="iFormFieldId">系统字段ID</th>
+	<!--<th  data-width="100" data-column="iFormId">系统表单ID</th>-->
+	<th  data-min-width="200" data-column="iFormFieldId">系统字段ID</th>
 	<!--<th  data-width="150" data-column="cFieldCode">系统字段编码</th>-->
 	<th  data-width="90" data-column="iPosition">单据位置</th>
 	<th  data-width="150" data-column="cFieldName">字段名称</th>

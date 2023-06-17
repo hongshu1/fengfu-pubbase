@@ -117,7 +117,11 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
             Object rValue = r.getValue();
 
             if(rValue!=null){
-                //开始世间
+                if(key.equals("sqlids")){
+                    parmsKey="and a.barcode in ";
+                    parmsValue="("+rValue+")";
+                }
+                //开始时间
                 if(key.equals("starttime")){
                     parmsKey="and a.CreateDate > ";
                     parmsValue="'"+rValue+"'";

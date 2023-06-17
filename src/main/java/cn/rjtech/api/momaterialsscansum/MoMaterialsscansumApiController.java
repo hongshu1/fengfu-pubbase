@@ -32,4 +32,30 @@ public class MoMaterialsscansumApiController extends BaseApiController {
         renderJBoltApiRet(moMaterialsscansumApiService.add(barcoce,imodocid));
     }
 
+    /**
+     * 获取备料现品票明细（未扫描）
+     */
+    public void getMoMaterialNotScanLogList(@Para(value = "page") Integer page,
+                                            @Para(value = "pageSize") Integer pageSize,
+                                             @Para(value = "imodocid") Long imodocid,
+                                            @Para(value = "barcode") String  barcoce){
+
+        renderJBoltApiRet(moMaterialsscansumApiService.getMoMaterialNotScanLogList(getPageNumber(),getPageSize(),barcoce));
+    }
+
+    /**
+     * 获取备料现品票明细(已扫描）
+     * @param page
+     * @param pageSize
+     * @param barcoce
+     */
+    @UnCheck
+    public void getMoMaterialScanLogList(@Para(value = "page") Integer page,
+                                         @Para(value = "pageSize") Integer pageSize,
+                                         @Para(value = "imodocid") Long imodocid,
+                                         @Para(value = "barcode") String  barcoce
+    ){
+        renderJBoltApiRet(moMaterialsscansumApiService.getMoMaterialNotScanLogList(getPageNumber(),getPageSize(),barcoce));
+    }
+
 }

@@ -298,7 +298,7 @@ public class PurchasedService extends BaseService<Purchased> {
     			}else{
     				InvestmentPlanItem investmentPlanItem =  investmentPlanItemService.findById(purchased.getIsourceid());
     				InvestmentPlan investmentPlan = investmentPlanService.findById(investmentPlanItem.getIplanid());
-    				Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(investmentPlan.getCdepcode());
+    				Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(investmentPlan.getCDepCode());
     				purchased.put("cdepname",refDepartmentRc.getStr("cdepname"));
     				purchased.put("cbudgetno",investmentPlanItem.getCplanno());
     			}
