@@ -233,7 +233,7 @@ where a.isEffective = '1'
   #if(detailHidden)
   and t.SourceBillDid not in (#(detailHidden))
   #end
-  ###and not exists (select 1 from T_Sys_PUReceiveDetail detail where detail.SourceBillDid = t.SourceBillDid)
+  and not exists (select 1 from T_Sys_PUReceiveDetail detail where detail.SourceBillDid = t.SourceBillDid)
 #end
 
 #sql("findWhArea")
