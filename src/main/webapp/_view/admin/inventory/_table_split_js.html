@@ -23,20 +23,29 @@
                     submitAttr: "iautoid"
                 },
                 cworkcode:{
-                    type:"select",
-                    required:true,
-                    url:"admin/workregionm/options",
-                    valueAttr:"iautoid",
-                    textAttr:"cworkcode",
-                    changeColumns: [
-                        {column:"cworkname",use:"cworkname"},
-                        {column:"cpersonname",use:"cpersonname"},
-                        {column:"cdepname",use:"cdepname"},
-                        {column:"idepid",use:"idepid"},
-                        {column:"isdefault",use:false},
-                        {column:"isdefaultname",use:"否"},
-                        {column:"iworkregionmid",use:"iautoid"},
-                    ]
+                    type:"dialogbtn",
+                    placeholder:"选择产线",
+                    maxLength:100,
+                    linkColumn:"cworkcode",
+                    linkPara:"#cworkname,#cworkname,#cdepname",
+                    dialog:{
+                        url:"admin/workregionm/select_dialog_index?",
+                        jbt_link_ele_id:"cworkname,",
+                        area:"60%,70%",
+                        title:"选择产线",
+                        btn:"选择,关闭"
+                    },
+                    changeColumns:[
+                        {column: "cworkcode", use: "cworkcode"},
+                        {column: "cworkname", use: "cworkname"},
+                        {column: "cdepname", use: "cdepname"},
+                        {column: "cpersonname", use: "cpersonname"},
+                        {column: "idepid", use: "idepid"},
+                        {column: "iworkregionmid", use: "iworkregionmid"},
+                    ],
+                    handler:function(table,td,text,value,trJsonData){
+                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
+                    }
                 },
                 defaultname: {
                     type:"select",
