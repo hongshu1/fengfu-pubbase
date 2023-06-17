@@ -795,12 +795,41 @@ public class MoMotaskService extends BaseService<MoMotask> {
             recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
           }
         }
-        record.put("udes", recordLisc);
+        record.put("rowdatas", recordLisc);
         records.add(record);
       }
     }
     return records;
+  }
 
+  public List<Record> getEditorialPlanDatas(Kv kv) {
+    ValidationUtils.notBlank(kv.getStr("taskid"), "制造工单任务ID缺失，获取数据异常！！！");
+
+    //<editor-fold desc="A获取产线物料信息">
+    List<Record> productionLineMaterials = dbTemplate("modocbatch.getModocDatas", kv).find();
+    List<String> productionLine = new ArrayList<>();
+    for (Record productionLineMaterial : productionLineMaterials) {
+      productionLine.add(productionLineMaterial.getStr("iWorkRegionMid") + productionLineMaterial.getStr("iInventoryId"));
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="B获取日期班次信息 dateShifts ">
+    List<Record> dateShifts = dbTemplate("modocbatch.getModocDateShiftDatas", kv).find();
+    //</editor-fold>
+
+    List<Record> planDatas = dbTemplate("modocbatch.getPlanDatasBytaskId", kv).find();
+    for (Record data : planDatas) {
+
+    }
+
+    for (Record productionLineMaterial : productionLineMaterials) {
+      for (Record dateShift : dateShifts) {
+
+      }
+    }
+
+
+    return productionLineMaterials;
   }
 
 }
