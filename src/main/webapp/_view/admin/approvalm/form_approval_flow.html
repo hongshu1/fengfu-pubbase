@@ -42,7 +42,7 @@
     /**
      * 提交审批
      */
-    function judgeType_#(pageId)(ele) {
+    function submit_#(pageId)(ele) {
         action = getRealJqueryObject(ele);
 
         index = LayerMsgBox.loading('执行中...');
@@ -54,7 +54,7 @@
             className: action.data('class')
         }
 
-        Ajax.post("/admin/formapproval/judgeType", para, function (ret) {
+        Ajax.post("/admin/formapproval/submit", para, function (ret) {
             LayerMsgBox.close(index);
 
             if (ret.state === 'ok') {

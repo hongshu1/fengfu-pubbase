@@ -11,11 +11,12 @@ import java.util.Map;
 public enum MonthOrderStatusEnum {
 
     /**
-     * 枚举列表：1. 已保存 2. 待审批 3. 已审批
+     * 枚举列表：1. 已保存 2. 待审批 3. 已审批 4. 不通过
      */
     SAVED("已保存", 1),
     AWAIT_AUDITED("待审核", 2),
-    AUDITTED("已审批", 3);
+    AUDITTED("已审批", 3),
+    REJECTED("审批不通过", 4);
 
     private static final Map<Integer, MonthOrderStatusEnum> MANUAL_ORDER_STATUS_ENUM = new HashMap<>();
 
