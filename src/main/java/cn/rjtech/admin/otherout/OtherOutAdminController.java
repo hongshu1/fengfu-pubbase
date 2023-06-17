@@ -8,8 +8,10 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import org.apache.commons.lang3.StringUtils;
 
@@ -89,6 +91,7 @@ public class OtherOutAdminController extends BaseAdminController {
 		}
 		set("otherOut",otherOut);
 		set("type", get("type"));
+		set("edit", get("edit"));
 		render("edit.html");
 	}
 
@@ -148,6 +151,15 @@ public class OtherOutAdminController extends BaseAdminController {
 	 */
 	public void submitMulti(String param, String revokeVal ,String autoid) {
 		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal,autoid));
+	}
+
+	/**
+	 * 详情页提审
+	 */
+	public void submit(@Para(value = "iautoid") Long iautoid) {
+		ValidationUtils.validateId(iautoid, "ID");
+
+		renderJson(service.submit(iautoid));
 	}
 
 

@@ -60,12 +60,10 @@ where 1=1
 #sql("paginateAdminDatas")
 SELECT
         AuditState =
-        CASE
-            WHEN t1.Status=1 THEN '已保存'
-            WHEN t1.Status=2 THEN '待审批'
-            WHEN t1.Status=7 THEN '关闭'
-            WHEN t1.Status=5 THEN '已出库'
-            WHEN t1.Status=3 THEN '已审批 /未完成' END,
+        CASE WHEN t1.iAuditStatus=0 THEN '未审批'
+             WHEN t1.iAuditStatus=1 THEN '待审批'
+             WHEN t1.iAuditStatus=2 THEN '已审批'
+             WHEN t1.iAuditStatus=3 THEN '审批不通过' END,
         TypeName =
         CASE WHEN t1.Type='OtherOutMES' THEN '手动新增'END,
         t1.*,

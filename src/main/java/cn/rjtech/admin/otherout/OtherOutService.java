@@ -7,7 +7,10 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
+import cn.rjtech.enums.WeekOrderStatusEnum;
+import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.model.momdata.OtherOutDetail;
 import cn.rjtech.util.ValidationUtils;
@@ -41,6 +44,8 @@ public class OtherOutService extends BaseService<OtherOut> {
 
 	@Inject
 	private OtherOutDetailService otherOutDetailService;
+	@Inject
+	private FormApprovalService formApprovalService;
 
 
 	/**
@@ -254,10 +259,10 @@ public class OtherOutService extends BaseService<OtherOut> {
 
 				if (otherOut.getAutoID() == null && "save".equals(revokeVal)) {
 					//保存
-					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-					otherOut.setAuditStatus(0);
-					//订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
-					otherOut.setStatus(1);
+//					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+//					otherOut.setAuditStatus(0);
+//					//订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
+//					otherOut.setStatus(1);
 					otherOut.setICreateBy(userId);
 					otherOut.setDCreateTime(nowDate);
 					otherOut.setCCreateName(userName);
@@ -266,6 +271,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 					otherOut.setDupdateTime(nowDate);
 					otherOut.setCUpdateName(userName);
 					otherOut.setType("OtherOutMES");
+					otherOut.setIsDeleted(false);
 					save(otherOut);
 					headerId = otherOut.getAutoID();
 				} else {
@@ -326,6 +332,26 @@ public class OtherOutService extends BaseService<OtherOut> {
 		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
+	/**
+	 * 详情页提审
+	 */
+
+	public Ret submit(Long iautoid) {
+		tx(() -> {
+
+			// 根据审批状态
+			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"cn.rjtech.admin.otherout.OtherOutService");
+			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+
+			// 处理其他业务
+//			OtherOut otherOut = findById(iautoid);
+//			otherOut.setIAuditStatus(1);
+//			ValidationUtils.isTrue(otherOut.update(),JBoltMsg.FAIL);
+			return true;
+		});
+
+		return SUCCESS;
+	}
 
 	/**
 	 * 审批
@@ -425,10 +451,10 @@ public class OtherOutService extends BaseService<OtherOut> {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		OtherOut otherOut = findById(iAutoId);
-		//订单状态：2. 待审批
-		otherOut.setStatus(1);
-		//审核状态： 1. 待审核
-		otherOut.setAuditStatus(0);
+//		//订单状态：2. 待审批
+//		otherOut.setStatus(1);
+		//审核状态： 1. 待审批
+		otherOut.setIAuditStatus(0);
 		boolean result = otherOut.update();
 		return ret(result);
 	}
