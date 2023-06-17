@@ -757,6 +757,34 @@ function showSwitchOrgDialog(showMsg, handler) {
     }
 }
 
+/**
+ * 自定义Ajax提交表单处理
+ *
+ * @param url               接口地址
+ * @param para              参数
+ * @param successCallback   成功回调
+ * @param failCallback      失败回调
+ */
+function postWithCallback(url, para, successCallback, failCallback) {
+    var index = parent.LayerMsgBox.loading('正在处理...', 10);
+    
+    Ajax.post(url, para, function (ret) {
+        parent.LayerMsgBox.close(index);
+        
+        if (ret.state === 'ok') {
+            successCallback(ret.data);
+        } else {
+            if (failCallback) {
+                failCallback();
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        }
+    }, function () {
+        parent.LayerMsgBox.close(index);
+    });
+}
+
 function zoomPage() {
     var wid = $(window).width(), len;
     if (wid >= 1024 && wid < 1400) {

@@ -1,7 +1,9 @@
 package cn.rjtech.admin.formapproval;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.FormApproval;
@@ -110,24 +112,31 @@ public class FormApprovalAdminController extends BaseAdminController {
     }
 
     /**
-     * 判断走审核还是审批
+     * 提交审核/提交审批
      *
      * @param formSn         表单编码
      * @param formAutoId     单据ID
      * @param primaryKeyName 单据主键名称
      * @param className      实现审批通过业务的类名
+     * @param permissionKey  单据提审权限key
      */
     public void submit(@Para(value = "formSn") String formSn,
                        @Para(value = "formAutoId") Long formAutoId,
                        @Para(value = "primaryKeyName") String primaryKeyName,
-                       @Para(value = "className") String className) {
+                       @Para(value = "className") String className,
+                       @Para(value = "permissionKey") String permissionKey) {
         ValidationUtils.notBlank(formSn, "缺少表单编码");
         ValidationUtils.validateId(formAutoId, "单据ID");
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "缺少实现审批通过业务的类名参数");
+        ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少单据的提审权限");
 
         renderJson(service.submit(formSn, formAutoId, primaryKeyName, className));
     }
+    
+    // --------------------------------------------------------------------------------------------------------------------
+    // 审批处理
+    // --------------------------------------------------------------------------------------------------------------------
 
     /**
      * 审批通过
@@ -199,7 +208,7 @@ public class FormApprovalAdminController extends BaseAdminController {
     }
 
     /**
-     * 批量审批
+     * 批量审批通过
      *
      * @param ids            单据IDs
      * @param formSn         表单
@@ -239,7 +248,7 @@ public class FormApprovalAdminController extends BaseAdminController {
     }
 
     /**
-     * 批量反审批
+     * 批量反审批，接口保留（不需要此实现）
      *
      * @param ids            单据ID
      * @param formSn         表名
@@ -257,13 +266,137 @@ public class FormApprovalAdminController extends BaseAdminController {
         renderJson(service.batchReverseApprove(ids, formSn, primaryKeyName, className));
     }
 
-    /**
-     * 判断审核还是审批
-     */
-    public void auditOrApprove(@Para(value = "formSn") String formSn) {
-        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+    // --------------------------------------------------------------------------------------------------------------------
+    // TODO 需要同时支持审核/审批处理： 批量撤销审批
+    // --------------------------------------------------------------------------------------------------------------------
 
-        renderJson(service.auditOrApprove(formSn));
+    // --------------------------------------------------------------------------------------------------------------------
+    // 审核处理
+    // 
+    // 详情页
+    // 1. 审核通过
+    // 2. 审核不通过
+    // 3. 反审核
+    // 
+    // 列表页
+    // 1. 批量审核通过
+    // 2. 批量审核不通过
+    // 
+    // --------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * 审核通过
+     *
+     * @param formSn         表单编码
+     * @param formAutoId     单据ID
+     * @param primaryKeyName 主键名
+     * @param className      实现审批通过的业务类名
+     * @param permissionKey  权限key
+     */
+    public void approveByStatus(@Para(value = "formSn") String formSn,
+                                @Para(value = "formAutoId") Long formAutoId,
+                                @Para(value = "primaryKeyName") String primaryKeyName,
+                                @Para(value = "className") String className,
+                                @Para(value = "permissionKey") String permissionKey) {
+        ValidationUtils.validateId(formAutoId, "单据ID");
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
+        ValidationUtils.notBlank(className, "缺少处理审核的类名");
+        ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“审核”权限");
+
+        renderJson(service.approveByStatus(formSn, formAutoId, primaryKeyName, className));
+    }
+
+    /**
+     * 审核不通过
+     *
+     * @param formSn         表单编码
+     * @param formAutoId     单据ID
+     * @param primaryKeyName 主键名
+     * @param className      实现审批通过的业务类名
+     * @param permissionKey  权限key
+     */
+    public void rejectByStatus(@Para(value = "formSn") String formSn,
+                               @Para(value = "formAutoId") Long formAutoId,
+                               @Para(value = "primaryKeyName") String primaryKeyName,
+                               @Para(value = "className") String className,
+                               @Para(value = "permissionKey") String permissionKey) {
+        ValidationUtils.validateId(formAutoId, "单据ID");
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
+        ValidationUtils.notBlank(className, "缺少处理审核的类名");
+        ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“审核”权限");
+
+        renderJson(service.rejectByStatus(formSn, formAutoId, primaryKeyName, className));
+    }
+
+    /**
+     * 反审核
+     *
+     * @param formSn         表单编码
+     * @param formAutoId     单据ID
+     * @param primaryKeyName 主键名
+     * @param className      实现审批通过的业务类名
+     * @param permissionKey  权限key
+     */
+    public void reverseApproveByStatus(@Para(value = "formSn") String formSn,
+                                       @Para(value = "formAutoId") Long formAutoId,
+                                       @Para(value = "primaryKeyName") String primaryKeyName,
+                                       @Para(value = "className") String className,
+                                       @Para(value = "permissionKey") String permissionKey) {
+        ValidationUtils.validateId(formAutoId, "单据ID");
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
+        ValidationUtils.notBlank(className, "缺少处理审核的类名");
+        ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“反审核”权限");
+
+        renderJson(service.reverseApproveByStatus(formSn, formAutoId, primaryKeyName, className));
+    }
+
+    /**
+     * 批量审核通过
+     *
+     * @param ids            单据IDs
+     * @param formSn         表单
+     * @param primaryKeyName 单据主键名称
+     * @param className      实现审批通过的业务类名
+     * @param permissionKey  权限key
+     */
+    public void batchApproveByStatus(@Para(value = "ids") String ids,
+                                     @Para(value = "formSn") String formSn,
+                                     @Para(value = "primaryKeyName") String primaryKeyName,
+                                     @Para(value = "className") String className,
+                                     @Para(value = "permissionKey") String permissionKey) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
+        ValidationUtils.notBlank(className, "缺少实现审批通过后的业务类名");
+        ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少批量“审核通过”的权限");
+
+        renderJson(service.batchApproveByStatus(ids, formSn, primaryKeyName, className));
+    }
+
+    /**
+     * 批量审核不通过
+     *
+     * @param ids            单据IDs
+     * @param formSn         表单
+     * @param primaryKeyName 单据主键名称
+     * @param className      实现审批通过的业务类名
+     * @param permissionKey  权限key
+     */
+    public void batchRejectByStatus(@Para(value = "ids") String ids,
+                                    @Para(value = "formSn") String formSn,
+                                    @Para(value = "primaryKeyName") String primaryKeyName,
+                                    @Para(value = "className") String className,
+                                    @Para(value = "permissionKey") String permissionKey) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
+        ValidationUtils.notBlank(className, "缺少实现审批通过后的业务类名");
+        ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少批量“审核不通过”的权限");
+
+        renderJson(service.batchRejectByStatus(ids, formSn, primaryKeyName, className));
     }
 
     /**

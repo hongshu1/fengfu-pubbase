@@ -509,6 +509,9 @@ public class InventoryService extends BaseService<Inventory> {
 				}
 				inventoryWorkRegionService.batchSave(newInventoryWorkRegions);
 			}
+
+			inventoryWorkRegionService.checkOk(inventory.getIAutoId());
+
 			// 工艺路线操作
 			inventoryRoutingOperation(inventory, inventoryRoutingJboltTable);
 			// 班次

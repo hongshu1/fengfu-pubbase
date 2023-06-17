@@ -46,15 +46,6 @@ public class MoDocBatchController extends BaseAdminController {
     renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
   }
 
-
-  /**
-   * 编辑计划
-   */
-  public void editPlan() {
-//    set("editplanviewdatas", service.getOpenEditPlanViewDatas(getLong(0)));
-    render("planform.html");
-  }
-
   public void getPlanPage() {
     renderJsonData(service.getPlanPage(getKv()));
   }
@@ -82,11 +73,24 @@ public class MoDocBatchController extends BaseAdminController {
   }
 
   /**
-   * 制造工单人员批量编辑获取数据源
+   * 制造工单人员批量编辑数据源
    */
   public void getModocStaffEditorDatas() {
     renderJsonData(service.getModocStaffEditorDatas(getKv()));
   }
 
+  /**
+   * 编辑计划
+   */
+  public void editPlan() {
+    render("planform.html");
+  }
+
+  /**
+   * 制造工单计划批量编辑数据源
+   */
+  public void getEditorialPlanDatas() {
+    renderJsonData(service.getEditorialPlanDatas(getKv()));
+  }
 
 }
