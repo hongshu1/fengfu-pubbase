@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseManualOrderM<M extends BaseManualOrderM<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
@@ -134,6 +135,10 @@ public abstract class BaseManualOrderM<M extends BaseManualOrderM<M>> extends JB
     public static final String IPUSHTO = "iPushTo";
     /**推送单号*/
     public static final String CDOCNO = "cDocNo";
+    /**客户编码*/
+    public static final String CCUSCODE = "cCusCode";
+    /**客户名称*/
+    public static final String CCUSNAME = "cCusName";
 	/**
 	 * 主键ID
 	 */
@@ -1186,6 +1191,40 @@ public abstract class BaseManualOrderM<M extends BaseManualOrderM<M>> extends JB
 	@JSONField(name = "cdocno")
 	public java.lang.String getCDocNo() {
 		return getStr("cDocNo");
+	}
+
+	/**
+	 * 客户编码
+	 */
+	public M setCCusCode(java.lang.String cCusCode) {
+		set("cCusCode", cCusCode);
+		return (M)this;
+	}
+
+	/**
+	 * 客户编码
+	 */
+	@JBoltField(name="ccuscode" ,columnName="cCusCode",type="String", remark="客户编码", required=false, maxLength=40, fixed=0, order=63)
+	@JSONField(name = "ccuscode")
+	public java.lang.String getCCusCode() {
+		return getStr("cCusCode");
+	}
+
+	/**
+	 * 客户名称
+	 */
+	public M setCCusName(java.lang.String cCusName) {
+		set("cCusName", cCusName);
+		return (M)this;
+	}
+
+	/**
+	 * 客户名称
+	 */
+	@JBoltField(name="ccusname" ,columnName="cCusName",type="String", remark="客户名称", required=false, maxLength=200, fixed=0, order=64)
+	@JSONField(name = "ccusname")
+	public java.lang.String getCCusName() {
+		return getStr("cCusName");
 	}
 
 }

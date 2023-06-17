@@ -73,6 +73,9 @@
                                     <input type="hidden" name="monthorderm.iCustomerId" value="#(monthorderm.iCustomerId??)" id="iCustomerId" data-value-attr="iautoid"/>
                                     <label class="col-sm-3 col-form-label">客户名称</label>
                                     <div class="col-9">
+                                        <div class="input-group">
+
+                                            <div class="ac_input_box">
                                         <input type="text" class="form-control"
                                                id="ccusname"
                                                data-autocomplete
@@ -86,9 +89,12 @@
                                                data-header="客户编码,客户名称,客户简称"
                                                maxlength="40"
                                                value="#(monthorderm.ccusname??)">
-                                        <div class="input-group-append">
+                                            </div>
+
+                                            <div class="input-group-append">
                                             <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#iCustomerId" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/annualorderm/ccusname_dialog_index"><i class="fa fa-search"></i></button>
                                         </div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>

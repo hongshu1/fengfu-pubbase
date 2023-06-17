@@ -1,5 +1,6 @@
 package cn.rjtech.api.processdefect;
 
+import cn.jbolt.core.api.OpenAPI;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
@@ -122,5 +123,47 @@ public class ProcessDefectApiController extends BaseApiController {
         Kv kv = new Kv();
         kv.set("ids", ids);
         renderJBoltApiRet(processdefectapiservice.QRCode(kv));
+    }
+
+    /**
+     * 工单-异常品记录-保存
+     *
+     * @param iautoid              来料异常品ID
+     * @param imodocid             制造表ID-工单ID
+     * @param capproach            处置区分
+     * @param processname          工序名称
+     * @param idqqty               不良数量
+     * @param iresptype            责任区：1. 供应商 2. 其他
+     * @param cbadnesssns          不良项目，字典编码，多个“,”分隔
+     * @param cdesc
+     * @param  ioperationid        工序ID
+     */
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+
+    public void editProcessDefect(@Para(value = "iautoid") Long iautoid,
+                                @Para(value = "capproach") String  capproach,
+                                @Para(value = "processname") String  processname,
+                                @Para(value = "idqqty") BigDecimal idqqty,
+                                @Para(value = "iresptype") Integer iresptype,
+                                @Para(value = "isfirsttime") Boolean isfirsttime,
+                                @Para(value = "cbadnesssns") String  cbadnesssns,
+                                @Para(value = "cdesc") String  cdesc,
+
+                                @Para(value = "imodocid") Long  imodocid,
+                                 @Para(value = "ioperationid") Long  ioperationid
+    ) {
+        ValidationUtils.notNull(imodocid,"缺少工单ID");
+        Kv kv = new Kv();
+        kv.set("iautoid", iautoid);
+        kv.set("capproach", capproach);
+        kv.set("idqqty", idqqty);
+        kv.set("iresptype", iresptype);
+        kv.set("isfirsttime", isfirsttime);
+        kv.set("cbadnesssns", cbadnesssns);
+        kv.set("cdesc", cdesc);
+        kv.set("processname", processname);
+        kv.set("imodocid", imodocid);
+        renderJBoltApiRet(processdefectapiservice.editProcessDefect(kv));
     }
 }

@@ -270,7 +270,7 @@ public class AppendItemService extends BaseService<AppendItem> {
 	 * */
 	public String genBudgetNo(InvestmentPlan investmentPlan,String iInvestmentType){
 		//采用编码规则配置生成
-		String barcoade = barcodeencodingmService.genCode(Kv.by("iautoid", investmentPlan.getIautoid()).set("iinvestmenttype",iInvestmentType), ItemEnum.INVESTMENT_PLAN_APPENDITEM.getValue());
+		String barcoade = barcodeencodingmService.genCode(Kv.by("iautoid", investmentPlan.getIAutoId()).set("iinvestmenttype",iInvestmentType), ItemEnum.INVESTMENT_PLAN_APPENDITEM.getValue());
 		return barcoade;
 	}
 	/**
@@ -311,7 +311,7 @@ public class AppendItemService extends BaseService<AppendItem> {
 				InvestmentPlanItem investmentPlanItem = new InvestmentPlanItem();
 				InvestmentPlan investmentPlan = investmentPlanService.findEffectivedInvestmentByDeptCode(Kv.by("cdepcode", cdepcode));
 				ValidationUtils.notNull(investmentPlan, "勾选数据未能查询到对应部门生效的预算数据,请检查!");
-				investmentPlanItem.setIplanid(investmentPlan.getIautoid());
+				investmentPlanItem.setIplanid(investmentPlan.getIAutoId());
 				ccode = genBudgetNo(investmentPlan,appendItem.getIinvestmenttype());
 				investmentPlanItem.setCplanno(ccode);
 				investmentPlanItem.setIinvestmenttype(appendItem.getIinvestmenttype());

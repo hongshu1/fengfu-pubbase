@@ -23,10 +23,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 制造工单任务 Service
@@ -91,7 +88,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
       }
     }
 
-    Map<String, List<Record>> list = new HashMap<>();
+    Map<String, List<Record>> list = new LinkedHashMap<>();
     for (Record record1 : records) {
       if (list.containsKey(record1.getStr("yeartodate"))) {
         List<Record> obj = list.get(record1.getStr("yeartodate"));
@@ -100,7 +97,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
       } else {
         List<Record> obj = new ArrayList<>();
         obj.add(record1);
-        list.put(record1.getStr("yeartodate"), obj);
+        list.put(obj.get(0).getStr("yeartodate"), obj);
       }
     }
     List<List<Record>> records1 = new ArrayList<>();
@@ -467,7 +464,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
    * @return
    */
   public List<Record> getModocStaffEditorDatas(Kv kv) {
-
+    ValidationUtils.notBlank(kv.getStr("taskid"), "制造工单任务ID缺失，获取数据异常！！！");
     // <editor-fold desc="A前置数据源--(iworkregionmid)产线id+(iinventoryid)存货id   根据taskid获取制造工单的产线id和存货id   key:(iworkregionmid)产线id+(iinventoryid)存货id  value:modocid">
     List<Record> docIdList = dbTemplate("modocbatch.getModocAllDatasByTaskid", kv).find();
     Map<String, String> modocidMap = new HashMap<>();

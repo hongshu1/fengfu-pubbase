@@ -60,6 +60,9 @@ SELECT
     mpd.Qty,
     md.cMoDocNo,
     it.cInvCode1,
+    it.cInvName1,
+    it.cInvCode,
+    it.cInvName,
     uom.cUomName,
     it.cInvStd
 
@@ -82,11 +85,14 @@ AND mpd.Barcode=#para(barcode)
 #sql("getMoMaterialNotScanLogList")  ###未扫描
 
 SELECT
-    s.InvCode,
-    s.Barcode as barcode,
-    s.Qty,
-    s.cMoDocNo,
+    mpd.InvCode,
+    s.cBarcode as barcode,
+    s.iScanQty as Qty,
+    md.cMoDocNo,
     it.cInvCode1,
+    it.cInvName1,
+    it.cInvCode,
+    it.cInvName,
     uom.cUomName,
     it.cInvStd
 FROM
@@ -100,7 +106,7 @@ WHERE 1=1
 and  md.iAutoId=#para(imodocid)
 #end
     #if(barcode)
-AND mpd.Barcode=#para(barcode)
+AND s.cBarcode=#para(barcode)
 #end
  #end
 

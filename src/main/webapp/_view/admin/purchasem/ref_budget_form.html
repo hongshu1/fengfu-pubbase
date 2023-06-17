@@ -10,8 +10,8 @@
     }
 </style>
 #end
-
-<div class="jbolt_page_content">
+<div class="jbolt_page vh-100">
+<div class="jbolt_page_title">
     <form onsubmit="return false;" id="refBudgetPurchasemForm" action="#(action)" method="post">
         #if(purchasem.iautoid??)
         <input type="hidden" name="purchasem.iautoid" value="#(purchasem.iautoid??)"/>
@@ -269,6 +269,7 @@
         </tr>
         </tfoot>
     </table>
+</div>
 </div>
 #end
 #define js()

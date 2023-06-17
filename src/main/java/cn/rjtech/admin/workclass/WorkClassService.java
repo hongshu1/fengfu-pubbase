@@ -2,16 +2,21 @@ package cn.rjtech.admin.workclass;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.*;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.IAtom;
@@ -37,6 +42,8 @@ public class WorkClassService extends BaseService<Workclass> {
 
     private final Workclass dao = new Workclass().dao();
 
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingDService;
     @Override
     protected Workclass dao() {
         return dao;
@@ -355,6 +362,50 @@ public class WorkClassService extends BaseService<Workclass> {
                 .first(); 
         
         return queryColumn(sql);
+    }
+    /**
+     * 从系统导入字段配置，获得导入的数据
+     */
+    public Ret importExcelClass(File file) {
+        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        if (notOk(records)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+        }
+
+
+        for (Record record : records) {
+
+            if (StrUtil.isBlank(record.getStr("cWorkClassCode"))) {
+                return fail("编码不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("cWorkClassName"))) {
+                return fail("名称不能为空");
+            }
+
+
+            Date now=new Date();
+
+            record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+            record.set("iOrgId", getOrgId());
+            record.set("cOrgCode", getOrgCode());
+            record.set("cOrgName", getOrgName());
+            record.set("iSource", SourceEnum.MES.getValue());
+            record.set("iCreateBy", JBoltUserKit.getUserId());
+            record.set("dCreateTime", now);
+            record.set("cCreateName", JBoltUserKit.getUserName());
+            record.set("isEnabled",1);
+            record.set("isDeleted",0);
+            record.set("iUpdateBy", JBoltUserKit.getUserId());
+            record.set("dUpdateTime", now);
+            record.set("cUpdateName", JBoltUserKit.getUserName());
+        }
+
+        // 执行批量操作
+        tx(() -> {
+            batchSaveRecords(records);
+            return true;
+        });
+        return SUCCESS;
     }
     
 }

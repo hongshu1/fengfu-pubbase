@@ -1,12 +1,9 @@
 #sql("paginateAdminDatas")
 SELECT co.*,
-       c.ccuscode,
-       c.cCusName,
        w.cwhname,
        d.cdepname,
        p.cPsn_Name AS cpsnname
 FROM Co_WeekOrderM co
-         LEFT JOIN Bd_Customer c ON c.iAutoId = co.iCustomerId AND c.isDeleted = 0
          LEFT JOIN Bd_Warehouse w ON CONVERT(VARCHAR, co.ibustype) = w.cwhcode
          LEFT JOIN Bd_Department d ON co.iDepartmentId = d.iautoid
          LEFT JOIN Bd_Person p ON co.iBusPersonId = p.iAutoId
