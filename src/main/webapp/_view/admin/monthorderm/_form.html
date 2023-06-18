@@ -213,8 +213,6 @@
         {@/each}
     </script>
 
-    <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
-
     ### 新增
     #if(readonly != 'readonly')
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
@@ -224,6 +222,7 @@
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-xs">添加行</button>
             <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除行</button>
             <button onclick="checkDetails(this)" class="btn btn-secondary btn-sm">检查明细</button>
+            <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
             <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导</button>
             
             <div class="dropdown-menu" aria-labelledby="importMenuButton">
@@ -365,7 +364,6 @@
     var submit = false;
 
     function submitThisForm(s) {
-        console.log('s');
         // 保存并提交
         if (s) {
             submit = s;

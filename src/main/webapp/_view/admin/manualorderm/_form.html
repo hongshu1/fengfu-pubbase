@@ -10,11 +10,12 @@
         <div class="card">
             <div class="card-body">
                 <div class="col">
-                    #if(!manualOrderM.iAutoId?? || (edit??false && (manualOrderM.iOrderStatus == 1 || manualOrderM.iOrderStatus == 4)))
+                    #if(readonly != 'readonly')
                     <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                     #end
                     #include("/_view/_common/_approval_btns.html", uri="/admin/manualorderm",
-                    formSn="Co_ManualOrderM", o=manualOrderM, primaryKeyName="iAutoId", edit=edit??)
+                    formSn="Co_ManualOrderM", o=manualOrderM, primaryKeyName="iAutoId",
+                    permissionKeyPrefix="manualOrderM", className="cn.rjtech.admin.manualorderm.ManualOrderMService")
                     <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                 </div>
             </div>
@@ -212,11 +213,17 @@
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
 
-    function submitThisForm() {
-        $("#iOrderStatus").val(1)
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
+
+    function submitThisForm(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
+        }
+        // 调用保存处理
         $('#save_btn_#(pageId)').click();
         parent.refreshPjaxContainer();
-        return true;
     }
 
     function submitApproveManual() {

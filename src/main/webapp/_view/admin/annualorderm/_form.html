@@ -7,13 +7,12 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        #if(!annualOrderM.iAutoId?? || (edit??false && (annualOrderM.iOrderStatus == 1 || annualOrderM.iOrderStatus == 4)))
+                        #if(readonly != 'readonly')
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
-                        #if(annualOrderM.iautoid?? && !edit?? && annualOrderM.iOrderStatus != 3)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/annualorderm",
-                        formSn="Co_AnnualOrderM", edit=edit??, primaryKeyName="iAutoId", o=annualOrderM)
-                        #end
+                        formSn="Co_AnnualOrderM", primaryKeyName="iAutoId", o=annualOrderM,
+                        permissionKeyPrefix="annualOrderM", className="cn.rjtech.admin.annualorderm.AnnualOrderMService")
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -102,7 +101,7 @@
 
 ### 新增之后，并且为审核流
 #if(annualOrderM.iautoid?? && annualOrderM.iauditway == 2)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=annualOrderM.iAutoId, formSn="Co_AnnualOrderM", btnNeed=1, pId=pageId)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=annualOrderM.iAutoId, formSn="Co_AnnualOrderM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.annualorderm.AnnualOrderMService")
 #end
 
 <div class="jbolt_page_content">
@@ -112,7 +111,7 @@
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                #if(!annualOrderM.iautoid?? || edit??false)
+                #if(readonly != 'readonly')
                 <a onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="btn btn-danger bat-sm">移除行</a>
                 #end
             </td>
@@ -138,7 +137,7 @@
         {@/each}
     </script>
     <div class="jbolt_table_toolbar" id="AnnualOrderM_toolbar_#(pageId)">
-        #if(!annualOrderM.iautoid?? || edit??false)
+        #if(readonly != 'readonly')
         <div class="btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-secondary btn-sm">添加行</button>
 
@@ -271,8 +270,7 @@
 
     function delRow(ele) {
         var datas = jboltTableGetAllDatas(ele);
-        console.log('delRow， datas: ' + datas);
-        
+
         if (datas && datas.length > 0) {
             var jboltTable = getJBoltTable(ele)
 
@@ -290,9 +288,15 @@
         return false;
     }
 
-    function submitThisForm() {
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
+    function submitThisForm(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
+        }
+        // 调用保存处理
         $('#save_btn_#(pageId)').click();
-        return true;
     }
 
     function submitApproveYear() {
@@ -388,8 +392,7 @@
      */
     function checkDetails(ele) {
         var rowDatas = jboltTableGetAllDatas(ele);
-        console.log(JSON.stringify(rowDatas));
-        
+
         if (rowDatas && rowDatas.length > 0) {
             $.each(rowDatas, function (idx, row) {
 
@@ -405,10 +408,7 @@
 
     function saveData(ele) {
         var rowDatas = jboltTableGetAllDatas(ele);
-        console.log(JSON.stringify(rowDatas));
-
         removeEmptyRow(ele, rowDatas);
-
         jboltTableSubmit(ele);
     }
 
@@ -422,10 +422,20 @@
                 type: "all",
                 url: "/admin/annualorderm/submitAll",
                 success: function (res) {
-                    LayerMsgBox.success("提交成功", 600, function () {
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
-                    });
+                    // 表格保存之后，判断是否需要提审处理
+                    if (res.state === 'ok') {
+                        // 提交审核（审批）调用
+                        if (submit) {
+                            // 提审
+                            submit_#(pageId)(res.data.iautoid, function (data) {
+                                successHandler('提审成功', res.data.iautoid);
+                            });
+                        } else {
+                            successHandler(res.msg, res.data.iautoid);
+                        }
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
                 }
             },
             maxRowCount: 9999,

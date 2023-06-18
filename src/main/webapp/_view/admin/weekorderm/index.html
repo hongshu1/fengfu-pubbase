@@ -60,10 +60,10 @@
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a class="jbolt_table_editbtn" href="admin/weekorderm/edit?iautoid=${data.iautoid}"  data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="周间客户订单详情"><i class="fa fa-eye">查看</i></a>
+                <a class="jbolt_table_editbtn" href="admin/weekorderm/edit?iautoid=${data.iautoid}&readonly=readonly"  data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="周间客户订单详情"><i class="fa fa-eye">查看</i></a>
             
                 {@if data.iorderstatus == '1'||data.iorderstatus == '4'}
-                    <a class="jbolt_table_editbtn" href="admin/weekorderm/edit?iautoid=${data.iautoid}&edit=true" data-fs="true" data-handler="refreshJBoltTable"  tooltip data-title="编辑周间客户订单"><i class="fa fa-remove fa-edit">编辑</i></a>
+                    <a class="jbolt_table_editbtn" href="admin/weekorderm/edit?iautoid=${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable"  tooltip data-title="编辑周间客户订单"><i class="fa fa-remove fa-edit">编辑</i></a>
                     <a class="jbolt_table_delbtn" href="admin/weekorderm/delete/${data.iautoid}" data-handler="refreshJBoltTable" tooltip data-title="删除周间客户订单"><i class="fa fa-remove c-danger">删除</i></a>
                 {@else if data.iorderstatus == '2'}
                     <a class="jbolt_table_delbtn" href="admin/weekorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回周间客户订单"><i class="fa fa-remove c-danger">撤回</i></a>
