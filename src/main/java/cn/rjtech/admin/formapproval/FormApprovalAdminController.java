@@ -133,7 +133,7 @@ public class FormApprovalAdminController extends BaseAdminController {
 
         renderJson(service.submit(formSn, formAutoId, primaryKeyName, className));
     }
-    
+
     // --------------------------------------------------------------------------------------------------------------------
     // 审批处理
     // --------------------------------------------------------------------------------------------------------------------
@@ -266,22 +266,42 @@ public class FormApprovalAdminController extends BaseAdminController {
         renderJson(service.batchReverseApprove(ids, formSn, primaryKeyName, className));
     }
 
+    /**
+     * 批量撤销审批
+     *
+     * @param ids            单据ID
+     * @param formSn         表名
+     * @param primaryKeyName 单据主键名称
+     */
+    public void batchBackOut(@Para(value = "ids") String ids,
+                                    @Para(value = "formSn") String formSn,
+                                    @Para(value = "primaryKeyName") String primaryKeyName,
+                                    @Para(value = "className") String className) {
+        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
+        ValidationUtils.notBlank(className, "处理审批的类名");
+
+        renderJson(service.batchBackOut(ids, formSn, primaryKeyName, className));
+    }
+
+
     // --------------------------------------------------------------------------------------------------------------------
     // TODO 需要同时支持审核/审批处理： 批量撤销审批
     // --------------------------------------------------------------------------------------------------------------------
 
     // --------------------------------------------------------------------------------------------------------------------
     // 审核处理
-    // 
+    //
     // 详情页
     // 1. 审核通过
     // 2. 审核不通过
     // 3. 反审核
-    // 
+    //
     // 列表页
     // 1. 批量审核通过
     // 2. 批量审核不通过
-    // 
+    //
     // --------------------------------------------------------------------------------------------------------------------
 
     /**
