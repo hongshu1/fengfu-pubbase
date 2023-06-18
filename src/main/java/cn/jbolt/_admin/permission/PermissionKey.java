@@ -2001,4 +2001,87 @@ public class PermissionKey {
 	 * 批量审核不通过
 	 */
 	public static final String MONTHORDERM_BATCH_REJECT = "monthorderm_batch_reject";
+	/**
+	 * 提审
+	 */
+	public static final String ANNUALORDERM_SUBMIT = "annualorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String ANNUALORDERM_APPROVE = "annualorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String ANNUALORDERM_REJECT = "annualorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String ANNUALORDERM_BATCH_APPROVE = "annualorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String ANNUALORDERM_BATCH_REJECT = "annualorderm_batch_reject";
+
+	/**
+	 * 提审
+	 */
+	public static final String WEEKORDERM_SUBMIT = "weekorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String WEEKORDERM_APPROVE = "weekorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String WEEKORDERM_REJECT = "weekorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String WEEKORDERM_BATCH_APPROVE = "weekorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String WEEKORDERM_BATCH_REJECT = "weekorderm_batch_reject";
+
+	/**
+	 * 提审
+	 */
+	public static final String MANUALORDERM_SUBMIT = "manualorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String MANUALORDERM_APPROVE = "manualorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String MANUALORDERM_REJECT = "manualorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String MANUALORDERM_BATCH_APPROVE = "manualorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String MANUALORDERM_BATCH_REJECT = "manualorderm_batch_reject";
+
+	/**
+	 * 提审
+	 */
+	public static final String SUBCONTRACTSALEORDERM_SUBMIT = "subcontractsaleorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String SUBCONTRACTSALEORDERM_APPROVE = "subcontractsaleorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String SUBCONTRACTSALEORDERM_REJECT = "subcontractsaleorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SUBCONTRACTSALEORDERM_BATCH_APPROVE = "subcontractsaleorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SUBCONTRACTSALEORDERM_BATCH_REJECT = "subcontractsaleorderm_batch_reject";
 }

@@ -184,7 +184,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return SUCCESS;
+        return successWithData(annualOrderM.keep("iautoid"));
     }
 
     /**

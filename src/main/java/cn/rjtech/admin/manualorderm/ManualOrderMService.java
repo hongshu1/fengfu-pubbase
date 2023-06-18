@@ -199,7 +199,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
             }
             return true;
         });
-        return res.get();
+        return successWithData(manualOrderM.keep("iautoid"));
     }
 
     public void deleteMultiByIds(Object[] deletes) {

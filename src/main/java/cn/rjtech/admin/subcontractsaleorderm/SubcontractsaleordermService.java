@@ -239,7 +239,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return SUCCESS;
+        return successWithData(subcontractsaleorderm.keep("iautoid"));
     }
 
     //可编辑表格提交-新增数据

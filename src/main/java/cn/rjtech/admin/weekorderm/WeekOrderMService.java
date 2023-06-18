@@ -247,7 +247,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
             return true;
         });
 
-        return SUCCESS;
+        return successWithData(weekOrderM.keep("iautoid"));
     }
 
     private void doSave(WeekOrderM weekOrderM, JBoltTable jBoltTable, Date now) {

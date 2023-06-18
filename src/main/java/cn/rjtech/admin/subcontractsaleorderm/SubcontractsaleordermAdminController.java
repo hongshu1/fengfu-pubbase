@@ -79,7 +79,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
         subcontractsaleordermRc.set("ccusname", customer == null ? null : customer.getCCusName());
         subcontractsaleordermRc.set("cbususername", JBoltUserCache.me.getUserName(subcontractsaleorderm.getIBusPersonId()));
         set("subcontractsaleorderm", subcontractsaleordermRc);
-        set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
+        keepPara();
         render("edit.html");
     }
 
