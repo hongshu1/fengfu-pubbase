@@ -2,7 +2,6 @@ package cn.rjtech.admin.monthorderm;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -41,21 +40,21 @@ import java.util.Set;
  */
 public class MonthordermService extends BaseService<MonthOrderM> implements IApprovalService {
 
-	private final MonthOrderM dao = new MonthOrderM().dao();
+    private final MonthOrderM dao = new MonthOrderM().dao();
 
-	@Inject
-	private MonthorderdService monthorderdService;
-	@Inject
-	private CusOrderSumService cusOrderSumService;
+    @Inject
+    private MonthorderdService monthorderdService;
+    @Inject
+    private CusOrderSumService cusOrderSumService;
     @Inject
     private FormApprovalService formApprovalService;
     @Inject
     private AuditFormConfigService auditFormConfigService;
 
-	@Override
-	protected MonthOrderM dao() {
-		return dao;
-	}
+    @Override
+    protected MonthOrderM dao() {
+        return dao;
+    }
 
     /**
      * 后台管理分页查询
@@ -65,40 +64,42 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
         return dbTemplate("monthorderm.paginateAdminDatas", para).paginate(pageNumber, pageSize);
     }
 
-	/**
-	 * 保存
-	 */
-	public Ret save(MonthOrderM monthorderm) {
-		if(monthorderm==null || isOk(monthorderm.getIAutoId())) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		//if(existsName(monthorderm.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		boolean success=monthorderm.save();
-		if(success) {
-			//添加日志
-			//addSaveSystemLog(monthorderm.getIautoid(), JBoltUserKit.getUserId(), monthorderm.getName());
-		}
-		return ret(success);
-	}
+    /**
+     * 保存
+     */
+    public Ret save(MonthOrderM monthorderm) {
+        if (monthorderm == null || isOk(monthorderm.getIAutoId())) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        //if(existsName(monthorderm.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+        boolean success = monthorderm.save();
+        if (success) {
+            //添加日志
+            //addSaveSystemLog(monthorderm.getIautoid(), JBoltUserKit.getUserId(), monthorderm.getName());
+        }
+        return ret(success);
+    }
 
-	/**
-	 * 更新
-	 */
-	public Ret update(MonthOrderM monthorderm) {
-		if(monthorderm==null || notOk(monthorderm.getIAutoId())) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		//更新时需要判断数据存在
-		MonthOrderM dbMonthorderm=findById(monthorderm.getIAutoId());
-		if(dbMonthorderm==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		//if(existsName(monthorderm.getName(), monthorderm.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		boolean success=monthorderm.update();
-		if(success) {
-			//添加日志
-			//addUpdateSystemLog(monthorderm.getIautoid(), JBoltUserKit.getUserId(), monthorderm.getName());
-		}
-		return ret(success);
-	}
+    /**
+     * 更新
+     */
+    public Ret update(MonthOrderM monthorderm) {
+        if (monthorderm == null || notOk(monthorderm.getIAutoId())) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        //更新时需要判断数据存在
+        MonthOrderM dbMonthorderm = findById(monthorderm.getIAutoId());
+        if (dbMonthorderm == null) {
+            return fail(JBoltMsg.DATA_NOT_EXIST);
+        }
+        //if(existsName(monthorderm.getName(), monthorderm.getIautoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+        boolean success = monthorderm.update();
+        if (success) {
+            //添加日志
+            //addUpdateSystemLog(monthorderm.getIautoid(), JBoltUserKit.getUserId(), monthorderm.getName());
+        }
+        return ret(success);
+    }
 
     /**
      * 删除 指定多个ID
@@ -133,11 +134,11 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
      * @param monthorderm 要删除的model
      * @param kv          携带额外参数一般用不上
      */
-	@Override
-	protected String afterDelete(MonthOrderM monthorderm, Kv kv) {
-		//addDeleteSystemLog(monthorderm.getIautoid(), JBoltUserKit.getUserId(),monthorderm.getName());
-		return null;
-	}
+    @Override
+    protected String afterDelete(MonthOrderM monthorderm, Kv kv) {
+        //addDeleteSystemLog(monthorderm.getIautoid(), JBoltUserKit.getUserId(),monthorderm.getName());
+        return null;
+    }
 
     /**
      * 检测是否可以删除
@@ -173,11 +174,11 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
      * @param column      操作的哪一列
      * @param kv          携带额外参数一般用不上
      */
-	@Override
-	public String checkCanToggle(MonthOrderM monthorderm, String column, Kv kv) {
-		//没有问题就返回null  有问题就返回提示string 字符串
-		return null;
-	}
+    @Override
+    public String checkCanToggle(MonthOrderM monthorderm, String column, Kv kv) {
+        //没有问题就返回null  有问题就返回提示string 字符串
+        return null;
+    }
 
     /**
      * toggle操作执行后的回调处理
@@ -300,10 +301,10 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
         }
     }
 
-	/**
-	 * 审批
-	 */
-	public Ret approve(Long id) {
+    /**
+     * 审批
+     */
+    public Ret approve(Long id) {
         tx(() -> {
 
             formApprovalService.approveByStatus(table(), primaryKey(), id, (formAutoId) -> {
@@ -312,10 +313,10 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
 
                 return null;
             }, (formAutoId) -> {
-                
+
                 // 审批通过业务处理
                 postApproveFunc(id);
-                
+
                 return null;
             });
 
@@ -338,7 +339,7 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
             // 处理其他业务
             MonthOrderM monthOrderM = findById(iautoid);
             monthOrderM.setIOrderStatus(MonthOrderStatusEnum.AWAIT_AUDITED.getValue());
-            ValidationUtils.isTrue(monthOrderM.update(),JBoltMsg.FAIL);
+            ValidationUtils.isTrue(monthOrderM.update(), JBoltMsg.FAIL);
             return true;
         });
 
@@ -383,7 +384,7 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
 
     /**
      * 处理审批通过的其他业务操作，如有异常返回错误信息
-     * 
+     *
      * @param formAutoId 单据ID
      * @return 错误信息
      */
@@ -419,10 +420,6 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
      * @param isLast     是否为审批的最后一个节点
      */
     public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
-        // 最后一个节点的反审，校验或其他业务处理
-        if (isLast) {
-            
-        }
         return null;
     }
 
@@ -462,14 +459,14 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
         switch (MonthOrderStatusEnum.toEnum(monthOrderM.getIOrderStatus())) {
             // 已保存
             case SAVED:
-            // 不通过
+                // 不通过
             case REJECTED:
-                
+
                 break;
             default:
                 return "订单非已保存状态";
         }
-        
+
         return null;
     }
 

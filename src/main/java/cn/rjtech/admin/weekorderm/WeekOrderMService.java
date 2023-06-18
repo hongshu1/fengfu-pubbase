@@ -15,7 +15,6 @@ import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
-import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
 import cn.rjtech.model.momdata.base.BaseWeekOrderD;
@@ -212,7 +211,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             // 更新订单的状态
@@ -275,8 +274,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         List<WeekOrderD> save = new ArrayList<>();
         try {
             save = jBoltTable.getSaveBeanList(WeekOrderD.class);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ValidationUtils.isTrue(false, "周间客户订单不合法,请检查订单数据!");
         }
         ValidationUtils.notEmpty(save, JBoltMsg.PARAM_ERROR);
@@ -427,6 +425,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
 
     /**
      * 打开
+     *
      * @param iautoid
      * @return
      */
@@ -451,6 +450,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         cusOrderSumService.algorithmSum();
         return null;
     }
+
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
@@ -458,6 +458,17 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
         WeekOrderM weekOrderM = findById(formAutoId);
         ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), "订单非待审核状态");
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+        return null;
+    }
+
+    /**
+     * 实现反审之前的其他业务操作，如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         return null;
     }
 
