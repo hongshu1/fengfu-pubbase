@@ -360,18 +360,6 @@
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
     
-    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
-    var submit = false;
-
-    function submitThisForm(s) {
-        // 保存并提交
-        if (s) {
-            submit = s;
-        }
-        // 调用保存处理
-        $('#save_btn_#(pageId)').click();
-    }
-    
     /**
      * 检查明细
      */
@@ -437,6 +425,18 @@
             return true;
         }
         return false;
+    }
+
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
+
+    function submitThisForm(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
+        }
+        // 调用保存处理
+        $('#save_btn_#(pageId)').click();
     }
 
     /**
