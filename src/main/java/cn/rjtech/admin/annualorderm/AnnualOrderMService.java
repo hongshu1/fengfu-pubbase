@@ -352,9 +352,6 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
 
     /**
      * 批量审核
-     *
-     * @param ids
-     * @return
      */
     public Ret batchApprove(String ids) {
         tx(() -> {
@@ -377,9 +374,6 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
 
     /**
      * 批量反审批
-     *
-     * @param ids
-     * @return
      */
     public Ret batchReverseApprove(String ids) {
         tx(() -> {

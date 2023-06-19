@@ -17,8 +17,6 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.Optional;
-
 /**
  * 月度计划订单 Controller
  *
@@ -121,13 +119,6 @@ public class MonthordermAdminController extends BaseAdminController {
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
-
-	/**
-	 * 审核通过
-	 */
-	public void approve() {
-		renderJson(service.approve(getLong(0)));
-	}
 
     /**
      * 提审

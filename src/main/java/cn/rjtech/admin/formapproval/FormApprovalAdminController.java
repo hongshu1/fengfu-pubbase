@@ -158,7 +158,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "缺少实现审批通过业务的类名参数");
 
-        renderJson(service.approve(formAutoId, formSn, status, primaryKeyName, className));
+        renderJson(service.approve(formAutoId, formSn, status, primaryKeyName, className, false));
     }
 
     /**
@@ -324,7 +324,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(className, "缺少处理审核的类名");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“审核”权限");
 
-        renderJson(service.approveByStatus(formSn, formAutoId, primaryKeyName, className));
+        renderJson(service.approveByStatus(formSn, formAutoId, primaryKeyName, className, false));
     }
 
     /**
@@ -347,7 +347,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(className, "缺少处理审核的类名");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“审核”权限");
 
-        renderJson(service.rejectByStatus(formSn, formAutoId, primaryKeyName, className));
+        renderJson(service.rejectByStatus(formSn, formAutoId, primaryKeyName, className, false));
     }
 
     /**

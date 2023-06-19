@@ -307,31 +307,6 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
     }
 
     /**
-     * 审批
-     */
-    public Ret approve(Long id) {
-        tx(() -> {
-
-            formApprovalService.approveByStatus(table(), primaryKey(), id, (formAutoId) -> {
-
-                // 实现通过前的业务处理
-
-                return null;
-            }, (formAutoId) -> {
-
-                // 审批通过业务处理
-                postApproveFunc(id);
-
-                return null;
-            });
-
-            return true;
-        });
-
-        return SUCCESS;
-    }
-
-    /**
      * 提交审核
      */
     public Ret submit(Long iautoid) {
@@ -394,7 +369,7 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
      * @return 错误信息
      */
     @Override
-    public String postApproveFunc(long formAutoId) {
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         MonthOrderM monthOrderM = findById(formAutoId);
         // 订单状态校验
         ValidationUtils.equals(monthOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
