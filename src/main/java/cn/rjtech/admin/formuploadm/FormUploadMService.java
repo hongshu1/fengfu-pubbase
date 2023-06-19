@@ -155,6 +155,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 				formUploadM.setDUpdateTime(date);
 				formUploadM.setIUpdateBy(user.getId());
 				formUploadM.setIAuditStatus(0);
+				formUploadM.setIAuditWay(1);
 				ValidationUtils.isTrue(formUploadM.save(), "保存失败");
 			}else {
 				formUploadM.setIUpdateBy(user.getId());
@@ -323,6 +324,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 				formUploadM.setICategoryId(Long.parseLong(icategoryid));
 				formUploadM.setDDate(ddate);
 				formUploadM.setDUpdateTime(new Date());
+				formUploadM.setIAuditWay(1);
 				formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
 				formUploadM.setCUpdateName(JBoltUserKit.getUserName());
 				ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
@@ -532,9 +534,6 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 	@Override
 	public String postApproveFunc(long formAutoId) {
 		FormUploadM formUploadM = findById(formAutoId);
-		// 审核状态校验
-		ValidationUtils.equals(formUploadM.getIAuditStatus(), AuditStatusEnum.AWAIT_AUDIT.getValue(), "订单非待审核状态");
-
 		// 审核状态修改
 		formUploadM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
 		formUploadM.setIUpdateBy(JBoltUserKit.getUserId());

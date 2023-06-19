@@ -87,7 +87,7 @@ public class FormUploadMAdminController extends BaseAdminController {
 		}
 		set("formUploadM",formUploadM);
 		String s = formUploadM.getIAuditStatus() == 0 ?
-				"未审核" : formUploadM.getIAuditStatus() == 1 ?
+				"已保存" : formUploadM.getIAuditStatus() == 1 ?
 				"待审核" : formUploadM.getIAuditStatus() == 2 ? "审核通过" : "审核不通过";
 		set("status",s);
 		keepPara();
