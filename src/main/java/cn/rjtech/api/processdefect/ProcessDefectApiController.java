@@ -163,7 +163,19 @@ public class ProcessDefectApiController extends BaseApiController {
         kv.set("cbadnesssns", cbadnesssns);
         kv.set("cdesc", cdesc);
         kv.set("processname", processname);
+        kv.set("ioperationid", ioperationid);
+
         kv.set("imodocid", imodocid);
         renderJBoltApiRet(processdefectapiservice.editProcessDefect(kv));
+    }
+
+    /**
+     * 删除异常品
+     * @param iautoid    异常品id
+     */
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+    public void deletes(@Para(value = "iautoid") Long iautoid) {
+        renderJBoltApiRet(processdefectapiservice.deletes(iautoid));
     }
 }

@@ -14,11 +14,10 @@ import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
+import cn.rjtech.admin.sysmaterialspreparescan.SysMaterialspreparescanService;
 import cn.rjtech.admin.syspureceive.SysPureceiveService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.MoDoc;
-import cn.rjtech.model.momdata.Person;
-import cn.rjtech.model.momdata.SysMaterialsprepare;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -34,7 +33,6 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.model.momdata.SysMaterialspreparedetail;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -60,6 +58,9 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 
 	@Inject
 	private MoDocService moDocS;
+
+	@Inject
+	private SysMaterialspreparescanService sysmaterialspreparescanservice;
 
 	@Inject
 	private InventoryRoutingInvcService inventoryroutinginvcservice;
@@ -160,6 +161,10 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 	}
 
 	public List<Record> cworkname() {
+		return dbTemplate("materialsprepare.iWorkRegionMid", Kv.of("isenabled", "1")).find();
+	}
+
+	public List<Record> cworkname1() {
 		return dbTemplate("materialsprepare.cworkname", Kv.of("isenabled", "1")).find();
 	}
 
@@ -198,7 +203,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 	}
 
 	public Record getchooseM(Kv kv) {
-		return dbTemplate("materialsprepare.getChooseM", kv).findFirst();
+		return dbTemplate("materialsprepare.getManualAdddatas", kv).findFirst();
 	}
 
 	public Ret submitByJBoltTable(String map1) {
@@ -359,11 +364,11 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 		}
 
 		User user = JBoltUserKit.getUser();
-		Map<String, Object> data = new HashMap<>();
+		JSONObject data = new JSONObject();
 
-		data.put("userCode", user.getUsername());
-		data.put("organizeCode", this.getdeptid());
-		data.put("token", "");
+		data.set("userCode", user.getUsername());
+		data.set("organizeCode", this.getdeptid());
+		data.set("token", "");
 
 		JSONObject preallocate = new JSONObject();
 
@@ -377,9 +382,9 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 		preallocate.set("tag", "AssemVouch");
 		preallocate.set("type", "AssemVouch");
 
-		data.put("PreAllocate", preallocate);
+		data.set("PreAllocate", preallocate);
 
-		JSONArray maindata = new JSONArray();
+		ArrayList<Object> maindata = new ArrayList<>();
 		sysMaterialspreparedetails.stream().forEach(s -> {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.set("iwhname", "");
@@ -406,9 +411,9 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 //			jsonObject.set("ODeptCode",sysassem.getDeptCode());
 //			jsonObject.set("RowNo",s.getRowNo());
 
-			maindata.put(jsonObject);
+			maindata.add(jsonObject);
 		});
-		data.put("MainData", maindata);
+		data.set("MainData", maindata);
 
 		//请求头
 		Map<String, String> header = new HashMap<>(5);
@@ -481,7 +486,6 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 		});
 		return SUCCESS;
 	}
-
 	private void saveTableSubmitDatasGo(SysMaterialsprepare sysMaterialsprepare, String id,String map1) {
 		String[] split = map1.split(",");
 		ArrayList<SysMaterialspreparedetail> sysMaterialspreparedetails = new ArrayList<>();
@@ -595,4 +599,66 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 //		Ret ret = pushU8(sysMaterialsprepare, sysMaterialspreparedetails);
 //		System.out.println(new Date() + "u8上传结束，u8上传结束，u8上传结束，u8上传结束，u8上传结束" + ret);
 //	}
+
+
+
+
+
+
+
+
+
+	public Ret submitByJBoltTableGo1(String map1) {
+		String[] no1 = map1.split(",");
+
+		//获取当前用户信息？
+//		User user = JBoltUserKit.getUser();
+//		Date now = new Date();
+		tx(() -> {
+			ArrayList<SysMaterialspreparescan> sysMaterialspreparescans = new ArrayList<>();
+			ArrayList<StockBarcodePosition> stockBarcodePositions = new ArrayList<>();
+			for (int i=1;i<no1.length;i++){
+				String[] data = no1[i].split(":");
+				SysMaterialspreparescan sysMaterialspreparescan = new SysMaterialspreparescan();
+				sysMaterialspreparescan.setIAutoId(JBoltSnowflakeKit.me.nextId());
+				sysMaterialspreparescan.setCBarcode(data[0]);
+				sysMaterialspreparescan.setIInventoryId(invent.findFirst("SELECT * FROM Bd_Inventory WHERE cInvCode=?", data[1]).getIAutoId());
+				sysMaterialspreparescan.setCBatch(data[2]);
+				sysMaterialspreparescan.setState("1");
+				sysMaterialspreparescan.setIScanDate(new Date());
+
+				sysMaterialspreparescans.add(sysMaterialspreparescan);
+
+				StockBarcodePosition stockBarcodePosition = stockbarcodepositionservice.findFirst("SELECT * FROM T_Sys_StockBarcodePosition WHERE Barcode = ?", data[0]);
+				stockBarcodePosition.setState(3);
+				stockBarcodePositions.add(stockBarcodePosition);
+
+
+			}
+			sysmaterialspreparescanservice.batchSave(sysMaterialspreparescans);
+			stockbarcodepositionservice.batchUpdate(stockBarcodePositions);
+
+			//通过 id 判断是新增还是修改
+//			MoDoc modoc = moDocS.findFirst("select * from Mo_MoDoc where cMoDocNo=?", id);
+//			sysMaterialsprepare.setSourceBillID(modoc.getIAutoId());
+//			sysMaterialsprepare.setSourceBillNo(modoc.getCMoDocNo());
+//			sysMaterialsprepare.setBillType("手工作成");
+//			sysMaterialsprepare.setOrganizeCode(getOrgCode());
+//			sysMaterialsprepare.setCcreatename(user.getName());
+//			sysMaterialsprepare.setDcreatetime(now);
+//			sysMaterialsprepare.setIcreateby(user.getId());
+//			sysMaterialsprepare.setBillDate(DateUtil.format(now, "yyyy-MM-dd HH:mm:ss"));
+//			sysMaterialsprepare.setBillNo("BL" + DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
+			//主表新增
+//			ValidationUtils.isTrue(sysMaterialsprepare.save(), ErrorMsg.SAVE_FAILED);
+			//从表的操作
+			// 获取保存数据（执行保存，通过 getSaveRecordList）
+			//修改工单状态
+			//获取修改数据（执行修改，通过 getUpdateRecordList）
+			//获取删除数据（执行删除，通过 getDelete）
+			return true;
+		});
+		return SUCCESS;
+	}
+
 }

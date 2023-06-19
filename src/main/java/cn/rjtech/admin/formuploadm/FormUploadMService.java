@@ -583,4 +583,19 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 	public String postWithdrawFromAuditted(long formAutoId) {
 		return null;
 	}
+
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        return null;
+    }
 }

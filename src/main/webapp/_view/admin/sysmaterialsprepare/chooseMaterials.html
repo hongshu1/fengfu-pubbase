@@ -12,6 +12,17 @@
                            name="cinvcode1" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="部品名称"
                            name="cinvname1" value=""/>
+                    <select class="form-control"
+                            name="cworkcode"
+                            data-autoload
+                            data-url="admin/sysMaterialspreparedetail/cworkname1"
+                            data-select-type="select2"
+                            data-text="=存货分类="
+                            data-value=""
+                            data-value-attr="iautoid"
+                            data-text-attr="cinvcname"
+                            data-select="#(cInvCName??)"
+                    ></select>
                     <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索
                     </button>
                     <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置
@@ -31,7 +42,7 @@
         <!-- 定义JBoltTable使用的数据渲染模板 -->
         <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.barcode}">
+<tr data-id="${data.iinventoryid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	<a class="text-info mr-1" type="button" onclick="getCheckedStrip(this)" style="user-select:none">选择</a>
@@ -42,8 +53,7 @@
 <td>${data.cinvstd}</td>
 <td>${data.cuomname}</td>
 <td>${data.cequipmentmodelname}</td>
-<td>${data.cwhname}</td>
-<td>${data.cpositionname}</td>
+<td>${data.cinvcname}</td>
 </tr>
 {@/each}
 </textarea>
@@ -76,8 +86,7 @@
                 <th data-width="200" data-column="">规格</th>
                 <th data-width="150" data-column="">主计量单位</th>
                 <th data-width="150" data-column="">机型名称</th>
-                <th data-width="200" data-column="">仓库名称</th>
-                <th data-width="200" data-column="">库位名称</th>
+                <th data-width="150" data-column="">存货分类</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -114,19 +123,20 @@
     });
 
     function choose2() {
-        var barcodes = jboltTableGetCheckedIds("chooseM", false);
-        if (barcodes.toString() == "false" ? false : true) {
+        var itID = jboltTableGetCheckedIds("chooseM", false);
+        var times=0;
             parent.layer.close(parent.layer.getFrameIndex(window.name));
-            for (i=0;i<barcodes.length;i++){
-                Ajax.post("admin/sysMaterialspreparedetail/choosemtool", {"cmodocno": $(cmo).val(), "barcodes": barcodes[i]},
+            for (i=0;i<itID.length;i++){
+                Ajax.post("admin/sysMaterialspreparedetail/choosemtool", {"cmodocno": $(cmo).val(), "itID": itID[i]},
                     function (res) {
                         jboltTableInsertRow(window.parent.getJBoltTable("manual"), res.data, false, false, false);
-                        console.log("插入完毕"+res.data);
                     }, function (err) {
+                        $('#chooseM tbody').empty();
+                        $('#chooseM tr').empty();
                     });
             }
             // window.parent.refreshJBoltTable();
-        }
+
     }
 
 
