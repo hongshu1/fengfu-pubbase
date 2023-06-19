@@ -771,7 +771,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
         }
       } else {
         Record datas = new Record();
-
+        List<Record> records1 = new ArrayList<>();
         //<editor-fold desc="模拟基础数据">
         Record cequipment = new Record();
         cequipment.put("cequipmentname", "");
@@ -809,7 +809,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
           }
         }
         datas.put("user", recordLisc);
-        record.put("rowdatas", datas);
+        records1.add(datas);
+        record.put("rowdatas", records1);
         records.add(record);
       }
     }
@@ -834,14 +835,19 @@ public class MoMotaskService extends BaseService<MoMotask> {
     List<Record> planDatas = dbTemplate("modocbatch.getPlanDatasBytaskId", kv).find();
 
     for (Record productionLineMaterial : productionLineMaterials) {
+      List<Record> datas = new ArrayList<>();
       for (Record dateShift : dateShifts) {
-        for (Record data : planDatas) {
-
+        for (Record plandata : planDatas) {
+          Record data = new Record();
+          if (plandata.getStr("mergeid").equals(productionLineMaterial.getStr("mergeid")) && plandata.getStr("dates").equals(dateShift.getStr("dates1"))) {
+            data.put("cmodocno", plandata.getStr("cmodocno"));
+            data.put("iqty", plandata.getStr("iqty"));
+            datas.add(data);
+          }
         }
       }
+      productionLineMaterial.put("rowDatas", datas);
     }
-
-
     return productionLineMaterials;
   }
 
