@@ -194,12 +194,12 @@ public class AuditFormConfigService extends BaseService<AuditFormConfig> {
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
         // 当前操作人员  当前时间
         User user = JBoltUserKit.getUser();
-        
+
         Date nowDate = new Date();
         Long orgId = getOrgId();
         String orgCode = getOrgCode();
         String orgName = getOrgName();
-        
+
         LOG.info("saveTable===>" + jBoltTable.getSave());
         LOG.info("updateTable===>" + jBoltTable.getUpdate());
         LOG.info("deleteTable===>" + Arrays.toString(jBoltTable.getDelete()));
@@ -246,6 +246,15 @@ public class AuditFormConfigService extends BaseService<AuditFormConfig> {
                 List<AuditFormConfig> updateList = new ArrayList<>();
                 updateModelList.forEach(auditFormConfig -> {
 
+                    AuditFormConfig config = findById(auditFormConfig.getIAutoId());
+
+//                  表单审批类型切换时，增加对已有未完成审批单据的校验
+                    if (!iType.equals(config.getIType())) {
+                        String cFormSn = auditFormConfig.getCFormSn();
+                        List<Record> list = findRecord("select * from "+cFormSn+" where iAuditStatus = 1");
+                        ValidationUtils.isTrue(list.size() <= 0, "还有具体单据未完成审批流程或审核流程，不允切换类型");
+                    }
+
                     /*
                      * 类型为 审批 的话 需要先定义审批流
                      */
@@ -263,7 +272,7 @@ public class AuditFormConfigService extends BaseService<AuditFormConfig> {
                     auditFormConfig.setDUpdateTime(nowDate);
                     updateList.add(auditFormConfig);
                 });
-                
+
                 batchUpdate(updateList);
             }
 
@@ -303,5 +312,5 @@ public class AuditFormConfigService extends BaseService<AuditFormConfig> {
     public Integer getAuditWayByCformSn(String cformsn) {
         return queryInt("SELECT iType FROM Bd_AuditFormConfig WHERE cFormSn = ? AND isEnabled = '1' AND IsDeleted = '0' ", cformsn);
     }
-    
+
 }

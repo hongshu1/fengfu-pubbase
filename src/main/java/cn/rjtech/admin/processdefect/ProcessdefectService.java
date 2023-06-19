@@ -234,6 +234,7 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 			if (notOk(formRecord.getLong("iautoid"))) {
 				String billNo = BillNoUtils.getcDocNo(getOrgId(), "YCP", 5);
 				processDefect.setIStatus(1);
+				processDefect.setCDocNo(billNo);
 				processDefect.setIOrgId(getOrgId());
 				processDefect.setCOrgCode(getOrgCode());
 				processDefect.setCOrgName(getOrgName());

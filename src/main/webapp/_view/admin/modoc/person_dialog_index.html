@@ -12,6 +12,7 @@
 		<button  type="submit" style="display: none" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 			<input type="hidden" id="iMoDocId" value="#(imdocid??)">
 			<input type="hidden" id="rowid" value="#(configid??)">
+			<input type="hidden" id="personequipmentjson" value="#(personequipmentjson??)">
 		</form>
 	</div>
 	<div class="col-md-auto">
@@ -29,6 +30,7 @@
 <td>${data.isex|iSex}</td>
 <td>${data.cpsnmobilephone}</td>
 <td>${data.jobnumber}</td>
+
 </tr>
 {@/each}
 </textarea>
@@ -41,7 +43,7 @@
 						<button onclick="jboltTableChooseAndInsert(this)" data-url="admin/modoc/persondialog?iautoid=#(configid??)&imdocid=#(imdocid??)" data-area="50%,100%" data-btn="" data-title="批量选择并插入" class="btn btn-success btn-sm" ><i class="fa fa-plus-square-o"></i> 批量插入</button>
 						<button onclick="jboltTableRemoveCheckedRows(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
 						<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
-						<button onclick="jboltTableSubmits(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>
+						<!-- <button onclick="submitThisForm(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>-->
 
 					</div>
 				</div>
@@ -54,20 +56,18 @@
 			   data-jbolttable
 			   data-height="fill"
 			   data-ajax="true"
-			   data-url="/admin/moroutingconfigperson/datas?imoroutingconfigid=#(configid??)"
+			   data-url="/admin/modoc/getPersonByEquipment?configid=&&personequipmentjson=#(personequipmentjson??)"
 			   data-column-resize="true"
 			   data-column-prepend="1:checkbox:true"
 			   data-conditions-form="itemroutingForm_#(pageId)"
 			   data-rowtpl="itemroutingRowtpl_#(pageId)"
 			   data-toolbar="itemrouting_toolbar_#(pageId)"
 			   data-editable="true"
-
 			   data-editable-option="getEditableTableOptions_workposition"
 		>
 			<thead class="fw-normal">
 			<tr>
 				<!--<th data-width="60">序号</th>-->
-
 				<th data-width="150" data-column="cPsn_Num">编码</th>
 				<th data-width="150" data-column="cPsn_Name">姓名</th>
 				<th data-width="150" data-column="iSex">性别</th>
@@ -95,19 +95,50 @@
 		}
 	}*/
 
-	$(function(){
-		hideParentLayerDialogBtn(0);
-		//addParentLayerDialogBtn("保存","lay_success",function(data){
-			//获取表格数据
-			/*var tableDatas = getJboltTableAllDatas('moroutingconfigperson');
-			alert("s"+JSON.stringify(tableDatas))
-			jboltTableSubmit('#moroutingconfigperson');*/
-		//});
-	});
+
+	function submitThisForm(callback){
+		var datas=getJboltTableAllDatas("moroutingconfigperson");
+		var configpersonids = '';
+		if(datas){
+			var cPsnNames=''
+			var count = 0;
+			var items = [];
+			for (var i=0; i<datas.length; i++){
+				var msg ='第'+(i+1)+'行的';
+				var item = datas[i];
+				if (item.cpsn_num){
+					cPsnNames += item.cpsn_name + '/';
+					configpersonids += item.iautoid + ',';
+					count=Number(count+1);
+					items.push(item);
+				}else{
+					LayerMsgBox.alert(msg+"请先选择设备！", 2);
+					return;
+				}
+			}
+			cPsnNames = cPsnNames.slice(0, -1);
+			configpersonids = configpersonids.slice(0, -1);
+			var data={
+				configpersonids:configpersonids,
+				personequipmentjsonstr: items,
+				personequipmentjson: encodeURIComponent(JSON.stringify(items))
+			};
+
+			console.info(JSON.stringify(configpersonids))
+			if (count > 0){
+				parent.jboltTableProcessTdByDialogChooser(cPsnNames,cPsnNames, data);
+			}
+			if(count > 0 && callback){
+				callback();
+			}
+		}
+	}
 function jboltTableSubmits(){
 	hideParentLayerDialogBtn(0);
 	var tableDatas = getJboltTableAllDatas('moroutingconfigperson');
 	var rowid=$("#rowid").val();
+
+	var personequipmentjson = $("#personequipmentjson").val();
 	//alert("s"+JSON.stringify(tableDatas))
 	LayerMsgBox.confirm("确定提交？",function(){
 		if(!tableDatas){
@@ -119,7 +150,7 @@ function jboltTableSubmits(){
 			"form":null}
 		s={"rowid":rowid,"persons":tableDatas}
 		data.jboltTable =JSON.stringify(s);
-		parent.saveDoc(tableDatas,rowid);
+		parent.saveDoc2(tableDatas,rowid);
 		//parent.getTbleData("sssss");
 		parent.LayerMsgBox.closeAll();
 

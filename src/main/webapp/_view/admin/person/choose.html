@@ -74,7 +74,7 @@
                data-url="admin/person/datas"
                data-column-resize="true"
                data-row-click-active="true"
-               data-column-prepend="1:radio:true"
+               data-column-prepend="1:#(select??'checkbox'):true"
                data-conditions-form="personForm_#(pageId)"
                data-rowtpl="personRowtpl_#(pageId)"
                data-page="personPage_#(pageId)"
@@ -103,26 +103,45 @@
 <script type="text/javascript">
 
     function submitThisForm() {
-        var data = jboltTableGetCheckedData('#jbolt_table_#(pageId)');
         
-        if (data) {
+        ### 单选场景
+        #if(select?? == 'radio')
+
+            var data = jboltTableGetCheckedData('#jbolt_table_#(pageId)');
+    
+            if (data) {
+    
+                ### 编辑表格中 弹出选择，增加参数dialog=1&select=radio
+                #if(dialog??)
+    
+                    parent.jboltTableProcessTdByDialogChooser(data.cpsn_name, data.iautoid, data);
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+    
+                ### dialogbtn 按钮控件中打开
+                #else
+    
+                    if (parent.chooseHandler(data)) {
+                        parent.layer.close(parent.layer.getFrameIndex(window.name));
+                    }
+    
+                #end
+    
+            }
+        
+        ### 多选场景
+        #else
+
+            var datas = jboltTableGetCheckedDatas('#jbolt_table_#(pageId)');
             
-            ### 编辑表格中 弹出选择，增加参数dialog=1
-            #if(dialog??)
-            
-                parent.jboltTableProcessTdByDialogChooser(data.cpsn_name, data.iautoid, data);
-                parent.layer.close(parent.layer.getFrameIndex(window.name));
-                
-            ### dialogbtn 按钮控件中打开
-            #else
-            
-                if (parent.chooseHandler(data)) {
+            if (datas && datas.length > 0) {
+                if (parent.chooseHandler(datas)) {
                     parent.layer.close(parent.layer.getFrameIndex(window.name));
                 }
-                
-            #end
-            
-        }
+            }
+        
+        #end
+        
+        
     }
     
 </script>

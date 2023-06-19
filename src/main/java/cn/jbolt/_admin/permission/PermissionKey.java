@@ -314,42 +314,6 @@ public class PermissionKey {
 	 */
 	public static final String MO_DOC = "mo_doc";
 	/**
-	 * 生产工位派工
-	 */
-	public static final String PRODUCTION_PRODUCTION = "production_production";
-	/**
-	 * 分条加工
-	 */
-	public static final String CUTSTRIPPROCESS = "cutstripprocess";
-	/**
-	 * 片料加工
-	 */
-	public static final String SLICEINVPROCESS = "sliceinvprocess";
-	/**
-	 * 板料加工
-	 */
-	public static final String PIECEINVPROCESS = "pieceinvprocess";
-	/**
-	 * 生产工序报工
-	 */
-	public static final String PRODUCTION_REPORT = "production_report";
-	/**
-	 * 生产完工
-	 */
-	public static final String PRODUCTION_COMPLETE = "production_complete";
-	/**
-	 * 返修工单管理
-	 */
-	public static final String REWORKORDER = "reworkorder";
-	/**
-	 * 委外工单管理
-	 */
-	public static final String PMISSUEM = "pmissuem";
-	/**
-	 * 员工计件工资
-	 */
-	public static final String PIECE_RATE = "piece_rate";
-	/**
 	 * 设备管理
 	 */
 	public static final String EQUIPMENT_MANAGE = "equipment_manage";
@@ -730,10 +694,6 @@ public class PermissionKey {
 	 */
 	public static final String MOPICKLIST = "mopicklist";
 	/**
-	 * 参数配置
-	 */
-	public static final String SYSSETTING = "syssetting";
-	/**
 	 * 计量单位档案
 	 */
 	public static final String UOM = "uom";
@@ -842,7 +802,7 @@ public class PermissionKey {
 	 */
 	public static final String PROPOSAL_MODEL = "proposal_model";
 	/**
-	 * 币种档案
+	 * 外币设置
 	 */
 	public static final String FOREIGN_CURRENCY_INDEX = "foreign_currency_index";
 	/**
@@ -918,7 +878,7 @@ public class PermissionKey {
 	 */
 	public static final String FITEMSS97 = "fitemss97";
 	/**
-	 * 项目管理大类项目子目录
+	 * 项目档案
 	 */
 	public static final String FITEMSS97SUB = "fitemss97sub";
 	/**
@@ -1042,7 +1002,7 @@ public class PermissionKey {
 	 */
 	public static final String OM_ORDER_MANAGEMENT = "om_order_management";
 	/**
-	 * 审批流/审批配置
+	 * 审批流/审核配置
 	 */
 	public static final String AUDIT_CONFIG = "audit_config";
 	/**
@@ -1073,10 +1033,6 @@ public class PermissionKey {
 	 * 条码报表
 	 */
 	public static final String BARCODE_REPORT = "barcode_report";
-	/**
-	 * 物料现品票汇总管理
-	 */
-	public static final String INVENTORY_BARCODE_TRACEPAGE = "Inventory_barcode_tracepage";
 	/**
 	 * 仓库报表
 	 */
@@ -1132,7 +1088,7 @@ public class PermissionKey {
 	/**
 	 * 备料一览表
 	 */
-	public static final String MATERIALPREPARATIONLIST = "materialPreparationList";
+	public static final String ADMIN_SYSMATERIALSPREPARE = "ADMIN_SYSMATERIALSPREPARE";
 	/**
 	 * 编码规则配置
 	 */
@@ -1168,7 +1124,7 @@ public class PermissionKey {
 	/**
 	 * 生产备料
 	 */
-	public static final String PRODUCTION_MATERIAL = "production_material";
+	public static final String ADMIN_SYSMATERIALSPREPAREDETAIL = "ADMIN_SYSMATERIALSPREPAREDETAIL";
 	/**
 	 * 材料出库单列表
 	 */
@@ -1249,14 +1205,6 @@ public class PermissionKey {
 	 * 收料单列表
 	 */
 	public static final String MATERIALRECEIPTLIST1 = "materialReceiptList1";
-	/**
-	 * 材料备料表
-	 */
-	public static final String ADMIN_SYSMATERIALSPREPARE = "ADMIN_SYSMATERIALSPREPARE";
-	/**
-	 * 备料单明细
-	 */
-	public static final String ADMIN_SYSMATERIALSPREPAREDETAIL = "ADMIN_SYSMATERIALSPREPAREDETAIL";
 	/**
 	 * 开发文档
 	 */
@@ -1441,6 +1389,62 @@ public class PermissionKey {
 	 * 关于我们
 	 */
 	public static final String ABOUT_US = "about_us";
+	/**
+	 * 平板菜单权限管理
+	 */
+	public static final String PAD_APP = "PAD_APP";
+	/**
+	 * 产线刷卡
+	 */
+	public static final String NFCSWIPECARD = "nfcswipecard";
+	/**
+	 * 单据审批权限
+	 */
+	public static final String FORM_APPROVAL_PERMISSION = "form_approval_permission";
+	/**
+	 * 物料现品票汇总管理
+	 */
+	public static final String INVENTORY_BARCODE_TRACEPAGE = "Inventory_barcode_tracepage";
+	/**
+	 * 制造工单
+	 */
+	public static final String MODOC = "modoc";
+	/**
+	 * 记录上传
+	 */
+	public static final String FORMUPLOADM = "formuploadm";
+	/**
+	 * 来料检
+	 */
+	public static final String RCVDOCQCFORMM_APP = "rcvdocqcformm_app";
+	/**
+	 * 在库检
+	 */
+	public static final String INSTOCKQCFORMM_APP = "instockqcformm_app";
+	/**
+	 * 出货检
+	 */
+	public static final String STOCKOUTQCFORMM_APP = "stockoutqcformm_app";
+	/**
+	 * 来料异常品管理
+	 */
+	public static final String RCVDOCDEFECT_APP = "rcvdocdefect_app";
+	/**
+	 * 制程异常品管理
+	 */
+	public static final String PROCESSDEFECT_APP = "processdefect_app";
+	/**
+	 * 在库异常品管理
+	 */
+	public static final String INSTOCKDEFECT_APP = "instockdefect_app";
+	/**
+	 * 出货异常品管理
+	 */
+	public static final String STOCKOUTDEFECT_APP = "stockoutdefect_app";
+	/**
+	 * 工程内品质巡查管理
+	 */
+	public static final String QCINSPECTION_APP = "qcinspection_app";
 	/**
 	 * 新增
 	 */
@@ -1974,7 +1978,110 @@ public class PermissionKey {
 	 */
 	public static final String INVESTMENT_PLAN_MANAGE_CANCLE = "investment_plan_manage_cancle";
 	/**
-	 * 上传记录
+	 * 通过
 	 */
-	public static final String FORMUPLOADM = "form_uploadm";
+	public static final String FORM_APP_APPROVE = "form_app_approve";
+	/**
+	 * 提审
+	 */
+	public static final String MONTHORDERM_SUBMIT = "monthorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String MONTHORDERM_APPROVE = "monthorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String MONTHORDERM_REJECT = "monthorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String MONTHORDERM_BATCH_APPROVE = "monthorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String MONTHORDERM_BATCH_REJECT = "monthorderm_batch_reject";
+	/**
+	 * 提审
+	 */
+	public static final String ANNUALORDERM_SUBMIT = "annualorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String ANNUALORDERM_APPROVE = "annualorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String ANNUALORDERM_REJECT = "annualorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String ANNUALORDERM_BATCH_APPROVE = "annualorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String ANNUALORDERM_BATCH_REJECT = "annualorderm_batch_reject";
+
+	/**
+	 * 提审
+	 */
+	public static final String WEEKORDERM_SUBMIT = "weekorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String WEEKORDERM_APPROVE = "weekorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String WEEKORDERM_REJECT = "weekorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String WEEKORDERM_BATCH_APPROVE = "weekorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String WEEKORDERM_BATCH_REJECT = "weekorderm_batch_reject";
+
+	/**
+	 * 提审
+	 */
+	public static final String MANUALORDERM_SUBMIT = "manualorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String MANUALORDERM_APPROVE = "manualorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String MANUALORDERM_REJECT = "manualorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String MANUALORDERM_BATCH_APPROVE = "manualorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String MANUALORDERM_BATCH_REJECT = "manualorderm_batch_reject";
+
+	/**
+	 * 提审
+	 */
+	public static final String SUBCONTRACTSALEORDERM_SUBMIT = "subcontractsaleorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String SUBCONTRACTSALEORDERM_APPROVE = "subcontractsaleorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String SUBCONTRACTSALEORDERM_REJECT = "subcontractsaleorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SUBCONTRACTSALEORDERM_BATCH_APPROVE = "subcontractsaleorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SUBCONTRACTSALEORDERM_BATCH_REJECT = "subcontractsaleorderm_batch_reject";
 }

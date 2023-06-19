@@ -67,39 +67,51 @@
 <!--				<input type="text" autocomplete="off" class="form-control" value="#(auditStatusStr)" readonly/>-->
 			</div>
 		</div>
+
+		<script type="text/template" id="bomcompare1_rowtpl_tr_#(pageId)">
+
+			<tr data-id="${iautoid}" data-pid="${ipid}"  data-level="${eachLevel}">
+				<td class="text-left"><span>${ccode1}</span></td>
+				<td>${ccode2}</td>
+				<td>${ccode3}</td>
+				<td>${ccode4}</td>
+				<td>${ccode5}</td>
+				<td>${ccode6}</td>
+				<td>${ccode7}</td>
+				<td>${ccode8}</td>
+				<td>${ccode9}</td>
+				<td>${cinvcode}</td>
+				<td>${cinvname}</td>
+				<td>${cinvstd}</td>
+				<td>${cuomname}</td>
+				<td>${parttypename}</td>
+				<td>${ibaseqty}</td>
+				<td>${iweight}</td>
+				<td>${cvenname}</td>
+				<td>${bproxyforeignname}</td>
+				<td>${isvirtalname}</td>
+				<td>${cmemo}</td>
+				<td>${cversion}</td>
+				<td>${denabledate|date_ymd}</td>
+				<td>${ddisabledate|date_ymd}</td>
+				<td></td>
+				<td></td>
+			</tr>
+			{@if items&&items.length>0}
+				{@each items as son}
+					{@include "#bomcompare1_rowtpl_tr_#(pageId)",son}
+				{@/each}
+			{@/if}
+		</script>
+
 		<!-- 定义JBoltTable使用的数据渲染模板 -->
-		<textarea class="jb_tpl_box" id="BomCompare_tpl_#(pageId)">
-	{@each datas as data,index}
-		<tr data-id="${data.id}">
-			<td>${pageNumber,pageSize,index | rownum}</td>
-			<td>${data.ccode1}</td>
-			<td>${data.ccode2}</td>
-			<td>${data.ccode3}</td>
-			<td>${data.ccode4}</td>
-			<td>${data.ccode5}</td>
-			<td>${data.ccode6}</td>
-			<td>${data.ccode7}</td>
-			<td>${data.ccode8}</td>
-			<td>${data.ccode9}</td>
-			<td>${data.cinvcode}</td>
-			<td>${data.cinvname}</td>
-			<td>${data.cinvstd}</td>
-			<td>${data.cuomname}</td>
-			<td>${data.parttypename}</td>
-			<td>${data.ibaseqty}</td>
-			<td>${data.iweight}</td>
-			<td>${data.cvenname}</td>
-			<td>${data.bproxyforeignname}</td>
-			<td>${data.isvirtalname}</td>
-			<td>${data.cmemo}</td>
-			<td>${data.cversion}</td>
-			<td>${data.denabledate|date_ymd}</td>
-			<td>${data.ddisabledate|date_ymd}</td>
-			<td></td>
-			<td></td>
-		</tr>
-	{@/each}
-	</textarea>
+
+		<script type="text/template" id="BomCompare_tpl_#(pageId)">
+			{@each datas as data,index}
+				{@include "#bomcompare1_rowtpl_tr_#(pageId)",data}
+			{@/each}
+		</script>
+
 		<div class="jbolt_table_toolbar" id="BomCompare_toolbar_#(pageId)">
 			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 				<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
@@ -107,22 +119,18 @@
 			</div>
 
 		</div>
-		<table class="jbolt_table jbolt_main_table  table-center "
+		<table class="jbolt_table jbolt_main_table table-center"
 			   data-jbolttable
-			   data-width="fill"
-			   data-height="fill"
 			   data-column-resize="true"
 			   data-conditions-form="BomCompare_form_index_#(pageId)"
 			   data-ajax="true"
-			   data-url="admin/bomM/getBomComparePageData?iBomMid=#(iAutoId)&cCode=#(cCode)&iCodeLevel=#(iCodeLevel)"
+			   data-url="admin/bomM/getTreeTableDatas?iBomMid=#(iAutoId)&cCode=#(cCode)&iCodeLevel=#(iCodeLevel)"
 			   data-rowtpl="BomCompare_tpl_#(pageId)"
-			   data-copy-to-excel="false"
-			   data-page="BomCompare_page"
+			   data-treetable="all:1"
 			   data-toolbar="BomCompare_toolbar_#(pageId)"
 		>
-			<thead>
+			<thead  class="fw-normal">
 				<tr>
-					<th rowspan="2" data-width="60" data-column="index">序号</th>
 					<th colspan="9" data-column="cCode">编码</th>
 					<th rowspan="2" data-width="150" data-column="cInvCode">子件物料编码</th>
 					<th rowspan="2" data-width="150" data-column="cInvName">子件物料名称</th>

@@ -113,7 +113,7 @@ WHERE 1 = 1
   AND t2.cDocNo like '%#(cdocno)%'
   #end
     #if(imodocid)
-  AND t1.cSpecRcvDocNo like '%#(imodocid)%'
+  AND t2.iModocId like '%#(imodocid)%'
   #end
 #if(cinvcode)
   AND t3.cInvCode like '%#(cinvcode)%'

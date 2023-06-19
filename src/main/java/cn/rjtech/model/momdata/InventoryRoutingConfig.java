@@ -23,7 +23,7 @@ public class InventoryRoutingConfig extends BaseInventoryRoutingConfig<Inventory
     public static final String ROUTINGSOPJSONSTR = "routingSopJsonStr";
     
     public static final String ROUTINGSOPJSON = "routingSopJson";
-    
+
     // 是否新增
     public static final String ISADD = "isAdd";
     
@@ -36,6 +36,11 @@ public class InventoryRoutingConfig extends BaseInventoryRoutingConfig<Inventory
     public void setIsAdd(boolean isAdd) {
         this.isAdd = isAdd;
     }
+
+    // 人员集
+    public static final String PERSONEQUIPMENTJSONSTR = "personequipmentjsonstr";
+
+    public static final String PERSONEQUIPMENTJSON = "personequipmentjson";
     
     // 设备集
 //    public static final String

@@ -140,7 +140,7 @@ public class ProcessDefectApiController extends BaseApiController {
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    @OpenAPI
+
     public void editProcessDefect(@Para(value = "iautoid") Long iautoid,
                                 @Para(value = "capproach") String  capproach,
                                 @Para(value = "processname") String  processname,

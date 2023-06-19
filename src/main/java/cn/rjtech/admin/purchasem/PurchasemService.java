@@ -31,6 +31,7 @@ import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.depref.DepRefService;
 import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryclass.InventoryClassService;
 import cn.rjtech.admin.period.PeriodService;
@@ -121,7 +122,8 @@ public class PurchasemService extends BaseService<Purchasem> {
     private VendorClassService vendorclassService;
     @Inject
     private DepRefService depRefService;
-    
+	@Inject
+    private FormApprovalService formApprovalService;
     /**
      * 后台管理分页查询
      *
@@ -145,7 +147,7 @@ public class PurchasemService extends BaseService<Purchasem> {
      * @return
      */
     public Ret save(Purchasem purchasem) {
-        if (purchasem == null || isOk(purchasem.getIautoid())) {
+        if (purchasem == null || isOk(purchasem.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
 
@@ -160,7 +162,7 @@ public class PurchasemService extends BaseService<Purchasem> {
         });
 
         // 添加日志
-        // addSaveSystemLog(purchasem.getIautoid(), JBoltUserKit.getUserId(), purchasem.getName());
+        // addSaveSystemLog(purchasem.getIAutoId(), JBoltUserKit.getUserId(), purchasem.getName());
         return SUCCESS;
     }
 
@@ -168,13 +170,13 @@ public class PurchasemService extends BaseService<Purchasem> {
      * 更新
      */
     public Ret update(Purchasem purchasem) {
-        if (purchasem == null || notOk(purchasem.getIautoid())) {
+        if (purchasem == null || notOk(purchasem.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
 
         tx(() -> {
             // 更新时需要判断数据存在
-            Purchasem dbPurchasem = findById(purchasem.getIautoid());
+            Purchasem dbPurchasem = findById(purchasem.getIAutoId());
             ValidationUtils.notNull(dbPurchasem, JBoltMsg.DATA_NOT_EXIST);
 
             // TODO 其他业务代码实现
@@ -186,7 +188,7 @@ public class PurchasemService extends BaseService<Purchasem> {
         });
 
         //添加日志
-        //addUpdateSystemLog(purchasem.getIautoid(), JBoltUserKit.getUserId(), purchasem.getName());
+        //addUpdateSystemLog(purchasem.getIAutoId(), JBoltUserKit.getUserId(), purchasem.getName());
         return SUCCESS;
     }
 
@@ -199,7 +201,7 @@ public class PurchasemService extends BaseService<Purchasem> {
                 long iAutoId = Long.parseLong(idStr);
                 Purchasem dbPurchasem = findById(iAutoId);
                 ValidationUtils.notNull(dbPurchasem, JBoltMsg.DATA_NOT_EXIST);
-                purchasedService.deleteBy(Okv.by("ipurchaseid", dbPurchasem.getIautoid()));
+                purchasedService.deleteBy(Okv.by("ipurchaseid", dbPurchasem.getIAutoId()));
                 ValidationUtils.isTrue(dbPurchasem.delete(), JBoltMsg.FAIL);
             }
 
@@ -221,7 +223,7 @@ public class PurchasemService extends BaseService<Purchasem> {
      */
     @Override
     protected String afterDelete(Purchasem purchasem, Kv kv) {
-        //addDeleteSystemLog(purchasem.getIautoid(), JBoltUserKit.getUserId(),purchasem.getName());
+        //addDeleteSystemLog(purchasem.getIAutoId(), JBoltUserKit.getUserId(),purchasem.getName());
         return null;
     }
 
@@ -273,7 +275,7 @@ public class PurchasemService extends BaseService<Purchasem> {
      */
     @Override
     protected String afterToggleBoolean(Purchasem purchasem, String column, Kv kv) {
-        //addUpdateSystemLog(purchasem.getIautoid(), JBoltUserKit.getUserId(), purchasem.getName(),"的字段["+column+"]值:"+purchasem.get(column));
+        //addUpdateSystemLog(purchasem.getIAutoId(), JBoltUserKit.getUserId(), purchasem.getName(),"的字段["+column+"]值:"+purchasem.get(column));
         return null;
     }
 
@@ -301,25 +303,25 @@ public class PurchasemService extends BaseService<Purchasem> {
      */
     public Ret saveTableSubmit(JBoltTable jBoltTable) {
         ValidationUtils.notNull(jBoltTable, JBoltMsg.PARAM_ERROR);
-        Purchasem purchasem = jBoltTable.getFormBean(Purchasem.class, "purchasem");
+        Purchasem purchasem = jBoltTable.getFormModel(Purchasem.class, "purchasem");
         ValidationUtils.notNull(purchasem, JBoltMsg.PARAM_ERROR);
         Boolean flg = true;
         flg = tx(() -> {
             // 申购主表数据处理
-            if (notOk(purchasem.getIautoid())) {
-                purchasem.setIorgid(getOrgId());
-                purchasem.setCorgcode(getOrgCode());
-                purchasem.setIauditstatus(AuditStatusEnum.NOT_AUDIT.getValue());
-                purchasem.setIstatus(PurchaseStatusEnum.NOPUSH.getValue());
-                purchasem.setDcreatetime(new Date());
-                purchasem.setIcreateby(JBoltUserKit.getUserId());
-                purchasem.setCpurchaseno("");
-                purchasem.setIreftype(PurchaseRefTypeEnum.PROPOSAL.getValue());
+            if (notOk(purchasem.getIAutoId())) {
+                purchasem.setIOrgId(getOrgId());
+                purchasem.setCOrgCode(getOrgCode());
+                purchasem.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+                purchasem.setIStatus(PurchaseStatusEnum.NOPUSH.getValue());
+                purchasem.setDCreateTime(new Date());
+                purchasem.setICreateBy(JBoltUserKit.getUserId());
+                purchasem.setCPurchaseNo("");
+                purchasem.setIRefType(PurchaseRefTypeEnum.PROPOSAL.getValue());
                 ValidationUtils.isTrue(purchasem.save(), ErrorMsg.SAVE_FAILED);
-                purchasem.setCpurchaseno(genPurchasNo(Kv.by("iautoid", purchasem.getIautoid())));
-            } else if (isOk(purchasem.getIautoid())) {
-                purchasem.setDupdatetime(new Date());
-                purchasem.setIupdateby(JBoltUserKit.getUserId());
+                purchasem.setCPurchaseNo(genPurchasNo(Kv.by("iautoid", purchasem.getIAutoId())));
+            } else if (isOk(purchasem.getIAutoId())) {
+                purchasem.setDUpdateTime(new Date());
+                purchasem.setIUpdateBy(JBoltUserKit.getUserId());
             }
             ValidationUtils.isTrue(purchasem.update(), ErrorMsg.UPDATE_FAILED);
             //校验申购单本次累计申购金额是否超出了禀议金额的10%或者500元
@@ -330,7 +332,7 @@ public class PurchasemService extends BaseService<Purchasem> {
                 saveRecordList.forEach(item->{
                 	item.remove("cbudgetno","cvenname","ibudgetmoney");
                 	item.set("iautoid", JBoltSnowflakeKit.me.nextId());
-                    item.set("ipurchaseid", purchasem.getIautoid());
+                    item.set("ipurchaseid", purchasem.getIAutoId());
                 });
                 purchasedService.batchSaveRecords(saveRecordList);
             }
@@ -350,9 +352,9 @@ public class PurchasemService extends BaseService<Purchasem> {
 	 * 校验申购单本次累计申购金额是否超出了禀议金额的10%或者500元
 	 * */
     private Boolean validatePurchaseMoneyIsExceed(Purchasem purchasem) {
-		Long ifirstsourceproposalid = purchasem.getIfirstsourceproposalid();
+		Long ifirstsourceproposalid = purchasem.getIFirstSourceProposalId();
 		ValidationUtils.notNull(ifirstsourceproposalid, "校验累计申购金额是否超出限制时，禀议书Id为空");
-		Record moneyRc = getMoney(Kv.by("ifirstsourceproposalid", purchasem.getIfirstsourceproposalid()));
+		Record moneyRc = getMoney(Kv.by("ifirstsourceproposalid", purchasem.getIFirstSourceProposalId()));
 		BigDecimal ialreadypurchasenatmoney = moneyRc.getBigDecimal("ialreadypurchasenatmoney"); //禀议书已申购金额(本币无税)
 		BigDecimal iproposalnatmoney = moneyRc.getBigDecimal("iproposalnatmoney");//禀议金额(本币无税)
 		BigDecimal purchaseRatio = null;
@@ -419,21 +421,22 @@ public class PurchasemService extends BaseService<Purchasem> {
      * @param loginUser
      * @return
      */
-    public Ret submit(Long iautoid, User loginUser) {
+    public Ret submit(Long iautoid) {
         Purchasem purchasem = findById(iautoid);
         ValidationUtils.notNull(purchasem, "申购单记录不存在");
-        ValidationUtils.isTrue(purchasem.getIorgid().equals(getOrgId()), ErrorMsg.ORG_ACCESS_DENIED);
-        ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), purchasem.getIauditstatus(), "非编辑状态，禁止提交审批");
-        if(purchasem.getIreftype() == PurchaseRefTypeEnum.PROPOSAL.getValue())
+        ValidationUtils.isTrue(purchasem.getIOrgId().equals(getOrgId()), ErrorMsg.ORG_ACCESS_DENIED);
+        ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), purchasem.getIAuditStatus(), "非编辑状态，禁止提交审批");
+        if(purchasem.getIRefType() == PurchaseRefTypeEnum.PROPOSAL.getValue())
         	ValidationUtils.isTrue(validatePurchaseMoneyIsExceed(purchasem), "申购金额已超禀议金额10%或500,请追加禀议");
         tx(() -> {
         	if(AppConfig.isVerifyProgressEnabled()){
-	            // 当前单据，审批状态更新为审批进行中
-	            ValidationUtils.isTrue(updateColumn(iautoid, "iauditstatus", AuditStatusEnum.AWAIT_AUDIT.getValue()).isOk(), ErrorMsg.UPDATE_FAILED);
-	            // 调用审批流初始化进度数据
-	            //verifyprogressService.start(String.valueOf(iautoid), getOrgCode(), VeriProgressObjTypeEnum.PURCHASE, loginUser, purchasedService.getTotalAmountByImid(iautoid), purchasem.getCdepcode(), new Date());
+        		// 根据审批状态
+                Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"cn.rjtech.admin.purchasem.PurchasemService");
+                ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+                
+                //生成待办和发送邮件
         	}else{
-        		purchasem.setIauditstatus(AuditStatusEnum.APPROVED.getValue());
+        		purchasem.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
         		ValidationUtils.isTrue(purchasem.update(), ErrorMsg.UPDATE_FAILED);
         	}
             return true;
@@ -442,7 +445,39 @@ public class PurchasemService extends BaseService<Purchasem> {
         return SUCCESS;
 
     }
-
+    /**
+     * 处理审批通过的其他业务操作，如有异常返回错误信息
+     */
+    public String postApproveFunc(long formAutoId) {
+  
+        return null;
+    }
+	
+    /**
+     * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
+     */
+    public String postRejectFunc(long formAutoId) {
+        return null;
+    }
+	
+    /**
+     * 实现反审之后的其他业务操作, 如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        // 反审回第一个节点，回退状态为“已保存”
+        if (isFirst) {
+       
+        }
+        // 最后一步通过的，反审，回退状态为“待审核”
+        if (isLast) {
+           
+        }
+        return null;
+    }
     /**
      * 撤销审批
      *
@@ -452,15 +487,10 @@ public class PurchasemService extends BaseService<Purchasem> {
     public Ret withdraw(Long iautoid) {
         Purchasem purchasem = findById(iautoid);
         ValidationUtils.notNull(purchasem, "禀议书不存在");
-        ValidationUtils.equals(purchasem.getIauditstatus(), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态，禁止操作");
-       // ValidationUtils.isTrue(verifyprogressService.notAuditting(VeriProgressObjTypeEnum.PURCHASE.getValue(), iautoid), "申购单已存在审核记录，请进行弃审操作");
-
+        ValidationUtils.equals(purchasem.getIAuditStatus(), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态，禁止操作");
         tx(() -> {
-            // 清理审批数据
-           // verifyprogressService.deleteByIobjectid(String.valueOf(iautoid), VeriProgressObjTypeEnum.PURCHASE.getValue());
             // 修改审批状态
             ValidationUtils.isTrue(updateColumn(iautoid, "iauditstatus", AuditStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤销审批失败");
-
             return true;
         });
 
@@ -477,24 +507,24 @@ public class PurchasemService extends BaseService<Purchasem> {
         Purchasem purchasem = findById(iautoid);
         List<Purchased> purchaseds = purchasedService.findByImid(iautoid);
         // 校验数据
-        ValidationUtils.equals(getOrgCode(), purchasem.getCorgcode(), "数据源不匹配");
-        ValidationUtils.equals(1, purchasem.getIstatus(), "申购单已推送");
-        ValidationUtils.equals(AuditStatusEnum.APPROVED.getValue(), purchasem.getIauditstatus(), "只允许推送已审核申购单");
+        ValidationUtils.equals(getOrgCode(), purchasem.getCOrgCode(), "数据源不匹配");
+        ValidationUtils.equals(1, purchasem.getIStatus(), "申购单已推送");
+        ValidationUtils.equals(AuditStatusEnum.APPROVED.getValue(), purchasem.getIAuditStatus(), "只允许推送已审核申购单");
         // 制单人名
-        String createname = JBoltUserCache.me.get(purchasem.getIcreateby()).getName();
+        String createname = JBoltUserCache.me.get(purchasem.getICreateBy()).getName();
         purchasem.put("createname", createname);
 
         tx(() -> {
             tx(u8SourceConfigName(), () -> {
                 // 校验是否存在
-                Record checkRecord = dbTemplate(u8SourceConfigName(), "purchasem.getAppVouchId", Kv.by("ccode", purchasem.getCpurchaseno())).findFirst();
+                Record checkRecord = dbTemplate(u8SourceConfigName(), "purchasem.getAppVouchId", Kv.by("ccode", purchasem.getCPurchaseNo())).findFirst();
                 ValidationUtils.isTrue(checkRecord == null, "该单据已存在U8请购单中");
                 //查询申购单表头部门在部门对照表中的末级部门
-                Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(purchasem.getCdepcode());
+                Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(purchasem.getCDepCode());
                 purchasem.put("cenddepcode", refDepartmentRc.getStr("cdepcode"));
                 // 推送U8及校验
                 ValidationUtils.equals("ok", PurchaseAppApi.add(getOrgCode(), purchasem, purchaseds), JBoltMsg.FAIL);
-                Record record = dbTemplate(u8SourceConfigName(), "purchasem.getAppVouchId", Kv.by("ccode", purchasem.getCpurchaseno())).findFirst();
+                Record record = dbTemplate(u8SourceConfigName(), "purchasem.getAppVouchId", Kv.by("ccode", purchasem.getCPurchaseNo())).findFirst();
                 ValidationUtils.notNull(record, "推单失败");
 
                 // U8请购单改为已审核
@@ -504,9 +534,9 @@ public class PurchasemService extends BaseService<Purchasem> {
 
 
             // 修改申购单
-            purchasem.setDupdatetime(new Date());
-            purchasem.setIupdateby(JBoltUserKit.getUserId());
-            purchasem.setIstatus(PurchaseStatusEnum.PUSH.getValue());
+            purchasem.setDUpdateTime(new Date());
+            purchasem.setIUpdateBy(JBoltUserKit.getUserId());
+            purchasem.setIStatus(PurchaseStatusEnum.PUSH.getValue());
             ValidationUtils.isTrue(purchasem.update(), JBoltMsg.FAIL);
             return true;
         });
@@ -526,10 +556,10 @@ public class PurchasemService extends BaseService<Purchasem> {
         ValidationUtils.notEmpty(purchasems, JBoltMsg.DATA_NOT_EXIST);
 
         // 推单状态校验
-        long counts = purchasems.stream().filter(item -> item.getIstatus() == 1).count();
+        long counts = purchasems.stream().filter(item -> item.getIStatus() == 1).count();
         ValidationUtils.isTrue(!(counts > 0), "细项存在未推送数据");
         // 获取申购单单据号
-        List<String> cPurchaseNos = purchasems.stream().map(Purchasem::getCpurchaseno).collect(Collectors.toList());
+        List<String> cPurchaseNos = purchasems.stream().map(Purchasem::getCPurchaseNo).collect(Collectors.toList());
 
         // 获取U8请购单主表ID
         List<Integer> ids = dbTemplate(u8SourceConfigName(), "purchasem.getAppVouchId", Kv.by("ccodes", cPurchaseNos)).find().stream().filter(Objects::nonNull).map(item -> {
@@ -562,9 +592,9 @@ public class PurchasemService extends BaseService<Purchasem> {
 
             // 修改申购单信息
             purchasems.forEach(purchasem -> {
-                purchasem.setIstatus(PurchaseStatusEnum.NOPUSH.getValue());
-                purchasem.setDupdatetime(new Date());
-                purchasem.setIupdateby(JBoltUserKit.getUserId());
+                purchasem.setIStatus(PurchaseStatusEnum.NOPUSH.getValue());
+                purchasem.setDUpdateTime(new Date());
+                purchasem.setIUpdateBy(JBoltUserKit.getUserId());
                 ValidationUtils.isTrue(purchasem.update(), JBoltMsg.FAIL);
             });
 
@@ -634,7 +664,7 @@ public class PurchasemService extends BaseService<Purchasem> {
     	ValidationUtils.notNull(purchasem, "申购单数据不存在,获取部门英文名称失败!");
 		switch (BarCodeEnum.toEnum(cprojectcode)) {
 	        case DEPT:
-	        	Record record = departmentService.findByCdepcode(getOrgId(),purchasem.getCdepcode()).toRecord();
+	        	Record record = departmentService.findByCdepcode(getOrgId(),purchasem.getCDepCode()).toRecord();
 	    		String cdepnameen = record.getStr("cdepnameen");
 	    		ValidationUtils.notBlank(cdepnameen, record.getStr("cdepname")+"部门的英文名称为空!");
 	    		str = cdepnameen;
@@ -696,8 +726,8 @@ public class PurchasemService extends BaseService<Purchasem> {
 		Date now = new Date();
 		Purchasem purchasem = findById(ipurchasemid);
 		Proposalm proposalm = proposalmService.findById(purchasem.getIproposalmid());
-		ValidationUtils.isTrue(ObjectUtil.equal(proposalm.getIauditstatus(), AuditStatusEnum.APPROVED.getValue()), "申购单的来源禀议书已失效,操作失败!");
-		ValidationUtils.isTrue(ObjectUtil.equal(purchasem.getIauditstatus(), AuditStatusEnum.APPROVED.getValue())
+		ValidationUtils.isTrue(ObjectUtil.equal(proposalm.getIAuditStatus(), AuditStatusEnum.APPROVED.getValue()), "申购单的来源禀议书已失效,操作失败!");
+		ValidationUtils.isTrue(ObjectUtil.equal(purchasem.getIAuditStatus(), AuditStatusEnum.APPROVED.getValue())
 				&& ObjectUtil.equal(purchasem.getIeffectivestatus(), EffectiveStatusEnum.INVAILD.getValue())
 				, "请选择已审核,未生效的申购单进行生效操作");
 		//校验是否超过禀议金额限制
@@ -709,13 +739,13 @@ public class PurchasemService extends BaseService<Purchasem> {
 			BigDecimal itotalpurchasemoney = moneyRc.getBigDecimal("itotalpurchasemoney"); //禀议书的累计申购金额(本币无税)
 			BigDecimal inowtotalpurchasemoney = ipurchasemoney.add(itotalpurchasemoney);//本次申购的累计申购金额 = 禀议书的累计申购金额(本币无税) + 申购单本次申购金额(本币无税)
 			User loginUser = JBoltUserKit.getUser();
-			proposalm.setIupdateby(loginUser.getId());
-			proposalm.setDupdatetime(now);
+			proposalm.setIUpdateBy(loginUser.getId());
+			proposalm.setDUpdateTime(now);
 			proposalm.setItotalpurchasemoney(inowtotalpurchasemoney);
 			ValidationUtils.isTrue(proposalm.update(), ErrorMsg.UPDATE_FAILED);
 			purchasem.setIeffectivestatus(EffectiveStatusEnum.EFFECTIVED.getValue());
-			purchasem.setIupdateby(loginUser.getId());
-			purchasem.setDupdatetime(now);
+			purchasem.setIUpdateBy(loginUser.getId());
+			purchasem.setDUpdateTime(now);
 			ValidationUtils.isTrue(purchasem.update(), ErrorMsg.UPDATE_FAILED);
 			return true;
 		});
@@ -783,19 +813,19 @@ public class PurchasemService extends BaseService<Purchasem> {
 		Date now = new Date();
 		User loginUesr = JBoltUserKit.getUser();
 		tx(()->{
-			if(purchasem.getIautoid() == null){
-				purchasem.setIorgid(getOrgId());
-				purchasem.setCorgcode(getOrgCode());
-				purchasem.setIreftype(PurchaseRefTypeEnum.BUDGET.getValue());
-				purchasem.setIauditstatus(AuditStatusEnum.NOT_AUDIT.getValue());
-				purchasem.setIstatus(PurchaseStatusEnum.NOPUSH.getValue());
-				purchasem.setIcreateby(loginUesr.getId());
-				purchasem.setDcreatetime(now);
+			if(purchasem.getIAutoId() == null){
+				purchasem.setIOrgId(getOrgId());
+				purchasem.setCOrgCode(getOrgCode());
+				purchasem.setIRefType(PurchaseRefTypeEnum.BUDGET.getValue());
+				purchasem.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+				purchasem.setIStatus(PurchaseStatusEnum.NOPUSH.getValue());
+				purchasem.setICreateBy(loginUesr.getId());
+				purchasem.setDCreateTime(now);
 				ValidationUtils.isTrue(purchasem.save(), ErrorMsg.SAVE_FAILED);
-				purchasem.setCpurchaseno(genPurchasNo(Kv.by("iautoid", purchasem.getIautoid())));
+				purchasem.setCPurchaseNo(genPurchasNo(Kv.by("iautoid", purchasem.getIAutoId())));
 			}else{
-				purchasem.setIupdateby(JBoltUserKit.getUserId());
-				purchasem.setDupdatetime(now);
+				purchasem.setIUpdateBy(JBoltUserKit.getUserId());
+				purchasem.setDUpdateTime(now);
 			}
 			ValidationUtils.isTrue(purchasem.update(), ErrorMsg.UPDATE_FAILED);
 			addPurchasedDatas(jBoltTable.getSaveRecordList(),purchasem);
@@ -815,7 +845,7 @@ public class PurchasemService extends BaseService<Purchasem> {
 					"ddemandate","cvencode","ccurrency","cmemo","itaxexclusivetotalamount","nflat","creferencepurpose",
 					"isourcetype","isourceid","iprojectcardid","itax","inatunitprice","inattax","inattax","inatsum","inatmoney","isubitem")
 			.set("iautoid", JBoltSnowflakeKit.me.nextId())
-			.set("ipurchaseid", purchasem.getIautoid());
+			.set("ipurchaseid", purchasem.getIAutoId());
 			if (i == 0) {
             //避免保存不到所有字段的问题(批量保存Record，底层是以数组中第一行的字段名称来拼接Insert sql的)
             for (String columnName : columnNames) {

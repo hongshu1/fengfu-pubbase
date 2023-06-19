@@ -487,7 +487,7 @@
         var rows = jboltTableGetCheckedDatas(ele);
         if (rows) {
             rows.forEach((row,index)=>{
-	            #if(proposalm.issupplemental??)
+	            #if(proposalm.issupplemental??==1)
 	            if (row.itype === 1) {
 	                LayerMsgBox.alert('只能删除追加的项目！', 2);
 	                return false;

@@ -140,4 +140,8 @@ public class BomMAdminController extends BaseAdminController {
         ValidationUtils.notNull(bomData, JBoltMsg.DATA_NOT_EXIST);
         renderJsonData(JSONObject.parseArray(bomData.getCData()));
     }
+    
+    public void getTreeTableDatas(){
+		renderJsonData(bomDService.getTreeTableDatas(getKv()));
+	}
 }

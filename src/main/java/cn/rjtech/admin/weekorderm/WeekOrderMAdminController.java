@@ -76,7 +76,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
         ValidationUtils.notNull(datas, JBoltMsg.DATA_NOT_EXIST);
         ValidationUtils.isTrue(datas.getList().size() > 0, JBoltMsg.DATA_NOT_EXIST);
         set("weekOrderM", datas.getList().get(0));
-        set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
+        keepPara();
         render("edit.html");
     }
 

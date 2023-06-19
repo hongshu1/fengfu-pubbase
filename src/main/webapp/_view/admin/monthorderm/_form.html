@@ -1,6 +1,13 @@
 #set(pageId=RandomUtil.random(6))
 #set(iYear=DateUtil.getYear())
 #set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
+
+### 默认为非只读,查看页有readonly=readonly标识
+### 【readonly为false】, 或 【审核中或已通过】，设置只读
+#if(readonly != 'readonly' && (monthorderm.iauditstatus??0 == 1 || monthorderm.iauditstatus??0 == 2))
+#set(readonly = 'readonly')
+#end
+
 <div class="jbolt_page_title">
 
     <div class="row">
@@ -9,17 +16,19 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        #if(!monthorderm.iautoid?? ||  (edit??false && (monthorderm.iOrderStatus == 1 || monthorderm.iOrderStatus == 4)))
-                        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
+                        #if(readonly != 'readonly')
+                            <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
 
                         ### 参数列表
-                        ### uri:                接口URI
-                        ### formSn:             表单名
-                        ### o:                  当前表单对象名
-                        ### primaryKeyName:     主键名
-                        ### edit:               查看为false,编辑为true
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
+                        ### uri:                    接口URI
+                        ### formSn:                 表单名
+                        ### o:                      当前表单对象名
+                        ### primaryKeyName:         主键名
+                        ### permissionKeyPrefix:    权限key
+                        ### redonly:                查看页定义为readonly=readonly, 新增/编辑页 可不传
+                        ### className:              实现审批业务的类名
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService", permissionKeyPrefix="monthorderm")
 
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
@@ -32,15 +41,15 @@
 </div>
 
 ### 新增之后，并且为审核流
-#if(monthorderm.iautoid?? && monthorderm.iauditway == 2)
-### 参数列表
-### formAutoId:                 单据ID
-### formSn:                     表单名
-### btnNeed:                    是否需要显示审批按钮
-### pId:                        当前页面绑定的pageId
-### primaryKeyName:             主键名
-### className:                  实现审批业务的类名
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService")
+#if(monthorderm.iautoid?? && monthorderm.iauditway == 2 && monthorderm.iauditstatus == 1)
+    ### 参数列表
+    ### formAutoId:                 单据ID
+    ### formSn:                     表单名
+    ### btnNeed:                    是否需要显示审批按钮
+    ### pId:                        当前页面绑定的pageId
+    ### primaryKeyName:             主键名
+    ### className:                  实现审批业务的类名
+    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService")
 #end
 
 <div class="jbolt_page_content">
@@ -64,30 +73,40 @@
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">订单号</label>
                                     <div class="col-10">
-                                        <input type="text" data-rule="required" data-notnull="true" data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入订单号" maxlength="40" name="monthorderm.cOrderNo" value="#(monthorderm.cOrderNo??)"/>
+                                        <input type="text" data-rule="required" data-notnull="true" data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入订单号" maxlength="40" name="monthorderm.cOrderNo" value="#(monthorderm.cOrderNo??)" #(readonly) />
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <input type="hidden" name="monthorderm.iCustomerId" value="#(monthorderm.iCustomerId??)" id="iCustomerId" data-value-attr="iautoid"/>
+                                    
                                     <label class="col-sm-3 col-form-label">客户名称</label>
                                     <div class="col-9">
-                                        <input type="text" class="form-control"
-                                               id="ccusname"
-                                               data-autocomplete
-                                               data-url="admin/customer/autocomplete"
-                                               data-rule="required"
-                                               data-hidden-input="iCustomerId"
-                                               data-text-attr="ccusname"
-                                               data-column-attr="ccuscode,ccusname,ccusabbname"
-                                               placeholder="请选择"
-                                               data-tips="请选择"
-                                               data-header="客户编码,客户名称,客户简称"
-                                               maxlength="40"
-                                               value="#(monthorderm.ccusname??)">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#iCustomerId" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/annualorderm/ccusname_dialog_index"><i class="fa fa-search"></i></button>
+                                        <div class="input-group">
+                                            <div class="ac_input_box">
+                                                <input type="text" class="form-control"
+                                                       id="ccusname"
+                                                       data-autocomplete
+                                                       data-url="admin/customer/autocomplete"
+                                                       data-rule="required"
+                                                       data-hidden-input="iCustomerId"
+                                                       data-text-attr="ccusname"
+                                                       data-column-attr="ccuscode,ccusname,ccusabbname"
+                                                       placeholder="请选择"
+                                                       data-tips="请选择"
+                                                       data-header="客户编码,客户名称,客户简称"
+                                                       #if(readonly)
+                                                       disabled
+                                                       #end
+                                                       maxlength="40"
+                                                       value="#(monthorderm.ccusname??)">
+                                            </div>
+                                            #if(readonly != 'readonly')
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#iCustomerId" data-area="1280,600" data-title="选择数据（单选）" data-url="admin/annualorderm/ccusname_dialog_index"><i class="fa fa-search"></i></button>
+                                            </div>
+                                            #end
                                         </div>
                                     </div>
                                 </div>
@@ -108,7 +127,8 @@
                                                class="form-control"
                                                maxlength="20"
                                                name="monthorderm.iYear"
-                                               value="#datetime(monthorderm.iYear??DateUtil.getNow(),'yyyy')"/>
+                                               value="#datetime(monthorderm.iYear??DateUtil.getNow(),'yyyy')"
+                                               #(readonly == 'readonly' ? 'disabled' : '') />
                                     </div>
                                 </div>
                             </div>
@@ -116,7 +136,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">月份</label>
                                     <div class="col-9">
-                                        <select class="form-control" data-autoload name="monthorderm.iMonth" data-select="#datetime(monthorderm.iMonth??DateUtil.getNow(),'M')">
+                                        <select class="form-control" data-autoload name="monthorderm.iMonth" data-select="#datetime(monthorderm.iMonth??DateUtil.getNow(),'M')" #(readonly == 'readonly' ? 'disabled' : '')>
                                             <option value="">=月份=</option>
                                             <option value="1">1月</option>
                                             <option value="2">2月</option>
@@ -145,12 +165,11 @@
         {@each datas as data,index}
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
-        <td>
-            #if(!monthorderm.iautoid?? || edit??false)
-            <a onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
-               data-handler="removeTr" data-confirm="确定删除此数据？" class="btn btn-danger bat-sm">移除行</a>
-            #end
-        </td>
+            <td>
+                #if(readonly != 'readonly')
+                    <a onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="btn btn-danger bat-sm">移除行</a>
+                #end
+            </td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
@@ -194,8 +213,10 @@
         {@/each}
     </script>
 
+    ### 新增
+    #if(readonly != 'readonly')
     <div class="jbolt_table_toolbar" id="monthorderm_toolbar_#(pageId)">
-        #if(!monthorderm.iautoid??||edit??false)
+
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-xs">添加行</button>
@@ -221,8 +242,8 @@
                 </div>
             </div>
         </div>
-        #end
     </div>
+    #end
 
     <table class="jbolt_table thead_font_normal table-bordered table-center"
            data-jbolttable
@@ -338,12 +359,7 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-
-    function submitThisForm(){
-        $('#save_btn_#(pageId)').click();
-        return true;
-    }
-
+    
     /**
      * 检查明细
      */
@@ -411,15 +427,35 @@
         return false;
     }
 
-    function submitApproveMonth() {
-        let result = jboltTableSubmit("#jbolt_Table_#(pageId)");
-        if (result){
-            let monthiautoid = $("#monthiautoid").val();
-            let url = "admin/monthorderm/approve?id="+monthiautoid;
-            Ajax.get(url,function(res){
-                LayerMsgBox.success("审批成功!");
-            });
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
+
+    function submitThisForm_#(pageId)(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
         }
+
+        // 普通表单表单，保存并提审处理
+        // submitThisForm(function (data) {
+        //     submit_#(pageId)(ret.data.iautoid, function (data) {
+        //         successHandler('提审成功', ret.data.iautoid);
+        //     });
+        // });
+        
+        // 调用保存处理
+        $('#save_btn_#(pageId)').click();
+    }
+
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/monthorderm/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
+            parent.refreshPjaxContainer();
+        });
     }
 
     //获得配置参数
@@ -430,11 +466,24 @@
                 name: 'monthOrderMForm',
                 type: "all",
                 url: "/admin/monthorderm/submitAll",
-                success: function (res) {
-                    LayerMsgBox.success("提交成功", 600, function () {
+                success: function (ret) {
+                    // 表格保存之后，判断是否需要提审处理
+                    if (ret.state === 'ok') {
+                        // 提交审核（审批）调用
+                        if (submit) {
+                            // 提审
+                            submit_#(pageId)(ret.data.iautoid, function (data) {
+                                successHandler('提审成功', ret.data.iautoid);
+                            });
+                        } else {
+                            successHandler(ret.msg, ret.data.iautoid);
+                        }
+
                         parent.refreshPjaxContainer();
                         parent.layer.closeAll();
-                    });
+                    } else {
+                        LayerMsgBox.alert(ret.msg, 2);
+                    }
                 }
             },
             maxRowCount: 9999,

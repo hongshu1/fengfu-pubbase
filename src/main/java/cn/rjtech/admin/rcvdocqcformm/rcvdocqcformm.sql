@@ -117,3 +117,8 @@ WHERE
   #end
 ORDER BY t1.iSeq asc
 #end
+
+
+#sql("findItemAndParamByIQcformId")
+
+#end

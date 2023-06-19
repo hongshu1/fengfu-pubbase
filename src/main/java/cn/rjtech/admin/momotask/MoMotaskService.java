@@ -770,6 +770,19 @@ public class MoMotaskService extends BaseService<MoMotask> {
           records.get(qty).set("rowdatas", records3);
         }
       } else {
+        Record datas = new Record();
+        List<Record> records1 = new ArrayList<>();
+        //<editor-fold desc="模拟基础数据">
+        Record cequipment = new Record();
+        cequipment.put("cequipmentname", "");
+        cequipment.put("iequipmentid", "");
+        Record coperation = new Record();
+        coperation.put("coperationname", "");
+        coperation.put("ioperationid", "");
+        datas.put("cequipment", cequipment);
+        datas.put("coperation", coperation);
+        //</editor-fold>
+
         List<Record> recordLisc = new ArrayList<>();
         Record record = new Record();
         record.put("cinvcode", "");
@@ -795,12 +808,47 @@ public class MoMotaskService extends BaseService<MoMotask> {
             recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
           }
         }
-        record.put("udes", recordLisc);
+        datas.put("user", recordLisc);
+        records1.add(datas);
+        record.put("rowdatas", records1);
         records.add(record);
       }
     }
     return records;
+  }
 
+  public List<Record> getEditorialPlanDatas(Kv kv) {
+    ValidationUtils.notBlank(kv.getStr("taskid"), "制造工单任务ID缺失，获取数据异常！！！");
+
+    //<editor-fold desc="A获取产线物料信息">
+    List<Record> productionLineMaterials = dbTemplate("modocbatch.getModocDatas", kv).find();
+    List<String> productionLine = new ArrayList<>();
+    for (Record productionLineMaterial : productionLineMaterials) {
+      productionLine.add(productionLineMaterial.getStr("iWorkRegionMid") + productionLineMaterial.getStr("iInventoryId"));
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="B获取日期班次信息 dateShifts ">
+    List<Record> dateShifts = dbTemplate("modocbatch.getModocDateShiftDatas", kv).find();
+    //</editor-fold>
+
+    List<Record> planDatas = dbTemplate("modocbatch.getPlanDatasBytaskId", kv).find();
+
+    for (Record productionLineMaterial : productionLineMaterials) {
+      List<Record> datas = new ArrayList<>();
+      for (Record dateShift : dateShifts) {
+        for (Record plandata : planDatas) {
+          Record data = new Record();
+          if (plandata.getStr("mergeid").equals(productionLineMaterial.getStr("mergeid")) && plandata.getStr("dates").equals(dateShift.getStr("dates1"))) {
+            data.put("cmodocno", plandata.getStr("cmodocno"));
+            data.put("iqty", plandata.getStr("iqty"));
+            datas.add(data);
+          }
+        }
+      }
+      productionLineMaterial.put("rowDatas", datas);
+    }
+    return productionLineMaterials;
   }
 
 }

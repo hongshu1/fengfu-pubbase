@@ -3,6 +3,7 @@ package cn.rjtech.admin.bomd;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -12,6 +13,7 @@ import cn.rjtech.enums.BoolCharEnum;
 import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.PartTypeEnum;
 import cn.rjtech.model.momdata.BomD;
+import cn.rjtech.model.momdata.BomM;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
@@ -21,6 +23,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -161,27 +164,89 @@ public class BomDService extends BaseService<BomD> {
 			return emptyPage(pageSize);
 		}
 		Page<Record> paginate = dbTemplate("bomd.getBomComparePageData", kv).paginate(pageNumber, pageSize);
-		changeRecord(paginate.getList(), kv.getStr(BomD.CCODE), kv.getStr(BomD.ICODELEVEL));
+		changeRecord(paginate.getList(), kv.getStr(BomD.CCODE), true);
 		return paginate;
 	}
 	
-	public void changeRecord(List<Record> recordList, String code, String codeLevel){
+	public List<Record> getTreeTableDatas(Kv kv) {
+		if (ObjectUtil.isNull(kv.getLong(BomD.IBOMMID))){
+			return new ArrayList<>();
+		}
+		List<Record> recordList = dbTemplate("bomd.getBomComparePageData", kv).find();
+		
+		
+		List<Record> jsTreeBean = createJsTreeBean(recordList, kv.getStr(BomD.CCODE));
+		
+		changeRecord(jsTreeBean, kv.getStr(BomD.CCODE), false);
+		List<Record> jsTableData = convertToRecordTree(jsTreeBean, BomD.IAUTOID, BomD.IPID, (p) -> notOk(p.getLong(BomD.IPID)));
+		return jsTableData;
+	}
+	
+	public List<Record> createJsTreeBean(List<Record> recordList, String code){
+		List<Record> trees = new ArrayList<>();
+		if (CollectionUtil.isNotEmpty(recordList)){
+			
+			List<Record> allList = dbTemplate("bomd.getBomComparePageData", Kv.by("orgId", getOrgId())).find();
+			Map<Long, List<Record>> compareMap = allList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IPID))).collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID)));
+			
+			for (Record record : recordList){
+				// 设置编码
+				setCodeLevel(record, code);
+				Long id = record.getLong(BomM.IAUTOID);
+				if (compareMap.containsKey(id)){
+					recursiveTraversal(record, trees, compareMap.get(id), compareMap);
+				}
+				Long compareId = record.getLong(BomD.IINVPARTBOMMID);
+				// 判断版本号是否为空
+				if (ObjectUtil.isNotNull(compareId)){
+					recursiveTraversal(record, trees, compareMap.get(compareId), compareMap);
+				}
+				record.set(BomD.IPID, "0");
+				// 添加子件
+				trees.add(record);
+			}
+		}
+		return trees;
+	}
+	
+	/**
+	 *  递归遍历所有子件
+	 * @param parentRecord  父对象
+	 * @param trees 集合
+	 * @param compareList 子件集合
+	 * @param compareMap  key=父id, value = 子件集合
+	 */
+	public void recursiveTraversal(Record parentRecord, List<Record> trees, List<Record> compareList, Map<Long, List<Record>> compareMap){
+		for (Record record : compareList){
+			Long id = record.getLong(BomM.IAUTOID);
+			Long compareId = record.getLong(BomD.IINVPARTBOMMID);
+			
+			Integer iLevel = parentRecord.getInt(BomD.ILEVELStr);
+			String code = String.valueOf(iLevel+1);
+			setCodeLevel(record, code);
+			// 判断当前子件是否存在 子件
+			if (compareMap.containsKey(id)){
+				recursiveTraversal(record, trees, compareMap.get(id), compareMap);
+			}
+			// 判断版本号是否为空
+			if (ObjectUtil.isNotNull(compareId)){
+				recursiveTraversal(record, trees, compareMap.get(compareId), compareMap);
+			}
+			Record newRecord = new Record();
+			newRecord.setColumns(record);
+			newRecord.set(BomD.IPID, parentRecord.getLong(BomD.IAUTOID));
+			trees.add(newRecord);
+		}
+	}
+	
+	public void changeRecord(List<Record> recordList, String code, Boolean flag){
 		if (CollectionUtil.isEmpty(recordList)){
 			return;
 		}
 		for (Record record : recordList){
-			if (ObjectUtil.isNull(codeLevel)){
-				// 拼接编码key
-				codeLevel = record.getStr(BomD.ICODELEVEL);
+			if (flag){
+				setCodeLevel(record, code);
 			}
-			if (ObjectUtil.isNull(code)){
-				code =record.getStr(BomD.CCODE);
-			}
-//			// 拼接编码key
-//			String codeLevel = record.getStr(BomD.ICODELEVEL);
-			String codeKey = BomD.CCODE.concat(codeLevel);
-			record.set(codeKey, code);
-			
 			Integer partType = record.getInt(BomD.IPARTTYPE);
 			Integer isVirtual = record.getInt(BomD.ISVIRTUAL);
 			Integer bProxyForeign = record.getInt(BomD.BPROXYFOREIGN);
@@ -202,6 +267,21 @@ public class BomDService extends BaseService<BomD> {
 				record.set(Inventory.BPROXYFOREIGNNAME, isEnableEnum.getText());
 			}
 		}
+	}
+	
+	/**
+	 * 用于拼接编码栏 key1-key9
+	 * @param record
+	 * @param code
+	 */
+	private void setCodeLevel(Record record, String code){
+		
+		if (ObjectUtil.isNull(code)){
+			code =record.getStr(BomD.CCODE);
+		}
+		String codeKey = BomD.CCODE.concat(code);
+		record.set(codeKey, code);
+		record.set(BomD.ILEVELStr, code);
 	}
 	
 	public List<BomD> queryBomCompareList(Long bomId, String fieldName){
@@ -249,16 +329,31 @@ public class BomDService extends BaseService<BomD> {
 		bomD.setCVenName(cVenName);
 	}
 	
-	public List<Record> getEffectiveBomCompare(Long orgId){
-        return dbTemplate("bomd.getEffectiveBomCompare", Okv.by("orgId", orgId)).find();
+	public void setBomCodeLevel(BomD bomD, String cCode){
+		// 层次编码
+		bomD.setCCode(cCode);
+		bomD.setICodeLevel(cCode);
+	}
+	
+	public List<Record> getEffectiveBomCompare(Long orgId, List<Long> invIds){
+		Okv okv = Okv.by("orgId", orgId);
+		if (CollectionUtil.isNotEmpty(invIds) && invIds.size() < 150){
+			okv.set("invIds", invIds);
+		}
+		return dbTemplate("bomd.getEffectiveBomCompare", okv).find();
     }
     
-    public Map<Long, List<Record>> getEffectiveBomCompareMap(Long orgId){
-        List<Record> recordList = getEffectiveBomCompare(orgId);
+    public Map<Long, List<Record>> getEffectiveBomCompareMap(Long orgId, List<Long> invIds){
+        List<Record> recordList = getEffectiveBomCompare(orgId, invIds);
         if (CollectionUtil.isEmpty(recordList)){
             return new HashMap<>();
         }
         return recordList.stream().collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID), Collectors.toList()));
     }
     
+    public BomD findByPid(Long pid){
+		Sql sql = selectSql().eq(BomD.IPID, pid).eq(BomD.ISDELETED, "0");
+		return findFirst(sql);
+	}
+ 
 }

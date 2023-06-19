@@ -20,7 +20,7 @@
         <td>
             ${data.code6}
         </td>
-        <td>
+        <td {@if !data.invitemcode} data-focus="true" data-changed="true" {@/if}>
             ${data.invitemcode}
             <div style="margin-top: 10px"></div>
             ${data.cinvname}
@@ -38,7 +38,7 @@
         <td>
 
         </td>
-        <td>
+        <td {@if !data.invqty} data-focus="true" data-changed="true" {@/if}>
             ${data.invqty}
             <div style="margin-top: 10px"></div>
             ${data.invweight}
@@ -51,7 +51,7 @@
         <td>
             ${data.materialtype}
         </td>
-        <td>
+        <td {@if !data.originalitemcode} data-focus="true" data-changed="true" {@/if}>
             ${data.originalitemcode}
             <div style="margin-top: 10px"></div>
             ${data.originalinvname}
@@ -61,12 +61,12 @@
             <div style="margin-top: 10px"></div>
             ${data.originalinvstd}
         </td>
-        <td>
+        <td {@if !data.originalqty} data-focus="true" data-changed="true" {@/if}>
             ${data.originalqty}
             <div style="margin-top: 10px"></div>
             ${data.originalweight}
         </td>
-        <td>
+        <td {@if !data.slicingitemcode} data-focus="true" data-changed="true" {@/if}>
             ${data.slicingitemcode}
             <div style="margin-top: 10px"></div>
             ${data.slicinginvname}
@@ -76,12 +76,12 @@
             <div style="margin-top: 10px"></div>
             ${data.slicinginvstd}
         </td>
-        <td>
+        <td {@if !data.slicingqty} data-focus="true" data-changed="true" {@/if}>
             ${data.slicingqty}
             <div style="margin-top: 10px"></div>
             ${data.slicingweight}
         </td>
-        <td>
+        <td {@if !data.blankingitemcode} data-focus="true" data-changed="true" {@/if}>
             ${data.blankingitemcode}
             <div style="margin-top: 10px"></div>
             ${data.blankinginvname}
@@ -91,7 +91,7 @@
             <div style="margin-top: 10px"></div>
             ${data.blankingstd}
         </td>
-        <td>
+        <td {@if !data.blankingqty} data-focus="true" data-changed="true" {@/if}>
             ${data.blankingqty}
             <div style="margin-top: 10px"></div>
             ${data.blankingweight}

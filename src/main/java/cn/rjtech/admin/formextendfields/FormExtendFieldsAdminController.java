@@ -99,4 +99,7 @@ public class FormExtendFieldsAdminController extends BaseAdminController {
 		renderJson(service.deleteById(getLong(0)));
 	}
 
+	public void test(){
+		renderJsonData(service);
+	}
 }

@@ -117,8 +117,9 @@ WHERE mr.iMoDocId = #para(docId) order by  mrc.iSeq
 #sql("getModocDatas")
 SELECT DISTINCT
 	modoc.iWorkRegionMid ,
-	regionm.cWorkName ,
 	modoc.iInventoryId,
+	concat(modoc.iWorkRegionMid,modoc.iInventoryId) mergeid,
+	regionm.cWorkName ,
 	inventory.cInvCode ,
 	inventory.cInvCode1 ,
 	inventory.cInvName1
@@ -139,12 +140,19 @@ SELECT DISTINCT
 	doc.iWorkShiftMid,
 	shiftm.cWorkShiftCode,
 	shiftm.cWorkShiftName,
-	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) dates
+	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) dates,
+	concat ( doc.iYear , doc.iMonth, doc.iDate, doc.iWorkShiftMid ) dates1
 FROM
 	Mo_MoDoc doc
 	LEFT JOIN Bd_WorkShiftM shiftm ON doc.iWorkShiftMid= shiftm.iAutoId
 WHERE
-	doc.iMoTaskId=#(taskid) and doc.iInventoryId=#(iinventoryid) and doc.iWorkRegionMid=#(iworkregionmid)
+	doc.iMoTaskId=#(taskid)
+	#if(iinventoryid)
+	and doc.iInventoryId=#(iinventoryid)
+	#end
+	#if(iworkregionmid)
+	and doc.iWorkRegionMid=#(iworkregionmid)
+	#end
 ORDER BY dates ASC
 #end
 
@@ -269,9 +277,17 @@ WHERE
 ORDER BY sdate ASC
 #end
 
-
-
-
+#sql("getPlanDatasBytaskId")
+SELECT DISTINCT
+	concat ( iWorkRegionMid, iInventoryId ) mergeid,
+	concat ( iYear, iMonth, iDate, iWorkShiftMid ) dates,
+	cMoDocNo,
+	iQty
+FROM
+	Mo_MoDoc
+WHERE
+	iMoTaskId = #(taskid)
+#end
 
 
 

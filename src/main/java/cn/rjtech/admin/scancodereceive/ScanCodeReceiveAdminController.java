@@ -1,5 +1,7 @@
 package cn.rjtech.admin.scancodereceive;
 
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
@@ -7,13 +9,20 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.sysenumeration.SysEnumerationService;
+import cn.rjtech.admin.syspureceive.SysPureceiveService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPureceive;
 import cn.rjtech.model.momdata.SysPureceivedetail;
+import cn.rjtech.model.momdata.Warehouse;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
 
 /**
  * 双单位扫码收货
@@ -34,7 +43,8 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
     private UserService userService;
     @Inject
     private ScanCodeReceiveDetailService syspureceivedetailservice;
-
+    @Inject
+    private SysPureceiveService sysPureceiveService;
     @Inject
     private SysEnumerationService sysenumerationservice;
 
@@ -70,25 +80,14 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        SysPureceive sysPureceive = service.findById(getLong(0));
+        String autoid = get("autoid");
+        SysPureceive sysPureceive = service.findById(autoid);
         if (sysPureceive == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        //todo （仓库数据在从表） 关联查询出仓库编码,然后换数据源U8 查其名称
-        SysPureceivedetail first = syspureceivedetailservice.findFirst("select * from  T_Sys_PUReceiveDetail where MasID = ?", sysPureceive.getAutoID());
-        if (first != null && null != first.getWhcode()) {
-            set("whname", sysenumerationservice.getWhname(first.getWhcode()));
-        }
-        //todo 关联查询用户名字
-        if (null != sysPureceive.getIcreateby()) {
-            set("username", sysenumerationservice.getUserName(sysPureceive.getIcreateby()));
-        }
-        //todo 换数据源U8 查供应商名称
-        if (null != sysPureceive.getVenCode()) {
-            set("venname", sysenumerationservice.getVenName(sysPureceive.getVenCode()));
-        }
         set("sysPureceive", sysPureceive);
+        keepPara();
         render("edit.html");
     }
 
@@ -142,12 +141,74 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
     }
 
     /**
+     * 库区数据源
+     */
+    public void findWhArea() {
+        String WhCode = get("WhCode");
+        ValidationUtils.notBlank(WhCode, "请先选择仓库");
+        String q = get("q");
+        Kv kv = new Kv();
+        kv.set("keywords",q);
+        kv.set("whCode",WhCode);
+        renderJsonData(service.findWhArea(kv));
+    }
+
+    /**
+     * 获取资源
+     */
+    public void getResource(){
+        String q = get("q");
+        if (notOk(q)){
+            renderJsonSuccess();
+            return;
+        }
+        String itemHidden = get("itemHidden");
+        String groupCode = get("groupCode");
+        String sourceBillType = get("sourceBillType");
+        Kv kv = new Kv();
+        kv.set("keywords",q);
+        kv.setIfNotNull("sourceBillType", sourceBillType);
+        kv.setIfNotNull("combination", groupCode);
+        kv.setIfNotNull("itemHidden", itemHidden);
+        kv.setIfNotNull("barcodetype", "转换前");
+        renderJsonData(service.getResource(kv));
+    }
+
+    /**
      * 查询双单位条码数据
      */
     public void getBarCodeData(){
         String itemCode = get("itemCode");
+        String supplier = get("supplier");
+        String sourceBillType = get("sourceBillType");
         Kv kv = new Kv();
         kv.set("itemCode",itemCode);
+        kv.setIfNotNull("sourceBillType", sourceBillType);
+        kv.set("supplier",notOk(supplier)?' ':supplier);
         renderJsonData(service.getBarcodeDatas(kv));
     }
+
+    /**
+     * 提审
+     */
+    public void submit(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.validateId(iautoid, "ID");
+
+        renderJson(service.submit(iautoid));
+    }
+
+    /**
+     * 审核通过
+     */
+    public void approve() {
+        renderJson(service.approve(getLong(0)));
+    }
+
+    /**
+     * 审核不通过
+     */
+    public void reject() {
+        renderJson(service.reject(getLong(0)));
+    }
+
 }
