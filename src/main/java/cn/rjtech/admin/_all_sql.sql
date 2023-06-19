@@ -677,3 +677,7 @@
 #namespace("momaterialsreturn")
 #include("momaterialsreturn/momaterialsreturn.sql")
 #end
+
+#namespace("inventoryworkregion")
+#include("inventoryworkregion/inventoryworkregion.sql")
+#end

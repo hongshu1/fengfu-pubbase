@@ -80,7 +80,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
         Customer customer = customerService.findById(annualOrderM.getICustomerId());
         annualOrderMRc.set("ccusname", customer == null ? null : customer.getCCusName());
         set("annualOrderM", annualOrderMRc);
-        set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
+        keepPara();
         render("edit.html");
     }
 

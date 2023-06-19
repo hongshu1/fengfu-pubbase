@@ -5,6 +5,7 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.InventoryWorkRegion;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -143,4 +144,14 @@ public class InventoryWorkRegionService extends BaseService<InventoryWorkRegion>
 		sql.asc("iAutoId");
 		return find(sql);
 	}
+
+	/**
+	 * 校验所属生产线是否符合要求
+	 * */
+    public void checkOk(Long iInventoryId) {
+		//校验是否默认<2
+		List<InventoryWorkRegion> list = daoTemplate("inventoryworkregion.checkOk", Kv.by("iInventoryId", iInventoryId)).find();
+		ValidationUtils.isTrue(list.size()<2,"生产-所属生产线,默认最多只能指定1个!");
+	}
+
 }

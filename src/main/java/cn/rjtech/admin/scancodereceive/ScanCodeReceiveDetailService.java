@@ -132,6 +132,11 @@ public class ScanCodeReceiveDetailService extends BaseService<SysPureceivedetail
         return null;
     }
 
+    /**
+     * 行数据查询
+     * @param para
+     * @return
+     */
     public List<Record> findEditTableDatas(Kv para) {
         List<Record> records = dbTemplate("scancodereceive.dList", para).find();
 

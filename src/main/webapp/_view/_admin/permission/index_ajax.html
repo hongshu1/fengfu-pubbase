@@ -38,7 +38,7 @@
 		</div>
 		<div class="col-md-auto">
 			<div class="" role="group" aria-label="btn-group">
-			<button data-area="1280,750" data-dialogbtn data-handler="refreshJBoltTable" data-title="新增权限资源" data-url="admin/permission/add/0-1" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+			<button data-area="90%,80%" data-dialogbtn data-handler="refreshJBoltTable" data-title="新增权限资源" data-url="admin/permission/add/0-1" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 			<button data-ajaxbtn data-confirm="确认初始化权限资源的顺序吗？" data-handler="refreshJBoltTable" data-title="初始化排序" data-url="admin/permission/initRank" class="btn btn-outline-info btn-sm" ><i class="fa fa-sort"></i> 初始化排序</button>
 			<button onclick="jboltTableRefresh(this)" class="btn btn-outline-secondary btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 			</div>
@@ -81,8 +81,8 @@
 <img data-switchbtn data-confirm="确定切换此权限是否是超管默认使用权限？" data-value="${isSystemAdminDefault=='1'}"  data-handler="refreshJBoltTable"  data-url="admin/permission/toggleSystemAdminDefault/${id}"/>
 </td>
 <td class="text-right">
-<a href="admin/permission/add/${id}-${permissionLevel+1}-" data-area="1280,750"  tooltip data-title="添加下级资源"   data-handler="refreshJBoltTable"  dialog-title="添加下级资源" class="jbolt_table_editbtn"><i class="fa fa-plus"></i></a>
-<a href="admin/permission/edit/${id}" data-area="1280,750"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" dialog-title="编辑资源" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
+<a href="admin/permission/add/${id}-${permissionLevel+1}-" data-area="90%,80%"  tooltip data-title="添加下级资源"   data-handler="refreshJBoltTable"  dialog-title="添加下级资源" class="jbolt_table_editbtn"><i class="fa fa-plus"></i></a>
+<a href="admin/permission/edit/${id}" data-area="90%,80%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" dialog-title="编辑资源" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
 <a href="admin/permission/delete/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTrCascade" data-confirm="确定删除这条数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
 <a href="admin/permission/up/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
 <a href="admin/permission/down/${id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>

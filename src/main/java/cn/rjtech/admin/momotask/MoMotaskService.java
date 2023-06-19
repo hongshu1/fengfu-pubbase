@@ -770,6 +770,19 @@ public class MoMotaskService extends BaseService<MoMotask> {
           records.get(qty).set("rowdatas", records3);
         }
       } else {
+        Record datas = new Record();
+
+        //<editor-fold desc="模拟基础数据">
+        Record cequipment = new Record();
+        cequipment.put("cequipmentname", "");
+        cequipment.put("iequipmentid", "");
+        Record coperation = new Record();
+        coperation.put("coperationname", "");
+        coperation.put("ioperationid", "");
+        datas.put("cequipment", cequipment);
+        datas.put("coperation", coperation);
+        //</editor-fold>
+
         List<Record> recordLisc = new ArrayList<>();
         Record record = new Record();
         record.put("cinvcode", "");
@@ -795,7 +808,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
             recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
           }
         }
-        record.put("rowdatas", recordLisc);
+        datas.put("user", recordLisc);
+        record.put("rowdatas", datas);
         records.add(record);
       }
     }
@@ -818,13 +832,12 @@ public class MoMotaskService extends BaseService<MoMotask> {
     //</editor-fold>
 
     List<Record> planDatas = dbTemplate("modocbatch.getPlanDatasBytaskId", kv).find();
-    for (Record data : planDatas) {
-
-    }
 
     for (Record productionLineMaterial : productionLineMaterials) {
       for (Record dateShift : dateShifts) {
+        for (Record data : planDatas) {
 
+        }
       }
     }
 

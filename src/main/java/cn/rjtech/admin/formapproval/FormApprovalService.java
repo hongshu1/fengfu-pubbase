@@ -25,6 +25,8 @@ import cn.rjtech.admin.formapprovalduser.FormapprovaldUserService;
 import cn.rjtech.admin.formapprovalflowd.FormApprovalFlowDService;
 import cn.rjtech.admin.formapprovalflowm.FormApprovalFlowMService;
 import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.base.exception.ParameterException;
+import cn.rjtech.cache.UserCache;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.AuditTypeEnum;
@@ -242,13 +244,10 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * 保存 审批流的审批流程的人员信息
      */
     public Ret submit(String formSn, Long formAutoId, String primaryKeyName, String className) {
-        FormApproval byFormAutoId = findByFormAutoId(formAutoId);
-        ValidationUtils.isTrue((notOk(byFormAutoId)), "该单据已提交审批，请勿重复提交审批！");
-
         // 提审人
         User user = JBoltUserKit.getUser();
-//        Person person = personService.findFirstByUserId(user.getId());
         Person person = findPersonByUserId(user.getId());
+
         // 获取单据信息
         Record formData = findFirstRecord("select * from " + formSn + " where "+primaryKeyName+" = ? ", formAutoId);
         ValidationUtils.notNull(formData, "单据不存在");
@@ -284,9 +283,17 @@ public class FormApprovalService extends BaseService<FormApproval> {
             switch (AuditTypeEnum.toEnum(auditFormConfig.getIType())) {
                 // 审批流
                 case FLOW:
+                    FormApproval byFormAutoId = findByFormAutoId(formAutoId);
+                    ValidationUtils.isTrue((notOk(byFormAutoId)), "该单据已提交审批，请勿重复提交审批！");
+
+                    // -----------------------------------
+                    // 提审前的业务调用
+                    // -----------------------------------
+                    String msg = invokeMethod(className, "preSubmitFunc", formAutoId);
+                    ValidationUtils.assertBlank(msg, msg);
+
                     // 提审更新
-                    ValidationUtils.isTrue(updateSubmit(formSn, formAutoId, AuditWayEnum.FLOW.getValue(), now,primaryKeyName),
-                            "单据当前状态不可提审");
+                    ValidationUtils.isTrue(updateSubmit(formSn, formAutoId, AuditWayEnum.FLOW.getValue(), now,primaryKeyName), "单据当前状态不可提审");
 
                     // 将审批配置 单独复制出来 防止配置被修改
                     Long iFormId = auditFormConfig.getIFormId();
@@ -668,11 +675,25 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     break;
                 // 审核
                 case STATUS:
+                    // -----------------------------------
+                    // 提审前的业务调用
+                    // -----------------------------------
+                    msg = invokeMethod(className, "preSubmitFunc", formAutoId);
+                    ValidationUtils.assertBlank(msg, msg);
+
                     ValidationUtils.isTrue(updateSubmit(formSn, formAutoId, AuditWayEnum.STATUS.getValue(), now,primaryKeyName), "当前状态不允许提审");
                     break;
                 default:
                     break;
             }
+
+            // -----------------------------------
+            // 提审后的业务调用
+            // -----------------------------------
+
+            String msg = invokeMethod(className, "postSubmitFunc", formAutoId);
+            ValidationUtils.assertBlank(msg, msg);
+
             return true;
         });
         return SUCCESS;
@@ -1673,6 +1694,64 @@ public class FormApprovalService extends BaseService<FormApproval> {
     }
 
     /**
+     * 批量撤销审批
+     */
+    public Ret batchBackOut(String ids, String formSn, String primaryKeyName, String className) {
+        for (String id : StrSplitter.split(ids, COMMA, true, true)) {
+            backOut(Long.parseLong(id), formSn, primaryKeyName, className);
+        }
+        return SUCCESS;
+    }
+
+    /**
+     * 撤销审批
+     * @param formAutoId
+     * @param formSn
+     * @param primaryKeyName
+     * @param className
+     * @return
+     */
+    public Ret backOut(Long formAutoId, String formSn, String primaryKeyName, String className){
+        // 查出单据对应的审批流配置
+        FormApproval formApproval = findByFormAutoId(formAutoId);
+        ValidationUtils.notNull(formApproval, "单据未提交审批！");
+
+        Record formRecord = findFirstRecord("select iAuditStatus as status from " + formSn + " where " + primaryKeyName + " = " + formAutoId);
+
+//        撤销前的单据状态
+        String perStatus = formRecord.getStr("status");
+
+        tx(() -> {
+
+            switch (AuditStatusEnum.toEnum(formApproval.getInt(IAUDITSTATUS))) {
+                case APPROVED:
+                    invokeMethod(className, "preWithdrawFromAuditted", formAutoId);
+                    
+                    // 更新单据状态为未审批
+                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formApproval.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
+
+                    invokeMethod(className, "postWithdrawFromAuditted", formAutoId);
+                    break;
+                case AWAIT_AUDIT:
+                    // 更新单据状态为未审批
+                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formApproval.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
+
+                    invokeMethod(className, "withdrawFromAuditting", formAutoId);
+                    break;
+                default:
+                    throw new ParameterException("状态不合法");
+            }
+
+            // 更新单据审批流主表
+            formApproval.setIsDeleted(true);
+            ValidationUtils.isTrue(formApproval.update(), ErrorMsg.UPDATE_FAILED);
+
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
      * 反审核
      */
     public void reverseApproveByStatus(long formAutoId, String formSn, String primaryKeyName, ICallbackFunc preApprove, ICallbackFunc postApprove) {
@@ -1700,18 +1779,6 @@ public class FormApprovalService extends BaseService<FormApproval> {
 //            reverseApproveByStatus(Long.parseLong(id), formSn, primaryKeyName, preReverse, postReverse);
 //        }
 //    }
-    /**
-     * 判断审核还是审批
-     */
-    public Ret auditOrApprove(String formSn) {
-        AuditFormConfig formConfig = auditFormConfigService.findFirst("select * from Bd_AuditFormConfig where IsDeleted = '0' and isEnabled = '1' and cFormSn = ? ", formSn);
-
-        Integer iType = 0;
-        if (isOk(formConfig)) {
-            iType = formConfig.getIType();
-        }
-        return successWithData(Kv.by("iType", iType));
-    }
 
     /**
      * 查询审批过程待审批的人员
@@ -1770,13 +1837,145 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
     /**
      * 根据用户ID获取人员信息
-     * @param userId
-     * @return
      */
     public Person findPersonByUserId(Long userId){
-        Kv kv = new Kv();
-        kv.setIfNotNull("orgId",getOrgId());
-        kv.set("userId",userId);
-        return personService.daoTemplate("formapproval.findPersonByUserId",kv).findFirst();
+        Long personId = UserCache.ME.getPersonId(userId, getOrgId());
+        ValidationUtils.notNull(personId, "系统用户未设置人员信息");
+
+        return personService.findById(personId);
     }
+
+    /**
+     * 审核通过，公用实现
+     *
+     * @param formSn         表单编码
+     * @param formAutoId     单据ID
+     * @param primaryKeyName 主键名
+     * @param className      类名
+     */
+    public Ret approveByStatus(String formSn, long formAutoId, String primaryKeyName, String className) {
+        tx(() -> {
+            Record formData = Db.use(dataSourceConfigName()).findFirst(String.format("SELECT * FROM %s WHERE iautoid = %d ", formSn, formAutoId));
+            ValidationUtils.notNull(formData, "单据不存在");
+            ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+            ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“审核通过”按钮");
+            ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态");
+
+            // 更新审核通过
+            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.APPROVED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date()), "更新审核状态失败");
+
+            // 后置业务实现
+            String msg = invokeMethod(className, "postApproveFunc", formAutoId);
+            ValidationUtils.assertBlank(msg, msg);
+
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    /**
+     * 审核不通过，公用实现
+     *
+     * @param formSn         表单编码
+     * @param formAutoId     单据ID
+     * @param primaryKeyName 主键名
+     * @param className      类名
+     */
+    public Ret rejectByStatus(String formSn, Long formAutoId, String primaryKeyName, String className) {
+        tx(() -> {
+            Record formData = Db.use(dataSourceConfigName()).findFirst(String.format("SELECT * FROM %s WHERE iautoid = %d ", formSn, formAutoId));
+            ValidationUtils.notNull(formData, "单据不存在");
+            ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+            ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“审核不通过”按钮");
+            ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态");
+
+            // 更新审核不通过
+            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date()), "更新审核状态失败");
+
+            // 后置业务实现
+            String msg = invokeMethod(className, "postRejectFunc", formAutoId);
+            ValidationUtils.assertBlank(msg, msg);
+
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    /**
+     * 反审核，公用实现
+     *
+     * @param formSn         表单编码
+     * @param formAutoId     单据ID
+     * @param primaryKeyName 主键名
+     * @param className      类名
+     */
+    public Ret reverseApproveByStatus(String formSn, Long formAutoId, String primaryKeyName, String className) {
+        tx(() -> {
+            Record formData = Db.use(dataSourceConfigName()).findFirst(String.format("SELECT * FROM %s WHERE iautoid = %d ", formSn, formAutoId));
+            ValidationUtils.notNull(formData, "单据不存在");
+            ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+            ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“反审核”按钮");
+            ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.APPROVED.getValue(), "非待审核状态");
+
+            // 前置业务实现
+            String msg = invokeMethod(className, "preReverseApproveFunc", formAutoId, true, true);
+            ValidationUtils.assertBlank(msg, msg);
+
+            // 更新审核通过
+            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), new Date()), "更新审核状态失败");
+
+            // 后置业务实现
+            msg = invokeMethod(className, "postReverseApproveFunc", formAutoId, true, true);
+            ValidationUtils.assertBlank(msg, msg);
+
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    /**
+     * 批量审核通过，公用实现
+     *
+     * @param ids            单据IDs
+     * @param formSn         表单编码
+     * @param primaryKeyName 主键名
+     * @param className      实现审批业务的类名
+     */
+    public Ret batchApproveByStatus(String ids, String formSn, String primaryKeyName, String className) {
+        tx(() -> {
+
+            for (String id : StrSplitter.split(ids, COMMA, true, true)) {
+                approveByStatus(formSn, Long.parseLong(id), primaryKeyName, className);
+            }
+
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    /**
+     * 批量审核不通过，公用实现
+     *
+     * @param ids            单据IDs
+     * @param formSn         表单编码
+     * @param primaryKeyName 主键名
+     * @param className      实现审批业务的类名
+     */
+    public Ret batchRejectByStatus(String ids, String formSn, String primaryKeyName, String className) {
+        tx(() -> {
+
+            for (String id : StrSplitter.split(ids, COMMA, true, true)) {
+                rejectByStatus(formSn, Long.parseLong(id), primaryKeyName, className);
+            }
+
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
 }
