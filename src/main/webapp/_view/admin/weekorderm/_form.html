@@ -382,6 +382,9 @@
                         } else {
                             successHandler(res.msg, res.data.iautoid);
                         }
+
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
                     }
