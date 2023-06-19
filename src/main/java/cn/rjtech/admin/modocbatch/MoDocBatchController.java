@@ -93,4 +93,12 @@ public class MoDocBatchController extends BaseAdminController {
     renderJsonData(service.getEditorialPlanDatas(getKv()));
   }
 
+  /**
+   * 编辑人员页面获取用户信息
+   */
+  public void getUserDatas() {
+    renderJsonData(service.getUserDatas(getKv()));
+  }
+
+
 }
