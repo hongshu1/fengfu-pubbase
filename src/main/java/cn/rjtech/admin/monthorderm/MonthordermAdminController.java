@@ -145,13 +145,6 @@ public class MonthordermAdminController extends BaseAdminController {
         renderJson(service.withdraw(getLong("iautoid")));
     }
 
-	/**
-	 * 审核不通过
-	 */
-	public void reject() {
-		renderJson(service.reject(getLong(0)));
-	}
-
     /**
      * 模板下载
      */

@@ -1,5 +1,7 @@
 package cn.rjtech.service.approval;
 
+import java.util.List;
+
 /**
  * @author Kephon
  */
@@ -88,5 +90,30 @@ public interface IApprovalService {
      * @return 错误信息
      */
     String postWithdrawFromAuditted(long formAutoId);
+
+    /**
+     * 批量审核（审批）通过，后置业务实现
+     *
+     * @param formAutoIds 单据IDs
+     * @return 错误信息
+     */
+    String postBatchApprove(List<Long> formAutoIds);
+    
+    /**
+     * 批量审批（审核）不通过，后置业务实现
+     *
+     * @param formAutoIds 单据IDs
+     * @return 错误信息
+     */
+    String postBatchReject(List<Long> formAutoIds);
+    
+    /**
+     * 批量撤销审批，后置业务实现
+     *
+     * @param formAutoIds 单据IDs
+     * @return 错误信息
+     */
+    String postBatchBackout(List<Long> formAutoIds);
+    
 
 }

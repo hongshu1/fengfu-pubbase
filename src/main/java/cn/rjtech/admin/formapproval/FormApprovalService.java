@@ -753,6 +753,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * @param preApprove  审批前置工作
      * @param postApprove 审批后置工作
      */
+    @Deprecated
     public void batchApproveByStatus(String formSn, String primaryKeyName, String formAutoIds, ICallbackFunc preApprove, ICallbackFunc postApprove) {
         for (String iautoid : StrUtil.split(formAutoIds, COMMA, true, true)) {
             approveByStatus(formSn, primaryKeyName, Long.parseLong(iautoid), preApprove, postApprove);
@@ -767,6 +768,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * @param preReject  审批不通过，前置工作
      * @param postReject 审批不通过，后置工作
      */
+    @Deprecated
     public void rejectByStatus(String formSn, String primaryKeyName, Long formAutoId, ICallbackFunc preReject, ICallbackFunc postReject) {
         Record formData = Db.use(dataSourceConfigName()).findFirst("SELECT * FROM " + formSn + " WHERE iautoid = ? ", formAutoId);
         ValidationUtils.notNull(formData, "单据不存在");
@@ -782,20 +784,6 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
         msg = postReject.execute();
         ValidationUtils.assertBlank(msg, msg);
-    }
-
-    /**
-     * 批量审核不通过
-     *
-     * @param formSn      表单
-     * @param formAutoIds 单据ID
-     * @param preReject   审批不通过，前置工作
-     * @param postReject  审批不通过，后置工作
-     */
-    public void batchRejectByStatus(String formSn, String primaryKeyName, String formAutoIds, ICallbackFunc preReject, ICallbackFunc postReject) {
-        for (String iautoid : StrUtil.split(formAutoIds, COMMA, true, true)) {
-            rejectByStatus(formSn, primaryKeyName, Long.parseLong(iautoid), preReject, postReject);
-        }
     }
 
     /**
@@ -1664,62 +1652,114 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * 批量审批
      */
     public Ret batchApprove(String ids, String formSn, String primaryKeyName, String className) {
+        List<Long> formAutoIds = new ArrayList<>();
+        
         int status = AuditStatusEnum.APPROVED.getValue();
-        for (String id : StrSplitter.split(ids, COMMA, true, true)) {
-            approve(Long.parseLong(id), formSn, status, primaryKeyName, className);
-        }
+
+        tx(() -> {
+
+            for (String id : StrSplitter.split(ids, COMMA, true, true)) {
+                Long formAutoId = Long.parseLong(id);
+                formAutoIds.add(formAutoId);
+
+                approve(formAutoId, formSn, status, primaryKeyName, className);
+            }
+
+            // 批量审核后置业务处理
+            String msg = invokeMethod(className, "postBatchApprove", formAutoIds);
+            ValidationUtils.assertBlank(msg, msg);
+            
+            return true;
+        });
+        
         return SUCCESS;
     }
 
     /**
-     * 批量拒审批
+     * 批量审核不通过
      */
     public Ret batchReject(String ids, String formSn, String primaryKeyName, String className) {
+        List<Long> formAutoIds = new ArrayList<>();
+        
         int status = AuditStatusEnum.REJECTED.getValue();
-        for (String id : StrSplitter.split(ids, COMMA, true, true)) {
-            reject(Long.parseLong(id), formSn, status, primaryKeyName, className);
-        }
+
+        tx(() -> {
+
+            for (String id : StrSplitter.split(ids, COMMA, true, true)) {
+                Long formAutoId = Long.parseLong(id);
+                formAutoIds.add(formAutoId);
+                
+                reject(formAutoId, formSn, status, primaryKeyName, className);
+            }
+
+            // 批量审核不通过后置业务处理
+            String msg = invokeMethod(className, "postBatchReject", formAutoIds);
+            ValidationUtils.assertBlank(msg, msg);
+            
+            return true;
+        });
+        
         return SUCCESS;
     }
 
-    /**
-     * 批量反审批
-     */
-    public Ret batchReverseApprove(String ids, String formSn, String primaryKeyName, String className) {
-        int status = AuditStatusEnum.AWAIT_AUDIT.getValue();
-        for (String id : StrSplitter.split(ids, COMMA, true, true)) {
-            reverseApprove(Long.parseLong(id), formSn, primaryKeyName, status, className);
-        }
-        return SUCCESS;
-    }
+//    /**
+//     * 批量反审批
+//     */
+//    public Ret batchReverseApprove(String ids, String formSn, String primaryKeyName, String className) {
+//        List<Long> formAutoIds = new ArrayList<>();
+//        
+//        int status = AuditStatusEnum.AWAIT_AUDIT.getValue();
+//
+//        tx(() -> {
+//
+//            for (String id : StrSplitter.split(ids, COMMA, true, true)) {
+//
+//                long formAutoId = Long.parseLong(id);
+//                formAutoIds.add(formAutoId);
+//
+//                reverseApprove(formAutoId, formSn, primaryKeyName, status, className);
+//            }
+//
+//            String msg = invokeMethod(className, "", formAutoIds);
+//            ValidationUtils.assertBlank(msg, msg);
+//            
+//            return true;
+//        });
+//        
+//        return SUCCESS;
+//    }
 
     /**
      * 批量撤销审批
      */
-    public Ret batchBackOut(String ids, String formSn, String primaryKeyName, String className) {
-        for (String id : StrSplitter.split(ids, COMMA, true, true)) {
-            backOut(Long.parseLong(id), formSn, primaryKeyName, className);
-        }
+    public Ret batchBackout(String ids, String formSn, String primaryKeyName, String className) {
+        List<Long> formAutoIds = new ArrayList<>();
+
+        tx(() -> {
+
+            for (String id : StrSplitter.split(ids, COMMA, true, true)) {
+                long formAutoId = Long.parseLong(id);
+                formAutoIds.add(formAutoId);
+
+                backout(formAutoId, formSn, primaryKeyName, className);
+            }
+
+            String msg = invokeMethod(className, "postBatchBackout", formAutoIds);
+            ValidationUtils.assertBlank(msg, msg);
+            
+            return true;
+        });
+        
         return SUCCESS;
     }
 
     /**
      * 撤销审批
-     * @param formAutoId
-     * @param formSn
-     * @param primaryKeyName
-     * @param className
-     * @return
      */
-    public Ret backOut(Long formAutoId, String formSn, String primaryKeyName, String className){
+    public Ret backout(Long formAutoId, String formSn, String primaryKeyName, String className){
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
-
-        Record formRecord = findFirstRecord("select iAuditStatus as status from " + formSn + " where " + primaryKeyName + " = " + formAutoId);
-
-//        撤销前的单据状态
-        String perStatus = formRecord.getStr("status");
 
         tx(() -> {
 
@@ -1819,20 +1859,10 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
     /**
      * 判断是否为审批第一人
-     * @param formId
-     * @return
      */
     public Boolean isFirstReverse(Long formId){
-
-        Kv kv = new Kv();
-        kv.set("formId",formId);
-        List<FormApprovalFlowM> approvalFlowMList = flowMService.daoTemplate("formapproval.isFirstReverse", kv).find();
-
-        if (approvalFlowMList.size() == 0){
-            return true;
-        }
-
-        return false;
+        List<FormApprovalFlowM> approvalFlowMList = flowMService.daoTemplate("formapproval.isFirstReverse", Kv.by("formId",formId)).find();
+        return CollUtil.isEmpty(approvalFlowMList);
     }
 
     /**
@@ -1945,12 +1975,22 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * @param className      实现审批业务的类名
      */
     public Ret batchApproveByStatus(String ids, String formSn, String primaryKeyName, String className) {
+        List<Long> formAutoIds = new ArrayList<>();
+        
         tx(() -> {
 
             for (String id : StrSplitter.split(ids, COMMA, true, true)) {
-                approveByStatus(formSn, Long.parseLong(id), primaryKeyName, className);
+
+                long formAutoId = Long.parseLong(id);
+                formAutoIds.add(formAutoId);
+                
+                approveByStatus(formSn, formAutoId, primaryKeyName, className);
             }
 
+            // 批量审核通过，后置业务
+            String msg = invokeMethod(className, "postBatchApprove", formAutoIds);
+            ValidationUtils.assertBlank(msg, msg);
+            
             return true;
         });
 

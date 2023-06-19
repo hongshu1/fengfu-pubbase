@@ -513,4 +513,19 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
         return null;
     }
 
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        return null;
+    }
+
 }
