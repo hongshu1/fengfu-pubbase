@@ -163,6 +163,8 @@ public class ProcessDefectApiController extends BaseApiController {
         kv.set("cbadnesssns", cbadnesssns);
         kv.set("cdesc", cdesc);
         kv.set("processname", processname);
+        kv.set("ioperationid", ioperationid);
+
         kv.set("imodocid", imodocid);
         renderJBoltApiRet(processdefectapiservice.editProcessDefect(kv));
     }
