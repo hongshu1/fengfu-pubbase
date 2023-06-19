@@ -290,7 +290,7 @@
 
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
     var submit = false;
-    function submitThisForm(s) {
+    function submitThisForm_#(pageId)(s) {
         // 保存并提交
         if (s) {
             submit = s;
@@ -433,10 +433,12 @@
                         } else {
                             successHandler(res.msg, res.data.iautoid);
                         }
+                        refreshPjaxContainer();
+                        parent.LayerMsgBox.closeAll();
+                        parent.refreshPjaxContainer();
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
                     }
-                    parent.refreshPjaxContainer();
                 }
             },
             maxRowCount: 9999,
