@@ -203,17 +203,18 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 			//通过 id 判断是新增还是修改
 			if(sysotherin.getAutoID() == null){
 				sysotherin.setOrganizeCode(getOrgCode());
-				sysotherin.setCreatePerson(user.getName());
-				sysotherin.setCreateDate(now);
-				sysotherin.setModifyPerson(user.getName());
-				sysotherin.setAuditPerson(user.getName());
-				sysotherin.setModifyDate(now);
-				sysotherin.setModifyDate(now);
+				sysotherin.setIcreateby(user.getId());
+				sysotherin.setCcreatename(user.getName());
+				sysotherin.setDcreatetime(now);
+				sysotherin.setIupdateby(user.getId());
+				sysotherin.setCupdatename(user.getName());
+				sysotherin.setDupdatetime(now);
 				//主表新增
 				ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
 			}else{
-				sysotherin.setModifyPerson(user.getName());
-				sysotherin.setModifyDate(now);
+				sysotherin.setIupdateby(user.getId());
+				sysotherin.setCupdatename(user.getName());
+				sysotherin.setDupdatetime(now);
 				//主表修改
 				ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
 			}
@@ -236,6 +237,7 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 		if(CollUtil.isEmpty(list)) return;
 		ArrayList<SysScandeliverdetail> sysproductindetail = new ArrayList<>();
 		Date now = new Date();
+		User user = JBoltUserKit.getUser();
 		for (int i=0;i<list.size();i++) {
 			Record row = list.get(i);
 			SysScandeliverdetail sysdetail = new SysScandeliverdetail();
@@ -251,8 +253,9 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 			sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
 			sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
 			sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
-			sysdetail.setCreateDate(now);
-			sysdetail.setModifyDate(now);
+			sysotherin.setIupdateby(user.getId());
+			sysotherin.setCupdatename(user.getName());
+			sysotherin.setDupdatetime(now);
 			sysproductindetail.add(sysdetail);
 		}
 		sysscandeliverdetailservice.batchSave(sysproductindetail);
@@ -263,6 +266,7 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 		if(CollUtil.isEmpty(list)) return;
 		ArrayList<SysScandeliverdetail> sysproductindetail = new ArrayList<>();
 		Date now = new Date();
+		User user = JBoltUserKit.getUser();
 		for(int i = 0;i < list.size(); i++){
 			Record row = list.get(i);
 			SysScandeliverdetail sysdetail = new SysScandeliverdetail();
@@ -277,8 +281,9 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 			sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
 			sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
 			sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
-			sysdetail.setCreateDate(now);
-			sysdetail.setModifyDate(now);
+			sysotherin.setIupdateby(user.getId());
+			sysotherin.setCupdatename(user.getName());
+			sysotherin.setDupdatetime(now);
 			sysproductindetail.add(sysdetail);
 
 		}
