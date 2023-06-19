@@ -430,11 +430,19 @@
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
     var submit = false;
 
-    function submitThisForm(s) {
+    function submitThisForm_#(pageId)(s) {
         // 保存并提交
         if (s) {
             submit = s;
         }
+
+        // 普通表单表单，保存并提审处理
+        // submitThisForm(function (data) {
+        //     submit_#(pageId)(ret.data.iautoid, function (data) {
+        //         successHandler('提审成功', ret.data.iautoid);
+        //     });
+        // });
+        
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
     }

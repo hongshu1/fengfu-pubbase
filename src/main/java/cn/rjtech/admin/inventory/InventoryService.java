@@ -664,15 +664,16 @@ public class InventoryService extends BaseService<Inventory> {
 			record.set(InventoryRoutingConfig.ISADD, isAdd);
 			record.set(InventoryRoutingConfig.IAUTOID, routingConfigId);
 			// 半成品
-			Long iRsInventoryId = record.getLong(InventoryRoutingConfig.IRSINVENTORYID);
+			String iRsInventoryIdStr = record.getStr(InventoryRoutingConfig.IRSINVENTORYID);
 			
 			// 工序名称
 			String cOperationName = getCOperationName(record.getStr(InventoryRoutingConfig.COPERATIONNAME));
 			
 			// 物料类型
 			int invPartType = InvPartTypeEnum.inventory.getValue();
+			Long iRsInventoryId = StrUtil.isBlank(iRsInventoryIdStr) ? null : Long.valueOf(iRsInventoryIdStr);
 			// 半成品为空说明是虚拟件
-			if (ObjectUtil.isNull(iRsInventoryId)){
+			if (StrUtil.isBlank(iRsInventoryIdStr)){
 				invPartType = InvPartTypeEnum.virtual.getValue();
 			}
 			
@@ -819,7 +820,7 @@ public class InventoryService extends BaseService<Inventory> {
 		Integer thisType = record.getInt(InventoryRoutingConfig.ITYPE);
 		
 		Record perConfig = seqMap.get(perSeq);
-		Long iRsInventoryId = perConfig.getLong(InventoryRoutingConfig.IRSINVENTORYID);
+		String iRsInventoryId = perConfig.getStr(InventoryRoutingConfig.IRSINVENTORYID);
 		
 		String cOperationName =getCOperationName(perConfig.getStr(InventoryRoutingConfig.COPERATIONNAME));
 		
@@ -841,7 +842,7 @@ public class InventoryService extends BaseService<Inventory> {
 			return;
 		}
 		
-		if (ObjectUtil.isNull(iRsInventoryId)){
+		if (StrUtil.isBlank(iRsInventoryId)){
 			InvPart invPart = invPartService.createInvPart(InvPartTypeEnum.virtual.getValue(), partName);
 			invPartList.add(invPart);
 		}
@@ -892,11 +893,12 @@ public class InventoryService extends BaseService<Inventory> {
 		if (count > 0 && bunchSequenceValue == operationTypeEnum.getValue()){
 			return;
 		}
-		// 半成品，虚拟件跳过
-		Long iRsInventoryId = routingConfigRecord.getLong(InventoryRoutingConfig.IRSINVENTORYID);
-		if (ObjectUtil.isNull(iRsInventoryId)){
+		String iRsInventoryIdStr = routingConfigRecord.getStr(InventoryRoutingConfig.IRSINVENTORYID);
+		if (StrUtil.isBlank(iRsInventoryIdStr)){
 			return;
 		}
+		// 半成品，虚拟件跳过
+		Long iRsInventoryId = routingConfigRecord.getLong(InventoryRoutingConfig.IRSINVENTORYID);
 		checkRouting(masterInvId, rsInventoryId, iRsInventoryId, prefixErrorMsg, itemList);
 	}
 	
