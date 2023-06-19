@@ -124,9 +124,14 @@
                 //工单ID
                 var id=jboltTable.me.getCheckedId(jboltTable,dontShowError,msg);
                 if (id!=false){
-                    const Url='/admin/sysMaterialsprepare/submitAll';
-                    const data={id:id}
-                    $.post(Url,data);
+
+
+                    Ajax.post("/admin/sysMaterialsprepare/submitAll", {"id": id},
+                        function (res) {
+                            LayerMsgBox.success("备料成功");
+                        }, function (err) {
+                        LayerMsgBox.error("备料失败");
+                        })
                     parent.layer.close(parent.layer.getFrameIndex(window.name));
                     // parent.layui.table.reload('indextable');
                     window.parent.refreshJBoltTable();
