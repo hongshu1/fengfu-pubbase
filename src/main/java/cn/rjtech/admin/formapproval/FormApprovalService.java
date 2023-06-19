@@ -787,7 +787,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
     }
 
     /**
-     * 审批通过,
+     * 审批通过
      *
      * @param formAutoId     单据ID
      * @param formSn         表单
@@ -1273,9 +1273,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 Set<Long> approvalDid = new HashSet<>();
                 Long passUserId = null;
 
-                for (int i = 0; i < size; i++) {
-                    Record record = list.get(i);
-
+                for (Record record : list) {
                     Long userid = record.getLong("userid");
                     Long approvaldid = record.getLong("approvaldid");
                     Long flowid = record.getLong("flowid");
@@ -1821,12 +1819,11 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 查询审批过程待审批的人员
      */
-    public String approvalProcessUsers(Long formAutoId, Integer size) {
+    public List<Long> getNextApprovalUsers(Long formAutoId, Integer size) {
         Kv kv = Kv.by("formAutoId", formAutoId)
                 .set("size", size);
 
-        List<String> list = dbTemplate("formapproval.approvalProcessUsers", kv).query();
-        return CollUtil.join(list, COMMA);
+        return dbTemplate("formapproval.approvalProcessUsers", kv).query();
     }
 
     /**
@@ -1884,9 +1881,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
      */
     public Ret approveByStatus(String formSn, long formAutoId, String primaryKeyName, String className, boolean isWithinBatch) {
         tx(() -> {
-            Record formData = Db.use(dataSourceConfigName()).findFirst(String.format("SELECT * FROM %s WHERE iautoid = %d ", formSn, formAutoId));
-            ValidationUtils.notNull(formData, "单据不存在");
-            ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+            Record formData = getApprovalForm(formSn, primaryKeyName, formAutoId);
             ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“审核通过”按钮");
             ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态");
 
@@ -1914,9 +1909,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
      */
     public Ret rejectByStatus(String formSn, Long formAutoId, String primaryKeyName, String className, boolean isWithinBatch) {
         tx(() -> {
-            Record formData = Db.use(dataSourceConfigName()).findFirst(String.format("SELECT * FROM %s WHERE iautoid = %d ", formSn, formAutoId));
-            ValidationUtils.notNull(formData, "单据不存在");
-            ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+            Record formData = getApprovalForm(formSn, primaryKeyName, formAutoId);
             ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“审核不通过”按钮");
             ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态");
 
@@ -1943,9 +1936,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
      */
     public Ret reverseApproveByStatus(String formSn, Long formAutoId, String primaryKeyName, String className) {
         tx(() -> {
-            Record formData = Db.use(dataSourceConfigName()).findFirst(String.format("SELECT * FROM %s WHERE iautoid = %d ", formSn, formAutoId));
-            ValidationUtils.notNull(formData, "单据不存在");
-            ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+            Record formData = getApprovalForm(formSn, primaryKeyName, formAutoId);
             ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“反审核”按钮");
             ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.APPROVED.getValue(), "非待审核状态");
 
@@ -2027,4 +2018,11 @@ public class FormApprovalService extends BaseService<FormApproval> {
         return SUCCESS;
     }
 
+    public Record getApprovalForm(String formSn, String primaryKeyName, long formAutoId) {
+        Record formData = Db.use(dataSourceConfigName()).findFirst(String.format("SELECT * FROM %s WHERE %s = %d ", formSn, primaryKeyName, formAutoId));
+        ValidationUtils.notNull(formData, "单据不存在");
+        ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+        return formData;
+    }
+    
 }

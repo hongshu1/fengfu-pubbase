@@ -329,7 +329,7 @@ public class TodoService extends JBoltBaseService<Todo> {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	public void saveTodo(String title, long userId, Date now, String url, short sourcetype, long sourceId, long createUserId) {
+	public void saveTodo(String title, long userId, Date now, String url, String formSn, long sourceId, long createUserId) {
 		Todo todo = new Todo();
 
 		todo.setTitle(title);
@@ -343,8 +343,8 @@ public class TodoService extends JBoltBaseService<Todo> {
 		todo.setCreateUserId(createUserId);
 		todo.setIsReaded(false);
 		todo.setPriorityLevel(1);
-		todo.setSourceType(sourcetype);
-		todo.setSourceId(sourceId);
+		todo.setFormSn(formSn);
+		todo.setFormId(sourceId);
 
 		ValidationUtils.isTrue(todo.save(), ErrorMsg.SAVE_FAILED);
 	}

@@ -13,13 +13,13 @@ public enum TodoSourceTypeEnum {
     /**
      * 枚举列表
      */
-    OTHER((short) 0, "非单据业务"),
-    EXPENSE((short) 1, "费用预算"),
-    INVESTMENT_PLAN((short) 2, "投资计划"),
-    PROPOSAL((short) 3, "禀议书"),
-    PURCHASE((short) 4, " 申购单");
+    OTHER("非单据业务", 0),
+    EXPENSE("费用预算", 1),
+    INVESTMENT_PLAN("投资计划", 2),
+    PROPOSAL("禀议书", 3),
+    PURCHASE("申购单", 4);
 
-    private static final Map<Short, TodoSourceTypeEnum> TODO_SOURCE_TYPE_ENUM_MAP = new HashMap<>();
+    private static final Map<Integer, TodoSourceTypeEnum> TODO_SOURCE_TYPE_ENUM_MAP = new HashMap<>();
 
     static {
         for (TodoSourceTypeEnum statusEnum : TodoSourceTypeEnum.values()) {
@@ -28,18 +28,18 @@ public enum TodoSourceTypeEnum {
     }
 
     private final String text;
-    private final short value;
+    private final int value;
 
-    TodoSourceTypeEnum(short value, String text) {
+    TodoSourceTypeEnum(String text, int value) {
         this.value = value;
         this.text = text;
     }
 
-    public static TodoSourceTypeEnum toEnum(short status) {
-        return TODO_SOURCE_TYPE_ENUM_MAP.get(status);
+    public static TodoSourceTypeEnum toEnum(int value) {
+        return TODO_SOURCE_TYPE_ENUM_MAP.get(value);
     }
 
-    public short getValue() {
+    public int getValue() {
         return value;
     }
 
