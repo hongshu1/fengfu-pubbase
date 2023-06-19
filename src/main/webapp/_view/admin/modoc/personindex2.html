@@ -1,4 +1,4 @@
-
+#@jboltLayout()
 <div class="jbolt_page" data-key="#(pmkey)" >
 <div class="jbolt_page_title">
     <div class="row">
@@ -113,7 +113,7 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 	<th data-width="150" data-column="cPsn_Name">姓名</th>
 	<th data-width="150" data-column="iSex">性别</th>
 	<th data-width="150" data-column="cPsnMobilePhone">手机</th>
-	<th data-width="150" data-column="jobnumber">工号</th>
+    <th data-width="150" data-column="jobnumber">工号</th>
 	<!--<th data-width="150" data-column="cEcardNo">电子卡号</th>
 	<th data-width="150" data-column="cusername">所属用户名</th>
 	<th data-width="150" data-column="cdepname">所属部门</th>
@@ -136,7 +136,13 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 </div>
 
 <script type="text/javascript">
+    $(function(){
+        hideParentLayerDialogBtn(0);
 
+        addParentLayerDialogBtn("选中","lay_primary text-white",function(){
+            chooseAndInsert();
+    })
+    })
 	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
 		$(tempTr1).data('url', '/admin/person/edit/' + rowData.iautoid)
 			.data('area', '1200,800')
@@ -146,5 +152,22 @@ data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
 
 		DialogUtil.openBy(tempTr1);
 	}
+    //点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
+    function chooseAndInsert(){
+        var datas=getJboltTableCheckedDatas("persontable",["iautoid:iautoid","cpsn_num:cpsn_num","cpsn_name:cpsn_name","isex:isex"
+            ,"cpsnmobilephone:cpsnmobilephone","jobnumber:jobnumber"]);
+
+        if(datas){
+            LayerMsgBox.confirm("确认选择此数据?",function(){
+                var action=parent.DialogUtil.getCurrentTriggerEle();
+                if(isOk(action)){
+                    var success=parent.jboltTableInsertRowsByDialogChooser(action,datas,'prepend');
+                    if(success){
+                        parent.layer.closeAll();
+                    }
+                }
+            });
+        }
+    }
 </script>
 

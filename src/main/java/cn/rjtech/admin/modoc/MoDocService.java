@@ -1,7 +1,10 @@
 package cn.rjtech.admin.modoc;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
@@ -28,15 +31,19 @@ import cn.rjtech.entity.vo.instockqcformm.MoDocFormVo;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.DateUtils;
+import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import io.netty.channel.RecvByteBufAllocator;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -137,26 +144,38 @@ public class MoDocService extends BaseService<MoDoc> {
     if (moDoc == null || isOk(moDoc.getIAutoId())) {
       return fail(JBoltMsg.PARAM_ERROR);
     }
-    //初始化状态
-    moDoc.setIStatus(1);
+
     moDoc.setIType(2);
+    //手工新增没有任务,先占着
+    moDoc.setIMoTaskId(1001L);
+    moDoc.setIWorkRegionMid(moDoc.getIWorkShiftMid());
+    moDoc.setIInventoryId(moDoc.getIInventoryId());
+    moDoc.setCMoDocNo(generateBarCode());
     Date date = moDoc.getDPlanDate();
-    
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTime(date);
-      
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
     moDoc.setIYear(calendar.get(Calendar.YEAR));
     moDoc.setIMonth(calendar.get(Calendar.MONTH));
     moDoc.setIDate(calendar.get(Calendar.DAY_OF_MONTH));
+    moDoc.setIDepartmentId(moDoc.getIDepartmentId());
+    moDoc.setIWorkShiftMid(moDoc.getIWorkShiftMid());
+    moDoc.setIQty(moDoc.getIQty());
+    moDoc.setICompQty(moDoc.getICompQty());
     moDoc.setIPersonNum(0);
+    moDoc.setIStatus(1);
+    moDoc.setIInventoryRouting(moDoc.getIInventoryRouting());
+    moDoc.setCRoutingName(moDoc.getCRoutingName());
     InventoryRouting byId = inventoryRoutingService.findById(moDoc.getIInventoryRouting());
     moDoc.setCVersion(byId.getCVersion());
-    moDoc.setIMoTaskId(1001L);//手工新增没有任务,先占着
-    moDoc.setCRoutingName(byId.getCRoutingName());
+    moDoc.setIcreateby(JBoltUserKit.getUserId());
+    moDoc.setCCreateName(JBoltUserKit.getUserName());
+    moDoc.setDCreateTime(new Date());
     Date dCreateTime = new Date();
     String userName = JBoltUserKit.getUserName();
     Long userId = JBoltUserKit.getUserId();
-    moDoc.setCMoDocNo(generateBarCode());
+    moDoc.setIcreateby(userId);
+    moDoc.setCCreateName(userName);
+    moDoc.setDCreateTime(dCreateTime);
     tx(() -> {
       moDoc.save();
       // 工艺路线
@@ -164,12 +183,11 @@ public class MoDocService extends BaseService<MoDoc> {
       moMorouting.setIMoDocId(moDoc.getIAutoId());
       moMorouting.setIInventoryId(moDoc.getIInventoryId());
       moMorouting.setIInventoryRoutingId(moDoc.getIInventoryRouting());
-
       moMorouting.setCVersion(byId.getCVersion());
       moMorouting.setCRoutingName(byId.getCRoutingName());
       moMorouting.setIFinishedRate(byId.getIFinishedRate());
-
       moMoroutingService.save(moMorouting);
+
       //存工艺路线工序,人员,设备,物料集
       List<MoDocFormVo> saveModelList1 = jBoltTable.getSaveModelList(MoDocFormVo.class);
       for (MoDocFormVo record : saveModelList1) {
@@ -184,15 +202,18 @@ public class MoDocService extends BaseService<MoDoc> {
         moMoroutingconfig.setCCreateName(record.getCcreatename());
         moMoroutingconfig.setCOperationName(record.getCoperationname());
         moMoroutingconfig.setIMergedNum(record.getImergednum());
-        moMoroutingconfig.setIMergeRate(new BigDecimal(record.getImergerate()));
+        if(null!=record.getImergerate()) {
+          moMoroutingconfig.setIMergeRate(new BigDecimal(record.getImergerate()));
+        }
         moMoroutingconfig.setIMergeSecs(record.getImergesecs());
-        moMoroutingconfig.setIRsInventoryId(Long.parseLong(record.getIrsinventoryid()));
+        //moMoroutingconfig.setIRsInventoryId(Long.parseLong(record.getIrsinventoryid()));
         moMoroutingconfig.setIType(record.getItype());
         moMoroutingconfig.setICreateBy(userId);
         moMoroutingconfig.setDCreateTime(dCreateTime);
         moMoroutingconfigService.save(moMoroutingconfig);
         //人员
-        String configperson = record.getConfigperson();
+        String configperson = record.getConfigpersonids();
+
         if (configperson != null) {
           String[] arr = configperson.split(",");
           for (int i = 0; i < arr.length; i++) {
@@ -1029,5 +1050,54 @@ public class MoDocService extends BaseService<MoDoc> {
   public List<Record> getMoJobData(Long imdcocid){
     List<Record> records = dbTemplate("modoc.findMoJobByImodocId", new Kv().set("imdcocid", imdcocid)).find();
     return records;
+  }
+
+  public Page<Record> getInventoryList(int pageNumber, int pageSize, Kv keywords) {
+    return dbTemplate("modoc.getInventoryList", keywords).paginate(pageNumber, pageSize);
+  }
+
+  public Page<Record> getPersonByEquipment(int pageNumber, int pageSize, Kv keywords){
+    if (StrUtil.isNotBlank(keywords.getStr(InventoryRoutingConfig.PERSONEQUIPMENTJSON))){
+      String str = keywords.getStr(InventoryRoutingConfig.PERSONEQUIPMENTJSON);
+      JSONArray jsonArray = JSONObject.parseArray(str);
+      if (CollectionUtil.isEmpty(jsonArray)){
+        return null;
+      }
+      List<Record> recordList = new ArrayList<>();
+      for (int i=0; i<jsonArray.size(); i++){
+        JSONObject jsonObject = jsonArray.getJSONObject(i);
+        Record record = new Record();
+        record.setColumns(jsonObject.getInnerMap());
+
+        Long personId = jsonObject.getLong("iautoid");
+        if (ObjectUtil.isNotNull(personId)){
+          Person person = personService.findById(personId);
+          ValidationUtils.notNull(person, "未找到设备信息");
+          record.set(person.CPSN_NUM, person.getCpsnNum());
+        }
+        recordList.add(record);
+      }
+      Page<Record> persons = dbTemplate("modoc.getInventoryList").paginate(pageNumber, pageSize);
+      persons.setList(recordList);
+      return persons;
+    }
+    List<Record> records = dbTemplate("modoc.getEquipments",Kv.by("iEquipmentIds",keywords.getLong("configid"))).find();
+
+    StringBuilder sb = new StringBuilder();
+    for (Record record : records) {
+      long iEquipmentId = record.getLong("iEquipmentId");
+      sb.append(iEquipmentId).append(",");
+    }
+
+    String equipmentIds = sb.toString();
+    if (equipmentIds.endsWith(",")) {
+      equipmentIds = equipmentIds.substring(0, equipmentIds.length() - 1);
+    }
+    keywords.set("iEquipmentIds", equipmentIds);
+    if(equipmentIds.equals("")){
+      return null;
+    }
+    Page<Record> iEquipmentIds = dbTemplate("modoc.getPersonByEquipment", keywords).paginate(pageNumber, pageSize);
+    return  iEquipmentIds;
   }
 }

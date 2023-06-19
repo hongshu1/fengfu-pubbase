@@ -81,8 +81,8 @@ WHERE 1 = 1
     #if(cinvaddcode)
   AND md.cinvaddcode = #para(cinvaddcode)
     #end
-    #if(cInvCode)
-  AND md.cInvCode = #para(cInvCode)
+    #if(cinvcode)
+  AND bi.cInvCode = #para(cinvcode)
     #end
     #if(iWorkRegionMid)
   AND md.iWorkRegionMid = #para(iWorkRegionMid)
@@ -201,4 +201,55 @@ WHERE 1=1
     #if(imodocdd)
       m.iMoDocId = #para(imodocdd)
     #end
+#end
+
+#sql("getInventoryList")
+SELECT
+	inv.iAutoId,
+	cInvCode,
+	cInvName,
+	cInvCode1,
+	cInvName1,
+	wm.iAutoId iworkregionmid,
+	wm.cWorkCode,
+	wm.cWorkName,
+	rt.iAutoId iinventoryroutingid
+FROM
+	Bd_Inventory inv
+	LEFT JOIN ( SELECT * FROM Bd_InventoryWorkRegion WHERE isDeleted = 0 AND isDefault = 1 ) wk ON wk.iInventoryId = inv.iAutoId
+	left    JOIN Bd_WorkRegionM wm ON wm.iAutoId = wk.iWorkRegionMid
+	left   JOIN (SELECT iAutoId,iInventoryId FROM Bd_InventoryRouting WHERE  getdate () >= dFromDate AND getdate ( ) <= dToDate  AND iAuditStatus=2) rt on rt.iInventoryId = inv.iAutoId
+WHERE
+	inv.isDeleted = 0
+	AND inv.isEnabled = 1
+        #if(q)
+            AND (inv.cInvCode LIKE CONCAT('%', #para(q), '%') OR inv.cInvCode1 LIKE CONCAT('%', #para(q), '%') OR inv.cInvName1 LIKE CONCAT('%', #para(q), '%'))
+	    #end
+	    #if(itemId)
+	        AND inv.iautoId = #para(itemId)
+	    #end
+	    #if(iEquipmentModelId)
+	        AND INV.iEquipmentModelId = #para(iEquipmentModelId)
+	    #end
+	    #if(cInvCode)
+             AND inv.cInvCode LIKE CONCAT('%', #para(cInvCode), '%')
+	    #end
+	    #if(cInvCode1)
+             AND inv.cInvCode LIKE CONCAT('%', #para(cInvCode1), '%')
+	    #end
+	    #if(cInvName)
+             AND inv.cInvName LIKE CONCAT('%', #para(cInvName), '%')
+	    #end
+	    #if(cVenName)
+	        AND ven.cVenName LIKE CONCAT('%', #para(cVenName), '%')
+	    #end
+#end
+
+#sql("getEquipments")
+select * from Bd_InventoryRoutingEquipment  where iInventoryRoutingConfigId=#para(iEquipmentIds)
+#end
+
+#sql("getPersonByEquipment")
+SELECT * FROM Bd_Person  per
+WHERE iAutoId IN (SELECT iPersonId FROM Bd_PersonEquipment EQ  WHERE EQ.iEquipmentId IN (#(iEquipmentIds)) AND isDeleted=0)
 #end

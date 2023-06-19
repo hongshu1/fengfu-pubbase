@@ -1,0 +1,95 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col">
+				<form class="form-inline text-left" id="inventorydialogForm_#(pageId)"   onsubmit="return false;" method="post">
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入存货编码" name="cInvCode" value="#(cInvCode)" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入存货名称" name="cInvName" value="#(cInvName)" />
+					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入客户部番" name="cInvCode1" value="#(cInvCode1)" />
+					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+				</form>
+			</div>
+			<div class="col-md-auto">
+			</div>
+		</div>
+	</div>
+	<div class="jbolt_page_content">
+		<!-- JBoltTable的数据模板定义-->
+		<textarea class="jb_tpl_box" id="inventorydialogRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.itemid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cinvcode}</td>
+<td>${data.cinvname}</td>
+<td>${data.cinvcode1}</td>
+<td>${data.cworkname}</td>
+<td hidden>${data.iworkregionmid}</td>
+<td hidden>${data.cworkcode}</td>
+<td hidden>${data.iautoid}</td>
+<td hidden>${data.iinventoryroutingid}</td>
+<td>
+	<a tooltip href="javascript:void(0)" onclick="checkThis(${index})"   class="jbolt_table_btn">选择</a>
+</td>
+</tr>
+{@/each}
+</textarea>
+
+		<!-- 工具条 toolbar -->
+		<table class="jbolt_table jbolt_main_table table-center"
+			   data-jbolttable
+			   data-height="fill"
+			   data-ajax="true"
+			   data-url="admin/modoc/getInventoryList"
+			   data-column-resize="true"
+			   data-column-prepend="1:radio:true"
+			   data-page="inventorydialogForm_page"
+			   data-conditions-form="inventorydialogForm_#(pageId)"
+			   data-rowtpl="inventorydialogRowtpl_#(pageId)"
+			   data-toolbar="inventorydialog_toolbar_#(pageId)"
+			   id="inventorydialogtableidMoDoc_#(pageId)"
+		>
+			<thead class="fw-normal">
+			<tr>
+				<th data-width="60" data-column="index">序号</th>
+				<th data-width="150" data-column="cinvcode">存货编码</th>
+				<th data-width="200" data-column="cinvname">存货名称</th>
+				<th data-width="200" data-column="cinvcode1">客户部番</th>
+				<th data-width="200" data-column="cinvname1">部品名称</th>
+				<th hidden data-column="cworkname">产线名称</th>
+				<th data-column="cOperationName">操作</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+
+
+
+
+	</div>
+</div>
+<script>
+	function submitThisForm(callback){
+		var data=getJboltTableCheckedData("inventorydialogtableidMoDoc_#(pageId)");
+
+		if(data){
+			parent.setChooseDialogSelectResult3(data,'#(index??)','#(type??)');
+			if(callback){
+				callback();
+			}
+		}
+	}
+
+	function checkThis(index){
+		if(index){
+			parent.setChooseDialogSelectResult(jboltTableGetRowJsonData("inventorydialogtableidMoDoc_#(pageId)", index),'#(index??)','#(type??)');
+			parent.LayerMsgBox.closeAll();
+		}
+	}
+</script>
+#end
+
