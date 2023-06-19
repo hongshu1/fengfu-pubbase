@@ -2,8 +2,10 @@ package cn.rjtech.admin.container;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -17,6 +19,7 @@ import cn.rjtech.admin.containerstockind.ContainerStockInDService;
 import cn.rjtech.admin.containerstockind.ContainerStockInMService;
 import cn.rjtech.admin.containerstockind.ContainerStockOutDService;
 import cn.rjtech.admin.containerstockind.ContainerStockOutMService;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
@@ -42,6 +45,9 @@ import static cn.hutool.core.text.StrPool.COMMA;
  */
 public class ContainerService extends BaseService<Container> {
 	private final Container dao=new Container().dao();
+
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingDService;
 	@Override
 	protected Container dao() {
 		return dao;
@@ -423,4 +429,68 @@ public class ContainerService extends BaseService<Container> {
 	public Object getPrintDataCheck(Kv kv) {
 		return dbTemplate("container.containerPrintData",kv).find();
     }
+
+	/**
+	 * 从系统导入字段配置，获得导入的数据
+	 */
+	public Ret importExcelClass(File file) {
+		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+		if (notOk(records)) {
+			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+		}
+
+
+		for (Record record : records) {
+
+			if (StrUtil.isBlank(record.getStr("iContainerClassId"))) {
+				return fail("容器类型不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("cContainerCode"))) {
+				return fail("容器编码不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("cContainerName"))) {
+				return fail("容器名称不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("iDepId"))) {
+				return fail("管理部门不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("iWarehouseId"))) {
+				return fail("管理仓库不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("isInner"))) {
+				return fail("存放地点不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("iLength"))) {
+				return fail("长不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("iWidth"))) {
+				return fail("宽不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("iHeight"))) {
+				return fail("高不能为空");
+			}
+
+			Date now=new Date();
+
+			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+			record.set("iOrgId", getOrgId());
+			record.set("cOrgCode", getOrgCode());
+			record.set("cOrgName", getOrgName());
+			record.set("iCreateBy", JBoltUserKit.getUserId());
+			record.set("dCreateTime", now);
+			record.set("cCreateName", JBoltUserKit.getUserName());
+			record.set("isEnabled",1);
+			record.set("isDeleted",0);
+			record.set("iUpdateBy", JBoltUserKit.getUserId());
+			record.set("dUpdateTime", now);
+			record.set("cUpdateName", JBoltUserKit.getUserName());
+		}
+
+		// 执行批量操作
+		tx(() -> {
+			batchSaveRecords(records);
+			return true;
+		});
+		return SUCCESS;
+	}
 }
