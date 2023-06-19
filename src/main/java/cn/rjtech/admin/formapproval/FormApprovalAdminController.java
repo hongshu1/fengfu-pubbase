@@ -247,24 +247,24 @@ public class FormApprovalAdminController extends BaseAdminController {
         renderJson(service.batchReject(ids, formSn, primaryKeyName, className));
     }
 
-    /**
-     * 批量反审批，接口保留（不需要此实现）
-     *
-     * @param ids            单据ID
-     * @param formSn         表名
-     * @param primaryKeyName 单据主键名称
-     */
-    public void batchReverseApprove(@Para(value = "ids") String ids,
-                                    @Para(value = "formSn") String formSn,
-                                    @Para(value = "primaryKeyName") String primaryKeyName,
-                                    @Para(value = "className") String className) {
-        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notBlank(formSn, "表单编码不能为空");
-        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
-        ValidationUtils.notBlank(className, "处理审批的类名");
-
-        renderJson(service.batchReverseApprove(ids, formSn, primaryKeyName, className));
-    }
+//    /**
+//     * 批量反审批，接口保留（不需要此实现）
+//     *
+//     * @param ids            单据ID
+//     * @param formSn         表名
+//     * @param primaryKeyName 单据主键名称
+//     */
+//    public void batchReverseApprove(@Para(value = "ids") String ids,
+//                                    @Para(value = "formSn") String formSn,
+//                                    @Para(value = "primaryKeyName") String primaryKeyName,
+//                                    @Para(value = "className") String className) {
+//        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
+//        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+//        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
+//        ValidationUtils.notBlank(className, "处理审批的类名");
+//
+//        renderJson(service.batchReverseApprove(ids, formSn, primaryKeyName, className));
+//    }
 
     /**
      * 批量撤销审批
@@ -282,7 +282,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "处理审批的类名");
 
-        renderJson(service.batchBackOut(ids, formSn, primaryKeyName, className));
+        renderJson(service.batchBackout(ids, formSn, primaryKeyName, className));
     }
 
 

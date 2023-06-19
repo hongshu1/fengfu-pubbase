@@ -771,7 +771,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
         }
       } else {
         Record datas = new Record();
-
+        List<Record> records1 = new ArrayList<>();
         //<editor-fold desc="模拟基础数据">
         Record cequipment = new Record();
         cequipment.put("cequipmentname", "");
@@ -809,13 +809,17 @@ public class MoMotaskService extends BaseService<MoMotask> {
           }
         }
         datas.put("user", recordLisc);
-        record.put("rowdatas", datas);
+        records1.add(datas);
+        record.put("rowdatas", records1);
         records.add(record);
       }
     }
     return records;
   }
 
+  /**
+   * 制造工单计划批量编辑数据源
+   */
   public List<Record> getEditorialPlanDatas(Kv kv) {
     ValidationUtils.notBlank(kv.getStr("taskid"), "制造工单任务ID缺失，获取数据异常！！！");
 
@@ -831,18 +835,36 @@ public class MoMotaskService extends BaseService<MoMotask> {
     List<Record> dateShifts = dbTemplate("modocbatch.getModocDateShiftDatas", kv).find();
     //</editor-fold>
 
+    //<editor-fold desc="C获取单号数量信息">
     List<Record> planDatas = dbTemplate("modocbatch.getPlanDatasBytaskId", kv).find();
+    //</editor-fold>
 
     for (Record productionLineMaterial : productionLineMaterials) {
+      List<Record> datas = new ArrayList<>();
       for (Record dateShift : dateShifts) {
-        for (Record data : planDatas) {
-
+        for (Record plandata : planDatas) {
+          if (plandata.getStr("mergeid").equals(productionLineMaterial.getStr("mergeid")) && plandata.getStr("dates").equals(dateShift.getStr("dates1"))) {
+            Record data = new Record();
+            data.put("cmodocno", plandata.getStr("cmodocno"));
+            data.put("iqty", plandata.getStr("iqty"));
+            datas.add(data);
+            break;
+          }
         }
       }
+      productionLineMaterial.put("rowDatas", datas);
     }
-
-
     return productionLineMaterials;
+  }
+
+  /**
+   * 编辑人员页面获取用户信息
+   *
+   * @param kv
+   * @return
+   */
+  public List<Record> getUserDatas(Kv kv) {
+    return dbTemplate("modocbatch.getUserDatas", kv).find();
   }
 
 }

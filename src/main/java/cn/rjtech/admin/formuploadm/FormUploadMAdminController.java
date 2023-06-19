@@ -14,6 +14,7 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Ret;
 import com.jfinal.upload.UploadFile;
 import org.apache.commons.lang3.StringUtils;
@@ -76,19 +77,20 @@ public class FormUploadMAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
-	public void edit() {
-		FormUploadM formUploadM=service.findById(getLong(0));
+	public void edit(@Para(value = "iautoid") Long iautoid) {
+		ValidationUtils.validateId(iautoid, "记录上传ID");
+
+		FormUploadM formUploadM=service.findById(iautoid);
 		if(formUploadM == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
 		set("formUploadM",formUploadM);
 		String s = formUploadM.getIAuditStatus() == 0 ?
-				"未审核" : formUploadM.getIAuditStatus() == 1 ?
+				"已保存" : formUploadM.getIAuditStatus() == 1 ?
 				"待审核" : formUploadM.getIAuditStatus() == 2 ? "审核通过" : "审核不通过";
 		set("status",s);
-		set("iauditstatus",false);
-		set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
+		keepPara();
 		render("edit.html");
 	}
 
@@ -122,8 +124,8 @@ public class FormUploadMAdminController extends BaseAdminController {
 	/**
 	 * 批量保存
 	 */
-	public void saveTableSubmit(){
-		renderJsonData(service.saveTableSubmit(getJBoltTable()));
+	public void submitAll(){
+		renderJson(service.saveTableSubmit(getJBoltTable()));
 	}
 
 	public void batchApprove() {

@@ -18,6 +18,7 @@ import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.FormUploadD;
 import cn.rjtech.model.momdata.FormUploadM;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -39,7 +40,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-29 15:35
  */
-public class FormUploadMService extends BaseService<FormUploadM> {
+public class FormUploadMService extends BaseService<FormUploadM> implements IApprovalService {
 	private final FormUploadM dao=new FormUploadM().dao();
 	@Override
 	protected FormUploadM dao() {
@@ -121,21 +122,11 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 	 *批量保存
 	 */
     public Ret saveTableSubmit( JBoltTable jBoltTable) {
+		FormUploadM formUploadM = jBoltTable.getFormModel(FormUploadM.class, "formUploadM");
+
 		Record formRecord = jBoltTable.getFormRecord();
 		ValidationUtils.notNull(jBoltTable.getFormRecord(), JBoltMsg.PARAM_ERROR);
-		FormUploadM formUploadM = new FormUploadM();
-		//图片数据处理
-		List<Record> saveRecords = jBoltTable.getSaveRecordList();
-		if (StrUtil.isNotBlank(formRecord.getStr("cattachments"))){
-			if (CollUtil.isNotEmpty(saveRecords)) {
-				for (Record saveRecord : saveRecords) {
-					if (formRecord.getStr("cattachments").contains(saveRecord.getStr("cattachments"))) {
-						String replace = formRecord.getStr("cattachments").replace(","+saveRecord.getStr("cattachments"), "");
-						formRecord.set("cattachments",replace);
-					}
-				}
-			}
-		}
+
 		if (jBoltTable.saveIsNotBlank()&&jBoltTable.updateIsBlank()&&!"".equals(formRecord.getStr("operationType"))){
 			return  fail("请先保存数据！");
 		}
@@ -148,9 +139,10 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 
 		//主表数据
 		User user = JBoltUserKit.getUser();
+		Date date = new Date();
 		tx(() -> {
 
-			if (notOk(formRecord.getStr("formUploadM.iAutoId"))) {
+			if (formUploadM.getIAutoId() == null) {
 				//基础数据
 				formUploadM.setCOrgCode(getOrgCode());
 				formUploadM.setCOrgName(getOrgName());
@@ -158,78 +150,89 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 				formUploadM.setIOrgId(getOrgId());
 				formUploadM.setICreateBy(user.getId());
 				formUploadM.setCCreateName(user.getName());
-				formUploadM.setDCreateTime(new Date());
+				formUploadM.setDCreateTime(date);
 				formUploadM.setCUpdateName(user.getName());
-				formUploadM.setDUpdateTime(new Date());
+				formUploadM.setDUpdateTime(date);
 				formUploadM.setIUpdateBy(user.getId());
-				formUploadM.setIWorkRegionMid(formRecord.getLong("formUploadM.iWorkRegionMid"));
-				formUploadM.setICategoryId(formRecord.getLong("formUploadM.iCategoryId"));
-				formUploadM.setDDate(formRecord.getDate("formUploadM.ddate"));
 				formUploadM.setIAuditStatus(0);
+				formUploadM.setIAuditWay(1);
 				ValidationUtils.isTrue(formUploadM.save(), "保存失败");
 			}else {
-				FormUploadM formUploadM1 = findById(formRecord.getStr("formUploadM.iAutoId"));
-					formUploadM1.setIWorkRegionMid(formRecord.getLong("formUploadM.iWorkRegionMid"));
-					formUploadM1.setICategoryId(formRecord.getLong("formUploadM.iCategoryId"));
-					formUploadM1.setDDate(formRecord.getDate("formUploadM.ddate"));
-				formUploadM1.update();
-			}
-			if (jBoltTable.saveIsNotBlank()){
-				ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
-				for (Record saveRecord : saveRecords) {
-					FormUploadD formUploadD = new FormUploadD();
-					if (ObjUtil.isNotNull(formRecord.getStr("formUploadM.iAutoId"))) {
-						formUploadD.setIFormUploadMid(formRecord.getLong("formUploadM.iAutoId"));
-					}else {
-						formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
-					}
-					formUploadD.setCAttachments(saveRecord.getStr("cattachments"));
-					formUploadD.setCMemo(saveRecord.getStr("cmemo"));
-					formUploadDS.add(formUploadD);
-				}
-				for (String cattachment : StrSplitter.split(formRecord.getStr("cattachments"), COMMA, true, true)) {
-					FormUploadD formUploadD = new FormUploadD();
-					if (ObjUtil.isNotNull(formRecord.getStr("formUploadM.iAutoId"))) {
-						formUploadD.setIFormUploadMid(formRecord.getLong("formUploadM.iAutoId"));
-					}else {
-						formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
-					}
-					formUploadD.setCAttachments(cattachment);
-					formUploadDS.add(formUploadD);
-				}
-				formUploadDService.batchSave(formUploadDS);
-			}else {
-				ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
-				for (String cattachment : StrSplitter.split(formRecord.getStr("cattachments"), COMMA, true, true)) {
-					FormUploadD formUploadD = new FormUploadD();
-					if (ObjUtil.isNotNull(formRecord.getStr("formUploadM.iAutoId"))) {
-						formUploadD.setIFormUploadMid(formRecord.getLong("formUploadM.iAutoId"));
-					}else {
-						formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
-					}
-					formUploadD.setCAttachments(cattachment);
-					formUploadDS.add(formUploadD);
-				}
-				formUploadDService.batchSave(formUploadDS);
-			}
-			if (jBoltTable.updateIsNotBlank()){
-				ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
-				List<Record> updateRecordList = jBoltTable.getUpdateRecordList();
-				for (Record updateRecord : updateRecordList) {
-					FormUploadD formUploadD = formUploadDService.findById(updateRecord.getStr("iautoid"));
-					formUploadD.setCAttachments(updateRecord.getStr("cattachments"));
-					formUploadD.setCMemo(updateRecord.getStr("cmemo"));
-					formUploadDS.add(formUploadD);
-				}
-				formUploadDService.batchUpdate(formUploadDS);
+				formUploadM.setIUpdateBy(user.getId());
+				formUploadM.setCUpdateName(user.getName());
+				formUploadM.setDUpdateTime(date);
+				ValidationUtils.isTrue(formUploadM.update(), "修改失败");
 			}
 
-			if (jBoltTable.deleteIsNotBlank()) {
-				formUploadDService.deleteByIds(jBoltTable.getDelete());
-			}
+			saveTableSubmitDatas(jBoltTable, formUploadM);
+			updateTableSubmitDatas(jBoltTable);
+			deleteTableSubmitDatas(jBoltTable);
 			return true;
 		});
-		return	success("autoid",String.valueOf(formUploadM.getIAutoId()));
+		return successWithData(formUploadM.keep("iautoid"));
+	}
+
+	private void deleteTableSubmitDatas(JBoltTable jBoltTable) {
+
+		if (jBoltTable.deleteIsNotBlank()) {
+			formUploadDService.deleteByIds(jBoltTable.getDelete());
+		}
+	}
+
+	private void updateTableSubmitDatas(JBoltTable jBoltTable) {
+		if (jBoltTable.updateIsNotBlank()){
+			ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
+			List<Record> updateRecordList = jBoltTable.getUpdateRecordList();
+			for (Record updateRecord : updateRecordList) {
+				FormUploadD formUploadD = formUploadDService.findById(updateRecord.getStr("iautoid"));
+				formUploadD.setCAttachments(updateRecord.getStr("cattachments"));
+				formUploadD.setCMemo(updateRecord.getStr("cmemo"));
+				formUploadDS.add(formUploadD);
+			}
+			formUploadDService.batchUpdate(formUploadDS);
+		}
+	}
+
+	private void saveTableSubmitDatas(JBoltTable jBoltTable, FormUploadM formUploadM) {
+		Record formRecord = jBoltTable.getFormRecord();
+		//图片数据处理
+		List<Record> saveRecords = jBoltTable.getSaveRecordList();
+		if (StrUtil.isNotBlank(formRecord.getStr("cattachments"))){
+			if (CollUtil.isNotEmpty(saveRecords)) {
+				for (Record saveRecord : saveRecords) {
+					if (formRecord.getStr("cattachments").contains(saveRecord.getStr("cattachments"))) {
+						String replace = formRecord.getStr("cattachments").replace(","+saveRecord.getStr("cattachments"), "");
+						formRecord.set("cattachments",replace);
+					}
+				}
+			}
+		}
+		if (jBoltTable.saveIsNotBlank()){
+			ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
+			for (Record saveRecord : saveRecords) {
+				FormUploadD formUploadD = new FormUploadD();
+				formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
+				formUploadD.setCAttachments(saveRecord.getStr("cattachments"));
+				formUploadD.setCMemo(saveRecord.getStr("cmemo"));
+				formUploadDS.add(formUploadD);
+			}
+			for (String cattachment : StrSplitter.split(formRecord.getStr("cattachments"), COMMA, true, true)) {
+				FormUploadD formUploadD = new FormUploadD();
+				formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
+				formUploadD.setCAttachments(cattachment);
+				formUploadDS.add(formUploadD);
+			}
+			formUploadDService.batchSave(formUploadDS);
+		}else {
+			ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
+			for (String cattachment : StrSplitter.split(formRecord.getStr("cattachments"), COMMA, true, true)) {
+				FormUploadD formUploadD = new FormUploadD();
+				formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
+				formUploadD.setCAttachments(cattachment);
+				formUploadDS.add(formUploadD);
+			}
+			formUploadDService.batchSave(formUploadDS);
+		}
 	}
 
 	/**
@@ -321,6 +324,7 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 				formUploadM.setICategoryId(Long.parseLong(icategoryid));
 				formUploadM.setDDate(ddate);
 				formUploadM.setDUpdateTime(new Date());
+				formUploadM.setIAuditWay(1);
 				formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
 				formUploadM.setCUpdateName(JBoltUserKit.getUserName());
 				ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
@@ -490,4 +494,108 @@ public class FormUploadMService extends BaseService<FormUploadM> {
 		});
 		return SUCCESS;
 	}
+
+
+	/**
+	 * 提审前业务，如有异常返回错误信息
+	 */
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		FormUploadM formuploadm = findById(formAutoId);
+
+		switch (AuditStatusEnum.toEnum(formuploadm.getIAuditStatus())) {
+			// 已保存
+			case NOT_AUDIT:
+				// 不通过
+			case REJECTED:
+
+				break;
+			default:
+				return "订单非已保存状态";
+		}
+
+		return null;
+	}
+
+	/**
+	 * 提审后业务处理，如有异常返回错误信息
+	 */
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", AuditStatusEnum.AWAIT_AUDIT.getValue()).isOk(), "提审失败");
+		return null;
+	}
+	/**
+	 * 处理审批通过的其他业务操作，如有异常返回错误信息
+	 *
+	 * @param formAutoId 单据ID
+	 * @return 错误信息
+	 */
+	@Override
+	public String postApproveFunc(long formAutoId) {
+		FormUploadM formUploadM = findById(formAutoId);
+		// 审核状态修改
+		formUploadM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+		formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
+		formUploadM.setCUpdateName(JBoltUserKit.getUserName());
+		formUploadM.setDUpdateTime(new Date());
+		formUploadM.update();
+		return null;
+	}
+
+	/**
+	 * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
+	 */
+	@Override
+	public String postRejectFunc(long formAutoId) {
+		ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", AuditStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", AuditStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
+
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        return null;
+    }
 }

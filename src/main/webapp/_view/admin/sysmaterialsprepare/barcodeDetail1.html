@@ -62,10 +62,10 @@
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.whcode}</td>
-<td>${data.barcode}</td>
+<td>${data.cbarcode}</td>
 <td>${data.qty}</td>
 <td>${data.cuomname}</td>
-<td>${data.batch}</td>
+<td>${data.cbatch}</td>
 <td>${data.dproddate}</td>
 </tr>
 {@/each}
@@ -75,7 +75,7 @@
        data-width="fill"
        data-height="fill"
        data-ajax="true"
-       data-url="admin/sysMaterialsprepare/getBarcode/?cinvcode=#(cinvcode??)&batch=#(batch??)"
+       data-url="admin/sysMaterialsprepare/getBarcode1/?cinvcode=#(cinvcode??)&batch=#(batch??)"
        data-rowtpl="SysMaterialsprepare_tpl_#(pageId)"
        data-copy-to-excel="false"
        data-page="SysMaterialsprepare_page"

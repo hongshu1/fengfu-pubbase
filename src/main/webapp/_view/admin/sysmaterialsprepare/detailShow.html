@@ -220,10 +220,10 @@
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysMaterialsprepare/barcodeDetail/?cinvcode=${data.cinvcode}" data-area="700,800" data-title="现品票明细"><i class="fa fa-eye">可用现品票</i></a>
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysMaterialsprepare/barcodeDetail/?cinvcode=${data.cinvcode}" data-area="700,800" data-title="现品票明细"><i class="fa fa-eye">备料现品票</i></a>
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysMaterialsprepare/barcodeDetail/?cinvcode=${data.cinvcode}&batch=${data.batch}&cinvcode1=${data.cinvcode1}&cinvname1=${data.cinvname1}" data-area="1200,800" data-title="现品票明细"><i class="fa fa-eye">可用现品票</i></a>
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysMaterialsprepare/barcodeDetail1/?cinvcode=${data.cinvcode}&batch=${data.batch}&cinvcode1=${data.cinvcode1}&cinvname1=${data.cinvname1}" data-area="1200,800" data-title="现品票明细"><i class="fa fa-eye">备料现品票</i></a>
 </td>
-<td>${data.invcode}</td>
+<td>${data.cinvcode}</td>
 <td>${data.cinvcode1}</td>
 <td>${data.cinvname1}</td>
 <td>${data.cinvstd}</td>
@@ -233,7 +233,7 @@
 <td>${data.出库库区}</td>
 <td>${data.已备料数量}</td>
 <td>${data.剩余备料数量}</td>
-<td>${data.可用批次号}</td>
+<td>${data.batch}</td>
 <td>${data.statename}</td>
 </tr>
 {@/each}
@@ -258,10 +258,10 @@
   <thead class="fw-normal">
   <tr>
     <th data-width="60" data-column="">序号</th>
-    <th data-width="150" data-column="">操作</th>
+    <th data-width="200" data-column="">操作</th>
     <th data-width="150" data-column="">存货编码</th>
     <th data-width="150" data-column="">客户部番</th>
-    <th data-width="150" data-column="">部品名称</th>
+    <th data-width="250" data-column="">部品名称</th>
     <th data-width="150" data-column="">规格</th>
     <th data-width="150" data-column="">库存单位</th>
     <th data-width="150" data-column="">计划数量</th>
