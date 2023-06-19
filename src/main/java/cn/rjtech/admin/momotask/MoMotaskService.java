@@ -771,7 +771,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
         }
       } else {
         Record datas = new Record();
-
+        List<Record> records1 = new ArrayList<>();
         //<editor-fold desc="模拟基础数据">
         Record cequipment = new Record();
         cequipment.put("cequipmentname", "");
@@ -809,7 +809,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
           }
         }
         datas.put("user", recordLisc);
-        record.put("rowdatas", datas);
+        records1.add(datas);
+        record.put("rowdatas", records1);
         records.add(record);
       }
     }
