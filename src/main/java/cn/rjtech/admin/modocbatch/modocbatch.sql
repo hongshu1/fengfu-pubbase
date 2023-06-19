@@ -296,7 +296,7 @@ SELECT
 	per.iAutoId,
 	per.cPsn_Num cpsnnum,
 	per.cPsn_Name cpsnname,
-	per.cPsnMobilePhone,
+	ISNULL(per.cPsnMobilePhone, ' ') cpsnmobilephone,
 	dep.cdepname
 FROM
 	Bd_Person per
