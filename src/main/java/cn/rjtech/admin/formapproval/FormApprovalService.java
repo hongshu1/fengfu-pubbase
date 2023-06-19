@@ -25,6 +25,7 @@ import cn.rjtech.admin.formapprovalduser.FormapprovaldUserService;
 import cn.rjtech.admin.formapprovalflowd.FormApprovalFlowDService;
 import cn.rjtech.admin.formapprovalflowm.FormApprovalFlowMService;
 import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.cache.UserCache;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
@@ -1720,19 +1721,30 @@ public class FormApprovalService extends BaseService<FormApproval> {
 //        撤销前的单据状态
         String perStatus = formRecord.getStr("status");
 
-        tx(()->{
+        tx(() -> {
 
-//            本来已通过，需预留额外业务处理方法
-                if (Objects.equals(perStatus, "2")) {
-                    invokeMethod(className, "", formAutoId);
-                }
-            //      更新单据状态为未审批
-                ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), primaryKeyName),
-                        "更新审批状态失败");
+            switch (AuditStatusEnum.toEnum(formApproval.getInt(IAUDITSTATUS))) {
+                case APPROVED:
+                    invokeMethod(className, "preWithdrawFromAuditted", formAutoId);
+                    
+                    // 更新单据状态为未审批
+                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formApproval.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
 
-                // 更新单据审批流主表
-                formApproval.setIsDeleted(true);
-                ValidationUtils.isTrue(formApproval.update(), ErrorMsg.UPDATE_FAILED);
+                    invokeMethod(className, "postWithdrawFromAuditted", formAutoId);
+                    break;
+                case AWAIT_AUDIT:
+                    // 更新单据状态为未审批
+                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formApproval.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
+
+                    invokeMethod(className, "withdrawFromAuditting", formAutoId);
+                    break;
+                default:
+                    throw new ParameterException("状态不合法");
+            }
+
+            // 更新单据审批流主表
+            formApproval.setIsDeleted(true);
+            ValidationUtils.isTrue(formApproval.update(), ErrorMsg.UPDATE_FAILED);
 
             return true;
         });
