@@ -34,7 +34,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
     /**货位编码*/
     public static final String POSCODE = "PosCode";
     /**组号*/
-    public static final String COMBINATIONNO = "CombinationNo";
+    public static final String COMBINATION = "Combination";
     /**行号*/
     public static final String ROWNO = "RowNo";
     /**入库数量*/
@@ -57,6 +57,10 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
     public static final String CUPDATENAME = "cupdatename";
     /**修改时间*/
     public static final String DUPDATETIME = "dupdatetime";
+    /**重量*/
+    public static final String WEIGHT = "Weight";
+    /**供应商*/
+    public static final String VENCODE = "VenCode";
 	/**
 	 * AutoID
 	 */
@@ -241,18 +245,18 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 组号
 	 */
-	public M setCombinationNo(java.lang.Integer CombinationNo) {
-		set("CombinationNo", CombinationNo);
+	public M setCombination(java.lang.Integer Combination) {
+		set("Combination", Combination);
 		return (M)this;
 	}
 
 	/**
 	 * 组号
 	 */
-	@JBoltField(name="combinationno" ,columnName="CombinationNo",type="Integer", remark="组号", required=false, maxLength=10, fixed=0, order=12)
-	@JSONField(name = "combinationno")
-	public java.lang.Integer getCombinationNo() {
-		return getInt("CombinationNo");
+	@JBoltField(name="combination" ,columnName="Combination",type="Integer", remark="组号", required=false, maxLength=10, fixed=0, order=12)
+	@JSONField(name = "combination")
+	public java.lang.Integer getCombination() {
+		return getInt("Combination");
 	}
 
 	/**
@@ -283,7 +287,7 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	/**
 	 * 入库数量
 	 */
-	@JBoltField(name="qty" ,columnName="Qty",type="BigDecimal", remark="入库数量", required=false, maxLength=18, fixed=6, order=14)
+	@JBoltField(name="qty" ,columnName="Qty",type="BigDecimal", remark="入库数量", required=false, maxLength=18, fixed=2, order=14)
 	@JSONField(name = "qty")
 	public java.math.BigDecimal getQty() {
 		return getBigDecimal("Qty");
@@ -440,6 +444,40 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDupdatetime() {
 		return getDate("dupdatetime");
+	}
+
+	/**
+	 * 重量
+	 */
+	public M setWeight(java.lang.String Weight) {
+		set("Weight", Weight);
+		return (M)this;
+	}
+
+	/**
+	 * 重量
+	 */
+	@JBoltField(name="weight" ,columnName="Weight",type="String", remark="重量", required=false, maxLength=32, fixed=0, order=24)
+	@JSONField(name = "weight")
+	public java.lang.String getWeight() {
+		return getStr("Weight");
+	}
+
+	/**
+	 * 供应商
+	 */
+	public M setVenCode(java.lang.String VenCode) {
+		set("VenCode", VenCode);
+		return (M)this;
+	}
+
+	/**
+	 * 供应商
+	 */
+	@JBoltField(name="vencode" ,columnName="VenCode",type="String", remark="供应商", required=false, maxLength=50, fixed=0, order=25)
+	@JSONField(name = "vencode")
+	public java.lang.String getVenCode() {
+		return getStr("VenCode");
 	}
 
 }
