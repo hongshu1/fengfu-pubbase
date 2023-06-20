@@ -776,9 +776,11 @@ public class MoMotaskService extends BaseService<MoMotask> {
         Record cequipment = new Record();
         cequipment.put("cequipmentname", "");
         cequipment.put("iequipmentid", "");
+
         Record coperation = new Record();
         coperation.put("coperationname", "");
         coperation.put("ioperationid", "");
+
         datas.put("cequipment", cequipment);
         datas.put("coperation", coperation);
         //</editor-fold>
@@ -825,10 +827,6 @@ public class MoMotaskService extends BaseService<MoMotask> {
 
     //<editor-fold desc="A获取产线物料信息">
     List<Record> productionLineMaterials = dbTemplate("modocbatch.getModocDatas", kv).find();
-    List<String> productionLine = new ArrayList<>();
-    for (Record productionLineMaterial : productionLineMaterials) {
-      productionLine.add(productionLineMaterial.getStr("iWorkRegionMid") + productionLineMaterial.getStr("iInventoryId"));
-    }
     //</editor-fold>
 
     //<editor-fold desc="B获取日期班次信息 dateShifts ">
