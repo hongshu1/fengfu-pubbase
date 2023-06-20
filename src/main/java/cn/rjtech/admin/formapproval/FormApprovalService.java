@@ -1955,7 +1955,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             ValidationUtils.assertBlank(msg, msg);
 
             // 更新审核通过
-            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), new Date()), "更新审核状态失败");
+            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), new Date()), "更新审核状态失败");
 
             // 后置业务实现
             msg = invokeMethod(className, "postReverseApproveFunc", formAutoId, true, true);
