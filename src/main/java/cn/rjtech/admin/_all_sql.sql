@@ -681,3 +681,7 @@
 #namespace("inventoryworkregion")
 #include("inventoryworkregion/inventoryworkregion.sql")
 #end
+
+#namespace("commonmenu")
+#include("commonmenu/commonmenu.sql")
+#end
