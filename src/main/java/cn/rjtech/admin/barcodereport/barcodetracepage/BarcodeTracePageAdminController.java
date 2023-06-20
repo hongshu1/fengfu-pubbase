@@ -83,7 +83,7 @@ public class BarcodeTracePageAdminController extends BaseAdminController {
             sqlids = sqlids.substring(0, sqlids.length() - 1);
             kv.set("sqlids", sqlids);
         }
-        renderJsonData(service.barcodeTotalDatas(getPageSize(),getPageNumber(),kv));
+        renderJsonData(service.PrintData(getPageSize(),getPageNumber(),kv));
     }
 
 
