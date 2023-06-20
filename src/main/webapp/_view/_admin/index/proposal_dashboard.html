@@ -2,15 +2,46 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <!--主页面内容显示区域 start-->
-<div class="jbolt_page shadow-none bg-transparent" data-key="#(pmkey)" data-require-plugin="morris" data-init-handler="initDashboard_#(pageId)" style="padding:0px 10px;">
+<div class="jbolt_page shadow-none bg-transparent" data-key="#(pmkey)" data-require-plugin="morris" style="padding:0px 10px;">
 	<div class="jbolt_page_content p-0" >
-		<div class="row">
+		#if(menulist)
+			#for(menuitemlist:menulist)
+				<div class="row">
+				#for(menuitem:menuitemlist)
+				#if(menuitem.title)
+					<div class="col-lg-3 col-md-6 col-sm-12 px-2" data-openpage data-url="#(menuitem.url)" data-title="#(menuitem.title)">
+						<div class="card border-0  mb-2 jb-dashboard-card hand">
+							<div class="card-body p-4 text-nowrap">
+								<span class="float-left"><i class="#(menuitem.icons) j_font_30 j_left_fa text-primary rounded"></i></span>
+								<div class="text-right ">
+									<span class="d-block j_left_fa j_font_24">#(menuitem.title)</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				#else
+					<div class="col-lg-3 col-md-6 col-sm-12 px-2" data-dialogbtn data-area="25%,80%" data-url="#(menuitem.url)" data-title="常用菜单">
+						<div class="card border-0  mb-2 jb-dashboard-card hand">
+							<div class="card-body p-4 text-nowrap">
+								<span class="float-left"><i class="#(menuitem.icons) j_font_30 j_left_fa text-primary rounded"></i></span>
+								<div class="text-right ">
+									<span class="d-block j_left_fa j_font_24">#(menuitem.title)</span>
+								</div>
+							</div>
+						</div>
+					</div>				
+				#end
+				#end
+				</div>
+			#end
+		#end
+		<!-- <div class="row">
 				<div class="col-lg-3 col-md-6 col-sm-12 px-2">
 					<div class="card border-0  mb-2 jb-dashboard-card hand">
 						<div class="card-body p-4 text-nowrap">
 							<span class="float-left"><i class="jbicon jb-kehuzhongxin01 j_font_30 j_left_fa text-primary rounded"></i></span>
 							<div class="text-right ">
-								<span class="d-block  j_font_24">34.1 K</span>
+								<span class="d-block j_left_fa j_font_24">费用月度实绩调整</span>
 								<span class="d-block">访问总量</span>
 							</div>
 						</div>
@@ -50,7 +81,7 @@
 						</div>
 					</div>
 				</div>		
-		</div>
+		</div> -->
 		<div class="row mt-2">
 				<div class="col-lg-12 col-sm-12 px-2">
 					<div class="card border-0  mb-2">

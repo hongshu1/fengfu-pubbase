@@ -1,0 +1,22 @@
+<form onsubmit="return false;" id="commonMenuForm" action="#(action)" method="post">
+<input type="hidden" name="commonMenu.id" value="#(commonMenu.id??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">类型：1. 预算 2. MOM</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入类型：1. 预算 2. MOM"  maxlength="10" name="commonMenu.type" value="#(commonMenu.type??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">菜单ID</label>
+		<div class="col">
+		<input type="text" autocomplete="off" data-autocomplete data-url="demo/userAutocomplete"  data-hiddeninput="menuid_hidden" class="form-control"  data-rule="required"  placeholder="请选择菜单ID"  data-tips="请选择菜单ID"  maxlength="200"/>
+		<input type="hidden" autocomplete="off" id="menuid_hidden"  data-rule="required"  placeholder="请选择菜单ID"   data-tips="请选择菜单ID"  name="commonMenu.menuid" value="#(commonMenu.menuid??)" maxLength="19"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="commonMenuForm")
+#end
+
