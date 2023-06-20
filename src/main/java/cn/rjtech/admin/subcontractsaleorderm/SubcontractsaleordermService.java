@@ -23,6 +23,7 @@ import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.Subcontractsaleorderm;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -32,6 +33,8 @@ import com.jfinal.plugin.activerecord.TableMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 委外销售订单主表 Service
@@ -567,6 +570,63 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), JBoltMsg.FAIL);
         // 修改客户计划汇总
         cusOrderSumService.algorithmSum();
+        return null;
+    }
+
+    /**
+     * 批量审批（审核）通过
+     * @param formAutoIds 单据IDs
+     * @return  错误信息
+     */
+    public String postBatchApprove(List<Long> formAutoIds) {
+        List<Subcontractsaleorderm> subcontractsaleorderms = getListByIds(StringUtils.join(formAutoIds, COMMA));
+        for (Subcontractsaleorderm subcontractsaleorderm : subcontractsaleorderms) {
+            // 订单状态校验
+            ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
+
+            // 订单状态修改
+            subcontractsaleorderm.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
+            subcontractsaleorderm.setIUpdateBy(JBoltUserKit.getUserId());
+            subcontractsaleorderm.setCUpdateName(JBoltUserKit.getUserName());
+            subcontractsaleorderm.setDUpdateTime(new Date());
+            subcontractsaleorderm.update();
+        }
+
+        // 审批通过生成客户计划汇总
+        cusOrderSumService.algorithmSum();
+        return null;
+    }
+
+    /**
+     * 批量审批（审核）不通过
+     * @param formAutoIds 单据IDs
+     * @return  错误信息
+     */
+    public String postBatchReject(List<Long> formAutoIds) {
+        for (Long formAutoId:formAutoIds) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+        }
+        return null;
+    }
+
+    /**
+     * 批量撤销审批
+     * @param formAutoIds 单据IDs
+     * @return  错误信息
+     */
+    public String postBatchBackout(List<Long> formAutoIds) {
+        List<Subcontractsaleorderm> subcontractsaleorderms = getListByIds(StringUtils.join(formAutoIds, COMMA));
+        Boolean algorithmSum = subcontractsaleorderms.stream().anyMatch(item -> item.getIOrderStatus().equals(WeekOrderStatusEnum.APPROVED.getValue()));
+        subcontractsaleorderms.stream().map(item -> {
+            item.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
+            return item;
+        }).collect(Collectors.toList());
+        batchUpdate(subcontractsaleorderms);
+
+        if (algorithmSum) {
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
+        }
         return null;
     }
 }

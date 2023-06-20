@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
-
 /**
  * 记录上传
  * @ClassName: FormUploadMService
@@ -41,7 +40,9 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @date: 2023-05-29 15:35
  */
 public class FormUploadMService extends BaseService<FormUploadM> implements IApprovalService {
+    
 	private final FormUploadM dao=new FormUploadM().dao();
+    
 	@Override
 	protected FormUploadM dao() {
 		return dao;
@@ -60,11 +61,11 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 	private FormUploadCategoryService formUploadCategoryService;
 	@Inject
 	private FormApprovalService formApprovalService;
+    
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-	 * @return
 	 */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv para) {
 		Page<Record> paginate = dbTemplate("formuploadm.getAdminDatas", para).paginate(pageNumber, pageSize);
@@ -81,8 +82,6 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 
 	/**
 	 * 保存
-	 * @param formUploadM
-	 * @return
 	 */
 	public Ret save(FormUploadM formUploadM) {
 		if(formUploadM==null || isOk(formUploadM.getIAutoId())) {
@@ -99,8 +98,6 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 
 	/**
 	 * 更新
-	 * @param formUploadM
-	 * @return
 	 */
 	public Ret update(FormUploadM formUploadM) {
 		if(formUploadM==null || notOk(formUploadM.getIAutoId())) {
@@ -532,7 +529,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 	 * @return 错误信息
 	 */
 	@Override
-	public String postApproveFunc(long formAutoId) {
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
 		FormUploadM formUploadM = findById(formAutoId);
 		// 审核状态修改
 		formUploadM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
@@ -583,4 +580,19 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 	public String postWithdrawFromAuditted(long formAutoId) {
 		return null;
 	}
+
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        return null;
+    }
 }

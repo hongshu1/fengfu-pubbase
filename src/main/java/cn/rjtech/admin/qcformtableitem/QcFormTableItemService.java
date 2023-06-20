@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +116,7 @@ public class QcFormTableItemService extends BaseService<QcFormTableItem> {
 		//这里用来覆盖 检测是否被其它表引用
 		return null;
 	}
-	
+
 	public QcFormTableItem createQcFormTableItem(Long id, Long qcFormId, Long qcFormItemId, Long qcFormParamId, Long qcFormTableParamId){
 		QcFormTableItem qcFormTableItem = new QcFormTableItem();
 		if (ObjectUtil.isNull(id)){
@@ -128,7 +129,7 @@ public class QcFormTableItemService extends BaseService<QcFormTableItem> {
 		qcFormTableItem.setIQcFormTableParamId(qcFormTableParamId);
 		return qcFormTableItem;
 	}
-	
+
 	public List<QcFormTableItem> createQcFormTableItemList(Long qcFormId, List<QcFormItem> qcFormItemList, JSONArray jsonArray){
 		if (CollectionUtil.isEmpty(jsonArray)){
 			return null;
@@ -138,7 +139,7 @@ public class QcFormTableItemService extends BaseService<QcFormTableItem> {
 		//
 		for (Object obj : jsonArray){
 			JSONObject jsonObject = (JSONObject)obj;
-			
+
 			for (Long itemId : qcItemMap.keySet()){
 				if (jsonObject.containsKey(itemId)){
 					QcFormTableItem qcFormTableItem = createQcFormTableItem(
@@ -150,7 +151,7 @@ public class QcFormTableItemService extends BaseService<QcFormTableItem> {
 					qcFormTableItemList.add(qcFormTableItem);
 					continue;
 				}
-				
+
 				QcFormTableItem qcFormTableItem = createQcFormTableItem(
 						null,
 						qcFormId,
@@ -168,11 +169,11 @@ public class QcFormTableItemService extends BaseService<QcFormTableItem> {
 		}
 		return qcFormTableItemList;
 	}
-	
+
 	public void removeByQcFormId(Long formId){
 		delete("DELETE Bd_QcFormTableItem WHERE iQCFormId = ?", formId);
 	}
-	
+
 	public List<QcFormTableItem> findByFormId(Long formId){
 		return find("SELECT * FROM Bd_QcFormTableItem WHERE iQcFormId = ?", formId);
 	}

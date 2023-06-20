@@ -53,7 +53,18 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">工序名称：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input type="text" class="form-control border-none" name="processname"  placeholder="" value="#(processDefect.processname??)"/>
+                    <select class="form-control"
+                            name="coperationname"
+                            data-autoload
+                            data-url="admin/processdefect/getOperationDatas"
+                            data-select-type="select2"
+                            data-text="=请选择工序名称="
+                            data-value=""
+                            data-sync-ele="#iOperationId"
+                            data-value-attr="coperationname"
+                            data-text-attr="coperationname"
+                            data-select="#(processDefect.coperationname??)"></select>
+                    <input type="hidden" data-sync-attr="iautoid" id="iOperationId" name="ioperationid" value="#(processDefect.ioperationid??)" />
                 </div>
                 <label class="col-sm-2 col-form-label">不良数量：</label>
                 <div class="col-sm-2 col-form-label">

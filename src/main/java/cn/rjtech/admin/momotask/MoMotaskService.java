@@ -776,9 +776,11 @@ public class MoMotaskService extends BaseService<MoMotask> {
         Record cequipment = new Record();
         cequipment.put("cequipmentname", "");
         cequipment.put("iequipmentid", "");
+
         Record coperation = new Record();
         coperation.put("coperationname", "");
         coperation.put("ioperationid", "");
+
         datas.put("cequipment", cequipment);
         datas.put("coperation", coperation);
         //</editor-fold>
@@ -817,38 +819,50 @@ public class MoMotaskService extends BaseService<MoMotask> {
     return records;
   }
 
+  /**
+   * 制造工单计划批量编辑数据源
+   */
   public List<Record> getEditorialPlanDatas(Kv kv) {
     ValidationUtils.notBlank(kv.getStr("taskid"), "制造工单任务ID缺失，获取数据异常！！！");
 
     //<editor-fold desc="A获取产线物料信息">
     List<Record> productionLineMaterials = dbTemplate("modocbatch.getModocDatas", kv).find();
-    List<String> productionLine = new ArrayList<>();
-    for (Record productionLineMaterial : productionLineMaterials) {
-      productionLine.add(productionLineMaterial.getStr("iWorkRegionMid") + productionLineMaterial.getStr("iInventoryId"));
-    }
     //</editor-fold>
 
     //<editor-fold desc="B获取日期班次信息 dateShifts ">
     List<Record> dateShifts = dbTemplate("modocbatch.getModocDateShiftDatas", kv).find();
     //</editor-fold>
 
+    //<editor-fold desc="C获取单号数量信息">
     List<Record> planDatas = dbTemplate("modocbatch.getPlanDatasBytaskId", kv).find();
+    //</editor-fold>
 
     for (Record productionLineMaterial : productionLineMaterials) {
       List<Record> datas = new ArrayList<>();
       for (Record dateShift : dateShifts) {
         for (Record plandata : planDatas) {
-          Record data = new Record();
           if (plandata.getStr("mergeid").equals(productionLineMaterial.getStr("mergeid")) && plandata.getStr("dates").equals(dateShift.getStr("dates1"))) {
+            Record data = new Record();
             data.put("cmodocno", plandata.getStr("cmodocno"));
             data.put("iqty", plandata.getStr("iqty"));
             datas.add(data);
+            break;
           }
         }
       }
       productionLineMaterial.put("rowDatas", datas);
     }
     return productionLineMaterials;
+  }
+
+  /**
+   * 编辑人员页面获取用户信息
+   *
+   * @param kv
+   * @return
+   */
+  public List<Record> getUserDatas(Kv kv) {
+    return dbTemplate("modocbatch.getUserDatas", kv).find();
   }
 
 }

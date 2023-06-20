@@ -13,6 +13,7 @@ import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -109,17 +110,25 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      */
     public void createTable(@Para(value = "iautoid") Long iautoid,
                             @Para(value = "cqcformname") String cqcformname) {
-        renderJson(service.createTable(iautoid, cqcformname));
+//        renderJson(service.createTable(iautoid, cqcformname));
+        renderJson(service.createTable2(iautoid, cqcformname));
     }
 
     /**
      * 跳转到检验页面
      */
     public void checkout() {
-        RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
-        Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
-//        service.commCreateTable();
-        set("rcvdocqcformm", rcvDocQcFormM);
+//        RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
+//        set("rcvdocqcformm", rcvDocQcFormM);
+        Record record = service.getCheckoutListByIautoId(getLong(0));
+        if (record == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        // 表头项目
+        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
+        set("columns", tableHeadData);
+        set("cvalueList", service.getCvaluelist().size());
         set("record", record);
         render("checkout.html");
     }

@@ -4,10 +4,13 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.RcvDocQcFormD;
+
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -121,5 +124,41 @@ public class RcvDocQcFormDService extends BaseService<RcvDocQcFormD> {
      */
     public List<RcvDocQcFormD> findByIRcvDocQcFormMId(Long iRcvDocQcFormMid) {
         return find("select * from PL_RcvDocQcFormD where iRcvDocQcFormMid=?", iRcvDocQcFormMid);
+    }
+
+    /*传参*/
+    public void saveRcvDocQcFormDModel(RcvDocQcFormD qcFormD, Long iRcvDocQcFormMid, Long iqcformId, int iseq,
+                                       int itype, Object istdVal, Object iMaxVal, Object iMinVal, Object cOptions,
+                                       String iqcformtableitemid) {
+        qcFormD.setIRcvDocQcFormMid(iRcvDocQcFormMid);
+        qcFormD.setIQcFormId(iqcformId);
+        qcFormD.setIFormParamId(Long.valueOf(iqcformtableitemid));
+        qcFormD.setISeq(iseq);
+        //qcFormD.setCQcFormParamIds(cQcFormParamIds);//String cQcFormParamIds,
+        qcFormD.setIType(itype);
+        qcFormD.setIStdVal(objToBig(istdVal));
+        qcFormD.setIMaxVal(objToBig(iMaxVal));
+        qcFormD.setIMinVal(objToBig(iMinVal));
+        qcFormD.setCOptions(cOptions != null ? cOptions.toString() : null);
+    }
+
+    /*object转bigdeciaml*/
+    public static BigDecimal objToBig(Object value) {
+        BigDecimal bigDecimal = null;
+        if (value != null) {
+            if (value instanceof BigDecimal) {
+                bigDecimal = (BigDecimal) value;
+            } else if (value instanceof String) {
+                bigDecimal = new BigDecimal((String) value);
+            } else if (value instanceof BigInteger) {
+                bigDecimal = new BigDecimal((BigInteger) value);
+            } else if (value instanceof Number) {
+                bigDecimal = new BigDecimal(((Number) value).doubleValue());
+            } else {
+                throw new ClassCastException(
+                    "Not possible to coerce [" + value + "] from class " + value.getClass() + " into a BigDecimal.");
+            }
+        }
+        return bigDecimal;
     }
 }

@@ -389,5 +389,11 @@ public class AdminIndexController extends JBoltBaseController {
 
         renderJsonSuccess();
     }
-
+    /**
+     * 禀议操作台
+     * */
+    @UnCheck
+    public void proposalDashBoardIndex(){
+    	render("proposal_dashboard.html");
+    }
 }

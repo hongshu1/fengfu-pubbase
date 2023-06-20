@@ -3,11 +3,11 @@ package cn.rjtech.event;
 import java.util.List;
 
 /**
- * 审批消息事件对象
+ * 批量审批消息
  *
  * @author Kephon
  */
-public class ApprovalMsgEvent {
+public class BatchAppprovalMsgEvent {
 
     /**
      * 登录用户ID
@@ -18,24 +18,19 @@ public class ApprovalMsgEvent {
      */
     private final String formSn;
     /**
-     * 主键名
+     * 单据主键名
      */
     private final String primaryKeyName;
     /**
-     * 单据ID
+     * 批量通知的单据
      */
-    private final long formAutoId;
-    /**
-     * 下一节点接收通知的用户Ids
-     */
-    private final List<Long> nextUserIds;
+    private final List<BatchApproval> approvals;
 
-    public ApprovalMsgEvent(long loginUserId, String formSn, String primaryKeyName, long formAutoId, List<Long> nextUserIds) {
+    public BatchAppprovalMsgEvent(long loginUserId, String formSn, String primaryKeyName, List<BatchApproval> approvals) {
         this.loginUserId = loginUserId;
         this.formSn = formSn;
         this.primaryKeyName = primaryKeyName;
-        this.formAutoId = formAutoId;
-        this.nextUserIds = nextUserIds;
+        this.approvals = approvals;
     }
 
     public long getLoginUserId() {
@@ -50,22 +45,17 @@ public class ApprovalMsgEvent {
         return primaryKeyName;
     }
 
-    public long getFormAutoId() {
-        return formAutoId;
-    }
-
-    public List<Long> getNextUserIds() {
-        return nextUserIds;
+    public List<BatchApproval> getApprovals() {
+        return approvals;
     }
 
     @Override
     public String toString() {
-        return "ApprovalMsgEvent{" +
+        return "BatchAppprovalMsgEvent{" +
                 "loginUserId=" + loginUserId +
                 ", formSn='" + formSn + '\'' +
                 ", primaryKeyName='" + primaryKeyName + '\'' +
-                ", formAutoId=" + formAutoId +
-                ", nextUserIds=" + nextUserIds +
+                ", approvals=" + approvals +
                 '}';
     }
     
