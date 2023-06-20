@@ -407,27 +407,25 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      * @return 错误信息
      */
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
-        if (isWithinBatch) {
-            AnnualOrderM annualOrderM = findById(formAutoId);
-            // 订单状态校验
-            ValidationUtils.equals(annualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
+        AnnualOrderM annualOrderM = findById(formAutoId);
+        // 订单状态校验
+        ValidationUtils.equals(annualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
 
-            // 订单状态修改
-            annualOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
-            annualOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-            annualOrderM.setCUpdateName(JBoltUserKit.getUserName());
-            annualOrderM.setDUpdateTime(new Date());
-            annualOrderM.update();
-            // 审批通过生成客户计划汇总
-            cusOrderSumService.algorithmSum();
-        }
+        // 订单状态修改
+        annualOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
+        annualOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+        annualOrderM.setCUpdateName(JBoltUserKit.getUserName());
+        annualOrderM.setDUpdateTime(new Date());
+        annualOrderM.update();
+        // 审批通过生成客户计划汇总
+        cusOrderSumService.algorithmSum();
         return null;
     }
 
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    public String postRejectFunc(long formAutoId, Boolean isWithinBatch) {
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }

@@ -2002,6 +2002,15 @@ public class PermissionKey {
 	 */
 	public static final String MONTHORDERM_BATCH_REJECT = "monthorderm_batch_reject";
 	/**
+	 * 反审
+	 */
+	public static final String MONTHORDERM_REVERSE_APPROVE = "monthorderm_reverse_approve";
+	/**
+	 * 批量反审
+	 */
+	public static final String MONTHORDERM_BATCH_REVERSE_APPROVE = "monthorderm_batch_reverse_approve";
+
+	/**
 	 * 提审
 	 */
 	public static final String ANNUALORDERM_SUBMIT = "annualorderm_submit";
@@ -2021,6 +2030,15 @@ public class PermissionKey {
 	 * 批量审核不通过
 	 */
 	public static final String ANNUALORDERM_BATCH_REJECT = "annualorderm_batch_reject";
+	/**
+	 * 反审
+	 */
+	public static final String ANNUALORDERM_REVERSE_APPROVE = "annualorderm_reverse_approve";
+	/**
+	 * 批量反审
+	 */
+	public static final String ANNUALORDERM_BATCH_REVERSE_APPROVE = "annualorderm_batch_reverse_approve";
+
 
 	/**
 	 * 提审
@@ -2042,6 +2060,14 @@ public class PermissionKey {
 	 * 批量审核不通过
 	 */
 	public static final String WEEKORDERM_BATCH_REJECT = "weekorderm_batch_reject";
+	/**
+	 * 反审
+	 */
+	public static final String WEEKORDERM_REVERSE_APPROVE = "weekorderm_reverse_approve";
+	/**
+	 * 批量反审
+	 */
+	public static final String WEEKORDERM_BATCH_REVERSE_APPROVE = "weekorderm_batch_reverse_approve";
 
 	/**
 	 * 提审
@@ -2063,6 +2089,14 @@ public class PermissionKey {
 	 * 批量审核不通过
 	 */
 	public static final String MANUALORDERM_BATCH_REJECT = "manualorderm_batch_reject";
+	/**
+	 * 反审
+	 */
+	public static final String MANUALORDERM_REVERSE_APPROVE = "manualorderm_reverse_approve";
+	/**
+	 * 批量反审
+	 */
+	public static final String MANUALORDERM_BATCH_REVERSE_APPROVE = "manualorderm_batch_reverse_approve";
 
 	/**
 	 * 提审
@@ -2084,4 +2118,12 @@ public class PermissionKey {
 	 * 批量审核不通过
 	 */
 	public static final String SUBCONTRACTSALEORDERM_BATCH_REJECT = "subcontractsaleorderm_batch_reject";
+	/**
+	 * 反审
+	 */
+	public static final String SUBCONTRACTSALEORDERM_REVERSE_APPROVE = "subcontractsaleorderm_reverse_approve";
+	/**
+	 * 批量反审
+	 */
+	public static final String SUBCONTRACTSALEORDERM_BATCH_REVERSE_APPROVE = "subcontractsaleorderm_batch_reverse_approve";
 }

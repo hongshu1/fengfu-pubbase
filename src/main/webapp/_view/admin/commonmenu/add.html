@@ -1,0 +1,83 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+<div class="jbolt_page_title">
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="commonMenuAddRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.title}</td>
+</tr>
+{@/each}
+</textarea>
+
+<table class="jbolt_table jbolt_main_table table-center"
+data-jbolttable
+data-height="fill"
+id="jbolt_table_#(pageId)"
+data-ajax="true"
+data-width="auto"
+data-autoload="true"
+data-url="admin/commonmenu/findAllCanCheckedMenu"
+data-ajax-success-handler="tableAjaxSuccessHandler_#(pageId)"
+data-column-resize="true"
+data-column-prepend="1:checkbox:true"
+data-rowtpl="commonMenuAddRowtpl_#(pageId)"
+>
+<thead class="fw-normal">
+<tr>
+	<th data-width="60">序号</th>
+	<th data-width="150" data-column="title">菜单名称</th>
+
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+function submitThisForm(){
+	var permissionId = getJboltTableCheckedIds("#jbolt_table_#(pageId)",false);
+	if(!permissionId) return;
+    var para = {
+    		permissionId: permissionId.join(",")
+    };
+    //保存部门对照表数据
+    Ajax.post('/admin/commonmenu/saveTableDatas', para, function (ret) {
+        if (ret.state === 'ok') {
+        	LayerMsgBox.success("保存成功");
+        	parent.layer.close(parent.layer.getFrameIndex(window.name));
+        	parent.refreshPjaxContainer();
+        } else {
+            LayerMsgBox.alert(ret.msg, 2);
+        }
+    });
+}
+function tableAjaxSuccessHandler_#(pageId)(table) {
+    Ajax.post('/admin/commonmenu/findCheckedIds', null, function (ret) {
+        if (ret.state === 'ok') {
+        	var ids = ret.data.ids;
+            if (ids) {
+            	var idsArr = ids.split(',');
+                setTimeout(function (){
+                	jboltTableSetCheckedIds(table,idsArr);
+                },100)
+            }
+        } else {
+            LayerMsgBox.alert(ret.msg, 2);
+        }
+    });
+}
+</script>
+#end

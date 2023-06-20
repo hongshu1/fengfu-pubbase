@@ -35,6 +35,7 @@ import cn.rjtech.model.momdata.InvestmentPlan;
 import cn.rjtech.model.momdata.InvestmentPlanItem;
 import cn.rjtech.model.momdata.InvestmentPlanItemd;
 import cn.rjtech.model.momdata.Period;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ReadInventmentExcelUtil;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -57,7 +58,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-10-18 09:33
  */
-public class InvestmentPlanService extends BaseService<InvestmentPlan> {
+public class InvestmentPlanService extends BaseService<InvestmentPlan> implements IApprovalService{
 
 	private final InvestmentPlan dao = new InvestmentPlan().dao();
 
@@ -1123,5 +1124,71 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 	public boolean periodIsExists(Period dbPeriod) {
 		List<InvestmentPlan> list = find(selectSql().eq("iPeriodId", dbPeriod.getIautoid()));
 		return CollUtil.isNotEmpty(list);
+	}
+
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

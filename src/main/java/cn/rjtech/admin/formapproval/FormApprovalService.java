@@ -1819,11 +1819,21 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 查询审批过程待审批的人员
      */
-    public List<Long> getNextApprovalUsers(Long formAutoId, Integer size) {
+    public List<Long> getNextApprovalUserIds(Long formAutoId, Integer size) {
         Kv kv = Kv.by("formAutoId", formAutoId)
                 .set("size", size);
 
-        return dbTemplate("formapproval.approvalProcessUsers", kv).query();
+        return dbTemplate("formapproval.getNextApprovalUserIds", kv).query();
+    }
+    
+    /**
+     * 查询审批过程待审批的人员
+     */
+    public List<Long> getNextApprovalUserNames(Long formAutoId, Integer size) {
+        Kv kv = Kv.by("formAutoId", formAutoId)
+                .set("size", size);
+
+        return dbTemplate("formapproval.getNextApprovalUserNames", kv).query();
     }
 
     /**
@@ -1911,7 +1921,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         tx(() -> {
             Record formData = getApprovalForm(formSn, primaryKeyName, formAutoId);
             ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“审核不通过”按钮");
-            ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态");
+            ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.APPROVED.getValue(), "非审核通过状态");
 
             // 更新审核不通过
             ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date()), "更新审核状态失败");
@@ -1945,7 +1955,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             ValidationUtils.assertBlank(msg, msg);
 
             // 更新审核通过
-            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), new Date()), "更新审核状态失败");
+            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), new Date()), "更新审核状态失败");
 
             // 后置业务实现
             msg = invokeMethod(className, "postReverseApproveFunc", formAutoId, true, true);

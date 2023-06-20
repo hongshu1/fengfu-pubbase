@@ -7,6 +7,8 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.cache.AuditFormConfigCache;
+import cn.rjtech.enums.FormAuditConfigTypeEnum;
 import cn.rjtech.model.momdata.FormApproval;
 import cn.rjtech.util.MsgEventUtil;
 import cn.rjtech.util.ValidationUtils;
@@ -136,7 +138,19 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(className, "缺少实现审批通过业务的类名参数");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少单据的提审权限");
 
-        renderJson(service.submit(formSn, formAutoId, primaryKeyName, className));
+        Ret ret = service.submit(formSn, formAutoId, primaryKeyName, className);
+
+        renderJson(ret);
+
+        if (ret.isOk()) {
+            // 审批流处理时，获取审批人推送消息
+            if (FormAuditConfigTypeEnum.toEnum(AuditFormConfigCache.ME.get(formAutoId).getIType()) == FormAuditConfigTypeEnum.FLOW) {
+                List<Long> list = service.getNextApprovalUserIds(formAutoId, 10);
+                if (CollUtil.isNotEmpty(list)) {
+                    MsgEventUtil.postApprovalMsgEvent(JBoltUserKit.getUserId(), formSn, primaryKeyName, formAutoId, list);
+                }
+            }
+        }
     }
 
     // --------------------------------------------------------------------------------------------------------------------
@@ -169,7 +183,7 @@ public class FormApprovalAdminController extends BaseAdminController {
 
         // 异步通知
         if (ret.isOk()) {
-            List<Long> list = service.getNextApprovalUsers(formAutoId, 10);
+            List<Long> list = service.getNextApprovalUserIds(formAutoId, 10);
             if (CollUtil.isNotEmpty(list)) {
                 MsgEventUtil.postApprovalMsgEvent(JBoltUserKit.getUserId(), formSn, primaryKeyName, formAutoId, list);
             }
@@ -443,7 +457,7 @@ public class FormApprovalAdminController extends BaseAdminController {
                                      @Para(value = "size", defaultValue = "5") Integer size) {
         ValidationUtils.validateId(formAutoId, "formAutoId");
 
-        renderJsonData(service.getNextApprovalUsers(formAutoId, size));
+        renderJsonData(service.getNextApprovalUserIds(formAutoId, size));
     }
 
 }
