@@ -237,4 +237,5 @@ public class QcFormTableParamService extends BaseService<QcFormTableParam> {
 		}
 		return mapList;
 	}
+
 }

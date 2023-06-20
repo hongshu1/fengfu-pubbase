@@ -466,8 +466,8 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
         });
         return SUCCESS;
     }
-    
-    
+
+
 
     /**
      * 检验表格数据源
@@ -594,9 +594,13 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
         }
         return FAIL;
     }
-    
+
     public Record findByQcFormId(Long id){
         return dbTemplate("inventoryqcform.pageList", Okv.by("iQcFormId", id)).findFirst();
+    }
+
+    public InventoryQcForm findByIInventoryId(Long iinventoryId){
+        return findFirst("SELECT * FROM Bd_InventoryQcForm where iInventoryId = ? ",iinventoryId);
     }
 
 }
