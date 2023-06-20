@@ -9,23 +9,23 @@
 				<div class="row">
 				#for(menuitem:menuitemlist)
 				#if(menuitem.title)
-					<div class="col-lg-3 col-md-6 col-sm-12 px-2" data-openpage data-url="#(menuitem.url)" data-title="#(menuitem.title)">
+					<div class="col-lg-2 col-md-6 col-sm-12 px-2" data-openpage data-url="#(menuitem.url)" data-title="#(menuitem.title)">
 						<div class="card border-0  mb-2 jb-dashboard-card hand">
-							<div class="card-body p-4 text-nowrap">
+							<div class="card-body p-2 text-nowrap">
 								<span class="float-left"><i class="#(menuitem.icons) j_font_30 j_left_fa text-primary rounded"></i></span>
 								<div class="text-right ">
-									<span class="d-block j_left_fa j_font_24">#(menuitem.title)</span>
+									<span class="d-block j_left_fa j_font_22">#(menuitem.title)</span>
 								</div>
 							</div>
 						</div>
 					</div>
 				#else
-					<div class="col-lg-3 col-md-6 col-sm-12 px-2" data-dialogbtn data-area="25%,80%" data-url="#(menuitem.url)" data-title="常用菜单">
+					<div class="col-lg-2 col-md-6 col-sm-12 px-2" data-dialogbtn data-area="25%,80%" data-url="#(menuitem.url)" data-title="常用菜单">
 						<div class="card border-0  mb-2 jb-dashboard-card hand">
-							<div class="card-body p-4 text-nowrap">
+							<div class="card-body p-2 text-nowrap">
 								<span class="float-left"><i class="#(menuitem.icons) j_font_30 j_left_fa text-primary rounded"></i></span>
 								<div class="text-right ">
-									<span class="d-block j_left_fa j_font_24">#(menuitem.title)</span>
+									<span class="d-block j_left_fa j_font_22">#(menuitem.title)</span>
 								</div>
 							</div>
 						</div>

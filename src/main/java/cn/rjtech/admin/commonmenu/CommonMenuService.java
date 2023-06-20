@@ -146,7 +146,7 @@ public class CommonMenuService extends BaseService<CommonMenu> {
 	public List<ArrayList<Record>> getDashBoardCommonMenu() {
 		List<Record> commonMenuList = dbTemplate("commonmenu.getDashBoardCommonMenu").find();
 		int commonMenuListSize = commonMenuList.size();
-		double perRowNum = 4;
+		double perRowNum = 6;
 		double commonMenuRow = Math.ceil(commonMenuListSize / perRowNum);
 		List<ArrayList<Record>> list = new ArrayList<ArrayList<Record>>();
 		for (int i=0; i<(int) commonMenuRow; i++) {
