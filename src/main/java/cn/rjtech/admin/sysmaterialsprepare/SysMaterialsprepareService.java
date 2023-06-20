@@ -183,9 +183,111 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
 
 
 
+//        int j=0;
+//        ArrayList<Integer> Nums = new ArrayList<>();//同一条存货编码出现的次数
+//        ArrayList<String> Batch = new ArrayList<>();//物料存货编码和批次号
 
 
-        return dbTemplate("materialsprepare.getDetaildatas", kv).paginate(pageNumber, pageSize);
+
+
+
+
+
+
+
+
+        List<Record> objects = new ArrayList<>();
+        int j=0;
+        String BATCH="";
+        BigDecimal QTYTOLL = new BigDecimal("0");
+        List<Record> recordList = dbTemplate("materialsprepare.xianjinxianchu", kv).find();
+        if (recordList.size()==0){
+            return null;
+        }
+        String cinvcode=recordList.get(0).get("cInvCode");//集合第一个数据的存货编码
+        for (int i=0;i<recordList.size();i++){
+            if (recordList.get(i).get("cInvCode").equals(cinvcode)){
+                BigDecimal planIqty=recordList.get(i).get("planIqty");
+                if (QTYTOLL.compareTo(planIqty)<1){//判断备料数量是否饱和
+                    QTYTOLL=QTYTOLL.add(recordList.get(i).get("QTY"));//物料录入，备料数量累加
+                    if (BATCH!=recordList.get(i).get("Batch")){
+                        Record record = new Record();
+                        record.set("cInvCode",recordList.get(i).get("cInvCode"));
+                        record.set("Batch",recordList.get(i).get("Batch"));
+                        record.set("cInvCode1",recordList.get(i).get("cInvCode1"));
+                        record.set("cInvName1",recordList.get(i).get("cInvName1"));
+                        record.set("planIqty",recordList.get(i).get("planIqty"));
+                        record.set("Billno",recordList.get(i).get("Billno"));
+                        record.set("SourceBillID",recordList.get(i).get("SourceBillID"));
+                        objects.add(record);
+                        j++;
+                    }
+                    BATCH=recordList.get(i).get("Batch");
+                }
+            }else {
+                cinvcode=recordList.get(i).get("cInvCode");
+                Record record = new Record();
+                record.set("cInvCode",recordList.get(i).get("cInvCode"));
+                record.set("Batch",recordList.get(i).get("Batch"));
+                record.set("cInvCode1",recordList.get(i).get("cInvCode1"));
+                record.set("cInvName1",recordList.get(i).get("cInvName1"));
+                record.set("planIqty",recordList.get(i).get("planIqty"));
+                record.set("Billno",recordList.get(i).get("Billno"));
+                record.set("SourceBillID",recordList.get(i).get("SourceBillID"));
+                objects.add(record);
+                j++;
+            }
+        }
+        int totalRow=j;
+        int totalPage=totalRow/pageSize;
+        if (totalPage*pageSize<totalRow){
+            totalPage++;
+        }
+        return new Page(objects,pageNumber, pageSize,totalPage,totalRow);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        for (int i=0;i<recordList.size();i++){
+//            if (recordList.get(i).get("cInvCode").equals(cinvcode)){
+//                j++;//相同存货编码出现次数
+//                if (Integer.valueOf(recordList.get(i).get("planIqty"))>QTYTOLL){//判断备料数量是否饱和
+//                    QTYTOLL+=Integer.valueOf(recordList.get(i).get("planIqty"));//物料录入，备料数量累加
+////                    Batch.add(recordList.get(i).get("cInvCode")+":"+recordList.get(i).get("Batch"));//记录该物料的批次号和存货编码
+//                    if (BATCH!=recordList.get(i).get("Batch")){
+//                        record.set("cInvCode",recordList.get(i).get("cInvCode"));
+//                        record.set("Batch",recordList.get(i).get("Batch"));
+//                        record.set("cInvCode1",recordList.get(i).get("cInvCode1"));
+//                        record.set("cInvName1",recordList.get(i).get("cInvName1"));
+//                    }
+//                    BATCH=recordList.get(i).get("Batch");
+//                }
+//            }else {
+//                Nums.add(j);//将相同存货编码出现的次数存入数组
+//                j=0;//归零
+//                cinvcode=recordList.get(i).get("cInvCode");
+//            }
+//            if (i==recordList.size()-1){
+//                Nums.add(j);//到数组最后一个判断完存入数组
+//            }
+//        }
+
+
+
+
+//        return dbTemplate("materialsprepare.getDetaildatas", kv).paginate(pageNumber, pageSize);
     }
 
     public Page<Record> getBarcodedatas(int pageNumber, int pageSize, Kv kv) {

@@ -901,7 +901,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		// 记录上一行有编码栏的值
 		Record perCacheRecord = null;
 		// 子件数据从第十一行开始读，下标10
-		for (int i=10; i<sheet.getLastRowNum(); i++){
+		for (int i=10; i<=sheet.getLastRowNum(); i++){
 			XSSFRow row = sheet.getRow(i);
 			if (ObjectUtil.isNull(row) || ObjectUtil.isNull(row.getCell(1))){
 				perCacheRecord = null;
@@ -961,8 +961,9 @@ public class BomMasterService extends BaseService<BomMaster> {
 				}
 				perCacheRecord = null;
 				continue;
+			}else {
+				rowRecord.set(codeKey, codeValue);
 			}
-			rowRecord.set(codeKey, codeValue);
 			// 补充第一行所有数据行
 			buildFristRow(sheet, row, rowRecord);
 			// 记录当前行
