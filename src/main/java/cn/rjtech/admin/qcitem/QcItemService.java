@@ -13,6 +13,7 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.QcItem;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -267,5 +268,48 @@ public class QcItemService extends BaseService<QcItem> {
 
     public QcItem findBycQcItemName(String cqcitemname) {
         return findFirst(selectSql().eq(QcItem.CQCITEMNAME, cqcitemname).eq(QcItem.IORGID, getOrgId()).eq(QcItem.ISDELETED, ZERO_STR).first());
+    }
+
+    /**
+     * 从系统导入字段配置，获得导入的数据
+     */
+    public Ret importExcelClass(File file) {
+        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        if (notOk(records)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+        }
+
+
+        for (Record record : records) {
+
+            if (StrUtil.isBlank(record.getStr("cQcItemCode"))) {
+                return fail("检验项目编码不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("cQcItemName"))) {
+                return fail("检验项目名称不能为空");
+            }
+
+
+            Date now=new Date();
+
+            record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+            record.set("iOrgId", getOrgId());
+            record.set("cOrgCode", getOrgCode());
+            record.set("cOrgName", getOrgName());
+            record.set("iCreateBy", JBoltUserKit.getUserId());
+            record.set("dCreateTime", now);
+            record.set("cCreateName", JBoltUserKit.getUserName());
+            record.set("isDeleted",0);
+            record.set("iUpdateBy", JBoltUserKit.getUserId());
+            record.set("dUpdateTime", now);
+            record.set("cUpdateName", JBoltUserKit.getUserName());
+        }
+
+        // 执行批量操作
+        tx(() -> {
+            batchSaveRecords(records);
+            return true;
+        });
+        return SUCCESS;
     }
 }
