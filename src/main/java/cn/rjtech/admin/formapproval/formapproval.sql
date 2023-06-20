@@ -39,7 +39,7 @@ where id in
                from Bd_FormApprovalD where iFormApprovalId = (
                    select Bd_FormApproval.iAutoId
                    from Bd_FormApproval where iFormObjectId = '#(formAutoId)' and isDeleted = '0'
-               ) and iStatus = 1 order by iSeq desc)))
+               ) and iStatus = 1 order by iSeq asc )) and iAuditStatus = 1)
 #end
 
 #sql("getNextApprovalUserIds")
@@ -86,7 +86,7 @@ where iFormApprovalFlowMid in (
 
 
 #sql("findPersonByUserId")
-select t1.* 
+select t1.*
 from Bd_Person t1
 left join (
     select g.iPersonId, u.id
