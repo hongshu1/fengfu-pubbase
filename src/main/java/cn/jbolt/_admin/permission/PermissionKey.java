@@ -1258,6 +1258,26 @@ public class PermissionKey {
 	 */
 	public static final String EXPENSE_BUDGET_MANAGE = "expense_budget_manage";
 	/**
+	 * 详情
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE_DETAIL = "expense_budget_manage_detail";
+	/**
+	 * 生效
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE_EFFECT = "expense_budget_manage_effect";
+	/**
+	 * 作废
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE_CANCLE = "expense_budget_manage_cancle";
+	/**
+	 * 撤销提审
+	 */
+	public static final String EXPENSEBUDGET_WITHDRAW = "expensebudget_withdraw";
+	/**
+	 * 查看审批
+	 */
+	public static final String EXPENSE_FORMAPPROVALFLOW_INDEX = "expense_formapprovalflow_index";
+	/**
 	 * 费用月度实绩调整
 	 */
 	public static final String EXPENSE_MONTH_ADJUSTMENTM = "expense_month_adjustmentm";
@@ -1269,6 +1289,31 @@ public class PermissionKey {
 	 * 投资计划管理
 	 */
 	public static final String INVESTMENT_PLAN_MANAGE = "investment_plan_manage";
+	/**
+	 * 详情
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE_DETAIL = "investment_plan_manage_detail";
+	/**
+	 * 生效
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE_EFFECT = "investment_plan_manage_effect";	
+	/**
+	 * 作废
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE_CANCLE = "investment_plan_manage_cancle";	
+	/**
+	 * 撤销提审
+	 */
+	public static final String INVESTMENTPLAN_WITHDRAW = "investmentplan_withdraw";
+	/**
+	 * 查看审批
+	 */
+	public static final String INVESTMENT_FORMAPPROVALFLOW_INDEX = "investment_formapprovalflow_index";
+	/**
+	 * 查看审批
+	 */
+	public static final String PROPOSALM_FORMAPPROVALFLOW_INDEX = "proposalm_formapprovalflow_index";
+	
 	/**
 	 * 投资月度实绩管理
 	 */
@@ -1807,6 +1852,7 @@ public class PermissionKey {
 	 * 提交审核
 	 */
 	public static final String EXPENSE_BUDGET_FORMULATE_SUBMITAUDIT = "expense_budget_formulate_submitaudit";
+	
 	/**
 	 * 新增
 	 */
@@ -1831,18 +1877,7 @@ public class PermissionKey {
 	 * 撤销提审
 	 */
 	public static final String PROPOSALM_WITHDRAW = "proposalm_withdraw";
-	/**
-	 * 详情
-	 */
-	public static final String EXPENSE_BUDGET_MANAGE_DETAIL = "expense_budget_manage_detail";
-	/**
-	 * 生效
-	 */
-	public static final String EXPENSE_BUDGET_MANAGE_EFFECT = "expense_budget_manage_effect";
-	/**
-	 * 失效
-	 */
-	public static final String EXPENSE_BUDGET_MANAGE_UNEFFECT = "expense_budget_manage_uneffect";
+
 	/**
 	 * 新增
 	 */
@@ -1855,6 +1890,7 @@ public class PermissionKey {
 	 * 生效
 	 */
 	public static final String EXPENSE_MONTH_ADJUSTMENTM_EFFECT = "expense_month_adjustmentm_effect";
+	
 	/**
 	 * 撤销
 	 */
@@ -1883,18 +1919,7 @@ public class PermissionKey {
 	 * 提交审核
 	 */
 	public static final String INVESTMENT_PLAN_FORMULATE_SUBMITAUDIT = "investment_plan_formulate_submitaudit";
-	/**
-	 * 详情
-	 */
-	public static final String INVESTMENT_PLAN_MANAGE_DETAIL = "investment_plan_manage_detail";
-	/**
-	 * 生效
-	 */
-	public static final String INVESTMENT_PLAN_MANAGE_EFFECT = "investment_plan_manage_effect";
-	/**
-	 * 失效
-	 */
-	public static final String INVESTMENT_PLAN_MANAGE_UNEFFECT = "investment_plan_manage_uneffect";
+
 	/**
 	 * 新增
 	 */
@@ -1960,7 +1985,7 @@ public class PermissionKey {
 	 */
 	public static final String PURCHASE_INSTRUMENT_DELETE = "purchase_instrument_delete";
 	/**
-	 * 撤销审核
+	 * 撤销提审
 	 */
 	public static final String PURCHASE_WITHDRAW = "purchase_withdraw";
 	/**
@@ -1972,6 +1997,10 @@ public class PermissionKey {
 	 */
 	public static final String PURCHASE_MANAGEMENT_SUMBITPURCHASE = "purchase_management_sumbitpurchase";
 	/**
+	 * 查看审批
+	 */
+	public static final String PURCHASEM_FORMAPPROVALFLOW_INDEX = "purchasem_formapprovalflow_index";	
+	/**
 	 * 导出
 	 */
 	public static final String PROPOSAL_DETAIL_EXPORT = "proposal_detail_export";
@@ -1979,14 +2008,6 @@ public class PermissionKey {
 	 * 导出
 	 */
 	public static final String EXECUTION_PROGRESS_TRACKING_EXPORT = "execution_progress_tracking_export";
-	/**
-	 * 作废
-	 */
-	public static final String EXPENSE_BUDGET_MANAGE_CANCLE = "expense_budget_manage_cancle";
-	/**
-	 * 作废
-	 */
-	public static final String INVESTMENT_PLAN_MANAGE_CANCLE = "investment_plan_manage_cancle";
 	/**
 	 * 通过
 	 */

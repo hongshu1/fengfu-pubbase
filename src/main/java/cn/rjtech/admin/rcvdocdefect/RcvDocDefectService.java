@@ -282,6 +282,9 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		rcvDocDefect.setIOrgId(getOrgId());
 		rcvDocDefect.setCOrgCode(getOrgCode());
 		rcvDocDefect.setCOrgName(getOrgName());
+		rcvDocDefect.setCUpdateName(userName);
+		rcvDocDefect.setDUpdateTime(date);
+		rcvDocDefect.setIUpdateBy(userId);
 //		rcvDocDefect.setIQcUserId(docQcFormM.getIQcUserId());        //检验用户ID
 //		rcvDocDefect.setDQcTime(docQcFormM.getDUpdateTime());        //检验时间
 //		rcvDocDefect.setCBadnessSns("不良项目");

@@ -81,16 +81,13 @@ public class RcvDocQcFormMApiController extends BaseApiController {
      * 点击生成按钮，生成来料检成绩表
      *
      * @param iautoid     主表id
-     * @param cqcformname 检验表格名称
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void createTable(@Para(value = "iautoid") Long iautoid, 
-                            @Para(value = "cqcformname") String cqcformname) {
+    public void createTable(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(cqcformname, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService.createTable(iautoid, cqcformname));
+        renderJBoltApiRet(apiService.createTable(iautoid));
     }
 
     /**

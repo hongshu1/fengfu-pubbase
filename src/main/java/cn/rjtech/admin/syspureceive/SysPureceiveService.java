@@ -735,7 +735,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
     public String installsyspuinstore(SysPureceive byId, Date now, User user,Record barcode) {
         SysPuinstore sysPuinstore = new SysPuinstore();
         sysPuinstore.setBillNo(byId.getBillNo());
-        sysPuinstore.setBillType(byId.getBillType());
+//        sysPuinstore.setBillType(byId.getBillType());
         sysPuinstore.setBillDate(DateUtil.formatDate(now));
         sysPuinstore.setOrganizeCode(getOrgCode());
         sysPuinstore.setSourceBillNo(byId.getSourceBillNo());
@@ -924,7 +924,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
                             sysPuinstoredetail.setSourceBillNoRow(f.getSourceBillNo() + "-" + i);
                             sysPuinstoredetail.setSourceBillDid(f.getSourceBillDid());
                             sysPuinstoredetail.setSourceBillID(f.getSourceBillID());
-                            sysPuinstoredetail.setRowNo(f.getRowNo());
+//                            sysPuinstoredetail.setRowNo(f.getRowNo());
                             sysPuinstoredetail.setWhcode(f.getWhcode());
                             sysPuinstoredetail.setPosCode(f.getPosCode());
                             sysPuinstoredetail.setQty(f.getQty());
