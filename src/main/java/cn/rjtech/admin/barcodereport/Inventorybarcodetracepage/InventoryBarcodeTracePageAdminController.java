@@ -73,12 +73,13 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
 
 
     /**
-     * 生成二维码
+     * 获取打印数据
      */
-    public void QRCode() {
+    public void PrintData() {
         Kv kv = new Kv();
         kv.setIfNotNull("ids", get("ids"));
-        renderJsonData(service.getBarcodeTotalList(DataSourceConstants.U8,kv));
+        ValidationUtils.notBlank(get("ids"), "数据记录不存在！！!");
+        renderJsonData(service.barcodeTotalDatas(getPageSize(),getPageNumber(),kv));
     }
 
 
@@ -129,134 +130,4 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
         renderBytesToExcelXlsFile(jBoltExcel);
 
     }
-
-//    /***
-//     * 勾选导出
-//     */
-//    @SuppressWarnings("unchecked")
-//    public void detailsDownloadChecked() throws Exception{
-//        Kv kv = getKv();
-//        String ids = kv.getStr("ids");
-//        if (ids != null) {
-//            String[] split = ids.split(",");
-//            String sqlids = "";
-//            for (String id : split) {
-//                sqlids += "'" + id + "',";
-//            }
-//            ValidationUtils.isTrue(sqlids.length() > 0, "请至少选择一条数据!");
-//            sqlids = sqlids.substring(0, sqlids.length() - 1);
-//            kv.set("sqlids", sqlids);
-//        }
-//        List<Record> records = service.detailsDatasList(kv);
-//        renderJxls("barcode_details.xlsx", Kv.by("rows", records), "条码变更记录_" + DateUtil.today() + ".xlsx");
-//
-//    }
-//
-//
-//    public void printEntityLabelAffirm(@Para(value = "barcode") String barcode) throws Exception{
-//        ValidationUtils.notNull(barcode, JBoltMsg.PARAM_ERROR);
-//
-//
-//        //指定自定义模板库模板
-//        HiprintTpl hiprintTpl = null;
-//
-//        //条码号，V_sys_BarcodeDetail，查询MES来源
-//        Record record = service.getMesSourceBarCode(Kv.by("cbarcode", barcode));
-//        Object jsonData = null;
-//
-//        if(isOk(record) && isOk(record.getStr("cbarcode"))){
-//            Kv kv = Kv.by("ids", record.getStr("iautoid"));
-//            switch (record.getStr("csource")) {
-//                case MesSourceBarCodeEnum.FT:
-//                    //分条料/片料
-//                    if(isOk(record.getStr("cmemo")) && record.getStr("cmemo").equals("0")){
-//                        hiprintTpl = tplService.findHiprintTplBySn("StripingTwo");
-//                        jsonData = cutstripprocessService.getListStriping(kv);
-//                    }else{
-//                        hiprintTpl = tplService.findHiprintTplBySn("Slicedmaterial");
-//                        jsonData = cutstripprocessService.getListSlicedmaterial(kv);
-//                    }
-//                    break;
-//                case MesSourceBarCodeEnum.FTYJ:
-//                    //分条余卷
-//                    hiprintTpl = tplService.findHiprintTplBySn("ResidualvolumeTwo");
-//                    jsonData = cutstripprocessService.getListresidualvolume(kv);
-//                    break;
-//                case MesSourceBarCodeEnum.FTYL:
-//                    //分条余料
-//                    break;
-//                case MesSourceBarCodeEnum.PL:
-//                    //片料
-//                    hiprintTpl = tplService.findHiprintTplBySn("Sheetmaterial");
-//                    jsonData = sliceinvprocessService.getListSheetMaterial(kv);
-//                    break;
-//                case MesSourceBarCodeEnum.PLYL:
-//                    //片料余料
-//                    break;
-//                case MesSourceBarCodeEnum.BL:
-//                    //板料
-//                    hiprintTpl = tplService.findHiprintTplBySn("CoiledSheet");
-//                    jsonData = pieceinvprocessService.getListSelectPrint(kv);
-//                    break;
-//                case MesSourceBarCodeEnum.ZJ:
-//                    //载具
-//                    hiprintTpl = tplService.findHiprintTplBySn("loadmould");
-//                    jsonData = loadMouldService.getList(kv);
-//                    break;
-//                case MesSourceBarCodeEnum.SCTM:
-//                    //生产条码
-//                    hiprintTpl = tplService.findHiprintTplBySn("entity_label_tpl");
-//                    jsonData = assignpositionrecordService.selectPrintEntityLabelAffirmList(kv);
-//                    break;
-//                case MesSourceBarCodeEnum.SCBL:
-//                    hiprintTpl = tplService.findHiprintTplBySn("entity_label_badness_tpl");
-//                    jsonData = assignpositionrecordService.skipPrintEntityLabelBadnessAffirm(kv);
-//                    break;
-//                default:
-//                    break;
-//            }
-//
-//        }else{
-//            //其它来源处理
-//            Kv kv = getKv();
-//            String type = kv.getStr("type");
-//            String billstate = kv.getStr("billstate");
-//
-//            //期初卷料
-//            boolean qcjl=type!=null&&type.equals("卷料")&&billstate.equals("期初");
-//            //非期初卷料
-//            boolean jl=type!=null&&type.equals("卷料")&&!billstate.equals("期初");
-//            //非期初片料
-//            boolean pl=type!=null&&type.equals("片料")&&!billstate.equals("期初");
-//
-//            if(qcjl){
-//                //期初卷料
-//                hiprintTpl=tplService.findHiprintTplBySn("labelJuan_total");
-//                jsonData = service.barcodedetail_JL(barcode);
-//            }else if(jl) {
-//                //非期初卷料
-//                hiprintTpl=tplService.findHiprintTplBySn("labelJuan");
-//                jsonData = service.barcodedetail_JL(barcode);
-//            }else if(pl) {
-//                //非期初片料
-//                hiprintTpl=tplService.findHiprintTplBySn("labelPian");
-//                jsonData = service.barcodedetail_PL_new(barcode);
-//            }else{
-//                ValidationUtils.notNull(record, JBoltMsg.DATA_NOT_EXIST+ ",未设置数据来源或未找到条码"+barcode);
-//            }
-//        }
-//
-//        ValidationUtils.notNull(hiprintTpl, "未设置打印模板！");
-//        set("printJsonData", jsonData);
-//        set("hiprintTpl", hiprintTpl.getContent());
-//        render("print_entity_label_affirm.html");
-//    }
-
-
-
-
-
-
-
-
 }

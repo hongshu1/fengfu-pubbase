@@ -113,43 +113,6 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     }
 
     /**
-     * 提交审批
-     */
-    public void submit() {
-        renderJson(service.submit(getLong("iautoid")));
-    }
-
-    /**
-     * 撤回
-     */
-    public void withdraw() {
-        renderJson(service.withdraw(getLong("iautoid")));
-    }
-
-    /**
-     * 审批
-     */
-    public void approve() {
-        renderJson(service.approve(getLong(0)));
-    }
-
-    /**
-     * 审批不通过
-     */
-    public void reject()
-    {
-        renderJson(service.reject(getLong(0)));
-    }
-
-    /**
-     * 批量审核
-     */
-    public void batchApprove()
-    {
-        renderJson(service.batchApprove(get("ids")));
-    }
-
-    /**
      * 批量反审
      */
     public void batchReverseApprove()

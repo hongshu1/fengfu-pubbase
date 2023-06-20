@@ -130,13 +130,6 @@ public class MonthordermAdminController extends BaseAdminController {
     }
 
     /**
-     * 撤回
-     */
-    public void withdraw() {
-        renderJson(service.withdraw(getLong("iautoid")));
-    }
-
-    /**
      * 模板下载
      */
     @SuppressWarnings("unchecked")

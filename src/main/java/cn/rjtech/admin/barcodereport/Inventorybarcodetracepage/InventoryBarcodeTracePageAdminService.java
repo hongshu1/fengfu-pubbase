@@ -186,9 +186,8 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
     public List<Record> excuteBarcodeTracePage(String dataSourceConfigName,String tempTableName) {
         List<Map> listMap=(List<Map>) executeFunc(dataSourceConfigName, (conn) -> {
             List<Map<String, Object>> list = new ArrayList<>();
-            CallableStatement proc = conn.prepareCall("{ call P_Sys_InventoryBarcodeTracePage(?) }");
+            CallableStatement proc = conn.prepareCall("{ call P_Sys_InventoryBarcodeTracePage(?,@Type ='Inventory') }");
             proc.setObject(1, tempTableName);
-
             //执行
             boolean isSuccess = true;
             ResultSet rs = null;

@@ -16,13 +16,11 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
-import java.util.Optional;
 
 /**
  * 客户订单-手配订单主表
@@ -89,44 +87,6 @@ public class ManualOrderMAdminController extends BaseAdminController {
         set("manualOrderM", datas.getList().get(0));
         keepPara();
         render("edit.html");
-    }
-
-    /**
-     * 提交审批
-     */
-    public void submit() {
-        renderJson(service.submit(getLong("iautoid")));
-    }
-
-    /**
-     * 审核
-     */
-    public void approve() {
-        renderJson(service.approve(getLong(0)));
-    }
-
-    /**
-     * 撤回
-     */
-    public void withdraw(@Para(value = "iautoid") Long iAutoId) {
-        ValidationUtils.validateId(iAutoId, "iAutoId");
-        renderJson(service.withdraw(iAutoId));
-    }
-
-    /**
-     * 批量审核
-     */
-    public void batchApprove()
-    {
-        renderJson(service.batchApprove(get("ids")));
-    }
-
-    /**
-     * 批量反审
-     */
-    public void batchReverseApprove()
-    {
-        renderJson(service.batchReverseApprove(get("ids")));
     }
 
     /**

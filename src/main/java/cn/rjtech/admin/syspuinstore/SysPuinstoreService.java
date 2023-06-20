@@ -32,7 +32,6 @@ import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO.data;
 import cn.rjtech.util.BaseInU8Util;
 import cn.rjtech.util.ValidationUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -829,11 +828,11 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         for (SysPuinstore puinstore : puinstores) {
             //未审核状态下不能批量审核
             if (puinstore.getIAuditStatus() == AuditStatusEnum.AWAIT_AUDIT.getValue()) {
-                ValidationUtils.isTrue(false, puinstore.getBillNo() + "：待审核状态下，不能批量反审核！！");
+                ValidationUtils.error( puinstore.getBillNo() + "：待审核状态下，不能批量反审核！！");
             } else if (puinstore.getIAuditStatus() == AuditStatusEnum.NOT_AUDIT.getValue()) {
-                ValidationUtils.isTrue(false, puinstore.getBillNo() + "：单据未提交审核或审批，不能批量反审核！！");
+                ValidationUtils.error(puinstore.getBillNo() + "：单据未提交审核或审批，不能批量反审核！！");
             } else if (puinstore.getIAuditStatus() == AuditStatusEnum.REJECTED.getValue()) {
-                ValidationUtils.isTrue(false, puinstore.getBillNo() + "：审核未通过，不能批量反审核！！");
+                ValidationUtils.error(puinstore.getBillNo() + "：审核未通过，不能批量反审核！！");
             }
         }
     }
@@ -897,67 +896,10 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
     public void checkApproveAndReject(long id) {
         SysPuinstore puinstore = findById(id);
         if (AuditStatusEnum.NOT_AUDIT.getValue() == puinstore.getIAuditStatus()) {
-            ValidationUtils.isTrue(false, "入库单号：" + puinstore.getBillNo() + " 单据未提交审核或审批！！");
-        } else if (AuditStatusEnum.APPROVED.getValue() == puinstore.getIAuditStatus()
-            || AuditStatusEnum.REJECTED.getValue() == puinstore.getIAuditStatus()) {
-            ValidationUtils.isTrue(false, "入库单号：" + puinstore.getBillNo() + " 流程已结束！！");
+            ValidationUtils.error("入库单号：" + puinstore.getBillNo() + " 单据未提交审核或审批！！");
+        } else if (AuditStatusEnum.APPROVED.getValue() == puinstore.getIAuditStatus() || AuditStatusEnum.REJECTED.getValue() == puinstore.getIAuditStatus()) {
+            ValidationUtils.error("入库单号：" + puinstore.getBillNo() + " 流程已结束！！");
         }
     }
 
-    /**
-     * 撤回提审批流
-     */
-    public Ret withdraw(Long autoid) {
-        tx(() -> {
-            SysPuinstore puinstore = findById(autoid);
-            ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), puinstore.getIAuditStatus(), "只允许将待审核状态订单撤回");
-            puinstore.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-            puinstore.setCUpdateName(JBoltUserKit.getUserName());
-            puinstore.setDUpdateTime(new Date());
-            puinstore.setIAuditWay(0);
-            ValidationUtils.isTrue(puinstore.update(), "撤回失败");
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /*
-     * 反审核
-     * */
-    public Ret reverseApprove(Long autoid) {
-        tx(() -> {
-            SysPuinstore puinstore = findById(autoid);
-//            ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), puinstore.getIAuditStatus(), "只允许待审核状态下反审核");
-            formApprovalService.withdraw(table(), primaryKey(), autoid, (formAutoId) -> null, (formAutoId) -> {
-                puinstore.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-                puinstore.setCUpdateName(JBoltUserKit.getUserName());
-                puinstore.setDUpdateTime(new Date());
-                ValidationUtils.isTrue(puinstore.update(), "撤回失败");
-
-                return null;
-            });
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /*
-     * 提交审核
-     * */
-    public Ret submit(Long autoid) {
-        SysPuinstore puinstore = findById(autoid);
-        ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), puinstore.getIAuditStatus(), "只允许未审核状态下提交审核");
-        puinstore.setIAuditStatus(1);
-        puinstore.setCUpdateName(JBoltUserKit.getUserName());
-        puinstore.setDUpdateTime(new Date());
-        puinstore.setDSubmitTime(new Date());
-        puinstore.setIAuditWay(1);
-        tx(() -> {
-//            boolean update = puinstore.update();
-            this.update(puinstore);
-//            ValidationUtils.isTrue(update, "审核失败");
-            return true;
-        });
-        return SUCCESS;
-    }
 }

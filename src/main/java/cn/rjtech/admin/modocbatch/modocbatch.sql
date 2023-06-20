@@ -133,7 +133,9 @@ WHERE
 
 #sql("getModocDateShiftDatas")
 SELECT DISTINCT
+	#if(iinventoryid)
     doc.iAutoId,
+    #end
 	doc.iYear,
 	doc.iMonth,
 	doc.iDate,
