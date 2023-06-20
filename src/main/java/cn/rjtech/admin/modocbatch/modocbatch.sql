@@ -118,8 +118,8 @@ WHERE mr.iMoDocId = #para(docId) order by  mrc.iSeq
 SELECT DISTINCT
 	modoc.iWorkRegionMid ,
 	modoc.iInventoryId,
+	concat(modoc.iWorkRegionMid,modoc.iInventoryId) mergeid,
 	regionm.cWorkName ,
-	modoc.iInventoryId,
 	inventory.cInvCode ,
 	inventory.cInvCode1 ,
 	inventory.cInvName1
@@ -133,14 +133,17 @@ WHERE
 
 #sql("getModocDateShiftDatas")
 SELECT DISTINCT
+	#if(iinventoryid)
     doc.iAutoId,
+    #end
 	doc.iYear,
 	doc.iMonth,
 	doc.iDate,
 	doc.iWorkShiftMid,
 	shiftm.cWorkShiftCode,
 	shiftm.cWorkShiftName,
-	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) dates
+	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) dates,
+	concat ( doc.iYear , doc.iMonth, doc.iDate, doc.iWorkShiftMid ) dates1
 FROM
 	Mo_MoDoc doc
 	LEFT JOIN Bd_WorkShiftM shiftm ON doc.iWorkShiftMid= shiftm.iAutoId
@@ -278,21 +281,44 @@ ORDER BY sdate ASC
 
 #sql("getPlanDatasBytaskId")
 SELECT DISTINCT
-	concat ( iWorkRegionMid, iInventoryId ) regtory,
+	concat ( iWorkRegionMid, iInventoryId ) mergeid,
 	concat ( iYear, iMonth, iDate, iWorkShiftMid ) dates,
 	cMoDocNo,
-	iQty
+	iQty,
+	concat ( iYear, '-', iMonth, '-', iDate ) sdate
 FROM
 	Mo_MoDoc
 WHERE
 	iMoTaskId = #(taskid)
+ORDER BY sdate ASC
 #end
 
-
-
-
-
-
+#sql("getUserDatas")
+SELECT
+	per.iAutoId,
+	per.cPsn_Num cpsnnum,
+	per.cPsn_Name cpsnname,
+	ISNULL(per.cPsnMobilePhone, ' ') cpsnmobilephone,
+	dep.cdepname
+FROM
+	Bd_Person per
+	LEFT JOIN Bd_PersonEquipment eq ON eq.iPersonId= per.iAutoId
+	LEFT JOIN Bd_Department dep ON per.cdept_num = dep.cdepcode
+WHERE
+	eq.isDeleted= 0
+	AND per.isDeleted= 0
+	AND per.isEnabled = 1
+	AND per.dLeaveDate IS NULL
+#if(iequipmentid)
+	AND eq.iEquipmentId IN #(iequipmentid)
+#end
+#if(cpsnname)
+	AND (per.cPsn_Num LIKE CONCAT('%',#para(cpsnname),'%') OR per.cPsn_Name LIKE CONCAT('%',#para(cpsnname),'%'))
+#end
+#if(cdepname)
+	AND dep.cdepname IN #para(cdepname)
+#end
+#end
 
 
 

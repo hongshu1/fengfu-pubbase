@@ -335,7 +335,7 @@ public class SysProductinService extends BaseService<SysProductin> {
 
         preallocate.set("userCode",user.getUsername());
         preallocate.set("organizeCode",this.getdeptid());
-        preallocate.set("CreatePerson",user.getId());
+        preallocate.set("CreatePerson",user.getUsername());
         preallocate.set("CreatePersonName",user.getName());
         preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
         preallocate.set("tag","ProductionIn");
@@ -358,16 +358,20 @@ public class SysProductinService extends BaseService<SysProductin> {
             jsonObject.set("packrate","1");
             jsonObject.set("barcode",s.getBarcode());
             jsonObject.set("batch","");
-            jsonObject.set("sourcebillnorow","");
-            jsonObject.set("sourcebillrowno",s.getSourceBIllNoRow());
-            jsonObject.set("sourcebillno",s.getSourceBillNo());
-            jsonObject.set("sourcebilltype",s.getSourceBillType());
-            jsonObject.set("sourcebillqty","");
+//            jsonObject.set("sourcebillnorow","");
+//            jsonObject.set("sourcebillrowno",s.getSourceBIllNoRow());
+//            jsonObject.set("sourcebillno",s.getSourceBillNo());
+//            jsonObject.set("sourcebilltype",s.getSourceBillType());
+            jsonObject.set("sourcebillnorow","8080000001");
+            jsonObject.set("sourcebillrowno","8080000001-1");
+            jsonObject.set("sourcebillno",sysproductin.getBillNo());
+            jsonObject.set("sourcebilltype","MO");
+            jsonObject.set("sourcebillqty",s.getQty().toString());
             jsonObject.set("sourcebilldid",s.getSourceBillDid());
             jsonObject.set("invcode",s.getInvCode());
             jsonObject.set("invname","1");
             jsonObject.set("invstd","");
-            jsonObject.set("qty",s.getQty());
+            jsonObject.set("qty",s.getQty().toString());
             jsonObject.set("noreceivedqty","");
             jsonObject.set("receivedqty","");
             jsonObject.set("vencode",sysproductin.getVenCode());
@@ -381,6 +385,7 @@ public class SysProductinService extends BaseService<SysProductin> {
             maindata.add(jsonObject);
         });
         data.set("MainData",maindata);
+        System.out.println("```````````"+data);
 
         //            请求头
         Map<String, String> header = new HashMap<>(5);
@@ -524,7 +529,7 @@ public class SysProductinService extends BaseService<SysProductin> {
         String[] split = ids.split(",");
         for (String s : split) {
             SysProductin sysProductin = findFirst("select *  from T_Sys_ProductIn where AutoID in (" + s + ")");
-            List<SysProductindetail> sysProductindetails = sysproductindetailservice.find("select *  from T_Sys_ProductIn where AutoID in (" + sysProductin.getAutoID() + ")");
+            List<SysProductindetail> sysProductindetails = sysproductindetailservice.find("select *  from T_Sys_ProductInDetail where MasID in (" + sysProductin.getAutoID() + ")");
             // 测试调用接口
             System.out.println("```````````````````````````````"+ new Date());
             Ret ret = pushU8(sysProductin, sysProductindetails);

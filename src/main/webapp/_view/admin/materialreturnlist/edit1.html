@@ -88,8 +88,11 @@
 
                 <label class="col-sm-2 col-form-label">采购类型：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input required type="text" id="billtype"  class="form-control border-none"
+                    <input required type="hidden" id="billtype"  class="form-control border-none"
                            readonly="readonly" placeholder="" name="puinstore.billtype"
+                           value="#(puinstore.billtype??)"/>
+                    <input required type="text" id="cptname"  class="form-control border-none"
+                           readonly="readonly" placeholder=""
                            value="#(puinstore.billtype??)"/>
                 </div>
             </div>

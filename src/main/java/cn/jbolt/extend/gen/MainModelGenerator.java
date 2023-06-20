@@ -19,7 +19,7 @@ public class MainModelGenerator extends JFinalModelGenerator{
 		//数据源配置名称 默认主数据源是main 其他的在extend_datasource.setting里配置的
 		String configName="main";
 		//指定本次运行直接生成的表名 忽略其它所有表 数组为空 表示忽略此强制设定 当需要单个指定生成时才需要这个
-		String[] tableNames = new String[] {"base_user_org"/* "jb_user","jb_application" */};
+		String[] tableNames = new String[] {"jb_todo"/* "jb_user","jb_application" */};
 		//哪些前缀名的要生成
 		String[] tableNamesPrefixes = new String[] {/* "jb_","pl_" */};
 		//是否包含数据库视图生成 默认不生
@@ -29,7 +29,7 @@ public class MainModelGenerator extends JFinalModelGenerator{
 		//默认ID生成模式
 		String idGenMode=JBoltIDGenMode.SNOWFLAKE;//auto|snowflake|sequence
 		//生成Model放在哪个包下
-		String modelPackage="cn.rjtech.model.main";
+		String modelPackage="cn.jbolt.common.model";
 
 		//是否生成Model和BaseModel 如果设置为false 则只判断是否生成字典文件 直接不进行model和baseModel的生成
 		boolean genModel=true;

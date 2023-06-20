@@ -4,6 +4,8 @@ import cn.jbolt.core.base.config.JBoltConfig;
 import cn.rjtech.base.event.ExceptionEvent;
 import cn.rjtech.base.redis.RedisKeys;
 import cn.rjtech.base.redis.RedisUtil;
+import cn.rjtech.event.EmailSendFailEvent;
+
 import com.jfinal.log.Log;
 import net.dreamlu.event.EventKit;
 
@@ -101,6 +103,13 @@ public class ExceptionEventUtil {
      */
     public static void setExpire(String exceptionKey) {
         RedisUtil.expire("LH:EXCEPTION:NOTICE:" + exceptionKey, RedisUtil.EXPIRES_IN_2_HOURS);
+    }
+    
+    /**
+     * 邮件发送失败错误
+     */
+    public static void postSendEmailFailMsg(String email, String subject, String text, String errMsg) {
+        EventKit.post(new EmailSendFailEvent(email, subject, text, errMsg));
     }
 
 }

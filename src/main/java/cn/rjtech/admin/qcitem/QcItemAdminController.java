@@ -189,4 +189,15 @@ public class QcItemAdminController extends BaseAdminController {
         }
         renderJson(service.importExcel(file.getFile()));
     }
+
+    public void importExcelClass() {
+        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+        UploadFile file = getFile("file", uploadPath);
+        if (notExcel(file)) {
+            renderJsonFail("请上传excel文件");
+            return;
+        }
+        renderJson(service.importExcelClass(file.getFile()));
+    }
+
 }

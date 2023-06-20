@@ -109,4 +109,8 @@ public class TodoAdminController extends JBoltBaseController {
 		render("detail.html");
 	}
 	
+	public void dashBoardTodoDatas(){
+		renderJsonData(service.dashBoardTodoDatas(getPageNumber(),getPageSize()));
+	}
+	
 }

@@ -61,7 +61,7 @@ where 1=1
 	#if(id)
 		and a.MasID = #para(id)
 	#end
-ORDER BY a.ModifyDate DESC
+ORDER BY a.dupdatetime DESC
 #end
 
 

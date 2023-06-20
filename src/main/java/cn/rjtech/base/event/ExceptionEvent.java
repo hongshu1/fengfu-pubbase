@@ -1,3 +1,4 @@
+
 package cn.rjtech.base.event;
 
 import java.io.Serializable;

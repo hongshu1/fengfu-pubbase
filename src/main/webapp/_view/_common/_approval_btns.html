@@ -5,10 +5,10 @@
     #switch(AuditFormConfigCache.ME.getAuditWay(formSn)??)
         ### 审批
         #case(1)
-            <button onclick="submitThisForm(true)" class="btn btn-outline-secondary btn-xs">提交审批</button>
+            <button onclick="submitThisForm_#(pageId)(true)" class="btn btn-outline-secondary btn-xs">提交审批</button>
         ### 审核
         #case(2)
-            <button onclick="submitThisForm(true)" class="btn btn-outline-secondary btn-xs">提交审核</button> 
+            <button onclick="submitThisForm_#(pageId)(true)" class="btn btn-outline-secondary btn-xs">提交审核</button> 
     #end
 
     <script>
@@ -50,8 +50,8 @@
         ### 审核按钮
         #case(1)
 
-            <button data-ajaxbtn data-url="/admin/formapproval/approveByStatus?formSn=#(formSn)&formAutoId=#(o.iautoid)&primaryKeyName=#(o.get(primaryKeyName)??)&className=#(className)&permissionKey=#(permissionKeyPrefix)_approve" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核通过</button>
-            <button data-ajaxbtn data-url="/admin/formapproval/rejectByStatus?formSn=#(formSn)&formAutoId=#(o.iautoid)&primaryKeyName=#(o.get(primaryKeyName)??)&className=#(className)&permissionKey=#(permissionKeyPrefix)_reject" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核不通过</button>
+            <button data-ajaxbtn data-url="/admin/formapproval/approveByStatus?formSn=#(formSn)&formAutoId=#(o.iautoid)&primaryKeyName=#(primaryKeyName)&className=#(className)&permissionKey=#(permissionKeyPrefix)_approve" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核通过</button>
+            <button data-ajaxbtn data-url="/admin/formapproval/rejectByStatus?formSn=#(formSn)&formAutoId=#(o.iautoid)&primaryKeyName=#(primaryKeyName)&className=#(className)&permissionKey=#(permissionKeyPrefix)_reject" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核不通过</button>
 
         ### 审批流操作, 不放置按钮，通过列表操作
         #case(2)
@@ -65,7 +65,7 @@
         ### 审核按钮
         #case(1)
 
-            <button data-ajaxbtn data-url="/admin/formapproval/reverseApproveByStatus?formSn=#(formSn)&formAutoId=#(o.iautoid)&primaryKeyName=#(o.get(primaryKeyName)??)&className=#(className)&permissionKey=#(permissionKeyPrefix)_reverse_approve" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >反审核</button>
+            <button data-ajaxbtn data-url="/admin/formapproval/reverseApproveByStatus?formSn=#(formSn)&formAutoId=#(o.iautoid)&primaryKeyName=#(primaryKeyName)&className=#(className)&permissionKey=#(permissionKeyPrefix)_reverse_approve" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >反审核</button>
 
         ### 审批流操作, 不放置按钮，通过列表操作
         #case(2)
