@@ -436,6 +436,8 @@ public class FormApprovalAdminController extends BaseAdminController {
 
     /**
      * 审批过程中待审批的人员
+     * @param formAutoId 单据ID
+     * @param size 人数
      */
     public void approvalProcessUsers(@Para(value = "formAutoId") Long formAutoId,
                                      @Para(value = "size", defaultValue = "5") Integer size) {
