@@ -10,9 +10,11 @@
                         #if(readonly != 'readonly')
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
+                        #if(annualOrderM.iAutoId??)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/annualorderm",
                         formSn="Co_AnnualOrderM", primaryKeyName="iAutoId", o=annualOrderM,
                         permissionKeyPrefix="annualorderm", className="cn.rjtech.admin.annualorderm.AnnualOrderMService")
+                        #end
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -295,6 +297,7 @@
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
         parent.refreshPjaxContainer();
+        parent.LayerMsgBox.closeAll();
     }
 
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值

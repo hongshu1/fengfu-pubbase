@@ -370,18 +370,18 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
      */
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
-        MonthOrderM monthOrderM = findById(formAutoId);
-        // 订单状态校验
-        ValidationUtils.equals(monthOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
+        if(isWithinBatch){
+            MonthOrderM monthOrderM = findById(formAutoId);
+            // 订单状态校验
+            ValidationUtils.equals(monthOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
 
-        // 订单状态修改
-        monthOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
-        monthOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-        monthOrderM.setCUpdateName(JBoltUserKit.getUserName());
-        monthOrderM.setDUpdateTime(new Date());
-        monthOrderM.update();
-        // 审批通过生成客户计划汇总
-        cusOrderSumService.algorithmSum();
+            // 订单状态修改
+            monthOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
+            monthOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+            monthOrderM.setCUpdateName(JBoltUserKit.getUserName());
+            monthOrderM.setDUpdateTime(new Date());
+            monthOrderM.update();
+        }
         return null;
     }
 
@@ -510,19 +510,6 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
      */
     @Override
     public String postBatchApprove(List<Long> formAutoIds) {
-        List<MonthOrderM> monthOrderMS = getListByIds(StringUtils.join(formAutoIds, COMMA));
-        for (MonthOrderM monthOrderM : monthOrderMS) {
-            // 订单状态校验
-            ValidationUtils.equals(monthOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
-
-            // 订单状态修改
-            monthOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
-            monthOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-            monthOrderM.setCUpdateName(JBoltUserKit.getUserName());
-            monthOrderM.setDUpdateTime(new Date());
-            monthOrderM.update();
-        }
-
         // 审批通过生成客户计划汇总
         cusOrderSumService.algorithmSum();
         return null;
@@ -535,9 +522,6 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
      */
     @Override
     public String postBatchReject(List<Long> formAutoIds) {
-        for (Long formAutoId:formAutoIds) {
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
-        }
         return null;
     }
 
@@ -550,12 +534,6 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
     public String postBatchBackout(List<Long> formAutoIds) {
         List<MonthOrderM> monthOrderMS = getListByIds(StringUtils.join(formAutoIds, COMMA));
         Boolean algorithmSum = monthOrderMS.stream().anyMatch(item -> item.getIOrderStatus().equals(WeekOrderStatusEnum.APPROVED.getValue()));
-        monthOrderMS.stream().map(item -> {
-            item.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
-            return item;
-        }).collect(Collectors.toList());
-        batchUpdate(monthOrderMS);
-
         if (algorithmSum) {
             // 修改客户计划汇总
             cusOrderSumService.algorithmSum();

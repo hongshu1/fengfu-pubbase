@@ -479,19 +479,21 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
      * @param formAutoId 单据ID
      * @return 错误信息
      */
-    public String postApproveFunc(long formAutoId) {
-        ManualOrderM manualOrderM = findById(formAutoId);
-        // 订单状态校验
-        ValidationUtils.equals(manualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        if (isWithinBatch) {
+            ManualOrderM manualOrderM = findById(formAutoId);
+            // 订单状态校验
+            ValidationUtils.equals(manualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
 
-        // 订单状态修改
-        manualOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
-        manualOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-        manualOrderM.setCUpdateName(JBoltUserKit.getUserName());
-        manualOrderM.setDUpdateTime(new Date());
-        manualOrderM.update();
-        // 审批通过生成客户计划汇总
-        cusOrderSumService.algorithmSum();
+            // 订单状态修改
+            manualOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
+            manualOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+            manualOrderM.setCUpdateName(JBoltUserKit.getUserName());
+            manualOrderM.setDUpdateTime(new Date());
+            manualOrderM.update();
+            // 审批通过生成客户计划汇总
+            cusOrderSumService.algorithmSum();
+        }
         return null;
     }
 
@@ -620,19 +622,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
      * @return  错误信息
      */
     public String postBatchApprove(List<Long> formAutoIds) {
-        List<ManualOrderM> manualOrderMS = getListByIds(StringUtils.join(formAutoIds, StrPool.COMMA));
-        for (ManualOrderM manualOrderM : manualOrderMS) {
-            // 订单状态校验
-            ValidationUtils.equals(manualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
-
-            // 订单状态修改
-            manualOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
-            manualOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-            manualOrderM.setCUpdateName(JBoltUserKit.getUserName());
-            manualOrderM.setDUpdateTime(new Date());
-            manualOrderM.update();
-        }
-
         // 审批通过生成客户计划汇总
         cusOrderSumService.algorithmSum();
         return null;

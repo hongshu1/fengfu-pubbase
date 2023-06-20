@@ -494,19 +494,22 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     /**
      * 处理审批通过的其他业务操作，如有异常返回错误信息
      */
-    public String postApproveFunc(long formAutoId) {
-        WeekOrderM weekOrderM = findById(formAutoId);
-        ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
-        // 推送U8订单
-        List<WeekOrderD> weekOrderDS = weekOrderDService.findByMId(formAutoId);
-        String cDocNo = pushOrder(weekOrderM, weekOrderDS);
-        ValidationUtils.notNull(cDocNo, "推单失败");
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        if (isWithinBatch)
+        {
+            WeekOrderM weekOrderM = findById(formAutoId);
+            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
+            // 推送U8订单
+            List<WeekOrderD> weekOrderDS = weekOrderDService.findByMId(formAutoId);
+            String cDocNo = pushOrder(weekOrderM, weekOrderDS);
+            ValidationUtils.notNull(cDocNo, "推单失败");
 
-        // 修改客户计划汇总
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iPushTo", 1).isOk(), JBoltMsg.FAIL);
-        ValidationUtils.isTrue(updateColumn(formAutoId, "cDocNo", cDocNo).isOk(), JBoltMsg.FAIL);
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
-        cusOrderSumService.algorithmSum();
+            // 修改客户计划汇总
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iPushTo", 1).isOk(), JBoltMsg.FAIL);
+            ValidationUtils.isTrue(updateColumn(formAutoId, "cDocNo", cDocNo).isOk(), JBoltMsg.FAIL);
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
+            cusOrderSumService.algorithmSum();
+        }
         return null;
     }
 
@@ -616,19 +619,6 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
      * @return  错误信息
      */
     public String postBatchApprove(List<Long> formAutoIds) {
-        List<WeekOrderM> weekOrderMS = getListByIds(StringUtils.join(formAutoIds, COMMA));
-        for (WeekOrderM weekOrderM : weekOrderMS) {
-            // 订单状态校验
-            ValidationUtils.equals(weekOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
-
-            // 订单状态修改
-            weekOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
-            weekOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-            weekOrderM.setCUpdateName(JBoltUserKit.getUserName());
-            weekOrderM.setDUpdateTime(new Date());
-            weekOrderM.update();
-        }
-
         // 审批通过生成客户计划汇总
         cusOrderSumService.algorithmSum();
         return null;
