@@ -12,7 +12,7 @@
                         #end
                         #include("/_view/_common/_approval_btns.html", uri="/admin/annualorderm",
                         formSn="Co_AnnualOrderM", primaryKeyName="iAutoId", o=annualOrderM,
-                        permissionKeyPrefix="annualOrderM", className="cn.rjtech.admin.annualorderm.AnnualOrderMService")
+                        permissionKeyPrefix="annualorderm", className="cn.rjtech.admin.annualorderm.AnnualOrderMService")
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -42,7 +42,8 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group row">
-                                	<input type="hidden" name="annualOrderM.iCustomerId" value="#(annualOrderM.iCustomerId??)" id="iCustomerId" data-value-attr="iautoid"/>
+                                	<input type="hidden" name="annualOrderM.icustomerid" value="#(annualOrderM.icustomerid??)" id="icustomerid" data-value-attr="iautoid"/>
+                                	<input type="hidden" name="annualOrderM.ccuscode" value="#(annualOrderM.ccuscode??)" id="ccuscode" data-value-attr="ccuscode"/>
                                     <label class="col-sm-3 col-form-label">客户名称</label>
                                     <div class="col-8">
                                         <div class="input-group">
@@ -52,14 +53,14 @@
                                                        data-autocomplete
                                                        data-url="admin/customer/autocomplete"
                                                        data-rule="required"
-                                                       data-hidden-input="iCustomerId"
+                                                       data-sync-ele="#icustomerid,#ccuscode"
                                                        data-text-attr="ccusname"
                                                        data-column-attr="ccuscode,ccusname,ccusabbname"
-                                                       ###data-sync-ele="#cformatname_#(pageId)"
                                                        placeholder="请选择"
                                                        data-tips="请选择"
                                                        data-header="客户编码,客户名称,客户简称"
                                                        maxlength="40"
+                                                       name="annualOrderM.ccusname"
                                                        value="#(annualOrderM.ccusname??)"/>
                                             </div>
                                             <div class="input-group-append">
@@ -288,9 +289,17 @@
         return false;
     }
 
+    // 保存方法
+    function submitThisForm()
+    {
+        // 调用保存处理
+        $('#save_btn_#(pageId)').click();
+        parent.refreshPjaxContainer();
+    }
+
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
     var submit = false;
-    function submitThisForm(s) {
+    function submitThisForm_#(pageId)(s) {
         // 保存并提交
         if (s) {
             submit = s;
@@ -433,6 +442,9 @@
                         } else {
                             successHandler(res.msg, res.data.iautoid);
                         }
+                        refreshPjaxContainer();
+                        parent.LayerMsgBox.closeAll();
+                        parent.refreshPjaxContainer();
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
                     }
@@ -642,10 +654,10 @@
     }
 
     // 选择客户名称
-    function instCcusname(data)
-    {
-        $("#iCustomerId").val(data.iautoid);
+    function instCcusname(data) {
+        $("#icustomerid").val(data.iautoid);
         $("#ccusname").val(data.ccusname);
+        $("#ccuscode").val(data.ccuscode);
     }
 </script>
 #end

@@ -260,7 +260,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 				if (otherOut.getAutoID() == null && "save".equals(revokeVal)) {
 					//保存
 //					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-//					otherOut.setAuditStatus(0);
+					otherOut.setIAuditStatus(0);
 //					//订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
 //					otherOut.setStatus(1);
 					otherOut.setICreateBy(userId);

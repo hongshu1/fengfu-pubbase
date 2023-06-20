@@ -11,43 +11,43 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">存货编码：</label>
-                                <div class="col-10">
+                                <label class="col col-form-label">存货编码：</label>
+                                <div class="col-7">
                                     <input type="text" data-rule="required" data-notnull="false"
                                            data-tips=""
                                            data-with-clearbtn="false" autocomplete="off"
                                            class="form-control" placeholder=""
                                            maxlength="40" name="sysMaterialsprepare.cInvCode"
                                            readonly
-                                           value="#(stockBarcodePosition.InvCode??)"/>
+                                           value="#(cinvcode??)"/>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">客户部番：</label>
-                                <div class="col-10">
+                                <label class="col col-form-label">客户部番：</label>
+                                <div class="col-7">
                                     <input type="text" data-rule="required" data-notnull="false"
                                            data-tips=""
                                            data-with-clearbtn="false" autocomplete="off"
                                            class="form-control" placeholder=""
                                            maxlength="40" name="sysMaterialsprepare.cInvCode1"
                                            readonly
-                                           value="#(inventory.cInvCode1??)"/>
+                                           value="#(cinvcode1??)"/>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">部品名称：</label>
-                                <div class="col-10">
+                                <label class="col col-form-label">部品名称：</label>
+                                <div class="col-7">
                                     <input type="text" data-rule="required" data-notnull="false"
                                            data-tips=""
                                            data-with-clearbtn="false" autocomplete="off"
                                            class="form-control" placeholder=""
                                            maxlength="40" name="sysMaterialsprepare.cInvName1"
                                            readonly
-                                           value="#(inventory.cInvName1??)"/>
+                                           value="#(cinvname1??)"/>
                                 </div>
                             </div>
                         </div>
@@ -61,11 +61,11 @@
 {@each datas as data,index}
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.cwhname}</td>
+<td>${data.whcode}</td>
 <td>${data.barcode}</td>
 <td>${data.qty}</td>
-<td>${data.iinventoryuomid1}</td>
-<td>${data.Batch}</td>
+<td>${data.cuomname}</td>
+<td>${data.batch}</td>
 <td>${data.dproddate}</td>
 </tr>
 {@/each}
@@ -73,9 +73,9 @@
 <table class="jbolt_table jbolt_main_table table-center"
        data-jbolttable
        data-width="fill"
-       data-height="60%"
+       data-height="fill"
        data-ajax="true"
-       data-url="admin/sysMaterialsprepare/getBarcode/?invcode=#(stockBarcodePosition.Invcode??)"
+       data-url="admin/sysMaterialsprepare/getBarcode/?cinvcode=#(cinvcode??)&batch=#(batch??)"
        data-rowtpl="SysMaterialsprepare_tpl_#(pageId)"
        data-copy-to-excel="false"
        data-page="SysMaterialsprepare_page"

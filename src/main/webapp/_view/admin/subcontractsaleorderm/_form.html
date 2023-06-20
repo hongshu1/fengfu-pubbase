@@ -76,36 +76,35 @@
 							</div>	
 						</div>
 						<div class="form-group row">
-							<input type="hidden" name="subcontractsaleorderm.iCustomerId" value="#(subcontractsaleorderm.iCustomerId??)" id="iCustomerId" data-value-attr="iautoid"/>
-							<label class="col-sm-1 col-form-label">客户名称</label>
-							<div class="col">
+                            <input type="hidden" name="subcontractsaleorderm.icustomerid" value="#(subcontractsaleorderm.icustomerid??)" id="icustomerid" data-sync-attr="iautoid"/>
+                            <label class="col-sm-1 col-form-label">客户名称</label>
+                            <div class="col">
                                 <div class="input-group">
-
                                     <div class="ac_input_box">
-								<input type="text" class="form-control"
-                                       id="ccusname"
-                                       data-autocomplete
-									   data-url="admin/customer/autocomplete"
-									   data-rule="required"
-									   data-hidden-input="iCustomerId"
-									   data-text-attr="ccusname"
-									   data-column-attr="ccuscode,ccusname,ccusabbname"
-                                       data-sync-ele="#icustomerid,icustomerid2"
-                                       placeholder="请选择"
-									   data-tips="请选择"
-									   data-header="客户编码,客户名称,客户简称"
-									   maxlength="40"
-									   value="#(subcontractsaleorderm.ccusname??)">
+                                        <input type="text" class="form-control"
+                                               data-autocomplete
+                                               id="ccusname"
+                                               data-url="admin/customer/autocomplete"
+                                               data-rule="required"
+                                               data-sync-ele="#icustomerid"
+                                               data-text-attr="ccusname"
+                                               data-value-attr="iautoid"
+                                               data-column-attr="ccuscode,ccusname"
+                                               placeholder="请选择"
+                                               data-tips="请选择"
+                                               data-header="客户编码,客户名称"
+                                               maxlength="40"
+                                               value="#(subcontractsaleorderm.ccusname??)">
+                                    </div>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" data-dialogbtn
+                                                data-link-para-ele="#icustomerid" data-area="1280,600"
+                                                data-title="选择数据（单选）"
+                                                data-url="admin/annualorderm/ccusname_dialog_index"><i
+                                                class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
                             </div>
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" data-dialogbtn
-                                            data-link-para-ele="#icustomerid" data-area="1280,600"
-                                            data-title="选择数据（单选）"
-                                            data-url="admin/annualorderm/ccusname_dialog_index"><i
-                                            class="fa fa-search"></i></button>
-                                </div>
-                                </div>
-							</div>
 							<label class="col-sm-1 col-form-label">付款条件</label>
 							<div class="col">
 								<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入付款条件" maxlength="100" name="subcontractsaleorderm.cPaymentTerm" value="#(subcontractsaleorderm.cPaymentTerm??)"/>
@@ -411,9 +410,17 @@
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
 
+    // 保存方法
+    function submitThisForm()
+    {
+        // 调用保存处理
+        $('#save_btn_#(pageId)').click();
+        parent.refreshPjaxContainer();
+    }
+
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
     var submit = false;
-    function submitThisForm(s) {
+    function submitThisForm_#(pageId)(s) {
         // 保存并提交
         if (s) {
             submit = s;
@@ -454,6 +461,8 @@
                         } else {
                             successHandler(res.msg, res.data.iautoid);
                         }
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
                     }

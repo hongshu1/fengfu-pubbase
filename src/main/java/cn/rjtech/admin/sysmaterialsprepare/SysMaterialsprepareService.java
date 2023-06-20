@@ -180,11 +180,20 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
     }
 
     public Page<Record> getDetail(int pageNumber, int pageSize, Kv kv) {
+
+
+
+
+
         return dbTemplate("materialsprepare.getDetaildatas", kv).paginate(pageNumber, pageSize);
     }
 
     public Page<Record> getBarcodedatas(int pageNumber, int pageSize, Kv kv) {
         return dbTemplate("materialsprepare.getBarcodedatas", kv).paginate(pageNumber, pageSize);
+    }
+
+    public Page<Record> getBarcodedatas1(int pageNumber, int pageSize, Kv kv) {
+        return dbTemplate("materialsprepare.getBarcodedatas1", kv).paginate(pageNumber, pageSize);
     }
 
     public Ret submitByJBoltTable(Long id) {
@@ -208,7 +217,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             ValidationUtils.isTrue(sysMaterialsprepare.save(), ErrorMsg.SAVE_FAILED);
             //从表的操作
             // 获取保存数据（执行保存，通过 getSaveRecordList）
-            saveTableSubmitDatas(sysMaterialsprepare, id);
+//            saveTableSubmitDatas(sysMaterialsprepare, id);
             //修改工单状态
             modoc.setIStatus(3);
             modoc.setIUpdateBy(user.getId());
@@ -308,11 +317,11 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         }
 
         User user = JBoltUserKit.getUser();
-        Map<String, Object> data = new HashMap<>();
+        JSONObject data = new JSONObject();
 
-        data.put("userCode", user.getUsername());
-        data.put("organizeCode", this.getdeptid());
-        data.put("token", "");
+        data.set("userCode", user.getUsername());
+        data.set("organizeCode", this.getdeptid());
+        data.set("token", "");
 
         JSONObject preallocate = new JSONObject();
 
@@ -326,9 +335,9 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         preallocate.set("tag", "AssemVouch");
         preallocate.set("type", "AssemVouch");
 
-        data.put("PreAllocate", preallocate);
+        data.set("PreAllocate", preallocate);
 
-        JSONArray maindata = new JSONArray();
+        ArrayList<Object> maindata = new ArrayList<>();
         sysMaterialspreparedetails.stream().forEach(s -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("iwhname", "");
@@ -355,9 +364,9 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
 //			jsonObject.set("ODeptCode",sysassem.getDeptCode());
 //			jsonObject.set("RowNo",s.getRowNo());
 
-            maindata.put(jsonObject);
+            maindata.add(jsonObject);
         });
-        data.put("MainData", maindata);
+        data.set("MainData", maindata);
 
         //请求头
         Map<String, String> header = new HashMap<>(5);

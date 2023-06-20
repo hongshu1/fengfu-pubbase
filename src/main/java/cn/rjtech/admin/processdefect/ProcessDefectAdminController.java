@@ -184,5 +184,15 @@ public class ProcessDefectAdminController extends BaseAdminController {
         renderJsonData(service.getQRCodeCheck(kv));
     }
 
+    /**
+     *  工序数据源
+     */
+    public void getOperationDatas() {
+        String OrgCode = getOrgCode();
+        Kv kv =new Kv();
+        kv.setIfNotNull("OrgCode", OrgCode);
+        renderJsonData(service.OperationDatas(kv));
+    }
+
 
 }

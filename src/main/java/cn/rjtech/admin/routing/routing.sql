@@ -103,7 +103,8 @@ FROM
 	Bd_InventoryRouting routing
 	LEFT JOIN Bd_Inventory inv ON inv.iAutoId = routing.iInventoryId
 WHERE
-    1 = 1
+    inv.isDeleted = '0'
+    AND routing.isDeleted = '0'
     #if(orgId)
         AND inv.iOrgId = #para(orgId)
     #end

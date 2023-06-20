@@ -39,4 +39,35 @@ public class EmailUtils {
 
         LOG.info("Exception Email has been sent...");
     }
+
+    /**
+     * 发送邮件
+     *
+     * @param emails  邮箱地址
+     * @param subject 主题
+     * @param text    邮件内容
+     */
+    public static void sendEmail(List<String> emails, String subject, String text) {
+        // 第一个为收件人，其他定义为抄送
+        String email = emails.remove(0);
+        sendEmail(email, CollUtil.isNotEmpty(emails) ? emails : null, subject, text);
+    }
+
+    /**
+     * 发送邮件，当发送失败的时候，发送异常通知
+     *
+     * @param email   邮件接收人
+     * @param cc      抄送
+     * @param subject 主题
+     * @param text    邮件内容
+     */
+    private static void sendEmail(String email, List<String> cc, String subject, String text) {
+        try {
+            MailKit.send(email, cc, subject, text);
+        } catch (Exception e) {
+            LOG.error("邮件发送失败, email: {}, subject: {}, text: {}, 错误信息: {}", email, subject, text, e.getLocalizedMessage());
+            e.printStackTrace();
+            ExceptionEventUtil.postSendEmailFailMsg(email, subject, text, Util.getStackMsg(e));
+        }
+    }
 }
