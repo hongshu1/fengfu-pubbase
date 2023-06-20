@@ -1819,11 +1819,21 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 查询审批过程待审批的人员
      */
-    public List<Long> getNextApprovalUsers(Long formAutoId, Integer size) {
+    public List<Long> getNextApprovalUserIds(Long formAutoId, Integer size) {
         Kv kv = Kv.by("formAutoId", formAutoId)
                 .set("size", size);
 
-        return dbTemplate("formapproval.approvalProcessUsers", kv).query();
+        return dbTemplate("formapproval.getNextApprovalUserIds", kv).query();
+    }
+    
+    /**
+     * 查询审批过程待审批的人员
+     */
+    public List<Long> getNextApprovalUserNames(Long formAutoId, Integer size) {
+        Kv kv = Kv.by("formAutoId", formAutoId)
+                .set("size", size);
+
+        return dbTemplate("formapproval.getNextApprovalUserNames", kv).query();
     }
 
     /**

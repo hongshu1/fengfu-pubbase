@@ -27,8 +27,23 @@ WHERE iFormApprovalFlowMid IN (
 ORDER BY iSeq ASC
 #end
 
-#sql("approvalProcessUsers")
+#sql("getNextApprovalUserNames")
 select top #(size) name
+from #(getBaseDbName()).dbo.jb_user
+where id in
+    (select iUserId
+     from Bd_FormApprovalFlowD where iFormApprovalFlowMid =
+         (select Bd_FormApprovalFlowM.iAutoId
+          from Bd_FormApprovalFlowM where iApprovalDid =
+              (select top 1 Bd_FormApprovalD.iAutoId
+               from Bd_FormApprovalD where iFormApprovalId = (
+                   select Bd_FormApproval.iAutoId
+                   from Bd_FormApproval where iFormObjectId = '#(formAutoId)' and isDeleted = '0'
+               ) and iStatus = 1 order by iSeq desc)))
+#end
+
+#sql("getNextApprovalUserIds")
+select top #(size) id
 from #(getBaseDbName()).dbo.jb_user
 where id in
     (select iUserId
