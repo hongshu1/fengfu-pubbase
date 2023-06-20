@@ -445,12 +445,11 @@
                         } else {
                             successHandler(res.msg, res.data.iautoid);
                         }
-                        refreshPjaxContainer();
-                        parent.LayerMsgBox.closeAll();
-                        parent.refreshPjaxContainer();
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
                     }
+                    parent.refreshPjaxContainer();
+                    parent.LayerMsgBox.closeAll();
                 }
             },
             maxRowCount: 9999,

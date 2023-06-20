@@ -495,28 +495,25 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
      * 处理审批通过的其他业务操作，如有异常返回错误信息
      */
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
-        if (isWithinBatch)
-        {
-            WeekOrderM weekOrderM = findById(formAutoId);
-            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
-            // 推送U8订单
-            List<WeekOrderD> weekOrderDS = weekOrderDService.findByMId(formAutoId);
-            String cDocNo = pushOrder(weekOrderM, weekOrderDS);
-            ValidationUtils.notNull(cDocNo, "推单失败");
+        WeekOrderM weekOrderM = findById(formAutoId);
+        ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
+        // 推送U8订单
+        List<WeekOrderD> weekOrderDS = weekOrderDService.findByMId(formAutoId);
+        String cDocNo = pushOrder(weekOrderM, weekOrderDS);
+        ValidationUtils.notNull(cDocNo, "推单失败");
 
-            // 修改客户计划汇总
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iPushTo", 1).isOk(), JBoltMsg.FAIL);
-            ValidationUtils.isTrue(updateColumn(formAutoId, "cDocNo", cDocNo).isOk(), JBoltMsg.FAIL);
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
-            cusOrderSumService.algorithmSum();
-        }
+        // 修改客户计划汇总
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iPushTo", 1).isOk(), JBoltMsg.FAIL);
+        ValidationUtils.isTrue(updateColumn(formAutoId, "cDocNo", cDocNo).isOk(), JBoltMsg.FAIL);
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
+        cusOrderSumService.algorithmSum();
         return null;
     }
 
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    public String postRejectFunc(long formAutoId, Boolean isWithinBatch) {
         WeekOrderM weekOrderM = findById(formAutoId);
         ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), "订单非待审核状态");
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);

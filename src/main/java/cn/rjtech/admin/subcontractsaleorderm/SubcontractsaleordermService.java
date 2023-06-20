@@ -449,27 +449,25 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @return 错误信息
      */
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
-        if (isWithinBatch) {
-            Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
-            // 订单状态校验
-            ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
+        Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
+        // 订单状态校验
+        ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
 
-            // 订单状态修改
-            subcontractsaleorderm.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
-            subcontractsaleorderm.setIUpdateBy(JBoltUserKit.getUserId());
-            subcontractsaleorderm.setCUpdateName(JBoltUserKit.getUserName());
-            subcontractsaleorderm.setDUpdateTime(new Date());
-            subcontractsaleorderm.update();
-            // 审批通过生成客户计划汇总
-            cusOrderSumService.algorithmSum();
-        }
+        // 订单状态修改
+        subcontractsaleorderm.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
+        subcontractsaleorderm.setIUpdateBy(JBoltUserKit.getUserId());
+        subcontractsaleorderm.setCUpdateName(JBoltUserKit.getUserName());
+        subcontractsaleorderm.setDUpdateTime(new Date());
+        subcontractsaleorderm.update();
+        // 审批通过生成客户计划汇总
+        cusOrderSumService.algorithmSum();
         return null;
     }
 
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    public String postRejectFunc(long formAutoId, Boolean isWithinBatch) {
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }

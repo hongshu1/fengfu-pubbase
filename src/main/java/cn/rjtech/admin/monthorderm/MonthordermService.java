@@ -370,26 +370,29 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
      */
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
-        if(isWithinBatch){
-            MonthOrderM monthOrderM = findById(formAutoId);
-            // 订单状态校验
-            ValidationUtils.equals(monthOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
+        MonthOrderM monthOrderM = findById(formAutoId);
+        // 订单状态校验
+        ValidationUtils.equals(monthOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
 
-            // 订单状态修改
-            monthOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
-            monthOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-            monthOrderM.setCUpdateName(JBoltUserKit.getUserName());
-            monthOrderM.setDUpdateTime(new Date());
-            monthOrderM.update();
-        }
+        // 订单状态修改
+        monthOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
+        monthOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+        monthOrderM.setCUpdateName(JBoltUserKit.getUserName());
+        monthOrderM.setDUpdateTime(new Date());
+        monthOrderM.update();
+        return null;
+    }
+
+    @Override
+    public String postRejectFunc(long formAutoId) {
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }
 
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    @Override
-    public String postRejectFunc(long formAutoId) {
+    public String postRejectFunc(long formAutoId, Boolean isWithinBatch) {
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }
