@@ -1,4 +1,4 @@
-package cn.rjtech.admin.barcodereport.Inventorybarcodetracepage;
+package cn.rjtech.admin.barcodereport.billnobarcodetracepage;
 
 import cn.jbolt.core.util.JBoltRandomUtil;
 import cn.rjtech.base.service.view.BaseU9ViewService;
@@ -7,7 +7,6 @@ import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
-
 import com.jfinal.plugin.activerecord.Record;
 
 import java.sql.CallableStatement;
@@ -20,7 +19,7 @@ import java.util.*;
  * 条码汇总
  * @author Kephon
  */
-public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
+public class BillNoBarcodeTracePageAdminService extends BaseU9ViewService {
 
 //    @Inject
 //    JBoltDictionaryService jBoltDictionaryService;
@@ -140,6 +139,10 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
                 if(key.equals("vencode")){
                     parmsKey="and c.vencode like ";
                     parmsValue="'%"+rValue+"%'";
+                } //'客户名称'
+                if(key.equals("cusname")){
+                    parmsKey="and c.cusname like ";
+                    parmsValue="'%"+rValue+"%'";
                 }//存货编码
                 if(key.equals("invcode")){
                     parmsKey="and i.invcode like ";
@@ -186,7 +189,7 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
     public List<Record> excuteBarcodeTracePage(String dataSourceConfigName,String tempTableName) {
         List<Map> listMap=(List<Map>) executeFunc(dataSourceConfigName, (conn) -> {
             List<Map<String, Object>> list = new ArrayList<>();
-            CallableStatement proc = conn.prepareCall("{ call P_Sys_InventoryBarcodeTracePage(?,@Type ='Inventory') }");
+            CallableStatement proc = conn.prepareCall("{ call P_Sys_InventoryBarcodeTracePage(?,@Type ='BillNo') }");
             proc.setObject(1, tempTableName);
             //执行
             boolean isSuccess = true;

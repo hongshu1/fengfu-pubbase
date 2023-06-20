@@ -1405,6 +1405,16 @@ public class PermissionKey {
 	 * 物料现品票汇总管理
 	 */
 	public static final String INVENTORY_BARCODE_TRACEPAGE = "Inventory_barcode_tracepage";
+
+	/**
+	 * 客户传票汇总管理
+	 */
+	public static final String BILLNO_BARCODE_TRACEPAGE = "billno_barcode_tracepage";
+
+	/**
+	 * 客户传票汇总管理
+	 */
+	public static final String BARCODE_TRACEPAGE = "barcode_tracepage";
 	/**
 	 * 制造工单
 	 */
