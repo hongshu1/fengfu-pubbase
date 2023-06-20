@@ -613,5 +613,9 @@ public class UserService extends JBoltUserService {
 	public User getUserByUserName(String username) {
 		return findFirst(selectSql().eq("username", username));
 	}
+
+    public List<String> getEmails(List<Long> nextUserIds) {
+        return query(selectSql().select(User.EMAIL).in(User.ID, nextUserIds));
+    }
     
 }

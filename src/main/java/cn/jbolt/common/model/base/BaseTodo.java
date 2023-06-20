@@ -55,10 +55,10 @@ public abstract class BaseTodo<M extends BaseTodo<M>> extends JBoltBaseModel<M>{
     public static final String SOURCE_SYS = "source_sys";
     /**是否已读*/
     public static final String IS_READED = "is_readed";
-    /***/
-    public static final String SOURCE_TYPE = "source_type";
-    /***/
-    public static final String SOURCE_ID = "source_id";
+    /**表单编码*/
+    public static final String FORM_SN = "form_sn";
+    /**来源ID*/
+    public static final String FORM_ID = "form_id";
 	/**
 	 * 主键ID
 	 */
@@ -433,26 +433,38 @@ public abstract class BaseTodo<M extends BaseTodo<M>> extends JBoltBaseModel<M>{
 		return getBoolean("is_readed");
 	}
 
-	public M setSourceType(java.lang.Short sourceType) {
-		set("source_type", sourceType);
+	/**
+	 * 表单编码
+	 */
+	public M setFormSn(java.lang.String formSn) {
+		set("form_sn", formSn);
 		return (M)this;
 	}
 
-	@JBoltField(name="sourcetype" ,columnName="source_type",type="", remark="SOURCETYPE", required=false, maxLength=3, fixed=0, order=23)
-	@JSONField(name = "sourcetype")
-	public java.lang.Short getSourceType() {
-		return getShort("source_type");
+	/**
+	 * 表单编码
+	 */
+	@JBoltField(name="formsn" ,columnName="form_sn",type="String", remark="表单编码", required=false, maxLength=100, fixed=0, order=23)
+	@JSONField(name = "formsn")
+	public java.lang.String getFormSn() {
+		return getStr("form_sn");
 	}
 
-	public M setSourceId(java.lang.Long sourceId) {
-		set("source_id", sourceId);
+	/**
+	 * 来源ID
+	 */
+	public M setFormId(java.lang.Long formId) {
+		set("form_id", formId);
 		return (M)this;
 	}
 
-	@JBoltField(name="sourceid" ,columnName="source_id",type="Long", remark="SOURCEID", required=false, maxLength=19, fixed=0, order=24)
-	@JSONField(name = "sourceid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getSourceId() {
-		return getLong("source_id");
+	/**
+	 * 来源ID
+	 */
+	@JBoltField(name="formid" ,columnName="form_id",type="Long", remark="来源ID", required=false, maxLength=19, fixed=0, order=24)
+	@JSONField(name = "formid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getFormId() {
+		return getLong("form_id");
 	}
 
 }

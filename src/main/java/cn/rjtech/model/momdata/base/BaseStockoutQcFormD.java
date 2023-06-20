@@ -21,8 +21,6 @@ public abstract class BaseStockoutQcFormD<M extends BaseStockoutQcFormD<M>> exte
     public static final String IFORMPARAMID = "iFormParamId";
     /**项目次序，固定取参数项目名为“项目”的参数名称次序值*/
     public static final String ISEQ = "iSeq";
-    /**子次序*/
-    public static final String ISUBSEQ = "iSubSeq";
     /**检验参数值ID，点检方法允许为空（拼接“-”）多个逗号分隔*/
     public static final String CQCFORMPARAMIDS = "cQcFormParamIds";
     /**参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间*/
@@ -97,7 +95,7 @@ public abstract class BaseStockoutQcFormD<M extends BaseStockoutQcFormD<M>> exte
 	/**
 	 * 检验项目ID，Bd_QcFormTableParam.iAutoId
 	 */
-	@JBoltField(name="iformparamid" ,columnName="iFormParamId",type="Long", remark="检验项目ID，Bd_QcFormTableParam.iAutoId", required=true, maxLength=19, fixed=0, order=4)
+	@JBoltField(name="iformparamid" ,columnName="iFormParamId",type="Long", remark="检验项目ID，Bd_QcFormTableParam.iAutoId", required=false, maxLength=19, fixed=0, order=4)
 	@JSONField(name = "iformparamid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIFormParamId() {
 		return getLong("iFormParamId");
@@ -118,23 +116,6 @@ public abstract class BaseStockoutQcFormD<M extends BaseStockoutQcFormD<M>> exte
 	@JSONField(name = "iseq")
 	public java.lang.Integer getISeq() {
 		return getInt("iSeq");
-	}
-
-	/**
-	 * 子次序
-	 */
-	public M setISubSeq(java.lang.Integer iSubSeq) {
-		set("iSubSeq", iSubSeq);
-		return (M)this;
-	}
-
-	/**
-	 * 子次序
-	 */
-	@JBoltField(name="isubseq" ,columnName="iSubSeq",type="Integer", remark="子次序", required=true, maxLength=10, fixed=0, order=6)
-	@JSONField(name = "isubseq")
-	public java.lang.Integer getISubSeq() {
-		return getInt("iSubSeq");
 	}
 
 	/**
