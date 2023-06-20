@@ -1,5 +1,6 @@
 package cn.rjtech.admin.sysmaterialspreparedetail;
 
+import cn.hutool.core.date.DateUtil;
 import cn.rjtech.admin.sysmaterialsprepare.SysMaterialsprepareService;
 import cn.rjtech.admin.syspureceive.SysPureceiveService;
 import cn.rjtech.util.ValidationUtils;
@@ -25,6 +26,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -180,7 +182,14 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 		renderJson(service.submitByJBoltTableGo1(map1));
 	}
 
-
+	public void ConfirmNum() {
+		String Oldbarcode = get("barcode");
+		String Oldqty = get("qty");
+		set("Oldbarcode",Oldbarcode);
+		set("Oldqty",Oldqty);
+		set("Newbarcode","WL"+ DateUtil.format(new Date(), "yyyyMMddHHmmss"));
+		render("ConfirmNum.html");
+	}
 
 
 }

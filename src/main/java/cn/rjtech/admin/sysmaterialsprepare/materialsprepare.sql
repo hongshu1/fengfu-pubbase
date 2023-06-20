@@ -553,6 +553,8 @@ SELECT it.cInvCode,
        sbp.Batch,
        sbp.Qty,
        sbp.Barcode,
+       sbp.WhCode,
+       sbp.PosCode,
        mp.Billno,
        mp.SourceBillID
 FROM

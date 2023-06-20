@@ -1,0 +1,71 @@
+#@jboltLayout()
+#define main()
+<div class="card" style="margin-bottom: 5px">
+    <div class="card-body">
+        <form onsubmit="return false;" id="SysMaterialspreparedetail_Form" action="#(action)" method="post">
+            #if(sysMaterialspreparedetail.AutoID??)
+            <input type="hidden" name="sysMaterialspreparedetail.AutoID" value="#(sysMaterialspreparedetail.AutoID??)" />
+            #end
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label">原现品票：</label>
+                        <div class="col-7">
+                            <input type="text"
+                                   class="form-control"
+                                   maxlength="40" name=""
+                                   readonly
+                                   value="#(Oldbarcode??)"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label">数量：</label>
+                        <div class="col-7">
+                            <input type="text"
+                                   class="form-control"
+                                   maxlength="40" name=""
+                                   readonly
+                                   value="#(Oldqty??)"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label">新现品票：</label>
+                        <div class="col-7">
+                            <input type="text"
+                                   class="form-control"
+                                   maxlength="40" name=""
+                                   readonly
+                                   value="#(Newbarcode??)"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label">数量：</label>
+                        <div class="col-7">
+                            <input type="text"
+                                   class="form-control"
+                                   maxlength="40" name=""
+                                   value="#(a??)"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+#end
+#define js()
+<script type="text/javascript">
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="SysMaterialsprepare_Form")
+#end

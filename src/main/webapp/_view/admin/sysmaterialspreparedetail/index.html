@@ -112,7 +112,7 @@
 <td>${data.cuomname}</td>
 <td>${data.cwhname}</td>
 <td>${data.cpositionname}</td>
-<td>${data.planiqty}</td>
+<td name="PLANQTY">${data.planiqty}</td>
 <td>${data.num}</td>
 <td name="scanqty">0</td>
 <td name="BATCH">${data.batch}</td>
@@ -194,6 +194,17 @@
             <tbody></tbody>
         </table>
 
+
+
+
+<div id="CONFIRM" hidden="hidden">
+
+</div>
+
+
+
+
+
         <div style="margin-top: 10px">
         <textarea class="jb_tpl_box" id="SysMaterialsprepare1_tpl_#(pageId)">
 {@each datas as data,index}
@@ -260,7 +271,8 @@
 
 #define js()
 <script type="text/javascript">
-
+var FLAG;
+var TAG;
 
     function barcode() {
         if (!document.getElementById("billno").value){
@@ -293,8 +305,25 @@
                     var mytable = document.getElementById("MaterialsDetail");
                     for (var i=1,rows=mytable.rows.length;i<rows; i++){
                         // map1[i-1]=mytable.rows[i].cells[14].innerHTML
-                        if (document.getElementsByName("CINVCODE")[i-1].innerText == res.data.cinvcode&&document.getElementsByName("BATCH")[i-1].innerText == res.data.batch){
-                            document.getElementsByName("scanqty")[i-1].innerText = (parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[i-1].innerText==""?0:document.getElementsByName("scanqty")[i-1].innerText)).toString();
+                        if (document.getElementsByName("CINVCODE")[i-1].innerText == res.data.cinvcode&&document.getElementsByName("BATCH")[i-1].innerText == res.data.batch){//判断扫描存货编码和批次号
+                            if (document.getElementsByName("PLANQTY")[i-1].innerText>=parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[i-1].innerText==""?0:document.getElementsByName("scanqty")[i-1].innerText)){//扫描数量大于计划数量后进行拆包操作
+                                //未超过,增加扫描数量
+                                document.getElementsByName("scanqty")[i-1].innerText = (parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[i-1].innerText==""?0:document.getElementsByName("scanqty")[i-1].innerText)).toString();
+                            }else {
+                                //超过,进行拆包操作
+                                TAG=i;
+                                LayerMsgBox.confirm("该条码数量大于需求数量，确认是否超出发料！",function () {
+                                    document.getElementsByName("scanqty")[TAG-1].innerText = (parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[TAG-1].innerText==""?0:document.getElementsByName("scanqty")[TAG-1].innerText)).toString();
+                                },function () {
+                                    document.getElementById("CONFIRM").innerHTML='<button data-dialogbtn data-area="20%,35%" data-title="确认数量" id="CONFIRM1" data-url="admin/sysMaterialspreparedetail/ConfirmNum?barcode='+barcode+'&qty='+res.data.qty+'">测试</button>';
+                                    console.log(document.getElementById("CONFIRM1"));
+                                    document.getElementById("CONFIRM1").click();
+                                })
+                                document.getElementsByClassName("layui-layer-btn0")[0].innerText="不拆包";
+                                document.getElementsByClassName("layui-layer-btn1")[0].innerText="拆包";
+                                break;
+                            }
+
                         }
                     }
 
@@ -387,6 +416,9 @@
         //     });
 
     }
+
+
+
 
 
 </script>
