@@ -538,3 +538,35 @@ WHERE ic.isDeleted = '0'
     #end
 
 
+
+
+
+
+
+#sql("xianjinxianchu")
+SELECT it.cInvCode,
+       it.cInvCode1,
+       it.cInvName1,
+       mri.iUsageUOM * md.iQty AS planIqty,
+       it.cInvStd,
+       uom.cUomName,
+       sbp.Batch,
+       sbp.Qty,
+       sbp.Barcode,
+       mp.Billno,
+       mp.SourceBillID
+FROM
+    Mo_MoRoutingInvc mri
+        LEFT JOIN Bd_Inventory it ON mri.iInventoryId= it.iAutoId
+        LEFT JOIN Mo_MoRoutingConfig mrc ON mri.iMoRoutingConfigId= mrc.iAutoId
+        LEFT JOIN Mo_MoRouting mr ON mrc.iMoRoutingId= mr.iAutoId
+        LEFT JOIN Mo_MoDoc md ON mr.iMoDocId= md.iAutoId
+        LEFT JOIN T_Sys_MaterialsPrepare mp ON mp.SourceBillID= md.iAutoId
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId= it.iInventoryUomId1
+        LEFT JOIN T_Sys_StockBarcodePosition sbp ON sbp.InvCode= it.cInvCode
+WHERE 1 = 1
+  AND  mp.BillNo='#(billno)'
+  AND  sbp.State='1'
+  AND  it.cInvCode is not null
+ORDER BY sbp.Batch ASC #end
+
