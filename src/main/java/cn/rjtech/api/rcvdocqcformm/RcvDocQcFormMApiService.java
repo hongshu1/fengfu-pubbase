@@ -44,8 +44,8 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
     /**
      * 生成
      */
-    public JBoltApiRet createTable(Long iautoid, String cqcformname) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.createTable(iautoid, cqcformname));
+    public JBoltApiRet createTable(Long iautoid) {
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.createTable(iautoid));
     }
 
     /**
