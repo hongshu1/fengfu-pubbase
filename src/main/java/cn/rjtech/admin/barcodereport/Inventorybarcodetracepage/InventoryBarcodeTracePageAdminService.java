@@ -63,6 +63,15 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
         return  new Page<>(recordArrayList, pageNumber, pageSize, totalPage, (int) totalRow);
     }
 
+
+    /**
+     * 获取打印数据
+     */
+    public List<Record> PrintData(int pageSize, int pageNumber, Kv kv){
+        List<Record> list = getBarcodeTotalList(DataSourceConstants.U8,kv);
+        return list;
+    }
+
         /**
          *条码汇总表构建临时表 ,并执行存储过程
          * */
