@@ -35,6 +35,7 @@ import cn.rjtech.model.momdata.ExpenseBudgetItem;
 import cn.rjtech.model.momdata.ExpenseBudgetItemd;
 import cn.rjtech.model.momdata.Period;
 import cn.rjtech.model.momdata.Subjectm;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ReadFullYearExpenseBudgetExcelUtil;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -59,7 +60,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-09-15 09:54
  */
-public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
+public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements IApprovalService{
 
 	private final ExpenseBudget dao = new ExpenseBudget().dao();
 	@Inject
@@ -984,7 +985,16 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
     public String postRejectFunc(long formAutoId) {
         return null;
     }
-	
+    /**
+     * 实现反审之前的其他业务操作，如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }	
     /**
      * 实现反审之后的其他业务操作, 如有异常返回错误信息
      *
@@ -1002,7 +1012,20 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
            
         }
         return null;
-    }	
+    }
+    /**
+     * 提审前业务，如有异常返回错误信息
+     */
+    public String preSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 提审后业务处理，如有异常返回错误信息
+     */
+    public String postSubmitFunc(long formAutoId) {
+        return null;
+    }
 
 	public Page<Record> periodContrastDatas(int pageNumber, int pageSize, Kv para) {
 		ExpenseBudget expenseBudget = new ExpenseBudget();
@@ -1338,5 +1361,53 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> {
 	public Boolean periodIsExists(Period dbPeriod) {
 		List<ExpenseBudget> list = find(selectSql().eq("iPeriodId", dbPeriod.getIautoid()));
 		return CollUtil.isNotEmpty(list);
+	}
+
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
