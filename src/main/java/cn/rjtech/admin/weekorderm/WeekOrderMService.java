@@ -185,32 +185,6 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     }
 
     /**
-     * 撤回
-     */
-    public Ret withdraw(Long iAutoId) {
-        WeekOrderM weekOrderM = findById(iAutoId);
-
-        tx(() -> {
-            // 校验订单状态
-            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
-            // 订单状态：2. 待审批
-            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
-
-                weekOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
-                ValidationUtils.isTrue(weekOrderM.update(), ErrorMsg.UPDATE_FAILED);
-
-                cusOrderSumService.algorithmSum();
-
-                return null;
-            });
-
-            return true;
-        });
-
-        return SUCCESS;
-    }
-
-    /**
      * 关闭功能
      */
     public Ret closeWeekOrder(String iAutoId) {

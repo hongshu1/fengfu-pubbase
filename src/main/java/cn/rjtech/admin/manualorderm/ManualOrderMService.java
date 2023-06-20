@@ -365,29 +365,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
     }
 
     /**
-     * 撤回
-     *
-     * @param iAutoId
-     * @return
-     */
-    public Ret withdraw(Long iAutoId) {
-        tx(() -> {
-            ManualOrderM manualOrderM = findById(iAutoId);
-            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), manualOrderM.getIOrderStatus(), "只允许待审核状态订单撤回");
-            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
-                manualOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
-                ValidationUtils.isTrue(manualOrderM.update(), "撤回失败");
-
-                // 修改客户计划汇总
-                cusOrderSumService.algorithmSum();
-                return null;
-            });
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
      * 提交审批
      *
      * @param iautoid

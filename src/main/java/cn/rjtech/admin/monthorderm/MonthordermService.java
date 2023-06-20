@@ -327,42 +327,6 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
     }
 
     /**
-     * 撤回
-     */
-    public Ret withdraw(Long iautoid) {
-        tx(() -> {
-            // 已根据单据的审批方式，适配撤回的处理
-            formApprovalService.withdraw(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), "撤回失败");
-                return null;
-            });
-
-            return true;
-        });
-
-        return SUCCESS;
-    }
-
-    /**
-     * 审核不通过
-     */
-    public Ret reject(Long iautoid) {
-        tx(() -> {
-            formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
-
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
-
-                postRejectFunc(iautoid);
-
-                return null;
-            });
-
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
      * 处理审批通过的其他业务操作，如有异常返回错误信息
      *
      * @param formAutoId 单据ID

@@ -303,9 +303,9 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param primaryKeyName 单据主键名称
      */
     public void batchBackOut(@Para(value = "ids") String ids,
-                                    @Para(value = "formSn") String formSn,
-                                    @Para(value = "primaryKeyName") String primaryKeyName,
-                                    @Para(value = "className") String className) {
+                             @Para(value = "formSn") String formSn,
+                             @Para(value = "primaryKeyName") String primaryKeyName,
+                             @Para(value = "className") String className) {
         ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notBlank(formSn, "表单编码不能为空");
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
@@ -313,11 +313,6 @@ public class FormApprovalAdminController extends BaseAdminController {
 
         renderJson(service.batchBackout(ids, formSn, primaryKeyName, className));
     }
-
-
-    // --------------------------------------------------------------------------------------------------------------------
-    // TODO 需要同时支持审核/审批处理： 批量撤销审批
-    // --------------------------------------------------------------------------------------------------------------------
 
     // --------------------------------------------------------------------------------------------------------------------
     // 审核处理
@@ -450,14 +445,32 @@ public class FormApprovalAdminController extends BaseAdminController {
 
     /**
      * 审批过程中待审批的人员
+     *
      * @param formAutoId 单据ID
-     * @param size 人数
+     * @param size       人数
      */
     public void approvalProcessUsers(@Para(value = "formAutoId") Long formAutoId,
                                      @Para(value = "size", defaultValue = "5") Integer size) {
         ValidationUtils.validateId(formAutoId, "formAutoId");
 
         renderJsonData(service.getNextApprovalUserIds(formAutoId, size));
+    }
+
+    /**
+     * 撤回审核、审批
+     */
+    public void withdraw(@Para(value = "formAutoId") Long formAutoId,
+                         @Para(value = "formSn") String formSn,
+                         @Para(value = "primaryKeyName") String primaryKeyName,
+                         @Para(value = "className") String className,
+                         @Para(value = "permissionKey") String permissionKey) {
+        ValidationUtils.validateId(formAutoId, "单据ID");
+        ValidationUtils.notBlank(formSn, "表单编码不能为空");
+        ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
+        ValidationUtils.notBlank(className, "缺少实现审批通过后的业务类名");
+        ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“撤回”的权限");
+        
+        renderJsonData(service.withdraw(formSn, primaryKeyName, formAutoId, className));
     }
 
 }
