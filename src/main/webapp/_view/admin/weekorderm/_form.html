@@ -84,6 +84,7 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group row">
+                                    <input type="hidden" name="icustomermid" value="#(weekOrderM.icustomerid??)" id="icustomermid" data-sync-attr="iautoid"/>
                                     <input type="hidden" name="weekOrderM.icustomerid" value="#(weekOrderM.icustomerid??)" id="icustomerid" data-sync-attr="iautoid"/>
                                     <input type="hidden" name="weekOrderM.ccuscode" value="#(weekOrderM.ccuscode??)" id="ccuscode" data-sync-attr="ccuscode"/>
                                     <label class="col-sm-3 col-form-label">客户名称</label>
@@ -95,7 +96,7 @@
                                                    id="ccusname"
                                                    data-url="admin/customer/autocomplete"
                                                    data-rule="required"
-                                                   data-sync-ele="#icustomerid,#ccuscode"
+                                                   data-sync-ele="#icustomermid,#icustomerid,#ccuscode"
                                                    data-text-attr="ccusname"
                                                    data-value-attr="iautoid"
                                                    data-column-attr="ccuscode,ccusname"
@@ -395,7 +396,7 @@
                 },
                 cdistrictname: {
                     type: "select",
-                    linkPara: 'input[name="icustomermid"]',
+                    linkPara:"#icustomermid",
                     url: "/admin/customeraddr/list",
                     valueAttr: "cdistrictname",
                     textAttr: "cdistrictname",
@@ -704,15 +705,15 @@
             }
         });
     }
-    function setChooseDialogSelectResult(data){
-        $('#icustomerid').val(data.ccusname);
-    }
 
     // 选择客户名称
     function instCcusname(data) {
         $("#icustomerid").val(data.iautoid);
         $("#ccusname").val(data.ccusname);
         $("#ccuscode").val(data.ccuscode);
+
+        // 收货地点依赖数据
+        $("#icustomermid").val(data.iautoid);
     }
 </script>
 #end
