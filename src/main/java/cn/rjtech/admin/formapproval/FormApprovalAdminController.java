@@ -169,7 +169,7 @@ public class FormApprovalAdminController extends BaseAdminController {
 
         // 异步通知
         if (ret.isOk()) {
-            List<Long> list = service.getNextApprovalUsers(formAutoId, 10);
+            List<Long> list = service.getNextApprovalUserIds(formAutoId, 10);
             if (CollUtil.isNotEmpty(list)) {
                 MsgEventUtil.postApprovalMsgEvent(JBoltUserKit.getUserId(), formSn, primaryKeyName, formAutoId, list);
             }
@@ -441,7 +441,7 @@ public class FormApprovalAdminController extends BaseAdminController {
                                      @Para(value = "size", defaultValue = "5") Integer size) {
         ValidationUtils.validateId(formAutoId, "formAutoId");
 
-        renderJsonData(service.getNextApprovalUsers(formAutoId, size));
+        renderJsonData(service.getNextApprovalUserIds(formAutoId, size));
     }
 
 }
