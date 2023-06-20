@@ -484,6 +484,7 @@ public class ContainerService extends BaseService<Container> {
 			record.set("iUpdateBy", JBoltUserKit.getUserId());
 			record.set("dUpdateTime", now);
 			record.set("cUpdateName", JBoltUserKit.getUserName());
+
 		}
 
 		// 执行批量操作
