@@ -16,6 +16,8 @@ import cn.rjtech.admin.formuploadcategory.FormUploadCategoryService;
 import cn.rjtech.admin.formuploadd.FormUploadDService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.WeekOrderStatusEnum;
+import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.FormUploadD;
 import cn.rjtech.model.momdata.FormUploadM;
 import cn.rjtech.service.approval.IApprovalService;
@@ -595,4 +597,24 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
     public String postBatchBackout(List<Long> formAutoIds) {
         return null;
     }
+
+	/**
+	 * 批量删除
+	 */
+	public Ret deleteByBatchIds(String ids) {
+		List<FormUploadM> list = getListByIds(ids);
+		List<FormUploadM> notAuditList = new ArrayList<>();
+		for (FormUploadM formuploadm : list) {
+			if (AuditStatusEnum.NOT_AUDIT.getValue() != formuploadm.getIAuditStatus()) {
+				notAuditList.add(formuploadm);
+			}
+
+			formuploadm.setIsDeleted(true);
+		}
+
+		ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
+		ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
+
+		return SUCCESS;
+	}
 }
