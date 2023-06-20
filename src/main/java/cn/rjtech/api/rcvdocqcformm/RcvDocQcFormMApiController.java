@@ -8,9 +8,11 @@ import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.instockqcformm.GetExportExcelVo;
 import cn.rjtech.entity.vo.rcvdocqcformm.*;
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+
 import io.github.yedaxia.apidocs.ApiDoc;
 
 /**
@@ -43,22 +45,21 @@ public class RcvDocQcFormMApiController extends BaseApiController {
      */
     @ApiDoc(result = RcvDocQcFormMPageVo.class)
     @UnCheck
-    public void getDatas(@Para(value = "crcvdocqcformno") String crcvdocqcformno, 
+    public void getDatas(@Para(value = "crcvdocqcformno") String crcvdocqcformno,
                          @Para(value = "cinvaddcode") String cinvaddcode,
                          @Para(value = "cinvcode1") String cinvcode1,
                          @Para(value = "cinvname1") String cinvname1,
-                         @Para(value = "name") String name, 
+                         @Para(value = "name") String name,
                          @Para(value = "cvenname") String cvenname,
-                         @Para(value = "crcvdocno") String crcvdocno, 
+                         @Para(value = "crcvdocno") String crcvdocno,
                          @Para(value = "istatus") String istatus,
-                         @Para(value = "iscompleted") String iscompleted, 
+                         @Para(value = "iscompleted") String iscompleted,
                          @Para(value = "cqcformname") String cqcformname,
-                         @Para(value = "starttime") String starttime, 
+                         @Para(value = "starttime") String starttime,
                          @Para(value = "endtime") String endtime,
                          @Para(value = "page") String page,
                          @Para(value = "pageSize") String pageSize) {
         Kv kv = new Kv();
-        
         kv.set("crcvdocqcformno", crcvdocqcformno);
         kv.set("cinvaddcode", cinvaddcode);
         kv.set("cinvcode1", cinvcode1);
@@ -73,14 +74,14 @@ public class RcvDocQcFormMApiController extends BaseApiController {
         kv.set("crcvdocno", crcvdocno);
         kv.set("page", page);
         kv.set("pageSize", pageSize);
-        
+
         renderJBoltApiRet(apiService.getDatas(kv));
     }
 
     /**
      * 点击生成按钮，生成来料检成绩表
      *
-     * @param iautoid     主表id
+     * @param iautoid 主表id
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
@@ -101,8 +102,8 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     }
 
     /**
-     * @desc 跳转到"检验"页面后，自动加载检验页面table的数据
      * @param ircvdocqcformmid 主表的主键
+     * @desc 进入子页面自动加载table的数据：检验、查看、编辑三个跳转功能
      */
     @ApiDoc(result = AutoGetCheckOutTableDatasVo.class)
     @UnCheck
@@ -120,7 +121,7 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     @UnCheck
     public void jumpOnlysee(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        
+
         renderJBoltApiRet(apiService.jumpOnlysee(iautoid));
     }
 
@@ -128,15 +129,22 @@ public class RcvDocQcFormMApiController extends BaseApiController {
      * @desc 跳转到"查看"页面或者“编辑”页面后，自动加载查看页面table的数据
      * @param iautoid 主键
      */
-    @ApiDoc(result = AutoGetRcvOnlyseeTableDatasVo.class)
+    /*@ApiDoc(result = AutoGetRcvOnlyseeTableDatasVo.class)
     @UnCheck
     public void autoGetRcvOnlyseeOrEditTableDatas(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
         
         renderJBoltApiRet(apiService.autoGetRcvOnlyseeOrEditTableDatas(iautoid));
-    }
+    }*/
 
     /**
+     * @param cmeasurepurpose:测试目的 cdcno:设变号
+     *                             ircvdocqcformmiautoid: 主页面的iautoid
+     *                             cmeasureunit:测定单位
+     *                             isok:是否合格
+     *                             cmeasurereason:测定理由
+     *                             serializeSubmitList:是一个json，存放在跳转的页面维护的数据（请调用此接口开发的同事，到时候问陈聪json的格式）
+     *                             cmemo:备注
      * @desc 在检验页面点击“确定”按钮，将数据带到后台保存
      */
     @ApiDoc(result = NullDataResult.class)
@@ -144,7 +152,7 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     public void saveCheckOut(@Para(value = "cmeasurepurpose") String cmeasurepurpose,
                              @Para(value = "cdcno") String cdcno,
                              @Para(value = "ircvdocqcformmiautoid") Long ircvdocqcformmiautoid,
-                             @Para(value = "cmeasureunit") String cmeasureunit, 
+                             @Para(value = "cmeasureunit") String cmeasureunit,
                              @Para(value = "isok") String isok,
                              @Para(value = "cmeasurereason") String cmeasurereason,
                              @Para(value = "serializeSubmitList") String serializeSubmitList,
@@ -155,7 +163,8 @@ public class RcvDocQcFormMApiController extends BaseApiController {
         ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, ircvdocqcformmiautoid, cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
+        renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, ircvdocqcformmiautoid,
+            cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
     }
 
     /**
@@ -165,7 +174,7 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     @UnCheck
     public void jumpEdit(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        
+
         renderJBoltApiRet(apiService.jumpEdit(iautoid));
     }
 
@@ -183,13 +192,13 @@ public class RcvDocQcFormMApiController extends BaseApiController {
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void saveEdit(@Para(value = "cmeasurepurpose") String cmeasurepurpose, 
+    public void saveEdit(@Para(value = "cmeasurepurpose") String cmeasurepurpose,
                          @Para(value = "cdcno") String cdcno,
                          @Para(value = "ircvdocqcformmiautoid") Long ircvdocqcformmiautoid,
-                         @Para(value = "cmeasureunit") String cmeasureunit, 
+                         @Para(value = "cmeasureunit") String cmeasureunit,
                          @Para(value = "isok") String isok,
                          @Para(value = "cmeasurereason") String cmeasurereason,
-                         @Para(value = "serializeSubmitList") String serializeSubmitList, 
+                         @Para(value = "serializeSubmitList") String serializeSubmitList,
                          @Para(value = "cmemo") String cmemo) {
         ValidationUtils.notNull(cmeasurepurpose, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(ircvdocqcformmiautoid, JBoltMsg.PARAM_ERROR);
@@ -197,16 +206,8 @@ public class RcvDocQcFormMApiController extends BaseApiController {
         ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService.saveEdit(cmeasurepurpose, cdcno, ircvdocqcformmiautoid, cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
-    }
-    
-    /**
-     * 自动加载图片
-     */
-    @ApiDoc
-    @UnCheck
-    public void uploadImage() {
-        renderJBoltApiRet(apiService.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+        renderJBoltApiRet(apiService.saveEdit(cmeasurepurpose, cdcno, ircvdocqcformmiautoid, cmeasureunit, isok,
+            cmeasurereason, serializeSubmitList, cmemo));
     }
 
     /**
@@ -214,10 +215,10 @@ public class RcvDocQcFormMApiController extends BaseApiController {
      */
     @ApiDoc(GetExportExcelVo.class)
     @UnCheck
-    public void exportExcel(@Para(value = "iauoid") Long iauoid){
+    public void exportExcel(@Para(value = "iauoid") Long iauoid) {
         ValidationUtils.notNull(iauoid, JBoltMsg.PARAM_ERROR);
-        
+
         renderJBoltApiRet(apiService.getExportData(iauoid));
     }
-    
+
 }

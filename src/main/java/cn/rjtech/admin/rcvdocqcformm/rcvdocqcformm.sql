@@ -60,30 +60,6 @@ where t1.IsDeleted = '0'
 ORDER BY t1.dUpdateTime DESC
 #end
 
-#sql("getCheckoutList")
-SELECT t1.*,
-       t2.cQcItemName,
-       t3.cQcParamName,
-       t4.iQcFormTableParamId,
-       t4.iAutoId as iqcformtableitemid,
-       t5.iStdVal,
-       t5.iMaxVal,
-       t5.iMinVal,
-       t5.cOptions,
-       t5.iSeq,
-       t5.iType
-FROM Bd_QcFormItem t1
-         LEFT JOIN Bd_QcItem t2 ON t1.iQcItemId = t2.iAutoId
-         LEFT JOIN Bd_QcParam t3 ON t2.iAutoId = t3.iQcItemId
-         LEFT JOIN Bd_QcFormTableItem t4 ON t1.iAutoId = t4.iQcFormItemId
-         LEFT JOIN Bd_QcFormTableParam t5 ON t4.iQcFormTableParamId = t5.iAutoId
-WHERE t1.isDeleted = '0'
-  #if(iqcformid)
-  AND t1.iqcformId = #para(iqcformid)
-  #end
-ORDER BY t1.iSeq ASC
-#end
-
 #sql("findChecoutListByIformParamid")
 SELECT
     t1.*,t4.cQcParamName,t5.cQcItemName

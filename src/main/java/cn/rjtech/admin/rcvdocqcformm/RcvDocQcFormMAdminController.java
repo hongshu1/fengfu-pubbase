@@ -23,6 +23,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 质量管理-来料检
@@ -130,7 +131,7 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     }
 
     /**
-     * 点击检验时，进入弹窗自动加载table的数据
+     * 进入子页面自动加载table的数据
      */
     public void getCheckOutTableDatas() {
         renderJsonData(service.getCheckOutTableDatas(getKv()));

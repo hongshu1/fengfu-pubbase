@@ -420,7 +420,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     /**
      * 点击查看时，进入弹窗自动加载table的数据
      */
-    public List<Record> getonlyseelistByiautoid(Kv kv) {
+    /*public List<Record> getonlyseelistByiautoid(Kv kv) {
         kv.set("ircvdocqcformmid", kv.get("iautoid"));
         List<Record> recordList = dbTemplate("rcvdocqcformm.getonlyseelistByiautoid", kv).find();
         List<Record> clearRecordList = clearZero(recordList);
@@ -456,9 +456,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         List<Record> resultRecord =
             records.stream().sorted(Comparator.comparing(e -> e.getInt("iseq"))).collect(Collectors.toList());
         return resultRecord;
-    }
+    }*/
 
-    public List<Record> getonlyseelistByiautoid(Long iautoid) {
+    /*public List<Record> getonlyseelistByiautoid(Long iautoid) {
         Kv kv = new Kv();
         kv.set("ircvdocqcformmid", iautoid);
         List<Record> recordList = dbTemplate("rcvdocqcformm.getonlyseelistByiautoid", kv).find();
@@ -472,7 +472,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             break;
         }
         return docparamlist;
-    }
+    }*/
 
     /**
      * 去零
@@ -570,7 +570,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     /**
      * 上传图片
      */
-    public List<String> uploadImage(List<UploadFile> files) {
+    /*public List<String> uploadImage(List<UploadFile> files) {
         List<String> imgList = new ArrayList<>();
         if (ObjectUtil.isEmpty(files)) {
             return imgList;
@@ -581,7 +581,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             imgList.add(localUrl);
         }
         return imgList;
-    }
+    }*/
 
     /**
      * 在编辑页面点击确定
@@ -606,7 +606,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     /*
      * 实现编辑页面的SerializeSubmitList
      * */
-    public Boolean achiveEditSerializeSubmitList(JSONArray serializeSubmitList, Long docqcformmiautoid, String cmeasurepurpose,
+    /*public Boolean achiveEditSerializeSubmitList(JSONArray serializeSubmitList, Long docqcformmiautoid, String cmeasurepurpose,
                                                  String cmeasurereason, String cmeasureunit, String cmemo, String cdcno,
                                                  String isok) {
         List<RcvdocqcformdLine> editRcvdocqcformdLines = new ArrayList<>();
@@ -652,7 +652,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             return true;
         });
         return result;
-    }
+    }*/
 
     /**
      * 给主表传参
@@ -751,8 +751,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         rcvDocQcFormM.setCMeasurePurpose(StringUtils.isNotBlank(cMeasurePurpose)
             ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose);
         //4、明细表数据
-        List<Record> recordList = getonlyseelistByiautoid(Kv.by("iautoid", iautoid));
+        List<RcvDocQcFormD> formDList = rcvDocQcFormDService.findByIRcvDocQcFormMId(rcvDocQcFormM.getIAutoId());
         //5、如果cvalue的列数>10行，分多个页签
+        List<Record> recordList = getCheckOutTableDatas(Kv.by("ircvdocqcformmid", rcvDocQcFormM.getIAutoId()));
         Record data = recordList.get(0);
         //核心业务逻辑，对列数进行分组
         inStockQcFormMService.commonPageMethod(data, recordList, rcvDocQcFormM, pages);
