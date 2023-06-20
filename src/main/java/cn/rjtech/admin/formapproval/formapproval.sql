@@ -54,7 +54,7 @@ where id in
                from Bd_FormApprovalD where iFormApprovalId = (
                    select Bd_FormApproval.iAutoId
                    from Bd_FormApproval where iFormObjectId = '#(formAutoId)' and isDeleted = '0'
-               ) and iStatus = 1 order by iSeq desc)))
+               ) and iStatus = 1 order by iSeq asc ))  and iAuditStatus = 1)
 #end
 
 
