@@ -41,7 +41,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-29 15:35
  */
-public class FormUploadMService extends BaseService<FormUploadM> implements IApprovalService {
+public class FormUploadMService extends BaseService<FormUploadM>  {
     
 	private final FormUploadM dao=new FormUploadM().dao();
     
@@ -498,7 +498,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 	/**
 	 * 提审前业务，如有异常返回错误信息
 	 */
-	@Override
+
 	public String preSubmitFunc(long formAutoId) {
 		FormUploadM formuploadm = findById(formAutoId);
 
@@ -519,7 +519,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 	/**
 	 * 提审后业务处理，如有异常返回错误信息
 	 */
-	@Override
+
 	public String postSubmitFunc(long formAutoId) {
 		ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", AuditStatusEnum.AWAIT_AUDIT.getValue()).isOk(), "提审失败");
 		return null;
@@ -530,7 +530,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 	 * @param formAutoId 单据ID
 	 * @return 错误信息
 	 */
-	@Override
+
 	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
 		FormUploadM formUploadM = findById(formAutoId);
 		// 审核状态修改
@@ -548,48 +548,56 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 	/**
 	 * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
 	 */
-	@Override
-	public String postRejectFunc(long formAutoId) {
-		ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", AuditStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
-		return null;
+
+	public String postRejectFunc(long formAutoId, Boolean isWithinBatch) {
+		FormUploadM formUploadM = findById(formAutoId);
+		// 审核状态修改
+		formUploadM.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+		formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
+		formUploadM.setCUpdateName(JBoltUserKit.getUserName());
+		formUploadM.setDUpdateTime(new Date());
+		formUploadM.setIAuditBy(JBoltUserKit.getUserId());
+		formUploadM.setCAuditName(JBoltUserKit.getUserName());
+		formUploadM.setDSubmitTime(new Date());
+		formUploadM.update();		return null;
 	}
 
 
-	@Override
+
 	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
 		return null;
 	}
 
-	@Override
+
 	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
 		return null;
 	}
 
-	@Override
+
 	public String postWithdrawFunc(long formAutoId) {
 		return null;
 	}
 
-	@Override
+
 	public String withdrawFromAuditting(long formAutoId) {
 		ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", AuditStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
 
 		return null;
 	}
 
-	@Override
+
 	public String preWithdrawFromAuditted(long formAutoId) {
 		return null;
 	}
 
-	@Override
+
 	public String postWithdrawFromAuditted(long formAutoId) {
 		return null;
 	}
 	/**
 	 * 批量审核（审批）通过，后置业务实现
 	 */
-    @Override
+
     public String postBatchApprove(List<Long> formAutoIds) {
 		for (Long formAutoId : formAutoIds) {
 			FormUploadM formUploadM = findById(formAutoId);
@@ -608,7 +616,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 	/**
 	 * 批量审批（审核）不通过，后置业务实现
 	 */
-    @Override
+
     public String postBatchReject(List<Long> formAutoIds) {
 		for (Long formAutoId : formAutoIds) {
 			FormUploadM formUploadM = findById(formAutoId);
@@ -625,7 +633,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
         return null;
     }
 
-    @Override
+
     public String postBatchBackout(List<Long> formAutoIds) {
         return null;
     }

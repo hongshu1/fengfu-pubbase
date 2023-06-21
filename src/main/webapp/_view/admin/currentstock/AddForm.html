@@ -1,0 +1,87 @@
+<div class="jbolt_page_title">
+    <div class="row">
+
+        <div class="col-12 form-inline">
+
+        </div>
+
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+
+    <form onsubmit="return false;" id="CurrentStockAddForm" action="#(action)" method="post">
+
+        <div class="form-group">
+
+            <label class="col-2 col-form-label">盘点仓库</label>
+            <div class="col-10 text-center">
+                <select class="form-control"
+                        style="width: 300px"
+                        data-autoload
+                        name="whcode"
+                        data-select-type="select2"
+                        data-rule="select"
+                        data-tips="所属仓库"
+                        data-url="admin/currentstock/autocompleteWareHouse"
+                        data-text="=仓库="
+                        data-text-attr="whcode,whname"
+                        data-value=""
+                        data-value-attr="whcode"
+                        data-linkage="true"
+                        data-sonid="poscodeSelect"
+                        id="whcode"
+
+                        data-select="#(whcode??)">
+                </select>
+
+
+
+            </div>
+            <label class="col-2 col-form-label">库位名称</label>
+            <div class="col-10">
+
+
+                <select class="form-control"
+                        data-autoload
+                        data-select-type="select2"
+                        data-tips="所属库位"
+                        data-url="admin/currentstock/autocompletePosition?whcode="
+                        data-text="=库位="
+                        data-text-attr="poscode,posname"
+                        data-value=""
+                        data-linkage="true"
+                        data-link-para-ele="#whcode"
+                        data-value-attr="poscode"
+                        data-setvalueto="poscode"
+                        multiple="multiple"
+                        id="poscodeSelect"
+                        data-select="#(poscode??)">
+                </select>
+
+                <input hidden id="poscode" name="poscode" />
+
+
+
+            </div>
+            <label class="col-2 col-form-label">盘点方式</label>
+                <div class="col-sm-4"  style="padding-top: 1px;">
+                    <div class="radio radio-primary  radio-inline">
+                        <input  id="r_isenabled_true" type="radio" name="checktype" value="0"/>
+                        <label for="r_isenabled_true">明盘</label>
+                    </div>
+                    <div class="radio radio-primary  radio-inline">
+                        <input  id="r_isenabled_false" type="radio" name="checktype" value="1"/>
+                        <label for="r_isenabled_false">暗盘</label>
+                    </div>
+                </div>
+
+        </div>
+    </form>
+</div>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="CurrentStockAddForm")
+#end
+

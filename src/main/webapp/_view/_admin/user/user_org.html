@@ -5,6 +5,10 @@
         <td>${pageNumber,pageSize,index | rownum}</td>
         <td>${data.name}</td>
         <td>${data.cpsnName}</td>
+        <td>${data.cpsnNum}</td>
+        <td>${data.isex|sex}</td>
+        <td>${data.cpsnmobilephone}</td>
+        <td>${data.cpsnemail}</td>
         <td>${data.position}</td>
         <td><img data-switchbtn data-value="${data.isPrincipal}" data-handler="switchEditableTd"/></td>
         <td>${data.parentPsnName}</td>
@@ -46,8 +50,12 @@
     <thead>
     <tr>
         <th data-width="60" data-column="index">序号</th>
-        <th data-width="150" data-column="orgId">组织</th>
+        <th data-width="200" data-column="orgId">组织账套</th>
         <th data-width="100" data-column="ipersonid">人员</th>
+        <th data-width="100" data-column="cpsnNum">编码</th>
+        <th data-width="100" data-column="isex">性别</th>
+        <th data-width="120" data-column="cpsnmobilephone">手机号</th>
+        <th data-width="120" data-column="cpsnemail">邮箱</th>
         <th data-width="150" data-column="position">职位</th>
         <th data-width="100" data-column="isPrincipal">负责人标识</th>
         <th data-width="100" data-column="parentPsnId">直接上级</th>
