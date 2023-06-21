@@ -417,8 +417,6 @@
     {
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
-        parent.refreshPjaxContainer();
-        parent.LayerMsgBox.closeAll();
     }
 
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
@@ -441,6 +439,17 @@
                 LayerMsgBox.success("审批成功!");
             });
         }
+    }
+
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/subcontractsaleorderm/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
+            parent.refreshPjaxContainer();
+        });
     }
 
     //获得配置参数
@@ -467,8 +476,6 @@
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
                     }
-                    parent.refreshPjaxContainer();
-                    parent.layer.closeAll();
                 }
             },
             maxRowCount: 9999,

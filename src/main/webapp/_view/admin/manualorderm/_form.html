@@ -151,7 +151,7 @@
                         <input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig5)" data-notnull="false"
                                autocomplete="off" class="form-control" placeholder="请输入税率"
                                name="manualOrderM.iTaxRate"
-                               value="#(manualOrderM.iTaxRate??)"/>
+                               value="#number(manualOrderM.iTaxRate??)"/>
                     </div>
                     <label class="col-sm-1 col-form-label">币种</label>
                     <div class="col">
@@ -170,7 +170,7 @@
                         <input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig4)" data-notnull="false"
                                autocomplete="off" class="form-control" placeholder="请输入汇率"
                                name="manualOrderM.iExchangeRate"
-                               value="#(manualOrderM.iExchangeRate??)"/>
+                               value="#number(manualOrderM.iExchangeRate??)"/>
                     </div>
                     <label class="col-sm-1 col-form-label">备注</label>
                     <div class="col">
@@ -222,8 +222,6 @@
     {
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
-        parent.refreshPjaxContainer();
-        parent.LayerMsgBox.closeAll();
     }
 
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值

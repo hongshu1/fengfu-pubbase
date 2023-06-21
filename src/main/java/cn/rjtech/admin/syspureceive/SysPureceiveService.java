@@ -22,6 +22,7 @@ import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 
 import com.jfinal.aop.Inject;
@@ -41,7 +42,7 @@ import java.util.*;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-10 10:01
  */
-public class SysPureceiveService extends BaseService<SysPureceive> {
+public class SysPureceiveService extends BaseService<SysPureceive> implements IApprovalService {
 
     private final SysPureceive dao = new SysPureceive().dao();
 
@@ -324,18 +325,18 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             }
         }
         // 采购订单推u8才可以添加
-        List<Record> list = jBoltTable.getSaveRecordList();
-        if(null != list) {
-            for (Record record : list) {
-                ValidationUtils.isTrue(this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
-            }
-        }
-        List<Record> list1 = jBoltTable.getUpdateRecordList();
-        if(null != list1) {
-            for (Record record : list1) {
-                ValidationUtils.isTrue(this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
-            }
-        }
+//        List<Record> list = jBoltTable.getSaveRecordList();
+//        if(null != list) {
+//            for (Record record : list) {
+//                ValidationUtils.isTrue(this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
+//            }
+//        }
+//        List<Record> list1 = jBoltTable.getUpdateRecordList();
+//        if(null != list1) {
+//            for (Record record : list1) {
+//                ValidationUtils.isTrue(this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
+//            }
+//        }
 
         SysPureceive sysPureceive = jBoltTable.getFormModel(SysPureceive.class, "sysPureceive");
 
@@ -362,7 +363,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
             return true;
         });
 
-        return SUCCESS;
+        return Ret.ok().set("autoid",sysPureceive.getAutoID());
     }
 
     private void saveData(JBoltTable jBoltTable, SysPureceive sysPureceive, String operationType, User user,
@@ -972,5 +973,69 @@ public class SysPureceiveService extends BaseService<SysPureceive> {
         return add.intValue();
     }
 
+    @Override
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        return null;
+    }
+
+    @Override
+    public String postRejectFunc(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    @Override
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    @Override
+    public String preSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postWithdrawFunc(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String withdrawFromAuditting(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String preWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        return null;
+    }
 }
 
