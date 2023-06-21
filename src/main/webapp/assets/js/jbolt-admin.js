@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.6.2";
+var jbolt_admin_js_version="6.6.3";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -7850,7 +7850,7 @@ var HtmlEditorUtil={
 			    reader.readAsDataURL( file );
 		}*/,sendSummernoteFileToQiniu:function(editor,fileDatas){
 			loadJBoltPlugin(['qiniu'], function(){
-	      	  uploadFileToQiniu(editor,"img",fileDatas,null,null,null,true,null,editor.data("upload-loading"),function(editorObj,type,res){
+	      	  uploadFileToQiniu(editor,"img",fileDatas,null,null,null,true,null,editor.data("upload-loading"),function(type,res){
 					for(var i in res.data){
 	      			  editor.summernote('insertImage',res.data[i].url);
 	      		  }
