@@ -6,13 +6,15 @@ SELECT dp.id,
        '#(busobjectname)' AS busobject_name,
 
         #switch(datasource)
+            ### 用户
             #case('1')
                 ISNULL(dp.busobject_value_id, p.id) AS busobject_value_id,
                 ISNULL(dp.busobject_value_name, p.name) AS busobject_value_name,
                 p.sn AS code,
+            ### 部门
             #case('2')
                 ISNULL(dp.busobject_value_id, p.iautoid) AS busobject_value_id,
-                ISNULL(dp.busobject_value_name, p.name) AS busobject_value_name,
+                ISNULL(dp.busobject_value_name, p.cdepname) AS busobject_value_name,
                 p.cdepcode AS code,
         #end
 
