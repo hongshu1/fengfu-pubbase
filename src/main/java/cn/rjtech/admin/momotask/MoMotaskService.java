@@ -552,7 +552,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
       record1.put("iyear", "");
       record1.put("psnname", "");
       record1.put("psnnum", "");
-      record1.put("lock", true);
+      record1.put("lock", false);
       if (record1.getStr("itype").equals("1")) {
         maps.put(record1.getStr("dataid"), record1);
       } else if (record1.getStr("itype").equals("2")) {
@@ -613,7 +613,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
           user.put("ipersonid", "");
           user.put("itype", "");
           user.put("sdate", "");
-          user.put("lock", true);
+          user.put("lock", false);
           userDatas.add(user);
           userMapDatas.put(dateSplicing, userDatas);
           //</editor-fold>
@@ -724,7 +724,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
               record1.put("ipersonid", "");
               record1.put("itype", "");
               record1.put("sdate", "");
-              record1.put("lock", false);
+              record1.put("lock", true);
 
               record2.put("cMoDocNo", "");
               record2.put("datesplicing", "");
@@ -739,7 +739,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
               record2.put("iyear", "");
               record2.put("psnname", "");
               record2.put("psnnum", "");
-              record2.put("lock", false);
+              record2.put("lock", true);
 
               record2.put("cpsn_num", "");
               record2.put("dataid", "");
@@ -767,7 +767,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
               record3.put("ipersonid", "");
               record3.put("itype", "");
               record3.put("sdate", "");
-              record3.put("lock", false);
+              record3.put("lock", true);
 
               record1.put("cMoDocNo", recorda3.getStr("cMoDocNo"));
 
@@ -823,7 +823,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
               record1.put("ipersonid", "");
               record1.put("itype", "");
               record1.put("sdate", "");
-              record3.put("lock", true);
+              record3.put("lock", false);
               record1.set("iDutyPersonId", record3.getStr("iDutyPersonId") == null ? "" : record3.getStr("iDutyPersonId"));
               record1.set("cPsn_Name", record3.getStr("cPsn_Name") == null ? "" : record3.getStr("cPsn_Name"));
               if (map6.containsKey(iAutoId)) {
@@ -926,7 +926,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
           leaderRec.put("psnname", "");
           leaderRec.put("psnnum", "");
 
-          leaderRec.put("lock", true);
+          leaderRec.put("lock", false);
           leaderRec.put("dataid", workShift.getStr("dataid"));
           leaderRec.put("sdate", workShift.getStr("sdate"));
           Record record2 = new Record();
