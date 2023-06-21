@@ -176,7 +176,7 @@
                                         <input type="text" autocomplete="off" class="form-control" data-rule="pnumber;fix<=#(precisionConfig5)"
                                                data-notnull="false"
                                                placeholder="请输入税率" maxlength="40" name="weekOrderM.iTaxRate"
-                                               value="#(weekOrderM.iTaxRate??)"/>
+                                               value="#number(weekOrderM.iTaxRate??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -395,6 +395,7 @@
                 cdistrictname: {
                     type: "select",
                     linkPara:"#icustomermid",
+
                     url: "/admin/customeraddr/list",
                     valueAttr: "cdistrictname",
                     textAttr: "cdistrictname",
