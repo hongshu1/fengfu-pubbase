@@ -29,3 +29,11 @@
 	#end	
 	order by pm.iautoid desc
 #end
+
+#sql("isExistsProposalDatas")
+select count(1) from pl_proposald pd where exists (
+	select 1 from pl_investment_plan ip
+		left join pl_investment_plan_item ipi on ip.iautoid = ipi.iplanid 
+		where ip.iautoid = #para(iplanid) and pd.iSourceId = ipi.iautoid
+)
+#end

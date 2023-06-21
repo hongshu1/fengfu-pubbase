@@ -1,7 +1,6 @@
 package cn.rjtech.admin.currentstock;
 
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
@@ -13,6 +12,8 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+
+import java.util.Date;
 
 /**
  * 盘点单 Controller
@@ -119,6 +120,7 @@ public class CurrentStockController extends BaseAdminController {
 	   stockcheckvouch.setWhCode(whcode);
 	   stockcheckvouch.setPoscodes(poscode);
 	   stockcheckvouch.setStatus("0");
+	   stockcheckvouch.setIsDeleted("0");
 	   ValidationUtils.notNull(whcode,"仓库为空!");
 	   ValidationUtils.notNull(checktype,"盘点方式为空!");
 
@@ -145,6 +147,9 @@ public class CurrentStockController extends BaseAdminController {
 	* */
 	public void okCheck() {
 		Kv kv = getKv();
+		kv.put("iupdateby", JBoltUserKit.getUserId());
+		kv.put("cupdatename", JBoltUserKit.getUserName());
+		kv.put("dupdatetime", new Date());
 		Ret ret = service.okCheck(kv);
 		renderJsonData(ret);
 	}
@@ -155,6 +160,11 @@ public class CurrentStockController extends BaseAdminController {
 	 * */
 	public void regret() {
 		Kv kv = getKv();
+		kv.put("iupdateby", JBoltUserKit.getUserId());
+		kv.put("cupdatename", JBoltUserKit.getUserName());
+		kv.put("dupdatetime", new Date());
+		kv.put("iauditby", JBoltUserKit.getUserId());
+		kv.put("cauditname", JBoltUserKit.getUserName());
 		Ret ret = service.regret(kv);
 		renderJsonData(ret);
 	}
@@ -164,6 +174,11 @@ public class CurrentStockController extends BaseAdminController {
 	 * */
 	public void agree() {
 		Kv kv = getKv();
+		kv.put("iupdateby", JBoltUserKit.getUserId());
+		kv.put("cupdatename", JBoltUserKit.getUserName());
+		kv.put("dupdatetime", new Date());
+		kv.put("iauditby", JBoltUserKit.getUserId());
+		kv.put("cauditname", JBoltUserKit.getUserName());
 		Ret ret = service.agree(kv);
 		renderJsonData(ret);
 	}

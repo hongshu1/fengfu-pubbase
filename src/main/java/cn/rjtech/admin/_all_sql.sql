@@ -695,3 +695,7 @@
 #namespace("stockcheckdetail")
 #include("stockcheckdetail/stockcheckdetail.sql")
 #end
+
+#namespace("formextendfields")
+#include("formextendfields/formextendfields.sql")
+#end

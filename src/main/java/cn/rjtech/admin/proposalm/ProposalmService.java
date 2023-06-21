@@ -23,6 +23,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.barcodeencodingm.BarcodeencodingmService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.admin.project.ProjectService;
 import cn.rjtech.admin.projectcard.ProjectCardService;
 import cn.rjtech.admin.proposalattachment.ProposalAttachmentService;
 import cn.rjtech.admin.proposalcategory.ProposalcategoryService;
@@ -78,6 +79,8 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
     private ProjectCardService projectCardService;
 	@Inject
     private FormApprovalService formApprovalService;
+	@Inject
+	private ProjectService projectService;
     @Override
     protected Proposalm dao() {
         return dao;
@@ -776,5 +779,32 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
 	public String postBatchBackout(List<Long> formAutoIds) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	/**
+	 * 失效：1.存在下游单据不能失效
+	 * 	2.单据状态从已生效变更到未生效
+	 *  3.删除项目档案
+	 * */
+	public Ret uneffect(Long iproposalmid) {
+		tx(()->{
+			Proposalm proposalm = findById(iproposalmid);
+			Integer ieffectivestatus = proposalm.getIEffectiveStatus();
+			ValidationUtils.isTrue(ieffectivestatus == EffectiveStatusEnum.EFFECTIVED.getValue(), "请操作已生效的单据!");
+			ValidationUtils.isTrue(!isExistsPurchaseDatas(iproposalmid), "存在申购数据，不能失效");
+			Project project = projectService.findByProjectCode(proposalm.getCProjectCode(), proposalm.getCDepCode());
+			proposalm.setIEffectiveStatus(EffectiveStatusEnum.INVAILD.getValue());
+			proposalm.setCProjectCode(null);
+			proposalm.setIUpdateBy(JBoltUserKit.getUserId());
+			proposalm.setDUpdateTime(new Date());
+			ValidationUtils.isTrue(proposalm.update(), ErrorMsg.UPDATE_FAILED);
+			ValidationUtils.isTrue(project.delete(), ErrorMsg.DELETE_FAILED);
+			return true;
+		});
+		return SUCCESS;
+	}
+	private boolean isExistsPurchaseDatas(Long iproposalmid){
+		int count = dbTemplate("proposalm.isExistsPurchaseDatas",Kv.by("iproposalmid", iproposalmid)).queryInt();
+		return count > 0 ? true : false;
 	}
 }
