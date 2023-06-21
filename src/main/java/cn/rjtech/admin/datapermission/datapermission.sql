@@ -11,9 +11,9 @@ SELECT dp.id,
                 ISNULL(dp.busobject_value_name, p.name) AS busobject_value_name,
                 p.sn AS code,
             #case('2')
-                ISNULL(dp.busobject_value_id, p.id) AS busobject_value_id,
+                ISNULL(dp.busobject_value_id, p.iautoid) AS busobject_value_id,
                 ISNULL(dp.busobject_value_name, p.name) AS busobject_value_name,
-                p.sn AS code,
+                p.cdepcode AS code,
         #end
 
        dp.is_view_enabled,
@@ -28,7 +28,7 @@ FROM base_data_permission dp
             RIGHT JOIN jb_user p ON dp.busobject_value_id = p.id
         ### 部门
         #case('2')
-            RIGHT JOIN jb_dept p ON dp.busobject_value_id = p.id
+            RIGHT JOIN #(getMomdataDbName()).dbo.Bd_Department p ON dp.busobject_value_id = p.iautoid
     #end
 
     AND dp.object_type = #para(objecttype)
@@ -47,8 +47,8 @@ WHERE 1=1
             ### 部门
             #case('2')
                 AND (
-                    p.sn LIKE CONCAT('%', #para(q), '%') OR
-                    p.name LIKE CONCAT('%', #para(q), '%')
+                    p.cdepcode LIKE CONCAT('%', #para(q), '%') OR
+                    p.cdepname LIKE CONCAT('%', #para(q), '%')
                 )
         #end
     #end
@@ -57,13 +57,13 @@ WHERE 1=1
 #sql("getAccessCdepcodes")
 SELECT
     DISTINCT
-    # switch(busobjectCode)
+    #switch(busobjectCode)
         ### 用户
         #case('01')
 
         ### 部门
         #case('02')
-            d.sn
+            d.cdepcode
     #end
 FROM base_data_permission dp
     #switch(busobjectCode)
@@ -72,7 +72,7 @@ FROM base_data_permission dp
 
         ### 部门
         #case('02')
-            INNER JOIN jb_dept d ON dp.busobject_value_id = d.id
+            INNER JOIN #(getMomdataDbName()).dbo.Bd_Department d ON dp.busobject_value_id = d.iautoid
     #end
 WHERE dp.is_deleted = '0'
     AND dp.#(fieldName) = '1'
@@ -90,9 +90,7 @@ WHERE dp.is_deleted = '0'
 #end
 
 #sql("getAccessDeptIdList")
-SELECT
-    DISTINCT
-    busobject_value_id
+SELECT DISTINCT busobject_value_id
 FROM base_data_permission dp
 WHERE dp.is_deleted = '0'
     AND dp.#(fieldName) = '1'
