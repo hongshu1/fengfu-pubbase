@@ -1596,10 +1596,10 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 更新撤销审核
      */
-    public boolean updateWithdraw(String formSn, long formAutoId) {
+    public boolean updateWithdraw(String formSn, String primaryKeyName, long formAutoId) {
         Sql updateSql = updateSql().update(formSn)
                 .set(IAUDITSTATUS, AuditStatusEnum.NOT_AUDIT.getValue())
-                .eq(IAUTOID, formAutoId)
+                .eq(primaryKeyName, formAutoId)
                 .eq(IAUDITSTATUS, AuditStatusEnum.AWAIT_AUDIT.getValue());
 
         return update(updateSql) > 0;
@@ -1618,7 +1618,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), formData.getInt(IAUDITSTATUS), "非待审核状态");
 
         // 执行状态更新
-        ValidationUtils.isTrue(updateWithdraw(formSn, formAutoId), "更新撤回失败");
+        ValidationUtils.isTrue(updateWithdraw(formSn, primaryKeyName, formAutoId), "更新撤回失败");
 
         switch (AuditWayEnum.toEnum(formData.getInt(IAUDITWAY))) {
             // 状态审批

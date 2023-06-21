@@ -44,7 +44,9 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -726,41 +728,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         return null;
     }
 
-    /*
-     * 获取导出数据
-     * */
-    public Kv getExportData(Long iautoid) {
-        //1、所有sheet
-        List<SheetPage<Record>> pages = new ArrayList<>();
-        //2、每个sheet的名字
-        List<String> sheetNames = new ArrayList<>();
-        sheetNames.add("sheet1");
-        sheetNames.add("sheet2");
-        sheetNames.add("sheet3");
-        //3、主表数据
-        RcvDocQcFormM rcvDocQcFormM = findById(iautoid);
-        //测定目的
-        String cMeasurePurpose = "";
-        String[] split = rcvDocQcFormM.getCMeasurePurpose().split(",");
-        for (int i = 0; i < split.length; i++) {
-            if (StringUtils.isNotBlank(split[i])) {
-                String text = CMeasurePurposeEnum.toEnum(Integer.valueOf(split[i])).getText();
-                cMeasurePurpose += text + ",";
-            }
-        }
-        rcvDocQcFormM.setCMeasurePurpose(StringUtils.isNotBlank(cMeasurePurpose)
-            ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose);
-        //4、明细表数据
-        List<RcvDocQcFormD> formDList = rcvDocQcFormDService.findByIRcvDocQcFormMId(rcvDocQcFormM.getIAutoId());
-        //5、如果cvalue的列数>10行，分多个页签
-        List<Record> recordList = getCheckOutTableDatas(Kv.by("ircvdocqcformmid", rcvDocQcFormM.getIAutoId()));
-        Record data = recordList.get(0);
-        //核心业务逻辑，对列数进行分组
-        inStockQcFormMService.commonPageMethod(data, recordList, rcvDocQcFormM, pages);
-
-        return Kv.by("pages", pages).set("sheetNames", sheetNames);
-    }
-
     public List<RcvDocQcFormM> findFirstBycRcvDocNo(String crcvdocno) {
         return find("select * from  PL_RcvDocQcFormM where cRcvDocNo = ? ", crcvdocno);
     }
@@ -807,6 +774,95 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             mapList.add(qcFormItemRecord.getColumns());
         }
         return mapList;
+    }
+
+    /*
+     * 获取导出数据
+     * */
+    public Kv getExportData(Long iautoid) {
+        //1、所有sheet
+        List<SheetPage<Record>> pages = new ArrayList<>();
+        //2、每个sheet的名字
+        List<String> sheetNames = new ArrayList<>();
+        sheetNames.add("sheet1");
+        sheetNames.add("sheet2");
+        sheetNames.add("sheet3");
+        //3、主表数据
+        Record rcvDocQcFormMRecord = getCheckoutListByIautoId(iautoid);
+        //测定目的
+        String cMeasurePurpose = "";
+        String[] split = rcvDocQcFormMRecord.getStr("cmeasurepurpose").split(",");
+        for (int i = 0; i < split.length; i++) {
+            if (StringUtils.isNotBlank(split[i])) {
+                String text = CMeasurePurposeEnum.toEnum(Integer.valueOf(split[i])).getText();
+                cMeasurePurpose += text + ",";
+            }
+        }
+        rcvDocQcFormMRecord.set("cmeasurepurpose", StringUtils.isNotBlank(cMeasurePurpose)
+            ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose);
+        //4、明细表数据
+        List<RcvDocQcFormD> formDList = rcvDocQcFormDService.findByIRcvDocQcFormMId(iautoid);
+        //5、如果cvalue的列数>10行，分多个页签
+        List<Record> recordList = getCheckOutTableDatas(Kv.by("ircvdocqcformmid", iautoid));
+        //核心业务逻辑，对列数进行分组
+        rcvDocQcFormMRecord.set("columns", "");
+        commPageMethod2(recordList, rcvDocQcFormMRecord, pages);
+
+        return Kv.by("pages", pages).set("sheetNames", sheetNames);
+    }
+
+    /*来料检、出库检、在库检的公共导出方法*/
+    public void commPageMethod2(List<Record> recordList, Object obj, List<SheetPage<Record>> pages) {
+        int iseq = 1;
+        List<List<Object>> partition = ListUtils.partition(objToList(recordList.get(0).getObject("cvaluelist")), 10);
+        for (int i = 0; i < partition.size(); i++) {
+            ArrayList<Record> records = new ArrayList<>();
+            for (Record record : recordList) {
+                List<List<Object>> partitionList = ListUtils.partition(objToList(record.getObject("cvaluelist")), 10);
+                List<Object> objects = partitionList.get(i);
+                List<String> cvaluelist = new ArrayList<>();
+
+                Record childRecord = new Record();
+                childRecord.set("cqcitemname", record.getStr(""));
+                childRecord.set("cqcparamname", record.getStr(""));
+                childRecord.set("imaxval", record.getStr("imaxval"));
+                childRecord.set("iminval", record.getStr("iminval"));
+                childRecord.set("istdval", record.getStr("istdval"));
+                childRecord.set("itype", record.getStr("itype"));
+                childRecord.set("options", record.getStr("options"));
+                childRecord.set("seq", iseq);
+                childRecord.set("cvaluelist", cvaluelist);
+                childRecord.set("itemlist","paramnamelist");
+                records.add(childRecord);
+                //
+                iseq++;
+
+                //records有项目，每个项目有分组的列值，以10列为一组
+                SheetPage<Record> page = new SheetPage<>();
+                // sheet名称
+                String sheetName = "sheet" + (i + 1);
+                page.setSheetName(sheetName);
+                // 主表
+                page.setMaster(obj);
+                // 明细
+                page.setDetails(records);
+                pages.add(page);
+            }
+        }
+    }
+
+    /*
+     * 将object对象转为list
+     * */
+    public List<Object> objToList(Object obj) {
+        List<Object> list = new ArrayList<Object>();
+        if (obj instanceof ArrayList<?>) {
+            for (Object o : (List<?>) obj) {
+                list.add(o);
+            }
+            return list;
+        }
+        return null;
     }
 
 }
