@@ -19,22 +19,16 @@ import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.barcodeencodingm.BarcodeencodingmService;
-import cn.rjtech.admin.datapermission.DataPermissionService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.expensebudgetitem.ExpenseBudgetItemService;
 import cn.rjtech.admin.expensebudgetitemd.ExpenseBudgetItemdService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
-import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.admin.subjectm.SubjectmService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.Constants;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
-import cn.rjtech.model.momdata.ExpenseBudget;
-import cn.rjtech.model.momdata.ExpenseBudgetItem;
-import cn.rjtech.model.momdata.ExpenseBudgetItemd;
-import cn.rjtech.model.momdata.Period;
-import cn.rjtech.model.momdata.Subjectm;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ReadFullYearExpenseBudgetExcelUtil;
 import cn.rjtech.util.ValidationUtils;
@@ -49,6 +43,7 @@ import org.apache.commons.lang.ArrayUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.*;
 
 import static cn.hutool.core.text.StrPool.COMMA;
@@ -63,24 +58,22 @@ import static cn.hutool.core.text.StrPool.COMMA;
 public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements IApprovalService{
 
 	private final ExpenseBudget dao = new ExpenseBudget().dao();
-	@Inject
-	private DepartmentService departmentService;
-	@Inject
-	private ExpenseBudgetItemService expenseBudgetItemService;
-	@Inject
-	private ExpenseBudgetItemdService expenseBudgetItemdService;
-	@Inject
-	private SubjectmService subjectmService;
-	@Inject
-	private DictionaryService dictionaryService;
-	@Inject
-	private PeriodService periodService;
-	@Inject
-	private DataPermissionService datapermissionService;
-	@Inject
-	private BarcodeencodingmService barcodeencodingmService;
-	@Inject
+
+    @Inject
+    private SubjectmService subjectmService;
+    @Inject
+    private DictionaryService dictionaryService;
+    @Inject
+    private DepartmentService departmentService;
+    @Inject
     private FormApprovalService formApprovalService;
+    @Inject
+	private BarcodeencodingmService barcodeencodingmService;
+    @Inject
+    private ExpenseBudgetItemService expenseBudgetItemService;
+    @Inject
+    private ExpenseBudgetItemdService expenseBudgetItemdService;
+    
 	@Override
 	protected ExpenseBudget dao() {
 		return dao;
