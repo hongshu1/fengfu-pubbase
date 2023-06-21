@@ -79,7 +79,7 @@
                 <a class="jbolt_table_editbtn" href="admin/subcontractsaleorderm/edit?iautoid=${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="编辑委外销售订单" data-dialog-title="修改委外销售订单"><i class="fa fa-remove fa-edit">编辑</i></a>
                 <a class="jbolt_table_delbtn" href="admin/subcontractsaleorderm/delete/${data.iautoid}" data-handler="refreshJBoltTable" tooltip data-title="删除委外销售订单" data-ajaxbtn data-loading="执行中 " data-confirm="确定删除此数据？"><i class="fa fa-remove c-danger">删除</i></a>
                 {@else if data.iorderstatus == '2'}
-                <a class="jbolt_table_delbtn" href="admin/subcontractsaleorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回委外销售订单"><i class="fa fa-remove c-danger">撤回</i></a>
+                <a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=Co_SubcontractSaleOrderM &primaryKeyName=iautoid&formAutoId=${data.iautoid}&permissionKey=subcontractsaleorderm_withdraw&className=cn.rjtech.admin.subcontractsaleorderm.SubcontractsaleordermService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回委外销售订单"><i class="fa fa-remove c-danger">撤回</i></a>
                 {@else if data.iorderstatus == '3'}
                     <a class="jbolt_table_delbtn" href="admin/subcontractsaleorderm/close?iautoid=${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" tooltip  data-title="关闭周间客户订单"><i class="fa fa-remove c-danger">关闭</i></a>
                 {@/if}

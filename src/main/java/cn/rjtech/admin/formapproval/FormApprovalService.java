@@ -1215,6 +1215,9 @@ public class FormApprovalService extends BaseService<FormApproval> {
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
 
+        // 单据反审时，预留额外前置业务处理
+        invokeMethod(className, "preReverseApproveFunc", formAutoId, false, false);
+
         Record formRecord = findFirstRecord("select iAuditStatus as status from " + formSn + " where " + primaryKeyName + " = " + formAutoId);
 
 //        反审前的单据状态
@@ -1631,7 +1634,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         // 撤回后的处理业务
         String msg = invokeMethod(className, "postWithdrawFunc", formAutoId);
         ValidationUtils.assertBlank(msg, msg);
-        
+
         return SUCCESS;
     }
 
@@ -1694,7 +1697,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
 //     */
 //    public Ret batchReverseApprove(String ids, String formSn, String primaryKeyName, String className) {
 //        List<Long> formAutoIds = new ArrayList<>();
-//        
+//
 //        int status = AuditStatusEnum.AWAIT_AUDIT.getValue();
 //
 //        tx(() -> {
@@ -1709,10 +1712,10 @@ public class FormApprovalService extends BaseService<FormApproval> {
 //
 //            String msg = invokeMethod(className, "", formAutoIds);
 //            ValidationUtils.assertBlank(msg, msg);
-//            
+//
 //            return true;
 //        });
-//        
+//
 //        return SUCCESS;
 //    }
 
@@ -1816,7 +1819,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
         return dbTemplate("formapproval.getNextApprovalUserIds", kv).query();
     }
-    
+
     /**
      * 查询审批过程待审批的人员
      */
@@ -1999,13 +2002,13 @@ public class FormApprovalService extends BaseService<FormApproval> {
      */
     public Ret batchRejectByStatus(String ids, String formSn, String primaryKeyName, String className) {
         List<Long> formAutoIds = new ArrayList<>();
-        
+
         tx(() -> {
 
             for (String id : StrSplitter.split(ids, COMMA, true, true)) {
                 long formAutoId = Long.parseLong(id);
                 formAutoIds.add(formAutoId);
-                
+
                 rejectByStatus(formSn, formAutoId, primaryKeyName, className, true);
             }
 
@@ -2025,5 +2028,5 @@ public class FormApprovalService extends BaseService<FormApproval> {
         ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
         return formData;
     }
-    
+
 }

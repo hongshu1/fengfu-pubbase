@@ -660,7 +660,7 @@ public class BomMService extends BaseService<BomM> {
 		for (int i=0; i<tableData.size(); i++){
 			JSONObject row = tableData.getJSONObject(i);
 			boolean checkInvCodeFlag = isAdd(row);
-			ValidationUtils.isTrue(!checkInvCodeFlag, "第"+(i+1)+"行存货编码未解析出来");
+//			ValidationUtils.isTrue(!checkInvCodeFlag, "第"+(i+1)+"行存货编码未解析出来");
 			verificationOfTableRow(finishedProductId, row);
 			String code = getCode(row);
 			codes.add(code);
@@ -681,23 +681,23 @@ public class BomMService extends BaseService<BomM> {
 		// 分条料
 		String slicingInvItemId = row.getString(BomCompare.SLICINGINVITEMID.toLowerCase());
 		
-		// 校验母件成品编码不能跟子件编码一致
+		/*// 校验母件成品编码不能跟子件编码一致
 		ValidationUtils.isTrue(!finishedProductId.equals(invItemId), "部品存货不能跟成品存货选择一致");
 		ValidationUtils.isTrue(!finishedProductId.equals(blankingItemId), "片料（落料）存货不能跟成品存货选择一致");
 		ValidationUtils.isTrue(!finishedProductId.equals(originalItemId), "卷料（原材料）存货不能跟成品存货选择一致");
 		ValidationUtils.isTrue(!finishedProductId.equals(slicingInvItemId), "分条料存货不能跟成品存货选择一致");
-		
+
 		// 校验部品存货是否存在一致
 		ValidationUtils.isTrue(!(StrUtil.isNotBlank(invItemId) && invItemId.equals(blankingItemId)), "部品存货不能跟片料（落料）存货选择一致");
 		ValidationUtils.isTrue(!(StrUtil.isNotBlank(invItemId) && invItemId.equals(originalItemId)), "部品存货不能跟卷料（原材料）存货选择一致");
 		ValidationUtils.isTrue(!(StrUtil.isNotBlank(invItemId) && invItemId.equals(slicingInvItemId)), "部品存货不能跟分条料存货选择一致");
-		
+
 		// 校验（原材料）存货是否存在一致
 		ValidationUtils.isTrue(!(StrUtil.isNotBlank(originalItemId) && originalItemId.equals(slicingInvItemId)), "卷料（原材料）存货不能跟分条料存货选择一致");
 		ValidationUtils.isTrue(!(StrUtil.isNotBlank(originalItemId) && originalItemId.equals(blankingItemId)), "卷料（原材料）存货不能跟片料（落料）存货选择一致");
 		// 分条料 校验
 		ValidationUtils.isTrue(!(StrUtil.isNotBlank(slicingInvItemId) && slicingInvItemId.equals(blankingItemId)), "分条料存货不能跟片料（落料）存货选择一致");
-		
+*/
 		String code1 = row.getString(BomCompare.CODE1);
 		String code2 = row.getString(BomCompare.CODE2);
 		String code3 = row.getString(BomCompare.CODE3);
@@ -712,7 +712,9 @@ public class BomMService extends BaseService<BomM> {
 				&& StrUtil.isBlank(code4)
 				&& StrUtil.isBlank(code5)
 				&& StrUtil.isBlank(code6);
-		ValidationUtils.isTrue(!codeFlag, "选择存货后，编码栏不能为空");
+		if (StrUtil.isNotBlank(invItemId) || StrUtil.isNotBlank(blankingItemId) || StrUtil.isNotBlank(originalItemId) || StrUtil.isNotBlank(slicingInvItemId)){
+			ValidationUtils.isTrue(!codeFlag, "选择存货后，编码栏不能为空");
+		}
 		int count = 0;
 		if (StrUtil.isNotBlank(code1)){
 			count+=1;
@@ -835,7 +837,6 @@ public class BomMService extends BaseService<BomM> {
 	private List<BomD> getBomCompareList(long bomMasterId, Long bomMasterInvId, JSONArray tableData, Date dEnableDate, Date dDisableDate){
 		// 用于保存校验
 		List<BomD> bomCompareList = new ArrayList<>();
-		
 		Long orgId = getOrgId();
 		// 编码
 		Map<String, BomD> codeBomCompareMap = createCodeBomCompareMap(bomMasterId, tableData);
@@ -849,7 +850,6 @@ public class BomMService extends BaseService<BomM> {
 		Map<Long, Record> effectiveBomMap = getEffectiveBomMap(orgId, null);
 		// 获取有效bom子件
 		Map<Long, List<Record>> effectiveBomCompareMap = bomDService.getEffectiveBomCompareMap(orgId, null);
-		
 		
 		// 编译所有母件
 		for (BomD productBomD :compareList){
@@ -916,7 +916,9 @@ public class BomMService extends BaseService<BomM> {
 					row.getString(BomCompare.CODE4),
 					row.getString(BomCompare.CODE5),
 					row.getString(BomCompare.CODE6));
-			
+			// 记录当前行的虚拟件（没有存货但是有编码栏。）
+			BomD bomD = new BomD();
+			bomD.setCInvName("虚拟件_".concat(JBoltSnowflakeKit.me.nextIdStr()));
 			int invLev;
 			if (code.equals(row.getString(BomCompare.CODE6))){
 				invLev = 6;
@@ -1020,11 +1022,18 @@ public class BomMService extends BaseService<BomM> {
 			if (ObjectUtil.isNotNull(compare)){
 				codeBomCompareMap.put(code, compare);
 			}else if (ObjectUtil.isNotNull(blankBomCompare)){
+				
 				codeBomCompareMap.put(code, blankBomCompare);
 			}else if (ObjectUtil.isNotNull(slicingBomCompare)){
+				
 				codeBomCompareMap.put(code, slicingBomCompare);
-			}else{
+			}else if (ObjectUtil.isNotNull(originalBomCompare)){
+				
 				codeBomCompareMap.put(code, originalBomCompare);
+			}else{
+				bomD.setCInvLev("0");
+				bomD.setCCode("0");
+				codeBomCompareMap.put(code, bomD);
 			}
 			
 //			codeBomCompareMap.put(code, ObjectUtil.isNotNull(compare) ? compare :
@@ -1038,6 +1047,9 @@ public class BomMService extends BaseService<BomM> {
 		List<BomD> bomDList = new ArrayList<>();
 		for (String code : codeBomCompareMap.keySet()){
 			BomD bomD = codeBomCompareMap.get(code);
+			if (ObjectUtil.isNull(bomD.getIInventoryId())){
+				continue;
+			}
 			addBomD(bomD.getChildBom(), bomDList);
 			bomDList.add(bomD);
 		}
@@ -1063,7 +1075,13 @@ public class BomMService extends BaseService<BomM> {
 			// 没有存在父级栏，直接跳过（父级栏目无需复制pid）
 			if (StrUtil.isBlank(perCode)){
 				bomD.setIPid(bomMasterId);
-				bomDService.setBomCodeLevel(bomD, "1");
+				String codeLevel = "1";
+				// 存货编码为空，则为虚拟件
+				if (ObjectUtil.isNull(bomD.getIInventoryId())){
+					bomD.setIAutoId(bomMasterId);
+					codeLevel = "0";
+				}
+				bomDService.setBomCodeLevel(bomD, codeLevel);
 				// 部品
 				addParentInvMap(parentInvMap, bomMasterInvId, bomD);
 				continue;
@@ -1109,7 +1127,7 @@ public class BomMService extends BaseService<BomM> {
 			}
 			
 			// 没有存在父级栏，直接跳过（父级栏目无需复制pid）
-			if (StrUtil.isBlank(perCode)){
+			if (StrUtil.isBlank(perCode) || !codeBomCompareMap.containsKey(perCode)){
 				continue;
 			}
 			// 父级id
@@ -1138,12 +1156,14 @@ public class BomMService extends BaseService<BomM> {
 			}else if (parentInvMap.containsKey(inventoryId)){ // 不存在则一个个添加进去
 				addBomCompareList(parentInvMap.get(inventoryId), bomCompareList, effectiveBomMap, effectiveBomCompareMap, parentInvMap);
 			}
-			bomCompareList.add(productBomD);
+			if (ObjectUtil.isNotNull(productBomD.getIInventoryId())){
+				bomCompareList.add(productBomD);
+			}
 		}
 	}
 	
 	private void addParentInvMap(Map<Long, List<BomD>> parentInvMap, Long invId, BomD bomD){
-		ValidationUtils.notNull(invId, "存货编码不能为空");
+//		ValidationUtils.notNull(invId, "存货编码不能为空");
 		List<BomD> bomDList = parentInvMap.containsKey(invId) ? parentInvMap.get(invId) : new ArrayList<>();
 		bomDList.add(bomD);
 		parentInvMap.put(invId, bomDList);
