@@ -35,7 +35,6 @@ public class BaseInU8Util {
         LOG.info("res: {}", res);
 
         String code = res.getString("code");
-        String data = res.getString("data");
         String message = StrUtil.nullToDefault(res.getString("message"), res.getString("msg"));
 
         if (ObjUtil.equal(res.getString("state"), "fail")) {
