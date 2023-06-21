@@ -2040,6 +2040,10 @@ public class PermissionKey {
 	 * 批量反审
 	 */
 	public static final String MONTHORDERM_BATCH_REVERSE_APPROVE = "monthorderm_batch_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String MONTHORDERM_WITHDRAW = "monthorderm_withdraw";
 
 	/**
 	 * 提审
@@ -2069,7 +2073,10 @@ public class PermissionKey {
 	 * 批量反审
 	 */
 	public static final String ANNUALORDERM_BATCH_REVERSE_APPROVE = "annualorderm_batch_reverse_approve";
-
+	/**
+	 * 撤回
+	 */
+	public static final String ANNUALORDERM_WITHDRAW = "annualorderm_withdraw";
 
 	/**
 	 * 提审
@@ -2099,6 +2106,10 @@ public class PermissionKey {
 	 * 批量反审
 	 */
 	public static final String WEEKORDERM_BATCH_REVERSE_APPROVE = "weekorderm_batch_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String WEEKORDERM_WITHDRAW = "weekorderm_withdraw";
 
 	/**
 	 * 提审
@@ -2128,6 +2139,10 @@ public class PermissionKey {
 	 * 批量反审
 	 */
 	public static final String MANUALORDERM_BATCH_REVERSE_APPROVE = "manualorderm_batch_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String MANUALORDERM_WITHDRAW = "manualorderm_withdraw";
 
 	/**
 	 * 提审
@@ -2160,5 +2175,5 @@ public class PermissionKey {
 	/**
 	 * 撤回
 	 */
-	public static final String subcontractsaleorderm_withdraw = "SUBCONTRACTSALEORDERM_WITHDRAW";
+	public static final String SUBCONTRACTSALEORDERM_WITHDRAW = "subcontractsaleorderm_withdraw";
 }
