@@ -922,7 +922,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                 } else {
                     // 通过主表的入库单号 查质检单数据
                     List<RcvDocQcFormM> firstBycRcvDocNo = rcvdocqcformmservice.findFirstBycRcvDocNo(s.getBillNo());
-                    if (null != firstBycRcvDocNo) {
+                    if (null != firstBycRcvDocNo && firstBycRcvDocNo.size() > 0) {
                         for (RcvDocQcFormM r : firstBycRcvDocNo) {
                             rcvdocqcformmservice.deleteByIds(String.valueOf(r.getIAutoId()));
                         }
@@ -1073,6 +1073,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         return checkbelowtwo;
     }
 
+    /**
+     * 实现反审之后的其他业务操作, 如有异常返回错误信息
+     */
     @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         if (isLast) {
