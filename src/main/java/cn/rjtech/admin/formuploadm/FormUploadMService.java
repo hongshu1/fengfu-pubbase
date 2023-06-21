@@ -538,6 +538,9 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 		formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
 		formUploadM.setCUpdateName(JBoltUserKit.getUserName());
 		formUploadM.setDUpdateTime(new Date());
+		formUploadM.setIAuditBy(JBoltUserKit.getUserId());
+		formUploadM.setCAuditName(JBoltUserKit.getUserName());
+		formUploadM.setDSubmitTime(new Date());
 		formUploadM.update();
 		return null;
 	}
@@ -550,6 +553,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 		ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", AuditStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
 		return null;
 	}
+
 
 	@Override
 	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
@@ -582,14 +586,42 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 	public String postWithdrawFromAuditted(long formAutoId) {
 		return null;
 	}
-
+	/**
+	 * 批量审核（审批）通过，后置业务实现
+	 */
     @Override
     public String postBatchApprove(List<Long> formAutoIds) {
+		for (Long formAutoId : formAutoIds) {
+			FormUploadM formUploadM = findById(formAutoId);
+			// 审核状态修改
+			formUploadM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+			formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
+			formUploadM.setCUpdateName(JBoltUserKit.getUserName());
+			formUploadM.setDUpdateTime(new Date());
+			formUploadM.setIAuditBy(JBoltUserKit.getUserId());
+			formUploadM.setCAuditName(JBoltUserKit.getUserName());
+			formUploadM.setDSubmitTime(new Date());
+			formUploadM.update();
+		}
         return null;
     }
-
+	/**
+	 * 批量审批（审核）不通过，后置业务实现
+	 */
     @Override
     public String postBatchReject(List<Long> formAutoIds) {
+		for (Long formAutoId : formAutoIds) {
+			FormUploadM formUploadM = findById(formAutoId);
+			// 审核状态修改
+			formUploadM.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+			formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
+			formUploadM.setCUpdateName(JBoltUserKit.getUserName());
+			formUploadM.setDUpdateTime(new Date());
+			formUploadM.setIAuditBy(JBoltUserKit.getUserId());
+			formUploadM.setCAuditName(JBoltUserKit.getUserName());
+			formUploadM.setDSubmitTime(new Date());
+			formUploadM.update();
+		}
         return null;
     }
 
