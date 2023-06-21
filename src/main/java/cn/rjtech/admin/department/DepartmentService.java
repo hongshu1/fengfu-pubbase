@@ -119,7 +119,6 @@ public class DepartmentService extends BaseService<Department> {
         department.setDUpdateTime(date);
         department.setCUpdateName(user.getUsername());
         department.setIsDeleted(false);
-        department.setIsDeleted(true);
         department.setIDepGrade(depGrade);
 //      if(existsName(department.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = department.save();

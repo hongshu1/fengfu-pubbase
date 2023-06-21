@@ -12,7 +12,7 @@
         </div>
     </div>
 <div class="form-group row" >
-<label class="col-sm-2 col-form-label">系统表单ID:</label>
+<label class="col-sm-2 col-form-label">基础档案名称:</label>
 
 <div class="col-2">
     <select class="form-control"
@@ -21,7 +21,7 @@
             data-url="admin/permission/optionsFormId"
             data-select-type="select1"
             name="formExtendFields.iFormId"
-            data-text="=系统表单ID="
+            data-text="=基础档案名称="
             data-text-attr="title"
             data-value-attr="id"
             data-rule="require"
@@ -30,51 +30,17 @@
     ></select>
 </div>
 </div>
-<!--<div class="form-group row" >-->
-<!--<label class="col-sm-2 col-form-label">系统字段ID:</label>-->
-
-<!--<div class="col-2">-->
-    <!--<select class="form-control"-->
-            <!--data-autoload-->
-            <!--data-url="admin/permission/optionsFormFieldId"-->
-            <!--data-select-type="select1"-->
-            <!--name="formExtendFields.iFormFieldId"-->
-            <!--data-text-attr="title"-->
-            <!--data-value-attr="id"-->
-            <!--data-select="#(formExtendFields.iFormFieldId??)"-->
-    <!--&gt;</select>-->
-<!--</div>-->
-<!--</div>-->
-<!--<div class="form-group row" >-->
-<!--<label class="col-sm-2 col-form-label">系统字段编码:</label>-->
-<!--<div class="col-2">-->
-    <!--<input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入系统字段编码" maxlength="40" name="formExtendFields.cFieldCode" value="#(formExtendFields.cFieldCode??)"/>-->
-<!--</div>-->
-<!--</div>-->
-    <!--<div class="form-group row"-->
-         <!--data-radio-->
-         <!--data-name="formExtendFields.iPosition"-->
-         <!--data-url="admin/dictionary/options?key=visible_position"-->
-         <!--data-value-attr="sn"-->
-         <!--data-label="显示位置:"-->
-         <!--data-rule="require"-->
-         <!--data-width="col-sm-2,col-5"-->
-         <!--data-value="#(formExtendFields.iPosition??)"-->
-         <!--data-inline="true"-->
-    <!--&gt;-->
-    <!--</div>-->
 
     <div class="form-group row" >
 <label class="col-sm-2 col-form-label">系统字段名称:</label>
 <div class="col-2">
     <select class="form-control"
             data-autoload
-            data-url="/admin/enumVals/enumvalsoptions"
-            data-select-type="select1"
+            data-url="admin/dictionary/options?key=field_name"
+            data-select-type="select2"
             name="formExtendFields.cFieldName"
             data-text="=系统字段名称="
-            data-text-attr="cenumname"
-            data-value-attr="cenumcode"
+            data-value-attr="sn"
             data-select="#(formExtendFields.cFieldName??)"
             data-rule="require"
     ></select>
@@ -89,7 +55,7 @@
 <div class="form-group row" >
 <label class="col-sm-2 col-form-label">字段值输入长度:</label>
 <div class="col-2">
-    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入字段长度" maxlength="10" name="formExtendFields.iMaxLength" value="#(formExtendFields.iMaxLength??)"/>
+    <input type="text" data-rule="pzint" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入字段长度" maxlength="10" name="formExtendFields.iMaxLength" value="#(formExtendFields.iMaxLength??)"/>
 </div>
 </div>
     <input type="hidden" id="bbbb"/>
@@ -137,7 +103,7 @@
     <div class="form-group row"  id="hidDigi" style="visibility: hidden">
         <label type="hidden" class="col-sm-2 col-form-label">小数位:</label>
         <div class="col-1">
-            <input type="number" data-notnull="false" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="" maxlength="40" name="formExtendFields.iDigit" value="#(formExtendFields.iDigit??)"/>
+            <input type="number" data-rule="pzint" data-notnull="false" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="" maxlength="40" name="formExtendFields.iDigit" value="#(formExtendFields.iDigit??)"/>
         </div>
     </div>
 
@@ -161,8 +127,8 @@
          data-name="formExtendFields.isRequired"
          data-value-attr="sn"
          data-url="admin/dictionary/options?key=is_required"
-         data-label="是否必填:"
          data-width="col-sm-2,col-5"
+         data-label="是否必填:"
          data-value="#(formExtendFields.isRequired??)"
          data-rule="radio"
          data-notnull="true"
@@ -171,7 +137,6 @@
          data-inline="true"
 >
 </div>
-
     <div class="form-group row"
          data-radio
          data-name="formExtendFields.isDisplayed"
@@ -273,8 +238,8 @@
         window.parent.refreshJBoltTable();
     }
     function sethid(val) {
-        var obj = document.getElementById('bbbb');
-        obj.value=val
+//        var obj = document.getElementById('bbbb');
+        bbbb.value=val;
     }
     function toggleOneInputHidden(){
         if(bbbb.value == 3){
@@ -284,8 +249,8 @@
         }
     }
     function sethid2(val) {
-        var obj2 = document.getElementById('optioniSource');
-        obj2.value=val
+//        var obj2 = document.getElementById('optioniSource');
+        optioniSource.value=val
     }
     function toggleOneInputHidden2(){
         if(optioniSource.value == 2){

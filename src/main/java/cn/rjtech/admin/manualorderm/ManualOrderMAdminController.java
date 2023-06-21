@@ -74,6 +74,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
     public void save() {
         JBoltTable jBoltTable = getJBoltTable();
         ManualOrderM manualOrderM = jBoltTable.getFormBean(ManualOrderM.class, "manualOrderM");
+
         renderJson(service.saveForm(manualOrderM, jBoltTable));
     }
 

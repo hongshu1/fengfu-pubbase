@@ -768,5 +768,16 @@ public class UserService extends JBoltUserService {
 
         return SUCCESS;
     }
-    
+
+
+    public String getU8Password(User user){
+        Long id = user.getId();
+        Record firstRecord = findFirstRecord("select U8Password from jb_user where id=?", id);
+        if(firstRecord==null){
+            return null;
+        }else{
+            return firstRecord.getStr("u8password");
+        }
+
+    }
 }

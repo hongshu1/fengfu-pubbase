@@ -184,5 +184,25 @@ public class ExpenseBudgetManageService extends BaseService<ExpenseBudget>{
 		});
 		return SUCCESS;
 	}
+	/**
+	 * 失效：1.存在下游单据不能失效
+	 * 	2.单据状态从已生效变更到未生效
+	 * */
+	public Ret uneffect(Long iexpenseid) {
+		tx(()->{
+			ExpenseBudget expenseBudget = findById(iexpenseid);
+			Integer ieffectivestatus = expenseBudget.getIEffectiveStatus();
+			ValidationUtils.isTrue(ieffectivestatus == EffectiveStatusEnum.EFFECTIVED.getValue(), "请操作已生效的单据!");
+			ValidationUtils.isTrue(!isExistsProposalDatas(iexpenseid), "存在禀议数据，不能失效");
+			expenseBudget.setIEffectiveStatus(EffectiveStatusEnum.INVAILD.getValue());
+			ValidationUtils.isTrue(expenseBudget.update(), ErrorMsg.UPDATE_FAILED);
+			return true;
+		});
+		return SUCCESS;
+	}
+	private boolean isExistsProposalDatas(Long iexpenseid){
+		int count = dbTemplate("expensebudgetmanage.isExistsProposalDatas",Kv.by("iexpenseid", iexpenseid)).queryInt();
+		return count > 0 ? true : false;
+	}
 
 }
