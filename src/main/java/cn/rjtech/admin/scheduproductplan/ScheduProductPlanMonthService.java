@@ -779,6 +779,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             int[] shiftOne = new int[scheduDayNum];
             int[] shiftTwo = new int[scheduDayNum];
             int[] shiftThree = new int[scheduDayNum];
+            //纪录第二班次加班纪录
+            int[] shiftWorkTwo = new int[scheduDayNum];
 
             String endInvCode = "";
             //key:inv  value:自动在库
@@ -853,7 +855,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     planZaiKuList = planZaiKuList.stream().sorted(Comparator.comparing(data -> (Integer) (data.get("chaYi")))).collect(Collectors.toList());
                 }
 
-                //计算每一天各物料的
+                //计算每一天各物料的班次排产计划
                 for (Map<String,Object> map : planZaiKuList) {
                     String inv = map.get("inv").toString();
                     int planZaiKu = (Integer) map.get("planZaiKu");
@@ -866,8 +868,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     int threeS = capabilityArray[2];
                     //第二班次加班数量
                     int twoOverNum = twoS / workTime * overTime;
-                    //第二班次+加班数量
-                    int twoOverSum = twoS + twoOverNum;
 
 
                     //1S排产后数据
@@ -916,7 +916,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         shiftTwo[day] = 1;  //当天班次标记为已被占用
                     }
 
-                    //TODO:计算2S加班  从当天往前找已排产2S计划并将加班数加到那天头上
+                    //TODO:计算2S加班  从当天往前找2S加班未被占用(加班)
                     for (int day = i; day >= 0; day--) {
                         //在库大于等于后面两天则跳出
                         if (planZaiKu >= afterTwoPPQty){
@@ -926,18 +926,16 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         if (workday[day].equals(Weekday.sat) || workday[day].equals(Weekday.sun)){
                             continue;
                         }
+                        //已被占用(加班)
+                        if (shiftWorkTwo[day] == 1){
+                            continue;
+                        }
                         int qty = twosPlan[day];
-                        //未排计划表示当天已被其他物料占用则跳过
-                        if (qty == 0){
-                            continue;
-                        }
-                        //相等表示当天已被安排加班过则跳过
-                        if (qty == twoOverSum){
-                            continue;
-                        }
+
                         twosPlan[day] = qty + twoOverNum;  //当天已排2S计划 + 加班数
                         planZaiKu = planZaiKu + twoOverNum;  //自动在库 + 加班数
                         shiftTwo[day] = 1;  //当天班次标记为已被占用
+                        shiftWorkTwo[day] = 1;  //当天班次标记为已被占用(加班)
                     }
 
                     //TODO:计算3S  从当天往前找3S未被占用
@@ -997,7 +995,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         shiftTwo[day] = 1;  //当天班次标记为已被占用
                     }
 
-                    //TODO:计算周六2S加班  从当天往前找已排产周六2S计划并将加班数加到那天头上
+                    //TODO:计算周六2S加班  从当天往前找周六2S加班未被占用(加班)
                     for (int day = i; day >= 0; day--) {
                         //在库大于等于后面两天则跳出
                         if (planZaiKu >= afterTwoPPQty){
@@ -1007,18 +1005,16 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         if (!workday[day].equals(Weekday.sat)){
                             continue;
                         }
+                        //已被占用(加班)
+                        if (shiftWorkTwo[day] == 1){
+                            continue;
+                        }
                         int qty = twosPlan[day];
-                        //未排计划表示当天已被其他物料占用则跳过
-                        if (qty == 0){
-                            continue;
-                        }
-                        //相等表示当天已被安排加班过则跳过
-                        if (qty == twoOverSum){
-                            continue;
-                        }
+
                         twosPlan[day] = qty + twoOverNum;  //当天已排2S计划 + 加班数
                         planZaiKu = planZaiKu + twoOverNum;  //自动在库 + 加班数
                         shiftTwo[day] = 1;  //当天班次标记为已被占用
+                        shiftWorkTwo[day] = 1;  //当天班次标记为已被占用(加班)
                     }
 
                     //TODO:计算周六3S  从当天往前找周六3S未被占用
@@ -1078,7 +1074,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         shiftTwo[day] = 1;  //当天班次标记为已被占用
                     }
 
-                    //TODO:计算周日2S加班  从当天往前找已排产周日2S计划并将加班数加到那天头上
+                    //TODO:计算周日2S加班  从当天往前找周日2S加班未被占用(加班)
                     for (int day = i; day >= 0; day--) {
                         //在库大于等于后面两天则跳出
                         if (planZaiKu >= afterTwoPPQty){
@@ -1088,18 +1084,16 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         if (!workday[day].equals(Weekday.sun)){
                             continue;
                         }
+                        //已被占用(加班)
+                        if (shiftWorkTwo[day] == 1){
+                            continue;
+                        }
                         int qty = twosPlan[day];
-                        //未排计划表示当天已被其他物料占用则跳过
-                        if (qty == 0){
-                            continue;
-                        }
-                        //相等表示当天已被安排加班过则跳过
-                        if (qty == twoOverSum){
-                            continue;
-                        }
+
                         twosPlan[day] = qty + twoOverNum;  //当天已排2S计划 + 加班数
                         planZaiKu = planZaiKu + twoOverNum;  //自动在库 + 加班数
                         shiftTwo[day] = 1;  //当天班次标记为已被占用
+                        shiftWorkTwo[day] = 1;  //当天班次标记为已被占用(加班)
                     }
 
                     //TODO:计算周日3S  从当天往前找周日3S未被占用
