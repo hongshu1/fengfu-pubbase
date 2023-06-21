@@ -25,6 +25,7 @@ import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO.Main;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO.PreAllocate;
@@ -51,7 +52,7 @@ import java.util.stream.Collectors;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 15:38
  */
-public class SysPuinstoreService extends BaseService<SysPuinstore> {
+public class SysPuinstoreService extends BaseService<SysPuinstore> implements IApprovalService {
 
     private final SysPuinstore dao = new SysPuinstore().dao();
 
@@ -902,4 +903,68 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> {
         }
     }
 
+    @Override
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        return null;
+    }
+
+    @Override
+    public String postRejectFunc(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    @Override
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    @Override
+    public String preSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postWithdrawFunc(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String withdrawFromAuditting(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String preWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        return null;
+    }
 }

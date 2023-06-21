@@ -163,7 +163,7 @@ where 1=1
 #sql("getResource")
 select t.* from
 (select '#(combination)'                              as combination,
-    '#(barcodetype)'                                 as barcodetype,
+    '#(assemtype)'                                 as assemtype,
     'PO'                                             as SourceBillType
      ,m.cOrderNo                                          as SourceBillNo
      , m.cOrderNo + '-' + cast(tc.iseq as NVARCHAR(10)) as SourceBillNoRow
@@ -211,7 +211,7 @@ where a.isEffective = '1'
   #end
 union all
 select '#(combination)'                              as combination,
-    '#(barcodetype)'                                 as barcodetype,
+    '#(assemtype)'                                 as assemtype,
     'OM'                                             as SourceBillType
      ,m.cOrderNo                                          as SourceBillNo
      , m.cOrderNo + '-' + cast(tc.iseq as NVARCHAR(10)) as SourceBillNoRow

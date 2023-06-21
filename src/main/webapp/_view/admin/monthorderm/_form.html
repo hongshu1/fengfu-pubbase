@@ -433,8 +433,6 @@
     {
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
-        parent.refreshPjaxContainer();
-        parent.LayerMsgBox.closeAll();
     }
 
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
@@ -446,13 +444,6 @@
             submit = s;
         }
 
-        // 普通表单表单，保存并提审处理
-        // submitThisForm(function (data) {
-        //     submit_#(pageId)(ret.data.iautoid, function (data) {
-        //         successHandler('提审成功', ret.data.iautoid);
-        //     });
-        // });
-        
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
     }
@@ -485,8 +476,6 @@
                             submit_#(pageId)(ret.data.iautoid, function (data) {
                                 successHandler('提审成功', ret.data.iautoid);
                             });
-                            parent.refreshPjaxContainer();
-                            parent.layer.closeAll();
                         } else {
                             successHandler(ret.msg, ret.data.iautoid);
                         }

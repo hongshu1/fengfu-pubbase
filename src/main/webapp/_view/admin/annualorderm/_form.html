@@ -296,8 +296,6 @@
     {
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
-        parent.refreshPjaxContainer();
-        parent.LayerMsgBox.closeAll();
     }
 
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
@@ -448,8 +446,6 @@
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
                     }
-                    parent.refreshPjaxContainer();
-                    parent.LayerMsgBox.closeAll();
                 }
             },
             maxRowCount: 9999,
@@ -641,6 +637,17 @@
         return editableTableOptions;
     }
 
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/annualorderm/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
+            parent.refreshPjaxContainer();
+        });
+    }
+
     function changeDoneYear(ele, value) {
         #set(iYear=value)
         $("#nowYear").html(ele.val()+"年");
@@ -650,9 +657,6 @@
     function closeHandler(){
     	parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
-    }
-    function setChooseDialogSelectResult(data){
-        $('#iCustomerId').val(data.ccusname);
     }
 
     // 选择客户名称

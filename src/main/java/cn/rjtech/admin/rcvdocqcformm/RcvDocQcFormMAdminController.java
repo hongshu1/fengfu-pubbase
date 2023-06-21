@@ -124,7 +124,8 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         //判断是否要先生成从表数据
         service.checkAutoCreateRcvDocQcFormD(record.getLong("iautoid"));
         // 表头项目
-        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
+        RcvDocQcFormM qcFormM = service.findById(record.getLong("iautoid"));
+        List tableHeadData = service.getTableHeadData(qcFormM.getIQcFormId());
         set("columns", tableHeadData);
         set("record", record);
         render("checkout.html");
@@ -156,7 +157,8 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         //List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
         List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
         // 表头项目
-        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
+        RcvDocQcFormM qcFormM = service.findById(record.getLong("iautoid"));
+        List tableHeadData = service.getTableHeadData(qcFormM.getIQcFormId());
         set("columns", tableHeadData);
         set("docparamlist", docparamlist);
         set("record", record);
@@ -175,7 +177,8 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         //List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
         List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
         // 表头项目
-        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
+        RcvDocQcFormM qcFormM = service.findById(record.getLong("iautoid"));
+        List tableHeadData = service.getTableHeadData(qcFormM.getIQcFormId());
         set("columns", tableHeadData);
         set("docparamlist", docparamlist);
         set("record", record);
