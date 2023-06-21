@@ -1,7 +1,6 @@
-package cn.rjtech.wms.stockcheckvouchdetail;
+package cn.rjtech.admin.stockcheckvouchdetail;
 
 import cn.jbolt.core.permission.UnCheck;
-import cn.rjtech.admin.stockcheckvouchdetail.StockCheckVouchDetailService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockCheckVouchDetail;
 import com.jfinal.aop.Inject;
