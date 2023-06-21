@@ -24,7 +24,8 @@ and inv.invname like concat ('%',#para(invname),'%')
 select c.*, inv.InvName
 from V_Sys_CurrentStock c
 left join V_Sys_Inventory inv on c.Invcode = inv.InvCode
-where c.OrganizeCode = #para(organizecode) #if(whcode)
+where c.OrganizeCode = #para(organizecode)
+#if(whcode)
 and c.whcode =#para(whcode)
 #end
 #if(poscodeSql)

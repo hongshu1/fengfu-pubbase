@@ -62,3 +62,12 @@
 	ebi.careertype,ebi.isLargeAmountExpense,ebi.cuse,ebi.cmemo,ebi.iprice,ebi.cunit,ebi.iCarryForward,ebi.icreateby,ebi.dcreatetime,ebi.isscheduled,
 	ebi.iamounttotal
 #end
+
+
+#sql("isExistsProposalDatas")
+select count(1) from pl_proposald pd where exists (
+	select 1 from PL_Expense_Budget eb
+		left join pl_expense_budget_item ebi on eb.iautoid = ebi.iExpenseId 
+		where eb.iautoid = #para(iexpenseid) and pd.iSourceId = ebi.iautoid
+)
+#end

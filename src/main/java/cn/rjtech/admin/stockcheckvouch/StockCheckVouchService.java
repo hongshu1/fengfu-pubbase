@@ -108,8 +108,9 @@ public class StockCheckVouchService extends BaseService<StockCheckVouch> {
         stockCheckVouch.setBillDate(date.toString());
         stockCheckVouch.setCheckPerson(kv.getStr("checkperson"));
         stockCheckVouch.setWhCode(kv.getStr("whcode"));
-        stockCheckVouch.setCreatePerson(userName);
-        stockCheckVouch.setCreateDate(date);
+        stockCheckVouch.setCCreateName(userName);
+        stockCheckVouch.setDCreateTime(date);
+        stockCheckVouch.setICreateBy(JBoltUserKit.getUserId());
         stockCheckVouch.setModifyPerson(userName);
         stockCheckVouch.setModifyDate(date);
         stockCheckVouch.setAutoId(JBoltSnowflakeKit.me.nextId());

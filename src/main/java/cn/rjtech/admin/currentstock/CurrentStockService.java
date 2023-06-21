@@ -392,12 +392,13 @@ public class CurrentStockService extends BaseU8RecordService {
 		//构造数据
 		Date date = new Date();
 		//创建时间
-		stockchekvouch.setCreateDate(date);
+		stockchekvouch.setDCreateTime(date);
 		String dateStr = JBoltDateUtil.format(date, "yyyy-MM-dd");
 		stockchekvouch.setBillDate(dateStr);
 		String userName = JBoltUserKit.getUserName();
 		//创建人
-		stockchekvouch.setCreatePerson(userName);
+		stockchekvouch.setCCreateName(userName);
+		stockchekvouch.setICreateBy(JBoltUserKit.getUserId());
 		String orgCode = getOrgCode();
 		//组织编码
 		stockchekvouch.setOrganizeCode(orgCode);
@@ -429,7 +430,7 @@ public class CurrentStockService extends BaseU8RecordService {
 			// ValidationUtils.isTrue(notExists(columnName, value), JBoltMsg.DATA_SAME_NAME_EXIST);
 			stockchekvouch.setOrganizeCode(getOrgCode());
 			stockchekvouch.setBillNo(BillNoUtils.genCurrentNo());
-			stockchekvouch.setCreateDate(new Date());
+			stockchekvouch.setDCreateTime(new Date());
 			ValidationUtils.isTrue(stockchekvouch.save(), ErrorMsg.SAVE_FAILED);
 
 
@@ -458,7 +459,9 @@ public class CurrentStockService extends BaseU8RecordService {
 			String userName = JBoltUserKit.getUserName();
 			stockcheckvouch.setBillDate(JBoltDateUtil.format(now,"yyyy-MM-dd"));
 			//创建人
-			stockcheckvouch.setCreatePerson(userName);
+			stockcheckvouch.setCCreateName( JBoltUserKit.getUserName());
+			stockcheckvouch.setICreateBy(JBoltUserKit.getUserId());
+			stockcheckvouch.setDCreateTime(now);
 			String orgCode = getOrgCode()+"";
 			//组织编码
 			stockcheckvouch.setOrganizeCode(orgCode);
@@ -467,7 +470,6 @@ public class CurrentStockService extends BaseU8RecordService {
 			stockcheckvouch.setCheckPerson(userName);
 			//单号
 			stockcheckvouch.setBillNo(code);
-			stockcheckvouch.setCreateDate(now);
 			ValidationUtils.isTrue(stockcheckvouch.save(),"主表保存失败!");
 
 			Long mid = stockcheckvouch.getAutoId();
@@ -536,12 +538,13 @@ public class CurrentStockService extends BaseU8RecordService {
 			//构造数据
 			Date date = new Date();
 			//创建时间
-			stockcheckvouch.setCreateDate(date);
+			stockcheckvouch.setDCreateTime(date);
 			String dateStr = JBoltDateUtil.format(date, "yyyy-MM-dd");
 			stockcheckvouch.setBillDate(dateStr);
 			String userName = JBoltUserKit.getUserName();
 			//创建人
-			stockcheckvouch.setCreatePerson(userName);
+			stockcheckvouch.setCCreateName(userName);
+			stockcheckvouch.setICreateBy(JBoltUserKit.getUserId());
 			String orgId = getOrgId()+"";
 			//组织编码
 			stockcheckvouch.setOrganizeCode(orgId);
