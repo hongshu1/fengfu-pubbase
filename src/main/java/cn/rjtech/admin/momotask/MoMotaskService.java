@@ -929,18 +929,20 @@ public class MoMotaskService extends BaseService<MoMotask> {
           leaderRec.put("lock", true);
           leaderRec.put("dataid", workShift.getStr("dataid"));
           leaderRec.put("sdate", workShift.getStr("sdate"));
+          Record record2 = new Record();
           if (qty == (recordssize - 3)) {
-            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+            record2.put("personne", maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+            recordLisc.add(record2);
           } else if (qty == (recordssize - 2)) {
-            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+            record2.put("personne", maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+            recordLisc.add(record2);
           } else if (qty == (recordssize - 1)) {
-            recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+            record2.put("personne", maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+            recordLisc.add(record2);
           }
         }
 
-        Record record1 = new Record();
-        record1.put("personne", recordLisc);
-        datas.put("user", record1);
+        datas.put("user", recordLisc);
         records1.add(datas);
         record.put("rowdatas", records1);
         records.add(record);
