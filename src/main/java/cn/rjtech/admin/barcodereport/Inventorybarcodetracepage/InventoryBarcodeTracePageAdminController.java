@@ -47,11 +47,14 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
     }
 
     /**
-     *详情
+     *跳转详情页面
      */
     public void details(){
         Kv kv = getKv();
+        //现品票
         set("barcode",kv.getStr("barcode"));
+        //单号
+        set("billno",kv.getStr("billno"));
         render("details.html");
     }
 
@@ -64,7 +67,10 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
      * */
     public void newdatas(){
         Kv kv = getKv();
+        //现品票
         set("barcode",kv.getStr("barcode"));
+        //单号
+        set("billno",kv.getStr("billno"));
         String startTime =(String) kv.get("starttime");
         String endtime =(String) kv.get("endtime");
         renderJsonData(service.newdatas(getPageSize(),getPageNumber(),kv));
@@ -76,10 +82,21 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
      * 获取打印数据
      */
     public void PrintData() {
-        Kv kv = new Kv();
-        kv.setIfNotNull("ids", get("ids"));
-        ValidationUtils.notBlank(get("ids"), "数据记录不存在！！!");
-        renderJsonData(service.barcodeTotalDatas(getPageSize(),getPageNumber(),kv));
+        Kv kv = getKv();
+        String ids = kv.getStr("ids");
+        if (ids != null) {
+            String[] split = ids.split(",");
+            String sqlids = "";
+            for (String id : split) {
+                sqlids += "'" + id + "',";
+            }
+            ValidationUtils.isTrue(sqlids.length() > 0, "请至少选择一条数据!");
+            sqlids = sqlids.substring(0, sqlids.length() - 1);
+            kv.set("sqlids", sqlids);
+        }
+        renderJsonData(service.PrintData(getPageSize(),getPageNumber(),kv));
+
+
     }
 
 

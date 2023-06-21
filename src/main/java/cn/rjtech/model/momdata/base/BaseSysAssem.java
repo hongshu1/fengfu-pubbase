@@ -57,6 +57,10 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
     public static final String IAUDITBY = "iAuditby";
     /**审核名称*/
     public static final String CAUDITNAME = "cAuditname";
+    /**仓库*/
+    public static final String WHCODE = "WhCode";
+    /**仓库名称*/
+    public static final String WHNAME = "WhName";
 	/**
 	 * 主键ID
 	 */
@@ -446,6 +450,40 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
 	@JSONField(name = "cauditname")
 	public java.lang.String getCAuditname() {
 		return getStr("cAuditname");
+	}
+
+	/**
+	 * 仓库
+	 */
+	public M setWhCode(java.lang.String WhCode) {
+		set("WhCode", WhCode);
+		return (M)this;
+	}
+
+	/**
+	 * 仓库
+	 */
+	@JBoltField(name="whcode" ,columnName="WhCode",type="String", remark="仓库", required=false, maxLength=50, fixed=0, order=24)
+	@JSONField(name = "whcode")
+	public java.lang.String getWhCode() {
+		return getStr("WhCode");
+	}
+
+	/**
+	 * 仓库名称
+	 */
+	public M setWhName(java.lang.String WhName) {
+		set("WhName", WhName);
+		return (M)this;
+	}
+
+	/**
+	 * 仓库名称
+	 */
+	@JBoltField(name="whname" ,columnName="WhName",type="String", remark="仓库名称", required=false, maxLength=50, fixed=0, order=25)
+	@JSONField(name = "whname")
+	public java.lang.String getWhName() {
+		return getStr("WhName");
 	}
 
 }

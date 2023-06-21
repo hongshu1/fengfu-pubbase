@@ -19,11 +19,14 @@ public enum ThirdpartySystemEnum {
     U9("U9","5"),
     U8("U8操作员", "6");
 
-    private static final Map<String, ThirdpartySystemEnum> THIRDPARTY_SYSTEM_ENUM_MAP = new HashMap<>();
+    private static final Map<String, ThirdpartySystemEnum> VALUE_ENUM_MAP = new HashMap<>();
+
+    private static final Map<String, ThirdpartySystemEnum> TEXT_ENUM_MAP = new HashMap<>();
 
     static {
         for (ThirdpartySystemEnum systemEnum : ThirdpartySystemEnum.values()) {
-            THIRDPARTY_SYSTEM_ENUM_MAP.put(systemEnum.value, systemEnum);
+            VALUE_ENUM_MAP.put(systemEnum.value, systemEnum);
+            TEXT_ENUM_MAP.put(systemEnum.text, systemEnum);
         }
     }
 
@@ -36,7 +39,11 @@ public enum ThirdpartySystemEnum {
     }
 
     public static ThirdpartySystemEnum toEnum(String value) {
-        return THIRDPARTY_SYSTEM_ENUM_MAP.get(value);
+        return VALUE_ENUM_MAP.get(value);
+    }
+
+    public static ThirdpartySystemEnum textToEnum(String text) {
+        return TEXT_ENUM_MAP.get(text);
     }
 
     public String getText() {

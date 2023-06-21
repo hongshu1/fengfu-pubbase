@@ -144,7 +144,7 @@ public class FormApprovalAdminController extends BaseAdminController {
 
         if (ret.isOk()) {
             // 审批流处理时，获取审批人推送消息
-            if (FormAuditConfigTypeEnum.toEnum(AuditFormConfigCache.ME.get(formAutoId).getIType()) == FormAuditConfigTypeEnum.FLOW) {
+            if (FormAuditConfigTypeEnum.toEnum(AuditFormConfigCache.ME.getAuditWay(formSn)) == FormAuditConfigTypeEnum.FLOW) {
                 List<Long> list = service.getNextApprovalUserIds(formAutoId, 10);
                 if (CollUtil.isNotEmpty(list)) {
                     MsgEventUtil.postApprovalMsgEvent(JBoltUserKit.getUserId(), formSn, primaryKeyName, formAutoId, list);
