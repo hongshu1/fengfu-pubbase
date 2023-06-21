@@ -35,9 +35,9 @@
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a href="admin/modocbatch/show/${data.iautoid}" data-fs="true"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="修改制造工单任务" class="jbolt_table_editbtn">查看</a>
-	<a href="admin/modocbatch/personEdit/${data.iautoid}" data-fs="true"   tooltip data-title="编辑人员"  data-handler="refreshJBoltTable" data-dialog-title="编辑人员" class="jbolt_table_editbtn">编辑人员</a>
-	<a href="admin/modocbatch/editPlan/${data.iautoid}" data-fs="true"  tooltip data-title="编辑计划"  data-handler="refreshJBoltTable" data-dialog-title="编辑计划" class="jbolt_table_editbtn">编辑计划</a>
+	<a href="admin/modocbatch/personShow/${data.iautoid}" data-fs="true"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看制造工单任务" class="jbolt_table_editbtn">查看</a>
+	<a href="admin/modocbatch/personEdit/${data.iautoid}" data-fs="true"   tooltip data-title="编辑人员"  data-handler="refreshJBoltTable" data-dialog-title="编辑制造工单人员" class="jbolt_table_editbtn">编辑人员</a>
+	<a href="admin/modocbatch/editPlan/${data.iautoid}" data-fs="true"  tooltip data-title="编辑计划"  data-handler="refreshJBoltTable" data-dialog-title="编辑制造工单计划" class="jbolt_table_editbtn">编辑计划</a>
 </td>
 <td>${data.istatusname}</td>
 <td>${data.dbegindate|date_ymd}</td>
