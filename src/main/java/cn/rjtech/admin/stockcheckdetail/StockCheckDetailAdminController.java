@@ -1,23 +1,24 @@
 package cn.rjtech.admin.stockcheckdetail;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
+
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
+import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockCheckDetail;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.tx.Tx;
 /**
- * 库存盘点-盘点明细表 Controller
+ * null管理
  * @ClassName: StockCheckDetailAdminController
- * @author: 佛山市瑞杰科技有限公司
- * @date: 2023-06-08 22:49
+ * @author: demo15
+ * @date: 2023-05-03 14:26
  */
-@CheckPermission(PermissionKey.NONE)
-@UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
+@UnCheck
 @Path(value = "/admin/stockcheckdetail", viewPath = "/_view/admin/stockcheckdetail")
 public class StockCheckDetailAdminController extends BaseAdminController {
 
@@ -30,12 +31,11 @@ public class StockCheckDetailAdminController extends BaseAdminController {
 	public void index() {
 		render("index.html");
 	}
-  	
-  	/**
+   /**
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize()));
 	}
 
    /**
@@ -46,10 +46,18 @@ public class StockCheckDetailAdminController extends BaseAdminController {
 	}
 
    /**
+	* 保存
+	*/
+	@Before(Tx.class)
+	public void save() {
+		renderJson(service.save(getModel(StockCheckDetail.class, "stockCheckDetail")));
+	}
+
+   /**
 	* 编辑
 	*/
 	public void edit() {
-		StockCheckDetail stockCheckDetail=service.findById(getLong(0)); 
+		StockCheckDetail stockCheckDetail=service.findById(getInt(0));
 		if(stockCheckDetail == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
@@ -58,40 +66,31 @@ public class StockCheckDetailAdminController extends BaseAdminController {
 		render("edit.html");
 	}
 
-  /**
-	* 保存
-	*/
-	public void save() {
-		renderJson(service.save(getModel(StockCheckDetail.class, "stockCheckDetail")));
-	}
-
    /**
 	* 更新
 	*/
+	@Before(Tx.class)
 	public void update() {
 		renderJson(service.update(getModel(StockCheckDetail.class, "stockCheckDetail")));
 	}
 
    /**
-	* 批量删除
-	*/
-	public void deleteByIds() {
-		renderJson(service.deleteByBatchIds(get("ids")));
-	}
-
-   /**
 	* 删除
 	*/
+	@Before(Tx.class)
 	public void delete() {
-		renderJson(service.delete(getLong(0)));
+		renderJson(service.deleteById(getInt(0)));
 	}
 
-  /**
-	* 切换toggleIsDeleted
-	*/
-	public void toggleIsDeleted() {
-		renderJson(service.toggleIsDeleted(getLong(0)));
+
+	/**
+	 * 盘点单调整数量
+	 */
+	public void adjust() {
+		Ret adjust = service.adjust(getKv());
+		renderJsonData(adjust);
 	}
+
 
 
 }

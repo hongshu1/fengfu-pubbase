@@ -234,3 +234,19 @@ select sum(pd.imoney) imoney from pl_proposald pd
 		and pm.ifirstsourceproposalid not in (#(ifirstsourceproposalid))
 	#end
 #end
+
+#sql("isExistsProposalDatas")
+select count(1) from pl_proposald pd where exists (
+	select 1 from pl_investment_plan ip
+		left join pl_investment_plan_item ipi on ip.iautoid = ipi.iplanid 
+		where ip.iautoid = #para(iplanid) and pd.iSourceId = ipi.iautoid
+)
+#end
+
+#sql("isExistsPurchaseDatas")
+select count(1) from pl_purchased p where exists (
+	select 1 from pl_proposalm pm
+		left join pl_proposald pd on pm.iautoid = pd.iproposalmid
+		where pm.iautoid = #para(iproposalmid) and pd.iautoid = p.iproposaldid
+)
+#end

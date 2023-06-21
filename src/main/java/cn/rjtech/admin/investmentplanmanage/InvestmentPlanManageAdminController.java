@@ -82,4 +82,10 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
     	set("investmentPlan", investmentPlan);
     	render("approve_process_index.html");
     }
+    
+    @CheckPermission(PermissionKey.INVESTMENT_PLAN_MANAGE_UNEFFECT)
+    public void uneffect(){
+    	renderJson(service.uneffect(getLong()));
+    }
 }
+

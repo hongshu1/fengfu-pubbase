@@ -509,31 +509,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             if (weekDay.equals("星期五") || weekDay.equals("Fri")){workday[i] = Weekday.fri;continue;}
             if (weekDay.equals("星期六") || weekDay.equals("Sat")){workday[i] = Weekday.sat;continue;}
             if (weekDay.equals("星期日") || weekDay.equals("Sun")){workday[i] = Weekday.sun;}
-            /*switch (weekDay) {
-                case "星期一":
-                    workday[i] = Weekday.mon;
-                    break;
-                case "星期二":
-                    workday[i] = Weekday.tue;
-                    break;
-                case "星期三":
-                    workday[i] = Weekday.wed;
-                    break;
-                case "星期四":
-                    workday[i] = Weekday.thu;
-                    break;
-                case "星期五":
-                    workday[i] = Weekday.fri;
-                    break;
-                case "星期六":
-                    workday[i] = Weekday.sat;
-                    break;
-                case "星期日":
-                    workday[i] = Weekday.sun;
-                    break;
-                default:
-                    return fail("工作日历数据不匹配！");
-            }*/
         }
 
         //TODO:根据物料集查询各班次产能
@@ -804,6 +779,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             int[] shiftOne = new int[scheduDayNum];
             int[] shiftTwo = new int[scheduDayNum];
             int[] shiftThree = new int[scheduDayNum];
+            //纪录第二班次加班纪录
+            int[] shiftWorkTwo = new int[scheduDayNum];
 
             String endInvCode = "";
             //key:inv  value:自动在库
@@ -878,7 +855,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     planZaiKuList = planZaiKuList.stream().sorted(Comparator.comparing(data -> (Integer) (data.get("chaYi")))).collect(Collectors.toList());
                 }
 
-                //计算每一天各物料的
+                //计算每一天各物料的班次排产计划
                 for (Map<String,Object> map : planZaiKuList) {
                     String inv = map.get("inv").toString();
                     int planZaiKu = (Integer) map.get("planZaiKu");
@@ -939,7 +916,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         shiftTwo[day] = 1;  //当天班次标记为已被占用
                     }
 
-                    //TODO:计算2S加班  从当天往前找已排产2S计划并将加班数加到那天头上
+                    //TODO:计算2S加班  从当天往前找2S加班未被占用(加班)
                     for (int day = i; day >= 0; day--) {
                         //在库大于等于后面两天则跳出
                         if (planZaiKu >= afterTwoPPQty){
@@ -949,14 +926,16 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         if (workday[day].equals(Weekday.sat) || workday[day].equals(Weekday.sun)){
                             continue;
                         }
-                        int qty = twosPlan[day];
-                        //未排计划表示当天已被其他物料占用则跳过
-                        if (qty == 0){
+                        //已被占用(加班)
+                        if (shiftWorkTwo[day] == 1){
                             continue;
                         }
+                        int qty = twosPlan[day];
+
                         twosPlan[day] = qty + twoOverNum;  //当天已排2S计划 + 加班数
                         planZaiKu = planZaiKu + twoOverNum;  //自动在库 + 加班数
                         shiftTwo[day] = 1;  //当天班次标记为已被占用
+                        shiftWorkTwo[day] = 1;  //当天班次标记为已被占用(加班)
                     }
 
                     //TODO:计算3S  从当天往前找3S未被占用
@@ -1016,7 +995,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         shiftTwo[day] = 1;  //当天班次标记为已被占用
                     }
 
-                    //TODO:计算周六2S加班  从当天往前找已排产周六2S计划并将加班数加到那天头上
+                    //TODO:计算周六2S加班  从当天往前找周六2S加班未被占用(加班)
                     for (int day = i; day >= 0; day--) {
                         //在库大于等于后面两天则跳出
                         if (planZaiKu >= afterTwoPPQty){
@@ -1026,14 +1005,16 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         if (!workday[day].equals(Weekday.sat)){
                             continue;
                         }
-                        int qty = twosPlan[day];
-                        //未排计划表示当天已被其他物料占用则跳过
-                        if (qty == 0){
+                        //已被占用(加班)
+                        if (shiftWorkTwo[day] == 1){
                             continue;
                         }
+                        int qty = twosPlan[day];
+
                         twosPlan[day] = qty + twoOverNum;  //当天已排2S计划 + 加班数
                         planZaiKu = planZaiKu + twoOverNum;  //自动在库 + 加班数
                         shiftTwo[day] = 1;  //当天班次标记为已被占用
+                        shiftWorkTwo[day] = 1;  //当天班次标记为已被占用(加班)
                     }
 
                     //TODO:计算周六3S  从当天往前找周六3S未被占用
@@ -1093,7 +1074,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         shiftTwo[day] = 1;  //当天班次标记为已被占用
                     }
 
-                    //TODO:计算周日2S加班  从当天往前找已排产周日2S计划并将加班数加到那天头上
+                    //TODO:计算周日2S加班  从当天往前找周日2S加班未被占用(加班)
                     for (int day = i; day >= 0; day--) {
                         //在库大于等于后面两天则跳出
                         if (planZaiKu >= afterTwoPPQty){
@@ -1103,14 +1084,16 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         if (!workday[day].equals(Weekday.sun)){
                             continue;
                         }
-                        int qty = twosPlan[day];
-                        //未排计划表示当天已被其他物料占用则跳过
-                        if (qty == 0){
+                        //已被占用(加班)
+                        if (shiftWorkTwo[day] == 1){
                             continue;
                         }
+                        int qty = twosPlan[day];
+
                         twosPlan[day] = qty + twoOverNum;  //当天已排2S计划 + 加班数
                         planZaiKu = planZaiKu + twoOverNum;  //自动在库 + 加班数
                         shiftTwo[day] = 1;  //当天班次标记为已被占用
+                        shiftWorkTwo[day] = 1;  //当天班次标记为已被占用(加班)
                     }
 
                     //TODO:计算周日3S  从当天往前找周日3S未被占用
@@ -1140,13 +1123,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
 
 
-
             /*//1S
             String[] productInformationByShift0 = new String[workday.length];
             int[] productNumberByShift0 = new int[workday.length];
             apsScheduling.getProductInfo(productInformationByShift0, productNumberByShift0, 0);
-            //System.out.println("早班："+ Arrays.toString(productInformationByShift0));
-            //System.out.println("早班："+ Arrays.toString(productNumberByShift0));
             //getInvPlanMap(productInformationByShift0, productNumberByShift0, invPlanMap1S);
             System.out.println();
 
@@ -1154,24 +1134,18 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             String[] productInformationByShift1 = new String[workday.length];
             int[] productNumberByShift1 = new int[workday.length];
             apsScheduling.getProductInfo(productInformationByShift1, productNumberByShift1, 1);
-            //System.out.println("中班："+ Arrays.toString(productInformationByShift1));
-            //System.out.println("中班："+ Arrays.toString(productNumberByShift1));
             //getInvPlanMap(productInformationByShift1, productNumberByShift1, invPlanMap2S);
             System.out.println();
 
             String[] productInformationByShift2 = new String[workday.length];
             int[] productNumberByShift2 = new int[workday.length];
             apsScheduling.getProductInfo(productInformationByShift2, productNumberByShift2, 2);
-            System.out.println("加班：" + Arrays.toString(productInformationByShift2));
-            System.out.println("加班：" + Arrays.toString(productNumberByShift2));
             System.out.println();
 
             //3S
             String[] productInformationByShift3 = new String[workday.length];
             int[] productNumberByShift3 = new int[workday.length];
             apsScheduling.getProductInfo(productInformationByShift3, productNumberByShift3, 3);
-            //System.out.println("晚班："+ Arrays.toString(productInformationByShift3));
-            //System.out.println("晚班："+ Arrays.toString(productNumberByShift3));
             //getInvPlanMap(productInformationByShift3, productNumberByShift3, invPlanMap3S);*/
 
 

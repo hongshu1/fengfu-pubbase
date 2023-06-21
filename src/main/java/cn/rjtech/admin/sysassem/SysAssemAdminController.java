@@ -171,7 +171,7 @@ public class SysAssemAdminController extends BaseAdminController {
 		kv.setIfNotNull("sourceBillType", sourceBillType);
 		kv.setIfNotNull("combination", groupCode);
 		kv.setIfNotNull("itemHidden", itemHidden);
-		kv.setIfNotNull("barcodetype", "转换前");
+		kv.setIfNotNull("assemtype", "转换前");
 		renderJsonData(service.getResource(kv));
 	}
 

@@ -11,17 +11,16 @@ import cn.jbolt.common.model.UserExtend;
 import cn.jbolt.core.base.JBoltGlobalConfigKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.*;
+import cn.jbolt.core.common.enums.UserTypeEnum;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.kit.JBoltCurrentOfModuleKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.kit.OrgAccessKit;
-import cn.jbolt.core.model.Application;
-import cn.jbolt.core.model.Dept;
-import cn.jbolt.core.model.Role;
-import cn.jbolt.core.model.User;
+import cn.jbolt.core.model.*;
 import cn.jbolt.core.service.JBoltUserService;
+import cn.jbolt.core.service.UserTypeService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltPinYinUtil;
@@ -39,10 +38,7 @@ import cn.rjtech.model.main.UserThirdparty;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
-import com.jfinal.kit.HashKit;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import com.jfinal.kit.StrKit;
+import com.jfinal.kit.*;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -78,6 +74,8 @@ public class UserService extends JBoltUserService {
     private RoleService roleService;
     @Inject
     private PersonService personService;
+    @Inject
+    private UserTypeService userTypeService;
 
     /**
      * 保存
@@ -643,7 +641,13 @@ public class UserService extends JBoltUserService {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
 
+        // 用户类型
+        UserType userType = userTypeService.findFirst(Okv.by(UserType.USERTYPE_CODE, UserTypeEnum.MOM.getValue()));
+        ValidationUtils.notNull(userType, "用户类型不存在");
+        
+        // 第三方账号
         List<Record> thirdpartys = new ArrayList<>();
+        // 用户组织（人员）
         List<Record> userOrgs = new ArrayList<>();
         
         Date now = new Date();
@@ -654,6 +658,9 @@ public class UserService extends JBoltUserService {
             ValidationUtils.notBlank(user.getStr("username"), "用户名不能为空");
             ValidationUtils.notBlank(user.getStr("password"), "密码不能为空");
 
+            // ------------------------------------
+            // 角色
+            // ------------------------------------
             String roles = user.getStr("roles");
             ValidationUtils.notBlank(roles, "角色不能为空");
             
@@ -667,9 +674,10 @@ public class UserService extends JBoltUserService {
 
                 roleIdList.add(role.getId());
             }
-            
+
             user.set("roles", CollUtil.join(roleIdList, COMMA));
             user.set("id", JBoltSnowflakeKit.me.nextId());
+            user.set("user_type_id", userType.getId());
 
             String password = user.getStr("password").trim();
             String pwdSalt = HashKit.generateSaltForSha256();
@@ -683,7 +691,7 @@ public class UserService extends JBoltUserService {
             // ---------------------------------------
             // 用户组织
             // ---------------------------------------
-            
+
             // 负责人标识
             String isPrincipal = user.getStr("is_principal");
             ValidationUtils.notBlank(isPrincipal, "缺少负责人标识");
@@ -693,19 +701,30 @@ public class UserService extends JBoltUserService {
             
             user.set("is_principal", t.getValue());
 
-            String cpersonname = user.getStr("parent_psn_id");
-            if (StrUtil.isNotBlank(cpersonname)) {
+            String cParentPersonname = user.getStr("parent_psn_id");
+            if (StrUtil.isNotBlank(cParentPersonname)) {
                 // 直接上级姓名
-                Person person = personService.findByCpersonName(cpersonname);
-                ValidationUtils.notNull(person, String.format("直接上级姓名“%s”不存在", cpersonname));
+                Person person = personService.findFirstByCpersonName(cParentPersonname);
+                ValidationUtils.notNull(person, String.format("直接上级姓名“%s”不存在", cParentPersonname));
 
                 user.set("parent_psn_id", person.getIAutoId());
             }
+
+            // ------------------------------------
+            // 人员
+            // ------------------------------------
+            String cpersonname = user.getStr("ipersonid");
+            ValidationUtils.notBlank(cpersonname, "人员姓名不能为空");
+
+            List<Person> personList = personService.findByCpersonName(cpersonname);
+            ValidationUtils.notEmpty(personList, String.format("人员“%s”不存在", cpersonname));
+            ValidationUtils.isTrue(personList.size() == 1, String.format("人员“%s”存在多个", cpersonname));
 
             userOrgs.add(new Record()
                     .set("id", JBoltSnowflakeKit.me.nextId())
                     .set("org_id", orgId)
                     .set("user_id", user.getLong("id"))
+                    .set("ipersonid", personList.get(0).getIAutoId())
                     .set("is_principal", user.getStr("is_principal"))
                     .set("parent_psn_id", user.getLong("parent_psn_id"))
                     .set("create_time", now)
@@ -731,7 +750,7 @@ public class UserService extends JBoltUserService {
                 );
             }
 
-            user.remove("is_principal", "parent_psn_id", "thirdparty_system", "thirdparty_code");
+            user.remove("is_principal", "ipersonid", "parent_psn_id", "thirdparty_system", "thirdparty_code");
         }
 
         // 执行批量操作
@@ -749,5 +768,16 @@ public class UserService extends JBoltUserService {
 
         return SUCCESS;
     }
-    
+
+
+    public String getU8Password(User user){
+        Long id = user.getId();
+        Record firstRecord = findFirstRecord("select U8Password from jb_user where id=?", id);
+        if(firstRecord==null){
+            return null;
+        }else{
+            return firstRecord.getStr("u8password");
+        }
+
+    }
 }

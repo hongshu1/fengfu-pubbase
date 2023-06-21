@@ -126,6 +126,10 @@
                 <button data-ajaxbtn data-area="700,400" data-title="生效" data-handler="refreshJBoltTable" data-check-handler="effectiveValidate" data-url="/admin/proposalm/effect?iautoid=" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 生效</button>
                 #end
 
+				#permission(PermissionKey.PROPOSALM_UNEFFECT)
+				<button data-ajaxbtn data-area="700,400" data-title="失效" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/proposalm/uneffect/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 失效</button>
+				#end
+
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
             </div>
 

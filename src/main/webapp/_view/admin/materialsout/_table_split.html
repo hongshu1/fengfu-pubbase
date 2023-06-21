@@ -1,7 +1,7 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
     {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
+        <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>${data.barcode}</td> <!--现品票-->
             <td>${data.invcode}</td> <!--材料编码-->
