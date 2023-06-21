@@ -376,12 +376,15 @@
                 let a1 = 4;
                 let A = 5;
                 let B = 6;
+                let Q = 4;
+                let W = 5;
                 parms.activeSheet.setColumnWidth(1, 150);//设置指定单元格的width
                 parms.activeSheet.setColumnWidth(2, 100);//设置指定单元格的width
                 parms.activeSheet.setColumnWidth(3, 150);//设置指定单元格的width
                 parms.activeSheet.setColumnWidth(4, 150);//设置指定单元格的width
+                let leg=4;//接收上一次数组的长度
+                let productionLength=0;//产线数据长度
                 for (let i = 0; i <jsonData.data.length; i++) {
-                    let leg = jsonData.data[i].rowdatas.length;
                     if(i==0){
                         //序号
                         sheet.setValue(rowIndex, colIndex,i+1);
@@ -398,13 +401,39 @@
                         //部品名称
                         sheet.setValue(rowIndex, serialCol+3,jsonData.data[i].cinvname1);
                         parms.activeSheet.addSpan(rowIndex,serialCol+3,jsonData.data[i].rowdatas.length+4,1);
-                        rowIndex+=jsonData.data[i].rowdatas.length+4;
+                        rowIndex = rowIndex+jsonData.data[i].rowdatas.length+4;
+                        //设置工作安排统计区域value
+                        //设备名称
+                        sheet.setValue(a1+jsonData.data[i].rowdatas.length, A,"工单号");
+                        const style_1S = new GC.Spread.Sheets.Style();
+                        style_1S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(a1+jsonData.data[i].rowdatas.length, A,style_1S);
+                        parms.activeSheet.addSpan(a1+jsonData.data[i].rowdatas.length,A,1,2);
+                        //
+                        sheet.setValue(a1+jsonData.data[i].rowdatas.length+1, A,"生产计划量");
+                        const style_2S = new GC.Spread.Sheets.Style();
+                        style_2S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(a1+jsonData.data[i].rowdatas.length+1, A,style_2S);
+                        parms.activeSheet.addSpan(a1+jsonData.data[i].rowdatas.length+1,A,1,2);
+                        //
+                        sheet.setValue(a1+jsonData.data[i].rowdatas.length+2, A,"小计人数");
+                        const style_3S = new GC.Spread.Sheets.Style();
+                        style_3S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(a1+jsonData.data[i].rowdatas.length+2, A,style_3S);
+                        parms.activeSheet.addSpan(a1+jsonData.data[i].rowdatas.length+2,A,1,2);
+                        //
+                        sheet.setValue(a1+jsonData.data[i].rowdatas.length+3, A,"产线组长");
+                        const style_4S = new GC.Spread.Sheets.Style();
+                        style_4S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(a1+jsonData.data[i].rowdatas.length+3, A,style_4S);
+                        parms.activeSheet.addSpan(a1+jsonData.data[i].rowdatas.length+3,A,1,2);
+                        a1=jsonData.data[i].rowdatas.length;
                     }else{
                         //序号
                         sheet.setValue(rowIndex, colIndex,i+1);
                         sheet.addSpan(rowIndex,colIndex,jsonData.data[i].rowdatas.length+4,1);
                         //产线名称
-                        sheet.setValue(rowIndex, serialCol,'产线名称'+i);
+                        sheet.setValue(rowIndex, serialCol,jsonData.data[i].cworkname);
                         parms.activeSheet.addSpan(rowIndex,serialCol,jsonData.data[i].rowdatas.length+4,1);
                         //存货编码
                         sheet.setValue(rowIndex, serialCol+1,jsonData.data[i].cinvcode);
@@ -415,75 +444,51 @@
                         //部品名称
                         sheet.setValue(rowIndex, serialCol+3,jsonData.data[i].cinvname1);
                         parms.activeSheet.addSpan(rowIndex,serialCol+3,jsonData.data[i].rowdatas.length+4,1);
-                        rowIndex+=jsonData.data[i].rowdatas.length+4;
+                        rowIndex = rowIndex+jsonData.data[i].rowdatas.length+4;
+                        //设置工作安排统计区域value
+                        //设备名称
+                        sheet.setValue(rowIndex-4, A,'工单号');
+                        const style_1S = new GC.Spread.Sheets.Style();
+                        style_1S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(rowIndex-4, A,style_1S);
+                        parms.activeSheet.addSpan(rowIndex-4,A,1,2);
+                        //
+                        sheet.setValue(rowIndex-3, A,'生产计划量');
+                        const style_2S = new GC.Spread.Sheets.Style();
+                        style_2S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(rowIndex-3, A,style_2S);
+                        parms.activeSheet.addSpan(rowIndex-3,A,1,2);
+                        //
+                        sheet.setValue(rowIndex-2, A,'小计人数');
+                        const style_3S = new GC.Spread.Sheets.Style();
+                        style_3S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(rowIndex-2, A,style_3S);
+                        parms.activeSheet.addSpan(rowIndex-2,A,1,2);
+                        //
+                        sheet.setValue(rowIndex-1, A,'产线组长');
+                        const style_4S = new GC.Spread.Sheets.Style();
+                        style_4S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(rowIndex-1, A,style_4S);
+                        parms.activeSheet.addSpan(rowIndex-1,A,1,2);
+                    }
+                    jsonData.data[i].rowdatas.forEach((item,k)=>{
+                            sheet.setValue(leg+k, W,item.cequipment.cequipmentname);
+                            sheet.setValue(leg+k, W+1,item.coperation.coperationname);
+                            item.user.forEach((it,ind)=>{
+                                // console.log(it.personne.psnname)
+                                sheet.setValue(leg+k, 7+ind,ind);
+                                sheet.setValue(rowIndex-4, 7+ind,ind);
+                                sheet.setValue(rowIndex-3, 7+ind,ind);
+                                sheet.setValue(rowIndex-2, 7+ind,ind);
+                                sheet.setValue(rowIndex-1, 7+ind,ind);
+                            })
 
-                    }
-                    for (let j = 0; j < jsonData.data[i].rowdatas.length; j++) {
-                        if(i==0){
-                            //设备名称
-                            sheet.setValue(a1+jsonData.data[i].rowdatas.length, A,"工单号");
-                            const style_1S = new GC.Spread.Sheets.Style();
-                            style_1S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(a1+jsonData.data[i].rowdatas.length, A,style_1S);
-                            parms.activeSheet.addSpan(a1+jsonData.data[i].rowdatas.length,A,1,2);
-                            //
-                            sheet.setValue(a1+jsonData.data[i].rowdatas.length+1, A,"生产计划量");
-                            const style_2S = new GC.Spread.Sheets.Style();
-                            style_2S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(a1+jsonData.data[i].rowdatas.length+1, A,style_2S);
-                            parms.activeSheet.addSpan(a1+jsonData.data[i].rowdatas.length+1,A,1,2);
-                            //
-                            sheet.setValue(a1+jsonData.data[i].rowdatas.length+2, A,"小计人数");
-                            const style_3S = new GC.Spread.Sheets.Style();
-                            style_3S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(a1+jsonData.data[i].rowdatas.length+2, A,style_3S);
-                            parms.activeSheet.addSpan(a1+jsonData.data[i].rowdatas.length+2,A,1,2);
-                            //
-                            sheet.setValue(a1+jsonData.data[i].rowdatas.length+3, A,"产线组长");
-                            const style_4S = new GC.Spread.Sheets.Style();
-                            style_4S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(a1+jsonData.data[i].rowdatas.length+3, A,style_4S);
-                            parms.activeSheet.addSpan(a1+jsonData.data[i].rowdatas.length+3,A,1,2);
-                        }else{
-                            //设备名称
-                            sheet.setValue(leg+12 * i + a1, A,'工单号');
-                            const style_1S = new GC.Spread.Sheets.Style();
-                            style_1S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(leg+12 * i + a1, A,style_1S);
-                            parms.activeSheet.addSpan(leg+12 * i + a1,A,1,2);
-                            //
-                            sheet.setValue(leg+12 * i + a1+1, A,'生产计划量');
-                            const style_2S = new GC.Spread.Sheets.Style();
-                            style_2S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(leg+12 * i + a1+1, A,style_2S);
-                            parms.activeSheet.addSpan(leg+12 * i + a1+1,A,1,2);
-                            //
-                            sheet.setValue(leg+12 * i + a1+2, A,'小计人数');
-                            const style_3S = new GC.Spread.Sheets.Style();
-                            style_3S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(leg+12 * i + a1+2, A,style_3S);
-                            parms.activeSheet.addSpan(leg+12 * i + a1+2,A,1,2);
-                            //
-                            sheet.setValue(leg+12 * i + a1+3, A,'产线组长');
-                            const style_4S = new GC.Spread.Sheets.Style();
-                            style_4S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(leg+12 * i + a1+3, A,style_4S);
-                            parms.activeSheet.addSpan(leg+12 * i + a1+3,A,1,2);
-                        }
-                    }
-                    // let Q = 4;
-                    // let W = 5;
-                    // for (let j = 0; j < jsonData.data[i].rowdatas.length; j++) {
-                    //     let leg = jsonData.data[i].rowdatas.length;
-                    //     if(i==0){
-                    //         sheet.setValue(Q+j, W,j);
-                    //         sheet.setValue(Q+j, W+1,j);
-                    //     }else{
-                    //         sheet.setValue(12*i+Q+j, W,j);
-                    //         sheet.setValue(12*i+Q+j, W+1,j);
-                    //     }
-                    // }
+                            if(k==jsonData.data[i].rowdatas.length-1){
+                                leg=leg+jsonData.data[i].rowdatas.length + 4
+                            }
+                    })
                 }
+
                 spreadResume();// 恢复绘制
             },error: function(error) {
                 console.log(error);
