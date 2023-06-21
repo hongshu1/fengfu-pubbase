@@ -1296,11 +1296,11 @@ public class PermissionKey {
 	/**
 	 * 生效
 	 */
-	public static final String INVESTMENT_PLAN_MANAGE_EFFECT = "investment_plan_manage_effect";	
+	public static final String INVESTMENT_PLAN_MANAGE_EFFECT = "investment_plan_manage_effect";
 	/**
 	 * 作废
 	 */
-	public static final String INVESTMENT_PLAN_MANAGE_CANCLE = "investment_plan_manage_cancle";	
+	public static final String INVESTMENT_PLAN_MANAGE_CANCLE = "investment_plan_manage_cancle";
 	/**
 	 * 撤销提审
 	 */
@@ -1313,7 +1313,7 @@ public class PermissionKey {
 	 * 查看审批
 	 */
 	public static final String PROPOSALM_FORMAPPROVALFLOW_INDEX = "proposalm_formapprovalflow_index";
-	
+
 	/**
 	 * 投资月度实绩管理
 	 */
@@ -1852,7 +1852,7 @@ public class PermissionKey {
 	 * 提交审核
 	 */
 	public static final String EXPENSE_BUDGET_FORMULATE_SUBMITAUDIT = "expense_budget_formulate_submitaudit";
-	
+
 	/**
 	 * 新增
 	 */
@@ -1890,7 +1890,7 @@ public class PermissionKey {
 	 * 生效
 	 */
 	public static final String EXPENSE_MONTH_ADJUSTMENTM_EFFECT = "expense_month_adjustmentm_effect";
-	
+
 	/**
 	 * 撤销
 	 */
@@ -1985,7 +1985,7 @@ public class PermissionKey {
 	 */
 	public static final String PURCHASE_INSTRUMENT_DELETE = "purchase_instrument_delete";
 	/**
-	 * 撤销提审
+	 * 撤销审核
 	 */
 	public static final String PURCHASE_WITHDRAW = "purchase_withdraw";
 	/**
@@ -1999,7 +1999,7 @@ public class PermissionKey {
 	/**
 	 * 查看审批
 	 */
-	public static final String PURCHASEM_FORMAPPROVALFLOW_INDEX = "purchasem_formapprovalflow_index";	
+	public static final String PURCHASEM_FORMAPPROVALFLOW_INDEX = "purchasem_formapprovalflow_index";
 	/**
 	 * 导出
 	 */
@@ -2040,6 +2040,10 @@ public class PermissionKey {
 	 * 批量反审
 	 */
 	public static final String MONTHORDERM_BATCH_REVERSE_APPROVE = "monthorderm_batch_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String MONTHORDERM_WITHDRAW = "monthorderm_withdraw";
 
 	/**
 	 * 提审
@@ -2069,7 +2073,10 @@ public class PermissionKey {
 	 * 批量反审
 	 */
 	public static final String ANNUALORDERM_BATCH_REVERSE_APPROVE = "annualorderm_batch_reverse_approve";
-
+	/**
+	 * 撤回
+	 */
+	public static final String ANNUALORDERM_WITHDRAW = "annualorderm_withdraw";
 
 	/**
 	 * 提审
@@ -2099,6 +2106,10 @@ public class PermissionKey {
 	 * 批量反审
 	 */
 	public static final String WEEKORDERM_BATCH_REVERSE_APPROVE = "weekorderm_batch_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String WEEKORDERM_WITHDRAW = "weekorderm_withdraw";
 
 	/**
 	 * 提审
@@ -2128,6 +2139,10 @@ public class PermissionKey {
 	 * 批量反审
 	 */
 	public static final String MANUALORDERM_BATCH_REVERSE_APPROVE = "manualorderm_batch_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String MANUALORDERM_WITHDRAW = "manualorderm_withdraw";
 
 	/**
 	 * 提审
@@ -2157,4 +2172,8 @@ public class PermissionKey {
 	 * 批量反审
 	 */
 	public static final String SUBCONTRACTSALEORDERM_BATCH_REVERSE_APPROVE = "subcontractsaleorderm_batch_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String SUBCONTRACTSALEORDERM_WITHDRAW = "subcontractsaleorderm_withdraw";
 }

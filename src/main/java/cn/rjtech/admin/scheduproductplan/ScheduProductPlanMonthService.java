@@ -456,6 +456,11 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         BigDecimal aps_workFactor = getConfigValue(Kv.by("configkey", "aps_workFactor"));
         double workFactor = aps_workFactor != null ? aps_workFactor.doubleValue() : 0.3;
 
+        //1S 2S上班小时数
+        int workTime = 8;
+        //加班小时数
+        int overTime = 3;
+
         //TODO:根据层级查询本次排产物料集信息
         List<Record> invInfoByLevelList;
         if (level == 1) {
@@ -716,7 +721,6 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         List<ApsWeekscheduledetails> detailsList = new ArrayList<>();
         //排产数量明细表
         List<ApsWeekscheduledQty> detailsQtyList = new ArrayList<>();
-        int seq = 1;
         //循环产线
         for (Long WorkIdKey : workInvListMap.keySet()) {
             //物料集
@@ -764,7 +768,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 planMap.put(inv, planArrar);
 
                 //期初库存
-                int stockQty = lastDateZKQtyMap.get(inv) != null ? lastDateZKQtyMap.get(inv) : 2000;
+                int stockQty = lastDateZKQtyMap.get(inv) != null ? lastDateZKQtyMap.get(inv) : 800;
                 inventory_originalMap.put(inv, stockQty);
 
                 //各班次产量数据
@@ -793,15 +797,357 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 continue;
             }
             //进行APS算法分析
-            ApsScheduling apsScheduling = ApsUtil.apsCalculation(invArrar, inventory_originalMap, planMap, 2, plan_nextMonthAverageMap, capabilityMap, workday, inventoryRate, workFactor);
+            //ApsScheduling apsScheduling = ApsUtil.apsCalculation(invArrar, inventory_originalMap, planMap, 2, plan_nextMonthAverageMap, capabilityMap, workday, inventoryRate, workFactor);
 
-            //1S
+
+            //纪录3个班次排产纪录
+            int[] shiftOne = new int[scheduDayNum];
+            int[] shiftTwo = new int[scheduDayNum];
+            int[] shiftThree = new int[scheduDayNum];
+
+            String endInvCode = "";
+            //key:inv  value:自动在库
+            Map<String,Integer> invZaiKuMap = new HashMap<>();
+            for (int i = 0; i < scheduDateList.size(); i++) {
+                List<Map<String,Object>> planZaiKuList = new ArrayList<>();
+                boolean isFlag = true;  //判断所有物料在库差异是否都小于0
+                int seq = 1;
+                //计算每一天各物料的计划在库
+                for (String inv : invArrar) {
+                    //期初库存
+                    int stockQty = inventory_originalMap.get(inv);
+                    //计划使用
+                    int[] ppArray = planMap.get(inv);
+
+                    //下个月平均计划使用数
+                    int avgQty = 200;
+                    //下个月两天平均计划使用数
+                    int avgQtySum = 200 * 2;
+
+
+                    //当天计划使用
+                    int PPQty = ppArray[i];
+
+                    //明后两天计划使用
+                    int afterTwoPPQty;
+                    if (i == ppArray.length - 2){
+                        afterTwoPPQty = ppArray[i + 1] + avgQty;
+                    }else if (i == ppArray.length - 1){
+                        afterTwoPPQty = avgQtySum;
+                    }else {
+                        afterTwoPPQty = ppArray[i + 1] + ppArray[i + 2];
+                    }
+
+                    //自动在库数
+                    int planZaiKu;
+                    if (i == 0){
+                        //自动在库数 = (期初在库 - PP)
+                        planZaiKu = (stockQty - PPQty);
+                    }else {
+                        //自动在库数 = (期初在库 - PP)
+                        planZaiKu = (invZaiKuMap.get(inv) - PPQty);
+                    }
+
+                    //差异
+                    int chaYi = planZaiKu - afterTwoPPQty;
+                    if (chaYi >= 0){
+                        isFlag = false;
+                    }
+
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("inv",inv);
+                    map.put("planZaiKu",planZaiKu);
+                    map.put("afterTwoPPQty",afterTwoPPQty);
+                    map.put("chaYi",chaYi);
+                    map.put("seq",seq++);
+                    planZaiKuList.add(map);
+                }
+
+                //如果所有物料的在库都小于，那么则上一次最后排产的物料先排
+                if (StringUtils.isNotBlank(endInvCode) && isFlag){
+                    for (Map<String,Object> map : planZaiKuList) {
+                        String inv = map.get("inv").toString();
+                        if (endInvCode.equals(inv)){
+                            map.put("seq",0);
+                            break;
+                        }
+                    }
+                    planZaiKuList = planZaiKuList.stream().sorted(Comparator.comparing(data -> (Integer) (data.get("seq")))).collect(Collectors.toList());
+                }else {
+                    //在库差异越小则先排计划(差异从小到大排序)
+                    planZaiKuList = planZaiKuList.stream().sorted(Comparator.comparing(data -> (Integer) (data.get("chaYi")))).collect(Collectors.toList());
+                }
+
+                //计算每一天各物料的
+                for (Map<String,Object> map : planZaiKuList) {
+                    String inv = map.get("inv").toString();
+                    int planZaiKu = (Integer) map.get("planZaiKu");
+                    int afterTwoPPQty = (Integer) map.get("afterTwoPPQty");
+
+                    //三班次产能
+                    int[] capabilityArray = capabilityMap.get(inv);
+                    int oneS = capabilityArray[0];
+                    int twoS = capabilityArray[1];
+                    int threeS = capabilityArray[2];
+                    //第二班次加班数量
+                    int twoOverNum = twoS / workTime * overTime;
+
+
+                    //1S排产后数据
+                    int[] onesPlan = invPlanMap1S.get(inv);
+                    //2S排产后数据
+                    int[] twosPlan = invPlanMap2S.get(inv);
+                    //3S排产后数据
+                    int[] threesPlan = invPlanMap3S.get(inv);
+
+
+                    //TODO:计算1S  从当天往前找1S未被占用
+                    for (int day = i; day >= 0; day--) {
+                        //在库大于等于后面两天则跳出
+                        if (planZaiKu >= afterTwoPPQty){
+                            break;
+                        }
+                        //当天为休息日则跳过
+                        if (workday[day].equals(Weekday.sat) || workday[day].equals(Weekday.sun)){
+                            continue;
+                        }
+                        //已被占用
+                        if (shiftOne[day] == 1){
+                            continue;
+                        }
+                        onesPlan[day] = oneS;  //当天班次排1S计划
+                        planZaiKu = planZaiKu + oneS;  //自动在库 + 1S计划
+                        shiftOne[day] = 1;  //当天班次标记为已被占用
+                    }
+
+                    //TODO:计算2S  从当天往前找2S未被占用
+                    for (int day = i; day >= 0; day--) {
+                        //在库大于等于后面两天则跳出
+                        if (planZaiKu >= afterTwoPPQty){
+                            break;
+                        }
+                        //当天为休息日则跳过
+                        if (workday[day].equals(Weekday.sat) || workday[day].equals(Weekday.sun)){
+                            continue;
+                        }
+                        //已被占用
+                        if (shiftTwo[day] == 1){
+                            continue;
+                        }
+                        twosPlan[day] = twoS;  //当天班次排2S计划
+                        planZaiKu = planZaiKu + twoS;  //自动在库 + 2S计划
+                        shiftTwo[day] = 1;  //当天班次标记为已被占用
+                    }
+
+                    //TODO:计算2S加班  从当天往前找已排产2S计划并将加班数加到那天头上
+                    for (int day = i; day >= 0; day--) {
+                        //在库大于等于后面两天则跳出
+                        if (planZaiKu >= afterTwoPPQty){
+                            break;
+                        }
+                        //当天为休息日则跳过
+                        if (workday[day].equals(Weekday.sat) || workday[day].equals(Weekday.sun)){
+                            continue;
+                        }
+                        int qty = twosPlan[day];
+                        //未排计划表示当天已被其他物料占用则跳过
+                        if (qty == 0){
+                            continue;
+                        }
+                        twosPlan[day] = qty + twoOverNum;  //当天已排2S计划 + 加班数
+                        planZaiKu = planZaiKu + twoOverNum;  //自动在库 + 加班数
+                        shiftTwo[day] = 1;  //当天班次标记为已被占用
+                    }
+
+                    //TODO:计算3S  从当天往前找3S未被占用
+                    for (int day = i; day >= 0; day--) {
+                        //在库大于等于后面两天则跳出
+                        if (planZaiKu >= afterTwoPPQty){
+                            break;
+                        }
+                        //当天为休息日则跳过
+                        if (workday[day].equals(Weekday.sat) || workday[day].equals(Weekday.sun)){
+                            continue;
+                        }
+                        //已被占用
+                        if (shiftThree[day] == 1){
+                            continue;
+                        }
+                        threesPlan[day] = threeS;  //当天班次排3S计划
+                        planZaiKu = planZaiKu + threeS;  //自动在库 + 3S计划
+                        shiftThree[day] = 1;  //当天班次标记为已被占用
+                    }
+
+                    //TODO:计算周六1S  从当天往前找周六1S未被占用
+                    for (int day = i; day >= 0; day--) {
+                        //在库大于等于后面两天则跳出
+                        if (planZaiKu >= afterTwoPPQty){
+                            break;
+                        }
+                        //当天不等于周六则跳过
+                        if (!workday[day].equals(Weekday.sat)){
+                            continue;
+                        }
+                        //已被占用
+                        if (shiftOne[day] == 1){
+                            continue;
+                        }
+                        onesPlan[day] = oneS;  //当天班次排1S计划
+                        planZaiKu = planZaiKu + oneS;  //自动在库 + 1S计划
+                        shiftOne[day] = 1;  //当天班次标记为已被占用
+                    }
+
+                    //TODO:计算周六2S  从当天往前找周六2S未被占用
+                    for (int day = i; day >= 0; day--) {
+                        //在库大于等于后面两天则跳出
+                        if (planZaiKu >= afterTwoPPQty){
+                            break;
+                        }
+                        //当天不等于周六则跳过
+                        if (!workday[day].equals(Weekday.sat)){
+                            continue;
+                        }
+                        //已被占用
+                        if (shiftTwo[day] == 1){
+                            continue;
+                        }
+                        twosPlan[day] = twoS;  //当天班次排2S计划
+                        planZaiKu = planZaiKu + twoS;  //自动在库 + 2S计划
+                        shiftTwo[day] = 1;  //当天班次标记为已被占用
+                    }
+
+                    //TODO:计算周六2S加班  从当天往前找已排产周六2S计划并将加班数加到那天头上
+                    for (int day = i; day >= 0; day--) {
+                        //在库大于等于后面两天则跳出
+                        if (planZaiKu >= afterTwoPPQty){
+                            break;
+                        }
+                        //当天不等于周六则跳过
+                        if (!workday[day].equals(Weekday.sat)){
+                            continue;
+                        }
+                        int qty = twosPlan[day];
+                        //未排计划表示当天已被其他物料占用则跳过
+                        if (qty == 0){
+                            continue;
+                        }
+                        twosPlan[day] = qty + twoOverNum;  //当天已排2S计划 + 加班数
+                        planZaiKu = planZaiKu + twoOverNum;  //自动在库 + 加班数
+                        shiftTwo[day] = 1;  //当天班次标记为已被占用
+                    }
+
+                    //TODO:计算周六3S  从当天往前找周六3S未被占用
+                    for (int day = i; day >= 0; day--) {
+                        //在库大于等于后面两天则跳出
+                        if (planZaiKu >= afterTwoPPQty){
+                            break;
+                        }
+                        //当天不等于周六则跳过
+                        if (!workday[day].equals(Weekday.sat)){
+                            continue;
+                        }
+                        //已被占用
+                        if (shiftThree[day] == 1){
+                            continue;
+                        }
+                        threesPlan[day] = threeS;  //当天班次排3S计划
+                        planZaiKu = planZaiKu + threeS;  //自动在库 + 3S计划
+                        shiftThree[day] = 1;  //当天班次标记为已被占用
+                    }
+
+                    //TODO:计算周日1S  从当天往前找周日1S未被占用
+                    for (int day = i; day >= 0; day--) {
+                        //在库大于等于后面两天则跳出
+                        if (planZaiKu >= afterTwoPPQty){
+                            break;
+                        }
+                        //当天不等于周日则跳过
+                        if (!workday[day].equals(Weekday.sun)){
+                            continue;
+                        }
+                        //已被占用
+                        if (shiftOne[day] == 1){
+                            continue;
+                        }
+                        onesPlan[day] = oneS;  //当天班次排1S计划
+                        planZaiKu = planZaiKu + oneS;  //自动在库 + 1S计划
+                        shiftOne[day] = 1;  //当天班次标记为已被占用
+                    }
+
+                    //TODO:计算周日2S  从当天往前找周日2S未被占用
+                    for (int day = i; day >= 0; day--) {
+                        //在库大于等于后面两天则跳出
+                        if (planZaiKu >= afterTwoPPQty){
+                            break;
+                        }
+                        //当天不等于周日则跳过
+                        if (!workday[day].equals(Weekday.sun)){
+                            continue;
+                        }
+                        //已被占用
+                        if (shiftTwo[day] == 1){
+                            continue;
+                        }
+                        twosPlan[day] = twoS;  //当天班次排2S计划
+                        planZaiKu = planZaiKu + twoS;  //自动在库 + 2S计划
+                        shiftTwo[day] = 1;  //当天班次标记为已被占用
+                    }
+
+                    //TODO:计算周日2S加班  从当天往前找已排产周日2S计划并将加班数加到那天头上
+                    for (int day = i; day >= 0; day--) {
+                        //在库大于等于后面两天则跳出
+                        if (planZaiKu >= afterTwoPPQty){
+                            break;
+                        }
+                        //当天不等于周日则跳过
+                        if (!workday[day].equals(Weekday.sun)){
+                            continue;
+                        }
+                        int qty = twosPlan[day];
+                        //未排计划表示当天已被其他物料占用则跳过
+                        if (qty == 0){
+                            continue;
+                        }
+                        twosPlan[day] = qty + twoOverNum;  //当天已排2S计划 + 加班数
+                        planZaiKu = planZaiKu + twoOverNum;  //自动在库 + 加班数
+                        shiftTwo[day] = 1;  //当天班次标记为已被占用
+                    }
+
+                    //TODO:计算周日3S  从当天往前找周日3S未被占用
+                    for (int day = i; day >= 0; day--) {
+                        //在库大于等于后面两天则跳出
+                        if (planZaiKu >= afterTwoPPQty){
+                            break;
+                        }
+                        //当天不等于周日则跳过
+                        if (!workday[day].equals(Weekday.sun)){
+                            continue;
+                        }
+                        //已被占用
+                        if (shiftThree[day] == 1){
+                            continue;
+                        }
+                        threesPlan[day] = threeS;  //当天班次排3S计划
+                        planZaiKu = planZaiKu + threeS;  //自动在库 + 3S计划
+                        shiftThree[day] = 1;  //当天班次标记为已被占用
+                    }
+                    if (planZaiKu < afterTwoPPQty){
+                        return fail(scheduDateList.get(i)+" 已排满后产能不够！");
+                    }
+                    invZaiKuMap.put(inv,planZaiKu);
+                    endInvCode = inv;
+                }
+            }
+
+
+
+            /*//1S
             String[] productInformationByShift0 = new String[workday.length];
             int[] productNumberByShift0 = new int[workday.length];
             apsScheduling.getProductInfo(productInformationByShift0, productNumberByShift0, 0);
             //System.out.println("早班："+ Arrays.toString(productInformationByShift0));
             //System.out.println("早班："+ Arrays.toString(productNumberByShift0));
-            getInvPlanMap(productInformationByShift0, productNumberByShift0, invPlanMap1S);
+            //getInvPlanMap(productInformationByShift0, productNumberByShift0, invPlanMap1S);
             System.out.println();
 
             //2S
@@ -810,7 +1156,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             apsScheduling.getProductInfo(productInformationByShift1, productNumberByShift1, 1);
             //System.out.println("中班："+ Arrays.toString(productInformationByShift1));
             //System.out.println("中班："+ Arrays.toString(productNumberByShift1));
-            getInvPlanMap(productInformationByShift1, productNumberByShift1, invPlanMap2S);
+            //getInvPlanMap(productInformationByShift1, productNumberByShift1, invPlanMap2S);
             System.out.println();
 
             String[] productInformationByShift2 = new String[workday.length];
@@ -826,7 +1172,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             apsScheduling.getProductInfo(productInformationByShift3, productNumberByShift3, 3);
             //System.out.println("晚班："+ Arrays.toString(productInformationByShift3));
             //System.out.println("晚班："+ Arrays.toString(productNumberByShift3));
-            getInvPlanMap(productInformationByShift3, productNumberByShift3, invPlanMap3S);
+            //getInvPlanMap(productInformationByShift3, productNumberByShift3, invPlanMap3S);*/
 
 
             //循环物料
@@ -933,6 +1279,63 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             return true;
         });
         return SUCCESS;
+    }
+
+    public static void main(String[] args){
+        for (int day = 0; day >= 0; day--) {
+            System.err.println(day);
+        }
+    }
+
+    /**
+     * 排产核心算法
+     * @param ppArray 计划使用
+     * @param stockQty 期初库存
+     * @param count 排产计算次数
+     * @param sumPPQty PP汇总
+     * @param sumCPQty PP汇总
+     * @param oneS 班次产能
+     * @param onesPlan 排产后计划数
+     */
+    public void getComputationalLogicPlan(int[] ppArray,int stockQty,int oneS,int[] onesPlan,
+                                          int count,int sumPPQty,int sumCPQty){
+        for (int i = 0; i < ppArray.length; i++) {
+            //今明两天计划使用
+            int PPQty;
+            if (i == ppArray.length - 1){
+                PPQty = ppArray[i];
+            }else {
+                PPQty = ppArray[i] + ppArray[i + 1];
+            }
+
+            //自动在库数前一天(若是计划数为初始1号则取在库计划期初数)
+            int yesterdayQty;
+            if (count == 0){
+                //在库计划期初数
+                yesterdayQty =  stockQty;
+            }else {
+                //自动在库数前一天 = (期初在库计划数 - PP汇总 + 计划数汇总)
+                yesterdayQty = (stockQty - sumPPQty + sumCPQty);
+            }
+
+            //休息日
+            if (false){ //!outCalendarList.contains(dateStr)
+                //tsysScheduBasePlan.getClass().getMethod("setDate"+(i+1), new Class[]{Double.class}).invoke(tsysScheduBasePlan, new Object[]{null});
+                sumCPQty += 0.0;
+            }
+            else {
+                //自动在库数前一天 >= PP 则不排计划 反之则=班次产能
+                if (yesterdayQty >= PPQty){
+                    sumCPQty += 0.0;
+                }else {
+                    onesPlan[i] = oneS;
+                    sumCPQty += oneS;
+                }
+            }
+            //PP汇总
+            sumPPQty += PPQty;
+            count++;
+        }
     }
 
     public void getInvPlanMap(String[] productInformationByShift, int[] productNumberByShift, Map<String, int[]> invPlanMap) {
@@ -1160,6 +1563,208 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         }
         return dataList;
     }
+    /**
+     * 获取计划
+     */
+    /*public List<Map<String, Object>> getScheduPlanMonthList(Kv kv) {
+        if (notOk(kv.get("level"))) {
+            return new ArrayList<>();
+        }
+        //排产层级
+        int level = kv.getInt("level");
+        //TODO:查询排产开始日期与截止日期
+        ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleBeginTime,dScheduleEndTime FROM Aps_WeekSchedule WHERE iLevel = ? ", level);
+        if (apsWeekschedule == null) {
+            return new ArrayList<>();
+        }
+        int iLevel = apsWeekschedule.getILevel();
+        String startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(), "yyyy-MM-dd");
+        String endDate = DateUtils.formatDate(apsWeekschedule.getDScheduleEndTime(), "yyyy-MM-dd");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(DateUtils.parseDate(startDate));
+        calendar.add(Calendar.DATE, -1);//日期-1
+        //过去一天年月日
+        Date lastDate = DateUtils.parseDate(DateUtils.formatDate(calendar.getTime(), "yyyy-MM-dd"));
+        int lastyear = Integer.parseInt(DateUtils.formatDate(lastDate, "yyyy"));
+        int lastmonth = Integer.parseInt(DateUtils.formatDate(lastDate, "MM"));
+        int lastday = Integer.parseInt(DateUtils.formatDate(lastDate, "dd"));
+
+        kv.set("level", iLevel);
+        if (notOk(kv.get("startdate"))) {
+            kv.set("startdate", startDate);
+        }
+        if (notOk(kv.get("enddate"))) {
+            kv.set("enddate", endDate);
+        }
+        //TODO:根据层级及日期获取月周生产计划表数据
+        List<Record> getWeekScheduPlanList = getWeekScheduPlanList(kv);
+
+        //key:产线id   value:List物料集
+        Map<Long, List<String>> workInvListMap = new HashMap<>();
+        //key:inv，   value:<yyyy-MM-dd，Record>
+        Map<String, Map<String, Record>> invPlanDateMap = new HashMap<>();
+        //key:inv   value:invInfo
+        Map<String, Record> invInfoMap = new HashMap<>();
+        //本次排产物料id集
+        String idsJoin = "(";
+        List<Long> idList = new ArrayList<>();
+        for (Record record : getWeekScheduPlanList) {
+            Long iWorkRegionMid = record.getLong("iWorkRegionMid");
+            Long invId = record.getLong("invId");
+            String cInvCode = record.getStr("cInvCode");
+            String iYear = record.getStr("iYear");
+            int iMonth = record.getInt("iMonth");
+            int iDate = record.getInt("iDate");
+            //yyyy-MM-dd
+            String dateKey = iYear;
+            dateKey = iMonth < 10 ? dateKey + "-0" + iMonth : dateKey + "-" + iMonth;
+            dateKey = iDate < 10 ? dateKey + "-0" + iDate : dateKey + "-" + iDate;
+
+            if (workInvListMap.containsKey(iWorkRegionMid)) {
+                List<String> list = workInvListMap.get(iWorkRegionMid);
+                if (!list.contains(cInvCode)) {
+                    list.add(cInvCode);
+                }
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(cInvCode);
+                workInvListMap.put(iWorkRegionMid, list);
+            }
+
+            if (invPlanDateMap.containsKey(cInvCode)) {
+                //key:yyyy-MM-dd   value:qty
+                Map<String, Record> dateQtyMap = invPlanDateMap.get(cInvCode);
+                dateQtyMap.put(dateKey, record);
+            } else {
+                Map<String, Record> dateQtyMap = new LinkedHashMap<>();
+                dateQtyMap.put(dateKey, record);
+                invPlanDateMap.put(cInvCode, dateQtyMap);
+            }
+
+            if (!invInfoMap.containsKey(cInvCode)) {
+                invInfoMap.put(cInvCode, record);
+            }
+
+            if (!idList.contains(invId)) {
+                idsJoin = idsJoin + invId + ",";
+                idList.add(invId);
+            }
+        }
+        idsJoin = idsJoin + "601)";
+
+
+        //TODO:查询物料集期初在库
+        List<Record> getLastDateZKQtyList = getLastDateZKQtyList(Kv.by("lastyear", lastyear).set("lastmonth", lastmonth).set("lastday", lastday).set("ids", idsJoin));
+        //key:inv   value:qty
+        Map<String, Integer> lastDateZKQtyMap = new HashMap<>();
+        for (Record record : getLastDateZKQtyList) {
+            String cInvCode = record.getStr("cInvCode");
+            int iQty5 = record.getBigDecimal("iQty5").intValue();
+            lastDateZKQtyMap.put(cInvCode, iQty5);
+        }
+        //TODO:根据物料集查询各班次产能
+        List<Record> invCapacityList = dbTemplate("scheduproductplan.getInvCapacityList", Kv.by("ids", idsJoin)).find();
+        //key:inv    value:list
+        Map<String, List<Record>> invCapacityListMap = new HashMap<>();
+        for (Record record : invCapacityList) {
+            String cInvCode = record.getStr("cInvCode");
+            if (invCapacityListMap.containsKey(cInvCode)) {
+                List<Record> list = invCapacityListMap.get(cInvCode);
+                list.add(record);
+                invCapacityListMap.put(cInvCode, list);
+            } else {
+                List<Record> list = new ArrayList<>();
+                list.add(record);
+                invCapacityListMap.put(cInvCode, list);
+            }
+        }
+        //上次锁定截止日期
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.setTime(new Date());
+        calendar2.add(Calendar.DATE, -1);//日期-1
+        Date lockPreDate = calendar2.getTime();
+        //TODO:获取当前层级上次排产锁定日期
+        ApsWeekschedule weekscheduleLock = apsWeekscheduleService.daoTemplate("scheduproductplan.getApsWeekscheduleLock", Kv.by("level", iLevel)).findFirst();
+        if (weekscheduleLock != null && weekscheduleLock.getDLockEndTime() != null) {
+            Date preLock = DateUtils.parseDate(DateUtils.formatDate(weekscheduleLock.getDLockEndTime(), "yyyy-MM-dd"));
+            if (preLock.getTime() >= DateUtils.parseDate(DateUtils.formatDate(new Date(), "yyyy-MM-d")).getTime()) {
+                lockPreDate = weekscheduleLock.getDLockEndTime();
+            }
+        }
+        lockPreDate = DateUtils.parseDate(DateUtils.formatDate(lockPreDate, "yyyy-MM-dd"));
+
+
+        List<Map<String, Object>> dataList = new ArrayList<>();
+        int seq = 1;
+        //循环产线
+        for (Long WorkIdKey : workInvListMap.keySet()) {
+            //物料集
+            List<String> invList = workInvListMap.get(WorkIdKey);
+            //循环物料
+            for (String inv : invList) {
+                Record info = invInfoMap.get(inv);
+                int qiChuOneS = 0;
+                int qiChuTwoS = 0;
+                int qiChuThreeS = 0;
+                List<Record> capacityList = invCapacityListMap.get(inv) != null ? invCapacityListMap.get(inv) : new ArrayList<>();
+                for (int i = 0; i < capacityList.size(); i++) {
+                    String cWorkShiftCode = capacityList.get(i).getStr("cWorkShiftCode") != null ? capacityList.get(i).getStr("cWorkShiftCode") : "";
+                    int iCapacity = capacityList.get(i).getInt("iCapacity");
+                    if (cWorkShiftCode.contains("1S")) {
+                        qiChuOneS = iCapacity;
+                    }
+                    if (cWorkShiftCode.contains("2S")) {
+                        qiChuTwoS = iCapacity;
+                    }
+                    if (cWorkShiftCode.contains("3S")) {
+                        qiChuThreeS = iCapacity;
+                    }
+                }
+                int iInnerInStockDays = isOk(info.getInt("iInnerInStockDays")) ? info.getInt("iInnerInStockDays") : 1;
+                //期初库存
+                int qiChuZaiKu = lastDateZKQtyMap.get(info.getStr("cInvCode")) != null ? lastDateZKQtyMap.get(info.getStr("cInvCode")) : 800;
+
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("seq", seq++);
+                map.put("iPsLevel", info.getInt("iPsLevel"));
+                map.put("cWorkName", info.getStr("cWorkName"));
+                map.put("cInvCode", info.getStr("cInvCode"));
+                map.put("cInvCode1", info.getStr("cInvCode1"));
+                map.put("cInvName1", info.getStr("cInvName1"));
+                map.put("qiChuOneS", qiChuOneS);
+                map.put("qiChuTwoS", qiChuTwoS);
+                map.put("qiChuThreeS", qiChuThreeS);
+                map.put("dayNum", iInnerInStockDays);
+                map.put("qiChuZaiKu", qiChuZaiKu);
+
+                List<Object> objectList = new ArrayList<>();
+                Map<String, Record> planDateMap = invPlanDateMap.get(inv);
+                for (String date : planDateMap.keySet()) {
+                    Record record = planDateMap.get(date);
+
+                    Map<String, Object> dataMap = new HashMap<>();
+                    dataMap.put("shiyong", record.getBigDecimal("iQty1"));
+                    dataMap.put("one", record.getBigDecimal("iQty2"));
+                    dataMap.put("two", record.getBigDecimal("iQty3"));
+                    dataMap.put("three", record.getBigDecimal("iQty4"));
+                    dataMap.put("zaiku", record.getBigDecimal("iQty5"));
+                    dataMap.put("tianshu", record.getBigDecimal("iQty6"));
+                    dataMap.put("date", date);
+                    dataMap.put("lock", false);//未锁定可编辑
+
+                    if (DateUtils.parseDate(date).getTime() <= lockPreDate.getTime()) {
+                        dataMap.put("lock", true);//已锁定不可编辑
+                    }
+                    objectList.add(dataMap);
+                }
+                map.put("day", objectList);
+                dataList.add(map);
+            }
+        }
+        return dataList;
+    }*/
 
     /**
      * 锁定计划

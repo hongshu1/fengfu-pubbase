@@ -170,4 +170,12 @@ public class ScanCodeReceiveDetailService extends BaseService<SysPureceivedetail
         return null;
     }
 
+    /**
+     * 根据主表id查询数据
+     * @param masId
+     * @return
+     */
+    public List<Record> findListByMasId(Long masId){
+        return dbTemplate("scancodereceive.findListByMasId",Kv.create().set("masId",masId)).find();
+    }
 }

@@ -87,6 +87,13 @@ public class MoDocBatchController extends BaseAdminController {
   }
 
   /**
+   * 查看
+   */
+  public void personShow() {
+    render("personshow.html");
+  }
+
+  /**
    * 制造工单计划批量编辑数据源
    */
   public void getEditorialPlanDatas() {

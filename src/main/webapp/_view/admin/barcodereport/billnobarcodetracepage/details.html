@@ -80,7 +80,7 @@
                     <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportContainerButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
                     <div class="dropdown-menu" aria-labelledby="exportContainerButton">
                         <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="/admin/barcodeReport/BillNoBarcodeTracePage/downloadChecked"><i class="fa fa-download"></i> 导出选中</button>
-                        <button class="btn dropdown-item" data-downloadbtn data-url="/admin/barcodeReport/BillNoBarcodeTracePage/downloadChecked" data-form="BillNoDetailsForm_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
+                        <button class="btn dropdown-item" data-downloadbtn data-url="/admin/barcodeReport/BillNoBarcodeTracePage/downloadChecked?billno=#(billno??)" data-form="BillNoDetailsForm_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@
                data-height="fill"
                data-ajax="true"
                data-width="auto"
-               data-url="/admin/barcodeReport/BillNoBarcodeTracePage/newdatas?barcode=#(barcode??)"
+               data-url="/admin/barcodeReport/BillNoBarcodeTracePage/newdatas?barcode=#(barcode??)&billno=#(billno??)"
                data-column-resize="true"
                data-column-prepend="1:checkbox:true"
                data-conditions-form="BillNoDetailsForm_#(pageId)"
