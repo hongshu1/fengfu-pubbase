@@ -42,11 +42,11 @@
 <tr data-id="${data.autoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}?&type=0"  data-fs="true" data-handler="refreshJBoltTable" data-title="材料出库单列表详情">查看</i></a>
+	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}?&readonly=readonly"  data-fs="true" data-handler="refreshJBoltTable" data-title="材料出库单列表详情">查看</i></a>
 	 {@if data.iauditstatus == '0'}
-	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}?&edit=true" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑材料出库单列表">编辑</i></a>
+	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑材料出库单列表">编辑</i></a>
 	 {@else if data.iauditstatus == '1'}
-	<a class="jbolt_table_delbtn" href="admin/materialDeliveryList/recall?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
+	<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=T_Sys_MaterialsOut&primaryKeyName=autoid&formAutoId=${data.autoid}&permissionKey=materialsOut_withdraw&className=cn.rjtech.admin.materialsout.MaterialsOutService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回材料出库表" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
 	 {@/if}
 </td>
 <td>${data.auditstate}</td>
@@ -73,9 +73,12 @@
 <div class="jbolt_table_toolbar" id="materialsOut_toolbar_#(pageId)">
 	<div class="" role="group" aria-label="btn-group">
 		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增出库管理-材料出库单列表"  data-url="admin/materialDeliveryList/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-<!--		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/materialDeliveryList/approve?mark=2&&iAutoId=" data-confirm="确定审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量审核</button>-->
-<!--		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"  data-url="admin/materialDeliveryList/NoApprove?ids=" data-confirm="确定反审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量反审核</button>-->
-		#include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_MaterialsOut",uri="admin/materialDeliveryList",primaryKeyName="AutoID")
+		### 参数列表
+		### formSn:                 表单名
+		### primaryKeyName:         表单主键名
+		### className:              实现审批业务的类名
+		### permissionKeyPrefix:    权限Key前缀
+		#include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_MaterialsOut", primaryKeyName="AutoID", className="cn.rjtech.admin.materialsout.MaterialsOutService", permissionKeyPrefix="materialsOut")
 		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/materialDeliveryList/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 批量删除</button>
 	</div>
 
