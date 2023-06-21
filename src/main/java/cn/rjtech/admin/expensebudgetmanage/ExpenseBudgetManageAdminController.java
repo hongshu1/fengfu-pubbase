@@ -97,4 +97,9 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
     	set("expenseBudget", expenseBudget);
     	render("approve_process_index.html");
     }
+    @CheckPermission(PermissionKey.EXPENSE_BUDGET_MANAGE_UNEFFECT)
+    public void uneffect(){
+    	renderJson(service.uneffect(getLong()));
+    }
+    
 }

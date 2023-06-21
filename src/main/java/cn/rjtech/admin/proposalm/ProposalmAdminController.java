@@ -623,5 +623,8 @@ public class ProposalmAdminController extends BaseAdminController {
     	set("proposalm", proposalm);
     	render("approve_process_index.html");
     }
-
+    @CheckPermission(PermissionKey.PROPOSALM_UNEFFECT)
+    public void uneffect(){
+    	renderJson(service.uneffect(getLong()));
+    }
 }
