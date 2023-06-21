@@ -1,13 +1,12 @@
 package cn.rjtech.admin.datapermission;
 
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.rjtech.model.main.DataPermission;
+import cn.jbolt.core.service.DataPermissionService;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -45,58 +44,6 @@ public class DataPermissionAdminController extends JBoltBaseController {
      */
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getSortColumn("id"), getSortType("desc"), getLong("busobjectId"), getInt("objectType"), getBoolean("isViewEnabled"), getBoolean("isEditEnabled"), getBoolean("isDeleteEnabled"), getBoolean("isDeleted", false)));
-    }
-
-    /**
-     * 新增
-     */
-    public void add() {
-        render("add.html");
-    }
-
-    /**
-     * 保存
-     */
-    @Before(Tx.class)
-    public void save() {
-        renderJson(service.save(getModel(DataPermission.class, "dataPermission")));
-    }
-
-    /**
-     * 编辑
-     */
-    public void edit() {
-        DataPermission dataPermission = service.findById(getLong(0));
-        if (dataPermission == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        set("dataPermission", dataPermission);
-        render("edit.html");
-    }
-
-    /**
-     * 更新
-     */
-    @Before(Tx.class)
-    public void update() {
-        renderJson(service.update(getModel(DataPermission.class, "dataPermission")));
-    }
-
-    /**
-     * 批量删除
-     */
-    @Before(Tx.class)
-    public void deleteByIds() {
-        renderJson(service.deleteByIds(get("ids")));
-    }
-
-    /**
-     * 删除
-     */
-    @Before(Tx.class)
-    public void delete() {
-        renderJson(service.deleteById(getLong(0)));
     }
 
     /**
