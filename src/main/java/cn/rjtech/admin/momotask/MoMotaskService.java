@@ -110,6 +110,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
     }
 
     Department byId = departmentService.findById(moMotask.getIDepartmentId());
+    record.put("iautoid", byId.getIAutoId());
+    record.put("depcode", byId.getCDepCode());
     record.put("depname", byId.getCDepName());
     record.put("startdate", records.get(0).getStr("yeartodate"));
     record.put("stopdate", records.get((records.size() - 1)).getStr("yeartodate"));
@@ -728,7 +730,6 @@ public class MoMotaskService extends BaseService<MoMotask> {
               record3.put("psnname", "");
               record3.put("psnnum", "");
 
-
               record1.put("cMoDocNo", recorda3.getStr("cMoDocNo"));
 
               record2.put("iQty", recorda3.getStr("iQty"));
@@ -766,8 +767,9 @@ public class MoMotaskService extends BaseService<MoMotask> {
             for (Record record3 : list6) {
               String iAutoId = record3.getStr("iAutoId");
               Record record1 = new Record();
-              record1.put("datesplicing","");
-              record1.put("iautoid","");
+
+              record1.put("datesplicing", "");
+              record1.put("iautoid", "");
               record1.put("idate", "");
               record1.put("imonth", "");
               record1.put("iworkshiftmid", "");
@@ -777,6 +779,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
               record1.put("cmodocno", "");
               record1.put("iqty", "");
               record1.put("ipersonnum", "");
+
               record1.set("iDutyPersonId", record3.getStr("iDutyPersonId") == null ? "" : record3.getStr("iDutyPersonId"));
               record1.set("cPsn_Name", record3.getStr("cPsn_Name") == null ? "" : record3.getStr("cPsn_Name"));
               if (map6.containsKey(iAutoId)) {
