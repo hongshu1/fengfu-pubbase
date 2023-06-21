@@ -2,7 +2,6 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)" data-dontchangeleftnav="true">
-
     <div class="jbolt_page_title">
         <form onsubmit="return false;" id="expenseBudgetEditForm" action="#(action)" method="post">
             <div class="form-group row text-left">
@@ -102,6 +101,7 @@
 
         <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            	<button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
                 <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 增行</button>
                 <button onclick="jboltTableRemoveCheckedRow(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-trash"></i> 删行</button>
                 <button data-openpage="dialog" data-check-handler="addExportUnfinishCheckHandler" data-area="100%,100%"  data-title="导入未完成项目"  data-url="admin/expensebudget/importUnfinishExpenseBudgetItem/" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 导入未完成项目</button>
@@ -124,9 +124,9 @@
 	            </div>
 	            <a hidden id="expenseBudgetAddExportBtn" data-downloadbtn href="admin/expensebudget/exportTableExpenseBudgetDatas" data-form="expenseBudgetEditForm" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> 导出</a>
 	            <button id="saveBtn_#(pageId)" onclick="submitThisForm()" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 保存</button>
-	            <button data-ajaxbtn data-handler="closeHandler()" data-url="admin/expensebudget/submit/#(expenseBudget.iautoid)" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 提交审核</button>
+	            <button data-ajaxbtn data-handler="closeHandler()" data-url="/admin/formapproval/submit?formSn=PL_Expense_Budget&primaryKeyName=iAutoId&permissionKey=expense_budget_formulate_submitaudit&className=cn.rjtech.admin.expensebudget.ExpenseBudgetService&formAutoId=#(expenseBudget.iautoid)" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 提交审核</button>
 	            <button onclick="closeHandler()" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 关闭</button>
-                <!-- <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button> -->
+                <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
                  (单价单位：元， 金额单位：千元)
             </div>
         </div>
@@ -402,6 +402,31 @@
     function closeHandler(){
     	parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
+    }
+    function submitThisForm_#(pageId)(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
+        }
+
+        // 普通表单表单，保存并提审处理
+        // submitThisForm(function (data) {
+        //     submit_#(pageId)(ret.data.iautoid, function (data) {
+        //         successHandler('提审成功', ret.data.iautoid);
+        //     });
+        // });
+        
+        // 调用保存处理
+        $('#save_btn_#(pageId)').click();
+    }
+    /**
+     * 保存清空错误数据
+     * @param ele
+     */
+    function saveData(ele) {
+        var rowDatas = jboltTableGetAllDatas(ele);
+        removeEmptyRow(ele, rowDatas);
+        jboltTableSubmit(ele);
     }
 </script>
 #end

@@ -167,7 +167,6 @@ public class WorkclassAdminController extends JBoltBaseController {
         renderBytesToExcelXlsFile(jBoltExcel);
     }
 
-    @SuppressWarnings("unchecked")
     public void downloadTpl() throws Exception {
         renderBytesToExcelXlsFile(service.getExcelImportTpl().setFileName("工种档案导入模板"));
     }

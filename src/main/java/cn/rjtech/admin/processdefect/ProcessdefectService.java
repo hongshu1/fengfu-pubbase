@@ -254,6 +254,7 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 				if (record.getIStatus() != null && record.getIStatus().equals(3)) {
 					ValidationUtils.error("单据已审批,不允许操作");
 				}
+				processDefect.setIAutoId(formRecord.getLong("iautoid"));
 				processDefect.setIUpdateBy(JBoltUserKit.getUserId());
 				processDefect.setCUpdateName(JBoltUserKit.getUserName());
 				processDefect.setDUpdateTime(now);

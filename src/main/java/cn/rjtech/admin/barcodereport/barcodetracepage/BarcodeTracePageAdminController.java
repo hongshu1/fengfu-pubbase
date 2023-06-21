@@ -1,9 +1,8 @@
-package cn.rjtech.admin.barcodereport.Inventorybarcodetracepage;
-import cn.hutool.core.date.DateUtil;
+package cn.rjtech.admin.barcodereport.barcodetracepage;
 
 import cn.jbolt._admin.hiprint.HiprintTplService;
-
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
@@ -13,28 +12,27 @@ import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
-
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
- * 物料现品票汇总管理 Controller
+ * 社内现品票汇总管理 Controller
  *
  * @author Kephon
  */
-@CheckPermission(PermissionKey.INVENTORY_BARCODE_TRACEPAGE)
+@CheckPermission(PermissionKey.BARCODE_TRACEPAGE)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/barcodeReport/InventoryBarcodeTracePage", viewPath = "/_view/admin/barcodereport/inventorybarcodetracepage")
-public class InventoryBarcodeTracePageAdminController extends BaseAdminController {
+@Path(value = "/admin/barcodeReport/BarcodeTracePage", viewPath = "/_view/admin/barcodereport/barcodetracepage")
+public class BarcodeTracePageAdminController extends BaseAdminController {
 
     @Inject
-    private InventoryBarcodeTracePageAdminService service;
+    private BarcodeTracePageAdminService service;
     @Inject
     private HiprintTplService tplService;
 
@@ -57,10 +55,7 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
 
 
     /**
-     * 数据源
-     */
-    /**
-     * 条码汇总表(新)数据源
+     * 社内现品票汇总管理数据源
      * */
     public void newdatas(){
         Kv kv = getKv();
@@ -89,8 +84,6 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
             kv.set("sqlids", sqlids);
         }
         renderJsonData(service.PrintData(getPageSize(),getPageNumber(),kv));
-
-
     }
 
 
@@ -118,7 +111,7 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
         JBoltExcel jBoltExcel = JBoltExcel
                 .create()//创建JBoltExcel
                 .addSheet(//设置sheet
-                        JBoltExcelSheet.create("物料现品票汇总管理")
+                        JBoltExcelSheet.create("社内现品票汇总管理")
                                 .setHeaders(1,//sheet里添加表头
                                         JBoltExcelHeader.create("billno", "单据单号", 20),
                                         JBoltExcelHeader.create("vencode", "供应商编码", 20),
@@ -136,7 +129,7 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
                                 ).setDataChangeHandler((data, index) -> {
                         })
                                 .setRecordDatas(2, records)//设置数据
-                ).setFileName("物料现品票汇总管理-" + new SimpleDateFormat("yyyyMMdd").format(new Date()));
+                ).setFileName("社内现品票汇总管理-" + new SimpleDateFormat("yyyyMMdd").format(new Date()));
         //3、导出
         renderBytesToExcelXlsFile(jBoltExcel);
 
