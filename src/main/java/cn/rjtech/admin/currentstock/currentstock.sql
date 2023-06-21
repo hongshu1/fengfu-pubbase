@@ -76,7 +76,8 @@ group by w.whname, w.whcode
 SELECT p.PosCode, p.PosName
 FROM V_Sys_Position p
 left join V_Sys_WareHouse w on w.whcode = p.whcode
-WHERE p.OrganizeCode = #para(organizecode) #if(q)
+WHERE p.OrganizeCode = #para(organizecode)
+#if(q)
 and p.PosName like concat ('%',#para(q),'%')
 #end
 #if(whcode)
