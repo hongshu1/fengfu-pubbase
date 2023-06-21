@@ -7,7 +7,9 @@ import java.util.List;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.common.model.Todo;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JBoltDateRange;
@@ -15,6 +17,9 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.JBoltBaseService;
 import cn.jbolt.core.util.JBoltArrayUtil;
+import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.TodoStateEnum;
+import cn.rjtech.util.ValidationUtils;
 import net.dreamlu.event.EventKit;
 
 /**
@@ -324,5 +329,28 @@ public class TodoService extends JBoltBaseService<Todo> {
 	protected int systemLogTargetType() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	public void saveTodo(String title, long userId, Date now, String url, String formSn, long sourceId, long createUserId) {
+		Todo todo = new Todo();
+
+		todo.setTitle(title);
+		todo.setUserId(userId);
+		todo.setState(TodoStateEnum.UNSTART.getValue());
+		todo.setSpecifiedFinishTime(now);
+		todo.setType(3);
+		todo.setUrl(url);
+		todo.setCreateTime(now);
+		todo.setUpdateTime(now);
+		todo.setCreateUserId(createUserId);
+		todo.setIsReaded(false);
+		todo.setPriorityLevel(1);
+		todo.setFormSn(formSn);
+		todo.setFormId(sourceId);
+
+		ValidationUtils.isTrue(todo.save(), ErrorMsg.SAVE_FAILED);
+	}
+
+	public Page<Todo> dashBoardTodoDatas(Integer pageNumber, Integer pageSize) {
+		return paginateUserTodos(pageNumber,pageSize,JBoltUserKit.getUserId(),"create_time","desc",null,null,true,"id","title");
 	}
 }

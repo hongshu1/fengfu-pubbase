@@ -579,14 +579,20 @@ public class MoMotaskService extends BaseService<MoMotask> {
           //<editor-fold desc="创建人员信息为空的基础信息">
           List<Record> userDatas = new ArrayList<>();
           Record user = new Record();
-          user.set("psnnum", "");
-          user.set("psnname", "");
-          user.set("dateSplicing", dateSplicing);
-          user.set("iworkshiftmid", iWorkShiftMid);
-          user.set("iAutoId", modocid1);
-          user.set("iyear", iYear);
-          user.set("imonth", iMonth);
-          user.set("idate", iDate);
+          user.put("psnnum", "");
+          user.put("psnname", "");
+          user.put("dateSplicing", dateSplicing);
+          user.put("iworkshiftmid", iWorkShiftMid);
+          user.put("iAutoId", modocid1);
+          user.put("iyear", iYear);
+          user.put("imonth", iMonth);
+          user.put("idate", iDate);
+          user.put("cmodocno", "");
+          user.put("iqty", "");
+          user.put("datesplicing", "");
+          user.put("ipersonnum", "");
+          user.put("cpsn_name", "");
+          user.put("idutypersonid", "");
           userDatas.add(user);
           userMapDatas.put(dateSplicing, userDatas);
           //</editor-fold>
@@ -678,12 +684,60 @@ public class MoMotaskService extends BaseService<MoMotask> {
               Record record1 = new Record();
               Record record2 = new Record();
               Record record3 = new Record();
-              record1.set("cMoDocNo", recorda3.getStr("cMoDocNo"));
-              record3.set("dateSplicing", recorda3.getStr("dateSplicing"));
-              record2.set("iQty", recorda3.getStr("iQty"));
-              record3.set("dateSplicing", recorda3.getStr("dateSplicing"));
-              record3.set("iPersonNum", recorda3.getStr("iPersonNum"));
-              record3.set("dateSplicing", recorda3.getStr("dateSplicing"));
+
+              record1.put("iqty", "");
+              record1.put("datesplicing", "");
+              record1.put("ipersonnum", "");
+              record1.put("cpsn_name", "");
+              record1.put("idutypersonid", "");
+              record1.put("datesplicing", "");
+              record1.put("iautoid", "");
+              record1.put("idate", "");
+              record1.put("imonth", "");
+              record1.put("iworkshiftmid", "");
+              record1.put("iyear", "");
+              record1.put("psnname", "");
+              record1.put("psnnum", "");
+
+              record2.put("cMoDocNo", "");
+              record2.put("datesplicing", "");
+              record2.put("ipersonnum", "");
+              record2.put("cpsn_name", "");
+              record2.put("idutypersonid", "");
+              record2.put("datesplicing", "");
+              record2.put("iautoid", "");
+              record2.put("idate", "");
+              record2.put("imonth", "");
+              record2.put("iworkshiftmid", "");
+              record2.put("iyear", "");
+              record2.put("psnname", "");
+              record2.put("psnnum", "");
+
+              record3.put("cMoDocNo", "");
+              record3.put("iqty", "");
+              record3.put("datesplicing", "");
+              record3.put("ipersonnum", "");
+              record3.put("cpsn_name", "");
+              record3.put("idutypersonid", "");
+              record3.put("datesplicing", "");
+              record3.put("iautoid", "");
+              record3.put("idate", "");
+              record3.put("imonth", "");
+              record3.put("iworkshiftmid", "");
+              record3.put("iyear", "");
+              record3.put("psnname", "");
+              record3.put("psnnum", "");
+
+
+              record1.put("cMoDocNo", recorda3.getStr("cMoDocNo"));
+
+              record2.put("iQty", recorda3.getStr("iQty"));
+
+              record3.put("dateSplicing", recorda3.getStr("dateSplicing"));
+              record3.put("dateSplicing", recorda3.getStr("dateSplicing"));
+              record3.put("iPersonNum", recorda3.getStr("iPersonNum"));
+              record3.put("dateSplicing", recorda3.getStr("dateSplicing"));
+
               List<Record> lista1 = new ArrayList<>();
               List<Record> lista2 = new ArrayList<>();
               List<Record> lista3 = new ArrayList<>();
@@ -712,6 +766,17 @@ public class MoMotaskService extends BaseService<MoMotask> {
             for (Record record3 : list6) {
               String iAutoId = record3.getStr("iAutoId");
               Record record1 = new Record();
+              record1.put("datesplicing","");
+              record1.put("iautoid","");
+              record1.put("idate", "");
+              record1.put("imonth", "");
+              record1.put("iworkshiftmid", "");
+              record1.put("iyear", "");
+              record1.put("psnname", "");
+              record1.put("psnnum", "");
+              record1.put("cmodocno", "");
+              record1.put("iqty", "");
+              record1.put("ipersonnum", "");
               record1.set("iDutyPersonId", record3.getStr("iDutyPersonId") == null ? "" : record3.getStr("iDutyPersonId"));
               record1.set("cPsn_Name", record3.getStr("cPsn_Name") == null ? "" : record3.getStr("cPsn_Name"));
               if (map6.containsKey(iAutoId)) {
@@ -776,9 +841,11 @@ public class MoMotaskService extends BaseService<MoMotask> {
         Record cequipment = new Record();
         cequipment.put("cequipmentname", "");
         cequipment.put("iequipmentid", "");
+
         Record coperation = new Record();
         coperation.put("coperationname", "");
         coperation.put("ioperationid", "");
+
         datas.put("cequipment", cequipment);
         datas.put("coperation", coperation);
         //</editor-fold>
@@ -808,6 +875,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
             recordLisc.add(maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
           }
         }
+
         datas.put("user", recordLisc);
         records1.add(datas);
         record.put("rowdatas", records1);
@@ -817,38 +885,50 @@ public class MoMotaskService extends BaseService<MoMotask> {
     return records;
   }
 
+  /**
+   * 制造工单计划批量编辑数据源
+   */
   public List<Record> getEditorialPlanDatas(Kv kv) {
     ValidationUtils.notBlank(kv.getStr("taskid"), "制造工单任务ID缺失，获取数据异常！！！");
 
     //<editor-fold desc="A获取产线物料信息">
     List<Record> productionLineMaterials = dbTemplate("modocbatch.getModocDatas", kv).find();
-    List<String> productionLine = new ArrayList<>();
-    for (Record productionLineMaterial : productionLineMaterials) {
-      productionLine.add(productionLineMaterial.getStr("iWorkRegionMid") + productionLineMaterial.getStr("iInventoryId"));
-    }
     //</editor-fold>
 
     //<editor-fold desc="B获取日期班次信息 dateShifts ">
     List<Record> dateShifts = dbTemplate("modocbatch.getModocDateShiftDatas", kv).find();
     //</editor-fold>
 
+    //<editor-fold desc="C获取单号数量信息">
     List<Record> planDatas = dbTemplate("modocbatch.getPlanDatasBytaskId", kv).find();
+    //</editor-fold>
 
     for (Record productionLineMaterial : productionLineMaterials) {
       List<Record> datas = new ArrayList<>();
       for (Record dateShift : dateShifts) {
         for (Record plandata : planDatas) {
-          Record data = new Record();
           if (plandata.getStr("mergeid").equals(productionLineMaterial.getStr("mergeid")) && plandata.getStr("dates").equals(dateShift.getStr("dates1"))) {
+            Record data = new Record();
             data.put("cmodocno", plandata.getStr("cmodocno"));
             data.put("iqty", plandata.getStr("iqty"));
             datas.add(data);
+            break;
           }
         }
       }
       productionLineMaterial.put("rowDatas", datas);
     }
     return productionLineMaterials;
+  }
+
+  /**
+   * 编辑人员页面获取用户信息
+   *
+   * @param kv
+   * @return
+   */
+  public List<Record> getUserDatas(Kv kv) {
+    return dbTemplate("modocbatch.getUserDatas", kv).find();
   }
 
 }

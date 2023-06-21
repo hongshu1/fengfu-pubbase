@@ -1,5 +1,6 @@
 package cn.rjtech.admin.manualorderm;
 
+import cn.hutool.core.text.StrPool;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -16,6 +17,7 @@ import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -363,29 +365,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
     }
 
     /**
-     * 撤回
-     *
-     * @param iAutoId
-     * @return
-     */
-    public Ret withdraw(Long iAutoId) {
-        tx(() -> {
-            ManualOrderM manualOrderM = findById(iAutoId);
-            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), manualOrderM.getIOrderStatus(), "只允许待审核状态订单撤回");
-            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
-                manualOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
-                ValidationUtils.isTrue(manualOrderM.update(), "撤回失败");
-
-                // 修改客户计划汇总
-                cusOrderSumService.algorithmSum();
-                return null;
-            });
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
      * 提交审批
      *
      * @param iautoid
@@ -477,7 +456,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
      * @param formAutoId 单据ID
      * @return 错误信息
      */
-    public String postApproveFunc(long formAutoId) {
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         ManualOrderM manualOrderM = findById(formAutoId);
         // 订单状态校验
         ValidationUtils.equals(manualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
@@ -496,7 +475,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    public String postRejectFunc(long formAutoId, Boolean isWithinBatch) {
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }
@@ -610,5 +589,49 @@ public class ManualOrderMService extends BaseService<ManualOrderM> {
      */
     public Ret delete(Long iautoid) {
         return updateColumn(iautoid, "IsDeleted", true);
+    }
+
+    /**
+     * 批量审批（审核）通过
+     * @param formAutoIds 单据IDs
+     * @return  错误信息
+     */
+    public String postBatchApprove(List<Long> formAutoIds) {
+        // 审批通过生成客户计划汇总
+        cusOrderSumService.algorithmSum();
+        return null;
+    }
+
+    /**
+     * 批量审批（审核）不通过
+     * @param formAutoIds 单据IDs
+     * @return  错误信息
+     */
+    public String postBatchReject(List<Long> formAutoIds) {
+        for (Long formAutoId:formAutoIds) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+        }
+        return null;
+    }
+
+    /**
+     * 批量撤销审批
+     * @param formAutoIds 单据IDs
+     * @return  错误信息
+     */
+    public String postBatchBackout(List<Long> formAutoIds) {
+        List<ManualOrderM> manualOrderMS = getListByIds(StringUtils.join(formAutoIds, StrPool.COMMA));
+        Boolean algorithmSum = manualOrderMS.stream().anyMatch(item -> item.getIOrderStatus().equals(WeekOrderStatusEnum.APPROVED.getValue()));
+        manualOrderMS.stream().map(item -> {
+            item.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
+            return item;
+        }).collect(Collectors.toList());
+        batchUpdate(manualOrderMS);
+
+        if (algorithmSum) {
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
+        }
+        return null;
     }
 }

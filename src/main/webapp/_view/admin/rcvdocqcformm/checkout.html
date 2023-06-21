@@ -3,8 +3,8 @@
 <div class="jbolt_page">
   <div class="jbolt_page_content">
     <form onsubmit="return false;" id="rcvdocqcformmform_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
-      #if(rcvdocqcformm.iautoid??)
-      <input type="hidden" name="rcvdocqcformm.iautoid" value="#(rcvdocqcformm.iautoid??)"/>
+      #if(record.iautoid??)
+      <input type="hidden" name="record.iautoid" value="#(record.iautoid??)"/>
       #end
       <div>
         <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
@@ -63,37 +63,11 @@
           <tr height="300px">
             <td colspan="6">
               <div class="col">
-                <div class="py-2" style="padding:.5rem 0rem;">
-                </div>
-
-                <input type="hidden" id="recordImages" placeholder="=测试==" name="recordImages"
-                       value="#(record.imgList??)" class="form-control"/>
-
                 <div class="form-group row">
                   <label class="col-form-label col-sm-2 text-left">检验图片：</label>
-                  <div class="col">
-                    <div class="j_upload_imgbox_multi">
-                      <div class="row">
-                        <div class="col-sm-auto">
-                          <div
-                              data-url="admin/rcvdocqcformm/uploadImage"
-                              data-limit="10"
-                              data-align="left"
-                              data-multi="true"
-                              data-handler="uploadMultipleFile"
-                              data-hidden-input="recordImages"
-                              data-imgbox="recordBox"
-                              data-area="150,150"
-                              data-maxsize="2000"
-                              style="width: 230px; height: 230px;"></div>
-                        </div>
-                        <div class="col pr-3">
-                          <ul id="recordBox" class="j_imgbox" data-remove-confirm="true"
-                              data-imgstyle="width:230px;height:230px;"></ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <input name="cpics" id="cpics" value="#(record.cpics??)" type="hidden"/>
+                  <img data-photobtn tooltip data-title="点击查看大图"  style="width: 700px;height:450px;" src="#(record.cpics??)"
+                       onerror="this.src='assets/img/noimg.png'"/>
                 </div>
               </div>
             </td>
@@ -122,8 +96,8 @@
             <button type="button" onclick="insertRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
-            <!--<img data-switchbtn data-value="#(rcvdocqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
-                 data-url="admin/rcvdocqcformm/toggleIsCpkSigned/#(rcvdocqcformm.iautoid??)" style="margin-left: 50px;"/>
+            <!--<img data-switchbtn data-value="#(record.iscpksigned??)" data-handler="refreshJBoltTable"
+                 data-url="admin/rcvdocqcformm/toggleIsCpkSigned/#(record.iautoid??)" style="margin-left: 50px;"/>
             <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>-->
           </div>
         </table>
@@ -133,58 +107,37 @@
           {@each datas as data,index}
           <tr data-id="${data.iautoid}">
             <td>${+index+1}</td>
-            <td title="${data.cqcitemname}">${data.cqcitemname}</td>
-            <td title="标准值:${data.istdval}，最大值:${data.imaxval}，最小值:${data.iminval}">
-              {@if data.itype=='1'}
-                <span>(${data.istdval})</span>
-                <span>(${data.imaxval})</span>
-                <span>(${data.iminval})</span>
-              {@else}
-                <span title="${data.coptions}">${data.coptions}</span>
-              {@/if}
-            </td>
-            <td>${data.cqcparamname}</td>
+            {@each data.paramnamelist as paramname,indextest}
+            <td title="${paramname}">${paramname}</td>
+            {@/each}
             {@each data.cvaluelist as value,indextest}
             <td>
               {@if data.itype == '1'}
-              <input name="cA${value}" type="number" class="cA01" value="#(data.cvalue??)"
+              <input name="cA${value.name}" type="number" class="cA01" value="${value.cvalue}"
                      title="最大值：${data.imaxval}，标准值：${data.istdval}，最小值：${data.iminval}"/>
               {@else if data.itype == '2'}
-              <input name="cA${value}" type="text" class="cA01" title="${data.coptions}" value="#(data.cvalue??)"/>
+              <input name="cA${value.name}" type="text" class="cA01" title="${value.coptions}" value="${value.cvalue}"/>
               {@else if data.itype == '3'}
-              <select name="cA${value}" class="form-control cA01" data-url="admin/dictionary/options?key=overallsize"
-                      data-autoload data-text="=整体尺寸=" data-value-attr="sn" value="#(data.cvalue??)"
-                      data-select="#(data.cvalue??)" title="=整体尺寸="></select>
+              <select name="cA${value.name}" class="form-control cA01" data-url="admin/dictionary/options?key=overallsize"
+                      data-autoload data-text="=整体尺寸=" data-value-attr="sn" value="${value.cvalue}"
+                      data-select="${value.coptions}" title="=整体尺寸="></select>
               {@else if data.itype == '4'}
-              <input name="cA${value}" type="text" class="cA01" title="#{data.coptions??}"/>
+              <input name="cA${value.name}" type="text" class="cA01" title="${value.cvalue}"/>
               {@else if data.itype == '5'}
-              <select name="appearance${value}" class="form-control cA01" data-url="admin/dictionary/options?key=appearance"
-                      data-autoload data-text="=整体外观=" data-value-attr="sn" value="#(data.cvalue??)" multiple
-                      data-select-type="select2"
-                      data-select="#(data.cvalue??)" title="=整体外观="></select>
-              <!--<select class="form-control cA01"
-                      name="appearance"
-                      data-autoload
-                      multiple
-                      data-text-attr="appearance"
-                      data-value-attr="sn"
-                      data-select-type="select2"
-                      data-tips="请选择"
-                      data-url="admin/dictionary/options?key=appearance"
-                      data-value=""
-                      data-select="#(data.cvalue??)">
-              </select>-->
+              <select name="appearance${value.name}" class="form-control cA01" data-url="admin/dictionary/options?key=appearance"
+                      data-autoload data-text="=整体外观=" data-value-attr="sn" value="${value.cvalue}" multiple
+                      data-select-type="select2" data-select="${value.cvalue}" title="=整体外观="></select>
               {@else if data.itype == '6'}
-              <select name="cA${value}" class="form-control cA01" data-url="admin/dictionary/options?key=overallsize"
-                      data-autoload data-text="=整体尺寸=" data-value-attr="sn" data-value="#(data.cvalue??)"
-                      data-select="#(data.coptions??)"></select>
+              <select name="cA${value.name}" class="form-control cA01" data-url="admin/dictionary/options?key=overallsize"
+                      data-autoload data-text="=整体尺寸=" data-value-attr="sn" data-value="${value.cvalue}"
+                      data-select="${value.coptions}"></select>
               {@else if data.itype == '7'}
-              <input name="cA${value}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+              <input name="cA${value.name}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
                      class="form-control cA01" placeholder="结束日期" data-tips="结束时间" maxlength="23"
-                     value="#(data.cvalue??)">
+                     value="${value.cvalue}">
               {@else data.itype == '8'}
-              <input name="cA${value}" type="text" class="form-control cA01" data-date data-type="time" data-fmt="HH:mm:ss"
-                     value="#(data.cvalue??)">
+              <input name="cA${value.name}" type="text" class="form-control cA01" data-date data-type="time" data-fmt="HH:mm:ss"
+                     value="${value.cvalue}">
               {@/if}
             </td>
             {@/each}
@@ -192,27 +145,30 @@
           {@/each}
         </textarea>
 
-        <!--#(rcvdocqcformm.iAutoId??)-->
+        <!--#(record.iAutoId??)-->
         <div class="card-body overflow-auto" style="left: 30px;margin-left: 30px;">
           <table id="jbolt_table_checkouttableparam_split_#(pageId)3" class="table-center jbolt_table thead_font_normal"
                  data-jbolttable
                  data-width="fill"
                  data-height="fill"
                  data-ajax="true"
+                 data-url="admin/rcvdocqcformm/getCheckOutTableDatas?ircvdocqcformmid=#(record.iAutoId??)"
                  data-editable="true"
+                 data-column-resize="true"
                  data-conditions-form="rcvdocqcformmform_#(pageId)"
-                 data-url="admin/rcvdocqcformm/getCheckOutTableDatas?ircvdocqcformmid=#(rcvdocqcformm.iAutoId??)"
                  data-rowtpl="checkoutType_tpl_#(pageId)"
                  data-copy-to-excel="false"
                  data-toolbar="rcvdocqcformmform_toolbar_#(pageId)">
             <thead>
             <tr class="colspan biaotoucolor">
               <th data-column="index">序号</th>
-              <th style="width: 120px;" data-column="cqcitemname">检查项目</th>
-              <th style="width: 220px;" data-column="coptions">规格公差</th>
-              <th style="width: 120px" data-column="cqcparamname">检查方法</th>
+              #for(data:columns??)
+              <th data-width="200" data-column="#(data.iqcitemid??)">
+                #(data.cqcitemname??)
+              </th>
+              #end
               #for(i = 1; i <= 10; i++)
-              <th style="width: 80px">#(i)</th>
+              <th style="width: 120px">#(i)</th>
               #end
             </tr>
             </thead>
@@ -334,7 +290,15 @@
       //将cvaluelist加10即可
       let cvaluelist = jboltTableAllDatas[i].cvaluelist;
       for (let arr = 1; arr <= rows; arr++) {
-        cvaluelist.push(cvaluelist.length + arr);
+        let element = cvaluelist[arr];
+        let cvalue = {
+          cvalue: "",
+          ircvdocqcformdid: element.ircvdocqcformdid,
+          iseq: element.iseq,
+          name: cvaluelist.length,
+          iautoid:""
+        }
+        cvaluelist.push(cvalue);
       }
     }
     clearJboltTable("#jbolt_table_checkouttableparam_split_#(pageId)3");
@@ -401,8 +365,16 @@
     var subMilasUrlArr = [];//存储每一行数据
     for (let i = 0; i < serializeGroupbyList.length; i++) {
       let data = allDatas[i];
+      let dataCvaluelist = data.cvaluelist;
       let serializeElement = serializeGroupbyList[i];
-      var tableData = {
+      let elements = serializeElement[0];
+      for (let num = 0; num < elements.length; num++) {
+        let element = elements[num];
+        let dataCvalue = dataCvaluelist[num];
+        dataCvalue.cvalue = element.value;
+      }
+
+      /*var tableData = {
         coptions: data.coptions,
         cqcformparamids: data.cqcformparamids,
         cqcitemname: data.cqcitemname,
@@ -419,7 +391,7 @@
         itype: data.itype,
         serializeElement: serializeElement
       };
-      subMilasUrlArr.push(tableData);
+      subMilasUrlArr.push(tableData);*/
     }
     //测试目的
     var cmeasurepurpose = "";
@@ -436,9 +408,10 @@
     var isok = $('input[name="isok"]').filter(':checked').val();//是否合格
     var cmemo = $("#cMemo").val(); //备注
     var cdcno = $("#cDcNo").val(); //设变号
-    var iautoid = $('input[name="rcvdocqcformm.iautoid"]').val();//主页面的主键
+    var iautoid = $('input[name="record.iautoid"]').val();//主页面的主键
     const submitDatas = {
-      serializeSubmitList: JSON.stringify(subMilasUrlArr),
+      // serializeSubmitList: JSON.stringify(subMilasUrlArr),
+      serializeSubmitList: JSON.stringify(allDatas),
       cmeasurereason: cmeasurereason,
       cmeasurepurpose: cmeasurepurpose2,
       cmeasureunit: cmeasureunit,

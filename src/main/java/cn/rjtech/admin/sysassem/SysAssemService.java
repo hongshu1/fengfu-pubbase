@@ -212,6 +212,7 @@ public class SysAssemService extends BaseService<SysAssem> {
             //通过 id 判断是新增还是修改
             if (sysotherin.getAutoID() == null) {
                 sysotherin.setOrganizeCode(getOrgCode());
+                sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
                 sysotherin.setIcreateby(user.getId());
                 sysotherin.setCcreatename(user.getName());
                 sysotherin.setDcreatetime(now);
@@ -222,15 +223,44 @@ public class SysAssemService extends BaseService<SysAssem> {
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
             } else {
                 //主表修改
+                sysotherin.setCupdatename(user.getName());
+                sysotherin.setDupdatetime(now);
                 ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
             }
             //从表的操作
-            // 获取保存数据（执行保存，通过 getSaveRecordList）
-            saveTableSubmitDatas(jBoltTable, sysotherin);
-            //获取修改数据（执行修改，通过 getUpdateRecordList）
-            updateTableSubmitDatas(jBoltTable, sysotherin);
-            //获取删除数据（执行删除，通过 getDelete）
-            deleteTableSubmitDatas(jBoltTable);
+            if (jBoltTable.saveIsNotBlank()) {
+                List<SysAssemdetail> saveModelList = jBoltTable.getSaveModelList(SysAssemdetail.class);
+                saveModelList.forEach(sysAssemdetail->{
+                    sysAssemdetail.setMasID(sysotherin.getAutoID());
+                    sysAssemdetail.setIcreateby(user.getId());
+                    sysAssemdetail.setDcreatetime(now);
+                    sysAssemdetail.setIupdateby(user.getId());
+                    sysAssemdetail.setDupdatetime(now);
+                    sysAssemdetail.setCcreatename(user.getName());
+                    sysAssemdetail.setCupdatename(user.getName());
+                    sysAssemdetail.setIsDeleted(false);
+                });
+                sysassemdetailservice.batchSave(saveModelList);
+            }
+            if (jBoltTable.updateIsNotBlank()) {
+                List<SysAssemdetail> updateModelList = jBoltTable.getUpdateModelList(SysAssemdetail.class);
+                updateModelList.forEach(sysAssemdetail->{
+                    sysAssemdetail.setIupdateby(user.getId());
+                    sysAssemdetail.setDupdatetime(now);
+                    sysAssemdetail.setCupdatename(user.getName());
+                });
+                sysassemdetailservice.batchUpdate(updateModelList, updateModelList.size());
+            }
+            if (jBoltTable.deleteIsNotBlank()) {
+                sysassemdetailservice.deleteByIds(jBoltTable.getDelete());
+            }
+
+//            // 获取保存数据（执行保存，通过 getSaveRecordList）
+//            saveTableSubmitDatas(jBoltTable, sysotherin);
+//            //获取修改数据（执行修改，通过 getUpdateRecordList）
+//            updateTableSubmitDatas(jBoltTable, sysotherin);
+//            //获取删除数据（执行删除，通过 getDelete）
+//            deleteTableSubmitDatas(jBoltTable);
             return true;
         });
         return SUCCESS;
@@ -263,8 +293,6 @@ public class SysAssemService extends BaseService<SysAssem> {
             sysAssemdetail.setAssemType(row.getStr("assemtype"));
             sysAssemdetail.setWhCode(row.getStr("whcode"));
             sysAssemdetail.setPosCode(row.getStr("poscode"));
-            sysAssemdetail
-                .setCombinationNo(Integer.valueOf(row.getStr("combinationno") == null ? "0" : row.getStr("combinationno")));
             sysAssemdetail.setRowNo(Integer.valueOf(row.getStr("rowno") == null ? "0" : row.getStr("rowno")));
             sysAssemdetail.setTrackType(row.getStr("tracktype"));
             sysAssemdetail.setMemo(row.getStr("memo"));
@@ -300,7 +328,6 @@ public class SysAssemService extends BaseService<SysAssem> {
             sysAssemdetail.setAssemType(row.getStr("assemtype"));
             sysAssemdetail.setWhCode(row.getStr("whcode"));
             sysAssemdetail.setPosCode(row.getStr("poscode"));
-            sysAssemdetail.setCombinationNo(Integer.valueOf(row.getStr("combinationno")));
             sysAssemdetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
             sysAssemdetail.setTrackType(row.getStr("tracktype"));
             sysAssemdetail.setMemo(row.getStr("memo"));
@@ -448,4 +475,41 @@ public class SysAssemService extends BaseService<SysAssem> {
         //sysAssem.setIsDeleted();
 
     }
+
+    /**
+     * 根据条件获取资源
+     * @param kv
+     * @return
+     */
+    public List<Record> getResource(Kv kv){
+        kv.setIfNotNull("orgCode", getOrgCode());
+        List<Record> list = dbTemplate("sysassem.getResource", kv).find();
+        ValidationUtils.isTrue(list.size()!=0, "找不到该现品票信息");
+        return list;
+    }
+
+    /**
+     * 获取双单位条码数据
+     * @return
+     */
+    public Record getBarcodeDatas(Kv kv) {
+
+        String itemCode = kv.getStr("itemCode");
+        System.out.println("itemCode==="+itemCode);
+        Record firstRecord = findFirstRecord("select t2.cInvCode as beforeCode, t3.cInvCode as afterCode\n" +
+                "from Bd_InventoryChange t1\n" +
+                "         left join Bd_Inventory t2 on t1.iBeforeInventoryId = t2.iAutoId\n" +
+                "         left join Bd_Inventory t3 on t1.iAfterInventoryId = t3.iAutoId\n" +
+                "where t2.cInvCode = '" + itemCode + "'");
+        if (firstRecord==null){
+            ValidationUtils.isTrue(false, "未查找到该物料的双单位，请先维护物料的形态对照表");
+        }
+        String aftercode = firstRecord.getStr("aftercode");
+        String orgCode = getOrgCode();
+        kv.set("keywords",aftercode);
+        kv.set("orgCode",orgCode);
+        kv.set("limit",1);
+        return dbTemplate("sysassem.getResource",kv).findFirst();
+    }
+
 }

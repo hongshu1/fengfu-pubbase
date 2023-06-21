@@ -18,8 +18,6 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Optional;
-
 /**
  * 客户订单-周间客户订单
  *
@@ -103,15 +101,6 @@ public class WeekOrderMAdminController extends BaseAdminController {
         ValidationUtils.validateId(iautoid, "id");
 
         renderJson(service.submit(iautoid));
-    }
-
-    /**
-     * 撤回已提审
-     */
-    public void withdraw(@Para(value = "iautoid") Long iAutoId) {
-        ValidationUtils.validateId(iAutoId, "iAutoId");
-
-        renderJson(service.withdraw(iAutoId));
     }
 
     /**

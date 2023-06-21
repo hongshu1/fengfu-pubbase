@@ -162,4 +162,11 @@ public class FormUploadMAdminController extends BaseAdminController {
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
+
+	/**
+	 * 批量删除
+	 */
+	public void deleteByIds() {
+		renderJson(service.deleteByBatchIds(get("ids")));
+	}
 }

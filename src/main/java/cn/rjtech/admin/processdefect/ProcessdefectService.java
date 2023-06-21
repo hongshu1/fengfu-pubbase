@@ -254,6 +254,7 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 				if (record.getIStatus() != null && record.getIStatus().equals(3)) {
 					ValidationUtils.error("单据已审批,不允许操作");
 				}
+				processDefect.setIAutoId(formRecord.getLong("iautoid"));
 				processDefect.setIUpdateBy(JBoltUserKit.getUserId());
 				processDefect.setCUpdateName(JBoltUserKit.getUserName());
 				processDefect.setDUpdateTime(now);
@@ -277,6 +278,8 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 				if (processDefect.getIStatus() == 1){
 					//录入数据
 					processDefect.setCApproach(formRecord.getStr("capproach"));
+					processDefect.setIOperationId(formRecord.getLong("ioperationid"));
+					processDefect.setCoperationname(formRecord.getStr("coperationname"));
 					processDefect.setIStatus(2);
 
 
@@ -319,6 +322,8 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 		processDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
 		processDefect.setCBadnessSns(formRecord.getStr("cbadnesssns"));
 		processDefect.setCDesc(formRecord.getStr("cdesc"));
+		processDefect.setIOperationId(formRecord.getLong("ioperationid"));
+		processDefect.setCoperationname(formRecord.getStr("coperationname"));
 
 
 		//必录入基本数据
@@ -497,6 +502,13 @@ public class ProcessdefectService extends BaseService<ProcessDefect> {
 	 */
 	public Object getQRCodeCheck(Kv kv) {
 		return dbTemplate("processdefect.containerPrintData",kv).find();
+	}
+
+	/**
+	 *  工序数据源
+	 */
+	public List<Record> OperationDatas(Kv kv) {
+		return dbTemplate("processdefect.OperationDatas", kv).find();
 	}
 
 

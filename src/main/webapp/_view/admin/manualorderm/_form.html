@@ -13,9 +13,11 @@
                     #if(readonly != 'readonly')
                     <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                     #end
+                    #if(manualOrderM.iAutoId??)
                     #include("/_view/_common/_approval_btns.html", uri="/admin/manualorderm",
                     formSn="Co_ManualOrderM", o=manualOrderM, primaryKeyName="iAutoId",
                     permissionKeyPrefix="manualorderm", className="cn.rjtech.admin.manualorderm.ManualOrderMService")
+                    #end
                     <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                 </div>
             </div>
@@ -72,7 +74,7 @@
                         </div>
                 <div class="form-group row">
                         <input type="hidden" name="manualOrderM.iCustomerId" value="#(manualOrderM.iCustomerId??)" id="icustomerid" data-sync-attr="iautoid"/>
-                        <input type="hidden" name="icustomermid" value="#(manualOrderM.iCustomerId??)" id="icustomerid2" data-sync-attr="iautoid"/>
+                        <input type="hidden" name="manualOrderM.ccuscode" value="#(manualOrderM.ccuscode??)" id="ccuscode" data-sync-attr="ccuscode"/>
                         <label class="col-sm-1 col-form-label">客户名称</label>
                         <div class="col">
                             <div class="input-group">
@@ -82,7 +84,7 @@
                                            id="ccusname"
                                            data-url="admin/customer/autocomplete"
                                            data-rule="required"
-                                           data-sync-ele="#icustomerid,icustomerid2"
+                                           data-sync-ele="#icustomerid,#ccuscode"
                                            data-text-attr="ccusname"
                                            data-value-attr="iautoid"
                                            data-column-attr="ccuscode,ccusname"
@@ -90,6 +92,7 @@
                                            data-tips="请选择"
                                            data-header="客户编码,客户名称"
                                            maxlength="40"
+                                           name="manualOrderM.ccusname"
                                            value="#(manualOrderM.ccusname??)">
                                 </div>
                                 <div class="input-group-append">
@@ -214,6 +217,15 @@
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
 
+    // 保存方法
+    function submitThisForm()
+    {
+        // 调用保存处理
+        $('#save_btn_#(pageId)').click();
+        parent.refreshPjaxContainer();
+        parent.LayerMsgBox.closeAll();
+    }
+
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
     var submit = false;
 
@@ -268,10 +280,10 @@
     }
 
     // 选择客户名称
-    function instCcusname(data)
-    {
+    function instCcusname(data) {
         $("#icustomerid").val(data.iautoid);
         $("#ccusname").val(data.ccusname);
+        $("#ccuscode").val(data.ccuscode);
     }
 </script>
 ###include("/_view/_admin/common/_formjs.html",formId="ManualOrderM_Form")

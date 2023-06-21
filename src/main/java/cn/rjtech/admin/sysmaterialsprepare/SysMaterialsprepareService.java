@@ -180,11 +180,122 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
     }
 
     public Page<Record> getDetail(int pageNumber, int pageSize, Kv kv) {
-        return dbTemplate("materialsprepare.getDetaildatas", kv).paginate(pageNumber, pageSize);
+
+
+
+//        int j=0;
+//        ArrayList<Integer> Nums = new ArrayList<>();//同一条存货编码出现的次数
+//        ArrayList<String> Batch = new ArrayList<>();//物料存货编码和批次号
+
+
+
+
+
+
+
+
+
+
+        List<Record> objects = new ArrayList<>();
+        int j=0;
+        String BATCH="";
+        BigDecimal QTYTOLL = new BigDecimal("0");
+        List<Record> recordList = dbTemplate("materialsprepare.xianjinxianchu", kv).find();
+        if (recordList.size()==0){
+            return null;
+        }
+        String cinvcode=recordList.get(0).get("cInvCode");//集合第一个数据的存货编码
+        for (int i=0;i<recordList.size();i++){
+            if (recordList.get(i).get("cInvCode").equals(cinvcode)){
+                BigDecimal planIqty=recordList.get(i).get("planIqty");
+                if (QTYTOLL.compareTo(planIqty)<1){//判断备料数量是否饱和
+                    QTYTOLL=QTYTOLL.add(recordList.get(i).get("QTY"));//物料录入，备料数量累加
+                    if (BATCH!=recordList.get(i).get("Batch")){
+                        Record record = new Record();
+                        record.set("cInvCode",recordList.get(i).get("cInvCode"));
+                        record.set("Batch",recordList.get(i).get("Batch"));
+                        record.set("cInvCode1",recordList.get(i).get("cInvCode1"));
+                        record.set("cInvName1",recordList.get(i).get("cInvName1"));
+                        record.set("planIqty",recordList.get(i).get("planIqty"));
+                        record.set("Billno",recordList.get(i).get("Billno"));
+                        record.set("SourceBillID",recordList.get(i).get("SourceBillID"));
+                        objects.add(record);
+                        j++;
+                    }
+                    BATCH=recordList.get(i).get("Batch");
+                }
+            }else {
+                cinvcode=recordList.get(i).get("cInvCode");
+                Record record = new Record();
+                record.set("cInvCode",recordList.get(i).get("cInvCode"));
+                record.set("Batch",recordList.get(i).get("Batch"));
+                record.set("cInvCode1",recordList.get(i).get("cInvCode1"));
+                record.set("cInvName1",recordList.get(i).get("cInvName1"));
+                record.set("planIqty",recordList.get(i).get("planIqty"));
+                record.set("Billno",recordList.get(i).get("Billno"));
+                record.set("SourceBillID",recordList.get(i).get("SourceBillID"));
+                objects.add(record);
+                j++;
+            }
+        }
+        int totalRow=j;
+        int totalPage=totalRow/pageSize;
+        if (totalPage*pageSize<totalRow){
+            totalPage++;
+        }
+        return new Page(objects,pageNumber, pageSize,totalPage,totalRow);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        for (int i=0;i<recordList.size();i++){
+//            if (recordList.get(i).get("cInvCode").equals(cinvcode)){
+//                j++;//相同存货编码出现次数
+//                if (Integer.valueOf(recordList.get(i).get("planIqty"))>QTYTOLL){//判断备料数量是否饱和
+//                    QTYTOLL+=Integer.valueOf(recordList.get(i).get("planIqty"));//物料录入，备料数量累加
+////                    Batch.add(recordList.get(i).get("cInvCode")+":"+recordList.get(i).get("Batch"));//记录该物料的批次号和存货编码
+//                    if (BATCH!=recordList.get(i).get("Batch")){
+//                        record.set("cInvCode",recordList.get(i).get("cInvCode"));
+//                        record.set("Batch",recordList.get(i).get("Batch"));
+//                        record.set("cInvCode1",recordList.get(i).get("cInvCode1"));
+//                        record.set("cInvName1",recordList.get(i).get("cInvName1"));
+//                    }
+//                    BATCH=recordList.get(i).get("Batch");
+//                }
+//            }else {
+//                Nums.add(j);//将相同存货编码出现的次数存入数组
+//                j=0;//归零
+//                cinvcode=recordList.get(i).get("cInvCode");
+//            }
+//            if (i==recordList.size()-1){
+//                Nums.add(j);//到数组最后一个判断完存入数组
+//            }
+//        }
+
+
+
+
+//        return dbTemplate("materialsprepare.getDetaildatas", kv).paginate(pageNumber, pageSize);
     }
 
     public Page<Record> getBarcodedatas(int pageNumber, int pageSize, Kv kv) {
         return dbTemplate("materialsprepare.getBarcodedatas", kv).paginate(pageNumber, pageSize);
+    }
+
+    public Page<Record> getBarcodedatas1(int pageNumber, int pageSize, Kv kv) {
+        return dbTemplate("materialsprepare.getBarcodedatas1", kv).paginate(pageNumber, pageSize);
     }
 
     public Ret submitByJBoltTable(Long id) {
@@ -208,7 +319,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             ValidationUtils.isTrue(sysMaterialsprepare.save(), ErrorMsg.SAVE_FAILED);
             //从表的操作
             // 获取保存数据（执行保存，通过 getSaveRecordList）
-            saveTableSubmitDatas(sysMaterialsprepare, id);
+//            saveTableSubmitDatas(sysMaterialsprepare, id);
             //修改工单状态
             modoc.setIStatus(3);
             modoc.setIUpdateBy(user.getId());
@@ -308,11 +419,11 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         }
 
         User user = JBoltUserKit.getUser();
-        Map<String, Object> data = new HashMap<>();
+        JSONObject data = new JSONObject();
 
-        data.put("userCode", user.getUsername());
-        data.put("organizeCode", this.getdeptid());
-        data.put("token", "");
+        data.set("userCode", user.getUsername());
+        data.set("organizeCode", this.getdeptid());
+        data.set("token", "");
 
         JSONObject preallocate = new JSONObject();
 
@@ -326,9 +437,9 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         preallocate.set("tag", "AssemVouch");
         preallocate.set("type", "AssemVouch");
 
-        data.put("PreAllocate", preallocate);
+        data.set("PreAllocate", preallocate);
 
-        JSONArray maindata = new JSONArray();
+        ArrayList<Object> maindata = new ArrayList<>();
         sysMaterialspreparedetails.stream().forEach(s -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("iwhname", "");
@@ -355,9 +466,9 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
 //			jsonObject.set("ODeptCode",sysassem.getDeptCode());
 //			jsonObject.set("RowNo",s.getRowNo());
 
-            maindata.put(jsonObject);
+            maindata.add(jsonObject);
         });
-        data.put("MainData", maindata);
+        data.set("MainData", maindata);
 
         //请求头
         Map<String, String> header = new HashMap<>(5);

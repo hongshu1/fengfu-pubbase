@@ -77,6 +77,7 @@
 <!--	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchAntiAuditBtn_#(pageId)" data-url="admin/formUploadM/batchAntiAudit?ids=" data-confirm="确定反审核选中数据？" class="btn btn-outline-primary" ><i class="fa fa-edit"></i> 批量反审核</button>-->
 <!--	#include("/_view/_common/_batch_approval_btns.html", formSn="PL_FormUploadM", uri="admin/formUploadM", primaryKeyName="iAutoId", className="cn.rjtech.admin.formuploadm.FormUploadMService" ,className="cn/rjtech/admin/formuploadm/FormUploadMService")-->
 	#include("/_view/_common/_batch_approval_btns.html", formSn="PL_FormUploadM", uri="admin/formUploadM??", primaryKeyName="iAutoId", className="cn.rjtech.admin.formuploadm.FormUploadMService", permissionKeyPrefix="formuploadm")
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/formUploadM/deleteByIds?ids=" data-confirm="确定删除批选中数据？" class="btn btn-outline-secondary btn-sm">批量删除</button>
 
 	<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
 </div>

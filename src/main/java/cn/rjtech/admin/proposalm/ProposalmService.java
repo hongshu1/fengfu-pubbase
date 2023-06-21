@@ -6,9 +6,9 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -33,6 +33,7 @@ import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.Project;
 import cn.rjtech.model.momdata.Proposald;
 import cn.rjtech.model.momdata.Proposalm;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.RecordMap;
 import cn.rjtech.util.ValidationUtils;
@@ -46,7 +47,6 @@ import com.jfinal.plugin.activerecord.TableMapping;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -57,7 +57,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-09-22 11:56
  */
-public class ProposalmService extends BaseService<Proposalm> {
+public class ProposalmService extends BaseService<Proposalm> implements IApprovalService{
 
     private final Proposalm dao = new Proposalm().dao();
     @Inject
@@ -225,23 +225,13 @@ public class ProposalmService extends BaseService<Proposalm> {
         return null;
     }
 
-    public List<Record> paginateDetails(Integer pageNumber, Integer pageSize, Kv kv) {
-        Page<Record> recordPage = dbTemplate("proposalm.paginateDetails", kv.set("iorgid", getOrgId())).paginate(pageNumber, pageSize);
-        ValidationUtils.notNull(recordPage, JBoltMsg.DATA_NOT_EXIST);
-        return recordPage.getList().stream().filter(Objects::nonNull).map(record -> {
-            // 设置明细金额
-            record.setColumns(getDetailsMoney(kv.set("iautoid", record.get("iautoid"))));
-
-            // 设置部门
-            record.set("cdepname", departmentService.getCdepName(record.getStr("cdepcode")));
-            // 设置预算对应部门
-            record.set("cbudgetdepname", departmentService.getCdepName(record.getStr("cbudgetdepcode")));
-
-            // 设置目的区分
-            String cPurposeName = Optional.ofNullable(dictionaryService.getCacheByKey(record.getStr("cpurposesn"), "purpose")).map(Dictionary::getName).orElse("");
-            record.set("cpurposename", cPurposeName);
-            return record;
-        }).collect(Collectors.toList());
+    public Page<Record> paginateDetails(Integer pageNumber, Integer pageSize, Kv para) {
+    	para.set("iservicetype",ServiceTypeEnum.EXPENSE_BUDGET.getValue());
+        Page<Record> recordPage = dbTemplate("proposalm.paginateDetails", para.set("iorgid", getOrgId())).paginate(pageNumber, pageSize);
+        for (Record row : recordPage.getList()) {
+        	row.set("cpurposename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PURPOSE.getValue(), row.getStr("cpurposesn")));
+		}
+        return recordPage;
     }
 
     /**
@@ -275,7 +265,7 @@ public class ProposalmService extends BaseService<Proposalm> {
                                 JBoltExcelHeader.create("cvencode	", "预定供应商", 12),
                                 JBoltExcelHeader.create("ddemanddate", "需求日", 12),
                                 JBoltExcelHeader.create("cbudgetdepcode", "预算对应部门", 12))
-                        .setRecordDatas(2, paginateDetails(1, JBoltArrayUtil.listFrom(iautoids, ",").size(), Kv.by("iautoids", iautoids))));
+                        .setRecordDatas(2, paginateDetails(1, JBoltArrayUtil.listFrom(iautoids, ",").size(), Kv.by("iautoids", iautoids)).getList()));
     }
     public Ret saveTableSubmit(JBoltTableMulti tableMulti, User user, Date now) {
         JBoltTable proposalTable = tableMulti.getJBoltTable("proposalds");
@@ -720,5 +710,71 @@ public class ProposalmService extends BaseService<Proposalm> {
 		if(ibudgetmoney.compareTo(imoney.add(iAreadyProposalMoney)) == -1 ) 
 			return fail("累计禀议金额超预算!"); 
 		return SUCCESS;
+	}
+
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

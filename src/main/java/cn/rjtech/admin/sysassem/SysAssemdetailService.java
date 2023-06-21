@@ -142,8 +142,10 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
     }
 
     public List<Record> findEditTableDatas(Kv para) {
-        ValidationUtils.notNull(para.getLong("masid"), JBoltMsg.PARAM_ERROR);
-        List<Record> records = dbTemplate("sysassem.dList", para).find();
+        List<Record> records =null;
+        if(null != para.getLong("masid")){
+            records = dbTemplate("sysassem.dList", para).find();
+        }
         return records;
     }
 

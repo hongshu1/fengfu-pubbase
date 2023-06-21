@@ -272,19 +272,44 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void barcodeDetail() {
-        String CIN = get("cinvcode");
-        Inventory inventory = invent.findFirst("select *   from Bd_Inventory where cInvCode=?", get("cinvcode"));
-        StockBarcodePosition stockBarcodePosition = stockBarcodePositionService.findFirst("select *   from T_Sys_StockBarcodePosition where InvCode=?", get("cinvcode"));
-        set("inventory", inventory);
-        set("stockBarcodePosition", stockBarcodePosition);
+        String cinvcode = get("cinvcode");
+        String batch = get("batch");
+        String cinvcode1 = get("cinvcode1");
+        String cinvname1 = get("cinvname1");
+        set("cinvcode",cinvcode);
+        set("batch",batch);
+        set("cinvcode1",cinvcode1);
+        set("cinvname1",cinvname1);
         render("barcodeDetail.html");
+    }
+    public void barcodeDetail1() {
+        String cinvcode = get("cinvcode");
+        String batch = get("batch");
+        String cinvcode1 = get("cinvcode1");
+        String cinvname1 = get("cinvname1");
+        set("cinvcode",cinvcode);
+        set("batch",batch);
+        set("cinvcode1",cinvcode1);
+        set("cinvname1",cinvname1);
+        render("barcodeDetail1.html");
     }
 
     public void getBarcode() {
-        String invcode = get("invcode");
+        String invcode = get("cinvcode");
+        String batch = get("batch");
         Kv kv = new Kv();
         kv.set("invcode", invcode == null ? "" : invcode);
+        kv.set("batch", batch == null ? "" : batch);
         renderJsonData(service.getBarcodedatas(getPageNumber(), getPageSize(), kv));
+    }
+
+    public void getBarcode1() {
+        String invcode = get("cinvcode");
+        String batch = get("batch");
+        Kv kv = new Kv();
+        kv.set("invcode", invcode == null ? "" : invcode);
+        kv.set("batch", batch == null ? "" : batch);
+        renderJsonData(service.getBarcodedatas1(getPageNumber(), getPageSize(), kv));
     }
 
     @Before(Tx.class)
@@ -301,9 +326,9 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void getManualAdddatas() {
-        String cmodocno = get("cmodocno");
-        Kv kv = new Kv();
-        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
-        renderJsonData(service.getgetManualAdddatas(getPageNumber(), getPageSize(), kv));
+//        String cmodocno = get("cmodocno");
+//        Kv kv = new Kv();
+//        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
+        renderJsonData(service.getgetManualAdddatas(getPageNumber(), getPageSize(), getKv()));
     }
 }

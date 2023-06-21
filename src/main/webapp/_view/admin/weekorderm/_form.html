@@ -11,9 +11,11 @@
                         #if(readonly != 'readonly')
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
+                        #if(weekOrderM.iAutoId??)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/weekorderm",
                         formSn="Co_WeekOrderM", o=weekOrderM, primaryKeyName="iAutoId",
                         className="cn.rjtech.admin.weekorderm.WeekOrderMService", permissionKeyPrefix="weekorderm")
+                        #end
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -82,38 +84,36 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group row">
-                                    <input type="hidden" name="weekOrderM.icustomerid"
-                                           value="#(weekOrderM.icustomerid??)" id="icustomerid"
-                                           data-sync-attr="iautoid"/>
-                                    <input type="hidden" name="icustomermid" value="#(weekOrderM.icustomerid??)"
-                                           id="icustomerid2" data-sync-attr="iautoid"/>
+                                    <input type="hidden" name="icustomermid" value="#(weekOrderM.icustomerid??)" id="icustomermid" data-sync-attr="iautoid"/>
+                                    <input type="hidden" name="weekOrderM.icustomerid" value="#(weekOrderM.icustomerid??)" id="icustomerid" data-sync-attr="iautoid"/>
+                                    <input type="hidden" name="weekOrderM.ccuscode" value="#(weekOrderM.ccuscode??)" id="ccuscode" data-sync-attr="ccuscode"/>
                                     <label class="col-sm-3 col-form-label">客户名称</label>
                                     <div class="col-8">
                                         <div class="input-group">
-
-                                        <div class="ac_input_box">
-                                        <input type="text" class="form-control"
-                                               data-autocomplete
-                                               id="ccusname"
-                                               data-url="admin/customer/autocomplete"
-                                               data-rule="required"
-                                               data-sync-ele="#icustomerid,icustomerid2"
-                                               data-text-attr="ccusname"
-                                               data-value-attr="iautoid"
-                                               data-column-attr="ccuscode,ccusname"
-                                               placeholder="请选择"
-                                               data-tips="请选择"
-                                               data-header="客户编码,客户名称"
-                                               maxlength="40"
-                                               value="#(weekOrderM.ccusname??)">
-                                    </div>
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-secondary" data-dialogbtn
-                                                    data-link-para-ele="#icustomerid" data-area="1280,600"
-                                                    data-title="选择数据（单选）"
-                                                    data-url="admin/annualorderm/ccusname_dialog_index"><i
-                                                    class="fa fa-search"></i></button>
+                                            <div class="ac_input_box">
+                                            <input type="text" class="form-control"
+                                                   data-autocomplete
+                                                   id="ccusname"
+                                                   data-url="admin/customer/autocomplete"
+                                                   data-rule="required"
+                                                   data-sync-ele="#icustomermid,#icustomerid,#ccuscode"
+                                                   data-text-attr="ccusname"
+                                                   data-value-attr="iautoid"
+                                                   data-column-attr="ccuscode,ccusname"
+                                                   placeholder="请选择"
+                                                   data-tips="请选择"
+                                                   data-header="客户编码,客户名称"
+                                                   maxlength="40"
+                                                   name="weekOrderM.ccusname"
+                                                   value="#(weekOrderM.ccusname??)">
                                         </div>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" data-dialogbtn
+                                                        data-link-para-ele="#icustomerid" data-area="1280,600"
+                                                        data-title="选择数据（单选）"
+                                                        data-url="admin/annualorderm/ccusname_dialog_index"><i
+                                                        class="fa fa-search"></i></button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -382,12 +382,11 @@
                         } else {
                             successHandler(res.msg, res.data.iautoid);
                         }
-
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
                     }
+                    parent.refreshPjaxContainer();
+                    parent.layer.closeAll();
                 }
             },
             maxRowCount: 9999,
@@ -397,7 +396,7 @@
                 },
                 cdistrictname: {
                     type: "select",
-                    linkPara: 'input[name="icustomermid"]',
+                    linkPara:"#icustomermid",
                     url: "/admin/customeraddr/list",
                     valueAttr: "cdistrictname",
                     textAttr: "cdistrictname",
@@ -662,6 +661,15 @@
         });
     }
 
+    // 保存方法
+    function submitThisForm()
+    {
+        // 调用保存处理
+        $('#save_btn_#(pageId)').click();
+        parent.refreshPjaxContainer();
+        parent.LayerMsgBox.closeAll();
+    }
+
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
     var submit = false;
     function submitThisForm_#(pageId)(s) {
@@ -697,15 +705,15 @@
             }
         });
     }
-    function setChooseDialogSelectResult(data){
-        $('#icustomerid').val(data.ccusname);
-    }
 
     // 选择客户名称
-    function instCcusname(data)
-    {
+    function instCcusname(data) {
         $("#icustomerid").val(data.iautoid);
         $("#ccusname").val(data.ccusname);
+        $("#ccuscode").val(data.ccuscode);
+
+        // 收货地点依赖数据
+        $("#icustomermid").val(data.iautoid);
     }
 </script>
 #end
