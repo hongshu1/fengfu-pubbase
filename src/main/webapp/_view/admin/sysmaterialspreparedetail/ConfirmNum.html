@@ -1,11 +1,7 @@
 #@jboltLayout()
 #define main()
-<div class="card" style="margin-bottom: 5px">
+<div class="card">
     <div class="card-body">
-        <form onsubmit="return false;" id="SysMaterialspreparedetail_Form" action="#(action)" method="post">
-            #if(sysMaterialspreparedetail.AutoID??)
-            <input type="hidden" name="sysMaterialspreparedetail.AutoID" value="#(sysMaterialspreparedetail.AutoID??)" />
-            #end
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group row">
@@ -53,19 +49,80 @@
                             <input type="text"
                                    class="form-control"
                                    maxlength="40" name=""
-                                   value="#(a??)"
+                                   value=""
+                                   id="NEWQTY"
                             />
                         </div>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <div class="col-2"></div>
+                        <div class="col-4">
+                            <button type="button"
+                                    class="btn btn-success"
+                                    name=""
+                                    style="width: 70px"
+                                    id="SUCCESS"
+                                    onclick="SUCCESSBTN()"
+                            >确认</button>
+                        </div>
+                        <div class="col-1"></div>
+                        <div class="col-4">
+                            <button type="button"
+                                    class="btn btn-danger"
+                                   name=""
+                                    style="width: 70px"
+                                    id="ERROR"
+                                    onclick="ERRORBTN()"
+                            >取消</button>
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+                </div>
             </div>
-        </form>
     </div>
 </div>
 
 #end
 #define js()
 <script type="text/javascript">
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+    function SUCCESSBTN() {
+        //旧现品票物料数量
+        var Oldqty="#(Oldqty??)"
+        //获取输入框内的值
+        var Newqty=document.getElementById("NEWQTY").value
+        //获取父页面行数
+        var TAG="#(TAG??)"
+        //旧数量与新数量的差值,修改后旧现品票的物料数量
+        var OjianN=Oldqty-Newqty
+        //判断输入的数量是否合理
+        if (Newqty===""||Newqty<=0||Newqty>=Oldqty){
+            LayerMsgBox.error("请正确输入数量");
+            return;
+        }
+        //成功回调
+        Ajax.post("admin/sysMaterialspreparedetail/NewNum", {"Oldbarcode":"#(Oldbarcode??)","Oldqty":"#(Oldqty??)","Newbarcode":"#(Newbarcode??)","Newqty":Newqty,"TAG":"#(TAG??)"},function (res) {
+            LayerMsgBox.success("保存成功");
+            //输入完数量点击确定后返回主页
+            parent.layer.close(parent.layer.getFrameIndex(window.name));
+            //获取主页的物料明细表格(上)
+            var TableTestup=top.document.getElementById("MaterialsDetail");
+            //获取主页的条码明细表格(下)
+            var TableTest=top.document.getElementById("jbolt_Table_");
+            //条码明细表格总行数
+            var ROWS=TableTest.rows.length;
+            //修改条码明细最后一行数据的数量
+            TableTest.rows[ROWS-1].cells[7].innerHTML=OjianN;
+            //修改物料明细表格的物料数量
+            TableTestup.rows[TAG].cells[12].innerText = (OjianN + parseInt(TableTestup.rows[TAG].cells[12].innerText==""?0:TableTestup.rows[TAG].cells[12].innerText)).toString();
+            //失败回调
+        },function (err) {
+            LayerMsgBox.error("保存失败");
+        });
+    }
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="SysMaterialsprepare_Form")
 #end

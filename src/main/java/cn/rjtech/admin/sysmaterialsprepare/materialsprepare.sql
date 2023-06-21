@@ -572,3 +572,16 @@ WHERE 1 = 1
   AND  it.cInvCode is not null
 ORDER BY sbp.Batch ASC #end
 
+
+
+
+#sql("setqty")
+SELECT
+    *
+FROM
+    T_Sys_StockBarcodePosition
+WHERE
+     Batch IS NOT NULL
+  AND InvCode IS NOT NULL
+  AND Barcode = '#(barcode)'
+#end

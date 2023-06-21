@@ -189,13 +189,20 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         if (recordList.size()==0){
             return null;
         }
-        String cinvcode=recordList.get(0).get("cInvCode");//集合第一个数据的存货编码
+        //集合第一个数据的存货编码
+        String cinvcode=recordList.get(0).get("cInvCode");
         for (int i=0;i<recordList.size();i++){
+            //判断存货编码是否相等
             if (recordList.get(i).get("cInvCode").equals(cinvcode)){
+                //获得集合中数据的物料总计划数量
                 BigDecimal planIqty=recordList.get(i).get("planIqty");
-                if (QTYTOLL.compareTo(planIqty)<1){//判断备料数量是否饱和
-                    QTYTOLL=QTYTOLL.add(recordList.get(i).get("QTY"));//备料数量累加
-                    if (BATCH!=recordList.get(i).get("Batch")){//判断前后数据批次号是否相同
+                //判断备料数量是否饱和
+                if (QTYTOLL.compareTo(planIqty)<1){
+                    //备料数量累加
+                    QTYTOLL=QTYTOLL.add(recordList.get(i).get("QTY"));
+                    //判断前后数据批次号是否相同(同一存货编码不同批次号)
+                    //如果批次号不相等，新增行
+                    if (BATCH!=recordList.get(i).get("Batch")){
                         Record record = new Record();
                         record.set("cInvCode",recordList.get(i).get("cInvCode"));
                         record.set("Batch",recordList.get(i).get("Batch"));
@@ -237,8 +244,8 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         if (totalPage*pageSize<totalRow){
             totalPage++;
         }
+        //已经实现数据根据计划需求数量先进先出,测试目标:动态展示先进先出,且数量不超过计划数量
         return new Page(objects,pageNumber, pageSize,totalPage,totalRow);
-//        return dbTemplate("materialsprepare.getDetaildatas", kv).paginate(pageNumber, pageSize);
     }
 
     public Page<Record> getBarcodedatas(int pageNumber, int pageSize, Kv kv) {
