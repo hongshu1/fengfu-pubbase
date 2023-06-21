@@ -1354,7 +1354,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
     /**
      * 获取计划
      */
-    /*public List<Map<String, Object>> getScheduPlanMonthList(Kv kv) {
+    public List<Map<String, Object>> getScheduPlanMonthList(Kv kv) {
         if (notOk(kv.get("level"))) {
             return new ArrayList<>();
         }
@@ -1562,11 +1562,11 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             dataList.add(masMap);
         }
         return dataList;
-    }*/
+    }
     /**
      * 获取计划
      */
-    public List<Map<String, Object>> getScheduPlanMonthList(Kv kv) {
+    /*public List<Map<String, Object>> getScheduPlanMonthList(Kv kv) {
         if (notOk(kv.get("level"))) {
             return new ArrayList<>();
         }
@@ -1764,7 +1764,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
         }
         return dataList;
-    }
+    }*/
 
     /**
      * 锁定计划
