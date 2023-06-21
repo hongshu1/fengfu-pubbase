@@ -540,6 +540,19 @@ public class MoMotaskService extends BaseService<MoMotask> {
     Map<String, Record> maps2 = new HashMap<>();
 
     for (Record record1 : LeaderRecs) {
+      record1.put("cmodocno", "");
+      record1.put("datesplicing", "");
+      record1.put("iautoid", "");
+      record1.put("idate", "");
+      record1.put("idutypersonid", "");
+      record1.put("imonth", "");
+      record1.put("ipersonnum", "");
+      record1.put("iqty", "");
+      record1.put("iworkshiftmid", "");
+      record1.put("iyear", "");
+      record1.put("psnname", "");
+      record1.put("psnnum", "");
+      record1.put("lock", true);
       if (record1.getStr("itype").equals("1")) {
         maps.put(record1.getStr("dataid"), record1);
       } else if (record1.getStr("itype").equals("2")) {
@@ -595,6 +608,12 @@ public class MoMotaskService extends BaseService<MoMotask> {
           user.put("ipersonnum", "");
           user.put("cpsn_name", "");
           user.put("idutypersonid", "");
+          user.put("cpsn_num", "");
+          user.put("dataid", "");
+          user.put("ipersonid", "");
+          user.put("itype", "");
+          user.put("sdate", "");
+          user.put("lock", true);
           userDatas.add(user);
           userMapDatas.put(dateSplicing, userDatas);
           //</editor-fold>
@@ -700,6 +719,12 @@ public class MoMotaskService extends BaseService<MoMotask> {
               record1.put("iyear", "");
               record1.put("psnname", "");
               record1.put("psnnum", "");
+              record1.put("cpsn_num", "");
+              record1.put("dataid", "");
+              record1.put("ipersonid", "");
+              record1.put("itype", "");
+              record1.put("sdate", "");
+              record1.put("lock", false);
 
               record2.put("cMoDocNo", "");
               record2.put("datesplicing", "");
@@ -714,6 +739,13 @@ public class MoMotaskService extends BaseService<MoMotask> {
               record2.put("iyear", "");
               record2.put("psnname", "");
               record2.put("psnnum", "");
+              record2.put("lock", false);
+
+              record2.put("cpsn_num", "");
+              record2.put("dataid", "");
+              record2.put("ipersonid", "");
+              record2.put("itype", "");
+              record2.put("sdate", "");
 
               record3.put("cMoDocNo", "");
               record3.put("iqty", "");
@@ -729,6 +761,13 @@ public class MoMotaskService extends BaseService<MoMotask> {
               record3.put("iyear", "");
               record3.put("psnname", "");
               record3.put("psnnum", "");
+
+              record3.put("cpsn_num", "");
+              record3.put("dataid", "");
+              record3.put("ipersonid", "");
+              record3.put("itype", "");
+              record3.put("sdate", "");
+              record3.put("lock", false);
 
               record1.put("cMoDocNo", recorda3.getStr("cMoDocNo"));
 
@@ -779,7 +818,12 @@ public class MoMotaskService extends BaseService<MoMotask> {
               record1.put("cmodocno", "");
               record1.put("iqty", "");
               record1.put("ipersonnum", "");
-
+              record1.put("cpsn_num", "");
+              record1.put("dataid", "");
+              record1.put("ipersonid", "");
+              record1.put("itype", "");
+              record1.put("sdate", "");
+              record3.put("lock", true);
               record1.set("iDutyPersonId", record3.getStr("iDutyPersonId") == null ? "" : record3.getStr("iDutyPersonId"));
               record1.set("cPsn_Name", record3.getStr("cPsn_Name") == null ? "" : record3.getStr("cPsn_Name"));
               if (map6.containsKey(iAutoId)) {
@@ -868,6 +912,21 @@ public class MoMotaskService extends BaseService<MoMotask> {
           leaderRec.put("ipersonid", "");
           leaderRec.put("cpsn_num", "");
           leaderRec.put("cpsn_name", "");
+
+          leaderRec.put("cmodocno", "");
+          leaderRec.put("datesplicing", "");
+          leaderRec.put("iautoid", "");
+          leaderRec.put("idate", "");
+          leaderRec.put("idutypersonid", "");
+          leaderRec.put("imonth", "");
+          leaderRec.put("ipersonnum", "");
+          leaderRec.put("iqty", "");
+          leaderRec.put("iworkshiftmid", "");
+          leaderRec.put("iyear", "");
+          leaderRec.put("psnname", "");
+          leaderRec.put("psnnum", "");
+
+          leaderRec.put("lock", true);
           leaderRec.put("dataid", workShift.getStr("dataid"));
           leaderRec.put("sdate", workShift.getStr("sdate"));
           if (qty == (recordssize - 3)) {
@@ -879,7 +938,9 @@ public class MoMotaskService extends BaseService<MoMotask> {
           }
         }
 
-        datas.put("user", recordLisc);
+        Record record1 = new Record();
+        record1.put("personne", recordLisc);
+        datas.put("user", record1);
         records1.add(datas);
         record.put("rowdatas", records1);
         records.add(record);
