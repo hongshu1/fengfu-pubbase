@@ -47,11 +47,14 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
     }
 
     /**
-     *详情
+     *跳转详情页面
      */
     public void details(){
         Kv kv = getKv();
+        //现品票
         set("barcode",kv.getStr("barcode"));
+        //单号
+        set("billno",kv.getStr("billno"));
         render("details.html");
     }
 
@@ -64,7 +67,10 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
      * */
     public void newdatas(){
         Kv kv = getKv();
+        //现品票
         set("barcode",kv.getStr("barcode"));
+        //单号
+        set("billno",kv.getStr("billno"));
         String startTime =(String) kv.get("starttime");
         String endtime =(String) kv.get("endtime");
         renderJsonData(service.newdatas(getPageSize(),getPageNumber(),kv));

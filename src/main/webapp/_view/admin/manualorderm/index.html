@@ -45,7 +45,7 @@
 		<a class="jbolt_table_editbtn" href="admin/manualorderm/edit?iautoid=${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" tooltip  data-title="编辑手配订单"> <i class="fa fa-remove fa-edit">编辑</i></a>
 		<a class="jbolt_table_delbtn" href="admin/manualorderm/delete/${data.iautoid}" data-handler="refreshJBoltTable" tooltip data-title="删除手配订单"  class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 		{@else if data.iorderstatus == 2}
-			<a class="jbolt_table_delbtn" href="admin/manualorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="审批手配订单" ><i class="fa fa-remove c-danger">撤回</i></a>
+			<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=Co_ManualOrderM&primaryKeyName=iautoid&formAutoId=${data.iautoid}&permissionKey=manualorderm_withdraw&className=cn.rjtech.admin.manualorderm.ManualOrderMService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="审批手配订单" ><i class="fa fa-remove c-danger">撤回</i></a>
 		{@else if data.iorderstatus == 3}
 		<a class="jbolt_table_delbtn" href="admin/manualorderm/close/${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" tooltip data-title="关闭手配订单"  class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">关闭</i></a>
 		{@/if}
