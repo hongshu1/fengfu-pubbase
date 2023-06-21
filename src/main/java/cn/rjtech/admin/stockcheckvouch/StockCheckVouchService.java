@@ -66,7 +66,7 @@ public class StockCheckVouchService extends BaseService<StockCheckVouch> {
      * 保存
      */
     public Ret save(StockCheckVouch stockCheckVouch) {
-        if (stockCheckVouch == null || isOk(stockCheckVouch.getAutoid())) {
+        if (stockCheckVouch == null || isOk(stockCheckVouch.getAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         //if(existsName(stockCheckVouch.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
@@ -112,18 +112,18 @@ public class StockCheckVouchService extends BaseService<StockCheckVouch> {
         stockCheckVouch.setCreateDate(date);
         stockCheckVouch.setModifyPerson(userName);
         stockCheckVouch.setModifyDate(date);
-        stockCheckVouch.setAutoid(JBoltSnowflakeKit.me.nextId());
+        stockCheckVouch.setAutoId(JBoltSnowflakeKit.me.nextId());
     }
 
     /**
      * 更新
      */
     public Ret update(StockCheckVouch stockCheckVouch) {
-        if (stockCheckVouch == null || notOk(stockCheckVouch.getAutoid())) {
+        if (stockCheckVouch == null || notOk(stockCheckVouch.getAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         //更新时需要判断数据存在
-        StockCheckVouch dbStockCheckVouch = findById(stockCheckVouch.getAutoid());
+        StockCheckVouch dbStockCheckVouch = findById(stockCheckVouch.getAutoId());
         if (dbStockCheckVouch == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
