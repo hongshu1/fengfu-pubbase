@@ -8,14 +8,16 @@
       <div class="card">
         <div class="card-body">
           <div class="col">
-            <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
+            <!--<button onclick="submitThisForm()" class="btn btn-success btn-sm"><i
                 class="fa fa-refresh"></i> 保存
-            </button>
-            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
-            <!--<button onclick="submitApprove('#(sysPuinstore.autoid??)')" class="btn btn-info btn-sm"><i
-                class="fa fa-window-maximize"></i> 提交审核
             </button>-->
-            #include("/_view/_common/_approval_btns.html", uri="/admin/purchaseReceiptList", formSn="T_Sys_PUInStore", o=sysPuinstore, edit=edit??, primaryKeyName="AutoID")
+            <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary" ><i
+                class="fa fa-refresh"></i> 保存</button>
+<!--            #include("/_view/_common/_approval_btns.html", uri="/admin/purchaseReceiptList", formSn="T_Sys_PUInStore", o=sysPuinstore, edit=edit??, primaryKeyName="AutoID")-->
+
+            #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUInStore", o=sysPuinstore, primaryKeyName="AutoID",
+            className="cn.rjtech.admin.syspuinstore.SysPuinstoreService",permissionKeyPrefix="sysPureceive")
+            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
           </div>
         </div>
       </div>
@@ -359,13 +361,24 @@
     jboltTableSubmit("#jbolt_Table_#(pageId)");
   }
 
-  function submitThisForm() {
+  //是否提审
+  var submit = false;
+
+  /*function submitThisForm() {
     // LayerMsgBox.alert("模块待开发")
     $("#operationType").val("submit");
     jboltTableSubmit("#jbolt_Table_#(pageId)");
     $("#operationType").val();
     return true;
+  }*/
+
+  function submitThisForm_#(pageId)(ele) {
+    submit = ele;
+    $("#operationType").val("submit");
+    jboltTableSubmit("#jbolt_Table_#(pageId)");
+    $("#operationType").val();
   }
+
 
   function getJBoltTableEditableColsOpton() {
     var editableTableOptions = {
