@@ -5,21 +5,13 @@
 		<div class="col">
 			<!--<label class="col-sm-3 col-form-label">基础档案名称：</label>-->
 <select class="form-control" name="iFormId"
-	data-autoload
-	data-url="admin/permission/optionsFormId"
-	data-select-type="select"
-	data-text="=系统表单ID="
+		data-autoload
+		data-url="admin/permission/optionsFormId"
+		data-select-type="select"
+		data-text="=基础档案名称="
 		data-text-attr="title"
 		data-value-attr="id"
 	></select>
-			<select class="form-control" name="test"
-					data-autoload
-					data-url="admin/formExtendFields/test"
-					data-select-type="select"
-					data-text="=test="
-					data-text-attr=""
-					data-value-attr=""
-			></select>
 			<!--<h8>单据档案名称：</h8>-->
 <!--<select class="form-control" name="iFormFieldId"-->
 	<!--data-autoload-->
@@ -40,7 +32,7 @@
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="=字段名称=" name="keywords" value="" />
 		<!--<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入系统字段名称" maxlength="40" name="cFieldName" />-->
 		<div class="btn-group text-center mx-1">
-			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 搜索</button>
 
 			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
 		</div>
@@ -107,7 +99,7 @@
 <tr>
 <th data-width="60" data-column="index">序号</th>
 	<th data-min-width="110">操作</th>
-	<th  data-min-width="200" data-column="iFormId">系统表单ID</th>
+	<th  data-min-width="200" data-column="iFormId">基础档案名称</th>
 	<!--<th  data-width="100" data-column="iFormFieldId">系统字段ID</th>-->
 	<!--<th  data-width="150" data-column="cFieldCode">系统字段编码</th>-->
 	<!--<th  data-width="90" data-column="iPosition">单据位置</th>-->
