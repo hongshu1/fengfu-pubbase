@@ -806,6 +806,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
             for (Record record3 : list6) {
               String iAutoId = record3.getStr("iAutoId");
               Record record1 = new Record();
+              record3.put("lock", false);
 
               record1.put("datesplicing", "");
               record1.put("iautoid", "");
@@ -823,7 +824,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
               record1.put("ipersonid", "");
               record1.put("itype", "");
               record1.put("sdate", "");
-              record3.put("lock", false);
+              record1.put("lock", false);
               record1.set("iDutyPersonId", record3.getStr("iDutyPersonId") == null ? "" : record3.getStr("iDutyPersonId"));
               record1.set("cPsn_Name", record3.getStr("cPsn_Name") == null ? "" : record3.getStr("cPsn_Name"));
               if (map6.containsKey(iAutoId)) {
