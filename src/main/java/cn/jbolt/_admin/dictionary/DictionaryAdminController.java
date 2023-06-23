@@ -258,7 +258,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 	 */
 	@Before(Tx.class)
 	public void delete(){
-		renderJson(service.deleteDictionaryById(getLong(0)));
+		renderJson(service.deleteDictionaryById(getLong(0),false));
 	}
 	/**
 	 * 上移
