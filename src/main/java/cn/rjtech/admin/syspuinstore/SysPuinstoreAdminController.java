@@ -16,7 +16,6 @@ import cn.rjtech.model.momdata.SysPuinstoredetail;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -112,30 +111,6 @@ public class SysPuinstoreAdminController extends BaseAdminController {
         set("ibustype", iBusTypeKey);//业务类型
         set("sysPuinstore", record);
         render("onlysee.html");
-    }
-
-    /*
-     * 反审批
-     * */
-    public void resetAutitById() {
-        Kv kv = getKv();
-        renderJson(service.resetAutitById(kv.getStr("autoid")));
-    }
-
-    /*
-     * 编辑页面的审批
-     * */
-    /*public void editAutit() {
-        Kv kv = getKv();
-        renderJson(service.editAutit(kv.getLong("autoid")));
-    }*/
-
-    /*
-     * 查看页面的审批
-     * */
-    public void onlyseeAutit() {
-        Kv kv = getKv();
-        renderJson(service.onlyseeAutit(kv.getLong("autoid")));
     }
 
     /**

@@ -70,9 +70,6 @@
           {@if data.iauditstatus == '1'}
             <a href="admin/purchaseReceiptList/edit?autoid=${data.autoid}" data-area="100%,100%" tooltip data-title="查看"
                data-handler="jboltTablePageToFirst" data-dialog-title="编辑采购入库单列表" class="jbolt_table_editbtn"><i class="fa fa-eye"></i>查看</a>
-<!--            <a class="jbolt_table_delbtn" href="admin/purchaseReceiptList/withdraw?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？"-->
-<!--               data-handler="refreshJBoltTable" data-loading="执行中 " tooltip data-title="撤回" ><i class="fa fa-remove c-danger">撤回</i></a>-->
-
           <a class="jbolt_table_delbtn" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回采购入库单" class="jbolt_table_delbtn"
              href="admin/formapproval/withdraw?formSn=T_Sys_PUInStore&primaryKeyName=autoid&formAutoId=${data.autoid}&permissionKey=syspuinstore_withdraw&className=cn.rjtech.admin.syspuinstore.SysPuinstoreService" >
             <i class="fa fa-remove c-danger">撤回</i></a>
