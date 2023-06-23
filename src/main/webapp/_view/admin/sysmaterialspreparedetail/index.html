@@ -118,7 +118,7 @@
                 <th data-width="60" data-column="">序号</th>
                 <th data-width="150" data-column="">备料单号</th>
                 <th data-width="200" data-column="">工单号</th>
-                <th data-width="150" data-column="">存货编码</th>
+                <th data-width="150" data-column="invcode">存货编码</th>
                 <th data-width="200" data-column="">客户部番</th>
                 <th data-width="250" data-column="">部品名称</th>
                 <th data-width="200" data-column="">规格</th>
@@ -128,7 +128,7 @@
                 <th data-width="150" data-column="">需求计划数量</th>
                 <th data-width="150" data-column="">已备料数量</th>
                 <th data-width="150" data-column="">扫描数量</th>
-                <th data-width="150" data-column="">可用批次号</th>
+                <th data-width="150" data-column="batch">可用批次号</th>
                 <th data-width="150" data-column="" hidden="hidden">条码</th>
                 <th data-width="150" data-column="" hidden="hidden">mpid</th>
             </tr>
@@ -233,6 +233,35 @@
         if (barcode) {
             Ajax.post("admin/sysMaterialspreparedetail/barcode", {"barcode": barcode},
                 function (res) {
+                    //判断扫入的条码是否和物料明细一致,以及是否满足先进先出规则
+                    var cunhuoCode=getJboltTableAllDatas("MaterialsDetail",["invcode"]);
+                    var cunhuoBatch=getJboltTableAllDatas("MaterialsDetail",["batch"]);
+                    var k = 0;
+                    if (null != cunhuoCode) {
+                        for (let i = 0; i < cunhuoCode.length; i++) {
+                            if (cunhuoCode[i] == res.data.cinvcode) {
+                                k++;
+                                break;
+                            }
+                        }
+                        if (k<1){
+                            k=0;
+                            LayerMsgBox.error("料品信息不一致");
+                            return;
+                        }
+                    }
+                    if (null != cunhuoBatch) {
+                        for (let i = 0; i < cunhuoBatch.length; i++) {
+                            if (cunhuoCode[i] == res.data.cunhuoBatch) {
+                                k++;
+                                break;
+                            }
+                        }
+                        if (k<1){
+                            k=0;
+                            LayerMsgBox.alert("物料现品票不在可用批次号范围内");
+                        }
+                    }
                     jboltTableInsertRow("jbolt_Table_", res.data, false, false, false);
                     $("#barcode").val('');
                     var mytable = document.getElementById("MaterialsDetail");
