@@ -1,11 +1,10 @@
 package cn.rjtech.admin.formapproval;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.permission.JBoltUserAuthKit;
-import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.*;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.cache.AuditFormConfigCache;
 import cn.rjtech.enums.FormAuditConfigTypeEnum;
@@ -27,7 +26,8 @@ import java.util.List;
  * @author: RJ
  * @date: 2023-04-18 17:26
  */
-@UnCheck
+@CheckPermission(PermissionKey.FORMAPPROVAL)
+@UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/formapproval", viewPath = "/_view/admin/formapproval")
 public class FormApprovalAdminController extends BaseAdminController {
@@ -469,7 +469,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "缺少实现审批通过后的业务类名");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“撤回”的权限");
-        
+
         renderJsonData(service.withdraw(formSn, primaryKeyName, formAutoId, className));
     }
 

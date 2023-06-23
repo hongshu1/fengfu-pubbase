@@ -1269,7 +1269,7 @@ public class PermissionKey {
 	 * 失效
 	 */
 	public static final String EXPENSE_BUDGET_MANAGE_UNEFFECT = "expense_budget_manage_uneffect";
-	
+
 	/**
 	 * 作废
 	 */
@@ -1301,7 +1301,7 @@ public class PermissionKey {
 	/**
 	 * 生效
 	 */
-	public static final String INVESTMENT_PLAN_MANAGE_EFFECT = "investment_plan_manage_effect";	
+	public static final String INVESTMENT_PLAN_MANAGE_EFFECT = "investment_plan_manage_effect";
 	/**
 	 * 失效
 	 */
@@ -1841,6 +1841,12 @@ public class PermissionKey {
 	 * 审批流列表
 	 */
 	public static final String APPROVALM = "approvalm";
+
+	/**
+	 * 表单审批流权限
+	 */
+	public static final String FORMAPPROVAL = "formapproval";
+
 	/**
 	 * 新增
 	 */
@@ -1973,7 +1979,7 @@ public class PermissionKey {
 	 * 生效
 	 */
 	public static final String PROPOSALM_EFFECT = "proposalm_effect";
-	
+
 	/**
 	 * 生效
 	 */
