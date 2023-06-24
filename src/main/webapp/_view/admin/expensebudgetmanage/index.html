@@ -81,10 +81,12 @@
 <div class="jbolt_table_toolbar" id="expenseBudget_toolbar_#(pageId)">
 	<div class="btn-group" role="group" aria-label="btn-group">
 		<button data-dialogbtn data-handler="refreshPjaxContainer" data-offset="0.2,0" data-area="100%,100%" data-title="费用预算详情" data-check-handler="jboltTableGetCheckedId" data-url="admin/expensebudgetmanage/detail/" class="btn btn-outline-primary btn-sm"  data-btn="close"><i class="fa fa-edit"></i>详情</button>
+		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/formapproval/withdraw?formSn=PL_Expense_Budget&primaryKeyName=iautoid&permissionKey=expensebudget_withdraw&className=cn.rjtech.admin.expensebudget.ExpenseBudgetService&formAutoId=" data-confirm="确定撤销选中数据？" class="btn btn-outline-primary btn-sm"><i class="jbicon jb-jujue"></i> 撤销提审</button>
 		<button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
                         data-check-handler="getIdIfValid_#(pageId)" data-url="admin/expensebudgetmanage/expenseFormApprovalFlowIndex?iautoid="
                         class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i class="fa fa-chain"></i>查看审批</button>
 		<button data-ajaxbtn data-area="700,400" data-title="生效" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/expensebudgetmanage/effect/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 生效</button>
+		<button data-ajaxbtn data-area="700,400" data-title="失效" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/expensebudgetmanage/uneffect/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 失效</button>
 		<button data-ajaxbtn data-area="700,400" data-title="作废" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/expensebudgetmanage/cancle/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 作废</button>
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 	</div>

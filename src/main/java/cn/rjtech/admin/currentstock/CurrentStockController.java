@@ -1,16 +1,19 @@
 package cn.rjtech.admin.currentstock;
 
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.rjtech.admin.stockcheckvouch.StockCheckVouchService;
+import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockCheckVouch;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+
+import java.util.Date;
 
 /**
  * 盘点单 Controller
@@ -19,16 +22,16 @@ import com.jfinal.kit.Kv;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-10-31 14:38
  */
-@CheckPermission(PermissionKey.NOME)
-@UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
+@UnCheckIfSystemAdmin
 @Path(value = "/admin/currentstock", viewPath = "_view/admin/currentstock")
 public class CurrentStockController extends BaseAdminController {
 
 	@Inject
-	private CurrentStockService service;
+	CurrentStockService service;
 	@Inject
-	private StockCheckVouchService stockCheckVouchService;
+	StockChekVouchService stockChekVouchService;
+
 
    /**
 	* 首页
@@ -38,19 +41,46 @@ public class CurrentStockController extends BaseAdminController {
 	}
 
 	/**
-	 * 列表也数据
+	细表新增选择数据
 	 */
+	public void CurrentStockBySelect(){
+		Kv kv = getKv();
+		String whcode = kv.getStr("whcode");
+		ValidationUtils.notNull(whcode,"请选择仓库!");
+		keepPara();
+
+		render("currentstockbyselect.html");
+	}
+	/**
+	 * 选择数据源
+	 * */
+	public void CurrentStockByDatas(){
+		renderJsonData(service.CurrentStockByDatas(getPageNumber(),getPageSize(),getKv()));
+
+	}
+	/**
+	 * 列表也数据
+	 * */
 	public void datas() {
-		renderJsonData(service.datas(getPageNumber(),getPageSize(),getKv()));
+		renderJsonData(service.datas_calculate(getPageNumber(),getPageSize(),getKv()));
 	}
 
+	/**
+	 * 盘点单物料详情列表
+	 * */
 	public void invDatas() {
-		renderJsonData(service.invDatas(getPageNumber(),getPageSize(),getKv()));
+		renderJsonData(service.invDatas(getKv()));
 	}
 
 
 
-   public void add(){
+	public void barcodeDatas() {
+		renderJsonData(service.barcodeDatas(getPageNumber(),getPageSize(),getKv()));
+	}
+
+
+
+	public void add(){
 		render("add.html");
    }
    /**
@@ -58,9 +88,10 @@ public class CurrentStockController extends BaseAdminController {
    public void stockEdit(){
 	   Kv kv = getKv();
 	   String autoid = kv.getStr("autoid");
-	   StockCheckVouch stockcheckvouch = stockCheckVouchService.findById(autoid);
+	   StockCheckVouch stockchekvouch = stockChekVouchService.findById(autoid);
 
-	   set("bill", stockcheckvouch);
+	   set("bill", stockchekvouch);
+	   set("isapp",0);
 	   render("stockEdit.html");
    }
 
@@ -77,18 +108,78 @@ public class CurrentStockController extends BaseAdminController {
 	}
 	/**
 	 * 新增提交
-	 */
+	 * */
    public void save(){
 	   Kv kv = getKv();
-	   //SysStockchekvouch sysStockchekvouch = useIfValid(SysStockchekvouch.class, "sysstockchekvouch");
-	   //renderJson(service.save());
-	   renderJson(service.save(useIfValid(StockCheckVouch.class, "SysStockchekvouch")));
+	   String checktype = kv.getStr("checktype");
+	   String whcode = kv.getStr("whcode");
+	   String poscode = kv.getStr("poscode");
 
-	   //renderJsonData(service.SaveStockchekvouch(getKv()));
+	   StockCheckVouch stockcheckvouch=new StockCheckVouch();
+	   stockcheckvouch.setCheckType(checktype);
+	   stockcheckvouch.setWhCode(whcode);
+	   stockcheckvouch.setPoscodes(poscode);
+	   stockcheckvouch.setStatus("0");
+	   stockcheckvouch.setIsDeleted("0");
+	   ValidationUtils.notNull(whcode,"仓库为空!");
+	   ValidationUtils.notNull(checktype,"盘点方式为空!");
+
+	   renderJson(service.save2(stockcheckvouch));
    }
+
+
+   /**
+	* 盘点单
+	* */
+	public void jboltTableSubmit(){
+		renderJson(service.jboltTableSubmit(getJBoltTable()));
+	}
+
+
 
    public void saveSubmit(){
    	renderJson(service.saveSubmit(getKv()));
    }
 
+
+   /**
+	* 完成盘点,修改盘点单单头状态
+	* */
+	public void okCheck() {
+		Kv kv = getKv();
+		kv.put("iupdateby", JBoltUserKit.getUserId());
+		kv.put("cupdatename", JBoltUserKit.getUserName());
+		kv.put("dupdatetime", new Date());
+		Ret ret = service.okCheck(kv);
+		renderJsonData(ret);
+	}
+
+
+	/**
+	 * 驳回,修改盘点单单头状态
+	 * */
+	public void regret() {
+		Kv kv = getKv();
+		kv.put("iupdateby", JBoltUserKit.getUserId());
+		kv.put("cupdatename", JBoltUserKit.getUserName());
+		kv.put("dupdatetime", new Date());
+		kv.put("iauditby", JBoltUserKit.getUserId());
+		kv.put("cauditname", JBoltUserKit.getUserName());
+		Ret ret = service.regret(kv);
+		renderJsonData(ret);
+	}
+
+	/**
+	 * 审核通过,修改盘点单单头状态,并推单给戴工
+	 * */
+	public void agree() {
+		Kv kv = getKv();
+		kv.put("iupdateby", JBoltUserKit.getUserId());
+		kv.put("cupdatename", JBoltUserKit.getUserName());
+		kv.put("dupdatetime", new Date());
+		kv.put("iauditby", JBoltUserKit.getUserId());
+		kv.put("cauditname", JBoltUserKit.getUserName());
+		Ret ret = service.agree(kv);
+		renderJsonData(ret);
+	}
 }

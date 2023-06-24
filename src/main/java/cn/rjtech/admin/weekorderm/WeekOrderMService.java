@@ -185,32 +185,6 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     }
 
     /**
-     * 撤回
-     */
-    public Ret withdraw(Long iAutoId) {
-        WeekOrderM weekOrderM = findById(iAutoId);
-
-        tx(() -> {
-            // 校验订单状态
-            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
-            // 订单状态：2. 待审批
-            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
-
-                weekOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
-                ValidationUtils.isTrue(weekOrderM.update(), ErrorMsg.UPDATE_FAILED);
-
-                cusOrderSumService.algorithmSum();
-
-                return null;
-            });
-
-            return true;
-        });
-
-        return SUCCESS;
-    }
-
-    /**
      * 关闭功能
      */
     public Ret closeWeekOrder(String iAutoId) {
@@ -494,7 +468,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     /**
      * 处理审批通过的其他业务操作，如有异常返回错误信息
      */
-    public String postApproveFunc(long formAutoId) {
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         WeekOrderM weekOrderM = findById(formAutoId);
         ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
         // 推送U8订单
@@ -513,7 +487,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    public String postRejectFunc(long formAutoId, Boolean isWithinBatch) {
         WeekOrderM weekOrderM = findById(formAutoId);
         ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), "订单非待审核状态");
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
@@ -616,19 +590,6 @@ public class WeekOrderMService extends BaseService<WeekOrderM> {
      * @return  错误信息
      */
     public String postBatchApprove(List<Long> formAutoIds) {
-        List<WeekOrderM> weekOrderMS = getListByIds(StringUtils.join(formAutoIds, COMMA));
-        for (WeekOrderM weekOrderM : weekOrderMS) {
-            // 订单状态校验
-            ValidationUtils.equals(weekOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
-
-            // 订单状态修改
-            weekOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
-            weekOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-            weekOrderM.setCUpdateName(JBoltUserKit.getUserName());
-            weekOrderM.setDUpdateTime(new Date());
-            weekOrderM.update();
-        }
-
         // 审批通过生成客户计划汇总
         cusOrderSumService.algorithmSum();
         return null;

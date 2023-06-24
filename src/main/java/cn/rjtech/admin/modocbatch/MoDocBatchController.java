@@ -83,7 +83,16 @@ public class MoDocBatchController extends BaseAdminController {
    * 编辑计划
    */
   public void editPlan() {
+    keepPara();
     render("planform.html");
+  }
+
+  /**
+   * 查看
+   */
+  public void personShow() {
+    keepPara();
+    render("personshow.html");
   }
 
   /**

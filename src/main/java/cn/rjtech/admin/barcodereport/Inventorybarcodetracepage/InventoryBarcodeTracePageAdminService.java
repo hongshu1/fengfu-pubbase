@@ -63,6 +63,15 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
         return  new Page<>(recordArrayList, pageNumber, pageSize, totalPage, (int) totalRow);
     }
 
+
+    /**
+     * 获取打印数据
+     */
+    public List<Record> PrintData(int pageSize, int pageNumber, Kv kv){
+        List<Record> list = getBarcodeTotalList(DataSourceConstants.U8,kv);
+        return list;
+    }
+
         /**
          *条码汇总表构建临时表 ,并执行存储过程
          * */
@@ -186,9 +195,8 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
     public List<Record> excuteBarcodeTracePage(String dataSourceConfigName,String tempTableName) {
         List<Map> listMap=(List<Map>) executeFunc(dataSourceConfigName, (conn) -> {
             List<Map<String, Object>> list = new ArrayList<>();
-            CallableStatement proc = conn.prepareCall("{ call P_Sys_InventoryBarcodeTracePage(?) }");
+            CallableStatement proc = conn.prepareCall("{ call P_Sys_InventoryBarcodeTracePage(?,@Type ='Inventory') }");
             proc.setObject(1, tempTableName);
-
             //执行
             boolean isSuccess = true;
             ResultSet rs = null;

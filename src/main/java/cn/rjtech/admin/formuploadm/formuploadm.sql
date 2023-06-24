@@ -9,7 +9,7 @@ select *,CASE iAuditStatus
              WHEN 3 THEN
                  '审核不通过'
     END AS statename from PL_FormUploadM where
-    1=1
+    1=1 and isDeleted =0
     #if(iWorkRegionMid)
     and iWorkRegionMid =#para(iWorkRegionMid)
     #end

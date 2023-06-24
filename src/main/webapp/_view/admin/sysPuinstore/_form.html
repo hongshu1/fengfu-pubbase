@@ -1,21 +1,19 @@
 #set(pageId=RandomUtil.random(6))
-#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
-#set(precisionConfig4=JBoltGlobalConfigCache.getConfigValue("precision_config4"))
-#set(precisionConfig5=JBoltGlobalConfigCache.getConfigValue("precision_config5"))
 <div class="jbolt_page_title">
   <div class="row">
     <div class="col-12">
       <div class="card">
         <div class="card-body">
           <div class="col">
-            <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
-                class="fa fa-refresh"></i> 保存
-            </button>
+            <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary" ><i
+                class="fa fa-refresh"></i> 保存</button>
+
+            #if(sysPuinstore.autoid??)
+            #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUInStore", o=sysPuinstore, primaryKeyName="AutoID",
+            className="cn.rjtech.admin.syspuinstore.SysPuinstoreService",permissionKeyPrefix="sysPureceive")
+            #end
+
             <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
-            <!--<button onclick="submitApprove('#(sysPuinstore.autoid??)')" class="btn btn-info btn-sm"><i
-                class="fa fa-window-maximize"></i> 提交审核
-            </button>-->
-            #include("/_view/_common/_approval_btns.html", uri="/admin/purchaseReceiptList", formSn="T_Sys_PUInStore", o=sysPuinstore, edit=edit??, primaryKeyName="AutoID")
           </div>
         </div>
       </div>
@@ -28,7 +26,6 @@
             <input id="autoid" type="hidden" name="autoid" value="#(sysPuinstore.autoid??)"/>
             #end
             <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
-<!--            <input type="hidden" id="detailHiddenInvocde" name="detailHiddenInvocde" value="#(detailHiddenInvocde??)"/>-->
             <div class="row">
               <div class="col">
                 <div class="form-group row">
@@ -183,6 +180,7 @@
                   </div>
                 </div>
 
+<!--                <input type="text" id="ibustype" name="ibustype" value="#(sysPuinstore.ibustype??)"/>-->
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">业务类型</label>
                   <div class="col-6">
@@ -359,13 +357,24 @@
     jboltTableSubmit("#jbolt_Table_#(pageId)");
   }
 
-  function submitThisForm() {
+  //是否提审
+  var submit = false;
+
+  /*function submitThisForm() {
     // LayerMsgBox.alert("模块待开发")
     $("#operationType").val("submit");
     jboltTableSubmit("#jbolt_Table_#(pageId)");
     $("#operationType").val();
     return true;
+  }*/
+
+  function submitThisForm_#(pageId)(ele) {
+    submit = ele;
+    $("#operationType").val("submit");
+    jboltTableSubmit("#jbolt_Table_#(pageId)");
+    $("#operationType").val();
   }
+
 
   function getJBoltTableEditableColsOpton() {
     var editableTableOptions = {
@@ -375,11 +384,25 @@
         name: 'sysPuinstore',
         type: "all",
         url: "/admin/purchaseReceiptList/submitAll", success: function (res) {
-          LayerMsgBox.success("提交成功", 600, function () {
-            parent.refreshCurrentTabContent();//刷新当前页面
-            parent.refreshPjaxContainer();
-            // parent.layer.closeAll();
-          });
+          var state = res.state;
+          if(state === 'ok'){
+            if (submit){
+              let autoid = res.autoid;
+              submit_#(pageId)(autoid,function () {
+                LayerMsgBox.success("提交成功", 600, function () {
+                  parent.refreshPjaxContainer();
+                  // parent.layer.closeAll();
+                });
+              });
+            } else {
+              LayerMsgBox.success("提交成功", 600, function () {
+                parent.refreshPjaxContainer();
+                parent.layer.closeAll();
+              });
+            }
+          }else {
+            LayerMsgBox.error(res.msg);
+          }
         }
       },
       cols: {

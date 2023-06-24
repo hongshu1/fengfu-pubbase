@@ -1,0 +1,207 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)" data-require-plugin="hiprint">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+                <h1> 社内现品票汇总管理</h1>
+            </div>
+            <div class="col">
+                <form class="form-inline" id="BarcodeTracePageForm_#(pageId)" onsubmit="return false;" method="post">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=订单号=" name="billno"
+                           value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="invcode"
+                           value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="otherinvcode"
+                           value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="otherinvname"
+                           value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" name="barcode"
+                           value=""/>
+                    <select style="width:150px" class="form-control"
+                            data-autoload
+                            data-text="=状态="
+                            name="iorderstatus"
+                    >
+                        <option value="">=状态=</option>
+                        <option value="1">生成</option>
+                        <option value="2">入库扫描</option>
+                        <option value="3">已入库</option>
+                        <option value="4">拆分条码</option>
+                        <option value="5">合并条码</option>
+                        <option value="6">备料扫描</option>
+                        <option value="7">调拨</option>
+                        <option value="8">材料耗用扫描</option>
+                        <option value="9">已出库</option>
+                        <option value="10">出货扫描</option>
+                        <option value="11">已出货</option>
+                        <option value="12">已失效</option>
+                    </select>
+                    <select class="form-control"
+                            name="whname"
+                            data-autoload
+                            data-url="admin/SysEnumeration/wareHouse"
+                            data-select-type="select2"
+                            data-text="=请选择仓库名称="
+                            data-value=""
+                            data-value-attr="whcode"
+                            data-text-attr="whname"
+                            data-select="#(whcode??)"></select>
+
+                    <select class="form-control"
+                            data-autoload
+                            name="posname"
+                            data-select-type="select2"
+                            data-tips="所属库区"
+                            data-url="admin/warehousearea/list?isdeleted=0"
+                            data-text="=所属库区="
+                            data-value-attr="careacode"
+                            data-text-attr="careaname"
+                            data-value=""
+                            data-select="#(careacode??)"></select>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="BarcodeTracePageRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.autoid}">
+  <td>${pageNumber,pageSize,index | rownum}</td>
+	<td>
+	<a  tooltip    href="/admin/barcodeReport/BarcodeTracePage/details?billno=${data.billno}" data-area="100%,100%"  class="jbolt_table_editbtn">变更记录</a>
+	</td>
+  <td>${data.billstate}</td> <!--状态-->
+	<td>${data.billno}</td> <!--单据单号-->
+	<td>${data.invcode}</td> <!--存货编码-->
+	<td>${data.otherinvcode}</td> <!--客户部番-->
+	<td>${data.otherinvname}</td> <!--部品名称-->
+	<td>${data.invstd}</td> <!--规格-->
+	<td>${data.poscode}</td> <!--主记录单位编码-->
+	<td>${data.barcode}</td> <!--现品票条码-->
+	<td >${data.version}</td> <!--版本号-->
+	<td>${data.qty}</td> <!--数量-->
+	<td>${data.date}</td> <!--生产日期-->
+	<td>${data.batch}</td> <!--批次号-->
+	<td>${data.whname}</td> <!--仓库名称-->
+	<td>${data.posname}</td> <!--库区名称-->
+	<td>${data.createdate}</td> <!--创建日期-->
+
+	<td hidden>${data.posname}</td> <!--主记录单位名称-->
+	<td hidden>${data.whcode}</td> <!--仓库编码-->
+	<td hidden>${data.poscode}</td> <!--库区编码-->
+	<td hidden>${data.scheduledate}</td> <!--未知-->
+</tr>
+{@/each}
+</textarea>
+
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="BarcodeTracePage_toolbar_#(pageId)">
+            <div class="col-sm-auto" role="group" aria-label="btn-group">
+                <div class="btn-group dropdown" role="group" aria-label="btn-group">
+                    <div class="btn-group dropdown ">
+                        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportContainerButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+                        <div class="dropdown-menu" aria-labelledby="exportContainerButton">
+                            <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="/admin/barcodeReport/BarcodeTracePage/downloadChecked"><i class="fa fa-download"></i> 导出选中</button>
+                            <button class="btn dropdown-item" data-downloadbtn data-url="/admin/barcodeReport/BarcodeTracePage/downloadChecked" data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">打印</button>
+                    <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+                        <button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds" onclick="containerPrint_#(pageId)('check')"><i class="fa fa-download"></i> 打印勾选行</button>
+                        <button class="btn dropdown-item" onclick="containerPrint_#(pageId)('page')"><i class="fa fa-download"></i> 打印当前页</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="clearfix"></div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               data-jbolttable
+               data-autoload="false"
+               data-height="fill"
+               data-ajax="true"
+               data-width="auto"
+               data-url="/admin/barcodeReport/BarcodeTracePage/newdatas"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="BarcodeTracePageForm_#(pageId)"
+               data-rowtpl="BarcodeTracePageRowtpl_#(pageId)"
+               data-page="BarcodeTracePage_toolbar_#(pageId)"
+
+               data-pagesize="100"
+               data-pagesize-options="5,10,15,20,30,40,50,100,500,1000"
+               data-fixed-columns-left="1,2,3"
+               data-fixed-columns-right="-1"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="150" data-column="AutoID">操作</th>
+                <th data-width="150" data-column="billstate">状态</th>
+                <th data-width="150" data-column="billno">工单号</th>
+                <th data-width="100" data-column="invcode">存货编码</th>
+                <th data-width="100" data-column="otherinvcode">客户部番</th>
+                <th data-width="100" data-column="otherinvname">部品名称</th>
+                <th data-width="150" data-column="invstd">规格</th>
+                <th data-width="120" data-column="poscode">主计量单位</th>
+                <th data-width="100" data-column="barcode">现品票</th>
+                <th data-width="100" data-column="version">版本号</th>
+                <th data-width="100" data-column="qty">数量</th>
+                <th data-width="100" data-column="date">生产日期</th>
+                <th data-width="100" data-column="batch">批次号</th>
+                <th data-width="150" data-column="whname">仓库名称</th>
+                <th data-width="150" data-column="posname">库区名称</th>
+                <th data-min-width="160" data-column="createdate">创建日期</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+    // 打印
+    function containerPrint_#(pageId)(mark) {
+        let rows;
+        if (mark == 'check') {
+            rows = jboltTableGetCheckedDatas();
+            if (rows == null) {
+                return;
+            }
+        } else {
+            rows = jboltTableGetAllDatas();
+        }
+
+        let code = [];
+        var k=0;
+        for (let i in rows) {
+            k++;
+            let rowdata = rows[i];
+            var ccode = rowdata.barcode;
+            var istatus = rowdata.istatus;
+            var cdocno = rowdata.cdocno;
+            if (ccode == null){
+                LayerMsgBox.error("第"+k+"行["+cdocno+"]异常单,请审核再打印！！！",3000);
+                return false;
+            }
+            code.push(ccode);
+        }
+        jboltHiprintWebPrint('068811', 'url', 'admin/barcodeReport/BarcodeTracePage/PrintData?ids=' + code.join(",") + "&&mark=" + mark);
+    }
+</script>
+#end

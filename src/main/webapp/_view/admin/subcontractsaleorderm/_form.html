@@ -12,9 +12,11 @@
                         #if(readonly != 'readonly')
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-sx">保存</button>
                         #end
+                        #if(subcontractsaleorderm.iAutoId??)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/subcontractsaleorderm",
                         formSn="Co_SubcontractSaleOrderM", o=subcontractsaleorderm, primaryKeyName="iAutoId",
                         className="cn.rjtech.admin.subcontractsaleorderm.SubcontractsaleordermService",  permissionKeyPrefix="subcontractsaleorderm")
+                        #end
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-sx">关闭</button>
                     </div>
                 </div>
@@ -415,7 +417,6 @@
     {
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
-        parent.refreshPjaxContainer();
     }
 
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
@@ -440,6 +441,17 @@
         }
     }
 
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/subcontractsaleorderm/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
+            parent.refreshPjaxContainer();
+        });
+    }
+
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
@@ -461,8 +473,6 @@
                         } else {
                             successHandler(res.msg, res.data.iautoid);
                         }
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
                     }

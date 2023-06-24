@@ -15,11 +15,14 @@ public enum BoolCharEnum {
     NO("否", "0"),
     YES("是", "1");
 
-    private static final Map<String, BoolCharEnum> BOOL_CHAR_ENUM_MAP = new HashMap<>();
+    private static final Map<String, BoolCharEnum> BOOL_VALUE_ENUM_MAP = new HashMap<>();
+
+    private static final Map<String, BoolCharEnum> BOOL_TEXT_ENUM_MAP = new HashMap<>();
 
     static {
         for (BoolCharEnum charEnum : BoolCharEnum.values()) {
-            BOOL_CHAR_ENUM_MAP.put(charEnum.value, charEnum);
+            BOOL_VALUE_ENUM_MAP.put(charEnum.value, charEnum);
+            BOOL_TEXT_ENUM_MAP.put(charEnum.text, charEnum);
         }
     }
 
@@ -32,7 +35,11 @@ public enum BoolCharEnum {
     }
 
     public static BoolCharEnum toEnum(String value) {
-        return BOOL_CHAR_ENUM_MAP.get(value);
+        return BOOL_VALUE_ENUM_MAP.get(value);
+    }
+
+    public static BoolCharEnum textToEnum(String text) {
+        return BOOL_TEXT_ENUM_MAP.get(text);
     }
 
     public String getText() {

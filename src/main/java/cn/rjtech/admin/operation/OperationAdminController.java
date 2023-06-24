@@ -182,7 +182,6 @@ public class OperationAdminController extends JBoltBaseController {
 //        renderJxls("operation.xlsx", Kv.by("rows", rows), "工序_" + DateUtil.today() + ".xlsx");
     }
 
-    @SuppressWarnings("unchecked")
     public void downloadTpl() throws Exception {
 //        renderJxls("operation_import.xlsx", Kv.by("rows", null), "工序导入模板.xlsx");
         renderBytesToExcelXlsFile(service.getExcelImportTpl().setFileName("工序导入模板"));

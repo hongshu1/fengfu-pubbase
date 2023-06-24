@@ -233,7 +233,7 @@ where a.isEffective = '1'
   #if(detailHidden)
   and t.SourceBillDid not in (#(detailHidden))
   #end
-  and not exists (select 1 from T_Sys_PUReceiveDetail detail where detail.SourceBillDid = t.SourceBillDid)
+  ###and not exists (select 1 from T_Sys_PUReceiveDetail detail where detail.SourceBillDid = t.SourceBillDid and detail.isDeleted = '0')
 #end
 
 #sql("findWhArea")
@@ -251,4 +251,46 @@ where a.isDeleted = '0'
     #if(orgCode)
     and wh.cOrgCode = '#(orgCode)'
     #end
+#end
+
+#sql("findListByMasId")
+SELECT  t1.*, t2.*, v.cVenName, v.iAutoId as veniAutoId, info.isIQC1, qc.iAutoId as qcIAutoId, qc.cDcCode
+FROM T_Sys_PUReceiveDetail t1
+         LEFT JOIN (
+    select b.iAutoId  as iInventoryId,
+           b.cInvCode1,
+           b.cInvCode as cinvcode,
+           b.cInvName as cinvname,
+           b.cInvName1,
+           a.cBarcode as cbarcode,
+           a.dPlanDate,
+           b.cInvStd  as cinvstd,
+           a.iQty     as quantity,
+           uom.cUomCode,
+           uom.cUomName
+    from PS_PurchaseOrderDBatch a
+             left join Bd_Inventory b on a.iinventoryId = b.iAutoId
+             left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
+    where 1 = 1
+    union all
+    select b.iAutoId  as iInventoryId,
+           b.cInvCode1,
+           b.cInvCode as cinvcode,
+           b.cInvName as cinvname,
+           b.cInvName1,
+           a.cBarcode as cbarcode,
+           a.dPlanDate,
+           b.cInvStd  as cinvstd,
+           a.iQty     as quantity,
+           uom.cUomCode,
+           uom.cUomName
+    from PS_SubcontractOrderDBatch a
+             left join Bd_Inventory b on a.iinventoryId = b.iAutoId
+             left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
+    where 1 = 1
+) t2 on t1.Barcode = t2.cbarcode
+         left join Bd_Vendor v on t1.VenCode = v.cVenCode
+        left join Bd_InventoryMfgInfo info on t2.iInventoryId = info.iInventoryId
+        left join Bd_InventoryQcForm qc on qc.iInventoryId = t2.iInventoryId
+where t1.MasID = '#(masId)'
 #end

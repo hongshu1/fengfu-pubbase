@@ -369,15 +369,15 @@
     sheet.getRange(-1, -1,-1,-1).font('宋体 bold 10px');
     statusBar.bind(spread);//状态栏
     spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
-    sheet.options.isProtected = true; // 开启工作表保护
-    sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
-    sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
-    sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
+    // sheet.options.isProtected = true; // 开启工作表保护
+    // sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+    // sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+    // sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
     var parmsDefault = {
         id:null,                //全局公共id
         level:'',               //排场层级
-        RowCount:27,           //一列多少单元格
-        ColumnCount:31,         //一行多少单元格
+        RowCount:100,           //一列多少单元格
+        ColumnCount:41,         //一行多少单元格
         rowindex:0,				//x轴索引
         columnindex:0,			//y轴索引
         data: [],				//当月时间数据
@@ -640,10 +640,10 @@
      */
     function initData(ilevel){
         spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
-        sheet.options.isProtected = true; // 开启工作表保护
-        sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
-        sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
-        sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
+        // sheet.options.isProtected = true; // 开启工作表保护
+        // sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+        // sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+        // sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
         //定义接口参数
         let url = Api + `admin/scheduproductplanmonth/getScheduPlanMonthList?level=${ilevel==null||undefined?'1':ilevel}&startdate=${searchData.searchStartTime}&enddate=${searchData.searchEndTime}&cworkname=${searchData.cworkname}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`
         LayerMsgBox.loading("正在获取最新数据...",20000);
@@ -652,178 +652,369 @@
             type: 'get',
             dataType: 'json',
             success: function (respons) {
+                console.log(respons)
                 LayerMsgBox.closeLoading();
                 parms['scheduplanmonth'] = respons;
                 if(parms['scheduplanmonth'].length>0){
                     spreadSuspend();//暂停绘制
                     let rowIndex = 4;
-                    let colIndex = 0;
-                    // //项目
+                    let rowIndexs = 4;//左视图产品数据渲染起始行
+                    let colIndexs = 0;//左视图产品数据渲染起始列
+                    let code = 4;//隐藏编码起始行
+                    let gentle = 4;//记录渲染的下标
+                    //日计划排版
+                    let shiyongRow = 4;//计划使用行下标
+                    let shiyongCol = 10;//计划使用列下标
+                    let zaikuCol = 9;//在库下标
+                    let B = 9;//在库天数公式嵌入起始行
+                    let Z = 10;//在库天数公式嵌入起始列
+                    let jihuaRow = 8;//计划在库公式嵌入起始行
+                    let jihuaCol = 10;//计划在库公式嵌入起始列
+                    //项目
                     for (let i = 0; i < parms['scheduplanmonth'].length; i++) {
-                        parms.cinvCode.push(parms['scheduplanmonth'][i].cInvCode);
-                        //定义多选按钮
-                        var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();
-                        parms.activeSheet.getCell(rowIndex, colIndex).cellType(cellType);
-                        sheet.addSpan(rowIndex, colIndex, 6, 1);
-                        //序号
-                        sheet.setValue(rowIndex, 1 + colIndex, i);
-                        parms.activeSheet.addSpan(rowIndex, 1 + colIndex, 6, 1);
-                        //排产层级
-                        sheet.setValue(rowIndex, 2 + colIndex, parms['scheduplanmonth'][i].iPsLevel);
-                        parms.activeSheet.addSpan(rowIndex, 2 + colIndex, 6, 1);
-                        //产线名称
-                        sheet.setValue(rowIndex, 3 + colIndex, parms['scheduplanmonth'][i].cWorkName);
-                        parms.activeSheet.addSpan(rowIndex, 3 + colIndex, 6, 1);
-                        //存货编码
-                        sheet.setValue(rowIndex, 4 + colIndex, parms['scheduplanmonth'][i].cInvCode);
-                        parms.activeSheet.addSpan(rowIndex, 4 + colIndex, 6, 1);
-                        //客户部番
-                        sheet.setValue(rowIndex, 5 + colIndex, parms['scheduplanmonth'][i].cInvCode1);
-                        parms.activeSheet.addSpan(rowIndex, 5 + colIndex, 6, 1);
-                        //部品名称
-                        sheet.setValue(rowIndex, 6 + colIndex, parms['scheduplanmonth'][i].cInvName1);
-                        parms.activeSheet.addSpan(rowIndex, 6 + colIndex, 6, 1);
-                        rowIndex += 6;
+                        let aw = parms['scheduplanmonth'][i].childList.length;
+                        let cs = aw*6;
+                        if(i==0){
+                            sheet.setValue(rowIndex, 3 + colIndexs, parms['scheduplanmonth'][i].cWorkName);
+                            parms.activeSheet.addSpan(rowIndex, 3 + colIndexs, cs, 1);
+                            rowIndex+=cs;
+                        }else{
+                            sheet.setValue(rowIndex, 3 + colIndexs, parms['scheduplanmonth'][i].cWorkName);
+                            parms.activeSheet.addSpan(rowIndex, 3 + colIndexs, cs, 1);
+                        }
+                        for (let j = 0; j < parms['scheduplanmonth'][i].childList.length; j++) {
+                            //接收所有的code编码
+                            parms.cinvCode.push(parms['scheduplanmonth'][i].childList[j].cInvCode);
+                            //
+                            parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划使用");
+                            parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/1S");
+                            parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/2S");
+                            parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/3S");
+                            parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划在库");
+                            parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("在库天数");
+                            //定义多选按钮
+                            var cellType = new GC.Spread.Sheets.CellTypes.CheckBox();
+                            parms.activeSheet.getCell(rowIndexs, colIndexs).cellType(cellType);
+                            sheet.addSpan(rowIndexs, colIndexs, 6, 1);
+                            //序号
+                            sheet.setValue(rowIndexs, 1 + colIndexs, parms['scheduplanmonth'][i].childList[j].seq);
+                            parms.activeSheet.addSpan(rowIndexs, 1 + colIndexs, 6, 1);
+                            //排产层级
+                            sheet.setValue(rowIndexs, 2 + colIndexs, parms['scheduplanmonth'][i].childList[j].iPsLevel);
+                            parms.activeSheet.addSpan(rowIndexs, 2 + colIndexs, 6, 1);
+                            //存货编码
+                            sheet.setValue(rowIndexs, 4 + colIndexs, parms['scheduplanmonth'][i].childList[j].cInvCode);
+                            parms.activeSheet.addSpan(rowIndexs, 4 + colIndexs, 6, 1);
+                            //客户部番
+                            sheet.setValue(rowIndexs, 5 + colIndexs, parms['scheduplanmonth'][i].childList[j].cInvCode1);
+                            parms.activeSheet.addSpan(rowIndexs, 5 + colIndexs, 6, 1);
+                            //部品名称
+                            sheet.setValue(rowIndexs, 6 + colIndexs, parms['scheduplanmonth'][i].childList[j].cInvName1);
+                            parms.activeSheet.addSpan(rowIndexs, 6 + colIndexs, 6, 1);
+                            rowIndexs += 6;
+                            sheet.setColumnVisible(8, false);//隐藏第9列
+                            //设置第9列数据
+                            for (let s = 0; s < 6; s++) {
+                                if(i==0){
+                                    sheet.setValue(code++, 8, parms['scheduplanmonth'][i].childList[j].cInvCode);
+                                }else{
+                                    sheet.setValue(6 * j + code++, 8, parms['scheduplanmonth'][i].childList[j].cInvCode);
+                                }
+                            }
+                            for (let k = 0; k < parms['scheduplanmonth'][i].childList[j].day.length; k++) {
+                                if (i == 0) {
+                                    if(j==0){
+                                        sheet.setValue(shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].shiyong));
+                                        sheet.setValue(1 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].one));
+                                        sheet.setValue(2 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].two));
+                                        sheet.setValue(3 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].three));
+                                        sheet.setValue(4 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].zaiku));
+                                        sheet.setValue(5 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu));
+                                        //
+                                        sheet.setValue(5, 9, parms['scheduplanmonth'][i].childList[j].qiChuOneS);
+                                        sheet.setValue(6, 9, parms['scheduplanmonth'][i].childList[j].qiChuTwoS);
+                                        sheet.setValue(7, 9, parms['scheduplanmonth'][i].childList[j].qiChuThreeS);
+                                        sheet.setValue(8, 9, parms['scheduplanmonth'][i].childList[j].qiChuZaiKu);
+                                        sheet.setValue(9, 9, parms['scheduplanmonth'][i].childList[j].dayNum);
+                                        gentle=parms['scheduplanmonth'][i].childList.length*6+4;
+                                        let Num = sheet.getValue(9,9);
+                                        let useArray = [];
+                                        for (let k = 0; k < Num; k++) {
+                                            useArray.push(`R[-5]C[${k+1}]`);
+                                        }
+                                        //嵌入计划在库公式
+                                        sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
+                                        //嵌入在库天数公式
+                                        sheet.setFormula(B,Z++,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
+                                        //控制小数位为1位
+                                        sheet.setFormatter(5 + shiyongRow, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
+                                    }else{
+                                        sheet.setValue(6 * j + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].shiyong));
+                                        sheet.setValue(6 * j + shiyongRow + 1, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].one));
+                                        sheet.setValue(6 * j + shiyongRow + 1, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].childList[j].qiChuOneS));
+                                        sheet.setValue(6 * j + shiyongRow + 2, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].two));
+                                        sheet.setValue(6 * j + shiyongRow + 2, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].childList[j].qiChuTwoS));
+                                        sheet.setValue(6 * j + shiyongRow + 3, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].three));
+                                        sheet.setValue(6 * j + shiyongRow + 3, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].childList[j].qiChuOneS));
+                                        sheet.setValue(6 * j + shiyongRow + 4, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].zaiku));
+                                        sheet.setValue(6 * j + shiyongRow + 4, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].childList[j].qiChuZaiKu));
+                                        sheet.setValue(6 * j + shiyongRow + 5, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu));
+                                        sheet.setValue(6 * j +  + 5, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].childList[j].dayNum));
+                                        gentle=parms['scheduplanmonth'][i].childList.length*6+4;
+                                        //
+                                        let Num = sheet.getValue(6*i+9+6,9)
+                                        let useArray = [];
+                                        for (let k = 0; k < Num; k++) {
+                                            useArray.push(`R[-5]C[${k+1}]`)
+                                        }
+                                        //嵌入计划在库公式
+                                        sheet.setFormula(6 * j + shiyongRow + 4,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
+                                        //嵌入在库天数公式
+                                        sheet.setFormula(6 * j + shiyongRow + 5,Z++,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`);
+                                        // 控制小数位为1位
+                                        sheet.setFormatter(6 * j + shiyongRow + 5, shiyongCol + k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.0":"0.00");
+                                    }
+                                } else {
+                                    if(j==0){
+                                        console.log(gentle,'6*i+9+6')
+                                        sheet.setValue(gentle, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].shiyong));
+                                        sheet.setValue(1 + gentle, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].one));
+                                        sheet.setValue(2 + gentle, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].two));
+                                        sheet.setValue(3 + gentle, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].three));
+                                        sheet.setValue(4 + gentle, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].zaiku));
+                                        sheet.setValue(5 + gentle, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu));
+                                        //
+                                        sheet.setValue(gentle+1, 9, parms['scheduplanmonth'][i].childList[j].qiChuOneS);
+                                        sheet.setValue(gentle+2, 9, parms['scheduplanmonth'][i].childList[j].qiChuTwoS);
+                                        sheet.setValue(gentle+3, 9, parms['scheduplanmonth'][i].childList[j].qiChuThreeS);
+                                        sheet.setValue(gentle+4, 9, parms['scheduplanmonth'][i].childList[j].qiChuZaiKu);
+                                        sheet.setValue(gentle+5, 9, parms['scheduplanmonth'][i].childList[j].dayNum);
+                                        let Num = sheet.getValue(gentle,9)
+                                        let useArray = [];
+                                        for (let k = 0; k < Num; k++) {
+                                            useArray.push(`R[-5]C[${k+1}]`);
+                                        }
+                                        //嵌入计划在库公式
+                                        sheet.setFormula(4 + gentle,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
+                                        //嵌入在库天数公式
+                                        sheet.setFormula(5 + gentle,Z++,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
+                                        //控制小数位为1位
+                                        sheet.setFormatter(5 + gentle, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
+                                    }else{
+                                        sheet.setValue(6 * j + gentle, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].shiyong));
+                                        sheet.setValue(6 * j + gentle + 1, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].one));
+                                        sheet.setValue(6 * j + gentle + 1, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].childList[j].qiChuOneS));
+                                        sheet.setValue(6 * j + gentle + 2, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].two));
+                                        sheet.setValue(6 * j + gentle + 2, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].childList[j].qiChuTwoS));
+                                        sheet.setValue(6 * j + gentle + 3, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].three));
+                                        sheet.setValue(6 * j + gentle + 3, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].childList[j].qiChuOneS));
+                                        sheet.setValue(6 * j + gentle + 4, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].zaiku));
+                                        sheet.setValue(6 * j + gentle + 4, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].childList[j].qiChuZaiKu));
+                                        sheet.setValue(6 * j + gentle + 5, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu));
+                                        sheet.setValue(6 * j + gentle + 5, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].childList[j].dayNum));
+                                        //
+                                        let Num = sheet.getValue(6*i+9,9)
+                                        let useArray = [];
+                                        for (let k = 0; k < Num; k++) {
+                                            useArray.push(`R[-5]C[${k+1}]`)
+                                        }
+                                        //嵌入计划在库公式
+                                        sheet.setFormula(6*i+jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
+                                        //嵌入在库天数公式
+                                        sheet.setFormula(6*i+B,Z++,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`);
+                                        // 控制小数位为1位
+                                        sheet.setFormatter(6 * i + shiyongRow + 5, shiyongCol + k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.0":"0.00");
+                                    }
+                                }
+                                // 条件为false进入
+                                if(!parms['scheduplanmonth'][i].childList[j].day[k].lock){
+                                    if(i == 0){
+                                        if(j==0){
+                                            // 设定解锁样式
+                                            sheet.getCell(shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(1+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(2+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(3+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(4+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(5+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                        }else{
+                                            // gentle=parms['scheduplanmonth'][i].childList.length*6+4;
+                                            // console.log(6*i+shiyongRow,'2')
+                                            sheet.getCell(6*i+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(6*i+shiyongRow+1, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(6*i+shiyongRow+2, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(6*i+shiyongRow+3, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(6*i+shiyongRow+4, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(6*i+shiyongRow+5, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                        }
+                                    }else{
+                                        if(j==0){
+                                            // 设定解锁样式
+                                            sheet.getCell(shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(1+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(2+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(3+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(4+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(5+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                        }else{
+                                            sheet.getCell(6*i+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(6*i+shiyongRow+1, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(6*i+shiyongRow+2, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(6*i+shiyongRow+3, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(6*i+shiyongRow+4, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                            sheet.getCell(6*i+shiyongRow+5, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                        }
+                                    }
+                                }else{
+                                    if(j==0){
+                                        // 设定锁定样式
+                                        const style_1S = new GC.Spread.Sheets.Style();
+                                        style_1S.backColor = "#F0F0F0";
+                                        sheet.getCell(shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                        parms.activeSheet.setStyle(1+shiyongRow, shiyongCol+j,style_1S);
 
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划使用");
-                        console.log(parms.planListRowIndex)
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/1S");
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/2S");
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划/3S");
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("计划在库");
-                        parms.activeSheet.getCell(parms.planListRowIndex++, parms.planListColIndex).text("在库天数");
-                        //
-                        let code = 4;
-                        let hideIndex = 8;
-                        sheet.setColumnVisible(hideIndex, false);//隐藏第9列
-                        //设置第9列数据
-                        for (let s = 0; s < 6; s++) {
-                            if(i==0){
-                                sheet.setValue(code++, 8, parms['scheduplanmonth'][i].cInvCode);
-                            }else{
-                                sheet.setValue(6 * i + code++, 8, parms['scheduplanmonth'][i].cInvCode);
+                                        const style_2S = new GC.Spread.Sheets.Style();
+                                        sheet.getCell(2+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                        style_2S.backColor = "#F0F0F0";
+                                        parms.activeSheet.setStyle(2+shiyongRow, shiyongCol+j,style_2S);
+
+                                        const style_3S = new GC.Spread.Sheets.Style();
+                                        sheet.getCell(3+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                        style_3S.backColor = "#F0F0F0";
+                                        parms.activeSheet.setStyle(3+shiyongRow, shiyongCol+j,style_3S);
+                                    }else{
+                                        const style_1S = new GC.Spread.Sheets.Style();
+                                        sheet.getCell(6*i+shiyongRow+1, shiyongCol+j).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                        style_1S.backColor = "#F0F0F0";
+                                        parms.activeSheet.setStyle(6*i+shiyongRow+1, shiyongCol+j,style_1S);
+                                        //
+                                        const style_2S = new GC.Spread.Sheets.Style();
+                                        sheet.getCell(6*i+shiyongRow+2, shiyongCol+j).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                        style_2S.backColor = "#F0F0F0";
+                                        parms.activeSheet.setStyle(6*i+shiyongRow+2, shiyongCol+j,style_2S);
+                                        //
+                                        const style_3S = new GC.Spread.Sheets.Style();
+                                        sheet.getCell(6*i+shiyongRow+3, shiyongCol+j).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                        style_3S.backColor = "#F0F0F0";
+                                        parms.activeSheet.setStyle(6*i+shiyongRow+3, shiyongCol+j,style_3S);
+                                    }
+                                }
+                                // 根据数据长度添加表格行列
+                                var addCol = parms['scheduplanmonth'].length+6;
+                                var addRow = 1;
+                                var row = parms.ColumnCount+addRow;
+                                var col = parms.RowCount+addCol;
+                                spread.getSheet(0).setRowCount(col); //设置一列单元格的个数
+                                spread.getSheet(0).setColumnCount(row); //设置一行有多少个单元格
+                                parms.RowCount=col;
+                                parms.ColumnCount=row;
                             }
                         }
-                         //日计划排版
-                        let shiyongRow = 4;//计划使用行下标
-                        let shiyongCol = 10;//计划使用列下标
-                        let zaikuCol = 9;//在库下标
-                        let B = 9;//在库天数公式嵌入起始行
-                        let Z = 10;//在库天数公式嵌入起始列
-                        let jihuaRow = 8;//计划在库公式嵌入起始行
-                        let jihuaCol = 10;//计划在库公式嵌入起始列
-                        //渲染计划数据
-                        for (var j = 0; j < parms['scheduplanmonth'][i].day.length; j++) {
-                            if (i == 0) {
-                                sheet.setValue(shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].shiyong));
-                                sheet.setValue(1 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].one));
-                                sheet.setValue(2 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].two));
-                                sheet.setValue(3 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].three));
-                                sheet.setValue(4 + shiyongRow, shiyongCol+j, parseFloat(parms['scheduplanmonth'][i].day[j].zaiku));
-                                sheet.setValue(5 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].tianshu));
-                                //
-                                sheet.setValue(5, 9, parms['scheduplanmonth'][i].qiChuOneS);
-                                sheet.setValue(6, 9, parms['scheduplanmonth'][i].qiChuTwoS);
-                                sheet.setValue(7, 9, parms['scheduplanmonth'][i].qiChuThreeS);
-                                sheet.setValue(8, 9, parms['scheduplanmonth'][i].qiChuZaiKu);
-                                sheet.setValue(9, 9, parms['scheduplanmonth'][i].dayNum);
-                                let Num = sheet.getValue(9,9)
-                                let useArray = [];
-                                for (let k = 0; k < Num; k++) {
-                                    useArray.push(`R[-5]C[${k+1}]`);
-                                }
-                                //嵌入计划在库公式
-                                sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
-                                //嵌入在库天数公式
-                                sheet.setFormula(B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`)
-                                //控制小数位为1位
-                                sheet.setFormatter(5 + shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0.00":"0.00");
-                            } else {
-                                sheet.setValue(6 * i + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].shiyong));
-                                sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].one));
-                                sheet.setValue(6 * i + shiyongRow + 1, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].qiChuOneS));
-                                sheet.setValue(6 * i + shiyongRow + 2, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].two));
-                                sheet.setValue(6 * i + shiyongRow + 2, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].qiChuTwoS));
-                                sheet.setValue(6 * i + shiyongRow + 3, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].three));
-                                sheet.setValue(6 * i + shiyongRow + 3, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].qiChuOneS));
-                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].zaiku));
-                                sheet.setValue(6 * i + shiyongRow + 4, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].qiChuZaiKu));
-                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].tianshu));
-                                sheet.setValue(6 * i + shiyongRow + 5, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].dayNum));
-                                //
-                                let Num = sheet.getValue(6*i+9,9)
-                                let useArray = [];
-                                for (let k = 0; k < Num; k++) {
-                                    useArray.push(`R[-5]C[${k+1}]`)
-                                }
-                                //嵌入计划在库公式
-                                sheet.setFormula(6*i+jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
-                                //嵌入在库天数公式
-                                sheet.setFormula(6*i+B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`);
-                                //控制小数位为1位
-                                sheet.setFormatter(6 * i + shiyongRow + 5, shiyongCol + j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0.0":"0.00");
-                            }
-                            // 条件为false进入
-                            if(!parms['scheduplanmonth'][i].day[j].lock){
-                                if(i==0){
-                                    // 设定解锁样式
-                                    sheet.getCell(shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    sheet.getCell(1+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    sheet.getCell(2+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    sheet.getCell(3+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    sheet.getCell(4+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    sheet.getCell(5+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                }else{
-                                    sheet.getCell(6*i+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    sheet.getCell(6*i+shiyongRow+1, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    sheet.getCell(6*i+shiyongRow+2, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    sheet.getCell(6*i+shiyongRow+3, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    sheet.getCell(6*i+shiyongRow+4, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    sheet.getCell(6*i+shiyongRow+5, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                }
-                            }else{
-                                if(i==0){
-                                    // 设定锁定样式
-                                    const style_1S = new GC.Spread.Sheets.Style();
-                                    style_1S.backColor = "#F0F0F0";
-                                    sheet.getCell(shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    parms.activeSheet.setStyle(1+shiyongRow, shiyongCol+j,style_1S);
-
-                                    const style_2S = new GC.Spread.Sheets.Style();
-                                    sheet.getCell(2+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    style_2S.backColor = "#F0F0F0";
-                                    parms.activeSheet.setStyle(2+shiyongRow, shiyongCol+j,style_2S);
-
-                                    const style_3S = new GC.Spread.Sheets.Style();
-                                    sheet.getCell(3+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    style_3S.backColor = "#F0F0F0";
-                                    parms.activeSheet.setStyle(3+shiyongRow, shiyongCol+j,style_3S);
-                                }else{
-                                    const style_1S = new GC.Spread.Sheets.Style();
-                                    sheet.getCell(6*i+shiyongRow+1, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    style_1S.backColor = "#F0F0F0";
-                                    parms.activeSheet.setStyle(6*i+shiyongRow+1, shiyongCol+j,style_1S);
-                                    //
-                                    const style_2S = new GC.Spread.Sheets.Style();
-                                    sheet.getCell(6*i+shiyongRow+2, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    style_2S.backColor = "#F0F0F0";
-                                    parms.activeSheet.setStyle(6*i+shiyongRow+2, shiyongCol+j,style_2S);
-                                    //
-                                    const style_3S = new GC.Spread.Sheets.Style();
-                                    sheet.getCell(6*i+shiyongRow+3, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
-                                    style_3S.backColor = "#F0F0F0";
-                                    parms.activeSheet.setStyle(6*i+shiyongRow+3, shiyongCol+j,style_3S);
-                                }
-                            }
-                        }
-                        // 根据数据长度添加表格行列
-                        var addCol = parms['scheduplanmonth'].length+6,addRow =1;
-                        var row = parms.ColumnCount+addRow;
-                        var col = parms.RowCount+addCol;
-                        spread.getSheet(0).setRowCount(col); //设置一列单元格的个数
-                        spread.getSheet(0).setColumnCount(row); //设置一行有多少个单元格
-                        parms.RowCount=col;
-                        parms.ColumnCount=row;
+                    //     //渲染计划数据
+                    //     for (var j = 0; j < parms['scheduplanmonth'][i].day.length; j++) {
+                    //         if (i == 0) {
+                    //             sheet.setValue(shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].shiyong));
+                    //             sheet.setValue(1 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].one));
+                    //             sheet.setValue(2 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].two));
+                    //             sheet.setValue(3 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].three));
+                    //             sheet.setValue(4 + shiyongRow, shiyongCol+j, parseFloat(parms['scheduplanmonth'][i].day[j].zaiku));
+                    //             sheet.setValue(5 + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].tianshu));
+                    //             //
+                    //             sheet.setValue(5, 9, parms['scheduplanmonth'][i].qiChuOneS);
+                    //             sheet.setValue(6, 9, parms['scheduplanmonth'][i].qiChuTwoS);
+                    //             sheet.setValue(7, 9, parms['scheduplanmonth'][i].qiChuThreeS);
+                    //             sheet.setValue(8, 9, parms['scheduplanmonth'][i].qiChuZaiKu);
+                    //             sheet.setValue(9, 9, parms['scheduplanmonth'][i].dayNum);
+                    //             let Num = sheet.getValue(9,9)
+                    //             let useArray = [];
+                    //             for (let k = 0; k < Num; k++) {
+                    //                 useArray.push(`R[-5]C[${k+1}]`);
+                    //             }
+                    //             //嵌入计划在库公式
+                    //             sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
+                    //             //嵌入在库天数公式
+                    //             sheet.setFormula(B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`)
+                    //             //控制小数位为1位
+                    //             sheet.setFormatter(5 + shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0.00":"0.00");
+                    //         } else {
+                    //             sheet.setValue(6 * i + shiyongRow, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].shiyong));
+                    //             sheet.setValue(6 * i + shiyongRow + 1, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].one));
+                    //             sheet.setValue(6 * i + shiyongRow + 1, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].qiChuOneS));
+                    //             sheet.setValue(6 * i + shiyongRow + 2, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].two));
+                    //             sheet.setValue(6 * i + shiyongRow + 2, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].qiChuTwoS));
+                    //             sheet.setValue(6 * i + shiyongRow + 3, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].three));
+                    //             sheet.setValue(6 * i + shiyongRow + 3, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].qiChuOneS));
+                    //             sheet.setValue(6 * i + shiyongRow + 4, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].zaiku));
+                    //             sheet.setValue(6 * i + shiyongRow + 4, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].qiChuZaiKu));
+                    //             sheet.setValue(6 * i + shiyongRow + 5, shiyongCol + j, parseFloat(parms['scheduplanmonth'][i].day[j].tianshu));
+                    //             sheet.setValue(6 * i + shiyongRow + 5, shiyongCol - 1, parseFloat(parms['scheduplanmonth'][i].dayNum));
+                    //             //
+                    //             let Num = sheet.getValue(6*i+9,9)
+                    //             let useArray = [];
+                    //             for (let k = 0; k < Num; k++) {
+                    //                 useArray.push(`R[-5]C[${k+1}]`)
+                    //             }
+                    //             //嵌入计划在库公式
+                    //             sheet.setFormula(6*i+jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
+                    //             //嵌入在库天数公式
+                    //             sheet.setFormula(6*i+B,Z++,`=IF(OR(RC[-${j+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${j+1}]))`);
+                    //             //控制小数位为1位
+                    //             sheet.setFormatter(6 * i + shiyongRow + 5, shiyongCol + j,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].day[j].tianshu))?"0.0":"0.00");
+                    //         }
+                    //         // 条件为false进入
+                    //         if(!parms['scheduplanmonth'][i].day[j].lock){
+                    //             if(i==0){
+                    //                 // 设定解锁样式
+                    //                 sheet.getCell(shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 sheet.getCell(1+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 sheet.getCell(2+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 sheet.getCell(3+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 sheet.getCell(4+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 sheet.getCell(5+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //             }else{
+                    //                 sheet.getCell(6*i+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 sheet.getCell(6*i+shiyongRow+1, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 sheet.getCell(6*i+shiyongRow+2, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 sheet.getCell(6*i+shiyongRow+3, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 sheet.getCell(6*i+shiyongRow+4, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 sheet.getCell(6*i+shiyongRow+5, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //             }
+                    //         }else{
+                    //             if(i==0){
+                    //                 // 设定锁定样式
+                    //                 const style_1S = new GC.Spread.Sheets.Style();
+                    //                 style_1S.backColor = "#F0F0F0";
+                    //                 sheet.getCell(shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 parms.activeSheet.setStyle(1+shiyongRow, shiyongCol+j,style_1S);
+                    //
+                    //                 const style_2S = new GC.Spread.Sheets.Style();
+                    //                 sheet.getCell(2+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 style_2S.backColor = "#F0F0F0";
+                    //                 parms.activeSheet.setStyle(2+shiyongRow, shiyongCol+j,style_2S);
+                    //
+                    //                 const style_3S = new GC.Spread.Sheets.Style();
+                    //                 sheet.getCell(3+shiyongRow, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 style_3S.backColor = "#F0F0F0";
+                    //                 parms.activeSheet.setStyle(3+shiyongRow, shiyongCol+j,style_3S);
+                    //             }else{
+                    //                 const style_1S = new GC.Spread.Sheets.Style();
+                    //                 sheet.getCell(6*i+shiyongRow+1, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 style_1S.backColor = "#F0F0F0";
+                    //                 parms.activeSheet.setStyle(6*i+shiyongRow+1, shiyongCol+j,style_1S);
+                    //                 //
+                    //                 const style_2S = new GC.Spread.Sheets.Style();
+                    //                 sheet.getCell(6*i+shiyongRow+2, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 style_2S.backColor = "#F0F0F0";
+                    //                 parms.activeSheet.setStyle(6*i+shiyongRow+2, shiyongCol+j,style_2S);
+                    //                 //
+                    //                 const style_3S = new GC.Spread.Sheets.Style();
+                    //                 sheet.getCell(6*i+shiyongRow+3, shiyongCol+j).locked(parms['scheduplanmonth'][i].day[j].lock);
+                    //                 style_3S.backColor = "#F0F0F0";
+                    //                 parms.activeSheet.setStyle(6*i+shiyongRow+3, shiyongCol+j,style_3S);
+                    //             }
+                    //         }
+                    //     }
+                    //
                     }
                     spreadResume();// 恢复绘制
                 }

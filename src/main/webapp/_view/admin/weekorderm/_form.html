@@ -11,9 +11,11 @@
                         #if(readonly != 'readonly')
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
+                        #if(weekOrderM.iAutoId??)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/weekorderm",
                         formSn="Co_WeekOrderM", o=weekOrderM, primaryKeyName="iAutoId",
                         className="cn.rjtech.admin.weekorderm.WeekOrderMService", permissionKeyPrefix="weekorderm")
+                        #end
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -82,6 +84,7 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group row">
+                                    <input type="hidden" name="icustomermid" value="#(weekOrderM.icustomerid??)" id="icustomermid" data-sync-attr="iautoid"/>
                                     <input type="hidden" name="weekOrderM.icustomerid" value="#(weekOrderM.icustomerid??)" id="icustomerid" data-sync-attr="iautoid"/>
                                     <input type="hidden" name="weekOrderM.ccuscode" value="#(weekOrderM.ccuscode??)" id="ccuscode" data-sync-attr="ccuscode"/>
                                     <label class="col-sm-3 col-form-label">客户名称</label>
@@ -93,7 +96,7 @@
                                                    id="ccusname"
                                                    data-url="admin/customer/autocomplete"
                                                    data-rule="required"
-                                                   data-sync-ele="#icustomerid,#ccuscode"
+                                                   data-sync-ele="#icustomermid,#icustomerid,#ccuscode"
                                                    data-text-attr="ccusname"
                                                    data-value-attr="iautoid"
                                                    data-column-attr="ccuscode,ccusname"
@@ -173,7 +176,7 @@
                                         <input type="text" autocomplete="off" class="form-control" data-rule="pnumber;fix<=#(precisionConfig5)"
                                                data-notnull="false"
                                                placeholder="请输入税率" maxlength="40" name="weekOrderM.iTaxRate"
-                                               value="#(weekOrderM.iTaxRate??)"/>
+                                               value="#number(weekOrderM.iTaxRate??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -379,9 +382,6 @@
                         } else {
                             successHandler(res.msg, res.data.iautoid);
                         }
-
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
                     }
@@ -394,7 +394,8 @@
                 },
                 cdistrictname: {
                     type: "select",
-                    linkPara: 'input[name="icustomermid"]',
+                    linkPara:"#icustomermid",
+
                     url: "/admin/customeraddr/list",
                     valueAttr: "cdistrictname",
                     textAttr: "cdistrictname",
@@ -498,6 +499,17 @@
             }
         };
         return editableTableOptions;
+    }
+
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/weekorderm/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
+            parent.refreshPjaxContainer();
+        });
     }
 
     /**
@@ -664,7 +676,6 @@
     {
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
-        parent.refreshPjaxContainer();
     }
 
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
@@ -702,15 +713,15 @@
             }
         });
     }
-    function setChooseDialogSelectResult(data){
-        $('#icustomerid').val(data.ccusname);
-    }
 
     // 选择客户名称
     function instCcusname(data) {
         $("#icustomerid").val(data.iautoid);
         $("#ccusname").val(data.ccusname);
         $("#ccuscode").val(data.ccuscode);
+
+        // 收货地点依赖数据
+        $("#icustomermid").val(data.iautoid);
     }
 </script>
 #end

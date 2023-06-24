@@ -154,6 +154,40 @@ public class SysAssemAdminController extends BaseAdminController {
 		renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit",10),get("orgCode",orgCode)));
 	}
 
+	/**
+	 * 获取资源
+	 */
+	public void getResource(){
+		String q = get("q");
+		if (notOk(q)){
+			renderJsonSuccess();
+			return;
+		}
+		String itemHidden = get("itemHidden");
+		String groupCode = get("groupCode");
+		String sourceBillType = get("sourceBillType");
+		Kv kv = new Kv();
+		kv.set("keywords",q);
+		kv.setIfNotNull("sourceBillType", sourceBillType);
+		kv.setIfNotNull("combination", groupCode);
+		kv.setIfNotNull("itemHidden", itemHidden);
+		kv.setIfNotNull("assemtype", "转换前");
+		renderJsonData(service.getResource(kv));
+	}
+
+	/**
+	 * 查询双单位条码数据
+	 */
+	public void getBarCodeData(){
+		String itemCode = get("itemCode");
+		String supplier = get("supplier");
+		String sourceBillType = get("sourceBillType");
+		Kv kv = new Kv();
+		kv.set("itemCode",itemCode);
+		kv.setIfNotNull("sourceBillType", sourceBillType);
+		kv.set("supplier",notOk(supplier)?' ':supplier);
+		renderJsonData(service.getBarcodeDatas(kv));
+	}
 
 
 }

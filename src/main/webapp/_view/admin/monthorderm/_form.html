@@ -19,7 +19,7 @@
                         #if(readonly != 'readonly')
                             <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
-
+                        #if(monthorderm.iAutoId??)
                         ### 参数列表
                         ### uri:                    接口URI
                         ### formSn:                 表单名
@@ -29,7 +29,7 @@
                         ### redonly:                查看页定义为readonly=readonly, 新增/编辑页 可不传
                         ### className:              实现审批业务的类名
                         #include("/_view/_common/_approval_btns.html", uri="/admin/monthorderm", formSn="Co_MonthOrderM", o=monthorderm, primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService", permissionKeyPrefix="monthorderm")
-
+                        #end
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -433,7 +433,6 @@
     {
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
-        parent.refreshPjaxContainer();
     }
 
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
@@ -445,13 +444,6 @@
             submit = s;
         }
 
-        // 普通表单表单，保存并提审处理
-        // submitThisForm(function (data) {
-        //     submit_#(pageId)(ret.data.iautoid, function (data) {
-        //         successHandler('提审成功', ret.data.iautoid);
-        //     });
-        // });
-        
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
     }
@@ -488,8 +480,6 @@
                             successHandler(ret.msg, ret.data.iautoid);
                         }
 
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
                     } else {
                         LayerMsgBox.alert(ret.msg, 2);
                     }

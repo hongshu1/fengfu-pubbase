@@ -245,6 +245,8 @@ public class WarehouseService extends BaseService<Warehouse> {
     }
 
     public List<Record> list(Kv kv) {
+        Long userDeptId = JBoltUserKit.getUserDeptId();
+        kv.setIfNotNull("iorgId",userDeptId);
         return dbTemplate("warehouse.paginateAdminDatas", kv).find();
     }
 

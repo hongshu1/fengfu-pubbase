@@ -4,12 +4,8 @@ import cn.jbolt._admin.msgcenter.TodoService;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.rjtech.admin.department.DepartmentService;
-import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
 import cn.rjtech.admin.form.FormService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
-import cn.rjtech.admin.investmentplan.InvestmentPlanService;
-import cn.rjtech.admin.proposalm.ProposalmService;
-import cn.rjtech.admin.purchasem.PurchasemService;
 import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.enums.ExpenseBudgetTypeEnum;
@@ -124,7 +120,7 @@ public class MsgEventListener {
 
                 int iBudgetYear = formData.get(ExpenseBudget.IBUDGETYEAR);
                 String cdepname = departmentService.getCdepName(formData.get(ExpenseBudget.CDEPCODE));
-                int iBudgetType = form.getInt(ExpenseBudget.IBUDGETTYPE);
+                int iBudgetType = formData.getInt(ExpenseBudget.IBUDGETTYPE);
                 
                 return cdepname + iBudgetYear + ExpenseBudgetTypeEnum.toEnum(iBudgetType).getText() + "的" + form.getCFormName() + "已于" + nowStr + "更新，请尽快处理";
             case "PL_Investment_Plan":

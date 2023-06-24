@@ -1,7 +1,5 @@
 package cn.rjtech.admin.syspuinstore;
 
-import java.util.List;
-
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -15,16 +13,14 @@ import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
-import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
-import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
+
+import java.util.List;
 
 /**
  * 采购入库单
@@ -117,30 +113,6 @@ public class SysPuinstoreAdminController extends BaseAdminController {
         render("onlysee.html");
     }
 
-    /*
-     * 反审批
-     * */
-    public void resetAutitById() {
-        Kv kv = getKv();
-        renderJson(service.resetAutitById(kv.getStr("autoid")));
-    }
-
-    /*
-     * 编辑页面的审批
-     * */
-    /*public void editAutit() {
-        Kv kv = getKv();
-        renderJson(service.editAutit(kv.getLong("autoid")));
-    }*/
-
-    /*
-     * 查看页面的审批
-     * */
-    public void onlyseeAutit() {
-        Kv kv = getKv();
-        renderJson(service.onlyseeAutit(kv.getLong("autoid")));
-    }
-
     /**
      * 更新
      */
@@ -207,62 +179,4 @@ public class SysPuinstoreAdminController extends BaseAdminController {
         renderJson(service.printData(getKv()));
     }
 
-    /*
-     * 批量审核通过
-     * */
-    public void batchApprove(@Para(value = "ids") String ids) {
-        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-
-        renderJson(service.batchApprove(ids));
-    }
-
-    /*
-     * 批量反审核
-     * */
-    public void batchReverseApprove(@Para(value = "ids") String ids) {
-        ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-
-        renderJson(service.batchReverseApprove(ids));
-    }
-
-    /*
-     * 审核通过
-     * */
-    public void approve(long autoid) {
-        renderJson(service.approve(getLong(0)));
-    }
-
-    /*
-     * 审核不通过
-     * */
-    public void reject(long autoid) {
-        renderJson(service.reject(getLong(0)));
-    }
-
-    /*
-     * 撤回
-     * */
-    public void withdraw(Long iAutoId) {
-        ValidationUtils.validateId(iAutoId, "iAutoId");
-
-        renderJson(service.withdraw(iAutoId));
-    }
-
-    /*
-     * 反审核
-     * */
-    public void reverseApprove(long autoid) {
-        ValidationUtils.validateId(autoid, "autoid");
-
-        renderJson(service.reverseApprove(autoid));
-    }
-
-    /*
-     * 提交审核
-     * */
-    public void submit(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.validateId(iautoid, "autoid");
-
-        renderJson(service.submit(iautoid));
-    }
 }

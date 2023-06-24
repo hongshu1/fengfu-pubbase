@@ -40,11 +40,12 @@ WHERE 1 = 1
 #if(enddate)
     and CONVERT(VARCHAR(10),t1.dcreatetime,23) <='#(enddate)'
 #end
-order by t1.dcreatetime desc
+order by t1.dupdatetime desc
     #end
 
 #sql("getMaterialsOutLines")
 select
+        t2.AutoId,
        t2.barcode,
        b.cInvCode as invcode,
        b.cInvName ,
@@ -53,7 +54,7 @@ select
        b.cInvName1,
        a.dPlanDate as plandate,
        b.cInvStd as cinvstd,
-       a.iQty as qty,
+       t2.qty,
        a.iQty as qtys,
        m.cOrderNo as SourceBillNo,
        m.iBusType as SourceBillType,

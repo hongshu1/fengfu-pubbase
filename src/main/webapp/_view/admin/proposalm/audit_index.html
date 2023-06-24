@@ -114,16 +114,21 @@
                 #end
 
                 #permission(PermissionKey.PROPOSALM_WITHDRAW)
-                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/proposalm/withdraw?iautoid=" data-confirm="确定撤销选中数据？" class="btn btn-outline-primary btn-sm"><i class="jbicon jb-jujue"></i> 撤销提交</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/formapproval/withdraw?formSn=PL_ProposalM&primaryKeyName=iautoid&permissionKey=proposalm_withdraw&className=cn.rjtech.admin.proposalm.ProposalmService&formAutoId=" data-confirm="确定撤销选中数据？" class="btn btn-outline-primary btn-sm"><i class="jbicon jb-jujue"></i> 撤销提审</button>
                 #end
 
+				#permission(PermissionKey.PROPOSALM_FORMAPPROVALFLOW_INDEX)
                 <button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
                         data-check-handler="getIdIfValid" data-url="admin/proposalm/proposalmFormApprovalFlowIndex?iautoid="
                         class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i class="fa fa-chain"></i>查看审批</button>
-
+				#end
                 #permission(PermissionKey.PROPOSALM_EFFECT)
                 <button data-ajaxbtn data-area="700,400" data-title="生效" data-handler="refreshJBoltTable" data-check-handler="effectiveValidate" data-url="/admin/proposalm/effect?iautoid=" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 生效</button>
                 #end
+
+				#permission(PermissionKey.PROPOSALM_UNEFFECT)
+				<button data-ajaxbtn data-area="700,400" data-title="失效" data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/proposalm/uneffect/" class="btn btn-outline-primary btn-sm"><i class="fa fa-check"></i> 失效</button>
+				#end
 
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
             </div>
