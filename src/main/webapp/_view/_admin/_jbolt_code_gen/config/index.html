@@ -679,7 +679,7 @@ function toggleTableSetCard(btnEle){
 	}else{
 		card.find(".toggleCardOpenBtn").addClass("d-none");
 	}
-	$("#table_design_right").toggleClass("col").toggleClass("col-8");
+	$("#table_design_right").toggleClass("jb_card_shrink_right").toggleClass("col-8");
 }
 
 function changeIsGenModel_#(pageId)(r,v){
@@ -1598,6 +1598,9 @@ function updateProjectPath(){
 	.card_left_box.jb_card_shrink_left{
 		width: 40px;
 		overflow: hidden;
+	}
+	.jb_card_shrink_right{
+		width: calc(100vw - 100px);
 	}
 	.card_left_box.jb_card_shrink_left .card-header,
 	.card_left_box.jb_card_shrink_left .card-body{
