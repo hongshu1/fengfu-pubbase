@@ -73,7 +73,7 @@ from pl_proposalm pm
     AND DATEDIFF(day, pm.dapplydate, #para(dapplydate)) = 0
 #end
 #if(cdepcode)
-    AND pm.cdepcode = #para(cdepcode)
+    AND pm.cdepcode like concat('#(cdepcode)','%')
 #end
 #if(iauditstatus)
     AND pm.iauditstatus = #para(iauditstatus)

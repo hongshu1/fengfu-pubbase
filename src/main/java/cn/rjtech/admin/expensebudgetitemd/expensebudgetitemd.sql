@@ -56,7 +56,7 @@ where 1=1
   and eb.ibudgetyear = #(ibudgetyear)
     #end
     #if(cdepcode)
-  and eb.cdepcode = #para(cdepcode)
+  and eb.cdepcode like concat('#(cdepcode)','%')
     #end
     #if(ibudgettype)
   and eb.ibudgettype = #para(ibudgettype)
