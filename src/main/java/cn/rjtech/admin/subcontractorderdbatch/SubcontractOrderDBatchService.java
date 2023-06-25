@@ -1,10 +1,8 @@
 package cn.rjtech.admin.subcontractorderdbatch;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -17,7 +15,6 @@ import cn.rjtech.model.momdata.SubcontractOrderDBatchVersion;
 import cn.rjtech.model.momdata.SubcontractorderdQty;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
 import com.google.zxing.BarcodeFormat;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -30,7 +27,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 采购/委外管理-采购现品票
@@ -171,6 +171,8 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     subcontractOrderDBatch.setCVersion("00");
     subcontractOrderDBatch.setCBarcode(barcode);
     subcontractOrderDBatch.setIsEffective(true);
+    // 完整条码：现品票_版本号
+    subcontractOrderDBatch .setCCompleteBarcode(barcode.concat("_00"));
     return subcontractOrderDBatch;
   }
 
@@ -424,6 +426,7 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
         orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, orderDBatch.getCBarcode());
     // 设置新版本号
     newBatch.setCVersion(cVersion);
+    newBatch.setCCompleteBarcode(orderDBatch.getCBarcode().concat("_").concat(cVersion));
     // 添加来源id
     newBatch.setCSourceld(String.valueOf(id));
     // 将旧的改为失效

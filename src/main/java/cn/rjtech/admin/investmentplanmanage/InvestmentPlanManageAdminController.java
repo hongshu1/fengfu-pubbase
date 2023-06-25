@@ -70,7 +70,7 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
     	renderJson(service.effect(getLong(0)));
     }
     /**
-     *	投资计划失效
+     *	投资计划作废
      * */
     @CheckPermission(PermissionKey.INVESTMENT_PLAN_MANAGE_CANCLE)
     public void cancle(){
@@ -86,7 +86,9 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
     	set("investmentPlan", investmentPlan);
     	render("approve_process_index.html");
     }
-    
+    /**
+     *	投资计划失效
+     * */
     @CheckPermission(PermissionKey.INVESTMENT_PLAN_MANAGE_UNEFFECT)
     public void uneffect(){
     	renderJson(service.uneffect(getLong()));

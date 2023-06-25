@@ -2,19 +2,25 @@ package cn.rjtech.admin.inventorychange;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.model.momdata.InventoryChange;
+import cn.rjtech.model.momdata.QcForm;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -23,6 +29,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +46,9 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 	protected InventoryChange dao() {
 		return dao;
 	}
+
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingDService;
 
 	@Override
     protected int systemLogTargetType() {
@@ -320,5 +330,39 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 
 	public List<Record> findInventoryChangeByInventoryId(Long iiventoryid){
 		return dbTemplate("inventorychange.findInventoryChangeByInventoryId",Kv.by("iiventoryid",iiventoryid)).find();
+	}
+
+	/**
+	 * 从系统导入字段配置，获得导入的数据
+	 */
+	public Ret importExcelClass(File file) {
+		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+		if (notOk(records)) {
+			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+		}
+
+
+		for (Record record : records) {
+
+			Date now=new Date();
+			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+			record.set("iOrgId", getOrgId());
+			record.set("cOrgCode", getOrgCode());
+			record.set("cOrgName", getOrgName());
+			record.set("iCreateBy", JBoltUserKit.getUserId());
+			record.set("dCreateTime", now);
+			record.set("cCreateName", JBoltUserKit.getUserName());
+			record.set("isDeleted",0);
+			record.set("iUpdateBy", JBoltUserKit.getUserId());
+			record.set("dUpdateTime", now);
+			record.set("cUpdateName", JBoltUserKit.getUserName());
+		}
+
+		// 执行批量操作
+		tx(() -> {
+			batchSaveRecords(records);
+			return true;
+		});
+		return SUCCESS;
 	}
 }

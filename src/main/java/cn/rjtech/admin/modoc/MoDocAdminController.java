@@ -23,6 +23,7 @@ import cn.rjtech.wms.utils.EncodeUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Page;
@@ -223,6 +224,19 @@ public class MoDocAdminController extends BaseAdminController {
 	}
 
 	/**
+	 * 编辑页面
+	 */
+	public void updatas(){
+		Record record=service.getmoDocupdata(getLong(0));
+		if(record == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		set("moDoc",record);
+		render("add.html");
+	}
+
+	/**
 	 * 人员信息操作
 	 */
 	public void personoperationdialog(){
@@ -231,6 +245,7 @@ public class MoDocAdminController extends BaseAdminController {
 		EncodeUtils.encodeUrl(get(InventoryRoutingConfig.PERSONEQUIPMENTJSON), EncodeUtils.UTF_8);
 		set("configid",getLong("iautoid"));
 		set("imdocid",getLong("imdocid"));
+		set("imergerate",kv.get("imergerate"));
 		set(InventoryRoutingConfig.PERSONEQUIPMENTJSON, EncodeUtils.encodeUrl(get(InventoryRoutingConfig.PERSONEQUIPMENTJSON), EncodeUtils.UTF_8) );
 		render("person_dialog_index.html");
 		//render("persondialog.html");
@@ -240,8 +255,8 @@ public class MoDocAdminController extends BaseAdminController {
 	 * 物料
 	 */
 	public void invc_dialog_index(){
-		set("configid",getLong("iautoid"));
-		set("iinventoryid",getLong("iinventoryid"));
+		set("configid",get("iautoid"));
+		set("iinventoryid",get("iinventoryid"));
 		set("imdocid",getLong("imdocid"));
 		render("invc_dialog_index.html");
 	}
@@ -506,5 +521,12 @@ public class MoDocAdminController extends BaseAdminController {
 		Kv kv = getKv();
 		Page<Record> page=service.getPersonByEquipment(getPageNumber(),getPageSize(),getKv());
 		renderJsonData(page);
+	}
+
+	/**
+	 * 编辑界面数据
+	 */
+	public void getMoDocbyIinventoryRoutingId(){
+		renderJsonData(service.getMoDocbyIinventoryRoutingId(getLong(0)));
 	}
 }

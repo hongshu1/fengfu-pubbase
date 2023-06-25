@@ -66,7 +66,7 @@ FROM
 WHERE
     1 = 1
     #if(cdepcode)
-  and  pm.cdepcode = #para(cdepcode)
+  and  pm.cdepcode like concat('#(cdepcode)','%')
     #end
     #if(ibudgetyear)
   and  pm.ibudgetyear = #para(ibudgetyear)

@@ -465,6 +465,9 @@ public class PurchasemAdminController extends BaseAdminController {
                 cbudgetno = Optional.ofNullable(investmentPlanItem).map(InvestmentPlanItem::getCplanno).orElse(null);
                 ibudgetmoney = investmentPlanItem.getIamounttotal();
             }
+            Vendor vendor = vendorRecordService.findByCode(proposald.getCvencode());
+            String cvenname = null;
+            cvenname = vendor != null ? vendor.getCVenName() : cvenname;
             purchaseds.add(new Record()
                     .set("iproposaldid", proposald.getIautoid())
                     .set("itaxrate", proposald.getItaxrate())
@@ -478,6 +481,22 @@ public class PurchasemAdminController extends BaseAdminController {
                     .set("isourcetype", proposald.getIsourcetype())
                     .set("isourceid", proposald.getIsourceid())
                     .set("iprojectcardid", proposald.getIprojectcardid())
+                    .set("cunit", proposald.getCunit())
+                    .set("iquantity", proposald.getIquantity())
+                    .set("iprice", proposald.getIunitprice())
+                    .set("nflat", proposald.getNflat())
+                    .set("itaxrate", proposald.getItaxrate())
+                    .set("ddemandate", proposald.getDdemanddate())
+                    .set("cvencode", proposald.getCvencode())
+                    .set("cvenname", cvenname)
+                    .set("ccurrency", proposald.getCcurrency())
+                    .set("itax", proposald.getItax())
+                    .set("itaxexclusivetotalamount", proposald.getImoney())
+                    .set("itotalamount", proposald.getIsum())
+                    .set("inatunitprice", proposald.getInatunitprice())
+                    .set("inattax", proposald.getInattax())
+                    .set("inatmoney", proposald.getInatmoney())
+                    .set("inatsum", proposald.getInatsum())
             );
         }
         set("purchaseds", purchaseds);
