@@ -3,6 +3,7 @@ package cn.rjtech.admin.inventoryqcform;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
@@ -42,6 +43,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,6 +56,7 @@ import java.util.stream.Collectors;
  */
 public class InventoryQcFormService extends BaseService<InventoryQcForm> {
     private final InventoryQcForm dao = new InventoryQcForm().dao();
+
 
     @Override
     protected InventoryQcForm dao() {
@@ -616,7 +619,7 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
 
         for (Record record : records) {
 
-            if (StrUtil.isBlank(record.getStr("iInventoryId"))) {
+            if (StrUtil.isBlank(record.getStr("iQcFormId"))) {
                 return fail("检验表格名称不能为空");
             }
             if (StrUtil.isBlank(record.getStr("cTypeNames"))) {
@@ -627,6 +630,11 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
             }
 
             String cTypeNames = record.getStr("cTypeNames");
+            BigDecimal iQcFormId = record.getBigDecimal("iQcFormId");
+            QcForm byId = qcFormService.findById(iQcFormId);
+            if (ObjectUtil.isNull(byId)){
+                ValidationUtils.error(""+iQcFormId+"检验表格id不存在");
+            }
 
 
             List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey("inspection_type", true);
