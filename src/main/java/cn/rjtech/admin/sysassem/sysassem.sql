@@ -183,6 +183,7 @@ select t.* from
      , v.cVenName                                       as venname
      , uom.cUomCode
      , uom.cUomName
+     ,change.iBeforeInventoryId
 from PS_PurchaseOrderDBatch a
          left join Bd_Inventory b on a.iinventoryId = b.iAutoId
          left join PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
@@ -192,7 +193,8 @@ from PS_PurchaseOrderDBatch a
                    on tc.iPurchaseOrderDid = d.iAutoId
                        and tc.iAutoId = a.iPurchaseOrderdQtyId
          left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
-where a.isEffective = '1'
+         left join Bd_InventoryChange change on change.iBeforeInventoryId=b.iAutoId
+where a.isEffective = '1' and change.iAutoId is not null
   and m.IsDeleted = '0'
 ###   and m.hideInvalid = '0'
   and d.isDeleted = '0'
@@ -231,6 +233,7 @@ select '#(combination)'                              as combination,
      , v.cVenName                                       as venname
      , uom.cUomCode
      , uom.cUomName
+     ,change.iBeforeInventoryId
 from PS_SubcontractOrderDBatch a
          left join Bd_Inventory b on a.iinventoryId = b.iAutoId
          left join PS_SubcontractOrderD d on a.iSubcontractOrderDid = d.iAutoId
@@ -240,7 +243,8 @@ from PS_SubcontractOrderDBatch a
                    on tc.iSubcontractOrderDid = d.iAutoId
                        and tc.iAutoId = a.iSubcontractOrderDid
          left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
-where a.isEffective = '1'
+         left join Bd_InventoryChange change on change.iBeforeInventoryId=b.iAutoId
+where a.isEffective = '1' and change.iAutoId is not null
   and m.IsDeleted = '0'
 ###   and m.hideInvalid = '0'
   and d.isDeleted = '0'
