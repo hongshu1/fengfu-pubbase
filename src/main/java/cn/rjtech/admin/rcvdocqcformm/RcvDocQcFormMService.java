@@ -354,6 +354,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     public void saveSysPuinstoreModel(SysPuinstore sysPuinstore, RcvDocQcFormM docQcFormM,
                                       List<SysPuinstoredetail> sysPuinstoredetails) {
         Date date = new Date();
+        String userName = JBoltUserKit.getUserName();
+        Long userId = JBoltUserKit.getUserId();
         Vendor vendor = vendorService.findById(docQcFormM.getIVendorId());
         SysPureceive sysPureceive = sysPureceiveService.findById(docQcFormM.getIRcvDocId());
         sysPuinstore.setOrganizeCode(getOrgCode());//组织编码
@@ -361,7 +363,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         sysPuinstore.setBillDate(DateUtil.formatDate(date)); //入库日期
         sysPuinstore.setVenCode(vendor.getCVenCode()); //供应商编码
         sysPuinstore.setMemo(docQcFormM.getCMemo());
-        sysPuinstore.setCCreateName(JBoltUserKit.getUserName());
+        sysPuinstore.setCCreateName(userName);
         sysPuinstore.setDCreateTime(date);
         //状态 0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
         sysPuinstore.setIAuditStatus(0);
@@ -371,7 +373,10 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         sysPuinstore.setWhName(sysPureceive.getWhName());
         sysPuinstore.setIAuditWay(0);
         sysPuinstore.setIsDeleted(false);
-        sysPuinstore.setICreateBy(JBoltUserKit.getUserId());
+        sysPuinstore.setICreateBy(userId);
+        sysPuinstore.setCUpdateName(userName);
+        sysPuinstore.setDUpdateTime(date);
+        sysPuinstore.setIUpdateBy(userId);
 
         //采购入库从表
         List<SysPureceivedetail> list = sysPureceivedetailService.findFirstBy(sysPureceive.getAutoID());
@@ -382,6 +387,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     public void saveSysPuinstoreDetail(List<SysPuinstoredetail> sysPuinstoredetails,
                                        List<SysPureceivedetail> list, SysPuinstore sysPuinstore) {
         int i = 1;
+        Date date = new Date();
+        String userName = JBoltUserKit.getUserName();
         for (SysPureceivedetail detail : list) {
             Record record = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", detail.getBarcode()))
                 .findFirst();
@@ -397,13 +404,15 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             sysPuinstoredetail.setQty(detail.getQty());
             sysPuinstoredetail.setRowNo(i);
             sysPuinstoredetail.setTrackType(detail.getTrackType());
-            sysPuinstoredetail.setCCreateName(JBoltUserKit.getUserName());
-            sysPuinstoredetail.setDCreateTime(new Date());
+            sysPuinstoredetail.setCCreateName(userName);
+            sysPuinstoredetail.setDCreateTime(date);
             sysPuinstoredetail.setSpotTicket(detail.getBarcode());
             sysPuinstoredetail.setPuUnitCode(record.getStr("puunitcode"));
             sysPuinstoredetail.setPuUnitName(record.getStr("puunitname"));
             sysPuinstoredetail.setIsDeleted(false);
             sysPuinstoredetail.setInvcode(record.getStr("cinvcode"));
+            sysPuinstoredetail.setCUpdateName(userName);
+            sysPuinstoredetail.setDUpdateTime(date);
 
             //主表的数据
             sysPuinstore.setBillType(record.getStr("ipurchasetypeid"));//采购类型：采购PO  委外OM
@@ -411,7 +420,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             //业务类型：0：采购入库，1：委外入库
             sysPuinstore.setIBusType(Integer.valueOf(record.getStr("ibustype")));
             sysPuinstore.setRdCode(record.getStr("scrdcode"));
-
             sysPuinstoredetails.add(sysPuinstoredetail);
             i++;
         }
