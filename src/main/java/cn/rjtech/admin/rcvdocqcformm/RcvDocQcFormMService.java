@@ -31,27 +31,20 @@ import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseRcvdocqcformdLine;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.excel.SheetPage;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
-import com.jfinal.config.JFinalConfig;
-import com.jfinal.core.JFinal;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jxls.util.Util;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -658,7 +651,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     /*
      * 获取导出数据
      * */
-    public Kv getExportData(Long iautoid) {
+    public Kv getExportData(Long iautoid) throws IOException {
         //1、所有sheet
         List<SheetPage<Record>> pages = new ArrayList<>();
         //2、每个sheet的名字
@@ -666,16 +659,16 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         //3、主表数据
         Record rcvDocQcFormMRecord = getCheckoutListByIautoId(iautoid);
         //测定目的
-        String cMeasurePurpose = "";
+        StringBuilder cMeasurePurpose = new StringBuilder();
         String[] split = rcvDocQcFormMRecord.getStr("cmeasurepurpose").split(",");
-        for (int i = 0; i < split.length; i++) {
-            if (StringUtils.isNotBlank(split[i])) {
-                String text = CMeasurePurposeEnum.toEnum(Integer.valueOf(split[i])).getText();
-                cMeasurePurpose += text + ",";
+        for (String s : split) {
+            if (StringUtils.isNotBlank(s)) {
+                String text = CMeasurePurposeEnum.toEnum(Integer.parseInt(s)).getText();
+                cMeasurePurpose.append(text).append(",");
             }
         }
-        rcvDocQcFormMRecord.set("cmeasurepurpose", StringUtils.isNotBlank(cMeasurePurpose)
-            ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose);
+        rcvDocQcFormMRecord.set("cmeasurepurpose", StringUtils.isNotBlank(cMeasurePurpose.toString())
+            ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose.toString());
         //4、明细表数据
 //        List<RcvDocQcFormD> formDList = rcvDocQcFormDService.findByIRcvDocQcFormMId(iautoid);
         //5、如果cvalue的列数>10行，分多个页签
@@ -690,17 +683,16 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             paramName.setValue(String.valueOf(map.get("cqcitemname")));
             columnNames.add(paramName);
         }
-        List<String> collect = columnNames.stream().map(ParamName::getValue).collect(Collectors.toList());
-        rcvDocQcFormMRecord.set("columnNames", collect);//项目列名
-        try {
-            String cpics = JBoltConfig.BASE_UPLOAD_PATH_PRE + rcvDocQcFormMRecord.getStr("cpics");
-            System.out.println("打印图片路径=====》"+cpics);
-            FileInputStream fileInputStream = new FileInputStream(cpics);
-            byte[] imageBytes = Util.toByteArray(fileInputStream);
-            rcvDocQcFormMRecord.set("cpics", imageBytes);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+//        List<String> collect = columnNames.stream().map(ParamName::getValue).collect(Collectors.toList());
+        rcvDocQcFormMRecord.set("columnNames", columnNames);//项目列名
+        
+        String cpics = JBoltConfig.BASE_UPLOAD_PATH_PRE +  StrUtil.SLASH + rcvDocQcFormMRecord.getStr("cpics");
+        System.out.println("打印图片路径=====》"+cpics);
+        
+        FileInputStream fileInputStream = new FileInputStream(cpics);
+        byte[] imageBytes = Util.toByteArray(fileInputStream);
+            
+        rcvDocQcFormMRecord.set("cpics", imageBytes);
         commPageMethod2(recordList, rcvDocQcFormMRecord, pages, sheetNames);
         return Kv.by("pages", pages).set("sheetNames", sheetNames);
     }
