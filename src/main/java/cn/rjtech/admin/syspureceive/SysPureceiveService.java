@@ -1055,7 +1055,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
     }
 
     @Override
-    public String postRejectFunc(long formAutoId) {
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return null;
     }
 

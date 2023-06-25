@@ -9,7 +9,6 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.auditformconfig.AuditFormConfigService;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -53,8 +51,6 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
     private CusOrderSumService cusOrderSumService;
     @Inject
     private FormApprovalService formApprovalService;
-    @Inject
-    private AuditFormConfigService auditFormConfigService;
 
     @Override
     protected MonthOrderM dao() {
@@ -347,16 +343,11 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
         return null;
     }
 
-    @Override
-    public String postRejectFunc(long formAutoId) {
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
-        return null;
-    }
-
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId, Boolean isWithinBatch) {
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }

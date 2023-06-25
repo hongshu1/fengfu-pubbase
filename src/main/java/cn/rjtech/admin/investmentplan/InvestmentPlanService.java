@@ -929,7 +929,8 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return null;
     }
 	

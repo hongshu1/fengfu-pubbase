@@ -788,7 +788,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
      * 审核不通过
      * */
     @Override
-    public String postRejectFunc(long formAutoId) {
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return reject(formAutoId);
     }
 

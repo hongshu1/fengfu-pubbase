@@ -526,7 +526,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 	}
 
 	@Override
-	public String postRejectFunc(long formAutoId) {
+	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
 		return null;
 	}
 
