@@ -990,6 +990,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
                         record.getLong(PurchaseOrderD.IINVENTORYID),
                         vendorAddr.getCDistrictName(),
                         record.getStr(PurchaseOrderD.CMEMO),
+                        record.getInt(PurchaseOrderD.IPKGQTY),
                         IsOkEnum.toEnum(isPresent).getText());
                     break;
                 default:
@@ -999,6 +1000,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
                         record.getLong(PurchaseOrderD.IINVENTORYID),
                         vendorAddr.getCDistrictName(),
                         record.getStr(PurchaseOrderD.CMEMO),
+                        record.getInt(PurchaseOrderD.IPKGQTY),
                         IsOkEnum.toEnum(isPresent).getText());
             }
 
