@@ -159,19 +159,19 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 
 	public List<Record> dataList(Long iinventoryroutingid) {
 		List<Record> list = dbTemplate("inventoryclass.getRouingConfigs", Okv.by("iinventoryroutingid", iinventoryroutingid)).find();
-		if (CollectionUtil.isNotEmpty(list)){
-			for (Record record : list){
+		if (CollectionUtil.isNotEmpty(list)) {
+			for (Record record : list) {
 				Long routingConfigId = record.getLong(InventoryRoutingConfig.IAUTOID);
 				List<Record> routingInvList = inventoryRoutingInvcService.findRoutingConfigId(routingConfigId);
 				// 物料集
-				if (CollectionUtil.isNotEmpty(routingInvList)){
+				if (CollectionUtil.isNotEmpty(routingInvList)) {
 					String jsonString = JSONObject.toJSONString(routingInvList);
 					record.set(InventoryRoutingConfig.ITEMJSON, EncodeUtils.encodeUrl(jsonString, EncodeUtils.UTF_8));
 					record.set(InventoryRoutingConfig.ITEMJSONSTR, routingInvList);
 				}
 				// 设备集
 				List<Record> equipmentList = inventoryRoutingEquipmentService.findRoutingConfigId(routingConfigId);
-				if (CollectionUtil.isNotEmpty(equipmentList)){
+				if (CollectionUtil.isNotEmpty(equipmentList)) {
 					String jsonString = JSONObject.toJSONString(equipmentList);
 					record.set(InventoryRoutingConfig.EQUIPMENTJSON, EncodeUtils.encodeUrl(jsonString, EncodeUtils.UTF_8));
 					record.set(InventoryRoutingConfig.EQUIPMENTJSONSTR, equipmentList);
