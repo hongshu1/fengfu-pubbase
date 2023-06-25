@@ -1,6 +1,7 @@
 #sql("findByPurchaseOrderMid")
 SELECT
 	d.iInventoryId,
+	d.iPkgQty,
 	qty.*
 FROM
 	PS_PurchaseOrderD_Qty qty

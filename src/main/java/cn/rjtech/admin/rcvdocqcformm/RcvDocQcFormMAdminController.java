@@ -2,15 +2,12 @@ package cn.rjtech.admin.rcvdocqcformm;
 
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
-import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
@@ -23,7 +20,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 质量管理-来料检
@@ -154,7 +150,6 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        //List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
         List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
         // 表头项目
         RcvDocQcFormM qcFormM = service.findById(record.getLong("iautoid"));

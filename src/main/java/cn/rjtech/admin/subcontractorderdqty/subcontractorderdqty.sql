@@ -1,6 +1,7 @@
 #sql("findBySubcontractOrderMId")
 SELECT
 	d.iInventoryId,
+	d.iPkgQty,
 	qty.*
 FROM
 	PS_SubcontractOrderD_Qty qty
