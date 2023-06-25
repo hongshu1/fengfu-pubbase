@@ -484,7 +484,8 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return null;
     }
 	
@@ -495,6 +496,7 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
      * @param isFirst    是否为审批的第一个节点
      * @param isLast     是否为审批的最后一个节点
      */
+    @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         // 反审回第一个节点，回退状态为“已保存”
         if (isFirst) {
