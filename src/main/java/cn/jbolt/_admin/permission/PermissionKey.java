@@ -2196,4 +2196,9 @@ public class PermissionKey {
 	 * 撤回
 	 */
 	public static final String SUBCONTRACTSALEORDERM_WITHDRAW = "subcontractsaleorderm_withdraw";
+
+	/**
+	 * 盘点单
+	 */
+	public static final String CURRENT_STOCK = "current_stock";
 }
