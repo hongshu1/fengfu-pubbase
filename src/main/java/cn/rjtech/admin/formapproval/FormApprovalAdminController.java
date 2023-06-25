@@ -26,7 +26,7 @@ import java.util.List;
  * @author: RJ
  * @date: 2023-04-18 17:26
  */
-@CheckPermission(PermissionKey.FORMAPPROVAL)
+@UnCheck
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/formapproval", viewPath = "/_view/admin/formapproval")

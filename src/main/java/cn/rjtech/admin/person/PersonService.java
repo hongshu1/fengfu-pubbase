@@ -505,7 +505,13 @@ public class PersonService extends BaseService<Person> {
         
         return dbTemplate("person.getAutocompleteListWithDept", para).find();
     }
-
+    public List<Record> getAutocompleteDatasContainSubDep(String cdepcode, String q, Integer limit) {
+        Okv para = Okv.by("q", q)
+                .set("limit", limit)
+                .set("iorgid", getOrgId())
+                .set("cdepcodelike", cdepcode);
+        return dbTemplate("person.getAutocompleteListWithDept", para).find();
+    }
     /**
      * 通过用户组织获取人员
      * 
