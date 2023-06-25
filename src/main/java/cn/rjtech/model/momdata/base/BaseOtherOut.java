@@ -580,18 +580,18 @@ public abstract class BaseOtherOut<M extends BaseOtherOut<M>> extends JBoltBaseM
 	/**
 	 * 审核时间
 	 */
-	public M setDAudittime(java.util.Date dAudittime) {
-		set("dAudittime", dAudittime);
+	public M setDAuditTime(java.util.Date dAuditTime) {
+		set("dAuditTime", dAuditTime);
 		return (M)this;
 	}
 
 	/**
 	 * 审核时间
 	 */
-	@JBoltField(name="daudittime" ,columnName="dAudittime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=31)
+	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=31)
 	@JSONField(name = "daudittime")
-	public java.util.Date getDAudittime() {
-		return getDate("dAudittime");
+	public java.util.Date getDAuditTime() {
+		return getDate("dAuditTime");
 	}
 
 }
