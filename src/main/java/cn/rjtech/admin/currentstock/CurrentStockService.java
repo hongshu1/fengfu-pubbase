@@ -16,6 +16,7 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.StockCheckDetail;
 import cn.rjtech.model.momdata.StockCheckVouch;
 import cn.rjtech.model.momdata.StockCheckVouchDetail;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
@@ -26,9 +27,12 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * 盘点单Service
@@ -36,8 +40,9 @@ import java.util.*;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2021-11-12 16:01
  */
-public class CurrentStockService extends BaseU8RecordService {
+public class CurrentStockService extends BaseU8RecordService implements IApprovalService {
 
+	Logger log = Logger.getLogger("CurrentStockService");
 	@Inject
 	StockCheckVouchDetailService stockCheckVouchDetailService;
 
@@ -595,7 +600,7 @@ public class CurrentStockService extends BaseU8RecordService {
 	/**
 	 * 调用wms的标准接口
 	 */
-	public String base_in(String json){
+	public String baseIn(String json){
 		String vouchSumbmitUrl = AppConfig.getVouchSumbmitUrl();
 		System.out.println("----------推单前---------------");
 		System.out.println(json);
@@ -634,47 +639,16 @@ public class CurrentStockService extends BaseU8RecordService {
 		return post;
 	}
 
-	/**
-	 * 完成盘点
-	 * */
-	public Ret okCheck(Kv kv) {
-		String mid = kv.getStr("mid");
-		StockCheckVouch dbModel = stockChekVouchService.findById(mid);
-		dbModel.setStatus("1");
-		ValidationUtils.isTrue(dbModel.update(),"更新失败!");
-		return SUCCESS;
-	}
-
-
 
 	/**
-	 *  驳回
+	 *  审核通过推单
 	 * */
-	public Ret regret(Kv kv) {
-		String mid = kv.getStr("mid");
-		StockCheckVouch dbModel = stockChekVouchService.findById(mid);
-		dbModel.setStatus("0");
-		ValidationUtils.isTrue(dbModel.update(),"更新失败!");
-		return SUCCESS;
-	}
-
-
-
-	/**
-	 *  审核通过
-	 * */
-	public Ret agree(Kv kv) {
-		String mid = kv.getStr("mid");
-		StockCheckVouch dbModel = stockChekVouchService.findById(mid);
-		dbModel.setStatus("2");
-		ValidationUtils.isTrue(dbModel.update(),"更新失败!");
+	public Ret agree(StockCheckVouch checkVouch) {
 		User user = JBoltUserKit.getUser();
 		String u8Name = user.getName();
-		String u8Code = String.valueOf(user.getId());
+		String u8Code = String.valueOf(JBoltUserKit.getUserId());
 		ValidationUtils.notNull(u8Name,"u8人员名称为空,推单失败!");
 		ValidationUtils.notNull(u8Code,"u8人员编码为空,推单失败!");
-
-
 
 		//下面是推单逻辑
 		Kv preAllocate=new Kv();
@@ -682,11 +656,11 @@ public class CurrentStockService extends BaseU8RecordService {
 		Date now=new Date();
 		String dateFormat = JBoltDateUtil.format(now, "yyyy-MM-dd");
 		preAllocate.set("loginDate",dateFormat);
-		preAllocate.set("type","CheckVouch");
+		preAllocate.set("type","CheckVouchAdj");
 
 
 		List<Map<String,String>> mainData=new ArrayList<>();
-		List<Record> modelList = stockCheckDetailService.findRecordByMasid(mid);
+		List<Record> modelList = stockCheckDetailService.findRecordByMasid(String.valueOf(checkVouch.getAutoId()));
 		for (Record model : modelList) {
 			BigDecimal adjustQty = model.getBigDecimal("adjustqty");
 			BigDecimal qty = model.getBigDecimal("qty");
@@ -731,13 +705,13 @@ public class CurrentStockService extends BaseU8RecordService {
 
 		target.put("usercode",u8Code);
 
-		String u8Password = userService.getU8Password(user);
-
-		target.put("password",u8Password);
+//		String u8Password = userService.getU8Password(user);
+//
+//		target.put("password",u8Password);
 
 		String json = JSON.toJSONString(target);
 
-		String post = base_in(json);
+		String post = baseIn(json);
 		return SUCCESS;
 	}
 
@@ -748,5 +722,116 @@ public class CurrentStockService extends BaseU8RecordService {
 	 * */
 	public List<Record> invDatasByIds(String ids) {
 		return dbTemplate("currentstock.invDatasByIds", Kv.by("ids", ids).set("orgcode",getOrgCode())).find();
+	}
+
+	/**
+	 * 处理审批通过的其他业务操作，如有异常返回错误信息
+	 * @param formAutoId    单据ID
+	 * @param isWithinBatch 是否为批量处理
+	 * @return
+	 */
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		StockCheckVouch byId = stockChekVouchService.findById(formAutoId);
+		if (ObjectUtils.isEmpty(byId)) {
+			log.info("未查询到相关盘点单数据，请联系管理员," + formAutoId + "," + isWithinBatch);
+			throw new RuntimeException("未查询到相关盘点单数据，请联系管理员," + formAutoId + "," + isWithinBatch);
+		}
+		byId.set("iauditby", JBoltUserKit.getUserId());
+		byId.set("cauditname", JBoltUserKit.getUserName());
+		byId.set("status", 2);
+		byId.set("iupdateby", JBoltUserKit.getUserId());
+		byId.set("cupdatename", JBoltUserKit.getUserName());
+		byId.set("dupdatetime", new Date());
+		ValidationUtils.isTrue(byId.update(),"更新失败!");
+		//推单U8
+		this.agree(byId);
+		return "SUCCESS";
+	}
+
+
+	@Override
+	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+		StockCheckVouch dbModel = stockChekVouchService.findById(formAutoId);
+		dbModel.setStatus("0");
+		dbModel.put("iupdateby", JBoltUserKit.getUserId());
+		dbModel.put("cupdatename", JBoltUserKit.getUserName());
+		dbModel.put("dupdatetime", new Date());
+		ValidationUtils.isTrue(dbModel.update(),"更新失败!");
+		return "SUCCESS";
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		StockCheckVouch dbModel = stockChekVouchService.findById(formAutoId);
+		dbModel.setStatus("0");
+		dbModel.put("iupdateby", JBoltUserKit.getUserId());
+		dbModel.put("cupdatename", JBoltUserKit.getUserName());
+		dbModel.put("dupdatetime", new Date());
+		ValidationUtils.isTrue(dbModel.update(),"更新失败!");
+		return "SUCCESS";
+	}
+
+	@Override
+	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		StockCheckVouch dbModel = stockChekVouchService.findById(formAutoId);
+		dbModel.setStatus("1");
+		dbModel.put("iupdateby", JBoltUserKit.getUserId());
+		dbModel.put("cupdatename", JBoltUserKit.getUserName());
+		dbModel.put("dupdatetime", new Date());
+		ValidationUtils.isTrue(dbModel.update(),"更新失败!");
+		return "SUCCESS";
+	}
+
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		StockCheckVouch dbModel = stockChekVouchService.findById(formAutoId);
+		dbModel.setStatus("0");
+		dbModel.put("iupdateby", JBoltUserKit.getUserId());
+		dbModel.put("cupdatename", JBoltUserKit.getUserName());
+		dbModel.put("dupdatetime", new Date());
+		ValidationUtils.isTrue(dbModel.update(),"更新失败!");
+		return "SUCCESS";
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		return null;
 	}
 }
