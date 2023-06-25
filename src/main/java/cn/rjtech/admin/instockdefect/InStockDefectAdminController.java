@@ -22,7 +22,7 @@ import com.jfinal.plugin.activerecord.Record;
  * @date: 2023-04-25 14:58
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.INSTOCKDEFECT)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/instockdefect", viewPath = "/_view/admin/instockdefect")
 public class InStockDefectAdminController extends BaseAdminController {

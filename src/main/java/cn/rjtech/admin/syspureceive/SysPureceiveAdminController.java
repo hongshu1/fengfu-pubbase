@@ -189,7 +189,9 @@ public class SysPureceiveAdminController extends BaseAdminController {
      */
     @UnCheck
     public void barcodeDatas() {
-        List<Record> barcodeDatas = service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()), null);
+        String whcode1 = get("whcode1");
+        ValidationUtils.notNull(whcode1, "请优先选择仓库。");
+        List<Record> barcodeDatas = service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()), null,whcode1);
         String barcode = get("detailHidden");
         if(null != barcode &&  !"".equals(barcode)){
             String[] split = barcode.split(",");

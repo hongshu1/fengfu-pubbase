@@ -200,19 +200,18 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 				//判断是否有主键id
 				if(isOk(formRecord.getStr("iautoid"))){
 					RcvDocDefect rcvDocDefect = findById(formRecord.getLong("iautoid"));
-					if (rcvDocDefect.getIStatus() == 1){
+					if (rcvDocDefect.getIStatus() == 2){
 						//录入数据
 						rcvDocDefect.setCApproach(formRecord.getStr("capproach"));
-						rcvDocDefect.setIStatus(2);
+						rcvDocDefect.setIStatus(3);
 						//更新人和时间
 						rcvDocDefect.setIUpdateBy(JBoltUserKit.getUserId());
 						rcvDocDefect.setCUpdateName(JBoltUserKit.getUserName());
 						rcvDocDefect.setDUpdateTime(now);
+						rcvDocDefect.update();
+					}else {
+						RcvDocfectLinesave(formRecord, now);
 					}
-					rcvDocDefect.update();
-				}else{
-					//保存未有主键的数据
-					RcvDocfectLinesave(formRecord, now);
 				}
 				return true;
 			});
@@ -232,16 +231,16 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		RcvDocDefect rcvDocDefect = new RcvDocDefect();
 		rcvDocDefect.setIAutoId(formRecord.getLong("iautoid"));
 
-		//质量管理-来料检明细
-		RcvDocQcFormM rcvDocQcFormM = rcvDocQcFormMService.findById(formRecord.getLong("ircvdocqcformmid"));
-		rcvDocDefect.setIRcvDocQcFormMid(rcvDocQcFormM.getIAutoId());
-		rcvDocDefect.setIVendorId(rcvDocQcFormM.getIInventoryId());
-		rcvDocDefect.setIInventoryId(rcvDocQcFormM.getIVendorId());
-		rcvDocDefect.setIQcUserId(rcvDocQcFormM.getIUpdateBy());
-		rcvDocDefect.setDQcTime(rcvDocQcFormM.getDUpdateTime());
+//		//质量管理-来料检明细
+//		RcvDocQcFormM rcvDocQcFormM = rcvDocQcFormMService.findById(formRecord.getLong("ircvdocqcformmid"));
+//		rcvDocDefect.setIRcvDocQcFormMid(rcvDocQcFormM.getIAutoId());
+//		rcvDocDefect.setIVendorId(rcvDocQcFormM.getIInventoryId());
+//		rcvDocDefect.setIInventoryId(rcvDocQcFormM.getIVendorId());
+//		rcvDocDefect.setIQcUserId(rcvDocQcFormM.getIUpdateBy());
+//		rcvDocDefect.setDQcTime(rcvDocQcFormM.getDUpdateTime());
 
 		//录入填写的数据
-		rcvDocDefect.setIStatus(1);
+		rcvDocDefect.setIStatus(2);
 		rcvDocDefect.setIDqQty(formRecord.getBigDecimal("idqqty"));
 		rcvDocDefect.setIRespType(formRecord.getInt("iresptype"));
 		rcvDocDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
@@ -249,19 +248,19 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		rcvDocDefect.setCDesc(formRecord.getStr("cdesc"));
 
 		//必录入基本数据
-		rcvDocDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
-		String billNo = BillNoUtils.getcDocNo(getOrgId(), "YCP", 5);
-		rcvDocDefect.setCDocNo(billNo);
-		rcvDocDefect.setIOrgId(getOrgId());
-		rcvDocDefect.setCOrgCode(getOrgCode());
-		rcvDocDefect.setCOrgName(getOrgName());
-		rcvDocDefect.setICreateBy(JBoltUserKit.getUserId());
-		rcvDocDefect.setCCreateName(JBoltUserKit.getUserName());
-		rcvDocDefect.setDCreateTime(now);
-		rcvDocDefect.setIUpdateBy(JBoltUserKit.getUserId());
-		rcvDocDefect.setCUpdateName(JBoltUserKit.getUserName());
-		rcvDocDefect.setDUpdateTime(now);
-		rcvDocDefect.save();
+//		rcvDocDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
+//		String billNo = BillNoUtils.getcDocNo(getOrgId(), "YCP", 5);
+//		rcvDocDefect.setCDocNo(billNo);
+//		rcvDocDefect.setIOrgId(getOrgId());
+//		rcvDocDefect.setCOrgCode(getOrgCode());
+//		rcvDocDefect.setCOrgName(getOrgName());
+//		rcvDocDefect.setICreateBy(JBoltUserKit.getUserId());
+//		rcvDocDefect.setCCreateName(JBoltUserKit.getUserName());
+//		rcvDocDefect.setDCreateTime(now);
+//		rcvDocDefect.setIUpdateBy(JBoltUserKit.getUserId());
+//		rcvDocDefect.setCUpdateName(JBoltUserKit.getUserName());
+//		rcvDocDefect.setDUpdateTime(now);
+		rcvDocDefect.update();
 	}
 
 	public void saveRcvDocDefectModel(RcvDocDefect rcvDocDefect, RcvDocQcFormM docQcFormM) {

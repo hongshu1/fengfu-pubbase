@@ -547,7 +547,7 @@ public class UserService extends JBoltUserService {
                     ValidationUtils.isTrue(userOrgService.notExistsDuplicatePerson(org.getOrgId(), org.getIPersonId()), "选择的人员已被占用");
                 }
                 
-                org.keep("id", "org_id", "position", "is_principal", "parent_psn_id", "version_num")
+                org.keep("id", "org_id", "position", "is_principal", "parent_psn_id", "version_num", "ipersonid")
                         .setLastUpdateId(user.getId())
                         .setLastUpdateName(user.getName())
                         .setLastUpdateTime(now);

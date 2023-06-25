@@ -325,5 +325,7 @@ public class PermissionService extends JBoltPermissionService {
 
         return convertToModelTree(allDatas,"id", "pid", (p)->notOk(p.getPid()));
     }
-
+    public List<Permission> findProposalTopNabMenu(){
+    	 return daoTemplate("permission.findProposalTopNabMenu").find();
+    }
     }
