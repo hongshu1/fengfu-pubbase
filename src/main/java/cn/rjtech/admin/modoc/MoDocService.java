@@ -116,7 +116,7 @@ public class MoDocService extends BaseService<MoDoc> {
   /**
    * 查询生产任务
    *
-   * @param id
+   * @param
    * @return
    */
   public HashMap<String, String> getJob(Long id) {
@@ -145,6 +145,9 @@ public class MoDocService extends BaseService<MoDoc> {
       return fail(JBoltMsg.PARAM_ERROR);
     }
 
+    ValidationUtils.notNull(moDoc.getIWorkRegionMid(),"未找到产线,请在存货档案维护产线!");
+    ValidationUtils.notNull(moDoc.getIDepartmentId(),"未找到部门，请在存货档案维护部门!");
+
     moDoc.setIType(2);
     //手工新增没有任务,先占着
     moDoc.setIMoTaskId(1001L);
@@ -162,7 +165,7 @@ public class MoDocService extends BaseService<MoDoc> {
     moDoc.setIQty(moDoc.getIQty());
     moDoc.setICompQty(moDoc.getICompQty());
     moDoc.setIPersonNum(0);
-    moDoc.setIStatus(1);
+    moDoc.setIStatus(0);
     moDoc.setIInventoryRouting(moDoc.getIInventoryRouting());
     moDoc.setCRoutingName(moDoc.getCRoutingName());
     InventoryRouting byId = inventoryRoutingService.findById(moDoc.getIInventoryRouting());
@@ -263,7 +266,6 @@ public class MoDocService extends BaseService<MoDoc> {
   public Ret addDoc(JBoltTable jBoltTable,String  rowid) {
     MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
     if (moDoc == null || isOk(moDoc.getIAutoId())) {
-      System.out.print("dddddddddds------------------------------------");
       return fail(JBoltMsg.PARAM_ERROR);
     }
 
@@ -1099,5 +1101,14 @@ public class MoDocService extends BaseService<MoDoc> {
     }
     Page<Record> iEquipmentIds = dbTemplate("modoc.getPersonByEquipment", keywords).paginate(pageNumber, pageSize);
     return  iEquipmentIds;
+  }
+
+  public Record getmoDocupdata(Long iautoid){
+      return dbTemplate("modoc.getmoDocupdata",Kv.by("iautoid",iautoid)).findFirst();
+  }
+
+  public List<Record> getMoDocbyIinventoryRoutingId(Long iMoDocId){
+    List<Record > datalists= dbTemplate("modoc.getMoDocbyIinventoryRoutingId",Kv.by("iMoDocId",iMoDocId)).find();
+    return datalists;
   }
 }

@@ -340,12 +340,14 @@
     }
 
     function submitForm(formData, tableData, commonInvMap, flag) {
+        var index = LayerMsgBox.loading();
         Ajax.post('/admin/bomM/submitForm', {
             formJsonData: JSON.stringify(formData),
             tableJsonData: JSON.stringify(tableData),
             commonInvData: JSON.stringify(commonInvMap),
             flag: flag
         }, function (ret) {
+            LayerMsgBox.close(index);
             if (ret.state === 'ok') {
                 LayerMsgBox.success(ret.msg, 1000, function () {
                     parent.LayerMsgBox.closeAll();

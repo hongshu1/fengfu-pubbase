@@ -146,10 +146,11 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 		String cMemo = jsonObject.getString(PurchaseOrderD.CMEMO.toLowerCase());
 		Boolean isPresent = jsonObject.getBoolean(PurchaseOrderD.ISPRESENT.toLowerCase());
 		Long iInventoryId = jsonObject.getLong(PurchaseOrderD.IINVENTORYID.toLowerCase());
-		return create(purchaseOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, isPresent);
+		Integer iPkgQty = jsonObject.getInteger(PurchaseOrderD.IPKGQTY.toLowerCase());
+		return create(purchaseOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, iPkgQty, isPresent);
 	}
 	
-	public PurchaseOrderD create(Long purchaseOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, boolean isPresent){
+	public PurchaseOrderD create(Long purchaseOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, Integer iPkgQty, boolean isPresent){
 		PurchaseOrderD purchaseOrderD = new PurchaseOrderD();
 		purchaseOrderD.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		purchaseOrderD.setIPurchaseOrderMid(purchaseOrderMid);
@@ -159,11 +160,12 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 		purchaseOrderD.setIsPresent(isPresent);
 		purchaseOrderD.setCMemo(cMemo);
 		purchaseOrderD.setCAddress(cAddress);
+		purchaseOrderD.setIPkgQty(iPkgQty);
 		return purchaseOrderD;
 	}
 	
-	public PurchaseOrderD create(Long id, Long purchaseOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, boolean isPresent) {
-		PurchaseOrderD purchaseOrderD = create(purchaseOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, isPresent);
+	public PurchaseOrderD create(Long id, Long purchaseOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, Integer iPkgQty, boolean isPresent) {
+		PurchaseOrderD purchaseOrderD = create(purchaseOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, iPkgQty, isPresent);
 		purchaseOrderD.setIAutoId(id);
 		return purchaseOrderD;
 	}
