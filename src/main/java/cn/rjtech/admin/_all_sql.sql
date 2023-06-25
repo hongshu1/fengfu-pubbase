@@ -685,3 +685,17 @@
 #namespace("commonmenu")
 #include("commonmenu/commonmenu.sql")
 #end
+
+
+#namespace("currentstock")
+#include("currentstock/currentstock.sql")
+#end
+
+
+#namespace("stockcheckdetail")
+#include("stockcheckdetail/stockcheckdetail.sql")
+#end
+
+#namespace("formextendfields")
+#include("formextendfields/formextendfields.sql")
+#end

@@ -1,11 +1,10 @@
 package cn.rjtech.admin.formapproval;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.permission.JBoltUserAuthKit;
-import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.*;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.cache.AuditFormConfigCache;
 import cn.rjtech.enums.FormAuditConfigTypeEnum;
@@ -27,7 +26,8 @@ import java.util.List;
  * @author: RJ
  * @date: 2023-04-18 17:26
  */
-@UnCheck
+@CheckPermission(PermissionKey.FORM_APPROVAL_PERMISSION)
+@UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/formapproval", viewPath = "/_view/admin/formapproval")
 public class FormApprovalAdminController extends BaseAdminController {
@@ -127,6 +127,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param className      实现审批通过业务的类名
      * @param permissionKey  单据提审权限key
      */
+    @CheckPermission(PermissionKey.FORM_APP_SUBMIT)
     public void submit(@Para(value = "formSn") String formSn,
                        @Para(value = "formAutoId") Long formAutoId,
                        @Para(value = "primaryKeyName") String primaryKeyName,
@@ -166,6 +167,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param primaryKeyName 单据主键名称
      * @param className      实现审批通过业务的类名
      */
+    @CheckPermission(PermissionKey.FORM_APP_APPROVE)
     public void approve(@Para(value = "formAutoId") Long formAutoId,
                         @Para(value = "formSn") String formSn,
                         @Para(value = "status") Integer status,
@@ -199,6 +201,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param primaryKeyName 单据主键名称
      * @param className      处理审批的Service类名
      */
+    @CheckPermission(PermissionKey.FORM_APP_REJECT)
     public void reject(@Para(value = "formAutoId") Long formAutoId,
                        @Para(value = "formSn") String formSn,
                        @Para(value = "status") Integer status,
@@ -222,6 +225,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param primaryKeyName 单据主键名称
      * @param className      处理审批的Service类名
      */
+    @CheckPermission(PermissionKey.FORM_APP_REVERSEAPPROVE)
     public void reverseApprove(@Para(value = "formAutoId") Long formAutoId,
                                @Para(value = "formSn") String formSn,
                                @Para(value = "status") Integer status,
@@ -244,6 +248,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param primaryKeyName 单据主键名称
      * @param className      实现审批通过的业务类名
      */
+    @CheckPermission(PermissionKey.FORM_APP_BATCH_APPROVE)
     public void batchApprove(@Para(value = "ids") String ids,
                              @Para(value = "formSn") String formSn,
                              @Para(value = "primaryKeyName") String primaryKeyName,
@@ -264,6 +269,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param primaryKeyName 单据主键名称
      * @param className      实现审批通过的业务类名
      */
+    @CheckPermission(PermissionKey.FORM_APP_BATCH_REJECT)
     public void batchReject(@Para(value = "ids") String ids,
                             @Para(value = "formSn") String formSn,
                             @Para(value = "primaryKeyName") String primaryKeyName,
@@ -302,6 +308,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param formSn         表名
      * @param primaryKeyName 单据主键名称
      */
+    @CheckPermission(PermissionKey.FORM_APP_BATCH_BACKOUT)
     public void batchBackOut(@Para(value = "ids") String ids,
                              @Para(value = "formSn") String formSn,
                              @Para(value = "primaryKeyName") String primaryKeyName,
@@ -469,7 +476,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "缺少实现审批通过后的业务类名");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“撤回”的权限");
-        
+
         renderJsonData(service.withdraw(formSn, primaryKeyName, formAutoId, className));
     }
 

@@ -3,19 +3,6 @@ SELECT m.*, d.cdepname
 FROM PL_Proposalm m
     left JOIN bd_Department d ON m.cdepcode = d.cdepcode
 WHERE m.iorgid = #para(iorgid)
-
-### 超级管理员不过滤权限部门
-#if(!isSystemAdmin)
-    ### 存在角色部门配置过滤处理
-    #if(accessCdepCodes && accessCdepCodes.size() > 0)
-        AND m.cDepCode IN (
-            #for(code:accessCdepCodes)
-                '#(code)' #(for.last?'':',')
-            #end
-        )
-    #end
-#end
-
 #if(audit)
     AND m.iauditstatus > 0 AND m.iauditstatus < 3
 #end
@@ -46,6 +33,7 @@ WHERE m.iorgid = #para(iorgid)
 #if(isscheduled)
     AND m.isscheduled = #para(isscheduled)
 #end
+#(getDataPermissionSql("m", "cdepcode"))
 ORDER BY m.iautoid DESC
 #end
 
@@ -85,7 +73,7 @@ from pl_proposalm pm
     AND DATEDIFF(day, pm.dapplydate, #para(dapplydate)) = 0
 #end
 #if(cdepcode)
-    AND pm.cdepcode = #para(cdepcode)
+    AND pm.cdepcode like concat('#(cdepcode)','%')
 #end
 #if(iauditstatus)
     AND pm.iauditstatus = #para(iauditstatus)
@@ -233,4 +221,20 @@ select sum(pd.imoney) imoney from pl_proposald pd
 	#if(ifirstsourceproposalid)
 		and pm.ifirstsourceproposalid not in (#(ifirstsourceproposalid))
 	#end
+#end
+
+#sql("isExistsProposalDatas")
+select count(1) from pl_proposald pd where exists (
+	select 1 from pl_investment_plan ip
+		left join pl_investment_plan_item ipi on ip.iautoid = ipi.iplanid 
+		where ip.iautoid = #para(iplanid) and pd.iSourceId = ipi.iautoid
+)
+#end
+
+#sql("isExistsPurchaseDatas")
+select count(1) from pl_purchased p where exists (
+	select 1 from pl_proposalm pm
+		left join pl_proposald pd on pm.iautoid = pd.iproposalmid
+		where pm.iautoid = #para(iproposalmid) and pd.iautoid = p.iproposaldid
+)
 #end

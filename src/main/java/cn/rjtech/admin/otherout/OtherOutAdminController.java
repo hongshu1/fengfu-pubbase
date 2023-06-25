@@ -91,7 +91,6 @@ public class OtherOutAdminController extends BaseAdminController {
 		}
 		set("otherOut",otherOut);
 		set("type", get("type"));
-		set("edit", get("edit"));
 		render("edit.html");
 	}
 

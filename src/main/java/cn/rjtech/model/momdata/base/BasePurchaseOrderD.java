@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -11,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BasePurchaseOrderD<M extends BasePurchaseOrderD<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**采购订单主表ID*/
@@ -23,13 +23,12 @@ public abstract class BasePurchaseOrderD<M extends BasePurchaseOrderD<M>> extend
     public static final String IVENDORADDRID = "iVendorAddrId";
     /**到货地址*/
     public static final String CADDRESS = "cAddress";
-    /**合计数量*/
-    public static final String ISUM = "iSum";
-   
     /**备注*/
     public static final String CMEMO = "cMemo";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    /**包装数量*/
+    public static final String IPKGQTY = "iPkgQty";
 	/**
 	 * 主键ID
 	 */
@@ -109,7 +108,7 @@ public abstract class BasePurchaseOrderD<M extends BasePurchaseOrderD<M>> extend
 	/**
 	 * 供应商地址ID
 	 */
-	@JBoltField(name="ivendoraddrid" ,columnName="iVendorAddrId",type="Long", remark="供应商地址ID", required=true, maxLength=19, fixed=0, order=5)
+	@JBoltField(name="ivendoraddrid" ,columnName="iVendorAddrId",type="Long", remark="供应商地址ID", required=false, maxLength=19, fixed=0, order=5)
 	@JSONField(name = "ivendoraddrid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIVendorAddrId() {
 		return getLong("iVendorAddrId");
@@ -133,24 +132,6 @@ public abstract class BasePurchaseOrderD<M extends BasePurchaseOrderD<M>> extend
 	}
 
 	/**
-	 * 合计数量
-	 */
-	public M setISum(java.math.BigDecimal iSum) {
-		set("iSum", iSum);
-		return (M)this;
-	}
-
-	/**
-	 * 合计数量
-	 */
-	@JBoltField(name="isum" ,columnName="iSum",type="BigDecimal", remark="合计数量", required=false, maxLength=18, fixed=2, order=7)
-	@JSONField(name = "isum")
-	public java.math.BigDecimal getISum() {
-		return getBigDecimal("iSum");
-	}
-	
-
-	/**
 	 * 备注
 	 */
 	public M setCMemo(java.lang.String cMemo) {
@@ -161,7 +142,7 @@ public abstract class BasePurchaseOrderD<M extends BasePurchaseOrderD<M>> extend
 	/**
 	 * 备注
 	 */
-	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=10)
+	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=7)
 	@JSONField(name = "cmemo")
 	public java.lang.String getCMemo() {
 		return getStr("cMemo");
@@ -178,10 +159,27 @@ public abstract class BasePurchaseOrderD<M extends BasePurchaseOrderD<M>> extend
 	/**
 	 * 删除状态：0. 未删除 1. 已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=11)
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=8)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 包装数量
+	 */
+	public M setIPkgQty(java.lang.Integer iPkgQty) {
+		set("iPkgQty", iPkgQty);
+		return (M)this;
+	}
+
+	/**
+	 * 包装数量
+	 */
+	@JBoltField(name="ipkgqty" ,columnName="iPkgQty",type="Integer", remark="包装数量", required=false, maxLength=10, fixed=0, order=9)
+	@JSONField(name = "ipkgqty")
+	public java.lang.Integer getIPkgQty() {
+		return getInt("iPkgQty");
 	}
 
 }

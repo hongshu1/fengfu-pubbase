@@ -1,0 +1,515 @@
+<form onsubmit="return false;" id="moDocForm_#(pageId)" action="#(action)" method="post">
+
+    <input type="hidden" id="iMoDocId" name="moDoc.iautoid" value="#(moDoc.iautoid??)"/>
+    #if(moDoc==null||moDoc.istatus<7)
+    <button type="submit"  onclick="submitThisForm()" class="btn btn-primary btn-sm"><i class="fa fa-save"></i>保存</button>
+    <button onclick="submitForm()" class="btn btn-warning btn-sm"><i class="fa fa-check"></i>提交</button>
+    <button onclick="closeHandler()" class="btn btn-danger btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+    #end
+    <div class="form-group row" style="margin-top: 20px">
+        <label class="col-sm-1 col-form-label">工单号</label>
+        <div class="col-3">
+            <input type="text"  class="form-control"
+                   placeholder="" maxlength="50" name="moDoc.clabelmodocno" readonly="readonly"
+                   value="#(moDoc.cmodocno??)"/>
+        </div>
+
+        <label class="col-sm-1 col-form-label">生产部门</label>
+        <div class="col-3">
+            <input type="text"  class="form-control" id="idepartmentname"
+                   placeholder="" maxlength="50" readonly="readonly"  value="#(moDoc.cdepname??)"/>
+            <input id="iDepartmentId" type="hidden" value="#(moDoc.idepartmentid??)" name="moDoc.iDepartmentId" >
+        </div>
+        <label class="col-sm-1 col-form-label">产线名称</label>
+        <div class="col-3">
+            <input type="text"  class="form-control" id="cworkname"
+                   placeholder="" maxlength="50" name="moDoc.croutingname" readonly="readonly"
+                   value="#(moDoc.cworkname??)"/>
+
+            <input type="hidden" id="iworkregionmid" value="moDoc.iworkregionmid" name="moDoc.iworkregionmid"/>
+        </div>
+
+    </div>
+    <div class="form-group row">
+
+        <label class="col-sm-1 col-form-label">班次名称</label>
+        <div class="col-3">
+            <select class="form-control"
+                    data-autoload
+                    id="iworkshiftmid"
+                    data-url="admin/workshiftm/getSelect"
+                    data-select-type="select"
+                    name="moDoc.iworkshiftmid"
+                    data-refresh="true"
+                    data-rule="select"
+                    data-notnull="true"
+                    data-tips="请选择班次"
+                    data-text="=请选择="
+                    data-value=""
+                    data-value-attr="iautoid"
+                    data-text-attr="cworkshiftname"
+                    data-select="#(moDoc.iworkshiftmid??)"
+            ></select>
+            <!--            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"-->
+            <!--                   data-rule="required"-->
+            <!--                   placeholder="请输入班次ID" maxlength="19" name="moDoc.iworkshiftmid"-->
+            <!--                   value="#(moDoc.iworkshiftmid??)"/>-->
+        </div>
+        <label class="col-sm-1 col-form-label">计划日期</label>
+        <div class="col-3">
+            <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
+                   autocomplete="off" id="dplandate"
+                   class="form-control" data-rule="required" placeholder="请设置计划日期" data-tips="请设置计划日期"
+                   maxlength="10"
+                   name="moDoc.dplandate" value="#(moDoc.dplandate??)"/>
+        </div>
+        <label class="col-sm-1 col-form-label">存货编码</label>
+        <div class="col-3">
+            <input type="text" name="iInventoryId" value="#(iInventoryId??)" hidden data-sync-attr="itemid" id="itemId_#(pageId)"  data-notnull="true" data-tips="请输入转换前存货ID" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" />
+            <div class="input-group">
+                <input type="text"
+                       data-autocomplete
+                       data-rule="required"
+                       data-tips="请选择存货编码"
+                       autocomplete="off"
+                       class="form-control"
+                       placeholder="请选择存货编码"
+                       value="#(moDoc.cinvcode??)"
+                       name="cInvCode"
+                       id="inventoryName"
+                       data-url="admin/bommaster/inventoryAutocomplete"
+                       data-sync-ele="#cinvname_#(pageId),#itemId_#(pageId)"
+                       data-text-attr="cinvcode"
+                       data-column-attr="cinvcode"
+
+                />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#inventoryName_#(pageId)" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/modoc/inventoryDialogIndex"><i class="fa fa-search"></i></button>
+                </div>
+                <input  type="hidden" placeholder="存货id" id="iinventoryid" data-value-attr="itemid" name="moDoc.iinventoryid" value="#(moDoc.iinventoryid??)"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <input  type="hidden" placeholder="工艺id" id="iinventoryrouting" data-value-attr="routid" name="moDoc.iinventoryrouting"/>
+        <input type="hidden" disabled id="iinventoryroutingid_#(pageId)" autocomplete="off" class="form-control col-sm-4"
+               placeholder="料品工艺档案Id" name="iinventoryroutingid" value="#(moDoc.iinventoryroutingid??)" />
+
+        <label class="col-sm-1 col-form-label">客户部番</label>
+        <div class="col-3">
+            <input id="cinvcode1" type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                   placeholder="" maxlength="18" data-value-attr="cinvcode1"
+                   readonly="readonly" value="#(moDoc.cinvcode1??)"
+            />
+        </div>
+        <label class="col-sm-1 col-form-label">部品名称</label>
+        <div class="col-3">
+            <input id="cinvname1" type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                   placeholder="" maxlength="18" data-value-attr="cinvname1"
+                   readonly="readonly" value="#(moDoc.cinvname1??)"
+            />
+        </div>
+        <label class="col-sm-1 col-form-label">计划数量</label>
+        <div class="col-3">
+            <input type="number" readonly="readonly" data-with-clearbtn="true" autocomplete="off" id="iqty" class="form-control" data-rule="pnumber;fix<=2;" placeholder="请输入计划数量" maxlength="18" name="moDoc.iqty" value="#(moDoc.iqty??)"/>
+        </div>
+    </div>
+
+</form>
+
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="itemroutingconfigRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+    <td hidden>${data.iinventoryid}</td>
+    <td>${data.iseq}</td>
+    <td data-value="${data.coperationname}">${data.coperationname}</td>
+
+    <td>
+        {@if data.invcs == undefined}
+           <span></span>
+       {@else}
+           <span><i class="fa fa-cog"></i>已选${data.invcs}个</span>
+        {@/if}
+    </td>
+
+    <td>
+        {@if data.equipments}
+            <span><i class="fa fa-cog"></i>已选${data.equipments}个</span>
+        {@else}
+            <span></span>
+        {@/if}
+    </td>
+
+    {@if data.drawings}
+        <td><span><i class="fa fa-cog"></i>已选${data.drawings}个</span></td>
+    {@else}
+        <td><span></span></td>
+    {@/if}
+
+    <!--{@if data.imergednum > 0}-->
+    <!--<td><span><i class="fa fa-cog"></i>请选${data.imergednum}个人</span></td>-->
+     <td><span><i class="fa fa-cog"></i>${data.configperson}</span></td>
+    <td>${data.imergerate}</td>
+    <td hidden>${data.configpersonids}</td>
+
+    <!--    {@else}-->
+    <!--        <td data-editable= flase>不可选</td>-->
+    <!--    {@/if}-->
+
+</tr>
+{@/each}
+</textarea>
+
+<h5>工艺路线信息</h5>
+
+<table class="jbolt_table jbolt_main_table table-center"
+       id="itemroutingconfigid2_#(pageId)"
+       data-jbolttable
+       data-height="62%"
+       data-autoload="false"
+       data-url="admin/modoc/getMoDocbyIinventoryRoutingId?iMoDocId=#(moDoc.iautoid??)"
+       data-column-resize="true"
+       data-ajax="true"
+       data-column-prepend="1:checkbox:true"
+       data-rowtpl="itemroutingconfigRowtpl_#(pageId)"
+       data-editable="true"
+       data-editable-option="getEditableTableOptionsModocFirst3">
+    <thead>
+    <tr>
+        <th data-width="120" data-column="iinventoryid" hidden>工艺档案id</th>
+        <th data-width="80" data-column="iseq">工序号</th>
+        <th data-width="160" data-column="coperationname">工序名称</th>
+        <th data-width="120" data-column="invcs">所需物料集</th>
+        <th data-width="120" data-column="equipments">所需设备集</th>
+        <th data-width="120" data-column="drawings">作业指导书</th>
+        <th data-width="120" data-column="configperson">生产人员</th>
+        <th data-width="120" data-column="imergerate">要员</th>
+        <th data-width="120" hidden data-column="configpersonids">生产人员ID</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+#define js()
+<script>
+    $(function(){
+        //alert("ssss");
+        var iMoDocId=$("#iMoDocId").val();
+
+        if(iMoDocId) {
+            reqTableDate2("admin/modoc/getMoDocbyIinventoryRoutingId?imodocid=" +iMoDocId);
+        }
+    })
+    function  reqTableDate2(requrl){
+        alert("111")
+        if(!requrl){
+            return;
+        }
+        $.ajax({
+            url: requrl,
+            type: 'GET',
+            success: function (ret) {
+                if (ret.state === 'ok') {
+                    var data = ret.data;
+                    console.log(JSON.stringify(data))
+                    jboltTableClear('#itemroutingconfigid2_#(pageId)');
+
+                    jboltTableInsertRow('#itemroutingconfigid2_#(pageId)', data, false, false, true);
+                    // console.log(jboltTableGetSubmitData('#itemroutingconfigid_#(pageId)'));
+                }
+            },
+            error: function (error) {
+
+            }
+        });
+    }
+    //加载产线，存货信息，工艺路线
+    function setChooseDialogSelectResult3(data){
+        console.log(JSON.stringify(data))
+        $("#iinventoryid").val(data.iautoid);
+        $("#inventoryName").val(data.cinvcode);
+        $("#cworkname").val(data.cworkname);
+        $("#cinvcode1").val(data.cinvcode1);
+        $("#cinvname1").val(data.cinvname1);
+        $("#iinventoryrouting").val(data.iinventoryroutingid);
+        $("#iworkregionmid").val(data.iworkregionmid);
+        $("#iDepartmentId").val(data.idepartmentid);
+        $("#idepartmentname").val(data.cdepname);
+        $.ajax({
+            url: 'admin/inventoryroutingconfig/list?iinventoryroutingid=' + data.iinventoryroutingid,
+            type: 'GET',
+            success: function (ret) {
+                if (ret.state === 'ok') {
+                    var datas = ret.data;
+                    console.log(JSON.stringify(datas[0].equipmentjson))
+                    jboltTableClear('#itemroutingconfigid2_#(pageId)');
+                    jboltTableInsertRow('#itemroutingconfigid2_#(pageId)', datas, false, false, true);
+                    jboltTableInsertRow('#itemroitingconfigid_#(pageId)',data ,false,false,true);
+                    // console.log(jboltTableGetSubmitData('#itemroutingconfigid2_#(pageId)'));
+                }
+            },
+            error: function () {
+                console.log();
+            }
+        });
+    }
+    function submitForm(){
+        LayerMsgBox.confirm("确认提交此数据?",function(){
+            // submitThisForm();
+            subDoc("","admin/modoc/subSave")
+        });
+
+    }
+    function closeHandler(){
+        LayerMsgBox.confirm("确认关闭此数据?",function(){
+            subDoc("","admin/modoc/stopSave")
+            //parent.layer.close(parent.layer.getFrameIndex(window.name));
+            //window.parent.refreshJBoltTable();
+        });
+    }
+    function  subDoc2(rowid,url) {
+        var tableDatas = getJboltTableAllDatas('itemroutingconfigid2_#(pageId)');
+        var formData = formToJson('moDocForm_#(pageId)');
+        console.info(JSON.stringify(tableDatas))
+        console.info(JSON.stringify(formData))
+
+
+        LayerMsgBox.loading("更新中...", 5000);
+        var data = {};
+        var s = {
+            "delete": null, "update": null, "save": tableDatas,
+            "form": formData
+        }
+        data.jboltTable = JSON.stringify(s);
+        Ajax.post(url+"?rowid="+rowid, data, function (res) {
+            LayerMsgBox.success("提交成功", 600, function () {
+                parent.refreshJBoltTable()
+                parent.layer.closeAll();
+                // var iMoDocId=$("#iMoDocId").val(res.data.iautoid);
+
+                //getTbleData("admin/modoc/getDocdetail?imodocid="+res.data.iautoid);
+
+                //LayerMsgBox.closeAll();
+            });
+        });
+
+    }
+    function getItemValue() {
+        let  itemidValue = $('#itemid').val();
+        console.log("得到存货id"+itemidValue)
+        return itemidValue;
+    }
+    function getimatdoc(){
+        var imdocid=$("#iMoDocId").val();
+        imdocid=111;
+    }
+    function getEditableTableOptionsModocFirst3(){
+        var imdocid=$("#iMoDocId").val();
+        var editableTableOptions1={
+            trigger:"click",
+            initRowCount:0,
+            maxRowCount:30,
+            keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+            submit:{
+                withForm: ["moDocForm_#(pageId)"],
+                name: 'docForm',
+                type:"all",//cell|all
+                //params:{"orderId":3},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+                url:"/admin/modoc/save?rowid=",
+                success:function(res){
+                    LayerMsgBox.success("提交成功",600,function(){
+                        //parent.refreshPjaxContainer();
+                        parent.refreshJBoltTable()
+                        parent.layer.closeAll();
+                    });
+                }
+            },
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols:{
+                autoid: {
+                    submitAttr: "iautoid"
+                },
+                invcs: {  //所需物料集
+                    type: "dialogbtn",
+                    placeholder: "设置物料集",
+                    linkColumn: 'iautoid',
+                    dialog: {
+                            url: "admin/modoc/invc_dialog_index?iinventoryid=" + getItemValue()+"&imdocid="+ imdocid,
+                        area: "80%,80%",
+                        title: "工序物料集",
+                        btn: "确定,关闭"
+                    }
+                },
+                equipments: {  //所需设备集
+                    type: "dialogbtn",
+                    placeholder: "工序设备集",
+                    linkColumn: 'iautoid',
+                    dialog: {
+                        url: "admin/modoc/equipment_dialog_index?imdocid="+imdocid,
+                        area: "80%,80%",
+                        title: "选择设备",
+                        btn: "确定,关闭"
+                    }
+                },
+                drawings: {  //工艺文件
+                    type: "dialogbtn",
+                    placeholder: "工艺文件",
+                    linkColumn: 'iautoid',
+                    dialog: {
+                        url: "admin/modoc/drawing_dialog_index?imdocid="+imdocid,
+                        area: "80%,80%",
+                        title: "工艺文件",
+                        btn: "确定,关闭"
+                    }
+                },
+                configperson: {
+                    type: "dialogbtn",
+                    placeholder: "人员维护",
+                    linkColumn: 'iautoid,personequipmentjson,configpersonids,imergerate',
+                    changeColumns: [
+                        {
+                            column: 'personequipmentjson', use : 'personequipmentjson'
+                        },
+                        {
+                            column: 'configpersonids', use : 'configpersonids'
+                        }
+                    ],
+                    dialog: {
+                        url: "admin/modoc/personoperationdialog?imdocid="+imdocid,
+                        area: "95%,95%",
+                        title: "选择人员",
+                        btn: "确定,关闭"
+                    },
+                },
+                configpersonids: {
+                    type: "dialogbtn",
+                    placeholder: "人员维护",
+                    linkColumn: 'configpersonids',
+                    changeColumns: [
+                        {
+                            column: 'configpersonids', use : 'configpersonids'
+                        }
+                    ],
+                }
+            }
+        };
+        return editableTableOptions1;
+    }
+
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+
+    //$(document).ready(function () {
+    $('#routid').on('change', function () {
+        var input = $(this);
+        var inputValue = input.val();
+
+        var $iinventoryroutingid = $('#iinventoryroutingid_#(pageId)');
+        $iinventoryroutingid.val(inputValue);
+
+        let iinventoryroutingidValue = $iinventoryroutingid.val();
+
+        $.ajax({
+            url: 'admin/inventoryroutingconfig/list?iinventoryroutingid=' + inputValue,
+            type: 'GET',
+            success: function (ret) {
+                if (ret.state === 'ok') {
+                    var data = ret.data;
+
+                    jboltTableClear('#itemroutingconfigid2_#(pageId)');
+
+                    jboltTableInsertRow('#itemroutingconfigid2_#(pageId)', data, false, false, true);
+                    // console.log(jboltTableGetSubmitData('#itemroutingconfigid2_#(pageId)'));
+                }
+            },
+            error: function () {
+                console.log();
+            }
+        });
+        // refreshJBoltTable('#itemroutingconfigid2_#(pageId)');
+    });
+    //});
+
+    function submitThisForm() {
+        console.log("提交表单")
+        jboltTableSubmit("#itemroutingconfigid2_#(pageId)");
+    }
+    /* function closeHandler(){
+         parent.layer.close(parent.layer.getFrameIndex(window.name));
+         window.parent.refreshJBoltTable();
+     }*/
+    function  reqTableDate(requrl){
+        if(!requrl){
+            return;
+        }
+        $.ajax({
+            url: requrl,
+            type: 'GET',
+            success: function (ret) {
+                if (ret.state === 'ok') {
+                    var data = ret.data;
+
+                    jboltTableClear('#itemroutingconfigid2_#(pageId)');
+
+                    jboltTableInsertRow('#itemroutingconfigid2_#(pageId)', data, false, false, true);
+                    // console.log(jboltTableGetSubmitData('#itemroutingconfigid2_#(pageId)'));
+                }
+            },
+            error: function (error) {
+
+            }
+        });
+    }
+    function  getTbleData(url){
+
+
+        /*   var inputValue=$('#iinventoryroutingid_#(pageId)').val();
+           if(!inputValue){
+
+               return;
+           }
+           var requrl="admin/inventoryroutingconfig/list?iinventoryroutingid=" + inputValue
+           if(url){
+
+               requrl=url;
+           }*/
+        reqTableDate(url)
+
+    }
+
+    function  saveDoc2(updateDatas,rowid) {
+        var tableDatas = getJboltTableAllDatas('itemroutingconfigid2_#(pageId)');
+        var formData = formToJson('moDocForm_#(pageId)');
+
+        // LayerMsgBox.confirm("确定提交？", function () {
+        LayerMsgBox.loading("更新中...", 5000);
+        var data = {};
+        var s = {
+            "delete": null, "update": updateDatas, "save": tableDatas,
+            "form": formData
+        }
+        data.jboltTable = JSON.stringify(s);
+        Ajax.post("admin/modoc/save?rowid="+rowid, data, function (res) {
+            LayerMsgBox.success("提交成功", 600, function () {
+                //alert("提交行")
+                // refreshPjaxContainer();
+                //parent.refreshJBoltTable("#modoctable");
+                //parent.refreshJBoltTable();
+                var iMoDocId=$("#iMoDocId").val(res.data.iautoid);
+                //var  requrl="admin/modoc/getDocdetail?iMoDocId="+"?iMoDocId="+iMoDocId;
+                getTbleData("admin/modoc/getDocdetail?imodocid="+res.data.iautoid);
+                //refreshPjaxContainer();
+                LayerMsgBox.closeAll();
+            });
+        });
+        // });
+    }
+</script>
+#end
+
+

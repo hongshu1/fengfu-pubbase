@@ -10,7 +10,7 @@
             <td>${data.cinvstd}</td> <!--规格-->
             <td>${data.caddress}</td> <!--品牌-->
             <td>${data.puunitname}</td> <!--采购单位-->
-            <td>${data.qty}</td> <!--数量-->
+            <td>${data.qty ,2|number_format}</td> <!--数量-->
             <td>${data.memo}</td> <!--备注-->
               <td hidden>${data.sourcebillno}</td> //来源单号（订单号）
             <td hidden>${data.sourcebillid}</td> //来源单据ID(订单id)
@@ -238,17 +238,19 @@
                   {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
                   {column: "caddress", use: "caddress"},{column: "cinvcode2", use: "cinvcode2"}]
           },
-          qty: {
+          qty:{ //单价
               type:"amount",
-              placeholder:'数量',
               required:true,
-              summary:[{
-                  dir:"v",
-                  tofixed:2,
-                  roundtag:"round",
-                  removezero:true,
-                  formula:"sum"
-              }]
+              textFormat: function (table, td, text, value, trJsonData) {
+                  return (typeof(text)==undefined||typeof(text)=="undefined"||(typeof(text)=='string'&&text.length==0))?"":numberFormat(value,2);
+              },
+              editorFormat:function(table,td,text,value,trJsonData){
+                  //编辑器内显示格式化
+                  if(!value){return "";}
+                  value=value.replaceAll(",","");
+                  console.log(removeFixedNumberAllZero(value,2));
+                  return removeFixedNumberAllZero(value,2);
+              }
           },
           memo:{
               type:"input",

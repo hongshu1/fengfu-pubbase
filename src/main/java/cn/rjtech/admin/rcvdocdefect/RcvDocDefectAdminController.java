@@ -22,7 +22,7 @@ import com.jfinal.plugin.activerecord.Record;
  * @date: 2023-04-18 16:36
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.RCVDOCDEFECT)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/rcvdocdefect", viewPath = "/_view/admin/rcvdocdefect")
 public class RcvDocDefectAdminController extends BaseAdminController {

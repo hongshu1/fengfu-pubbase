@@ -719,7 +719,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 	}
 
     @Override
-	public String postRejectFunc(long formAutoId) {
+	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
 		return null;
 	}
 

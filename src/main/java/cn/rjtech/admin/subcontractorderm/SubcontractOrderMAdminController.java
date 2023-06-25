@@ -13,6 +13,7 @@ import cn.rjtech.admin.subcontractorderdbatch.SubcontractOrderDBatchService;
 import cn.rjtech.admin.subcontractorderdbatchversion.SubcontractOrderDBatchVersionService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
+import cn.rjtech.annotations.RequestLimit;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.enums.SourceTypeEnum;
 import cn.rjtech.model.momdata.*;
@@ -20,7 +21,6 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
-import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
@@ -316,7 +316,8 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
                                 @Para(value = "hideInvalid") String hideInvalid) {
     renderJsonData(service.updateHideInvalid(id, Boolean.valueOf(hideInvalid)));
   }
-
+  
+  @RequestLimit(time = 15, count = 1)
   public void updateOrderBatch(@Para(value = "subcontractOrderMId") Long subcontractOrderMid,
                                @Para(value = "id") Long id,
                                @Para(value = "cVersion") String cVersion,

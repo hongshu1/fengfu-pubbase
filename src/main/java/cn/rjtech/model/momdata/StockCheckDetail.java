@@ -1,8 +1,9 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseStockCheckDetail;
+
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
+import cn.rjtech.model.momdata.base.BaseStockCheckDetail;
 
 /**
  * 库存盘点单-盘点明细表

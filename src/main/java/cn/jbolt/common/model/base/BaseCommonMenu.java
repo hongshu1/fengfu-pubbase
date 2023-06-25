@@ -17,6 +17,8 @@ public abstract class BaseCommonMenu<M extends BaseCommonMenu<M>> extends JBoltB
     public static final String TYPE = "type";
     /**菜单ID*/
     public static final String MENU_ID = "menu_id";
+    /**用户ID*/
+    public static final String USER_ID = "user_id";
 	/**
 	 * 主键ID
 	 */
@@ -66,6 +68,23 @@ public abstract class BaseCommonMenu<M extends BaseCommonMenu<M>> extends JBoltB
 	@JSONField(name = "menuid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getMenuId() {
 		return getLong("menu_id");
+	}
+
+	/**
+	 * 用户ID
+	 */
+	public M setUserId(java.lang.Long userId) {
+		set("user_id", userId);
+		return (M)this;
+	}
+
+	/**
+	 * 用户ID
+	 */
+	@JBoltField(name="userid" ,columnName="user_id",type="Long", remark="用户ID", required=true, maxLength=19, fixed=0, order=4)
+	@JSONField(name = "userid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getUserId() {
+		return getLong("user_id");
 	}
 
 }

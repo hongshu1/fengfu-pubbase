@@ -1,5 +1,6 @@
 package cn.rjtech.admin.sysmaterialspreparedetail;
 
+import cn.hutool.core.date.DateUtil;
 import cn.rjtech.admin.sysmaterialsprepare.SysMaterialsprepareService;
 import cn.rjtech.admin.syspureceive.SysPureceiveService;
 import cn.rjtech.util.ValidationUtils;
@@ -25,6 +26,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -127,7 +129,6 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 		Kv kv = new Kv();
 		kv.set("billno", billno == null ? "" : billno);
 		renderJsonData(service1.getDetail(getPageNumber(), getPageSize(), kv));
-//		renderJsonData(service.getMaterialsdetials(getPageNumber(), getPageSize(), getKv()));
 	}
 
 	public void getMaterialsdetials1() {
@@ -180,7 +181,24 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 		renderJson(service.submitByJBoltTableGo1(map1));
 	}
 
+	public void ConfirmNum() {
+		String Oldbarcode = get("barcode");
+		String Oldqty = get("qty");
+		String TAG = get("TAG");
+		set("Oldbarcode",Oldbarcode);
+		set("Oldqty",Oldqty);
+		set("TAG",TAG);
+		set("Newbarcode","WL"+ DateUtil.format(new Date(), "yyyyMMddHHmmss"));
+		render("ConfirmNum.html");
+	}
 
-
-
+	@Before(Tx.class)
+	public void NewNum(){
+		String Oldbarcode = get("Oldbarcode");
+		String Oldqty = get("Oldqty");
+		String Newbarcode = get("Newbarcode");
+		String Newqty = get("Newqty");
+		String TAG = get("TAG");
+		renderJson(service.submitQTY(Oldbarcode,Oldqty,Newbarcode,Newqty));
+	}
 }

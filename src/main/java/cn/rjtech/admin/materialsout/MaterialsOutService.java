@@ -11,10 +11,10 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.materialsoutdetail.MaterialsOutDetailService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import com.jfinal.aop.Inject;
@@ -36,7 +36,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: RJ
  * @date: 2023-05-13 16:16
  */
-public class MaterialsOutService extends BaseService<MaterialsOut> {
+public class MaterialsOutService extends BaseService<MaterialsOut> implements IApprovalService {
 
 	private final MaterialsOut dao = new MaterialsOut().dao();
 	@Inject
@@ -44,9 +44,6 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 
 	@Inject
 	private MaterialsOutDetailService materialsOutDetailService;
-
-	@Inject
-	private FormApprovalService formApprovalService;
 
 	@Override
 	protected MaterialsOut dao() {
@@ -117,6 +114,9 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 				String autoId = idStr;
 				MaterialsOut materialsOut = findById(autoId);
 				ValidationUtils.notNull(materialsOut, JBoltMsg.DATA_NOT_EXIST);
+				//软删除
+//				materialsOut.setIsDeleted(true);
+//				materialsOut.update();
 
 				// TODO 可能需要补充校验组织账套权限
 				// TODO 存在关联使用时，校验是否仍在使用
@@ -182,7 +182,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 
 
 
-	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, Integer param, String revokeVal, String autoid) {
+	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
@@ -234,48 +234,37 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 				MaterialsOut materialsOut = jBoltTable.getFormModel(MaterialsOut.class,"materialsOut");
 
 				//	行数据为空 不保存
-				if ("save".equals(revokeVal)) {
 					if (materialsOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
 						ValidationUtils.error( "请先添加行数据！");
 					}
-				}
-
-				if ("submit".equals(revokeVal) && materialsOut.getAutoID() == null) {
-					ValidationUtils.error( "请保存后提交审核！！！");
-				}
 
 
-				if (materialsOut.getAutoID() == null && "save".equals(revokeVal)) {
+
+
+				if (materialsOut.getAutoID() == null) {
 //					保存
 //					审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-					materialsOut.setIAuditStatus(param);
+					materialsOut.setIAuditStatus(0);
 
 					//创建人
-					materialsOut.setIcreateby(userId);
-					materialsOut.setCcreatename(userName);
-					materialsOut.setDcreatetime(nowDate);
+					materialsOut.setIcreateBy(userId);
+					materialsOut.setCcreateName(userName);
+					materialsOut.setDcreateTime(nowDate);
 
 					//更新人
-					materialsOut.setIupdateby(userId);
-					materialsOut.setCupdatename(userName);
-					materialsOut.setDupdatetime(nowDate);
+					materialsOut.setIupdateBy(userId);
+					materialsOut.setCupdateName(userName);
+					materialsOut.setDupdateTime(nowDate);
 
 					materialsOut.setOrganizeCode(OrgCode);
 					materialsOut.setIsDeleted(false);
 					save(materialsOut);
 					headerId = materialsOut.getAutoID();
 				}else {
-					if ( param == 1 ){
-						//审核人
-						materialsOut.setIAuditBy(userId);
-						materialsOut.setCAuditName(userName);
-						materialsOut.setDAudittime(nowDate);
-					}
-					materialsOut.setIAuditStatus(param);
 					//更新人
-					materialsOut.setIupdateby(userId);
-					materialsOut.setCupdatename(userName);
-					materialsOut.setDupdatetime(nowDate);
+					materialsOut.setIupdateBy(userId);
+					materialsOut.setCupdateName(userName);
+					materialsOut.setDupdateTime(nowDate);
 					update(materialsOut);
 					headerId = materialsOut.getAutoID();
 				}
@@ -323,146 +312,6 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	}
 
 
-	/**
-	 * 详情页提审
-	 */
-	public Ret submit(Long iautoid) {
-		tx(() -> {
-			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"T_Sys_OtherOut");
-			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-			// 处理其他业务
-			MaterialsOut materialsOut = findById(iautoid);
-			materialsOut.setIAuditStatus(1);
-			ValidationUtils.isTrue(materialsOut.update(),JBoltMsg.FAIL);
-			return true;
-		});
-		return SUCCESS;
-	}
-
-
-	/**
-	 * 详情页审核
-	 */
-	public Ret approve(String ids) {
-		tx(() -> {
-			boolean success = false;
-			Long userId = JBoltUserKit.getUserId();
-			String userName = JBoltUserKit.getUserName();
-			Date nowDate = new Date();
-			MaterialsOut materialsOut = superFindById(ids);
-			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-			if (materialsOut.getIAuditStatus() != 1) {
-				ValidationUtils.error("订单："+materialsOut.getBillNo()+"状态不支持审核操作！");
-			}
-			//订单状态：3. 已审核
-			materialsOut.setIAuditStatus(2);
-			//审核人
-			materialsOut.setIAuditBy(userId);
-			materialsOut.setCAuditName(userName);
-			materialsOut.setDAudittime(nowDate);
-			Ret ret = this.pushU8(ids);
-			success= materialsOut.update();
-
-			return true;
-		});
-
-		return SUCCESS;
-	}
-
-	/**
-	 * 详情页审核不通过
-	 */
-	public Ret reject(Long ids) {
-		tx(() -> {
-			MaterialsOut materialsOut = superFindById(ids);
-			if (materialsOut.getIAuditStatus() != 2) {
-				ValidationUtils.error("订单："+materialsOut.getBillNo()+"状态不支持反审批操作！");
-			}
-			materialsOut.setIAuditStatus(1);
-			materialsOut.update();
-
-			return true;
-		});
-		return SUCCESS;
-	}
-
-	/**
-	 * 批量审核
-	 * @param ids
-	 * @return
-	 */
-	public Ret batchApprove(String ids, Integer mark) {
-		tx(() -> {
-			boolean success = false;
-			Long userId = JBoltUserKit.getUserId();
-			String userName = JBoltUserKit.getUserName();
-			Date nowDate = new Date();
-			List<MaterialsOut> listByIds = getListByIds(ids);
-			if (listByIds.size() > 0) {
-				for (MaterialsOut materialsOut : listByIds) {
-					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-					if (materialsOut.getIAuditStatus() != 1) {
-						ValidationUtils.error("订单：" + materialsOut.getBillNo() + "状态不支持审核操作！");
-					}
-					//订单状态：3. 已审核
-					materialsOut.setIAuditStatus(2);
-					//审核人
-					materialsOut.setIAuditBy(userId);
-					materialsOut.setCAuditName(userName);
-					materialsOut.setDAudittime(nowDate);
-					Ret ret = this.pushU8(ids);
-					success = materialsOut.update();
-				}
-			}
-			return true;
-		});
-		return SUCCESS;
-	}
-
-	/**
-	 * 批量反审核
-	 * @param ids
-	 * @return
-	 */
-	public Ret batchReverseApprove(String ids) {
-		tx(() -> {
-			//TODO数据同步暂未开发 现只修改状态
-			for (MaterialsOut materialsOut :  getListByIds(ids)) {
-//			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-				if (materialsOut.getIAuditStatus() != 2) {
-					ValidationUtils.error("订单："+materialsOut.getBillNo()+"状态不支持反审核操作！");
-				}
-				materialsOut.setIAuditStatus(1);
-				materialsOut.update();
-			}
-
-			return true;
-		});
-		return SUCCESS;
-	}
-
-
-
-	/**
-	 * 撤回
-	 * @param iAutoId
-	 * @return
-	 */
-	public Ret recall(String iAutoId) {
-		if( notOk(iAutoId)) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		MaterialsOut materialsOut = findById(iAutoId);
-		//订单状态：2. 待审批
-		materialsOut.setIAuditStatus(0);
-		//审核人
-		materialsOut.setIAuditBy(null);
-		materialsOut.setCAuditName(null);
-		materialsOut.setDAudittime(null);
-		boolean result = materialsOut.update();
-		return ret(result);
-	}
 
 	/**
 	 * 材料出库单列表 明细
@@ -624,61 +473,6 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 	}
 
 
-	//推送u8数据接口
-//	public Ret pushU8(MaterialsOut materialsout, List<MaterialsOutDetail> materialsoutdetail) {
-//		if(!CollectionUtils.isNotEmpty(materialsoutdetail)){
-//			return Ret.fail("数据不能为空");
-//		}
-//
-//		User user = JBoltUserKit.getUser();
-//		Map<String, Object> data = new HashMap<>();
-//
-//		data.put("userCode",user.getUsername());
-//		data.put("organizeCode",this.getdeptid());
-//		data.put("token","");
-//
-//		JSONObject preallocate = new JSONObject();
-//
-//
-//		preallocate.set("userCode",user.getUsername());
-//		preallocate.set("organizeCode",this.getdeptid());
-//		preallocate.set("CreatePerson",user.getId());
-//		preallocate.set("CreatePersonName",user.getName());
-//		preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
-//		preallocate.set("tag","MaterialOutForMO");
-//		preallocate.set("type","MaterialOutForMO");
-//
-//		data.put("PreAllocate",preallocate);
-//
-//		JSONArray maindata = new JSONArray();
-//		materialsoutdetail.stream().forEach(s -> {
-//			JSONObject jsonObject = new JSONObject();
-//
-//
-//			maindata.put(jsonObject);
-//		});
-//		data.put("MainData",maindata);
-//
-//		//            请求头
-//		Map<String, String> header = new HashMap<>(5);
-//		header.put("Content-Type", "application/json");
-//		String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
-//
-//		try {
-//			String post = HttpApiUtils.httpHutoolPost(url, data, header);
-//			com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
-//			if (isOk(post)) {
-//				if ("201".equals(jsonObject.getString("code"))) {
-//					System.out.println(jsonObject);
-//					return Ret.ok("提交成功");
-//				}
-//			}
-//		}catch (Exception e){
-//			e.printStackTrace();
-//		}
-//		return Ret.fail("上传u8失败");
-//	}
-
 	//通过当前登录人名称获取部门id
 	public String getdeptid(){
 		String dept = "001";
@@ -702,8 +496,8 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 		materials.setDeptCode(puinstore.getDeptCode());
 		materials.setWhcode(puinstore.getWhCode());
 		materials.setVenCode(puinstore.getVenCode());
-		materials.setCcreatename(puinstore.getCCreateName());
-		materials.setDcreatetime(puinstore.getDCreateTime());
+		materials.setCcreateName(puinstore.getCCreateName());
+		materials.setDcreateTime(puinstore.getDCreateTime());
 		materials.setState(1);
 		materials.setIAuditStatus(0);
 		materials.setMemo(puinstore.getMemo());
@@ -716,6 +510,118 @@ public class MaterialsOutService extends BaseService<MaterialsOut> {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		return null;
+	}
+
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+			Long userId = JBoltUserKit.getUserId();
+			String userName = JBoltUserKit.getUserName();
+			Date nowDate = new Date();
+			MaterialsOut materialsOut = findById(formAutoId);
+			materialsOut.setIAuditBy(userId);
+			materialsOut.setCAuditName(userName);
+			materialsOut.setDAuditTime(nowDate);
+			String ids = String.valueOf(materialsOut.getAutoID());
+		 	this.pushU8(ids);
+			materialsOut.update();
+		return null;
+	}
+
+	@Override
+	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		MaterialsOut materialsOut = findById(formAutoId);
+		materialsOut.setIAuditBy(null);
+		materialsOut.setCAuditName(null);
+		materialsOut.setDAuditTime(null);
+		materialsOut.update();
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		Date nowDate = new Date();
+		/**
+		 *List转换String类型
+		 */
+		if (formAutoIds.size()>0){
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < formAutoIds.size(); i++) {
+
+				buffer.append(""+formAutoIds.get(i)+",");
+			}
+			String ids = buffer.substring(0, buffer.length() - 1);
+			List<MaterialsOut> listByIds = getListByIds(ids);
+			if (listByIds.size() > 0) {
+				for (MaterialsOut materialsOut : listByIds) {
+					//审核人
+					materialsOut.setIAuditBy(userId);
+					materialsOut.setCAuditName(userName);
+					materialsOut.setDAuditTime(nowDate);
+//					this.pushU8(ids);
+					materialsOut.update();
+				}
+			}
+		}
+
+
+
+
+
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
 		return null;
 	}
 

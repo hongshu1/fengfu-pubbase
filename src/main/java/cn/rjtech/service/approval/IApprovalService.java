@@ -22,7 +22,7 @@ public interface IApprovalService {
      * @param formAutoId 单据ID
      * @return 错误信息
      */
-    String postRejectFunc(long formAutoId);
+    String postRejectFunc(long formAutoId, boolean isWithinBatch);
 
     /**
      * 实现反审之前的其他业务操作，如有异常返回错误信息

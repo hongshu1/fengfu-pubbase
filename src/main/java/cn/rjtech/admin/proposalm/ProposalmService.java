@@ -7,6 +7,7 @@ import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
+import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
@@ -23,6 +24,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.barcodeencodingm.BarcodeencodingmService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.admin.project.ProjectService;
 import cn.rjtech.admin.projectcard.ProjectCardService;
 import cn.rjtech.admin.proposalattachment.ProposalAttachmentService;
 import cn.rjtech.admin.proposalcategory.ProposalcategoryService;
@@ -78,6 +80,8 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
     private ProjectCardService projectCardService;
 	@Inject
     private FormApprovalService formApprovalService;
+	@Inject
+	private ProjectService projectService;
     @Override
     protected Proposalm dao() {
         return dao;
@@ -139,6 +143,7 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
                 long iAutoId = Long.parseLong(idStr);
                 Proposalm dbProposalm = findById(iAutoId);
                 ValidationUtils.notNull(dbProposalm, JBoltMsg.DATA_NOT_EXIST);
+                DataPermissionKit.validateAccess(dbProposalm.getCDepCode());
                 ValidationUtils.equals(dbProposalm.getIOrgId(), getOrgId(), ErrorMsg.ORG_ACCESS_DENIED);
                 ValidationUtils.equals(dbProposalm.getIAuditStatus(), AuditStatusEnum.NOT_AUDIT.getValue(), "只能删除编辑状态的单据");
 
@@ -270,6 +275,8 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
     public Ret saveTableSubmit(JBoltTableMulti tableMulti, User user, Date now) {
         JBoltTable proposalTable = tableMulti.getJBoltTable("proposalds");
         Proposalm proposalm = proposalTable.getFormModel(Proposalm.class, "proposalm");
+        ValidationUtils.notBlank(proposalm.getCDepCode(), "缺少部门参数");
+        DataPermissionKit.validateAccess(proposalm.getCDepCode());
         ValidationUtils.notNull(proposalm, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(proposalm.getDApplyDate(), "申请日期不能为空");
         ValidationUtils.notBlank(proposalm.getCApplyPersonCode(), "申请人不能为空");
@@ -279,8 +286,6 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
         ValidationUtils.notNull(proposalm.getIsScheduled(), "缺少事业计划");
         JBoltTable attachmentsTable = tableMulti.getJBoltTable("attachments");
         if (null == proposalm.getIAutoId()) {
-            // 必填参数检查
-            ValidationUtils.notBlank(proposalm.getCDepCode(), "缺少部门参数");
             ValidationUtils.notEmpty(proposalTable.getSaveRecordList(), "禀议书项目不能为空");
             tx(() -> {
                 doSaveTableSubmit(proposalm, proposalTable.getSaveRecordList(), attachmentsTable.getSaveRecordList(), user.getId(), now);
@@ -479,7 +484,8 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return null;
     }
 	
@@ -490,6 +496,7 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
      * @param isFirst    是否为审批的第一个节点
      * @param isLast     是否为审批的最后一个节点
      */
+    @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         // 反审回第一个节点，回退状态为“已保存”
         if (isFirst) {
@@ -776,5 +783,32 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
 	public String postBatchBackout(List<Long> formAutoIds) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	/**
+	 * 失效：1.存在下游单据不能失效
+	 * 	2.单据状态从已生效变更到未生效
+	 *  3.删除项目档案
+	 * */
+	public Ret uneffect(Long iproposalmid) {
+		tx(()->{
+			Proposalm proposalm = findById(iproposalmid);
+			Integer ieffectivestatus = proposalm.getIEffectiveStatus();
+			ValidationUtils.isTrue(ieffectivestatus == EffectiveStatusEnum.EFFECTIVED.getValue(), "请操作已生效的单据!");
+			ValidationUtils.isTrue(!isExistsPurchaseDatas(iproposalmid), "存在申购数据，不能失效");
+			Project project = projectService.findByProjectCode(proposalm.getCProjectCode(), proposalm.getCDepCode());
+			proposalm.setIEffectiveStatus(EffectiveStatusEnum.INVAILD.getValue());
+			proposalm.setCProjectCode(null);
+			proposalm.setIUpdateBy(JBoltUserKit.getUserId());
+			proposalm.setDUpdateTime(new Date());
+			ValidationUtils.isTrue(proposalm.update(), ErrorMsg.UPDATE_FAILED);
+			ValidationUtils.isTrue(project.delete(), ErrorMsg.DELETE_FAILED);
+			return true;
+		});
+		return SUCCESS;
+	}
+	private boolean isExistsPurchaseDatas(Long iproposalmid){
+		int count = dbTemplate("proposalm.isExistsPurchaseDatas",Kv.by("iproposalmid", iproposalmid)).queryInt();
+		return count > 0 ? true : false;
 	}
 }

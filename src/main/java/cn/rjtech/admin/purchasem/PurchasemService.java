@@ -12,6 +12,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
@@ -305,6 +306,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
     public Ret saveTableSubmit(JBoltTable jBoltTable) {
         ValidationUtils.notNull(jBoltTable, JBoltMsg.PARAM_ERROR);
         Purchasem purchasem = jBoltTable.getFormModel(Purchasem.class, "purchasem");
+        DataPermissionKit.validateAccess(purchasem.getCDepCode());
         ValidationUtils.notNull(purchasem, JBoltMsg.PARAM_ERROR);
         Boolean flg = true;
         flg = tx(() -> {
@@ -417,10 +419,6 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 
     /**
      * 提交审批
-     *
-     * @param iautoid
-     * @param loginUser
-     * @return
      */
     public Ret submit(Long iautoid) {
         Purchasem purchasem = findById(iautoid);
@@ -446,18 +444,12 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         return SUCCESS;
 
     }
-    /**
-     * 处理审批通过的其他业务操作，如有异常返回错误信息
-     */
-    public String postApproveFunc(long formAutoId) {
-  
-        return null;
-    }
 	
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return null;
     }
 	
@@ -468,6 +460,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
      * @param isFirst    是否为审批的第一个节点
      * @param isLast     是否为审批的最后一个节点
      */
+    @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         // 反审回第一个节点，回退状态为“已保存”
         if (isFirst) {
@@ -811,6 +804,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 	 */
 	public Ret refBudgetSaveTableSubmit(JBoltTable jBoltTable) {
 		Purchasem purchasem = jBoltTable.getFormModel(Purchasem.class,"purchasem");
+		DataPermissionKit.validateAccess(purchasem.getCDepCode());
 		Date now = new Date();
 		User loginUesr = JBoltUserKit.getUser();
 		tx(()->{

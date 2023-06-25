@@ -19,6 +19,7 @@ import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionServ
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
+import cn.rjtech.annotations.RequestLimit;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.enums.SourceTypeEnum;
 import cn.rjtech.model.momdata.Exch;
@@ -333,6 +334,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         renderJsonData(service.updateHideInvalid(id, Boolean.valueOf(hideInvalid)));
     }
 
+    @RequestLimit(time = 15, count = 1)
     public void updateOrderBatch(@Para(value = "purchaseOrderMId") Long purchaseOrderMId,
                                  @Para(value = "id") Long id,
                                  @Para(value = "cVersion") String cVersion,

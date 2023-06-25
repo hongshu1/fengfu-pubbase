@@ -410,7 +410,7 @@ public class AdminIndexController extends JBoltBaseController {
      * */
     @UnCheck
     public void proposalDashBoardIndex(){
-    	List<ArrayList<Record>> list = commonMenuService.getDashBoardCommonMenu();
+    	List<ArrayList<Record>> list = commonMenuService.getDashBoardCommonMenu(Kv.by("iuserid", JBoltUserKit.getUserId()));
     	set("menulist", list);
     	render("proposal_dashboard.html");
     }

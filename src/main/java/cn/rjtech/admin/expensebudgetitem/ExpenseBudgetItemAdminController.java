@@ -1,6 +1,9 @@
 package cn.rjtech.admin.expensebudgetitem;
 
+import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -68,6 +71,7 @@ public class ExpenseBudgetItemAdminController extends BaseAdminController {
      * 禀议参照选择数据
      */
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void mdatas() {
         renderJsonData(service.paginateMdatas(getPageNumber(), getPageSize(), getKv()));
     }

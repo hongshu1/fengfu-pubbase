@@ -15,6 +15,8 @@ import com.jfinal.kit.Kv;
 
 import io.github.yedaxia.apidocs.ApiDoc;
 
+import java.io.IOException;
+
 /**
  * @version 1.0
  * @Author cc
@@ -215,7 +217,7 @@ public class RcvDocQcFormMApiController extends BaseApiController {
      */
     @ApiDoc(GetExportExcelVo.class)
     @UnCheck
-    public void exportExcel(@Para(value = "iauoid") Long iauoid) {
+    public void exportExcel(@Para(value = "iauoid") Long iauoid) throws IOException {
         ValidationUtils.notNull(iauoid, JBoltMsg.PARAM_ERROR);
 
         renderJBoltApiRet(apiService.getExportData(iauoid));

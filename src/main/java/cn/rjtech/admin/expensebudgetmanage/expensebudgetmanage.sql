@@ -19,17 +19,7 @@
 	#if(ieffectivestatus)
 		and eb.ieffectivestatus in (#(ieffectivestatus))
 	#end	
-	### 超级管理员不过滤权限部门
-	#if(!isSystemAdmin)
-	    ### 存在角色部门配置过滤处理
-	    #if(accessCdepCodes && accessCdepCodes.size() > 0)
-	        AND eb.cDepCode IN (
-	            #for(code:accessCdepCodes)
-	                '#(code)' #(for.last?'':',')
-	            #end
-	        )
-	    #end
-	#end
+	#(getDataPermissionSql("eb", "cdepcode"))
 	order by eb.iautoid desc
 #end
 
@@ -61,4 +51,13 @@
 	ebi.iautoid,ebi.iexpenseid,eb.cbegindate,ebi.cbudgetno,bsh.csubjectname,bsl.csubjectname,ebi.citemname,ebi.chighestsubjectcode,ebi.clowestsubjectcode,
 	ebi.careertype,ebi.isLargeAmountExpense,ebi.cuse,ebi.cmemo,ebi.iprice,ebi.cunit,ebi.iCarryForward,ebi.icreateby,ebi.dcreatetime,ebi.isscheduled,
 	ebi.iamounttotal
+#end
+
+
+#sql("isExistsProposalDatas")
+select count(1) from pl_proposald pd where exists (
+	select 1 from PL_Expense_Budget eb
+		left join pl_expense_budget_item ebi on eb.iautoid = ebi.iExpenseId 
+		where eb.iautoid = #para(iexpenseid) and pd.iSourceId = ebi.iautoid
+)
 #end

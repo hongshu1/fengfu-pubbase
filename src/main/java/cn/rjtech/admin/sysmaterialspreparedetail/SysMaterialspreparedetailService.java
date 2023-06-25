@@ -661,4 +661,63 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 		return SUCCESS;
 	}
 
+
+	public Ret submitQTY(String Oldbarcode,String Oldqty,String Newbarcode, String Newqty) {
+		//获取当前用户信息？
+//		User user = JBoltUserKit.getUser();
+//		Date now = new Date();
+		tx(() -> {
+			Kv kv = new Kv();
+			kv.set("barcode",Oldbarcode);
+			List<Record> records = dbTemplate("materialsprepare.setqty", kv).find();
+			StockBarcodePosition stockBarcodePosition = stockbarcodepositionservice.findFirst("SELECT * FROM T_Sys_StockBarcodePosition WHERE Barcode=?", Oldbarcode);
+			stockBarcodePosition.setQty(new BigDecimal(Oldqty).subtract(new BigDecimal(Newqty)));//旧现品票的物料数量
+
+			StockBarcodePosition stockBarcodePosition1 = new StockBarcodePosition();
+
+//			stockBarcodePosition1.setAutoID(JBoltSnowflakeKit.me.nextId());
+			stockBarcodePosition1.setOrganizeCode(stockBarcodePosition.getOrganizeCode());
+			stockBarcodePosition1.setCusCode(stockBarcodePosition.getCusCode());
+			stockBarcodePosition1.setCusPosCode(stockBarcodePosition.getCusPosCode());
+			stockBarcodePosition1.setInvCode(stockBarcodePosition.getInvCode());
+			stockBarcodePosition1.setVenCode(stockBarcodePosition.getVenCode());
+			stockBarcodePosition1.setVenPosCode(stockBarcodePosition.getVenPosCode());
+			stockBarcodePosition1.setWhCode(stockBarcodePosition.getWhCode());
+			stockBarcodePosition1.setPosCode(stockBarcodePosition.getPosCode());
+			stockBarcodePosition1.setState(stockBarcodePosition.getState());
+			stockBarcodePosition1.setBarcode(Newbarcode);
+			stockBarcodePosition1.setQty(new BigDecimal(Newqty));
+			stockBarcodePosition1.setNum(stockBarcodePosition.getNum());
+			stockBarcodePosition1.setPackRate(stockBarcodePosition.getPackRate());
+			stockBarcodePosition1.setBatch(stockBarcodePosition.getBatch());
+			stockBarcodePosition1.setFdimension1(stockBarcodePosition.getFdimension1());
+			stockBarcodePosition1.setFdimension2(stockBarcodePosition.getFdimension2());
+			stockBarcodePosition1.setFdimension3(stockBarcodePosition.getFdimension3());
+			stockBarcodePosition1.setFdimension4(stockBarcodePosition.getFdimension4());
+			stockBarcodePosition1.setFdimension5(stockBarcodePosition.getFdimension5());
+			stockBarcodePosition1.setFdimension6(stockBarcodePosition.getFdimension6());
+			stockBarcodePosition1.setCdimension1(stockBarcodePosition.getCdimension1());
+			stockBarcodePosition1.setCdimension2(stockBarcodePosition.getCdimension2());
+			stockBarcodePosition1.setCdimension3(stockBarcodePosition.getCdimension3());
+			stockBarcodePosition1.setCdimension4(stockBarcodePosition.getCdimension4());
+			stockBarcodePosition1.setCdimension5(stockBarcodePosition.getCdimension5());
+			stockBarcodePosition1.setCdimension6(stockBarcodePosition.getCdimension6());
+			stockBarcodePosition1.setDdimension1(stockBarcodePosition.getDdimension1());
+			stockBarcodePosition1.setDdimension2(stockBarcodePosition.getDdimension2());
+			stockBarcodePosition1.setDdimension3(stockBarcodePosition.getDdimension3());
+			stockBarcodePosition1.setDdimension4(stockBarcodePosition.getDdimension4());
+			stockBarcodePosition1.setDdimension5(stockBarcodePosition.getDdimension5());
+			stockBarcodePosition1.setDdimension6(stockBarcodePosition.getDdimension6());
+			stockBarcodePosition1.setLockType(stockBarcodePosition.getLockType());
+			stockBarcodePosition1.setLockSource(stockBarcodePosition.getLockSource());
+			stockBarcodePosition1.setChgDate(stockBarcodePosition.getChgDate());
+
+			stockBarcodePosition.update();//旧现品票更新
+			stockBarcodePosition1.save();//新现品票更新
+
+			return true;
+		});
+		return SUCCESS;
+	}
+
 }

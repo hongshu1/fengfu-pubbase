@@ -569,6 +569,7 @@
                                     res.data.combination = trJsonData.combination;
                                     jboltTableInsertAfterRow(table, td.parent(), res.data);
                                 } else {
+                                    LayerMsgBox.alert("找不到双单位数据");
                                     console.log('找不到双单位数据')
                                 }
                             }
