@@ -22,7 +22,7 @@ import com.jfinal.kit.Kv;
  * @date: 2023-04-21 15:49
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.PROCESSDEFECT)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/processdefect", viewPath = "/_view/admin/processdefect")
 public class ProcessDefectAdminController extends BaseAdminController {

@@ -203,7 +203,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	}
 
 
-	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, Integer param, String revokeVal) {
+	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
@@ -262,22 +262,14 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 //				detailByParam = sysPuinstoreService.findSysPODetailByParam(kv);
 
 				//	行数据为空 不保存
-				if ("save".equals(revokeVal)) {
-					if (puinstore.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
-						ValidationUtils.error( "请先添加行数据！");
-					}
+				if (puinstore.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
+					ValidationUtils.error( "请先添加行数据！");
 				}
 
-				if ("submit".equals(revokeVal) && puinstore.getAutoID() == null) {
-					ValidationUtils.error( "请保存后提交审核！！！");
-				}
-
-
-				if (puinstore.getAutoID() == null && "save".equals(revokeVal)) {
+				if (puinstore.getAutoID() == null) {
 //					保存
 //					订单状态：0=待审核，1=未审核，2=已审核. 3=审核不通过
-					puinstore.setIAuditStatus(param);
-
+					puinstore.setIAuditStatus(0);
 					//创建人
 					puinstore.setICreateBy(userId);
 					puinstore.setDCreateTime(nowDate);
@@ -294,12 +286,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					save(puinstore);
 					headerId = puinstore.getAutoID();
 				}else {
-					Integer  a = Integer.valueOf(param);
-					if ( a  == 2){
-						puinstore.setAuditDate(nowDate);
-						puinstore.setCAuditName(userName);
-					}
-					puinstore.setIAuditStatus(param);
+					//更新人
+					puinstore.setIUpdateBy(userId);
 					puinstore.setDUpdateTime(nowDate);
 					puinstore.setCUpdateName(userName);
 					update(puinstore);
