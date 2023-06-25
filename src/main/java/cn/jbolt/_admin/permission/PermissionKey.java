@@ -2377,9 +2377,4 @@ public class PermissionKey {
 	 * 提审
 	 */
 	public static final String FORM_APP_SUBMIT = "form_app_submit";
-
-	public static final String CURRENT_STOCK = "current_stock";
-
-	public static final String STOCK_CHECK_VOUCH = "stock_check_vouch";
-
 }

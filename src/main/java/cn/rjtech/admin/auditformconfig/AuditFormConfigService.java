@@ -251,7 +251,8 @@ public class AuditFormConfigService extends BaseService<AuditFormConfig> {
 //                  表单审批类型切换时，增加对已有未完成审批单据的校验
                     if (!iType.equals(config.getIType())) {
                         String cFormSn = auditFormConfig.getCFormSn();
-                        List<Record> list = findRecord("select * from "+cFormSn+" where iAuditStatus = 1");
+                        List<Record> list = findRecord("select * from "+cFormSn+" where iAuditStatus = 1 and " +
+                                "IsDeleted = '0'");
                         ValidationUtils.isTrue(list.size() <= 0, "还有具体单据未完成审批流程或审核流程，不允切换类型");
                     }
 
