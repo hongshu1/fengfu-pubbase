@@ -4,6 +4,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.TransVouchDetail;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -78,7 +79,12 @@ public class TransVouchDetailService extends BaseService<TransVouchDetail> {
 	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
-		return deleteByIds(ids,true);
+		tx(() -> {
+			ValidationUtils.notNull(ids, JBoltMsg.DATA_NOT_EXIST);
+			delete("delete from T_Sys_TransVouchDetail where MasID = '" + ids + "'");
+			return true;
+		});
+		return SUCCESS;
 	}
 
 	/**

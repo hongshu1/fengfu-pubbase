@@ -15,6 +15,7 @@ import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -36,7 +37,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: RJ
  * @date: 2023-05-17 09:35
  */
-public class OtherOutDeliveryService extends BaseService<OtherOut> {
+public class OtherOutDeliveryService extends BaseService<OtherOut> implements IApprovalService {
 
 	private final OtherOut dao = new OtherOut().dao();
 
@@ -230,41 +231,27 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 			// 获取Form对应的数据
 			if (jBoltTable.formIsNotBlank()) {
 				OtherOut otherOut = jBoltTable.getFormModel(OtherOut.class,"otherOut");
-
 				//	行数据为空 不保存
-				if ("save".equals(revokeVal)) {
-					if (otherOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
-						ValidationUtils.error( "请先添加行数据！");
-					}
+				if (otherOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
+					ValidationUtils.error( "请先添加行数据！");
 				}
-
-				if ("submit".equals(revokeVal) && otherOut.getAutoID() == null) {
-					ValidationUtils.error( "请保存后提交审核！！！");
-				}
-
-
-				if (otherOut.getAutoID() == null && "save".equals(revokeVal)) {
-//					保存
-//					订单状态：1=已保存，2=待审核，3=已审核
-					otherOut.setIAuditStatus(param);
-
+				if (otherOut.getAutoID() == null) {
+					otherOut.setOrganizeCode(OrgCode);
+					//创建人
 					otherOut.setICreateBy(userId);
 					otherOut.setDCreateTime(nowDate);
 					otherOut.setCCreateName(userName);
-					otherOut.setOrganizeCode(OrgCode);
+					//更新人
 					otherOut.setIUpdateBy(userId);
 					otherOut.setDupdateTime(nowDate);
 					otherOut.setCUpdateName(userName);
 					otherOut.setIsDeleted(false);
+					otherOut.setIAuditStatus(0);
 					otherOut.setType("OtherOut");
 					save(otherOut);
 					headerId = otherOut.getAutoID();
 				}else {
-					if ( param == 1 ){
-						otherOut.setAuditDate(nowDate);
-						otherOut.setAuditPerson(userName);
-					}
-					otherOut.setIAuditStatus(param);
+					//更新人
 					otherOut.setIUpdateBy(userId);
 					otherOut.setDupdateTime(nowDate);
 					otherOut.setCUpdateName(userName);
@@ -655,4 +642,78 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> {
 		return dept;
 	}
 
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		Date nowDate = new Date();
+		OtherOut otherOut = findById(formAutoId);
+		otherOut.setIAuditBy(userId);
+		otherOut.setCAuditName(userName);
+		otherOut.setDAudittime(nowDate);
+		String ids = String.valueOf(otherOut.getAutoID());
+		this.pushU8(ids);
+		otherOut.update();
+		return null;
+	}
+
+	@Override
+	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		return null;
+	}
 }

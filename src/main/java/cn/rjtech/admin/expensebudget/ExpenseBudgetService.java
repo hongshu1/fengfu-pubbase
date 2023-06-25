@@ -1357,7 +1357,9 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 		List<ExpenseBudget> list = find(selectSql().eq("iPeriodId", dbPeriod.getIautoid()));
 		return CollUtil.isNotEmpty(list);
 	}
-
+    /**
+     * 处理审批通过的其他业务操作，如有异常返回错误信息
+     */
 	@Override
 	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
 		// TODO Auto-generated method stub

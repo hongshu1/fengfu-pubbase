@@ -165,6 +165,8 @@ public class PurchaseOrderDBatchService extends BaseService<PurchaseOrderDBatch>
 		purchaseOrderDBatch.setCVersion("00");
 		purchaseOrderDBatch.setCBarcode(barcode);
 		purchaseOrderDBatch.setIsEffective(true);
+		// 完整条码：现品票_版本号(默认版本号为00)
+		purchaseOrderDBatch.setCCompleteBarcode(barcode.concat("_00"));
 		return purchaseOrderDBatch;
 	}
 	
@@ -197,6 +199,7 @@ public class PurchaseOrderDBatchService extends BaseService<PurchaseOrderDBatch>
 				orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, orderDBatch.getCBarcode());
         // 设置新版本号
         newBatch.setCVersion(cVersion);
+        newBatch.setCCompleteBarcode(orderDBatch.getCBarcode().concat("_").concat(cVersion));
         // 添加来源id
         newBatch.setCSourceld(String.valueOf(id));
         // 将旧的改为失效

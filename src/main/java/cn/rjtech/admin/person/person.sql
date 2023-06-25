@@ -71,6 +71,9 @@ WHERE hp.iorgid = #para(iorgid)
     #if(cdepcode)
     	and d.cdepcode = #para(cdepcode)
     #end
+    #if(cdepcodelike)
+    	and d.cdepcode like concat('#(cdepcodelike)','%')
+    #end    
 ORDER BY hp.cpsn_num
 #end
 

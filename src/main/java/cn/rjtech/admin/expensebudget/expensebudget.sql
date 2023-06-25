@@ -146,7 +146,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
 		and ibudgettype = 1
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -167,7 +167,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
 		and ibudgettype = 2
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -187,7 +187,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))	
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -207,7 +207,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -228,7 +228,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
 		and ibudgettype = 1
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -249,7 +249,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
 		and ibudgettype = 2
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -269,7 +269,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))	
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -289,7 +289,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -310,7 +310,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
 		and ibudgettype = 1
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -331,7 +331,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
 		and ibudgettype = 2
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -351,7 +351,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))	
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -371,7 +371,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -416,7 +416,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
 		and ibudgettype = 1
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -437,7 +437,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
 		and ibudgettype = 2
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -457,7 +457,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))	
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -477,7 +477,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -498,7 +498,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
 		and ibudgettype = 1
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -519,7 +519,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
 		and ibudgettype = 2
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -539,7 +539,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))	
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -559,7 +559,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -580,7 +580,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
 		and ibudgettype = 1
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -601,7 +601,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
 		and ibudgettype = 2
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -621,7 +621,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))	
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -641,7 +641,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -689,7 +689,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
 		and ibudgettype = 1
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -710,7 +710,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
 		and ibudgettype = 2
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -730,7 +730,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))	
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -750,7 +750,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -771,7 +771,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
 		and ibudgettype = 1
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -792,7 +792,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
 		and ibudgettype = 2
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -812,7 +812,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))	
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -832,7 +832,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -853,7 +853,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
 		and ibudgettype = 1
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -874,7 +874,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
 		and ibudgettype = 2
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -894,7 +894,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))	
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -914,7 +914,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -962,7 +962,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
 		and ibudgettype = 1
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -983,7 +983,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
 		and ibudgettype = 2
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -1003,7 +1003,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))	
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -1023,7 +1023,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime1),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime1),'-01'))
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -1044,7 +1044,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
 		and ibudgettype = 1
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -1065,7 +1065,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
 		and ibudgettype = 2
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -1085,7 +1085,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))	
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -1105,7 +1105,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime2),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime2),'-01'))
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -1126,7 +1126,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
 		and ibudgettype = 1
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -1147,7 +1147,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
 		and ibudgettype = 2
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,eb.ibudgettype
 #end
@@ -1167,7 +1167,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))	
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
@@ -1187,7 +1187,7 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 		where 1=1 and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) >= convert(date,concat(#para(dstarttime3),'-01'))
 		and convert(date,concat(ebid.iyear,'-',ebid.imonth,'-01')) <= convert(date,concat(#para(dendtime3),'-01'))
 		#if(cdepcode)
-			and cdepcode = #para(cdepcode)
+			and cdepcode like concat('#(cdepcode)','%')
 		#end		
 		 GROUP BY eb.ibudgetyear,ebi.iHighestSubjectId, ebi.iLowestSubjectId,hsm.csubjectname,lsm.csubjectname,ebi.cbudgetno
 #end
