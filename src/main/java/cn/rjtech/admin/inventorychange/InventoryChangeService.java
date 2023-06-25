@@ -344,7 +344,6 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 
 		for (Record record : records) {
 
-
 			Date now=new Date();
 			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
 			record.set("iOrgId", getOrgId());
