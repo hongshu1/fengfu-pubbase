@@ -1,5 +1,9 @@
 #sql("paginateAdminDatas")
 SELECT
+        AuditState =
+        CASE WHEN t2.iStatus=1 THEN '待记录'
+             WHEN t2.iStatus=2 THEN '待判断'
+             WHEN t2.iStatus=3 THEN '已完成' END,
     t1.iAutoId AS iRcvDocQcFormMid,
     t1.cRcvDocQcFormNo,
     t1.iInventoryId,
@@ -48,7 +52,7 @@ WHERE
 #if(enddate)
     and CONVERT(VARCHAR(10),t2.dUpdateTime,23) <='#(enddate)'
 #end
-order by t2.dUpdateTime desc
+order by t2.dCreateTime desc
 #end
 
 
