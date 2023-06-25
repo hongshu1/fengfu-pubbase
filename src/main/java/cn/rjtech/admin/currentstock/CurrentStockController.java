@@ -22,7 +22,7 @@ import com.jfinal.kit.Kv;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-10-31 14:38
  */
-@CheckPermission(PermissionKey.FORMAPPROVAL)
+@CheckPermission(PermissionKey.CURRENT_STOCK)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/currentstock", viewPath = "_view/admin/currentstock")

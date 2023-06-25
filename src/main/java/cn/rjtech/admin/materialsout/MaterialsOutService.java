@@ -114,6 +114,9 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 				String autoId = idStr;
 				MaterialsOut materialsOut = findById(autoId);
 				ValidationUtils.notNull(materialsOut, JBoltMsg.DATA_NOT_EXIST);
+				//软删除
+//				materialsOut.setIsDeleted(true);
+//				materialsOut.update();
 
 				// TODO 可能需要补充校验组织账套权限
 				// TODO 存在关联使用时，校验是否仍在使用
@@ -244,14 +247,14 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 					materialsOut.setIAuditStatus(0);
 
 					//创建人
-					materialsOut.setIcreateby(userId);
-					materialsOut.setCcreatename(userName);
-					materialsOut.setDcreatetime(nowDate);
+					materialsOut.setIcreateBy(userId);
+					materialsOut.setCcreateName(userName);
+					materialsOut.setDcreateTime(nowDate);
 
 					//更新人
-					materialsOut.setIupdateby(userId);
-					materialsOut.setCupdatename(userName);
-					materialsOut.setDupdatetime(nowDate);
+					materialsOut.setIupdateBy(userId);
+					materialsOut.setCupdateName(userName);
+					materialsOut.setDupdateTime(nowDate);
 
 					materialsOut.setOrganizeCode(OrgCode);
 					materialsOut.setIsDeleted(false);
@@ -259,9 +262,9 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 					headerId = materialsOut.getAutoID();
 				}else {
 					//更新人
-					materialsOut.setIupdateby(userId);
-					materialsOut.setCupdatename(userName);
-					materialsOut.setDupdatetime(nowDate);
+					materialsOut.setIupdateBy(userId);
+					materialsOut.setCupdateName(userName);
+					materialsOut.setDupdateTime(nowDate);
 					update(materialsOut);
 					headerId = materialsOut.getAutoID();
 				}
@@ -493,8 +496,8 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 		materials.setDeptCode(puinstore.getDeptCode());
 		materials.setWhcode(puinstore.getWhCode());
 		materials.setVenCode(puinstore.getVenCode());
-		materials.setCcreatename(puinstore.getCCreateName());
-		materials.setDcreatetime(puinstore.getDCreateTime());
+		materials.setCcreateName(puinstore.getCCreateName());
+		materials.setDcreateTime(puinstore.getDCreateTime());
 		materials.setState(1);
 		materials.setIAuditStatus(0);
 		materials.setMemo(puinstore.getMemo());
@@ -518,7 +521,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 			MaterialsOut materialsOut = findById(formAutoId);
 			materialsOut.setIAuditBy(userId);
 			materialsOut.setCAuditName(userName);
-			materialsOut.setDAudittime(nowDate);
+			materialsOut.setDAuditTime(nowDate);
 			String ids = String.valueOf(materialsOut.getAutoID());
 		 	this.pushU8(ids);
 			materialsOut.update();
@@ -540,7 +543,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 		MaterialsOut materialsOut = findById(formAutoId);
 		materialsOut.setIAuditBy(null);
 		materialsOut.setCAuditName(null);
-		materialsOut.setDAudittime(null);
+		materialsOut.setDAuditTime(null);
 		materialsOut.update();
 		return null;
 	}
@@ -598,7 +601,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 					//审核人
 					materialsOut.setIAuditBy(userId);
 					materialsOut.setCAuditName(userName);
-					materialsOut.setDAudittime(nowDate);
+					materialsOut.setDAuditTime(nowDate);
 //					this.pushU8(ids);
 					materialsOut.update();
 				}
