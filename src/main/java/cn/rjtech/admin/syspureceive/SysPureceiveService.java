@@ -282,9 +282,14 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
      * 通过关键字匹配
      * autocomplete组件使用
      */
-    public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode, String vencode) {
+    public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode, String vencode,String whcode1) {
+        Record whcode = dbTemplate("syspureceive.Whcode", Kv.by("whcode", whcode1)).findFirst();
+        String whcode2 = null;
+        if(null != whcode && "".equals(whcode)){
+            whcode2 =whcode.getStr("iautoid");
+        }
         return dbTemplate("syspureceive.getBarcodeDatas",
-                Kv.by("q", q).set("limit", limit).set("orgCode", orgCode).set("vencode", vencode)).find();
+                Kv.by("q", q).set("limit", limit).set("orgCode", orgCode).set("vencode", vencode).set("whcodeid",whcode2)).find();
     }
 
     /**

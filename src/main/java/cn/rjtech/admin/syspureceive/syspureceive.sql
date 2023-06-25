@@ -124,7 +124,8 @@ select top #(limit)
     m.iVendorId,
 	v.cVenCode as vencode,
 	v.cVenName as venname,
-	uom.cUomCode as purchasecuomcode,uom.cUomName as purchasecuomname
+	uom.cUomCode as purchasecuomcode,uom.cUomName as purchasecuomname,
+	area.cAreaCode as poscode
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
@@ -133,6 +134,8 @@ LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode AND pd.isDeleted = '0'
 LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
 LEFT JOIN Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
+LEFT JOIN Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
+LEFT JOIN Bd_Warehouse_Area area on area.iAutoId =config.iWarehouseAreaId
 where a.isEffective = '1'
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
@@ -276,6 +279,12 @@ LEFT JOIN Bd_Warehouse wh ON wa.iWarehouseId = wh.iAutoId
 WHERE wa.isDeleted = 0
     AND wa.cAreaCode = #para(careacode)
 
+#end
+
+#sql("getWhCode")
+SELECT wa.*
+FROM Bd_Warehouse wa
+WHERE wa.isDeleted = 0  AND wa.cWhCode = #para(careacode)
 #end
 
 #sql("barcodeDatas")

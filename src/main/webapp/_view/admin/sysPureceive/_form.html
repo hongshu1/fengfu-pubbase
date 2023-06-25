@@ -187,7 +187,7 @@
                            #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >
                 </div>
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                    <button onclick="coverall()" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >覆盖</button>
+                    <button onclick="coverall(this)" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >覆盖</button>
                 </div>
 
 
@@ -256,12 +256,45 @@
             LayerMsgBox.alert("请输入条码")
         }
     }
-    function coverall() {
-        var careacode = $("#careacode").val();
-        var careaname = $("#careaname").val();
-        console.log(careacode  +careaname  );
-        let data = [{"column":"poscode","text":careacode,"value":careacode}];
-        jboltTableBatchSetColumns(jbolt_Table_#(pageId),data,true);
+    function coverall(ele) {
+
+        var action=getRealJqueryObject(ele);
+        if(isOk(action)){
+            var success = checkMasterTableId(action);
+            if(!success){
+                return false;
+            }
+        }
+        var isCheckedNone=jboltTableIsCheckedNone(ele);
+        if(isCheckedNone){
+            var careacode = $("#careacode").val();
+            var careaname = $("#careaname").val();
+            console.log(careacode  +careaname  );
+            let data = [{"column":"poscode","text":careacode,"value":careacode}];
+            jboltTableBatchSetColumns(jbolt_Table_#(pageId),data,true);
+        }else{
+            var ids=jboltTableGetCheckedIds(ele,true);
+            if(ids){
+                LayerMsgBox.confirm("所选数据中确定覆盖吗？",function(){
+                    // removeJBoltTableCheckedTr(ele,false,callback);
+                    var careacode = $("#careacode").val();
+                    var careaname = $("#careaname").val();
+                    console.log(careacode  +careaname  );
+                    let data = [{"column":"poscode","text":careacode,"value":careacode}];
+                    jboltTableBatchSetColumns(ele,data,true);
+                });
+            }
+            return true;
+
+        }
+        return false;
+
+        //
+        // var careacode = $("#careacode").val();
+        // var careaname = $("#careaname").val();
+        // console.log(careacode  +careaname  );
+        // let data = [{"column":"poscode","text":careacode,"value":careacode}];
+        // jboltTableBatchSetColumns(jbolt_Table_#(pageId),data,true);
 
     }
 
@@ -321,12 +354,27 @@
                 AutoID: {
                     submitAttr: "AutoID",
                 },
-                qty: {
-                    type: "amount",//类型
-                    required: true,
-                    placeholder: "数量", //输入提示，里面
-                    tooltip: "数量",//输入提示，上方
+                qty:{ //单价
+                    type:"amount",
+                    required:true,
+                    textFormat: function (table, td, text, value, trJsonData) {
+                        return (typeof(text)==undefined||typeof(text)=="undefined"||(typeof(text)=='string'&&text.length==0))?"":numberFormat(value,2);
+                    },
+                    editorFormat:function(table,td,text,value,trJsonData){
+                        //编辑器内显示格式化
+                        if(!value){return "";}
+                        value=value.replaceAll(",","");
+                        console.log(removeFixedNumberAllZero(value,2));
+                        return removeFixedNumberAllZero(value,2);
+                    }
                 },
+                // qty: {
+                //     type: "amount",//类型
+                //     required: true,
+                //     placeholder: "数量", //输入提示，里面
+                //     tooltip: "数量",//输入提示，上方
+                //     tofixed:2
+                // },
                 whcode: {
                     placeholder: "仓库", //输入提示，里面
                     tooltip: "仓库",//输入提示，上方
@@ -396,7 +444,7 @@
                     // handler: function (table, td, trJsonData, checkbox, isChecked) {
                     //     checkHead(table, 'isDeleteEnabled');
                     // },
-                    linkPara: "input[name='detailHidden']",
+                    linkPara: "input[name='detailHidden'],input[name='whcode1']",
                     maxLength: 100,
                     required: true,
                     placeholder: "=请选择=",
@@ -423,7 +471,7 @@
                         {column: "cuomclassname", use: "cuomclassname"}, {
                             column: "iinventoryid",
                             use: "iautoid"
-                        }, {column: "sourcebilltype", use: "sourcebilltype"},
+                        }, {column: "sourcebilltype", use: "sourcebilltype"},{column: "poscode", use: "poscode"},
                         {column: "sourcebillno", use: "sourcebillno"}, {column: "sourcebilldid", use: "sourcebilldid"},
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {
                             column: "sourcebillid",
@@ -431,6 +479,11 @@
                         }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}, {column: "billtype", use: "ipurchasetypeid"}],
 
                         handler:function (table,td,text,value,jsonData) {
+                            // let whcode = $("#whcode").val();
+                            // if(whcode == null || whcode==''){
+                            //     alert("请先选择仓库")
+                            //     return false;
+                            // }
                             let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
                             console.log("data==>",datas);
                             let array = new Array();
