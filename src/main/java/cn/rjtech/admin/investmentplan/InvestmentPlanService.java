@@ -6,6 +6,7 @@ import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -176,6 +177,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 			for (String idStr : StrSplitter.split(ids, COMMA, true, true)) {
 				long iAutoId = Long.parseLong(idStr);
 				InvestmentPlan dbInvestmentPlan = findById(iAutoId);
+				DataPermissionKit.validateAccess(dbInvestmentPlan.getCDepCode());
 				ValidationUtils.notNull(dbInvestmentPlan, JBoltMsg.DATA_NOT_EXIST);
 				deleteInvestmentPlanItem(iAutoId);
 				// TODO 可能需要补充校验组织账套权限
@@ -332,6 +334,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 		} catch (Exception e) {
 			ValidationUtils.error( "预算部门获取失败,请检查导入模板!");
 		}
+        DataPermissionKit.validateAccess(cdepcode);
         List<Record> excelRowList = (List<Record>)excelMap.get("rows");
         StringBuilder errorMsg = new StringBuilder();
         if(CollUtil.isNotEmpty(excelRowList)){
@@ -527,6 +530,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 		ValidationUtils.notNull(jBoltTable, "参数不能为空");
 		Date now = new Date();
 		InvestmentPlan investmentPlan = jBoltTable.getFormModel(InvestmentPlan.class, "investmentPlan");
+		DataPermissionKit.validateAccess(investmentPlan.getCDepCode());
 		//从启用期间中获取预算类型和预算年度
 		Integer iBudgetType = investmentPlan.getIBudgetType();
 		Integer iBudgetYear = investmentPlan.getIBudgetYear();
@@ -741,6 +745,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 		ValidationUtils.notNull(jBoltTable, "参数不能为空");
 		Date now = new Date();
 		InvestmentPlan investmentPlan = jBoltTable.getFormModel(InvestmentPlan.class, "investmentPlan");
+		DataPermissionKit.validateAccess(investmentPlan.getCDepCode());
 		Long iInvestmentPlanId = investmentPlan.getIAutoId();
 		InvestmentPlan investmentPlanDbs = findById(iInvestmentPlanId);
 		tx(()->{

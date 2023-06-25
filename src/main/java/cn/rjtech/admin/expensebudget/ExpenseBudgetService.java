@@ -7,6 +7,7 @@ import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -155,6 +156,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 			for (String idStr : StrSplitter.split(ids, COMMA, true, true)) {
 				long iAutoId = Long.parseLong(idStr);
 				ExpenseBudget expenseBudget = findById(iAutoId);
+				DataPermissionKit.validateAccess(expenseBudget.getCDepCode());
 				ValidationUtils.notNull(expenseBudget, JBoltMsg.DATA_NOT_EXIST);
 				deleteExpenseBudgetItem(iAutoId);
 				ValidationUtils.isTrue(expenseBudget.delete(), ErrorMsg.DELETE_FAILED);
@@ -278,6 +280,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 	    int budgetEndYear = rc.getInt("budgetEndYear");
 	    int budgetEndMonth = rc.getInt("budgetEndMonth");
 	    String cdepcode = rc.getStr("cdepcode");
+	    DataPermissionKit.validateAccess(cdepcode);
 	    Integer ibudgetType = rc.getInt("cbudgetType");
 	    Integer ibudgetyear = rc.getInt("ibudgetyear");
 	    Date cBeginDate = JBoltDateUtil.getDate(budgetStartYear+"-"+budgetStartMonth+"-01", JBoltDateUtil.YMD);
@@ -738,6 +741,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 		ValidationUtils.notNull(jBoltTable, "参数不能为空");
 		Date now = new Date();
 		ExpenseBudget expenseBudget = jBoltTable.getFormModel(ExpenseBudget.class, "expenseBudget");
+		DataPermissionKit.validateAccess(expenseBudget.getCDepCode());
 		String cdepcode = expenseBudget.getCDepCode();
 		Integer iBudgetYear = expenseBudget.getIBudgetYear();
 		Integer iBudgetType = expenseBudget.getIBudgetType();
@@ -772,6 +776,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 		Date now = new Date();
 		ExpenseBudget expenseBudgetForm = jBoltTable.getFormModel(ExpenseBudget.class, "expenseBudget");
 		ExpenseBudget expenseBudget = findById(expenseBudgetForm.getIAutoId());
+		DataPermissionKit.validateAccess(expenseBudget.getCDepCode());
 		tx(()->{
 			Long userId = JBoltUserKit.getUserId();
 			//新增行

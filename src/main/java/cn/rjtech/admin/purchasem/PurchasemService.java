@@ -12,6 +12,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
@@ -305,6 +306,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
     public Ret saveTableSubmit(JBoltTable jBoltTable) {
         ValidationUtils.notNull(jBoltTable, JBoltMsg.PARAM_ERROR);
         Purchasem purchasem = jBoltTable.getFormModel(Purchasem.class, "purchasem");
+        DataPermissionKit.validateAccess(purchasem.getCDepCode());
         ValidationUtils.notNull(purchasem, JBoltMsg.PARAM_ERROR);
         Boolean flg = true;
         flg = tx(() -> {
@@ -811,6 +813,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 	 */
 	public Ret refBudgetSaveTableSubmit(JBoltTable jBoltTable) {
 		Purchasem purchasem = jBoltTable.getFormModel(Purchasem.class,"purchasem");
+		DataPermissionKit.validateAccess(purchasem.getCDepCode());
 		Date now = new Date();
 		User loginUesr = JBoltUserKit.getUser();
 		tx(()->{

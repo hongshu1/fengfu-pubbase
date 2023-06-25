@@ -5,7 +5,10 @@ import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.model.JboltFile;
 import cn.jbolt.core.permission.CheckPermission;
@@ -116,6 +119,7 @@ public class PurchasemAdminController extends BaseAdminController {
      * 数据源
      */
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getKv()));
     }
@@ -232,6 +236,7 @@ public class PurchasemAdminController extends BaseAdminController {
     /**
      * 选择费用预算列表数据
      */
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findExpenseBudgetItemDatas() {
         renderJsonData(service.findExpenseBudgetItemDatas(getKv()));
     }    
@@ -249,6 +254,7 @@ public class PurchasemAdminController extends BaseAdminController {
     /**
      * 选择投资计划列表数据
      */
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findInvestmentPlanItemDatas() {
         renderJsonData(service.findInvestmentPlanItemDatas(getKv()));
     }    
@@ -484,6 +490,7 @@ public class PurchasemAdminController extends BaseAdminController {
      * 参照禀议书表格提交-新增/修改提交申购单
      */
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableSubmit() {
         renderJsonData(service.saveTableSubmit(getJBoltTable()));
     }
@@ -556,6 +563,7 @@ public class PurchasemAdminController extends BaseAdminController {
      * 参照禀议书界面-禀议书主表数据查询
      * */
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void chooseProposalmDatas(){
     	renderJsonData(service.chooseProposalmDatas(getKv()));
     }
@@ -614,6 +622,7 @@ public class PurchasemAdminController extends BaseAdminController {
    /**
     * 参照预算保存申购单
     * */
+   @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
    public void refBudgetSaveTableSubmit(){
 	   renderJson(service.refBudgetSaveTableSubmit(getJBoltTable()));
    }

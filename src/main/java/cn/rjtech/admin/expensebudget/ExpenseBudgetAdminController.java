@@ -4,7 +4,10 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -82,6 +85,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
      * 数据源
      */
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -104,6 +108,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
      * 批量删除
      */
     @CheckPermission(PermissionKey.EXPENSE_BUDGET_FORMULATE_DELETE)
+    @CheckDataPermission(operation = DataOperationEnum.DELETE, type = BusObjectTypeEnum.DEPTARTMENT)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -238,6 +243,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
      * 费用预算编制-新增和修改界面 --可编辑表格导入
      */
 	@UnCheck
+	@CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void importTableExpenseBudgetTpl(@Para(value="iexpenseid") Long iexpenseid) throws Exception {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);
@@ -279,6 +285,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     @UnCheck
     @RequestLimit(time=15,count=1)
     @Before(RequestLimitInterceptor.class)
+    @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableByAdd() {
         renderJson(service.saveTableSubmitByAdd(getJBoltTable()));
     }
@@ -308,6 +315,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
      */
     @RequestLimit(time=15,count=1)
     @Before(RequestLimitInterceptor.class)
+    @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableByUpdate() {
         renderJson(service.saveTableByUpdate(getJBoltTable()));
     }

@@ -17,17 +17,7 @@ from PL_Expense_Budget eb
 	#if(iorgid)
 		and eb.iorgid = #para(iorgid)
 	#end
-	### 超级管理员不过滤权限部门
-	#if(!isSystemAdmin)
-	    ### 存在角色部门配置过滤处理
-	    #if(accessCdepCodes && accessCdepCodes.size() > 0)
-	        AND eb.cDepCode IN (
-	            #for(code:accessCdepCodes)
-	                '#(code)' #(for.last?'':',')
-	            #end
-	        )
-	    #end
-	#end
+	#(getDataPermissionSql("eb", "cdepcode")) 
 	order by eb.iautoid desc
 #end
 

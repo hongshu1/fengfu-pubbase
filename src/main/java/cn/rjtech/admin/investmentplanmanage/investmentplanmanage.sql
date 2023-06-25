@@ -16,17 +16,7 @@
 	#if(ieffectivestatus)
 		and pm.ieffectivestatus in (#(ieffectivestatus))
 	#end	
-	### 超级管理员不过滤权限部门
-	#if(!isSystemAdmin)
-	    ### 存在角色部门配置过滤处理
-	    #if(accessCdepCodes && accessCdepCodes.size() > 0)
-	        AND pm.cDepCode IN (
-	            #for(code:accessCdepCodes)
-	                '#(code)' #(for.last?'':',')
-	            #end
-	        )
-	    #end
-	#end	
+	#(getDataPermissionSql("pm", "cdepcode")) 	
 	order by pm.iautoid desc
 #end
 
