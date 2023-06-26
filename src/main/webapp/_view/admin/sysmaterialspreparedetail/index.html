@@ -326,7 +326,6 @@
     function go() {
         var mytable = document.getElementById("jbolt_Table_");
         var cmodocno=getJboltTableAllDatas("MaterialsDetail",["cmodocno"]);
-        debugger
         if (!document.getElementById("billno").value) {
             LayerMsgBox.error("请选择备料单");
             return;
