@@ -700,6 +700,14 @@
 #include("formextendfields/formextendfields.sql")
 #end
 
+#namespace("uptimeparam")
+#include("uptimeparam/uptimeparam.sql")
+#end
+
+#namespace("uptimecategory")
+#include("uptimecategory/uptimecategory.sql")
+#end
+
 #namespace("prodparam")
 #include("prodparam/prodparam.sql")
 #end

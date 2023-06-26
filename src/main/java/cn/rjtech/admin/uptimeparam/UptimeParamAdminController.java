@@ -1,5 +1,6 @@
 package cn.rjtech.admin.uptimeparam;
 
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -13,13 +14,15 @@ import com.jfinal.plugin.activerecord.tx.TxConfig;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.UptimeParam;
 /**
- * 稼动时间建模-稼动时间参数
+ * 稼动时间参数
  * @ClassName: UptimeParamAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-06-26 15:14
  */
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/uptimeParam", viewPath = "/_view/admin/uptimeparam")
+@CheckPermission(PermissionKey.UPTIME_PARAM)
+@UnCheckIfSystemAdmin
 public class UptimeParamAdminController extends BaseAdminController {
 
 	@Inject
@@ -34,7 +37,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isEnabled")));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
 	}
 
    /**
