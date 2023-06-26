@@ -1458,6 +1458,26 @@ public class PermissionKey {
 	 */
 	public static final String BARCODE_TRACEPAGE = "barcode_tracepage";
 	/**
+	 * 生产表单参数
+	 */
+	public static final String PRODPARAM = "prodparam";
+	/**
+	 * 稼动时间建模
+	 */
+	public static final String UPTIME_CATEGORYS = "uptime_categorys";
+	/**
+	 * 稼动时间模板
+	 */
+	public static final String UPTIME_PARAM = "uptime_param";
+	/**
+	 * 稼动时间参数
+	 */
+	public static final String UPTIME_CATEGORY = "uptime_category";
+	/**
+	 * 生产项目
+	 */
+	public static final String PRODITEM = "prodItem";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
