@@ -65,6 +65,21 @@
     <!-- 工具条 toolbar -->
     <div class="jbolt_table_toolbar" id="fh_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            #if(readonly != 'readonly')
+            <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
+            #end
+            #if(SysStockchekvouch.autoid??)
+            ### 参数列表
+            ### uri:                    接口URI
+            ### formSn:                 表单名
+            ### o:                      当前表单对象名
+            ### primaryKeyName:         主键名
+            ### permissionKeyPrefix:    权限key
+            ### redonly:                查看页定义为readonly=readonly, 新增/编辑页 可不传
+            ### className:              实现审批业务的类名
+            #include("/_view/_common/_approval_btns.html", uri="/admin/currentstock", formSn="T_Sys_StockCheckVouch", o=SysStockchekvouch, primaryKeyName="AutoID", className="cn.rjtech.admin.currentstock.CurrentStockService",permissionKeyPrefix="SysStockchekvouch")
+            #end
+            <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
             <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="/admin/stockcheckvouchdetail/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
         </div>
 
@@ -113,10 +128,16 @@
 
 #define js()
 <script>
-    function submitThisForm() {
+    // function submitThisForm() {
+    //     jboltTableSubmit('#jbolt_table_#(pageId)');
+    // }
+
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
+    function submitThisForm_#(pageId)(ele) {
+        submit = ele;
         jboltTableSubmit('#jbolt_table_#(pageId)');
     }
-
     // 子表查询表单
     var stockcheckvouchdid = $('#stockcheckvouchdid');
     // 避免触发重复点击行事件的处理
@@ -130,8 +151,27 @@
                 var mid='#(bill.autoid)';
 
                 Ajax.post('admin/currentstock/okCheck', {"mid":mid}, function (ret) {
-                    parent.refreshPjaxContainer();
-                    parent.layer.closeAll();
+                    // parent.refreshPjaxContainer();
+                    // parent.layer.closeAll();
+                    if (ret.state == "ok") {
+                        LayerMsgBox.success(ret.msg, 600, function () {
+                            let autoid = ret.AutoID;
+                            // 提交审核（审批）调用
+                            if (submit){
+                                submit_#(pageId)(autoid,function () {
+                                    LayerMsgBox.success("提交成功", 600, function () {
+                                        parent.refreshPjaxContainer();
+                                        parent.layer.closeAll();
+                                    });
+                                });
+                            } else {
+                                parent.refreshPjaxContainer();
+                                parent.layer.closeAll();
+                               }
+                        })
+                    } else {
+                        LayerMsgBox.error(res.msg);
+                    }
                 });
             });
 
