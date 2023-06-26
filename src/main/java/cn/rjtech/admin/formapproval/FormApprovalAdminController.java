@@ -213,7 +213,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "处理审批的Service类名");
 
-        renderJson(service.reject(formAutoId, formSn, status, primaryKeyName, className));
+        renderJson(service.reject(formAutoId, formSn, status, primaryKeyName, className, false));
     }
 
     /**
