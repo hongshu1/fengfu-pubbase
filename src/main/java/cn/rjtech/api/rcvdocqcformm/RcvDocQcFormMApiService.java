@@ -3,15 +3,15 @@ package cn.rjtech.api.rcvdocqcformm;
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
+import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.util.ValidationUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.upload.UploadFile;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -24,7 +24,9 @@ import java.util.List;
 public class RcvDocQcFormMApiService extends JBoltApiBaseService {
 
     @Inject
-    private RcvDocQcFormMService     service;              //质量管理-来料检验表
+    private RcvDocQcFormMService service;              //质量管理-来料检验表
+    @Inject
+    private RcvDocQcFormDService rcvDocQcFormDService; //质量管理-来料检单行配置表
 
     /**
      * 点击左侧导航栏-出库检，显示主页面数据
@@ -52,8 +54,10 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
         service.checkAutoCreateRcvDocQcFormD(record.getLong("iautoid"));
         // 表头项目
         List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
+        List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
         record.set("columns", tableHeadData);
         record.set("record", record);
+        record.set("docparamlist", docparamlist);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
@@ -81,11 +85,10 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
         //1、查询跳转到另一页面需要的数据
         Record record = service.getCheckoutListByIautoId(iautoid);
         ValidationUtils.notNull(record, JBoltMsg.DATA_NOT_EXIST);
-
-        //判断是否要先生成从表数据
-        service.checkAutoCreateRcvDocQcFormD(record.getLong("iautoid"));
         // 表头项目
         List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
+        List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
+        record.set("docparamlist", docparamlist);
         record.set("columns", tableHeadData);
         record.set("record", record);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
@@ -103,26 +106,12 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
         service.checkAutoCreateRcvDocQcFormD(record.getLong("iautoid"));
         // 表头项目
         List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
+        List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
+        record.set("docparamlist", docparamlist);
         record.set("columns", tableHeadData);
         record.set("record", record);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
-
-    /**
-     * 跳转到"查看"页面后，自动加载查看页面table的数据
-     */
-    /*public JBoltApiRet autoGetRcvOnlyseeOrEditTableDatas(Long iautoid) {
-        //1、调用方法获得table数据
-        Kv kv = new Kv();
-        kv.set("iautoid", iautoid);
-        List<Record> recordList = service.getonlyseelistByiautoid(kv);//getonlyseelistByiautoid\getonlyseelistByiautoid
-        //2、传到实体类里面
-        for (Record record : recordList) {
-            record.keep("iautoid", "iformparamid", "iqcformid", "ircvdocqcformmid", "iseq", "isubseq", "itype", "coptions",
-                "cqcformparamids", "cqcitemname", "cqcparamname", "imaxval", "iminval", "istdval", "cvaluelist");
-        }
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(recordList);
-    }*/
 
     /**
      * 在检验页面点击“确定”按钮，将数据带到后台保存
@@ -147,13 +136,6 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
         //2、最后返回成功
         return JBoltApiRet.API_SUCCESS;
     }
-
-    /*
-     * 自动加载图片
-     * */
-    /*public JBoltApiRet uploadImage(List<UploadFile> files) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.uploadImage(files));
-    }*/
 
     /*
      * 导出详情页
