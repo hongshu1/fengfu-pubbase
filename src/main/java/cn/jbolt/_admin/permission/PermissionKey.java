@@ -2434,6 +2434,10 @@ public class PermissionKey {
 	 */
 	public static final String CURRENT_STOCK_APPROVE = "current_stock_approve";
 	/**
+	 * 不通过
+	 */
+	public static final String CURRENT_STOCK_REJECT = "current_stock_reject";
+	/**
 	 * 反审核
 	 */
 	public static final String CURRENT_STOCK_REVERSE_APPROVE = "current_stock_reverse_approve";
@@ -2441,4 +2445,24 @@ public class PermissionKey {
 	 * 撤回
 	 */
 	public static final String FORM_APP_WITHDRAW = "form_app_withdraw";
+	/**
+	 * 审核
+	 */
+	public static final String FORM_APP_AUDIT = "form_app_audit";
+	/**
+	 * 审核不通过
+	 */
+	public static final String FORM_APP_REJECT_AUDIT = "form_app_reject_audit";
+	/**
+	 * 反审核
+	 */
+	public static final String FORM_APP_REVERSE_AUDIT = "form_app_reverse_audit";
+	/**
+	 * 批量审核
+	 */
+	public static final String FORM_APP_BATCH_AUDIT = "form_app_batch_audit";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String FORM_APP_BATCH_REJECT_AUDIT = "form_app_batch_reject_audit";
 }
