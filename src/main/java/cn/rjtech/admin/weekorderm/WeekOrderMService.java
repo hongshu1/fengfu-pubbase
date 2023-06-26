@@ -497,15 +497,15 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         WeekOrderM weekOrderM = findById(formAutoId);
-        ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
+//        ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
         // 推送U8订单
-        List<WeekOrderD> weekOrderDS = weekOrderDService.findByMId(formAutoId);
-        String cDocNo = pushOrder(weekOrderM, weekOrderDS);
-        ValidationUtils.notNull(cDocNo, "推单失败");
+//        List<WeekOrderD> weekOrderDS = weekOrderDService.findByMId(formAutoId);
+//        String cDocNo = pushOrder(weekOrderM, weekOrderDS);
+//        ValidationUtils.notNull(cDocNo, "推单失败");
 
         // 修改客户计划汇总
         ValidationUtils.isTrue(updateColumn(formAutoId, "iPushTo", 1).isOk(), JBoltMsg.FAIL);
-        ValidationUtils.isTrue(updateColumn(formAutoId, "cDocNo", cDocNo).isOk(), JBoltMsg.FAIL);
+       // ValidationUtils.isTrue(updateColumn(formAutoId, "cDocNo", cDocNo).isOk(), JBoltMsg.FAIL);
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
         cusOrderSumService.algorithmSum();
         return null;
@@ -517,7 +517,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     @Override
     public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         WeekOrderM weekOrderM = findById(formAutoId);
-        ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), "订单非待审核状态");
+//        ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), "订单非待审核状态");
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }
@@ -568,7 +568,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     @Override
     public String preSubmitFunc(long formAutoId) {
         WeekOrderM weekOrderM = findById(formAutoId);
-        ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.NOT_AUDIT.getValue(), "订单非已保存状态");
+//        ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.NOT_AUDIT.getValue(), "订单非已保存状态");
         return null;
     }
 
@@ -587,7 +587,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     @Override
     public String postWithdrawFunc(long formAutoId) {
         WeekOrderM weekOrderM = findById(formAutoId);
-        ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), "订单非待审批状态");
+//        ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), "订单非待审批状态");
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
         return null;
     }
