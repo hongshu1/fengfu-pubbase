@@ -699,3 +699,11 @@
 #namespace("formextendfields")
 #include("formextendfields/formextendfields.sql")
 #end
+
+#namespace("prodparam")
+#include("prodparam/prodparam.sql")
+#end
+
+#namespace("proditem")
+#include("proditem/proditem.sql")
+#end

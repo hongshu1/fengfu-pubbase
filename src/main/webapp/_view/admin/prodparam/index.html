@@ -33,15 +33,15 @@
 <tr data-id="${data.iautoid}">
   <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
-      <a tooltip title="编辑" href="admin/qcparam/edit/${data.iautoid}" data-scroll="yes" data-handler="refreshJBoltTable"
+      <a tooltip title="编辑" href="admin/prodParam/edit/${data.iautoid}" data-scroll="yes" data-handler="refreshJBoltTable"
          data-title="编辑" data-area="1200,1000" class="jbolt_table_editbtn">编辑</a>
-      <a tooltip title="删除" href="admin/qcparam/delete/${data.iautoid}" data-handler="refreshJBoltTable"
+      <a tooltip title="删除" href="admin/prodParam/delete/${data.iautoid}" data-handler="refreshJBoltTable"
          class="jbolt_table_delbtn">删除</a>
   </td>
-  <td title="${data.cqcitemname}">${data.cqcitemname}</td><!--参数项目名称-->
-  <td>${data.cqcparamname}</td><!--参数名称-->
+  <td>${data.cproditemname}</td><!--参数项目名称-->
+  <td>${data.cprodparamname}</td><!--参数名称-->
   <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"
-           data-url="admin/operation/toggleIsenabledByQcParam/${data.iautoid}"/>
+           data-url="admin/prodParam/toggleIsEnabled/${data.iautoid}"/>
   </td>
   <td>${data.ccreatename}</td>
   <td>${data.dcreatetime}</td>
@@ -51,13 +51,12 @@
     <div class="jbolt_table_toolbar" id="qcparam_toolbar_#(pageId)">
       <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         <button data-dialogbtn data-area="1200,1000" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
-                data-title="新增质量建模-检验参数" data-url="admin/qcparam/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i>
+                data-title="新增生产表单参数" data-url="admin/prodParam/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i>
           新增
         </button>
         <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
       </div>
-
-      <div class="btn-group dropdown">
+<!--      <div class="btn-group dropdown">
         <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
         </button>
@@ -66,7 +65,7 @@
                   data-url="admin/qcparam/exportExcelByIds"><i class="fa fa-download"></i> 导出选中
           </button>
           <button class="btn dropdown-item" data-downloadbtn data-url="admin/qcparam/exportExcelAll"
-                  data-form="qcParamFrom_#(pageId)"><i class="fa fa-download"></i> 导出全部666
+                  data-form="qcParamFrom_#(pageId)"><i class="fa fa-download"></i> 导出全部
           </button>
         </div>
       </div>
@@ -87,7 +86,7 @@
                data-url="/admin/qcparam/importExcelClass">
           </div>
         </div>
-      </div>
+      </div>-->
 
     </div>
     <table class="jbolt_table jbolt_main_table  table-center "
@@ -97,7 +96,7 @@
            data-ajax="true"
            data-column-resize="true"
            data-conditions-form="qcParamFrom_#(pageId)"
-           data-url="admin/qcparam/datas"
+           data-url="admin/prodParam/datas"
            data-rowtpl="qcParamRowtpl_#(pageId)"
            data-column-prepend="1:checkbox:true"
            data-copy-to-excel="false"
@@ -107,8 +106,8 @@
       <tr>
         <th data-width="60" data-column="index">序号</th>
         <th data-width="150">操作</th>
-        <th data-width="180" data-column="cQcItemName">参数项目名称</th>
-        <th data-width="180" data-column="cQcParamName">参数名称</th>
+        <th data-width="180" data-column="cproditemname">生产项目名称</th>
+        <th data-width="180" data-column="cProdParamName">参数名称</th>
         <th data-width="120" data-column="isEnabled">启用状态</th>
         <th data-width="180" data-column="cCreateName">创建人</th>
         <th data-min-width="120" data-column="dCreateTime">创建时间</th>
