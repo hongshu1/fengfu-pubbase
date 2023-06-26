@@ -12,6 +12,7 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
 import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.momaterialsscansum.MoMaterialscanlogService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
 import cn.rjtech.admin.sysmaterialsprepare.SysMaterialsprepareService;
@@ -51,6 +52,9 @@ import java.util.*;
  */
 public class SysMaterialspreparedetailService extends BaseService<SysMaterialspreparedetail> {
 	private final SysMaterialspreparedetail dao=new SysMaterialspreparedetail().dao();
+
+	@Inject
+	private MoMaterialscanlogService moMaterialscanlogService;
 
 	@Inject
 	private SysMaterialsprepareService sysMaterialsprepareService;
@@ -225,7 +229,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 			sysMaterialsprepare.setSourceBillNo(modoc.getCMoDocNo());
 			sysMaterialsprepare.setBillType("手工作成");
 			sysMaterialsprepare.setOrganizeCode(getOrgCode());
-			sysMaterialsprepare.setCcreatename(user.getName());
+			sysMaterialsprepare.setCcreatename(user.getUsername());
 			sysMaterialsprepare.setDcreatetime(now);
 			sysMaterialsprepare.setIcreateby(user.getId());
 			sysMaterialsprepare.setBillDate(DateUtil.format(now, "yyyy-MM-dd HH:mm:ss"));
@@ -273,7 +277,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 				sysMaterialspreparedetail.setState(String.valueOf(0));
 				sysMaterialspreparedetail.setIsDeleted(false);
 				sysMaterialspreparedetail.setIcreateby(user.getId());
-				sysMaterialspreparedetail.setCcreatename(user.getName());
+				sysMaterialspreparedetail.setCcreatename(user.getUsername());
 				sysMaterialspreparedetail.setDcreatetime(now);
 //            sysMaterialspreparedetail.setIupdateby()
 //            sysMaterialspreparedetail.setCupdatename()
@@ -381,7 +385,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 		preallocate.set("password", "123456");
 		preallocate.set("organizeCode", this.getdeptid());
 		preallocate.set("CreatePerson", user.getId());
-		preallocate.set("CreatePersonName", user.getName());
+		preallocate.set("CreatePersonName", user.getUsername());
 		preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
 		preallocate.set("tag", "AssemVouch");
 		preallocate.set("type", "AssemVouch");
@@ -402,7 +406,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 			jsonObject.set("invname", "");
 //            jsonObject.set("CreatePerson", s.getCreatePerson());
 			jsonObject.set("qty", s.getQty());
-			jsonObject.set("CreatePersonName", user.getName());
+			jsonObject.set("CreatePersonName", user.getUsername());
 			jsonObject.set("IRdName", "");
 			jsonObject.set("ORdName", "");
 			jsonObject.set("Tag", "AssemVouch");
@@ -524,7 +528,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 //				sysMaterialspreparedetail.setCcreatename(user.getName());
 //				sysMaterialspreparedetail.setDcreatetime(now);
             sysMaterialspreparedetail.setIupdateby(user.getId());
-            sysMaterialspreparedetail.setCupdatename(user.getName());
+            sysMaterialspreparedetail.setCupdatename(user.getUsername());
             sysMaterialspreparedetail.setDupdatetime(now);
 				sysMaterialspreparedetails.add(sysMaterialspreparedetail);
 			}
@@ -615,26 +619,31 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 	public Ret submitByJBoltTableGo1(String map1) {
 		String[] no1 = map1.split(",");
 		String billno = no1[0].split(":")[1];
+		String cmodocno = no1[0].split(":")[2];
 
-		//获取当前用户信息？
-//		User user = JBoltUserKit.getUser();
-//		Date now = new Date();
+//		获取当前用户信息
+		User user = JBoltUserKit.getUser();
+		Date now = new Date();
 		tx(() -> {
 			ArrayList<SysMaterialspreparescan> sysMaterialspreparescans = new ArrayList<>();
 			ArrayList<SysMaterialspreparedetail> sysMaterialspreparedetails = new ArrayList<>();
 			ArrayList<StockBarcodePosition> stockBarcodePositions = new ArrayList<>();
+			ArrayList<MoMaterialscanlog> moMaterialscanlogs = new ArrayList<>();
+
 			for (int i=1;i<no1.length;i++){
 				String[] data = no1[i].split(":");
 				SysMaterialspreparedetail sysMaterialspreparedetail = new SysMaterialspreparedetail();
 				SysMaterialspreparescan sysMaterialspreparescan = new SysMaterialspreparescan();
+				MoMaterialscanlog moMaterialscanlog = new MoMaterialscanlog();
 				//提交备料存入备料细表
 				sysMaterialspreparedetail.setAutoID(JBoltSnowflakeKit.me.nextId()+"");
 				sysMaterialspreparedetail.setMasID(Long.valueOf(sysMaterialsprepareService.findFirst("SELECT * FROM T_Sys_MaterialsPrepare WHERE BillNo=?",billno).getAutoID()));
 				sysMaterialspreparedetail.setBarcode(data[0]);
 				sysMaterialspreparedetail.setInvCode(data[1]);
-				sysMaterialspreparedetail.setPosCode(stockbarcodepositionservice.findFirst("SELECT * FROM T_Sys_StockBarcodePosition WHERE Barcode=?",data[0]).getPosCode());
-				sysMaterialspreparedetail.setQty(stockbarcodepositionservice.findFirst("SELECT * FROM T_Sys_StockBarcodePosition WHERE Barcode=?",data[0]).getQty());
-				sysMaterialspreparedetail.setPackRate(stockbarcodepositionservice.findFirst("SELECT * FROM T_Sys_StockBarcodePosition WHERE Barcode=?",data[0]).getPackRate());
+				StockBarcodePosition stockBarcodePosition=stockbarcodepositionservice.findFirst("SELECT * FROM T_Sys_StockBarcodePosition WHERE Barcode=?",data[0]);
+				sysMaterialspreparedetail.setPosCode(stockBarcodePosition.getPosCode());
+				sysMaterialspreparedetail.setQty(stockBarcodePosition.getQty());
+				sysMaterialspreparedetail.setPackRate(stockBarcodePosition.getPackRate());
 //				sysMaterialspreparedetail.setSourceBillType();
 //				sysMaterialspreparedetail.setSourceBillNo();
 //				sysMaterialspreparedetail.setSourceBillNoRow();
@@ -643,9 +652,9 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 //				sysMaterialspreparedetail.setMemo();
 				sysMaterialspreparedetail.setState("1");
 				sysMaterialspreparedetail.setIsDeleted(false);
-				sysMaterialspreparedetail.setIcreateby(JBoltUserKit.getUser().getId());
-				sysMaterialspreparedetail.setCcreatename(JBoltUserKit.getUser().getName());
-				sysMaterialspreparedetail.setDcreatetime(new Date());
+				sysMaterialspreparedetail.setIcreateby(user.getId());
+				sysMaterialspreparedetail.setCcreatename(user.getUsername());
+				sysMaterialspreparedetail.setDcreatetime(now);
 //				sysMaterialspreparedetail.setIupdateby();
 //				sysMaterialspreparedetail.setCupdatename();
 //				sysMaterialspreparedetail.setDupdatetime();
@@ -658,7 +667,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 				sysMaterialspreparescan.setIInventoryId(invent.findFirst("SELECT * FROM Bd_Inventory WHERE cInvCode=?", data[1]).getIAutoId());
 				sysMaterialspreparescan.setCBatch(data[2]);
 				sysMaterialspreparescan.setState("1");
-				sysMaterialspreparescan.setIScanDate(new Date());
+				sysMaterialspreparescan.setIScanDate(now);
 //				sysMaterialspreparescan.setIQty();
 				sysMaterialspreparescan.setIMaterialsPrepareId(sysMaterialspreparedetail.getMasID());
 				sysMaterialspreparescan.setIMaterialsPrepareDetailId(Long.valueOf(sysMaterialspreparedetail.getAutoID()));
@@ -666,10 +675,19 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 //				sysMaterialspreparescan.setDProdDate();
 //				sysMaterialspreparescan.setITotalQty();
 //				sysMaterialspreparescan.setIScanQty();
-
 				sysMaterialspreparescans.add(sysMaterialspreparescan);
 
-				StockBarcodePosition stockBarcodePosition = stockbarcodepositionservice.findFirst("SELECT * FROM T_Sys_StockBarcodePosition WHERE Barcode = ?", data[0]);
+				//提交备料存入下一环节扫码日志表
+				moMaterialscanlog.setIAutoId(JBoltSnowflakeKit.me.nextId());
+				moMaterialscanlog.setIMoDocId(moDocS.findFirst("SELECT * FROM Mo_MoDoc WHERE cMoDocNo=?",cmodocno).getIAutoId());
+				moMaterialscanlog.setIMaterialsPrepairDid(Long.valueOf(sysMaterialspreparedetail.getAutoID()));
+				moMaterialscanlog.setIInventoryId(sysMaterialspreparescan.getIInventoryId());
+				moMaterialscanlog.setCBarcode(data[0]);
+				moMaterialscanlog.setIQty(sysMaterialspreparedetail.getQty());
+				moMaterialscanlog.setICreateBy(user.getId());
+				moMaterialscanlog.setCCreateName(user.getUsername());
+				moMaterialscanlog.setDCreateTime(now);
+				//更改条码库存表状态
 				stockBarcodePosition.setState(3);
 				stockBarcodePositions.add(stockBarcodePosition);
 
@@ -687,53 +705,21 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 
 	public Ret submitQTY(String Oldbarcode,String Oldqty,String Newbarcode, String Newqty) {
 		tx(() -> {
-			Kv kv = new Kv();
-			kv.set("barcode",Oldbarcode);
-			List<Record> records = dbTemplate("materialsprepare.setqty", kv).find();
 			StockBarcodePosition stockBarcodePosition = stockbarcodepositionservice.findFirst("SELECT * FROM T_Sys_StockBarcodePosition WHERE Barcode=?", Oldbarcode);
-			stockBarcodePosition.setQty(new BigDecimal(Oldqty).subtract(new BigDecimal(Newqty)));//旧现品票的物料数量
+			//旧现品票的物料数量,数量相减
+			stockBarcodePosition.setQty(new BigDecimal(Oldqty).subtract(new BigDecimal(Newqty)));
 
 			StockBarcodePosition stockBarcodePosition1 = new StockBarcodePosition();
-
-//			stockBarcodePosition1.setAutoID(JBoltSnowflakeKit.me.nextId());
-			stockBarcodePosition1.setOrganizeCode(stockBarcodePosition.getOrganizeCode());
-			stockBarcodePosition1.setCusCode(stockBarcodePosition.getCusCode());
-			stockBarcodePosition1.setCusPosCode(stockBarcodePosition.getCusPosCode());
-			stockBarcodePosition1.setInvCode(stockBarcodePosition.getInvCode());
-			stockBarcodePosition1.setVenCode(stockBarcodePosition.getVenCode());
-			stockBarcodePosition1.setVenPosCode(stockBarcodePosition.getVenPosCode());
-			stockBarcodePosition1.setWhCode(stockBarcodePosition.getWhCode());
-			stockBarcodePosition1.setPosCode(stockBarcodePosition.getPosCode());
-			stockBarcodePosition1.setState(stockBarcodePosition.getState());
+			stockBarcodePosition1._setAttrs(stockBarcodePosition);
+			//修改新现品票不同的部分
+			stockBarcodePosition1.setAutoID(JBoltSnowflakeKit.me.nextId());
 			stockBarcodePosition1.setBarcode(Newbarcode);
 			stockBarcodePosition1.setQty(new BigDecimal(Newqty));
-			stockBarcodePosition1.setNum(stockBarcodePosition.getNum());
-			stockBarcodePosition1.setPackRate(stockBarcodePosition.getPackRate());
-			stockBarcodePosition1.setBatch(stockBarcodePosition.getBatch());
-			stockBarcodePosition1.setFdimension1(stockBarcodePosition.getFdimension1());
-			stockBarcodePosition1.setFdimension2(stockBarcodePosition.getFdimension2());
-			stockBarcodePosition1.setFdimension3(stockBarcodePosition.getFdimension3());
-			stockBarcodePosition1.setFdimension4(stockBarcodePosition.getFdimension4());
-			stockBarcodePosition1.setFdimension5(stockBarcodePosition.getFdimension5());
-			stockBarcodePosition1.setFdimension6(stockBarcodePosition.getFdimension6());
-			stockBarcodePosition1.setCdimension1(stockBarcodePosition.getCdimension1());
-			stockBarcodePosition1.setCdimension2(stockBarcodePosition.getCdimension2());
-			stockBarcodePosition1.setCdimension3(stockBarcodePosition.getCdimension3());
-			stockBarcodePosition1.setCdimension4(stockBarcodePosition.getCdimension4());
-			stockBarcodePosition1.setCdimension5(stockBarcodePosition.getCdimension5());
-			stockBarcodePosition1.setCdimension6(stockBarcodePosition.getCdimension6());
-			stockBarcodePosition1.setDdimension1(stockBarcodePosition.getDdimension1());
-			stockBarcodePosition1.setDdimension2(stockBarcodePosition.getDdimension2());
-			stockBarcodePosition1.setDdimension3(stockBarcodePosition.getDdimension3());
-			stockBarcodePosition1.setDdimension4(stockBarcodePosition.getDdimension4());
-			stockBarcodePosition1.setDdimension5(stockBarcodePosition.getDdimension5());
-			stockBarcodePosition1.setDdimension6(stockBarcodePosition.getDdimension6());
-			stockBarcodePosition1.setLockType(stockBarcodePosition.getLockType());
-			stockBarcodePosition1.setLockSource(stockBarcodePosition.getLockSource());
-			stockBarcodePosition1.setChgDate(stockBarcodePosition.getChgDate());
 
-			stockBarcodePosition.update();//旧现品票更新
-			stockBarcodePosition1.save();//新现品票更新
+			//旧现品票更新
+			stockBarcodePosition.update();
+			//新现品票更新
+			stockBarcodePosition1.save();
 
 			return true;
 		});

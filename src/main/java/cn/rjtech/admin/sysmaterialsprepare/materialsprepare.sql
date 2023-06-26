@@ -556,7 +556,8 @@ SELECT it.cInvCode,
        sbp.WhCode,
        sbp.PosCode,
        mp.Billno,
-       mp.SourceBillID
+       mp.SourceBillID,
+       md.cMoDocNo
 FROM
     Mo_MoRoutingInvc mri
         LEFT JOIN Bd_Inventory it ON mri.iInventoryId= it.iAutoId

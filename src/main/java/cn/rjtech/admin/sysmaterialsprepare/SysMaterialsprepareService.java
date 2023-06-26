@@ -215,6 +215,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                         record.set("SourceBillID",recordList.get(i).get("SourceBillID"));
                         record.set("cInvStd",recordList.get(i).get("cInvStd"));
                         record.set("cUomName",recordList.get(i).get("cUomName"));
+                        record.set("cMoDocNo",recordList.get(i).get("cMoDocNo"));
                         record.set("WhCode",recordList.get(i).get("WhCode"));
                         record.set("PosCode",recordList.get(i).get("PosCode"));
                         //获取已备料数量
@@ -253,6 +254,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                 record.set("Billno",recordList.get(i).get("Billno"));
                 record.set("SourceBillID",recordList.get(i).get("SourceBillID"));
                 record.set("cInvStd",recordList.get(i).get("cInvStd"));
+                record.set("cMoDocNo",recordList.get(i).get("cMoDocNo"));
                 record.set("cUomName",recordList.get(i).get("cUomName"));
                 record.set("WhCode",recordList.get(i).get("WhCode"));
                 record.set("PosCode",recordList.get(i).get("PosCode"));
