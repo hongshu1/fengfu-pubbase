@@ -203,7 +203,7 @@
            data-page="sysPureceive_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
         <thead class="fw_normal">
         <tr>
-            <th data-width="20" data-column="index">序号</th>
+            <th data-width="50" data-column="index">序号</th>
             <th data-width="50">操作</th>
             <th data-width="150" data-column="venname">供应商</th>
             <th data-width="150" data-column="sourcebillno">订单编号</th>
@@ -246,7 +246,8 @@
         }
 
         if (barcode) {
-            Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode},
+            var whcode1 = $("#whcode1").val();
+            Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode,"whcode1":whcode1},
                 function (res) {
                     jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
                     $("#barcode").val('');
@@ -266,6 +267,7 @@
             }
         }
         var isCheckedNone=jboltTableIsCheckedNone(ele);
+        console.log("isCheckedNone",isCheckedNone)
         if(isCheckedNone){
             var careacode = $("#careacode").val();
             var careaname = $("#careaname").val();
@@ -273,8 +275,9 @@
             let data = [{"column":"poscode","text":careacode,"value":careacode}];
             jboltTableBatchSetColumns(jbolt_Table_#(pageId),data,true);
         }else{
-            var ids=jboltTableGetCheckedIds(ele,true);
-            if(ids){
+            var datas=jboltTableGetCheckedDatas(ele);
+            console.log("datas",datas)
+            if(datas){
                 LayerMsgBox.confirm("所选数据中确定覆盖吗？",function(){
                     // removeJBoltTableCheckedTr(ele,false,callback);
                     var careacode = $("#careacode").val();
@@ -468,10 +471,8 @@
                             column: "cinvcname",
                             use: "cinvcname"
                         }, {column: "vencode", use: "vencode"}, {column: "venname", use: "venname"},
-                        {column: "cuomclassname", use: "cuomclassname"}, {
-                            column: "iinventoryid",
-                            use: "iautoid"
-                        }, {column: "sourcebilltype", use: "sourcebilltype"},{column: "poscode", use: "poscode"},
+                        {column: "cuomclassname", use: "cuomclassname"}, { column: "iinventoryid",use: "iautoid"},{ column: "autoid",use: "autoid"},
+                        {column: "sourcebilltype", use: "sourcebilltype"},{column: "poscode", use: "poscode"},
                         {column: "sourcebillno", use: "sourcebillno"}, {column: "sourcebilldid", use: "sourcebilldid"},
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {
                             column: "sourcebillid",
@@ -479,11 +480,6 @@
                         }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}, {column: "billtype", use: "ipurchasetypeid"}],
 
                         handler:function (table,td,text,value,jsonData) {
-                            // let whcode = $("#whcode").val();
-                            // if(whcode == null || whcode==''){
-                            //     alert("请先选择仓库")
-                            //     return false;
-                            // }
                             let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
                             console.log("data==>",datas);
                             let array = new Array();
@@ -499,7 +495,7 @@
                             }
                         }
                 },
-                cinvcode: {
+                cinvcode5: {
                     // linkPara:"#sysPureceive.VenCode",
                     linkPara: "input[name='detailHidden']",
                     maxLength: 100,
