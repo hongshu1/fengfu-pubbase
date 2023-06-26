@@ -42,8 +42,13 @@
 <tr data-id="${data.autoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
+	{@if data.iauditstatus != '0'}
 	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}?&readonly=readonly"  data-fs="true" data-handler="refreshJBoltTable" data-title="材料出库单列表详情">查看</i></a>
-	 {@if data.iauditstatus == '0'}
+	{@/if}
+	{@if data.iauditstatus == '0'}
+	<a href="admin/materialDeliveryList/deleteByIds?ids=${data.autoid}" data-ajaxbtn data-loading="执行中 "
+                           tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
+                           class="jbolt_table_delbtn">删除</a>
 	<a class="jbolt_table_editbtn" href="admin/materialDeliveryList/edit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑材料出库单列表">编辑</i></a>
 	 {@else if data.iauditstatus == '1'}
 	<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=T_Sys_MaterialsOut&primaryKeyName=autoid&formAutoId=${data.autoid}&permissionKey=materialsOut_withdraw&className=cn.rjtech.admin.materialsout.MaterialsOutService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回材料出库表" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>

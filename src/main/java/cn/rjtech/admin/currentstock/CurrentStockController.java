@@ -1,6 +1,8 @@
 package cn.rjtech.admin.currentstock;
 
-import cn.jbolt.core.kit.JBoltUserKit;
+
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
@@ -11,9 +13,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
 
-import java.util.Date;
 
 /**
  * 盘点单 Controller
@@ -22,8 +22,9 @@ import java.util.Date;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-10-31 14:38
  */
-@Before(JBoltAdminAuthInterceptor.class)
+@CheckPermission(PermissionKey.CURRENTSTOCK)
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/currentstock", viewPath = "_view/admin/currentstock")
 public class CurrentStockController extends BaseAdminController {
 
@@ -143,43 +144,63 @@ public class CurrentStockController extends BaseAdminController {
 
 
    /**
-	* 完成盘点,修改盘点单单头状态
+	* 完成盘点，发起审批,修改盘点单单头状态
 	* */
-	public void okCheck() {
-		Kv kv = getKv();
-		kv.put("iupdateby", JBoltUserKit.getUserId());
-		kv.put("cupdatename", JBoltUserKit.getUserName());
-		kv.put("dupdatetime", new Date());
-		Ret ret = service.okCheck(kv);
-		renderJsonData(ret);
+	public void submit(Long formAutoId) {
+		service.preSubmitFunc(formAutoId);
 	}
 
 
 	/**
 	 * 驳回,修改盘点单单头状态
 	 * */
-	public void regret() {
-		Kv kv = getKv();
-		kv.put("iupdateby", JBoltUserKit.getUserId());
-		kv.put("cupdatename", JBoltUserKit.getUserName());
-		kv.put("dupdatetime", new Date());
-		kv.put("iauditby", JBoltUserKit.getUserId());
-		kv.put("cauditname", JBoltUserKit.getUserName());
-		Ret ret = service.regret(kv);
-		renderJsonData(ret);
+	public void reject(Long formAutoId, boolean isWithinBatch) {
+		service.postRejectFunc(formAutoId, isWithinBatch);
 	}
 
 	/**
 	 * 审核通过,修改盘点单单头状态,并推单给戴工
 	 * */
-	public void agree() {
-		Kv kv = getKv();
-		kv.put("iupdateby", JBoltUserKit.getUserId());
-		kv.put("cupdatename", JBoltUserKit.getUserName());
-		kv.put("dupdatetime", new Date());
-		kv.put("iauditby", JBoltUserKit.getUserId());
-		kv.put("cauditname", JBoltUserKit.getUserName());
-		Ret ret = service.agree(kv);
-		renderJsonData(ret);
+	public void approve(long formAutoId, boolean isWithinBatch) {
+		service.postApproveFunc(formAutoId, isWithinBatch);
 	}
+
+	/**
+	 * 撤回审核
+	 */
+	public void withdraw(Long formAutoId) {
+		service.postWithdrawFunc(formAutoId);
+	}
+
+	/**
+	 * 反审批
+	 * @param formAutoId 业务id
+	 */
+	public void reverseApprove(long formAutoId, boolean isFirst, boolean isLast) {
+		service.preReverseApproveFunc(formAutoId, isFirst, isLast);
+	}
+//
+//	public void agree() {
+//		Kv kv = getKv();
+//		kv.put("iupdateby", JBoltUserKit.getUserId());
+//		kv.put("cupdatename", JBoltUserKit.getUserName());
+//		kv.put("dupdatetime", new Date());
+//		Ret ret = service.agree(kv);
+//		renderJsonData(ret);
+//
+//	}
+//
+//	/**
+//	 * 完成盘点,修改盘点单单头状态
+//	 * */
+//	public void okCheck() {
+//		Kv kv = getKv();
+//		List<StockCheckVouch> autoId = stockChekVouchService.getListByIds((String) kv.get("mid"));
+//		StockCheckVouch byId = autoId.get(0);
+//
+//		byId.setStatus("1");
+//		Ret ret = stockChekVouchService.update(byId);
+//		renderJsonData(ret);
+//	}
+
 }

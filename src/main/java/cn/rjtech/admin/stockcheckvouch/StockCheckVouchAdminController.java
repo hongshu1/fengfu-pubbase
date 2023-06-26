@@ -18,7 +18,7 @@ import com.jfinal.core.Path;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-21 10:47
  */
-@CheckPermission(PermissionKey.STOCKCHECKVOUCH)
+@CheckPermission(PermissionKey.CURRENTSTOCK)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/stockcheckvouch", viewPath = "/_view/admin/stockcheckvouch")

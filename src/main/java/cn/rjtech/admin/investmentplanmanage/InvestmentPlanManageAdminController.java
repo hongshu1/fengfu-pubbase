@@ -1,6 +1,9 @@
 package cn.rjtech.admin.investmentplanmanage;
 
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.annotation.CheckDataPermission;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
@@ -39,6 +42,7 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
 	/**
 	* 数据源
 	*/
+	@CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -66,7 +70,7 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
     	renderJson(service.effect(getLong(0)));
     }
     /**
-     *	投资计划失效
+     *	投资计划作废
      * */
     @CheckPermission(PermissionKey.INVESTMENT_PLAN_MANAGE_CANCLE)
     public void cancle(){
@@ -82,7 +86,9 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
     	set("investmentPlan", investmentPlan);
     	render("approve_process_index.html");
     }
-    
+    /**
+     *	投资计划失效
+     * */
     @CheckPermission(PermissionKey.INVESTMENT_PLAN_MANAGE_UNEFFECT)
     public void uneffect(){
     	renderJson(service.uneffect(getLong()));

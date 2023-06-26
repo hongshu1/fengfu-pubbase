@@ -52,17 +52,7 @@ from PL_Expense_Budget_Item ebi
 	#if(iprojectcardids)
 		and ebi.iprojectcardid not in (#(iprojectcardids))
 	#end
-### 超级管理员不过滤权限部门
-#if(!isSystemAdmin)
-    ### 存在角色部门配置过滤处理
-    #if(accessCdepCodes && accessCdepCodes.size() > 0)
-        AND eb.cDepCode IN (
-            #for(code:accessCdepCodes)
-                '#(code)' #(for.last?'':',')
-            #end
-        )
-    #end
-#end
+	#(getDataPermissionSql("eb", "cdepcode"))
 	group by eb.cdepcode,eb.ibudgettype,eb.ibudgetyear,ebi.iautoid,ebi.iexpenseid,eb.cbegindate,ebi.cbudgetno,bsh.csubjectname,bsl.csubjectname,ebi.citemname,ebi.ihighestsubjectid,ebi.ilowestsubjectid,
 ebi.careertype,ebi.isLargeAmountExpense,ebi.cuse,ebi.cmemo,ebi.iprice,ebi.cunit,ebi.iCarryForward,ebi.icreateby,ebi.dcreatetime,ebi.iamounttotal,ebi.isscheduled
 #end

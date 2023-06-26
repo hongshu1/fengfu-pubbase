@@ -41,11 +41,16 @@
 <tr data-id="${data.autoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
+	{@if data.iauditstatus != '0'}
 	<a class="jbolt_table_editbtn" href="admin/otherdeliverylist/edit/${data.autoid}?&type=0"  data-fs="true" data-handler="refreshJBoltTable" data-title="其他出库单列表详情">查看</i></a>
-	 {@if data.iauditstatus == '0'}
+	{@/if}
+	{@if data.iauditstatus == '0'}
+	<a href="admin/otherdeliverylist/deleteByIds?ids=${data.autoid}" data-ajaxbtn data-loading="执行中 "
+                           tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
+                           class="jbolt_table_delbtn">删除</a>
 	<a class="jbolt_table_editbtn" href="admin/otherdeliverylist/edit/${data.autoid}?&edit=true" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑其他出库单列表">编辑</i></a>
 	 {@else if data.iauditstatus == '1'}
-	<a class="jbolt_table_delbtn" href="admin/otherdeliverylist/recall?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
+		<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=T_Sys_OtherOut&primaryKeyName=autoid&formAutoId=${data.autoid}&permissionKey=otherOut&className=cn.rjtech.admin.otherdeliverylist.OtherOutDeliveryService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回其他出库表" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
 	 {@/if}
 </td>
 <td>${data.auditstate}</td>
@@ -72,10 +77,13 @@
 	<div class="jbolt_table_toolbar" id="otherOutList_toolbar_#(pageId)">
 		<div class="" role="group" aria-label="btn-group">
 			<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增出库管理-其他出库单列表"  data-url="admin/otherdeliverylist/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-<!--			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/otherdeliverylist/approve?mark=2&&iAutoId=" data-confirm="确定审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量审核</button>-->
-<!--			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"  data-url="admin/otherdeliverylist/NoApprove?ids=" data-confirm="确定反审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量反审核</button>-->
-			<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/otherdeliverylist/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 批量删除</button>
-			#include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_OtherOut",uri="admin/otherdeliverylist",primaryKeyName="AutoID")
+			### 参数列表
+			### formSn:                 表单名
+			### primaryKeyName:         表单主键名
+			### className:              实现审批业务的类名
+			### permissionKeyPrefix:    权限Key前缀
+			#include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_OtherOut", primaryKeyName="AutoID", className="cn.rjtech.admin.otherdeliverylist.OtherOutDeliveryService", permissionKeyPrefix="otherOut")
+			<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/materialDeliveryList/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 批量删除</button>
 		</div>
 
 		<div class="clearfix"></div>

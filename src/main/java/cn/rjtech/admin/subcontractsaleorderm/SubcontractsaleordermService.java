@@ -18,10 +18,10 @@ import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.Subcontractsaleorderm;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
@@ -43,7 +43,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: RJ
  * @date: 2023-04-12 18:57
  */
-public class SubcontractsaleordermService extends BaseService<Subcontractsaleorderm> {
+public class SubcontractsaleordermService extends BaseService<Subcontractsaleorderm> implements IApprovalService {
 
     private final Subcontractsaleorderm dao = new Subcontractsaleorderm().dao();
     @Inject
@@ -428,6 +428,11 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         return null;
     }
 
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+        return null;
+    }
+
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
@@ -443,6 +448,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @param isFirst    是否为审批的第一个节点
      * @param isLast     是否为审批的最后一个节点
      */
+    @Override
     public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         return null;
     }
@@ -477,6 +483,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     /**
      * 提审前业务，如有异常返回错误信息
      */
+    @Override
     public String preSubmitFunc(long formAutoId) {
         Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
 
@@ -515,6 +522,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     /**
      * 从审批中，撤回到已保存，业务实现，如有异常返回错误信息
      */
+    @Override
     public String withdrawFromAuditting(long formAutoId) {
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
@@ -523,6 +531,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     /**
      * 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
      */
+    @Override
     public String preWithdrawFromAuditted(long formAutoId) {
         return null;
     }

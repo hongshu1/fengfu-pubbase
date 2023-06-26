@@ -275,4 +275,48 @@ public class QcParamService extends BaseService<QcParam> {
         return find("select * from Bd_QcParam where iQcItemId=?",iQcItemId);
     }
 
+    /**
+     * 从系统导入字段配置，获得导入的数据
+     */
+    public Ret importExcelClass(File file) {
+        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        if (notOk(records)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+        }
+
+
+        for (Record record : records) {
+
+            if (StrUtil.isBlank(record.getStr("iQcItemId"))) {
+                return fail("检验项目名称不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("cQcParamName"))) {
+                return fail("检验参数名称不能为空");
+            }
+
+
+            Date now=new Date();
+
+            record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+            record.set("iOrgId", getOrgId());
+            record.set("cOrgCode", getOrgCode());
+            record.set("cOrgName", getOrgName());
+            record.set("iCreateBy", JBoltUserKit.getUserId());
+            record.set("dCreateTime", now);
+            record.set("cCreateName", JBoltUserKit.getUserName());
+            record.set("isEnabled",1);
+            record.set("isDeleted",0);
+            record.set("iUpdateBy", JBoltUserKit.getUserId());
+            record.set("dUpdateTime", now);
+            record.set("cUpdateName", JBoltUserKit.getUserName());
+        }
+
+        // 执行批量操作
+        tx(() -> {
+            batchSaveRecords(records);
+            return true;
+        });
+        return SUCCESS;
+    }
+
 }

@@ -68,3 +68,11 @@ WHERE a.id IN ( #(ids) )
  #end
  group by id,title,permission_key,pkey
 #end
+
+
+#sql("findProposalTopNabMenu")
+select p.* from jb_topnav ta
+	inner join jb_topnav_menu tm on ta.id = tm.topnav_id
+	inner join jb_permission p on tm.permission_id = p.id
+ where ta.name = '禀议'
+#end

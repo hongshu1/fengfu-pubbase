@@ -60,17 +60,7 @@ where 1=1 and pm.iorgid = #para(iorgid)
 	#if(iprojectcardids)
 		and pi.iprojectcardid not in (#(iprojectcardids))
 	#end
-### 超级管理员不过滤权限部门
-#if(!isSystemAdmin)
-    ### 存在角色部门配置过滤处理
-    #if(accessCdepCodes && accessCdepCodes.size() > 0)
-        AND pm.cDepCode IN (
-            #for(code:accessCdepCodes)
-                '#(code)' #(for.last?'':',')
-            #end
-        )
-    #end
-#end
+	#(getDataPermissionSql("pm", "cdepcode"))
 #end
 
 #sql("getEdittingPlanItems")

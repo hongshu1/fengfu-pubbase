@@ -260,7 +260,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     /*
      * 批量审核的公共方法
      * */
-    public void commonAutitByIds(String id, ArrayList<SysPuinstore> puinstoreList, Date date) {
+    /*public void commonAutitByIds(String id, ArrayList<SysPuinstore> puinstoreList, Date date) {
         SysPuinstore puinstore = findById(id);
         Integer iAuditStatus = puinstore.getIAuditStatus();
         if (AuditStatusEnum.AWAIT_AUDIT.getValue() == iAuditStatus) {//待审核状态
@@ -281,7 +281,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             //
             puinstoreList.add(puinstore);
         }
-    }
+    }*/
 
     /*
      * 反审批
@@ -788,7 +788,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
      * 审核不通过
      * */
     @Override
-    public String postRejectFunc(long formAutoId) {
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return reject(formAutoId);
     }
 

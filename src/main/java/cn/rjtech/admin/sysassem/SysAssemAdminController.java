@@ -179,13 +179,21 @@ public class SysAssemAdminController extends BaseAdminController {
 	 * 查询双单位条码数据
 	 */
 	public void getBarCodeData(){
+		//存货编码
 		String itemCode = get("itemCode");
+		//供应商
 		String supplier = get("supplier");
+		//单据类型
 		String sourceBillType = get("sourceBillType");
+		//转换前 存货主键
+		String ibeforeinventoryid = get("ibeforeinventoryid");
+		String trJsonData = get("trjsondata");
 		Kv kv = new Kv();
 		kv.set("itemCode",itemCode);
 		kv.setIfNotNull("sourceBillType", sourceBillType);
 		kv.set("supplier",notOk(supplier)?' ':supplier);
+		kv.set("ibeforeinventoryid",notOk(ibeforeinventoryid)?' ':ibeforeinventoryid);
+		kv.set("trJsonData",notOk(trJsonData)?' ':trJsonData);
 		renderJsonData(service.getBarcodeDatas(kv));
 	}
 

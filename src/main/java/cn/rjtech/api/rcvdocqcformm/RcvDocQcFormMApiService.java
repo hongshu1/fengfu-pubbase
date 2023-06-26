@@ -12,6 +12,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -157,7 +158,7 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
     /*
      * 导出详情页
      * */
-    public JBoltApiRet getExportData(Long iautoid) {
+    public JBoltApiRet getExportData(Long iautoid) throws IOException {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
     }
 }

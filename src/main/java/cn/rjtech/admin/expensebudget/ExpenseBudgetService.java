@@ -7,6 +7,7 @@ import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -155,6 +156,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 			for (String idStr : StrSplitter.split(ids, COMMA, true, true)) {
 				long iAutoId = Long.parseLong(idStr);
 				ExpenseBudget expenseBudget = findById(iAutoId);
+				DataPermissionKit.validateAccess(expenseBudget.getCDepCode());
 				ValidationUtils.notNull(expenseBudget, JBoltMsg.DATA_NOT_EXIST);
 				deleteExpenseBudgetItem(iAutoId);
 				ValidationUtils.isTrue(expenseBudget.delete(), ErrorMsg.DELETE_FAILED);
@@ -278,6 +280,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 	    int budgetEndYear = rc.getInt("budgetEndYear");
 	    int budgetEndMonth = rc.getInt("budgetEndMonth");
 	    String cdepcode = rc.getStr("cdepcode");
+	    DataPermissionKit.validateAccess(cdepcode);
 	    Integer ibudgetType = rc.getInt("cbudgetType");
 	    Integer ibudgetyear = rc.getInt("ibudgetyear");
 	    Date cBeginDate = JBoltDateUtil.getDate(budgetStartYear+"-"+budgetStartMonth+"-01", JBoltDateUtil.YMD);
@@ -738,6 +741,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 		ValidationUtils.notNull(jBoltTable, "参数不能为空");
 		Date now = new Date();
 		ExpenseBudget expenseBudget = jBoltTable.getFormModel(ExpenseBudget.class, "expenseBudget");
+		DataPermissionKit.validateAccess(expenseBudget.getCDepCode());
 		String cdepcode = expenseBudget.getCDepCode();
 		Integer iBudgetYear = expenseBudget.getIBudgetYear();
 		Integer iBudgetType = expenseBudget.getIBudgetType();
@@ -772,6 +776,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 		Date now = new Date();
 		ExpenseBudget expenseBudgetForm = jBoltTable.getFormModel(ExpenseBudget.class, "expenseBudget");
 		ExpenseBudget expenseBudget = findById(expenseBudgetForm.getIAutoId());
+		DataPermissionKit.validateAccess(expenseBudget.getCDepCode());
 		tx(()->{
 			Long userId = JBoltUserKit.getUserId();
 			//新增行
@@ -965,17 +970,10 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 	}
 	
     /**
-     * 处理审批通过的其他业务操作，如有异常返回错误信息
-     */
-    public String postApproveFunc(long formAutoId) {
-  
-        return null;
-    }
-	
-    /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return null;
     }
     /**
@@ -985,6 +983,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
      * @param isFirst    是否为审批的第一个节点
      * @param isLast     是否为审批的最后一个节点
      */
+    @Override
     public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         return null;
     }	
@@ -995,6 +994,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
      * @param isFirst    是否为审批的第一个节点
      * @param isLast     是否为审批的最后一个节点
      */
+    @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         // 反审回第一个节点，回退状态为“已保存”
         if (isFirst) {
@@ -1009,6 +1009,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
     /**
      * 提审前业务，如有异常返回错误信息
      */
+    @Override
     public String preSubmitFunc(long formAutoId) {
         return null;
     }
@@ -1016,6 +1017,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
     /**
      * 提审后业务处理，如有异常返回错误信息
      */
+    @Override
     public String postSubmitFunc(long formAutoId) {
         return null;
     }
@@ -1355,7 +1357,9 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 		List<ExpenseBudget> list = find(selectSql().eq("iPeriodId", dbPeriod.getIautoid()));
 		return CollUtil.isNotEmpty(list);
 	}
-
+    /**
+     * 处理审批通过的其他业务操作，如有异常返回错误信息
+     */
 	@Override
 	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
 		// TODO Auto-generated method stub

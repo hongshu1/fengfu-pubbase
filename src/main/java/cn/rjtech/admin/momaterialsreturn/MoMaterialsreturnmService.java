@@ -316,8 +316,8 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 	   transVouch.setIWhCode("");//调入仓库编码
 	   transVouch.setOWhCode(""); //调出仓库
 	   transVouch.setMemo(moMaterialsreturnm.getCMemo());
-	   transVouch.setCupdatename(JBoltUserKit.getUserName());
-	   transVouch.setDcreatetime(now);
+	   transVouch.setCupdateName(JBoltUserKit.getUserName());
+	   transVouch.setDcreateTime(now);
 	   transVouch.setState(2);//待审核
 	   transVouch.save();
 

@@ -1,17 +1,15 @@
 package cn.rjtech.admin.rcvdocqcformm;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.service.base.BaseService;
-import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.admin.inventory.InventoryService;
@@ -30,26 +28,26 @@ import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.enums.CMeasurePurposeEnum;
 import cn.rjtech.enums.IsOkEnum;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.base.BaseRcvdocqcformdLine;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.excel.SheetPage;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import com.jfinal.aop.Inject;
-import com.jfinal.core.JFinal;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.upload.UploadFile;
 
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.jxls.util.Util;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /**
@@ -356,6 +354,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     public void saveSysPuinstoreModel(SysPuinstore sysPuinstore, RcvDocQcFormM docQcFormM,
                                       List<SysPuinstoredetail> sysPuinstoredetails) {
         Date date = new Date();
+        String userName = JBoltUserKit.getUserName();
+        Long userId = JBoltUserKit.getUserId();
         Vendor vendor = vendorService.findById(docQcFormM.getIVendorId());
         SysPureceive sysPureceive = sysPureceiveService.findById(docQcFormM.getIRcvDocId());
         sysPuinstore.setOrganizeCode(getOrgCode());//组织编码
@@ -363,7 +363,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         sysPuinstore.setBillDate(DateUtil.formatDate(date)); //入库日期
         sysPuinstore.setVenCode(vendor.getCVenCode()); //供应商编码
         sysPuinstore.setMemo(docQcFormM.getCMemo());
-        sysPuinstore.setCCreateName(JBoltUserKit.getUserName());
+        sysPuinstore.setCCreateName(userName);
         sysPuinstore.setDCreateTime(date);
         //状态 0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
         sysPuinstore.setIAuditStatus(0);
@@ -373,7 +373,10 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         sysPuinstore.setWhName(sysPureceive.getWhName());
         sysPuinstore.setIAuditWay(0);
         sysPuinstore.setIsDeleted(false);
-        sysPuinstore.setICreateBy(JBoltUserKit.getUserId());
+        sysPuinstore.setICreateBy(userId);
+        sysPuinstore.setCUpdateName(userName);
+        sysPuinstore.setDUpdateTime(date);
+        sysPuinstore.setIUpdateBy(userId);
 
         //采购入库从表
         List<SysPureceivedetail> list = sysPureceivedetailService.findFirstBy(sysPureceive.getAutoID());
@@ -384,6 +387,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     public void saveSysPuinstoreDetail(List<SysPuinstoredetail> sysPuinstoredetails,
                                        List<SysPureceivedetail> list, SysPuinstore sysPuinstore) {
         int i = 1;
+        Date date = new Date();
+        String userName = JBoltUserKit.getUserName();
         for (SysPureceivedetail detail : list) {
             Record record = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", detail.getBarcode()))
                 .findFirst();
@@ -399,13 +404,15 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             sysPuinstoredetail.setQty(detail.getQty());
             sysPuinstoredetail.setRowNo(i);
             sysPuinstoredetail.setTrackType(detail.getTrackType());
-            sysPuinstoredetail.setCCreateName(JBoltUserKit.getUserName());
-            sysPuinstoredetail.setDCreateTime(new Date());
+            sysPuinstoredetail.setCCreateName(userName);
+            sysPuinstoredetail.setDCreateTime(date);
             sysPuinstoredetail.setSpotTicket(detail.getBarcode());
             sysPuinstoredetail.setPuUnitCode(record.getStr("puunitcode"));
             sysPuinstoredetail.setPuUnitName(record.getStr("puunitname"));
             sysPuinstoredetail.setIsDeleted(false);
             sysPuinstoredetail.setInvcode(record.getStr("cinvcode"));
+            sysPuinstoredetail.setCUpdateName(userName);
+            sysPuinstoredetail.setDUpdateTime(date);
 
             //主表的数据
             sysPuinstore.setBillType(record.getStr("ipurchasetypeid"));//采购类型：采购PO  委外OM
@@ -413,68 +420,10 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             //业务类型：0：采购入库，1：委外入库
             sysPuinstore.setIBusType(Integer.valueOf(record.getStr("ibustype")));
             sysPuinstore.setRdCode(record.getStr("scrdcode"));
-
             sysPuinstoredetails.add(sysPuinstoredetail);
             i++;
         }
     }
-
-    /**
-     * 点击查看时，进入弹窗自动加载table的数据
-     */
-    /*public List<Record> getonlyseelistByiautoid(Kv kv) {
-        kv.set("ircvdocqcformmid", kv.get("iautoid"));
-        List<Record> recordList = dbTemplate("rcvdocqcformm.getonlyseelistByiautoid", kv).find();
-        List<Record> clearRecordList = clearZero(recordList);
-
-        Map<Object, List<Record>> map = clearRecordList.stream()
-            .collect(Collectors.groupingBy(p -> p.get("iautoid"), Collectors.toList()));
-
-        List<Record> records = new ArrayList<>();
-        for (Entry<Object, List<Record>> entry : map.entrySet()) {
-            List<Record> value = entry.getValue();
-            for (int i = 0; i < value.size(); i++) {
-                value.get(i).set("name", (i + 1));
-            }
-            Record record = new Record();
-            Record record1 = value.get(0);
-            record.set("cvalueList", value);
-            record.set("coptions", record1.get("coptions"));
-            record.set("cqcformparamids", record1.get("cqcformparamids"));
-            record.set("cqcitemname", record1.get("cqcitemname"));
-            record.set("cqcparamname", record1.get("cqcparamname"));
-            record.set("iautoid", record1.get("iautoid"));
-            record.set("iformparamid", record1.get("iformparamid  "));
-            record.set("imaxval", record1.get("imaxval"));
-            record.set("iminval", record1.get("iminval"));
-            record.set("iqcformid", record1.get("iqcformid"));
-            record.set("ircvdocqcformmid", record1.get("ircvdocqcformmid"));
-            record.set("iseq", record1.get("iseq"));
-            record.set("istdval", record1.get("istdval"));
-            record.set("isubseq", record1.get("isubseq"));
-            record.set("itype", record1.get("itype"));
-            records.add(record);
-        }
-        List<Record> resultRecord =
-            records.stream().sorted(Comparator.comparing(e -> e.getInt("iseq"))).collect(Collectors.toList());
-        return resultRecord;
-    }*/
-
-    /*public List<Record> getonlyseelistByiautoid(Long iautoid) {
-        Kv kv = new Kv();
-        kv.set("ircvdocqcformmid", iautoid);
-        List<Record> recordList = dbTemplate("rcvdocqcformm.getonlyseelistByiautoid", kv).find();
-        List<Record> clearRecordList = clearZero(recordList);
-
-        Map<Object, List<Record>> map = clearRecordList.stream()
-            .collect(Collectors.groupingBy(p -> p.get("iautoid"), Collectors.toList()));
-        List<Record> docparamlist = new ArrayList<>();
-        for (Entry<Object, List<Record>> entry : map.entrySet()) {
-            docparamlist = entry.getValue();
-            break;
-        }
-        return docparamlist;
-    }*/
 
     /**
      * 去零
@@ -570,22 +519,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     }
 
     /**
-     * 上传图片
-     */
-    /*public List<String> uploadImage(List<UploadFile> files) {
-        List<String> imgList = new ArrayList<>();
-        if (ObjectUtil.isEmpty(files)) {
-            return imgList;
-        }
-        for (UploadFile uploadFile : files) {
-            String localUrl = FileUtil.normalize(JBoltRealUrlUtil.get(JFinal.me().getConstants().getBaseUploadPath() + '/'
-                + uploadFile.getUploadPath() + '/' + uploadFile.getFileName()));
-            imgList.add(localUrl);
-        }
-        return imgList;
-    }*/
-
-    /**
      * 在编辑页面点击确定
      */
     public Ret saveEditTable(JBoltPara JboltPara) {
@@ -604,57 +537,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
 
         return ret(result);
     }
-
-    /*
-     * 实现编辑页面的SerializeSubmitList
-     * */
-    /*public Boolean achiveEditSerializeSubmitList(JSONArray serializeSubmitList, Long docqcformmiautoid, String cmeasurepurpose,
-                                                 String cmeasurereason, String cmeasureunit, String cmemo, String cdcno,
-                                                 String isok) {
-        List<RcvdocqcformdLine> editRcvdocqcformdLines = new ArrayList<>();
-        List<RcvdocqcformdLine> saveRcvdocqcformdLines = new ArrayList<>();
-        boolean result = tx(() -> {
-            Date now = new Date();
-            for (int i = 0; i < serializeSubmitList.size(); i++) {
-                JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
-                System.out.println("new Gson().toJson(jsonObject)====>" + new Gson().toJson(jsonObject));
-                String iseq = jsonObject.getString("iseq");
-                Long ircvdocqcformmid = jsonObject.getLong("iautoid");
-                JSONArray cvaluelist = jsonObject.getJSONArray("cvaluelist");
-                JSONArray serializeElement = jsonObject.getJSONArray("serializeElement");
-                JSONArray elementList = serializeElement.getJSONArray(0);
-                for (int j = 0; j < elementList.size(); j++) {
-                    JSONObject object = elementList.getJSONObject(j);
-                    String cvalue = object.getString("value");
-                    JSONObject cvaluelistJSONObject = cvaluelist.getJSONObject(j);
-                    Long lineiautoid = cvaluelistJSONObject.getLong("lineiautoid");
-                    if (lineiautoid != null) {
-                        RcvdocqcformdLine rcvdocqcformdLine = rcvdocqcformdLineService.findById(lineiautoid);//质量管理-来料检明细列值表
-                        rcvdocqcformdLine.setCValue(cvalue);
-                        editRcvdocqcformdLines.add(rcvdocqcformdLine);
-                    } else {
-                        //如果没有，代表是新增页的数据
-                        RcvdocqcformdLine rcvdocqcformdLine = new RcvdocqcformdLine();//质量管理-出库检明细列值表
-                        saveRcvdocqcformdLineModel(rcvdocqcformdLine, String.valueOf(ircvdocqcformmid), iseq, cvalue);
-                        saveRcvdocqcformdLines.add(rcvdocqcformdLine);
-                    }
-                }
-            }
-            //更新line
-            if (!editRcvdocqcformdLines.isEmpty()) {
-                rcvdocqcformdLineService.batchUpdate(editRcvdocqcformdLines);
-            }
-            if (!saveRcvdocqcformdLines.isEmpty()) {
-                rcvdocqcformdLineService.batchSave(saveRcvdocqcformdLines);
-            }
-            //更新来料检主表
-            RcvDocQcFormM docQcFormM = findById(docqcformmiautoid);
-            saveDocQcFormMModel(docQcFormM, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, now, isok);
-            update(docQcFormM);
-            return true;
-        });
-        return result;
-    }*/
 
     /**
      * 给主表传参
@@ -779,52 +661,81 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     /*
      * 获取导出数据
      * */
-    public Kv getExportData(Long iautoid) {
+    public Kv getExportData(Long iautoid) throws IOException {
         //1、所有sheet
         List<SheetPage<Record>> pages = new ArrayList<>();
         //2、每个sheet的名字
         List<String> sheetNames = new ArrayList<>();
-        sheetNames.add("sheet1");
-        sheetNames.add("sheet2");
-        sheetNames.add("sheet3");
         //3、主表数据
         Record rcvDocQcFormMRecord = getCheckoutListByIautoId(iautoid);
         //测定目的
-        String cMeasurePurpose = "";
+        StringBuilder cMeasurePurpose = new StringBuilder();
         String[] split = rcvDocQcFormMRecord.getStr("cmeasurepurpose").split(",");
-        for (int i = 0; i < split.length; i++) {
-            if (StringUtils.isNotBlank(split[i])) {
-                String text = CMeasurePurposeEnum.toEnum(Integer.valueOf(split[i])).getText();
-                cMeasurePurpose += text + ",";
+        for (String s : split) {
+            if (StringUtils.isNotBlank(s)) {
+                String text = CMeasurePurposeEnum.toEnum(Integer.parseInt(s)).getText();
+                cMeasurePurpose.append(text).append(",");
             }
         }
-        rcvDocQcFormMRecord.set("cmeasurepurpose", StringUtils.isNotBlank(cMeasurePurpose)
-            ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose);
+        rcvDocQcFormMRecord.set("cmeasurepurpose", StringUtils.isNotBlank(cMeasurePurpose.toString())
+            ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose.toString());
         //4、明细表数据
-        List<RcvDocQcFormD> formDList = rcvDocQcFormDService.findByIRcvDocQcFormMId(iautoid);
+//        List<RcvDocQcFormD> formDList = rcvDocQcFormDService.findByIRcvDocQcFormMId(iautoid);
         //5、如果cvalue的列数>10行，分多个页签
         List<Record> recordList = getCheckOutTableDatas(Kv.by("ircvdocqcformmid", iautoid));
         //核心业务逻辑，对列数进行分组
-        rcvDocQcFormMRecord.set("columns", "");
-        commPageMethod2(recordList, rcvDocQcFormMRecord, pages);
+        List<Map<String, Object>> tableHeadData = getTableHeadData(rcvDocQcFormMRecord.get("iqcformid"));
+        List<ParamName> columnNames = new ArrayList<>();
+        for (int i = 0; i < tableHeadData.size(); i++) {
+            Map<String, Object> map = tableHeadData.get(i);
+            ParamName paramName = new ParamName();
+            paramName.setSeq(i);
+            paramName.setValue(StrUtil.toString((map.get("cqcitemname"))));
+            columnNames.add(paramName);
+        }
+        rcvDocQcFormMRecord.set("columnNameList", columnNames);//项目列名
 
+        String cpics = JBoltConfig.BASE_UPLOAD_PATH_PRE + StrUtil.SLASH + rcvDocQcFormMRecord.getStr("cpics");
+
+        FileInputStream fileInputStream = new FileInputStream(cpics);
+        byte[] imageBytes = Util.toByteArray(fileInputStream);
+
+        rcvDocQcFormMRecord.set("cpics", imageBytes);
+        commPageMethod2(recordList, rcvDocQcFormMRecord, pages, sheetNames);
         return Kv.by("pages", pages).set("sheetNames", sheetNames);
     }
 
     /*来料检、出库检、在库检的公共导出方法*/
-    public void commPageMethod2(List<Record> recordList, Object obj, List<SheetPage<Record>> pages) {
-        int iseq = 1;
+    public void commPageMethod2(List<Record> recordList, Object obj, List<SheetPage<Record>> pages, List<String> sheetNames) {
         List<List<Object>> partition = ListUtils.partition(objToList(recordList.get(0).getObject("cvaluelist")), 10);
         for (int i = 0; i < partition.size(); i++) {
+            int iseq = 1;
             ArrayList<Record> records = new ArrayList<>();
             for (Record record : recordList) {
                 List<List<Object>> partitionList = ListUtils.partition(objToList(record.getObject("cvaluelist")), 10);
                 List<Object> objects = partitionList.get(i);
-                List<String> cvaluelist = new ArrayList<>();
+
+                List<RcvdocqcformdLine> rcvdocqcformdLines = new ArrayList<>();
+                objects.stream().forEach(object -> {
+                    RcvdocqcformdLine rcvdocqcformdLine = JSON.parseObject(JSON.toJSONString(object), RcvdocqcformdLine.class);
+                    rcvdocqcformdLines.add(rcvdocqcformdLine);
+                });
+                List<String> cvaluelist = rcvdocqcformdLines
+                    .stream()
+                    .sorted(Comparator.comparing(BaseRcvdocqcformdLine::getISeq))
+                    .map(BaseRcvdocqcformdLine::getCValue)
+                    .collect(Collectors.toList());
+                /*List<ParamName> cvaluelist = new ArrayList<>();
+                for (int l = 0; l < objects.size(); l++) {
+                    Object lineObj = objects.get(i);
+                    RcvdocqcformdLine line = JSON.parseObject(JSON.toJSONString(lineObj), RcvdocqcformdLine.class);
+                    ParamName paramName = new ParamName();
+                    paramName.setSeq(line.getISeq());
+                    paramName.setValue(line.getCValue());
+                    cvaluelist.add(paramName);
+                }*/
 
                 Record childRecord = new Record();
-                childRecord.set("cqcitemname", record.getStr(""));
-                childRecord.set("cqcparamname", record.getStr(""));
                 childRecord.set("imaxval", record.getStr("imaxval"));
                 childRecord.set("iminval", record.getStr("iminval"));
                 childRecord.set("istdval", record.getStr("istdval"));
@@ -832,22 +743,30 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
                 childRecord.set("options", record.getStr("options"));
                 childRecord.set("seq", iseq);
                 childRecord.set("cvaluelist", cvaluelist);
-                childRecord.set("itemlist","paramnamelist");
+                List<Object> paramnamelist = objToList(record.get("paramnamelist"));
+                List<ParamName> paramnamelists = new ArrayList<>();
+                for (int o1 = 0; o1 < paramnamelist.size(); o1++) {
+                    ParamName paramName = new ParamName();
+                    paramName.setSeq(o1);
+                    paramName.setValue(StrUtil.toString(paramnamelist.get(o1)));
+                    paramnamelists.add(paramName);
+                }
+                childRecord.set("paramnamelist", paramnamelists); //具体项目名称
                 records.add(childRecord);
                 //
                 iseq++;
-
-                //records有项目，每个项目有分组的列值，以10列为一组
-                SheetPage<Record> page = new SheetPage<>();
-                // sheet名称
-                String sheetName = "sheet" + (i + 1);
-                page.setSheetName(sheetName);
-                // 主表
-                page.setMaster(obj);
-                // 明细
-                page.setDetails(records);
-                pages.add(page);
             }
+            //records有项目，每个项目有分组的列值，以10列为一组
+            SheetPage<Record> page = new SheetPage<>();
+            // sheet名称
+            String sheetName = "sheet" + (i + 1);
+            page.setSheetName(sheetName);
+            sheetNames.add(sheetName);
+            // 主表
+            page.setMaster(obj);
+            // 明细
+            page.setDetails(records);
+            pages.add(page);
         }
     }
 
@@ -863,6 +782,29 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             return list;
         }
         return null;
+    }
+
+
+    public static class ParamName {
+
+        public int    seq;
+        public String value;
+
+        public int getSeq() {
+            return seq;
+        }
+
+        public void setSeq(int seq) {
+            this.seq = seq;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
     }
 
 }

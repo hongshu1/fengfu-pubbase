@@ -13,17 +13,7 @@
 	#if(iauditstatus)
 		and pm.iauditstatus in (#(iauditstatus))
 	#end
-	### 超级管理员不过滤权限部门
-	#if(!isSystemAdmin)
-	    ### 存在角色部门配置过滤处理
-	    #if(accessCdepCodes && accessCdepCodes.size() > 0)
-	        AND pm.cDepCode IN (
-	            #for(code:accessCdepCodes)
-	                '#(code)' #(for.last?'':',')
-	            #end
-	        )
-	    #end
-	#end
+	#(getDataPermissionSql("pm", "cdepcode"))
 	order by pm.iautoid desc
 #end
 
@@ -413,7 +403,7 @@ WHERE 1=1 and ip.iEffectiveStatus != 3
 	and T.ibudgettype = #para(ibudgettype)
 #end
 #if(cdepcode)
-	and T.cdepcode = #para(cdepcode)
+	and T.cdepcode like concat('#(cdepcode)','%')
 #end
 #if(iinvestmenttype)
 	and T.iinvestmenttype = #para(iinvestmenttype)
@@ -500,7 +490,7 @@ from PL_Expense_Budget_Item ebi
 	and ibudgetyear = #para(ibudgetyear)
 #end
 #if(cdepcode)
-	and cdepcode = #para(cdepcode)
+	and cdepcode like concat('#(cdepcode)','%')
 #end
 #if(ccode)
 	and ccode like concat('%',#para(ccode),'%')
@@ -569,7 +559,7 @@ from pl_investment_plan_item ipi
 	and ibudgetyear = #para(ibudgetyear)
 #end
 #if(cdepcode)
-	and cdepcode = #para(cdepcode)
+	and cdepcode like concat('#(cdepcode)','%')
 #end
 #if(ccode)
 	and ccode like concat('%',#para(ccode),'%')

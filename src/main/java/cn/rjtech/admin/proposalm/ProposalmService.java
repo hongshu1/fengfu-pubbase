@@ -7,6 +7,7 @@ import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
+import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
@@ -142,6 +143,7 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
                 long iAutoId = Long.parseLong(idStr);
                 Proposalm dbProposalm = findById(iAutoId);
                 ValidationUtils.notNull(dbProposalm, JBoltMsg.DATA_NOT_EXIST);
+                DataPermissionKit.validateAccess(dbProposalm.getCDepCode());
                 ValidationUtils.equals(dbProposalm.getIOrgId(), getOrgId(), ErrorMsg.ORG_ACCESS_DENIED);
                 ValidationUtils.equals(dbProposalm.getIAuditStatus(), AuditStatusEnum.NOT_AUDIT.getValue(), "只能删除编辑状态的单据");
 
@@ -273,6 +275,8 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
     public Ret saveTableSubmit(JBoltTableMulti tableMulti, User user, Date now) {
         JBoltTable proposalTable = tableMulti.getJBoltTable("proposalds");
         Proposalm proposalm = proposalTable.getFormModel(Proposalm.class, "proposalm");
+        ValidationUtils.notBlank(proposalm.getCDepCode(), "缺少部门参数");
+        DataPermissionKit.validateAccess(proposalm.getCDepCode());
         ValidationUtils.notNull(proposalm, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(proposalm.getDApplyDate(), "申请日期不能为空");
         ValidationUtils.notBlank(proposalm.getCApplyPersonCode(), "申请人不能为空");
@@ -282,8 +286,6 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
         ValidationUtils.notNull(proposalm.getIsScheduled(), "缺少事业计划");
         JBoltTable attachmentsTable = tableMulti.getJBoltTable("attachments");
         if (null == proposalm.getIAutoId()) {
-            // 必填参数检查
-            ValidationUtils.notBlank(proposalm.getCDepCode(), "缺少部门参数");
             ValidationUtils.notEmpty(proposalTable.getSaveRecordList(), "禀议书项目不能为空");
             tx(() -> {
                 doSaveTableSubmit(proposalm, proposalTable.getSaveRecordList(), attachmentsTable.getSaveRecordList(), user.getId(), now);
@@ -482,7 +484,8 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return null;
     }
 	
@@ -493,6 +496,7 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
      * @param isFirst    是否为审批的第一个节点
      * @param isLast     是否为审批的最后一个节点
      */
+    @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         // 反审回第一个节点，回退状态为“已保存”
         if (isFirst) {

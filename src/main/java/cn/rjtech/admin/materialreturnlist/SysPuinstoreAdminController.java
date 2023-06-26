@@ -85,7 +85,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 		String OrgCode = getOrgCode();
 		Record puinstoreName = service.getstockoutQcFormMList(autoid,OrgCode);
 		set("type", get("type"));
-		set("edit", get("edit"));
+		set("readonly", get("readonly"));
 		set("puinstoreName",puinstoreName);
 		set("puinstore",puinstore);
 		render("edit.html");
@@ -122,8 +122,8 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	/**
 	 * JBoltTable 可编辑表格整体提交 多表格
 	 */
-	public void submitMulti(Integer param, String revokeVal) {
-		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal));
+	public void submitMulti() {
+		renderJson(service.submitByJBoltTables(getJBoltTables()));
 	}
 
 	/**

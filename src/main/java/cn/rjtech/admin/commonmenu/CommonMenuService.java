@@ -16,7 +16,12 @@ import com.jfinal.plugin.activerecord.Record;
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.permission.PermissionService;
 import cn.jbolt.common.model.CommonMenu;
+import cn.jbolt.core.base.JBoltGlobalConfigKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltGlobalConfigCache;
+import cn.jbolt.core.cache.JBoltPermissionCache;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Permission;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -143,8 +148,8 @@ public class CommonMenuService extends BaseService<CommonMenu> {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
-	public List<ArrayList<Record>> getDashBoardCommonMenu() {
-		List<Record> commonMenuList = dbTemplate("commonmenu.getDashBoardCommonMenu").find();
+	public List<ArrayList<Record>> getDashBoardCommonMenu(Kv para) {
+		List<Record> commonMenuList = dbTemplate("commonmenu.getDashBoardCommonMenu",para).find();
 		int commonMenuListSize = commonMenuList.size();
 		double perRowNum = 6;
 		double commonMenuRow = Math.ceil(commonMenuListSize / perRowNum);
@@ -164,27 +169,35 @@ public class CommonMenuService extends BaseService<CommonMenu> {
 		}
 		return list;
 	}
-
-	public List<Record> findAllCanCheckedMenu() {
-		List<Record> proposalTopNavMenuList = dbTemplate("commonmenu.findProposalTopNabMenu").find();
-		List<Record> allCanCheckedMenu = new ArrayList<Record>();
-		getEndMenu(proposalTopNavMenuList,allCanCheckedMenu);
+	/**
+	 * 禀议系统的顶部导航配置的一级菜单下面的所有可跳转页面的末级菜单与当前登陆用户的菜单权限的交集
+	 * */
+	public List<Permission> findAllCanCheckedMenu() {
+		//禀议系统的顶部导航配置的一级菜单下面的所有可跳转页面的末级菜单
+		List<Permission> proposalTopNavMenuList = permissionService.findProposalTopNabMenu();
+		List<Permission> topNavCanCheckedMenuList = new ArrayList<Permission>();
+		getEndMenu(proposalTopNavMenuList,topNavCanCheckedMenuList);
+		//当前登陆用户的菜单权限
+		List<Permission> loginUserPermissionList = JBoltPermissionCache.me.getRoleMenus(JBoltUserKit.getUserId(), JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APP_ID), JBoltGlobalConfigCache.me.getLongConfigValue(JBoltGlobalConfigKey.MOM_APPLICATION_ID), JBoltUserKit.getUserRoleIds());
+		List<Permission> loginUserCanCheckedMenuList = new ArrayList<Permission>();
+		getEndMenu(loginUserPermissionList,loginUserCanCheckedMenuList);
+		//求交集
+		List<Permission> allCanCheckedMenu = topNavCanCheckedMenuList.stream().filter(p1 -> loginUserCanCheckedMenuList.stream().anyMatch(p2 -> p1.getId().equals(p2.getId()))).collect(Collectors.toList());
 		return allCanCheckedMenu;
 	}
-	private void getEndMenu(List<Record> pList,List<Record> endMenuList){
+	private void getEndMenu(List<Permission> pList,List<Permission> endMenuList){
 		if(CollUtil.isEmpty(pList)) return;
-		for (Record record : pList) {
-			String url = record.getStr("url");
+		for (Permission record : pList) {
+			String url = record.getUrl();
 			if(JBoltStringUtil.isNotBlank(url)) {
 				endMenuList.add(record);
 				continue;
 			}
-			Long permissionId = record.getLong("id");
-			List<Record> nextLevelMenuList =permissionService.findRecord(permissionService.selectSql().eq("pid", permissionId).eq("is_menu", IsEnableEnum.YES.getValue()).eq("is_deleted", IsEnableEnum.NO.getValue()));
+			Long permissionId = record.getId();
+			List<Permission> nextLevelMenuList =permissionService.find(permissionService.selectSql().eq("pid", permissionId).eq("is_menu", IsEnableEnum.YES.getValue()).eq("is_deleted", IsEnableEnum.NO.getValue()));
 			getEndMenu(nextLevelMenuList,endMenuList);
 		}
 	}
-
 	/**
 	 * 获取常用菜单id集合
 	 * */
@@ -206,6 +219,7 @@ public class CommonMenuService extends BaseService<CommonMenu> {
 				CommonMenu commonMenu = new CommonMenu(); 
 				commonMenu.setType(CommonMenuTypeEnum.PROPOSAL.getValue());
 				commonMenu.setMenuId(Long.parseLong(menuId));
+				commonMenu.setUserId(JBoltUserKit.getUserId());
 				ValidationUtils.isTrue(commonMenu.save(), ErrorMsg.SAVE_FAILED);
 			}
 			return true;
