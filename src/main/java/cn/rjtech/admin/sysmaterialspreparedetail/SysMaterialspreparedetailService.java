@@ -14,6 +14,7 @@ import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
+import cn.rjtech.admin.sysmaterialsprepare.SysMaterialsprepareService;
 import cn.rjtech.admin.sysmaterialspreparescan.SysMaterialspreparescanService;
 import cn.rjtech.admin.syspureceive.SysPureceiveService;
 import cn.rjtech.constants.ErrorMsg;
@@ -50,6 +51,9 @@ import java.util.*;
  */
 public class SysMaterialspreparedetailService extends BaseService<SysMaterialspreparedetail> {
 	private final SysMaterialspreparedetail dao=new SysMaterialspreparedetail().dao();
+
+	@Inject
+	private SysMaterialsprepareService sysMaterialsprepareService;
 	@Inject
 	private SysPureceiveService syspureceiveservice;
 
@@ -610,22 +614,58 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 
 	public Ret submitByJBoltTableGo1(String map1) {
 		String[] no1 = map1.split(",");
+		String billno = no1[0].split(":")[1];
 
 		//获取当前用户信息？
 //		User user = JBoltUserKit.getUser();
 //		Date now = new Date();
 		tx(() -> {
 			ArrayList<SysMaterialspreparescan> sysMaterialspreparescans = new ArrayList<>();
+			ArrayList<SysMaterialspreparedetail> sysMaterialspreparedetails = new ArrayList<>();
 			ArrayList<StockBarcodePosition> stockBarcodePositions = new ArrayList<>();
 			for (int i=1;i<no1.length;i++){
 				String[] data = no1[i].split(":");
+				SysMaterialspreparedetail sysMaterialspreparedetail = new SysMaterialspreparedetail();
 				SysMaterialspreparescan sysMaterialspreparescan = new SysMaterialspreparescan();
+				//提交备料存入备料细表
+				sysMaterialspreparedetail.setAutoID(JBoltSnowflakeKit.me.nextId()+"");
+				sysMaterialspreparedetail.setMasID(Long.valueOf(sysMaterialsprepareService.findFirst("SELECT * FROM T_Sys_MaterialsPrepare WHERE BillNo=?",billno).getAutoID()));
+				sysMaterialspreparedetail.setBarcode(data[0]);
+				sysMaterialspreparedetail.setInvCode(data[1]);
+				sysMaterialspreparedetail.setPosCode(stockbarcodepositionservice.findFirst("SELECT * FROM T_Sys_StockBarcodePosition WHERE Barcode=?",data[0]).getPosCode());
+				sysMaterialspreparedetail.setQty(stockbarcodepositionservice.findFirst("SELECT * FROM T_Sys_StockBarcodePosition WHERE Barcode=?",data[0]).getQty());
+				sysMaterialspreparedetail.setPackRate(stockbarcodepositionservice.findFirst("SELECT * FROM T_Sys_StockBarcodePosition WHERE Barcode=?",data[0]).getPackRate());
+//				sysMaterialspreparedetail.setSourceBillType();
+//				sysMaterialspreparedetail.setSourceBillNo();
+//				sysMaterialspreparedetail.setSourceBillNoRow();
+//				sysMaterialspreparedetail.setSourceBillID();
+//				sysMaterialspreparedetail.setSourceBillDid();
+//				sysMaterialspreparedetail.setMemo();
+				sysMaterialspreparedetail.setState("1");
+				sysMaterialspreparedetail.setIsDeleted(false);
+				sysMaterialspreparedetail.setIcreateby(JBoltUserKit.getUser().getId());
+				sysMaterialspreparedetail.setCcreatename(JBoltUserKit.getUser().getName());
+				sysMaterialspreparedetail.setDcreatetime(new Date());
+//				sysMaterialspreparedetail.setIupdateby();
+//				sysMaterialspreparedetail.setCupdatename();
+//				sysMaterialspreparedetail.setDupdatetime();
+				sysMaterialspreparedetails.add(sysMaterialspreparedetail);
+
+
+				//提交备料存入扫描日志表
 				sysMaterialspreparescan.setIAutoId(JBoltSnowflakeKit.me.nextId());
 				sysMaterialspreparescan.setCBarcode(data[0]);
 				sysMaterialspreparescan.setIInventoryId(invent.findFirst("SELECT * FROM Bd_Inventory WHERE cInvCode=?", data[1]).getIAutoId());
 				sysMaterialspreparescan.setCBatch(data[2]);
 				sysMaterialspreparescan.setState("1");
 				sysMaterialspreparescan.setIScanDate(new Date());
+//				sysMaterialspreparescan.setIQty();
+				sysMaterialspreparescan.setIMaterialsPrepareId(sysMaterialspreparedetail.getMasID());
+				sysMaterialspreparescan.setIMaterialsPrepareDetailId(Long.valueOf(sysMaterialspreparedetail.getAutoID()));
+//				sysMaterialspreparescan.setIWarehouseAreaId();
+//				sysMaterialspreparescan.setDProdDate();
+//				sysMaterialspreparescan.setITotalQty();
+//				sysMaterialspreparescan.setIScanQty();
 
 				sysMaterialspreparescans.add(sysMaterialspreparescan);
 
@@ -635,27 +675,10 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 
 
 			}
+			this.batchSave(sysMaterialspreparedetails);
 			sysmaterialspreparescanservice.batchSave(sysMaterialspreparescans);
 			stockbarcodepositionservice.batchUpdate(stockBarcodePositions);
 
-			//通过 id 判断是新增还是修改
-//			MoDoc modoc = moDocS.findFirst("select * from Mo_MoDoc where cMoDocNo=?", id);
-//			sysMaterialsprepare.setSourceBillID(modoc.getIAutoId());
-//			sysMaterialsprepare.setSourceBillNo(modoc.getCMoDocNo());
-//			sysMaterialsprepare.setBillType("手工作成");
-//			sysMaterialsprepare.setOrganizeCode(getOrgCode());
-//			sysMaterialsprepare.setCcreatename(user.getName());
-//			sysMaterialsprepare.setDcreatetime(now);
-//			sysMaterialsprepare.setIcreateby(user.getId());
-//			sysMaterialsprepare.setBillDate(DateUtil.format(now, "yyyy-MM-dd HH:mm:ss"));
-//			sysMaterialsprepare.setBillNo("BL" + DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
-			//主表新增
-//			ValidationUtils.isTrue(sysMaterialsprepare.save(), ErrorMsg.SAVE_FAILED);
-			//从表的操作
-			// 获取保存数据（执行保存，通过 getSaveRecordList）
-			//修改工单状态
-			//获取修改数据（执行修改，通过 getUpdateRecordList）
-			//获取删除数据（执行删除，通过 getDelete）
 			return true;
 		});
 		return SUCCESS;
@@ -663,9 +686,6 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 
 
 	public Ret submitQTY(String Oldbarcode,String Oldqty,String Newbarcode, String Newqty) {
-		//获取当前用户信息？
-//		User user = JBoltUserKit.getUser();
-//		Date now = new Date();
 		tx(() -> {
 			Kv kv = new Kv();
 			kv.set("barcode",Oldbarcode);

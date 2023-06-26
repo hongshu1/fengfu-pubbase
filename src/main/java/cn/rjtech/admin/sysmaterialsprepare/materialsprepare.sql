@@ -585,3 +585,33 @@ WHERE
   AND InvCode IS NOT NULL
   AND Barcode = '#(barcode)'
 #end
+
+
+
+
+
+
+#sql("HasBeenPrepared")
+SELECT
+    a.iInventoryId,
+    f.cInvCode,
+    a.iUsageUOM,
+    a.iUsageUOM*d.iQty AS planIqty,
+    sbp.Batch,
+    sbp.Barcode,
+    mpd.Qty,
+    mpd.AutoID
+FROM
+    Mo_MoRoutingInvc a
+        LEFT JOIN Bd_Inventory f ON a.iInventoryId= f.iAutoId
+        LEFT JOIN Mo_MoRoutingConfig b ON a.iMoRoutingConfigId= b.iAutoId
+        LEFT JOIN Mo_MoRouting c ON b.iMoRoutingId= c.iAutoId
+        LEFT JOIN Mo_MoDoc d ON c.iMoDocId= d.iAutoId
+        LEFT JOIN T_Sys_StockBarcodePosition sbp ON sbp.InvCode= f.cInvCode
+        LEFT JOIN T_Sys_MaterialsPrepareDetail mpd ON mpd.Barcode= sbp.Barcode
+WHERE 1=1
+  AND  d.iAutoId='#(iAutoId)'
+  AND  sbp.InvCode='#(InvCode)'
+  AND  sbp.Batch='#(Batch)'
+  AND  mpd.AutoID IS NOT NULL
+    #end
