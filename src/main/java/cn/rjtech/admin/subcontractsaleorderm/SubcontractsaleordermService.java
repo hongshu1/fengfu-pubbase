@@ -415,7 +415,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
         // 订单状态校验
-        ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
+//        ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
 
         // 订单状态修改
         subcontractsaleorderm.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
@@ -514,7 +514,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      */
     public String postWithdrawFunc(long formAutoId) {
         Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
-        ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审批状态");
+//        ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审批状态");
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), "撤回失败");
         return null;
     }

@@ -283,14 +283,13 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
      * autocomplete组件使用
      */
     public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode, String vencode,String whcode1) {
-        Record whcode = dbTemplate("syspureceive.Whcode", Kv.by("whcode", whcode1)).findFirst();
-        String whcode2 = null;
-        if(null != whcode && "".equals(whcode)){
-            whcode2 =whcode.getStr("iautoid");
-        }
-        return dbTemplate("syspureceive.getBarcodeDatas",
-                Kv.by("q", q).set("limit", limit).set("orgCode", orgCode).set("vencode", vencode).set("whcodeid",whcode2)).find();
+        return dbTemplate("syspureceive.getBarcodeDatas", Kv.by("q", q).set("limit", limit).set("orgCode", orgCode).set("vencode", vencode)).find();
     }
+
+    public Record getWhcodeid(String whcode1) {
+        return dbTemplate("syspureceive.Whcode", Kv.by("q", whcode1)).findFirst();
+    }
+
 
     /**
      * 获取条码列表
@@ -741,11 +740,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
     public String installsyspuinstore(SysPureceive byId, Date now, User user, Record barcode) {
         SysPuinstore sysPuinstore = new SysPuinstore();
         sysPuinstore.setBillNo(byId.getBillNo());
-//        sysPuinstore.setBillType(byId.getBillType());
         sysPuinstore.setBillDate(DateUtil.formatDate(now));
         sysPuinstore.setOrganizeCode(getOrgCode());
         sysPuinstore.setSourceBillNo(byId.getSourceBillNo());
-//        sysPuinstore.setSourceBillID(byId.getSourceBillID());
         sysPuinstore.setVenCode(byId.getVenCode());
         sysPuinstore.setCCreateName(user.getName());
         sysPuinstore.setDCreateTime(now);
@@ -755,10 +752,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         sysPuinstore.setWhName(byId.getWhName());
         sysPuinstore.setIAuditStatus(0);
         sysPuinstore.setIsDeleted(false);
+        sysPuinstore.setICreateBy(JBoltUserKit.getUserId());
         sysPuinstore.setBillType(barcode.getStr("ipurchasetypeid"));
         sysPuinstore.setDeptCode(barcode.getStr("cdepcode"));
         sysPuinstore.setIBusType(Integer.valueOf(barcode.getStr("ibustype")));
         sysPuinstore.setRdCode(barcode.getStr("scrdcode"));
+        sysPuinstore.setIUpdateBy(JBoltUserKit.getUserId());
         syspuinstoreservice.save(sysPuinstore);
         return sysPuinstore.getAutoID();
     }

@@ -375,6 +375,17 @@
     $("#operationType").val();
   }
 
+  /**
+   * 新增/修改/提审
+   */
+  function successHandler(msg, iautoid) {
+    LayerMsgBox.success(msg, 600, function () {
+      // 新增/修改，均跳转到详情页
+      location.href = '/admin/purchaseReceiptList/edit?autoid=' + autoid + '&_jb_rqtype_=dialog';
+      parent.refreshPjaxContainer();
+    });
+  }
+
 
   function getJBoltTableEditableColsOpton() {
     var editableTableOptions = {
@@ -389,16 +400,14 @@
             if (submit){
               let autoid = res.autoid;
               submit_#(pageId)(autoid,function () {
-                LayerMsgBox.success("提交成功", 600, function () {
-                  parent.refreshPjaxContainer();
-                  // parent.layer.closeAll();
-                });
+                successHandler('提交审核成功', autoid);
               });
             } else {
-              LayerMsgBox.success("提交成功", 600, function () {
+              successHandler(ret.msg, autoid);
+              /*LayerMsgBox.success("提交成功", 600, function () {
                 parent.refreshPjaxContainer();
                 parent.layer.closeAll();
-              });
+              });*/
             }
           }else {
             LayerMsgBox.error(res.msg);

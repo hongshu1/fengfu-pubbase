@@ -104,7 +104,7 @@
 
 ### 新增之后，并且为审核流
 #if(annualOrderM.iautoid?? && annualOrderM.iauditway == 2)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=annualOrderM.iAutoId, formSn="Co_AnnualOrderM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.annualorderm.AnnualOrderMService")
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=annualOrderM.iAutoId, primaryKeyName="iAutoId", formSn="Co_AnnualOrderM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.annualorderm.AnnualOrderMService")
 #end
 
 <div class="jbolt_page_content">

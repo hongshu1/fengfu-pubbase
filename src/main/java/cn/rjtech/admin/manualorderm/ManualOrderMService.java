@@ -384,7 +384,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         ManualOrderM manualOrderM = findById(formAutoId);
         // 订单状态校验
-        ValidationUtils.equals(manualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
+//        ValidationUtils.equals(manualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
 
         // 订单状态修改
         manualOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
@@ -482,7 +482,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     @Override
     public String postWithdrawFunc(long formAutoId) {
         ManualOrderM manualOrderM = findById(formAutoId);
-        ValidationUtils.equals(manualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审批状态");
+//        ValidationUtils.equals(manualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审批状态");
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), "撤回失败");
         return null;
     }
