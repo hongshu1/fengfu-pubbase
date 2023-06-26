@@ -285,7 +285,8 @@ SELECT DISTINCT
 	concat ( iYear, iMonth, iDate, iWorkShiftMid ) dates,
 	cMoDocNo,
 	iQty,
-	concat ( iYear, '-', iMonth, '-', iDate ) sdate
+	concat ( iYear, '-', iMonth, '-', iDate ) sdate,
+	isModified
 FROM
 	Mo_MoDoc
 WHERE
