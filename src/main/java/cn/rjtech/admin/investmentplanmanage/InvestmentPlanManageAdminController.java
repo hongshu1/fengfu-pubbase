@@ -53,6 +53,7 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
     public void detail() {
         Record investmentPlan = service.findInvestmentPlanDataForDetail(getLong(0));
         set("investmentPlan", investmentPlan);
+        set("readonly", "readonly");
         render("detail.html");
     }
     
