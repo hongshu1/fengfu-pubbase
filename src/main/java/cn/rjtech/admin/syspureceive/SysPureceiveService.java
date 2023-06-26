@@ -740,11 +740,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
     public String installsyspuinstore(SysPureceive byId, Date now, User user, Record barcode) {
         SysPuinstore sysPuinstore = new SysPuinstore();
         sysPuinstore.setBillNo(byId.getBillNo());
-//        sysPuinstore.setBillType(byId.getBillType());
         sysPuinstore.setBillDate(DateUtil.formatDate(now));
         sysPuinstore.setOrganizeCode(getOrgCode());
         sysPuinstore.setSourceBillNo(byId.getSourceBillNo());
-//        sysPuinstore.setSourceBillID(byId.getSourceBillID());
         sysPuinstore.setVenCode(byId.getVenCode());
         sysPuinstore.setCCreateName(user.getName());
         sysPuinstore.setDCreateTime(now);
@@ -754,10 +752,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         sysPuinstore.setWhName(byId.getWhName());
         sysPuinstore.setIAuditStatus(0);
         sysPuinstore.setIsDeleted(false);
+        sysPuinstore.setICreateBy(JBoltUserKit.getUserId());
         sysPuinstore.setBillType(barcode.getStr("ipurchasetypeid"));
         sysPuinstore.setDeptCode(barcode.getStr("cdepcode"));
         sysPuinstore.setIBusType(Integer.valueOf(barcode.getStr("ibustype")));
         sysPuinstore.setRdCode(barcode.getStr("scrdcode"));
+        sysPuinstore.setIUpdateBy(JBoltUserKit.getUserId());
         syspuinstoreservice.save(sysPuinstore);
         return sysPuinstore.getAutoID();
     }
