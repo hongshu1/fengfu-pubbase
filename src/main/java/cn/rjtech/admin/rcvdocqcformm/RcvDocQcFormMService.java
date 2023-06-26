@@ -358,6 +358,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         Long userId = JBoltUserKit.getUserId();
         Vendor vendor = vendorService.findById(docQcFormM.getIVendorId());
         SysPureceive sysPureceive = sysPureceiveService.findById(docQcFormM.getIRcvDocId());
+        sysPuinstore.setAutoID(StrUtil.toString(JBoltSnowflakeKit.me.nextId()));
         sysPuinstore.setOrganizeCode(getOrgCode());//组织编码
         sysPuinstore.setBillNo(String.valueOf(JBoltSnowflakeKit.me.nextId())); //入库单号
         sysPuinstore.setBillDate(DateUtil.formatDate(date)); //入库日期

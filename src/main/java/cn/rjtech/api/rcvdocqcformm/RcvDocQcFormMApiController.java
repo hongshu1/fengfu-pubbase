@@ -2,7 +2,6 @@ package cn.rjtech.api.rcvdocqcformm;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.instockqcformm.GetExportExcelVo;
@@ -126,18 +125,6 @@ public class RcvDocQcFormMApiController extends BaseApiController {
 
         renderJBoltApiRet(apiService.jumpOnlysee(iautoid));
     }
-
-    /**
-     * @desc 跳转到"查看"页面或者“编辑”页面后，自动加载查看页面table的数据
-     * @param iautoid 主键
-     */
-    /*@ApiDoc(result = AutoGetRcvOnlyseeTableDatasVo.class)
-    @UnCheck
-    public void autoGetRcvOnlyseeOrEditTableDatas(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        
-        renderJBoltApiRet(apiService.autoGetRcvOnlyseeOrEditTableDatas(iautoid));
-    }*/
 
     /**
      * @param cmeasurepurpose:测试目的 cdcno:设变号

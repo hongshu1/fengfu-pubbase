@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import cn.rjtech.model.momdata.RcvDocQcFormD;
+
 /**
  * @version 1.0
  * @Author cc
@@ -77,6 +79,8 @@ public class RcvDocQcFormMApiCheckOut implements Serializable {
     private Date                dqctime;
     /*table的头部*/
     public  List<tableHeadData> columns;
+
+    public  List<RcvDocQcFormD> docparamlist;
 
     public static class tableHeadData {
 
@@ -331,6 +335,14 @@ public class RcvDocQcFormMApiCheckOut implements Serializable {
         public void setCompares(List<compare> compares) {
             this.compares = compares;
         }
+    }
+
+    public List<RcvDocQcFormD> getDocparamlist() {
+        return docparamlist;
+    }
+
+    public void setDocparamlist(List<RcvDocQcFormD> docparamlist) {
+        this.docparamlist = docparamlist;
     }
 
     public String getCbatchno() {
