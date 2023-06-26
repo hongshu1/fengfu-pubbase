@@ -166,20 +166,21 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param status         审批状态
      * @param primaryKeyName 单据主键名称
      * @param className      实现审批通过业务的类名
+     * @param remark         审批意见
      */
     @CheckPermission(PermissionKey.FORM_APP_APPROVE)
     public void approve(@Para(value = "formAutoId") Long formAutoId,
                         @Para(value = "formSn") String formSn,
                         @Para(value = "status") Integer status,
                         @Para(value = "primaryKeyName") String primaryKeyName,
-                        @Para(value = "className") String className) {
+                        @Para(value = "className") String className,@Para(value = "remark") String remark) {
         ValidationUtils.validateId(formAutoId, "单据ID");
         ValidationUtils.notBlank(formSn, "表单编码不能为空");
         ValidationUtils.validateIntGt0(status, "审批状态");
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "缺少实现审批通过业务的类名参数");
 
-        Ret ret = service.approve(formAutoId, formSn, status, primaryKeyName, className, false);
+        Ret ret = service.approve(formAutoId, formSn, status, primaryKeyName, className, false,remark);
 
         renderJson(ret);
 
@@ -200,20 +201,21 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param status         审批状态
      * @param primaryKeyName 单据主键名称
      * @param className      处理审批的Service类名
+     * @param remark         审批意见
      */
     @CheckPermission(PermissionKey.FORM_APP_REJECT)
     public void reject(@Para(value = "formAutoId") Long formAutoId,
                        @Para(value = "formSn") String formSn,
                        @Para(value = "status") Integer status,
                        @Para(value = "primaryKeyName") String primaryKeyName,
-                       @Para(value = "className") String className) {
+                       @Para(value = "className") String className,@Para(value = "remark") String remark) {
         ValidationUtils.validateId(formAutoId, "单据ID");
         ValidationUtils.notBlank(formSn, "表单编码不能为空");
         ValidationUtils.validateIntGt0(status, "审批状态");
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "处理审批的Service类名");
 
-        renderJson(service.reject(formAutoId, formSn, status, primaryKeyName, className));
+        renderJson(service.reject(formAutoId, formSn, status, primaryKeyName, className,remark,false));
     }
 
     /**
@@ -224,20 +226,21 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param status         审批状态
      * @param primaryKeyName 单据主键名称
      * @param className      处理审批的Service类名
+     * @param remark         审批意见
      */
     @CheckPermission(PermissionKey.FORM_APP_REVERSEAPPROVE)
     public void reverseApprove(@Para(value = "formAutoId") Long formAutoId,
                                @Para(value = "formSn") String formSn,
                                @Para(value = "status") Integer status,
                                @Para(value = "primaryKeyName") String primaryKeyName,
-                               @Para(value = "className") String className) {
+                               @Para(value = "className") String className,@Para(value = "remark") String remark) {
         ValidationUtils.validateId(formAutoId, "单据ID");
         ValidationUtils.notBlank(formSn, "表单编码不能为空");
         ValidationUtils.validateIntGt0(status, "审批状态");
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "处理审批的Service类名");
 
-        renderJson(service.reverseApprove(formAutoId, formSn, primaryKeyName, status, className));
+        renderJson(service.reverseApprove(formAutoId, formSn, primaryKeyName, status, className,remark));
     }
 
     /**
@@ -344,6 +347,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @CheckPermission(PermissionKey.FORM_APP_AUDIT)
     public void approveByStatus(@Para(value = "formSn") String formSn,
                                 @Para(value = "formAutoId") Long formAutoId,
                                 @Para(value = "primaryKeyName") String primaryKeyName,
@@ -367,6 +371,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @CheckPermission(PermissionKey.FORM_APP_REJECT_AUDIT)
     public void rejectByStatus(@Para(value = "formSn") String formSn,
                                @Para(value = "formAutoId") Long formAutoId,
                                @Para(value = "primaryKeyName") String primaryKeyName,
@@ -390,6 +395,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @CheckPermission(PermissionKey.FORM_APP_REVERSE_AUDIT)
     public void reverseApproveByStatus(@Para(value = "formSn") String formSn,
                                        @Para(value = "formAutoId") Long formAutoId,
                                        @Para(value = "primaryKeyName") String primaryKeyName,
@@ -413,6 +419,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @CheckPermission(PermissionKey.FORM_APP_BATCH_AUDIT)
     public void batchApproveByStatus(@Para(value = "ids") String ids,
                                      @Para(value = "formSn") String formSn,
                                      @Para(value = "primaryKeyName") String primaryKeyName,
@@ -436,6 +443,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @CheckPermission(PermissionKey.FORM_APP_BATCH_REJECT_AUDIT)
     public void batchRejectByStatus(@Para(value = "ids") String ids,
                                     @Para(value = "formSn") String formSn,
                                     @Para(value = "primaryKeyName") String primaryKeyName,
@@ -466,6 +474,7 @@ public class FormApprovalAdminController extends BaseAdminController {
     /**
      * 撤回审核、审批
      */
+    @CheckPermission(PermissionKey.FORM_APP_WITHDRAW)
     public void withdraw(@Para(value = "formAutoId") Long formAutoId,
                          @Para(value = "formSn") String formSn,
                          @Para(value = "primaryKeyName") String primaryKeyName,

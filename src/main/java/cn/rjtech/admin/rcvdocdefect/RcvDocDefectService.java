@@ -224,6 +224,7 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 							syspuinstoredetailservice.batchSave(sysPuinstoredetails);
 						}
 					}else {
+						//待记录状态
 						RcvDocfectLinesave(formRecord, now);
 					}
 				}
@@ -248,6 +249,8 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 
 		//录入填写的数据
 		rcvDocDefect.setIStatus(2);
+		rcvDocDefect.setIQcUserId(JBoltUserKit.getUserId());        //检验用户ID
+		rcvDocDefect.setDQcTime(now);        						//检验时间
 		rcvDocDefect.setIDqQty(formRecord.getBigDecimal("idqqty"));
 		rcvDocDefect.setIRespType(formRecord.getInt("iresptype"));
 		rcvDocDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
@@ -314,10 +317,10 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		if (rcvDocDefect == null){
 			return map;
 		}
-		if (rcvDocDefect.getIStatus() == 1) {
+		if (rcvDocDefect.getIStatus() == 2) {
 			map.put("isfirsttime", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
 			map.put("iresptype", (rcvDocDefect.getIRespType() == 1) ? "供应商" : "其他");
-		} else if (rcvDocDefect.getIStatus() == 2) {
+		} else if (rcvDocDefect.getIStatus() == 3) {
 			int getCApproach = Integer.parseInt(rcvDocDefect.getCApproach());
 			map.put("capproach", (getCApproach == 1) ? "特采" : "拒收");
 			map.put("isfirsttime", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
