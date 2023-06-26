@@ -332,7 +332,7 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         MonthOrderM monthOrderM = findById(formAutoId);
         // 订单状态校验
-        ValidationUtils.equals(monthOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
+//        ValidationUtils.equals(monthOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
 
         // 订单状态修改
         monthOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
@@ -428,7 +428,7 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
     @Override
     public String postWithdrawFunc(long formAutoId) {
         MonthOrderM monthOrderM = findById(formAutoId);
-        ValidationUtils.equals(monthOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审批状态");
+//        ValidationUtils.equals(monthOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审批状态");
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), "撤回失败");
         return null;
     }
