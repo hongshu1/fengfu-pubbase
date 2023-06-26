@@ -42,19 +42,18 @@
 <tr data-id="${data.autoid}">
   <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-	 {@if data.iauditstatus != '1'}
-		<a class="jbolt_table_editbtn" href="admin/materialreturnlist/edit/${data.autoid}?&type=0"  data-fs="true" data-handler="refreshJBoltTable" data-title="物料退货列表详情">查看</i></a>
+	{@if data.iauditstatus != '0'}
+	<a class="jbolt_table_editbtn" href="admin/materialreturnlist/edit/${data.autoid}?&readonly=readonly"  data-fs="true" data-handler="refreshJBoltTable" data-title="材料出库单列表详情">查看</i></a>
 	{@/if}
-	{@if data.iauditstatus == '1'}
-	            <a data-ajaxbtn href="admin/materialreturnlist/recall/${data.autoid}" data-handler='refreshJBoltTable'
-               tooltip data-confirm='确定要执行此操作？' data-title="撤回">撤回</a>
-	{@/if}
-	{@if data.iauditstatus != '2'}
-		<a class="jbolt_table_editbtn" href="admin/materialreturnlist/edit/${data.autoid}?&edit=true" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑物料退货列表">编辑</i></a>
+	{@if data.iauditstatus == '0'}
+	<a href="admin/materialreturnlist/deleteByIds?ids=${data.autoid}" data-ajaxbtn data-loading="执行中 "
+                           tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
+                           class="jbolt_table_delbtn">删除</a>
+	<a class="jbolt_table_editbtn" href="admin/materialreturnlist/edit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑材料出库单列表">编辑</i></a>
+	 {@else if data.iauditstatus == '1'}
+	<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=T_Sys_PUInStore&primaryKeyName=autoid&formAutoId=${data.autoid}&permissionKey=materialreturn_withdraw&className=cn.rjtech.admin.materialreturnlist.SysPuinstoreListService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回材料出库表" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
 	 {@/if}
-<!--	<a href="admin/materialreturnlist/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "-->
-<!--                           tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"-->
-<!--                           class="jbolt_table_delbtn">删除</a>-->
+
 </td>
   <td title="${data.auditstate}">${data.auditstate}</td>
   <td title="${data.billno}">${data.billno}</td>
