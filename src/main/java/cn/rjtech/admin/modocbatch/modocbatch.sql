@@ -286,7 +286,8 @@ SELECT DISTINCT
 	cMoDocNo,
 	iQty,
 	concat ( iYear, '-', iMonth, '-', iDate ) sdate,
-	isModified
+	isModified,
+	iAutoId
 FROM
 	Mo_MoDoc
 WHERE
