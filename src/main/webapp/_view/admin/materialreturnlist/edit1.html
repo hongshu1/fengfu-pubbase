@@ -7,16 +7,10 @@
 
             <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
                 <div class="col-md-l pt-2" role="group" aria-label="btn-group">
-                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
-                            data-id="0" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i>
-                        保存
-                    </button>
                     #if(readonly != 'readonly')
                     <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
                     #end
-                    <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
-                        关闭
-                    </button>
+                    <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                 </div>
             </div>
         <form onsubmit="return false;" id="PuinstoreForm" action="#(action)" method="post">

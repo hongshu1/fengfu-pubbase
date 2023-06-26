@@ -1,0 +1,136 @@
+<form onsubmit="return false;" id="UptimeParam_Form" action="#(action)" method="post">
+	#if(uptimeParam.iAutoId??)
+	<input type="hidden" name="uptimeParam.iAutoId" value="#(uptimeParam.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="uptimeParam.iAutoId" value="#(uptimeParam.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织ID" maxlength="40" name="uptimeParam.iOrgId" value="#(uptimeParam.iOrgId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织编码</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织编码" maxlength="40" name="uptimeParam.cOrgCode" value="#(uptimeParam.cOrgCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">组织名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入组织名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入组织名称" maxlength="40" name="uptimeParam.cOrgName" value="#(uptimeParam.cOrgName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">稼动时间参数类别ID</label>
+
+<div class="col-10">
+    <select class="form-control"
+            data-autoload
+            data-url="admin/dictionary/options?key=null"
+            data-select-type="select"
+            name="uptimeParam.iUptimeCategoryId"
+            data-refresh="true"
+            data-rule="select"
+            data-notnull="true"
+            data-tips="请选择稼动时间参数类别ID"
+            data-text="=请选择="
+            data-value=""
+            data-value-attr="sn"
+            data-select="#(uptimeParam.iUptimeCategoryId??)"
+            
+    ></select>
+</div>
+</div>
+</div>
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">参数名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入参数名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入参数名称" maxlength="40" name="uptimeParam.cUptimeParamName" value="#(uptimeParam.cUptimeParamName??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="uptimeParam.isEnabled"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否启用;0. 否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(uptimeParam.isEnabled??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入是否启用;0. 否 1. 是"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人ID" maxlength="40" name="uptimeParam.iCreateBy" value="#(uptimeParam.iCreateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人名称" maxlength="40" name="uptimeParam.cCreateName" value="#(uptimeParam.cCreateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入创建时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="uptimeParam.dCreateTime"    value="#datetime(uptimeParam.dCreateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+</div>
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人ID" maxlength="40" name="uptimeParam.iUpdateBy" value="#(uptimeParam.iUpdateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人名称" maxlength="40" name="uptimeParam.cUpdateName" value="#(uptimeParam.cUpdateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入更新时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新时间" maxlength="20" name="uptimeParam.dUpdateTime"    value="#datetime(uptimeParam.dUpdateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="uptimeParam.isDeleted"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="删除状态;0. 未删除 1. 已删除"
+data-width="col-sm-2,col-10"
+data-value="#(uptimeParam.isDeleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入删除状态;0. 未删除 1. 已删除"
+data-inline="true"
+>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="UptimeParam_Form")
+#end
+

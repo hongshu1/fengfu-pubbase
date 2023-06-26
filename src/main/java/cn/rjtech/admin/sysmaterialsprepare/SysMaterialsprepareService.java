@@ -204,7 +204,9 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                     //如果批次号不相等，新增行
                     if (BATCH!=recordList.get(i).get("Batch")){
                         Record record = new Record();
+                        //存货编码
                         record.set("cInvCode",recordList.get(i).get("cInvCode"));
+                        //批次号
                         record.set("Batch",recordList.get(i).get("Batch"));
                         record.set("cInvCode1",recordList.get(i).get("cInvCode1"));
                         record.set("cInvName1",recordList.get(i).get("cInvName1"));
@@ -213,8 +215,27 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                         record.set("SourceBillID",recordList.get(i).get("SourceBillID"));
                         record.set("cInvStd",recordList.get(i).get("cInvStd"));
                         record.set("cUomName",recordList.get(i).get("cUomName"));
+                        record.set("cMoDocNo",recordList.get(i).get("cMoDocNo"));
                         record.set("WhCode",recordList.get(i).get("WhCode"));
                         record.set("PosCode",recordList.get(i).get("PosCode"));
+                        //获取已备料数量
+                        Kv kv1 = new Kv();
+                        kv1.set("iAutoId",recordList.get(i).get("SourceBillID"));
+                        kv1.set("InvCode",recordList.get(i).get("cInvCode"));
+                        kv1.set("Batch",recordList.get(i).get("Batch"));
+                        List<Record> recordOfHasBeenPrepared = dbTemplate("materialsprepare.HasBeenPrepared", kv1).find();
+                        BigDecimal HasBeenPrepared = new BigDecimal(0);
+                        //判断是否已有备料
+                        if (recordOfHasBeenPrepared.size()<1){
+                            record.set("num",0);
+
+                        }else {
+                            for (int t=1;t<recordOfHasBeenPrepared.size();t++){
+                                HasBeenPrepared.add(recordOfHasBeenPrepared.get(t).get("Qty"));
+                            }
+                            record.set("num",HasBeenPrepared);
+                        }
+                        HasBeenPrepared=new BigDecimal(0);
                         objects.add(record);
                         j++;
                     }
@@ -223,7 +244,9 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             }else {
                 cinvcode=recordList.get(i).get("cInvCode");
                 Record record = new Record();
+                //存货编码
                 record.set("cInvCode",recordList.get(i).get("cInvCode"));
+                //批次号
                 record.set("Batch",recordList.get(i).get("Batch"));
                 record.set("cInvCode1",recordList.get(i).get("cInvCode1"));
                 record.set("cInvName1",recordList.get(i).get("cInvName1"));
@@ -231,9 +254,28 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                 record.set("Billno",recordList.get(i).get("Billno"));
                 record.set("SourceBillID",recordList.get(i).get("SourceBillID"));
                 record.set("cInvStd",recordList.get(i).get("cInvStd"));
+                record.set("cMoDocNo",recordList.get(i).get("cMoDocNo"));
                 record.set("cUomName",recordList.get(i).get("cUomName"));
                 record.set("WhCode",recordList.get(i).get("WhCode"));
                 record.set("PosCode",recordList.get(i).get("PosCode"));
+                //获取已备料数量
+                Kv kv1 = new Kv();
+                kv1.set("iAutoId",recordList.get(i).get("SourceBillID"));
+                kv1.set("InvCode",recordList.get(i).get("cInvCode"));
+                kv1.set("Batch",recordList.get(i).get("Batch"));
+                List<Record> recordOfHasBeenPrepared = dbTemplate("materialsprepare.HasBeenPrepared", kv1).find();
+                BigDecimal HasBeenPrepared = new BigDecimal(0);
+                //判断是否已有备料
+                if (recordOfHasBeenPrepared.size()<1){
+                    record.set("num",0);
+
+                }else {
+                    for (int t=1;t<recordOfHasBeenPrepared.size();t++){
+                        HasBeenPrepared.add(recordOfHasBeenPrepared.get(t).get("Qty"));
+                    }
+                    record.set("num",HasBeenPrepared);
+                }
+                HasBeenPrepared=new BigDecimal(0);
                 objects.add(record);
                 j++;
             }

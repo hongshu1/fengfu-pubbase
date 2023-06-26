@@ -67,14 +67,14 @@
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.billno}</td>
-<td>${data.sourcebillid}</td>
+<td>${data.cmodocno}</td>
 <td name="CINVCODE">${data.cinvcode}</td>
 <td>${data.cinvcode1}</td>
 <td>${data.cinvname1}</td>
 <td>${data.cinvstd}</td>
 <td>${data.cuomname}</td>
-<td>${data.cwhname}</td>
-<td>${data.cpositionname}</td>
+<td>${data.whcode}</td>
+<td>${data.poscode}</td>
 <td name="PLANQTY">${data.planiqty}</td>
 <td>${data.num}</td>
 <td name="scanqty">0</td>
@@ -117,14 +117,14 @@
             <tr>
                 <th data-width="60" data-column="">序号</th>
                 <th data-width="150" data-column="">备料单号</th>
-                <th data-width="200" data-column="">工单号</th>
-                <th data-width="150" data-column="invcode">存货编码</th>
+                <th data-width="200" data-column="cmodocno">工单号</th>
+                <th data-width="150" data-column="cinvcode">存货编码</th>
                 <th data-width="200" data-column="">客户部番</th>
                 <th data-width="250" data-column="">部品名称</th>
                 <th data-width="200" data-column="">规格</th>
                 <th data-width="100" data-column="">主计量单位</th>
-                <th data-width="200" data-column="">出库仓库</th>
-                <th data-width="150" data-column="">出库库区</th>
+                <th data-width="200" data-column="WhCode">出库仓库</th>
+                <th data-width="150" data-column="PosCode">出库库区</th>
                 <th data-width="150" data-column="">需求计划数量</th>
                 <th data-width="150" data-column="">已备料数量</th>
                 <th data-width="150" data-column="">扫描数量</th>
@@ -222,24 +222,19 @@
                     LayerMsgBox.alert("条码已重复")
                     return;
                 }
-                array.push("'" + data[i].barcode + "'");
             }
-            let codes = array.join(',');
-            $("#detailHidden").val(codes);
-        } else {
-            $("#detailHidden").val('');
         }
 
         if (barcode) {
             Ajax.post("admin/sysMaterialspreparedetail/barcode", {"barcode": barcode},
                 function (res) {
                     //判断扫入的条码是否和物料明细一致,以及是否满足先进先出规则
-                    var cunhuoCode=getJboltTableAllDatas("MaterialsDetail",["invcode"]);
+                    var cunhuoCode=getJboltTableAllDatas("MaterialsDetail",["cinvcode"]);
                     var cunhuoBatch=getJboltTableAllDatas("MaterialsDetail",["batch"]);
                     var k = 0;
                     if (null != cunhuoCode) {
                         for (let i = 0; i < cunhuoCode.length; i++) {
-                            if (cunhuoCode[i] == res.data.cinvcode) {
+                            if (cunhuoCode[i].cinvcode == res.data.cinvcode) {
                                 k++;
                                 break;
                             }
@@ -252,7 +247,7 @@
                     }
                     if (null != cunhuoBatch) {
                         for (let i = 0; i < cunhuoBatch.length; i++) {
-                            if (cunhuoCode[i] == res.data.cunhuoBatch) {
+                            if (cunhuoBatch[i].batch == res.data.cunhuoBatch) {
                                 k++;
                                 break;
                             }
@@ -267,12 +262,18 @@
                     var mytable = document.getElementById("MaterialsDetail");
                     //遍历物料明细表格来进行数据分类,该循环由每次PDA扫码时触发
                     for (var i = 1, rows = mytable.rows.length; i < rows; i++) {
-                        //判断扫描存货编码和批次号是否相等
-                        if (document.getElementsByName("CINVCODE")[i - 1].innerText == res.data.cinvcode && document.getElementsByName("BATCH")[i - 1].innerText == res.data.batch) {
+                        //判断扫描存货编码是否相等
+                        if (document.getElementsByName("CINVCODE")[i - 1].innerText == res.data.cinvcode) {
                             //扫描数量大于计划数量后进行拆包操作
                             if (document.getElementsByName("PLANQTY")[i - 1].innerText >= parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[i - 1].innerText == "" ? 0 : document.getElementsByName("scanqty")[i - 1].innerText)) {
                                 //未超过,增加扫描数量
-                                document.getElementsByName("scanqty")[i - 1].innerText = (parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[i - 1].innerText == "" ? 0 : document.getElementsByName("scanqty")[i - 1].innerText)).toString();
+                                //遍历出所有同一存货编码的数据
+                                for (var m = 0, rows1 = cunhuoCode.length; m < rows1; m++){
+                                    if (cunhuoCode[m].cinvcode==res.data.cinvcode){
+                                        document.getElementsByName("scanqty")[m].innerText = (parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[m].innerText == "" ? 0 : document.getElementsByName("scanqty")[m].innerText)).toString();
+                                    }
+                                }
+                                break;
                                 //超过,进行拆包操作
                             } else {
                                 //传到子页面的物料明细表格的当前行数标记
@@ -280,7 +281,11 @@
                                 //确定按钮函数
                                 LayerMsgBox.confirm("该条码数量大于需求数量，确认是否超出发料！", function () {
                                     //直接增加物料明细表格的物料数量
-                                    document.getElementsByName("scanqty")[TAG - 1].innerText = (parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[TAG - 1].innerText == "" ? 0 : document.getElementsByName("scanqty")[TAG - 1].innerText)).toString();
+                                    for (var m = 0, rows1 = cunhuoCode.length; m < rows1; m++){
+                                        if (cunhuoCode[m].cinvcode==res.data.cinvcode){
+                                            document.getElementsByName("scanqty")[m].innerText = (parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[m].innerText == "" ? 0 : document.getElementsByName("scanqty")[m].innerText)).toString();
+                                        }
+                                    }
                                     //取消按钮函数
                                 }, function () {
                                     //动态生成button按钮
@@ -295,8 +300,6 @@
                                 //当检测到当前数量超过计划数量时,代表当前扫描的现品票已达到物料计划总数量,处理完相关逻辑后中断循环
                                 break;
                             }
-                        } else {
-                            LayerMsgBox.error("")
                         }
                     }
                 }, function (err) {
@@ -322,6 +325,8 @@
     //提交备料按钮
     function go() {
         var mytable = document.getElementById("jbolt_Table_");
+        var cmodocno=getJboltTableAllDatas("MaterialsDetail",["cmodocno"]);
+        debugger
         if (!document.getElementById("billno").value) {
             LayerMsgBox.error("请选择备料单");
             return;
@@ -331,8 +336,9 @@
             return;
         }
         var map1 = [];
-        map1[0] = "id" + ":" + document.getElementById("billno").value;
+        map1[0] = "id" + ":" + document.getElementById("billno").value+":"+cmodocno[0].cmodocno;
         for (var i = 1, rows = mytable.rows.length; i < rows; i++) {
+            //现品票:存货编码:批次号
             map1[i] = mytable.rows[i].cells[1].innerHTML + ":" + mytable.rows[i].cells[2].innerHTML + ":" + mytable.rows[i].cells[8].innerHTML;
         }
         Ajax.post("admin/sysMaterialspreparedetail/go1", {"data": map1.toString()},
