@@ -214,6 +214,8 @@
             <td>${data.poscode}</td>
             <td hidden>${data.sourcebilldid}</td>
             <td hidden>${data.sourcebilltype}</td>
+            <td hidden>${data.ibeforeinventoryid}</td>
+            <td hidden>${data.iafterinventoryid}</td>
         </tr>
         {@/each}
     </script>
@@ -292,6 +294,8 @@
             <th data-width="100" data-column="poscode">入库库区</th>
             <th data-width="100" data-column="sourcebilldid" hidden>行号</th>
             <th data-width="100" data-column="sourcebilltype" hidden>单据类型</th>
+            <th data-width="100" data-column="ibeforeinventoryid" hidden>转换前存货id</th>
+            <th data-width="100" data-column="iafterinventoryid" hidden>转换后存货id</th>
         </tr>
         </thead>
     </table>
@@ -308,7 +312,7 @@
     function searchBarcode() {
         var barcode = $("#barcode").val();
         if (barcode != null && barcode !== ''){
-            var index = LayerMsgBox.loading("执行中......",2000);
+            var index = LayerMsgBox.loading("执行中......",4000);
             var data = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
             if (data != null){
                 for (let i = 0; i < data.length; i++) {
@@ -320,26 +324,28 @@
             }
             var detailHidden = $("#detailHidden").val();
             var groupCode = $("#groupCode").val();
-            Ajax.post("admin/formConversionList/getResource", {"q": barcode,"detailHidden":detailHidden,"groupCode":groupCode},
+            Ajax.post("admin/formConversionList/getBarcode", {"barcode": barcode,"detailHidden":detailHidden,"groupCode":groupCode},
                 function (res) {
                     if (res.state==='ok'){
                         var trJsonData = res.data;
-                        console.log('res.data===>',res.data)
                         jboltTableInsertRow("jbolt_Table_#(pageId)", trJsonData, false, false, false);
+                        console.log("trJsonData",trJsonData)
                         $("#barcode").val('');
-                        console.log('trJsonData====>',trJsonData)
-                        var cinvcode = trJsonData[0].cinvcode;
-                        var vencode = trJsonData[0].vencode;
-                        var sourcebilltype = trJsonData[0].sourcebilltype;
                         Ajax.post("admin/formConversionList/getBarCodeData",
-                            {"itemCode": cinvcode,"supplier":vencode,"sourceBillType":sourcebilltype},
+                            {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,
+                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,
+                                "ibeforeinventoryid":trJsonData.ibeforeinventoryid},
                             function(rres) {
                                 console.log('rres', rres)
                                 if (rres.state==='ok'){
                                     console.log('data',rres.data);
                                     if (rres.data!==undefined){
+                                        // res.data.assemtype = '转换后';
+                                        // res.data.combination = trJsonData.combination;
+                                        // tableDataSuccess();
+                                   
                                         rres.data.assemtype = '转换后';
-                                        rres.data.combination = trJsonData[0].combination;
+                                        rres.data.combination = trJsonData.combination;
                                         jboltTableInsertRow("jbolt_Table_#(pageId)", rres.data, false, false, false);
                                         tableDataSuccess();
                                         LayerMsgBox.close(index);
@@ -394,33 +400,15 @@
      * 获取表格数据
      * */
     function tableDataSuccess() {
-        let result = jboltTableGetAllDatas("jbolt_Table_#(pageId)", ["sourcebilldid","sourcebilltype"]);
-        console.log('result===>',result)
-        let array = [];
+        $("#groupCode").val("");
         let groupCode = 1;
-        if (result != null) {
-            var length = result.length;
-            let len = 0;
-            for (let i = 0; i < length; i++) {
-                if (result[i].sourcebilldid != undefined){
-                    array.push("'" + result[i].sourcebilldid + "'");
-                    len = len + 1;
-                    if (i===0){
-                        console.log('sourcebilltype',result[0].sourcebilltype)
-                        $("#sourceBillType").val(result[0].sourcebilltype);
-                    }
-                }
-            }
-            console.log('len',len)
-            let group = (len % 2 === 0)?len:len+1;
-            groupCode = (group / 2) + 1;
-
-            let codes = array.length > 0 ?array.join(','):'';
-            $("#detailHidden").val(codes);
+        var data = getJboltTableAllDatas("jbolt_Table_#(pageId)",["cinvcode"]);
+        console.log("data"+data)
+        if(null != data && data.length % 2 == 0){
+            groupCode+=data.length/2
         }
+      
         $("#groupCode").val(groupCode);
-        console.log('detailHidden===',$("#detailHidden").val());
-        console.log('groupCode===',$("#groupCode").val());
         return true;
     }
 
@@ -450,17 +438,45 @@
                 AutoID: {
                     submitAttr: "AutoID",
                 },
-                qty: {
-                    type: "amount",//类型
-                    required: true,
-                    placeholder: "数量", //输入提示，里面
-                    tooltip: "数量",//输入提示，上方
+                qty:  { //单价
+                    type:"amount",
+                    required:true,
+                    textFormat: function (table, td, text, value, trJsonData) {
+                    return (typeof(text)==undefined||typeof(text)=="undefined"||(typeof(text)=='string'&&text.length==0))?"":numberFormat(value,2);
+                    },
+                    editorFormat:function(table,td,text,value,trJsonData){
+                        //编辑器内显示格式化
+                        if(!value){return "";}
+                        value=value.replaceAll(",","");
+                        console.log(removeFixedNumberAllZero(value,2));
+                        return removeFixedNumberAllZero(value,2);
+                    }
                 },
-                weight: {
-                    type: "amount",//类型
-                    required: true,
-                    placeholder: "重量", //输入提示，里面
-                    tooltip: "重量",//输入提示，上方
+                // qty: {
+                //     type: "amount",//类型
+                //     required: true,
+                //     placeholder: "数量", //输入提示，里面
+                //     tooltip: "数量",//输入提示，上方
+                // },
+                // weight: {
+                //     type: "amount",//类型
+                //     required: true,
+                //     placeholder: "重量", //输入提示，里面
+                //     tooltip: "重量",//输入提示，上方
+                // },
+                weight:  { //重量
+                    type:"amount",
+                    required:true,
+                    textFormat: function (table, td, text, value, trJsonData) {
+                    return (typeof(text)==undefined||typeof(text)=="undefined"||(typeof(text)=='string'&&text.length==0))?"":numberFormat(value,2);
+                    },
+                    editorFormat:function(table,td,text,value,trJsonData){
+                        //编辑器内显示格式化
+                        if(!value){return "";}
+                        value=value.replaceAll(",","");
+                        console.log(removeFixedNumberAllZero(value,2));
+                        return removeFixedNumberAllZero(value,2);
+                    }
                 },
                 sourcebilltype:{
                     submitAttr:"SourceBillType"
@@ -536,10 +552,6 @@
                         var cinvcode = trJsonData.cinvcode;
                         var vencode = trJsonData.vencode;
                         var sourcebilltype = trJsonData.sourcebilltype;
-                        console.log('cinvcode',cinvcode)
-                        console.log('vencode',vencode)
-                        console.log('sourcebilltype',sourcebilltype)
-                        console.log('trJsonData',JSON.stringify(trJsonData))
                         Ajax.post("admin/formConversionList/getBarCodeData",
                             {"itemCode": cinvcode,"supplier":vencode,"sourceBillType":sourcebilltype},
                             function(res) {
@@ -565,7 +577,7 @@
                 barcode: { //条码
                     linkPara: "input[name='detailHidden'],input[name='groupCode']",
                     maxLength: 100,
-                    required: true,
+                    // required: true,
                     placeholder: "=请选择=",
                     type: "autocomplete",
                     url: "admin/formConversionList/getResource",
@@ -575,10 +587,8 @@
                     valueAttr: "barcode",
                     columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty",
                     header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量',
-                    changeColumns: [{column: "barcode", use: "barcode"}, {
-                        column: "cinvcode",
-                        use: "cinvcode"
-                    }, {column: "cinvcode1", use: "cinvcode1"},{column: "assemtype", use: "assemtype"},
+                    changeColumns: [{column: "barcode", use: "barcode"}, { column: "cinvcode", use: "cinvcode"}, 
+                        { column: "invcode", use: "cinvcode"}, {column: "cinvcode1", use: "cinvcode1"},{column: "assemtype", use: "assemtype"},
                         {column: "cinvname1", use: "cinvname1"},{column: "combination", use: "combination"},
                         {column: "cinvstd",use: "cinvstd"}, {column: "dplandate", use: "dplandate"},
                         {column: "vencode",use: "vencode"}, {column: "venname", use: "venname"},
@@ -586,16 +596,11 @@
                         {column: "cuomname", use: "cuomname"}, {column: "sourcebilltype", use: "sourcebilltype"},
                         {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {column: "sourcebillid",use: "sourcebillid"},
-                        {column: "qty", use: "qty"}, {column: "quantity", use: "quantity"}],
+                        {column: "qty", use: "qty"}, {column: "quantity", use: "quantity"}, {column: "iafterinventoryid", use: "iafterinventoryid"}
+                        , {column: "ibeforeinventoryid", use: "ibeforeinventoryid"}],
                     handler:function(table,td,text,value,trJsonData){
-                        var cinvcode = trJsonData.cinvcode;
-                        var vencode = trJsonData.vencode;
-                        var sourcebilltype = trJsonData.sourcebilltype;
-                        console.log('cinvcode',cinvcode)
-                        console.log('vencode',vencode)
-                        console.log('sourcebilltype',sourcebilltype);
-                        console.log('trJsonData',JSON.stringify(trJsonData))
-                        Ajax.post("admin/formConversionList/getBarCodeData", {"itemCode": cinvcode,"supplier":vencode,"sourceBillType":sourcebilltype},
+                        Ajax.post("admin/formConversionList/getBarCodeData", {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,
+                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid},
                             function(res) {
                                 console.log('res', res)
                                 if (res.state==='ok'){
@@ -603,6 +608,7 @@
                                     if (res.data!=undefined){
                                         res.data.assemtype = '转换后';
                                         res.data.combination = trJsonData.combination;
+                                        tableDataSuccess();
                                         jboltTableInsertAfterRow(table, td.parent(), res.data);
                                     } else {
                                         console.log('找不到双单位数据')

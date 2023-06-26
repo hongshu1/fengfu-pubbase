@@ -1,0 +1,132 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col">
+        <form class="form-inline text-left" id="QcItem_form_#(pageId)" onsubmit="return false;" method="post" style="left: 30px;text-align: left">
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=输入项目编码搜索="
+                 maxlength="50" name="cproditemcode" value="#(cproditemcode??)"/>
+          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=输入项目名称搜索="
+                 maxlength="50" name="cproditemname" value="#(cproditemname??)"/>
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="jbolt_page_content">
+    <!-- 定义JBoltTable使用的数据渲染模板 -->
+    <textarea class="jb_tpl_box" id="QcItem_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.corgcode}</td>
+<td>${data.corgname}</td>
+<td>${data.cproditemcode}</td>
+<td title="${data.cproditemname}">${data.cproditemname}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+    <div class="jbolt_table_toolbar" id="QcItem_toolbar_#(pageId)">
+      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
+                data-title="新增生产项目" data-url="admin/prodItem/add" class="btn btn-outline-primary"><i
+            class="fa fa-plus"></i> 新增
+        </button>
+
+        <button data-openpage="dialog" data-area="60%,50%" data-handler="refreshJBoltTable" data-title="修改生产项目"
+                data-check-handler="jboltTableGetCheckedId" data-url="admin/prodItem/edit/" class="btn btn-outline-info btn-sm">
+          <i class="fa fa-edit"></i> 修改
+        </button>
+        <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
+                data-url="admin/prodItem/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm"><i
+            class="fa fa-trash"></i> 删除
+        </button>
+        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+      </div>
+
+<!--      <div class="btn-group dropdown">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
+        </button>
+        <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+          <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                  data-url="admin/qcitem/exportExcelByIds"><i class="fa fa-download"></i> 导出选中
+          </button>
+          <button class="btn dropdown-item" data-downloadbtn data-url="admin/qcitem/exportExcelAll"
+                  data-form="QcItem_form_#(pageId)"><i class="fa fa-download"></i> 导出全部
+          </button>
+        </div>
+      </div>
+
+      <div class="btn-group dropdown">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importTableButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入</button>
+        <div class="dropdown-menu" aria-labelledby="importMenuButton">
+          <a href="assets/exceltpl/qcitem.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+          <div class="j_upload_file_box"
+               data-name="file"
+               data-btn-class="btn dropdown-item"
+               data-placeholder="上传导入"
+               data-confirm="确认导入数据？"
+               data-accept="excel"
+               data-maxsize="20480"
+               data-handler="uploadFile"
+               data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+               data-url="/admin/qcitem/importExcelClass">
+          </div>
+        </div>
+      </div>-->
+
+    </div>
+    <table class="jbolt_table jbolt_main_table  table-center "
+           id="chooseDataTable_#(pageId)"
+           data-jbolttable
+           data-height="fill"
+           data-ajax="true"
+           data-url="admin/prodItem/datas"
+           data-column-resize="true"
+           data-column-prepend="1:checkbox:true"
+           data-conditions-form="QcItem_form_#(pageId)"
+           data-rowtpl="QcItem_tpl_#(pageId)"
+           data-page="QcItem_page_#(pageId)"
+           data-toolbar="QcItem_toolbar_#(pageId)"
+           data-fixed-columns-left="1,2,3">
+      <thead>
+      <tr>
+        <th data-width="60" data-column="index">序号</th>
+        <th data-width="150" data-column="cOrgCode">组织编码</th>
+        <th data-width="150" data-column="cOrgName">组织名称</th>
+        <th data-width="150" data-column="cProdItemCode">项目编码</th>
+        <th data-width="150" data-column="cProdItemName">项目名称</th>
+        <th data-width="150" data-column="cCreateName">创建人名称</th>
+        <th data-min-width="100" data-column="dCreateTime">创建时间</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+  function submitThisForm(callback){
+    var data=getJboltTableCheckedData("chooseDataTable_#(pageId)");
+    console.log('data===>',data);
+    if(data){
+      // LayerMsgBox.confirm("确认选择此数据?",function(){
+      parent.setChooseDialogSelectResultFromData(data);
+      if(callback){
+        callback();
+      }
+      // });
+    }
+  }
+</script>
+#end

@@ -347,6 +347,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @CheckPermission(PermissionKey.FORM_APP_AUDIT)
     public void approveByStatus(@Para(value = "formSn") String formSn,
                                 @Para(value = "formAutoId") Long formAutoId,
                                 @Para(value = "primaryKeyName") String primaryKeyName,
@@ -370,6 +371,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @CheckPermission(PermissionKey.FORM_APP_REJECT_AUDIT)
     public void rejectByStatus(@Para(value = "formSn") String formSn,
                                @Para(value = "formAutoId") Long formAutoId,
                                @Para(value = "primaryKeyName") String primaryKeyName,
@@ -393,6 +395,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @CheckPermission(PermissionKey.FORM_APP_REVERSE_AUDIT)
     public void reverseApproveByStatus(@Para(value = "formSn") String formSn,
                                        @Para(value = "formAutoId") Long formAutoId,
                                        @Para(value = "primaryKeyName") String primaryKeyName,
@@ -416,6 +419,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @CheckPermission(PermissionKey.FORM_APP_BATCH_AUDIT)
     public void batchApproveByStatus(@Para(value = "ids") String ids,
                                      @Para(value = "formSn") String formSn,
                                      @Para(value = "primaryKeyName") String primaryKeyName,
@@ -439,6 +443,7 @@ public class FormApprovalAdminController extends BaseAdminController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @CheckPermission(PermissionKey.FORM_APP_BATCH_REJECT_AUDIT)
     public void batchRejectByStatus(@Para(value = "ids") String ids,
                                     @Para(value = "formSn") String formSn,
                                     @Para(value = "primaryKeyName") String primaryKeyName,
@@ -469,6 +474,7 @@ public class FormApprovalAdminController extends BaseAdminController {
     /**
      * 撤回审核、审批
      */
+    @CheckPermission(PermissionKey.FORM_APP_WITHDRAW)
     public void withdraw(@Para(value = "formAutoId") Long formAutoId,
                          @Para(value = "formSn") String formSn,
                          @Para(value = "primaryKeyName") String primaryKeyName,

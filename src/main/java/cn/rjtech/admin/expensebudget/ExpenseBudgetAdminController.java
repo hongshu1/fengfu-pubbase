@@ -427,14 +427,14 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
 		renderBytesToExcelXlsxFile(jBoltExcel);
     }
     
-    /**
+/*    *//**
      * 提交审核
-     * */
-    @CheckPermission(PermissionKey.EXPENSE_BUDGET_FORMULATE_SUBMITAUDIT)
+     * *//*
+    @CheckPermission(PermissionKey.EXPENSE_BUDGET_FORMULATE_SUBMIT)
     public void submit(){
     	Long iexpenseid = getLong(0);
     	renderJson(service.submit(iexpenseid));
-    }
+    }*/
 
     /**
      * 费用预算期间对比数据源

@@ -3,6 +3,7 @@ package cn.rjtech.event.listener;
 import cn.jbolt._admin.msgcenter.TodoService;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.util.JBoltDateUtil;
+import cn.jbolt.core.util.JBoltStringUtil;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.form.FormService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
@@ -51,13 +52,13 @@ public class MsgEventListener {
 
             List<String> emails = userService.getEmails(event.getNextUserIds());
 
-            String content = getContent(event.getFormSn(), event.getPrimaryKeyName(), event.getFormAutoId(), nowStr);
-            
+            String content = getContent(event.getFormSn(), event.getPrimaryKeyName(), event.getFormAutoId(), nowStr,"title");
+            String url = getContent(event.getFormSn(), event.getPrimaryKeyName(), event.getFormAutoId(), nowStr,"url");
             // 保存消息处理
             Db.use(DataSourceConstants.MAIN).tx(() -> {
 
                 for (Long userId : event.getNextUserIds()) {
-                    todoService.saveTodo(content, userId, now, null, event.getFormSn(), event.getFormAutoId(), event.getLoginUserId());
+                    todoService.saveTodo(content, userId, now, url, event.getFormSn(), event.getFormAutoId(), event.getLoginUserId());
                 }
                 
                 return true;
@@ -87,10 +88,10 @@ public class MsgEventListener {
 
                 for (BatchApproval approval : event.getApprovals()) {
 
-                    String content = getContent(event.getFormSn(), event.getPrimaryKeyName(), approval.getFormAutoId(), nowStr);
-                    
+                    String content = getContent(event.getFormSn(), event.getPrimaryKeyName(), approval.getFormAutoId(), nowStr,"title");
+                    String url = getContent(event.getFormSn(), event.getPrimaryKeyName(), approval.getFormAutoId(), nowStr,"url");
                     for (Long userId : approval.getNextUserIds()) {
-                        todoService.saveTodo(content, userId, now, null, event.getFormSn(), approval.getFormAutoId(), event.getLoginUserId());
+                        todoService.saveTodo(content, userId, now, url, event.getFormSn(), approval.getFormAutoId(), event.getLoginUserId());
                     }
 
                     emailKvs.add(Kv.by("emails", userService.getEmails(approval.getNextUserIds())).set("content", content));
@@ -109,7 +110,7 @@ public class MsgEventListener {
         }
     }
 
-    private String getContent(String formSn, String primaryKeyName, long formAutoId, String nowStr) {
+    private String getContent(String formSn, String primaryKeyName, long formAutoId, String nowStr,String contentType) {
         Form form = formService.findByCformSn(formSn);
         
         Record formData = formApprovalService.getApprovalForm(formSn, primaryKeyName, formAutoId);
@@ -121,16 +122,22 @@ public class MsgEventListener {
                 int iBudgetYear = formData.get(ExpenseBudget.IBUDGETYEAR);
                 String cdepname = departmentService.getCdepName(formData.get(ExpenseBudget.CDEPCODE));
                 int iBudgetType = formData.getInt(ExpenseBudget.IBUDGETTYPE);
-                
-                return cdepname + iBudgetYear + ExpenseBudgetTypeEnum.toEnum(iBudgetType).getText() + "的" + form.getCFormName() + "已于" + nowStr + "更新，请尽快处理";
+                if(contentType.equals("title")){
+                	return cdepname + iBudgetYear + ExpenseBudgetTypeEnum.toEnum(iBudgetType).getText() + "的" + form.getCFormName() + "已于" + nowStr + "更新，请尽快处理";
+                }else if(contentType.equals("url")){
+                	return "admin/expensebudgetmanage/detail/"+formAutoId;
+                }
             case "PL_Investment_Plan":
                 ValidationUtils.notNull(formData, form.getCFormName() + "不存在,生成消息失败!");
 
                 iBudgetYear = formData.get(InvestmentPlan.IBUDGETYEAR);
                 cdepname = departmentService.getCdepName(formData.get(InvestmentPlan.CDEPCODE));
                 iBudgetType = formData.get(InvestmentPlan.IBUDGETTYPE);
-                
-                return cdepname + iBudgetYear + InvestmentBudgetTypeEnum.toEnum(iBudgetType).getText() + "的" + form.getCFormName() + "已于" + nowStr + "更新，请尽快处理";
+                if(contentType.equals("title")){
+                	return cdepname + iBudgetYear + InvestmentBudgetTypeEnum.toEnum(iBudgetType).getText() + "的" + form.getCFormName() + "已于" + nowStr + "更新，请尽快处理";
+                }else if(contentType.equals("url")){
+                	return "admin/investmentplanmanage/detail/"+formAutoId;
+                }
             case "PL_ProposalM":
                 ValidationUtils.notNull(formData, form.getCFormName() + "不存在,生成消息失败!");
                 

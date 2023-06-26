@@ -462,6 +462,7 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 			Date now=new Date();
 			String userName = JBoltUserKit.getUserName();
 			stockcheckvouch.setBillDate(JBoltDateUtil.format(now,"yyyy-MM-dd"));
+			stockcheckvouch.setIAuditStatus(0);
 			//创建人
 			stockcheckvouch.setCCreateName( JBoltUserKit.getUserName());
 			stockcheckvouch.setICreateBy(JBoltUserKit.getUserId());
@@ -750,7 +751,7 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 	@Override
 	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
 		StockCheckVouch dbModel = stockChekVouchService.findById(formAutoId);
-		dbModel.setStatus("0");
+		dbModel.setIAuditStatus(3);
 		dbModel.put("iupdateby", JBoltUserKit.getUserId());
 		dbModel.put("cupdatename", JBoltUserKit.getUserName());
 		dbModel.put("dupdatetime", new Date());
@@ -761,7 +762,7 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 	@Override
 	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
 		StockCheckVouch dbModel = stockChekVouchService.findById(formAutoId);
-		dbModel.setStatus("0");
+		dbModel.setIAuditStatus(0);
 		dbModel.put("iupdateby", JBoltUserKit.getUserId());
 		dbModel.put("cupdatename", JBoltUserKit.getUserName());
 		dbModel.put("dupdatetime", new Date());
@@ -777,7 +778,7 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 	@Override
 	public String preSubmitFunc(long formAutoId) {
 		StockCheckVouch dbModel = stockChekVouchService.findById(formAutoId);
-		dbModel.setStatus("1");
+		dbModel.setIAuditStatus(1);
 		dbModel.put("iupdateby", JBoltUserKit.getUserId());
 		dbModel.put("cupdatename", JBoltUserKit.getUserName());
 		dbModel.put("dupdatetime", new Date());
@@ -794,7 +795,7 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 	@Override
 	public String postWithdrawFunc(long formAutoId) {
 		StockCheckVouch dbModel = stockChekVouchService.findById(formAutoId);
-		dbModel.setStatus("0");
+		dbModel.setIAuditStatus(0);
 		dbModel.put("iupdateby", JBoltUserKit.getUserId());
 		dbModel.put("cupdatename", JBoltUserKit.getUserName());
 		dbModel.put("dupdatetime", new Date());
