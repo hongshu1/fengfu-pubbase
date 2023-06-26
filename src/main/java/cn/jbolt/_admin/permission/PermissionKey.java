@@ -1466,11 +1466,11 @@ public class PermissionKey {
 	 */
 	public static final String UPTIME_CATEGORYS = "uptime_categorys";
 	/**
-	 * 稼动时间模板
+	 * 稼动时间参数
 	 */
 	public static final String UPTIME_PARAM = "uptime_param";
 	/**
-	 * 稼动时间参数
+	 * 稼动时间模板
 	 */
 	public static final String UPTIME_CATEGORY = "uptime_category";
 	/**
@@ -1900,7 +1900,7 @@ public class PermissionKey {
 	/**
 	 * 提交审核
 	 */
-	public static final String INVESTMENT_PLAN_FORMULATE_SUBMITAUDIT = "investment_plan_formulate_submitaudit";
+	public static final String INVESTMENT_PLAN_FORMULATE_SUBMIT = "investment_plan_formulate_submit";
 	/**
 	 * 详情
 	 */
@@ -2397,4 +2397,48 @@ public class PermissionKey {
 	 * 提审
 	 */
 	public static final String FORM_APP_SUBMIT = "form_app_submit";
+	/**
+	 * 提审
+	 */
+	public static final String MATERIALRETURN_SUBMIT = "materialreturn_submit";
+	/**
+	 * 通过
+	 */
+	public static final String MATERIALRETURN_APPROVE = "materialreturn_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String MATERIALRETURN_REJECT = "materialreturn_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String MATERIALRETURN_BATCH_APPROVE = "materialreturn_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String MATERIALRETURN_BATCH_REJECT = "materialreturn_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String MATERIALRETURN_REVERSE_APPROVE = "materialreturn_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String MATERIALRETURN_WITHDRAW = "materialreturn_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String CURRENT_STOCK_SUBMIT = "current_stock_submit";
+	/**
+	 * 通过
+	 */
+	public static final String CURRENT_STOCK_APPROVE = "current_stock_approve";
+	/**
+	 * 反审核
+	 */
+	public static final String CURRENT_STOCK_REVERSE_APPROVE = "current_stock_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String FORM_APP_WITHDRAW = "form_app_withdraw";
 }

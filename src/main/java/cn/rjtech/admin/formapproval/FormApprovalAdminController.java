@@ -469,6 +469,7 @@ public class FormApprovalAdminController extends BaseAdminController {
     /**
      * 撤回审核、审批
      */
+    @CheckPermission(PermissionKey.FORM_APP_WITHDRAW)
     public void withdraw(@Para(value = "formAutoId") Long formAutoId,
                          @Para(value = "formSn") String formSn,
                          @Para(value = "primaryKeyName") String primaryKeyName,
