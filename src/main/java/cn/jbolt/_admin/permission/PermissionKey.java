@@ -1458,10 +1458,6 @@ public class PermissionKey {
 	 */
 	public static final String BARCODE_TRACEPAGE = "barcode_tracepage";
 	/**
-	 * 生产表单参数
-	 */
-	public static final String PRODPARAM = "prodparam";
-	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
@@ -2381,48 +2377,4 @@ public class PermissionKey {
 	 * 提审
 	 */
 	public static final String FORM_APP_SUBMIT = "form_app_submit";
-	/**
-	 * 提审
-	 */
-	public static final String MATERIALRETURN_SUBMIT = "materialreturn_submit";
-	/**
-	 * 通过
-	 */
-	public static final String MATERIALRETURN_APPROVE = "materialreturn_approve";
-	/**
-	 * 不通过
-	 */
-	public static final String MATERIALRETURN_REJECT = "materialreturn_reject";
-	/**
-	 * 批量审核通过
-	 */
-	public static final String MATERIALRETURN_BATCH_APPROVE = "materialreturn_batch_approve";
-	/**
-	 * 批量审核不通过
-	 */
-	public static final String MATERIALRETURN_BATCH_REJECT = "materialreturn_batch_reject";
-	/**
-	 * 反审核
-	 */
-	public static final String MATERIALRETURN_REVERSE_APPROVE = "materialreturn_reverse_approve";
-	/**
-	 * 撤回
-	 */
-	public static final String MATERIALRETURN_WITHDRAW = "materialreturn_withdraw";
-	/**
-	 * 提审
-	 */
-	public static final String CURRENT_STOCK_SUBMIT = "current_stock_submit";
-	/**
-	 * 通过
-	 */
-	public static final String CURRENT_STOCK_APPROVE = "current_stock_approve";
-	/**
-	 * 不通过
-	 */
-	public static final String CURRENT_STOCK_APPROVE = "current_stock_approve";
-	/**
-	 * 反审核
-	 */
-	public static final String CURRENT_STOCK_REVERSE_APPROVE = "current_stock_reverse_approve";
 }
