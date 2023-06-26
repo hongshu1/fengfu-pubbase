@@ -116,6 +116,7 @@ select top #(limit)
     b.cInvStd as cinvstd,
     a.iQty as qty,
     a.iQty as qtys,
+    a.iAutoId as autoid,
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
     m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
@@ -125,6 +126,7 @@ select top #(limit)
 	v.cVenCode as vencode,
 	v.cVenName as venname,
 	uom.cUomCode as purchasecuomcode,uom.cUomName as purchasecuomname,
+	config.iWarehouseId,
 	area.cAreaCode as poscode
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
@@ -243,6 +245,7 @@ select
     b.cInvStd as cinvstd,
     a.iQty as qtys,
     a.iQty as qty,
+    a.iAutoId as autoid,
     a.iinventoryId,
     b.iAutoId,
     m.cOrderNo as SourceBillNo,
@@ -253,7 +256,9 @@ select
     m.iVendorId,
 	v.cVenCode as vencode,
 	v.cVenName as venname,
-    uom.cUomCode,uom.cUomName as purchasecuomname,uom.cUomName as  puunitname
+    uom.cUomCode,uom.cUomName as purchasecuomname,uom.cUomName as  puunitname,
+	config.iWarehouseId,
+	area.cAreaCode as poscode
 FROM PS_PurchaseOrderDBatch a
 LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
@@ -262,6 +267,8 @@ LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
 LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode  AND pd.isDeleted = '0'
 LEFT JOIN Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
+LEFT JOIN Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
+LEFT JOIN Bd_Warehouse_Area area on area.iAutoId =config.iWarehouseAreaId
 where a.isEffective = '1'
 
 	#if(barcode)

@@ -1,14 +1,13 @@
 package cn.rjtech.admin.rcvdocdefect;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
-import cn.rjtech.model.momdata.RcvDocDefect;
-import cn.rjtech.model.momdata.RcvDocQcFormM;
-import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.admin.syspuinstore.SysPuinstoredetailService;
+import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -16,9 +15,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 来料异常品记录 Service
@@ -32,6 +29,9 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 
 	@Inject
 	private RcvDocQcFormMService rcvDocQcFormMService;      ////质量管理-来料表
+
+	@Inject
+	private SysPuinstoredetailService syspuinstoredetailservice; ////采购入库从表
 
 	@Override
 	protected RcvDocDefect dao() {
@@ -209,6 +209,20 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 						rcvDocDefect.setCUpdateName(JBoltUserKit.getUserName());
 						rcvDocDefect.setDUpdateTime(now);
 						rcvDocDefect.update();
+						String cApproach = rcvDocDefect.getCApproach();
+						System.out.println("==="+cApproach.equals("1"));
+						System.out.println("==="+cApproach=="1");
+						if (cApproach.equals("1")){
+							RcvDocQcFormM docQcFormM=rcvDocQcFormMService.findById(rcvDocDefect.getIRcvDocQcFormMid());
+
+							SysPuinstore sysPuinstore = new SysPuinstore();
+							List<SysPuinstoredetail> sysPuinstoredetails = new ArrayList<>();
+							rcvDocQcFormMService.saveSysPuinstoreModel(sysPuinstore, docQcFormM, sysPuinstoredetails);
+							//保存采购入库单主表数据
+							ValidationUtils.isTrue(sysPuinstore.save(), "创建采购入库单据失败");
+							//保存采购入库单从表数据
+							syspuinstoredetailservice.batchSave(sysPuinstoredetails);
+						}
 					}else {
 						RcvDocfectLinesave(formRecord, now);
 					}
@@ -231,13 +245,6 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		RcvDocDefect rcvDocDefect = new RcvDocDefect();
 		rcvDocDefect.setIAutoId(formRecord.getLong("iautoid"));
 
-//		//质量管理-来料检明细
-//		RcvDocQcFormM rcvDocQcFormM = rcvDocQcFormMService.findById(formRecord.getLong("ircvdocqcformmid"));
-//		rcvDocDefect.setIRcvDocQcFormMid(rcvDocQcFormM.getIAutoId());
-//		rcvDocDefect.setIVendorId(rcvDocQcFormM.getIInventoryId());
-//		rcvDocDefect.setIInventoryId(rcvDocQcFormM.getIVendorId());
-//		rcvDocDefect.setIQcUserId(rcvDocQcFormM.getIUpdateBy());
-//		rcvDocDefect.setDQcTime(rcvDocQcFormM.getDUpdateTime());
 
 		//录入填写的数据
 		rcvDocDefect.setIStatus(2);
@@ -247,19 +254,6 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		rcvDocDefect.setCBadnessSns(formRecord.getStr("cbadnesssns"));
 		rcvDocDefect.setCDesc(formRecord.getStr("cdesc"));
 
-		//必录入基本数据
-//		rcvDocDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
-//		String billNo = BillNoUtils.getcDocNo(getOrgId(), "YCP", 5);
-//		rcvDocDefect.setCDocNo(billNo);
-//		rcvDocDefect.setIOrgId(getOrgId());
-//		rcvDocDefect.setCOrgCode(getOrgCode());
-//		rcvDocDefect.setCOrgName(getOrgName());
-//		rcvDocDefect.setICreateBy(JBoltUserKit.getUserId());
-//		rcvDocDefect.setCCreateName(JBoltUserKit.getUserName());
-//		rcvDocDefect.setDCreateTime(now);
-//		rcvDocDefect.setIUpdateBy(JBoltUserKit.getUserId());
-//		rcvDocDefect.setCUpdateName(JBoltUserKit.getUserName());
-//		rcvDocDefect.setDUpdateTime(now);
 		rcvDocDefect.update();
 	}
 

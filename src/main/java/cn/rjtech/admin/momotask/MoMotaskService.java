@@ -994,8 +994,10 @@ public class MoMotaskService extends BaseService<MoMotask> {
    * @param kv
    * @return
    */
-  public List<Record> getUserDatas(Kv kv) {
-    return dbTemplate("modocbatch.getUserDatas", kv).find();
+  public Page<Record> getUserDatas(Kv kv) {
+    ValidationUtils.notBlank(kv.getStr("pageNumber"), "每页条数数据未传入！！！");
+    ValidationUtils.notBlank(kv.getStr("pageSize"), "分页数据未传入！！！");
+    return dbTemplate("modocbatch.getUserDatas", kv).paginate(kv.getInt("pageNumber"), kv.getInt("pageSize"));
   }
 
 }
