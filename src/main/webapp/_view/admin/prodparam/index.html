@@ -6,8 +6,8 @@
     <div class="row">
       <div class="col">
         <form class="form-inline text-left" id="qcParamFrom_#(pageId)" style="left: 30px;text-align: left">
-          <input type="text" autocomplete="off" class="form-control" placeholder="=参数名称=" name="keywords" value=""/>
-          <input type="text" autocomplete="off" class="form-control" placeholder="=参数项目=" name="keywords" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=生产项目名称=" name="cproditemname" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=参数项目=" name="cprodparamname" value=""/>
 
           <select class="form-control" name="isenabled"
                   data-autoload
@@ -19,6 +19,8 @@
           ></select>
 
           <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="jbicon jb-11zhongzhi"></i> 重置</button>
+
         </form>
       </div>
       <div class="col-sm-auto text-right">
@@ -56,15 +58,15 @@
         </button>
         <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
       </div>
-<!--      <div class="btn-group dropdown">
+      <div class="btn-group dropdown">
         <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
         </button>
         <div class="dropdown-menu" aria-labelledby="exportMenuButton">
           <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
-                  data-url="admin/qcparam/exportExcelByIds"><i class="fa fa-download"></i> 导出选中
+                  data-url="admin/prodParam/exportExcelByIds"><i class="fa fa-download"></i> 导出选中
           </button>
-          <button class="btn dropdown-item" data-downloadbtn data-url="admin/qcparam/exportExcelAll"
+          <button class="btn dropdown-item" data-downloadbtn data-url="admin/prodParam/exportExcelAll"
                   data-form="qcParamFrom_#(pageId)"><i class="fa fa-download"></i> 导出全部
           </button>
         </div>
@@ -73,7 +75,7 @@
       <div class="btn-group dropdown">
         <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importTableButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入</button>
         <div class="dropdown-menu" aria-labelledby="importMenuButton">
-          <a href="assets/exceltpl/qcparam.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+          <a href="assets/exceltpl/prodparam.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
           <div class="j_upload_file_box"
                data-name="file"
                data-btn-class="btn dropdown-item"
@@ -83,10 +85,10 @@
                data-maxsize="20480"
                data-handler="uploadFile"
                data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
-               data-url="/admin/qcparam/importExcelClass">
+               data-url="/admin/prodParam/importExcelClass">
           </div>
         </div>
-      </div>-->
+      </div>
 
     </div>
     <table class="jbolt_table jbolt_main_table  table-center "
