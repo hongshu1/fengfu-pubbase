@@ -18,6 +18,7 @@ import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoredetailService;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import com.alibaba.fastjson.JSONArray;
@@ -39,7 +40,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: RJ
  * @date: 2023-05-19 10:49
  */
-public class SysPuinstoreListService extends BaseService<SysPuinstore> {
+public class SysPuinstoreListService extends BaseService<SysPuinstore> implements IApprovalService {
 
 	private final SysPuinstore dao = new SysPuinstore().dao();
 
@@ -381,90 +382,6 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	}
 
 	/**
-	 * 详情页提审
-	 */
-	public Ret submit(Long iautoid) {
-		tx(() -> {
-			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"T_Sys_PUInStore");
-			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-			// 处理其他业务
-			SysPuinstore sysPuinstore = findById(iautoid);
-			sysPuinstore.setIAuditStatus(1);
-			ValidationUtils.isTrue(sysPuinstore.update(),JBoltMsg.FAIL);
-			return true;
-		});
-		return SUCCESS;
-	}
-
-
-	/**
-	 * 详情页审核
-	 */
-	public Ret approve(String ids) {
-		tx(() -> {
-			boolean success = false;
-			Long userId = JBoltUserKit.getUserId();
-			String userName = JBoltUserKit.getUserName();
-			Date nowDate = new Date();
-			SysPuinstore sysPuinstore = superFindById(ids);
-			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-			if (sysPuinstore.getIAuditStatus() != 1) {
-				ValidationUtils.error("订单："+sysPuinstore.getBillNo()+"状态不支持审核操作！");
-			}
-			//订单状态：3. 已审核
-			sysPuinstore.setIAuditStatus(2);
-			//审核人
-			sysPuinstore.setIAuditBy(userId);
-			sysPuinstore.setCAuditName(userName);
-			sysPuinstore.setDAuditTime(nowDate);
-			Ret ret = this.pushU8(ids);
-			success= sysPuinstore.update();
-
-			return true;
-		});
-
-		return SUCCESS;
-	}
-
-	/**
-	 * 详情页审核不通过
-	 */
-	public Ret reject(Long ids) {
-		tx(() -> {
-			SysPuinstore sysPuinstore = superFindById(ids);
-			if (sysPuinstore.getIAuditStatus() != 2) {
-				ValidationUtils.error("订单："+sysPuinstore.getBillNo()+"状态不支持反审批操作！");
-			}
-			sysPuinstore.setIAuditStatus(1);
-			sysPuinstore.update();
-			return true;
-		});
-		return SUCCESS;
-	}
-
-
-
-
-	/**
-	 * 撤回
-	 * @param iAutoId
-	 * @return
-	 */
-	public Ret recall(String iAutoId) {
-		if( notOk(iAutoId)) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		SysPuinstore puinstore = findById(iAutoId);
-		puinstore.setIAuditStatus(0);
-		puinstore.setIAuditBy(null);
-		puinstore.setAuditDate(null);
-		puinstore.setCAuditName(null);
-		boolean result = puinstore.update();
-		return ret(result);
-	}
-
-	/**
 	 * 查看所有材料出库单列表 明细
 	 * @param pageNumber
 	 * @param pageSize
@@ -651,59 +568,109 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		return SUCCESS;
 	}
 
-	/**
-	 * 批量审核
-	 * @param ids
-	 * @return
-	 */
-	public Ret batchApprove(String ids) {
-		tx(() -> {
-			boolean success = false;
-			Long userId = JBoltUserKit.getUserId();
-			String userName = JBoltUserKit.getUserName();
-			Date nowDate = new Date();
+
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		Date nowDate = new Date();
+		SysPuinstore sysPuinstore = findById(formAutoId);
+		sysPuinstore.setIAuditBy(userId);
+		sysPuinstore.setCAuditName(userName);
+		sysPuinstore.setDAuditTime(nowDate);
+		String ids = String.valueOf(sysPuinstore.getAutoID());
+		this.pushU8(ids);
+		sysPuinstore.update();
+		return null;
+	}
+
+	@Override
+	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		SysPuinstore sysPuinstore = findById(formAutoId);
+		sysPuinstore.setIAuditBy(null);
+		sysPuinstore.setCAuditName(null);
+		sysPuinstore.setDAuditTime(null);
+		sysPuinstore.update();
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		Date nowDate = new Date();
+		/**
+		 *List转换String类型
+		 */
+		if (formAutoIds.size()>0){
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < formAutoIds.size(); i++) {
+
+				buffer.append(""+formAutoIds.get(i)+",");
+			}
+			String ids = buffer.substring(0, buffer.length() - 1);
 			List<SysPuinstore> listByIds = getListByIds(ids);
 			if (listByIds.size() > 0) {
 				for (SysPuinstore sysPuinstore : listByIds) {
-					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-					if (sysPuinstore.getIAuditStatus() != 1) {
-						ValidationUtils.error("订单：" + sysPuinstore.getBillNo() + "状态不支持审核操作！");
-					}
-					//订单状态：2. 已审核
-					sysPuinstore.setIAuditStatus(2);
 					//审核人
 					sysPuinstore.setIAuditBy(userId);
 					sysPuinstore.setCAuditName(userName);
 					sysPuinstore.setDAuditTime(nowDate);
-					Ret ret = this.pushU8(ids);
-					success = sysPuinstore.update();
+//					this.pushU8(ids);
+					sysPuinstore.update();
 				}
 			}
-			return true;
-		});
-		return SUCCESS;
+		}
+		return null;
 	}
 
-	/**
-	 * 批量反审核
-	 * @param ids
-	 * @return
-	 */
-	public Ret batchReverseApprove(String ids) {
-		tx(() -> {
-			//TODO数据同步暂未开发 现只修改状态
-			for (SysPuinstore sysPuinstore :  getListByIds(ids)) {
-//			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-				if (sysPuinstore.getIAuditStatus() != 2) {
-					ValidationUtils.error("订单："+sysPuinstore.getBillNo()+"状态不支持反审核操作！");
-				}
-				sysPuinstore.setIAuditStatus(1);
-				sysPuinstore.update();
-			}
-
-			return true;
-		});
-		return SUCCESS;
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		return null;
 	}
 
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		return null;
+	}
 }
