@@ -1045,7 +1045,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 审批不通过
      */
-    public Ret reject(Long formAutoId, String formSn, int status, String primaryKeyName, String className) {
+    public Ret reject(Long formAutoId, String formSn, int status, String primaryKeyName, String className, boolean isWithinBatch) {
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
@@ -1188,7 +1188,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     ValidationUtils.isTrue(formApproval.update(), ErrorMsg.UPDATE_FAILED);
 
                     // 处理审批不通过的额外业务
-                    invokeMethod(className, "postRejectFunc", formAutoId);
+                    invokeMethod(className, "postRejectFunc", formAutoId, isWithinBatch);
                 }
 
                 return true;
@@ -1679,7 +1679,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 Long formAutoId = Long.parseLong(id);
                 formAutoIds.add(formAutoId);
 
-                reject(formAutoId, formSn, status, primaryKeyName, className);
+                reject(formAutoId, formSn, status, primaryKeyName, className, true);
             }
 
             // 批量审核不通过后置业务处理
