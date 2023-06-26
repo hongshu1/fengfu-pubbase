@@ -78,12 +78,17 @@
 
         index = LayerMsgBox.loading('执行中...');
 
+        var remark = $("#remark").val();
+
+        console.log('remark',remark)
+
         para = {
             formSn: action.data("formsn"),
             formAutoId: action.data("formautoid"),
             status: action.data("status"),
             primaryKeyName: action.data("primary"),
-            className: action.data('class')
+            className: action.data('class'),
+            remark: remark
         };
 
         Ajax.post("/admin/formapproval/approve", para, function (ret) {
@@ -110,12 +115,17 @@
 
         index = LayerMsgBox.loading('执行中...');
 
+        var remark = $("#remark").val();
+
+        console.log('remark',remark)
+
         para = {
             formSn: action.data("formsn"),
             formAutoId: action.data("formautoid"),
             status: action.data("status"),
             primaryKeyName: action.data("primary"),
-            className: action.data('class')
+            className: action.data('class'),
+            remark: remark
         };
 
         Ajax.post("/admin/formapproval/reject", para, function (ret) {
@@ -142,12 +152,17 @@
 
         index = LayerMsgBox.loading('执行中...');
 
+        var remark = $("#remark").val();
+
+        console.log('remark',remark)
+
         para = {
             formSn: action.data("formsn"),
             formAutoId: action.data("formautoid"),
             status: action.data("status"),
             primaryKeyName: action.data("primary"),
-            className: action.data('class')
+            className: action.data('class'),
+            remark: remark
         };
 
         Ajax.post("/admin/formapproval/reverseApprove", para, function (ret) {

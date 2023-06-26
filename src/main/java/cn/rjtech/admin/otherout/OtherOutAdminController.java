@@ -23,7 +23,7 @@ import java.util.Date;
  * @author: RJ
  * @date: 2023-05-06 15:05
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.OTHEROUT)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/otherout", viewPath = "/_view/admin/otherout")
 public class OtherOutAdminController extends BaseAdminController {
