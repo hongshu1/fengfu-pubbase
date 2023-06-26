@@ -2441,15 +2441,6 @@ public class PermissionKey {
 	 * 反审核
 	 */
 	public static final String CURRENT_STOCK_REVERSE_APPROVE = "current_stock_reverse_approve";
-
-	/**
-	 * 不通过
-	 */
-	public static final String CURRENT_STOCK_REJECT = "current_stock_reject";
-	/**
-	 * 不通过
-	 */
-	public static final String CURRENT_STOCK_WITHDRAW = "current_stock_withdraw";
 	/**
 	 * 撤回
 	 */
@@ -2474,4 +2465,8 @@ public class PermissionKey {
 	 * 批量审核不通过
 	 */
 	public static final String FORM_APP_BATCH_REJECT_AUDIT = "form_app_batch_reject_audit";
+	/**
+	 * 撤回审批
+	 */
+	public static final String CURRENT_STOCK_WITHDRAW = "current_stock_withdraw";
 }
