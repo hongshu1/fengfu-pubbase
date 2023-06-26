@@ -2434,6 +2434,10 @@ public class PermissionKey {
 	 */
 	public static final String CURRENT_STOCK_APPROVE = "current_stock_approve";
 	/**
+	 * 不通过
+	 */
+	public static final String CURRENT_STOCK_REJECT = "current_stock_reject";
+	/**
 	 * 反审核
 	 */
 	public static final String CURRENT_STOCK_REVERSE_APPROVE = "current_stock_reverse_approve";
