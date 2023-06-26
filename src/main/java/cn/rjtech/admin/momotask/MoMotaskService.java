@@ -978,6 +978,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
             Record data = new Record();
             data.put("cmodocno", plandata.getStr("cmodocno"));
             data.put("iqty", plandata.getStr("iqty"));
+            data.put("iautoid", plandata.getStr("iAutoId"));
+            data.put("ismodified", plandata.getStr("isModified"));
             datas.add(data);
             break;
           }
