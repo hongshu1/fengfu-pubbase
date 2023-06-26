@@ -1,0 +1,75 @@
+<form onsubmit="return false;" id="QcParam_Form" action="#(action)" method="post">
+    
+  #if(prodParam.iAutoId??)
+  <input type="hidden" name="prodParam.iAutoId" value="#(prodParam.iAutoId??)"/>
+  #end
+    
+  <div class="row">
+      <div class="col">
+          <div class="form-group row">
+              <label class="col-sm-2 col-form-label">参数项目名称</label>
+              <div class="col-sm-6 input-group">
+                  <select class="form-control"
+                          data-rule="required"
+                          data-tips="=请选择="
+                          data-url="admin/prodItem/options"
+                          id="select_iQcItemId_#(pageId)"
+                          name="prodParam.iProdItemId"
+                          data-autoload
+                          data-value-attr="iautoid"
+                          data-text-attr="cProdItemName"
+                          data-select="#(prodParam.iProdItemId??)">
+                  </select>
+                  <button class="btn btn-success" data-dialogbtn data-area="1000,900" data-title="新增参数项目" data-url="admin/prodItem/index"><i
+                          class="fa fa-plus mr-1"></i>新增生产项目
+                  </button>
+              </div>
+          </div>
+          <div class="form-group row">
+              <label class="col-sm-2 col-form-label">参数名称</label>
+              <div class="col-6">
+                  <input type="text" data-rule="required" data-notnull="true" data-tips="请输入参数名称" data-with-clearbtn="true"
+                         autocomplete="off" class="form-control" placeholder="请输入参数名称" maxlength="40" name="prodParam.cProdParamName"
+                         value="#(prodParam.cProdParamName??)"/>
+              </div>
+          </div>
+          <div class="form-group row"
+               data-radio
+               data-name="prodParam.isEnabled"
+               data-value-attr="sn"
+               data-default="options_first"
+               data-url="admin/dictionary/options?key=options_enable"
+               data-label="是否启用"
+               data-width="col-sm-2,col-10"
+               data-value="#(prodParam.isEnabled??)"
+               data-rule="radio"
+               data-notnull="true"
+               data-tips="是否启用"
+               data-inline="true">
+          </div>
+      </div>
+  </div>
+</form>
+#define js()
+<script>
+    
+  /**
+   * 获取检验项目数据
+   * @param data
+   */
+  function setChooseDialogSelectResultFromData(data) {
+    SelectUtil.refresh("select_iQcItemId_#(pageId)");
+    
+    var selectVal = data.iautoid;
+    console.log(selectVal)
+    console.log(data)
+      
+      setTimeout(function () {
+          SelectUtil.setValue("select_iQcItemId_#(pageId)", selectVal);
+      }, 100)
+
+  }
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="QcParam_Form")
+#end
+
