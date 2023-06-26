@@ -318,6 +318,17 @@ public abstract class BaseStockCheckVouch<M extends BaseStockCheckVouch<M>> exte
 		return (M)this;
 	}
 
+	@JBoltField(name="iAuditStatus" ,columnName="iAuditStatus",type="int", remark="审核状态", required=true, maxLength=255, fixed=0, order=12)
+	public Integer getIAuditStatus() {
+		return getInt("iAuditStatus");
+	}
+
+	public M setIAuditStatus(Integer iAuditStatus) {
+		set("iAuditStatus", iAuditStatus);
+		return (M)this;
+	}
+
+
 	@JBoltField(name="iAuditBy" ,columnName="iauditby",type="String", remark="更新人id", required=true, maxLength=255, fixed=0, order=12)
 	public Long getIAuditBy() {
 		return getLong("iAuditBy");
