@@ -3,56 +3,101 @@
 #set(pageId = RandomUtil.random(6))
 <div class="jbolt_page vh-100" data-key="#(pmkey)" id="jbolttable_mspage_#(pageId)">
 <div class="jbolt_page_title">
-    <form onsubmit="return false;" id="investmentPlanDetailForm" action="#(action)" method="post">
-        <div class="form-group row">
-            <label class="col-1 col-form-label">部门</label>
-            <div class="col-3">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required" placeholder="请输入" maxlength="19" name="investmentPlan.cdepname" value="#(investmentPlan.cdepname??)" disabled>
-            </div>
-            <label class="col-1 col-form-label">预算年度</label>
-            <div class="col-3">
-                <input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" data-rule="required" placeholder="请设置年份" data-tips="请设置年份" maxlength="10" name="investmentPlan.ibudgetyear"
-                       value="#(investmentPlan.ibudgetyear??)" disabled>
-            </div>
-            <label class="col-1 col-form-label">预算类型</label>
-            <div class="col-3">
-               <select class="form-control"
-                    		data-select-type="select2"
-                            name="investmentPlan.ibudgettype"
-                            data-autoload
-                            data-tips="预算类型"
-                            data-url="admin/dictionary/options?key=expense_budget_type"
-                            data-text="=预算类型="
-                            data-text-attr="name"
-                            data-value-attr="sn"
-                            data-value=""
-                            data-select="#( investmentPlan.ibudgettype ??)"
-                            data-width="200"
-                            disabled>
-                </select>
-            </div>
-        </div>
-		<div class="form-group row">
-			<label class="col-1 col-form-label">审核状态</label>
-            <div class="col-3 input-group jb_col_input_group">
-                <select class="form-control ml-1"
-                    data-autoload
-                    name="investmentPlan.iAuditstatus"
-                    data-select-type="select2"
-                    data-tips="=请选择审核状态="
-                    data-url="admin/dictionary/options?key=audit_status"
-                    data-value=""
-                    data-text-attr="name"
-                    data-value-attr="sn"
-                    data-select="#( investmentPlan.iauditstatus ??)"
-                    disabled>
-                </select>
-            </div>
-		</div>
-    </form>
+	    <div class="row">
+	        <div class="col-12">
+	            <div class="card">
+	                <div class="card-body">
+	                    <div class="col">
+	                        #if(readonly != 'readonly')
+	                            <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
+	                        #end
+	                        #if(investmentPlan.iAutoId??)
+	                        ### 参数列表
+	                        ### uri:                    接口URI
+	                        ### formSn:                 表单名
+	                        ### o:                      当前表单对象名
+	                        ### primaryKeyName:         主键名
+	                        ### permissionKeyPrefix:    权限key
+	                        ### redonly:                查看页定义为readonly=readonly, 新增/编辑页 可不传
+	                        ### className:              实现审批业务的类名
+	                        #include("/_view/_common/_approval_btns.html", uri="/admin/investmentplan", formSn="PL_Investment_Plan", o=investmentPlan, primaryKeyName="iAutoId", className="cn.rjtech.admin.investmentplan.InvestmentPlanService", permissionKeyPrefix="investment_plan_formulate")
+	                        #end
+	                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>       
 </div>
 
+### 新增之后，并且为审批流
+#if(investmentPlan.iautoid?? && investmentPlan.iauditway == 2 && investmentPlan.iauditstatus == 1)
+    ### 参数列表
+    ### formAutoId:                 单据ID
+    ### formSn:                     表单名
+    ### btnNeed:                    是否需要显示审批按钮
+    ### pId:                        当前页面绑定的pageId
+    ### primaryKeyName:             主键名
+    ### className:                  实现审批业务的类名
+    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=investmentPlan.iAutoId, primaryKeyName="iAutoId", formSn="PL_Investment_Plan", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.investmentplan.InvestmentPlanService")
+#end
+
 <div class="jbolt_page_content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+					<form onsubmit="return false;" id="investmentPlanDetailForm" action="#(action)" method="post">
+					        <div class="form-group row">
+					            <label class="col-1 col-form-label">部门</label>
+					            <div class="col-3">
+					                <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required" placeholder="请输入" maxlength="19" name="investmentPlan.cdepname" value="#(investmentPlan.cdepname??)" disabled>
+					            </div>
+					            <label class="col-1 col-form-label">预算年度</label>
+					            <div class="col-3">
+					                <input type="text" data-date data-type="year" data-with-clearbtn="true" data-fmt="yyyy" readonly="readonly" autocomplete="off" class="form-control" data-rule="required" placeholder="请设置年份" data-tips="请设置年份" maxlength="10" name="investmentPlan.ibudgetyear"
+					                       value="#(investmentPlan.ibudgetyear??)" disabled>
+					            </div>
+					            <label class="col-1 col-form-label">预算类型</label>
+					            <div class="col-3">
+					               <select class="form-control"
+					                    		data-select-type="select2"
+					                            name="investmentPlan.ibudgettype"
+					                            data-autoload
+					                            data-tips="预算类型"
+					                            data-url="admin/dictionary/options?key=expense_budget_type"
+					                            data-text="=预算类型="
+					                            data-text-attr="name"
+					                            data-value-attr="sn"
+					                            data-value=""
+					                            data-select="#( investmentPlan.ibudgettype ??)"
+					                            data-width="200"
+					                            disabled>
+					                </select>
+					            </div>
+					        </div>
+							<div class="form-group row">
+								<label class="col-1 col-form-label">审核状态</label>
+					            <div class="col-3 input-group jb_col_input_group">
+					                <select class="form-control ml-1"
+					                    data-autoload
+					                    name="investmentPlan.iAuditstatus"
+					                    data-select-type="select2"
+					                    data-tips="=请选择审核状态="
+					                    data-url="admin/dictionary/options?key=audit_status"
+					                    data-value=""
+					                    data-text-attr="name"
+					                    data-value-attr="sn"
+					                    data-select="#( investmentPlan.iauditstatus ??)"
+					                    disabled>
+					                </select>
+					            </div>
+							</div>
+					    </form>
+					</div>
+				</div>
+			</div>
+		</div>
     <!-- JBoltTable -->
     <!-- JBoltTable的数据模板定义-->
     <script type="text/template" id="jboltTable_investmentPlanDetailForm_#(pageId)">
