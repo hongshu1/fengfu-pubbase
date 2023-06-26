@@ -23,7 +23,7 @@ import com.jfinal.plugin.activerecord.Record;
  * @author: RJ
  * @date: 2023-05-19 10:49
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MATERIAL_RETURN_LIST)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/materialreturnlist", viewPath = "/_view/admin/materialreturnlist")
 public class SysPuinstoreAdminController extends BaseAdminController {
