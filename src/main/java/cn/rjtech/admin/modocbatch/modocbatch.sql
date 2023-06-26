@@ -309,6 +309,7 @@ WHERE
 	AND per.isDeleted= 0
 	AND per.isEnabled = 1
 	AND per.dLeaveDate IS NULL
+
 #if(iequipmentid)
 	AND eq.iEquipmentId IN #(iequipmentid)
 #end

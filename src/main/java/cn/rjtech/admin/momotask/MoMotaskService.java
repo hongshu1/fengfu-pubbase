@@ -651,7 +651,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
                     recordsa2ListMap.get(records2.get(i).getStr("iautoid")) : new ArrayList<>();
                 for (Record recordb1 : recordsb1) {
                   sb1.append(recordb1.getStr("coperationname") != null ? recordb1.getStr("coperationname") : "").append("/");
-                  sb2.append(recordb1.getStr("ioperationid") != null ? recordb1.getStr("ioperationid") : "").append(",");
+                  sb2.append(recordb1.getStr("imoroutingconfigid") != null ? recordb1.getStr("imoroutingconfigid") : "").append(",");
                 }
                 String coperationname = sb1.toString().endsWith("/") ? sb1.toString().substring(0, sb1.toString().length() - 1) : sb1.toString();
                 ioperationid = sb2.toString().endsWith(",") ? sb2.toString().substring(0, sb2.toString().length() - 1) : sb2.toString();
@@ -997,6 +997,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
   public Page<Record> getUserDatas(Kv kv) {
     ValidationUtils.notBlank(kv.getStr("pageNumber"), "每页条数数据未传入！！！");
     ValidationUtils.notBlank(kv.getStr("pageSize"), "分页数据未传入！！！");
+//    ValidationUtils.notBlank(kv.getStr("depcode"), "部门编码未传入！！！");AND per.cdept_num=#para(depcode)
     return dbTemplate("modocbatch.getUserDatas", kv).paginate(kv.getInt("pageNumber"), kv.getInt("pageSize"));
   }
 
