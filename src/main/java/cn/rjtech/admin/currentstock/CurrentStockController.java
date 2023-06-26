@@ -13,6 +13,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 
 
 /**
@@ -89,9 +90,9 @@ public class CurrentStockController extends BaseAdminController {
    public void stockEdit(){
 	   Kv kv = getKv();
 	   String autoid = kv.getStr("autoid");
-	   StockCheckVouch stockchekvouch = stockChekVouchService.findById(autoid);
-
-	   set("bill", stockchekvouch);
+	   StockCheckVouch stockChekVouch = stockChekVouchService.findById(autoid);
+	   set("SysStockchekvouch", stockChekVouch);
+	   set("bill", stockChekVouch);
 	   set("isapp",0);
 	   render("stockEdit.html");
    }
@@ -179,13 +180,23 @@ public class CurrentStockController extends BaseAdminController {
 	public void reverseApprove(long formAutoId, boolean isFirst, boolean isLast) {
 		service.preReverseApproveFunc(formAutoId, isFirst, isLast);
 	}
-//
+
+
+	/**
+	 * 逻辑删除
+	 * @param kv 业务id
+	 */
+	public void delete(Kv kv) {
+		StockCheckVouch mid = stockChekVouchService.findById(kv.get("mid"));
+		mid.setIsDeleted("1");
+		stockChekVouchService.update(mid);
+	}
+
+
+
 //	public void agree() {
 //		Kv kv = getKv();
-//		kv.put("iupdateby", JBoltUserKit.getUserId());
-//		kv.put("cupdatename", JBoltUserKit.getUserName());
-//		kv.put("dupdatetime", new Date());
-//		Ret ret = service.agree(kv);
+//		Ret ret = service.agree(stockChekVouchService.findById(kv.get("mid")));
 //		renderJsonData(ret);
 //
 //	}
