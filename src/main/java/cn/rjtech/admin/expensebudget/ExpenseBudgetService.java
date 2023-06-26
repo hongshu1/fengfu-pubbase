@@ -25,7 +25,6 @@ import cn.rjtech.admin.expensebudgetitem.ExpenseBudgetItemService;
 import cn.rjtech.admin.expensebudgetitemd.ExpenseBudgetItemdService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.subjectm.SubjectmService;
-import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.Constants;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
@@ -948,9 +947,9 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 		fillExpenseBudgetItem(list);
 		return list;
 	}
-	/**
+/*	*//**
      * 提交审核
-     * */
+     * *//*
 	public Ret submit(Long iexpenseid) {
 		Date now = new Date();
 		ValidationUtils.notNull(iexpenseid, "请先保存后再提交");
@@ -967,7 +966,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 			ValidationUtils.isTrue(expenseBudget.update(), ErrorMsg.UPDATE_FAILED);
 		}
 		return SUCCESS;
-	}
+	}*/
 	
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息

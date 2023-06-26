@@ -351,6 +351,6 @@ public class TodoService extends JBoltBaseService<Todo> {
 	}
 
 	public Page<Todo> dashBoardTodoDatas(Integer pageNumber, Integer pageSize) {
-		return paginateUserTodos(pageNumber,pageSize,JBoltUserKit.getUserId(),"create_time","desc",null,null,true,"id","title");
+		return paginateUserTodos(pageNumber,pageSize,JBoltUserKit.getUserId(),"create_time","desc",null,null,true,"id","title","url");
 	}
 }
