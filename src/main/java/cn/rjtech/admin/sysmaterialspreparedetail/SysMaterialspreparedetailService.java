@@ -687,6 +687,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 				moMaterialscanlog.setICreateBy(user.getId());
 				moMaterialscanlog.setCCreateName(user.getUsername());
 				moMaterialscanlog.setDCreateTime(now);
+				moMaterialscanlogs.add(moMaterialscanlog);
 				//更改条码库存表状态
 				stockBarcodePosition.setState(3);
 				stockBarcodePositions.add(stockBarcodePosition);
@@ -696,6 +697,8 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 			this.batchSave(sysMaterialspreparedetails);
 			sysmaterialspreparescanservice.batchSave(sysMaterialspreparescans);
 			stockbarcodepositionservice.batchUpdate(stockBarcodePositions);
+			moMaterialscanlogService.batchSave(moMaterialscanlogs);
+
 
 			return true;
 		});
