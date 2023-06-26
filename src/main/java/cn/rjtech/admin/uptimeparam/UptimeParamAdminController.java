@@ -1,18 +1,23 @@
 package cn.rjtech.admin.uptimeparam;
 
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
+import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.UptimeParam;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.UptimeParam;
+
 /**
  * 稼动时间参数
  * @ClassName: UptimeParamAdminController
@@ -105,5 +110,11 @@ public class UptimeParamAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 
-
+	/**
+	 * 导出
+	 */
+	public void exportExcelAll() throws Exception {
+		Page<Record> recordPage = service.getAdminDatas(1, 100000, getKv());
+		renderJxls("uptimeparam.xlsx", Kv.by("rows", recordPage.getList()), "稼动时间参数导出_" + DateUtil.today() + ".xlsx");
+	}
 }
