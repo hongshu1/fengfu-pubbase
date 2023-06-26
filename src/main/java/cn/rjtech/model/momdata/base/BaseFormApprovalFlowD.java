@@ -22,6 +22,10 @@ public abstract class BaseFormApprovalFlowD<M extends BaseFormApprovalFlowD<M>> 
     /**审核状态;1. 待审核 2. 审核通过 3. 审核不通过*/
     public static final String IAUDITSTATUS = "iAuditStatus";
 	/**
+	 * 审批意见
+	 */
+	public static final String CMEMO = "cMemo";
+	/**
 	 * 主键ID
 	 */
 	public M setIAutoId(java.lang.Long iAutoId) {
@@ -105,6 +109,26 @@ public abstract class BaseFormApprovalFlowD<M extends BaseFormApprovalFlowD<M>> 
 	public java.lang.Integer getIAuditStatus() {
 		return getInt("iAuditStatus");
 	}
+
+	/**
+	 * 审批意见
+	 */
+	public M setCMemo(java.lang.String cMemo) {
+		set("cMemo", cMemo);
+		return (M)this;
+	}
+
+	/**
+	 * 审批意见
+	 */
+	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="审批意见", required=true, maxLength=200,
+			fixed=0
+			, order=4)
+	@JSONField(name = "cmemo")
+	public java.lang.String getCMemo() {
+		return getStr("cMemo");
+	}
+
 
 }
 

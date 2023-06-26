@@ -104,8 +104,8 @@ from Bd_Person t1
 left join Bd_Department t2 on t2.cDepCode = t1.cDept_num
 left join (
  select g.iPersonId, u.id, u.username
- from UGCFF_MOM_System.dbo.jb_user u
- left join UGCFF_MOM_System.dbo.base_user_org g on u.id = g.user_id
+ from #(getBaseDbName()).dbo.jb_user u
+ left join #(getBaseDbName()).dbo.base_user_org g on u.id = g.user_id
  ) t3 on t3.iPersonId = t1.iAutoId
 where t1.isDeleted = '0'
 ) t on t1.iPersonId = t.ipersonid
