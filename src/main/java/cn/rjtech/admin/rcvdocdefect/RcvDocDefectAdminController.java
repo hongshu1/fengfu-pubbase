@@ -57,18 +57,14 @@ public class RcvDocDefectAdminController extends BaseAdminController {
     public void add2() {
         RcvDocDefect rcvDocDefect = service.findById(get("iautoid"));
         Record rcvDocQcFormM = service.getrcvDocQcFormList(getLong("ircvdocqcformmid"));
-        set("iautoid", get("iautoid"));
-        set("type", get("type"));
-        set("rcvDocDefect", rcvDocDefect);
-        set("rcvDocQcFormM", rcvDocQcFormM);
-        if (isNull(get("iautoid"))) {
+        if (rcvDocDefect.getIStatus() == 1) {
             render("add2.html");
         } else {
-            if (rcvDocDefect.getIStatus() == 1) {
+            if (rcvDocDefect.getIStatus() == 2) {
                 set("isfirsttime", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
                 set("iresptype", (rcvDocDefect.getIRespType() == 1) ? "供应商" : "其他");
                 render("add3.html");
-            } else if (rcvDocDefect.getIStatus() == 2) {
+            } else if (rcvDocDefect.getIStatus() == 3) {
                 int getCApproach = Integer.parseInt(rcvDocDefect.getCApproach());
                 set("capproach", (getCApproach == 1) ? "特采" : "拒收");
                 set("isfirsttime", (rcvDocDefect.getIsFirstTime() == true) ? "首发" : "再发");
@@ -76,6 +72,10 @@ public class RcvDocDefectAdminController extends BaseAdminController {
                 render("add4.html");
             }
         }
+        set("iautoid", get("iautoid"));
+        set("type", get("type"));
+        set("rcvDocDefect", rcvDocDefect);
+        set("rcvDocQcFormM", rcvDocQcFormM);
     }
 
     /**

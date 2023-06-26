@@ -2,6 +2,7 @@ package cn.rjtech.admin.weekorderm;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -32,6 +33,7 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import cn.jbolt.core.model.Dictionary;
 
 import java.util.*;
 import java.util.function.Function;
@@ -56,6 +58,8 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     private CusOrderSumService cusOrderSumService;
     @Inject
     private FormApprovalService formApprovalService;
+    @Inject
+    private DictionaryService dictionaryService;
 
     @Override
     protected WeekOrderM dao() {
@@ -114,9 +118,30 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
      * @param pageSize   每页几条数据
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-        return dbTemplate("weekorderm.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
+        Page<Record> paginate = dbTemplate("weekorderm.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
+       change(paginate.getList());
+        return paginate;
     }
 
+    private void change(List<Record> records){
+        if (CollUtil.isEmpty(records)){
+            return;
+        }
+        List<Dictionary> saleTypeList = dictionaryService.getOptionListByTypeKey("sale_type");
+        List<Dictionary> orderBusinessType = dictionaryService.getOptionListByTypeKey("order_business_type");
+        Map<String, Dictionary> saleTypeMap = saleTypeList.stream().collect(Collectors.toMap(Dictionary::getSn, Function.identity()));
+        Map<String, Dictionary> orderBusinessMap = orderBusinessType.stream().collect(Collectors.toMap(Dictionary::getSn, Function.identity()));
+        records.forEach(record -> {
+            if (orderBusinessMap.containsKey(record.getStr("ibustype"))){
+                Dictionary dictionary = orderBusinessMap.get(record.getStr("ibustype"));
+                record.set("bustypename", dictionary.getName());
+            }
+            if(saleTypeMap.containsKey(record.getStr("isaletypeid"))){
+                Dictionary dictionary = saleTypeMap.get(record.getStr("isaletypeid"));
+                record.set("saletypename", dictionary.getName());
+            }
+        });
+    }
     /**
      * 删除数据后执行的回调
      *

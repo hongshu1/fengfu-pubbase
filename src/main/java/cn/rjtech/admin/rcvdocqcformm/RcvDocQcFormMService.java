@@ -31,6 +31,7 @@ import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseRcvdocqcformdLine;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.excel.SheetPage;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -39,6 +40,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jxls.util.Util;
@@ -352,6 +354,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     public void saveSysPuinstoreModel(SysPuinstore sysPuinstore, RcvDocQcFormM docQcFormM,
                                       List<SysPuinstoredetail> sysPuinstoredetails) {
         Date date = new Date();
+        String userName = JBoltUserKit.getUserName();
+        Long userId = JBoltUserKit.getUserId();
         Vendor vendor = vendorService.findById(docQcFormM.getIVendorId());
         SysPureceive sysPureceive = sysPureceiveService.findById(docQcFormM.getIRcvDocId());
         sysPuinstore.setOrganizeCode(getOrgCode());//组织编码
@@ -359,7 +363,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         sysPuinstore.setBillDate(DateUtil.formatDate(date)); //入库日期
         sysPuinstore.setVenCode(vendor.getCVenCode()); //供应商编码
         sysPuinstore.setMemo(docQcFormM.getCMemo());
-        sysPuinstore.setCCreateName(JBoltUserKit.getUserName());
+        sysPuinstore.setCCreateName(userName);
         sysPuinstore.setDCreateTime(date);
         //状态 0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
         sysPuinstore.setIAuditStatus(0);
@@ -369,7 +373,10 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         sysPuinstore.setWhName(sysPureceive.getWhName());
         sysPuinstore.setIAuditWay(0);
         sysPuinstore.setIsDeleted(false);
-        sysPuinstore.setICreateBy(JBoltUserKit.getUserId());
+        sysPuinstore.setICreateBy(userId);
+        sysPuinstore.setCUpdateName(userName);
+        sysPuinstore.setDUpdateTime(date);
+        sysPuinstore.setIUpdateBy(userId);
 
         //采购入库从表
         List<SysPureceivedetail> list = sysPureceivedetailService.findFirstBy(sysPureceive.getAutoID());
@@ -380,6 +387,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     public void saveSysPuinstoreDetail(List<SysPuinstoredetail> sysPuinstoredetails,
                                        List<SysPureceivedetail> list, SysPuinstore sysPuinstore) {
         int i = 1;
+        Date date = new Date();
+        String userName = JBoltUserKit.getUserName();
         for (SysPureceivedetail detail : list) {
             Record record = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", detail.getBarcode()))
                 .findFirst();
@@ -395,13 +404,15 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             sysPuinstoredetail.setQty(detail.getQty());
             sysPuinstoredetail.setRowNo(i);
             sysPuinstoredetail.setTrackType(detail.getTrackType());
-            sysPuinstoredetail.setCCreateName(JBoltUserKit.getUserName());
-            sysPuinstoredetail.setDCreateTime(new Date());
+            sysPuinstoredetail.setCCreateName(userName);
+            sysPuinstoredetail.setDCreateTime(date);
             sysPuinstoredetail.setSpotTicket(detail.getBarcode());
             sysPuinstoredetail.setPuUnitCode(record.getStr("puunitcode"));
             sysPuinstoredetail.setPuUnitName(record.getStr("puunitname"));
             sysPuinstoredetail.setIsDeleted(false);
             sysPuinstoredetail.setInvcode(record.getStr("cinvcode"));
+            sysPuinstoredetail.setCUpdateName(userName);
+            sysPuinstoredetail.setDUpdateTime(date);
 
             //主表的数据
             sysPuinstore.setBillType(record.getStr("ipurchasetypeid"));//采购类型：采购PO  委外OM
@@ -409,7 +420,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             //业务类型：0：采购入库，1：委外入库
             sysPuinstore.setIBusType(Integer.valueOf(record.getStr("ibustype")));
             sysPuinstore.setRdCode(record.getStr("scrdcode"));
-
             sysPuinstoredetails.add(sysPuinstoredetail);
             i++;
         }
@@ -675,23 +685,21 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         List<Record> recordList = getCheckOutTableDatas(Kv.by("ircvdocqcformmid", iautoid));
         //核心业务逻辑，对列数进行分组
         List<Map<String, Object>> tableHeadData = getTableHeadData(rcvDocQcFormMRecord.get("iqcformid"));
-        ArrayList<ParamName> columnNames = new ArrayList<>();
+        List<ParamName> columnNames = new ArrayList<>();
         for (int i = 0; i < tableHeadData.size(); i++) {
             Map<String, Object> map = tableHeadData.get(i);
             ParamName paramName = new ParamName();
             paramName.setSeq(i);
-            paramName.setValue(String.valueOf(map.get("cqcitemname")));
+            paramName.setValue(StrUtil.toString((map.get("cqcitemname"))));
             columnNames.add(paramName);
         }
-//        List<String> collect = columnNames.stream().map(ParamName::getValue).collect(Collectors.toList());
-        rcvDocQcFormMRecord.set("columnNames", columnNames);//项目列名
-        
-        String cpics = JBoltConfig.BASE_UPLOAD_PATH_PRE +  StrUtil.SLASH + rcvDocQcFormMRecord.getStr("cpics");
-        System.out.println("打印图片路径=====》"+cpics);
-        
+        rcvDocQcFormMRecord.set("columnNameList", columnNames);//项目列名
+
+        String cpics = JBoltConfig.BASE_UPLOAD_PATH_PRE + StrUtil.SLASH + rcvDocQcFormMRecord.getStr("cpics");
+
         FileInputStream fileInputStream = new FileInputStream(cpics);
         byte[] imageBytes = Util.toByteArray(fileInputStream);
-            
+
         rcvDocQcFormMRecord.set("cpics", imageBytes);
         commPageMethod2(recordList, rcvDocQcFormMRecord, pages, sheetNames);
         return Kv.by("pages", pages).set("sheetNames", sheetNames);
@@ -717,6 +725,15 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
                     .sorted(Comparator.comparing(BaseRcvdocqcformdLine::getISeq))
                     .map(BaseRcvdocqcformdLine::getCValue)
                     .collect(Collectors.toList());
+                /*List<ParamName> cvaluelist = new ArrayList<>();
+                for (int l = 0; l < objects.size(); l++) {
+                    Object lineObj = objects.get(i);
+                    RcvdocqcformdLine line = JSON.parseObject(JSON.toJSONString(lineObj), RcvdocqcformdLine.class);
+                    ParamName paramName = new ParamName();
+                    paramName.setSeq(line.getISeq());
+                    paramName.setValue(line.getCValue());
+                    cvaluelist.add(paramName);
+                }*/
 
                 Record childRecord = new Record();
                 childRecord.set("imaxval", record.getStr("imaxval"));
@@ -729,10 +746,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
                 List<Object> paramnamelist = objToList(record.get("paramnamelist"));
                 List<ParamName> paramnamelists = new ArrayList<>();
                 for (int o1 = 0; o1 < paramnamelist.size(); o1++) {
-                    String value = (String) paramnamelist.get(o1);
                     ParamName paramName = new ParamName();
                     paramName.setSeq(o1);
-                    paramName.setValue(value);
+                    paramName.setValue(StrUtil.toString(paramnamelist.get(o1)));
                     paramnamelists.add(paramName);
                 }
                 childRecord.set("paramnamelist", paramnamelists); //具体项目名称

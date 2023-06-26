@@ -493,14 +493,18 @@ public class SysAssemService extends BaseService<SysAssem> {
      * @return
      */
     public Record getBarcodeDatas(Kv kv) {
+        //存货编码，及id
+        String cinvcode = kv.getStr("cinvcode");
+        String ibeforeinventoryid = kv.getStr("ibeforeinventoryid");
+        String trJsonData = kv.getStr("trJsonData");
+        JSONObject json = (JSONObject) JSON.toJSON(trJsonData);
 
-        String itemCode = kv.getStr("itemCode");
-        System.out.println("itemCode==="+itemCode);
+
         Record firstRecord = findFirstRecord("select t2.cInvCode as beforeCode, t3.cInvCode as afterCode\n" +
                 "from Bd_InventoryChange t1\n" +
                 "         left join Bd_Inventory t2 on t1.iBeforeInventoryId = t2.iAutoId\n" +
                 "         left join Bd_Inventory t3 on t1.iAfterInventoryId = t3.iAutoId\n" +
-                "where t2.cInvCode = '" + itemCode + "'");
+                "where t2.cInvCode = '" + cinvcode + "'");
         if (firstRecord==null){
             ValidationUtils.isTrue(false, "未查找到该物料的双单位，请先维护物料的形态对照表");
         }
