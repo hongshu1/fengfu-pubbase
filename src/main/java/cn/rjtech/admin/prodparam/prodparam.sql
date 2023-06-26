@@ -9,8 +9,14 @@ WHERE t1.isDeleted = '0'
   #if(cprodparamname)
   AND t1.cProdParamName = #para(cprodparamname)
   #end
+    #if(cproditemname)
+  AND t2.cProdItemName = #para(cproditemname)
+  #end
   #if(isenabled)
   AND t1.isenabled = #para(isenabled == 'true' ? 1 : 0)
+#end
+#if(ids)
+    AND t1.iautoid IN #(ids)
 #end
 ORDER BY t1.dUpdateTime
     DESC

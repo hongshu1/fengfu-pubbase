@@ -27,7 +27,6 @@ import cn.rjtech.admin.investmentplanitem.InvestmentPlanItemService;
 import cn.rjtech.admin.investmentplanitemd.InvestmentPlanItemdService;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.admin.projectcard.ProjectCardService;
-import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.Constants;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
@@ -894,12 +893,12 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 		InvestmentPlan unfinishItemInvestmentPlan = findFirst(selectSql().eq("ibudgettype", ibudgettypeNew).eq("ibudgetyear", ibudgetyearNew).eq("cdepcode", cdepcode));
 		return unfinishItemInvestmentPlan;
 	}
-	/**
+/*	*//**
 	 * 提交审核: 
 	 * 	1. 未审核、未通过状态的投资计划可提交审核
 	 * 	2. 调用提交流程方法
 	 * 	3. 更改投资计划审核状态为待审核
-	 * */
+	 * *//*
 	public Ret submit(Long iplanid) {
 		Date now = new Date();
 		ValidationUtils.notNull(iplanid, "请先保存后再提交");
@@ -916,7 +915,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 			ValidationUtils.isTrue(investmentPlan.update(), ErrorMsg.UPDATE_FAILED);
 		}
 		return SUCCESS;
-	}
+	}*/
 	
     /**
      * 处理审批通过的其他业务操作，如有异常返回错误信息

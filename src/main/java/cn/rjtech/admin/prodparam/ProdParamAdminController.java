@@ -1,5 +1,8 @@
 package cn.rjtech.admin.prodparam;
 
+import cn.hutool.core.date.DateUtil;
+import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.rjtech.util.Util;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -8,10 +11,16 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.ProdParam;
+import com.jfinal.upload.UploadFile;
+
+import java.util.List;
+
 /**
  * 生产表单建模-生产表单参数
  * @ClassName: ProdParamAdminController
@@ -113,5 +122,38 @@ public class ProdParamAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 
+	@SuppressWarnings("unchecked")
+	public void exportExcelByIds() throws Exception {
+		String ids = get("ids");
+		if (notOk(ids)) {
+			renderJsonFail("未选择有效数据，无法导出");
+			return;
+		}
+		List<Record> data = service.list(Kv.create().setIfNotBlank("ids", Util.getInSqlByIds(ids)));
+		if (notOk(data)) {
+			renderJsonFail("无有效数据导出");
+			return;
+		}
+		renderJxls("prodparam.xlsx", Kv.by("rows", data), "生产表单参数(选中导出)_" + DateUtil.today() + ".xlsx");
+	}
 
+	@SuppressWarnings("unchecked")
+	public void exportExcelAll() throws Exception {
+		List<Record> rows = service.list(getKv());
+		if (notOk(rows)) {
+			renderJsonFail("无有效数据导出");
+			return;
+		}
+		renderJxls("prodparam.xlsx", Kv.by("rows", rows), "生产表单参数" + DateUtil.today() + ".xlsx");
+	}
+
+	public void importExcelClass() {
+		String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+		UploadFile file = getFile("file", uploadPath);
+		if (notExcel(file)) {
+			renderJsonFail("请上传excel文件");
+			return;
+		}
+		renderJson(service.importExcelClass(file.getFile()));
+	}
 }

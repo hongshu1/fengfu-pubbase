@@ -489,31 +489,40 @@ public class SysAssemService extends BaseService<SysAssem> {
     }
 
     /**
+     * 根据条件获取资源
+     * @param kv
+     * @return
+     */
+    public Record getBarcode(Kv kv){
+        kv.setIfNotNull("orgCode", getOrgCode());
+        Record list = dbTemplate("sysassem.getBarcode", kv).findFirst();
+        ValidationUtils.isTrue(list.size()!=0, "找不到该现品票信息");
+        return list;
+    }
+
+    /**
      * 获取双单位条码数据
      * @return
      */
     public Record getBarcodeDatas(Kv kv) {
-        //存货编码，及id
-        String cinvcode = kv.getStr("cinvcode");
         String ibeforeinventoryid = kv.getStr("ibeforeinventoryid");
-        String trJsonData = kv.getStr("trJsonData");
-        JSONObject json = (JSONObject) JSON.toJSON(trJsonData);
-
-
-        Record firstRecord = findFirstRecord("select t2.cInvCode as beforeCode, t3.cInvCode as afterCode\n" +
-                "from Bd_InventoryChange t1\n" +
+        Record firstRecord = findFirstRecord("select t2.cInvCode as beforeCode, t3.cInvCode as afterCode,t3.cInvCode as invcode,t3.cinvname,t3.cInvCode ,t3.cInvCode1,t3.cInvName1,t3.cInvStd as cinvstd,\n" +
+                "t3.iAutoId,uom.cUomCode,uom.cUomName as purchasecuomname,uom.cUomName as  puunitname\n" +
+                "         from Bd_InventoryChange t1\n" +
                 "         left join Bd_Inventory t2 on t1.iBeforeInventoryId = t2.iAutoId\n" +
                 "         left join Bd_Inventory t3 on t1.iAfterInventoryId = t3.iAutoId\n" +
-                "where t2.cInvCode = '" + cinvcode + "'");
+                "         LEFT JOIN Bd_Uom uom on t3.iPurchaseUomId = uom.iAutoId\n" +
+                "where t1.iBeforeInventoryId = '" + ibeforeinventoryid + "'");
         if (firstRecord==null){
             ValidationUtils.isTrue(false, "未查找到该物料的双单位，请先维护物料的形态对照表");
         }
-        String aftercode = firstRecord.getStr("aftercode");
-        String orgCode = getOrgCode();
-        kv.set("keywords",aftercode);
-        kv.set("orgCode",orgCode);
-        kv.set("limit",1);
-        return dbTemplate("sysassem.getResource",kv).findFirst();
+        firstRecord.set("sourcebillno",kv.get("sourcebillno"));
+        firstRecord.set("vencode",kv.get("vencode"));
+        firstRecord.set("venname",kv.get("venname"));
+        firstRecord.set("ibeforeinventoryid",kv.get("ibeforeinventoryid"));
+        firstRecord.set("iafterinventoryid",kv.get("iafterinventoryid"));
+
+        return firstRecord;
     }
 
 }

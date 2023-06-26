@@ -1828,7 +1828,7 @@ public class PermissionKey {
 	/**
 	 * 提交审核
 	 */
-	public static final String EXPENSE_BUDGET_FORMULATE_SUBMITAUDIT = "expense_budget_formulate_submitaudit";
+	public static final String EXPENSE_BUDGET_FORMULATE_SUBMIT = "expense_budget_formulate_submit";
 	/**
 	 * 新增
 	 */

@@ -61,6 +61,8 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
     public static final String WEIGHT = "Weight";
     /**供应商*/
     public static final String VENCODE = "VenCode";
+    /**存货编码*/
+    public static final String INVCODE = "invcode";
 	/**
 	 * AutoID
 	 */
@@ -478,6 +480,23 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	@JSONField(name = "vencode")
 	public java.lang.String getVenCode() {
 		return getStr("VenCode");
+	}
+
+	/**
+	 * 存货编码
+	 */
+	public M setInvcode(java.lang.String invcode) {
+		set("invcode", invcode);
+		return (M)this;
+	}
+
+	/**
+	 * 存货编码
+	 */
+	@JBoltField(name="invcode" ,columnName="invcode",type="String", remark="存货编码", required=false, maxLength=255, fixed=0, order=26)
+	@JSONField(name = "invcode")
+	public java.lang.String getInvcode() {
+		return getStr("invcode");
 	}
 
 }

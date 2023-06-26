@@ -196,15 +196,6 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 	}
 
 	public Record barcode(Kv kv) {
-		//先查询条码是否已添加
-//		Record first = dbTemplate("syspureceive.barcodeDatas", kv).findFirst();
-//		if (null != first) {
-//			ValidationUtils.isTrue(false, "条码为：" + kv.getStr("barcode") + "的数据已经存在，请勿重复录入。");
-//		}
-//		first = dbTemplate("syspureceive.barcode", kv).findFirst();
-//		ValidationUtils.notNull(first, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入。");
-//		return first;
-
 		Record first = dbTemplate("materialsprepare.barcodeDatas", kv).findFirst();
 		ValidationUtils.notNull(first, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入。");
 		return first;
@@ -698,7 +689,6 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 			sysmaterialspreparescanservice.batchSave(sysMaterialspreparescans);
 			stockbarcodepositionservice.batchUpdate(stockBarcodePositions);
 			moMaterialscanlogService.batchSave(moMaterialscanlogs);
-
 
 			return true;
 		});

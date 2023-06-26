@@ -187,11 +187,11 @@ public class ProdParamService extends BaseService<ProdParam> {
 
 		for (Record record : records) {
 
-			if (StrUtil.isBlank(record.getStr("iQcItemId"))) {
-				return fail("检验项目名称不能为空");
+			if (StrUtil.isBlank(record.getStr("iProdItemId"))) {
+				return fail("生产项目名称不能为空");
 			}
-			if (StrUtil.isBlank(record.getStr("cQcParamName"))) {
-				return fail("检验参数名称不能为空");
+			if (StrUtil.isBlank(record.getStr("cProdParamName"))) {
+				return fail("参数名称不能为空");
 			}
 
 
