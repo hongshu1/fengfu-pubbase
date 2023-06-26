@@ -211,8 +211,6 @@ public class InvestmentPlanAdminController extends BaseAdminController {
      * 投资计划新增-表格提交
      */
     @UnCheck
-    @RequestLimit(time=30,count=1)
-    @Before(RequestLimitInterceptor.class)
     @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableByAdd() {
         renderJson(service.saveTableSubmitByAdd(getJBoltTable()));
@@ -221,8 +219,6 @@ public class InvestmentPlanAdminController extends BaseAdminController {
      * 投资计划修改-表格提交
      */
     @UnCheck
-    @RequestLimit(time=10,count=1)
-    @Before(RequestLimitInterceptor.class)
     @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableByEdit(){
     	renderJson(service.saveTableSubmitByEdit(getJBoltTable()));
@@ -379,7 +375,7 @@ public class InvestmentPlanAdminController extends BaseAdminController {
     /**
      * 提交审核
      * */
-    @CheckPermission(PermissionKey.INVESTMENT_PLAN_FORMULATE_SUBMITAUDIT)
+    @CheckPermission(PermissionKey.INVESTMENT_PLAN_FORMULATE_SUBMIT)
     public void submit(){
     	Long iplanid = getLong(0);
     	renderJson(service.submit(iplanid));

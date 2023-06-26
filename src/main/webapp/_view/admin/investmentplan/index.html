@@ -69,7 +69,7 @@
 		<button data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="创建投资计划"  data-url="admin/investmentplan/choosePeriodPage" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
 		<button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshPjaxContainer" data-title="编辑投资计划" data-check-handler="jboltTableGetCheckedId" data-url="admin/investmentplan/edit/" class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i>详情</button>
 		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/investmentplan/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 删除</button>
-		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/formapproval/submit?formSn=PL_Investment_Plan&primaryKeyName=iAutoId&permissionKey=investment_plan_formulate_submitaudit&className=cn.rjtech.admin.investmentplan.InvestmentPlanService&formAutoId=" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 提交审核</button>
+		<!-- <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/formapproval/submit?formSn=PL_Investment_Plan&primaryKeyName=iAutoId&permissionKey=investment_plan_formulate_submitaudit&className=cn.rjtech.admin.investmentplan.InvestmentPlanService&formAutoId=" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 提交审核</button> -->
 		<button onclick="investmentPlanIndexExportClick()" class="btn btn-outline-primary btn-sm" ><i class="fa fa-file-excel-o"></i> 导出</button>
 		<a hidden id="investmentPlanIndexExportBtn" data-downloadbtn href="admin/investmentplan/exportInvestmentPlanDatas" data-form="investmentPlanForm_#(pageId)" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> 导出</a>
 		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
@@ -86,7 +86,7 @@ data-height="fill"
 id="jbolt_table_#(pageId)"
 data-ajax="true"
 data-width="auto"
-data-autoload="false"
+data-autoload="true"
 data-url="admin/investmentplan/datas"
 data-column-resize="true"
 data-column-prepend="1:checkbox:true"
