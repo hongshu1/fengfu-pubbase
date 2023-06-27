@@ -702,7 +702,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
                     sysPuinstoredetail.setTrackType(record.getStr("tracktype"));
                     sysPuinstoredetail.setCCreateName(user.getUsername());
                     sysPuinstoredetail.setDCreateTime(now);
-                    sysPuinstoredetail.setSpotTicket(record.getStr("barcode"));
+                    sysPuinstoredetail.setBarCode(record.getStr("barcode"));
                     sysPuinstoredetail.setPuUnitCode(record.getStr("uomcode"));
                     sysPuinstoredetail.setPuUnitName(record.getStr("uomname"));
                     sysPuinstoredetail.setIsDeleted(false);

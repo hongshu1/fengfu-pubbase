@@ -58,8 +58,8 @@ where a.isDeleted = '0'
 	#if(masid)
 		and a.MasID = #para(masid)
 	#end
-     #if(spotticket)
-    and a.spotticket = #para(spotticket)
+     #if(barcode)
+    and a.barcode = #para(barcode)
      #end
 ORDER BY a.dupdatetime DESC
 #end
@@ -193,7 +193,7 @@ and p.cPTName like CONCAT('%', #para(cPTName), '%')
 select
     m.cOrderNo as sourcebillno,
     a.cCompleteBarcode as barcode,
-    a.cCompleteBarcode as spotticket,
+    a.cCompleteBarcode as barcode,
     b.cInvCode as invcode,
     b.cinvname,
     b.cInvCode ,
@@ -235,7 +235,7 @@ where a.isEffective = '1'
 select
     m.cOrderNo as sourcebillno,
     a.cCompleteBarcode as barcode,
-    a.cCompleteBarcode as spotticket,
+    a.cCompleteBarcode as barcode,
     b.cInvCode as invcode,
     b.cinvname,
     b.cInvCode ,

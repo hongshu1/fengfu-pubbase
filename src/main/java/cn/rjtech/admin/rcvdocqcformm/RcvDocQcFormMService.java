@@ -407,7 +407,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
             sysPuinstoredetail.setTrackType(detail.getTrackType());
             sysPuinstoredetail.setCCreateName(userName);
             sysPuinstoredetail.setDCreateTime(date);
-            sysPuinstoredetail.setSpotTicket(detail.getBarcode());
+            sysPuinstoredetail.setBarCode(detail.getBarcode());
             sysPuinstoredetail.setPuUnitCode(record.getStr("puunitcode"));
             sysPuinstoredetail.setPuUnitName(record.getStr("puunitname"));
             sysPuinstoredetail.setIsDeleted(false);

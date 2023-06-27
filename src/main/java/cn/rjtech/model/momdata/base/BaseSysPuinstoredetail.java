@@ -48,7 +48,7 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
     /**修改时间*/
     public static final String DUPDATETIME = "dUpdateTime";
     /**现品票*/
-    public static final String SPOTTICKET = "spotTicket";
+    public static final String BARCODE = "barcode";
     /**是否删除：0. 否 1. 是*/
     public static final String ISDELETED = "isDeleted";
     /**品牌code*/
@@ -61,8 +61,6 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
     public static final String PUUNITNAME = "PuUnitName";
     /**存货编码*/
     public static final String INVCODE = "invcode";
-	/**版本号*/
-    public static final String CVERSION = "cVersion";
 	/**
 	 * AutoID
 	 */
@@ -372,18 +370,18 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
 	/**
 	 * 现品票
 	 */
-	public M setSpotTicket(java.lang.String spotTicket) {
-		set("spotTicket", spotTicket);
+	public M setBarCode(java.lang.String barcode) {
+		set("barcode", barcode);
 		return (M)this;
 	}
 
 	/**
 	 * 现品票
 	 */
-	@JBoltField(name="spotticket" ,columnName="spotTicket",type="String", remark="现品票", required=false, maxLength=50, fixed=0, order=19)
-	@JSONField(name = "spotticket")
-	public java.lang.String getSpotTicket() {
-		return getStr("spotTicket");
+	@JBoltField(name="barcode" ,columnName="barcode",type="String", remark="现品票", required=false, maxLength=50, fixed=0, order=19)
+	@JSONField(name = "barcode")
+	public java.lang.String getBarCode() {
+		return getStr("barcode");
 	}
 
 	/**
@@ -486,23 +484,6 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
 	@JSONField(name = "invcode")
 	public java.lang.String getInvcode() {
 		return getStr("invcode");
-	}
-
-	/**
-	 * 版本号
-	 */
-	public M setCVersion(java.lang.String cVersion) {
-		set("cVersion", cVersion);
-		return (M)this;
-	}
-
-	/**
-	 * 版本号
-	 */
-	@JBoltField(name="cversion" ,columnName="cversion",type="String", remark="版本号", required=false, maxLength=30, fixed=0, order=25)
-	@JSONField(name = "cversion")
-	public java.lang.String getCVersion() {
-		return getStr("cVersion");
 	}
 }
 
