@@ -643,7 +643,7 @@
                         {column: "cuomname", use: "cuomname"}, {column: "sourcebilltype", use: "sourcebilltype"},
                         {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {column: "sourcebillid",use: "sourcebillid"},
-                        {column: "qty", use: "qty"}, {column: "quantity", use: "quantity"}, {column: "iafterinventoryid", use: "iafterinventoryid"}
+                        {column: "qty", use: "qty"},{column: "weight", use: "qty"}, {column: "quantity", use: "quantity"}, {column: "iafterinventoryid", use: "iafterinventoryid"}
                         , {column: "ibeforeinventoryid", use: "ibeforeinventoryid"}],
                     handler:function(table,td,text,value,trJsonData){
                         Ajax.post("admin/formConversionList/getBarCodeData", {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,
