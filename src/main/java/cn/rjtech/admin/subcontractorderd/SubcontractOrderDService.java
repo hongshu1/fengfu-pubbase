@@ -3,6 +3,7 @@ package cn.rjtech.admin.subcontractorderd;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -147,11 +148,12 @@ public class SubcontractOrderDService extends BaseService<SubcontractOrderD> {
 		String cMemo = jsonObject.getString(SubcontractOrderD.CMEMO.toLowerCase());
 		Boolean isPresent = jsonObject.getBoolean(SubcontractOrderD.ISPRESENT.toLowerCase());
 		Long iInventoryId = jsonObject.getLong(SubcontractOrderD.IINVENTORYID.toLowerCase());
-		create(iSubcontractOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, isPresent);
+		String iPkgQty = jsonObject.getString(SubcontractOrderD.IPKGQTY.toLowerCase());
+		create(iSubcontractOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, iPkgQty, isPresent);
 		return subcontractOrderD;
 	}
 	
-	public SubcontractOrderD create(Long iSubcontractOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, boolean isPresent){
+	public SubcontractOrderD create(Long iSubcontractOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, String iPkgQty, boolean isPresent){
 		SubcontractOrderD subcontractOrderD = new SubcontractOrderD();
 		subcontractOrderD.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		subcontractOrderD.setISubcontractOrderMid(iSubcontractOrderMid);
@@ -161,11 +163,14 @@ public class SubcontractOrderDService extends BaseService<SubcontractOrderD> {
 		subcontractOrderD.setIsPresent(isPresent);
 		subcontractOrderD.setCMemo(cMemo);
 		subcontractOrderD.setCAddress(cAddress);
+		if (StrUtil.isNotBlank(iPkgQty)){
+			subcontractOrderD.setIPkgQty(Integer.valueOf(iPkgQty));
+		}
 		return subcontractOrderD;
 	}
 	
-	public SubcontractOrderD create(Long id, Long iSubcontractOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, boolean isPresent) {
-		SubcontractOrderD subcontractOrderD = create(iSubcontractOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, isPresent);
+	public SubcontractOrderD create(Long id, Long iSubcontractOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, String iPkgQty, boolean isPresent) {
+		SubcontractOrderD subcontractOrderD = create(iSubcontractOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo,iPkgQty , isPresent);
 		subcontractOrderD.setIAutoId(id);
 		return subcontractOrderD;
 	}

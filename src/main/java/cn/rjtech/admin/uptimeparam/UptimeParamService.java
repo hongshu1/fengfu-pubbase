@@ -1,6 +1,10 @@
 package cn.rjtech.admin.uptimeparam;
 
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.admin.uptimecategory.UptimeCategoryService;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -11,8 +15,12 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.UptimeParam;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
+import com.jfinal.weixin.sdk.utils.RetryUtils;
+import org.apache.poi.hwpf.dev.RecordUtil;
 
-import java.util.Date;
+import java.io.File;
+import java.util.*;
 
 /**
  * 稼动时间建模-稼动时间参数
@@ -31,6 +39,10 @@ public class UptimeParamService extends BaseService<UptimeParam> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingdService;
+	@Inject
+	private UptimeCategoryService uptimeCategoryService;
 
 	/**
 	 * 后台管理数据查询
@@ -132,4 +144,28 @@ public class UptimeParamService extends BaseService<UptimeParam> {
 		return null;
 	}
 
+	/**
+	 * 数据导入
+	 * @param file
+	 * @param cformatName
+	 * @return
+	 */
+	public Ret importExcelData(File file, String cformatName) {
+		Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
+		ValidationUtils.isTrue(ret.isOk(), "导入失败");
+		ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
+		// 封装数据
+		for (Map<String, String> map : datas) {
+			Long iUptimeCategoryId = uptimeCategoryService.getOrAddUptimeCategoryByName(map.get("cuptimeparamname"));
+
+			UptimeParam uptimeParam = new UptimeParam();
+			uptimeParam.setCUptimeParamName(map.get("cuptimeparamname"));
+			uptimeParam.setIUptimeCategoryId(iUptimeCategoryId);
+			uptimeParam.setIsEnabled(true);
+			// 保存数据
+			save(uptimeParam);
+		}
+
+		return SUCCESS;
+	}
 }
