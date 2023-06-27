@@ -19,10 +19,7 @@ import com.jfinal.plugin.activerecord.tx.TxConfig;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-06-26 14:25
  */
-@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/uptimeCategory", viewPath = "/_view/admin/uptimecategory")
-@CheckPermission(PermissionKey.UPTIME_CATEGORY)
-@UnCheckIfSystemAdmin
 public class UptimeCategoryAdminController extends BaseAdminController {
 
 	@Inject
