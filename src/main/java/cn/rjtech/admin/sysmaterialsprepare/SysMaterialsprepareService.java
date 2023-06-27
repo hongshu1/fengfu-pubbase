@@ -27,6 +27,7 @@ import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.DbTemplate;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.json.JSONArray;
@@ -594,5 +595,22 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
 
     public Page<Record> getgetManualAdddatas(int pageNumber, int pageSize, Kv kv) {
         return dbTemplate("materialsprepare.getManualAdddatas", kv).paginate(pageNumber, pageSize);
+    }
+
+    public Page<Record> manualmanual(int pageNumber, int pageSize, List list) {
+        ArrayList<Record> records = new ArrayList<>();
+        for (int z=0;z<list.size();z++){
+            Kv kv = new Kv();
+            kv.set("iAutoId",list.get(z));
+            Record record = dbTemplate("materialsprepare.mm", kv).findFirst();
+            records.add(record);
+        }
+        //处理页量页码信息
+        int totalRow=records.size();
+        int totalPage=totalRow/pageSize;
+        if (totalPage*pageSize<totalRow){
+            totalPage++;
+        }
+        return new Page(records,pageNumber, pageSize,totalPage,totalRow);
     }
 }

@@ -30,7 +30,7 @@
 	    </div> 
 </div>
 ### 新增之后，并且为审批流
-#if(expenseBudget.iautoid?? && expenseBudget.iauditway == 2 && expenseBudget.iauditstatus == 1)
+#if(expenseBudget.iautoid?? && expenseBudget.iauditway == 2 && (expenseBudget.iauditstatus == 1 || expenseBudget.iauditstatus == 2) && expenseBudget.ieffectivestatus == 1)
     ### 参数列表
     ### formAutoId:                 单据ID
     ### formSn:                     表单名

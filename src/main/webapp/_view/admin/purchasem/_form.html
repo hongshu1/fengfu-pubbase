@@ -38,7 +38,7 @@
 	    </div>     
 </div>
 ### 新增之后，并且为审批流
-#if(purchasem.iautoid?? && purchasem.iauditway == 2 && purchasem.iauditstatus == 1)
+#if(purchasem.iautoid?? && purchasem.iauditway == 2 && (purchasem.iauditstatus == 1 || purchasem.iauditstatus == 2) && purchasem.istatus == 1)
     ### 参数列表
     ### formAutoId:                 单据ID
     ### formSn:                     表单名
@@ -182,6 +182,7 @@
 #@hiprintjs()
 <script type="text/javascript">
 	hideAllParentLayerDialogBtn();
+	var submit = false;
     function submitThisForm() {
         $('#save_btn_#(pageId)').click();
     }
@@ -205,10 +206,10 @@
     /**
      * 新增/修改/提审
      */
-    function successHandler(msg, iautoid) {
+    function successHandler(msg, url) {
         LayerMsgBox.success(msg, 600, function () {
             // 新增/修改，均跳转到详情页
-            location.href = '/admin/purchasem/instrumentEdit/' + iautoid + '-_jb_rqtype_dialog';
+            location.href = url;
             parent.refreshPjaxContainer();
         });
     }
@@ -226,15 +227,17 @@
                 type: "all",
                 url: "admin/purchasem/saveTableSubmit",
                 success: function (res) {
-                    if(res.data.state == 'ok'){
+                    if(res.state == 'ok'){
                     	// 提交审核（审批）调用
                         if (submit) {
                             // 提审
                             submit_#(pageId)(res.data.iautoid, function (data) {
-                                successHandler('提审成功', res.data.iautoid);
+                            	var url = '/admin/purchasem/details/' + res.data.iautoid + '-_jb_rqtype_dialog';
+                                successHandler('提审成功', url);
                             });
                         } else {
-                            successHandler(res.msg, res.data.iautoid);
+                        	var url = '/admin/purchasem/instrumentEdit/' + res.data.iautoid + '-_jb_rqtype_dialog';
+                            successHandler(res.msg, url);
                         }
                     }else{
                     	LayerMsgBox.alert("申购金额已超禀议金额10%或500,请追加禀议",2);

@@ -707,3 +707,21 @@ WHERE 1=1
   AND  d.iAutoId='#(imodocid)'
   AND  f.cInvCode='#(cinvcode)'
     #end
+
+
+
+#sql("mm")
+SELECT
+    it.iAutoId,
+    it.cInvCode,
+    it.cInvName,
+    it.cInvCode1,
+    it.cInvName1,
+    it.cInvStd,
+    uom.cUomName
+FROM
+    Bd_Inventory it
+        LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1 = uom.iAutoId
+WHERE 1=1
+  AND  it.iAutoId='#(iAutoId)'
+    #end

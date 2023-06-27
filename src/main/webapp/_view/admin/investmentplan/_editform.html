@@ -317,10 +317,10 @@
     /**
      * 新增/修改/提审
      */
-    function successHandler(msg, iautoid) {
+    function successHandler(msg, url) {
         LayerMsgBox.success(msg, 600, function () {
             // 新增/修改，均跳转到详情页
-            location.href = '/admin/investmentplan/edit/' + iautoid + '-_jb_rqtype_dialog';
+            location.href = url;
             parent.refreshPjaxContainer();
         });
     }
@@ -344,10 +344,12 @@
                         if (submit) {
                             // 提审
                             submit_#(pageId)(ret.data.iautoid, function (data) {
-                                successHandler('提审成功', ret.data.iautoid);
+                            	var url = '/admin/investmentplanmanage/detail/' + ret.data.iautoid + '-_jb_rqtype_dialog';
+                                successHandler('提审成功', url);
                             });
                         } else {
-                            successHandler(ret.msg, ret.data.iautoid);
+                        	var url = '/admin/investmentplan/edit/' + ret.data.iautoid + '-_jb_rqtype_dialog';
+                            successHandler(ret.msg, url);
                         }
 
                     } else {
