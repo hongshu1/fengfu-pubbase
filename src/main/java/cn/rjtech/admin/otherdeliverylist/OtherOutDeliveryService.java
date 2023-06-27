@@ -72,8 +72,9 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 	 */
 	public List<Record> getOtherOutLines(Kv kv){
 		return dbTemplate("otherdeliverylist.getOtherOutLines",kv).find();
-
 	}
+
+
 	/**
 	 * 保存
 	 * @param otherOut
@@ -309,8 +310,30 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
+	/**
+	 * 获取条码列表
+	 * 通过关键字匹配
+	 */
 	public List<Record> otherOutBarcodeDatas(String q, String orgCode) {
 		return dbTemplate("otherdeliverylist.otherOutBarcodeDatas",Kv.by("q", q).set("orgCode",orgCode)).find();
+	}
+
+	/**
+	 * 获取项目大类目录数据
+	 * @param  q 通过关键字匹配
+	 * @return
+	 */
+	public List<Record> getCItemCCodeLines(String q, String orgCode) {
+		return dbTemplate("otherdeliverylist.getCItemCCodeLines",Kv.by("q", q).set("orgCode",orgCode)).find();
+	}
+
+	/**
+	 * 获取项目管理主目录数据
+	 * @return
+	 */
+	public List<Record> getItemCodeLines(Kv kv) {
+		kv.setIfNotNull("orgCode", getOrgCode());
+		return dbTemplate("otherdeliverylist.getItemCodeLines",kv).find();
 	}
 
 	public Ret pushU8(String ids) {
@@ -329,7 +352,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 
 			JSONObject preAllocate = new JSONObject();
 			preAllocate.set("CreatePerson",userId);
-			preAllocate.set("CreatePersonName",user.getName());
+			preAllocate.set("CreatePersonName",userCode);
 			preAllocate.set("loginDate", nowDate);
 			preAllocate.set("tag",type);
 			preAllocate.set("type",type);

@@ -71,7 +71,7 @@
                 <div class="col-sm-2 col-form-label">
                     <select class="form-control" name="otherOut.billtype"
                             data-autoload
-                            data-url="admin/dictionary/options?key=null"
+                            data-url="admin/dictionary/options?key=OtherOut_type"
                             data-select-type="select"
                             data-text="=业务类型="
                             data-value=""
@@ -156,7 +156,6 @@
                 LayerMsgBox.success(res.msg, 600, function () {
                     let autoid = res.AutoID;
                     // 提交审核（审批）调用
-                    debugger;
                     if (submit){
                         submit_#(pageId)(autoid,function () {
                             LayerMsgBox.success("提交成功", 600, function () {

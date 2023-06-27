@@ -131,4 +131,21 @@ public class OtherOutDeliveryAdminController extends BaseAdminController {
 		String orgCode =  getOrgCode();
 		renderJsonData(service.otherOutBarcodeDatas(get("q"),get("orgCode",orgCode)));
 	}
+	/**
+	 * 获取项目大类目录数据
+	 * 通过关键字匹配
+	 */
+	public void getCItemCCodeLines() {
+		String orgCode =  getOrgCode();
+		renderJsonData(service.getCItemCCodeLines(get("q"),get("orgCode",orgCode)));
+	}
+	/**
+	 * 获取项目大类主目录数据
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	public void getItemCodeLines() {
+		Kv kv = getKv();
+		renderJsonData(service.getItemCodeLines(kv));
+	}
 }

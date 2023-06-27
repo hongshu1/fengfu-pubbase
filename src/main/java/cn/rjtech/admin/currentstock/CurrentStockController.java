@@ -123,7 +123,6 @@ public class CurrentStockController extends BaseAdminController {
 	   stockcheckvouch.setCheckType(checktype);
 	   stockcheckvouch.setWhCode(whcode);
 	   stockcheckvouch.setPoscodes(poscode);
-	   stockcheckvouch.setStatus("0");
 	   stockcheckvouch.setIsDeleted("0");
 	   ValidationUtils.notNull(whcode,"仓库为空!");
 	   ValidationUtils.notNull(checktype,"盘点方式为空!");
