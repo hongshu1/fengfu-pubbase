@@ -490,7 +490,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         //5、如果cvalue的列数>10行，分多个页签
         Record data = recordList.get(0);
         //核心业务逻辑，对列数进行分组
-        inStockQcFormMService.commonPageMethod(data, recordList, stockoutQcFormM, pages);
+//        inStockQcFormMService.commonPageMethod(data, recordList, stockoutQcFormM, pages);
 
         return Kv.by("pages", pages).set("sheetNames", sheetNames);
     }

@@ -15,6 +15,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 /**
@@ -60,16 +61,10 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        Subcontractsaleorderm subcontractsaleorderm = service.findById(getLong("iautoid"));
-        if (subcontractsaleorderm == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        Record subcontractsaleordermRc = subcontractsaleorderm.toRecord();
-        Customer customer = customerService.findById(subcontractsaleorderm.getICustomerId());
-        subcontractsaleordermRc.set("ccusname", customer == null ? null : customer.getCCusName());
-        subcontractsaleordermRc.set("cbususername", JBoltUserCache.me.getUserName(subcontractsaleorderm.getIBusPersonId()));
-        set("subcontractsaleorderm", subcontractsaleordermRc);
+        Page<Record> datas = service.paginateAdminDatas(1, 1, Kv.by("iautoid", getLong("iautoid")));
+        ValidationUtils.notNull(datas, JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.isTrue(datas.getList().size() > 0, JBoltMsg.DATA_NOT_EXIST);
+        set("subcontractsaleorderm", datas.getList().get(0));
         keepPara();
         render("edit.html");
     }

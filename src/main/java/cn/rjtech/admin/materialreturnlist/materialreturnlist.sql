@@ -81,7 +81,7 @@ SELECT
     t2.Qty AS qtys,
     t2.Memo,
     t2.MasID,
-    t2.spotTicket,
+    t2.BarCode,
     t2.SourceBillDid,
     t2.SourceBillNoRow,
     t2.SourceBillType,
@@ -129,7 +129,7 @@ FROM
             cSourceBarcode
         FROM
             PS_SubcontractOrderDBatch
-    ) t4 ON t2.spotTicket = t4.cbarcode
+    ) t4 ON t2.BarCode = t4.cbarcode
         LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
         LEFT JOIN Bd_Warehouse t9 ON t2.Whcode = t9.cWhCode
@@ -155,7 +155,7 @@ SELECT
     t2.Qty AS qtys,
     t2.Memo,
     t2.MasID,
-    t2.spotTicket,
+    t2.BarCode,
     t2.SourceBillDid,
     t2.SourceBillNoRow,
     t2.SourceBillType,
@@ -191,13 +191,13 @@ FROM
             cSourceBarcode
         FROM
             PS_SubcontractOrderDBatch
-    ) t4 ON t2.spotTicket = t4.cbarcode
+    ) t4 ON t2.BarCode = t4.cbarcode
         LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
 WHERE
         t1.AutoID = t2.MasID
-  AND ( SELECT SUM ( Qty ) FROM T_Sys_PUInStoreDetail WHERE  spotTicket = t2.spotTicket ) > 0
+  AND ( SELECT SUM ( Qty ) FROM T_Sys_PUInStoreDetail WHERE  BarCode = t2.BarCode ) > 0
   AND t2.Qty > 0
   AND  t1.AutoID = '#(autoid)'
     #if(OrgCode)
@@ -228,7 +228,7 @@ from T_Sys_PUInStore t1
 
 where 1 =1
     AND t2.Qty > 0
-    AND (SELECT SUM(Qty) FROM T_Sys_PUInStoreDetail WHERE spotTicket = t2.spotTicket) > 0
+    AND (SELECT SUM(Qty) FROM T_Sys_PUInStoreDetail WHERE BarCode = t2.BarCode) > 0
     #if(billno)
         AND t1.billno = #para(billno)
     #end
@@ -256,9 +256,9 @@ GROUP BY
 
 #sql("getmaterialLines")
 SELECT
-    ( SELECT SUM ( Qty ) FROM T_Sys_PUInStoreDetail WHERE spotTicket = pd.spotTicket ) AS qtys,
+    ( SELECT SUM ( Qty ) FROM T_Sys_PUInStoreDetail WHERE BarCode = pd.BarCode ) AS qtys,
     0 - pd.Qty AS qty,
-    a.cBarcode AS spotticket,
+    a.cBarcode AS BarCode,
     b.cInvCode ,
     b.cInvName ,
     b.cInvCode1,
@@ -282,7 +282,7 @@ SELECT
 FROM
     T_Sys_PUInStore t1
         LEFT JOIN T_Sys_PUInStoreDetail pd ON t1.AutoID = pd.MasID
-        LEFT JOIN PS_PurchaseOrderDBatch a ON pd.spotTicket = a.cBarcode
+        LEFT JOIN PS_PurchaseOrderDBatch a ON pd.BarCode = a.cBarcode
         AND a.isEffective = '1'
         LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
         LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
@@ -295,7 +295,7 @@ FROM
 WHERE
     1 = 1
   AND t1.AutoID = '#(autoid)'
-  AND (SELECT SUM (Qty) FROM T_Sys_PUInStoreDetail WHERE  spotTicket =pd.spotTicket )> 0
+  AND (SELECT SUM (Qty) FROM T_Sys_PUInStoreDetail WHERE  BarCode =pd.BarCode )> 0
     #if(OrgCode)
   AND t1.OrganizeCode = #para(OrgCode)
     #end
@@ -347,7 +347,7 @@ FROM
             cSourceBarcode
         FROM
             PS_SubcontractOrderDBatch
-    ) t4 ON t2.spotTicket = t4.cbarcode
+    ) t4 ON t2.BarCode = t4.cbarcode
         LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
 WHERE t1.AutoID = '#(autoid)'
   AND t2.Qty < 0
@@ -383,7 +383,7 @@ select top #(limit)
        ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName,
        ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
 FROM T_Sys_PUInStoreDetail pd
-         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.spotTicket = a.cBarcode
+         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.BarCode = a.cBarcode
          LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
          LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
          LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
@@ -395,8 +395,8 @@ where
     1=1
     AND pd.MasID = '#(autoid)'
     AND b.cOrgCode = #(orgCode)
-    #if(spottickets != null)
-        AND pd.spotTicket not in ( #(spottickets) )
+    #if(barcodes != null)
+        AND pd.barcode not in ( #(barcodes) )
     #end
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
@@ -415,13 +415,13 @@ FROM T_Sys_PUInStoreDetail
 WHERE isDeleted = 0
     AND MasID = '#(autoid)'
     #if(barcode)
-		and spotTicket = #para(barcode)
+		and barcode = #para(barcode)
 	#end
 #end
 
 #sql("barcode")
 select
-    a.cBarcode as spotTicket,
+    a.cBarcode as barcode,
     b.cInvCode ,
     b.cInvName ,
     b.cInvCode1,
@@ -446,7 +446,7 @@ select
     ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName ,
     ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
 FROM T_Sys_PUInStoreDetail pd
-         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.spotTicket = a.cBarcode
+         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.barcode = a.cBarcode
          LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
          LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
          LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid

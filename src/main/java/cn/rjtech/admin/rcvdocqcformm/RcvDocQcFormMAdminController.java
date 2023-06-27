@@ -120,25 +120,10 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         //判断是否要先生成从表数据
         service.checkAutoCreateRcvDocQcFormD(record.getLong("iautoid"));
         // 表头项目
-        RcvDocQcFormM qcFormM = service.findById(record.getLong("iautoid"));
-        List tableHeadData = service.getTableHeadData(qcFormM.getIQcFormId());
+        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
         set("columns", tableHeadData);
         set("record", record);
         render("checkout.html");
-    }
-
-    /**
-     * 进入子页面自动加载table的数据
-     */
-    public void getCheckOutTableDatas() {
-        renderJsonData(service.getCheckOutTableDatas(getKv()));
-    }
-
-    /**
-     * 在检验页面点击确定
-     */
-    public void saveCheckOutTable(JBoltPara JboltPara) {
-        renderJson(service.saveCheckOutTable(JboltPara));
     }
 
     /**
@@ -152,8 +137,7 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         }
         List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
         // 表头项目
-        RcvDocQcFormM qcFormM = service.findById(record.getLong("iautoid"));
-        List tableHeadData = service.getTableHeadData(qcFormM.getIQcFormId());
+        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
         set("columns", tableHeadData);
         set("docparamlist", docparamlist);
         set("record", record);
@@ -172,12 +156,25 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         //List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
         List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
         // 表头项目
-        RcvDocQcFormM qcFormM = service.findById(record.getLong("iautoid"));
-        List tableHeadData = service.getTableHeadData(qcFormM.getIQcFormId());
+        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
         set("columns", tableHeadData);
         set("docparamlist", docparamlist);
         set("record", record);
         render("editTable.html");
+    }
+
+    /**
+     * 进入子页面自动加载table的数据
+     */
+    public void getCheckOutTableDatas() {
+        renderJsonData(service.getCheckOutTableDatas(getKv()));
+    }
+
+    /**
+     * 在检验页面点击确定
+     */
+    public void saveCheckOutTable(JBoltPara JboltPara) {
+        renderJson(service.saveCheckOutTable(JboltPara));
     }
 
     /**

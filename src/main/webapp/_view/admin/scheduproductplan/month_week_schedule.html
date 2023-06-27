@@ -369,10 +369,10 @@
     sheet.getRange(-1, -1,-1,-1).font('宋体 bold 10px');
     statusBar.bind(spread);//状态栏
     spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
-    // sheet.options.isProtected = true; // 开启工作表保护
-    // sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
-    // sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
-    // sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
+    sheet.options.isProtected = true; // 开启工作表保护
+    sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+    sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+    sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
     var parmsDefault = {
         id:null,                //全局公共id
         level:'',               //排场层级
@@ -640,10 +640,10 @@
      */
     function initData(ilevel){
         spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
-        // sheet.options.isProtected = true; // 开启工作表保护
-        // sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
-        // sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
-        // sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
+        sheet.options.isProtected = true; // 开启工作表保护
+        sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+        sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+        sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
         //定义接口参数
         let url = Api + `admin/scheduproductplanmonth/getScheduPlanMonthList?level=${ilevel==null||undefined?'1':ilevel}&startdate=${searchData.searchStartTime}&enddate=${searchData.searchEndTime}&cworkname=${searchData.cworkname}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`
         LayerMsgBox.loading("正在获取最新数据...",20000);
@@ -1055,7 +1055,6 @@
                     }
                 })
                 sheet.clearPendingChanges({clearType: 1, row: -1, rowCount: -1, col: -1, colCount: -1});
-            console.log(parms.tableData)
             }, 0);
     });
     /**
