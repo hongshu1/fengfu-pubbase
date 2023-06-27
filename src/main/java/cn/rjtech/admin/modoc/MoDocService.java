@@ -170,13 +170,13 @@ public class MoDocService extends BaseService<MoDoc> {
     moDoc.setCRoutingName(moDoc.getCRoutingName());
     InventoryRouting byId = inventoryRoutingService.findById(moDoc.getIInventoryRouting());
     moDoc.setCVersion(byId.getCVersion());
-    moDoc.setIcreateby(JBoltUserKit.getUserId());
+    moDoc.setICreateBy(JBoltUserKit.getUserId());
     moDoc.setCCreateName(JBoltUserKit.getUserName());
     moDoc.setDCreateTime(new Date());
     Date dCreateTime = new Date();
     String userName = JBoltUserKit.getUserName();
     Long userId = JBoltUserKit.getUserId();
-    moDoc.setIcreateby(userId);
+    moDoc.setICreateBy(userId);
     moDoc.setCCreateName(userName);
     moDoc.setDCreateTime(dCreateTime);
     tx(() -> {
@@ -291,7 +291,7 @@ public class MoDocService extends BaseService<MoDoc> {
     String userName = JBoltUserKit.getUserName();
     Long userId = JBoltUserKit.getUserId();
     moDoc.setCMoDocNo(generateBarCode());
-    moDoc.setIcreateby(userId);
+    moDoc.setICreateBy(userId);
     moDoc.setCCreateName(userName);
     moDoc.setDCreateTime(dCreateTime);
     // 工艺路线
@@ -1122,6 +1122,7 @@ public class MoDocService extends BaseService<MoDoc> {
       records.forEach(record -> {
         MoDoc moDoc = findById(record.getStr("iautoid"));
         moDoc.setIQty(record.getBigDecimal("qty"));
+        moDoc.setIsModified(false);
         moDoc.update();
       });
       return true;
