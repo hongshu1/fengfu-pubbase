@@ -715,3 +715,7 @@
 #namespace("proditem")
 #include("proditem/proditem.sql")
 #end
+
+#namespace("momopatchweldm")
+#include("momopatchweldm/momopatchweldm.sql")
+#end

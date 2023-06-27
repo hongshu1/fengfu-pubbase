@@ -1813,18 +1813,18 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
                     //  审批流
                 case FLOW:
-                    switch (AuditStatusEnum.toEnum(formApproval.getInt(IAUDITSTATUS))) {
+                    switch (AuditStatusEnum.toEnum(formData.getInt(IAUDITSTATUS))) {
                         case APPROVED:
                             invokeMethod(className, "preWithdrawFromAuditted", formAutoId);
 
                             // 更新单据状态为未审批
-                            ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formApproval.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
+                            ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formData.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
 
                             invokeMethod(className, "postWithdrawFromAuditted", formAutoId);
                             break;
                         case AWAIT_AUDIT:
                             // 更新单据状态为未审批
-                            ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formApproval.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
+                            ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formData.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
 
                             invokeMethod(className, "withdrawFromAuditting", formAutoId);
                             break;

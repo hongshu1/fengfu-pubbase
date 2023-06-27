@@ -56,6 +56,11 @@ public class ScheduProductPlanYearController extends BaseAdminController {
             isedit = true;
         }
         set("isedit",isedit);
+
+        ApsAnnualplanm apsAnnualplanm = service.findById(get("iautoid"));
+        set("iautoid",get("iautoid"));
+        set("apsAnnualplanm",apsAnnualplanm);
+
         render("planyear_add.html");
     }
 
