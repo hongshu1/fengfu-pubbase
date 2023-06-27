@@ -536,4 +536,10 @@ public class WorkregionmService extends BaseService<Workregionm> {
 
     }
 
+    /**
+     *根据产线名称获取数据
+     */
+    public Workregionm findFirstByWorkName(String cWorkName) {
+        return  findFirst(selectSql().select().eq(Workregionm.CWORKNAME, cWorkName));
+    }
 }
