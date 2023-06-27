@@ -128,7 +128,7 @@
 							</div>		
 							<label class="col-sm-1 col-form-label">业务员</label>
 							<div class="col">
-                                <input type="hidden" id="ipersonid_#(pageId)" name="subcontractsaleorderm.ibuspersonid" value="#(weekOrderM.ibuspersonid??)"/>
+                                <input type="hidden" id="ipersonid_#(pageId)" name="subcontractsaleorderm.ibuspersonid" value="#(subcontractsaleorderm.ibuspersonid??)"/>
                                 <input type="text" autocomplete="off"
                                        class="form-control"
                                        placeholder="==请选择人员=="
@@ -140,7 +140,7 @@
                                        data-hidden-input="ipersonid_#(pageId)"
                                        data-load-type="ajaxportal"
                                        data-url="admin/workregionm/personTable"
-                                       value="#(weekOrderM.cpsnname??)"
+                                       value="#(subcontractsaleorderm.cpsnname??)"
                                 />
 							</div>
 						</div>

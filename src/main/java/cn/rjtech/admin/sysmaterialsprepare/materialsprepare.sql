@@ -688,3 +688,22 @@ FROM
 WHERE 1=1
   AND  d.iAutoId='#(imodocid)'
     #end
+
+
+
+#sql("zijianwuliaoji2")
+SELECT
+    a.iInventoryId,
+    f.cInvCode,
+    a.iUsageUOM,
+    a.iUsageUOM*d.iQty AS planIqty
+FROM
+    Mo_MoRoutingInvc a
+        LEFT JOIN Bd_Inventory f ON a.iInventoryId= f.iAutoId
+        LEFT JOIN Mo_MoRoutingConfig b ON a.iMoRoutingConfigId= b.iAutoId
+        LEFT JOIN Mo_MoRouting c ON b.iMoRoutingId= c.iAutoId
+        LEFT JOIN Mo_MoDoc d ON c.iMoDocId= d.iAutoId
+WHERE 1=1
+  AND  d.iAutoId='#(imodocid)'
+  AND  f.cInvCode='#(cinvcode)'
+    #end

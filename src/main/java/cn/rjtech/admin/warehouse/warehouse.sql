@@ -125,6 +125,10 @@ FROM
 #if(cwhname)
     AND cWhName = #para(cwhname)
 #end
+#if(iautoid)
+    AND iautoid != #para(iautoid)
+#end
+
 #end
 
 #sql("getCdepnameByCdepcode")

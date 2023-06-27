@@ -58,9 +58,15 @@
 <div class="jbolt_table_toolbar" id="Equipment_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增设备管理-设备档案" data-url="admin/equipment/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
-
 	<div class="btn-group dropdown">
-		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入</button>
+		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+		<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+			<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/equipment/exportExcelByCheckedIds"><i class="fa fa-download"></i> 导出选中</button>
+			<button class="btn dropdown-item" data-downloadbtn data-url="admin/equipment/exportExcelAll" data-form="Equipment_form_#(pageId)"><i class="fa fa-download"></i> 导出全部</button>
+		</div>
+	</div>
+	<div class="btn-group dropdown">
+		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">数据导入</button>
 		<div class="dropdown-menu" aria-labelledby="importMenuButton">
 			<a href="assets/exceltpl/equipment.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
 			<div class="j_upload_file_box"
@@ -78,14 +84,14 @@
 	</div>
 
 </div>
-<div class="float-right" role="group" aria-label="btn-group">
-<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" tooltip data-title="导入Excel数据" data-url="admin/equipment/initImportExcel" data-btn="close" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>
-	<div class="btn-group btn-group-sm">
-		<button tooltip data-title="导出Excel(查询结果)" data-form="Equipment_form_#(pageId)" class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="admin/equipment/exportExcelByForm"><i class="fa fa-download"></i></button>
-		<button tooltip data-title="导出Excel(选中行数据)" data-usecheckedids="true" class="btn btn-outline-success btn-sm" data-downloadbtn data-url="admin/equipment/exportExcelByCheckedIds"><i class="fa fa-download"></i></button>
-		<button tooltip data-title="导出Excel(所有数据)" class="btn btn-outline-info btn-sm" data-downloadbtn data-url="admin/equipment/exportExcelAll"><i class="fa fa-download"></i></button>
-	</div>
-</div>
+<!--<div class="float-right" role="group" aria-label="btn-group">-->
+<!--<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" tooltip data-title="导入Excel数据" data-url="admin/equipment/initImportExcel" data-btn="close" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>-->
+<!--	<div class="btn-group btn-group-sm">-->
+<!--		<button tooltip data-title="导出Excel(查询结果)" data-form="Equipment_form_#(pageId)" class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="admin/equipment/exportExcelByForm"><i class="fa fa-download"></i></button>-->
+<!--		<button tooltip data-title="导出Excel(选中行数据)" data-usecheckedids="true" class="btn btn-outline-success btn-sm" data-downloadbtn data-url="admin/equipment/exportExcelByCheckedIds"><i class="fa fa-download"></i></button>-->
+<!--		<button tooltip data-title="导出Excel(所有数据)" class="btn btn-outline-info btn-sm" data-downloadbtn data-url="admin/equipment/exportExcelAll"><i class="fa fa-download"></i></button>-->
+<!--	</div>-->
+<!--</div>-->
 
 </div>
 <table class="jbolt_table jbolt_main_table  table-center "

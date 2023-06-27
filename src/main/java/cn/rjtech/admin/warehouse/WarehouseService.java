@@ -109,8 +109,18 @@ public class WarehouseService extends BaseService<Warehouse> {
 //		if(existsName(warehouse.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 
     //查重
-    ValidationUtils.assertNull(findByWhCode(warehouse.getCWhCode()), "仓库编码重复！");
-    ValidationUtils.assertNull(findByWhCode(warehouse.getCWhName()), "仓库名称重复！");
+//    ValidationUtils.assertNull(findByWhCode(warehouse.getCWhCode()), "仓库编码重复！");
+//    ValidationUtils.assertNull(findByWhCode(warehouse.getCWhName()), "仓库名称重复！");
+
+    Integer isRepetition1 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhcode", warehouse.getCWhCode())).queryInt();
+    if (isRepetition1 >= 1) {
+      ValidationUtils.error("【仓库编码】已经存在，请修改后保存");
+    }
+
+    Integer isRepetition2 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhname", warehouse.getCWhName())).queryInt();
+    if (isRepetition2 >= 1) {
+      ValidationUtils.error("【仓库名称】已经存在，请修改后保存");
+    }
 
     //创建信息
     warehouse.setIcreateby(JBoltUserKit.getUserId());
@@ -150,12 +160,16 @@ public class WarehouseService extends BaseService<Warehouse> {
       return fail(JBoltMsg.DATA_NOT_EXIST);
     }
 
-    //查询编码是否存在
-    Warehouse ware = findByWhCode(warehouse.getCWhCode());
+    Integer isRepetition1 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhcode", warehouse.getCWhCode()).
+        set("iautoid", warehouse.getIAutoId())).queryInt();
+    if (isRepetition1 >= 1) {
+      ValidationUtils.error("【仓库编码】已经存在，请修改后保存");
+    }
 
-    //编码重复判断
-    if (ware != null && !warehouse.getIAutoId().equals(ware.getIAutoId())) {
-      ValidationUtils.assertNull(ware.getCWhCode(), "仓库编码重复！");
+    Integer isRepetition2 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhname", warehouse.getCWhName()).
+        set("iautoid", warehouse.getIAutoId())).queryInt();
+    if (isRepetition2 >= 1) {
+      ValidationUtils.error("【仓库名称】已经存在，请修改后保存");
     }
 
     //if(existsName(warehouse.getName(), warehouse.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
@@ -383,17 +397,18 @@ public class WarehouseService extends BaseService<Warehouse> {
 
     int i = 1;
     for (Record record : records) {
+      String str = "第【" + i + "】行的";
       if (StrUtil.isBlank(record.getStr("cWhCode"))) {
-        return fail("仓库编码不能为空");
+        return fail(str + "仓库编码不能为空");
       }
       if (StrUtil.isBlank(record.getStr("cWhName"))) {
-        return fail("仓库名称不能为空");
+        return fail(str + "仓库名称不能为空");
       }
       if (StrUtil.isBlank(record.getStr("cDepCode"))) {
-        return fail("所属部门名称不能为空");
+        return fail(str + "所属部门名称不能为空");
       }
 
-      String str = "第【" + i + "】行的";
+
       //<editor-fold desc="是否启用空间管控数据判断">
       if (StrUtil.isBlank(record.getStr("isSpaceControlEnabled"))) {
         return fail("是否启用空间管控不能为空");
@@ -435,13 +450,13 @@ public class WarehouseService extends BaseService<Warehouse> {
 
 
       Integer isRepetition1 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhcode", record.getStr("cwhcode"))).queryInt();
-      if (isRepetition1 > 1) {
+      if (isRepetition1 >= 1) {
         String msg = str + "【仓库编码】已经存在，请修改后重新导入";
         return fail(msg);
       }
 
       Integer isRepetition2 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhname", record.getStr("cwhname"))).queryInt();
-      if (isRepetition2 > 1) {
+      if (isRepetition2 >= 1) {
         String msg = str + "【仓库名称】已经存在，请修改后重新导入";
         return fail(msg);
       }

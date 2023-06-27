@@ -1,18 +1,25 @@
 package cn.rjtech.admin.fitemss97;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Fitemss97;
+import cn.rjtech.model.momdata.Fitemss97class;
+import cn.rjtech.model.momdata.RdStyle;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 /**
  * 项目管理大类项目主目录 Service
  * @ClassName: Fitemss97Service
@@ -32,13 +39,76 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 	 * 后台管理分页查询
 	 * @param pageNumber
 	 * @param pageSize
-	 * @param keywords
+	 * @param
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
 		para.set("iorgid",getOrgId());
 		return dbTemplate("fitemss97.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 	}
+
+
+
+	/**
+	 * 得到后台分类数据树 包含所有数据
+	 *
+	 *
+	 * @param openLevel 打开级别
+	 */
+	public List<JsTreeBean> getMgrTree( int openLevel,String sn) {
+		/**
+		 * 项目大类目录
+		 */
+		List<Record> records = dbTemplate("fitemss97.findfitemss97classList",Kv.by("sn",sn)).find();
+
+		List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
+		for (Record record :records) {
+			JsTreeBean parent = new JsTreeBean(record.getStr("cItemCcode"), "#", record.getStr("cItemCname"), null, "", false);
+			jsTreeBeanList.add(parent);
+			List<Record> subRecords = dbTemplate("fitemss97.findfitemss97List",Kv.by("citemccode",record.get("cItemCcode"))).find();
+			for (Record subRecord : subRecords) {
+				Long id = subRecord.getLong("iAutoId");
+				Object pid = subRecord.getStr("iSourceId");
+				String text = "[" + subRecord.getStr("citemcode") + "]" + subRecord.getStr("citemname");
+				String type = subRecord.getStr("citemcode");
+				JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text, type, "", false);
+				jsTreeBeanList.add(jsTreeBean);
+			}
+		}
+
+		return jsTreeBeanList;
+	}
+
+
+	public List<Fitemss97> getTreeDatas(boolean onlyEnable, boolean asOptions) {
+		List<Fitemss97> fitemss97List = getMgrList();
+		for (Fitemss97 fitemss97 : fitemss97List){
+			String iSourceId = fitemss97.getStr("iSourceId");
+			fitemss97.set("iSourceId",Long.valueOf(iSourceId));
+		}
+		List<Fitemss97> fitemss97s = this.convertToModelTree(fitemss97List, "iAutoId", "iSourceId", (p) -> this.notOk(Long.valueOf(p.getISourceId())));
+		return fitemss97s;
+	}
+
+	/**
+	 * 获取分类数据中的所有后端分类数据
+	 */
+	public List<Fitemss97> getMgrList() {
+		return getrdstyle(true);
+	}
+
+	/**
+	 * 获取分类数据
+	 *
+	 *
+	 */
+	public List<Fitemss97> getrdstyle(Boolean isEnabled) {
+		Okv kv = Okv.by("isDeleted", false);
+		return getCommonList( kv,"iAutoId", "asc");
+	}
+
+
+
 
 	/**
 	 * 保存
