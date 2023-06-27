@@ -397,17 +397,18 @@ public class WarehouseService extends BaseService<Warehouse> {
 
     int i = 1;
     for (Record record : records) {
+      String str = "第【" + i + "】行的";
       if (StrUtil.isBlank(record.getStr("cWhCode"))) {
-        return fail("仓库编码不能为空");
+        return fail(str + "仓库编码不能为空");
       }
       if (StrUtil.isBlank(record.getStr("cWhName"))) {
-        return fail("仓库名称不能为空");
+        return fail(str + "仓库名称不能为空");
       }
       if (StrUtil.isBlank(record.getStr("cDepCode"))) {
-        return fail("所属部门名称不能为空");
+        return fail(str + "所属部门名称不能为空");
       }
 
-      String str = "第【" + i + "】行的";
+
       //<editor-fold desc="是否启用空间管控数据判断">
       if (StrUtil.isBlank(record.getStr("isSpaceControlEnabled"))) {
         return fail("是否启用空间管控不能为空");
