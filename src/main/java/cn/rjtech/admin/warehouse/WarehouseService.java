@@ -445,6 +445,8 @@ public class WarehouseService extends BaseService<Warehouse> {
         return fail(msg);
       }
 
+      String cdepcode = dbTemplate("warehouse.getCdepnameByCdepcode", Kv.by("cdepname", record.getStr("cdepcode"))).queryStr();
+
 
       //空间管控
       int isSpaceControlEnabled = record.getStr("isspacecontrolenabled").equals("是") ? 1 : 0;
@@ -471,6 +473,7 @@ public class WarehouseService extends BaseService<Warehouse> {
       record.set("isreservoirarea", isreservoirarea);
       record.set("isSpaceControlEnabled", isSpaceControlEnabled);
       record.set("isStockWarnEnabled", isStockWarnEnabled);
+      record.set("cdepcode", cdepcode);
       i++;
     }
 

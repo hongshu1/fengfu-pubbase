@@ -118,10 +118,15 @@ SELECT
 	ISNULL( COUNT ( iAutoId ), 0 )
 FROM
 	Bd_Warehouse
+	WHERE isDeleted=0
 #if(cwhcode)
-    WHERE cWhCode = #para(cwhcode)
+    AND cWhCode = #para(cwhcode)
 #end
 #if(cwhname)
-    WHERE cWhName = #para(cwhname)
+    AND cWhName = #para(cwhname)
 #end
+#end
+
+#sql("getCdepnameByCdepcode")
+select cDepCode from bd_department where cDepName = #para(cdepname)
 #end
