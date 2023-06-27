@@ -1485,6 +1485,7 @@ public class PermissionKey {
 	 * 生产表单设置
 	 */
 	public static final String PRODFORM = "prodform";
+
 	/**
 	 * 补焊纪录管理
 	 */
