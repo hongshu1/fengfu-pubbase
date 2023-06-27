@@ -10,6 +10,7 @@ import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.MoDoc;
 import cn.rjtech.model.momdata.MoMotask;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
@@ -1001,6 +1002,18 @@ public class MoMotaskService extends BaseService<MoMotask> {
     ValidationUtils.notBlank(kv.getStr("pageSize"), "分页数据未传入！！！");
 //    ValidationUtils.notBlank(kv.getStr("depcode"), "部门编码未传入！！！");AND per.cdept_num=#para(depcode)
     return dbTemplate("modocbatch.getUserDatas", kv).paginate(kv.getInt("pageNumber"), kv.getInt("pageSize"));
+  }
+
+  /**
+   * 编辑计划保存
+   *
+   * @param records
+   * @return
+   */
+  public Ret savePlan(List<Record> records) {
+    MoDoc moDoc = new MoDoc();
+    boolean success = moDoc.save();
+    return ret(success);
   }
 
 }

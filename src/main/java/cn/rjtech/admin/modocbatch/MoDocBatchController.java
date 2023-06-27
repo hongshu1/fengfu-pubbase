@@ -2,15 +2,19 @@ package cn.rjtech.admin.modocbatch;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.momotask.MoMotaskService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.MoDoc;
 import cn.rjtech.model.momdata.MoMotask;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
@@ -62,7 +66,7 @@ public class MoDocBatchController extends BaseAdminController {
    */
   public void personEdit() {
     keepPara();
-    set("taskId",getLong(0));
+    set("taskId", getLong(0));
     render("person_edit.html");
   }
 
@@ -85,7 +89,7 @@ public class MoDocBatchController extends BaseAdminController {
    */
   public void editPlan() {
     keepPara();
-    set("taskId",getLong(0));
+    set("taskId", getLong(0));
     render("planform.html");
   }
 
@@ -94,7 +98,7 @@ public class MoDocBatchController extends BaseAdminController {
    */
   public void personShow() {
     keepPara();
-    set("taskId",getLong(0));
+    set("taskId", getLong(0));
     render("personshow.html");
   }
 
@@ -112,5 +116,14 @@ public class MoDocBatchController extends BaseAdminController {
     renderJsonData(service.getUserDatas(getKv()));
   }
 
+
+  /**
+   * 编辑计划保存
+   */
+  public void savePlan() {
+    Kv kv = getKv();
+    List<Record> list = JBoltModelKit.getFromRecords(JSONArray.parseArray(kv.getStr("modoc")));
+    renderJsonData(service.savePlan(list));
+  }
 
 }
