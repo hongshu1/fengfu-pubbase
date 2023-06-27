@@ -360,7 +360,6 @@ public class ProposalmAdminController extends BaseAdminController {
             set("sourceinatmoney", sourceProposalm.getINatMoney());
             set("sourceinatsum", sourceProposalm.getINatSum());
         }
-        //keepPara();
         set("proposalm", proposalm);
         set("cdepname", departmentService.getCdepName(proposalm.getCDepCode()));
         // 如果是已审核的，设置为只读
