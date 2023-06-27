@@ -78,7 +78,7 @@ where 1=1
 
 
 #sql("Whcode")
-SELECT  a.*,a.cWhCode as whcode,a.cWhName as whname,dt.cDepName
+SELECT  a.*,a.cWhCode as whcode,a.cWhName as whname
 FROM Bd_Warehouse a
 LEFT JOIN bd_department dt ON a.cDepCode = dt.iAutoId and dt.isDeleted = 0
 where a.isDeleted = 0
