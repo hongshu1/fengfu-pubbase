@@ -1003,17 +1003,4 @@ public class MoMotaskService extends BaseService<MoMotask> {
 //    ValidationUtils.notBlank(kv.getStr("depcode"), "部门编码未传入！！！");AND per.cdept_num=#para(depcode)
     return dbTemplate("modocbatch.getUserDatas", kv).paginate(kv.getInt("pageNumber"), kv.getInt("pageSize"));
   }
-
-  /**
-   * 编辑计划保存
-   *
-   * @param records
-   * @return
-   */
-  public Ret savePlan(List<Record> records) {
-    MoDoc moDoc = new MoDoc();
-    boolean success = moDoc.save();
-    return ret(success);
-  }
-
 }
