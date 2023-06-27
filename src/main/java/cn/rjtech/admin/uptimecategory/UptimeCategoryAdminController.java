@@ -1,16 +1,13 @@
 package cn.rjtech.admin.uptimecategory;
 
-import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.UptimeCategory;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
 /**
@@ -95,5 +92,14 @@ public class UptimeCategoryAdminController extends BaseAdminController {
 
 	public void options() {
 		renderJsonData(service.options());
+	}
+
+	/**
+	 * 表格内容
+	 */
+	public void uptimeTplTableDatas()
+	{
+		Kv kv = getKv();
+		renderJsonData(service.uptimeTplTableDatas(getKv()));
 	}
 }
