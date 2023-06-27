@@ -669,6 +669,10 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 				sysMaterialspreparescans.add(sysMaterialspreparescan);
 
 				//提交备料存入下一环节扫码日志表
+				Kv kv2 = new Kv();
+				kv2.set("imodocid",moDocS.findFirst("SELECT * FROM Mo_MoDoc WHERE cMoDocNo=?",cmodocno).getIAutoId());
+				kv2.set("cinvcode",data[1]);
+				Record zijianwuliaoS = dbTemplate("materialsprepare.zijianwuliaoji2", kv2).findFirst();
 				moMaterialscanlog.setIAutoId(JBoltSnowflakeKit.me.nextId());
 				moMaterialscanlog.setIMoDocId(moDocS.findFirst("SELECT * FROM Mo_MoDoc WHERE cMoDocNo=?",cmodocno).getIAutoId());
 				moMaterialscanlog.setIMaterialsPrepairDid(Long.valueOf(sysMaterialspreparedetail.getAutoID()));
@@ -678,6 +682,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 				moMaterialscanlog.setICreateBy(user.getId());
 				moMaterialscanlog.setCCreateName(user.getUsername());
 				moMaterialscanlog.setDCreateTime(now);
+				moMaterialscanlog.setIPlayQty(zijianwuliaoS.get("planIqty"));
 				moMaterialscanlogs.add(moMaterialscanlog);
 				//更改条码库存表状态
 				stockBarcodePosition.setState(3);

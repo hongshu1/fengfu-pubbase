@@ -981,6 +981,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 							record.getLong(PurchaseOrderD.IINVENTORYID),
 							vendorAddr.getCDistrictName(),
 							record.getStr(PurchaseOrderD.CMEMO),
+							record.getStr(PurchaseOrderD.IPKGQTY),
 							IsOkEnum.toEnum(isPresent).getText());
 					break;
 				default:
@@ -990,6 +991,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 							record.getLong(PurchaseOrderD.IINVENTORYID),
 							vendorAddr.getCDistrictName(),
 							record.getStr(PurchaseOrderD.CMEMO),
+							record.getStr(PurchaseOrderD.IPKGQTY),
 							IsOkEnum.toEnum(isPresent).getText());
 			}
 			subcontractOrderDList.add(subcontractOrderD);

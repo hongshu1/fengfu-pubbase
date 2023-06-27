@@ -230,6 +230,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
                 subcontractsaleorderm.setIUpdateBy(user.getId());
                 subcontractsaleorderm.setCUpdateName(user.getName());
                 subcontractsaleorderm.setDUpdateTime(now);
+                subcontractsaleorderm.setIsDeleted(false);
                 ValidationUtils.isTrue(subcontractsaleorderm.save(), ErrorMsg.SAVE_FAILED);
             } else {
                 subcontractsaleorderm.setIUpdateBy(user.getId());
@@ -485,19 +486,6 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      */
     @Override
     public String preSubmitFunc(long formAutoId) {
-        Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
-
-        switch (MonthOrderStatusEnum.toEnum(subcontractsaleorderm.getIOrderStatus())) {
-            // 已保存
-            case SAVED:
-                // 不通过
-            case REJECTED:
-
-                break;
-            default:
-                return "订单非已保存状态";
-        }
-
         return null;
     }
 
@@ -505,7 +493,10 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * 提审后业务处理，如有异常返回错误信息
      */
     public String postSubmitFunc(long formAutoId) {
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
+        Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
+        if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == subcontractsaleorderm.getIOrderStatus() || WeekOrderStatusEnum.REJECTED.getValue() == subcontractsaleorderm.getIOrderStatus()) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
+        }
         return null;
     }
 

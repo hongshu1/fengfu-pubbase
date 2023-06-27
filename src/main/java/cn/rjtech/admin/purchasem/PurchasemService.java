@@ -348,7 +348,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
             }
             return true;
         });
-        if(flg) return SUCCESS;
+        if(flg) return successWithData(purchasem.keep("iautoid"));
         else return FAIL;
     }
 	/**
@@ -828,7 +828,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 			deletePurchasedDatas(jBoltTable.getDelete());
 			return true;
 		});
-		return SUCCESS;
+		return successWithData(purchasem.keep("iautoid"));
 	}
 	//表格提交-新增申购明细数据
 	private void addPurchasedDatas(List<Record> saveRecordList, Purchasem purchasem) {

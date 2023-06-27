@@ -1,18 +1,21 @@
 package cn.rjtech.admin.equipment;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
+import cn.jbolt.core.poi.excel.*;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Equipment;
+import cn.rjtech.model.momdata.Person;
+import cn.rjtech.model.momdata.Workregionm;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -23,7 +26,9 @@ import com.jfinal.plugin.activerecord.Record;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设备管理-设备档案
@@ -40,7 +45,8 @@ public class EquipmentService extends BaseService<Equipment> {
 
 	@Inject
 	private CusFieldsMappingDService cusFieldsMappingDService;
-
+	@Inject
+	private WorkregionmService workregionmService;
 	@Override
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
@@ -262,8 +268,11 @@ public class EquipmentService extends BaseService<Equipment> {
                             JBoltExcelHeader.create("isnozzleswitchenabled","是否导电咀更换",15),
                             JBoltExcelHeader.create("statename","状态",15),
                             JBoltExcelHeader.create("ccreatename","创建人名称",15),
-                            JBoltExcelHeader.create("dcreatetime","创建时间",15)
-                            )
+                            JBoltExcelHeader.create("dcreatetime","创建时间",20)
+                            ).setDataChangeHandler((data, index) -> {
+								//设置数据转换处理器
+                             data.changeBooleanToStr("isnozzleswitchenabled", "是", "否");
+							})
     		    	//设置导出的数据源 来自于数据库查询出来的Model List
     		    	.setRecordDatas(2,datas)
     		    );
@@ -314,7 +323,8 @@ public class EquipmentService extends BaseService<Equipment> {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 		}
 
-
+		// 产线
+		Map<String, Workregionm> workregionmMap = new HashMap<>();
 		for (Record record : records) {
 
 			if (StrUtil.isBlank(record.getStr("cEquipmentCode"))) {
@@ -330,6 +340,14 @@ public class EquipmentService extends BaseService<Equipment> {
 				return fail("是否导电咀更换不能为空");
 			}
 
+			String iWorkRegionmId = record.getStr("iWorkRegionmId");
+			Workregionm workregionm = workregionmMap.get(iWorkRegionmId);
+			if (ObjUtil.isNull(workregionm)) {
+				workregionm = workregionmService.findFirstByWorkName(iWorkRegionmId);
+				ValidationUtils.notNull(workregionm, String.format("产线“%s”不存在", workregionmMap));
+				record.set("iWorkRegionmId",workregionm.getIAutoId());
+				workregionmMap.put(iWorkRegionmId, workregionm);
+			}
 
 			Date now=new Date();
 
@@ -346,6 +364,7 @@ public class EquipmentService extends BaseService<Equipment> {
 			record.set("iUpdateBy", JBoltUserKit.getUserId());
 			record.set("dUpdateTime", now);
 			record.set("cUpdateName", JBoltUserKit.getUserName());
+			record.set("isNozzleSwitchEnabled", "是".equals(record.getStr("isNozzleSwitchEnabled"))? 1 : 0);
 		}
 
 		// 执行批量操作

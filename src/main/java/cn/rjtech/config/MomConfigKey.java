@@ -25,5 +25,15 @@ public class MomConfigKey {
      * 关于我们
      */
     public static final String ABOUT_US="about_us";
+    
+    /**
+     * 部门层级
+     */
+    public static final String DEP_GRADE = "dep_grade";
+    
+    /**
+     * 邮件通知中系统的访问入口链接
+     */
+    public static final String EMAIL_LOGIN_URL = "email_login_url";
 
 }

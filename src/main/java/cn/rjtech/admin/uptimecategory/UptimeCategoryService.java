@@ -1,9 +1,9 @@
 package cn.rjtech.admin.uptimecategory;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.util.JBoltRandomUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.UptimeCategory;
 import com.jfinal.kit.Kv;
@@ -138,4 +138,18 @@ public class UptimeCategoryService extends BaseService<UptimeCategory> {
     public List<Record> options() {
 		return dbTemplate("uptimecategory.getAdminDatas", Kv.of("isenabled", "true")).find();
     }
+
+    public Long getOrAddUptimeCategoryByName(String cuptimeparamname) {
+		UptimeCategory uptimeCategory = findFirst(selectSql().eq("cUptimeCategoryName", cuptimeparamname));
+		if (notNull(uptimeCategory)) {
+			return uptimeCategory.getIAutoId();
+		}
+
+		UptimeCategory newUptimeCategory = new UptimeCategory();
+		newUptimeCategory.setCUptimeCategoryCode(JBoltRandomUtil.randomNumber(6));//待优化
+		newUptimeCategory.setCUptimeCategoryName(cuptimeparamname);
+		save(newUptimeCategory);
+		return newUptimeCategory.getIAutoId();
+
+	}
 }

@@ -3,6 +3,7 @@ package cn.rjtech.admin.purchaseorderd;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -146,11 +147,11 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 		String cMemo = jsonObject.getString(PurchaseOrderD.CMEMO.toLowerCase());
 		Boolean isPresent = jsonObject.getBoolean(PurchaseOrderD.ISPRESENT.toLowerCase());
 		Long iInventoryId = jsonObject.getLong(PurchaseOrderD.IINVENTORYID.toLowerCase());
-		Integer iPkgQty = jsonObject.getInteger(PurchaseOrderD.IPKGQTY.toLowerCase());
+		String iPkgQty = jsonObject.getString(PurchaseOrderD.IPKGQTY.toLowerCase());
 		return create(purchaseOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, iPkgQty, isPresent);
 	}
 	
-	public PurchaseOrderD create(Long purchaseOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, Integer iPkgQty, boolean isPresent){
+	public PurchaseOrderD create(Long purchaseOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, String iPkgQty, boolean isPresent){
 		PurchaseOrderD purchaseOrderD = new PurchaseOrderD();
 		purchaseOrderD.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		purchaseOrderD.setIPurchaseOrderMid(purchaseOrderMid);
@@ -160,11 +161,14 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 		purchaseOrderD.setIsPresent(isPresent);
 		purchaseOrderD.setCMemo(cMemo);
 		purchaseOrderD.setCAddress(cAddress);
-		purchaseOrderD.setIPkgQty(iPkgQty);
+		if (StrUtil.isNotBlank(iPkgQty)){
+			purchaseOrderD.setIPkgQty(Integer.valueOf(iPkgQty));
+		}
+		
 		return purchaseOrderD;
 	}
 	
-	public PurchaseOrderD create(Long id, Long purchaseOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, Integer iPkgQty, boolean isPresent) {
+	public PurchaseOrderD create(Long id, Long purchaseOrderMid, Long iVendorAddrId, Long iInventoryId, String cAddress, String cMemo, String iPkgQty, boolean isPresent) {
 		PurchaseOrderD purchaseOrderD = create(purchaseOrderMid, iVendorAddrId, iInventoryId, cAddress, cMemo, iPkgQty, isPresent);
 		purchaseOrderD.setIAutoId(id);
 		return purchaseOrderD;

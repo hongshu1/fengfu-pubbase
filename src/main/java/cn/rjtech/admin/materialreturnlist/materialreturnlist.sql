@@ -395,8 +395,8 @@ where
     1=1
     AND pd.MasID = '#(autoid)'
     AND b.cOrgCode = #(orgCode)
-    #if(BarCodes != null)
-        AND pd.BarCode not in ( #(spottickets) )
+    #if(barcodes != null)
+        AND pd.barcode not in ( #(barcodes) )
     #end
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
@@ -415,13 +415,13 @@ FROM T_Sys_PUInStoreDetail
 WHERE isDeleted = 0
     AND MasID = '#(autoid)'
     #if(barcode)
-		and BarCode = #para(barcode)
+		and barcode = #para(barcode)
 	#end
 #end
 
 #sql("barcode")
 select
-    a.cBarcode,
+    a.cBarcode as barcode,
     b.cInvCode ,
     b.cInvName ,
     b.cInvCode1,
@@ -446,7 +446,7 @@ select
     ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName ,
     ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
 FROM T_Sys_PUInStoreDetail pd
-         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.BarCode = a.cBarcode
+         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.barcode = a.cBarcode
          LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
          LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
          LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
@@ -458,7 +458,7 @@ where
     1=1
     AND pd.MasID = '#(autoid)'
     #if(detailHidden != null)
-    AND pd.BarCode not in ( #(detailHidden) )
+    AND pd.spotTicket not in ( #(detailHidden) )
     #end
 
 #end
