@@ -88,7 +88,7 @@ public class StockCheckDetailAdminController extends BaseAdminController {
 	 */
 	public void adjust() {
 		Ret adjust = service.adjust(getKv());
-		renderJsonData(adjust);
+		renderJson(adjust);
 	}
 
 

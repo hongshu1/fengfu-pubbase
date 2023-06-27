@@ -504,7 +504,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
 //        ValidationUtils.notNull(cDocNo, "推单失败");
 
         // 修改客户计划汇总
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iPushTo", 1).isOk(), JBoltMsg.FAIL);
+//        ValidationUtils.isTrue(updateColumn(formAutoId, "iPushTo", 1).isOk(), JBoltMsg.FAIL);
        // ValidationUtils.isTrue(updateColumn(formAutoId, "cDocNo", cDocNo).isOk(), JBoltMsg.FAIL);
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
         cusOrderSumService.algorithmSum();
@@ -567,8 +567,6 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
      */
     @Override
     public String preSubmitFunc(long formAutoId) {
-        WeekOrderM weekOrderM = findById(formAutoId);
-//        ValidationUtils.equals(weekOrderM.getIOrderStatus(), WeekOrderStatusEnum.NOT_AUDIT.getValue(), "订单非已保存状态");
         return null;
     }
 
@@ -577,7 +575,10 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
      */
     @Override
     public String postSubmitFunc(long formAutoId) {
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), "提审失败");
+        WeekOrderM weekOrderM = findById(formAutoId);
+        if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == weekOrderM.getIOrderStatus()|| WeekOrderStatusEnum.REJECTED.getValue() == weekOrderM.getIOrderStatus()) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), "提审失败");
+        }
         return null;
     }
 
