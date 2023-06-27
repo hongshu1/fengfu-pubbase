@@ -10,8 +10,11 @@
             <td>${data.cinvstd}</td> <!--型号-->
             <td>${data.cuomclassname}</td> <!--主计量单位-->
             <td>${data.qty}</td> <!--数量-->
+            <td>${data.citemccode}</td>
+            <td>${data.citemcname}</td>
             <td>${data.cinvccode}</td>
-            <td>${data.cinvcname}</td>
+            <td>${data.citemname}</td>
+
             <td  style="display: none">${data.sourcebilltype}</td> <!--来源单据类型-->
             <td  style="display: none">${data.sourcebillnorow}</td> <!--来源单号+行号-->
             <td  style="display: none">${data.sourcebillid}</td> <!--来源单据ID-->
@@ -62,10 +65,12 @@
               <th data-width="150" data-column="cinvaddcode">存货代码</th>
               <th data-width="150" data-column="cinvname">存货名称</th>
               <th data-width="150" data-column="cinvstd">规格型号</th>
-              <th data-width="150" data-column="inventorycuomname">主计量单位</th>
+              <th data-width="150" data-column="purchasecuomname">主计量单位</th>
             <th data-width="150" data-column="qty">现存量</th>
-            <th data-width="150" data-column="cinvccode">项目大类编码</th>
-            <th data-width="150" data-column="cinvcname">项目大类名称</th>
+            <th data-width="150" data-column="citemccode">项目大类编码</th>
+            <th data-width="150" data-column="citemcname">项目大类名称</th>
+            <th data-width="150" data-column="citemcode">项目编码</th>
+            <th data-width="150" data-column="citemname">项目名称</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -131,6 +136,7 @@
             $("#barcodes").val(codes);
         } else {
             $("#barcodes").val('');
+            $("#citemccode").val('');
         }
         return true;
     }
@@ -162,12 +168,12 @@
               width: 800,
               sync:"" ,
               valueAttr: "barcode",
-              columnAttr: "barcode,cinvcode,cinvaddcode,cinvname,cinvstd,qty,cinvccode,cinvcname,inventorycuomname",
-              header:' 现品票, 存货编码, 存货代码,存货名称, 规格型号,数量,项目大类编码, 项目大类名称,库存主单位',
+              columnAttr: "barcode,cinvcode,cinvaddcode,cinvname,cinvstd,qty,purchasecuomname",
+              header:' 现品票, 存货编码, 存货代码,存货名称, 规格型号,数量,库存主单位',
               changeColumns:[{column: "barcode", use: "barcode"},{column: "invcode", use: "cinvcode"},{column: "cinvaddcode", use: "cinvaddcode"},
                   {column: "cinvname", use: "cinvname"},{column: "cinvstd", use: "cinvstd"},
-                  {column: "qty", use: "qty"},{column: "cinvccode", use: "cinvccode"},
-                  {column: "cinvcname", use: "cinvcname"},{column: "inventorycuomname", use: "inventorycuomname"},
+                  {column: "qty", use: "qty"},
+                  {column: "purchasecuomname", use: "purchasecuomname"},
                   ],
               handler:function (table,td,text,value,jsonData) {
                   let datas = getJboltTableAllDatas("jbolt_table_otherdeliverylist_split_#(pageId)",["barcode"]);
@@ -196,13 +202,47 @@
               textAttr: "cinvcode",
               width: 800,
               valueAttr: "invcode",
-              columnAttr: "cinvcode,cinvaddcode,cinvname,cInvstd,qty,cinvccode,cinvcname,inventorycuomname",
+              columnAttr: "cinvcode,cinvaddcode,cinvname,cInvstd,qty,cinvccode,cinvcname,purchasecuomname",
               header:'存货编码, 存货代码,存货名称, 规格型号,数量,项目大类编码, 项目大类名称,库存主单位',
-              changeColumns:[{column: "barcode", use: "barcode"},{column: "invcode", use: "cinvcode"},{column: "cinvaddcode", use: "cinvaddcode"},
+              changeColumns:[{column: "invcode", use: "cinvcode"},{column: "cinvaddcode", use: "cinvaddcode"},
                   {column: "cinvname", use: "cinvname"},{column: "cInvstd", use: "cInvstd"},
                   {column: "qty", use: "qty"},{column: "cinvccode", use: "cinvccode"},
-                  {column: "cinvcname", use: "cinvcname"},{column: "inventorycuomname", use: "inventorycuomname"},
+                  {column: "cinvcname", use: "cinvcname"},{column: "purchasecuomname", use: "purchasecuomname"},
               ]
+          },
+          citemccode: {
+              sync:"" ,
+              type: "autocomplete",
+              url: "admin/otherdeliverylist/getCItemCCodeLines",
+              maxLength: 100,
+              required: true,
+              placeholder: "=请选择=",
+              textAttr: "citemccode",
+              width: 200,
+              valueAttr: "citemccode",
+              columnAttr: "citemccode,citemcname",
+              header:'项目大类编码, 项目大类名称',
+              changeColumns:[
+                  {column: "citemccode", use: "citemccode"},
+                  {column: "citemcname", use: "citemcname"},
+              ],
+          },
+          citemcode: {
+              type: "autocomplete",
+              url: "admin/otherdeliverylist/getItemCodeLines",
+              maxLength: 100,
+              // required: true,
+              linkColumn:"citemccode",
+              placeholder: "=请选择=",
+              textAttr: "citemcode",
+              width: 200,
+              valueAttr: "citemcode",
+              columnAttr: "citemcode,citemname",
+              header:'项目大类编码, 项目大类名称',
+              changeColumns:[
+                  {column: "citemcode", use: "citemcode"},
+                  {column: "citemname", use: "citemname"},
+              ],
           },
           qty: {
               type:"amount",

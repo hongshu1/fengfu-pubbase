@@ -451,19 +451,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
      */
     @Override
     public String preSubmitFunc(long formAutoId) {
-        ManualOrderM manualOrderM = findById(formAutoId);
-
-        switch (MonthOrderStatusEnum.toEnum(manualOrderM.getIOrderStatus())) {
-            // 已保存
-            case SAVED:
-                // 不通过
-            case REJECTED:
-
-                break;
-            default:
-                return "订单非已保存状态";
-        }
-
         return null;
     }
 
@@ -472,7 +459,10 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
      */
     @Override
     public String postSubmitFunc(long formAutoId) {
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
+        ManualOrderM manualOrderM = findById(formAutoId);
+        if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == manualOrderM.getIOrderStatus() || WeekOrderStatusEnum.REJECTED.getValue() == manualOrderM.getIOrderStatus()) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
+        }
         return null;
     }
 

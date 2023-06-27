@@ -30,6 +30,8 @@
                 className: '#(className)'
             };
 
+            console.log(JSON.stringify(para));
+
             postWithCallback('/admin/formapproval/submit', para, function (data) {
                 if (successCallback) {
                     successCallback(data);
@@ -50,8 +52,7 @@
         ### 审核按钮
         #case(1)
 
-            <button data-ajaxbtn
-                    data-url="/admin/formapproval/approveByStatus?formSn=#(formSn)&formAutoId=#(o.get(primaryKeyName))&primaryKeyName=#(primaryKeyName)&className=#(className)&permissionKey=#(permissionKeyPrefix)_approve" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核通过</button>
+            <button data-ajaxbtn data-url="/admin/formapproval/approveByStatus?formSn=#(formSn)&formAutoId=#(o.get(primaryKeyName))&primaryKeyName=#(primaryKeyName)&className=#(className)&permissionKey=#(permissionKeyPrefix)_approve" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核通过</button>
             <button data-ajaxbtn data-url="/admin/formapproval/rejectByStatus?formSn=#(formSn)&formAutoId=#(o.get(primaryKeyName))&primaryKeyName=#(primaryKeyName)&className=#(className)&permissionKey=#(permissionKeyPrefix)_reject" data-handler="refreshPjaxContainer" class="btn btn-outline-secondary btn-xs" >审核不通过</button>
 
         ### 审批流操作, 不放置按钮，通过列表操作

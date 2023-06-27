@@ -134,3 +134,7 @@ FROM
 #sql("getCdepnameByCdepcode")
 select cDepCode from bd_department where cDepName = #para(cdepname)
 #end
+
+#sql("getCpsnnameByCpsnnum")
+SELECT cPsn_Num FROM Bd_Person WHERE cPsn_Name = #para(cdepname)
+#end

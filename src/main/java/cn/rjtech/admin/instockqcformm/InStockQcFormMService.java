@@ -19,20 +19,18 @@ import cn.rjtech.admin.qcform.QcFormService;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService.ParamName;
-import cn.rjtech.enums.AppearanceEnum;
 import cn.rjtech.enums.CMeasurePurposeEnum;
 import cn.rjtech.enums.IsOkEnum;
-import cn.rjtech.enums.OverallSizeEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseInStockQcFormD;
 import cn.rjtech.model.momdata.base.BaseInstockqcformdLine;
-import cn.rjtech.model.momdata.base.BaseRcvdocqcformdLine;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.excel.SheetPage;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -43,6 +41,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jxls.util.Util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -94,7 +93,8 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
      * 查询主数据
      * */
     public Page<Record> pageList(Kv kv) {
-        return dbTemplate("instockqcformm.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
+        Page<Record> paginate = dbTemplate("instockqcformm.list", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
+        return paginate;
     }
 
     /**
@@ -267,7 +267,12 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         InventoryQcForm inventoryQcForm = inventoryQcFormService.findByIInventoryId(iInventoryId);
         ValidationUtils.notNull(inventoryQcForm, inventory.getCInvCode() + "：没有在【质量建模-检验适用标准】维护标准表格，无法生成单据！！！");
 
-        Long iQcFormId = inventoryQcForm.getIQcFormId();
+        Long iQcFormId = null;
+        if (inStockQcFormM.getIQcFormId() != null) {
+            iQcFormId = inStockQcFormM.getIQcFormId();
+        } else {
+            iQcFormId = inventoryQcForm.getIQcFormId();
+        }
         QcForm qcForm = qcFormService.findById(iQcFormId);
         ValidationUtils.notNull(qcForm, "【质量建模-质量表格设置】检验表格不存在");
 
@@ -353,12 +358,12 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         return dbTemplate("instockqcformm.list", Kv.by("iautoId", iautoId)).findFirst();
     }
 
-    public List<Record> getCvaluelist(Long iInStockQcFormMid, int iseq) {
+    public List<Record> getCvaluelist(Long iinstockqcformdid, int iseq) {
         ArrayList<Record> list = new ArrayList<>();
         for (int i = 0; i <= 9; i++) {
             Record record = new Record();
             record.set("name", i);
-            record.set("iinstockQcformmid", iInStockQcFormMid);
+            record.set("iinstockqcformdid", iinstockqcformdid);
             record.set("iseq", iseq);
             record.set("cvalue", "");
             record.set("iautoid", "");
@@ -409,14 +414,13 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
                                              String cmemo, String cdcno, String isok) {
         List<InstockqcformdLine> saveInstockLines = new ArrayList<>();
         List<InstockqcformdLine> updateInstockLines = new ArrayList<>();
-
         boolean tx = tx(() -> {
             for (int i = 0; i < serializeSubmitList.size(); i++) {
                 JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
                 JSONArray cvaluelist = jsonObject.getJSONArray("cvaluelist");
                 for (int j = 0; j < cvaluelist.size(); j++) {
                     JSONObject object = cvaluelist.getJSONObject(j);
-                    Long iinstockqcformdid = jsonObject.getLong("iinstockqcformdid");
+                    Long iinstockqcformdid = object.getLong("iinstockqcformdid");
                     String cvalue = object.getString("cvalue");
                     Integer iseq = object.getInteger("iseq");
                     String name = object.getString("name");
@@ -484,7 +488,11 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
      * 保存异常品记录
      * */
     public void saveInDefectModel(String isok, Long instockqcformmiautoid, InStockQcFormM inStockQcFormM) {
-        if (Integer.valueOf(isok).equals(IsOkEnum.NO.getValue())) {
+        if (StrUtil.isBlank(isok)) {
+            return;
+        }
+        Integer isOkValue = Integer.valueOf(isok);
+        if (ObjUtil.equal(isOkValue, IsOkEnum.NO.getValue())) {
             InStockDefect defect = defectService.findDefectByiInStockQcFormMid(instockqcformmiautoid);
             if (null == defect) {
                 InStockDefect inStockDefect = new InStockDefect();
@@ -502,12 +510,14 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         List<InStockQcFormD> inStockQcFormDList = inStockQcFormDService.findByIInStockQcFormMid(iautoid);
         List<Long> collect = inStockQcFormDList.stream().map(BaseInStockQcFormD::getIAutoId).collect(Collectors.toList());
         String ids = StringUtils.join(collect, ",");
-        Ret ret = inStockQcFormDService.deleteByIds(ids);
-        //2、更新主表状态
-        InStockQcFormM stockQcFormM = findById(iautoid);
-        stockQcFormM.setIStatus(0);
-        update(stockQcFormM);
-        return ret;
+        boolean tx = tx(() -> {
+            //删除从表
+            inStockQcFormDService.deleteByIds(ids);
+            //删除主表
+            deleteById(iautoid);
+            return true;
+        });
+        return ret(tx);
     }
 
     /*
@@ -516,7 +526,14 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
     public Record findDetailByBarcode(String cbarcode) {
         Record record = dbTemplate("instockqcformm.findDetailByBarcode", Kv.by("cbarcode", cbarcode)).findFirst();
         ValidationUtils.notNull(record, cbarcode + "：不存在，请重新扫描");
+
+        InStockQcFormM stockQcFormM = findByCBarcodeAndInvcode(cbarcode, record.getStr("iinventoryid"));
+        ValidationUtils.isTrue(stockQcFormM == null, cbarcode + "：数据记录已存在，不需要新增！！！");
         return record;
+    }
+
+    public InStockQcFormM findByCBarcodeAndInvcode(String cbarcode, String iinventoryid) {
+        return findFirst("select * from PL_InStockQcFormM where cbarcode=? and iinventoryid=?", cbarcode, iinventoryid);
     }
 
     /*
@@ -528,7 +545,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
      * cinvname1：部品名称
      * */
     public Ret saveInStockQcFormByCbarcode(String cbarcode, Integer iqty, String invcode, String cinvcode1, String cinvname1,
-                                           String iinventoryid, String cdcno, String cMeasureReason) {
+                                           String iinventoryid, String cdcno, String cMeasureReason, Long iqcformid) {
         User user = JBoltUserKit.getUser();
         Long userId = JBoltUserKit.getUserId();
         Date now = new Date();
@@ -540,10 +557,10 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         inStockQcFormM.setCOrgName(getOrgName());
         inStockQcFormM.setCInvQcFormNo(String.valueOf(JBoltSnowflakeKit.me.nextId()));//检验单号
 
-        InventoryQcForm inventoryQcForm = inventoryQcFormService.findByIInventoryId(Long.valueOf(iinventoryid));
-        ValidationUtils.notNull(inventoryQcForm, "存货编码：" + invcode + " 没有在【质量建模-检验适用标准】维护标准表格，无法生成单据！！！");
+        Record byQcFormId = inventoryQcFormService.findByQcFormId(iqcformid);
+        ValidationUtils.notNull(byQcFormId, "存货编码：" + invcode + " 没有在【质量建模-检验适用标准】维护标准表格，无法生成单据！！！");
 
-        inStockQcFormM.setIQcFormId(inventoryQcForm.getIQcFormId());
+        inStockQcFormM.setIQcFormId(iqcformid);
         inStockQcFormM.setIInventoryId(Long.valueOf(iinventoryid));
         inStockQcFormM.setIQty(iqty);
         inStockQcFormM.setCBarcode(cbarcode);
@@ -585,46 +602,6 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         return docparamlist;
     }
 
-    /**
-     * 点击检验时，进入弹窗自动加载table的数据
-     */
-    /*public List<Record> getonlyseelistByiautoid(Kv kv) {
-        kv.set("iinstockqcformmid", kv.get("iautoid"));
-        List<Record> recordList = dbTemplate("instockqcformm.getonlyseelistByiautoid", kv).find();
-        List<Record> clearRecordList = rcvDocQcFormMService.clearZero(recordList);
-
-        Map<Object, List<Record>> map = clearRecordList.stream()
-            .collect(Collectors.groupingBy(p -> p.get("iautoid"), Collectors.toList()));
-
-        List<Record> records = new ArrayList<>();
-        for (Entry<Object, List<Record>> entry : map.entrySet()) {
-            List<Record> value = entry.getValue();
-            for (int i = 0; i < value.size(); i++) {
-                value.get(i).set("name", (i + 1));
-            }
-            Record record = new Record();
-            Record record1 = value.get(0);
-            record.set("cvalueList", value);
-            record.set("coptions", record1.get("coptions"));
-            record.set("cqcformparamids", record1.get("cqcformparamids"));
-            record.set("cqcitemname", record1.get("cqcitemname"));
-            record.set("cqcparamname", record1.get("cqcparamname"));
-            record.set("iautoid", record1.get("iautoid"));
-            record.set("iformparamid", record1.get("iformparamid  "));
-            record.set("imaxval", record1.get("imaxval"));
-            record.set("iminval", record1.get("iminval"));
-            record.set("iqcformid", record1.get("iqcformid"));
-            record.set("iseq", record1.get("iseq"));
-            record.set("istdval", record1.get("istdval"));
-            record.set("isubseq", record1.get("isubseq"));
-            record.set("itype", record1.get("itype"));
-            records.add(record);
-        }
-        List<Record> resultRecord =
-            records.stream().sorted(Comparator.comparing(e -> e.getInt("iseq"))).collect(Collectors.toList());
-        return resultRecord;
-    }*/
-
     /*
      * 获取导出数据
      * */
@@ -661,16 +638,24 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         inStockQcFormMRecord.set("columnNameList", columnNames);//项目列名
 
         byte[] imageBytes = null;
-        String cpics = JBoltConfig.BASE_UPLOAD_PATH_PRE + StrUtil.SLASH + inStockQcFormMRecord.getStr("cpics");
-        FileInputStream fileInputStream = new FileInputStream(cpics);
-        if (fileInputStream != null) {
-            imageBytes = Util.toByteArray(fileInputStream);
+        if (StrUtil.isNotBlank(inStockQcFormMRecord.getStr("cpics"))) {
+            String cpics = JBoltConfig.BASE_UPLOAD_PATH_PRE + StrUtil.SLASH + inStockQcFormMRecord.getStr("cpics");
+            File file = new File(cpics);
+            if (file.exists()) {
+                File[] files = file.listFiles();
+                for (File file1 : files) {
+                    String name = file1.getName();
+                    System.out.println(name);
+                }
+            }
+            FileInputStream fileInputStream = new FileInputStream(cpics);
+            if (fileInputStream != null) {
+                imageBytes = Util.toByteArray(fileInputStream);
+            }
         }
-        inStockQcFormMRecord.set("cpics", imageBytes);
+        inStockQcFormMRecord.set("cpics", imageBytes == null ? "" : imageBytes);
 
-        //5、如果cvalue的列数>10行，分多个页签
-        Record data = recordList.get(0);
-        //核心业务逻辑，对列数进行分组
+        //5、如果cvalue的列数>10行，分多个页签，核心业务逻辑，对列数进行分组
         commonPageMethod(recordList, inStockQcFormMRecord, pages, sheetNames);
         return Kv.by("pages", pages).set("sheetNames", sheetNames);
     }

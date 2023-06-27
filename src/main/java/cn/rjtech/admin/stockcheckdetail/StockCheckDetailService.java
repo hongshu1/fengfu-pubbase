@@ -3,6 +3,7 @@ package cn.rjtech.admin.stockcheckdetail;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.StockCheckDetail;
@@ -165,6 +166,11 @@ public class StockCheckDetailService extends BaseService<StockCheckDetail> {
 	public Ret adjust(Kv kv) {
 		tx(() -> {
 			String datas = kv.getStr("datas");
+
+			String ids = kv.getStr("sourceid");
+
+			List<Record> rows = JBoltModelKit.getFromRecords(datas);
+
 			List<JSONObject> jsonObjects = JSONArray.parseArray(datas, JSONObject.class);
 			for (JSONObject jsonObject : jsonObjects) {
 				String source = jsonObject.getString("source");
@@ -223,6 +229,6 @@ public class StockCheckDetailService extends BaseService<StockCheckDetail> {
 			return true;
 		});
 
-		return SUCCESS;
+		return SUCCESS.set("AutoID", kv.getStr("sourceid"));
 	}
 }

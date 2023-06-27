@@ -874,7 +874,7 @@ public class PermissionKey {
 	 */
 	public static final String FITEMSS97CLASS = "fitemss97class";
 	/**
-	 * 项目管理大类项目主目录
+	 * 项目分类
 	 */
 	public static final String FITEMSS97 = "fitemss97";
 	/**
@@ -1477,6 +1477,18 @@ public class PermissionKey {
 	 * 生产项目
 	 */
 	public static final String PRODITEM = "prodItem";
+	/**
+	 * 生产表单建模
+	 */
+	public static final String PRODUCTION_FORM_MODELING = "production_form_modeling";
+	/**
+	 * 生产表单设置
+	 */
+	public static final String PRODFORM = "prodform";
+	/**
+	 * 补焊纪录管理
+	 */
+	public static final String MOMOPATCHWELDM = "momopatchweldm";
 	/**
 	 * 新增
 	 */
@@ -2453,4 +2465,76 @@ public class PermissionKey {
 	 * 撤回审批
 	 */
 	public static final String CURRENT_STOCK_WITHDRAW = "current_stock_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String SCHEDUPLANYEAR_SUBMIT = "scheduplanyear_submit";
+	/**
+	 * 通过
+	 */
+	public static final String SCHEDUPLANYEAR_APPROVE = "scheduplanyear_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String SCHEDUPLANYEAR_REJECT = "scheduplanyear_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SCHEDUPLANYEAR_BATCH_APPROVE = "scheduplanyear_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SCHEDUPLANYEAR_BATCH_REJECT = "scheduplanyear_batch_reject";
+	/**
+	 * 反审
+	 */
+	public static final String SCHEDUPLANYEAR_REVERSE_APPROVE = "scheduplanyear_reverse_approve";
+	/**
+	 * 批量反审
+	 */
+	public static final String SCHEDUPLANYEAR_BATCH_REVERSE_APPROVE = "scheduplanyear_batch_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String SCHEDUPLANYEAR_WITHDRAW = "scheduplanyear_withdraw";
+	/**
+	 * 批量反审
+	 */
+	public static final String CURRENT_STOCK_BATCH_REVERSE_APPROVE = "current_stock_batch_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String CURRENT_STOCK_BATCH_APPROVE = "current_stock_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String CURRENT_STOCK_BATCH_REJECT = "current_stock_batch_reject";
+	/**
+	 * 提审
+	 */
+	public static final String MOMOPATCHWELDM_SUBMIT = "momopatchweldm_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String MOMOPATCHWELDM_APPROVE = "momopatchweldm_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String MOMOPATCHWELDM_REJECT = "momopatchweldm_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String MOMOPATCHWELDM_REVERSE_APPROVE = "momopatchweldm_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String MOMOPATCHWELDM_BATCH_APPROVE = "momopatchweldm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String MOMOPATCHWELDM_BATCH_REJECT = "momopatchweldm_batch_reject";
+	/**
+	 * 撤回审核
+	 */
+	public static final String MOMOPATCHWELDM_WITHDRAW = "momopatchweldm_withdraw";
 }

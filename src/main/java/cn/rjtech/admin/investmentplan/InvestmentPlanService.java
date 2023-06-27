@@ -917,13 +917,6 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 		return SUCCESS;
 	}*/
 	
-    /**
-     * 处理审批通过的其他业务操作，如有异常返回错误信息
-     */
-    public String postApproveFunc(long formAutoId) {
-  
-        return null;
-    }
 	
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息

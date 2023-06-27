@@ -9,6 +9,8 @@
                         <input type="text" hidden class="form-control" placeholder="计划单号" name="cplanorderno" value="#(cplanorderno)" id="cplanorderno"/>
                         <input type="text" hidden class="form-control" placeholder="客户id" name="icustomerid" value="#(icustomerid)" id="icustomerid"/>
                         <input type="text" hidden class="form-control" placeholder="年份" name="startyear" value="#(startyear)" id="startyear"/>
+                        <input type="text" hidden class="form-control" placeholder="isedit" name="isedit" value="#(isedit)" id="isedit"/>
+                        <input type="text" hidden class="form-control" placeholder="isedit" name="iautoid" value="#(iautoid)" id="iautoid"/>
 
                         <input type="text" class="form-control" placeholder="存货编码" name="cinvcode" value="" id="cinvcode"/>
                         <input type="text" class="form-control" placeholder="客户部番" name="cinvcode1" value="" id="cinvcode1"/>
@@ -32,6 +34,12 @@
             </div>
         </div>
     </div>
+
+    ### 新增之后，并且为审核流
+    #if(apsAnnualplanm.iautoid?? && apsAnnualplanm.iauditway == 2)
+    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=apsAnnualplanm.iAutoId, formSn="Aps_AnnualPlanM", btnNeed=1, pId=pageId,className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService")
+    #end
+
     <div class="jbolt_page_content">
         <script type="text/template" id="jboltTable_demotpladd_#(pageId)">
             {@each datas as data,index}
@@ -100,18 +108,24 @@
                         </div>
                     </div>
                 </div>
-                <button onclick="submitThisFormPlan()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
-                <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>
+                <!--<button onclick="submitThisFormPlan()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>-->
                 #end
 
                 #if(cplanorderno != '' && cplanorderno != null)
-                <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 审批</button>
-                <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 反审批</button>
-
                 <button data-downloadbtn data-form="apsAnnualplanmFormadd_#(pageId)"
                         data-url="admin/scheduproductplanyear/dataExportYear" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
                 #end
-                <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+
+                #if(readonly != 'readonly')
+                <button onclick="submitThisFormPlan()" class="btn btn-outline-secondary btn-xs">保存</button>
+                #end
+                #if(apsAnnualplanm.iAutoId??)
+                #include("/_view/_common/_approval_btns.html", uri="/admin/scheduproductplanyear",
+                formSn="Aps_AnnualPlanM", o=apsAnnualplanm, primaryKeyName="iAutoId",
+                className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService", permissionKeyPrefix="scheduplanyear")
+                #end
+                <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+
             </div>
         </div>
         <table class="jbolt_table thead_font_normal table-bordered table-center"
@@ -174,27 +188,72 @@
 <script>
 hideParentLayerDialogBtn(0);
 hideParentLayerDialogBtn(1);
+
+function addviewparmBtn(ele){
+    var url="admin/scheduproductplanyear/addviewparm";
+    $(ele).data("url",url);
+    DialogUtil.openBy(ele);
+}
+
 function submitThisFormPlan(){
 	//jboltTableSubmit("#jbolt_Table_year");
     saveTable();
 }
-function saveTable(){
+// 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+
+function saveTable(s){
     let tableDatas = getJboltTableAllDatas('#jbolt_Table_year');
     let dataObj = {
         yearDataArry: JSON.stringify(tableDatas),
     }
     let url = "admin/scheduproductplanyear/saveScheduPlanYear";
     Ajax.post(url,dataObj,function(res){
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-        parent.LayerMsgBox.success("保存成功!");
+        //parent.layer.close(parent.layer.getFrameIndex(window.name));
+        //window.parent.refreshJBoltTable();
+        //parent.LayerMsgBox.success("保存成功!");
+        // 调用保存处理
+        if (res.state === 'ok') {
+            // 提交审核（审批）调用
+            if (submit) {
+                // 提审
+                submit_#(pageId)(res.data.iautoid, function (data) {
+
+                    successHandler('提审成功', res.data.iautoid);
+                });
+            } else {
+                successHandler(res.msg, res.data.iautoid);
+            }
+        } else {
+            LayerMsgBox.alert(res.msg, 2);
+        }
+    });
+}
+/**
+ * 新增/修改/提审
+ */
+function successHandler(msg, id) {
+    LayerMsgBox.success(msg, 600, function () {
+        let cPlanOrderNo = $("#cplanorderno").val();
+        let iCustomerId = $("#icustomerid").val();
+        let iYear = $("#startyear").val();
+        let isedit = $("#isedit").val();
+        let iautoid = $("#iautoid").val();
+        // 新增/修改，均跳转到详情页
+        var url="admin/scheduproductplanyear/addview?cplanorderno="+cPlanOrderNo+"&icustomerid="+iCustomerId+"&startyear="+iYear+"&isedit="+isedit+"&iautoid="+iautoid;
+        location.href = url;
+        parent.refreshPjaxContainer();
     });
 }
 
-function addviewparmBtn(ele){
-    var url="admin/scheduproductplanyear/addviewparm";
-    $(ele).data("url",url);
-    DialogUtil.openBy(ele);
+// 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+var submit = false;
+function submitThisForm_#(pageId)(s) {
+    // 保存并提交
+    if (s) {
+        submit = s;
+    }
+    // 调用保存处理
+    saveTable();
 }
 
 function getEditableTableOptions_year() {

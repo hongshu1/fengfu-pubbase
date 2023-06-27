@@ -1,0 +1,68 @@
+#@adminDialogLayout()
+
+#define css()
+<link href="assets/plugins/Grape/16.0.2/css/gc.spread.sheets.16.0.2.css" rel="stylesheet">
+<style>
+    .spread-container {
+        height:75.5vh;
+    }
+
+    .gc-statusbar {
+        height: 25px;
+        min-height: 25px;
+        background: #217346;
+        font-size: 0.6rem;
+        color: aliceblue;
+    }
+    body,p {
+        margin: 0px;
+        padding: 0px;
+        font-size: 12px;
+        color: black;
+    }
+</style>
+#end
+
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div>
+    查看
+    <!-- 创建表格目标DOM元素，id为ss的HTML -->
+    <div id="ss" class="spread-container"></div>
+    <div id="statusBar" class="gc-statusbar"></div>
+</div>
+#end
+#define js()
+<script type="text/javascript" src="assets/plugins/Grape/gc.spread.sheets.all.12.0.7.min.js"></script>
+<script type="text/javascript">
+    var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
+    //设置状态栏
+    var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
+    var sheet = spread.getSheet(0);//按照下标获取表单
+    //设置全局内容水平垂直居中
+    sheet.getRange(-1,-1,-1,-1).hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
+    //设置全局的字体样式
+    sheet.getRange(-1, -1,-1,-1).font('宋体 bold 10px');
+    //状态栏
+    statusBar.bind(spread);
+    spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
+    var parmsDefault = {
+        RowCount:200,           //一列多少单元格
+        ColumnCount:500,         //一行多少单元格
+        rowindex:0,				//x轴索引
+        columnindex:0,			//y轴索引
+        dayRow:10,              //day渲染起始下标
+        weekRow:10,             //week渲染起始下标
+        tableData:[],           //接收添加的数据
+    };
+    var parmsArr = [Object.assign({},parmsDefault)];
+    //添加属性
+    parmsArr[0]['spread'] = spread;
+    parmsArr[0]['activeSheet'] = spread.getSheet(0);//获取指定的表单
+    var parms = parmsArr[0];
+
+    //设置全局表单的背景颜色
+    spread.options.grayAreaBackColor = '#fff';
+</script>
+#end
+
