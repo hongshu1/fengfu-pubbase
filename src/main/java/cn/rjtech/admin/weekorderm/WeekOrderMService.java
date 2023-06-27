@@ -576,7 +576,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     @Override
     public String postSubmitFunc(long formAutoId) {
         WeekOrderM weekOrderM = findById(formAutoId);
-        if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == weekOrderM.getIOrderStatus()) {
+        if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == weekOrderM.getIOrderStatus()|| WeekOrderStatusEnum.REJECTED.getValue() == weekOrderM.getIOrderStatus()) {
             ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), "提审失败");
         }
         return null;

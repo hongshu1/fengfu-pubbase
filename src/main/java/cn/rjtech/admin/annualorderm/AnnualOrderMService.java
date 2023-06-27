@@ -410,7 +410,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
     @Override
     public String postSubmitFunc(long formAutoId) {
         AnnualOrderM annualOrderM = findById(formAutoId);
-        if (annualOrderM.getIOrderStatus() == WeekOrderStatusEnum.NOT_AUDIT.getValue()) {
+        if (annualOrderM.getIOrderStatus() == WeekOrderStatusEnum.NOT_AUDIT.getValue() || annualOrderM.getIOrderStatus() == WeekOrderStatusEnum.REJECTED.getValue()) {
             ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
         }
         return null;

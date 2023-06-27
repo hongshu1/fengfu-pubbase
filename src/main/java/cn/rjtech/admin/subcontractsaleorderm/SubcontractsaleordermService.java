@@ -494,7 +494,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      */
     public String postSubmitFunc(long formAutoId) {
         Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
-        if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == subcontractsaleorderm.getIOrderStatus()) {
+        if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == subcontractsaleorderm.getIOrderStatus() || WeekOrderStatusEnum.REJECTED.getValue() == subcontractsaleorderm.getIOrderStatus()) {
             ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
         }
         return null;

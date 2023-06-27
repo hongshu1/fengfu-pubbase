@@ -406,7 +406,7 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
     @Override
     public String postSubmitFunc(long formAutoId) {
         MonthOrderM monthOrderM = findById(formAutoId);
-        if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == monthOrderM.getIOrderStatus()) {
+        if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == monthOrderM.getIOrderStatus()|| WeekOrderStatusEnum.REJECTED.getValue() == monthOrderM.getIOrderStatus()) {
             ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
         }
         return null;

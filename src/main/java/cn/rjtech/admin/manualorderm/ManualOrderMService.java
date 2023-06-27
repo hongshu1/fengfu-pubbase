@@ -460,7 +460,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     @Override
     public String postSubmitFunc(long formAutoId) {
         ManualOrderM manualOrderM = findById(formAutoId);
-        if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == manualOrderM.getIOrderStatus()) {
+        if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == manualOrderM.getIOrderStatus() || WeekOrderStatusEnum.REJECTED.getValue() == manualOrderM.getIOrderStatus()) {
             ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
         }
         return null;
