@@ -35,6 +35,7 @@ import cn.rjtech.util.excel.SheetPage;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -263,7 +264,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         }
         Long docqcformmiautoid = JboltPara.getLong("docqcformmiautoid"); //主表id
         JSONArray serializeSubmitList = JboltPara.getJSONArray("serializeSubmitList");
-
         Boolean result = achieveSerializeSubmitList(serializeSubmitList, docqcformmiautoid,
             JboltPara.getString("cmeasurepurpose"), JboltPara.getString("cmeasurereason"),
             JboltPara.getString("cmeasureunit"), JboltPara.getString("cmemo"),

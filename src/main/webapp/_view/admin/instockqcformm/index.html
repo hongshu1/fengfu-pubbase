@@ -109,20 +109,20 @@
     {@if data.istatus == 1}
       <a class="text-info mr-1" data-openpage="dialog" href="admin/instockqcformm/jumpCheckOut/${data.iautoid}"
          data-area="100%,100%"
-         tooltip title="点击检验" data-title="检验">检验</a>
+         tooltip title="点击检验" data-title="在库检成绩表">检验</a>
      <a tooltip href="admin/instockqcformm/deleteCheckoutByIautoid/${data.iautoid}" data-handler="refreshJBoltTable"
         class="jbolt_table_delbtn" tooltip title="删除在库检成绩表">删除</a>
     {@/if}
     {@if data.istatus == 2}
-     <a tooltip tooltip title="查看出库检成绩表" href="admin/instockqcformm/jumpOnlySee/${data.iautoid}" data-scroll="yes"
+     <a tooltip tooltip title="查看在库检成绩表" href="admin/instockqcformm/jumpOnlySee/${data.iautoid}" data-scroll="yes"
         data-handler="refreshJBoltTable" data-area="100%,100%" class="jbolt_table_editbtn">查看</a>
-      <a tooltip title="编辑出库检成绩表" href="admin/instockqcformm/jumpEdit/${data.iautoid}" data-handler="refreshJBoltTable"
+      <a tooltip title="编辑在库检成绩表" href="admin/instockqcformm/jumpEdit/${data.iautoid}" data-handler="refreshJBoltTable"
          data-area="100%,100%" class="jbolt_table_editbtn">编辑</a>
     {@/if}
     {@if data.istatus == 3}
       <a class="text-info mr-1" data-openpage="dialog" href="admin/instockqcformm/jumpOnlySee/${data.iautoid}"
          data-area="100%,100%"
-         tooltip data-title="查看出库检成绩表">查看</a>
+         tooltip data-title="查看在库检成绩表">查看</a>
       <a href="javascript:return false;" data-handler="refreshJBoltTable" tooltip data-title="状态合格不需要编辑"
          disabled="disabled" disabled style="opacity:0.5">编辑</a>
     {@/if}
@@ -251,7 +251,8 @@
                 cinvname1: data.cinvname1,
                 iinventoryid:data.iinventoryid,
                 cmeasurereason:data.cmeasure,
-                cdcno:data.cdccode
+                cdcno:data.cdccode,
+                iqcformid:data.iqcformid
               } ,function (res) {
                 if (res.state == 'ok'){
                   parent.refreshPjaxContainer();

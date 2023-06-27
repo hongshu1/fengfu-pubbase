@@ -13,7 +13,7 @@
             <i class="fa fa-download"></i>数据导出
           </button>
         </div>
-        <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
+        <div style="font-size: 20px;vertical-align: sub;text-align: center;">在库检查成绩表</div>
         <table id="jbolt_table_checkouttableparam_split__#(pageId)1" border="1"
                style="text-align: center;left: 60px;margin-left:50px;width: 1300px;">
 
@@ -173,7 +173,7 @@
                  data-editable="true"
                  data-ajax="true"
                  data-conditions-form="instockqcformmform_#(pageId)"
-                 data-url="admin/instockqcformm/autoGetOnlySeeDatas?iautoid=#(record.iAutoId??)"
+                 data-url="admin/instockqcformm/getTableDatas?iinstockqcformid=#(record.iAutoId??)"
                  data-rowtpl="checkoutType_tpl_#(pageId)"
                  data-copy-to-excel="false"
                  data-toolbar="instockqcformmform_toolbar_#(pageId)">
