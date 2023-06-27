@@ -64,3 +64,31 @@ FROM
 where wa.isEnabled = '1' and wa.isDeleted = '0'
 order by wa.dUpdateTime desc
 #end
+
+#sql("verifyDuplication")
+SELECT
+	ISNULL( COUNT ( iAutoId ), 0 )
+FROM
+	Bd_Warehouse_Area
+WHERE
+	isDeleted = 0
+#if(careacode)
+    AND careacode = #para(careacode)
+#end
+#if(careaname)
+    AND careaname = #para(careaname)
+#end
+#if(iautoid)
+    AND iautoid != #para(iautoid)
+#end
+#end
+
+#sql("getiAutoIdByCwhname")
+SELECT
+	iAutoId
+FROM
+	Bd_Warehouse
+WHERE
+	isDeleted = 0
+	AND cWhName = #para(cwhname)
+#end

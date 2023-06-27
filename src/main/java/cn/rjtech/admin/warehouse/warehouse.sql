@@ -112,3 +112,29 @@ FROM
 	AND isDeleted = '0'
 	AND isEnabled = '1'
 #end
+
+#sql("verifyDuplication")
+SELECT
+	ISNULL( COUNT ( iAutoId ), 0 )
+FROM
+	Bd_Warehouse
+	WHERE isDeleted=0
+#if(cwhcode)
+    AND cWhCode = #para(cwhcode)
+#end
+#if(cwhname)
+    AND cWhName = #para(cwhname)
+#end
+#if(iautoid)
+    AND iautoid != #para(iautoid)
+#end
+
+#end
+
+#sql("getCdepnameByCdepcode")
+select cDepCode from bd_department where cDepName = #para(cdepname)
+#end
+
+#sql("getCpsnnameByCpsnnum")
+SELECT cPsn_Num FROM Bd_Person WHERE cPsn_Name = #para(cdepname)
+#end

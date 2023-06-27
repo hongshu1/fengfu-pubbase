@@ -74,12 +74,6 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
         render("index.html");
     }
 
-//   /**
-//	* 数据源
-//	*/
-//	public void datas() {
-//		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("BillType")));
-//	}
 
     /**
      * 新增
@@ -199,7 +193,7 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void detailShow() {
-        SysMaterialsprepare sysMaterialsprepare = service.findById(getLong(0));
+        SysMaterialsprepare sysMaterialsprepare = service.findById(Long.valueOf(get("autoid")));
         if (sysMaterialsprepare == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -261,6 +255,7 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
             set("cworkshiftname", workshiftm.getCworkshiftname());
         }
         set("sysMaterialsprepare", sysMaterialsprepare);
+        set("ifinish",get("ifinish"));
         render("detailShow.html");
     }
 

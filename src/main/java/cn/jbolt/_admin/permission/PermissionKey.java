@@ -2190,25 +2190,9 @@ public class PermissionKey {
 	 */
 	public static final String EXPENSEBUDGET_WITHDRAW = "expensebudget_withdraw";
 	/**
-	 * 查看审批
-	 */
-	public static final String EXPENSE_FORMAPPROVALFLOW_INDEX = "expense_formapprovalflow_index";
-	/**
 	 * 撤销审核
 	 */
 	public static final String INVESTMENTPLAN_WITHDRAW = "investmentplan_withdraw";
-	/**
-	 * 查看审批
-	 */
-	public static final String INVESTMENT_FORMAPPROVALFLOW_INDEX = "investment_formapprovalflow_index";
-	/**
-	 * 查看审批
-	 */
-	public static final String PURCHASEM_FORMAPPROVALFLOW_INDEX = "purchasem_formapprovalflow_index";
-	/**
-	 * 查看审批
-	 */
-	public static final String PROPOSALM_FORMAPPROVALFLOW_INDEX = "proposalm_formapprovalflow_index";
 	/**
 	 * 提审
 	 */

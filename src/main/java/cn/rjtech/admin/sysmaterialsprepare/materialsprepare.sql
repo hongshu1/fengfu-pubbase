@@ -15,7 +15,8 @@ SELECT
     uom.cUomName,
     md.iQty,
     mp.ccreatename,
-    mp.dcreatetime
+    mp.dcreatetime,
+    md.iAutoId AS mdID
 FROM
     T_Sys_MaterialsPrepare mp
         LEFT JOIN Mo_MoDoc md ON md.iAutoId = mp.SourceBillID
@@ -657,3 +658,52 @@ WHERE 1 = 1
   AND  mp.BillNo='#(billno)'
   AND  sbp.Barcode IS  NULL
 ORDER BY sbp.Batch ASC #end
+
+
+
+
+#sql("checkQty")
+SELECT
+    Qty
+FROM T_Sys_MaterialsPrepareDetail mpd
+WHERE 1 = 1
+AND mpd.MasID='#(autoID)'
+   #end
+
+
+
+
+#sql("zijianwuliaoji")
+SELECT
+    a.iInventoryId,
+    f.cInvCode,
+    a.iUsageUOM,
+    a.iUsageUOM*d.iQty AS planIqty
+FROM
+    Mo_MoRoutingInvc a
+    LEFT JOIN Bd_Inventory f ON a.iInventoryId= f.iAutoId
+    LEFT JOIN Mo_MoRoutingConfig b ON a.iMoRoutingConfigId= b.iAutoId
+    LEFT JOIN Mo_MoRouting c ON b.iMoRoutingId= c.iAutoId
+    LEFT JOIN Mo_MoDoc d ON c.iMoDocId= d.iAutoId
+WHERE 1=1
+  AND  d.iAutoId='#(imodocid)'
+    #end
+
+
+
+#sql("zijianwuliaoji2")
+SELECT
+    a.iInventoryId,
+    f.cInvCode,
+    a.iUsageUOM,
+    a.iUsageUOM*d.iQty AS planIqty
+FROM
+    Mo_MoRoutingInvc a
+        LEFT JOIN Bd_Inventory f ON a.iInventoryId= f.iAutoId
+        LEFT JOIN Mo_MoRoutingConfig b ON a.iMoRoutingConfigId= b.iAutoId
+        LEFT JOIN Mo_MoRouting c ON b.iMoRoutingId= c.iAutoId
+        LEFT JOIN Mo_MoDoc d ON c.iMoDocId= d.iAutoId
+WHERE 1=1
+  AND  d.iAutoId='#(imodocid)'
+  AND  f.cInvCode='#(cinvcode)'
+    #end

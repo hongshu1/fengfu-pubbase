@@ -47,17 +47,10 @@
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysMaterialsprepare/detailShow/${data.autoid}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="备料一览表详情"><i class="fa fa-eye">查看</i></a>
+	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysMaterialsprepare/detailShow/?autoid=${data.autoid}&ifinish=${data.isfinish}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="备料一览表详情"><i class="fa fa-eye">查看</i></a>
 </td>
 <td>${data.billtype}</td>
-<td>
-	{@if data.isDeleted}
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysotherindetail/edit/${data.id}" data-area="800,600" data-title="查看其它入库单明细"><i class="fa fa-eye"></i></a>
-	{@else}
-	<a class="jbolt_table_editbtn" href="admin/sysotherindetail/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑其它入库单明细"><i class="fa fa-edit"></i></a>
-	{@/if}
-	<a class="jbolt_table_delbtn" href="admin/sysotherindetail/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
-</td>
+<td>${data.isfinish}</td>
 <td>${data.billno}</td>
 <td>${data.sourcebillno}</td>
 <td>${data.cdepname}</td>
@@ -125,7 +118,7 @@
 				<th data-width="150" data-column="">生产班次</th>
 				<th data-width="150" data-column="">计划日期</th>
 				<th data-width="150" data-column="">存货编码</th>
-				<th data-width="150" data-column="">客户部番</th>
+				<th data-width="200" data-column="">客户部番</th>
 				<th data-min-width="400" data-column="">部品名称</th>
 				<th data-width="150" data-column="">生产单位</th>
 				<th data-width="150" data-column="">计划数量</th>

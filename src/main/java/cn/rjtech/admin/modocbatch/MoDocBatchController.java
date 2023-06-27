@@ -62,6 +62,7 @@ public class MoDocBatchController extends BaseAdminController {
    */
   public void personEdit() {
     keepPara();
+    set("taskId",getLong(0));
     render("person_edit.html");
   }
 
@@ -84,6 +85,7 @@ public class MoDocBatchController extends BaseAdminController {
    */
   public void editPlan() {
     keepPara();
+    set("taskId",getLong(0));
     render("planform.html");
   }
 
@@ -92,6 +94,7 @@ public class MoDocBatchController extends BaseAdminController {
    */
   public void personShow() {
     keepPara();
+    set("taskId",getLong(0));
     render("personshow.html");
   }
 
