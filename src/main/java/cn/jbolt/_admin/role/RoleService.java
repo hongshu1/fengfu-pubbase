@@ -1,5 +1,6 @@
 package cn.jbolt._admin.role;
 
+import cn.jbolt.core.model.Role;
 import cn.jbolt.core.service.JBoltRoleService;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
@@ -27,4 +28,8 @@ public class RoleService extends JBoltRoleService {
     }
 
 
+    public Role findFirstByName(String roleStr) {
+        return findFirst(selectSql().eq("name", roleStr).first());
+    }
+    
 }

@@ -1,5 +1,7 @@
 package cn.rjtech.api.instockqcformm;
 
+import java.io.IOException;
+
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.crossorigin.CrossOrigin;
 import cn.jbolt.core.permission.UnCheck;
@@ -87,10 +89,9 @@ public class InStockQcFormMApiController extends BaseApiController {
      * */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void createTable(@Para(value = "iautoid") Long iautoid, @Para(value = "cqcformname") String cqcformname) {
+    public void createTable(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(cqcformname, JBoltMsg.PARAM_ERROR);
-        renderJBoltApiRet(apiService.createTable(iautoid, cqcformname));
+        renderJBoltApiRet(apiService.createTable(iautoid));
     }
 
     /*
@@ -208,21 +209,11 @@ public class InStockQcFormMApiController extends BaseApiController {
     }
 
     /*
-     * 自动加载图片
-     * */
-    @ApiDoc
-    @UnCheck
-    public void uploadImage() {
-        renderJBoltApiRet(apiService.uploadImage(getFiles(
-            ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
-    }
-
-    /*
      * 导出在库检详情页数据
      * */
     @ApiDoc(GetExportExcelVo.class)
     @UnCheck
-    public void exportExcel(@Para(value = "iautoid") Long iautoid) {
+    public void exportExcel(@Para(value = "iautoid") Long iautoid) throws IOException {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(apiService.getExportData(iautoid));
     }

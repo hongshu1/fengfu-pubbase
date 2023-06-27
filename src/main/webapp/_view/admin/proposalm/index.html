@@ -125,28 +125,9 @@
                 #permission(PermissionKey.PROPOSALM_EDIT)
                 <button data-openpage="dialog" data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="修改禀议管理数据" data-check-handler="jboltTableGetCheckedId" data-url="admin/proposalm/edit?iautoid=" class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i> 修改</button>
                 #end
-
-                #permission(PermissionKey.PROPOSALM_SUBMIT)
-<!--                 <div class="btn-group dropdown">
-                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        提交
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/proposalm/submit?iautoid=" data-confirm="确定提交选中数据？">提交审核</a>
-                        <a class="dropdown-item" data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/proposalm/withdraw?iautoid=" data-confirm="确定撤销选中数据？">撤销提交</a>
-                    </div>
-                </div> -->
-                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/proposalm/submit?iautoid=" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 提交审核</button>
-                #end
-
-                <button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
-                        data-check-handler="getIdIfValid" data-url="admin/proposalm/proposalmFormApprovalFlowIndex?iautoid="
-                        class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i class="fa fa-chain"></i>查看审批</button>
-
                 #permission(PermissionKey.PROPOSALM_DELETE)
                 <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/proposalm/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-primary btn-sm"><i class="fa fa-trash"></i> 删除</button>
                 #end
-
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
             </div>
 

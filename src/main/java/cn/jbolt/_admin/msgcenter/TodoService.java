@@ -7,6 +7,7 @@ import java.util.List;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.common.model.Todo;
@@ -347,5 +348,9 @@ public class TodoService extends JBoltBaseService<Todo> {
 		todo.setFormId(sourceId);
 
 		ValidationUtils.isTrue(todo.save(), ErrorMsg.SAVE_FAILED);
+	}
+
+	public Page<Todo> dashBoardTodoDatas(Integer pageNumber, Integer pageSize) {
+		return paginateUserTodos(pageNumber,pageSize,JBoltUserKit.getUserId(),"create_time","desc",null,null,true,"id","title","url");
 	}
 }

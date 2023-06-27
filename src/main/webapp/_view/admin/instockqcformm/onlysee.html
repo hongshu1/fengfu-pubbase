@@ -3,13 +3,13 @@
 <div class="jbolt_page">
   <div class="jbolt_page_content">
     <form onsubmit="return false;" id="instockqcformmform_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
-      #if(instockqcformm.iautoid??)
-      <input type="hidden" name="instockqcformm.iautoid" value="#(instockqcformm.iautoid??)"/>
+      #if(record.iautoid??)
+      <input type="hidden" name="record.iautoid" value="#(record.iautoid??)"/>
       #end
       <div>
         <div style="left: 60px;margin-left:50px">
           <button data-downloadbtn class="btn btn-outline-primary btn-sm"
-                  data-url="admin/instockqcformm/exportExcel/#(instockqcformm.iautoid??)">
+                  data-url="admin/instockqcformm/exportExcel/#(record.iautoid??)">
             <i class="fa fa-download"></i>数据导出
           </button>
         </div>
@@ -38,7 +38,7 @@
                    data-value-attr="sn"
                    data-text-attr="cmeasurepurpose"
                    data-inline="true"
-                   data-value="#(instockqcformm.cmeasurepurpose??)"
+                   data-value="#(record.cmeasurepurpose??)"
                    data-name="cmeasurepurpose">
               </div>
             </td>
@@ -63,44 +63,17 @@
             </td>
             <td class="x74">设变号</td>
             <td class="x71" width="250">
-              <input id="cDcNo" type="text" autocomplete="off" placeholder="=请输入设变号=" name="cdcno"
-                     value="#(record.cdcno??)" maxlength="355" data-rule="required"/>
+              #(record.cdcno??)
             </td>
           </tr>
           <tr height="300px">
             <td colspan="6">
               <div class="col">
-                <div class="py-2" style="padding:.5rem 0rem;">
-                </div>
-
-                <input type="hidden" id="recordImages" placeholder="=测试==" name="recordImages"
-                       value="#(record.imgList??)" class="form-control"/>
-
                 <div class="form-group row">
                   <label class="col-form-label col-sm-2 text-left">检验图片：</label>
-                  <div class="col">
-                    <div class="j_upload_imgbox_multi">
-                      <div class="row">
-                        <div class="col-sm-auto">
-                          <div
-                              data-url="admin/instockqcformm/uploadImage"
-                              data-limit="10"
-                              data-align="left"
-                              data-multi="true"
-                              data-handler="uploadMultipleFile"
-                              data-hidden-input="recordImages"
-                              data-imgbox="recordBox"
-                              data-area="150,150"
-                              data-maxsize="2000"
-                              style="width: 230px; height: 230px;"></div>
-                        </div>
-                        <div class="col pr-3">
-                          <ul id="recordBox" class="j_imgbox" data-remove-confirm="true"
-                              data-imgstyle="width:230px;height:230px;"></ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <input name="cpics" id="cpics" value="#(record.cpics??)" type="hidden"/>
+                  <img data-photobtn tooltip data-title="点击查看大图"  style="width: 700px;height:450px;" src="#(record.cpics??)"
+                       onerror="this.src='assets/img/noimg.png'"/>
                 </div>
               </div>
             </td>
@@ -128,10 +101,10 @@
                style="text-align: center;left: 60px;margin-left:50px" width="1200" cellpadding="2">
           <div style="margin-top: 20px">
             <!--data-url="admin/rcvdocqcformm/toggleIsCpkSigned/#(rcvdocqcformm.iautoid??)"-->
-            <img data-switchbtn data-value="#(instockqcformm.iscpksigned??)" data-handler="refreshJBoltTable"
-                 onclick="changeCpkStatus('#(instockqcformm.iscpksigned??)')" style="margin-left: 50px;"/>
+            <img data-switchbtn data-value="#(record.iscpksigned??)" data-handler="refreshJBoltTable"
+                 onclick="changeCpkStatus('#(record.iscpksigned??)')" style="margin-left: 50px;"/>
             <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>
-            <input type="text" hidden id="getiscpksigned" value="#(instockqcformm.iscpksigned??)"/>
+            <input type="text" hidden id="getiscpksigned" value="#(record.iscpksigned??)"/>
           </div>
         </table>
 
@@ -200,7 +173,7 @@
                  data-editable="true"
                  data-ajax="true"
                  data-conditions-form="instockqcformmform_#(pageId)"
-                 data-url="admin/instockqcformm/autoGetOnlySeeDatas?iautoid=#(instockqcformm.iAutoId??)"
+                 data-url="admin/instockqcformm/autoGetOnlySeeDatas?iautoid=#(record.iAutoId??)"
                  data-rowtpl="checkoutType_tpl_#(pageId)"
                  data-copy-to-excel="false"
                  data-toolbar="instockqcformmform_toolbar_#(pageId)">
@@ -411,7 +384,7 @@
     var isok = $('input[name="isok"]').filter(':checked').val();//是否合格
     var cmemo = $("#cMemo").val(); //备注
     var cdcno = $("#cDcNo").val(); //设变号
-    var iautoid = $('input[name="instockqcformm.iautoid"]').val();//主页面的主键
+    var iautoid = $('input[name="record.iautoid"]').val();//主页面的主键
     const submitDatas = {
       serializeSubmitList: JSON.stringify(subMilasUrlArr),
       cmeasurereason: cmeasurereason,

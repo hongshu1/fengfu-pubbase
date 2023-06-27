@@ -3,7 +3,10 @@ package cn.rjtech.admin.proposalm;
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.permission.CheckPermission;
@@ -104,6 +107,7 @@ public class ProposalmAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -356,7 +360,6 @@ public class ProposalmAdminController extends BaseAdminController {
             set("sourceinatmoney", sourceProposalm.getINatMoney());
             set("sourceinatsum", sourceProposalm.getINatSum());
         }
-        //keepPara();
         set("proposalm", proposalm);
         set("cdepname", departmentService.getCdepName(proposalm.getCDepCode()));
         // 如果是已审核的，设置为只读
@@ -380,6 +383,7 @@ public class ProposalmAdminController extends BaseAdminController {
      * 批量删除
      */
     @CheckPermission(PermissionKey.PROPOSALM_DELETE)
+    @CheckDataPermission(operation = DataOperationEnum.DELETE, type = BusObjectTypeEnum.DEPTARTMENT)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -534,6 +538,7 @@ public class ProposalmAdminController extends BaseAdminController {
      * 新增/修改禀议书
      */
     @CheckPermission(PermissionKey.PROPOSALM_SUBMIT)
+    @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableSubmit() {
         renderJson(service.saveTableSubmit(getJBoltTables(), JBoltUserKit.getUser(), new Date()));
     }
@@ -623,5 +628,8 @@ public class ProposalmAdminController extends BaseAdminController {
     	set("proposalm", proposalm);
     	render("approve_process_index.html");
     }
-
+    @CheckPermission(PermissionKey.PROPOSALM_UNEFFECT)
+    public void uneffect(){
+    	renderJson(service.uneffect(getLong()));
+    }
 }

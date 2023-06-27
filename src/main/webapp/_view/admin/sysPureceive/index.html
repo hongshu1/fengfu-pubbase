@@ -45,7 +45,7 @@
                     {@if data.type=='PUReceive'}
 					<td>
                       {@if data.iauditstatus == '0'}
-                        <a href="admin/materialReceiptList/edit?autoid=${data.autoid}&edit=true" data-area="100%,100%" tooltip
+                        <a href="admin/materialReceiptList/edit?autoid=${data.autoid}" data-area="100%,100%" tooltip
                            data-title="编辑"
                            data-handler="refreshJBoltTable" data-dialog-title="编辑收料单列表"
                            class="jbolt_table_editbtn">编辑</a>
@@ -55,7 +55,8 @@
                            data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
                       {@/if}
                       {@if data.iauditstatus != '0'}
-                        <a href="admin/materialReceiptList/edit?autoid=${data.autoid}" data-area="100%,100%" tooltip
+                        <a href="admin/materialReceiptList/edit?autoid=${data.autoid}&readonly=readonly"
+                           data-area="100%,100%" tooltip
                            data-title="查看"
                            data-handler="refreshJBoltTable" data-dialog-title="查看收料单"
                            class="jbolt_table_editbtn">查看</a>
@@ -63,8 +64,8 @@
 					</td>
                     {@else}
                     <td>
-                        {@if data.iauditstatus == '0'}
-                        <a href="admin/scancodereceive/edit?autoid=${data.autoid}&edit=true" data-area="100%,100%" tooltip
+                        {@if data.iauditstatus == '0' || data.iauditstatus == '3'}
+                        <a href="admin/scancodereceive/edit?autoid=${data.autoid}" data-area="100%,100%" tooltip
                            data-title="编辑"
                            data-handler="refreshJBoltTable" data-dialog-title="编辑收料单列表"
                            class="jbolt_table_editbtn">编辑</a>
@@ -73,11 +74,15 @@
                            data-title="删除"
                            data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
                       {@/if}
-                      {@if data.iauditstatus != '0'}
-                        <a href="admin/scancodereceive/edit?autoid=${data.autoid}" data-area="100%,100%" tooltip
+                      {@if data.iauditstatus == '1' || data.iauditstatus == '2'}
+                        <a href="admin/scancodereceive/edit?autoid=${data.autoid}&readonly=readonly" data-area="100%,100%" tooltip
                            data-title="查看"
                            data-handler="refreshJBoltTable" data-dialog-title="查看收料单"
                            class="jbolt_table_editbtn">查看</a>
+                        {@/if}
+                        {@if data.iauditstatus == '1'}
+                        <a class="jbolt_table_delbtn"
+                           href="admin/formapproval/withdraw?formSn=T_Sys_PUReceive&primaryKeyName=AutoID&formAutoId=${data.autoid}&permissionKey=form_app_withdraw&className=cn.rjtech.admin.scancodereceive.ScanCodeReceiveService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回收料单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
                       {@/if}
                     </td>
                       {@/if}
@@ -108,13 +113,10 @@
                         id="toolbar_deleteBtn_#(pageId)" data-url="admin/materialReceiptList/deleteByIds?ids="
                         data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
                 </button>
-                #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_PUReceive",uri="admin/materialReceiptList",primaryKeyName="AutoID", className="cn.rjtech.admin.syspureceive.SysPureceiveService")
-                ### 参数列表
-                ### formSn:         表单名
-                ### uri:            接口URI
-                ### primaryKeyName: 表单主键名
-                ### className：     实现审批业务的类名
-                ###include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_ProductIn",uri="admin/productInList",primaryKeyName="AutoID", className="cn.rjtech.admin.sysproductin.SysProductinService")
+
+                #include("/_view/_common/_batch_approval_btns.html",
+                formSn="T_Sys_PUReceive",primaryKeyName="AutoID",
+                className="cn.rjtech.admin.scancodereceive.ScanCodeReceiveService", permissionKeyPrefix="sysPureceive")
 
             </div>
         </div>
@@ -128,7 +130,7 @@
             <thead class="fw-normal">
             <tr>
                 <th data-width="60" data-column="index">序号</th>
-                <th data-width="100" data-column="AutoID">操作</th>
+                <th data-width="120" data-column="AutoID">操作</th>
                 <th data-width="100" data-column="type">类型</th>
                 <th data-width="100" data-column="state">状态</th>
                 <th data-width="200" data-column="BillNo">收料单号</th>

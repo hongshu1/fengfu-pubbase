@@ -2,137 +2,81 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <!--主页面内容显示区域 start-->
-<div class="jbolt_page shadow-none bg-transparent" data-key="#(pmkey)" data-require-plugin="morris" data-init-handler="initDashboard_#(pageId)" style="padding:0px 10px;">
+<div class="jbolt_page shadow-none bg-transparent" data-key="#(pmkey)" data-require-plugin="morris" style="padding:0px 10px;">
 	<div class="jbolt_page_content p-0" >
-		<div class="row">
-				<div class="col-lg-3 col-md-6 col-sm-12 px-2">
-					<div class="card border-0  mb-2 jb-dashboard-card hand">
-						<div class="card-body p-4 text-nowrap">
-							<span class="float-left"><i class="jbicon jb-kehuzhongxin01 j_font_30 j_left_fa text-primary rounded"></i></span>
-							<div class="text-right ">
-								<span class="d-block  j_font_24">34.1 K</span>
-								<span class="d-block">访问总量</span>
+		#if(menulist)
+			#for(menuitemlist:menulist)
+				<div class="row">
+				#for(menuitem:menuitemlist)
+				#if(menuitem.title)
+					<div class="col-lg-2 col-md-6 col-sm-12 px-2" data-openpage data-url="#(menuitem.url)" data-title="#(menuitem.title)">
+						<div class="card border-0  mb-2 jb-dashboard-card hand">
+							<div class="card-body p-2 text-nowrap">
+								<span class="float-left"><i class="#(menuitem.icons) j_font_30 j_left_fa text-primary rounded"></i></span>
+								<div class="text-right ">
+									<span class="d-block j_left_fa j_font_22">#(menuitem.title)</span>
+								</div>
 							</div>
 						</div>
 					</div>
+				#else
+					<div class="col-lg-2 col-md-6 col-sm-12 px-2" data-dialogbtn data-area="25%,80%" data-url="#(menuitem.url)" data-title="常用菜单">
+						<div class="card border-0  mb-2 jb-dashboard-card hand">
+							<div class="card-body p-2 text-nowrap">
+								<span class="float-left"><i class="#(menuitem.icons) j_font_30 j_left_fa text-primary rounded"></i></span>
+								<div class="text-right ">
+									<span class="d-block j_left_fa j_font_22">#(menuitem.title)</span>
+								</div>
+							</div>
+						</div>
+					</div>				
+				#end
+				#end
 				</div>
-				<div class="col-lg-3 col-md-6 col-sm-12 px-2">
-					<div class="card border-0  mb-2 jb-dashboard-card hand">
-						<div class="card-body p-4 text-nowrap">
-							<span class="float-left"><i class="jbicon jb-dianjiliang j_font_30 j_left_fa text-success rounded"></i></span>
-							<div class="text-right ">
-								<span class="d-block  j_font_24">11.2 K</span>
-								<span class="d-block">点击量</span>
-							</div>
-						</div>
-					</div>
-					
-				</div>
-				<div class="col-lg-3 col-md-6 col-sm-12 px-2">
-					<div class="card border-0  mb-2 jb-dashboard-card hand">
-						<div class="card-body p-4 text-nowrap">
-							<span class="float-left"><i class="jbicon jb-42xiazai1 j_font_30 j_left_fa text-info rounded"></i></span>
-							<div class="text-right ">
-								<span class="d-block  j_font_24">9.9 K</span>
-								<span class="d-block">APP下载量</span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6 col-sm-12 px-2">
-					<div class="card border-0  mb-2 jb-dashboard-card hand">
-						<div class="card-body p-4 text-nowrap">
-							<span class="float-left"><i class="jbicon jb-tongxunlu01 j_font_30 j_left_fa text-danger rounded"></i></span>
-							<div class="text-right ">
-								<span class="d-block  j_font_24">34 个</span>
-								<span class="d-block">签约代理</span>
-							</div>
-						</div>
-					</div>
-				</div>		
-		</div>
+			#end
+		#end
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="dashboardTableRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.title}</td>
+<td>
+	<a href="${data.url}" data-area="1200,800"  tooltip data-title="进入审批"  data-handler="refreshJBoltTable" data-dialog-title="审批" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>进入审批</a>
+</td>
+</tr>
+{@/each}
+</textarea>		
 		<div class="row mt-2">
 				<div class="col-lg-12 col-sm-12 px-2">
 					<div class="card border-0  mb-2">
-						<div class="card-body" style="height:400px">
-							<h5 class="card-title"><span>用户留言</span><a tabindex="-1" data-fullscreenbtn data-target="parent.card" class="pull-right text-black-50"><i class="jbicon2 jbi-fullscreen"></i></a></h5>
+						<div class="card-body" style="height:500px">
+							<h5 class="card-title"><span>系统通知</span><a tabindex="-1" data-fullscreenbtn data-target="parent.card" class="pull-right text-black-50"><i class="jbicon2 jbi-fullscreen"></i></a></h5>
 							<div class="jbolt_table_view">
 							<div class="jbolt_table_box">
 							<div class="jbolt_table_body">
-							<table class="jbolt_table thead_font_normal"
-							  data-jbolttable
-							  data-fixed-columns-left="1"
-							  data-height="fill_box">
-								<thead><tr><th data-width="100" data-nochange>用户</th><th data-min-width="200">留言</th><th data-width="180"  data-nochange>订单号</th><th data-width="120"  data-nochange>时间</th></tr></thead>
+								<table class="jbolt_table jbolt_main_table table-center"
+								data-jbolttable
+								data-height="400"
+								data-ajax="true"
+								data-width="auto"
+								id="jbolt_table_#(pageId)"
+								data-url="admin/todo/dashBoardTodoDatas"
+								data-column-resize="true"
+								data-rowtpl="dashboardTableRowtpl_#(pageId)"
+								data-page="expenseBudgetPage_#(pageId)"
+								data-pagesize="50"
+								>
+								<thead class="fw-normal">
+									<tr>
+										<th data-width="60">序号</th>
+										<th data-width="1000" data-column="title">消息内容</th>
+										<th data-width="150">操作</th>
+									</tr>
+								</thead>
 								<tbody>
-									<tr>
-										<td>金毛狮王</td>
-										<td><a class="text-info" href="javascript:void(0)" data-dialogbtn data-area="400,500" data-title="查看留言内容" data-btn="close" data-content="this">JFinal极速开发-当然首选JBolt极速开发平台，省心，省事儿，极速开发</a></td>
-										<td>D1874837283745593</td>
-										<td>03/13 12:37</td>
-									</tr>
-									<tr>
-										<td>无忌孩儿</td>
-										<td><a class="text-info" href="javascript:void(0)" data-dialogbtn data-area="400,500" data-title="查看留言内容" data-btn="close" data-content="this">现在加入JFinal开发者计划，赠送一年JFinal官网俱乐部续费</a></td>
-										<td>D1874837283741123</td>
-										<td>03/13 12:37</td>
-									</tr>
-									<tr>
-										<td>齐天大圣</td>
-										<td><a class="text-info" href="javascript:void(0)" data-dialogbtn data-area="400,500" data-title="查看留言内容" data-btn="close" data-content="this">依托JFinal极速开发框架特性，最佳实践代码，学习JFinal，就加入JFinal开发者计划</a></td>
-										<td>D1874837283744563</td>
-										<td>03/13 12:37</td>
-									</tr>
-									<tr>
-										<td>太上老君</td>
-										<td><a class="text-info" href="javascript:void(0)" data-dialogbtn data-area="400,500" data-title="查看留言内容" data-btn="close" data-content="this">自动化前端组件集成，懒加载</a></td>
-										<td>D1874837283740098</td>
-										<td>03/13 12:37</td>
-									</tr>
-									<tr>
-										<td>铁臂阿头目</td>
-										<td><a class="text-info" href="javascript:void(0)" data-dialogbtn data-area="400,500" data-title="查看留言内容" data-btn="close" data-content="this">前端节省一半工作量</a></td>
-										<td>D1874837283748599</td>
-										<td>03/13 12:37</td>
-									</tr>
-									<tr>
-										<td>乔布斯</td>
-										<td><a class="text-info" href="javascript:void(0)" data-dialogbtn data-area="400,500" data-title="查看留言内容" data-btn="close" data-content="this">代码生成器，可视化</a></td>
-										<td>D1874837283733439</td>
-										<td>03/13 12:37</td>
-									</tr>
-									<tr>
-										<td>马云</td>
-										<td><a class="text-info" href="javascript:void(0)" data-dialogbtn data-area="400,500" data-title="查看留言内容" data-btn="close" data-content="this">JBolt Eclipse插件用起来</a></td>
-										<td>D1874837283439282</td>
-										<td>03/13 12:37</td>
-									</tr>
-									<tr>
-										<td>红薯</td>
-										<td><a class="text-info" href="javascript:void(0)" data-dialogbtn data-area="400,500" data-title="查看留言内容" data-btn="close" data-content="this">内置公众号多账号管理</a></td>
-										<td>D1874837283200928</td>
-										<td>03/13 12:37</td>
-									</tr>
-									<tr>
-										<td>山东小木</td>
-										<td><a class="text-info" href="javascript:void(0)" data-dialogbtn data-area="400,500" data-title="查看留言内容" data-btn="close" data-content="this">微信小程序多账号集成</a></td>
-										<td>D1874837283444933</td>
-										<td>03/13 12:37</td>
-									</tr>
-									<tr>
-										<td>成龙</td>
-										<td><a class="text-info" href="javascript:void(0)" data-dialogbtn data-area="400,500" data-title="查看留言内容" data-btn="close" data-content="this">电商模块研发中</a></td>
-										<td>D1874837283555855</td>
-										<td>03/13 12:37</td>
-									</tr>
-									<tr>
-										<td>李连杰</td>
-										<td><a class="text-info" href="javascript:void(0)" data-dialogbtn data-area="400,500" data-title="查看留言内容" data-btn="close" data-content="this">JBoltTable组件精致打造，后面进销存产品就用它</a></td>
-										<td>D1874837283221221</td>
-										<td>03/13 12:37</td>
-									</tr>
 								</tbody>
-							</table>
+								</table>							
 							</div>
 							</div>
 							</div>

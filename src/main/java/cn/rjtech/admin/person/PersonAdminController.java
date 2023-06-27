@@ -209,6 +209,11 @@ public class PersonAdminController extends BaseAdminController {
         renderJsonData(service.getAutocompleteListWithDept(get("cdepcode"), get("q"), getInt("limit", 10)));
     }
 
+    @UnCheck
+    public void getAutocompleteDatasContainSubDep() {
+        renderJsonData(service.getAutocompleteDatasContainSubDep(get("cdepcode"), get("q"), getInt("limit", 10)));
+    }
+    
     /**
      * 选择页面
      */

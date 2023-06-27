@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSubcontractOrderDBatch<M extends BaseSubcontractOrderDBatch<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**委外订单明细ID*/
@@ -34,6 +35,8 @@ public abstract class BaseSubcontractOrderDBatch<M extends BaseSubcontractOrderD
     public static final String CSEQ = "cSeq";
     /**委外销售订单明细数量ID*/
     public static final String ISUBCONTRACTORDERDQTYID = "iSubcontractOrderdQtyId";
+    /**完整条码（现品票+版本号）*/
+    public static final String CCOMPLETEBARCODE = "cCompleteBarcode";
 	/**
 	 * 主键ID
 	 */
@@ -236,6 +239,23 @@ public abstract class BaseSubcontractOrderDBatch<M extends BaseSubcontractOrderD
 	@JSONField(name = "isubcontractorderdqtyid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getISubcontractOrderdQtyId() {
 		return getLong("iSubcontractOrderdQtyId");
+	}
+
+	/**
+	 * 完整条码（现品票+版本号）
+	 */
+	public M setCCompleteBarcode(java.lang.String cCompleteBarcode) {
+		set("cCompleteBarcode", cCompleteBarcode);
+		return (M)this;
+	}
+
+	/**
+	 * 完整条码（现品票+版本号）
+	 */
+	@JBoltField(name="ccompletebarcode" ,columnName="cCompleteBarcode",type="String", remark="完整条码（现品票+版本号）", required=false, maxLength=100, fixed=0, order=13)
+	@JSONField(name = "ccompletebarcode")
+	public java.lang.String getCCompleteBarcode() {
+		return getStr("cCompleteBarcode");
 	}
 
 }

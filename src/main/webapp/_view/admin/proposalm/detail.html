@@ -62,7 +62,7 @@
             <tr data-id="${data.iautoid}" >
                 <td>${pageNumber,pageSize,index | rownum}</td>
                 <td>${data.cproposalno}</td>
-                <td>${data.cdepname}${data.cdepcode|bracket}</td>
+                <td>${data.cdepname}</td>
                 <td>${data.capplypersonname}</td>
                 <td>${data.dapplydate,'yyyy-MM-dd'|date}</td>
                 <td>${data.cprojectcode}</td>
@@ -70,9 +70,9 @@
                 <td>${data.cpurposename}</td>
                 <td>${data.ccategoryname}</td>
                 <td>${data.cbudgetno}</td>
-                <td>${data.clowestsubjectcode}</td>
-                <td>${data.budgetamount|kFormat}</td>
-                <td>${data.budgetamountnottaxinclu|kFormat}</td>
+                <td>${data.clowestsubjectname}</td>
+                <td>${data.ibudgetsum|kFormat}</td>
+                <td>${data.ibudgetmoney|kFormat}</td>
                 <td>${data.sumamounttaxinclu|kFormat}</td>
                 <td>${data.sumamountnottaxinclu|kFormat}</td>
                 <td>${data.citemname}</td>
@@ -82,7 +82,7 @@
                 <td>${data.iamountnottaxinclu|kFormat}</td>
                 <td>${data.cvenname}</td>
                 <td>${data.ddemanddate,'yyyy-MM-dd'|date}</td>
-                <td>${data.cbudgetdepname}${data.cbudgetdepcode|bracket}</td>
+                <td>${data.cbudgetdepname}</td>
             </tr>
         {@/each}
         </textarea>
@@ -117,13 +117,13 @@
                data-pagesize="50"
                data-toolbar="proposalDetail_toolbar_#(pageId)"
                data-fixed-columns-left="1,2,3"
-               data-ajax-success-handler="ajaxSuccessHandler_#(pageId)"
+               ###data-ajax-success-handler="ajaxSuccessHandler_#(pageId)"
         >
             <thead class="fw-normal">
             <tr>
                 <th data-width="60">序号</th>
                 <th data-width="150" data-column="cproposalno">禀议书编号</th>
-                <th data-width="150" data-column="cdepcode">部门</th>
+                <th data-width="150" data-column="cdepname">部门</th>
                 <th data-width="150" data-column="capplypersonname">申请人</th>
                 <th data-width="150" data-column="dapplydate">申请日期</th>
                 <th data-width="150" data-column="cprojectcode">项目编码</th>
@@ -132,8 +132,8 @@
                 <th data-width="150" data-column="ccategoryname">类别区分</th>
                 <th data-width="150" data-column="cbudgetno">预算编号</th>
                 <th data-width="150" data-column="clowestsubjectcode">明细科目</th>
-                <th data-width="150" data-column="budgetamount">预算金额（含税）</th>
-                <th data-width="150" data-column="budgetamountnottaxinclu">预算金额（不含税）</th>
+                <th data-width="150" data-column="ibudgetsum">预算金额（含税）</th>
+                <th data-width="150" data-column="ibudgetmoney">预算金额（不含税）</th>
                 <th data-width="150" data-column="sumamounttaxinclu">已禀议金额（含税）</th>
                 <th data-width="150" data-column="sumamountnottaxinclu">已禀议金额（不含税）</th>
                 <th data-width="150" data-column="citemname">细项名称</th>
@@ -141,7 +141,7 @@
                 <th data-width="150" data-column="inatunitprice">单价</th>
                 <th data-width="150" data-column="iamounttaxinclu">申请金额（含税）</th>
                 <th data-width="150" data-column="iamountnottaxinclu">申请金额（不含税）</th>
-                <th data-width="150" data-column="cvencode">预定供应商</th>
+                <th data-width="150" data-column="cvenname">预定供应商</th>
                 <th data-width="150" data-column="ddemanddate">需求日</th>
                 <th data-width="150" data-column="cbudgetdepcode">预算对应部门</th>
             </tr>

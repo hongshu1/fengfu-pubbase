@@ -1,6 +1,9 @@
 package cn.rjtech.admin.expensebudgetmanage;
 
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.annotation.CheckDataPermission;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
@@ -42,6 +45,7 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -60,6 +64,7 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
         List<Record> quantityAndAmountColumnList = new ArrayList<>();
         periodService.calcDynamicExpenseBudgetTableColumn(dstarttime,dendtime,yearColumnTxtList,monthColumnTxtList,quantityAndAmountColumnList);
         set("expenseBudget", expenseBudget);
+        set("readonly","readonly");
         set("yearcolumntxtlist",yearColumnTxtList);
         set("monthcolumntxtlist",monthColumnTxtList);
         set("quantityandamountcolumnlist",quantityAndAmountColumnList);
@@ -97,4 +102,9 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
     	set("expenseBudget", expenseBudget);
     	render("approve_process_index.html");
     }
+    @CheckPermission(PermissionKey.EXPENSE_BUDGET_MANAGE_UNEFFECT)
+    public void uneffect(){
+    	renderJson(service.uneffect(getLong()));
+    }
+    
 }

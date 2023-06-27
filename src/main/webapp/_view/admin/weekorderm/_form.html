@@ -11,9 +11,11 @@
                         #if(readonly != 'readonly')
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
+                        #if(weekOrderM.iAutoId??)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/weekorderm",
                         formSn="Co_WeekOrderM", o=weekOrderM, primaryKeyName="iAutoId",
                         className="cn.rjtech.admin.weekorderm.WeekOrderMService", permissionKeyPrefix="weekorderm")
+                        #end
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -82,6 +84,7 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group row">
+                                    <input type="hidden" name="icustomermid" value="#(weekOrderM.icustomerid??)" id="icustomermid" data-sync-attr="iautoid"/>
                                     <input type="hidden" name="weekOrderM.icustomerid" value="#(weekOrderM.icustomerid??)" id="icustomerid" data-sync-attr="iautoid"/>
                                     <input type="hidden" name="weekOrderM.ccuscode" value="#(weekOrderM.ccuscode??)" id="ccuscode" data-sync-attr="ccuscode"/>
                                     <label class="col-sm-3 col-form-label">客户名称</label>
@@ -93,7 +96,7 @@
                                                    id="ccusname"
                                                    data-url="admin/customer/autocomplete"
                                                    data-rule="required"
-                                                   data-sync-ele="#icustomerid,#ccuscode"
+                                                   data-sync-ele="#icustomermid,#icustomerid,#ccuscode"
                                                    data-text-attr="ccusname"
                                                    data-value-attr="iautoid"
                                                    data-column-attr="ccuscode,ccusname"
@@ -129,16 +132,19 @@
                             <div class="col-md-3">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">销售部门</label>
-                                    <input type="hidden" name="weekOrderM.iDepartmentId"
-                                           value="#(weekOrderM.iDepartmentId??)" id="cdepcode"
-                                           data-value-attr="iautoid" />
                                     <div class="col-8">
-                                        <input type="text" class="form-control" data-autocomplete
-                                               data-url="admin/salesShipmentList/department"
-                                               data-hidden-input="cdepcode" data-text-attr="cdepname"
-                                               data-column-attr="cdepcode,cdepname" placeholder="请选销售部门"
-                                               data-tips="请选销售部门"
-                                               data-header="销售部门编码,销售部门名称" maxlength="40" value="#(weekOrderM.cdepname??)">
+                                        <select class="form-control" name="weekOrderM.iDepartmentId"
+                                                data-autoload
+                                                data-with-clearbtn="true"
+                                                data-select-type="select2"
+                                                data-tips="请选择"
+                                                data-url="admin/dept/enableOptions"
+                                                data-text="=请选择="
+                                                data-text-attr="name"
+                                                data-value-attr="id"
+                                                data-width="218"
+                                                data-select="#(weekOrderM.iDepartmentId??)">
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -173,7 +179,7 @@
                                         <input type="text" autocomplete="off" class="form-control" data-rule="pnumber;fix<=#(precisionConfig5)"
                                                data-notnull="false"
                                                placeholder="请输入税率" maxlength="40" name="weekOrderM.iTaxRate"
-                                               value="#(weekOrderM.iTaxRate??)"/>
+                                               value="#number(weekOrderM.iTaxRate??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -253,7 +259,7 @@
 
 ### 新增之后，并且为审核流
 #if(weekOrderM.iautoid?? && weekOrderM.iauditway == 2)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=weekOrderM.iAutoId, formSn="Co_WeekOrderM", btnNeed=1, pId=pageId,className="cn.rjtech.admin.weekorderm.WeekOrderMService")
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=weekOrderM.iAutoId, primaryKeyName="iAutoId", formSn="Co_WeekOrderM", btnNeed=1, pId=pageId,className="cn.rjtech.admin.weekorderm.WeekOrderMService")
 #end
 
 <div class="jbolt_page_content">
@@ -341,9 +347,7 @@
             <th data-width="100" data-column="cinvcode">存货编码</th>
             <th data-width="100" data-column="cdefine1">客户部番</th>
             <th data-width="100" data-column="cdefine2">部品名称</th>
-            <!--<th data-width="100" data-column="cinvstd">规格</th>-->
             <th data-width="100" data-column="iqty">数量</th>
-            <!--<th data-width="100" data-column="cdefine4">销售单位</th>-->
             <th data-width="160" data-column="dplanaogdate">计划到货日期</th>
             <th data-width="160" data-column="cplanaogtime">计划到货时间</th>
             <th data-width="100" data-column="ccode">传票号</th>
@@ -379,9 +383,6 @@
                         } else {
                             successHandler(res.msg, res.data.iautoid);
                         }
-
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
                     }
@@ -394,7 +395,8 @@
                 },
                 cdistrictname: {
                     type: "select",
-                    linkPara: 'input[name="icustomermid"]',
+                    linkPara:"#icustomermid",
+
                     url: "/admin/customeraddr/list",
                     valueAttr: "cdistrictname",
                     textAttr: "cdistrictname",
@@ -498,6 +500,17 @@
             }
         };
         return editableTableOptions;
+    }
+
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/weekorderm/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
+            parent.refreshPjaxContainer();
+        });
     }
 
     /**
@@ -664,7 +677,6 @@
     {
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
-        parent.refreshPjaxContainer();
     }
 
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
@@ -702,15 +714,15 @@
             }
         });
     }
-    function setChooseDialogSelectResult(data){
-        $('#icustomerid').val(data.ccusname);
-    }
 
     // 选择客户名称
     function instCcusname(data) {
         $("#icustomerid").val(data.iautoid);
         $("#ccusname").val(data.ccusname);
         $("#ccuscode").val(data.ccuscode);
+
+        // 收货地点依赖数据
+        $("#icustomermid").val(data.iautoid);
     }
 </script>
 #end

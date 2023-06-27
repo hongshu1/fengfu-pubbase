@@ -25,8 +25,6 @@
                         } else {
                             successHandler(res.msg, res.data.iautoid);
                         }
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
                     }
@@ -417,6 +415,17 @@
             }
         };
         return editableTableOptions;
+    }
+
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/manualorderm/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
+            parent.refreshPjaxContainer();
+        });
     }
 
     function uploadHandler(uploader, type, fileInput, res) {

@@ -5,7 +5,6 @@ import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -311,7 +310,7 @@ public class WorkregionmService extends BaseService<Workregionm> {
             Person person = personMap.get(cpersonname);
 
             if (ObjUtil.isNull(person)) {
-                person = personService.findByCpersonName(cpersonname); 
+                person = personService.findFirstByCpersonName(cpersonname); 
                 ValidationUtils.notNull(person, String.format("人员“%s”不存在", cpersonname));
 
                 personMap.put(cpersonname, person);
@@ -537,4 +536,10 @@ public class WorkregionmService extends BaseService<Workregionm> {
 
     }
 
+    /**
+     *根据产线名称获取数据
+     */
+    public Workregionm findFirstByWorkName(String cWorkName) {
+        return  findFirst(selectSql().select().eq(Workregionm.CWORKNAME, cWorkName));
+    }
 }

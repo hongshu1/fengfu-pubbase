@@ -12,6 +12,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
@@ -50,6 +51,7 @@ import cn.rjtech.model.momdata.ExpenseBudget;
 import cn.rjtech.model.momdata.Period;
 import cn.rjtech.model.momdata.Purchased;
 import cn.rjtech.model.momdata.Purchasem;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.u8.api.purchaseapp.PurchaseAppApi;
 import cn.rjtech.util.RecordMap;
 import cn.rjtech.util.ValidationUtils;
@@ -77,7 +79,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-09-14 14:52
  */
-public class PurchasemService extends BaseService<Purchasem> {
+public class PurchasemService extends BaseService<Purchasem> implements IApprovalService{
 
     private final Purchasem dao = new Purchasem().dao();
 
@@ -304,6 +306,7 @@ public class PurchasemService extends BaseService<Purchasem> {
     public Ret saveTableSubmit(JBoltTable jBoltTable) {
         ValidationUtils.notNull(jBoltTable, JBoltMsg.PARAM_ERROR);
         Purchasem purchasem = jBoltTable.getFormModel(Purchasem.class, "purchasem");
+        DataPermissionKit.validateAccess(purchasem.getCDepCode());
         ValidationUtils.notNull(purchasem, JBoltMsg.PARAM_ERROR);
         Boolean flg = true;
         flg = tx(() -> {
@@ -345,7 +348,7 @@ public class PurchasemService extends BaseService<Purchasem> {
             }
             return true;
         });
-        if(flg) return SUCCESS;
+        if(flg) return successWithData(purchasem.keep("iautoid"));
         else return FAIL;
     }
 	/**
@@ -416,10 +419,6 @@ public class PurchasemService extends BaseService<Purchasem> {
 
     /**
      * 提交审批
-     *
-     * @param iautoid
-     * @param loginUser
-     * @return
      */
     public Ret submit(Long iautoid) {
         Purchasem purchasem = findById(iautoid);
@@ -445,18 +444,12 @@ public class PurchasemService extends BaseService<Purchasem> {
         return SUCCESS;
 
     }
-    /**
-     * 处理审批通过的其他业务操作，如有异常返回错误信息
-     */
-    public String postApproveFunc(long formAutoId) {
-  
-        return null;
-    }
 	
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return null;
     }
 	
@@ -467,6 +460,7 @@ public class PurchasemService extends BaseService<Purchasem> {
      * @param isFirst    是否为审批的第一个节点
      * @param isLast     是否为审批的最后一个节点
      */
+    @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         // 反审回第一个节点，回退状态为“已保存”
         if (isFirst) {
@@ -810,6 +804,7 @@ public class PurchasemService extends BaseService<Purchasem> {
 	 */
 	public Ret refBudgetSaveTableSubmit(JBoltTable jBoltTable) {
 		Purchasem purchasem = jBoltTable.getFormModel(Purchasem.class,"purchasem");
+		DataPermissionKit.validateAccess(purchasem.getCDepCode());
 		Date now = new Date();
 		User loginUesr = JBoltUserKit.getUser();
 		tx(()->{
@@ -833,7 +828,7 @@ public class PurchasemService extends BaseService<Purchasem> {
 			deletePurchasedDatas(jBoltTable.getDelete());
 			return true;
 		});
-		return SUCCESS;
+		return successWithData(purchasem.keep("iautoid"));
 	}
 	//表格提交-新增申购明细数据
 	private void addPurchasedDatas(List<Record> saveRecordList, Purchasem purchasem) {
@@ -1267,4 +1262,70 @@ public class PurchasemService extends BaseService<Purchasem> {
         }
         return successWithData(record.keep("iunitprice"));
     }
+
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 } 

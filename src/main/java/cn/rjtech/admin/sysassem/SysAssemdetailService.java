@@ -5,6 +5,7 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.model.momdata.SysAssemdetail;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
@@ -142,8 +143,29 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
     }
 
     public List<Record> findEditTableDatas(Kv para) {
-        ValidationUtils.notNull(para.getLong("masid"), JBoltMsg.PARAM_ERROR);
-        List<Record> records = dbTemplate("sysassem.dList", para).find();
+        List<Record> records =null;
+        if(null != para.getLong("masid")){
+            records = dbTemplate("sysassem.dList", para).find();
+        }
+        if (records != null && !records.isEmpty()) {
+            for (int t = 0; t < records.size(); t++) {
+                Record record = records.get(t);
+                String cinvcode = record.getStr("cinvcode");
+                if (cinvcode == null || "".equals(cinvcode)) {
+                    String invcode = record.getStr("invcode");
+                    Record firstRecord = findFirstRecord("select t3.cinvname,t3.cInvCode ,t3.cInvCode1,t3.cInvName1,t3.cInvStd as cinvstd,\n" +
+                            "t3.iAutoId,uom.cUomCode,uom.cUomName as purchasecuomname,uom.cUomName as  puunitname\n" +
+                            "         from Bd_Inventory t3\n" +
+                            "         LEFT JOIN Bd_Uom uom on t3.iPurchaseUomId = uom.iAutoId\n" +
+                            "         where t3.cInvCode = '" + invcode + "'");
+                    record.set("cinvcode",invcode);
+                    record.set("cinvcode1",firstRecord.getStr("cinvcode1"));
+                    record.set("cinvname1",firstRecord.getStr("cinvname1"));
+                    record.set("cinvstd",firstRecord.getStr("cinvstd"));
+                    record.set("cuomname",firstRecord.getStr("puunitname"));
+                }
+            }
+        }
         return records;
     }
 
@@ -167,7 +189,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
 //		sysAssemdetail.setAutoID();
         SysAssemdetail sysAssemdetail = new SysAssemdetail();
         sysAssemdetail.setMasID(masId);
-        sysAssemdetail.setBarcode(puinstoredetail.getSpotTicket());
+        sysAssemdetail.setBarcode(puinstoredetail.getBarCode());
         sysAssemdetail.setSourceType(puinstoredetail.getSourceBillType());
         sysAssemdetail.setSourceBillNo(puinstoredetail.getSourceBillNo());
         sysAssemdetail.setSourceBillNoRow(puinstoredetail.getSourceBillNoRow());

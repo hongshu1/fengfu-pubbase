@@ -1,7 +1,6 @@
 package cn.rjtech.admin.investmentplanmanage;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
@@ -153,5 +152,26 @@ public class InvestmentPlanManageService extends BaseService<InvestmentPlan>{
 			return true;
 		});
 		return SUCCESS;
+	}
+	
+	/**
+	 * 失效：1.存在下游单据不能失效
+	 * 	2.单据状态从已生效变更到未生效
+	 * */
+	public Ret uneffect(Long iplanid) {
+		tx(()->{
+			InvestmentPlan investmentPlan = findById(iplanid);
+			Integer ieffectivestatus = investmentPlan.getIEffectiveStatus();
+			ValidationUtils.isTrue(ieffectivestatus == EffectiveStatusEnum.EFFECTIVED.getValue(), "请操作已生效的单据!");
+			ValidationUtils.isTrue(!isExistsProposalDatas(iplanid), "存在禀议数据，不能失效");
+			investmentPlan.setIEffectiveStatus(EffectiveStatusEnum.INVAILD.getValue());
+			ValidationUtils.isTrue(investmentPlan.update(), ErrorMsg.UPDATE_FAILED);
+			return true;
+		});
+		return SUCCESS;
+	}
+	private boolean isExistsProposalDatas(Long iplanid){
+		int count = dbTemplate("investmentplanmanage.isExistsProposalDatas",Kv.by("iplanid", iplanid)).queryInt();
+		return count > 0 ? true : false;
 	}
 }

@@ -51,7 +51,7 @@ public class ApprovalMService extends BaseService<ApprovalM> {
 	 * @return
 	 */
 	public Page<ApprovalM> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
+		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "cApprovalName");
 	}
 
 	/**

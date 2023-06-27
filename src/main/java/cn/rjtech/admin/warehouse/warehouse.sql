@@ -1,9 +1,14 @@
 #sql("paginateAdminDatas")
 SELECT
 	wh.*,
-    dt.cDepName
-FROM Bd_Warehouse wh
-     LEFT JOIN bd_department dt ON wh.cDepCode = dt.cDepCode and wh.iOrgId=#(iorgid) and dt.isDeleted = 0
+	dt.cDepName
+FROM
+	Bd_Warehouse wh
+	LEFT JOIN bd_department dt ON wh.cDepCode = dt.cDepCode
+#if(iorgId)
+	and wh.iOrgId = #para(iorgId)
+#end
+	 and dt.isDeleted = 0
 WHERE wh.isDeleted = 0
 	#if(cwhcode)
 	    AND wh.cWhCode  LIKE CONCAT('%', #para(cwhcode), '%')
@@ -34,7 +39,7 @@ WHERE wh.isDeleted = 0
         AND CHARINDEX(','+cast((select wh.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
     #end
 
-ORDER BY wh.cWhCode DESC
+ORDER BY wh.cWhCode,wh.dCreateTime DESC
 #end
 
 #sql("findByMouldsId")
@@ -106,4 +111,26 @@ FROM
 	    iOrgId = #para(orgId)
 	AND isDeleted = '0'
 	AND isEnabled = '1'
+#end
+
+#sql("verifyDuplication")
+SELECT
+	ISNULL( COUNT ( iAutoId ), 0 )
+FROM
+	Bd_Warehouse
+	WHERE isDeleted=0
+#if(cwhcode)
+    AND cWhCode = #para(cwhcode)
+#end
+#if(cwhname)
+    AND cWhName = #para(cwhname)
+#end
+#if(iautoid)
+    AND iautoid != #para(iautoid)
+#end
+
+#end
+
+#sql("getCdepnameByCdepcode")
+select cDepCode from bd_department where cDepName = #para(cdepname)
 #end

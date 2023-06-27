@@ -185,7 +185,7 @@ public abstract class BaseFormExtendFields<M extends BaseFormExtendFields<M>> ex
 	/**
 	 * 是否启用;0. 否 1. 是
 	 */
-	public M setIsEnabled(java.lang.Boolean isEnabled) {
+	public M setIsEnabled(java.lang.String isEnabled) {
 		set("isEnabled", isEnabled);
 		return (M)this;
 	}
@@ -193,16 +193,16 @@ public abstract class BaseFormExtendFields<M extends BaseFormExtendFields<M>> ex
 	/**
 	 * 是否启用;0. 否 1. 是
 	 */
-	@JBoltField(name="isenabled" ,columnName="isEnabled",type="Boolean", remark="是否启用;0. 否 1. 是", required=true, maxLength=1, fixed=0, order=9)
+	@JBoltField(name="isenabled" ,columnName="isEnabled",type="String", remark="是否启用;0. 否 1. 是", required=true, maxLength=1, fixed=0, order=9)
 	@JSONField(name = "isenabled")
-	public java.lang.Boolean getIsEnabled() {
-		return getBoolean("isEnabled");
+	public java.lang.String getIsEnabled() {
+		return getStr("isEnabled");
 	}
 
 	/**
 	 * 是否必填;0. 否 1. 是
 	 */
-	public M setIsRequired(java.lang.Boolean isRequired) {
+	public M setIsRequired(java.lang.String isRequired) {
 		set("isRequired", isRequired);
 		return (M)this;
 	}
@@ -210,16 +210,16 @@ public abstract class BaseFormExtendFields<M extends BaseFormExtendFields<M>> ex
 	/**
 	 * 是否必填;0. 否 1. 是
 	 */
-	@JBoltField(name="isrequired" ,columnName="isRequired",type="Boolean", remark="是否必填;0. 否 1. 是", required=true, maxLength=1, fixed=0, order=10)
+	@JBoltField(name="isrequired" ,columnName="isRequired",type="String", remark="是否必填;0. 否 1. 是", required=true, maxLength=1, fixed=0, order=10)
 	@JSONField(name = "isrequired")
-	public java.lang.Boolean getIsRequired() {
-		return getBoolean("isRequired");
+	public java.lang.String getIsRequired() {
+		return getStr("isRequired");
 	}
 
 	/**
 	 * 是否编辑;0. 否 1. 是
 	 */
-	public M setIsEditable(java.lang.Boolean isEditable) {
+	public M setIsEditable(java.lang.String isEditable) {
 		set("isEditable", isEditable);
 		return (M)this;
 	}
@@ -227,16 +227,16 @@ public abstract class BaseFormExtendFields<M extends BaseFormExtendFields<M>> ex
 	/**
 	 * 是否编辑;0. 否 1. 是
 	 */
-	@JBoltField(name="iseditable" ,columnName="isEditable",type="Boolean", remark="是否编辑;0. 否 1. 是", required=true, maxLength=1, fixed=0, order=11)
+	@JBoltField(name="iseditable" ,columnName="isEditable",type="String", remark="是否编辑;0. 否 1. 是", required=true, maxLength=1, fixed=0, order=11)
 	@JSONField(name = "iseditable")
-	public java.lang.Boolean getIsEditable() {
-		return getBoolean("isEditable");
+	public java.lang.String getIsEditable() {
+		return getStr("isEditable");
 	}
 
 	/**
 	 * 是否显示
 	 */
-	public M setIsDisplayed(java.lang.Boolean isDisplayed) {
+	public M setIsDisplayed(java.lang.String isDisplayed) {
 		set("isDisplayed", isDisplayed);
 		return (M)this;
 	}
@@ -244,10 +244,10 @@ public abstract class BaseFormExtendFields<M extends BaseFormExtendFields<M>> ex
 	/**
 	 * 是否显示
 	 */
-	@JBoltField(name="isdisplayed" ,columnName="isDisplayed",type="Boolean", remark="是否显示", required=true, maxLength=1, fixed=0, order=12)
+	@JBoltField(name="isdisplayed" ,columnName="isDisplayed",type="String", remark="是否显示", required=true, maxLength=1, fixed=0, order=12)
 	@JSONField(name = "isdisplayed")
-	public java.lang.Boolean getIsDisplayed() {
-		return getBoolean("isDisplayed");
+	public java.lang.String getIsDisplayed() {
+		return getStr("isDisplayed");
 	}
 
 	/**

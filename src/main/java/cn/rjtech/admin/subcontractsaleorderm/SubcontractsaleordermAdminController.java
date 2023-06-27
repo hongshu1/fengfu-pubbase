@@ -6,23 +6,17 @@ import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.enums.SubcontractSaleOrderStatusEnum;
 import cn.rjtech.model.momdata.Customer;
 import cn.rjtech.model.momdata.Subcontractsaleorderm;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
-import java.util.Optional;
 
 /**
  * 委外销售订单主表 Controller
@@ -41,8 +35,6 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     private CustomerService customerService;
     @Inject
     private SubcontractsaleordermService service;
-    @Inject
-    private CusOrderSumService cusOrderSumService;
 
     /**
      * 首页
@@ -69,16 +61,10 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        Subcontractsaleorderm subcontractsaleorderm = service.findById(getLong("iautoid"));
-        if (subcontractsaleorderm == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        Record subcontractsaleordermRc = subcontractsaleorderm.toRecord();
-        Customer customer = customerService.findById(subcontractsaleorderm.getICustomerId());
-        subcontractsaleordermRc.set("ccusname", customer == null ? null : customer.getCCusName());
-        subcontractsaleordermRc.set("cbususername", JBoltUserCache.me.getUserName(subcontractsaleorderm.getIBusPersonId()));
-        set("subcontractsaleorderm", subcontractsaleordermRc);
+        Page<Record> datas = service.paginateAdminDatas(1, 1, Kv.by("iautoid", getLong("iautoid")));
+        ValidationUtils.notNull(datas, JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.isTrue(datas.getList().size() > 0, JBoltMsg.DATA_NOT_EXIST);
+        set("subcontractsaleorderm", datas.getList().get(0));
         keepPara();
         render("edit.html");
     }
@@ -116,52 +102,6 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
      */
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
-    }
-
-    /**
-     * 提交审批
-     */
-    public void submit() {
-        renderJson(service.submit(getLong("iautoid")));
-    }
-
-    /**
-     * 审批
-     */
-    public void approve() {
-        renderJson(service.approve(getLong(0)));
-    }
-
-    /**
-     * 审批不通过
-     */
-    public void reject() {
-        renderJson(service.reject(getLong(0)));
-    }
-
-    /**
-     * 撤回
-     */
-    public void withdraw(@Para(value = "iautoid") Long iAutoId) {
-        ValidationUtils.validateId(iAutoId, "iAutoId");
-
-        renderJson(service.withdraw(iAutoId));
-    }
-
-    /**
-     * 批量审核
-     */
-    public void batchApprove()
-    {
-        renderJson(service.batchApprove(get("ids")));
-    }
-
-    /**
-     * 批量反审
-     */
-    public void batchReverseApprove()
-    {
-        renderJson(service.batchReverseApprove(get("ids")));
     }
 
     /**

@@ -4,40 +4,45 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dept.DeptService;
+import cn.jbolt._admin.role.RoleService;
 import cn.jbolt.common.model.UserExtend;
 import cn.jbolt.core.base.JBoltGlobalConfigKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.*;
+import cn.jbolt.core.common.enums.UserTypeEnum;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.enumutil.JBoltEnum;
 import cn.jbolt.core.kit.JBoltCurrentOfModuleKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.kit.OrgAccessKit;
-import cn.jbolt.core.model.Application;
-import cn.jbolt.core.model.Dept;
-import cn.jbolt.core.model.User;
+import cn.jbolt.core.model.*;
 import cn.jbolt.core.service.JBoltUserService;
+import cn.jbolt.core.service.UserTypeService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltPinYinUtil;
 import cn.jbolt.extend.config.ExtendProjectOfModule;
 import cn.jbolt.extend.user.ExtendUserOfModuleLinkService;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.userorg.UserOrgService;
 import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.BoolCharEnum;
+import cn.rjtech.enums.ThirdpartySystemEnum;
 import cn.rjtech.model.main.UserOrg;
 import cn.rjtech.model.main.UserThirdparty;
+import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
-import com.jfinal.kit.HashKit;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import com.jfinal.kit.StrKit;
+import com.jfinal.kit.*;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,6 +57,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @date: 2020年5月2日
  */
 public class UserService extends JBoltUserService {
+    
     @Inject
     private DeptService deptService;
     @Inject
@@ -62,6 +68,14 @@ public class UserService extends JBoltUserService {
     private UserOrgService userOrgService;
     @Inject
     private UserThirdpartyService userThirdpartyService;
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingDService;
+    @Inject
+    private RoleService roleService;
+    @Inject
+    private PersonService personService;
+    @Inject
+    private UserTypeService userTypeService;
 
     /**
      * 保存
@@ -533,7 +547,7 @@ public class UserService extends JBoltUserService {
                     ValidationUtils.isTrue(userOrgService.notExistsDuplicatePerson(org.getOrgId(), org.getIPersonId()), "选择的人员已被占用");
                 }
                 
-                org.keep("id", "org_id", "position", "is_principal", "parent_psn_id", "version_num")
+                org.keep("id", "org_id", "position", "is_principal", "parent_psn_id", "version_num", "ipersonid")
                         .setLastUpdateId(user.getId())
                         .setLastUpdateName(user.getName())
                         .setLastUpdateTime(now);
@@ -617,5 +631,153 @@ public class UserService extends JBoltUserService {
     public List<String> getEmails(List<Long> nextUserIds) {
         return query(selectSql().select(User.EMAIL).in(User.ID, nextUserIds));
     }
-    
+
+    /**
+     * 从系统导入字段配置，获得导入的数据
+     */
+    public Ret importExcel(File file, Long orgId, Long userId) {
+        List<Record> users = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        if (notOk(users)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+        }
+
+        // 用户类型
+        UserType userType = userTypeService.findFirst(Okv.by(UserType.USERTYPE_CODE, UserTypeEnum.MOM.getValue()));
+        ValidationUtils.notNull(userType, "用户类型不存在");
+        
+        // 第三方账号
+        List<Record> thirdpartys = new ArrayList<>();
+        // 用户组织（人员）
+        List<Record> userOrgs = new ArrayList<>();
+        
+        Date now = new Date();
+
+        for (Record user : users) {
+
+            ValidationUtils.notBlank(user.getStr("name"), "姓名不能为空");
+            ValidationUtils.notBlank(user.getStr("username"), "用户名不能为空");
+            ValidationUtils.notBlank(user.getStr("password"), "密码不能为空");
+
+            // ------------------------------------
+            // 角色
+            // ------------------------------------
+            String roles = user.getStr("roles");
+            ValidationUtils.notBlank(roles, "角色不能为空");
+            
+            List<Long> roleIdList = new ArrayList<>();
+
+            List<String> roleStrList = StrSplitter.split(roles, COMMA, true, true);
+
+            for (String roleStr : roleStrList) {
+                Role role = roleService.findFirstByName(roleStr);
+                ValidationUtils.notNull(role, String.format("角色“%s”不存在", roleStr));
+
+                roleIdList.add(role.getId());
+            }
+
+            user.set("roles", CollUtil.join(roleIdList, COMMA));
+            user.set("id", JBoltSnowflakeKit.me.nextId());
+            user.set("user_type_id", userType.getId());
+
+            String password = user.getStr("password").trim();
+            String pwdSalt = HashKit.generateSaltForSha256();
+            user.set("pwd_salt", pwdSalt);
+            user.set("password", calPasswordWithSalt(password, pwdSalt));
+            user.set("create_time", now);
+            user.set("create_user_id", userId);
+            user.set("update_time", now);
+            user.set("update_user_id", userId);
+            
+            // ---------------------------------------
+            // 用户组织
+            // ---------------------------------------
+
+            // 负责人标识
+            String isPrincipal = user.getStr("is_principal");
+            ValidationUtils.notBlank(isPrincipal, "缺少负责人标识");
+            
+            BoolCharEnum t = BoolCharEnum.textToEnum(isPrincipal);
+            ValidationUtils.notNull(t, "负责人标识不合法");
+            
+            user.set("is_principal", t.getValue());
+
+            String cParentPersonname = user.getStr("parent_psn_id");
+            if (StrUtil.isNotBlank(cParentPersonname)) {
+                // 直接上级姓名
+                Person person = personService.findFirstByCpersonName(cParentPersonname);
+                ValidationUtils.notNull(person, String.format("直接上级姓名“%s”不存在", cParentPersonname));
+
+                user.set("parent_psn_id", person.getIAutoId());
+            }
+
+            // ------------------------------------
+            // 人员
+            // ------------------------------------
+            String cpersonname = user.getStr("ipersonid");
+            ValidationUtils.notBlank(cpersonname, "人员姓名不能为空");
+
+            List<Person> personList = personService.findByCpersonName(cpersonname);
+            ValidationUtils.notEmpty(personList, String.format("人员“%s”不存在", cpersonname));
+            ValidationUtils.isTrue(personList.size() == 1, String.format("人员“%s”存在多个", cpersonname));
+
+            userOrgs.add(new Record()
+                    .set("id", JBoltSnowflakeKit.me.nextId())
+                    .set("org_id", orgId)
+                    .set("user_id", user.getLong("id"))
+                    .set("ipersonid", personList.get(0).getIAutoId())
+                    .set("is_principal", user.getStr("is_principal"))
+                    .set("parent_psn_id", user.getLong("parent_psn_id"))
+                    .set("create_time", now)
+                    .set("create_user_id", userId)
+                    .set("is_deleted", ZERO_STR));
+            
+            // ---------------------------------------
+            // 第三方系统
+            // ---------------------------------------
+            
+            String thirdpartySystem = user.getStr("thirdparty_system");
+            if (StrUtil.isNotBlank(thirdpartySystem)) {
+                ThirdpartySystemEnum thirdpartySystemEnum = ThirdpartySystemEnum.textToEnum(thirdpartySystem);
+                ValidationUtils.notNull(thirdpartySystemEnum, String.format("第三方系统“%s”不存在", thirdpartySystem));
+
+                user.set("thirdparty_system", thirdpartySystemEnum.getValue());
+
+                thirdpartys.add(new Record()
+                        .set("id", JBoltSnowflakeKit.me.nextId())
+                        .set("thirdparty_system", user.get("thirdparty_system"))
+                        .set("user_id", user.get("id"))
+                        .set("thirdparty_code", user.get("thirdparty_code"))
+                );
+            }
+
+            user.remove("is_principal", "ipersonid", "parent_psn_id", "thirdparty_system", "thirdparty_code");
+        }
+
+        // 执行批量操作
+        tx(() -> {
+            
+            // 用户
+            batchSaveRecords(users);
+            // 用户组织
+            userOrgService.batchSaveRecords(userOrgs);
+            // 第三方系统
+            userThirdpartyService.batchSaveRecords(thirdpartys);
+            
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+
+    public String getU8Password(User user){
+        Long id = user.getId();
+        Record firstRecord = findFirstRecord("select U8Password from jb_user where id=?", id);
+        if(firstRecord==null){
+            return null;
+        }else{
+            return firstRecord.getStr("u8password");
+        }
+
+    }
 }

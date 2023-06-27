@@ -3,70 +3,97 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page vh-100" data-key="#(pmkey)" id="jbolttable_mspage_#(pageId)">
     <div class="jbolt_page_title">
-        <form onsubmit="return false;" id="investmentPlanAddForm" action="#(action)" method="post">
-            <div class="form-group row text-left">
-            	<input type="hidden" value="#(periodRc.iautoid)" name="investmentPlan.iperiodid"/>
-                <label class="col-1 col-form-label">部门</label>
-                <div class="col-2">
-                    <select class="form-control"
-                   			id="cdepcodeSelect_#(pageId)"
-                            data-rule="required"
-                            name="investmentPlan.cdepcode"
-                            data-select-type="select2"
-                            data-autoload
-                            data-tips="请选择u8部门"
-                            data-url="admin/department/treeDatasForProposalSystem?isProposal=true"
-                            data-text="=请选择u8部门="
-                            data-text-attr="cdepname"
-                            data-value-attr="cdepcode"
-                            data-setvalueto="cdepcode"
-                            data-value=""
-                            data-width="200">
-                    </select>
-                </div>
-                <label class="col-1 col-form-label">预算年度</label>
-                <div class="col-2">
-                    <input id="ibudgetyear_#(pageId)" type="text" style="width:200px" class="form-control" data-rule="required" placeholder="请设置年份" data-tips="请设置年份" maxlength="10"
-                          value="#(periodRc.ibudgetyear)" disabled>
-                    <input type="hidden" name="investmentPlan.ibudgetyear" value="#(periodRc.ibudgetyear)"/>
-                </div>
-                <label class="col-1 col-form-label">预算类型</label>
-                <div class="col-2">
-	                <select class="form-control"
-	                  		data-select-type="select2"
-	                        data-autoload
-	                        data-rule="required"
-	                        data-tips="预算类型"
-	                        data-url="admin/dictionary/options?key=investment_budget_type"
-	                        data-text="=预算类型="
-	                        data-text-attr="name"
-	                        data-value-attr="sn"
-	                        name="investmentPlan.ibudgettype"
-	                        data-value=""
-	                        id="ibudgettype_#(pageId)"
-	                        data-select="#(periodRc.ibudgettype)"
-	                        data-width="200"
-	                        disabled
-	                        >
-	                </select>
-	                <input type="hidden" name="investmentPlan.ibudgettype" value="#(periodRc.ibudgettype)"/>
-                </div>
-                <label class="col-1 col-form-label">备注</label>
-                <div class="col-2">
-                    <input type="text" style="width:200px" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="investmentPlan.cmemo" value="">
-                </div>
-            </div>
-            <input id="tabledatas_#(pageId)" name="tabledatas" type="hidden" value="" />
-        </form>
+	    <div class="row">
+	        <div class="col-12">
+	            <div class="card">
+	                <div class="card-body">
+	                    <div class="col">
+	                        #if(readonly != 'readonly')
+	                            <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
+	                        #end
+	                        #if(investmentPlan.iAutoId??)
+	                        ### 参数列表
+	                        ### uri:                    接口URI
+	                        ### formSn:                 表单名
+	                        ### o:                      当前表单对象名
+	                        ### primaryKeyName:         主键名
+	                        ### permissionKeyPrefix:    权限key
+	                        ### redonly:                查看页定义为readonly=readonly, 新增/编辑页 可不传
+	                        ### className:              实现审批业务的类名
+	                        #include("/_view/_common/_approval_btns.html", uri="/admin/investmentplan", formSn="PL_Investment_Plan", o=investmentPlan, primaryKeyName="iAutoId", className="cn.rjtech.admin.investmentplan.InvestmentPlanService", permissionKeyPrefix="investment_plan_formulate")
+	                        #end
+	                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>    
     </div>
-	<!-- <div class="jbolt_page_title">
-    	<div class="row">
-			<div class="col-md-auto">
-				<h1><i class="fa fa-file-text-o"></i>投资计划项目</h1>
-			</div>
-		</div>
-	</div> -->
     <div class="jbolt_page_content">
+	<div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+			        <form onsubmit="return false;" id="investmentPlanAddForm" action="#(action)" method="post">
+			            <div class="form-group row text-left">
+			            	<input type="hidden" value="#(periodRc.iautoid)" name="investmentPlan.iperiodid"/>
+			                <label class="col-1 col-form-label">部门</label>
+			                <div class="col-2">
+			                    <select class="form-control"
+			                   			id="cdepcodeSelect_#(pageId)"
+			                            data-rule="required"
+			                            name="investmentPlan.cdepcode"
+			                            data-select-type="select2"
+			                            data-autoload
+			                            data-tips="请选择u8部门"
+			                            data-url="admin/department/treeDatasForProposalSystem?isProposal=true"
+			                            data-text="=请选择u8部门="
+			                            data-text-attr="cdepname"
+			                            data-value-attr="cdepcode"
+			                            data-setvalueto="cdepcode"
+			                            data-value=""
+			                            data-width="200">
+			                    </select>
+			                </div>
+			                <label class="col-1 col-form-label">预算年度</label>
+			                <div class="col-2">
+			                    <input id="ibudgetyear_#(pageId)" type="text" style="width:200px" class="form-control" data-rule="required" placeholder="请设置年份" data-tips="请设置年份" maxlength="10"
+			                          value="#(periodRc.ibudgetyear)" disabled>
+			                    <input type="hidden" name="investmentPlan.ibudgetyear" value="#(periodRc.ibudgetyear)"/>
+			                </div>
+			                <label class="col-1 col-form-label">预算类型</label>
+			                <div class="col-2">
+				                <select class="form-control"
+				                  		data-select-type="select2"
+				                        data-autoload
+				                        data-rule="required"
+				                        data-tips="预算类型"
+				                        data-url="admin/dictionary/options?key=investment_budget_type"
+				                        data-text="=预算类型="
+				                        data-text-attr="name"
+				                        data-value-attr="sn"
+				                        name="investmentPlan.ibudgettype"
+				                        data-value=""
+				                        id="ibudgettype_#(pageId)"
+				                        data-select="#(periodRc.ibudgettype)"
+				                        data-width="200"
+				                        disabled
+				                        >
+				                </select>
+				                <input type="hidden" name="investmentPlan.ibudgettype" value="#(periodRc.ibudgettype)"/>
+			                </div>
+			                <label class="col-1 col-form-label">备注</label>
+			                <div class="col-2">
+			                    <input type="text" style="width:200px" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="investmentPlan.cmemo" value="">
+			                </div>
+			            </div>
+			            <input id="tabledatas_#(pageId)" name="tabledatas" type="hidden" value="" />
+			        </form>
+        		</div>
+        	</div>
+        </div>
+      </div>    
+    
         <!-- JBoltTable的数据模板定义-->
         <script type="text/template" id="jboltTable_investmentPlanAddForm_#(pageId)">
             {@each datas as data,index}
@@ -139,10 +166,7 @@
 		            </div>
 	            </div>
 	            <a hidden id="investmentPlanAddExportBtn" data-downloadbtn href="admin/investmentplan/exportTableInvestmentPlanDatas" data-form="investmentPlanAddForm" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> 导出</a>
-	            <button onclick="submitThisForm()" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 保存</button>
-	            <button data-ajaxbtn data-handler="closeHandler()" data-url="admin/investmentplan/submit/" data-confirm="确定提交审核？" class="btn btn-outline-primary btn-sm" ><i class="fa fa-trash"></i> 提交审核</button>
-	            <button onclick="closeHandler()" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 关闭</button>
-                <!-- <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button> -->
+                <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
             </div>
         </div>
 
@@ -219,14 +243,40 @@
 #end
 #define js()
 <script>
-    /* changeParentLayerDialogOkBtnTitle("保存"); */
-    hideParentLayerDialogBtn(0);
-    hideParentLayerDialogBtn(1);
+	hideAllParentLayerDialogBtn();
+ 	// 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
     function submitThisForm(){
-    	var index = LayerMsgBox.loading('执行中...');
-    	jboltTableSubmit("#jbolt_Table_#(pageId)");
+    	$('#save_btn_#(pageId)').click();
+    }
+    function submitThisForm_#(pageId)(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
+        }
+
+        // 调用保存处理
+        $('#save_btn_#(pageId)').click();
+    }
+    /**
+     * 保存清空错误数据
+     * @param ele
+     */
+    function saveData(ele) {
+        jboltTableSubmit(ele);
     }
 
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/investmentplan/edit/' + iautoid + '-_jb_rqtype_dialog';
+            parent.refreshPjaxContainer();
+        });
+    }
+    
     //获得配置参数
     function getEditableTableOptions_#(pageId)(){
         var editableTableOptions={
@@ -239,12 +289,22 @@
                 type:"all",//cell|all
                 //params:{"orderId":3},//携带其他额外参数
                 url:"admin/investmentplan/saveTableByAdd",
-                success:function(res){
-                	LayerMsgBox.success("提交成功",600,function(){
-                        /* parent.layer.close(parent.layer.getFrameIndex(window.name));
-                        window.parent.refreshJBoltTable(); */
-                		location.href = '/admin/investmentplan/edit/' + res.data.iautoid + '-_jb_rqtype_dialog';
-                    });
+                success:function(ret){
+                	// 表格保存之后，判断是否需要提审处理
+                    if (ret.state === 'ok') {
+                        // 提交审核（审批）调用
+                        if (submit) {
+                            // 提审
+                            submit_#(pageId)(ret.data.iautoid, function (data) {
+                                successHandler('提审成功', ret.data.iautoid);
+                            });
+                        } else {
+                            successHandler(ret.msg, ret.data.iautoid);
+                        }
+
+                    } else {
+                        LayerMsgBox.alert(ret.msg, 2);
+                    }
                 } 
             },
             cols: {
@@ -505,6 +565,7 @@
     	parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
     }
+    
 </script>
 
 #end

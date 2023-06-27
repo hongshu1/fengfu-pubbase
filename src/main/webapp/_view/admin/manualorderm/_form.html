@@ -13,9 +13,11 @@
                     #if(readonly != 'readonly')
                     <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                     #end
+                    #if(manualOrderM.iAutoId??)
                     #include("/_view/_common/_approval_btns.html", uri="/admin/manualorderm",
                     formSn="Co_ManualOrderM", o=manualOrderM, primaryKeyName="iAutoId",
                     permissionKeyPrefix="manualorderm", className="cn.rjtech.admin.manualorderm.ManualOrderMService")
+                    #end
                     <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                 </div>
             </div>
@@ -72,7 +74,7 @@
                         </div>
                 <div class="form-group row">
                         <input type="hidden" name="manualOrderM.iCustomerId" value="#(manualOrderM.iCustomerId??)" id="icustomerid" data-sync-attr="iautoid"/>
-                        <input type="hidden" name="manualOrderM.ccuscode" value="#(manualOrderM.ccuscode??)" id="ccuscode" data-sync-attr="ccuscode"/>
+                        <input type="hidden" name="manualOrderM.cCusCode" value="#(manualOrderM.cCusCode??)" id="ccuscode" data-sync-attr="ccuscode"/>
                         <label class="col-sm-1 col-form-label">客户名称</label>
                         <div class="col">
                             <div class="input-group">
@@ -90,8 +92,8 @@
                                            data-tips="请选择"
                                            data-header="客户编码,客户名称"
                                            maxlength="40"
-                                           name="manualOrderM.ccusname"
-                                           value="#(manualOrderM.ccusname??)">
+                                           name="manualOrderM.cCusName"
+                                           value="#(manualOrderM.cCusName??)">
                                 </div>
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-secondary" data-dialogbtn
@@ -149,7 +151,7 @@
                         <input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig5)" data-notnull="false"
                                autocomplete="off" class="form-control" placeholder="请输入税率"
                                name="manualOrderM.iTaxRate"
-                               value="#(manualOrderM.iTaxRate??)"/>
+                               value="#number(manualOrderM.iTaxRate??)"/>
                     </div>
                     <label class="col-sm-1 col-form-label">币种</label>
                     <div class="col">
@@ -168,7 +170,7 @@
                         <input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig4)" data-notnull="false"
                                autocomplete="off" class="form-control" placeholder="请输入汇率"
                                name="manualOrderM.iExchangeRate"
-                               value="#(manualOrderM.iExchangeRate??)"/>
+                               value="#number(manualOrderM.iExchangeRate??)"/>
                     </div>
                     <label class="col-sm-1 col-form-label">备注</label>
                     <div class="col">
@@ -220,7 +222,6 @@
     {
         // 调用保存处理
         $('#save_btn_#(pageId)').click();
-        parent.refreshPjaxContainer();
     }
 
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值

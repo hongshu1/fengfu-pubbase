@@ -505,11 +505,13 @@ public class PersonService extends BaseService<Person> {
         
         return dbTemplate("person.getAutocompleteListWithDept", para).find();
     }
-
-    public Person findByCpersonName(String cpersonname) {
-        return findFirst(selectSql().eq(Person.CPSN_NAME, cpersonname).eq(Person.IORGID, getOrgId()).eq(Person.ISDELETED, ZERO_STR).first());
+    public List<Record> getAutocompleteDatasContainSubDep(String cdepcode, String q, Integer limit) {
+        Okv para = Okv.by("q", q)
+                .set("limit", limit)
+                .set("iorgid", getOrgId())
+                .set("cdepcodelike", cdepcode);
+        return dbTemplate("person.getAutocompleteListWithDept", para).find();
     }
-
     /**
      * 通过用户组织获取人员
      * 
@@ -523,4 +525,12 @@ public class PersonService extends BaseService<Person> {
         return daoTemplate("person.getPersonByUserOrg", para).findFirst();
     }
 
+    public Person findFirstByCpersonName(String cpersonname) {
+        return findFirst(selectSql().eq(Person.CPSN_NAME, cpersonname).eq(Person.IORGID, getOrgId()).eq(Person.ISDELETED, ZERO_STR).first());
+    }
+
+    public List<Person> findByCpersonName(String cpersonname) {
+        return find(selectSql().eq(Person.CPSN_NAME, cpersonname).eq(Person.IORGID, getOrgId()).eq(Person.ISDELETED, ZERO_STR));
+    }
+    
 }

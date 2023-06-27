@@ -18,10 +18,10 @@ import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.Subcontractsaleorderm;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
@@ -43,7 +43,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: RJ
  * @date: 2023-04-12 18:57
  */
-public class SubcontractsaleordermService extends BaseService<Subcontractsaleorderm> {
+public class SubcontractsaleordermService extends BaseService<Subcontractsaleorderm> implements IApprovalService {
 
     private final Subcontractsaleorderm dao = new Subcontractsaleorderm().dao();
     @Inject
@@ -230,6 +230,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
                 subcontractsaleorderm.setIUpdateBy(user.getId());
                 subcontractsaleorderm.setCUpdateName(user.getName());
                 subcontractsaleorderm.setDUpdateTime(now);
+                subcontractsaleorderm.setIsDeleted(false);
                 ValidationUtils.isTrue(subcontractsaleorderm.save(), ErrorMsg.SAVE_FAILED);
             } else {
                 subcontractsaleorderm.setIUpdateBy(user.getId());
@@ -295,42 +296,6 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         for (Object id : ids) {
             subcontractsaleorderdService.deleteById(id);
         }
-    }
-
-    /**
-     * 撤回
-     */
-    public Ret withdraw(Long iAutoId) {
-        tx(() -> {
-            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
-
-                // 修改客户计划汇总
-                cusOrderSumService.algorithmSum();
-                return null;
-            });
-
-            return true;
-        });
-        return SUCCESS;
-    }
-
-
-    /**
-     * 提交审批
-     */
-    public Ret submit(Long iautoid) {
-        tx(() -> {
-            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "");
-            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-            Subcontractsaleorderm subcontractsaleorderm = findById(iautoid);
-            subcontractsaleorderm.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
-            subcontractsaleorderm.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            ValidationUtils.isTrue(subcontractsaleorderm.update(), JBoltMsg.FAIL);
-            return true;
-        });
-        return SUCCESS;
     }
 
     public Ret approve(Long iautoid) {
@@ -448,10 +413,10 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @param formAutoId 单据ID
      * @return 错误信息
      */
-    public String postApproveFunc(long formAutoId) {
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
         // 订单状态校验
-        ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
+//        ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
 
         // 订单状态修改
         subcontractsaleorderm.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
@@ -464,10 +429,15 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         return null;
     }
 
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+        return null;
+    }
+
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    public String postRejectFunc(long formAutoId, Boolean isWithinBatch) {
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
     }
@@ -479,6 +449,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @param isFirst    是否为审批的第一个节点
      * @param isLast     是否为审批的最后一个节点
      */
+    @Override
     public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         return null;
     }
@@ -513,20 +484,8 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     /**
      * 提审前业务，如有异常返回错误信息
      */
+    @Override
     public String preSubmitFunc(long formAutoId) {
-        Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
-
-        switch (MonthOrderStatusEnum.toEnum(subcontractsaleorderm.getIOrderStatus())) {
-            // 已保存
-            case SAVED:
-                // 不通过
-            case REJECTED:
-
-                break;
-            default:
-                return "订单非已保存状态";
-        }
-
         return null;
     }
 
@@ -534,7 +493,10 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * 提审后业务处理，如有异常返回错误信息
      */
     public String postSubmitFunc(long formAutoId) {
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
+        Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
+        if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == subcontractsaleorderm.getIOrderStatus() || WeekOrderStatusEnum.REJECTED.getValue() == subcontractsaleorderm.getIOrderStatus()) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
+        }
         return null;
     }
 
@@ -543,7 +505,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      */
     public String postWithdrawFunc(long formAutoId) {
         Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
-        ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审批状态");
+//        ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审批状态");
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), "撤回失败");
         return null;
     }
@@ -551,6 +513,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     /**
      * 从审批中，撤回到已保存，业务实现，如有异常返回错误信息
      */
+    @Override
     public String withdrawFromAuditting(long formAutoId) {
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), JBoltMsg.FAIL);
         return null;
@@ -559,6 +522,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     /**
      * 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
      */
+    @Override
     public String preWithdrawFromAuditted(long formAutoId) {
         return null;
     }
@@ -579,19 +543,6 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @return  错误信息
      */
     public String postBatchApprove(List<Long> formAutoIds) {
-        List<Subcontractsaleorderm> subcontractsaleorderms = getListByIds(StringUtils.join(formAutoIds, COMMA));
-        for (Subcontractsaleorderm subcontractsaleorderm : subcontractsaleorderms) {
-            // 订单状态校验
-            ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
-
-            // 订单状态修改
-            subcontractsaleorderm.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
-            subcontractsaleorderm.setIUpdateBy(JBoltUserKit.getUserId());
-            subcontractsaleorderm.setCUpdateName(JBoltUserKit.getUserName());
-            subcontractsaleorderm.setDUpdateTime(new Date());
-            subcontractsaleorderm.update();
-        }
-
         // 审批通过生成客户计划汇总
         cusOrderSumService.algorithmSum();
         return null;

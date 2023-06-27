@@ -78,7 +78,7 @@
 <tr data-id="${data.barcode}">
   <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-	<a  tooltip    href="/admin/barcodeReport/InventoryBarcodeTracePage/details?barcode=${data.barcode}" data-area="100%,100%"  class="jbolt_table_editbtn">变更记录</a>
+	<a  tooltip    href="/admin/barcodeReport/InventoryBarcodeTracePage/details?billno=${data.billno}" data-area="100%,100%"  class="jbolt_table_editbtn">变更记录</a>
 	</td>
 	<td>${data.billstate}</td> <!--状态-->
 <!--	<td>${data.billstate}</td>!单据来源-->
@@ -120,16 +120,15 @@
 				</div>
 			</div>
 		</div>
-
-
-	</div>
-	<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
-		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">打印二维码</button>
-		<div class="dropdown-menu" aria-labelledby="exportMenuButton">
-			<button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds" onclick="containerPrint_#(pageId)('check')"><i class="fa fa-download"></i> 打印勾选行</button>
-			<button class="btn dropdown-item" onclick="containerPrint_#(pageId)('page')"><i class="fa fa-download"></i> 打印当前页</button>
+		<div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">打印</button>
+			<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+				<button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds" onclick="containerPrint_#(pageId)('check')"><i class="fa fa-download"></i> 打印勾选行</button>
+				<button class="btn dropdown-item" onclick="containerPrint_#(pageId)('page')"><i class="fa fa-download"></i> 打印当前页</button>
+			</div>
 		</div>
 	</div>
+
 
 	<div class="clearfix"></div>
 </div>
@@ -212,7 +211,7 @@
 			}
 			code.push(ccode);
 		}
-		jboltHiprintWebPrint('109607', 'url', 'admin/barcodeReport/InventoryBarcodeTracePage/QRCode?ids=' + code.join(",") + "&&mark=" + mark);
+		jboltHiprintWebPrint('068811', 'url', 'admin/barcodeReport/InventoryBarcodeTracePage/PrintData?ids=' + code.join(",") + "&&mark=" + mark);
 	}
 </script>
 #end

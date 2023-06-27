@@ -187,28 +187,4 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
         kv.set("supplier",notOk(supplier)?' ':supplier);
         renderJsonData(service.getBarcodeDatas(kv));
     }
-
-    /**
-     * 提审
-     */
-    public void submit(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.validateId(iautoid, "ID");
-
-        renderJson(service.submit(iautoid));
-    }
-
-    /**
-     * 审核通过
-     */
-    public void approve() {
-        renderJson(service.approve(getLong(0)));
-    }
-
-    /**
-     * 审核不通过
-     */
-    public void reject() {
-        renderJson(service.reject(getLong(0)));
-    }
-
 }

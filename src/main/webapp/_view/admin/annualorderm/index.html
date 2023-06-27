@@ -55,7 +55,7 @@
                 <a tooltip class="jbolt_table_editbtn" href="admin/annualorderm/edit?iautoid=${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" data-title="编辑年度订单"><i class="fa fa-edit"></i>编辑</a>
                 <a tooltip class="jbolt_table_delbtn" href="admin/annualorderm/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable"><i class="fa fa-remove c-danger">删除</i></a>
             {@else if data.iorderstatus == '2'}
-                <a class="jbolt_table_delbtn" href="admin/annualorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回年度订单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
+                <a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=Co_AnnualOrderM&primaryKeyName=iautoid&formAutoId=${data.iautoid}&permissionKey=annualorderm_withdraw&className=cn.rjtech.admin.annualorderm.AnnualOrderMService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回年度订单" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
            {@/if}
             </td>
             <td>${data.iorderstatus|iOrderStatus}</td>

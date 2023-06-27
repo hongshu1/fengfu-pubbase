@@ -67,14 +67,6 @@
                 </button>
                 #end
 
-                #permission(PermissionKey.PURCHASE_INSTRUMENT_SUBMIT)
-                <button data-ajaxbtn data-handler="refreshJBoltTable"
-                        data-check-handler="jboltTableGetCheckedId"
-                        data-url="/admin/purchasem/submit?iautoid="
-                        class="btn btn-outline-primary btn-sm"><i class="fa fa-adjust"></i> 提交审批
-                </button>
-                #end
-
                 #permission(PermissionKey.PURCHASE_INSTRUMENT_UPLOAD_FILE)
                 <button class="btn btn-outline-primary btn-sm" data-openpage="dialog" data-btn="close"
                         data-area="600,400"
@@ -95,19 +87,9 @@
 
                 <!-- 申购单管理按钮 -->
                 #if(purchaseManagement)
-                <button data-dialogbtn data-offset="0.2,0" data-area="100%,100%" data-handler="refreshJBoltTable" data-title="查看审批"
-                        data-check-handler="getIdIfValid"
-                        data-url="admin/purchasem/purchasemFormApprovalFlowIndex?iautoid="
-                        class="btn btn-outline-primary btn-sm" data-btn="close" data-close-handler="refreshJBoltTable"><i
-                        class="fa fa-chain"></i>查看审批
-                </button>
-
-<!--                 #permission(PermissionKey.PURCHASE_WITHDRAW)
-                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId"
-                        data-url="/admin/purchasem/withdraw?iautoid=" data-confirm="确定撤销选中数据？"
-                        class="btn btn-outline-primary btn-sm"><i class="jbicon jb-jujue"></i> 撤销审批
-                </button>
-                #end -->
+                #permission(PermissionKey.PURCHASE_WITHDRAW)
+           		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId" data-url="/admin/formapproval/withdraw?formSn=PL_PurchaseM&primaryKeyName=iautoid&permissionKey=proposalm_withdraw&className=cn.rjtech.admin.purchasem.PurchasemService&formAutoId=" data-confirm="确定撤销选中数据？" class="btn btn-outline-primary btn-sm"><i class="jbicon jb-jujue"></i> 撤销提审</button>
+                #end
 
                 #permission(PermissionKey.PURCHASE_MANAGEMENT_SUMBITPURCHASE)
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedId"

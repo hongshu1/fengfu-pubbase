@@ -9,8 +9,24 @@
 <!--			<button onclick="submitAllTables_#(pageId)(this)" #if(type =="0") style="display: none" #end data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批</button>-->
 
 
+			#if(readonly != 'readonly')
+			<button onclick="submitThisForm_#(pageId)()" class="btn btn-outline-secondary btn-xs">保存</button>
+			#end
+
+			### 参数列表
+			### uri:                    接口URI
+			### formSn:                 表单名
+			### o:                      当前表单对象名
+			### primaryKeyName:         主键名
+			### permissionKeyPrefix:    权限key
+			### redonly:                查看页定义为readonly=readonly, 新增/编辑页 可不传
+			### className:              实现审批业务的类名
+
+
+
+
 			#if(otherOut.autoid??)
-			#include("/_view/_common/_approval_btns.html", uri="/admin/otherout", formSn="T_Sys_OtherOut", o=otherOut, edit=edit??, primaryKeyName="autoid")
+			#include("/_view/_common/_approval_btns.html", uri="/admin/otherout", formSn="T_Sys_OtherOut", o=otherOut, primaryKeyName="autoid",className="cn.rjtech.admin.otherout.OtherOutService", permissionKeyPrefix="monthorderm")
 			#end
 			<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
 		</div>
@@ -99,31 +115,59 @@
 #define js()
 <script>
 	hideParentLayerDialogBtn();
-	function submitThisForm() {
-		return true;
+
+	var submit = false;
+
+	function submitThisForm_#(pageId)(s) {
+		debugger;
+		// 保存并提交
+		if (s) {
+			submit = s;
+
+		}
+		// 调用保存处理
+		jboltTableSubmit(ele);
+	}
+
+	/**
+	 * 新增/修改/提审
+	 */
+	function successHandler(msg, id) {
+		debugger;
+		LayerMsgBox.success(msg, 600, function () {
+			// 新增/修改，均跳转到详情页
+			self.location.href = "/admin/otherout/edit/"+id+"-_jb_rqtype_dialog"; //新增的刷新
+			// location.href = '/admin/otherout/edit/' + iautoid + '-_jb_rqtype_dialog';
+			parent.refreshPjaxContainer();
+		});
 	}
 
 
-
 	function submitAllTables_#(pageId)(ele){
-		var action = getRealJqueryObject(ele);
-
-		var id = action.data("id");
-		var value = action.data("value");
+		// var action = getRealJqueryObject(ele);
+		//
+		// var id = action.data("id");
+		// var value = action.data("value");
 		var tables = ["jbolt_table_inventory_split_#(pageId)"];
-			jboltTableSubmitMulti(tables, "admin/otherout/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
+			jboltTableSubmitMulti(tables, "admin/otherout/submitMulti?param=" , function (res) {
+				debugger;
+				let id = res.AutoID;
 				if (res.state == "ok") {
 					LayerMsgBox.success(res.msg, 600, function () {
-						let id = res.AutoID;
-						if (value == "save"){
-							parent.refreshPjaxContainer();
-							// parent.refreshCurrentTabContent();//刷新当前页面
-							self.location.href = "/admin/otherout/edit/"+id+"-_jb_rqtype_dialog?&edit=true"; //新增的刷新
-							// parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
-						}else {
-							parent.refreshCurrentTabContent();//刷新当前页面
-							// refreshPjaxContainer();
-							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+						if (submit) {
+							// 提审
+
+							submit_#(pageId)(id, function (data) {
+								console.log(3);
+								successHandler('提审成功', id);
+								// parent.refreshPjaxContainer();
+								// // parent.refreshCurrentTabContent();//刷新当前页面
+								// self.location.href = "/admin/otherout/edit/"+id+"-_jb_rqtype_dialog?&edit=true"; //新增的刷新
+								// // parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+							});
+						} else {
+							console.log(4);
+							successHandler(res.msg, id);
 						}
 					})
 				} else {

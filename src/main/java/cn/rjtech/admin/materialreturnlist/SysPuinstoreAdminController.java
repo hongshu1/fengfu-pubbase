@@ -23,7 +23,7 @@ import com.jfinal.plugin.activerecord.Record;
  * @author: RJ
  * @date: 2023-05-19 10:49
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MATERIAL_RETURN_LIST)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/materialreturnlist", viewPath = "/_view/admin/materialreturnlist")
 public class SysPuinstoreAdminController extends BaseAdminController {
@@ -85,7 +85,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 		String OrgCode = getOrgCode();
 		Record puinstoreName = service.getstockoutQcFormMList(autoid,OrgCode);
 		set("type", get("type"));
-		set("edit", get("edit"));
+		set("readonly", get("readonly"));
 		set("puinstoreName",puinstoreName);
 		set("puinstore",puinstore);
 		render("edit.html");
@@ -122,8 +122,8 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	/**
 	 * JBoltTable 可编辑表格整体提交 多表格
 	 */
-	public void submitMulti(Integer param, String revokeVal) {
-		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal));
+	public void submitMulti() {
+		renderJson(service.submitByJBoltTables(getJBoltTables()));
 	}
 
 	/**
@@ -134,49 +134,12 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 
 		Kv kv = new Kv();
 		kv.setIfNotNull("autoid",get("autoid"));
-		kv.setIfNotNull("spottickets",get("spottickets"));
+		kv.setIfNotNull("barcodes",get("barcodes"));
 		kv.setIfNotNull("q",get("q"));
 		kv.setIfNotNull("limit",getInt("limit", 10));
 		kv.setIfNotNull("orgCode",getOrgCode());
 
 		renderJsonData(service.getBarcodeDatas(kv));
-	}
-
-
-	/**
-	 * 详情页提审
-	 */
-	public void submit(@Para(value = "iautoid") Long iautoid) {
-		ValidationUtils.validateId(iautoid, "id");
-		renderJson(service.submit(iautoid));
-	}
-
-	/**
-	 * 详情页审核通过
-	 */
-	public void approve() {
-		renderJson(service.approve(get(0)));
-	}
-
-	/**
-	 * 详情页审核不通过
-	 */
-	public void reject() {
-		renderJson(service.reject(getLong(0)));
-	}
-
-
-	/**
-	 * 撤回
-	 */
-	public void recall() {
-		SysPuinstore puinstore=service.findById(getLong(0));
-		if(puinstore == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-		String AutoId = puinstore.getAutoID();
-		renderJson(service.recall(AutoId));
 	}
 
 
@@ -248,26 +211,4 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 		Page<Record> recordPage = service.getSysPODetail(getKv(), getPageNumber(), getPageSize());
 		renderJsonData(recordPage);
 	}
-
-	/**
-	 * 批量审核
-	 */
-	public void batchApprove(String ids) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
-			renderFail(JBoltMsg.PARAM_ERROR);
-			return;
-		}
-		renderJson(service.batchApprove(ids));
-	}
-
-	/**
-	 * 批量反审核
-	 */
-	public void batchReverseApprove(@Para(value = "ids") String ids) {
-		ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-
-		renderJson(service.batchReverseApprove(ids));
-	}
-
-
 }

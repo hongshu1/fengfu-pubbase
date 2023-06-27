@@ -98,4 +98,12 @@ public class AppConfig {
         return String.format("%s/PurchasesInDeleteV1", JBoltConfig.prop.get("u8.stock.api"));
     }
 
+
+
+    /**
+     * U9推单地址
+     */
+    public static String getVouchSumbmitUrl() {
+        return JBoltConfig.prop.get("u9.api.url") + "/web/erp/common/vouchProcessSubmit";
+    }
 }

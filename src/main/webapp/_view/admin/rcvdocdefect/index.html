@@ -21,9 +21,9 @@
 							name="istatus"
 					>
 						<option value="">=状态=</option>
-						<option value="0">待记录</option>
-						<option value="1">待判定</option>
-						<option value="2">已完成</option>
+						<option value="1">待记录</option>
+						<option value="2">待判定</option>
+						<option value="3">已完成</option>
 					</select>
 					<input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=开始时间=" name="startdate" data-tips="开始时间" maxlength="23" value="">
 					<input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=结束时间=" name="enddate" data-tips="结束时间" maxlength="23" value="">
@@ -44,15 +44,17 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	{@if data.istatus==1}
-		<a href="admin/rcvdocdefect/add2?iautoid=${data.iautoid}&ircvdocqcformmid=${data.ircvdocqcformmid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判断" class="jbolt_table_editbtn">异常品判断</a>
+			<a href="admin/rcvdocdefect/add2?iautoid=${data.iautoid}&ircvdocqcformmid=${data.ircvdocqcformmid}" data-area="80%,100%"  tooltip data-title="质检"  data-handler="refreshJBoltTable" data-dialog-title="异常品记录" class="jbolt_table_editbtn">异常品记录</a>
+
 	{@else if data.istatus==2}
+			<a href="admin/rcvdocdefect/add2?iautoid=${data.iautoid}&ircvdocqcformmid=${data.ircvdocqcformmid}" data-area="80%,100%"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="异常品判断" class="jbolt_table_editbtn">异常品判断</a>
+
+	{@else if  data.istatus==3}
 			<a href="common/qrcode?code=${data.cdocno}" data-photobtn tooltip data-title="点击查看二维码"><i style="font-size:20px;" class="fa fa-qrcode"></i></a>
 		<a href="admin/rcvdocdefect/add2?iautoid=${data.iautoid}&ircvdocqcformmid=${data.ircvdocqcformmid}&type=0" data-area="80%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
-	{@else}
-		<a href="admin/rcvdocdefect/add2?iautoid=${data.iautoid}&ircvdocqcformmid=${data.ircvdocqcformmid}" data-area="80%,100%"  tooltip data-title="质检"  data-handler="refreshJBoltTable" data-dialog-title="异常品记录" class="jbolt_table_editbtn">异常品记录</a>
 	{@/if}
 </td>
-<td>${data.istatus=='1'?'待判定':data.istatus=='2'?'已完成':'待记录'}</td>
+<td>${data.auditstate}</td>
 <td>${data.cdocno}</td>
 <td>${data.crcvdocqcformno}</td>
 <td>${data.cinvcode}</td>

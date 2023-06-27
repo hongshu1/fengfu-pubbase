@@ -7,20 +7,6 @@
             <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>备料扫码</h1></div>
             <div class="col-sm-auto" style="padding-right: 0px">
                 <form class="form-inline" id="SysMaterialspreparedetail_form_#(pageId)">
-
-                    <!--                    <select class="form-control"-->
-                    <!--                            data-autoload-->
-                    <!--                            data-select-type="select"-->
-                    <!--                            data-text="=备料单号="-->
-                    <!--                            data-value=""-->
-                    <!--                            data-value-attr="sn"-->
-                    <!--                            readonly-->
-                    <!--                            data-dialogbtn-->
-                    <!--                            data-area="50%,50%"-->
-                    <!--                            data-url="admin/sysMaterialspreparedetail/MaterialsList"-->
-                    <!--                            name="billno"-->
-                    <!--                            style="background-color: white"-->
-                    <!--                    ></select>-->
                     <input type="text"
                            class="form-control ml-2"
                            placeholder="请点击选择备料单号"
@@ -36,14 +22,6 @@
                            readonly
                            style="background-color: white"
                     />
-                    <!--                    <input class="form-control"-->
-                    <!--                           data-autoload-->
-                    <!--                           data-url="admin/dictionary/options?key=null"-->
-                    <!--                           data-text="=现品票扫码="-->
-                    <!--                           data-value=""-->
-                    <!--                           data-value-attr="sn"-->
-                    <!--                           placeholder="现品票扫码"-->
-                    <!--                    ></input>-->
                     <input type="text"
                            data-notnull="true"
                            data-tips="请输入现品票扫码"
@@ -56,8 +34,6 @@
                            name="barcode"
                            value="#(barcode??)"
                     />
-
-
                     <div class="btn-group text-center mx-1" hidden="hidden">
                         <button type="submit" class="btn btn-outline-primary" id="suBmit"><i class="fa fa-search"></i>
                             查询
@@ -69,10 +45,7 @@
                         </button>
                     </div>
                 </form>
-
-
             </div>
-
             <div class="col-sm-auto" style="padding-left: 0px">
                 <div class="btn-group text-center mx-1">
                     <button type="button" class="btn btn-outline-primary" onclick="barcode()"><i
@@ -85,16 +58,6 @@
                     </button>
                 </div>
             </div>
-            <!--            <div class="col-sm-auto text-right">-->
-
-            <!--                <button data-dialogbtn class="btn btn-outline-primary btn-sm"-->
-            <!--                        data-url="admin/sysMaterialspreparedetail/add" data-handler="jboltTablePageToFirst"-->
-            <!--                        data-area="800,600" tooltip data-title="新增备料单明细"><i class="fa fa-plus"></i></button>-->
-            <!--                <button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip-->
-            <!--                        data-title="刷新数据"><i class="fa fa-refresh"></i></button>-->
-
-
-            <!--            </div>-->
         </div>
     </div>
     <div class="jbolt_page_content">
@@ -104,17 +67,17 @@
 <tr data-id="${data.autoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.billno}</td>
-<td>${data.sourcebillid}</td>
+<td>${data.cmodocno}</td>
 <td name="CINVCODE">${data.cinvcode}</td>
 <td>${data.cinvcode1}</td>
 <td>${data.cinvname1}</td>
 <td>${data.cinvstd}</td>
 <td>${data.cuomname}</td>
-<td>${data.cwhname}</td>
-<td>${data.cpositionname}</td>
-<td>${data.planiqty}</td>
+<td>${data.whcode}</td>
+<td>${data.poscode}</td>
+<td name="PLANQTY">${data.planiqty}</td>
 <td>${data.num}</td>
-<td name="scanqty">0</td>
+<td name="scanqty">${data.scanqty}</td>
 <td name="BATCH">${data.batch}</td>
 <td name="barcodeCols" hidden:"hidden">${data.barcode}</td>
 <td name="mpid" hidden:"hidden">${data.autoid}</td>
@@ -126,26 +89,7 @@
 {@/each}
 </textarea>
         <div class="jbolt_table_toolbar" id="SysMaterialspreparedetail_toolbar_#(pageId)">
-            <!--            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">-->
-            <!--                                <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst"-->
-            <!--                                        id="toolbar_addBtn_#(pageId)" data-title="新增备料单明细"-->
-            <!--                                        data-url="admin/sysMaterialspreparedetail/add" class="btn btn-outline-primary"><i-->
-            <!--                                        class="fa fa-plus"></i> 新增-->
-            <!--                                </button>-->
-            <!--                                <button data-dialogbtn data-area="800,600" data-handler="refreshJBoltTable"-->
-            <!--                                        id="toolbar_editBtn_#(pageId)" data-title="编辑备料单明细"-->
-            <!--                                        data-check-handler="jboltTableGetCheckedId" data-url="admin/sysMaterialspreparedetail/edit/"-->
-            <!--                                        class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑-->
-            <!--                                </button>-->
-            <!--                                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"-->
-            <!--                                        id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysMaterialspreparedetail/deleteByIds?ids="-->
-            <!--                                        data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除-->
-            <!--                                </button>-->
-            <!--                                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新-->
-            <!--                                </button>-->
-            <!--            </div>-->
             <div class="row">
-
                 <div class="col-auto">
                     <form class="form-inline" id="SysOtherin1_form_#(pageId)">
                         <div style="margin-right: 30px">
@@ -154,8 +98,6 @@
                     </form>
                 </div>
             </div>
-
-
         </div>
         <table class="jbolt_table jbolt_main_table  table-center "
                data-jbolttable
@@ -175,24 +117,26 @@
             <tr>
                 <th data-width="60" data-column="">序号</th>
                 <th data-width="150" data-column="">备料单号</th>
-                <th data-width="200" data-column="">工单号</th>
-                <th data-width="150" data-column="">存货编码</th>
+                <th data-width="200" data-column="cmodocno">工单号</th>
+                <th data-width="150" data-column="cinvcode">存货编码</th>
                 <th data-width="200" data-column="">客户部番</th>
                 <th data-width="250" data-column="">部品名称</th>
                 <th data-width="200" data-column="">规格</th>
                 <th data-width="100" data-column="">主计量单位</th>
-                <th data-width="200" data-column="">出库仓库</th>
-                <th data-width="150" data-column="">出库库区</th>
+                <th data-width="200" data-column="WhCode">出库仓库</th>
+                <th data-width="150" data-column="PosCode">出库库区</th>
                 <th data-width="150" data-column="">需求计划数量</th>
                 <th data-width="150" data-column="">已备料数量</th>
                 <th data-width="150" data-column="">扫描数量</th>
-                <th data-width="150" data-column="">可用批次号</th>
+                <th data-width="150" data-column="batch">可用批次号</th>
                 <th data-width="150" data-column="" hidden="hidden">条码</th>
                 <th data-width="150" data-column="" hidden="hidden">mpid</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table>
+
+        <div id="CONFIRM" hidden="hidden"></div>
 
         <div style="margin-top: 10px">
         <textarea class="jb_tpl_box" id="SysMaterialsprepare1_tpl_#(pageId)">
@@ -234,7 +178,7 @@
                    data-copy-to-excel="false"
                    data-page="SysMaterialsprepare_page"
                    data-toolbar="SysMaterialsprepare1_toolbar_#(pageId)"
-                   id="jbolt_Table_#(pageId)"
+                   id="jbolt_Table_"
                    data-editable="true"
             >
                 <thead class="fw-normal">
@@ -260,16 +204,17 @@
 
 #define js()
 <script type="text/javascript">
-
+    //传到子页面的物料明细表格的当前行数标记
+    var TAG;
 
     function barcode() {
-        if (!document.getElementById("billno").value){
+        if (!document.getElementById("billno").value) {
             LayerMsgBox.error("请选择备料单");
             return;
         }
         LayerMsgBox.loading("查询中......", 500);
         var barcode = $("#barcode").val();
-        var data = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
+        var data = getJboltTableAllDatas("jbolt_Table_", ["barcode"]);
         let array = new Array();
         if (null != data) {
             for (let i = 0; i < data.length; i++) {
@@ -277,28 +222,86 @@
                     LayerMsgBox.alert("条码已重复")
                     return;
                 }
-                array.push("'" + data[i].barcode + "'");
             }
-            let codes = array.join(',');
-            $("#detailHidden").val(codes);
-        } else {
-            $("#detailHidden").val('');
         }
 
         if (barcode) {
             Ajax.post("admin/sysMaterialspreparedetail/barcode", {"barcode": barcode},
                 function (res) {
-                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, false, false);
-                    $("#barcode").val('');
-                    var mytable = document.getElementById("MaterialsDetail");
-                    for (var i=1,rows=mytable.rows.length;i<rows; i++){
-                        // map1[i-1]=mytable.rows[i].cells[14].innerHTML
-                        if (document.getElementsByName("CINVCODE")[i-1].innerText == res.data.cinvcode&&document.getElementsByName("BATCH")[i-1].innerText == res.data.batch){
-                            document.getElementsByName("scanqty")[i-1].innerText = (parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[i-1].innerText==""?0:document.getElementsByName("scanqty")[i-1].innerText)).toString();
+                    //判断扫入的条码是否和物料明细一致,以及是否满足先进先出规则
+                    var cunhuoCode=getJboltTableAllDatas("MaterialsDetail",["cinvcode"]);
+                    var cunhuoBatch=getJboltTableAllDatas("MaterialsDetail",["batch"]);
+                    var k = 0;
+                    if (null != cunhuoCode) {
+                        for (let i = 0; i < cunhuoCode.length; i++) {
+                            if (cunhuoCode[i].cinvcode == res.data.cinvcode) {
+                                k++;
+                                break;
+                            }
+                        }
+                        if (k<1){
+                            k=0;
+                            LayerMsgBox.error("料品信息不一致");
+                            return;
                         }
                     }
-
-
+                    if (null != cunhuoBatch) {
+                        for (let i = 0; i < cunhuoBatch.length; i++) {
+                            if (cunhuoBatch[i].batch == res.data.cunhuoBatch) {
+                                k++;
+                                break;
+                            }
+                        }
+                        if (k<1){
+                            k=0;
+                            LayerMsgBox.alert("物料现品票不在可用批次号范围内");
+                        }
+                    }
+                    jboltTableInsertRow("jbolt_Table_", res.data, false, false, false);
+                    $("#barcode").val('');
+                    var mytable = document.getElementById("MaterialsDetail");
+                    //遍历物料明细表格来进行数据分类,该循环由每次PDA扫码时触发
+                    for (var i = 1, rows = mytable.rows.length; i < rows; i++) {
+                        //判断扫描存货编码是否相等
+                        if (document.getElementsByName("CINVCODE")[i - 1].innerText == res.data.cinvcode) {
+                            //扫描数量大于计划数量后进行拆包操作
+                            if (document.getElementsByName("PLANQTY")[i - 1].innerText >= parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[i - 1].innerText == "" ? 0 : document.getElementsByName("scanqty")[i - 1].innerText)) {
+                                //未超过,增加扫描数量
+                                //遍历出所有同一存货编码的数据
+                                for (var m = 0, rows1 = cunhuoCode.length; m < rows1; m++){
+                                    if (cunhuoCode[m].cinvcode==res.data.cinvcode){
+                                        document.getElementsByName("scanqty")[m].innerText = (parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[m].innerText == "" ? 0 : document.getElementsByName("scanqty")[m].innerText)).toString();
+                                    }
+                                }
+                                break;
+                                //超过,进行拆包操作
+                            } else {
+                                //传到子页面的物料明细表格的当前行数标记
+                                TAG = i;
+                                //确定按钮函数
+                                LayerMsgBox.confirm("该条码数量大于需求数量，确认是否超出发料！", function () {
+                                    //直接增加物料明细表格的物料数量
+                                    for (var m = 0, rows1 = cunhuoCode.length; m < rows1; m++){
+                                        if (cunhuoCode[m].cinvcode==res.data.cinvcode){
+                                            document.getElementsByName("scanqty")[m].innerText = (parseInt(res.data.qty) + parseInt(document.getElementsByName("scanqty")[m].innerText == "" ? 0 : document.getElementsByName("scanqty")[m].innerText)).toString();
+                                        }
+                                    }
+                                    //取消按钮函数
+                                }, function () {
+                                    //动态生成button按钮
+                                    document.getElementById("CONFIRM").innerHTML = '<button data-dialogbtn data-area="20%,43%" data-title="确认数量" id="CONFIRM1" data-url="admin/sysMaterialspreparedetail/ConfirmNum?barcode=' + barcode + '&qty=' + res.data.qty + '&TAG=' + TAG + '">测试</button>';
+                                    //按钮点击，跳转数量确认页面
+                                    document.getElementById("CONFIRM1").click();
+                                })
+                                //修改对话框确认按钮样式
+                                document.getElementsByClassName("layui-layer-btn0")[0].innerText = "不拆包";
+                                //修改对话框取消按钮样式
+                                document.getElementsByClassName("layui-layer-btn1")[0].innerText = "拆包";
+                                //当检测到当前数量超过计划数量时,代表当前扫描的现品票已达到物料计划总数量,处理完相关逻辑后中断循环
+                                break;
+                            }
+                        }
+                    }
                 }, function (err) {
                 })
         } else {
@@ -306,88 +309,42 @@
         }
     }
 
-
+    //按钮绑定
     const BTN1 = document.getElementById('suBmit');
     const BTN2 = document.getElementById('reSet');
     const BTN3 = document.getElementById('sumitMaterials');
     const BTN4 = document.getElementById('suBmit1');
     const BTN5 = document.getElementById('reSet1');
-    // const BTN6 = document.getElementById('sumitMaterials1');
     // 给按钮 2 添加点击事件
     BTN5.addEventListener('click', () => {
-        BTN2.onclick(); // 按钮 2 点击后触发按钮 1 的 `onclick`
-        // BTN1.click(); // 按钮 2 点击后触发按钮 1 的 `click`，效果一样
+        // 按钮 2 点击后触发按钮 5 的 `onclick`
+        BTN2.onclick();
     });
-    // BTN6.addEventListener('click', () => {
-    //     BTN3.onclick(); // 按钮 2 点击后触发按钮 1 的 `onclick`
-    //     // BTN1.click(); // 按钮 2 点击后触发按钮 1 的 `click`，效果一样
-    // });
-
-    function myCreateFunction() {
-        var table = document.getElementById("test1");
-        var row = table.insertRow(0);
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        cell1.innerHTML = "NEW CELL1";
-        cell2.innerHTML = "NEW CELL2";
-    }
 
 
-    //提交备料
-    function go(){
-        var mytable = document.getElementById("jbolt_Table_#(pageId)");
-        if (!document.getElementById("billno").value){
+    //提交备料按钮
+    function go() {
+        var mytable = document.getElementById("jbolt_Table_");
+        var cmodocno=getJboltTableAllDatas("MaterialsDetail",["cmodocno"]);
+        if (!document.getElementById("billno").value) {
             LayerMsgBox.error("请选择备料单");
             return;
         }
-        if (mytable.rows.length<2){
+        if (mytable.rows.length < 2) {
             LayerMsgBox.error("请扫码");
             return;
         }
         var map1 = [];
-        map1[0]="id"+":"+document.getElementById("billno").value;
-        for (var i=1,rows=mytable.rows.length;i<rows; i++){
-            map1[i]=mytable.rows[i].cells[1].innerHTML+":"+mytable.rows[i].cells[2].innerHTML+":"+mytable.rows[i].cells[8].innerHTML;
+        map1[0] = "id" + ":" + document.getElementById("billno").value+":"+cmodocno[0].cmodocno;
+        for (var i = 1, rows = mytable.rows.length; i < rows; i++) {
+            //现品票:存货编码:批次号
+            map1[i] = mytable.rows[i].cells[1].innerHTML + ":" + mytable.rows[i].cells[2].innerHTML + ":" + mytable.rows[i].cells[8].innerHTML;
         }
-        Ajax.post("admin/sysMaterialspreparedetail/go1", {"data":map1.toString()},
+        Ajax.post("admin/sysMaterialspreparedetail/go1", {"data": map1.toString()},
             function (res) {
                 LayerMsgBox.success("保存成功");
             }, function (err) {
             });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // var mytable = document.getElementById("MaterialsDetail");
-        // var map1 = [];
-        // map1[0]="id"+":"+"id";
-        // for (var i=1,rows=mytable.rows.length;i<rows; i++){
-        //     map1[i]=mytable.rows[i].cells[15].innerHTML+":"+document.getElementsByName("scanqty")[i-1].innerText+":"+document.getElementsByName("barcodeCols")[i-1].innerText;
-        // }
-        // Ajax.post("admin/sysMaterialspreparedetail/go", {"data":map1.toString()},
-        //     function (res) {
-        //         console.log("保存成功");
-        //     }, function (err) {
-        //     });
-
     }
-
-
 </script>
 #end

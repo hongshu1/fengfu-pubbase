@@ -1,0 +1,35 @@
+<form onsubmit="return false;" id="UptimeCategory_Form" action="#(action)" method="post">
+    #if(uptimeCategory.iautoid??)
+    <input type="hidden" name="uptimeCategory.iAutoId" value="#(uptimeCategory.iautoid??)"/>
+    #end
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label is_required">类别编码:</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入类别编码"
+                           data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入类别编码" maxlength="40"
+                           name="uptimeCategory.cUptimeCategoryCode"
+                           data-rule="required" value="#(uptimeCategory.cuptimecategorycode??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label is_required">类别名称:</label>
+                <div class="col-10">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入类别名称"
+                           data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入检类别名称" maxlength="40"
+                           name="uptimeCategory.cUptimeCategoryName"
+                           data-rule="required" value="#(uptimeCategory.cuptimecategoryname??)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="UptimeCategory_Form")
+#end

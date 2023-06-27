@@ -189,7 +189,12 @@ public class SysPureceiveAdminController extends BaseAdminController {
      */
     @UnCheck
     public void barcodeDatas() {
-        List<Record> barcodeDatas = service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()), null);
+        String whcode1 = get("whcode1");
+        ValidationUtils.notNull(whcode1, "请优先选择仓库。");
+        Record whcodeid = service.getWhcodeid(whcode1);
+        String iautoid = whcodeid.getStr("iautoid");
+//        System.out.println("iautoid"+iautoid);
+        List<Record> barcodeDatas = service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()), null,whcode1);
         String barcode = get("detailHidden");
         if(null != barcode &&  !"".equals(barcode)){
             String[] split = barcode.split(",");
@@ -203,7 +208,14 @@ public class SysPureceiveAdminController extends BaseAdminController {
                     }
                 }
             }
+            for (int i = 0; i < barcodeDatas.size(); i++) {
+                Record record = barcodeDatas.get(i);
+                if(!iautoid.equals(record.getStr("iwarehouseid"))){
+                    record.set("poscode",null);
+                }
+            }
         }
+
         renderJsonData(barcodeDatas);
     }
 
@@ -213,8 +225,18 @@ public class SysPureceiveAdminController extends BaseAdminController {
     @UnCheck
     public void barcode(@Para(value = "barcode") String barcode) {
         ValidationUtils.notBlank(barcode, "请扫码");
+        String whcode1 = get("whcode1");
+        ValidationUtils.notNull(whcode1, "请优先选择仓库。");
+        Record whcodeid = service.getWhcodeid(whcode1);
+        String iautoid = whcodeid.getStr("iautoid");
+        Record barcodeDatas = service.barcode(Kv.by("barcode", barcode));
+        if(null != barcode &&  !"".equals(barcode)){
+            if(!iautoid.equals(barcodeDatas.getStr("iwarehouseid"))){
+                barcodeDatas.set("poscode",null);
 
-        renderJsonData(service.barcode(Kv.by("barcode", barcode)));
+            }
+        }
+        renderJsonData(barcodeDatas);
     }
 
     /**

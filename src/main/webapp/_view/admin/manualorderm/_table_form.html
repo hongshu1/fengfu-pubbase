@@ -16,7 +16,7 @@
 
     ### 新增之后，并且为审核流
     #if(manualOrderM.iautoid?? && manualOrderM.iauditway == 2)
-    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=manualOrderM.iAutoId, formSn="Co_ManualOrderM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.manualorderm.ManualOrderMService")
+    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=manualOrderM.iAutoId, primaryKeyName="iAutoId", formSn="Co_ManualOrderM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.manualorderm.ManualOrderMService")
     #end
     <div class="jbolt_page_content">
         
@@ -40,7 +40,7 @@
             <td>${data.iqty2}</td>
             <td>${data.iqty3}</td>
             <td>${data.iqty4}</td>
-            <td>${data.iqty5}</td>
+            <td>${data.iqty5|tofixed_2}</td>
             <td>${data.iqty6}</td>
             <td>${data.iqty7}</td>
             <td>${data.iqty8}</td>

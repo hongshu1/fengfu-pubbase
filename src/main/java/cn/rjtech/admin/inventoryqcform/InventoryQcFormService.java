@@ -1,7 +1,9 @@
 package cn.rjtech.admin.inventoryqcform;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
@@ -41,6 +43,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,6 +56,7 @@ import java.util.stream.Collectors;
  */
 public class InventoryQcFormService extends BaseService<InventoryQcForm> {
     private final InventoryQcForm dao = new InventoryQcForm().dao();
+
 
     @Override
     protected InventoryQcForm dao() {
@@ -601,6 +605,72 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
 
     public InventoryQcForm findByIInventoryId(Long iinventoryId){
         return findFirst("SELECT * FROM Bd_InventoryQcForm where iInventoryId = ? ",iinventoryId);
+    }
+
+    /**
+     * 从系统导入字段配置，获得导入的数据
+     */
+    public Ret importExcelClass(File file) {
+        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        if (notOk(records)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+        }
+
+
+        for (Record record : records) {
+
+            if (StrUtil.isBlank(record.getStr("iQcFormId"))) {
+                return fail("检验表格名称不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("cTypeNames"))) {
+                return fail("检验类型不能为空");
+            }
+            if (StrUtil.isBlank(record.getStr("iInventoryId"))) {
+                return fail("存货名称不能为空");
+            }
+
+            String cTypeNames = record.getStr("cTypeNames");
+            BigDecimal iQcFormId = record.getBigDecimal("iQcFormId");
+            QcForm byId = qcFormService.findById(iQcFormId);
+            if (ObjectUtil.isNull(byId)){
+                ValidationUtils.error(""+iQcFormId+"检验表格id不存在");
+            }
+
+
+            List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey("inspection_type", true);
+            StringBuilder Strsn=new StringBuilder();
+            for (Dictionary dictionary : dictionaryList) {
+                for (String cname: StrSplitter.split(cTypeNames,",",true,true)) {
+                    String name = dictionary.getName();
+                    if (name.equals( cname)) {
+                        Strsn.append(dictionary.getSn()).append(",");
+                    }
+
+                }
+            }
+            Strsn.deleteCharAt(Strsn.lastIndexOf(","));
+
+            Date now=new Date();
+            record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+            record.set("iOrgId", getOrgId());
+            record.set("cOrgCode", getOrgCode());
+            record.set("cOrgName", getOrgName());
+            record.set("iCreateBy", JBoltUserKit.getUserId());
+            record.set("dCreateTime", now);
+            record.set("cCreateName", JBoltUserKit.getUserName());
+            record.set("isDeleted",0);
+            record.set("iUpdateBy", JBoltUserKit.getUserId());
+            record.set("dUpdateTime", now);
+            record.set("cUpdateName", JBoltUserKit.getUserName());
+            record.set("cTypeIds",Strsn.toString());
+        }
+
+        // 执行批量操作
+        tx(() -> {
+            batchSaveRecords(records);
+            return true;
+        });
+        return SUCCESS;
     }
 
 }

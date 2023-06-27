@@ -1,21 +1,19 @@
 #set(pageId=RandomUtil.random(6))
-#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
-#set(precisionConfig4=JBoltGlobalConfigCache.getConfigValue("precision_config4"))
-#set(precisionConfig5=JBoltGlobalConfigCache.getConfigValue("precision_config5"))
 <div class="jbolt_page_title">
   <div class="row">
     <div class="col-12">
       <div class="card">
         <div class="card-body">
           <div class="col">
-            <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
-                class="fa fa-refresh"></i> 保存
-            </button>
+            <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary" ><i
+                class="fa fa-refresh"></i> 保存</button>
+
+            #if(sysPuinstore.autoid??)
+            #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUInStore", o=sysPuinstore, primaryKeyName="AutoID",
+            className="cn.rjtech.admin.syspuinstore.SysPuinstoreService",permissionKeyPrefix="sysPureceive")
+            #end
+
             <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
-            <!--<button onclick="submitApprove('#(sysPuinstore.autoid??)')" class="btn btn-info btn-sm"><i
-                class="fa fa-window-maximize"></i> 提交审核
-            </button>-->
-            #include("/_view/_common/_approval_btns.html", uri="/admin/purchaseReceiptList", formSn="T_Sys_PUInStore", o=sysPuinstore, edit=edit??, primaryKeyName="AutoID")
           </div>
         </div>
       </div>
@@ -28,7 +26,6 @@
             <input id="autoid" type="hidden" name="autoid" value="#(sysPuinstore.autoid??)"/>
             #end
             <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
-<!--            <input type="hidden" id="detailHiddenInvocde" name="detailHiddenInvocde" value="#(detailHiddenInvocde??)"/>-->
             <div class="row">
               <div class="col">
                 <div class="form-group row">
@@ -183,6 +180,7 @@
                   </div>
                 </div>
 
+<!--                <input type="text" id="ibustype" name="ibustype" value="#(sysPuinstore.ibustype??)"/>-->
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">业务类型</label>
                   <div class="col-6">
@@ -221,7 +219,7 @@
            tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
            class="jbolt_table_delbtn">删除</i></a>
       </td>
-      <td title="${data.spotticket}">${data.spotticket}</td>
+      <td title="${data.barcode}">${data.barcode}</td>
       <td title="${data.invcode}">${data.invcode}</td>
       <td title="${data.cinvname}">${data.cinvname}</td>
       <td title="${data.cinvcode1}">${data.cinvcode1}</td>
@@ -247,12 +245,12 @@
           </button>
         </div>
         <div class="col-5">
-          <input type="text" id="spotticket" name="spotticket" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
+          <input type="text" id="barcode" name="barcode" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
                  autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
-                 value="#(spotticket??)"/>
+                 value="#(barcode??)"/>
         </div>
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-          <button onclick="checkSpotticket()" class="btn btn-primary btn-sm">扫码</button>
+          <button onclick="checkBarcode()" class="btn btn-primary btn-sm">扫码</button>
         </div>
       </div>
     </div>
@@ -277,7 +275,7 @@
     <tr>
       <th data-width="30px">序号</th>
       <th data-width="150">操作</th>
-      <th data-width="180" data-column="spotticket">现品票</th>
+      <th data-width="180" data-column="barcode">现品票</th>
       <th data-width="120" data-column="invcode">存货编码</th>
       <th data-width="200" data-column="cinvname">存货名称</th>
       <th data-width="200" data-column="cinvcode1">客户部番</th>
@@ -318,25 +316,25 @@
     });
   }
 
-  function checkSpotticket() {
+  function checkBarcode() {
     LayerMsgBox.loading("执行中......", 2000);
-    var spotticket = $("#spotticket").val();
-    var data = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["spotticket"]);
+    var barcode = $("#barcode").val();
+    var data = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
     let array = new Array();
     if (null != data) {
       for (let i = 0; i < data.length; i++) {
-        if (data[i].spotticket == spotticket) {
+        if (data[i].barcode == barcode) {
           LayerMsgBox.alert("条码已重复")
           return;
         }
-        array.push("'" + data[i].spotticket + "'");
+        array.push("'" + data[i].barcode + "'");
       }
     } else {
       $("#detailHidden").val('');
     }
 
-    if (spotticket) {
-      Ajax.post("admin/materialReceiptList/barcode", {"barcode": spotticket}, function (res) {
+    if (barcode) {
+      Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode}, function (res) {
         //扫描的现品票必须归属于同一张采购订单
         let data = res.data;
         let sourcebillno = $("#sourcebillno").val('');
@@ -345,7 +343,7 @@
           return;
         }
         jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
-        $("#spotticket").val('');
+        $("#barcode").val('');
         let codes = array.join(',');
         $("#detailHidden").val(codes);
       }, function (err) {
@@ -359,13 +357,35 @@
     jboltTableSubmit("#jbolt_Table_#(pageId)");
   }
 
-  function submitThisForm() {
+  //是否提审
+  var submit = false;
+
+  /*function submitThisForm() {
     // LayerMsgBox.alert("模块待开发")
     $("#operationType").val("submit");
     jboltTableSubmit("#jbolt_Table_#(pageId)");
     $("#operationType").val();
     return true;
+  }*/
+
+  function submitThisForm_#(pageId)(ele) {
+    submit = ele;
+    $("#operationType").val("submit");
+    jboltTableSubmit("#jbolt_Table_#(pageId)");
+    $("#operationType").val();
   }
+
+  /**
+   * 新增/修改/提审
+   */
+  function successHandler(msg, iautoid) {
+    LayerMsgBox.success(msg, 600, function () {
+      // 新增/修改，均跳转到详情页
+      location.href = '/admin/purchaseReceiptList/edit?autoid=' + autoid + '&_jb_rqtype_=dialog';
+      parent.refreshPjaxContainer();
+    });
+  }
+
 
   function getJBoltTableEditableColsOpton() {
     var editableTableOptions = {
@@ -375,28 +395,40 @@
         name: 'sysPuinstore',
         type: "all",
         url: "/admin/purchaseReceiptList/submitAll", success: function (res) {
-          LayerMsgBox.success("提交成功", 600, function () {
-            parent.refreshCurrentTabContent();//刷新当前页面
-            parent.refreshPjaxContainer();
-            // parent.layer.closeAll();
-          });
+          var state = res.state;
+          if(state === 'ok'){
+            if (submit){
+              let autoid = res.autoid;
+              submit_#(pageId)(autoid,function () {
+                successHandler('提交审核成功', autoid);
+              });
+            } else {
+              successHandler(ret.msg, autoid);
+              /*LayerMsgBox.success("提交成功", 600, function () {
+                parent.refreshPjaxContainer();
+                parent.layer.closeAll();
+              });*/
+            }
+          }else {
+            LayerMsgBox.error(res.msg);
+          }
         }
       },
       cols: {
-        spotticket: { //现品票条码
+        barcode: { //现品票条码
           linkPara: "input[name='detailHidden']",
           maxLength: 100,
           required: false,
           placeholder: "=请选择现品票=",
           type: "autocomplete",
           url: "admin/materialReceiptList/barcodeDatas",
-          textAttr: "spotticket",
+          textAttr: "barcode",
           width: 1100,
           sync: "",
-          valueAttr: "spotticket",
+          valueAttr: "barcode",
           columnAttr: "barcode,cinvcode,cinvname,cinvcode1,cinvname1,cinvstd,brandcode,brandname,purchasecuomcode,purchasecuomname",
           header: '现品票,存货编码,存货名称,客户部番,部品名称,规格型号,品牌编码,品牌,采购编码,采购单位',
-          changeColumns: [{column: "spotticket", use: "barcode"},
+          changeColumns: [{column: "barcode", use: "barcode"},
             {column: "invcode", use: "cinvcode"},
             {column: "cinvname", use: "cinvname"},
             {column: "cinvcode1", use: "cinvcode1"},
@@ -408,12 +440,12 @@
             {column: "puunitname", use: "purchasecuomname"}],
 
           handler: function (table, td, text, value, jsonData) {
-            let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["spotticket"]);
+            let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
             let array = new Array();
             if (datas != null) {
               for (var i = 0; i < datas.length; i++) {
                 var data = datas[i];
-                array.push("'" + data.spotticket + "'");
+                array.push("'" + data.barcode + "'");
                 let codes = array.join(',');
                 $("#detailHidden").val(codes);
               }

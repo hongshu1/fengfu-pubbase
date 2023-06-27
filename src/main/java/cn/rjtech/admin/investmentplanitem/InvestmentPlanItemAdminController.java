@@ -1,7 +1,10 @@
 package cn.rjtech.admin.investmentplanitem;
 
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
@@ -96,6 +99,7 @@ public class InvestmentPlanItemAdminController extends BaseAdminController {
         renderJson(service.toggleIspriorreport(getLong(0)));
     }
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void mdatas() {
         renderJsonData(service.paginateMdatas(getPageNumber(), getPageSize(), getKv()));
     }

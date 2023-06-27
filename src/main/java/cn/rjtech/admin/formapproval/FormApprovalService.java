@@ -794,8 +794,10 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * @param status         状态
      * @param primaryKeyName 主键名
      * @param isWithinBatch  是否批量审批处理
+     * @param remark         审批意见
      */
-    public Ret approve(Long formAutoId, String formSn, int status, String primaryKeyName, String className, boolean isWithinBatch) {
+    public Ret approve(Long formAutoId, String formSn, int status, String primaryKeyName, String className,
+                       boolean isWithinBatch,String remark) {
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
@@ -938,6 +940,15 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     formApprovalDService.batchUpdate(nodeList);
                 }
                 if (approvalFlowDList.size() > 0) {
+                    if (remark != null) {
+                        FormApprovalFlowD flowD = approvalFlowDList.get(0);
+                        String cMemo = flowD.getCMemo();
+                        String memo = remark;
+                        if (cMemo!=null){
+                            memo = remark + ";" + cMemo;
+                        }
+                        flowD.setCMemo(memo);
+                    }
                     flowDService.batchUpdate(approvalFlowDList);
                 }
 
@@ -1045,7 +1056,8 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 审批不通过
      */
-    public Ret reject(Long formAutoId, String formSn, int status, String primaryKeyName, String className) {
+    public Ret reject(Long formAutoId, String formSn, int status, String primaryKeyName, String className,
+                      String remark, boolean isWithinBatch) {
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
@@ -1176,6 +1188,15 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     formApprovalDService.batchUpdate(nodeList);
                 }
                 if (approvalFlowDList.size() > 0) {
+                    if (remark != null) {
+                        FormApprovalFlowD flowD = approvalFlowDList.get(0);
+                        String cMemo = flowD.getCMemo();
+                        String memo = remark;
+                        if (cMemo!=null){
+                            memo = remark + ";" + cMemo;
+                        }
+                        flowD.setCMemo(memo);
+                    }
                     flowDService.batchUpdate(approvalFlowDList);
                 }
 
@@ -1188,7 +1209,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     ValidationUtils.isTrue(formApproval.update(), ErrorMsg.UPDATE_FAILED);
 
                     // 处理审批不通过的额外业务
-                    invokeMethod(className, "postRejectFunc", formAutoId);
+                    invokeMethod(className, "postRejectFunc", formAutoId, isWithinBatch);
                 }
 
                 return true;
@@ -1210,10 +1231,14 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * @param status         状态
      * @param className      处理审批Service的类名
      */
-    public Ret reverseApprove(Long formAutoId, String formSn, String primaryKeyName, int status, String className) {
+    public Ret reverseApprove(Long formAutoId, String formSn, String primaryKeyName, int status, String className,
+                              String remark) {
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
+
+        // 单据反审时，预留额外前置业务处理
+        invokeMethod(className, "preReverseApproveFunc", formAutoId, false, false);
 
         Record formRecord = findFirstRecord("select iAuditStatus as status from " + formSn + " where " + primaryKeyName + " = " + formAutoId);
 
@@ -1304,6 +1329,14 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
                 flowDList.forEach(formApprovalFlowD -> {
                     formApprovalFlowD.setIAuditStatus(status);
+                    if (remark != null) {
+                        String cMemo = formApprovalFlowD.getCMemo();
+                        String memo = remark;
+                        if (cMemo!=null){
+                            memo = remark + ";" + cMemo;
+                        }
+                        formApprovalFlowD.setCMemo(memo);
+                    }
                 });
 
                 tx(() -> {
@@ -1320,20 +1353,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     int[] flowDUpdate = flowDService.batchUpdate(flowDList, flowDList.size());
 
                     if (flowDUpdate.length != 0) {
-                        // 是否为第一个反审
-                        if (isFirstReverse(formAutoId) && flowDUpdate.length == 1) {
-
-                            revocationApprove(formAutoId);
-
-                            ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(),
-                                    primaryKeyName), "更新反审失败");
-
-
-                            // 单据反审时，预留额外业务处理
-                            invokeMethod(className, "postReverseApproveFunc", formAutoId, true, false);
-                        }
-
-                        // TODO 单据的审批状态，是最后一步审批之后的反审时，需更新单据状态
+                        // 单据的审批状态，是最后一步审批之后的反审时，需更新单据状态
                         if (Objects.equals(perStatus, "2")) {
                             // 反审后 单据状态都是待审批
                             ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), primaryKeyName), "更新反审失败");
@@ -1342,6 +1362,18 @@ public class FormApprovalService extends BaseService<FormApproval> {
 //                         单据反审时，预留额外业务处理
                             invokeMethod(className, "postReverseApproveFunc", formAutoId, false, true);
 
+                        } else {
+                            // 是否为第一个反审
+                            if (isFirstReverse(formAutoId) && flowDUpdate.length == 1) {
+
+                                // 撤回-审批流处理
+                                revocationApprove(formAutoId);
+
+                                ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), primaryKeyName), "更新反审失败");
+
+                                // 单据反审时，预留额外业务处理
+                                invokeMethod(className, "postReverseApproveFunc", formAutoId, true, false);
+                            }
                         }
                     }
                     return true;
@@ -1411,10 +1443,6 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 }
             }
         }
-
-        // 更新后业务处理
-//        String msg = postWithdraw.execute();
-//        ValidationUtils.assertBlank(msg, msg);
     }
 
     /**
@@ -1598,10 +1626,10 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 更新撤销审核
      */
-    public boolean updateWithdraw(String formSn, long formAutoId) {
+    public boolean updateWithdraw(String formSn, String primaryKeyName, long formAutoId) {
         Sql updateSql = updateSql().update(formSn)
                 .set(IAUDITSTATUS, AuditStatusEnum.NOT_AUDIT.getValue())
-                .eq(IAUTOID, formAutoId)
+                .eq(primaryKeyName, formAutoId)
                 .eq(IAUDITSTATUS, AuditStatusEnum.AWAIT_AUDIT.getValue());
 
         return update(updateSql) > 0;
@@ -1613,28 +1641,18 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * @param formSn         表名
      * @param primaryKeyName 主键名
      * @param formAutoId     单据ID
-     * @param preWithdraw    撤回前校验
-     * @param postWithdraw   更新之后的其他逻辑处理
+     * @param className      实现审批业务的类名
      */
-    public void withdraw(String formSn, String primaryKeyName, long formAutoId, ICallbackFunc preWithdraw, ICallbackFunc postWithdraw) {
-        Record formData = Db.use(dataSourceConfigName()).findFirst(String.format("SELECT * FROM %s WHERE %s = ? ", formSn, primaryKeyName), formAutoId);
-        ValidationUtils.notNull(formData, "单据不存在");
-        ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+    public Ret withdraw(String formSn, String primaryKeyName, long formAutoId, String className) {
+        Record formData = getApprovalForm(formSn, primaryKeyName, formAutoId);
         ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), formData.getInt(IAUDITSTATUS), "非待审核状态");
 
-        // 更新前校验
-        String msg = preWithdraw.execute();
-        ValidationUtils.assertBlank(msg, msg);
-
         // 执行状态更新
-        ValidationUtils.isTrue(updateWithdraw(formSn, formAutoId), "更新撤回失败");
+        ValidationUtils.isTrue(updateWithdraw(formSn, primaryKeyName, formAutoId), "更新撤回失败");
 
         switch (AuditWayEnum.toEnum(formData.getInt(IAUDITWAY))) {
             // 状态审批
             case STATUS:
-                // 更新后业务处理
-                msg = postWithdraw.execute();
-                ValidationUtils.assertBlank(msg, msg);
                 //  审批流
             case FLOW:
                 revocationApprove(formAutoId);
@@ -1642,6 +1660,12 @@ public class FormApprovalService extends BaseService<FormApproval> {
             default:
                 break;
         }
+
+        // 撤回后的处理业务
+        String msg = invokeMethod(className, "postWithdrawFunc", formAutoId);
+        ValidationUtils.assertBlank(msg, msg);
+
+        return SUCCESS;
     }
 
     /**
@@ -1658,7 +1682,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 Long formAutoId = Long.parseLong(id);
                 formAutoIds.add(formAutoId);
 
-                approve(formAutoId, formSn, status, primaryKeyName, className, true);
+                approve(formAutoId, formSn, status, primaryKeyName, className, true,null);
             }
 
             // 批量审核后置业务处理
@@ -1685,7 +1709,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 Long formAutoId = Long.parseLong(id);
                 formAutoIds.add(formAutoId);
 
-                reject(formAutoId, formSn, status, primaryKeyName, className);
+                reject(formAutoId, formSn, status, primaryKeyName, className,null,true);
             }
 
             // 批量审核不通过后置业务处理
@@ -1703,7 +1727,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
 //     */
 //    public Ret batchReverseApprove(String ids, String formSn, String primaryKeyName, String className) {
 //        List<Long> formAutoIds = new ArrayList<>();
-//        
+//
 //        int status = AuditStatusEnum.AWAIT_AUDIT.getValue();
 //
 //        tx(() -> {
@@ -1718,10 +1742,10 @@ public class FormApprovalService extends BaseService<FormApproval> {
 //
 //            String msg = invokeMethod(className, "", formAutoIds);
 //            ValidationUtils.assertBlank(msg, msg);
-//            
+//
 //            return true;
 //        });
-//        
+//
 //        return SUCCESS;
 //    }
 
@@ -1756,31 +1780,65 @@ public class FormApprovalService extends BaseService<FormApproval> {
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");
+        Record formData = getApprovalForm(formSn, primaryKeyName, formAutoId);
 
         tx(() -> {
 
-            switch (AuditStatusEnum.toEnum(formApproval.getInt(IAUDITSTATUS))) {
-                case APPROVED:
-                    invokeMethod(className, "preWithdrawFromAuditted", formAutoId);
+            switch (AuditWayEnum.toEnum(formData.getInt(IAUDITWAY))) {
+                // 状态审批
+                case STATUS:
+                    switch (AuditStatusEnum.toEnum(formData.getInt(IAUDITSTATUS))) {
+                        case APPROVED:
+                            invokeMethod(className, "preWithdrawFromAuditted", formAutoId);
 
-                    // 更新单据状态为未审批
-                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formApproval.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
+                            // 更新单据状态为未审批
+                            ValidationUtils.isTrue(updateAudit(formSn, formAutoId,
+                                    AuditStatusEnum.NOT_AUDIT.getValue(), formData.getInt(IAUDITSTATUS),
+                                    primaryKeyName), "更新审核状态失败");
 
-                    invokeMethod(className, "postWithdrawFromAuditted", formAutoId);
+                            invokeMethod(className, "postWithdrawFromAuditted", formAutoId);
+                            break;
+                        case AWAIT_AUDIT:
+                            // 更新单据状态为未审批
+                            ValidationUtils.isTrue(updateAudit(formSn, formAutoId,
+                                    AuditStatusEnum.NOT_AUDIT.getValue(), formData.getInt(IAUDITSTATUS),
+                                    primaryKeyName), "更新审批状态失败");
+
+                            invokeMethod(className, "withdrawFromAuditting", formAutoId);
+                            break;
+                        default:
+                            throw new ParameterException("状态不合法");
+                    }
                     break;
-                case AWAIT_AUDIT:
-                    // 更新单据状态为未审批
-                    ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formApproval.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
 
-                    invokeMethod(className, "withdrawFromAuditting", formAutoId);
+                    //  审批流
+                case FLOW:
+                    switch (AuditStatusEnum.toEnum(formApproval.getInt(IAUDITSTATUS))) {
+                        case APPROVED:
+                            invokeMethod(className, "preWithdrawFromAuditted", formAutoId);
+
+                            // 更新单据状态为未审批
+                            ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formApproval.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
+
+                            invokeMethod(className, "postWithdrawFromAuditted", formAutoId);
+                            break;
+                        case AWAIT_AUDIT:
+                            // 更新单据状态为未审批
+                            ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formApproval.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
+
+                            invokeMethod(className, "withdrawFromAuditting", formAutoId);
+                            break;
+                        default:
+                            throw new ParameterException("状态不合法");
+                    }
+
+                    // 更新单据审批流主表
+                    formApproval.setIsDeleted(true);
+                    ValidationUtils.isTrue(formApproval.update(), ErrorMsg.UPDATE_FAILED);
                     break;
                 default:
-                    throw new ParameterException("状态不合法");
+                    break;
             }
-
-            // 更新单据审批流主表
-            formApproval.setIsDeleted(true);
-            ValidationUtils.isTrue(formApproval.update(), ErrorMsg.UPDATE_FAILED);
 
             return true;
         });
@@ -1819,11 +1877,21 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 查询审批过程待审批的人员
      */
-    public List<Long> getNextApprovalUsers(Long formAutoId, Integer size) {
+    public List<Long> getNextApprovalUserIds(Long formAutoId, Integer size) {
         Kv kv = Kv.by("formAutoId", formAutoId)
                 .set("size", size);
 
-        return dbTemplate("formapproval.approvalProcessUsers", kv).query();
+        return dbTemplate("formapproval.getNextApprovalUserIds", kv).query();
+    }
+
+    /**
+     * 查询审批过程待审批的人员
+     */
+    public List<Long> getNextApprovalUserNames(Long formAutoId, Integer size) {
+        Kv kv = Kv.by("formAutoId", formAutoId)
+                .set("size", size);
+
+        return dbTemplate("formapproval.getNextApprovalUserNames", kv).query();
     }
 
     /**
@@ -1945,7 +2013,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             ValidationUtils.assertBlank(msg, msg);
 
             // 更新审核通过
-            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.AWAIT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), new Date()), "更新审核状态失败");
+            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), new Date()), "更新审核状态失败");
 
             // 后置业务实现
             msg = invokeMethod(className, "postReverseApproveFunc", formAutoId, true, true);
@@ -1998,13 +2066,13 @@ public class FormApprovalService extends BaseService<FormApproval> {
      */
     public Ret batchRejectByStatus(String ids, String formSn, String primaryKeyName, String className) {
         List<Long> formAutoIds = new ArrayList<>();
-        
+
         tx(() -> {
 
             for (String id : StrSplitter.split(ids, COMMA, true, true)) {
                 long formAutoId = Long.parseLong(id);
                 formAutoIds.add(formAutoId);
-                
+
                 rejectByStatus(formSn, formAutoId, primaryKeyName, className, true);
             }
 
@@ -2024,5 +2092,5 @@ public class FormApprovalService extends BaseService<FormApproval> {
         ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
         return formData;
     }
-    
+
 }

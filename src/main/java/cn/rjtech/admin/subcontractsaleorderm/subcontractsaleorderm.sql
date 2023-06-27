@@ -1,6 +1,12 @@
 #sql("paginateAdminDatas")
-	select scsom.* from Co_SubcontractSaleOrderM scsom
+	select scsom.*, p.cPsn_Name AS cpsnname, cus.ccusname
+	from Co_SubcontractSaleOrderM scsom
+    LEFT JOIN Bd_Person p ON scsom.iBusPersonId = p.iAutoId
+	LEFT JOIN Bd_Customer cus ON scsom.icustomerid = cus.iautoid
 	where scsom.isDeleted = '0'
+    #if(iautoid)
+        AND scsom.iAutoId = #para(iautoid)
+    #end
 	#if(iorgid)
 		and scsom.iorgid = #para(iorgid)
 	#end

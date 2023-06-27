@@ -1,5 +1,20 @@
 package cn.jbolt.index;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Clear;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.JFinal;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.PathKit;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Record;
+
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.onlineuser.OnlineUserService;
@@ -8,7 +23,11 @@ import cn.jbolt.core.api.HttpMethod;
 import cn.jbolt.core.base.JBoltGlobalConfigKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.base.config.JBoltConfig;
-import cn.jbolt.core.cache.*;
+import cn.jbolt.core.cache.JBoltGlobalConfigCache;
+import cn.jbolt.core.cache.JBoltOnlineUserCache;
+import cn.jbolt.core.cache.JBoltPermissionCache;
+import cn.jbolt.core.cache.JBoltUserConfigCache;
+import cn.jbolt.core.cache.UserTypeCache;
 import cn.jbolt.core.common.enums.JBoltLoginState;
 import cn.jbolt.core.common.enums.UserTypeEnum;
 import cn.jbolt.core.consts.JBoltConst;
@@ -17,7 +36,11 @@ import cn.jbolt.core.handler.base.JBoltBaseHandler;
 import cn.jbolt.core.kit.JBoltControllerKit;
 import cn.jbolt.core.kit.JBoltSaasTenantKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.*;
+import cn.jbolt.core.model.LoginLog;
+import cn.jbolt.core.model.OnlineUser;
+import cn.jbolt.core.model.Org;
+import cn.jbolt.core.model.User;
+import cn.jbolt.core.model.UserType;
 import cn.jbolt.core.para.JBoltNoUrlPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -25,19 +48,10 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.JBoltLoginLogUtil;
 import cn.jbolt.core.service.JBoltOrgService;
+import cn.rjtech.admin.commonmenu.CommonMenuService;
 import cn.rjtech.admin.userorg.UserOrgService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.util.ValidationUtils;
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Clear;
-import com.jfinal.aop.Inject;
-import com.jfinal.core.JFinal;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.PathKit;
-import com.jfinal.kit.Ret;
-
-import javax.servlet.http.HttpSession;
-import java.io.File;
 
 /**
  * 系统后台主入口
@@ -54,6 +68,8 @@ public class AdminIndexController extends JBoltBaseController {
 	private OnlineUserService onlineUserService;
     @Inject
     private JBoltOrgService orgService;
+    @Inject
+    private CommonMenuService commonMenuService;
 	@UnCheck
 	@Before(JBoltNoUrlPara.class)
 	public void index(){
@@ -394,6 +410,8 @@ public class AdminIndexController extends JBoltBaseController {
      * */
     @UnCheck
     public void proposalDashBoardIndex(){
+    	List<ArrayList<Record>> list = commonMenuService.getDashBoardCommonMenu(Kv.by("iuserid", JBoltUserKit.getUserId()));
+    	set("menulist", list);
     	render("proposal_dashboard.html");
     }
 }

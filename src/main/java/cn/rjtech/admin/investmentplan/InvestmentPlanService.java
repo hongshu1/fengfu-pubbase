@@ -6,6 +6,7 @@ import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -26,7 +27,6 @@ import cn.rjtech.admin.investmentplanitem.InvestmentPlanItemService;
 import cn.rjtech.admin.investmentplanitemd.InvestmentPlanItemdService;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.admin.projectcard.ProjectCardService;
-import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.Constants;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
@@ -35,6 +35,7 @@ import cn.rjtech.model.momdata.InvestmentPlan;
 import cn.rjtech.model.momdata.InvestmentPlanItem;
 import cn.rjtech.model.momdata.InvestmentPlanItemd;
 import cn.rjtech.model.momdata.Period;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ReadInventmentExcelUtil;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -57,7 +58,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-10-18 09:33
  */
-public class InvestmentPlanService extends BaseService<InvestmentPlan> {
+public class InvestmentPlanService extends BaseService<InvestmentPlan> implements IApprovalService{
 
 	private final InvestmentPlan dao = new InvestmentPlan().dao();
 
@@ -175,6 +176,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 			for (String idStr : StrSplitter.split(ids, COMMA, true, true)) {
 				long iAutoId = Long.parseLong(idStr);
 				InvestmentPlan dbInvestmentPlan = findById(iAutoId);
+				DataPermissionKit.validateAccess(dbInvestmentPlan.getCDepCode());
 				ValidationUtils.notNull(dbInvestmentPlan, JBoltMsg.DATA_NOT_EXIST);
 				deleteInvestmentPlanItem(iAutoId);
 				// TODO 可能需要补充校验组织账套权限
@@ -331,6 +333,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		} catch (Exception e) {
 			ValidationUtils.error( "预算部门获取失败,请检查导入模板!");
 		}
+        DataPermissionKit.validateAccess(cdepcode);
         List<Record> excelRowList = (List<Record>)excelMap.get("rows");
         StringBuilder errorMsg = new StringBuilder();
         if(CollUtil.isNotEmpty(excelRowList)){
@@ -526,6 +529,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		ValidationUtils.notNull(jBoltTable, "参数不能为空");
 		Date now = new Date();
 		InvestmentPlan investmentPlan = jBoltTable.getFormModel(InvestmentPlan.class, "investmentPlan");
+		DataPermissionKit.validateAccess(investmentPlan.getCDepCode());
 		//从启用期间中获取预算类型和预算年度
 		Integer iBudgetType = investmentPlan.getIBudgetType();
 		Integer iBudgetYear = investmentPlan.getIBudgetYear();
@@ -740,6 +744,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		ValidationUtils.notNull(jBoltTable, "参数不能为空");
 		Date now = new Date();
 		InvestmentPlan investmentPlan = jBoltTable.getFormModel(InvestmentPlan.class, "investmentPlan");
+		DataPermissionKit.validateAccess(investmentPlan.getCDepCode());
 		Long iInvestmentPlanId = investmentPlan.getIAutoId();
 		InvestmentPlan investmentPlanDbs = findById(iInvestmentPlanId);
 		tx(()->{
@@ -888,12 +893,12 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 		InvestmentPlan unfinishItemInvestmentPlan = findFirst(selectSql().eq("ibudgettype", ibudgettypeNew).eq("ibudgetyear", ibudgetyearNew).eq("cdepcode", cdepcode));
 		return unfinishItemInvestmentPlan;
 	}
-	/**
+/*	*//**
 	 * 提交审核: 
 	 * 	1. 未审核、未通过状态的投资计划可提交审核
 	 * 	2. 调用提交流程方法
 	 * 	3. 更改投资计划审核状态为待审核
-	 * */
+	 * *//*
 	public Ret submit(Long iplanid) {
 		Date now = new Date();
 		ValidationUtils.notNull(iplanid, "请先保存后再提交");
@@ -910,7 +915,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 			ValidationUtils.isTrue(investmentPlan.update(), ErrorMsg.UPDATE_FAILED);
 		}
 		return SUCCESS;
-	}
+	}*/
 	
     /**
      * 处理审批通过的其他业务操作，如有异常返回错误信息
@@ -923,7 +928,8 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return null;
     }
 	
@@ -1123,5 +1129,71 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> {
 	public boolean periodIsExists(Period dbPeriod) {
 		List<InvestmentPlan> list = find(selectSql().eq("iPeriodId", dbPeriod.getIautoid()));
 		return CollUtil.isNotEmpty(list);
+	}
+
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -8,14 +8,11 @@ SELECT mt.iAutoId,
        mt.dCreateTime,
        dp.cDepName
 FROM dbo.Mo_MoTask AS mt
-         LEFT JOIN
-     dbo.Bd_Department AS dp
-     ON
-         mt.iDepartmentId = dp.iAutoId
-WHERE mt.IsDeleted = '0' #if(startdate)
+LEFT JOIN dbo.Bd_Department AS dp ON mt.iDepartmentId = dp.iAutoId
+WHERE mt.IsDeleted = '0'
+    #if(startdate)
        AND mt.dBeginDate >=  #para(startdate)
     #end
-
      #if(enddate)
        AND mt.dEndDate <= #para(enddate)
     #end
@@ -285,7 +282,9 @@ SELECT DISTINCT
 	concat ( iYear, iMonth, iDate, iWorkShiftMid ) dates,
 	cMoDocNo,
 	iQty,
-	concat ( iYear, '-', iMonth, '-', iDate ) sdate
+	concat ( iYear, '-', iMonth, '-', iDate ) sdate,
+	isModified,
+	iAutoId
 FROM
 	Mo_MoDoc
 WHERE
@@ -309,6 +308,7 @@ WHERE
 	AND per.isDeleted= 0
 	AND per.isEnabled = 1
 	AND per.dLeaveDate IS NULL
+
 #if(iequipmentid)
 	AND eq.iEquipmentId IN #(iequipmentid)
 #end

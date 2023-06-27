@@ -13,6 +13,7 @@
 			<input type="hidden" id="iMoDocId" value="#(imdocid??)">
 			<input type="hidden" id="rowid" value="#(configid??)">
 			<input type="hidden" id="personequipmentjson" value="#(personequipmentjson??)">
+			<input type="hidden"  id="imergerate" value="#(imergerate??)">
 		</form>
 	</div>
 	<div class="col-md-auto">
@@ -97,6 +98,8 @@
 
 
 	function submitThisForm(callback){
+		var imergerate=$("#imergerate").val();
+
 		var datas=getJboltTableAllDatas("moroutingconfigperson");
 		var configpersonids = '';
 		if(datas){
@@ -116,6 +119,14 @@
 					return;
 				}
 			}
+			console.log(parseInt(count))
+			console.log(parseInt(imergerate))
+			if(parseInt(count) != parseInt(imergerate)){
+				LayerMsgBox.alert("选择人数必须等于要员人数!");
+				return;
+			}
+
+
 			cPsnNames = cPsnNames.slice(0, -1);
 			configpersonids = configpersonids.slice(0, -1);
 			var data={

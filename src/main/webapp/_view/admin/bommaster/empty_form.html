@@ -259,7 +259,7 @@
     hideParentLayerDialogBtn(0);
 
     #if(isView??0 !=1)
-    addParentLayerDialogBtn("保存","lay_success",function(){
+        addParentLayerDialogBtn("保存","lay_success",function(){
         if (!FormChecker.check("#BomMaster_Form")){
             return;
         }
@@ -340,12 +340,14 @@
     }
 
     function submitForm(formData, tableData, commonInvMap, flag) {
+        var index = LayerMsgBox.loading();
         Ajax.post('/admin/bomM/submitForm', {
             formJsonData: JSON.stringify(formData),
             tableJsonData: JSON.stringify(tableData),
             commonInvData: JSON.stringify(commonInvMap),
             flag: flag
         }, function (ret) {
+            LayerMsgBox.close(index);
             if (ret.state === 'ok') {
                 LayerMsgBox.success(ret.msg, 1000, function () {
                     parent.LayerMsgBox.closeAll();

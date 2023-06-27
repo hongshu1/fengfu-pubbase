@@ -173,7 +173,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
     }
 
     public SysPuinstoredetail findFirstByBarcode(String barcode) {
-        return findFirst("select * from  T_Sys_PUInStoreDetail where spotTicket = ? ", barcode);
+        return findFirst("select * from  T_Sys_PUInStoreDetail where barcode = ? ", barcode);
     }
 
     /*
@@ -181,18 +181,6 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
      * */
     public void saveSysPuinstoredetailModel(SysPuinstoredetail detail, Record detailRecord,
                                             SysPuinstore puinstore, int i) {
-        /*Inventory inventory = inventoryService.findBycInvCode(detailRecord.getStr("invcode"));
-        Kv kv = new Kv();
-        kv.set("sourcebillno", puinstore.getSourceBillNo());
-        kv.set("iInventoryId", null != inventory ? inventory.getIAutoId() : "");
-        Record record = dbTemplate("syspuinstore.getSourceBillIdAndDid", kv).findFirst();
-        if (StrUtil.isBlank(detail.getSourceBillID()) && record != null) {
-            detail.setSourceBillID(record.getStr("sourcebillid")); //来源单据ID(订单id)
-        }
-        if (StrUtil.isBlank(detail.getSourceBillDid()) && record != null) {
-            detail.setSourceBillDid(record.getStr("sourcebilldid")); //来源单据DID;采购或委外单身ID
-        }*/
-        detail.setSourceBillType(puinstore.get("sourcebilltype"));//采购PO  委外OM（采购类型）
         detail.setSourceBillNo(puinstore.getSourceBillNo()); //来源单号（订单号）
         detail.setSourceBillNoRow(puinstore.getSourceBillNo() + "-" + i); //来源单号+行号
         detail.setRowNo(i);  //行号
@@ -201,7 +189,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         detail.setQty(detailRecord.getBigDecimal("qty")); //入库数量
         detail.setCCreateName(JBoltUserKit.getUserName());
         detail.setDCreateTime(puinstore.getDCreateTime());
-        detail.setSpotTicket(detailRecord.get("spotticket"));//现品票
+        detail.setBarCode(detailRecord.get("barcode"));//现品票
         detail.setIsDeleted(false);
         detail.setBrandCode(detailRecord.get("brandcode"));//品牌code
         detail.setBrandName(detailRecord.get("brandname"));//品牌名称
@@ -209,5 +197,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         detail.setPuUnitName(detailRecord.get("puunitname"));//采购单位名称
         detail.setMemo(detailRecord.get("memo"));
         detail.setInvcode(detailRecord.get("invcode"));
+        detail.setDUpdateTime(puinstore.getDCreateTime());
+        detail.setCUpdateName(JBoltUserKit.getUserName());
     }
 }
