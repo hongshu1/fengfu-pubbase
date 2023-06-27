@@ -1485,7 +1485,6 @@ public class PermissionKey {
 	 * 生产表单设置
 	 */
 	public static final String PRODFORM = "prodform";
-
 	/**
 	 * 补焊纪录管理
 	 */
@@ -2538,4 +2537,29 @@ public class PermissionKey {
 	 * 撤回审核
 	 */
 	public static final String MOMOPATCHWELDM_WITHDRAW = "momopatchweldm_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String SYSASSEM_SUBMIT = "sysAssem_submit";
+	/**
+	 * 通过
+	 */
+	public static final String SYSASSEM_APPROVE = "sysAssem_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String SYSASSEM_REJECT = "sysAssem_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SYSASSEM_BATCH_APPROVE = "sysAssem_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SYSASSEM_BATCH_REJECT = "sysAssem_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String SYSASSEM_REVERSE_APPROVE = "sysAssem_reverse_approve";
+	public static final String UPTIME_CATEGORY = "uptime_category";
 }
