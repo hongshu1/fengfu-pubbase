@@ -1472,7 +1472,7 @@ public class PermissionKey {
 	/**
 	 * 稼动时间模板
 	 */
-	public static final String UPTIME_CATEGORY = "uptime_category";
+	public static final String UPTIME_TPL = "uptime_tpl";
 	/**
 	 * 生产项目
 	 */

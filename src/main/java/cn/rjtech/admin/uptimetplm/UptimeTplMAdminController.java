@@ -1,5 +1,6 @@
 package cn.rjtech.admin.uptimetplm;
 
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -20,6 +21,8 @@ import cn.rjtech.model.momdata.UptimeTplM;
  */
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/uptimeTplM", viewPath = "/_view/admin/uptimetplm")
+@CheckPermission(PermissionKey.UPTIME_TPL)
+@UnCheckIfSystemAdmin
 public class UptimeTplMAdminController extends BaseAdminController {
 
 	@Inject
