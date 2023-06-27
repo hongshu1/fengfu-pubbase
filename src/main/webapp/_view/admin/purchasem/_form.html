@@ -38,7 +38,7 @@
 	    </div>     
 </div>
 ### 新增之后，并且为审批流
-#if(purchasem.iautoid?? && purchasem.iauditway == 2 && purchasem.iauditstatus == 1)
+#if(purchasem.iautoid?? && purchasem.iauditway == 2 && (purchasem.iauditstatus == 1 || purchasem.iauditstatus == 2) && purchasem.istatus == 1)
     ### 参数列表
     ### formAutoId:                 单据ID
     ### formSn:                     表单名
