@@ -230,6 +230,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
                 subcontractsaleorderm.setIUpdateBy(user.getId());
                 subcontractsaleorderm.setCUpdateName(user.getName());
                 subcontractsaleorderm.setDUpdateTime(now);
+                subcontractsaleorderm.setIsDeleted(false);
                 ValidationUtils.isTrue(subcontractsaleorderm.save(), ErrorMsg.SAVE_FAILED);
             } else {
                 subcontractsaleorderm.setIUpdateBy(user.getId());

@@ -110,6 +110,7 @@ public class WarehouseService extends BaseService<Warehouse> {
 
     //查重
     ValidationUtils.assertNull(findByWhCode(warehouse.getCWhCode()), "仓库编码重复！");
+    ValidationUtils.assertNull(findByWhCode(warehouse.getCWhName()), "仓库名称重复！");
 
     //创建信息
     warehouse.setIcreateby(JBoltUserKit.getUserId());
@@ -445,6 +446,8 @@ public class WarehouseService extends BaseService<Warehouse> {
         return fail(msg);
       }
 
+      String cdepcode = dbTemplate("warehouse.getCdepnameByCdepcode", Kv.by("cdepname", record.getStr("cdepcode"))).queryStr();
+
 
       //空间管控
       int isSpaceControlEnabled = record.getStr("isspacecontrolenabled").equals("是") ? 1 : 0;
@@ -471,6 +474,7 @@ public class WarehouseService extends BaseService<Warehouse> {
       record.set("isreservoirarea", isreservoirarea);
       record.set("isSpaceControlEnabled", isSpaceControlEnabled);
       record.set("isStockWarnEnabled", isStockWarnEnabled);
+      record.set("cdepcode", cdepcode);
       i++;
     }
 
