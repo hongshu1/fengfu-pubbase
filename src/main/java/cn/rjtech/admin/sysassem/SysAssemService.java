@@ -249,6 +249,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
                 sysotherin.setIupdateby(user.getId());
                 sysotherin.setCupdatename(user.getName());
                 sysotherin.setDupdatetime(now);
+                sysotherin.setIsDeleted(false);
                 //主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
             } else {
@@ -571,7 +572,12 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        tx(() -> {
+            this.passagetwo(formAutoId);
+            return true;
+        });
         return null;
+
     }
 
     @Override
@@ -635,6 +641,28 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
     }
 
     //审核通过后的业务逻辑
+    public void passagetwo(Long formAutoId) {
+
+            SysAssem byId = findById(formAutoId);
+            byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+            byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
+            byId.update();
+            //获取转换前的所有数据
+            List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstBy(formAutoId.toString());
+            List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
+            if(!CollectionUtils.isEmpty(firstBy)){
+                for(SysAssemdetail detail : firstBy){
+                    //生成现品票
+                    this.cashNotTransaction(formAutoId,detail,purchaseOrderDBatchList);
+                    //对转换前的现品票扣减失效
+                    PurchaseOrderDBatch first1 = purchaseOrderDBatchService.findFirst("select * from  PS_PurchaseOrderDBatch where cCompleteBarcode = ?", detail.getBarcode());
+                    first1.setIsEffective(false);
+                    purchaseOrderDBatchService.update(first1);
+                }
+        }
+    }
+
+    //批量审核通过后的业务逻辑
     public void passagetwo(List<Long> formAutoId) {
         for (Long s : formAutoId) {
             SysAssem byId = findById(s);
@@ -676,21 +704,23 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         //采购订单主表
         PurchaseOrderM first3 = purchaseordermservice.findFirst("select * from  PS_PurchaseOrderM where iAutoId = ?", first2.getIPurchaseOrderMid());
         //采购订单明细数量
-        PurchaseorderdQty first4 = purchaseorderdQtyService.findFirst("select * from PS_PurchaseOrderD_Qty where iPurchaseOrderDid = ?", first2.getIAutoId());
+        PurchaseorderdQty first4 = purchaseorderdQtyService.findFirst("select d.iInventoryId,qty.* from PS_PurchaseOrderD_Qty qty LEFT JOIN  PS_PurchaseOrderD d ON d.iAutoId = qty.iPurchaseOrderDid where qty.iPurchaseOrderDid = ?", first2.getIAutoId());
         //获取转换后的从表数据
         SysAssemdetail first5 = sysassemdetailservice.findFirst(s.toString(), detail.getCombination());
         //通过存货编码获取单位
         Inventory first6 = inventoryService.findFirst("select t3.*,uom.cUomCode,uom.cUomName FROM Bd_Inventory t3 LEFT JOIN Bd_Uom uom on t3.iPurchaseUomId = uom.iAutoId where t3.cInvCode = ?", detail.getInvcode());
-        BigDecimal sourceQty = null;
-        if("KG".equals(first6.getStr("cuomname"))){
-            sourceQty = first6.getBigDecimal("weight");
-        }else {
-            sourceQty = first6.getBigDecimal("qty");
-        }
+        //采购订单现品票表只有数量
+        BigDecimal sourceQty = first5.getBigDecimal("qty");
+//        if("KG".equals(first6.getStr("cuomname"))){
+//            sourceQty = first5.getBigDecimal("weight");
+//        }else {
+//            sourceQty = first5.getBigDecimal("qty");
+//        }
         // 源数量，数量应该是转换后的
 //                    BigDecimal sourceQty = first4.getBigDecimal(PurchaseorderdQty.IQTY);
         Long purchaseOrderDId = first4.getLong(PurchaseorderdQty.IPURCHASEORDERDID);
-        Long iPurchaseOrderdQtyId = first4.getLong(PurchaseorderdQty.IAUTOID);
+//        Long iPurchaseOrderdQtyId = first4.getLong(PurchaseorderdQty.IAUTOID);
+        Long iPurchaseOrderdQtyId = Long.valueOf(first5.getAutoID());
         Long inventoryId = first4.getLong(PurchaseOrderD.IINVENTORYID);
         String dateStr = demandPlanDService.getDate(first4.getStr(PurchaseorderdQty.IYEAR), first4.getInt(PurchaseorderdQty.IMONTH),first4.getInt(PurchaseorderdQty.IDATE));
         DateTime planDate = DateUtil.parse(dateStr, DatePattern.PURE_DATE_PATTERN);
@@ -717,7 +747,8 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
                 purchaseOrderDBatchList.add(purchaseOrderDBatch);
             }
         }
-        purchaseOrderDBatchService.batchSave(purchaseOrderDBatchList);
+        int[] ints = purchaseOrderDBatchService.batchSave(purchaseOrderDBatchList);
+        System.out.println("条码生成："+ints);
     }
 
 

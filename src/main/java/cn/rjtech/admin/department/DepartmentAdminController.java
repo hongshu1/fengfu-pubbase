@@ -78,6 +78,17 @@ public class DepartmentAdminController extends BaseAdminController {
     	depGrade = JBoltStringUtil.isBlank(depGrade) ? "3" : depGrade;
     	para.set("idepgrade",depGrade);
     	para.set("bdepend",IsEnableEnum.NO.getValue());
+    	para.set("isEnabled","true");
+        renderJsonData(service.treeDatasForProposalSystem(para));
+    }
+    /**
+     * 数据源
+     */
+    @UnCheck
+    public void treeDatasForProposalReport() {
+    	Kv para = getKv();
+    	para.set("isProposal","true");
+    	para.set("isEnabled","true");
         renderJsonData(service.treeDatasForProposalSystem(para));
     }
     /**
