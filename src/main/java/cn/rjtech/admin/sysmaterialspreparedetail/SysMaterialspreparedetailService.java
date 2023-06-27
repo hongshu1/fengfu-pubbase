@@ -210,7 +210,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 		String[] split5 = split[0].split(":");
 		String id=split5[1];
 		SysMaterialsprepare sysMaterialsprepare = new SysMaterialsprepare();
-		//获取当前用户信息？
+		//获取当前用户信息
 		User user = JBoltUserKit.getUser();
 		Date now = new Date();
 		tx(() -> {
@@ -229,7 +229,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 			ValidationUtils.isTrue(sysMaterialsprepare.save(), ErrorMsg.SAVE_FAILED);
 			//从表的操作
 			// 获取保存数据（执行保存，通过 getSaveRecordList）
-			saveTableSubmitDatas(sysMaterialsprepare, id,map1);
+			saveTableSubmitDatas(sysMaterialsprepare,id,map1);
 			//修改工单状态
 			//获取修改数据（执行修改，通过 getUpdateRecordList）
 			//获取删除数据（执行删除，通过 getDelete）
