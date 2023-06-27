@@ -64,6 +64,7 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
         List<Record> quantityAndAmountColumnList = new ArrayList<>();
         periodService.calcDynamicExpenseBudgetTableColumn(dstarttime,dendtime,yearColumnTxtList,monthColumnTxtList,quantityAndAmountColumnList);
         set("expenseBudget", expenseBudget);
+        set("readonly","readonly");
         set("yearcolumntxtlist",yearColumnTxtList);
         set("monthcolumntxtlist",monthColumnTxtList);
         set("quantityandamountcolumnlist",quantityAndAmountColumnList);

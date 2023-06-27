@@ -1,25 +1,41 @@
 package cn.rjtech.admin.uptimeparam;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.render.JBoltByteFileType;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.UptimeParam;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.UptimeParam;
+import com.jfinal.upload.UploadFile;
+
+import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
- * 稼动时间建模-稼动时间参数
+ * 稼动时间参数
  * @ClassName: UptimeParamAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-06-26 15:14
  */
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/uptimeParam", viewPath = "/_view/admin/uptimeparam")
+@CheckPermission(PermissionKey.UPTIME_PARAM)
+@UnCheckIfSystemAdmin
 public class UptimeParamAdminController extends BaseAdminController {
 
 	@Inject
@@ -34,7 +50,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isEnabled")));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
 	}
 
    /**
@@ -102,5 +118,52 @@ public class UptimeParamAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 
+	/**
+	 * 导出
+	 */
+	public void exportExcelAll() throws Exception {
+		Page<Record> recordPage = service.getAdminDatas(1, 100000, getKv());
+		List<Record> rows = recordPage.getList();
+		if (!rows.isEmpty()) {
+			rows = rows.stream().map(row -> {
+				row.put("isenabled", row.getBoolean("isenabled") ? "是" : "否");
+				row.put("dcreatetime", DateUtil.format(row.getDate("dcreatetime"), "yyyy-MM-dd HH:mm"));
+				return row;
+			}).collect(Collectors.toList());
+		}
+		renderJxls("uptimeparam.xlsx", Kv.by("rows", recordPage.getList()), "稼动时间参数导出_" + DateUtil.today() + ".xlsx");
+	}
 
+	/**
+	 * 模板下载
+	 */
+	@SuppressWarnings("unchecked")
+	public void downloadTpl() {
+		try {
+			renderJxls("param.xlsx", Kv.by("rows", null), "嫁接时间参数.xlsx");
+		} catch (Exception e) {
+			ValidationUtils.error("模板下载失败");
+		}
+	}
+
+	/**
+	 * 数据导入
+	 */
+	@SuppressWarnings("unchecked")
+	public void importExcelData() {
+		UploadFile uploadFile = getFile("file");
+		ValidationUtils.notNull(uploadFile, "上传文件不能为空");
+
+		File file = uploadFile.getFile();
+
+		List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
+
+		// 截取最后一个“.”之前的文件名，作为导入格式名
+		String cformatName = list.get(0);
+
+		String extension = list.get(1);
+
+		ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+		renderJson(service.importExcelData(file, cformatName));
+	}
 }

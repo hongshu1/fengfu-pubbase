@@ -98,7 +98,7 @@ ORDER BY t1.iSeq asc
 
 #sql("getCheckOutTableDatas")
 select t1.* from PL_RcvDocQcFormD t1
-where 1=1
+    where 1=1
 #if(ircvdocqcformmid)
     and t1.ircvdocqcformmid = #para(ircvdocqcformmid)
 #end

@@ -134,7 +134,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 
 		Kv kv = new Kv();
 		kv.setIfNotNull("autoid",get("autoid"));
-		kv.setIfNotNull("spottickets",get("spottickets"));
+		kv.setIfNotNull("barcodes",get("barcodes"));
 		kv.setIfNotNull("q",get("q"));
 		kv.setIfNotNull("limit",getInt("limit", 10));
 		kv.setIfNotNull("orgCode",getOrgCode());

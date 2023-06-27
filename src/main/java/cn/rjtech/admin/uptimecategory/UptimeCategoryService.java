@@ -1,13 +1,19 @@
 package cn.rjtech.admin.uptimecategory;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.util.JBoltRandomUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.UptimeCategory;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.Date;
+import java.util.List;
+
 /**
  * 稼动时间建模-稼动时间参数类别
  * @ClassName: UptimeCategoryService
@@ -30,22 +36,11 @@ public class UptimeCategoryService extends BaseService<UptimeCategory> {
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-	 * @param keywords   关键词
-     * @param cUptimeCategoryName 稼动时间参数类别名称
-     * @param isDeleted 删除状态;0. 未删除 1. 已删除
+	 * @param kv   查询条件
 	 * @return
 	 */
-	public Page<UptimeCategory> getAdminDatas(int pageNumber, int pageSize, String keywords, String cUptimeCategoryName, Boolean isDeleted) {
-	    //创建sql对象
-	    Sql sql = selectSql().page(pageNumber,pageSize);
-	    //sql条件处理
-        sql.eq("cUptimeCategoryName",cUptimeCategoryName);
-        sql.eqBooleanToChar("isDeleted",isDeleted);
-        //关键词模糊查询
-        sql.like("cUptimeCategoryName",keywords);
-        //排序
-        sql.desc("iAutoId");
-		return paginate(sql);
+	public Page<Record> getAdminDatas(int pageNumber, int pageSize,Kv kv) {
+		return dbTemplate("uptimecategory.getAdminDatas").paginate(pageNumber, pageSize);
 	}
 
 	/**
@@ -54,11 +49,23 @@ public class UptimeCategoryService extends BaseService<UptimeCategory> {
 	 * @return
 	 */
 	public Ret save(UptimeCategory uptimeCategory) {
-		if(uptimeCategory==null || isOk(uptimeCategory.getIAutoId())) {
+		if (uptimeCategory == null || isOk(uptimeCategory.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		boolean success=uptimeCategory.save();
-		if(success) {
+		// 设置其他信息
+		uptimeCategory.setIOrgId(getOrgId());
+		uptimeCategory.setCOrgCode(getOrgCode());
+		uptimeCategory.setCOrgName(getOrgName());
+		uptimeCategory.setICreateBy(JBoltUserKit.getUserId());
+		uptimeCategory.setCCreateName(JBoltUserKit.getUserName());
+		uptimeCategory.setDCreateTime(new Date());
+		uptimeCategory.setIUpdateBy(JBoltUserKit.getUserId());
+		uptimeCategory.setCUpdateName(JBoltUserKit.getUserName());
+		uptimeCategory.setDUpdateTime(new Date());
+		uptimeCategory.setIsDeleted(false);
+		boolean success = uptimeCategory.save();
+
+		if (success) {
 			//添加日志
 			//addSaveSystemLog(uptimeCategory.getIAutoId(), JBoltUserKit.getUserId(), uptimeCategory.getName());
 		}
@@ -77,6 +84,10 @@ public class UptimeCategoryService extends BaseService<UptimeCategory> {
 		//更新时需要判断数据存在
 		UptimeCategory dbUptimeCategory=findById(uptimeCategory.getIAutoId());
 		if(dbUptimeCategory==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
+		// 设置更新信息
+		uptimeCategory.setIUpdateBy(JBoltUserKit.getUserId());
+		uptimeCategory.setCUpdateName(JBoltUserKit.getUserName());
+		uptimeCategory.setDUpdateTime(new Date());
 		boolean success=uptimeCategory.update();
 		if(success) {
 			//添加日志
@@ -124,4 +135,21 @@ public class UptimeCategoryService extends BaseService<UptimeCategory> {
 		return null;
 	}
 
+    public List<Record> options() {
+		return dbTemplate("uptimecategory.getAdminDatas", Kv.of("isenabled", "true")).find();
+    }
+
+    public Long getOrAddUptimeCategoryByName(String cuptimeparamname) {
+		UptimeCategory uptimeCategory = findFirst(selectSql().eq("cUptimeCategoryName", cuptimeparamname));
+		if (notNull(uptimeCategory)) {
+			return uptimeCategory.getIAutoId();
+		}
+
+		UptimeCategory newUptimeCategory = new UptimeCategory();
+		newUptimeCategory.setCUptimeCategoryCode(JBoltRandomUtil.randomNumber(6));//待优化
+		newUptimeCategory.setCUptimeCategoryName(cuptimeparamname);
+		save(newUptimeCategory);
+		return newUptimeCategory.getIAutoId();
+
+	}
 }

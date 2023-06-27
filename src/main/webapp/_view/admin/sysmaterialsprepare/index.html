@@ -29,10 +29,6 @@
                         </button>
                     </div>
                 </form>
-				<button
-						id="FRESH"
-				onclick="refreshJBoltTable(this)"
-				/>
             </div>
             <div class="col-sm-auto text-right" style="display: none">
 
@@ -54,14 +50,7 @@
 	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysMaterialsprepare/detailShow/${data.autoid}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="备料一览表详情"><i class="fa fa-eye">查看</i></a>
 </td>
 <td>${data.billtype}</td>
-<td>
-	{@if data.isDeleted}
-	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysotherindetail/edit/${data.id}" data-area="800,600" data-title="查看其它入库单明细"><i class="fa fa-eye"></i></a>
-	{@else}
-	<a class="jbolt_table_editbtn" href="admin/sysotherindetail/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑其它入库单明细"><i class="fa fa-edit"></i></a>
-	{@/if}
-	<a class="jbolt_table_delbtn" href="admin/sysotherindetail/${data.isDeleted?'realDelete':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
-</td>
+<td>${data.isfinish}</td>
 <td>${data.billno}</td>
 <td>${data.sourcebillno}</td>
 <td>${data.cdepname}</td>

@@ -145,7 +145,7 @@ public class ProdItemService extends BaseService<ProdItem> {
 
 
 	public List<Record> list(Kv kv) {
-		return dbTemplate("qcitem.list", kv).find();
+		return dbTemplate("proditem.list", kv).find();
 	}
 
 	public List<Record> options() {

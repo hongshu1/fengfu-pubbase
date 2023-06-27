@@ -11,5 +11,8 @@ WHERE isDeleted = '0'
   #if(cproditemname)
   AND cproditemname = #para(cproditemname)
   #end
+#if(ids)
+    AND iautoid IN #(ids)
+#end
 ORDER BY dUpdateTime DESC
     #end

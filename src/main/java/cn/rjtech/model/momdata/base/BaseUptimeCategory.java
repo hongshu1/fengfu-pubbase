@@ -32,7 +32,7 @@ public abstract class BaseUptimeCategory<M extends BaseUptimeCategory<M>> extend
     /**更新人ID*/
     public static final String IUPDATEBY = "iUpdateBy";
     /**更新人名称*/
-    public static final String CUPDATNAME = "cUpdatName";
+    public static final String CUPDATENAME = "cUpdateName";
     /**更新时间*/
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态;0. 未删除 1. 已删除*/
@@ -210,18 +210,18 @@ public abstract class BaseUptimeCategory<M extends BaseUptimeCategory<M>> extend
 	/**
 	 * 更新人名称
 	 */
-	public M setCUpdatName(java.lang.String cUpdatName) {
-		set("cUpdatName", cUpdatName);
+	public M setCUpdateName(java.lang.String cUpdateName) {
+		set("cUpdateName", cUpdateName);
 		return (M)this;
 	}
 
 	/**
 	 * 更新人名称
 	 */
-	@JBoltField(name="cupdatname" ,columnName="cUpdatName",type="String", remark="更新人名称", required=true, maxLength=60, fixed=0, order=11)
-	@JSONField(name = "cupdatname")
-	public java.lang.String getCUpdatName() {
-		return getStr("cUpdatName");
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=60, fixed=0, order=11)
+	@JSONField(name = "cupdatename")
+	public java.lang.String getCUpdateName() {
+		return getStr("cUpdateName");
 	}
 
 	/**

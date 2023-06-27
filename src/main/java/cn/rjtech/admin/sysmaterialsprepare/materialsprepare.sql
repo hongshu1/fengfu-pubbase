@@ -15,7 +15,8 @@ SELECT
     uom.cUomName,
     md.iQty,
     mp.ccreatename,
-    mp.dcreatetime
+    mp.dcreatetime,
+    md.iAutoId AS mdID
 FROM
     T_Sys_MaterialsPrepare mp
         LEFT JOIN Mo_MoDoc md ON md.iAutoId = mp.SourceBillID
@@ -555,6 +556,7 @@ SELECT it.cInvCode,
        sbp.Barcode,
        sbp.WhCode,
        sbp.PosCode,
+       mp.AutoID,
        mp.Billno,
        mp.SourceBillID,
        md.cMoDocNo
@@ -591,8 +593,19 @@ WHERE
 
 
 
-
 #sql("HasBeenPrepared")
+SELECT
+   *
+FROM
+    T_Sys_MaterialsPrepareDetail
+        where 1=1
+        and MasID='#(iAutoId)'
+        and InvCode='#(InvCode)'
+#end
+
+
+
+#sql("HasBeenPrepared1")
 SELECT
     a.iInventoryId,
     f.cInvCode,
@@ -615,4 +628,63 @@ WHERE 1=1
   AND  sbp.InvCode='#(InvCode)'
   AND  sbp.Batch='#(Batch)'
   AND  mpd.AutoID IS NOT NULL
+    #end
+
+
+
+#sql("xianjinxianchuALL")
+SELECT it.cInvCode,
+       it.cInvCode1,
+       it.cInvName1,
+       mri.iUsageUOM * md.iQty AS planIqty,
+       it.cInvStd,
+       uom.cUomName,
+       sbp.Batch,
+       sbp.Qty,
+       sbp.Barcode,
+       sbp.WhCode,
+       sbp.PosCode,
+       md.cMoDocNo
+FROM
+    Mo_MoRoutingInvc mri
+        LEFT JOIN Bd_Inventory it ON mri.iInventoryId= it.iAutoId
+        LEFT JOIN Mo_MoRoutingConfig mrc ON mri.iMoRoutingConfigId= mrc.iAutoId
+        LEFT JOIN Mo_MoRouting mr ON mrc.iMoRoutingId= mr.iAutoId
+        LEFT JOIN Mo_MoDoc md ON mr.iMoDocId= md.iAutoId
+        LEFT JOIN T_Sys_MaterialsPrepare mp ON mp.SourceBillID= md.iAutoId
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId= it.iInventoryUomId1
+        LEFT JOIN T_Sys_StockBarcodePosition sbp ON sbp.InvCode= it.cInvCode
+WHERE 1 = 1
+  AND  mp.BillNo='#(billno)'
+  AND  sbp.Barcode IS  NULL
+ORDER BY sbp.Batch ASC #end
+
+
+
+
+#sql("checkQty")
+SELECT
+    Qty
+FROM T_Sys_MaterialsPrepareDetail mpd
+WHERE 1 = 1
+AND mpd.MasID='#(autoID)'
+   #end
+
+
+
+
+#sql("zijianwuliaoji")
+SELECT
+    a.iInventoryId,
+    f.cInvCode,
+    a.iUsageUOM,
+    a.iUsageUOM*d.iQty AS planIqty
+FROM
+    Mo_MoRoutingInvc a
+    LEFT JOIN Bd_Inventory f ON a.iInventoryId= f.iAutoId
+    LEFT JOIN Mo_MoRoutingConfig b ON a.iMoRoutingConfigId= b.iAutoId
+    LEFT JOIN Mo_MoRouting c ON b.iMoRoutingId= c.iAutoId
+    LEFT JOIN Mo_MoDoc d ON c.iMoDocId= d.iAutoId
+WHERE 1=1
+  AND  d.iAutoId='#(imodocid)'
     #end

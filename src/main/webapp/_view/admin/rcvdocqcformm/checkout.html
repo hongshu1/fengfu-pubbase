@@ -96,9 +96,6 @@
             <button type="button" onclick="insertRow(10)" class="btn btn-success"
                     style="background-color: #1006F1;margin-top: 11px">新增页
             </button>
-            <!--<img data-switchbtn data-value="#(record.iscpksigned??)" data-handler="refreshJBoltTable"
-                 data-url="admin/rcvdocqcformm/toggleIsCpkSigned/#(record.iautoid??)" style="margin-left: 50px;"/>
-            <span style="margin-left: 5px;">CPK数值的输入内容按正负数显示</span>-->
           </div>
         </table>
 
@@ -362,7 +359,6 @@
     const allDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
     var serializeGroupbyList = _chunk(filterserializeArray, allDatas[0].cvaluelist.length);
 
-    var subMilasUrlArr = [];//存储每一行数据
     for (let i = 0; i < serializeGroupbyList.length; i++) {
       let data = allDatas[i];
       let dataCvaluelist = data.cvaluelist;
@@ -373,25 +369,6 @@
         let dataCvalue = dataCvaluelist[num];
         dataCvalue.cvalue = element.value;
       }
-
-      /*var tableData = {
-        coptions: data.coptions,
-        cqcformparamids: data.cqcformparamids,
-        cqcitemname: data.cqcitemname,
-        cqcparamname: data.cqcparamname,
-        iautoid: data.iautoid,
-        iformparamid: data.iformparamid,
-        imaxval: data.imaxval,
-        iminval: data.iminval,
-        iqcformid: data.iqcformid,
-        ircvdocqcformmid: data.ircvdocqcformmid,
-        iseq: data.iseq,
-        istdval: data.istdval,
-        isubseq: data.isubseq,
-        itype: data.itype,
-        serializeElement: serializeElement
-      };
-      subMilasUrlArr.push(tableData);*/
     }
     //测试目的
     var cmeasurepurpose = "";
@@ -410,7 +387,6 @@
     var cdcno = $("#cDcNo").val(); //设变号
     var iautoid = $('input[name="record.iautoid"]').val();//主页面的主键
     const submitDatas = {
-      // serializeSubmitList: JSON.stringify(subMilasUrlArr),
       serializeSubmitList: JSON.stringify(allDatas),
       cmeasurereason: cmeasurereason,
       cmeasurepurpose: cmeasurepurpose2,

@@ -1,5 +1,10 @@
 package cn.rjtech.admin.uptimeparam;
 
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.admin.uptimecategory.UptimeCategoryService;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,6 +14,14 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.UptimeParam;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
+import com.jfinal.weixin.sdk.utils.RetryUtils;
+import org.apache.poi.hwpf.dev.RecordUtil;
+
+import java.io.File;
+import java.util.*;
+
 /**
  * 稼动时间建模-稼动时间参数
  * @ClassName: UptimeParamService
@@ -26,25 +39,20 @@ public class UptimeParamService extends BaseService<UptimeParam> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingdService;
+	@Inject
+	private UptimeCategoryService uptimeCategoryService;
 
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-	 * @param keywords   关键词
-     * @param isEnabled 是否启用;0. 否 1. 是
+	 * @param kv   查询条件
 	 * @return
 	 */
-	public Page<UptimeParam> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isEnabled) {
-	    //创建sql对象
-	    Sql sql = selectSql().page(pageNumber,pageSize);
-	    //sql条件处理
-        sql.eqBooleanToChar("isEnabled",isEnabled);
-        //关键词模糊查询
-        sql.like("cUptimeParamName",keywords);
-        //排序
-        sql.desc("iAutoId");
-		return paginate(sql);
+	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
+		return dbTemplate("uptimeparam.getAdminDatas", kv).paginate(pageNumber, pageSize);
 	}
 
 	/**
@@ -53,11 +61,22 @@ public class UptimeParamService extends BaseService<UptimeParam> {
 	 * @return
 	 */
 	public Ret save(UptimeParam uptimeParam) {
-		if(uptimeParam==null || isOk(uptimeParam.getIAutoId())) {
+		if (uptimeParam == null || isOk(uptimeParam.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		boolean success=uptimeParam.save();
-		if(success) {
+		// 设置其他信息
+		uptimeParam.setIOrgId(getOrgId());
+		uptimeParam.setCOrgCode(getOrgCode());
+		uptimeParam.setCOrgName(getOrgName());
+		uptimeParam.setICreateBy(JBoltUserKit.getUserId());
+		uptimeParam.setCCreateName(JBoltUserKit.getUserName());
+		uptimeParam.setDCreateTime(new Date());
+		uptimeParam.setIUpdateBy(JBoltUserKit.getUserId());
+		uptimeParam.setCUpdateName(JBoltUserKit.getUserName());
+		uptimeParam.setDUpdateTime(new Date());
+		uptimeParam.setIsDeleted(false);
+		boolean success = uptimeParam.save();
+		if (success) {
 			//添加日志
 			//addSaveSystemLog(uptimeParam.getIAutoId(), JBoltUserKit.getUserId(), uptimeParam.getName());
 		}
@@ -125,4 +144,28 @@ public class UptimeParamService extends BaseService<UptimeParam> {
 		return null;
 	}
 
+	/**
+	 * 数据导入
+	 * @param file
+	 * @param cformatName
+	 * @return
+	 */
+	public Ret importExcelData(File file, String cformatName) {
+		Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
+		ValidationUtils.isTrue(ret.isOk(), "导入失败");
+		ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
+		// 封装数据
+		for (Map<String, String> map : datas) {
+			Long iUptimeCategoryId = uptimeCategoryService.getOrAddUptimeCategoryByName(map.get("cuptimeparamname"));
+
+			UptimeParam uptimeParam = new UptimeParam();
+			uptimeParam.setCUptimeParamName(map.get("cuptimeparamname"));
+			uptimeParam.setIUptimeCategoryId(iUptimeCategoryId);
+			uptimeParam.setIsEnabled(true);
+			// 保存数据
+			save(uptimeParam);
+		}
+
+		return SUCCESS;
+	}
 }

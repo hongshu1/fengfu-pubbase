@@ -117,17 +117,5 @@
 
 #define js()
 <script type="text/javascript">
-  function submitThisForm(callback){
-    var data=getJboltTableCheckedData("chooseDataTable_#(pageId)");
-    console.log('data===>',data);
-    if(data){
-      // LayerMsgBox.confirm("确认选择此数据?",function(){
-      parent.setChooseDialogSelectResultFromData(data);
-      if(callback){
-        callback();
-      }
-      // });
-    }
-  }
 </script>
 #end
