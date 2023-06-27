@@ -441,6 +441,8 @@
                     submitAttr:"qty",
                     required:true,
                     handler:function (table,td,text,value,jsonData) {
+                        debugger;
+                        // let iqty = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["iqty"]);
                         let iqty =  jsonData.iqty;
                         console.log(iqty);
                         let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
@@ -450,6 +452,7 @@
                             return false;
                         }
                         let cha = iqty- (qty);
+                        console.log("==="+cha)
                         if (cha > iqty*2){
                             showFormEleErrorStyle(td,"可退数量为"+iqty+",退货数量已超出！！！");
                             return false;
