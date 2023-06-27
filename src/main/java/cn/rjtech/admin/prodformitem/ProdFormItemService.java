@@ -120,7 +120,7 @@ public class ProdFormItemService extends BaseService<ProdFormItem> {
 			ProdFormItem qcFormItem = createQcFormItem(
 					null,
 					qcFormId,
-					jsonObject.getLong(ProdFormItem.IPRODITEMID.toLowerCase()),
+					jsonObject.getLong(QcFormItem.IQCITEMID.toLowerCase()),
 					jsonObject.getInteger(ProdFormItem.ISEQ.toLowerCase()),
 					isDelete);
 			list.add(qcFormItem);
