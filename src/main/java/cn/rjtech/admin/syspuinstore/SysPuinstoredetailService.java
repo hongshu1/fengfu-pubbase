@@ -173,7 +173,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
     }
 
     public SysPuinstoredetail findFirstByBarcode(String barcode) {
-        return findFirst("select * from  T_Sys_PUInStoreDetail where spotTicket = ? ", barcode);
+        return findFirst("select * from  T_Sys_PUInStoreDetail where barcode = ? ", barcode);
     }
 
     /*
@@ -189,7 +189,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         detail.setQty(detailRecord.getBigDecimal("qty")); //入库数量
         detail.setCCreateName(JBoltUserKit.getUserName());
         detail.setDCreateTime(puinstore.getDCreateTime());
-        detail.setSpotTicket(detailRecord.get("spotticket"));//现品票
+        detail.setBarCode(detailRecord.get("barcode"));//现品票
         detail.setIsDeleted(false);
         detail.setBrandCode(detailRecord.get("brandcode"));//品牌code
         detail.setBrandName(detailRecord.get("brandname"));//品牌名称

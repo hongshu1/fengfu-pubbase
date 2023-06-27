@@ -33,7 +33,7 @@ ORDER BY so.dcreatetime DESC
 #sql("dList")
 SELECT  a.*,
     m.cOrderNo as sourcebillno,
-    aa.cBarcode as barcode,
+    aa.cCompleteBarcode as barcode,
     b.cInvCode ,
     b.cInvCode1,
     b.cInvName1,
@@ -48,7 +48,7 @@ SELECT  a.*,
 	v.cVenCode as vencode,
 	v.cVenName as venname
 FROM T_Sys_PUReceiveDetail a
-LEFT JOIN PS_PurchaseOrderDBatch aa on aa.cBarcode = a.Barcode and aa.isEffective = '1'
+LEFT JOIN PS_PurchaseOrderDBatch aa on aa.cCompleteBarcode = a.Barcode and aa.isEffective = '1'
 LEFT JOIN Bd_Inventory b on aa.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on aa.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
@@ -58,8 +58,8 @@ where a.isDeleted = '0'
 	#if(masid)
 		and a.MasID = #para(masid)
 	#end
-     #if(spotticket)
-    and a.spotticket = #para(spotticket)
+     #if(barcode)
+    and a.barcode = #para(barcode)
      #end
 ORDER BY a.dupdatetime DESC
 #end
@@ -78,7 +78,7 @@ where 1=1
 
 
 #sql("Whcode")
-SELECT  a.*,a.cWhCode as whcode,a.cWhName as whname,dt.cDepName
+SELECT  a.*,a.cWhCode as whcode,a.cWhName as whname
 FROM Bd_Warehouse a
 LEFT JOIN bd_department dt ON a.cDepCode = dt.iAutoId and dt.isDeleted = 0
 where a.isDeleted = 0
@@ -107,7 +107,7 @@ where a.isDeleted = 0
 #sql("getBarcodeDatas")
 select top #(limit)
     m.cOrderNo as sourcebillno,
-    a.cBarcode as barcode,
+    a.cCompleteBarcode as barcode,
     b.cInvCode ,
     b.cInvCode1,
     b.cInvName1,
@@ -133,7 +133,7 @@ LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
 LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
-LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode AND pd.isDeleted = '0'
+LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cCompleteBarcode AND pd.isDeleted = '0'
 LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
 LEFT JOIN Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
 LEFT JOIN Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
@@ -141,7 +141,7 @@ LEFT JOIN Bd_Warehouse_Area area on area.iAutoId =config.iWarehouseAreaId
 where a.isEffective = '1'
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
-			or b.cinvname1 like concat('%',#para(q),'%') or a.cBarcode like concat('%',#para(q),'%')
+			or b.cinvname1 like concat('%',#para(q),'%') or a.cCompleteBarcode like concat('%',#para(q),'%')
 			or v.cVenCode like concat('%',#para(q),'%')
 		)
 	#end
@@ -192,8 +192,8 @@ and p.cPTName like CONCAT('%', #para(cPTName), '%')
 #sql("tuibarcode")
 select
     m.cOrderNo as sourcebillno,
-    a.cBarcode as barcode,
-    a.cBarcode as spotticket,
+    a.cCompleteBarcode as barcode,
+    a.cCompleteBarcode as barcode,
     b.cInvCode as invcode,
     b.cinvname,
     b.cInvCode ,
@@ -220,12 +220,12 @@ LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
-LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode  AND pd.isDeleted = '0'
+LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cCompleteBarcode  AND pd.isDeleted = '0'
 LEFT JOIN Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
 where a.isEffective = '1'
 
 	#if(barcode)
-		and a.cBarcode = #para(barcode)
+		and a.cCompleteBarcode = #para(barcode)
 	#end
 
 #end
@@ -234,8 +234,8 @@ where a.isEffective = '1'
 #sql("barcode")
 select
     m.cOrderNo as sourcebillno,
-    a.cBarcode as barcode,
-    a.cBarcode as spotticket,
+    a.cCompleteBarcode as barcode,
+    a.cCompleteBarcode as barcode,
     b.cInvCode as invcode,
     b.cinvname,
     b.cInvCode ,
@@ -265,14 +265,14 @@ LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
 LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
 LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
 LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
-LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cBarcode  AND pd.isDeleted = '0'
+LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cCompleteBarcode  AND pd.isDeleted = '0'
 LEFT JOIN Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
 LEFT JOIN Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
 LEFT JOIN Bd_Warehouse_Area area on area.iAutoId =config.iWarehouseAreaId
 where a.isEffective = '1'
 
 	#if(barcode)
-		and a.cBarcode = #para(barcode)
+		and a.cCompleteBarcode = #para(barcode)
 	#end
         AND pd.AutoID IS NULL
 
@@ -309,7 +309,7 @@ select
     d.*,
     m.*,
     m.cOrderNo as sourcebillno,
-    a.cBarcode as barcode,
+    a.cCompleteBarcode as barcode,
     b.cInvCode ,
     b.cInvCode1,
     b.cInvName1,
@@ -345,7 +345,7 @@ LEFT JOIN Bd_Rd_Style s ON s.cRdCode = p.cRdCode
 left join Bd_Department dep on m.idepartmentid = dep.iautoid
 where 1=1
    	#if(barcode)
-		and a.cBarcode = #para(barcode)
+		and a.cCompleteBarcode = #para(barcode)
 	#end
 #end
 

@@ -1008,7 +1008,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                             sysPuinstoredetail.setTrackType(f.getTrackType());
                             sysPuinstoredetail.setCCreateName(user.getUsername());
                             sysPuinstoredetail.setDCreateTime(now);
-                            sysPuinstoredetail.setSpotTicket(f.getBarcode());
+                            sysPuinstoredetail.setBarCode(f.getBarcode());
                             sysPuinstoredetail.setPuUnitCode(barcode.getStr("puunitcode"));
                             sysPuinstoredetail.setPuUnitName(barcode.getStr("puunitname"));
                             sysPuinstoredetail.setIsDeleted(false);
@@ -1216,7 +1216,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                             sysPuinstoredetail.setTrackType(f.getTrackType());
                             sysPuinstoredetail.setCCreateName(user.getUsername());
                             sysPuinstoredetail.setDCreateTime(now);
-                            sysPuinstoredetail.setSpotTicket(f.getBarcode());
+                            sysPuinstoredetail.setBarCode(f.getBarcode());
                             sysPuinstoredetail.setPuUnitCode(barcode.getStr("puunitcode"));
                             sysPuinstoredetail.setPuUnitName(barcode.getStr("puunitname"));
                             sysPuinstoredetail.setIsDeleted(false);
@@ -1319,7 +1319,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                         sysPuinstoredetail.setTrackType(f.getTrackType());
                         sysPuinstoredetail.setCCreateName(user.getUsername());
                         sysPuinstoredetail.setDCreateTime(now);
-                        sysPuinstoredetail.setSpotTicket(f.getBarcode());
+                        sysPuinstoredetail.setBarCode(f.getBarcode());
                         sysPuinstoredetail.setPuUnitCode(barcode.getStr("puunitcode"));
                         sysPuinstoredetail.setPuUnitName(barcode.getStr("puunitname"));
                         sysPuinstoredetail.setIsDeleted(false);

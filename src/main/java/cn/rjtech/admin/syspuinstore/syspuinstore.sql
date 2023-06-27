@@ -66,8 +66,8 @@ where 1=1
 #if(masid)
     and a.MasID = #para(masid)
 #end
-#if(spotticket)
-    and a.spotticket = #para(spotticket)
+#if(barcode)
+    and a.barcode = #para(barcode)
 #end
 #if(invcode)
   and a.invcode = #para(invcode)
