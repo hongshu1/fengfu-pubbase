@@ -132,7 +132,7 @@ public class MaterialsOutDetailService extends BaseService<MaterialsOutDetail> {
         //materialsOutDetail.setAutoID();
         materialsOutDetail.setMasID(masid);
         materialsOutDetail.setPosCode(puinstoredetail.getPosCode());
-        materialsOutDetail.setBarcode(puinstoredetail.getSpotTicket());
+        materialsOutDetail.setBarcode(puinstoredetail.getBarCode());
         materialsOutDetail.setInvCode(puinstoredetail.getInvcode());
         //materialsOutDetail.setNum(new BigDecimal(0));//件数
         materialsOutDetail.setQty(puinstoredetail.getQty());

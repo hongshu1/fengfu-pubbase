@@ -575,9 +575,9 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
         int i = 1;
         for (SysPuinstoredetail detail : detailList) {
             Main main = new Main();
-            if (StrUtil.isNotBlank(detail.getSpotTicket())) {
+            if (StrUtil.isNotBlank(detail.getBarCode())) {
 //                Record record = getBarcodeVersion(puinstore.getSourceBillNo(), detail.getSpotTicket());
-                main.setBarCode(detail.getSpotTicket() + "-" + detail.getCVersion()); //现品票+版本号
+                main.setBarCode(detail.getBarCode()); //现品票+版本号
             } else {
                 main.setBarCode(detail.getInvcode());//传invcode
             }

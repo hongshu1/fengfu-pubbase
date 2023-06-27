@@ -111,7 +111,7 @@ public class SysPuinstoredetailAdminController extends BaseAdminController {
      * */
     public void finddetaildatas() {
         Kv kv = getKv();
-        if (StringUtils.isBlank(kv.getStr("masid")) && StringUtils.isBlank(kv.getStr("spotticket"))) {
+        if (StringUtils.isBlank(kv.getStr("masid")) && StringUtils.isBlank(kv.getStr("barcode"))) {
             renderJsonData(null);
             return;
         }

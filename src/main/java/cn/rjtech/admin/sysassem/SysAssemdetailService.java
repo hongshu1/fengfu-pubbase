@@ -189,7 +189,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
 //		sysAssemdetail.setAutoID();
         SysAssemdetail sysAssemdetail = new SysAssemdetail();
         sysAssemdetail.setMasID(masId);
-        sysAssemdetail.setBarcode(puinstoredetail.getSpotTicket());
+        sysAssemdetail.setBarcode(puinstoredetail.getBarCode());
         sysAssemdetail.setSourceType(puinstoredetail.getSourceBillType());
         sysAssemdetail.setSourceBillNo(puinstoredetail.getSourceBillNo());
         sysAssemdetail.setSourceBillNoRow(puinstoredetail.getSourceBillNoRow());

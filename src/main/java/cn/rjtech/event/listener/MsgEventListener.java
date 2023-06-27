@@ -3,7 +3,6 @@ package cn.rjtech.event.listener;
 import cn.jbolt._admin.msgcenter.TodoService;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.util.JBoltDateUtil;
-import cn.jbolt.core.util.JBoltStringUtil;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.form.FormService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
@@ -140,12 +139,18 @@ public class MsgEventListener {
                 }
             case "PL_ProposalM":
                 ValidationUtils.notNull(formData, form.getCFormName() + "不存在,生成消息失败!");
-                
-                return form.getCFormName() + formData.get(Proposalm.CPROPOSALNO) + "已于" + nowStr + "更新，请尽快处理";
+                if(contentType.equals("title")){
+                	return form.getCFormName() + formData.get(Proposalm.CPROPOSALNO) + "已于" + nowStr + "更新，请尽快处理";
+                }else if(contentType.equals("url")){
+                	return "admin/proposalm/edit?iautoid="+formAutoId;
+                }
             case "PL_PurchaseM":
                 ValidationUtils.notNull(formData, form.getCFormName() + "不存在,生成消息失败!");
-                
-                return form.getCFormName() + formData.get(Purchasem.CPURCHASENO) + "已于" + nowStr + "更新，请尽快处理";
+                if(contentType.equals("title")){
+                	return form.getCFormName() + formData.get(Purchasem.CPURCHASENO) + "已于" + nowStr + "更新，请尽快处理";
+                }else if(contentType.equals("url")){
+                	return "admin/purchasem/instrumentEdit/"+formAutoId;
+                }
             default:
                 throw new ParameterException("未知参数");
         }

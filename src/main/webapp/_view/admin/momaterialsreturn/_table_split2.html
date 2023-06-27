@@ -215,19 +215,19 @@
                 name:"table2"
             },
             cols: {
-                spotticket: { //现品票条码
+                barcode: { //现品票条码
                     maxLength: 100,
                     required: false,
                     placeholder: "=请选择=",
                     type: "autocomplete",
                     url: "admin/otherout/barcodeDatas",
-                    textAttr: "spotticket",
+                    textAttr: "barcode",
                     width: 800,
                     sync: "",
-                    valueAttr: "spotticket",
+                    valueAttr: "barcode",
                     columnAttr: "barcode,cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid,qty",
                     header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
-                    changeColumns: [{column: "spotticket", use: "barcode"},
+                    changeColumns: [{column: "barcode", use: "barcode"},
                         {column: "cinvcode", use: "cinvaddcode"},
                         {column: "cinvname", use: "cinvname"},
                         {column: "cinvcode1", use: "cinvcode1"},
