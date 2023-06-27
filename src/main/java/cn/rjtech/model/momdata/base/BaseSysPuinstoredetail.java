@@ -61,6 +61,8 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
     public static final String PUUNITNAME = "PuUnitName";
     /**存货编码*/
     public static final String INVCODE = "invcode";
+	/**版本号*/
+    public static final String CVERSION = "cVersion";
 	/**
 	 * AutoID
 	 */
@@ -486,5 +488,21 @@ public abstract class BaseSysPuinstoredetail<M extends BaseSysPuinstoredetail<M>
 		return getStr("invcode");
 	}
 
+	/**
+	 * 版本号
+	 */
+	public M setCVersion(java.lang.String cVersion) {
+		set("cVersion", cVersion);
+		return (M)this;
+	}
+
+	/**
+	 * 版本号
+	 */
+	@JBoltField(name="cversion" ,columnName="cversion",type="String", remark="版本号", required=false, maxLength=30, fixed=0, order=25)
+	@JSONField(name = "cversion")
+	public java.lang.String getCVersion() {
+		return getStr("cVersion");
+	}
 }
 

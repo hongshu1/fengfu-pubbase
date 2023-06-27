@@ -140,7 +140,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         //1、生成的时候没有iqcformid，只有存货编码
         Long iInventoryId = rcvDocQcFormM.getIInventoryId();
         Inventory inventory = inventoryService.findById(iInventoryId);
-        ValidationUtils.notNull(inventory, "存货编码不存在,无法生成或检验！！！");
+        ValidationUtils.notNull(inventory, "存货编码不存在,无法生成单据或检验单据！！！");
 
         InventoryQcForm inventoryQcForm = inventoryQcFormService.findByIInventoryId(iInventoryId);
         ValidationUtils.notNull(inventoryQcForm, inventory.getCInvCode() + "：没有在【质量建模-检验适用标准】维护标准表格");
@@ -592,25 +592,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         }
     }
 
-    /**
-     * object 转 list
-     *
-     * @param obj   需要转换的List对象
-     * @param clazz List中元素的class
-     */
-    public static <T> List<T> oobjectToList(Object obj, Class<T> clazz) {
-        List<T> result = new ArrayList<T>();
-        // 判断 obj 是否包含 List 类型
-        if (obj instanceof List<?>) {
-            for (Object o : (List<?>) obj) {
-                // 使用Class.cast做类型转换
-                result.add(clazz.cast(o));
-            }
-            return result;
-        }
-        return null;
-    }
-
     public List<RcvDocQcFormM> findFirstBycRcvDocNo(String crcvdocno) {
         return find("select * from  PL_RcvDocQcFormM where cRcvDocNo = ? ", crcvdocno);
     }
@@ -680,11 +661,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         }
         rcvDocQcFormMRecord.set("cmeasurepurpose", StringUtils.isNotBlank(cMeasurePurpose.toString())
             ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose.toString());
-        //4、明细表数据
-//        List<RcvDocQcFormD> formDList = rcvDocQcFormDService.findByIRcvDocQcFormMId(iautoid);
-        //5、如果cvalue的列数>10行，分多个页签
+        //4、如果cvalue的列数>10行，分多个页签
         List<Record> recordList = getCheckOutTableDatas(Kv.by("ircvdocqcformmid", iautoid));
-        //核心业务逻辑，对列数进行分组
+        //5、核心业务逻辑，对列数进行分组
         List<Map<String, Object>> tableHeadData = getTableHeadData(rcvDocQcFormMRecord.get("iqcformid"));
         List<ParamName> columnNames = new ArrayList<>();
         for (int i = 0; i < tableHeadData.size(); i++) {
@@ -696,10 +675,12 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         }
         rcvDocQcFormMRecord.set("columnNameList", columnNames);//项目列名
 
+        byte[] imageBytes = null;
         String cpics = JBoltConfig.BASE_UPLOAD_PATH_PRE + StrUtil.SLASH + rcvDocQcFormMRecord.getStr("cpics");
-
         FileInputStream fileInputStream = new FileInputStream(cpics);
-        byte[] imageBytes = Util.toByteArray(fileInputStream);
+        if (fileInputStream != null) {
+            imageBytes = Util.toByteArray(fileInputStream);
+        }
 
         rcvDocQcFormMRecord.set("cpics", imageBytes);
         commPageMethod2(recordList, rcvDocQcFormMRecord, pages, sheetNames);
@@ -726,16 +707,6 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
                     .sorted(Comparator.comparing(BaseRcvdocqcformdLine::getISeq))
                     .map(BaseRcvdocqcformdLine::getCValue)
                     .collect(Collectors.toList());
-                /*List<ParamName> cvaluelist = new ArrayList<>();
-                for (int l = 0; l < objects.size(); l++) {
-                    Object lineObj = objects.get(i);
-                    RcvdocqcformdLine line = JSON.parseObject(JSON.toJSONString(lineObj), RcvdocqcformdLine.class);
-                    ParamName paramName = new ParamName();
-                    paramName.setSeq(line.getISeq());
-                    paramName.setValue(line.getCValue());
-                    cvaluelist.add(paramName);
-                }*/
-
                 Record childRecord = new Record();
                 childRecord.set("imaxval", record.getStr("imaxval"));
                 childRecord.set("iminval", record.getStr("iminval"));
