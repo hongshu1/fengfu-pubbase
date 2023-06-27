@@ -380,9 +380,8 @@ public class WarehouseService extends BaseService<Warehouse> {
       return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
     }
 
-
+    int i = 1;
     for (Record record : records) {
-
       if (StrUtil.isBlank(record.getStr("cWhCode"))) {
         return fail("仓库编码不能为空");
       }
@@ -392,13 +391,67 @@ public class WarehouseService extends BaseService<Warehouse> {
       if (StrUtil.isBlank(record.getStr("cDepCode"))) {
         return fail("所属部门名称不能为空");
       }
+
+      String str = "第【" + i + "】行的";
+      //<editor-fold desc="是否启用空间管控数据判断">
+      if (StrUtil.isBlank(record.getStr("isSpaceControlEnabled"))) {
+        return fail("是否启用空间管控不能为空");
+      }
+      if (record.getStr("isSpaceControlEnabled").equals("是")) {
+
+      } else if (record.getStr("isSpaceControlEnabled").equals("否")) {
+
+      } else {
+        String msg = str + "【是否启用空间管控数据】不能为 " + record.getStr("isSpaceControlEnabled");
+        return fail(msg);
+      }
+      //</editor-fold>
+
+      //<editor-fold desc="启用库存预警判断">
       if (StrUtil.isBlank(record.getStr("isStockWarnEnabled"))) {
         return fail("启用库存预警不能为空");
       }
-      if (StrUtil.isBlank(record.getStr("isSpaceControlEnabled"))) {
-        return fail("启用空间掌控不能为空");
+      if (record.getStr("isStockWarnEnabled").equals("是")) {
+
+      } else if (record.getStr("isStockWarnEnabled").equals("否")) {
+
+      } else {
+        String msg = str + "【启用库存预警】数据不能为 " + record.getStr("isStockWarnEnabled");
+        return fail(msg);
+      }
+      //</editor-fold>
+
+      //<editor-fold desc="启用库区判断">
+      if (record.getStr("isReservoirArea").equals("是")) {
+
+      } else if (record.getStr("isReservoirArea").equals("否")) {
+
+      } else {
+        String msg = str + "【启用库区】数据不能为 " + record.getStr("isReservoirArea");
+        return fail(msg);
+      }
+      //</editor-fold>
+
+
+      Integer isRepetition1 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhcode", record.getStr("cwhcode"))).queryInt();
+      if (isRepetition1 > 1) {
+        String msg = str + "【仓库编码】已经存在，请修改后重新导入";
+        return fail(msg);
       }
 
+      Integer isRepetition2 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhname", record.getStr("cwhname"))).queryInt();
+      if (isRepetition2 > 1) {
+        String msg = str + "【仓库名称】已经存在，请修改后重新导入";
+        return fail(msg);
+      }
+
+
+      //空间管控
+      int isSpaceControlEnabled = record.getStr("isspacecontrolenabled").equals("是") ? 1 : 0;
+      //库存预警
+      int isStockWarnEnabled = record.getStr("isstockwarnenabled").equals("是") ? 1 : 0;
+      //启动库区
+      int isreservoirarea = record.getStr("isReservoirArea").equals("是") ? 1 : 0;
 
       Date now = new Date();
 
@@ -415,6 +468,10 @@ public class WarehouseService extends BaseService<Warehouse> {
       record.set("iUpdateBy", JBoltUserKit.getUserId());
       record.set("dUpdateTime", now);
       record.set("cUpdateName", JBoltUserKit.getUserName());
+      record.set("isreservoirarea", isreservoirarea);
+      record.set("isSpaceControlEnabled", isSpaceControlEnabled);
+      record.set("isStockWarnEnabled", isStockWarnEnabled);
+      i++;
     }
 
     // 执行批量操作
