@@ -3,9 +3,7 @@ package cn.rjtech.entity.vo.rcvdocqcformm;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import cn.rjtech.model.momdata.RcvDocQcFormD;
 
 /**
  * @version 1.0
@@ -77,6 +75,8 @@ public class RcvDocQcFormMApiCheckOut implements Serializable {
     private Date                drcvdate;
     /*检测日期*/
     private Date                dqctime;
+    /*在库检-检验单号*/
+    private String cInvQcFormNo;
     /*table的头部*/
     public  List<tableHeadData> columns;
 
@@ -335,6 +335,136 @@ public class RcvDocQcFormMApiCheckOut implements Serializable {
         public void setCompares(List<compare> compares) {
             this.compares = compares;
         }
+    }
+
+    public static class RcvDocQcFormD{
+        public String iAutoId;
+        /**来料检ID*/
+        public String iRcvDocQcFormMid;
+        /**检验表格ID*/
+        public String iQcFormId;
+        /**检验项目ID，Bd_QcFormTableParam.iAutoId*/
+        public String iFormParamId;
+        /**项目次序，固定取参数项目名为“项目”的参数名称次序值*/
+        public  String iSeq;
+        /**子次序*/
+        public String iSubSeq;
+        /**检验参数值ID，点检方法允许为空（拼接“-”）多个逗号分隔*/
+        public String cQcFormParamIds;
+        /**参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间*/
+        public String iType;
+        /**标准值*/
+        public String iStdVal;
+        /**最大设定值*/
+        public String iMaxVal;
+        /**最小设定值*/
+        public String iMinVal;
+        /**列表可选值，多个";"分隔*/
+        public String cOptions;
+
+        public String getiAutoId() {
+            return iAutoId;
+        }
+
+        public void setiAutoId(String iAutoId) {
+            this.iAutoId = iAutoId;
+        }
+
+        public String getiRcvDocQcFormMid() {
+            return iRcvDocQcFormMid;
+        }
+
+        public void setiRcvDocQcFormMid(String iRcvDocQcFormMid) {
+            this.iRcvDocQcFormMid = iRcvDocQcFormMid;
+        }
+
+        public String getiQcFormId() {
+            return iQcFormId;
+        }
+
+        public void setiQcFormId(String iQcFormId) {
+            this.iQcFormId = iQcFormId;
+        }
+
+        public String getiFormParamId() {
+            return iFormParamId;
+        }
+
+        public void setiFormParamId(String iFormParamId) {
+            this.iFormParamId = iFormParamId;
+        }
+
+        public String getiSeq() {
+            return iSeq;
+        }
+
+        public void setiSeq(String iSeq) {
+            this.iSeq = iSeq;
+        }
+
+        public String getiSubSeq() {
+            return iSubSeq;
+        }
+
+        public void setiSubSeq(String iSubSeq) {
+            this.iSubSeq = iSubSeq;
+        }
+
+        public String getcQcFormParamIds() {
+            return cQcFormParamIds;
+        }
+
+        public void setcQcFormParamIds(String cQcFormParamIds) {
+            this.cQcFormParamIds = cQcFormParamIds;
+        }
+
+        public String getiType() {
+            return iType;
+        }
+
+        public void setiType(String iType) {
+            this.iType = iType;
+        }
+
+        public String getiStdVal() {
+            return iStdVal;
+        }
+
+        public void setiStdVal(String iStdVal) {
+            this.iStdVal = iStdVal;
+        }
+
+        public String getiMaxVal() {
+            return iMaxVal;
+        }
+
+        public void setiMaxVal(String iMaxVal) {
+            this.iMaxVal = iMaxVal;
+        }
+
+        public String getiMinVal() {
+            return iMinVal;
+        }
+
+        public void setiMinVal(String iMinVal) {
+            this.iMinVal = iMinVal;
+        }
+
+        public String getcOptions() {
+            return cOptions;
+        }
+
+        public void setcOptions(String cOptions) {
+            this.cOptions = cOptions;
+        }
+    }
+
+    public String getcInvQcFormNo() {
+        return cInvQcFormNo;
+    }
+
+    public void setcInvQcFormNo(String cInvQcFormNo) {
+        this.cInvQcFormNo = cInvQcFormNo;
     }
 
     public List<RcvDocQcFormD> getDocparamlist() {

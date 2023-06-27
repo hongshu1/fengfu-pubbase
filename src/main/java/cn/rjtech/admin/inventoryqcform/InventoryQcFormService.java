@@ -604,7 +604,7 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
     }
 
     public InventoryQcForm findByIInventoryId(Long iinventoryId){
-        return findFirst("SELECT * FROM Bd_InventoryQcForm where iInventoryId = ? ",iinventoryId);
+        return findFirst("SELECT * FROM Bd_InventoryQcForm where iInventoryId = ? order by dUpdateTime desc",iinventoryId);
     }
 
     /**

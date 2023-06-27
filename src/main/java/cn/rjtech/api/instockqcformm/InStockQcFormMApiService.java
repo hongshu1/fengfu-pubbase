@@ -5,14 +5,14 @@ import cn.jbolt.core.api.JBoltApiRet;
 import cn.rjtech.admin.instockdefect.InStockDefectService;
 import cn.rjtech.admin.instockqcformd.InStockQcFormDService;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
-import cn.rjtech.model.momdata.InStockQcFormM;
+import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
+import cn.rjtech.model.momdata.InStockQcFormD;
 
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.upload.UploadFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +32,8 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
     private InStockDefectService  defectService;
     @Inject
     private InStockQcFormDService inStockQcFormDService;
+    @Inject
+    private RcvDocQcFormMService  rcvDocQcFormMService;
 
     /*
      * 点击左侧导航栏-在库检，显示主页面数据
@@ -68,9 +70,13 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
      * */
     public JBoltApiRet jumpCheckOut(Long iautoid) {
         //1、查找子页面需要的传参
-        InStockQcFormM inStockQcFormM = service.findById(iautoid);
-        Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
-        record.set("cbarcode", inStockQcFormM.getCBarcode());
+        Record record = service.getCheckoutListByIautoId(iautoid);
+        if (record == null) {
+            return JBoltApiRet.API_FAIL("数据不存在");
+        }
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        record.set("columns", tableHeadData);
+        record.set("record", record);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
@@ -81,14 +87,13 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
         Kv kv = new Kv();
         kv.set("iinstockqcformmid", iinstockqcformmid);
         //1、查询
-//        List<Record> recordList = service.getCheckOutTableDatas(kv);
-        List<Record> recordList = new ArrayList<>();
+        List<Record> tableDatas = service.getTableDatas(kv);
         //2、遍历
-        recordList.stream().forEach(record -> {
+        /*recordList.stream().forEach(record -> {
             record.keep("iautoid", "iformparamid", "iqcformid", "iinstockqcformmid", "iseq", "isubseq",
                 "itype", "coptions", "cqcformparamids", "cqcitemname", "cqcparamname", "imaxval", "iminval", "istdval");
-        });
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(recordList);
+        });*/
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(tableDatas);
     }
 
     /*
@@ -108,7 +113,7 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
      * */
     public JBoltApiRet deleteCheckoutByIautoid(Long iautoid) {
         Ret ret = service.deleteCheckoutByIautoid(iautoid);
-        return JBoltApiRet.API_SUCCESS;
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(ret);
     }
 
     /**
@@ -116,11 +121,15 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
      */
     public JBoltApiRet jumpOnlySee(Long iautoid) {
         //1、查询子页面需要的数据
-        InStockQcFormM inStockQcFormM = service.findById(iautoid);
-        Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
-        List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(inStockQcFormM.getIAutoId());
-        record.set("cbarcode", inStockQcFormM.getCBarcode());
-        record.set("size", stockoutqcformlist.size());
+        Record record = service.getCheckoutListByIautoId(iautoid);
+        if (record == null) {
+            return JBoltApiRet.API_FAIL("数据不存在");
+        }
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        List<InStockQcFormD> stockoutqcformlist = inStockQcFormDService.findByIInStockQcFormMid(iautoid);
+        record.set("record", record);
+        record.set("columns", tableHeadData);
+        record.set("stockoutqcformlist", stockoutqcformlist);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
@@ -128,28 +137,17 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
      * 点击编辑按钮，跳转到编辑页面
      * */
     public JBoltApiRet jumpEdit(Long iautoid) {
-        InStockQcFormM inStockQcFormM = service.findById(iautoid);
-        Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
-        List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(inStockQcFormM.getIAutoId());
-        record.set("size", stockoutqcformlist.size());
-        record.set("cbarcode", inStockQcFormM.getCBarcode());
+        //1、查询子页面需要的数据
+        Record record = service.getCheckoutListByIautoId(iautoid);
+        if (record == null) {
+            return JBoltApiRet.API_FAIL("数据不存在");
+        }
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        List<InStockQcFormD> stockoutqcformlist = inStockQcFormDService.findByIInStockQcFormMid(iautoid);
+        record.set("record", record);
+        record.set("columns", tableHeadData);
+        record.set("stockoutqcformlist", stockoutqcformlist);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
-    }
-
-    /**
-     * 跳转到onlysee页面，自动加载table数据
-     */
-    public JBoltApiRet autoGetOnlySeeOrEditTableDatas(Long iautoid) {
-        Kv kv = new Kv();
-        kv.set("iautoid", iautoid);
-        //1、查询
-//        List<Record> recordList = service.getonlyseelistByiautoid(kv);
-        List<Record> recordList = new ArrayList<>();
-        recordList.stream().forEach(record -> {
-            record.keep("iautoid", "iformparamid", "iqcformid", "coptions", "cqcformparamids", "cqcitemname",
-                "cqcparamname", "iseq", "isubseq", "itype", "imaxval", "iminval", "istdval", "cvaluelist");
-        });
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(recordList);
     }
 
     /*
@@ -177,5 +175,15 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
      * */
     public JBoltApiRet createInStockQcFormByCbarcode(String cbarcode) {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.createInStockQcFormByCbarcode(cbarcode));
+    }
+
+    public JBoltApiRet findDetailByBarcode(String cbarcode){
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.findDetailByBarcode(cbarcode));
+    }
+
+    public JBoltApiRet saveInStockQcFormByCbarcode(String cbarcode, Integer iqty, String invcode, String cinvcode1, String cinvname1,
+                                                   String iinventoryid, String cdcno, String cmeasurereason, Long iqcformid){
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.saveInStockQcFormByCbarcode(cbarcode, iqty, invcode, cinvcode1, cinvname1,iinventoryid, cdcno,
+            cmeasurereason,Long.valueOf(iqcformid)));
     }
 }

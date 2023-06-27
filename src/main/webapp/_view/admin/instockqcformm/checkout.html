@@ -7,7 +7,7 @@
       <input type="hidden" name="record.iautoid" value="#(record.iautoid??)"/>
       #end
       <div>
-        <div style="font-size: 20px;vertical-align: sub;text-align: center;">检查成绩表</div>
+        <div style="font-size: 20px;vertical-align: sub;text-align: center;">在库检成绩表</div>
         <table id="jbolt_table_checkouttableparam_split__#(pageId)1" border="1"
                style="text-align: center;left: 60px;margin-left:50px;width: 1300px;">
 
@@ -45,7 +45,7 @@
             <td>批次号</td>
             <td>#(record.cbatchno??)</td>
             <td class="x74" width="100px">批次大小</td>
-            <td width="250">#(record.cbatchno??)</td>
+            <td width="250">#(record.iqty??)</td>
             <td class="x74" width="100px">检测日期</td>
             <td width="250">#(record.dupdatetime??)</td>
           </tr>
@@ -56,7 +56,7 @@
                      value="#(record.cmeasurereason??)" maxlength="355" data-rule="required" style="width: 630px"/>
             </td>
             <td class="x74">设变号</td>
-            <td class="x71" width="250">
+            <td width="250">
               #(record.cdcno??)
             </td>
           </tr>

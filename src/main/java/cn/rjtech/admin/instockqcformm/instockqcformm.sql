@@ -9,13 +9,18 @@ SELECT t1.*,
     t3.cInvAddCode,
     t4.cEquipmentName,
     t5.cUomCode,t5.cUomName,
-    t6.cpics,t6.ctypeids,t6.ctypenames
+    t6.cpics,t6.ctypeids,t6.ctypenames,
+    t7.cversion
 FROM PL_InStockQcFormM t1
-    inner JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
+    left JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
     LEFT JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId
     LEFT JOIN Bd_Equipment t4 ON t3.iEquipmentModelId = t4.iAutoId
     LEFT JOIN Bd_Uom t5 on t3.iInventoryUomId1 = t5.iautoid
     LEFT JOIN Bd_InventoryQcForm t6 on t1.iqcformid = t6.iqcformid and t1.iInventoryId = t6.iInventoryId
+    LEFT JOIN (SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion from PS_PurchaseOrderDBatch
+               UNION ALL
+               SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion from PS_SubcontractOrderDBatch)
+    t7 on t1.cBarcode = t7.cBarcode
 where t1.IsDeleted = '0'
 #if(iautoid)
     AND t1.iautoid =#para(iautoid)
@@ -118,7 +123,7 @@ ORDER BY t1.iSeq asc
 #sql("getInStockQcFormDByMasId")
 select * from PL_InStockQcFormD where 1=1
 #if(iinstockqcformdid)
-                                  and iInStockQcFormMid = #para(iinstockqcformid)
+and iInStockQcFormMid = #para(iinstockqcformid)
 #end
 order by iSeq asc
 #end
@@ -136,12 +141,16 @@ where t1.iqcformtableparamid=#para(iqcformtableparamid)
 #end
 
 #sql("findDetailByBarcode")
-select TOP 1 t1.iAutoId,t1.cbarcode,t1.iQty,t1.iinventoryId,
+select t1.iAutoId,t1.cbarcode,t1.iQty,t1.iinventoryId,
        t2.cInvCode as invcode,t2.cInvCode1,t2.cInvName1,
        t3.iqcformid,t3.cdccode,t3.cmeasure
-from PS_PurchaseOrderDBatch t1
-left join Bd_Inventory t2 on t1.iinventoryId = t2.iAutoId
+from
+     (SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion from PS_PurchaseOrderDBatch
+      UNION ALL
+      SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion from PS_SubcontractOrderDBatch) t1
+inner join Bd_Inventory t2 on t1.iinventoryId = t2.iAutoId
 left join Bd_InventoryQcForm t3 on t2.iAutoId = t3.iinventoryId
+inner join Bd_QcForm t4 on t3.iQcFormId = t4.iautoid
 where t1.cBarcode = #para(cbarcode)
 order by t3.dupdatetime desc
 #end
