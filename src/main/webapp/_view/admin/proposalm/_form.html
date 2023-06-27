@@ -530,7 +530,7 @@
     function successHandler(msg, iautoid) {
         LayerMsgBox.success(msg, 600, function () {
             // 新增/修改，均跳转到详情页
-            location.href = '/admin/proposalm/edit?iautoid=' + ret.data.iautoid + '&_jb_rqtype_=dialog';
+            location.href = '/admin/proposalm/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
             parent.refreshPjaxContainer();
         });
     }
