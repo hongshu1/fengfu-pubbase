@@ -27,7 +27,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
@@ -463,6 +462,7 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 			Date now=new Date();
 			String userName = JBoltUserKit.getUserName();
 			stockcheckvouch.setBillDate(JBoltDateUtil.format(now,"yyyy-MM-dd"));
+			stockcheckvouch.setIAuditStatus(0);
 			//创建人
 			stockcheckvouch.setCCreateName( JBoltUserKit.getUserName());
 			stockcheckvouch.setICreateBy(JBoltUserKit.getUserId());
@@ -602,20 +602,20 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 	 */
 	public String baseIn(String json){
 		String vouchSumbmitUrl = AppConfig.getVouchSumbmitUrl();
-		System.out.println("----------推单前---------------");
-		System.out.println(json);
-		System.out.println("------------------------------");
-		System.out.println(vouchSumbmitUrl);
-		System.out.println("----------推单前---------------");
+		log.info("----------推单前---------------");
+		log.info("请求参数:" + json);
+		log.info("------------------------------");
+		log.info("请求路径：" + vouchSumbmitUrl);
+		log.info("----------推单前---------------");
 
 
 
 		String post = HttpUtil.post(vouchSumbmitUrl, json);
 		String post2 = post;
 
-		System.out.println("----------------post返回信息-------------------");
-		System.out.println(post2);
-		System.out.println("----------------post返回信息-------------------");
+		log.info("----------------post返回信息-------------------");
+		log.info("请求返回参数：" + post2);
+		log.info("----------------post返回信息-------------------");
 
 		JSONObject res = JSON.parseObject(post);
 		ValidationUtils.notNull(res, "解析JSON为空");
@@ -626,16 +626,14 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 		ValidationUtils.notNull(code, json + ";" + post);
 		ValidationUtils.equals(code, "200",  json + ";" + post);
 		if(code.equals("200")){
-			System.out.println("----------推单成功-------------");
-			System.out.println(json);
-			System.out.println("------------------------------");
-			System.out.println(post);
-			System.out.println("----------推单成功-------------");
+			log.info("----------推单成功-------------");
+			log.info("请求返回参数：" + json);
+			log.info("------------------------------");
+			log.info("请求返回参数：" + post);
+			log.info("----------推单成功-------------");
 		}
 
-		System.out.println("----------inBase:return-------------");
-		System.out.println(post);
-		System.out.println("----------inBase:return-------------");
+		log.info("----------inBase:return-------------");
 		return post;
 	}
 
@@ -643,10 +641,10 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 	/**
 	 *  审核通过推单
 	 * */
-	public Ret agree(StockCheckVouch checkVouch) {
+	public Ret 	agree(StockCheckVouch checkVouch) {
 		User user = JBoltUserKit.getUser();
 		String u8Name = user.getName();
-		String u8Code = String.valueOf(JBoltUserKit.getUserId());
+		String u8Code = String.valueOf(JBoltUserKit.getUserUserName());
 		ValidationUtils.notNull(u8Name,"u8人员名称为空,推单失败!");
 		ValidationUtils.notNull(u8Code,"u8人员编码为空,推单失败!");
 
@@ -753,7 +751,7 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 	@Override
 	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
 		StockCheckVouch dbModel = stockChekVouchService.findById(formAutoId);
-		dbModel.setStatus("0");
+		dbModel.setIAuditStatus(3);
 		dbModel.put("iupdateby", JBoltUserKit.getUserId());
 		dbModel.put("cupdatename", JBoltUserKit.getUserName());
 		dbModel.put("dupdatetime", new Date());
@@ -764,7 +762,7 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 	@Override
 	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
 		StockCheckVouch dbModel = stockChekVouchService.findById(formAutoId);
-		dbModel.setStatus("0");
+		dbModel.setIAuditStatus(0);
 		dbModel.put("iupdateby", JBoltUserKit.getUserId());
 		dbModel.put("cupdatename", JBoltUserKit.getUserName());
 		dbModel.put("dupdatetime", new Date());
@@ -780,7 +778,7 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 	@Override
 	public String preSubmitFunc(long formAutoId) {
 		StockCheckVouch dbModel = stockChekVouchService.findById(formAutoId);
-		dbModel.setStatus("1");
+		dbModel.setIAuditStatus(1);
 		dbModel.put("iupdateby", JBoltUserKit.getUserId());
 		dbModel.put("cupdatename", JBoltUserKit.getUserName());
 		dbModel.put("dupdatetime", new Date());
@@ -797,7 +795,7 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 	@Override
 	public String postWithdrawFunc(long formAutoId) {
 		StockCheckVouch dbModel = stockChekVouchService.findById(formAutoId);
-		dbModel.setStatus("0");
+		dbModel.setIAuditStatus(0);
 		dbModel.put("iupdateby", JBoltUserKit.getUserId());
 		dbModel.put("cupdatename", JBoltUserKit.getUserName());
 		dbModel.put("dupdatetime", new Date());

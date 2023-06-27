@@ -172,7 +172,7 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     subcontractOrderDBatch.setCBarcode(barcode);
     subcontractOrderDBatch.setIsEffective(true);
     // 完整条码：现品票_版本号
-    subcontractOrderDBatch .setCCompleteBarcode(barcode.concat("_00"));
+    subcontractOrderDBatch .setCCompleteBarcode(barcode.concat("-00"));
     return subcontractOrderDBatch;
   }
 
@@ -426,7 +426,7 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
         orderDBatch.getIinventoryId(), orderDBatch.getDPlanDate(), qty, orderDBatch.getCBarcode());
     // 设置新版本号
     newBatch.setCVersion(cVersion);
-    newBatch.setCCompleteBarcode(orderDBatch.getCBarcode().concat("_").concat(cVersion));
+    newBatch.setCCompleteBarcode(orderDBatch.getCBarcode().concat("-").concat(cVersion));
     // 添加来源id
     newBatch.setCSourceld(String.valueOf(id));
     // 将旧的改为失效

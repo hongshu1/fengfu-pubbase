@@ -1,6 +1,8 @@
 package cn.rjtech.admin.formapprovald;
 
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -81,6 +83,7 @@ public class FormApprovalDAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.FORM_APP_EDIT)
     public void edit() {
         FormApprovalD approvalD = service.findById(getLong(0));
 

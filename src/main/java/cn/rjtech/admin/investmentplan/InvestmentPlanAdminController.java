@@ -24,13 +24,11 @@ import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
 import cn.rjtech.admin.expensebudgetitem.ExpenseBudgetItemService;
 import cn.rjtech.admin.investmentplanitem.InvestmentPlanItemService;
 import cn.rjtech.admin.period.PeriodService;
-import cn.rjtech.annotations.RequestLimit;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.enums.DictionaryTypeKeyEnum;
 import cn.rjtech.enums.InvestmentBudgetTypeEnum;
 import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.ServiceTypeEnum;
-import cn.rjtech.interceptor.RequestLimitInterceptor;
 import cn.rjtech.model.momdata.InvestmentPlan;
 import cn.rjtech.util.ReadInventmentExcelUtil;
 import cn.rjtech.util.ValidationUtils;
@@ -211,8 +209,6 @@ public class InvestmentPlanAdminController extends BaseAdminController {
      * 投资计划新增-表格提交
      */
     @UnCheck
-    @RequestLimit(time=30,count=1)
-    @Before(RequestLimitInterceptor.class)
     @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableByAdd() {
         renderJson(service.saveTableSubmitByAdd(getJBoltTable()));
@@ -221,8 +217,6 @@ public class InvestmentPlanAdminController extends BaseAdminController {
      * 投资计划修改-表格提交
      */
     @UnCheck
-    @RequestLimit(time=10,count=1)
-    @Before(RequestLimitInterceptor.class)
     @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableByEdit(){
     	renderJson(service.saveTableSubmitByEdit(getJBoltTable()));
@@ -376,14 +370,14 @@ public class InvestmentPlanAdminController extends BaseAdminController {
     public void findUnfinishInvestmentPlanItemDatas(@Para(value="iplanid") Long iplanid){
     	renderJsonData(service.findUnfinishInvestmentPlanItemDatas(iplanid));
     }
-    /**
+/*    *//**
      * 提交审核
-     * */
-    @CheckPermission(PermissionKey.INVESTMENT_PLAN_FORMULATE_SUBMITAUDIT)
+     * *//*
+    @CheckPermission(PermissionKey.INVESTMENT_PLAN_FORMULATE_SUBMIT)
     public void submit(){
     	Long iplanid = getLong(0);
     	renderJson(service.submit(iplanid));
-    }
+    }*/
     
     @CheckPermission(PermissionKey.INVESTMENT_BUDGET_ACTUAL_DIFFERENCE)
     public void budgetActualDifferenceIndex(){

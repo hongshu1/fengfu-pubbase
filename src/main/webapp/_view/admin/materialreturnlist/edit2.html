@@ -7,17 +7,10 @@
         <form onsubmit="return false;" id="PuinstoreForm_#(pageId)" action="#(action)" method="post">
             <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
                 <div class="col-md-l pt-2" role="group" aria-label="btn-group">
-                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
-                            data-id="0" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i>
-                        保存
-                    </button>
-<!--                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end-->
-<!--                            data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i-->
-<!--                            class="fa fa-window-maximize"></i> 提交审核-->
-<!--                    </button>-->
-                    <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
-                        关闭
-                    </button>
+                    #if(readonly != 'readonly')
+                    <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
+                    #end
+                    <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                 </div>
             </div>
             #if(puinstore.AutoID??)
@@ -221,29 +214,34 @@
 
 #define js()
 <script>
-    hideParentLayerDialogBtn();
-
-
-    function submitAllTables_#(pageId)(ele){
-        var action = getRealJqueryObject(ele);
-        var id = action.data("id");
-        var value = action.data("value");
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
+    function submitThisForm_#(pageId)(ele) {
+        submit = ele;
+        submitAllTables_#(pageId)();
+    }
+    function submitAllTables_#(pageId)(){
         var tables = ["Puinstoreform_TableId_#(pageId)"];
         if (edit2checkTds()) {
-            jboltTableSubmitMulti(tables, "/admin/materialreturnlist/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
+            jboltTableSubmitMulti(tables, "/admin/materialreturnlist/submitMulti", function (res) {
+                debugger;
                 if (res.state == "ok") {
-                    LayerMsgBox.success(res.msg, 600, function () {
-                        let id = res.AutoID;
-                        debugger;
-                        if (value == "save"){
+                    LayerMsgBox.success(res.msg, 2000, function () {
+                        let autoid = res.AutoID;
+                        if (submit){
+                            submit_#(pageId)(autoid,function () {
+                                LayerMsgBox.success("提交成功", 600, function () {
+                                    parent.refreshPjaxContainer();
+                                    // parent.refreshCurrentTabContent();//刷新当前页面
+                                    self.location.href = "/admin/materialreturnlist/edit/"+autoid+"-_jb_rqtype_dialog"; //新增的刷新
+                                    // parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                                });
+                            });
+                        } else {
                             parent.refreshPjaxContainer();
-                            parent.refreshCurrentTabContent();//刷新当前页面
-                            self.location.href = "/admin/materialreturnlist/edit/"+id+"-_jb_rqtype_dialog"; //新增的刷新
+                            // parent.refreshCurrentTabContent();//刷新当前页面
+                            self.location.href = "/admin/materialreturnlist/edit/"+autoid+"-_jb_rqtype_dialog"; //新增的刷新
                             // parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
-                        }else {
-                            parent.refreshCurrentTabContent();//刷新当前页面
-                            // refreshPjaxContainer();
-                            parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
                         }
                     })
                 } else {
@@ -251,8 +249,11 @@
                 }
             });
         }
-    }
 
+    }
+</script>
+<script>
+    hideParentLayerDialogBtn();
 
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
@@ -298,58 +299,6 @@
                 name:"table2"
             },
             cols: {
-                // spotticket: { //现品票条码
-                //     maxLength: 100,
-                //     required: false,
-                //     placeholder: "=请选择=",
-                //     type: "autocomplete",
-                //     url: "admin/otherout/barcodeDatas",
-                //     textAttr: "spotticket",
-                //     width: 800,
-                //     sync: "",
-                //     valueAttr: "spotticket",
-                //     columnAttr: "barcode,cinvaddcode,cinvname,cinvcode1,cinvstd,cinvname1,puunitname,qty",
-                //     header: '条码,存货编码,存货名称,客户部番,规格型号,品牌,采购单位,数量',
-                //     changeColumns: [{column: "spotticket", use: "barcode"},
-                //         {column: "cinvcode", use: "cinvaddcode"},
-                //         {column: "cinvname", use: "cinvname"},
-                //         {column: "cinvcode1", use: "cinvcode1"},
-                //         {column: "cinvstd", use: "cinvstd"},
-                //         {column: "qty", use: "qty"},
-                //         {column: "puunitname", use: "puunitname"},
-                //         {column: "puunitcode", use: "puunitcode"},
-                //         {column: "sourcebillno", use: "sourcebillno"},
-                //         {column: "sourcebillid", use: "sourcebillid"},
-                //         {column: "sourcebilltype", use: "sourcebilltype"},
-                //         {column: "sourcebilldid", use: "sourcebilldid"},
-                //         {column: "sourcebillnorow", use: "sourcebillnorow"},
-                //         {column: "rowno", use: "rowno"},
-                //     ]
-                //
-                //
-                // },
-                // cinvcode: {
-                //     type: "autocomplete",
-                //     url: "admin/otherout/autocomplete",
-                //     maxLength: 100,
-                //     required: false,
-                //     placeholder: "=请选择=",
-                //     textAttr: "cinvcode",
-                //     width: 800,
-                //     valueAttr: "cinvcode",
-                //     columnAttr: "cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,ipurchaseuomid,qty",
-                //     header: '存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
-                //     changeColumns: [{column: "cinvcode", use: "cinvaddcode"},
-                //         {column: "cinvname", use: "cinvname"},
-                //         {column: "cinvcode1", use: "cinvcode1"},
-                //         {column: "cinvname1", use: "cinvname1"},
-                //         {column: "cinvstd", use: "cinvstd"},
-                //         {column: "pingpai", use: "cinvname1"},
-                //         {column: "qty", use: "qty"},
-                //         {column: "puunitname", use: "puunitname"}]
-                // },
-
-
                 cinvcode: {
                     type: "input",
                     submitAttr:"cinvcode",

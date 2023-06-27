@@ -1,0 +1,57 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+	<div class="jbolt_page_content">
+		<form class="form-inline" id="UptimeCategory_form_#(pageId)">
+		</form>
+		<!-- 定义JBoltTable使用的数据渲染模板 -->
+		<textarea class="jb_tpl_box" id="UptimeCategory_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iAutoId}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cuptimecategorycode}</td>
+<td>${data.cuptimecategoryname}</td>
+<td>
+	<a class="jbolt_table_editbtn" href="admin/uptimeCategory/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600">编辑</a>
+	<a class="jbolt_table_delbtn" href="admin/uptimeCategory/delete/${data.iautoid}" data-handler="refreshJBoltTable" >删除</a>
+</td>
+</tr>
+{@/each}
+</textarea>
+		<div class="jbolt_table_toolbar" id="UptimeCategory_toolbar_#(pageId)">
+			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+				<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="添加分类" data-url="admin/uptimeCategory/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+			</div>
+
+		</div>
+		<table class="jbolt_table jbolt_main_table  table-center "
+			   data-jbolttable
+			   data-width="fill"
+			   data-height="fill"
+			   data-ajax="true"
+			   data-conditions-form="UptimeCategory_form_#(pageId)"
+			   data-url="admin/uptimeCategory/datas"
+			   data-rowtpl="UptimeCategory_tpl_#(pageId)"
+			   data-copy-to-excel="false"
+			   data-page="UptimeCategory_page"
+			   data-toolbar="UptimeCategory_toolbar_#(pageId)"
+		>
+			<thead class="fw-normal" >
+			<tr>
+				<th data-width="60" data-column="index">序号</th>
+				<th  data-width="150" data-column="cUptimeCategoryCode">类别编码</th>
+				<th  data-width="150" data-column="cUptimeCategoryName">类别名称</th>
+				<th data-width="80">操作</th>
+			</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

@@ -126,22 +126,23 @@
 									data-select="#(subcontractsaleorderm.iDepartmentId??)">
 								</select>									
 							</div>		
-							<input type="hidden" name="subcontractsaleorderm.iBusPersonId" value="#(subcontractsaleorderm.iBusPersonId??)" id="iBusPersonId" data-value-attr="id"/>
 							<label class="col-sm-1 col-form-label">业务员</label>
 							<div class="col">
-								<input type="text" class="form-control"
-									   data-autocomplete
-									   data-url="admin/user/autocomplete"
-									   data-hidden-input="iBusPersonId"
+                                <input type="hidden" id="ipersonid_#(pageId)" name="subcontractsaleorderm.ibuspersonid" value="#(weekOrderM.ibuspersonid??)"/>
+                                <input type="text" autocomplete="off"
+                                       class="form-control"
+                                       placeholder="==请选择人员=="
+                                       data-jboltinput
+                                       data-width="600"
+                                       data-height="450"
                                        data-rule="required"
-									   data-text-attr="name"
-									   data-column-attr="username,name,phone"
-									   placeholder="请选择"
-									   data-tips="请选择"
-									   data-header="用户名,姓名,电话"
-									   maxlength="40"
-									   value="#(subcontractsaleorderm.cbususername??)">		
-							</div>							
+                                       data-refresh="true"
+                                       data-hidden-input="ipersonid_#(pageId)"
+                                       data-load-type="ajaxportal"
+                                       data-url="admin/workregionm/personTable"
+                                       value="#(weekOrderM.cpsnname??)"
+                                />
+							</div>
 						</div>
 						<div class="form-group row">
 							<label class="col-sm-1 col-form-label">税率</label>
@@ -214,7 +215,7 @@
 
 ### 新增之后，并且为审核流
 #if(subcontractsaleorderm.iautoid?? && subcontractsaleorderm.iauditway == 2)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=subcontractsaleorderm.iAutoId, formSn="Co_SubcontractSaleOrderM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.subcontractsaleorderm.SubcontractsaleordermService")
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=subcontractsaleorderm.iAutoId, primaryKeyName="iAutoId", formSn="Co_SubcontractSaleOrderM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.subcontractsaleorderm.SubcontractsaleordermService")
 #end
 
 <div class="jbolt_page_content">

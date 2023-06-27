@@ -1,66 +1,69 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey)" >
+<div class="jbolt_page" data-key="#(pmkey)">
 
-    <div class="jbolt_page_title">
-        <div class="row">
-            <div class="col">
-                <form class="form-inline text-left" id="warehouseForm_#(pageId)"   onsubmit="return false;" method="post">
-                    <input type="text" autocomplete="off"  class="form-control col-md-1 "  placeholder="=仓库编码=" name="cwhcode" value="" />
-                    <input type="text" autocomplete="off"  class="form-control"  placeholder="=仓库名称=" name="cwhname" value="" />
-                    <select class="form-control"
-                            data-autoload
-                            name="idepid"
-                            data-select-type="select2"
-                            data-tips="所属部门"
-                            data-url="admin/department/list"
-                            data-text="=所属部门="
-                            data-value=""
-                            data-text-attr="cdepcode,cdepname"
-                            data-value-attr="iautoid"
-                            data-select=""
-                           >
-                    </select>
-<!--
-                    <input type="number" autocomplete="off" style="width:110px"  class="form-control"  placeholder="最小存储数" name="imaxstockMin" value="" />
-                    <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最大存储数" name="imaxstockMax" value="" />
-                    <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最小空间值" name="imaxspaceMin" value="" />
-                    <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最大空间值" name="imaxspaceMax" value="" />
--->
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col">
+        <form class="form-inline text-left" id="warehouseForm_#(pageId)" onsubmit="return false;" method="post">
+          <input type="text" autocomplete="off" class="form-control col-md-1 " placeholder="=仓库编码=" name="cwhcode"
+                 value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=仓库名称=" name="cwhname" value=""/>
+          <select class="form-control"
+                  data-autoload
+                  name="idepid"
+                  data-select-type="select2"
+                  data-tips="所属部门"
+                  data-url="admin/department/list"
+                  data-text="=所属部门="
+                  data-value=""
+                  data-text-attr="cdepcode,cdepname"
+                  data-value-attr="iautoid"
+                  data-select=""
+          >
+          </select>
+          <!--
+                              <input type="number" autocomplete="off" style="width:110px"  class="form-control"  placeholder="最小存储数" name="imaxstockMin" value="" />
+                              <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最大存储数" name="imaxstockMax" value="" />
+                              <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最小空间值" name="imaxspaceMin" value="" />
+                              <input type="number" autocomplete="off" style="width:110px" class="form-control"  placeholder="最大空间值" name="imaxspaceMax" value="" />
+          -->
 
-                    <select class="form-control"
-                            data-autoload
-                            data-url="admin/enums/boolchar"
-                            name="isenabled"
-                            data-text="=是否启用="
-                            data-value=""
-                            data-select=""
-                    >
-                    </select>
+          <select class="form-control"
+                  data-autoload
+                  data-url="admin/enums/boolchar"
+                  name="isenabled"
+                  data-text="=是否启用="
+                  data-value=""
+                  data-select=""
+          >
+          </select>
 
 
-                    <button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-                    <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-                </form>
-            </div>
-            <div class="col-md-auto">
-            </div>
-        </div>
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+        </form>
+      </div>
+      <div class="col-md-auto">
+      </div>
     </div>
-    <div class="jbolt_page_content">
-        <!-- JBoltTable的数据模板定义-->
-        <textarea class="jb_tpl_box" id="warehouseRowtpl_#(pageId)">
+  </div>
+  <div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="warehouseRowtpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iautoid}" >
+<tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.cwhcode}</td>
 <td>${data.cwhname}</td>
 <td>${data.cdepname}</td>
-<!--<td>${data.imaxstock}</td>
-<td>${data.imaxspace}</td>-->
-<td><img data-switchbtn data-confirm="确定切换是否库存预警？" data-value="${data.isstockwarnenabled}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/isStockWarnEnabled/${data.iautoid}"/></td>
-<td><img data-switchbtn data-confirm="确定切换是否启动？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/warehouse/isEnabled/${data.iautoid}"/></td>
+<td>${data.imaxstock}</td>
+<td>${data.imaxspace}</td>
+<td><img data-switchbtn data-confirm="确定切换是否库存预警？" data-value="${data.isstockwarnenabled}"
+         data-handler="refreshJBoltTable" data-url="admin/warehouse/isStockWarnEnabled/${data.iautoid}"/></td>
+<td><img data-switchbtn data-confirm="确定切换是否启动？" data-value="${data.isenabled}" data-handler="refreshJBoltTable"
+         data-url="admin/warehouse/isEnabled/${data.iautoid}"/></td>
 <td>${data.cwhmemo}</td>
 <td>${data.isource==1?"MES":"U8"}</td>
 <td>${data.ccreatename}</td>
@@ -70,96 +73,116 @@
 </textarea>
 
 
-        <!-- 工具条 toolbar -->
-        <div class="jbolt_table_toolbar" id="warehouse_toolbar_#(pageId)">
-            <div class="col-sm-auto" role="group" aria-label="btn-group">
-                #permission(PermissionKey.WAREHOUSE_ADD)
-                <button data-openpage="dialog" data-area="50%,100%"  data-handler="jboltTablePageToFirst" data-title="新增仓库档案"  data-url="admin/warehouse/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-                #end
-                #permission(PermissionKey.WAREHOUSE_EDIT)
-                <button data-openpage="dialog" data-area="50%,100%"  data-handler="refreshJBoltTable" data-title="修改仓库档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/warehouse/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
-                #end
-                #permission(PermissionKey.WAREHOUSE_DELETE)
-                <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/warehouse/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
-                #end
-                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
-               <!-- <button data-ajaxbtn data-confirm="确定同步最新数据？" data-handler="refreshJBoltTable" data-title="同步最新数据" data-url="admin/u9datassynctaskrecord/syncU9Datas?type=5" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 同步U9</button>-->
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="warehouse_toolbar_#(pageId)">
+      <div class="col-sm-auto" role="group" aria-label="btn-group">
+        #permission(PermissionKey.WAREHOUSE_ADD)
+        <button data-openpage="dialog" data-area="50%,100%" data-handler="jboltTablePageToFirst" data-title="新增仓库档案"
+                data-url="admin/warehouse/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增
+        </button>
+        #end
+        #permission(PermissionKey.WAREHOUSE_EDIT)
+        <button data-openpage="dialog" data-area="50%,100%" data-handler="refreshJBoltTable" data-title="修改仓库档案"
+                data-check-handler="jboltTableGetCheckedId" data-url="admin/warehouse/edit/"
+                class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改
+        </button>
+        #end
+        #permission(PermissionKey.WAREHOUSE_DELETE)
+        <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
+                data-url="admin/warehouse/deleteByIds?ids=" data-confirm="确定删除选中数据？"
+                class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除
+        </button>
+        #end
+        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新
+        </button>
+        <!-- <button data-ajaxbtn data-confirm="确定同步最新数据？" data-handler="refreshJBoltTable" data-title="同步最新数据"
+        data-url="admin/u9datassynctaskrecord/syncU9Datas?type=5" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 同步U9</button>-->
 
 
-            #permission(PermissionKey.WAREHOUSE_EXPORT)
-                <div class="btn-group dropdown" role="group" aria-label="btn-group">
-                <div class="btn-group dropdown">
-                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuwarehouseButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
-                    <div class="dropdown-menu" aria-labelledby="exportMenuwarehouseButton">
-                        <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/warehouse/dataExport"><i class="fa fa-download"></i> 导出选中</button>
-                        <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouse/dataExport"  data-form="warehouseForm_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
-                        <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouse/dataExport" ><i class="fa fa-download"></i> 全部导出</button>
-                    </div>
-                </div>
+        #permission(PermissionKey.WAREHOUSE_EXPORT)
+        <div class="btn-group dropdown" role="group" aria-label="btn-group">
+          <div class="btn-group dropdown">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuwarehouseButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
+            </button>
+            <div class="dropdown-menu" aria-labelledby="exportMenuwarehouseButton">
+              <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                      data-url="admin/warehouse/dataExport"><i class="fa fa-download"></i> 导出选中
+              </button>
+              <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouse/dataExport"
+                      data-form="warehouseForm_#(pageId)"><i class="fa fa-download"></i> 条件导出
+              </button>
+              <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouse/dataExport"><i
+                  class="fa fa-download"></i> 全部导出
+              </button>
             </div>
-            #end
-
-            #permission(PermissionKey.WAREHOUSE_IMPORT)
-                <div class="btn-group dropdown">
-                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importTableButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入</button>
-                    <div class="dropdown-menu" aria-labelledby="importMenuButton">
-                        <a href="assets/exceltpl/warehouse.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
-                        <div class="j_upload_file_box"
-                             data-name="file"
-                             data-btn-class="btn dropdown-item"
-                             data-placeholder="上传导入"
-                             data-confirm="确认导入数据？"
-                             data-accept="excel"
-                             data-maxsize="20480"
-                             data-handler="uploadFile"
-                             data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
-                             data-url="/admin/warehouse/importExcelClass">
-                        </div>
-                    </div>
-                </div>
-            #end
-            </div>
-            <div class="clearfix"></div>
+          </div>
         </div>
+        #end
 
-
-
-        <table class="jbolt_table jbolt_main_table table-center"
-               data-jbolttable
-               data-height="fill"
-               data-ajax="true"
-               data-url="admin/warehouse/datas?isdeleted=0"
-               data-column-resize="true"
-               data-column-prepend="1:checkbox:true"
-               data-conditions-form="warehouseForm_#(pageId)"
-               data-rowtpl="warehouseRowtpl_#(pageId)"
-               data-page="warehousePage_#(pageId)"
-               data-toolbar="warehouse_toolbar_#(pageId)"
-               data-fixed-columns-left="1,2,3"
-        >
-            <thead>
-            <tr>
-                <th data-width="60">序号</th>
-                <th data-width="150" data-column="cwhcode">仓库编码</th>
-                <th data-width="150" data-column="cwhname">仓库名称</th>
-                <th data-width="150" data-column="cDepCode">所属部门</th>
-               <!-- <th data-width="150" data-column="cwhAddress">最大存储数量</th>
-                <th data-width="150" data-column="cwhPhone">最大存储空间</th>-->
-                <th data-width="150" data-column="cwhPerson">启用库存预警</th>
-                <th data-width="150" data-column="cwhvaluestyle">是否启用</th>
-                <th data-width="150" data-column="cMonth">备注</th>
-                <th data-width="150" data-column="cwhMemo">来源</th>
-                <th data-width="100" data-column="bfreeze">创建人</th>
-                <th data-min-width="160" data-column="dCreateTime">创建时间</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-
-
-
+        #permission(PermissionKey.WAREHOUSE_IMPORT)
+        <div class="btn-group dropdown">
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importTableButton"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入
+          </button>
+          <div class="dropdown-menu" aria-labelledby="importMenuButton">
+            <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouse/templateDownload">
+              <i class="fa fa-file-excel-o"></i> &nbsp;模板下载
+            </button>
+            <div class="j_upload_file_box"
+                 data-name="file"
+                 data-btn-class="btn dropdown-item"
+                 data-placeholder="上传导入"
+                 data-confirm="确认导入数据？"
+                 data-accept="excel"
+                 data-maxsize="20480"
+                 data-handler="uploadFile"
+                 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                 data-url="/admin/warehouse/importExcelClass">
+            </div>
+          </div>
+        </div>
+        #end
+      </div>
+      <div class="clearfix"></div>
     </div>
+
+
+    <table class="jbolt_table jbolt_main_table table-center"
+           data-jbolttable
+           data-height="fill"
+           data-ajax="true"
+           data-url="admin/warehouse/datas?isdeleted=0"
+           data-column-resize="true"
+           data-column-prepend="1:checkbox:true"
+           data-conditions-form="warehouseForm_#(pageId)"
+           data-rowtpl="warehouseRowtpl_#(pageId)"
+           data-page="warehousePage_#(pageId)"
+           data-toolbar="warehouse_toolbar_#(pageId)"
+           data-fixed-columns-left="1,2,3"
+    >
+      <thead>
+      <tr>
+        <th data-width="60" width="60">序号</th>
+        <th data-min-width="100" width="100" data-column="cwhcode">仓库编码</th>
+        <th data-min-width="180" width="180" data-column="cwhname">仓库名称</th>
+        <th data-min-width="180" width="180" data-column="cDepName">所属部门</th>
+        <th data-width="150" width="120" data-column="iMaxStock">最大存储数量</th>
+        <th data-width="150" width="120" data-column="iMaxSpace">最大存储空间</th>
+        <th data-min-width="120" width="120" data-column="cwhPerson">启用库存预警</th>
+        <th data-min-width="80" width="80" data-column="cwhvaluestyle">是否启用</th>
+        <th data-min-width="120" width="120" data-column="cMonth">备注</th>
+        <th data-min-width="80" width="80" data-column="cwhMemo">来源</th>
+        <th data-min-width="120" width="120" data-column="bfreeze">创建人</th>
+        <th data-min-width="150" width="150" data-column="dCreateTime">创建时间</th>
+      </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+
+  </div>
 </div>
 #end
 

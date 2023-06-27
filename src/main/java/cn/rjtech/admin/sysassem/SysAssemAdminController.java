@@ -176,24 +176,45 @@ public class SysAssemAdminController extends BaseAdminController {
 	}
 
 	/**
+	 * 条码获取资源
+	 */
+	public void getBarcode(){
+		String barcode = get("barcode");
+		if (notOk(barcode)){
+			renderJsonSuccess();
+			return;
+		}
+		String itemHidden = get("itemHidden");
+		String groupCode = get("groupCode");
+		String sourceBillType = get("sourceBillType");
+		Kv kv = new Kv();
+		kv.set("barcode",barcode);
+		kv.setIfNotNull("sourceBillType", sourceBillType);
+		kv.setIfNotNull("combination", groupCode);
+		kv.setIfNotNull("itemHidden", itemHidden);
+		kv.setIfNotNull("assemtype", "转换前");
+		renderJsonData(service.getBarcode(kv));
+	}
+
+	/**
 	 * 查询双单位条码数据
 	 */
 	public void getBarCodeData(){
-		//存货编码
-		String itemCode = get("itemCode");
-		//供应商
-		String supplier = get("supplier");
-		//单据类型
-		String sourceBillType = get("sourceBillType");
+		//订单编号
+		String sourcebillno = get("sourcebillno");
+		//供应商code，名字
+		String vencode = get("vencode");
+		String venname = get("venname");
 		//转换前 存货主键
 		String ibeforeinventoryid = get("ibeforeinventoryid");
-		String trJsonData = get("trjsondata");
+		//转换后 存货主键
+		String iafterinventoryid = get("iafterinventoryid");
 		Kv kv = new Kv();
-		kv.set("itemCode",itemCode);
-		kv.setIfNotNull("sourceBillType", sourceBillType);
-		kv.set("supplier",notOk(supplier)?' ':supplier);
-		kv.set("ibeforeinventoryid",notOk(ibeforeinventoryid)?' ':ibeforeinventoryid);
-		kv.set("trJsonData",notOk(trJsonData)?' ':trJsonData);
+		kv.set("sourcebillno",notOk(sourcebillno)?"":sourcebillno);
+		kv.set("vencode",notOk(vencode)?"":vencode);
+		kv.set("venname",notOk(venname)?"":venname);
+		kv.set("ibeforeinventoryid",notOk(ibeforeinventoryid)?"":ibeforeinventoryid);
+		kv.set("iafterinventoryid",notOk(iafterinventoryid)?"":iafterinventoryid);
 		renderJsonData(service.getBarcodeDatas(kv));
 	}
 
