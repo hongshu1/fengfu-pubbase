@@ -19,7 +19,7 @@
             #end
             <input type="hidden" id="autoid" name="autoid" value="#(puinstore.autoid??)"/>
             <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
-            <input type="hidden" id="spottickets" name="spottickets"/>
+            <input type="hidden" id="barcodes" name="barcodes"/>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label"><font style="color: red">*</font>入库单号：</label>
                 <div class="col-sm-2 col-form-label">
@@ -150,7 +150,7 @@
                                         <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)" #if(puinstore.sourcebillno??) #else style="display: none" #end >
                                             <div  class="" role="group" aria-label="btn-group" >
                                                 <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-                                                <button onclick="jboltTableRemoveCheckedRow(this, true, spotTickets)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
+                                                <button onclick="jboltTableRemoveCheckedRow(this, true, barcodes)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
                                             </div>
                                             <div class="clearfix"></div>
                                         </div>
@@ -177,7 +177,7 @@
                                             <tr>
                                                 <th data-width="60" data-column="index">序号</th>
                                                 <th data-width="100">操作</th>
-                                                <th data-width="100" data-column="spotticket">现品票</th>
+                                                <th data-width="100" data-column="barcode">现品票</th>
                                                 <th data-width="100" data-column="cinvcode">存货编码</th>
                                                 <th data-width="100" data-column="cinvname">存货名称</th>
                                                 <th data-width="100" data-column="cinvcode1">客户部番</th>
@@ -230,7 +230,7 @@
     <td>
         <a href="admin/materialreturnlist/deleteList/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn">删除</a>
     </td>
-    <td>${data.spotticket}</td>
+    <td>${data.barcode}</td>
     <td>${data.cinvcode}</td>
     <td>${data.cinvname}</td>
     <td>${data.cinvcode1}</td>
@@ -256,20 +256,20 @@
 
 #define js()
 <script>
-    function spotTickets(){
+    function barcodes(){
         // //扫入多条现品票判断是否存在
-        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["barcode"]);
         console.log(data);
         let array = new Array();
         if (data != null){
             for (let i = 0; i < data.length; i++) {
-                array.push("'"+data[i].spotticket+"'");
+                array.push("'"+data[i].barcode+"'");
             }
             //通过逗号分开，一个一个加进数组中
             let codes = array.join(',');
-            $("#spottickets").val(codes);
+            $("#barcodes").val(codes);
         } else {
-            $("#spottickets").val('');
+            $("#barcodes").val('');
         }
         return true;
     }
@@ -281,11 +281,11 @@
         var detailHidden = $("#detailHidden").val();
 
         //扫入多条现品票判断是否存在
-        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["barcode"]);
         let array = new Array();
         if (data != null){
             for (let i = 0; i < data.length; i++) {
-                array.push("'"+data[i].spotticket+"'");
+                array.push("'"+data[i].barcode+"'");
             }
             for (let i = 0; i < array.length; i++) {
                 let a =  "'"+barcode+"'";
@@ -321,7 +321,7 @@
     function setChooseDialogSelectResultFromSupplier(data) {
         //重新选择入库单号时刷新
         refreshJBoltTable("#Puinstoreform_TableId_#(pageId)");
-        $("#spottickets").val('');
+        $("#barcodes").val('');
 
         //隐藏和显示现品票搜索和添加行
         if ($("#sourcebillno").val()!=null){
@@ -365,21 +365,21 @@
                 name:"table2"
             },
             cols: {
-                spotticket: { //现品票条码
+                barcode: { //现品票条码
                     maxLength: 100,
-                    linkPara: "#spottickets,#autoid",
-                    syncval:"#spotticket",
+                    linkPara: "#barcodes,#autoid",
+                    syncval:"#barcode",
                     required: false,
                     placeholder: "=请选择=",
                     type: "autocomplete",
                     url: "admin/materialreturnlist/barcodeDatas",
-                    textAttr: "spotticket",
+                    textAttr: "barcode",
                     width: 800,
                     sync: "",
-                    valueAttr: "spotticket",
+                    valueAttr: "barcode",
                     columnAttr: "barcode,cinvcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,puunitname,qty",
                     header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
-                    changeColumns: [{column: "spotticket", use: "barcode"},
+                    changeColumns: [{column: "barcode", use: "barcode"},
                         {column: "cinvcode", use: "cinvcode"},
                         {column: "cinvname", use: "cinvname"},
                         {column: "cinvcode1", use: "cinvcode1"},
@@ -397,19 +397,19 @@
                         {column: "rowno", use: "rowno"},
                     ],
                     handler:function (table,td,text,value,jsonData) {
-                        //选择的现品票后存入spottickets,没有传空
-                        let datas = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+                        //选择的现品票后存入barcodes,没有传空
+                        let datas = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["barcode"]);
                         console.log("data==>",datas);
                         let array = new Array();
                         if (datas != null){
                             for (var i = 0; i < datas.length; i++){
                                 var data = datas[i];
-                                array.push("'"+data.spotticket+"'");
+                                array.push("'"+data.barcode+"'");
                                 let codes = array.join(',');
-                                $("#spottickets").val(codes);
+                                $("#barcodes").val(codes);
                             }
                         }else {
-                            $("#spottickets").val('');
+                            $("#barcodes").val('');
                         }
 
                     }

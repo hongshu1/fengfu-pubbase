@@ -63,15 +63,8 @@
           <tr height="300px">
             <td colspan="6">
               <div class="col">
-                <div class="py-2" style="padding:.5rem 0rem;">
-                </div>
-
-                <input type="hidden" id="recordImages" placeholder="=测试==" name="recordImages"
-                       value="#(record.imgList??)" class="form-control"/>
-
                 <div class="form-group row">
                   <label class="col-form-label col-sm-2 text-left">检验图片：</label>
-                  <input name="cpics" id="cpics" value="#(record.cpics??)" type="hidden"/>
                   <img data-photobtn tooltip data-title="点击查看大图"  style="width: 700px;height:450px;" src="#(record.cpics??)"
                        onerror="this.src='assets/img/noimg.png'"/>
                 </div>
@@ -279,46 +272,6 @@
  * @param：rows:行数
  * */
   function insertRow(rows) {
-    /*let jboltTableAllDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
-
-    //添加10列到表头
-    let length = jboltTableAllDatas[0].cvaluelist.length;
-    for (let col = 0; col < rows; col++) {
-      let newVar = length + col + 1;
-      var firstLie = '<th class="setStyle">' + newVar + '</th>';
-      $(".table>thead>tr").append(firstLie);
-    }
-
-    for (let i = 0; i < jboltTableAllDatas.length; i++) {
-      let cvaluelist = jboltTableAllDatas[i].cvaluelist;
-      let element = cvaluelist[0];
-      //给cvaluelist添加10列
-      let cvalueLength = cvaluelist.length;
-      for (let arr = 0; arr < rows; arr++) {
-        var cvalue = {
-          coptions: element.coptions,
-          cqcitemname: element.cqcitemname,
-          cqcparamname: element.cqcparamname,
-          cvalue: "",
-          iautoid: "",
-          iformparamid: element.iformparamid,
-          ircvdocqcformmid: element.ircvdocqcformmid,
-          imaxval: element.imaxval,
-          iminval: element.iminval,
-          iqcformid: element.iqcformid,
-          iseq: element.iseq,
-          istdval: element.istdval,
-          isubseq: element.isubseq,
-          itype: element.itype,
-          lineiautoid: "",
-          name: "cA" + cvalueLength + 1
-        };
-        //最后push到cvaluelist
-        cvaluelist.push(cvalue);
-      }
-      jboltTableAllDatas[i].cvaluelist = cvaluelist;
-    }*/
-
     let jboltTableAllDatas = getJboltTableAllDatas("#jbolt_table_checkouttableparam_split_#(pageId)3");
 
     //添加10列到表头
@@ -403,7 +356,6 @@
     let length = allDatas[0].cvaluelist.length;
     var serializeGroupbyList = _chunk(filterserializeArray, length);
 
-    var subMilasUrlArr = [];//存储每一行数据
     for (let i = 0; i < serializeGroupbyList.length; i++) {
       let data = allDatas[i];
       let dataCvaluelist = data.cvaluelist;
@@ -414,26 +366,6 @@
         let dataCvalue = dataCvaluelist[num];
         dataCvalue.cvalue = element.value;
       }
-      /*var tableData = {
-        coptions: data.coptions,
-        cqcformparamids: data.cqcformparamids,
-        cqcitemname: data.cqcitemname,
-        cqcparamname: data.cqcparamname,
-        iautoid: data.iautoid,
-        iformparamid: data.iformparamid,
-        imaxval: data.imaxval,
-        iminval: data.iminval,
-        iqcformid: data.iqcformid,
-        ircvdocqcformmid: data.ircvdocqcformmid,
-        iseq: data.iseq,
-        istdval: data.istdval,
-        isubseq: data.isubseq,
-        itype: data.itype,
-        cvaluelist:data.cvaluelist,
-        serializeElement: serializeElement
-      };
-      subMilasUrlArr.push(tableData);
-      */
     }
 
     //测试目的
@@ -454,7 +386,6 @@
     var cdcno = $("#cDcNo").val(); //设变号
     var iautoid = $('input[name="record.iautoid"]').val();//主页面的主键
     const submitDatas = {
-      // serializeSubmitList: JSON.stringify(subMilasUrlArr),
       serializeSubmitList: JSON.stringify(allDatas),
       cmeasurereason: cmeasurereason,
       cmeasurepurpose: cmeasurepurpose2,

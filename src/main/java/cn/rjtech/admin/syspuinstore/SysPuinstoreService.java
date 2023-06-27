@@ -258,32 +258,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     }
 
     /*
-     * 批量审核的公共方法
-     * */
-    /*public void commonAutitByIds(String id, ArrayList<SysPuinstore> puinstoreList, Date date) {
-        SysPuinstore puinstore = findById(id);
-        Integer iAuditStatus = puinstore.getIAuditStatus();
-        if (AuditStatusEnum.AWAIT_AUDIT.getValue() == iAuditStatus) {//待审核状态
-            //同步U8
-            String json = getSysPuinstoreDto(puinstore);
-            String u8Billno = new BaseInU8Util().base_in(json);
-            LOG.info(u8Billno);
-
-            // 状态改为已审核
-            puinstore.setCAuditName(JBoltUserKit.getUserName());
-            puinstore.setAuditDate(date);
-            puinstore.setCUpdateName(JBoltUserKit.getUserName());
-            puinstore.setDUpdateTime(date);
-            puinstore.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-            //PurchaseOrderM purchaseOrderM = findU8BillNo(puinstore);
-            puinstore.setU8BillNo(u8Billno);
-            puinstore.setIAuditWay(1);
-            //
-            puinstoreList.add(puinstore);
-        }
-    }*/
-
-    /*
      * 反审批
      * */
     public String resetAutitById(String autoid) {
@@ -421,7 +395,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
         data data = new data();
         data.setAccid(getOrgCode());
         data.setPassword(userRecord.get("u8_pwd"));
-//        Long userid = userRecord.getLong("userid");
         data.setUserID(userRecord.get("u8_code"));
         Long id = u8Record.getLong("id");
         data.setVouchId(String.valueOf(id));//u8单据id
@@ -602,8 +575,9 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
         int i = 1;
         for (SysPuinstoredetail detail : detailList) {
             Main main = new Main();
-            if (StrUtil.isNotBlank(detail.getSpotTicket())) {
-                main.setBarCode(detail.getSpotTicket()); //现品票+版本号
+            if (StrUtil.isNotBlank(detail.getBarCode())) {
+//                Record record = getBarcodeVersion(puinstore.getSourceBillNo(), detail.getSpotTicket());
+                main.setBarCode(detail.getBarCode()); //现品票+版本号
             } else {
                 main.setBarCode(detail.getInvcode());//传invcode
             }
@@ -659,6 +633,13 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
         return JSON.toJSONString(dto);
     }
 
+    public Record getBarcodeVersion(String corderno, String barcode) {
+        Kv kv = new Kv();
+        kv.set("corderno", corderno);
+        kv.set("barcode", barcode);
+        return dbTemplate("syspuinstore.getBarcodeVersion", kv).findFirst();
+    }
+
     public Object printData(Kv kv) {
         return dbTemplate("syspuinstore.getPrintData", kv).find();
     }
@@ -698,7 +679,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     public void setSysPuinstoreU8Billno(String json, SysPuinstore puinstore) {
         tx(() -> {
             String u8Billno = new BaseInU8Util().base_in(json);
-            System.out.println(u8Billno);
+//            System.out.println(u8Billno);
             puinstore.setU8BillNo(u8Billno);
             return true;
         });
