@@ -8,6 +8,7 @@ import cn.rjtech.api.instockdefect.InStockDefectApiController;
 import cn.rjtech.api.instockqcformm.InStockQcFormMApiController;
 import cn.rjtech.api.modoc.ModocApiController;
 import cn.rjtech.api.momaterialsscansum.MoMaterialsscansumApiController;
+import cn.rjtech.api.momopatchweldm.MoMopatchweldmApiController;
 import cn.rjtech.api.moroutingconfigoperation.MoMoroutingconfigOperationApiController;
 import cn.rjtech.api.nfcswipecard.NfcSwipeCardApiController;
 import cn.rjtech.api.org.OrgApiController;
@@ -63,6 +64,8 @@ public class ApiRoutes extends Routes {
         this.add("/api/formuploadcategory", FormUploadCategoryApiController.class);
         //工单工序
         this.add("/api/momoroutingconfigoperation", MoMoroutingconfigOperationApiController.class);
+        //补焊记录
+        this.add("/api/momopatchweldm", MoMopatchweldmApiController.class);
 
     }
 

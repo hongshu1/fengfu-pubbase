@@ -106,4 +106,12 @@ public class MoMopatchweldmAdminController extends BaseAdminController {
 	}
 
 
+	//-----------------------app--------------------------------------
+	public void getList() {
+		renderJsonData(service.getMoMopatchwelddApiList(getLong("iMoDocId")));
+	}
+	public void saveData() {
+		renderJsonData(service.saveData(getLong("iMoDocId"),get("data")));
+	}
+
 }
