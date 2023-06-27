@@ -110,6 +110,7 @@ public class WarehouseService extends BaseService<Warehouse> {
 
     //查重
     ValidationUtils.assertNull(findByWhCode(warehouse.getCWhCode()), "仓库编码重复！");
+    ValidationUtils.assertNull(findByWhCode(warehouse.getCWhName()), "仓库名称重复！");
 
     //创建信息
     warehouse.setIcreateby(JBoltUserKit.getUserId());
