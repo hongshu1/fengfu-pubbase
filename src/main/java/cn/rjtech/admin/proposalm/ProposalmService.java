@@ -324,7 +324,7 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
             });
         }
 
-        return SUCCESS;
+        return successWithData(proposalm.keep("iautoid"));
     }
 
     private void doDeleteProposalds(Object[] delete) {

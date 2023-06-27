@@ -152,4 +152,13 @@ public class UptimeCategoryService extends BaseService<UptimeCategory> {
 		return newUptimeCategory.getIAutoId();
 
 	}
+
+	/**
+	 * 表格内容
+	 * @param kv
+	 * @return
+	 */
+    public List<Record> uptimeTplTableDatas(Kv kv) {
+		return dbTemplate("uptimecategory.uptimeTplTableDatas", kv).find();
+    }
 }

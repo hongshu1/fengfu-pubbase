@@ -156,13 +156,6 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 		kv.set("itID", itID == null ? "" : itID);
 		kv.set("cmodocno",cmodocno== null ? "" : cmodocno);
 		renderJsonData(service.getchooseM(kv));
-//		String[] barcodesS = barcodes.split(",");
-//		for (int i=0;i<barcodesS.length;i++){
-//			Kv kv = new Kv();
-//			kv.set("barcodes", barcodesS[i] == null ? "" : barcodesS[i]);
-//			kv.set("cmodocno",cmodocno== null ? "" : cmodocno);
-//			renderJsonData(service.getchooseM(kv));
-//		}
 	}
 	@Before(Tx.class)
 	public void go() {

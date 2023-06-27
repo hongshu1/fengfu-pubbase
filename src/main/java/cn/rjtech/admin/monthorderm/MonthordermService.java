@@ -375,17 +375,27 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         // 只有一个审批人
         if (isFirst && isLast) {
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), JBoltMsg.FAIL);
+            if (updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isFail()) {
+                LOG.info("更新失败");
+                return "更新失败";
+            }
             // 修改客户计划汇总
             cusOrderSumService.algorithmSum();
         }
         // 反审回第一个节点，回退状态为“已保存”
         else if (isFirst) {
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), JBoltMsg.FAIL);
+            if (updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isFail()) {
+                LOG.info("更新失败");
+                return "更新失败";
+            }
         }
         // 最后一步通过的，反审，回退状态为“待审核”
         else if (isLast) {
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), JBoltMsg.FAIL);
+            if (updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isFail()) {
+                LOG.info("更新失败");
+                return "更新失败";
+            }
+            
             // 修改客户计划汇总
             cusOrderSumService.algorithmSum();
         }

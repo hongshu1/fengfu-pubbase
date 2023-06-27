@@ -8,6 +8,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
 import cn.rjtech.model.momdata.SysAssemdetail;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
+import cn.rjtech.model.momdata.SysPureceivedetail;
 import cn.rjtech.util.ValidationUtils;
 
 import com.jfinal.kit.Kv;
@@ -209,5 +210,13 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
 		sysAssemdetail.setModifyDate();
 		sysAssemdetail.setIsDeleted();*/
 		return sysAssemdetail;
+    }
+
+    public List<SysAssemdetail> findFirstBy(String masId) {
+        return find("select * from  T_Sys_AssemDetail where MasID = ? and isDeleted = '0' and AssemType ='转换前' ", masId);
+    }
+
+    public SysAssemdetail findFirst(String masId, Integer combination) {
+        return findFirst("select * from  T_Sys_AssemDetail where MasID = ? and isDeleted = '0' and AssemType ='转换后' and Combination = ?", masId,combination);
     }
 }

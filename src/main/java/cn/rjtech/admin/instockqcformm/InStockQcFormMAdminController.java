@@ -218,7 +218,7 @@ public class InStockQcFormMAdminController extends BaseAdminController {
      * */
     public void exportExcel() throws Exception {
         Kv kv = service.getExportData(getLong(0));//instaockqcformm
-        renderJxls("instaockqcformm.xlsx", kv, "在库检_" + DateUtil.today() + "_成绩表.xlsx");
+        renderJxls("instockqcformm.xlsx", kv, "在库检_" + DateUtil.today() + "_成绩表.xlsx");
     }
 
     /*
@@ -245,13 +245,14 @@ public class InStockQcFormMAdminController extends BaseAdminController {
         String iinventoryid = get("iinventoryid");
         String cdcno  = get("cdcno");
         String cMeasureReason = get("cmeasurereason");
+        String iqcformid = get("iqcformid");
         ValidationUtils.notBlank(cbarcode, "现品票不能为空");
         ValidationUtils.notBlank(invcode, "存货编码不能为空");
         ValidationUtils.notBlank(iinventoryid, "存货id不能为空");
 
-//        BigDecimal bigDecimal = new BigDecimal(iqty);
         int qty = iqty.setScale(2,BigDecimal.ROUND_DOWN).intValue();
-        renderJson(service.saveInStockQcFormByCbarcode(cbarcode, qty, invcode, cinvcode1, cinvname1,iinventoryid, cdcno, cMeasureReason));
+        renderJson(service.saveInStockQcFormByCbarcode(cbarcode, qty, invcode, cinvcode1, cinvname1,iinventoryid, cdcno,
+            cMeasureReason,Long.valueOf(iqcformid)));
     }
 
 }

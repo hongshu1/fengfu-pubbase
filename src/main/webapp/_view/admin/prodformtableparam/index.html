@@ -1,0 +1,110 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>生产表单设置-生产表格参数录入配置</h1></div>
+	<div class="col">
+	<form class="form-inline" id="ProdFormTableParam_form_#(pageId)">
+
+<select class="form-control" name="iType"
+	data-autoload
+	data-url="admin/dictionary/options?key=null"
+	data-select-type="select"
+	data-text="=参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+
+<select class="form-control" name="isDeleted"
+	data-autoload
+	data-url="admin/dictionary/options?key=options_enable"
+	data-select-type="select"
+	data-text="=删除状态：0. 未删除 1. 已删除="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+		<div class="btn-group text-center mx-1">
+			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
+		</div>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/prodFormTableParam/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增生产表单设置-生产表格参数录入配置"><i class="fa fa-plus"></i></button>
+	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="ProdFormTableParam_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iAutoId}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iAutoId}</td>
+<td>${data.iQcFormId}</td>
+<td>${data.iSeq}</td>
+<td>${data.iType}</td>
+<td>${data.iStdVal}</td>
+<td>${data.iMaxVal}</td>
+<td>${data.iMinVal}</td>
+<td>${data.cOptions}</td>
+<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isDeleted}"  data-handler="refreshJBoltTable"  data-url="admin/prodFormTableParam/toggleIsDeleted/${data.iAutoId}"/></td>
+<td>
+	<a class="jbolt_table_editbtn" href="admin/prodFormTableParam/edit/${data.iAutoId}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑生产表单设置-生产表格参数录入配置"><i class="fa fa-edit"></i></a>
+	<a class="jbolt_table_delbtn" href="admin/prodFormTableParam/delete/${data.iAutoId}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="ProdFormTableParam_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增生产表单设置-生产表格参数录入配置" data-url="admin/prodFormTableParam/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑生产表单设置-生产表格参数录入配置" data-check-handler="jboltTableGetCheckedId" data-url="admin/prodFormTableParam/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/prodFormTableParam/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="ProdFormTableParam_form_#(pageId)"
+	   data-url="admin/prodFormTableParam/datas"
+	   data-rowtpl="ProdFormTableParam_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="ProdFormTableParam_page"
+	   data-toolbar="ProdFormTableParam_toolbar_#(pageId)"
+>
+<thead class="fw-normal" >
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th  data-width="100" data-column="iAutoId">主键ID</th>
+	<th  data-width="100" data-column="iQcFormId">检验表格ID</th>
+	<th  data-width="100" data-column="iSeq">项目次序，固定取参数项目名为“项目”的参数名称次序值</th>
+	<th  data-width="100" data-column="iType">参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间</th>
+	<th  data-width="100" data-column="iStdVal">标准值</th>
+	<th  data-width="100" data-column="iMaxVal">最大设定值</th>
+	<th  data-width="100" data-column="iMinVal">最小设定值</th>
+	<th  data-width="150" data-column="cOptions">列表可选值，多个";"分隔</th>
+	<th  data-width="100" data-column="isDeleted">删除状态：0. 未删除 1. 已删除</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

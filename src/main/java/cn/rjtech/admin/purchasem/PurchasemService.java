@@ -383,7 +383,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
      * @return
      */
     public Record details(Kv kv) {
-        return dbTemplate("purchasem.paginateAdminDatas", kv).findFirst();
+        return dbTemplate("purchasem.findPurchasemDetails", kv).findFirst();
     }
 
     /**

@@ -36,7 +36,7 @@
     </div> 
 </div>
 ### 新增之后，并且为审批流
-#if(proposalm.iautoid?? && proposalm.iauditway == 2 && proposalm.iauditstatus == 1)
+#if(proposalm.iautoid?? && proposalm.iauditway == 2 && (proposalm.iauditstatus == 1 || proposalm.iauditstatus == 2) && proposalm.ieffectivestatus == 1)
     ### 参数列表
     ### formAutoId:                 单据ID
     ### formSn:                     表单名
@@ -530,7 +530,7 @@
     function successHandler(msg, iautoid) {
         LayerMsgBox.success(msg, 600, function () {
             // 新增/修改，均跳转到详情页
-            location.href = '/admin/proposalm/edit?iautoid=' + ret.data.iautoid + '&_jb_rqtype_=dialog';
+            location.href = '/admin/proposalm/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
             parent.refreshPjaxContainer();
         });
     }

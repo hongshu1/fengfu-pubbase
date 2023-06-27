@@ -35,59 +35,25 @@
 
 <script>
 
-    var action
     var index;
     var para;
-
-    /**
-     * 提交审批
-     */
-    function submit_#(pageId)(ele) {
-        action = getRealJqueryObject(ele);
-
-        index = LayerMsgBox.loading('执行中...');
-
-        para = {
-            formSn: action.data("formsn"),
-            formAutoId: action.data("formautoid"),
-            primaryKeyName: action.data("primary"),
-            className: action.data('class')
-        }
-
-        Ajax.post("/admin/formapproval/submit", para, function (ret) {
-            LayerMsgBox.close(index);
-
-            if (ret.state === 'ok') {
-                LayerMsgBox.success(ret.msg, 1500, function () {
-                    parent.refreshPjaxContainer();
-                    parent.layer.closeAll();
-                });
-            } else {
-                LayerMsgBox.alert(ret.msg, 2);
-            }
-        }, function (err) {
-            LayerMsgBox.close(index);
-        });
-    }
+    var remark;
 
     /**
      * 审批/审核
      */
     function approveT_#(pageId)(ele) {
-        action = getRealJqueryObject(ele);
-
         index = LayerMsgBox.loading('执行中...');
 
-        var remark = $("#remark").val();
-
+        remark = $("#remark").val();
         console.log('remark',remark)
 
         para = {
-            formSn: action.data("formsn"),
-            formAutoId: action.data("formautoid"),
-            status: action.data("status"),
-            primaryKeyName: action.data("primary"),
-            className: action.data('class'),
+            formSn: '#(formSn)',
+            formAutoId: '#(formAutoId)',
+            status: 2,
+            primaryKeyName: '#(primaryKeyName)',
+            className: '#(className)',
             remark: remark
         };
 
@@ -111,20 +77,18 @@
      * 审批不通过
      */
     function rejectT_#(pageId)(ele) {
-        action = getRealJqueryObject(ele);
 
         index = LayerMsgBox.loading('执行中...');
 
-        var remark = $("#remark").val();
-
+        remark = $("#remark").val();
         console.log('remark',remark)
 
         para = {
-            formSn: action.data("formsn"),
-            formAutoId: action.data("formautoid"),
-            status: action.data("status"),
-            primaryKeyName: action.data("primary"),
-            className: action.data('class'),
+            formSn: '#(formSn)',
+            formAutoId: '#(formAutoId)',
+            status: 3,
+            primaryKeyName: '#(primaryKeyName)',
+            className: '#(className)',
             remark: remark
         };
 
@@ -148,20 +112,17 @@
      * 反审批
      */
     function reverseApproveT_#(pageId)(ele) {
-        action = getRealJqueryObject(ele);
-
         index = LayerMsgBox.loading('执行中...');
 
-        var remark = $("#remark").val();
-
+        remark = $("#remark").val();
         console.log('remark',remark)
 
         para = {
-            formSn: action.data("formsn"),
-            formAutoId: action.data("formautoid"),
-            status: action.data("status"),
-            primaryKeyName: action.data("primary"),
-            className: action.data('class'),
+            formSn: '#(formSn)',
+            formAutoId: '#(formAutoId)',
+            status: 1,
+            primaryKeyName: '#(primaryKeyName)',
+            className: '#(className)',
             remark: remark
         };
 

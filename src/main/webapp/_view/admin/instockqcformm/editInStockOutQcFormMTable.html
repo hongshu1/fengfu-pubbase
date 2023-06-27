@@ -149,7 +149,7 @@
                  data-height="fill"
                  data-ajax="true"
                  data-conditions-form="instockqcformmform_#(pageId)"
-                 data-url="admin/instockqcformm/autoGetOnlySeeDatas?iautoid=#(record.iAutoId??)"
+                 data-url="admin/instockqcformm/getTableDatas?iinstockqcformid=#(record.iAutoId??)"
                  data-rowtpl="checkoutType_tpl_#(pageId)"
                  data-copy-to-excel="true"
                  data-toolbar="instockqcformmform_toolbar_#(pageId)">
@@ -161,7 +161,7 @@
                 #(data.cqcitemname??)
               </th>
               #end
-              #for(i = 1; i <= 10; i++)
+              #for(i = 1; i <= stockoutqcformlist.size(); i++)
               <th style="width: 120px">#(i)</th>
               #end
             </tr>

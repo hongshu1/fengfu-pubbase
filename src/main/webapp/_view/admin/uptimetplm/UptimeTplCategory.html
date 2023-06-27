@@ -1,0 +1,65 @@
+<!-- 检验表格项目表的的数据模板定义-->
+<script type="text/template" id="master_demotpl_#(pageId)">
+    {@each datas as data,index}
+    <tr data-id="${data.iautoid}" class="hand" data-changed=""
+        onclick="masterTableTrTriggerShowSlave(this,'${data.iautoid}')">
+        {@if pageSize&&pageSize>0}
+        <td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
+        {@else}
+        <td>${+index+1}</td>
+        {@/if}
+        <td>${data.cuptimecategoryname}</td>
+        <td>
+            {@if index>0}
+            <a tooltip data-title="上移" href="javascript:void(0)"
+               onclick="jboltTableTrMoveUp(this, true);updateItemSeq();" class="jbolt_table_btn"><i
+                    class="fa fa-arrow-up c-info"></i></a>
+            {@/if}
+            {@if index < datas.length-1}
+            <a tooltip data-title="下移" href="javascript:void(0)"
+               onclick="jboltTableTrMoveDown(this, true);updateItemSeq();" class="jbolt_table_btn"><i
+                    class="fa fa-arrow-down c-info"></i></a>
+            {@/if}
+            <a tooltip data-title="删除" href="javascript:void(0)"
+               onclick="removeJboltTableRow(this);updateItemSeq();" class="jbolt_table_btn"><i
+                    class="fa fa-remove  c-danger"></i></a>
+        </td>
+    </tr>
+    {@/each}
+</script>
+
+<!-- 工具条 toolbar -->
+<div class="split master">
+    <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
+        <div class="col-md-l pt-2" role="group" aria-label="btn-group">
+            <button data-dialogbtn data-area="800,600" data-handler="jboltTablePageToFirst"
+                    id="toolbar_addBtn_#(pageId)" data-title="添加分类" data-url="admin/uptimeCategory/addCategory"
+                    class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增
+            </button>
+        </div>
+    </div>
+
+    <table id="jbolt_table_uptime_tpl_category"
+           class="table-center jbolt_table thead_font_normal"
+           data-jbolttable
+           data-column-resize="true"
+           data-height="fill_box"
+           data-rowtpl="master_demotpl_#(pageId)"
+           data-column-prepend="1:radio:true"
+           data-ajax="true"
+           data-url="admin/uptimeCategory/datas"
+           data-conditions-form="qcformitemTypeForm_#(pageId)"
+           data-toolbar="bomcompare_split_toolbar_#(pageId)"
+           data-width="auto"
+    >
+        <thead>
+        <tr>
+            <th data-width="60" data-column="index">项次</th>
+            <th data-width="300" data-column="cUptimeCategoryName">分类名称</th>
+            <th data-width="120" data-column="iseq">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>

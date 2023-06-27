@@ -511,7 +511,7 @@ public class PurchasemAdminController extends BaseAdminController {
     @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableSubmit() {
-        renderJsonData(service.saveTableSubmit(getJBoltTable()));
+        renderJson(service.saveTableSubmit(getJBoltTable()));
     }
 
     /**

@@ -1,0 +1,84 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>稼动时间建模-参数表格</h1></div>
+	<div class="col">
+	<form class="form-inline" id="UptimeTplTable_form_#(pageId)">
+		<div class="btn-group text-center mx-1">
+			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
+		</div>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/uptimeTplTable/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增稼动时间建模-参数表格"><i class="fa fa-plus"></i></button>
+	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="UptimeTplTable_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iAutoId}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.iAutoId}</td>
+<td>${data.iUptimeTplMid}</td>
+<td>${data.iUptimeCategoryId}</td>
+<td>${data.iUptimeParamId}</td>
+<td>${data.iSeq}</td>
+<td>${data.iMins}</td>
+<td>
+	<a class="jbolt_table_editbtn" href="admin/uptimeTplTable/edit/${data.iAutoId}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑稼动时间建模-参数表格"><i class="fa fa-edit"></i></a>
+	<a class="jbolt_table_delbtn" href="admin/uptimeTplTable/delete/${data.iAutoId}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="UptimeTplTable_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增稼动时间建模-参数表格" data-url="admin/uptimeTplTable/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="UptimeTplTable_form_#(pageId)"
+	   data-url="admin/uptimeTplTable/datas"
+	   data-rowtpl="UptimeTplTable_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="UptimeTplTable_page"
+	   data-toolbar="UptimeTplTable_toolbar_#(pageId)"
+>
+<thead class="fw-normal" >
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th  data-width="100" data-column="iAutoId">主键ID</th>
+	<th  data-width="100" data-column="iUptimeTplMid">稼动时间参数模板ID</th>
+	<th  data-width="100" data-column="iUptimeCategoryId">稼动时间-参数类别ID</th>
+	<th  data-width="100" data-column="iUptimeParamId">稼动时间-参数ID</th>
+	<th  data-width="100" data-column="iSeq">顺序号</th>
+	<th  data-width="100" data-column="iMins">设定值（分钟数）</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
