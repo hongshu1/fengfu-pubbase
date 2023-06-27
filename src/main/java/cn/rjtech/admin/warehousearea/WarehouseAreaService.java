@@ -386,8 +386,6 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
       String cdepcode = dbTemplate("warehousearea.getiAutoIdByCwhname", Kv.by("cwhname", record.getStr("iWarehouseId"))).queryStr();
       if (StrUtil.isBlank(cdepcode)) {
         return fail(str + "【所属仓库】未找到对应的仓库数据信息,请检查【" + record.getStr("iWarehouseId") + "】仓库数据是否存在仓库档案");
-      } else if (cdepcode.equals("")) {
-        return fail(str + "【所属仓库】未找到对应的仓库数据信息,请检查【" + record.getStr("iWarehouseId") + "】仓库数据是否存在仓库档案");
       }
 
       Date now = new Date();

@@ -26,7 +26,9 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 仓库建模-仓库档案
@@ -396,16 +398,18 @@ public class WarehouseService extends BaseService<Warehouse> {
     }
 
     int i = 1;
+    Map<String, Object> codeMap = new HashMap<>();
+    Map<String, Object> nameMap = new HashMap<>();
     for (Record record : records) {
       String str = "第【" + i + "】行的";
       if (StrUtil.isBlank(record.getStr("cWhCode"))) {
-        return fail(str + "仓库编码不能为空");
+        return fail(str + "【仓库编码】不能为空");
       }
       if (StrUtil.isBlank(record.getStr("cWhName"))) {
-        return fail(str + "仓库名称不能为空");
+        return fail(str + "【仓库名称】不能为空");
       }
       if (StrUtil.isBlank(record.getStr("cDepCode"))) {
-        return fail(str + "所属部门名称不能为空");
+        return fail(str + "【所属部门名称】不能为空");
       }
 
 
@@ -448,6 +452,20 @@ public class WarehouseService extends BaseService<Warehouse> {
       }
       //</editor-fold>
 
+      if (i == 1) {
+        codeMap.put(record.getStr("cwhcode"), i);
+        nameMap.put(record.getStr("cwhname"), i);
+      } else {
+        if (codeMap.get(record.getStr("cwhcode")) != null) {
+          return fail(str + "【仓库编码】和第【" + codeMap.get(record.getStr("cwhcode")) + "】行的【仓库编码】重复，请修改后重新导入");
+        }
+        if (nameMap.get(record.getStr("cwhname")) != null) {
+          return fail(str + "【仓库名称】和第【" + nameMap.get(record.getStr("cwhname")) + "】行的【仓库名称】重复，请修改后重新导入");
+        }
+        codeMap.put(record.getStr("cwhcode"), i);
+        nameMap.put(record.getStr("cwhname"), i);
+      }
+
 
       Integer isRepetition1 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhcode", record.getStr("cwhcode"))).queryInt();
       if (isRepetition1 >= 1) {
@@ -457,12 +475,19 @@ public class WarehouseService extends BaseService<Warehouse> {
 
       Integer isRepetition2 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhname", record.getStr("cwhname"))).queryInt();
       if (isRepetition2 >= 1) {
-        String msg = str + "【仓库名称】已经存在，请修改后重新导入";
-        return fail(msg);
+        return fail(str + "【仓库名称】已经存在，请修改后重新导入");
       }
 
       String cdepcode = dbTemplate("warehouse.getCdepnameByCdepcode", Kv.by("cdepname", record.getStr("cdepcode"))).queryStr();
+      if (StrUtil.isBlank(cdepcode)) {
+        return fail(str + "【所属部门名称】未找到对应的部门数据信息,请检查【" + record.getStr("cdepcode") + "】部门数据是否存在部门档案");
+      }
 
+      if (record.getStr("isspacecontrolenabled").equals("否")) {
+        if (!StrUtil.isBlank(record.getStr("isspacecontrolenabled")) && !StrUtil.isBlank(record.getStr("isspacecontrolenabled"))) {
+          return fail(str + "【是否启用空间管控】为【否】时，【最大存储数】【最大存储空间】的数据必须为空，请确定数据后修改重新导入");
+        }
+      }
 
       //空间管控
       int isSpaceControlEnabled = record.getStr("isspacecontrolenabled").equals("是") ? 1 : 0;
@@ -470,6 +495,15 @@ public class WarehouseService extends BaseService<Warehouse> {
       int isStockWarnEnabled = record.getStr("isstockwarnenabled").equals("是") ? 1 : 0;
       //启动库区
       int isreservoirarea = record.getStr("isReservoirArea").equals("是") ? 1 : 0;
+
+      if (!StrUtil.isBlank(record.getStr("cwhperson"))) {
+        String cpsn_num = dbTemplate("warehouse.getCpsnnameByCpsnnum", Kv.by("cdepname", record.getStr("cWhPerson"))).queryStr();
+        if (StrUtil.isBlank(cpsn_num)) {
+          return fail(str + "【负责人姓名】未找到对应的人员数据信息,请检查【" + record.getStr("cWhPerson") + "】人员数据是否存在人员档案");
+        } else {
+          record.set("cwhperson", cpsn_num);
+        }
+      }
 
       Date now = new Date();
 
