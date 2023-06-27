@@ -119,7 +119,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
         Page<Record> paginate = dbTemplate("weekorderm.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
-       change(paginate.getList());
+        change(paginate.getList());
         return paginate;
     }
 

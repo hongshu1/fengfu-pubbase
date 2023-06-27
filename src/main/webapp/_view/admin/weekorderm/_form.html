@@ -132,16 +132,19 @@
                             <div class="col-md-3">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">销售部门</label>
-                                    <input type="hidden" name="weekOrderM.iDepartmentId"
-                                           value="#(weekOrderM.iDepartmentId??)" id="cdepcode"
-                                           data-value-attr="iautoid" />
                                     <div class="col-8">
-                                        <input type="text" class="form-control" data-autocomplete
-                                               data-url="admin/salesShipmentList/department"
-                                               data-hidden-input="cdepcode" data-text-attr="cdepname"
-                                               data-column-attr="cdepcode,cdepname" placeholder="请选销售部门"
-                                               data-tips="请选销售部门"
-                                               data-header="销售部门编码,销售部门名称" maxlength="40" value="#(weekOrderM.cdepname??)">
+                                        <select class="form-control" name="weekOrderM.iDepartmentId"
+                                                data-autoload
+                                                data-with-clearbtn="true"
+                                                data-select-type="select2"
+                                                data-tips="请选择"
+                                                data-url="admin/dept/enableOptions"
+                                                data-text="=请选择="
+                                                data-text-attr="name"
+                                                data-value-attr="id"
+                                                data-width="218"
+                                                data-select="#(weekOrderM.iDepartmentId??)">
+                                        </select>
                                     </div>
                                 </div>
                             </div>
