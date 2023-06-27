@@ -18,6 +18,9 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * 稼动时间参数
  * @ClassName: UptimeParamAdminController
@@ -115,6 +118,14 @@ public class UptimeParamAdminController extends BaseAdminController {
 	 */
 	public void exportExcelAll() throws Exception {
 		Page<Record> recordPage = service.getAdminDatas(1, 100000, getKv());
+		List<Record> rows = recordPage.getList();
+		if (!rows.isEmpty()) {
+			rows = rows.stream().map(row -> {
+				row.put("isenabled", row.getBoolean("isenabled") ? "是" : "否");
+				row.put("dcreatetime", DateUtil.format(row.getDate("dcreatetime"), "yyyy-MM-dd HH:mm"));
+				return row;
+			}).collect(Collectors.toList());
+		}
 		renderJxls("uptimeparam.xlsx", Kv.by("rows", recordPage.getList()), "稼动时间参数导出_" + DateUtil.today() + ".xlsx");
 	}
 }
