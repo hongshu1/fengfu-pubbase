@@ -99,8 +99,55 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
      * @return
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-        Page<Record> paginate = dbTemplate("materialsprepare.recpor", kv).paginate(pageNumber, pageSize);
-        return paginate;
+        List<Record> list = dbTemplate("materialsprepare.recpor", kv).find();
+        if (list.size()>=1){
+            for (int l=0;l<list.size();l++){
+                //备料单ID
+                String autoID = list.get(l).get("AutoID");
+                //工单ID
+                String mdID = list.get(l).get("mdID").toString();
+                //查询子件物料集
+                Kv kv1 = new Kv();
+                kv1.set("imodocid",mdID);
+                List<Record> zijianwuliaojiS = dbTemplate("materialsprepare.zijianwuliaoji", kv1).find();
+                //计算子件物料计划总数
+                if (zijianwuliaojiS!=null && !zijianwuliaojiS.isEmpty()){
+                    BigDecimal qtyAll = new BigDecimal(0);
+                    for (int c=0;c<zijianwuliaojiS.size();c++){
+                        qtyAll=qtyAll.add(zijianwuliaojiS.get(c).get("planIqty"));
+                    }
+                    //查询已备料子件数量
+                    Kv kv2 = new Kv();
+                    kv2.set("autoID",autoID);
+                    List<Record> yibeiliao = dbTemplate("materialsprepare.checkQty", kv2).find();
+                    BigDecimal qtyAll1 = new BigDecimal(0);
+                    String daxiao="";
+                    if (yibeiliao!=null && !yibeiliao.isEmpty()){
+                        for (int r=0;r<yibeiliao.size();r++){
+                            qtyAll1=qtyAll1.add(yibeiliao.get(r).get("Qty"));
+                        }
+                        //进行大小对比
+                        int o = qtyAll.compareTo(qtyAll1);
+                        switch(o){
+                            case 0 :
+                                daxiao="已完成";
+                            case 1 :
+                                daxiao="备料中";
+                        }
+                    }else {
+                        daxiao="待备料";
+                    }
+                    list.get(l).set("isFinish",daxiao);
+                }
+            }
+        }
+        //处理页量页码信息
+        int totalRow=list.size();
+        int totalPage=totalRow/pageSize;
+        if (totalPage*pageSize<totalRow){
+            totalPage++;
+        }
+        return new Page(list,pageNumber, pageSize,totalPage,totalRow);
     }
 
     /**
@@ -218,6 +265,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                         record.set("cMoDocNo",recordList.get(i).get("cMoDocNo"));
                         record.set("WhCode",recordList.get(i).get("WhCode"));
                         record.set("PosCode",recordList.get(i).get("PosCode"));
+                        record.set("scanqty",0);
                         //获取已备料数量
                         Kv kv1 = new Kv();
                         kv1.set("iAutoId",recordList.get(i).get("AutoID"));
@@ -279,6 +327,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                 record.set("cUomName",recordList.get(i).get("cUomName"));
                 record.set("WhCode",recordList.get(i).get("WhCode"));
                 record.set("PosCode",recordList.get(i).get("PosCode"));
+                record.set("scanqty",0);
                 //获取已备料数量
                 Kv kv1 = new Kv();
                 kv1.set("iAutoId",recordList.get(i).get("AutoID"));

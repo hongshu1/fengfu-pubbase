@@ -74,12 +74,6 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
         render("index.html");
     }
 
-//   /**
-//	* 数据源
-//	*/
-//	public void datas() {
-//		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("BillType")));
-//	}
 
     /**
      * 新增
