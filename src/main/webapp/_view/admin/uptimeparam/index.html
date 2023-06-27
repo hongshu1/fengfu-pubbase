@@ -65,18 +65,22 @@
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
                 </button>
                 <button data-downloadbtn class="btn btn-outline-primary btn-sm" data-url="admin/uptimeParam/exportExcelAll"><i class="fa fa-download"></i>数据导出</button>
-                <div class="j_upload_file_box"
-                     data-name="file"
-                     data-btn-class="btn dropdown-item"
-                     data-placeholder="数据导入"
-
-                     data-form="WeekOrderM_Form"
-                     data-confirm="确认导入数据？"
-                     data-accept="excel"
-                     data-maxsize="20480"
-                     data-handler="uploadFile"
-                     data-upload-success-handler="uploadHandler"
-                     data-url="/admin/dataimport/importExcelData">
+                <div class="btn-group dropdown">
+                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importTableButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入</button>
+                    <div class="dropdown-menu" aria-labelledby="importMenuButton">
+                        <a data-downloadbtn href="/admin/uptimeParam/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>模板下载</a>
+                        <div class="j_upload_file_box"
+                             data-name="file"
+                             data-btn-class="btn dropdown-item"
+                             data-placeholder="上传导入"
+                             data-confirm="确认导入数据？"
+                             data-accept="excel"
+                             data-maxsize="20480"
+                             data-handler="uploadFile"
+                             data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                             data-url="/admin/uptimeParam/importExcelData">
+                        </div>
+                    </div>
                 </div>
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新
                 </button>
