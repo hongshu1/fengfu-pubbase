@@ -37,16 +37,32 @@
                   data-refresh="true"
                   data-notnull="true">
           </select>
-
-
         </div>
       </div>
+
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">负责人</label>
         <div class="col-10">
-          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入负责人"
-                 maxlength="40" name="warehouse.cWhPerson" value="#(warehouse.cWhPerson??)"/>
+          <select class="form-control"
+                  data-autoload
+                  name="warehouse.cWhPerson"
+                  data-select-type="select2"
+                  data-rule="select"
+                  data-tips="负责人"
+                  data-url="admin/department/selectPerson"
+                  data-text="=负责人="
+                  data-value=""
+                  data-text-attr="cpsnname"
+                  data-value-attr="cpsnnum"
+                  data-select="#(warehouse.cWhPerson??)"
+                  data-refresh="true"
+                  data-notnull="true">
+          </select>
         </div>
+        <!--        <div class="col-10">-->
+        <!--          <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入负责人"-->
+        <!--                 maxlength="40" name="warehouse.cWhPerson" value="#(warehouse.cWhPerson??)"/>-->
+        <!--        </div>-->
       </div>
 
       <div class="form-group row"
