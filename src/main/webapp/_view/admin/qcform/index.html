@@ -40,6 +40,23 @@
                 <button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑质量建模-检验表格" data-check-handler="jboltTableGetCheckedId" data-url="admin/qcform/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/qcform/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+
+<!--                <div class="btn-group dropdown">-->
+<!--                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importBomButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>-->
+<!--                    <div class="dropdown-menu" aria-labelledby="importBomButton">-->
+<!--                        <a data-downloadbtn href="/admin/qcform/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>-->
+<!--                        <div class="j_upload_file_box"-->
+<!--                             data-name="file"-->
+<!--                             data-btn-class="btn dropdown-item"-->
+<!--                             data-placeholder="上传导入"-->
+<!--                             data-confirm="确认导入数据？"-->
+<!--                             data-accept="excel"-->
+<!--                             data-handler="uploadFile"-->
+<!--                             data-upload-success-handler="uploadSuccessHandler"-->
+<!--                             data-url="/admin/qcform/importExcelFile">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
             </div>
         </div>
         

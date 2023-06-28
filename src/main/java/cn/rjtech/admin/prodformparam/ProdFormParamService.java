@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.rjtech.model.momdata.QcFormParam;
+import cn.rjtech.model.momdata.QcParam;
 import cn.rjtech.model.momdata.SpotCheckFormParam;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -99,6 +100,7 @@ public class ProdFormParamService extends BaseService<ProdFormParam> {
 		if (ObjectUtil.isNull(id)){
 			id = JBoltSnowflakeKit.me.nextId();
 		}
+		qcFormParam.setIProdParamId(qcParamId);
 		qcFormParam.setIAutoId(id);
 		qcFormParam.setIProdFormId(qcFormId);
 		qcFormParam.setIProdFormItemId(qcFormItemId);
@@ -120,8 +122,8 @@ public class ProdFormParamService extends BaseService<ProdFormParam> {
 					null,
 					qcFormId,
 					jsonObject.getLong(ProdFormParam.IPRODFORMITEMID.toLowerCase()),
-					jsonObject.getLong(ProdFormParam.IPRODITEMID.toLowerCase()),
-					jsonObject.getLong(ProdFormParam.IPRODFORMID.toLowerCase()),
+					jsonObject.getLong(QcFormParam.IQCITEMID.toLowerCase()),
+					jsonObject.getLong(QcFormParam.IQCPARAMID.toLowerCase()),
 					jsonObject.getInteger(ProdFormParam.IITEMSEQ.toLowerCase()),
 					jsonObject.getInteger(ProdFormParam.IITEMPARAMSEQ.toLowerCase()),
 					false
