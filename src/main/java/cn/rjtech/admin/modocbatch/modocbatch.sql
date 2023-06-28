@@ -215,7 +215,7 @@ FROM
 WHERE
 	bdperson.cPsn_Num IS NOT NULL
 	AND bdperson.cPsn_Name IS NOT NULL
-	AND doc.iAutoId IN (#(docid))
+	AND doc.iMoTaskId = (#(taskid))
 #end
 
 #sql("getModocDutyPersonnameByDocid")

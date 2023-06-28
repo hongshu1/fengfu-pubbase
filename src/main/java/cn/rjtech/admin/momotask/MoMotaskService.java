@@ -679,7 +679,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
 
 
             //<editor-fold desc="5.获取人员信息 modocid1  value:List<String>">
-            List<Record> list2 = dbTemplate("modocbatch.getModocPersonnameByDocid", Kv.by("docid", CollUtil.join(modocidList, ","))).find();
+            List<Record> list2 = dbTemplate("modocbatch.getModocPersonnameByDocid", kv).find();
             Map<String, List<Record>> map2 = new HashMap<>();
             for (Record record2 : list2) {
               String dateSplicing = record2.getStr("dateSplicing");
@@ -852,7 +852,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
               String matchingid = year + imonth + idate + iworkshiftmid;
               boolean bol = false;
               if (map2.size() > 0) {
-                if (map2.get(matchingid).size() > 0) {
+                List<Record> records11 = map2.get(matchingid) == null ? new ArrayList<>() : map2.get(matchingid);
+                if (records11.size() > 0) {
                   bol = true;
                 }
               }
