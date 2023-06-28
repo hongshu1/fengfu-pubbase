@@ -195,11 +195,21 @@
 
     </div>
 
-    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysPureceive.AutoID??)
-           data-ajax="true" data-url="admin/sysPureceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)" #end
-           id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
-           data-rowtpl="sysPureceive_tpl_#(pageId)" data-toolbar="sysPureceive_toolbar_#(pageId)" data-editable="true"
-           data-page="sysPureceive_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
+    <table class="jbolt_table thead_font_normal table-bordered table-center" 
+           data-jbolttable 
+           #if(sysPureceive.AutoID??)
+           data-ajax="true" 
+           data-url="admin/sysPureceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)" 
+           #end
+           id="jbolt_Table_#(pageId)" 
+           data-column-resize="true" 
+           ###data-tfoot-fixed="true" 
+           data-column-prepend="1:checkbox"
+           data-rowtpl="sysPureceive_tpl_#(pageId)" 
+           data-toolbar="sysPureceive_toolbar_#(pageId)" 
+           data-editable="true"
+           ###data-page="sysPureceive_tpl_#(pageId)" 
+           data-editable-option="getJBoltTableEditableColsOpton_#(pageId)">
         <thead class="fw_normal">
         <tr>
             <th data-width="50" data-column="index">序号</th>
@@ -251,7 +261,7 @@
             var whcode1 = $("#whcode1").val();
             Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode,"whcode1":whcode1},
                 function (res) {
-                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false);
+                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, true, false);
                     $("#barcode").val('');
                 }, function (err) {
                 })
@@ -259,48 +269,48 @@
             LayerMsgBox.alert("请输入条码")
         }
     }
+    
     function coverall(ele) {
-
-        var action=getRealJqueryObject(ele);
-        if(isOk(action)){
+        var action = getRealJqueryObject(ele);
+        if (isOk(action)) {
             var success = checkMasterTableId(action);
-            if(!success){
+            if (!success) {
                 return false;
             }
         }
-        var isCheckedNone=jboltTableIsCheckedNone(ele);
-        console.log("isCheckedNone",isCheckedNone)
-        if(isCheckedNone){
-            var careacode = $("#careacode").val();
-            var careaname = $("#careaname").val();
-            console.log(careacode  +careaname  );
-            let data = [{"column":"poscode","text":careacode,"value":careacode}];
-            jboltTableBatchSetColumns(jbolt_Table_#(pageId),data,true);
-        }else{
-            var datas=jboltTableGetCheckedDatas(ele);
-            console.log("datas",datas)
-            if(datas){
-                LayerMsgBox.confirm("所选数据中确定覆盖吗？",function(){
-                    // removeJBoltTableCheckedTr(ele,false,callback);
-                    var careacode = $("#careacode").val();
-                    var careaname = $("#careaname").val();
-                    console.log(careacode  +careaname  );
-                    let data = [{"column":"poscode","text":careacode,"value":careacode}];
-                    jboltTableBatchSetColumns(ele,data,true);
+
+        var isCheckedNone = jboltTableIsCheckedNone(ele);
+        console.log("isCheckedNone", isCheckedNone);
+
+        var careacode = $("#careacode").val();
+        var careaname = $("#careaname").val();
+        console.log(careacode + careaname);
+
+        if (isCheckedNone) {
+            let data = [{"column": "poscode", "text": careacode, "value": careacode}];
+            jboltTableBatchSetColumns(jbolt_Table_#(pageId), data, true);
+        } else {
+            var datas = jboltTableGetCheckedDatas(ele);
+            console.log("datas", datas)
+
+            if (datas) {
+
+                var $table = $('#jbolt_Table_#(pageId)');
+
+                LayerMsgBox.confirm("所选数据中确定覆盖吗？", function () {
+                    $.each(datas, function (index, row) {
+
+                        row.careacode = careacode;
+
+                        var $tr = $('tr[data-id="' + row.autoid + '"]');
+                        
+                        jboltTableSetCell($table, $tr, 'poscode', row.careacode, row.careacode);
+                    })
                 });
             }
             return true;
-
         }
         return false;
-
-        //
-        // var careacode = $("#careacode").val();
-        // var careaname = $("#careaname").val();
-        // console.log(careacode  +careaname  );
-        // let data = [{"column":"poscode","text":careacode,"value":careacode}];
-        // jboltTableBatchSetColumns(jbolt_Table_#(pageId),data,true);
-
     }
 
     function save() {
@@ -318,7 +328,6 @@
         jboltTableSubmit("#jbolt_Table_#(pageId)");
     }
 
-
     function submitThisForm() {
         // LayerMsgBox.alert("模块待开发")
         $("#operationType").val("submit");
@@ -327,14 +336,16 @@
         return true;
     }
 
-    function getJBoltTableEditableColsOpton() {
+    function getJBoltTableEditableColsOpton_#(pageId)() {
         var editableTableOptions = {
-
             submit: {
                 withForm: ["sysPureceive_#(pageId)"],
                 name: 'sysPureceive',
                 type: "all",
                 url: "/admin/materialReceiptList/submitAll",
+                afterInsertRowHandler: function (table, tr) {
+                    jboltTableSetCell(table, tr, 'autoid', null, null, true);
+                },
                 success: function (res) {
                     var state = res.state;
                     if (state==='ok'){
@@ -389,7 +400,6 @@
                     url: "admin/materialReceiptList/Whcode",
                     maxLength: 100,
                     required: true,
-                    placeholder: "请选择仓库编码",
                     textAttr: "whcode",
                     width: 500,
                     valueAttr: "whcode",//选择赋值的字段
@@ -407,7 +417,6 @@
                     url: "admin/materialReceiptList/wareHousepos",
                     maxLength: 100,
                     required: true,
-                    placeholder: "请选择库区编码",
                     textAttr: "careacode",
                     width: 500,
                     valueAttr: "careacode",//选择赋值的字段
@@ -419,7 +428,7 @@
                     handler:function (table,td,text,value,jsonData) {
                         let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["cinvcode"]);
                         //获取打开初物开关的数据
-                        let arrayisinitial = new Array();
+                        let arrayisinitial = [];
                         if (datas != null){
                             for (var i = 0; i < datas.length; i++){
                                 var data = datas[i];
@@ -484,7 +493,7 @@
                         handler:function (table,td,text,value,jsonData) {
                             let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
                             console.log("data==>",datas);
-                            let array = new Array();
+                            let array = [];
                             if (datas != null){
                                 for (var i = 0; i < datas.length; i++){
                                     var data = datas[i];
@@ -534,17 +543,17 @@
                         }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}, {column: "billtype", use: "ipurchasetypeid"}],
 
                         handler:function (table,td,text,value,jsonData) {
-                            let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
-                            console.log("data==>",datas);
-                            let array = new Array();
-                            if (datas != null){
-                                for (var i = 0; i < datas.length; i++){
+                            let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
+                            console.log("data==>", datas);
+                            let array = [];
+                            if (datas != null) {
+                                for (var i = 0; i < datas.length; i++) {
                                     var data = datas[i];
-                                    array.push("'"+data.barcode+"'");
+                                    array.push("'" + data.barcode + "'");
                                     let codes = array.join(',');
                                     $("#detailHidden").val(codes);
                                 }
-                            }else {
+                            } else {
                                 $("#detailHidden").val('');
                             }
                         }
