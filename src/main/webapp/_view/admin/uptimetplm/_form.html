@@ -2,6 +2,8 @@
     #if(uptimeTplM.iautoid??)
     <input type="hidden" name="uptimeTplM.iAutoId" value="#(uptimeTplM.iautoid??)"/>
     #end
+    <input type="hidden" id="uptimetplcategorydatas" name="uptimetplcategorydatas" value=""/>
+    <input type="hidden" id="uptimetpltabledatas" name="uptimetpltabledatas" value=""/>
     <div class="row">
         <div class="col">
             <div class="form-group row">
@@ -10,15 +12,15 @@
                     <input type="text" data-rule="required" data-notnull="true" data-tips="请输入类别编码"
                            data-with-clearbtn="true"
                            autocomplete="off" class="form-control" placeholder="请输入类别编码" maxlength="40"
-                           name="uptimeTplM.cUptimeCategoryCode"
-                           value="#(uptimeTplM.cuptimecategorycode??)"/>
+                           name="uptimeTplM.iWorkRegionMid"
+                           value="#(uptimeTplM.cuptimecategoryname??)"/>
                 </div>
                 <label class="col-sm-1 col-form-label">班次名称:</label>
                 <div class="col-2">
                     <input type="text" data-rule="required" data-notnull="true" data-tips="请输入班次名称"
                            data-with-clearbtn="true"
                            autocomplete="off" class="form-control" placeholder="请输入班次名称" maxlength="40"
-                           name="uptimeTplM.cUptimeCategoryName"
+                           name="uptimeTplM.iWorkShiftMid"
                            value="#(uptimeTplM.cuptimecategoryname??)"/>
                 </div>
             </div>
@@ -28,24 +30,24 @@
                     <input type="text" data-notnull="true" data-rule="required" data-tips="请输入类别名称"
                            data-with-clearbtn="true"
                            autocomplete="off" class="form-control" placeholder="请输入类别名称" maxlength="40"
-                           name="uptimeTplM.cUptimeCategoryName"
-                           value="#(uptimeTplM.cuptimecategoryname??)"/>
+                           name="uptimeTplM.iBaseMins"
+                           value="#(uptimeTplM.ibasemins??)"/>
                 </div>
                 <label class="col-sm-1 col-form-label">不稼动时间(分钟):</label>
                 <div class="col-2">
                     <input type="text" data-notnull="true" data-rule="required" data-tips="请输入类别名称"
                            data-with-clearbtn="true"
                            autocomplete="off" class="form-control" placeholder="请输入类别名称" maxlength="40"
-                           name="uptimeTplM.cUptimeCategoryName"
-                           value="#(uptimeTplM.cuptimecategoryname??)"/>
+                           name="uptimeTplM.iStopMins"
+                           value="#(uptimeTplM.istopmins??)"/>
                 </div>
                 <label class="col-sm-1 col-form-label">机种切换时间(分钟):</label>
                 <div class="col-2">
                     <input type="text" data-notnull="true" data-rule="required" data-tips="请输入类别名称"
                            data-with-clearbtn="true"
                            autocomplete="off" class="form-control" placeholder="请输入类别名称" maxlength="40"
-                           name="uptimeTplM.cUptimeCategoryName"
-                           value="#(uptimeTplM.cuptimecategoryname??)"/>
+                           name="uptimeTplM.iSwitchMins"
+                           value="#(uptimeTplM.iswitchmins??)"/>
                 </div>
             </div>
             <div class="form-group row">
@@ -54,16 +56,16 @@
                     <input type="text" data-notnull="true" data-tips="请输入班次名称"
                            data-with-clearbtn="true"
                            autocomplete="off" class="form-control" placeholder="请输入班次名称" maxlength="40"
-                           name="uptimeTplM.cUptimeCategoryName"
-                           value="#(uptimeTplM.cuptimecategoryname??)"/>
+                           name="uptimeTplM.iOtMins"
+                           value="#(uptimeTplM.iotmins??)"/>
                 </div>
                 <label class="col-sm-1 col-form-label">工作时间(分钟):</label>
                 <div class="col-2">
                     <input type="text" data-notnull="true" data-tips="请输入班次名称"
                            data-with-clearbtn="true"
                            autocomplete="off" class="form-control" placeholder="请输入班次名称" maxlength="40"
-                           name="uptimeTplM.cUptimeCategoryName"
-                           value="#(uptimeTplM.cuptimecategoryname??)"/>
+                           name="uptimeTplM.iWorkMins"
+                           value="#(uptimeTplM.iworkmins??)"/>
                 </div>
             </div>
         </div>
@@ -108,6 +110,127 @@
 </form>
 #define js()
 <script>
+
+    // 表格分类可编辑
+    function jbolt_table_edittable_#(pageId)()
+    {
+        var editableTableOptions = {
+            submit: {
+                withForm: ["UptimeTplM_Form"],
+                type: "all",
+                name:"Tpls",
+                url: "/admin/uptimeTplM/submitAll",
+                success: function (res, table, td) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success(res.msg, 1000, function () {
+                            parent.LayerMsgBox.closeAll();
+                            parent.refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                index: {
+                    submitAttr: "iseq",
+                },
+                iMins:{
+                    type:"amount",
+                    placeholder: '分钟',
+                    required: true,
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+
+    // 表格内容可编辑
+    function instDatas(datas) {
+        // 插入表格分类
+        jboltTableInsertRow("jbolt_table_uptime_tpl_category", datas);
+
+        var iUptimeCategoryIds = [];
+        for (let i in datas) {
+            iUptimeCategoryIds.push(datas[i].iautoid);
+        }
+
+        Ajax.get("admin/uptimeCategory/uptimeTplTableDatas?iuptimecategoryids=" + iUptimeCategoryIds, function (res) {
+            if (res.data) {
+                jboltTableInsertRow("jbolt_table_uptimetpltable_split", res.data);
+            }
+        });
+
+        editTplDatas();
+    }
+
+    // 封装表格数据
+    function editTplDatas() {
+        var categoryDatas = getJboltTableAllDatas("jbolt_table_uptime_tpl_category");
+        $("#uptimetplcategorydatas").val(JSON.stringify(categoryDatas));
+        var tableDatas = getJboltTableAllDatas("jbolt_table_uptimetpltable_split");
+        $("#uptimetpltabledatas").val(JSON.stringify(tableDatas));
+    }
+
+    // 获取不需要新增数据
+    function getNotIuptimecategoryids() {
+        var datas = getJboltTableAllDatas("jbolt_table_uptime_tpl_category");
+        var notIuptimecategoryids = [];
+        if (datas) {
+            for (let i in datas) {
+                notIuptimecategoryids.push(datas[i].iautoid);
+            }
+            return notIuptimecategoryids
+        }
+        return notIuptimecategoryids;
+    }
+
+    function removeTplTable(iuptimecategoryid) {
+        updateTable("jbolt_table_uptimetpltable_split", iuptimecategoryid, "iuptimecategoryid");
+    }
+
+    // 修改表格数据
+    function updateTable(tableId, iuptimecategoryid, attrName) {
+        var datas = getJboltTableAllDatas(tableId);
+        var newDats = [];
+        if (datas) {
+            for (let i in datas) {
+                var tpliuptimecategoryid = datas[i][attrName];
+                if (iuptimecategoryid != tpliuptimecategoryid) {
+                    newDats.push(datas[i]);
+                }
+            }
+        }
+
+        jboltTableClear(tableId);
+        if (newDats.length > 0) {
+            jboltTableInsertRow(tableId, newDats);
+        }
+
+        editTplDatas();
+    }
+
+    // 删除表格内容校验是否删除表格分类
+    function checkOrUpdateTplCategory(iuptimecategoryid) {
+        var tableDatas = getJboltTableAllDatas("jbolt_table_uptimetpltable_split");
+        var deleteLogo = false;
+        if (!tableDatas) {
+            deleteLogo = true;
+        } else {
+            for (let i in tableDatas) {
+                // 还存在相关分类数据
+                if (iuptimecategoryid == tableDatas[i].iuptimecategoryid) {
+                    deleteLogo = false;
+                    return;
+                }
+            }
+            deleteLogo = true
+        }
+
+        if (deleteLogo) {
+            updateTable("jbolt_table_uptime_tpl_category", iuptimecategoryid, "iautoid");
+        }
+    }
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="UptimeTplM_Form")
 #end
