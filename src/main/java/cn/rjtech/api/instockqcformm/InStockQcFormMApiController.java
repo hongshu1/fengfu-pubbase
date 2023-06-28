@@ -1,17 +1,18 @@
 package cn.rjtech.api.instockqcformm;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.crossorigin.CrossOrigin;
 import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.admin.instockdefect.InStockDefectService;
 import cn.rjtech.admin.instockqcformd.InStockQcFormDService;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.instockqcformm.*;
+import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMApiCheckOutVo;
 import cn.rjtech.util.ValidationUtils;
 
 import com.jfinal.aop.Inject;
@@ -99,7 +100,7 @@ public class InStockQcFormMApiController extends BaseApiController {
      *
      * @param iautoid 主键
      * */
-    @ApiDoc(result = InStockQcFormMApiJumpCheckOutVo.class)
+    @ApiDoc(result = RcvDocQcFormMApiCheckOutVo.class)
     @UnCheck
     public void jumpCheckOut(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
@@ -107,12 +108,12 @@ public class InStockQcFormMApiController extends BaseApiController {
     }
 
     /*
-     * 跳转到checkout页面后，自动加载table数据
+     * @desc 跳转到详情页面，获取table数据
      * @param iinstockqcformmid：主表主键
      * */
     @ApiDoc(result = InStockAutoGetCheckOutTableDatasVo.class)
     @UnCheck
-    public void autoGetCheckOutTableDatas(@Para(value = "iinstockqcformmid") Long iinstockqcformmid) {
+    public void autoGetTableDatas(@Para(value = "iinstockqcformmid") Long iinstockqcformmid) {
         ValidationUtils.notNull(iinstockqcformmid, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(apiService.autoGetCheckOutTableDatas(iinstockqcformmid));
     }
@@ -131,7 +132,8 @@ public class InStockQcFormMApiController extends BaseApiController {
                              @Para(value = "serializeSubmitList") String serializeSubmitList,
                              @Para(value = "cmemo") String cmemo) {
         ValidationUtils.notNull(iinstockqcformmid, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.notNull(serializeSubmitList, JBoltMsg.PARAM_ERROR);
+//        ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, iinstockqcformmid, cmeasureunit, isok, cmeasurereason,
             serializeSubmitList, cmemo));
     }
@@ -153,17 +155,6 @@ public class InStockQcFormMApiController extends BaseApiController {
     public void jumpOnlySee(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(apiService.jumpOnlySee(iautoid));
-    }
-
-    /**
-     * 跳转到onlysee或者edit页面，自动加载table数据
-     */
-    @ApiDoc(result = InStockAutoGetOnlyseeTableDatasVo.class)
-    @UnCheck
-    public void autoGetOnlySeeOrEditTableDatas(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-
-        renderJBoltApiRet(apiService.autoGetOnlySeeOrEditTableDatas(iautoid));
     }
 
     /*
@@ -200,7 +191,7 @@ public class InStockQcFormMApiController extends BaseApiController {
                          @Para(value = "cmemo") String cmemo) {
         ValidationUtils.notNull(cmeasurepurpose, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(iinstockqcformmid, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
+//        ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(serializeSubmitList, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
 
@@ -223,8 +214,51 @@ public class InStockQcFormMApiController extends BaseApiController {
      *       需维护相关设置后点击“生成”按钮，生成检查成绩表。
      * @param cbarcode：现品票
      * */
-    public void createInStockQcFormByCbarcode(@Para(value = "cbarcode") String cbarcode){
+    @ApiDoc(result = FindDetailByBarcodeVo.class)
+    @UnCheck
+    public void createInStockQcFormByCbarcode(@Para(value = "cbarcode") String cbarcode) {
         renderJBoltApiRet(apiService.createInStockQcFormByCbarcode(cbarcode));
     }
 
+    /*
+     * 扫描现品票获取弹窗数据
+     * */
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+    public void findDetailByBarcode(@Para(value = "cbarcode") String cbarcode) {
+        ValidationUtils.notNull(cbarcode, cbarcode + "：现品票不存在！！！");
+        renderJBoltApiRet(apiService.findDetailByBarcode(cbarcode));
+    }
+
+    /*
+     * 弹窗页面点击“确定”按钮，新增数据
+     * @param cbarcode：现品票
+     * qty：数量
+     * invcode：存货编码
+     * cinvcode1：客户部番
+     * cinvname1：部品名称
+     * iinventoryid：bd_inventory表的主键
+     * cdcno：设变号
+     * cmeasurereason：测定理由
+     * iqcformid：bd_qcform表的主键
+     */
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+    public void saveInStockQcFormByCbarcode(@Para(value = "cbarcode") String cbarcode,
+                                            @Para(value = "iqty") BigDecimal iqty,
+                                            @Para(value = "invcode") String invcode,
+                                            @Para(value = "cinvcode1") String cinvcode1,
+                                            @Para(value = "cinvname1") String cinvname1,
+                                            @Para(value = "iinventoryid") String iinventoryid,
+                                            @Para(value = "cdcno") String cdcno,
+                                            @Para(value = "cmeasurereason") String cmeasurereason,
+                                            @Para(value = "iqcformid") String iqcformid) {
+        ValidationUtils.notNull(cbarcode, cbarcode + "：现品票不存在！！！");
+        ValidationUtils.notNull(invcode, invcode + "：存货编码不存在！！！");
+        ValidationUtils.notNull(iinventoryid, iinventoryid + "：存货id不存在！！！");
+
+        int qty = iqty.setScale(2,BigDecimal.ROUND_DOWN).intValue();
+        renderJBoltApiRet(apiService.saveInStockQcFormByCbarcode(cbarcode, qty, invcode, cinvcode1, cinvname1,iinventoryid, cdcno,
+            cmeasurereason,Long.valueOf(iqcformid)));
+    }
 }

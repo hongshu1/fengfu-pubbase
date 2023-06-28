@@ -29,6 +29,7 @@ WHERE mt.IsDeleted = '0'
 
 #sql("editplanviewdatas")
 SELECT DISTINCT
+    doc.iworkshiftmid,
 	doc.iYear,
 	doc.iMonth,
 	doc.iDate,

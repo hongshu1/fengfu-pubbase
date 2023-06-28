@@ -101,18 +101,6 @@
 
     function getCheckedStrip(val) {
         $(val).parent().click();
-
-        // if ($(val).parent().parent().find("td")[0].children[0].getAttribute("class")==="jbolt_table_checkbox checked"){
-        //     $(val).parent().parent().find("td")[0].children[0].setAttribute("class","jbolt_table_checkbox")
-        // }else {
-        //     $(val).parent().parent().find("td")[0].children[0].setAttribute("class","jbolt_table_checkbox checked")
-        // }
-
-        // var value = $(val).parent().parent().find("td");
-        // $(val).parent().parent().find("td:eq(0)").checked;
-        // parent.$("#cmodocno").val(value.eq(3).text());
-        // window.parent.refreshJBoltTable();
-        // parent.layer.close(parent.layer.getFrameIndex(window.name));
     }
 
     const BTN1 = document.getElementById('choose');
@@ -122,21 +110,27 @@
         BTN2.onclick();
     });
 
+    //选择按钮
     function choose2() {
-        var itID = jboltTableGetCheckedIds("chooseM", false);
-        var times=0;
-            parent.layer.close(parent.layer.getFrameIndex(window.name));
-            for (i=0;i<itID.length;i++){
-                Ajax.post("admin/sysMaterialspreparedetail/choosemtool", {"cmodocno": $(cmo).val(), "itID": itID[i]},
-                    function (res) {
-                        jboltTableInsertRow(window.parent.getJBoltTable("manual"), res.data, false, false, false);
-                    }, function (err) {
-                        $('#chooseM tbody').empty();
-                        $('#chooseM tr').empty();
-                    });
-            }
-            // window.parent.refreshJBoltTable();
+        //被选中的iinventoryid
+        var itID = jboltTableGetCheckedIds("chooseM", false).toString();
+        parent.window.document.getElementById("manualdata").value=itID;
+        parent.window.document.getElementById("manualdataCMO").value=$(cmo).val();
+        parent.window.document.getElementById("commit").click();
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
 
+
+            // for (i=0;i<itID.length;i++){
+            //     //发送iinventoryid和cmodocno
+            //     Ajax.post("admin/sysMaterialspreparedetail/choosemtool", {"cmodocno": $(cmo).val(), "itID": itID[i]},
+            //         function (res) {
+            //             jboltTableInsertRow(window.parent.getJBoltTable("manual"), res.data, false, false, false);
+            //         }, function (err) {
+            //             $('#chooseM tbody').empty();
+            //             $('#chooseM tr').empty();
+            //         });
+            // }
+            // // window.parent.refreshJBoltTable();
     }
 
 

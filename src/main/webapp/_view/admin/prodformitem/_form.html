@@ -1,0 +1,54 @@
+<form onsubmit="return false;" id="ProdFormItem_Form" action="#(action)" method="post">
+	#if(prodFormItem.iAutoId??)
+	<input type="hidden" name="prodFormItem.iAutoId" value="#(prodFormItem.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="prodFormItem.iAutoId" value="#(prodFormItem.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">生产表格ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入生产表格ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产表格ID" maxlength="40" name="prodFormItem.iProdFormId" value="#(prodFormItem.iProdFormId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">生产项目ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入生产项目ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产项目ID" maxlength="40" name="prodFormItem.iProdItemId" value="#(prodFormItem.iProdItemId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">项次</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入项次"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入项次" maxlength="40" name="prodFormItem.iSeq" value="#(prodFormItem.iSeq??)"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="prodFormItem.isDeleted"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="删除状态;0. 未删除 1. 已删除"
+data-width="col-sm-2,col-10"
+data-value="#(prodFormItem.isDeleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入删除状态;0. 未删除 1. 已删除"
+data-inline="true"
+>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="ProdFormItem_Form")
+#end
+

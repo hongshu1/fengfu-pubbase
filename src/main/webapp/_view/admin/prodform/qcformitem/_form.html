@@ -1,0 +1,131 @@
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+    <script type="text/template" id="itemcombinemSplit_tpl_#(pageId)">
+    {@each datas as data,index}
+        <tr data-id="${data.autoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.cqcformname}</td>
+            <td style="display: none">${data.iqcitemid}</td>
+            <td data-editable="false">${data.cqcitemname}</td>
+<!--			<td><img data-switchbtn data-confirm="确定切换删除状态：0. 未删除 1. 已删除？" data-value="${data.isDeleted}"  data-handler="refreshJBoltTable"  data-url="admin/qcformitem/toggleIsDeleted/${data.id}"/></td>-->
+			<td>
+    <a href="admin/topnav/delete/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
+    <a href="admin/topnav/up/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+    <a href="admin/topnav/down/${data.id}" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+</td>
+        </tr>
+    {@/each}
+    </script>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- 工具条 toolbar -->
+                <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
+
+                    <div class="" role="group" aria-label="btn-group">
+                        <button onclick="addBomcompareTr(this)" class="btn btn-primary btn-sm"><i
+                                class="fa fa-plus"></i> 新增
+                        </button>
+                        <button onclick="jboltTableRemoveCheckedRow(this, true)" class="btn btn-danger btn-sm"><i
+                                class="fa fa-trash"></i> 删除
+                        </button>
+                        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i
+                                class="fa fa-refresh"></i> 刷新
+                        </button>
+                    </div>
+
+                    <div class="clearfix"></div>
+                </div>
+
+                <table class="jbolt_table jbolt_main_table  table-center"
+                       ###id="jbolt_table_bomcompare_split_#(pageId)"
+                       id="jbolt_table_QcFormItem_split"
+                       data-jbolttable
+                       data-width="auto"
+                       data-height="200"
+                       data-ajax="true"
+                       data-column-prepend="1:checkbox:true"
+                       data-toolbar="bomcompare_split_toolbar_#(pageId)"
+                       data-url="/admin/prodForm/getItemCombinedListByPId?iqcformid=#(prodForm.iAutoId??)"
+                       data-rowtpl="itemcombinemSplit_tpl_#(pageId)"
+                       data-column-resize="true"
+                       data-editable="true"
+                       data-editable-option="getQcFormItemTableOptions_split">
+                    <thead>
+                    <tr>
+                        <th data-width="60" data-column="index">项次</th>
+<!--                        <th data-width="100" data-column="iqcformid">检验表格id</th>-->
+                        <th data-width="100" data-column="cqcformname">检验表格</th>
+                        <th data-width="100" data-column="iqcitemid" style="display: none">检验项目id</th>
+                        <th data-width="100" data-column="cqcitemname">检验项目</th>
+                        <!--                        <th data-width="100" data-column="isDeleted">删除状态：0. 未删除 1. 已删除</th>-->
+                        <th data-width="100">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    function addBomcompareTr(ele) {
+        const dataList = jboltTableGetAllDatas('#jbolt_table_QcFormItem_split', ['iqcitemid']);
+        let FormItemCodes = '';
+        if(isOk(dataList)){
+            dataList.forEach((value,index)=>{
+                FormItemCodes = FormItemCodes.concat(",").concat(value.iqcitemid);
+            })
+        }
+        if(isOk(FormItemCodes)){
+            FormItemCodes = FormItemCodes.concat(",");
+        }
+        const url = "/admin/prodForm/qcformitem/qcFormItemDatas?type=1&FormItemCodes=" + FormItemCodes;
+        $(ele).data("url", url);
+        DialogUtil.openBy(ele);
+    }
+
+    function getQcFormItemTableOptions_split(){
+        return {
+            trigger: "click",
+            // insertDefaultValues: {username: '#(JBoltUserKit.getUserName())'},
+            submit: {
+                withForm: ["QcFormForm"],
+                type: "all",
+                url: "/admin/prodForm/submitByJBoltTable",
+                success: function (res, table, td) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success(res.msg, 1000, function () {
+                            refreshPjaxContainer();
+                            parent.LayerMsgBox.closeAll();
+                            parent.refreshPjaxContainer();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            cols: {
+                index: {
+                        submitAttr:"iseq",
+                    },
+                    iqcitemid: {
+                        submitAttr:"iqcitemid",
+                    },
+                cqcitemname: {
+                        submitAttr:"cqcitemname",
+                        type: "input",
+                    },
+
+            }
+        };
+    }
+
+    function insertRow(data) {
+        jboltTableInsertRow('#jbolt_table_QcFormItem_split', data, false);
+    }
+
+</script>

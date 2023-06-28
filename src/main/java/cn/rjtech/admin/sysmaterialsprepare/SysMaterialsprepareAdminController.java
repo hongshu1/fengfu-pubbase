@@ -20,9 +20,12 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 材料备料表
@@ -186,10 +189,22 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void manualDatas() {
-        String cmodocno = get("cmodocno");
-        Kv kv = new Kv();
-        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
-        renderJsonData(service.getManualdatas(getPageNumber(), getPageSize(), kv));
+        String data = get("data");
+        String CMO = get("CMO");
+        if (data==null){
+            renderJsonData(null);
+            return;
+        }
+        //库存ID itID
+        String[] itIds = data.split(",");
+        //去重
+        List list = new ArrayList();
+        for(int x=0;x<itIds.length;x++){
+            if(!list.contains(itIds[x])){
+                list.add(itIds[x]);
+            }
+        }
+        renderJsonData(service.manualmanual(getPageNumber(), getPageSize(), list));
     }
 
     public void detailShow() {

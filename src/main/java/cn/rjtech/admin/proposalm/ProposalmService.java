@@ -324,7 +324,7 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
             });
         }
 
-        return SUCCESS;
+        return successWithData(proposalm.keep("iautoid"));
     }
 
     private void doDeleteProposalds(Object[] delete) {
@@ -472,13 +472,6 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
         });
 
         return SUCCESS;
-    }
-    /**
-     * 处理审批通过的其他业务操作，如有异常返回错误信息
-     */
-    public String postApproveFunc(long formAutoId) {
-  
-        return null;
     }
 	
     /**

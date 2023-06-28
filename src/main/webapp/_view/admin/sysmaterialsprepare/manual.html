@@ -1,237 +1,205 @@
 #@jboltLayout()
 #define main()
 <div class="row">
-
-
-
-
-
-
-
-
-<!--  <form class="form-inline" id="SysMaterialsprepare111_Form" hidden="hidden">-->
-<!--    <input type="text"  data-notnull="false"-->
-<!--           data-tips=""-->
-<!--           data-with-clearbtn="false" autocomplete="off"-->
-<!--           class="form-control" placeholder=""-->
-<!--           maxlength="40" name="cmodocno"-->
-<!--           readonly-->
-<!--           value=""-->
-<!--           id="cmodocnoW"-->
-<!--    />-->
-<!--    <input type="text"  data-notnull="false"-->
-<!--           data-tips=""-->
-<!--           data-with-clearbtn="false" autocomplete="off"-->
-<!--           class="form-control" placeholder=""-->
-<!--           maxlength="40" name="itid"-->
-<!--           readonly-->
-<!--           value=""-->
-<!--           id="itid"-->
-<!--    />-->
-<!--    <button type="submit" class="btn btn-outline-secondary" id="searchhh"><i class="fa fa-search"></i> 搜索-->
-<!--    </button>-->
-<!--  </form>-->
-
-
-
-
-
-
-
-
-
-
-
-
-  <div class="col">
-    <div class="card" style="margin-bottom: 5px">
-      <div class="card-body">
-        <div class="col">
-          <button
-                  class="btn btn-success btn-sm" id="btn1"><i class="fa fa-refresh"></i> 保存
-          </button>
-          <button onclick="closeHandler()"
-                  class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭
-          </button>
+    <div class="col">
+        <div class="card" style="margin-bottom: 5px">
+            <div class="card-body">
+                <div class="col">
+                    <button
+                            class="btn btn-success btn-sm" id="btn1"><i class="fa fa-refresh"></i> 保存
+                    </button>
+                    <button onclick="closeHandler()"
+                            class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="card" style="margin-bottom: 5px">
-      <div class="card-body">
-        <form onsubmit="return false;" id="SysMaterialsprepare_Form" action="#(action)" method="post">
-          #if(moPickItemM.AutoID??)
-          <input type="hidden" name="sysMaterialsprepare.autoid" value="#(sysMaterialsprepare.AutoID??)"/>
-          #end
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">工单号：</label>
-                <div class="col-10">
-                  <input type="text"  data-notnull="false"
-                         data-tips=""
-                         data-with-clearbtn="false" autocomplete="off"
-                         class="form-control" placeholder=""
-                         maxlength="40" name="sysMaterialsprepare.BillNo"
-                         readonly
-                         value="#(cmodocno??)"/>
-                </div>
-              </div>
+        <div class="card" style="margin-bottom: 5px">
+            <div class="card-body">
+                <form class="form-inline" id="SysMaterialsprepare_form_#(pageId)" hidden="hidden">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="被选中的iinventoryid"
+                           name="data" value="" id="manualdata"/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="cmodocno"
+                           name="CMO" value="" id="manualdataCMO"/>
+                    <div class="btn-group text-center mx-1">
+                        <button type="submit" class="btn btn-outline-primary" id="commit"><i class="fa fa-search"></i> 搜索</button>
+                        <button type="button" onclick="form.reset();refreshJBoltTable(this);"
+                                class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
+                        </button>
+                    </div>
+                </form>
+                <form onsubmit="return false;" id="SysMaterialsprepare_Form" action="#(action)" method="post">
+                    #if(moPickItemM.AutoID??)
+                    <input type="hidden" name="sysMaterialsprepare.autoid" value="#(sysMaterialsprepare.AutoID??)"/>
+                    #end
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">工单号：</label>
+                                <div class="col-10">
+                                    <input type="text" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control" placeholder=""
+                                           maxlength="40" name="sysMaterialsprepare.BillNo"
+                                           readonly
+                                           value="#(cmodocno??)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">机型 ：</label>
+                                <div class="col-10">
+                                    <input type="text" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control" placeholder=""
+                                           maxlength="40" name="sysMaterialsprepare.cMoDocNo"
+                                           readonly
+                                           value="#(cequipmentmodelname??)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">存货编码：</label>
+                                <div class="col-10">
+                                    <input type="text" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control"
+                                           placeholder="" maxlength="40" name="sysMaterialsprepare.cInvName1"
+                                           readonly
+                                           value="#(cinvcode??)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">客户部番：</label>
+                                <div class="col-10">
+                                    <input type="text" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control"
+                                           placeholder="" maxlength="40" name="sysMaterialsprepare.iEquipmentModelId"
+                                           readonly
+                                           value="#(cinvcode1??)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">部品名称：</label>
+                                <div class="col-10">
+                                    <input type="text" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control"
+                                           placeholder="" maxlength="40" name="sysMaterialsprepare.cInvCode1"
+                                           readonly
+                                           value="#(cinvname1??)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">计划数量：</label>
+                                <div class="col-10">
+                                    <input type="text" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control"
+                                           placeholder="" maxlength="40" name="sysMaterialsprepare.cDepName"
+                                           readonly
+                                           value="#(iqty??)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">计划日期：</label>
+                                <div class="col-10">
+                                    <input type="text" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control"
+                                           placeholder="" maxlength="40" name="sysMaterialsprepare.dPlanDate"
+                                           readonly
+                                           value="#(dplandate??)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">生产部门：</label>
+                                <div class="col-10">
+                                    <input type="text" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control"
+                                           placeholder="" maxlength="40" name="sysMaterialsprepare.cBatch"
+                                           readonly
+                                           value="#(cdepname??)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">产线名称：</label>
+                                <div class="col-10">
+                                    <input type="text" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control"
+                                           placeholder="" maxlength="40" name="sysMaterialsprepare.cBatch"
+                                           readonly
+                                           value="#(cworkname??)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">班次名称：</label>
+                                <div class="col-10">
+                                    <input type="text" data-notnull="false"
+                                           data-tips=""
+                                           data-with-clearbtn="false" autocomplete="off"
+                                           class="form-control"
+                                           placeholder="" maxlength="40" name="sysMaterialsprepare.cBatch"
+                                           readonly
+                                           value="#(cworkshiftname??)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="col-md-4">
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">机型 ：</label>
-                <div class="col-10">
-                  <input type="text"  data-notnull="false"
-                         data-tips=""
-                         data-with-clearbtn="false" autocomplete="off"
-                         class="form-control" placeholder=""
-                         maxlength="40" name="sysMaterialsprepare.cMoDocNo"
-                         readonly
-                         value="#(cequipmentmodelname??)"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">存货编码：</label>
-                <div class="col-10">
-                  <input type="text"  data-notnull="false"
-                         data-tips=""
-                         data-with-clearbtn="false" autocomplete="off"
-                         class="form-control"
-                         placeholder="" maxlength="40" name="sysMaterialsprepare.cInvName1"
-                         readonly
-                         value="#(cinvcode??)"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">客户部番：</label>
-                <div class="col-10">
-                  <input type="text"  data-notnull="false"
-                         data-tips=""
-                         data-with-clearbtn="false" autocomplete="off"
-                         class="form-control"
-                         placeholder="" maxlength="40" name="sysMaterialsprepare.iEquipmentModelId"
-                         readonly
-                         value="#(cinvcode1??)"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">部品名称：</label>
-                <div class="col-10">
-                  <input type="text"  data-notnull="false"
-                         data-tips=""
-                         data-with-clearbtn="false" autocomplete="off"
-                         class="form-control"
-                         placeholder="" maxlength="40" name="sysMaterialsprepare.cInvCode1"
-                         readonly
-                         value="#(cinvname1??)"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">计划数量：</label>
-                <div class="col-10">
-                  <input type="text"  data-notnull="false"
-                         data-tips=""
-                         data-with-clearbtn="false" autocomplete="off"
-                         class="form-control"
-                         placeholder="" maxlength="40" name="sysMaterialsprepare.cDepName"
-                         readonly
-                         value="#(iqty??)"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">计划日期：</label>
-                <div class="col-10">
-                  <input type="text"  data-notnull="false"
-                         data-tips=""
-                         data-with-clearbtn="false" autocomplete="off"
-                         class="form-control"
-                         placeholder="" maxlength="40" name="sysMaterialsprepare.dPlanDate"
-                         readonly
-                         value="#(dplandate??)"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">生产部门：</label>
-                <div class="col-10">
-                  <input type="text"  data-notnull="false"
-                         data-tips=""
-                         data-with-clearbtn="false" autocomplete="off"
-                         class="form-control"
-                         placeholder="" maxlength="40" name="sysMaterialsprepare.cBatch"
-                         readonly
-                         value="#(cdepname??)"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">产线名称：</label>
-                <div class="col-10">
-                  <input type="text"  data-notnull="false"
-                         data-tips=""
-                         data-with-clearbtn="false" autocomplete="off"
-                         class="form-control"
-                         placeholder="" maxlength="40" name="sysMaterialsprepare.cBatch"
-                         readonly
-                         value="#(cworkname??)"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">班次名称：</label>
-                <div class="col-10">
-                  <input type="text"  data-notnull="false"
-                         data-tips=""
-                         data-with-clearbtn="false" autocomplete="off"
-                         class="form-control"
-                         placeholder="" maxlength="40" name="sysMaterialsprepare.cBatch"
-                         readonly
-                         value="#(cworkshiftname??)"/>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+        </div>
 
-    <button onclick="submitThisFormtest()"
-            class="btn btn-success btn-sm" hidden="hidden" id="btn2"><i class="fa fa-refresh"></i> 保存
-    </button>
-
-
-
-    <div class="card" style="margin-bottom: 5px">
-    <div class="card-body">
-      <div class="col">
-        <button data-dialogbtn
-                data-area="80%,70%"
-                data-handler="jboltTablePageToFirst"
-                data-title="选择存货"
-                data-url="admin/sysMaterialsprepare/MaterialsListchoose?cmodocno=#(cmodocno??)"
-                class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 新增
+        <button onclick="submitThisFormtest()"
+                class="btn btn-success btn-sm" hidden="hidden" id="btn2"><i class="fa fa-refresh"></i> 保存
         </button>
-      </div>
-    </div>
-    </div>
 
 
-  </div>
+        <div class="card" style="margin-bottom: 5px">
+            <div class="card-body">
+                <div class="col">
+                    <button data-dialogbtn
+                            data-area="80%,70%"
+                            data-handler="jboltTablePageToFirst"
+                            data-title="选择存货"
+                            data-url="admin/sysMaterialsprepare/MaterialsListchoose?cmodocno=#(cmodocno??)"
+                            class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 新增
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
 </div>
-
 
 
 <textarea class="jb_tpl_box" id="SysMaterialsprepare_tpl_#(pageId)">
@@ -249,9 +217,6 @@
 <td>
 	<a type="button" onclick="DElete(this)" style="user-select:none"  ><i class="fa c-danger">移除</i></a>
 </td>
-<!--<td>-->
-<!--	<a class="jbolt_table_delbtn" href="admin/sysmaterialspreparedetail/${data.isDeleted?'realDelete':'delete'}/${data.autoid}" data-handler="refreshJBoltTable" ><i class="fa c-danger">移除</i></a>-->
-<!--</td>-->
 </tr>
 {@/each}
 </textarea>
@@ -268,68 +233,62 @@
        data-toolbar="SysMaterialsprepare_toolbar_#(pageId)"
        id="manual"
        data-editable="true"
+       data-conditions-form="SysMaterialsprepare_form_#(pageId)"
 >
-  <thead class="fw-normal">
-  <tr>
-    <th data-width="60" data-column="index">序号</th>
-    <th data-width="150" data-column="cinvcode">存货编码</th>
-    <th data-min-width="150" data-column="cinvcode1">客户部番</th>
-    <th data-width="250" data-column="cinvname1">部品名称</th>
-    <th data-width="200" data-column="cinvstd">规格</th>
-    <th data-width="150" data-column="cuomname">主计量单位</th>
-    <th data-width="150" data-column="">计划数量</th>
-    <th data-width="150" data-column="">操作</th>
-  </tr>
-  </thead>
-  <tbody></tbody>
+    <thead class="fw-normal">
+    <tr>
+        <th data-width="60" data-column="index">序号</th>
+        <th data-width="150" data-column="cinvcode">存货编码</th>
+        <th data-min-width="150" data-column="cinvcode1">客户部番</th>
+        <th data-width="250" data-column="cinvname1">部品名称</th>
+        <th data-width="200" data-column="cinvstd">规格</th>
+        <th data-width="150" data-column="cuomname">主计量单位</th>
+        <th data-width="150" data-column="">计划数量</th>
+        <th data-width="150" data-column="">操作</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
 </table>
 #end
 #define js()
 <script type="text/javascript">
-  hideParentLayerDialogBtn(0);
-  hideParentLayerDialogBtn(1);
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
 
-  function closeHandler() {
-    parent.layer.close(parent.layer.getFrameIndex(window.name));
-    window.parent.refreshJBoltTable();
-  }
-
-  function DElete(val){
-    var oParent = val.parentNode.parentNode;
-    oParent.parentNode.removeChild(oParent);
-  }
-  
-  function submitThisFormtest() {
-    var mytable = document.getElementById("manual");
-    var map1 = [];
-    // for(var i=0,rows=mytable.rows.length; i<rows; i++){
-    //   for(var j=0,cells=mytable.rows[i].cells.length; j<cells; j++){
-    //     if(!data[i]){
-    //       data[i] = new Array();
-    //     }
-    //     data[i][j] = mytable.rows[i].cells[j].innerHTML;
-    //   }
-    // }
-    map1[0]="id"+":"+"#(cmodocno??)";
-    for (var i=1,rows=mytable.rows.length;i<rows; i++){
-      map1[i]=mytable.rows[i].cells[9].innerHTML+":"+mytable.rows[i].cells[6].children[0].value;
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
     }
 
-    // return data;
-    Ajax.post("admin/sysMaterialspreparedetail/submitAll", {"data":map1.toString()},
+    function DElete(val) {
+        var oParent = val.parentNode.parentNode;
+        oParent.parentNode.removeChild(oParent);
+    }
+
+    //保存按钮
+    function submitThisFormtest() {
+        var mytable = document.getElementById("manual");
+        var map1 = [];
+        map1[0] = "id" + ":" + "#(cmodocno??)";
+        for (var i = 1, rows = mytable.rows.length; i < rows; i++) {
+            map1[i] = mytable.rows[i].cells[9].innerHTML + ":" + mytable.rows[i].cells[6].children[0].value;
+        }
+        debugger
+        Ajax.post("admin/sysMaterialspreparedetail/submitAll", {"data": map1.toString()},
             function (res) {
-      alert("保存成功");
+                LayerMsgBox.success("保存成功");
             }, function (err) {
+                LayerMsgBox.error("保存失败");
             });
+    }
 
-  }
+    const BTN1 = document.getElementById('btn1');
+    const BTN2 = document.getElementById('btn2');
 
-  const BTN1 = document.getElementById('btn1');
-  const BTN2 = document.getElementById('btn2');
-  // 给按钮 2 添加点击事件
-  BTN1.addEventListener('click', () => {
-    BTN2.onclick();
-  });
+    // 给按钮 2 添加点击事件
+    BTN1.addEventListener('click', () => {
+        BTN2.onclick();
+    });
 
 
 </script>

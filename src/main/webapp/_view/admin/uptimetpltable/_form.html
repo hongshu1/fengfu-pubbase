@@ -1,0 +1,70 @@
+<form onsubmit="return false;" id="UptimeTplTable_Form" action="#(action)" method="post">
+	#if(uptimeTplTable.iAutoId??)
+	<input type="hidden" name="uptimeTplTable.iAutoId" value="#(uptimeTplTable.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="uptimeTplTable.iAutoId" value="#(uptimeTplTable.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">稼动时间参数模板ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入稼动时间参数模板ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入稼动时间参数模板ID" maxlength="40" name="uptimeTplTable.iUptimeTplMid" value="#(uptimeTplTable.iUptimeTplMid??)"/>
+</div>
+</div>
+</div>
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">稼动时间-参数类别ID</label>
+
+<div class="col-10">
+    <select class="form-control"
+            data-autoload
+            data-url="admin/dictionary/options?key=null"
+            data-select-type="select"
+            name="uptimeTplTable.iUptimeCategoryId"
+            data-refresh="true"
+            data-rule="select"
+            data-notnull="true"
+            data-tips="请选择稼动时间-参数类别ID"
+            data-text="=请选择="
+            data-value=""
+            data-value-attr="sn"
+            data-select="#(uptimeTplTable.iUptimeCategoryId??)"
+            
+    ></select>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">稼动时间-参数ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入稼动时间-参数ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入稼动时间-参数ID" maxlength="40" name="uptimeTplTable.iUptimeParamId" value="#(uptimeTplTable.iUptimeParamId??)"/>
+</div>
+</div>
+</div>
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">顺序号</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入顺序号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入顺序号" maxlength="40" name="uptimeTplTable.iSeq" value="#(uptimeTplTable.iSeq??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设定值（分钟数）</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入设定值（分钟数）"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入设定值（分钟数）" maxlength="40" name="uptimeTplTable.iMins" value="#(uptimeTplTable.iMins??)"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="UptimeTplTable_Form")
+#end
+

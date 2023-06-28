@@ -7,10 +7,28 @@
 	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>分类管理</h1></div>
 	<div class="col">
 	<form class="form-inline" id="FormUploadCategory_form_#(pageId)">
-<!--		<div class="btn-group text-center mx-1">-->
-<!--			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>-->
-<!--			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>-->
-<!--		</div>-->
+		<div class="btn-group text-center mx-1">
+			<input type="text" autocomplete="off" class="form-control" placeholder="=目录名称=" name="cCategoryName" value=""/>
+			<select class="form-control" 	name="iWorkRegionMid"
+					data-autoload
+					data-url="admin/workregionm/options"
+					data-select-type="select"
+					data-text="=产线名称="
+					data-value=""
+					data-value-attr="iautoid"
+					data-text-attr="cworkname"
+			></select>
+			<select class="form-control" name="isEnabled"
+					data-autoload
+					data-url="admin/dictionary/options?key=options_enable"
+					data-select-type="select"
+					data-text="=是否启用="
+					data-value=""
+					data-value-attr="sn"
+			></select>
+			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
+		</div>
 	</form>
 	</div>
 	<div class="col-sm-auto text-right">
@@ -24,12 +42,17 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.iworkregionmid}</td>
-<td>${data.ccategoryname}</td>
 <td>
 	<a href="admin/formUploadCategory/edit/${data.iautoid}" data-area="80%,80%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" dialog-title="编辑资源" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
 	<a class="jbolt_table_delbtn" href="admin/formUploadCategory/delete/${data.iautoid}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
 </td>
+<td>${data.iworkregionmid}</td>
+<td>${data.ccategoryname}</td>
+<td><img data-switchbtn data-confirm="确定切换是否启用：0. 否 1. 是？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/formUploadCategory/toggleIsEnabled/${data.iautoid}"/></td>
+<td>${data.cmemo}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+
 </tr>
 {@/each}
 </textarea>
@@ -37,16 +60,33 @@
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增分类管理" data-url="admin/formUploadCategory/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
 <!--	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑分类管理" data-check-handler="jboltTableGetCheckedId" data-url="admin/formUploadCategory/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>-->
-<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
 </div>
-<!--<div class="float-right" role="group" aria-label="btn-group">-->
-<!--<button data-dialogbtn data-area="600,400"  data-handler="jboltTablePageToFirst" tooltip data-title="导入Excel数据" data-url="admin/formUploadCategory/initImportExcel" data-btn="close" class="btn btn-outline-primary btn-sm" ><i class="fa fa-upload"></i></button>-->
-<!--	<div class="btn-group btn-group-sm">-->
-<!--&lt;!&ndash;		<button tooltip data-title="导出Excel(查询结果)" data-form="FormUploadCategory_form_#(pageId)" class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="admin/formUploadCategory/exportExcelByForm"><i class="fa fa-download"></i></button>&ndash;&gt;-->
-<!--		<button tooltip data-title="导出Excel(选中行数据)" data-usecheckedids="true" class="btn btn-outline-success btn-sm" data-downloadbtn data-url="admin/formUploadCategory/exportExcelByCheckedIds"><i class="fa fa-download"></i></button>-->
-<!--		<button tooltip data-title="导出Excel(所有数据)" class="btn btn-outline-info btn-sm" data-downloadbtn data-url="admin/formUploadCategory/exportExcelAll"><i class="fa fa-download"></i></button>-->
-<!--	</div>-->
-<!--</div>-->
+	<div class="btn-group dropdown">
+		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+		<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+			<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/formUploadCategory/exportExcelByCheckedIds"><i class="fa fa-download"></i> 导出选中</button>
+			<button class="btn dropdown-item" data-downloadbtn data-url="admin/formUploadCategory/exportExcelAll" data-form="Equipment_form_#(pageId)"><i class="fa fa-download"></i> 导出全部</button>
+		</div>
+	</div>
+	<div class="btn-group dropdown">
+		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">数据导入</button>
+		<div class="dropdown-menu" aria-labelledby="importMenuButton">
+			<a href="assets/exceltpl/formuploadcategory.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+			<div class="j_upload_file_box"
+				 data-name="file"
+				 data-btn-class="btn dropdown-item"
+				 data-placeholder="上传导入"
+				 data-confirm="确认导入数据？"
+				 data-accept="excel"
+				 data-maxsize="20480"
+				 data-handler="uploadFile"
+				 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+				 data-url="/admin/formUploadCategory/importExcelClass">
+			</div>
+		</div>
+	</div>
+<!--	<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>-->
+
 
 </div>
 <table class="jbolt_table jbolt_main_table  table-center "
@@ -65,9 +105,13 @@
 <thead class="fw-normal" >
 <tr>
 <th data-width="60" data-column="index">序号</th>
-	<th data-width="150" data-column="cCategoryCode">产线名称</th>
-	<th data-width="150" data-column="cCategoryName">分类名称</th>
-<th data-width="80">操作</th>
+	<th data-width="80">操作</th>
+	<th data-width="150" data-column="iworkregionmid">产线名称</th>
+	<th data-width="150" data-column="cCategoryName">目录名称</th>
+	<th data-width="100" data-column="cCategoryName">是否启用</th>
+	<th data-width="250" data-column="cmemo">备注</th>
+	<th data-width="100" data-column="cCategoryName">创建人</th>
+	<th data-width="150" data-column="cCategoryName">创建时间</th>
 </tr>
 </thead>
 <tbody></tbody>

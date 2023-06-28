@@ -10,7 +10,7 @@
 
             #if(sysPuinstore.autoid??)
             #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUInStore", o=sysPuinstore, primaryKeyName="AutoID",
-            className="cn.rjtech.admin.syspuinstore.SysPuinstoreService",permissionKeyPrefix="sysPureceive")
+            className="cn.rjtech.admin.syspuinstore.SysPuinstoreService",permissionKeyPrefix="sysPuinstore")
             #end
 
             <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
@@ -378,7 +378,7 @@
   /**
    * 新增/修改/提审
    */
-  function successHandler(msg, iautoid) {
+  function successHandler(msg, autoid) {
     LayerMsgBox.success(msg, 600, function () {
       // 新增/修改，均跳转到详情页
       location.href = '/admin/purchaseReceiptList/edit?autoid=' + autoid + '&_jb_rqtype_=dialog';
@@ -404,10 +404,6 @@
               });
             } else {
               successHandler(ret.msg, autoid);
-              /*LayerMsgBox.success("提交成功", 600, function () {
-                parent.refreshPjaxContainer();
-                parent.layer.closeAll();
-              });*/
             }
           }else {
             LayerMsgBox.error(res.msg);
@@ -478,23 +474,6 @@
             {column: "brandname", use: "brandname"},
             {column: "puunitcode", use: "purchasecuomcode"},
             {column: "puunitname", use: "purchasecuomname"}],
-
-          /*handler: function (table, td, text, value, jsonData) {
-            let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["invcode"]);
-            let array = new Array();
-            if (datas != null) {
-              for (var i = 0; i < datas.length; i++) {
-                var data = datas[i];
-                array.push("'" + data.invcode + "'");
-                let codes = array.join(',');
-                $("#detailHiddenInvocde").val(codes);
-              }
-            } else {
-              $("#detailHiddenInvocde").val('');
-              LayerMsgBox.alert("存货编码不能重复", 2);
-              return;
-            }
-          }*/
         },
         qty: {
           type: "amount",//类型

@@ -31,7 +31,7 @@
 </div>
 
 ### 新增之后，并且为审批流
-#if(investmentPlan.iautoid?? && investmentPlan.iauditway == 2 && investmentPlan.iauditstatus == 1)
+#if(investmentPlan.iautoid?? && investmentPlan.iauditway == 2 && (investmentPlan.iauditstatus == 1 || investmentPlan.iauditstatus == 2) && investmentPlan.ieffectivestatus == 1)
     ### 参数列表
     ### formAutoId:                 单据ID
     ### formSn:                     表单名
