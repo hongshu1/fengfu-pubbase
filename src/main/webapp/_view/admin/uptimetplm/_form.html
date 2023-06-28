@@ -143,10 +143,6 @@
 </form>
 #define js()
 <script>
-    $(function () {
-        editTplDatas();
-    });
-
     // 表格分类可编辑
     function jbolt_table_edittable_#(pageId)()
     {
@@ -171,7 +167,7 @@
                 index: {
                     submitAttr: "iseq",
                 },
-                iMins:{
+                imins:{
                     type:"amount",
                     placeholder: '分钟',
                     required: true,
@@ -208,6 +204,7 @@
     // 封装表格数据
     function editTplDatas() {
         var categoryDatas = getJboltTableAllDatas("jbolt_table_uptime_tpl_category");
+        // 过滤分类名称为空的数据
         $("#uptimetplcategorydatas").val(JSON.stringify(categoryDatas));
         var tableDatas = getJboltTableAllDatas("jbolt_table_uptimetpltable_split");
         $("#uptimetpltabledatas").val(JSON.stringify(tableDatas));

@@ -38,6 +38,7 @@
            data-rowtpl="slave_demotpl_#(pageId)"
            data-ajax="true"
            data-url="admin/uptimeTplTable/uptimeTplTableDatas?iuptimetplmid=#(uptimeTplM.iautoid??)"
+           data-ajax-success-handler="editTplDatas"
            data-conditions-form="qcformitemTypeForm_#(pageId)"
            data-width="auto"
            data-page-mini="true"
@@ -49,7 +50,7 @@
             <th data-width="60" data-column="index">序号</th>
             <th data-width="300" data-column="cUptimeCategoryName">分类名称</th>
             <th data-width="300" data-column="cUptimeParamName">项目名称</th>
-            <th data-width="300" data-column="iMins">设定值(分钟)</th>
+            <th data-width="300" data-column="imins">设定值(分钟)</th>
             <th data-width="120" data-column="iseq">操作</th>
         </tr>
         </thead>

@@ -154,7 +154,9 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
 			if (!uptimeTplCategoryList.isEmpty()) {
 				Integer iSeq = 1;
 				for (UptimeTplCategory uptimeTplCategory : uptimeTplCategoryList) {
-					uptimeTplCategory.setIUptimeCategoryId(uptimeTplCategory.getIAutoId());
+					if (isOk(uptimeTplCategory.getIAutoId()) && isNull(uptimeTplCategory.getIUptimeCategoryId())) {
+						uptimeTplCategory.setIUptimeCategoryId(uptimeTplCategory.getIAutoId());
+					}
 					uptimeTplCategory.setIUptimeTplMid(uptimeTplM.getIAutoId());
 					uptimeTplCategory.setIAutoId(null);
 					uptimeTplCategory.setISeq(iSeq);

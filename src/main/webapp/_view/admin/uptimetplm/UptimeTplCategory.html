@@ -1,8 +1,7 @@
 <!-- 检验表格项目表的的数据模板定义-->
 <script type="text/template" id="master_demotpl_#(pageId)">
     {@each datas as data,index}
-    <tr data-id="${data.iautoid}" class="hand" data-changed=""
-        onclick="masterTableTrTriggerShowSlave(this,'${data.iautoid}')">
+    <tr data-id="${data.iautoid}" class="hand" data-changed="" onclick="masterTableTrTriggerShowSlave(this,'${data.iautoid}')">
         {@if pageSize&&pageSize>0}
         <td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
         {@else}
@@ -41,14 +40,14 @@
     </div>
 
     <table id="jbolt_table_uptime_tpl_category"
-           class="table-center jbolt_table thead_font_normal"
+           class="table-center jbolt_table"
            data-jbolttable
            data-column-resize="true"
            data-height="fill_box"
            data-rowtpl="master_demotpl_#(pageId)"
-           data-autoload="false"
            data-ajax="true"
-           data-url="admin/uptimeTplCategory/getAdminDatas?iuptimetplmid=#(uptimeTplM.iautoid??)"
+           data-url="admin/uptimeTplCategory/datas?iuptimetplmid=#(uptimeTplM.iautoid??)"
+           data-ajax-success-handler="editTplDatas"
            data-conditions-form="qcformitemTypeForm_#(pageId)"
            data-toolbar="bomcompare_split_toolbar_#(pageId)"
            data-width="auto"
