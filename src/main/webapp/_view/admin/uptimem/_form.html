@@ -345,8 +345,16 @@
 	function updateiMins(){
 		let tableDatas = getJboltTableAllDatas('#tableId_uptimeM');
 		console.log(tableDatas);
-
-		$("#istopmins").val(500);
+		let sum = 0;
+		if (isOk(tableDatas)) {
+			for (let k in tableDatas) {
+				let iMins = tableDatas[k].imins;
+				if (isOk(iMins)) {
+					sum = sum + Number(iMins);
+				}
+			}
+		}
+		$("#istopmins").val(sum);
 	}
 	function onblurUptimeM(){
 		let ibasemins = $("#ibasemins").val();
