@@ -2,6 +2,12 @@
 SELECT *
 FROM Bd_UptimeCategory
 WHERE isDeleted = '0'
+#if(cuptimecategoryname)
+AND cUptimeCategoryName LIKE CONCAT('%', #para(cuptimecategoryname), '%')
+#end
+#if(notiuptimecategoryids)
+AND iAutoId NOT IN (#(notiuptimecategoryids))
+#end
 ORDER BY dCreateTime DESC
 #end
 
@@ -11,7 +17,7 @@ FROM Bd_UptimeParam up
 LEFT JOIN Bd_UptimeCategory uc ON up.iUptimeCategoryId = uc.iAutoId
 WHERE up.isEnabled = '1'
 AND uc.isDeleted = '0'
-#if(iuptimecategoryid)
-AND uc.iAutoId = #para(iuptimecategoryid)
+#if(iuptimecategoryids)
+AND uc.iAutoId IN (#(iuptimecategoryids))
 #end
 #end

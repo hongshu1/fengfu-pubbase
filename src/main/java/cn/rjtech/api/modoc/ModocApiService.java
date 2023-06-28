@@ -7,6 +7,7 @@ import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.morouting.MoMoroutingService;
+import cn.rjtech.admin.specmaterialsrcvm.SpecMaterialsRcvMService;
 import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
@@ -16,6 +17,7 @@ import cn.rjtech.model.momdata.*;
 import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
@@ -43,6 +45,10 @@ public class ModocApiService extends JBoltApiBaseService {
   @Inject
   DepartmentService departmentService; //部门
 
+  //特殊领料
+  @Inject
+  private SpecMaterialsRcvMService specMaterialsRcvMService;
+
 
   /**
    * 根据制造工单id查询工序名称信息
@@ -65,21 +71,21 @@ public class ModocApiService extends JBoltApiBaseService {
                           String cinvname1,
                           String cdepname, Long iworkregionmid, Integer status, Date starttime, Date endtime) {
     return JBoltApiRet.API_SUCCESS_WITH_DATA(moDocService.page(page, pageSize, cmodocno, cinvaddcode,
-            cinvcode1, cinvname1, cdepname, iworkregionmid, status, starttime, endtime));
+        cinvcode1, cinvname1, cdepname, iworkregionmid, status, starttime, endtime));
   }
 
-    public JBoltApiRet getModocdetails(Long imodocid) {
-      ModocApiResVo modocResVo=new ModocApiResVo();
-      MoDoc moDoc=moDocService.findById(imodocid);
-      if(moDoc==null){
-        return  JBoltApiRet.fail(4000,"工单信息不存在");
-      }
-      Record record=getModoc(moDoc);
-      modocResVo.setDoc(record);
-      //拼上生产任务数据
-      List<Record> rows=moDocService.getMoJobData(imodocid);
-      modocResVo.setJob(rows);
-      return JBoltApiRet.API_SUCCESS_WITH_DATA(modocResVo);
+  public JBoltApiRet getModocdetails(Long imodocid) {
+    ModocApiResVo modocResVo = new ModocApiResVo();
+    MoDoc moDoc = moDocService.findById(imodocid);
+    if (moDoc == null) {
+      return JBoltApiRet.fail(4000, "工单信息不存在");
+    }
+    Record record = getModoc(moDoc);
+    modocResVo.setDoc(record);
+    //拼上生产任务数据
+    List<Record> rows = moDocService.getMoJobData(imodocid);
+    modocResVo.setJob(rows);
+    return JBoltApiRet.API_SUCCESS_WITH_DATA(modocResVo);
 
     }
 
@@ -256,5 +262,15 @@ public class ModocApiService extends JBoltApiBaseService {
       modocApiPag.setcDepName("");
     }
    return  modocApiPag;
+  }
+
+  /**
+   * 根据制造工单id查询特殊领料数据源
+   *
+   * @param imodocid
+   * @return
+   */
+  public Page<Record> getSpecmaterialsrcvmDatas(Long imodocid) {
+    return specMaterialsRcvMService.getApiSpecmaterialsrcvmDatas(imodocid);
   }
 }

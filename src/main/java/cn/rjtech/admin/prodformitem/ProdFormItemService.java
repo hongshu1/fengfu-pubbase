@@ -133,4 +133,8 @@ public class ProdFormItemService extends BaseService<ProdFormItem> {
 	public List<ProdFormItem> findByFormId(Long formId){
 		return find("SELECT * FROM Bd_ProdFormItem WHERE iProdFormId = ?", formId);
 	}
+
+	public List<Record> formItemLists(Kv para){
+		return dbTemplate("prodformitem.formItemLists",para).find();
+	}
 }

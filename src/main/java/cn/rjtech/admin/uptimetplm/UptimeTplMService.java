@@ -1,14 +1,14 @@
 package cn.rjtech.admin.uptimetplm;
 
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.UptimeTplM;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+
 /**
  * 稼动时间建模-稼动时间模板主表
  * @ClassName: UptimeTplMService
@@ -108,4 +108,20 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
 		return null;
 	}
 
+	/**
+	 * 保存
+	 * @param kv
+	 * @return
+	 */
+	public Ret submitAll(Kv kv) {
+		tx(() -> {
+			UptimeTplM uptimeTplM = new UptimeTplM();
+
+			// 解析表格分类
+			// 解析表格内容
+			return true;
+		});
+
+		return SUCCESS;
+	}
 }

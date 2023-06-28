@@ -580,6 +580,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
         Map<String, String> map1 = new HashMap<>();
         List<String> modocidList = new ArrayList<>();
 
+        List<String> modocidList2 = new ArrayList<>();
+
         Map<String, List<Record>> userMapDatas = new HashMap<>();
 
         for (Record record1 : records1) {
@@ -591,7 +593,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
           String dateSplicing = iYear + iMonth + iDate + iWorkShiftMid;
           map1.put(dateSplicing, modocid1);
           modocidList.add(modocid);
-
+          modocidList2.add(modocid1);
           //<editor-fold desc="创建人员信息为空的基础信息">
           List<Record> userDatas = new ArrayList<>();
           Record user = new Record();
@@ -633,6 +635,10 @@ public class MoMotaskService extends BaseService<MoMotask> {
             //<editor-fold desc="4. 设备名称  工序名称处理">
             Record cequipmentnameRecord = new Record();
             Record equipmentnameRecord = new Record();
+            equipmentnameRecord.set("cequipmentname", "");
+            equipmentnameRecord.set("iequipmentid", "");
+            cequipmentnameRecord.set("coperationname", "");
+            cequipmentnameRecord.set("ioperationid", "");
             if (i < records2.size()) {
               if (records2.get(i).getStr("itype") != null) {
                 List<Record> recordsa1 = recordsa1ListMap.get(records2.get(i).getStr("iautoid")) != null ?
@@ -652,7 +658,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
                     recordsa2ListMap.get(records2.get(i).getStr("iautoid")) : new ArrayList<>();
                 for (Record recordb1 : recordsb1) {
                   sb1.append(recordb1.getStr("coperationname") != null ? recordb1.getStr("coperationname") : "").append("/");
-                  sb2.append(recordb1.getStr("imoroutingconfigid") != null ? recordb1.getStr("imoroutingconfigid") : "").append(",");
+                  sb2.append(recordb1.getStr("ioperationid") != null ? recordb1.getStr("ioperationid") : "").append(",");
                 }
                 String coperationname = sb1.toString().endsWith("/") ? sb1.toString().substring(0, sb1.toString().length() - 1) : sb1.toString();
                 ioperationid = sb2.toString().endsWith(",") ? sb2.toString().substring(0, sb2.toString().length() - 1) : sb2.toString();
@@ -678,7 +684,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
 
 
             //<editor-fold desc="5.获取人员信息 modocid1  value:List<String>">
-            List<Record> list2 = dbTemplate("modocbatch.getModocPersonnameByDocid", Kv.by("docid", CollUtil.join(modocidList, ","))).find();
+            List<Record> list2 = dbTemplate("modocbatch.getModocPersonnameByDocid", Kv.by("docid", CollUtil.join(modocidList2, ","))).find();
             Map<String, List<Record>> map2 = new HashMap<>();
             for (Record record2 : list2) {
               String dateSplicing = record2.getStr("dateSplicing");
@@ -851,7 +857,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
               String matchingid = year + imonth + idate + iworkshiftmid;
               boolean bol = false;
               if (map2.size() > 0) {
-                if (map2.get(matchingid).size() > 0) {
+                List<Record> records11 = map2.get(matchingid) == null ? new ArrayList<>() : map2.get(matchingid);
+                if (records11.size() > 0) {
                   bol = true;
                 }
               }
@@ -859,7 +866,22 @@ public class MoMotaskService extends BaseService<MoMotask> {
               if (i < records2.size()) {
                 //读取人员数据
                 List<Record> records4 = bol ? map2.get(matchingid) : userMapDatas.get(matchingid);
-                record2.set("personne", records4.get(0));
+                Record record = new Record();
+                String psnname = "";
+                String psnnum = "";
+                for (int k = 0; k < records4.size(); k++) {
+                  if (k == 0) {
+                    psnname = records4.get(k).getStr("psnname");
+                    psnnum = records4.get(k).getStr("psnnum");
+                  } else {
+                    psnname = psnname + "/" + records4.get(k).getStr("psnname");
+                    psnnum = psnnum + "," + records4.get(k).getStr("psnnum");
+                  }
+                }
+                record.put("psnnum", psnnum);
+                record.put("psnname", psnname);
+                record.put("lock", false);
+                record2.set("personne", record);
               } else if (i == (records2.size())) {
                 List<Record> records4 = map3.get(modocid1);
                 record2.set("personne", records4.get(0));
@@ -890,6 +912,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
         Record cequipment = new Record();
         cequipment.put("cequipmentname", "");
         cequipment.put("iequipmentid", "");
+
 
         Record coperation = new Record();
         coperation.put("coperationname", "");

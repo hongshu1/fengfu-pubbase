@@ -172,6 +172,8 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     public Ret saveForm(ManualOrderM manualOrderM, JBoltTable jBoltTable) {
         tx(() -> {
             if (manualOrderM.getIAutoId() == null) {
+                manualOrderM.setIsDeleted(false);
+                manualOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
                 Ret save = save(manualOrderM);
                 if (!save.isOk()) {
                     return false;

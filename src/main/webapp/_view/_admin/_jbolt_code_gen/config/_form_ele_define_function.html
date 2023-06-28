@@ -3,7 +3,7 @@
 #if(isFormGroupRow)
 <div class="col-#((col.formEleWidth!=null && col.formEleWidth>0)?col.formEleWidth:(formControlWidth?? 10))">
 #end
-<div data-editor="summernote" data-height="350" #if(col.formUiType=="summernote_simple") data-toolbar="simple" #end  data-hidden-input="#(modelName)_#(col.attrName)_hidden">#(htmlcontent??)</div>
+<div data-editor="summernote" data-height="350" #if(col.formUiType=="summernote_simple") data-toolbar="simple" #end  data-hidden-input="#(modelName)_#(col.attrName)_hidden">#if(codeGenServiceMode??)#[[#]]#(#(modelName).#(col.attrName)??)#end</div>
 #if(isFormGroupRow)
 </div>
 #end

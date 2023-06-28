@@ -99,7 +99,12 @@ public class UptimeCategoryAdminController extends BaseAdminController {
 	 */
 	public void uptimeTplTableDatas()
 	{
-		Kv kv = getKv();
 		renderJsonData(service.uptimeTplTableDatas(getKv()));
+	}
+
+	public void selectDatas() {
+		Kv kv = getKv();
+		set("notiuptimecategoryids", kv.getStr("notiuptimecategoryids"));
+		render("selectDatas.html");
 	}
 }

@@ -731,3 +731,7 @@
 #namespace("momopatchweldm")
 #include("momopatchweldm/momopatchweldm.sql")
 #end
+
+#namespace("uptimem")
+#include("uptimem/uptimem.sql")
+#end

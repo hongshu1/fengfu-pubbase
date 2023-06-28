@@ -534,4 +534,10 @@ public class ProdFormService extends BaseService<ProdForm> {
 		}
 		return null;
 	}
+	/**
+	 * 根据表格id获取明细数据
+	 */
+	public List<Record> findByIdGetDetail(String iprodformid){
+		return  dbTemplate("prodform.findByIdGetDetail",Kv.by("iprodformid",iprodformid)).find();
+	}
 }
