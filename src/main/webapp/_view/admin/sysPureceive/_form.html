@@ -172,10 +172,8 @@
 
                 <label class="col-sm-3 col-form-label">库区</label>
                 <div class="col-5">
-                    <input type="hidden" name="careacode" value="#(careacode??)"
-                           id="careacode" data-value-attr="careacode"/>
-                    <input type="hidden" name="careaname" value="#(careaname??)"
-                           id="careaname" data-sync-attr="careaname"/>
+                    <input type="hidden" name="careacode" value="#(careacode??)" id="careacode" data-value-attr="careacode"/>
+                    <input type="hidden" name="careaname" value="#(careaname??)" id="careaname" data-sync-attr="careaname"/>
                     <input type="text" class="form-control" data-autocomplete
                            data-sync-ele="#careacode,careaname"
                            data-link-para-ele="#whcode1"
@@ -186,6 +184,7 @@
                            value="#(careaname??)"
                            #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >
                 </div>
+
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                     <button onclick="coverall(this)" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >覆盖</button>
                 </div>
@@ -228,9 +227,12 @@
 
     function barcode() {
         LayerMsgBox.loading("执行中......",2000);
+
         var barcode = $("#barcode").val();
+
         var data = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
         let array = new Array();
+
         if(null != data){
             for (let i = 0; i < data.length; i++) {
                 if(data[i].barcode == barcode){
@@ -249,7 +251,7 @@
             var whcode1 = $("#whcode1").val();
             Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode,"whcode1":whcode1},
                 function (res) {
-                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
+                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false);
                     $("#barcode").val('');
                 }, function (err) {
                 })
