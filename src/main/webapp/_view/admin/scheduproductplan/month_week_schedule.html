@@ -796,20 +796,19 @@
                                 sheet.setValue(4 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].qiChuZaiKu);
                                 sheet.setValue(5 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].dayNum);
                                 //
-                                console.log(sheet.getValue(9,9))
+                                let AS= shiyongRow==4?9:shiyongRow-1;
                                 console.log(shiyongRow)
-                                let Num = sheet.getValue(shiyongRow,9);
+                                let Num = sheet.getValue(AS,9);
                                 let useArray = [];
                                 for (let f = 0; f < Num; f++) {
                                     useArray.push(`R[-5]C[${f+1}]`);
                                 }
-                                // console.log(useArray)
                                 //嵌入计划在库公式
-                                sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
+                                sheet.setFormula(AS-1,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //嵌入在库天数公式7
-                                sheet.setFormula(B,Z++,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
+                                sheet.setFormula(AS,Z++,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
                                 //控制小数位为1位
-                                sheet.setFormatter(5 + shiyongRow, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
+                                sheet.setFormatter(AS, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
                             }
                             shiyongRow=shiyongRow+6
                         }

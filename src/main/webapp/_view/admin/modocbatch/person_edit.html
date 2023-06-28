@@ -500,6 +500,7 @@
             dataType:'json',
             success:function (respons){
                 let tableHeadArray = respons.data.datas;
+                parms['tableHeadArray'] = respons.data.datas;
                 spreadSuspend();//暂停绘制
                 //渲染头部数据
                 let startDate = document.getElementById("cinvcode1");
@@ -555,7 +556,6 @@
                 LayerMsgBox.closeLoading();
                 const jsonData = respons;
                 parms['pageData'] = respons.data;
-                console.log(jsonData)
                 spreadSuspend();//暂停绘制
                 let rowIndex = 4;
                 let colIndex=0;
@@ -875,9 +875,12 @@
         let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
         parms.editCellValueObj.gonXuid = sheBeigonXuObj.cequipment.iequipmentid;//工序id
         parms.editCellValueObj.sheBeiid = sheBeigonXuObj.coperation.ioperationid;//设备id
+        parms.editCellValueObj.iworkregionmid = productionLineObj.iworkregionmid
         id.forEach((arr)=>{
             parms.editCellValueObj.renYuanid.push(arr)
         })
+        let blan = parms['tableHeadArray'].find((v,i)=>v.find((item,ind)=>item.yeartodate==parms.editCellValueObj.data)).find((ite,id)=>ite.cworkshiftcode==parms.editCellValueObj.plan);
+        parms.editCellValueObj.iworkshiftmid = blan.iworkshiftmid;
         parms.editCellValue.push(parms.editCellValueObj)
     }
     /**
@@ -942,7 +945,6 @@
         util.on('lay-on', {
             'test-tips-prompt-0': function(){
                 layer.prompt({title: '请输入文本'}, function(value, index, elem){
-                    console.log(index)
                     if(value === '') return elem.focus();
                     if(index==100002){
                         var json = spread.toJSON();//转为json格式
