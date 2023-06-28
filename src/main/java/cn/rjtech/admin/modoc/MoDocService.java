@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
@@ -145,8 +146,8 @@ public class MoDocService extends BaseService<MoDoc> {
       return fail(JBoltMsg.PARAM_ERROR);
     }
 
-    ValidationUtils.notNull(moDoc.getIWorkRegionMid(),"未找到产线,请在存货档案维护产线!");
-    ValidationUtils.notNull(moDoc.getIDepartmentId(),"未找到部门，请在存货档案维护部门!");
+    ValidationUtils.notNull(moDoc.getIWorkRegionMid(), "未找到产线,请在存货档案维护产线!");
+    ValidationUtils.notNull(moDoc.getIDepartmentId(), "未找到部门，请在存货档案维护部门!");
 
     moDoc.setIType(2);
     //手工新增没有任务,先占着
@@ -170,13 +171,13 @@ public class MoDocService extends BaseService<MoDoc> {
     moDoc.setCRoutingName(moDoc.getCRoutingName());
     InventoryRouting byId = inventoryRoutingService.findById(moDoc.getIInventoryRouting());
     moDoc.setCVersion(byId.getCVersion());
-    moDoc.setIcreateby(JBoltUserKit.getUserId());
+    moDoc.setICreateBy(JBoltUserKit.getUserId());
     moDoc.setCCreateName(JBoltUserKit.getUserName());
     moDoc.setDCreateTime(new Date());
     Date dCreateTime = new Date();
     String userName = JBoltUserKit.getUserName();
     Long userId = JBoltUserKit.getUserId();
-    moDoc.setIcreateby(userId);
+    moDoc.setICreateBy(userId);
     moDoc.setCCreateName(userName);
     moDoc.setDCreateTime(dCreateTime);
     tx(() -> {
@@ -205,7 +206,7 @@ public class MoDocService extends BaseService<MoDoc> {
         moMoroutingconfig.setCCreateName(record.getCcreatename());
         moMoroutingconfig.setCOperationName(record.getCoperationname());
         moMoroutingconfig.setIMergedNum(record.getImergednum());
-        if(null!=record.getImergerate()) {
+        if (null != record.getImergerate()) {
           moMoroutingconfig.setIMergeRate(new BigDecimal(record.getImergerate()));
         }
         moMoroutingconfig.setIMergeSecs(record.getImergesecs());
@@ -229,7 +230,7 @@ public class MoDocService extends BaseService<MoDoc> {
         }
         //设备
         List<InventoryRoutingEquipment> iInventoryEquipments = inventoryRoutingEquipmentService
-                .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+            .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
         for (InventoryRoutingEquipment iInventoryEquipment : iInventoryEquipments) {
           Long iEquipmentId = iInventoryEquipment.getIEquipmentId();
           MoMoroutingequipment moMoroutingequipment = new MoMoroutingequipment();
@@ -239,7 +240,7 @@ public class MoDocService extends BaseService<MoDoc> {
         }
         //物料集
         List<InventoryRoutingInvc> iInventoryRoutingInvcs = inventoryRoutingInvcService
-                .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+            .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
         for (InventoryRoutingInvc iInventoryRoutingInvc : iInventoryRoutingInvcs) {
           MoMoroutinginvc moMoroutinginvc = new MoMoroutinginvc();
           moMoroutinginvc.setIInventoryRoutingConfigId(inventoryRoutingConfigServiceById.getIAutoId());
@@ -257,13 +258,14 @@ public class MoDocService extends BaseService<MoDoc> {
     });
     return ret(true);
   }
+
   /**
    * 保存
    *
    * @param
    * @return
    */
-  public Ret addDoc(JBoltTable jBoltTable,String  rowid) {
+  public Ret addDoc(JBoltTable jBoltTable, String rowid) {
     MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
     if (moDoc == null || isOk(moDoc.getIAutoId())) {
       return fail(JBoltMsg.PARAM_ERROR);
@@ -273,13 +275,13 @@ public class MoDocService extends BaseService<MoDoc> {
     moDoc.setIStatus(1);
     moDoc.setIType(2);
     //计划日期
-    if(moDoc.getDPlanDate()!=null) {
+    if (moDoc.getDPlanDate() != null) {
       Date date = moDoc.getDPlanDate();
-      java.util.Calendar ca =  java.util.Calendar.getInstance();
+      java.util.Calendar ca = java.util.Calendar.getInstance();
       ca.setTime(date);
 
       moDoc.setIYear(ca.get(java.util.Calendar.YEAR));
-      moDoc.setIMonth(ca.get(Calendar.MONTH)+1);
+      moDoc.setIMonth(ca.get(Calendar.MONTH) + 1);
       moDoc.setIDate(ca.get(Calendar.DATE));
     }
     moDoc.setIPersonNum(0);
@@ -290,7 +292,7 @@ public class MoDocService extends BaseService<MoDoc> {
     String userName = JBoltUserKit.getUserName();
     Long userId = JBoltUserKit.getUserId();
     moDoc.setCMoDocNo(generateBarCode());
-    moDoc.setIcreateby(userId);
+    moDoc.setICreateBy(userId);
     moDoc.setCCreateName(userName);
     moDoc.setDCreateTime(dCreateTime);
     // 工艺路线
@@ -298,7 +300,7 @@ public class MoDocService extends BaseService<MoDoc> {
     moMorouting.setIMoDocId(moDoc.getIAutoId());
     moMorouting.setIInventoryId(moDoc.getIInventoryId());
     moMorouting.setIInventoryRoutingId(moDoc.getIInventoryRouting());
-    if(isOk(moDoc.getIInventoryRouting())){
+    if (isOk(moDoc.getIInventoryRouting())) {
       InventoryRouting byId = inventoryRoutingService.findById(moDoc.getIInventoryRouting());
       moDoc.setCVersion(byId.getCVersion());
       moDoc.setCRoutingName(byId.getCRoutingName());
@@ -318,11 +320,11 @@ public class MoDocService extends BaseService<MoDoc> {
       List<MoDocFormVo> saveModelList1 = jBoltTable.getSaveModelList(MoDocFormVo.class);
       Long iMoRoutingConfigId = null;
       MoMoroutingconfig moMoroutingconfig;
-      for (MoDocFormVo record : saveModelList1){
+      for (MoDocFormVo record : saveModelList1) {
         String iautoid = record.getIautoid();
-        System.out.print("iautoid"+iautoid);
+        System.out.print("iautoid" + iautoid);
         InventoryRoutingConfig inventoryRoutingConfigServiceById = inventoryRoutingConfigService.findById(iautoid);
-        if(inventoryRoutingConfigServiceById!=null) {
+        if (inventoryRoutingConfigServiceById != null) {
 
           //工序
           moMoroutingconfig = new MoMoroutingconfig();
@@ -342,17 +344,17 @@ public class MoDocService extends BaseService<MoDoc> {
           moMoroutingconfig.setICreateBy(userId);
           moMoroutingconfig.setDCreateTime(dCreateTime);
           moMoroutingconfigService.save(moMoroutingconfig);
-          if (StringUtils.isNotBlank(rowid)&&rowid.equals(iautoid)) {
+          if (StringUtils.isNotBlank(rowid) && rowid.equals(iautoid)) {
             iMoRoutingConfigId = moMoroutingconfig.getIAutoId();
           }
 
           //设备
           List<InventoryRoutingEquipment> iInventoryEquipments = inventoryRoutingEquipmentService
-                  .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+              .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
           if (!iInventoryEquipments.isEmpty()) {
             MoMoroutingequipment moMoroutingequipment;
             for (InventoryRoutingEquipment iInventoryEquipment : iInventoryEquipments) {
-              if(isOk(iInventoryEquipment.getIEquipmentId())) {
+              if (isOk(iInventoryEquipment.getIEquipmentId())) {
                 Long iEquipmentId = iInventoryEquipment.getIEquipmentId();
                 moMoroutingequipment = new MoMoroutingequipment();
                 moMoroutingequipment.setIEquipmentId(iEquipmentId);
@@ -363,7 +365,7 @@ public class MoDocService extends BaseService<MoDoc> {
           }
           //物料集
           List<InventoryRoutingInvc> iInventoryRoutingInvcs = inventoryRoutingInvcService
-                  .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+              .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
           if (!iInventoryRoutingInvcs.isEmpty()) {
             MoMoroutinginvc moMoroutinginvc;
             for (InventoryRoutingInvc iInventoryRoutingInvc : iInventoryRoutingInvcs) {
@@ -381,10 +383,10 @@ public class MoDocService extends BaseService<MoDoc> {
           }
           //作业指导书
           List<InventoryRoutingSop> moMoroutinginvcs = inventoryRoutingSopService.getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
-          if(!moMoroutinginvcs.isEmpty()){
+          if (!moMoroutinginvcs.isEmpty()) {
             MoMoroutingsop moMoroutingsop;
-            for(InventoryRoutingSop inventoryRoutingSop:moMoroutinginvcs){
-              moMoroutingsop=new MoMoroutingsop();
+            for (InventoryRoutingSop inventoryRoutingSop : moMoroutinginvcs) {
+              moMoroutingsop = new MoMoroutingsop();
               moMoroutingsop.setIInventoryRoutingConfigId(inventoryRoutingConfigServiceById.getIAutoId());
               moMoroutingsop.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());
               moMoroutingsop.setCName(inventoryRoutingSop.getCName());
@@ -401,9 +403,9 @@ public class MoDocService extends BaseService<MoDoc> {
       }
 
 
-      if(isOk(iMoRoutingConfigId)) {
-        if (jBoltTable.getUpdate() != null){
-          int   iPersonNum=0;
+      if (isOk(iMoRoutingConfigId)) {
+        if (jBoltTable.getUpdate() != null) {
+          int iPersonNum = 0;
           List<Record> recordList = jBoltTable.getUpdateRecordList();
           if (!recordList.isEmpty()) {
             MoMoroutingconfigPerson moMoroutingconfigPerson;
@@ -433,8 +435,8 @@ public class MoDocService extends BaseService<MoDoc> {
               moMoroutingconfigPerson.save();
               iPersonNum++;
             }
-            System.out.print("iPersonNu........................................"+iPersonNum);
-            if(iPersonNum>0){
+            System.out.print("iPersonNu........................................" + iPersonNum);
+            if (iPersonNum > 0) {
               moDoc.setIPersonNum(iPersonNum);
               moDoc.setIStatus(2);
               moDoc.update();
@@ -446,35 +448,36 @@ public class MoDocService extends BaseService<MoDoc> {
     });
     return successWithData(moDoc);
   }
-  public Ret saveDoc(JBoltTable jBoltTable,String rowid){
+
+  public Ret saveDoc(JBoltTable jBoltTable, String rowid) {
     MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
     if (moDoc == null) {
       System.out.print("dddddddddds");
       return fail(JBoltMsg.PARAM_ERROR);
     }
     /// checkDoc(moDoc);
-    if(!isOk(moDoc.getIInventoryId())){
+    if (!isOk(moDoc.getIInventoryId())) {
       return Ret.fail("缺少产线,请重新选择人员在提交");
     }
-    if(!isOk(moDoc.getIDepartmentId())){
+    if (!isOk(moDoc.getIDepartmentId())) {
       return Ret.fail("缺少部门,请重新选择人员在提交");
     }
-    if(!isOk(moDoc.getIInventoryId())){
+    if (!isOk(moDoc.getIInventoryId())) {
       return Ret.fail("缺少存货编号,请重新选择人员在提交");
     }
-    if(!isOk(moDoc.getIQty())){
+    if (!isOk(moDoc.getIQty())) {
       return Ret.fail("缺少计划数,请重新选择人员在提交");
     }
-    if(!isOk(moDoc.getDPlanDate())){
+    if (!isOk(moDoc.getDPlanDate())) {
       return Ret.fail("缺少计划日期,请重新选择人员在提交");
     }
-    if(!isOk(moDoc.getIAutoId())&&StringUtils.isBlank(moDoc.getCMoDocNo())){
+    if (!isOk(moDoc.getIAutoId()) && StringUtils.isBlank(moDoc.getCMoDocNo())) {
       return addDoc(jBoltTable, rowid);
     }
-    MoDoc oldModoc=findById(moDoc.getIAutoId());
-    if(oldModoc==null){
-      oldModoc=findFirst(Okv.create().setIfNotBlank(MoDoc.CMODOCNO,moDoc.getCMoDocNo()));
-      if(oldModoc==null){
+    MoDoc oldModoc = findById(moDoc.getIAutoId());
+    if (oldModoc == null) {
+      oldModoc = findFirst(Okv.create().setIfNotBlank(MoDoc.CMODOCNO, moDoc.getCMoDocNo()));
+      if (oldModoc == null) {
         return addDoc(jBoltTable, rowid);
       }
 
@@ -483,13 +486,13 @@ public class MoDocService extends BaseService<MoDoc> {
     //初始化状态
     //moDoc.setIStatus(1);
     //moDoc.setIType(2);
-    if(moDoc.getDPlanDate()!=null) {
+    if (moDoc.getDPlanDate() != null) {
       Date date = moDoc.getDPlanDate();
-      java.util.Calendar ca =  java.util.Calendar.getInstance();
+      java.util.Calendar ca = java.util.Calendar.getInstance();
       ca.setTime(date);
 
       oldModoc.setIYear(ca.get(java.util.Calendar.YEAR));
-      oldModoc.setIMonth(ca.get(Calendar.MONTH)+1);
+      oldModoc.setIMonth(ca.get(Calendar.MONTH) + 1);
       oldModoc.setIDate(ca.get(Calendar.DATE));
     }
 
@@ -506,13 +509,13 @@ public class MoDocService extends BaseService<MoDoc> {
     // oldModoc.setIInventoryRouting(moDoc.getIInventoryRouting());//工艺路线ID
 
     //存货ID发变化则清除原来数据
-    Inventory inventory=inventoryService.findById(moDoc.getIInventoryId());
-    if(inventory==null){
-      return  fail("无效存货档案信息");
+    Inventory inventory = inventoryService.findById(moDoc.getIInventoryId());
+    if (inventory == null) {
+      return fail("无效存货档案信息");
     }
-    if(!inventory.getIAutoId().equals(oldModoc.getIInventoryId())){
+    if (!inventory.getIAutoId().equals(oldModoc.getIInventoryId())) {
 
-      return clearAndSaveLines(oldModoc, jBoltTable, rowid,dCreateTime);
+      return clearAndSaveLines(oldModoc, jBoltTable, rowid, dCreateTime);
     }
     // 工艺路线
    /* MoMorouting moMorouting = new MoMorouting();
@@ -535,23 +538,22 @@ public class MoDocService extends BaseService<MoDoc> {
 
       //moMorouting.setIMoDocId(moDoc.getIAutoId());
       //moMoroutingService.save(moMorouting)
-      MoMorouting moMorouting=moMoroutingService.findFirst(Okv.create().set(MoMorouting.IMODOCID,finalOldModoc.getIAutoId()),
-              MoMorouting.IAUTOID,"desc");
+      MoMorouting moMorouting = moMoroutingService.findFirst(Okv.create().set(MoMorouting.IMODOCID, finalOldModoc.getIAutoId()),
+          MoMorouting.IAUTOID, "desc");
       savelines(jBoltTable, rowid, moMorouting.getIAutoId(), dCreateTime);
       return true;
 
     });
 
 
-
     return successWithData(finalOldModoc);
   }
 
-  public Ret subSave(JBoltTable jBoltTable,String rowid){
-    Ret ret=saveDoc(jBoltTable,rowid);
-    MoDoc modoc=(MoDoc)ret.get("data");
-    if(modoc!=null&&modoc.getIStatus().equals(7)){
-      return  fail("已经是关闭状态");
+  public Ret subSave(JBoltTable jBoltTable, String rowid) {
+    Ret ret = saveDoc(jBoltTable, rowid);
+    MoDoc modoc = (MoDoc) ret.get("data");
+    if (modoc != null && modoc.getIStatus().equals(7)) {
+      return fail("已经是关闭状态");
     }
     // modoc.setIStatus(3);
     modoc.setIUpdateBy(JBoltUserKit.getUserId());
@@ -565,19 +567,19 @@ public class MoDocService extends BaseService<MoDoc> {
   }
 
 
-  private Ret clearAndSaveLines(MoDoc oldModoc,JBoltTable jBoltTable, String rowid,Date dCreateTime ) {
+  private Ret clearAndSaveLines(MoDoc oldModoc, JBoltTable jBoltTable, String rowid, Date dCreateTime) {
 
     MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
     // 工艺路线
 
-    MoMorouting oldmoMorouting = moMoroutingService.findFirst(Okv.create().set(MoMorouting.IMODOCID,oldModoc.getIAutoId()),MoMorouting.IAUTOID,"desc");
+    MoMorouting oldmoMorouting = moMoroutingService.findFirst(Okv.create().set(MoMorouting.IMODOCID, oldModoc.getIAutoId()), MoMorouting.IAUTOID, "desc");
     /*if(oldmoMorouting!=null&&oldmoMorouting.getIInventoryId().equals(moDoc.getIInventoryId())) {
       return  successWithData(oldModoc);
     }*/
 
     oldmoMorouting.setIInventoryId(moDoc.getIInventoryId());//存货ID
-    Long iInventoryRoutingId=oldmoMorouting.getIInventoryRoutingId();
-    if(isOk(moDoc.getIInventoryRouting())) {
+    Long iInventoryRoutingId = oldmoMorouting.getIInventoryRoutingId();
+    if (isOk(moDoc.getIInventoryRouting())) {
       oldmoMorouting.setIInventoryRoutingId(moDoc.getIInventoryRouting());
       InventoryRouting byId = inventoryRoutingService.findById(moDoc.getIInventoryRouting());
       if (byId != null) {
@@ -613,34 +615,32 @@ public class MoDocService extends BaseService<MoDoc> {
       // }
       // }
       Integer iPersonNum = savelines(jBoltTable, rowid, oldmoMorouting.getIAutoId(), dCreateTime);
-      if (iPersonNum > 0){
+      if (iPersonNum > 0) {
         oldModoc.setIPersonNum(iPersonNum);
         oldModoc.setIStatus(2);
         oldModoc.update();
       }
 
 
-
       return true;
     });
 
 
-
-
-    return  SUCCESS;
+    return SUCCESS;
   }
-  public  Integer savelines(JBoltTable jBoltTable,String rowid,Long imoroutingid,Date dCreateTime){
+
+  public Integer savelines(JBoltTable jBoltTable, String rowid, Long imoroutingid, Date dCreateTime) {
 
 
 //存工艺路线工序,人员,设备,物料集
     List<MoDocFormVo> saveModelList1 = jBoltTable.getSaveModelList(MoDocFormVo.class);
     Long iMoRoutingConfigId = null;
     MoMoroutingconfig moMoroutingconfig;
-    for (MoDocFormVo record : saveModelList1){
+    for (MoDocFormVo record : saveModelList1) {
       String iautoid = record.getIautoid();
-      System.out.print("iautoid"+iautoid);
+      System.out.print("iautoid" + iautoid);
       InventoryRoutingConfig inventoryRoutingConfigServiceById = inventoryRoutingConfigService.findById(iautoid);
-      if(inventoryRoutingConfigServiceById!=null) {
+      if (inventoryRoutingConfigServiceById != null) {
 
         //工序
         moMoroutingconfig = new MoMoroutingconfig();
@@ -661,13 +661,13 @@ public class MoDocService extends BaseService<MoDoc> {
         moMoroutingconfig.setCCreateName(JBoltUserKit.getUserName());
         moMoroutingconfig.setDCreateTime(dCreateTime);
         moMoroutingconfigService.save(moMoroutingconfig);
-        if (StringUtils.isNotBlank(rowid)&&rowid.equals(iautoid)) {
+        if (StringUtils.isNotBlank(rowid) && rowid.equals(iautoid)) {
           iMoRoutingConfigId = moMoroutingconfig.getIAutoId();
         }
 
         //设备
         List<InventoryRoutingEquipment> iInventoryEquipments = inventoryRoutingEquipmentService
-                .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+            .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
         if (!iInventoryEquipments.isEmpty()) {
           MoMoroutingequipment moMoroutingequipment;
           for (InventoryRoutingEquipment iInventoryEquipment : iInventoryEquipments) {
@@ -680,7 +680,7 @@ public class MoDocService extends BaseService<MoDoc> {
         }
         //物料集
         List<InventoryRoutingInvc> iInventoryRoutingInvcs = inventoryRoutingInvcService
-                .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+            .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
         if (!iInventoryRoutingInvcs.isEmpty()) {
           MoMoroutinginvc moMoroutinginvc;
           for (InventoryRoutingInvc iInventoryRoutingInvc : iInventoryRoutingInvcs) {
@@ -698,10 +698,10 @@ public class MoDocService extends BaseService<MoDoc> {
         }
         //作业指导书
         List<InventoryRoutingSop> moMoroutinginvcs = inventoryRoutingSopService.getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
-        if(!moMoroutinginvcs.isEmpty()){
+        if (!moMoroutinginvcs.isEmpty()) {
           MoMoroutingsop moMoroutingsop;
-          for(InventoryRoutingSop inventoryRoutingSop:moMoroutinginvcs){
-            moMoroutingsop=new MoMoroutingsop();
+          for (InventoryRoutingSop inventoryRoutingSop : moMoroutinginvcs) {
+            moMoroutingsop = new MoMoroutingsop();
             moMoroutingsop.setIInventoryRoutingConfigId(inventoryRoutingConfigServiceById.getIAutoId());
             moMoroutingsop.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());
             moMoroutingsop.setCName(inventoryRoutingSop.getCName());
@@ -714,10 +714,10 @@ public class MoDocService extends BaseService<MoDoc> {
             moMoroutingsopService.save(moMoroutingsop);
           }
         }
-      }else{
-        moMoroutingconfig=moMoroutingconfigService.findById(iautoid);
-        if(moMoroutingconfig!=null){
-          if (StringUtils.isNotBlank(rowid)&&rowid.equals(iautoid)) {
+      } else {
+        moMoroutingconfig = moMoroutingconfigService.findById(iautoid);
+        if (moMoroutingconfig != null) {
+          if (StringUtils.isNotBlank(rowid) && rowid.equals(iautoid)) {
             iMoRoutingConfigId = moMoroutingconfig.getIAutoId();
             //删除原有人员信息
             moMoroutingconfigPersonService.deleteBy(Okv.create().set(MoMoroutingconfigPerson.IMOROUTINGCONFIGID, moMoroutingconfig.getIAutoId()));
@@ -726,12 +726,12 @@ public class MoDocService extends BaseService<MoDoc> {
         }
       }
     }
-    int  iPersonNum=0;
-    if(isOk(iMoRoutingConfigId)) {
+    int iPersonNum = 0;
+    if (isOk(iMoRoutingConfigId)) {
       //人员处理
-      if(jBoltTable.getUpdate()!=null) {
+      if (jBoltTable.getUpdate() != null) {
         List<Record> recordList = jBoltTable.getUpdateRecordList();
-        if(!recordList.isEmpty()){
+        if (!recordList.isEmpty()) {
 
           MoMoroutingconfigPerson moMoroutingconfigPerson;
           for (Record r : recordList) {
@@ -763,9 +763,10 @@ public class MoDocService extends BaseService<MoDoc> {
         }
       }
     }
-    System.out.print("iPersonNu........................................"+iPersonNum);
-    return  iPersonNum;
+    System.out.print("iPersonNu........................................" + iPersonNum);
+    return iPersonNum;
   }
+
   /**
    * 更新
    *
@@ -891,51 +892,52 @@ public class MoDocService extends BaseService<MoDoc> {
                            String cdepname, Long iworkregionmid, Integer istatus,
                            Date starttime, Date endtime) {
     return dbTemplate("modoc.getPage", Kv.by("cMoDocNo", cmodocno).set("cInvCode", cinvcode).
-            set("cInvCode1", cinvcode1).
-            set("cinvname1", cinvname1).
-            set("cDepName", cdepname).
-            set("iWorkRegionMid", iworkregionmid).
-            set("istatus", istatus).
-            set("startdate", starttime).
-            set("enddate", endtime)).paginate(page, pageSize);
+        set("cInvCode1", cinvcode1).
+        set("cinvname1", cinvname1).
+        set("cDepName", cdepname).
+        set("iWorkRegionMid", iworkregionmid).
+        set("istatus", istatus).
+        set("startdate", starttime).
+        set("enddate", endtime)).paginate(page, pageSize);
 
   }
 
   public String generateBarCode() {
     String prefix = "SCGD";
     String format = DateUtil.format(DateUtil.date(), DatePattern.PURE_DATE_FORMAT);
-    String s= momDataFuncService.getNextNo(prefix.concat(format), 4);
+    String s = momDataFuncService.getNextNo(prefix.concat(format), 4);
 
-    return  momDataFuncService.getNextRouteNo(1L, "SCGD", 6);
+    return momDataFuncService.getNextRouteNo(1L, "SCGD", 6);
   }
-  public List<Record> getDocdetail(Long imodocid,Long iinventoryroutingid) {
-    List<Record> records= dbTemplate("modoc.findDocdetail",   Okv.by("iMoDocId", imodocid).set("iInventoryRoutingId",iinventoryroutingid)).find();
-    if(!records.isEmpty()){
-      for(Record r:records){
-        if(isOk(r.getLong("iautoid"))){
-          r.set("personnames",moMoroutingconfigPersonService.getMoMoroutingconfigPersonNameData(r.getLong("iautoid")));
+
+  public List<Record> getDocdetail(Long imodocid, Long iinventoryroutingid) {
+    List<Record> records = dbTemplate("modoc.findDocdetail", Okv.by("iMoDocId", imodocid).set("iInventoryRoutingId", iinventoryroutingid)).find();
+    if (!records.isEmpty()) {
+      for (Record r : records) {
+        if (isOk(r.getLong("iautoid"))) {
+          r.set("personnames", moMoroutingconfigPersonService.getMoMoroutingconfigPersonNameData(r.getLong("iautoid")));
         }
       }
     }
-    return  records;
+    return records;
 
 
   }
 
-  public Ret checkDoc(MoDoc moDoc){
-    if(!isOk(moDoc.getIInventoryId())){
+  public Ret checkDoc(MoDoc moDoc) {
+    if (!isOk(moDoc.getIInventoryId())) {
       return Ret.fail("缺少产线");
     }
-    if(!isOk(moDoc.getIDepartmentId())){
+    if (!isOk(moDoc.getIDepartmentId())) {
       return Ret.fail("缺少部门");
     }
-    if(!isOk(moDoc.getIInventoryId())){
+    if (!isOk(moDoc.getIInventoryId())) {
       return Ret.fail("缺少存货编号");
     }
-    if(!isOk(moDoc.getIQty())){
+    if (!isOk(moDoc.getIQty())) {
       return Ret.fail("缺少计划数");
     }
-    if(!isOk(moDoc.getDPlanDate())){
+    if (!isOk(moDoc.getDPlanDate())) {
       return Ret.fail("缺少计划日期");
     }
     return SUCCESS;
@@ -943,10 +945,10 @@ public class MoDocService extends BaseService<MoDoc> {
 
   public Ret stopSave(JBoltTable jBoltTable, String rowid) {
 
-    Ret ret=saveDoc(jBoltTable,rowid);
-    MoDoc modoc=(MoDoc)ret.get("data");
-    if(modoc!=null&&modoc.getIStatus().equals(7)){
-      return  fail("已经是关闭状态");
+    Ret ret = saveDoc(jBoltTable, rowid);
+    MoDoc modoc = (MoDoc) ret.get("data");
+    if (modoc != null && modoc.getIStatus().equals(7)) {
+      return fail("已经是关闭状态");
     }
     modoc.setIStatus(7);
     modoc.setIUpdateBy(JBoltUserKit.getUserId());
@@ -959,9 +961,10 @@ public class MoDocService extends BaseService<MoDoc> {
 
     return SUCCESS;
   }
-  public Ret updateStatus(MoDoc modoc){
-    if(modoc!=null&&modoc.getIStatus().equals(7)){
-      return  fail("已经是关闭状态");
+
+  public Ret updateStatus(MoDoc modoc) {
+    if (modoc != null && modoc.getIStatus().equals(7)) {
+      return fail("已经是关闭状态");
     }
     modoc.setIStatus(7);
     modoc.setIUpdateBy(JBoltUserKit.getUserId());
@@ -971,17 +974,18 @@ public class MoDocService extends BaseService<MoDoc> {
       modoc.update();
       return true;
     });
-    return  SUCCESS;
+    return SUCCESS;
   }
 
   /**
    * 获取工单对应产线关联所属仓库信息
+   *
    * @param imdcocid
    */
-  public void  getModocWarehouse(Long imdcocid){
-   MoDoc moDoc=findById(imdcocid);
-   //获取产线
-    if(moDoc!=null){
+  public void getModocWarehouse(Long imdcocid) {
+    MoDoc moDoc = findById(imdcocid);
+    //获取产线
+    if (moDoc != null) {
 
     }
   }
@@ -989,39 +993,35 @@ public class MoDocService extends BaseService<MoDoc> {
   //推送u8数据接口
   public Ret pushU8(MoDoc moDoc) {
 
-   List<PushU8ReqVo> rows=new ArrayList();
-    PushU8ReqVo pushU8ReqVo=new PushU8ReqVo();
+    List<PushU8ReqVo> rows = new ArrayList();
+    PushU8ReqVo pushU8ReqVo = new PushU8ReqVo();
     pushU8ReqVo.setDocno(moDoc.getCMoDocNo());
-    pushU8ReqVo.setDdate(DateUtils.formatDate(moDoc.getDCreateTime(),"yyyy-MM-dd"));
+    pushU8ReqVo.setDdate(DateUtils.formatDate(moDoc.getDCreateTime(), "yyyy-MM-dd"));
     pushU8ReqVo.setcWhCode("");
-    Inventory inventory=inventoryService.findById(moDoc.getIInventoryId());
-    if(inventory!=null) {
+    Inventory inventory = inventoryService.findById(moDoc.getIInventoryId());
+    if (inventory != null) {
       pushU8ReqVo.setCinvcode(inventory.getCInvCode());
       pushU8ReqVo.setcInvName(inventory.getCInvName());
       pushU8ReqVo.setcInvStd(inventory.getCInvStd());
     }
-    if(moDoc.getICompQty()!=null){
+    if (moDoc.getICompQty() != null) {
       pushU8ReqVo.setIquantity(Integer.valueOf(moDoc.getICompQty().intValue()));
     }
-    if(isOk(moDoc.getDPlanDate())){
-      pushU8ReqVo.setDStartDate(DateUtils.formatDate(moDoc.getDCreateTime(),"yyyy-MM-dd"));
-      pushU8ReqVo.setDdate(DateUtils.formatDate(moDoc.getDCreateTime(),"yyyy-MM-dd"));
+    if (isOk(moDoc.getDPlanDate())) {
+      pushU8ReqVo.setDStartDate(DateUtils.formatDate(moDoc.getDCreateTime(), "yyyy-MM-dd"));
+      pushU8ReqVo.setDdate(DateUtils.formatDate(moDoc.getDCreateTime(), "yyyy-MM-dd"));
     }
     pushU8ReqVo.setIrowno("1");
     pushU8ReqVo.setcBatch("");
     rows.add(pushU8ReqVo);
-    Map map=new HashMap();
-  map.put("data",rows);
-
-
-
-
+    Map map = new HashMap();
+    map.put("data", rows);
 
 
     //            请求头
     Map<String, String> header = new HashMap<>(5);
     header.put("Content-Type", "application/json");
-    String url ="http://192.168.1.19:8090/api/cwapi/AddMoToERP?dbname=U8Context";
+    String url = "http://192.168.1.19:8090/api/cwapi/AddMoToERP?dbname=U8Context";
 
     try {
       String post = HttpApiUtils.httpHutoolPost(url, map, header);
@@ -1032,24 +1032,24 @@ public class MoDocService extends BaseService<MoDoc> {
           return Ret.ok("提交成功");
         }
       }
-    }catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
     }
     return Ret.fail("上传u8失败");
   }
 
   //通过当前登录人名称获取部门id
-  public String getdeptid(){
+  public String getdeptid() {
     String dept = "001";
     User user = JBoltUserKit.getUser();
     Person person = personService.findFirstByUserId(user.getId());
-    if(null != person && "".equals(person)){
+    if (null != person && "".equals(person)) {
       dept = person.getCOrgCode();
     }
     return dept;
   }
 
-  public List<Record> getMoJobData(Long imdcocid){
+  public List<Record> getMoJobData(Long imdcocid) {
     List<Record> records = dbTemplate("modoc.findMoJobByImodocId", new Kv().set("imdcocid", imdcocid)).find();
     return records;
   }
@@ -1058,21 +1058,21 @@ public class MoDocService extends BaseService<MoDoc> {
     return dbTemplate("modoc.getInventoryList", keywords).paginate(pageNumber, pageSize);
   }
 
-  public Page<Record> getPersonByEquipment(int pageNumber, int pageSize, Kv keywords){
-    if (StrUtil.isNotBlank(keywords.getStr(InventoryRoutingConfig.PERSONEQUIPMENTJSON))){
+  public Page<Record> getPersonByEquipment(int pageNumber, int pageSize, Kv keywords) {
+    if (StrUtil.isNotBlank(keywords.getStr(InventoryRoutingConfig.PERSONEQUIPMENTJSON))) {
       String str = keywords.getStr(InventoryRoutingConfig.PERSONEQUIPMENTJSON);
       JSONArray jsonArray = JSONObject.parseArray(str);
-      if (CollectionUtil.isEmpty(jsonArray)){
+      if (CollectionUtil.isEmpty(jsonArray)) {
         return null;
       }
       List<Record> recordList = new ArrayList<>();
-      for (int i=0; i<jsonArray.size(); i++){
+      for (int i = 0; i < jsonArray.size(); i++) {
         JSONObject jsonObject = jsonArray.getJSONObject(i);
         Record record = new Record();
         record.setColumns(jsonObject.getInnerMap());
 
         Long personId = jsonObject.getLong("iautoid");
-        if (ObjectUtil.isNotNull(personId)){
+        if (ObjectUtil.isNotNull(personId)) {
           Person person = personService.findById(personId);
           ValidationUtils.notNull(person, "未找到设备信息");
           record.set(person.CPSN_NUM, person.getCpsnNum());
@@ -1083,7 +1083,7 @@ public class MoDocService extends BaseService<MoDoc> {
       persons.setList(recordList);
       return persons;
     }
-    List<Record> records = dbTemplate("modoc.getEquipments",Kv.by("iEquipmentIds",keywords.getLong("configid"))).find();
+    List<Record> records = dbTemplate("modoc.getEquipments", Kv.by("iEquipmentIds", keywords.getLong("configid"))).find();
 
     StringBuilder sb = new StringBuilder();
     for (Record record : records) {
@@ -1096,19 +1096,76 @@ public class MoDocService extends BaseService<MoDoc> {
       equipmentIds = equipmentIds.substring(0, equipmentIds.length() - 1);
     }
     keywords.set("iEquipmentIds", equipmentIds);
-    if(equipmentIds.equals("")){
+    if (equipmentIds.equals("")) {
       return null;
     }
     Page<Record> iEquipmentIds = dbTemplate("modoc.getPersonByEquipment", keywords).paginate(pageNumber, pageSize);
-    return  iEquipmentIds;
+    return iEquipmentIds;
   }
 
-  public Record getmoDocupdata(Long iautoid){
-      return dbTemplate("modoc.getmoDocupdata",Kv.by("iautoid",iautoid)).findFirst();
+  public Record getmoDocupdata(Long iautoid) {
+    return dbTemplate("modoc.getmoDocupdata", Kv.by("iautoid", iautoid)).findFirst();
   }
 
-  public List<Record> getMoDocbyIinventoryRoutingId(Long iMoDocId){
-    List<Record > datalists= dbTemplate("modoc.getMoDocbyIinventoryRoutingId",Kv.by("iMoDocId",iMoDocId)).find();
+  public List<Record> getMoDocbyIinventoryRoutingId(Long iMoDocId) {
+    List<Record> datalists = dbTemplate("modoc.getMoDocbyIinventoryRoutingId", Kv.by("iMoDocId", iMoDocId)).find();
     return datalists;
+  }
+
+  /**
+   * 编辑计划保存
+   *
+   * @param records
+   * @return
+   */
+  public Ret savePlan(List<Record> records) {
+    tx(() -> {
+      records.forEach(record -> {
+        MoDoc moDoc = findById(record.getStr("iautoid"));
+        if (record.getStr("qty").matches("\\d+")) { // 使用正则表达式判断字符串是否由数字组成
+          int num = Integer.parseInt(record.getStr("qty")); // 将字符串转换为整数
+          if (num <= 0) {
+            ValidationUtils.error("工单号【" + moDoc.getCMoDocNo() + "】数量必须大于0");
+          }
+        } else {
+          ValidationUtils.error("工单号【" + moDoc.getCMoDocNo() + "】生产计划量数据错误，请输入正确的数据");
+        }
+        moDoc.setIQty(record.getBigDecimal("qty"));
+        moDoc.setIsModified(true);
+        moDoc.update();
+      });
+      return true;
+    });
+    return SUCCESS;
+  }
+
+  /**
+   * 编辑人员保存
+   *
+   * @param records
+   * @return
+   */
+  public Ret savePersonnel(List<Record> records) {
+    tx(() -> {
+      records.forEach(record -> {
+        Date date = DateUtil.parse(record.getStr("data"));
+        //获取工单工艺配置ID
+        String routingconfigid = dbTemplate("modocbatch.getMoroutingconfigId", Kv.by("imotaskid", record.getStr("taskid")).set("iyear", DateUtil.year(date)).
+            set("imonth", DateUtil.month(date) + 1).set("idate", DateUtil.dayOfMonth(date)).set("iworkshiftmid", record.getStr("iworkshiftmid")).
+            set("iinventoryid", record.getStr("codekehu")).set("ioperationid", record.getStr("gonxuid"))).queryStr();
+//        ValidationUtils.notBlank(routingconfigid, "工单号【" + record.getStr("") + "】对应列未找到工单工艺配置数据！！！");
+        //删除之前跟工单工艺配置ID相关联的工单工艺人员配置信息
+
+        JSONArray records1 = JSON.parseArray(record.getStr("renyuanid"));
+        for (Object o : records1) {
+          MoMoroutingconfigPerson person = new MoMoroutingconfigPerson();
+          person.setIMoRoutingConfigId(Long.parseLong(routingconfigid));
+          person.setIPersonId(Long.parseLong(String.valueOf(o)));
+          person.save();
+        }
+      });
+      return true;
+    });
+    return SUCCESS;
   }
 }

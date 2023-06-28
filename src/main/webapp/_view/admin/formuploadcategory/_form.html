@@ -28,6 +28,27 @@
     <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入分类名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入分类名称" maxlength="40" name="formUploadCategory.cCategoryName" value="#(formUploadCategory.cCategoryName??)"/>
 </div>
 </div>
+	<div class="form-group row"
+		 data-radio
+		 data-name="formUploadCategory.isEnabled"
+		 data-value-attr="sn"
+		 data-default="options_first"
+		 data-url="admin/dictionary/options?key=options_enable"
+		 data-label="是否启用"
+		 data-width="col-sm-2,col-10"
+		 data-value="#(formUploadCategory.isEnabled??)"
+		 data-rule="radio"
+		 data-notnull="true"
+		 data-tips="请输入是否启用"
+		 data-inline="true"
+	>
+	</div>
+	<div class="form-group row" >
+		<label class="col-sm-2 col-form-label">备注</label>
+		<div class="col-10">
+			<textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="formUploadCategory.cMemo">#(formUploadCategory.cMemo??)</textarea>
+		</div>
+	</div>
 </div>
 </div>
 </form>

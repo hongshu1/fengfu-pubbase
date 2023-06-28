@@ -36,7 +36,7 @@
     </div> 
 </div>
 ### 新增之后，并且为审批流
-#if(proposalm.iautoid?? && proposalm.iauditway == 2 && proposalm.iauditstatus == 1)
+#if(proposalm.iautoid?? && proposalm.iauditway == 2 && (proposalm.iauditstatus == 1 || proposalm.iauditstatus == 2) && proposalm.ieffectivestatus == 1)
     ### 参数列表
     ### formAutoId:                 单据ID
     ### formSn:                     表单名

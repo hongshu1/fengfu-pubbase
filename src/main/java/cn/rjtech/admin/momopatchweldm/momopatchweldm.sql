@@ -42,6 +42,7 @@ WHERE 1 = 1
     #if(enddate)
         AND b.dPlanDate <= #para(enddate)
     #end
+    ORDER BY a.dCreateTime DESC
 #end
 
 #sql("getMoMopatchwelddList")
@@ -52,5 +53,16 @@ FROM Mo_MoPatchWeldD AS a
          LEFT JOIN Mo_MoRoutingEquipment AS c ON b.iAutoId = c.iMoRoutingConfigId
          LEFT JOIN Bd_Equipment AS d ON c.iEquipmentId = d.iAutoId
 WHERE a.iMoPatchWeldMid = #para(mid)
+ORDER BY b.iSeq
+#end
+
+#sql("getMoMopatchwelddApiList")
+###根据条件查询补焊记录明细
+SELECT a.iMoDocId,b.iAutoId AS iMoRoutingConfigId,b.cOperationName,d.cEquipmentName,0 AS iQty
+FROM Mo_MoRouting AS a
+         LEFT JOIN Mo_MoRoutingConfig AS b ON a.iAutoId = b.iMoRoutingId
+         LEFT JOIN Mo_MoRoutingEquipment AS c ON b.iAutoId = c.iMoRoutingConfigId
+         LEFT JOIN Bd_Equipment AS d ON c.iEquipmentId = d.iAutoId
+WHERE a.iMoDocId = #para(imodocid)
 ORDER BY b.iSeq
 #end

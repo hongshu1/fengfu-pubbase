@@ -10,6 +10,7 @@ import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.MoDoc;
 import cn.rjtech.model.momdata.MoMotask;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
@@ -651,7 +652,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
                     recordsa2ListMap.get(records2.get(i).getStr("iautoid")) : new ArrayList<>();
                 for (Record recordb1 : recordsb1) {
                   sb1.append(recordb1.getStr("coperationname") != null ? recordb1.getStr("coperationname") : "").append("/");
-                  sb2.append(recordb1.getStr("imoroutingconfigid") != null ? recordb1.getStr("imoroutingconfigid") : "").append(",");
+//                  sb2.append(recordb1.getStr("imoroutingconfigid") != null ? recordb1.getStr("imoroutingconfigid") : "").append(",");
+                  sb2.append(recordb1.getStr("ioperationid") != null ? recordb1.getStr("ioperationid") : "").append(",");
                 }
                 String coperationname = sb1.toString().endsWith("/") ? sb1.toString().substring(0, sb1.toString().length() - 1) : sb1.toString();
                 ioperationid = sb2.toString().endsWith(",") ? sb2.toString().substring(0, sb2.toString().length() - 1) : sb2.toString();
@@ -1002,5 +1004,4 @@ public class MoMotaskService extends BaseService<MoMotask> {
 //    ValidationUtils.notBlank(kv.getStr("depcode"), "部门编码未传入！！！");AND per.cdept_num=#para(depcode)
     return dbTemplate("modocbatch.getUserDatas", kv).paginate(kv.getInt("pageNumber"), kv.getInt("pageSize"));
   }
-
 }

@@ -1,0 +1,59 @@
+<!-- 检验表格参数表的的数据模板定义-->
+<script type="text/template" id="QcFormParamSplit_tpl_#(pageId)">
+
+    {@each datas as data,index}
+    <tr data-id="${data.iautoid}">
+        {@if pageSize&&pageSize>0}
+        <td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
+        {@else}
+        <td>${+index+1}</td>
+        {@/if}
+        <td data-editable="false">${data.cqcitemnames}</td>
+        <td>${data.cqcparamnames}</td>
+        <td hidden>${data.iqcformitemid}</td>
+        <td hidden>${data.iqcparamid}</td>
+        <td hidden>${data.iitemseq}</td>
+        <td>
+            {@if index>0}
+                <a tooltip data-title="上移" href="javascript:void(0)" class="jbolt_table_btn" onclick="jboltTableTrMoveUp(this, true);updateItemParamSeq(false);"><i class="fa fa-arrow-up c-info"></i></a>
+            {@/if}
+            {@if index<datas.length-1}
+                <a tooltip data-title="下移" href="javascript:void(0)" class="jbolt_table_btn" onclick="jboltTableTrMoveDown(this, true);updateItemParamSeq(false);"><i class="fa fa-arrow-down c-info"></i></a>
+            {@/if}
+            <a tooltip data-title="删除" href="javascript:void(0)" class="jbolt_table_delbtn" onclick="removeJboltTableRow(this);updateItemParamSeq(true);"><i class="fa fa-remove  c-danger"></i></a>
+        </td>
+    </tr>
+    {@/each}
+</script>
+
+<div class="jbolt_table_toolbar" id="dicOptBtns_#(pageId)">
+    <button data-link-para-ele="#dicTypeId_#(pageId)" onclick="addparam(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+</div>
+
+<table id="jbolt_table_prod_qcformparam_split" class="jbolt_table thead_font_normal dictionaryTypes table-center" data-jbolttable data-column-resize="true" data-height="fill_box"
+       data-rowtpl="QcFormParamSplit_tpl_#(pageId)"
+       data-ajax="true"
+       data-url="/admin/prodForm/qcformparam/getQcFormParamListByPId?iqcformid=#(prodForm.iAutoId??)"
+       data-conditions-form="dictionaryForm_#(pageId)"
+       data-toolbar="dicOptBtns_#(pageId)"
+       data-width="auto"
+       data-editable="true"
+       data-editable-option="getQcFormParamTableOptions_split"
+       data-ajax-success-handler="ajaxSuccessHandler"
+       data-page-mini="true"
+       data-row-click-active="true">
+    <thead>
+    <tr>
+        <th data-width="60" data-column="index">项次</th>
+        <th data-width="300" data-column="cqcitemnames">项目名称</th>
+        <th data-width="200" data-column="cqcparamnames">参数名称</th>
+        <th hidden data-column="iqcformitemid"></th>
+        <th hidden data-column="iqcparamid"></th>
+        <th hidden data-column="iitemseq"></th>
+        <th hidden data-column="iitemseq"></th>
+        <th data-width="180" data-column="iseq">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>

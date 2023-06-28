@@ -10,9 +10,11 @@ import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.SysAssem;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -136,6 +138,15 @@ public class SysAssemAdminController extends BaseAdminController {
 	@Before(Tx.class)
 	public void submitAll() {
 		renderJson(service.submitByJBoltTable(getJBoltTable()));
+	}
+
+	/**
+	 * 提审批
+	 */
+	public void submit(@Para(value = "iautoid") Long iautoid) {
+		ValidationUtils.validateId(iautoid, "id");
+
+		renderJson(service.submit(iautoid));
 	}
 
 	//获取转换方式数据源 jb_dictionary 存id

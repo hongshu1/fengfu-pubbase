@@ -1,0 +1,84 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>生产表单设置</h1></div>
+			<div class="col">
+				<form class="form-inline" id="spot_check_form_#(pageId)">
+					<input type="text" autocomplete="off" class="form-control" placeholder="=生产表格名称=" name="cProdFormName" id="cSpotCheckFormName" value=""/>
+
+					<button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+					<button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="jbolt_page_content">
+
+		<!-- 定义JBoltTable使用的数据渲染模板 -->
+		<textarea class="jb_tpl_box" id="spot_check_form_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a tooltip title="编辑" href="admin/prodForm/edit/${data.iautoid}" data-scroll="yes" data-handler="refreshJBoltTable"data-title="编辑" data-area="100%,100%" class="jbolt_table_editbtn">编辑</a>
+                <a tooltip title="删除" href="admin/prodForm/delete/${data.iautoid}" data-handler="refreshJBoltTable" class="jbolt_table_delbtn">删除</a>
+            </td>
+            <td>${data.cprodformname}</td>
+			  <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"
+           data-url="admin/prodForm/toggleIsEnabled/${data.iautoid}"/>
+  </td>
+            <td>${data.cmemo}</td>
+            <td>${data.ccreatename}</td>
+            <td>${data.dcreatetime}</td>
+        </tr>
+        {@/each}
+        </textarea>
+
+		<div class="jbolt_table_toolbar" id="spot_check_form_toolbar_#(pageId)">
+			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+				<button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)" data-title="新增生产表单设置" data-url="admin/prodForm/add" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增</button>
+				<button data-dialogbtn data-area="100%,100%" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)" data-title="编辑生产表单设置" data-check-handler="jboltTableGetCheckedId" data-url="admin/prodForm/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+				<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/prodForm/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除</button>
+				<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+			</div>
+		</div>
+
+		<table class="jbolt_table jbolt_main_table  table-center "
+			   data-jbolttable
+			   data-width="auto"
+			   data-height="fill"
+			   data-ajax="true"
+			   data-conditions-form="spot_check_form_#(pageId)"
+			   data-url="admin/prodForm/datas"
+			   data-rowtpl="spot_check_form_tpl_#(pageId)"
+			   data-copy-to-excel="false"
+			   data-page="spot_check_form_page"
+			   data-toolbar="spot_check_form_toolbar_#(pageId)"
+			   data-column-resize="true"
+			   data-column-prepend="1:checkbox:true"
+			   data-fixed-columns-left="1,2,3">
+			<thead>
+			<tr>
+				<th data-width="60" data-column="index">序号</th>
+				<th data-width="130">操作</th>
+				<th data-width="120" data-column="cProdFormName">生产表格名称</th>
+				<th data-width="120" data-column="isEnabled">是否启用</th>
+				<th data-width="120" data-column="cMemo">备注</th>
+				<th data-width="120" data-column="ccreatename">创建人名称</th>
+				<th data-width="150" data-column="dcreatetime">创建时间</th>
+			</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
