@@ -102,4 +102,8 @@ public class UptimeTplCategoryService extends BaseService<UptimeTplCategory> {
 		return null;
 	}
 
+	public Boolean delectByUptimeTplMid(Long iuptimecategoryid) {
+		delete(deleteSql().eq("iUptimeCategoryId", iuptimecategoryid));
+		return true;
+	}
 }

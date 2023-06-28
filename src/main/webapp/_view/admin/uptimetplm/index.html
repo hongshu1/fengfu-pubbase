@@ -4,17 +4,42 @@
 <div class="jbolt_page" data-key="#(pmkey??)">
     <div class="jbolt_page_title">
         <div class="row">
-            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>稼动时间建模-稼动时间模板主表</h1></div>
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>稼动时间建模</h1></div>
             <div class="col">
                 <form class="form-inline" id="UptimeTplM_form_#(pageId)">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="输入关键字搜索" name="keywords"
-                           value=""/>
-
-                    <select class="form-control" name="isDeleted"
+                    <select class="form-control"
+                            data-autoload
+                            data-url="admin/workregionm/options"
+                            data-select-type="select"
+                            name="iworkregionmid"
+                            data-rule="select"
+                            data-notnull="true"
+                            data-tips="请选择产线名称"
+                            data-text="=请选择产线名称="
+                            data-value-attr="iautoid"
+                            data-text-attr="cworkname"
+                            data-select="#(uptimeTplM.iworkregionmid??)"
+                    ></select>
+                    <select class="form-control"
+                            data-autoload
+                            id="iworkshiftmid"
+                            data-url="admin/workshiftm/getSelect"
+                            data-select-type="select"
+                            name="iworkshiftmid"
+                            data-rule="select"
+                            data-notnull="true"
+                            data-tips="请选择班次"
+                            data-text="=请选择班次="
+                            data-value=""
+                            data-value-attr="iautoid"
+                            data-text-attr="cworkshiftname"
+                            data-select="#(uptimeTplM.iworkshiftmid??)"
+                    ></select>
+                    <select class="form-control" name="isenabled"
                             data-autoload
                             data-url="admin/dictionary/options?key=options_enable"
                             data-select-type="select"
-                            data-text="=删除状态;0. 未删除 1. 已删除="
+                            data-text="=是否启用"
                             data-value=""
                             data-value-attr="sn"
                     ></select>
@@ -25,16 +50,6 @@
                         </button>
                     </div>
                 </form>
-            </div>
-            <div class="col-sm-auto text-right">
-
-                <button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/uptimeTplM/add"
-                        data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增稼动时间建模-稼动时间模板主表">
-                    <i class="fa fa-plus"></i></button>
-                <button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据">
-                    <i class="fa fa-refresh"></i></button>
-
-
             </div>
         </div>
     </div>
@@ -48,8 +63,8 @@
 	<a class="jbolt_table_editbtn" href="admin/uptimeTplM/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑稼动时间建模-稼动时间模板主表">编辑</a>
 	<a class="jbolt_table_delbtn" href="admin/uptimeTplM/delete/${data.iautoid}" data-handler="refreshJBoltTable" >删除</a>
 </td>
-<td>${data.iworkregionmname}</td>
-<td>${data.iworkshiftmname}</td>
+<td>${data.cworkname}</td>
+<td>${data.cworkshiftname}</td>
 <td>${data.ccreatename}</td>
 <td>${data.dcreatetime}</td>
 </tr>
@@ -80,8 +95,8 @@
             <thead class="fw-normal">
             <tr>
                 <th data-width="60" data-column="index">序号</th>
-                <th data-width="80">操作</th>
-                <th data-width="100" data-column="iWorkRegionMid">分类名称</th>
+                <th data-width="120">操作</th>
+                <th data-width="200" data-column="iWorkRegionMid">分类名称</th>
                 <th data-width="100" data-column="iWorkShiftMid">项目名称</th>
                 <th data-width="150" data-column="cCreateName">创建人名称</th>
                 <th data-min-width="160" data-column="dCreateTime">创建时间</th>

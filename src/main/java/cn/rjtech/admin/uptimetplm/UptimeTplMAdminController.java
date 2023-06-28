@@ -41,7 +41,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isDeleted")));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
 	}
 
    /**
@@ -97,7 +97,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	@Before(Tx.class)
     @TxConfig(UptimeTplM.DATASOURCE_CONFIG_NAME)
 	public void delete() {
-		renderJson(service.deleteById(getLong(0)));
+		renderJson(service.delete(getLong(0)));
 	}
 
 
@@ -106,10 +106,6 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	 */
 	public void submitAll()
 	{
-		JBoltTableMulti jBoltTables = getJBoltTables();
-		Kv kv = getKv();
-		JBoltTable jBoltTable = getJBoltTable();
-		JBoltPara para = getJBoltPara();
-		renderJson(service.submitAll(kv));
+		renderJson(service.submitAll(getKv()));
 	}
 }
