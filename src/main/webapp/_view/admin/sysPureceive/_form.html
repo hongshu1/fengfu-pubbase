@@ -364,9 +364,10 @@
                             });
                         } else {
                             LayerMsgBox.success("提交成功", 600, function () {
-                                // parent.refreshPjaxContainer();
-                                self.location.href =
-                                    "/admin/materialReceiptList/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
+                                parent.refreshPjaxContainer();
+                                parent.layer.closeAll();
+                                // self.location.href =
+                                //     "/admin/materialReceiptList/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
                             });
 
                         }
