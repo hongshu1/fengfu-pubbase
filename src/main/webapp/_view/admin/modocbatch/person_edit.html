@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
 <style>
     .spread-container {
-        height:75.5vh;
+        height:76.5vh;
     }
 
     .gc-statusbar {
@@ -877,6 +877,7 @@
         id.forEach((arr)=>{
             parms.editCellValueObj.renYuanid.push(arr)
         })
+        parms.editCellValue.push(parms.editCellValueObj)
     }
     /**
      * 页面数据保存事件
@@ -889,16 +890,16 @@
             type:'post',
             dataType:'json',
             data:{
-                modoc:JSON.stringify(parms.editCellValueObj)//修改单元格之后的数据--[object]
+                modoc:JSON.stringify(parms.editCellValue)//修改单元格之后的数据--[object]
             },
             success:function (res){
                 if(res.data?.msg=='操作成功'){
                     LayerMsgBox.success(res.data.msg)
-                    parms.editCellValueObj.length=0;
+                    parms.editCellValue.length=0;
                     initData();
                 }else{
                     LayerMsgBox.error(res.msg,1000);
-                    parms.editCellValueObj.length=0;
+                    parms.editCellValue.length=0;
                 }
             },error: function(error) {
                 console.log(error);
