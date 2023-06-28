@@ -425,6 +425,7 @@
                 codeKehu:rowData[0][7],//当前物品的存货编码
                 sheBeiid:"",//设备id
                 gonXuid:"",//工序id
+                taskId,//页面id
                 renYuanid:[]//人员id
             }
             parms.cellRowOk = row;
@@ -872,8 +873,8 @@
     function getArrayCellRow(id){
         let productionLineObj = parms['pageData'].slice(0,parms['pageData'].length-3).find((v,i)=>v.cinvcode==parms.keHuCode);//查找到当前产线对象
         let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
-        parms.editCellValueObj.gonXuid=sheBeigonXuObj.cequipment.iequipmentid;//工序id
-        parms.editCellValueObj.sheBeiid=sheBeigonXuObj.coperation.ioperationid;//设备id
+        parms.editCellValueObj.gonXuid = sheBeigonXuObj.cequipment.iequipmentid;//工序id
+        parms.editCellValueObj.sheBeiid = sheBeigonXuObj.coperation.ioperationid;//设备id
         id.forEach((arr)=>{
             parms.editCellValueObj.renYuanid.push(arr)
         })
