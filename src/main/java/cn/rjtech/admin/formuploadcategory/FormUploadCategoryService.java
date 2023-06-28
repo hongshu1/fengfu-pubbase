@@ -1,18 +1,23 @@
 package cn.rjtech.admin.formuploadcategory;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
+import cn.jbolt.core.poi.excel.*;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.model.momdata.FormUploadCategory;
+import cn.rjtech.model.momdata.Workregionm;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -25,7 +30,9 @@ import com.jfinal.plugin.activerecord.Record;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 分类管理
@@ -47,15 +54,16 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 
 	@Inject
 	private WorkregionmService workregionmService;
-
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingDService;
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
 	 * @return
 	 */
-	public Page<Record> getAdminDatas(int pageNumber, int pageSize) {
-		Page<Record> paginate = dbTemplate("formuploadcategory.list").paginate(pageNumber, pageSize);
+	public Page<Record> getAdminDatas(int pageNumber, int pageSize,Kv para) {
+		Page<Record> paginate = dbTemplate("formuploadcategory.list",para).paginate(pageNumber, pageSize);
 		for (Record record : paginate.getList()) {
 			if (ObjectUtil.isNotNull(workregionmService.findById(record.getStr("iworkregionmid")))){
 				record.set("iworkregionmid",workregionmService.findById(record.getStr("iworkregionmid")).getCWorkName());
@@ -75,7 +83,7 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 		}
 		User user = JBoltUserKit.getUser();
 		//基础数据
-		formUploadCategory.setCCategoryCode(BillNoUtils.genCurrentNo());
+		formUploadCategory.setCCategoryCode("FL" +DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
 		formUploadCategory.setCOrgCode(getOrgCode());
 		formUploadCategory.setCOrgName(getOrgName());
 		formUploadCategory.setIOrgId(getOrgId());
@@ -157,67 +165,57 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
                     );
     }
 
-    /**
-	 * 读取excel文件
-	 * @param file
-	 * @return
+	/**
+	 * 从系统导入字段配置，获得导入的数据
 	 */
-	public Ret importExcel(File file) {
-		StringBuilder errorMsg=new StringBuilder();
-		JBoltExcel jBoltExcel=JBoltExcel
-		//从excel文件创建JBoltExcel实例
-		.from(file)
-		//设置工作表信息
-		.setSheets(
-				JBoltExcelSheet.create()
-				//设置列映射 顺序 标题名称
-                .setHeaders(1,
-                        JBoltExcelHeader.create("ccategorycode","分类编码"),
-                        JBoltExcelHeader.create("ccategoryname","分类名称")
-                        )
-				//从第三行开始读取
-				.setDataStartRow(2)
-				);
-		//从指定的sheet工作表里读取数据
-		List<FormUploadCategory> formUploadCategorys=JBoltExcelUtil.readModels(jBoltExcel,1, FormUploadCategory.class,errorMsg);
-		if(notOk(formUploadCategorys)) {
-			if(errorMsg.length()>0) {
-				return fail(errorMsg.toString());
-			}else {
-				return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-			}
-		}
-		for (FormUploadCategory formUploadCategory : formUploadCategorys) {
-			if (CollUtil.isNotEmpty(list(formUploadCategory.getCCategoryCode()))) {
-				return fail("列表中已存在该分类！");
-			}
-			if (CollUtil.isNotEmpty(list(formUploadCategory.getCCategoryName()))) {
-				return fail("列表中已存在该分类！");
-			}
-			User user = JBoltUserKit.getUser();
-			//基础数据
-			formUploadCategory.setCOrgCode(getOrgCode());
-			formUploadCategory.setCOrgName(getOrgName());
-			formUploadCategory.setIOrgId(getOrgId());
-			formUploadCategory.setICreateBy(user.getId());
-			formUploadCategory.setCCreateName(user.getName());
-			formUploadCategory.setDCreateTime(new Date());
-			formUploadCategory.setCUpdateName(user.getName());
-			formUploadCategory.setDUpdateTime(new Date());
-			formUploadCategory.setIUpdateBy(user.getId());
-		}
-		//执行批量操作
-		boolean success=tx(new IAtom() {
-			@Override
-			public boolean run() throws SQLException {
-				batchSave(formUploadCategorys);
-				return true;
-			}
-		});
+	public Ret importExcelClass(File file) {
 
-		if(!success) {
-			return fail(JBoltMsg.DATA_IMPORT_FAIL);
+		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+		if (notOk(records)) {
+			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 		}
+
+		// 产线
+		Map<String, Workregionm> workregionmMap = new HashMap<>();
+		for (Record record : records) {
+
+			if (StrUtil.isBlank(record.getStr("iWorkRegionmId"))) {
+				return fail("产线名称不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("cCategoryName"))) {
+				return fail("目录名称不能为空");
+			}
+			String iWorkRegionmId = record.getStr("iWorkRegionmId");
+			Workregionm workregionm = workregionmMap.get(iWorkRegionmId);
+			if (ObjUtil.isNull(workregionm)) {
+				workregionm = workregionmService.findFirstByWorkName(iWorkRegionmId);
+				ValidationUtils.notNull(workregionm, String.format("产线“%s”不存在", workregionmMap));
+				record.set("iWorkRegionmId",workregionm.getIAutoId());
+				workregionmMap.put(iWorkRegionmId, workregionm);
+			}
+
+			Date now=new Date();
+
+			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+			record.set("iOrgId", getOrgId());
+			record.set("cOrgCode", getOrgCode());
+			record.set("cOrgName", getOrgName());
+			record.set("isEnabled",1);
+			record.set("iCreateBy", JBoltUserKit.getUserId());
+			record.set("dCreateTime", now);
+			record.set("cCreateName", JBoltUserKit.getUserName());
+			record.set("isDeleted",0);
+			record.set("iUpdateBy", JBoltUserKit.getUserId());
+			record.set("dUpdateTime", now);
+			record.set("cUpdateName", JBoltUserKit.getUserName());
+			record.set("cCategoryCode", "FL" +DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
+		}
+
+		// 执行批量操作
+		tx(() -> {
+			batchSaveRecords(records);
+			return true;
+		});
 		return SUCCESS;
 	}
 
@@ -225,7 +223,12 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 	 * 生成要导出的Excel
 	 * @return
 	 */
-	public JBoltExcel exportExcel(List<FormUploadCategory> datas) {
+	public JBoltExcel exportExcel(List<Record> datas) {
+		for (Record record : datas) {
+			if (ObjectUtil.isNotNull(workregionmService.findById(record.getStr("iworkregionmid")))){
+				record.set("iworkregionmid",workregionmService.findById(record.getStr("iworkregionmid")).getCWorkName());
+			}
+		}
 	    return JBoltExcel
 			    //创建
 			    .create()
@@ -236,11 +239,12 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
     				.create()
     				//表头映射关系
                     .setHeaders(1,
-                            JBoltExcelHeader.create("ccategorycode","分类编码",15),
-                            JBoltExcelHeader.create("ccategoryname","分类名称",15)
+                            JBoltExcelHeader.create("iworkregionmid","产线名称",40),
+                            JBoltExcelHeader.create("ccategoryname","目录名称",20),
+                            JBoltExcelHeader.create("cmemo","备注",20)
                             )
     		    	//设置导出的数据源 来自于数据库查询出来的Model List
-    		    	.setModelDatas(2,datas)
+    		    	.setRecordDatas(2,datas)
     		    );
 	}
 
@@ -248,7 +252,7 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 	 *获取类别档案
 	 */
 	public List<Record> list(String q) {
-		return dbTemplate("formuploadcategory.list", Kv.by("q",q)).find();
+		return dbTemplate("formuploadcategory.list", Kv.by("q",q).set("isEnabled",false)).find();
 	}
 
 	/**
@@ -267,5 +271,18 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 			return true;
 		});
 		return SUCCESS;
+	}
+	/**
+	 * 切换isenabled属性
+	 */
+	public Ret toggleIsenabled(Long id) {
+		return toggleBoolean(id, "isEnabled");
+	}
+
+	/**
+	 * 获取全部数据
+	 */
+	public List<Record> list(Kv kv){
+		return dbTemplate("formuploadcategory.list", kv).find();
 	}
 }
