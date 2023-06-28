@@ -1148,10 +1148,8 @@ public class MoDocService extends BaseService<MoDoc> {
   public Ret savePersonnel(List<Record> records) {
     tx(() -> {
       records.forEach(record -> {
-//        MoDoc moDoc = findById(record.getStr("iautoid"));
 
 
-//        moDoc.update();
       });
       return true;
     });
