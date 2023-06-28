@@ -649,7 +649,10 @@
             let date = 1;
             let dateCol = 10;
             let C = 10;
-            let numberArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
+            let numberArray = [];
+            for (let i = 1; i <= 31; i++) {
+                numberArray.push(i)
+            }
             //设置头部年月份
             for (let i = 0; i < res.data.month.length; i++) {
                 let index = numberArray.findIndex(v=>v==res.data.month[i].colsum);
@@ -693,10 +696,10 @@
      */
     function initData(ilevel){
         spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
-        // sheet.options.isProtected = true; // 开启工作表保护
-        // sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
-        // sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
-        // sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
+        sheet.options.isProtected = true; // 开启工作表保护
+        sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+        sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+        sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
         //定义接口参数
         let url = Api + `admin/scheduproductplanmonth/getScheduPlanMonthList?level=${ilevel==null||undefined?'1':ilevel}&startdate=${searchData.searchStartTime}&enddate=${searchData.searchEndTime}&cworkname=${searchData.cworkname}&cinvcode=${searchData.cinvcode}&cinvcode1=${searchData.cinvcode1}&cinvname1=${searchData.cinvname1}`
         LayerMsgBox.loading("正在获取最新数据...",20000);
@@ -796,20 +799,44 @@
                                 sheet.setValue(4 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].qiChuZaiKu);
                                 sheet.setValue(5 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].dayNum);
                                 //
-                                console.log(sheet.getValue(9,9))
-                                console.log(shiyongRow)
-                                let Num = sheet.getValue(shiyongRow,9);
+                                let AS= shiyongRow+5;
+                                let Num = sheet.getValue(AS,9);
                                 let useArray = [];
                                 for (let f = 0; f < Num; f++) {
                                     useArray.push(`R[-5]C[${f+1}]`);
                                 }
-                                // console.log(useArray)
                                 //嵌入计划在库公式
-                                sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
+                                sheet.setFormula(shiyongRow+5-1,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //嵌入在库天数公式7
-                                sheet.setFormula(B,Z++,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
+                                sheet.setFormula(AS,Z++,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
                                 //控制小数位为1位
-                                sheet.setFormatter(5 + shiyongRow, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
+                                sheet.setFormatter(AS, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
+                                //
+                                if(!parms['scheduplanmonth'][i].childList[j].day[k].lock){
+                                    // 设置单元格是否可编辑
+                                    sheet.getCell(shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                    sheet.getCell(1+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                    sheet.getCell(2+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                    sheet.getCell(3+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                    sheet.getCell(4+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                    sheet.getCell(5+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                }else{
+                                    // 设定锁定样式
+                                    const style_1S = new GC.Spread.Sheets.Style();
+                                    style_1S.backColor = "#F0F0F0";
+                                    sheet.getCell(1+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                    parms.activeSheet.setStyle(1+shiyongRow, shiyongCol+k,style_1S);
+
+                                    const style_2S = new GC.Spread.Sheets.Style();
+                                    sheet.getCell(2+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                    style_2S.backColor = "#F0F0F0";
+                                    parms.activeSheet.setStyle(2+shiyongRow, shiyongCol+k,style_2S);
+
+                                    const style_3S = new GC.Spread.Sheets.Style();
+                                    sheet.getCell(3+shiyongRow, shiyongCol+k).locked(parms['scheduplanmonth'][i].childList[j].day[k].lock);
+                                    style_3S.backColor = "#F0F0F0";
+                                    parms.activeSheet.setStyle(3+shiyongRow, shiyongCol+k,style_3S);
+                                }
                             }
                             shiyongRow=shiyongRow+6
                         }

@@ -1,0 +1,57 @@
+<form onsubmit="return false;" id="MoMojob_Form" action="#(action)" method="post">
+	#if(moMojob.iAutoId??)
+	<input type="hidden" name="moMojob.iAutoId" value="#(moMojob.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="moMojob.iAutoId" value="#(moMojob.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">生产工单ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入生产工单ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产工单ID" maxlength="40" name="moMojob.iMoDocId" value="#(moMojob.iMoDocId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">工单任务编码，字典名MoJob： 1. 齐料检查 2. 现品票打印 3. 材料耗用</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入工单任务编码，字典名MoJob： 1. 齐料检查 2. 现品票打印 3. 材料耗用"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入工单任务编码，字典名MoJob： 1. 齐料检查 2. 现品票打印 3. 材料耗用" maxlength="40" name="moMojob.cMoJobSn" value="#(moMojob.cMoJobSn??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">计划现品票数</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入计划现品票数"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入计划现品票数" maxlength="40" name="moMojob.iPlanQty" value="#(moMojob.iPlanQty??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">实绩现品票数</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入实绩现品票数"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入实绩现品票数" maxlength="40" name="moMojob.iRealQty" value="#(moMojob.iRealQty??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">完成状态：1. 未完成 2. 已完成</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入完成状态：1. 未完成 2. 已完成"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入完成状态：1. 未完成 2. 已完成" maxlength="40" name="moMojob.iStatus" value="#(moMojob.iStatus??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">最新操作时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入最新操作时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入最新操作时间" maxlength="20" name="moMojob.dUpdateTime"    value="#datetime(moMojob.dUpdateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="MoMojob_Form")
+#end
+

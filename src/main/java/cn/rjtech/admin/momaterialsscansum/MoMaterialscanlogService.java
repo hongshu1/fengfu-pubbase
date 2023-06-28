@@ -1,23 +1,20 @@
 package cn.rjtech.admin.momaterialsscansum;
 
-import cn.jbolt.core.kit.JBoltUserKit;
-import cn.rjtech.admin.momaterialscanusedlog.MoMaterialscanusedlogmService;
-import cn.rjtech.model.momdata.MoMaterialscanusedlogd;
-import cn.rjtech.model.momdata.MoMaterialsscansum;
-import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.momaterialscanusedlog.MoMaterialscanusedlogmService;
+import cn.rjtech.model.momdata.MoMaterialscanlog;
+import cn.rjtech.model.momdata.MoMaterialsscansum;
+import cn.rjtech.model.momdata.MoMojob;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.MoMaterialscanlog;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import java.util.*;
 
 /**
  * 制造工单-齐料明细 Service
@@ -36,17 +33,11 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 
 	@Inject
 	private MoMaterialscanusedlogmService moMaterialscanusedlogmService;
-
 	@Inject
 	private  MoMaterialsscansumService moMaterialsscansumService; //齐料汇总
 
 	/**
 	 * 后台管理分页查询
-	 *
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param keywords
-	 * @return
 	 */
 	public Page<MoMaterialscanlog> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
 		return paginateByKeywords("iAutoId", "DESC", pageNumber, pageSize, keywords, "iAutoId");
@@ -54,9 +45,6 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 
 	/**
 	 * 保存
-	 *
-	 * @param moMaterialscanlog
-	 * @return
 	 */
 	public Ret save(MoMaterialscanlog moMaterialscanlog) {
 		if (moMaterialscanlog == null || isOk(moMaterialscanlog.getIAutoId())) {
@@ -73,9 +61,6 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 
 	/**
 	 * 更新
-	 *
-	 * @param moMaterialscanlog
-	 * @return
 	 */
 	public Ret update(MoMaterialscanlog moMaterialscanlog) {
 		if (moMaterialscanlog == null || notOk(moMaterialscanlog.getIAutoId())) {
@@ -97,9 +82,6 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 
 	/**
 	 * 删除 指定多个ID
-	 *
-	 * @param ids
-	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
 		return deleteByIds(ids, true);
@@ -107,9 +89,6 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 
 	/**
 	 * 删除
-	 *
-	 * @param id
-	 * @return
 	 */
 	public Ret delete(Long id) {
 		return deleteById(id, true);
@@ -120,7 +99,6 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 	 *
 	 * @param moMaterialscanlog 要删除的model
 	 * @param kv                携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	protected String afterDelete(MoMaterialscanlog moMaterialscanlog, Kv kv) {
@@ -133,7 +111,6 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 	 *
 	 * @param moMaterialscanlog 要删除的model
 	 * @param kv                携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkCanDelete(MoMaterialscanlog moMaterialscanlog, Kv kv) {
@@ -143,8 +120,6 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 
 	/**
 	 * 设置返回二开业务所属的关键systemLog的targetType
-	 *
-	 * @return
 	 */
 	@Override
 	protected int systemLogTargetType() {
@@ -152,67 +127,51 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 	}
 
 	/**
-	 * 未扫描
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
+	 * 未扫描/已扫码
 	 */
 	public Page<Record> getMoMaterialNotScanLogList(int pageNumber, int pageSize, Kv kv) {
-
-		return dbTemplate("momaterialsscansum.getMoMaterialNotScanLogList", kv).paginate(pageNumber, pageSize);
-	}
-
-	/**
-	 * 扫描
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
-	 */
-	public Page<Record> getMoMaterialScanLogList(int pageNumber, int pageSize, Kv kv) {
-		return dbTemplate("momaterialsscansum.getMoMaterialScanLogList", kv).paginate(pageNumber, pageSize);
+		return dbTemplate("momaterialsscansum.getMaterialScanLogN", kv).paginate(pageNumber, pageSize);
 	}
 
 	public Ret addBarcode(String barcode, Long imodocid) {
-		Record record = moMaterialsscansumService.getBarcode(barcode,imodocid);
+		Record record = dbTemplate("momaterialsscansum.getMaterialScanLogByBarcode",Kv.by("cBarcode",barcode)).findFirst();
+
 		if(record==null){
-			return  fail("未找到当前现品票");
+			return  fail("当前现品票已扫码");
 		}
+		Map<String,String> map=new HashMap<>();
 
-		if (record != null) {
 			tx(() -> {
-				MoMaterialscanlog moMaterialscanlog = findFirst(Okv.create().
-						setIfNotNull(MoMaterialscanlog.IMATERIALSPREPAIRDID, record.get("imaterialsprepairdid")).
-						setIfNotNull(MoMaterialscanlog.CBARCODE, record.get("barcode")).
-						setIfNotNull(MoMaterialscanlog.IMODOCID, imodocid), MoMaterialscanlog.IAUTOID, "desc");
-				if (moMaterialscanlog == null) {
-					moMaterialscanlog.setIMoDocId(imodocid);
-					moMaterialscanlog.setIMaterialsPrepairDid(record.get("imaterialsprepairdid"));
-					moMaterialscanlog.setIInventoryId(record.getLong("iinventoryid")); //存货ID
-					moMaterialscanlog.setCBarcode(record.getStr("barcode"));
-					//moMaterialscanlog.setIQty(new BigDecimal(1));
-					moMaterialscanlog.setIQty(record.getBigDecimal("qty"));
-					moMaterialscanlog.setICreateBy(JBoltUserKit.getUserId());
-					moMaterialscanlog.setCCreateName(JBoltUserKit.getUserName());
-					moMaterialscanlog.setDCreateTime(new Date());
-					moMaterialscanlog.save();
+				MoMaterialscanlog moMaterialscanlog = new MoMaterialscanlog();
 
-				} else {
-					//moMaterialscanlog.setIQty(moMaterialscanlog.getIQty().add(new BigDecimal(1)));
-					//moMaterialscanlog.update();
-					fail("已加入");
+					moMaterialscanlog.setIAutoId(record.get("iautoid"));
+					moMaterialscanlog.setIsScanned(true);
+					moMaterialscanlog.setScanTime(new Date());
+					moMaterialscanlog.update();
+				Record jobN = dbTemplate("momaterialsscansum.getByBarcodeF",Kv.by("imodocid",imodocid)).findFirst();
+				Record jobY = dbTemplate("momaterialsscansum.getByBarcodeN",Kv.by("imodocid",imodocid)).findFirst();
+				MoMojob moMojob=new MoMojob();
+				moMojob.setIMoDocId(imodocid);
+				moMojob.setCMoJobSn("1");
+				moMojob.setIPlanQty(jobN.getInt("iplanqty"));
+				moMojob.setIRealQty(jobY.getInt("irealqty"));
+				if(Objects.equals(jobN.getInt("iplanqty"), jobY.getInt("irealqty"))){
+					moMojob.setIStatus(2);
+					map.put("vincodeStae","已齐料");
+					map.put("numStatus","已齐料");
+				}else{
+					moMojob.setIStatus(1);
+					map.put("vincodeStae","未齐料");
+					map.put("numStatus","未齐料");
 				}
-				addMoMaterialsscansum(record);
+				moMojob.setDUpdateTime(new Date());
+				moMojob.save();
 				return  true;
 			});
-		}
-
-		return  SUCCESS;
+		return  successWithData(map);
 	}
 
 	public void  addMoMaterialsscansum(Record record){
-
 		if(isOk(record.getLong("iinventoryid"))) {
 			MoMaterialsscansum moMaterialsscansum=moMaterialsscansumService.findFirst(Okv.create().
 							set(MoMaterialsscansum.IINVENTORYID,record.getLong("iinventoryid"))
@@ -235,19 +194,34 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 				//moMaterialsscansum.update();
 			}
 		}
-
 	}
 
 	/**
 	 * 获取子件计划数
-	 * @param imodocid
-	 * @param iinventoryid
-	 * @return
 	 */
-	public Record getPlanQty(Long imodocid,Long iinventoryid){
-		Kv kv=Kv.create().setIfNotNull("imodocid",imodocid).
-				setIfNotNull("iinventoryid",iinventoryid);
-		Record record=dbTemplate("momaterialsscansum.findInvCodeUseNum",kv).findFirst();
-		return record;		}
+    public Record getPlanQty(Long imodocid, Long iinventoryid) {
+        Kv kv = Kv.create()
+                .setIfNotNull("imodocid", imodocid)
+                .setIfNotNull("iinventoryid", iinventoryid);
+
+        return dbTemplate("momaterialsscansum.findInvCodeUseNum", kv).findFirst();
+    }
+
+    public Page<Record> getBarcodeAll(int pageNumber, int pageSize, Kv kv) {
+        Page<Record> page = dbTemplate("momaterialsscansum.getBarcodeAll", kv).paginate(pageNumber, pageSize);
+        
+        List<Record> record1 = dbTemplate("momaterialsscansum.getAllById", kv).find();
+        
+        for (Record record : page.getList()) {
+            record.set("iqty2", ZERO_STR);
+            for (Record record2 : record1) {
+                if (record.getLong("iautoid").longValue() == record2.getLong("iautoid").longValue()) {
+                    record.set("iqty2", record2.get("iqty"));
+                }
+            }
+        }
+
+        return page;
+    }
 
 }

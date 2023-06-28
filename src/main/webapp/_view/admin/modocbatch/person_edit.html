@@ -278,7 +278,6 @@
                     </table>
                 </div>
             </div>
-            <div id="demo-laypage-limits"></div>
             <div class="dialog-footer">
                 <button class="dialog-btn dialog-btn-cancel" id="dialog-btn-cancel">取消</button>
                 <button class="dialog-btn dialog-btn-ok" id="dialog-btn-ok" onClick="dialogBtnOk()">确定</button>
@@ -434,57 +433,30 @@
         }
     });
     function getUserData() {
-        let pageCount=1;
-        let pageSize=10;
         //获取弹框人员数据
-        function fetchData() {
-            let url = Api+`admin/modocbatch/getUserDatas?pageNumber=${pageCount}&pageSize=${pageSize}`;
-            $.ajax({
-                url,
-                type:'post',
-                dataType:'json',
-                success:function (res){
-                    var str = "";
-                    for (var i = 0; i < res.data.list.length; i++) {
-                        str += `<tr>
-                                <td align='center'><input type="checkbox" class="checkbox" onChange="selectCheckboxs(event,${i})"></td>
-                                <td class="hide">${res.data.list[i].iautoid}</td>
-                                <td>${res.data.list[i].cpsnnum}</td>
-                                <td>${res.data.list[i].cpsnname}</td>
-                                <td>${res.data.list[i].cpsnmobilephone}</td>
-                                <td>${res.data.list[i].cdepname}</td>
-                               </tr>`;
-                    }
-                    $("#layer_tr").html(str);
-                    //处理分页数据
-                    layui.use(function(){
-                        let laypage = layui.laypage;
-                        // 自定义每页条数的选择项
-                        laypage.render({
-                            elem: 'demo-laypage-limits',
-                            count:res.data.totalRow,
-                            limit: pageCount,
-                            limits: [1,10, 20, 30,40,50,100,200],
-                            layout: ['count','prev', 'page', 'next', 'limit'],
-                            jump: function(obj, first){
-                                if(obj.curr!=pageCount){
-                                    pageCount = obj.curr; // 得到当前页，以便向服务端请求对应页的数据。
-                                }
-                                if(obj.limit!=pageSize){
-                                    pageSize = obj.limit; // 得到每页显示的条数
-                                }
-                                if (!first) { // 判断是否为首次加载，避免重复请求
-                                    fetchData(); // 数据发生改变时重新请求
-                                }
-                            }
-                        });
-                    });
-                },error: function(error) {
-                    console.log(error);
+        let url = Api+`admin/modocbatch/getUserDatas?pageNumber=1&pageSize=${parms["pageSize"]??10}`;
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                parms["pageSize"]=res.data.list.length;
+                var str = "";
+                for (var i = 0; i < res.data.list.length; i++) {
+                    str += `<tr>
+                            <td align='center'><input type="checkbox" class="checkbox" onChange="selectCheckboxs(event,${i})"></td>
+                            <td class="hide">${res.data.list[i].iautoid}</td>
+                            <td>${res.data.list[i].cpsnnum}</td>
+                            <td>${res.data.list[i].cpsnname}</td>
+                            <td>${res.data.list[i].cpsnmobilephone}</td>
+                            <td>${res.data.list[i].cdepname}</td>
+                           </tr>`;
                 }
-            });
-        }
-        fetchData(); // 初始化时请求数据
+                $("#layer_tr").html(str);
+            },error: function(error) {
+                console.log(error);
+            }
+        });
     }
     /**
      * 获取接口返回的日期数据
@@ -500,6 +472,7 @@
             dataType:'json',
             success:function (respons){
                 let tableHeadArray = respons.data.datas;
+                parms['tableHeadArray'] = respons.data.datas;
                 spreadSuspend();//暂停绘制
                 //渲染头部数据
                 let startDate = document.getElementById("cinvcode1");
@@ -555,7 +528,6 @@
                 LayerMsgBox.closeLoading();
                 const jsonData = respons;
                 parms['pageData'] = respons.data;
-                console.log(jsonData)
                 spreadSuspend();//暂停绘制
                 let rowIndex = 4;
                 let colIndex=0;
@@ -763,6 +735,21 @@
     tableContainer.addEventListener('scroll', function() {
         // 获取表头元素
         const tableHeader = myTable.querySelector('thead');
+        if (tableContainer.scrollTop + tableContainer.clientHeight >= myTable.scrollHeight) {
+            for (var i = 0; i < 20; i++) {
+                str += `<tr>
+                            <td align='center'><input type="checkbox" class="checkbox" onChange="selectCheckboxs(event,${i})"></td>
+                            <td class="hide">${i}</td>
+                            <td>${i+1}</td>
+                            <td>${i+1}</td>
+                            <td>${i+1}</td>
+                            <td>${i+1}</td>
+                           </tr>`;
+            }
+            $("tbody tr").appendChild(str);
+            // 执行数据加载操作
+            initData();
+        }
     });
 
     // 获取全选按钮和所有复选框
@@ -873,19 +860,23 @@
     function getArrayCellRow(id){
         let productionLineObj = parms['pageData'].slice(0,parms['pageData'].length-3).find((v,i)=>v.cinvcode==parms.keHuCode);//查找到当前产线对象
         let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
-        parms.editCellValueObj.gonXuid = sheBeigonXuObj.cequipment.iequipmentid;//工序id
-        parms.editCellValueObj.sheBeiid = sheBeigonXuObj.coperation.ioperationid;//设备id
+        parms.editCellValueObj.sheBeiid = sheBeigonXuObj.cequipment.iequipmentid;//工序id
+        parms.editCellValueObj.gonXuid = sheBeigonXuObj.coperation.ioperationid;//设备id
+        parms.editCellValueObj.iworkregionmid = productionLineObj.iworkregionmid;
         id.forEach((arr)=>{
-            parms.editCellValueObj.renYuanid.push(arr)
+            parms.editCellValueObj.renYuanid.push(arr);
         })
-        parms.editCellValue.push(parms.editCellValueObj)
+        //获取当前的班次id
+        let blan = parms['tableHeadArray'].find((v,i)=>v.find((item,ind)=>item.yeartodate==parms.editCellValueObj.data)).find((ite,id)=>ite.cworkshiftcode==parms.editCellValueObj.plan);
+        parms.editCellValueObj.iworkshiftmid = blan.iworkshiftmid;
+        parms.editCellValue.push(parms.editCellValueObj);
     }
     /**
      * 页面数据保存事件
      * @param seva
      */
     function seva() {
-        let url = `admin/modocbatch/savePersonnel`
+        let url = `admin/modocbatch/savePersonnel`;
         $.ajax({
             url,
             type:'post',
@@ -895,7 +886,7 @@
             },
             success:function (res){
                 if(res.data?.msg=='操作成功'){
-                    LayerMsgBox.success(res.data.msg)
+                    LayerMsgBox.success(res.data.msg);
                     parms.editCellValue.length=0;
                     initData();
                 }else{
@@ -942,7 +933,6 @@
         util.on('lay-on', {
             'test-tips-prompt-0': function(){
                 layer.prompt({title: '请输入文本'}, function(value, index, elem){
-                    console.log(index)
                     if(value === '') return elem.focus();
                     if(index==100002){
                         var json = spread.toJSON();//转为json格式
