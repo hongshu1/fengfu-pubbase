@@ -216,7 +216,17 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         return find("select * from  T_Sys_AssemDetail where MasID = ? and isDeleted = '0' and AssemType ='转换前' ", masId);
     }
 
+
     public SysAssemdetail findFirst(String masId, Integer combination) {
         return findFirst("select * from  T_Sys_AssemDetail where MasID = ? and isDeleted = '0' and AssemType ='转换后' and Combination = ?", masId,combination);
     }
+
+    public List<SysAssemdetail> findFirst(String masId) {
+        return find("select * from  T_Sys_AssemDetail where MasID = ? and isDeleted = '0' and AssemType ='转换后' ", masId);
+    }
+
+    public List<SysAssemdetail> findFirstByall(Long masId) {
+        return find("select * from  T_Sys_AssemDetail where MasID = ? and isDeleted = '0'  ", masId);
+    }
+
 }
