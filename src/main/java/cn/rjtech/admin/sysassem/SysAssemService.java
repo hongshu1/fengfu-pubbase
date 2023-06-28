@@ -33,6 +33,7 @@ import cn.smallbun.screw.core.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
+import com.jfinal.core.Controller;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -368,10 +369,6 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         }
         sysassemdetailservice.batchUpdate(sysAssemdetails);
 
-        // 测试调用接口
-        System.out.println("开始上传u8开始上传u8开始上传u8开始上传u8开始上传u8开始上传u8" + new Date());
-        Ret ret = pushU8(sysotherin, sysAssemdetails);
-        System.out.println(new Date() + "u8上传结束，u8上传结束，u8上传结束，u8上传结束，u8上传结束" + ret);
     }
 
     //可编辑表格提交-删除数据
@@ -427,7 +424,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("IWhCode", s.getWhCode());
             jsonObject.set("iwhname", "");
-            jsonObject.set("invcode", "");
+            jsonObject.set("invcode", s.getInvcode());
             jsonObject.set("userCode", user.getUsername());
             jsonObject.set("organizeCode", this.getdeptid());
             jsonObject.set("OWhCode", s.getPosCode());
@@ -452,7 +449,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             maindata.add(jsonObject);
         });
         data.set("MainData", maindata);
-
+        System.out.println(data);
         //            请求头
         Map<String, String> header = new HashMap<>(5);
         header.put("Content-Type", "application/json");
@@ -469,7 +466,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return fail("上传u8失败");
+        return Ret.fail("上传u8失败");
     }
 
 
@@ -570,10 +567,19 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         return SUCCESS;
     }
 
+    /**
+     * 处理审批通过的其他业务操作，如有异常返回错误信息
+     *
+     * @param formAutoId    单据ID
+     * @param isWithinBatch 是否为批量处理
+     * @return 错误信息
+     */
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         tx(() -> {
-            this.passagetwo(formAutoId);
+            //添加现品票 ,todo 推送u8
+            Ret passagetwo = this.passagetwo(formAutoId);
+
             return true;
         });
         return null;
@@ -590,8 +596,19 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         return null;
     }
 
+    /**
+     * 反审之后的操作
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     * @return
+     */
     @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        if(isLast){
+            //删除现品票 todo 删除u8 单据
+            this.delectbelowtwo(formAutoId);
+        }
         return null;
     }
 
@@ -620,13 +637,28 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         return null;
     }
 
+    /**
+     * 从已审核，撤回到已保存，业务实现，如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @return
+     */
     @Override
     public String postWithdrawFromAuditted(long formAutoId) {
+        //删除现品票 todo 删除u8 单据
+        this.delectbelowtwo(formAutoId);
         return null;
     }
 
+    /**
+     * 批量审核（审批）通过，后置业务实现
+     *
+     * @param formAutoIds 单据IDs
+     * @return 错误信息
+     */
     @Override
     public String postBatchApprove(List<Long> formAutoIds) {
+        this.passagetwo(formAutoIds);
         return null;
     }
 
@@ -641,25 +673,31 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
     }
 
     //审核通过后的业务逻辑
-    public void passagetwo(Long formAutoId) {
-
-            SysAssem byId = findById(formAutoId);
-            byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-            byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            byId.update();
-            //获取转换前的所有数据
-            List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstBy(formAutoId.toString());
-            List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
-            if(!CollectionUtils.isEmpty(firstBy)){
-                for(SysAssemdetail detail : firstBy){
-                    //生成现品票
-                    this.cashNotTransaction(formAutoId,detail,purchaseOrderDBatchList);
-                    //对转换前的现品票扣减失效
-                    PurchaseOrderDBatch first1 = purchaseOrderDBatchService.findFirst("select * from  PS_PurchaseOrderDBatch where cCompleteBarcode = ?", detail.getBarcode());
-                    first1.setIsEffective(false);
-                    purchaseOrderDBatchService.update(first1);
-                }
+    public Ret passagetwo(Long formAutoId) {
+        SysAssem byId = findById(formAutoId);
+        byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+        byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
+        byId.update();
+        //获取转换前的所有数据
+        List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstBy(formAutoId.toString());
+        List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(firstBy)){
+            for(SysAssemdetail detail : firstBy){
+                //生成现品票
+                this.cashNotTransaction(formAutoId,detail,purchaseOrderDBatchList);
+                //对转换前的现品票扣减失效
+                PurchaseOrderDBatch first1 = purchaseOrderDBatchService.findFirst("select * from  PS_PurchaseOrderDBatch where cCompleteBarcode = ?", detail.getBarcode());
+                first1.setIsEffective(false);
+                purchaseOrderDBatchService.update(first1);
+            }
         }
+        //推送u8，查出转换后从表数据
+        List<SysAssemdetail> first = sysassemdetailservice.findFirst(formAutoId.toString());
+        ArrayList<SysAssemdetail> merge = this.merge(first);
+        System.out.println("开始上传u8开始上传u8开始上传u8开始上传u8开始上传u8开始上传u8" + new Date());
+        Ret ret = this.pushU8(byId, merge);
+        System.out.println(new Date() + "u8上传结束，u8上传结束，u8上传结束，u8上传结束，u8上传结束" + ret);
+        return ret;
     }
 
     //批量审核通过后的业务逻辑
@@ -676,20 +714,18 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
                 for(SysAssemdetail detail : firstBy){
                     //生成现品票
                     this.cashNotTransaction(s,detail,purchaseOrderDBatchList);
-                    //获取转换后的数据
-                    SysAssemdetail first = sysassemdetailservice.findFirst(s.toString(), detail.getCombination());
-                    String invcode = first.getInvcode();
+                    //对转换前的现品票扣减失效
+                    PurchaseOrderDBatch first1 = purchaseOrderDBatchService.findFirst("select * from  PS_PurchaseOrderDBatch where cCompleteBarcode = ?", detail.getBarcode());
+                    first1.setIsEffective(false);
+                    purchaseOrderDBatchService.update(first1);
                 }
             }
-
-            //通过现品票查出
-
-            //对转换前的存货现品票扣减，或者失效
-
-            //对转换后的数据生成现品现品票，并添加到的采购现品票。
-
-            //推送u8
-
+            //推送u8，查出转换后从表数据
+            List<SysAssemdetail> first = sysassemdetailservice.findFirst(s.toString());
+            ArrayList<SysAssemdetail> merge = this.merge(first);
+            System.out.println("开始上传u8开始上传u8开始上传u8开始上传u8开始上传u8开始上传u8" + new Date());
+            Ret ret = this.pushU8(byId, merge);
+            System.out.println(new Date() + "u8上传结束，u8上传结束，u8上传结束，u8上传结束，u8上传结束" + ret);
         }
     }
 
@@ -747,8 +783,53 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
                 purchaseOrderDBatchList.add(purchaseOrderDBatch);
             }
         }
-        int[] ints = purchaseOrderDBatchService.batchSave(purchaseOrderDBatchList);
-        System.out.println("条码生成："+ints);
+        purchaseOrderDBatchService.batchSave(purchaseOrderDBatchList);
+    }
+
+    //根据存货编码合并数量和重量
+    public ArrayList<SysAssemdetail> merge(List<SysAssemdetail> first){
+        //先把存货编码相同的数量合并
+        ArrayList<SysAssemdetail> merge = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(first)) {
+            for(SysAssemdetail sys : first ){
+                boolean have = true;
+                if(CollectionUtils.isNotEmpty(merge)){
+                    for (SysAssemdetail me : merge){
+                        if(me.getInvcode().equals(sys.getInvcode())){
+                            me.setQty(me.getQty().add(sys.getQty()));
+                            me.setWeight(new BigDecimal(me.getWeight()).add(new BigDecimal(sys.getWeight())).toString());
+                            //找到，就不用新增
+                            have = false;
+                        }
+                    }
+                    if(have){
+                        merge.add(sys);
+                    }
+                }else {
+                    merge.add(sys);
+                }
+            }
+        }
+        return merge;
+    }
+
+    //反审后的操作
+    public void delectbelowtwo(long formAutoId){
+        List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstByall(formAutoId);
+        if(CollectionUtils.isNotEmpty(firstBy)){
+            for (SysAssemdetail s : firstBy ){
+                if(s.getAssemType().equals("转换前")){
+                    //对转换前的现品票扣减失效
+                    PurchaseOrderDBatch first1 = purchaseOrderDBatchService.findFirst("select * from  PS_PurchaseOrderDBatch where cCompleteBarcode = ?", s.getBarcode());
+                    first1.setIsEffective(true);
+                    purchaseOrderDBatchService.update(first1);
+                }else {
+                 delete("DELETE PS_PurchaseOrderDBatch where iPurchaseOrderdQtyId = ?",s.getAutoID());
+                }
+            }
+        }
+        //todo 删除u8的数据
+
     }
 
 
