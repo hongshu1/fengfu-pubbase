@@ -77,6 +77,8 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 			//如果设置为default 就把其它的已经default的设置为false
 			if(qiniuBucket.getIsDefault()) {
 				changeIsDefaultFalse(qiniuBucket.getQiniuId(),qiniuBucket.getId());
+				//删除default缓存
+				JBoltQiniuCache.me.removeDefaultBucket(qiniuBucket.getQiniuId());
 			}
 			//添加日志
 			addSaveSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(),qiniuBucket.getName());
@@ -120,6 +122,8 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 			//如果前端传了true 并且数据库里的不是true
 			if((qiniuBucket.getIsDefault() != null && qiniuBucket.getIsDefault()) && !dbQiniuBucket.getIsDefault()) {
 				changeIsDefaultFalse(qiniuBucket.getQiniuId(),qiniuBucket.getId());
+				//删除default缓存
+				JBoltQiniuCache.me.removeDefaultBucket(qiniuBucket.getQiniuId());
 			}
 			//添加日志
 			addUpdateSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(),qiniuBucket.getName());
@@ -169,14 +173,14 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 			if(qiniuBucket.getIsDefault()) {
 				changeIsDefaultFalse(qiniuBucket.getQiniuId(), qiniuBucket.getId());
 			}
-			//删除default缓存
-			JBoltQiniuCache.me.removeDefaultBucket(qiniuBucket.getQiniuId());
 			addUpdateSystemLog(qiniuBucket.getId(), JBoltUserKit.getUserId(),qiniuBucket.getName(),"的是否默认属性:"+qiniuBucket.getIsDefault());
 			break;
 
 		default:
 			break;
 		}
+		//删除default缓存
+		JBoltQiniuCache.me.removeDefaultBucket(qiniuBucket.getQiniuId());
 	return null;
 	}
 	
@@ -200,6 +204,8 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 		if(isOk(onlineBuckets)) {
 			syncDbAndQiniuBuckets(qiniu,onlineBuckets);
 		}
+		//删除default缓存
+		JBoltQiniuCache.me.removeDefaultBucket(qiniuId);
 		return SUCCESS;
 	}
 	
@@ -218,8 +224,10 @@ public class QiniuBucketService extends JBoltBaseService<QiniuBucket> {
 			if(isOk(onlineBuckets)) {
 				syncDbAndQiniuBuckets(qiniu,onlineBuckets);
 			}
+			//删除default缓存
+			JBoltQiniuCache.me.removeDefaultBucket(qiniu.getId());
 		}
-		
+
 		return SUCCESS;
 	}
 	

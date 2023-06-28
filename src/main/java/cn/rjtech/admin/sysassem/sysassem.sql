@@ -222,8 +222,8 @@ where a.isEffective = '1' and change.iAutoId is not null
   #if(detailHidden)
   and t.SourceBillDid not in (#(detailHidden))
   #end
-  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.SourceBillDid = t.SourceBillDid)
-  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.SourceBillDid = t.SourceBillDid)
+  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
+  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.barcode = t.barcode)
 #end
 
 
@@ -293,8 +293,8 @@ where a.isEffective = '1' and change.iAutoId is not null
   and t.barcode = #para(barcode)
   #end
 
-  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.SourceBillDid = t.SourceBillDid)
-  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.SourceBillDid = t.SourceBillDid)
+  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
+  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.Barcode = t.barcode)
 #end
 
 
@@ -411,6 +411,6 @@ where a.isEffective = '1' and change.iAutoId is not null
   #if(detailHidden)
   and t.SourceBillDid not in (#(detailHidden))
   #end
-  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.SourceBillDid = t.SourceBillDid)
-  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.SourceBillDid = t.SourceBillDid)
+  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
+  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.barcode = t.barcode)
 #end

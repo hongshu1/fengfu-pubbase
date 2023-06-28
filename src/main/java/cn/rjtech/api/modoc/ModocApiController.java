@@ -89,7 +89,8 @@ public class ModocApiController extends BaseApiController {
   }
 
   /**
-   *  获取工单详情信息
+   * 获取工单详情信息
+   *
    * @param imodocid 工单ID
    */
   @ApiDoc(result = ModocApiResVo.class)
@@ -98,5 +99,19 @@ public class ModocApiController extends BaseApiController {
   public void getModocdetails( @Para(value = "imodocid") Long imodocid){
       ValidationUtils.notNull(imodocid,"缺少工单ID");
     renderJBoltApiRet(moDocApiService.getModocdetails(imodocid));
+  }
+
+  /**
+   * 根据制造工单id查询特殊领料数据源
+   *
+   * @param imodocid
+   */
+//  @ApiDoc(result = ModocApiResVo.class)
+  @UnCheck
+  @OpenAPI
+  public void getSpecmaterialsrcvmDatas(@Para(value = "imodocid") Long imodocid, @Para(value = "pagenumber") Integer pageNumber,
+                                        @Para(value = "pagesize") Integer pageSize) {
+    ValidationUtils.notNull(imodocid, "缺少工单ID");
+//    renderJBoltApiSuccessWithData(moDocApiService.getSpecmaterialsrcvmDatas(imodocid));
   }
 }

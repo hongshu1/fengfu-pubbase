@@ -220,8 +220,14 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.validateIntGt0(status, "审批状态");
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "处理审批的Service类名");
-
-        renderJson(service.reject(formAutoId, formSn, status, primaryKeyName, className, remark, false));
+        
+        Ret ret = service.reject(formAutoId, formSn, status, primaryKeyName, className, remark, false);
+        renderJson(ret);
+        
+        // 异步通知:审批不通过，给制单人(提审人)发送待办和邮件
+        if (ret.isOk()) {
+            MsgEventUtil.postRejectMsgEvent(JBoltUserKit.getUserId(), formSn, primaryKeyName, formAutoId);
+        }        
     }
 
     /**

@@ -54,7 +54,7 @@ WHERE
 	t2.isDeleted = '0'
 	AND t1.isDeleted = '0'
 	#if(qcFormId)
-	    AND t3.iProdParamId = #para(qcFormId)
+	    AND t3.iProdFormId = #para(qcFormId)
 	#end
 	ORDER BY t3.iItemSeq,t3.iItemParamSeq ASC
 #end

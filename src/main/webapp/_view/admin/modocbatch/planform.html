@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
 <style>
     .spread-container {
-        height:75.5vh;
+        height:90vh;
     }
 
     .gc-statusbar {
@@ -162,15 +162,26 @@
         if(newValue!=oldValue){
             let rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取当前行数据
             let colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取当前列数据
-            let productionLineObj = parms['pageData'].find((v,i)=>v.cinvcode==rowData[0][7]);//查找到当前产线对象
-            let gonDanHaoObj = productionLineObj.rowdatas.find((v,i)=>v.cmodocno==colData[row-1][0]);//查找到当前id对象
+            let productionLineObj = parms['pageData'].find((v,i)=>v.cinvcode==rowData[0][7]).rowdatas.find((v,i)=>v.cmodocno==colData[row-1][0]);//查找到当前id对象
             let editCellValueObj = {
-                iautoid:gonDanHaoObj.iautoid,//id
+                iautoid:productionLineObj.iautoid,//id
                 qty:newValue
             }
             parms.editCellValue.push(editCellValueObj)
+            if(typeof newValue==="number"){
+                const style_1S = new GC.Spread.Sheets.Style();
+                style_1S.backColor = "red";
+                parms.activeSheet.setStyle(row, col,style_1S);
+            }else{
+                LayerMsgBox.error('请输入数字',1000);
+                parms.editCellValue.length=0;
+            }
         }
     });
+    /**
+     * 保存事件
+     * @param seva
+     */
     function seva() {
         let url = `admin/modocbatch/savePlan`
         $.ajax({
@@ -178,12 +189,20 @@
             type:'post',
             dataType:'json',
             data:{
-                modoc:JSON.stringify(parms.editCellValue)
+                modoc:JSON.stringify(parms.editCellValue)//修改单元格之后的数据--[object]
             },
             success:function (res){
-                console.log(res)
+                console.log(res,'success')
+                if(res.data?.msg=='操作成功'){
+                    LayerMsgBox.success(res.data.msg)
+                    parms.editCellValue.length=0;
+                    initData();
+                }else{
+                    LayerMsgBox.error(res.msg,1000);
+                    parms.editCellValue.length=0;
+                }
             },error: function(error) {
-                console.log(error);
+                console.log(error,'error');
             }
         })
     }
@@ -270,6 +289,7 @@
                             const style_1S = new GC.Spread.Sheets.Style();
                             style_1S.backColor = "red";
                             parms.activeSheet.setStyle(rowIndex+1, colIndex+8+index,style_1S);
+                            sheet.getCell(rowIndex+1, colIndex+8+index).locked(false);
                         }
                     })
                     rowIndex = rowIndex+2;

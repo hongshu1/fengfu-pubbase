@@ -5,7 +5,6 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.model.momdata.MoMaterialsreturnd;
 import cn.rjtech.model.momdata.MoMaterialsreturnm;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -27,6 +26,8 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
+		String imodocid = get("imodocid");
+		set("imodocid",imodocid);
 		render("index.html");
 	}
   	

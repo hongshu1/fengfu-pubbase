@@ -103,6 +103,48 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         List<Record> list = dbTemplate("materialsprepare.recpor", kv).find();
         if (list.size()>=1){
             for (int l=0;l<list.size();l++){
+                //判定备料单种类
+                if (list.get(l).get("BillType").equals("手工作成")){
+                    //备料单主表ID
+                    String zhuID=list.get(l).get("AutoID");
+                    Kv kv0=new Kv();
+                    kv0.set("AutoID",zhuID);
+                    List<Record> records65 = dbTemplate("materialsprepare.hh", kv0).find();
+
+                    BigDecimal tag1=new BigDecimal(0);
+                    BigDecimal tag2=new BigDecimal(0);
+                    //各子件物料的计划数量
+                    for (int c=0;c<records65.size();c++){
+                        BigDecimal Allqty=records65.get(c).get("Qty");
+                        String invcode=records65.get(c).get("InvCode");
+
+                        Kv kv74=new Kv();
+                        kv74.set("AutoID",zhuID);
+                        kv74.set("invcode",invcode);
+                        List<Record> records55 = dbTemplate("materialsprepare.bb", kv74).find();
+
+                        BigDecimal nnn=new BigDecimal(0);
+                        //计算已备料数量
+                        for (int q=0;q<records55.size();q++){
+                            nnn=nnn.add(records55.get(q).get("Qty"));
+                        }
+                        tag1=tag1.add(Allqty);
+                        tag2=tag2.add(nnn);
+                    }
+
+                    if (tag1.compareTo(tag2)==1){
+                        list.get(l).set("isFinish","备料中");
+                    }
+                    if (tag1.compareTo(tag2)==0){
+                        list.get(l).set("isFinish","已完成");
+                    }
+
+                    if (tag2.compareTo(BigDecimal.ZERO)==0){
+                        list.get(l).set("isFinish","待备料");
+                    }
+                    continue;
+                }
+
                 //备料单ID
                 String autoID = list.get(l).get("AutoID");
                 //工单ID
@@ -227,7 +269,121 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         return dbTemplate("materialsprepare.getManualdatas", kv).paginate(pageNumber, pageSize);
     }
 
+    //传入备料主单号
     public Page<Record> getDetail(int pageNumber, int pageSize, Kv kv) {
+        if (kv.get("billno").equals("")){
+            return null;
+        }
+        //先判断是自动作成还是手动作成
+        Record record2 = dbTemplate("materialsprepare.kk", kv).findFirst();
+        if (record2.get("BillType").toString().equals("手工作成")){
+            //最后展示在表格的数据
+            ArrayList<Record> objects1 = new ArrayList<>();
+            ArrayList<Record> objects20 = new ArrayList<>();
+            Record record5=new Record();
+            //备料细表
+            List<Record> record3s = dbTemplate("materialsprepare.tt", kv).find();
+            for (int b=0;b<record3s.size();b++){
+                //该存货编码
+                String invcodee=record3s.get(b).get("InvCode");
+                //该存货编码的计划数量
+                BigDecimal qtyy=record3s.get(b).get("Qty");
+                Kv kv1=new Kv();
+                kv1.set("InvCode",invcodee);
+                //有库存的子件物料,单个存货编码,批次号已排序
+                List<Record> record4s = dbTemplate("materialsprepare.cc", kv1).find();
+                //累计物料数量
+                BigDecimal qtyyy = new BigDecimal(0);
+                if (record4s.size()>0){
+                    ArrayList<String> test = new ArrayList<>();
+                    for (int d=0;d<record4s.size();d++){
+                        qtyyy=qtyyy.add(record4s.get(d).get("Qty"));
+                        if (qtyyy.compareTo(qtyy)<1){
+                            test.add(record4s.get(d).get("Batch"));
+                        }
+                    }
+                    //集合对批次号去重
+                    Set set = new HashSet();
+                    List newList = new ArrayList();
+                    for (Iterator iter = test.iterator(); iter.hasNext();) {
+                        Object element = iter.next();
+                        if (set.add(element))
+                            newList.add(element);
+                    }
+                    test.clear();
+                    test.addAll(newList);
+
+                    Kv kv6=new Kv();
+                    kv6.set("cinvcode",invcodee);
+                    Record record6 = dbTemplate("materialsprepare.rr", kv6).findFirst();
+                    for (int x=0;x<test.size();x++){
+                        record5.set("billno",kv.get("billno"));
+                        record5.set("cmodocno",record2.get("SourceBillNo"));
+                        record5.set("cinvcode",invcodee);
+                        record5.set("cinvcode1",record6.get("cInvCode1"));
+                        record5.set("cinvname1",record6.get("cInvName1"));
+                        record5.set("cinvstd",record6.get("cInvStd"));
+                        record5.set("cuomname",record6.get("cUomName"));
+                        record5.set("whcode",record4s.get(0).get("WhCode"));
+                        record5.set("poscode",record4s.get(0).get("PosCode"));
+                        record5.set("planiqty",qtyy);
+                        //获取已备料数量
+                        Kv kv10 = new Kv();
+                        kv10.set("icode",invcodee);
+                        kv10.set("masid",Long.valueOf(record2.get("AutoID")));
+                        List<Record> recordOfHasBeenPreparedss = dbTemplate("materialsprepare.vv", kv10).find();
+                        BigDecimal HasBeenPrepared = new BigDecimal(0);
+                        //判断是否已有备料
+                        if (recordOfHasBeenPreparedss.size()<1){
+                            record5.set("num",0);
+                        }else {
+                            for (int t=0;t<recordOfHasBeenPreparedss.size();t++){
+                                HasBeenPrepared=HasBeenPrepared.add(recordOfHasBeenPreparedss.get(t).get("Qty"));
+                            }
+                            record5.set("num",HasBeenPrepared);
+                        }
+                        record5.set("scanqty",0);
+                        record5.set("batch",test.get(x));
+                        objects1.add(record5);
+                    }
+                    //无库存
+                }else {
+                    Record record000=new Record();
+                    record000.set("billno",kv.get("billno"));
+                    record000.set("cmodocno",record2.get("SourceBillNo"));
+                    record000.set("cinvcode",invcodee);
+                    Kv kv56=new Kv();
+                    kv56.set("cinvcode",invcodee);
+                    Record record67 = dbTemplate("materialsprepare.rr", kv56).findFirst();
+                    record000.set("cinvcode1",record67.get("cInvCode1"));
+                    record000.set("cinvname1",record67.get("cInvName1"));
+                    record000.set("cinvstd",record67.get("cInvStd"));
+                    record000.set("cuomname",record67.get("cUomName"));
+//                    record000.set("whcode",);
+//                    record000.set("poscode",);
+                    record000.set("planiqty",qtyy);
+                    record000.set("Batch","无库存");
+                    objects20.add(record000);
+                    System.out.println(objects20);
+                }
+            }
+            System.out.println(objects20);
+            if (objects20.size()>0){
+                for (int e=0;e<objects20.size();e++){
+                    objects1.add(objects20.get(e));
+                }
+            }
+
+            //处理页量页码信息
+            int totalRow=objects1.size();
+            int totalPage=totalRow/pageSize;
+            if (totalPage*pageSize<totalRow){
+                totalPage++;
+            }
+            //已经实现数据根据计划需求数量先进先出,测试目标:动态展示先进先出,且数量不超过计划数量
+            return new Page(objects1,pageNumber, pageSize,totalPage,totalRow);
+        }
+        //自动作成
         //先进先出
         List<Record> objects = new ArrayList<>();
         int j=0;

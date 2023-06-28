@@ -101,7 +101,7 @@ public class ProdFormTableParamService extends BaseService<ProdFormTableParam> {
 
 
 	public List<Map<String, Object>> findByFormId(Long formId){
-		List<Record> records = findRecords("SELECT * FROM Bd_ProdFormTableParam WHERE iSpotCheckFormId = ?  ORDER BY iSeq ASC", formId);
+		List<Record> records = findRecords("SELECT * FROM Bd_ProdFormTableParam WHERE iQcFormId = ?  ORDER BY iSeq ASC", formId);
 		List<ProdFormTableItem> qcFormTableItemList = prodFormTableItemService.findByFormId(formId);
 
 		List<Map<String, Object>> mapList = new ArrayList<>();

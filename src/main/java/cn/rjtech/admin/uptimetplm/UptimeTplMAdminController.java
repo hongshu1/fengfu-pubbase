@@ -1,6 +1,9 @@
 package cn.rjtech.admin.uptimetplm;
 
+import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -9,6 +12,7 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
 import cn.jbolt.core.base.JBoltMsg;
@@ -97,4 +101,15 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	}
 
 
+	/**
+	 * 保存
+	 */
+	public void submitAll()
+	{
+		JBoltTableMulti jBoltTables = getJBoltTables();
+		Kv kv = getKv();
+		JBoltTable jBoltTable = getJBoltTable();
+		JBoltPara para = getJBoltPara();
+		renderJson(service.submitAll(kv));
+	}
 }

@@ -1,7 +1,6 @@
 package cn.rjtech.admin.modocbatch;
 
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -9,25 +8,16 @@ import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.momotask.MoMotaskService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.model.momdata.Department;
-import cn.rjtech.model.momdata.MoDoc;
 import cn.rjtech.model.momdata.MoMotask;
-import cn.rjtech.util.DateUtils;
-import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MO_DOCBATCH)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/modocbatch", viewPath = "/_view/admin/modocbatch")
 public class MoDocBatchController extends BaseAdminController {
@@ -120,14 +110,27 @@ public class MoDocBatchController extends BaseAdminController {
     renderJsonData(service.getUserDatas(getKv()));
   }
 
-
   /**
    * 编辑计划保存
+   *
+   * @param modoc
    */
   public void savePlan(String modoc) {
     ValidationUtils.notBlank(modoc, "参数为空!");
     List<Record> list = JBoltModelKit.getFromRecords(JSONArray.parseArray(modoc));
     renderJsonData(moDocService.savePlan(list));
   }
+
+  /**
+   * 编辑人员保存
+   *
+   * @param modoc
+   */
+  public void savePersonnel(String modoc) {
+    ValidationUtils.notBlank(modoc, "参数为空!");
+    List<Record> list = JBoltModelKit.getFromRecords(JSONArray.parseArray(modoc));
+    renderJsonData(moDocService.savePersonnel(list));
+  }
+
 
 }
