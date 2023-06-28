@@ -236,7 +236,7 @@
                 <div class="but_box">
                     <button class="button" lay-on="test-tips-prompt-0">数据导出</button>
                     <button class="button" id="loadExcel">数据导入</button>
-                    <button class="button" onClick="sava()">保存</button>
+                    <button class="button" onClick="seva()">保存</button>
                     <button class="button">提交审批</button>
                 </div>
                 <!-- 创建表格目标DOM元素，id为ss的HTML -->
@@ -331,6 +331,7 @@
         sheBeiName:"",          //接收当前行的设备name
         gonXuName:"",           //接收当前行的工序name
         keHuCode:"",            //接收当前行的客户编码
+        editCellValue:[],       //存储要保存的数据
     };
     var parmsArr = [Object.assign({},parmsDefault)];
     //添加属性
@@ -344,6 +345,7 @@
     loadInit();
     initData();
     initDate();
+
     /**
      * 初始化产线数据
      * @param loadInit
@@ -875,7 +877,33 @@
         id.forEach((arr)=>{
             parms.editCellValueObj.renYuanid.push(arr)
         })
-        console.log(parms.editCellValueObj)
+    }
+    /**
+     * 页面数据保存事件
+     * @param seva
+     */
+    function seva() {
+        let url = `admin/modocbatch/savePersonnel`
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            data:{
+                modoc:JSON.stringify(parms.editCellValueObj)//修改单元格之后的数据--[object]
+            },
+            success:function (res){
+                if(res.data?.msg=='操作成功'){
+                    LayerMsgBox.success(res.data.msg)
+                    parms.editCellValueObj.length=0;
+                    initData();
+                }else{
+                    LayerMsgBox.error(res.msg,1000);
+                    parms.editCellValueObj.length=0;
+                }
+            },error: function(error) {
+                console.log(error);
+            }
+        })
     }
     /**
      *
