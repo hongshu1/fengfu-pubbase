@@ -535,11 +535,18 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
     public Record getBarcodeDatas(Kv kv) {
         String ibeforeinventoryid = kv.getStr("ibeforeinventoryid");
         Record firstRecord = findFirstRecord("select t2.cInvCode as beforeCode, t3.cInvCode as afterCode,t3.cInvCode as invcode,t3.cinvname,t3.cInvCode ,t3.cInvCode1,t3.cInvName1,t3.cInvStd as cinvstd,\n" +
-                "t3.iAutoId,uom.cUomCode,uom.cUomName as purchasecuomname,uom.cUomName as  puunitname\n" +
+                "t3.iAutoId,uom.cUomCode,uom.cUomName ,uom.cUomName as purchasecuomname,wh.cWhCode as whcode\n" +
+                "     ,wh.cWhName as whname\n" +
+                "     ,area.cAreaCode as poscode\n" +
+                "     ,area.cAreaName as posname\n" +
                 "         from Bd_InventoryChange t1\n" +
                 "         left join Bd_Inventory t2 on t1.iBeforeInventoryId = t2.iAutoId\n" +
                 "         left join Bd_Inventory t3 on t1.iAfterInventoryId = t3.iAutoId\n" +
                 "         LEFT JOIN Bd_Uom uom on t3.iPurchaseUomId = uom.iAutoId\n" +
+                "         left join Bd_InventoryChange change on change.iBeforeInventoryId=t3.iAutoId\n" +
+                "         left join Bd_InventoryStockConfig config on config.iInventoryId = t3.iAutoId\n" +
+                "         left join Bd_Warehouse_Area area on area.iAutoId = config.iWarehouseAreaId\n" +
+                "         left join Bd_Warehouse wh on wh.iAutoId = config.iWarehouseId\n" +
                 "where t1.iBeforeInventoryId = '" + ibeforeinventoryid + "'");
         if (firstRecord==null){
             ValidationUtils.isTrue(false, "未查找到该物料的双单位，请先维护物料的形态对照表");

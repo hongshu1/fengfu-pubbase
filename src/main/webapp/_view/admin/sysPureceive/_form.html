@@ -161,14 +161,16 @@
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                     <button onclick="barcode()" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1 || sysPureceive.AutoID??) disabled #end >搜索</button>
                 </div>
+                <span style="padding-left: 15px">
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                     <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1 || sysPureceive.AutoID??) disabled #end >添加行</button>
                 </div>
+
+
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                     <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end   ><i class="fa fa-trash"></i> 删除行</button>
-
-
                 </div>
+                 </span>
 
                 <label class="col-sm-3 col-form-label">库区</label>
                 <div class="col-5">
