@@ -415,6 +415,13 @@
         }else{
             let rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取当前行数据
             let colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取当前列数据
+            let clickRow = sheet.getArray(row, col, sheet.getRowCount(), 1);//获取当前列数据
+            let ModArray = [];
+            for (let i = 0; i < clickRow.length; i++) {
+                if(clickRow[i][0]!=null){
+                    ModArray.push(clickRow[i][0])
+                }
+            }
             parms.sheBeiName = rowData[0][5];//当前行的设备name
             parms.gonXuName = rowData[0][6];//当前行的工序name
             parms.keHuCode = rowData[0][7];//当前行的客户编码
@@ -427,37 +434,20 @@
                 taskId,//页面id
                 renYuanid:[]//人员id
             }
+            const regex = /^MOD/;
+            // 匹配第一条以 "MOD" 开头的数据
+            ModArray.some(item => {
+                if (regex.test(item)) {
+                    parms.editCellValueObj.cmodocno=item;
+                    return true; // 结束匹配
+                }
+            });
+            console.log(parms.editCellValueObj)
             parms.cellRowOk = row;
             parms.cellColOk = col;
             showDialog();
         }
     });
-    function getUserData() {
-        //获取弹框人员数据
-        let url = Api+`admin/modocbatch/getUserDatas?pageNumber=1&pageSize=${parms["pageSize"]??10}`;
-        $.ajax({
-            url,
-            type:'post',
-            dataType:'json',
-            success:function (res){
-                parms["pageSize"]=res.data.list.length;
-                var str = "";
-                for (var i = 0; i < res.data.list.length; i++) {
-                    str += `<tr>
-                            <td align='center'><input type="checkbox" class="checkbox" onChange="selectCheckboxs(event,${i})"></td>
-                            <td class="hide">${res.data.list[i].iautoid}</td>
-                            <td>${res.data.list[i].cpsnnum}</td>
-                            <td>${res.data.list[i].cpsnname}</td>
-                            <td>${res.data.list[i].cpsnmobilephone}</td>
-                            <td>${res.data.list[i].cdepname}</td>
-                           </tr>`;
-                }
-                $("#layer_tr").html(str);
-            },error: function(error) {
-                console.log(error);
-            }
-        });
-    }
     /**
      * 获取接口返回的日期数据
      * @param initDate
@@ -736,22 +726,46 @@
         // 获取表头元素
         const tableHeader = myTable.querySelector('thead');
         if (tableContainer.scrollTop + tableContainer.clientHeight >= myTable.scrollHeight) {
-            for (var i = 0; i < 20; i++) {
-                str += `<tr>
-                            <td align='center'><input type="checkbox" class="checkbox" onChange="selectCheckboxs(event,${i})"></td>
-                            <td class="hide">${i}</td>
-                            <td>${i+1}</td>
-                            <td>${i+1}</td>
-                            <td>${i+1}</td>
-                            <td>${i+1}</td>
-                           </tr>`;
-            }
-            $("tbody tr").appendChild(str);
+            parms["pageSize"]=parms["pageSize"]??1+1;
             // 执行数据加载操作
-            initData();
+            getUserData();
         }
     });
-
+    function getUserData() {
+        //获取弹框人员数据
+        let url = Api+`admin/modocbatch/getUserDatas?pageNumber=1&pageSize=${parms["pageSize"]??1}`;
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                var str = "";
+                for (var i = 0; i < res.data.list.length; i++) {
+                    str += `<tr>
+                            <td align='center'><input type="checkbox" class="checkbox" onChange="selectCheckboxs(event,${i})"></td>
+                            <td class="hide">${res.data.list[i].iautoid}</td>
+                            <td>${res.data.list[i].cpsnnum}</td>
+                            <td>${res.data.list[i].cpsnname}</td>
+                            <td>${res.data.list[i].cpsnmobilephone}</td>
+                            <td>${res.data.list[i].cdepname}</td>
+                           </tr>`;
+                }
+                // for (var i = 0; i < 20; i++) {
+                //     str += `<tr>
+                //             <td align='center'><input type="checkbox" class="checkbox" onChange="selectCheckboxs(event,${i})"></td>
+                //             <td class="hide">${i}</td>
+                //             <td>${i+1}</td>
+                //             <td>${i+1}</td>
+                //             <td>${i+1}</td>
+                //             <td>${i+1}</td>
+                //            </tr>`;
+                // }
+                $("#layer_tr").html(str);
+            },error: function(error) {
+                console.log(error);
+            }
+        });
+    }
     // 获取全选按钮和所有复选框
     const checkboxes = document.getElementsByClassName('checkbox');
     /**
@@ -860,8 +874,8 @@
     function getArrayCellRow(id){
         let productionLineObj = parms['pageData'].slice(0,parms['pageData'].length-3).find((v,i)=>v.cinvcode==parms.keHuCode);//查找到当前产线对象
         let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
-        parms.editCellValueObj.sheBeiid = sheBeigonXuObj.cequipment.iequipmentid;//工序id
-        parms.editCellValueObj.gonXuid = sheBeigonXuObj.coperation.ioperationid;//设备id
+        parms.editCellValueObj.sheBeiid = sheBeigonXuObj.cequipment.iequipmentid;//设备id
+        parms.editCellValueObj.gonXuid = sheBeigonXuObj.coperation.ioperationid;//工序id
         parms.editCellValueObj.iworkregionmid = productionLineObj.iworkregionmid;
         id.forEach((arr)=>{
             parms.editCellValueObj.renYuanid.push(arr);
