@@ -1,7 +1,6 @@
 package cn.rjtech.admin.modocbatch;
 
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -9,24 +8,13 @@ import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.momotask.MoMotaskService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.model.momdata.Department;
-import cn.rjtech.model.momdata.MoDoc;
 import cn.rjtech.model.momdata.MoMotask;
-import cn.rjtech.util.DateUtils;
-import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 @CheckPermission(PermissionKey.MO_DOCBATCH)
