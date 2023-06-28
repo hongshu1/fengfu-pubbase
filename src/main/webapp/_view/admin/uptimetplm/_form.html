@@ -28,7 +28,6 @@
                 <div class="col-2">
                     <select class="form-control"
                             data-autoload
-                            id="iworkshiftmid"
                             data-url="admin/workshiftm/getSelect"
                             data-select-type="select"
                             name="uptimeTplM.iWorkShiftMid"
@@ -144,6 +143,9 @@
 </form>
 #define js()
 <script>
+    $(function () {
+        editTplDatas();
+    });
 
     // 表格分类可编辑
     function jbolt_table_edittable_#(pageId)()

@@ -47,6 +47,8 @@ public abstract class BaseUptimeTplM<M extends BaseUptimeTplM<M>> extends JBoltB
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态;0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    /**是否启用：0. 否 1. 是*/
+    public static final String ISENABLED = "isEnabled";
 	/**
 	 * 主键ID
 	 */
@@ -351,6 +353,23 @@ public abstract class BaseUptimeTplM<M extends BaseUptimeTplM<M>> extends JBoltB
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 是否启用：0. 否 1. 是
+	 */
+	public M setIsEnabled(java.lang.Boolean isEnabled) {
+		set("isEnabled", isEnabled);
+		return (M)this;
+	}
+
+	/**
+	 * 是否启用：0. 否 1. 是
+	 */
+	@JBoltField(name="isenabled" ,columnName="isEnabled",type="Boolean", remark="是否启用：0. 否 1. 是", required=true, maxLength=1, fixed=0, order=19)
+	@JSONField(name = "isenabled")
+	public java.lang.Boolean getIsEnabled() {
+		return getBoolean("isEnabled");
 	}
 
 }

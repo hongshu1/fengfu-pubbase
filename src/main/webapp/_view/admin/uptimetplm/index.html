@@ -12,9 +12,6 @@
                             data-url="admin/workregionm/options"
                             data-select-type="select"
                             name="iworkregionmid"
-                            data-rule="select"
-                            data-notnull="true"
-                            data-tips="请选择产线名称"
                             data-text="=请选择产线名称="
                             data-value-attr="iautoid"
                             data-text-attr="cworkname"
@@ -22,13 +19,9 @@
                     ></select>
                     <select class="form-control"
                             data-autoload
-                            id="iworkshiftmid"
                             data-url="admin/workshiftm/getSelect"
                             data-select-type="select"
                             name="iworkshiftmid"
-                            data-rule="select"
-                            data-notnull="true"
-                            data-tips="请选择班次"
                             data-text="=请选择班次="
                             data-value=""
                             data-value-attr="iautoid"
@@ -60,7 +53,7 @@
 <tr data-id="${data.iAutoId}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a class="jbolt_table_editbtn" href="admin/uptimeTplM/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑稼动时间建模-稼动时间模板主表">编辑</a>
+	<a class="jbolt_table_editbtn" href="admin/uptimeTplM/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="编辑稼动时间建模">编辑</a>
 	<a class="jbolt_table_delbtn" href="admin/uptimeTplM/delete/${data.iautoid}" data-handler="refreshJBoltTable" >删除</a>
 </td>
 <td>${data.cworkname}</td>

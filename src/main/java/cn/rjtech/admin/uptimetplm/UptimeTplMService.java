@@ -123,7 +123,7 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
 	public Ret submitAll(Kv kv) {
 		tx(() -> {
 			UptimeTplM uptimeTplM = new UptimeTplM();
-			uptimeTplM.setIsDeleted(kv.getBoolean("uptimeTplM.isEnabled"));
+			uptimeTplM.setIsEnabled(kv.getBoolean("uptimeTplM.isEnabled"));
 			uptimeTplM.setIUpdateBy(JBoltUserKit.getUserId());
 			uptimeTplM.setCUpdateName(JBoltUserKit.getUserName());
 			uptimeTplM.setDUpdateTime(new Date());
@@ -141,6 +141,7 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
 				uptimeTplM.setICreateBy(JBoltUserKit.getUserId());
 				uptimeTplM.setCCreateName(JBoltUserKit.getUserName());
 				uptimeTplM.setDCreateTime(new Date());
+				uptimeTplM.setIsDeleted(false);
 				uptimeTplM.save();
 			} else {
 				uptimeTplM.setIAutoId(kv.getLong("uptimeTplM.iAutoId"));
@@ -187,9 +188,7 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
 	 */
 	public Ret delete(Long iuptimecategoryid) {
 		tx(() -> {
-			deleteById(iuptimecategoryid);
-			uptimeTplCategoryService.delectByUptimeTplMid(iuptimecategoryid);
-			uptimeTplTableService.deleteByUptimeTplMid(iuptimecategoryid);
+			updateColumn(iuptimecategoryid, "isDeleted", TRUE);
 			return true;
 		});
 		return SUCCESS;

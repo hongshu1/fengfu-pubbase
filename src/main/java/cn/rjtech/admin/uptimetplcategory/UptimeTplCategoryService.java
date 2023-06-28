@@ -9,6 +9,8 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.UptimeTplCategory;
+import com.jfinal.plugin.activerecord.Record;
+
 /**
  * 稼动时间建模-稼动时间模板类别
  * @ClassName: UptimeTplCategoryService
@@ -31,14 +33,14 @@ public class UptimeTplCategoryService extends BaseService<UptimeTplCategory> {
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
+	 * @param kv
 	 * @return
 	 */
-	public Page<UptimeTplCategory> getAdminDatas(int pageNumber, int pageSize) {
-	    //创建sql对象
-	    Sql sql = selectSql().page(pageNumber,pageSize);
-        //排序
-        sql.desc("iAutoId");
-		return paginate(sql);
+	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
+		if (isNull(kv.get("iuptimetplmid"))) {
+			return null;
+		}
+		return dbTemplate("uptimetplcategory.getAdminDatas", kv).paginate(pageNumber, pageSize);
 	}
 
 	/**

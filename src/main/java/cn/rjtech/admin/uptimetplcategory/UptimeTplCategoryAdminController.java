@@ -18,7 +18,6 @@ import cn.rjtech.model.momdata.UptimeTplCategory;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-06-27 19:17
  */
-@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/uptimeTplCategory", viewPath = "/_view/admin/uptimetplcategory")
 public class UptimeTplCategoryAdminController extends BaseAdminController {
 
@@ -34,7 +33,7 @@ public class UptimeTplCategoryAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize()));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
 	}
 
    /**

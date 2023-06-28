@@ -739,3 +739,11 @@
 #namespace("uptimetplm")
 #include("uptimetplm/uptimetplm.sql")
 #end
+
+#namespace("uptimetpltable")
+#include("uptimetpltable/uptimetpltable.sql")
+#end
+
+#namespace("uptimetplcategory")
+#include("uptimetplcategory/uptimetplcategory.sql")
+#end
