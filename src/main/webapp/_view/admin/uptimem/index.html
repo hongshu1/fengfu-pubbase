@@ -1,0 +1,146 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+<div class="jbolt_page_title">
+	<div class="row">
+	<div class="col-md-auto">
+	<h1>稼动时间管理</h1>
+	</div>
+	<div class="col">
+		<form class="form-inline" id="uptimeMForm_#(pageId)"   onsubmit="return false;" method="post">
+
+			<select class="form-control"
+					data-autoload
+					data-url="admin/workregionm/options"
+					data-select-type="select"
+					name="cworkname"
+					data-refresh="false"
+					data-rule="select"
+					data-notnull="false"
+					data-tips="请选择产线名称"
+					data-text="=选择产线名称="
+					data-value-attr="cworkname"
+					data-text-attr="cworkname"
+					data-select="#(cworkname??)"
+			></select>
+			<select class="form-control"
+					data-autoload
+					data-url="admin/workshiftm/getSelect"
+					data-select-type="select"
+					name="cworkshiftname"
+					data-refresh="false"
+					data-rule="select"
+					data-notnull="false"
+					data-tips="请选择班次"
+					data-text="=选择班次="
+					data-value=""
+					data-value-attr="cworkshiftname"
+					data-text-attr="cworkshiftname"
+					data-select="#(cworkshiftname??)"
+			></select>
+			<select class="form-control"
+					name="iauditstatus"
+					data-autoload
+					data-url="admin/dictionary/options?key=mrpDemandPlanM_istatus"
+					data-select-type="select"
+					data-text="=选择状态="
+					data-value=""
+					data-with-clearbtn="true"
+					data-value-attr="sn"
+			></select>
+			<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
+			<span style="margin-top: 5px">至</span>
+			<input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
+
+		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+		</form>
+	</div>
+	<div class="col-md-auto">
+	</div>
+	</div>
+</div>
+<div class="jbolt_page_content">
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="uptimeMRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a href="admin/uptimem/edit?iautoid=${data.iautoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑稼动时间管理" class="jbolt_table_editbtn">编辑</a>
+    <a href="admin/uptimem/delete?iautoid=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+</td>
+<td>${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
+<td>${data.cworkname}</td>
+<td>${data.cworkshiftname}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+
+<!-- 工具条 toolbar -->
+<div class="jbolt_table_toolbar" id="uptimeM_toolbar_#(pageId)">
+	<div class="" role="group" aria-label="btn-group">
+		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增稼动时间管理"  data-url="admin/uptimem/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/uptimem/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-secondary btn-sm">批量删除</button>
+		#include("/_view/_common/_batch_approval_btns.html", formSn="PL_UptimeM", uri="admin/uptimem??", primaryKeyName="iAutoId", className="cn.rjtech.admin.uptimem.UptimeMService", permissionKeyPrefix="uptimem")
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+
+<table class="jbolt_table jbolt_main_table table-center hover_info"
+data-jbolttable
+data-height="fill"
+data-ajax="true"
+data-url="admin/uptimem/datas"
+data-column-resize="true"
+data-column-prepend="1:checkbox:true"
+data-conditions-form="uptimeMForm_#(pageId)"
+data-rowtpl="uptimeMRowtpl_#(pageId)"
+data-page="uptimeMPage_#(pageId)"
+data-toolbar="uptimeM_toolbar_#(pageId)"
+
+data-fixed-columns-left="1,2,3"
+data-fixed-columns-right="-1"
+>
+<thead>
+<tr>
+	<th data-width="80">序号</th>
+	<th data-min-width="130">操作</th>
+	<th data-min-width="150" data-column="iAuditStatus">状态</th>
+	<th data-min-width="180" data-column="cWorkName">产线名称</th>
+	<th data-min-width="150" data-column="cWorkShiftName">班次名称</th>
+	<th data-min-width="150" data-column="cCreateName">创建人名称</th>
+	<th data-min-width="150" data-column="dCreateTime">创建时间</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/admin/uptimem/edit/' + rowData.iautoid)
+			.data('area', '1200,800')
+			.data('title', '稼动时间管理')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
+</script>
+#end
