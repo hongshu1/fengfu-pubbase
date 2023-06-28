@@ -8,7 +8,7 @@ SELECT *
 FROM Bd_ProdForm
 WHERE 1 = 1
     #if(cQcFormName)
-  AND cSpotCheckFormName like '%#(cQcFormName)%'
+  AND cProdFormName like '%#(cQcFormName)%'
   #end
 order by dUpdateTime desc
     #end
