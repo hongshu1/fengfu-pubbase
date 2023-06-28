@@ -580,6 +580,8 @@ public class MoMotaskService extends BaseService<MoMotask> {
         Map<String, String> map1 = new HashMap<>();
         List<String> modocidList = new ArrayList<>();
 
+        List<String> modocidList2 = new ArrayList<>();
+
         Map<String, List<Record>> userMapDatas = new HashMap<>();
 
         for (Record record1 : records1) {
@@ -591,7 +593,7 @@ public class MoMotaskService extends BaseService<MoMotask> {
           String dateSplicing = iYear + iMonth + iDate + iWorkShiftMid;
           map1.put(dateSplicing, modocid1);
           modocidList.add(modocid);
-
+          modocidList2.add(modocid1);
           //<editor-fold desc="创建人员信息为空的基础信息">
           List<Record> userDatas = new ArrayList<>();
           Record user = new Record();
@@ -679,9 +681,10 @@ public class MoMotaskService extends BaseService<MoMotask> {
 
 
             //<editor-fold desc="5.获取人员信息 modocid1  value:List<String>">
-            List<Record> list2 = dbTemplate("modocbatch.getModocPersonnameByDocid", kv).find();
+            List<Record> list2 = dbTemplate("modocbatch.getModocPersonnameByDocid", Kv.by("docid", CollUtil.join(modocidList2, ","))).find();
             Map<String, List<Record>> map2 = new HashMap<>();
             for (Record record2 : list2) {
+              record2.put("lock", false);
               String dateSplicing = record2.getStr("dateSplicing");
               if (map2.containsKey(dateSplicing)) {
                 List<Record> list = map2.get(dateSplicing);

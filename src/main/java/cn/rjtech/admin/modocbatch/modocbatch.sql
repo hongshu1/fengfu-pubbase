@@ -205,8 +205,7 @@ SELECT DISTINCT
 	doc.iWorkShiftMid,
 	bdperson.cPsn_Num psnnum,
 	bdperson.cPsn_Name psnname,
-	concat ( doc.iYear, doc.iMonth, doc.iDate, doc.iWorkShiftMid ) dateSplicing,
-	'false' lock
+	concat ( doc.iYear, doc.iMonth, doc.iDate, doc.iWorkShiftMid ) dateSplicing
 FROM
 	Mo_MoDoc doc
 	LEFT JOIN Mo_MoRouting routing ON routing.iMoDocId= doc.iAutoId
@@ -216,7 +215,7 @@ FROM
 WHERE
 	bdperson.cPsn_Num IS NOT NULL
 	AND bdperson.cPsn_Name IS NOT NULL
-	AND doc.iMoTaskId = (#(taskid))
+	AND doc.iAutoId IN (#(docid))
 #end
 
 #sql("getModocDutyPersonnameByDocid")
