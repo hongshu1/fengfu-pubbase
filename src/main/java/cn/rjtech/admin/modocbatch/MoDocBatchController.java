@@ -120,14 +120,26 @@ public class MoDocBatchController extends BaseAdminController {
     renderJsonData(service.getUserDatas(getKv()));
   }
 
-
   /**
    * 编辑计划保存
+   *
+   * @param modoc
    */
   public void savePlan(String modoc) {
     ValidationUtils.notBlank(modoc, "参数为空!");
     List<Record> list = JBoltModelKit.getFromRecords(JSONArray.parseArray(modoc));
     renderJsonData(moDocService.savePlan(list));
+  }
+
+  /**
+   * 编辑人员保存
+   *
+   * @param modoc
+   */
+  public void savePersonnel(String modoc) {
+    ValidationUtils.notBlank(modoc, "参数为空!");
+    List<Record> list = JBoltModelKit.getFromRecords(JSONArray.parseArray(modoc));
+    renderJsonData(moDocService.savePersonnel(list));
   }
 
 }

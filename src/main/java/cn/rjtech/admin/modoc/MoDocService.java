@@ -1138,4 +1138,23 @@ public class MoDocService extends BaseService<MoDoc> {
     return SUCCESS;
   }
 
+
+  /**
+   * 编辑人员保存
+   *
+   * @param records
+   * @return
+   */
+  public Ret savePersonnel(List<Record> records) {
+    tx(() -> {
+      records.forEach(record -> {
+//        MoDoc moDoc = findById(record.getStr("iautoid"));
+
+
+//        moDoc.update();
+      });
+      return true;
+    });
+    return SUCCESS;
+  }
 }
