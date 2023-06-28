@@ -238,6 +238,7 @@ public class QiniuService extends JBoltBaseService<Qiniu> {
             default:
                 break;
         }
+        JBoltQiniuCache.me.removeDefaultBucket(qiniu.getId());
         return null;
     }
 
