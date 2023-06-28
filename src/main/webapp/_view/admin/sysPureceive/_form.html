@@ -195,20 +195,20 @@
 
     </div>
 
-    <table class="jbolt_table thead_font_normal table-bordered table-center" 
-           data-jbolttable 
+    <table class="jbolt_table thead_font_normal table-bordered table-center"
+           data-jbolttable
            #if(sysPureceive.AutoID??)
-           data-ajax="true" 
-           data-url="admin/sysPureceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)" 
+           data-ajax="true"
+           data-url="admin/sysPureceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)"
            #end
-           id="jbolt_Table_#(pageId)" 
-           data-column-resize="true" 
-           ###data-tfoot-fixed="true" 
+           id="jbolt_Table_#(pageId)"
+           data-column-resize="true"
+           ###data-tfoot-fixed="true"
            data-column-prepend="1:checkbox"
-           data-rowtpl="sysPureceive_tpl_#(pageId)" 
-           data-toolbar="sysPureceive_toolbar_#(pageId)" 
+           data-rowtpl="sysPureceive_tpl_#(pageId)"
+           data-toolbar="sysPureceive_toolbar_#(pageId)"
            data-editable="true"
-           ###data-page="sysPureceive_tpl_#(pageId)" 
+           ###data-page="sysPureceive_tpl_#(pageId)"
            data-editable-option="getJBoltTableEditableColsOpton_#(pageId)">
         <thead class="fw_normal">
         <tr>
@@ -263,7 +263,7 @@
                 if (ret.state === 'ok') {
                     jboltTableInsertRow("jbolt_Table_#(pageId)", ret.data);
 
-                    $("#barcode").val(''); 
+                    $("#barcode").val('');
                 } else {
                     LayerMsgBox.alert(ret.msg, 2);
                 }
@@ -272,7 +272,7 @@
             LayerMsgBox.alert("请输入条码")
         }
     }
-    
+
     function coverall(ele) {
         var action = getRealJqueryObject(ele);
         if (isOk(action)) {
@@ -306,7 +306,7 @@
                         row.careacode = careacode;
 
                         var $tr = $('tr[data-barcode="' + row.barcode + '"]');
-                        
+
                         jboltTableSetCell($table, $tr, 'poscode', row.careacode, row.careacode);
                     })
                 });
@@ -356,16 +356,17 @@
                         if (submit){
                             submit_#(pageId)(autoid,function () {
                                 LayerMsgBox.success("提交成功", 600, function () {
-                                    parent.refreshPjaxContainer();
+                                    // parent.refreshPjaxContainer();
                                     // parent.layer.closeAll();
-                                    self.location.href = "/admin/materialReceiptList/edit/?autoid="+autoid; //新增的刷新
+                                    self.location.href = "/admin/materialReceiptList/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
                                 });
 
                             });
                         } else {
                             LayerMsgBox.success("提交成功", 600, function () {
-                                parent.refreshPjaxContainer();
-                                self.location.href = "/admin/materialReceiptList/edit/?autoid="+autoid; //新增的刷新
+                                // parent.refreshPjaxContainer();
+                                self.location.href =
+                                    "/admin/materialReceiptList/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
                             });
 
                         }
