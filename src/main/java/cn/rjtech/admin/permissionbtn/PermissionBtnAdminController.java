@@ -7,6 +7,7 @@ import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.PermissionBtn;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -42,6 +43,7 @@ public class PermissionBtnAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getLong("permissionId")));
     }
