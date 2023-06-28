@@ -735,3 +735,7 @@
 #namespace("uptimem")
 #include("uptimem/uptimem.sql")
 #end
+
+#namespace("specmaterialsrcvm")
+#include("specmaterialsrcvm/specmaterialsrcvm.sql")
+#end

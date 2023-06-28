@@ -55,8 +55,8 @@ public class ModocApiService extends JBoltApiBaseService {
    *
    * @param modocid 制造工单id
    */
-  public List<Record> getCoperationnameByModocId(String modocid){
-   return moDocService.getApiCoperationnameByModocId(modocid);
+  public List<Record> getCoperationnameByModocId(String modocid) {
+    return moDocService.getApiCoperationnameByModocId(modocid);
   }
 
   /**
@@ -64,9 +64,10 @@ public class ModocApiService extends JBoltApiBaseService {
    *
    * @param inventoryroutingconfigid 料品工艺档案配置ID
    */
-  public List<Record> getMoroutingsopByInventoryroutingconfigId(String inventoryroutingconfigid){
+  public List<Record> getMoroutingsopByInventoryroutingconfigId(String inventoryroutingconfigid) {
     return moDocService.getMoroutingsopByInventoryroutingconfigId(inventoryroutingconfigid);
   }
+
   public JBoltApiRet page(Integer page, Integer pageSize, String cmodocno, String cinvaddcode, String cinvcode1,
                           String cinvname1,
                           String cdepname, Long iworkregionmid, Integer status, Date starttime, Date endtime) {
@@ -87,123 +88,124 @@ public class ModocApiService extends JBoltApiBaseService {
     modocResVo.setJob(rows);
     return JBoltApiRet.API_SUCCESS_WITH_DATA(modocResVo);
 
+  }
+
+
+  public Record getModoc(MoDoc moDoc) {
+
+    Record moRecod = moDoc.toRecord();
+    moRecod.keep("cmodocno", "dplandate", "iqty", "icompqty");
+    if (notOk(moRecod.getBigDecimal("icompqty"))) {
+      moRecod.set("icompqty", new BigDecimal(0));
     }
-
-
-  public Record getModoc(MoDoc moDoc){
-
-    Record moRecod=moDoc.toRecord();
-    moRecod.keep("cmodocno","dplandate","iqty","icompqty");
-    if(notOk(moRecod.getBigDecimal("icompqty"))){
-      moRecod.set("icompqty",new BigDecimal(0));
-    }
-    if(isOk(moDoc.getIInventoryId())){
+    if (isOk(moDoc.getIInventoryId())) {
       //存货
       Inventory inventory = inventoryService.findById(moDoc.getIInventoryId());
-      if(inventory!=null){
+      if (inventory != null) {
         //料品编码
-        if(StringUtils.isNotBlank(inventory.getCInvCode())) {
+        if (StringUtils.isNotBlank(inventory.getCInvCode())) {
           moRecod.set("cinvcode", inventory.getCInvCode());
-        }else{
+        } else {
           moRecod.set("cinvcode", "");
         }
         //客户部番
-        if(StringUtils.isNotBlank(inventory.getCInvCode1())) {
+        if (StringUtils.isNotBlank(inventory.getCInvCode1())) {
           moRecod.set("cinvcode1", inventory.getCInvCode1());
-        }else{
+        } else {
           moRecod.set("cinvcode1", "");
         }
         //部品名称
-        if(StringUtils.isNotBlank(inventory.getCInvName1())) {
+        if (StringUtils.isNotBlank(inventory.getCInvName1())) {
           moRecod.set("cinvname1", inventory.getCInvName1());
-        }else{
+        } else {
           moRecod.set("cinvname1", "");
         }
-      }else{
+      } else {
         moRecod.set("cinvcode", "");
         moRecod.set("cinvcode1", "");
         moRecod.set("cinvname1", "");
       }
-    }else{
+    } else {
       moRecod.set("cinvcode", "");
       moRecod.set("cinvcode1", "");
       moRecod.set("cinvname1", "");
     }
 
 
-
     //差异数量
-    if(moDoc.getIQty()!=null&&moDoc.getICompQty()!=null) {
-      BigDecimal cyqty =moDoc.getIQty().subtract(moDoc.getICompQty());
-      moRecod.set("cyqty",cyqty);
-    }else{
-      moRecod.set("cyqty",new BigDecimal(0));
+    if (moDoc.getIQty() != null && moDoc.getICompQty() != null) {
+      BigDecimal cyqty = moDoc.getIQty().subtract(moDoc.getICompQty());
+      moRecod.set("cyqty", cyqty);
+    } else {
+      moRecod.set("cyqty", new BigDecimal(0));
     }
     //产线
-    if(isOk(moDoc.getIWorkRegionMid())){
-      Workregionm workregionm=workregionmService.findById(moDoc.getIWorkRegionMid());
-      if(workregionm!=null){
-        if(StringUtils.isNotBlank(workregionm.getCWorkName())) {
+    if (isOk(moDoc.getIWorkRegionMid())) {
+      Workregionm workregionm = workregionmService.findById(moDoc.getIWorkRegionMid());
+      if (workregionm != null) {
+        if (StringUtils.isNotBlank(workregionm.getCWorkName())) {
           moRecod.set("cworkname", workregionm.getCWorkName());
-        }else{
+        } else {
 
           moRecod.set("cworkname", "");
         }
-      }else{
+      } else {
         moRecod.set("cworkname", "");
       }
-    }else{
+    } else {
 
       moRecod.set("cworkname", "");
     }
     //班次
-    if(isOk(moDoc.getIWorkShiftMid())){
-      Workshiftm  workshiftm=workshiftmService.findById(moDoc.getIWorkShiftMid());
-      if(workshiftm!=null){
-        if(StringUtils.isNotBlank(workshiftm.getCworkshiftname())) {
-        moRecod.set("cworkshiftname",workshiftm.getCworkshiftname());
-      }else{
+    if (isOk(moDoc.getIWorkShiftMid())) {
+      Workshiftm workshiftm = workshiftmService.findById(moDoc.getIWorkShiftMid());
+      if (workshiftm != null) {
+        if (StringUtils.isNotBlank(workshiftm.getCworkshiftname())) {
+          moRecod.set("cworkshiftname", workshiftm.getCworkshiftname());
+        } else {
           moRecod.set("cworkshiftname", "");
         }
-      }else{
+      } else {
         moRecod.set("cworkshiftname", "");
       }
-    }else{
+    } else {
       moRecod.set("cworkshiftname", "");
     }
     //部门
-    if(isOk(moDoc.getIDepartmentId())){
-      Department department=departmentService.findById(moDoc.getIDepartmentId());
-      if(department!=null){
-        if(StringUtils.isNotBlank(department.getCDepName())) {
+    if (isOk(moDoc.getIDepartmentId())) {
+      Department department = departmentService.findById(moDoc.getIDepartmentId());
+      if (department != null) {
+        if (StringUtils.isNotBlank(department.getCDepName())) {
           moRecod.set("cdepname", department.getCDepName());
-        }else{
+        } else {
           moRecod.set("cdepname", "");
         }
-      }else{
+      } else {
         moRecod.set("cdepname", "");
       }
-    }else{
+    } else {
       moRecod.set("cdepname", "");
     }
-  return  moRecod;
+    return moRecod;
   }
+
   /**
    * 获取工单信息
+   *
    * @param moDoc
    */
-  public ModocApiPage getModoc1(MoDoc moDoc){
-    ModocApiPage modocApiPag=new ModocApiPage();
+  public ModocApiPage getModoc1(MoDoc moDoc) {
+    ModocApiPage modocApiPag = new ModocApiPage();
 
     modocApiPag.setiAutoId(moDoc.getIAutoId());
     modocApiPag.setcMoDocNo(moDoc.getCMoDocNo());
     modocApiPag.setdPlanDate(moDoc.getDPlanDate());
 
 
-    if(isOk(moDoc.getIInventoryId())){
+    if (isOk(moDoc.getIInventoryId())) {
       //存货
       Inventory inventory = inventoryService.findById(moDoc.getIInventoryId());
-      if(inventory!=null){
+      if (inventory != null) {
         //料品编码
         modocApiPag.setcInvCode(inventory.getCInvCode());
 
@@ -211,12 +213,11 @@ public class ModocApiService extends JBoltApiBaseService {
         modocApiPag.setcInvCode1(inventory.getCInvCode1());
 
         //部品名称
-        if(StringUtils.isNotBlank(inventory.getCInvName1())){
+        if (StringUtils.isNotBlank(inventory.getCInvName1())) {
           modocApiPag.setcInvName1(inventory.getCInvName1());
-        }else{
+        } else {
           modocApiPag.setcInvName1("");
         }
-
 
 
       }
@@ -225,52 +226,54 @@ public class ModocApiService extends JBoltApiBaseService {
 
     }
     //差异数量
-    if(moDoc.getIQty()!=null&&moDoc.getICompQty()!=null) {
-      BigDecimal cyqty =moDoc.getIQty().subtract(moDoc.getICompQty());
+    if (moDoc.getIQty() != null && moDoc.getICompQty() != null) {
+      BigDecimal cyqty = moDoc.getIQty().subtract(moDoc.getICompQty());
       modocApiPag.setCyqty(cyqty);
-    }else{
+    } else {
       modocApiPag.setCyqty(new BigDecimal(0));
     }
 
     //产线
-    if(isOk(moDoc.getIWorkRegionMid())){
-      Workregionm workregionm=workregionmService.findById(moDoc.getIWorkRegionMid());
-      if(workregionm!=null){
+    if (isOk(moDoc.getIWorkRegionMid())) {
+      Workregionm workregionm = workregionmService.findById(moDoc.getIWorkRegionMid());
+      if (workregionm != null) {
         modocApiPag.setcWorkName(workregionm.getCWorkName());
 
       }
-    }else{
+    } else {
       modocApiPag.setcWorkName("");
     }
     //班次
-    if(isOk(moDoc.getIWorkShiftMid())){
-      Workshiftm workshiftm=workshiftmService.findById(moDoc.getIWorkShiftMid());
-      if(workshiftm!=null){
+    if (isOk(moDoc.getIWorkShiftMid())) {
+      Workshiftm workshiftm = workshiftmService.findById(moDoc.getIWorkShiftMid());
+      if (workshiftm != null) {
         modocApiPag.setcWorkShiftName(workshiftm.getCworkshiftname());
       }
-    }else{
+    } else {
       modocApiPag.setcWorkShiftName("");
     }
     //部门
-    if(isOk(moDoc.getIDepartmentId())){
-      Department department=departmentService.findById(moDoc.getIDepartmentId());
-      if(department!=null){
+    if (isOk(moDoc.getIDepartmentId())) {
+      Department department = departmentService.findById(moDoc.getIDepartmentId());
+      if (department != null) {
         modocApiPag.setcDepName(department.getCDepName());
 
       }
-    }else{
+    } else {
       modocApiPag.setcDepName("");
     }
-   return  modocApiPag;
+    return modocApiPag;
   }
 
   /**
-   * 根据制造工单id查询特殊领料数据源
+   * 根据制造工单id查询特殊领料数据源Api
    *
    * @param imodocid
+   * @param pageNumber
+   * @param pageSize
    * @return
    */
-  public Page<Record> getSpecmaterialsrcvmDatas(Long imodocid) {
-    return specMaterialsRcvMService.getApiSpecmaterialsrcvmDatas(imodocid);
+  public Page<Record> getSpecmaterialsrcvmDatas(Long imodocid, Integer pageNumber, Integer pageSize) {
+    return specMaterialsRcvMService.getApiSpecmaterialsrcvmDatas(imodocid, pageNumber, pageSize);
   }
 }
