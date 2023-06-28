@@ -64,3 +64,28 @@ FROM
 WHERE t1.iProdFormId = '#(iQcFormId)'
   AND t3.iProdFormItemId = t1.iAutoId
     #end
+#sql("findByIdGetDetail")
+SELECT
+    b.iAutoId,
+    b.iSeq,
+    b.iType,
+    b.iStdVal,
+    b.iMaxVal,
+    b.iMinVal,
+    b.cOptions,
+    c.cProdParamName,
+    d.ISEQ as ProdItemIseq
+    ,c.iAutoId as ProdParamid
+FROM
+    Bd_ProdFormTableItem a
+         JOIN Bd_ProdFormTableParam b ON a.iProdFormTableParamId= b.iAutoId
+         JOIN Bd_ProdParam c ON a.iProdFormParamId= c.iAutoId
+         JOIN  Bd_ProdFormItem d on d.iProdItemId = a.iProdFormItemId and  d.iProdFormId = a.iProdFormId
+         JOIN Bd_ProdItem t3 ON t3.iAutoId = d.iProdItemId
+WHERE
+      1=1
+      #if("iprodformid")
+       and  a.iProdFormId = #para(iprodformid)
+      #end
+ORDER BY b.iseq ,d.ISEQ
+#end
