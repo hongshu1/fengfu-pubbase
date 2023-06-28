@@ -1,0 +1,45 @@
+<form onsubmit="return false;" id="uptimeDForm" action="#(action)" method="post">
+<input type="hidden" name="uptimeD.iautoid" value="#(uptimeD.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">稼动时间记录主表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入稼动时间记录主表ID" maxlength="19" name="uptimeD.iuptimemid" value="#(uptimeD.iuptimemid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">稼动时间类别ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入稼动时间类别ID" maxlength="19" name="uptimeD.iuptimecategoryid" value="#(uptimeD.iuptimecategoryid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">稼动时间参数ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入稼动时间参数ID" maxlength="19" name="uptimeD.iuptimeparamid" value="#(uptimeD.iuptimeparamid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">顺序值</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入顺序值"  maxlength="10" name="uptimeD.iseq" value="#(uptimeD.iseq??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">设定值（分钟）</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入设定值（分钟）"  maxlength="10" name="uptimeD.istdmins" value="#(uptimeD.istdmins??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">时间（分钟）</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber" placeholder="请输入时间（分钟）"  maxlength="10" name="uptimeD.imins" value="#(uptimeD.imins??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="uptimeDForm")
+#end
+

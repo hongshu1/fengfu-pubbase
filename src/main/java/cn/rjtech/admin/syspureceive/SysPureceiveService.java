@@ -828,7 +828,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             }
         }
     }
-
+    //实现反审之前的操作
     public String  checkbelowtwo(long formAutoId) {
         List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + formAutoId + ")");
         for (SysPureceive s : sysPureceives) {
@@ -901,7 +901,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             }
         }
     }
-
+    //反审后的操作
     public void delectbelowtwo(long formAutoId) {
         List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + formAutoId + ")");
         for (SysPureceive s : sysPureceives) {
@@ -933,6 +933,44 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                     }
                 }
 
+            }
+        }
+    }
+
+    //反审后的操作
+    public void delectbelowtwo(List<Long> formAutoId) {
+        for(Long q : formAutoId) {
+            List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + q + ")");
+            for (SysPureceive s : sysPureceives) {
+                //查出从表
+                List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.getAutoID());
+                if (firstBy.isEmpty()) return;
+                for (SysPureceivedetail d : firstBy) {
+                    if ("0".equals(d.getIsInitial())) {
+                        SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
+                        if (null != firstByBarcode && null != firstByBarcode.getAutoID()) {
+                            String autoID = firstByBarcode.getMasID();
+                            //删除从表
+                            syspuinstoredetailservice.deleteByIds(firstByBarcode.getAutoID());
+                            SysPuinstore byId = syspuinstoreservice.findById(autoID);
+                            List<SysPuinstoredetail> detailByMasID = syspuinstoredetailservice.findDetailByMasID(byId.getAutoID());
+                            if (detailByMasID.isEmpty()) {
+                                // 从表没数据才删除 主表
+                                syspuinstoreservice.deleteByIds(byId.getAutoID());
+
+                            }
+                        }
+                    } else {
+                        // 通过主表的入库单号 查质检单数据
+                        List<RcvDocQcFormM> firstBycRcvDocNo = rcvdocqcformmservice.findFirstBycRcvDocNo(s.getBillNo());
+                        if (null != firstBycRcvDocNo && firstBycRcvDocNo.size() > 0) {
+                            for (RcvDocQcFormM r : firstBycRcvDocNo) {
+                                rcvdocqcformmservice.deleteByIds(String.valueOf(r.getIAutoId()));
+                            }
+                        }
+                    }
+
+                }
             }
         }
     }
@@ -1049,6 +1087,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         return add.intValue();
     }
 
+    /**
+     * todo  审核通过
+     */
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         tx(() -> {
@@ -1058,13 +1099,16 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         return null;
     }
 
+    /**
+     * 审核不通过
+     */
     @Override
     public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return null;
     }
 
     /**
-     * 实现反审之前的其他业务操作，如有异常返回错误信息
+     * todo 实现反审之前的其他业务操作，如有异常返回错误信息
      */
     @Override
     public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
@@ -1072,13 +1116,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         //最后一个节点才判断下游单据状态
         if (isLast) {
           checkbelowtwo = this.checkbelowtwo(formAutoId);
-
         }
         return checkbelowtwo;
     }
 
     /**
-     * 实现反审之后的其他业务操作, 如有异常返回错误信息
+     * todo 实现反审之后的其他业务操作, 如有异常返回错误信息
      */
     @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
@@ -1088,41 +1131,57 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         return null;
     }
 
+    /**
+     * 提审前业务，如有异常返回错误信息
+     */
     @Override
     public String preSubmitFunc(long formAutoId) {
         return null;
     }
 
+    /**
+     * 提审后业务处理，如有异常返回错误信息
+     */
     @Override
     public String postSubmitFunc(long formAutoId) {
         return null;
     }
 
+    /**
+     * 撤回审核业务处理，如有异常返回错误信息，没走完的，不用做业务出来
+     */
     @Override
     public String postWithdrawFunc(long formAutoId) {
         return null;
     }
 
+    /**
+     * 从审批中，撤回到已保存，业务实现，如有异常返回错误信息
+     */
     @Override
     public String withdrawFromAuditting(long formAutoId) {
         return null;
     }
 
+    /**
+     *  todo 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
+     */
     @Override
     public String preWithdrawFromAuditted(long formAutoId) {
-        return null;
+        return this.checkbelowtwo(formAutoId);
     }
 
+    /**
+     * todo 从已审核，撤回到已保存，业务实现，如有异常返回错误信息
+     */
     @Override
     public String postWithdrawFromAuditted(long formAutoId) {
+        this.delectbelowtwo(formAutoId);
         return null;
     }
 
     /**
-     * 批量审核（审批）通过，后置业务实现
-     *
-     * @param formAutoIds 单据IDs
-     * @return
+     * todo 批量审核（审批）通过，后置业务实现
      */
     @Override
     public String postBatchApprove(List<Long> formAutoIds) {
@@ -1135,13 +1194,20 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         return null;
     }
 
+    /**
+     * 批量审批（审核）不通过，后置业务实现
+     */
     @Override
     public String postBatchReject(List<Long> formAutoIds) {
         return null;
     }
 
+    /**
+     * todo 批量撤销审批，后置业务实现，需要做业务出来
+     */
     @Override
     public String postBatchBackout(List<Long> formAutoIds) {
+        this.delectbelowtwo(formAutoIds);
         return null;
     }
 
