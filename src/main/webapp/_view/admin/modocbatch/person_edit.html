@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
 <style>
     .spread-container {
-        height:75.5vh;
+        height:76.5vh;
     }
 
     .gc-statusbar {
@@ -236,7 +236,7 @@
                 <div class="but_box">
                     <button class="button" lay-on="test-tips-prompt-0">数据导出</button>
                     <button class="button" id="loadExcel">数据导入</button>
-                    <button class="button">保存</button>
+                    <button class="button" onClick="seva()">保存</button>
                     <button class="button">提交审批</button>
                 </div>
                 <!-- 创建表格目标DOM元素，id为ss的HTML -->
@@ -331,6 +331,7 @@
         sheBeiName:"",          //接收当前行的设备name
         gonXuName:"",           //接收当前行的工序name
         keHuCode:"",            //接收当前行的客户编码
+        editCellValue:[],       //存储要保存的数据
     };
     var parmsArr = [Object.assign({},parmsDefault)];
     //添加属性
@@ -344,6 +345,7 @@
     loadInit();
     initData();
     initDate();
+
     /**
      * 初始化产线数据
      * @param loadInit
@@ -423,6 +425,7 @@
                 codeKehu:rowData[0][7],//当前物品的存货编码
                 sheBeiid:"",//设备id
                 gonXuid:"",//工序id
+                taskId,//页面id
                 renYuanid:[]//人员id
             }
             parms.cellRowOk = row;
@@ -497,6 +500,7 @@
             dataType:'json',
             success:function (respons){
                 let tableHeadArray = respons.data.datas;
+                parms['tableHeadArray'] = respons.data.datas;
                 spreadSuspend();//暂停绘制
                 //渲染头部数据
                 let startDate = document.getElementById("cinvcode1");
@@ -542,7 +546,7 @@
         sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
         sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
         sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
-        let url = `admin/modocbatch/getModocStaffEditorDatas?taskid=1668495051179982848`
+        let url = `admin/modocbatch/getModocStaffEditorDatas?taskid=${taskId}`
         LayerMsgBox.loading("正在获取最新数据...",20000);
         $.ajax({
             url,
@@ -552,7 +556,6 @@
                 LayerMsgBox.closeLoading();
                 const jsonData = respons;
                 parms['pageData'] = respons.data;
-                console.log(jsonData)
                 spreadSuspend();//暂停绘制
                 let rowIndex = 4;
                 let colIndex=0;
@@ -870,12 +873,43 @@
     function getArrayCellRow(id){
         let productionLineObj = parms['pageData'].slice(0,parms['pageData'].length-3).find((v,i)=>v.cinvcode==parms.keHuCode);//查找到当前产线对象
         let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
-        parms.editCellValueObj.gonXuid=sheBeigonXuObj.cequipment.iequipmentid;//工序id
-        parms.editCellValueObj.sheBeiid=sheBeigonXuObj.coperation.ioperationid;//设备id
+        parms.editCellValueObj.gonXuid = sheBeigonXuObj.cequipment.iequipmentid;//工序id
+        parms.editCellValueObj.sheBeiid = sheBeigonXuObj.coperation.ioperationid;//设备id
+        parms.editCellValueObj.iworkregionmid = productionLineObj.iworkregionmid;
         id.forEach((arr)=>{
-            parms.editCellValueObj.renYuanid.push(arr)
+            parms.editCellValueObj.renYuanid.push(arr);
         })
-        console.log(parms.editCellValueObj)
+        //获取当前的班次id
+        let blan = parms['tableHeadArray'].find((v,i)=>v.find((item,ind)=>item.yeartodate==parms.editCellValueObj.data)).find((ite,id)=>ite.cworkshiftcode==parms.editCellValueObj.plan);
+        parms.editCellValueObj.iworkshiftmid = blan.iworkshiftmid;
+        parms.editCellValue.push(parms.editCellValueObj);
+    }
+    /**
+     * 页面数据保存事件
+     * @param seva
+     */
+    function seva() {
+        let url = `admin/modocbatch/savePersonnel`;
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            data:{
+                modoc:JSON.stringify(parms.editCellValue)//修改单元格之后的数据--[object]
+            },
+            success:function (res){
+                if(res.data?.msg=='操作成功'){
+                    LayerMsgBox.success(res.data.msg);
+                    parms.editCellValue.length=0;
+                    initData();
+                }else{
+                    LayerMsgBox.error(res.msg,1000);
+                    parms.editCellValue.length=0;
+                }
+            },error: function(error) {
+                console.log(error);
+            }
+        })
     }
     /**
      *
@@ -912,7 +946,6 @@
         util.on('lay-on', {
             'test-tips-prompt-0': function(){
                 layer.prompt({title: '请输入文本'}, function(value, index, elem){
-                    console.log(index)
                     if(value === '') return elem.focus();
                     if(index==100002){
                         var json = spread.toJSON();//转为json格式

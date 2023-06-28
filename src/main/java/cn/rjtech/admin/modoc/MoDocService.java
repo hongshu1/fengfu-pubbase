@@ -1121,8 +1121,16 @@ public class MoDocService extends BaseService<MoDoc> {
     tx(() -> {
       records.forEach(record -> {
         MoDoc moDoc = findById(record.getStr("iautoid"));
+        if (record.getStr("qty").matches("\\d+")) { // 使用正则表达式判断字符串是否由数字组成
+          int num = Integer.parseInt(record.getStr("qty")); // 将字符串转换为整数
+          if (num <= 0) {
+            ValidationUtils.error("工单号【" + moDoc.getCMoDocNo() + "】数量必须大于0");
+          }
+        } else {
+          ValidationUtils.error("工单号【" + moDoc.getCMoDocNo() + "】生产计划量数据错误，请输入正确的数据");
+        }
         moDoc.setIQty(record.getBigDecimal("qty"));
-        moDoc.setIsModified(false);
+        moDoc.setIsModified(true);
         moDoc.update();
       });
       return true;
@@ -1130,4 +1138,21 @@ public class MoDocService extends BaseService<MoDoc> {
     return SUCCESS;
   }
 
+
+  /**
+   * 编辑人员保存
+   *
+   * @param records
+   * @return
+   */
+  public Ret savePersonnel(List<Record> records) {
+    tx(() -> {
+      records.forEach(record -> {
+
+
+      });
+      return true;
+    });
+    return SUCCESS;
+  }
 }

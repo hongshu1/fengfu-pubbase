@@ -1,5 +1,6 @@
 package cn.rjtech.admin.formuploadcategory;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -9,9 +10,12 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.FormUploadCategory;
+import cn.rjtech.util.Util;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import java.util.List;
@@ -39,7 +43,7 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize()));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(),getKv()));
 	}
 
    /**
@@ -97,30 +101,16 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
 		renderBytesToExcelXlsFile(service.getImportExcelTpl().setFileName("上传记录-分类导入模板"));
 	}
 
-   /**
-	* 执行导入excel
-	*/
-	public void importExcel() {
-		String uploadPath=JBoltUploadFolder.todayFolder(JBoltUploadFolder.IMPORT_EXCEL_TEMP_FOLDER);
-        UploadFile file=getFile("file",uploadPath);
-        if(notExcel(file)){
-            renderJsonFail("请上传excel文件");
-            return;
-        }
-        renderJson(service.importExcel(file.getFile()));
+	public void importExcelClass() {
+		String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+		UploadFile file = getFile("file", uploadPath);
+		if (notExcel(file)) {
+			renderJsonFail("请上传excel文件");
+			return;
+		}
+		renderJson(service.importExcelClass(file.getFile()));
 	}
 
-   /**
-	* 执行导出excel 根据查询form表单
-	*/
-	public void exportExcelByForm() {
-		List<FormUploadCategory> allParents = service.getAllParents();
-		if(notOk(allParents)){
-	        renderJsonFail("无有效数据导出");
-	        return;
-	    }
-		renderBytesToExcelXlsxFile(service.exportExcel(allParents).setFileName("上传记录-分类"));
-	}
 
     /**
 	* 执行导出excel 根据表格选中数据
@@ -131,24 +121,24 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
 	        renderJsonFail("未选择有效数据，无法导出");
         	return;
 	    }
-	    List<FormUploadCategory> datas = service.getListByIds(ids);
-	    if(notOk(datas)){
+		List<Record> datas = service.list(Kv.create().setIfNotBlank("ids", Util.getInSqlByIds(ids)));
+		if(notOk(datas)){
 	        renderJsonFail("无有效数据导出");
 	        return;
 	    }
-		renderBytesToExcelXlsxFile(service.exportExcel(datas).setFileName("上传记录-分类"));
+		renderBytesToExcelXlsxFile(service.exportExcel(datas).setFileName("生产建模-上传记录_分类"));
 	}
 
-    /**
-	* 执行导出excel 所有数据
-	*/
+	/**
+	 * 执行导出excel 所有数据
+	 */
 	public void exportExcelAll() {
-	    List<FormUploadCategory> datas = service.findAll();
-	    if(notOk(datas)){
-	        renderJsonFail("无有效数据导出");
-	        return;
-	    }
-		renderBytesToExcelXlsxFile(service.exportExcel(datas).setFileName("上传记录-分类"));
+		List<Record> datas = service.list(getKv());
+		if (notOk(datas)) {
+			renderJsonFail("无有效数据导出");
+			return;
+		}
+		renderBytesToExcelXlsxFile(service.exportExcel(datas).setFileName("生产建模-上传记录_分类"));
 	}
 
 	/**
@@ -158,4 +148,12 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
 	public void options() {
 		renderJsonData(service.list(get("q")));
 	}
+
+	/**
+	 * 切换toggleIsenabled
+	 */
+	public void toggleIsenabled() {
+		renderJson(service.toggleIsenabled(getLong(0)));
+	}
+
 }

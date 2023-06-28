@@ -66,7 +66,7 @@ public class MsgEventListener {
                 return true;
             });
             // 发送邮件处理
-            EmailUtils.sendEmail(emails, "审批通知", content  + ",访问链接："+globalConfigService.getConfigValue(MomConfigKey.EMAIL_LOGIN_URL));
+            EmailUtils.sendEmail(emails, "审批通知", content  + ",<a href='"+globalConfigService.getConfigValue(MomConfigKey.EMAIL_LOGIN_URL) + "'>点击访问</a>");
         } catch (Exception e) {
             e.printStackTrace();
             ExceptionEventUtil.postExceptionEvent(e);

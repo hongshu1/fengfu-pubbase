@@ -26,9 +26,9 @@ public class MoMopatchweldmApiController extends BaseApiController {
      * @param iMoDocId 工单主键id
      */
     @UnCheck
-    public void getList(@Para(value = "iMoDocId") String iMoDocId) {
-        ValidationUtils.validateStr(iMoDocId, 20,"工单主键id");
-        renderJBoltApiRet(service.getList(Long.getLong(iMoDocId)));
+    public void getList(@Para(value = "iMoDocId") Long iMoDocId) {
+        ValidationUtils.validateId(iMoDocId,"工单主键id");
+        renderJBoltApiRet(service.getList(iMoDocId));
     }
     /**
      * 补焊纪录保存接口
@@ -42,10 +42,10 @@ public class MoMopatchweldmApiController extends BaseApiController {
      *             }]
      */
     @UnCheck
-    public void saveData(@Para(value = "iMoDocId") String iMoDocId,
+    public void saveData(@Para(value = "iMoDocId") Long iMoDocId,
                          @Para(value = "data") String data) {
         ValidationUtils.notNull(iMoDocId,"工单主键id不能为空！");
-        renderJBoltApiRet(service.saveData(Long.getLong(iMoDocId),data));
+        renderJBoltApiRet(service.saveData(iMoDocId,data));
     }
 
 }
