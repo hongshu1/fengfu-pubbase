@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.6.3";
+var jbolt_admin_js_version="6.6.4";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -19394,6 +19394,24 @@ function initJuicer(){
 	juicer.register("enableToStr",enableToStr);
 	juicer.register("enable_to_check",enableToCheck);
 	juicer.register("enableToCheck",enableToCheck);
+	juicer.register("fileSizeFormat",fileSizeFormat);
+}
+
+function fileSizeFormat(fileSize){
+	if(!fileSize){
+		return "0B";
+	}
+	if (fileSize < 1024) {
+		return fileSize + ' B';
+	} else if (fileSize < 1024 * 1024) {
+		return (fileSize / 1024).toFixed(2) + ' KB';
+	} else if (fileSize < 1024 * 1024 * 1024) {
+		return (fileSize / (1024 * 1024)).toFixed(2) + ' MB';
+	} else if (fileSize < 1024 * 1024 * 1024 * 1024) {
+		return (fileSize / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+	} else {
+		return (fileSize / (1024 * 1024 * 1024 * 1024)).toFixed(2) + ' TB';
+	}
 }
 
 function booleanToCheck(value){
