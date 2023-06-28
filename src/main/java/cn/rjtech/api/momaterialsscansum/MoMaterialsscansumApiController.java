@@ -4,6 +4,9 @@ import cn.jbolt.core.api.OpenAPI;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
+import cn.rjtech.entity.vo.org.OrgVo;
+import cn.rjtech.model.momdata.MoMaterialscanlog;
+import cn.rjtech.model.momdata.MoMaterialsscansum;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import io.github.yedaxia.apidocs.ApiDoc;
@@ -33,29 +36,28 @@ public class MoMaterialsscansumApiController extends BaseApiController {
     }
 
     /**
-     * 获取备料现品票明细（未扫描）
+     * 获取备料现品票所有数据
      */
-    public void getMoMaterialNotScanLogList(@Para(value = "page") Integer page,
+    @ApiDoc(result = NullDataResult.class)
+    @UnCheck
+    public void getBarcodeAll(@Para(value = "pageNumber") Integer pageNumber,
                                             @Para(value = "pageSize") Integer pageSize,
-                                             @Para(value = "imodocid") Long imodocid,
-                                            @Para(value = "barcode") String  barcoce){
-
-        renderJBoltApiRet(moMaterialsscansumApiService.getMoMaterialNotScanLogList(getPageNumber(),getPageSize(),barcoce));
+                                             @Para(value = "imodocid") Long imodocid
+    ){
+        renderJBoltApiRet(moMaterialsscansumApiService.getBarcodeAll(pageNumber,pageSize,imodocid));
     }
 
     /**
-     * 获取备料现品票明细(已扫描）
-     * @param page
-     * @param pageSize
-     * @param barcoce
+     * 获取备料现品票明细（未扫描/已扫描）
      */
+    @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void getMoMaterialScanLogList(@Para(value = "page") Integer page,
-                                         @Para(value = "pageSize") Integer pageSize,
-                                         @Para(value = "imodocid") Long imodocid,
-                                         @Para(value = "barcode") String  barcoce
+    public void getMoMaterialNotScanLogList(@Para(value = "pageNumber") Integer pageNumber,
+                                            @Para(value = "pageSize") Integer pageSize,
+                                            @Para(value = "imodocid") Long imodocid,
+                                            @Para(value = "isScanned") Integer isScanned
     ){
-        renderJBoltApiRet(moMaterialsscansumApiService.getMoMaterialNotScanLogList(getPageNumber(),getPageSize(),barcoce));
+        renderJBoltApiRet(moMaterialsscansumApiService.getMoMaterialNotScanLogList(pageNumber,pageSize,imodocid,isScanned));
     }
 
 }
