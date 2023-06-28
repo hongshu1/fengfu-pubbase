@@ -185,7 +185,7 @@ public class ProdFormTableParamService extends BaseService<ProdFormTableParam> {
 			}
 			qcFormTableParamList.add(qcFormTableParam);
 			// 设置当前行id
-			jsonObject.put(SpotCheckFormTableItem.ISPOTCHECKFORMTABLEPARAMID.toLowerCase(), qcFormTableParam.getIAutoId());
+			jsonObject.put(ProdFormTableItem.IPRODFORMTABLEPARAMID.toLowerCase(), qcFormTableParam.getIAutoId());
 		}
 		return qcFormTableParamList;
 	}

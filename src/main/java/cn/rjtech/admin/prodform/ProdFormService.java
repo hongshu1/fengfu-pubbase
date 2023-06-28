@@ -405,7 +405,7 @@ public class ProdFormService extends BaseService<ProdForm> {
 		Map<Long, ProdFormItem> qcFormItemMap = qcFormItemList.stream().collect(Collectors.toMap(ProdFormItem::getIProdItemId, Function.identity(), (key1, key2) -> key2));
 		for (int i=0; i<qcParamJsonData.size(); i++){
 			JSONObject jsonObject = qcParamJsonData.getJSONObject(i);
-			Long qcItemId = jsonObject.getLong(ProdFormParam.IPRODITEMID.toLowerCase());
+			Long qcItemId = jsonObject.getLong(QcFormParam.IQCITEMID.toLowerCase());
 			if (qcFormItemMap.containsKey(qcItemId)){
 				ProdFormItem qcFormItem = qcFormItemMap.get(qcItemId);
 				jsonObject.put(ProdFormParam.IPRODFORMITEMID.toLowerCase(), qcFormItem.getIAutoId());

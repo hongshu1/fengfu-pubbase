@@ -353,7 +353,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
             Map<String,Record> cusWorkMonthNumMap = cusWorkMonthNumListMap.get(customerId) != null ? cusWorkMonthNumListMap.get(customerId) : new HashMap<>();
             //CC:客户行事历
             ScheduProductYearViewDTO productYearViewCC = getProductYearViewCC(CC,startYear,endYear,cusWorkMonthNumMap);
-            scheduProductPlanYearList.add(productYearViewCC);
+            //scheduProductPlanYearList.add(productYearViewCC);
 
             //TODO:查询本次所有客户的订单计划
             for (Record record : sourceYearOrderList) {
@@ -852,7 +852,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
             Map<String,Record> cusWorkMonthNumMap = cusWorkMonthNumListMap.get(icustomerid) != null ? cusWorkMonthNumListMap.get(icustomerid) : new HashMap<>();
             //CC:客户行事历
             ScheduProductYearViewDTO productYearViewCC = getProductYearViewCC(CC,startYear,endYear,cusWorkMonthNumMap);
-            scheduProductPlanYearList.add(productYearViewCC);
+            //scheduProductPlanYearList.add(productYearViewCC);
 
             //key:物料id+机型id   value:List<Record>
             Map<String,List<Record>> apsYearPlanQtyListMap = new HashMap<>();
