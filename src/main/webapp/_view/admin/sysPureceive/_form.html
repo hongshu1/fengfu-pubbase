@@ -120,7 +120,7 @@
 <div class="jbolt_page_content">
     <script type="text/template" id="sysPureceive_tpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.autoid}">
+        <tr data-id="${data.autoid}" data-barcode="${data.barcode}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
                 #if(!sysPureceive.AutoID??)
@@ -259,12 +259,15 @@
 
         if (barcode) {
             var whcode1 = $("#whcode1").val();
-            Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode,"whcode1":whcode1},
-                function (res) {
-                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, true, false);
-                    $("#barcode").val('');
-                }, function (err) {
-                })
+            Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode, "whcode1": whcode1}, function (ret) {
+                if (ret.state === 'ok') {
+                    jboltTableInsertRow("jbolt_Table_#(pageId)", ret.data);
+
+                    $("#barcode").val(''); 
+                } else {
+                    LayerMsgBox.alert(ret.msg, 2);
+                }
+            }, function (err) {})
         } else {
             LayerMsgBox.alert("请输入条码")
         }
@@ -302,7 +305,7 @@
 
                         row.careacode = careacode;
 
-                        var $tr = $('tr[data-id="' + row.autoid + '"]');
+                        var $tr = $('tr[data-barcode="' + row.barcode + '"]');
                         
                         jboltTableSetCell($table, $tr, 'poscode', row.careacode, row.careacode);
                     })
