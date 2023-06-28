@@ -875,20 +875,21 @@
         let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
         parms.editCellValueObj.gonXuid = sheBeigonXuObj.cequipment.iequipmentid;//工序id
         parms.editCellValueObj.sheBeiid = sheBeigonXuObj.coperation.ioperationid;//设备id
-        parms.editCellValueObj.iworkregionmid = productionLineObj.iworkregionmid
+        parms.editCellValueObj.iworkregionmid = productionLineObj.iworkregionmid;
         id.forEach((arr)=>{
-            parms.editCellValueObj.renYuanid.push(arr)
+            parms.editCellValueObj.renYuanid.push(arr);
         })
+        //获取当前的班次id
         let blan = parms['tableHeadArray'].find((v,i)=>v.find((item,ind)=>item.yeartodate==parms.editCellValueObj.data)).find((ite,id)=>ite.cworkshiftcode==parms.editCellValueObj.plan);
         parms.editCellValueObj.iworkshiftmid = blan.iworkshiftmid;
-        parms.editCellValue.push(parms.editCellValueObj)
+        parms.editCellValue.push(parms.editCellValueObj);
     }
     /**
      * 页面数据保存事件
      * @param seva
      */
     function seva() {
-        let url = `admin/modocbatch/savePersonnel`
+        let url = `admin/modocbatch/savePersonnel`;
         $.ajax({
             url,
             type:'post',
@@ -898,7 +899,7 @@
             },
             success:function (res){
                 if(res.data?.msg=='操作成功'){
-                    LayerMsgBox.success(res.data.msg)
+                    LayerMsgBox.success(res.data.msg);
                     parms.editCellValue.length=0;
                     initData();
                 }else{
