@@ -14,6 +14,8 @@ import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.service.approval.IApprovalService;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -31,7 +33,7 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-25 16:32
  */
-public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
+public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> implements IApprovalService {
 
 	private final MoMaterialsreturnm dao = new MoMaterialsreturnm().dao();
 
@@ -58,7 +60,10 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 	private WarehouseAreaService warehouseAreaService; //库区
 
 	@Inject
-	private MoDocService moDocService;
+	private MoDocService moDocService;//制造管理-制造工单
+	@Inject
+	private MoMaterialsreturndService materialsreturndService;//生产退料明细表
+
 
 
 	/**
@@ -371,4 +376,68 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 	 return transVouch;
    }
 
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		return null;
+	}
+
+	@Override
+	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		return null;
+	}
 }
