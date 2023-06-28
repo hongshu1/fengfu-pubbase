@@ -1,0 +1,176 @@
+<form onsubmit="return false;" id="prodFormMForm" action="#(action)" method="post">
+    <input type="hidden" name="prodFormM.iautoid" value="#(prodFormM.iautoid??)" />
+    <input type="hidden" maxlength="255" id="prodFormMiautoid" name="prodFormM.iautoid" value="#(recordInfo.iautoid??)"/>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="col">
+                    <!--#if(readonly != 'readonly')
+                    <button onclick="submitThisForm_#(pageId)()" class="btn btn-outline-secondary btn-xs">保存</button>
+                    #end-->
+                    #include("/_view/_common/_approval_btns.html", uri="/admin/prodFormM",
+                    formSn="Mo_MoPatchWeldM", primaryKeyName="iAutoId", o=prodFormM,
+                    permissionKeyPrefix="prodFormM",  className="cn.rjtech.admin.prodFormM.prodFormMService")
+
+                    <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="py-2" style="padding:.5rem 0rem;">
+        <span class="py-1"><strong></strong></span>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">生产表格名称</label>
+                <div class="col-2">
+                    <select class="form-control"
+                            data-height="30"
+                            data-width="220"
+                            data-autoload
+                            data-url="admin/prodForm/options"
+                            data-select-type="select2"
+                            name="prodFormM.iProdFormId"
+                            data-refresh="true"
+                            data-rule="select"
+                            data-notnull="true"
+                            data-tips="请选择生产表格名称"
+                            data-text="=请选择="
+                            data-value-attr="iautoid"
+                            data-text-attr="cprodformname"
+                            data-select="#(prodFormM.iprodformid??)"
+                            #if(readonly)
+                            disabled
+                            #end
+                            data-handler="getProdFormDatas()"
+                            data-setvalueto="multipleInput"
+                    ></select>
+                    <input type="hidden" id="multipleInput" name="iprodformid" value="#(prodFormM.iprodformid??)" />
+
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">产线名称：</label>
+                <div class="col-2">
+                    <select class="form-control"
+                            data-height="30"
+                            data-width="220"
+                            data-autoload
+                            data-url="admin/workregionm/options"
+                            data-select-type="select2"
+                            name="prodFormM.iWorkRegionMid"
+                            data-refresh="true"
+                            data-rule="select"
+                            data-notnull="true"
+                            data-tips="请选择产线名称"
+                            data-text="=请选择="
+                            data-value-attr="iautoid"
+                            data-text-attr="cworkname"
+                            data-select="#(prodFormM.iworkregionmid??)"
+                            #if(readonly)
+                            disabled
+                            #end
+
+                    ></select>
+
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">班次名称：</label>
+                <div class="col-2">
+                    <select class="form-control"
+                            data-height="30"
+                            data-width="220"
+                            data-autoload
+                            data-url="admin/workshiftm/getSelect"
+                            data-select-type="select2"
+                            name="prodFormM.iWorkShiftMid"
+                            data-refresh="true"
+                            data-rule="select"
+                            data-notnull="true"
+                            data-tips="请选择班次名称"
+                            data-text="=请选择="
+                            data-value-attr="iautoid"
+                            data-text-attr="cworkshiftname"
+                            data-select="#(prodFormM.iworkshiftmid??)"
+                            #if(readonly)
+                            disabled
+                            #end
+                    ></select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">日期</label>
+                <div class="col-2">
+                    <input type="text" data-date data-type="date"    #if(readonly) disabled #end data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="prodFormM.ddate" value="#(prodFormM.ddate??)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: 300px;">
+        #ajaxPortal("/admin/prodFormM/table3","dictionaryPortal",true)
+    </div>
+</form>
+#define js()
+#include("_table3_js.html")
+<script>
+hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+
+    function closeHandler(){
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+    //获取表格名称数据获取对应列表数据
+function getProdFormDatas() {
+    let iprodformid = $("input[name='iprodformid']").val();
+    if (iprodformid){
+        $("#dictionaryPortal").ajaxPortal(true,"/admin/prodFormM/table3?iprodformid="+iprodformid+'&_jb_rqtype_=dialog',true);
+    }
+}
+
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
+    function submitThisForm_#(pageId)(s) {
+        let prodFormMiautoid = $("#prodFormMiautoid").val();
+        // 保存并提交
+        if (s) {
+            submit = s;
+        }
+
+        // 提交审核（审批）调用
+        if (submit) {
+            // 提审
+            submit_#(pageId)(prodFormMiautoid, function (data) {
+
+                successHandler('提审成功', prodFormMiautoid);
+            });
+        } else {
+            successHandler(res.msg, prodFormMiautoid);
+        }
+    }
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, id) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            var url="admin/prodFormM/edit?iautoid="+id+ '&_jb_rqtype_=dialog';
+            location.href = url;
+            parent.refreshPjaxContainer();
+        });
+    }
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="prodFormMForm")
+#end
+

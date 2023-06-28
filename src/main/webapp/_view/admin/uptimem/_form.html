@@ -1,0 +1,375 @@
+<form onsubmit="return false;" id="uptimeMForm" action="#(action)" method="post">
+<input type="hidden" name="uptimeM.iautoid" id="uptimeMId" value="#(uptimeM.iautoid??)" />
+	<div class="col-12">
+		<div class="card">
+			<div class="card-body">
+				<div class="col">
+
+					#if(updateOrSave == 'save')
+					<button onclick="submitThisForm_uptimeM()" class="btn btn-outline-secondary btn-xs">保存</button>
+					#else
+						#if(recordInfo.iauditstatus == 0)
+						<button onclick="submitThisForm_uptimeM()" class="btn btn-outline-secondary btn-xs">保存</button>
+						#end
+					#end
+
+					#if(readonly != 'readonly')
+					<button hidden onclick="submitThisForm_uptimeM()" class="btn btn-outline-secondary btn-xs">保存</button>
+					#end
+					#include("/_view/_common/_approval_btns.html", uri="/admin/uptimem",
+					formSn="PL_UptimeM", primaryKeyName="iAutoId", o=uptimeM,
+					permissionKeyPrefix="uptimem",  className="cn.rjtech.admin.uptimem.UptimeMService")
+
+					<button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="py-2" style="padding:.5rem 0rem;">
+		<span class="py-1"><strong>稼动信息</strong></span>
+	</div>
+
+	<div class="row">
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">产线名称：</label>
+				<div class="col">
+					#if(updateOrSave == 'save')
+					<select class="form-control" data-tips="请选择产线" data-url="admin/workregionm/options" data-rule="required" data-handler="selectTable"
+							name="uptimeM.iworkregionmid" data-autoload data-text="=请选择产线=" data-value-attr="iautoid" data-text-attr="cworkname"
+							data-select="#(recordInfo.iworkregionmid??)"></select>
+					#else
+					<select class="form-control" data-tips="请选择产线" data-url="admin/workregionm/options" data-rule="required" data-handler="selectTable" disabled
+							name="uptimeM.iworkregionmid" data-autoload data-text="=请选择产线=" data-value-attr="iautoid" data-text-attr="cworkname"
+							data-select="#(recordInfo.iworkregionmid??)"></select>
+					#end
+					<input type="hidden" maxlength="255" id="iworkregionmid2" name="iworkregionmid" value="#(recordInfo.iworkregionmid??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">班次名称：</label>
+				<div class="col">
+					#if(updateOrSave == 'save')
+					<select class="form-control" data-tips="请选择班次" data-url="admin/workshiftm/getSelect" data-rule="required" data-handler="selectTable2"
+							name="uptimeM.iworkshiftmid" data-autoload data-text="=请选择班次=" data-value-attr="iautoid" data-text-attr="cworkshiftname"
+							data-select="#(recordInfo.iworkshiftmid??)"></select>
+					#else
+					<select class="form-control" data-tips="请选择班次" data-url="admin/workshiftm/getSelect" data-rule="required" data-handler="selectTable2" disabled
+							name="uptimeM.iworkshiftmid" data-autoload data-text="=请选择班次=" data-value-attr="iautoid" data-text-attr="cworkshiftname"
+							data-select="#(recordInfo.iworkshiftmid??)"></select>
+					#end
+					<input type="hidden" maxlength="255" id="iworkshiftmid2" name="iworkshiftmid" value="#(recordInfo.iworkshiftmid??)"/>
+					<input type="hidden" maxlength="255" id="updateOrSave" name="updateOrSave" value="#(updateOrSave??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">基本稼动时间(分)：</label>
+				<div class="col">
+					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()"  class="form-control" data-rule="required"  maxlength="255" id="ibasemins" name="uptimeM.ibasemins" value="#(recordInfo.ibasemins??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">不稼动时间(分)：</label>
+				<div class="col">
+					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" class="form-control"  data-rule="required"  maxlength="255" id="istopmins" name="uptimeM.istopmins" value="#(recordInfo.istopmins??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">机种切换时间(分)：</label>
+				<div class="col">
+					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" class="form-control"  data-rule="required"  maxlength="255" id="iswitchmins" name="uptimeM.iswitchmins" value="#(recordInfo.iswitchmins??)"/>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">加班时间(分)：</label>
+				<div class="col">
+					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" class="form-control"  data-rule="required"  maxlength="255" id="iotmins" name="uptimeM.iotmins" value="#(recordInfo.iotmins??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">工作时间(分)：</label>
+				<div class="col">
+					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" class="form-control"  data-rule="required"  maxlength="255" id="iworkmins" name="uptimeM.iworkmins" value="#(recordInfo.iworkmins??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+		</div>
+	</div>
+
+	<div class="py-2" style="padding:.5rem 0rem;margin-top: 10px">
+		<span class="py-1"><strong>不稼动时间列表</strong></span>
+	</div>
+	<div class="jbolt_page_content">
+		<!-- JBoltTable的数据模板定义-->
+		<textarea class="jb_tpl_box" id="keepingRecordRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cuptimecategoryname}</td>
+<td>${data.cuptimeparamname}</td>
+<td>${data.istdmins}</td>
+<td>${data.imins}</td>
+</tr>
+{@/each}
+</textarea>
+		<table class="jbolt_table jbolt_main_table table-center hover_info"
+			   id="tableId_uptimeM"
+			   data-jbolttable
+			   data-height="300"
+			   data-ajax="true"
+			   data-url="admin/uptimem/getUptimeDList?iautoid=#(recordInfo.iautoid??)"
+			   data-column-resize="true"
+			   data-column-prepend="1:checkbox:true"
+			   data-conditions-form="uptimeMForm"
+			   data-rowtpl="keepingRecordRowtpl_#(pageId)"
+			   data-toolbar="keepingRecord_toolbar_#(pageId)"
+			   data-editable="true"
+			   data-editable-option="getEditableTableOptionsqc"
+		>
+			<thead>
+			<tr>
+				<th data-width="50">序号</th>
+				<th data-min-width="250" data-column="cUptimeCategoryName">分类名称</th>
+				<th data-min-width="250" data-column="cUptimeParamName">项目名称</th>
+				<th data-width="250" data-column="iStdMins">设定值(分)</th>
+				<th data-width="250" data-column="iMins">时间(分)</th>
+				<th data-width="250" data-column="sum">合计</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<div class="py-2" style="padding:.5rem 0rem;margin-top: 10px">
+
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">无机种切换稼动率：</label>
+				<div class="col">
+					<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  maxlength="255" id="irate1" name="uptimeM.irate1" value="#(recordInfo.irate1??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+		</div>
+		<div class="col">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">有机种切换稼动率：</label>
+				<div class="col">
+					<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  maxlength="255" id="irate2" name="uptimeM.irate2" value="#(recordInfo.irate2??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+		</div>
+		<div class="col">
+		</div>
+	</div>
+
+
+
+
+</form>
+#define js()
+<script>
+	hideParentLayerDialogBtn(0);
+	hideParentLayerDialogBtn(1);
+
+	function closeHandler(){
+		parent.layer.close(parent.layer.getFrameIndex(window.name));
+		window.parent.refreshJBoltTable();
+	}
+
+	var iworkregionmid = '';
+	var iworkshiftmid = '';
+	function selectTable(index) {
+		iworkregionmid = index.val();
+		$("#iworkregionmid2").val(iworkregionmid);
+		if (isOk(iworkregionmid) && isOk(iworkshiftmid)) {
+			refreshDate();
+		}
+	}
+	function selectTable2(index) {
+		iworkshiftmid = index.val();
+		$("#iworkshiftmid2").val(iworkshiftmid);
+		if (isOk(iworkregionmid) && isOk(iworkshiftmid)) {
+			refreshDate();
+		}
+	}
+	function refreshDate(){
+		//$("#tableId_uptimeM").attr("data-url", "admin/uptimem/getUptimeDList?iautoid=#(recordInfo.iautoid??)&iworkregionmid="+iworkregionmid+"&iworkshiftmid="+iworkshiftmid);
+		if (notOk($("#uptimeMId").val())){
+			let dataObj = {
+				iworkregionmid: iworkregionmid,
+				iworkshiftmid: iworkshiftmid,
+			}
+			let url = "admin/uptimem/getUptimeTplInfo";
+			Ajax.post(url,dataObj,function(res){
+				$("#ibasemins").val(res.data.ibasemins);
+				$("#istopmins").val(res.data.istopmins);
+				$("#iswitchmins").val(res.data.iswitchmins);
+				$("#iotmins").val(res.data.iotmins);
+				$("#iworkmins").val(res.data.iworkmins);
+
+				//无机种切换稼动率：=（基本稼动时间-不稼动时间）/基本稼动时间*100%
+				let irate1 = (Number(res.data.ibasemins) - Number(res.data.istopmins)) / Number(res.data.ibasemins) * 100;
+				$("#irate1").val(irate1);
+				//有机种切换稼动率：=（基本稼动时间-不稼动时间-机种切换时间）/基本稼动时间*100%
+				let irate2 = (Number(res.data.ibasemins) - Number(res.data.istopmins) - Number(res.data.iswitchmins)) / Number(res.data.ibasemins) * 100;
+				$("#irate2").val(irate2);
+			});
+		}
+		refreshJBoltTable("#tableId_uptimeM");
+	}
+
+
+	// 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+	var submit = false;
+	function submitThisForm_#(pageId)(s) {
+		if (s) {
+			submit = s;
+		}
+		// 保存并提交
+		submitThisForm_uptimeM();
+	}
+	/**
+	 * 新增/修改/提审
+	 */
+	function successHandler(msg, id) {
+		LayerMsgBox.success(msg, 600, function () {
+			// 新增/修改，均跳转到详情页
+			var url="admin/uptimem/edit?iautoid="+id+ '&_jb_rqtype_=dialog';
+			location.href = url;
+			parent.refreshPjaxContainer();
+		});
+	}
+
+	function submitThisForm_uptimeM(){
+		//基本稼动时间+加班时间=不稼动时间+机种切换时间+工作时间
+		let ibasemins = $("#ibasemins").val();
+		let istopmins = $("#istopmins").val();
+		let iswitchmins = $("#iswitchmins").val();
+		let iotmins = $("#iotmins").val();
+		let iworkmins = $("#iworkmins").val();
+
+		let sum1 = Number(ibasemins) + Number(iotmins);
+		let sum2 = Number(istopmins) + Number(iswitchmins) + Number(iworkmins);
+		if (sum1 != sum2){
+			LayerMsgBox.alert("基本稼动时间+加班时间=不稼动时间+机种切换时间+工作时间",2)
+			return;
+		}
+		onblurUptimeM();
+		jboltTableSubmit('#tableId_uptimeM');
+	}
+
+	function getEditableTableOptionsqc(){
+		var editableTableOptions={
+			trigger:"click",
+			initRowCount:0,
+			maxRowCount:30,
+			keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+			submit:{
+				withForm:["uptimeMForm"],
+				type:"all",//cell|all
+				params:{"updateOrSave":$("#updateOrSave").val()},//携带其他额外参数
+				//commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+				url:"admin/uptimem/updateAndSave",
+				success:function(res){
+					//refreshJBoltTable("#itemroutingconfigid");
+					/*LayerMsgBox.success("提交成功",600,function(){
+						parent.LayerMsgBox.closeAll();
+						parent.refreshJBoltTable();
+					});*/
+					// 表格保存之后，判断是否需要提审处理
+					if (res.state === 'ok') {
+						// 提交审核（审批）调用
+						if (submit) {
+							// 提审
+							submit_#(pageId)(res.data, function (data) {
+
+								successHandler('提审成功', res.data);
+							});
+						} else {
+							successHandler(res.msg, res.data);
+						}
+					} else {
+						LayerMsgBox.alert(res.msg, 2);
+					}
+				},
+			},
+			//插入数据时默认属性值
+			//insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+			cols:{
+				iautoid:{
+					submitAttr:"iautoid",
+				},
+				iMins:{
+					type:"input_number",
+					rule:"number",
+					placeholder:"0",
+					required:true,
+					handler:function(table,td,text,value,trJsonData){
+						updateiMins();
+					},
+				},
+			}
+		};
+		return editableTableOptions;
+	}
+	function updateiMins(){
+		let tableDatas = getJboltTableAllDatas('#tableId_uptimeM');
+		console.log(tableDatas);
+		let sum = 0;
+		if (isOk(tableDatas)) {
+			for (let k in tableDatas) {
+				let iMins = tableDatas[k].imins;
+				if (isOk(iMins)) {
+					sum = sum + Number(iMins);
+				}
+			}
+		}
+		$("#istopmins").val(sum);
+	}
+	function onblurUptimeM(){
+		let ibasemins = $("#ibasemins").val();
+		let istopmins = $("#istopmins").val();
+		let iswitchmins = $("#iswitchmins").val();
+
+		//无机种切换稼动率：=（基本稼动时间-不稼动时间）/基本稼动时间*100%
+		let irate1 = ((Number(ibasemins) - Number(istopmins)) / Number(ibasemins)) * 100;
+		$("#irate1").val(irate1);
+		//有机种切换稼动率：=（基本稼动时间-不稼动时间-机种切换时间）/基本稼动时间*100%
+		let irate2 = ((Number(ibasemins) - Number(istopmins) - Number(iswitchmins)) / Number(ibasemins)) * 100;
+		$("#irate2").val(irate2);
+	}
+
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="uptimeMForm")
+#end
+
