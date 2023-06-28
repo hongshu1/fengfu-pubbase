@@ -27,23 +27,30 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="ProdFormM_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iAutoId}">
+<tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-<a class=jbolt_table_editbtn href="admin/prodFormM/edit?iautoid=${data.iautoid}&readonly=readonly" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="记录上传详情"><i class="fa fa-eye"></i>查看</a>
+<a class=jbolt_table_editbtn href="admin/prodFormM/edit?iautoid=${data.iautoid}&readonly=readonly" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="详情"><i class="fa fa-eye"></i>查看</a>
 
- {@if  data.iauditstatus == '0' }
-<a href="admin/prodFormM/edit?iautoid=${data.iautoid}&edit=true" data-area="100%,100%"  tooltip data-title="编辑记录上传"  data-handler="refreshJBoltTable" data-dialog-title="编辑记录上传" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+{@if  data.iauditstatus == '0' }
+<a href="admin/prodFormM/edit?iautoid=${data.iautoid}&edit=true" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
 <a href="admin/prodFormM/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除记录上传" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
- {@/if}
+{@/if}
+{@if  data.iauditstatus == '1' }
+	<a class=jbolt_table_editbtn href="admin/prodFormM/edit?iautoid=${data.iautoid}&readonly=readonly" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="详情"><i class="fa fa-eye"></i>查看</a>
+	<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=PL_ProdFormM&primaryKeyName=iautoid&formAutoId=${data.iautoid}&permissionKey=prodformm_withdraw&className=cn.rjtech.admin.prodformm.ProdFormMService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="撤回该数据状态" ><i class="fa fa-remove c-danger">撤回</i></a>
+{@/if}
+</td>
+
+
 </td>
 <td>$${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
-<td>${data.iProdFormId}</td>
-<td>${data.iWorkRegionMid}</td>
-<td>${data.iWorkShiftMid}</td>
-<td>${data.dDate}</td>
-<td>${data.cCreateName}</td>
-<td>${data.dCreateTime}</td>
+<td>${data.iprodformid}</td>
+<td>${data.iworkregionmid}</td>
+<td>${data.iworkshiftmid}</td>
+<td>${data.ddate}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
 </tr>
 {@/each}
 </textarea>
@@ -68,6 +75,8 @@
 	   data-copy-to-excel="false"
 	   data-page="ProdFormM_page"
 	   data-toolbar="ProdFormM_toolbar_#(pageId)"
+	   data-column-prepend="1:checkbox:true:false:false"
+
 >
 <thead class="fw-normal" >
 <tr>

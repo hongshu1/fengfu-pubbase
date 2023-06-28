@@ -1,16 +1,23 @@
+#set(pageId=RandomUtil.random(6))
+#set(iYear=DateUtil.getYear())
+#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
+#if(readonly != 'readonly' && (formUploadM.iauditstatus??0 == 1 || formUploadM.iauditstatus??0 == 2))
+#set(readonly = 'readonly')
+#end
 <form onsubmit="return false;" id="prodFormMForm" action="#(action)" method="post">
+
     <input type="hidden" name="prodFormM.iautoid" value="#(prodFormM.iautoid??)" />
-    <input type="hidden" maxlength="255" id="prodFormMiautoid" name="prodFormM.iautoid" value="#(recordInfo.iautoid??)"/>
+    <input type="hidden" maxlength="255" id="prodFormMiautoid" name="prodFormM.iautoid" value="#(prodFormM.iautoid??)"/>
     <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <div class="col">
-                    <!--#if(readonly != 'readonly')
-                    <button onclick="submitThisForm_#(pageId)()" class="btn btn-outline-secondary btn-xs">保存</button>
-                    #end-->
+                   #if(readonly != 'readonly')
+                    <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
+                    #end
                     #include("/_view/_common/_approval_btns.html", uri="/admin/prodFormM",
-                    formSn="Mo_MoPatchWeldM", primaryKeyName="iAutoId", o=prodFormM,
-                    permissionKeyPrefix="prodFormM",  className="cn.rjtech.admin.prodFormM.prodFormMService")
+                    formSn="PL_ProdFormM", primaryKeyName="iAutoId", o=prodFormM,
+                    permissionKeyPrefix="prodformm",  className="cn.rjtech.admin.prodformm.ProdFormMService")
 
                     <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                 </div>
@@ -23,7 +30,7 @@
     <div class="row">
         <div class="col">
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label">生产表格名称</label>
+                <label class="col-sm-1 col-form-label">生产表格名称</label>
                 <div class="col-2">
                     <select class="form-control"
                             data-height="30"
@@ -49,11 +56,7 @@
                     <input type="hidden" id="multipleInput" name="iprodformid" value="#(prodFormM.iprodformid??)" />
 
                 </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">产线名称：</label>
+                <label class="col-sm-1 col-form-label">产线名称：</label>
                 <div class="col-2">
                     <select class="form-control"
                             data-height="30"
@@ -77,11 +80,7 @@
                     ></select>
 
                 </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">班次名称：</label>
+                <label class="col-sm-1 col-form-label">班次名称：</label>
                 <div class="col-2">
                     <select class="form-control"
                             data-height="30"
@@ -104,18 +103,45 @@
                     ></select>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
             <div class="form-group row">
                 <label class="col-sm-1 col-form-label">日期</label>
                 <div class="col-2">
                     <input type="text" data-date data-type="date"    #if(readonly) disabled #end data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="prodFormM.ddate" value="#(prodFormM.ddate??)"/>
                 </div>
+                #if(readonly == 'readonly')
+                <label class="col-sm-1 col-form-label">创建人</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="10" name="prodFormM.cCreateName" value="#(prodFormM.ccreatename??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">创建时间</label>
+                <div class="col-2">
+                    <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" disabled autocomplete="off" class="form-control"  placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="prodFormM.dCreateTime" value="#(prodFormM.dcreatetime??)"/>
+                </div>
+                #end
+            </div>
+            <div class="form-group row">
+                #if(readonly == 'readonly')
+                <label class="col-sm-1 col-form-label">状态</label>
+                <div class="col-2">
+                    <input type="text"    autocomplete="off"  hidden   #if(readonly) disabled #end  class="form-control"    maxlength="10" name="prodFormM.iAuditStatus" value="#(prodFormM.iauditstatus??)"/>
+                    <input type="text"    autocomplete="off"     #if(readonly) disabled #end  class="form-control"    maxlength="10" name="status" value="#(status??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">审核人</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="10" name="prodFormM.cAuditName" value="#(prodFormM.cauditname??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">审核时间</label>
+                <div class="col-2">
+                    <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" disabled autocomplete="off" class="form-control"  placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="prodFormM.dAuditTime" value="#(prodFormM.daudittime??)"/>
+                </div>
+                #end
             </div>
         </div>
+
     </div>
+
+
+
     <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: 300px;">
         #ajaxPortal("/admin/prodFormM/table3","dictionaryPortal",true)
     </div>
@@ -138,27 +164,41 @@ function getProdFormDatas() {
         $("#dictionaryPortal").ajaxPortal(true,"/admin/prodFormM/table3?iprodformid="+iprodformid+'&_jb_rqtype_=dialog',true);
     }
 }
+// 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+var submit = false;
 
-    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
-    var submit = false;
-    function submitThisForm_#(pageId)(s) {
-        let prodFormMiautoid = $("#prodFormMiautoid").val();
-        // 保存并提交
-        if (s) {
-            submit = s;
-        }
+function submitThisForm_#(pageId)(s) {
+    // 保存并提交
+    if (s) {
+        submit = s;
 
-        // 提交审核（审批）调用
-        if (submit) {
-            // 提审
-            submit_#(pageId)(prodFormMiautoid, function (data) {
-
-                successHandler('提审成功', prodFormMiautoid);
+    }
+    var tableData = getTableData();
+    var formData1 = formToJson('#prodFormMForm');
+    Ajax.post('/admin/prodFormM/submitForm', {
+        formJsonData: JSON.stringify(formData1),
+        tableJsonData: JSON.stringify(tableData)
+    }, function (ret) {
+        if (ret.state === 'ok') {
+            LayerMsgBox.success(ret.msg, 1000, function () {
+                console.log(ret);
+                // 表格保存之后，判断是否需要提审处理
+                    // 提交审核（审批）调用
+                    if (submit) {
+                        // 提审
+                        submit_#(pageId)(ret.data.data.iautoid, function (data) {
+                            console.log(3)
+                            successHandler('提审成功', ret.data.data.iautoid);
+                        });
+                    } else {
+                        successHandler(ret.msg, ret.data.iautoid);
+                    }
             });
         } else {
-            successHandler(res.msg, prodFormMiautoid);
+            LayerMsgBox.alert(ret.msg, 2);
         }
-    }
+    });
+}
     /**
      * 新增/修改/提审
      */
@@ -170,6 +210,35 @@ function getProdFormDatas() {
             parent.refreshPjaxContainer();
         });
     }
+function getTableData() {
+    var pageId = $("#jbolt_table_qcformtableparam_split_input").val();
+    var tableParamTableData = $('#jbolt_table_qcformtableparam_split_'+pageId);
+    var rows = [];
+    tableParamTableData.children("tbody").children("tr").each(function () {
+        var row = {};
+        // 获取input标签 class属性还有form-control
+        $(this).find('td').each(function () {
+            var inputs = $(this).find("input[class*='form-control']");
+            getField(row, inputs);
+            var selects = $(this).find("select[class*='form-control']");
+            getField(row, selects);
+
+        })
+        rows.push(row);
+    })
+    return rows;
+}
+
+function getField(row, labels) {
+    if (labels && labels.length > 0) {
+        $.each(labels, function (idx, v) {
+            if (v.name && v.name !== '' && v.value) {
+                row[v.name] = row[v.name] ? (row[v.name] + ',' + v.value) : v.value;
+            }
+        });
+    }
+}
+
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="prodFormMForm")
 #end
