@@ -1,0 +1,113 @@
+<form onsubmit="return false;" id="UptimeTplM_Form" action="#(action)" method="post">
+    #if(uptimeTplM.iautoid??)
+    <input type="hidden" name="uptimeTplM.iAutoId" value="#(uptimeTplM.iautoid??)"/>
+    #end
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">产线名称:</label>
+                <div class="col-2">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入类别编码"
+                           data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入类别编码" maxlength="40"
+                           name="uptimeTplM.cUptimeCategoryCode"
+                           value="#(uptimeTplM.cuptimecategorycode??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">班次名称:</label>
+                <div class="col-2">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入班次名称"
+                           data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入班次名称" maxlength="40"
+                           name="uptimeTplM.cUptimeCategoryName"
+                           value="#(uptimeTplM.cuptimecategoryname??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">基本稼动时间(分钟):</label>
+                <div class="col-2">
+                    <input type="text" data-notnull="true" data-rule="required" data-tips="请输入类别名称"
+                           data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入类别名称" maxlength="40"
+                           name="uptimeTplM.cUptimeCategoryName"
+                           value="#(uptimeTplM.cuptimecategoryname??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">不稼动时间(分钟):</label>
+                <div class="col-2">
+                    <input type="text" data-notnull="true" data-rule="required" data-tips="请输入类别名称"
+                           data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入类别名称" maxlength="40"
+                           name="uptimeTplM.cUptimeCategoryName"
+                           value="#(uptimeTplM.cuptimecategoryname??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">机种切换时间(分钟):</label>
+                <div class="col-2">
+                    <input type="text" data-notnull="true" data-rule="required" data-tips="请输入类别名称"
+                           data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入类别名称" maxlength="40"
+                           name="uptimeTplM.cUptimeCategoryName"
+                           value="#(uptimeTplM.cuptimecategoryname??)"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">加班时间(分钟):</label>
+                <div class="col-2">
+                    <input type="text" data-notnull="true" data-tips="请输入班次名称"
+                           data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入班次名称" maxlength="40"
+                           name="uptimeTplM.cUptimeCategoryName"
+                           value="#(uptimeTplM.cuptimecategoryname??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">工作时间(分钟):</label>
+                <div class="col-2">
+                    <input type="text" data-notnull="true" data-tips="请输入班次名称"
+                           data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入班次名称" maxlength="40"
+                           name="uptimeTplM.cUptimeCategoryName"
+                           value="#(uptimeTplM.cuptimecategoryname??)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<form onsubmit="return false;">
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">不稼动时间列表</label>
+                <div class="col-10">
+                    <div class="jbolttable_master_slave_box">
+                        <div class="card">
+                                <div class="card-header py-2">
+                                    <div class="row">
+                                        <div class="col pt-2"><label>表格分类</label></div>
+                                        <div class="col-md-auto">
+                                            <form></form>
+                                        </div>
+                                    </div>
+                                    <div class="card-body overflow-auto" style="height: 300px;">
+                                        #include("UptimeTplCategory.html")
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="card">
+                                <div class="card-header py-2">
+                                    <div class="row">
+                                        <div class="col pt-2"><label>表格内容</label></div>
+                                        <div class="col-md-auto">
+                                            <form></form>
+                                        </div>
+                                    </div>
+                                    <div class="card-body overflow-auto" style="height: 300px;">
+                                        #include("UptimeTplTable.html")
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="UptimeTplM_Form")
+#end

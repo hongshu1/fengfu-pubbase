@@ -1472,7 +1472,7 @@ public class PermissionKey {
 	/**
 	 * 稼动时间模板
 	 */
-	public static final String UPTIME_CATEGORY = "uptime_category";
+	public static final String UPTIME_TPL = "uptime_tpl";
 	/**
 	 * 生产项目
 	 */
@@ -2537,4 +2537,29 @@ public class PermissionKey {
 	 * 撤回审核
 	 */
 	public static final String MOMOPATCHWELDM_WITHDRAW = "momopatchweldm_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String SYSASSEM_SUBMIT = "sysAssem_submit";
+	/**
+	 * 通过
+	 */
+	public static final String SYSASSEM_APPROVE = "sysAssem_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String SYSASSEM_REJECT = "sysAssem_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SYSASSEM_BATCH_APPROVE = "sysAssem_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SYSASSEM_BATCH_REJECT = "sysAssem_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String SYSASSEM_REVERSE_APPROVE = "sysAssem_reverse_approve";
+	public static final String UPTIME_CATEGORY = "uptime_category";
 }

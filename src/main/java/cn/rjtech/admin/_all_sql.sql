@@ -716,6 +716,18 @@
 #include("proditem/proditem.sql")
 #end
 
+#namespace("prodform")
+#include("prodform/prodform.sql")
+#end
+
+#namespace("prodformitem")
+#include("prodformitem/prodformitem.sql")
+#end
+
+#namespace("prodformparam")
+#include("prodformparam/prodformparam.sql")
+#end
+
 #namespace("momopatchweldm")
 #include("momopatchweldm/momopatchweldm.sql")
 #end

@@ -1,8 +1,11 @@
 package cn.rjtech.admin.sysassem;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -12,12 +15,18 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.demandpland.DemandPlanDService;
+import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.admin.purchaseorderd.PurchaseOrderDService;
+import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
+import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
+import cn.rjtech.admin.purchaseorderm.PurchaseOrderMService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.Person;
-import cn.rjtech.model.momdata.SysAssem;
-import cn.rjtech.model.momdata.SysAssemdetail;
-import cn.rjtech.model.momdata.SysPuinstore;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.model.momdata.*;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -41,7 +50,7 @@ import java.util.*;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 09:45
  */
-public class SysAssemService extends BaseService<SysAssem> {
+public class SysAssemService extends BaseService<SysAssem> implements IApprovalService {
 
     private final SysAssem dao = new SysAssem().dao();
 
@@ -49,6 +58,15 @@ public class SysAssemService extends BaseService<SysAssem> {
     protected SysAssem dao() {
         return dao;
     }
+
+    @Inject
+    private PurchaseOrderMService purchaseordermservice;
+
+    @Inject
+    private PurchaseOrderDService purchaseOrderDService;
+
+    @Inject
+    private PurchaseOrderDBatchService purchaseOrderDBatchService;
 
     @Inject
     private PersonService personservice;
@@ -60,6 +78,18 @@ public class SysAssemService extends BaseService<SysAssem> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
+
+    @Inject
+    private FormApprovalService formApprovalService;
+
+    @Inject
+    private PurchaseorderdQtyService purchaseorderdQtyService;
+
+    @Inject
+    private InventoryService inventoryService;
+
+    @Inject
+    private DemandPlanDService demandPlanDService;
 
     /**
      * 后台管理数据查询
@@ -219,6 +249,7 @@ public class SysAssemService extends BaseService<SysAssem> {
                 sysotherin.setIupdateby(user.getId());
                 sysotherin.setCupdatename(user.getName());
                 sysotherin.setDupdatetime(now);
+                sysotherin.setIsDeleted(false);
                 //主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
             } else {
@@ -263,7 +294,7 @@ public class SysAssemService extends BaseService<SysAssem> {
 //            deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return SUCCESS;
+        return Ret.ok().set("autoid", sysotherin.getAutoID());
     }
 
     //可编辑表格提交-新增数据
@@ -431,7 +462,7 @@ public class SysAssemService extends BaseService<SysAssem> {
             String post = HttpApiUtils.httpHutoolPost(url, data, header);
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
-                if ("201".equals(jsonObject.getString("code"))) {
+                if ("200".equals(jsonObject.getString("code"))) {
                     return Ret.ok().setOk().data(jsonObject);
                 }
             }
@@ -524,5 +555,201 @@ public class SysAssemService extends BaseService<SysAssem> {
 
         return firstRecord;
     }
+
+    /**
+     * 提审批
+     */
+    public Ret submit(Long iautoid) {
+        tx(() -> {
+
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.sysassem.SysAssemService");
+            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    @Override
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        tx(() -> {
+            this.passagetwo(formAutoId);
+            return true;
+        });
+        return null;
+
+    }
+
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+        return null;
+    }
+
+    @Override
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    @Override
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    @Override
+    public String preSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postWithdrawFunc(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String withdrawFromAuditting(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String preWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        return null;
+    }
+
+    //审核通过后的业务逻辑
+    public void passagetwo(Long formAutoId) {
+
+            SysAssem byId = findById(formAutoId);
+            byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+            byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
+            byId.update();
+            //获取转换前的所有数据
+            List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstBy(formAutoId.toString());
+            List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
+            if(!CollectionUtils.isEmpty(firstBy)){
+                for(SysAssemdetail detail : firstBy){
+                    //生成现品票
+                    this.cashNotTransaction(formAutoId,detail,purchaseOrderDBatchList);
+                    //对转换前的现品票扣减失效
+                    PurchaseOrderDBatch first1 = purchaseOrderDBatchService.findFirst("select * from  PS_PurchaseOrderDBatch where cCompleteBarcode = ?", detail.getBarcode());
+                    first1.setIsEffective(false);
+                    purchaseOrderDBatchService.update(first1);
+                }
+        }
+    }
+
+    //批量审核通过后的业务逻辑
+    public void passagetwo(List<Long> formAutoId) {
+        for (Long s : formAutoId) {
+            SysAssem byId = findById(s);
+            byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+            byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
+            byId.update();
+            //获取转换前的所有数据
+            List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstBy(s.toString());
+            List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
+            if(!CollectionUtils.isEmpty(firstBy)){
+                for(SysAssemdetail detail : firstBy){
+                    //生成现品票
+                    this.cashNotTransaction(s,detail,purchaseOrderDBatchList);
+                    //获取转换后的数据
+                    SysAssemdetail first = sysassemdetailservice.findFirst(s.toString(), detail.getCombination());
+                    String invcode = first.getInvcode();
+                }
+            }
+
+            //通过现品票查出
+
+            //对转换前的存货现品票扣减，或者失效
+
+            //对转换后的数据生成现品现品票，并添加到的采购现品票。
+
+            //推送u8
+
+        }
+    }
+
+    //生成现品票
+    public void cashNotTransaction(Long s,SysAssemdetail detail,List<PurchaseOrderDBatch> purchaseOrderDBatchList) {
+        //通过现品票获取到采购订单等相关的数据
+        String barcode = detail.getBarcode();
+        //采购订单现品票
+        PurchaseOrderDBatch first1 = purchaseOrderDBatchService.findFirst("select * from  PS_PurchaseOrderDBatch where cCompleteBarcode = ?", barcode);
+        //采购订单从表
+        PurchaseOrderD first2 = purchaseOrderDService.findFirst("select * from  PS_PurchaseOrderD where iAutoId = ?", first1.getIPurchaseOrderDid());
+        //采购订单主表
+        PurchaseOrderM first3 = purchaseordermservice.findFirst("select * from  PS_PurchaseOrderM where iAutoId = ?", first2.getIPurchaseOrderMid());
+        //采购订单明细数量
+        PurchaseorderdQty first4 = purchaseorderdQtyService.findFirst("select d.iInventoryId,qty.* from PS_PurchaseOrderD_Qty qty LEFT JOIN  PS_PurchaseOrderD d ON d.iAutoId = qty.iPurchaseOrderDid where qty.iPurchaseOrderDid = ?", first2.getIAutoId());
+        //获取转换后的从表数据
+        SysAssemdetail first5 = sysassemdetailservice.findFirst(s.toString(), detail.getCombination());
+        //通过存货编码获取单位
+        Inventory first6 = inventoryService.findFirst("select t3.*,uom.cUomCode,uom.cUomName FROM Bd_Inventory t3 LEFT JOIN Bd_Uom uom on t3.iPurchaseUomId = uom.iAutoId where t3.cInvCode = ?", detail.getInvcode());
+        //采购订单现品票表只有数量
+        BigDecimal sourceQty = first5.getBigDecimal("qty");
+//        if("KG".equals(first6.getStr("cuomname"))){
+//            sourceQty = first5.getBigDecimal("weight");
+//        }else {
+//            sourceQty = first5.getBigDecimal("qty");
+//        }
+        // 源数量，数量应该是转换后的
+//                    BigDecimal sourceQty = first4.getBigDecimal(PurchaseorderdQty.IQTY);
+        Long purchaseOrderDId = first4.getLong(PurchaseorderdQty.IPURCHASEORDERDID);
+//        Long iPurchaseOrderdQtyId = first4.getLong(PurchaseorderdQty.IAUTOID);
+        Long iPurchaseOrderdQtyId = Long.valueOf(first5.getAutoID());
+        Long inventoryId = first4.getLong(PurchaseOrderD.IINVENTORYID);
+        String dateStr = demandPlanDService.getDate(first4.getStr(PurchaseorderdQty.IYEAR), first4.getInt(PurchaseorderdQty.IMONTH),first4.getInt(PurchaseorderdQty.IDATE));
+        DateTime planDate = DateUtil.parse(dateStr, DatePattern.PURE_DATE_PATTERN);
+        // 包装数量
+        BigDecimal pkgQty = first4.getBigDecimal(Inventory.IPKGQTY);
+        // 包装数量为空或者为0，生成一张条码，原始数量/打包数量
+        if (ObjectUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceQty.compareTo(pkgQty) <= 0) {
+            String barCode = purchaseOrderDBatchService.generateBarCode();
+            PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, iPurchaseOrderdQtyId, inventoryId, planDate, sourceQty, barCode);
+            purchaseOrderDBatchList.add(purchaseOrderDBatch);
+        }else {
+            // 源数量/包装数量 （向上取）
+            int count = sourceQty.divide(pkgQty, 0, BigDecimal.ROUND_UP).intValue();
+            for (int i = 0; i < count; i++) {
+                // count-1： 69/10; 9
+                String barCode = purchaseOrderDBatchService.generateBarCode();
+                if (i == count - 1) {
+                    BigDecimal qty = sourceQty.subtract(BigDecimal.valueOf(i).multiply(pkgQty));
+                    PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, iPurchaseOrderdQtyId, inventoryId, planDate, qty, barCode);
+                    purchaseOrderDBatchList.add(purchaseOrderDBatch);
+                    break;
+                }
+                PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, iPurchaseOrderdQtyId, inventoryId, planDate, pkgQty, barCode);
+                purchaseOrderDBatchList.add(purchaseOrderDBatch);
+            }
+        }
+        int[] ints = purchaseOrderDBatchService.batchSave(purchaseOrderDBatchList);
+        System.out.println("条码生成："+ints);
+    }
+
 
 }

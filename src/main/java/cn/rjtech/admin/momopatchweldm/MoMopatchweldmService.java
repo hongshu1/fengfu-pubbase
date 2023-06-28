@@ -1,13 +1,22 @@
 package cn.rjtech.admin.momopatchweldm;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltModelKit;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.momopatchweldd.MoMopatchwelddService;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.model.momdata.ApsAnnualpland;
+import cn.rjtech.model.momdata.MoMopatchweldd;
 import cn.rjtech.model.momdata.MoMopatchweldm;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.StringUtils;
+import com.alibaba.fastjson.JSON;
+import com.itextpdf.text.pdf.PRIndirectReference;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -24,6 +33,9 @@ import java.util.*;
 public class MoMopatchweldmService extends BaseService<MoMopatchweldm> implements IApprovalService {
 
 	private final MoMopatchweldm dao = new MoMopatchweldm().dao();
+
+	@Inject
+	private MoMopatchwelddService moMopatchwelddService;
 
 	@Override
 	protected MoMopatchweldm dao() {
@@ -193,6 +205,63 @@ public class MoMopatchweldmService extends BaseService<MoMopatchweldm> implement
 		//这里用来覆盖 检测MoMopatchweldm是否被其它表引用
 		return null;
 	}
+
+	//-----------------------app--------------------------------------
+	public List<Record> getMoMopatchwelddApiList(Long iMoDocId){
+		List<Record> recordList = dbTemplate("momopatchweldm.getMoMopatchwelddApiList",Kv.by("imodocid",iMoDocId)).find();
+		Map<Long,Record> map = new LinkedHashMap<>();
+		for (Record record : recordList){
+			Long iMoRoutingConfigId = record.getLong("iMoRoutingConfigId");
+			String cEquipmentName = record.get("cEquipmentName") != null ? record.get("cEquipmentName") : " ";
+			if (map.containsKey(iMoRoutingConfigId)){
+				Record record1 = map.get(iMoRoutingConfigId);
+				String name = record1.get("cEquipmentName") != null ? record1.get("cEquipmentName") : " ";
+				record1.set("cEquipmentName",name.concat("/").concat(cEquipmentName));
+				map.put(iMoRoutingConfigId,record1);
+			}else {
+				map.put(iMoRoutingConfigId,record);
+			}
+		}
+		List<Record> list = new ArrayList<>(map.values());
+		return list;
+	}
+	public Ret saveData(Long iMoDocId,String dataArrarStr){
+		Date newDate = new Date();
+		Long mid = JBoltSnowflakeKit.me.nextId();
+
+		MoMopatchweldm mopatchweldm = new MoMopatchweldm();
+		mopatchweldm.setIAutoId(mid);
+		mopatchweldm.setIMoDocId(iMoDocId);
+		mopatchweldm.setIAuditStatus(0);
+		mopatchweldm.setIOrgId(getOrgId());
+		mopatchweldm.setCOrgCode(getOrgCode());
+		mopatchweldm.setCOrgName(getOrgName());
+		mopatchweldm.setICreateBy(JBoltUserKit.getUserId());
+		mopatchweldm.setCCreateName(JBoltUserKit.getUserName());
+		mopatchweldm.setDCreateTime(newDate);
+		mopatchweldm.setIUpdateBy(JBoltUserKit.getUserId());
+		mopatchweldm.setCUpdateName(JBoltUserKit.getUserName());
+		mopatchweldm.setDUpdateTime(newDate);
+
+		List<MoMopatchweldd> recordLineList = new ArrayList<>();
+		if (StringUtils.isNotBlank(dataArrarStr) && !dataArrarStr.equals("[]")){
+			recordLineList = JBoltModelKit.getBeanList(MoMopatchweldd.class, JSON.parseArray(dataArrarStr));
+			for (MoMopatchweldd recordLine : recordLineList) {
+				recordLine.setIMoPatchWeldMid(mid);
+			}
+		}
+		List<MoMopatchweldd> finalRecordLineList = recordLineList;
+		tx(() -> {
+			mopatchweldm.save();
+			moMopatchwelddService.batchSave(finalRecordLineList);
+			return true;
+		});
+		return SUCCESS;
+	}
+
+
+
+
 
 	@Override
 	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {

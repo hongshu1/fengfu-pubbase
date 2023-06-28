@@ -1,0 +1,78 @@
+<form onsubmit="return false;" id="ProdFormTableParam_Form" action="#(action)" method="post">
+	#if(prodFormTableParam.iAutoId??)
+	<input type="hidden" name="prodFormTableParam.iAutoId" value="#(prodFormTableParam.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="prodFormTableParam.iAutoId" value="#(prodFormTableParam.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">检验表格ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入检验表格ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入检验表格ID" maxlength="40" name="prodFormTableParam.iQcFormId" value="#(prodFormTableParam.iQcFormId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">项目次序，固定取参数项目名为“项目”的参数名称次序值</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入项目次序，固定取参数项目名为“项目”的参数名称次序值"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入项目次序，固定取参数项目名为“项目”的参数名称次序值" maxlength="40" name="prodFormTableParam.iSeq" value="#(prodFormTableParam.iSeq??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间" maxlength="40" name="prodFormTableParam.iType" value="#(prodFormTableParam.iType??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">标准值</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入标准值" maxlength="40" name="prodFormTableParam.iStdVal" value="#(prodFormTableParam.iStdVal??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">最大设定值</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入最大设定值" maxlength="40" name="prodFormTableParam.iMaxVal" value="#(prodFormTableParam.iMaxVal??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">最小设定值</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入最小设定值" maxlength="40" name="prodFormTableParam.iMinVal" value="#(prodFormTableParam.iMinVal??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">列表可选值，多个";"分隔</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入列表可选值，多个";"分隔" maxlength="200" name="prodFormTableParam.cOptions">#(prodFormTableParam.cOptions??)</textarea>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="prodFormTableParam.isDeleted"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="删除状态：0. 未删除 1. 已删除"
+data-width="col-sm-2,col-10"
+data-value="#(prodFormTableParam.isDeleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入删除状态：0. 未删除 1. 已删除"
+data-inline="true"
+>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="ProdFormTableParam_Form")
+#end
+

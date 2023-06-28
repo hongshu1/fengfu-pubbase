@@ -152,7 +152,7 @@ public class MsgEventListener {
                 if(contentType.equals("title")){
                 	return form.getCFormName() + formData.get(Purchasem.CPURCHASENO) + "已于" + nowStr + "更新，请尽快处理";
                 }else if(contentType.equals("url")){
-                	return "admin/purchasem/instrumentEdit/"+formAutoId;
+                	return "admin/purchasem/details/"+formAutoId;
                 }
             default:
                 throw new ParameterException("未知参数");

@@ -1,13 +1,28 @@
+
+#set(pageId=RandomUtil.random(6))
+### 默认为非只读,查看页有readonly=readonly标识
+### 【readonly为false】, 或 【审核中或已通过】，设置只读
+#if(readonly != 'readonly' && (sysAssem.iAuditStatus??0 == 1 || sysAssem.iAuditStatus??0 == 2))
+#set(readonly = 'readonly')
+#end
+
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
-                                class="fa fa-refresh"></i> 保存</button>
-                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批
-                        </button>
+                        <!-- <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
+                                class="fa fa-refresh"></i> 保存</button> -->
+                        #if(readonly != 'readonly')
+                        <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-success btn-sm"  #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end  ><i
+                                class=" fa fa-refresh"></i> 保存</button>
+                        #end
+                
+
+
+                        #include("/_view/_common/_approval_btns.html", formSn="T_Sys_Assem", o=sysAssem,primaryKeyName="AutoID",className="cn.rjtech.admin.sysassem.SysAssemService",permissionKeyPrefix="sysAssem")
+
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
                                 class="fa fa-window-maximize"></i> 关闭
                         </button>
@@ -193,6 +208,11 @@
     </div>
 </div>
 
+### 新增之后，并且为审核流
+#if(sysAssem.AutoID?? && sysAssem.iauditway == 2 && sysAssem.iauditstatus == 1)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysAssem.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.sysassem.SysAssemService")
+#end
+
 <div class="jbolt_page_content">
     <script type="text/template" id="sysAssem_tpl_#(pageId)">
         {@each datas as data,index}
@@ -366,6 +386,20 @@
 
     }
 
+    //是否提审
+    var submit = false;
+
+    /**
+     * 保存方法
+     */
+    function submitThisForm_#(pageId)(ele) {
+        if(ele)
+        {
+            submit = ele;
+        }
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
+
     /**
      * 覆盖库区
      * */
@@ -428,10 +462,23 @@
                 type: "all",
                 url: "/admin/formConversionList/submitAll",
                 success: function (res) {
-                    LayerMsgBox.success("提交成功", 600, function () {
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
-                    });
+                    var state = res.state;
+                    if (state==='ok'){
+                        var autoid = res.autoid;
+                        if (submit){
+                            submit_#(pageId)(autoid,function () {
+                                LayerMsgBox.success("提交成功", 600, function () {
+                                    parent.refreshPjaxContainer();
+                                    parent.layer.closeAll();
+                                });
+                            });
+                        } else {
+                            LayerMsgBox.success("提交成功", 600, function () {
+                                parent.refreshPjaxContainer();
+                                parent.layer.closeAll();
+                            });
+                        }
+                    }
                 }
             },
             cols: {
@@ -596,7 +643,7 @@
                         {column: "cuomname", use: "cuomname"}, {column: "sourcebilltype", use: "sourcebilltype"},
                         {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {column: "sourcebillid",use: "sourcebillid"},
-                        {column: "qty", use: "qty"}, {column: "quantity", use: "quantity"}, {column: "iafterinventoryid", use: "iafterinventoryid"}
+                        {column: "qty", use: "qty"},{column: "weight", use: "qty"}, {column: "quantity", use: "quantity"}, {column: "iafterinventoryid", use: "iafterinventoryid"}
                         , {column: "ibeforeinventoryid", use: "ibeforeinventoryid"}],
                     handler:function(table,td,text,value,trJsonData){
                         Ajax.post("admin/formConversionList/getBarCodeData", {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,

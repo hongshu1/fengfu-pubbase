@@ -249,9 +249,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         Person person = findPersonByUserId(user.getId());
 
         // 获取单据信息
-        Record formData = findFirstRecord("select * from " + formSn + " where " + primaryKeyName + " = ? ", formAutoId);
-        ValidationUtils.notNull(formData, "单据不存在");
-        ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
+        Record formData = getApprovalForm(formSn, primaryKeyName, formAutoId);
 
         // 单据审核状态
         AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(formData.getInt(IAUDITSTATUS));
