@@ -542,7 +542,7 @@
         sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
         sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
         sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
-        let url = `admin/modocbatch/getModocStaffEditorDatas?taskid=1668495051179982848`
+        let url = `admin/modocbatch/getModocStaffEditorDatas?taskid=${taskId}`
         LayerMsgBox.loading("正在获取最新数据...",20000);
         $.ajax({
             url,
