@@ -557,7 +557,7 @@ SELECT it.cInvCode,
        sbp.WhCode,
        sbp.PosCode,
        mp.AutoID,
-       mp.Billno,
+       mp.BillNo,
        mp.SourceBillID,
        md.cMoDocNo
 FROM
@@ -724,4 +724,127 @@ FROM
         LEFT JOIN Bd_Uom uom ON it.iInventoryUomId1 = uom.iAutoId
 WHERE 1=1
   AND  it.iAutoId='#(iAutoId)'
+    #end
+
+
+
+
+#sql("kk")
+SELECT
+    mp.AutoID,
+    mp.BillType,
+    mp.SourceBillNo
+FROM
+    T_Sys_MaterialsPrepare mp
+WHERE 1=1
+  AND mp.BillNo='#(billno)'
+    #end
+
+
+#sql("tt")
+SELECT
+    mpd.AutoID,
+    mpd.InvCode,
+    mpd.Qty
+FROM
+    T_Sys_MaterialsPrepareDetail mpd
+        LEFT JOIN T_Sys_MaterialsPrepare mp ON mp.AutoID = mpd.MasID
+WHERE 1=1
+  AND mp.BillNo='#(billno)'
+    #end
+
+
+
+
+
+#sql("cc")
+SELECT
+    *
+FROM
+    T_Sys_StockBarcodePosition sbp
+WHERE 1=1
+  AND sbp.InvCode='#(InvCode)'
+  AND sbp.State='1'
+  AND sbp.Barcode IS NOT NULL
+ORDER BY sbp.Batch ASC
+    #end
+
+
+
+#sql("rr")
+SELECT
+    it.iAutoId,
+    it.cInvCode,
+    it.cInvName,
+    it.cInvCode1,
+    it.cInvName1,
+    it.iEquipmentModelId,
+    it.cInvStd,
+    it.iInventoryUomId1,
+    uom.cUomName
+FROM
+    Bd_Inventory it
+LEFT JOIN Bd_Uom uom ON uom.iAutoId=it.iInventoryUomId1
+WHERE 1=1
+AND it.cInvCode='#(cinvcode)'
+AND it.cInvCode IS NOT NULL
+    #end
+
+
+
+
+
+
+
+
+
+
+#sql("vv")
+SELECT
+    *
+FROM
+    T_Sys_MaterialsPrepareDetail mpd
+WHERE 1=1
+AND mpd.InvCode='#(icode)'
+AND mpd.MasID='#(masid)'
+AND mpd.State='1'
+    #end
+
+
+
+
+#sql("ss")
+SELECT
+    *
+FROM
+    T_Sys_StockBarcodePosition sbp
+WHERE 1=1
+  AND sbp.InvCode='#(icode)'
+  AND sbp.State='1'
+  AND sbp.Barcode IS NOT NULL
+    #end
+
+
+
+#sql("hh")
+SELECT
+    *
+FROM
+    T_Sys_MaterialsPrepareDetail mpd
+WHERE 1=1
+  AND mpd.MasID='#(AutoID)'
+  AND mpd.State='0'
+    #end
+
+
+
+#sql("bb")
+SELECT
+    *
+FROM
+    T_Sys_MaterialsPrepareDetail mpd
+WHERE 1=1
+  AND mpd.MasID='#(AutoID)'
+  AND mpd.InvCode='#(invcode)'
+  AND mpd.State='1'
     #end
