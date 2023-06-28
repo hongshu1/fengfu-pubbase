@@ -17,6 +17,8 @@ import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
@@ -27,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MO_DOCBATCH)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/modocbatch", viewPath = "/_view/admin/modocbatch")
 public class MoDocBatchController extends BaseAdminController {
@@ -141,5 +143,6 @@ public class MoDocBatchController extends BaseAdminController {
     List<Record> list = JBoltModelKit.getFromRecords(JSONArray.parseArray(modoc));
     renderJsonData(moDocService.savePersonnel(list));
   }
+
 
 }
