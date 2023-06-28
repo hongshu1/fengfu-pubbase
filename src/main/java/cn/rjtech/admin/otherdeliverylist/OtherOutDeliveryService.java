@@ -18,8 +18,6 @@ import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
-import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -189,12 +187,10 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
-	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, Integer param, String revokeVal, String autoid) {
+	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
-
-
 
 		// 这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
 
@@ -311,11 +307,22 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 	}
 
 	/**
-	 * 获取条码列表
-	 * 通过关键字匹配
+	 * 通过新增行获取条码列表
 	 */
-	public List<Record> otherOutBarcodeDatas(String q, String orgCode) {
-		return dbTemplate("otherdeliverylist.otherOutBarcodeDatas",Kv.by("q", q).set("orgCode",orgCode)).find();
+	public List<Record> otherOutBarcodeDatas(Kv kv) {
+		return dbTemplate("otherdeliverylist.otherOutBarcodeDatas",kv).find();
+	}
+
+	/**
+	 * 根据扫描现品票获取条码
+	 */
+	public Record barcode(Kv kv) {
+////		先查询条码是否已添加
+		Record first2 = dbTemplate("otherdeliverylist.otherOutBarcodeDatas", kv).findFirst();
+		if(null == first2){
+			ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "没有此数据！！！");
+		}
+		return first2;
 	}
 
 	/**
@@ -424,10 +431,9 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 						String bill = s[0];
 						LOG.info("s===>" + bill);
 						LOG.info("data====" + data);
-						int update = update("update T_Sys_OtherOut set IAuditStatus ='2' where AutoID IN("+ids+")" );
-
-						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
-								"推送数据失败," + "失败原因" + msg);
+//						int update = update("update T_Sys_OtherOut set IAuditStatus ='2' where AutoID IN("+ids+")" );
+//						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
+//								"推送数据失败," + "失败原因" + msg);
 					}
 					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
 				} else {
@@ -438,8 +444,8 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 				stringBuilder.append("<span class='text-primary'>[失败异常=").append(e.getMessage()).append("]</span>");
 				e.printStackTrace();
 			} finally {
-				systemLog.setTitle(stringBuilder.toString());
-				systemLog.save();
+//				systemLog.setTitle(stringBuilder.toString());
+//				systemLog.save();
 			}
 			return fail("请求失败");
 		} else {
@@ -447,82 +453,6 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 		}
 
 		return SUCCESS;
-	}
-
-
-	//推送u8数据接口
-	public Ret pushU8S(OtherOut otherout, List<OtherOutDetail> otheroutdetail) {
-		if(!CollectionUtils.isNotEmpty(otheroutdetail)){
-			return Ret.fail("数据不能为空");
-		}
-
-		User user = JBoltUserKit.getUser();
-		JSONObject data = new JSONObject();
-
-		data.set("userCode",user.getUsername());
-		data.set("organizeCode",this.getdeptid());
-		data.set("token","");
-
-		JSONObject preallocate = new JSONObject();
-
-
-		preallocate.set("userCode",user.getUsername());
-		preallocate.set("organizeCode",this.getdeptid());
-		preallocate.set("CreatePerson",user.getId());
-		preallocate.set("CreatePersonName",user.getName());
-		preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
-		preallocate.set("tag","OtherOut");
-		preallocate.set("type","OtherOut");
-
-		data.put("PreAllocate",preallocate);
-
-		ArrayList<Object> maindata = new ArrayList<>();
-		otheroutdetail.stream().forEach(s -> {
-			JSONObject jsonObject = new JSONObject();
-			jsonObject.set("invstd","");
-			jsonObject.set("owhcode",otherout.getWhcode());
-			jsonObject.set("invname","");
-			jsonObject.set("index","1");
-			jsonObject.set("vt_id","");
-			jsonObject.set("billDate",otherout.getBillDate());
-			jsonObject.set("lineColor","");
-			jsonObject.set("invcode",s.getInvCode());
-			jsonObject.set("userCode",user.getUsername());
-			jsonObject.set("iswhpos","true");
-			jsonObject.set("ispack","0");
-			jsonObject.set("organizeCode",otherout.getOrganizeCode());
-			jsonObject.set("qty",s.getQty());
-			jsonObject.set("Tag","OtherOut");
-			jsonObject.set("oposcode","");
-			jsonObject.set("barcode",s.getBarcode());
-			jsonObject.set("ORdName","其他出库");
-			jsonObject.set("ORdCode",otherout.getRdCode());
-			jsonObject.set("ODeptCode",otherout.getDeptCode());
-			jsonObject.set("ODeptName","");
-			jsonObject.set("ORdType",otherout.getType());
-
-			maindata.add(jsonObject);
-		});
-		data.set("MainData",maindata);
-
-		//            请求头
-		Map<String, String> header = new HashMap<>(5);
-		header.put("Content-Type", "application/json");
-		String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
-
-		try {
-			String post = HttpApiUtils.httpHutoolPost(url, data, header);
-			com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
-			if (isOk(post)) {
-				if ("201".equals(jsonObject.getString("code"))) {
-					System.out.println(jsonObject);
-					return Ret.ok("提交成功");
-				}
-			}
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return Ret.fail("上传u8失败");
 	}
 
 	//通过当前登录人名称获取部门id

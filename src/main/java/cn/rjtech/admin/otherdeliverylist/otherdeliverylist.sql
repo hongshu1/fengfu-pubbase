@@ -114,7 +114,7 @@ AND bRdFlag = #(bRdFlag)
 #sql("otherOutBarcodeDatas")
 select m.cOrderNo AS sourcebillno,
        a.cCompleteBarcode AS barcode,
-       b.cInvCode ,
+       b.cInvCode AS invcode,
        b.cInvCode1,
        b.cInvName1,
        b.cInvName,
@@ -154,8 +154,28 @@ where 1=1
 			or v.cVenCode like concat('%',#para(q),'%')
 		)
 	#end
+	 #if(barcodes != null)
+        AND a.cCompleteBarcode not in ( #(barcodes) )
+    #end
+    #if(detailHidden != null)
+    AND  a.cCompleteBarcode not in ( #(detailHidden) )
+    #end
+    #if(barcode != null)
+        AND a.cCompleteBarcode = #para(barcode)
+    #end
 		AND b.cOrgCode = #(orgCode)
 #end
+
+
+#sql("barcodeDatas")
+SELECT *
+FROM PS_PurchaseOrderDBatch
+WHERE 1=1
+    #if(detailHidden)
+		and cCompleteBarcode = #para(detailHidden)
+	#end
+#end
+
 
 #sql("pushU8List")
 SELECT
@@ -179,7 +199,7 @@ FROM
         LEFT JOIN Bd_Vendor vd ON vd.cVenCode = t1.VenCode
         LEFT JOIN Bd_Rd_Style rs ON rs.cRdCode = t1.RdCode
         LEFT JOIN Bd_Department dt ON dt.iAutoId = t1.DeptCode
-WHERE t1.AutoID IN (#(autoid))
+WHERE t1.AutoID IN (#para(autoid))
     #end
 
 #sql("getCItemCCodeLines")
@@ -191,7 +211,7 @@ WHERE 1 = 1
     #if(q)
 		and (cItemCcode like concat('%',#para(q),'%') or cItemCname like concat('%',#para(q),'%'))
 	#end
-		AND cOrgCode = #(orgCode)
+		AND cOrgCode = #para(orgCode)
 #end
 
 #sql("getItemCodeLines")

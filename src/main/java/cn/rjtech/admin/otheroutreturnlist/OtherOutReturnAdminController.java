@@ -43,6 +43,25 @@ public class OtherOutReturnAdminController extends BaseAdminController {
 		render("index.html");
 	}
 
+
+	/**
+	 * 跳转选择领料单页面
+	 */
+	public void BillNoreturnList() {
+		render("return.html");
+	}
+
+
+	/**
+	 * 选择领料单单号获得数据源
+	 */
+	public void getReturnDataS() {
+		String billno = get("billno");
+		Kv kv = new Kv();
+		kv.set("billno", billno == null ? "" : billno);
+		renderJsonData(service.getReturnDataS(getPageNumber(), getPageSize(), kv));
+	}
+
 	/**
 	 * 数据源
 	 */
@@ -110,8 +129,8 @@ public class OtherOutReturnAdminController extends BaseAdminController {
 	/**
 	 * JBoltTable 可编辑表格整体提交 多表格
 	 */
-	public void submitMulti(String param, String revokeVal ,String autoid) {
-		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal,autoid));
+	public void submitMulti() {
+		renderJson(service.submitByJBoltTables(getJBoltTables()));
 	}
 
 
@@ -143,23 +162,5 @@ public class OtherOutReturnAdminController extends BaseAdminController {
 		renderJson(service.deleteList(get(0)));
 	}
 
-	public void pushu(){
-		Kv kv = new Kv();
-		kv.set("ids",get("ids"));
-		List<OtherOut> getpushu = service.getpushu(kv);
-		if(!CollectionUtils.isNotEmpty(getpushu)){
-			return ;
-		}
-		getpushu.stream().forEach(s -> {
-			Kv kv1 = new Kv();
-			kv1.set("id",s.getAutoID());
-			List<OtherOutDetail> getpushudetail1 = otherOutDetailService.getpushudetail(kv1);
-            System.out.println("开始u8，开始u8，开始u8，开始u8，开始u8"+new Date());
-			Ret ret = service.pushU8(s, getpushudetail1);
-			renderJson(ret);
-            System.out.println(ret);
-            System.out.println("结束u8，结束u8，结束u8，结束u8，结束u8"+new Date());
-		});
-	}
 
 }

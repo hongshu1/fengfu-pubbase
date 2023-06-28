@@ -169,7 +169,7 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 	}
 
 
-	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, String param, String revokeVal, String autoid) {
+	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
@@ -220,15 +220,12 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 
 
 				//	行数据为空 不保存
-				if ("save".equals(revokeVal)) {
-					if (otherOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
-						ValidationUtils.error( "请先添加行数据！");
-					}
+
+				if (otherOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
+					ValidationUtils.error( "请先添加行数据！");
 				}
 
-				if ("submit".equals(revokeVal) && otherOut.getAutoID() == null) {
-					ValidationUtils.error( "请保存后提交审核！！！");
-				}
+
 
 				List<Record> jBoltTableSaveRecordList = jBoltTable.getUpdateRecordList();
 				if (jBoltTableSaveRecordList!= null){
@@ -258,21 +255,24 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 				}
 				System.out.println("====="+otherOut.getAutoID());
 
-				if (otherOut.getAutoID() == null && "save".equals(revokeVal)) {
+				if (otherOut.getAutoID() == null ) {
+					otherOut.setOrganizeCode(OrgCode);
+					//创建人
 					otherOut.setICreateBy(userId);
 					otherOut.setDCreateTime(nowDate);
 					otherOut.setCCreateName(userName);
-					otherOut.setOrganizeCode(OrgCode);
+					//更新人
 					otherOut.setIUpdateBy(userId);
 					otherOut.setDupdateTime(nowDate);
 					otherOut.setCUpdateName(userName);
+					otherOut.setIsDeleted(false);
+					otherOut.setIAuditStatus(0);
+					otherOut.setType("OtherOutMES");
+					save(otherOut);
 					save(otherOut);
 					headerId = otherOut.getAutoID();
 				} else {
-					if ("submit".equals(revokeVal)){
-						//订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
-						otherOut.setStatus(5);
-					}
+					//更新人
 					otherOut.setIUpdateBy(userId);
 					otherOut.setDupdateTime(nowDate);
 					otherOut.setCUpdateName(userName);
@@ -287,7 +287,6 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 
 				String finalHeaderId = headerId;
 				lines.forEach(otherOutDetail -> {
-					otherOutDetail.setMasID(finalHeaderId);
 					//创建人
 					otherOutDetail.setIcreateby(userId);
 					otherOutDetail.setDcreatetime(nowDate);
@@ -296,6 +295,8 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 					otherOutDetail.setIupdateby(userId);
 					otherOutDetail.setDupdatetime(nowDate);
 					otherOutDetail.setCupdatename(userName);
+
+					otherOutDetail.setMasID(finalHeaderId);
 				});
 				otherOutDetailService.batchSave(lines);
 			}
@@ -303,11 +304,11 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 			if (jBoltTable.updateIsNotBlank()) {
 				List<OtherOutDetail> lines = jBoltTable.getUpdateModelList(OtherOutDetail.class);
 
-				lines.forEach(otherOutDetail -> {
+				lines.forEach(materialsOutDetail -> {
 					//更新人
-					otherOutDetail.setIupdateby(userId);
-					otherOutDetail.setDupdatetime(nowDate);
-					otherOutDetail.setCupdatename(userName);
+					materialsOutDetail.setIupdateby(userId);
+					materialsOutDetail.setDupdatetime(nowDate);
+					materialsOutDetail.setCupdatename(userName);
 				});
 				otherOutDetailService.batchUpdate(lines);
 
@@ -322,6 +323,17 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 		return SUCCESS;
 	}
 
+
+	/**
+	 * 后台管理分页查询
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param kv
+	 * @return
+	 */
+	public Page<Record> getReturnDataS(int pageNumber, int pageSize, Kv kv) {
+		return dbTemplate("otheroutreturnlist.getReturnDataS",kv).paginate(pageNumber, pageSize);
+	}
 
 	/**
 	 * 删除行数据

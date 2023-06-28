@@ -78,7 +78,7 @@ WHERE 1 = 1
     #if(selectparam)
     AND (t1.BillNo LIKE CONCAT('%',#para(selectparam), '%')
     OR t1.SourceBillType LIKE CONCAT('%', #para(selectparam), '%')
-    OR  t4.cDepName LIKE CONCAT('%', #para(selectparam), '%')
+    OR  dt.cDepName LIKE CONCAT('%', #para(selectparam), '%')
     )
     #end
    #if(iorderstatus)
@@ -120,4 +120,52 @@ FROM T_Sys_OtherOut t1,
 WHERE
     t1.AutoID = t2.MasID AND  t1.AutoID = '#(autoid)'
     AND t2.Qty > 0
+#end
+
+
+#sql("TableBarcodeData")
+select m.cOrderNo AS sourcebillno,
+       a.cCompleteBarcode AS barcode,
+       b.cInvCode AS invcode,
+       b.cInvCode1,
+       b.cInvName1,
+       b.cInvName,
+       b.cInvAddCode,
+       a.dPlanDate AS plandate,
+       b.cInvStd AS cinvstd,
+       a.iQty AS qty,
+       a.iQty AS qtys,
+       m.cOrderNo AS SourceBillNo,
+       m.iBusType AS SourceBillType,
+       m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+       m.cOrderNo AS SourceBillID,
+       d.iAutoId AS SourceBillDid,
+       m.iVendorId,
+       v.cVenCode AS vencode,
+       v.cVenName AS venname,
+       uom.cUomCode AS purchasecuomcode,
+       uom.cUomName AS purchasecuomname,
+       config.iWarehouseId
+FROM
+    PS_PurchaseOrderDBatch a
+        LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+        LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
+        LEFT JOIN PS_PurchaseOrderM m ON m.iAutoId = d.iPurchaseOrderMid
+        LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+        LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cBarcode
+        AND pd.isDeleted = '0'
+        LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId
+        AND tc.iAutoId = a.iPurchaseOrderdQtyId
+        LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+        LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+where 1=1
+	#if(invcode != null)
+        AND b.cInvCode  in ( #(invcode) )
+    #end
+    #if(barcode != null)
+        AND a.cCompleteBarcode = '#(barcode)'
+    #end
+    #if(orgCode != null)
+    AND b.cOrgCode = '#(orgCode)'
+    #end
 #end

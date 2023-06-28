@@ -140,16 +140,21 @@ public class OtherOutAdminController extends BaseAdminController {
 	 */
 	@UnCheck
 	public void barcodeDatas() {
-		String orgCode =  getOrgCode();
-		renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit",10),get("orgCode",orgCode)));
+		Kv kv = new Kv();
+		kv.setIfNotNull("autoid",get("autoid"));
+		kv.setIfNotNull("barcodes",get("barcodes"));
+		kv.setIfNotNull("q",get("q"));
+		kv.setIfNotNull("limit",getInt("limit", 10));
+		kv.setIfNotNull("orgCode",getOrgCode());
+		renderJsonData(service.getBarcodeDatas(kv));
 	}
 
 
 	/**
 	 * JBoltTable 可编辑表格整体提交 多表格
 	 */
-	public void submitMulti(String param, String revokeVal ,String autoid) {
-		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal,autoid));
+	public void submitMulti() {
+		renderJson(service.submitByJBoltTables(getJBoltTables()));
 	}
 
 	/**
@@ -220,6 +225,31 @@ public class OtherOutAdminController extends BaseAdminController {
 //		if (otherOut.getStatus() == 3){
 			renderQrCode(otherOut.getBillNo(),200,200);
 //		}
+	}
+
+	/**
+	 * 获取现品票
+	 * 通过关键字匹配
+	 */
+	public void gettable2() {
+		Kv kv = new Kv();
+		kv.setIfNotNull("billno",get("billno"));
+		kv.setIfNotNull("barcode",get("barcode"));
+		kv.setIfNotNull("orgCode",getOrgCode());
+		renderJsonData(service.gettable2(kv));
+	}
+
+	/**
+	 * 获取条码列表
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	public void TableBarcodeData() {
+		Kv kv = new Kv();
+		String barcode = get("barcode");
+		kv.set("barcode", barcode == null ? "" : barcode);
+			kv.setIfNotNull("orgCode",getOrgCode());
+		renderJsonData(service.TableBarcodeData(kv));
 	}
 
 }

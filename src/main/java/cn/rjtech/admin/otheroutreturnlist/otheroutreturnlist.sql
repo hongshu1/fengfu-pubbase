@@ -100,3 +100,31 @@ FROM
 WHERE
         MasID = '#(autoid)'
 #end
+
+#sql("getReturnDataS")
+SELECT AuditState =
+       CASE WHEN t1.iAuditStatus=0 THEN '未审批'
+            WHEN t1.iAuditStatus=1 THEN '待审批'
+            WHEN t1.iAuditStatus=2 THEN '已审批'
+            WHEN t1.iAuditStatus=3 THEN '审批不通过' END,
+       TypeName =
+       CASE WHEN t1.Type='OtherOutMES' THEN '手动新增'END,
+       t1.*,
+       t2.InvCode,
+       dt.cDepName,
+       m.cMoDocNo  ###工单号
+FROM T_Sys_OtherOut t1
+         LEFT JOIN T_Sys_OtherOutDetail t2 ON t2.MasID = t1.AutoID
+         LEFT JOIN Bd_Department dt ON dt.iAutoId = t1.DeptCode
+         LEFT JOIN  Mo_MoDoc m ON t1.sourcebilldid=m.iAutoId
+WHERE 1 = 1
+   AND t1.BillNo = #para(billno)
+    #end
+
+#sql("getTable2InvCode")
+SELECT
+       t2.InvCode
+FROM T_Sys_OtherOut t1
+         LEFT JOIN T_Sys_OtherOutDetail t2 ON t2.MasID = t1.AutoID
+WHERE t1.BillNo = #para(billno)
+#end

@@ -26,7 +26,7 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import com.jfinal.plugin.activerecord.Record;
-import jdk.nashorn.internal.ir.annotations.Ignore;
+//import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import java.util.*;
 import java.util.function.Function;
