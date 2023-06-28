@@ -7,7 +7,7 @@
 			<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>生产表单设置</h1></div>
 			<div class="col">
 				<form class="form-inline" id="spot_check_form_#(pageId)">
-					<input type="text" autocomplete="off" class="form-control" placeholder="=生产表格名称=" name="cSpotCheckFormName" id="cSpotCheckFormName" value=""/>
+					<input type="text" autocomplete="off" class="form-control" placeholder="=生产表格名称=" name="cProdFormName" id="cSpotCheckFormName" value=""/>
 
 					<button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
 					<button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
@@ -27,10 +27,11 @@
                 <a tooltip title="编辑" href="admin/prodForm/edit/${data.iautoid}" data-scroll="yes" data-handler="refreshJBoltTable"data-title="编辑" data-area="100%,100%" class="jbolt_table_editbtn">编辑</a>
                 <a tooltip title="删除" href="admin/prodForm/delete/${data.iautoid}" data-handler="refreshJBoltTable" class="jbolt_table_delbtn">删除</a>
             </td>
-            <td>${data.cspotcheckformname}</td>
+            <td>${data.cprodformname}</td>
 			  <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"
            data-url="admin/prodForm/toggleIsEnabled/${data.iautoid}"/>
   </td>
+            <td>${data.cmemo}</td>
             <td>${data.ccreatename}</td>
             <td>${data.dcreatetime}</td>
         </tr>
@@ -64,8 +65,9 @@
 			<tr>
 				<th data-width="60" data-column="index">序号</th>
 				<th data-width="130">操作</th>
-				<th data-width="120" data-column="cSpotCheckFormName">生产表格名称</th>
+				<th data-width="120" data-column="cProdFormName">生产表格名称</th>
 				<th data-width="120" data-column="isEnabled">是否启用</th>
+				<th data-width="120" data-column="cMemo">备注</th>
 				<th data-width="120" data-column="ccreatename">创建人名称</th>
 				<th data-width="150" data-column="dcreatetime">创建时间</th>
 			</tr>

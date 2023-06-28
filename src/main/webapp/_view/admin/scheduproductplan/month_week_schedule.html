@@ -3,7 +3,7 @@
 <link href="assets/plugins/Grape/16.0.2/css/gc.spread.sheets.16.0.2.css" rel="stylesheet">
 <style>
     .spread-container {
-        height:75.5vh;
+        height:80.3vh;
     }
 
     .gc-statusbar {
@@ -796,12 +796,14 @@
                                 sheet.setValue(4 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].qiChuZaiKu);
                                 sheet.setValue(5 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].dayNum);
                                 //
-                                let Num = sheet.getValue(shiyongRow,9);
+                                console.log(sheet.getValue(9,9))
                                 console.log(shiyongRow)
+                                let Num = sheet.getValue(shiyongRow,9);
                                 let useArray = [];
                                 for (let f = 0; f < Num; f++) {
                                     useArray.push(`R[-5]C[${f+1}]`);
                                 }
+                                // console.log(useArray)
                                 //嵌入计划在库公式
                                 sheet.setFormula(jihuaRow,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //嵌入在库天数公式7
