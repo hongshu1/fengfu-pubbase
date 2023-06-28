@@ -441,7 +441,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 		if(null == first){
 			ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "采购入库没有此数据！！！");
 		}
-		Record first2 = dbTemplate("materialreturnlist.barcode", kv).findFirst();
+		Record first2 = dbTemplate("materialreturnlist.getBarcodes", kv).findFirst();
 		return first2;
 	}
 
