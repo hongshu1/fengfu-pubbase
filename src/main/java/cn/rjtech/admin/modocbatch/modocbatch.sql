@@ -205,7 +205,8 @@ SELECT DISTINCT
 	doc.iWorkShiftMid,
 	bdperson.cPsn_Num psnnum,
 	bdperson.cPsn_Name psnname,
-	concat ( doc.iYear, doc.iMonth, doc.iDate, doc.iWorkShiftMid ) dateSplicing
+	concat ( doc.iYear, doc.iMonth, doc.iDate, doc.iWorkShiftMid ) dateSplicing,
+	'false' lock
 FROM
 	Mo_MoDoc doc
 	LEFT JOIN Mo_MoRouting routing ON routing.iMoDocId= doc.iAutoId
