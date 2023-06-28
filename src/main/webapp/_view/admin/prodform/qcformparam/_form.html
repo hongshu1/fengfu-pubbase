@@ -2,7 +2,7 @@
 
 <script type="text/template" id="QcFormParamSplit_tpl_#(pageId)">
     {@each datas as data,index}
-    <tr data-id="${data.autoid}">
+    <tr data-id="${data.iautoid}">
         <td>${+index+1}</td>
         <td>${data.iqcformitemid}</td>
         <td>${data.iqcparamid}</td>
@@ -73,6 +73,8 @@
         if(isOk(FormItemCodes)){
             FormItemCodes = FormItemCodes.concat(",");
         }
+
+        console.log(JSON.stringify(FormItemCodes))
         const url = "/admin/prodForm/qcformparam/qcformparamDatas?type=2&FormItemCodes=" + FormItemCodes;
         $(ele).data("url", url);
         DialogUtil.openBy(ele);

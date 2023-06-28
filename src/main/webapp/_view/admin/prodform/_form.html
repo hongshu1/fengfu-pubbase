@@ -101,8 +101,8 @@
                 <div class="form-group row">
                     <label class="col-sm-1 col-form-label">是否启用</label>
                     <div class="col-10">
-                        <input hidden name="isEnabled" id="isEnabled_#(pageId)" value="#(spotCheckForm.isenabled??'1'=='1'?true:false)">
-                        <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(spotCheckForm.isenabled??'1'=='1'?true:false)"/>
+                        <input hidden name="isEnabled" id="isEnabled_#(pageId)" value="#(prodForm.isenabled??'1'=='1'?true:false)">
+                        <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(prodForm.isenabled??'1'=='1'?true:false)"/>
                     </div>
                 </div>
             </div>
@@ -113,7 +113,7 @@
                 <div class="form-group row">
                     <label class="col-sm-1 col-form-label">备注</label>
                     <div class="col-10">
-                        <textarea  data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="cMemo">#(spotCheckForm.cMemo??)</textarea>
+                        <textarea  data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="cMemo">#(prodForm.cMemo??)</textarea>
                     </div>
                 </div>
             </div>
@@ -217,6 +217,7 @@
 
         function getFormItemCodes() {
             const dataList = jboltTableGetAllDatas('#jbolt_table_QcFormItem_split', ['iqcitemid']);
+            console.log(JSON.stringify(dataList))
             let FormItemCodes = '';
             if (isOk(dataList)) {
                 dataList.forEach((value, index) => {
@@ -227,6 +228,7 @@
             if (isOk(FormItemCodes)) {
                 FormItemCodes = FormItemCodes.concat(",");
             }
+            console.log(JSON.stringify(FormItemCodes))
             return FormItemCodes;
         }
 

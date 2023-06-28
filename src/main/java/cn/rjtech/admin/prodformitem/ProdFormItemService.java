@@ -137,4 +137,11 @@ public class ProdFormItemService extends BaseService<ProdFormItem> {
 	public List<Record> formItemLists(Kv para){
 		return dbTemplate("prodformitem.formItemLists",para).find();
 	}
+
+	/**
+	 * 切换isenabled属性
+	 */
+	public Ret toggleIsEnabled(Long id) {
+		return toggleBoolean(id, "isEnabled");
+	}
 }
