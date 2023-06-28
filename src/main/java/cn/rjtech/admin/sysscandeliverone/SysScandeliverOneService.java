@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * (双)扫码发货
@@ -185,53 +186,90 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 	}
 
 
-	/**
-	 * 执行JBoltTable表格整体提交
-	 *
-	 * @param jBoltTable
-	 * @return
-	 */
-	public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-		if(jBoltTable.getSaveRecordList()==null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList()==null){
-			return fail("行数据不能为空");
-		}
-		SysScandeliver sysotherin = jBoltTable.getFormModel(SysScandeliver.class,"sysscandeliver");
-		//获取当前用户信息？
-		User user = JBoltUserKit.getUser();
-		Date now = new Date();
-		tx(()->{
-			//通过 id 判断是新增还是修改
-			if(sysotherin.getAutoID() == null){
-				sysotherin.setOrganizeCode(getOrgCode());
-				sysotherin.setIcreateby(user.getId());
-				sysotherin.setCcreatename(user.getName());
-				sysotherin.setDcreatetime(now);
-				sysotherin.setIupdateby(user.getId());
-				sysotherin.setCupdatename(user.getName());
-				sysotherin.setDupdatetime(now);
-				//主表新增
-				ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
-			}else{
-				sysotherin.setIupdateby(user.getId());
-				sysotherin.setCupdatename(user.getName());
-				sysotherin.setDupdatetime(now);
-				//主表修改
-				ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
-			}
-			//从表的操作
-			// 获取保存数据（执行保存，通过 getSaveRecordList）
-			saveTableSubmitDatas(jBoltTable,sysotherin);
-			//获取修改数据（执行修改，通过 getUpdateRecordList）
-			updateTableSubmitDatas(jBoltTable,sysotherin);
-			//获取删除数据（执行删除，通过 getDelete）
-			deleteTableSubmitDatas(jBoltTable);
-			return true;
-		});
-		return SUCCESS;
-	}
+    /**
+     * 可编辑表格提交
+     *
+     * @param jBoltTable 编辑表格提交内容
+     * @return
+     */
+    public Ret submitByJBoltTable(JBoltTable jBoltTable) {
+        //当前操作人员  当前时间
+        User user = JBoltUserKit.getUser();
+        Date nowDate = new Date();
+        System.out.println("saveTable===>" + jBoltTable.getSave());
+        System.out.println("updateTable===>" + jBoltTable.getUpdate());
+        System.out.println("deleteTable===>" + jBoltTable.getDelete());
+        System.out.println("form===>" + jBoltTable.getForm());
+        AtomicReference<String> headerId = new AtomicReference<>();
+        tx(() -> {
+
+            //判断form是否为空
+            if (jBoltTable.formIsNotBlank()) {
+                SysScandeliver sysScandeliver = jBoltTable.getFormBean(SysScandeliver.class, "sysscandeliver");
+
+                String autoID = sysScandeliver.getAutoID();
+
+                if (notOk(autoID)) {
+                    ValidationUtils.isTrue(jBoltTable.saveIsNotBlank(), "行数据为空，不允许保存！");
+                    sysScandeliver.setICreateBy(user.getId());
+                    sysScandeliver.setDCreateTime(nowDate);
+                    sysScandeliver.setIUpdateBy(user.getId());
+                    sysScandeliver.setDUpdateTime(nowDate);
+                    sysScandeliver.setCUpdateName(user.getName());
+                    sysScandeliver.setCCreateName(user.getName());
+                    sysScandeliver.setIsDeleted(false);
+                    sysScandeliver.save();
+                } else {
+                    sysScandeliver.setIUpdateBy(user.getId());
+                    sysScandeliver.setDUpdateTime(nowDate);
+                    sysScandeliver.setCUpdateName(user.getName());
+                    sysScandeliver.update();
+                }
+
+                headerId.set(autoID);
+            }
+
+            if (jBoltTable.saveIsNotBlank()) {
+                List<SysScandeliverdetail> saveModelList = jBoltTable.getSaveModelList(SysScandeliverdetail.class);
+
+                saveModelList.forEach(sysScandeliverdetail -> {
+                    sysScandeliverdetail.setMasID(headerId.get());
+                    sysScandeliverdetail.setICreateBy(user.getId());
+                    sysScandeliverdetail.setDCreateTime(nowDate);
+                    sysScandeliverdetail.setIUpdateBy(user.getId());
+                    sysScandeliverdetail.setDUpdateTime(nowDate);
+                    sysScandeliverdetail.setCUpdateName(user.getName());
+                    sysScandeliverdetail.setCCreateName(user.getName());
+                    sysScandeliverdetail.setIsDeleted(false);
+                });
+//                    保存
+                sysscandeliverdetailservice.batchSave(saveModelList,saveModelList.size());
+            }
+
+            //更新
+            if (jBoltTable.updateIsNotBlank()) {
+                List<SysScandeliverdetail> updateModelList = jBoltTable.getUpdateModelList(SysScandeliverdetail.class);
+                updateModelList.forEach(sysScandeliverdetail -> {
+                    sysScandeliverdetail.setIUpdateBy(user.getId());
+                    sysScandeliverdetail.setDUpdateTime(nowDate);
+                    sysScandeliverdetail.setCUpdateName(user.getName());
+                });
+                sysscandeliverdetailservice.batchUpdate(updateModelList, updateModelList.size());
+            }
+
+            //获取待删除数据 执行删除
+            if (jBoltTable.deleteIsNotBlank()) {
+                sysscandeliverdetailservice.deleteByIds(jBoltTable.getDelete());
+            }
+
+            return true;
+        });
+        return SUCCESS.set("autoid",headerId.get());
+    }
 
 
-	//可编辑表格提交-新增数据
+
+    //可编辑表格提交-新增数据
 	private void saveTableSubmitDatas(JBoltTable jBoltTable,SysScandeliver sysotherin){
 		List<Record> list = jBoltTable.getSaveRecordList();
 		if(CollUtil.isEmpty(list)) return;
@@ -253,9 +291,7 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 			sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
 			sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
 			sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
-			sysotherin.setIupdateby(user.getId());
-			sysotherin.setCupdatename(user.getName());
-			sysotherin.setDupdatetime(now);
+
 			sysproductindetail.add(sysdetail);
 		}
 		sysscandeliverdetailservice.batchSave(sysproductindetail);
@@ -281,9 +317,7 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 			sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
 			sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
 			sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
-			sysotherin.setIupdateby(user.getId());
-			sysotherin.setCupdatename(user.getName());
-			sysotherin.setDupdatetime(now);
+
 			sysproductindetail.add(sysdetail);
 
 		}
@@ -296,4 +330,32 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 		sysscandeliverdetailservice.deleteByIds(ids);
 	}
 
+	/**
+	 * 获取客户信息
+	 * @param kv
+	 * @return
+	 */
+	public List<Record> getCustomer(Kv kv){
+		return dbTemplate("sysscandeliverone.getCustomer", kv).find();
+	}
+
+	/**
+	 * 获取客户地址
+	 * @param kv
+	 * @return
+	 */
+	public List<Record> getCustAddr(Kv kv){
+		return dbTemplate("sysscandeliverone.getCustAddr", kv).find();
+	}
+
+    /**
+     * 获取订单信息
+     * @param kv
+     * @return
+     */
+	public List<Record> getOrder(Kv kv){
+        Long orgId = getOrgId();
+        kv.set("orgId",orgId);
+        return dbTemplate("sysscandeliverone.getOrder",kv).find();
+    }
 }
