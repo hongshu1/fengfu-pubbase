@@ -116,7 +116,8 @@ public class UptimeMService extends BaseService<UptimeM> implements IApprovalSer
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		return deleteById(id,true);
+		update("UPDATE PL_UptimeM SET isDeleted = 1 WHERE iAutoId = ?",id);
+		return SUCCESS;
 	}
 
 	/**
