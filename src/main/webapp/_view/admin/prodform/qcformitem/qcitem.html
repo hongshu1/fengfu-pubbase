@@ -5,7 +5,7 @@
     <div class="jbolt_page_title">
         <div class="row">
             <div class="col-md-auto">
-                <h6><strong>料品列表</strong></h6>
+                <h6><strong>表格项目列表</strong></h6>
             </div>
             <div class="col">
                 <form class="form-inline" id="itemmasterForm_#(pageId)" onsubmit="return false;" method="post">
@@ -28,7 +28,7 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.cproditemcode}</td>
 <td>${data.cproditemname}</td>
-<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/itemmaster/toggleIsenabled/${data.id}"/></td>
+<td hidden><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/prodForm/qcformitem/toggleIsEnabled/${data.iautoid}"/></td>
 </tr>
 {@/each}
 </textarea>
@@ -59,7 +59,7 @@
                 <th data-width="60" data-column="index">序号</th>
                 <th data-width="150" data-column="cProdItemCode">参数项目编码</th>
                 <th data-width="150" data-column="cProdItemName">参数项目名称</th>
-                <th data-width="150" data-column="isEnabled">启用状态</th>
+                <th data-width="150" hidden data-column="isEnabled">启用状态</th>
             </tr>
             </thead>
             <tbody>

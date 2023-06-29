@@ -1,11 +1,9 @@
 package cn.rjtech.admin.modoc;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
@@ -24,6 +22,8 @@ import cn.rjtech.admin.moroutingcinve.MoMoroutinginvcService;
 import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
 import cn.rjtech.admin.moroutingconfigequipment.MoMoroutingequipmentService;
 import cn.rjtech.admin.moroutingconfigperson.MoMoroutingconfigPersonService;
+import cn.rjtech.admin.moworkshiftd.MoWorkShiftDService;
+import cn.rjtech.admin.moworkshiftm.MoWorkShiftMService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.base.exception.ParameterException;
@@ -36,18 +36,17 @@ import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import io.netty.channel.RecvByteBufAllocator;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 工单管理 Service
@@ -92,6 +91,12 @@ public class MoDocService extends BaseService<MoDoc> {
 
   @Inject
   private WorkregionmService workregionmService; //产线
+
+  @Inject
+  private MoWorkShiftDService moWorkShiftDService; //指定日期班次人员信息明细
+
+  @Inject
+  private MoWorkShiftMService moWorkShiftMService; //指定日期班次人员信息主表
 
 
   private final MoDoc dao = new MoDoc().dao();
@@ -255,7 +260,7 @@ public class MoDocService extends BaseService<MoDoc> {
       }
       return true;
     });
-    return ret(true);
+    return SUCCESS;
   }
 
   /**
@@ -1058,31 +1063,16 @@ public class MoDocService extends BaseService<MoDoc> {
   }
 
   public Page<Record> getPersonByEquipment(int pageNumber, int pageSize, Kv keywords) {
-    if (StrUtil.isNotBlank(keywords.getStr(InventoryRoutingConfig.PERSONEQUIPMENTJSON))) {
-      String str = keywords.getStr(InventoryRoutingConfig.PERSONEQUIPMENTJSON);
-      JSONArray jsonArray = JSONObject.parseArray(str);
-      if (CollectionUtil.isEmpty(jsonArray)) {
-        return null;
-      }
-      List<Record> recordList = new ArrayList<>();
-      for (int i = 0; i < jsonArray.size(); i++) {
-        JSONObject jsonObject = jsonArray.getJSONObject(i);
-        Record record = new Record();
-        record.setColumns(jsonObject.getInnerMap());
-
-        Long personId = jsonObject.getLong("iautoid");
-        if (ObjectUtil.isNotNull(personId)) {
-          Person person = personService.findById(personId);
-          ValidationUtils.notNull(person, "未找到设备信息");
-          record.set(person.CPSN_NUM, person.getCpsnNum());
-        }
-        recordList.add(record);
-      }
-      Page<Record> persons = dbTemplate("modoc.getInventoryList").paginate(pageNumber, pageSize);
-      persons.setList(recordList);
+    if (keywords.get("configpersonids") != null) {
+      String configpersonids = keywords.getStr("configpersonids");
+      Page<Record> persons = dbTemplate("modoc.getPersonsByIds", Kv.by("configpersonids", configpersonids)).paginate(pageNumber, pageSize);
       return persons;
     }
+
     List<Record> records = dbTemplate("modoc.getEquipments", Kv.by("iEquipmentIds", keywords.getLong("configid"))).find();
+    if (records.size() == 0) {
+      records = dbTemplate("modoc.getMoDocEquipments", Kv.by("iEquipmentIds", keywords.getLong("configid"))).find();
+    }
 
     StringBuilder sb = new StringBuilder();
     for (Record record : records) {
@@ -1111,6 +1101,34 @@ public class MoDocService extends BaseService<MoDoc> {
     return datalists;
   }
 
+  public List<Record> getMoDocinv(Kv kv) {
+    List<Record> datalists = dbTemplate("modoc.getMoDocinv", Kv.by("iautoid", kv.getLong("configid"))).find();
+    return datalists;
+  }
+
+  public List<Record> getMoDocEquipment(Kv kv) {
+    List<Record> datalists = dbTemplate("modoc.getMoDocEquipment", Kv.by("iautoid", kv.getLong("configid"))).find();
+    return datalists;
+  }
+
+  public List<Record> moDocInventoryRouting(Kv kv) {
+    List<Record> datalists = dbTemplate("modoc.moDocInventoryRouting", Kv.by("iautoid", kv.getLong("configid"))).find();
+    return datalists;
+  }
+
+  public String findByisScanned(Long imodocid) {
+    Record jobN = dbTemplate("momaterialsscansum.getByBarcodeF", Kv.by("imodocid", imodocid)).findFirst();
+    Record jobY = dbTemplate("momaterialsscansum.getByBarcodeN", Kv.by("imodocid", imodocid)).findFirst();
+    String isScanned = "";
+    if (jobN.getInt("iplanqty") == jobY.getInt("irealqty")) {
+      isScanned = "已齐料";
+    } else {
+      isScanned = "未齐料";
+    }
+    return isScanned;
+  }
+
+
   /**
    * 编辑计划保存
    *
@@ -1138,7 +1156,6 @@ public class MoDocService extends BaseService<MoDoc> {
     return SUCCESS;
   }
 
-
   /**
    * 编辑人员保存
    *
@@ -1148,8 +1165,93 @@ public class MoDocService extends BaseService<MoDoc> {
   public Ret savePersonnel(List<Record> records) {
     tx(() -> {
       records.forEach(record -> {
+        if (record.getStr("type").equals("0")) {
+          Date date = DateUtil.parse(record.getStr("data"));
+          //获取工单工艺配置ID
+          String routingconfigid = dbTemplate("modocbatch.getMoroutingconfigId", Kv.by("imotaskid", record.getStr("taskid")).set("iyear", DateUtil.year(date)).
+              set("imonth", DateUtil.month(date) + 1).set("idate", DateUtil.dayOfMonth(date)).set("iworkshiftmid", record.getStr("iworkshiftmid")).
+              set("iinventoryid", record.getStr("codekehu")).set("ioperationid", record.getStr("gonxuid"))).queryStr();
+          ValidationUtils.notBlank(routingconfigid, "工单号【" + record.getStr("cmodocno") + "】对应列未找到工单工艺配置数据！！！");
+          //删除之前跟工单工艺配置ID相关联的工单工艺人员配置信息
+          List<Record> records11 = dbTemplate("modocbatch.deleteModocPersonByConfigId", Kv.by("routingconfigid", Long.parseLong(routingconfigid))).find();
+          records11.forEach(record1 -> {
+            MoMoroutingconfigPerson person = moMoroutingconfigPersonService.findByid(record1.getLong("iautoid"));
+            person.delete();
+          });
+          JSONArray records1 = JSON.parseArray(record.getStr("renyuanid"));
+          for (Object o : records1) {
+            MoMoroutingconfigPerson person = new MoMoroutingconfigPerson();
+            person.setIMoRoutingConfigId(Long.parseLong(routingconfigid));
+            person.setIPersonId(Long.parseLong(String.valueOf(o)));
+            person.save();
+          }
+        } else if (record.getStr("type").equals("2")) {
+          JSONArray records1 = JSON.parseArray(record.getStr("renyuanid"));
+          ValidationUtils.isTrue(records1.size() == 1, "工单号【" + record.getStr("cmodocno") + "】的组长只能选择一个人员");
+          Long iautoid = dbTemplate("modocbatch.getModocId", Kv.by("cmodocno", record.getStr("cmodocno")).
+              set("taskid", record.getStr("taskid"))).queryLong();
+          MoDoc moDoc = findById(iautoid);
+          moDoc.setIDutyPersonId(Long.parseLong(String.valueOf(records1.get(0))));
+          moDoc.update();
+        } else if (record.getStr("type").equals("3") || record.getStr("type").equals("4") || record.getStr("type").equals("5")) {
+          Integer itype = 0;
+          String type = record.getStr("type");
+          switch (type) {
+            case "3":
+              itype = 1;
+              break;
+            case "4":
+              itype = 2;
+              break;
+            case "5":
+              itype = 3;
+              break;
+            default:
+              itype = 0;
+              break;
+          }
+          JSONArray records1 = JSON.parseArray(record.getStr("renyuanid"));
+          Date date = DateUtil.parse(record.getStr("data"));
+          List<Record> records2 = dbTemplate("modocbatch.getMoworkshiftMDId", Kv.by("imotaskid", record.getStr("taskid")).
+              set("iyear", DateUtil.year(date)).set("imonth", DateUtil.month(date) + 1).set("idate", DateUtil.dayOfMonth(date)).
+              set("iworkshiftmid", record.getStr("iworkshiftmid"))).find();
+          if (records2.size() > 0) {
+            AtomicReference<String> diautoid = new AtomicReference<>("");
+            Integer finalItype = itype;
+            records2.forEach(record2 -> {
+              if (record2.getInt("itype").equals(finalItype)) {
+                diautoid.set(record2.getStr("diautoid"));
+              }
+            });
+            MoWorkShiftD shiftD = new MoWorkShiftD();
+            if (diautoid.get() != null && !diautoid.get().equals("")) {
+              moWorkShiftDService.finByid(Long.parseLong(diautoid.get()));
+            }
+            shiftD.setIType(itype);
+            shiftD.setIMoWorkShiftMid(Long.parseLong(records2.get(0).getStr("miautoid")));
+            shiftD.setIPersonId(Long.parseLong(String.valueOf(records1.get(0))));
+            if (diautoid.get() != null && !diautoid.get().equals("")) {
+              shiftD.update();
+            } else {
+              shiftD.save();
+            }
+          } else {
+            MoWorkShiftM shiftM = new MoWorkShiftM();
+            shiftM.setIAutoId(JBoltSnowflakeKit.me.nextId());
+            shiftM.setIMoTaskId(record.getLong("taskid"));
+            shiftM.setIYear(DateUtil.year(date));
+            shiftM.setIMonth(DateUtil.month(date) + 1);
+            shiftM.setIDate(DateUtil.dayOfMonth(date));
+            shiftM.setIWorkShiftMid(record.getLong("iworkshiftmid"));
+            shiftM.save();
 
-
+            MoWorkShiftD shiftD = new MoWorkShiftD();
+            shiftD.setIMoWorkShiftMid(shiftM.getIAutoId());
+            shiftD.setIType(itype);
+            shiftD.setIPersonId(Long.parseLong(String.valueOf(records1.get(0))));
+            shiftD.save();
+          }
+        }
       });
       return true;
     });

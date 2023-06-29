@@ -165,4 +165,8 @@ public class SpotCheckFormItemService extends BaseService<SpotCheckFormItem> {
 	public void removeByQcFormId(Long formId){
 		delete("DELETE Bd_SpotCheckFormItem WHERE iSpotCheckFormId = ?", formId);
 	}
+
+	public List<Record> formItemLists(Kv para){
+		return dbTemplate("spotcheckformitem.formItemLists",para).find();
+	}
 }

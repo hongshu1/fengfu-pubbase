@@ -4,10 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.permission.JBoltUserAuthKit;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.permission.*;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.cache.AuditFormConfigCache;
 import cn.rjtech.enums.FormAuditConfigTypeEnum;
@@ -48,6 +45,7 @@ public class FormApprovalAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKeywords()));
     }
@@ -220,8 +218,14 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.validateIntGt0(status, "审批状态");
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "处理审批的Service类名");
-
-        renderJson(service.reject(formAutoId, formSn, status, primaryKeyName, className, remark, false));
+        
+        Ret ret = service.reject(formAutoId, formSn, status, primaryKeyName, className, remark, false);
+        renderJson(ret);
+        
+        // 异步通知:审批不通过，给制单人(提审人)发送待办和邮件
+        if (ret.isOk()) {
+            MsgEventUtil.postRejectMsgEvent(JBoltUserKit.getUserId(), formSn, primaryKeyName, formAutoId);
+        }        
     }
 
     /**

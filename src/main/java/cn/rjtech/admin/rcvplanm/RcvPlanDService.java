@@ -120,7 +120,7 @@ public class RcvPlanDService extends BaseService<RcvPlanD> {
 	 */
 	public Ret delete(Long id) {
 		updateColumn(id, "isdeleted", true);
-		return ret(true);
+		return SUCCESS;
 	}
 
 
@@ -129,7 +129,7 @@ public class RcvPlanDService extends BaseService<RcvPlanD> {
 		for(String s : split){
 			updateColumn(s, "isdeleted", true);
 		}
-		return ret(true);
+		return SUCCESS;
 	}
 
 }

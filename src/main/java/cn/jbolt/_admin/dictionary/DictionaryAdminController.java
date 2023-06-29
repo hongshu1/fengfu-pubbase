@@ -37,6 +37,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 	private DictionaryService service;
 	@Inject
 	private DictionaryTypeService dictionaryTypeService;
+    @UnCheck
 	public void datas(){
 		Long typeId = getLong("typeId");
 		DictionaryType type = dictionaryTypeService.findById(typeId);
@@ -261,7 +262,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 	 */
 	@Before(Tx.class)
 	public void delete(){
-		renderJson(service.deleteDictionaryById(getLong(0)));
+		renderJson(service.deleteDictionaryById(getLong(0),false));
 	}
 	/**
 	 * 上移

@@ -90,7 +90,7 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
   <td>
     {@if data.istatus == 0}
-    		<button type="button" onclick="createTable('${data.iautoid}','${data.cqcformname}')" data-handler="refreshJBoltTable"
+    		<button type="button" onclick="createTable('${data.iautoid}')" data-handler="refreshJBoltTable"
                 class="btn btn-outline-secondary">生成</button>
     {@/if}
     {@if data.istatus == 1}
@@ -111,12 +111,7 @@
          data-title="编辑来料检查成绩表" disabled style="opacity:0.5">编辑</a><!-- class="jbolt_table_editbtn"-->
     {@/if}
   </td>
-  <td>
-    {@if data.istatus == 0}<span>未有检查表</span>{@/if}
-    {@if data.istatus == 1}<span>待检</span>{@/if}
-    {@if data.istatus == 2}<span>不合格</span>{@/if}
-    {@if data.istatus == 3}<span>合格</span>{@/if}
-  </td>
+  <td>${data.statusname}</td>
   <td>
     {@if data.iscompleted == 0}<span>未完成</span>{@/if}
     {@if data.iscompleted == 1}<span>已完成</span>{@/if}
@@ -196,7 +191,7 @@
   /*
   * 生成
   * */
-  function createTable(iautoid, cqcformname) {
+  function createTable(iautoid) {
     var para = {
       iautoid: iautoid
     }

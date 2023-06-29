@@ -46,6 +46,7 @@ public class EnumTypeAdminController extends BaseAdminController {
    /**
 	* 数据源
 	*/
+   @UnCheck
 	public void datas() {
 		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("cEnumTypeName")));
 	}
@@ -109,6 +110,7 @@ public class EnumTypeAdminController extends BaseAdminController {
 	/**
 	 * select数据源（查询、可编辑表格）
 	 */
+    @UnCheck
 	public void options() {
 		renderJsonData(service.getCommonList("cEnumTypeCode,cEnumTypeName"));
 	}

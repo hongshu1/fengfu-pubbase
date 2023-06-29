@@ -6,11 +6,24 @@ SELECT t1.*,
        t3.cInvStd,
        t3.iInventoryUomId1,
        t3.cInvAddCode,
-       t6.cEquipmentName
+       t6.cEquipmentName,
+       u.cUomCode,u.cUomName,
+       t7.cpics,t7.ctypeids,t7.ctypenames,
+       t8.ccusname,
+       co.cOrderNo,
+       statusname =
+        CASE WHEN t1.istatus=0 THEN '未有检查表'
+        WHEN t1.istatus=1 THEN '待检'
+        WHEN t1.istatus=2 THEN '不合格'
+        WHEN t1.istatus=3 THEN '合格' END
 FROM PL_StockoutQcFormM t1
          LEFT JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
          LEFT JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId
          LEFT JOIN Bd_Equipment t6 ON t3.iEquipmentModelId = t6.iAutoId
+         LEFT JOIN Bd_Uom u on t3.iInventoryUomId1 = u.iautoid
+         LEFT JOIN Bd_InventoryQcForm t7 on t1.iqcformid = t7.iqcformid and t1.iInventoryId = t7.iInventoryId
+         LEFT JOIN Bd_Customer t8 on t1.iCustomerId = t8.iAutoId
+         LEFT JOIN Co_ManualOrderM co on t1.iManualOrderMid = co.iAutoId
 where t1.IsDeleted = '0'
   #if(iautoid)
   AND t1.iautoid =#para(iautoid)
@@ -51,61 +64,23 @@ where t1.IsDeleted = '0'
 ORDER BY t1.dUpdateTime DESC
 #end
 
-#sql("getCheckoutList")
-SELECT t1.*,
-       t2.cQcItemName,
-       t3.cQcParamName,
-       t4.iQcFormTableParamId,
-       t4.iAutoId as iqcformtableitemid,
-       t5.iStdVal,
-       t5.iMaxVal,
-       t5.iMinVal,
-       t5.cOptions,
-       t5.iSeq,
-       t5.iType
-FROM Bd_QcFormItem t1
-         LEFT JOIN Bd_QcItem t2 ON t1.iQcItemId = t2.iAutoId
-         LEFT JOIN Bd_QcParam t3 ON t2.iAutoId = t3.iQcItemId
-         LEFT JOIN Bd_QcFormTableItem t4 ON t1.iAutoId = t4.iQcFormItemId
-         LEFT JOIN Bd_QcFormTableParam t5 ON t4.iQcFormTableParamId = t5.iAutoId
-WHERE t1.isDeleted = '0'
-  #if(iqcformid)
-  AND t1.iqcformId = #para(iqcformid)
-  #end
-ORDER BY t1.iSeq ASC
+#sql("getStockoutQcFormDByMasid")
+select t1.* from PL_StockoutQcFormD t1
+where 1=1
+#if(istockoutqcformmid)
+  and t1.iStockoutQcFormMid = #para(istockoutqcformmid)
+#end
+order by t1.iSeq asc
 #end
 
-#sql("findChecoutListByIformParamid")
-SELECT
-    t1.*,t4.cQcParamName,t5.cQcItemName
-FROM PL_StockoutQcFormD t1
-         LEFT JOIN Bd_QcFormTableItem t2 on t1.iFormParamId = t2.iAutoId
-         LEFT JOIN Bd_QcFormParam t3 ON t2.iQcFormParamId = t3.iAutoId
-         LEFT JOIN Bd_QcParam t4 ON t3.iQcParamId = t4.iAutoId
-         LEFT JOIN Bd_QcItem t5 ON t4.iQcItemId = t5.iAutoId
-WHERE
-    #if(istockoutqcformmid)
-    t1.istockoutqcformmid = #para(istockoutqcformmid)
-    #end
-ORDER BY t1.iSeq asc
+#sql("getQcFormTableItemList")
+select t1.*,t2.cQcItemName,t3.cQcParamName from Bd_QcFormTableItem t1
+left join Bd_QcItem t2 on t1.iQcFormItemId = t2.iAutoId
+left join Bd_QcParam t3 on t1.iQcFormParamId = t3.iAutoId
+where t1.iqcformtableparamid=#para(iqcformtableparamid)
+  and t1.iqcformid=#para(iqcformid)
 #end
 
-#sql("getonlyseelistByiautoid")
-SELECT t1.* ,
-       t2.iautoid lineiautoid,
-       t2.iSeq,
-       t2.cValue,
-       t5.cQcParamName,
-       t6.cQcItemName
-FROM  PL_StockoutQcFormD t1
-          LEFT JOIN PL_StockoutQcFormD_Line t2 ON t1.iAutoId = t2.iStockoutQcFormDid
-          LEFT JOIN Bd_QcFormTableItem t3 ON t1.iFormParamId = t3.iAutoId
-          LEFT JOIN Bd_QcFormParam t4 ON t3.iQcFormParamId = t4.iAutoId
-          LEFT JOIN Bd_QcParam t5 ON t4.iQcParamId = t5.iAutoId
-          LEFT JOIN Bd_QcItem t6 ON t5.iQcItemId = t6.iAutoId
-WHERE
-  #if(istockoutqcformmid)
-  t1.istockoutqcformmid = #para(istockoutqcformmid)
-#end
-ORDER BY t1.iSeq asc
+#sql("getStockQcFormDLineList")
+select * from PL_StockoutQcFormD_Line where iStockoutQcFormDid=#para(istockoutqcformdid)
 #end

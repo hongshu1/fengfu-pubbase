@@ -19,6 +19,7 @@ import cn.rjtech.admin.materialsout.MaterialsOutService;
 import cn.rjtech.admin.materialsoutdetail.MaterialsOutDetailService;
 import cn.rjtech.admin.purchaseorderm.PurchaseOrderMService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
+import cn.rjtech.admin.subcontractorderm.SubcontractOrderMService;
 import cn.rjtech.admin.sysassem.SysAssemService;
 import cn.rjtech.admin.sysassem.SysAssemdetailService;
 import cn.rjtech.admin.vendor.VendorService;
@@ -70,8 +71,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     @Inject
     private VendorService             vendorService;
     @Inject
-    private PurchaseOrderMService     purchaseOrderMService;
-    @Inject
     private WarehouseService          warehouseService;
     @Inject
     private DictionaryService         dictionaryService;
@@ -87,6 +86,12 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     private InventoryChangeService    changeService;//物料形态对照表
     @Inject
     private InventoryService          inventoryService;
+    @Inject
+    private SubcontractOrderMService  subcontractOrderMService;//委外订单主表
+    @Inject
+    private PurchaseOrderMService     purchaseOrderMService;//采购订单主表
+    @Inject
+    private InventoryChangeService    inventoryChangeService;//物料形态对照表
 
     @Override
     protected int systemLogTargetType() {
@@ -148,58 +153,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             //addSaveSystemLog(sysPuinstore.getAutoID(), JBoltUserKit.getUserId(), sysPuinstore.getName());
         }
         return ret(success);
-    }
-
-
-    /*
-     * 检查是否要生成材料出库单和形态转换单
-     * */
-    public void checkIsCreateMaterialAndSysAssem(List<SysPuinstore> puinstoreList) {
-        boolean isTwo = false; //单单位、或双单位
-        boolean isOutRdCode = false; //入库类型是否为“外作品入库”
-        boolean puUnitName = false;//采购单位是否为：KG
-        for (SysPuinstore puinstore : puinstoreList) {
-            List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
-            if (!detailList.isEmpty()) {
-                SysPuinstoredetail sysPuinstoredetail = detailList.get(0);
-                isTwo       = CheckIsTwo(sysPuinstoredetail.getInvcode());
-                isOutRdCode = checkIsOutRdCode(puinstore.getRdCode());
-
-                if ("KG".equals(sysPuinstoredetail.getPuUnitName())) {
-                    puUnitName = true;
-                }
-            }
-
-            //2、如果入库类型是外作品入库并且为单单位时：采购入库单“审核通过”生成材料出库单，并且倒扣加工供应商仓库存
-            if (isOutRdCode && !isTwo) {
-                //2.1、材料出库单
-                List<MaterialsOutDetail> materialsOutDetailList = new ArrayList<>();
-                MaterialsOut materials = new MaterialsOut();
-                createMaterialsOut(puinstore, detailList, materials, materialsOutDetailList);
-                materialsOutService.save(materials);
-                materialsOutDetailService.batchSave(materialsOutDetailList);
-
-                //todo 2.2、倒扣加工供应商仓库存
-            }
-            //3、如果单位为重量KG和双单位：采购入库单“审核通过”同时生成材料出库单、形态转换单
-            if (puUnitName && isTwo) {
-                //3.1、材料出库单
-                List<MaterialsOutDetail> materialsOutDetailList = new ArrayList<>();
-                MaterialsOut materials = new MaterialsOut();
-                createMaterialsOut(puinstore, detailList, materials, materialsOutDetailList);
-                materialsOutService.save(materials);
-                materialsOutDetailService.batchSave(materialsOutDetailList);
-
-                //todo 3.2、倒扣加工供应商仓库存
-
-                //3.3、形态转换单
-                SysAssem sysAssem = new SysAssem();
-                List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
-                createSysAssem(sysAssem, detailList, puinstore, sysAssemdetailList);
-                sysAssemService.save(sysAssem);
-                sysAssemdetailService.batchSave(sysAssemdetailList);
-            }
-        }
     }
 
     public boolean CheckIsTwo(String invcode) {
@@ -364,7 +317,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             deleteById(id);
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     public void checkDelete(Long id) {
@@ -379,7 +332,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             List<String> collect = puinstoredetails.stream().map(SysPuinstoredetail::getAutoID).collect(Collectors.toList());
             syspuinstoredetailservice.deleteByIds(String.join(",", collect));
         }
-        return ret(true);
+        return SUCCESS;
     }
 
     /*
@@ -651,35 +604,107 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
         String[] split = ids.split(",");
         ArrayList<SysPuinstore> puinstoreList = new ArrayList<>();
         Date date = new Date();
-        for (String id : split) {
-            SysPuinstore puinstore = findById(id);
-            //同步U8
-            String json = getSysPuinstoreDto(puinstore);
-            setSysPuinstoreU8Billno(json, puinstore);
-            // 状态改为已审核
-            puinstore.setCAuditName(JBoltUserKit.getUserName());
-            puinstore.setAuditDate(date);
-            puinstore.setCUpdateName(JBoltUserKit.getUserName());
-            puinstore.setDUpdateTime(date);
-            //
-            puinstoreList.add(puinstore);
-        }
+
         tx(() -> {
-            //1、批量审核成功
+            for (String id : split) {
+                SysPuinstore puinstore = findById(id);
+                //同步U8
+                String json = getSysPuinstoreDto(puinstore);
+                setSysPuinstoreU8Billno(json, puinstore);
+                // 状态改为已审核
+                puinstore.setCAuditName(JBoltUserKit.getUserName());
+                puinstore.setAuditDate(date);
+                puinstore.setCUpdateName(JBoltUserKit.getUserName());
+                puinstore.setDUpdateTime(date);
+                //
+                puinstoreList.add(puinstore);
+
+                //2、采购订单，如果是双单位收货，需要生成形态转换单
+                PurchaseOrderM purchaseOrderM = purchaseOrderMService.findByCOrerNo(puinstore.getSourceBillNo());
+                //2.1 采购订单
+                if (purchaseOrderM != null) {
+                    List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
+                    String invcode = detailList.get(0).getInvcode();
+                    Inventory inventory = inventoryService.findBycInvCode(invcode);
+                    InventoryChange inventoryChange = inventoryChangeService.findByBeforeInventoryId(inventory.getIAutoId());
+                    //inventoryChange != null，代表是双单位，需要生成形态转换单
+                    if (inventoryChange != null) {
+                        SysAssem sysAssem = new SysAssem();
+                        List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
+                        createSysAssem(sysAssem, detailList, puinstore, sysAssemdetailList);
+                        ValidationUtils.isTrue(sysAssem.save(), "生成形态转换单失败！！！");
+                        sysAssemdetailService.batchSave(sysAssemdetailList);
+                    }
+                }
+                //2.2 委外订单
+                Integer corderno = subcontractOrderMService.findOderNoIsNotExists(puinstore.getSourceBillNo());
+                if (corderno != null) {
+                    //todo checkIsCreateMaterialAndSysAssem(puinstoreList);
+                }
+            }
+            //批量审核成功
             batchUpdate(puinstoreList);
 
-            //2、todo 委外订单检查是否要生成材料出库单和形态转换单
-            //checkIsCreateMaterialAndSysAssem(puinstoreList);
             return true;
         });
 
         return SUCCESS;
     }
 
+    /*
+     * 检查是否要生成材料出库单和形态转换单
+     * */
+    public void checkIsCreateMaterialAndSysAssem(List<SysPuinstore> puinstoreList) {
+        boolean isTwo = false; //单单位、或双单位
+        boolean isOutRdCode = false; //入库类型是否为“外作品入库”
+        boolean puUnitName = false;//采购单位是否为：KG
+        for (SysPuinstore puinstore : puinstoreList) {
+            List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
+            if (!detailList.isEmpty()) {
+                SysPuinstoredetail sysPuinstoredetail = detailList.get(0);
+                isTwo       = CheckIsTwo(sysPuinstoredetail.getInvcode());
+                isOutRdCode = checkIsOutRdCode(puinstore.getRdCode());
+
+                if ("KG".equals(sysPuinstoredetail.getPuUnitName())) {
+                    puUnitName = true;
+                }
+            }
+
+            //2、如果入库类型是外作品入库并且为单单位时：采购入库单“审核通过”生成材料出库单，并且倒扣加工供应商仓库存
+            if (isOutRdCode && !isTwo) {
+                //2.1、材料出库单
+                List<MaterialsOutDetail> materialsOutDetailList = new ArrayList<>();
+                MaterialsOut materials = new MaterialsOut();
+                createMaterialsOut(puinstore, detailList, materials, materialsOutDetailList);
+                materialsOutService.save(materials);
+                materialsOutDetailService.batchSave(materialsOutDetailList);
+
+                //todo 2.2、倒扣加工供应商仓库存
+            }
+            //3、如果单位为重量KG和双单位：采购入库单“审核通过”同时生成材料出库单、形态转换单
+            if (puUnitName && isTwo) {
+                //3.1、材料出库单
+                List<MaterialsOutDetail> materialsOutDetailList = new ArrayList<>();
+                MaterialsOut materials = new MaterialsOut();
+                createMaterialsOut(puinstore, detailList, materials, materialsOutDetailList);
+                materialsOutService.save(materials);
+                materialsOutDetailService.batchSave(materialsOutDetailList);
+
+                //todo 3.2、倒扣加工供应商仓库存
+
+                //3.3、形态转换单
+                SysAssem sysAssem = new SysAssem();
+                List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
+                createSysAssem(sysAssem, detailList, puinstore, sysAssemdetailList);
+                sysAssemService.save(sysAssem);
+                sysAssemdetailService.batchSave(sysAssemdetailList);
+            }
+        }
+    }
+
     public void setSysPuinstoreU8Billno(String json, SysPuinstore puinstore) {
         tx(() -> {
             String u8Billno = new BaseInU8Util().base_in(json);
-//            System.out.println(u8Billno);
             puinstore.setU8BillNo(u8Billno);
             return true;
         });

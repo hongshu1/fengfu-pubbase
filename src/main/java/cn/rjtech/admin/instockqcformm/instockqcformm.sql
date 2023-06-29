@@ -10,32 +10,37 @@ SELECT t1.*,
     t4.cEquipmentName,
     t5.cUomCode,t5.cUomName,
     t6.cpics,t6.ctypeids,t6.ctypenames,
-    t7.cversion
+    t7.cversion,
+    statusname =
+       CASE WHEN t1.istatus=0 THEN '未有检查表'
+            WHEN t1.istatus=1 THEN '待检'
+            WHEN t1.istatus=2 THEN '不合格'
+            WHEN t1.istatus=3 THEN '合格' END
 FROM PL_InStockQcFormM t1
-    left JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
-    LEFT JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId
+         LEFT JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
+    inner JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId
     LEFT JOIN Bd_Equipment t4 ON t3.iEquipmentModelId = t4.iAutoId
     LEFT JOIN Bd_Uom t5 on t3.iInventoryUomId1 = t5.iautoid
     LEFT JOIN Bd_InventoryQcForm t6 on t1.iqcformid = t6.iqcformid and t1.iInventoryId = t6.iInventoryId
-    LEFT JOIN (SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion from PS_PurchaseOrderDBatch
+    LEFT JOIN (SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion,cCompleteBarcode from PS_PurchaseOrderDBatch
                UNION ALL
-               SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion from PS_SubcontractOrderDBatch)
-    t7 on t1.cBarcode = t7.cBarcode
+               SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion,cCompleteBarcode from PS_SubcontractOrderDBatch)
+    t7 on t1.cBarcode = t7.ccompletebarcode
 where t1.IsDeleted = '0'
 #if(iautoid)
     AND t1.iautoid =#para(iautoid)
                      #end
                      #if(cinvqcformno)
-    AND t1.cinvqcformno =#para(cinvqcformno)
+    AND t1.cinvqcformno LIKE CONCAT('%', #para(cinvqcformno), '%')
                      #end
                      #if(cinvaddcode)
-    AND t3.cinvaddcode =#para(cinvaddcode)
+    AND t3.cinvaddcode LIKE CONCAT('%', #para(cinvaddcode), '%')
                      #end
                      #if(cinvcode1)
-    AND t3.cinvcode1 =#para(cinvcode1)
+    AND t3.cinvcode1 LIKE CONCAT('%', #para(cinvcode1), '%')
                      #end
                      #if(cinvname1)
-    AND t3.cinvname1 =#para(cinvname1)
+    AND t3.cinvname1 LIKE CONCAT('%', #para(cinvname1), '%')
                      #end
                      #if(iqcuserid)
     AND t1.iqcuserid =#para(iqcuserid)
@@ -56,7 +61,7 @@ where t1.IsDeleted = '0'
     AND t1.dcreatetime <= #para(endtime)
                      #end
     #if(cbarcode)
-    AND t1.cBarcode = #para(cbarcode)
+    AND t1.cBarcode LIKE CONCAT('%', #para(cbarcode), '%')
     #end
 ORDER BY t1.dUpdateTime DESC
     #end
@@ -141,16 +146,16 @@ where t1.iqcformtableparamid=#para(iqcformtableparamid)
 #end
 
 #sql("findDetailByBarcode")
-select t1.iAutoId,t1.cbarcode,t1.iQty,t1.iinventoryId,
+select t1.iAutoId,t1.cbarcode,t1.cVersion,t1.cCompleteBarcode,t1.iQty,t1.iinventoryId,
        t2.cInvCode as invcode,t2.cInvCode1,t2.cInvName1,
        t3.iqcformid,t3.cdccode,t3.cmeasure
 from
-     (SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion from PS_PurchaseOrderDBatch
+     (SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion,cCompleteBarcode from PS_PurchaseOrderDBatch
       UNION ALL
-      SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion from PS_SubcontractOrderDBatch) t1
-inner join Bd_Inventory t2 on t1.iinventoryId = t2.iAutoId
+      SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion,cCompleteBarcode from PS_SubcontractOrderDBatch) t1
+left join Bd_Inventory t2 on t1.iinventoryId = t2.iAutoId
 left join Bd_InventoryQcForm t3 on t2.iAutoId = t3.iinventoryId
-inner join Bd_QcForm t4 on t3.iQcFormId = t4.iautoid
-where t1.cBarcode = #para(cbarcode)
+left join Bd_QcForm t4 on t3.iQcFormId = t4.iautoid
+where t1.ccompletebarcode = #para(ccompletebarcode)
 order by t3.dupdatetime desc
 #end

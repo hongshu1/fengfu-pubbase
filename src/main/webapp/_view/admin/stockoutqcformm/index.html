@@ -20,7 +20,7 @@
         <form class="form-inline" id="stockoutqcformmForm_#(pageId)" style="left: 30px;text-align: left">
           <input type="text" hidden id="iscompleted" name="iscompleted" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="cstockoutqcformno" value=""/>
-          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvaddcode" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
           <select class="form-control"
@@ -86,49 +86,49 @@
   <td>${pageNumber,pageSize,index | rownum}</td>
   <td title="${data.iautoid}">
     {@if data.istatus == 0}
-      <button type="button" onclick="createTable('${data.iautoid}','${data.cqcformname}')" data-handler="refreshJBoltTable"
+      <button type="button" onclick="createTable('${data.iautoid}')" data-handler="refreshJBoltTable"
               class="btn btn-outline-secondary">生成</button>
     {@/if}
     {@if data.istatus == 1}
       <a class="text-info mr-1" data-openpage="dialog" href="admin/stockoutqcformm/checkout/${data.iautoid}" data-area="100%,100%"
-         tooltip title="在库检成绩表" data-title="检验">检验</a>
+         tooltip title="出货检成绩表" data-title="检验">检验</a>
     {@/if}
     {@if data.istatus == 2}
      <a tooltip tooltip title="查看出库检成绩表" href="admin/stockoutqcformm/onlysee/${data.iautoid}" data-scroll="yes"
         data-handler="refreshJBoltTable" data-area="100%,100%" class="jbolt_table_editbtn">查看</a>
-      <a tooltip title="编辑出库检成绩表" href="admin/stockoutqcformm/edit/${data.iautoid}" data-handler="refreshJBoltTable"
+      <a tooltip title="编辑出货检成绩表" href="admin/stockoutqcformm/edit/${data.iautoid}" data-handler="refreshJBoltTable"
          data-area="100%,100%" class="jbolt_table_editbtn">编辑</a>
     {@/if}
     {@if data.istatus == 3}
       <a class="text-info mr-1" data-openpage="dialog" href="admin/stockoutqcformm/onlysee/${data.iautoid}" data-area="100%,100%"
-         tooltip data-title="查看出库检成绩表">查看</a>
+         tooltip data-title="查看出货检成绩表">查看</a>
       <a href="javascript:return false;" data-handler="refreshJBoltTable" tooltip data-title="状态合格不需要编辑"
          disabled="disabled" disabled style="opacity:0.5">编辑</a>
     {@/if}
   </td>
-  <td>
-    {@if data.istatus==0}<span>未有检查表</span>{@/if}
-    {@if data.istatus==1}<span>待检</span>{@/if}
-    {@if data.istatus==2}<span>不合格</span>{@/if}
-    {@if data.istatus==3}<span>合格</span>{@/if}
+  <td>${data.statusname}
+<!--    {@if data.istatus==0}<span>未有检查表</span>{@/if}-->
+<!--    {@if data.istatus==1}<span>待检</span>{@/if}-->
+<!--    {@if data.istatus==2}<span>不合格</span>{@/if}-->
+<!--    {@if data.istatus==3}<span>合格</span>{@/if}-->
   </td>
   <td>
-     {@if data.iscompleted==0}<span>未完成</span>{@/if}
+    {@if data.iscompleted==0}<span>未完成</span>{@/if}
     {@if data.iscompleted==1}<span>已完成</span>{@/if}
   </td>
   <td title="${data.cstockoutqcformno}">${data.cstockoutqcformno}</td>
   <td title="${data.cqcformname}">${data.cqcformname}</td>
+  <td title="${data.corderno}">${data.corderno}</td>
+  <td title="${data.ccusname}">${data.ccusname}</td>
 	<td title="${data.cinvaddcode}">${data.cinvaddcode}</td>
   <td title="${data.cinvcode1}">${data.cinvcode1}</td>
   <td title="${data.cinvname1}">${data.cinvname1}</td>
   <td title="${data.cinvstd}">${data.cinvstd}</td>
-  <td title="${data.iinventoryuomid1}">${data.iinventoryuomid1}</td>
+  <td title="${data.cuomname}">${data.cuomname}</td>
 	<td title="${data.iqty}">${data.iqty}</td>
-	<td title="${data.cbatchno}">${data.cbatchno}</td>
   <td title="${data.cbatchno}">${data.cbatchno}</td>
-	<td title="${data.iqcuserid}">${data.iqcuserid}</td>
+	<td title="${data.ccreatename}">${data.ccreatename}</td>
   <td title="${data.dcreatetime}">${data.dcreatetime}</td>
-
 </tr>
 {@/each}
 </textarea>
@@ -147,20 +147,21 @@
       <tr>
         <th data-width="60" data-column="index">序号</th>
         <th data-width="150">操作</th>
-        <th data-width="150" data-column="istatus">检验状态</th><!--0. 未生成 1. 待检 2. 不合格 3. 合格-->
+        <th data-width="150" data-column="statusname">检验状态</th><!--istatus:0. 未生成 1. 待检 2. 不合格 3. 合格-->
         <th data-width="100" data-column="iscompleted">状态</th>
-        <th data-width="150" data-column="cStockoutQcFormNo">检验单号</th>
-        <th data-width="150" data-column="cQcFormName">检验表格名称</th>
-        <th data-width="100" data-column="cInvAddCode">存货编码</th>
-        <th data-width="100" data-column="cinvcode1">客户部番</th>
-        <th data-width="100" data-column="cinvname1">部品名称</th>
-        <th data-width="100" data-column="cInvStd">规格</th>
-        <th data-width="100" data-column="iInventoryUomId1">单位</th>
+        <th data-width="180" data-column="cStockoutQcFormNo">检验单号</th>
+        <th data-width="180" data-column="cQcFormName">检验表格名称</th>
+        <th data-width="180" data-column="cOrderNo">订单号</th>
+        <th data-width="180" data-column="ccusname">客户名称</th>
+        <th data-width="180" data-column="cInvAddCode">存货编码</th>
+        <th data-width="180" data-column="cinvcode1">客户部番</th>
+        <th data-width="180" data-column="cinvname1">部品名称</th>
+        <th data-width="180" data-column="cInvStd">规格</th>
+        <th data-width="150" data-column="cUomName">销售单位</th>
         <th data-width="100" data-column="iQty">数量</th>
-        <th data-width="100" data-column="cBatchNo">现品票</th>
-        <th data-width="150" data-column="cBatchNo">批次号</th>
-        <th data-width="100" data-column="iQcUserId">检验员</th>
-        <th data-min-width="160" data-column="dCreateTime">创建时间</th>
+        <th data-width="180" data-column="cBatchNo">批次号</th>
+        <th data-width="150" data-column="ccreatename">检验员</th>
+        <th data-min-width="150" data-column="dCreateTime">创建时间</th>
       </tr>
       </thead>
       <tbody></tbody>
@@ -181,10 +182,9 @@
   /*
   * 生成
   * */
-  function createTable(iautoid, cqcformname) {
+  function createTable(iautoid) {
     var para = {
-      iautoid: iautoid,
-      cqcformname: cqcformname
+      iautoid: iautoid
     }
     LayerMsgBox.loading("正在生成,请稍等...", 30000);
     Ajax.post('/admin/stockoutqcformm/createTable', para, function (res) {

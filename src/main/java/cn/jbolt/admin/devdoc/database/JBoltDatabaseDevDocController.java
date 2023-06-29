@@ -8,6 +8,7 @@ import cn.jbolt.core.db.datasource.JBoltDataSourceUtil;
 import cn.jbolt.core.db.datasource.JBoltDatasource;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.OnlySaasPlatform;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.plugin.activerecord.DbKit;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class JBoltDatabaseDevDocController extends JBoltBaseController {
     /**
      * 查询所有可用数据源配置信息
      */
+    @UnCheck
     public void datasources(){
         List<JBoltDatasource> mainDatasource = new ArrayList<>();
         JBoltDatasource mainDs = JBoltDataSourceUtil.me.getJBoltDatasource(DbKit.MAIN_CONFIG_NAME);

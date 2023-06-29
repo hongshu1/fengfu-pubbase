@@ -172,6 +172,8 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     public Ret saveForm(ManualOrderM manualOrderM, JBoltTable jBoltTable) {
         tx(() -> {
             if (manualOrderM.getIAutoId() == null) {
+                manualOrderM.setIsDeleted(false);
+                manualOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
                 Ret save = save(manualOrderM);
                 if (!save.isOk()) {
                     return false;
@@ -344,27 +346,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     }
 
     /**
-     * 审批
-     */
-    public Ret approve(Long iautoid) {
-        tx(() -> {
-            ManualOrderM manualOrderM = findById(iautoid);
-            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), manualOrderM.getIOrderStatus(), "订单非待审核状态");
-
-            formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (formAutoId) -> null, (formAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
-                return null;
-            });
-
-
-            // 修改客户计划汇总
-            cusOrderSumService.algorithmSum();
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
      * 打开
      */
     public Ret open(String iautoid) {
@@ -525,6 +506,8 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
      * 删除
      */
     public Ret delete(Long iautoid) {
+        ManualOrderM manualOrderM = findById(iautoid);
+        ValidationUtils.equals(manualOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
         return updateColumn(iautoid, "IsDeleted", true);
     }
 

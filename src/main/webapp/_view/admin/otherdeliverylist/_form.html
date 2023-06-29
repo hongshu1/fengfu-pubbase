@@ -1,7 +1,7 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="otherDeliveryListForm_#(pageId)" action="#(action)" method="post">
+
         <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
             <div class="col-md-l pt-2" role="group" aria-label="btn-group">
                 #if(readonly != 'readonly')
@@ -21,6 +21,7 @@
                 <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
             </div>
         </div>
+        <form onsubmit="return false;" id="otherDeliveryListForm_#(pageId)" action="#(action)" method="post">
             #if(otherOut.autoid??)
             <input type="hidden" id="otherOutautoid" name="otherOut.autoid" value="#(otherOut.autoid??)"/>
             #end

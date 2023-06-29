@@ -41,7 +41,7 @@ public class InvestmentPlanItemdService extends BaseService<InvestmentPlanItemd>
 	 */
 
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
-		return dbTemplate(u8SourceConfigName(),"investmentplanitemd.paginateAdminDatas",para).paginate(pageNumber,pageSize);
+		return dbTemplate("investmentplanitemd.paginateAdminDatas",para).paginate(pageNumber,pageSize);
 	}
 
 	/**

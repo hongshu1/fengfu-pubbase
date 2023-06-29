@@ -76,10 +76,11 @@ public class ProdFormParamAdminController extends BaseAdminController {
 		set("FormItemCodes", get("FormItemCodes"));
 		set("iqcformitemid", get("typeId"));
 		set("iQcItemIds", get("iQcItemIds"));
+		keepPara();
 		render("qcformparam.html");
 	}
 	/**
-	 * 表格项目数据源
+	 * 表格内容数据源
 	 */
 	public void qcformparamlist() {
 		renderJsonData(service.qcformparamlist(getPageNumber(), getPageSize(), Okv.create().set(getKv())));

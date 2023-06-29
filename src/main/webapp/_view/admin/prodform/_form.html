@@ -75,7 +75,7 @@
                                     <div class="col-md-auto">
                                         <form id="qcformtableparamForm" method="post" class="form-inline" onsubmit="return false;">
                                             <!-- 工具条 toolbar -->
-                                            <input type="text" hidden name="iqcformid" id="iqcformid" value="#(prodForm.iAutoId??)"/>
+                                            <input hidden type="text"  name="iqcformid" id="iqcformid" value="#(prodForm.iAutoId??)"/>
                                             <input type="text" hidden name="qcItemJsonStr" id="qcItemJsonStr" value=""/>
                                             <input type="text" hidden name="qcParamJsonStr" id="qcParamJsonStr" value=""/>
                                             <input type="text" hidden name="qcTableParamJsonStr" id="qcTableParamJsonStr" value=""/>
@@ -85,7 +85,7 @@
                             </div>
 
                             <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: 300px;">
-                                #ajaxPortal("/admin/prodForm/table3?iqcformid="+(spotCheckForm.iAutoId??''),"qcformtable_portal_" + pageId, true)
+                                #ajaxPortal("/admin/prodForm/table3?iqcformid="+(prodForm.iAutoId??''),"qcformtable_portal_" + pageId, true)
                             </div>
 
                         </div>
@@ -101,8 +101,8 @@
                 <div class="form-group row">
                     <label class="col-sm-1 col-form-label">是否启用</label>
                     <div class="col-10">
-                        <input hidden name="isEnabled" id="isEnabled_#(pageId)" value="#(spotCheckForm.isenabled??'1'=='1'?true:false)">
-                        <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(spotCheckForm.isenabled??'1'=='1'?true:false)"/>
+                        <input hidden name="isEnabled" id="isEnabled_#(pageId)" value="#(prodForm.isenabled??'1'=='1'?true:false)">
+                        <img style="margin-top: 5px" src="assets/img/off.png" id="enable" data-handler="updateIsEnabled"  data-switchbtn data-nomsg="true" data-value="#(prodForm.isenabled??'1'=='1'?true:false)"/>
                     </div>
                 </div>
             </div>
@@ -113,7 +113,7 @@
                 <div class="form-group row">
                     <label class="col-sm-1 col-form-label">备注</label>
                     <div class="col-10">
-                        <textarea  data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="cMemo">#(spotCheckForm.cMemo??)</textarea>
+                        <textarea  data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="cMemo">#(prodForm.cMemo??)</textarea>
                     </div>
                 </div>
             </div>
@@ -148,7 +148,6 @@
             }
 
             var tableData = getTableData();
-
             if (!tableData || tableData.length ==0){
                 LayerMsgBox.alert("表格录入方式数据不能为空",2);
                 return;
@@ -227,6 +226,7 @@
             if (isOk(FormItemCodes)) {
                 FormItemCodes = FormItemCodes.concat(",");
             }
+            console.log(JSON.stringify(FormItemCodes))
             return FormItemCodes;
         }
 
@@ -320,6 +320,9 @@
 
         function updateItemParamSeq(isRefresh){
             var datas = jboltTableGetAllDatas('#jbolt_table_prod_qcformparam_split');
+            console.log(datas)
+            console.log(JSON.stringify(datas))
+            console.log(6666)
             if (isNotEmpty(datas)){
                 setItemParamSeq('#jbolt_table_prod_qcformparam_split', datas, itemSort('#jbolt_table_QcFormItem_split'), isRefresh);
             }
@@ -401,7 +404,6 @@
         function setTableJsonStr() {
             var itemSortData = itemSort('#jbolt_table_QcFormItem_split');
             var itemParamTableData = jboltTableGetAllDatas('#jbolt_table_prod_qcformparam_split');
-
             if (isEmpty(itemSortData)){
                 itemSortData = [];
             }
@@ -430,6 +432,8 @@
         function getTableData() {
             var pageId = $("#jbolt_table_qcformtableparam_split_input").val();
             var tableParamTableData = $('#jbolt_table_qcformtableparam_split_'+pageId);
+            console.log(6666);
+            console.log(JSON.stringify(tableParamTableData)+6666);
             var rows = [];
             tableParamTableData.children("tbody").children("tr").each(function () {
                 var row = {};

@@ -119,7 +119,7 @@ SELECT
     a.iUsageUOM*d.iQty AS planIqty
 FROM
     Mo_MoRoutingInvc a   ### 工艺工序物料集
-        LEFT JOIN Bd_Inventory f ON a.iInventoryId= f.iAutoId
+    LEFT JOIN Bd_Inventory f ON a.iInventoryId= f.iAutoId
     LEFT JOIN Mo_MoRoutingConfig b ON a.iMoRoutingConfigId= b.iAutoId ###工单工艺配置
     LEFT JOIN Mo_MoRouting c ON b.iMoRoutingId= c.iAutoId   ###工艺路线
     LEFT JOIN Mo_MoDoc d ON c.iMoDocId= d.iAutoId
@@ -134,4 +134,52 @@ where 1=1
 
 
 
+#sql("getMaterialScanLogN")
+SELECT LOG.*, cInvCode, cInvCode1,cInvName1,cInvStd, uom.cUomName
+FROM Mo_MaterialScanLog LOG
+LEFT JOIN Bd_Inventory INV ON LOG.iInventoryId=INV.iAutoId
+LEFT JOIN Bd_Uom uom ON uom.iAutoId = INV.iInventoryUomId1
+WHERE isScanned=#para(isscanned) AND LOG.iMoDocId = #para(imodocid)
+#end
 
+#sql("getMaterialScanLogY")
+SELECT LOG.*, cInvCode, cInvCode1,cInvName1,cInvStd, uom.cUomName
+FROM Mo_MaterialScanLog LOG
+LEFT JOIN Bd_Inventory INV ON LOG.iInventoryId=INV.iAutoId
+LEFT JOIN Bd_Uom uom ON uom.iAutoId = INV.iInventoryUomId1
+WHERE isScanned=1 AND LOG.iMoDocId = #para(imodocid)
+#end
+
+#sql("getMaterialScanLogByBarcode")
+SELECT LOG.*, cInvCode, cInvCode1,cInvName1,cInvStd, uom.cUomName
+FROM Mo_MaterialScanLog LOG
+LEFT JOIN Bd_Inventory INV ON LOG.iInventoryId=INV.iAutoId
+LEFT JOIN Bd_Uom uom ON uom.iAutoId = INV.iInventoryUomId1
+WHERE LOG.cBarcode = #para(cBarcode)
+and LOG.isScanned=0
+#end
+
+
+
+#sql("getBarcodeAll")
+SELECT LOG.*, cInvCode, cInvCode1,cInvName1,cInvStd, uom.cUomName
+FROM Mo_MaterialScanLog LOG
+LEFT JOIN Bd_Inventory INV ON LOG.iInventoryId=INV.iAutoId
+LEFT JOIN Bd_Uom uom ON uom.iAutoId = INV.iInventoryUomId1
+WHERE  LOG.iMoDocId = #para(imodocid)
+#end
+
+
+#sql("getAllById")
+select * from Mo_MaterialScanLog where imodocid =#para(imodocid) and isScanned=1
+#end
+
+#sql("getByBarcodeF")
+SELECT COUNT(*)iplanqty
+FROM Mo_MaterialScanLog LOG where iMoDocId=#para(imodocid)
+#end
+
+#sql("getByBarcodeN")
+SELECT COUNT(*)irealqty
+FROM Mo_MaterialScanLog LOG where iMoDocId=#para(imodocid) and isScanned=1
+#end

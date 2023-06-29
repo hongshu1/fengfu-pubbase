@@ -151,7 +151,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
      */
     public Ret delete(Long id) {
         updateColumn(id, "isdeleted", true);
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -165,7 +165,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     public List<SysPuinstoredetail> findDetailByMasID(String masid) {

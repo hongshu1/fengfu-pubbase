@@ -1,0 +1,39 @@
+<form onsubmit="return false;" id="MoWorkShiftD_Form" action="#(action)" method="post">
+	#if(moWorkShiftD.iAutoId??)
+	<input type="hidden" name="moWorkShiftD.iAutoId" value="#(moWorkShiftD.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="moWorkShiftD.iAutoId" value="#(moWorkShiftD.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">班次人员信息主表ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入班次人员信息主表ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入班次人员信息主表ID" maxlength="40" name="moWorkShiftD.iMoWorkShiftMid" value="#(moWorkShiftD.iMoWorkShiftMid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">人员类型：1. 班长 2. 其余人员1 3. 其余人员2</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入人员类型：1. 班长 2. 其余人员1 3. 其余人员2"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入人员类型：1. 班长 2. 其余人员1 3. 其余人员2" maxlength="40" name="moWorkShiftD.iType" value="#(moWorkShiftD.iType??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">人员ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入人员ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入人员ID" maxlength="40" name="moWorkShiftD.iPersonId" value="#(moWorkShiftD.iPersonId??)"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="MoWorkShiftD_Form")
+#end
+

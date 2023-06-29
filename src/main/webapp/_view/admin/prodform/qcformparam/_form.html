@@ -2,7 +2,7 @@
 
 <script type="text/template" id="QcFormParamSplit_tpl_#(pageId)">
     {@each datas as data,index}
-    <tr data-id="${data.autoid}">
+    <tr data-id="${data.iautoid}">
         <td>${+index+1}</td>
         <td>${data.iqcformitemid}</td>
         <td>${data.iqcparamid}</td>
@@ -25,8 +25,8 @@
                 <!-- 工具条 toolbar -->
 
                 <table class="jbolt_table jbolt_main_table  table-center"
-                       ###id="jbolt_table_qcformparam_split_#(pageId)"
-                       id="jbolt_table_qcformparam_split"
+                       ###id="jbolt_table_prod_qcformparam_split_#(pageId)"
+                       id="jbolt_table_prod_qcformparam_split"
                        data-jbolttable
                        data-width="auto"
                        data-height="200"
@@ -63,7 +63,7 @@
 </div>
 <script>
     function addparam(ele) {
-        const dataList = jboltTableGetAllDatas('#jbolt_table_qcformparam_split', ['iqcparamid']);
+        const dataList = jboltTableGetAllDatas('#jbolt_table_prod_qcformparam_split', ['iqcparamid']);
         let FormItemCodes = '';
         if(isOk(dataList)){
             dataList.forEach((value,index)=>{
@@ -73,6 +73,8 @@
         if(isOk(FormItemCodes)){
             FormItemCodes = FormItemCodes.concat(",");
         }
+
+        console.log(JSON.stringify(FormItemCodes))
         const url = "/admin/prodForm/qcformparam/qcformparamDatas?type=2&FormItemCodes=" + FormItemCodes;
         $(ele).data("url", url);
         DialogUtil.openBy(ele);
@@ -122,7 +124,7 @@
     }
 
     function insertRow(data) {
-        jboltTableInsertRow('#jbolt_table_qcformparam_split', data, false);
+        jboltTableInsertRow('#jbolt_table_prod_qcformparam_split', data, false);
     }
 
     // function addBomcompareTr(ele) {

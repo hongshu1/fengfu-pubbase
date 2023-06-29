@@ -5,43 +5,30 @@
         <form onsubmit="return false;" id="moMoinvbatchForm" action="#(action)" method="post">
             <input type="hidden" name="moMoinvbatch.iautoid" value="#(moMoinvbatch.iautoid??)" />
             <div class="form-group row">
-
                 <button onclick="submitForm(this)" class="btn btn-warning btn-sm"><i class="fa fa-check"></i>提交修改</button>
                 <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>关闭</button>
             </div>
-
-
-
-
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label"></label>
+                <label class="col-sm-2 col-form-label">数量:</label>
                 <div class="col">
-                    <input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入数量"  maxlength="24" name="moMoinvbatch.iqty" value="#(moMoinvbatch.iqty??)"/>
+                    <input type="text" data-with-clearbtn="true" data-rule="pint;>0;<=#(moMoinvbatch.iqty)" autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;" placeholder="请输入数量"  maxlength="24" name="moMoinvbatch.iqty" value="#(moMoinvbatch.iqty??)"/>
                 </div>
             </div>
-
-
-
         </form>
     </div>
 </div>
 </div>
 #end
 #define js()
-
 <script>
-    hideParentLayerDialogBtn(0);
     function closeHandler() {
-
-
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
     }
-    function submitForm(){
-        LayerMsgBox.confirm("确认提交此数据?",function(){
-            // submitThisForms();
-            submitThisForms("admin/momoinvbatch/updateStatus");
 
+    function submitForm(){
+        LayerMsgBox.confirm("确认提交此数据?", function () {
+            submitThisForms("admin/momoinvbatch/updateNumber");
         });
     }
     function  submitThisForms(url,ele){
@@ -50,28 +37,17 @@
             url: url,
             type: "post",
             dataType: "json",
-            //contentType: "application/json; charset=utf-8",
-            data:$('#moMoinvbatchForm').serialize(),//传送的数据
-            success: function (res) {//执行成功
+            data:$('#moMoinvbatchForm').serialize(),
+            success: function (res) {
                 if(res.state=="ok"){
-                    //parent.layer.close(parent.layer.getFrameIndex(window.name))
                     LayerMsgBox.success("保存成功",300,function(){
                         parent.layer.close(parent.layer.getFrameIndex(window.name));
                         window.parent.refreshJBoltTable();
 
                     })
-
                 }else{
                     LayerMsgBox.alert(res.msg,2);
-
                 }
-            },
-            error: function () {//执行失败
-                LayerMsgBox.alert("网络通讯异常",2);
-
-            },
-            complete: function (res) { //不管成功还是失败后
-
             }
         });
     }

@@ -1,12 +1,8 @@
-
 <div class="jbolt_page" data-key="#(pmkey)" >
-
     <div class="jbolt_page_title">
         <div class="row">
-
             <div class="col">
                 <form class="form-inline" id="moMoinvbatchForm1_#(pageId)"   onsubmit="return false;" method="post">
-
                 </form>
             </div>
             <div class="col-md-auto">
@@ -19,42 +15,33 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
-
 <td>${data.cbarcode}</td>
  <td>${data.cversion}</td>
 <td>${data.iqty}</td>
-<td>${data.iprintstatusname}</td>
-
-
+<td>${data.istatus}</td>
 <td>
-    {@if data.istatus==0}
-      <a href="admin/momoinvbatch/updateWork/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="确定报工" data-handler="refreshJBoltTable" data-confirm="确定报工？" class="jbolt_table_delbtn"><i class="fa fa-pencil"></i>报工</a>
-   {@/if}
-             {@if data.istatus==1}
-	<a href=""><i class=""></i>已报工</a>
-     {@/if}
+    <a href="admin/momoinvbatch/updateWork/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="补打" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-pencil"></i>补打</a>
+    #if(index == 1)
+    <a href="admin/momoinvbatch/withdraw?iautoid=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="撤回" data-handler="refreshJBoltTable" data-confirm="确定撤回？" class="jbolt_table_delbtn"><i class="fa fa-pencil"></i>撤回</a>
+    #end
 </td>
 </tr>
 {@/each}
 </textarea>
-
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="moMoinvbatch_toolbar1_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/momoinvbatch/workByIds?ids=" data-confirm="批量报工？" class="btn btn-primary btn-sm" ><i class="fa fa-print"></i>批量报工</button>
 
             </div>
-
             <div class="clearfix"></div>
         </div>
-
-
 
         <table class="jbolt_table jbolt_main_table table-center hover_info"
                data-jbolttable
                data-height="fill"
                data-ajax="true"
-               data-url="admin/momoinvbatch/datas"
+               data-url="admin/momoinvbatch/datas?iprintstatus=2"
                data-column-resize="true"
                data-row-click-active="true"
                data-column-prepend="1:checkbox:true"
@@ -62,10 +49,6 @@
                data-rowtpl="moMoinvbatchRowtpl1_#(pageId)"
                data-page="moMoinvbatchPage1_#(pageId)"
                data-toolbar="moMoinvbatch_toolbar1_#(pageId)"
-
-
-
-
                data-fixed-columns-left="1,2,3"
                data-fixed-columns-right="-1"
                data-row-dblclick-active="true"
@@ -74,12 +57,10 @@
             <thead>
             <tr>
                 <th data-width="10">序号</th>
-
-
                 <th data-width="150" data-column="cBarcode">现品票</th>
                 <th data-width="150" data-column="cversion">版本号</th>
                 <th data-width="50" data-column="iQty">数量</th>
-                <th data-width="50" data-column="iPrintStatus">打印状态</th>
+                <th data-width="50" data-column="iPrintStatus">状态</th>
                 <th data-width="150" >操作</th>
             </tr>
             </thead>

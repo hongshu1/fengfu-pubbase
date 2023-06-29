@@ -2,16 +2,17 @@ package cn.rjtech.admin.stockoutqcformm;
 
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.extend.config.ExtendUploadFolder;
+import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
-import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.StockoutQcFormD;
 import cn.rjtech.model.momdata.StockoutQcFormM;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -20,8 +21,10 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.List;
+
 /**
  * 质量管理-出库检
+ *
  * @ClassName: StockoutQcFormMAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-12 19:18
@@ -32,157 +35,153 @@ import java.util.List;
 @Path(value = "/admin/stockoutqcformm", viewPath = "/_view/admin/stockoutqcformm")
 public class StockoutQcFormMAdminController extends BaseAdminController {
 
-	@Inject
-	private StockoutQcFormMService     service;
-	@Inject
-	private StockoutqcformdLineService stockoutqcformdLineService;
-	@Inject
-	private StockoutQcFormDService     stockoutQcFormDService;
+    @Inject
+    private StockoutQcFormMService service;
+    @Inject
+    private RcvDocQcFormMService   rcvDocQcFormMService;  //质量管理-来料检验表
+    @Inject
+    private StockoutQcFormDService stockoutQcFormDService;
 
-   /**
-	* 首页
-	*/
-	public void index() {
-		render("index.html");
-	}
+    /**
+     * 首页
+     */
+    public void index() {
+        render("index.html");
+    }
 
-	/**
-	 * 新增
-	 */
-	public void add() {
-		render("add.html");
-	}
+    /**
+     * 新增
+     */
+    public void add() {
+        render("add.html");
+    }
 
-	/**
-	 * 保存
-	 */
-	public void save() {
-		renderJson(service.save(getModel(StockoutQcFormM.class, "stockoutQcFormM")));
-	}
+    /**
+     * 保存
+     */
+    public void save() {
+        renderJson(service.save(getModel(StockoutQcFormM.class, "stockoutQcFormM")));
+    }
 
-	/**
-	 * 更新
-	 */
-	public void update() {
-		renderJson(service.update(getModel(StockoutQcFormM.class, "stockoutQcFormM")));
-	}
+    /**
+     * 更新
+     */
+    public void update() {
+        renderJson(service.update(getModel(StockoutQcFormM.class, "stockoutQcFormM")));
+    }
 
-	/**
-	 * 批量删除
-	 */
-	public void deleteByIds() {
-		renderJson(service.deleteByIds(get("ids")));
-	}
+    /**
+     * 批量删除
+     */
+    public void deleteByIds() {
+        renderJson(service.deleteByIds(get("ids")));
+    }
 
-	/**
-	 * 删除
-	 */
-	public void delete() {
-		renderJson(service.deleteById(getLong(0)));
-	}
+    /**
+     * 删除
+     */
+    public void delete() {
+        renderJson(service.deleteById(getLong(0)));
+    }
 
-   /**
-	* 数据源
-	*/
-	public void datas() {
-		renderJsonData(service.pageList(getKv()));
-	}
+    /**
+     * 数据源
+     */
+    public void datas() {
+        renderJsonData(service.pageList(getKv()));
+    }
 
-	/*
-	 * 生成
-	 */
-	public void createTable(@Para(value = "iautoid") Long iautoid,
-							@Para(value = "cqcformname") String cqcformname) {
-		renderJson(service.createTable(iautoid,cqcformname));
-	}
+    /*
+     * 生成
+     */
+    public void createTable(@Para(value = "iautoid") Long iautoid) {
+        renderJson(service.createTable(iautoid));
+    }
 
-	/**
-	 * 跳转到检验页面
-	 */
-	public void checkout() {
-		StockoutQcFormM stockoutQcFormM = service.findById(getLong(0));
-		Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
-		set("stockoutqcformm", stockoutQcFormM);
-		set("record", record);
-		render("checkout.html");
-	}
+    /**
+     * 跳转到检验页面
+     */
+    public void checkout() {
+        Record record = service.getCheckoutListByIautoId(getLong(0));
+        if (record == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        //判断是否要先生成从表数据
+        service.checkAutoCreateStockoutQcFormD(record.getLong("iautoid"));
+        // 表头项目
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        set("columns", tableHeadData);
+        set("record", record);
+        render("checkout.html");
+    }
 
-	/*
-	 * 点击检验时，进入弹窗自动加载table的数据
-	 */
-	public void getCheckOutTableDatas() {
-		renderJsonData(service.getCheckOutTableDatas(getKv()));
-	}
+    /**
+     * 打开onlysee页面
+     */
+    public void onlysee() {
+        Record record = service.getCheckoutListByIautoId(getLong(0));
+        if (record == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        List<StockoutQcFormD> stockoutqcformlist = stockoutQcFormDService.findByIStockoutQcFormMid(getLong(0));
+        // 表头项目
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        set("columns", tableHeadData);
+        set("stockoutqcformlist", stockoutqcformlist);
+        set("record", record);
+        render("onlysee.html");
+    }
 
-	/*
-	 * 在检验页面点击确定
-	 */
-	public void saveCheckOutTable(JBoltPara JboltPara) {
-		renderJson(service.saveCheckOutTable(JboltPara));
-	}
+    /**
+     * 编辑
+     */
+    public void edit() {
+        Record record = service.getCheckoutListByIautoId(getLong(0));
+        if (record == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        List<StockoutQcFormD> stockoutqcformlist = stockoutQcFormDService.findByIStockoutQcFormMid(getLong(0));
+        // 表头项目
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        set("stockoutqcformlist", stockoutqcformlist);
+        set("record", record);
+        render("editstockoutqcformmTable.html");
+    }
 
-	/**
-	 * 打开onlysee页面
-	 */
-	public void onlysee() {
-		StockoutQcFormM stockoutQcFormM = service.findById(getLong(0));
-		Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
-		List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(stockoutQcFormM.getIAutoId());
-		set("stockoutqcformlist", stockoutqcformlist);
-		set("stockoutqcformm", stockoutQcFormM);
-		set("record", record);
-		render("onlysee.html");
-	}
+    /*详情页面的table数据*/
+    public void getTableDatas() {
+        renderJsonData(service.getTableDatas(getKv()));
+    }
 
-	/**
-	 * 点击查看时，进入弹窗自动加载table的数据
-	 */
-	public void getonlyseeDatas() {
-		renderJsonData(service.getonlyseelistByiautoid(getKv()));
-	}
+    /*
+     * 在检验页面点击确定
+     */
+    public void saveCheckOutTable(JBoltPara JboltPara) {
+        renderJson(service.saveCheckOutTable(JboltPara));
+    }
 
-   /**
-	* 编辑
-	*/
-	public void edit() {
-		StockoutQcFormM stockoutQcFormM=service.findById(getLong(0));
-		Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
-		List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(stockoutQcFormM.getIAutoId());
-		set("stockoutqcformlist", stockoutqcformlist);
-		set("stockoutqcformm", stockoutQcFormM);
-		set("record", record);
-		render("editstockoutqcformmTable.html");
-	}
+    /*
+     * 在编辑页面点击确定
+     */
+    public void saveEditTable(JBoltPara JboltPara) {
+        renderJson(service.saveEditTable(JboltPara));
+    }
 
-	/*
-	 * 在编辑页面点击确定
-	 */
-	public void saveEditTable(JBoltPara JboltPara) {
-		renderJson(service.saveEditTable(JboltPara));
-	}
+    /**
+     * 切换isCpkSigned
+     */
+    public void toggleIsCpkSigned() {
+        renderJson(service.toggleBoolean(getLong(0), "isCpkSigned"));
+    }
 
-
-	/**
-	 * 导入图片
-	 */
-	public void uploadImage() {
-		String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
-		renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
-	}
-
-	/**
-	 * 切换isCpkSigned
-	 */
-	public void toggleIsCpkSigned() {
-		renderJson(service.toggleBoolean(getLong(0), "isCpkSigned"));
-	}
-
-
-	/*
-	 * 导出详情页
-	 * */
-	public void exportExcel() throws Exception {
-		Kv kv = service.getExportData(getLong(0));//instaockqcformm
-		renderJxls("stockoutqcformm.xlsx", kv, "出库检_" + DateUtil.today() + "_成绩表.xlsx");
-	}
+    /*
+     * 导出详情页
+     * */
+    public void exportExcel() throws Exception{
+        Kv kv = service.getExportData(getLong(0));//instaockqcformm
+        renderJxls("stockoutqcformm.xlsx", kv, "出货检_" + DateUtil.today() + "_成绩表.xlsx");
+    }
 }

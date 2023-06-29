@@ -18,8 +18,6 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
-import java.util.Optional;
-
 /**
  * 年度计划订单
  *
@@ -110,22 +108,6 @@ public class AnnualOrderMAdminController extends BaseAdminController {
      */
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
-    }
-
-    /**
-     * 批量反审
-     */
-    public void batchReverseApprove()
-    {
-        renderJson(service.batchReverseApprove(get("ids")));
-    }
-
-    /**
-     * 批量不通过
-     */
-    public void batchReject()
-    {
-
     }
 
     /**

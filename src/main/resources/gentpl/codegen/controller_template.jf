@@ -49,6 +49,9 @@ import cn.jbolt.core.base.JBoltMsg;
 import #(codeGen.modelPackage+"."+codeGen.modelName);
 #end
 #end
+#if(needUnCheck??)
+import cn.jbolt.core.permission.UnCheck;
+#end
 /**
  * #(codeGen.indexHtmlPageTitle?? (codeGen.mainTableRemark?? (codeGen.controllerName??)))
  * @ClassName: #(codeGen.controllerName??)

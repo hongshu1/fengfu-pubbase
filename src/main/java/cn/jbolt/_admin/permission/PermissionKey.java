@@ -1490,6 +1490,14 @@ public class PermissionKey {
 	 */
 	public static final String MOMOPATCHWELDM = "momopatchweldm";
 	/**
+	 * 生产表单管理
+	 */
+	public static final String PRODFORMM = "prodformm";
+	/**
+	 * 稼动时间管理
+	 */
+	public static final String UPTIMEM = "uptimem";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
@@ -2561,5 +2569,65 @@ public class PermissionKey {
 	 * 反审核
 	 */
 	public static final String SYSASSEM_REVERSE_APPROVE = "sysAssem_reverse_approve";
-	public static final String UPTIME_CATEGORY = "uptime_category";
+	/**
+	 * 提审
+	 */
+	public static final String UPTIMEM_SUBMIT = "uptimem_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String UPTIMEM_APPROVE = "uptimem_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String UPTIMEM_REJECT = "uptimem_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String UPTIMEM_REVERSE_APPROVE = "uptimem_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String UPTIMEM_BATCH_APPROVE = "uptimem_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String UPTIMEM_BATCH_REJECT = "uptimem_batch_reject";
+	/**
+	 * 撤回审核
+	 */
+	public static final String UPTIMEM_WITHDRAW = "uptimem_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String PRODFORMM_SUBMIT = "prodformm_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String PRODFORMM_APPROVE = "prodformm_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String PRODFORMM_REJECT = "prodformm_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String PRODFORMM_REVERSE_APPROVE = "prodformm_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String PRODFORMM_BATCH_APPROVE = "prodformm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String PRODFORMM_BATCH_REJECT = "prodformm_batch_reject";
+	/**
+	 * 撤回审核
+	 */
+	public static final String PRODFORMM_WITHDRAW = "prodformm_withdraw";
+	/**
+	 * 始业点检表管理
+	 */
+	public static final String SPOTCHECKFORMM = "spotcheckformm";
+
 }

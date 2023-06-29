@@ -1,0 +1,61 @@
+`#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_content">
+        <form class="form-inline" id="UptimeCategory_form_#(pageId)">
+            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                   placeholder="=分类名称=" maxlength="40" name="cuptimecategoryname"/>
+            <div class="btn-group text-center mx-1">
+                <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
+                <button type="button" onclick="form.reset();refreshJBoltTable(this);"
+                        class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
+                </button>
+            </div>
+        </form>
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="UptimeCategory_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iAutoId}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cuptimecategorycode}</td>
+<td>${data.cuptimecategoryname}</td>
+</tr>
+{@/each}
+</textarea>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               id="selectDatas_#(pageId)"
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="UptimeCategory_form_#(pageId)"
+               data-url="admin/uptimeCategory/datas?notiuptimecategoryids=#(notiuptimecategoryids)"
+               data-rowtpl="UptimeCategory_tpl_#(pageId)"
+               data-column-prepend="1:checkbox:true"
+               data-copy-to-excel="false"
+               data-page="UptimeCategory_page"
+               data-toolbar="UptimeCategory_toolbar_#(pageId)"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="150" data-column="cUptimeCategoryCode">类别编码</th>
+                <th data-width="150" data-column="cUptimeCategoryName">类别名称</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+    function submitThisForm() {
+        parent.instDatas(jboltTableGetCheckedDatas("selectDatas_#(pageId)"));
+        parent.layer.closeAll();
+    }
+</script>
+#end
+`

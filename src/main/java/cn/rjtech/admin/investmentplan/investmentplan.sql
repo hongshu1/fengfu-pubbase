@@ -278,14 +278,16 @@ EXEC	[dbo].[P_InvestmentPlanBudgetActualDifference]
 		@cDepCode = #para(cdepcode),
 		@investmentdiffbudgettype1 = #para(investmentdiffbudgettype1),
 		@investmentdiffbudgettype2 = #para(investmentdiffbudgettype2),
-		@u8DbName = #para(u8dbname)
+		@u8DbName = #para(u8dbname),
+		@accesscdepcodes = #para(accesscdepcodes)
 #end
 
 #sql("findInvestmentPlanGroupSummaryDatas")
 EXEC	[dbo].[P_InvestmentPlanGroupSummary]
 		@cGroupKey = #para(cgroupkey),
 		@iBudgetYear = #(ibudgetyear),
-		@u8DbName = #para(u8dbname)
+		@u8DbName = #para(u8dbname),
+		@accesscdepcodes = #para(accesscdepcodes)
 #end
 
 
@@ -405,6 +407,9 @@ WHERE 1=1 and ip.iEffectiveStatus != 3
 #if(cdepcode)
 	and T.cdepcode like concat('#(cdepcode)','%')
 #end
+#if(accesscdepcodes)
+	and T.cdepcode in (#(accesscdepcodes))
+#end
 #if(iinvestmenttype)
 	and T.iinvestmenttype = #para(iinvestmenttype)
 #end
@@ -492,6 +497,9 @@ from PL_Expense_Budget_Item ebi
 #if(cdepcode)
 	and cdepcode like concat('#(cdepcode)','%')
 #end
+#if(accesscdepcodes)
+	and cdepcode in (#(accesscdepcodes))
+#end
 #if(ccode)
 	and ccode like concat('%',#para(ccode),'%')
 #end
@@ -560,6 +568,9 @@ from pl_investment_plan_item ipi
 #end
 #if(cdepcode)
 	and cdepcode like concat('#(cdepcode)','%')
+#end
+#if(accesscdepcodes)
+	and cdepcode in (#(accesscdepcodes))
 #end
 #if(ccode)
 	and ccode like concat('%',#para(ccode),'%')

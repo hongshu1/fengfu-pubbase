@@ -23,6 +23,9 @@ public class PurchaseAppReq extends BaseReq {
     @XmlElement(name = "body")
     private PurchaseAppBody body = new PurchaseAppBody();
 
+    public PurchaseAppReq() {
+    }
+
     public PurchaseAppReq(String orgCode) {
         super(orgCode);
     }

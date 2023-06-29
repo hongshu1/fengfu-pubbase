@@ -42,8 +42,8 @@
             <input type="text" autocomplete="off" placeholder="多个字段用分号（;）分隔" class="form-control"  name="coptions" value="${data.coptions}">
         </td>
         <td>
-            <a tooltip data-title="上移" href="javascript:void(0)" onclick="jboltTableTrMoveUp(this, true);" class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
-            <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true);" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+            <a tooltip data-title="上移" href="javascript:void(0)" onclick="jboltTableTrMoveUp(this, true);" class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></ a>
+            <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true);" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></ a>
             <a tooltip data-title="删除" href="javascript:void(0)" onclick="removeJboltTableRow(this);" class="jbolt_table_btn"><i class="fa fa-remove  c-danger"></i></a>
         </td>
     </tr>
@@ -81,11 +81,11 @@
             </th>
         #end
         <th hidden data-column="iseq">次序</th>
-        <th data-width="120" data-column="iType">参数录入方式</th>
-        <th data-width="120" data-column="iStdVal">标准值</th>
-        <th data-width="120" data-column="iMaxVal">最大设定值</th>
-        <th data-width="120" data-column="iMinVal">最小设定值</th>
-        <th data-width="360" data-column="cOptions">列表可选值</th>
+        <th data-width="120" data-column="itype">参数录入方式</th>
+        <th data-width="120" data-column="istdval">标准值</th>
+        <th data-width="120" data-column="imaxval">最大设定值</th>
+        <th data-width="120" data-column="iminval">最小设定值</th>
+        <th data-width="360" data-column="coptions">列表可选值</th>
         <th data-width="200">操作</th>
     </tr>
     </thead>

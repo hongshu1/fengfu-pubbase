@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSysScandeliver<M extends BaseSysScandeliver<M>> extends JBoltBaseModel<M>{
-    public static final String DATASOURCE_CONFIG_NAME = "momdata";
+    
     /**AutoID*/
     public static final String AUTOID = "AutoID";
     /**来源类型;DP 销售计划*/
@@ -52,21 +52,27 @@ public abstract class BaseSysScandeliver<M extends BaseSysScandeliver<M>> extend
     /**是否删除：0. 否 1. 是*/
     public static final String ISDELETED = "isDeleted";
     /**创建人id*/
-    public static final String ICREATEBY = "icreateby";
+    public static final String ICREATEBY = "iCreateBy";
     /**创建人名称*/
-    public static final String CCREATENAME = "ccreatename";
+    public static final String CCREATENAME = "cCreateName";
     /**创建时间*/
-    public static final String DCREATETIME = "dcreatetime";
+    public static final String DCREATETIME = "dCreateTime";
     /**修改人id*/
-    public static final String IUPDATEBY = "iupdateby";
+    public static final String IUPDATEBY = "iUpdateBy";
     /**修改人名称*/
-    public static final String CUPDATENAME = "cupdatename";
+    public static final String CUPDATENAME = "cUpdateName";
     /**修改时间*/
-    public static final String DUPDATETIME = "dupdatetime";
+    public static final String DUPDATETIME = "dUpdateTime";
     /**审核人id*/
     public static final String IAUDITBY = "iAuditby";
     /**审核名称*/
     public static final String CAUDITNAME = "cAuditname";
+    /**客户位置*/
+    public static final String CUSPOSITION = "CusPosition";
+    /**仓库编码*/
+    public static final String WHCODE = "WhCode";
+    /**仓库名称*/
+    public static final String WHNAME = "WhName";
 	/**
 	 * AutoID
 	 */
@@ -410,103 +416,103 @@ public abstract class BaseSysScandeliver<M extends BaseSysScandeliver<M>> extend
 	/**
 	 * 创建人id
 	 */
-	public M setIcreateby(java.lang.Long icreateby) {
-		set("icreateby", icreateby);
+	public M setICreateBy(java.lang.Long iCreateBy) {
+		set("iCreateBy", iCreateBy);
 		return (M)this;
 	}
 
 	/**
 	 * 创建人id
 	 */
-	@JBoltField(name="icreateby" ,columnName="icreateby",type="Long", remark="创建人id", required=false, maxLength=19, fixed=0, order=21)
+	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人id", required=false, maxLength=19, fixed=0, order=21)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIcreateby() {
-		return getLong("icreateby");
+	public java.lang.Long getICreateBy() {
+		return getLong("iCreateBy");
 	}
 
 	/**
 	 * 创建人名称
 	 */
-	public M setCcreatename(java.lang.String ccreatename) {
-		set("ccreatename", ccreatename);
+	public M setCCreateName(java.lang.String cCreateName) {
+		set("cCreateName", cCreateName);
 		return (M)this;
 	}
 
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="ccreatename",type="String", remark="创建人名称", required=false, maxLength=30, fixed=0, order=22)
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=false, maxLength=30, fixed=0, order=22)
 	@JSONField(name = "ccreatename")
-	public java.lang.String getCcreatename() {
-		return getStr("ccreatename");
+	public java.lang.String getCCreateName() {
+		return getStr("cCreateName");
 	}
 
 	/**
 	 * 创建时间
 	 */
-	public M setDcreatetime(java.util.Date dcreatetime) {
-		set("dcreatetime", dcreatetime);
+	public M setDCreateTime(java.util.Date dCreateTime) {
+		set("dCreateTime", dCreateTime);
 		return (M)this;
 	}
 
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dcreatetime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=23)
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=23)
 	@JSONField(name = "dcreatetime")
-	public java.util.Date getDcreatetime() {
-		return getDate("dcreatetime");
+	public java.util.Date getDCreateTime() {
+		return getDate("dCreateTime");
 	}
 
 	/**
 	 * 修改人id
 	 */
-	public M setIupdateby(java.lang.Long iupdateby) {
-		set("iupdateby", iupdateby);
+	public M setIUpdateBy(java.lang.Long iUpdateBy) {
+		set("iUpdateBy", iUpdateBy);
 		return (M)this;
 	}
 
 	/**
 	 * 修改人id
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iupdateby",type="Long", remark="修改人id", required=false, maxLength=19, fixed=0, order=24)
+	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="修改人id", required=false, maxLength=19, fixed=0, order=24)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIupdateby() {
-		return getLong("iupdateby");
+	public java.lang.Long getIUpdateBy() {
+		return getLong("iUpdateBy");
 	}
 
 	/**
 	 * 修改人名称
 	 */
-	public M setCupdatename(java.lang.String cupdatename) {
-		set("cupdatename", cupdatename);
+	public M setCUpdateName(java.lang.String cUpdateName) {
+		set("cUpdateName", cUpdateName);
 		return (M)this;
 	}
 
 	/**
 	 * 修改人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cupdatename",type="String", remark="修改人名称", required=false, maxLength=30, fixed=0, order=25)
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="修改人名称", required=false, maxLength=30, fixed=0, order=25)
 	@JSONField(name = "cupdatename")
-	public java.lang.String getCupdatename() {
-		return getStr("cupdatename");
+	public java.lang.String getCUpdateName() {
+		return getStr("cUpdateName");
 	}
 
 	/**
 	 * 修改时间
 	 */
-	public M setDupdatetime(java.util.Date dupdatetime) {
-		set("dupdatetime", dupdatetime);
+	public M setDUpdateTime(java.util.Date dUpdateTime) {
+		set("dUpdateTime", dUpdateTime);
 		return (M)this;
 	}
 
 	/**
 	 * 修改时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dupdatetime",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=26)
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=26)
 	@JSONField(name = "dupdatetime")
-	public java.util.Date getDupdatetime() {
-		return getDate("dupdatetime");
+	public java.util.Date getDUpdateTime() {
+		return getDate("dUpdateTime");
 	}
 
 	/**
@@ -541,6 +547,57 @@ public abstract class BaseSysScandeliver<M extends BaseSysScandeliver<M>> extend
 	@JSONField(name = "cauditname")
 	public java.lang.String getCAuditname() {
 		return getStr("cAuditname");
+	}
+
+	/**
+	 * 客户位置
+	 */
+	public M setCusPosition(java.lang.String CusPosition) {
+		set("CusPosition", CusPosition);
+		return (M)this;
+	}
+
+	/**
+	 * 客户位置
+	 */
+	@JBoltField(name="cusposition" ,columnName="CusPosition",type="String", remark="客户位置", required=false, maxLength=255, fixed=0, order=29)
+	@JSONField(name = "cusposition")
+	public java.lang.String getCusPosition() {
+		return getStr("CusPosition");
+	}
+
+	/**
+	 * 仓库编码
+	 */
+	public M setWhCode(java.lang.String WhCode) {
+		set("WhCode", WhCode);
+		return (M)this;
+	}
+
+	/**
+	 * 仓库编码
+	 */
+	@JBoltField(name="whcode" ,columnName="WhCode",type="String", remark="仓库编码", required=false, maxLength=255, fixed=0, order=30)
+	@JSONField(name = "whcode")
+	public java.lang.String getWhCode() {
+		return getStr("WhCode");
+	}
+
+	/**
+	 * 仓库名称
+	 */
+	public M setWhName(java.lang.String WhName) {
+		set("WhName", WhName);
+		return (M)this;
+	}
+
+	/**
+	 * 仓库名称
+	 */
+	@JBoltField(name="whname" ,columnName="WhName",type="String", remark="仓库名称", required=false, maxLength=255, fixed=0, order=31)
+	@JSONField(name = "whname")
+	public java.lang.String getWhName() {
+		return getStr("WhName");
 	}
 
 }

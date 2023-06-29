@@ -2,6 +2,7 @@ package cn.rjtech.admin.bomd;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.BomD;
 import com.jfinal.aop.Before;
@@ -29,6 +30,7 @@ public class BomDAdminController extends BaseAdminController {
    /**
 	* 数据源
 	*/
+   @UnCheck
 	public void datas() {
 		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getInt("iPartType"), getBoolean("isVirtual"), getBoolean("bProxyForeign")));
 	}

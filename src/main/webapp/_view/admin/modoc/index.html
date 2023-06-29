@@ -47,10 +47,10 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
     {@if data.istatus != 0}
-        <a href="admin/modoc/details/${data.iautoid}" data-area="1600,800"  tooltip data-title="制造工单详情"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+        <a href="admin/modoc/details/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单详情"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn" data-btn="no">查看</a>
     {@/if}
     {@if data.istatus == 0 && data.itype == 2}
-        <a href="admin/modoc/updatas/${data.iautoid}" data-area="1600,800"  tooltip data-title="制造工单编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn">编辑</a>
+        <a href="admin/modoc/updatas/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn">编辑</a>
     {@/if}
     {@if data.istatus == 0 || data.istatus == 11}
         <a data-ajaxbtn href="/admin/person/deleteByAjax" data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
@@ -60,7 +60,7 @@
     {@/if}
     {@if data.istatus == 4  || data.istatus== 5 || data.istatus== 6 ||  data.istatus==7}
         <button data-openpage="dialog"  data-handler="jboltTablePageToFirst"
-             data-title="" data-url="admin/modoc/edit/${data.iautoid}" data-fs="true"  class="btn btn-outline-primary btn-sm">现品票
+             data-title="" data-url="admin/modoc/edit/${data.iautoid}"  data-area="100%,100%" data-fs="true"  class="btn btn-outline-primary btn-sm">现品票
         </button>
     {@/if}
 </td>

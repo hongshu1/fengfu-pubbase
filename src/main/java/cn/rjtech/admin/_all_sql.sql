@@ -674,8 +674,8 @@
 #end
 
 
-#namespace("momaterialsreturn")
-#include("momaterialsreturn/momaterialsreturn.sql")
+#namespace("momaterialsreturnm")
+#include("momaterialsreturnm/momaterialsreturnm.sql")
 #end
 
 #namespace("inventoryworkregion")
@@ -730,4 +730,28 @@
 
 #namespace("momopatchweldm")
 #include("momopatchweldm/momopatchweldm.sql")
+#end
+
+#namespace("prodformm")
+#include("prodformm/prodformm.sql")
+#end
+
+#namespace("uptimem")
+#include("uptimem/uptimem.sql")
+#end
+
+#namespace("specmaterialsrcvm")
+#include("specmaterialsrcvm/specmaterialsrcvm.sql")
+#end
+
+#namespace("uptimetplm")
+#include("uptimetplm/uptimetplm.sql")
+#end
+
+#namespace("uptimetpltable")
+#include("uptimetpltable/uptimetpltable.sql")
+#end
+
+#namespace("uptimetplcategory")
+#include("uptimetplcategory/uptimetplcategory.sql")
 #end

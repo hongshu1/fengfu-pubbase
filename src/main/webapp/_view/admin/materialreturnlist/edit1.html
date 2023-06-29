@@ -178,7 +178,7 @@
                                                 <th data-width="60" data-column="index">序号</th>
                                                 <th data-width="100">操作</th>
                                                 <th data-width="100" data-column="barcode">现品票</th>
-                                                <th data-width="100" data-column="cinvcode">存货编码</th>
+                                                <th data-width="100" data-column="invcode">存货编码</th>
                                                 <th data-width="100" data-column="cinvname">存货名称</th>
                                                 <th data-width="100" data-column="cinvcode1">客户部番</th>
                                                 <th data-width="100" data-column="cinvname1">部品名称</th>
@@ -187,6 +187,8 @@
                                                 <th data-width="100" data-column="puunitname">采购单位</th>
                                                 <th data-width="100" data-column="qty">现存数</th>
                                                 <th data-width="100" data-column="memo">备注</th>
+                                                <th hidden data-width="100" data-column="whcode">仓库</th>
+                                                <th hidden data-width="100" data-column="poscode">库位</th>
                                                 <th hidden data-width="100" data-column="puunitcode"></th>
                                                 <th hidden data-width="100" data-column="sourcebillno"></th>
                                                 <th hidden data-width="100" data-column="sourcebillid"></th>
@@ -194,6 +196,7 @@
                                                 <th hidden data-width="100" data-column="sourcebilldid"></th>
                                                 <th hidden data-width="100" data-column="sourcebillnorow"></th>
                                                 <th hidden data-width="100" data-column="rowno"></th>
+
                                             </tr>
                                             </thead>
                                             <tbody></tbody>
@@ -231,7 +234,7 @@
         <a href="admin/materialreturnlist/deleteList/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn">删除</a>
     </td>
     <td>${data.barcode}</td>
-    <td>${data.cinvcode}</td>
+    <td>${data.invcode}</td>
     <td>${data.cinvname}</td>
     <td>${data.cinvcode1}</td>
     <td>${data.cinvname1}</td>
@@ -240,7 +243,8 @@
     <td >${data.puunitname}</td> //采购单位名称
 <!--    <td>${data.inventorycuomname}</td>-->
     <td>${data.qty}</td>
-    <td>${data.memo}</td>
+    <td>${data.memo}</td><td hidden>${data.whcode}</td> //仓库
+    <td hidden>${data.poscode}</td> //库位
     <td hidden>${data.iqty}</td>
     <td hidden>${data.puunitcode}</td> //采购单位编码
     <td hidden>${data.sourcebillno}</td> //来源单号（订单号）
@@ -249,6 +253,7 @@
     <td hidden>${data.sourcebilldid}</td> //来源单据DID;采购或委外单身ID
     <td hidden>${data.sourcebillnorow}</td> //来源单号+行号
     <td hidden>${data.rowno}</td> //行号
+
   </tr>
     {@/each}
 </script>
@@ -377,10 +382,10 @@
                     width: 800,
                     sync: "",
                     valueAttr: "barcode",
-                    columnAttr: "barcode,cinvcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,puunitname,qty",
+                    columnAttr: "barcode,invcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,puunitname,qty",
                     header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
                     changeColumns: [{column: "barcode", use: "barcode"},
-                        {column: "cinvcode", use: "cinvcode"},
+                        {column: "invcode", use: "invcode"},
                         {column: "cinvname", use: "cinvname"},
                         {column: "cinvcode1", use: "cinvcode1"},
                         {column: "cinvname1", use: "cinvname1"},
@@ -394,6 +399,8 @@
                         {column: "sourcebilltype", use: "sourcebilltype"},
                         {column: "sourcebilldid", use: "sourcebilldid"},
                         {column: "sourcebillnorow", use: "sourcebillnorow"},
+                        {column: "whcode", use: "whcode"},
+                        {column: "poscode", use: "poscode"},
                         {column: "rowno", use: "rowno"},
                     ],
                     handler:function (table,td,text,value,jsonData) {
@@ -416,18 +423,18 @@
 
 
     },
-                cinvcode: {
+                invcode: {
                     type: "autocomplete",
                     url: "admin/materialreturnlist/barcodeDatas",
                     maxLength: 100,
                     required: false,
                     placeholder: "=请选择=",
-                    textAttr: "cinvcode",
+                    textAttr: "invcode",
                     width: 800,
-                    valueAttr: "cinvcode",
+                    valueAttr: "invcode",
                     columnAttr: "cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,inventorycuomname,qty",
                     header: '存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
-                    changeColumns: [{column: "cinvcode", use: "cinvaddcode"},
+                    changeColumns: [{column: "invcode", use: "cinvaddcode"},
                         {column: "cinvname", use: "cinvname"},
                         {column: "cinvcode1", use: "cinvcode1"},
                         {column: "cinvname1", use: "cinvname1"},
@@ -441,6 +448,8 @@
                     submitAttr:"qty",
                     required:true,
                     handler:function (table,td,text,value,jsonData) {
+                        debugger;
+                        // let iqty = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["iqty"]);
                         let iqty =  jsonData.iqty;
                         console.log(iqty);
                         let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
@@ -450,6 +459,7 @@
                             return false;
                         }
                         let cha = iqty- (qty);
+                        console.log("==="+cha)
                         if (cha > iqty*2){
                             showFormEleErrorStyle(td,"可退数量为"+iqty+",退货数量已超出！！！");
                             return false;

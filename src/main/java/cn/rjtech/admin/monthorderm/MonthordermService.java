@@ -109,6 +109,7 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
         List<MonthOrderM> list = getListByIds(ids);
         List<MonthOrderM> notAuditList = new ArrayList<>();
         for (MonthOrderM monthOrderM : list) {
+            ValidationUtils.equals(monthOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
             if (MonthOrderStatusEnum.SAVED.getValue() != monthOrderM.getIOrderStatus()) {
                 notAuditList.add(monthOrderM);
             }
@@ -126,6 +127,8 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
      * 删除
      */
     public Ret delete(Long id) {
+        MonthOrderM monthOrderM = findById(id);
+        ValidationUtils.equals(monthOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
         return updateColumn(id, "isdeleted", true);
     }
 

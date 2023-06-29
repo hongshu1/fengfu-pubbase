@@ -3,15 +3,18 @@ package cn.rjtech.api.stockoutqcformm;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.crossorigin.CrossOrigin;
 import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.instockqcformm.GetExportExcelVo;
+import cn.rjtech.entity.vo.instockqcformm.InStockAutoGetCheckOutTableDatasVo;
+import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMApiCheckOutVo;
 import cn.rjtech.entity.vo.stockoutqcformm.*;
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+
 import io.github.yedaxia.apidocs.ApiDoc;
 
 /**
@@ -78,12 +81,10 @@ public class StockOutQcFormMApiController extends BaseApiController {
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    public void createTable(@Para(value = "iautoid") Long iautoid,
-                            @Para(value = "cqcformname") String cqcformname) {
+    public void createTable(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        ValidationUtils.notNull(cqcformname, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService.createTable(iautoid, cqcformname));
+        renderJBoltApiRet(apiService.createTable(iautoid));
     }
 
     /**
@@ -91,7 +92,7 @@ public class StockOutQcFormMApiController extends BaseApiController {
      *
      * @param iautoid 主键
      */
-    @ApiDoc(result = StockoutQcFormMCheckoutVo.class)
+    @ApiDoc(result = RcvDocQcFormMApiCheckOutVo.class)
     @UnCheck
     public void jumpCheckout(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
@@ -99,22 +100,11 @@ public class StockOutQcFormMApiController extends BaseApiController {
     }
 
     /**
-     * 跳转到"检验"页面后，自动加载检验页面table的数据
-     */
-    @ApiDoc(result = AutoGetCheckOutTableDatasVo.class)
-    @UnCheck
-    public void autoGetCheckOutTableDatas(@Para(value = "istockoutqcformmid") Long istockoutqcformmid) {
-        ValidationUtils.notNull(istockoutqcformmid, JBoltMsg.PARAM_ERROR);
-
-        renderJBoltApiRet(apiService.autoGetCheckOutTableDatas(istockoutqcformmid));
-    }
-
-    /**
      * 点击查看按钮，跳转到“查看”页面（该页面只能查看，不能编辑）
      *
      * @param iautoid 主键
      */
-    @ApiDoc(result = StockoutQcFormMOnlyseeVo.class)
+    @ApiDoc(result = RcvDocQcFormMApiCheckOutVo.class)
     @UnCheck
     public void jumpOnlysee(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
@@ -122,17 +112,25 @@ public class StockOutQcFormMApiController extends BaseApiController {
         renderJBoltApiRet(apiService.jumpOnlysee(iautoid));
     }
 
-    /**
-     * 跳转到"查看"页面后，自动加载查看页面table的数据
-     *
-     * @param iautoid 主键
-     */
-    @ApiDoc(result = AutoGetOnlyseeTableDatasVo.class)
+    /*
+     * 点击编辑按钮，跳转到编辑页面
+     * */
+    @ApiDoc(result = RcvDocQcFormMApiCheckOutVo.class)
     @UnCheck
-    public void autoGetOnlyseeOrEditTableDatas(@Para(value = "iautoid") Long iautoid) {
+    public void jumpEdit(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.jumpEdit(iautoid));
+    }
 
-        renderJBoltApiRet(apiService.autoGetOnlyseeOrEditTableDatas(iautoid));
+    /*
+     * @desc 跳转到详情页面，获取table数据
+     * @param iinstockqcformmid：主表主键
+     * */
+    @ApiDoc(result = InStockAutoGetCheckOutTableDatasVo.class)
+    @UnCheck
+    public void getTableDatas(@Para(value = "istockoutqcformmid") Long istockoutqcformmid) {
+        ValidationUtils.notNull(istockoutqcformmid, JBoltMsg.PARAM_ERROR);
+        renderJBoltApiRet(apiService.getTableDatas(istockoutqcformmid));
     }
 
     /**
@@ -147,24 +145,16 @@ public class StockOutQcFormMApiController extends BaseApiController {
                              @Para(value = "isok") String isok,
                              @Para(value = "cmeasurereason") String cmeasurereason,
                              @Para(value = "serializeSubmitList") String serializeSubmitList,
-                             @Para(value = "cmemo") String cmemo) {
+                             @Para(value = "cmemo") String cmemo,
+                             @Para(value = "cbatchno") String cbatchno) {
         ValidationUtils.notNull(cmeasurepurpose, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(stockqcformmiautoid, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(serializeSubmitList, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, stockqcformmiautoid, cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
-    }
-
-    /*
-     * 点击编辑按钮，跳转到编辑页面
-     * */
-    @ApiDoc(result = StockoutQcFormMOnlyseeVo.class)
-    @UnCheck
-    public void jumpEdit(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-        renderJBoltApiRet(apiService.jumpEdit(iautoid));
+        renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, stockqcformmiautoid, cmeasureunit,
+            isok, cmeasurereason, serializeSubmitList, cmemo, cbatchno));
     }
 
     /**
@@ -188,24 +178,16 @@ public class StockOutQcFormMApiController extends BaseApiController {
                          @Para(value = "isok") String isok,
                          @Para(value = "cmeasurereason") String cmeasurereason,
                          @Para(value = "serializeSubmitList") String serializeSubmitList,
-                         @Para(value = "cmemo") String cmemo) {
+                         @Para(value = "cmemo") String cmemo,
+                         @Para(value = "cbatchno") String cbatchno) {
         ValidationUtils.notNull(cmeasurepurpose, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(stockqcformmiautoid, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(serializeSubmitList, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService.saveEdit(cmeasurepurpose, cdcno, stockqcformmiautoid, cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
-    }
-
-    /*
-     * 自动加载图片
-     * */
-    @ApiDoc(NullDataResult.class)
-    @UnCheck
-    public void uploadImage() {
-        renderJBoltApiRet(apiService.uploadImage(getFiles(
-            ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
+        renderJBoltApiRet(apiService.saveEdit(cmeasurepurpose, cdcno, stockqcformmiautoid, cmeasureunit, isok,
+            cmeasurereason, serializeSubmitList, cmemo, cbatchno));
     }
 
     /*
@@ -213,7 +195,7 @@ public class StockOutQcFormMApiController extends BaseApiController {
      * */
     @ApiDoc(GetExportExcelVo.class)
     @UnCheck
-    public void exportExcel(@Para(value = "iauoid") Long iauoid){
+    public void exportExcel(@Para(value = "iauoid") Long iauoid) throws Exception{
         ValidationUtils.notNull(iauoid, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(apiService.getExportData(iauoid));
     }

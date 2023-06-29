@@ -37,7 +37,7 @@ ORDER BY so.dupdatetime DESC
 #end
 
 #sql("dList")
-SELECT  t1.*, t2.*,v.cVenName as venname
+SELECT  t1.*, t2.*,v.cVenName as venname,t1.WhCode as whcodeh,t1.poscode as poscodeh
 FROM T_Sys_AssemDetail t1
          LEFT JOIN (
          select b.cInvCode1,
@@ -49,9 +49,17 @@ FROM T_Sys_AssemDetail t1
        b.cInvStd  as cinvstd,
        a.iQty     as quantity,
        uom.cUomName
+     ,wh.cWhCode as whcode
+     ,wh.cWhName as whname
+     ,area.cAreaCode as poscode
+     ,area.cAreaName as posname
 from PS_PurchaseOrderDBatch a
          left join Bd_Inventory b on a.iinventoryId = b.iAutoId
          left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
+         left join Bd_InventoryChange change on change.iBeforeInventoryId=b.iAutoId
+         left join Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
+	     left join Bd_Warehouse_Area area on area.iAutoId = config.iWarehouseAreaId
+	     left join Bd_Warehouse wh on wh.iAutoId = config.iWarehouseId
 where 1 = 1
 union all
 select b.cInvCode1,
@@ -63,9 +71,17 @@ select b.cInvCode1,
        b.cInvStd  as cinvstd,
        a.iQty     as quantity,
        uom.cUomName
+     ,wh.cWhCode as whcode
+     ,wh.cWhName as whname
+     ,area.cAreaCode as poscode
+     ,area.cAreaName as posname
 from PS_SubcontractOrderDBatch a
          left join Bd_Inventory b on a.iinventoryId = b.iAutoId
          left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
+         left join Bd_InventoryChange change on change.iBeforeInventoryId=b.iAutoId
+         left join Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
+	     left join Bd_Warehouse_Area area on area.iAutoId = config.iWarehouseAreaId
+	     left join Bd_Warehouse wh on wh.iAutoId = config.iWarehouseId
 where 1 = 1
          ) t2 on t1.Barcode = t2.cbarcode
  left join Bd_Vendor v on t1.VenCode = v.cVenCode
@@ -187,6 +203,10 @@ select t.* from
      , uom.cUomName
      ,change.iBeforeInventoryId
      ,change.iAfterInventoryId
+     ,wh.cWhCode as whcode
+     ,wh.cWhName as whname
+     ,area.cAreaCode as poscode
+     ,area.cAreaName as posname
 from PS_PurchaseOrderDBatch a
          left join Bd_Inventory b on a.iinventoryId = b.iAutoId
          left join PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
@@ -197,6 +217,9 @@ from PS_PurchaseOrderDBatch a
                        and tc.iAutoId = a.iPurchaseOrderdQtyId
          left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
          left join Bd_InventoryChange change on change.iBeforeInventoryId=b.iAutoId
+         left join Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
+	     left join Bd_Warehouse_Area area on area.iAutoId = config.iWarehouseAreaId
+	     left join Bd_Warehouse wh on wh.iAutoId = config.iWarehouseId
 where a.isEffective = '1' and change.iAutoId is not null
   and m.IsDeleted = '0'
 ###   and m.hideInvalid = '0'
@@ -222,8 +245,8 @@ where a.isEffective = '1' and change.iAutoId is not null
   #if(detailHidden)
   and t.SourceBillDid not in (#(detailHidden))
   #end
-  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.SourceBillDid = t.SourceBillDid)
-  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.SourceBillDid = t.SourceBillDid)
+  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
+  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.barcode = t.barcode)
 #end
 
 
@@ -254,6 +277,10 @@ select t.* , t.cInvCode as invcode from
      , uom.cUomName
      ,change.iBeforeInventoryId
      ,change.iAfterInventoryId
+     ,wh.cWhCode as whcode
+     ,wh.cWhName as whname
+     ,area.cAreaCode as poscode
+     ,area.cAreaName as posname
 from PS_PurchaseOrderDBatch a
          left join Bd_Inventory b on a.iinventoryId = b.iAutoId
          left join PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
@@ -264,6 +291,9 @@ from PS_PurchaseOrderDBatch a
                        and tc.iAutoId = a.iPurchaseOrderdQtyId
          left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
          left join Bd_InventoryChange change on change.iBeforeInventoryId=b.iAutoId
+         left join Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
+	     left join Bd_Warehouse_Area area on area.iAutoId = config.iWarehouseAreaId
+	     left join Bd_Warehouse wh on wh.iAutoId = config.iWarehouseId
 where a.isEffective = '1' and change.iAutoId is not null
   and m.IsDeleted = '0'
 ###   and m.hideInvalid = '0'
@@ -293,8 +323,8 @@ where a.isEffective = '1' and change.iAutoId is not null
   and t.barcode = #para(barcode)
   #end
 
-  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.SourceBillDid = t.SourceBillDid)
-  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.SourceBillDid = t.SourceBillDid)
+  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
+  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.Barcode = t.barcode)
 #end
 
 
@@ -411,6 +441,6 @@ where a.isEffective = '1' and change.iAutoId is not null
   #if(detailHidden)
   and t.SourceBillDid not in (#(detailHidden))
   #end
-  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.SourceBillDid = t.SourceBillDid)
-  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.SourceBillDid = t.SourceBillDid)
+  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
+  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.barcode = t.barcode)
 #end

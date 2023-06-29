@@ -147,6 +147,7 @@ public class VendorAdminController extends BaseAdminController {
         renderJson(service.toggleIsenabled(getLong(0)));
     }
 
+    @UnCheck
     public void options() {
         renderJsonData(service.options());
     }

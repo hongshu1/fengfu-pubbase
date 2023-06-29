@@ -174,7 +174,7 @@ public class SysProductinService extends BaseService<SysProductin> {
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -188,7 +188,7 @@ public class SysProductinService extends BaseService<SysProductin> {
             delete("DELETE T_Sys_ProductInDetail   where  MasID = ?", id);
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -235,7 +235,7 @@ public class SysProductinService extends BaseService<SysProductin> {
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return SUCCESS;
+        return Ret.ok().set("autoid", sysotherin.getAutoID());
     }
 
     // 可编辑表格提交-新增数据
@@ -552,4 +552,31 @@ public class SysProductinService extends BaseService<SysProductin> {
             }
         }
     }
+
+
+    /**
+     * 获取条码列表
+     * 通过关键字匹配
+     * autocomplete组件使用
+     */
+    public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode) {
+        return dbTemplate("sysproductin.getBarcodeDatas", Kv.by("q", q).set("limit", limit).set("orgCode", orgCode)).find();
+    }
+
+    /**
+     * 获取条码列表
+     * 通过关键字匹配
+     * autocomplete组件使用
+     */
+    public Record barcode(Kv kv) {
+        //先查询条码是否已添加
+        Record first = dbTemplate("sysproductin.barcodeDatas", kv).findFirst();
+        if (null != first) {
+            ValidationUtils.isTrue(false, "条码为：" + kv.getStr("barcode") + "的数据已经存在，请勿重复录入。");
+        }
+        first = dbTemplate("syspureceive.barcode", kv).findFirst();
+        ValidationUtils.notNull(first, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入。");
+        return first;
+    }
+
 }
