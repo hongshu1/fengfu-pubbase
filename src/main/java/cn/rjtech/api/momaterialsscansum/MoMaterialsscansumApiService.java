@@ -26,7 +26,7 @@ public class MoMaterialsscansumApiService extends JBoltApiBaseService {
     }
 
     public JBoltApiRet getMoMaterialNotScanLogList(Integer pageNumber, Integer pageSize, Long imodocid, Integer isScanned) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(moMaterialscanlogService.getMoMaterialNotScanLogList(pageNumber, pageSize, Kv.by("imodocid", imodocid).set("isScanned", isScanned)));
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(moMaterialscanlogService.getMoMaterialNotScanLogList(pageNumber, pageSize, Kv.by("imodocid", imodocid).set("isscanned", isScanned)));
     }
 
     public JBoltApiRet getBarcodeAll(Integer pageNumber, Integer pageSize, Long imodocid) {
