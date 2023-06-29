@@ -1,12 +1,15 @@
 package cn.rjtech.admin.qcform;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.qcformtableparam.QcFormTableParamService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -21,6 +24,7 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 import java.util.List;
 import java.util.Map;
@@ -54,6 +58,7 @@ public class QcFormAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         Okv kv = new Okv();
         kv.setIfNotNull("cQcFormName", get("cQcFormName"));
@@ -204,6 +209,7 @@ public class QcFormAdminController extends BaseAdminController {
 
     }
 
+    @UnCheck
 	public void options(){
 		renderJsonData(service.options());
 	}
@@ -253,5 +259,25 @@ public class QcFormAdminController extends BaseAdminController {
                            @Para(value = "tableJsonData") String tableJsonDataStr){
         renderJsonData(service.submitForm(formJsonDataStr, qcItemTableJsonDataStr, qcParamTableJsonDataStr, tableJsonDataStr));
     }
+
+    /**
+     * 下载导入模板
+     */
+    public void downloadTpl() throws Exception {
+        renderJxls("qcform.xlsx", getKv(), "检验表格_导入模板_" + DateUtil.today() + ".xlsx");
+    }
+
+//    /**
+//     * 检验表格Excel导入数据库
+//     */
+//    public void importExcelFile(){
+//        String uploadPath= JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+//        UploadFile file=getFile("file",uploadPath);
+//        if(notExcel(file)){
+//            renderJsonFail("请上传excel文件");
+//            return;
+//        }
+//        renderJson(service.importExcelData(file.getFile()));
+//    }
   
 }

@@ -80,7 +80,7 @@ public class SysScandeliverService extends BaseService<SysScandeliver> {
 			}
 			return true;
 		});
-		return ret(true);
+		return SUCCESS;
 	}
 	/**
 	 * 删除
@@ -93,7 +93,7 @@ public class SysScandeliverService extends BaseService<SysScandeliver> {
 			delete("DELETE T_Sys_ScanDeliverDetail   where  MasID = ?",id);
 			return true;
 		});
-		return ret(true);
+		return SUCCESS;
 	}
 
 	/**
@@ -203,17 +203,9 @@ public class SysScandeliverService extends BaseService<SysScandeliver> {
 			//通过 id 判断是新增还是修改
 			if(sysotherin.getAutoID() == null){
 				sysotherin.setOrganizeCode(getOrgCode());
-				sysotherin.setCreatePerson(user.getName());
-				sysotherin.setCreateDate(now);
-				sysotherin.setModifyPerson(user.getName());
-				sysotherin.setAuditPerson(user.getName());
-				sysotherin.setModifyDate(now);
-				sysotherin.setModifyDate(now);
 				//主表新增
 				ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
 			}else{
-				sysotherin.setModifyPerson(user.getName());
-				sysotherin.setModifyDate(now);
 				//主表修改
 				ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
 			}
@@ -236,6 +228,7 @@ public class SysScandeliverService extends BaseService<SysScandeliver> {
 		if(CollUtil.isEmpty(list)) return;
 		ArrayList<SysScandeliverdetail> sysproductindetail = new ArrayList<>();
 		Date now = new Date();
+		User user = JBoltUserKit.getUser();
 		for (int i=0;i<list.size();i++) {
 			Record row = list.get(i);
 			SysScandeliverdetail sysdetail = new SysScandeliverdetail();
@@ -251,8 +244,6 @@ public class SysScandeliverService extends BaseService<SysScandeliver> {
 			sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
 			sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
 			sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
-			sysdetail.setCreateDate(now);
-			sysdetail.setModifyDate(now);
 			sysproductindetail.add(sysdetail);
 		}
 		sysscandeliverdetailservice.batchSave(sysproductindetail);
@@ -263,6 +254,7 @@ public class SysScandeliverService extends BaseService<SysScandeliver> {
 		if(CollUtil.isEmpty(list)) return;
 		ArrayList<SysScandeliverdetail> sysproductindetail = new ArrayList<>();
 		Date now = new Date();
+		User user = JBoltUserKit.getUser();
 		for(int i = 0;i < list.size(); i++){
 			Record row = list.get(i);
 			SysScandeliverdetail sysdetail = new SysScandeliverdetail();
@@ -277,8 +269,6 @@ public class SysScandeliverService extends BaseService<SysScandeliver> {
 			sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
 			sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
 			sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
-			sysdetail.setCreateDate(now);
-			sysdetail.setModifyDate(now);
 			sysproductindetail.add(sysdetail);
 
 		}

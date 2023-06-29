@@ -60,7 +60,7 @@ public class AppConfig {
      * U9推单地址
      */
     public static String getVouchSubmitUrl() {
-        return JBoltConfig.prop.get("u9.api.url") + "/web/erp/common/vouchProcessSubmit";
+        return JBoltConfig.prop.get("vouch.api.url") + "/web/erp/common/vouchProcessSubmit";
     }
 
     /**
@@ -73,7 +73,7 @@ public class AppConfig {
     /**
      * 是否启用审批流
      */
-    public static Boolean isVerifyProgressEnabled() {
+    public static boolean isVerifyProgressEnabled() {
         return JBoltGlobalConfigCache.me.getBooleanConfigValue("verify_progress_enabled", true);
     }
 
@@ -84,19 +84,26 @@ public class AppConfig {
         return String.format("http://127.0.0.1:%s/api/erp/common/vouchProcessDynamicSubmit", getServerPort());
     }
 
-    /*
+    /**
+     * 通知U8弃审采购入库单
+     */
+    public static String inUnVouchProcessDynamicSubmitUrl() {
+        return String.format("%s/PurchasesInUnConfirmV1", JBoltConfig.prop.get("u8.stock.api"));
+    }
+
+    /**
      * 通知U8删除采购入库单
-     * */
+     */
     public static String deleteVouchProcessDynamicSubmitUrl() {
-        String url = "http://120.24.44.82:3013/WEB_INFO/StockAPI.asmx?op=PurchasesInDelete";
-        return url;
+        return String.format("%s/PurchasesInDeleteV1", JBoltConfig.prop.get("u8.stock.api"));
     }
 
-    public static String getSysPuinstoreVouchProcessDynamicSubmitUrl(){
-//        String url = "http://120.24.44.82:3013/WEB_INFO/StockAPI.asmx?op=PurchasesInAdd";
-//        String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
-        String url = "http://localhost:8081/web/erp/common/vouchProcessSubmit";
-        return url;
-    }
 
+
+    /**
+     * U9推单地址
+     */
+    public static String getVouchSumbmitUrl() {
+        return JBoltConfig.prop.get("u9.api.url") + "/web/erp/common/vouchProcessSubmit";
+    }
 }

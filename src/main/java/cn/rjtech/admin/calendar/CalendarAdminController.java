@@ -5,6 +5,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.model.momdata.Calendar;
 import cn.rjtech.util.DateUtils;
@@ -39,6 +40,7 @@ public class CalendarAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKeywords()));
     }

@@ -1,5 +1,7 @@
 package cn.rjtech.admin.sysmaterialspreparedetail;
 
+import cn.hutool.core.date.DateUtil;
+import cn.rjtech.admin.sysmaterialsprepare.SysMaterialsprepareService;
 import cn.rjtech.admin.syspureceive.SysPureceiveService;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -24,6 +26,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -40,6 +43,9 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 
 	@Inject
 	private SysMaterialspreparedetailService service;
+
+	@Inject
+	private SysMaterialsprepareService service1;
 
    /**
 	* 首页
@@ -110,12 +116,19 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 		renderJsonData(service.cworkname());
 	}
 
+	public void cworkname1() {
+		renderJsonData(service.cworkname1());
+	}
+
 	public void cworkshiftcode() {
 		renderJsonData(service.cworkshiftcode());
 	}
 
 	public void getMaterialsdetials() {
-		renderJsonData(service.getMaterialsdetials(getPageNumber(), getPageSize(), getKv()));
+		String billno = get("billno");
+		Kv kv = new Kv();
+		kv.set("billno", billno == null ? "" : billno);
+		renderJsonData(service1.getDetail(getPageNumber(), getPageSize(), kv));
 	}
 
 	public void getMaterialsdetials1() {
@@ -137,21 +150,18 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 	}
 
 	public void choosemtool() {
-		String barcodes = get("barcodes");
+		String itID = get("itID");
 		String cmodocno = get("cmodocno");
 		Kv kv = new Kv();
-		kv.set("barcodes", barcodes == null ? "" : barcodes);
+		kv.set("itID", itID == null ? "" : itID);
 		kv.set("cmodocno",cmodocno== null ? "" : cmodocno);
 		renderJsonData(service.getchooseM(kv));
-//		String[] barcodesS = barcodes.split(",");
-//		for (int i=0;i<barcodesS.length;i++){
-//			Kv kv = new Kv();
-//			kv.set("barcodes", barcodesS[i] == null ? "" : barcodesS[i]);
-//			kv.set("cmodocno",cmodocno== null ? "" : cmodocno);
-//			renderJsonData(service.getchooseM(kv));
-//		}
 	}
-
+	@Before(Tx.class)
+	public void go() {
+		String map1 = get("data");
+		renderJson(service.submitByJBoltTableGo(map1));
+	}
 	@Before(Tx.class)
 	public void submitAll() {
 		String map1 = get("data");
@@ -159,8 +169,29 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
 	}
 
 	@Before(Tx.class)
-	public void go() {
+	public void go1() {
 		String map1 = get("data");
-		renderJson(service.submitByJBoltTableGo(map1));
+		renderJson(service.submitByJBoltTableGo1(map1));
+	}
+
+	public void ConfirmNum() {
+		String Oldbarcode = get("barcode");
+		String Oldqty = get("qty");
+		String TAG = get("TAG");
+		set("Oldbarcode",Oldbarcode);
+		set("Oldqty",Oldqty);
+		set("TAG",TAG);
+		set("Newbarcode","WL"+ DateUtil.format(new Date(), "yyyyMMddHHmmss"));
+		render("ConfirmNum.html");
+	}
+
+	@Before(Tx.class)
+	public void NewNum(){
+		String Oldbarcode = get("Oldbarcode");
+		String Oldqty = get("Oldqty");
+		String Newbarcode = get("Newbarcode");
+		String Newqty = get("Newqty");
+		String TAG = get("TAG");
+		renderJson(service.submitQTY(Oldbarcode,Oldqty,Newbarcode,Newqty));
 	}
 }

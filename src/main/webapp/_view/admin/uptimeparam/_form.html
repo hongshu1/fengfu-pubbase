@@ -1,0 +1,58 @@
+<form onsubmit="return false;" id="UptimeParam_Form" action="#(action)" method="post">
+    #if(uptimeParam.iAutoId??)
+    <input type="hidden" name="uptimeParam.iAutoId" value="#(uptimeParam.iAutoId??)"/>
+    #end
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">分类名称</label>
+                <div class="col-sm-6 input-group">
+                    <select class="form-control"
+                            data-rule="required"
+                            data-tips="请输入分类名称"
+                            data-url="admin/uptimeCategory/options"
+                            id="select_iUptimeCategoryId_#(pageId)"
+                            name="uptimeParam.iUptimeCategoryId"
+                            data-autoload
+                            data-value-attr="iautoid"
+                            data-text-attr="cuptimecategoryname"
+                            data-select="#(uptimeParam.iuptimecategoryid??)">
+                    </select>
+                    <button class="btn btn-success" data-dialogbtn data-area="1000,600" data-title="新增分类名称"
+                            data-btn="no" data-url="admin/uptimeCategory/index"><i class="jbicon jb-shezhi3"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">项目名称</label>
+                <div class="col-6">
+                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入项目名称"
+                           data-with-clearbtn="true"
+                           autocomplete="off" class="form-control" placeholder="请输入项目名称" maxlength="40"
+                           name="uptimeParam.cUptimeParamName"
+                           value="#(uptimeParam.cuptimeparamname??)"/>
+                </div>
+            </div>
+            <div class="form-group row"
+                 data-radio
+                 data-name="uptimeParam.isEnabled"
+                 data-value-attr="sn"
+                 data-default="options_first"
+                 data-url="admin/dictionary/options?key=options_enable"
+                 data-label="是否启用"
+                 data-width="col-sm-2,col-10"
+                 data-select="#(uptimeParam.isenabled??)"
+                 data-rule="radio"
+                 data-notnull="true"
+                 data-tips="是否启用"
+                 data-inline="true">
+            </div>
+        </div>
+    </div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="UptimeParam_Form")
+#end
+

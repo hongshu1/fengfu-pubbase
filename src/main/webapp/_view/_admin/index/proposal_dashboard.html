@@ -1,0 +1,89 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<!--主页面内容显示区域 start-->
+<div class="jbolt_page shadow-none bg-transparent" data-key="#(pmkey)" data-require-plugin="morris" style="padding:0px 10px;">
+	<div class="jbolt_page_content p-0" >
+		#if(menulist)
+			#for(menuitemlist:menulist)
+				<div class="row">
+				#for(menuitem:menuitemlist)
+				#if(menuitem.title)
+					<div class="col-lg-2 col-md-6 col-sm-12 px-2" data-openpage data-url="#(menuitem.url)" data-title="#(menuitem.title)">
+						<div class="card border-0  mb-2 jb-dashboard-card hand">
+							<div class="card-body p-2 text-nowrap">
+								<span class="float-left"><i class="#(menuitem.icons) j_font_30 j_left_fa text-primary rounded"></i></span>
+								<div class="text-right ">
+									<span class="d-block j_left_fa j_font_22">#(menuitem.title)</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				#else
+					<div class="col-lg-2 col-md-6 col-sm-12 px-2" data-dialogbtn data-area="25%,80%" data-url="#(menuitem.url)" data-title="常用菜单">
+						<div class="card border-0  mb-2 jb-dashboard-card hand">
+							<div class="card-body p-2 text-nowrap">
+								<span class="float-left"><i class="#(menuitem.icons) j_font_30 j_left_fa text-primary rounded"></i></span>
+								<div class="text-right ">
+									<span class="d-block j_left_fa j_font_22">#(menuitem.title)</span>
+								</div>
+							</div>
+						</div>
+					</div>				
+				#end
+				#end
+				</div>
+			#end
+		#end
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="dashboardTableRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.id}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.title}</td>
+<td>
+	<a href="${data.url}" data-area="1200,800"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="审批" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>查看</a>
+</td>
+</tr>
+{@/each}
+</textarea>		
+		<div class="row mt-2">
+				<div class="col-lg-12 col-sm-12 px-2">
+					<div class="card border-0  mb-2">
+						<div class="card-body" style="height:500px">
+							<h5 class="card-title"><span>系统通知</span><a tabindex="-1" data-fullscreenbtn data-target="parent.card" class="pull-right text-black-50"><i class="jbicon2 jbi-fullscreen"></i></a></h5>
+							<div class="jbolt_table_view">
+							<div class="jbolt_table_box">
+							<div class="jbolt_table_body">
+								<table class="jbolt_table jbolt_main_table table-center"
+								data-jbolttable
+								data-height="400"
+								data-ajax="true"
+								data-width="auto"
+								id="jbolt_table_#(pageId)"
+								data-url="admin/todo/dashBoardTodoDatas"
+								data-column-resize="true"
+								data-rowtpl="dashboardTableRowtpl_#(pageId)"
+								data-page="expenseBudgetPage_#(pageId)"
+								data-pagesize="50"
+								>
+								<thead class="fw-normal">
+									<tr>
+										<th data-width="60">序号</th>
+										<th data-width="700" data-column="title">消息内容</th>
+										<th data-width="150">操作</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+								</table>							
+							</div>
+							</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>		
+	</div>
+</div>
+#end

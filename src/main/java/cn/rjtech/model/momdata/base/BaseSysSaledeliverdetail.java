@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSysSaledeliverdetail<M extends BaseSysSaledeliverdetail<M>> extends JBoltBaseModel<M>{
+    
     /**AutoID*/
     public static final String AUTOID = "AutoID";
     /**MasID;T_Sys_SaleDeliver.AutoID*/
@@ -54,6 +55,8 @@ public abstract class BaseSysSaledeliverdetail<M extends BaseSysSaledeliverdetai
     public static final String MODIFYPERSON = "ModifyPerson";
     /**更新时间*/
     public static final String MODIFYDATE = "ModifyDate";
+    /**是否删除：0. 否 1. 是*/
+    public static final String ISDELETED = "isDeleted";
 	/**
 	 * AutoID
 	 */
@@ -426,6 +429,23 @@ public abstract class BaseSysSaledeliverdetail<M extends BaseSysSaledeliverdetai
 	@JSONField(name = "modifydate")
 	public java.util.Date getModifyDate() {
 		return getDate("ModifyDate");
+	}
+
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
+		return (M)this;
+	}
+
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=23)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("isDeleted");
 	}
 
 }

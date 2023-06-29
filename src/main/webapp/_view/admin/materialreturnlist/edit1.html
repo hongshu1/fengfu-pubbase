@@ -7,17 +7,10 @@
 
             <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
                 <div class="col-md-l pt-2" role="group" aria-label="btn-group">
-                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
-                            data-id="0" data-value="save" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i>
-                        保存
-                    </button>
-<!--                    <button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end-->
-<!--                            data-id="1" data-value="submit" type="submit" class="btn btn-info btn-sm"><i-->
-<!--                            class="fa fa-window-maximize"></i> 提交审核-->
-<!--                    </button>-->
-                    <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>
-                        关闭
-                    </button>
+                    #if(readonly != 'readonly')
+                    <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
+                    #end
+                    <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                 </div>
             </div>
         <form onsubmit="return false;" id="PuinstoreForm" action="#(action)" method="post">
@@ -26,7 +19,7 @@
             #end
             <input type="hidden" id="autoid" name="autoid" value="#(puinstore.autoid??)"/>
             <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
-            <input type="hidden" id="spottickets" name="spottickets"/>
+            <input type="hidden" id="barcodes" name="barcodes"/>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label"><font style="color: red">*</font>入库单号：</label>
                 <div class="col-sm-2 col-form-label">
@@ -88,8 +81,11 @@
 
                 <label class="col-sm-2 col-form-label">采购类型：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input required type="text" id="billtype"  class="form-control border-none"
+                    <input required type="hidden" id="billtype"  class="form-control border-none"
                            readonly="readonly" placeholder="" name="puinstore.billtype"
+                           value="#(puinstore.billtype??)"/>
+                    <input required type="text" id="cptname"  class="form-control border-none"
+                           readonly="readonly" placeholder=""
                            value="#(puinstore.billtype??)"/>
                 </div>
             </div>
@@ -154,7 +150,7 @@
                                         <div class="jbolt_table_toolbar" id="inventory_split_toolbar_#(pageId)" #if(puinstore.sourcebillno??) #else style="display: none" #end >
                                             <div  class="" role="group" aria-label="btn-group" >
                                                 <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-                                                <button onclick="jboltTableRemoveCheckedRow(this, true, spotTickets)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
+                                                <button onclick="jboltTableRemoveCheckedRow(this, true, barcodes)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
                                             </div>
                                             <div class="clearfix"></div>
                                         </div>
@@ -181,8 +177,8 @@
                                             <tr>
                                                 <th data-width="60" data-column="index">序号</th>
                                                 <th data-width="100">操作</th>
-                                                <th data-width="100" data-column="spotticket">现品票</th>
-                                                <th data-width="100" data-column="cinvcode">存货编码</th>
+                                                <th data-width="100" data-column="barcode">现品票</th>
+                                                <th data-width="100" data-column="invcode">存货编码</th>
                                                 <th data-width="100" data-column="cinvname">存货名称</th>
                                                 <th data-width="100" data-column="cinvcode1">客户部番</th>
                                                 <th data-width="100" data-column="cinvname1">部品名称</th>
@@ -191,6 +187,8 @@
                                                 <th data-width="100" data-column="puunitname">采购单位</th>
                                                 <th data-width="100" data-column="qty">现存数</th>
                                                 <th data-width="100" data-column="memo">备注</th>
+                                                <th hidden data-width="100" data-column="whcode">仓库</th>
+                                                <th hidden data-width="100" data-column="poscode">库位</th>
                                                 <th hidden data-width="100" data-column="puunitcode"></th>
                                                 <th hidden data-width="100" data-column="sourcebillno"></th>
                                                 <th hidden data-width="100" data-column="sourcebillid"></th>
@@ -198,6 +196,7 @@
                                                 <th hidden data-width="100" data-column="sourcebilldid"></th>
                                                 <th hidden data-width="100" data-column="sourcebillnorow"></th>
                                                 <th hidden data-width="100" data-column="rowno"></th>
+
                                             </tr>
                                             </thead>
                                             <tbody></tbody>
@@ -234,8 +233,8 @@
     <td>
         <a href="admin/materialreturnlist/deleteList/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn">删除</a>
     </td>
-    <td>${data.spotticket}</td>
-    <td>${data.cinvcode}</td>
+    <td>${data.barcode}</td>
+    <td>${data.invcode}</td>
     <td>${data.cinvname}</td>
     <td>${data.cinvcode1}</td>
     <td>${data.cinvname1}</td>
@@ -244,7 +243,8 @@
     <td >${data.puunitname}</td> //采购单位名称
 <!--    <td>${data.inventorycuomname}</td>-->
     <td>${data.qty}</td>
-    <td>${data.memo}</td>
+    <td>${data.memo}</td><td hidden>${data.whcode}</td> //仓库
+    <td hidden>${data.poscode}</td> //库位
     <td hidden>${data.iqty}</td>
     <td hidden>${data.puunitcode}</td> //采购单位编码
     <td hidden>${data.sourcebillno}</td> //来源单号（订单号）
@@ -253,6 +253,7 @@
     <td hidden>${data.sourcebilldid}</td> //来源单据DID;采购或委外单身ID
     <td hidden>${data.sourcebillnorow}</td> //来源单号+行号
     <td hidden>${data.rowno}</td> //行号
+
   </tr>
     {@/each}
 </script>
@@ -260,20 +261,20 @@
 
 #define js()
 <script>
-    function spotTickets(){
+    function barcodes(){
         // //扫入多条现品票判断是否存在
-        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["barcode"]);
         console.log(data);
         let array = new Array();
         if (data != null){
             for (let i = 0; i < data.length; i++) {
-                array.push("'"+data[i].spotticket+"'");
+                array.push("'"+data[i].barcode+"'");
             }
             //通过逗号分开，一个一个加进数组中
             let codes = array.join(',');
-            $("#spottickets").val(codes);
+            $("#barcodes").val(codes);
         } else {
-            $("#spottickets").val('');
+            $("#barcodes").val('');
         }
         return true;
     }
@@ -285,11 +286,11 @@
         var detailHidden = $("#detailHidden").val();
 
         //扫入多条现品票判断是否存在
-        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+        let data = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["barcode"]);
         let array = new Array();
         if (data != null){
             for (let i = 0; i < data.length; i++) {
-                array.push("'"+data[i].spotticket+"'");
+                array.push("'"+data[i].barcode+"'");
             }
             for (let i = 0; i < array.length; i++) {
                 let a =  "'"+barcode+"'";
@@ -325,7 +326,7 @@
     function setChooseDialogSelectResultFromSupplier(data) {
         //重新选择入库单号时刷新
         refreshJBoltTable("#Puinstoreform_TableId_#(pageId)");
-        $("#spottickets").val('');
+        $("#barcodes").val('');
 
         //隐藏和显示现品票搜索和添加行
         if ($("#sourcebillno").val()!=null){
@@ -369,22 +370,22 @@
                 name:"table2"
             },
             cols: {
-                spotticket: { //现品票条码
+                barcode: { //现品票条码
                     maxLength: 100,
-                    linkPara: "#spottickets,#autoid",
-                    syncval:"#spotticket",
+                    linkPara: "#barcodes,#autoid",
+                    syncval:"#barcode",
                     required: false,
                     placeholder: "=请选择=",
                     type: "autocomplete",
                     url: "admin/materialreturnlist/barcodeDatas",
-                    textAttr: "spotticket",
+                    textAttr: "barcode",
                     width: 800,
                     sync: "",
-                    valueAttr: "spotticket",
-                    columnAttr: "barcode,cinvcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,puunitname,qty",
+                    valueAttr: "barcode",
+                    columnAttr: "barcode,invcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,puunitname,qty",
                     header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
-                    changeColumns: [{column: "spotticket", use: "barcode"},
-                        {column: "cinvcode", use: "cinvcode"},
+                    changeColumns: [{column: "barcode", use: "barcode"},
+                        {column: "invcode", use: "invcode"},
                         {column: "cinvname", use: "cinvname"},
                         {column: "cinvcode1", use: "cinvcode1"},
                         {column: "cinvname1", use: "cinvname1"},
@@ -398,40 +399,42 @@
                         {column: "sourcebilltype", use: "sourcebilltype"},
                         {column: "sourcebilldid", use: "sourcebilldid"},
                         {column: "sourcebillnorow", use: "sourcebillnorow"},
+                        {column: "whcode", use: "whcode"},
+                        {column: "poscode", use: "poscode"},
                         {column: "rowno", use: "rowno"},
                     ],
                     handler:function (table,td,text,value,jsonData) {
-                        //选择的现品票后存入spottickets,没有传空
-                        let datas = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["spotticket"]);
+                        //选择的现品票后存入barcodes,没有传空
+                        let datas = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["barcode"]);
                         console.log("data==>",datas);
                         let array = new Array();
                         if (datas != null){
                             for (var i = 0; i < datas.length; i++){
                                 var data = datas[i];
-                                array.push("'"+data.spotticket+"'");
+                                array.push("'"+data.barcode+"'");
                                 let codes = array.join(',');
-                                $("#spottickets").val(codes);
+                                $("#barcodes").val(codes);
                             }
                         }else {
-                            $("#spottickets").val('');
+                            $("#barcodes").val('');
                         }
 
                     }
 
 
     },
-                cinvcode: {
+                invcode: {
                     type: "autocomplete",
                     url: "admin/materialreturnlist/barcodeDatas",
                     maxLength: 100,
                     required: false,
                     placeholder: "=请选择=",
-                    textAttr: "cinvcode",
+                    textAttr: "invcode",
                     width: 800,
-                    valueAttr: "cinvcode",
+                    valueAttr: "invcode",
                     columnAttr: "cinvaddcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,inventorycuomname,qty",
                     header: '存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
-                    changeColumns: [{column: "cinvcode", use: "cinvaddcode"},
+                    changeColumns: [{column: "invcode", use: "cinvaddcode"},
                         {column: "cinvname", use: "cinvname"},
                         {column: "cinvcode1", use: "cinvcode1"},
                         {column: "cinvname1", use: "cinvname1"},
@@ -445,6 +448,8 @@
                     submitAttr:"qty",
                     required:true,
                     handler:function (table,td,text,value,jsonData) {
+                        debugger;
+                        // let iqty = getJboltTableAllDatas("Puinstoreform_TableId_#(pageId)",["iqty"]);
                         let iqty =  jsonData.iqty;
                         console.log(iqty);
                         let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
@@ -454,6 +459,7 @@
                             return false;
                         }
                         let cha = iqty- (qty);
+                        console.log("==="+cha)
                         if (cha > iqty*2){
                             showFormEleErrorStyle(td,"可退数量为"+iqty+",退货数量已超出！！！");
                             return false;
@@ -503,26 +509,44 @@
     hideParentLayerDialogBtn();
 
 
-    function submitAllTables_#(pageId)(ele){
-        var action = getRealJqueryObject(ele);
-        var id = action.data("id");
-        var value = action.data("value");
+
+
+
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+
+</script>
+<script>
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
+    function submitThisForm_#(pageId)(ele) {
+        submit = ele;
+        submitAllTables_#(pageId)();
+    }
+    function submitAllTables_#(pageId)(){
         var tables = ["Puinstoreform_TableId_#(pageId)"];
         if (checkTds()) {
-            jboltTableSubmitMulti(tables, "/admin/materialreturnlist/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
+            jboltTableSubmitMulti(tables, "/admin/materialreturnlist/submitMulti", function (res) {
                 if (res.state == "ok") {
                     LayerMsgBox.success(res.msg, 2000, function () {
-                        debugger;
-                        let id = res.AutoID;
-                        if (value == "save"){
-                            parent.refreshJBoltTable();
-                            // parent.refreshPjaxContainer();
+                        let autoid = res.AutoID;
+                        if (submit){
+                            submit_#(pageId)(autoid,function () {
+                                LayerMsgBox.success("提交成功", 600, function () {
+                                    parent.refreshPjaxContainer();
+                                    // parent.refreshCurrentTabContent();//刷新当前页面
+                                    self.location.href = "/admin/materialreturnlist/edit/"+autoid+"-_jb_rqtype_dialog"; //新增的刷新
+                                    // parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                                });
+                            });
+                        } else {
+                            parent.refreshPjaxContainer();
                             // parent.refreshCurrentTabContent();//刷新当前页面
-                            self.location.href = "/admin/materialreturnlist/edit/"+id+"-_jb_rqtype_dialog"; //新增的刷新
-                        }else {
-                            parent.refreshCurrentTabContent();//刷新当前页面
-                            // refreshPjaxContainer();
-                            parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                            self.location.href = "/admin/materialreturnlist/edit/"+autoid+"-_jb_rqtype_dialog"; //新增的刷新
+                            // parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
                         }
                     })
                 } else {
@@ -532,14 +556,6 @@
         }
 
     }
-
-
-    function closeHandler() {
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-    }
-
-
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="PuinstoreForm")
 #end

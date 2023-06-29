@@ -2,14 +2,18 @@ package cn.rjtech.admin.instockqcformm;
 
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.extend.config.ExtendUploadFolder;
+import cn.rjtech.admin.instockqcformd.InStockQcFormDService;
+import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.InStockQcFormD;
 import cn.rjtech.model.momdata.InStockQcFormM;
+import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -17,6 +21,7 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -34,6 +39,10 @@ public class InStockQcFormMAdminController extends BaseAdminController {
 
     @Inject
     private InStockQcFormMService service;
+    @Inject
+    private RcvDocQcFormMService  rcvDocQcFormMService;
+    @Inject
+    private InStockQcFormDService inStockQcFormDService;
 
     /**
      * 首页
@@ -113,29 +122,81 @@ public class InStockQcFormMAdminController extends BaseAdminController {
     }
 
     /*
+     * 删除在库检查表
+     * */
+    public void deleteCheckoutByIautoid() {
+        renderJson(service.deleteCheckoutByIautoid(getLong(0)));
+    }
+
+    /*
+     * @desc 扫描现品票，点击“确定”按钮，表体增加1行在库检任务；如果此存货没有配置检验项目，
+     *       需维护相关设置后点击“生成”按钮，生成检查成绩表。
+     * @param cbarcode：现品票
+     * */
+    public void createInStockQcFormByCbarcode() {
+        Kv kv = getKv();
+        renderJson(service.createInStockQcFormByCbarcode(kv.getStr("cbarcode")));
+    }
+
+    /*
      * 生成
      * */
-    public void createTable(@Para(value = "iautoid") Long iautoid,
-                            @Para(value = "cqcformname") String cqcformname) {
-        renderJson(service.createTable(iautoid, cqcformname));
+    public void createTable(@Para(value = "iautoid") Long iautoid) {
+        renderJson(service.createTable(iautoid));
     }
 
     /*
      * 点击检验按钮，跳转到checkout页面
      * */
     public void jumpCheckOut() {
-        InStockQcFormM inStockQcFormM = service.findById(getLong(0));
-        Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
-        set("instockqcformm", inStockQcFormM);
+        Record record = service.getCheckoutListByIautoId(getLong(0));
+        if (record == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        set("columns", tableHeadData);
         set("record", record);
         render("checkout.html");
     }
 
+    /**
+     * 点击查看按钮，跳转到onlysee页面
+     */
+    public void jumpOnlySee() {
+        Record record = service.getCheckoutListByIautoId(getLong(0));
+        if (record == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        List<InStockQcFormD> stockoutqcformlist = inStockQcFormDService.findByIInStockQcFormMid(getLong(0));
+        set("record", record);
+        set("columns", tableHeadData);
+        set("stockoutqcformlist", stockoutqcformlist);
+        render("onlysee.html");
+    }
+
     /*
-     * 点击检验按钮，跳转到checkout页面后，自动加载table的数据
+     * 点击编辑按钮，跳转到编辑页面
      * */
-    public void autoGetCheckOutTableDatas() {
-        renderJsonData(service.getCheckOutTableDatas(getKv()));
+    public void jumpEdit() {
+        Record record = service.getCheckoutListByIautoId(getLong(0));
+        if (record == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        List<InStockQcFormD> stockoutqcformlist = inStockQcFormDService.findByIInStockQcFormMid(getLong(0));
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        set("record", record);
+        set("stockoutqcformlist", stockoutqcformlist);
+        set("columns", tableHeadData);
+        render("editInStockOutQcFormMTable.html");
+    }
+
+    /*详情页面的table数据*/
+    public void getTableDatas() {
+        renderJsonData(service.getTableDatas(getKv()));
     }
 
     /*
@@ -146,58 +207,10 @@ public class InStockQcFormMAdminController extends BaseAdminController {
     }
 
     /*
-     * 删除在库检查表
-     * */
-    public void deleteCheckoutByIautoid() {
-        renderJson(service.deleteCheckoutByIautoid(getLong(0)));
-    }
-
-    /**
-     * 点击查看按钮，跳转到onlysee页面
-     */
-    public void jumpOnlySee() {
-        InStockQcFormM inStockQcFormM = service.findById(getLong(0));
-        Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
-        List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(inStockQcFormM.getIAutoId());
-        set("stockoutqcformlist", stockoutqcformlist);
-        set("instockqcformm", inStockQcFormM);
-        set("record", record);
-        render("onlysee.html");
-    }
-
-    /*
-     * 点击查看按钮，跳转到onlysee页面后，自动加载table的数据
-     * */
-    public void autoGetOnlySeeDatas() {
-        renderJsonData(service.getonlyseelistByiautoid(getKv()));
-    }
-
-    /*
-     * 点击编辑按钮，跳转到编辑页面
-     * */
-    public void jumpEdit() {
-        InStockQcFormM inStockQcFormM = service.findById(getLong(0));
-        Record record = service.getCheckoutListByIautoId(inStockQcFormM.getIAutoId());
-        List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(inStockQcFormM.getIAutoId());
-        set("instockqcformm", inStockQcFormM);
-        set("record", record);
-        set("stockoutqcformlist", stockoutqcformlist);
-        render("editInStockOutQcFormMTable.html");
-    }
-
-    /*
      * 在编辑页面点击确定
      */
     public void saveEditTable(JBoltPara JboltPara) {
         renderJson(service.saveEditTable(JboltPara));
-    }
-
-    /**
-     * 导入图片
-     */
-    public void uploadImage() {
-        String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
-        renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
     }
 
     /*
@@ -205,17 +218,41 @@ public class InStockQcFormMAdminController extends BaseAdminController {
      * */
     public void exportExcel() throws Exception {
         Kv kv = service.getExportData(getLong(0));//instaockqcformm
-        renderJxls("instaockqcformm.xlsx", kv, "在库检_" + DateUtil.today() + "_成绩表.xlsx");
+        renderJxls("instockqcformm.xlsx", kv, "在库检_" + DateUtil.today() + "_成绩表.xlsx");
     }
 
     /*
-     * @desc 扫描现品票，点击“确定”按钮，表体增加1行在库检任务；如果此存货没有配置检验项目，
-     *       需维护相关设置后点击“生成”按钮，生成检查成绩表。
-     * @param cbarcode：现品票
+     * 根据现品票查询数据
      * */
-    public void createInStockQcFormByCbarcode(){
-        Kv kv = getKv();
-        renderJson(service.createInStockQcFormByCbarcode(kv.getStr("cbarcode")));
+    public void findDetailByBarcode(@Para(value = "cbarcode") String cbarcod) {
+        renderJsonData(service.findDetailByBarcode(cbarcod));
+    }
+
+    /*
+     * @desc 新增数据
+     * @param cbarcode：现品票
+     * qty：数量
+     * invcode：存货编码
+     * cinvcode1：客户部番
+     * cinvname1：部品名称
+     * */
+    public void saveInStockQcFormByCbarcode() {
+        String cbarcode = get("cbarcode");
+        BigDecimal iqty = getBigDecimal("iqty");
+        String invcode = get("invcode");
+        String cinvcode1 = get("cinvcode1");
+        String cinvname1 = get("cinvname1");
+        String iinventoryid = get("iinventoryid");
+        String cdcno  = get("cdcno");
+        String cMeasureReason = get("cmeasurereason");
+        String iqcformid = get("iqcformid");
+        ValidationUtils.notBlank(cbarcode, "现品票不能为空");
+        ValidationUtils.notBlank(invcode, "存货编码不能为空");
+        ValidationUtils.notBlank(iinventoryid, "存货id不能为空");
+
+        int qty = iqty.setScale(2,BigDecimal.ROUND_DOWN).intValue();
+        renderJson(service.saveInStockQcFormByCbarcode(cbarcode, qty, invcode, cinvcode1, cinvname1,iinventoryid, cdcno,
+            cMeasureReason,Long.valueOf(iqcformid)));
     }
 
 }

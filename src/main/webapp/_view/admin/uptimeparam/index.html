@@ -1,0 +1,122 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>稼动时间参数</h1></div>
+            <div class="col">
+                <form class="form-inline" id="UptimeParam_form_#(pageId)">
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="=分类名称=" maxlength="40" name="cuptimecategoryname"/>
+                    <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                           placeholder="=参数名称=" maxlength="40" name="cuptimeparamname"/>
+
+                    <select class="form-control" name="isenabled"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_enable"
+                            data-select-type="select"
+                            data-text="=是否启用"
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+                    <div class="btn-group text-center mx-1">
+                        <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
+                        <button type="button" onclick="form.reset();refreshJBoltTable(this);"
+                                class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-auto text-right">
+
+                <button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/uptimeParam/add"
+                        data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增稼动时间建模-稼动时间参数"><i
+                        class="fa fa-plus"></i></button>
+                <button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据">
+                    <i class="fa fa-refresh"></i></button>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="UptimeParam_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iAutoId}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a class="jbolt_table_editbtn" href="admin/uptimeParam/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑稼动时间建模-稼动时间参数">编辑</i></a>
+	<a class="jbolt_table_delbtn" href="admin/uptimeParam/delete/${data.iautoid}" data-handler="refreshJBoltTable" >删除</i></a>
+</td>
+<td>${data.cuptimecategoryname}</td>
+<td>${data.cuptimeparamname}</td>
+<td><img data-switchbtn data-confirm="确定切换是否启用;0. 否 1. 是？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/uptimeParam/toggleIsEnabled/${data.iAutoId}"/></td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime|date_ymdhm}</td>
+</tr>
+{@/each}
+</textarea>
+        <div class="jbolt_table_toolbar" id="UptimeParam_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="1200,600" data-handler="jboltTablePageToFirst"
+                        id="toolbar_addBtn_#(pageId)" data -title="新增稼动时间参数" data-url="admin/uptimeParam/add"
+                        class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
+                </button>
+                <button data-downloadbtn class="btn btn-outline-primary btn-sm" data-url="admin/uptimeParam/exportExcelAll"><i class="fa fa-download"></i>数据导出</button>
+                <div class="btn-group dropdown">
+                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importTableButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入</button>
+                    <div class="dropdown-menu" aria-labelledby="importMenuButton">
+                        <a data-downloadbtn href="/admin/uptimeParam/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>模板下载</a>
+                        <div class="j_upload_file_box"
+                             data-name="file"
+                             data-btn-class="btn dropdown-item"
+                             data-placeholder="上传导入"
+                             data-confirm="确认导入数据？"
+                             data-accept="excel"
+                             data-maxsize="20480"
+                             data-handler="uploadFile"
+                             data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                             data-url="/admin/uptimeParam/importExcelData">
+                        </div>
+                    </div>
+                </div>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新
+                </button>
+            </div>
+
+        </div>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="UptimeParam_form_#(pageId)"
+               data-url="admin/uptimeParam/datas"
+               data-rowtpl="UptimeParam_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="UptimeParam_page"
+               data-toolbar="UptimeParam_toolbar_#(pageId)"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="120">操作</th>
+                <th data-width="200" data-column="cUptimeCategoryName">分类名称</th>
+                <th data-width="150" data-column="cUptimeParamName">参数名称</th>
+                <th data-width="100" data-column="isEnabled">启用状态</th>
+                <th data-width="150" data-column="cCreateName">创建人</th>
+                <th data-min-width="160" data-column="dCreateTime">创建时间</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

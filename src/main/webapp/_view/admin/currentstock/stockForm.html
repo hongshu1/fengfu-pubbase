@@ -1,0 +1,372 @@
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page_title">
+    <div class="row">
+        <div class="col-md-auto">
+        </div>
+        <div class="col-md-auto">
+        </div>
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+    <div class="row">
+        <div class="col-10 text-left">
+            <form class="form-inline text-left" onsubmit="return false;" id="stockForm" action="#(action)" method="post">
+<!--                #if(readonly != 'readonly')-->
+<!--                <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>-->
+<!--                #end-->
+                #if(SysStockchekvouch.autoid??)
+                ### 参数列表
+                ### uri:                    接口URI
+                ### formSn:                 表单名
+                ### o:                      当前表单对象名
+                ### primaryKeyName:         主键名
+                ### permissionKeyPrefix:    权限key
+                ### redonly:                查看页定义为readonly=readonly, 新增/编辑页 可不传
+                ### className:              实现审批业务的类名
+                #include("/_view/_common/_approval_btns.html", uri="/admin/stockcheckvouch", formSn="T_Sys_StockCheckVouch", o=SysStockchekvouch, primaryKeyName="AutoID", className="cn.rjtech.admin.currentstock.CurrentStockService",permissionKeyPrefix="current_stock")
+                #end
+                <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+                #if(SysStockchekvouch.autoid??)
+                <input type="hidden" id="SysStockchekvouchAutoid" name="SysStockchekvouch.autoid" value="#(SysStockchekvouch.autoid??)"/>
+                #end
+
+                <input type="text" autocomplete="off" class="form-control" placeholder="=库位名称=" name="posname" value=""/>
+                <input type="text" autocomplete="off" class="form-control" placeholder="=盘点状态=" name="status" value=""/>
+                <input type="text" autocomplete="off" class="form-control" placeholder="=料品分类=" name="addinvclass" value=""/>
+                <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="invcode" value=""/>
+                <input type="text" autocomplete="off" class="form-control" placeholder="=存货名称=" name="invname" value=""/>
+
+                <select class="form-control"
+                        data-autoload
+                        data-url="admin/enums/isApp"
+                        name="isapp"
+                        id="isapp"
+                        data-value=""
+                        onchange="isAppChange()"
+                        data-select="#(isapp??)">
+                </select>
+
+                <button id="query" type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="jbolt_page_content">
+
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="fhRowtpl_#(pageId)">
+		{@each datas as data,index}
+        <tr data-id="${data.autoid}" onclick="masterTableTrTriggerShowSlaveExt(this,'${data.autoid}')">
+            <td style="width: 30px;max-width: 30px">${pageNumber,pageSize,index | rownum}</td>
+			<td style="width: 150px;max-width: 150px">${data.posname}</td>
+            <td style="width: 150px;max-width: 150px">${data.invclasscode}</td>
+			<td style="width: 150px;max-width: 150px">${data.addinvclass}</td>
+			<td style="width: 150px;max-width: 150px">${data.invcode}</td>
+			<td style="width: 150px;max-width: 150px">${data.invname}</td>
+
+			<td style="width: 150px;max-width: 150px">${data.invstd}</td>
+			<td style="width: 110px;max-width: 110px">${data.unitname}</td>
+			<td style="width: 110px;max-width: 110px">${data.totalrealqty}</td>
+			<td style="width: 110px;max-width: 110px">${data.qty, 2|number_format}</td>
+			<td style="width: 130px;max-width: 130px" >${data.isiqc1}</td>
+			<td style="width: 110px;max-width: 110px" >${data.status}</td>
+		</tr>
+		{@/each}
+	</textarea>
+
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="fh_toolbar_#(pageId)">
+        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+            <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="/admin/stockcheckvouchdetail/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+
+    <table class="jbolt_table jbolt_main_table table-center"
+           id="jbolt_table_#(pageId)"
+           data-fast-mode="true"
+           data-jbolttable
+           data-height="250"
+           data-ajax="true"
+           data-width="auto"
+           data-url="admin/currentstock/invDatas?mid=#(bill.autoid)"
+           data-column-resize="true"
+           data-column-prepend="1:radio:true"
+           data-conditions-form="stockForm"
+           data-rowtpl="fhRowtpl_#(pageId)"
+           data-toolbar="fh_toolbar_#(pageId)"
+           data-editable-option="getEditableTableOptions_#(pageId)"
+           data-editable="true"
+    >
+        <thead class="thead-blue">
+        <tr>
+            <th style="width: 60px;max-width: 60px" data-width="60" data-column="index">序号</th>
+            <th style="width: 150px;max-width: 150px" data-width="150" data-column="posname">库位名称</th>
+            <th style="width: 150px;max-width: 150px" data-width="150" data-column="invclasscode">存货分类编码</th>
+            <th style="width: 150px;max-width: 150px" data-width="150" data-column="addinvclass">存货分类名称</th>
+            <th style="width: 150px;max-width: 150px" data-width="150" data-column="invcode">存货编码</th>
+
+            <th style="width: 150px;max-width: 150px" data-width="150" data-column="invname">部品名称</th>
+            <th style="width: 150px;max-width: 150px" data-width="150" data-column="invstd">规格</th>
+            <th style="width: 110px;max-width: 110px" data-width="110" data-column="unitname">库存单位</th>
+            <th style="width: 110px;max-width: 110px" data-column="totalrealqty">盘点数量</th>
+            <th style="width: 110px;max-width: 110px" data-column="qty">库存数量</th>
+
+            <th style="width: 130px;max-width: 130px" data-column="isiqc1">盈亏数量</th>
+            <th style="width: 110px;max-width: 110px" data-column="status">盘点状态</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    </div>
+#include("tockchekvouchForm.html")
+
+#define js()
+<script>
+    // function submitThisForm() {
+    //     jboltTableSubmit('#jbolt_table_#(pageId)');
+    // }
+
+    //关闭按钮
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
+    function submitThisForm_#(pageId)(ele) {
+        submit = ele;
+        submitAllTables_#(pageId)();
+    }
+
+
+    function submitAllTables_#(pageId)(){
+        var autoid=$("#SysStockchekvouchAutoid").val();
+        var sourceid=$("#stockcheckvouchdid").val();
+        //获取选中表格数据
+        var para = jboltTableGetCheckedDatas('#stock__table_#(pageId)');
+        if(para){
+            Ajax.post('admin/stockcheckdetail/adjust',{"datas":JSON.stringify(para),"sourceid":sourceid} , function (ret) {
+                debugger;
+                if (ret.state == "ok") {
+                        // let autoid = ret.AutoID;
+                        // 提交审核（审批）调用
+                        if (submit){
+                            submit_#(pageId)(autoid,function () {
+                                LayerMsgBox.success("提交成功", 600, function () {
+                                    parent.refreshPjaxContainer();
+                                    parent.layer.closeAll();
+                                });
+                            });
+                        } else {
+                            parent.refreshPjaxContainer();
+                        }
+                } else {
+                    LayerMsgBox.error(ret.msg);
+                }
+            });
+        }
+    }
+
+
+    // 子表查询表单
+    var stockcheckvouchdid = $('#stockcheckvouchdid');
+    // 避免触发重复点击行事件的处理
+    var clicked = false;
+
+    $(function(){
+        var status='#(bill.status)';
+
+        if(status==0){
+            addParentLayerDialogBtn("完成盘点","lay_success",function(){
+                var mid='#(bill.autoid)';
+
+                Ajax.post('admin/currentstock/okCheck', {"mid":mid}, function (ret) {
+                    parent.refreshPjaxContainer();
+                    parent.layer.closeAll();
+                });
+            });
+
+            addParentLayerDialogBtn("保存记录","lay_success",function(){
+                var sourceid=$("#stockcheckvouchdid").val();
+
+                //获取选中表格数据
+                var para = jboltTableGetCheckedDatas('#stock__table_#(pageId)');
+                if(para){
+                    Ajax.post('admin/stockcheckdetail/adjust',{"datas":JSON.stringify(para),"sourceid":sourceid} , function (ret) {
+                        refreshPjaxContainer();
+                    });
+                }
+            });
+
+        }else if(status==1){
+            addParentLayerDialogBtn("驳回","lay_success",function(){
+                var mid='#(bill.autoid)';
+
+                Ajax.post('admin/currentstock/regret', {"mid":mid}, function (ret) {
+                    parent.refreshPjaxContainer();
+                    parent.layer.closeAll();
+                });
+            });
+
+            addParentLayerDialogBtn("审核通过","lay_success",function(){
+                var mid='#(bill.autoid)';
+
+                Ajax.post('admin/currentstock/agree', {"mid":mid}, function (ret) {
+                    parent.refreshPjaxContainer();
+                    parent.layer.closeAll();
+                });
+            });
+
+        }
+    });
+
+    function checkRow(ele) {
+        console.log('ch')
+        var checkCol = $(ele).find("td>.jbolt_table_radio>input[type='radio']").first();
+
+        if (checkCol.prop('checked')) {
+            checkCol.prop('checked', '');
+            checkCol.parent().removeClass('checked');
+        } else {
+            checkCol.prop('checked', 'checked');
+            checkCol.parent().addClass('checked');
+        }
+    }
+
+    //条码明细
+    function getEditableTableOptions_#(pageId)(){
+        var editableTableOptions = {
+            trigger: "click",
+            //初始行数
+            initRowCount: 0,
+            submit: {
+                withForm: ["stockForm"],
+                type: "all",//cell|all
+                url: "admin/pudeliverydetail/saveTableSubmit",
+                success: function (res) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success("提交成功", 600, function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                            window.parent.refreshJBoltTable();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            //插入数据时默认属性值
+            cols: {
+                realqty2: {
+                    textAttr: "realqty2",
+                    summary: {
+                        dir: "h",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "qty + adjustqty2"
+                    }
+                },
+                adjustqty2: {
+                    type: "number",
+                    textAttr: "adjustqty2"
+                },
+                qty:{
+                    textAttr: "qty",
+                    summary: {
+                        dir: "v",
+                        removezero: true,
+                        formula: "sum"
+                    }
+                },
+
+
+
+            }
+        };
+        return editableTableOptions;
+    }
+    function currentstock_Barcode_#(pageId)(){
+        var editableTableOptions = {
+            trigger: "click",
+            //初始行数
+            initRowCount: 0,
+            submit: {
+                withForm: ["tockchekvouchForm"],
+                type: "all",//cell|all
+                url: "admin/pudeliverydetail/saveTableSubmit",
+                success: function (res) {
+                    if (res.state === 'ok') {
+                        LayerMsgBox.success("提交成功", 600, function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                            window.parent.refreshJBoltTable();
+                        });
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
+                }
+            },
+            //插入数据时默认属性值
+            cols: {
+                "adjustqty2": {
+                    type: "input",
+                    textAttr: "adjustqty2"
+                },
+
+
+                "realqty2": {
+                    textAttr: "realqty2",
+                    summary: {
+                        dir: "h",
+                        tofixed: 2,
+                        removezero: true,
+                        formula: "qty + adjustqty2"
+                    }
+                },
+                "qty":{
+                    textAttr: "qty",
+                    summary: {
+                        dir: "v",
+                        removezero: true,
+                        formula: "sum"
+                    }
+                },
+
+            }
+        };
+        return editableTableOptions;
+    }
+
+    function masterTableTrTriggerShowSlaveExt(ele, autoid) {
+        if (!clicked) {
+            clicked = true;
+
+            stockcheckvouchdid.val(autoid);
+            // 清空表格数据（再加载）
+            jboltTableClear('#stock__table_#(pageId)');
+
+            checkRow(ele);
+
+            $("#dTable").click();
+            clicked = false;
+        }
+    }
+    /**
+     * 是否APP更改
+     * */
+    function isAppChange() {
+        var isapp=$("#isapp").val();
+        $("#isapp2").val(isapp);
+        $("#query").click();
+
+        // clearJboltTable('#stock__table_#(pageId)');
+        jboltTableClear('#stock__table_#(pageId)');
+    }
+
+</script>
+#end
+

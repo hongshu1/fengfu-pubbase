@@ -4,7 +4,10 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -82,6 +85,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
      * 数据源
      */
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -104,6 +108,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
      * 批量删除
      */
     @CheckPermission(PermissionKey.EXPENSE_BUDGET_FORMULATE_DELETE)
+    @CheckDataPermission(operation = DataOperationEnum.DELETE, type = BusObjectTypeEnum.DEPTARTMENT)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -238,6 +243,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
      * 费用预算编制-新增和修改界面 --可编辑表格导入
      */
 	@UnCheck
+	@CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void importTableExpenseBudgetTpl(@Para(value="iexpenseid") Long iexpenseid) throws Exception {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);
@@ -279,6 +285,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     @UnCheck
     @RequestLimit(time=15,count=1)
     @Before(RequestLimitInterceptor.class)
+    @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableByAdd() {
         renderJson(service.saveTableSubmitByAdd(getJBoltTable()));
     }
@@ -290,8 +297,8 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     public void edit() {
         ExpenseBudget expenseBudget = service.findById(useIfPresent(getLong(0)));
         ValidationUtils.notNull(expenseBudget, JBoltMsg.DATA_NOT_EXIST);
-        Date dstarttime = expenseBudget.getCbegindate();
-        Date dendtime = expenseBudget.getCenddate();
+        Date dstarttime = expenseBudget.getCBeginDate();
+        Date dendtime = expenseBudget.getCEndDate();
         List<Record> yearColumnTxtList = new ArrayList<Record>();
         List<String> monthColumnTxtList = new ArrayList<String>();
         List<Record> quantityAndAmountColumnList = new ArrayList<Record>();
@@ -308,6 +315,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
      */
     @RequestLimit(time=15,count=1)
     @Before(RequestLimitInterceptor.class)
+    @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableByUpdate() {
         renderJson(service.saveTableByUpdate(getJBoltTable()));
     }
@@ -335,8 +343,8 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     	Kv para = getKv();
     	ExpenseBudget unfinishItemExpenseBudget = service.findPreviousPeriodExpenseBudget(para);
     	ValidationUtils.notNull(unfinishItemExpenseBudget,"没有上期预算类型的费用预算数据，不能导入项目");
-    	Date dstarttime = unfinishItemExpenseBudget.getCbegindate();
-        Date dendtime = unfinishItemExpenseBudget.getCenddate();
+    	Date dstarttime = unfinishItemExpenseBudget.getCBeginDate();
+        Date dendtime = unfinishItemExpenseBudget.getCEndDate();
         List<Record> yearColumnTxtList = new ArrayList<Record>();
         List<String> monthColumnTxtList = new ArrayList<String>();
         List<Record> quantityAndAmountColumnList = new ArrayList<Record>();
@@ -419,14 +427,14 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
 		renderBytesToExcelXlsxFile(jBoltExcel);
     }
     
-    /**
+/*    *//**
      * 提交审核
-     * */
-    @CheckPermission(PermissionKey.EXPENSE_BUDGET_FORMULATE_SUBMITAUDIT)
-    public void submitAudit(){
+     * *//*
+    @CheckPermission(PermissionKey.EXPENSE_BUDGET_FORMULATE_SUBMIT)
+    public void submit(){
     	Long iexpenseid = getLong(0);
-    	renderJson(service.submitAudit(iexpenseid));
-    }
+    	renderJson(service.submit(iexpenseid));
+    }*/
 
     /**
      * 费用预算期间对比数据源
@@ -589,5 +597,6 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
         //3、导出
         renderBytesToExcelXlsxFile(jBoltExcel);
     }
+
 }
 

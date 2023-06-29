@@ -1,0 +1,259 @@
+<form onsubmit="return false;" id="moMopatchweldmForm" action="#(action)" method="post">
+<input type="hidden" name="moMopatchweldm.iautoid" value="#(moMopatchweldm.iautoid??)" />
+<input type="hidden" maxlength="255" id="moMopatchweldmiautoid" name="moMopatchweldm.iautoid" value="#(recordInfo.iautoid??)"/>
+	<div class="col-12">
+		<div class="card">
+			<div class="card-body">
+				<div class="col">
+					<!--#if(readonly != 'readonly')
+					<button onclick="submitThisForm_#(pageId)()" class="btn btn-outline-secondary btn-xs">保存</button>
+					#end-->
+					#include("/_view/_common/_approval_btns.html", uri="/admin/momopatchweldm",
+					formSn="Mo_MoPatchWeldM", primaryKeyName="iAutoId", o=moMopatchweldm,
+					permissionKeyPrefix="momopatchweldm",  className="cn.rjtech.admin.momopatchweldm.MoMopatchweldmService")
+
+					<button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="py-2" style="padding:.5rem 0rem;">
+		<span class="py-1"><strong>工单信息</strong></span>
+	</div>
+
+	<div class="row">
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">工单号：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.cmodocno??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.cmodocno" value="#(recordInfo.cmodocno??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">计划日期：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.dplandate??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.dplandate" value="#(recordInfo.dplandate??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">生产部门：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.cdepname??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.cdepname" value="#(recordInfo.cdepname??)"/>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">存货编码：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.cinvcode??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.cinvcode" value="#(recordInfo.cinvcode??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">客户部番：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.cinvcode1??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.cinvcode1" value="#(recordInfo.cinvcode1??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">部品名称：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.cinvname1??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.cinvname1" value="#(recordInfo.cinvname1??)"/>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">产线名称：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.cworkname??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.cworkname" value="#(recordInfo.cworkname??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">班次名称：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.cworkshiftname??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.cworkshiftname" value="#(recordInfo.cworkshiftname??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">计划数量：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.iqty??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.iqty" value="#(recordInfo.iqty??)"/>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">状态：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.statename??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.statename" value="#(recordInfo.statename??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+		</div>
+		<div class="col">
+		</div>
+	</div>
+
+
+	<div class="py-2" style="padding:.5rem 0rem;margin-top: 10px">
+		<span class="py-1"><strong>补焊纪录表</strong></span>
+	</div>
+	<div class="jbolt_page_content">
+		<!-- JBoltTable的数据模板定义-->
+		<textarea class="jb_tpl_box" id="keepingRecordRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cequipmentname}</td>
+<td>${data.coperationname}</td>
+<td>${data.iqty}</td>
+</tr>
+{@/each}
+</textarea>
+		<table class="jbolt_table jbolt_main_table table-center hover_info"
+			   data-jbolttable
+			   data-height="300"
+			   data-ajax="true"
+			   data-url="admin/momopatchweldm/getMoMopatchwelddList?iautoid=#(recordInfo.iautoid??)"
+			   data-column-resize="true"
+			   data-column-prepend="1:checkbox:true"
+			   data-conditions-form="keepingRecordForm_#(pageId)"
+			   data-rowtpl="keepingRecordRowtpl_#(pageId)"
+			   data-toolbar="keepingRecord_toolbar_#(pageId)"
+		>
+			<thead>
+			<tr>
+				<th data-width="50">序号</th>
+				<th data-min-width="250" data-column="cEquipmentName">设备名</th>
+				<th data-min-width="250" data-column="cOperationName">工序名</th>
+				<th data-width="250" data-column="iQty">补焊数量</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<div class="py-2" style="padding:.5rem 0rem;margin-top: 10px">
+
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">创建人：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.ccreatename??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.ccreatename" value="#(recordInfo.ccreatename??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">创建时间：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.dcreatetime??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.dcreatetime" value="#(recordInfo.dcreatetime??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">审核人：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.cauditname??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.cauditname" value="#(recordInfo.cauditname??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="form-group row">
+				<label class="col-sm-3 col-form-label">审核时间：</label>
+				<div class="col">
+					<span class="form-control">#(recordInfo.daudittime??)</span>
+					###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.daudittime" value="#(recordInfo.daudittime??)"/>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+	hideParentLayerDialogBtn(0);
+	hideParentLayerDialogBtn(1);
+
+	function closeHandler(){
+		parent.layer.close(parent.layer.getFrameIndex(window.name));
+		window.parent.refreshJBoltTable();
+	}
+
+	// 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+	var submit = false;
+	function submitThisForm_#(pageId)(s) {
+		let moMopatchweldmiautoid = $("#moMopatchweldmiautoid").val();
+		// 保存并提交
+		if (s) {
+			submit = s;
+		}
+
+		// 提交审核（审批）调用
+		if (submit) {
+			// 提审
+			submit_#(pageId)(moMopatchweldmiautoid, function (data) {
+
+				successHandler('提审成功', moMopatchweldmiautoid);
+			});
+		} else {
+			successHandler(res.msg, moMopatchweldmiautoid);
+		}
+	}
+	/**
+	 * 新增/修改/提审
+	 */
+	function successHandler(msg, id) {
+		LayerMsgBox.success(msg, 600, function () {
+			// 新增/修改，均跳转到详情页
+			var url="admin/momopatchweldm/edit?iautoid="+id+ '&_jb_rqtype_=dialog';
+			location.href = url;
+			parent.refreshPjaxContainer();
+		});
+	}
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="moMopatchweldmForm")
+#end
+

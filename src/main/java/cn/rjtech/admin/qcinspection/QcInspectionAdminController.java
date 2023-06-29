@@ -31,7 +31,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: RJ
  * @date: 2023-04-26 13:49
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.QCINSPECTION)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/qcinspection", viewPath = "/_view/admin/qcinspection")

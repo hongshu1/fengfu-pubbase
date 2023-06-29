@@ -22,7 +22,7 @@ import com.jfinal.kit.Kv;
  * @date: 2023-04-21 15:49
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.PROCESSDEFECT)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/processdefect", viewPath = "/_view/admin/processdefect")
 public class ProcessDefectAdminController extends BaseAdminController {
@@ -182,6 +182,16 @@ public class ProcessDefectAdminController extends BaseAdminController {
         Kv kv = new Kv();
         kv.setIfNotNull("ids", get("ids"));
         renderJsonData(service.getQRCodeCheck(kv));
+    }
+
+    /**
+     *  工序数据源
+     */
+    public void getOperationDatas() {
+        String OrgCode = getOrgCode();
+        Kv kv =new Kv();
+        kv.setIfNotNull("OrgCode", OrgCode);
+        renderJsonData(service.OperationDatas(kv));
     }
 
 

@@ -65,10 +65,118 @@ ORDER BY a.ModifyDate DESC
 #end
 
 
+###-------------------重新开发
 
+#sql("getLine")
+select * from T_Sys_ScanDeliverDetail where MasID = '#(autoId)'
+#end
 
+#sql("getCustomer")
+SELECT  a.cCusCode as cusCode, a.cCusName as cusName, a.iAutoId as cusId
+FROM Bd_Customer a
+where 1=1 and a.isEnabled = '1' and a.isDeleted = '0'
+	#if(q)
+		and (a.cCusCode like concat('%',#para(q),'%') OR a.cCusName like concat('%',#para(q),'%'))
+	#end
+#end
 
+#sql("getCustAddr")
+select t1.iAutoId as addrId, cDistrictCode as addrCode, cDistrictName as addrName, t2.cWhCode as whCode, t2.cWhName
+as whName
+from Bd_CustomerAddr t1
+	left join Bd_Warehouse t2 on t2.iAutoId = t1.iWarehouseId
+where iCustomerId = '#(cusid)'
+### and t1.isDeleted = '0' and t1.isEnabled = '1'
+### and t2.isDeleted = '0' and t2.isEnabled = '1'
+#if(q)
+		and (t1.cDistrictCode like concat('%',#para(q),'%') OR t1.cDistrictCode like concat('%',#para(q),'%'))
+	#end
+#end
 
+#sql("getOrder")
+select *
+from (select t1.cOrderNo    as SourceBillNo,
+             t1.iAutoId     as SourceBillID,
+             t1.iSaleTypeId as SourceBillType,
+             sale.cSTName   as saleName,
+             t1.iBusType    as BillType,
+             dic.name       as busName
+      from Co_WeekOrderM t1
+               left join (
+          SELECT s1.*,
+                 s2.cRdName,
+                 s2.cRdCode as s2RdCode
+          FROM Bd_SaleType s1
+                   LEFT JOIN Bd_Rd_Style s2 ON s2.cRdCode = s1.cRdCode
+          WHERE s1.IsDeleted = '0'
+      ) sale on sale.iAutoId = t1.iSaleTypeId
+               left join UGCFF_MOM_System.dbo.jb_dictionary dic
+                         ON t1.iBusType = dic.sn AND dic.type_key = 'order_business_type'
+      where 1 = 1
+        and t1.iCustomerId = '#(cusid)'
+        and t1.iOrgId = '#(orgId)'
+        ###and t1.iAuditStatus = '2'
+        ###and t1.IsDeleted = '0'
+      union all
+      select t1.cOrderNo    as SourceBillNo,
+             t1.iAutoId     as SourceBillID,
+             t1.iSaleTypeId as SourceBillType,
+             sale.cSTName   as saleName,
+             t1.iBusType    as BillType,
+             dic.name       as busName
+      from Co_ManualOrderM t1
+               left join (
+          SELECT s1.*,
+                 s2.cRdName,
+                 s2.cRdCode as s2RdCode
+          FROM Bd_SaleType s1
+                   LEFT JOIN Bd_Rd_Style s2 ON s2.cRdCode = s1.cRdCode
+          WHERE s1.IsDeleted = '0'
+      ) sale on sale.iAutoId = t1.iSaleTypeId
+               left join UGCFF_MOM_System.dbo.jb_dictionary dic
+                         ON t1.iBusType = dic.sn AND dic.type_key = 'order_business_type'
+      where 1 = 1
+        and t1.iCustomerId = '#(cusid)'
+        and t1.iOrgId = '#(orgId)'
+        ###and t1.iAuditStatus = '2'
+        ###and t1.IsDeleted = '0'
+        ) t
+where 1=1
+#if(orderNo)
+and t.SourceBillNo like concat('%',#para(orderNo),'%')
+#end
+#end
 
-
-
+#sql("getOrderLine")
+select t.*,
+       isnull(delivery.deliveryQty, 0) as deliveryQty,
+       b.cInvName1,
+       b.cInvCode1,
+       b.cInvStd                       as cinvstd,
+       uom.cUomName
+from (select t1.iAutoId  as SourceBillDid,
+             t1.cInvCode as InvCode,
+             t1.iInventoryId,
+             t1.dPlanAogDate as billDate,
+             0           as qty,
+             t1.iQty     as planQty
+      from Co_WeekOrderD t1
+      where iWeekOrderMid = '#(orderId)'
+        ###and t1.isDeleted = '0'
+      union all
+      select t1.iAutoId  as SourceBillDid,
+             t1.cInvCode as InvCode,
+             t1.iInventoryId,
+             ''          as billDate,
+             0           as qty,
+             t1.iSum     as planQty
+      from Co_ManualOrderD t1
+      where iManualOrderMid = '#(orderId)'
+        ###and t1.isDeleted = '0'
+        ) t
+         left join (
+    select InvCode, sum(Qty) as deliveryQty from T_Sys_SaleDeliverDetail where isDeleted = '0' group by InvCode
+) delivery on t.InvCode = delivery.InvCode
+         left join Bd_Inventory b on t.iInventoryId = b.iAutoId
+         left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
+#end

@@ -1,0 +1,33 @@
+<form onsubmit="return false;" id="BomData_Form" action="#(action)" method="post">
+	#if(bomData.iAutoId??)
+	<input type="hidden" name="bomData.iAutoId" value="#(bomData.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="bomData.iAutoId" value="#(bomData.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">BOM主表ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入BOM主表ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入BOM主表ID" maxlength="40" name="bomData.iBomMid" value="#(bomData.iBomMid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">BOM数据</label>
+<div class="col-10">
+    <textarea style="height:100px;"  data-rule="required"  data-notnull="true" data-tips="请输入BOM数据" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入BOM数据" maxlength="200" name="bomData.cData">#(bomData.cData??)</textarea>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="BomData_Form")
+#end
+

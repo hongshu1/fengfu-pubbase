@@ -79,7 +79,9 @@
             <!--                   placeholder="请输入班次ID" maxlength="19" name="moDoc.iworkshiftmid"-->
             <!--                   value="#(moDoc.iworkshiftmid??)"/>-->
         </div>
+    </div>
 
+    <div class="form-group row">
         <label class="col-sm-2 col-form-label">计划日期</label>
         <div class="col-3">
             <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
@@ -88,40 +90,35 @@
                    maxlength="10"
                    name="moDoc.dplandate" value="#(moDoc.dplandate??)"/>
         </div>
-    </div>
-
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">存货编码</label>
+        <label class="col-sm-1 col-form-label" style="margin-left:130px">存货编码</label>
         <div class="col-3">
-          <!--  <input type="text"
-                   data-autocomplete
-                   data-rule="required"
-                   data-tips="请选择存货编码"
-                   autocomplete="off"
-                   class="form-control"
-                   placeholder="请选择存货编码"
-                   value="#(moDoc.cinvcode??)"
-                   id="cinvcode"
-                   data-text-attr="cinvcode"
-                   data-hidden-input="cinvcode1,cinvname1,itemid,routid"
-                   data-column-attr="cinvname,cinvname1,itemid"
-                   maxlength="40"
-                   data-url="admin/bommaster/inventoryAutocompleteNew?itemId=#(moDoc.iinventoryid??)"
-            />-->
-            <input  type="hidden" placeholder="存货id" id="itemid" data-value-attr="itemid" name="moDoc.iinventoryid" value="#(moDoc.iinventoryid??)"/>
-            <input type="text" autocomplete="off" class="form-control"
-                   id="cinvcode"
-                   data-autocomplete
-                   data-url="admin/bommaster/inventoryAutocompleteNew?itemid="
-                   data-hiddeninput="cinvcode1,cinvname1,itemid,routid"
-                   data-value-attr="cinvcode"
-                   data-text-attr="cinvcode"
-                   data-width="550"
-                   data-header="存货编码,名称,ID"
-                   data-column-attr="cinvcode,cinvname1,itemid"
-                   data-rule="required" placeholder=""  data-tips=""  maxlength="40" name="" value="#(moDoc.cinvcode??)">
-        </div>
+            <input type="text" name="iInventoryId" value="#(iInventoryId??)" hidden data-sync-attr="itemid" id="itemId_#(pageId)"  data-notnull="true" data-tips="请输入转换前存货ID" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" />
+            <div class="input-group">
+                <input type="text"
+                       data-autocomplete
+                       data-rule="required"
+                       data-tips="请选择存货编码"
+                       autocomplete="off"
+                       class="form-control"
+                       placeholder="请选择存货编码"
+                       value="#(moDoc.cinvcode??)"
+                       name="cInvCode"
+                       id="inventoryName"
+                       data-url="admin/bommaster/inventoryAutocomplete"
+                       data-sync-ele="#cinvname_#(pageId),#itemId_#(pageId)"
+                       data-text-attr="cinvcode"
+                       data-column-attr="cinvcode"
 
+                />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#inventoryName_#(pageId)" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/modoc/inventoryDialogIndex"><i class="fa fa-search"></i></button>
+                </div>
+                <input  type="hidden" placeholder="存货id" id="itemid" data-value-attr="itemid" name="moDoc.iinventoryid" value="#(moDoc.iinventoryid??)"/>
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group row">
 
         <input  type="hidden" placeholder="工艺id" id="routid" data-value-attr="routid" name="moDoc.iinventoryrouting"/>
         <input type="hidden" disabled id="iinventoryroutingid_#(pageId)" autocomplete="off" class="form-control col-sm-4"
@@ -134,15 +131,16 @@
                    readonly="readonly"
             />
         </div>
-    </div>
-
-    <div class="form-group row">
         <label class="col-sm-2 col-form-label">部品名称</label>
         <div class="col-3">
             <input id="cinvname1" type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
                    placeholder="" maxlength="18" data-value-attr="cinvname1"
                    readonly="readonly"/>
         </div>
+    </div>
+
+    <div class="form-group row">
+
         <label class="col-sm-2 col-form-label">计划数量</label>
         <div class="col-3">
             <input type="number" data-with-clearbtn="true" autocomplete="off" id="iqty" class="form-control" data-rule="pnumber;fix<=2;" placeholder="请输入计划数量" maxlength="18" name="moDoc.iqty" value="#(moDoc.iqty??)"/>
@@ -208,6 +206,7 @@
        data-rowtpl="itemroutingconfigRowtpl_#(pageId)"
        data-editable="true"
        data-editable-option="getEditableTableOptionsModocFirst"
+
 >
     <thead>
     <tr>
@@ -232,10 +231,43 @@
         var iMoDocId=$("#iMoDocId").val();
 
         if(iMoDocId) {
-
             reqTableDate("admin/modoc/getDocdetail?imodocid=" +iMoDocId);
         }
     })
+    function setChooseDialogSelectResult2(data){
+        $("#inventoryName").val(data.cinvcode);
+        // Ajax.post("admin/topnav/menu",{"topnavId":"#(topnavId)","permissions":permissions},function(ret){
+        //     LayerMsgBox.success(ret.msg,500,successCallback);
+        //
+        //     var input = $(this);
+        //     var inputValue = input.val();
+        //
+        //     var $iinventoryroutingid = $('#iinventoryroutingid_#(pageId)');
+        //     $iinventoryroutingid.val(inputValue);
+        //     console.log()
+        //     let iinventoryroutingidValue = $iinventoryroutingid.val();
+        //
+        //
+        // });
+        console.log(JSON.stringify(data.iinventoryroutingid))
+        $.ajax({
+            url: 'admin/inventoryroutingconfig/list?iinventoryroutingid=' + data.iinventoryroutingid,
+            type: 'GET',
+            success: function (ret) {
+                if (ret.state === 'ok') {
+                    var datas = ret.data;
+                    console.log(JSON.stringify(datas))
+                    jboltTableClear('#itemroutingconfigid_#(pageId)');
+
+                    jboltTableInsertRow('#itemroutingconfigid_#(pageId)', datas, false, false, true);
+                    // console.log(jboltTableGetSubmitData('#itemroutingconfigid_#(pageId)'));
+                }
+            },
+            error: function () {
+                console.log();
+            }
+        });
+    }
    function submitForm(){
        LayerMsgBox.confirm("确认提交此数据?",function(){
           // submitThisForm();
@@ -304,6 +336,7 @@
     }
     function getEditableTableOptionsModocFirst(){
         var imdocid=$("#iMoDocId").val();
+        alert(imdocid)
         var editableTableOptions1={
             trigger:"click",
             initRowCount:0,

@@ -306,6 +306,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 			}
 			// 获取一行的子件
 			List<BomCompare> bomCompares = objectConversionOfToBomCompara(row, bomMasterId, userId, userName, now);
+			ValidationUtils.notEmpty(bomCompares, "第"+(i+1)+"行存货编码未解析出来");
 			bomCompareList.addAll(bomCompares);
 		}
 		ValidationUtils.notEmpty(bomCompareList, "未解析到子件数据");
@@ -398,13 +399,13 @@ public class BomMasterService extends BaseService<BomMaster> {
 	
 	public void verificationOfTableRow(String finishedProductId, JSONObject row){
         // 部品
-        String invItemId = row.getString(BomCompare.INVITEMID);
+        String invItemId = row.getString(BomCompare.INVITEMID.toLowerCase());
         // 片料
-        String blankingItemId = row.getString(BomCompare.BLANKINGITEMID);
+        String blankingItemId = row.getString(BomCompare.BLANKINGITEMID.toLowerCase());
         // 卷料
-        String originalItemId = row.getString(BomCompare.ORIGINALITEMID);
+        String originalItemId = row.getString(BomCompare.ORIGINALITEMID.toLowerCase());
         // 分条料
-        String slicingInvItemId = row.getString(BomCompare.SLICINGINVITEMID);
+        String slicingInvItemId = row.getString(BomCompare.SLICINGINVITEMID.toLowerCase());
 		
 		// 校验母件成品编码不能跟子件编码一致
 		ValidationUtils.isTrue(!finishedProductId.equals(invItemId), "部品存货不能跟成品存货选择一致");
@@ -461,22 +462,9 @@ public class BomMasterService extends BaseService<BomMaster> {
         ValidationUtils.isTrue(count==1, "编号栏只能填写一列");
         
         if (StrUtil.isNotBlank(invItemId)){
-			ValidationUtils.notNull(row.getBigDecimal(BomCompare.INVQTY), "部品QTY不能为空");
+			ValidationUtils.notNull(row.getBigDecimal(BomCompare.INVQTY.toLowerCase()), "部品QTY不能为空");
 		}
-//		if (StrUtil.isNotBlank(blankingItemId)){
-//			ValidationUtils.notNull(row.getBigDecimal(BomCompare.BLANKINGQTY), "片料可制件数不能为空");
-//			ValidationUtils.notNull(row.getBigDecimal(BomCompare.BLANKINGWEIGHT), "片料重量不能为空");
-//		}
-//
-//		if (StrUtil.isNotBlank(originalItemId)){
-//			ValidationUtils.notNull(row.getBigDecimal(BomCompare.ORIGINALQTY), "原材料可制件数不能为空");
-//			ValidationUtils.notNull(row.getBigDecimal(BomCompare.ORIGINALWEIGHT), "原材料重量不能为空");
-//		}
-//
-//		if (StrUtil.isNotBlank(slicingInvItemId)){
-//			ValidationUtils.notNull(row.getBigDecimal(BomCompare.SLICINGQTY), "分条料可制件数不能为空");
-//			ValidationUtils.notNull(row.getBigDecimal(BomCompare.SLICINGWEIGHT), "分条料重量不能为空");
-//		}
+
 	}
 	
 	
@@ -497,13 +485,13 @@ public class BomMasterService extends BaseService<BomMaster> {
 	 */
 	private boolean isAdd(JSONObject row){
 		// 部品
-		String invItemId = row.getString(BomCompare.INVITEMID);
+		String invItemId = row.getString(BomCompare.INVITEMID.toLowerCase());
 		// 片料
-		String blankingItemId = row.getString(BomCompare.BLANKINGITEMID);
+		String blankingItemId = row.getString(BomCompare.BLANKINGITEMID.toLowerCase());
 		// 卷料
-		String originalItemId = row.getString(BomCompare.ORIGINALITEMID);
+		String originalItemId = row.getString(BomCompare.ORIGINALITEMID.toLowerCase());
 		// 分条料
-		String slicingInvItemId = row.getString(BomCompare.SLICINGINVITEMID);
+		String slicingInvItemId = row.getString(BomCompare.SLICINGINVITEMID.toLowerCase());
 		// 判断物料是否都为空，为空全部跳过
 		return StrUtil.isBlank(blankingItemId) && StrUtil.isBlank(invItemId) && StrUtil.isBlank(originalItemId) &&StrUtil.isBlank(slicingInvItemId);
 	}
@@ -544,26 +532,30 @@ public class BomMasterService extends BaseService<BomMaster> {
 		 */
 		BomCompare bomCompare = null;
 		// 部品 先赋值成品的存货id
-        if (StrUtil.isNotBlank(row.getString(BomCompare.INVITEMID))){
-           bomCompare = bomCompareService.createBomCompare(JBoltSnowflakeKit.me.nextId(), userId, userName, now, bomMasterId, null, row.getLong(BomCompare.INVITEMID), invLev, invLev, code, 0,
-                    row.getBigDecimal(BomCompare.INVQTY), row.getBigDecimal(BomCompare.INVWEIGHT), row.getLong(BomCompare.IVENDORID), row.getString(BomCompare.CMEMO),
-					Boolean.valueOf(row.getString(BomCompare.ISOUTSOURCED)), false);
+        if (StrUtil.isNotBlank(row.getString(BomCompare.INVITEMID.toLowerCase()))){
+           bomCompare = bomCompareService.createBomCompare(JBoltSnowflakeKit.me.nextId(), userId, userName, now, bomMasterId, null,
+				   row.getLong(BomCompare.INVITEMID.toLowerCase()), invLev, invLev, code, 0,
+                    row.getBigDecimal(BomCompare.INVQTY.toLowerCase()), row.getBigDecimal(BomCompare.INVWEIGHT.toLowerCase()),
+				   row.getLong(BomCompare.IVENDORID.toLowerCase()), row.getString(BomCompare.CMEMO.toLowerCase()),
+					Boolean.valueOf(row.getString(BomCompare.ISOUTSOURCED.toLowerCase())), false);
             bomCompares.add(bomCompare);
         }
 		BomCompare blankBomCompare = null;
         // 片料
-        if (StrUtil.isNotBlank(row.getString(BomCompare.BLANKINGITEMID))){
+        if (StrUtil.isNotBlank(row.getString(BomCompare.BLANKINGITEMID.toLowerCase()))){
         	Long pid = null;
         	if (ObjectUtil.isNotNull(bomCompare)){
         		pid = bomCompare.getIAutoId();
 			}
-        	blankBomCompare = bomCompareService.createBomCompare(JBoltSnowflakeKit.me.nextId(), userId, userName, now, bomMasterId, pid, row.getLong(BomCompare.BLANKINGITEMID), invLev, invLev, code, 1,
-                    row.getBigDecimal(BomCompare.BLANKINGQTY), row.getBigDecimal(BomCompare.BLANKINGWEIGHT), null, null, false, false);
+        	blankBomCompare = bomCompareService.createBomCompare(JBoltSnowflakeKit.me.nextId(), userId, userName, now, bomMasterId, pid,
+					row.getLong(BomCompare.BLANKINGITEMID.toLowerCase()), invLev, invLev, code, 1,
+                    row.getBigDecimal(BomCompare.BLANKINGQTY.toLowerCase()), row.getBigDecimal(BomCompare.BLANKINGWEIGHT.toLowerCase()),
+					null, null, false, false);
             bomCompares.add(blankBomCompare);
         }
         // 分条料
 		BomCompare slicingBomCompare = null;
-        if (StrUtil.isNotBlank(row.getString(BomCompare.SLICINGINVITEMID))){
+        if (StrUtil.isNotBlank(row.getString(BomCompare.SLICINGINVITEMID.toLowerCase()))){
 			
 			/**
 			 * 1.不存在片料:
@@ -578,13 +570,15 @@ public class BomMasterService extends BaseService<BomMaster> {
 			if (ObjectUtil.isNotNull(blankBomCompare)){
 				pid = blankBomCompare.getIAutoId();
 			}
-			slicingBomCompare = bomCompareService.createBomCompare(JBoltSnowflakeKit.me.nextId(), userId, userName, now,bomMasterId, pid, row.getLong(BomCompare.SLICINGINVITEMID), invLev, invLev, code, 2,
-                    row.getBigDecimal(BomCompare.SLICINGQTY), row.getBigDecimal(BomCompare.SLICINGWEIGHT), null, null, false, false);
+			slicingBomCompare = bomCompareService.createBomCompare(JBoltSnowflakeKit.me.nextId(), userId, userName, now,bomMasterId, pid,
+					row.getLong(BomCompare.SLICINGINVITEMID.toLowerCase()), invLev, invLev, code, 2,
+                    row.getBigDecimal(BomCompare.SLICINGQTY.toLowerCase()), row.getBigDecimal(BomCompare.SLICINGWEIGHT.toLowerCase()), null,
+					null, false, false);
             bomCompares.add(slicingBomCompare);
         }
         
         // 卷料
-        if (StrUtil.isNotBlank(row.getString(BomCompare.ORIGINALITEMID))){
+        if (StrUtil.isNotBlank(row.getString(BomCompare.ORIGINALITEMID.toLowerCase()))){
 			Long pid = null;
 			if (ObjectUtil.isNotNull(bomCompare)){
 				pid = bomCompare.getIAutoId();
@@ -595,8 +589,10 @@ public class BomMasterService extends BaseService<BomMaster> {
 			if (ObjectUtil.isNotNull(slicingBomCompare)){
 				pid = slicingBomCompare.getIAutoId();
 			}
-            BomCompare originalBomCompare = bomCompareService.createBomCompare(JBoltSnowflakeKit.me.nextId(), userId, userName, now,bomMasterId, pid, row.getLong(BomCompare.ORIGINALITEMID), invLev, invLev, code, 3,
-                    row.getBigDecimal(BomCompare.ORIGINALQTY), row.getBigDecimal(BomCompare.ORIGINALWEIGHT), null, null, false, false);
+            BomCompare originalBomCompare = bomCompareService.createBomCompare(JBoltSnowflakeKit.me.nextId(), userId, userName, now,bomMasterId, pid,
+					row.getLong(BomCompare.ORIGINALITEMID.toLowerCase()), invLev, invLev, code, 3,
+                    row.getBigDecimal(BomCompare.ORIGINALQTY.toLowerCase()), row.getBigDecimal(BomCompare.ORIGINALWEIGHT.toLowerCase()),
+					null, null, false, false);
             bomCompares.add(originalBomCompare);
         }
         return bomCompares;
@@ -905,7 +901,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		// 记录上一行有编码栏的值
 		Record perCacheRecord = null;
 		// 子件数据从第十一行开始读，下标10
-		for (int i=10; i<sheet.getLastRowNum(); i++){
+		for (int i=10; i<=sheet.getLastRowNum(); i++){
 			XSSFRow row = sheet.getRow(i);
 			if (ObjectUtil.isNull(row) || ObjectUtil.isNull(row.getCell(1))){
 				perCacheRecord = null;
@@ -965,8 +961,9 @@ public class BomMasterService extends BaseService<BomMaster> {
 				}
 				perCacheRecord = null;
 				continue;
+			}else {
+				rowRecord.set(codeKey, codeValue);
 			}
-			rowRecord.set(codeKey, codeValue);
 			// 补充第一行所有数据行
 			buildFristRow(sheet, row, rowRecord);
 			// 记录当前行

@@ -43,10 +43,10 @@
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
                 <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
-                    onclick="addViewBtn(this,'${data.cplanorderno}','${data.icustomerid}','${data.iyear}',false)" data-handler="refreshJBoltTable" data-title="查看年度计划">查看</a>
+                    onclick="addViewBtn(this,'${data.iautoid}','${data.cplanorderno}','${data.icustomerid}','${data.iyear}',false)" data-handler="refreshJBoltTable" data-title="查看年度计划">查看</a>
 
                 <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
-                    onclick="addViewBtn(this,'${data.cplanorderno}','${data.icustomerid}','${data.iyear}',true)" data-handler="refreshJBoltTable" data-title="编辑年度计划">编辑</a>
+                    onclick="addViewBtn(this,'${data.iautoid}','${data.cplanorderno}','${data.icustomerid}','${data.iyear}',true)" data-handler="refreshJBoltTable" data-title="编辑年度计划">编辑</a>
 
                 <a class="jbolt_table_delbtn" href="admin/scheduproductplanyear/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable" >删除</a>
             </td>
@@ -64,6 +64,9 @@
                 <button data-dialogbtn data-handler="jboltTablePageToFirst" data-fs="true"
                         data-title="新增年度生产计划排产" data-url="admin/scheduproductplanyear/addview" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
                 </button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/scheduproductplanyear/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-secondary btn-sm">批量删除</button>
+                #include("/_view/_common/_batch_approval_btns.html", formSn="Aps_AnnualPlanM", uri="admin/scheduproductplanyear",
+                primaryKeyName="iAutoId", className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService", permissionKeyPrefix="scheduplanyear")
             </div>
         </div>
         <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
@@ -101,8 +104,8 @@
 <script type="text/javascript">
 
 
-function addViewBtn(ele,cPlanOrderNo,iCustomerId,iYear,isedit){
-    var url="admin/scheduproductplanyear/addview?cplanorderno="+cPlanOrderNo+"&icustomerid="+iCustomerId+"&startyear="+iYear+"&isedit="+isedit;
+function addViewBtn(ele,iautoid,cPlanOrderNo,iCustomerId,iYear,isedit){
+    var url="admin/scheduproductplanyear/addview?cplanorderno="+cPlanOrderNo+"&icustomerid="+iCustomerId+"&startyear="+iYear+"&isedit="+isedit+"&iautoid="+iautoid;
     $(ele).data("url",url);
     DialogUtil.openBy(ele);
 }

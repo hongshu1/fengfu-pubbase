@@ -12,12 +12,28 @@
 #if(iautoid)
     AND pm.iAutoId = #para(iautoid)
 #end
-#if(cdepcodes)
-    AND pm.cdepcode IN (
-        #for(code:cdepcodes)
-            '#(code)' #(for.last?'':',')
-        #end
-    )
+#if(cpurchaseno)
+	and pm.cpurchaseno like concat('%',#para(cpurchaseno),'%')
+#end
+#if(cpurchasedate)
+	and convert(date,pm.cpurchasedate) = convert(date,#para(cpurchasedate))
+#end
+#(getDataPermissionSql("pm", "cdepcode"))
+ORDER BY pm.iautoid DESC
+#end
+
+#sql("findPurchasemDetails")
+    SELECT pm.*,
+    (SELECT top 1 cptname FROM bd_PurchaseType pt WHERE pt.cptcode = pm.iPurchaseType) AS ipurchasetypename,
+    (SELECT top 1 cDepName FROM bd_Department WHERE cDepCode = pm.cdepcode) AS cdepname,
+    (SELECT top 1 cpsn_name FROM Bd_Person WHERE cpsn_num = pm.cPersonCode) AS cpersonname
+    FROM PL_PurchaseM pm
+    WHERE 1 = 1
+#if(iorgid)
+	and pm.iorgid = #para(iorgid)
+#end
+#if(iautoid)
+    AND pm.iAutoId = #para(iautoid)
 #end
 #if(cpurchaseno)
 	and pm.cpurchaseno like concat('%',#para(cpurchaseno),'%')
@@ -146,17 +162,6 @@ WHERE 1=1
 #if(iorgid)
 	and m.iorgid = #para(iorgid)
 #end
-### 超级管理员不过滤权限部门
-#if(!isSystemAdmin)
-    ### 存在角色部门配置过滤处理
-    #if(accessCdepCodes && accessCdepCodes.size() > 0)
-        AND m.cDepCode IN (
-            #for(code:accessCdepCodes)
-                '#(code)' #(for.last?'':',')
-            #end
-        )
-    #end
-#end
 #if(ieffectivestatus)
     AND m.ieffectivestatus = #para(ieffectivestatus)
 #end
@@ -175,6 +180,7 @@ WHERE 1=1
 #if(capplypersonname)
 	and m.capplypersonname like concat('%',#para(capplypersonname),'%')
 #end
+#(getDataPermissionSql("m", "cdepcode"))
 ORDER BY m.iautoid DESC
 #end
 
@@ -246,17 +252,7 @@ from PL_Expense_Budget_Item ebi
 	#if(ieffectivestatus)
 		and eb.ieffectivestatus = #para(ieffectivestatus)
 	#end
-### 超级管理员不过滤权限部门
-#if(!isSystemAdmin)
-    ### 存在角色部门配置过滤处理
-    #if(accessCdepCodes && accessCdepCodes.size() > 0)
-        AND eb.cDepCode IN (
-            #for(code:accessCdepCodes)
-                '#(code)' #(for.last?'':',')
-            #end
-        )
-    #end
-#end
+	#(getDataPermissionSql("eb", "cdepcode"))
 	group by eb.cdepcode,eb.ibudgettype,eb.ibudgetyear,ebi.iautoid,ebi.iexpenseid,eb.cbegindate,ebi.cbudgetno,bsh.csubjectname,bsl.csubjectname,ebi.citemname,ebi.ihighestsubjectid,ebi.ilowestsubjectid,
 ebi.careertype,ebi.isLargeAmountExpense,ebi.cuse,ebi.cmemo,ebi.iprice,ebi.cunit,ebi.iCarryForward,ebi.icreateby,ebi.dcreatetime,ebi.iamounttotal,ebi.isscheduled,ebi.iprojectcardid
 #end
@@ -316,17 +312,7 @@ where 1=1 and pm.iorgid = #para(iorgid)
 	#if(ieffectivestatus)
 		and pm.ieffectivestatus = #para(ieffectivestatus)
 	#end
-### 超级管理员不过滤权限部门
-#if(!isSystemAdmin)
-    ### 存在角色部门配置过滤处理
-    #if(accessCdepCodes && accessCdepCodes.size() > 0)
-        AND pm.cDepCode IN (
-            #for(code:accessCdepCodes)
-                '#(code)' #(for.last?'':',')
-            #end
-        )
-    #end
-#end
+	#(getDataPermissionSql("pm", "cdepcode"))
 #end
 
 #sql("refBudgetItemDatas")

@@ -314,42 +314,6 @@ public class PermissionKey {
 	 */
 	public static final String MO_DOC = "mo_doc";
 	/**
-	 * 生产工位派工
-	 */
-	public static final String PRODUCTION_PRODUCTION = "production_production";
-	/**
-	 * 分条加工
-	 */
-	public static final String CUTSTRIPPROCESS = "cutstripprocess";
-	/**
-	 * 片料加工
-	 */
-	public static final String SLICEINVPROCESS = "sliceinvprocess";
-	/**
-	 * 板料加工
-	 */
-	public static final String PIECEINVPROCESS = "pieceinvprocess";
-	/**
-	 * 生产工序报工
-	 */
-	public static final String PRODUCTION_REPORT = "production_report";
-	/**
-	 * 生产完工
-	 */
-	public static final String PRODUCTION_COMPLETE = "production_complete";
-	/**
-	 * 返修工单管理
-	 */
-	public static final String REWORKORDER = "reworkorder";
-	/**
-	 * 委外工单管理
-	 */
-	public static final String PMISSUEM = "pmissuem";
-	/**
-	 * 员工计件工资
-	 */
-	public static final String PIECE_RATE = "piece_rate";
-	/**
 	 * 设备管理
 	 */
 	public static final String EQUIPMENT_MANAGE = "equipment_manage";
@@ -730,10 +694,6 @@ public class PermissionKey {
 	 */
 	public static final String MOPICKLIST = "mopicklist";
 	/**
-	 * 参数配置
-	 */
-	public static final String SYSSETTING = "syssetting";
-	/**
 	 * 计量单位档案
 	 */
 	public static final String UOM = "uom";
@@ -842,7 +802,7 @@ public class PermissionKey {
 	 */
 	public static final String PROPOSAL_MODEL = "proposal_model";
 	/**
-	 * 币种档案
+	 * 外币设置
 	 */
 	public static final String FOREIGN_CURRENCY_INDEX = "foreign_currency_index";
 	/**
@@ -914,11 +874,11 @@ public class PermissionKey {
 	 */
 	public static final String FITEMSS97CLASS = "fitemss97class";
 	/**
-	 * 项目管理大类项目主目录
+	 * 项目分类
 	 */
 	public static final String FITEMSS97 = "fitemss97";
 	/**
-	 * 项目管理大类项目子目录
+	 * 项目档案
 	 */
 	public static final String FITEMSS97SUB = "fitemss97sub";
 	/**
@@ -1042,7 +1002,7 @@ public class PermissionKey {
 	 */
 	public static final String OM_ORDER_MANAGEMENT = "om_order_management";
 	/**
-	 * 审批流/审批配置
+	 * 审批流/审核配置
 	 */
 	public static final String AUDIT_CONFIG = "audit_config";
 	/**
@@ -1074,17 +1034,13 @@ public class PermissionKey {
 	 */
 	public static final String BARCODE_REPORT = "barcode_report";
 	/**
-	 * 物料现品票汇总管理
-	 */
-	public static final String INVENTORY_BARCODE_TRACEPAGE = "Inventory_barcode_tracepage";
-	/**
 	 * 仓库报表
 	 */
 	public static final String WAREHOUSE_REPORT = "warehouse_report";
 	/**
 	 * 库存盘点
 	 */
-	public static final String STOCKCHECKVOUCH = "stockcheckvouch";
+	public static final String CURRENTSTOCK = "currentstock";
 	/**
 	 * 制程异常品记录
 	 */
@@ -1132,7 +1088,7 @@ public class PermissionKey {
 	/**
 	 * 备料一览表
 	 */
-	public static final String MATERIALPREPARATIONLIST = "materialPreparationList";
+	public static final String ADMIN_SYSMATERIALSPREPARE = "ADMIN_SYSMATERIALSPREPARE";
 	/**
 	 * 编码规则配置
 	 */
@@ -1168,7 +1124,7 @@ public class PermissionKey {
 	/**
 	 * 生产备料
 	 */
-	public static final String PRODUCTION_MATERIAL = "production_material";
+	public static final String ADMIN_SYSMATERIALSPREPAREDETAIL = "ADMIN_SYSMATERIALSPREPAREDETAIL";
 	/**
 	 * 材料出库单列表
 	 */
@@ -1249,14 +1205,6 @@ public class PermissionKey {
 	 * 收料单列表
 	 */
 	public static final String MATERIALRECEIPTLIST1 = "materialReceiptList1";
-	/**
-	 * 材料备料表
-	 */
-	public static final String ADMIN_SYSMATERIALSPREPARE = "ADMIN_SYSMATERIALSPREPARE";
-	/**
-	 * 备料单明细
-	 */
-	public static final String ADMIN_SYSMATERIALSPREPAREDETAIL = "ADMIN_SYSMATERIALSPREPAREDETAIL";
 	/**
 	 * 开发文档
 	 */
@@ -1441,6 +1389,114 @@ public class PermissionKey {
 	 * 关于我们
 	 */
 	public static final String ABOUT_US = "about_us";
+	/**
+	 * 平板菜单权限管理
+	 */
+	public static final String PAD_APP = "PAD_APP";
+	/**
+	 * 产线刷卡
+	 */
+	public static final String NFCSWIPECARD = "nfcswipecard";
+	/**
+	 * 单据审批权限
+	 */
+	public static final String FORM_APPROVAL_PERMISSION = "form_approval_permission";
+	/**
+	 * 物料现品票汇总管理
+	 */
+	public static final String INVENTORY_BARCODE_TRACEPAGE = "Inventory_barcode_tracepage";
+	/**
+	 * 制造工单
+	 */
+	public static final String MODOC = "modoc";
+	/**
+	 * 记录上传
+	 */
+	public static final String FORMUPLOADM = "formuploadm";
+	/**
+	 * 来料检
+	 */
+	public static final String RCVDOCQCFORMM_APP = "rcvdocqcformm_app";
+	/**
+	 * 在库检
+	 */
+	public static final String INSTOCKQCFORMM_APP = "instockqcformm_app";
+	/**
+	 * 出货检
+	 */
+	public static final String STOCKOUTQCFORMM_APP = "stockoutqcformm_app";
+	/**
+	 * 来料异常品管理
+	 */
+	public static final String RCVDOCDEFECT_APP = "rcvdocdefect_app";
+	/**
+	 * 制程异常品管理
+	 */
+	public static final String PROCESSDEFECT_APP = "processdefect_app";
+	/**
+	 * 在库异常品管理
+	 */
+	public static final String INSTOCKDEFECT_APP = "instockdefect_app";
+	/**
+	 * 出货异常品管理
+	 */
+	public static final String STOCKOUTDEFECT_APP = "stockoutdefect_app";
+	/**
+	 * 工程内品质巡查管理
+	 */
+	public static final String QCINSPECTION_APP = "qcinspection_app";
+	/**
+	 * 工作台
+	 */
+	public static final String PROPOSAL_DASHBOARD = "proposal_dashboard";
+	/**
+	 * 客户传票汇总管理
+	 */
+	public static final String BILLNO_BARCODE_TRACEPAGE = "billno_barcode_tracepage";
+	/**
+	 * 社内现品票汇总管理
+	 */
+	public static final String BARCODE_TRACEPAGE = "barcode_tracepage";
+	/**
+	 * 生产表单参数
+	 */
+	public static final String PRODPARAM = "prodparam";
+	/**
+	 * 稼动时间建模
+	 */
+	public static final String UPTIME_CATEGORYS = "uptime_categorys";
+	/**
+	 * 稼动时间参数
+	 */
+	public static final String UPTIME_PARAM = "uptime_param";
+	/**
+	 * 稼动时间模板
+	 */
+	public static final String UPTIME_TPL = "uptime_tpl";
+	/**
+	 * 生产项目
+	 */
+	public static final String PRODITEM = "prodItem";
+	/**
+	 * 生产表单建模
+	 */
+	public static final String PRODUCTION_FORM_MODELING = "production_form_modeling";
+	/**
+	 * 生产表单设置
+	 */
+	public static final String PRODFORM = "prodform";
+	/**
+	 * 补焊纪录管理
+	 */
+	public static final String MOMOPATCHWELDM = "momopatchweldm";
+	/**
+	 * 生产表单管理
+	 */
+	public static final String PRODFORMM = "prodformm";
+	/**
+	 * 稼动时间管理
+	 */
+	public static final String UPTIMEM = "uptimem";
 	/**
 	 * 新增
 	 */
@@ -1792,7 +1848,7 @@ public class PermissionKey {
 	/**
 	 * 提交审核
 	 */
-	public static final String EXPENSE_BUDGET_FORMULATE_SUBMITAUDIT = "expense_budget_formulate_submitaudit";
+	public static final String EXPENSE_BUDGET_FORMULATE_SUBMIT = "expense_budget_formulate_submit";
 	/**
 	 * 新增
 	 */
@@ -1825,10 +1881,6 @@ public class PermissionKey {
 	 * 生效
 	 */
 	public static final String EXPENSE_BUDGET_MANAGE_EFFECT = "expense_budget_manage_effect";
-	/**
-	 * 失效
-	 */
-	public static final String EXPENSE_BUDGET_MANAGE_UNEFFECT = "expense_budget_manage_uneffect";
 	/**
 	 * 新增
 	 */
@@ -1868,7 +1920,7 @@ public class PermissionKey {
 	/**
 	 * 提交审核
 	 */
-	public static final String INVESTMENT_PLAN_FORMULATE_SUBMITAUDIT = "investment_plan_formulate_submitaudit";
+	public static final String INVESTMENT_PLAN_FORMULATE_SUBMIT = "investment_plan_formulate_submit";
 	/**
 	 * 详情
 	 */
@@ -1877,10 +1929,6 @@ public class PermissionKey {
 	 * 生效
 	 */
 	public static final String INVESTMENT_PLAN_MANAGE_EFFECT = "investment_plan_manage_effect";
-	/**
-	 * 失效
-	 */
-	public static final String INVESTMENT_PLAN_MANAGE_UNEFFECT = "investment_plan_manage_uneffect";
 	/**
 	 * 新增
 	 */
@@ -1946,7 +1994,7 @@ public class PermissionKey {
 	 */
 	public static final String PURCHASE_INSTRUMENT_DELETE = "purchase_instrument_delete";
 	/**
-	 * 撤销审核
+	 * 撤销提审
 	 */
 	public static final String PURCHASE_WITHDRAW = "purchase_withdraw";
 	/**
@@ -1974,7 +2022,612 @@ public class PermissionKey {
 	 */
 	public static final String INVESTMENT_PLAN_MANAGE_CANCLE = "investment_plan_manage_cancle";
 	/**
-	 * 上传记录
+	 * 通过
 	 */
-	public static final String FORMUPLOADM = "form_uploadm";
+	public static final String FORM_APP_APPROVE = "form_app_approve";
+	/**
+	 * 提审
+	 */
+	public static final String MONTHORDERM_SUBMIT = "monthorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String MONTHORDERM_APPROVE = "monthorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String MONTHORDERM_REJECT = "monthorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String MONTHORDERM_BATCH_APPROVE = "monthorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String MONTHORDERM_BATCH_REJECT = "monthorderm_batch_reject";
+	/**
+	 * 不通过
+	 */
+	public static final String FORM_APP_REJECT = "form_app_reject";
+	/**
+	 * 反审批
+	 */
+	public static final String FORM_APP_REVERSEAPPROVE = "form_app_reverseApprove";
+	/**
+	 * 编辑
+	 */
+	public static final String FORM_APP_EDIT = "form_app_edit";
+	/**
+	 * 提审
+	 */
+	public static final String ANNUALORDERM_SUBMIT = "annualorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String ANNUALORDERM_APPROVE = "annualorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String ANNUALORDERM_REJECT = "annualorderm_reject";
+	/**
+	 * 批量审批通过
+	 */
+	public static final String ANNUALORDERM_BATCH_APPROVE = "annualorderm_batch_approve";
+	/**
+	 * 批量审批不通过
+	 */
+	public static final String ANNUALORDERM_BATCH_REJECT = "annualorderm_batch_reject";
+	/**
+	 * 提审
+	 */
+	public static final String WEEKORDERM_SUBMIT = "weekorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String WEEKORDERM_APPROVE = "weekorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String WEEKORDERM_REJECT = "weekorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String WEEKORDERM_BATCH_APPROVE = "weekorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String WEEKORDERM_BATCH_REJECT = "weekorderm_batch_reject";
+	/**
+	 * 提审
+	 */
+	public static final String MANUALORDERM_SUBMIT = "manualorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String MANUALORDERM_APPROVE = "manualorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String MANUALORDERM_REJECT = "manualorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String MANUALORDERM_BATCH_APPROVE = "manualorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String MANUALORDERM_BATCH_REJECT = "manualorderm_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String MONTHORDERM_REVERSE_APPROVE = "monthorderm_reverse_approve";
+	/**
+	 * 提审
+	 */
+	public static final String FORMUPLOADM_SUBMIT = "formuploadm_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String FORMUPLOADM_APPROVE = "formuploadm_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String FORMUPLOADM_REJECT = "formuploadm_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String FORMUPLOADM_REVERSE_APPROVE = "formuploadm_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String FORMUPLOADM_BATCH_APPROVE = "formuploadm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String FORMUPLOADM_BATCH_REJECT = "formuploadm_batch_reject";
+	/**
+	 * 反审批
+	 */
+	public static final String ANNUALORDERM_REVERSE_APPROVE = "annualorderm_reverse_approve";
+	/**
+	 * 批量反审批
+	 */
+	public static final String ANNUALORDERM_BATCH_REVERSE_APPROVE = "annualorderm_batch_reverse_approve";
+	/**
+	 * 反审
+	 */
+	public static final String WEEKORDERM_REVERSE_APPROVE = "weekorderm_reverse_approve";
+	/**
+	 * 批量反审
+	 */
+	public static final String WEEKORDERM_BATCH_REVERSE_APPROVE = "weekorderm_batch_reverse_approve";
+	/**
+	 * 批量反审
+	 */
+	public static final String MONTHORDERM_BATCH_REVERSE_APPROVE = "monthorderm_batch_reverse_approve";
+	/**
+	 * 反审
+	 */
+	public static final String MANUALORDERM_REVERSE_APPROVE = "manualorderm_reverse_approve";
+	/**
+	 * 批量反审
+	 */
+	public static final String MANUALORDERM_BATCH_REVERSE_APPROVE = "manualorderm_batch_reverse_approve";
+	/**
+	 * 提审
+	 */
+	public static final String SUBCONTRACTSALEORDERM_SUBMIT = "subcontractsaleorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String SUBCONTRACTSALEORDERM_APPROVE = "subcontractsaleorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String SUBCONTRACTSALEORDERM_REJECT = "subcontractsaleorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SUBCONTRACTSALEORDERM_BATCH_APPROVE = "subcontractsaleorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SUBCONTRACTSALEORDERM_BATCH_REJECT = "subcontractsaleorderm_batch_reject";
+	/**
+	 * 反审
+	 */
+	public static final String SUBCONTRACTSALEORDERM_REVERSE_APPROVE = "subcontractsaleorderm_reverse_approve";
+	/**
+	 * 批量反审
+	 */
+	public static final String SUBCONTRACTSALEORDERM_BATCH_REVERSE_APPR = "subcontractsaleorderm_batch_reverse_appr";
+	/**
+	 * 撤回审核处理
+	 */
+	public static final String MONTHORDERM_WITHDRAW = "monthorderm_withdraw";
+	/**
+	 * 撤销提审
+	 */
+	public static final String EXPENSEBUDGET_WITHDRAW = "expensebudget_withdraw";
+	/**
+	 * 撤销审核
+	 */
+	public static final String INVESTMENTPLAN_WITHDRAW = "investmentplan_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String SYSPURECEIVE_SUBMIT = "sysPureceive_submit";
+	/**
+	 * 通过
+	 */
+	public static final String SYSPURECEIVE_APPROVE = "sysPureceive_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String SYSPURECEIVE_REJECT = "sysPureceive_reject";
+	/**
+	 * 反审
+	 */
+	public static final String SYSPURECEIVE_REVERSE_APPROVE = "sysPureceive_reverse_approve";
+	/**
+	 * 批量通过
+	 */
+	public static final String SYSPURECEIVE_BATCH_APPROVE = "sysPureceive_batch_approve";
+	/**
+	 * 批量不通过
+	 */
+	public static final String SYSPURECEIVE_BATCH_REJECT = "sysPureceive_batch_reject";
+	/**
+	 * 批量通过
+	 */
+	public static final String FORM_APP_BATCH_APPROVE = "form_app_batch_approve";
+	/**
+	 * 批量不通过
+	 */
+	public static final String FORM_APP_BATCH_REJECT = "form_app_batch_reject";
+	/**
+	 * 批量撤销
+	 */
+	public static final String FORM_APP_BATCH_BACKOUT = "form_app_batch_backout";
+	/**
+	 * 撤回
+	 */
+	public static final String ANNUALORDERM_WITHDRAW = "annualorderm_withdraw";
+	/**
+	 * 撤回
+	 */
+	public static final String WEEKORDERM_WITHDRAW = "weekorderm_withdraw";
+	/**
+	 * 撤回
+	 */
+	public static final String MANUALORDERM_WITHDRAW = "manualorderm_withdraw";
+	/**
+	 * 撤回
+	 */
+	public static final String SUBCONTRACTSALEORDERM_WITHDRAW = "subcontractsaleorderm_withdraw";
+	/**
+	 * 撤回审核
+	 */
+	public static final String FORMUPLOADM_WITHDRAW = "formuploadm_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String MATERIALSOUT_SUBMIT = "materialsOut_submit";
+	/**
+	 * 通过
+	 */
+	public static final String MATERIALSOUT_APPROVE = "materialsOut_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String MATERIALSOUT_REJECT = "materialsOut_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String MATERIALSOUT_BATCH_APPROVE = "materialsOut_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String MATERIALSOUT_BATCH_REJECT = "materialsOut_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String MATERIALSOUT_REVERSE_APPROVE = "materialsOut_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String SYSPUINSTORE_WITHDRAW = "syspuinstore_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String SYSPUINSTORE_SUBMIT = "syspuinstore_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String SYSPUINSTORE_APPROVE = "syspuinstore_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String SYSPUINSTORE_REJECT = "syspuinstore_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SYSPUINSTORE_BATCH_APPROVE = "syspuinstore_batch_approve";
+	/**
+	 * 反审核
+	 */
+	public static final String SYSPUINSTORE_REVERSE_APPROVE = "syspuinstore_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String MATERIALSOUT_WITHDRAW = "materialsOut_withdraw";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SYSPUINSTORE_BATCH_REJECT = "syspuinstore_batch_reject";
+	/**
+	 * 撤回
+	 */
+	public static final String SYSPURECEIVE_WITHDRAW = "sysPureceive_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String OTHEROUT_SUBMIT = "otherOut_submit";
+	/**
+	 * 通过
+	 */
+	public static final String OTHEROUT_APPROVE = "otherOut_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String OTHEROUT_REJECT = "otherOut_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String OTHEROUT_BATCH_APPROVE = "otherOut_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String OTHEROUT_BATCH_REJECT = "otherOut_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String OTHEROUT_REVERSE_APPROVE = "otherOut_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String OTHEROUT_WITHDRAW = "otherOut_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String TRANSVOUCH_SUBMIT = "transVouch_submit";
+	/**
+	 * 通过
+	 */
+	public static final String TRANSVOUCH_APPROVE = "transVouch_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String TRANSVOUCH_REJECT = "transVouch_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String TRANSVOUCH_BATCH_APPROVE = "transVouch_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String TRANSVOUCH_BATCH_REJECT = "transVouch_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String TRANSVOUCH_REVERSE_APPROVE = "transVouch_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String TRANSVOUCH_WITHDRAW = "transVouch_withdraw";
+	/**
+	 * 失效
+	 */
+	public static final String INVESTMENT_PLAN_MANAGE_UNEFFECT = "investment_plan_manage_uneffect";
+	/**
+	 * 失效
+	 */
+	public static final String EXPENSE_BUDGET_MANAGE_UNEFFECT = "expense_budget_manage_uneffect";
+	/**
+	 * 失效
+	 */
+	public static final String PROPOSALM_UNEFFECT = "proposalm_uneffect";
+	/**
+	 * 提审
+	 */
+	public static final String FORM_APP_SUBMIT = "form_app_submit";
+	/**
+	 * 提审
+	 */
+	public static final String MATERIALRETURN_SUBMIT = "materialreturn_submit";
+	/**
+	 * 通过
+	 */
+	public static final String MATERIALRETURN_APPROVE = "materialreturn_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String MATERIALRETURN_REJECT = "materialreturn_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String MATERIALRETURN_BATCH_APPROVE = "materialreturn_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String MATERIALRETURN_BATCH_REJECT = "materialreturn_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String MATERIALRETURN_REVERSE_APPROVE = "materialreturn_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String MATERIALRETURN_WITHDRAW = "materialreturn_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String CURRENT_STOCK_SUBMIT = "current_stock_submit";
+	/**
+	 * 通过
+	 */
+	public static final String CURRENT_STOCK_APPROVE = "current_stock_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String CURRENT_STOCK_REJECT = "current_stock_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String CURRENT_STOCK_REVERSE_APPROVE = "current_stock_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String FORM_APP_WITHDRAW = "form_app_withdraw";
+	/**
+	 * 审核
+	 */
+	public static final String FORM_APP_AUDIT = "form_app_audit";
+	/**
+	 * 审核不通过
+	 */
+	public static final String FORM_APP_REJECT_AUDIT = "form_app_reject_audit";
+	/**
+	 * 反审核
+	 */
+	public static final String FORM_APP_REVERSE_AUDIT = "form_app_reverse_audit";
+	/**
+	 * 批量审核
+	 */
+	public static final String FORM_APP_BATCH_AUDIT = "form_app_batch_audit";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String FORM_APP_BATCH_REJECT_AUDIT = "form_app_batch_reject_audit";
+	/**
+	 * 撤回审批
+	 */
+	public static final String CURRENT_STOCK_WITHDRAW = "current_stock_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String SCHEDUPLANYEAR_SUBMIT = "scheduplanyear_submit";
+	/**
+	 * 通过
+	 */
+	public static final String SCHEDUPLANYEAR_APPROVE = "scheduplanyear_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String SCHEDUPLANYEAR_REJECT = "scheduplanyear_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SCHEDUPLANYEAR_BATCH_APPROVE = "scheduplanyear_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SCHEDUPLANYEAR_BATCH_REJECT = "scheduplanyear_batch_reject";
+	/**
+	 * 反审
+	 */
+	public static final String SCHEDUPLANYEAR_REVERSE_APPROVE = "scheduplanyear_reverse_approve";
+	/**
+	 * 批量反审
+	 */
+	public static final String SCHEDUPLANYEAR_BATCH_REVERSE_APPROVE = "scheduplanyear_batch_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String SCHEDUPLANYEAR_WITHDRAW = "scheduplanyear_withdraw";
+	/**
+	 * 批量反审
+	 */
+	public static final String CURRENT_STOCK_BATCH_REVERSE_APPROVE = "current_stock_batch_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String CURRENT_STOCK_BATCH_APPROVE = "current_stock_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String CURRENT_STOCK_BATCH_REJECT = "current_stock_batch_reject";
+	/**
+	 * 提审
+	 */
+	public static final String MOMOPATCHWELDM_SUBMIT = "momopatchweldm_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String MOMOPATCHWELDM_APPROVE = "momopatchweldm_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String MOMOPATCHWELDM_REJECT = "momopatchweldm_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String MOMOPATCHWELDM_REVERSE_APPROVE = "momopatchweldm_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String MOMOPATCHWELDM_BATCH_APPROVE = "momopatchweldm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String MOMOPATCHWELDM_BATCH_REJECT = "momopatchweldm_batch_reject";
+	/**
+	 * 撤回审核
+	 */
+	public static final String MOMOPATCHWELDM_WITHDRAW = "momopatchweldm_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String SYSASSEM_SUBMIT = "sysAssem_submit";
+	/**
+	 * 通过
+	 */
+	public static final String SYSASSEM_APPROVE = "sysAssem_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String SYSASSEM_REJECT = "sysAssem_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SYSASSEM_BATCH_APPROVE = "sysAssem_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SYSASSEM_BATCH_REJECT = "sysAssem_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String SYSASSEM_REVERSE_APPROVE = "sysAssem_reverse_approve";
+	/**
+	 * 提审
+	 */
+	public static final String UPTIMEM_SUBMIT = "uptimem_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String UPTIMEM_APPROVE = "uptimem_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String UPTIMEM_REJECT = "uptimem_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String UPTIMEM_REVERSE_APPROVE = "uptimem_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String UPTIMEM_BATCH_APPROVE = "uptimem_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String UPTIMEM_BATCH_REJECT = "uptimem_batch_reject";
+	/**
+	 * 撤回审核
+	 */
+	public static final String UPTIMEM_WITHDRAW = "uptimem_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String PRODFORMM_SUBMIT = "prodformm_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String PRODFORMM_APPROVE = "prodformm_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String PRODFORMM_REJECT = "prodformm_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String PRODFORMM_REVERSE_APPROVE = "prodformm_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String PRODFORMM_BATCH_APPROVE = "prodformm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String PRODFORMM_BATCH_REJECT = "prodformm_batch_reject";
+	/**
+	 * 撤回审核
+	 */
+	public static final String PRODFORMM_WITHDRAW = "prodformm_withdraw";
+	/**
+	 * 始业点检表管理
+	 */
+	public static final String SPOTCHECKFORMM = "spotcheckformm";
+
 }

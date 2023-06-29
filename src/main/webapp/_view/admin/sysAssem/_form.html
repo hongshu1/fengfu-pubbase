@@ -1,13 +1,28 @@
+
+#set(pageId=RandomUtil.random(6))
+### 默认为非只读,查看页有readonly=readonly标识
+### 【readonly为false】, 或 【审核中或已通过】，设置只读
+#if(readonly != 'readonly' && (sysAssem.iAuditStatus??0 == 1 || sysAssem.iAuditStatus??0 == 2))
+#set(readonly = 'readonly')
+#end
+
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
-                                class="fa fa-refresh"></i> 保存</button>
-                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批
-                        </button>
+                        <!-- <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
+                                class="fa fa-refresh"></i> 保存</button> -->
+                        #if(readonly != 'readonly')
+                        <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-success btn-sm"  #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end  ><i
+                                class=" fa fa-refresh"></i> 保存</button>
+                        #end
+                
+
+
+                        #include("/_view/_common/_approval_btns.html", formSn="T_Sys_Assem", o=sysAssem,primaryKeyName="AutoID",className="cn.rjtech.admin.sysassem.SysAssemService",permissionKeyPrefix="sysAssem")
+
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
                                 class="fa fa-window-maximize"></i> 关闭
                         </button>
@@ -22,12 +37,15 @@
                         #if(sysAssem.AutoID??)
                         <input type="hidden" name="sysAssem.AutoID" value="#(sysAssem.AutoID??)" />
                         #end
+                        <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
+                        <input type="hidden" id="groupCode" name="groupCode" value="#(groupCode??)"/>
+                        <input type="hidden" id="sourceBillType" name="sourceBillType" value="#(sourceBillType??)"/>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">单据号</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true" data-tips="请输入单据号"
+                                        <input type="text" data-notnull="true" data-tips="请输入单据号" disabled
                                             data-with-clearbtn="true" autocomplete="off" class="form-control"
                                             placeholder="请输入单据号" maxlength="40" name="sysAssem.BillNo"
                                             value="#(sysAssem.BillNo??)" />
@@ -39,7 +57,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">日期</label>
                                     <div class="col-9">
-                                        <input type="text" data-date class="form-control ml-2" placeholder="日期"
+                                        <input type="text" data-date class="form-control" placeholder="日期" disabled
                                             maxlength="20" name="sysAssem.BillDate"
                                             value="#(sysAssem.BillDate??)" />
                                     </div>
@@ -62,6 +80,24 @@
                                 </div>
                             </div>
 
+<!--                            <div class="col-md-4">-->
+<!--                                <div class="form-group row">-->
+<!--                                    <input type="hidden" name="sysAssem.WhCode" value="#(sysAssem.WhCode??)"-->
+<!--                                           id="whcode" data-value-attr="whcode"/>-->
+<!--                                    <label class="col-sm-3 col-form-label">仓库名称</label>-->
+<!--                                    <div class="col-9">-->
+<!--                                        <input type="text" class="form-control" data-autocomplete-->
+<!--                                               data-url="admin/materialReceiptList/Whcode" data-rule="required"-->
+<!--                                               data-hidden-input="whcode"-->
+<!--                                               data-sync-ele="#whcode"-->
+<!--                                               data-text-attr="whname" name="sysAssem.WhName"-->
+<!--                                               data-column-attr="whcode,whname" placeholder="请选择仓库名称"-->
+<!--                                               data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"-->
+<!--                                               value="#(sysAssem.WhName??)"-->
+<!--                                               #if(sysAssem.iAuditStatus?? ==2 || sysAssem.iAuditStatus?? ==3 || sysAssem.iAuditStatus?? ==1) disabled #end >-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
 
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -120,8 +156,8 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">审批日期</label>
                                     <div class="col-9">
-                                        <input type="text" data-date class="form-control ml-2" placeholder="审批日期"
-                                            maxlength="20" name="sysAssem.AuditDate" value="#(sysAssem.AuditDate??)" />
+                                        <input type="text" data-date class="form-control" placeholder="审批日期" disabled
+                                            maxlength="20" name="sysAssem.dAuditTime" value="#(sysAssem.daudittime??)" />
                                     </div>
                                 </div>
                             </div>
@@ -138,15 +174,14 @@
                                 </div>
                             </div>
 
-
                             <div class="col-md-4">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">制单人</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true" data-tips="请输制单人"
+                                        <input type="text" data-notnull="true" data-tips="请输制单人" disabled
                                             data-with-clearbtn="true" autocomplete="off" class="form-control"
-                                            placeholder="请输制单人" maxlength="40" name="sysAssem.CreatePerson"
-                                            value="#(sysAssem.CreatePerson??)" />
+                                            placeholder="请输制单人" maxlength="40" name="sysAssem.cupdatename"
+                                            value="#(sysAssem.cupdatename??)" />
                                     </div>
                                 </div>
                             </div>
@@ -155,13 +190,14 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">审核人</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true" data-tips="请输审核人"
-                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
-                                            placeholder="请输审核人" maxlength="40" name="sysAssem.AuditPerson"
-                                            value="#(sysAssem.AuditPerson??)" />
+                                        <input type="text" data-notnull="true" data-tips="请输审核人" disabled
+                                               data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                               placeholder="请输审核人" maxlength="40" name="sysAssem.cAuditname"
+                                               value="#(sysAssem.cauditname??)" />
                                     </div>
                                 </div>
                             </div>
+
 
 
                         </div>
@@ -171,83 +207,118 @@
         </div>
     </div>
 </div>
+
+### 新增之后，并且为审核流
+#if(sysAssem.AutoID?? && sysAssem.iauditway == 2 && sysAssem.iauditstatus == 1)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysAssem.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.sysassem.SysAssemService")
+#end
+
 <div class="jbolt_page_content">
     <script type="text/template" id="sysAssem_tpl_#(pageId)">
         {@each datas as data,index}
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
-            <td>${data.combinationno}</td>
-            <td>
-                <a href="admin/sysAssemdetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " 
-                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" 
-                class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-   
-            </td>
+            <td>${data.combination}</td>
             <td>${data.assemtype}</td>
-            <td>${data.barcode}</td>
             <td>${data.whname}</td>
-            <td>${data.cinvcode}</td>
-            <td>${data.cinvname}</td>
+            <td>${data.posname}</td>
+            <td {@if data.autoid} data-editable="false" {@/if}>${data.barcode}</td>
+            <td {@if data.autoid} data-editable="false" {@/if}>${data.cinvcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
-            <td>${data.cinvstd}</td>
-            <td>${data.inventorycuomname}</td>
+            <td>${data.dplandate|date_ymd}</td>
+            <td>${data.cuomname}</td>
             <td>${data.qty}</td>
-            <td>${data.iequipmentmodelid}</td>
+            <td>${data.weight}</td>
             <td>${data.memo}</td>
-
+            <td hidden>${data.whcode}</td>
+            <td hidden>${data.poscode}</td>
+            <td hidden>${data.sourcebilldid}</td>
+            <td hidden>${data.sourcebilltype}</td>
+            <td hidden>${data.ibeforeinventoryid}</td>
+            <td hidden>${data.iafterinventoryid}</td>
         </tr>
         {@/each}
     </script>
-    <div class="jbolt_table_toolbar" id="sysAssem_toolbar_#(pageId)">
-        <div class="col-md-4">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">现品票扫码</label>
-                <div class="col-9">
-                    <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
-                        autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40"
-                        name="sysAssem.warehousingNo" value="#(sysAssem.warehousingNo??)" />
-                </div>
-            </div>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">搜索</button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysAssemdetail/deleteByIds?ids="
-                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
-        </div>
 
+    <div class="jbolt_table_toolbar buttonDiv  #if(sysAssem.iAuditStatus?? ==2 || sysAssem.iAuditStatus?? ==3 || sysAssem.iAuditStatus?? ==1)
+ disabled
+ #end" id="sysAssem_toolbar_#(pageId)" style="display: flex">
+        <div style="padding-right: 15px;">
+            <button onclick="insertEmpty(this)" class="btn btn-outline-secondary">添加行
+            </button>
+            <button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-outline-secondary"><i class="fa fa-trash"></i> 删除</button>
+        </div>
+        <div class="clearfix">
+            <form class="form-inline" id="sysscandeliver_detail_#(pageId)" onsubmit="return false;">
+                #if(sysAssem.AutoID??)
+                <input type="hidden" name="sysAssem.AutoID" value="#(sysAssem.AutoID??)"/>
+                #end
+                <input type="text" autocomplete="off" class="form-control"  placeholder="现品票扫码" name="barcode"
+                       id="barcode"
+                       value="" />
+                <button type="button" onclick="searchBarcode()" class="btn btn-outline-secondary"><i
+                        class="fa fa-search"></i> 搜索</button>
+<!--                <span style="padding-left: 15px">-->
+<!--                <input type="hidden" name="careacode" value="#(careacode??)"-->
+<!--                       id="careacode" data-value-attr="careacode"/>-->
+<!--                <input type="hidden" name="careaname" value="#(careaname??)"-->
+<!--                       id="careaname" data-sync-attr="careaname"/>-->
+<!--                <input type="text" class="form-control" data-autocomplete-->
+<!--                       data-sync-ele="#careacode,careaname"-->
+<!--                       data-link-para-ele="#whcode"-->
+<!--                       data-url="admin/scancodereceive/findWhArea"-->
+<!--                       data-hidden-input="rdcode" data-text-attr="careacode"-->
+<!--                       data-column-attr="careacode,careaname" placeholder="请选择库区"-->
+<!--                       data-tips="请选择库区" data-header="请选择库区,库名称" maxlength="40"-->
+<!--                       value="#(careaname??)">-->
+<!--                    </span>-->
+<!--                <button type="button" class="btn btn-outline-secondary" onclick="coverall()"><i class="fa fa-refresh"></i>-->
+<!--                    覆盖库区</button>-->
+            </form>
+        </div>
     </div>
-
-    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysAssem.AutoID??)
-        data-ajax="true" data-url="admin/sysAssemdetail/findEditTableDatas?masid=#(sysAssem.AutoID??)" #end
-        id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
-        data-rowtpl="sysAssem_tpl_#(pageId)" data-toolbar="sysAssem_toolbar_#(pageId)" data-editable="true"
-        data-page="sysAssem_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
-        <thead class="fw_normal">
-            <tr>
-                <th data-width="60" data-column="index">序号</th>
-                <th class="combinationno" data-width="100" data-column="combinationno">组号</th>
-                <th data-width="150">操作</th>
-                <th class="assemtype" data-width="100" data-column="assemtype">类型</th>
-                <th class="barcode" data-width="100" data-column="barcode">现品票</th>
-                <th class="whname" data-width="100" data-column="whname">仓库名称</th>
-                <th class="cinvcode" data-width="100" data-column="cinvcode">存货编码</th>
-                <th class="cinvname" data-width="100" data-column="cinvname">存货名称</th>
-                <th class="cinvcode1" data-width="100" data-column="cinvcode1">客户部番</th>
-                <th class="cinvname1" data-width="100" data-column="cinvname1">部品名称</th>
-                <th class="cinvstd" data-width="100" data-column="cinvstd">规格型号</th>
-                <th class="inventorycuomname" data-width="100" data-column="inventorycuomname">主计量单位</th>
-                <th class="qty" data-width="100" data-column="qty">数量</th>
-                <th class="iequipmentmodelid" data-width="100" data-column="iequipmentmodelid">所属机型</th>
-                <th class="memo" data-width="100" data-column="memo">备注</th>
-
-            </tr>
+    <table class="jbolt_table thead_font_normal table-bordered table-center"
+           id="jbolt_Table_#(pageId)"
+           data-jbolttable
+           data-ajax-success-handler="tableDataSuccess()"
+           data-width="auto"
+           data-height="fill"
+           data-ajax="true"
+           data-page="sysAssem_tpl_#(pageId)"
+           data-url="admin/sysAssemdetail/findEditTableDatas?masid=#(sysAssem.AutoID??)"
+           data-column-prepend="1:checkbox:true"
+           data-toolbar="sysAssem_toolbar_#(pageId)"
+           data-url="admin/sysAssemdetail/findEditTableDatas"
+           data-conditions-form="sysAssem_#(pageId)"
+           data-rowtpl="sysAssem_tpl_#(pageId)"
+           data-column-resize="true"
+           data-editable="true"
+           data-editable-option="getJBoltTableEditableColsOpton_#(pageId)">
+        <thead>
+        <tr>
+            <th data-width="60" data-column="index">序号</th>
+            <!--            <th data-width="150">操作</th>-->
+            <th data-width="60" data-column="combination">组号</th>
+            <th data-width="100" data-column="assemtype">类型</th>
+            <th data-width="150" data-column="whname">仓库名称</th>
+            <th data-width="150" data-column="posname">库区</th>
+            <th data-min-width="150" data-column="barcode">现品票</th>
+            <th data-width="150" data-column="cinvcode">存货编码</th>
+            <th data-width="150" data-column="cinvcode1">客户部番</th>
+            <th data-width="110" data-column="cinvname1">部品名称</th>
+            <th data-width="120" data-column="dplandate">计划到货日期</th>
+            <th data-width="100" data-column="cuomname">主计量单位</th>
+            <th data-width="100" data-column="qty">数量</th>
+            <th data-width="100" data-column="weight">重量</th>
+            <th data-width="100" data-column="memo">备注</th>
+            <th data-width="150" data-column="whcode" hidden>仓库</th>
+            <th data-width="100" data-column="poscode" hidden>入库库区</th>
+            <th data-width="100" data-column="sourcebilldid" hidden>行号</th>
+            <th data-width="100" data-column="sourcebilltype" hidden>单据类型</th>
+            <th data-width="100" data-column="ibeforeinventoryid" hidden>转换前存货id</th>
+            <th data-width="100" data-column="iafterinventoryid" hidden>转换后存货id</th>
+        </tr>
         </thead>
     </table>
 
@@ -256,127 +327,363 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-    function submitThisForm() {
+
+    /**
+     * 搜索现品票
+     * */
+    function searchBarcode() {
+        var barcode = $("#barcode").val();
+        if (barcode != null && barcode !== ''){
+            var index = LayerMsgBox.loading("执行中......",4000);
+            var data = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
+            if (data != null){
+                for (let i = 0; i < data.length; i++) {
+                    if(data[i].barcode === barcode){
+                        LayerMsgBox.error("条码已重复");
+                        return;
+                    }
+                }
+            }
+            var detailHidden = $("#detailHidden").val();
+            var groupCode = $("#groupCode").val();
+            Ajax.post("admin/formConversionList/getBarcode", {"barcode": barcode,"detailHidden":detailHidden,"groupCode":groupCode},
+                function (res) {
+                    if (res.state==='ok'){
+                        var trJsonData = res.data;
+                        jboltTableInsertRow("jbolt_Table_#(pageId)", trJsonData, false);
+                        console.log("trJsonData",trJsonData)
+                        $("#barcode").val('');
+                        Ajax.post("admin/formConversionList/getBarCodeData",
+                            {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,
+                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,
+                                "ibeforeinventoryid":trJsonData.ibeforeinventoryid},
+                            function(rres) {
+                                console.log('rres', rres)
+                                if (rres.state==='ok'){
+                                    console.log('data',rres.data);
+                                    if (rres.data!==undefined){
+                                        // res.data.assemtype = '转换后';
+                                        // res.data.combination = trJsonData.combination;
+                                        // tableDataSuccess();
+                                   
+                                        rres.data.assemtype = '转换后';
+                                        rres.data.combination = trJsonData.combination;
+                                        jboltTableInsertRow("jbolt_Table_#(pageId)", rres.data, false, false, false);
+                                        tableDataSuccess();
+                                        LayerMsgBox.close(index);
+                                    } else {
+                                        console.log('找不到双单位数据')
+                                    }
+                                }
+                                LayerMsgBox.close(index);
+                            },function (err) {
+                                LayerMsgBox.close(index);
+                            })
+                    }
+                }, function (err) {
+                })
+        } else {
+
+        }
+
+    }
+
+    //是否提审
+    var submit = false;
+
+    /**
+     * 保存方法
+     */
+    function submitThisForm_#(pageId)(ele) {
+        if(ele)
+        {
+            submit = ele;
+        }
         jboltTableSubmit("#jbolt_Table_#(pageId)");
     }
 
-    function getJBoltTableEditableColsOpton() {
-        var editableTableOptions = {
+    /**
+     * 覆盖库区
+     * */
+    function coverall() {
+        var careacode = $("#careacode").val();
+        var careaname = $("#careaname").val();
+        if (careacode !== '' && careacode !== null){
+            let data = [{"column":"poscode","text":careacode,"value":careacode}];
+            jboltTableBatchSetColumns("jbolt_Table_#(pageId)",data,true);
+        }
+    }
 
+    /**
+     * 添加行
+     * */
+    function insertEmpty(ele) {
+        var isSuccess = tableDataSuccess();
+        if (isSuccess){
+            jboltTableInsertEmptyRow(ele);
+        }
+    }
+
+    /**
+     * 是否初物判断
+     * */
+    function switchEditableTd(ele) {
+        alert('111')
+        console.log('ele===>',ele)
+    }
+
+    /**
+     * 获取表格数据
+     * */
+    function tableDataSuccess() {
+        $("#groupCode").val("");
+        let groupCode = 1;
+        var data = getJboltTableAllDatas("jbolt_Table_#(pageId)",["cinvcode"]);
+        console.log("data"+data)
+        if(null != data && data.length % 2 == 0){
+            groupCode+=data.length/2
+        }
+      
+        $("#groupCode").val(groupCode);
+        return true;
+    }
+
+    /**
+     * 保存方法
+     */
+    function submitThisForm() {
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+        return true;
+    }
+
+    function getJBoltTableEditableColsOpton_#(pageId)() {
+        var editableTableOptions = {
+            trigger: "click",
             submit: {
                 withForm: ["sysAssem_#(pageId)"],
-                name: 'sysAssem',
                 type: "all",
                 url: "/admin/formConversionList/submitAll",
                 success: function (res) {
-                    LayerMsgBox.success("提交成功", 600, function () {
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
-                    });
+                    var state = res.state;
+                    if (state==='ok'){
+                        var autoid = res.autoid;
+                        if (submit){
+                            submit_#(pageId)(autoid,function () {
+                                LayerMsgBox.success("提交成功", 600, function () {
+                                    parent.refreshPjaxContainer();
+                                    parent.layer.closeAll();
+                                });
+                            });
+                        } else {
+                            LayerMsgBox.success("提交成功", 600, function () {
+                                parent.refreshPjaxContainer();
+                                parent.layer.closeAll();
+                            });
+                        }
+                    }
                 }
             },
             cols: {
                 AutoID: {
                     submitAttr: "AutoID",
                 },
+                qty:  { //单价
+                    type:"amount",
+                    required:true,
+                    textFormat: function (table, td, text, value, trJsonData) {
+                    return (typeof(text)==undefined||typeof(text)=="undefined"||(typeof(text)=='string'&&text.length==0))?"":numberFormat(value,2);
+                    },
+                    editorFormat:function(table,td,text,value,trJsonData){
+                        //编辑器内显示格式化
+                        if(!value){return "";}
+                        value=value.replaceAll(",","");
+                        console.log(removeFixedNumberAllZero(value,2));
+                        return removeFixedNumberAllZero(value,2);
+                    }
+                },
                 memo: {
                     type: "input",//类型
+                    // required: true,
                     placeholder: "备注", //输入提示，里面
                     tooltip: "备注",//输入提示，上方
                 },
-
-                qty: {
-                    type: "amount",//类型
-                    placeholder: "数量", //输入提示，里面
-                    tooltip: "数量",//输入提示，上方
+                // qty: {
+                //     type: "amount",//类型
+                //     required: true,
+                //     placeholder: "数量", //输入提示，里面
+                //     tooltip: "数量",//输入提示，上方
+                // },
+                // weight: {
+                //     type: "amount",//类型
+                //     required: true,
+                //     placeholder: "重量", //输入提示，里面
+                //     tooltip: "重量",//输入提示，上方
+                // },
+                weight:  { //重量
+                    type:"amount",
+                    required:true,
+                    textFormat: function (table, td, text, value, trJsonData) {
+                    return (typeof(text)==undefined||typeof(text)=="undefined"||(typeof(text)=='string'&&text.length==0))?"":numberFormat(value,2);
+                    },
+                    editorFormat:function(table,td,text,value,trJsonData){
+                        //编辑器内显示格式化
+                        if(!value){return "";}
+                        value=value.replaceAll(",","");
+                        console.log(removeFixedNumberAllZero(value,2));
+                        return removeFixedNumberAllZero(value,2);
+                    }
                 },
-
-
-                barcode: {
-                    // type:"select",
-                    // url:admin/inventory/autocomplete,//url地址
-                    //valueAttr:"",//显示的字段，可以设置多个
-                    //onlyleaf:true,//树形结构只能选择叶子节点
-                    //required:true,//必填
-                    // changeColumns:[{column: "iinventoryid",//显示绑定的字段
-                    //                 use: "cinvcode"        //数据源的字段
-                    //                 }
-                    // ]   
+                sourcebilltype:{
+                    submitAttr:"SourceBillType"
+                },
+                whcode: {
+                    placeholder: "仓库", //输入提示，里面
+                    tooltip: "仓库",//输入提示，上方
                     type: "autocomplete",
-                    url: "admin/formConversionList/barcodeDatas",
+                    //目前供应商都是空的无法过滤
+                    url: "admin/SysEnumeration/wareHouse",
+                    maxLength: 100,
+                    // required: true,
+                    textAttr: "whcode",
+                    width: 500,
+                    valueAttr: "whcode",//选择赋值的字段
+                    columnAttr: "whcode,whname",//下来看的时候显示哪些字段
+                    header: '仓库编码,仓库名称',
+                    changeColumns: [{ column: "whcode", use: "whcode" }]
+                },
+                poscode: {
+                    linkPara: "#whcode",
+                    placeholder: "库区", //输入提示，里面
+                    tooltip: "库区",//输入提示，上方
+                    type: "autocomplete",
+                    //根据仓库过滤
+                    // linkColumn:"whcode",
+                    url: "admin/scancodereceive/findWhArea",
+                    maxLength: 100,
+                    // required: true,
+                    placeholder: "请选择库区编码",
+                    textAttr: "careacode",
+                    width: 500,
+                    valueAttr: "careacode",//选择赋值的字段
+                    columnAttr: "careacode,careaname",//下来看的时候显示哪些字段
+                    header: '库区,库区名称',
+                    changeColumns: [{column: "poscode", use: "careacode"}]
+                },
+                combination:{
+                    submitAttr:"Combination"
+                },
+                assemtype:{
+                    submitAttr:"AssemType"
+                },
+                sourcebillno:{
+                    submitAttr:"SourceBillNo"
+                },
+                cinvcode11:{
+                    linkPara: "input[name='detailHidden'],input[name='groupCode']",
                     maxLength: 100,
                     required: true,
-                    placeholder: "请选择存货编码",
-                    textAttr: "cinvcode",
-                    width: 500,
-                    valueAttr: "cinvcode",//选择赋值的字段
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",//下来看的时候显示哪些字段
-                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
+                    placeholder: "=请选择=",
+                    type: "autocomplete",
+                    url: "admin/scancodereceive/getResource",
+                    textAttr: "barcode",
+                    width: 800,
+                    sync: "",
                     valueAttr: "barcode",
-                    columnAttr: "barcode,cinvcode,cinvdddcode,cinvname,cinvstd,inventorycuomname,qty,cequipmentmodelname",
-                    header: '现品票,存货编码,存货代码,存货名称,规格型号,主计量单位,数量,所属机型',
-                    changeColumns: [{ column: "barcode", use: "barcode" }, { column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
-                    { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
-                    { column: "cinvccode", use: "cinvccode" }, { column: "cinvcname", use: "cinvcname" },
-                    { column: "cuomclassname", use: "cuomclassname" }, { column: "iinventoryid", use: "iautoid" }, { column: "sourcebilltype", use: "sourcebilltype" },
-                    {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
-                    {column: "sourcebillnorow", use: "sourcebillnorow"},{column: "sourcebillid", use: "sourcebillid"},{column: "cinvdddcode", use: "cinvdddcode"},
-                    {column: "cinvname", use: "cinvname"},{column: "inventorycuomname", use: "inventorycuomname"},
-                    {column: "sourcebillid", use: "sourcebillid"},{column: "qty", use: "qty"}],
-                    // handler: function (table, td, text, value, trJsonData) {
-                    //     //逻辑：先判断当前行选择数据的时候能否添加下一行 ;(或者在以上的表格通过disabled处理)
-                    //     //能，添加行，通过当前行获取下一行然后赋值
-                    //     //不能，通过当前行获取下一行然后赋值
-                    //     jboltTableAppendEmptyRow1(table, td, text, value, trJsonData);
-                    //     var dq = td.parent();  console.log('dq',dq);
-                    //     var down = td.parent().parent().next();  console.log('down',down);
-                    //
-                    //     // 获取当前行第二个td元素（索引为1）的value值
-                    //     var value = down.find('td:eq(13)').text();
-                    //     console.log('value',value);
-                    //     down.find('.cinvname2').text(value);
-                    //     //获取所有的序号
-                    //     var datas = jboltTableGetAllDatas("jbolt_Table_#(pageId)");
-                    //     console.log('table',table);//整个表格
-                    //     console.log('datas',datas);//整个表格数据
-                    //     console.log('trJsonData',trJsonData);//当前行数据
-                    //     //获当前行的序号
-                    // }
+                    columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty",
+                    header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量',
+                    changeColumns: [{column: "barcode", use: "barcode"}, {
+                        column: "cinvcode",
+                        use: "cinvcode"
+                    }, {column: "cinvcode1", use: "cinvcode1"},{column: "assemtype", use: "assemtype"},
+                        {column: "cinvname1", use: "cinvname1"},{column: "combination", use: "combination"},
+                        {column: "cinvstd",use: "cinvstd"}, {column: "dplandate", use: "dplandate"},
+                        {column: "vencode",use: "vencode"}, {column: "venname", use: "venname"},
+                        {column: "cinvccode", use: "cinvccode"}, {column: "cinvcname",use: "cinvcname"},
+                        {column: "cuomname", use: "cuomname"}, {column: "sourcebilltype", use: "sourcebilltype"},
+                        {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
+                        {column: "sourcebillnorow", use: "sourcebillnorow"}, {column: "sourcebillid",use: "sourcebillid"},
+                        {column: "qty", use: "qty"}, {column: "quantity", use: "quantity"}],
+                    handler:function(table,td,text,value,trJsonData){
+                        var cinvcode = trJsonData.cinvcode;
+                        var vencode = trJsonData.vencode;
+                        var sourcebilltype = trJsonData.sourcebilltype;
+                        Ajax.post("admin/formConversionList/getBarCodeData",
+                            {"itemCode": cinvcode,"supplier":vencode,"sourceBillType":sourcebilltype},
+                            function(res) {
+                                console.log('res', res)
+                                if (res.state==='ok'){
+                                    console.log('data',res.data);
+                                    if (res.data!=undefined){
+                                        res.data.assemtype = '转换后';
+                                        res.data.combination = trJsonData.combination;
+                                        jboltTableInsertAfterRow(table, td.parent(), res.data);
+                                    } else {
+                                        console.log('找不到双单位数据')
+                                    }
+                                }
+                            },function (err) {
+
+                            })
+                    }
                 },
-          
+                vencode:{
+                    submitAttr:"VenCode"
+                },
+                barcode: { //条码
+                    linkPara: "input[name='detailHidden'],input[name='groupCode']",
+                    maxLength: 100,
+                    // required: true,
+                    placeholder: "=请选择=",
+                    type: "autocomplete",
+                    url: "admin/formConversionList/getResource",
+                    textAttr: "barcode",
+                    width: 800,
+                    sync: "",
+                    valueAttr: "barcode",
+                    columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty",
+                    header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量',
+                    changeColumns: [{column: "barcode", use: "barcode"}, { column: "cinvcode", use: "cinvcode"}, 
+                        { column: "invcode", use: "cinvcode"}, {column: "cinvcode1", use: "cinvcode1"},{column: "assemtype", use: "assemtype"},
+                        {column: "cinvname1", use: "cinvname1"},{column: "combination", use: "combination"},
+                        {column: "cinvstd",use: "cinvstd"}, {column: "dplandate", use: "dplandate"},
+                        {column: "vencode",use: "vencode"}, {column: "venname", use: "venname"},
+                        {column: "posname",use: "posname"}, {column: "poscode", use: "poscode"},
+                        {column: "whname",use: "whname"}, {column: "whcode", use: "whcode"},
+                        {column: "cinvccode", use: "cinvccode"}, {column: "cinvcname",use: "cinvcname"},
+                        {column: "cuomname", use: "cuomname"}, {column: "sourcebilltype", use: "sourcebilltype"},
+                        {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
+                        {column: "sourcebillnorow", use: "sourcebillnorow"}, {column: "sourcebillid",use: "sourcebillid"},
+                        {column: "qty", use: "qty"},{column: "weight", use: "qty"}, {column: "quantity", use: "quantity"}, {column: "iafterinventoryid", use: "iafterinventoryid"}
+                        , {column: "ibeforeinventoryid", use: "ibeforeinventoryid"}],
+                    handler:function(table,td,text,value,trJsonData){
+                        Ajax.post("admin/formConversionList/getBarCodeData", {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,
+                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid},
+                            function(res) {
+                                console.log('res', res)
+                                if (res.state==='ok'){
+                                    console.log('data',res.data);
+                                    if (res.data!=undefined){
+                                        res.data.assemtype = '转换后';
+                                        res.data.combination = trJsonData.combination;
+                                        tableDataSuccess();
+                                        jboltTableInsertAfterRow(table, td.parent(), res.data,false,false,true);
+                                    } else {
+                                        console.log('找不到双单位数据')
+                                    }
+                                }
+                            },function (err) {
+
+                            })
+                    }
+                },
             }
         };
         return editableTableOptions;
     }
+
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
-    }
-
-
-    function jboltTableAppendEmptyRow1(ele, forceTrChange,text, value, trJsonData) {
-        var table = getJBoltTable(ele);
-        if (isOk(table)) {
-            var jboltTable = table.jboltTable("inst");
-            if (jboltTable) {
-                var action = getRealJqueryObject(ele);
-                if (isOk(action)) {
-                    var success = checkMasterTableId(action);
-                    if (!success) {
-                        return false;
-                    }
-                }
-                if (!jboltTable.isEmpty) {
-                    var tr = jboltTable.tbody.find("tr:last");
-                    if (isOk(tr)) {
-                        return jboltTable.me.insertEmptyRow(jboltTable, tr, false, forceTrChange);
-                    }
-                }
-                return jboltTable.me.insertEmptyRow(jboltTable, null, false, forceTrChange);
-            }
-        }
-        LayerMsgBox.alert("表格组件配置异常", 2);
-        return false;
     }
 
 </script>

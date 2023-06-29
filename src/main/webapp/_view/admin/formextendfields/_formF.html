@@ -27,7 +27,7 @@
 <!--</div>-->
 <!--</div>-->
 <div class="form-group row" >
-<label class="col-sm-2 col-form-label">系统字段ID:</label>
+<label class="col-sm-2 col-form-label">单据档案名称:</label>
 
 <div class="col-2">
     <select class="form-control"
@@ -35,7 +35,7 @@
             data-url="admin/permission/optionsFormFieldId"
             data-select-type="select1"
             name="formExtendFields.iFormFieldId"
-            data-text="=系统字段ID="
+            data-text="=单据档案名称="
             data-text-attr="title"
             data-value-attr="id"
             data-rule="require"
@@ -64,18 +64,16 @@
     >
     </div>
 
-
     <div class="form-group row" >
 <label class="col-sm-2 col-form-label">系统字段名称:</label>
 <div class="col-2">
     <select class="form-control"
             data-autoload
-            data-url="/admin/enumVals/enumvalsoptions"
-            data-select-type="select1"
+            data-url="admin/dictionary/options?key=field_name"
+            data-select-type="select2"
             name="formExtendFields.cFieldName"
             data-text="=系统字段名称="
-            data-text-attr="cenumname"
-            data-value-attr="cenumcode"
+            data-value-attr="sn"
             data-select="#(formExtendFields.cFieldName??)"
             data-rule="require"
     ></select>
@@ -84,13 +82,13 @@
 <div class="form-group row" >
 <label class="col-sm-2 col-form-label">显示名称:</label>
 <div class="col-2">
-    <input type="text"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入显示名称" maxlength="40" name="formExtendFields.cDisplayName" value="#(formExtendFields.cDisplayName??)"/>
+    <input type="text"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入显示名称" maxlength="30" name="formExtendFields.cDisplayName" value="#(formExtendFields.cDisplayName??)"/>
 </div>
 </div>
 <div class="form-group row" >
 <label class="col-sm-2 col-form-label">字段值输入长度:</label>
 <div class="col-2">
-    <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入字段长度" maxlength="40" name="formExtendFields.iMaxLength" value="#(formExtendFields.iMaxLength??)"/>
+    <input type="text" data-rule="pzint" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入字段长度" maxlength="10" name="formExtendFields.iMaxLength" value="#(formExtendFields.iMaxLength??)"/>
 </div>
 </div>
     <input type="hidden" id="bbbb"/>
@@ -100,10 +98,11 @@
          data-name="formExtendFields.iFieldType"
          data-width="col-sm-2,col-5"
          data-value="#(formExtendFields.iFieldType??)"
-         data-default="options_first"
+         data-rule="radio"
+         data-notnull="true"
+         data-rule="require"
          onchange="toggleOneInputHidden()"
 >
-        <!--data-value-attr="sn"-->
         <!--data-url="admin/dictionary/options?key=extend_field_type"-->
         <label class="col-sm-2 col-form-label" >字段类型：</label>
         <div class="col"  style="padding-top: 1px;">
@@ -208,12 +207,11 @@ data-inline="true"
          data-width="col-sm-2,col-5"
          data-value="#(formExtendFields.iSource??)"
          data-inline="true"
+         data-rule="radio"
          data-notnull="true"
          data-rule="require"
-         data-default="options_first"
          onchange="toggleOneInputHidden2()"
     >
-        <!--data-value-attr="sn"-->
         <!--data-url="admin/dictionary/options?key=value_source"-->
         <label class="col-sm-2 col-form-label" >值来源：</label>
         <div class="col"  style="padding-top: 1px;">
@@ -295,8 +293,8 @@ data-inline="true"
         window.parent.refreshJBoltTable();
     }
     function sethid(val) {
-        var obj = document.getElementById('bbbb');
-        obj.value=val
+//        var obj = document.getElementById('bbbb');
+        bbbb.value=val
     }
     function toggleOneInputHidden(){
         if(bbbb.value == 3){
@@ -306,8 +304,8 @@ data-inline="true"
         }
     }
     function sethid2(val) {
-        var obj2 = document.getElementById('optioniSource');
-        obj2.value=val
+//        var obj2 = document.getElementById('optioniSource');
+        optioniSource.value=val
     }
     function toggleOneInputHidden2(){
         if(optioniSource.value == 2){

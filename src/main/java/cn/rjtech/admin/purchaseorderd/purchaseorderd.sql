@@ -8,7 +8,7 @@ SELECT
 	inv.cInvCode1,
 	inv.cInvStd,
 	inv.cInvName1,
-	inv.iPkgQty,
+	b.iPkgQty,
 	u.cuomname,
 	b.isPresent,
 	b.iVendorAddrId,

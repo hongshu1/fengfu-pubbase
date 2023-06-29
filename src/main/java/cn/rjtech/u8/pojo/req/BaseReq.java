@@ -13,6 +13,9 @@ import java.io.Serializable;
  */
 public abstract class BaseReq implements Serializable {
 
+    public BaseReq() {
+    }
+
     public BaseReq(String orgCode) {
         ValidationUtils.isTrue(U8DataSourceKit.ME.getIsU8ApiEnabled(orgCode), "当前运行配置环境，无法调用U8接口");
     }

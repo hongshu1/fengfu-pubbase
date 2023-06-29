@@ -1,0 +1,54 @@
+<form onsubmit="return false;" id="UptimeTplCategory_Form" action="#(action)" method="post">
+	#if(uptimeTplCategory.iAutoId??)
+	<input type="hidden" name="uptimeTplCategory.iAutoId" value="#(uptimeTplCategory.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="uptimeTplCategory.iAutoId" value="#(uptimeTplCategory.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">稼动时间模板ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入稼动时间模板ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入稼动时间模板ID" maxlength="40" name="uptimeTplCategory.iUptimeTplMid" value="#(uptimeTplCategory.iUptimeTplMid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">稼动时间类别ID</label>
+
+<div class="col-10">
+    <select class="form-control"
+            data-autoload
+            data-url="admin/dictionary/options?key=null"
+            data-select-type="select"
+            name="uptimeTplCategory.iUptimeCategoryId"
+            data-refresh="true"
+            data-rule="select"
+            data-notnull="true"
+            data-tips="请选择稼动时间类别ID"
+            data-text="=请选择="
+            data-value=""
+            data-value-attr="sn"
+            data-select="#(uptimeTplCategory.iUptimeCategoryId??)"
+            
+    ></select>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">序号</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入序号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入序号" maxlength="40" name="uptimeTplCategory.iSeq" value="#(uptimeTplCategory.iSeq??)"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="UptimeTplCategory_Form")
+#end
+

@@ -7,6 +7,7 @@ import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.bomcompare.BomCompareService;
 import cn.rjtech.admin.bomm.BomMService;
 import cn.rjtech.admin.customer.CustomerService;
@@ -14,6 +15,7 @@ import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.BomM;
 import cn.rjtech.model.momdata.BomMaster;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.util.ValidationUtils;
@@ -64,6 +66,7 @@ public class BomMasterAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isEnabled"), getBoolean("isDeleted")));
     }
@@ -191,6 +194,10 @@ public class BomMasterAdminController extends BaseAdminController {
     public void copyForm() {
         ValidationUtils.notNull(get(0), "未获取到指定产品id");
         set("oldId", get(0));
+        BomM bomM = bomMService.findById(get(0));
+        ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
+        set(BomM.DENABLEDATE, bomM.getDDisableDate());
+        set(BomM.CVERSION, bomMService.getNextVersion(getOrgId(), bomM.getIInventoryId()));
         render("_copy_form.html");
     }
 

@@ -16,6 +16,7 @@ import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import java.util.List;
@@ -46,6 +47,7 @@ public class EquipmentAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -207,6 +209,12 @@ public class EquipmentAdminController extends BaseAdminController {
         }
         renderJson(service.importExcelClass(file.getFile()));
     }
-
+    /**
+     * 真删除
+     */
+    @Before(Tx.class)
+    public void realDelete() {
+        renderJson(service.realDeleteById(getLong(0),true));
+    }
 
 }

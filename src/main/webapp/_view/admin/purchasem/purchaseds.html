@@ -1,5 +1,4 @@
 ### 从表数据，带工具条，可编辑表单
-<div class="jbolt_page_content" onfocus="">
     <!-- JBoltTable的数据模板定义-->
     <textarea class="jb_tpl_box" id="purchased_Rowtpl_#(pageId)">
 			{@each datas as data,index}
@@ -63,6 +62,7 @@
             <button onclick="jboltTableRemoveCheckedRow(this)" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
             <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-outline-success"><i class="fa fa-refresh"></i> 刷新</button>
             #end
+            <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
         </div>
         <div class="clearfix"></div>
     </div>
@@ -151,7 +151,6 @@
         </tr>
         </tfoot>
     </table>
-</div>
 
 <script type="text/javascript">
 	

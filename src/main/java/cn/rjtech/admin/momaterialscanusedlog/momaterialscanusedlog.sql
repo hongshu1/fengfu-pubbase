@@ -95,7 +95,6 @@ where 1=1
     #if(imodocid)
 and  md.iAutoId=#para(imodocid)
 #end
-
 #end
 
 
@@ -115,10 +114,20 @@ FROM
         LEFT JOIN T_Sys_MaterialsPrepare mp ON mpd.MasID = mp.AutoID
         LEFT JOIN Mo_MoDoc md ON md.iAutoId = mp.SourceBillID
         LEFT JOIN Bd_Inventory it ON it.cInvCode = mpd.InvCode
-
 WHERE
-        1 = 1
+    1 = 1
     #if(barcode)
 AND mpd.Barcode=#para(barcode)
+#end
+#end
+
+#sql("getBarcodeAllBycBarcode")
+    SELECT LOG.*, cInvCode, cInvCode1,cInvName1,cInvStd, uom.cUomName
+FROM Mo_MaterialScanLog LOG
+LEFT JOIN Bd_Inventory INV ON LOG.iInventoryId=INV.iAutoId
+LEFT JOIN Bd_Uom uom ON uom.iAutoId = INV.iInventoryUomId1
+WHERE  LOG.iMoDocId = #para(imodocid)  and isScanned=1
+#if(barcode)
+AND mpd.cBarcode not in #para(barcode)
 #end
 #end

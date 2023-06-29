@@ -15,6 +15,17 @@
     </nav>
   </div>
   <div class="jbolt_page_title">
+
+    <div class="row">
+      <form class="form-inline" id="scanInStockQcFormMForm_#(pageId)" onsubmit="return false;" method="post"
+            style="margin-left: 15px;margin-top: 20px;margin-bottom: 20px">
+        <input id="cbarcode" name="cbarcode" type="text" autocomplete="off" class="form-control" placeholder="=现品票扫描=" name="cinvqcformno" value=""/>
+
+        <button type="button" class="btn btn-outline-secondary" onclick="scanBarcode()">扫描</button>
+        <button type="button" class="btn btn-outline-secondary" onclick="">搜索</button>
+      </form>
+    </div>
+
     <div class="row">
       <div class="col">
         <form class="form-inline" id="inStockQcFormMForm_#(pageId)" onsubmit="return false;" method="post"
@@ -24,6 +35,7 @@
           <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvaddcode" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" name="cbarcode" value=""/>
 
           <select class="form-control"
                   data-autoload
@@ -95,20 +107,22 @@
               class="btn btn-outline-secondary">生成</button>
     {@/if}
     {@if data.istatus == 1}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/instockqcformm/jumpCheckOut/${data.iautoid}" data-area="100%,100%"
-         tooltip title="点击检验" data-title="检验">检验</a>
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/instockqcformm/jumpCheckOut/${data.iautoid}"
+         data-area="100%,100%"
+         tooltip title="点击检验" data-title="在库检成绩表">检验</a>
      <a tooltip href="admin/instockqcformm/deleteCheckoutByIautoid/${data.iautoid}" data-handler="refreshJBoltTable"
-             class="jbolt_table_delbtn" tooltip title="删除在库检成绩表">删除</a>
+        class="jbolt_table_delbtn" tooltip title="删除在库检成绩表">删除</a>
     {@/if}
     {@if data.istatus == 2}
-     <a tooltip tooltip title="查看出库检成绩表" href="admin/instockqcformm/jumpOnlySee/${data.iautoid}" data-scroll="yes"
+     <a tooltip tooltip title="查看在库检成绩表" href="admin/instockqcformm/jumpOnlySee/${data.iautoid}" data-scroll="yes"
         data-handler="refreshJBoltTable" data-area="100%,100%" class="jbolt_table_editbtn">查看</a>
-      <a tooltip title="编辑出库检成绩表" href="admin/instockqcformm/jumpEdit/${data.iautoid}" data-handler="refreshJBoltTable"
+      <a tooltip title="编辑在库检成绩表" href="admin/instockqcformm/jumpEdit/${data.iautoid}" data-handler="refreshJBoltTable"
          data-area="100%,100%" class="jbolt_table_editbtn">编辑</a>
     {@/if}
     {@if data.istatus == 3}
-      <a class="text-info mr-1" data-openpage="dialog" href="admin/instockqcformm/jumpOnlySee/${data.iautoid}" data-area="100%,100%"
-         tooltip data-title="查看出库检成绩表">查看</a>
+      <a class="text-info mr-1" data-openpage="dialog" href="admin/instockqcformm/jumpOnlySee/${data.iautoid}"
+         data-area="100%,100%"
+         tooltip data-title="查看在库检成绩表">查看</a>
       <a href="javascript:return false;" data-handler="refreshJBoltTable" tooltip data-title="状态合格不需要编辑"
          disabled="disabled" disabled style="opacity:0.5">编辑</a>
     {@/if}
@@ -125,15 +139,16 @@
   </td>
   <td title="${data.cinvqcformno}">${data.cinvqcformno}</td>
   <td title="${data.cqcformname}">${data.cqcformname}</td>
-	<td title="${data.cinvaddcode}">${data.cinvaddcode}</td>
+	<td title="${data.cinvcode}">${data.cinvcode}</td>
   <td title="${data.cinvcode1}">${data.cinvcode1}</td>
   <td title="${data.cinvname1}">${data.cinvname1}</td>
   <td title="${data.cinvstd}">${data.cinvstd}</td>
-  <td title="${data.iinventoryuomid1}">${data.iinventoryuomid1}</td>
+  <td title="${data.cuomname}">${data.cuomname}</td>
 	<td title="${data.iqty}">${data.iqty}</td>
-	<td title="${data.cBarcode}">${data.cBarcode}</td>
+	<td title="${data.cbarcode}">${data.cbarcode}</td>
+	<td title="${data.cversion}">${data.cversion}</td>
   <td title="${data.cbatchno}">${data.cbatchno}</td>
-	<td title="${data.iqcuserid}">${data.iqcuserid}</td>
+	<td title="${data.cupdatename}">${data.cupdatename}</td>
   <td title="${data.dcreatetime}">${data.dcreatetime}</td>
 
 </tr>
@@ -154,26 +169,25 @@
         <th data-width="60" data-column="index">序号</th>
         <th data-width="150">操作</th>
         <th data-width="150" data-column="istatus">检验结果</th><!--0. 未生成 1. 待检 2. 不合格 3. 合格-->
-        <th data-width="100" data-column="iscompleted">状态</th>
-        <th data-width="150" data-column="cinvqcformno">检验单号</th>
-        <th data-width="150" data-column="cQcFormName">检验表格名称</th>
-        <th data-width="100" data-column="cInvAddCode">存货编码</th>
-        <th data-width="100" data-column="cinvcode1">客户部番</th>
-        <th data-width="100" data-column="cinvname1">部品名称</th>
-        <th data-width="100" data-column="cInvStd">规格</th>
-        <th data-width="100" data-column="iInventoryUomId1">单位</th>
-        <th data-width="100" data-column="iQty">数量</th>
-        <th data-width="100" data-column="cBarcode">现品票</th>
-        <th data-width="150" data-column="cBatchNo">批次号</th>
-        <th data-width="100" data-column="iQcUserId">检验员</th>
+        <th data-width="150" data-column="iscompleted">状态</th>
+        <th data-width="180" data-column="cinvqcformno">检验单号</th>
+        <th data-width="180" data-column="cQcFormName">检验表格名称</th>
+        <th data-width="180" data-column="cinvcode">存货编码</th>
+        <th data-width="180" data-column="cinvcode1">客户部番</th>
+        <th data-width="180" data-column="cinvname1">部品名称</th>
+        <th data-width="180" data-column="cInvStd">规格</th>
+        <th data-width="120" data-column="cUomName">单位</th>
+        <th data-width="120" data-column="iQty">数量</th>
+        <th data-width="180" data-column="cBarcode">现品票</th>
+        <th data-width="180" data-column="cversion">版本号</th>
+        <th data-width="180" data-column="cBatchNo">批次号</th>
+        <th data-width="150" data-column="cUpdateName">检验员</th>
         <th data-min-width="160" data-column="dCreateTime">创建时间</th>
       </tr>
       </thead>
       <tbody>
       </tbody>
     </table>
-
-
   </div>
 </div>
 #end
@@ -201,6 +215,53 @@
         LayerMsgBox.success(res.msg, 1000, function () {
           refreshPjaxContainer();
         });
+      } else {
+        LayerMsgBox.alert(res.msg, 2);
+      }
+    });
+  }
+
+  /*扫描现品票*/
+  function scanBarcode() {
+    var cbarcode = $("#cbarcode").val();
+    if (cbarcode == null || cbarcode == '' || cbarcode == undefined) {
+      LayerMsgBox.alert("现品票不能为空");
+      return;
+    }
+
+    let url = "admin/instockqcformm/findDetailByBarcode?cbarcode=" + cbarcode;
+    Ajax.get(url, function (res) {
+      if (res.state == 'ok') {
+        var data = res.data;
+
+        LayerMsgBox.confirm(
+            "现品票：" + cbarcode + "<br>"
+            + "数量：" + data.iqty + "<br>"
+            + "存货编码：" + data.invcode + "<br>"
+            + "客户部番：" + data.cinvcode1 + "<br>"
+            + "部品名称：" + data.cinvname1 + "<br>"
+            + "<br>"
+            + "确认是否进行在库检验？<br>", function () {
+              let url = "admin/instockqcformm/saveInStockQcFormByCbarcode"
+              Ajax.post(url,{
+                cbarcode: cbarcode,
+                iqty: data.iqty,
+                invcode: data.invcode,
+                cinvcode1: data.cinvcode1,
+                cinvname1: data.cinvname1,
+                iinventoryid:data.iinventoryid,
+                cmeasurereason:data.cmeasure,
+                cdcno:data.cdccode,
+                iqcformid:data.iqcformid
+              } ,function (res) {
+                if (res.state == 'ok'){
+                  parent.refreshPjaxContainer();
+                }else {
+                  LayerMsgBox.alert(res.msg, 2);
+                }
+              });
+            });
+
       } else {
         LayerMsgBox.alert(res.msg, 2);
       }

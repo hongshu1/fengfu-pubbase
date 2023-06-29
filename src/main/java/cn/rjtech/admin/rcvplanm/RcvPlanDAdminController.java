@@ -34,6 +34,7 @@ public class RcvPlanDAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize()));
     }
@@ -87,6 +88,7 @@ public class RcvPlanDAdminController extends BaseAdminController {
         renderJson(service.delete(getLong(0)));
     }
 
+    @UnCheck
     public void findEditTableDatas() {
         renderJsonData(service.findEditTableDatas(getKv()));
     }

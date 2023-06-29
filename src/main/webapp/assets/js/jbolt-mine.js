@@ -600,6 +600,47 @@ function iPeriodContrastBudgetType(val) {
     }
 }
 
+function moDocType(val) {
+    switch (val) {
+        case 0:
+            return "已保存";
+        case 1:
+            return "未安排人员";
+        case 2:
+            return "已安排人员";
+        case 3:
+            return "生成备料单";
+        case 4:
+            return "待生产";
+        case 5:
+            return "生产中";
+        case 6:
+            return "已完工";
+        case 7:
+            return "已关闭";
+        case 8:
+            return "已取消";
+        case 9:
+            return "待审批";
+        case 10:
+            return "审批中";
+        case 11:
+            return "审批不通过";
+        default:
+            return "";
+    }
+}
+
+function moDociType(val) {
+    switch (val) {
+        case 1:
+            return "APS";
+        case 2:
+            return "手工新增";
+        default:
+            return "";
+    }
+}
 
 /*
  * 数字格式化 清除掉小数点后的无用的0 如果最后是0 转为自定义字符显示
@@ -669,6 +710,8 @@ function initMineJuicer(){
     juicer.register('previewUrl', previewUrl);
     juicer.register('icontrastnum', icontrastnum);
     juicer.register('iPeriodContrastBudgetType', iPeriodContrastBudgetType);
+    juicer.register('moDocType',moDocType);
+    juicer.register('moDociType',moDociType)
 }
 
 function jboltTableGetSpecCols(ele, colName) {
@@ -755,6 +798,34 @@ function showSwitchOrgDialog(showMsg, handler) {
             handler: handler ? handler : refreshPjaxContainer
         });
     }
+}
+
+/**
+ * 自定义Ajax提交表单处理
+ *
+ * @param url               接口地址
+ * @param para              参数
+ * @param successCallback   成功回调
+ * @param failCallback      失败回调
+ */
+function postWithCallback(url, para, successCallback, failCallback) {
+    var index = parent.LayerMsgBox.loading('正在处理...', 10);
+    
+    Ajax.post(url, para, function (ret) {
+        parent.LayerMsgBox.close(index);
+        
+        if (ret.state === 'ok') {
+            successCallback(ret.data);
+        } else {
+            if (failCallback) {
+                failCallback();
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        }
+    }, function () {
+        parent.LayerMsgBox.close(index);
+    });
 }
 
 function zoomPage() {

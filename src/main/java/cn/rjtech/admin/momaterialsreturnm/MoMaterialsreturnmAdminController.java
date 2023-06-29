@@ -26,6 +26,8 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
 	* 首页
 	*/
 	public void index() {
+		String imodocid = get("imodocid");
+		set("imodocid",imodocid);
 		render("index.html");
 	}
   	

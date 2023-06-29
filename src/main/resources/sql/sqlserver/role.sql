@@ -42,7 +42,7 @@ FROM
         #if(keywords)
             AND (
                 r.sn LIKE CONCAT('%', #para(keywords), '%') OR
-                AND r.name LIKE CONCAT('%', #para(keywords), '%')
+                 r.name LIKE CONCAT('%', #para(keywords), '%')
             )
         #end
     #else
@@ -65,7 +65,7 @@ FROM
                 #if(keywords)
                     AND (
                         r.sn LIKE CONCAT('%', #para(keywords), '%') OR
-                        AND r.name LIKE CONCAT('%', #para(keywords), '%')
+                         r.name LIKE CONCAT('%', #para(keywords), '%')
                     )
                 #end
             #case('2')

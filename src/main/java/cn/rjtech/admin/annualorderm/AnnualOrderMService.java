@@ -13,11 +13,16 @@ import cn.rjtech.admin.annualorderdqty.AnnualorderdQtyService;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AnnualOrderStatusEnum;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.AnnualOrderD;
+import cn.rjtech.model.momdata.AnnualOrderM;
+import cn.rjtech.model.momdata.AnnualorderdQty;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.StringUtils;
+import com.github.javaparser.utils.Log;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -30,8 +35,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 年度计划订单
@@ -40,7 +46,7 @@ import java.util.stream.Collectors;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-23 17:23
  */
-public class AnnualOrderMService extends BaseService<AnnualOrderM> {
+public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IApprovalService {
 
     private final AnnualOrderM dao = new AnnualOrderM().dao();
 
@@ -95,6 +101,8 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      * 删除
      */
     public Ret delete(Long id) {
+        AnnualOrderM annualOrderM = findById(id);
+        ValidationUtils.equals(annualOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
         return updateColumn(id, "isdeleted", true);
     }
 
@@ -181,7 +189,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return SUCCESS;
+        return successWithData(annualOrderM.keep("iautoid"));
     }
 
     /**
@@ -267,28 +275,6 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         }
     }
 
-    public Ret approve(Long id) {
-        tx(() -> {
-            formApprovalService.approveByStatus(table(), primaryKey(), id, (formAutoId) -> null, (formAutoId) -> {
-                AnnualOrderM annualOrderM = superFindById(id);
-                //2. 审核通过
-                annualOrderM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-                // 3. 已审批
-                annualOrderM.setIOrderStatus(AnnualOrderStatusEnum.AUDITTED.getValue());
-                annualOrderM.setIUpdateBy(JBoltUserKit.getUserId());
-                annualOrderM.setCUpdateName(JBoltUserKit.getUserName());
-                annualOrderM.setDUpdateTime(new Date());
-                annualOrderM.update();
-                //审批通过生成客户计划汇总
-                cusOrderSumService.algorithmSum();
-                return null;
-            });
-            return true;
-        });
-
-        return SUCCESS;
-    }
-
     public Ret importExcel(File file) {
         StringBuilder errorMsg = new StringBuilder();
 
@@ -301,7 +287,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      */
     public Ret submit(Long iautoid) {
         tx(() -> {
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             AnnualOrderM annualOrderM = findById(iautoid);
@@ -314,101 +300,46 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
     }
 
     /**
-     * 撤回
-     */
-    public Ret withdraw(Long iAutoId) {
-        tx(() -> {
-            formApprovalService.withdraw(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iAutoId, "iOrderStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
-                return null;
-            });
-
-            return true;
-        });
-        return SUCCESS;
-
-    }
-
-    /**
-     * 审批不通过
-     */
-    public Ret reject(Long iAutoId) {
-        tx(() -> {
-            formApprovalService.rejectByStatus(table(), primaryKey(), iAutoId, (formAutoId) -> null, (formAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iAutoId, "iOrderStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
-                return null;
-            });
-
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
-     * 批量审核
-     * @param ids
-     * @return
-     */
-    public Ret batchApprove(String ids) {
-        tx(() -> {
-            formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> null, (formAutoId) -> {
-                List<AnnualOrderM> list = getListByIds(ids);
-                list = list.stream().filter(Objects::nonNull).map(item -> {
-                    item.setIOrderStatus(WeekOrderStatusEnum.APPROVED.getValue());
-                    return item;
-                }).collect(Collectors.toList());
-                ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
-
-                // 修改客户计划汇总
-                cusOrderSumService.algorithmSum();
-                return null;
-            });
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
-     * 批量反审批
-     *
-     * @param ids
-     * @return
-     */
-    public Ret batchReverseApprove(String ids) {
-        tx(() -> {
-            List<AnnualOrderM> list = getListByIds(ids);
-            // 非已审批数据
-            List<AnnualOrderM> noApprovedDatas = list.stream().filter(item -> !(item.getIOrderStatus() == WeekOrderStatusEnum.APPROVED.getValue())).collect(Collectors.toList());
-            ValidationUtils.isTrue(noApprovedDatas.size() <= 0, "存在非已审批数据");
-
-            for (AnnualOrderM annualOrderM : list) {
-                // 处理订单审批数据
-                Long id = annualOrderM.getIAutoId();
-                formApprovalService.reverseApproveByStatus(id, table(), primaryKey(), (formAutoId) -> null, (formAutoId) ->
-                {
-                    // 处理订单状态
-                    ValidationUtils.isTrue(updateColumn(id, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
-                    return null;
-                });
-            }
-
-            // 修改客户计划汇总
-            cusOrderSumService.algorithmSum();
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
      * 处理审批通过的其他业务操作，如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @return 错误信息
      */
-    public String postApproveFunc(long formAutoId) {
+    @Override
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        AnnualOrderM annualOrderM = findById(formAutoId);
+        // 订单状态校验
+//        ValidationUtils.equals(annualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
+
+        // 订单状态修改
+        annualOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
+        annualOrderM.setIUpdateBy(JBoltUserKit.getUserId());
+        annualOrderM.setCUpdateName(JBoltUserKit.getUserName());
+        annualOrderM.setDUpdateTime(new Date());
+        annualOrderM.update();
+        // 审批通过生成客户计划汇总
+        cusOrderSumService.algorithmSum();
         return null;
     }
+
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
-    public String postRejectFunc(long formAutoId) {
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+        return null;
+    }
+
+    /**
+     * 实现反审之前的其他业务操作，如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    @Override
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         return null;
     }
 
@@ -419,12 +350,101 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
      * @param isFirst    是否为审批的第一个节点
      * @param isLast     是否为审批的最后一个节点
      */
+    @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        // 只有一个审批人
+        if (isFirst && isLast) {
+            if(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isFail()){
+                Log.info("更新失败");
+                return "更新失败";
+            }
+//            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), JBoltMsg.FAIL);
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
+        }
+        // 反审回第一个节点，回退状态为“已保存”
+        else if (isFirst) {
+            if (updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isFail()){
+                Log.info("更新失败");
+                return "更新失败";
+            }
+//            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), JBoltMsg.FAIL);
+        }
+        // 最后一步通过的，反审，回退状态为“待审核”
+        else if (isLast) {
+            if (updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isFail()) {
+                Log.info("更新失败");
+                return "更新失败";
+            }
+//            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), JBoltMsg.FAIL);
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
+        }
+        return null;
+    }
+
+    /**
+     * 提审前业务，如有异常返回错误信息
+     */
+    @Override
+    public String preSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 提审后业务处理，如有异常返回错误信息
+     */
+    @Override
+    public String postSubmitFunc(long formAutoId) {
+        AnnualOrderM annualOrderM = findById(formAutoId);
+        if (annualOrderM.getIOrderStatus() == WeekOrderStatusEnum.NOT_AUDIT.getValue() || annualOrderM.getIOrderStatus() == WeekOrderStatusEnum.REJECTED.getValue()) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isOk(), "提审失败");
+        }
+        return null;
+    }
+
+    /**
+     * 撤回审核业务处理，如有异常返回错误信息
+     */
+    @Override
+    public String postWithdrawFunc(long formAutoId) {
+        AnnualOrderM annualOrderM = findById(formAutoId);
+//        ValidationUtils.equals(annualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审批状态");
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), "撤回失败");
+        return null;
+    }
+
+    /**
+     * 从审批中，撤回到已保存，业务实现，如有异常返回错误信息
+     */
+    @Override
+    public String withdrawFromAuditting(long formAutoId) {
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), JBoltMsg.FAIL);
+        return null;
+    }
+
+    /**
+     * 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
+     */
+    @Override
+    public String preWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 从已审核，撤回到已保存，业务实现，如有异常返回错误信息
+     */
+    @Override
+    public String postWithdrawFromAuditted(long formAutoId) {
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), JBoltMsg.FAIL);
+        // 修改客户计划汇总
+        cusOrderSumService.algorithmSum();
         return null;
     }
 
     /**
      * 批量删除
+     *
      * @param ids
      * @return
      */
@@ -432,6 +452,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         List<AnnualOrderM> list = getListByIds(ids);
         List<AnnualOrderM> notAuditList = new ArrayList<>();
         for (AnnualOrderM annualOrderM : list) {
+            ValidationUtils.equals(annualOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
             if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != annualOrderM.getIOrderStatus()) {
                 notAuditList.add(annualOrderM);
             }
@@ -443,5 +464,53 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> {
         ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
 
         return SUCCESS;
+    }
+
+
+    /**
+     * 批量审批（审核）通过
+     * @param formAutoIds 单据IDs
+     * @return  错误信息
+     */
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        // 审批通过生成客户计划汇总
+        cusOrderSumService.algorithmSum();
+        return null;
+    }
+
+    /**
+     * 批量审批（审核）不通过
+     * @param formAutoIds 单据IDs
+     * @return  错误信息
+     */
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        for (Long formAutoId:formAutoIds) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+        }
+        return null;
+    }
+
+    /**
+     * 批量撤销审批
+     * @param formAutoIds 单据IDs
+     * @return  错误信息
+     */
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        List<AnnualOrderM> annualOrderMS = getListByIds(StringUtils.join(formAutoIds, COMMA));
+        Boolean algorithmSum = annualOrderMS.stream().anyMatch(item -> item.getIOrderStatus().equals(WeekOrderStatusEnum.APPROVED.getValue()));
+        annualOrderMS.stream().map(item -> {
+            item.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
+            return item;
+        }).collect(Collectors.toList());
+        batchUpdate(annualOrderMS);
+
+        if (algorithmSum) {
+            // 修改客户计划汇总
+            cusOrderSumService.algorithmSum();
+        }
+        return null;
     }
 }

@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extends JBoltBaseModel<M>{
+    
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
@@ -40,11 +41,21 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
     public static final String IEFFECTIVESTATUS = "iEffectiveStatus";
     /**期间ID*/
     public static final String IPERIODID = "iPeriodId";
+    /**审批方式：1. 审批状态 2. 审批流*/
+    public static final String IAUDITWAY = "iAuditWay";
+    /**提审时间*/
+    public static final String DSUBMITTIME = "dSubmitTime";
+    /**审核人ID，不走审批流时有该值*/
+    public static final String IAUDITBY = "iAuditBy";
+    /**审核人名称，不走审批流时有该值*/
+    public static final String CAUDITNAME = "cAuditName";
+    /**删除状态：0. 未删除 1. 已删除*/
+    public static final String ISDELETED = "IsDeleted";
 	/**
 	 * 主键ID
 	 */
-	public M setIautoid(java.lang.Long iautoid) {
-		set("iAutoId", iautoid);
+	public M setIAutoId(java.lang.Long iAutoId) {
+		set("iAutoId", iAutoId);
 		return (M)this;
 	}
 
@@ -52,16 +63,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 主键ID
 	 */
 	@JBoltField(name="iautoid" ,columnName="iAutoId",type="Long", remark="主键ID", required=true, maxLength=19, fixed=0, order=1)
-	@JSONField(serializeUsing= ToStringSerializer.class)
-	public java.lang.Long getIautoid() {
+	@JSONField(name = "iautoid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIAutoId() {
 		return getLong("iAutoId");
 	}
 
 	/**
 	 * 组织ID
 	 */
-	public M setIorgid(java.lang.Long iorgid) {
-		set("iOrgId", iorgid);
+	public M setIOrgId(java.lang.Long iOrgId) {
+		set("iOrgId", iOrgId);
 		return (M)this;
 	}
 
@@ -69,16 +80,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 组织ID
 	 */
 	@JBoltField(name="iorgid" ,columnName="iOrgId",type="Long", remark="组织ID", required=true, maxLength=19, fixed=0, order=2)
-	@JSONField(serializeUsing= ToStringSerializer.class)
-	public java.lang.Long getIorgid() {
+	@JSONField(name = "iorgid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIOrgId() {
 		return getLong("iOrgId");
 	}
 
 	/**
 	 * 组织编码
 	 */
-	public M setCorgcode(java.lang.String corgcode) {
-		set("cOrgCode", corgcode);
+	public M setCOrgCode(java.lang.String cOrgCode) {
+		set("cOrgCode", cOrgCode);
 		return (M)this;
 	}
 
@@ -86,15 +97,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 组织编码
 	 */
 	@JBoltField(name="corgcode" ,columnName="cOrgCode",type="String", remark="组织编码", required=true, maxLength=20, fixed=0, order=3)
-	public java.lang.String getCorgcode() {
+	@JSONField(name = "corgcode")
+	public java.lang.String getCOrgCode() {
 		return getStr("cOrgCode");
 	}
 
 	/**
 	 * 部门编码
 	 */
-	public M setCdepcode(java.lang.String cdepcode) {
-		set("cDepCode", cdepcode);
+	public M setCDepCode(java.lang.String cDepCode) {
+		set("cDepCode", cDepCode);
 		return (M)this;
 	}
 
@@ -102,15 +114,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 部门编码
 	 */
 	@JBoltField(name="cdepcode" ,columnName="cDepCode",type="String", remark="部门编码", required=true, maxLength=20, fixed=0, order=4)
-	public java.lang.String getCdepcode() {
+	@JSONField(name = "cdepcode")
+	public java.lang.String getCDepCode() {
 		return getStr("cDepCode");
 	}
 
 	/**
 	 * 预算类型(1.全年预算 2.下期修改)
 	 */
-	public M setIbudgettype(java.lang.Integer ibudgettype) {
-		set("iBudgetType", ibudgettype);
+	public M setIBudgetType(java.lang.Integer iBudgetType) {
+		set("iBudgetType", iBudgetType);
 		return (M)this;
 	}
 
@@ -118,15 +131,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 预算类型(1.全年预算 2.下期修改)
 	 */
 	@JBoltField(name="ibudgettype" ,columnName="iBudgetType",type="Integer", remark="预算类型(1.全年预算 2.下期修改)", required=true, maxLength=10, fixed=0, order=5)
-	public java.lang.Integer getIbudgettype() {
+	@JSONField(name = "ibudgettype")
+	public java.lang.Integer getIBudgetType() {
 		return getInt("iBudgetType");
 	}
 
 	/**
 	 * 预算年度
 	 */
-	public M setIbudgetyear(java.lang.Integer ibudgetyear) {
-		set("iBudgetYear", ibudgetyear);
+	public M setIBudgetYear(java.lang.Integer iBudgetYear) {
+		set("iBudgetYear", iBudgetYear);
 		return (M)this;
 	}
 
@@ -134,15 +148,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 预算年度
 	 */
 	@JBoltField(name="ibudgetyear" ,columnName="iBudgetYear",type="Integer", remark="预算年度", required=false, maxLength=10, fixed=0, order=6)
-	public java.lang.Integer getIbudgetyear() {
+	@JSONField(name = "ibudgetyear")
+	public java.lang.Integer getIBudgetYear() {
 		return getInt("iBudgetYear");
 	}
 
 	/**
 	 * 备注
 	 */
-	public M setCmemo(java.lang.String cmemo) {
-		set("cMemo", cmemo);
+	public M setCMemo(java.lang.String cMemo) {
+		set("cMemo", cMemo);
 		return (M)this;
 	}
 
@@ -150,15 +165,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 备注
 	 */
 	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=7)
-	public java.lang.String getCmemo() {
+	@JSONField(name = "cmemo")
+	public java.lang.String getCMemo() {
 		return getStr("cMemo");
 	}
 
 	/**
 	 * 审核状态
 	 */
-	public M setIauditstatus(java.lang.Integer iauditstatus) {
-		set("iAuditStatus", iauditstatus);
+	public M setIAuditStatus(java.lang.Integer iAuditStatus) {
+		set("iAuditStatus", iAuditStatus);
 		return (M)this;
 	}
 
@@ -166,15 +182,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 审核状态
 	 */
 	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态", required=true, maxLength=10, fixed=0, order=8)
-	public java.lang.Integer getIauditstatus() {
+	@JSONField(name = "iauditstatus")
+	public java.lang.Integer getIAuditStatus() {
 		return getInt("iAuditStatus");
 	}
 
 	/**
 	 * 审核时间
 	 */
-	public M setDaudittime(java.util.Date daudittime) {
-		set("dAuditTime", daudittime);
+	public M setDAuditTime(java.util.Date dAuditTime) {
+		set("dAuditTime", dAuditTime);
 		return (M)this;
 	}
 
@@ -182,15 +199,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 审核时间
 	 */
 	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=9)
-	public java.util.Date getDaudittime() {
+	@JSONField(name = "daudittime")
+	public java.util.Date getDAuditTime() {
 		return getDate("dAuditTime");
 	}
 
 	/**
 	 * 创建时间
 	 */
-	public M setDcreatetime(java.util.Date dcreatetime) {
-		set("dCreateTime", dcreatetime);
+	public M setDCreateTime(java.util.Date dCreateTime) {
+		set("dCreateTime", dCreateTime);
 		return (M)this;
 	}
 
@@ -198,15 +216,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 创建时间
 	 */
 	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=10)
-	public java.util.Date getDcreatetime() {
+	@JSONField(name = "dcreatetime")
+	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
 	}
 
 	/**
 	 * 更新时间
 	 */
-	public M setDupdatetime(java.util.Date dupdatetime) {
-		set("dUpdateTime", dupdatetime);
+	public M setDUpdateTime(java.util.Date dUpdateTime) {
+		set("dUpdateTime", dUpdateTime);
 		return (M)this;
 	}
 
@@ -214,15 +233,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 更新时间
 	 */
 	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=false, maxLength=23, fixed=3, order=11)
-	public java.util.Date getDupdatetime() {
+	@JSONField(name = "dupdatetime")
+	public java.util.Date getDUpdateTime() {
 		return getDate("dUpdateTime");
 	}
 
 	/**
 	 * 创建人
 	 */
-	public M setIcreateby(java.lang.Long icreateby) {
-		set("iCreateBy", icreateby);
+	public M setICreateBy(java.lang.Long iCreateBy) {
+		set("iCreateBy", iCreateBy);
 		return (M)this;
 	}
 
@@ -230,16 +250,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 创建人
 	 */
 	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人", required=true, maxLength=19, fixed=0, order=12)
-	@JSONField(serializeUsing= ToStringSerializer.class)
-	public java.lang.Long getIcreateby() {
+	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
 	}
 
 	/**
 	 * 更新人
 	 */
-	public M setIupdateby(java.lang.Long iupdateby) {
-		set("iUpdateBy", iupdateby);
+	public M setIUpdateBy(java.lang.Long iUpdateBy) {
+		set("iUpdateBy", iUpdateBy);
 		return (M)this;
 	}
 
@@ -247,16 +267,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 更新人
 	 */
 	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人", required=false, maxLength=19, fixed=0, order=13)
-	@JSONField(serializeUsing= ToStringSerializer.class)
-	public java.lang.Long getIupdateby() {
+	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIUpdateBy() {
 		return getLong("iUpdateBy");
 	}
 
 	/**
 	 * 生效状态(1.未生效 2.已生效 3.失效)
 	 */
-	public M setIeffectivestatus(java.lang.Integer ieffectivestatus) {
-		set("iEffectiveStatus", ieffectivestatus);
+	public M setIEffectiveStatus(java.lang.Integer iEffectiveStatus) {
+		set("iEffectiveStatus", iEffectiveStatus);
 		return (M)this;
 	}
 
@@ -264,15 +284,16 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 生效状态(1.未生效 2.已生效 3.失效)
 	 */
 	@JBoltField(name="ieffectivestatus" ,columnName="iEffectiveStatus",type="Integer", remark="生效状态(1.未生效 2.已生效 3.失效)", required=true, maxLength=10, fixed=0, order=14)
-	public java.lang.Integer getIeffectivestatus() {
+	@JSONField(name = "ieffectivestatus")
+	public java.lang.Integer getIEffectiveStatus() {
 		return getInt("iEffectiveStatus");
 	}
 
 	/**
 	 * 期间ID
 	 */
-	public M setIperiodid(java.lang.Long iperiodid) {
-		set("iPeriodId", iperiodid);
+	public M setIPeriodId(java.lang.Long iPeriodId) {
+		set("iPeriodId", iPeriodId);
 		return (M)this;
 	}
 
@@ -280,9 +301,94 @@ public abstract class BaseInvestmentPlan<M extends BaseInvestmentPlan<M>> extend
 	 * 期间ID
 	 */
 	@JBoltField(name="iperiodid" ,columnName="iPeriodId",type="Long", remark="期间ID", required=false, maxLength=19, fixed=0, order=15)
-	@JSONField(serializeUsing= ToStringSerializer.class)
-	public java.lang.Long getIperiodid() {
+	@JSONField(name = "iperiodid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIPeriodId() {
 		return getLong("iPeriodId");
+	}
+
+	/**
+	 * 审批方式：1. 审批状态 2. 审批流
+	 */
+	public M setIAuditWay(java.lang.Integer iAuditWay) {
+		set("iAuditWay", iAuditWay);
+		return (M)this;
+	}
+
+	/**
+	 * 审批方式：1. 审批状态 2. 审批流
+	 */
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审批状态 2. 审批流", required=false, maxLength=10, fixed=0, order=16)
+	@JSONField(name = "iauditway")
+	public java.lang.Integer getIAuditWay() {
+		return getInt("iAuditWay");
+	}
+
+	/**
+	 * 提审时间
+	 */
+	public M setDSubmitTime(java.util.Date dSubmitTime) {
+		set("dSubmitTime", dSubmitTime);
+		return (M)this;
+	}
+
+	/**
+	 * 提审时间
+	 */
+	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=17)
+	@JSONField(name = "dsubmittime")
+	public java.util.Date getDSubmitTime() {
+		return getDate("dSubmitTime");
+	}
+
+	/**
+	 * 审核人ID，不走审批流时有该值
+	 */
+	public M setIAuditBy(java.lang.Long iAuditBy) {
+		set("iAuditBy", iAuditBy);
+		return (M)this;
+	}
+
+	/**
+	 * 审核人ID，不走审批流时有该值
+	 */
+	@JBoltField(name="iauditby" ,columnName="iAuditBy",type="Long", remark="审核人ID，不走审批流时有该值", required=false, maxLength=19, fixed=0, order=18)
+	@JSONField(name = "iauditby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIAuditBy() {
+		return getLong("iAuditBy");
+	}
+
+	/**
+	 * 审核人名称，不走审批流时有该值
+	 */
+	public M setCAuditName(java.util.Date cAuditName) {
+		set("cAuditName", cAuditName);
+		return (M)this;
+	}
+
+	/**
+	 * 审核人名称，不走审批流时有该值
+	 */
+	@JBoltField(name="cauditname" ,columnName="cAuditName",type="Date", remark="审核人名称，不走审批流时有该值", required=false, maxLength=23, fixed=3, order=19)
+	@JSONField(name = "cauditname")
+	public java.util.Date getCAuditName() {
+		return getDate("cAuditName");
+	}
+
+	/**
+	 * 删除状态：0. 未删除 1. 已删除
+	 */
+	public M setIsDeleted(java.lang.Boolean IsDeleted) {
+		set("IsDeleted", IsDeleted);
+		return (M)this;
+	}
+
+	/**
+	 * 删除状态：0. 未删除 1. 已删除
+	 */
+	@JBoltField(name="isdeleted" ,columnName="IsDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=20)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("IsDeleted");
 	}
 
 }

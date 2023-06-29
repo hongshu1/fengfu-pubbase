@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseWeekOrderM<M extends BaseWeekOrderM<M>> extends JBoltBaseModel<M>{
+    
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
@@ -130,6 +131,10 @@ public abstract class BaseWeekOrderM<M extends BaseWeekOrderM<M>> extends JBoltB
     public static final String IPUSHTO = "iPushTo";
     /**推送单号*/
     public static final String CDOCNO = "cDocNo";
+    /**客户编码*/
+    public static final String CCUSCODE = "cCusCode";
+    /**客户名称*/
+    public static final String CCUSNAME = "cCusName";
 	/**
 	 * 主键ID
 	 */
@@ -1093,7 +1098,7 @@ public abstract class BaseWeekOrderM<M extends BaseWeekOrderM<M>> extends JBoltB
 	/**
 	 * 审批方式;1. 审批状态 2. 审批流
 	 */
-	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式;1. 审批状态 2. 审批流", required=false, maxLength=10, fixed=0, order=57)
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式;1. 审批状态 2. 审批流", required=true, maxLength=10, fixed=0, order=57)
 	@JSONField(name = "iauditway")
 	public java.lang.Integer getIAuditWay() {
 		return getInt("iAuditWay");
@@ -1148,6 +1153,40 @@ public abstract class BaseWeekOrderM<M extends BaseWeekOrderM<M>> extends JBoltB
 	@JSONField(name = "cdocno")
 	public java.lang.String getCDocNo() {
 		return getStr("cDocNo");
+	}
+
+	/**
+	 * 客户编码
+	 */
+	public M setCCusCode(java.lang.String cCusCode) {
+		set("cCusCode", cCusCode);
+		return (M)this;
+	}
+
+	/**
+	 * 客户编码
+	 */
+	@JBoltField(name="ccuscode" ,columnName="cCusCode",type="String", remark="客户编码", required=false, maxLength=40, fixed=0, order=61)
+	@JSONField(name = "ccuscode")
+	public java.lang.String getCCusCode() {
+		return getStr("cCusCode");
+	}
+
+	/**
+	 * 客户名称
+	 */
+	public M setCCusName(java.lang.String cCusName) {
+		set("cCusName", cCusName);
+		return (M)this;
+	}
+
+	/**
+	 * 客户名称
+	 */
+	@JBoltField(name="ccusname" ,columnName="cCusName",type="String", remark="客户名称", required=false, maxLength=200, fixed=0, order=62)
+	@JSONField(name = "ccusname")
+	public java.lang.String getCCusName() {
+		return getStr("cCusName");
 	}
 
 }

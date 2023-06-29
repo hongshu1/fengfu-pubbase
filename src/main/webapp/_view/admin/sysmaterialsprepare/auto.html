@@ -5,13 +5,6 @@
         <div class="row">
             <div class="col">
                 <div class="jbolt_table_toolbar" id="SysMaterialsprepare_toolbar_#(pageId)">
-<!--                    <button data-check-handler="jboltTableGetCheckedId"-->
-<!--                            data-dialogbtn data-area="30%,30%"-->
-<!--                            data-handler="jboltTablePageToFirst"-->
-<!--                            id="toolbar_addBtn_#(pageId)"-->
-<!--                            data-url="admin/sysMaterialsprepare/submitAll/"-->
-<!--                            class="btn btn-success btn-sm"><i class="fa fa-plus"></i> 生成备料单-->
-<!--                    </button>-->
                     <button onclick="submitThisForm1()"
                             id="toolbar_addBtn_#(pageId)"
                             class="btn btn-success btn-sm"><i class="fa fa-plus"></i> 生成备料单
@@ -124,11 +117,14 @@
                 //工单ID
                 var id=jboltTable.me.getCheckedId(jboltTable,dontShowError,msg);
                 if (id!=false){
-                    const Url='/admin/sysMaterialsprepare/submitAll';
-                    const data={id:id}
-                    $.post(Url,data);
+                    Ajax.post("/admin/sysMaterialsprepare/submitAll", {"id": id},
+                        function (res) {
+                            LayerMsgBox.success("备料成功");
+                        }, function (err) {
+                        LayerMsgBox.error("备料失败");
+                        })
+                    //返回主页面
                     parent.layer.close(parent.layer.getFrameIndex(window.name));
-                    // parent.layui.table.reload('indextable');
                     window.parent.refreshJBoltTable();
                 }
                 return true;

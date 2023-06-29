@@ -5,14 +5,17 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.SysAssem;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -46,6 +49,7 @@ public class SysAssemAdminController extends BaseAdminController {
    /**
 	* 数据源
 	*/
+   @UnCheck
 	public void datas() {
 		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
 	}
@@ -138,6 +142,15 @@ public class SysAssemAdminController extends BaseAdminController {
 		renderJson(service.submitByJBoltTable(getJBoltTable()));
 	}
 
+	/**
+	 * 提审批
+	 */
+	public void submit(@Para(value = "iautoid") Long iautoid) {
+		ValidationUtils.validateId(iautoid, "id");
+
+		renderJson(service.submit(iautoid));
+	}
+
 	//获取转换方式数据源 jb_dictionary 存id
 	public void dictionary(){
 		renderJsonData(service.getdictionary(getKv()));
@@ -154,6 +167,69 @@ public class SysAssemAdminController extends BaseAdminController {
 		renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit",10),get("orgCode",orgCode)));
 	}
 
+	/**
+	 * 获取资源
+	 */
+	public void getResource(){
+		String q = get("q");
+		if (notOk(q)){
+			renderJsonSuccess();
+			return;
+		}
+		String itemHidden = get("itemHidden");
+		String groupCode = get("groupCode");
+		String sourceBillType = get("sourceBillType");
+		Kv kv = new Kv();
+		kv.set("keywords",q);
+		kv.setIfNotNull("sourceBillType", sourceBillType);
+		kv.setIfNotNull("combination", groupCode);
+		kv.setIfNotNull("itemHidden", itemHidden);
+		kv.setIfNotNull("assemtype", "转换前");
+		renderJsonData(service.getResource(kv));
+	}
+
+	/**
+	 * 条码获取资源
+	 */
+	public void getBarcode(){
+		String barcode = get("barcode");
+		if (notOk(barcode)){
+			renderJsonSuccess();
+			return;
+		}
+		String itemHidden = get("itemHidden");
+		String groupCode = get("groupCode");
+		String sourceBillType = get("sourceBillType");
+		Kv kv = new Kv();
+		kv.set("barcode",barcode);
+		kv.setIfNotNull("sourceBillType", sourceBillType);
+		kv.setIfNotNull("combination", groupCode);
+		kv.setIfNotNull("itemHidden", itemHidden);
+		kv.setIfNotNull("assemtype", "转换前");
+		renderJsonData(service.getBarcode(kv));
+	}
+
+	/**
+	 * 查询双单位条码数据
+	 */
+	public void getBarCodeData(){
+		//订单编号
+		String sourcebillno = get("sourcebillno");
+		//供应商code，名字
+		String vencode = get("vencode");
+		String venname = get("venname");
+		//转换前 存货主键
+		String ibeforeinventoryid = get("ibeforeinventoryid");
+		//转换后 存货主键
+		String iafterinventoryid = get("iafterinventoryid");
+		Kv kv = new Kv();
+		kv.set("sourcebillno",notOk(sourcebillno)?"":sourcebillno);
+		kv.set("vencode",notOk(vencode)?"":vencode);
+		kv.set("venname",notOk(venname)?"":venname);
+		kv.set("ibeforeinventoryid",notOk(ibeforeinventoryid)?"":ibeforeinventoryid);
+		kv.set("iafterinventoryid",notOk(iafterinventoryid)?"":iafterinventoryid);
+		renderJsonData(service.getBarcodeDatas(kv));
+	}
 
 
 }

@@ -8,6 +8,11 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MoMaterialscanlog;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
 /**
  * 制造工单-齐料明细 Controller
  * @ClassName: MoMaterialscanlogAdminController
@@ -33,6 +38,7 @@ public class MoMaterialscanlogAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
+
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
 	}
 
@@ -91,18 +97,21 @@ public class MoMaterialscanlogAdminController extends BaseAdminController {
 		renderJsonData(service.getMoMaterialNotScanLogList(getPageNumber(),getPageSize(),getKv()));
 	}
 	/**
-	 * 获取备料现品票明细（已扫描）
-	 */
-	public void getMoMaterialScanLogList(){
-		renderJsonData(service.getMoMaterialScanLogList(getPageNumber(),getPageSize(),getKv()));
-	}
-	/**
 	 * 材料汇总-现品票扫描
 	 */
-	public  void  addBarcode(){
-		String barcode=get("barcode");
-		Long imodocid=getLong("imodocid");
-		renderJsonData(service.addBarcode(barcode,imodocid));
+	public  void addBarcode(@Para(value = "barcode") String barcode,
+							 @Para(value = "imodocid") Long imodocid){
+		Kv kv = getKv();
+		renderJson(service.addBarcode(barcode,imodocid));
 	}
+
+	/**
+	 * 齐料检查主页数据
+	 */
+	public void getBarcodeAll(){
+		Page<Record> page=service.getBarcodeAll(getPageNumber(),getPageSize(),getKv());
+		renderJsonData(page);
+	}
+
 
 }

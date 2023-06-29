@@ -51,6 +51,7 @@ public class UomclassAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKeywords()));
     }

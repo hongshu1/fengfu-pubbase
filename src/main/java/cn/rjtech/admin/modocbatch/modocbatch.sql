@@ -8,14 +8,11 @@ SELECT mt.iAutoId,
        mt.dCreateTime,
        dp.cDepName
 FROM dbo.Mo_MoTask AS mt
-         LEFT JOIN
-     dbo.Bd_Department AS dp
-     ON
-         mt.iDepartmentId = dp.iAutoId
-WHERE mt.IsDeleted = '0' #if(startdate)
+LEFT JOIN dbo.Bd_Department AS dp ON mt.iDepartmentId = dp.iAutoId
+WHERE mt.IsDeleted = '0'
+    #if(startdate)
        AND mt.dBeginDate >=  #para(startdate)
     #end
-
      #if(enddate)
        AND mt.dEndDate <= #para(enddate)
     #end
@@ -32,10 +29,12 @@ WHERE mt.IsDeleted = '0' #if(startdate)
 
 #sql("editplanviewdatas")
 SELECT DISTINCT
+    doc.iworkshiftmid,
 	doc.iYear,
 	doc.iMonth,
 	doc.iDate,
 	wm.cWorkShiftName,
+	wm.cWorkShiftCode,
 	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) YearToDate
 FROM
 	Mo_MoDoc doc
@@ -116,8 +115,9 @@ WHERE mr.iMoDocId = #para(docId) order by  mrc.iSeq
 #sql("getModocDatas")
 SELECT DISTINCT
 	modoc.iWorkRegionMid ,
-	regionm.cWorkName ,
 	modoc.iInventoryId,
+	concat(modoc.iWorkRegionMid,modoc.iInventoryId) mergeid,
+	regionm.cWorkName ,
 	inventory.cInvCode ,
 	inventory.cInvCode1 ,
 	inventory.cInvName1
@@ -131,20 +131,29 @@ WHERE
 
 #sql("getModocDateShiftDatas")
 SELECT DISTINCT
+	#if(iinventoryid)
     doc.iAutoId,
+    #end
 	doc.iYear,
 	doc.iMonth,
 	doc.iDate,
 	doc.iWorkShiftMid,
 	shiftm.cWorkShiftCode,
 	shiftm.cWorkShiftName,
-	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) dates
+	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) dates,
+	concat ( doc.iYear , doc.iMonth, doc.iDate, doc.iWorkShiftMid ) dates1
 FROM
 	Mo_MoDoc doc
 	LEFT JOIN Bd_WorkShiftM shiftm ON doc.iWorkShiftMid= shiftm.iAutoId
 WHERE
-	doc.iMoTaskId=#(taskid) and doc.iInventoryId=#(iinventoryid) and doc.iWorkRegionMid=#(iworkregionmid)
-ORDER BY shiftm.cWorkShiftCode ASC
+	doc.iMoTaskId=#(taskid)
+	#if(iinventoryid)
+	and doc.iInventoryId=#(iinventoryid)
+	#end
+	#if(iworkregionmid)
+	and doc.iWorkRegionMid=#(iworkregionmid)
+	#end
+ORDER BY dates ASC
 #end
 
 #sql("getModocAllDatasByTaskid")
@@ -222,7 +231,7 @@ WHERE
 #end
 
 #sql("getModocNoQtyNumByDocid")
-SELECT
+SELECT DISTINCT
 	iAutoId,
 	cMoDocNo,
 	iQty,
@@ -238,20 +247,94 @@ WHERE
 	iMoTaskId = #(taskid)
 #end
 
+#sql("getModocLeaderByTaskid")
+SELECT DISTINCT
+	concat ( mm.iYear, mm.iMonth, mm.iDate, mm.iWorkShiftMid ) dataid,
+	concat ( mm.iYear, mm.iMonth, mm.iDate ) sdate,
+	md.iType,
+	md.iPersonId,
+	pn.cPsn_Num,
+	pn.cPsn_Name
+FROM
+	Mo_MoWorkShiftM mm
+	LEFT JOIN Mo_MoWorkShiftD md ON mm.iAutoId= md.iMoWorkShiftMid
+	LEFT JOIN Bd_Person pn ON md.iPersonId= pn.iAutoId
+WHERE
+	iMoTaskId = #(taskid)
+ORDER BY
+	sdate,
+	md.iType ASC
+#end
 
+#sql("getModocWorkShifts")
+SELECT  DISTINCT
+	concat ( iYear, iMonth, iDate, iWorkShiftMid ) dataid,
+	concat ( iYear, iMonth, iDate ) sdate
+FROM
+	Mo_MoDOC
+WHERE
+	iMoTaskId = #(taskid)
+ORDER BY sdate ASC
+#end
 
+#sql("getPlanDatasBytaskId")
+SELECT DISTINCT
+	concat ( iWorkRegionMid, iInventoryId ) mergeid,
+	concat ( iYear, iMonth, iDate, iWorkShiftMid ) dates,
+	cMoDocNo,
+	iQty,
+	concat ( iYear, '-', iMonth, '-', iDate ) sdate,
+	isModified,
+	iAutoId
+FROM
+	Mo_MoDoc
+WHERE
+	iMoTaskId = #(taskid)
+ORDER BY sdate ASC
+#end
 
+#sql("getUserDatas")
+SELECT
+	per.iAutoId,
+	per.cPsn_Num cpsnnum,
+	per.cPsn_Name cpsnname,
+	ISNULL(per.cPsnMobilePhone, ' ') cpsnmobilephone,
+	ISNULL(dep.cdepname, ' ') cdepname
+FROM
+	Bd_Person per
+	LEFT JOIN Bd_PersonEquipment eq ON eq.iPersonId= per.iAutoId
+	LEFT JOIN Bd_Department dep ON per.cdept_num = dep.cdepcode
+WHERE
+	eq.isDeleted= 0
+	AND per.isDeleted= 0
+	AND per.isEnabled = 1
+	AND per.dLeaveDate IS NULL
+#if(iequipmentid)
+	AND eq.iEquipmentId IN #(iequipmentid)
+#end
+#if(cpsnname)
+	AND (per.cPsn_Num LIKE CONCAT('%',#para(cpsnname),'%') OR per.cPsn_Name LIKE CONCAT('%',#para(cpsnname),'%'))
+#end
+#if(cdepname)
+	AND dep.cdepname IN #para(cdepname)
+#end
+#end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+#sql("getMoroutingconfigId")
+SELECT DISTINCT
+	rcfg.iAutoId
+FROM
+	Mo_MoRoutingConfig rcfg
+	LEFT JOIN Mo_MoRouting ting ON rcfg.iMoRoutingId= ting.iAutoId
+	LEFT JOIN Mo_MoDoc modoc ON ting.iMoDocId = modoc.iAutoId
+	LEFT JOIN Bd_Inventory tory ON tory.iAutoId=ting.iInventoryId
+	LEFT JOIN Mo_MoRoutingConfig_Operation oper ON oper.iMoRoutingConfigId = rcfg.iAutoId
+WHERE
+	modoc.iMoTaskId = #(imotaskid)
+	AND modoc.iYear = #(iyear)
+	AND modoc.iMonth = #(imonth)
+	AND modoc.iDate = #(idate)
+	AND modoc.iWorkShiftMid = #(iworkshiftmid)
+	AND tory.cInvCode = #para(iinventoryid)
+	AND oper.iOperationId IN (#(ioperationid))
+#end

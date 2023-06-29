@@ -4,9 +4,11 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Fitemss97;
+import cn.rjtech.model.momdata.RdStyle;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -37,6 +39,7 @@ public class Fitemss97AdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -47,6 +50,31 @@ public class Fitemss97AdminController extends BaseAdminController {
     public void add() {
         render("add.html");
     }
+
+
+    /**
+     * 树结构数据源
+     */
+    public void mgrTree() {
+        renderJsonData(service.getMgrTree( getInt("openLevel", 0),get("sn",null)));
+    }
+
+    /**
+     * select数据源
+     */
+    public void enableOptions() {
+        renderJsonData(service.getTreeDatas(true, true));
+    }
+
+
+    public void selectFitemss97() {
+        Fitemss97 fitemss97 = service.findById(getKv().getLong("iautoid"));
+        renderJsonData(fitemss97);
+    }
+
+
+
+
 
     /**
      * 编辑
@@ -86,7 +114,7 @@ public class Fitemss97AdminController extends BaseAdminController {
      * 删除
      */
     public void delete() {
-        renderJson(service.delete(getLong(0)));
+        renderJson(service.delete(getLong("id")));
     }
 
     /**

@@ -7,142 +7,216 @@
     }
 </style>
 #end
-
-<div class="jbolt_page_content">
-    <form onsubmit="return false;" id="purchasemForm" action="#(action)" method="post">
-        #if(purchasem.iautoid??)
-        <input type="hidden" name="purchasem.iautoid" value="#(purchasem.iautoid??)"/>
-        #end
-        <input type="hidden" id="purchasechoosedatabuild" value="#(purchasechoosedatabuild??)"/>
-        <div class="form-group row">
-            <label class="col-sm-1 col-form-label">业务类型(業務類別)</label>
-            <div class="col-2">
-                <select class="form-control" data-rule="required" name="purchasem.cservicetypename" data-autoload
-                        data-url="admin/dictionary/options?key=purchase_service_type" data-text="=业务类型="
-                        data-value-attr="name" #if(details??) disabled #end
-                        data-text-attr="name" data-select="#(purchasem.cservicetypename??)"></select>
-            </div>
-            <label class="col-sm-1 col-form-label">单据号(帳票番号)</label>
-            <div class="col-2">
-                <input type="text" data-with-clearbtn="true" autocomplete="off" readonly="readonly" class="form-control"
-                       placeholder="请输入单据号" maxlength="50" name="purchasem.cpurchaseno"
-                       value="#(purchasem.cpurchaseno??)"/>
-            </div>
-
-            <label class="col-sm-1 col-form-label">日期(日付)</label>
-            <div class="col-2">
-                <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd"
-                       autocomplete="off" class="form-control" data-rule="required" placeholder="请设置日期"
-                       data-tips="请设置日期" maxlength="23" name="purchasem.cpurchasedate" #if(details??) disabled #end
-                       value="#date(purchasem.cpurchasedate??DateUtil.getNow(),'yyyy-MM-dd')"/>
-            </div>
-            <label class="col-sm-1 col-form-label">是否经采购</label>
-            <div class="col-2">
-                <select class="form-control" data-rule="required" name="purchasem.ispurchased" data-autoload #if(details??) disabled #end
-						data-text="=类型=" data-value-attr="sn"
-                        data-select="#(purchasem.ispurchased??)">
-                        <option value="">请选择</option>
-                        <option value="1">是</option>
-                        <option value="0">否</option>
-                </select>
-            </div>            
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-1 col-form-label">请购部门(申請購買部門)</label>
-            <div class="col-2">
-                <input type="text" autocomplete="off" class="form-control" value="#(purchasem.cdepname??)" readonly>
-                <input type="hidden" autocomplete="off" class="form-control" name="purchasem.cdepcode" value="#(purchasem.cdepcode??)" id="cdepcodelink">
-            </div>
-            <label class="col-sm-1 col-form-label">请购人(申請購買人)</label>
-            <div class="col-2">
-                <input type="text" autocomplete="off" class="form-control"
-                       data-autocomplete
-                       data-link-para-ele="#cdepcodelink"
-                       data-url="admin/person/autocompleteWithDept"
-                       data-width="800"
-                       data-sync-ele="cpersoncode,cdepcode,cdepname"
-                       data-text-attr="cpsn_name"
-                       data-header="编码,姓名,部门编码,部门名称"
-                       data-column-attr="cpsn_num,cpsn_name,cdepcode,cdepname"
-                       maxlength="50"
-                       #if(details??) disabled #end
-                       value="#(purchasem.cpersonname??)"
-                >
-                <input type="hidden" autocomplete="off" class="form-control" maxlength="100"
-                       name="purchasem.cpersoncode" value="#(purchasem.cpersoncode??)" readonly id="cpersoncode"
-                       data-sync-attr="cpsn_num">
-            </div>
-            <label class="col-sm-1 col-form-label">采购类型(購買類別)</label>
-            <div class="col-2">
-                <select class="form-control" data-rule="required" name="purchasem.ipurchasetype" data-autoload
-                        data-url="admin/purchasem/getPurchaseType" data-text="=采购类型=" data-value-attr="cptcode"
-                        data-text-attr="cptname" #if(details??) disabled #end
-                        data-select="#(purchasem.ipurchasetype??)"></select>
-            </div>
-            <label class="col-sm-1 col-form-label">禀议书编号(稟議書NO)</label>
-            <div class="col-2">
-            	<input type="text" class="form-control" value="#(purchasem.cproposalno??)" disabled>
-                <input type="hidden" name="purchasem.ifirstsourceproposalid" value="#(purchasem.ifirstsourceproposalid??)">
-            </div>            
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-1 col-form-label">申购金额(本币无税)</label>
-            <div class="col-2 ">
-				<input type="hidden" class="form-control" id="inatmoney" name="purchasem.inatmoney" value="#(purchasem.inatmoney??0.00)"/>
-				<input type="text" class="form-control" id="inatmoneyshow" value="" readonly/>            
-            </div>        
-            <label class="col-sm-1 col-form-label">禀议书金额(稟議金額)</label>
-            <div class="col-2">
-            	<input type="hidden" id="ialreadypurchasenatmoney" class="form-control" value="#(purchasem.ialreadypurchasenatmoney??)"/> <!-- 禀议书已申购金额(本币无税) -->
-                <input type="hidden" id="iproposalnatmoney" class="form-control" value="#(purchasem.iproposalnatmoney??)"/>
-                <input type="text" id="iproposalnatmoneyshow" class="form-control" disabled="disabled" value=""/>  
-            </div>
-            <label class="col-sm-1 col-form-label">禀议项目累计申购金额(稟議項目累計申請購買金額)</label>
-            <div class="col-2">
-                <input type="hidden" id="itotalpurchasenatmoney" class="form-control" value=""/>
-                <input type="text" id="itotalpurchasenatmoneyshow" class="form-control" disabled="disabled" value=""/>
-            </div>
-            <label class="col-sm-1 col-form-label">剩余禀议金额(剰余稟議金額)</label>
-            <div class="col-2">
-                <input type="hidden" id="iremainproposalnatmoney" class="form-control"  value=""/>
-                <input type="text" id="iremainproposalnatmoneyshow" class="form-control" disabled="disabled" value=""/>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-1 col-form-label">预算金额(予算金額)</label>
-            <div class="col-2 ">
-                <input type="hidden" class="form-control" value="#(purchasem.ibudgetmoney??)" id="ibudgetmoney"/>
-                <input type="text" class="form-control" value="#(purchasem.ibudgetmoney??)" id="ibudgetmoneyshow" disabled/>
-            </div>
-            <label class="col-sm-1 col-form-label">预算累计申购金额(予算累計申請購買金額)</label>
-            <div class="col-2">
-            	<input type="hidden" id="ibudgetalreadypurchasemoney" class="form-control" value="#(purchasem.ibudgetalreadypurchasemoney??)"/> <!-- 预算已申购金额(原币无税) -->
-                <input type="hidden" class="form-control" value="" id="ibudgettotalpurchasemoney"/>
-                <input type="text" class="form-control" value="" id="ibudgettotalpurchasemoneyshow" disabled/>
-            </div>
-            <label class="col-sm-1 col-form-label">剩余预算金额(剰余予算金額)</label>
-            <div class="col-2">
-                <input type="hidden" class="form-control" value="" id="iremainbudgetmoney"/>
-                <input type="text" class="form-control" disabled value="" id="iremainbudgetmoneyshow"/>
-            </div>
-        </div>
-        	<input id="tabledatas_#(pageId)" name="tabledatas" type="hidden" value="" />
-    </form>
+#if(readonly != 'readonly' && (purchasem.iauditstatus??0 == 1 || purchasem.iauditstatus??0 == 2))
+#set(readonly = 'readonly')
+#end
+<div class="jbolt_page_title">
+	    <div class="row">
+	        <div class="col-12">
+	            <div class="card">
+	                <div class="card-body">
+	                    <div class="col">
+	                        #if(readonly != 'readonly')
+	                            <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
+	                        #end
+	                        #if(purchasem.iAutoId??)
+	                        ### 参数列表
+	                        ### uri:                    接口URI
+	                        ### formSn:                 表单名
+	                        ### o:                      当前表单对象名
+	                        ### primaryKeyName:         主键名
+	                        ### permissionKeyPrefix:    权限key
+	                        ### redonly:                查看页定义为readonly=readonly, 新增/编辑页 可不传
+	                        ### className:              实现审批业务的类名
+	                        #include("/_view/_common/_approval_btns.html", uri="/admin/purchasem", formSn="PL_PurchaseM", o=purchasem, primaryKeyName="iAutoId", className="cn.rjtech.admin.purchasem.PurchasemService", permissionKeyPrefix="purchase_instrument")
+	                        #end
+	                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>     
 </div>
-
+### 新增之后，并且为审批流
+#if(purchasem.iautoid?? && purchasem.iauditway == 2 && (purchasem.iauditstatus == 1 || purchasem.iauditstatus == 2) && purchasem.istatus == 1)
+    ### 参数列表
+    ### formAutoId:                 单据ID
+    ### formSn:                     表单名
+    ### btnNeed:                    是否需要显示审批按钮
+    ### pId:                        当前页面绑定的pageId
+    ### primaryKeyName:             主键名
+    ### className:                  实现审批业务的类名
+    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=purchasem.iAutoId, primaryKeyName="iAutoId", formSn="PL_PurchaseM", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.purchasem.PurchasemService")
+#end
+<div class="jbolt_page_content">
+	<div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+					<form onsubmit="return false;" id="purchasemForm" action="#(action)" method="post">
+					        #if(purchasem.iautoid??)
+					        <input type="hidden" name="purchasem.iautoid" value="#(purchasem.iautoid??)"/>
+					        #end
+					        <input type="hidden" id="purchasechoosedatabuild" value="#(purchasechoosedatabuild??)"/>
+					        <div class="form-group row">
+					            <label class="col-sm-1 col-form-label">业务类型(業務類別)</label>
+					            <div class="col-2">
+					                <select class="form-control" data-rule="required" name="purchasem.cservicetypename" data-autoload
+					                        data-url="admin/dictionary/options?key=purchase_service_type" data-text="=业务类型="
+					                        data-value-attr="name" #if(details??) disabled #end
+					                        data-text-attr="name" data-select="#(purchasem.cservicetypename??)"></select>
+					            </div>
+					            <label class="col-sm-1 col-form-label">单据号(帳票番号)</label>
+					            <div class="col-2">
+					                <input type="text" data-with-clearbtn="true" autocomplete="off" readonly="readonly" class="form-control"
+					                       placeholder="请输入单据号" maxlength="50" name="purchasem.cpurchaseno"
+					                       value="#(purchasem.cpurchaseno??)"/>
+					            </div>
+					
+					            <label class="col-sm-1 col-form-label">日期(日付)</label>
+					            <div class="col-2">
+					                <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd"
+					                       autocomplete="off" class="form-control" data-rule="required" placeholder="请设置日期"
+					                       data-tips="请设置日期" maxlength="23" name="purchasem.cpurchasedate" #if(details??) disabled #end
+					                       value="#date(purchasem.cpurchasedate??DateUtil.getNow(),'yyyy-MM-dd')"/>
+					            </div>
+					            <label class="col-sm-1 col-form-label">是否经采购</label>
+					            <div class="col-2">
+					                <select class="form-control" data-rule="required" name="purchasem.ispurchased" data-autoload #if(details??) disabled #end
+											data-text="=类型=" data-value-attr="sn"
+					                        data-select="#(purchasem.ispurchased??)">
+					                        <option value="">请选择</option>
+					                        <option value="1">是</option>
+					                        <option value="0">否</option>
+					                </select>
+					            </div>            
+					        </div>
+					        <div class="form-group row">
+					            <label class="col-sm-1 col-form-label">请购部门(申請購買部門)</label>
+					            <div class="col-2">
+					                <input type="text" autocomplete="off" class="form-control" value="#(purchasem.cdepname??)" readonly>
+					                <input type="hidden" autocomplete="off" class="form-control" name="purchasem.cdepcode" value="#(purchasem.cdepcode??)" id="cdepcodelink">
+					            </div>
+					            <label class="col-sm-1 col-form-label">请购人(申請購買人)</label>
+					            <div class="col-2">
+					                <input type="text" autocomplete="off" class="form-control"
+					                       data-autocomplete
+					                       data-link-para-ele="#cdepcodelink"
+					                       data-url="admin/person/getAutocompleteDatasContainSubDep"
+					                       data-width="800"
+					                       data-sync-ele="cpersoncode,cdepcode,cdepname"
+					                       data-text-attr="cpsn_name"
+					                       data-header="编码,姓名,部门编码,部门名称"
+					                       data-column-attr="cpsn_num,cpsn_name,cdepcode,cdepname"
+					                       maxlength="50"
+					                       #if(details??) disabled #end
+					                       value="#(purchasem.cpersonname??)"
+					                >
+					                <input type="hidden" autocomplete="off" class="form-control" maxlength="100"
+					                       name="purchasem.cpersoncode" value="#(purchasem.cpersoncode??)" readonly id="cpersoncode"
+					                       data-sync-attr="cpsn_num">
+					            </div>
+					            <label class="col-sm-1 col-form-label">采购类型(購買類別)</label>
+					            <div class="col-2">
+					                <select class="form-control" data-rule="required" name="purchasem.ipurchasetype" data-autoload
+					                        data-url="admin/purchasem/getPurchaseType" data-text="=采购类型=" data-value-attr="cptcode"
+					                        data-text-attr="cptname" #if(details??) disabled #end
+					                        data-select="#(purchasem.ipurchasetype??)"></select>
+					            </div>
+					            <label class="col-sm-1 col-form-label">禀议书编号(稟議書NO)</label>
+					            <div class="col-2">
+					            	<input type="text" class="form-control" value="#(purchasem.cproposalno??)" disabled>
+					                <input type="hidden" name="purchasem.ifirstsourceproposalid" value="#(purchasem.ifirstsourceproposalid??)">
+					            </div>            
+					        </div>
+					        <div class="form-group row">
+					            <label class="col-sm-1 col-form-label">申购金额(本币无税)</label>
+					            <div class="col-2 ">
+									<input type="hidden" class="form-control" id="inatmoney" name="purchasem.inatmoney" value="#(purchasem.inatmoney??0.00)"/>
+									<input type="text" class="form-control" id="inatmoneyshow" value="" readonly/>            
+					            </div>        
+					            <label class="col-sm-1 col-form-label">禀议书金额(稟議金額)</label>
+					            <div class="col-2">
+					            	<input type="hidden" id="ialreadypurchasenatmoney" class="form-control" value="#(purchasem.ialreadypurchasenatmoney??)"/> <!-- 禀议书已申购金额(本币无税) -->
+					                <input type="hidden" id="iproposalnatmoney" class="form-control" value="#(purchasem.iproposalnatmoney??)"/>
+					                <input type="text" id="iproposalnatmoneyshow" class="form-control" disabled="disabled" value=""/>  
+					            </div>
+					            <label class="col-sm-1 col-form-label">禀议项目累计申购金额(稟議項目累計申請購買金額)</label>
+					            <div class="col-2">
+					                <input type="hidden" id="itotalpurchasenatmoney" class="form-control" value=""/>
+					                <input type="text" id="itotalpurchasenatmoneyshow" class="form-control" disabled="disabled" value=""/>
+					            </div>
+					            <label class="col-sm-1 col-form-label">剩余禀议金额(剰余稟議金額)</label>
+					            <div class="col-2">
+					                <input type="hidden" id="iremainproposalnatmoney" class="form-control"  value=""/>
+					                <input type="text" id="iremainproposalnatmoneyshow" class="form-control" disabled="disabled" value=""/>
+					            </div>
+					        </div>
+					        <div class="form-group row">
+					            <label class="col-sm-1 col-form-label">预算金额(予算金額)</label>
+					            <div class="col-2 ">
+					                <input type="hidden" class="form-control" value="#(purchasem.ibudgetmoney??)" id="ibudgetmoney"/>
+					                <input type="text" class="form-control" value="#(purchasem.ibudgetmoney??)" id="ibudgetmoneyshow" disabled/>
+					            </div>
+					            <label class="col-sm-1 col-form-label">预算累计申购金额(予算累計申請購買金額)</label>
+					            <div class="col-2">
+					            	<input type="hidden" id="ibudgetalreadypurchasemoney" class="form-control" value="#(purchasem.ibudgetalreadypurchasemoney??)"/> <!-- 预算已申购金额(原币无税) -->
+					                <input type="hidden" class="form-control" value="" id="ibudgettotalpurchasemoney"/>
+					                <input type="text" class="form-control" value="" id="ibudgettotalpurchasemoneyshow" disabled/>
+					            </div>
+					            <label class="col-sm-1 col-form-label">剩余预算金额(剰余予算金額)</label>
+					            <div class="col-2">
+					                <input type="hidden" class="form-control" value="" id="iremainbudgetmoney"/>
+					                <input type="text" class="form-control" disabled value="" id="iremainbudgetmoneyshow"/>
+					            </div>
+					        </div>
+					        	<input id="tabledatas_#(pageId)" name="tabledatas" type="hidden" value="" />
+					    </form>
+				    </div>
+			   	</div>
+		   	</div>
+	   	</div>
 #include("purchaseds.html")
-
+</div>
 #define js()
 #@hiprintjs()
 <script type="text/javascript">
+	hideAllParentLayerDialogBtn();
+	var submit = false;
     function submitThisForm() {
-    	var index = LayerMsgBox.loading('执行中...');
-    	/* changeParentLayerDialogOkBtnStateToSubmiting();
-    	changeParentLayerAllDialogBtnStateToDisabled(); */
-    	finishEditingCells("#jbolt_table_#(pageId)");
-        jboltTableSubmit('#jbolt_table_#(pageId)');
+        $('#save_btn_#(pageId)').click();
     }
-
+    function submitThisForm_#(pageId)(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
+        }
+        // 调用保存处理
+        $('#save_btn_#(pageId)').click();
+    }
+    /**
+     * 保存清空错误数据
+     * @param ele
+     */
+    function saveData(ele) {
+    	//var index = LayerMsgBox.loading('执行中...');
+    	finishEditingCells(ele);
+        jboltTableSubmit(ele);
+    }
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, url) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = url;
+            parent.refreshPjaxContainer();
+        });
+    }
+    function closeHandler(){
+    	parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
     function getEdiTableOptions() {
         var editableTableOptions = {
             trigger: "click",
@@ -153,11 +227,18 @@
                 type: "all",
                 url: "admin/purchasem/saveTableSubmit",
                 success: function (res) {
-                    if(res.data.state == 'ok'){
-                    	LayerMsgBox.success("提交成功", 600, function () {
-	                        parent.layer.close(parent.layer.getFrameIndex(window.name));
-	                        window.parent.refreshJBoltTable();
-                    	});
+                    if(res.state == 'ok'){
+                    	// 提交审核（审批）调用
+                        if (submit) {
+                            // 提审
+                            submit_#(pageId)(res.data.iautoid, function (data) {
+                            	var url = '/admin/purchasem/details/' + res.data.iautoid + '-_jb_rqtype_dialog';
+                                successHandler('提审成功', url);
+                            });
+                        } else {
+                        	var url = '/admin/purchasem/instrumentEdit/' + res.data.iautoid + '-_jb_rqtype_dialog';
+                            successHandler(res.msg, url);
+                        }
                     }else{
                     	LayerMsgBox.alert("申购金额已超禀议金额10%或500,请追加禀议",2);
                     	Ajax.get("admin/purchasem/getMoney?ifirstsourceproposalid=#(purchasem.ifirstsourceproposalid??)&ipurchasemid=#(purchasem.iautoid??)",function(res){
@@ -485,10 +566,6 @@
     	console.log('proposalds: ' + JSON.stringify(processTableListDatas_#(pageId)));
         jboltTableInsertRow(table, processTableListDatas_#(pageId));
     }
-    addParentLayerDialogBtn("确定", "layui-layer-btn0", function () {
-        jboltTableSubmit('#jbolt_table_#(pageId)');
-    });
-
     // 导入细项
     function insertAttachment(data, ele) {
         if (!data) {

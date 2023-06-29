@@ -9,11 +9,14 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        #if(!subcontractsaleorderm.iAutoId?? || (edit??false && (subcontractsaleorderm.iOrderStatus == 1 || subcontractsaleorderm.iOrderStatus == 4)))
+                        #if(readonly != 'readonly')
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-sx">保存</button>
                         #end
+                        #if(subcontractsaleorderm.iAutoId??)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/subcontractsaleorderm",
-                        formSn="Co_SubcontractSaleOrderM", o=subcontractsaleorderm, primaryKeyName="iAutoId", edit=edit??)
+                        formSn="Co_SubcontractSaleOrderM", o=subcontractsaleorderm, primaryKeyName="iAutoId",
+                        className="cn.rjtech.admin.subcontractsaleorderm.SubcontractsaleordermService",  permissionKeyPrefix="subcontractsaleorderm")
+                        #end
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-sx">关闭</button>
                     </div>
                 </div>
@@ -75,22 +78,35 @@
 							</div>	
 						</div>
 						<div class="form-group row">
-							<input type="hidden" name="subcontractsaleorderm.iCustomerId" value="#(subcontractsaleorderm.iCustomerId??)" id="iCustomerId" data-value-attr="iautoid"/>
-							<label class="col-sm-1 col-form-label">客户名称</label>
-							<div class="col">
-								<input type="text" class="form-control"
-									   data-autocomplete
-									   data-url="admin/customer/autocomplete"
-									   data-rule="required"
-									   data-hidden-input="iCustomerId"
-									   data-text-attr="ccusname"
-									   data-column-attr="ccuscode,ccusname,ccusabbname"
-									   placeholder="请选择"
-									   data-tips="请选择"
-									   data-header="客户编码,客户名称,客户简称"
-									   maxlength="40"
-									   value="#(subcontractsaleorderm.ccusname??)">     	
-							</div>	
+                            <input type="hidden" name="subcontractsaleorderm.icustomerid" value="#(subcontractsaleorderm.icustomerid??)" id="icustomerid" data-sync-attr="iautoid"/>
+                            <label class="col-sm-1 col-form-label">客户名称</label>
+                            <div class="col">
+                                <div class="input-group">
+                                    <div class="ac_input_box">
+                                        <input type="text" class="form-control"
+                                               data-autocomplete
+                                               id="ccusname"
+                                               data-url="admin/customer/autocomplete"
+                                               data-rule="required"
+                                               data-sync-ele="#icustomerid"
+                                               data-text-attr="ccusname"
+                                               data-value-attr="iautoid"
+                                               data-column-attr="ccuscode,ccusname"
+                                               placeholder="请选择"
+                                               data-tips="请选择"
+                                               data-header="客户编码,客户名称"
+                                               maxlength="40"
+                                               value="#(subcontractsaleorderm.ccusname??)">
+                                    </div>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" data-dialogbtn
+                                                data-link-para-ele="#icustomerid" data-area="1280,600"
+                                                data-title="选择数据（单选）"
+                                                data-url="admin/annualorderm/ccusname_dialog_index"><i
+                                                class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+                            </div>
 							<label class="col-sm-1 col-form-label">付款条件</label>
 							<div class="col">
 								<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入付款条件" maxlength="100" name="subcontractsaleorderm.cPaymentTerm" value="#(subcontractsaleorderm.cPaymentTerm??)"/>
@@ -110,21 +126,23 @@
 									data-select="#(subcontractsaleorderm.iDepartmentId??)">
 								</select>									
 							</div>		
-							<input type="hidden" name="subcontractsaleorderm.iBusPersonId" value="#(subcontractsaleorderm.iBusPersonId??)" id="iBusPersonId" data-value-attr="id"/>
 							<label class="col-sm-1 col-form-label">业务员</label>
 							<div class="col">
-								<input type="text" class="form-control"
-									   data-autocomplete
-									   data-url="admin/user/autocomplete"
-									   data-hidden-input="iBusPersonId"
-									   data-text-attr="name"
-									   data-column-attr="username,name,phone"
-									   placeholder="请选择"
-									   data-tips="请选择"
-									   data-header="用户名,姓名,电话"
-									   maxlength="40"
-									   value="#(subcontractsaleorderm.cbususername??)">		
-							</div>							
+                                <input type="hidden" id="ipersonid_#(pageId)" name="subcontractsaleorderm.ibuspersonid" value="#(subcontractsaleorderm.ibuspersonid??)"/>
+                                <input type="text" autocomplete="off"
+                                       class="form-control"
+                                       placeholder="==请选择人员=="
+                                       data-jboltinput
+                                       data-width="600"
+                                       data-height="450"
+                                       data-rule="required"
+                                       data-refresh="true"
+                                       data-hidden-input="ipersonid_#(pageId)"
+                                       data-load-type="ajaxportal"
+                                       data-url="admin/workregionm/personTable"
+                                       value="#(subcontractsaleorderm.cpsnname??)"
+                                />
+							</div>
 						</div>
 						<div class="form-group row">
 							<label class="col-sm-1 col-form-label">税率</label>
@@ -196,8 +214,8 @@
 </div>
 
 ### 新增之后，并且为审核流
-#if(subcontractsaleorderm.iautoid?? && subcontractsaleorderm.iauditway == 2)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=subcontractsaleorderm.iAutoId, formSn="Co_SubcontractSaleOrderM", btnNeed=1, pId=pageId)
+#if(subcontractsaleorderm.iautoid?? && subcontractsaleorderm.iauditway == 2 && subcontractsaleorderm.iauditstatus > 0)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=subcontractsaleorderm.iAutoId, primaryKeyName="iAutoId", formSn="Co_SubcontractSaleOrderM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.subcontractsaleorderm.SubcontractsaleordermService")
 #end
 
 <div class="jbolt_page_content">
@@ -206,7 +224,7 @@
         <tr data-id="${data.iautoid}" class="${data.iinventoryid?'':'table-danger'}" {@if data.error} tooltip title='${data.error}' {@/if}>
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                #if(!subcontractsaleorderm.iAutoId?? || edit??false)
+                #if(readonly != 'readonly')
                 <a onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？" class="btn btn-danger bat-sm">移除行</a>
                 #end
             </td>
@@ -252,7 +270,7 @@
     </script>
     
     <div class="jbolt_table_toolbar" id="subcontractsaleorderm_toolbar_#(pageId)">
-        #if(!subcontractsaleorderm.iAutoId?? || edit??false)
+        #if(readonly != 'readonly')
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
 
@@ -395,9 +413,22 @@
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
 
-    function submitThisForm() {
-        jboltTableSubmit("#jbolt_Table_#(pageId)");
-        return true;
+    // 保存方法
+    function submitThisForm()
+    {
+        // 调用保存处理
+        $('#save_btn_#(pageId)').click();
+    }
+
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
+    function submitThisForm_#(pageId)(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
+        }
+        // 调用保存处理
+        $('#save_btn_#(pageId)').click();
     }
 
     function submitApproveSubSale() {
@@ -411,6 +442,17 @@
         }
     }
 
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/subcontractsaleorderm/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
+            parent.refreshPjaxContainer();
+        });
+    }
+
     //获得配置参数
     function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
@@ -420,10 +462,21 @@
                 type: "all",
                 url: "/admin/subcontractsaleorderm/submitAll",
                 success: function (res) {
-                    LayerMsgBox.success("提交成功", 600, function () {
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
-                    });
+                    // 表格保存之后，判断是否需要提审处理
+                    if (res.state === 'ok') {
+                        // 提交审核（审批）调用
+                        if (submit) {
+                            // 提审
+                            submit_#(pageId)(res.data.iautoid, function (data) {
+
+                                successHandler('提审成功', res.data.iautoid);
+                            });
+                        } else {
+                            successHandler(res.msg, res.data.iautoid);
+                        }
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
                 }
             },
             maxRowCount: 9999,
@@ -863,7 +916,6 @@
     }
 
     function removeClass(idx) {
-        console.log(idx);
         var $tr = $('tr[data-index="' + idx + '"]');
         $tr.removeAttr('tooltip');
         $tr.removeAttr('title');
@@ -915,7 +967,6 @@
         jboltTableClear("#jbolt_Table_#(pageId)");
 
         var data = res.data;
-        console.log(data)
         if (!data || data.length === 0) {
             LayerMsgBox.alert('导入数据不能为空', 2);
             return;
@@ -992,6 +1043,17 @@
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
+    }
+
+    function setChooseDialogSelectResult(data){
+        $('#icustomerid').val(data.ccusname);
+    }
+
+    // 选择客户名称
+    function instCcusname(data)
+    {
+        $("#icustomerid").val(data.iautoid);
+        $("#ccusname").val(data.ccusname);
     }
 </script>
 #end

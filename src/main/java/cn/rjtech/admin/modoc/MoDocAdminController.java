@@ -1,9 +1,11 @@
 package cn.rjtech.admin.modoc;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
@@ -18,14 +20,18 @@ import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.wms.utils.EncodeUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.crypto.spec.IvParameterSpec;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -79,6 +85,7 @@ public class MoDocAdminController extends BaseAdminController {
 	/**
 	 * 数据源
 	 */
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -87,7 +94,7 @@ public class MoDocAdminController extends BaseAdminController {
 	 * 新增
 	 */
 	public void add() {
-		render("add.html");
+		render("add2.html");
 	}
 
 	/**
@@ -108,6 +115,7 @@ public class MoDocAdminController extends BaseAdminController {
 			  moRecod.set("cinvcode",inventory.getCInvCode());//料品编码
 			  moRecod.set("cinvcode1",inventory.getCInvCode1());//客户部番
 			  moRecod.set("cinvname1",inventory.getCInvName1());//部品名称
+			  moRecod.set("iPkgQty",inventory.getIPkgQty());//包装数量
 				Uom uom=uomService.findFirst(Okv.create().
 						setIfNotNull(Uom.IAUTOID,inventory.getICostUomId()),Uom.IAUTOID,"desc");
 				if(uom!=null) {
@@ -120,6 +128,7 @@ public class MoDocAdminController extends BaseAdminController {
 			MoMorouting moMorouting=moMoroutingService.findByImdocId(moDoc.getIAutoId());
 			if(moMorouting!=null){
 				moRecod.set("croutingname",moMorouting.getCRoutingName());//工艺路线名称
+
 			}
 		}
 		set("moDoc",moRecod);
@@ -144,6 +153,8 @@ public class MoDocAdminController extends BaseAdminController {
 	 */
 	public  void  checkmaterialpage(){
 		set("imodocid",getLong("imodocid"));
+		String isScanned =service.findByisScanned(getLong("imodocid"));
+		set("isScanned",isScanned);
 		render("checkmaterialpage.html");
 	}
 
@@ -176,7 +187,6 @@ public class MoDocAdminController extends BaseAdminController {
 	 * 保存
 	 */
 	public void save() {
-
 		renderJson(service.save(getJBoltTable()));
 	}
 
@@ -213,8 +223,21 @@ public class MoDocAdminController extends BaseAdminController {
 		//operation
 		set("configid",getLong("iautoid"));
 		set("imdocid",getLong("imdocid"));
-		render("opindex.html");
+		render("personindex2.html");
 		//render("persondialog.html");
+	}
+
+	/**
+	 * 编辑页面
+	 */
+	public void updatas(){
+		Record record=service.getmoDocupdata(getLong(0));
+		if(record == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		set("moDoc",record);
+		render("add.html");
 	}
 
 	/**
@@ -222,8 +245,13 @@ public class MoDocAdminController extends BaseAdminController {
 	 */
 	public void personoperationdialog(){
 		//operation
+		Kv kv = getKv();
+		EncodeUtils.encodeUrl(get(InventoryRoutingConfig.PERSONEQUIPMENTJSON), EncodeUtils.UTF_8);
 		set("configid",getLong("iautoid"));
 		set("imdocid",getLong("imdocid"));
+		set("imergerate",kv.get("imergerate"));
+		set("configpersonids",kv.get("configpersonids"));
+		set(InventoryRoutingConfig.PERSONEQUIPMENTJSON, EncodeUtils.encodeUrl(get(InventoryRoutingConfig.PERSONEQUIPMENTJSON), EncodeUtils.UTF_8) );
 		render("person_dialog_index.html");
 		//render("persondialog.html");
 	}
@@ -232,8 +260,8 @@ public class MoDocAdminController extends BaseAdminController {
 	 * 物料
 	 */
 	public void invc_dialog_index(){
-		set("configid",getLong("iautoid"));
-		set("iinventoryid",getLong("iinventoryid"));
+		set("configid",get("iautoid"));
+		set("iinventoryid",get("iinventoryid"));
 		set("imdocid",getLong("imdocid"));
 		render("invc_dialog_index.html");
 	}
@@ -242,6 +270,7 @@ public class MoDocAdminController extends BaseAdminController {
 	 * 设备
 	 */
 	public void equipment_dialog_index(){
+		Kv kv = getKv();
 		set("configid",getLong("iautoid"));
 		set("imdocid",getLong("imdocid"));
 		render("equipment_dialog_index.html");
@@ -474,5 +503,89 @@ public class MoDocAdminController extends BaseAdminController {
 			return;
 		}
 		renderJson(service.pushU8(moDoc));
+	}
+
+	/**
+	 * 存货档案弹出框
+	 */
+	public void inventoryDialogIndex(){
+		render("inventory_dialog_index.html");
+	}
+
+	/**
+	 * 获取存货档案
+	 */
+	public void getInventoryList(){
+		Page<Record> pageList = service.getInventoryList(getPageNumber(),getPageSize(),getKv());
+		renderJsonData(pageList);
+	}
+	/**
+	 * 获取操作资质的人员
+	 */
+	public void getPersonByEquipment(){
+		Kv kv = getKv();
+		Page<Record> page=service.getPersonByEquipment(getPageNumber(),getPageSize(),getKv());
+		renderJsonData(page);
+	}
+
+	/**
+	 * 编辑界面数据
+	 */
+	public void getMoDocbyIinventoryRoutingId(){
+		Kv kv = getKv();
+		renderJsonData(service.getMoDocbyIinventoryRoutingId(kv.getLong("iMoDocId")));
+	}
+
+	/**
+	 * 编辑界面工序物料集数据
+	 */
+	public void getMoDocinv(){
+		Kv kv = getKv();
+		renderJsonData(service.getMoDocinv(getKv()));
+	}
+
+	/**
+	 * 跳转工序物料集界面
+	 */
+	public void modoc_inv_index(){
+		set("configid",get("iautoid"));
+		set("iinventoryid",get("iinventoryid"));
+		set("imdocid",get("imdocid"));
+		render("modoc_inv_index.html");
+	}
+
+	/**
+	 * 跳转工序设备集界面
+	 */
+	public void modoc_equipment_index(){
+		set("configid",get("iautoid"));
+		set("iinventoryid",get("iinventoryid"));
+		set("imdocid",get("imdocid"));
+		render("modoc_equipment_index.html");
+	}
+	/**
+	 * 跳转工序设备集界面数据
+	 */
+	public void getMoDocEquipment(){
+		Kv kv = getKv();
+		renderJsonData(service.getMoDocEquipment(getKv()));
+	}
+
+	/**
+	 * 跳转工序工艺文件
+	 */
+	public void modoc_drawing_index(){
+		set("configid",get("iautoid"));
+		set("iinventoryid",get("iinventoryid"));
+		set("imdocid",get("imdocid"));
+		render("modoc_drawing_index.html");
+	}
+
+	/**
+	 * 编辑界面工序工艺文件数据
+	 */
+	public void moDocInventoryRouting(){
+		Kv kv = getKv();
+		renderJsonData(service.moDocInventoryRouting(getKv()));
 	}
 }

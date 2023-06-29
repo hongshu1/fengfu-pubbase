@@ -8,8 +8,10 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,7 +23,7 @@ import java.util.Date;
  * @author: RJ
  * @date: 2023-05-06 15:05
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.OTHEROUT)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/otherout", viewPath = "/_view/admin/otherout")
 public class OtherOutAdminController extends BaseAdminController {
@@ -39,6 +41,7 @@ public class OtherOutAdminController extends BaseAdminController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		Kv kv =new Kv();
 		kv.setIfNotNull("selectparam", get("billno"));
@@ -49,7 +52,7 @@ public class OtherOutAdminController extends BaseAdminController {
 		kv.setIfNotNull("enddate", get("enddate"));
 		kv.setIfNotNull("sourcebilldid", get("sourcebilldid"));//来源单号ID sourcebilldid
 		kv.setIfNotNull("idepartmentid", get("idepartmentid"));
-
+		kv.setIfNotNull("state", get("state"));
 		renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), kv));
 
 	}
@@ -138,16 +141,30 @@ public class OtherOutAdminController extends BaseAdminController {
 	 */
 	@UnCheck
 	public void barcodeDatas() {
-		String orgCode =  getOrgCode();
-		renderJsonData(service.getBarcodeDatas(get("q"), getInt("limit",10),get("orgCode",orgCode)));
+		Kv kv = new Kv();
+		kv.setIfNotNull("autoid",get("autoid"));
+		kv.setIfNotNull("barcodes",get("barcodes"));
+		kv.setIfNotNull("q",get("q"));
+		kv.setIfNotNull("limit",getInt("limit", 10));
+		kv.setIfNotNull("orgCode",getOrgCode());
+		renderJsonData(service.getBarcodeDatas(kv));
 	}
 
 
 	/**
 	 * JBoltTable 可编辑表格整体提交 多表格
 	 */
-	public void submitMulti(String param, String revokeVal ,String autoid) {
-		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal,autoid));
+	public void submitMulti() {
+		renderJson(service.submitByJBoltTables(getJBoltTables()));
+	}
+
+	/**
+	 * 详情页提审
+	 */
+	public void submit(@Para(value = "iautoid") Long iautoid) {
+		ValidationUtils.validateId(iautoid, "ID");
+
+		renderJson(service.submit(iautoid));
 	}
 
 
@@ -209,6 +226,31 @@ public class OtherOutAdminController extends BaseAdminController {
 //		if (otherOut.getStatus() == 3){
 			renderQrCode(otherOut.getBillNo(),200,200);
 //		}
+	}
+
+	/**
+	 * 获取现品票
+	 * 通过关键字匹配
+	 */
+	public void gettable2() {
+		Kv kv = new Kv();
+		kv.setIfNotNull("billno",get("billno"));
+		kv.setIfNotNull("barcode",get("barcode"));
+		kv.setIfNotNull("orgCode",getOrgCode());
+		renderJsonData(service.gettable2(kv));
+	}
+
+	/**
+	 * 获取条码列表
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	public void TableBarcodeData() {
+		Kv kv = new Kv();
+		String barcode = get("barcode");
+		kv.set("barcode", barcode == null ? "" : barcode);
+			kv.setIfNotNull("orgCode",getOrgCode());
+		renderJsonData(service.TableBarcodeData(kv));
 	}
 
 }

@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseAnnualOrderM<M extends BaseAnnualOrderM<M>> extends JBoltBaseModel<M>{
+    
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
@@ -112,6 +113,10 @@ public abstract class BaseAnnualOrderM<M extends BaseAnnualOrderM<M>> extends JB
     public static final String IAUDITWAY = "iAuditWay";
     /**提审时间*/
     public static final String DSUBMITTIME = "dSubmitTime";
+    /**客户编码*/
+    public static final String CCUSCODE = "cCusCode";
+    /**客户名称*/
+    public static final String CCUSNAME = "cCusName";
 	/**
 	 * 主键ID
 	 */
@@ -977,6 +982,40 @@ public abstract class BaseAnnualOrderM<M extends BaseAnnualOrderM<M>> extends JB
 	@JSONField(name = "dsubmittime")
 	public java.util.Date getDSubmitTime() {
 		return getDate("dSubmitTime");
+	}
+
+	/**
+	 * 客户编码
+	 */
+	public M setCCusCode(java.lang.String cCusCode) {
+		set("cCusCode", cCusCode);
+		return (M)this;
+	}
+
+	/**
+	 * 客户编码
+	 */
+	@JBoltField(name="ccuscode" ,columnName="cCusCode",type="String", remark="客户编码", required=false, maxLength=40, fixed=0, order=52)
+	@JSONField(name = "ccuscode")
+	public java.lang.String getCCusCode() {
+		return getStr("cCusCode");
+	}
+
+	/**
+	 * 客户名称
+	 */
+	public M setCCusName(java.lang.String cCusName) {
+		set("cCusName", cCusName);
+		return (M)this;
+	}
+
+	/**
+	 * 客户名称
+	 */
+	@JBoltField(name="ccusname" ,columnName="cCusName",type="String", remark="客户名称", required=false, maxLength=200, fixed=0, order=53)
+	@JSONField(name = "ccusname")
+	public java.lang.String getCCusName() {
+		return getStr("cCusName");
 	}
 
 }

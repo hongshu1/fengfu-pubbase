@@ -1,0 +1,45 @@
+<form onsubmit="return false;" id="ProdFormTableItem_Form" action="#(action)" method="post">
+	#if(prodFormTableItem.iAutoId??)
+	<input type="hidden" name="prodFormTableItem.iAutoId" value="#(prodFormTableItem.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="prodFormTableItem.iAutoId" value="#(prodFormTableItem.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">生产项目ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入生产项目ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产项目ID" maxlength="40" name="prodFormTableItem.iProdFormItemId" value="#(prodFormTableItem.iProdFormItemId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">生产参数ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产参数ID" maxlength="40" name="prodFormTableItem.iProdFormParamId" value="#(prodFormTableItem.iProdFormParamId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">生产表格行ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入生产表格行ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产表格行ID" maxlength="40" name="prodFormTableItem.iProdFormTableParamId" value="#(prodFormTableItem.iProdFormTableParamId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">生产表格ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入生产表格ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产表格ID" maxlength="40" name="prodFormTableItem.iProdFormId" value="#(prodFormTableItem.iProdFormId??)"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="ProdFormTableItem_Form")
+#end
+

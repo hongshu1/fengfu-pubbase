@@ -33,12 +33,6 @@
 	</div>
 </div>
 </div>
-
-### 新增之后，并且为审核流
-#if(annualOrderM.iautoid?? && annualOrderM.iauditway == 2)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=manualorderm.iAutoId, formSn="Co_ManualOrderM", btnNeed=1, pId=pageId)
-#end
-
 <div class="jbolt_page_content">
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="ManualOrderM_tpl_#(pageId)">
@@ -46,12 +40,12 @@
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-	       <a class="jbolt_table_editbtn" href="admin/manualorderm/edit?iautoid=${data.iautoid}"  data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="手配订单详情"><i class="fa fa-eye">查看</i></a>
+	       <a class="jbolt_table_editbtn" href="admin/manualorderm/edit?iautoid=${data.iautoid}&readonly=readonly"  data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="手配订单详情"><i class="fa fa-eye">查看</i></a>
 		{@if data.iorderstatus == 1 || data.iorderstatus == 4}
-		<a class="jbolt_table_editbtn" href="admin/manualorderm/edit?iautoid=${data.iautoid}&edit=true" data-fs="true" data-handler="refreshJBoltTable" tooltip  data-title="编辑手配订单"> <i class="fa fa-remove fa-edit">编辑</i></a>
+		<a class="jbolt_table_editbtn" href="admin/manualorderm/edit?iautoid=${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable" tooltip  data-title="编辑手配订单"> <i class="fa fa-remove fa-edit">编辑</i></a>
 		<a class="jbolt_table_delbtn" href="admin/manualorderm/delete/${data.iautoid}" data-handler="refreshJBoltTable" tooltip data-title="删除手配订单"  class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 		{@else if data.iorderstatus == 2}
-			<a class="jbolt_table_delbtn" href="admin/manualorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="审批手配订单" ><i class="fa fa-remove c-danger">撤回</i></a>
+			<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=Co_ManualOrderM&primaryKeyName=iautoid&formAutoId=${data.iautoid}&permissionKey=manualorderm_withdraw&className=cn.rjtech.admin.manualorderm.ManualOrderMService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="审批手配订单" ><i class="fa fa-remove c-danger">撤回</i></a>
 		{@else if data.iorderstatus == 3}
 		<a class="jbolt_table_delbtn" href="admin/manualorderm/close/${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" tooltip data-title="关闭手配订单"  class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">关闭</i></a>
 		{@/if}
@@ -89,7 +83,8 @@
 <!--	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchAuditBtn_#(pageId)" data-url="admin/manualorderm/batchAudit?ids=" data-confirm="确定审核选中数据？" class="btn btn-outline-info"><i class="fa fa-edit"></i> 批量审核</button>-->
 <!--	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchAntiAuditBtn_#(pageId)" data-url="admin/manualorderm/batchAntiAudit?ids=" data-confirm="确定反审核选中数据？" class="btn btn-outline-info"><i class="fa fa-edit"></i> 批量反审核</button>-->
 <!--	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_batchCloseBtn_#(pageId)" data-url="admin/manualorderm/batchClose?ids=" data-confirm="确定关闭选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 批量关闭</button>-->
-	#include("/_view/_common/_batch_approval_btns.html", formSn="Co_ManualOrderM", uri="admin/manualorderm")
+	#include("/_view/_common/_batch_approval_btns.html", formSn="Co_ManualOrderM", uri="admin/manualorderm",
+	primaryKeyName="iAutoId", permissionKeyPrefix="manualorderm", className="cn.rjtech.admin.manualorderm.ManualOrderMService")
 </div>
 
 </div>

@@ -64,3 +64,29 @@ FROM
 WHERE t1.iSpotCheckFormId = '#(iQcFormId)'
   AND t3.iSpotCheckFormItemId = t1.iAutoId
     #end
+
+#sql("findByIdGetDetail")
+SELECT
+    b.iAutoId,
+    b.iSeq,
+    b.iType,
+    b.iStdVal,
+    b.iMaxVal,
+    b.iMinVal,
+    b.cOptions,
+    c.cQcParamName,
+    d.ISEQ as ProdItemIseq
+        ,c.iAutoId as SpotCheckParamid
+FROM
+    Bd_SpotCheckFormTableItem a
+        JOIN Bd_SpotCheckFormTableParam b ON a.iSpotCheckFormTableParamId= b.iAutoId
+        JOIN Bd_SpotCheckParam c ON a.iSpotCheckFormParamId= c.iAutoId
+        JOIN  Bd_SpotCheckFormItem d on d.iQcItemId = a.iSpotCheckFormItemId and  d.iSpotCheckFormId = a.iSpotCheckFormId
+        JOIN Bd_QcItem t3 ON t3.iAutoId = d.iQcItemId
+WHERE
+        1=1
+    #if("iprodformid")
+    and  a.iSpotCheckFormId = #para(iprodformid)
+     #end
+ORDER BY b.iseq ,d.ISEQ
+    #end

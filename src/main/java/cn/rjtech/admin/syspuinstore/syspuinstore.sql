@@ -66,8 +66,8 @@ where 1=1
 #if(masid)
     and a.MasID = #para(masid)
 #end
-#if(spotticket)
-    and a.spotticket = #para(spotticket)
+#if(barcode)
+    and a.barcode = #para(barcode)
 #end
 #if(invcode)
   and a.invcode = #para(invcode)
@@ -242,4 +242,12 @@ and m.corderno=#para(sourcebillno)
 #if(iInventoryId)
 and d.iInventoryId=#para(iInventoryId)
 #end
+#end
+
+#sql("findU8UserByUserCode")
+select u.* from UFDATA_001_2023.dbo.V_Sys_User u where u.userCode = #para(usercode)
+#end
+
+#sql("findU8RdRecord01Id")
+select r.* from UFDATA_001_2023.dbo.RdRecord01 r where r.cCode = #para(cCode)
 #end

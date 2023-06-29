@@ -3,9 +3,10 @@
     #case(1)
         <button data-ajaxbtn data-url="admin/formapproval/batchApprove?primaryKeyName=#(primaryKeyName??)&className=#(className)&formSn=#(formSn??)&ids=" data-handler="refreshPjaxContainer" data-check-handler="jboltTableGetCheckedIds" class="btn btn-outline-secondary btn-sm" >批量审批通过</button>
         <button data-ajaxbtn data-url="admin/formapproval/batchReject?primaryKeyName=#(primaryKeyName??)&className=#(className)&formSn=#(formSn??)&ids=" data-handler="refreshPjaxContainer" data-check-handler="jboltTableGetCheckedIds" class="btn btn-outline-secondary btn-sm" >批量审批不通过</button>
-        <button data-ajaxbtn data-url="admin/formapproval/batchReverseApprove?primaryKeyName=#(primaryKeyName??)&className=#(className)&formSn=#(formSn??)&ids=" data-handler="refreshPjaxContainer" data-check-handler="jboltTableGetCheckedIds" class="btn btn-outline-secondary btn-sm" >批量反审批</button>
+        <!-- <button data-ajaxbtn data-url="admin/formapproval/batchReverseApprove?primaryKeyName=#(primaryKeyName??)&className=#(className)&formSn=#(formSn??)&ids=" data-handler="refreshPjaxContainer" data-check-handler="jboltTableGetCheckedIds" class="btn btn-outline-secondary btn-sm" >批量反审批</button>-->
+        <button data-ajaxbtn data-url="admin/formapproval/batchBackOut?primaryKeyName=#(primaryKeyName??)&className=#(className)&formSn=#(formSn??)&ids=" data-handler="refreshPjaxContainer" data-check-handler="jboltTableGetCheckedIds" class="btn btn-outline-secondary btn-sm" >批量撤销审批</button>
     ### 审核
     #case(2)
-        <button data-ajaxbtn data-url="#(uri)/batchApprove?formSn=#(formSn??)&ids=" data-handler="refreshPjaxContainer" data-check-handler="jboltTableGetCheckedIds" class="btn btn-outline-secondary btn-sm" >批量审核通过</button>
-        <button data-ajaxbtn data-url="#(uri)/batchReverseApprove?formSn=#(formSn??)&ids=" data-handler="refreshPjaxContainer" data-check-handler="jboltTableGetCheckedIds" class="btn btn-outline-secondary btn-sm" >批量反审核</button>
+        <button data-ajaxbtn data-url="admin/formapproval/batchApproveByStatus?formSn=#(formSn??)&primaryKeyName=#(primaryKeyName)&className=#(className)&permissionKey=#(permissionKeyPrefix)_batch_approve&ids=" data-handler="refreshPjaxContainer" data-check-handler="jboltTableGetCheckedIds" class="btn btn-outline-secondary btn-sm" >批量审核通过</button>
+        <button data-ajaxbtn data-url="admin/formapproval/batchRejectByStatus?formSn=#(formSn??)&primaryKeyName=#(primaryKeyName)&className=#(className)&permissionKey=#(permissionKeyPrefix)_batch_reject&ids=" data-handler="refreshPjaxContainer" data-check-handler="jboltTableGetCheckedIds" class="btn btn-outline-secondary btn-sm" >批量审核不通过</button>
 #end

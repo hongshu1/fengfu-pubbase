@@ -227,6 +227,16 @@
                     </div>
                 </div>
             </div>
+            <div class="col-3">
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">包装数量</label>
+                    <div class="col">
+                        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                               placeholder="" maxlength="18" name="" readonly="readonly"
+                               value="#(moDoc.iPkgQty??)"/>
+                    </div>
+                </div>
+            </div>
 
 
         </div>
@@ -283,7 +293,6 @@
                         class="btn btn-outline-primary btn-sm">
                     工单现品票生成
                 </button>
-
             </div>
             <!--   <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 
@@ -333,8 +342,8 @@
                 <td>#(productionTasks.actual2)</td>
                 <td>#(productionTasks.sate2)</td>
                 <td>#(productionTasks.time2)</td>
-                <td><a data-url="admin/momoinvbatch/add?imodocid=#(moDoc.iautoid??)"  data-area="1600,800"  tooltip data-title="作成"
-                       data-handler="refreshJBoltTable" data-dialog-title="作成" class="jbolt_table_editbtn">作成</a></td>
+                <td><a data-url="admin/momoinvbatch/add?imodocid=#(moDoc.iautoid??)"  data-area="100%,100%"   tooltip data-title="工单现品票"
+                       data-handler="refreshJBoltTable" data-dialog-title="工单现品票" class="jbolt_table_editbtn" data-btn="no">作成</a></td>
             </tr>
             <tr>
                 <td>3</td>
@@ -343,7 +352,7 @@
                 <td>#(productionTasks.actual3)</td>
                 <td>#(productionTasks.sate3)</td>
                 <td>#(productionTasks.time3)</td>
-                <td>	<a href="admin/momaterialscanusedlog/index?imodocid=#(moDoc.iautoid??)" data-area="1600,800"  tooltip data-title="作成"
+                <td>	<a href="admin/momaterialscanusedlog/index?imodocid=#(moDoc.iautoid??)" data-area="100%,100%"   tooltip data-title="作成"
                            data-handler="refreshJBoltTable" data-dialog-title="作成" class="jbolt_table_editbtn">作成</a>
                 </td>
             </tr>
@@ -384,7 +393,11 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <td>
+                <a href="admin/spotCheckFormM/index2?cinvcode=#(moDoc.cinvcode??)&cmodocno=#(moDoc.cmodocno??)&croutingname=#(moDoc.croutingname)"
+                   data-area="100%,100%"  tooltip data-title="生成"  data-handler="refreshJBoltTable"
+                   data-dialog-title="生成" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>生成</a>
+                </td>
 
             </tr>
             </thead>

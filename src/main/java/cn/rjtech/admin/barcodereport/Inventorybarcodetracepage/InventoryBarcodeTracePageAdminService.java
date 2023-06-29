@@ -29,23 +29,6 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
     public Page<Record> newdatas(int pageSize, int pageNumber, Kv para){
 
         Page<Record> page = barcodeTotalDatas(pageSize, pageNumber, para);
-//        List<Record> list = page.getList();
-//
-//        Set<String> set=new HashSet<>();
-//
-//
-//        for (Record record : list) {
-//            String ccategoryname = record.getStr("stockclassname");
-//            record.set("ccategoryname",ccategoryname);
-//            set.add(ccategoryname);
-//            if(ccategoryname!=null){
-//                if(ccategoryname.equals("片料")){
-//                    record.set("type","片料");
-//                }
-//            }
-//
-//
-//        }
         return page;
     }
 
@@ -78,6 +61,15 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
             recordArrayList =list.subList(pageStart, pageEnd);
         }
         return  new Page<>(recordArrayList, pageNumber, pageSize, totalPage, (int) totalRow);
+    }
+
+
+    /**
+     * 获取打印数据
+     */
+    public List<Record> PrintData(int pageSize, int pageNumber, Kv kv){
+        List<Record> list = getBarcodeTotalList(DataSourceConstants.U8,kv);
+        return list;
     }
 
         /**
@@ -134,42 +126,52 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
             Object rValue = r.getValue();
 
             if(rValue!=null){
-                //开始世间
-                if(key.equals("startTime")){
-                    parmsKey="tra.CreateDate > ";
+                if(key.equals("sqlids")){
+                    parmsKey="and a.barcode in ";
+                    parmsValue="("+rValue+")";
+                }
+                //开始时间
+                if(key.equals("starttime")){
+                    parmsKey="and a.CreateDate > ";
+                    parmsValue="'"+rValue+"'";
+                }
+
+                //结束时间
+                if(key.equals("endtime")){
+                    parmsKey="and a.CreateDate < ";
                     parmsValue="'"+rValue+"'";
                 }
                 //单据号
                 if(key.equals("billno")){
-                    parmsKey="a.billno like ";
+                    parmsKey="and a.BillNo like ";
                     parmsValue="'%"+rValue+"%'";
                 } //供应商
                 if(key.equals("vencode")){
-                    parmsKey="c.vencode like ";
+                    parmsKey="and c.vencode like ";
                     parmsValue="'%"+rValue+"%'";
                 }//存货编码
                 if(key.equals("invcode")){
-                    parmsKey="i.invcode like ";
+                    parmsKey="and i.invcode like ";
                     parmsValue="'%"+rValue+"%'";
                 }//客户部番
                 if(key.equals("otherinvcode")){
-                    parmsKey="i.otherinvcode like ";
+                    parmsKey="and i.otherinvcode like ";
                     parmsValue="'%"+rValue+"%'";
                 }//部品名称
                 if(key.equals("otherinvname")){
-                    parmsKey="i.otherinvname like ";
+                    parmsKey="and i.otherinvname like ";
                     parmsValue="'%"+rValue+"%'";
                 }//现品票
                 if(key.equals("barcode")){
-                    parmsKey="a.barcode like ";
+                    parmsKey="and a.barcode like ";
                     parmsValue="'%"+rValue+"%'";
                 }//库区
                 if(key.equals("posname")){
-                    parmsKey="p.posname like ";
+                    parmsKey="and p.posname like ";
                     parmsValue="'%"+rValue+"%'";
                 }//仓库
                 if(key.equals("whname")){
-                    parmsKey="w.whname like ";
+                    parmsKey="and w.whname like ";
                     parmsValue="'%"+rValue+"%'";
                 }
             }
@@ -193,9 +195,8 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
     public List<Record> excuteBarcodeTracePage(String dataSourceConfigName,String tempTableName) {
         List<Map> listMap=(List<Map>) executeFunc(dataSourceConfigName, (conn) -> {
             List<Map<String, Object>> list = new ArrayList<>();
-            CallableStatement proc = conn.prepareCall("{ call P_Sys_InventoryBarcodeTracePage(?) }");
+            CallableStatement proc = conn.prepareCall("{ call P_Sys_InventoryBarcodeTracePage(?,@Type ='Inventory') }");
             proc.setObject(1, tempTableName);
-
             //执行
             boolean isSuccess = true;
             ResultSet rs = null;

@@ -3,242 +3,114 @@
     <tr data-id="${data.id}">
         <td>${pageNumber,pageSize,index | rownum}</td>
         <td>
-            <input autocomplete="off" class="form-control" data-maxsize="2" name="code1" value="${data.code1}">
+            ${data.code1}
         </td>
         <td>
-            <input  autocomplete="off" class="form-control" data-maxsize="5" name="code2" value="${data.code2}">
+            ${data.code2}
         </td>
         <td>
-            <input  autocomplete="off" class="form-control" name="code3" value="${data.code3}">
+            ${data.code3}
         </td>
         <td>
-            <input  autocomplete="off" class="form-control" name="code4" value="${data.code4}">
+            ${data.code4}
         </td>
         <td>
-            <input  autocomplete="off" class="form-control" name="code5" value="${data.code5}">
+            ${data.code5}
         </td>
         <td>
-            <input  autocomplete="off" class="form-control" name="code6" value="${data.code6}">
+            ${data.code6}
         </td>
-        <td>
-            <input type="text" hidden data-sync-attr="itemid" id="iBeforeInventoryId${data.index}" data-tips="部品" data-notnull="true" autocomplete="off"  class="form-control" maxlength="40" name="invItemId" value="${data.invitemid}"/>
-            <input type="text" hidden data-tips="部品" data-notnull="true" autocomplete="off"  class="form-control" maxlength="40" name="invBomCompareId" value="${data.invbomcompareid}"/>
-            <div class="input-group">
-
-                <input type="text"
-                       id="invItemId${data.index}"
-                       data-autocomplete
-                       data-notnull="true"
-                       data-tips="请选择存货编码"
-                       autocomplete="off"
-                       class="form-control"
-                       maxlength="40"
-                       value="${data.invitemcode}"
-                       data-url="admin/bommaster/inventoryAutocomplete"
-                       data-sync-ele="#cInvCode${data.index},#iWeight${data.index},#iBeforeInventoryId${data.index},#cInvName${data.index},#cInvAddName${data.index},#cInvAddCode${data.index},#InvName${data.index}"
-                       data-text-attr="cinvcode"
-                       data-column-attr="cinvcode"
-                />
-
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#iBeforeInventoryId${data.index}" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/bommaster/inventoryDialogIndex?index=${data.index}&type=0"><i class="fa fa-search"></i></button>
-                </div>
-            </div>
+        <td {@if !data.invitemcode} data-focus="true" data-changed="true" {@/if}>
+            ${data.invitemcode}
             <div style="margin-top: 10px"></div>
-            <input id="cInvName${data.index}" type="text"   value="${data.cinvname}" data-notnull="true" data-sync-attr="cinvname"    autocomplete="off"  class="form-control" readonly/>
+            ${data.cinvname}
         </td>
         <td>
-            <input id="cInvCode${data.index}" type="text"  value="${data.cinvcode1}" data-notnull="true" data-sync-attr="cinvcode1"    autocomplete="off"  class="form-control" readonly/>
+            ${data.cinvcode1}
             <div style="margin-top: 10px"></div>
-            <input id="cInvAddName${data.index}" type="text" value="${data.cinvname1}" data-notnull="true" data-sync-attr="cinvname1"    autocomplete="off"  class="form-control" readonly/>
+            ${data.cinvname1}
         </td>
         <td>
-            <input id="cInvAddCode${data.index}" type="text" value="${data.cinvaddcode1}" data-notnull="true" data-sync-attr="cinvaddcode1"    autocomplete="off"  class="form-control" readonly/>
+            ${data.cinvaddcode1}
             <div style="margin-top: 10px"></div>
-            <input id="InvName${data.index}" type="text" value="${data.cinvname2}" data-notnull="true" data-sync-attr="cinvname2"    autocomplete="off"  class="form-control" readonly/>
+            ${data.cinvname2}
         </td>
         <td>
 
         </td>
-        <td>
-            <input type="text" autocomplete="off"  class="form-control" data-rule="number"  data-notnull="true" maxlength="10" name="invQty" value="${data.invqty}">
+        <td {@if !data.invqty} data-focus="true" data-changed="true" {@/if}>
+            ${data.invqty}
             <div style="margin-top: 10px"></div>
-            <input id="iWeight${data.index}" type="text" data-notnull="true" data-sync-attr="iweight"   autocomplete="off"  class="form-control" name="invWeight" value="${data.invweight}"/>
+            ${data.invweight}
         </td>
         <td>
-            <input type="text" autocomplete="off" value="${data.material}" class="form-control" disabled>
+            ${data.material}
             <div style="margin-top: 10px"></div>
-            <input type="text" autocomplete="off" value="${data.thickness}" class="form-control" disabled>
+            ${data.thickness}
         </td>
         <td>
-            <input type="text" id="materialtype${data.index}" value="${data.materialtype}" data-notnull="true"  autocomplete="off"  class="form-control" readonly/>
+            ${data.materialtype}
         </td>
-        <td>
-            <input type="text" hidden data-sync-attr="itemid" id="originalInvId${data.index}" data-tips="卷料" value="${data.originalitemid}" data-notnull="true"   autocomplete="off"  class="form-control" maxlength="40" name="originalItemId"/>
-            <input type="text" hidden data-tips="卷料" value="${data.originalbomcompareid}" data-notnull="true"   autocomplete="off"  class="form-control" maxlength="40" name="originalBomCompareId"/>
-            <div class="input-group">
-
-                <input type="text" id="originalItemId${data.index}"
-                       data-rule="required"
-                       value="${data.originalitemcode}"
-                       data-autocomplete
-                       data-notnull="true"
-                       data-tips="请选择存货编码"
-                       autocomplete="off"
-                       class="form-control"
-                       maxlength="40"
-                       data-url="admin/bommaster/inventoryAutocomplete"
-                       data-sync-ele="#originalInvId${data.index},#originalInvName${data.index},#originalInvStd${data.index},#originalWeight${data.index}"
-                       data-text-attr="cinvcode"
-                       data-column-attr="cinvcode"
-                />
-
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#originalInvId${data.index}" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/bommaster/inventoryDialogIndex?index=${data.index}&type=3"><i class="fa fa-search"></i></button>
-                </div>
-
-            </div>
+        <td {@if !data.originalitemcode} data-focus="true" data-changed="true" {@/if}>
+            ${data.originalitemcode}
             <div style="margin-top: 10px"></div>
-            <input id="originalInvName${data.index}" type="text"   value="${data.originalinvname}" data-notnull="true" data-sync-attr="cinvname"    autocomplete="off"  class="form-control" readonly/>
+            ${data.originalinvname}
         </td>
         <td>
-            <input id="originalInvSup${data.index}" type="text"   value="${data.originalinvsup}" data-notnull="true"    autocomplete="off"  class="form-control" readonly/>
+            ${data.originalinvsup}
             <div style="margin-top: 10px"></div>
-            <input id="originalInvStd${data.index}" type="text"   value="${data.originalinvstd}" data-notnull="true" data-sync-attr="cinvstd"    autocomplete="off"  class="form-control" readonly/>
+            ${data.originalinvstd}
         </td>
-        <td>
-            <input type="text" autocomplete="off"  class="form-control" data-rule="number"  data-notnull="true" maxlength="10" name="originalQty" value="${data.originalqty}">
+        <td {@if !data.originalqty} data-focus="true" data-changed="true" {@/if}>
+            ${data.originalqty}
             <div style="margin-top: 10px"></div>
-            <input id="originalWeight${data.index}" type="text" autocomplete="off" data-sync-attr="iweight"  class="form-control" data-rule="number"  data-notnull="true" maxlength="10" name="originalWeight" value="${data.originalweight}">
+            ${data.originalweight}
         </td>
-        <td>
-            <input type="text" hidden data-sync-attr="itemid" id="slicingInvId${data.index}"  data-notnull="true"   autocomplete="off"  class="form-control"  maxlength="40" data-tips="分条料" name="slicingInvItemId" value="${data.slicinginvitemid}"/>
-            <input type="text" hidden data-notnull="true"   autocomplete="off"  class="form-control"  maxlength="40" data-tips="分条料" name="slicingBomCompareId" value="${data.slicingbomcompareid}"/>
-            <div class="input-group">
-                <input type="text"
-                       id="slicingItemId${data.index}"
-                       data-autocomplete
-                       data-notnull="true"
-                       data-tips="请选择存货编码"
-                       value="${data.slicingitemcode}"
-                       autocomplete="off"
-                       class="form-control"
-                       placeholder="请选择存货编码"
-                       maxlength="40"
-                       data-url="admin/bommaster/inventoryAutocomplete"
-                       data-sync-ele="#slicingInvId${data.index},#slicingInvName${data.index},#slicingInvStd${data.index},#slicingWeight${data.index}"
-                       data-text-attr="cinvcode"
-                       data-column-attr="cinvcode"
-                />
-
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#slicingInvId${data.index}" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/bommaster/inventoryDialogIndex?index=${data.index}&type=2"><i class="fa fa-search"></i></button>
-                </div>
-            </div>
+        <td {@if !data.slicingitemcode} data-focus="true" data-changed="true" {@/if}>
+            ${data.slicingitemcode}
             <div style="margin-top: 10px"></div>
-            <input id="slicingInvName${data.index}" type="text"   value="${data.slicinginvname}" data-notnull="true" data-sync-attr="cinvname"    autocomplete="off"  class="form-control" readonly/>
+            ${data.slicinginvname}
         </td>
         <td>
-            <input id="slicingInvSup${data.index}" type="text"   value="${data.slicinginvsup}" data-notnull="true"    autocomplete="off"  class="form-control" readonly/>
+            ${data.slicinginvsup}
             <div style="margin-top: 10px"></div>
-            <input id="slicingInvStd${data.index}" type="text"   value="${data.slicinginvstd}" data-notnull="true" data-sync-attr="cinvstd"  autocomplete="off"  class="form-control" readonly/>
+            ${data.slicinginvstd}
         </td>
-        <td>
-            <input type="text" autocomplete="off"  class="form-control" data-rule="number"  data-notnull="true"  maxlength="10" name="slicingQty" value="${data.slicingqty}">
+        <td {@if !data.slicingqty} data-focus="true" data-changed="true" {@/if}>
+            ${data.slicingqty}
             <div style="margin-top: 10px"></div>
-            <input id="slicingWeight${data.index}" type="text" autocomplete="off" data-sync-attr="iweight"  class="form-control" data-rule="number"  data-notnull="true" maxlength="10" name="slicingWeight" value="${data.slicingweight}">
+            ${data.slicingweight}
         </td>
-        <td>
-            <input type="text" hidden data-sync-attr="itemid" id="blankingInvId${data.index}"  data-notnull="true"  autocomplete="off"  class="form-control"  data-tips="片料" maxlength="40" name="blankingItemId" value="${data.blankingitemid}"/>
-            <input type="text" hidden data-notnull="true"  autocomplete="off"  class="form-control"  data-tips="片料" maxlength="40" name="blankingBomCompareId" value="${data.blankingbomcompareid}"/>
-
-            <div class="input-group">
-                <input type="text"
-                       id="blankingItemId${data.index}"
-                       value="${data.blankingitemcode}"
-                       data-rule="required"
-                       data-autocomplete
-                       data-notnull="true"
-                       data-tips="请选择存货编码"
-                       autocomplete="off"
-                       class="form-control"
-                       placeholder="请选择存货编码"
-                       maxlength="40"
-                       data-url="admin/bommaster/inventoryAutocomplete"
-                       data-sync-ele="#blankingInvId${data.index},#blankingInvName${data.index},#blankingStd${data.index},#blankingInvName${data.index},#blankingWeight${data.index}"
-                       data-text-attr="cinvcode"
-                       data-column-attr="cinvcode"
-                />
-
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#blankingInvId${data.index}" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/bommaster/inventoryDialogIndex?index=${data.index}&type=1"><i class="fa fa-search"></i></button>
-                </div>
-            </div>
-
+        <td {@if !data.blankingitemcode} data-focus="true" data-changed="true" {@/if}>
+            ${data.blankingitemcode}
             <div style="margin-top: 10px"></div>
-            <input id="blankingInvName${data.index}" type="text" value="${data.blankinginvname}" data-notnull="true" data-sync-attr="cinvname"  autocomplete="off"  class="form-control" disabled/>
+            ${data.blankinginvname}
         </td>
         <td>
-            <input id="blankingSup${data.index}" type="text" value="${data.blankingsup}" data-notnull="true"    autocomplete="off"  class="form-control" disabled/>
+            ${data.blankingsup}
             <div style="margin-top: 10px"></div>
-            <input id="blankingStd${data.index}" type="text" value="${data.blankingstd}" data-notnull="true" data-sync-attr="cinvstd"    autocomplete="off"  class="form-control" disabled/>
+            ${data.blankingstd}
         </td>
-        <td>
-            <input type="text" autocomplete="off"  class="form-control" data-rule="number"  data-notnull="true" name="blankingQty"  value="${data.blankingqty}" maxlength="10"/>
+        <td {@if !data.blankingqty} data-focus="true" data-changed="true" {@/if}>
+            ${data.blankingqty}
             <div style="margin-top: 10px"></div>
-            <input id="blankingWeight${data.index}" type="text" autocomplete="off" data-sync-attr="iweight"  class="form-control" data-rule="number"  data-notnull="true" name="blankingWeight" value="${data.blankingweight}" maxlength="10"/>
+            ${data.blankingweight}
         </td>
         <td>
-            <input type="text" hidden autocomplete="off"  class="form-control" id="iVendorId${data.index}" data-sync-attr="cvenid" name="iVendorId" value="${data.ivendorid}">
-
-            <input type="text"
-                   class="form-control"
-                   id="iVendorName${data.index}"
-                   value="${data.ivendorid}"
-                   data-autocomplete
-                   data-notnull="true"
-                   data-tips="请选择部品加工商"
-                   autocomplete="off"
-                   placeholder="请选择部品加工商"
-                   maxlength="40"
-                   data-url="admin/bommaster/findVendorList"
-                   data-sync-ele="iVendorId${data.index}"
-                   data-text-attr="cvenname"
-                   data-column-attr="cvenname"
-            />
+            ${data.cvenname}
         </td>
         <td>
-            <select class="form-control" data-url="admin/dictionary/options?key=isOutSourcedType" name="isOutSourced" data-autoload
-                    data-text="=请选择=" data-value-attr="sn" id="isOutSourced" data-value="" data-select="${data.isoutsourced}"></select>
+            ${data.isoutsourced == '0'? '否': '是'}
         </td>
         <td>
-            <input type="text" autocomplete="off"  class="form-control" name="cMemo" value="${data.cmemo}">
-        </td>
-        <td>
-            <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="插入一行"  onclick="addEmptyRow(this)"><i class="fa fa-plus"></i></a>
-            <a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-trash text-danger"></i></a>
-            <a tooltip data-title="上移"  href="javascript:void(0)" onclick="jboltTableTrMoveUp(this)"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
-            <a tooltip data-title="下移"  href="javascript:void(0)" onclick="jboltTableTrMoveDown(this)"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+            ${data.cmemo}
         </td>
     </tr>
     {@/each}
 </script>
-#if(view??0 !=1)
+
+#if(isView??0 !=1)
 <div class="jbolt_table_toolbar" id="bomMaster_toolbar_#(pageId)">
-    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-        <button onclick="insertEmptyRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-        <button onclick="jboltTableRemoveCheckedRow(this,true,false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
-        <button onclick="jboltTableRefresh(this,'刷新会丢失新添加未保存的数据，确认刷新吗？')" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
-        <button onclick="jboltTableMaximize(this)" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 最大化</button>
-    </div>
-    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-        <button onclick="insertPrependEmptyRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-arrow-up"></i> 首插空</button>
-        <button onclick="insertEmptyRowBeforeChecked(this)" class="btn btn-primary btn-sm" ><i class="fa fa-arrow-left"></i> 前插空</button>
-        <button onclick="insertEmptyRowAfterChecked(this)" class="btn btn-primary btn-sm" >后插空 <i class="fa fa-arrow-right"></i></button>
-        <button onclick="insertAppendEmptyRow(this)" class="btn btn-primary btn-sm" >尾插空 <i class="fa fa-arrow-down"></i></button>
-    </div>
-
-
     <div class="btn-group dropdown">
         <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importBomButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
         <div class="dropdown-menu" aria-labelledby="importBomButton">
@@ -258,18 +130,17 @@
 
 </div>
 #end
+
 <table class="jbolt_table jbolt_main_table table-center thead_font_normal"
        data-jbolttable
        data-width="auto"
        data-height="fill"
        data-column-resize="true"
-       data-column-prepend="1:checkbox"
        #if(bomMaster.iautoid??)
        data-ajax="true"
-       data-url="/admin/bommaster/findByBomMasterId/#(bomMaster.iautoid??)"
-       #end
+       data-url="/admin/bomM/findByBomMasterId/#(bomMaster.iautoid??)"
+       #else
        data-toolbar="bomMaster_toolbar_#(pageId)"
-       #if(view??0 !=1)
        data-editable="true"
        #end
        data-tfoot-fixed="true"
@@ -279,28 +150,27 @@
 >
     <thead>
     <tr>
-        <th  rowspan="2" data-column="index">序号</th>
+        <th  rowspan="2" data-column="index" data-width="60">序号</th>
         <th  colspan="6" data-width="420">编号</th>
-        <th  rowspan="1" data-width="150"  data-column="irsinventoryid">存货编码</th>
-        <th  rowspan="1" data-width="150">客户部番</th>
-        <th  rowspan="1" data-width="150">UG部番</th>
-        <th  rowspan="2" data-width="150">略图</th>
-        <th  rowspan="1" data-width="120">QTY</th>
-        <th  rowspan="1" data-width="150">材质</th>
-        <th  rowspan="2" data-width="150">材料类别</th>
-        <th  rowspan="1" data-width="150">原材料存货编码</th>
-        <th  rowspan="1" data-width="150">原材料供应商</th>
-        <th  rowspan="1" data-width="120">可制件数</th>
-        <th  rowspan="1" data-width="150">分条存货编码</th>
-        <th  rowspan="1" data-width="150">分条商</th>
-        <th  rowspan="1" data-width="120">可制件数</th>
-        <th  rowspan="1" data-width="150">落料存货编码</th>
-        <th  rowspan="1" data-width="150">落料商</th>
-        <th  rowspan="1" data-width="120">可制件数</th>
-        <th  rowspan="2" data-width="150">部品加工商</th>
-        <th  rowspan="2" data-width="120">是否外作</th>
-        <th  rowspan="2" data-width="120">备注</th>
-        <th  rowspan="2" data-width="150">操作</th>
+        <th  data-width="150"  data-column="irsinventoryid">存货编码</th>
+        <th  data-width="150" data-column="cinvcode1">客户部番</th>
+        <th  data-width="150" data-column="cinvaddcode1">UG部番</th>
+        <th  rowspan="2" data-width="150" data-column="img">略图</th>
+        <th  data-width="120" data-column="invqty">QTY</th>
+        <th  data-width="150" data-column="material">材质</th>
+        <th  rowspan="2" data-width="150" data-column="materialtype">材料类别</th>
+        <th  data-width="150" data-column="originalitemcode">原材料存货编码</th>
+        <th  data-width="150" data-column="originalinvsup">原材料供应商</th>
+        <th  data-width="120" data-column="originalqty">可制件数</th>
+        <th  data-width="150" data-column="slicingitemcode">分条存货编码</th>
+        <th  data-width="150" data-column="slicinginvsup">分条商</th>
+        <th  data-width="120" data-column="slicingqty">可制件数</th>
+        <th  data-width="150" data-column="blankingitemcode">落料存货编码</th>
+        <th  data-width="150" data-column="blankingsup">落料商</th>
+        <th  data-width="120" data-column="blankingqty">可制件数</th>
+        <th  rowspan="2" data-width="150" data-column="cvenname">部品加工商</th>
+        <th  rowspan="2" data-width="120" data-column="isoutsourced">是否外作</th>
+        <th  rowspan="2" data-width="200" data-column="cmemo">备注</th>
     </tr>
     <tr>
         <th data-width="70" data-column="code1">1</th>
@@ -309,20 +179,20 @@
         <th data-column="code4">4</th>
         <th data-column="code5">5</th>
         <th data-column="code6">6</th>
-        <th rowspan="1" data-width="150">存货名称</th>
-        <th rowspan="1" data-width="150">部品名称</th>
-        <th rowspan="1" data-width="150">UG部品名称</th>
-        <th rowspan="1" data-width="120">重量</th>
-        <th rowspan="1" data-width="120">厚度</th>
-        <th rowspan="1" data-width="150">原材料存货名称</th>
-        <th rowspan="1" data-width="150">原材料规格</th>
-        <th rowspan="1" data-width="120">重量</th>
-        <th rowspan="1" data-width="150">分条存货名称</th>
-        <th rowspan="1" data-width="150">分条规格</th>
-        <th rowspan="1" data-width="120">重量</th>
-        <th rowspan="1" data-width="150">落料存货名称</th>
-        <th rowspan="1" data-width="150">下料尺寸</th>
-        <th rowspan="1" data-width="120">重量</th>
+        <th data-width="150">存货名称</th>
+        <th data-width="150">部品名称</th>
+        <th data-width="150">UG部品名称</th>
+        <th data-width="120">重量</th>
+        <th data-width="120">厚度</th>
+        <th data-width="150">原材料存货名称</th>
+        <th data-width="150">原材料规格</th>
+        <th data-width="120">重量</th>
+        <th data-width="150">分条存货名称</th>
+        <th data-width="150">分条规格</th>
+        <th data-width="120">重量</th>
+        <th data-width="150">落料存货名称</th>
+        <th data-width="150">下料尺寸</th>
+        <th data-width="120">重量</th>
     </tr>
     </thead>
     <tbody>

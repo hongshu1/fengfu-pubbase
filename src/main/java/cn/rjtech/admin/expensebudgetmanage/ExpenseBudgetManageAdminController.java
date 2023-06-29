@@ -1,11 +1,17 @@
 package cn.rjtech.admin.expensebudgetmanage;
 
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.annotation.CheckDataPermission;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.ExpenseBudget;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -39,6 +45,7 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -57,6 +64,7 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
         List<Record> quantityAndAmountColumnList = new ArrayList<>();
         periodService.calcDynamicExpenseBudgetTableColumn(dstarttime,dendtime,yearColumnTxtList,monthColumnTxtList,quantityAndAmountColumnList);
         set("expenseBudget", expenseBudget);
+        set("readonly","readonly");
         set("yearcolumntxtlist",yearColumnTxtList);
         set("monthcolumntxtlist",monthColumnTxtList);
         set("quantityandamountcolumnlist",quantityAndAmountColumnList);
@@ -84,6 +92,19 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
     @CheckPermission(PermissionKey.EXPENSE_BUDGET_MANAGE_CANCLE)
     public void cancle(){
     	renderJson(service.cancle(getLong(0)));
+    }
+    /**
+     * 查看审批界面
+     * */
+    @UnCheck
+    public void expenseFormApprovalFlowIndex(){
+    	ExpenseBudget expenseBudget = service.findById(getLong("iautoid"));
+    	set("expenseBudget", expenseBudget);
+    	render("approve_process_index.html");
+    }
+    @CheckPermission(PermissionKey.EXPENSE_BUDGET_MANAGE_UNEFFECT)
+    public void uneffect(){
+    	renderJson(service.uneffect(getLong()));
     }
     
 }

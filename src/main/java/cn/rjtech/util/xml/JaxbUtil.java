@@ -27,6 +27,7 @@ public class JaxbUtil<T> {
         try {
             jaxbContext = JAXBContext.newInstance(t.getClass());
         } catch (JAXBException e) {
+            e.printStackTrace();
             throw new CommonException(e.getLocalizedMessage());
         }
     }

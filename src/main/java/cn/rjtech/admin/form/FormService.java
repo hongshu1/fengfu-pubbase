@@ -11,6 +11,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formfield.FormFieldService;
 import cn.rjtech.base.exception.ParameterException;
+import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.enums.FormFieldEnum;
 import cn.rjtech.model.momdata.Form;
 import cn.rjtech.model.momdata.FormField;
@@ -232,8 +233,14 @@ public class FormService extends BaseService<Form> {
         ValidationUtils.isTrue(!form.getIsDeleted(), JBoltMsg.DATA_NOT_EXIST);
         ValidationUtils.isTrue(formFieldService.notExists(iautoid), "表单已存在字段，若要重新生成，请清空后再生成");
 
-        TableMeta tableMeta = JBoltTableMetaUtil.getTableMeta(dataSourceConfigName(), dbType(), form.getCFormCode(), false);
-        ValidationUtils.notNull(tableMeta, "获取数据表元数据失败");
+        TableMeta tableMeta;
+        
+        if (form.getCFormCode().startsWith("jb_") || form.getCFormCode().startsWith("base_")) {
+            tableMeta = JBoltTableMetaUtil.getTableMeta(DataSourceConstants.MAIN, dbType(), form.getCFormCode(), false);
+        } else {
+            tableMeta = JBoltTableMetaUtil.getTableMeta(dataSourceConfigName(), dbType(), form.getCFormCode(), false);
+            ValidationUtils.notNull(tableMeta, "获取数据表元数据失败");
+        }
 
         List<ColumnMeta> columnMetas = tableMeta.columnMetas;
         ValidationUtils.notEmpty(columnMetas, "数据表字段不能为空");

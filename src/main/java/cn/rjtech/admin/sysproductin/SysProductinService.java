@@ -19,7 +19,6 @@ import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
-import cn.rjtech.model.momdata.SysPureceive;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -175,7 +174,7 @@ public class SysProductinService extends BaseService<SysProductin> {
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -189,7 +188,7 @@ public class SysProductinService extends BaseService<SysProductin> {
             delete("DELETE T_Sys_ProductInDetail   where  MasID = ?", id);
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -325,18 +324,18 @@ public class SysProductinService extends BaseService<SysProductin> {
         }
 
         User user = JBoltUserKit.getUser();
-        Map<String, Object> data = new HashMap<>();
+        JSONObject data = new JSONObject();
 
-        data.put("userCode",user.getUsername());
-        data.put("organizeCode",this.getdeptid());
-        data.put("token","");
+        data.set("userCode",user.getUsername());
+        data.set("organizeCode",this.getdeptid());
+        data.set("token","");
 
         JSONObject preallocate = new JSONObject();
 
 
         preallocate.set("userCode",user.getUsername());
         preallocate.set("organizeCode",this.getdeptid());
-        preallocate.set("CreatePerson",user.getId());
+        preallocate.set("CreatePerson",user.getUsername());
         preallocate.set("CreatePersonName",user.getName());
         preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
         preallocate.set("tag","ProductionIn");
@@ -344,7 +343,7 @@ public class SysProductinService extends BaseService<SysProductin> {
 
         data.put("PreAllocate",preallocate);
 
-        JSONArray maindata = new JSONArray();
+        ArrayList<Object> maindata = new ArrayList<>();
         sysproductindetail.stream().forEach(s -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("Tag","ProductionIn");
@@ -359,16 +358,20 @@ public class SysProductinService extends BaseService<SysProductin> {
             jsonObject.set("packrate","1");
             jsonObject.set("barcode",s.getBarcode());
             jsonObject.set("batch","");
-            jsonObject.set("sourcebillnorow","");
-            jsonObject.set("sourcebillrowno",s.getSourceBIllNoRow());
-            jsonObject.set("sourcebillno",s.getSourceBillNo());
-            jsonObject.set("sourcebilltype",s.getSourceBillType());
-            jsonObject.set("sourcebillqty","");
+//            jsonObject.set("sourcebillnorow","");
+//            jsonObject.set("sourcebillrowno",s.getSourceBIllNoRow());
+//            jsonObject.set("sourcebillno",s.getSourceBillNo());
+//            jsonObject.set("sourcebilltype",s.getSourceBillType());
+            jsonObject.set("sourcebillnorow","8080000001");
+            jsonObject.set("sourcebillrowno","8080000001-1");
+            jsonObject.set("sourcebillno",sysproductin.getBillNo());
+            jsonObject.set("sourcebilltype","MO");
+            jsonObject.set("sourcebillqty",s.getQty().toString());
             jsonObject.set("sourcebilldid",s.getSourceBillDid());
             jsonObject.set("invcode",s.getInvCode());
             jsonObject.set("invname","1");
             jsonObject.set("invstd","");
-            jsonObject.set("qty",s.getQty());
+            jsonObject.set("qty",s.getQty().toString());
             jsonObject.set("noreceivedqty","");
             jsonObject.set("receivedqty","");
             jsonObject.set("vencode",sysproductin.getVenCode());
@@ -379,9 +382,10 @@ public class SysProductinService extends BaseService<SysProductin> {
             jsonObject.set("IRdName","生产入库");
             jsonObject.set("IRdCode","101");
 
-            maindata.put(jsonObject);
+            maindata.add(jsonObject);
         });
-        data.put("MainData",maindata);
+        data.set("MainData",maindata);
+        System.out.println("```````````"+data);
 
         //            请求头
         Map<String, String> header = new HashMap<>(5);
@@ -419,7 +423,7 @@ public class SysProductinService extends BaseService<SysProductin> {
     public Ret submit(Long iautoid) {
         tx(() -> {
 
-            Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(), "cn.rjtech.admin.sysproductin.SysProductinService");
+            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.sysproductin.SysProductinService");
             ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
 
             return true;
@@ -525,7 +529,7 @@ public class SysProductinService extends BaseService<SysProductin> {
         String[] split = ids.split(",");
         for (String s : split) {
             SysProductin sysProductin = findFirst("select *  from T_Sys_ProductIn where AutoID in (" + s + ")");
-            List<SysProductindetail> sysProductindetails = sysproductindetailservice.find("select *  from T_Sys_ProductIn where AutoID in (" + sysProductin.getAutoID() + ")");
+            List<SysProductindetail> sysProductindetails = sysproductindetailservice.find("select *  from T_Sys_ProductInDetail where MasID in (" + sysProductin.getAutoID() + ")");
             // 测试调用接口
             System.out.println("```````````````````````````````"+ new Date());
             Ret ret = pushU8(sysProductin, sysProductindetails);
@@ -533,5 +537,19 @@ public class SysProductinService extends BaseService<SysProductin> {
         }
 
     }
+    public void checkbelow(String ids) {
+        String[] split = ids.split(",");
+        for (String p : split) {
+            List<SysProductin> sysProductins = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
+            for (SysProductin s : sysProductins) {
+                if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！");
+                }
+                if ("1".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！");
+                }
 
+            }
+        }
+    }
 }

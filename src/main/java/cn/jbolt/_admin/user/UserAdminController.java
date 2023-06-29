@@ -68,6 +68,7 @@ public class UserAdminController extends BaseAdminController {
 	/**
 	 * 表格数据接口
 	 */
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminList(getPageNumber(),getPageSize(),getKeywords(),getOfModule(),getInt("sex"),getBoolean("assignDept",true),getLong("deptId"),getLong("postId"),getLong("roleId"),getBoolean("enable"), getLong("excludeRoleId")));
 	}
@@ -340,6 +341,16 @@ public class UserAdminController extends BaseAdminController {
         ValidationUtils.notBlank(userIds, "缺少用户ID");
 
         renderJson(service.updateRoles(roleId, userIds));
+    }
+
+    public void importExcel() {
+        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+        UploadFile file = getFile("file", uploadPath);
+        if (notExcel(file)) {
+            renderJsonFail("请上传excel文件");
+            return;
+        }
+        renderJson(service.importExcel(file.getFile(), getOrgId(), JBoltUserKit.getUserId()));
     }
 
 }

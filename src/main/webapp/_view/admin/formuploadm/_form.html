@@ -1,18 +1,22 @@
+#set(pageId=RandomUtil.random(6))
+#set(iYear=DateUtil.getYear())
+#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
+#if(readonly != 'readonly' && (formUploadM.iauditstatus??0 == 1 || formUploadM.iauditstatus??0 == 2))
+#set(readonly = 'readonly')
+#end
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()"  class="btn btn-outline-secondary btn-xs"  #if(formUploadM.iauditstatus?? ==2 || formUploadM.iauditstatus?? ==3 || formUploadM.iauditstatus?? ==1) disabled #end>保存</button>
-                        #if(formUploadM.iautoid??)
-                        ### 参数列表
-                        ### uri:                接口URI
-                        ### formSn:             表单名
-                        ### o:                  当前表单对象名
-                        ### primaryKeyName:     主键名
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/formUploadM", formSn="PL_FormUploadM", o=formUploadM, edit=edit??, primaryKeyName="iautoid")
+                        #if(readonly != 'readonly')
+                        <button onclick="submitThisForm_#(pageId)()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/formUploadM",
+                        formSn="PL_FormUploadM", primaryKeyName="iAutoId", o=formUploadM,
+                        permissionKeyPrefix="formuploadm",  className="cn.rjtech.admin.formuploadm.FormUploadMService")
+
                         <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                     </div>
                 </div>
@@ -45,7 +49,9 @@
                                                 data-value-attr="iautoid"
                                                 data-text-attr="ccategoryname"
                                                 data-select="#(formUploadM.icategoryid??)"
-                                                #if(iauditstatus==false)  #if(formUploadM.iauditstatus!=0) disabled #end #end
+                                                #if(readonly)
+                                                disabled
+                                                #end
                                         ></select>
                                     </div>
                                         <a data-dialogbtn href="admin/formUploadCategory/index" data-area="80%,80%" data-title="分类管理" data-handler="refreshJBoltTable" ><i class="jbicon jb-shezhi3"></i></a>
@@ -66,27 +72,26 @@
                                                 data-value-attr="iautoid"
                                                 data-text-attr="cworkname"
                                                 data-select="#(formUploadM.iworkregionmid??)"
-                                                #if(iauditstatus==false)  #if(formUploadM.iauditstatus!=0) disabled #end #end
+                                                #if(readonly)
+                                                disabled
+                                                #end
                                         ></select>
                                     </div>
                                 </div>
                                 <div class="form-group row" >
                                     <label class="col-sm-2 col-form-label">日期</label>
                                     <div class="col-2">
-                                        <input type="text" data-date data-type="date"   #if(iauditstatus==false)  #if(formUploadM.iauditstatus!=0) disabled #end #end data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="formUploadM.ddate" value="#(formUploadM.ddate??)"/>
+                                        <input type="text" data-date data-type="date"    #if(readonly) disabled #end data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="formUploadM.ddate" value="#(formUploadM.ddate??)"/>
                                     </div>
-                                    #if(iauditstatus==false)
-                                    #if(formUploadM.iauditstatus!=0)
+                                    #if(readonly == 'readonly')
                                     <label class="col-sm-2 col-form-label">状态</label>
                                     <div class="col-2">
-                                        <input type="text"    autocomplete="off"  hidden   #if(iauditstatus==false)  #if(formUploadM.iauditstatus!=0) disabled #end #end class="form-control"    maxlength="10" name="formUploadM.iAuditStatus" value="#(formUploadM.iauditstatus??)"/>
-                                        <input type="text"    autocomplete="off"      #if(iauditstatus==false)  #if(formUploadM.iauditstatus!=0) disabled #end #end class="form-control"    maxlength="10" name="status" value="#(status??)"/>
+                                        <input type="text"    autocomplete="off"  hidden   #if(readonly) disabled #end  class="form-control"    maxlength="10" name="formUploadM.iAuditStatus" value="#(formUploadM.iauditstatus??)"/>
+                                        <input type="text"    autocomplete="off"     #if(readonly) disabled #end  class="form-control"    maxlength="10" name="status" value="#(status??)"/>
                                     </div>
                                     #end
-                                    #end
                                 </div>
-                                #if(iauditstatus==false)
-                                #if(formUploadM.iauditstatus!=0)
+                                #if(readonly == 'readonly')
                                 <div class="form-group row" >
                                     <label class="col-sm-2 col-form-label">创建人</label>
                                     <div class="col-2">
@@ -108,7 +113,6 @@
                                     </div>
                                 </div>
                                 #end
-                                #end
 
                             </div>
                         </div>
@@ -120,19 +124,13 @@
         </div>
     </div>
 </div>
+
 <div class="jbolt_page_content">
     <script type="text/template" id="formUploadM_tpl_#(pageId)">
         {@each datas as data,index}
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
-            #if(iauditstatus==false)
-            #if(formUploadM.iauditstatus==0)
-            <td>
-                <a href="admin/formUploadD/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-            </td>
-            #end
-            #end
-            #if(iauditstatus==true)
+            #if(readonly != 'readonly')
             <td>
             <a href="admin/formUploadD/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
             </td>
@@ -153,16 +151,17 @@
         </tr>
         {@/each}
     </script>
+    #if(readonly != 'readonly')
     <div class="jbolt_table_toolbar" id="formUploadM_toolbar_#(pageId)">
-
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button data-openpage="dialog" data-area="700,800" data-handler="jboltTablePageToFirst" #if(iauditstatus==false) #if(formUploadM.iauditstatus!=0) style="display:none;" #end  #end
+            <button data-openpage="dialog" data-area="700,800" data-handler="jboltTablePageToFirst"
                     data-title="新增记录" data-url="admin/formUploadM/attachment"
                     class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增数据
             </button>
+            <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
         </div>
-
     </div>
+    #end
 
     <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(formUploadM.iautoid??)
            data-ajax="true" data-url="admin/formUploadD/datas?pid=#(formUploadM.iautoid??)" #end
@@ -173,12 +172,7 @@
         <tr>
             <th data-width="60" data-column="index">序号</th>
 
-            #if(iauditstatus==false)
-            #if(formUploadM.iauditstatus==0)
-            <th data-width="150" data-column="cattachments">操作</th>
-            #end
-            #end
-            #if(iauditstatus==true)
+            #if(readonly != 'readonly')
             <th data-width="150" data-column="cattachments">操作</th>
             #end
 
@@ -193,13 +187,34 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-    function submitThisForm(iauditstatus) {
-        $("#operationType").val(iauditstatus);
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
 
-        jboltTableSubmit("#jbolt_Table_#(pageId)");
-        $("#operationType").val();
+    function submitThisForm_#(pageId)(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
+
+        }
+        // 调用保存处理
+        $('#save_btn_#(pageId)').click();
     }
 
+
+    function saveData(ele) {
+        jboltTableSubmit(ele);
+    }
+
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/formUploadM/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
+            parent.refreshPjaxContainer();
+        });
+    }
     function getJBoltTableEditableColsOpton() {
         var editableTableOptions = {
 
@@ -207,18 +222,28 @@
                 withForm: ["formUploadM_#(pageId)"],
                 name: 'formUploadM',
                 type: "all",
-                url: "admin/formUploadM/saveTableSubmit",
+                url: "admin/formUploadM/submitAll",
                 success: function (res) {
-                    console.log(res);
                     if (res.data.msg=='附件不可为空！'||res.data.msg=='请先保存数据！'){
                         LayerMsgBox.alert(res.data.msg,600,function (){
                             parent.refreshPjaxContainer();
                         });
                     }else {
-                        LayerMsgBox.success("提交成功", 600, function () {
-                            parent.refreshPjaxContainer();
-                            parent.LayerMsgBox.closeAll();
-                        });
+                        // 表格保存之后，判断是否需要提审处理
+                        if (res.state === 'ok') {
+                            // 提交审核（审批）调用
+                            if (submit) {
+                                // 提审
+                                submit_#(pageId)(res.data.iautoid, function (data) {
+                                    console.log(3)
+                                    successHandler('提审成功', res.data.iautoid);
+                                });
+                            } else {
+                                successHandler(res.msg, res.data.iautoid);
+                            }
+                        } else {
+                            LayerMsgBox.alert(res.msg, 2);
+                        }
                     }
 
                 }

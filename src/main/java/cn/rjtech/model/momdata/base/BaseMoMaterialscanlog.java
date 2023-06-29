@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseMoMaterialscanlog<M extends BaseMoMaterialscanlog<M>> extends JBoltBaseModel<M>{
+    
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**生产工单ID*/
@@ -28,6 +29,12 @@ public abstract class BaseMoMaterialscanlog<M extends BaseMoMaterialscanlog<M>> 
     public static final String CCREATENAME = "cCreateName";
     /**创建时间*/
     public static final String DCREATETIME = "dCreateTime";
+    /**是否已扫码；0. 未扫码 1. 已扫码*/
+    public static final String ISSCANNED = "isScanned";
+    /**扫码时间*/
+    public static final String SCANTIME = "ScanTime";
+    /**计划数量*/
+    public static final String IPLAYQTY = "iPlayQty";
 	/**
 	 * 主键ID
 	 */
@@ -124,7 +131,7 @@ public abstract class BaseMoMaterialscanlog<M extends BaseMoMaterialscanlog<M>> 
 	/**
 	 * 数量
 	 */
-	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="数量", required=true, maxLength=18, fixed=2, order=6)
+	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="数量", required=true, maxLength=24, fixed=6, order=6)
 	@JSONField(name = "iqty")
 	public java.math.BigDecimal getIQty() {
 		return getBigDecimal("iQty");
@@ -179,6 +186,57 @@ public abstract class BaseMoMaterialscanlog<M extends BaseMoMaterialscanlog<M>> 
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
+	}
+
+	/**
+	 * 是否已扫码；0. 未扫码 1. 已扫码
+	 */
+	public M setIsScanned(java.lang.Boolean isScanned) {
+		set("isScanned", isScanned);
+		return (M)this;
+	}
+
+	/**
+	 * 是否已扫码；0. 未扫码 1. 已扫码
+	 */
+	@JBoltField(name="isscanned" ,columnName="isScanned",type="Boolean", remark="是否已扫码；0. 未扫码 1. 已扫码", required=true, maxLength=1, fixed=0, order=10)
+	@JSONField(name = "isscanned")
+	public java.lang.Boolean getIsScanned() {
+		return getBoolean("isScanned");
+	}
+
+	/**
+	 * 扫码时间
+	 */
+	public M setScanTime(java.util.Date ScanTime) {
+		set("ScanTime", ScanTime);
+		return (M)this;
+	}
+
+	/**
+	 * 扫码时间
+	 */
+	@JBoltField(name="scantime" ,columnName="ScanTime",type="Date", remark="扫码时间", required=false, maxLength=23, fixed=3, order=11)
+	@JSONField(name = "scantime")
+	public java.util.Date getScanTime() {
+		return getDate("ScanTime");
+	}
+
+	/**
+	 * 计划数量
+	 */
+	public M setIPlayQty(java.math.BigDecimal iPlayQty) {
+		set("iPlayQty", iPlayQty);
+		return (M)this;
+	}
+
+	/**
+	 * 计划数量
+	 */
+	@JBoltField(name="iplayqty" ,columnName="iPlayQty",type="BigDecimal", remark="计划数量", required=false, maxLength=24, fixed=6, order=12)
+	@JSONField(name = "iplayqty")
+	public java.math.BigDecimal getIPlayQty() {
+		return getBigDecimal("iPlayQty");
 	}
 
 }

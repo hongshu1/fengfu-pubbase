@@ -16,9 +16,12 @@ import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -40,7 +43,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     }
     public void addview() {
         String cplanorderno = get("cplanorderno");
-        String icustomerid = get("icustomerid");
+        Long icustomerid = getLong("icustomerid");
         String startyear = get("startyear");
 
         set("cplanorderno",cplanorderno);
@@ -56,6 +59,56 @@ public class ScheduProductPlanYearController extends BaseAdminController {
             isedit = true;
         }
         set("isedit",isedit);
+
+        ApsAnnualplanm apsAnnualplanm = service.findById(get("iautoid"));
+        set("iautoid",get("iautoid"));
+        set("apsAnnualplanm",apsAnnualplanm);
+
+
+        String endYear = service.getEndYear(startyear);
+        Long organizeId = getOrgId();
+        String CC = "CC";  //客户行事历
+        //TODO: 所有客户的年度每月工作日集合  key：客户id，value：<年份，客户每月工作天数>
+        Map<Long,Map<String,Record>> cusWorkMonthNumListMap = new HashMap<>();
+        if (isOk(icustomerid)){
+            //根据客户id集查询客户年度每月工作天数
+            List<Record> cusWorkMonthNumList = service.getCusWorkMonthNumList(organizeId,icustomerid,startyear,endYear);
+            for (Record record : cusWorkMonthNumList){
+                Long iCustomerId = record.getLong("iCustomerId");
+                String iYear = record.getStr("iYear");
+                if (cusWorkMonthNumListMap.containsKey(iCustomerId)){
+                    Map<String,Record> map = cusWorkMonthNumListMap.get(iCustomerId);
+                    map.put(iYear,record);
+                }else {
+                    Map<String,Record> map = new HashMap<>();
+                    map.put(iYear,record);
+                    cusWorkMonthNumListMap.put(iCustomerId,map);
+                }
+            }
+        }
+
+        //CC:客户行事历（客户每月工作天数）
+        Map<String,Record> cusWorkMonthNumMap = cusWorkMonthNumListMap.get(icustomerid) != null ? cusWorkMonthNumListMap.get(icustomerid) : new HashMap<>();
+        //CC:客户行事历
+        ScheduProductYearViewDTO productYearViewCC = service.getProductYearViewCC(CC,startyear,endYear,cusWorkMonthNumMap);
+        List<String> weeklist = new ArrayList<>();
+        try {
+            for (int i = 1; i <= 12; i++) {
+                BigDecimal preQtycp = (BigDecimal) productYearViewCC.getClass().getMethod("getNowmonth" + i, new Class[]{}).invoke(productYearViewCC, new Object[]{});
+                weeklist.add(preQtycp.toString());
+            }
+            weeklist.add(productYearViewCC.getNowMonthSum().toString());
+
+            for (int i = 1; i <= 3; i++) {
+                BigDecimal preQtycp = (BigDecimal) productYearViewCC.getClass().getMethod("getNextmonth" + i, new Class[]{}).invoke(productYearViewCC, new Object[]{});
+                weeklist.add(preQtycp.toString());
+            }
+            weeklist.add(productYearViewCC.getNextMonthSum().toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        set("weeklist", weeklist);
         render("planyear_add.html");
     }
 

@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
@@ -102,6 +103,7 @@ public class SysPuinstoredetailAdminController extends BaseAdminController {
         renderJson(service.toggleBoolean(getLong(0), "IsDeleted"));
     }
 
+    @UnCheck
     public void findEditTableDatas() {
         renderJsonData(service.findEditTableDatas(getKv()));
     }
@@ -111,7 +113,7 @@ public class SysPuinstoredetailAdminController extends BaseAdminController {
      * */
     public void finddetaildatas() {
         Kv kv = getKv();
-        if (StringUtils.isBlank(kv.getStr("masid")) && StringUtils.isBlank(kv.getStr("spotticket"))) {
+        if (StringUtils.isBlank(kv.getStr("masid")) && StringUtils.isBlank(kv.getStr("barcode"))) {
             renderJsonData(null);
             return;
         }

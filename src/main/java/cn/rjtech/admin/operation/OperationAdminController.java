@@ -6,6 +6,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.rjtech.admin.qcparam.QcParamService;
@@ -53,6 +54,7 @@ public class OperationAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKeywords()));
     }
@@ -182,7 +184,6 @@ public class OperationAdminController extends JBoltBaseController {
 //        renderJxls("operation.xlsx", Kv.by("rows", rows), "工序_" + DateUtil.today() + ".xlsx");
     }
 
-    @SuppressWarnings("unchecked")
     public void downloadTpl() throws Exception {
 //        renderJxls("operation_import.xlsx", Kv.by("rows", null), "工序导入模板.xlsx");
         renderBytesToExcelXlsFile(service.getExcelImportTpl().setFileName("工序导入模板"));
@@ -198,11 +199,23 @@ public class OperationAdminController extends JBoltBaseController {
         renderJson(service.importExcelData(file.getFile()));
     }
 
+    @UnCheck
     public void options(){
         renderJsonData(service.getIdAndNameList());
     }
 
+    @UnCheck
     public void optionsToInventoryCheckForm(){
         renderJsonData(service.getIdAndNameListToInventoryCheckForm());
+    }
+
+    public void importExcelClass() {
+        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+        UploadFile file = getFile("file", uploadPath);
+        if (notExcel(file)) {
+            renderJsonFail("请上传excel文件");
+            return;
+        }
+        renderJson(service.importExcelClass(file.getFile()));
     }
 }

@@ -18,6 +18,8 @@ import cn.rjtech.admin.warehousearea.WarehouseAreaService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.service.approval.IApprovalService;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -36,7 +38,7 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-25 16:32
  */
-public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
+public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> implements IApprovalService {
 
 	private final MoMaterialsreturnm dao = new MoMaterialsreturnm().dao();
 
@@ -45,29 +47,25 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 		return dao;
 	}
 
-	@Inject
+    @Inject
+    private MoDocService moDocService;
+    @Inject
+    private WarehouseService warehouseService;
+    @Inject
 	private InventoryService inventoryService;
-	@Inject
-	private TransVouchService transVouchService; //调拨单
-	@Inject
-	private TransVouchDetailService transVouchDetailService;//调拨单明细
-
-	@Inject
-	private DepartmentService departmentService; //部门
-	@Inject
-	private WarehouseService warehouseService; //仓库
-	@Inject
-	private WorkregionmService workregionmService;//产线
-
-	@Inject
-	private WarehouseAreaService warehouseAreaService; //库区
-
-	@Inject
-	private MoDocService moDocService;
-	@Inject
-	private MoMaterialsreturndService materialsreturndService;//生产退料明细表
-
-	@Inject
+    @Inject
+	private TransVouchService transVouchService;
+    @Inject
+    private DepartmentService departmentService;
+    @Inject
+	private WorkregionmService workregionmService;
+    @Inject
+	private WarehouseAreaService warehouseAreaService;
+    @Inject
+    private TransVouchDetailService transVouchDetailService;
+    @Inject
+	private MoMaterialsreturndService materialsreturndService;
+    @Inject
 	private MoMaterialsreturnmService materialsreturnmService;
 
 
@@ -326,8 +324,8 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 	   transVouch.setIWhCode("");//调入仓库编码
 	   transVouch.setOWhCode(""); //调出仓库
 	   transVouch.setMemo(moMaterialsreturnm.getCMemo());
-	   transVouch.setCupdatename(JBoltUserKit.getUserName());
-	   transVouch.setDcreatetime(now);
+	   transVouch.setCupdateName(JBoltUserKit.getUserName());
+	   transVouch.setDcreateTime(now);
 	   transVouch.setState(2);//待审核
 	   transVouch.save();
 
@@ -461,14 +459,9 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 			moMaterialsreturnm.setDUpdateTime(now);
 			moMaterialsreturnm.setIsDeleted(false);
 
-
-
-
 			moMaterialsreturnds.add(moMaterialsreturnd);
 			moMaterialsreturnms.add(moMaterialsreturnm);
-
 		}
-
 
 		tx(() -> {
 
@@ -480,4 +473,69 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> {
 		return SUCCESS;
 	}
 
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		return null;
+	}
+
+	@Override
+	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		return null;
+	}
+    
 }

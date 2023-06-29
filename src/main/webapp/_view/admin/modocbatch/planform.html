@@ -1,136 +1,431 @@
-#@jboltLayout()
-#define main()
-#set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey??)">
-	<div class="jbolt_page_title">
-		<div class="row">
-			<!--<div class="col-md-auto"><h1><i class="jbicon2 jbi-appstore"></i>工单计划</h1></div>-->
-			<div class="col">
-				<form class="form-inline" id="apsAnnualplanmFormsum_#(pageId)"   onsubmit="return false;" method="post">
-					<input type="text" data-date class="form-control ml-2" disabled placeholder="开始日期" maxlength="20" id="startdate" name="startdate" value="#datetime(moMotask.dbegindate??,'yyyy-MM-dd')"/>
-					<span style="margin-top: 5px">至</span>
-					<input type="text" data-date class="form-control" disabled placeholder="结束日期" maxlength="20" id="enddate" name="enddate" value="#datetime(moMotask.denddate??,'yyyy-MM-dd')"/>
+#@adminDialogLayout()
 
+#define css()
+<link href="assets/plugins/Grape/16.0.2/css/gc.spread.sheets.16.0.2.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
+<style>
+    .spread-container {
+        height:90vh;
+    }
 
-					<input type="text" class="form-control" disabled placeholder="生产部门" id="deptname" name="deptname" value="#(deptname??)" />
+    .gc-statusbar {
+        height: 25px;
+        min-height: 25px;
+        background: #217346;
+        font-size: 0.6rem;
+        color: aliceblue;
+    }
+    body,p {
+        margin: 0px;
+        padding: 0px;
+        font-size: 12px;
+        color: black;
+    }
+    /* 表格工具 */
+    .but_box {
+        padding: 15px 0px;
+        padding-left: 15px;
+        border-bottom: none;
+    }
 
-					<button type="submit" onclick="" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-					<button type="button" onclick="" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-				</form>
-			</div>
-			<div class="col-md-auto">
-			</div>
-		</div>
-	</div>
-	<div class="jbolt_page_content">
-		<script type="text/template" id="jboltTable_demotplsum_#(pageId)">
-			{@each datas as data, index}
-			<tr data-id="${data.iautoid}">
-				<td rowspan="2">${pageNumber,pageSize,index | rownum}</td>
-				<td rowspan="2">${data.cworkname}</td>
-				<td rowspan="2">${data.cinvcode}</td>
-				<td rowspan="2">${data.cinvcode1}</td>
-				<td rowspan="2">${data.cinvname1}</td>
-				<td rowspan="2">${data.colname}</td>
-				<td>工单号</td>
-				{@each data.docnolist as value}
-				<td >${value}</td>
-				{@/each}
-
-			</tr>
-			<tr>
-				<td>生产计划量</td>
-				{@each data.planlist as value, index}
-				<td >${value}</td>
-				{@/each}
-			</tr>
-			{@/each}
-		</script>
-		<div class="jbolt_table_toolbar" id="AnnualOrderM_toolbarsum_#(pageId)">
-			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-				<div class="btn-group dropdown">
-					<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
-							id="exportMenuBadnessButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						数据导出
-					</button>
-					<div class="dropdown-menu" aria-labelledby="exportMenuBadnessButton">
-						<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
-								data-url="admin/basis/dataExportxxx"><i class="fa fa-download"></i> 导出选中
-						</button>
-						<button class="btn dropdown-item" data-downloadbtn data-url="admin/basis/dataExportxxx"
-								data-form="basisForm_#(pageId)"><i class="fa fa-download"></i> 全部导出
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<table class="jbolt_table thead_font_normal table-bordered table-center"
-			   data-jbolttable
-			   data-ajax="true"
-			   data-conditions-form="apsAnnualplanmFormsum_#(pageId)"
-			   data-url="admin/modocbatch/getPlanPage?iAutoId=#(moMotask.iAutoId??)"
-			   id="jbolt_Table_#(pageId)"
-			   data-column-resize="true"
-			   data-tfoot-fixed="true"
-			   data-column-prepend="1:checkbox"
-			   data-page="apsAnnualplanm_page#(pageId)"
-			   data-rowtpl="jboltTable_demotplsum_#(pageId)"
-			   data-toolbar="AnnualOrderM_toolbarsum_#(pageId)"
-		>
-			<thead>
-			<tr>
-				<th  data-column="index" rowspan="3">序号</th>
-				<th  data-column="cworkname" rowspan="3">产线名称</th>
-				<th  data-column="cinvcode" rowspan="3">存货编码</th>
-				<th  data-column="cinvcode1" rowspan="3">客户部番</th>
-				<th  data-column="cinvname1" rowspan="3">部品名称</th>
-				<th  data-column="colname" rowspan="3">项目</th>
-				<th  data-column="colname" rowspan="3"></th>
-				#for(item:daylist)
-				<th  colspan="3">#(item)</th>
-				#end
-			</tr>
-			<tr>
-				#for(item:weeklist)
-				<th colspan="3">#(item)</th>
-				#end
-			</tr>
-			<tr>
-				#for(item:classlist)
-				<th data-column="worki" >#(item)</th>
-				#end
-			</tr>
-			</thead>
-			<tbody></tbody>
-			<tfoot>
-
-			</tfoot>
-		</table>
-	</div>
-</div>
+    /* 表格按钮 */
+    .but_box button {
+        padding: 3px 10px;
+        margin-right: 8px;
+        background-color: #fff;
+        border: #797979 1px solid;
+        border-radius: 5px;
+    }
+    /* 弹出框样式 */
+    .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        display: none;
+    }
+    .popup p{
+        margin-bottom: 10px;
+        margin-top: 0px;
+        display: flex;
+        line-height: 45px;
+        font-size: 16px;
+    }
+    .popup p span:nth-child(1){
+        flex: 1;
+    }
+    .popup p span:nth-child(2){
+        font-size: 30px;
+        cursor: pointer;
+    }
+</style>
 #end
 
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div>
+    <div class="jbolt_page_content">
+        <div class="sample-container">
+            <!-- 表格 -->
+            <div id="table-tool">
+                <!-- 表格工具开始 -->
+                <div class="but_box">
+                    <button class="button" lay-on="test-tips-prompt-0">数据导出</button>
+                    <button class="button" id="loadExcel">数据导入</button>
+                    <button class="button" onClick="seva()">保存</button>
+                </div>
+                <!-- 创建表格目标DOM元素，id为ss的HTML -->
+                <div id="ss" class="spread-container"></div>
+                <div id="statusBar" class="gc-statusbar"></div>
+            </div>
+        </div>
+    </div>
+    <!--导入弹出框开始-->
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup1">
+        <p><span>请上传要导入的文件</span><span onClick="hidePopup()">x</span></p>
+        <input type="file" id="fileDemo" class="input">
+        <button onclick="importSubmit()" class="button" style="float: right;width: 60px">确定</button>
+    </div>
+    <!--导入弹出框结束-->
+</div>
+#end
 #define js()
+<script type="text/javascript" src="assets/plugins/Grape/gc.spread.sheets.all.12.0.7.min.js"></script>
+<script src="assets/js/pagination/layui/layui.js"></script>
+<script type="text/javascript" src="assets/plugins/Grape/gc.spread.excelio.12.0.7.min.js"></script>
+<script type="text/javascript" src="assets/plugins/Grape/FileSaver.min.js"></script>
 <script type="text/javascript">
+    var taskId = ("#(taskId??)");
+    /**
+     * @param Api 公共接口
+     */
+    var Api = '/';
+    var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
+    var excelIo = new GC.Spread.Excel.IO();//开启导入导出api
+    //设置状态栏
+    var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
+    var sheet = spread.getSheet(0);//按照下标获取表单
+    //设置全局内容水平垂直居中
+    sheet.getRange(-1,-1,-1,-1).hAlign(GC.Spread.Sheets.HorizontalAlign.center).vAlign(GC.Spread.Sheets.VerticalAlign.center);
+    //设置全局的字体样式
+    sheet.getRange(-1, -1,-1,-1).font('宋体 bold 10px');
+    //状态栏
+    statusBar.bind(spread);
+    spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
+    var parmsDefault = {
+        RowCount:200,           //一列多少单元格
+        ColumnCount:500,         //一行多少单元格
+        rowindex:0,				//x轴索引
+        columnindex:0,			//y轴索引
+        dayRow:10,              //day渲染起始下标
+        weekRow:10,             //week渲染起始下标
+        tableData:[],           //接收添加的数据
+        editCellValue:[],       //存储要保存的数据
+    };
+    var parmsArr = [Object.assign({},parmsDefault)];
+    //添加属性
+    parmsArr[0]['spread'] = spread;
+    parmsArr[0]['activeSheet'] = spread.getSheet(0);//获取指定的表单
+    var parms = parmsArr[0];
+    /*工作簿暂停活性*/
+    function spreadSuspend() {
+        spread.suspendPaint(); //渲染前失活(提升性能)
+        spread.suspendCalcService(); //暂停计算服务
+    }
+    /*工作簿开启活性*/
+    function spreadResume() {
+        spread.resumeCalcService(); //开启计算服务
+        spread.resumePaint(); //恢复绘制
+    }
+    //设置全局表单的背景颜色
+    spread.options.grayAreaBackColor = '#fff';
+    initData();
+    initDate();
+    loadInit();
+    //监听双击单元格
+    sheet.bind(GC.Spread.Sheets.Events.CellDoubleClick, function (e, info) {
+        let {row,col} = info;
+        var cell = sheet.getCell(row,col);
+        if(sheet.options.isProtected == true && cell.locked() == true) {
+            LayerMsgBox.error("禁止修改",1000);
+        }
+    });
+    // 监听单元格值变化事件
+    sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (sender, args) {
+        let {row,col,newValue,oldValue} = args;
+        if(newValue!=oldValue){
+            let rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取当前行数据
+            let colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取当前列数据
+            let productionLineObj = parms['pageData'].find((v,i)=>v.cinvcode==rowData[0][7]).rowdatas.find((v,i)=>v.cmodocno==colData[row-1][0]);//查找到当前id对象
+            let editCellValueObj = {
+                iautoid:productionLineObj.iautoid,//id
+                qty:newValue
+            }
+            parms.editCellValue.push(editCellValueObj)
+            if(typeof newValue==="number"){
+                const style_1S = new GC.Spread.Sheets.Style();
+                style_1S.backColor = "red";
+                parms.activeSheet.setStyle(row, col,style_1S);
+            }else{
+                LayerMsgBox.error('请输入数字',1000);
+                parms.editCellValue.length=0;
+            }
+        }
+    });
+    /**
+     * 保存事件
+     * @param seva
+     */
+    function seva() {
+        let url = `admin/modocbatch/savePlan`
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            data:{
+                modoc:JSON.stringify(parms.editCellValue)//修改单元格之后的数据--[object]
+            },
+            success:function (res){
+                console.log(res,'success')
+                if(res.data?.msg=='操作成功'){
+                    LayerMsgBox.success(res.data.msg)
+                    parms.editCellValue.length=0;
+                    initData();
+                }else{
+                    LayerMsgBox.error(res.msg,1000);
+                    parms.editCellValue.length=0;
+                }
+            },error: function(error) {
+                console.log(error,'error');
+            }
+        })
+    }
 
-	function selectMonthPlanBtn2(ele){
-		let startdate = $("#startdate").val();
-		let enddate = $("#enddate").val();
-		let cworkname = $("#cworkname").val();
-		let cinvcode = $("#cinvcode").val();
-		let cinvcode1 = $("#cinvcode1").val();
-		let cinvname1 = $("#cinvname1").val();
-		JBoltTabUtil.currentTabGo(`admin/scheduproductplanmonth/planandactualview`,
-				{"startdate":startdate,"enddate":enddate,"cworkname":cworkname,"cinvcode":cinvcode,"cinvcode1":cinvcode1,"cinvname1":cinvname1});
-	}
-	function clearFormBtn2(ele){
-		$("#startdate").val('');
-		$("#enddate").val('');
-		$("#cworkname").val('');
-		$("#cinvcode").val('');
-		$("#cinvcode1").val('');
-		$("#cinvname1").val('');
-	}
-
+    /**
+     * 初始化产线数据
+     * @param initData
+     */
+    function initData(){
+        spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
+        sheet.options.isProtected = true; // 开启工作表保护
+        sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
+        sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
+        sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
+        let url = `admin/modocbatch/getEditorialPlanDatas?taskid=${taskId==''?1668495051179982848:taskId}`
+        LayerMsgBox.loading("正在获取最新数据...",20000);
+        $.ajax({
+            url,
+            type:'get',
+            dataType:'json',
+            success:function (respons){
+                LayerMsgBox.closeLoading();
+                const jsonData = respons;
+                parms['pageData'] = jsonData.data;
+                console.log(jsonData)
+                spreadSuspend();//暂停绘制
+                let rowIndex = 4;
+                let colIndex=0;
+                let serialCol = 1;
+                let codeRow = 4;
+                for (let i = 0; i < respons.data.length; i++) {
+                    sheet.setColumnVisible(7, false);//隐藏第8列
+                    //设置第9列数据
+                    for (let s = 0; s < 2; s++) {
+                        sheet.setValue(codeRow+s, 7, respons.data[i].cinvcode);
+                        // //存储当前循环的最后一次length
+                        if(s==1){
+                            codeRow=codeRow+2;
+                        }
+                    }
+                    //
+                    sheet.setValue(rowIndex, colIndex,i+1);
+                    sheet.addSpan(rowIndex,colIndex,2,1);
+                    //
+                    sheet.setValue(rowIndex, colIndex+1,respons.data[i].cworkname);
+                    sheet.addSpan(rowIndex,colIndex+1,2,1);
+                    parms.activeSheet.setColumnWidth(1, 150);//设置指定单元格的width
+                    //
+                    sheet.setValue(rowIndex, colIndex+2,respons.data[i].cinvcode);
+                    sheet.addSpan(rowIndex,colIndex+2,2,1);
+                    //
+                    sheet.setValue(rowIndex, colIndex+3,respons.data[i].cinvcode1);
+                    sheet.addSpan(rowIndex,colIndex+3,2,1);
+                    parms.activeSheet.setColumnWidth(3, 200);//设置指定单元格的width
+                    //
+                    sheet.setValue(rowIndex, colIndex+4,respons.data[i].cinvname1);
+                    sheet.addSpan(rowIndex,colIndex+4,2,1);
+                    parms.activeSheet.setColumnWidth(4, 200);//设置指定单元格的width
+                    //
+                    sheet.setValue(rowIndex, colIndex+5,"工单号");
+                    const style_1S = new GC.Spread.Sheets.Style();
+                    style_1S.backColor = "#F0F0F0";
+                    parms.activeSheet.setStyle(rowIndex, 5,style_1S);
+                    parms.activeSheet.addSpan(rowIndex,5,1,2);
+                    //
+                    sheet.setValue(rowIndex+1, colIndex+5,"生产计划量");
+                    const style_2S = new GC.Spread.Sheets.Style();
+                    style_2S.backColor = "#F0F0F0";
+                    parms.activeSheet.setStyle(rowIndex+1, 5,style_2S);
+                    parms.activeSheet.addSpan(rowIndex+1,5,1,2);
+                    //
+                    respons.data[i].rowdatas.forEach(function(item,index){
+                        //
+                        sheet.setValue(rowIndex, colIndex+8+index,item.cmodocno);
+                        const style_3S = new GC.Spread.Sheets.Style();
+                        style_3S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(rowIndex,colIndex+8+index,style_3S);
+                        sheet.getCell(rowIndex, colIndex+7+index).locked(true);
+                        //
+                        sheet.setValue(rowIndex+1, colIndex+8+index,item.iqty);
+                        sheet.getCell(rowIndex+1, colIndex+8+index).locked(false);
+                        parms.activeSheet.setColumnWidth(colIndex+8+index, 140);//设置指定单元格的width
+                        if(item.ismodified==1){
+                            const style_1S = new GC.Spread.Sheets.Style();
+                            style_1S.backColor = "red";
+                            parms.activeSheet.setStyle(rowIndex+1, colIndex+8+index,style_1S);
+                            sheet.getCell(rowIndex+1, colIndex+8+index).locked(false);
+                        }
+                    })
+                    rowIndex = rowIndex+2;
+                }
+                spreadResume();// 恢复绘制
+            },error: function(error) {
+                console.log(error);
+            }
+        })
+    }
+    /**
+     * 获取接口返回的日期数据
+     * @param initDate
+     * @param parms 自定义对象，用户接收数据
+     * @param sheet 当前活动表单
+     */
+    function initDate() {
+        let url = `admin/modocbatch/personEditHeaderDatas?taskid=${taskId==''?1668495051179982848:taskId}`
+        $.ajax({
+            url,
+            type:'get',
+            dataType:'json',
+            success:function (respons){
+                let tableHeadArray = respons.data.datas;
+                spreadSuspend();//暂停绘制
+                //渲染日期班次
+                let dateCol = 8;
+                let dateRow = 0;
+                let colSpan = 6;
+                spread.getActiveSheet().setRowVisible(1, false);//隐藏第2行
+                for (let i = 0; i < tableHeadArray.length; i++) {
+                    for (let j = 0; j < tableHeadArray[i].length; j++) {
+                        colSpan=colSpan+tableHeadArray[i].length-1;
+                        if(j<tableHeadArray[i].length-1){
+                            //
+                            sheet.setValue(dateRow, dateCol++,tableHeadArray[i].at(-1).yeartodate);
+                            //
+                            sheet.setValue(dateRow+2, dateCol-1,tableHeadArray[i][j].weeks);
+                            //
+                            sheet.setValue(dateRow+3, dateCol-1,tableHeadArray[i][j].cworkshiftcode);
+                        }
+                        parms.activeSheet.addSpan(0,colSpan,1,tableHeadArray[i].length-1);
+                        parms.activeSheet.addSpan(2,colSpan,1,tableHeadArray[i].length-1);
+                        sheet.setValue(dateRow+1, dateCol-1,tableHeadArray[i].at(-1).yeartodate);
+                    }
+                }
+                spreadResume();// 恢复绘制
+            },error: function(error) {
+                console.log(error);
+            }
+        })
+    }
+    /**
+     * 初始化产线数据
+     * @param loadInit
+     */
+    function loadInit(){
+        //设置单元格内容的对齐方式
+        var style = new GC.Spread.Sheets.Style();
+        style.hAlign = GC.Spread.Sheets.HorizontalAlign.center;
+        style.vAlign = GC.Spread.Sheets.VerticalAlign.center;
+        spread.sheets.forEach(function(sheet) {
+            sheet.setDefaultStyle(style, GC.Spread.Sheets.SheetArea.viewport);
+        });
+        //设置全局的列宽行高
+        sheet.defaults.colWidth = 80;
+        sheet.defaults.rowHeight = 30;
+        spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
+        spread.getSheet(0).setColumnCount(parms.ColumnCount); //设置一行有多少个单元格
+        //设置value值和该单元格的对齐方式
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex).text("序号");
+        parms.activeSheet.setColumnWidth(parms.columnindex, 40);//设置指定单元格的width
+        sheet.addSpan(0,0,4,1);
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+1).text("产线名称");
+        parms.activeSheet.setColumnWidth(parms.columnindex+1, 60);//设置指定单元格的width
+        parms.activeSheet.addSpan(0,1,4,1);
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+2).text("存货编码");
+        parms.activeSheet.addSpan(0,2,4,1);
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+3).text("客户部番");
+        parms.activeSheet.addSpan(0,3,4,1);
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+4).text("部品名称");
+        parms.activeSheet.addSpan(0,4,4,1);
+        parms.activeSheet.setColumnWidth(parms.columnindex+4, 100);//设置指定单元格的width
+        parms.activeSheet.getCell(parms.rowindex, parms.columnindex+5).text("");
+        parms.activeSheet.addSpan(0,5,4,2);
+    }
+    layui.use(function(){
+        var layer = layui.layer;
+        var util = layui.util;
+        // 事件
+        util.on('lay-on', {
+            'test-tips-prompt-0': function(){
+                layer.prompt({title: '请输入文本'}, function(value, index, elem){
+                    console.log(index)
+                    if(value === '') return elem.focus();
+                    if(index==100002){
+                        var json = spread.toJSON();//转为json格式
+                        excelIo.save(json, function (blob) {
+                            saveAs(blob, value+'.xlsx');//转成xlsx
+                        });
+                    }
+                    // 关闭 prompt
+                    layer.close(index);
+                });
+            }
+        })
+    });
+    /**
+     * 确定导入文件
+     * @param importSubmit
+     */
+    function importSubmit() {
+        var excelFile = document.getElementById("fileDemo").files[0];//获取用户上传文件
+        excelIo.open(excelFile, function (json) {
+            var workbookObj = json;
+            spread.fromJSON(workbookObj);
+        }, function (e) {
+            alert(e.errorMessage);
+        });
+        hidePopup();
+    }
+    /**
+     * 数据导入
+     * @param loadExcel 按钮节点
+     */
+    document.getElementById('loadExcel').onclick = function () {
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById("popup1").style.display = "block";
+    };
+    /**
+     * 隐藏数据导出弹出框
+     * @param hidePopup
+     */
+    function hidePopup() {
+        document.getElementById("popup1").style.display = "none";
+        document.getElementById("overlay").style.display = "none";
+    }
 </script>
 #end

@@ -9,9 +9,9 @@
                 <h1>工单管理</h1>
             </div>
             <div class="col">
-                <form class="form-inline" id="moDocForm_#(pageId)" >
+                <form class="form-inline" id="moDocForm_#(pageId)">
                     <input type="text" autocomplete="off" class="form-control" placeholder="=工单号=" name="cMoDocNo" value=""/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="iInventoryId" value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cInvCode1" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cInvName1" value=""/>
                     <!--<input type="text" autocomplete="off" class="form-control" placeholder="=生产部门=" name="cDepName" value=""/>-->
@@ -46,19 +46,27 @@
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a href="admin/modoc/details/${data.iautoid}" data-area="1600,800"  tooltip data-title="制造工单详情"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
-	<!--<a href="admin/modoc/edit/${data.iautoid}" data-area="1200,800"  tooltip data-title="现品票"  data-handler="refreshJBoltTable" data-dialog-title="现品票" class="jbolt_table_editbtn">现品票</a>-->
-       {@if data.istatus < 4}
-     <button data-openpage="dialog"  data-handler="jboltTablePageToFirst"
-                        data-title="" data-url="admin/modoc/edit/${data.iautoid}" data-fs="true"  class="btn btn-outline-primary btn-sm">现品票
-                </button>
-            {@/if}
-      {@if data.istatus < 7}
-    <a href="admin/modoc/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="关闭" data-handler="refreshJBoltTable" data-confirm="确定关闭此数据？" class="jbolt_table_delbtn">关闭</a>
-        {@/if}
+    {@if data.istatus != 0}
+        <a href="admin/modoc/details/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单详情"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn" data-btn="no">查看</a>
+    {@/if}
+    {@if data.istatus == 0 && data.itype == 2}
+        <a href="admin/modoc/updatas/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn">编辑</a>
+    {@/if}
+    {@if data.istatus == 0 || data.istatus == 11}
+        <a data-ajaxbtn href="/admin/person/deleteByAjax" data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+    {@/if}
+    {@if data.istatus == 4 || data.istatus == 5 }
+        <a href="admin/modoc/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="关闭" data-handler="refreshJBoltTable" data-confirm="确定关闭此数据？" class="jbolt_table_delbtn">关闭</a>
+    {@/if}
+    {@if data.istatus == 4  || data.istatus== 5 || data.istatus== 6 ||  data.istatus==7}
+        <button data-openpage="dialog"  data-handler="jboltTablePageToFirst"
+             data-title="" data-url="admin/modoc/edit/${data.iautoid}"  data-area="100%,100%" data-fs="true"  class="btn btn-outline-primary btn-sm">现品票
+        </button>
+    {@/if}
 </td>
-            <td hidden >${data.iautoid}</td>
-            <td style="color: red">${data.istatusname}</td>
+            <td hidden>${data.iautoid}</td>
+            <td style="color: red">${data.istatus | moDocType}</td>
+            <td >${data.itype | moDociType}</td>
             <td>${data.dplandate|date_ymd}</td>
             <td>${data.cmodocno}</td>
             <td>${data.cdepname}</td>
@@ -106,14 +114,13 @@
                data-toolbar="moDoc_toolbar_#(pageId)"
                data-fixed-columns-left="1,2,3"
                data-row-dblclick-active="false"
-
         >
-            <thead>
+        <thead>
             <tr>
                 <th data-width="60">序号</th>
-                <th data-width="150">操作</th>
-                <th hidden data-width="150" data-column="iAutoId">id</th>
+                <th data-width="250">操作</th>
                 <th data-width="150" data-column="iStatus">状态</th>
+                <th data-width="150" data-column="iType">单据来源</th>
                 <th data-width="150" data-column="dPlanDate">计划日期</th>
                 <th data-width="150" data-column="cMoDocNo">工单号</th>
                 <th data-width="150" data-column="cDepName">生产部门</th>

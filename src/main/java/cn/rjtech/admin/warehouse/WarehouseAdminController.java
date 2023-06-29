@@ -6,6 +6,7 @@ import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Warehouse;
@@ -45,6 +46,7 @@ public class WarehouseAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         Page<Record> page = service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv());
         renderJsonData(page);
@@ -157,6 +159,7 @@ public class WarehouseAdminController extends BaseAdminController {
         renderJxls("warehouse.xlsx", Kv.by("rows", rows), "仓库列表_" + DateUtil.today() + ".xlsx");
     }
 
+    @UnCheck
     public void options() {
         renderJsonData(service.options());
     }
@@ -169,5 +172,12 @@ public class WarehouseAdminController extends BaseAdminController {
             return;
         }
         renderJson(service.importExcelClass(file.getFile()));
+    }
+
+    /**
+     * 导入模板下载
+     */
+    public void templateDownload() throws Exception {
+        renderJxls("warehouse_import.xlsx", Kv.by("rows", null), "仓库档案导入模板.xlsx");
     }
 }

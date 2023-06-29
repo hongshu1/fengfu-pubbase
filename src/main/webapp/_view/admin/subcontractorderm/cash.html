@@ -203,16 +203,18 @@
             LayerMsgBox.alert("包装数量不能小于0",2);
             return ;
         }
+        var index = LayerMsgBox.loading();
         Ajax.post('/admin/subcontractorderm/updateOrderBatch', {
             subcontractOrderMId: subcontractOrderMId,
             id: id,
             cVersion: version,
             qty: qty
         },  function(ret) {
-                if (ret.state == 'ok'){
-                    index = 0;
-                    refreshPjaxContainer();
-                }
+            LayerMsgBox.close(index);
+            if (ret.state == 'ok'){
+                index = 0;
+                refreshPjaxContainer();
+            }
         });
     }
 

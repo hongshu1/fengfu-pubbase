@@ -2,6 +2,7 @@ package cn.rjtech.admin.materialreturnlist;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.SystemLog;
@@ -16,11 +17,17 @@ import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoredetailService;
-import cn.rjtech.model.momdata.MaterialsOut;
+import cn.rjtech.config.AppConfig;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
+import cn.rjtech.model.momdata.Vendor;
+import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO;
+import cn.rjtech.util.BaseInU8Util;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
+import cn.rjtech.wms.utils.StringUtils;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
@@ -40,7 +47,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: RJ
  * @date: 2023-05-19 10:49
  */
-public class SysPuinstoreListService extends BaseService<SysPuinstore> {
+public class SysPuinstoreListService extends BaseService<SysPuinstore> implements IApprovalService {
 
 	private final SysPuinstore dao = new SysPuinstore().dao();
 
@@ -204,7 +211,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	}
 
 
-	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, Integer param, String revokeVal) {
+	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
@@ -251,34 +258,25 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 
 		tx(()->{
 			String headerId = null;
-			String whcode = null;
+
 			// 获取Form对应的数据
 			if (jBoltTable.formIsNotBlank()) {
 				SysPuinstore puinstore = jBoltTable.getFormModel(SysPuinstore.class,"puinstore");
-				Record record = jBoltTable.getFormRecord();
-				whcode = record.get("whcode");//仓库
+
 
 
 //				detailByParam = dbTemplate("syspureceive.purchaseOrderD", kv).findFirst();
 //				detailByParam = sysPuinstoreService.findSysPODetailByParam(kv);
 
 				//	行数据为空 不保存
-				if ("save".equals(revokeVal)) {
-					if (puinstore.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
-						ValidationUtils.error( "请先添加行数据！");
-					}
+				if (puinstore.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
+					ValidationUtils.error( "请先添加行数据！");
 				}
 
-				if ("submit".equals(revokeVal) && puinstore.getAutoID() == null) {
-					ValidationUtils.error( "请保存后提交审核！！！");
-				}
-
-
-				if (puinstore.getAutoID() == null && "save".equals(revokeVal)) {
+				if (puinstore.getAutoID() == null) {
 //					保存
 //					订单状态：0=待审核，1=未审核，2=已审核. 3=审核不通过
-					puinstore.setIAuditStatus(param);
-
+					puinstore.setIAuditStatus(0);
 					//创建人
 					puinstore.setICreateBy(userId);
 					puinstore.setDCreateTime(nowDate);
@@ -295,12 +293,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					save(puinstore);
 					headerId = puinstore.getAutoID();
 				}else {
-					Integer  a = Integer.valueOf(param);
-					if ( a  == 2){
-						puinstore.setAuditDate(nowDate);
-						puinstore.setCAuditName(userName);
-					}
-					puinstore.setIAuditStatus(param);
+					//更新人
+					puinstore.setIUpdateBy(userId);
 					puinstore.setDUpdateTime(nowDate);
 					puinstore.setCUpdateName(userName);
 					update(puinstore);
@@ -348,12 +342,12 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 					}
 				}
 				String finalHeaderId = headerId;
-				String finalWhcodes = whcode;
+
 				lines.forEach(materialsOutDetail -> {
 					Object qtys = materialsOutDetail.get("qty");
 					System.out.println(qtys);
 					materialsOutDetail.setMasID(finalHeaderId);
-					materialsOutDetail.setWhcode(finalWhcodes);
+
 					materialsOutDetail.setDCreateTime(nowDate);
 					materialsOutDetail.setCCreateName(userName);
 					materialsOutDetail.setDUpdateTime(nowDate);
@@ -366,9 +360,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 				List<SysPuinstoredetail> lines = jBoltTable.getUpdateModelList(SysPuinstoredetail.class);
 
 				String finalHeaderId = headerId;
-				String finalWhcodes1 = whcode;
 				lines.forEach(materialsOutDetail -> {
-					materialsOutDetail.setWhcode(finalWhcodes1);
 					materialsOutDetail.setDUpdateTime(nowDate);
 					materialsOutDetail.setCUpdateName(userName);
 				});
@@ -391,90 +383,6 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 	 */
 	public List<Record> getBarcodeDatas(Kv kv) {
 		return dbTemplate("materialreturnlist.getBarcodeDatas",kv).find();
-	}
-
-	/**
-	 * 详情页提审
-	 */
-	public Ret submit(Long iautoid) {
-		tx(() -> {
-			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"T_Sys_PUInStore");
-			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-			// 处理其他业务
-			SysPuinstore sysPuinstore = findById(iautoid);
-			sysPuinstore.setIAuditStatus(1);
-			ValidationUtils.isTrue(sysPuinstore.update(),JBoltMsg.FAIL);
-			return true;
-		});
-		return SUCCESS;
-	}
-
-
-	/**
-	 * 详情页审核
-	 */
-	public Ret approve(String ids) {
-		tx(() -> {
-			boolean success = false;
-			Long userId = JBoltUserKit.getUserId();
-			String userName = JBoltUserKit.getUserName();
-			Date nowDate = new Date();
-			SysPuinstore sysPuinstore = superFindById(ids);
-			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-			if (sysPuinstore.getIAuditStatus() != 1) {
-				ValidationUtils.error("订单："+sysPuinstore.getBillNo()+"状态不支持审核操作！");
-			}
-			//订单状态：3. 已审核
-			sysPuinstore.setIAuditStatus(2);
-			//审核人
-			sysPuinstore.setIAuditBy(userId);
-			sysPuinstore.setCAuditName(userName);
-			sysPuinstore.setDAuditTime(nowDate);
-			Ret ret = this.pushU8(ids);
-			success= sysPuinstore.update();
-
-			return true;
-		});
-
-		return SUCCESS;
-	}
-
-	/**
-	 * 详情页审核不通过
-	 */
-	public Ret reject(Long ids) {
-		tx(() -> {
-			SysPuinstore sysPuinstore = superFindById(ids);
-			if (sysPuinstore.getIAuditStatus() != 2) {
-				ValidationUtils.error("订单："+sysPuinstore.getBillNo()+"状态不支持反审批操作！");
-			}
-			sysPuinstore.setIAuditStatus(1);
-			sysPuinstore.update();
-			return true;
-		});
-		return SUCCESS;
-	}
-
-
-
-
-	/**
-	 * 撤回
-	 * @param iAutoId
-	 * @return
-	 */
-	public Ret recall(String iAutoId) {
-		if( notOk(iAutoId)) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		SysPuinstore puinstore = findById(iAutoId);
-		puinstore.setIAuditStatus(0);
-		puinstore.setIAuditBy(null);
-		puinstore.setAuditDate(null);
-		puinstore.setCAuditName(null);
-		boolean result = puinstore.update();
-		return ret(result);
 	}
 
 	/**
@@ -537,186 +445,79 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> {
 		if(null == first){
 			ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "采购入库没有此数据！！！");
 		}
-		Record first2 = dbTemplate("materialreturnlist.barcode", kv).findFirst();
+		Record first2 = dbTemplate("materialreturnlist.getBarcodes", kv).findFirst();
 		return first2;
 	}
 
-
-
-	public Ret pushU8(String id) {
-		List<Record> list = dbTemplate("materialreturnlist.pushU8List", Kv.by("autoid", id)).find();
-
-		if (list.size() > 0) {
-//          接口参数
-			User user = JBoltUserKit.getUser();
-			String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
-			String userCode = user.getUsername();
-			Long userId = user.getId();
-			String type = "PUInStore";
-			Record record1 = list.get(0);
-			String organizecode = record1.get("organizecode");
-			String nowDate = DateUtil.format(new Date(), "yyyy-MM-dd");
-
-			JSONObject preAllocate = new JSONObject();
-			preAllocate.put("userCode",userCode);
-			preAllocate.put("organizeCode",organizecode);
-			preAllocate.put("CreatePerson",userId);
-			preAllocate.put("CreatePersonName",user.getName());
-			preAllocate.put("loginDate", nowDate);
-			preAllocate.put("tag",type);
-			preAllocate.put("type",type);
-			JSONArray mainData = new JSONArray();
-			list.forEach(record -> {
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("IsWhpos","1");
-				jsonObject.put("iwhcode", record.get("iwhcode"));
-				jsonObject.put("InvName", record.get("invname"));
-				jsonObject.put("VenName", record.get("venname"));
-				jsonObject.put("VenCode", record.get("vencode"));
-				jsonObject.put("Qty", record.get("qty"));
-				jsonObject.put("organizeCode", organizecode);
-				jsonObject.put("InvCode", record.get("invcode"));
-				jsonObject.put("Num", "0");
-				jsonObject.put("index", "1");
-				jsonObject.put("PackRate", "0");
-				jsonObject.put("ISsurplusqty", "false");
-				jsonObject.put("CreatePerson", userCode);
-				jsonObject.put("BarCode", record.get("barcode"));
-				jsonObject.put("BillNo", record.get("billno"));
-				jsonObject.put("BillID", record.get("billno"));
-				jsonObject.put("BillNoRow", record.get("billnorow"));
-				jsonObject.put("BillDate", record.get("billdate"));
-				jsonObject.put("BillDid", record.get("billno"));
-				jsonObject.put("sourceBillNo", record.get("sourcebillno"));
-				jsonObject.put("sourceBillDid", record.get("sourcebilldid"));
-				jsonObject.put("sourceBillID", record.get("sourcebillid"));
-				jsonObject.put("sourceBillType", record.get("sourcebilltype"));
-				jsonObject.put("SourceBillNoRow", record.get("sourcebillnorow"));
-				jsonObject.put("tag", type);
-				jsonObject.put("IcRdCode", record.get("icrdcode"));
-				jsonObject.put("iposcode", record.get("iposcode"));
-				mainData.add(jsonObject);
-
-			});
-
-//            参数装载
-			Map<String, Object> data = new HashMap<>();
-			data.put("organizeCode", organizecode);
-			data.put("userCode", userCode);
-			data.put("PreAllocate", preAllocate);
-			data.put("MainData", mainData);
-
-//            请求头
-			Map<String, String> header = new HashMap<>(5);
-			header.put("Content-Type", "application/json");
-
-
-			SystemLog systemLog = new SystemLog();
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append("<span class='text-danger'>[物料退货列表推U8操作]</span>");
-//            stringBuilder.append("<span class='text-primary'>[url="+url+"]</span>");
-//            stringBuilder.append("<span class='text-danger'>[参数={"+JSONObject.toJSONString(data)+"}]</span>");
-			systemLog.setType(2);
-			systemLog.setCreateTime(new Date());
-			systemLog.setUserId(JBoltUserKit.getUserId());
-			systemLog.setUserName(JBoltUserKit.getUserUserName());
-			systemLog.setOpenType(1);
-			systemLog.setTargetId(1L);
-			systemLog.setTargetType(1);
-			Ret ret = new Ret();
-			try {
-				String post = HttpApiUtils.httpHutoolPost(url, data, header);
-				if (isOk(post)) {
-					JSONObject parseObject = JSONObject.parseObject(post);
-					stringBuilder.append("<span class='text-primary'>[成功返回参数=").append(post).append("]</span>");
-					String code = parseObject.getString("code");
-					String msg = parseObject.getString("message");
-
-					LOG.info("data====" + data);
-					if ("200".equals(code)) {
-						String[] s = msg.split(",");
-						String bill = s[0];
-						LOG.info("s===>" + bill);
-						LOG.info("data====" + data);
-
-//						int update = update("update T_Sys_SOReturn set U9BillNo = '" + bill + "', status = '2' where" + " AutoID " + "= " + "'" + id + "'");
-
-//						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
-//								"推送数据失败," + "失败原因" + msg);
-					}
-					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
-				} else {
-					stringBuilder.append("<span class='text-primary'>[失败返回参数=").append(post).append("]</span>");
-					return fail("请求失败");
-				}
-			} catch (Exception e) {
-				stringBuilder.append("<span class='text-primary'>[失败异常=").append(e.getMessage()).append("]</span>");
-				e.printStackTrace();
-			} finally {
-				systemLog.setTitle(stringBuilder.toString());
-				systemLog.save();
-			}
-			return fail("请求失败");
-		} else {
-			ValidationUtils.error("查无此单");
-		}
-
-		return SUCCESS;
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		sysPuinstoreService.batchApprove(StringUtils.join(formAutoId, COMMA));
+		return null;
 	}
 
-	/**
-	 * 批量审核
-	 * @param ids
-	 * @return
-	 */
-	public Ret batchApprove(String ids) {
-		tx(() -> {
-			boolean success = false;
-			Long userId = JBoltUserKit.getUserId();
-			String userName = JBoltUserKit.getUserName();
-			Date nowDate = new Date();
-			List<SysPuinstore> listByIds = getListByIds(ids);
-			if (listByIds.size() > 0) {
-				for (SysPuinstore sysPuinstore : listByIds) {
-					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-					if (sysPuinstore.getIAuditStatus() != 1) {
-						ValidationUtils.error("订单：" + sysPuinstore.getBillNo() + "状态不支持审核操作！");
-					}
-					//订单状态：2. 已审核
-					sysPuinstore.setIAuditStatus(2);
-					//审核人
-					sysPuinstore.setIAuditBy(userId);
-					sysPuinstore.setCAuditName(userName);
-					sysPuinstore.setDAuditTime(nowDate);
-					Ret ret = this.pushU8(ids);
-					success = sysPuinstore.update();
-				}
-			}
-			return true;
-		});
-		return SUCCESS;
+	@Override
+	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+		return null;
 	}
 
-	/**
-	 * 批量反审核
-	 * @param ids
-	 * @return
-	 */
-	public Ret batchReverseApprove(String ids) {
-		tx(() -> {
-			//TODO数据同步暂未开发 现只修改状态
-			for (SysPuinstore sysPuinstore :  getListByIds(ids)) {
-//			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-				if (sysPuinstore.getIAuditStatus() != 2) {
-					ValidationUtils.error("订单："+sysPuinstore.getBillNo()+"状态不支持反审核操作！");
-				}
-				sysPuinstore.setIAuditStatus(1);
-				sysPuinstore.update();
-			}
-
-			return true;
-		});
-		return SUCCESS;
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
 	}
 
+	@Override
+	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		SysPuinstore sysPuinstore = findById(formAutoId);
+		sysPuinstore.setIAuditBy(null);
+		sysPuinstore.setCAuditName(null);
+		sysPuinstore.setDAuditTime(null);
+		sysPuinstore.update();
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		sysPuinstoreService.batchApprove(StringUtils.join(formAutoIds, COMMA));
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		return null;
+	}
 }

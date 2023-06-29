@@ -24,7 +24,7 @@ import java.util.Date;
  * @author: RJ
  * @date: 2023-05-11 14:54
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.TRANSVOUCH)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/transvouch", viewPath = "/_view/admin/transvouch")
 public class TransVouchAdminController extends BaseAdminController {
@@ -42,6 +42,7 @@ public class TransVouchAdminController extends BaseAdminController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		Kv kv =new Kv();
 		kv.setIfNotNull("selectparam", get("billno"));
@@ -90,8 +91,8 @@ public class TransVouchAdminController extends BaseAdminController {
 			return;
 		}
 		set("transVouch",transVouch);
+		set("readonly", get("readonly"));
 		set("type", get("type"));
-		set("edit", get("edit"));
 		render("edit.html");
 	}
 
@@ -138,64 +139,8 @@ public class TransVouchAdminController extends BaseAdminController {
 	/**
 	 * JBoltTable 可编辑表格整体提交 多表格
 	 */
-	public void submitMulti(Integer param, String revokeVal) {
-		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal));
-	}
-
-
-	/**
-	 * 批量审核
-	 */
-	public void batchApprove(String ids) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
-			renderFail(JBoltMsg.PARAM_ERROR);
-			return;
-		}
-		renderJson(service.batchApprove(ids));
-	}
-
-	/**
-	 * 批量反审核
-	 */
-	public void batchReverseApprove(@Para(value = "ids") String ids) {
-		ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-
-		renderJson(service.batchReverseApprove(ids));
-	}
-
-	/**
-	 * 详情页提审
-	 */
-	public void submit(@Para(value = "iautoid") Long iautoid) {
-		ValidationUtils.validateId(iautoid, "id");
-
-		renderJson(service.submit(iautoid));
-	}
-
-	/**
-	 * 详情页审核通过
-	 */
-	public void approve() {
-		renderJson(service.approve(get(0)));
-	}
-
-	/**
-	 * 详情页审核不通过
-	 */
-	public void reject() {
-		renderJson(service.reject(getLong(0)));
-	}
-
-
-	/**
-	 * 撤回
-	 */
-	public void recall(String iAutoId) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(iAutoId)) {
-			renderFail(JBoltMsg.PARAM_ERROR);
-			return;
-		}
-		renderJson(service.recall(iAutoId));
+	public void submitMulti() {
+		renderJson(service.submitByJBoltTables(getJBoltTables()));
 	}
 
 	/**

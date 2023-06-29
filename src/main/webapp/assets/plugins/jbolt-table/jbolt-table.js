@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.5.0";
+var jbolt_table_js_version="3.5.1";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 
@@ -8282,10 +8282,16 @@ function getScrollBarHeight(ele){
 			var editorEle=$(html);
 			if(colConfig&&colConfig.hasOwnProperty("handler")){
 				if(colConfig.type=="select" || colConfig.type=="autocomplete" || colConfig.type=="jboltinput"|| colConfig.type=="dialogbtn"){
-					currentTd.data("dialog-choose-choose-handler",colConfig.handler).data("jbolttable-handler-ischangecolumns",colConfig.ischangecolumns);
+					if(!currentTd.data("dialog-choose-choose-handler")){
+						currentTd.data("dialog-choose-choose-handler",colConfig.handler).data("jbolttable-handler-ischangecolumns",colConfig.ischangecolumns);
+						table.tbody.find("tr>td[data-col-index='"+currentTd.data("col-index")+"']:not([data-dialog-choose-choose-handler])").data("dialog-choose-choose-handler",colConfig.handler).data("jbolttable-handler-ischangecolumns",colConfig.ischangecolumns);
+					}
 					editorEle.find("input[data-autocomplete],input[data-jboltinput],select").data("jbolttable-handler",colConfig.handler).data("jbolttable-handler-ischangecolumns",colConfig.ischangecolumns);
 				}else{
-					currentTd.data("editable-value-change-handler",colConfig.handler).data("jbolttable-handler-ischangecolumns",colConfig.ischangecolumns);
+					if(!currentTd.data("editable-value-change-handler")){
+						currentTd.data("editable-value-change-handler",colConfig.handler).data("jbolttable-handler-ischangecolumns",colConfig.ischangecolumns);
+						table.tbody.find("tr>td[data-col-index='"+currentTd.data("col-index")+"']:not([data-dialog-choose-choose-handler])").data("editable-value-change-handler",colConfig.handler).data("jbolttable-handler-ischangecolumns",colConfig.ischangecolumns);
+					}
 				}
 			}
 			if(colConfig.type=="select"&&colConfig.options){

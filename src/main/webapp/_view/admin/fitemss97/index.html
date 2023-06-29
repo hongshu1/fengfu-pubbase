@@ -2,109 +2,172 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)" >
-
-<div class="jbolt_page_title">
-	<div class="row">
-	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>项目管理大类项目主目录</h1></div>
-	<div class="col">
-		<form class="form-inline text-left" id="fitemss97Form_#(pageId)"   onsubmit="return false;" method="post">
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
-		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-		<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-		</form>
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col-sm-auto">
+				<h1><i class="jbicon2 jbi-tags"></i> 项目分类</h1>
+			</div>
+			<div class="col">
+				<form class="form-inline text-left" id="fitemss97_form_#(pageId)">
+					<select class="form-control"
+							data-autoload
+							data-select-type="select2"
+							data-url="admin/dictionary/options?key=fitemss97class"
+							data-text="=项目大类="
+							data-value-attr="sn"
+							data-value=""
+							name="sn"
+							data-width="260"
+							onchange="onblurInput()"
+							id="searchBackGoodsTypeInput2_#(pageId)"
+					>
+					</select>
+				</form>
+			</div>
+			<div class="col-sm-auto">
+			</div>
+		</div>
 	</div>
-	<div class="col-md-auto">
+	<div class="jbolt_page_content">
+		<div class="row">
+			<div class="col-auto " style="width:26%;">
+				<div class="card">
+					<div class="card-header py-2">
+						<span class="d-inline-block py-1"><strong>项目分类</strong></span>
+						<div class="pull-right">
+
+							<input type="text" class="form-control" id="searchBackGoodsTypeInput_#(pageId)"  placeholder="搜索关键字过滤" />
+						</div>
+					</div>
+					<div class="card-header py-2">
+						<div>
+							<div class="" role="group" aria-label="btn-group">
+								<button data-area="900,600" data-openpage="dialog" data-title="新增分类" onclick="addfitemss97(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+								<button onclick="deletefitemss97(this)" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="card-body overflow-auto" style="height:600px;">
+						<div id="fitemss97Tree">
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="col-auto card " style="width:74%; margin-top: 0px">
+				<!--右边详情-->
+				<form onsubmit="return false;" id="fitemss97Form" action="#(action)" method="post">
+					<input type="hidden" name="fitemss97.iautoid" value="#(fitemss97.iautoid??)" />
+
+					<div style="padding-top: 100px">
+						<div class="form-group row">
+							<label class="col-2 col-form-label" style="padding-right: 0px; font-weight: bold">项目编码规则:</label>
+							<div class="col-3">
+								<input type="text" id="coderule" data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="5" name="fitemss97.citemccode" value="#(fitemss97.citemccode??)"/>
+							</div>
+						</div>
+						<div class="form-group row" style="padding-top: 50px">
+							<label class="col-2 col-form-label" style="padding-right: 0px; font-weight: bold">分类编码:</label>
+							<div class="col-3">
+								<input type="text" id="citemcode" data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="5" name="fitemss97.citemcode" value="#(fitemss97.citemcode??)"/>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label class="col-2 col-form-label" style="padding-right: 0px; font-weight: bold">分类名称:</label>
+							<div class="col-3">
+								<input type="text" id="citemname" data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="50" name="fitemss97.citemname" value="#(fitemss97.citemname??)"/>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
-	</div>
-</div>
-<div class="jbolt_page_content">
-<!-- JBoltTable的数据模板定义-->
-<textarea class="jb_tpl_box" id="fitemss97Rowtpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.iautoid}" >
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>
-	<a href="admin/fitemss97/edit/${data.iautoid}" data-area="900,600"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改项目管理大类项目主目录" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>修改</a>
-    <a href="admin/fitemss97/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-</td>
-<td>${data.citemcode}</td>
-<td>${data.citemname}</td>
-<td><img data-switchbtn data-confirm="确定切换是否封存？" data-value="${data.bclose}"  data-handler="refreshJBoltTable"  data-url="admin/fitemss97/toggleBclose/${data.iautoid}"/></td>
-<td>${data.citemccode}</td>
-<td><img data-switchbtn data-confirm="确定切换其它系统是否使用？" data-value="${data.iotherused}"  data-handler="refreshJBoltTable"  data-url="admin/fitemss97/toggleIotherused/${data.iautoid}"/></td>
-<td>${data.denddate|date_ymd}</td>
-<td>${data.isource|iSource}</td>
-<td>${data.ccreatename}</td>
-<td>${data.dcreatetime}</td>
-</tr>
-{@/each}
-</textarea>
 
-<!-- 工具条 toolbar -->
-<div class="jbolt_table_toolbar" id="fitemss97_toolbar_#(pageId)">
-	<div class="" role="group" aria-label="btn-group">
-		<button data-openpage="dialog" data-area="900,600"  data-handler="jboltTablePageToFirst" data-title="新增项目管理大类项目主目录"  data-url="admin/fitemss97/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-	</div>
+	<script>
+		function onblurInput() {
+			var inpVal = $("#searchBackGoodsTypeInput2_#(pageId)").val();
+			if(isOk(inpVal)){
+				treeHtml(inpVal)
+			}
+		}
 
-	<div class="clearfix"></div>
-</div>
+		treeHtml("");
+		function treeHtml(sn) {
+			setTimeout(function (){
+			mgrTreehandlerFn(sn);
+			},300)
+		}
 
+		function mgrTreehandlerFn(sn) {
+			var treeHtmlStr = "<div id='fitemss97Tree' " +
+					"data-jstree " +
+					"data-portalid='fitemss97Id' " +
+					"data-curd='false' " +
+					"data-async='true' " +
+					"data-open-level='-1' " +
+					"data-handler='mgrTreehandlerFn'"+
+					"data-read-url='admin/fitemss97/mgrTree?sn="+sn+"'" +
+					"data-change-handler='fitemss97Click'>" +
+					"</div>"
+			$("#fitemss97Tree").html(treeHtmlStr)
+			JSTreeUtil.init($("#fitemss97Tree"))
+		}
 
+		var autoid = "";
+		/*详情*/
+		function fitemss97Click(tree,data){
+			console.log(data);
+			autoid = data.id;
+			let url = "admin/fitemss97/selectFitemss97?iautoid="+autoid;
+			Ajax.get(url,function(res){
+				if (res.state === 'ok'&& res.data!=undefined){
+					let table = res.data;
+					console.log(res.data);
+					$("#citemcode").val(table.citemcode);
+					$("#citemname").val(table.citemname);
+					$("#coderule").val(table.citemccode+'-'+table.citemcode);
+				}else if(res.state === 'ok'&& res.data==undefined){
+					$("#citemcode").val(null);
+					$("#citemname").val(null);
+					$("#coderule").val(null);
+				}else {
+					LayerMsgBox.error("接口错误！");
+				}
 
-<table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
-data-jbolttable
-data-height="fill"
-data-ajax="true"
-data-url="admin/fitemss97/datas"
-data-column-resize="true"
-data-row-click-active="true"
-data-column-prepend="1:checkbox:true"
-data-conditions-form="fitemss97Form_#(pageId)"
-data-rowtpl="fitemss97Rowtpl_#(pageId)"
-data-page="fitemss97Page_#(pageId)"
-data-toolbar="fitemss97_toolbar_#(pageId)"
-data-fixed-columns-left="1,2,3"
-data-row-dblclick-active="true"
-data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
->
-<thead>
-<tr>
-	<th data-width="60">序号</th>
-	<th data-width="150">操作</th>
-	<th data-width="150" data-column="citemcode">项目编码</th>
-	<th data-width="150" data-column="citemname">项目名称</th>
-	<th data-width="150" data-column="bclose">是否封存</th>
-	<th data-width="150" data-column="citemccode">项目大类编码</th>
-	<th data-width="150" data-column="iotherused">其它系统是否使用</th>
-	<th data-width="150" data-column="dEndDate">结束日期</th>
-	<th data-width="150" data-column="iSource">来源类型</th>
-	<th data-width="150" data-column="cCreateName">创建人名称</th>
-	<th data-width="150" data-column="dCreateTime">创建时间</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+			});
+		}
+
+		function submitBtn(){
+			$("#iitemcategoryid").val('');
+		}
+
+		/*新增*/
+		function addfitemss97(ele){
+			var url="admin/fitemss97/add";
+			$(ele).data("url",url);
+			DialogUtil.openBy(ele);
 
 
+		}
 
-</div>
+		/*删除*/
+		function deletefitemss97(ele){
+			if (autoid == ""){
+				LayerMsgBox.alert("请先选择需要删除的项目分类！");
+				return;
+			}
+			LayerMsgBox.confirm("确定删除选中数据？",function(){
+				let url = "admin/fitemss97/delete?id="+autoid
+				Ajax.get(url,function(res){
+					window.parent.refreshPjaxContainer();
+				});
+			});
+		}
+
+
+	</script>
 </div>
 #end
 
-#define js()
-<script type="text/javascript">
-
-	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
-		console.log(JSON.stringify(rowData));
-
-		$(tempTr1).data('url', '/admin/fitemss97/edit/' + rowData.iautoid)
-			.data('area', '900,600')
-			.data('handler','refreshJBoltTable')
-			.data('title', '项目管理大类项目主目录')
-			.data('btn', '确认,关闭');
-
-		DialogUtil.openBy(tempTr1);
-	}
-</script>
-#end

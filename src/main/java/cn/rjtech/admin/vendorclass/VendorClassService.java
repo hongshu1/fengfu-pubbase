@@ -2,6 +2,7 @@ package cn.rjtech.admin.vendorclass;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.cache.JBoltUserCache;
@@ -369,7 +370,18 @@ public class VendorClassService extends BaseService<VendorClass> {
      * 获取分类数据中的所有后端分类数据
      */
     public List<VendorClass> getMgrList() {
-        return getVendorclass(false);
+        //筛选组织id
+        List<VendorClass> vendorClassList = getVendorclass(false);
+        List<VendorClass> vendorClassListData = new ArrayList<>();
+        if(ObjectUtil.isNotEmpty(vendorClassList)){
+            for (int i=0;i < vendorClassList.size();i++){
+                if(getOrgCode().equals(vendorClassList.get(i).getCOrgCode())){
+                    vendorClassListData.add(vendorClassList.get(i));
+                }
+            }
+        }
+        return vendorClassListData;
+//        return getVendorclass(false);
     }
 
     /**

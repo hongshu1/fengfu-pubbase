@@ -1,0 +1,107 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>稼动时间建模</h1></div>
+            <div class="col">
+                <form class="form-inline" id="UptimeTplM_form_#(pageId)">
+                    <select class="form-control"
+                            data-autoload
+                            data-url="admin/workregionm/options"
+                            data-select-type="select"
+                            name="iworkregionmid"
+                            data-text="=请选择产线名称="
+                            data-value-attr="iautoid"
+                            data-text-attr="cworkname"
+                            data-select="#(uptimeTplM.iworkregionmid??)"
+                    ></select>
+                    <select class="form-control"
+                            data-autoload
+                            data-url="admin/workshiftm/getSelect"
+                            data-select-type="select"
+                            name="iworkshiftmid"
+                            data-text="=请选择班次="
+                            data-value=""
+                            data-value-attr="iautoid"
+                            data-text-attr="cworkshiftname"
+                            data-select="#(uptimeTplM.iworkshiftmid??)"
+                    ></select>
+                    <select class="form-control" name="isenabled"
+                            data-autoload
+                            data-url="admin/dictionary/options?key=options_enable"
+                            data-select-type="select"
+                            data-text="=是否启用"
+                            data-value=""
+                            data-value-attr="sn"
+                    ></select>
+                    <div class="btn-group text-center mx-1">
+                        <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
+                        <button type="button" onclick="form.reset();refreshJBoltTable(this);"
+                                class="btn btn-outline-secondary"><i class="fa fa-reply-all"></i> 重置
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+        <textarea class="jb_tpl_box" id="UptimeTplM_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iAutoId}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a class="jbolt_table_editbtn" href="admin/uptimeTplM/edit/${data.iautoid}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="编辑稼动时间建模">编辑</a>
+	<a class="jbolt_table_delbtn" href="admin/uptimeTplM/delete/${data.iautoid}" data-handler="refreshJBoltTable" >删除</a>
+</td>
+<td>${data.cworkname}</td>
+<td>${data.cworkshiftname}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+        <div class="jbolt_table_toolbar" id="UptimeTplM_toolbar_#(pageId)">
+            <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
+                        id="toolbar_addBtn_#(pageId)" data-title="新增稼动时间模板" data-url="admin/uptimeTplM/add"
+                        class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
+                </button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新
+                </button>
+            </div>
+        </div>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="UptimeTplM_form_#(pageId)"
+               data-url="admin/uptimeTplM/datas"
+               data-rowtpl="UptimeTplM_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="UptimeTplM_page"
+               data-toolbar="UptimeTplM_toolbar_#(pageId)"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="120">操作</th>
+                <th data-width="200" data-column="iWorkRegionMid">分类名称</th>
+                <th data-width="100" data-column="iWorkShiftMid">项目名称</th>
+                <th data-width="150" data-column="cCreateName">创建人名称</th>
+                <th data-min-width="160" data-column="dCreateTime">创建时间</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

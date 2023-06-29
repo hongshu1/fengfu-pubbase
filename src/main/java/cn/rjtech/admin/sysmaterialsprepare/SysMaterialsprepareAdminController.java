@@ -20,9 +20,12 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 材料备料表
@@ -74,12 +77,6 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
         render("index.html");
     }
 
-//   /**
-//	* 数据源
-//	*/
-//	public void datas() {
-//		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("BillType")));
-//	}
 
     /**
      * 新增
@@ -192,14 +189,26 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void manualDatas() {
-        String cmodocno = get("cmodocno");
-        Kv kv = new Kv();
-        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
-        renderJsonData(service.getManualdatas(getPageNumber(), getPageSize(), kv));
+        String data = get("data");
+        String CMO = get("CMO");
+        if (data==null){
+            renderJsonData(null);
+            return;
+        }
+        //库存ID itID
+        String[] itIds = data.split(",");
+        //去重
+        List list = new ArrayList();
+        for(int x=0;x<itIds.length;x++){
+            if(!list.contains(itIds[x])){
+                list.add(itIds[x]);
+            }
+        }
+        renderJsonData(service.manualmanual(getPageNumber(), getPageSize(), list));
     }
 
     public void detailShow() {
-        SysMaterialsprepare sysMaterialsprepare = service.findById(getLong(0));
+        SysMaterialsprepare sysMaterialsprepare = service.findById(Long.valueOf(get("autoid")));
         if (sysMaterialsprepare == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -261,6 +270,7 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
             set("cworkshiftname", workshiftm.getCworkshiftname());
         }
         set("sysMaterialsprepare", sysMaterialsprepare);
+        set("ifinish",get("ifinish"));
         render("detailShow.html");
     }
 
@@ -272,19 +282,44 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void barcodeDetail() {
-        String CIN = get("cinvcode");
-        Inventory inventory = invent.findFirst("select *   from Bd_Inventory where cInvCode=?", get("cinvcode"));
-        StockBarcodePosition stockBarcodePosition = stockBarcodePositionService.findFirst("select *   from T_Sys_StockBarcodePosition where InvCode=?", get("cinvcode"));
-        set("inventory", inventory);
-        set("stockBarcodePosition", stockBarcodePosition);
+        String cinvcode = get("cinvcode");
+        String batch = get("batch");
+        String cinvcode1 = get("cinvcode1");
+        String cinvname1 = get("cinvname1");
+        set("cinvcode",cinvcode);
+        set("batch",batch);
+        set("cinvcode1",cinvcode1);
+        set("cinvname1",cinvname1);
         render("barcodeDetail.html");
+    }
+    public void barcodeDetail1() {
+        String cinvcode = get("cinvcode");
+        String batch = get("batch");
+        String cinvcode1 = get("cinvcode1");
+        String cinvname1 = get("cinvname1");
+        set("cinvcode",cinvcode);
+        set("batch",batch);
+        set("cinvcode1",cinvcode1);
+        set("cinvname1",cinvname1);
+        render("barcodeDetail1.html");
     }
 
     public void getBarcode() {
-        String invcode = get("invcode");
+        String invcode = get("cinvcode");
+        String batch = get("batch");
         Kv kv = new Kv();
         kv.set("invcode", invcode == null ? "" : invcode);
+        kv.set("batch", batch == null ? "" : batch);
         renderJsonData(service.getBarcodedatas(getPageNumber(), getPageSize(), kv));
+    }
+
+    public void getBarcode1() {
+        String invcode = get("cinvcode");
+        String batch = get("batch");
+        Kv kv = new Kv();
+        kv.set("invcode", invcode == null ? "" : invcode);
+        kv.set("batch", batch == null ? "" : batch);
+        renderJsonData(service.getBarcodedatas1(getPageNumber(), getPageSize(), kv));
     }
 
     @Before(Tx.class)
@@ -301,9 +336,9 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     }
 
     public void getManualAdddatas() {
-        String cmodocno = get("cmodocno");
-        Kv kv = new Kv();
-        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
-        renderJsonData(service.getgetManualAdddatas(getPageNumber(), getPageSize(), kv));
+//        String cmodocno = get("cmodocno");
+//        Kv kv = new Kv();
+//        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
+        renderJsonData(service.getgetManualAdddatas(getPageNumber(), getPageSize(), getKv()));
     }
 }

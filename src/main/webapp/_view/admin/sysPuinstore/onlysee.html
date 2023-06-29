@@ -13,13 +13,14 @@
                         <button onclick="printSysPuinstore()" class="btn btn-info btn-sm"><i
                                 class="fa fa-window-maximize"></i> 打印
                         </button>
-<!--                        #include("/_view/_common/_approval_btns.html", uri="/admin/purchaseReceiptList", formSn="T_Sys_PUInStore", o=sysPuinstore, edit=edit??, primaryKeyName="AutoID")-->
-                        <button onclick="submitApprove('#(sysPuinstore.autoid??)')" class="btn btn-info btn-sm"><i
+                        <!--<button onclick="submitApprove('#(sysPuinstore.autoid??)')" class="btn btn-info btn-sm"><i
                                 class="fa fa-window-maximize"></i> 审核
                         </button>
                         <button onclick="resetSubmitApprove('#(sysPuinstore.autoid??)')" class="btn btn-info btn-sm"><i
                                 class="fa fa-window-maximize"></i> 反审核
-                        </button>
+                        </button>-->
+                        #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUInStore", o=sysPuinstore, primaryKeyName="AutoID",
+                        className="cn.rjtech.admin.syspuinstore.SysPuinstoreService",permissionKeyPrefix="sysPuinstore")
                     </div>
                 </div>
             </div>
@@ -98,16 +99,16 @@
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">业务员</label>
                         <div class="col-6">
-                            <input class="form-control" name="createperson" type="text" readonly="readonly" maxlength="20"
-                                   value="#(sysPuinstore.createperson??)"/>
+                            <input class="form-control" name="cupdatename" type="text" readonly="readonly" maxlength="20"
+                                   value="#(sysPuinstore.cupdatename??)"/>
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">订单类型</label>
                         <div class="col-6">
-                            <input class="form-control" name="sourcebilltype" id="sourcebilltype" type="text" readonly="readonly" maxlength="20"
-                                   value="#(sysPuinstore.sourcebilltype??)"/>
+                            <input class="form-control" name="ibustype" type="text" readonly="readonly" maxlength="20"
+                                   value="#(ibustype??)"/>
                         </div>
                     </div>
                 </div>
@@ -138,8 +139,8 @@
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">业务类型</label>
                         <div class="col-6">
-                            <input class="form-control" name="ibustype" type="text" readonly="readonly" maxlength="20"
-                                   value="#(ibustype??)"/>
+                            <input class="form-control" name="sourcebilltype" id="sourcebilltype" type="text" readonly="readonly" maxlength="20"
+                                   value="#(sysPuinstore.sourcebilltype??)"/>
                         </div>
                     </div>
                 </div>
@@ -153,7 +154,7 @@
   {@each datas as data,index}
   <tr data-id="${data.autoid}">
     <td>${pageNumber,pageSize,index | rownum}</td>
-    <td title="${data.spotticket}">${data.spotticket}</td>
+    <td title="${data.barcode}">${data.barcode}</td>
     <td title="${data.invcode}">${data.invcode}</td>
     <td title="${data.cinvname}">${data.cinvname}</td>
     <td title="${data.cinvcode1}">${data.cinvcode1}</td>
@@ -186,7 +187,7 @@
                     <thead>
                     <tr>
                         <th data-width="30px">序号</th>
-                        <th data-width="180" data-column="spotticket">现品票</th>
+                        <th data-width="180" data-column="barcode">现品票</th>
                         <th data-width="180" data-column="invcode">存货编码</th>
                         <th data-width="180" data-column="cinvname">存货名称</th>
                         <th data-width="180" data-column="cinvcode1">客户部番</th>

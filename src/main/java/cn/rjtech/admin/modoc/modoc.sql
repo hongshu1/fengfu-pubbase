@@ -11,6 +11,7 @@ SELECT md.iAutoId,
        md.iPersonNum,
        md.iDutyPersonId,
        md.iStatus,
+       md.iType,
        jdh.name as iStatusname,### 状态说明
     bi.cInvCode, ### 存货编码
     bi.cInvCode1, ### 客户部番
@@ -23,7 +24,7 @@ FROM dbo.Mo_MoDoc AS md
          LEFT JOIN
      dbo.Bd_Inventory AS bi
      ON
-             md.iInventoryId = bi.iAutoId
+    md.iInventoryId = bi.iAutoId
          LEFT JOIN
      ###(getBaseDbName()).dbo.jb_dept AS bd
     Bd_Department bd ON md.iDepartmentId = bd.iAutoId
@@ -81,8 +82,8 @@ WHERE 1 = 1
     #if(cinvaddcode)
   AND md.cinvaddcode = #para(cinvaddcode)
     #end
-    #if(cInvCode)
-  AND md.cInvCode = #para(cInvCode)
+    #if(cinvcode)
+  AND bi.cInvCode = #para(cinvcode)
     #end
     #if(iWorkRegionMid)
   AND md.iWorkRegionMid = #para(iWorkRegionMid)
@@ -201,4 +202,166 @@ WHERE 1=1
     #if(imodocdd)
       m.iMoDocId = #para(imodocdd)
     #end
+#end
+
+#sql("getInventoryList")
+SELECT
+	inv.iAutoId,
+	cInvCode,
+	cInvName,
+	cInvCode1,
+	cInvName1,
+	wm.iAutoId iworkregionmid,
+	wm.cWorkCode,
+	wm.cWorkName,
+	dt.iAutoId iDepartmentId,
+    dt.cDepCode,
+	dt.cDepName,
+	rt.iAutoId iinventoryroutingid
+FROM
+	Bd_Inventory inv
+	LEFT JOIN ( SELECT * FROM Bd_InventoryWorkRegion WHERE isDeleted = 0 AND isDefault = 1 ) wk ON wk.iInventoryId = inv.iAutoId
+	left JOIN Bd_WorkRegionM wm ON wm.iAutoId = wk.iWorkRegionMid
+	left JOIN (SELECT iAutoId,iInventoryId FROM Bd_InventoryRouting WHERE  getdate () >= dFromDate AND getdate ( ) <= dToDate  AND iAuditStatus=2) rt on rt.iInventoryId = inv.iAutoId
+    LEFT JOIN Bd_Department dt on dt.iAutoId =wk.iDepId
+WHERE
+	inv.isDeleted = 0
+	AND inv.isEnabled = 1
+        #if(q)
+            AND (inv.cInvCode LIKE CONCAT('%', #para(q), '%') OR inv.cInvCode1 LIKE CONCAT('%', #para(q), '%') OR inv.cInvName1 LIKE CONCAT('%', #para(q), '%'))
+	    #end
+	    #if(itemId)
+	        AND inv.iautoId = #para(itemId)
+	    #end
+	    #if(iEquipmentModelId)
+	        AND INV.iEquipmentModelId = #para(iEquipmentModelId)
+	    #end
+	    #if(cInvCode)
+             AND inv.cInvCode LIKE CONCAT('%', #para(cInvCode), '%')
+	    #end
+	    #if(cInvCode1)
+             AND inv.cInvCode LIKE CONCAT('%', #para(cInvCode1), '%')
+	    #end
+	    #if(cInvName)
+             AND invG.cInvName LIKE CONCAT('%', #para(cInvName), '%')
+	    #end
+	    #if(cVenName)
+	        AND ven.cVenName LIKE CONCAT('%', #para(cVenName), '%')
+	    #end
+#end
+
+#sql("getEquipments")
+select * from Bd_InventoryRoutingEquipment  where iInventoryRoutingConfigId=#para(iEquipmentIds)
+#end
+
+#sql("getMoDocEquipments")
+	select * from Mo_MoRoutingEquipment where iMoRoutingConfigId=#para(iEquipmentIds)
+#end
+
+
+#sql("getPersonByEquipment")
+SELECT * FROM Bd_Person  per
+WHERE iAutoId IN (SELECT iPersonId FROM Bd_PersonEquipment EQ  WHERE EQ.iEquipmentId IN (#(iEquipmentIds)) AND isDeleted=0)
+#end
+
+
+#sql("getmoDocupdata")
+SELECT  MO.*,
+    inv.iAutoId iinventoryid,
+	cInvCode,
+	cInvName,
+	cInvCode1,
+	cInvName1,
+	wm.iAutoId iworkregionmid,
+	wm.cWorkCode,
+	wm.cWorkName,
+	dt.iAutoId iDepartmentId,
+    dt.cDepCode,
+	dt.cDepName,
+	rt.iAutoId iinventoryroutingid FROM Mo_MoDoc MO INNER JOIN Bd_Inventory  INV
+	ON MO.iInventoryId=INV.iAutoId
+	LEFT JOIN ( SELECT * FROM Bd_InventoryWorkRegion WHERE isDeleted = 0 AND isDefault = 1 ) wk ON wk.iInventoryId = inv.iAutoId
+	left    JOIN Bd_WorkRegionM wm ON wm.iAutoId = wk.iWorkRegionMid
+	left   JOIN (SELECT iAutoId,iInventoryId FROM Bd_InventoryRouting WHERE  getdate () >= dFromDate AND getdate ( ) <= dToDate  AND iAuditStatus=2) rt on rt.iInventoryId = inv.iAutoId
+    LEFT JOIN Bd_Department dt on dt.iAutoId =wk.iDepId
+	WHERE MO.iAutoId = #para(iautoid) AND 	inv.isDeleted = 0
+	AND inv.isEnabled = 1
+#end
+
+#sql("getMoDocby")
+SELECT * FROM Mo_MoDoc DOC
+INNER JOIN Mo_MoRouting ROU ON DOC.iAutoId=ROU.iMoDocId
+INNER JOIN Mo_MoRoutingConfig FIG ON FIG.iMoRoutingId=ROU.iAutoId
+INNER JOIN Mo_MoRoutingEquipment ME ON ME.iMoRoutingConfigId=FIG.iAutoId
+WHERE DOC.iAutoId=#para(iautoid)
+#end
+
+
+#sql("getMoDocbyIinventoryRoutingId")
+SELECT
+    mf.*,
+    rs.equipments,
+    invs.invcs,
+    persons.configperson,
+    persons2.configpersonids
+FROM
+    Mo_MoRouting mr
+    INNER JOIN Mo_MoRoutingConfig mf ON mr.iAutoId = mf.iMoRoutingId
+    LEFT JOIN (SELECT COUNT(iMoRoutingConfigId) equipments, iMoRoutingConfigId FROM Mo_MoRoutingEquipment GROUP BY iMoRoutingConfigId) rs ON rs.iMoRoutingConfigId = mf.iAutoId
+    LEFT JOIN (SELECT COUNT(iMoRoutingConfigId) invcs, iMoRoutingConfigId FROM Mo_MoRoutingInvc GROUP BY iMoRoutingConfigId) invs ON invs.iMoRoutingConfigId = mf.iAutoId
+    LEFT JOIN (
+        SELECT mp1.iMoRoutingConfigId,
+            STUFF((SELECT '/' + per.cPsn_Name
+                   FROM (
+                        SELECT iMoRoutingConfigId, CAST(iPersonId AS BIGINT) AS iPersonId
+                        FROM Mo_MoRoutingConfig_Person
+                        WHERE ISNUMERIC(iPersonId) = 1
+                   ) mp2
+                   INNER JOIN Bd_Person per ON mp2.iPersonId = per.iAutoId
+                   WHERE mp2.iMoRoutingConfigId = mp1.iMoRoutingConfigId
+                   FOR XML PATH('')), 1, 1, '') AS configperson
+        FROM Mo_MoRoutingConfig_Person mp1
+        GROUP BY mp1.iMoRoutingConfigId
+    ) persons ON persons.iMoRoutingConfigId = mf.iAutoId
+    LEFT JOIN (
+        SELECT mp1.iMoRoutingConfigId,
+            STUFF((SELECT ',' + CAST(mp2.iPersonId AS VARCHAR(MAX))
+                   FROM (
+                        SELECT iMoRoutingConfigId, CAST(iPersonId AS BIGINT) AS iPersonId
+                        FROM Mo_MoRoutingConfig_Person
+                        WHERE ISNUMERIC(iPersonId) = 1
+                   ) mp2
+                   INNER JOIN Bd_Person per ON mp2.iPersonId = per.iAutoId
+                   WHERE mp2.iMoRoutingConfigId = mp1.iMoRoutingConfigId
+                   FOR XML PATH('')), 1, 1, '') AS configpersonids
+        FROM Mo_MoRoutingConfig_Person mp1
+        GROUP BY mp1.iMoRoutingConfigId
+    ) persons2 ON persons2.iMoRoutingConfigId = mf.iAutoId
+WHERE
+	iMoDocId = #para(iMoDocId)
+#end
+
+
+#sql("getMoDocinv")
+   SELECT *
+FROM Mo_MoRoutingInvc mi
+INNER JOIN  Bd_Inventory inv on mi.iInventoryId=inv.iAutoId
+where iMoRoutingConfigId=#para(iautoid)
+#end
+
+#sql("getMoDocEquipment")
+SELECT * FROM Mo_MoRoutingEquipment ME
+INNER JOIN Bd_Equipment EQ ON ME.iEquipmentId=EQ.iAutoId
+where iMoRoutingConfigId=#para(iautoid)
+#end
+
+#sql("moDocInventoryRouting")
+SELECT * FROM Mo_MoRoutingEquipment ME
+INNER JOIN Bd_Equipment EQ ON ME.iEquipmentId=EQ.iAutoId
+where iMoRoutingConfigId=#para(iautoid)
+#end
+
+
+#sql("getPersonsByIds")
+select * from Bd_Person per where iautoid  IN (#(configpersonids))
 #end

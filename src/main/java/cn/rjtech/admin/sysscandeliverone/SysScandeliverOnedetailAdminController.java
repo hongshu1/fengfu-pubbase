@@ -8,6 +8,7 @@ import cn.rjtech.model.momdata.SysScandeliverdetail;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 
 /**
  * 扫码发货明细
@@ -91,8 +92,28 @@ public class SysScandeliverOnedetailAdminController extends BaseAdminController 
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 
-
+    @UnCheck
 	public void findEditTableDatas(){
 		renderJsonData(service.findEditTableDatas(get("sysscandeliver.AutoID")));
 	}
+
+	/**
+	 * 获取行信息
+	 */
+	public void getLine(){
+		String autoId = get("sysscandeliver.autoid");
+		Kv kv = new Kv();
+		kv.set("autoId",isOk(autoId)?autoId:" ");
+		renderJsonData(service.getLine(kv));
+	}
+
+    /**
+     * 获取订单行信息
+     */
+    public void getOrderLine(){
+        String orderId = get("sysscandeliver.sourcebillid");
+        Kv kv = new Kv();
+        kv.set("orderId",isOk(orderId)?orderId:" ");
+        renderJsonData(service.getOrderLine(kv));
+    }
 }

@@ -14,11 +14,20 @@
                 //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
                 url:"admin/manualorderm/save",
                 success:function(res){
-                    LayerMsgBox.success("提交成功",600,function(){
-                        //refreshPjaxContainer();
-                        parent.refreshJBoltTable("#itemroutingconfigid");
-                        parent.LayerMsgBox.closeAll();
-                    });
+                    // 表格保存之后，判断是否需要提审处理
+                    if (res.state === 'ok') {
+                        // 提交审核（审批）调用
+                        if (submit) {
+                            // 提审
+                            submit_#(pageId)(res.data.iautoid, function (data) {
+                                successHandler('提审成功', res.data.iautoid);
+                            });
+                        } else {
+                            successHandler(res.msg, res.data.iautoid);
+                        }
+                    } else {
+                        LayerMsgBox.alert(res.msg, 2);
+                    }
                 }
             },
             //插入数据时默认属性值
@@ -406,6 +415,17 @@
             }
         };
         return editableTableOptions;
+    }
+
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/manualorderm/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
+            parent.refreshPjaxContainer();
+        });
     }
 
     function uploadHandler(uploader, type, fileInput, res) {

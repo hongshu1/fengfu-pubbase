@@ -1,6 +1,7 @@
 package cn.rjtech.admin.transvouch;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.SystemLog;
@@ -11,8 +12,11 @@ import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.transvouchdetail.TransVouchDetailService;
+import cn.rjtech.model.momdata.MaterialsOut;
 import cn.rjtech.model.momdata.TransVouch;
 import cn.rjtech.model.momdata.TransVouchDetail;
+import cn.rjtech.model.momdata.Workregionm;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -23,8 +27,11 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.util.*;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 出库管理-调拨单列表 Service
@@ -32,7 +39,7 @@ import java.util.*;
  * @author: RJ
  * @date: 2023-05-11 14:54
  */
-public class TransVouchService extends BaseService<TransVouch> {
+public class TransVouchService extends BaseService<TransVouch> implements IApprovalService{
 
 	private final TransVouch dao = new TransVouch().dao();
 
@@ -114,8 +121,34 @@ public class TransVouchService extends BaseService<TransVouch> {
 	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
-		return deleteByIds(ids,true);
-	}
+	tx(() -> {
+		for (String idStr : StrSplitter.split(ids, COMMA, true, true)) {
+			String autoId = idStr;
+			TransVouch transVouch = findById(autoId);
+			ValidationUtils.notNull(transVouch, JBoltMsg.DATA_NOT_EXIST);
+			//软删除
+//			transVouch.setIsDeleted(true);
+//			transVouch.update();
+
+			// TODO 可能需要补充校验组织账套权限
+			// TODO 存在关联使用时，校验是否仍在使用
+
+			Integer[] state = {1,2,3};
+			for (int i = 0; i < state.length; i++) {
+				System.out.println(state[i]);
+				if (state[i] ==transVouch.getIAuditStatus()){
+					ValidationUtils.error( "审核中、已审核的记录不允许删除,修改！！！");
+				}
+			}
+			//删除行数据
+			transVouchDetailService.deleteByBatchIds(autoId);
+			ValidationUtils.isTrue(transVouch.delete(), JBoltMsg.FAIL);
+
+		}
+		return true;
+	});
+		return SUCCESS;
+}
 
 	/**
 	 * 删除
@@ -125,6 +158,7 @@ public class TransVouchService extends BaseService<TransVouch> {
 	public Ret delete(Long id) {
 		return deleteById(id,true);
 	}
+
 
 	/**
 	 * 删除数据后执行的回调
@@ -151,7 +185,7 @@ public class TransVouchService extends BaseService<TransVouch> {
 	}
 
 	/**
-	 * 设置返回二开业务所属的关键systemLog的targetType 
+	 * 设置返回二开业务所属的关键systemLog的targetType
 	 * @return
 	 */
 	@Override
@@ -182,18 +216,14 @@ public class TransVouchService extends BaseService<TransVouch> {
 	}
 
 
-	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, Integer param, String revokeVal) {
+	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
 
-
-
 		// 这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
 
 		JBoltTable jBoltTable = jboltTableMulti.getJBoltTable("table2");
-		//  jboltTableMulti.entrySet().forEach(en->{
-		//  BoltTable jBoltTable = en.getValue();
 		// 获取额外传递参数 比如订单ID等信息 在下面数据里可能用到
 		if (jBoltTable.paramsIsNotBlank()) {
 			System.out.println(jBoltTable.getParams().toJSONString());
@@ -221,7 +251,6 @@ public class TransVouchService extends BaseService<TransVouch> {
 			recordList.addAll(saveRecordList);
 		}
 
-
 		if (jBoltTable.updateIsNotBlank()) {
 			recordList.addAll(updateRecordList);
 		}
@@ -233,47 +262,34 @@ public class TransVouchService extends BaseService<TransVouch> {
 			if (jBoltTable.formIsNotBlank()) {
 				TransVouch transVouch = jBoltTable.getFormModel(TransVouch.class,"transVouch");
 
-
 				//	行数据为空 不保存
-				if ("save".equals(revokeVal)) {
-					if (transVouch.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
-						ValidationUtils.error( "请先添加行数据！");
-					}
-				}
-				if ("submit".equals(revokeVal) && transVouch.getAutoID() == null) {
-					ValidationUtils.error( "请保存后提交审核！！！");
+				if (transVouch.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
+					ValidationUtils.error( "请先添加行数据！");
 				}
 
 				if (transVouch.getAutoID() == null) {
-//					保存
-//					状态：1=已保存，2=待审核，3=已审核
-					transVouch.setState(param);
+//					审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+					transVouch.setIAuditStatus(0);
 					transVouch.setOrganizeCode(OrgCode);
 					transVouch.setBillNo(billNo);
 					transVouch.setBillType("TransVouch");
 					transVouch.setIsDeleted(false);
 
 					//创建人
-					transVouch.setIcreateby(userId);
-					transVouch.setDcreatetime(nowDate);
-					transVouch.setCcreatename(userName);
+					transVouch.setIcreateBy(userId);
+					transVouch.setDcreateTime(nowDate);
+					transVouch.setCcreateName(userName);
 					//更新人
-					transVouch.setIupdateby(userId);
-					transVouch.setDupdatetime(nowDate);
-					transVouch.setCupdatename(userName);
+					transVouch.setIupdateBy(userId);
+					transVouch.setDupdateTime(nowDate);
+					transVouch.setCupdateName(userName);
 					save(transVouch);
 					headerId = transVouch.getAutoID();
 				} else {
-					if ( param == 2 ){
-						transVouch.setIAuditby(userId);
-						transVouch.setDAuditTime(nowDate);
-						transVouch.setCAuditname(userName);
-					}
-					transVouch.setState(param);
 					//更新人
-					transVouch.setIupdateby(userId);
-					transVouch.setDupdatetime(nowDate);
-					transVouch.setCupdatename(userName);
+					transVouch.setIupdateBy(userId);
+					transVouch.setDupdateTime(nowDate);
+					transVouch.setCupdateName(userName);
 					update(transVouch);
 					headerId = transVouch.getAutoID();
 				}
@@ -319,146 +335,6 @@ public class TransVouchService extends BaseService<TransVouch> {
 		});
 		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
-
-
-	/**
-	 * 批量审核
-	 * @param ids
-	 * @return
-	 */
-	public Ret batchApprove(String ids) {
-		tx(() -> {
-			boolean success = false;
-			Long userId = JBoltUserKit.getUserId();
-			String userName = JBoltUserKit.getUserName();
-			Date nowDate = new Date();
-			List<TransVouch> listByIds = getListByIds(ids);
-			if (listByIds.size() > 0) {
-				for (TransVouch transVouch : listByIds) {
-					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-					if (transVouch.getIAuditStatus() != 1) {
-						ValidationUtils.error("订单：" + transVouch.getBillNo() + "状态不支持审核操作！");
-					}
-					//订单状态：3. 已审核
-					transVouch.setIAuditStatus(2);
-					transVouch.setIAuditby(userId);
-					transVouch.setDAuditTime(nowDate);
-					transVouch.setCAuditname(userName);
-					Ret ret = this.pushU8(ids);
-					success = transVouch.update();
-				}
-			}
-			return true;
-		});
-		return SUCCESS;
-	}
-
-
-
-	/**
-	 * 批量反审核
-	 * @param ids
-	 * @return
-	 */
-	public Ret batchReverseApprove(String ids) {
-		tx(() -> {
-			//TODO数据同步暂未开发 现只修改状态
-			for (TransVouch transVouch :  getListByIds(ids)) {
-//			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-				if (transVouch.getIAuditStatus() != 2) {
-					ValidationUtils.error("订单："+transVouch.getBillNo()+"状态不支持反审批操作！");
-				}
-				transVouch.setIAuditStatus(1);
-				transVouch.update();
-			}
-
-			return true;
-		});
-		return SUCCESS;
-	}
-
-	/**
-	 * 详情页提审
-	 */
-	public Ret submit(Long iautoid) {
-		tx(() -> {
-			Ret ret = formApprovalService.judgeType(table(), iautoid, primaryKey(),"T_Sys_TransVouch");
-			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-			// 处理其他业务
-			TransVouch transVouch = findById(iautoid);
-			transVouch.setIAuditStatus(1);
-			ValidationUtils.isTrue(transVouch.update(),JBoltMsg.FAIL);
-			return true;
-		});
-		return SUCCESS;
-	}
-
-	/**
-	 * 详情页审核
-	 */
-	public Ret approve(String ids) {
-		tx(() -> {
-			boolean success = false;
-			Long userId = JBoltUserKit.getUserId();
-			String userName = JBoltUserKit.getUserName();
-			Date nowDate = new Date();
-			TransVouch transVouch = superFindById(ids);
-			//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-			if (transVouch.getIAuditStatus() != 1) {
-				ValidationUtils.error("订单："+transVouch.getBillNo()+"状态不支持审核操作！");
-			}
-			//订单状态：3. 已审核
-			transVouch.setIAuditStatus(2);
-			transVouch.setIAuditby(userId);
-			transVouch.setDAuditTime(nowDate);
-			transVouch.setCAuditname(userName);
-			Ret ret = this.pushU8(ids);
-			success= transVouch.update();
-
-			return true;
-		});
-
-		return SUCCESS;
-	}
-
-	/**
-	 * 详情页审核不通过
-	 */
-	public Ret reject(Long ids) {
-		tx(() -> {
-			TransVouch transVouch = superFindById(ids);
-			if (transVouch.getIAuditStatus() != 2) {
-				ValidationUtils.error("订单："+transVouch.getBillNo()+"状态不支持反审批操作！");
-			}
-			transVouch.setIAuditStatus(1);
-			transVouch.update();
-
-			return true;
-		});
-		return SUCCESS;
-	}
-
-
-	/**
-	 * 撤回
-	 * @param iAutoId
-	 * @return
-	 */
-	public Ret recall(String iAutoId) {
-		if( notOk(iAutoId)) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		TransVouch transVouch = findById(iAutoId);
-		//订单状态：2. 待审核
-		transVouch.setIAuditStatus(0);
-		transVouch.setIAuditby(null);
-		transVouch.setDAuditTime(null);
-		transVouch.setCAuditname(null);
-		boolean result = transVouch.update();
-		return ret(result);
-	}
-
 
 	/**
 	 * 获取条码列表
@@ -595,4 +471,108 @@ public class TransVouchService extends BaseService<TransVouch> {
 		return SUCCESS;
 	}
 
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		Date nowDate = new Date();
+		TransVouch transVouch = findById(formAutoId);
+		transVouch.setIAuditBy(userId);
+		transVouch.setCAuditName(userName);
+		transVouch.setDAuditTime(nowDate);
+		String ids = String.valueOf(transVouch.getAutoID());
+		this.pushU8(ids);
+		transVouch.update();
+		return null;
+	}
+
+	@Override
+	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		TransVouch transVouch = findById(formAutoId);
+		transVouch.setIAuditBy(null);
+		transVouch.setCAuditName(null);
+		transVouch.setDAuditTime(null);
+		transVouch.update();
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		Date nowDate = new Date();
+		/**
+		 *List转换String类型
+		 */
+		if (formAutoIds.size()>0){
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < formAutoIds.size(); i++) {
+
+				buffer.append(""+formAutoIds.get(i)+",");
+			}
+			String ids = buffer.substring(0, buffer.length() - 1);
+			List<TransVouch> listByIds = getListByIds(ids);
+			if (listByIds.size() > 0) {
+				for (TransVouch transVouch : listByIds) {
+					//审核人
+					transVouch.setIAuditBy(userId);
+					transVouch.setCAuditName(userName);
+					transVouch.setDAuditTime(nowDate);
+//					this.pushU8(ids);
+					transVouch.update();
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		return null;
+	}
 }

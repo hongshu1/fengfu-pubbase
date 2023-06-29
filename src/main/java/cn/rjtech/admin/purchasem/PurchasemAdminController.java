@@ -5,9 +5,11 @@ import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.kit.JBoltModelKit;
-import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.JboltFile;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -117,6 +119,7 @@ public class PurchasemAdminController extends BaseAdminController {
      * 数据源
      */
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getKv()));
     }
@@ -203,8 +206,8 @@ public class PurchasemAdminController extends BaseAdminController {
     	InvestmentPlan investmentPlan = investmentPlanService.findEffectivedInvestmentByDeptCode(para);
     	Period expenseBudgetPeriod = null;
     	Period investmentPlanPeriod = null;
-    	if(expenseBudget!=null) expenseBudgetPeriod = periodService.findById(expenseBudget.getIperiodid());
-    	if(investmentPlan!=null) investmentPlanPeriod = periodService.findById(investmentPlan.getIperiodid());
+    	if(expenseBudget!=null) expenseBudgetPeriod = periodService.findById(expenseBudget.getIPeriodId());
+    	if(investmentPlan!=null) investmentPlanPeriod = periodService.findById(investmentPlan.getIPeriodId());
     	keepPara();
     	set("expenseBudgetPeriod",expenseBudgetPeriod);
     	set("investmentPlanPeriod",investmentPlanPeriod);
@@ -233,6 +236,7 @@ public class PurchasemAdminController extends BaseAdminController {
     /**
      * 选择费用预算列表数据
      */
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findExpenseBudgetItemDatas() {
         renderJsonData(service.findExpenseBudgetItemDatas(getKv()));
     }    
@@ -250,6 +254,7 @@ public class PurchasemAdminController extends BaseAdminController {
     /**
      * 选择投资计划列表数据
      */
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findInvestmentPlanItemDatas() {
         renderJsonData(service.findInvestmentPlanItemDatas(getKv()));
     }    
@@ -440,11 +445,11 @@ public class PurchasemAdminController extends BaseAdminController {
         ValidationUtils.notEmpty(proposalds, "勾选的禀议书项目数据不存在，请检查!");
         Long iproposalmid = proposalds.get(0).getIproposalmid();
         Proposalm proposalm = proposalmService.findById(iproposalmid);
-        Long ifirstsourceproposalid = proposalm.getIfirstsourceproposalid();
+        Long ifirstsourceproposalid = proposalm.getIFirstSourceProposalId();
         ValidationUtils.notNull(proposalm, "禀议书不存在!");
         Record moneyRc = service.getMoney(Kv.by("ifirstsourceproposalid",ifirstsourceproposalid));
-        moneyRc.set("cdepcode", proposalm.getCdepcode());
-        moneyRc.set("cdepname", departmentService.getCdepName(proposalm.getCdepcode()));
+        moneyRc.set("cdepcode", proposalm.getCDepCode());
+        moneyRc.set("cdepname", departmentService.getCdepName(proposalm.getCDepCode()));
         set("purchasem",moneyRc);
         List<Record> purchaseds = new ArrayList<>();
         for (Proposald proposald : proposalds) {
@@ -460,6 +465,9 @@ public class PurchasemAdminController extends BaseAdminController {
                 cbudgetno = Optional.ofNullable(investmentPlanItem).map(InvestmentPlanItem::getCplanno).orElse(null);
                 ibudgetmoney = investmentPlanItem.getIamounttotal();
             }
+            Vendor vendor = vendorRecordService.findByCode(proposald.getCvencode());
+            String cvenname = null;
+            cvenname = vendor != null ? vendor.getCVenName() : cvenname;
             purchaseds.add(new Record()
                     .set("iproposaldid", proposald.getIautoid())
                     .set("itaxrate", proposald.getItaxrate())
@@ -473,6 +481,22 @@ public class PurchasemAdminController extends BaseAdminController {
                     .set("isourcetype", proposald.getIsourcetype())
                     .set("isourceid", proposald.getIsourceid())
                     .set("iprojectcardid", proposald.getIprojectcardid())
+                    .set("cunit", proposald.getCunit())
+                    .set("iquantity", proposald.getIquantity())
+                    .set("iprice", proposald.getIunitprice())
+                    .set("nflat", proposald.getNflat())
+                    .set("itaxrate", proposald.getItaxrate())
+                    .set("ddemandate", proposald.getDdemanddate())
+                    .set("cvencode", proposald.getCvencode())
+                    .set("cvenname", cvenname)
+                    .set("ccurrency", proposald.getCcurrency())
+                    .set("itax", proposald.getItax())
+                    .set("itaxexclusivetotalamount", proposald.getImoney())
+                    .set("itotalamount", proposald.getIsum())
+                    .set("inatunitprice", proposald.getInatunitprice())
+                    .set("inattax", proposald.getInattax())
+                    .set("inatmoney", proposald.getInatmoney())
+                    .set("inatsum", proposald.getInatsum())
             );
         }
         set("purchaseds", purchaseds);
@@ -485,8 +509,9 @@ public class PurchasemAdminController extends BaseAdminController {
      * 参照禀议书表格提交-新增/修改提交申购单
      */
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableSubmit() {
-        renderJsonData(service.saveTableSubmit(getJBoltTable()));
+        renderJson(service.saveTableSubmit(getJBoltTable()));
     }
 
     /**
@@ -495,7 +520,7 @@ public class PurchasemAdminController extends BaseAdminController {
     @CheckPermission(PermissionKey.PURCHASE_INSTRUMENT_EDIT)
     public void instrumentEdit() {
     	Purchasem purchasem = service.findById(useIfPresent(getLong(0)));
-    	PurchaseRefTypeEnum refTypeEnum = PurchaseRefTypeEnum.toEnum(purchasem.getIreftype());
+    	PurchaseRefTypeEnum refTypeEnum = PurchaseRefTypeEnum.toEnum(purchasem.getIRefType());
     	set("edit",true);
     	switch (refTypeEnum) {
 		case PROPOSAL:
@@ -503,7 +528,7 @@ public class PurchasemAdminController extends BaseAdminController {
 			render("edit.html");
 			break;
 		case BUDGET:
-			Record record = service.details(Kv.by("iautoid", purchasem.getIautoid()));
+			Record record = service.details(Kv.by("iautoid", purchasem.getIAutoId()));
 			set("purchasem", record);
 			render("ref_budget_form.html");
 			break;			
@@ -550,13 +575,14 @@ public class PurchasemAdminController extends BaseAdminController {
     @CheckPermission(PermissionKey.PURCHASE_INSTRUMENT_SUBMIT)
     public void submit() {
         ValidationUtils.validateId(getLong("iautoid"), "申购单ID");
-        renderJson(service.submit(getLong("iautoid"), JBoltUserKit.getUser()));
+        renderJson(service.submit(getLong("iautoid")));
     }
     
     /**
      * 参照禀议书界面-禀议书主表数据查询
      * */
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void chooseProposalmDatas(){
     	renderJsonData(service.chooseProposalmDatas(getKv()));
     }
@@ -615,6 +641,7 @@ public class PurchasemAdminController extends BaseAdminController {
    /**
     * 参照预算保存申购单
     * */
+   @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
    public void refBudgetSaveTableSubmit(){
 	   renderJson(service.refBudgetSaveTableSubmit(getJBoltTable()));
    }
@@ -686,5 +713,15 @@ public class PurchasemAdminController extends BaseAdminController {
            return;
        }
        renderJson(service.importRefBudgetPurchasedTplNotSave(file.getFile(),cdepcode));
+   }
+   
+   /**
+    * 查看审批界面
+    * */
+   @UnCheck
+   public void purchasemFormApprovalFlowIndex(){
+   	Purchasem purchasem = service.findById(getLong("iautoid"));
+   	set("purchasem", purchasem);
+   	render("approve_process_index.html");
    }
 }

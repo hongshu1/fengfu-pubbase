@@ -22,7 +22,7 @@ from #(getBaseDbName()).dbo.jb_user u
          #end
          )
  t3 on t3.iPersonId = t1.iAutoId
-where t1.isDeleted = '0' and t1.iUserId is not null
+where t1.isDeleted = '0' and t3.id is not null
 #if(itemHidden)
     and t1.iAutoId not in (#(itemHidden))
 #end
@@ -98,13 +98,16 @@ and (sn like '#(keywords)%' or name like '%#(keywords)%')
 #sql("lineDatas")
 select t1.iAutoId, t1.iSeq, t.* from Bd_ApprovalD_User t1
 join (
-select t1.iAutoId as ipersonid, t1.cPsn_Num as cpsncode, t1.cPsn_Name as cpsnname, t2.cDepName as cdeptname, t1.iUserId as
+select t1.iAutoId as ipersonid, t1.cPsn_Num as cpsncode, t1.cPsn_Name as cpsnname, t2.cDepName as cdeptname, t3.id as
 iuserid, t3.username
 from Bd_Person t1
-###left join #(getBaseDbName()).dbo.jb_dept t2 on t2.sn = t1.cDept_num
 left join Bd_Department t2 on t2.cDepCode = t1.cDept_num
-left join #(getBaseDbName()).dbo.jb_user t3 on t3.id = t1.iUserId
-where t1.isDeleted = '0' and t1.iUserId is not null
+left join (
+ select g.iPersonId, u.id, u.username
+ from #(getBaseDbName()).dbo.jb_user u
+ left join #(getBaseDbName()).dbo.base_user_org g on u.id = g.user_id
+ ) t3 on t3.iPersonId = t1.iAutoId
+where t1.isDeleted = '0'
 ) t on t1.iPersonId = t.ipersonid
 where t1.iApprovalDid = '#(mid)' order by t1.iSeq asc
 #end

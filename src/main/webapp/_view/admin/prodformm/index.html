@@ -1,0 +1,156 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>生产表单管理</h1></div>
+	<div class="col">
+	<form class="form-inline" id="ProdFormM_form_#(pageId)">
+		<select class="form-control"
+				data-autoload
+				data-url="admin/prodForm/options"
+				data-select-type="select"
+				name="iprodformid"
+				data-refresh="false"
+				data-rule="select"
+				data-notnull="false"
+				data-tips="请选择生产表格名称"
+				data-text="=请选择生产表格名称="
+				data-value-attr="iautoid"
+				data-text-attr="cprodformname"
+				data-select="#(iprodformid??)"
+		></select>
+		<select class="form-control"
+				data-autoload
+				data-url="admin/workregionm/options"
+				data-select-type="select"
+				name="cworkid"
+				data-refresh="false"
+				data-rule="select"
+				data-notnull="false"
+				data-tips="请选择产线名称"
+				data-text="=选择产线名称="
+				data-value-attr="iautoid"
+				data-text-attr="cworkname"
+				data-select="#(cworkname??)"
+		></select>
+		<select class="form-control"
+				data-autoload
+				data-url="admin/workshiftm/getSelect"
+				data-select-type="select"
+				name="cworkshiftid"
+				data-refresh="false"
+				data-rule="select"
+				data-notnull="false"
+				data-tips="请选择班次"
+				data-text="=选择班次="
+				data-value=""
+				data-value-attr="iautoid"
+				data-text-attr="cworkshiftname"
+				data-select="#(cworkshiftname??)"
+		></select>
+		<select class="form-control"
+				name="iauditstatus"
+				data-autoload
+				data-url="admin/dictionary/options?key=audit_status"
+				data-select-type="select"
+				data-text="=选择状态="
+				data-value=""
+				data-with-clearbtn="true"
+				data-value-attr="sn"
+		></select>
+		<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
+		<span style="margin-top: 5px">至</span>
+		<input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
+
+		<div class="btn-group text-center mx-1">
+			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
+		</div>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="ProdFormM_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+<a class=jbolt_table_editbtn href="admin/prodFormM/edit?iautoid=${data.iautoid}&readonly=readonly" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="详情"><i class="fa fa-eye"></i>查看</a>
+
+{@if  data.iauditstatus == '0' }
+<a href="admin/prodFormM/edit?iautoid=${data.iautoid}&edit=true" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+<a href="admin/prodFormM/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除记录上传" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+{@/if}
+{@if  data.iauditstatus == '1' }
+	<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=PL_ProdFormM&primaryKeyName=iautoid&formAutoId=${data.iautoid}&permissionKey=prodformm_withdraw&className=cn.rjtech.admin.prodformm.ProdFormMService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="撤回该数据状态" ><i class="fa fa-remove c-danger">撤回</i></a>
+{@/if}
+</td>
+
+
+</td>
+<td>$${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
+<td>${data.iprodformid}</td>
+<td>${data.iworkregionmid}</td>
+<td>${data.iworkshiftmid}</td>
+<td>${data.ddate}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="ProdFormM_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="100%,100%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增制造管理-生产表单主表" data-url="admin/prodFormM/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+<!--	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑制造管理-生产表单主表" data-check-handler="jboltTableGetCheckedId" data-url="admin/prodFormM/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>-->
+<!--	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/prodFormM/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>-->
+	#include("/_view/_common/_batch_approval_btns.html", formSn="PL_ProdFormM", uri="admin/prodFormM??", primaryKeyName="iAutoId", className="cn.rjtech.admin.prodformm.ProdFormMService", permissionKeyPrefix="prodformm")
+	<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="ProdFormM_form_#(pageId)"
+	   data-url="admin/prodFormM/datas"
+	   data-rowtpl="ProdFormM_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="ProdFormM_page"
+	   data-toolbar="ProdFormM_toolbar_#(pageId)"
+	   data-column-prepend="1:checkbox:true:false:false"
+
+>
+<thead class="fw-normal" >
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th  data-width="200" data-column="">操作</th>
+	<th  data-width="100" data-column="iAuditStatus">状态</th>
+	<th  data-width="100" data-column="iProdFormId">生产表格名称</th>
+	<th  data-width="100" data-column="iWorkRegionMid">产线名称</th>
+	<th  data-width="100" data-column="iWorkShiftMid">班次名称</th>
+	<th  data-width="100" data-column="dDate">日期</th>
+	<th  data-width="150" data-column="cCreateName">创建人</th>
+	<th  data-width="100" data-column="dCreateTime">创建时间</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

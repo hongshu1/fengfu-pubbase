@@ -1,5 +1,6 @@
 package cn.rjtech.admin.scheduproductplan;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -10,9 +11,14 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.apsannualpland.ApsAnnualplandService;
 import cn.rjtech.admin.apsannualplandqty.ApsAnnualplandQtyService;
 import cn.rjtech.admin.calendar.CalendarService;
+import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.enums.MonthOrderStatusEnum;
+import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.ApsAnnualpland;
 import cn.rjtech.model.momdata.ApsAnnualplandQty;
 import cn.rjtech.model.momdata.ApsAnnualplanm;
+import cn.rjtech.model.momdata.WeekOrderM;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
 import cn.rjtech.util.DateUtils;
@@ -29,6 +35,9 @@ import org.apache.commons.lang.StringUtils;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 生产计划排程 Service
@@ -36,7 +45,7 @@ import java.util.*;
  * @author: chentao
  * @date: 2023-03-30 11:26
  */
-public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
+public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  implements IApprovalService {
 
     private final ApsAnnualplanm dao = new ApsAnnualplanm().dao();
 
@@ -50,6 +59,8 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
     private DateQueryInvTotalFuncService dateQueryInvTotalFuncService;
     @Inject
     private MomDataFuncService momDataFuncService;
+    @Inject
+    private FormApprovalService formApprovalService;
 
     @Inject
     private ApsAnnualplandService apsAnnualplandService;
@@ -113,7 +124,9 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
      * @return
      */
     public Ret deleteByBatchIds(String ids) {
-        return deleteByIds(ids,true);
+        String[] idsArray = ids.split(",");
+        update("UPDATE Aps_AnnualPlanM SET isDeleted = 1 WHERE iAutoId IN ("+ ArrayUtil.join(idsArray,",")+")");
+        return SUCCESS;
     }
 
     /**
@@ -340,7 +353,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
             Map<String,Record> cusWorkMonthNumMap = cusWorkMonthNumListMap.get(customerId) != null ? cusWorkMonthNumListMap.get(customerId) : new HashMap<>();
             //CC:客户行事历
             ScheduProductYearViewDTO productYearViewCC = getProductYearViewCC(CC,startYear,endYear,cusWorkMonthNumMap);
-            scheduProductPlanYearList.add(productYearViewCC);
+            //scheduProductPlanYearList.add(productYearViewCC);
 
             //TODO:查询本次所有客户的订单计划
             for (Record record : sourceYearOrderList) {
@@ -839,7 +852,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
             Map<String,Record> cusWorkMonthNumMap = cusWorkMonthNumListMap.get(icustomerid) != null ? cusWorkMonthNumListMap.get(icustomerid) : new HashMap<>();
             //CC:客户行事历
             ScheduProductYearViewDTO productYearViewCC = getProductYearViewCC(CC,startYear,endYear,cusWorkMonthNumMap);
-            scheduProductPlanYearList.add(productYearViewCC);
+            //scheduProductPlanYearList.add(productYearViewCC);
 
             //key:物料id+机型id   value:List<Record>
             Map<String,List<Record>> apsYearPlanQtyListMap = new HashMap<>();
@@ -1114,8 +1127,98 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm> {
     }
 
 
+    @Override
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        //ValidationUtils.isTrue(updateColumn(formAutoId, "iPushTo", 1).isOk(), JBoltMsg.FAIL);
+        // ValidationUtils.isTrue(updateColumn(formAutoId, "cDocNo", cDocNo).isOk(), JBoltMsg.FAIL);
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
+        return null;
+    }
 
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+        return null;
+    }
 
+    @Override
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
 
+    @Override
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        // 只有一个审批人
+        if (isFirst && isLast) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+        }
+        // 反审回第一个节点，回退状态为“已保存”
+        else if (isFirst) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+        }
+        // 最后一步通过的，反审，回退状态为“待审核”
+        else if (isLast) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+        }
+        return null;
+    }
 
+    @Override
+    public String preSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postSubmitFunc(long formAutoId) {
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), "提审失败");
+        return null;
+    }
+
+    @Override
+    public String postWithdrawFunc(long formAutoId) {
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
+        return null;
+    }
+
+    @Override
+    public String withdrawFromAuditting(long formAutoId) {
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+        return null;
+    }
+
+    @Override
+    public String preWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    @Override
+    public String postWithdrawFromAuditted(long formAutoId) {
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+        return null;
+    }
+
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        return null;
+    }
+
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        for (Long formAutoId:formAutoIds) {
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+        }
+        return null;
+    }
+
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        List<ApsAnnualplanm> weekOrderMS = getListByIds(cn.rjtech.wms.utils.StringUtils.join(formAutoIds, COMMA));
+        Boolean algorithmSum = weekOrderMS.stream().anyMatch(item -> item.getIAuditStatus().equals(WeekOrderStatusEnum.APPROVED.getValue()));
+        weekOrderMS.stream().map(item -> {
+            item.setIAuditStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
+            return item;
+        }).collect(Collectors.toList());
+        batchUpdate(weekOrderMS);
+        return null;
+    }
 }

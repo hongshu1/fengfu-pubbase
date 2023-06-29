@@ -2,17 +2,16 @@ package cn.rjtech.admin.rcvdocqcformm;
 
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
-import cn.rjtech.admin.rcvdocqcformdline.RcvdocqcformdLineService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -39,8 +38,6 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     private RcvDocQcFormMService     service;              //质量管理-来料检验表
     @Inject
     private RcvDocQcFormDService     rcvDocQcFormDService; //质量管理-来料检单行配置表
-    @Inject
-    private RcvdocqcformdLineService rcvdocqcformdLineService; //质量管理-来料检明细列值表
 
     /**
      * 首页
@@ -107,24 +104,67 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     /**
      * 生成
      */
-    public void createTable(@Para(value = "iautoid") Long iautoid,
-                            @Para(value = "cqcformname") String cqcformname) {
-        renderJson(service.createTable(iautoid, cqcformname));
+    public void createTable(@Para(value = "iautoid") Long iautoid) {
+        renderJson(service.createTable(iautoid));
     }
 
     /**
      * 跳转到检验页面
      */
     public void checkout() {
-        RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
-        Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
-        set("rcvdocqcformm", rcvDocQcFormM);
+        Record record = service.getCheckoutListByIautoId(getLong(0));
+        if (record == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        //判断是否要先生成从表数据
+        service.checkAutoCreateRcvDocQcFormD(record.getLong("iautoid"));
+        // 表头项目
+        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
+        set("columns", tableHeadData);
         set("record", record);
         render("checkout.html");
     }
 
     /**
-     * 点击检验时，进入弹窗自动加载table的数据
+     * 打开onlysee页面
+     */
+    public void onlysee() {
+        Record record = service.getCheckoutListByIautoId(getLong(0));
+        if (record == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
+        // 表头项目
+        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
+        set("columns", tableHeadData);
+        set("docparamlist", docparamlist);
+        set("record", record);
+        render("onlysee.html");
+    }
+
+    /**
+     * 打开编辑页面
+     */
+    public void editrcvDocQcFormD() {
+        Record record = service.getCheckoutListByIautoId(getLong(0));
+        if (record == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        //List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
+        List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
+        // 表头项目
+        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
+        set("columns", tableHeadData);
+        set("docparamlist", docparamlist);
+        set("record", record);
+        render("editTable.html");
+    }
+
+    /**
+     * 进入子页面自动加载table的数据
      */
     public void getCheckOutTableDatas() {
         renderJsonData(service.getCheckOutTableDatas(getKv()));
@@ -135,39 +175,6 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      */
     public void saveCheckOutTable(JBoltPara JboltPara) {
         renderJson(service.saveCheckOutTable(JboltPara));
-    }
-
-    /**
-     * 打开onlysee页面
-     */
-    public void onlysee() {
-        RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
-        Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
-        List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
-        set("docparamlist", docparamlist);
-        set("rcvdocqcformm", rcvDocQcFormM);
-        set("record", record);
-        render("onlysee.html");
-    }
-
-    /**
-     * 点击查看时，进入弹窗自动加载table的数据
-     */
-    public void getonlyseeDatas() {
-        renderJsonData(service.getonlyseelistByiautoid(getKv()));
-    }
-
-    /**
-     * 打开编辑页面
-     */
-    public void editrcvDocQcFormD() {
-        RcvDocQcFormM rcvDocQcFormM = service.findById(getLong(0));
-        Record record = service.getCheckoutListByIautoId(rcvDocQcFormM.getIAutoId());
-        List<Record> docparamlist = service.getonlyseelistByiautoid(rcvDocQcFormM.getIAutoId());
-        set("docparamlist", docparamlist);
-        set("rcvdocqcformm", rcvDocQcFormM);
-        set("record", record);
-        render("editTable.html");
     }
 
     /**
@@ -196,14 +203,6 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
      */
     public void toggleIsCpkSigned() {
         renderJson(service.toggleBoolean(getLong(0), "isCpkSigned"));
-    }
-
-    /**
-     * 导入图片
-     */
-    public void uploadImage() {
-        String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/");
-        renderJsonData(service.uploadImage(getFiles(ExtendUploadFolder.EXTEND_ITEMMASTER_EDITOR_IMAGE + "/inventory" + "/")));
     }
 
     /*

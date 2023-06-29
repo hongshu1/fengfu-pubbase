@@ -1,0 +1,60 @@
+<!-- 检验表格项目表的的数据模板定义-->
+<script type="text/template" id="slave_demotpl_#(pageId)">
+    {@each datas as data,index}
+    <tr data-id="${data.iautoid}" class="hand" data-changed="">
+        {@if pageSize&&pageSize>0}
+        <td>${((pageNumber-1)*pageSize)+(+index+1)}</td>
+        {@else}
+        <td>${+index+1}</td>
+        {@/if}
+        <td>${data.cuptimecategoryname}</td>
+        <td>${data.cuptimeparamname}</td>
+        <td>${data.imins}</td>
+        <td>
+            {@if index>0}
+            <a tooltip data-title="上移" href="javascript:void(0)"
+               onclick="jboltTableTrMoveUp(this, true, 'iseq');" class="jbolt_table_btn"><i
+                    class="fa fa-arrow-up c-info"></i></a>
+            {@/if}
+            {@if index < datas.length-1}
+            <a tooltip data-title="下移" href="javascript:void(0)"
+               onclick="jboltTableTrMoveDown(this, true, 'iseq');" class="jbolt_table_btn"><i
+                    class="fa fa-arrow-down c-info"></i></a>
+            {@/if}
+            <a tooltip data-title="删除" href="javascript:void(0)"
+               onclick="removeTr(this);checkOrUpdateTplCategory(${data.iuptimecategoryid});" class="jbolt_table_btn"><i
+                    class="fa fa-remove  c-danger"></i></a>
+        </td>
+    </tr>
+    {@/each}
+</script>
+
+<div class="split slave">
+    <table id="jbolt_table_uptimetpltable_split"
+           class="table-center jbolt_table thead_font_normal table_striped"
+           data-jbolttable
+           data-column-resize="true"
+           data-height="fill_box"
+           data-rowtpl="slave_demotpl_#(pageId)"
+           data-ajax="true"
+           data-url="admin/uptimeTplTable/uptimeTplTableDatas?iuptimetplmid=#(uptimeTplM.iautoid??)"
+           data-ajax-success-handler="editTplDatas"
+           data-conditions-form="qcformitemTypeForm_#(pageId)"
+           data-width="auto"
+           data-page-mini="true"
+           data-editable="true"
+           data-editable-option="jbolt_table_edittable_#(pageId)"
+    >
+        <thead>
+        <tr>
+            <th data-width="60" data-column="index">序号</th>
+            <th data-width="300" data-column="cUptimeCategoryName">分类名称</th>
+            <th data-width="300" data-column="cUptimeParamName">项目名称</th>
+            <th data-width="300" data-column="imins">设定值(分钟)</th>
+            <th data-width="120" data-column="iseq">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>

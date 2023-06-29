@@ -48,6 +48,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -209,6 +210,11 @@ public class PersonAdminController extends BaseAdminController {
         renderJsonData(service.getAutocompleteListWithDept(get("cdepcode"), get("q"), getInt("limit", 10)));
     }
 
+    @UnCheck
+    public void getAutocompleteDatasContainSubDep() {
+        renderJsonData(service.getAutocompleteDatasContainSubDep(get("cdepcode"), get("q"), getInt("limit", 10)));
+    }
+    
     /**
      * 选择页面
      */

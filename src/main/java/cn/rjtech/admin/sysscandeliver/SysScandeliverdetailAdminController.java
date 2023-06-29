@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysScandeliverdetail;
@@ -94,7 +95,7 @@ public class SysScandeliverdetailAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 
-
+    @UnCheck
 	public void findEditTableDatas(){
 		Kv kv = new Kv();
 		String id = get("sysscandeliver.AutoID");

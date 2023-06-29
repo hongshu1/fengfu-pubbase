@@ -597,4 +597,10 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 		}
 		return null;
 	}
+	/**
+	 * 根据表格id获取明细数据
+	 */
+	public List<Record> findByIdGetDetail(String iprodformid){
+		return  dbTemplate("spotcheckform.findByIdGetDetail",Kv.by("iprodformid",iprodformid)).find();
+	}
 }

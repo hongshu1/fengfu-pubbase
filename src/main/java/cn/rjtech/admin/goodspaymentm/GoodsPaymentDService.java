@@ -120,13 +120,13 @@ public class GoodsPaymentDService extends BaseService<GoodsPaymentD> {
 	 */
 	public Ret delete(Long id) {
 		updateColumn(id, "isdeleted", true);
-		return ret(true);
+		return SUCCESS;
 	}
 	public Ret deleteByIdsRm(String ids) {
 		String[] split = ids.split(",");
 		for(String s : split){
 			updateColumn(s, "isdeleted", true);
 		}
-		return ret(true);
+		return SUCCESS;
 	}
 }

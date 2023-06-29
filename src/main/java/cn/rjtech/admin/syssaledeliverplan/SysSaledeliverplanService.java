@@ -104,7 +104,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -118,7 +118,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
             delete("DELETE T_Sys_SaleDeliverPlanDetail   where  MasID = ?",id);
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
     /**
      * 更新
@@ -217,17 +217,19 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
             //通过 id 判断是新增还是修改
             if(sysotherin.getAutoID() == null){
                 sysotherin.setOrganizeCode(getOrgCode());
-                sysotherin.setCreatePerson(user.getName());
-                sysotherin.setCreateDate(now);
-                sysotherin.setModifyPerson(user.getName());
-                sysotherin.setAuditPerson(user.getName());
+                sysotherin.setIcreateby(user.getId());
+                sysotherin.setCcreatename(user.getName());
+                sysotherin.setDcreatetime(now);
+                sysotherin.setIupdateby(user.getId());
+                sysotherin.setCupdatename(user.getName());
+                sysotherin.setDupdatetime(now);
 
-                sysotherin.setModifyDate(now);
                 //主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
             }else{
-                sysotherin.setModifyPerson(user.getName());
-                sysotherin.setModifyDate(now);
+                sysotherin.setIupdateby(user.getId());
+                sysotherin.setCupdatename(user.getName());
+                sysotherin.setDupdatetime(now);
                 //主表修改
                 ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
             }
@@ -248,6 +250,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
         List<Record> list = jBoltTable.getSaveRecordList();
         if(CollUtil.isEmpty(list)) return;
         ArrayList<SysSaledeliverplandetail> sysproductindetail = new ArrayList<>();
+        User user = JBoltUserKit.getUser();
         Date now = new Date();
         for (int i=0;i<list.size();i++) {
             Record row = list.get(i);
@@ -263,8 +266,9 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
             sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
             sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
-            sysdetail.setCreateDate(now);
-            sysdetail.setModifyDate(now);
+            sysotherin.setIupdateby(user.getId());
+            sysotherin.setCupdatename(user.getName());
+            sysotherin.setDupdatetime(now);
             sysproductindetail.add(sysdetail);
         }
         syssaledeliverplandetailservice.batchSave(sysproductindetail);
@@ -275,13 +279,14 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
         if(CollUtil.isEmpty(list)) return;
         ArrayList<SysSaledeliverplandetail> sysproductindetail = new ArrayList<>();
         Date now = new Date();
+        User user = JBoltUserKit.getUser();
         for(int i = 0;i < list.size(); i++){
             Record row = list.get(i);
             SysSaledeliverplandetail sysdetail = new SysSaledeliverplandetail();
             sysdetail.setAutoID(row.get("autoid").toString());
             sysdetail.setBarcode(row.get("barcode"));
             sysdetail.setInvCode(row.get("cinvcode"));
-            System.out.println(row.get("whcode").toString());
+//            System.out.println(row.get("whcode").toString());
             sysdetail.setWhCode(row.get("whcode").toString());
             sysdetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysdetail.setMasID(sysotherin.getAutoID());
@@ -289,8 +294,9 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
             sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
             sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
-            sysdetail.setCreateDate(now);
-            sysdetail.setModifyDate(now);
+            sysotherin.setIupdateby(user.getId());
+            sysotherin.setCupdatename(user.getName());
+            sysotherin.setDupdatetime(now);
             sysproductindetail.add(sysdetail);
 
         }

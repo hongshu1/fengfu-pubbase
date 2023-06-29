@@ -2,6 +2,7 @@ package cn.rjtech.entity.vo.rcvdocqcformm;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @version 1.0
@@ -11,20 +12,82 @@ import java.math.BigDecimal;
  */
 public class AutoGetCheckOutTableDatas implements Serializable {
 
-    private Long       iautoid;
-    private Long       iformparamid;
-    private Long       iqcformid;
-    private Long       ircvdocqcformmid;
-    private Integer    iseq;
-    private Integer    isubseq;
-    private Integer    itype;//参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间
-    private String     coptions;
-    private String     cqcformparamids;
-    private String     cqcitemname;
-    private String     cqcparamname;
-    private BigDecimal imaxval;
-    private BigDecimal iminval;
-    private BigDecimal istdval;
+    /*主键*/
+    private Long         iautoid;
+    /*来料检主表的字段*/
+    private Long         iformparamid;
+    /*bd_qcform表的id(质量表格设置页面的id)*/
+    private Long         iqcformid;
+    /*来料检主表id*/
+    private Long         ircvdocqcformmid;
+    /*次序*/
+    private Integer      iseq;
+    /*参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间*/
+    private Integer      itype;
+    private String       coptions;
+    private String       cqcformparamids;
+    /*参数名称*/
+    private String       cqcitemname;
+    /*项目名称*/
+    private String       cqcparamname;
+    /*最大值*/
+    private BigDecimal   imaxval;
+    /*最小值*/
+    private BigDecimal   iminval;
+    /*平均值*/
+    private BigDecimal   istdval;
+    /*存放规格公差、检查方法、点检方法、检查项目等名称*/
+    private List<String> paramnamelist;
+    /*每个项目维护的值，1-10或1-20*/
+    private List<cValue> cvaluelist;
+
+    public static class cValue{
+        public String cvalue;
+        public String iautoid;
+        public String ircvdocqcformdid;
+        public String iseq;
+        public String name;
+
+        public String getCvalue() {
+            return cvalue;
+        }
+
+        public void setCvalue(String cvalue) {
+            this.cvalue = cvalue;
+        }
+
+        public String getIautoid() {
+            return iautoid;
+        }
+
+        public void setIautoid(String iautoid) {
+            this.iautoid = iautoid;
+        }
+
+        public String getIrcvdocqcformdid() {
+            return ircvdocqcformdid;
+        }
+
+        public void setIrcvdocqcformdid(String ircvdocqcformdid) {
+            this.ircvdocqcformdid = ircvdocqcformdid;
+        }
+
+        public String getIseq() {
+            return iseq;
+        }
+
+        public void setIseq(String iseq) {
+            this.iseq = iseq;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 
     public Long getIautoid() {
         return iautoid;
@@ -64,14 +127,6 @@ public class AutoGetCheckOutTableDatas implements Serializable {
 
     public void setIseq(Integer iseq) {
         this.iseq = iseq;
-    }
-
-    public Integer getIsubseq() {
-        return isubseq;
-    }
-
-    public void setIsubseq(Integer isubseq) {
-        this.isubseq = isubseq;
     }
 
     public Integer getItype() {
@@ -136,5 +191,21 @@ public class AutoGetCheckOutTableDatas implements Serializable {
 
     public void setIstdval(BigDecimal istdval) {
         this.istdval = istdval;
+    }
+
+    public List<String> getParamnamelist() {
+        return paramnamelist;
+    }
+
+    public void setParamnamelist(List<String> paramnamelist) {
+        this.paramnamelist = paramnamelist;
+    }
+
+    public List<cValue> getCvaluelist() {
+        return cvaluelist;
+    }
+
+    public void setCvaluelist(List<cValue> cvaluelist) {
+        this.cvaluelist = cvaluelist;
     }
 }

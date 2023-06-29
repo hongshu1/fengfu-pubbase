@@ -74,7 +74,7 @@ public class ExpenseBudgetManageService extends BaseService<ExpenseBudget>{
         	.set("iorgid",getOrgId());
 		Page<Record> pageRecord =  dbTemplate("expensebudgetmanage.paginateAdminDatas",para).paginate(pageNumber, pageSize);
 		for (Record row : pageRecord.getList()) {
-			row.set("cusername",JBoltUserCache.me.getUserName(row.getLong("icreateby")));
+			row.set("cusername",JBoltUserCache.me.getName(row.getLong("icreateby")));
 			row.set("cdepname", departmentService.getCdepName(row.getStr("cdepcode")));
 		}
 		return pageRecord;
@@ -101,7 +101,7 @@ public class ExpenseBudgetManageService extends BaseService<ExpenseBudget>{
 				long iAutoId = Long.parseLong(idStr);
 				ExpenseBudget expenseBudget = findById(iAutoId);
 				ValidationUtils.notNull(expenseBudget, JBoltMsg.DATA_NOT_EXIST);
-				List<ExpenseBudgetItem> expenseBudgetItemList = expenseBudgetItemService.findByMainId(expenseBudget.getIautoid());
+				List<ExpenseBudgetItem> expenseBudgetItemList = expenseBudgetItemService.findByMainId(expenseBudget.getIAutoId());
 				for (ExpenseBudgetItem expenseBudgetItem : expenseBudgetItemList) {
 					List<ExpenseBudgetItemd> expenseBudgetItemdList =  expenseBudgetItemdService.findByItemId(expenseBudgetItem.getIautoid());
 					for (ExpenseBudgetItemd expenseBudgetItemd : expenseBudgetItemdList) {
@@ -128,9 +128,9 @@ public class ExpenseBudgetManageService extends BaseService<ExpenseBudget>{
 		ValidationUtils.notNull(iexpenseid, "费用预算ID为空");
 		ExpenseBudget expenseBudget = findById(iexpenseid);
 		Date now = new Date();
-		ValidationUtils.isTrue(expenseBudget.getIauditstatus() == AuditStatusEnum.APPROVED.getValue(), "请选择已审核的费用预算进行生效操作!");
-		ValidationUtils.isTrue(expenseBudget.getIeffectivestatus() == EffectiveStatusEnum.INVAILD.getValue()
-				||expenseBudget.getIeffectivestatus() == EffectiveStatusEnum.CANCLE.getValue()
+		ValidationUtils.isTrue(expenseBudget.getIAuditStatus() == AuditStatusEnum.APPROVED.getValue(), "请选择已审核的费用预算进行生效操作!");
+		ValidationUtils.isTrue(expenseBudget.getIEffectiveStatus() == EffectiveStatusEnum.INVAILD.getValue()
+				||expenseBudget.getIEffectiveStatus() == EffectiveStatusEnum.CANCLE.getValue()
 				, "请选择未生效或已作废的费用预算进行生效操作!");
 		ValidationUtils.isTrue(!expenseBudgetService.isExistsEffectivedExpenseBudget(expenseBudget), "已存在生效部门，请检查!");
 		tx(()->{
@@ -140,17 +140,17 @@ public class ExpenseBudgetManageService extends BaseService<ExpenseBudget>{
 					projectCardService.contructModelAndSave(ServiceTypeEnum.EXPENSE_BUDGET.getValue(), expenseBudgetItem, FinishStatusEnum.UNFINISHED.getValue(),now);
 				}
 			}
-			ExpenseBudget previousPeriodExpenseBudget = expenseBudgetService.findPreviousPeriodExpenseBudget(Kv.by("cdepcode", expenseBudget.getCdepcode())
-					.set("ibudgettype",expenseBudget.getIbudgettype()).set("ibudgetyear",expenseBudget.getIbudgetyear()));
+			ExpenseBudget previousPeriodExpenseBudget = expenseBudgetService.findPreviousPeriodExpenseBudget(Kv.by("cdepcode", expenseBudget.getCDepCode())
+					.set("ibudgettype",expenseBudget.getIBudgetType()).set("ibudgetyear",expenseBudget.getIBudgetYear()));
 			if(previousPeriodExpenseBudget != null){
-				previousPeriodExpenseBudget.setIupdateby(JBoltUserKit.getUserId());
-				previousPeriodExpenseBudget.setDupdatetime(now);
-				previousPeriodExpenseBudget.setIeffectivestatus(EffectiveStatusEnum.EXPIRED.getValue());
+				previousPeriodExpenseBudget.setIUpdateBy(JBoltUserKit.getUserId());
+				previousPeriodExpenseBudget.setDUpdateTime(now);
+				previousPeriodExpenseBudget.setIEffectiveStatus(EffectiveStatusEnum.EXPIRED.getValue());
 				ValidationUtils.isTrue(previousPeriodExpenseBudget.update(), ErrorMsg.UPDATE_FAILED);
 			}
-			expenseBudget.setIeffectivestatus(EffectiveStatusEnum.EFFECTIVED.getValue());
-			expenseBudget.setIupdateby(JBoltUserKit.getUserId());
-			expenseBudget.setDupdatetime(now);
+			expenseBudget.setIEffectiveStatus(EffectiveStatusEnum.EFFECTIVED.getValue());
+			expenseBudget.setIUpdateBy(JBoltUserKit.getUserId());
+			expenseBudget.setDUpdateTime(now);
 			ValidationUtils.isTrue(expenseBudget.update(), ErrorMsg.UPDATE_FAILED);
 			return true;
 		});
@@ -165,7 +165,7 @@ public class ExpenseBudgetManageService extends BaseService<ExpenseBudget>{
 		ValidationUtils.notNull(iexpenseid, "费用预算ID为空");
 		ExpenseBudget expenseBudget = findById(iexpenseid);
 		Date now = new Date();
-		ValidationUtils.isTrue(expenseBudget.getIeffectivestatus() == EffectiveStatusEnum.EFFECTIVED.getValue(), "请选择已生效的费用预算进行作废操作!");
+		ValidationUtils.isTrue(expenseBudget.getIEffectiveStatus() == EffectiveStatusEnum.EFFECTIVED.getValue(), "请选择已生效的费用预算进行作废操作!");
 		List<Record> list = proposalmService.findProposalDatasByExpenseId(iexpenseid);
 		if(CollUtil.isNotEmpty(list)) {
 			String cproposalNos = "";
@@ -176,13 +176,33 @@ public class ExpenseBudgetManageService extends BaseService<ExpenseBudget>{
 			ValidationUtils.error( "费用预算已发生禀议，不能作废，请删除后流程单据后继续操作，禀议书编号为"+cproposalNos);
 		}
 		tx(()->{
-			expenseBudget.setIeffectivestatus(EffectiveStatusEnum.CANCLE.getValue());
-			expenseBudget.setIupdateby(JBoltUserKit.getUserId());
-			expenseBudget.setDupdatetime(now);
+			expenseBudget.setIEffectiveStatus(EffectiveStatusEnum.CANCLE.getValue());
+			expenseBudget.setIUpdateBy(JBoltUserKit.getUserId());
+			expenseBudget.setDUpdateTime(now);
 			ValidationUtils.isTrue(expenseBudget.update(), ErrorMsg.UPDATE_FAILED);
 			return true;
 		});
 		return SUCCESS;
+	}
+	/**
+	 * 失效：1.存在下游单据不能失效
+	 * 	2.单据状态从已生效变更到未生效
+	 * */
+	public Ret uneffect(Long iexpenseid) {
+		tx(()->{
+			ExpenseBudget expenseBudget = findById(iexpenseid);
+			Integer ieffectivestatus = expenseBudget.getIEffectiveStatus();
+			ValidationUtils.isTrue(ieffectivestatus == EffectiveStatusEnum.EFFECTIVED.getValue(), "请操作已生效的单据!");
+			ValidationUtils.isTrue(!isExistsProposalDatas(iexpenseid), "存在禀议数据，不能失效");
+			expenseBudget.setIEffectiveStatus(EffectiveStatusEnum.INVAILD.getValue());
+			ValidationUtils.isTrue(expenseBudget.update(), ErrorMsg.UPDATE_FAILED);
+			return true;
+		});
+		return SUCCESS;
+	}
+	private boolean isExistsProposalDatas(Long iexpenseid){
+		int count = dbTemplate("expensebudgetmanage.isExistsProposalDatas",Kv.by("iexpenseid", iexpenseid)).queryInt();
+		return count > 0 ? true : false;
 	}
 
 }

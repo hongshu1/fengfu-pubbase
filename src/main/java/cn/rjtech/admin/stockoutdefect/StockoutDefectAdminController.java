@@ -22,7 +22,7 @@ import com.jfinal.plugin.activerecord.Record;
  * @author: RJ
  * @date: 2023-04-25 09:26
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.STOCKOUTDEFECT)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/stockoutdefect", viewPath = "/_view/admin/stockoutdefect")

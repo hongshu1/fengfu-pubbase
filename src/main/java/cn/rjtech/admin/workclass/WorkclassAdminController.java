@@ -6,6 +6,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.rjtech.admin.operation.OperationService;
@@ -51,6 +52,7 @@ public class WorkclassAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         Page<Record> recordPage = service.pageList(getKv());
         renderJsonData(recordPage);
@@ -167,7 +169,6 @@ public class WorkclassAdminController extends JBoltBaseController {
         renderBytesToExcelXlsFile(jBoltExcel);
     }
 
-    @SuppressWarnings("unchecked")
     public void downloadTpl() throws Exception {
         renderBytesToExcelXlsFile(service.getExcelImportTpl().setFileName("工种档案导入模板"));
     }
@@ -185,8 +186,19 @@ public class WorkclassAdminController extends JBoltBaseController {
         renderJson(service.importExcelData(file.getFile()));
     }
 
+    @UnCheck
     public void options() {
         renderJsonData(service.options());
+    }
+
+    public void importExcelClass() {
+        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+        UploadFile file = getFile("file", uploadPath);
+        if (notExcel(file)) {
+            renderJsonFail("请上传excel文件");
+            return;
+        }
+        renderJson(service.importExcelClass(file.getFile()));
     }
 
 }

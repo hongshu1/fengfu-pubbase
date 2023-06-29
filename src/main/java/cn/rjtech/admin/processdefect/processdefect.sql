@@ -113,7 +113,7 @@ WHERE 1 = 1
   AND t2.cDocNo like '%#(cdocno)%'
   #end
     #if(imodocid)
-  AND t1.cSpecRcvDocNo like '%#(imodocid)%'
+  AND t2.iModocId like '%#(imodocid)%'
   #end
 #if(cinvcode)
   AND t3.cInvCode like '%#(cinvcode)%'
@@ -146,3 +146,13 @@ SELECT t1.* FROM Mo_ProcessDefect t1 WHERE 1=1
       AND t1.iAutoId  in (#(ids))
     #end
 #end
+#sql("OneMaterialTitle")
+#end
+
+#sql("OperationDatas")
+SELECT iAutoId, cOperationName
+FROM Bd_Operation
+WHERE 1 = 1
+and isDeleted = 0
+and cOrgCode = #(OrgCode)
+    #end

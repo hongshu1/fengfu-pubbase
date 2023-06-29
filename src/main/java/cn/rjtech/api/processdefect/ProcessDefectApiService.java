@@ -45,5 +45,15 @@ public class ProcessDefectApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS;
     }
 
+    public JBoltApiRet editProcessDefect(Kv kv){
+        processDefectService.editProcessDefect(kv);
+        return  JBoltApiRet.API_SUCCESS;
+    }
+
+    public JBoltApiRet deletes(Long iautoid) {
+        processDefectService.delete(iautoid);
+        return JBoltApiRet.API_SUCCESS;
+    }
+
 
 }

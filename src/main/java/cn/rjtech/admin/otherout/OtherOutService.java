@@ -7,12 +7,17 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
+import cn.rjtech.enums.WeekOrderStatusEnum;
+import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.model.momdata.OtherOutDetail;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -29,7 +34,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @author: RJ
  * @date: 2023-05-06 15:05
  */
-public class OtherOutService extends BaseService<OtherOut> {
+public class OtherOutService extends BaseService<OtherOut> implements IApprovalService {
 
 	private final OtherOut dao = new OtherOut().dao();
 
@@ -41,6 +46,8 @@ public class OtherOutService extends BaseService<OtherOut> {
 
 	@Inject
 	private OtherOutDetailService otherOutDetailService;
+	@Inject
+	private FormApprovalService formApprovalService;
 
 
 	/**
@@ -53,6 +60,7 @@ public class OtherOutService extends BaseService<OtherOut> {
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
 		return dbTemplate("otherout.paginateAdminDatas",kv).paginate(pageNumber, pageSize);
 	}
+
 
 	/**
 	 * 特殊领料单列表 明细
@@ -185,16 +193,14 @@ public class OtherOutService extends BaseService<OtherOut> {
 	 * 通过关键字匹配
 	 * autocomplete组件使用
 	 */
-	public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode) {
-		return dbTemplate("otherout.getBarcodeDatas",Kv.by("q", q).set("limit",limit).set("orgCode",orgCode)).find();
+	public List<Record> getBarcodeDatas(Kv kv) {
+		return dbTemplate("otherout.getBarcodeDatas",kv).find();
 	}
 
-	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti, String param, String revokeVal,String autoid) {
+	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
-
-
 
 		// 这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
 
@@ -241,23 +247,16 @@ public class OtherOutService extends BaseService<OtherOut> {
 
 
 				//	行数据为空 不保存
-				if ("save".equals(revokeVal)) {
-					if (otherOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
-						ValidationUtils.error( "请先添加行数据！");
-					}
+				if (otherOut.getAutoID() == null && !jBoltTable.saveIsNotBlank() && !jBoltTable.updateIsNotBlank() && !jBoltTable.deleteIsNotBlank()) {
+					ValidationUtils.error( "请先添加行数据！");
 				}
 
-				if ("submit".equals(revokeVal) && otherOut.getAutoID() == null) {
-					ValidationUtils.error( "请保存后提交审核！！！");
-				}
-				System.out.println("====="+otherOut.getAutoID());
 
-				if (otherOut.getAutoID() == null && "save".equals(revokeVal)) {
+
+				if (otherOut.getAutoID() == null) {
 					//保存
-					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
-					otherOut.setAuditStatus(0);
-					//订单状态：1. 已保存 2. 待审批 3. 已审批 4. 审批不通过 5. 已发货 6. 已核对 7. 已关闭
-					otherOut.setStatus(1);
+//					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+					otherOut.setIAuditStatus(0);
 					otherOut.setICreateBy(userId);
 					otherOut.setDCreateTime(nowDate);
 					otherOut.setCCreateName(userName);
@@ -266,17 +265,10 @@ public class OtherOutService extends BaseService<OtherOut> {
 					otherOut.setDupdateTime(nowDate);
 					otherOut.setCUpdateName(userName);
 					otherOut.setType("OtherOutMES");
+					otherOut.setIsDeleted(false);
 					save(otherOut);
 					headerId = otherOut.getAutoID();
 				} else {
-					if ("save".equals(revokeVal)){
-						otherOut.setStatus(1);
-					}else {
-						//审核状态：1. 待审核
-						otherOut.setAuditStatus(1);
-						//订单状态：2. 待审批
-						otherOut.setStatus(2);
-					}
 					otherOut.setIUpdateBy(userId);
 					otherOut.setDupdateTime(nowDate);
 					otherOut.setCUpdateName(userName);
@@ -326,6 +318,26 @@ public class OtherOutService extends BaseService<OtherOut> {
 		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
+	/**
+	 * 详情页提审
+	 */
+
+	public Ret submit(Long iautoid) {
+		tx(() -> {
+
+			// 根据审批状态
+			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"cn.rjtech.admin.otherout.OtherOutService");
+			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+
+			// 处理其他业务
+//			OtherOut otherOut = findById(iautoid);
+//			otherOut.setIAuditStatus(1);
+//			ValidationUtils.isTrue(otherOut.update(),JBoltMsg.FAIL);
+			return true;
+		});
+
+		return SUCCESS;
+	}
 
 	/**
 	 * 审批
@@ -425,11 +437,162 @@ public class OtherOutService extends BaseService<OtherOut> {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		OtherOut otherOut = findById(iAutoId);
-		//订单状态：2. 待审批
-		otherOut.setStatus(1);
-		//审核状态： 1. 待审核
-		otherOut.setAuditStatus(0);
+//		//订单状态：2. 待审批
+//		otherOut.setStatus(1);
+		//审核状态： 1. 待审批
+		otherOut.setIAuditStatus(0);
 		boolean result = otherOut.update();
 		return ret(result);
+	}
+
+
+	/**
+	 * 获取现品票
+	 * @param  kv
+	 * @return
+	 */
+	public List<Record> gettable2(Kv kv) {
+		List<Record> Table2InvCode = dbTemplate("otheroutreturnlist.getTable2InvCode", kv).find();
+
+		final String[] barCode = {null};
+		List<String> InvCodesList = new ArrayList<>();
+		for (Record InvCode :Table2InvCode){
+			String itemCode = InvCode.getStr("InvCode");
+			if (!InvCodesList.contains(itemCode)){
+				InvCodesList.add(itemCode);
+			}
+		}
+
+		if (InvCodesList.size()>0){
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < InvCodesList.size(); i++) {
+
+				buffer.append("\'"+InvCodesList.get(i)+"\',");
+			}
+			String invCodes = buffer.substring(0, buffer.length() - 1);
+			kv.set("invcode",invCodes);
+		}
+
+		List<Record> TableBarcodeData = this.TableBarcodeData(kv);
+		if (TableBarcodeData.size() == 0){
+			ValidationUtils.error( "请输入正确的现品票！！！");
+		}
+		return TableBarcodeData;
+	}
+
+	/**
+	 * 获取条码列表
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	public List<Record> TableBarcodeData(Kv kv) {
+		return dbTemplate("otherout.TableBarcodeData",kv).find();
+	}
+
+
+
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		Date nowDate = new Date();
+		OtherOut otherOut = findById(formAutoId);
+		otherOut.setIAuditBy(userId);
+		otherOut.setCAuditName(userName);
+		otherOut.setDAuditTime(nowDate);
+//		String ids = String.valueOf(otherOut.getAutoID());
+//		this.pushU8(ids);
+		otherOut.update();
+		return null;
+	}
+
+	@Override
+	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	@Override
+	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		OtherOut otherOut = findById(formAutoId);
+		otherOut.setIAuditBy(null);
+		otherOut.setCAuditName(null);
+		otherOut.setDAuditTime(null);
+		otherOut.update();
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		Long userId = JBoltUserKit.getUserId();
+		String userName = JBoltUserKit.getUserName();
+		Date nowDate = new Date();
+		/**
+		 *List转换String类型
+		 */
+		if (formAutoIds.size()>0) {
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < formAutoIds.size(); i++) {
+
+				buffer.append("" + formAutoIds.get(i) + ",");
+			}
+			String ids = buffer.substring(0, buffer.length() - 1);
+			List<OtherOut> listByIds = getListByIds(ids);
+			if (listByIds.size() > 0) {
+				for (OtherOut otherOut : listByIds) {
+					//审核人
+					otherOut.setIAuditBy(userId);
+					otherOut.setCAuditName(userName);
+					otherOut.setDAuditTime(nowDate);
+//					this.pushU8(ids);
+					otherOut.update();
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		return null;
+	}
+
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		return null;
 	}
 }

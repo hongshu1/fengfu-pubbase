@@ -132,6 +132,11 @@ public class ScanCodeReceiveDetailService extends BaseService<SysPureceivedetail
         return null;
     }
 
+    /**
+     * 行数据查询
+     * @param para
+     * @return
+     */
     public List<Record> findEditTableDatas(Kv para) {
         List<Record> records = dbTemplate("scancodereceive.dList", para).find();
 
@@ -149,7 +154,7 @@ public class ScanCodeReceiveDetailService extends BaseService<SysPureceivedetail
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -157,7 +162,7 @@ public class ScanCodeReceiveDetailService extends BaseService<SysPureceivedetail
      */
     public Ret delete(Long id) {
         updateColumn(id, "isdeleted", true);
-        return ret(true);
+        return SUCCESS;
     }
 
     public List<Record> getwhname(String id) {
@@ -165,4 +170,12 @@ public class ScanCodeReceiveDetailService extends BaseService<SysPureceivedetail
         return null;
     }
 
+    /**
+     * 根据主表id查询数据
+     * @param masId
+     * @return
+     */
+    public List<Record> findListByMasId(Long masId){
+        return dbTemplate("scancodereceive.findListByMasId",Kv.create().set("masId",masId)).find();
+    }
 }

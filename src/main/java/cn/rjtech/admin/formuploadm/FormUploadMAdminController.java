@@ -14,13 +14,12 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Ret;
 import com.jfinal.upload.UploadFile;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 记录上传
@@ -76,19 +75,20 @@ public class FormUploadMAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
-	public void edit() {
-		FormUploadM formUploadM=service.findById(getLong(0));
+	public void edit(@Para(value = "iautoid") Long iautoid) {
+		ValidationUtils.validateId(iautoid, "记录上传ID");
+
+		FormUploadM formUploadM=service.findById(iautoid);
 		if(formUploadM == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
 		set("formUploadM",formUploadM);
 		String s = formUploadM.getIAuditStatus() == 0 ?
-				"未审核" : formUploadM.getIAuditStatus() == 1 ?
+				"已保存" : formUploadM.getIAuditStatus() == 1 ?
 				"待审核" : formUploadM.getIAuditStatus() == 2 ? "审核通过" : "审核不通过";
 		set("status",s);
-		set("iauditstatus",false);
-		set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
+		keepPara();
 		render("edit.html");
 	}
 
@@ -122,42 +122,22 @@ public class FormUploadMAdminController extends BaseAdminController {
 	/**
 	 * 批量保存
 	 */
-	public void saveTableSubmit(){
-		renderJsonData(service.saveTableSubmit(getJBoltTable()));
+	public void submitAll(){
+		renderJson(service.saveTableSubmit(getJBoltTable()));
 	}
 
-	public void batchApprove() {
-		renderJson(service.batchApprove(get("ids")));
-	}
-
-	public void batchReverseApprove() {
-		renderJson(service.batchReverseApprove(get("ids")));
-	}
-
-	/**
-	 * 提交审批
-	 */
-	public void submit() {
-		renderJson(service.submit(getLong("iautoid")));
-	}
-
-	/**
-	 * 审批通过
-	 */
-	public void approve() {
-		renderJson(service.approve(getLong(0)));
-	}
-
-	/**
-	 * 审批不通过
-	 */
-	public void reject() {
-		renderJson(service.reject(getLong(0)));
-	}
 	/**
 	 * 删除
 	 */
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
+
+	/**
+	 * 批量删除
+	 */
+	public void deleteByIds() {
+		renderJson(service.deleteByBatchIds(get("ids")));
+	}
+    
 }

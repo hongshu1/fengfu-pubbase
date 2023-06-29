@@ -1,0 +1,132 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+                <h6><strong>参数名称列表</strong></h6>
+            </div>
+            <div class="col">
+                <form class="form-inline" id="qcformparamForm_#(pageId)" onsubmit="return false;" method="post">
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=参数名称=" name="paramname"
+                           value=""/>
+                    <input hidden type="text" name="qcFormItemCodes" value="#(qcFormItemCodes??)">
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="qcformparamRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td style="display: none">${data.iqcformitemid}</td>
+<td>${data.cproditemname}</td>
+<td hidden>${data.iproditemid}</td>
+<td>${data.cprodparamname}</td>
+<td style="display: none">${data.iitemseq}</td>
+<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"
+           data-url="admin/operation/toggleIsenabledByQcParam/${data.iautoid}"/>
+  </td></tr>
+{@/each}
+</textarea>
+        <div class="jbolt_table_toolbar" id="qcformparam_toolbar_#(pageId)">
+            <div class="btn-group" hidden role="group" aria-label="btn-group">
+                <button data-btn onclick="getparamIds(this)" id="btnclick" data-title="选择"
+                        class="btn btn-secondary"><i class="fa fa-check"></i> 选择
+                </button>
+            </div>
+        </div>
+
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               id="qcformparamPage"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-url="/admin/prodForm/qcformparam/qcformparamlist?ids=#(FormItemCodes??)&iQcItemIds=#(iQcItemIds??)"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="qcformparamForm_#(pageId)"
+               data-rowtpl="qcformparamRowtpl_#(pageId)"
+               data-page="itemmasterPage_#(pageId)"
+               data-ajax-success-handler="ajaxSuccessHandler"
+               data-toolbar="qcformparam_toolbar_#(pageId)"
+        >
+            <thead>
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="150" data-column="cproditemname">参数项目名称</th>
+                <th data-width="150" hidden data-column="iproditemid">参数编码</th>
+                <th data-width="150" data-column="cprodparamname">参数名称</th>
+                <th data-width="150" data-column="isenabled">启用状态</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+#end
+#define js()
+<script>
+    hideParentLayerDialogBtn(0)
+    addParentLayerDialogBtn("确定", "lay_success", function (data) {
+        $("#btnclick").click();
+    });
+
+    function getparamIds(o) {
+        if ('#(type??)' == '2') {
+            var data = jboltTableGetCheckedDatas(o);
+            var insertDatas = [];
+            for (var i in data) {
+                insertDatas.push({
+                    "iqcformitemid": data[i].iqcformitemid,
+                    "cqcitemnames": data[i].cproditemname,
+                    "iqcparamid": data[i].iautoid,
+                    "cqcparamnames": data[i].cprodparamname,
+                    "iitemseq": data[i].iitemseq,
+                    "iqcitemid": data[i].iproditemid,
+
+                });
+            }
+            console.log('insertDatas==='+JSON.stringify(insertDatas))
+            parent.jboltTableInsertRow(parent.$("#jbolt_table_prod_qcformparam_split"), insertDatas);
+            // parent.insertRow(insertDatas);
+            parent.updateItemParamSeq(true);
+            parent.layer.close(parent.layer.getFrameIndex(window.name));
+        } else {
+            //母件选择
+            const data = jboltTableGetCheckedData(o);
+            console.log("====="+data)
+            if (data != null) {
+                parent.$("#iqcparamid").val(data.iautoid)
+                // parent.$("#iqcformid").val(data.cqcitemcode)
+                // parent.$("#iQcFormItemId").val(data.cqcitemcode)
+
+                const insertionData = {
+                    "iqcparamid": data.iautoid
+                }
+                jboltTableInsertRow(parent.$("#jbolt_table_prod_qcformparam_split"), insertionData);
+                parent.layer.close(parent.layer.getFrameIndex(window.name));
+            }
+        }
+    }
+
+    function ajaxSuccessHandler(table) {
+        $('.jbolt_table').tablesMergeCell({
+            cols: [1]
+        }, true)
+    }
+</script>
+#end
+

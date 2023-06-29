@@ -1,8 +1,9 @@
 package cn.rjtech.model.momdata;
 
-import cn.rjtech.model.momdata.base.BaseBomD;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
+import cn.rjtech.model.momdata.base.BaseBomD;
+
 
 /**
  * 物料建模-BOM明细
@@ -11,8 +12,57 @@ import cn.jbolt.core.base.JBoltIDGenMode;
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Bd_BomD" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
 public class BomD extends BaseBomD<BomD> {
-    // 源id
+    /**
+     * 源id
+     */
     public static final String SOURCEID = "sourceId";
     
+    public static final String ILEVELStr = "iLevel";
+    /**
+     * 层级
+     */
+    private Integer iLevel;
+    /**
+     * 层级文本，示例：1-1
+     */
+    private String cInvLev;
+    /**
+     * 原材料类型：0.部品 1. 片料 2. 分条料 3. 卷料
+     */
+    private Integer iRawType;
+    
+    private BomD childBom;
+    
+    public void setILevel(java.lang.Integer iLevel) {
+        this.iLevel = iLevel;
+    }
+    
+    public java.lang.Integer getILevel() {
+        return iLevel;
+    }
+    
+    public void setCInvLev(java.lang.String cInvLev) {
+       this.cInvLev = cInvLev;
+    }
+    
+    public java.lang.String getCInvLev() {
+        return cInvLev;
+    }
+   
+    public void setIRawType(java.lang.Integer iRawType) {
+        this.iRawType = iRawType;
+    }
+    
+    public java.lang.Integer getIRawType() {
+        return iRawType;
+    }
+    
+    public BomD getChildBom() {
+        return childBom;
+    }
+    
+    public void setChildBom(BomD childBom) {
+        this.childBom = childBom;
+    }
 }
 

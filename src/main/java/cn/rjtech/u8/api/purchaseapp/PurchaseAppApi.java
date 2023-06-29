@@ -39,17 +39,17 @@ public class PurchaseAppApi {
         // 构建主表信息
         PurchaseAppHeader handle = new PurchaseAppHeader();
         // 单据号 非空、唯一
-        handle.setCode(purchasem.getCpurchaseno());
+        handle.setCode(purchasem.getCPurchaseNo());
         // 单据日期 非空
-        handle.setDate(JBoltDateUtil.format(purchasem.getCpurchasedate(), JBoltDateUtil.YMD));
+        handle.setDate(JBoltDateUtil.format(purchasem.getCPurchaseDate(), JBoltDateUtil.YMD));
         // 部门编号 可空
         handle.setDepartmentcode(purchasem.get("cenddepcode"));
         // 职员编号 可空
-        handle.setPersoncode(purchasem.getCpersoncode());
+        handle.setPersoncode(purchasem.getCPersonCode());
         // 采购类型 可空
-        handle.setPurchasetypecode(purchasem.getIpurchasetype());
+        handle.setPurchasetypecode(purchasem.getIPurchaseType());
         // 业务类型 非空
-        handle.setBusinesstype(purchasem.getCservicetypename());
+        handle.setBusinesstype(purchasem.getCServiceTypeName());
         // 	制单人 非空
         handle.setMaker(purchasem.get("createname"));
         // 自定义字段 可空
@@ -60,7 +60,7 @@ public class PurchaseAppApi {
         handle.setDefine5(null);
         handle.setDefine6(null);
         handle.setDefine7(null);
-        handle.setDefine8(purchasem.getIspurchased() ? "是" : "否");
+        handle.setDefine8(purchasem.getIsPurchased() ? "是" : "否");
         handle.setDefine9(null);
         handle.setDefine10(null);
         handle.setDefine11(null);
@@ -138,8 +138,8 @@ public class PurchaseAppApi {
             //entry.setIvouchrowno(0);
             // 自定义项 可空
             entry.setDefine22(null);
-            entry.setDefine23(purchasem.getCdepcode());
-            entry.setDefine24(purchasem.getCpurchaseno());
+            entry.setDefine23(purchasem.getCDepCode());
+            entry.setDefine24(purchasem.getCPurchaseNo());
             entry.setDefine25(purchased.getCreferencepurpose());
             entry.setDefine26(null);
             entry.setDefine27(null);
@@ -173,7 +173,7 @@ public class PurchaseAppApi {
         purchaseAppReq.setBody(body);
 
         // 获取响应数据
-        JSONObject invoke = RemoteInvoker.invoke(purchasem.getCorgcode(), ProcTypeEnum.ADD.getText(), purchaseAppReq);
+        JSONObject invoke = RemoteInvoker.invoke(purchasem.getCOrgCode(), ProcTypeEnum.ADD.getText(), purchaseAppReq);
         JSONObject ufinterface = invoke.getJSONObject("ufinterface");
         JSONObject item = ufinterface.getJSONObject("item");
         return item.getString("dsc");

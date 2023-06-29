@@ -1,132 +1,326 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey)" >
+<div class="jbolt_page" data-key="#(pmkey)">
 
-<div class="jbolt_page_title">
-	<div class="row">
-	<div class="col-md-auto">
-	<h1>出库管理-特殊领料出库</h1>
-	</div>
-	<div class="col">
-		<form class="form-inline" id="otherOutForm_#(pageId)"   onsubmit="return false;" method="post">
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="=领料单号=" name="billno" value="" />
-			<!--<input type="text" autocomplete="off"  class="form-control"  placeholder="=生产部门=" name="deptname" value="" />-->
-			<select class="form-control"
-					data-autoload
-					name="idepartmentid"
-					data-url="admin/department/getTreeTableDatas?isApsInvoled="
-					data-text="=生产部门="
-					data-text-attr="cdepname"
-					data-value-attr="iautoid"
-					data-value=""
-					data-value-attr="iautoid">
-			</select>
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="=来源=" name="sourcebilltype" value="" />
-			<select style="width:150px" class="form-control"
-					data-autoload
-					data-text="=状态="
-					name="iorderstatus"
-			>
-				<option value="">=状态=</option>
-				<option value="3">已审批 /未完成</option>
-				<option value="5">已出库</option>
-			</select>
-			<input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=开始时间=" name="startdate" data-tips="开始时间" maxlength="23" value="">至
-			<input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control" placeholder="=结束时间=" name="enddate" data-tips="结束时间" maxlength="23" value="">
-			<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-			<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button></form>
-	</div>
-	<div class="col-md-auto">
-	</div>
-	</div>
-</div>
-<div class="jbolt_page_content">
-<!-- JBoltTable的数据模板定义-->
-<textarea class="jb_tpl_box" id="otherOutRowtpl_#(pageId)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+                <h1>出库管理-特殊领料单列表</h1>
+            </div>
+            <div class="col">
+                <form class="form-inline" id="otherOutForm_#(pageId)"   onsubmit="return false;" method="post">
+                    <input type="text"
+                           class="form-control ml-2"
+                           placeholder="请点击选择领料单"
+                           maxlength="40"
+                           name="billno"
+                           value=""
+                           data-dialogbtn
+                           data-area="80%,60%"
+                           data-handler="jboltTablePageToFirst"
+                           id="billno"
+                           data-title="选择领料单"
+                           data-url="admin/otheroutreturnlist/BillNoreturnList"
+                           readonly
+                           style="background-color: white"
+                    />
+                    <input type="text"
+                           data-notnull="true"
+                           data-tips="请输入现品票扫码"
+                           data-with-clearbtn="true"
+                           autocomplete="off"
+                           class="form-control"
+                           placeholder="请输入现品票扫码"
+                           maxlength="40"
+                           id="barcode"
+                           name="barcode"
+                           value="#(barcode??)"
+                    />
+                    <input type="hidden" id="barcodes" name="barcodes" value="" />
+                    <button onclick="barcode_#(pageId)()" class="btn btn-outline-secondary btn-xs"><i class="fa fa-search" id="suBmit1"></i> 查询</button>
+                    <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                    <button type="button" class="btn btn-outline-secondary" id="sumitMaterials1" onclick="submitAllTables_#(pageId)()"> 提交备料</button>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">出库部门：</label>
+                        <div class="col-sm-3 col-form-label">
+                            <select class="form-control"
+                                    data-autoload
+                                    name="otherOut.deptcode"
+                                    data-tips="请选择部门"
+                                    data-rule="required"
+                                    data-url="admin/department/getTreeTableDatas"
+                                    data-text="=请选择部门="
+                                    data-value=""
+                                    data-value-attr="iautoid"
+                                    data-text-attr="cdepname"
+                                    data-select="#(otherOut.deptcode??)">
+                            </select>
+                        </div>
+                        <label class="col-sm-2 col-form-label">备注：</label>
+                        <div class="col-sm-3 col-form-label">
+                            <textarea  style="width: 210px; height: 35px; resize: none" placeholder="=请备注=" type="text" maxlength="300" class="form-control border-none" name="otherOut.memo" placeholder="" value="#(otherOut.memo??)">#(otherOut.memo??)</textarea>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="otherOutRowtpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.autoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>
-	<a class="jbolt_table_editbtn" href="admin/otheroutreturnlist/edit/${data.autoid}?&status=${data.status}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑特殊领料单列表">出库</i></a>
-</td>
 <td>${data.auditstate}</td>
+<td>${data.typename}</td>
 <td>${data.sourcebilltype}</td>
 <td>${data.billno}</td>
-<td>${data.sourcebilldid}</td>
+<td>${data.invcode}</td> <!--存货编码-->
 <td>${data.billdate}</td>
 <td>${data.cdepname}</td>
-<td>${data.处置意见}</td>
 <td>${data.memo}</td>
-<td>${data.createperson}</td>
-<td>${data.createdate}</td>
+<td>${data.reason}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
 
 </tr>
 {@/each}
 </textarea>
 
-<!-- 工具条 toolbar -->
-<div class="jbolt_table_toolbar" id="otherOut_toolbar_#(pageId)">
-	<div class="" role="group" aria-label="btn-group">
-<!--		<button data-openpage="dialog" data-area="1200,800"  data-handler="jboltTablePageToFirst" data-title="新增出库管理-特殊领料出库"  data-url="admin/otheroutreturnlist/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>-->
-<!--		<button data-openpage="dialog" data-area="1200,800"  data-handler="refreshJBoltTable" data-title="修改出库管理-特殊领料出库" data-check-handler="jboltTableGetCheckedId" data-url="admin/otheroutreturnlist/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>-->
-		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/otherout/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
-		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
-		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-				id="side_toolbar_editBtn_#(pageId)" data-url="admin/otheroutreturnlist/pushu?ids="
-				data-confirm="确定提交选中数据？" class="btn btn-outline-danger"> 提交u8
-		</button>
-	</div>
-
-	<div class="clearfix"></div>
-</div>
-
-
-
-<table class="jbolt_table jbolt_main_table table-center hover_info"
-data-jbolttable
-data-height="fill"
-data-ajax="true"
-data-url="admin/otheroutreturnlist/datas"
-data-column-resize="true"
-data-row-click-active="true"
-data-column-prepend="1:checkbox:true"
-data-conditions-form="otherOutForm_#(pageId)"
-data-rowtpl="otherOutRowtpl_#(pageId)"
-data-page="otherOutPage_#(pageId)"
-data-toolbar="otherOut_toolbar_#(pageId)"
-
-data-fixed-columns-left="1,2,3"
-data-fixed-columns-right="-1"
-data-row-dblclick-active="true"
->
-<thead>
-<tr>
-	<th data-width="60">序号</th>
-	<th data-width="150">操作</th>
-	<th data-width="150">状态</th>
-	<th data-min-width="150" data-column="SourceBillType">来源</th>
-	<th data-width="150" data-column="BillNo">领料单号</th>
-	<th data-width="150" data-column="BillNo">工单号</th>
-	<th data-width="150" data-column="BillDate">需求日期</th>
-	<th data-width="150" data-column="DeptCode">生产部门</th>
-	<th data-width="150" data-column="DeptCode">处置意见</th>
-	<th data-width="150" data-column="DeptCode">要求原因分析</th>
-	<th data-width="150" data-column="CreatePerson">创建人</th>
-	<th data-width="150" data-column="CreateDate">创建时间</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+        <div class="jbolt_table_toolbar" id="otherOut_toolbar_#(pageId)">
+            <div class="row">
+                <div class="col-auto">
+                    <form class="form-inline" id="SysOtherin1_form_#(pageId)">
+                        <div style="margin-right: 30px">
+                            <label>物料明细</label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="jbolt_table_toolbar" id="otherOut_toolbar2_#(pageId)">
+            <div class="row">
+                <div class="col-auto">
+                    <form class="form-inline" id="SysOtherin2_form_#(pageId)">
+                        <div style="margin-right: 30px">
+                            <label>条码明细</label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
 
+        <table class="jbolt_table jbolt_main_table table-center hover_info"
+               id="jbolt_table1_#(pageId)"
+               data-jbolttable
+               data-height="300"
+               data-ajax="true"
+               data-url="admin/otheroutreturnlist/getReturnDataS"
+               data-column-resize="true"
+               data-row-click-active="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="otherOutForm_#(pageId)"
+               data-rowtpl="otherOutRowtpl_#(pageId)"
+               data-page="otherOutPage_#(pageId)"
+               data-toolbar="otherOut_toolbar_#(pageId)"
 
-</div>
+               data-fixed-columns-left="1,2,3"
+               data-fixed-columns-right="-1"
+               data-row-dblclick-active="true"
+        >
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150" data-column="BillNo">领料单号</th>
+                <th data-width="150" data-column="invcode">存货编码</th>
+                <th data-width="150" data-column="cinvcode1">客户部番</th>
+                <th data-width="150" data-column="cinvname1">部品名称</th>
+                <th data-width="150" data-column="cinvstd">规格</th>
+                <th data-width="100" data-column="purchasecuomname">库存主单位</th>
+                <th data-width="100" data-column="qty">数量</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+
+        <div style="margin-top: 10px">
+
+
+
+        <textarea class="jb_tpl_box" id="otherOutRowtpl2_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.autoid}" data-needsave="true" data-changed="true">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.barcode}</td> <!--条码-->
+            <td>${data.invcode}</td> <!--存货编码-->
+            <td>${data.cinvcode1}</td> <!--客户部番-->
+            <td>${data.cinvname1}</td> <!--部品名称-->
+            <td>${data.cinvstd}</td> <!--规格-->
+            <td>${data.cuomname}</td> <!--主计量单位-->
+            <td >${data.qty ,2|number_format}</td>
+            <td>${data.rowno}</td> <!--批次号-->
+            <td>${data.dplandate}</td> <!--生产日期-->
+            <td>${data.whname}</td> <!--仓库名称-->
+            <td>${data.posname}</td> <!--库区名称-->
+            <td  style="display: none">${data.sourcebillnorow}</td> <!--来源单号+行号-->
+            <td  style="display: none">${data.sourcebillid}</td> <!--来源单据ID-->
+            <td  style="display: none">${data.sourcebilldid}</td> <!--来源单据Did-->
+        </tr>
+{@/each}
+</textarea>
+
+
+            <table class="jbolt_table jbolt_main_table table-center hover_info"
+                   id="jbolt_table2_#(pageId)"
+                   data-jbolttable
+                   data-height="300"
+                   data-ajax="true"
+                   data-url="admin/otherout/TableBarcodeData"
+                   data-column-prepend="1:checkbox:true"
+                   data-rowtpl="otherOutRowtpl2_#(pageId)"
+                   data-toolbar="otherOut_toolbar2_#(pageId)"
+                   data-editable="true"
+                   data-editable-option="getEditableTableOptions_split_#(pageId)"
+            >
+                <thead>
+                <tr>
+                    <th data-width="60" data-column="index">序号</th>
+                    <th data-width="180" data-column="barcode">现品票</th>
+                    <th data-width="150" data-column="invcode">存货编码</th>
+                    <th data-width="150" data-column="cinvcode1">客户部番</th>
+                    <th data-width="150" data-column="cinvname1">部品名称</th>
+                    <th data-width="150" data-column="cinvstd">规格</th>
+                    <th data-width="100" data-column="purchasecuomname">库存主单位</th>
+                    <th data-width="100" data-column="qty">数量</th>
+                    <th data-width="100" data-column="rowno">批次号</th>
+                    <th data-width="100" data-column="dplandate">生产日期</th>
+                    <th data-width="100" data-column="whname">仓库名称</th>
+                    <th data-width="100" data-column="posname">库区名称</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 #end
 
 #define js()
-<script type="text/javascript">
+<script>
+    /*去后端执行提交功能*/
+    function getEditableTableOptions_split_#(pageId)(){
+        var editableTableOptions={
+            //初始行数
+            // initRowCount:10,
+            //限制最大数 默认30
+            maxRowCount:1000,
+            trigger:"click",
+            submit:{
+                withForm: ["otherOutForm_#(pageId)"],
+                type:"multi",//cell|all|multi
+                name:"table2"
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid",
+                },
+                returnqty: {
+                    type:"input",
+                    submitAttr:"qty",
+                    required:true,
+                    handler:function (table,td,text,value,jsonData) {
+                        debugger;
+                        let qtys =  jsonData.qtys;
+                        console.log(qtys);
+                        let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
+                        console.log('退货数量===>',qty);
+                        if (qty > 0){
+                            showFormEleErrorStyle(td,"请输入小于或等于0的数量！！！");
+                            return false;
+                        }
+                        let cha = qtys- (qty);
+                        if (cha < qty*-2){
+                            showFormEleErrorStyle(td,"可退数量为"+qtys+",退货数量已超出！！！");
+                            return false;
+                        }
+                    }
+                },
+                qtys: {
+                    submitAttr:"qtys",
+                },
+            }
+        };
+        return editableTableOptions;
+    }
+
+
+    function submitAllTables_#(pageId)(){
+        var tables = ["jbolt_table2_#(pageId)"];
+            jboltTableSubmitMulti(tables, "/admin/otheroutreturnlist/submitMulti", function (res) {
+                if (res.state == "ok") {
+                    LayerMsgBox.success(res.msg, 2000, function () {
+                        let autoid = res.AutoID;
+                        parent.refreshPjaxContainer();
+                        // parent.refreshCurrentTabContent();//刷新当前页面
+                        parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                    })
+                } else {
+                    LayerMsgBox.error(res.msg);
+                }
+            });
+    }
+</script>
+<script>
+    function barcode_#(pageId)(){
+        if (!document.getElementById("billno").value) {
+            LayerMsgBox.error("请选择备料单");
+            return;
+        }
+        LayerMsgBox.loading("查询中......", 500);
+        var barcode = $("#barcode").val();
+        var billno = $("#billno").val();
+
+        //扫入多条现品票判断是否存在
+        let data = getJboltTableAllDatas("jbolt_table2_#(pageId)",["barcode"]);
+        let array = new Array();
+        if (data != null){
+            for (let i = 0; i < data.length; i++) {
+                array.push("'"+data[i].barcode+"'");
+            }
+            for (let i = 0; i < array.length; i++) {
+                let a =  "'"+barcode+"'";
+                if (a == array[i]){
+                    LayerMsgBox.error("已存在相同["+barcode+"]现品票！！！",2000);
+                    return false;
+                }
+            }
+            //通过逗号分开，一个一个加进数组中
+            let codes = array.join(',');
+            $("#barcodes").val(codes);
+        } else {
+            $("#barcodes").val('');
+        }
+        if (barcode) {
+            Ajax.post('admin/otherout/gettable2', {"barcode": barcode, "billno": billno}, function (res) {
+                if (res.state === "ok") {
+                        var trJsonData = res.data[0];
+                        jboltTableInsertRow("jbolt_table2_#(pageId)", trJsonData, true);
+                }
+            });
+        }else {
+            LayerMsgBox.alert("请输入条码");
+        }
+    }
 </script>
 #end

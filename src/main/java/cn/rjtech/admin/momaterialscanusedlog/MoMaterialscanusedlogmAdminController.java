@@ -8,13 +8,16 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MoMaterialscanusedlogm;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
 /**
  * 制造工单-材料耗用主表 Controller
  * @ClassName: MoMaterialscanusedlogmAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-25 18:06
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MO_DOC)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/momaterialscanusedlog", viewPath = "/_view/admin/momaterialscanusedlog")
 public class MoMaterialscanusedlogmAdminController extends BaseAdminController {
@@ -138,8 +141,11 @@ public class MoMaterialscanusedlogmAdminController extends BaseAdminController {
 		renderJsonData(service.createOutDoc(cdocno,imaterialscanUsedlogmid));
 	}
 
-	public  void details(){
-
+	/**
+	 * 获取齐料检查已扫描现品票
+	 */
+	public void getMaterialScanUsedLog(){
+		Page<Record> page=service.getBarcodeAllBycBarcode(getPageNumber(),getPageSize(),getKv());
+		renderJsonData(page);
 	}
-
 }

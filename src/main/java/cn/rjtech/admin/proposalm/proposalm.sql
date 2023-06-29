@@ -3,19 +3,6 @@ SELECT m.*, d.cdepname
 FROM PL_Proposalm m
     left JOIN bd_Department d ON m.cdepcode = d.cdepcode
 WHERE m.iorgid = #para(iorgid)
-
-### 超级管理员不过滤权限部门
-#if(!isSystemAdmin)
-    ### 存在角色部门配置过滤处理
-    #if(accessCdepCodes && accessCdepCodes.size() > 0)
-        AND m.cDepCode IN (
-            #for(code:accessCdepCodes)
-                '#(code)' #(for.last?'':',')
-            #end
-        )
-    #end
-#end
-
 #if(audit)
     AND m.iauditstatus > 0 AND m.iauditstatus < 3
 #end
@@ -46,60 +33,73 @@ WHERE m.iorgid = #para(iorgid)
 #if(isscheduled)
     AND m.isscheduled = #para(isscheduled)
 #end
+#(getDataPermissionSql("m", "cdepcode"))
 ORDER BY m.iautoid DESC
 #end
 
 ### 获取禀议数据
 #sql("paginateDetails")
-SELECT  prom.iAutoId, prom.cProposalNo, prom.cDepCode, prom.cApplyPersonName, prom.dApplyDate,
-        prom.iAuditStatus, prom.cProjectCode, prom.cProjectName, prom.cPurposeSn,
-        prom.iCategoryId, expi.cBudgetNo, prod.cItemName, prod.iQuantity,
-        prod.iNatUnitPrice, prod.cVenCode,bv.cvenname, prod.dDemandDate, prod.cBudgetDepCode, bpc.cCategoryName,
-       (SELECT cSubjectName FROM Bas_SubjectM WHERE iAutoId = expi.iLowestSubjectId) AS cLowestSubjectCode
-FROM PL_ProposalM prom
-    LEFT JOIN PL_ProposalD prod ON prom.iAutoId = prod.iProposalMid
-    LEFT JOIN PL_Expense_Budget_Item expi  ON prod.iSourceId = expi.iAutoId
-    LEFT JOIN PL_Expense_Budget_ItemD expid ON expi.iAutoId = expid.iExpenseItemId
-    LEFT JOIN Bas_ProposalCategory bpc ON prom.iCategoryId = bpc.iAutoId
-    left join bd_vendor bv on bv.cvencode = prod.cVenCode
-WHERE prom.iorgid = #para(iorgid)
+select * from (
+select pm.cproposalno,mdp.cdepname,pm.cApplyPersonName,pm.dApplyDate,pm.cprojectcode,
+	pm.cprojectname,bpc.cCategoryName,
+	(select top 1 ccode from Bas_Project_Card where iautoid = pd.iProjectCardId) cBudgetNo,
+	(select top 1 sm.csubjectname from Bas_Project_Card pc
+	left join PL_Expense_Budget_Item ebi on pc.iautoid = ebi.iProjectCardId
+	left join Bas_SubjectM sm on sm.iautoid = ebi.iLowestSubjectId
+	where pc.iautoid = pd.iProjectCardId) cLowestSubjectname,
+	(select min(case when cBudgetNo is not null then ibudgetsum end) from pl_Proposald where iProjectCardId = pd.iProjectCardId GROUP BY iProjectCardId) ibudgetsum,	
+	(select min(case when cBudgetNo is not null then ibudgetmoney end) from pl_Proposald where iProjectCardId = pd.iProjectCardId GROUP BY iProjectCardId) ibudgetmoney,
+	pd.iNatSum sumamounttaxinclu,
+	pd.iNatMoney sumamountnottaxinclu,
+	pd.cItemName,
+	pd.iquantity,
+	pd.iNatUnitPrice,
+	pd.iNatSum iamounttaxinclu,
+	pd.iNatMoney iamountnottaxinclu,
+	bv.cvenname,
+	pd.dDemandDate,
+	bdp.cdepname cbudgetdepname
+from pl_proposalm pm
+	inner join pl_proposald pd on pm.iautoid = pd.iProposalMid
+	left join Bd_Department mdp on pm.cdepcode = mdp.cdepcode
+	LEFT JOIN Bas_ProposalCategory bpc ON pm.iCategoryId = bpc.iAutoId
+	left join bd_vendor bv on bv.cvencode = pd.cVenCode
+	left join Bd_Department bdp on pd.cBudgetDepCode = bdp.cdepcode
+	where pd.isubitem = 1 and pm.iorgid = #para(iorgid)
 #if(iautoids)
-    AND prom.iAutoId IN ( #(iautoids) )
+    AND pm.iAutoId IN ( #(iautoids) )
 #end
 #if(dapplydate)
-    AND DATEDIFF(day, prom.dapplydate, #para(dapplydate)) = 0
+    AND DATEDIFF(day, pm.dapplydate, #para(dapplydate)) = 0
 #end
 #if(cdepcode)
-    AND prom.cdepcode = #para(cdepcode)
+    AND pm.cdepcode like concat('#(cdepcode)','%')
 #end
 #if(iauditstatus)
-    AND prom.iauditstatus = #para(iauditstatus)
+    AND pm.iauditstatus = #para(iauditstatus)
 #end
 #if(isscheduled)
-    AND prom.isscheduled = #para(isscheduled)
+    AND pm.isscheduled = #para(isscheduled)
 #end
 #if(cproposalno)
-    AND prom.cproposalno LIKE CONCAT('%', #para(cproposalno), '%')
+    AND pm.cproposalno LIKE CONCAT('%', #para(cproposalno), '%')
 #end
 #if(cprojectname)
-    AND prom.cprojectname LIKE CONCAT('%', #para(cprojectname), '%')
+    AND pm.cprojectname LIKE CONCAT('%', #para(cprojectname), '%')
 #end
 #if(cpurposename)
-    AND prom.cpurposesn = #para(cpurposename)
+    AND pm.cpurposesn = #para(cpurposename)
 #end
 #if(citemname)
-    AND prod.citemname LIKE CONCAT('%', #para(citemname), '%')
+    AND pd.citemname LIKE CONCAT('%', #para(citemname), '%')
 #end
 #if(ccategoryname)
     AND bpc.ccategoryname LIKE CONCAT('%', #para(ccategoryname), '%')
 #end
+) T where 1=1
 #if(cbudgetno)
-    AND expi.cbudgetno LIKE CONCAT('%', #para(cbudgetno), '%')
+    AND cbudgetno LIKE CONCAT('%', #para(cbudgetno), '%')
 #end
-GROUP BY prom.iAutoId, prom.cProposalNo, prom.cDepCode, prom.cApplyPersonName, prom.dApplyDate,
-    prom.iAuditStatus, prom.cProjectCode, prom.cProjectName, prom.cPurposeSn,
-    prom.iCategoryId, expi.cBudgetNo, expi.iLowestSubjectId,prod.cItemName, prod.iQuantity,
-    prod.iNatUnitPrice, prod.cVenCode,bv.cvenname, prod.dDemandDate, prod.cBudgetDepCode, bpc.cCategoryName
 #end
 
 ### 获取明细金额
@@ -221,4 +221,20 @@ select sum(pd.imoney) imoney from pl_proposald pd
 	#if(ifirstsourceproposalid)
 		and pm.ifirstsourceproposalid not in (#(ifirstsourceproposalid))
 	#end
+#end
+
+#sql("isExistsProposalDatas")
+select count(1) from pl_proposald pd where exists (
+	select 1 from pl_investment_plan ip
+		left join pl_investment_plan_item ipi on ip.iautoid = ipi.iplanid 
+		where ip.iautoid = #para(iplanid) and pd.iSourceId = ipi.iautoid
+)
+#end
+
+#sql("isExistsPurchaseDatas")
+select count(1) from pl_purchased p where exists (
+	select 1 from pl_proposalm pm
+		left join pl_proposald pd on pm.iautoid = pd.iproposalmid
+		where pm.iautoid = #para(iproposalmid) and pd.iautoid = p.iproposaldid
+)
 #end

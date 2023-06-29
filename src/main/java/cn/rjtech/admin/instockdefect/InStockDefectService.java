@@ -9,6 +9,7 @@ import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
 import cn.rjtech.model.momdata.InStockDefect;
 import cn.rjtech.model.momdata.InStockQcFormM;
 import cn.rjtech.util.BillNoUtils;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -32,6 +33,7 @@ public class InStockDefectService extends BaseService<InStockDefect> {
 
     @Inject
     private InStockQcFormMService inStockQcFormMService;      ////质量管理-在库检
+
     @Override
     protected InStockDefect dao() {
         return dao;
@@ -200,7 +202,7 @@ public class InStockDefectService extends BaseService<InStockDefect> {
                 //保存未有主键的数据
                 inStockDefectLinesave(formRecord, now);
             }
-            
+
             return true;
         });
         return SUCCESS;
@@ -248,46 +250,48 @@ public class InStockDefectService extends BaseService<InStockDefect> {
     /**
      * 在库检明细
      */
-    public Record getinStockQcFormMList(Long iautoid){
-        return dbTemplate("instockdefect.getinStockQcFormMList", Kv.by("iautoid",iautoid)).findFirst();
+    public Record getinStockQcFormMList(Long iautoid) {
+        return dbTemplate("instockdefect.getinStockQcFormMList", Kv.by("iautoid", iautoid)).findFirst();
     }
 
     //API在库主页查询
     public Page<Record> getPageListApi(Integer pageNumber, Integer pageSize, Kv kv) {
-        return dbTemplate("instockdefect.paginateAdminDatasapi",kv).paginate(pageNumber,pageSize);
+        return dbTemplate("instockdefect.paginateAdminDatasapi", kv).paginate(pageNumber, pageSize);
     }
 
     //API在库异常品查看与编辑
-    public Map<String, Object> getInStockDefectListApi(Long iautoid, Long iinstockqcformmid, String type){
+    public Map<String, Object> getInStockDefectListApi(Long iautoid, Long iinstockqcformmid, String type) {
 
         Map<String, Object> map = new HashMap<>();
 
-        InStockDefect inStockDefect=findById(iautoid);
+        InStockDefect inStockDefect = findById(iautoid);
         Record inStockQcFormM = getinStockQcFormMList(iinstockqcformmid);
-        map.put("inStockDefect",inStockDefect);
-        map.put("inStockQcFormM",inStockQcFormM);
-        map.put("type",type);
-        if (inStockDefect == null){
+        map.put("inStockDefect", inStockDefect);
+        map.put("inStockQcFormM", inStockQcFormM);
+        map.put("type", type);
+        if (inStockDefect == null) {
             return map;
         }
         if (inStockDefect.getIStatus() == 1) {
             map.put("isfirsttime", (inStockDefect.getIsFirstTime() == true) ? "首发" : "再发");
-            map.put("iresptype", (inStockDefect.getIRespType() == 1) ? "供应商" : (inStockDefect.getIRespType() == 2 ? "工程内":"其他"));
+            map.put("iresptype",
+                (inStockDefect.getIRespType() == 1) ? "供应商" : (inStockDefect.getIRespType() == 2 ? "工程内" : "其他"));
         } else if (inStockDefect.getIStatus() == 2) {
             int getCApproach = Integer.parseInt(inStockDefect.getCApproach());
-            map.put("capproach", (getCApproach == 1) ? "报废" : (getCApproach == 2 ? "返修":"退货"));
+            map.put("capproach", (getCApproach == 1) ? "报废" : (getCApproach == 2 ? "返修" : "退货"));
             map.put("isfirsttime", (inStockDefect.getIsFirstTime() == true) ? "首发" : "再发");
-            map.put("iresptype", (inStockDefect.getIRespType() == 1) ? "供应商" : (inStockDefect.getIRespType() == 2 ? "工程内":"其他"));
+            map.put("iresptype",
+                (inStockDefect.getIRespType() == 1) ? "供应商" : (inStockDefect.getIRespType() == 2 ? "工程内" : "其他"));
         }
         return map;
     }
 
     public void saveInStockOutDefectModel(InStockDefect inStockDefect, InStockQcFormM inStockQcFormM) {
-        inStockDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
         Date date = new Date();
         Long userId = JBoltUserKit.getUserId();
         String userName = JBoltUserKit.getUserName();
-        inStockDefect.setCDocNo(inStockQcFormM.getCDcNo());   //异常品单号
+        inStockDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
+        //inStockDefect.setCDocNo(inStockQcFormM.getCInvQcFormNo());   //异常品单号
         inStockDefect.setIInStockQcFormMid(inStockQcFormM.getIAutoId()); //在库检id
         inStockDefect.setIInventoryId(inStockQcFormM.getIInventoryId());  //存货ID
         inStockDefect.setIStatus(1);                                       //状态：1. 待记录 2. 待判定 3. 已完成
@@ -315,10 +319,10 @@ public class InStockDefectService extends BaseService<InStockDefect> {
 
     /**
      * 打印数据
+     *
      * @param kv 参数
-     * @return
      */
     public Object getQRCodeCheck(Kv kv) {
-        return dbTemplate("instockdefect.containerPrintData",kv).find();
+        return dbTemplate("instockdefect.containerPrintData", kv).find();
     }
 }

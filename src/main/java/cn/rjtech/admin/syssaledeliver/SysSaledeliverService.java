@@ -25,10 +25,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.json.JSONArray;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 销售出库
@@ -210,11 +207,11 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         }
 
         User user = JBoltUserKit.getUser();
-        Map<String, Object> data = new HashMap<>();
+        JSONObject data = new JSONObject();
 
-        data.put("userCode",user.getUsername());
-        data.put("organizeCode",this.getdeptid());
-        data.put("token","");
+        data.set("userCode",user.getUsername());
+        data.set("organizeCode",this.getdeptid());
+        data.set("token","");
 
         JSONObject preallocate = new JSONObject();
 
@@ -229,7 +226,7 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
 
         data.put("PreAllocate",preallocate);
 
-        JSONArray maindata = new JSONArray();
+        ArrayList<Object> maindata = new ArrayList<>();
         syssaledeliverdetail.stream().forEach(s -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("owhcode",s.getWhCode());
@@ -258,9 +255,9 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
             jsonObject.set("cusname","");
             jsonObject.set("ORdType",s.getTrackType());
 
-            maindata.put(jsonObject);
+            maindata.add(jsonObject);
         });
-        data.put("MainData",maindata);
+        data.set("MainData",maindata);
 
         //            请求头
         Map<String, String> header = new HashMap<>(5);
@@ -271,7 +268,7 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
             String post = HttpApiUtils.httpHutoolPost(url, data, header);
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
-                if ("201".equals(jsonObject.getString("code"))) {
+                if ("200".equals(jsonObject.getString("code"))) {
                     return Ret.ok("提交成功");
                 }
             }

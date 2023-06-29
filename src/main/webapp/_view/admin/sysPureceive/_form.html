@@ -1,26 +1,27 @@
+
+#set(pageId=RandomUtil.random(6))
+### 默认为非只读,查看页有readonly=readonly标识
+### 【readonly为false】, 或 【审核中或已通过】，设置只读
+#if(readonly != 'readonly' && (sysPureceive.iAuditStatus??0 == 1 || sysPureceive.iAuditStatus??0 == 2))
+#set(readonly = 'readonly')
+#end
+
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-<!--                        <input value="#(sysPureceive.iAuditStatus??)"/>-->
-                        <button onclick="save()" class="btn btn-success btn-sm"  #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end  ><i
-                            class=" fa fa-refresh"></i> 保存</button>
-                        #if(sysPureceive.AutoID??)
-                        ### 参数列表
-                        ### uri:                接口URI
-                        ### formSn:             表单名
-                        ### o:                  当前表单对象名
-                        ### primaryKeyName:     主键名
-                        ###include("/_view/_common/_approval_btns.html", uri="/admin/materialReceiptList", formSn="T_Sys_PUReceive", o=monthorderm, edit=edit??, primaryKeyName="iAutoId")
-
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/materialReceiptList", formSn="T_Sys_PUReceive", o=sysPureceive, edit=edit??, primaryKeyName="AutoID")
+                        #if(readonly != 'readonly')
+                        <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-success btn-sm"  #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end  ><i
+                                class=" fa fa-refresh"></i> 保存</button>
                         #end
-<!--                        #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUReceive",uri="/admin/materialReceiptList", iautoid=sysPureceive.AutoID??, edit=edit??,primaryKeyName="AutoID")-->
-<!--                        <button onclick="submitThisForm()" class="btn btn-info btn-sm"><i-->
-<!--                                class="fa fa-window-maximize"></i> 提交审批-->
-<!--                        </button>-->
+
+
+                        #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUReceive", o=sysPureceive,primaryKeyName="AutoID",className="cn.rjtech.admin.syspureceive.SysPureceiveService",permissionKeyPrefix="sysPureceive")
+
+<!--                        #include("/_view/_common/_approval_btns.html", uri="/admin/materialReceiptList", formSn="T_Sys_PUReceive", o=sysPureceive, edit=edit??, primaryKeyName="AutoID")-->
+
                         <button onclick="closeHandler()" class="btn btn-info btn-sm" ><i
                                 class="fa fa-window-maximize"></i> 关闭
                         </button>
@@ -84,40 +85,6 @@
                             </div>
 
 
-                            <!--                            <div class="col-md-4">-->
-                            <!--                                <div class="form-group row">-->
-                            <!--                                    <input type="hidden" name="sysPureceive.VenCode" value="#(sysPureceive.VenCode??)"-->
-                            <!--                                           id="vencode" data-value-attr="vencode"/>-->
-                            <!--                                    <input type="hidden" name="vencode1" value="#(sysPureceive.VenCode??)"-->
-                            <!--                                           id="vencode1" data-sync-attr="vencode"/>-->
-                            <!--                                    <label class="col-sm-3 col-form-label">供应商名称</label>-->
-                            <!--                                    <div class="col-9">-->
-                            <!--                                        <input type="text" class="form-control" data-autocomplete-->
-                            <!--                                               data-url="admin/materialReceiptList/venCode" data-rule="required"-->
-                            <!--                                               data-text-attr="venname"-->
-                            <!--                                               data-sync-ele="#vencode,vencode1"-->
-                            <!--                                               data-column-attr="vencode,venname" placeholder="请选择供应商名称"-->
-                            <!--                                               data-tips="请选择供应商名称" data-header="供应商编码,供应商名称" maxlength="40"-->
-                            <!--                                               value="#(venname??)">-->
-                            <!--                                    </div>-->
-                            <!--                                </div>-->
-                            <!--                            </div>-->
-                            <!--                            <div class="col-md-4">-->
-                            <!--                                <div class="form-group row">-->
-                            <!--                                    <input type="hidden" name="sysPureceive.RdCode" value="#(sysPureceive.RdCode??)"-->
-                            <!--                                           id="rdcode" data-value-attr="crdcode"/>-->
-                            <!--                                    <label class="col-sm-3 col-form-label">入库类型</label>-->
-                            <!--                                    <div class="col-9">-->
-                            <!--                                        <input type="text" class="form-control" data-autocomplete-->
-                            <!--                                               data-url="admin/materialReceiptList/selectRdCode" data-rule="required"-->
-                            <!--                                               data-hidden-input="rdcode" data-text-attr="cptname"-->
-                            <!--                                               data-column-attr="crdcode,cptname" placeholder="请选择入库类型"-->
-                            <!--                                               data-tips="请选择入库类型" data-header="入库类型编码,入库类型名称" maxlength="40"-->
-                            <!--                                               value="#(cptname??)">-->
-                            <!--                                    </div>-->
-                            <!--                                </div>-->
-                            <!--                            </div>-->
-
 
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -140,18 +107,20 @@
         </div>
     </div>
 </div>
+
+###include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysPureceive.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId,primaryKeyName="AutoID", className="cn.rjtech.admin.syspureceive.SysPureceiveService")
+
+
 ### 新增之后，并且为审核流
-###if(monthorderm.iautoid?? && monthorderm.iauditway == 2)
-#if(sysPureceive.AutoID?? && sysPureceive.iauditway == '2')
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysPureceive.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId,primaryKeyName="AutoID", className="cn.rjtech.admin.syspureceive.SysPureceiveService")
-###include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=monthorderm.iAutoId, formSn="Co_MonthOrderM", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.monthorderm.MonthordermService")
+#if(sysPureceive.AutoID?? && sysPureceive.iauditway == 2 && sysPureceive.iauditstatus == 1)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysPureceive.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.syspureceive.SysPureceiveService")
 #end
 
 
 <div class="jbolt_page_content">
     <script type="text/template" id="sysPureceive_tpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.autoid}">
+        <tr data-id="${data.autoid}" data-barcode="${data.barcode}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
                 #if(!sysPureceive.AutoID??)
@@ -192,24 +161,21 @@
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                     <button onclick="barcode()" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1 || sysPureceive.AutoID??) disabled #end >搜索</button>
                 </div>
+              
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                     <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1 || sysPureceive.AutoID??) disabled #end >添加行</button>
                 </div>
+
+
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                     <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end   ><i class="fa fa-trash"></i> 删除行</button>
-
-<!--                    <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"-->
-<!--                            id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysPureceivedetail/deleteByIds?ids="-->
-<!--                            data-confirm="确定删除选中数据？" class="btn btn-outline-danger" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end  ><i class="fa fa-trash"></i> 批量删除-->
-<!--                    </button>-->
                 </div>
+            
 
                 <label class="col-sm-3 col-form-label">库区</label>
                 <div class="col-5">
-                    <input type="hidden" name="careacode" value="#(careacode??)"
-                           id="careacode" data-value-attr="careacode"/>
-                    <input type="hidden" name="careaname" value="#(careaname??)"
-                           id="careaname" data-sync-attr="careaname"/>
+                    <input type="hidden" name="careacode" value="#(careacode??)" id="careacode" data-value-attr="careacode"/>
+                    <input type="hidden" name="careaname" value="#(careaname??)" id="careaname" data-sync-attr="careaname"/>
                     <input type="text" class="form-control" data-autocomplete
                            data-sync-ele="#careacode,careaname"
                            data-link-para-ele="#whcode1"
@@ -220,8 +186,9 @@
                            value="#(careaname??)"
                            #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >
                 </div>
+
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                    <button onclick="coverall()" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >覆盖</button>
+                    <button onclick="coverall(this)" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >覆盖</button>
                 </div>
 
 
@@ -230,18 +197,28 @@
 
     </div>
 
-    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysPureceive.AutoID??)
-           data-ajax="true" data-url="admin/sysPureceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)" #end
-           id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
-           data-rowtpl="sysPureceive_tpl_#(pageId)" data-toolbar="sysPureceive_toolbar_#(pageId)" data-editable="true"
-           data-page="sysPureceive_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
+    <table class="jbolt_table thead_font_normal table-bordered table-center"
+           data-jbolttable
+           #if(sysPureceive.AutoID??)
+           data-ajax="true"
+           data-url="admin/sysPureceivedetail/findEditTableDatas?masid=#(sysPureceive.AutoID??)"
+           #end
+           id="jbolt_Table_#(pageId)"
+           data-column-resize="true"
+           ###data-tfoot-fixed="true"
+           data-column-prepend="1:checkbox"
+           data-rowtpl="sysPureceive_tpl_#(pageId)"
+           data-toolbar="sysPureceive_toolbar_#(pageId)"
+           data-editable="true"
+           ###data-page="sysPureceive_tpl_#(pageId)"
+           data-editable-option="getJBoltTableEditableColsOpton_#(pageId)">
         <thead class="fw_normal">
         <tr>
-            <th data-width="20">序号</th>
+            <th data-width="50" data-column="index">序号</th>
             <th data-width="50">操作</th>
             <th data-width="150" data-column="venname">供应商</th>
             <th data-width="150" data-column="sourcebillno">订单编号</th>
-            <th data-width="150" data-column="barcode">现品票</th>
+            <th data-width="200" data-column="barcode">现品票</th>
             <th data-width="100" data-column="cinvcode">存货编码</th>
             <th data-width="100" data-column="cinvcode1">客户部番</th>
             <th data-width="100" data-column="cinvname1">部品名称</th>
@@ -262,9 +239,12 @@
 
     function barcode() {
         LayerMsgBox.loading("执行中......",2000);
+
         var barcode = $("#barcode").val();
+
         var data = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
         let array = new Array();
+
         if(null != data){
             for (let i = 0; i < data.length; i++) {
                 if(data[i].barcode == barcode){
@@ -280,26 +260,76 @@
         }
 
         if (barcode) {
-            Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode},
-                function (res) {
-                    jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
+            var whcode1 = $("#whcode1").val();
+            Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode, "whcode1": whcode1}, function (ret) {
+                if (ret.state === 'ok') {
+                    jboltTableInsertRow("jbolt_Table_#(pageId)", ret.data);
+
                     $("#barcode").val('');
-                }, function (err) {
-                })
+                } else {
+                    LayerMsgBox.alert(ret.msg, 2);
+                }
+            }, function (err) {})
         } else {
             LayerMsgBox.alert("请输入条码")
         }
     }
-    function coverall() {
+
+    function coverall(ele) {
+        var action = getRealJqueryObject(ele);
+        if (isOk(action)) {
+            var success = checkMasterTableId(action);
+            if (!success) {
+                return false;
+            }
+        }
+
+        var isCheckedNone = jboltTableIsCheckedNone(ele);
+        console.log("isCheckedNone", isCheckedNone);
+
         var careacode = $("#careacode").val();
         var careaname = $("#careaname").val();
-        console.log(careacode  +careaname  );
-        let data = [{"column":"poscode","text":careacode,"value":careacode}];
-        jboltTableBatchSetColumns(jbolt_Table_#(pageId),data,true);
+        console.log(careacode + careaname);
 
+        if (isCheckedNone) {
+            let data = [{"column": "poscode", "text": careacode, "value": careacode}];
+            jboltTableBatchSetColumns(jbolt_Table_#(pageId), data, true);
+        } else {
+            var datas = jboltTableGetCheckedDatas(ele);
+            console.log("datas", datas)
+
+            if (datas) {
+
+                var $table = $('#jbolt_Table_#(pageId)');
+
+                LayerMsgBox.confirm("所选数据中确定覆盖吗？", function () {
+                    $.each(datas, function (index, row) {
+
+                        row.careacode = careacode;
+
+                        var $tr = $('tr[data-barcode="' + row.barcode + '"]');
+
+                        jboltTableSetCell($table, $tr, 'poscode', row.careacode, row.careacode);
+                    })
+                });
+            }
+            return true;
+        }
+        return false;
     }
 
     function save() {
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+    }
+
+    //是否提审
+    var submit = false;
+
+    /**
+     * 保存方法
+     */
+    function submitThisForm_#(pageId)(ele) {
+        submit = ele;
         jboltTableSubmit("#jbolt_Table_#(pageId)");
     }
 
@@ -311,32 +341,66 @@
         return true;
     }
 
-    function getJBoltTableEditableColsOpton() {
+    function getJBoltTableEditableColsOpton_#(pageId)() {
         var editableTableOptions = {
-
             submit: {
                 withForm: ["sysPureceive_#(pageId)"],
                 name: 'sysPureceive',
                 type: "all",
                 url: "/admin/materialReceiptList/submitAll",
+                afterInsertRowHandler: function (table, tr) {
+                    jboltTableSetCell(table, tr, 'autoid', null, null, true);
+                },
                 success: function (res) {
-                    LayerMsgBox.success("提交成功", 600, function () {
-                        parent.refreshCurrentTabContent();//刷新当前页面
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
-                    });
+                    var state = res.state;
+                    if (state==='ok'){
+                        var autoid = res.autoid;
+                        if (submit){
+                            submit_#(pageId)(autoid,function () {
+                                LayerMsgBox.success("提交成功", 600, function () {
+                                    // parent.refreshPjaxContainer();
+                                    // parent.layer.closeAll();
+                                    self.location.href = "/admin/materialReceiptList/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
+                                });
+
+                            });
+                        } else {
+                            LayerMsgBox.success("提交成功", 600, function () {
+                                parent.refreshPjaxContainer();
+                                parent.layer.closeAll();
+                                // self.location.href =
+                                //     "/admin/materialReceiptList/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
+                            });
+
+                        }
+                    }
                 }
             },
             cols: {
                 AutoID: {
                     submitAttr: "AutoID",
                 },
-                qty: {
-                    type: "amount",//类型
-                    required: true,
-                    placeholder: "数量", //输入提示，里面
-                    tooltip: "数量",//输入提示，上方
+                qty:{ //单价
+                    type:"amount",
+                    required:true,
+                    textFormat: function (table, td, text, value, trJsonData) {
+                        return (typeof(text)==undefined||typeof(text)=="undefined"||(typeof(text)=='string'&&text.length==0))?"":numberFormat(value,2);
+                    },
+                    editorFormat:function(table,td,text,value,trJsonData){
+                        //编辑器内显示格式化
+                        if(!value){return "";}
+                        value=value.replaceAll(",","");
+                        console.log(removeFixedNumberAllZero(value,2));
+                        return removeFixedNumberAllZero(value,2);
+                    }
                 },
+                // qty: {
+                //     type: "amount",//类型
+                //     required: true,
+                //     placeholder: "数量", //输入提示，里面
+                //     tooltip: "数量",//输入提示，上方
+                //     tofixed:2
+                // },
                 whcode: {
                     placeholder: "仓库", //输入提示，里面
                     tooltip: "仓库",//输入提示，上方
@@ -346,7 +410,6 @@
                     url: "admin/materialReceiptList/Whcode",
                     maxLength: 100,
                     required: true,
-                    placeholder: "请选择仓库编码",
                     textAttr: "whcode",
                     width: 500,
                     valueAttr: "whcode",//选择赋值的字段
@@ -364,7 +427,6 @@
                     url: "admin/materialReceiptList/wareHousepos",
                     maxLength: 100,
                     required: true,
-                    placeholder: "请选择库区编码",
                     textAttr: "careacode",
                     width: 500,
                     valueAttr: "careacode",//选择赋值的字段
@@ -376,7 +438,7 @@
                     handler:function (table,td,text,value,jsonData) {
                         let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["cinvcode"]);
                         //获取打开初物开关的数据
-                        let arrayisinitial = new Array();
+                        let arrayisinitial = [];
                         if (datas != null){
                             for (var i = 0; i < datas.length; i++){
                                 var data = datas[i];
@@ -406,7 +468,7 @@
                     // handler: function (table, td, trJsonData, checkbox, isChecked) {
                     //     checkHead(table, 'isDeleteEnabled');
                     // },
-                    linkPara: "input[name='detailHidden']",
+                    linkPara: "input[name='detailHidden'],input[name='whcode1']",
                     maxLength: 100,
                     required: true,
                     placeholder: "=请选择=",
@@ -430,10 +492,8 @@
                             column: "cinvcname",
                             use: "cinvcname"
                         }, {column: "vencode", use: "vencode"}, {column: "venname", use: "venname"},
-                        {column: "cuomclassname", use: "cuomclassname"}, {
-                            column: "iinventoryid",
-                            use: "iautoid"
-                        }, {column: "sourcebilltype", use: "sourcebilltype"},
+                        {column: "cuomclassname", use: "cuomclassname"}, { column: "iinventoryid",use: "iautoid"},{ column: "autoid",use: "autoid"},
+                        {column: "sourcebilltype", use: "sourcebilltype"},{column: "poscode", use: "poscode"},
                         {column: "sourcebillno", use: "sourcebillno"}, {column: "sourcebilldid", use: "sourcebilldid"},
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {
                             column: "sourcebillid",
@@ -442,8 +502,10 @@
 
                         handler:function (table,td,text,value,jsonData) {
                             let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
+
+                            td.parent().attr('data-barcode', jsonData.barcode);
                             console.log("data==>",datas);
-                            let array = new Array();
+                            let array = [];
                             if (datas != null){
                                 for (var i = 0; i < datas.length; i++){
                                     var data = datas[i];
@@ -456,7 +518,7 @@
                             }
                         }
                 },
-                cinvcode: {
+                cinvcode5: {
                     // linkPara:"#sysPureceive.VenCode",
                     linkPara: "input[name='detailHidden']",
                     maxLength: 100,
@@ -493,17 +555,17 @@
                         }, {column: "qty", use: "qty"}, {column: "qtys", use: "qtys"}, {column: "billtype", use: "ipurchasetypeid"}],
 
                         handler:function (table,td,text,value,jsonData) {
-                            let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
-                            console.log("data==>",datas);
-                            let array = new Array();
-                            if (datas != null){
-                                for (var i = 0; i < datas.length; i++){
+                            let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
+                            console.log("data==>", datas);
+                            let array = [];
+                            if (datas != null) {
+                                for (var i = 0; i < datas.length; i++) {
                                     var data = datas[i];
-                                    array.push("'"+data.barcode+"'");
+                                    array.push("'" + data.barcode + "'");
                                     let codes = array.join(',');
                                     $("#detailHidden").val(codes);
                                 }
-                            }else {
+                            } else {
                                 $("#detailHidden").val('');
                             }
                         }

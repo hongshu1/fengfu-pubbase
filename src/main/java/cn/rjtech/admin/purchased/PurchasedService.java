@@ -292,13 +292,13 @@ public class PurchasedService extends BaseService<Purchased> {
     			if(ObjectUtil.equal(projectcard.getIservicetype(), ServiceTypeEnum.EXPENSE_BUDGET.getValue())){
     				ExpenseBudgetItem expenseBudgetItem =  expenseBudgetItemService.findById(purchased.getIsourceid());
     				ExpenseBudget expenseBudget = expenseBudgetService.findById(expenseBudgetItem.getIexpenseid());
-    				Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(expenseBudget.getCdepcode());
+    				Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(expenseBudget.getCDepCode());
     				purchased.put("cdepname",refDepartmentRc.getStr("cdepname"));
     				purchased.put("cbudgetno",expenseBudgetItem.getCbudgetno());
     			}else{
     				InvestmentPlanItem investmentPlanItem =  investmentPlanItemService.findById(purchased.getIsourceid());
     				InvestmentPlan investmentPlan = investmentPlanService.findById(investmentPlanItem.getIplanid());
-    				Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(investmentPlan.getCdepcode());
+    				Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(investmentPlan.getCDepCode());
     				purchased.put("cdepname",refDepartmentRc.getStr("cdepname"));
     				purchased.put("cbudgetno",investmentPlanItem.getCplanno());
     			}

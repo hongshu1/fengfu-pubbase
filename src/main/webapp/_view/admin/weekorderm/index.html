@@ -60,13 +60,13 @@
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a class="jbolt_table_editbtn" href="admin/weekorderm/edit?iautoid=${data.iautoid}"  data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="周间客户订单详情"><i class="fa fa-eye">查看</i></a>
+                <a class="jbolt_table_editbtn" href="admin/weekorderm/edit?iautoid=${data.iautoid}&readonly=readonly"  data-fs="true" data-handler="refreshJBoltTable" tooltip data-title="周间客户订单详情"><i class="fa fa-eye">查看</i></a>
             
                 {@if data.iorderstatus == '1'||data.iorderstatus == '4'}
-                    <a class="jbolt_table_editbtn" href="admin/weekorderm/edit?iautoid=${data.iautoid}&edit=true" data-fs="true" data-handler="refreshJBoltTable"  tooltip data-title="编辑周间客户订单"><i class="fa fa-remove fa-edit">编辑</i></a>
+                    <a class="jbolt_table_editbtn" href="admin/weekorderm/edit?iautoid=${data.iautoid}" data-fs="true" data-handler="refreshJBoltTable"  tooltip data-title="编辑周间客户订单"><i class="fa fa-remove fa-edit">编辑</i></a>
                     <a class="jbolt_table_delbtn" href="admin/weekorderm/delete/${data.iautoid}" data-handler="refreshJBoltTable" tooltip data-title="删除周间客户订单"><i class="fa fa-remove c-danger">删除</i></a>
                 {@else if data.iorderstatus == '2'}
-                    <a class="jbolt_table_delbtn" href="admin/weekorderm/withdraw?iautoid=${data.iautoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回周间客户订单"><i class="fa fa-remove c-danger">撤回</i></a>
+                    <a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=Co_WeekOrderM&primaryKeyName=iautoid&formAutoId=${data.iautoid}&permissionKey=weekorderm_withdraw&className=cn.rjtech.admin.weekorderm.WeekOrderMService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回周间客户订单"><i class="fa fa-remove c-danger">撤回</i></a>
                 {@else if data.iorderstatus == '3'}
                     <a class="jbolt_table_delbtn" href="admin/weekorderm/closeWeekOrder?iautoid=${data.iautoid}" data-confirm="确定关闭此选项？" data-handler="refreshJBoltTable" tooltip  data-title="关闭周间客户订单"><i class="fa fa-remove c-danger">关闭</i></a>
                 {@/if}
@@ -79,8 +79,8 @@
             <td>${data.corderno}</td>
             <td>${data.cdocno}</td>
             <td>${data.dorderdate}</td>
-            <td>${data.ibustype}</td>
-            <td>${data.isaletypeid}</td>
+            <td>${data.bustypename}</td>
+            <td>${data.saletypename}</td>
             <td>${data.ccuscode}</td>
             <td>${data.ccusname}</td>
             <td>${data.cpaymentterm}</td>
@@ -101,7 +101,8 @@
                 <button data-dialogbtn data-handler="jboltTablePageToFirst" data-fs="true" data-title="新增周间客户订单" data-url="admin/weekorderm/add" class="btn btn-outline-secondary btn-sm">新增</button>
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/weekorderm/deleteByIds?ids=" data-confirm="确定反审批选中数据？" class="btn btn-outline-secondary btn-sm">批量删除</button>
                 <button data-dialogbtn data-handler="jboltTablePageToFirst" data-fs="true" data-title="调整计划时间" data-url="admin/weekorderm/updateCplanTime" class="btn btn-outline-secondary btn-sm" data-btn="no">调整计划时间</button>
-                #include("/_view/_common/_batch_approval_btns.html", formSn="Co_WeekOrderM", uri="admin/weekorderm")
+                #include("/_view/_common/_batch_approval_btns.html", formSn="Co_WeekOrderM", uri="admin/weekorderm",
+                primaryKeyName="iAutoId", className="cn.rjtech.admin.weekorderm.WeekOrderMService", permissionKeyPrefix="weekorderm")
             </div>
         </div>
         <table class="jbolt_table jbolt_main_table  table-center "
@@ -129,8 +130,8 @@
                 <th data-width="200" data-column="corderno">订单号</th>
                 <th data-width="200" data-column="cdocno">ERP单号</th>
                 <th data-width="200" data-column="dorderdate">订单日期</th>
-                <th data-width="200" data-column="ibustype">业务类型</th>
-                <th data-width="200" data-column="isaletypeid">销售类型</th>
+                <th data-width="200" data-column="bustypename">业务类型</th>
+                <th data-width="200" data-column="saletypename">销售类型</th>
                 <th data-width="200" data-column="ccuscode">客户编码</th>
                 <th data-width="200" data-column="ccusname">客户简称</th>
                 <th data-width="200" data-column="cpaymentterm">付款条件</th>

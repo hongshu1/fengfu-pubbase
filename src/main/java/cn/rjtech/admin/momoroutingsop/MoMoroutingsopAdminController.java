@@ -9,7 +9,7 @@ import cn.rjtech.model.momdata.MoMoroutingsop;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 /**
- *  Controller
+ *  Controller   工单-工序指导书
  * @ClassName: MoMoroutingsopAdminController
  * @author: RJ
  * @date: 2023-05-20 11:49

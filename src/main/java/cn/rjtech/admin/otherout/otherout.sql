@@ -60,29 +60,32 @@ where 1=1
 #sql("paginateAdminDatas")
 SELECT
         AuditState =
-        CASE
-            WHEN t1.Status=1 THEN '已保存'
-            WHEN t1.Status=2 THEN '待审批'
-            WHEN t1.Status=7 THEN '关闭'
-            WHEN t1.Status=5 THEN '已出库'
-            WHEN t1.Status=3 THEN '已审批 /未完成' END,
-      t1.*,
-      t4.cDepName,
+        CASE WHEN t1.iAuditStatus=0 THEN '未审批'
+             WHEN t1.iAuditStatus=1 THEN '待审批'
+             WHEN t1.iAuditStatus=2 THEN '已审批'
+             WHEN t1.iAuditStatus=3 THEN '审批不通过' END,
+        TypeName =
+        CASE WHEN t1.Type='OtherOutMES' THEN '手动新增'END,
+        t1.*,
+        dt.cDepName,
     m.cMoDocNo  ###工单号
 FROM
     T_Sys_OtherOut t1
-    LEFT JOIN Bd_Department t4 ON t4.cDepCode = t1.DeptCode
+    LEFT JOIN Bd_Department dt ON dt.iAutoId = t1.DeptCode
     LEFT JOIN  Mo_MoDoc m ON t1.sourcebilldid=m.iAutoId
 WHERE 1 = 1
     AND t1.Type = 'OtherOutMES'
     #if(selectparam)
     AND (t1.BillNo LIKE CONCAT('%',#para(selectparam), '%')
     OR t1.SourceBillType LIKE CONCAT('%', #para(selectparam), '%')
-    OR  t4.cDepName LIKE CONCAT('%', #para(selectparam), '%')
+    OR  dt.cDepName LIKE CONCAT('%', #para(selectparam), '%')
     )
     #end
-   #if(iorderstatus)
-        AND t1.Status = #para(iorderstatus)
+   #if(state)
+        AND t1.iAuditStatus = #para(state)
+    #end
+    #if(iorderstatus)
+        AND t1.iAuditStatus = #para(iorderstatus)
     #end
 #if(startdate)
     and CONVERT(VARCHAR(10),t1.ModifyDate,23) >='#(startdate)'
@@ -120,4 +123,58 @@ FROM T_Sys_OtherOut t1,
 WHERE
     t1.AutoID = t2.MasID AND  t1.AutoID = '#(autoid)'
     AND t2.Qty > 0
+#end
+
+
+#sql("TableBarcodeData")
+SELECT
+    m.cOrderNo AS SourceBillNo,
+    m.cOrderNo + '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+    m.iAutoId AS SourceBillID,
+    d.iAutoId AS SourceBillDid,
+    tc.iSeq AS RowNo,
+    b.cInvCode AS invcode,
+    b.cInvName,
+    b.cInvCode1,
+    b.cInvName1,
+    a.cCompleteBarcode AS barcode,
+    CONVERT ( VARCHAR ( 10 ), a.dPlanDate, 120 ) AS dPlanDate,
+    b.cInvStd AS cinvstd,
+    a.iQty AS qty,
+    a.iQty AS quantity,
+    v.cVenCode AS vencode,
+    v.cVenName AS venname,
+    uom.cUomCode,
+    uom.cUomName,
+    change.iBeforeInventoryId,
+    change.iAfterInventoryId,
+    wh.cWhCode AS whcode,
+    wh.cWhName AS whname,
+    area.cAreaCode AS poscode,
+    area.cAreaName AS posname
+FROM
+    PS_PurchaseOrderDBatch a
+        LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+        LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
+        LEFT JOIN PS_PurchaseOrderM m ON m.iAutoId = d.iPurchaseOrderMid
+        LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+        LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId
+        AND tc.iAutoId = a.iPurchaseOrderdQtyId
+        LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+        LEFT JOIN Bd_InventoryChange change ON change.iBeforeInventoryId= b.iAutoId
+        LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+        LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+        LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = config.iWarehouseId
+WHERE 1=1
+    AND a.isEffective = '1'
+	AND change.iAutoId IS NOT NULL
+	#if(invcode != null)
+        AND b.cInvCode  in ( #(invcode) )
+    #end
+    #if(barcode != null)
+        AND a.cCompleteBarcode = '#(barcode)'
+    #end
+    #if(orgCode != null)
+    AND b.cOrgCode = '#(orgCode)'
+    #end
 #end

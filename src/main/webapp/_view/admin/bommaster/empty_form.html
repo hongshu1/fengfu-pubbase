@@ -21,7 +21,8 @@
 #render("empty_tr.html")
 #define js()
 <script>
-    var index = #(index??0);
+    var index = 0;
+    var importDatas;
     function getEditableTableOptions_#(pageId)(){
         var editableTableOptions={
             trigger:"click",
@@ -257,8 +258,22 @@
     // 隐藏第一个按钮
     hideParentLayerDialogBtn(0);
 
-    #if(view??0 !=1)
-    addParentLayerDialogBtn("保存","lay_success",function(){
+    #if(isView??0 !=1)
+        addParentLayerDialogBtn("保存","lay_success",function(){
+        if (!FormChecker.check("#BomMaster_Form")){
+            return;
+        }
+        var jboltTableAllDatas = getJboltTableAllDatas("#bomMaster_#(pageId)");
+        if (!jboltTableAllDatas || jboltTableAllDatas.length ==0){
+            LayerMsgBox.alert("表格数据不能为空",2);
+            return;
+        }
+        var formData = formToJson('#BomMaster_Form');
+        submitForm(formData, importDatas);
+    });
+    #end
+
+    function test() {
         if (!FormChecker.check("#BomMaster_Form")){
             return;
         }
@@ -274,7 +289,7 @@
             // 报错返回false
             flag = verification(item, formData);
             if (!flag){
-               throw new Error("跳出循环");
+                throw new Error("跳出循环");
             }
         })
 
@@ -283,7 +298,7 @@
             var arr = [];
             console.log("tableData："+tableData);
             for (var i=0; i<tableData.length; i++){
-                 var item = tableData[i];
+                var item = tableData[i];
                 // 部品
                 var invItemId = item.invItemId;
                 // 卷料
@@ -311,28 +326,28 @@
                 tableJsonData: JSON.stringify(arr)
             }, function (ret) {
                 // 存在共用件提示！
-               if (ret.data.data){
-                   LayerMsgBox.confirm("此物料已关联其它成品/半成品物料BOM，确认是否变更，如确认变更，关联的其他共用成品/半成品的物料BOM，自动升级新版本号。",function(){
-                       submitForm(formData, tableData, ret.data.data, ret.data.flag);
-                   })
-               }else{
-                   submitForm(formData, tableData);
-               }
+                if (ret.data.data){
+                    LayerMsgBox.confirm("此物料已关联其它成品/半成品物料BOM，确认是否变更，如确认变更，关联的其他共用成品/半成品的物料BOM，自动升级新版本号。",function(){
+                        submitForm(formData, tableData, ret.data.data, ret.data.flag);
+                    })
+                }else{
+                    submitForm(formData, tableData);
+                }
             });
 
 
         }
-    });
-    #end
-
+    }
 
     function submitForm(formData, tableData, commonInvMap, flag) {
-        Ajax.post('/admin/bommaster/submitForm', {
+        var index = LayerMsgBox.loading();
+        Ajax.post('/admin/bomM/submitForm', {
             formJsonData: JSON.stringify(formData),
             tableJsonData: JSON.stringify(tableData),
             commonInvData: JSON.stringify(commonInvMap),
             flag: flag
         }, function (ret) {
+            LayerMsgBox.close(index);
             if (ret.state === 'ok') {
                 LayerMsgBox.success(ret.msg, 1000, function () {
                     parent.LayerMsgBox.closeAll();
@@ -524,11 +539,14 @@
 
     function uploadSuccessHandler(uploader,type,fileInput,res){
         setTimeout(function () {
+            // table数据全部清空
+            jboltTableClear('#bomMaster_#(pageId)');
             var data = res.data;
             if (data.head){
                 setFormValue(data.head);
             }
             if(data.body){
+                importDatas = data.body;
                 var body = data.body;
                 for(var i=0 ;i<body.length; i++){
                     insertDataRow(body[i]);

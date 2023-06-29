@@ -18,8 +18,6 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
-import java.util.Optional;
-
 /**
  * 年度计划订单
  *
@@ -80,7 +78,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
         Customer customer = customerService.findById(annualOrderM.getICustomerId());
         annualOrderMRc.set("ccusname", customer == null ? null : customer.getCCusName());
         set("annualOrderM", annualOrderMRc);
-        set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
+        keepPara();
         render("edit.html");
     }
 
@@ -113,65 +111,17 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     }
 
     /**
-     * 提交审批
-     */
-    public void submit() {
-        renderJson(service.submit(getLong("iautoid")));
-    }
-
-    /**
-     * 撤回
-     */
-    public void withdraw() {
-        renderJson(service.withdraw(getLong("iautoid")));
-    }
-
-    /**
-     * 审批
-     */
-    public void approve() {
-        renderJson(service.approve(getLong(0)));
-    }
-
-    /**
-     * 审批不通过
-     */
-    public void reject()
-    {
-        renderJson(service.reject(getLong(0)));
-    }
-
-    /**
-     * 批量审核
-     */
-    public void batchApprove()
-    {
-        renderJson(service.batchApprove(get("ids")));
-    }
-
-    /**
-     * 批量反审
-     */
-    public void batchReverseApprove()
-    {
-        renderJson(service.batchReverseApprove(get("ids")));
-    }
-
-    /**
-     * 批量不通过
-     */
-    public void batchReject()
-    {
-
-    }
-
-    /**
      * 导入Excel数据
      */
     public void importExcel(@Para(value = "file") UploadFile file) {
         ValidationUtils.notNull(file, JBoltMsg.PARAM_ERROR);
 
         renderJson(service.importExcel(file.getFile()));
+    }
+
+    public void ccusname_dialog_index(){
+        keepPara();
+        render("ccusname_dialog_index.html");
     }
 
 }

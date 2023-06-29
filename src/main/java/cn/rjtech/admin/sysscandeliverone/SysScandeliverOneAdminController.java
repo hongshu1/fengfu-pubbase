@@ -7,6 +7,7 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysScandeliver;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -127,13 +128,6 @@ public class SysScandeliverOneAdminController extends BaseAdminController {
 
 
 	/**
-	 * 车次号/传票号
-	 */
-	public void orderData() {
-		render("modetail.html");
-	}
-
-	/**
 	 * 客户位置
 	 */
 	public void orderDatatwo() {
@@ -164,4 +158,41 @@ public class SysScandeliverOneAdminController extends BaseAdminController {
 		renderJson(service.submitByJBoltTable(getJBoltTable()));
 	}
 
+	/**
+	 * 获取客户信息
+	 * @return
+	 */
+	public void getCustomer(){
+		renderJsonData(service.getCustomer(getKv()));
+	}
+
+	/**
+	 * 获取客户地址
+	 * @return
+	 */
+	public void getCustAddr(){
+		renderJsonData(service.getCustAddr(getKv()));
+	}
+
+	/**
+	 * 获取订单Dialog
+	 */
+	public void orderData() {
+        String cusid = get("cusid");
+        set("cusid", cusid);
+		ValidationUtils.isTrue(isOk(cusid), "请先选择客户名称");
+        render("modetail.html");
+	}
+
+    /**
+     * 获取订单数据源
+     */
+	public void getOrder(){
+	    Kv kv = new Kv();
+        String cusid = get("cusid");
+        String orderNo = get("orderNo");
+        kv.set("cusid",isOk(cusid)?cusid:" ");
+        kv.setIfNotNull("orderNo", orderNo);
+        renderJsonData(service.getOrder(kv));
+    }
 }
