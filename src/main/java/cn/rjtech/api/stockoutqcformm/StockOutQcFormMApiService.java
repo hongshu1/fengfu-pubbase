@@ -56,11 +56,12 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      */
     public JBoltApiRet jumpCheckout(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
-        Record record = service.getCheckoutListByIautoId(iautoid);
-        if (record == null) {
+        Record record = new Record();
+        Record checkoutrecord = service.getCheckoutListByIautoId(iautoid);
+        if (checkoutrecord == null) {
             return JBoltApiRet.API_FAIL("数据不存在");
         }
-        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(checkoutrecord.getLong("iqcformid"));
         record.set("columns", tableHeadData);
         record.set("record", record);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
@@ -71,15 +72,16 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      */
     public JBoltApiRet jumpOnlysee(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
-        Record record = service.getCheckoutListByIautoId(iautoid);
-        if (record == null) {
+        Record record = new Record();
+        Record checkoutrecord = service.getCheckoutListByIautoId(iautoid);
+        if (checkoutrecord == null) {
             return JBoltApiRet.API_FAIL("数据不存在");
         }
-        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(checkoutrecord.getLong("iqcformid"));
         List<StockoutQcFormD> stockoutqcformlist = stockoutQcFormDService.findByIStockoutQcFormMid(iautoid);
         record.set("stockoutqcformlist", stockoutqcformlist);
         record.set("columns", tableHeadData);
-        record.set("record", record);
+        record.set("record", checkoutrecord);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
@@ -88,15 +90,16 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      * */
     public JBoltApiRet jumpEdit(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
-        Record record = service.getCheckoutListByIautoId(iautoid);
-        if (record == null) {
+        Record record = new Record();
+        Record checkoutrecord = service.getCheckoutListByIautoId(iautoid);
+        if (checkoutrecord == null) {
             return JBoltApiRet.API_FAIL("数据不存在");
         }
-        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(checkoutrecord.getLong("iqcformid"));
         List<StockoutQcFormD> stockoutqcformlist = stockoutQcFormDService.findByIStockoutQcFormMid(iautoid);
         record.set("stockoutqcformlist", stockoutqcformlist);
         record.set("columns", tableHeadData);
-        record.set("record", record);
+        record.set("record", checkoutrecord);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 

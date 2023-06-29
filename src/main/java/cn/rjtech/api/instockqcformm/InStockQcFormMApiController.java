@@ -191,7 +191,6 @@ public class InStockQcFormMApiController extends BaseApiController {
                          @Para(value = "cmemo") String cmemo) {
         ValidationUtils.notNull(cmeasurepurpose, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(iinstockqcformmid, JBoltMsg.PARAM_ERROR);
-//        ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(serializeSubmitList, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
 
@@ -207,17 +206,6 @@ public class InStockQcFormMApiController extends BaseApiController {
     public void exportExcel(@Para(value = "iautoid") Long iautoid) throws IOException {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(apiService.getExportData(iautoid));
-    }
-
-    /*
-     * @desc 扫描现品票，点击“确定”按钮，表体增加1行在库检任务；如果此存货没有配置检验项目，
-     *       需维护相关设置后点击“生成”按钮，生成检查成绩表。
-     * @param cbarcode：现品票
-     * */
-    @ApiDoc(result = FindDetailByBarcodeVo.class)
-    @UnCheck
-    public void createInStockQcFormByCbarcode(@Para(value = "cbarcode") String cbarcode) {
-        renderJBoltApiRet(apiService.createInStockQcFormByCbarcode(cbarcode));
     }
 
     /*
@@ -257,8 +245,8 @@ public class InStockQcFormMApiController extends BaseApiController {
         ValidationUtils.notNull(invcode, invcode + "：存货编码不存在！！！");
         ValidationUtils.notNull(iinventoryid, iinventoryid + "：存货id不存在！！！");
 
-        int qty = iqty.setScale(2,BigDecimal.ROUND_DOWN).intValue();
-        renderJBoltApiRet(apiService.saveInStockQcFormByCbarcode(cbarcode, qty, invcode, cinvcode1, cinvname1,iinventoryid, cdcno,
-            cmeasurereason,Long.valueOf(iqcformid)));
+        int qty = iqty.setScale(2, BigDecimal.ROUND_DOWN).intValue();
+        renderJBoltApiRet(apiService.saveInStockQcFormByCbarcode(cbarcode, qty, invcode, cinvcode1, cinvname1,
+            iinventoryid, cdcno, cmeasurereason, Long.valueOf(iqcformid)));
     }
 }

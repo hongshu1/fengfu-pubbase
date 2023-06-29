@@ -241,16 +241,6 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         return null;
     }
 
-    /*
-     * @desc 扫描现品票，点击“确定”按钮，表体增加1行在库检任务；如果此存货没有配置检验项目，
-     *       需维护相关设置后点击“生成”按钮，生成检查成绩表。
-     * @param cbarcode：现品票
-     * */
-    public Ret createInStockQcFormByCbarcode(String cbarcode) {
-        Ret ret = new Ret();
-        return ret;
-    }
-
     /*生成*/
     public Ret createTable(Long iautoid) {
         InStockQcFormM inStockQcFormM = findById(iautoid);
@@ -535,7 +525,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
      * 根据现品票查询数据
      * */
     public Record findDetailByBarcode(String cbarcode) {
-        Record record = dbTemplate("instockqcformm.findDetailByBarcode", Kv.by("cbarcode", cbarcode)).findFirst();
+        Record record = dbTemplate("instockqcformm.findDetailByBarcode", Kv.by("ccompletebarcode", cbarcode)).findFirst();
         ValidationUtils.notNull(record, cbarcode + "：不存在，请重新扫描");
 
         InStockQcFormM stockQcFormM = findByCBarcodeAndInvcode(cbarcode, record.getStr("iinventoryid"));
