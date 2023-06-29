@@ -527,6 +527,8 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
      * 删除
      */
     public Ret delete(Long iautoid) {
+        ManualOrderM manualOrderM = findById(iautoid);
+        ValidationUtils.equals(manualOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
         return updateColumn(iautoid, "IsDeleted", true);
     }
 
