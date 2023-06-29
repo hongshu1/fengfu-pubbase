@@ -355,4 +355,14 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
     public void withdraw() {
         renderJson(service.withdraw(getLong("iautoid")));
     }
+
+    /**
+     * 修改数量
+     */
+    public void updateNumber()
+    {
+        Long iautoid = getLong("moMoinvbatch.iautoid");
+        BigDecimal newQty = getBigDecimal("moMoinvbatch.iqty");
+        renderJson(service.updateNumber(iautoid, newQty));
+    }
 }
