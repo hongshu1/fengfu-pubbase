@@ -10,7 +10,12 @@ SELECT t1.*,
        u.cUomCode,u.cUomName,
        t7.cpics,t7.ctypeids,t7.ctypenames,
        t8.ccusname,
-       co.cOrderNo
+       co.cOrderNo,
+       statusname =
+        CASE WHEN t1.istatus=0 THEN '未有检查表'
+        WHEN t1.istatus=1 THEN '待检'
+        WHEN t1.istatus=2 THEN '不合格'
+        WHEN t1.istatus=3 THEN '合格' END
 FROM PL_StockoutQcFormM t1
          LEFT JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
          LEFT JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId

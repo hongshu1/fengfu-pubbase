@@ -338,3 +338,29 @@ WHERE
 	AND tory.cInvCode = #para(iinventoryid)
 	AND oper.iOperationId IN (#(ioperationid))
 #end
+
+#sql("getModocId")
+SELECT iAutoId FROM Mo_MoDoc WHERE 1=1
+#if(taskid)
+	AND iMoTaskId =#(taskid)
+#end
+#if(taskid)
+	AND cMoDocNo =#para(cmodocno)
+#end
+#end
+
+#sql("getMoworkshiftMDId")
+SELECT
+	m.iAutoId MiAutoId,
+	d.iAutoId DiAutoId,
+	d.itype
+FROM
+	Mo_MoWorkShiftM m
+	LEFT JOIN Mo_MoWorkShiftD d ON m.iAutoId= d.iMoWorkShiftMid
+WHERE
+	m.iMoTaskId = #(imotaskid)
+	AND m.iYear = #(iyear)
+	AND m.iMonth = #(imonth)
+	AND m.iDate = #(idate)
+	AND m.iWorkShiftMid = #(iworkshiftmid)
+#end

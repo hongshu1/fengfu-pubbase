@@ -57,7 +57,7 @@
         var  page=$('#gonu').val();
         var  pageSize=$('#pageSize').val();
         $.ajax({
-            url: "admin/momaterialsreturn/getMoMaterialsreturnList?page="+page+"&pageSize="+pageSize+"&imaterialsreturnmid="+imaterialsreturnmid,
+            url: "admin/momaterialsreturnm/getMoMaterialsreturnList?page="+page+"&pageSize="+pageSize+"&imaterialsreturnmid="+imaterialsreturnmid,
             type: 'GET',
             success: function (ret) {
                 if (ret.state === 'ok') {

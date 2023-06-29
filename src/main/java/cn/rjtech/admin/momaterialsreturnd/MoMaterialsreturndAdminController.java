@@ -1,4 +1,4 @@
-package cn.rjtech.admin.momaterialsreturn;
+package cn.rjtech.admin.momaterialsreturnd;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -8,6 +8,7 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MoMaterialsreturnd;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+
 /**
  * 制造工单-生产退料明细 Controller
  * @ClassName: MoMaterialsreturndAdminController
@@ -48,7 +49,7 @@ public class MoMaterialsreturndAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
-		MoMaterialsreturnd moMaterialsreturnd=service.findById(getLong(0)); 
+		MoMaterialsreturnd moMaterialsreturnd=service.findById(getLong(0));
 		if(moMaterialsreturnd == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
