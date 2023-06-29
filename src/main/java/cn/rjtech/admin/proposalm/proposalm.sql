@@ -96,6 +96,7 @@ from pl_proposalm pm
 #if(ccategoryname)
     AND bpc.ccategoryname LIKE CONCAT('%', #para(ccategoryname), '%')
 #end
+#(getDataPermissionSql("pm", "cdepcode"))
 ) T where 1=1
 #if(cbudgetno)
     AND cbudgetno LIKE CONCAT('%', #para(cbudgetno), '%')

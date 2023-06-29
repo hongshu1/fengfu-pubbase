@@ -959,10 +959,10 @@ public class MoMotaskService extends BaseService<MoMotask> {
             record2.put("personne", maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
             recordLisc.add(record2);
           } else if (qty == (recordssize - 2)) {
-            record2.put("personne", maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+            record2.put("personne", maps1.get(workShift.getStr("dataid")) == null ? leaderRec : maps1.get(workShift.getStr("dataid")));
             recordLisc.add(record2);
           } else if (qty == (recordssize - 1)) {
-            record2.put("personne", maps.get(workShift.getStr("dataid")) == null ? leaderRec : maps.get(workShift.getStr("dataid")));
+            record2.put("personne", maps2.get(workShift.getStr("dataid")) == null ? leaderRec : maps2.get(workShift.getStr("dataid")));
             recordLisc.add(record2);
           }
         }

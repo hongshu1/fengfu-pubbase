@@ -596,6 +596,7 @@ public class ProposalmAdminController extends BaseAdminController {
      * 禀议明细数据
      */
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void detaiDatas() {
         renderJsonData(service.paginateDetails(getPageNumber(), getPageSize(), getKv()));
     }

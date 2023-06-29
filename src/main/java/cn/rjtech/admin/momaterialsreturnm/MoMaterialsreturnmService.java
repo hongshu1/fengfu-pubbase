@@ -76,7 +76,9 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
-		return  dbTemplate("momaterialsreturn.paginateAdminDatas",kv).paginate(pageNumber,pageSize);
+		Page<Record> paginate = dbTemplate("momaterialsreturnm.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
+
+		return paginate;
 	}
 
 	/**
@@ -276,7 +278,7 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 	 */
 	public Page<Record>  getMoMaterialsreturnList(int pageNumber, int pageSize,Kv kv){
 		kv.set("corgcode",getOrgCode());
-		Page<Record> rows=dbTemplate("momaterialsreturn.findByImodocId", kv).paginate(pageNumber,pageSize);
+		Page<Record> rows=dbTemplate("momaterialsreturnm.findByImodocId", kv).paginate(pageNumber,pageSize);
 		return rows;
 	}
 
@@ -423,49 +425,71 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 		MoMaterialsreturnm form = jBoltTable.getFormModel(MoMaterialsreturnm.class, "moMaterialsreturnm");
 
 		List<Record> save = jBoltTable.getSaveRecordList();
+		List<Record> save1 = jBoltTable.getSaveRecordList();
 
-		List<MoMaterialsreturnm> moMaterialsreturnms=new ArrayList<MoMaterialsreturnm>();
-		List<MoMaterialsreturnd> moMaterialsreturnds= new ArrayList<MoMaterialsreturnd>();
-		MoMaterialsreturnm moMaterialsreturnm=new MoMaterialsreturnm();
-		MoMaterialsreturnd moMaterialsreturnd=new MoMaterialsreturnd();
 		for (Record row : save) {
-			moMaterialsreturnd.setIAutoId(JBoltSnowflakeKit.me.nextId());
-			moMaterialsreturnd.setIMaterialsReturnMid(row.get("iAutoId"));
-			moMaterialsreturnd.setIMoDocId(form.get("IMoDocId"));
-			moMaterialsreturnd.setIInventoryId(row.get("iInventoryId"));
-			moMaterialsreturnd.setIQty(row.get("iqtys"));
-			moMaterialsreturnd.setCbarcode(row.getStr("cBarcode"));
 
+
+			row.remove("cinvaddcode");
+			row.remove("cinvcode");
+			row.remove("cinvname");
+			row.remove("cmemo");
+			row.remove("iqty");
+			row.remove("iscannedqty");
+			row.remove("iuomclassid");
+			row.remove("type");
+
+			row.set("IAutoId",JBoltSnowflakeKit.me.nextId());
+			row.set("IMaterialsReturnMid",row.get("iAutoId"));
+			row.set("IMoDocId",form.get("IMoDocId"));
+			row.set("IInventoryId",row.get("iInventoryId"));
+			row.set("IQty",row.get("iqtys"));
+			row.set("Cbarcode",row.getStr("cBarcode"));
+			row.remove("iqtys");
+		}
+
+		for (Record row : save1) {
 			Date now=new Date();
 
-			moMaterialsreturnm.setIMoDocId(form.get("IMoDocId"));
-			moMaterialsreturnm.setIAuditWay(1);
-			moMaterialsreturnm.setDSubmitTime(now);
-			moMaterialsreturnm.setIAuditStatus(1);
-			moMaterialsreturnm.setDAuditTime(now);
-			moMaterialsreturnm.setCMemo(row.getStr("cmemo"));
 
+			row.remove("cinvaddcode");
+			row.remove("cinvcode");
+			row.remove("cinvname");
+			row.remove("iqty");
+			row.remove("iscannedqty");
+			row.remove("iuomclassid");
+			row.remove("type");
+			row.remove("iinventoryid");
+			row.remove("iqtys");
+			row.remove("cbarcode");
+			row.remove("iautoid");
 
-			moMaterialsreturnm.setIAutoId(JBoltSnowflakeKit.me.nextId());
-			moMaterialsreturnm.setCOrgCode(getOrgCode());
-			moMaterialsreturnm.setIOrgId(getOrgId());
-			moMaterialsreturnm.setCOrgName(getOrgName());
-			moMaterialsreturnm.setICreateBy(JBoltUserKit.getUserId());
-			moMaterialsreturnm.setCCreateName(JBoltUserKit.getUserName());
-			moMaterialsreturnm.setDCreateTime(now);
-			moMaterialsreturnm.setIUpdateBy(JBoltUserKit.getUserId());
-			moMaterialsreturnm.setCUpdateName(JBoltUserKit.getUserName());
-			moMaterialsreturnm.setDUpdateTime(now);
-			moMaterialsreturnm.setIsDeleted(false);
+			row.set("IMoDocId",form.get("IMoDocId"));
+			row.set("IAuditWay",1);
+			row.set("DSubmitTime",now);
+			row.set("IAuditStatus",1);
+			row.set("DAuditTime",now);
+			row.set("CMemo",row.getStr("cmemo"));
 
-			moMaterialsreturnds.add(moMaterialsreturnd);
-			moMaterialsreturnms.add(moMaterialsreturnm);
+			row.set("IAutoId",JBoltSnowflakeKit.me.nextId());
+			row.set("COrgCode",getOrgCode());
+			row.set("IOrgId",getOrgId());
+			row.set("COrgName",getOrgName());
+			row.set("ICreateBy",JBoltUserKit.getUserId());
+			row.set("CCreateName",JBoltUserKit.getUserName());
+			row.set("DCreateTime",now);
+			row.set("IUpdateBy",JBoltUserKit.getUserId());
+			row.set("CUpdateName",JBoltUserKit.getUserName());
+			row.set("DUpdateTime",now);
+			row.set("IsDeleted",false);
+
 		}
+
 
 		tx(() -> {
 
-			materialsreturndService.batchSave(moMaterialsreturnds);
-			materialsreturnmService.batchSave(moMaterialsreturnms);
+			materialsreturndService.batchSaveRecords(save);
+			materialsreturnmService.batchSaveRecords(save1);
 			return true;
 		});
 
