@@ -185,35 +185,6 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     }
 
     /**
-     * 审批
-     */
-    public Ret approve(Long iautoid) {
-        tx(() -> {
-            // 校验订单状态
-            WeekOrderM weekOrderM = findById(iautoid);
-            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
-            formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
-                // 修改客户计划汇总
-                cusOrderSumService.algorithmSum();
-
-                // 推单
-                List<WeekOrderD> weekOrderDS = weekOrderDService.findByMId(iautoid);
-                String cDocNo = pushOrder(weekOrderM, weekOrderDS);
-                ValidationUtils.notNull(cDocNo, "推单失败");
-
-                // 修改周间客户订单信息
-                ValidationUtils.isTrue(updateColumn(iautoid, "iPushTo", 1).isOk(), JBoltMsg.FAIL);
-                ValidationUtils.isTrue(updateColumn(iautoid, "cDocNo", cDocNo).isOk(), JBoltMsg.FAIL);
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
-                return null;
-            });
-            return true;
-        });
-
-        return SUCCESS;
-    }
-
-    /**
      * 关闭功能
      */
     public Ret closeWeekOrder(String iAutoId) {

@@ -302,24 +302,6 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         }
     }
 
-    public Ret approve(Long iautoid) {
-        tx(() -> {
-            // 校验订单状态
-            Subcontractsaleorderm subcontractsaleorderm = findById(iautoid);
-            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), subcontractsaleorderm.getIOrderStatus(), "订单非待审核状态");
-            formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
-                return null;
-            });
-
-            // 修改客户计划汇总
-            cusOrderSumService.algorithmSum();
-            return true;
-        });
-
-        return SUCCESS;
-    }
-
     /**
      * 关闭
      */
