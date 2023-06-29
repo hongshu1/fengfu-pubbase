@@ -5,15 +5,12 @@
         <div class="row">
             <div class="col-12">
                 <form onsubmit="return false;" class="form-inline" id="chooseDataForm" method="post">
-                    <input style="width: 400px" type="text" autocomplete="off" class="form-control" placeholder="=传票号="
+                    <input style="width: 400px" type="text" autocomplete="off" class="form-control"
+                           placeholder="=订单号="
                         name="cbarcode" value="" />
 
-                    <input type="hidden" name="icustomerid" value="#(icustomerid??)" id="ccuscode" data-value-attr="iautoid" />
-                    <input type="text" class="form-control" data-autocomplete
-                        data-url="admin/salesShipmentList/customer" data-hidden-input="ccuscode" data-text-attr="ccusname" id="ccusname"
-                        data-column-attr="ccuscode,ccusname" placeholder="请选择客户名称" data-tips="请选择客户名称"
-                        data-header="客户编码,客户名称" maxlength="40" value="#(ccusname??)" />
-                        
+                    <input type="hidden" name="cusid" value="#(cusid??)" id="cusid"/>
+
                     <!-- <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
                         class="form-control" placeholder="=开始时间=" name="startTime" data-tips="开始时间" maxlength="23"
                         value="">至
@@ -38,25 +35,32 @@
                 {@else}
                 <td>${+index+1}</td>
                 {@/if}
-                <td>${data.ccarno}</td>
-                <td>${data.cbarcode}</td>
-                <td>${data.ccusname}</td>
-                <td>${data.icustomerid}</td>
+                <td>${data.sourcebillno}</td>
+                <td>${data.salename}</td>
+                <td>${data.busname}</td>
+                <td hidden>${data.sourcebillid}</td>
             </tr>
             {@/each}
         </script>
-        <table class="thead_font_normal" id="chooseDataTable" data-jbolttable data-fixed-columns-left="1,2"
-            data-fixed-columns-right="6,7" data-column-resize="true" data-ajax="true"
-            data-column-prepend="1:checkbox:true" data-conditions-form="chooseDataForm" data-page="jboltTablePage_ajax"
-            data-pagesize="50" data-url="admin/scanCodeShipment/rcvpland" data-rowtpl="jboltTable_demotpl"
-            data-row-dblclick-active="true" data-row-dblclick-handler="dbClickCheckData">
+        <table class="thead_font_normal"
+               id="chooseDataTable"
+               data-jbolttable
+               data-column-resize="true"
+               data-ajax="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="chooseDataForm"
+               data-page="jboltTablePage_ajax"
+               data-pagesize="50"
+               data-url="admin/scanCodeShipment/getOrder"
+               data-rowtpl="jboltTable_demotpl"
+               data-row-dblclick-active="true"
+               data-row-dblclick-handler="dbClickCheckData">
             <thead>
-                <tr>
-                    <th data-width="60">序号</th>
-                    <th data-width="160" data-column="ccarno">车次号</th>
-                    <th data-width="160" data-column="cbarcode">传票号</th>
-                    <th data-width="160" data-column="ccusname">客户名称</th>
-                    <th data-width="160" data-column="icustomerid">客户名称ID</th>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="160" data-column="sourcebillno">订单号</th>
+                <th data-width="160" data-column="salename">销售类型</th>
+                <th data-width="160" data-column="busname">业务类型</th>
             </thead>
             <tbody></tbody>
         </table>
@@ -72,7 +76,7 @@
         console.log('data===>', data);
         if (data) {
             // LayerMsgBox.confirm("确认选择此数据?",function(){
-            parent.setChooseDialogSelectResultFromSupplier(data);
+            parent.setChooseDialogSelectResultFromOrder(data);
             if (callback) {
                 callback();
             }
@@ -81,7 +85,7 @@
     }
 
     function dbClickCheckData(table, tempTr1, trId1, rowData) {
-        parent.setChooseDialogSelectResultFromSupplier(rowData);
+        parent.setChooseDialogSelectResultFromOrder(rowData);
         parent.layer.close(parent.layer.getFrameIndex(window.name));
     }
 

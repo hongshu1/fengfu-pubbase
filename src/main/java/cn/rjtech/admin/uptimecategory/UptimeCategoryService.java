@@ -158,7 +158,7 @@ public class UptimeCategoryService extends BaseService<UptimeCategory> {
 	 * @param kv
 	 * @return
 	 */
-    public List<Record> uptimeTplTableDatas(Kv kv) {
+	public List<Record> uptimeTplTableDatas(Kv kv) {
 		return dbTemplate("uptimecategory.uptimeTplTableDatas", kv).find();
-    }
+	}
 }

@@ -101,6 +101,8 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
      * 删除
      */
     public Ret delete(Long id) {
+        AnnualOrderM annualOrderM = findById(id);
+        ValidationUtils.equals(annualOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
         return updateColumn(id, "isdeleted", true);
     }
 
@@ -478,6 +480,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
         List<AnnualOrderM> list = getListByIds(ids);
         List<AnnualOrderM> notAuditList = new ArrayList<>();
         for (AnnualOrderM annualOrderM : list) {
+            ValidationUtils.equals(annualOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
             if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != annualOrderM.getIOrderStatus()) {
                 notAuditList.add(annualOrderM);
             }

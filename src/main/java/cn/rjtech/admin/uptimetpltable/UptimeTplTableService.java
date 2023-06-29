@@ -9,6 +9,10 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.UptimeTplTable;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
 /**
  * 稼动时间建模-参数表格
  * @ClassName: UptimeTplTableService
@@ -102,4 +106,20 @@ public class UptimeTplTableService extends BaseService<UptimeTplTable> {
 		return null;
 	}
 
+	public Boolean deleteByUptimeTplMid(Long iuptimecategoryid) {
+		delete(deleteSql().eq("iUptimeTplMid", iuptimecategoryid));
+		return true;
+	}
+
+	/**
+	 *
+	 * @param kv
+	 * @return
+	 */
+	public List<Record> uptimeTplTableDatas(Kv kv) {
+		if (isNull(kv.get("iuptimetplmid"))) {
+			return null;
+		}
+		return dbTemplate("uptimetpltable.uptimeTplTableDatas", kv).find();
+	}
 }
