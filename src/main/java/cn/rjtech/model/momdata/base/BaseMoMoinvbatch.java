@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
@@ -20,6 +21,10 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
     public static final String CORGNAME = "cOrgName";
     /**生产订单ID*/
     public static final String IMODOCID = "iMoDocId";
+    /**存货ID*/
+    public static final String IINVENTORYID = "iInventoryId";
+    /**包装数量*/
+    public static final String IPKGQTY = "iPkgQty";
     /**序号*/
     public static final String ISEQ = "iSeq";
     /**版本号*/
@@ -48,6 +53,8 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态;0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    /**完整条码（现品票+版本号）*/
+    public static final String CCOMPLETEBARCODE = "cCompleteBarcode";
 	/**
 	 * 主键ID
 	 */
@@ -134,6 +141,40 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	}
 
 	/**
+	 * 存货ID
+	 */
+	public M setIInventoryId(java.lang.Long iInventoryId) {
+		set("iInventoryId", iInventoryId);
+		return (M)this;
+	}
+
+	/**
+	 * 存货ID
+	 */
+	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="Long", remark="存货ID", required=true, maxLength=19, fixed=0, order=6)
+	@JSONField(name = "iinventoryid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIInventoryId() {
+		return getLong("iInventoryId");
+	}
+
+	/**
+	 * 包装数量
+	 */
+	public M setIPkgQty(java.lang.Integer iPkgQty) {
+		set("iPkgQty", iPkgQty);
+		return (M)this;
+	}
+
+	/**
+	 * 包装数量
+	 */
+	@JBoltField(name="ipkgqty" ,columnName="iPkgQty",type="Integer", remark="包装数量", required=true, maxLength=10, fixed=0, order=7)
+	@JSONField(name = "ipkgqty")
+	public java.lang.Integer getIPkgQty() {
+		return getInt("iPkgQty");
+	}
+
+	/**
 	 * 序号
 	 */
 	public M setISeq(java.lang.Integer iSeq) {
@@ -144,7 +185,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 序号
 	 */
-	@JBoltField(name="iseq" ,columnName="iSeq",type="Integer", remark="序号", required=true, maxLength=10, fixed=0, order=6)
+	@JBoltField(name="iseq" ,columnName="iSeq",type="Integer", remark="序号", required=true, maxLength=10, fixed=0, order=8)
 	@JSONField(name = "iseq")
 	public java.lang.Integer getISeq() {
 		return getInt("iSeq");
@@ -161,7 +202,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 版本号
 	 */
-	@JBoltField(name="cversion" ,columnName="cVersion",type="String", remark="版本号", required=true, maxLength=4, fixed=0, order=7)
+	@JBoltField(name="cversion" ,columnName="cVersion",type="String", remark="版本号", required=true, maxLength=4, fixed=0, order=9)
 	@JSONField(name = "cversion")
 	public java.lang.String getCVersion() {
 		return getStr("cVersion");
@@ -178,7 +219,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 现品票
 	 */
-	@JBoltField(name="cbarcode" ,columnName="cBarcode",type="String", remark="现品票", required=true, maxLength=40, fixed=0, order=8)
+	@JBoltField(name="cbarcode" ,columnName="cBarcode",type="String", remark="现品票", required=true, maxLength=40, fixed=0, order=10)
 	@JSONField(name = "cbarcode")
 	public java.lang.String getCBarcode() {
 		return getStr("cBarcode");
@@ -195,7 +236,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 数量
 	 */
-	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="数量", required=true, maxLength=24, fixed=6, order=9)
+	@JBoltField(name="iqty" ,columnName="iQty",type="BigDecimal", remark="数量", required=true, maxLength=24, fixed=6, order=11)
 	@JSONField(name = "iqty")
 	public java.math.BigDecimal getIQty() {
 		return getBigDecimal("iQty");
@@ -212,7 +253,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 打印状态;1. 未打印 2. 已打印
 	 */
-	@JBoltField(name="iprintstatus" ,columnName="iPrintStatus",type="Integer", remark="打印状态;1. 未打印 2. 已打印", required=true, maxLength=10, fixed=0, order=10)
+	@JBoltField(name="iprintstatus" ,columnName="iPrintStatus",type="Integer", remark="打印状态;1. 未打印 2. 已打印", required=true, maxLength=10, fixed=0, order=12)
 	@JSONField(name = "iprintstatus")
 	public java.lang.Integer getIPrintStatus() {
 		return getInt("iPrintStatus");
@@ -229,7 +270,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 状态;0. 未报工 1. 已报工
 	 */
-	@JBoltField(name="istatus" ,columnName="iStatus",type="Integer", remark="状态;0. 未报工 1. 已报工", required=true, maxLength=10, fixed=0, order=11)
+	@JBoltField(name="istatus" ,columnName="iStatus",type="Integer", remark="状态;0. 未报工 1. 已报工", required=true, maxLength=10, fixed=0, order=13)
 	@JSONField(name = "istatus")
 	public java.lang.Integer getIStatus() {
 		return getInt("iStatus");
@@ -246,7 +287,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 是否有效;0. 失效 1. 有效
 	 */
-	@JBoltField(name="iseffective" ,columnName="isEffective",type="Boolean", remark="是否有效;0. 失效 1. 有效", required=true, maxLength=1, fixed=0, order=12)
+	@JBoltField(name="iseffective" ,columnName="isEffective",type="Boolean", remark="是否有效;0. 失效 1. 有效", required=true, maxLength=1, fixed=0, order=14)
 	@JSONField(name = "iseffective")
 	public java.lang.Boolean getIsEffective() {
 		return getBoolean("isEffective");
@@ -263,7 +304,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 创建人ID
 	 */
-	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=13)
+	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=15)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
@@ -280,7 +321,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=40, fixed=0, order=14)
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=40, fixed=0, order=16)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCCreateName() {
 		return getStr("cCreateName");
@@ -297,7 +338,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=15)
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=17)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
@@ -314,7 +355,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 更新人ID
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=16)
+	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=18)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIUpdateBy() {
 		return getLong("iUpdateBy");
@@ -331,7 +372,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 更新人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=40, fixed=0, order=17)
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=40, fixed=0, order=19)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCUpdateName() {
 		return getStr("cUpdateName");
@@ -348,7 +389,7 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 更新时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=18)
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=20)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDUpdateTime() {
 		return getDate("dUpdateTime");
@@ -365,10 +406,27 @@ public abstract class BaseMoMoinvbatch<M extends BaseMoMoinvbatch<M>> extends JB
 	/**
 	 * 删除状态;0. 未删除 1. 已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态;0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=19)
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态;0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=21)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 完整条码（现品票+版本号）
+	 */
+	public M setCCompleteBarcode(java.lang.String cCompleteBarcode) {
+		set("cCompleteBarcode", cCompleteBarcode);
+		return (M)this;
+	}
+
+	/**
+	 * 完整条码（现品票+版本号）
+	 */
+	@JBoltField(name="ccompletebarcode" ,columnName="cCompleteBarcode",type="String", remark="完整条码（现品票+版本号）", required=false, maxLength=100, fixed=0, order=22)
+	@JSONField(name = "ccompletebarcode")
+	public java.lang.String getCCompleteBarcode() {
+		return getStr("cCompleteBarcode");
 	}
 
 }
