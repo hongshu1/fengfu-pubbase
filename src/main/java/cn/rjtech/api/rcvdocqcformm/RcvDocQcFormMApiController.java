@@ -103,6 +103,29 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     }
 
     /**
+     * 点击编辑按钮，跳转到编辑页面
+     */
+    @ApiDoc(result = RcvDocQcFormMApiCheckOutVo.class)
+    @UnCheck
+    public void jumpEdit(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+
+        renderJBoltApiRet(apiService.jumpEdit(iautoid));
+    }
+
+    /**
+     * @desc 点击查看按钮，跳转到“查看”页面（该页面只能查看，不能编辑）
+     * @param iautoid
+     */
+    @ApiDoc(result = RcvDocQcFormMApiCheckOutVo.class)
+    @UnCheck
+    public void jumpOnlysee(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
+
+        renderJBoltApiRet(apiService.jumpOnlysee(iautoid));
+    }
+
+    /**
      * @param ircvdocqcformmid 主表的主键
      * @desc 进入子页面自动加载table的数据：检验、查看、编辑三个跳转功能
      */
@@ -112,18 +135,6 @@ public class RcvDocQcFormMApiController extends BaseApiController {
         ValidationUtils.notNull(ircvdocqcformmid, JBoltMsg.PARAM_ERROR);
 
         renderJBoltApiRet(apiService.autoGetRcvCheckOutTableDatas(ircvdocqcformmid));
-    }
-
-    /**
-     * @desc 点击查看按钮，跳转到“查看”页面（该页面只能查看，不能编辑）
-     * @param iautoid
-     */
-    @ApiDoc(result = RcvDocQcFormMOnlyseeApiVo.class)
-    @UnCheck
-    public void jumpOnlysee(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-
-        renderJBoltApiRet(apiService.jumpOnlysee(iautoid));
     }
 
     /**
@@ -154,17 +165,6 @@ public class RcvDocQcFormMApiController extends BaseApiController {
 
         renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, ircvdocqcformmiautoid,
             cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
-    }
-
-    /**
-     * 点击编辑按钮，跳转到编辑页面
-     */
-    @ApiDoc(result = RcvDocQcFormMOnlyseeApiVo.class)
-    @UnCheck
-    public void jumpEdit(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
-
-        renderJBoltApiRet(apiService.jumpEdit(iautoid));
     }
 
     /**

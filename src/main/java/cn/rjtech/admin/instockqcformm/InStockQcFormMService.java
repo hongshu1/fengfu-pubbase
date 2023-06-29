@@ -30,7 +30,6 @@ import cn.rjtech.util.excel.SheetPage;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -279,16 +278,23 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         List<Map<String, Object>> recordList = rcvDocQcFormMService.findByIQcFormId(iQcFormId);
         ValidationUtils.notEmpty(recordList, qcForm.getCQcFormName() + "：【质量建模-质量表格设置】没有维护需要检验的项目");
 
+        if (!inventoryQcForm.getCTypeIds().contains("2")) {
+            return fail(qcForm.getCQcFormName() + "：在【质量建模-检验适用标准】页面中没有来料检的检验类型");
+        }
+
         ArrayList<InStockQcFormD> inStockQcFormDS = new ArrayList<>();
         for (Map<String, Object> map : recordList) {
             InStockQcFormD inStockQcFormD = new InStockQcFormD();
             inStockQcFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
             inStockQcFormD.setIInStockQcFormMid(iautoid);
             inStockQcFormD.setIQcFormId(iQcFormId);
-            inStockQcFormD.setIFormParamId(Long.valueOf(map.get("iqcformtableparamid").toString()));
-            inStockQcFormD.setISeq(Integer.valueOf(map.get("iseq").toString()));
+            Object iqcformtableparamid = map.get("iqcformtableparamid");
+            inStockQcFormD.setIFormParamId(iqcformtableparamid != null ? Long.valueOf(iqcformtableparamid.toString()) : null);
+            Object iseq = map.get("iseq");
+            inStockQcFormD.setISeq(iseq != null ? strToInt(iseq) : null);
 //            inStockQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
-            inStockQcFormD.setIType(Integer.valueOf(map.get("itype").toString()));
+            Object itype = map.get("itype");
+            inStockQcFormD.setIType(itype != null ? strToInt(itype) : null);
             inStockQcFormD.setIStdVal(rcvDocQcFormDService.objToBig(map.get("istdval")));
             inStockQcFormD.setIMaxVal(rcvDocQcFormDService.objToBig(map.get("imaxval")));
             inStockQcFormD.setIMinVal(rcvDocQcFormDService.objToBig(map.get("iminval")));
@@ -307,6 +313,10 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         });
 
         return ret(result);
+    }
+
+    public Integer strToInt(Object obj) {
+        return Integer.parseInt(obj.toString());
     }
 
     /*详情页面的table数据*/
@@ -396,10 +406,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         Long instockqcformmiautoid = JboltPara.getLong("iinstockqcformmid"); //主表id
-        //是否合格不能为空
-        if (StringUtils.isBlank(JboltPara.getString("isok"))) {
-            return fail("请判定是否合格");
-        }
+
         JSONArray serializeSubmitList = JboltPara.getJSONArray("serializeSubmitList");
         Boolean result = achiveSerializeSubmitList(serializeSubmitList, instockqcformmiautoid,
             JboltPara.getString("cmeasurepurpose"), JboltPara.getString("cmeasurereason"),
@@ -482,6 +489,9 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
             inStockQcFormM.setIsCompleted(true);
             inStockQcFormM.setIsCpkSigned(false);
         }
+        inStockQcFormM.setIUpdateBy(JBoltUserKit.getUserId());
+        inStockQcFormM.setDUpdateTime(new Date());
+        inStockQcFormM.setCUpdateName(JBoltUserKit.getUserName());
     }
 
     /*

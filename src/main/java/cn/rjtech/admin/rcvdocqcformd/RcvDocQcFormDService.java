@@ -127,15 +127,15 @@ public class RcvDocQcFormDService extends BaseService<RcvDocQcFormD> {
     }
 
     /*传参*/
-    public void saveRcvDocQcFormDModel(RcvDocQcFormD qcFormD, Long iRcvDocQcFormMid, Long iqcformId, int iseq,
-                                       int itype, Object istdVal, Object iMaxVal, Object iMinVal, Object cOptions,
-                                       String iqcformtableitemid) {
+    public void saveRcvDocQcFormDModel(RcvDocQcFormD qcFormD, Long iRcvDocQcFormMid, Long iqcformId, Object iseq,
+                                       Object itype, Object istdVal, Object iMaxVal, Object iMinVal, Object cOptions,
+                                       Object iqcformtableitemid) {
         qcFormD.setIRcvDocQcFormMid(iRcvDocQcFormMid);
         qcFormD.setIQcFormId(iqcformId);
-        qcFormD.setIFormParamId(Long.valueOf(iqcformtableitemid));
-        qcFormD.setISeq(iseq);
+        qcFormD.setIFormParamId(iqcformtableitemid != null ? Long.valueOf(iqcformtableitemid.toString()) : null);
+        qcFormD.setISeq(iseq != null ? strToInt(iseq.toString()) : null);
         //qcFormD.setCQcFormParamIds(cQcFormParamIds);//String cQcFormParamIds,
-        qcFormD.setIType(itype);
+        qcFormD.setIType(iseq != null ? strToInt(itype.toString()) : null);
         qcFormD.setIStdVal(objToBig(istdVal));
         qcFormD.setIMaxVal(objToBig(iMaxVal));
         qcFormD.setIMinVal(objToBig(iMinVal));
@@ -160,5 +160,9 @@ public class RcvDocQcFormDService extends BaseService<RcvDocQcFormD> {
             }
         }
         return bigDecimal;
+    }
+
+    public Integer strToInt(Object obj) {
+        return Integer.parseInt(obj.toString());
     }
 }

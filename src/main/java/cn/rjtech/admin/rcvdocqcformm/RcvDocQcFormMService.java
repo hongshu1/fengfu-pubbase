@@ -35,7 +35,6 @@ import cn.rjtech.util.excel.SheetPage;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -146,12 +145,21 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         InventoryQcForm inventoryQcForm = inventoryQcFormService.findByIInventoryId(iInventoryId);
         ValidationUtils.notNull(inventoryQcForm, inventory.getCInvCode() + "：没有在【质量建模-检验适用标准】维护标准表格");
 
-        Long iQcFormId = inventoryQcForm.getIQcFormId();
+        Long iQcFormId = null;
+        if (rcvDocQcFormM.getIQcFormId() != null) {
+            iQcFormId = rcvDocQcFormM.getIQcFormId();
+        }else{
+            iQcFormId = inventoryQcForm.getIQcFormId();
+        }
         QcForm qcForm = qcFormService.findById(iQcFormId);
         ValidationUtils.notNull(qcForm, "【质量建模-质量表格设置】检验表格不存在");
 
         List<Map<String, Object>> recordList = findByIQcFormId(iQcFormId);
         ValidationUtils.notEmpty(recordList, qcForm.getCQcFormName() + "：【质量建模-质量表格设置】没有维护需要检验的项目");
+
+        if (!inventoryQcForm.getCTypeIds().contains("1")) {
+            return fail(qcForm.getCQcFormName() + "：在【质量建模-检验适用标准】页面中没有来料检的检验类型");
+        }
 
         //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检：1”
         rcvDocQcFormM.setIQcFormId(inventoryQcForm.getIQcFormId());//bd_qcform的主键
@@ -163,9 +171,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         List<RcvDocQcFormD> formDList = new ArrayList<>();
         for (Map<String, Object> map : recordList) {
             RcvDocQcFormD qcFormD = new RcvDocQcFormD();
-            rcvDocQcFormDService.saveRcvDocQcFormDModel(qcFormD, iautoid, iQcFormId, Integer.valueOf(map.get("iseq").toString()),
-                Integer.valueOf(map.get("itype").toString()), map.get("istdval"), map.get("imaxval"), map.get("iminval"),
-                map.get("coptions"), map.get("iqcformtableparamid").toString());
+            rcvDocQcFormDService.saveRcvDocQcFormDModel(qcFormD, iautoid, iQcFormId, map.get("iseq"),
+                map.get("itype"), map.get("istdval"), map.get("imaxval"), map.get("iminval"),
+                map.get("coptions"), map.get("iqcformtableparamid"));
             formDList.add(qcFormD);
         }
 
@@ -529,7 +537,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         Long docqcformmiautoid = JboltPara.getLong("docqcformmiautoid"); //主表id
         String isok = JboltPara.getString("isok");
         //是否合格不能为空
-        ValidationUtils.notBlank(isok, "请判定是否合格");
+//        ValidationUtils.notBlank(isok, "请判定是否合格");
 
         Boolean result = achieveSerializeSubmitList(JboltPara.getJSONArray("serializeSubmitList"), docqcformmiautoid,
             JboltPara.getString("cmeasurepurpose"), JboltPara.getString("cmeasurereason"),
