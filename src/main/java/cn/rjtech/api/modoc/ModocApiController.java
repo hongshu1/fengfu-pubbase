@@ -52,20 +52,19 @@ public class ModocApiController extends BaseApiController {
   }
 
   /**
+   * *制造工单查询API
    *
-   *  *制造工单查询API
-   *
-   * @param page  页数 必要参数
-   * @param pageSize 条数 必要参数
-   * @param cmodocno 工单号
-   * @param cinvcode 存货编码
-   * @param cinvcode1 客户布番
-   * @param cinvname1  部品名称
-   * @param cdepname 生产部门
+   * @param page           页数 必要参数
+   * @param pageSize       条数 必要参数
+   * @param cmodocno       工单号
+   * @param cinvcode       存货编码
+   * @param cinvcode1      客户布番
+   * @param cinvname1      部品名称
+   * @param cdepname       生产部门
    * @param iworkregionmid 产线ID 必要参数
-   * @param status 状态
-   * @param starttime 开始日期
-   * @param endtime 截止日期
+   * @param status         状态
+   * @param starttime      开始日期
+   * @param endtime        截止日期
    */
   @ApiDoc(result = ModocApiPageVo.class)
   @UnCheck
@@ -80,23 +79,40 @@ public class ModocApiController extends BaseApiController {
                    @Para(value = "iworkregionmid") Long iworkregionmid,
                    @Para(value = "status") Integer status,
                    @Para(value = "starttime") Date starttime,
-                   @Para(value = "endtime") Date endtime){
-    ValidationUtils.validateIdInt(page,"缺少页数");
-    ValidationUtils.validateIdInt(pageSize,"缺少条数");
+                   @Para(value = "endtime") Date endtime) {
+    ValidationUtils.validateIdInt(page, "缺少页数");
+    ValidationUtils.validateIdInt(pageSize, "缺少条数");
     // ValidationUtils.notNull(iworkregionmid,"缺少产线ID");
-    renderJBoltApiRet(moDocApiService.page(page,pageSize,cmodocno,cinvcode,cinvcode1,cinvname1,
-            cdepname,iworkregionmid,status,starttime,endtime));
+    renderJBoltApiRet(moDocApiService.page(page, pageSize, cmodocno, cinvcode, cinvcode1, cinvname1,
+        cdepname, iworkregionmid, status, starttime, endtime));
   }
 
   /**
-   *  获取工单详情信息
+   * 获取工单详情信息
+   *
    * @param imodocid 工单ID
    */
   @ApiDoc(result = ModocApiResVo.class)
   @UnCheck
   @OpenAPI
-  public void getModocdetails( @Para(value = "imodocid") Long imodocid){
-      ValidationUtils.notNull(imodocid,"缺少工单ID");
+  public void getModocdetails(@Para(value = "imodocid") Long imodocid) {
+    ValidationUtils.notNull(imodocid, "缺少工单ID");
     renderJBoltApiRet(moDocApiService.getModocdetails(imodocid));
+  }
+
+  /**
+   * 根据制造工单id查询特殊领料数据源
+   *
+   * @param imodocid
+   * @param pageNumber
+   * @param pageSize
+   */
+//  @ApiDoc(result = ModocApiResVo.class)
+  @UnCheck
+  @OpenAPI
+  public void getSpecmaterialsrcvmDatas(@Para(value = "imodocid") Long imodocid, @Para(value = "pageNumber") Integer pageNumber,
+                                        @Para(value = "pageSize") Integer pageSize) {
+    ValidationUtils.notNull(imodocid, "缺少工单ID");
+    renderJBoltApiSuccessWithData(moDocApiService.getSpecmaterialsrcvmDatas(imodocid, pageNumber, pageSize));
   }
 }

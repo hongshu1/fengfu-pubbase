@@ -269,11 +269,14 @@
     function submitThisFormtest() {
         var mytable = document.getElementById("manual");
         var map1 = [];
+        //储存当前工单号
         map1[0] = "id" + ":" + "#(cmodocno??)";
         for (var i = 1, rows = mytable.rows.length; i < rows; i++) {
-            map1[i] = mytable.rows[i].cells[9].innerHTML + ":" + mytable.rows[i].cells[6].children[0].value;
+            if (mytable.rows[i].cells[6].children[0].value){
+                //存货编码:输入的数量
+                map1.push(mytable.rows[i].cells[1].innerHTML + ":" + mytable.rows[i].cells[6].children[0].value);
+            }
         }
-        debugger
         Ajax.post("admin/sysMaterialspreparedetail/submitAll", {"data": map1.toString()},
             function (res) {
                 LayerMsgBox.success("保存成功");

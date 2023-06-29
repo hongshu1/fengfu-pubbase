@@ -26,7 +26,7 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import com.jfinal.plugin.activerecord.Record;
-import jdk.nashorn.internal.ir.annotations.Ignore;
+//import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import java.util.*;
 import java.util.function.Function;
@@ -533,5 +533,11 @@ public class ProdFormService extends BaseService<ProdForm> {
 			return mapList;
 		}
 		return null;
+	}
+	/**
+	 * 根据表格id获取明细数据
+	 */
+	public List<Record> findByIdGetDetail(String iprodformid){
+		return  dbTemplate("prodform.findByIdGetDetail",Kv.by("iprodformid",iprodformid)).find();
 	}
 }

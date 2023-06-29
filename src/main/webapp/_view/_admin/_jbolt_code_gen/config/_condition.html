@@ -34,7 +34,7 @@
 ### 根据UIType字符串 生成Autocomplete类型html
 #define genIndexAutocompleteByUiTypeStr(col)
 <input type="text" class="form-control" maxlength="#(col.attrLength?? 200)" data-autocomplete autocomplete="off" placeholder="请选择#(col.formLabel?? (col.tableLabel?? (col.remark?? '')))"
-	data-url="#(col.formDataValue)"
+	data-url="#(col.searchDataValue)"
     #if(col.searchDataValueAttr)
     data-value-attr="#(col.searchDataValueAttr)"
     #end

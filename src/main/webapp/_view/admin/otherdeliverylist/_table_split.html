@@ -1,7 +1,7 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
     {@each datas as data,index}
-        <tr data-id="${data.autoid}">
+        <tr data-id="${data.autoid}" data-needsave="true" data-changed="true">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>${data.barcode}</td> <!--现品票-->
             <td>${data.invcode}</td> <!--材料编码-->
@@ -86,25 +86,28 @@
         var autoid = $("#autoid").val();
         var detailHidden = $("#detailHidden").val();
 
+        debugger;
         //扫入多条现品票判断是否存在
         let data = getJboltTableAllDatas("jbolt_table_otherdeliverylist_split_#(pageId)",["barcode"]);
         let array = new Array();
+        debugger;
         if (data != null){
             for (let i = 0; i < data.length; i++) {
                 array.push("'"+data[i].barcode+"'");
             }
             for (let i = 0; i < array.length; i++) {
                 let a =  "'"+barcode+"'";
+
                 if (a == array[i]){
                     LayerMsgBox.error("已存在相同["+barcode+"]现品票！！！",2000);
                     return false;
                 }
-
-
             }
+            array.push("'"+barcode+"'");
             //通过逗号分开，一个一个加进数组中
             let codes = array.join(',');
             $("#detailHidden").val(codes);
+            $("#barcodes").val(codes);
         } else {
             $("#detailHidden").val('');
         }
@@ -122,7 +125,7 @@
 
 
     function otherBarcodes(){
-
+        debugger;
         // //扫入多条现品票判断是否存在
         let data = getJboltTableAllDatas("jbolt_table_otherdeliverylist_split_#(pageId)",["barcode"]);
         console.log(data);
@@ -160,6 +163,7 @@
         },
           barcode: { //条码
               maxLength: 100,
+              linkPara: "#barcodes",
               // required: true,
               placeholder: "=请选择=",
               type:"autocomplete",
@@ -168,9 +172,9 @@
               width: 800,
               sync:"" ,
               valueAttr: "barcode",
-              columnAttr: "barcode,cinvcode,cinvaddcode,cinvname,cinvstd,qty,purchasecuomname",
+              columnAttr: "barcode,invcode,cinvaddcode,cinvname,cinvstd,qty,purchasecuomname",
               header:' 现品票, 存货编码, 存货代码,存货名称, 规格型号,数量,库存主单位',
-              changeColumns:[{column: "barcode", use: "barcode"},{column: "invcode", use: "cinvcode"},{column: "cinvaddcode", use: "cinvaddcode"},
+              changeColumns:[{column: "barcode", use: "barcode"},{column: "invcode", use: "invcode"},{column: "cinvaddcode", use: "cinvaddcode"},
                   {column: "cinvname", use: "cinvname"},{column: "cinvstd", use: "cinvstd"},
                   {column: "qty", use: "qty"},
                   {column: "purchasecuomname", use: "purchasecuomname"},
@@ -199,12 +203,12 @@
               maxLength: 100,
               // required: true,
               placeholder: "=请选择=",
-              textAttr: "cinvcode",
+              textAttr: "invcode",
               width: 800,
               valueAttr: "invcode",
-              columnAttr: "cinvcode,cinvaddcode,cinvname,cInvstd,qty,cinvccode,cinvcname,purchasecuomname",
+              columnAttr: "invcode,cinvaddcode,cinvname,cInvstd,qty,cinvccode,cinvcname,purchasecuomname",
               header:'存货编码, 存货代码,存货名称, 规格型号,数量,项目大类编码, 项目大类名称,库存主单位',
-              changeColumns:[{column: "invcode", use: "cinvcode"},{column: "cinvaddcode", use: "cinvaddcode"},
+              changeColumns:[{column: "invcode", use: "invcode"},{column: "cinvaddcode", use: "cinvaddcode"},
                   {column: "cinvname", use: "cinvname"},{column: "cInvstd", use: "cInvstd"},
                   {column: "qty", use: "qty"},{column: "cinvccode", use: "cinvccode"},
                   {column: "cinvcname", use: "cinvcname"},{column: "purchasecuomname", use: "purchasecuomname"},
@@ -215,7 +219,7 @@
               type: "autocomplete",
               url: "admin/otherdeliverylist/getCItemCCodeLines",
               maxLength: 100,
-              required: true,
+              // required: true,
               placeholder: "=请选择=",
               textAttr: "citemccode",
               width: 200,

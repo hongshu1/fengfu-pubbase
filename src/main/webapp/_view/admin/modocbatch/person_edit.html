@@ -154,6 +154,7 @@
     }
     .popup-layer{
         width:100%;
+        height:330px;
         overflow-y: scroll;
     }
     .hide{
@@ -278,7 +279,6 @@
                     </table>
                 </div>
             </div>
-            <div id="demo-laypage-limits"></div>
             <div class="dialog-footer">
                 <button class="dialog-btn dialog-btn-cancel" id="dialog-btn-cancel">取消</button>
                 <button class="dialog-btn dialog-btn-ok" id="dialog-btn-ok" onClick="dialogBtnOk()">确定</button>
@@ -305,6 +305,9 @@
 <script type="text/javascript" src="assets/plugins/Grape/FileSaver.min.js"></script>
 <script type="text/javascript">
     let taskId = ("#(taskId??)");//界面id
+    hideParentLayerDialogBtn(1);
+    hideParentLayerDialogBtn(0);
+
     var Api = '/';//公共接口
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
     var excelIo = new GC.Spread.Excel.IO();//开启导入导出api
@@ -332,6 +335,7 @@
         gonXuName:"",           //接收当前行的工序name
         keHuCode:"",            //接收当前行的客户编码
         editCellValue:[],       //存储要保存的数据
+        pageSize:10,            //选择人员分页请求条数
     };
     var parmsArr = [Object.assign({},parmsDefault)];
     //添加属性
@@ -404,10 +408,6 @@
             parms['cellCol'] = col;
         }
     });
-    //人员搜索事件
-    function userSearch(){
-        let value = $(".layui-input").val();
-    }
     //双击单元格事件
     sheet.bind(GC.Spread.Sheets.Events.CellDoubleClick, function (sender, args) {
         let {row,col} = args;
@@ -415,7 +415,15 @@
             return;
         }else{
             let rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取当前行数据
+            console.log(rowData)
             let colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取当前列数据
+            let clickRow = sheet.getArray(row, col, sheet.getRowCount(), 1);//获取当前列数据
+            let ModArray = [];
+            for (let i = 0; i < clickRow.length; i++) {
+                if(clickRow[i][0]!=null){
+                    ModArray.push(clickRow[i][0])
+                }
+            }
             parms.sheBeiName = rowData[0][5];//当前行的设备name
             parms.gonXuName = rowData[0][6];//当前行的工序name
             parms.keHuCode = rowData[0][7];//当前行的客户编码
@@ -423,68 +431,52 @@
                 data:colData[1][0],//当前单元格所在年月日
                 plan:colData[3][0],//排班(1S,2S)
                 codeKehu:rowData[0][7],//当前物品的存货编码
+                type:rowData[0][8],//人员类型
                 sheBeiid:"",//设备id
                 gonXuid:"",//工序id
                 taskId,//页面id
                 renYuanid:[]//人员id
             }
+            const regex = /^MOD/;
+            // 匹配第一条以 "MOD" 开头的数据
+            ModArray.some(item => {
+                if (regex.test(item)) {
+                    parms.editCellValueObj.cmodocno=item;
+                    return true; // 结束匹配
+                }
+            });
+            console.log(parms.editCellValueObj)
             parms.cellRowOk = row;
             parms.cellColOk = col;
             showDialog();
         }
     });
-    function getUserData() {
-        let pageCount=1;
-        let pageSize=10;
-        //获取弹框人员数据
-        function fetchData() {
-            let url = Api+`admin/modocbatch/getUserDatas?pageNumber=${pageCount}&pageSize=${pageSize}`;
-            $.ajax({
-                url,
-                type:'post',
-                dataType:'json',
-                success:function (res){
-                    var str = "";
-                    for (var i = 0; i < res.data.list.length; i++) {
-                        str += `<tr>
-                                <td align='center'><input type="checkbox" class="checkbox" onChange="selectCheckboxs(event,${i})"></td>
-                                <td class="hide">${res.data.list[i].iautoid}</td>
-                                <td>${res.data.list[i].cpsnnum}</td>
-                                <td>${res.data.list[i].cpsnname}</td>
-                                <td>${res.data.list[i].cpsnmobilephone}</td>
-                                <td>${res.data.list[i].cdepname}</td>
-                               </tr>`;
-                    }
-                    $("#layer_tr").html(str);
-                    //处理分页数据
-                    layui.use(function(){
-                        let laypage = layui.laypage;
-                        // 自定义每页条数的选择项
-                        laypage.render({
-                            elem: 'demo-laypage-limits',
-                            count:res.data.totalRow,
-                            limit: pageCount,
-                            limits: [1,10, 20, 30,40,50,100,200],
-                            layout: ['count','prev', 'page', 'next', 'limit'],
-                            jump: function(obj, first){
-                                if(obj.curr!=pageCount){
-                                    pageCount = obj.curr; // 得到当前页，以便向服务端请求对应页的数据。
-                                }
-                                if(obj.limit!=pageSize){
-                                    pageSize = obj.limit; // 得到每页显示的条数
-                                }
-                                if (!first) { // 判断是否为首次加载，避免重复请求
-                                    fetchData(); // 数据发生改变时重新请求
-                                }
-                            }
-                        });
-                    });
-                },error: function(error) {
-                    console.log(error);
+    /**
+     * 页面数据保存事件
+     * @param seva
+     */
+    function seva() {
+        let url = `admin/modocbatch/savePersonnel`;
+        console.log(parms.editCellValue)
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            data:{
+                modoc:JSON.stringify(parms.editCellValue)//修改单元格之后的数据--[object]
+            },
+            success:function (res){
+                if(res.data?.msg=='操作成功'){
+                    LayerMsgBox.success(res.data.msg);
+                    initData();
+                }else{
+                    LayerMsgBox.error(res.msg,1000);
                 }
-            });
-        }
-        fetchData(); // 初始化时请求数据
+                parms.editCellValue.length=0;
+            },error: function(error) {
+                console.log(error);
+            }
+        })
     }
     /**
      * 获取接口返回的日期数据
@@ -500,6 +492,7 @@
             dataType:'json',
             success:function (respons){
                 let tableHeadArray = respons.data.datas;
+                parms['tableHeadArray'] = respons.data.datas;
                 spreadSuspend();//暂停绘制
                 //渲染头部数据
                 let startDate = document.getElementById("cinvcode1");
@@ -509,9 +502,9 @@
                 let depname = document.getElementById("cinvcode3");
                 depname.value=respons.data.depname;
                 //渲染日期班次
-                let dateCol = 8;
+                let dateCol = 9;
                 let dateRow = 0;
-                let colSpan = 6;
+                let colSpan = 7;
                 spread.getActiveSheet().setRowVisible(1, false);//隐藏第2行
                 for (let i = 0; i < tableHeadArray.length; i++) {
                     for (let j = 0; j < tableHeadArray[i].length; j++) {
@@ -555,7 +548,6 @@
                 LayerMsgBox.closeLoading();
                 const jsonData = respons;
                 parms['pageData'] = respons.data;
-                console.log(jsonData)
                 spreadSuspend();//暂停绘制
                 let rowIndex = 4;
                 let colIndex=0;
@@ -566,12 +558,13 @@
                 parms.activeSheet.setColumnWidth(1, 150);//设置指定单元格的width
                 parms.activeSheet.setColumnWidth(2, 100);//设置指定单元格的width
                 parms.activeSheet.setColumnWidth(3, 150);//设置指定单元格的width
-                parms.activeSheet.setColumnWidth(4, 150);//设置指定单元格的width
+                parms.activeSheet.setColumnWidth(4, 300);//设置指定单元格的width
                 let codeRow = 4;//隐藏的存货编码起始渲染列下标
                 let leg=4;//接收上一次数组的长度
                 let jsonDataLength = 0;
+                sheet.setColumnVisible(7, false);//隐藏第7列
+                sheet.setColumnVisible(8, false);//隐藏第8列
                 for (let i = 0; i <jsonData.data.length-3; i++) {
-                    sheet.setColumnVisible(7, false);//隐藏第9列
                     //设置第9列数据
                     for (let s = 0; s < jsonData.data[i].rowdatas.length; s++) {
                         sheet.setValue(codeRow+s, 7, jsonData.data[i].cinvcode);
@@ -670,17 +663,20 @@
                                 parms.activeSheet.addSpan(rowIndex-jsonData.data[i].rowdatas.length+3,A,1,2);
                             }
                             item.user.forEach((it,ind)=>{
-                                parms.activeSheet.setColumnWidth(8+ind, 200);//设置指定单元格的width
-                                sheet.setValue(leg+k, 8+ind,it.personne.psnname);
+                                //渲染第8列的数据（员工类型）
+                                sheet.setValue(leg+k, 8,0);
+                                //
+                                parms.activeSheet.setColumnWidth(9+ind, 200);//设置指定单元格的width
+                                sheet.setValue(leg+k, 9+ind,it.personne.psnname);
                                 if(!it.personne.lock){
                                     //设置单元格lock属性
-                                    sheet.getCell(leg+k, 8+ind).locked(it.personne.lock);
+                                    sheet.getCell(leg+k, 9+ind).locked(it.personne.lock);
                                 }else{
                                     // 设定锁定样式
                                     const style_1S = new GC.Spread.Sheets.Style();
                                     style_1S.backColor = "#F0F0F0";
-                                    sheet.getCell(leg+k, 8+ind).locked(it.personne.lock);
-                                    parms.activeSheet.setStyle(leg+k, 8+ind,style_1S);
+                                    sheet.getCell(leg+k, 9+ind).locked(it.personne.lock);
+                                    parms.activeSheet.setStyle(leg+k, 9+ind,style_1S);
                                 }
                             })
                             //存储当前循环的最后一次length
@@ -690,29 +686,34 @@
                     })
                     for (let j = 0; j < jsonData.data[i].rowdatas.slice(-4).length; j++) {
                         for (let l = 0; l < jsonData.data[i].rowdatas.slice(-4)[j].user.length; l++) {
-                            sheet.setValue(leg-4, 8+l,jsonData.data[i].rowdatas.slice(-4)[0].user[l].personne.cmodocno);
-                            sheet.setValue(leg-3, 8+l,jsonData.data[i].rowdatas.slice(-4)[1].user[l].personne.iqty);
-                            sheet.setValue(leg-2, 8+l,jsonData.data[i].rowdatas.slice(-4)[2].user[l].personne.ipersonnum);
-                            sheet.setValue(leg-1, 8+l,jsonData.data[i].rowdatas.slice(-4)[3].user[l].personne.cpsn_name);
+                            sheet.setValue(leg-4, 9+l,jsonData.data[i].rowdatas.slice(-4)[0].user[l].personne.cmodocno);
+                            sheet.setValue(leg-3, 9+l,jsonData.data[i].rowdatas.slice(-4)[1].user[l].personne.iqty);
+                            sheet.setValue(leg-2, 9+l,jsonData.data[i].rowdatas.slice(-4)[2].user[l].personne.ipersonnum);
+                            sheet.setValue(leg-1, 9+l,jsonData.data[i].rowdatas.slice(-4)[3].user[l].personne.cpsn_name);
+                            //工单--生产--小计--产线组长类型
+                            sheet.setValue(leg-4, 8,1);
+                            sheet.setValue(leg-3, 8,1);
+                            sheet.setValue(leg-2, 8,1);
+                            sheet.setValue(leg-1, 8,2);
                             if(!jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock){
                                 //设置产线组长锁定样式
-                                sheet.getCell(leg-1, 8+l).locked(jsonData.data[i].rowdatas.slice(-4)[3].user[l].personne.lock);
+                                sheet.getCell(leg-1, 9+l).locked(jsonData.data[i].rowdatas.slice(-4)[3].user[l].personne.lock);
                             }else{
                                 // 设定锁定单元格样式
                                 const style_1S = new GC.Spread.Sheets.Style();
                                 style_1S.backColor = "#F0F0F0";
-                                sheet.getCell(leg-4, 8+l).locked(jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock);
-                                parms.activeSheet.setStyle(leg-4, 8+l,style_1S);
+                                sheet.getCell(leg-4, 9+l).locked(jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock);
+                                parms.activeSheet.setStyle(leg-4, 9+l,style_1S);
                                 //
                                 const style_2S = new GC.Spread.Sheets.Style();
                                 style_2S.backColor = "#F0F0F0";
-                                sheet.getCell(leg-3, 8+l).locked(jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock);
-                                parms.activeSheet.setStyle(leg-3, 8+l,style_2S);
+                                sheet.getCell(leg-3, 9+l).locked(jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock);
+                                parms.activeSheet.setStyle(leg-3, 9+l,style_2S);
                                 //
                                 const style_3S = new GC.Spread.Sheets.Style();
                                 style_3S.backColor = "#F0F0F0";
-                                sheet.getCell(leg-2, 8+l).locked(jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock);
-                                parms.activeSheet.setStyle(leg-2, 8+l,style_3S);
+                                sheet.getCell(leg-2, 9+l).locked(jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock);
+                                parms.activeSheet.setStyle(leg-2, 9+l,style_3S);
                             }
                         }
                     }
@@ -737,15 +738,19 @@
                     parms.activeSheet.setStyle(jsonDataLength+4+2, A,style_3S);
                     parms.activeSheet.addSpan(jsonDataLength+4+2,A,1,2);
                     //
+                    sheet.setValue(jsonDataLength+4, 8,3);
+                    sheet.setValue(jsonDataLength+4+1, 8,4);
+                    sheet.setValue(jsonDataLength+4+2, 8,5);
+                    //
                     for (let j = 0; j < jsonData.data.slice(-3)[i].rowdatas[0].user.length; j++) {
-                        sheet.setValue(jsonDataLength+4, 8+j,jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.cpsn_name);
-                        sheet.setValue(jsonDataLength+4+1, 8+j,jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.itype);
-                        sheet.setValue(jsonDataLength+4+2, 8+j,jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.itype);
+                        sheet.setValue(jsonDataLength+4, 9+j,jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.cpsn_name);
+                        sheet.setValue(jsonDataLength+4+1, 9+j,jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.itype);
+                        sheet.setValue(jsonDataLength+4+2, 9+j,jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.itype);
                         if(!jsonData.data.slice(-3)[i].rowdatas[0].user[j].personne.lock){
                             //设置班长其他人员锁定样式
-                            sheet.getCell(jsonDataLength+4, 8+j).locked(jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.lock);
-                            sheet.getCell(jsonDataLength+4+1, 8+j).locked(jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.lock);
-                            sheet.getCell(jsonDataLength+4+2, 8+j).locked(jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.lock);
+                            sheet.getCell(jsonDataLength+4, 9+j).locked(jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.lock);
+                            sheet.getCell(jsonDataLength+4+1, 9+j).locked(jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.lock);
+                            sheet.getCell(jsonDataLength+4+2, 9+j).locked(jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.lock);
                         }
                     }
                 }
@@ -763,8 +768,55 @@
     tableContainer.addEventListener('scroll', function() {
         // 获取表头元素
         const tableHeader = myTable.querySelector('thead');
+        if (tableContainer.scrollTop + tableContainer.clientHeight >= myTable.scrollHeight) {
+            parms.pageSize=parms.pageSize+20;
+            // 执行数据加载操作
+            getUserData();
+        }
     });
-
+    /**
+     * 人员搜索事件
+     * @param userSearch
+     */
+    function userSearch(){
+        parms["searchValue"] = $(".layui-input").val();
+        getUserData();
+    }
+    function getUserData() {
+        //获取弹框人员数据
+        let url = Api+`admin/modocbatch/getUserDatas?pageNumber=1&pageSize=${parms.pageSize}&cpsnname=${parms["searchValue"]??''}`;
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                var str = "";
+                for (var i = 0; i < res.data.list.length; i++) {
+                    str += `<tr>
+                            <td align='center'><input type="checkbox" class="checkbox" onChange="selectCheckboxs(event,${i})"></td>
+                            <td class="hide">${res.data.list[i].iautoid}</td>
+                            <td>${res.data.list[i].cpsnnum}</td>
+                            <td>${res.data.list[i].cpsnname}</td>
+                            <td>${res.data.list[i].cpsnmobilephone}</td>
+                            <td>${res.data.list[i].cdepname}</td>
+                           </tr>`;
+                }
+                // for (var i = 0; i < parms.pageSize+10; i++) {
+                //     str += `<tr>
+                //             <td align='center'><input type="checkbox" class="checkbox" onChange="selectCheckboxs(event,${i})"></td>
+                //             <td class="hide">${i}</td>
+                //             <td>${i+1}</td>
+                //             <td>${i+1}</td>
+                //             <td>${i+1}</td>
+                //             <td>${i+1}</td>
+                //            </tr>`;
+                // }
+                $("#layer_tr").html(str);
+            },error: function(error) {
+                console.log(error);
+            }
+        });
+    }
     // 获取全选按钮和所有复选框
     const checkboxes = document.getElementsByClassName('checkbox');
     /**
@@ -873,39 +925,16 @@
     function getArrayCellRow(id){
         let productionLineObj = parms['pageData'].slice(0,parms['pageData'].length-3).find((v,i)=>v.cinvcode==parms.keHuCode);//查找到当前产线对象
         let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
-        parms.editCellValueObj.gonXuid = sheBeigonXuObj.cequipment.iequipmentid;//工序id
-        parms.editCellValueObj.sheBeiid = sheBeigonXuObj.coperation.ioperationid;//设备id
+        parms.editCellValueObj.sheBeiid = sheBeigonXuObj.cequipment.iequipmentid;//设备id
+        parms.editCellValueObj.gonXuid = sheBeigonXuObj.coperation.ioperationid;//工序id
+        parms.editCellValueObj.iworkregionmid = productionLineObj.iworkregionmid;
         id.forEach((arr)=>{
-            parms.editCellValueObj.renYuanid.push(arr)
+            parms.editCellValueObj.renYuanid.push(arr);
         })
-        parms.editCellValue.push(parms.editCellValueObj)
-    }
-    /**
-     * 页面数据保存事件
-     * @param seva
-     */
-    function seva() {
-        let url = `admin/modocbatch/savePersonnel`
-        $.ajax({
-            url,
-            type:'post',
-            dataType:'json',
-            data:{
-                modoc:JSON.stringify(parms.editCellValue)//修改单元格之后的数据--[object]
-            },
-            success:function (res){
-                if(res.data?.msg=='操作成功'){
-                    LayerMsgBox.success(res.data.msg)
-                    parms.editCellValue.length=0;
-                    initData();
-                }else{
-                    LayerMsgBox.error(res.msg,1000);
-                    parms.editCellValue.length=0;
-                }
-            },error: function(error) {
-                console.log(error);
-            }
-        })
+        //获取当前的班次id
+        let blan = parms['tableHeadArray'].find((v,i)=>v.find((item,ind)=>item.yeartodate==parms.editCellValueObj.data)).find((ite,id)=>ite.cworkshiftcode==parms.editCellValueObj.plan);
+        parms.editCellValueObj.iworkshiftmid = blan.iworkshiftmid;
+        parms.editCellValue.push(parms.editCellValueObj);
     }
     /**
      *
@@ -942,7 +971,6 @@
         util.on('lay-on', {
             'test-tips-prompt-0': function(){
                 layer.prompt({title: '请输入文本'}, function(value, index, elem){
-                    console.log(index)
                     if(value === '') return elem.focus();
                     if(index==100002){
                         var json = spread.toJSON();//转为json格式

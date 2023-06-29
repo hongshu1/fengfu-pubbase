@@ -103,6 +103,12 @@ public class ProdFormItemAdminController extends BaseAdminController {
 		renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 
+	/**
+	 * 切换toggleIsEnabled
+	 */
+	public void toggleIsEnabled() {
+		renderJson(service.toggleIsEnabled(getLong(0)));
+	}
 
 
 }

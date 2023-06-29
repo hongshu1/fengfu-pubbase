@@ -113,7 +113,7 @@ FROM
             iAutoId as PoId,
             iPurchaseOrderDid,
             iinventoryId,
-            cBarcode,
+            cCompleteBarcode,
             iQty,
             cSourceld,
             cSourceBarcode
@@ -123,13 +123,13 @@ FROM
             iAutoId as PoId,
             iSubcontractOrderDid,
             iinventoryId,
-            cBarcode,
+            cCompleteBarcode,
             iQty,
             cSourceld,
             cSourceBarcode
         FROM
             PS_SubcontractOrderDBatch
-    ) t4 ON t2.BarCode = t4.cbarcode
+    ) t4 ON t2.BarCode = t4.cCompleteBarcode
         LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
         LEFT JOIN Bd_Warehouse t9 ON t2.Whcode = t9.cWhCode
@@ -175,7 +175,7 @@ FROM
             iAutoId as PoId,
             iPurchaseOrderDid,
             iinventoryId,
-            cBarcode,
+            cCompleteBarcode,
             iQty,
             cSourceld,
             cSourceBarcode
@@ -185,13 +185,13 @@ FROM
             iAutoId as PoId,
             iSubcontractOrderDid,
             iinventoryId,
-            cBarcode,
+            cCompleteBarcode,
             iQty,
             cSourceld,
             cSourceBarcode
         FROM
             PS_SubcontractOrderDBatch
-    ) t4 ON t2.BarCode = t4.cbarcode
+    ) t4 ON t2.BarCode = t4.cCompleteBarcode
         LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
@@ -235,7 +235,6 @@ where 1 =1
     #if(sourcebillno)
         AND t1.sourcebillno = #para(sourcebillno)
     #end
-
 GROUP BY
     t1.BillType,
     t1.DeptCode,
@@ -249,16 +248,18 @@ GROUP BY
     t3.cDepName,
     t4.cPTName,
     t6.cVenName,
-    t1.cCreateName
+    t1.cCreateName,
+    t1.dCreateTime
+ORDER BY t1.dCreateTime DESC
     #end
 
 
 
-#sql("getmaterialLines")
+    #sql("getmaterialLines")
 SELECT
     ( SELECT SUM ( Qty ) FROM T_Sys_PUInStoreDetail WHERE BarCode = pd.BarCode ) AS qtys,
     0 - pd.Qty AS qty,
-    a.cBarcode AS BarCode,
+    a.cCompleteBarcode AS BarCode,
     b.cInvCode ,
     b.cInvName ,
     b.cInvCode1,
@@ -282,7 +283,7 @@ SELECT
 FROM
     T_Sys_PUInStore t1
         LEFT JOIN T_Sys_PUInStoreDetail pd ON t1.AutoID = pd.MasID
-        LEFT JOIN PS_PurchaseOrderDBatch a ON pd.BarCode = a.cBarcode
+        LEFT JOIN PS_PurchaseOrderDBatch a ON pd.BarCode = a.cCompleteBarcode
         AND a.isEffective = '1'
         LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
         LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
@@ -332,7 +333,7 @@ FROM
         SELECT
             iPurchaseOrderDid,
             iinventoryId,
-            cBarcode,
+            cCompleteBarcode,
             iQty,
             cSourceld,
             cSourceBarcode
@@ -341,13 +342,13 @@ FROM
         SELECT
             iSubcontractOrderDid,
             iinventoryId,
-            cBarcode,
+            cCompleteBarcode,
             iQty,
             cSourceld,
             cSourceBarcode
         FROM
             PS_SubcontractOrderDBatch
-    ) t4 ON t2.BarCode = t4.cbarcode
+    ) t4 ON t2.BarCode = t4.cCompleteBarcode
         LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
 WHERE t1.AutoID = '#(autoid)'
   AND t2.Qty < 0
@@ -357,7 +358,7 @@ WHERE t1.AutoID = '#(autoid)'
 
 #sql("getBarcodeDatas")
 select top #(limit)
-       a.cBarcode as barcode,
+       a.cCompleteBarcode as barcode,
        b.cInvCode ,
        b.cInvName ,
        b.cInvCode1,
@@ -366,7 +367,7 @@ select top #(limit)
        a.dPlanDate as plandate,
        b.cInvStd as cinvstd,
        a.iQty as qty,
-       a.iQty as qtys,
+       a.iQty,
        m.cOrderNo as SourceBillNo,
        m.iBusType as SourceBillType,
        m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
@@ -383,7 +384,7 @@ select top #(limit)
        ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName,
        ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
 FROM T_Sys_PUInStoreDetail pd
-         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.BarCode = a.cBarcode
+         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.BarCode = a.cCompleteBarcode
          LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
          LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
          LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
@@ -400,7 +401,7 @@ where
     #end
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
-			or b.cinvname1 like concat('%',#para(q),'%') or a.cBarcode like concat('%',#para(q),'%')
+			or b.cinvname1 like concat('%',#para(q),'%') or a.cCompleteBarcode like concat('%',#para(q),'%')
 			or v.cVenCode like concat('%',#para(q),'%')
 		)
 	#end
@@ -419,9 +420,9 @@ WHERE isDeleted = 0
 	#end
 #end
 
-#sql("barcode")
+#sql("getBarcodes")
 select
-    a.cBarcode as barcode,
+    a.cCompleteBarcode as barcode,
     b.cInvCode ,
     b.cInvName ,
     b.cInvCode1,
@@ -429,7 +430,7 @@ select
     a.dPlanDate as plandate,
     b.cInvStd as cinvstd,
     a.iQty as qty,
-    a.iQty as qtys,
+    a.iQty,
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,
     m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
@@ -446,7 +447,7 @@ select
     ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName ,
     ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
 FROM T_Sys_PUInStoreDetail pd
-         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.barcode = a.cBarcode
+         LEFT JOIN PS_PurchaseOrderDBatch a ON pd.barcode = a.cCompleteBarcode
          LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
          LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
          LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
@@ -458,7 +459,7 @@ where
     1=1
     AND pd.MasID = '#(autoid)'
     #if(detailHidden != null)
-    AND pd.spotTicket not in ( #(detailHidden) )
+    AND pd.barcode not in ( #(detailHidden) )
     #end
 
 #end

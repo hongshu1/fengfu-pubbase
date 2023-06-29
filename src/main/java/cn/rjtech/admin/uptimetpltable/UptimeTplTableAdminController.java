@@ -18,7 +18,6 @@ import cn.rjtech.model.momdata.UptimeTplTable;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-06-27 19:15
  */
-@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/uptimeTplTable", viewPath = "/_view/admin/uptimetpltable")
 public class UptimeTplTableAdminController extends BaseAdminController {
 
@@ -84,5 +83,8 @@ public class UptimeTplTableAdminController extends BaseAdminController {
 		renderJson(service.deleteById(getLong(0)));
 	}
 
-
+	public void uptimeTplTableDatas()
+	{
+		renderJsonData(service.uptimeTplTableDatas(getKv()));
+	}
 }

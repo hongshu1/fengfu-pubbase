@@ -185,10 +185,11 @@ public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> {
    * 根据制造工单id查询特殊领料数据源Api
    *
    * @param imodocid
+   * @param pageNumber
+   * @param pageSize
    * @return
    */
-  public Page<Record> getApiSpecmaterialsrcvmDatas(Long imodocid) {
-//    return dbTemplate("getApiSpecmaterialsrcvmDatas", Kv.by("imodocid", imodocid)).find();
-    return null;
+  public Page<Record> getApiSpecmaterialsrcvmDatas(Long imodocid, Integer pageNumber, Integer pageSize) {
+    return dbTemplate("specmaterialsrcvm.getApiSpecmaterialsrcvmDatas", Kv.by("imodocid", imodocid)).paginate(pageNumber, pageSize);
   }
 }

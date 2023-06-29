@@ -1,6 +1,9 @@
 package cn.rjtech.admin.uptimetplm;
 
+import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -9,6 +12,7 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
 import cn.jbolt.core.base.JBoltMsg;
@@ -37,7 +41,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isDeleted")));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
 	}
 
    /**
@@ -93,8 +97,15 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	@Before(Tx.class)
     @TxConfig(UptimeTplM.DATASOURCE_CONFIG_NAME)
 	public void delete() {
-		renderJson(service.deleteById(getLong(0)));
+		renderJson(service.delete(getLong(0)));
 	}
 
 
+	/**
+	 * 保存
+	 */
+	public void submitAll()
+	{
+		renderJson(service.submitAll(getKv()));
+	}
 }

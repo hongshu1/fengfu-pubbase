@@ -1,7 +1,7 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
     <script type="text/template" id="itemcombinemSplit_tpl_#(pageId)">
     {@each datas as data,index}
-        <tr data-id="${data.autoid}">
+        <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>${data.cqcformname}</td>
             <td style="display: none">${data.iqcitemid}</td>

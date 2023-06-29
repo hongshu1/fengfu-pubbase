@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
@@ -1138,7 +1139,6 @@ public class MoDocService extends BaseService<MoDoc> {
     return SUCCESS;
   }
 
-
   /**
    * 编辑人员保存
    *
@@ -1148,8 +1148,31 @@ public class MoDocService extends BaseService<MoDoc> {
   public Ret savePersonnel(List<Record> records) {
     tx(() -> {
       records.forEach(record -> {
+        if (record.getStr("type").equals("0")) {
+          Date date = DateUtil.parse(record.getStr("data"));
+          //获取工单工艺配置ID
+          String routingconfigid = dbTemplate("modocbatch.getMoroutingconfigId", Kv.by("imotaskid", record.getStr("taskid")).set("iyear", DateUtil.year(date)).
+              set("imonth", DateUtil.month(date) + 1).set("idate", DateUtil.dayOfMonth(date)).set("iworkshiftmid", record.getStr("iworkshiftmid")).
+              set("iinventoryid", record.getStr("codekehu")).set("ioperationid", record.getStr("gonxuid"))).queryStr();
+//        ValidationUtils.notBlank(routingconfigid, "工单号【" + record.getStr("") + "】对应列未找到工单工艺配置数据！！！");
+          //删除之前跟工单工艺配置ID相关联的工单工艺人员配置信息
 
+          JSONArray records1 = JSON.parseArray(record.getStr("renyuanid"));
+          for (Object o : records1) {
+            MoMoroutingconfigPerson person = new MoMoroutingconfigPerson();
+            person.setIMoRoutingConfigId(Long.parseLong(routingconfigid));
+            person.setIPersonId(Long.parseLong(String.valueOf(o)));
+            person.save();
+          }
+        } else if (record.getStr("type").equals("2")) {
 
+        } else if (record.getStr("type").equals("3")) {
+
+        } else if (record.getStr("type").equals("4")) {
+
+        } else if (record.getStr("type").equals("5")) {
+
+        }
       });
       return true;
     });

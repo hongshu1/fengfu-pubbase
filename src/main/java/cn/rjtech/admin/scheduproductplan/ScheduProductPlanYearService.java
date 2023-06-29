@@ -126,7 +126,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
     public Ret deleteByBatchIds(String ids) {
         String[] idsArray = ids.split(",");
         update("UPDATE Aps_AnnualPlanM SET isDeleted = 1 WHERE iAutoId IN ("+ ArrayUtil.join(idsArray,",")+")");
-        return deleteByIds(ids,true);
+        return SUCCESS;
     }
 
     /**

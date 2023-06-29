@@ -29,6 +29,7 @@ WHERE mt.IsDeleted = '0'
 
 #sql("editplanviewdatas")
 SELECT DISTINCT
+    doc.iworkshiftmid,
 	doc.iYear,
 	doc.iMonth,
 	doc.iDate,
@@ -298,7 +299,7 @@ SELECT
 	per.cPsn_Num cpsnnum,
 	per.cPsn_Name cpsnname,
 	ISNULL(per.cPsnMobilePhone, ' ') cpsnmobilephone,
-	dep.cdepname
+	ISNULL(dep.cdepname, ' ') cdepname
 FROM
 	Bd_Person per
 	LEFT JOIN Bd_PersonEquipment eq ON eq.iPersonId= per.iAutoId
@@ -308,7 +309,6 @@ WHERE
 	AND per.isDeleted= 0
 	AND per.isEnabled = 1
 	AND per.dLeaveDate IS NULL
-
 #if(iequipmentid)
 	AND eq.iEquipmentId IN #(iequipmentid)
 #end
@@ -320,5 +320,21 @@ WHERE
 #end
 #end
 
-
-
+#sql("getMoroutingconfigId")
+SELECT DISTINCT
+	rcfg.iAutoId
+FROM
+	Mo_MoRoutingConfig rcfg
+	LEFT JOIN Mo_MoRouting ting ON rcfg.iMoRoutingId= ting.iAutoId
+	LEFT JOIN Mo_MoDoc modoc ON ting.iMoDocId = modoc.iAutoId
+	LEFT JOIN Bd_Inventory tory ON tory.iAutoId=ting.iInventoryId
+	LEFT JOIN Mo_MoRoutingConfig_Operation oper ON oper.iMoRoutingConfigId = rcfg.iAutoId
+WHERE
+	modoc.iMoTaskId = #(imotaskid)
+	AND modoc.iYear = #(iyear)
+	AND modoc.iMonth = #(imonth)
+	AND modoc.iDate = #(idate)
+	AND modoc.iWorkShiftMid = #(iworkshiftmid)
+	AND tory.cInvCode = #para(iinventoryid)
+	AND oper.iOperationId IN (#(ioperationid))
+#end

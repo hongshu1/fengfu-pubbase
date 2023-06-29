@@ -3,12 +3,15 @@ package cn.rjtech.admin.otherdeliverylist;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 
 import java.util.Date;
@@ -118,19 +121,32 @@ public class OtherOutDeliveryAdminController extends BaseAdminController {
 	/**
 	 * JBoltTable 可编辑表格整体提交 多表格
 	 */
-	public void submitMulti(Integer param, String revokeVal ,String autoid) {
-		renderJson(service.submitByJBoltTables(getJBoltTables(),param,revokeVal,autoid));
+	public void submitMulti() {
+		renderJson(service.submitByJBoltTables(getJBoltTables()));
 	}
 
 	/**
-	 * 获取条码列表
-	 * 通过关键字匹配
-	 * autocomplete组件使用
+	 * 通过新增行获取条码列表
 	 */
 	public void otherOutBarcodeDatas() {
-		String orgCode =  getOrgCode();
-		renderJsonData(service.otherOutBarcodeDatas(get("q"),get("orgCode",orgCode)));
+		Kv kv = new Kv();
+		kv.setIfNotNull("barcodes",get("barcodes"));
+		kv.setIfNotNull("q",get("q"));
+		kv.setIfNotNull("orgCode",getOrgCode());
+		renderJsonData(service.otherOutBarcodeDatas(kv));
 	}
+
+	/**
+	 * 根据扫描现品票获取条码
+	 */
+	@UnCheck
+	public void barcode(@Para(value = "barcode") String barcode,
+						@Para(value = "autoid") Long autoid,
+						@Para(value = "detailHidden") String detailHidden) {
+		ValidationUtils.notBlank(barcode, "请扫码");
+		renderJsonData(service.barcode(Kv.by("barcode", barcode).set("autoid",autoid).set("detailHidden",detailHidden).set("orgCode",getOrgCode())));
+	}
+
 	/**
 	 * 获取项目大类目录数据
 	 * 通过关键字匹配
@@ -139,6 +155,8 @@ public class OtherOutDeliveryAdminController extends BaseAdminController {
 		String orgCode =  getOrgCode();
 		renderJsonData(service.getCItemCCodeLines(get("q"),get("orgCode",orgCode)));
 	}
+
+
 	/**
 	 * 获取项目大类主目录数据
 	 * 通过关键字匹配

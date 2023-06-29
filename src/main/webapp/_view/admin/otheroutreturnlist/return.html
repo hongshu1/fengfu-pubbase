@@ -1,0 +1,81 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col-sm-auto">
+        <form class="form-inline" id="otheroutreturnlist_form_#(pageId)">
+          <input type="text" autocomplete="off"  class="form-control"  placeholder="=领料单号=" name="billno" value="" />
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索
+          </button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- 定义JBoltTable使用的数据渲染模板 -->
+    <textarea class="jb_tpl_box" id="MoPickItemM_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.autoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+	<a class="text-info mr-1"  href=""  data-fs="true" data-handler="refreshJBoltTable" onclick="getCheckedStrip(this)">出库</a>
+</td>
+<td>${data.auditstate}</td>
+<td>${data.sourcebilltype}</td>
+<td>${data.billno}</td>
+<td>${data.sourcebilldid}</td>
+<td>${data.billdate}</td>
+<td>${data.cdepname}</td>
+<td>${data.memo}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+    <table class="jbolt_table jbolt_main_table  table-center "
+           data-jbolttable data-width="fill"
+           data-height="fill"
+           data-ajax="true"
+           data-conditions-form="otheroutreturnlist_form_#(pageId)"
+           data-url="admin/otherout/datas"
+           data-rowtpl="MoPickItemM_tpl_#(pageId)"
+           data-copy-to-excel="false"
+           data-column-resize="true"
+    >
+      <thead class="fw-normal">
+      <tr>
+        <th data-width="60">序号</th>
+        <th data-width="150">操作</th>
+        <th data-width="150">状态</th>
+        <th data-min-width="150" data-column="SourceBillType">来源</th>
+        <th data-width="150" data-column="billno">领料单号</th>
+        <th data-width="150" data-column="BillDate">需求日期</th>
+        <th data-width="150" data-column="DeptCode">生产部门</th>
+        <th data-width="150" data-column="DeptCode">处置意见</th>
+        <th data-width="150" data-column="DeptCode">要求原因分析</th>
+        <th data-width="150" data-column="CreatePerson">创建人</th>
+        <th data-width="150" data-column="CreateDate">创建时间</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+#end
+#define js()
+<script type="text/javascript">
+  hideParentLayerDialogBtn(0);
+  hideParentLayerDialogBtn(1);
+
+  function getCheckedStrip(val){
+    var value = $(val).parent().parent().find("td");
+    parent.$("#billno").val(value.eq(4).text());
+    window.parent.refreshJBoltTable();
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+  }
+</script>
+#end
