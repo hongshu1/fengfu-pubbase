@@ -1,0 +1,138 @@
+<form onsubmit="return false;" id="SpotCheckFormM_Form" action="#(action)" method="post">
+	#if(spotCheckFormM.iAutoId??)
+	<input type="hidden" name="spotCheckFormM.iAutoId" value="#(spotCheckFormM.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">工序工艺ID</label>
+<div class="col-10">
+    <textarea style="height:100px;"  data-rule="required"  data-notnull="true" data-tips="请输入工序工艺ID" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入工序工艺ID" maxlength="200" name="spotCheckFormM.iMoRoutingConfigId">#(spotCheckFormM.iMoRoutingConfigId??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">工序名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入工序名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入工序名称" maxlength="40" name="spotCheckFormM.cOperationName" value="#(spotCheckFormM.cOperationName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">收料单号</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入收料单号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入收料单号" maxlength="40" name="spotCheckFormM.cRcvDocNo" value="#(spotCheckFormM.cRcvDocNo??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">生产人员ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入生产人员ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产人员ID" maxlength="40" name="spotCheckFormM.iPersonId" value="#(spotCheckFormM.iPersonId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">生产人员名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入生产人员名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产人员名称" maxlength="40" name="spotCheckFormM.cPersonName" value="#(spotCheckFormM.cPersonName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人ID" maxlength="40" name="spotCheckFormM.iCreateBy" value="#(spotCheckFormM.iCreateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人名称" maxlength="40" name="spotCheckFormM.cCreateName" value="#(spotCheckFormM.cCreateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入创建时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="spotCheckFormM.dCreateTime"    value="#datetime(spotCheckFormM.dCreateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人ID" maxlength="40" name="spotCheckFormM.iUpdateBy" value="#(spotCheckFormM.iUpdateBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新人名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人名称" maxlength="40" name="spotCheckFormM.cUpdateName" value="#(spotCheckFormM.cUpdateName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">更新时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入更新时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新时间" maxlength="20" name="spotCheckFormM.dUpdateTime"    value="#datetime(spotCheckFormM.dUpdateTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="spotCheckFormM.IsDeleted"
+data-value-attr="sn"
+data-default="false"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="删除状态;0. 未删除 1. 已删除"
+data-width="col-sm-2,col-10"
+data-value="#(spotCheckFormM.IsDeleted??)"
+data-rule="radio"
+data-notnull="true"
+data-tips="请输入删除状态;0. 未删除 1. 已删除"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="spotCheckFormM.cMemo">#(spotCheckFormM.cMemo??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">审核状态;0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入审核状态;0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审核状态;0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过" maxlength="40" name="spotCheckFormM.iAuditStatus" value="#(spotCheckFormM.iAuditStatus??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">审核时间，不走审批流时有该值</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入审核时间，不走审批流时有该值" maxlength="20" name="spotCheckFormM.dAuditTime"    value="#datetime(spotCheckFormM.dAuditTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">审核人ID，不走审批流时有该值</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审核人ID，不走审批流时有该值" maxlength="40" name="spotCheckFormM.iAuditBy" value="#(spotCheckFormM.iAuditBy??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">审核人名称，不走审批流时有该值</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审核人名称，不走审批流时有该值" maxlength="40" name="spotCheckFormM.cAuditName" value="#(spotCheckFormM.cAuditName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">审批方式;1. 审批状态 2. 审批流</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入审批方式;1. 审批状态 2. 审批流"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审批方式;1. 审批状态 2. 审批流" maxlength="40" name="spotCheckFormM.iAuditWay" value="#(spotCheckFormM.iAuditWay??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">提审时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入提审时间" maxlength="20" name="spotCheckFormM.dSubmitTime"    value="#datetime(spotCheckFormM.dSubmitTime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="SpotCheckFormM_Form")
+#end
+

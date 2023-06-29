@@ -81,7 +81,7 @@ public abstract class BaseProdformdLine<M extends BaseProdformdLine<M>> extends 
 	/**
 	 * 填写值
 	 */
-	@JBoltField(name="cvalue" ,columnName="cValue",type="String", remark="填写值", required=true, maxLength=200, fixed=0, order=4)
+	@JBoltField(name="cvalue" ,columnName="cValue",type="String", remark="填写值", required=false, maxLength=200, fixed=0, order=4)
 	@JSONField(name = "cvalue")
 	public java.lang.String getCValue() {
 		return getStr("cValue");

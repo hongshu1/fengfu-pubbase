@@ -269,6 +269,7 @@ public class DepartmentAdminController extends BaseAdminController {
         renderJsonData(trees);
     }
 
+    @UnCheck
     public void options() {
         renderJsonData(service.findAll());
     }

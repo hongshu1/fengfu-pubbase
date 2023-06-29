@@ -2,6 +2,7 @@ package cn.rjtech.admin.proditem;
 
 import cn.hutool.core.date.DateUtil;
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.prodparam.ProdParamService;
 import cn.rjtech.util.Util;
 import com.jfinal.aop.Inject;
@@ -82,6 +83,7 @@ public class ProdItemAdminController extends BaseAdminController {
 		render("edit.html");
 	}
 
+    @UnCheck
 	public void options() {
 		renderJsonData(service.options());
 	}

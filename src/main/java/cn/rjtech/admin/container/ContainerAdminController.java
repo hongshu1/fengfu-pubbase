@@ -7,6 +7,7 @@ import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Container;
@@ -205,10 +206,12 @@ public class ContainerAdminController extends BaseAdminController {
     /**
      * 容器打印数据
      */
+    @UnCheck
     public void printData() {
         renderJsonData(service.getPrintDataCheck(getKv()));
     }
 
+    @UnCheck
     public void options() {
         renderJsonData(service.options());
     }

@@ -79,6 +79,7 @@ public class InventoryAdminController extends BaseAdminController {
    /**
 	* 数据源
 	*/
+   @UnCheck
 	public void options() {
 		renderJsonData(service.options(getKv()));
 	}

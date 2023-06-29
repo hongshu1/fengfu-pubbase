@@ -6,6 +6,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.rjtech.admin.operation.OperationService;
@@ -184,6 +185,7 @@ public class WorkclassAdminController extends JBoltBaseController {
         renderJson(service.importExcelData(file.getFile()));
     }
 
+    @UnCheck
     public void options() {
         renderJsonData(service.options());
     }
