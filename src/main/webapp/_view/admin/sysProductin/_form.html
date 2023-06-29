@@ -15,7 +15,7 @@
                         <button class="btn btn-success btn-sm" onclick="submitThisForm_#(pageId)(false)" #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) disabled #end ><i class="fa fa-refresh"></i> 保存</button>
                         #end
 
-                        #include("/_view/_common/_approval_btns.html", formSn="T_Sys_ProductIn", o=sysProductin,primaryKeyName="AutoID",className="cn.rjtech.admin.sysProductin.sysProductinService",permissionKeyPrefix="sysProductin")
+                        #include("/_view/_common/_approval_btns.html", formSn="T_Sys_ProductIn", o=sysProductin,primaryKeyName="AutoID",className="cn.rjtech.admin.sysProductin.sysProductinService",permissionKeyPrefix="sysproductin")
 
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                     </div>
