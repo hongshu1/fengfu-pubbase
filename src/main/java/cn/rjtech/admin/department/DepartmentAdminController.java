@@ -77,7 +77,6 @@ public class DepartmentAdminController extends BaseAdminController {
     	String depGrade = globalConfigService.getConfigValue(MesConfigKey.DEP_GRADE);
     	depGrade = JBoltStringUtil.isBlank(depGrade) ? "3" : depGrade;
     	para.set("idepgrade",depGrade);
-    	para.set("bdepend",IsEnableEnum.NO.getValue());
     	para.set("isEnabled","true");
         renderJsonData(service.treeDatasForProposalSystem(para));
     }
