@@ -21,7 +21,7 @@ public class MoMaterialsscansumApiService extends JBoltApiBaseService {
     private MoMaterialscanlogService moMaterialscanlogService;
 
     public JBoltApiRet add(String barcoce, Long imodocid) {
-        moMaterialsscansumService.add(barcoce, imodocid);
+        moMaterialscanlogService.addBarcode(barcoce, imodocid);
         return JBoltApiRet.success();
     }
 
@@ -30,7 +30,7 @@ public class MoMaterialsscansumApiService extends JBoltApiBaseService {
     }
 
     public JBoltApiRet getBarcodeAll(Integer pageNumber, Integer pageSize, Long imodocid) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(moMaterialscanlogService.getBarcodeAll(pageNumber, pageSize, Kv.by("imodocid", imodocid)));
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(moMaterialscanlogService.getApiBarcodeAll(pageNumber, pageSize, Kv.by("imodocid", imodocid)));
     }
 
 }

@@ -28,19 +28,14 @@
 	   {@each datas as data,index}
             <tr data-id="${data.iautoid}">
                 <td>${pageNumber,pageSize,index | rownum}</td>
-                <td>${data.invcode}</td>
-                <td>${data.cinvcode1}</td>
-                <td>${data.cinvname1}</td>
-                <td>${data.cinvstd}</td>
+               	<td>${data.cinvcode}</td>
+				<td>${data.cinvcode1}</td>
+				<td>${data.cinvname1}</td>
+				<td>${data.cinvstd}</td>
                 <td>${data.cuomname}</td>
-                <td>${data.barcode}</td>
+                <td>${data.cuomname}</td>
                 <td>${data.iqty}</td>
                 <td>${data.iscannedqty}</td>
-
-
-
-
-
 
             </tr>
             {@/each}
@@ -56,7 +51,7 @@
          data-height="250"
          data-ajax="true"
          data-width="auto"
-         data-url="admin/momaterialscanusedlog/getMaterialsPrepareList"
+         data-url="admin/momaterialsscanlog/getMoMaterialNotScanLogList?imodocid=#(moMaterialscanusedlogm.imodocid??)&&isscanned=1"
          data-column-resize="true"
          data-column-prepend="1:checkbox:true"
          data-conditions-form="stockForm"

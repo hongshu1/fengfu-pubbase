@@ -9,7 +9,10 @@
 		<form class="form-inline text-left" id="itemroutingForm_#(pageId)"   onsubmit="return false;" method="post">
 			<input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品工艺档案配置Id" name="configid" value="#(configid??)" />
 			<input type="hidden" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
-		<button  type="submit" style="display: none" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+			<input type="hidden" autocomplete="off"  class="form-control" name="configpersonids" value="#(configpersonids??)" />
+
+
+			<button  type="submit" style="display: none" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 			<input type="hidden" id="iMoDocId" value="#(imdocid??)">
 			<input type="hidden" id="rowid" value="#(configid??)">
 			<input type="hidden" id="personequipmentjson" value="#(personequipmentjson??)">
@@ -57,7 +60,7 @@
 			   data-jbolttable
 			   data-height="fill"
 			   data-ajax="true"
-			   data-url="/admin/modoc/getPersonByEquipment?configid=&&personequipmentjson=#(personequipmentjson??)"
+			   data-url="/admin/modoc/getPersonByEquipment?configid=&&personequipmentjson=#(personequipmentjson??)&&configpersonids=#(configpersonids??)"
 			   data-column-resize="true"
 			   data-column-prepend="1:checkbox:true"
 			   data-conditions-form="itemroutingForm_#(pageId)"
