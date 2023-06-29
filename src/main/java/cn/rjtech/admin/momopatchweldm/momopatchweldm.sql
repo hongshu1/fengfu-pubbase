@@ -6,7 +6,7 @@ SELECT a.iAutoId,a.iAuditStatus,b.cMoDocNo,b.dPlanDate,b.iQty,
        a.cCreateName,a.dCreateTime,a.cAuditName,a.dAuditTime,
        CASE a.iAuditStatus
            WHEN 0 THEN
-               '未审核'
+               '已保存'
            WHEN 1 THEN
                '待审核'
            WHEN 2 THEN

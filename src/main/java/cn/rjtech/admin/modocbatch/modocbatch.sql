@@ -138,6 +138,7 @@ SELECT DISTINCT
 	doc.iMonth,
 	doc.iDate,
 	doc.iWorkShiftMid,
+	oper.iOperationId,
 	shiftm.cWorkShiftCode,
 	shiftm.cWorkShiftName,
 	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) dates,
@@ -145,6 +146,9 @@ SELECT DISTINCT
 FROM
 	Mo_MoDoc doc
 	LEFT JOIN Bd_WorkShiftM shiftm ON doc.iWorkShiftMid= shiftm.iAutoId
+	LEFT JOIN Mo_MoRouting ting ON ting.iMoDocId= doc.iAutoId
+	LEFT JOIN Mo_MoRoutingConfig tingcfg ON tingcfg.iMoRoutingId= ting.iAutoId
+	LEFT JOIN Mo_MoRoutingConfig_Operation oper ON oper.iMoRoutingConfigId= tingcfg.iAutoId
 WHERE
 	doc.iMoTaskId=#(taskid)
 	#if(iinventoryid)
@@ -205,12 +209,13 @@ SELECT DISTINCT
 	doc.iWorkShiftMid,
 	bdperson.cPsn_Num psnnum,
 	bdperson.cPsn_Name psnname,
-	concat ( doc.iYear, doc.iMonth, doc.iDate, doc.iWorkShiftMid ) dateSplicing
+	concat ( doc.iYear, doc.iMonth, doc.iDate, doc.iWorkShiftMid , oper.iOperationId ) dateSplicing
 FROM
 	Mo_MoDoc doc
 	LEFT JOIN Mo_MoRouting routing ON routing.iMoDocId= doc.iAutoId
 	LEFT JOIN Mo_MoRoutingConfig config ON config.iMoRoutingId= routing.iAutoId
 	LEFT JOIN Mo_MoRoutingConfig_Person moperson ON moperson.iMoRoutingConfigId= config.iAutoId
+	LEFT JOIN Mo_MoRoutingConfig_Operation oper ON oper.iMoRoutingConfigId= config.iAutoId
 	LEFT JOIN Bd_Person bdperson ON moperson.iPersonId= bdperson.iAutoId
 WHERE
 	bdperson.cPsn_Num IS NOT NULL
@@ -337,4 +342,34 @@ WHERE
 	AND modoc.iWorkShiftMid = #(iworkshiftmid)
 	AND tory.cInvCode = #para(iinventoryid)
 	AND oper.iOperationId IN (#(ioperationid))
+#end
+
+#sql("getModocId")
+SELECT iAutoId FROM Mo_MoDoc WHERE 1=1
+#if(taskid)
+	AND iMoTaskId =#(taskid)
+#end
+#if(cmodocno)
+	AND cMoDocNo =#para(cmodocno)
+#end
+#end
+
+#sql("getMoworkshiftMDId")
+SELECT
+	m.iAutoId MiAutoId,
+	d.iAutoId DiAutoId,
+	d.itype
+FROM
+	Mo_MoWorkShiftM m
+	LEFT JOIN Mo_MoWorkShiftD d ON m.iAutoId= d.iMoWorkShiftMid
+WHERE
+	m.iMoTaskId = #(imotaskid)
+	AND m.iYear = #(iyear)
+	AND m.iMonth = #(imonth)
+	AND m.iDate = #(idate)
+	AND m.iWorkShiftMid = #(iworkshiftmid)
+#end
+
+#sql("deleteModocPersonByConfigId")
+SELECT iAutoId FROM Mo_MoRoutingConfig_Person WHERE iMoRoutingConfigId=#(routingconfigid)
 #end

@@ -57,11 +57,11 @@ SELECT
     MIN ( CASE iperiodnum WHEN 6 THEN concat ( YEAR ( dperioddate ), '-', MONTH ( dperioddate )) END ) dperioddate6,
     SUM ( CASE iperiodnum WHEN 6 THEN iamount END ) iamount6
 FROM
-    #(getMomdataDbName()).dbo.PL_Investment_Plan_Item pi
-        LEFT JOIN #(getMomdataDbName()).dbo.pl_investment_Plan_itemd pid ON pi.iautoid = pid.iplanitemid
-    LEFT JOIN #(getMomdataDbName()).dbo.bas_project bp ON pi.iprojectid = bp.iautoid
-    LEFT JOIN  #(getMomdataDbName()).dbo.PL_Investment_Plan pm  ON pi.iPlanId = pm.iAutoId
-    LEFT JOIN department d on pm.cdepcode = d.cdepcode
+    PL_Investment_Plan_Item pi
+    LEFT JOIN pl_investment_Plan_itemd pid ON pi.iautoid = pid.iplanitemid
+    LEFT JOIN bas_project bp ON pi.iprojectid = bp.iautoid
+    LEFT JOIN PL_Investment_Plan pm  ON pi.iPlanId = pm.iAutoId
+    LEFT JOIN bd_department d on pm.cdepcode = d.cdepcode
 
 WHERE
     1 = 1
@@ -95,7 +95,7 @@ WHERE
     #if(citemname)
   and  pi.citemname = #para(citemname)
     #end
-
+	#(getDataPermissionSql("pm", "cdepcode")) 
 GROUP BY
     pi.iautoid,
     pi.iinvestmenttype,

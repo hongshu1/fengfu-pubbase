@@ -1030,6 +1030,16 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 		expenseBudget.setCBeginDate(dstarttime1Date);
 		expenseBudget.setCEndDate(dendtime1Date);
 		constructDynamicsDbColumn(expenseBudget,para);
+    	List<String> list = DataPermissionKit.getAccessCdepcodes();
+    	para.set("accesscdepcodes", null);
+        if (CollUtil.isNotEmpty(list)) {
+            String sqlInStrCdepcode = "";
+            for (String cdepcode : list) {
+                sqlInStrCdepcode += "'" + cdepcode + "',";
+            }
+            sqlInStrCdepcode += "''";
+            para.set("accesscdepcodes", sqlInStrCdepcode);
+        }
 		Page<Record> list1 = dbTemplate(u8SourceConfigName(),"expensebudget.periodContrastDatas", para).paginate(pageNumber, pageSize);
 		return list1;
 	}
