@@ -31,6 +31,7 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.ProdFormM;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.template.stat.ast.If;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -203,14 +204,17 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 					boolean flag = false;
 					List<Map<String, Object>> itemParamList = new ArrayList<>();
 					for (Record object :byIdGetDetail){
-
 						if (!object.getStr("iAutoId").equals(id)) {
 							id=object.getStr("iAutoId");
 							ProdFormD prodFormD = prodFormDService.findFirst("select * from PL_ProdFormD where iProdFormParamId=?", object.getLong("iAutoId"));
-							List<ProdformdLine> list = prodformdLineService.findByProdFormDId(prodFormD.getIAutoId());
-							object.set("cValue",list.get(0).getCValue());
+							if (ObjUtil.isNotNull(prodFormD)) {
+								List<ProdformdLine> list = prodformdLineService.findByProdFormDId(prodFormD.getIAutoId());
+								object.set("cValue",list.get(0).getCValue());
+								object.set("iStdVal",prodFormD.getIStdVal());
+								object.set("iMaxVal",prodFormD.getIMaxVal());
+								object.set("iMinVal",prodFormD.getIMinVal());
+							}
 						}
-
 						if (qcItemId.equals(object.getStr("iseq"))){
 							flag = true;
 							itemParamList.add(object.getColumns());
@@ -256,6 +260,9 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 
 		//主表数据
 		if (StrUtil.isBlank(formJsonData.getString("prodFormM.iautoid"))) {
+			if (ObjUtil.isNull(prodFormM2)) {
+				prodFormM2 = new ProdFormM();
+			}
 			prodFormM2.setIProdFormId(formJsonData.getLong("prodFormM.iProdFormId"));
 			prodFormM2.setIWorkRegionMid(formJsonData.getLong("prodFormM.iWorkRegionMid"));
 			prodFormM2.setIWorkShiftMid(formJsonData.getLong("prodFormM.iWorkShiftMid"));

@@ -181,7 +181,6 @@ function submitThisForm_#(pageId)(s) {
     }, function (ret) {
         if (ret.state === 'ok') {
             LayerMsgBox.success(ret.msg, 1000, function () {
-                console.log(ret);
                 // 表格保存之后，判断是否需要提审处理
                     // 提交审核（审批）调用
                     if (submit) {
@@ -191,7 +190,7 @@ function submitThisForm_#(pageId)(s) {
                             successHandler('提审成功', ret.data.data.iautoid);
                         });
                     } else {
-                        successHandler(ret.msg, ret.data.iautoid);
+                        successHandler(ret.msg, ret.data.data.iautoid);
                     }
             });
         } else {

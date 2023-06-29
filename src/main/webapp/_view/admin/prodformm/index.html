@@ -37,7 +37,6 @@
 <a href="admin/prodFormM/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除记录上传" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
 {@/if}
 {@if  data.iauditstatus == '1' }
-	<a class=jbolt_table_editbtn href="admin/prodFormM/edit?iautoid=${data.iautoid}&readonly=readonly" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="详情"><i class="fa fa-eye"></i>查看</a>
 	<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=PL_ProdFormM&primaryKeyName=iautoid&formAutoId=${data.iautoid}&permissionKey=prodformm_withdraw&className=cn.rjtech.admin.prodformm.ProdFormMService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="撤回该数据状态" ><i class="fa fa-remove c-danger">撤回</i></a>
 {@/if}
 </td>
