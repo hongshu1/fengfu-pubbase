@@ -112,10 +112,10 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      * 点击“检验”按钮，在检验页面点击“确定”按钮，将数据带到后台保存
      */
     public JBoltApiRet saveCheckOut(String cmeasurepurpose, String cdcno, Long istockqcformmiautoid, String cmeasureunit,
-                                    String isok, String cmeasurereason, String serializeSubmitList, String cmemo) {
+                                    String isok, String cmeasurereason, String serializeSubmitList, String cmemo,String cbatchno) {
         //1、开始更新编辑页面的数据
         Boolean result = service.achieveSerializeSubmitList(JSON.parseArray(serializeSubmitList), istockqcformmiautoid,
-            cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
+            cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok, cbatchno);
         //2、最后返回成功
         return JBoltApiRet.API_SUCCESS;
     }
@@ -124,11 +124,11 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      * 点击“编辑”按钮，在编辑页面点击“确定”按钮，将数据带到后台保存
      */
     public JBoltApiRet saveEdit(String cmeasurepurpose, String cdcno, Long stockqcformmiautoid, String cmeasureunit, String isok,
-                                String cmeasurereason, String serializeSubmitList, String cmemo) {
+                                String cmeasurereason, String serializeSubmitList, String cmemo,String cbatchno) {
         // 1、开始更新编辑页面的数据
         Boolean result = service
             .achieveSerializeSubmitList(JSON.parseArray(serializeSubmitList), stockqcformmiautoid, cmeasurepurpose,
-                cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
+                cmeasurereason, cmeasureunit, cmemo, cdcno, isok,cbatchno);
         //2、最后返回成功
         return JBoltApiRet.API_SUCCESS;
     }
@@ -136,7 +136,7 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
     /*
      * 导出详情页
      * */
-    public JBoltApiRet getExportData(Long iautoid) {
+    public JBoltApiRet getExportData(Long iautoid) throws Exception{
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
     }
 }

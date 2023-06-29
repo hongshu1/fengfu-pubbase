@@ -878,7 +878,6 @@
         }else{
             if(parms['tableData'].length>1){
                 LayerMsgBox.error('产线组长,班长,其余人员等只能选择一个成员',1500);
-                parms['tableData'] = Array.from([]);
             }else{
                 getArrayCellRow(parms['tableData'][0].iautoid);
                 str=names[0];
@@ -916,16 +915,17 @@
                 data:colData[1][0],//当前单元格所在年月日
                 plan:colData[3][0],//排班(1S,2S)
                 type:rowData[0][8],//人员类型
+                itype:'',
             }
             if(rowData[0][8]==3){
                 parms.editCellValueObj.taskId = taskId;//页面id
-                parms.editCellValueObj.itype = 1;
+                // parms.editCellValueObj.itype = 1;
             }else if(rowData[0][8]==4){
                 parms.editCellValueObj.taskId = taskId;//页面id
-                parms.editCellValueObj.itype = 2;
+                // parms.editCellValueObj.itype = 2;
             }else if(rowData[0][8]==5){
                 parms.editCellValueObj.taskId = taskId;//页面id
-                parms.editCellValueObj.itype = 3;
+                // parms.editCellValueObj.itype = 3;
             }else if(rowData[0][8]==2){
                 let mod = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取当前列数据
                 parms.editCellValueObj.cmodocno=mod[row-3][0];
@@ -947,13 +947,13 @@
      */
     function getArrayCellRow(id){
         parms.editCellValueObj.renYuanId = [];
+        //获取当前的班次id
+        let blan = parms['tableHeadArray'].find((v,i)=>v.find((item,ind)=>item.yeartodate==parms.editCellValueObj.data)).find((ite,id)=>ite.cworkshiftcode==parms.editCellValueObj.plan);
+        parms.editCellValueObj.iworkshiftmid = blan.iworkshiftmid;
         if(typeof id=='object'){
             id.forEach((arr)=>{
                 parms.editCellValueObj.renYuanId.push(arr);
             })
-            //获取当前的班次id
-            let blan = parms['tableHeadArray'].find((v,i)=>v.find((item,ind)=>item.yeartodate==parms.editCellValueObj.data)).find((ite,id)=>ite.cworkshiftcode==parms.editCellValueObj.plan);
-            parms.editCellValueObj.iworkshiftmid = blan.iworkshiftmid;
             if(parms['userType']==0){
                 let productionLineObj = parms['pageData'].slice(0,parms['pageData'].length-3).find((v,i)=>v.cinvcode==parms.keHuCode);//查找到当前产线对象
                 let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
@@ -964,9 +964,9 @@
             }
         }else if(typeof id=='string'){
             parms.editCellValueObj.renYuanId.push(id);
+            parms.editCellValueObj.itype = parms['userType']==2?1:parms['userType']==3?2:3;
             parms.editCellValue.push(parms.editCellValueObj);
         }
-        console.log(parms.editCellValue)
     }
     /**
      * 关闭Dialog事件

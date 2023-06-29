@@ -38,20 +38,26 @@
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="moMoinvbatch_toolbar_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
+                <button data-ajaxbtn data-handler="modifyTable1" id="create_moinvbatch_#(pageId)"
+                        data-url="admin/momoinvbatch/createMomoinvbatch?imodocid=#(imodocid??)"
+                        class="btn btn-primary btn-sm"><i class="fa fa-print"></i>生成现品票
+                </button>
                 <button data-openpage="dialog" data-area="50%,100%" data-dialog-title="批量打印" data-ajaxbtn
                         data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                         id="toolbar_deleteBtn_#(pageId)"
                         data-url="admin/momoinvbatch/subListPrintPage?imodocid=#(imodocid??)&ids=" data-confirm="批量打印？"
-                        class="btn btn-primary btn-sm"><i class="fa fa-print"></i>批量打印
+                        class="btn btn-primary btn-sm" disabled="disabled"><i class="fa fa-print"></i>批量打印
                 </button>
             </div>
         </div>
 
         <table class="jbolt_table jbolt_main_table table-center hover_info"
+               id="table1_#(pageId)"
                data-jbolttable
                data-height="fill"
                data-ajax="true"
-               data-url="admin/momoinvbatch/datas"
+               data-url="admin/momoinvbatch/datas?iprintstatus=1"
+               data-ajax-success-handler="checkDatas"
                data-column-resize="true"
                data-row-click-active="true"
                data-column-prepend="1:checkbox:true"

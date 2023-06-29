@@ -301,13 +301,14 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
             inStockQcFormD.setCOptions(StrUtil.toString(map.get("coptions")));
             inStockQcFormDS.add(inStockQcFormD);
         }
+        inStockQcFormM.setIStatus(1);
+        inStockQcFormM.setCUpdateName(JBoltUserKit.getUserName());
+        inStockQcFormM.setDUpdateTime(new Date());
+        inStockQcFormM.setIUpdateBy(JBoltUserKit.getUserId());
+        inStockQcFormM.setCInvQcFormNo(JBoltSnowflakeKit.me.nextIdStr());//减压单号
         boolean result = tx(() -> {
             inStockQcFormDService.batchSave(inStockQcFormDS);
             //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检-1”
-            inStockQcFormM.setIStatus(1);
-            inStockQcFormM.setCUpdateName(JBoltUserKit.getUserName());
-            inStockQcFormM.setDUpdateTime(new Date());
-            inStockQcFormM.setIUpdateBy(JBoltUserKit.getUserId());
             ValidationUtils.isTrue(inStockQcFormM.update(), "生成单据失败！！！");
             return true;
         });
@@ -657,10 +658,10 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
                     String name = file1.getName();
                     System.out.println(name);
                 }
-            }
-            FileInputStream fileInputStream = new FileInputStream(cpics);
-            if (fileInputStream != null) {
-                imageBytes = Util.toByteArray(fileInputStream);
+                FileInputStream fileInputStream = new FileInputStream(cpics);
+                if (fileInputStream != null) {
+                    imageBytes = Util.toByteArray(fileInputStream);
+                }
             }
         }
         inStockQcFormMRecord.set("cpics", imageBytes == null ? "" : imageBytes);

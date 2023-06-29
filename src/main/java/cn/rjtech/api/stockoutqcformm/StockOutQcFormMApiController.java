@@ -144,16 +144,16 @@ public class StockOutQcFormMApiController extends BaseApiController {
                              @Para(value = "isok") String isok,
                              @Para(value = "cmeasurereason") String cmeasurereason,
                              @Para(value = "serializeSubmitList") String serializeSubmitList,
-                             @Para(value = "cmemo") String cmemo) {
+                             @Para(value = "cmemo") String cmemo,
+                             @Para(value = "cbatchno") String cbatchno) {
         ValidationUtils.notNull(cmeasurepurpose, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(stockqcformmiautoid, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(serializeSubmitList, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService
-            .saveCheckOut(cmeasurepurpose, cdcno, stockqcformmiautoid, cmeasureunit, isok, cmeasurereason, serializeSubmitList,
-                cmemo));
+        renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, stockqcformmiautoid, cmeasureunit,
+            isok, cmeasurereason, serializeSubmitList, cmemo, cbatchno));
     }
 
     /**
@@ -177,16 +177,16 @@ public class StockOutQcFormMApiController extends BaseApiController {
                          @Para(value = "isok") String isok,
                          @Para(value = "cmeasurereason") String cmeasurereason,
                          @Para(value = "serializeSubmitList") String serializeSubmitList,
-                         @Para(value = "cmemo") String cmemo) {
+                         @Para(value = "cmemo") String cmemo,
+                         @Para(value = "cbatchno") String cbatchno) {
         ValidationUtils.notNull(cmeasurepurpose, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(stockqcformmiautoid, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(serializeSubmitList, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService
-            .saveEdit(cmeasurepurpose, cdcno, stockqcformmiautoid, cmeasureunit, isok, cmeasurereason, serializeSubmitList,
-                cmemo));
+        renderJBoltApiRet(apiService.saveEdit(cmeasurepurpose, cdcno, stockqcformmiautoid, cmeasureunit, isok,
+            cmeasurereason, serializeSubmitList, cmemo, cbatchno));
     }
 
     /*
@@ -194,7 +194,7 @@ public class StockOutQcFormMApiController extends BaseApiController {
      * */
     @ApiDoc(GetExportExcelVo.class)
     @UnCheck
-    public void exportExcel(@Para(value = "iauoid") Long iauoid) {
+    public void exportExcel(@Para(value = "iauoid") Long iauoid) throws Exception{
         ValidationUtils.notNull(iauoid, JBoltMsg.PARAM_ERROR);
         renderJBoltApiRet(apiService.getExportData(iauoid));
     }
