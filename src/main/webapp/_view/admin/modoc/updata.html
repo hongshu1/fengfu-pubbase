@@ -152,7 +152,7 @@
     <!--<td><span><i class="fa fa-cog"></i>请选${data.imergednum}个人</span></td>-->
      <td><span><i class="fa fa-cog"></i>${data.configperson}</span></td>
     <td>${data.imergerate}</td>
-    <td hidden>${data.configpersonids}</td>
+    <td >${data.configpersonids}</td>
 
     <!--    {@else}-->
     <!--        <td data-editable= flase>不可选</td>-->
@@ -186,7 +186,7 @@
         <th data-width="120" data-column="drawings">作业指导书</th>
         <th data-width="120" data-column="configperson">生产人员</th>
         <th data-width="120" data-column="imergerate">要员</th>
-        <th data-width="120" hidden data-column="configpersonids">生产人员ID</th>
+        <th data-width="120"  data-column="configpersonids">生产人员ID</th>
     </tr>
     </thead>
     <tbody>
@@ -198,13 +198,15 @@
     $(function(){
         //alert("ssss");
         var iMoDocId=$("#iMoDocId").val();
-
+        console.log(iMoDocId)
         if(iMoDocId) {
-            reqTableDate2("admin/modoc/getMoDocbyIinventoryRoutingId?imodocid=" +iMoDocId);
+            setTimeout(function (){
+                reqTableDate2("admin/modoc/getMoDocbyIinventoryRoutingId?iMoDocId=" +iMoDocId);
+            },100)
+
         }
     })
     function  reqTableDate2(requrl){
-        alert("111")
         if(!requrl){
             return;
         }
@@ -223,36 +225,6 @@
             },
             error: function (error) {
 
-            }
-        });
-    }
-    //加载产线，存货信息，工艺路线
-    function setChooseDialogSelectResult3(data){
-        console.log(JSON.stringify(data))
-        $("#iinventoryid").val(data.iautoid);
-        $("#inventoryName").val(data.cinvcode);
-        $("#cworkname").val(data.cworkname);
-        $("#cinvcode1").val(data.cinvcode1);
-        $("#cinvname1").val(data.cinvname1);
-        $("#iinventoryrouting").val(data.iinventoryroutingid);
-        $("#iworkregionmid").val(data.iworkregionmid);
-        $("#iDepartmentId").val(data.idepartmentid);
-        $("#idepartmentname").val(data.cdepname);
-        $.ajax({
-            url: 'admin/inventoryroutingconfig/list?iinventoryroutingid=' + data.iinventoryroutingid,
-            type: 'GET',
-            success: function (ret) {
-                if (ret.state === 'ok') {
-                    var datas = ret.data;
-                    console.log(JSON.stringify(datas[0].equipmentjson))
-                    jboltTableClear('#itemroutingconfigid2_#(pageId)');
-                    jboltTableInsertRow('#itemroutingconfigid2_#(pageId)', datas, false, false, true);
-                    jboltTableInsertRow('#itemroitingconfigid_#(pageId)',data ,false,false,true);
-                    // console.log(jboltTableGetSubmitData('#itemroutingconfigid2_#(pageId)'));
-                }
-            },
-            error: function () {
-                console.log();
             }
         });
     }
@@ -308,7 +280,7 @@
     }
     function getEditableTableOptionsModocFirst3(){
         var imdocid=$("#iMoDocId").val();
-        var editableTableOptions1={
+        var editableTableOptions2={
             trigger:"click",
             initRowCount:0,
             maxRowCount:30,
@@ -339,7 +311,7 @@
                     placeholder: "设置物料集",
                     linkColumn: 'iautoid',
                     dialog: {
-                            url: "admin/modoc/invc_dialog_index?iinventoryid=" + getItemValue()+"&imdocid="+ imdocid,
+                        url: "admin/modoc/modoc_inv_index?iinventoryid=" + getItemValue()+"&imdocid="+ imdocid,
                         area: "80%,80%",
                         title: "工序物料集",
                         btn: "确定,关闭"
@@ -350,7 +322,7 @@
                     placeholder: "工序设备集",
                     linkColumn: 'iautoid',
                     dialog: {
-                        url: "admin/modoc/equipment_dialog_index?imdocid="+imdocid,
+                        url: "admin/modoc/modoc_equipment_index?imdocid="+imdocid,
                         area: "80%,80%",
                         title: "选择设备",
                         btn: "确定,关闭"
@@ -361,7 +333,7 @@
                     placeholder: "工艺文件",
                     linkColumn: 'iautoid',
                     dialog: {
-                        url: "admin/modoc/drawing_dialog_index?imdocid="+imdocid,
+                        url: "admin/modoc/modoc_drawing_index?imdocid="+imdocid,
                         area: "80%,80%",
                         title: "工艺文件",
                         btn: "确定,关闭"
@@ -398,7 +370,7 @@
                 }
             }
         };
-        return editableTableOptions1;
+        return editableTableOptions2;
     }
 
     hideParentLayerDialogBtn(0);

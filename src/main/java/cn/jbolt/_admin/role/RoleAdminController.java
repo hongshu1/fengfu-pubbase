@@ -27,6 +27,7 @@ public class RoleAdminController extends JBoltBaseController {
 		render("index.html");
 	}
 
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.getAllRoleTreeDatas());
 	}

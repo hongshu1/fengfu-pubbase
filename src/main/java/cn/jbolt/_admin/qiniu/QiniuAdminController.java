@@ -52,6 +52,7 @@ public class QiniuAdminController extends JBoltBaseController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords(),getType(),getBoolean("isDefault"),getEnable()));
 	}

@@ -1,15 +1,25 @@
 package cn.rjtech.admin.spotcheckformm;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjUtil;
+import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.inventoryspotcheckform.InventorySpotCheckFormService;
+import cn.rjtech.admin.inventoryspotcheckformOperation.InventoryspotcheckformOperationService;
+import cn.rjtech.admin.spotcheckformd.SpotCheckFormDService;
+import cn.rjtech.admin.spotcheckformdline.SpotcheckformdLineService;
+import cn.rjtech.model.momdata.*;
+import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
-import java.util.Date;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.SpotCheckFormM;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.*;
+
 /**
  * 始业点检表管理
  * @ClassName: SpotCheckFormMService
@@ -27,6 +37,16 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
+	@Inject
+	private InventorySpotCheckFormService inventorySpotCheckFormService;
+	@Inject
+	private InventoryService inventoryService;
+	@Inject
+	private InventoryspotcheckformOperationService inventoryspotcheckformOperationService;
+	@Inject
+	private SpotCheckFormDService spotCheckFormDService;
+	@Inject
+	private SpotcheckformdLineService spotcheckformdLineService;
 
 	/**
 	 * 后台管理数据查询
@@ -111,4 +131,122 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> {
 		return null;
 	}
 
+	/**
+	 *制造工单入口数据
+	 */
+	public Page<Record> getAdminDatas2(Integer pageNumber, Integer pageSize, Kv kv) {
+		//获取制造工单的存货编码
+		Inventory cinvcode = inventoryService.findFirst("SELECT * FROM Bd_Inventory WHERE  cInvCode=? and isDeleted=0", kv.getStr("cinvcode"));
+		//获取对应点检建模数据
+		List<InventorySpotCheckForm> list = inventorySpotCheckFormService.findByInventoryId(cinvcode.getIAutoId(), 1);
+		Page<Record> page1 = null;
+		for (InventorySpotCheckForm inventorySpotCheckForm : list) {
+			Page<Record> page = inventorySpotCheckFormService.pageList(kv.set("iautoid", inventorySpotCheckForm.getIAutoId()).set("page",pageNumber).set("pageSize",pageSize));
+			for (Record record : page.getList()) {
+				record.set("croutingname",kv.getStr("croutingname"));
+				record.set("cinvcode",kv.getStr("cinvcode"));
+				record.set("cmodocno",kv.getStr("cmodocno"));
+			}
+			page1=page;
+		}
+
+		return page1;
+	}
+
+	/**
+	 * 标题数据处理
+	 */
+	public List<Map<String, Object>> lineRoll(List<Record> formItemLists,String iprodformid) {
+		List<Map<String, Object>> mapList = new ArrayList<>();
+		// 标题选择值
+		if (ObjUtil.isNotNull(formItemLists)){
+
+			for (int i=0; i<formItemLists.size(); i++){
+
+				Record item = formItemLists.get(i);
+				String qcItemId = item.getStr("iqcitemid");
+
+				boolean flag = false;
+				List<Map<String, Object>> itemParamList = new ArrayList<>();
+				for (Record object :formItemLists){
+					if (qcItemId.equals(object.getStr("iqcitemid"))){
+						flag = true;
+						itemParamList.add(object.getColumns());
+					}
+				}
+				if (flag){
+					item.put("compares", itemParamList);
+				}
+				mapList.add(item.getColumns());
+			}
+		}
+
+		if (CollectionUtil.isNotEmpty(mapList)){
+
+			Collections.sort(mapList, new Comparator<Map<String, Object>>() {
+				@Override
+				public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+					Integer map1 = Integer.valueOf(o1.get("iseq").toString());
+					Integer map2 = Integer.valueOf(o2.get("iseq").toString());
+					return map1.compareTo(map2);
+				}
+			});
+			return mapList;
+		}
+		return null;
+	}
+
+	public List<Map<String, Object>> lineRoll2(List<Record> byIdGetDetail) {
+		List<Map<String, Object>> mapList = new ArrayList<>();
+		String iseq = "";
+		String id = "";
+		if (ObjUtil.isNotNull(byIdGetDetail)){
+
+			for (int i=0; i<byIdGetDetail.size(); i++){
+
+				Record item = byIdGetDetail.get(i);
+				String qcItemId = item.getStr("iseq");
+				if (!qcItemId.equals(iseq)) {
+					iseq=qcItemId;
+					boolean flag = false;
+					List<Map<String, Object>> itemParamList = new ArrayList<>();
+					for (Record object :byIdGetDetail){
+						if (!object.getStr("iAutoId").equals(id)) {
+							id=object.getStr("iAutoId");
+							SpotCheckFormD checkFormD = spotCheckFormDService.findFirst("select * from PL_SpotCheckFormD where iSpotCheckFormMid=?", object.getLong("iAutoId"));
+							if (ObjUtil.isNotNull(checkFormD)) {
+								List<SpotcheckformdLine> list = spotcheckformdLineService.findBySpotCheckFormDId(checkFormD.getIAutoId());
+								object.set("cValue",list.get(0).getCValue());
+								object.set("iStdVal",checkFormD.getIStdVal());
+								object.set("iMaxVal",checkFormD.getIMaxVal());
+								object.set("iMinVal",checkFormD.getIMinVal());
+							}
+						}
+						if (qcItemId.equals(object.getStr("iseq"))){
+							flag = true;
+							itemParamList.add(object.getColumns());
+						}
+					}
+					if (flag){
+						item.put("compares", itemParamList);
+					}
+					mapList.add(item.getColumns());
+				}
+
+			}
+		}
+		if (CollectionUtil.isNotEmpty(mapList)){
+
+			Collections.sort(mapList, new Comparator<Map<String, Object>>() {
+				@Override
+				public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+					Integer map1 = Integer.valueOf(o1.get("proditemiseq").toString());
+					Integer map2 = Integer.valueOf(o2.get("proditemiseq").toString());
+					return map1.compareTo(map2);
+				}
+			});
+			return mapList;
+		}
+		return null;
+	}
 }

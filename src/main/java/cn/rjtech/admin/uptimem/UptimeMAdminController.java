@@ -59,6 +59,7 @@ public class UptimeMAdminController extends BaseAdminController {
 		}
 		set("uptimeM",uptimeM);
 		set("updateOrSave","update");
+		set("readonly",getBoolean("readonly"));
 
 		Record record = service.getUptimeMInfo(Kv.by("mid",getLong("iautoid")));
 		set("recordInfo",record);

@@ -12,7 +12,7 @@ import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.app.user.service.UserAppService;
-import cn.rjtech.base.service.BaseService;
+import cn.jbolt.core.service.base.BaseService;
 import cn.rjtech.common.columsmapdetail.ColumsmapdetailService;
 import cn.rjtech.common.exchangetable.ExchangeTableService;
 import cn.rjtech.common.model.*;

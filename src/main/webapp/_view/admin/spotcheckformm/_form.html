@@ -1,138 +1,143 @@
-<form onsubmit="return false;" id="SpotCheckFormM_Form" action="#(action)" method="post">
-	#if(spotCheckFormM.iAutoId??)
-	<input type="hidden" name="spotCheckFormM.iAutoId" value="#(spotCheckFormM.iAutoId??)" />
-	#end
-<div class="row">
-<div class="col" >
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">工序工艺ID</label>
-<div class="col-10">
-    <textarea style="height:100px;"  data-rule="required"  data-notnull="true" data-tips="请输入工序工艺ID" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入工序工艺ID" maxlength="200" name="spotCheckFormM.iMoRoutingConfigId">#(spotCheckFormM.iMoRoutingConfigId??)</textarea>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">工序名称</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入工序名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入工序名称" maxlength="40" name="spotCheckFormM.cOperationName" value="#(spotCheckFormM.cOperationName??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">收料单号</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入收料单号"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入收料单号" maxlength="40" name="spotCheckFormM.cRcvDocNo" value="#(spotCheckFormM.cRcvDocNo??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">生产人员ID</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入生产人员ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产人员ID" maxlength="40" name="spotCheckFormM.iPersonId" value="#(spotCheckFormM.iPersonId??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">生产人员名称</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入生产人员名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入生产人员名称" maxlength="40" name="spotCheckFormM.cPersonName" value="#(spotCheckFormM.cPersonName??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">创建人ID</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人ID" maxlength="40" name="spotCheckFormM.iCreateBy" value="#(spotCheckFormM.iCreateBy??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">创建人名称</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入创建人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人名称" maxlength="40" name="spotCheckFormM.cCreateName" value="#(spotCheckFormM.cCreateName??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">创建时间</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入创建时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="spotCheckFormM.dCreateTime"    value="#datetime(spotCheckFormM.dCreateTime??,'yyyy-MM-dd')"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">更新人ID</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人ID" maxlength="40" name="spotCheckFormM.iUpdateBy" value="#(spotCheckFormM.iUpdateBy??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">更新人名称</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入更新人名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人名称" maxlength="40" name="spotCheckFormM.cUpdateName" value="#(spotCheckFormM.cUpdateName??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">更新时间</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入更新时间" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新时间" maxlength="20" name="spotCheckFormM.dUpdateTime"    value="#datetime(spotCheckFormM.dUpdateTime??,'yyyy-MM-dd')"/>
-</div>
-</div>
-<div class="form-group row" 
-data-radio
-data-name="spotCheckFormM.IsDeleted"
-data-value-attr="sn"
-data-default="false"
-data-url="admin/dictionary/options?key=options_enable"
-data-label="删除状态;0. 未删除 1. 已删除"
-data-width="col-sm-2,col-10"
-data-value="#(spotCheckFormM.IsDeleted??)"
-data-rule="radio"
-data-notnull="true"
-data-tips="请输入删除状态;0. 未删除 1. 已删除"
-data-inline="true"
->
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">备注</label>
-<div class="col-10">
-    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注" maxlength="200" name="spotCheckFormM.cMemo">#(spotCheckFormM.cMemo??)</textarea>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">审核状态;0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过</label>
-<div class="col-10">
-    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入审核状态;0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审核状态;0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过" maxlength="40" name="spotCheckFormM.iAuditStatus" value="#(spotCheckFormM.iAuditStatus??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">审核时间，不走审批流时有该值</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入审核时间，不走审批流时有该值" maxlength="20" name="spotCheckFormM.dAuditTime"    value="#datetime(spotCheckFormM.dAuditTime??,'yyyy-MM-dd')"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">审核人ID，不走审批流时有该值</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审核人ID，不走审批流时有该值" maxlength="40" name="spotCheckFormM.iAuditBy" value="#(spotCheckFormM.iAuditBy??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">审核人名称，不走审批流时有该值</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审核人名称，不走审批流时有该值" maxlength="40" name="spotCheckFormM.cAuditName" value="#(spotCheckFormM.cAuditName??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">审批方式;1. 审批状态 2. 审批流</label>
-<div class="col-10">
-    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入审批方式;1. 审批状态 2. 审批流"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入审批方式;1. 审批状态 2. 审批流" maxlength="40" name="spotCheckFormM.iAuditWay" value="#(spotCheckFormM.iAuditWay??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">提审时间</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入提审时间" maxlength="20" name="spotCheckFormM.dSubmitTime"    value="#datetime(spotCheckFormM.dSubmitTime??,'yyyy-MM-dd')"/>
-</div>
-</div>
-</div>
-</div>
+#set(pageId=RandomUtil.random(6))
+#set(iYear=DateUtil.getYear())
+#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
+#if(readonly != 'readonly' && (formUploadM.iauditstatus??0 == 1 || formUploadM.iauditstatus??0 == 2))
+#set(readonly = 'readonly')
+#end
+<form onsubmit="return false;" id="spotCheckFormMForm" action="#(action)" method="post">
+
+    <input type="hidden" name="spotCheckFormM.iautoid" value="#(spotCheckFormM.iautoid??)" />
+    <input type="hidden" maxlength="255" id="spotCheckFormMiautoid" name="spotCheckFormM.iautoid" value="#(spotCheckFormM.iautoid??)"/>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="col">
+                    #if(readonly != 'readonly')
+                    <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
+                    #end
+                    #include("/_view/_common/_approval_btns.html", uri="/admin/spotCheckFormM",
+                    formSn="PL_spotCheckFormM", primaryKeyName="iAutoId", o=spotCheckFormM,
+                    permissionKeyPrefix="spotCheckFormM",  className="cn.rjtech.admin.spotCheckFormM.spotCheckFormMService")
+
+                    <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="py-2" style="padding:.5rem 0rem;">
+        <span class="py-1"><strong></strong></span>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">工序名称</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="10" name="spotCheckFormM.coperationname" value="#(spotCheckFormM.coperationname??)"/>
+                    <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="10" name="iprodformid" value="#(spotcheckformid??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">设备名称</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="10" name="spotCheckFormM.cequipmentmodelname" value="#(spotCheckFormM.cequipmentmodelname??)"/>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: 300px;">
+        #ajaxPortal("/admin/spotCheckFormM/table3?spotcheckformid="+(spotcheckformid??''),"qcformtable_portal_" + pageId, true)
+    </div>
 </form>
 #define js()
+#include("_table3_js.html")
 <script>
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+
+    function closeHandler(){
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
+
+    function submitThisForm_#(pageId)(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
+
+        }
+        var tableData = getTableData();
+        var formData1 = formToJson('#spotCheckFormMForm');
+        Ajax.post('/admin/spotCheckFormM/submitForm', {
+            formJsonData: JSON.stringify(formData1),
+            tableJsonData: JSON.stringify(tableData)
+        }, function (ret) {
+            if (ret.state === 'ok') {
+                LayerMsgBox.success(ret.msg, 1000, function () {
+                    // 表格保存之后，判断是否需要提审处理
+                    // 提交审核（审批）调用
+                    if (submit) {
+                        // 提审
+                        submit_#(pageId)(ret.data.data.iautoid, function (data) {
+                            console.log(3)
+                            successHandler('提审成功', ret.data.data.iautoid);
+                        });
+                    } else {
+                        successHandler(ret.msg, ret.data.data.iautoid);
+                    }
+                });
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        });
+    }
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, id) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            var url="admin/spotCheckFormM/edit?iautoid="+id+ '&_jb_rqtype_=dialog';
+            location.href = url;
+            parent.refreshPjaxContainer();
+        });
+    }
+    function getTableData() {
+        var pageId = $("#jbolt_table_qcformtableparam_split_input").val();
+        var tableParamTableData = $('#jbolt_table_qcformtableparam_split_'+pageId);
+        var rows = [];
+        tableParamTableData.children("tbody").children("tr").each(function () {
+            var row = {};
+            // 获取input标签 class属性还有form-control
+            $(this).find('td').each(function () {
+                var inputs = $(this).find("input[class*='form-control']");
+                getField(row, inputs);
+                var selects = $(this).find("select[class*='form-control']");
+                getField(row, selects);
+
+            })
+            rows.push(row);
+        })
+        return rows;
+    }
+
+    function getField(row, labels) {
+        if (labels && labels.length > 0) {
+            $.each(labels, function (idx, v) {
+                if (v.name && v.name !== '' && v.value) {
+                    row[v.name] = row[v.name] ? (row[v.name] + ',' + v.value) : v.value;
+                }
+            });
+        }
+    }
+
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="SpotCheckFormM_Form")
+#include("/_view/_admin/common/_formjs.html",formId="spotCheckFormMForm")
 #end
 

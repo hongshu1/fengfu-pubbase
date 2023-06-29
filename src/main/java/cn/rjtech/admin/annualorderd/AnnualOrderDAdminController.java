@@ -95,6 +95,7 @@ public class AnnualOrderDAdminController extends BaseAdminController {
         renderJson(service.toggleIsDeleted(getLong(0)));
     }
 
+    @UnCheck
     public void findEditTableDatas() {
         renderJsonData(service.findEditTableDatas(getKv()));
     }

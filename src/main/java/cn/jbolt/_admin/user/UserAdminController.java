@@ -68,6 +68,7 @@ public class UserAdminController extends BaseAdminController {
 	/**
 	 * 表格数据接口
 	 */
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminList(getPageNumber(),getPageSize(),getKeywords(),getOfModule(),getInt("sex"),getBoolean("assignDept",true),getLong("deptId"),getLong("postId"),getLong("roleId"),getBoolean("enable"), getLong("excludeRoleId")));
 	}

@@ -2,6 +2,7 @@ package cn.rjtech.admin.invpart;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InvPart;
 import com.jfinal.aop.Before;
@@ -28,6 +29,7 @@ public class InvPartAdminController extends BaseAdminController {
    /**
 	* 数据源
 	*/
+   @UnCheck
 	public void datas() {
 		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getInt("iType")));
 	}

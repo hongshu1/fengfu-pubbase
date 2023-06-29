@@ -291,7 +291,7 @@ public class ProdFormService extends BaseService<ProdForm> {
 	 * @param jBoltTable 编辑表格提交内容
 	 */
 	public Ret QcFormParamJBoltTable(JBoltTable jBoltTable) {
-		SpotCheckForm qcForm = jBoltTable.getFormModel(SpotCheckForm.class, "qcForm");
+		ProdForm qcForm = jBoltTable.getFormModel(ProdForm.class, "prodForm");
 		ValidationUtils.notNull(qcForm, JBoltMsg.PARAM_ERROR);
 
 		Long userId = JBoltUserKit.getUserId();
@@ -405,10 +405,18 @@ public class ProdFormService extends BaseService<ProdForm> {
 		Map<Long, ProdFormItem> qcFormItemMap = qcFormItemList.stream().collect(Collectors.toMap(ProdFormItem::getIProdItemId, Function.identity(), (key1, key2) -> key2));
 		for (int i=0; i<qcParamJsonData.size(); i++){
 			JSONObject jsonObject = qcParamJsonData.getJSONObject(i);
-			Long qcItemId = jsonObject.getLong(QcFormParam.IQCITEMID.toLowerCase());
+			Long qcItemId = null;
+			//新增是QcFormParam.IQCITEMID，编辑是ProdFormParam.IPRODITEMID
+			if (notNull(jsonObject.get(ProdFormParam.IAUTOID.toLowerCase()))){
+				 qcItemId = jsonObject.getLong(ProdFormParam.IPRODITEMID.toLowerCase());
+			}else {
+				 qcItemId = jsonObject.getLong(QcFormParam.IQCITEMID.toLowerCase());
+			}
+
 			if (qcFormItemMap.containsKey(qcItemId)){
 				ProdFormItem qcFormItem = qcFormItemMap.get(qcItemId);
 				jsonObject.put(ProdFormParam.IPRODFORMITEMID.toLowerCase(), qcFormItem.getIAutoId());
+				//QcFormParam.IQCFORMITEMID
 			}
 		}
 
@@ -504,7 +512,7 @@ public class ProdFormService extends BaseService<ProdForm> {
 		}else if (ObjectUtil.isNotNull(formId)){
 			List<Record> qcFormItemList = getItemCombinedListByPId(Kv.by("iqcformid", formId));
 			List<Record> qcFormParamList = prodFormParamService.getQcFormParamListByPId(formId);
-			Map<Long, List<Record>> itemParamByItemMap = qcFormParamList.stream().collect(Collectors.groupingBy(obj -> obj.getLong("iqcitemid")));
+			Map<Long, List<Record>> itemParamByItemMap = qcFormParamList.stream().collect(Collectors.groupingBy(obj -> obj.getLong("iproditemid")));//iproditemid 生产ID？？
 			for (Record qcFormItemRecord : qcFormItemList){
 				Long qcItemId = qcFormItemRecord.getLong("iqcitemid");
 				if (itemParamByItemMap.containsKey(qcItemId)){

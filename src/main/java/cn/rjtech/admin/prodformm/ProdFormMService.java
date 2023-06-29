@@ -4,9 +4,12 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.prodform.ProdFormService;
 import cn.rjtech.admin.prodformd.ProdFormDService;
@@ -15,23 +18,18 @@ import cn.rjtech.admin.prodformparam.ProdFormParamService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.model.momdata.FormUploadM;
 import cn.rjtech.model.momdata.ProdFormD;
+import cn.rjtech.model.momdata.ProdFormM;
 import cn.rjtech.model.momdata.ProdformdLine;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.ProdFormM;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.template.stat.ast.If;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -388,36 +386,6 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 	}
 
 	/**
-	 * 批量反审批
-	 *
-	 * @param ids
-	 * @return
-	 */
-	public Ret batchReverseApprove(String ids) {
-		tx(() -> {
-			List<ProdFormM> list = getListByIds(ids);
-			// 非已审批数据
-			List<ProdFormM> noApprovedDatas = list.stream().filter(item -> !(item.getIAuditStatus() == AuditStatusEnum.APPROVED.getValue())).collect(Collectors.toList());
-			ValidationUtils.isTrue(noApprovedDatas.size() <= 0, "存在非已审批数据");
-
-			for (ProdFormM formuploadm : list) {
-				// 处理订单审批数据
-				formApprovalService.reverseApproveByStatus(formuploadm.getIAutoId(), table(), primaryKey(), (formAutoId) -> null, (formAutoId) ->
-				{
-					// 处理订单状态
-					formuploadm.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-					return null;
-				});
-			}
-
-			ValidationUtils.isTrue(batchUpdate(list).length > 0, "批量反审批失败");
-
-			return true;
-		});
-		return SUCCESS;
-	}
-
-	/**
 	 * 提交审批
 	 */
 	public Ret submit(Long iautoid) {
@@ -431,38 +399,6 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 			prodFormM.setCUpdateName(JBoltUserKit.getUserName());
 			prodFormM.setDUpdateTime(new Date());
 			ValidationUtils.isTrue(prodFormM.update(), JBoltMsg.FAIL);
-			return true;
-		});
-		return SUCCESS;
-	}
-
-	/**
-	 * 审批通过
-	 */
-	public Ret approve(Long iautoid) {
-		tx(() -> {
-			// 校验订单状态
-			ProdFormM prodFormM = findById(iautoid);
-			ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), prodFormM.getIAuditStatus(), "该记录非待审核状态");
-			formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
-				ValidationUtils.isTrue(updateColumn(iautoid, "iAuditStatus", AuditStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
-				return null;
-			});
-			return true;
-		});
-		return SUCCESS;
-	}
-
-	/**
-	 * 审批不通过
-	 */
-	public Ret reject(Long iautoid) {
-		tx(() -> {
-			// 数据同步暂未开发 现只修改状态
-			formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
-				ValidationUtils.isTrue(updateColumn(iautoid, "iAuditStatus", AuditStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
-				return null;
-			});
 			return true;
 		});
 		return SUCCESS;

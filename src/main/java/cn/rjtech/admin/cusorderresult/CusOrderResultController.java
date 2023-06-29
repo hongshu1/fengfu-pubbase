@@ -3,6 +3,7 @@ package cn.rjtech.admin.cusorderresult;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -138,10 +139,9 @@ public class CusOrderResultController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
-
       renderJsonData(orderResultService.findCusOrderResult(getPageNumber(), getPageSize(), getKv()));
-
     }
 
 }

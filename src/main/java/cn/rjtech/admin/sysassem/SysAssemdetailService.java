@@ -5,12 +5,10 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.model.momdata.RcvDocQcFormM;
-import cn.rjtech.model.momdata.SysAssemdetail;
-import cn.rjtech.model.momdata.SysPuinstoredetail;
-import cn.rjtech.model.momdata.SysPureceivedetail;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -34,6 +32,9 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
     protected SysAssemdetail dao() {
         return dao;
     }
+
+    @Inject
+    private SysAssemService sysassemservice;
 
     @Override
     protected int systemLogTargetType() {
@@ -152,19 +153,27 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
             for (int t = 0; t < records.size(); t++) {
                 Record record = records.get(t);
                 String cinvcode = record.getStr("cinvcode");
+                // 判断有没有条码 (转换后的数据)
                 if (cinvcode == null || "".equals(cinvcode)) {
                     String invcode = record.getStr("invcode");
                     Record firstRecord = findFirstRecord("select t3.cinvname,t3.cInvCode ,t3.cInvCode1,t3.cInvName1,t3.cInvStd as cinvstd,\n" +
-                            "t3.iAutoId,uom.cUomCode,uom.cUomName as purchasecuomname,uom.cUomName as  puunitname\n" +
+                            "t3.iAutoId,uom.cUomCode,uom.cUomName,uom.cUomName as purchasecuomname\n" +
                             "         from Bd_Inventory t3\n" +
-                            "         LEFT JOIN Bd_Uom uom on t3.iPurchaseUomId = uom.iAutoId\n" +
+                            "         LEFT JOIN Bd_Uom uom on t3.iInventoryUomId1 = uom.iAutoId\n" +
                             "         where t3.cInvCode = '" + invcode + "'");
                     record.set("cinvcode",invcode);
                     record.set("cinvcode1",firstRecord.getStr("cinvcode1"));
                     record.set("cinvname1",firstRecord.getStr("cinvname1"));
                     record.set("cinvstd",firstRecord.getStr("cinvstd"));
-                    record.set("cuomname",firstRecord.getStr("puunitname"));
+                    record.set("cuomname",firstRecord.getStr("cuomname"));
+                    Record whcode = findFirstRecord("select * from Bd_Warehouse where cWhCode = '" + record.getStr("whcodeh")+ "'");
+                    record.set("whcode",whcode.getStr("cwhcode"));
+                    record.set("whname",whcode.getStr("cwhname"));
+                    Record poscode = findFirstRecord("select * from Bd_Warehouse_Area where cAreaCode = '" + record.getStr("poscodeh")+ "'");
+                    record.set("poscode",poscode.getStr("careacode"));
+                    record.set("posname",poscode.getStr("careaname"));
                 }
+
             }
         }
         return records;
@@ -174,16 +183,35 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
      * 批量删除主从表
      */
     public Ret deleteRmRdByIds(String ids) {
+        String[] split = ids.split(",");
+        for (String s : split) {
+            SysAssemdetail byId1 = findById(s);
+            SysAssem byId = sysassemservice.findById(byId1.getMasID());
+            if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+                ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+            }
+            if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+            }
+        }
         deleteByIds(ids);
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
      * 删除
      */
     public Ret delete(Long id) {
+        SysAssemdetail byId1 = findById(id);
+        SysAssem byId = sysassemservice.findById(byId1.getMasID());
+        if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+            ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+        }
+        if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+            ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+        }
         deleteById(id);
-        return ret(true);
+        return SUCCESS;
     }
 
     public SysAssemdetail saveSysAssemdetailModel(SysPuinstoredetail puinstoredetail, String masId) {
