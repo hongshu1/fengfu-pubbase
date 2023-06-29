@@ -46,6 +46,7 @@ public class WarehouseAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         Page<Record> page = service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv());
         renderJsonData(page);

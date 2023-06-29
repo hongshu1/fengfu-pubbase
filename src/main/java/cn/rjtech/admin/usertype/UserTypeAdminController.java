@@ -51,6 +51,7 @@ public class UserTypeAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getSortColumn("id"), getSortType("desc"), get("usertypeCode"), get("usertypeName"), getBoolean("isInner"), getBoolean("isSysPreset"), getBoolean("isEnabled"), getBoolean("isDeleted", false)));
     }

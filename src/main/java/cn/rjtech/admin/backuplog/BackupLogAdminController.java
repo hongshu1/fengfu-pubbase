@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.backupconfig.BackupConfigService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -50,6 +51,7 @@ public class BackupLogAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas(String cName) {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), cName));
     }

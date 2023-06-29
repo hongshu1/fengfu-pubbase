@@ -44,6 +44,7 @@ public class BusobjectAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getSortColumn("id"), getSortType("desc"), getLong("appId"), get("dataSource"), getBoolean("isEnabled"), getBoolean("isDeleted", false)));
     }

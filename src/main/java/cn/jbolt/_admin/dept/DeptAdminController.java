@@ -41,6 +41,7 @@ public class DeptAdminController extends JBoltBaseController {
 	/**
 	 * 数据源
 	 */
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.getTreeTableDatas());
 	}

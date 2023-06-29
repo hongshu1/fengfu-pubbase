@@ -33,6 +33,7 @@ public class TopnavAdminController extends JBoltBaseController {
 	/**
 	 * 数据源
 	 */
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.getAdminList(getKeywords()));
 	}

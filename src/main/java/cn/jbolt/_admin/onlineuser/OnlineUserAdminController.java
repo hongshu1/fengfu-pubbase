@@ -1,5 +1,6 @@
 package cn.jbolt._admin.onlineuser;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Inject;
 
 import cn.jbolt._admin.permission.PermissionKey;
@@ -32,6 +33,7 @@ public class OnlineUserAdminController extends JBoltBaseController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords(),getState()));
 	}

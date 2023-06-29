@@ -58,6 +58,7 @@ public class QcFormAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         Okv kv = new Okv();
         kv.setIfNotNull("cQcFormName", get("cQcFormName"));

@@ -5,6 +5,7 @@ import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.rjtech.admin.qcitem.QcItemService;
@@ -50,6 +51,7 @@ public class QcParamAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.pageList(getKv()));
 //		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isEnabled"), getBoolean("isDeleted")));

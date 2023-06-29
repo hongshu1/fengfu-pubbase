@@ -33,6 +33,7 @@ public class EnumsAdminController extends JBoltBaseController {
     /**
      * 数据权限 数据来源
      */
+    @UnCheck
     public void datasource() {
         renderJsonData(JBoltEnum.getEnumOptionList(DataSourceEnum.class));
     }

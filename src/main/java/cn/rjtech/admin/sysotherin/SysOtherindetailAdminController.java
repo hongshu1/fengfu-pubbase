@@ -35,6 +35,7 @@ public class SysOtherindetailAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("TrackType"), get("SourceBillType"), get("projectTypeCode"), get("projectTypeName")));
     }

@@ -7,6 +7,7 @@ import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.bomcompare.BomCompareService;
 import cn.rjtech.admin.bomm.BomMService;
 import cn.rjtech.admin.customer.CustomerService;
@@ -65,6 +66,7 @@ public class BomMasterAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isEnabled"), getBoolean("isDeleted")));
     }
