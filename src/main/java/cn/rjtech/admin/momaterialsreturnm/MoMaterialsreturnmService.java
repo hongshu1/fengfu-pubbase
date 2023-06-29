@@ -1,6 +1,8 @@
-package cn.rjtech.admin.momaterialsreturn;
+package cn.rjtech.admin.momaterialsreturnm;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -8,12 +10,14 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.modoc.MoDocService;
+import cn.rjtech.admin.momaterialsreturnd.MoMaterialsreturndService;
 import cn.rjtech.admin.transvouch.TransVouchService;
 import cn.rjtech.admin.transvouchdetail.TransVouchDetailService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.service.approval.IApprovalService;
 
 import com.jfinal.aop.Inject;
@@ -21,9 +25,9 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-//import jdk.nashorn.internal.ir.ReturnNode;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,28 +46,26 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 		return dao;
 	}
 
-	@Inject
+    @Inject
+    private MoDocService moDocService;
+    @Inject
+    private WarehouseService warehouseService;
+    @Inject
 	private InventoryService inventoryService;
-	@Inject
-	private TransVouchService transVouchService; //调拨单
-	@Inject
-	private TransVouchDetailService transVouchDetailService;//调拨单明细
-
-	@Inject
-	private DepartmentService departmentService; //部门
-	@Inject
-	private WarehouseService warehouseService; //仓库
-	@Inject
-	private WorkregionmService workregionmService;//产线
-
-	@Inject
-	private WarehouseAreaService warehouseAreaService; //库区
-
-	@Inject
-	private MoDocService moDocService;//制造管理-制造工单
-	@Inject
-	private MoMaterialsreturndService materialsreturndService;//生产退料明细表
-
+    @Inject
+	private TransVouchService transVouchService;
+    @Inject
+    private DepartmentService departmentService;
+    @Inject
+	private WorkregionmService workregionmService;
+    @Inject
+	private WarehouseAreaService warehouseAreaService;
+    @Inject
+    private TransVouchDetailService transVouchDetailService;
+    @Inject
+	private MoMaterialsreturndService materialsreturndService;
+    @Inject
+	private MoMaterialsreturnmService materialsreturnmService;
 
 
 	/**
@@ -74,7 +76,9 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
-		return  dbTemplate("momaterialsreturn.paginateAdminDatas",kv).paginate(pageNumber,pageSize);
+		Page<Record> paginate = dbTemplate("momaterialsreturnm.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
+
+		return paginate;
 	}
 
 	/**
@@ -274,7 +278,7 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 	 */
 	public Page<Record>  getMoMaterialsreturnList(int pageNumber, int pageSize,Kv kv){
 		kv.set("corgcode",getOrgCode());
-		Page<Record> rows=dbTemplate("momaterialsreturn.findByImodocId", kv).paginate(pageNumber,pageSize);
+		Page<Record> rows=dbTemplate("momaterialsreturnm.findByImodocId", kv).paginate(pageNumber,pageSize);
 		return rows;
 	}
 
@@ -376,6 +380,122 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 	 return transVouch;
    }
 
+	public Object getBycBarcode(String barcode) {
+		Kv para = Kv.by("barcode", barcode);
+		List<Record> records = dbTemplate("momaterialsreturnm.getMaterialScanLogBycBarcode", para).find();
+		for (Record record : records) {
+			if (ObjectUtil.isNull(record.getBigDecimal("iQty")) && ObjectUtil.isNull(record.getBigDecimal("iScannedQty"))) {
+				ValidationUtils.error(record.getStr("cbarcode") + "中的现品票数量或耗用数量为空");
+			}
+			BigDecimal subtract = record.getBigDecimal("iQty").subtract(record.getBigDecimal("iScannedQty"));
+			record.set("iqtys", subtract);
+
+		}
+
+		return records;
+	}
+
+	public List<Record> getBycBarcodeInfo(String barcode) {
+		Kv para = Kv.by("barcode", barcode);
+		List<Record> records = dbTemplate("momaterialsreturnm.getMaterialScanLogBycBarcode", para).find();
+		for (Record record : records) {
+			if (ObjectUtil.isNull(record.getBigDecimal("iQty")) && ObjectUtil.isNull(record.getBigDecimal("iScannedQty"))) {
+				ValidationUtils.error(record.getStr("cbarcode") + "中的现品票数量或耗用数量为空");
+			}
+			BigDecimal subtract = record.getBigDecimal("iQty").subtract(record.getBigDecimal("iScannedQty"));
+			record.set("iqtys", subtract);
+		}
+		return records;
+
+	}
+
+	public List<Record> getBycBarcodeList() {
+		List<Record> records = dbTemplate("momaterialsreturnm.getmomaterialscanusedlogList").find();
+		for (Record record : records) {
+			if (ObjectUtil.isNull(record.getBigDecimal("iQty")) && ObjectUtil.isNull(record.getBigDecimal("iScannedQty"))) {
+				ValidationUtils.error(record.getStr("cbarcode") + "中的现品票数量或耗用数量为空");
+			}
+			BigDecimal subtract = record.getBigDecimal("iQty").subtract(record.getBigDecimal("iScannedQty"));
+			record.set("iqtys", subtract);
+		}
+		return records;
+	}
+
+	public Ret saveTableSubmit(JBoltTable jBoltTable) {
+		MoMaterialsreturnm form = jBoltTable.getFormModel(MoMaterialsreturnm.class, "moMaterialsreturnm");
+
+		List<Record> save = jBoltTable.getSaveRecordList();
+		List<Record> save1 = jBoltTable.getSaveRecordList();
+
+		for (Record row : save) {
+
+
+			row.remove("cinvaddcode");
+			row.remove("cinvcode");
+			row.remove("cinvname");
+			row.remove("cmemo");
+			row.remove("iqty");
+			row.remove("iscannedqty");
+			row.remove("iuomclassid");
+			row.remove("type");
+
+			row.set("IAutoId",JBoltSnowflakeKit.me.nextId());
+			row.set("IMaterialsReturnMid",row.get("iAutoId"));
+			row.set("IMoDocId",form.get("IMoDocId"));
+			row.set("IInventoryId",row.get("iInventoryId"));
+			row.set("IQty",row.get("iqtys"));
+			row.set("Cbarcode",row.getStr("cBarcode"));
+			row.remove("iqtys");
+		}
+
+		for (Record row : save1) {
+			Date now=new Date();
+
+
+			row.remove("cinvaddcode");
+			row.remove("cinvcode");
+			row.remove("cinvname");
+			row.remove("iqty");
+			row.remove("iscannedqty");
+			row.remove("iuomclassid");
+			row.remove("type");
+			row.remove("iinventoryid");
+			row.remove("iqtys");
+			row.remove("cbarcode");
+			row.remove("iautoid");
+
+			row.set("IMoDocId",form.get("IMoDocId"));
+			row.set("IAuditWay",1);
+			row.set("DSubmitTime",now);
+			row.set("IAuditStatus",1);
+			row.set("DAuditTime",now);
+			row.set("CMemo",row.getStr("cmemo"));
+
+			row.set("IAutoId",JBoltSnowflakeKit.me.nextId());
+			row.set("COrgCode",getOrgCode());
+			row.set("IOrgId",getOrgId());
+			row.set("COrgName",getOrgName());
+			row.set("ICreateBy",JBoltUserKit.getUserId());
+			row.set("CCreateName",JBoltUserKit.getUserName());
+			row.set("DCreateTime",now);
+			row.set("IUpdateBy",JBoltUserKit.getUserId());
+			row.set("CUpdateName",JBoltUserKit.getUserName());
+			row.set("DUpdateTime",now);
+			row.set("IsDeleted",false);
+
+		}
+
+
+		tx(() -> {
+
+			materialsreturndService.batchSaveRecords(save);
+			materialsreturnmService.batchSaveRecords(save1);
+			return true;
+		});
+
+		return SUCCESS;
+	}
+
 	@Override
 	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
 		return null;
@@ -440,4 +560,5 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 	public String postBatchBackout(List<Long> formAutoIds) {
 		return null;
 	}
+    
 }

@@ -47,17 +47,16 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
      */
     public JBoltApiRet jumpCheckout(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
-        Record record = service.getCheckoutListByIautoId(iautoid);
-        ValidationUtils.notNull(record, JBoltMsg.DATA_NOT_EXIST);
+        Record record = new Record();
+        Record checkoutList = service.getCheckoutListByIautoId(iautoid);
+        ValidationUtils.notNull(checkoutList, JBoltMsg.DATA_NOT_EXIST);
 
         //判断是否要先生成从表数据
-        service.checkAutoCreateRcvDocQcFormD(record.getLong("iautoid"));
+        service.checkAutoCreateRcvDocQcFormD(iautoid);
         // 表头项目
-        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
-        List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
-        record.set("columns", tableHeadData);
-        record.set("record", record);
-        record.set("docparamlist", docparamlist);
+        List tableHeadData = service.getTableHeadData(checkoutList.getLong("iqcformid"));
+        record.set("columns", tableHeadData);//项目列名
+        record.set("record", checkoutList);//存放检验信息、检查成绩表的数据
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
@@ -82,15 +81,16 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
      * 点击查看按钮，跳转到“查看”页面（该页面只能查看，不能编辑）
      */
     public JBoltApiRet jumpOnlysee(Long iautoid) {
+        Record record = new Record();
         //1、查询跳转到另一页面需要的数据
-        Record record = service.getCheckoutListByIautoId(iautoid);
-        ValidationUtils.notNull(record, JBoltMsg.DATA_NOT_EXIST);
+        Record checkOutRecord = service.getCheckoutListByIautoId(iautoid);
+        ValidationUtils.notNull(checkOutRecord, JBoltMsg.DATA_NOT_EXIST);
         // 表头项目
-        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
-        List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
+        List tableHeadData = service.getTableHeadData(checkOutRecord.getLong("iqcformid"));
+        List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(iautoid);
         record.set("docparamlist", docparamlist);
         record.set("columns", tableHeadData);
-        record.set("record", record);
+        record.set("record", checkOutRecord);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
@@ -98,18 +98,19 @@ public class RcvDocQcFormMApiService extends JBoltApiBaseService {
      * 点击编辑按钮，跳转到编辑页面
      * */
     public JBoltApiRet jumpEdit(Long iautoid){
+        Record record = new Record();
         //1、查询跳转到另一页面需要的数据
-        Record record = service.getCheckoutListByIautoId(iautoid);
-        ValidationUtils.notNull(record, JBoltMsg.DATA_NOT_EXIST);
+        Record checkoutRecord = service.getCheckoutListByIautoId(iautoid);
+        ValidationUtils.notNull(checkoutRecord, JBoltMsg.DATA_NOT_EXIST);
 
         //判断是否要先生成从表数据
-        service.checkAutoCreateRcvDocQcFormD(record.getLong("iautoid"));
+        service.checkAutoCreateRcvDocQcFormD(iautoid);
         // 表头项目
-        List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
-        List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(record.get("iautoid"));
+        List tableHeadData = service.getTableHeadData(checkoutRecord.getLong("iqcformid"));
+        List<RcvDocQcFormD> docparamlist = rcvDocQcFormDService.findByIRcvDocQcFormMId(iautoid);
         record.set("docparamlist", docparamlist);
         record.set("columns", tableHeadData);
-        record.set("record", record);
+        record.set("record", checkoutRecord);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 

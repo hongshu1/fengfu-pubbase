@@ -9,7 +9,15 @@ SELECT t1.*,
        t4.cVenName,
        t6.cEquipmentName,
        u.cUomCode,u.cUomName,
-       t7.cpics,t7.ctypeids,t7.ctypenames
+       t7.cpics,t7.ctypeids,t7.ctypenames,
+       statusname =
+       CASE WHEN t1.istatus=0 THEN '未有检查表'
+            WHEN t1.istatus=1 THEN '待检'
+            WHEN t1.istatus=2 THEN '不合格'
+            WHEN t1.istatus=3 THEN '合格' END,
+       maskname=
+       CASE WHEN t1.imask=1 THEN '正常'
+            WHEN t1.imask=2 THEN '初物' END
 FROM PL_RcvDocQcFormM t1
          LEFT JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId
          LEFT JOIN Bd_Vendor t4 ON t1.iVendorId = t4.iAutoId

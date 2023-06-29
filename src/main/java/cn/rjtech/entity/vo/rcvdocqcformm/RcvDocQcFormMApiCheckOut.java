@@ -76,13 +76,17 @@ public class RcvDocQcFormMApiCheckOut implements Serializable {
     /*检测日期*/
     private Date                dqctime;
     /*在库检-检验单号*/
-    private String cInvQcFormNo;
+    private String              cInvQcFormNo;
     /*出货检-检验单号*/
-    private String cstockoutqcformno;
-    /*table的头部*/
+    private String              cstockoutqcformno;
+    /*标记*/
+    private String              maskname;
+    /*检验结果*/
+    private String              statusname;
+    /*列名,比如检查项目、规格公差、检查方法等，因为项目名个数是不固定的，动态显示*/
     public  List<tableHeadData> columns;
 
-    public  List<RcvDocQcFormD> docparamlist;
+    public List<DocParam> docparamlist;
 
     public static class tableHeadData {
 
@@ -339,29 +343,52 @@ public class RcvDocQcFormMApiCheckOut implements Serializable {
         }
     }
 
-    public static class RcvDocQcFormD{
+    public static class DocParam {
+
         public String iAutoId;
-        /**来料检ID*/
+        /**
+         * 来料检ID
+         */
         public String iRcvDocQcFormMid;
-        /**检验表格ID*/
+        /**
+         * 检验表格ID
+         */
         public String iQcFormId;
-        /**检验项目ID，Bd_QcFormTableParam.iAutoId*/
+        /**
+         * 检验项目ID，Bd_QcFormTableParam.iAutoId
+         */
         public String iFormParamId;
-        /**项目次序，固定取参数项目名为“项目”的参数名称次序值*/
-        public  String iSeq;
-        /**子次序*/
+        /**
+         * 项目次序，固定取参数项目名为“项目”的参数名称次序值
+         */
+        public String iSeq;
+        /**
+         * 子次序
+         */
         public String iSubSeq;
-        /**检验参数值ID，点检方法允许为空（拼接“-”）多个逗号分隔*/
+        /**
+         * 检验参数值ID，点检方法允许为空（拼接“-”）多个逗号分隔
+         */
         public String cQcFormParamIds;
-        /**参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间*/
+        /**
+         * 参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间
+         */
         public String iType;
-        /**标准值*/
+        /**
+         * 标准值
+         */
         public String iStdVal;
-        /**最大设定值*/
+        /**
+         * 最大设定值
+         */
         public String iMaxVal;
-        /**最小设定值*/
+        /**
+         * 最小设定值
+         */
         public String iMinVal;
-        /**列表可选值，多个";"分隔*/
+        /**
+         * 列表可选值，多个";"分隔
+         */
         public String cOptions;
 
         public String getiAutoId() {
@@ -461,6 +488,22 @@ public class RcvDocQcFormMApiCheckOut implements Serializable {
         }
     }
 
+    public String getMaskname() {
+        return maskname;
+    }
+
+    public void setMaskname(String maskname) {
+        this.maskname = maskname;
+    }
+
+    public String getStatusname() {
+        return statusname;
+    }
+
+    public void setStatusname(String statusname) {
+        this.statusname = statusname;
+    }
+
     public String getCstockoutqcformno() {
         return cstockoutqcformno;
     }
@@ -477,11 +520,11 @@ public class RcvDocQcFormMApiCheckOut implements Serializable {
         this.cInvQcFormNo = cInvQcFormNo;
     }
 
-    public List<RcvDocQcFormD> getDocparamlist() {
+    public List<DocParam> getDocparamlist() {
         return docparamlist;
     }
 
-    public void setDocparamlist(List<RcvDocQcFormD> docparamlist) {
+    public void setDocparamlist(List<DocParam> docparamlist) {
         this.docparamlist = docparamlist;
     }
 

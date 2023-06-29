@@ -1,0 +1,251 @@
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page">
+
+    <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
+        <div class="col-md-l pt-2" role="group" aria-label="btn-group">
+
+            <button onclick="submitThisForms()" class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 保存</button>
+            <!--<button onclick="submitAllTables_#(pageId)(this)" #if(type=="0") style="display: none" #end
+                    data-id="2" data-value="submit" type="submit" class="btn btn-info btn-sm"><i
+                class="fa fa-window-maximize"></i> 提交审核
+            </button>-->
+            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>关闭</button>
+        </div>
+    </div>
+
+    <div class="form-group row">
+
+        <div class="col-11" style="margin-left: 180px;">
+            <div class="jbolt_page_title">
+                <div class="row">
+                    <div class="col-md-auto">
+                        <h1>生产退料</h1>
+                    </div>
+                    <div class="col">
+                        <form class="form-inline" id="moMaterialsreturnmForm_#(pageId)" onsubmit="return false;" method="post"></form>
+
+                        <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码=" maxlength="20" id="barcode2" name="barcode" value="#(barcode??)"/>
+                        <button onclick="returnofmaterial2()" class="btn btn-outline-secondary"><i class="fa fa-search"></i>搜索</button>
+                        <button onclick="returnofmaterial()" style="color:red" class="btn btn-outline-secondary"><i class="fa fa-reset"></i>一健退料</button>
+                    </div>
+                    <div class="col-md-auto">
+                    </div>
+                </div>
+            </div>
+
+      <div class="jbolt_page_content">
+
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="moMaterialsreturnmRowtpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.imodocid}</td>
+            <td>${data.cbarcode}</td>
+            <td>${data.cinvcode}</td>
+            <td>${data.cinvaddcode}</td>
+            <td>${data.cinvname}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.empty}</td>
+            <td>${data.iuomclassid}</td>
+            <td>${data.iqtys}</td>
+        </tr>
+        {@/each}
+        </textarea>
+
+        <table class="jbolt_table jbolt_main_table table-center hover_info"
+               id="jbolt_table_#(pageId)"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-url="admin/momaterialsreturnm/addBarcode?barcode="
+               data-column-resize="true"
+               data-row-click-active="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="moMaterialsreturnmForm_#(pageId)"
+               data-rowtpl="moMaterialsreturnmRowtpl_#(pageId)"
+               ###data-page="moMaterialsreturnmPage_#(pageId)"
+               data-toolbar="moMaterialsreturnm_toolbar_#(pageId)"
+               ###data-fixed-columns-left="1,2,3"
+               ###data-fixed-columns-right="-1"
+               data-row-dblclick-active="true"
+               data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+               data-editable="true"
+               data-editable-option="getEditableTableOptions_split_#(pageId)"
+        >
+          <thead>
+          <tr>
+            <th data-width="100" data-column="index">序号</th>
+            <th data-width="150" data-column="imodocid">工单号</th>
+            <th data-width="150" data-column="cbarcode">现品票</th>
+            <th data-width="150" data-column="cinvcode">存货编码</th>
+            <th data-width="150" data-column="cinvaddcode">存货代码</th>
+            <th data-width="150" data-column="cinvname">存货名称</th>
+            <th data-width="150" data-column="cinvstd">规格型号</th>
+            <th data-width="150" data-column="empty">品牌</th>
+            <th data-width="150" data-column="iuomclassid">主计量单位</th>
+            <th data-width="150" data-column="iqtys">数量</th>
+          </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="jbolt_page_content">
+    <form onsubmit="return false;" id="moMaterialsreturnForm" action="#(action)" method="post">
+
+      <input type="hidden" name="moMaterialsreturnm.imodocid" value="#(imodocid??)"/>
+
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">备注：</label>
+        <div class="col-sm-3 col-form-label">
+<!--          </textarea>-->
+          <textarea id="memo" name="moMaterialsreturnm.cmemo" class="form-control" placeholder="=请输入备注=" type="text" maxlength="300"></textarea>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+#define js()
+<script>
+  hideParentLayerDialogBtn();
+
+  $(function () {
+    init();
+  });
+
+  function submitThisForms() {
+
+    console.log("提交表单");
+    jboltTableSubmit("#jbolt_table_#(pageId)");
+  }
+
+  function returnofmaterial2() {
+      var barcode2 = $("#barcode2").val();
+      $.ajax({
+          url: "admin/momaterialsreturnm/addBarcode?barcode="+barcode2,
+          type: 'GET',
+          success: function (ret) {
+              if (ret.state === 'ok') {
+                  var data = ret.data;
+                  if (data) {
+                      jboltTableInsertRow('#jbolt_table_#(pageId)', data);
+                  }
+              }
+          },
+          error: function () {
+              LayerMsgBox.alert("系统异常,请联系管理员");
+          }
+      });
+  }
+
+  function returnofmaterial() {
+    $.ajax({
+      url: "admin/momaterialsreturnm/getmomaterialscanusedlogList",
+      type: 'GET',
+      success: function (ret) {
+        if (ret.state === 'ok') {
+          var data = ret.data;
+          if (data) {
+             jboltTableClear('#jbolt_table_#(pageId)');
+             jboltTableInsertRow('#jbolt_table_#(pageId)', data, false, false, true);
+          }
+        }
+      },
+      error: function () {
+        LayerMsgBox.alert("系统异常,请联系管理员");
+      }
+    });
+  }
+
+
+
+  // function returnofmaterial() {
+  //   $.ajax({
+  //     url: "admin/momaterialscanusedlog/getmomaterialscanusedlogList",
+  //     type: 'GET',
+  //     success: function (ret) {
+  //       if (ret.state === 'ok') {
+  //         var data = ret.data;
+  //         if (data.list) {
+  //           //jboltTableClear('#jbolt_table_#(pageId)');
+  //           //jboltTableInsertRow('#jbolt_table_#(pageId)', data.list, false, false, true);
+  //         }
+  //         // console.log(jboltTableGetSubmitData('#itemroutingconfigid_#(pageId)'));
+  //       }
+  //     },
+  //     error: function () {
+  //       LayerMsgBox.alert("系统异常,请联系管理员");
+  //     }
+  //   });
+  // }
+
+  function init() {
+      $.ajax({
+          url: "admin/momaterialsreturnm/getMoMaterialsreturnList",
+          type: 'GET',
+          success: function (ret) {
+              if (ret.state === 'ok') {
+                  var data = ret.data;
+
+                  //jboltTableClear('#jbolt_table_#(pageId)');
+
+                  //jboltTableInsertRow('#jbolt_table_#(pageId)', data, false, false, true);
+                  // console.log(jboltTableGetSubmitData('#itemroutingconfigid_#(pageId)'));
+              }
+          },
+          error: function () {
+              LayerMsgBox.alert("系统异常,请联系管理员");
+          }
+      });
+  }
+
+  function getEditableTableOptions_split_#(pageId)(){
+      var editableTableOptions = {
+          //初始行数
+          // initRowCount:10,
+          //限制最大数 默认30
+          maxRowCount: 1000,
+          trigger: "click",
+          submit: {
+              withForm: ["moMaterialsreturnForm"],
+              type: "all",//cell|all|multi
+              //name:"table2"
+              url: "/admin/momaterialsreturnm/saveTableSubmit", success: function (res) {
+                  if (res.state === 'ok') {
+                      LayerMsgBox.success("提交成功", 600, function () {
+                          // parent.layer.closeAll();
+                      });
+                  } else {
+                      LayerMsgBox.alert(res.msg, 2);
+                  }
+              }
+          },
+          cols: [
+              {
+                  imodocid: {
+                      submitAttr: 'imodocid'
+                  },
+                  cbarcode: {
+                      type: 'input',
+                      readOnly: true
+                  }
+              }
+          ]
+      }
+
+    return editableTableOptions;
+  }
+
+  function closeHandler() {
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+    window.parent.refreshJBoltTable();
+  }
+
+</script>
+#end
+

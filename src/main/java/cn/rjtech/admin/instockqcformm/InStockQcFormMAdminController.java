@@ -129,16 +129,6 @@ public class InStockQcFormMAdminController extends BaseAdminController {
     }
 
     /*
-     * @desc 扫描现品票，点击“确定”按钮，表体增加1行在库检任务；如果此存货没有配置检验项目，
-     *       需维护相关设置后点击“生成”按钮，生成检查成绩表。
-     * @param cbarcode：现品票
-     * */
-    public void createInStockQcFormByCbarcode() {
-        Kv kv = getKv();
-        renderJson(service.createInStockQcFormByCbarcode(kv.getStr("cbarcode")));
-    }
-
-    /*
      * 生成
      * */
     public void createTable(@Para(value = "iautoid") Long iautoid) {

@@ -1,24 +1,23 @@
+#set(pageId=RandomUtil.random(6))
+### 默认为非只读,查看页有readonly=readonly标识
+### 【readonly为false】, 或 【审核中或已通过】，设置只读
+#if(readonly != 'readonly' && (sysProductin.iAuditStatus??0 == 1 || sysProductin.iAuditStatus??0 == 2))
+#set(readonly = 'readonly')
+#end
+
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button class="btn btn-success btn-sm" onclick="submitThisForm()" #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) disabled #end ><i
-                                class="fa fa-refresh"></i> 保存
-                        </button>
-                        #if(sysProductin.AutoID??)
-                        ### 参数列表
-                        ### uri:                接口URI
-                        ### formSn:             表单名
-                        ### o:                  当前表单对象名
-                        ### primaryKeyName:     主键名
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/productInList", formSn="T_Sys_ProductIn", o=sysProductin, edit=edit??, primaryKeyName="AutoID")
+                        #if(readonly != 'readonly')
+                        <button class="btn btn-success btn-sm" onclick="submitThisForm_#(pageId)(false)" #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) disabled #end ><i class="fa fa-refresh"></i> 保存</button>
                         #end
 
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 关闭
-                        </button>
+                        #include("/_view/_common/_approval_btns.html", formSn="T_Sys_ProductIn", o=sysProductin,primaryKeyName="AutoID",className="cn.rjtech.admin.sysProductin.sysProductinService",permissionKeyPrefix="sysProductin")
+
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                     </div>
                 </div>
             </div>
@@ -30,6 +29,7 @@
                         #if(sysProductin.AutoID??)
                         <input type="hidden" name="sysProductin.AutoID" value="#(sysProductin.AutoID??)"/>
                         #end
+                        <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -58,11 +58,14 @@
                                 <div class="form-group row">
                                     <input type="hidden" name="sysProductin.Whcode" value="#(sysProductin.Whcode??)"
                                            id="cwhcode" data-value-attr="cwhcode"/>
+                                    <input type="hidden" name="whcode1" value="#(sysProductin.WhCode??)"
+                                           id="whcode1" data-sync-attr="cwhcode"/>       
                                     <label class="col-sm-3 col-form-label">仓库名称</label>
                                     <div class="col-9">
                                         <input type="text" class="form-control" data-autocomplete
                                                data-url="admin/productInList/getWarehouse" data-rule="required"
                                                data-hidden-input="cwhcode" data-text-attr="cwhname"
+                                               data-sync-ele="#cwhcode,whcode1"
                                                data-column-attr="cwhcode,cwhname" placeholder="请选择仓库名称"
                                                data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
                                                value="#(cwhname??)"
@@ -160,14 +163,14 @@
         </div>
     </div>
 </div>
+
 ### 新增之后，并且为审核流
 #if(sysProductin.AutoID?? && sysProductin.iauditway == 2)
 #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysProductin.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId,primaryKeyName="AutoID", className="cn.rjtech.admin.sysproductin.SysProductinService")
 #end
 
-
-
 <div class="jbolt_page_content">
+    
     <script type="text/template" id="sysProductin_tpl_#(pageId)">
         {@each datas as data,index}
         <tr data-id="${data.autoid}">
@@ -196,6 +199,7 @@
         </tr>
         {@/each}
     </script>
+    
     <div class="jbolt_table_toolbar" id="sysProductin_toolbar_#(pageId)">
         <div class="col-md-4">
             <div class="form-group row">
@@ -215,13 +219,11 @@
                     <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) disabled #end   ><i class="fa fa-trash"></i> 删除行</button>
                 </div>
 
-
-
-
             </div>
         </div>
 
     </div>
+    
     <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysProductin.AutoID??)
            data-ajax="true" data-url="admin/sysProductindetail/findEditTableDatas?masid=#(sysProductin.AutoID??)" #end
            id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
@@ -246,10 +248,11 @@
 </div>
 #define js()
 <script>
+    
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
 
-    function submitThisForm() {
+    function submitThisForm_#(pageId)() {
         jboltTableSubmit("#jbolt_Table_#(pageId)");
         return true;
     }
@@ -262,20 +265,36 @@
                 type: "all",
                 url: "/admin/productInList/submitAll",
                 success: function (res) {
-                    LayerMsgBox.success("提交成功", 600, function () {
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
-                    });
+                    var state = res.state;
+                    if (state==='ok'){
+                        var autoid = res.autoid;
+                        if (submit){
+                            submit_#(pageId)(autoid,function () {
+                                LayerMsgBox.success("提交成功", 600, function () {
+                                    // parent.refreshPjaxContainer();
+                                    // parent.layer.closeAll();
+                                    self.location.href = "/admin/materialReceiptList/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
+                                });
+
+                            });
+                        } else {
+                            LayerMsgBox.success("提交成功", 600, function () {
+                                // parent.refreshPjaxContainer();
+                                // parent.layer.closeAll();
+                                self.location.href = "/admin/materialReceiptList/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
+                            });
+
+                        }
+                    }
+                    // LayerMsgBox.success("提交成功", 600, function () {
+                    //     parent.refreshPjaxContainer();
+                    //     parent.layer.closeAll();
+                    // });
                 }
             },
             cols: {
                 AutoID: {
                     submitAttr: "AutoID",
-                },
-                barcode: {
-                    type: "input",//类型
-                    placeholder: "现品票", //输入提示，里面
-                    tooltip: "现品票",//输入提示，上方
                 },
                 memo: {
                     type: "input",//类型
@@ -283,16 +302,17 @@
                     tooltip: "用途",//输入提示，上方
                 },
                 barcode: { //条码
+                    linkPara: "input[name='detailHidden'],input[name='whcode1']",
                     maxLength: 100,
                     required: true,
                     placeholder: "=请选择=",
                     type: "autocomplete",
-                    url: "admin/otherout/barcodeDatas",
+                    url: "admin/productInList/barcodeDatas",
                     textAttr: "barcode",
                     width: 800,
                     sync: "",
                     valueAttr: "barcode",
-                    columnAttr: "barcode,cinvcode,cinvdddcode,cinvname,cinvstd,inventorycuomname,qty,cequipmentmodelname",
+                    columnAttr: "barcode,cinvcode,cinvdddcode,cinvname,cinvstd,cUomName,qty,cequipmentmodelname",
                     header: '现品票,存货编码,存货代码,存货名称,规格型号,主计量单位,数量,所属机型',
                     changeColumns: [{column: "barcode", use: "barcode"}, {
                         column: "cinvcode",
@@ -304,13 +324,30 @@
                             column: "iinventoryid",
                             use: "iautoid"
                         }, {column: "sourcebilltype", use: "sourcebilltype"},
-                        {column: "sourcebillno", use: "sourcebillno"}, {column: "sourcebilldid", use: "sourcebilldid"},
+                        {column: "sourcebillno", use: "sourcebillno"}, {column: "cequipmentmodelname", use: "cequipmentmodelname"},
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {
                             column: "sourcebillid",
                             use: "sourcebillid"
-                        }, {column: "cinvdddcode", use: "cinvdddcode"},
-                        {column: "cinvname", use: "cinvname"}, {column: "inventorycuomname", use: "inventorycuomname"},
-                        {column: "sourcebillid", use: "sourcebillid"}, {column: "qty", use: "qty"}]
+                        }, {column: "cinvdddcode", use: "cinvdddcode"},{column: "cinvdddcode", use: "cinvdddcode"},
+                        {column: "cinvname", use: "cinvname"}, {column: "inventorycuomname", use: "cuomname"},
+                        {column: "sourcebillid", use: "sourcebillid"}, {column: "qty", use: "qty"}],
+                    handler:function (table,td,text,value,jsonData) {
+                            let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
+
+                            td.parent().attr('data-barcode', jsonData.barcode);
+                            console.log("data==>",datas);
+                            let array = [];
+                            if (datas != null){
+                                for (var i = 0; i < datas.length; i++){
+                                    var data = datas[i];
+                                    array.push("'"+data.barcode+"'");
+                                    let codes = array.join(',');
+                                    $("#detailHidden").val(codes);
+                                }
+                            }else {
+                                $("#detailHidden").val('');
+                            }
+                        }
 
                 },
             }
@@ -322,6 +359,51 @@
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
     }
+
+    function barcode() {
+        LayerMsgBox.loading("执行中......",2000);
+        var barcode = $("#barcode").val();
+        var data = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
+        let array = new Array();
+        if(null != data){
+            for (let i = 0; i < data.length; i++) {
+                if(data[i].barcode == barcode){
+                    LayerMsgBox.alert("条码已重复")
+                    return;
+                }
+                array.push("'"+data[i].barcode+"'");
+            }
+            let codes = array.join(',');
+            $("#detailHidden").val(codes);
+        } else {
+            $("#detailHidden").val('');
+        }
+        if (barcode) {
+            var whcode1 = $("#whcode1").val();
+            Ajax.post("admin/productInList/barcode", {"barcode": barcode, "whcode1": whcode1}, function (ret) {
+                if (ret.state === 'ok') {
+                    jboltTableInsertRow("jbolt_Table_#(pageId)", ret.data);
+
+                    $("#barcode").val('');
+                } else {
+                    LayerMsgBox.alert(ret.msg, 2);
+                }
+            }, function (err) {})
+        } else {
+            LayerMsgBox.alert("请输入条码")
+        }
+    }
+
+        //是否提审
+        var submit = false;
+
+        /**
+         * 保存方法
+         */
+        function submitThisForm_#(pageId)(ele) {
+            submit = ele;
+            jboltTableSubmit("#jbolt_Table_#(pageId)");
+        }
 
 </script>
 #end

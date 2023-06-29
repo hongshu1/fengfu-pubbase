@@ -9,9 +9,9 @@ import com.jfinal.kit.Kv;
 import java.util.Date;
 
 /**
- * 设备保养班组人员
+ * 补焊纪录
  *
- * @author Kephon
+ * @author chentao
  */
 public class MoMopatchweldmApiService extends JBoltApiBaseService {
 

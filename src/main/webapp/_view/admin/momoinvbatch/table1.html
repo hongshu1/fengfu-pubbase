@@ -18,19 +18,14 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
-
 <td>${data.cbarcode}</td>
  <td>${data.cversion}</td>
 <td>${data.iqty}</td>
 <td>
-    {@if data.iprintstatus==1}
+{@if data.iprintstatus==1}
 	<a href="admin/momoinvbatch/editprint/${data.iautoid}" data-area="50%,100%"  tooltip data-title="打印"  data-handler="refreshJBoltTable" data-dialog-title="打印" class="jbolt_table_editbtn"><i class="fa fa-print"></i>打印</a>
-    <a href="admin/momoinvbatch/updatePage/${data.iautoid}" data-area="50%,100%"  tooltip data-title="修改数量" data-handler="refreshJBoltTable"  class="jbolt_table_editbtn"><i class="fa fa-pencil"></i>修改数量</a>
-  {@/if}
-      {@if data.iprintstatus==2}
-	<a href=""><i class=""></i>已打印</a>
-
-  {@/if}
+    <a href="admin/momoinvbatch/updatePage/${data.iautoid}" data-area="800,600"  tooltip data-title="修改数量" data-handler="refreshJBoltTable"  class="jbolt_table_editbtn" data-btn="no"><i class="fa fa-pencil"></i>修改数量</a>
+{@/if}
 </td>
 </tr>
 {@/each}
@@ -38,20 +33,26 @@
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="moMoinvbatch_toolbar_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
+                <button data-ajaxbtn data-handler="modifyTable1" id="create_moinvbatch_#(pageId)"
+                        data-url="admin/momoinvbatch/createMomoinvbatch?imodocid=#(imodocid??)"
+                        class="btn btn-primary btn-sm"><i class="fa fa-print"></i>生成现品票
+                </button>
                 <button data-openpage="dialog" data-area="50%,100%" data-dialog-title="批量打印" data-ajaxbtn
                         data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                         id="toolbar_deleteBtn_#(pageId)"
                         data-url="admin/momoinvbatch/subListPrintPage?imodocid=#(imodocid??)&ids=" data-confirm="批量打印？"
-                        class="btn btn-primary btn-sm"><i class="fa fa-print"></i>批量打印
+                        class="btn btn-primary btn-sm" disabled><i class="fa fa-print"></i>批量打印
                 </button>
             </div>
         </div>
 
         <table class="jbolt_table jbolt_main_table table-center hover_info"
+               id="table1_#(pageId)"
                data-jbolttable
                data-height="fill"
                data-ajax="true"
-               data-url="admin/momoinvbatch/datas"
+               data-url="admin/momoinvbatch/datas?iprintstatus=1&imodocid=#(moDoc.iautoid)"
+               data-ajax-success-handler="checkDatas"
                data-column-resize="true"
                data-row-click-active="true"
                data-column-prepend="1:checkbox:true"
@@ -76,8 +77,6 @@
             <tbody>
             </tbody>
         </table>
-
-
     </div>
 </div>
 

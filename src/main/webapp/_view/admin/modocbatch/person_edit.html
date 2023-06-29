@@ -408,80 +408,6 @@
             parms['cellCol'] = col;
         }
     });
-    //双击单元格事件
-    sheet.bind(GC.Spread.Sheets.Events.CellDoubleClick, function (sender, args) {
-        let {row,col} = args;
-        if(row==parms['cellRow']&&col==parms['cellCol']){
-            return;
-        }else{
-            let rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取当前行数据
-            let colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取当前列数据
-            let clickRow = sheet.getArray(row, col, sheet.getRowCount(), 1);//获取当前列数据
-            parms['userType'] = rowData[0][8];//当前点击的人员类型
-            let ModArray = [];
-            for (let i = 0; i < clickRow.length; i++) {
-                //遍历当前列的所有数据并存储到数组中
-                if(clickRow[i][0]!=null){
-                    ModArray.push(clickRow[i][0])
-                }
-            }
-            const regex = /^MOD/;
-            // 匹配第一条以 "MOD" 开头的数据
-            ModArray.some(item => {
-                if (regex.test(item)) {
-                    parms.editCellValueObj.cmodocno=item;
-                    return true; // 结束匹配
-                }
-            });
-            parms.editCellValueObj = {
-                data:colData[1][0],//当前单元格所在年月日
-                plan:colData[3][0],//排班(1S,2S)
-                type:rowData[0][8],//人员类型
-                taskId,//页面id
-            }
-            if(rowData[0][8]==3){
-                parms.editCellValueObj.taskId = taskId;
-            }else if(rowData[0][8]==4){
-                parms.editCellValueObj.taskId = taskId;
-            }else if(rowData[0][8]==5){
-                parms.editCellValueObj.taskId = taskId;
-            }else if(rowData[0][8]==2){
-                let mod = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取当前列数据
-                parms.editCellValueObj.cmodocno=mod[row-3][0];
-            }else if(rowData[0][8]==0){
-                parms.sheBeiName = rowData[0][5];//当前行的设备name
-                parms.gonXuName = rowData[0][6];//当前行的工序name
-                parms.editCellValueObj.codeKehu = rowData[0][7];//当前物品的存货编码
-                parms.keHuCode = rowData[0][7];//当前行的客户编码
-            }
-            parms.cellRowOk = row;
-            parms.cellColOk = col;
-            showDialog();
-        }
-    });
-    /**
-     * 人员编辑点击确定查找对应设备工序id事件
-     * @param getArrayCellRow
-     * @param id {Array} 所有人员id数组
-     */
-    function getArrayCellRow(id){
-        parms.editCellValueObj.renYuanId = [];
-        id.forEach((arr)=>{
-            parms.editCellValueObj.renYuanId.push(arr);
-        })
-        //获取当前的班次id
-        let blan = parms['tableHeadArray'].find((v,i)=>v.find((item,ind)=>item.yeartodate==parms.editCellValueObj.data)).find((ite,id)=>ite.cworkshiftcode==parms.editCellValueObj.plan);
-        parms.editCellValueObj.iworkshiftmid = blan.iworkshiftmid;
-
-        if(parms['userType']==0){
-            let productionLineObj = parms['pageData'].slice(0,parms['pageData'].length-3).find((v,i)=>v.cinvcode==parms.keHuCode);//查找到当前产线对象
-            let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
-            parms.editCellValueObj.sheBeiid = sheBeigonXuObj.cequipment.iequipmentid;//设备id
-            parms.editCellValueObj.gonXuid = sheBeigonXuObj.coperation.ioperationid;//工序id
-            parms.editCellValueObj.iworkregionmid = productionLineObj.iworkregionmid;
-        }
-        parms.editCellValue.push(parms.editCellValueObj);
-    }
     /**
      * 页面数据保存事件
      * @param seva
@@ -498,11 +424,11 @@
             success:function (res){
                 if(res.data?.msg=='操作成功'){
                     LayerMsgBox.success(res.data.msg);
+                    parms.editCellValue.length=0;
                     initData();
                 }else{
                     LayerMsgBox.error(res.msg,1000);
                 }
-                parms.editCellValue.length=0;
             },error: function(error) {
                 console.log(error);
             }
@@ -774,8 +700,8 @@
                     //
                     for (let j = 0; j < jsonData.data.slice(-3)[i].rowdatas[0].user.length; j++) {
                         sheet.setValue(jsonDataLength+4, 9+j,jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.cpsn_name);
-                        sheet.setValue(jsonDataLength+4+1, 9+j,jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.itype);
-                        sheet.setValue(jsonDataLength+4+2, 9+j,jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.itype);
+                        sheet.setValue(jsonDataLength+4+1, 9+j,jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.cpsn_name);
+                        sheet.setValue(jsonDataLength+4+2, 9+j,jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.cpsn_name);
                         if(!jsonData.data.slice(-3)[i].rowdatas[0].user[j].personne.lock){
                             //设置班长其他人员锁定样式
                             sheet.getCell(jsonDataLength+4, 9+j).locked(jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.lock);
@@ -850,7 +776,8 @@
     // 获取全选按钮和所有复选框
     const checkboxes = document.getElementsByClassName('checkbox');
     /**
-     * @param selectAllCheckboxs 全选按钮的事件监听器
+     * 全选按钮的事件监听器
+     * @param selectAllCheckboxs
      * @param v 点击事件源
      */
     function selectAllCheckboxs(v) {
@@ -893,7 +820,8 @@
         }
     };
     /**
-     * @param selectCheckboxs 复选框的事件监听器
+     * 复选框的事件监听器
+     * @param selectCheckboxs
      * @param e 点击事件源
      * @param index 当前点击数据下标
      */
@@ -939,19 +867,106 @@
      */
     function dialogBtnOk(){
         let str = "";
-        let names = parms['tableData'].map(obj => obj.cpsnname); // 使用map方法获取所有name属性的值
-        if (names.length > 0) {
-            str = names.length === 1 ? names[0] : names.join('/');
+        let names = parms['tableData'].map(obj => obj.cpsnname); // 使用map方法获取所有name
+        if(parms['userType']==0){
+            if (names.length > 0) {
+                str = names.length === 1 ? names[0] : names.join('/');
+            }
+            let id = parms['tableData'].map(obj => obj.iautoid); // 使用map方法获取所有名字id
+            getArrayCellRow(id);//人员编辑点击确定查找对应设备工序id方法
+            hideDialog();
+        }else{
+            if(parms['tableData'].length>1){
+                LayerMsgBox.error('产线组长,班长,其余人员等只能选择一个成员',1500);
+            }else{
+                getArrayCellRow(parms['tableData'][0].iautoid);
+                str=names[0];
+                hideDialog();
+            }
         }
         sheet.setValue(parms.cellRowOk, parms.cellColOk, str);
-        let id = parms['tableData'].map(obj => obj.iautoid); // 使用map方法获取所有name属性的值
-        hideDialog();
-        getArrayCellRow(id);//人员编辑点击确定查找对应设备工序id方法
     }
-
+    //双击单元格事件
+    sheet.bind(GC.Spread.Sheets.Events.CellDoubleClick, function (sender, args) {
+        let {row,col} = args;
+        if(row==parms['cellRow']&&col==parms['cellCol']){
+            return;
+        }else{
+            let rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取当前行数据
+            let colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取当前列数据
+            let clickRow = sheet.getArray(row, col, sheet.getRowCount(), 1);//获取当前列数据
+            parms['userType'] = rowData[0][8];//当前点击的人员类型
+            let ModArray = [];
+            for (let i = 0; i < clickRow.length; i++) {
+                //遍历当前列的所有数据并存储到数组中
+                if(clickRow[i][0]!=null){
+                    ModArray.push(clickRow[i][0])
+                }
+            }
+            const regex = /^MOD/;
+            // 匹配第一条以 "MOD" 开头的数据
+            ModArray.some(item => {
+                if (regex.test(item)) {
+                    parms.editCellValueObj.cmodocno=item;
+                    return true; // 结束匹配
+                }
+            });
+            parms.editCellValueObj = {
+                data:colData[1][0],//当前单元格所在年月日
+                plan:colData[3][0],//排班(1S,2S)
+                type:rowData[0][8],//人员类型
+                taskId,
+            }
+            if(rowData[0][8]==3){
+                parms.editCellValueObj.taskId = taskId;//页面id
+            }else if(rowData[0][8]==4){
+                parms.editCellValueObj.taskId = taskId;//页面id
+            }else if(rowData[0][8]==5){
+                parms.editCellValueObj.taskId = taskId;//页面id
+            }else if(rowData[0][8]==2){
+                let mod = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取当前列数据
+                parms.editCellValueObj.cmodocno=mod[row-3][0];
+            }else if(rowData[0][8]==0){
+                parms.sheBeiName = rowData[0][5];//当前行的设备name
+                parms.gonXuName = rowData[0][6];//当前行的工序name
+                parms.editCellValueObj.codeKehu = rowData[0][7];//当前物品的存货编码
+                parms.keHuCode = rowData[0][7];//当前行的客户编码
+            }
+            parms.cellRowOk = row;
+            parms.cellColOk = col;
+            showDialog();
+        }
+    });
     /**
-     *
-     * @param closeDialog {Function} 关闭Dialog事件
+     * 人员编辑点击确定查找对应设备工序id事件
+     * @param getArrayCellRow
+     * @param id {Array} 所有人员id数组
+     */
+    function getArrayCellRow(id){
+        parms.editCellValueObj.renYuanId = [];
+        //获取当前的班次id
+        let blan = parms['tableHeadArray'].find((v,i)=>v.find((item,ind)=>item.yeartodate==parms.editCellValueObj.data)).find((ite,id)=>ite.cworkshiftcode==parms.editCellValueObj.plan);
+        parms.editCellValueObj.iworkshiftmid = blan.iworkshiftmid;
+        if(typeof id=='object'){
+            id.forEach((arr)=>{
+                parms.editCellValueObj.renYuanId.push(arr);
+            })
+            if(parms['userType']==0){
+                let productionLineObj = parms['pageData'].slice(0,parms['pageData'].length-3).find((v,i)=>v.cinvcode==parms.keHuCode);//查找到当前产线对象
+                let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
+                parms.editCellValueObj.sheBeiid = sheBeigonXuObj.cequipment.iequipmentid;//设备id
+                parms.editCellValueObj.gonXuid = sheBeigonXuObj.coperation.ioperationid;//工序id
+                parms.editCellValueObj.iworkregionmid = productionLineObj.iworkregionmid;//产线id
+                parms.editCellValue.push(parms.editCellValueObj);
+            }
+        }else if(typeof id=='string'){
+            parms.editCellValueObj.renYuanId.push(id);
+            parms.editCellValue.push(parms.editCellValueObj);
+        }
+    }
+    /**
+     * 关闭Dialog事件
+     * @param closeDialog
      * @param e {Object} 点击事件源
      * @param index {Number} 当前点击数据下标
      */
@@ -960,7 +975,8 @@
         hideDialog();
     }
     /**
-     * @param showDialog 显示Dialog
+     * 显示Dialog
+     * @param showDialog
      */
     function showDialog() {
         dialogMask.style.display = "block";
@@ -968,7 +984,8 @@
         getUserData();//人员数据接口
     }
     /**
-     * @param hideDialog 隐藏Dialog
+     * 隐藏Dialog
+     * @param hideDialog
      */
     function hideDialog() {
         dialogMask.style.display = "none";

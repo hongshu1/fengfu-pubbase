@@ -44,13 +44,13 @@ select ebi.iautoid,ebi.iexpenseid,d.cdepcode,d.cdepname,eb.ibudgetyear,eb.ibudge
         sum(case when ebid.iyear = eb.iBudgetYear+1 and ebid.imonth = 3 then ebid.iamount end) 'nextyearmounthamount3',
         sum(case when ebid.iyear = eb.iBudgetYear+1 and ebid.imonth = 4 then ebid.iQuantity end) 'nextyearmounthquantity4',
         sum(case when ebid.iyear = eb.iBudgetYear+1 and ebid.imonth = 4 then ebid.iamount end) 'nextyearmounthamount4'
-from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
-	left join #(getMomdataDbName()).dbo.PL_Expense_Budget_ItemD ebid on ebi.iautoid = ebid.iexpenseitemid
-    left join #(getMomdataDbName()).dbo.PL_Expense_Budget eb on eb.iautoid = ebi.iExpenseId
-    left join department d on d.cdepcode = eb.cdepcode
-    left join #(getMomdataDbName()).dbo.bas_project bp on bp.iautoid = ebi.iprojectid
-    left join #(getMomdataDbName()).dbo.bas_subjectm bsh on bsh.iAutoId = ebi.iHighestSubjectId
-    left join #(getMomdataDbName()).dbo.bas_subjectm bsl on bsl.iAutoId = ebi.iLowestSubjectId
+from PL_Expense_Budget_Item ebi
+	left join PL_Expense_Budget_ItemD ebid on ebi.iautoid = ebid.iexpenseitemid
+    left join PL_Expense_Budget eb on eb.iautoid = ebi.iExpenseId
+    left join bd_department d on d.cdepcode = eb.cdepcode
+    left join bas_project bp on bp.iautoid = ebi.iprojectid
+    left join bas_subjectm bsh on bsh.iAutoId = ebi.iHighestSubjectId
+    left join bas_subjectm bsl on bsl.iAutoId = ebi.iLowestSubjectId
 where 1=1
     #if(ibudgetyear)
   and eb.ibudgetyear = #(ibudgetyear)
@@ -85,7 +85,7 @@ where 1=1
     #if(islargeamountexpense)
   and ebi.isLargeAmountExpense = #para(islargeamountexpense)
     #end
-
+	#(getDataPermissionSql("eb", "cdepcode")) 
 group by
     ebi.iautoid,ebi.iexpenseid,d.cdepcode,d.cdepname,eb.ibudgetyear,eb.ibudgettype,eb.cbegindate,eb.cenddate,
     bp.cprojectcode,bp.cprojectname,ebi.cbudgetno,bsh.csubjectname,bsl.csubjectname,ebi.citemname,eb.iAuditStatus,

@@ -1,5 +1,7 @@
 #@jboltLayout()
 #define main()
+#set(pageId=RandomUtil.random(6))
+#set(printworkorderspotticketsinadvance=JBoltGlobalConfigCache.getBooleanConfigValue("print_work_order_spot_tickets_in_advance"))
 <div class="jbolt_page">
     <div class="jbolt_page_content">
         <div class="row">
@@ -61,15 +63,15 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">完工数量:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    #(moDoc.icompqty??)
+                                    <input disabled="disabled" name="moDoc.iCompQty" value="#(moDoc.icompqty??0)">
                                 </div>
                                 <label class="col-sm-2 col-form-label">差异数量:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    #(moDoc.cyqty??)
+                                    <input disabled="disabled" id="remainder" value="#(moDoc.iqty-moDoc.icompqty??0)">
                                 </div>
                                 <label class="col-sm-2 col-form-label">包装数量:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    #(moDoc.cyqty??)
+                                    <input disabled="disabled" name="ipkgqty" value="#(moDoc.ipkgqty??moDoc.iqty)">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -88,7 +90,6 @@
                                        data-column-attr="cpsnnum,cpsnname">
                                 <label class="col-sm-2 col-form-label">产线组长:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    #(moDoc.cinvname1??)
                                 </div>
                             </div>
                         </form>
@@ -138,8 +139,6 @@
 
        });
    }
-
-
     function submitThisFormsd(){
         var postDatas=formToJson("#processDefectForm");
         LayerMsgBox.loading("更新中...",5000);
@@ -153,11 +152,6 @@
             });
 
     }
-
-
-
-
-
     function  submitThisForms(url){
         $.ajax({
             url: url,
@@ -190,6 +184,27 @@
    function closeHandler(){
        parent.layer.close(parent.layer.getFrameIndex(window.name));
        window.parent.refreshJBoltTable();
+   }
+
+   function modifyTable1() {
+       // 刷新页面
+       refreshJBoltTable($("#table1_#(pageId)"));
+       $("#create_moinvbatch_#(pageId)").hide();
+       #if(printworkorderspotticketsinadvance)
+       $("#toolbar_deleteBtn_#(pageId)").removeAttr("disabled");
+       #end
+       return true;
+   }
+
+   function checkDatas() {
+       var datas = getJboltTableAllDatas("table1_#(pageId)");
+       // 已生成现品票数据默认隐藏生成现品票按钮
+       if (datas) {
+           $("#create_moinvbatch_#(pageId)").hide();
+           #if(printworkorderspotticketsinadvance)
+           $("#toolbar_deleteBtn_#(pageId)").removeAttr("disabled");
+           #end
+       }
    }
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="processDefectForm")
