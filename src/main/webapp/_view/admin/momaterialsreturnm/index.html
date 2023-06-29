@@ -1,0 +1,119 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+                <h1>生产退料</h1>
+            </div>
+            <div class="col">
+                <form class="form-inline" id="moMaterialsreturnmForm_#(pageId)" onsubmit="return false;" method="post">
+                    <input type="text" name="imodocid" id="imodocid" class="form-control" placeholder="=生产工单ID="
+                           value="#(imodocid??)"/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=调拨单号=" name="billno"
+                           value=""/>
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="moMaterialsreturnmRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+  <td>${pageNumber,pageSize,index | rownum}</td>
+  <td>
+    {@if data.iauditstatus == '0'}
+     <a href="admin/momaterialsreturnm/edit/${data.iautoid}" data-area="1200,800" tooltip data-title="修改"
+        data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i>编辑</a>
+     <a href="admin/momaterialsreturnm/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
+        data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i
+             class="fa fa-remove  c-danger">删除</i></a>
+    {@/if}
+    {@if data.iauditstatus == '1'}
+    <a href="admin/momaterialsreturnm/details/${data.iautoid}" data-area="1600,800" tooltip data-title="详情"
+       data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+    <a class="jbolt_table_delbtn" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="撤回采购入库单"
+       class="jbolt_table_delbtn"
+       href="admin/formapproval/withdraw?formSn=Mo_MaterialsReturnM&primaryKeyName=iautoid&formAutoId=${data.iautoid}&permissionKey=momaterialsreturnm_withdraw&className=cn.rjtech.admin.momaterialsreturnm.MoMaterialsreturnmService">
+      <i class="fa fa-remove c-danger">撤回</i></a>
+    {@/if}
+    {@if data.iauditstatus == '2'}
+    <a href="admin/momaterialsreturnm/details/${data.iautoid}" data-area="1600,800" tooltip data-title="详情"
+       data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+    {@/if}
+    {@if data.iauditstatus == '3'}
+    <a href="admin/momaterialsreturnm/details/${data.iautoid}" data-area="1600,800" tooltip data-title="详情"
+       data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+    {@/if}
+  </td>
+  <td title="${data.iauditstatus}">${data.auditState}</td>
+  <td>${data.cmodocno}</td>
+  <td>${data.cdeptname}</td>
+  <td>${data.billno}</td>
+  <td>${data.ccreatename}</td>
+  <td>${data.dcreatetime}</td>
+</tr>
+{@/each}
+</textarea>
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="moMaterialsreturnm_toolbar_#(pageId)">
+            <div class="" role="group" aria-label="btn-group">
+                <button data-openpage="dialog" data-area="1200,800" data-handler="jboltTablePageToFirst" data-title=""
+                        data-url="admin/momaterialsreturnm/add?imodocid=#(imodocid)"
+                        class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增
+                </button>
+                <!--<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>-->
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table table-center hover_info"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-url="admin/momaterialsreturnm/datas?imodocid=#(imodocid??)"
+               data-column-resize="true"
+               data-row-click-active="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="moMaterialsreturnmForm_#(pageId)"
+               data-rowtpl="moMaterialsreturnmRowtpl_#(pageId)"
+               data-page="moMaterialsreturnmPage_#(pageId)"
+               data-toolbar="moMaterialsreturnm_toolbar_#(pageId)"
+               data-fixed-columns-left="1,2,3"
+               data-fixed-columns-right="-1"
+               data-row-dblclick-active="true"
+               data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+        >
+            <thead>
+            <tr>
+                <th data-width="50">序号</th>
+                <th data-width="100">操作</th>
+                <th data-width="150" data-column="auditstate">审核状态</th>
+                <th data-width="180" data-column="BillNo">调拨单号</th>
+                <th data-width="180" data-column="cMoDocNo">工单号</th>
+                <th data-width="180" data-column="cDepName">生产部门</th>
+                <th data-width="150" data-column="cCreateName">创建人名称</th>
+                <th data-width="150" data-column="dCreateTime">创建时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+    hideParentLayerDialogBtn();
+
+</script>
+#end

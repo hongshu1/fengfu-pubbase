@@ -116,7 +116,8 @@ public class UptimeMService extends BaseService<UptimeM> implements IApprovalSer
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		return deleteById(id,true);
+		update("UPDATE PL_UptimeM SET isDeleted = 1 WHERE iAutoId = ?",id);
+		return SUCCESS;
 	}
 
 	/**
@@ -262,6 +263,69 @@ public class UptimeMService extends BaseService<UptimeM> implements IApprovalSer
 	}
 
 
+	//---------------------app----------------------
+	public Record getUptimeTplInfoList(Kv kv) {
+		Record record = dbTemplate("uptimem.getUptimeTplInfo",kv).findFirst();
+		List<Record> recordList = dbTemplate("uptimem.getUptimeDList",kv).find();
+		record.set("dataList",recordList);
+		return record;
+	}
+
+	public Record getUptimeMInfoList(Kv kv) {
+		Record record = dbTemplate("uptimem.getUptimeMList",kv).findFirst();
+		List<Record> recordList = dbTemplate("uptimem.getUptimeDList2",kv).find();
+		record.set("dataList",recordList);
+		return record;
+	}
+
+	public Long updateAndSaveApi(Integer updateOrSaveType,String dataStr,String dataListStr) {
+		Long mid;
+		Date newDate = new Date();
+		UptimeM model = JSONObject.parseObject(dataStr,UptimeM.class);
+		List<UptimeD> updateRecords = new ArrayList<>();
+		if (dataListStr != null && !dataListStr.equals("[]")  && !dataListStr.equals("null")){
+			updateRecords = JSONArray.parseArray(dataListStr,UptimeD.class);
+		}
+
+		//新增
+		if (updateOrSaveType == 1){
+			mid = JBoltSnowflakeKit.me.nextId();
+
+			model.setIAutoId(mid);
+			model.setIOrgId(getOrgId());
+			model.setCOrgCode(getOrgCode());
+			model.setCOrgName(getOrgName());
+			model.setICreateBy(JBoltUserKit.getUserId());
+			model.setCCreateName(JBoltUserKit.getUserName());
+			model.setDCreateTime(newDate);
+			model.setIUpdateBy(JBoltUserKit.getUserId());
+			model.setCUpdateName(JBoltUserKit.getUserName());
+			model.setDUpdateTime(newDate);
+
+			for (UptimeD uptimeD : updateRecords){
+				uptimeD.setIUptimeMid(mid);
+			}
+			List<UptimeD> finalUpdateRecords1 = updateRecords;
+			tx(() -> {
+				model.save();
+				uptimeDService.batchSave(finalUpdateRecords1, 500);
+				return true;
+			});
+		}else {
+			mid = model.getIAutoId();
+			model.setIUpdateBy(JBoltUserKit.getUserId());
+			model.setCUpdateName(JBoltUserKit.getUserName());
+			model.setDUpdateTime(newDate);
+
+			List<UptimeD> finalUpdateRecords = updateRecords;
+			tx(() -> {
+				model.update();
+				uptimeDService.batchUpdate(finalUpdateRecords, 500);
+				return true;
+			});
+		}
+		return mid;
+	}
 
 
 
