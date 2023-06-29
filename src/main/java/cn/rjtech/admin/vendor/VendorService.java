@@ -183,6 +183,8 @@ public class VendorService extends BaseService<Vendor> {
                 udpateVendor.setCProperty(formRecord.getStr("cproperty2"));//供应商属性
                 Person person = personService.findById(udpateVendor.getIDutyPersonId());
                 udpateVendor.setCVenPPerson(person != null ? person.getCpsnNum() : "");
+                Record record = vendorClassService.findRecordByCVCCode(udpateVendor.getCVCCode());
+                udpateVendor.setIVendorClassId(record != null ? record.get("iautoid") : new Long(0));
                 if (jBoltTable.updateIsNotBlank()) {
                     //获取并更新表单
                     List<VendorAddr> updateModelList1 = jBoltTable.getUpdateModelList(VendorAddr.class);
