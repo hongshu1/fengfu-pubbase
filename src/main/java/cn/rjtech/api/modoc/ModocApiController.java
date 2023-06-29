@@ -103,9 +103,9 @@ public class ModocApiController extends BaseApiController {
   /**
    * 根据制造工单id查询特殊领料数据源
    *
-   * @param imodocid
-   * @param pageNumber
-   * @param pageSize
+   * @param imodocid   制造工单id，必传
+   * @param pageNumber 页数，必传
+   * @param pageSize   页面数量，必传
    */
 //  @ApiDoc(result = ModocApiResVo.class)
   @UnCheck
@@ -113,6 +113,30 @@ public class ModocApiController extends BaseApiController {
   public void getSpecmaterialsrcvmDatas(@Para(value = "imodocid") Long imodocid, @Para(value = "pageNumber") Integer pageNumber,
                                         @Para(value = "pageSize") Integer pageSize) {
     ValidationUtils.notNull(imodocid, "缺少工单ID");
+    ValidationUtils.notNull(pageNumber, "缺少页数");
+    ValidationUtils.notNull(pageSize, "缺少页面数量");
     renderJBoltApiSuccessWithData(moDocApiService.getSpecmaterialsrcvmDatas(imodocid, pageNumber, pageSize));
   }
+
+  /**
+   * 根据制造工单id查询当前工单的存货档案数据
+   *
+   * @param imodocid   制造工单id，必传
+   * @param pageNumber 页数，必传
+   * @param pageSize   页面数量，必传
+   * @param cinvcode   存货编码
+   * @param cinvcode1  客户部番
+   * @param cinvname1  部品名称
+   */
+  @UnCheck
+  @OpenAPI
+  public void getInventoryDatasByDocid(@Para(value = "imodocid") Long imodocid, @Para(value = "pageNumber") Integer pageNumber,
+                                       @Para(value = "pageSize") Integer pageSize, @Para(value = "cinvcode") String cinvcode,
+                                       @Para(value = "cinvcode1") String cinvcode1, @Para(value = "cinvname1") String cinvname1) {
+    ValidationUtils.notNull(imodocid, "缺少工单ID");
+    ValidationUtils.notNull(pageNumber, "缺少页数");
+    ValidationUtils.notNull(pageSize, "缺少页面数量");
+    renderJBoltApiSuccessWithData(moDocApiService.getInventoryDatasByDocid(imodocid, pageNumber, pageSize, cinvcode, cinvcode1, cinvname1));
+  }
+
 }
