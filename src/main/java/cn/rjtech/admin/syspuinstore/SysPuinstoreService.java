@@ -364,7 +364,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             deleteById(id);
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     public void checkDelete(Long id) {
@@ -379,7 +379,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             List<String> collect = puinstoredetails.stream().map(SysPuinstoredetail::getAutoID).collect(Collectors.toList());
             syspuinstoredetailservice.deleteByIds(String.join(",", collect));
         }
-        return ret(true);
+        return SUCCESS;
     }
 
     /*

@@ -120,7 +120,7 @@ public class SysOtherindetailService extends BaseService<SysOtherindetail> {
      */
     public Ret delete(Long id) {
         deleteById(id);
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -128,7 +128,7 @@ public class SysOtherindetailService extends BaseService<SysOtherindetail> {
      */
     public Ret deleteRmRdByIds(String ids) {
         deleteByIds(ids);
-        return ret(true);
+        return SUCCESS;
     }
 
     public List<Record> findEditTableDatas(Kv para) {

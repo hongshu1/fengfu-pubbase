@@ -3,16 +3,18 @@ package cn.rjtech.api.stockoutqcformm;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
+import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.admin.stockoutdefect.StockoutDefectService;
 import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
 import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
+import cn.rjtech.model.momdata.StockoutQcFormD;
 import cn.rjtech.model.momdata.StockoutQcFormM;
+
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.upload.UploadFile;
 
 import java.util.List;
 
@@ -32,6 +34,8 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
     private StockoutQcFormDService     stockoutQcFormDService;
     @Inject
     private StockoutDefectService      stockoutDefectService; //出库检异常品单
+    @Inject
+    private RcvDocQcFormMService       rcvDocQcFormMService;
 
     /**
      * 点击左侧导航栏-出库检，显示主页面数据
@@ -43,8 +47,8 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
     /**
      * 生成
      */
-    public JBoltApiRet createTable(Long iautoid, String cqcformname) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.createTable(iautoid, cqcformname));
+    public JBoltApiRet createTable(Long iautoid) {
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.createTable(iautoid));
     }
 
     /**
@@ -52,26 +56,14 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      */
     public JBoltApiRet jumpCheckout(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
-        StockoutQcFormM stockoutQcFormM = service.findById(iautoid);
-        Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
-        record.set("cstockoutqcformno",stockoutQcFormM.getCStockoutQcFormNo());
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
-    }
-
-    /**
-     * 跳转到检验页面后，自动加载table的数据
-     */
-    public JBoltApiRet autoGetCheckOutTableDatas(Long istockoutqcformmid) {
-        //1、查询table的数据
-        Kv kv = new Kv();
-        kv.set("istockoutqcformmid", istockoutqcformmid);
-        List<Record> recordList = service.getCheckOutTableDatas(kv);
-        //2、将数据传到
-        for (Record record : recordList) {
-            record.keep("iautoid", "iformparamid", "iqcformid", "istockoutqcformmid", "iseq", "isubseq",
-                "itype", "coptions", "cqcformparamids", "cqcitemname", "cqcparamname", "imaxval", "iminval", "istdval");
+        Record record = service.getCheckoutListByIautoId(iautoid);
+        if (record == null) {
+            return JBoltApiRet.API_FAIL("数据不存在");
         }
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(recordList);
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        record.set("columns", tableHeadData);
+        record.set("record", record);
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
     /**
@@ -79,39 +71,41 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      */
     public JBoltApiRet jumpOnlysee(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
-        StockoutQcFormM stockoutQcFormM = service.findById(iautoid);
-        Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
-        List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(stockoutQcFormM.getIAutoId());
-        record.set("size",stockoutqcformlist.size());
-        record.set("cstockoutqcformno",stockoutQcFormM.getCStockoutQcFormNo());
+        Record record = service.getCheckoutListByIautoId(iautoid);
+        if (record == null) {
+            return JBoltApiRet.API_FAIL("数据不存在");
+        }
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        List<StockoutQcFormD> stockoutqcformlist = stockoutQcFormDService.findByIStockoutQcFormMid(iautoid);
+        record.set("stockoutqcformlist", stockoutqcformlist);
+        record.set("columns", tableHeadData);
+        record.set("record", record);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
     /*
      * 点击编辑按钮，跳转到编辑页面
      * */
-    public JBoltApiRet jumpEdit(Long iautoid){
-        StockoutQcFormM stockoutQcFormM = service.findById(iautoid);
-        Record record = service.getCheckoutListByIautoId(stockoutQcFormM.getIAutoId());
-        List<Record> stockoutqcformlist = service.getonlyseelistByiautoid(stockoutQcFormM.getIAutoId());
-        record.set("size", stockoutqcformlist.size());
+    public JBoltApiRet jumpEdit(Long iautoid) {
+        //1、查询跳转到另一页面需要的数据
+        Record record = service.getCheckoutListByIautoId(iautoid);
+        if (record == null) {
+            return JBoltApiRet.API_FAIL("数据不存在");
+        }
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        List<StockoutQcFormD> stockoutqcformlist = stockoutQcFormDService.findByIStockoutQcFormMid(iautoid);
+        record.set("stockoutqcformlist", stockoutqcformlist);
+        record.set("columns", tableHeadData);
+        record.set("record", record);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
-    /**
-     * 跳转到"查看"页面后，自动加载查看页面table的数据
-     */
-    public JBoltApiRet autoGetOnlyseeOrEditTableDatas(Long iautoid) {
+    public JBoltApiRet getTableDatas(Long istockoutqcformmid) {
         Kv kv = new Kv();
-        kv.set("iautoid", iautoid);
-        //1、调用方法获得table数据
-        List<Record> recordList = service.getonlyseelistByiautoid(kv);
-        //2、传到实体类里面
-        for (Record record : recordList) {
-            record.keep("iautoid", "iformparamid", "iqcformid", "coptions", "cqcformparamids",
-                "cqcitemname", "cqcparamname", "iseq", "isubseq", "itype", "imaxval", "iminval", "istdval", "cvaluelist");
-        }
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(recordList);
+        kv.set("istockoutqcformmid", istockoutqcformmid);
+        //1、查询
+        List<Record> tableDatas = service.getTableDatas(kv);
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(tableDatas);
     }
 
     /**
@@ -120,7 +114,7 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
     public JBoltApiRet saveCheckOut(String cmeasurepurpose, String cdcno, Long istockqcformmiautoid, String cmeasureunit,
                                     String isok, String cmeasurereason, String serializeSubmitList, String cmemo) {
         //1、开始更新编辑页面的数据
-        Boolean result = service.achiveChecOutSerializeSubmitList(JSON.parseArray(serializeSubmitList), istockqcformmiautoid,
+        Boolean result = service.achieveSerializeSubmitList(JSON.parseArray(serializeSubmitList), istockqcformmiautoid,
             cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
         //2、最后返回成功
         return JBoltApiRet.API_SUCCESS;
@@ -133,23 +127,16 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
                                 String cmeasurereason, String serializeSubmitList, String cmemo) {
         // 1、开始更新编辑页面的数据
         Boolean result = service
-            .achiveEditSerializeSubmitList(JSON.parseArray(serializeSubmitList), stockqcformmiautoid, cmeasurepurpose,
+            .achieveSerializeSubmitList(JSON.parseArray(serializeSubmitList), stockqcformmiautoid, cmeasurepurpose,
                 cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
         //2、最后返回成功
         return JBoltApiRet.API_SUCCESS;
     }
 
     /*
-     * 自动加载图片
-     * */
-    public JBoltApiRet uploadImage(List<UploadFile> files) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.uploadImage(files));
-    }
-
-    /*
      * 导出详情页
      * */
-    public JBoltApiRet getExportData(Long iautoid){
+    public JBoltApiRet getExportData(Long iautoid) {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
     }
 }

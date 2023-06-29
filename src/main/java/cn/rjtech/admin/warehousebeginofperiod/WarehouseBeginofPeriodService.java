@@ -477,7 +477,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             });
             ValidationUtils.isTrue(tx, "导入失败");
         }
-        return ret(true);
+        return SUCCESS;
     }
 
     /*
@@ -617,7 +617,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         ValidationUtils.notEmpty(hiprintTpls, reportfilename + ": 打印模板标签不存在，请添加打印模板后再次导入");
         ValidationUtils.isTrue(!(hiprintTpls.size() > 1), reportfilename + ": 打印模板标签名重复，无法区分，请修改名称后再次导入");
 
-        return ret(true);
+        return SUCCESS;
     }
 
     /*

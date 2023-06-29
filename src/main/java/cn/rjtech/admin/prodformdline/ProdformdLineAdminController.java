@@ -1,17 +1,16 @@
 package cn.rjtech.admin.prodformdline;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.constants.DataSourceConstants;
+import cn.rjtech.model.momdata.ProdformdLine;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.ProdformdLine;
 /**
  * 制造管理-生产表单明细列值
  * @ClassName: ProdformdLineAdminController
@@ -48,7 +47,7 @@ public class ProdformdLineAdminController extends BaseAdminController {
 	* 保存
 	*/
 	@Before(Tx.class)
-    @TxConfig(ProdformdLine.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void save(@Para("prodformdLine")ProdformdLine prodformdLine) {
 		renderJson(service.save(prodformdLine));
 	}
@@ -70,7 +69,7 @@ public class ProdformdLineAdminController extends BaseAdminController {
 	* 更新
 	*/
 	@Before(Tx.class)
-    @TxConfig(ProdformdLine.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void update(@Para("prodformdLine")ProdformdLine prodformdLine) {
 		renderJson(service.update(prodformdLine));
 	}
@@ -79,7 +78,7 @@ public class ProdformdLineAdminController extends BaseAdminController {
 	* 批量删除
 	*/
     @Before(Tx.class)
-    @TxConfig(ProdformdLine.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void deleteByIds() {
 		renderJson(service.deleteByIds(get("ids")));
 	}
@@ -88,7 +87,7 @@ public class ProdformdLineAdminController extends BaseAdminController {
 	* 删除
 	*/
 	@Before(Tx.class)
-    @TxConfig(ProdformdLine.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void delete() {
 		renderJson(service.deleteById(getLong(0)));
 	}

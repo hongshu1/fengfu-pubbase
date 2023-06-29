@@ -85,7 +85,7 @@ public class RcvPlanMService extends BaseService<RcvPlanM> {
 			return success;
 		});
 		
-		return ret(true);
+		return SUCCESS;
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class RcvPlanMService extends BaseService<RcvPlanM> {
 			}
 			return true;
 		});
-		return ret(true);
+		return SUCCESS;
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class RcvPlanMService extends BaseService<RcvPlanM> {
 			update("update SM_RcvPlanD  set  IsDeleted = 1 where  iRcvPlanMid = ?",id);
 			return true;
 		});
-		return ret(true);
+		return SUCCESS;
 	}
 	/**
 	 * 删除数据后执行的回调

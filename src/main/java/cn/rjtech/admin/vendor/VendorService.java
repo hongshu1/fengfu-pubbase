@@ -307,7 +307,7 @@ public class VendorService extends BaseService<Vendor> {
         for (String autoid : split) {
             this.deleteByAutoid(Long.valueOf(autoid));
         }
-        return ret(true);
+        return SUCCESS;
     }
 
     public Ret deleteByAutoid(Long autoid) {
@@ -325,7 +325,7 @@ public class VendorService extends BaseService<Vendor> {
             deleteById(autoid);
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**

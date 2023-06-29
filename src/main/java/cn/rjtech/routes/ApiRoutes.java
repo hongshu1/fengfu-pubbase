@@ -1,5 +1,6 @@
 package cn.rjtech.routes;
 
+import cn.rjtech.admin.formapproval.FormApprovalApiController;
 import cn.rjtech.api.appversion.AppversionApiController;
 import cn.rjtech.api.formuploadcategory.FormUploadCategoryApiController;
 import cn.rjtech.api.formuploadm.FormUploadMApiController;
@@ -54,7 +55,7 @@ public class ApiRoutes extends Routes {
         this.add("/api/instockqcformm", InStockQcFormMApiController.class);
         this.add("/api/stockoutdefect", StockoutDefectApiController.class);
         this.add("/api/stockoutqcformm", StockOutQcFormMApiController.class);
-        
+
         // 产线
         this.add("/api/workregionm", WorkRegionmApiController.class);
         // 齐料检查
@@ -69,7 +70,8 @@ public class ApiRoutes extends Routes {
         this.add("/api/momopatchweldm", MoMopatchweldmApiController.class);
         //稼动时间管理
         this.add("/api/uptimem", UptimeMApiController.class);
-
+        //审批流/审核
+        this.add("/api/formapproval", FormApprovalApiController.class);
     }
 
 }

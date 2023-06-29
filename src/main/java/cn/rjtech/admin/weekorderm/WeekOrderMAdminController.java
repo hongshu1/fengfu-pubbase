@@ -83,7 +83,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
      */
     public void deleteByIds(@Para(value = "ids") String ids) {
         ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
-        
+
         renderJson(service.deleteByIdS(ids));
     }
 
@@ -92,45 +92,6 @@ public class WeekOrderMAdminController extends BaseAdminController {
      */
     public void delete() {
         renderJson(service.delete(getLong(0)));
-    }
-
-    /**
-     * 提审
-     */
-    public void submit(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.validateId(iautoid, "id");
-
-        renderJson(service.submit(iautoid));
-    }
-
-    /**
-     * 审批通过
-     */
-    public void approve() {
-        renderJson(service.approve(getLong(0)));
-    }
-
-    /**
-     * 审批不通过
-     */
-    public void reject() {
-        renderJson(service.reject(getLong(0)));
-    }
-
-    /**
-     * 批量审核
-     */
-    public void batchApprove()
-    {
-        renderJson(service.batchApprove(get("ids")));
-    }
-
-    /**
-     * 批量反审
-     */
-    public void batchReverseApprove()
-    {
-        renderJson(service.batchReverseApprove(get("ids")));
     }
 
     /**
@@ -147,8 +108,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 打开
      */
-    public void open()
-    {
+    public void open() {
         renderJson(service.open(get("iautoid")));
     }
 
@@ -162,7 +122,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 调整计划时间数据源
      */
-    public void updateCplanTimeDatas(){
+    public void updateCplanTimeDatas() {
         renderJsonData(service.updateCplanTimeDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
@@ -173,8 +133,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
         render("update_cplan_time_next.html");
     }
 
-    public void saveUpdateCplanTime()
-    {
+    public void saveUpdateCplanTime() {
         renderJson(service.saveUpdateCplanTime(getJBoltTable()));
     }
 
@@ -185,9 +144,8 @@ public class WeekOrderMAdminController extends BaseAdminController {
     public void downloadTpl() {
         try {
             renderJxls("weekorderm.xlsx", Kv.by("rows", null), "周间客户订单.xlsx");
-        }catch (Exception e)
-        {
-            ValidationUtils.error( "模板下载失败");
+        } catch (Exception e) {
+            ValidationUtils.error("模板下载失败");
         }
     }
 }

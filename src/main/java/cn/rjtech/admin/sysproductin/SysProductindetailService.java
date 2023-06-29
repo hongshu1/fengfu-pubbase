@@ -137,7 +137,7 @@ public class SysProductindetailService extends BaseService<SysProductindetail> {
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -148,6 +148,6 @@ public class SysProductindetailService extends BaseService<SysProductindetail> {
      */
     public Ret delete(Long id) {
         updateColumn(id, "isdeleted", true);
-        return ret(true);
+        return SUCCESS;
     }
 }

@@ -300,34 +300,6 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
     }
 
     /**
-     * 批量反审批
-     */
-    public Ret batchReverseApprove(String ids) {
-        tx(() -> {
-            List<AnnualOrderM> list = getListByIds(ids);
-            // 非已审批数据
-            List<AnnualOrderM> noApprovedDatas = list.stream().filter(item -> !(item.getIOrderStatus() == WeekOrderStatusEnum.APPROVED.getValue())).collect(Collectors.toList());
-            ValidationUtils.isTrue(noApprovedDatas.size() <= 0, "存在非已审批数据");
-
-            for (AnnualOrderM annualOrderM : list) {
-                // 处理订单审批数据
-                Long id = annualOrderM.getIAutoId();
-                formApprovalService.reverseApproveByStatus(id, table(), primaryKey(), (formAutoId) -> null, (formAutoId) ->
-                {
-                    // 处理订单状态
-                    ValidationUtils.isTrue(updateColumn(id, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
-                    return null;
-                });
-            }
-
-            // 修改客户计划汇总
-            cusOrderSumService.algorithmSum();
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
      * 处理审批通过的其他业务操作，如有异常返回错误信息
      *
      * @param formAutoId 单据ID

@@ -184,7 +184,7 @@
     }
     function updateCheck(ele) {
         var row = jboltTableGetCheckedData(ele);
-        if (row.iauditstatus > 0) {
+        if (row.iauditstatus == 1 || row.iauditstatus == 2) {
             LayerMsgBox.alert('只允许修改未审核数据！', 2);
             return false;
         }

@@ -172,6 +172,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                 if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
                     ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
+                if(s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                    ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
+                }
             }
             String[] split = ids.split(",");
             deleteByIds(ids);
@@ -180,7 +183,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -188,11 +191,18 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
      */
     public Ret delete(Long id) {
         tx(() -> {
+            SysPureceive byId = findById(id);
+            if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+                ValidationUtils.isTrue(false, "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+            }
+            if(byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + byId.getCcreatename() + " 不可删除!!!");
+            }
             deleteById(id);
             delete("DELETE T_Sys_PUReceiveDetail   where  MasID = ?", id);
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
 

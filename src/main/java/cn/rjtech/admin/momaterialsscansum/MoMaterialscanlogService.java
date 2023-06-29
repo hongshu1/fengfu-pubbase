@@ -242,4 +242,6 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 		map.put("pageInfo",page);
 		return map;
 	}
+
+
 }

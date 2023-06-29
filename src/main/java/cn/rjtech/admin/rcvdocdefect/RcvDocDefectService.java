@@ -265,7 +265,7 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		Date date = new Date();
 		Long userId = JBoltUserKit.getUserId();
 		String userName = JBoltUserKit.getUserName();
-		rcvDocDefect.setCDocNo(docQcFormM.getCRcvDocQcFormNo());     //异常品单号
+//		rcvDocDefect.setCDocNo(docQcFormM.getCRcvDocQcFormNo());     //异常品单号
 		rcvDocDefect.setIRcvDocQcFormMid(docQcFormM.getIAutoId());   //来料检id
 		rcvDocDefect.setIInventoryId(docQcFormM.getIInventoryId());  //存货ID
 		rcvDocDefect.setIVendorId(docQcFormM.getIVendorId());        //供应商id

@@ -119,7 +119,7 @@ SELECT
     a.iUsageUOM*d.iQty AS planIqty
 FROM
     Mo_MoRoutingInvc a   ### 工艺工序物料集
-        LEFT JOIN Bd_Inventory f ON a.iInventoryId= f.iAutoId
+    LEFT JOIN Bd_Inventory f ON a.iInventoryId= f.iAutoId
     LEFT JOIN Mo_MoRoutingConfig b ON a.iMoRoutingConfigId= b.iAutoId ###工单工艺配置
     LEFT JOIN Mo_MoRouting c ON b.iMoRoutingId= c.iAutoId   ###工艺路线
     LEFT JOIN Mo_MoDoc d ON c.iMoDocId= d.iAutoId

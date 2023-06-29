@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseMoDoc<M extends BaseMoDoc<M>> extends JBoltBaseModel<M>{
-    public static final String DATASOURCE_CONFIG_NAME = "momdata";
+    
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**来源类型：1. APS 2. 手工新增*/
@@ -65,6 +65,8 @@ public abstract class BaseMoDoc<M extends BaseMoDoc<M>> extends JBoltBaseModel<M
     public static final String DUPDATETIME = "dUpdateTime";
     /**是否被修改：0. 否 1. 是*/
     public static final String ISMODIFIED = "isModified";
+    /**包装数量*/
+    public static final String IPKGQTY = "iPkgQty";
 	/**
 	 * 主键ID
 	 */
@@ -522,6 +524,23 @@ public abstract class BaseMoDoc<M extends BaseMoDoc<M>> extends JBoltBaseModel<M
 	@JSONField(name = "ismodified")
 	public java.lang.Boolean getIsModified() {
 		return getBoolean("isModified");
+	}
+
+	/**
+	 * 包装数量
+	 */
+	public M setIPkgQty(java.lang.Integer iPkgQty) {
+		set("iPkgQty", iPkgQty);
+		return (M)this;
+	}
+
+	/**
+	 * 包装数量
+	 */
+	@JBoltField(name="ipkgqty" ,columnName="iPkgQty",type="Integer", remark="包装数量", required=false, maxLength=10, fixed=0, order=28)
+	@JSONField(name = "ipkgqty")
+	public java.lang.Integer getIPkgQty() {
+		return getInt("iPkgQty");
 	}
 
 }

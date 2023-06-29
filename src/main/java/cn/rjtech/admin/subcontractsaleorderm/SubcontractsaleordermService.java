@@ -302,96 +302,8 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         }
     }
 
-    public Ret approve(Long iautoid) {
-        tx(() -> {
-            // 校验订单状态
-            Subcontractsaleorderm subcontractsaleorderm = findById(iautoid);
-            ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), subcontractsaleorderm.getIOrderStatus(), "订单非待审核状态");
-            formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
-                return null;
-            });
-
-            // 修改客户计划汇总
-            cusOrderSumService.algorithmSum();
-            return true;
-        });
-
-        return SUCCESS;
-    }
-
-    public Ret reject(Long iautoid) {
-        tx(() -> {
-            // 数据同步暂未开发 现只修改状态
-            formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
-                //cusOrderSumService.algorithmSum();
-                return null;
-            });
-
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
-     * 批量审批
-     *
-     * @param ids
-     * @return
-     */
-    public Ret batchApprove(String ids) {
-        tx(() -> {
-            formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> null, (formAutoId) -> {
-                List<Subcontractsaleorderm> list = getListByIds(ids);
-                list = list.stream().filter(Objects::nonNull).map(item -> {
-                    item.setIOrderStatus(WeekOrderStatusEnum.APPROVED.getValue());
-                    return item;
-                }).collect(Collectors.toList());
-                ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
-
-                // 修改客户计划汇总
-                cusOrderSumService.algorithmSum();
-                return null;
-            });
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
-     * 批量反审
-     *
-     * @param ids
-     * @return
-     */
-    public Ret batchReverseApprove(String ids) {
-        tx(() -> {
-            List<Subcontractsaleorderm> list = getListByIds(ids);
-            // 非已审批数据
-            List<Subcontractsaleorderm> noApprovedDatas = list.stream().filter(item -> !(item.getIOrderStatus() == WeekOrderStatusEnum.APPROVED.getValue())).collect(Collectors.toList());
-            ValidationUtils.isTrue(noApprovedDatas.size() <= 0, "存在非已审批数据");
-            for (Subcontractsaleorderm subcontractsaleorderm : list) {
-                Long id = subcontractsaleorderm.getIAutoId();
-                formApprovalService.reverseApproveByStatus(id, table(), primaryKey(), (formAutoId) -> null, (formAutoId) -> {
-                    // 处理订单状态
-                    ValidationUtils.isTrue(updateColumn(id, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
-                    return null;
-                });
-            }
-
-            // 修改客户计划汇总
-            cusOrderSumService.algorithmSum();
-            return true;
-        });
-        return SUCCESS;
-    }
-
     /**
      * 关闭
-     *
-     * @param iautoid
-     * @return
      */
     public Ret close(String iautoid) {
         Subcontractsaleorderm subcontractsaleorderm = findById(iautoid);
@@ -401,9 +313,6 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
 
     /**
      * 打开
-     *
-     * @param iautoid
-     * @return
      */
     public Ret open(String iautoid) {
         Subcontractsaleorderm subcontractsaleorderm = findById(iautoid);

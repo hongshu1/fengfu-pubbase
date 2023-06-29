@@ -1,0 +1,145 @@
+<!-- 检验表格项目表的的数据模板定义-->
+#set(pageId=RandomUtil.random(6))
+<script type="text/template" id="QcFormTableParam_tpl_#(pageId)">
+  {@each datas as data,index}
+  <tr data-id="${data.iautoid}">
+    {@if pageSize&&pageSize>0}
+    <td>
+      ${((pageNumber-1)*pageSize)+(+index+1)}
+    </td>
+    {@else}
+    <td>
+      ${+index+1}
+    </td>
+    {@/if}
+    #for(item:columns??)
+    <td>
+      <select class="form-control" name="#(item.iqcitemid)" >
+        <option value="">=请选择#(item.cqcitemname??)=</option>
+        #for(va : item.compares)
+        <option value="#(va.iqcparamid)" >#(va.cqcparamnames)</option>
+        #end
+      </select>
+    </td>
+    #end
+    <td hidden>
+      <input type="text" autocomplete="off"  class="form-control" name="iseq" value="${data.iseq}">
+    </td>
+    <td>
+      <select class="form-control" data-url="admin/dictionary/options?key=rcvDocQcFormd_itype" name="itype" data-autoload
+              data-text="=请选择=" data-value-attr="sn" data-select="${data.itype}"></select>
+    </td>
+    <td>
+      <input type="text" autocomplete="off"  class="form-control" data-rule="number"  data-notnull="false"  maxlength="10" name="istdval" value="${data.istdval}">
+    </td>
+    <td>
+      <input type="text" autocomplete="off"  class="form-control" data-rule="number"  data-notnull="false"  maxlength="10" name="imaxval" value="${data.imaxval}">
+    </td>
+    <td>
+      <input type="text" autocomplete="off"  class="form-control" data-rule="number"  data-notnull="false"  maxlength="10" name="iminval" value="${data.iminval}">
+    </td>
+    <td>
+      <input type="text" autocomplete="off" placeholder="多个字段用分号（;）分隔" class="form-control"  name="coptions" value="${data.coptions}">
+    </td>
+  </tr>
+  {@/each}
+</script>
+
+<div class="jbolt_table_toolbar" id="qcformtableparam_split_toolbar_#(pageId)">
+  <div class="col-md-l pt-2" role="group" aria-label="btn-group">
+      <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
+  </div>
+</div>
+<input hidden id="jbolt_table_qcformtableparam_split_input" value="#(pageId)">
+<table id="jbolt_table_qcformtableparam_split_#(pageId)" class="table-center jbolt_table thead_font_normal dictionaryTypes" data-jbolttable data-column-resize="true"
+       data-rowtpl="QcFormTableParam_tpl_#(pageId)"
+       data-column-prepend="1:checkbox"
+       data-toolbar="qcformtableparam_split_toolbar_#(pageId)"
+       data-width="auto"
+       data-height="auto"
+       data-editable="true"
+       data-editable-option="getqcformtableparamTableOptions_split"
+>
+  <thead>
+  <tr>
+    <th data-width="60" data-column="index">项次</th>
+    #for(data:columns??)
+    <th data-width="200" data-column="#(data.iqcitemid??)">
+      #(data.cqcitemname??)
+    </th>
+    #end
+    <th hidden data-column="iseq">次序</th>
+    <th data-width="120" data-column="iType">参数录入方式</th>
+    #for(data:dataList??)
+    #if(data.itype==1)
+    <th data-width="120" data-column="iStdVal">标准值</th>
+    <th data-width="120" data-column="iMaxVal">最大设定值</th>
+    <th data-width="120" data-column="iMinVal">最小设定值</th>
+    #end
+    #end
+    <th data-width="200" data-column="cValue">结果</th>
+  </tr>
+  </thead>
+  <tbody>
+  #for(data:dataList??)
+  <tr data-id="#(data.iautoid??)">
+    <td>
+      #(for.count)
+    </td>
+    #for(item:data.compares??)
+    <td >
+      <input disabled type="text" autocomplete="off"  class="form-control" name="cProdParamName" value="#(item.cProdParamName??)">
+      <input hidden type="text" autocomplete="off"  class="form-control" name="ProdParamid" value="#(item.ProdParamid??)">
+      <input hidden type="text" autocomplete="off"  class="form-control" name="prodformtableparamid" value="#(item.iAutoId??)">
+    </td>
+    #end
+    <td hidden>
+      <input disabled type="text" autocomplete="off"  class="form-control" name="iseq" value="#(data.iseq??)">
+    </td>
+    <td>
+      <select disabled class="form-control" name="itype" data-url="admin/dictionary/options?key=rcvDocQcFormd_itype" data-autoload data-rule="required"
+              data-text="=请选择=" data-value-attr="sn" data-select="#(data.itype??)"></select>
+    </td>
+
+   #if(data.itype==1)
+    <td>
+      <input type="text" autocomplete="off"  class="form-control" data-rule="number" data-notnull="false"  maxlength="10" name="istdval" value="#(data.istdval??)">
+    </td>
+    <td>
+      <input type="text" autocomplete="off"  class="form-control" data-rule="number" data-notnull="false"  maxlength="10" name="imaxval" value="#(data.imaxval??)">
+    </td>
+    <td>
+      <input type="text" autocomplete="off"  class="form-control" data-rule="number"  data-notnull="false"  maxlength="10" name="iminval" value="#(data.iminval??)">
+    </td>
+    #end
+    #if(data.itype==2)
+    <td>
+      <input type="text" autocomplete="off"   disabled  class="form-control"  name="cvalue" value="#(data.cvalue??)">
+    </td>
+    #end
+    #if(data.itype==3)
+    <td>
+      √ <input autocomplete="off"  #if(readonly) disabled #end   type="radio" name="cvalue1" value="1">
+      / <input autocomplete="off"   #if(readonly) disabled #end  type="radio" name="cvalue2" value="2">
+      × <input autocomplete="off"   #if(readonly) disabled #end type="radio" name="cvalue3" value="3">
+      △ <input autocomplete="off"  #if(readonly) disabled #end  type="radio" name="cvalue4" value="3">
+      ◎ <input autocomplete="off"   #if(readonly) disabled #end type="radio" name="cvalue5" value="3">
+
+      </td>
+    #end
+    #if(data.itype==4)
+
+    #end
+    #if(data.itype==5)
+    #end
+    #if(data.itype==6)
+    #end
+    #if(data.itype==7)
+    #end
+    #if(data.itype==8)
+    #end
+
+  </tr>
+  #end
+  </tbody>
+</table>
