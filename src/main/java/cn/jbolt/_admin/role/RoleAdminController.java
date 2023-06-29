@@ -116,7 +116,7 @@ public class RoleAdminController extends JBoltBaseController {
         renderJsonData(service.paginateUserAndRoleDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
-
+    @UnCheck
 	public void autocomplete(){
 		renderJsonData(service.autocomplete(getKv()));
 	}

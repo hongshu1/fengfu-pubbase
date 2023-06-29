@@ -5,6 +5,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.FormField;
@@ -117,6 +118,7 @@ public class FormFieldAdminController extends BaseAdminController {
         render("_mgr.html");
     }
 
+    @UnCheck
     public void autocomplete() {
         renderJsonData(service.getAutocompleteList(getLong("iformid"), get("isimportfield"), getKeywords(), getInt("limit", 10)));
     }
