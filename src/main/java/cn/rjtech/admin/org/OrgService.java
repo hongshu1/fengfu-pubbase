@@ -8,7 +8,7 @@ import cn.jbolt.core.enumutil.JBoltEnableEnum;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.model.Org;
-import cn.rjtech.base.service.BaseService;
+import cn.jbolt.core.service.base.BaseService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;

@@ -2,6 +2,7 @@ package cn.jbolt._admin.dictionary;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
@@ -37,6 +38,7 @@ public class DictionaryTypeAdminController extends JBoltBaseController {
 	/**
 	 * 管理页面分页读取数据源
 	 */
+    @UnCheck
 	public void datas(){
 		renderJsonData(service.paginateByKeywords("id","desc", getPageNumber(), getPageSize(JBoltPageSize.PAGESIZE_ADMIN_LIST_15), getKeywords(), "name,type_key", Okv.by("enable",getBoolean("enable",true))));
 	}

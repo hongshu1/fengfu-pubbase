@@ -148,7 +148,6 @@
             }
 
             var tableData = getTableData();
-
             if (!tableData || tableData.length ==0){
                 LayerMsgBox.alert("表格录入方式数据不能为空",2);
                 return;
@@ -217,7 +216,6 @@
 
         function getFormItemCodes() {
             const dataList = jboltTableGetAllDatas('#jbolt_table_QcFormItem_split', ['iqcitemid']);
-            console.log(JSON.stringify(dataList))
             let FormItemCodes = '';
             if (isOk(dataList)) {
                 dataList.forEach((value, index) => {
@@ -322,6 +320,9 @@
 
         function updateItemParamSeq(isRefresh){
             var datas = jboltTableGetAllDatas('#jbolt_table_prod_qcformparam_split');
+            console.log(datas)
+            console.log(JSON.stringify(datas))
+            console.log(6666)
             if (isNotEmpty(datas)){
                 setItemParamSeq('#jbolt_table_prod_qcformparam_split', datas, itemSort('#jbolt_table_QcFormItem_split'), isRefresh);
             }
@@ -403,7 +404,6 @@
         function setTableJsonStr() {
             var itemSortData = itemSort('#jbolt_table_QcFormItem_split');
             var itemParamTableData = jboltTableGetAllDatas('#jbolt_table_prod_qcformparam_split');
-
             if (isEmpty(itemSortData)){
                 itemSortData = [];
             }
@@ -432,6 +432,8 @@
         function getTableData() {
             var pageId = $("#jbolt_table_qcformtableparam_split_input").val();
             var tableParamTableData = $('#jbolt_table_qcformtableparam_split_'+pageId);
+            console.log(6666);
+            console.log(JSON.stringify(tableParamTableData)+6666);
             var rows = [];
             tableParamTableData.children("tbody").children("tr").each(function () {
                 var row = {};

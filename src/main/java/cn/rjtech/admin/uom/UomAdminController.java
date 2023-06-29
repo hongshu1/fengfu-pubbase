@@ -49,6 +49,7 @@ public class UomAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         String uomclassid = get("uomclassid");
         if (notOk(uomclassid)) {

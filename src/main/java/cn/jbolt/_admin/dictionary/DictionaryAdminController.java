@@ -37,6 +37,7 @@ public class DictionaryAdminController extends JBoltBaseController {
 	private DictionaryService service;
 	@Inject
 	private DictionaryTypeService dictionaryTypeService;
+    @UnCheck
 	public void datas(){
 		Long typeId = getLong("typeId");
 		DictionaryType type = dictionaryTypeService.findById(typeId);

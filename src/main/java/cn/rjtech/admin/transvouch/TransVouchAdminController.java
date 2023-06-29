@@ -42,6 +42,7 @@ public class TransVouchAdminController extends BaseAdminController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		Kv kv =new Kv();
 		kv.setIfNotNull("selectparam", get("billno"));
