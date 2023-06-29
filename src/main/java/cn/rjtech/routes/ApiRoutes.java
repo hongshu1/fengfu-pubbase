@@ -19,6 +19,7 @@ import cn.rjtech.api.rcvdocqcformm.RcvDocQcFormMApiController;
 import cn.rjtech.api.stockoutdefect.StockoutDefectApiController;
 import cn.rjtech.api.stockoutqcformm.StockOutQcFormMApiController;
 import cn.rjtech.api.upload.UploadApiController;
+import cn.rjtech.api.uptimem.UptimeMApiController;
 import cn.rjtech.api.user.UserApiController;
 import cn.rjtech.api.workregion.WorkRegionmApiController;
 import cn.rjtech.common.CommonApiController;
@@ -66,6 +67,8 @@ public class ApiRoutes extends Routes {
         this.add("/api/momoroutingconfigoperation", MoMoroutingconfigOperationApiController.class);
         //补焊记录
         this.add("/api/momopatchweldm", MoMopatchweldmApiController.class);
+        //稼动时间管理
+        this.add("/api/uptimem", UptimeMApiController.class);
 
     }
 
