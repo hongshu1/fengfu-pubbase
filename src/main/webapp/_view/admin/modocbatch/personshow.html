@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
 <style>
     .spread-container {
-        height:75.5vh;
+        height:76.5vh;
     }
 
     .gc-statusbar {
@@ -154,6 +154,7 @@
     }
     .popup-layer{
         width:100%;
+        height:330px;
         overflow-y: scroll;
     }
     .hide{
@@ -204,30 +205,6 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
-    <div class="jbolt_page_title">
-        <!-- 头部标题开始 -->
-        <nav>
-            <p class="nav_title">制造工单人员安排</p>
-        </nav>
-        <!-- 头部标题结束 -->
-        <!-- 搜索工具类开始 -->
-        <div class="search">
-            <div class="select">
-                <div class="select">
-                    <span>日期:</span>
-                    <input style="width:150px;height:20px;" id="cinvcode1" disabled/>
-                    <input style="width:150px;height:20px;" id="cinvcode2" disabled/>
-                </div>
-            </div>
-            <div class="select">
-                <div class="select">
-                    <span>生产部门:</span>
-                    <input style="width:150px;height:20px;" id="cinvcode3" disabled/>
-                </div>
-            </div>
-        </div>
-        <!-- 搜索工具类结束 -->
-    </div>
     <div class="jbolt_page_content">
         <div class="sample-container">
             <!-- 表格 -->
@@ -235,9 +212,6 @@
                 <!-- 表格工具开始 -->
                 <div class="but_box">
                     <button class="button" lay-on="test-tips-prompt-0">数据导出</button>
-                    <button class="button" id="loadExcel">数据导入</button>
-                    <button class="button">保存</button>
-                    <button class="button">提交审批</button>
                 </div>
                 <!-- 创建表格目标DOM元素，id为ss的HTML -->
                 <div id="ss" class="spread-container"></div>
@@ -278,7 +252,6 @@
                     </table>
                 </div>
             </div>
-            <div id="demo-laypage-limits"></div>
             <div class="dialog-footer">
                 <button class="dialog-btn dialog-btn-cancel" id="dialog-btn-cancel">取消</button>
                 <button class="dialog-btn dialog-btn-ok" id="dialog-btn-ok" onClick="dialogBtnOk()">确定</button>
@@ -305,6 +278,9 @@
 <script type="text/javascript" src="assets/plugins/Grape/FileSaver.min.js"></script>
 <script type="text/javascript">
     let taskId = ("#(taskId??)");//界面id
+    hideParentLayerDialogBtn(1);
+    hideParentLayerDialogBtn(0);
+
     var Api = '/';//公共接口
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1});
     var excelIo = new GC.Spread.Excel.IO();//开启导入导出api
@@ -331,6 +307,8 @@
         sheBeiName:"",          //接收当前行的设备name
         gonXuName:"",           //接收当前行的工序name
         keHuCode:"",            //接收当前行的客户编码
+        editCellValue:[],       //存储要保存的数据
+        pageSize:10,            //选择人员分页请求条数
     };
     var parmsArr = [Object.assign({},parmsDefault)];
     //添加属性
@@ -344,6 +322,7 @@
     loadInit();
     initData();
     initDate();
+
     /**
      * 初始化产线数据
      * @param loadInit
@@ -398,91 +377,8 @@
         var cell = sheet.getCell(row,col);
         if(sheet.options.isProtected == true && cell.locked() == true) {
             LayerMsgBox.error("禁止修改",1000);
-            parms['cellRow'] = row;
-            parms['cellCol'] = col;
         }
     });
-    //人员搜索事件
-    function userSearch(){
-        let value = $(".layui-input").val();
-    }
-    //双击单元格事件
-    sheet.bind(GC.Spread.Sheets.Events.CellDoubleClick, function (sender, args) {
-        let {row,col} = args;
-        if(row==parms['cellRow']&&col==parms['cellCol']){
-            return;
-        }else{
-            let rowData = sheet.getArray(row,0, 1, sheet.getColumnCount());//获取当前行数据
-            let colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取当前列数据
-            parms.sheBeiName = rowData[0][5];//当前行的设备name
-            parms.gonXuName = rowData[0][6];//当前行的工序name
-            parms.keHuCode = rowData[0][7];//当前行的客户编码
-            parms.editCellValueObj = {
-                data:colData[1][0],//当前单元格所在年月日
-                plan:colData[3][0],//排班(1S,2S)
-                codeKehu:rowData[0][7],//当前物品的存货编码
-                sheBeiid:"",//设备id
-                gonXuid:"",//工序id
-                renYuanid:[]//人员id
-            }
-            parms.cellRowOk = row;
-            parms.cellColOk = col;
-            showDialog();
-        }
-    });
-    function getUserData() {
-        let pageCount=1;
-        let pageSize=10;
-        //获取弹框人员数据
-        function fetchData() {
-            let url = Api+`admin/modocbatch/getUserDatas?pageNumber=${pageCount}&pageSize=${pageSize}`;
-            $.ajax({
-                url,
-                type:'post',
-                dataType:'json',
-                success:function (res){
-                    var str = "";
-                    for (var i = 0; i < res.data.list.length; i++) {
-                        str += `<tr>
-                                <td align='center'><input type="checkbox" class="checkbox" onChange="selectCheckboxs(event,${i})"></td>
-                                <td class="hide">${res.data.list[i].iautoid}</td>
-                                <td>${res.data.list[i].cpsnnum}</td>
-                                <td>${res.data.list[i].cpsnname}</td>
-                                <td>${res.data.list[i].cpsnmobilephone}</td>
-                                <td>${res.data.list[i].cdepname}</td>
-                               </tr>`;
-                    }
-                    $("#layer_tr").html(str);
-                    //处理分页数据
-                    layui.use(function(){
-                        let laypage = layui.laypage;
-                        // 自定义每页条数的选择项
-                        laypage.render({
-                            elem: 'demo-laypage-limits',
-                            count:res.data.totalRow,
-                            limit: pageCount,
-                            limits: [1,10, 20, 30,40,50,100,200],
-                            layout: ['count','prev', 'page', 'next', 'limit'],
-                            jump: function(obj, first){
-                                if(obj.curr!=pageCount){
-                                    pageCount = obj.curr; // 得到当前页，以便向服务端请求对应页的数据。
-                                }
-                                if(obj.limit!=pageSize){
-                                    pageSize = obj.limit; // 得到每页显示的条数
-                                }
-                                if (!first) { // 判断是否为首次加载，避免重复请求
-                                    fetchData(); // 数据发生改变时重新请求
-                                }
-                            }
-                        });
-                    });
-                },error: function(error) {
-                    console.log(error);
-                }
-            });
-        }
-        fetchData(); // 初始化时请求数据
-    }
     /**
      * 获取接口返回的日期数据
      * @param initDate
@@ -497,18 +393,12 @@
             dataType:'json',
             success:function (respons){
                 let tableHeadArray = respons.data.datas;
+                parms['tableHeadArray'] = respons.data.datas;
                 spreadSuspend();//暂停绘制
-                //渲染头部数据
-                let startDate = document.getElementById("cinvcode1");
-                startDate.value=respons.data.startdate;
-                let endDate = document.getElementById("cinvcode2");
-                endDate.value=respons.data.stopdate;
-                let depname = document.getElementById("cinvcode3");
-                depname.value=respons.data.depname;
                 //渲染日期班次
-                let dateCol = 8;
+                let dateCol = 9;
                 let dateRow = 0;
-                let colSpan = 6;
+                let colSpan = 7;
                 spread.getActiveSheet().setRowVisible(1, false);//隐藏第2行
                 for (let i = 0; i < tableHeadArray.length; i++) {
                     for (let j = 0; j < tableHeadArray[i].length; j++) {
@@ -542,7 +432,7 @@
         sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
         sheet.options.protectionOptions.allowSelectLockedCells = true; // 允许选择锁定单元格
         sheet.options.protectionOptions.allowSelectUnlockedCells = true; // 允许选择非锁定单元格
-        let url = `admin/modocbatch/getModocStaffEditorDatas?taskid=1668495051179982848`
+        let url = `admin/modocbatch/getModocStaffEditorDatas?taskid=${taskId}`
         LayerMsgBox.loading("正在获取最新数据...",20000);
         $.ajax({
             url,
@@ -552,7 +442,6 @@
                 LayerMsgBox.closeLoading();
                 const jsonData = respons;
                 parms['pageData'] = respons.data;
-                console.log(jsonData)
                 spreadSuspend();//暂停绘制
                 let rowIndex = 4;
                 let colIndex=0;
@@ -563,12 +452,13 @@
                 parms.activeSheet.setColumnWidth(1, 150);//设置指定单元格的width
                 parms.activeSheet.setColumnWidth(2, 100);//设置指定单元格的width
                 parms.activeSheet.setColumnWidth(3, 150);//设置指定单元格的width
-                parms.activeSheet.setColumnWidth(4, 150);//设置指定单元格的width
+                parms.activeSheet.setColumnWidth(4, 300);//设置指定单元格的width
                 let codeRow = 4;//隐藏的存货编码起始渲染列下标
                 let leg=4;//接收上一次数组的长度
                 let jsonDataLength = 0;
+                sheet.setColumnVisible(7, false);//隐藏第7列
+                sheet.setColumnVisible(8, false);//隐藏第8列
                 for (let i = 0; i <jsonData.data.length-3; i++) {
-                    sheet.setColumnVisible(7, false);//隐藏第9列
                     //设置第9列数据
                     for (let s = 0; s < jsonData.data[i].rowdatas.length; s++) {
                         sheet.setValue(codeRow+s, 7, jsonData.data[i].cinvcode);
@@ -623,21 +513,12 @@
                             //设置工作安排统计区域value
                             //设备名称
                             sheet.setValue(a1+jsonData.data[i].rowdatas.length-4, A,"工单号");
-                            const style_1S = new GC.Spread.Sheets.Style();
-                            style_1S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(a1+jsonData.data[i].rowdatas.length-4, A,style_1S);
                             parms.activeSheet.addSpan(a1+jsonData.data[i].rowdatas.length-4,A,1,2);
                             //
                             sheet.setValue(a1+jsonData.data[i].rowdatas.length-3, A,"生产计划量");
-                            const style_2S = new GC.Spread.Sheets.Style();
-                            style_2S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(a1+jsonData.data[i].rowdatas.length-3, A,style_2S);
                             parms.activeSheet.addSpan(a1+jsonData.data[i].rowdatas.length-3,A,1,2);
                             //
                             sheet.setValue(a1+jsonData.data[i].rowdatas.length-2, A,"小计人数");
-                            const style_3S = new GC.Spread.Sheets.Style();
-                            style_3S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(a1+jsonData.data[i].rowdatas.length-2, A,style_3S);
                             parms.activeSheet.addSpan(a1+jsonData.data[i].rowdatas.length-2,A,1,2);
                             //
                             sheet.setValue(a1+jsonData.data[i].rowdatas.length-1, A,"产线组长");
@@ -646,29 +527,23 @@
                             //设置工作安排统计区域value
                             //设备名称
                             sheet.setValue(rowIndex-jsonData.data[i].rowdatas.length, A,'工单号');
-                            const style_1S = new GC.Spread.Sheets.Style();
-                            style_1S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(rowIndex-jsonData.data[i].rowdatas.length, A,style_1S);
                             parms.activeSheet.addSpan(rowIndex-jsonData.data[i].rowdatas.length,A,1,2);
                             //
                             sheet.setValue(rowIndex-jsonData.data[i].rowdatas.length+1, A,'生产计划量');
-                            const style_2S = new GC.Spread.Sheets.Style();
-                            style_2S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(rowIndex-jsonData.data[i].rowdatas.length+1, A,style_2S);
                             parms.activeSheet.addSpan(rowIndex-jsonData.data[i].rowdatas.length+1,A,1,2);
                             //
                             sheet.setValue(rowIndex-jsonData.data[i].rowdatas.length+2, A,'小计人数');
-                            const style_3S = new GC.Spread.Sheets.Style();
-                            style_3S.backColor = "#F0F0F0";
-                            parms.activeSheet.setStyle(rowIndex-jsonData.data[i].rowdatas.length+2, A,style_3S);
                             parms.activeSheet.addSpan(rowIndex-jsonData.data[i].rowdatas.length+2,A,1,2);
                             //
                             sheet.setValue(rowIndex-jsonData.data[i].rowdatas.length+3, A,'产线组长');
                             parms.activeSheet.addSpan(rowIndex-jsonData.data[i].rowdatas.length+3,A,1,2);
                         }
                         item.user.forEach((it,ind)=>{
-                            parms.activeSheet.setColumnWidth(8+ind, 200);//设置指定单元格的width
-                            sheet.setValue(leg+k, 8+ind,it.personne.psnname);
+                            //渲染第8列的数据（员工类型）
+                            sheet.setValue(leg+k, 8,0);
+                            //
+                            parms.activeSheet.setColumnWidth(9+ind, 200);//设置指定单元格的width
+                            sheet.setValue(leg+k, 9+ind,it.personne.psnname);
                         })
                         //存储当前循环的最后一次length
                         if(k==jsonData.data[i].rowdatas.length-5){
@@ -677,25 +552,28 @@
                     })
                     for (let j = 0; j < jsonData.data[i].rowdatas.slice(-4).length; j++) {
                         for (let l = 0; l < jsonData.data[i].rowdatas.slice(-4)[j].user.length; l++) {
-                            sheet.setValue(leg-4, 8+l,jsonData.data[i].rowdatas.slice(-4)[0].user[l].personne.cmodocno);
-                            sheet.setValue(leg-3, 8+l,jsonData.data[i].rowdatas.slice(-4)[1].user[l].personne.iqty);
-                            sheet.setValue(leg-2, 8+l,jsonData.data[i].rowdatas.slice(-4)[2].user[l].personne.ipersonnum);
-                            sheet.setValue(leg-1, 8+l,jsonData.data[i].rowdatas.slice(-4)[3].user[l].personne.cpsn_name);
+                            sheet.setValue(leg-4, 9+l,jsonData.data[i].rowdatas.slice(-4)[0].user[l].personne.cmodocno);
+                            sheet.setValue(leg-3, 9+l,jsonData.data[i].rowdatas.slice(-4)[1].user[l].personne.iqty);
+                            sheet.setValue(leg-2, 9+l,jsonData.data[i].rowdatas.slice(-4)[2].user[l].personne.ipersonnum);
+                            sheet.setValue(leg-1, 9+l,jsonData.data[i].rowdatas.slice(-4)[3].user[l].personne.cpsn_name);
                         }
                     }
                 }
                 //渲染底部班长其他人员数据
                 for (let i = 0; i < jsonData.data.slice(-3).length; i++) {
                     sheet.setValue(jsonDataLength+4, A,"班长");
-                    const style_1S = new GC.Spread.Sheets.Style();
-                    style_1S.backColor = "#F0F0F0";
-                    parms.activeSheet.setStyle(jsonDataLength+4, A,style_1S);
                     parms.activeSheet.addSpan(jsonDataLength+4,A,1,2);
                     //
+                    sheet.setValue(jsonDataLength+4+1, A,"其余人员1");
+                    parms.activeSheet.addSpan(jsonDataLength+4+1,A,1,2);
+                    //
+                    sheet.setValue(jsonDataLength+4+2, A,"其余人员2");
+                    parms.activeSheet.addSpan(jsonDataLength+4+2,A,1,2);
+                    //
                     for (let j = 0; j < jsonData.data.slice(-3)[i].rowdatas[0].user.length; j++) {
-                        sheet.setValue(jsonDataLength+4, 8+j,jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.cpsn_name);
-                        sheet.setValue(jsonDataLength+4+1, 8+j,jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.itype);
-                        sheet.setValue(jsonDataLength+4+2, 8+j,jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.itype);
+                        sheet.setValue(jsonDataLength+4, 9+j,jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.cpsn_name);
+                        sheet.setValue(jsonDataLength+4+1, 9+j,jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.cpsn_name);
+                        sheet.setValue(jsonDataLength+4+2, 9+j,jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.cpsn_name);
                     }
                 }
                 spreadResume();// 恢复绘制
@@ -704,154 +582,18 @@
             }
         })
     }
-
-    //给排产弹窗添加一个滑动区域，避免数据太长而造成样式崩塌
-    const myTable = document.getElementById('popup_table');
-    const tableContainer = document.getElementById('popup-layer');
-    // 添加滚动事件处理程序
-    tableContainer.addEventListener('scroll', function() {
-        // 获取表头元素
-        const tableHeader = myTable.querySelector('thead');
-    });
-
-    // 获取全选按钮和所有复选框
-    const checkboxes = document.getElementsByClassName('checkbox');
-    /**
-     * @param selectAllCheckboxs 全选按钮的事件监听器
-     * @param v 点击事件源
-     */
-    function selectAllCheckboxs(v) {
-        // 如果全选按钮为选中状态
-        if (v.target.checked) {
-            // 遍历所有复选框，将它们的状态设置为选中
-            for (let i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].checked = true;
-            }
-        } else {
-            // 遍历除全选按钮外的其他复选框，将它们的状态保持不变
-            for (let i = 0; i < checkboxes.length; i++) {
-                // 如果全选按钮为非选中状态
-                if (checkboxes[i].checked==true) {
-                    checkboxes[i].checked = false;
-                }
-            }
-        }
-        const allCheckbox = document.getElementById('selectAll');//获取全选按钮节点
-        const rows = document.querySelectorAll('tbody tr');//获取所有tr
-        const data = [];
-        if (allCheckbox.checked) {
-            for (let i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].checked) {
-                    const rowData = Array.from(rows[i].querySelectorAll('td')).map(td => td.textContent);
-                    const obj = {
-                        iautoid: rowData[1], // 部门名称
-                        cpsnname: rowData[3] // 人员名称
-                    };
-                    data.push(obj);
-                }
-            }
-        }else{
-            //不全选则清空数组
-            parms['tableData'].length=0;
-        }
-        // 检查对象是否为空
-        if (data.length > 0) {
-            parms['tableData']=data;
-        }
-    };
-    /**
-     * @param selectCheckboxs 复选框的事件监听器
-     * @param e 点击事件源
-     * @param index 当前点击数据下标
-     */
-    function selectCheckboxs(e,index){
-        const allCheckbox = document.getElementById('selectAll');
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]'); // 获取所有复选框
-        let data = []; // 用于存储每次获取到的值
-        //遍历所有checkbox状态
-        for (let i = 0; i < checkboxes.length; i++) {
-            let allChecked = false;
-            let obj = {};
-            for (let j = 0; j < checkboxes.length; j++) {
-                // 检查是否有任何一个复选框未被选中
-                if(checkboxes[i].checked==false){
-                    checkboxes[i].checked = false;
-                }else{
-                    //检查按钮是否全部都已选中
-                    if(Array.from(checkboxes).every(item => item.checked==true)){
-                        allChecked=true;//设置全选按钮为选中状态
-                    }else{
-                        allChecked=false;//设置全选按钮为不选中状态
-                        let rowData = Array.from(checkboxes[i].closest('tr').querySelectorAll('td')).map(td => td.textContent);//获取当前点击的行数据
-                        obj.iautoid = rowData[1]; // 部门名称
-                        obj.cpsnname = rowData[3]; // 人员名称
-                    }
-                }
-            }
-            // 检查对象是否为空
-            if (Object.keys(obj).length !== 0) {
-                data.push(obj); // 将对象推送到数组中
-                parms['tableData']=data;
-            }
-            // 更新全选按钮的状态
-            allCheckbox.checked = allChecked;
-        }
-    }
     // 获取Dialog元素
     var dialogMask = document.getElementById("dialog-mask");
     var dialogClose = document.getElementById("dialog-close");
     var dialogBtnCancel = document.getElementById("dialog-btn-cancel");
     /**
-     * @param dialogBtnOk 编辑人员确定事件
-     */
-    function dialogBtnOk(){
-        let str = "";
-        let names = parms['tableData'].map(obj => obj.cpsnname); // 使用map方法获取所有name属性的值
-        if (names.length > 0) {
-            str = names.length === 1 ? names[0] : names.join('/');
-        }
-        sheet.setValue(parms.cellRowOk, parms.cellColOk, str);
-        let id = parms['tableData'].map(obj => obj.iautoid); // 使用map方法获取所有name属性的值
-        hideDialog();
-        getArrayCellRow(id);//人员编辑点击确定查找对应设备工序id方法
-    }
-    /**
-     * 人员编辑点击确定查找对应设备工序id事件
-     * @param getArrayCellRow {Function}
-     */
-    function getArrayCellRow(id){
-        let productionLineObj = parms['pageData'].slice(0,parms['pageData'].length-3).find((v,i)=>v.cinvcode==parms.keHuCode);//查找到当前产线对象
-        let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
-        parms.editCellValueObj.gonXuid=sheBeigonXuObj.cequipment.iequipmentid;//工序id
-        parms.editCellValueObj.sheBeiid=sheBeigonXuObj.coperation.ioperationid;//设备id
-        id.forEach((arr)=>{
-            parms.editCellValueObj.renYuanid.push(arr)
-        })
-        console.log(parms.editCellValueObj)
-    }
-    /**
-     *
-     * @param closeDialog {Function} 关闭Dialog事件
+     * 关闭Dialog事件
+     * @param closeDialog
      * @param e {Object} 点击事件源
      * @param index {Number} 当前点击数据下标
      */
     function closeDialog() {
-        parms['tableData'] = Array.from([]);
         hideDialog();
-    }
-    /**
-     * @param showDialog 显示Dialog
-     */
-    function showDialog() {
-        dialogMask.style.display = "block";
-        parms['tableData'] = Array.from([]);
-        getUserData();//人员数据接口
-    }
-    /**
-     * @param hideDialog 隐藏Dialog
-     */
-    function hideDialog() {
-        dialogMask.style.display = "none";
     }
 
     // 绑定事件
@@ -864,13 +606,17 @@
         util.on('lay-on', {
             'test-tips-prompt-0': function(){
                 layer.prompt({title: '请输入文本'}, function(value, index, elem){
-                    console.log(index)
                     if(value === '') return elem.focus();
-                    if(index==100002){
-                        var json = spread.toJSON();//转为json格式
-                        excelIo.save(json, function (blob) {
-                            saveAs(blob, value+'.xlsx');//转成xlsx
-                        });
+                    if(index){
+                        if(parms.editCellValue.length>0){
+                            LayerMsgBox.error('有数据未保存，请保存后在重试',1500);
+                        }else{
+                            // 导出表格
+                            var json = spread.toJSON();//转为json格式
+                            excelIo.save(json, function (blob) {
+                                saveAs(blob, value+'.xlsx');//转成xlsx
+                            });
+                        }
                     }
                     // 关闭 prompt
                     layer.close(index);
@@ -878,28 +624,6 @@
             }
         })
     });
-    /**
-     * 确定导入文件
-     * @param importSubmit
-     */
-    function importSubmit() {
-        var excelFile = document.getElementById("fileDemo").files[0];//获取用户上传文件
-        excelIo.open(excelFile, function (json) {
-            var workbookObj = json;
-            spread.fromJSON(workbookObj);
-        }, function (e) {
-            alert(e.errorMessage);
-        });
-        hidePopup();
-    }
-    /**
-     * 数据导入
-     * @param loadExcel 按钮节点
-     */
-    document.getElementById('loadExcel').onclick = function () {
-        document.getElementById("overlay").style.display = "block";
-        document.getElementById("popup1").style.display = "block";
-    };
     /**
      * 隐藏数据导出弹出框
      * @param hidePopup
