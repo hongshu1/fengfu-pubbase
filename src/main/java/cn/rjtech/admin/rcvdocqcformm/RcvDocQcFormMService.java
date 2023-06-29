@@ -45,6 +45,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jxls.util.Util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -684,11 +685,22 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         rcvDocQcFormMRecord.set("columnNameList", columnNames);//项目列名
 
         byte[] imageBytes = null;
-        String cpics = JBoltConfig.BASE_UPLOAD_PATH_PRE + StrUtil.SLASH + rcvDocQcFormMRecord.getStr("cpics");
-        FileInputStream fileInputStream = new FileInputStream(cpics);
-        if (fileInputStream != null) {
-            imageBytes = Util.toByteArray(fileInputStream);
+        if (StrUtil.isNotBlank(rcvDocQcFormMRecord.getStr("cpics"))) {
+            String cpics = JBoltConfig.BASE_UPLOAD_PATH_PRE + StrUtil.SLASH + rcvDocQcFormMRecord.getStr("cpics");
+            File file = new File(cpics);
+            if (file.exists()) {
+                File[] files = file.listFiles();
+                for (File file1 : files) {
+                    String name = file1.getName();
+                    System.out.println(name);
+                }
+                FileInputStream fileInputStream = new FileInputStream(cpics);
+                if (fileInputStream != null) {
+                    imageBytes = Util.toByteArray(fileInputStream);
+                }
+            }
         }
+        rcvDocQcFormMRecord.set("cpics", imageBytes == null ? "" : imageBytes);
 
         rcvDocQcFormMRecord.set("cpics", imageBytes);
         commPageMethod2(recordList, rcvDocQcFormMRecord, pages, sheetNames);

@@ -180,8 +180,8 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
     /*
      * 导出详情页
      * */
-    public void exportExcel() throws Exception {
+    public void exportExcel() throws Exception{
         Kv kv = service.getExportData(getLong(0));//instaockqcformm
-        renderJxls("stockoutqcformm.xlsx", kv, "出库检_" + DateUtil.today() + "_成绩表.xlsx");
+        renderJxls("stockoutqcformm.xlsx", kv, "出货检_" + DateUtil.today() + "_成绩表.xlsx");
     }
 }

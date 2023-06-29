@@ -10,7 +10,12 @@ SELECT t1.*,
     t4.cEquipmentName,
     t5.cUomCode,t5.cUomName,
     t6.cpics,t6.ctypeids,t6.ctypenames,
-    t7.cversion
+    t7.cversion,
+    statusname =
+       CASE WHEN t1.istatus=0 THEN '未有检查表'
+            WHEN t1.istatus=1 THEN '待检'
+            WHEN t1.istatus=2 THEN '不合格'
+            WHEN t1.istatus=3 THEN '合格' END
 FROM PL_InStockQcFormM t1
     left JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
     LEFT JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId

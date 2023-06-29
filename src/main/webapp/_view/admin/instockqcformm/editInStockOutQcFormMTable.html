@@ -2,6 +2,34 @@
 #define main()
 <div class="jbolt_page">
   <div class="jbolt_page_content">
+    <form onsubmit="return false;" id="stockoutcheckdetail_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
+      #if(record.iautoid??)
+      <input type="hidden" name="record.iautoid" value="#(record.iautoid??)"/>
+      #end
+
+      <h3>检验信息</h3>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">检验单号：</label>
+        <div class="col-sm-2 col-form-label">
+          #(record.cinvqcformno??)
+        </div>
+        <label class="col-sm-2 col-form-label">检验表格名称：</label>
+        <div class="col-sm-2 col-form-label">
+          #(record.cqcformname??)
+        </div>
+        <label class="col-sm-2 col-form-label">检验结果：</label>
+        <div class="col-sm-2 col-form-label">
+          #(record.statusname??)
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">创建时间：</label>
+        <div class="col-sm-2 col-form-label">
+          #(record.dcreatetime??)
+        </div>
+      </div>
+    </form>
     <form onsubmit="return false;" id="instockqcformmform_#(pageId)" data-pjaxsubmit action="#(action)" method="post">
       #if(record.iautoid??)
       <input type="hidden" name="record.iautoid" value="#(record.iautoid??)"/>
@@ -131,7 +159,7 @@
               <input name="cA${value.name}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
                      class="form-control cA01" placeholder="结束日期" data-tips="结束时间" maxlength="23"
                      value="${value.cvalue}">
-              {@else data.itype == '8'}
+              {@else if data.itype == '8'}
               <input name="cA${value.name}" type="text" class="form-control cA01" data-date data-type="time" data-fmt="HH:mm:ss"
                      value="${value.cvalue}">
               {@/if}

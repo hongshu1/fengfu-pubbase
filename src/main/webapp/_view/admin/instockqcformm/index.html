@@ -127,12 +127,7 @@
          disabled="disabled" disabled style="opacity:0.5">编辑</a>
     {@/if}
   </td>
-  <td>
-    {@if data.istatus==0}<span>未有检查表</span>{@/if}
-    {@if data.istatus==1}<span>待检</span>{@/if}
-    {@if data.istatus==2}<span>不合格</span>{@/if}
-    {@if data.istatus==3}<span>合格</span>{@/if}
-  </td>
+  <td>${data.statusname}</td>
   <td>
      {@if data.iscompleted==0}<span>未完成</span>{@/if}
     {@if data.iscompleted==1}<span>已完成</span>{@/if}
@@ -168,7 +163,7 @@
       <tr>
         <th data-width="60" data-column="index">序号</th>
         <th data-width="150">操作</th>
-        <th data-width="150" data-column="istatus">检验结果</th><!--0. 未生成 1. 待检 2. 不合格 3. 合格-->
+        <th data-width="150" data-column="statusname">检验结果</th><!--0. 未生成 1. 待检 2. 不合格 3. 合格-->
         <th data-width="150" data-column="iscompleted">状态</th>
         <th data-width="180" data-column="cinvqcformno">检验单号</th>
         <th data-width="180" data-column="cQcFormName">检验表格名称</th>

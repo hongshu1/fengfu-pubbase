@@ -3,6 +3,7 @@ package cn.rjtech.admin.stockoutqcformm;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -15,6 +16,7 @@ import cn.rjtech.admin.inventoryqcform.InventoryQcFormService;
 import cn.rjtech.admin.qcform.QcFormService;
 import cn.rjtech.admin.qcformparam.QcFormParamService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
+import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService.ParamName;
 import cn.rjtech.admin.stockoutdefect.StockoutDefectService;
 import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
 import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
@@ -30,6 +32,7 @@ import cn.rjtech.model.momdata.StockoutqcformdLine;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.excel.SheetPage;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
@@ -38,8 +41,12 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jxls.util.Util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -139,6 +146,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         stockoutQcFormM.setIStatus(1);
         stockoutQcFormM.setCUpdateName(JBoltUserKit.getUserName());
         stockoutQcFormM.setDUpdateTime(new Date());
+        stockoutQcFormM.setCStockoutQcFormNo(JBoltSnowflakeKit.me.nextIdStr());//检验单号
         stockoutQcFormM.setIUpdateBy(JBoltUserKit.getUserId());
 
         List<StockoutQcFormD> formDList = new ArrayList<>();
@@ -179,8 +187,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
      * 加载详情table的数据
      * */
     public List<Record> getTableDatas(Kv kv) {
-        List<Record> recordList = rcvDocQcFormMService
-            .clearZero(dbTemplate("stockoutqcformm.getStockoutQcFormDByMasid", kv).find());
+        List<Record> recordList = clearZero(dbTemplate("stockoutqcformm.getStockoutQcFormDByMasid", kv).find());
         for (Record record : recordList) {
             kv.set("iqcformid", record.get("iqcformid"));
             kv.set("iqcformtableparamid", record.get("iformparamid"));
@@ -244,7 +251,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         Boolean result = achieveSerializeSubmitList(JboltPara.getJSONArray("serializeSubmitList"), istockoutqcformid,
             JboltPara.getString("cmeasurepurpose"), JboltPara.getString("cmeasurereason"),
             JboltPara.getString("cmeasureunit"), JboltPara.getString("cmemo"),
-            JboltPara.getString("cdcno"), JboltPara.getString("isok"));
+            JboltPara.getString("cdcno"), JboltPara.getString("isok"), JboltPara.getString("cbatchno"));
 
         return ret(result);
     }
@@ -262,14 +269,14 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         Boolean result = achieveSerializeSubmitList(serializeSubmitList, istockoutqcformid,
             JboltPara.getString("cmeasurepurpose"), JboltPara.getString("cmeasurereason"),
             JboltPara.getString("cmeasureunit"), JboltPara.getString("cmemo"),
-            JboltPara.getString("cdcno"), JboltPara.getString("isok"));
+            JboltPara.getString("cdcno"), JboltPara.getString("isok"), JboltPara.getString("cbatchno"));
 
         return ret(result);
     }
 
     public Boolean achieveSerializeSubmitList(JSONArray serializeSubmitList, Long istockoutqcformmid,
                                               String cmeasurepurpose, String cmeasurereason, String cmeasureunit,
-                                              String cmemo, String cdcno, String isok) {
+                                              String cmemo, String cdcno, String isok, String cbatchno) {
         List<StockoutqcformdLine> updateStockoutqcformdLines = new ArrayList<>();
         List<StockoutqcformdLine> saveStockoutqcformdLines = new ArrayList<>();
         boolean tx = tx(() -> {
@@ -308,6 +315,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
 
             //更新主表
             StockoutQcFormM stockoutQcFormM = findById(istockoutqcformmid);
+            stockoutQcFormM.setCBatchNo(cbatchno);
             saveStockoutQcFormmModel(stockoutQcFormM, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
             ValidationUtils.isTrue(stockoutQcFormM.update(), "检验失败！！！");
 
@@ -413,14 +421,20 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
     }
 
     /**
-     * 清除多余的零
+     * 去零
      */
     public List<Record> clearZero(List<Record> recordList) {
-        recordList.stream().forEach(e -> {
-            e.set("istdval", e.getBigDecimal("istdval").stripTrailingZeros().toPlainString());
-            e.set("imaxval", e.getBigDecimal("imaxval").stripTrailingZeros().toPlainString());
-            e.set("iminval", e.getBigDecimal("iminval").stripTrailingZeros().toPlainString());
-        });
+        for (Record record : recordList) {
+            if (record.getBigDecimal("istdval") != null) {
+                record.set("istdval", record.getBigDecimal("istdval").stripTrailingZeros().toPlainString());
+            }
+            if (record.getBigDecimal("imaxval") != null) {
+                record.set("imaxval", record.getBigDecimal("imaxval").stripTrailingZeros().toPlainString());
+            }
+            if (record.getBigDecimal("imaxval") != null) {
+                record.set("iminval", record.getBigDecimal("iminval").stripTrailingZeros().toPlainString());
+            }
+        }
         return recordList;
     }
 
@@ -428,35 +442,127 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
     /*
      * 获取导出数据
      * */
-    public Kv getExportData(Long iautoid) {
+    public Kv getExportData(Long iautoid) throws Exception{
         //1、所有sheet
         List<SheetPage<Record>> pages = new ArrayList<>();
         //2、每个sheet的名字
         List<String> sheetNames = new ArrayList<>();
-        sheetNames.add("sheet1");
-        sheetNames.add("sheet2");
-        sheetNames.add("sheet3");
         //3、主表数据
-        StockoutQcFormM stockoutQcFormM = findById(iautoid);
+        Record stockoutrecord = getCheckoutListByIautoId(iautoid);
         //测定目的
         String cMeasurePurpose = "";
-        String[] split = stockoutQcFormM.getCMeasurePurpose().split(",");
+        String[] split = stockoutrecord.getStr("cmeasurepurpose").split(",");
         for (int i = 0; i < split.length; i++) {
             if (StringUtils.isNotBlank(split[i])) {
                 String text = CMeasurePurposeEnum.toEnum(Integer.valueOf(split[i])).getText();
                 cMeasurePurpose += text + ",";
             }
         }
-        stockoutQcFormM.setCMeasurePurpose(StringUtils.isNotBlank(cMeasurePurpose)
-            ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose);
+        stockoutrecord.set("cmeasurepurpose", StringUtils.isNotBlank(cMeasurePurpose.toString())
+            ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose.toString());
         //4、明细表数据
-//        List<Record> recordList = getonlyseelistByiautoid(Kv.by("iautoid", iautoid));
-        List<Record> recordList = new ArrayList<>();
-        //5、如果cvalue的列数>10行，分多个页签
-        Record data = recordList.get(0);
-        //核心业务逻辑，对列数进行分组
-//        inStockQcFormMService.commonPageMethod(data, recordList, stockoutQcFormM, pages);
+        List<Record> recordList = getTableDatas(Kv.by("istockoutqcformmid", iautoid));
+        List<Map<String, Object>> tableHeadData = rcvDocQcFormMService.getTableHeadData(stockoutrecord.get("iqcformid"));
+        List<ParamName> columnNames = new ArrayList<>();
+        for (int i = 0; i < tableHeadData.size(); i++) {
+            Map<String, Object> map = tableHeadData.get(i);
+            ParamName paramName = new ParamName();
+            paramName.setSeq(i);
+            paramName.setValue(StrUtil.toString((map.get("cqcitemname"))));
+            columnNames.add(paramName);
+        }
+        stockoutrecord.set("columnNameList", columnNames);//项目列名
 
+        byte[] imageBytes = null;
+        if (StrUtil.isNotBlank(stockoutrecord.getStr("cpics"))) {
+            String cpics = JBoltConfig.BASE_UPLOAD_PATH_PRE + StrUtil.SLASH + stockoutrecord.getStr("cpics");
+            File file = new File(cpics);
+            if (file.exists()) {
+                File[] files = file.listFiles();
+                for (File file1 : files) {
+                    String name = file1.getName();
+                    System.out.println(name);
+                }
+                FileInputStream fileInputStream = new FileInputStream(cpics);
+                if (fileInputStream != null) {
+                    imageBytes = Util.toByteArray(fileInputStream);
+                }
+            }
+        }
+        stockoutrecord.set("cpics", imageBytes == null ? "" : imageBytes);
+
+        stockoutrecord.set("cpics", imageBytes);
+        //5、如果cvalue的列数>10行，分多个页签，核心业务逻辑，对列数进行分组
+        commonPageMethod(recordList, stockoutrecord, pages, sheetNames);
         return Kv.by("pages", pages).set("sheetNames", sheetNames);
+    }
+
+    /*来料检、出库检、在库检的公共导出方法*/
+    public void commonPageMethod(List<Record> recordList, Object obj, List<SheetPage<Record>> pages, List<String> sheetNames) {
+        List<List<Object>> partition = ListUtils.partition(objToList(recordList.get(0).getObject("cvaluelist")), 10);
+        for (int i = 0; i < partition.size(); i++) {
+            int iseq = 1;
+            ArrayList<Record> records = new ArrayList<>();
+            for (Record record : recordList) {
+                List<List<Object>> partitionList = ListUtils.partition(objToList(record.getObject("cvaluelist")), 10);
+                List<Object> objects = partitionList.get(i);
+
+                List<StockoutqcformdLine> stockoutqcformdLines = new ArrayList<>();
+                objects.stream().forEach(object -> {
+                    StockoutqcformdLine stockoutqcformdLine = JSON.parseObject(JSON.toJSONString(object), StockoutqcformdLine.class);
+                    stockoutqcformdLines.add(stockoutqcformdLine);
+                });
+                List<String> cvaluelist = stockoutqcformdLines
+                    .stream()
+                    .sorted(Comparator.comparing(StockoutqcformdLine::getISeq))
+                    .map(StockoutqcformdLine::getCValue)
+                    .collect(Collectors.toList());
+                Record childRecord = new Record();
+                childRecord.set("imaxval", record.getStr("imaxval"));
+                childRecord.set("iminval", record.getStr("iminval"));
+                childRecord.set("istdval", record.getStr("istdval"));
+                childRecord.set("itype", record.getStr("itype"));
+                childRecord.set("options", record.getStr("options"));
+                childRecord.set("seq", iseq);
+                childRecord.set("cvaluelist", cvaluelist);
+                List<Object> paramnamelist = objToList(record.get("paramnamelist"));
+                List<ParamName> paramnamelists = new ArrayList<>();
+                for (int o1 = 0; o1 < paramnamelist.size(); o1++) {
+                    ParamName paramName = new ParamName();
+                    paramName.setSeq(o1);
+                    paramName.setValue(StrUtil.toString(paramnamelist.get(o1)));
+                    paramnamelists.add(paramName);
+                }
+                childRecord.set("paramnamelist", paramnamelists); //具体项目名称
+                records.add(childRecord);
+                //
+                iseq++;
+            }
+            //records有项目，每个项目有分组的列值，以10列为一组
+            SheetPage<Record> page = new SheetPage<>();
+            // sheet名称
+            String sheetName = "sheet" + (i + 1);
+            page.setSheetName(sheetName);
+            sheetNames.add(sheetName);
+            // 主表
+            page.setMaster(obj);
+            // 明细
+            page.setDetails(records);
+            pages.add(page);
+        }
+    }
+
+    /*
+     * 将object对象转为list
+     * */
+    public List<Object> objToList(Object obj) {
+        List<Object> list = new ArrayList<Object>();
+        if (obj instanceof ArrayList<?>) {
+            for (Object o : (List<?>) obj) {
+                list.add(o);
+            }
+            return list;
+        }
+        return null;
     }
 }
