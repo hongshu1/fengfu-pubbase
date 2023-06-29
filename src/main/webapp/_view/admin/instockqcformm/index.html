@@ -223,7 +223,7 @@
       return;
     }
 
-    let url = "admin/instockqcformm/findDetailByBarcode?cbarcode=" + cbarcode;
+    let url = "admin/instockqcformm/findDetailByBarcode?cbarcode=" + cbarcode.trim();
     Ajax.get(url, function (res) {
       if (res.state == 'ok') {
         var data = res.data;
