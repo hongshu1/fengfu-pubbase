@@ -291,7 +291,7 @@ public class ProdFormService extends BaseService<ProdForm> {
 	 * @param jBoltTable 编辑表格提交内容
 	 */
 	public Ret QcFormParamJBoltTable(JBoltTable jBoltTable) {
-		SpotCheckForm qcForm = jBoltTable.getFormModel(SpotCheckForm.class, "qcForm");
+		ProdForm qcForm = jBoltTable.getFormModel(ProdForm.class, "prodForm");
 		ValidationUtils.notNull(qcForm, JBoltMsg.PARAM_ERROR);
 
 		Long userId = JBoltUserKit.getUserId();
@@ -504,7 +504,7 @@ public class ProdFormService extends BaseService<ProdForm> {
 		}else if (ObjectUtil.isNotNull(formId)){
 			List<Record> qcFormItemList = getItemCombinedListByPId(Kv.by("iqcformid", formId));
 			List<Record> qcFormParamList = prodFormParamService.getQcFormParamListByPId(formId);
-			Map<Long, List<Record>> itemParamByItemMap = qcFormParamList.stream().collect(Collectors.groupingBy(obj -> obj.getLong("iqcitemid")));
+			Map<Long, List<Record>> itemParamByItemMap = qcFormParamList.stream().collect(Collectors.groupingBy(obj -> obj.getLong("iqcitemid")));//iproditemid 生产ID？？
 			for (Record qcFormItemRecord : qcFormItemList){
 				Long qcItemId = qcFormItemRecord.getLong("iqcitemid");
 				if (itemParamByItemMap.containsKey(qcItemId)){
