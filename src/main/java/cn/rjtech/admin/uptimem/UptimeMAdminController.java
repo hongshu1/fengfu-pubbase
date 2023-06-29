@@ -113,4 +113,23 @@ public class UptimeMAdminController extends BaseAdminController {
 		renderJsonData(service.updateAndSave(getJBoltTable()),"");
 	}
 
+
+
+	//---------------------app----------------------
+	public void getPageList() {
+		int pageNumber = getInt("pageNumber");
+		int pageSize = getInt("pageSize");
+		renderJsonData(service.paginateAdminDatas(pageNumber,pageSize,getKv()));
+	}
+	public void getUptimeTplInfoList() {
+		renderJsonData(service.getUptimeTplInfoList(getKv()));
+	}
+	public void getUptimeMInfoList() {
+		renderJsonData(service.getUptimeMInfoList(getKv()));
+	}
+
+	public void updateAndSaveApi() {
+		renderJsonData(service.updateAndSaveApi(getInt("updateOrSaveType"),get("data"),get("dataList")));
+	}
+
 }

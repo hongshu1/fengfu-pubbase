@@ -11,9 +11,9 @@ import io.github.yedaxia.apidocs.ApiDoc;
 import java.util.Date;
 
 /**
- * 设备点检
+ * 补焊纪录
  *
- * @author Kephon
+ * @author chentao
  */
 @ApiDoc
 public class MoMopatchweldmApiController extends BaseApiController {

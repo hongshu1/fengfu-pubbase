@@ -32,7 +32,7 @@ public class PurchasedCache extends JBoltCache {
      */
     public String getCvenname(String cvencode) {
     	Vendor vendor = vendorRecordService.findByCode(cvencode);
-    	if(vendor != null) return vendor.getCVenCode();
+    	if(vendor != null) return vendor.getCVenName();
     	return null;
     }
 }

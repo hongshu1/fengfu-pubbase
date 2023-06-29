@@ -1,4 +1,4 @@
-package cn.rjtech.admin.momaterialsreturn;
+package cn.rjtech.admin.momaterialsreturnm;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -16,7 +16,7 @@ import com.jfinal.core.Path;
  */
 @CheckPermission(PermissionKey.NONE)
 @UnCheckIfSystemAdmin
-@Path(value = "/admin/momaterialsreturn", viewPath = "/_view/admin/momaterialsreturn")
+@Path(value = "/admin/momaterialsreturnm", viewPath = "/_view/admin/momaterialsreturnm")
 public class MoMaterialsreturnmAdminController extends BaseAdminController {
 
 	@Inject
@@ -140,6 +140,21 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
 		}
 		set("moMaterialsreturnm",moMaterialsreturnm);
 		render("detail.html");
+	}
+
+	/**
+	 * 查询现品票
+	 */
+	public void addBarcode() {
+		renderJsonData(service.getBycBarcodeInfo(get("barcode")));
+	}
+
+	public void getmomaterialscanusedlogList() {
+		renderJsonData(service.getBycBarcodeList());
+	}
+
+	public void saveTableSubmit() {
+		renderJson(service.saveTableSubmit(getJBoltTable()));
 	}
 
 }
