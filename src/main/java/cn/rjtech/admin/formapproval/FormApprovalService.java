@@ -744,47 +744,6 @@ public class FormApprovalService extends BaseService<FormApproval> {
     }
 
     /**
-     * 批量审核通过
-     *
-     * @param formSn      表单
-     * @param formAutoIds 单据IDs
-     * @param preApprove  审批前置工作
-     * @param postApprove 审批后置工作
-     */
-    @Deprecated
-    public void batchApproveByStatus(String formSn, String primaryKeyName, String formAutoIds, ICallbackFunc preApprove, ICallbackFunc postApprove) {
-        for (String iautoid : StrUtil.split(formAutoIds, COMMA, true, true)) {
-            approveByStatus(formSn, primaryKeyName, Long.parseLong(iautoid), preApprove, postApprove);
-        }
-    }
-
-    /**
-     * 审核不通过
-     *
-     * @param formSn     表单
-     * @param formAutoId 单据ID
-     * @param preReject  审批不通过，前置工作
-     * @param postReject 审批不通过，后置工作
-     */
-    @Deprecated
-    public void rejectByStatus(String formSn, String primaryKeyName, Long formAutoId, ICallbackFunc preReject, ICallbackFunc postReject) {
-        Record formData = Db.use(dataSourceConfigName()).findFirst("SELECT * FROM " + formSn + " WHERE iautoid = ? ", formAutoId);
-        ValidationUtils.notNull(formData, "单据不存在");
-        ValidationUtils.isTrue(!formData.getBoolean(IS_DELETED), "单据已被删除");
-        ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不能操作“审批不通过”");
-        ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态");
-
-        String msg = preReject.execute();
-        ValidationUtils.assertBlank(msg, msg);
-
-        // 更新审核通过
-        ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date()), "更新审批状态失败");
-
-        msg = postReject.execute();
-        ValidationUtils.assertBlank(msg, msg);
-    }
-
-    /**
      * 审批通过
      *
      * @param formAutoId     单据ID
@@ -794,8 +753,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * @param isWithinBatch  是否批量审批处理
      * @param remark         审批意见
      */
-    public Ret approve(Long formAutoId, String formSn, int status, String primaryKeyName, String className,
-                       boolean isWithinBatch,String remark) {
+    public Ret approve(Long formAutoId, String formSn, int status, String primaryKeyName, String className, boolean isWithinBatch,String remark) {
         // 查出单据对应的审批流配置
         FormApproval formApproval = findByFormAutoId(formAutoId);
         ValidationUtils.notNull(formApproval, "单据未提交审批！");

@@ -4,9 +4,12 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.prodform.ProdFormService;
 import cn.rjtech.admin.prodformd.ProdFormDService;
@@ -15,23 +18,18 @@ import cn.rjtech.admin.prodformparam.ProdFormParamService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.model.momdata.FormUploadM;
 import cn.rjtech.model.momdata.ProdFormD;
+import cn.rjtech.model.momdata.ProdFormM;
 import cn.rjtech.model.momdata.ProdformdLine;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.ProdFormM;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.template.stat.ast.If;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -446,21 +444,6 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 			ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), prodFormM.getIAuditStatus(), "该记录非待审核状态");
 			formApprovalService.approveByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
 				ValidationUtils.isTrue(updateColumn(iautoid, "iAuditStatus", AuditStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
-				return null;
-			});
-			return true;
-		});
-		return SUCCESS;
-	}
-
-	/**
-	 * 审批不通过
-	 */
-	public Ret reject(Long iautoid) {
-		tx(() -> {
-			// 数据同步暂未开发 现只修改状态
-			formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
-				ValidationUtils.isTrue(updateColumn(iautoid, "iAuditStatus", AuditStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
 				return null;
 			});
 			return true;

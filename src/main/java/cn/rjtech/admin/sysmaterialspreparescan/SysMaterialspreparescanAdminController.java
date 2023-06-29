@@ -1,5 +1,6 @@
 package cn.rjtech.admin.sysmaterialspreparescan;
 
+import cn.rjtech.constants.DataSourceConstants;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -48,7 +49,7 @@ public class SysMaterialspreparescanAdminController extends BaseAdminController 
 	* 保存
 	*/
 	@Before(Tx.class)
-    @TxConfig(SysMaterialspreparescan.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void save(@Para("sysMaterialspreparescan")SysMaterialspreparescan sysMaterialspreparescan) {
 		renderJson(service.save(sysMaterialspreparescan));
 	}
@@ -70,7 +71,7 @@ public class SysMaterialspreparescanAdminController extends BaseAdminController 
 	* 更新
 	*/
 	@Before(Tx.class)
-    @TxConfig(SysMaterialspreparescan.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void update(@Para("sysMaterialspreparescan")SysMaterialspreparescan sysMaterialspreparescan) {
 		renderJson(service.update(sysMaterialspreparescan));
 	}
@@ -79,7 +80,7 @@ public class SysMaterialspreparescanAdminController extends BaseAdminController 
 	* 批量删除
 	*/
     @Before(Tx.class)
-    @TxConfig(SysMaterialspreparescan.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void deleteByIds() {
 		renderJson(service.deleteByIds(get("ids")));
 	}
@@ -88,7 +89,7 @@ public class SysMaterialspreparescanAdminController extends BaseAdminController 
 	* 删除
 	*/
 	@Before(Tx.class)
-    @TxConfig(SysMaterialspreparescan.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void delete() {
 		renderJson(service.deleteById(getLong(0)));
 	}

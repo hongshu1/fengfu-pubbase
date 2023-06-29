@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseBomData<M extends BaseBomData<M>> extends JBoltBaseModel<M>{
-    public static final String DATASOURCE_CONFIG_NAME = "momdata";
+    
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**BOM主表ID*/

@@ -1,22 +1,19 @@
 package cn.rjtech.admin.uptimetplm;
 
-import cn.jbolt.core.para.JBoltPara;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
-import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.constants.DataSourceConstants;
+import cn.rjtech.model.momdata.UptimeTplM;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
-import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.UptimeTplM;
 /**
  * 稼动时间建模-稼动时间模板主表
  * @ClassName: UptimeTplMAdminController
@@ -55,7 +52,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	* 保存
 	*/
 	@Before(Tx.class)
-    @TxConfig(UptimeTplM.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void save(@Para("uptimeTplM")UptimeTplM uptimeTplM) {
 		renderJson(service.save(uptimeTplM));
 	}
@@ -77,7 +74,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	* 更新
 	*/
 	@Before(Tx.class)
-    @TxConfig(UptimeTplM.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void update(@Para("uptimeTplM")UptimeTplM uptimeTplM) {
 		renderJson(service.update(uptimeTplM));
 	}
@@ -86,7 +83,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	* 批量删除
 	*/
     @Before(Tx.class)
-    @TxConfig(UptimeTplM.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void deleteByIds() {
 		renderJson(service.deleteByIds(get("ids")));
 	}
@@ -95,7 +92,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	* 删除
 	*/
 	@Before(Tx.class)
-    @TxConfig(UptimeTplM.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}

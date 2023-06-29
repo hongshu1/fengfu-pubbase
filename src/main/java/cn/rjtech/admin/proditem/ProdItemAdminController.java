@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.prodparam.ProdParamService;
+import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.util.Util;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -65,7 +66,7 @@ public class ProdItemAdminController extends BaseAdminController {
 	* 保存
 	*/
 	@Before(Tx.class)
-    @TxConfig(ProdItem.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void save(@Para("prodItem")ProdItem prodItem) {
 		renderJson(service.save(prodItem));
 	}
@@ -91,7 +92,7 @@ public class ProdItemAdminController extends BaseAdminController {
 	* 更新
 	*/
 	@Before(Tx.class)
-    @TxConfig(ProdItem.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void update(@Para("prodItem")ProdItem prodItem) {
 		renderJson(service.update(prodItem));
 	}
@@ -100,7 +101,7 @@ public class ProdItemAdminController extends BaseAdminController {
 	* 批量删除
 	*/
     @Before(Tx.class)
-    @TxConfig(ProdItem.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void deleteByIds() {
 		renderJson(service.deleteByIds(get("ids")));
 	}
@@ -109,7 +110,7 @@ public class ProdItemAdminController extends BaseAdminController {
 	* 删除
 	*/
 	@Before(Tx.class)
-    @TxConfig(ProdItem.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void delete() {
 		renderJson(service.deleteById(getLong(0)));
 	}
@@ -118,7 +119,7 @@ public class ProdItemAdminController extends BaseAdminController {
 	* 切换isDeleted
 	*/
 	@Before(Tx.class)
-    @TxConfig(ProdItem.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void toggleIsDeleted() {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}

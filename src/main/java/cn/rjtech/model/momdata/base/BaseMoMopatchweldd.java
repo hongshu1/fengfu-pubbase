@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseMoMopatchweldd<M extends BaseMoMopatchweldd<M>> extends JBoltBaseModel<M>{
-    public static final String DATASOURCE_CONFIG_NAME = "momdata";
+    
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**补焊记录主表ID*/

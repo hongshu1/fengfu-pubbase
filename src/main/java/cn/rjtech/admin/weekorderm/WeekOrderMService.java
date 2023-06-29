@@ -7,6 +7,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -34,7 +35,6 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import cn.jbolt.core.model.Dictionary;
 
 import java.util.*;
 import java.util.function.Function;
@@ -249,37 +249,6 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
         return SUCCESS;
     }
 
-    /**
-     * 审批不通过
-     */
-    public Ret reject(Long iautoid) {
-        tx(() -> {
-            // 数据同步暂未开发 现只修改状态
-            formApprovalService.rejectByStatus(table(), primaryKey(), iautoid, (fromAutoId) -> null, (fromAutoId) -> {
-                ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
-                //cusOrderSumService.algorithmSum();
-                return null;
-            });
-
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    public Ret submit(Long iautoid) {
-        tx(() -> {
-
-            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "");
-            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-            // 更新订单的状态
-            ValidationUtils.isTrue(updateColumn(iautoid, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), "提审失败");
-
-            return true;
-        });
-        return SUCCESS;
-    }
-
     private boolean updateIorderStatus(long iautoid, int iAfterStatus, int iBeforeStatus) {
         return update("UPDATE Co_WeekOrderM SET iOrderStatus = ? WHERE iAutoId = ? AND iOrderStatus = ? ", iAfterStatus, iautoid, iBeforeStatus) > 0;
     }
@@ -429,63 +398,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     }
 
     /**
-     * 批量审批
-     *
-     * @param ids
-     * @return
-     */
-    public Ret batchApprove(String ids) {
-        tx(() -> {
-            formApprovalService.batchApproveByStatus(table(), primaryKey(), ids, (formAutoId) -> null, (formAutoId) -> {
-                List<WeekOrderM> list = getListByIds(ids);
-                list = list.stream().filter(Objects::nonNull).map(item -> {
-                    item.setIOrderStatus(WeekOrderStatusEnum.APPROVED.getValue());
-                    return item;
-                }).collect(Collectors.toList());
-                ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
-                return null;
-            });
-
-            // 修改客户计划汇总
-            cusOrderSumService.algorithmSum();
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
-     * 批量反审批
-     *
-     * @param ids
-     * @return
-     */
-    public Ret batchReverseApprove(String ids) {
-        tx(() -> {
-            List<WeekOrderM> list = getListByIds(ids);
-            // 非已审批数据
-            List<WeekOrderM> noApprovedDatas = list.stream().filter(item -> !(item.getIOrderStatus() == WeekOrderStatusEnum.APPROVED.getValue())).collect(Collectors.toList());
-            ValidationUtils.isTrue(noApprovedDatas.size() <= 0, "存在非已审批数据");
-            for (WeekOrderM weekOrderM : list) {
-                Long id = weekOrderM.getIAutoId();
-                formApprovalService.reverseApproveByStatus(id, table(), primaryKey(), (formAutoId) -> null, (formAutoId) -> {
-                    // 处理订单状态
-                    ValidationUtils.isTrue(updateColumn(id, "iOrderStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
-                    return null;
-                });
-            }
-
-            // 修改客户计划汇总
-            cusOrderSumService.algorithmSum();
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
      * 打开
-     *
-     * @param iautoid
-     * @return
      */
     public Ret open(String iautoid) {
         WeekOrderM weekOrderM = findById(iautoid);
