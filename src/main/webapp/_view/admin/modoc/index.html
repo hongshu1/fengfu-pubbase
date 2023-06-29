@@ -47,7 +47,7 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
     {@if data.istatus != 0}
-        <a href="admin/modoc/details/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单详情"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+        <a href="admin/modoc/details/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单详情"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn" data-btn="no">查看</a>
     {@/if}
     {@if data.istatus == 0 && data.itype == 2}
         <a href="admin/modoc/updatas/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn">编辑</a>
