@@ -185,6 +185,7 @@ public class ExpenseBudgetItemService extends BaseService<ExpenseBudgetItem> {
     public List<Record> differencesManagementDatas(Kv para) {
     	para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
     	List<String> list = DataPermissionKit.getAccessCdepcodes();
+    	para.set("accesscdepcodes", null);
         if (CollUtil.isNotEmpty(list)) {
             String sqlInStrCdepcode = "";
             for (String cdepcode : list) {
