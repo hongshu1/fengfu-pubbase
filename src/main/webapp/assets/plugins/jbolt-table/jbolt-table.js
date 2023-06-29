@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.5.3";
+var jbolt_table_js_version="3.5.5";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 
@@ -4424,7 +4424,7 @@ function getScrollBarHeight(ele){
 				if(!columnprepend){
 					columnprepend="checkbox";
 				}
-				if(columnprepend=="checkbox"||columnprepend.indexOf(":checkbox")!=-1 || columnprepend=="radio"||columnprepend.indexOf(":radio")!=-1){
+				if(columnprepend=="checkbox"||columnprepend.indexOf("checkbox:")!=-1||columnprepend.indexOf(":checkbox")!=-1 || columnprepend=="radio"||columnprepend.indexOf("radio:")!=-1||columnprepend.indexOf(":radio")!=-1){
 					var cks=table.tbody.find("tr>td input[type='checkbox'][name='jboltTableCheckbox']:checked,tr>td input[type='radio'][name='jboltTableRadio']:checked");
 					if(isOk(cks)){
 						var cksLen=cks.length;
@@ -4466,11 +4466,11 @@ function getScrollBarHeight(ele){
 				columnprepend="checkbox";
 			}
 
-			if(columnprepend=="checkbox"||columnprepend.indexOf(":checkbox")!=-1){
+			if(columnprepend=="checkbox" ||columnprepend.indexOf("checkbox:")!=-1 ||columnprepend.indexOf(":checkbox")!=-1){
 				return that.getCheckboxCheckedCount(table);
 			}
 
-			if(columnprepend=="radio"||columnprepend.indexOf(":radio")!=-1){
+			if(columnprepend=="radio"||columnprepend.indexOf("radio:")!=-1||columnprepend.indexOf(":radio")!=-1){
 				return that.getRadioCheckedCount(table);
 			}
 		},
@@ -4481,11 +4481,11 @@ function getScrollBarHeight(ele){
 				columnprepend="checkbox";
 			}
 
-			if(columnprepend=="checkbox"||columnprepend.indexOf(":checkbox")!=-1){
+			if(columnprepend=="checkbox"||columnprepend.indexOf("checkbox:")!=-1||columnprepend.indexOf(":checkbox")!=-1){
 				return that.isCheckboxCheckedNone(table);
 			}
 
-			if(columnprepend=="radio"||columnprepend.indexOf(":radio")!=-1){
+			if(columnprepend=="radio"||columnprepend.indexOf("radio:")!=-1||columnprepend.indexOf(":radio")!=-1){
 				return that.isRadioCheckedNone(table);
 			}
 
@@ -4785,9 +4785,9 @@ function getScrollBarHeight(ele){
 				columnprepend="checkbox";
 			}
 			var chrds,tr;
-			if(columnprepend=="checkbox"||columnprepend.indexOf(":checkbox")!=-1){
+			if(columnprepend=="checkbox"||columnprepend.indexOf("checkbox:")!=-1||columnprepend.indexOf(":checkbox")!=-1){
 				chrds=table.tbody.find("tr>td input[type='checkbox'][name='jboltTableCheckbox']:checked");
-			}else if(columnprepend=="radio"||columnprepend.indexOf(":radio")!=-1){
+			}else if(columnprepend=="radio"||columnprepend.indexOf("radio:")!=-1||columnprepend.indexOf(":radio")!=-1){
 				chrds=table.tbody.find("tr>td input[type='radio'][name='jboltTableRadio']:checked");
 			}
 			return chrds;
