@@ -1,5 +1,6 @@
 package cn.rjtech.admin.syspuinstore;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -17,6 +18,7 @@ import cn.rjtech.model.momdata.SysPuinstoredetail;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -163,6 +165,11 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * 详情表，新增行获取数据
      * */
     public void getInsertPuinstoreDetail() {
+        Kv kv = getKv();
+        if (StrUtil.isBlank(kv.getStr("sourcebillno"))){
+            fail("订单号为空，请先选择订单号");
+            return;
+        }
         List<Record> recordList = service.getInsertPuinstoreDetail(getKv());
         renderJsonData(recordList);
     }

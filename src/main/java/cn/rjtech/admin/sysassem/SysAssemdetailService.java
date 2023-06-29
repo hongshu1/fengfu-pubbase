@@ -2,6 +2,7 @@ package cn.rjtech.admin.sysassem;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -145,8 +146,8 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
     }
 
     public List<Record> findEditTableDatas(Kv para) {
-        List<Record> records =null;
-        if(null != para.getLong("masid")){
+        List<Record> records = null;
+        if (null != para.getLong("masid")) {
             records = dbTemplate("sysassem.dList", para).find();
         }
         if (records != null && !records.isEmpty()) {
@@ -156,22 +157,25 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
                 // 判断有没有条码 (转换后的数据)
                 if (cinvcode == null || "".equals(cinvcode)) {
                     String invcode = record.getStr("invcode");
-                    Record firstRecord = findFirstRecord("select t3.cinvname,t3.cInvCode ,t3.cInvCode1,t3.cInvName1,t3.cInvStd as cinvstd,\n" +
+                    Record firstRecord = findFirstRecord(
+                        "select t3.cinvname,t3.cInvCode ,t3.cInvCode1,t3.cInvName1,t3.cInvStd as cinvstd,\n" +
                             "t3.iAutoId,uom.cUomCode,uom.cUomName,uom.cUomName as purchasecuomname\n" +
                             "         from Bd_Inventory t3\n" +
                             "         LEFT JOIN Bd_Uom uom on t3.iInventoryUomId1 = uom.iAutoId\n" +
                             "         where t3.cInvCode = '" + invcode + "'");
-                    record.set("cinvcode",invcode);
-                    record.set("cinvcode1",firstRecord.getStr("cinvcode1"));
-                    record.set("cinvname1",firstRecord.getStr("cinvname1"));
-                    record.set("cinvstd",firstRecord.getStr("cinvstd"));
-                    record.set("cuomname",firstRecord.getStr("cuomname"));
-                    Record whcode = findFirstRecord("select * from Bd_Warehouse where cWhCode = '" + record.getStr("whcodeh")+ "'");
-                    record.set("whcode",whcode.getStr("cwhcode"));
-                    record.set("whname",whcode.getStr("cwhname"));
-                    Record poscode = findFirstRecord("select * from Bd_Warehouse_Area where cAreaCode = '" + record.getStr("poscodeh")+ "'");
-                    record.set("poscode",poscode.getStr("careacode"));
-                    record.set("posname",poscode.getStr("careaname"));
+                    record.set("cinvcode", invcode);
+                    record.set("cinvcode1", firstRecord.getStr("cinvcode1"));
+                    record.set("cinvname1", firstRecord.getStr("cinvname1"));
+                    record.set("cinvstd", firstRecord.getStr("cinvstd"));
+                    record.set("cuomname", firstRecord.getStr("cuomname"));
+                    Record whcode = findFirstRecord(
+                        "select * from Bd_Warehouse where cWhCode = '" + record.getStr("whcodeh") + "'");
+                    record.set("whcode", whcode.getStr("cwhcode"));
+                    record.set("whname", whcode.getStr("cwhname"));
+                    Record poscode = findFirstRecord(
+                        "select * from Bd_Warehouse_Area where cAreaCode = '" + record.getStr("poscodeh") + "'");
+                    record.set("poscode", poscode.getStr("careacode"));
+                    record.set("posname", poscode.getStr("careaname"));
                 }
 
             }
@@ -190,7 +194,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
             if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
             }
-            if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+            if (!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())) {
                 ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
             }
         }
@@ -207,7 +211,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
             ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
         }
-        if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+        if (!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())) {
             ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
         }
         deleteById(id);
@@ -215,8 +219,9 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
     }
 
     public SysAssemdetail saveSysAssemdetailModel(SysPuinstoredetail puinstoredetail, String masId) {
-//		sysAssemdetail.setAutoID();
+        Date date = new Date();
         SysAssemdetail sysAssemdetail = new SysAssemdetail();
+        sysAssemdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
         sysAssemdetail.setMasID(masId);
         sysAssemdetail.setBarcode(puinstoredetail.getBarCode());
         sysAssemdetail.setSourceType(puinstoredetail.getSourceBillType());
@@ -224,7 +229,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         sysAssemdetail.setSourceBillNoRow(puinstoredetail.getSourceBillNoRow());
         sysAssemdetail.setSourceBillID(puinstoredetail.getSourceBillID());
         sysAssemdetail.setSourceBillDid(puinstoredetail.getSourceBillDid());
-        //sysAssemdetail.setAssemType("转换状态;转换前 及转换后");
+//        sysAssemdetail.setAssemType("转换状态;转换前 及转换后");
         sysAssemdetail.setWhCode(puinstoredetail.getWhcode());
         sysAssemdetail.setPosCode(puinstoredetail.getPosCode());
         //sysAssemdetail.setCombinationNo("组号");
@@ -233,11 +238,13 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         sysAssemdetail.setTrackType(puinstoredetail.getTrackType());
         sysAssemdetail.setMemo(puinstoredetail.getMemo());
         sysAssemdetail.setCcreatename(JBoltUserKit.getUserName());
-        sysAssemdetail.setDcreatetime(new Date());
-		/*sysAssemdetail.setModifyPerson();
-		sysAssemdetail.setModifyDate();
-		sysAssemdetail.setIsDeleted();*/
-		return sysAssemdetail;
+        sysAssemdetail.setDcreatetime(date);
+        sysAssemdetail.setIcreateby(JBoltUserKit.getUserId());
+        sysAssemdetail.setCupdatename(JBoltUserKit.getUserName());
+        sysAssemdetail.setDupdatetime(date);
+        sysAssemdetail.setIupdateby(JBoltUserKit.getUserId());
+        sysAssemdetail.setIsDeleted(false);
+        return sysAssemdetail;
     }
 
     public List<SysAssemdetail> findFirstBy(String masId) {
@@ -246,7 +253,9 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
 
 
     public SysAssemdetail findFirst(String masId, Integer combination) {
-        return findFirst("select * from  T_Sys_AssemDetail where MasID = ? and isDeleted = '0' and AssemType ='转换后' and Combination = ?", masId,combination);
+        return findFirst(
+            "select * from  T_Sys_AssemDetail where MasID = ? and isDeleted = '0' and AssemType ='转换后' and Combination = ?",
+            masId, combination);
     }
 
     public List<SysAssemdetail> findFirst(String masId) {
