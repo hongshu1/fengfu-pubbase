@@ -46,7 +46,7 @@ WHERE a.iWorkRegionMid = #para(iworkregionmid)  AND iWorkShiftMid = #para(iworks
 
 #sql("getUptimeDList")
 ###根据条件查询稼动时间记录明细
-SELECT c.iAutoId,a.iWorkRegionMid,a.iWorkShiftMid,a.iBaseMins,a.iStopMins,a.iSwitchMins,a.iOtMins,a.iWorkMins,
+SELECT a.iWorkRegionMid,a.iWorkShiftMid,a.iBaseMins,a.iStopMins,a.iSwitchMins,a.iOtMins,a.iWorkMins,
        c.iUptimeCategoryId,d.cUptimeCategoryName,c.iUptimeParamId,e.cUptimeParamName,c.iSeq,c.iMins AS iStdMins,0 AS iMins
 FROM Bd_UptimeTplM AS a
          LEFT JOIN Bd_UptimeTplCategory AS b ON b.iUptimeTplMid = a.iAutoId

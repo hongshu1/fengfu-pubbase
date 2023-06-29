@@ -6,15 +6,15 @@
 				<div class="col">
 
 					#if(updateOrSave == 'save')
-					<button onclick="submitThisForm_uptimeM()" class="btn btn-outline-secondary btn-xs">保存</button>
+					<button type="button" onclick="submitThisForm_uptimeM()" class="btn btn-outline-secondary btn-xs">保存</button>
 					#else
-						#if(recordInfo.iauditstatus == 0)
-						<button onclick="submitThisForm_uptimeM()" class="btn btn-outline-secondary btn-xs">保存</button>
+						#if(recordInfo.iauditstatus == 0 && !readonly)
+						<button type="button" onclick="submitThisForm_uptimeM()" class="btn btn-outline-secondary btn-xs">保存</button>
 						#end
 					#end
 
 					#if(readonly != 'readonly')
-					<button hidden onclick="submitThisForm_uptimeM()" class="btn btn-outline-secondary btn-xs">保存</button>
+					<button type="button" hidden onclick="submitThisForm_uptimeM()" class="btn btn-outline-secondary btn-xs">保存</button>
 					#end
 					#include("/_view/_common/_approval_btns.html", uri="/admin/uptimem",
 					formSn="PL_UptimeM", primaryKeyName="iAutoId", o=uptimeM,
@@ -74,7 +74,7 @@
 			<div class="form-group row">
 				<label class="col-sm-3 col-form-label">基本稼动时间(分)：</label>
 				<div class="col">
-					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()"  class="form-control" data-rule="required"  maxlength="255" id="ibasemins" name="uptimeM.ibasemins" value="#(recordInfo.ibasemins??)"/>
+					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" #if(readonly) disabled #end class="form-control" data-rule="required"  maxlength="255" id="ibasemins" name="uptimeM.ibasemins" value="#(recordInfo.ibasemins??)"/>
 				</div>
 			</div>
 		</div>
@@ -82,7 +82,7 @@
 			<div class="form-group row">
 				<label class="col-sm-3 col-form-label">不稼动时间(分)：</label>
 				<div class="col">
-					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" class="form-control"  data-rule="required"  maxlength="255" id="istopmins" name="uptimeM.istopmins" value="#(recordInfo.istopmins??)"/>
+					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" #if(readonly) disabled #end class="form-control"  data-rule="required"  maxlength="255" id="istopmins" name="uptimeM.istopmins" value="#(recordInfo.istopmins??)"/>
 				</div>
 			</div>
 		</div>
@@ -90,7 +90,7 @@
 			<div class="form-group row">
 				<label class="col-sm-3 col-form-label">机种切换时间(分)：</label>
 				<div class="col">
-					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" class="form-control"  data-rule="required"  maxlength="255" id="iswitchmins" name="uptimeM.iswitchmins" value="#(recordInfo.iswitchmins??)"/>
+					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" #if(readonly) disabled #end class="form-control"  data-rule="required"  maxlength="255" id="iswitchmins" name="uptimeM.iswitchmins" value="#(recordInfo.iswitchmins??)"/>
 				</div>
 			</div>
 		</div>
@@ -100,7 +100,7 @@
 			<div class="form-group row">
 				<label class="col-sm-3 col-form-label">加班时间(分)：</label>
 				<div class="col">
-					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" class="form-control"  data-rule="required"  maxlength="255" id="iotmins" name="uptimeM.iotmins" value="#(recordInfo.iotmins??)"/>
+					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" #if(readonly) disabled #end class="form-control"  data-rule="required"  maxlength="255" id="iotmins" name="uptimeM.iotmins" value="#(recordInfo.iotmins??)"/>
 				</div>
 			</div>
 		</div>
@@ -108,9 +108,10 @@
 			<div class="form-group row">
 				<label class="col-sm-3 col-form-label">工作时间(分)：</label>
 				<div class="col">
-					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" class="form-control"  data-rule="required"  maxlength="255" id="iworkmins" name="uptimeM.iworkmins" value="#(recordInfo.iworkmins??)"/>
+					<input type="text" data-with-clearbtn="true" autocomplete="off" onblur="onblurUptimeM()" #if(readonly) disabled #end class="form-control"  data-rule="required"  maxlength="255" id="iworkmins" name="uptimeM.iworkmins" value="#(recordInfo.iworkmins??)"/>
 				</div>
 			</div>
+			<input type="hidden" maxlength="255" id="tableDataArray" name="tableDataArray" value="#(tableDataArray??)"/>
 		</div>
 		<div class="col">
 		</div>
@@ -143,7 +144,7 @@
 			   data-conditions-form="uptimeMForm"
 			   data-rowtpl="keepingRecordRowtpl_#(pageId)"
 			   data-toolbar="keepingRecord_toolbar_#(pageId)"
-			   data-editable="true"
+			   data-editable="#(!readonly)"
 			   data-editable-option="getEditableTableOptionsqc"
 		>
 			<thead>
@@ -152,7 +153,7 @@
 				<th data-min-width="250" data-column="cUptimeCategoryName">分类名称</th>
 				<th data-min-width="250" data-column="cUptimeParamName">项目名称</th>
 				<th data-width="250" data-column="iStdMins">设定值(分)</th>
-				<th data-width="250" data-column="iMins">时间(分)</th>
+				<th data-width="250" data-column="imins">时间(分)</th>
 				<th data-width="250" data-column="sum">合计</th>
 			</tr>
 			</thead>
@@ -168,7 +169,7 @@
 			<div class="form-group row">
 				<label class="col-sm-3 col-form-label">无机种切换稼动率：</label>
 				<div class="col">
-					<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  maxlength="255" id="irate1" name="uptimeM.irate1" value="#(recordInfo.irate1??)"/>
+					<input type="text" data-with-clearbtn="true" autocomplete="off" #if(readonly) disabled #end  class="form-control"  maxlength="255" id="irate1" name="uptimeM.irate1" value="#(recordInfo.irate1??)"/>
 				</div>
 			</div>
 		</div>
@@ -182,7 +183,7 @@
 			<div class="form-group row">
 				<label class="col-sm-3 col-form-label">有机种切换稼动率：</label>
 				<div class="col">
-					<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  maxlength="255" id="irate2" name="uptimeM.irate2" value="#(recordInfo.irate2??)"/>
+					<input type="text" data-with-clearbtn="true" autocomplete="off" #if(readonly) disabled #end  class="form-control"  maxlength="255" id="irate2" name="uptimeM.irate2" value="#(recordInfo.irate2??)"/>
 				</div>
 			</div>
 		</div>
@@ -284,6 +285,9 @@
 			LayerMsgBox.alert("基本稼动时间+加班时间=不稼动时间+机种切换时间+工作时间",2)
 			return;
 		}
+		let tableData = getJboltTableAllDatas('#tableId_uptimeM');
+		let tableDataArray = JSON.stringify(tableData);
+		$("#tableDataArray").val(tableDataArray)
 		onblurUptimeM();
 		jboltTableSubmit('#tableId_uptimeM');
 	}
@@ -329,7 +333,7 @@
 				iautoid:{
 					submitAttr:"iautoid",
 				},
-				iMins:{
+				imins:{
 					type:"input_number",
 					rule:"number",
 					placeholder:"0",
