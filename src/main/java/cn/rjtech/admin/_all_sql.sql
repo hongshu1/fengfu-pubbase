@@ -674,6 +674,6 @@
 #end
 
 
-#namespace("momaterialsreturn")
-#include("momaterialsreturn/momaterialsreturn.sql")
+#namespace("momaterialsreturnm")
+#include("momaterialsreturnm/momaterialsreturnm.sql")
 #end
