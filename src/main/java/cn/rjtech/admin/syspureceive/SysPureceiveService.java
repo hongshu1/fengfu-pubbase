@@ -188,6 +188,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
      */
     public Ret delete(Long id) {
         tx(() -> {
+            SysPureceive byId = findById(id);
+            if(byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+            }
             deleteById(id);
             delete("DELETE T_Sys_PUReceiveDetail   where  MasID = ?", id);
             return true;

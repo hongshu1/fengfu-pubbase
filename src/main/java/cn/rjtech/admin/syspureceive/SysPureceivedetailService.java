@@ -2,10 +2,13 @@ package cn.rjtech.admin.syspureceive;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.SysPureceive;
 import cn.rjtech.model.momdata.SysPureceivedetail;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
@@ -33,6 +36,9 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
+
+    @Inject
+    private SysPureceiveService syspureceiveservice;
 
     /**
      * 后台管理数据查询
@@ -121,6 +127,14 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
      * 批量删除主从表
      */
     public Ret deleteRmRdByIds(String ids) {
+        String[] split = ids.split(",");
+        for (String s : split) {
+            SysPureceivedetail byId1 = findById(s);
+            SysPureceive byId = syspureceiveservice.findById(byId1.getMasID()) ;
+            if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+            }
+        }
         deleteByIds(ids);
         return ret(true);
     }
@@ -129,6 +143,11 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
      * 删除
      */
     public Ret delete(Long id) {
+        SysPureceivedetail byId1 = findById(id);
+        SysPureceive byId = syspureceiveservice.findById(byId1.getMasID()) ;
+        if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+            ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+        }
         deleteById(id);
         return ret(true);
     }
