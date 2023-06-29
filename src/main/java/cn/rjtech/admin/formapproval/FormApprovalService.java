@@ -1238,7 +1238,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         // 单据反审时，预留额外前置业务处理
         String msg = invokeMethod(className, "preReverseApproveFunc", formAutoId, false, false);
         ValidationUtils.assertBlank(msg, msg);
-        
+
         Record formRecord = findFirstRecord("select iAuditStatus as status from " + formSn + " where " + primaryKeyName + " = " + formAutoId);
 
 //        反审前的单据状态
@@ -1647,6 +1647,15 @@ public class FormApprovalService extends BaseService<FormApproval> {
         Record formData = getApprovalForm(formSn, primaryKeyName, formAutoId);
         ValidationUtils.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), formData.getInt(IAUDITSTATUS), "非待审核状态");
 
+        // 当前登录人
+        User user = JBoltUserKit.getUser();
+        Long userId = user.getId();
+
+        // 单据创建人
+        Long icreateby = formData.getLong("icreateby");
+        // 撤回人跟单据创建人要是同一个用户
+        ValidationUtils.equals(icreateby, userId, "撤回操作必须是单据创建人");
+
         // 执行状态更新
         ValidationUtils.isTrue(updateWithdraw(formSn, primaryKeyName, formAutoId), "更新撤回失败");
 
@@ -1791,7 +1800,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                         case APPROVED:
                             String msg = invokeMethod(className, "preWithdrawFromAuditted", formAutoId);
                             ValidationUtils.assertBlank(msg, msg);
-                            
+
                             // 更新单据状态为未审批
                             ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formData.getInt(IAUDITSTATUS), primaryKeyName), "更新审核状态失败");
 
@@ -1816,7 +1825,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                         case APPROVED:
                             String msg = invokeMethod(className, "preWithdrawFromAuditted", formAutoId);
                             ValidationUtils.assertBlank(msg, msg);
-                            
+
                             // 更新单据状态为未审批
                             ValidationUtils.isTrue(updateAudit(formSn, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), formData.getInt(IAUDITSTATUS), primaryKeyName), "更新审批状态失败");
 
