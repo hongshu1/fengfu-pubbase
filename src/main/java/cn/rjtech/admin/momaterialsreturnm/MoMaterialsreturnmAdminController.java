@@ -6,8 +6,11 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MoMaterialsreturnm;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+
 /**
  * 制造工单-生产退料主表 Controller
  * @ClassName: MoMaterialsreturnmAdminController
@@ -41,8 +44,10 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
-	public void add() {
-		Long imodocid=getLong("imodocid");
+	public void add(@Para(value = "imodocid") Long imodocid) {
+		ValidationUtils.validateId(imodocid, "imodocid");
+
+		keepPara();
 		render("add.html");
 	}
 

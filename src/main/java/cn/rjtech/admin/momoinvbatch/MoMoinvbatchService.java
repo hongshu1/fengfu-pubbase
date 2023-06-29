@@ -16,6 +16,7 @@ import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
+import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -28,6 +29,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 工单现品票 Service
@@ -540,5 +543,130 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 		moMoinvbatch.update();
 		return  SUCCESS;
 
+	}
+
+	/**
+	 * 生成现品票
+	 * @param imodocid
+	 * @return
+	 */
+	public Ret createMomoinvbatch(Long imodocid) {
+		ValidationUtils.notNull(imodocid, "生产订单主键不允许为空");
+		ValidationUtils.isTrue(findByiMoDocId(imodocid).size() == 0, "已生成现品票");
+		// 获取工单信息
+		MoDoc moDoc = moDocService.findById(imodocid);
+		// 获取存货数量
+		Inventory inventory = inventoryService.findById(moDoc.getIInventoryId());
+		// 计划数量
+		Integer iqty = Double.valueOf(Double.parseDouble(moDoc.getIQty().toString())).intValue();
+		// 包装数量
+		Integer iPkgQty = Optional.ofNullable(inventory.getIPkgQty()).orElse(iqty);
+		List<MoMoinvbatch> moMoinvbatches = new ArrayList<>();
+		Integer sunNumber = 0;
+
+		for (int i = 1; i * iPkgQty <= iqty; i++) {
+			sunNumber +=  iPkgQty;
+			MoMoinvbatch moMoinvbatch = new MoMoinvbatch();
+			moMoinvbatch.setIOrgId(getOrgId());
+			moMoinvbatch.setCOrgCode(getOrgCode());
+			moMoinvbatch.setCOrgName(getOrgName());
+			moMoinvbatch.setIMoDocId(imodocid);
+			moMoinvbatch.setIInventoryId(inventory.getIAutoId());
+			moMoinvbatch.setIPkgQty(iPkgQty);
+			moMoinvbatch.setISeq(i);
+			moMoinvbatch.setCVersion("00");
+			moMoinvbatch.setCBarcode(BillNoUtils.genRoutingReportNo());
+			if (sunNumber + iPkgQty > iqty) {
+				moMoinvbatch.setIQty(new BigDecimal(iqty - sunNumber));
+			} else {
+				moMoinvbatch.setIQty(new BigDecimal(iPkgQty.toString()));
+			}
+			moMoinvbatch.setIPrintStatus(1);
+			moMoinvbatch.setIStatus(0);
+			moMoinvbatch.setIsEffective(true);
+			moMoinvbatch.setICreateBy(JBoltUserKit.getUserId());
+			moMoinvbatch.setCCreateName(JBoltUserKit.getUserName());
+			moMoinvbatch.setDCreateTime(new Date());
+			moMoinvbatch.setIUpdateBy(JBoltUserKit.getUserId());
+			moMoinvbatch.setCUpdateName(JBoltUserKit.getUserName());
+			moMoinvbatch.setDUpdateTime(new Date());
+			moMoinvbatch.setIsDeleted(false);
+			moMoinvbatch.setCCompleteBarcode(moMoinvbatch.getCBarcode() + moMoinvbatch.getCVersion());
+			moMoinvbatches.add(moMoinvbatch);
+		}
+
+		batchSave(moMoinvbatches);
+		return SUCCESS;
+	}
+
+	public List<MoMoinvbatch> findByiMoDocId(Long imodocid) {
+		return find(selectSql().eq("iMoDocId", imodocid));
+	}
+
+	/**
+	 * 批量报工
+	 * @param ids
+	 * @return
+	 */
+	public Ret workByIds(String ids) {
+		List<MoMoinvbatch> moMoinvbatches = getListByIds(ids);
+
+		moMoinvbatches = moMoinvbatches.stream().map(item -> {
+			item.setIStatus(1);
+			return item;
+		}).collect(Collectors.toList());
+		batchSave(moMoinvbatches);
+		return SUCCESS;
+	}
+
+	/**
+	 * 撤回
+	 *
+	 * @param iautoid
+	 * @return
+	 */
+	public Ret withdraw(Long iautoid) {
+		MoMoinvbatch moinvbatch = findById(iautoid);
+		moinvbatch.setIPrintStatus(1);
+		moinvbatch.setIStatus(0);
+		return SUCCESS;
+	}
+
+	public Ret updateNumber(Long iautoid, BigDecimal newQty) {
+		tx(()-> {
+			MoMoinvbatch moinvbatch = findById(iautoid);
+			// 获取最大序列号
+			Integer maxSeq = getMaxSeqByMoDocId(moinvbatch.getIMoDocId());
+			BigDecimal oldQty = moinvbatch.getIQty();
+			// 修改原对象
+			moinvbatch.setIQty(newQty);
+			Integer version = Integer.valueOf(moinvbatch.getCVersion());
+			Integer newVersion = version + 1;
+			moinvbatch.setCVersion(newVersion >= 10 ? newVersion.toString() : "0" + newVersion);
+			ValidationUtils.isTrue(moinvbatch.update(), "修改原现品票失败");
+
+			// 生成新对象
+			MoMoinvbatch newMoinvbatch = new MoMoinvbatch();
+			newMoinvbatch.put(moinvbatch);
+			newMoinvbatch.setIAutoId(null);
+			newMoinvbatch.setIQty(oldQty.subtract(newQty));
+			newMoinvbatch.setISeq(maxSeq + 1);
+			newMoinvbatch.setCVersion("00");
+			newMoinvbatch.setCBarcode(BillNoUtils.genRoutingReportNo());
+			newMoinvbatch.setCCompleteBarcode(newMoinvbatch.getCBarcode() + newMoinvbatch.getCVersion());
+			ValidationUtils.isTrue(newMoinvbatch.save(), "生成新现品票失败");
+			return true;
+		});
+
+		return SUCCESS;
+	}
+
+	/**
+	 * 获取生产订单最大序号
+	 * @param iMoDocId
+	 * @return
+	 */
+	private Integer getMaxSeqByMoDocId(Long iMoDocId) {
+		return queryColumn(selectSql().max("iSeq").eq("iMoDocId", iMoDocId));
 	}
 }

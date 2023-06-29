@@ -39,6 +39,7 @@ FROM
       #if(istatus)
        and a.istatus=#para(istatus)
       #end
+ORDER BY a.iSeq
 #end
 
 #sql("findLastProcess")   ####查找工单最后一道工序

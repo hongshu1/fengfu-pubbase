@@ -161,6 +161,7 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
                 moRecod.set("cinvcode1", inventory.getCInvCode1());
                 // 部品名称
                 moRecod.set("cinvname1", inventory.getCInvName1());
+                moRecod.set("ipkgqty", inventory.getIPkgQty());
 
                 // 生产单位
                 Uom uom = uomService.findFirst(Okv.create().setIfNotNull(Uom.IAUTOID, inventory.getICostUomId()), Uom.IAUTOID, "desc");
@@ -332,4 +333,36 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
         renderJson(service.updateWork(moMoinvbatch));
     }
 
+    /**
+     * 生成现品票
+     */
+    public void createMomoinvbatch()
+    {
+        renderJson(service.createMomoinvbatch(getLong("imodocid")));
+    }
+
+    /**
+     * 批量报工
+     */
+    public void workByIds()
+    {
+        renderJson(service.workByIds(get("ids")));
+    }
+
+    /**
+     * 撤回
+     */
+    public void withdraw() {
+        renderJson(service.withdraw(getLong("iautoid")));
+    }
+
+    /**
+     * 修改数量
+     */
+    public void updateNumber()
+    {
+        Long iautoid = getLong("moMoinvbatch.iautoid");
+        BigDecimal newQty = getBigDecimal("moMoinvbatch.iqty");
+        renderJson(service.updateNumber(iautoid, newQty));
+    }
 }

@@ -1,10 +1,16 @@
 package cn.rjtech.admin.expensebudgetitemd;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelMerge;
 import cn.jbolt.core.poi.excel.JBoltExcelPositionData;
@@ -38,7 +44,8 @@ import java.util.stream.Collectors;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-09-15 10:04
  */
-@UnCheck
+@UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.STATISTIC_ANALYSIS_EXPENSEBUDGETITEMD)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/expensebudgetitemd", viewPath = "/_view/admin/expensebudgetitemd")
 public class ExpenseBudgetItemdAdminController extends BaseAdminController {
@@ -60,6 +67,8 @@ public class ExpenseBudgetItemdAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }

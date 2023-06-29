@@ -56,11 +56,12 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      */
     public JBoltApiRet jumpCheckout(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
-        Record record = service.getCheckoutListByIautoId(iautoid);
-        if (record == null) {
+        Record record = new Record();
+        Record checkoutrecord = service.getCheckoutListByIautoId(iautoid);
+        if (checkoutrecord == null) {
             return JBoltApiRet.API_FAIL("数据不存在");
         }
-        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(checkoutrecord.getLong("iqcformid"));
         record.set("columns", tableHeadData);
         record.set("record", record);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
@@ -71,15 +72,16 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      */
     public JBoltApiRet jumpOnlysee(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
-        Record record = service.getCheckoutListByIautoId(iautoid);
-        if (record == null) {
+        Record record = new Record();
+        Record checkoutrecord = service.getCheckoutListByIautoId(iautoid);
+        if (checkoutrecord == null) {
             return JBoltApiRet.API_FAIL("数据不存在");
         }
-        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(checkoutrecord.getLong("iqcformid"));
         List<StockoutQcFormD> stockoutqcformlist = stockoutQcFormDService.findByIStockoutQcFormMid(iautoid);
         record.set("stockoutqcformlist", stockoutqcformlist);
         record.set("columns", tableHeadData);
-        record.set("record", record);
+        record.set("record", checkoutrecord);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
@@ -88,15 +90,16 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      * */
     public JBoltApiRet jumpEdit(Long iautoid) {
         //1、查询跳转到另一页面需要的数据
-        Record record = service.getCheckoutListByIautoId(iautoid);
-        if (record == null) {
+        Record record = new Record();
+        Record checkoutrecord = service.getCheckoutListByIautoId(iautoid);
+        if (checkoutrecord == null) {
             return JBoltApiRet.API_FAIL("数据不存在");
         }
-        List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        List tableHeadData = rcvDocQcFormMService.getTableHeadData(checkoutrecord.getLong("iqcformid"));
         List<StockoutQcFormD> stockoutqcformlist = stockoutQcFormDService.findByIStockoutQcFormMid(iautoid);
         record.set("stockoutqcformlist", stockoutqcformlist);
         record.set("columns", tableHeadData);
-        record.set("record", record);
+        record.set("record", checkoutrecord);
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
@@ -112,10 +115,10 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      * 点击“检验”按钮，在检验页面点击“确定”按钮，将数据带到后台保存
      */
     public JBoltApiRet saveCheckOut(String cmeasurepurpose, String cdcno, Long istockqcformmiautoid, String cmeasureunit,
-                                    String isok, String cmeasurereason, String serializeSubmitList, String cmemo) {
+                                    String isok, String cmeasurereason, String serializeSubmitList, String cmemo,String cbatchno) {
         //1、开始更新编辑页面的数据
         Boolean result = service.achieveSerializeSubmitList(JSON.parseArray(serializeSubmitList), istockqcformmiautoid,
-            cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
+            cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok, cbatchno);
         //2、最后返回成功
         return JBoltApiRet.API_SUCCESS;
     }
@@ -124,11 +127,11 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
      * 点击“编辑”按钮，在编辑页面点击“确定”按钮，将数据带到后台保存
      */
     public JBoltApiRet saveEdit(String cmeasurepurpose, String cdcno, Long stockqcformmiautoid, String cmeasureunit, String isok,
-                                String cmeasurereason, String serializeSubmitList, String cmemo) {
+                                String cmeasurereason, String serializeSubmitList, String cmemo,String cbatchno) {
         // 1、开始更新编辑页面的数据
         Boolean result = service
             .achieveSerializeSubmitList(JSON.parseArray(serializeSubmitList), stockqcformmiautoid, cmeasurepurpose,
-                cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
+                cmeasurereason, cmeasureunit, cmemo, cdcno, isok,cbatchno);
         //2、最后返回成功
         return JBoltApiRet.API_SUCCESS;
     }
@@ -136,7 +139,7 @@ public class StockOutQcFormMApiService extends JBoltApiBaseService {
     /*
      * 导出详情页
      * */
-    public JBoltApiRet getExportData(Long iautoid) {
+    public JBoltApiRet getExportData(Long iautoid) throws Exception{
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.getExportData(iautoid));
     }
 }

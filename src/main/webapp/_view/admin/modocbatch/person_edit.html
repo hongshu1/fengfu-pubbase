@@ -700,8 +700,8 @@
                     //
                     for (let j = 0; j < jsonData.data.slice(-3)[i].rowdatas[0].user.length; j++) {
                         sheet.setValue(jsonDataLength+4, 9+j,jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.cpsn_name);
-                        sheet.setValue(jsonDataLength+4+1, 9+j,jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.itype);
-                        sheet.setValue(jsonDataLength+4+2, 9+j,jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.itype);
+                        sheet.setValue(jsonDataLength+4+1, 9+j,jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.cpsn_name);
+                        sheet.setValue(jsonDataLength+4+2, 9+j,jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.cpsn_name);
                         if(!jsonData.data.slice(-3)[i].rowdatas[0].user[j].personne.lock){
                             //设置班长其他人员锁定样式
                             sheet.getCell(jsonDataLength+4, 9+j).locked(jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.lock);
@@ -915,17 +915,14 @@
                 data:colData[1][0],//当前单元格所在年月日
                 plan:colData[3][0],//排班(1S,2S)
                 type:rowData[0][8],//人员类型
-                itype:'',
+                taskId,
             }
             if(rowData[0][8]==3){
                 parms.editCellValueObj.taskId = taskId;//页面id
-                // parms.editCellValueObj.itype = 1;
             }else if(rowData[0][8]==4){
                 parms.editCellValueObj.taskId = taskId;//页面id
-                // parms.editCellValueObj.itype = 2;
             }else if(rowData[0][8]==5){
                 parms.editCellValueObj.taskId = taskId;//页面id
-                // parms.editCellValueObj.itype = 3;
             }else if(rowData[0][8]==2){
                 let mod = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取当前列数据
                 parms.editCellValueObj.cmodocno=mod[row-3][0];
@@ -964,7 +961,6 @@
             }
         }else if(typeof id=='string'){
             parms.editCellValueObj.renYuanId.push(id);
-            parms.editCellValueObj.itype = parms['userType']==2?1:parms['userType']==3?2:3;
             parms.editCellValue.push(parms.editCellValueObj);
         }
     }

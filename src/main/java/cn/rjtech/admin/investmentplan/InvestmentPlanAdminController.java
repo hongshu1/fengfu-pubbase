@@ -386,6 +386,8 @@ public class InvestmentPlanAdminController extends BaseAdminController {
     /**
      * 投资预实差异管理表数据查询
      * */
+    @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findBudgetActualDifferenceDatas(){
     	renderJsonData(service.findBudgetActualDifferenceDatas(getKv()));
     }
@@ -399,6 +401,8 @@ public class InvestmentPlanAdminController extends BaseAdminController {
     /**
      * 投资汇总表数据查询
      * */
+    @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findInvestmentPlanGroupSummaryDatas(){
     	Kv para = getKv();
     	Integer ibudgetyear = para.getInt("ibudgetyear");
@@ -439,6 +443,8 @@ public class InvestmentPlanAdminController extends BaseAdminController {
 	/**
 	 * 投资情况查询表
 	 * */
+    @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findInvestmentPlanItemSituationDatas(){
     	renderJsonData(service.findInvestmentPlanItemSituationDatas(getKv()));
     }
@@ -468,6 +474,7 @@ public class InvestmentPlanAdminController extends BaseAdminController {
      * 执行进度跟踪表-费用tab数据查询
      * */
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findExecutionProgressTrackingExpenseDatas(){
     	renderJsonData(service.findExecutionProgressTrackingExpenseDatas(getKv()));
     }
@@ -475,6 +482,7 @@ public class InvestmentPlanAdminController extends BaseAdminController {
      * 执行进度跟踪表-投资tab数据查询
      * */
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findExecutionProgressTrackingInvestmentDatas(){
     	renderJsonData(service.findExecutionProgressTrackingInvestmentDatas(getKv()));
     }

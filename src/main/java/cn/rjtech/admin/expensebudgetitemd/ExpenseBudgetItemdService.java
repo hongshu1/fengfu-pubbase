@@ -47,7 +47,7 @@ public class ExpenseBudgetItemdService extends BaseService<ExpenseBudgetItemd> {
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
-		Page<Record> paginate = dbTemplate(u8SourceConfigName(),"expensebudgetitemd.paginateAdminList", para).paginate(pageNumber, pageSize);
+		Page<Record> paginate = dbTemplate("expensebudgetitemd.paginateAdminList", para).paginate(pageNumber, pageSize);
 		for (Record row : paginate.getList()) {
 			dataDispose(row);
 		}

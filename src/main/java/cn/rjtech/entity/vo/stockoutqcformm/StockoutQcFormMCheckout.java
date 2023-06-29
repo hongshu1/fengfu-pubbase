@@ -38,7 +38,7 @@ public class StockoutQcFormMCheckout implements Serializable {
     private String  corgcode;
     /*检验单号*/
     private String  corgname;
-    /**/
+    /*在库检检验单号*/
     private String  cstockoutqcformno;
     /*更新人员*/
     private String  cupdatename;
@@ -80,6 +80,10 @@ public class StockoutQcFormMCheckout implements Serializable {
     private Date    dupdatetime;
     /*列数，例如1-10，或者1-20，1-30*/
     private int     size;
+    /*标记*/
+    private String maskname;
+    /*检验结果*/
+    private String statusname;
 
     public String getCbatchno() {
         return cbatchno;

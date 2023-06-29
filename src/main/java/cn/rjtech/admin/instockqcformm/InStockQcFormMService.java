@@ -241,16 +241,6 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         return null;
     }
 
-    /*
-     * @desc 扫描现品票，点击“确定”按钮，表体增加1行在库检任务；如果此存货没有配置检验项目，
-     *       需维护相关设置后点击“生成”按钮，生成检查成绩表。
-     * @param cbarcode：现品票
-     * */
-    public Ret createInStockQcFormByCbarcode(String cbarcode) {
-        Ret ret = new Ret();
-        return ret;
-    }
-
     /*生成*/
     public Ret createTable(Long iautoid) {
         InStockQcFormM inStockQcFormM = findById(iautoid);
@@ -301,13 +291,14 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
             inStockQcFormD.setCOptions(StrUtil.toString(map.get("coptions")));
             inStockQcFormDS.add(inStockQcFormD);
         }
+        inStockQcFormM.setIStatus(1);
+        inStockQcFormM.setCUpdateName(JBoltUserKit.getUserName());
+        inStockQcFormM.setDUpdateTime(new Date());
+        inStockQcFormM.setIUpdateBy(JBoltUserKit.getUserId());
+        inStockQcFormM.setCInvQcFormNo(JBoltSnowflakeKit.me.nextIdStr());//减压单号
         boolean result = tx(() -> {
             inStockQcFormDService.batchSave(inStockQcFormDS);
             //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检-1”
-            inStockQcFormM.setIStatus(1);
-            inStockQcFormM.setCUpdateName(JBoltUserKit.getUserName());
-            inStockQcFormM.setDUpdateTime(new Date());
-            inStockQcFormM.setIUpdateBy(JBoltUserKit.getUserId());
             ValidationUtils.isTrue(inStockQcFormM.update(), "生成单据失败！！！");
             return true;
         });
@@ -534,7 +525,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
      * 根据现品票查询数据
      * */
     public Record findDetailByBarcode(String cbarcode) {
-        Record record = dbTemplate("instockqcformm.findDetailByBarcode", Kv.by("cbarcode", cbarcode)).findFirst();
+        Record record = dbTemplate("instockqcformm.findDetailByBarcode", Kv.by("ccompletebarcode", cbarcode)).findFirst();
         ValidationUtils.notNull(record, cbarcode + "：不存在，请重新扫描");
 
         InStockQcFormM stockQcFormM = findByCBarcodeAndInvcode(cbarcode, record.getStr("iinventoryid"));
@@ -657,10 +648,10 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
                     String name = file1.getName();
                     System.out.println(name);
                 }
-            }
-            FileInputStream fileInputStream = new FileInputStream(cpics);
-            if (fileInputStream != null) {
-                imageBytes = Util.toByteArray(fileInputStream);
+                FileInputStream fileInputStream = new FileInputStream(cpics);
+                if (fileInputStream != null) {
+                    imageBytes = Util.toByteArray(fileInputStream);
+                }
             }
         }
         inStockQcFormMRecord.set("cpics", imageBytes == null ? "" : imageBytes);

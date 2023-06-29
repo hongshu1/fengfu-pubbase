@@ -816,4 +816,125 @@ public class DBUtils {
         return listmap;
     }
 
+    /**
+     * 调用存储过程获取输出值的数据以及结果集的数据 20221103 潘家宝添加
+     *
+     * @param dbAlias       jeesite中yml配的数据库名
+     * @param procedureName 存储过程名
+     * @param paramsMap     存储过程的参数集（参数名必须跟储存过程的参数名一致）
+     * @return {resultData=[{}],resultOutput=[{}, {},.....]}  没有结果记得存储过程不返回resultData
+     * 如： {resultOutput=[{}, {},.....]}
+     */
+    public static Map<String, Object> ExecSql1(String dbAlias, String erpdbschemas, String procedureName, Map<String, Object> paramsMap) {
+        // 其中并没有使用到paramsList，到这个参数，要根据后续需求进行对应修改添加
+        Connection conn = null;
+        ResultSet rs = null;
+        CallableStatement call = null;
+
+        StringBuilder buffer = new StringBuilder();
+
+        int index = 1;
+
+        // 最终返回的数据集合
+        Map<String, Integer> outputIndex = new HashMap<>();
+
+        try {
+            //条件为真则说明该存储过程需要传入参数
+            if (paramsMap != null && paramsMap.size() > 0) {
+                int mapsize = paramsMap.size();
+                //根据传入的参数集拼接占位符
+                for (int i = 0; i < mapsize; i++) {
+                    buffer.append("?");
+                    if (i < mapsize - 1) {
+                        buffer.append(",");
+                    }
+                }
+            }
+
+            conn = getConnection(dbAlias);
+            String sql = "{call" + " " + erpdbschemas + "." + procedureName + "(" + buffer + ")}";
+            //String sql = "{call mes.P_Sys_ReportForProduceTaskNoticeGP'''and20221108''','',''()}";
+            // 执行sql语句
+            call = conn.prepareCall(sql);
+
+            //如果有参数则将参数放入到相应的占位符
+            if (!("".equals(buffer.toString()))) {
+                // 使用迭代器，获取key
+                // Iterator<Map.Entry<String, Object>> iter = paramsMap.entrySet().iterator()
+                //获取存储过程的参数情况
+                List<Map<String, Object>> paramResult = GetParamBySql(dbAlias, erpdbschemas, procedureName);
+                for (int i = 0; i < paramResult.size(); i++) {
+                    call.setObject(index, paramsMap.get(paramResult.get(i).get("name").toString().replace("@", "").toLowerCase()));
+                    Integer isEq1 = (Integer) paramResult.get(i).get("isoutparam");
+                    if (isEq1 == 1) {
+                        call.registerOutParameter(i + 1, Types.OTHER);
+                        //保存输出参数的参数名
+                        outputIndex.put(paramResult.get(i).get("name").toString(), i + 1);
+                    }
+                    if (index < paramsMap.size()) {
+                        index++;
+                    }
+                }
+            }
+
+            boolean execute = true;
+            // 获取存储过程结果集(该步骤不可删除，删除后下方call.getResultSet获得对象为null)
+            try {
+                //执行有返回值的存储过程（executeQuery方法执行没有返回值的存储过程会报错）
+                ResultSet executeQuery = call.executeQuery();
+            } catch (SQLException e) {
+                call.execute();
+                execute = false;
+            }
+
+            int numi = 0;
+
+            Map<String, Object> mapRet = new HashMap<>();
+
+            // 遍历结果集
+            while (execute) {
+                rs = call.getResultSet();
+                // 获取结果集列名
+                ResultSetMetaData rsm = rs.getMetaData();
+                List<String> allColumn = new ArrayList<>();
+                // 获取结果集列名集合
+                int cH = 1;
+                while (cH <= rsm.getColumnCount()) {
+                    String columnName = rsm.getColumnName(cH);
+                    allColumn.add(columnName);
+                    cH++;
+                }
+                List<Map<String, Object>> mapList = new ArrayList<>();
+                while (rs.next()) {
+                    Map<String, Object> map = new HashMap<>();
+                    int i = 1;
+                    while (i <= allColumn.size()) {
+                        String string = rs.getString(i);
+                        map.put(allColumn.get(i - 1), string);
+                        i++;
+                    }
+                    mapList.add(map);
+                }
+                execute = call.getMoreResults();
+                numi++;
+                mapRet.put(String.valueOf(numi), mapList);
+            }
+
+            //获取有输出参数的存储过程的输出参数值
+            if (!"".equals(buffer.toString())) {
+                for (Map.Entry<String, Integer> entry : outputIndex.entrySet()) {
+                    Object outputValue = call.getObject(entry.getValue());
+                    paramsMap.put(entry.getKey(), outputValue);
+                }
+            }
+            LOG.info("mapRet: {}", mapRet);
+            return mapRet;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("调用存储过程异常: " + e.getLocalizedMessage());
+        } finally {
+            DBUtils.closeAll(rs, call, conn);
+        }
+    }
+
 }

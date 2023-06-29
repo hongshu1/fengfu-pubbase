@@ -950,22 +950,42 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
      * */
 	public List<Record> findBudgetActualDifferenceDatas(Kv para) {
 		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
-		List<Record> list = dbTemplate("investmentplan.findBudgetActualDifferenceDatas",para).find();
-		for (Record record : list) {
+    	List<String> list = DataPermissionKit.getAccessCdepcodes();
+    	para.set("accesscdepcodes", null);
+        if (CollUtil.isNotEmpty(list)) {
+            String sqlInStrCdepcode = "";
+            for (String cdepcode : list) {
+                sqlInStrCdepcode += "'" + cdepcode + "',";
+            }
+            sqlInStrCdepcode += "''";
+            para.set("accesscdepcodes", sqlInStrCdepcode);
+        }
+		List<Record> rsList = dbTemplate("investmentplan.findBudgetActualDifferenceDatas",para).find();
+		for (Record record : rsList) {
 			Constants.fillPlanItem(record);
 		}
-		return list;
+		return rsList;
 	}
     /**
      * 投资汇总表数据查询
      * */
 	public List<Record> findInvestmentPlanGroupSummaryDatas(Kv para) {
 		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
-		List<Record> list = dbTemplate("investmentplan.findInvestmentPlanGroupSummaryDatas",para).find();
+    	List<String> list = DataPermissionKit.getAccessCdepcodes();
+    	para.set("accesscdepcodes", null);
+        if (CollUtil.isNotEmpty(list)) {
+            String sqlInStrCdepcode = "";
+            for (String cdepcode : list) {
+                sqlInStrCdepcode += "'" + cdepcode + "',";
+            }
+            sqlInStrCdepcode += "''";
+            para.set("accesscdepcodes", sqlInStrCdepcode);
+        }
+		List<Record> rsList = dbTemplate("investmentplan.findInvestmentPlanGroupSummaryDatas",para).find();
 		String cgroupkey = para.getStr("cgroupkey");
 		ValidationUtils.notBlank(cgroupkey, "请选择字段筛选!");
 		InvestmentSummaryGroupOptionEnum groupOptionEnum = InvestmentSummaryGroupOptionEnum.toEnum(cgroupkey);
-		for (Record row : list) {
+		for (Record row : rsList) {
 			switch (groupOptionEnum) {
 			case IINVESTMENTTYPE:
 				row.set("cgroupname", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.INVESTMENT_TYPE.getValue(), row.getStr("cgroupsn")));
@@ -1005,7 +1025,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 			}
 			//row.set("cgroupname", value);
 		}
-		return list;
+		return rsList;
 	}
 	/**
 	 * 投资情况查询表
@@ -1024,16 +1044,26 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 		expenseBudget.setCBeginDate(JBoltDateUtil.toDate(dstartdate,"yyyy-MM-dd"));
 		expenseBudget.setCEndDate(JBoltDateUtil.toDate(denddate,"yyyy-MM-dd"));
 		expenseBudgetService.constructDynamicsDbColumn(expenseBudget, para);
-		List<Record> list = dbTemplate(u8SourceConfigName(),"investmentplan.findInvestmentPlanItemSituationDatas",para).find();
-		if(CollUtil.isNotEmpty(list)){
-			for (Record row : list) {
+    	List<String> list = DataPermissionKit.getAccessCdepcodes();
+    	para.set("accesscdepcodes", null);
+        if (CollUtil.isNotEmpty(list)) {
+            String sqlInStrCdepcode = "";
+            for (String cdepcode : list) {
+                sqlInStrCdepcode += "'" + cdepcode + "',";
+            }
+            sqlInStrCdepcode += "''";
+            para.set("accesscdepcodes", sqlInStrCdepcode);
+        }
+		List<Record> rsList = dbTemplate(u8SourceConfigName(),"investmentplan.findInvestmentPlanItemSituationDatas",para).find();
+		if(CollUtil.isNotEmpty(rsList)){
+			for (Record row : rsList) {
 				row.set("cinvestmenttypedesc", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.INVESTMENT_TYPE.getValue(), row.getStr("iinvestmenttype")));
 				row.set("careertypedesc",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.CAREERTYPE.getValue(), row.getStr("icareertype")));
 				row.set("cinvestmentdistinctiondesc",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.INVESTMENT_DISTINCTION.getValue(), row.getStr("iinvestmentdistinction")));
 				row.set("cassettypedesc",JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.CASSETTYPE.getValue(), row.getStr("cassettype")));
 			}
 		}
-		return list;
+		return rsList;
 	}
 	/**
 	 * 根据启用期间的起止日期计算投资情况查询表的表头
@@ -1073,6 +1103,16 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
      * */
 	public List<Record> findExecutionProgressTrackingExpenseDatas(Kv para) {
 		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
+    	List<String> list = DataPermissionKit.getAccessCdepcodes();
+    	para.set("accesscdepcodes", null);
+        if (CollUtil.isNotEmpty(list)) {
+            String sqlInStrCdepcode = "";
+            for (String cdepcode : list) {
+                sqlInStrCdepcode += "'" + cdepcode + "',";
+            }
+            sqlInStrCdepcode += "''";
+            para.set("accesscdepcodes", sqlInStrCdepcode);
+        }
 		return dbTemplate("investmentplan.findExecutionProgressTrackingExpenseDatas",para).find();
 	}	
     /**
@@ -1080,6 +1120,16 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
      * */
 	public List<Record> findExecutionProgressTrackingInvestmentDatas(Kv para) {
 		para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
+    	List<String> list = DataPermissionKit.getAccessCdepcodes();
+    	para.set("accesscdepcodes", null);
+        if (CollUtil.isNotEmpty(list)) {
+            String sqlInStrCdepcode = "";
+            for (String cdepcode : list) {
+                sqlInStrCdepcode += "'" + cdepcode + "',";
+            }
+            sqlInStrCdepcode += "''";
+            para.set("accesscdepcodes", sqlInStrCdepcode);
+        }
 		return dbTemplate("investmentplan.findExecutionProgressTrackingInvestmentDatas",para).find();
 	}	
 	
