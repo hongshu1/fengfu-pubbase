@@ -3,6 +3,7 @@ package cn.rjtech.wms.utils;
 import cn.hutool.setting.Setting;
 import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.base.config.JBoltExtendDatabaseConfig;
+import cn.jbolt.core.util.JBoltDesUtil;
 import cn.jbolt.core.util.JBoltStringUtil;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.log.Log;
@@ -49,6 +50,11 @@ public class DBUtils {
         String driver = JBoltConfig.getDriverClass(setting.get("db_type"));
         String username = setting.get("user");
         String password = setting.get("password");
+        
+        if (setting.getBool("is_encrypted", false)) {
+            username = JBoltDesUtil.getDecryptData(username);
+            password = JBoltDesUtil.getDecryptData(password);
+        }
 
 //        if ("ds1".equals(dbAlias) || dbAlias == null) {
 //            url = AppConfig.globalGetProperty("jdbc.url");
@@ -81,6 +87,11 @@ public class DBUtils {
         String driver = JBoltConfig.getDriverClass(setting.get("db_type"));
         String username = setting.get("user");
         String password = setting.get("password");
+
+        if (setting.getBool("is_encrypted", false)) {
+            username = JBoltDesUtil.getDecryptData(username);
+            password = JBoltDesUtil.getDecryptData(password);
+        }
         
         if(JBoltStringUtil.isBlank(jdbcUrl)){
             jdbcUrl = url;
