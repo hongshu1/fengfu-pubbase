@@ -1,5 +1,6 @@
 package cn.jbolt._admin.globalconfig;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -23,6 +24,7 @@ public class GlobalConfigTypeAdminController extends JBoltBaseController {
 	
 	@Inject
 	private GlobalConfigTypeService service;
+    @UnCheck
 	public void options() {
 		renderJsonData(service.getOptionList());
 	}

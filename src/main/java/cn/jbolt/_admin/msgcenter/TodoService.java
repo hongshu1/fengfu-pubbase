@@ -4,12 +4,12 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.common.model.Todo;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JBoltDateRange;
@@ -18,6 +18,7 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.JBoltBaseService;
 import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.TodoStateEnum;
 import cn.rjtech.util.ValidationUtils;
 import net.dreamlu.event.EventKit;
@@ -350,7 +351,9 @@ public class TodoService extends JBoltBaseService<Todo> {
 		ValidationUtils.isTrue(todo.save(), ErrorMsg.SAVE_FAILED);
 	}
 
-	public Page<Todo> dashBoardTodoDatas(Integer pageNumber, Integer pageSize) {
-		return paginateUserTodos(pageNumber,pageSize,JBoltUserKit.getUserId(),"create_time","desc",null,null,true,"id","title","url");
+	public Page<Record> dashBoardTodoDatas(Integer pageNumber, Integer pageSize) {
+		Kv para = Kv.by("userid", JBoltUserKit.getUserId())
+				.set("iauditstatus",AuditStatusEnum.AWAIT_AUDIT.getValue());
+		return dbTemplate("todo.dashBoardTodoDatas",para).paginate(pageNumber, pageSize);
 	}
 }

@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.VouchTypeDic;
 import com.jfinal.aop.Before;
@@ -88,6 +89,7 @@ public class VouchTypeDicAdminController extends BaseAdminController {
         renderJson(service.deleteById(getLong(0)));
     }
 
+    @UnCheck
     public void options() {
         renderJsonData(service.getCommonList("cvbtid,cvtchname,cbtchname", Okv.by("iorgid", getOrgId())));
     }

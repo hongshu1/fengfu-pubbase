@@ -5,6 +5,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -178,6 +179,7 @@ public class EquipmentModelAdminController extends BaseAdminController {
         renderBytesToExcelXlsxFile(service.exportExcel(datas).setFileName("物料建模-机型档案"));
     }
 
+    @UnCheck
     public void options() {
         List<Record> options = service.options();
         renderJsonData(options);

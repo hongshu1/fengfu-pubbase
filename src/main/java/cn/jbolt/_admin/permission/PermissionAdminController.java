@@ -37,6 +37,7 @@ public class PermissionAdminController extends JBoltBaseController {
 	/**
 	 * ajax options数据接口
 	 */
+    @UnCheck
 	public void options() {
 		renderJsonData(service.getAllPermissionsOptionsWithLevel(getLong("applicationId", 0L), getLong("appId", 0L)));
 	}
@@ -114,6 +115,7 @@ public class PermissionAdminController extends JBoltBaseController {
     /**
      * ajax options数据接口
      */
+    @UnCheck
     public void options2(@Para(value = "applicationId") Long applicationId,
                          @Para(value = "appId") Long appId) {
         ValidationUtils.validateId(applicationId, "系统应用ID");
@@ -156,9 +158,11 @@ public class PermissionAdminController extends JBoltBaseController {
 	/**
 	 * 数据源
 	 */
+    @UnCheck
 	public void optionsFormId(){
 		renderJsonData(service.getDatas());
 	}
+    @UnCheck
 	public void optionsFormFieldId(){
 		renderJsonData(service.getFormDatas());
 	}

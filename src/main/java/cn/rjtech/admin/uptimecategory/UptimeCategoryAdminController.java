@@ -1,6 +1,7 @@
 package cn.rjtech.admin.uptimecategory;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.UptimeCategory;
 import com.jfinal.aop.Before;
@@ -90,6 +91,7 @@ public class UptimeCategoryAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 
+    @UnCheck
 	public void options() {
 		renderJsonData(service.options());
 	}
