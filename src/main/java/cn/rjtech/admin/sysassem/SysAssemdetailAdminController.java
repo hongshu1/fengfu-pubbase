@@ -2,6 +2,7 @@ package cn.rjtech.admin.sysassem;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysAssemdetail;
@@ -90,7 +91,9 @@ public class SysAssemdetailAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"IsDeleted"));
 	}
 
+    @UnCheck
 	public void findEditTableDatas(){
 		renderJsonData(service.findEditTableDatas(getKv()));
 	}
+    
 }
