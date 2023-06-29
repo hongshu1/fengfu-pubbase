@@ -24,7 +24,6 @@ import com.jfinal.kit.Kv;
  */
 @CheckPermission(PermissionKey.CURRENTSTOCK)
 @UnCheckIfSystemAdmin
-@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/currentstock", viewPath = "_view/admin/currentstock")
 public class CurrentStockController extends BaseAdminController {
 
@@ -66,6 +65,14 @@ public class CurrentStockController extends BaseAdminController {
 		renderJsonData(service.datas_calculate(getPageNumber(),getPageSize(),getKv()));
 	}
 
+
+	/**
+	 * 列表也数据
+	 * */
+	public void getdatas() {
+		renderJsonData(service.getdatas(getPageNumber(),getPageSize(),getKv()));
+	}
+
 	/**
 	 * 盘点单物料详情列表
 	 * */
@@ -95,15 +102,18 @@ public class CurrentStockController extends BaseAdminController {
 	   set("isapp",0);
 	   render("stockEdit.html");
    }
-
-    @UnCheck
+	/**仓库*/
 	public void autocompleteWareHouse() {
-		renderJsonData(service.autocompleteWareHouse(getKv()));
+		Kv kv = getKv();
+		kv.setIfNotNull("OrgCode",getOrgCode());
+		renderJsonData(service.autocompleteWareHouse(kv));
 	}
-
-    @UnCheck
+	/**库位*/
 	public void autocompletePosition() {
-		renderJsonData(service.autocompletePosition(getKv()));
+		Kv kv = getKv();
+		kv.set("whcode", get("whcode") == null ? "" : get("whcode"));
+		kv.setIfNotNull("OrgCode",getOrgCode());
+		renderJsonData(service.autocompletePosition(kv));
 	}
 
     @UnCheck
@@ -116,7 +126,9 @@ public class CurrentStockController extends BaseAdminController {
 	 * */
    public void save(){
 	   Kv kv = getKv();
+
 	   String checktype = kv.getStr("checktype");
+	   String cdepperson = kv.getStr("cdepperson");
 	   String whcode = kv.getStr("whcode");
 	   String poscode = kv.getStr("poscode");
 
@@ -124,11 +136,26 @@ public class CurrentStockController extends BaseAdminController {
 	   stockcheckvouch.setCheckType(checktype);
 	   stockcheckvouch.setWhCode(whcode);
 	   stockcheckvouch.setPoscodes(poscode);
+	   stockcheckvouch.setCheckPerson(cdepperson);
 	   stockcheckvouch.setIsDeleted("0");
 	   ValidationUtils.notNull(whcode,"仓库为空!");
 	   ValidationUtils.notNull(checktype,"盘点方式为空!");
 
 	   renderJson(service.save2(stockcheckvouch));
+   }
+   public void a(){
+	   Kv kv = getKv();
+	   String checktype = kv.getStr("checktype");
+	   String cdepperson = kv.getStr("cdepperson");
+	   String checktypetrue = kv.getStr("checktypetrue");
+	   String whcode = kv.getStr("whcode");
+	   String poscode = kv.getStr("poscode");
+	   set(checktype,"checktype");
+	   set(cdepperson,"cdepperson");
+	   set(checktypetrue,"checktypetrue");
+	   set(whcode,"whcode");
+	   set(poscode,"poscode");
+	   render("stockForm.html");
    }
 
 

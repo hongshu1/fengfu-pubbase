@@ -631,4 +631,42 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 		moinvbatch.setIStatus(0);
 		return SUCCESS;
 	}
+
+	public Ret updateNumber(Long iautoid, BigDecimal newQty) {
+		tx(()-> {
+			MoMoinvbatch moinvbatch = findById(iautoid);
+			// 获取最大序列号
+			Integer maxSeq = getMaxSeqByMoDocId(moinvbatch.getIMoDocId());
+			BigDecimal oldQty = moinvbatch.getIQty();
+			// 修改原对象
+			moinvbatch.setIQty(newQty);
+			Integer version = Integer.valueOf(moinvbatch.getCVersion());
+			Integer newVersion = version + 1;
+			moinvbatch.setCVersion(newVersion >= 10 ? newVersion.toString() : "0" + newVersion);
+			ValidationUtils.isTrue(moinvbatch.update(), "修改原现品票失败");
+
+			// 生成新对象
+			MoMoinvbatch newMoinvbatch = new MoMoinvbatch();
+			newMoinvbatch.put(moinvbatch);
+			newMoinvbatch.setIAutoId(null);
+			newMoinvbatch.setIQty(oldQty.subtract(newQty));
+			newMoinvbatch.setISeq(maxSeq + 1);
+			newMoinvbatch.setCVersion("00");
+			newMoinvbatch.setCBarcode(BillNoUtils.genRoutingReportNo());
+			newMoinvbatch.setCCompleteBarcode(newMoinvbatch.getCBarcode() + newMoinvbatch.getCVersion());
+			ValidationUtils.isTrue(newMoinvbatch.save(), "生成新现品票失败");
+			return true;
+		});
+
+		return SUCCESS;
+	}
+
+	/**
+	 * 获取生产订单最大序号
+	 * @param iMoDocId
+	 * @return
+	 */
+	private Integer getMaxSeqByMoDocId(Long iMoDocId) {
+		return queryColumn(selectSql().max("iSeq").eq("iMoDocId", iMoDocId));
+	}
 }
