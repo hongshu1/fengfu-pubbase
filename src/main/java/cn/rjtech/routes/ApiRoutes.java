@@ -23,6 +23,7 @@ import cn.rjtech.api.upload.UploadApiController;
 import cn.rjtech.api.user.UserApiController;
 import cn.rjtech.api.workregion.WorkRegionmApiController;
 import cn.rjtech.common.CommonApiController;
+import cn.rjtech.wms.print.PrintController;
 import com.jfinal.config.Routes;
 
 /**
@@ -69,6 +70,8 @@ public class ApiRoutes extends Routes {
         this.add("/api/momopatchweldm", MoMopatchweldmApiController.class);
         //审批流/审核
         this.add("/api/formapproval", FormApprovalApiController.class);
+
+        this.add("/web/common/print", PrintController.class);
     }
 
 }
