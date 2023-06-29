@@ -1058,32 +1058,17 @@ public class MoDocService extends BaseService<MoDoc> {
     return dbTemplate("modoc.getInventoryList", keywords).paginate(pageNumber, pageSize);
   }
 
-  public Page<Record> getPersonByEquipment(int pageNumber, int pageSize, Kv keywords) {
-    if (StrUtil.isNotBlank(keywords.getStr(InventoryRoutingConfig.PERSONEQUIPMENTJSON))) {
-      String str = keywords.getStr(InventoryRoutingConfig.PERSONEQUIPMENTJSON);
-      JSONArray jsonArray = JSONObject.parseArray(str);
-      if (CollectionUtil.isEmpty(jsonArray)) {
-        return null;
-      }
-      List<Record> recordList = new ArrayList<>();
-      for (int i = 0; i < jsonArray.size(); i++) {
-        JSONObject jsonObject = jsonArray.getJSONObject(i);
-        Record record = new Record();
-        record.setColumns(jsonObject.getInnerMap());
-
-        Long personId = jsonObject.getLong("iautoid");
-        if (ObjectUtil.isNotNull(personId)) {
-          Person person = personService.findById(personId);
-          ValidationUtils.notNull(person, "未找到设备信息");
-          record.set(person.CPSN_NUM, person.getCpsnNum());
-        }
-        recordList.add(record);
-      }
-      Page<Record> persons = dbTemplate("modoc.getInventoryList").paginate(pageNumber, pageSize);
-      persons.setList(recordList);
+  public Page<Record> getPersonByEquipment(int pageNumber, int pageSize, Kv keywords){
+    if(keywords.get("configpersonids")!=null){
+      String configpersonids=keywords.getStr("configpersonids");
+      Page<Record> persons = dbTemplate("modoc.getPersonsByIds",Kv.by("configpersonids",configpersonids)).paginate(pageNumber, pageSize);
       return persons;
     }
-    List<Record> records = dbTemplate("modoc.getEquipments", Kv.by("iEquipmentIds", keywords.getLong("configid"))).find();
+
+    List<Record> records = dbTemplate("modoc.getEquipments",Kv.by("iEquipmentIds",keywords.getLong("configid"))).find();
+    if(records.size()==0){
+      records = dbTemplate("modoc.getMoDocEquipments",Kv.by("iEquipmentIds",keywords.getLong("configid"))).find();
+    }
 
     StringBuilder sb = new StringBuilder();
     for (Record record : records) {
@@ -1111,6 +1096,35 @@ public class MoDocService extends BaseService<MoDoc> {
     List<Record> datalists = dbTemplate("modoc.getMoDocbyIinventoryRoutingId", Kv.by("iMoDocId", iMoDocId)).find();
     return datalists;
   }
+
+  public List<Record> getMoDocinv(Kv kv){
+    List<Record> datalists=dbTemplate("modoc.getMoDocinv",Kv.by("iautoid",kv.getLong("configid"))).find();
+    return  datalists;
+  }
+
+  public List<Record> getMoDocEquipment(Kv kv){
+    List<Record> datalists=dbTemplate("modoc.getMoDocEquipment",Kv.by("iautoid",kv.getLong("configid"))).find();
+    return  datalists;
+  }
+
+  public List<Record> moDocInventoryRouting(Kv kv){
+    List<Record> datalists=dbTemplate("modoc.moDocInventoryRouting",Kv.by("iautoid",kv.getLong("configid"))).find();
+    return  datalists;
+  }
+
+  public String findByisScanned(Long imodocid){
+    Record jobN = dbTemplate("momaterialsscansum.getByBarcodeF",Kv.by("imodocid",imodocid)).findFirst();
+    Record jobY = dbTemplate("momaterialsscansum.getByBarcodeN",Kv.by("imodocid",imodocid)).findFirst();
+    String isScanned="";
+    if(jobN.getInt("iplanqty")==jobY.getInt("irealqty")){
+      isScanned="已齐料";
+    }else{
+      isScanned="未齐料";
+    }
+    return isScanned;
+  }
+
+
 
   /**
    * 编辑计划保存
