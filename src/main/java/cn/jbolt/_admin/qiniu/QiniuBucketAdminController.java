@@ -1,5 +1,6 @@
 package cn.jbolt._admin.qiniu;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
@@ -58,6 +59,7 @@ public class QiniuBucketAdminController extends JBoltBaseController {
 	/**
 	 * options数据源
 	 */
+    @UnCheck
 	public void options() {
 		Long qiniuId = getLong(0);
 		if(notOk(qiniuId)){

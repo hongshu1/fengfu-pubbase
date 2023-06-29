@@ -3,6 +3,7 @@ package cn.rjtech.admin.prodform;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.prodformtableparam.ProdFormTableParamService;
 import cn.rjtech.model.momdata.SpotCheckForm;
 import com.alibaba.fastjson.JSONArray;
@@ -119,7 +120,7 @@ public class ProdFormAdminController extends BaseAdminController {
 		renderJson(service.toggleIsEnabled(getLong(0)));
 	}
 
-
+    @UnCheck
 	public void options() {
 		renderJsonData(service.options());
 	}
