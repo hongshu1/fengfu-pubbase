@@ -180,7 +180,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -196,7 +196,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             delete("DELETE T_Sys_PUReceiveDetail   where  MasID = ?", id);
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
 

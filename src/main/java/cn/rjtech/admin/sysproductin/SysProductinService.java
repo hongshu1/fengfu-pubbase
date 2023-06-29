@@ -174,7 +174,7 @@ public class SysProductinService extends BaseService<SysProductin> {
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -188,7 +188,7 @@ public class SysProductinService extends BaseService<SysProductin> {
             delete("DELETE T_Sys_ProductInDetail   where  MasID = ?", id);
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**

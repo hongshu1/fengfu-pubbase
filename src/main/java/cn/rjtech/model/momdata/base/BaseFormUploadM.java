@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
@@ -18,8 +19,6 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
     public static final String CORGCODE = "cOrgCode";
     /**组织名称*/
     public static final String CORGNAME = "cOrgName";
-    /**表格名称*/
-    public static final String CFORMSN = "cFormSn";
     /**上传记录类别ID*/
     public static final String ICATEGORYID = "iCategoryId";
     /**产线ID*/
@@ -123,23 +122,6 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	}
 
 	/**
-	 * 表格名称
-	 */
-	public M setCFormSn(java.lang.String cFormSn) {
-		set("cFormSn", cFormSn);
-		return (M)this;
-	}
-
-	/**
-	 * 表格名称
-	 */
-	@JBoltField(name="cformsn" ,columnName="cFormSn",type="String", remark="表格名称", required=true, maxLength=40, fixed=0, order=5)
-	@JSONField(name = "cformsn")
-	public java.lang.String getCFormSn() {
-		return getStr("cFormSn");
-	}
-
-	/**
 	 * 上传记录类别ID
 	 */
 	public M setICategoryId(java.lang.Long iCategoryId) {
@@ -150,7 +132,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 上传记录类别ID
 	 */
-	@JBoltField(name="icategoryid" ,columnName="iCategoryId",type="Long", remark="上传记录类别ID", required=true, maxLength=19, fixed=0, order=6)
+	@JBoltField(name="icategoryid" ,columnName="iCategoryId",type="Long", remark="上传记录类别ID", required=true, maxLength=19, fixed=0, order=5)
 	@JSONField(name = "icategoryid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICategoryId() {
 		return getLong("iCategoryId");
@@ -167,7 +149,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 产线ID
 	 */
-	@JBoltField(name="iworkregionmid" ,columnName="iWorkRegionMid",type="Long", remark="产线ID", required=true, maxLength=19, fixed=0, order=7)
+	@JBoltField(name="iworkregionmid" ,columnName="iWorkRegionMid",type="Long", remark="产线ID", required=true, maxLength=19, fixed=0, order=6)
 	@JSONField(name = "iworkregionmid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIWorkRegionMid() {
 		return getLong("iWorkRegionMid");
@@ -184,7 +166,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 日期
 	 */
-	@JBoltField(name="ddate" ,columnName="dDate",type="Date", remark="日期", required=true, maxLength=10, fixed=0, order=8)
+	@JBoltField(name="ddate" ,columnName="dDate",type="Date", remark="日期", required=true, maxLength=10, fixed=0, order=7)
 	@JSONField(name = "ddate")
 	public java.util.Date getDDate() {
 		return getDate("dDate");
@@ -201,7 +183,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 备注
 	 */
-	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=9)
+	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=8)
 	@JSONField(name = "cmemo")
 	public java.lang.String getCMemo() {
 		return getStr("cMemo");
@@ -218,7 +200,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 审核状态;0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
 	 */
-	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态;0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=10)
+	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态;0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=9)
 	@JSONField(name = "iauditstatus")
 	public java.lang.Integer getIAuditStatus() {
 		return getInt("iAuditStatus");
@@ -235,7 +217,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 审核时间
 	 */
-	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=11)
+	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=10)
 	@JSONField(name = "daudittime")
 	public java.util.Date getDAuditTime() {
 		return getDate("dAuditTime");
@@ -252,7 +234,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 审批方式;1. 审批状态 2. 审批流
 	 */
-	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式;1. 审批状态 2. 审批流", required=true, maxLength=10, fixed=0, order=12)
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式;1. 审批状态 2. 审批流", required=true, maxLength=10, fixed=0, order=11)
 	@JSONField(name = "iauditway")
 	public java.lang.Integer getIAuditWay() {
 		return getInt("iAuditWay");
@@ -269,7 +251,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 审核人ID
 	 */
-	@JBoltField(name="iauditby" ,columnName="iAuditBy",type="Long", remark="审核人ID", required=false, maxLength=19, fixed=0, order=13)
+	@JBoltField(name="iauditby" ,columnName="iAuditBy",type="Long", remark="审核人ID", required=false, maxLength=19, fixed=0, order=12)
 	@JSONField(name = "iauditby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIAuditBy() {
 		return getLong("iAuditBy");
@@ -286,7 +268,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 审核人名称
 	 */
-	@JBoltField(name="cauditname" ,columnName="cAuditName",type="String", remark="审核人名称", required=false, maxLength=60, fixed=0, order=14)
+	@JBoltField(name="cauditname" ,columnName="cAuditName",type="String", remark="审核人名称", required=false, maxLength=60, fixed=0, order=13)
 	@JSONField(name = "cauditname")
 	public java.lang.String getCAuditName() {
 		return getStr("cAuditName");
@@ -303,7 +285,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 提审时间
 	 */
-	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=15)
+	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=14)
 	@JSONField(name = "dsubmittime")
 	public java.util.Date getDSubmitTime() {
 		return getDate("dSubmitTime");
@@ -320,7 +302,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 创建人ID
 	 */
-	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=16)
+	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=true, maxLength=19, fixed=0, order=15)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
@@ -337,7 +319,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=40, fixed=0, order=17)
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=40, fixed=0, order=16)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCCreateName() {
 		return getStr("cCreateName");
@@ -354,7 +336,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=18)
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=17)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
@@ -371,7 +353,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 更新人ID
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=19)
+	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=true, maxLength=19, fixed=0, order=18)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIUpdateBy() {
 		return getLong("iUpdateBy");
@@ -388,7 +370,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 更新人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=40, fixed=0, order=20)
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=true, maxLength=40, fixed=0, order=19)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCUpdateName() {
 		return getStr("cUpdateName");
@@ -405,7 +387,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 更新时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=21)
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=true, maxLength=23, fixed=3, order=20)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDUpdateTime() {
 		return getDate("dUpdateTime");
@@ -422,7 +404,7 @@ public abstract class BaseFormUploadM<M extends BaseFormUploadM<M>> extends JBol
 	/**
 	 * 删除状态;0. 未删除 1. 已删除
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态;0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=22)
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态;0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=21)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");

@@ -216,7 +216,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -228,7 +228,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             delete("DELETE T_Sys_AssemDetail   where  MasID = ?", id);
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**

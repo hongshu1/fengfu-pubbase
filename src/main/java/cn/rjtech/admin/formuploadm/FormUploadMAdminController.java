@@ -17,11 +17,9 @@ import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Ret;
 import com.jfinal.upload.UploadFile;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 记录上传
@@ -128,34 +126,6 @@ public class FormUploadMAdminController extends BaseAdminController {
 		renderJson(service.saveTableSubmit(getJBoltTable()));
 	}
 
-	public void batchApprove() {
-		renderJson(service.batchApprove(get("ids")));
-	}
-
-	public void batchReverseApprove() {
-		renderJson(service.batchReverseApprove(get("ids")));
-	}
-
-	/**
-	 * 提交审批
-	 */
-	public void submit() {
-		renderJson(service.submit(getLong("iautoid")));
-	}
-
-	/**
-	 * 审批通过
-	 */
-	public void approve() {
-		renderJson(service.approve(getLong(0)));
-	}
-
-	/**
-	 * 审批不通过
-	 */
-	public void reject() {
-		renderJson(service.reject(getLong(0)));
-	}
 	/**
 	 * 删除
 	 */
@@ -169,4 +139,5 @@ public class FormUploadMAdminController extends BaseAdminController {
 	public void deleteByIds() {
 		renderJson(service.deleteByBatchIds(get("ids")));
 	}
+    
 }

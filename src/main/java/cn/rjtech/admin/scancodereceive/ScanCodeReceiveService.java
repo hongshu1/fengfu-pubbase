@@ -192,7 +192,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 			}
 			return true;
 		});
-		return ret(true);
+		return SUCCESS;
 	}
 
 	/**
@@ -206,7 +206,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 			delete("DELETE T_Sys_PUReceiveDetail   where  MasID = ?",id);
 			return true;
 		});
-		return ret(true);
+		return SUCCESS;
 	}
 
 	/**

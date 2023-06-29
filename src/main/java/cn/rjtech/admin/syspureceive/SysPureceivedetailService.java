@@ -136,7 +136,7 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
             }
         }
         deleteByIds(ids);
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -149,7 +149,7 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
             ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
         }
         deleteById(id);
-        return ret(true);
+        return SUCCESS;
     }
 
     public List<Record> getwhname(String id) {

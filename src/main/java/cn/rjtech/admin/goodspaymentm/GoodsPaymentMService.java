@@ -146,7 +146,7 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> {
 			}
 			return true;
 		});
-		return ret(true);
+		return SUCCESS;
 	}
 
 	/**
@@ -160,7 +160,7 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> {
 			update("update SM_GoodsPaymentD  set  IsDeleted = 1 where  iGoodsPaymentMid = ?",id);
 			return true;
 		});
-		return ret(true);
+		return SUCCESS;
 	}
 
 	/**

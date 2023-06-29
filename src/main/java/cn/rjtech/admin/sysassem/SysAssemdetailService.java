@@ -175,7 +175,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
      */
     public Ret deleteRmRdByIds(String ids) {
         deleteByIds(ids);
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -183,7 +183,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
      */
     public Ret delete(Long id) {
         deleteById(id);
-        return ret(true);
+        return SUCCESS;
     }
 
     public SysAssemdetail saveSysAssemdetailModel(SysPuinstoredetail puinstoredetail, String masId) {

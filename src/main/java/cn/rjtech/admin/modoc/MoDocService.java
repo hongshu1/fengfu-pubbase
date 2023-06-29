@@ -256,7 +256,7 @@ public class MoDocService extends BaseService<MoDoc> {
       }
       return true;
     });
-    return ret(true);
+    return SUCCESS;
   }
 
   /**
