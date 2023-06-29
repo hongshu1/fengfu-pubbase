@@ -3,6 +3,7 @@ package cn.jbolt._admin.globalconfig;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.PathKit;
 
@@ -39,6 +40,7 @@ public class GlobalConfigAdminController extends JBoltBaseController {
 	 * @param builtIn
 	 * @param type
 	 */
+    @UnCheck
 	public void datas(String keywords,Boolean builtIn,Long type) {
 		renderJsonData(service.getAdminList(type,builtIn,keywords));
 	}

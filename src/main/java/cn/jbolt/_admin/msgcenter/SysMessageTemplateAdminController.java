@@ -43,6 +43,7 @@ public class SysMessageTemplateAdminController extends BaseAdminController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.adminDatas(getPageNumber(),getPageSize(),getKeywords(), getBoolean("isEnabled"),getInt("messageName"),getInt("messageChance")));
 		//renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));

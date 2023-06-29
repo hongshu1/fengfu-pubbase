@@ -31,6 +31,7 @@ public class PermissionAdminController extends JBoltBaseController {
 	/**
 	 * ajax数据接口
 	 */
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.getAdminPermissionRecordsWithLevel(getLong("applicationId"), getLong("appId"), getLong("topnavId")));
 	}

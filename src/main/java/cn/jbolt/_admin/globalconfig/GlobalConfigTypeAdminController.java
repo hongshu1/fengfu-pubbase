@@ -28,6 +28,7 @@ public class GlobalConfigTypeAdminController extends JBoltBaseController {
 	public void options() {
 		renderJsonData(service.getOptionList());
 	}
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.getAdminList());
 	}

@@ -34,6 +34,7 @@ public class WorkshiftdAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.list(get("iworkshiftmid")));
     }

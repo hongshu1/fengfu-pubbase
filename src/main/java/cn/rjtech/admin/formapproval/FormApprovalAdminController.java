@@ -4,10 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.permission.JBoltUserAuthKit;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.permission.*;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.cache.AuditFormConfigCache;
 import cn.rjtech.enums.FormAuditConfigTypeEnum;
@@ -48,6 +45,7 @@ public class FormApprovalAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKeywords()));
     }

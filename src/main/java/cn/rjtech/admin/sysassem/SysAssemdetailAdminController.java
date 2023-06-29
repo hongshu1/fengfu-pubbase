@@ -32,6 +32,7 @@ public class SysAssemdetailAdminController extends BaseAdminController {
    /**
 	* 数据源
 	*/
+   @UnCheck
 	public void datas() {
 		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("SourceType"), get("AssemType"), get("TrackType"), getBoolean("IsDeleted")));
 	}

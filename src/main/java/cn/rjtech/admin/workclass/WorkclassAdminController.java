@@ -52,6 +52,7 @@ public class WorkclassAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         Page<Record> recordPage = service.pageList(getKv());
         renderJsonData(recordPage);
