@@ -9,6 +9,10 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.ProdFormD;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
+
 /**
  * 制造管理-生产表单行配置
  * @ClassName: ProdFormDService
@@ -105,4 +109,7 @@ public class ProdFormDService extends BaseService<ProdFormD> {
 		return null;
 	}
 
+	public List<ProdFormD> findByPid(Long pid) {
+		return  find("select * from PL_ProdFormD where iProdFormMid=?",pid);
+	}
 }

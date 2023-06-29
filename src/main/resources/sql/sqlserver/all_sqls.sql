@@ -73,3 +73,7 @@
 #namespace("openapi")
 #include("openapi.sql")
 #end
+
+#namespace("todo")
+#include("todo.sql")
+#end

@@ -20,7 +20,7 @@
         <form class="form-inline" id="stockoutqcformmForm_#(pageId)" style="left: 30px;text-align: left">
           <input type="text" hidden id="iscompleted" name="iscompleted" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="cstockoutqcformno" value=""/>
-          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvaddcode" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
           <select class="form-control"
@@ -91,17 +91,17 @@
     {@/if}
     {@if data.istatus == 1}
       <a class="text-info mr-1" data-openpage="dialog" href="admin/stockoutqcformm/checkout/${data.iautoid}" data-area="100%,100%"
-         tooltip title="在库检成绩表" data-title="检验">检验</a>
+         tooltip title="出货检成绩表" data-title="检验">检验</a>
     {@/if}
     {@if data.istatus == 2}
      <a tooltip tooltip title="查看出库检成绩表" href="admin/stockoutqcformm/onlysee/${data.iautoid}" data-scroll="yes"
         data-handler="refreshJBoltTable" data-area="100%,100%" class="jbolt_table_editbtn">查看</a>
-      <a tooltip title="编辑出库检成绩表" href="admin/stockoutqcformm/edit/${data.iautoid}" data-handler="refreshJBoltTable"
+      <a tooltip title="编辑出货检成绩表" href="admin/stockoutqcformm/edit/${data.iautoid}" data-handler="refreshJBoltTable"
          data-area="100%,100%" class="jbolt_table_editbtn">编辑</a>
     {@/if}
     {@if data.istatus == 3}
       <a class="text-info mr-1" data-openpage="dialog" href="admin/stockoutqcformm/onlysee/${data.iautoid}" data-area="100%,100%"
-         tooltip data-title="查看出库检成绩表">查看</a>
+         tooltip data-title="查看出货检成绩表">查看</a>
       <a href="javascript:return false;" data-handler="refreshJBoltTable" tooltip data-title="状态合格不需要编辑"
          disabled="disabled" disabled style="opacity:0.5">编辑</a>
     {@/if}
@@ -113,7 +113,7 @@
     {@if data.istatus==3}<span>合格</span>{@/if}
   </td>
   <td>
-     {@if data.iscompleted==0}<span>未完成</span>{@/if}
+    {@if data.iscompleted==0}<span>未完成</span>{@/if}
     {@if data.iscompleted==1}<span>已完成</span>{@/if}
   </td>
   <td title="${data.cstockoutqcformno}">${data.cstockoutqcformno}</td>
@@ -126,9 +126,8 @@
 	<td title="${data.iqty}">${data.iqty}</td>
 	<td title="${data.cbatchno}">${data.cbatchno}</td>
   <td title="${data.cbatchno}">${data.cbatchno}</td>
-	<td title="${data.iqcuserid}">${data.iqcuserid}</td>
+	<td title="${data.ccreatename}">${data.ccreatename}</td>
   <td title="${data.dcreatetime}">${data.dcreatetime}</td>
-
 </tr>
 {@/each}
 </textarea>
@@ -159,7 +158,7 @@
         <th data-width="100" data-column="iQty">数量</th>
         <th data-width="100" data-column="cBatchNo">现品票</th>
         <th data-width="150" data-column="cBatchNo">批次号</th>
-        <th data-width="100" data-column="iQcUserId">检验员</th>
+        <th data-width="100" data-column="ccreatename">检验员</th>
         <th data-min-width="160" data-column="dCreateTime">创建时间</th>
       </tr>
       </thead>
@@ -181,10 +180,9 @@
   /*
   * 生成
   * */
-  function createTable(iautoid, cqcformname) {
+  function createTable(iautoid) {
     var para = {
-      iautoid: iautoid,
-      cqcformname: cqcformname
+      iautoid: iautoid
     }
     LayerMsgBox.loading("正在生成,请稍等...", 30000);
     Ajax.post('/admin/stockoutqcformm/createTable', para, function (res) {

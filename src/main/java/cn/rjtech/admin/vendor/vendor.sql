@@ -55,7 +55,7 @@ SELECT
 #end
 v.*
 FROM bd_Vendor v
-WHERE  1 = 1
+WHERE  1 = 1 and isdeleted = 0 and isenabled = 1
 #if(iorgid)
 	and v.iorgid = #para(iorgid)
 #end

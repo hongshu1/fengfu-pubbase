@@ -4,9 +4,9 @@
         var editableTableOptions = {
             // trigger: "click",
             submit: {
-                withForm: ["QcFormForm"],
+                withForm: ["prodFormMForm"],
                 type: "all",
-                url: "/admin/prodForm/QcFormTableParamJBoltTable",
+                url: "/admin/prodFormM/QcFormTableParamJBoltTable",
                 success: function (res, table, td) {
                     if (res.state === 'ok') {
                         LayerMsgBox.success(res.msg, 1000, function () {

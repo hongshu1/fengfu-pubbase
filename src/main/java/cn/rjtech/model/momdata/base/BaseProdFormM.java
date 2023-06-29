@@ -206,7 +206,7 @@ public abstract class BaseProdFormM<M extends BaseProdFormM<M>> extends JBoltBas
 	/**
 	 * 生产人员ID
 	 */
-	@JBoltField(name="ipersonid" ,columnName="iPersonId",type="Long", remark="生产人员ID", required=true, maxLength=19, fixed=0, order=9)
+	@JBoltField(name="ipersonid" ,columnName="iPersonId",type="Long", remark="生产人员ID", required=false, maxLength=19, fixed=0, order=9)
 	@JSONField(name = "ipersonid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIPersonId() {
 		return getLong("iPersonId");
@@ -223,7 +223,7 @@ public abstract class BaseProdFormM<M extends BaseProdFormM<M>> extends JBoltBas
 	/**
 	 * 生产人员名称
 	 */
-	@JBoltField(name="cpersonname" ,columnName="cPersonName",type="String", remark="生产人员名称", required=true, maxLength=60, fixed=0, order=10)
+	@JBoltField(name="cpersonname" ,columnName="cPersonName",type="String", remark="生产人员名称", required=false, maxLength=60, fixed=0, order=10)
 	@JSONField(name = "cpersonname")
 	public java.lang.String getCPersonName() {
 		return getStr("cPersonName");
@@ -425,20 +425,20 @@ public abstract class BaseProdFormM<M extends BaseProdFormM<M>> extends JBoltBas
 	}
 
 	/**
-	 * 审核人名称，不走审批流时有该值
+	 * 审核人名称
 	 */
-	@JBoltField(name="cauditname" ,columnName="cAuditName",type="Date", remark="审核人名称，不走审批流时有该值", required=false, maxLength=23, fixed=3, order=22)
-	@JSONField(name = "cauditname")
-	public java.util.Date getCAuditName() {
-		return getDate("cAuditName");
+	public M setCAuditName(java.lang.String cAuditName) {
+		set("cAuditName", cAuditName);
+		return (M)this;
 	}
 
 	/**
-	 * 审批方式;1. 审批状态 2. 审批流
+	 * 审核人名称
 	 */
-	public M setIAuditWay(java.lang.Integer iAuditWay) {
-		set("iAuditWay", iAuditWay);
-		return (M)this;
+	@JBoltField(name="cauditname" ,columnName="cAuditName",type="String", remark="审核人名称", required=false, maxLength=60, fixed=0, order=14)
+	@JSONField(name = "cauditname")
+	public java.lang.String getCAuditName() {
+		return getStr("cAuditName");
 	}
 
 	/**

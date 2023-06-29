@@ -5,6 +5,7 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.prodform.ProdFormService;
 import cn.rjtech.admin.prodformitem.ProdFormItemService;
 import cn.rjtech.admin.prodformtableparam.ProdFormTableParamService;
+import cn.rjtech.model.momdata.FormUploadM;
 import cn.rjtech.model.momdata.ProdFormItem;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -55,7 +56,7 @@ public class ProdFormMAdminController extends BaseAdminController {
 	 * 数据源
 	 */
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getLong("iProdFormId")));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(),getKv()));
 	}
 
 	/**
@@ -77,13 +78,18 @@ public class ProdFormMAdminController extends BaseAdminController {
 	/**
 	 * 编辑
 	 */
-	public void edit() {
-		ProdFormM prodFormM=service.findById(getLong(0));
+	public void edit(@Para(value = "iautoid") Long iautoid) {
+		ProdFormM prodFormM = service.findById(iautoid);
 		if(prodFormM == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
 		set("prodFormM",prodFormM);
+		keepPara();
+		String s = prodFormM.getIAuditStatus() == 0 ?
+				"已保存" : prodFormM.getIAuditStatus() == 1 ?
+				"待审核" : prodFormM.getIAuditStatus() == 2 ? "审核通过" : "审核不通过";
+		set("status",s);
 		render("edit.html");
 	}
 
@@ -127,11 +133,42 @@ public class ProdFormMAdminController extends BaseAdminController {
 			set("columns",columns);
 			List<Record> byIdGetDetail = prodFormService.findByIdGetDetail(iprodformid);
 			List<Map<String, Object>> maps = service.lineRoll2(byIdGetDetail);
-			List<Map<String, Object>> recordList = prodFormTableParamService.findByFormId(Long.valueOf(iprodformid));
-
 			// 查询表头数据及参数数据
-			set("dataList", recordList);
+			set("dataList", maps);
 		}
 		render("_table3.html");
+	}
+
+	/**
+	 * 新增保存
+	 */
+	public void submitForm(@Para(value = "formJsonData") String formJsonDataStr,
+						   @Para(value = "tableJsonData") String tableJsonDataStr){
+		renderJsonData(service.submitForm(formJsonDataStr, tableJsonDataStr));
+	}
+
+	public void batchReverseApprove() {
+		renderJson(service.batchReverseApprove(get("ids")));
+	}
+
+	/**
+	 * 提交审批
+	 */
+	public void submit() {
+		renderJson(service.submit(getLong("iautoid")));
+	}
+
+	/**
+	 * 审批通过
+	 */
+	public void approve() {
+		renderJson(service.approve(getLong(0)));
+	}
+
+	/**
+	 * 审批不通过
+	 */
+	public void reject() {
+		renderJson(service.reject(getLong(0)));
 	}
 }

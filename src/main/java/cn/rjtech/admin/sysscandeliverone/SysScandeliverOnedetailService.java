@@ -138,4 +138,44 @@ public class SysScandeliverOnedetailService extends BaseService<SysScandeliverde
 		return records;
 	}
 
+	/**
+	 * 获取行信息
+	 * @param pageNum
+	 * @param pageSize
+	 * @param kv
+	 * @return
+	 */
+	public Page<Record> getLine(int pageNum, int pageSize, Kv kv){
+		return dbTemplate("sysscandeliverone.getLine", kv).paginate(pageNum, pageSize);
+	}
+
+    /**
+     * 获取订单行数据
+     * @param pageNum
+     * @param pageSize
+     * @param kv
+     * @return
+     */
+    public Page<Record> getOrderLine(int pageNum, int pageSize, Kv kv){
+        return dbTemplate("sysscandeliverone.getOrderLine", kv).paginate(pageNum, pageSize);
+    }
+
+//    ===========不分页
+    /**
+     * 获取行信息
+     * @param kv
+     * @return
+     */
+    public List<Record> getLine(Kv kv){
+        return dbTemplate("sysscandeliverone.getLine", kv).find();
+    }
+
+    /**
+     * 获取订单行数据
+     * @param kv
+     * @return
+     */
+    public List<Record> getOrderLine(Kv kv){
+        return dbTemplate("sysscandeliverone.getOrderLine", kv).find();
+    }
 }

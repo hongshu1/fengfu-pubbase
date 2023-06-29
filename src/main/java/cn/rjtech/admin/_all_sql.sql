@@ -732,6 +732,10 @@
 #include("momopatchweldm/momopatchweldm.sql")
 #end
 
+#namespace("prodformm")
+#include("prodformm/prodformm.sql")
+#end
+
 #namespace("uptimem")
 #include("uptimem/uptimem.sql")
 #end

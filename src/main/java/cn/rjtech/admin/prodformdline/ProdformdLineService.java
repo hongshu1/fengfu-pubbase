@@ -9,6 +9,9 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.ProdformdLine;
+
+import java.util.List;
+
 /**
  * 制造管理-生产表单明细列值
  * @ClassName: ProdformdLineService
@@ -102,4 +105,7 @@ public class ProdformdLineService extends BaseService<ProdformdLine> {
 		return null;
 	}
 
+	public List<ProdformdLine> findByProdFormDId(Long formDIAutoId) {
+		return  find("select * from PL_ProdFormD_Line where iProdFormDid=?",formDIAutoId);
+	}
 }
