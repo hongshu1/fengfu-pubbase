@@ -699,9 +699,10 @@
                     sheet.setValue(jsonDataLength+4+2, 8,5);
                     //
                     for (let j = 0; j < jsonData.data.slice(-3)[i].rowdatas[0].user.length; j++) {
+                        console.log(jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.itype)
                         sheet.setValue(jsonDataLength+4, 9+j,jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.cpsn_name);
-                        sheet.setValue(jsonDataLength+4+1, 9+j,jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.itype);
-                        sheet.setValue(jsonDataLength+4+2, 9+j,jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.itype);
+                        sheet.setValue(jsonDataLength+4+1, 9+j,jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.cpsn_name);
+                        sheet.setValue(jsonDataLength+4+2, 9+j,jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.cpsn_name);
                         if(!jsonData.data.slice(-3)[i].rowdatas[0].user[j].personne.lock){
                             //设置班长其他人员锁定样式
                             sheet.getCell(jsonDataLength+4, 9+j).locked(jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.lock);
@@ -964,7 +965,6 @@
             }
         }else if(typeof id=='string'){
             parms.editCellValueObj.renYuanId.push(id);
-            parms.editCellValueObj.itype = parms['userType']==2?1:parms['userType']==3?2:3;
             parms.editCellValue.push(parms.editCellValueObj);
         }
     }
