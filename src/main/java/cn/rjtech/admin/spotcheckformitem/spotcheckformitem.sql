@@ -16,7 +16,8 @@ WHERE isDeleted = '0'
 #sql("formItemLists")
 SELECT
 	t1.*,
-	t3.cQcItemName
+	t3.cQcItemName,
+    t3.iAutoId as iqcitemid
 FROM
     Bd_SpotCheckFormItem t1
 	LEFT JOIN Bd_QcItem t3 ON t3.iAutoId = t1.iQcItemId

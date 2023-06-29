@@ -63,6 +63,8 @@ public abstract class BaseSpotCheckFormM<M extends BaseSpotCheckFormM<M>> extend
     public static final String IAUDITWAY = "iAuditWay";
     /**提审时间*/
     public static final String DSUBMITTIME = "dSubmitTime";
+    /**附件;多个“,”分隔*/
+    public static final String CATTACHMENTS = "cAttachments";
 	/**
 	 * 主键ID
 	 */
@@ -503,6 +505,23 @@ public abstract class BaseSpotCheckFormM<M extends BaseSpotCheckFormM<M>> extend
 	@JSONField(name = "dsubmittime")
 	public java.util.Date getDSubmitTime() {
 		return getDate("dSubmitTime");
+	}
+
+	/**
+	 * 附件;多个“,”分隔
+	 */
+	public M setCAttachments(java.lang.String cAttachments) {
+		set("cAttachments", cAttachments);
+		return (M)this;
+	}
+
+	/**
+	 * 附件;多个“,”分隔
+	 */
+	@JBoltField(name="cattachments" ,columnName="cAttachments",type="String", remark="附件;多个“,”分隔", required=false, maxLength=2147483647, fixed=0, order=27)
+	@JSONField(name = "cattachments")
+	public java.lang.String getCAttachments() {
+		return getStr("cAttachments");
 	}
 
 }

@@ -1,6 +1,12 @@
 package cn.rjtech.admin.spotcheckformm;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.inventoryspotcheckform.InventorySpotCheckFormService;
+import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
+import cn.rjtech.admin.spotcheckformitem.SpotCheckFormItemService;
+import cn.rjtech.model.momdata.InventorySpotCheckForm;
+import cn.rjtech.model.momdata.SpotCheckForm;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -9,10 +15,17 @@ import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.model.momdata.SpotCheckFormM;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * 始业点检表管理
  * @ClassName: SpotCheckFormMAdminController
@@ -27,11 +40,35 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
 
 	@Inject
 	private SpotCheckFormMService service;
+	@Inject
+	private SpotCheckFormService spotCheckFormService;
+	@Inject
+	private InventorySpotCheckFormService inventorySpotCheckFormService;
+	@Inject
+	private SpotCheckFormItemService spotCheckFormItemService;
+
    /**
-	* 首页
+	* 始业点检-制造工单入口
 	*/
+	public void index2(@Para(value = "cinvcode") String cinvcode,
+					   @Para(value = "cmodocno") String cmodocno,
+					   @Para(value = "croutingname") String croutingname) {
+		set("cinvcode",cinvcode);
+		set("cmodocno",cmodocno);
+		set("croutingname",croutingname);
+		render("spotcheckformm.html");
+	}
+	/**
+	 * 首页
+	 */
 	public void index() {
 		render("index.html");
+	}
+	/**
+	 * 数据源
+	 */
+	public void datas2() {
+		renderJsonData(service.getAdminDatas2(getPageNumber(), getPageSize(),getKv()));
 	}
    /**
 	* 数据源
@@ -59,14 +96,41 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
-	public void edit() {
-		SpotCheckFormM spotCheckFormM=service.findById(getLong(0));
-		if(spotCheckFormM == null){
+	public void edit(@Para(value = "inventoryspotcheckformid") Long inventoryspotcheckformid,
+					 @Para(value = "cinvcode") String cinvcode,
+					 @Para(value = "cmodocno") String cmodocno,
+					 @Para(value = "croutingname") String croutingname) {
+		Record record1 = inventorySpotCheckFormService.pageList(Kv.create().set("iautoid", inventoryspotcheckformid)
+				.set("page",1).set("pageSize",5)).getList().get(0);
+		SpotCheckForm spotCheckForm = spotCheckFormService.findById(record1.getStr("ispotcheckformid"));
+
+		if(record1 == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
 			return;
 		}
-		set("spotCheckFormM",spotCheckFormM);
+		record1.set("coperationname",croutingname);
+		record1.set("crcvdocno",cmodocno);
+		set("spotCheckFormM",record1);
+		set("spotcheckformid",spotCheckForm.getIAutoId());
 		render("edit.html");
+	}
+	/**
+	 * 获取表格中的数据
+	 */
+	public void table3(@Para( value = "spotcheckformid") String spotcheckformid){
+		//根据生产表格id获取项目名称
+		if (StrUtil.isNotBlank(spotcheckformid)) {
+			//生产表单项目标题
+			List<Record> formItemLists = spotCheckFormItemService.formItemLists(Kv.by("iqcformid", spotcheckformid));
+			//行转列
+			List<Map<String, Object>> columns = service.lineRoll(formItemLists,spotcheckformid);
+			set("columns",columns);
+			List<Record> byIdGetDetail = spotCheckFormService.findByIdGetDetail(spotcheckformid);
+			List<Map<String, Object>> maps = service.lineRoll2(byIdGetDetail);
+			// 查询表头数据及参数数据
+			set("dataList", maps);
+		}
+		render("_table3.html");
 	}
 
    /**

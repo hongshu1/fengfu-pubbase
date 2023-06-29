@@ -1,5 +1,6 @@
 package cn.rjtech.admin.spotcheckformdline;
 
+import cn.rjtech.model.momdata.ProdformdLine;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,6 +10,9 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.SpotcheckformdLine;
+
+import java.util.List;
+
 /**
  * 制造管理-点检表明细列值
  * @ClassName: SpotcheckformdLineService
@@ -101,5 +105,7 @@ public class SpotcheckformdLineService extends BaseService<SpotcheckformdLine> {
 		//这里用来覆盖 检测是否被其它表引用
 		return null;
 	}
-
+	public List<SpotcheckformdLine> findBySpotCheckFormDId(Long formDIAutoId) {
+		return  find("select * from PL_SpotCheckFormD_Line where iSpotCheckFormDid=?",formDIAutoId);
+	}
 }

@@ -475,6 +475,11 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
         }
         return SUCCESS;
     }
-
+    /**
+     * 根据存货id获取数据
+     */
+    public List<InventorySpotCheckForm> findByInventoryId(Long iinventoryid,int iType){
+        return find("select * from Bd_InventorySpotCheckForm where iInventoryId=? and iType=?",iinventoryid,iType);
+    }
 
 }
