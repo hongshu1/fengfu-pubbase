@@ -265,7 +265,7 @@ public class UptimeMService extends BaseService<UptimeM> implements IApprovalSer
 
 	//---------------------app----------------------
 	public Record getUptimeTplInfoList(Kv kv) {
-		Record record = dbTemplate("uptimem.getUptimeTplInfo",kv).findFirst();
+		Record record = dbTemplate("uptimem.getUptimeTplInfo",kv).findFirst() != null ? dbTemplate("uptimem.getUptimeTplInfo",kv).findFirst() : new Record();
 		List<Record> recordList = dbTemplate("uptimem.getUptimeDList",kv).find();
 		record.set("dataList",recordList);
 		return record;
