@@ -12,7 +12,6 @@ import cn.jbolt.core.util.JBoltStringUtil;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.config.MesConfigKey;
-import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.Util;
