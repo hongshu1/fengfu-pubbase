@@ -2,6 +2,7 @@ package cn.rjtech.admin.materialreturnlist;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.SystemLog;
@@ -16,11 +17,17 @@ import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoredetailService;
+import cn.rjtech.config.AppConfig;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
+import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO;
+import cn.rjtech.util.BaseInU8Util;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
+import cn.rjtech.wms.utils.StringUtils;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
@@ -251,12 +258,11 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 
 		tx(()->{
 			String headerId = null;
-			String whcode = null;
+
 			// 获取Form对应的数据
 			if (jBoltTable.formIsNotBlank()) {
 				SysPuinstore puinstore = jBoltTable.getFormModel(SysPuinstore.class,"puinstore");
-				Record record = jBoltTable.getFormRecord();
-				whcode = record.get("whcode");//仓库
+
 
 
 //				detailByParam = dbTemplate("syspureceive.purchaseOrderD", kv).findFirst();
@@ -336,12 +342,12 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 					}
 				}
 				String finalHeaderId = headerId;
-				String finalWhcodes = whcode;
+
 				lines.forEach(materialsOutDetail -> {
 					Object qtys = materialsOutDetail.get("qty");
 					System.out.println(qtys);
 					materialsOutDetail.setMasID(finalHeaderId);
-					materialsOutDetail.setWhcode(finalWhcodes);
+
 					materialsOutDetail.setDCreateTime(nowDate);
 					materialsOutDetail.setCCreateName(userName);
 					materialsOutDetail.setDUpdateTime(nowDate);
@@ -354,9 +360,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 				List<SysPuinstoredetail> lines = jBoltTable.getUpdateModelList(SysPuinstoredetail.class);
 
 				String finalHeaderId = headerId;
-				String finalWhcodes1 = whcode;
 				lines.forEach(materialsOutDetail -> {
-					materialsOutDetail.setWhcode(finalWhcodes1);
 					materialsOutDetail.setDUpdateTime(nowDate);
 					materialsOutDetail.setCUpdateName(userName);
 				});
@@ -445,142 +449,9 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 		return first2;
 	}
 
-
-
-	public Ret pushU8(String id) {
-		List<Record> list = dbTemplate("materialreturnlist.pushU8List", Kv.by("autoid", id)).find();
-
-		if (list.size() > 0) {
-//          接口参数
-			User user = JBoltUserKit.getUser();
-			String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
-			String userCode = user.getUsername();
-			Long userId = user.getId();
-			String type = "PUInStore";
-			Record record1 = list.get(0);
-			String organizecode = record1.get("organizecode");
-			String nowDate = DateUtil.format(new Date(), "yyyy-MM-dd");
-
-			JSONObject preAllocate = new JSONObject();
-			preAllocate.put("userCode",userCode);
-			preAllocate.put("organizeCode",organizecode);
-			preAllocate.put("CreatePerson",userId);
-			preAllocate.put("CreatePersonName",user.getName());
-			preAllocate.put("loginDate", nowDate);
-			preAllocate.put("tag",type);
-			preAllocate.put("type",type);
-			JSONArray mainData = new JSONArray();
-			list.forEach(record -> {
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("IsWhpos","1");
-				jsonObject.put("iwhcode", record.get("iwhcode"));
-				jsonObject.put("InvName", record.get("invname"));
-				jsonObject.put("VenName", record.get("venname"));
-				jsonObject.put("VenCode", record.get("vencode"));
-				jsonObject.put("Qty", record.get("qty"));
-				jsonObject.put("organizeCode", organizecode);
-				jsonObject.put("InvCode", record.get("invcode"));
-				jsonObject.put("Num", "0");
-				jsonObject.put("index", "1");
-				jsonObject.put("PackRate", "0");
-				jsonObject.put("ISsurplusqty", "false");
-				jsonObject.put("CreatePerson", userCode);
-				jsonObject.put("BarCode", record.get("barcode"));
-				jsonObject.put("BillNo", record.get("billno"));
-				jsonObject.put("BillID", record.get("billno"));
-				jsonObject.put("BillNoRow", record.get("billnorow"));
-				jsonObject.put("BillDate", record.get("billdate"));
-				jsonObject.put("BillDid", record.get("billno"));
-				jsonObject.put("sourceBillNo", record.get("sourcebillno"));
-				jsonObject.put("sourceBillDid", record.get("sourcebilldid"));
-				jsonObject.put("sourceBillID", record.get("sourcebillid"));
-				jsonObject.put("sourceBillType", record.get("sourcebilltype"));
-				jsonObject.put("SourceBillNoRow", record.get("sourcebillnorow"));
-				jsonObject.put("tag", type);
-				jsonObject.put("IcRdCode", record.get("icrdcode"));
-				jsonObject.put("iposcode", record.get("iposcode"));
-				mainData.add(jsonObject);
-
-			});
-
-//            参数装载
-			Map<String, Object> data = new HashMap<>();
-			data.put("organizeCode", organizecode);
-			data.put("userCode", userCode);
-			data.put("PreAllocate", preAllocate);
-			data.put("MainData", mainData);
-
-//            请求头
-			Map<String, String> header = new HashMap<>(5);
-			header.put("Content-Type", "application/json");
-
-
-			SystemLog systemLog = new SystemLog();
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append("<span class='text-danger'>[物料退货列表推U8操作]</span>");
-//            stringBuilder.append("<span class='text-primary'>[url="+url+"]</span>");
-//            stringBuilder.append("<span class='text-danger'>[参数={"+JSONObject.toJSONString(data)+"}]</span>");
-			systemLog.setType(2);
-			systemLog.setCreateTime(new Date());
-			systemLog.setUserId(JBoltUserKit.getUserId());
-			systemLog.setUserName(JBoltUserKit.getUserUserName());
-			systemLog.setOpenType(1);
-			systemLog.setTargetId(1L);
-			systemLog.setTargetType(1);
-			Ret ret = new Ret();
-			try {
-				String post = HttpApiUtils.httpHutoolPost(url, data, header);
-				if (isOk(post)) {
-					JSONObject parseObject = JSONObject.parseObject(post);
-					stringBuilder.append("<span class='text-primary'>[成功返回参数=").append(post).append("]</span>");
-					String code = parseObject.getString("code");
-					String msg = parseObject.getString("message");
-
-					LOG.info("data====" + data);
-					if ("200".equals(code)) {
-						String[] s = msg.split(",");
-						String bill = s[0];
-						LOG.info("s===>" + bill);
-						LOG.info("data====" + data);
-
-//						int update = update("update T_Sys_SOReturn set U9BillNo = '" + bill + "', status = '2' where" + " AutoID " + "= " + "'" + id + "'");
-
-//						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
-//								"推送数据失败," + "失败原因" + msg);
-					}
-					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
-				} else {
-					stringBuilder.append("<span class='text-primary'>[失败返回参数=").append(post).append("]</span>");
-					return fail("请求失败");
-				}
-			} catch (Exception e) {
-				stringBuilder.append("<span class='text-primary'>[失败异常=").append(e.getMessage()).append("]</span>");
-				e.printStackTrace();
-			} finally {
-				systemLog.setTitle(stringBuilder.toString());
-				systemLog.save();
-			}
-			return fail("请求失败");
-		} else {
-			ValidationUtils.error("查无此单");
-		}
-
-		return SUCCESS;
-	}
-
-
 	@Override
 	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		SysPuinstore sysPuinstore = findById(formAutoId);
-		sysPuinstore.setIAuditBy(userId);
-		sysPuinstore.setCAuditName(userName);
-		sysPuinstore.setDAuditTime(nowDate);
-		String ids = String.valueOf(sysPuinstore.getAutoID());
-		this.pushU8(ids);
-		sysPuinstore.update();
+		sysPuinstoreService.batchApprove(StringUtils.join(formAutoId, COMMA));
 		return null;
 	}
 
@@ -636,31 +507,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 
 	@Override
 	public String postBatchApprove(List<Long> formAutoIds) {
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		/**
-		 *List转换String类型
-		 */
-		if (formAutoIds.size()>0){
-			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < formAutoIds.size(); i++) {
-
-				buffer.append(""+formAutoIds.get(i)+",");
-			}
-			String ids = buffer.substring(0, buffer.length() - 1);
-			List<SysPuinstore> listByIds = getListByIds(ids);
-			if (listByIds.size() > 0) {
-				for (SysPuinstore sysPuinstore : listByIds) {
-					//审核人
-					sysPuinstore.setIAuditBy(userId);
-					sysPuinstore.setCAuditName(userName);
-					sysPuinstore.setDAuditTime(nowDate);
-//					this.pushU8(ids);
-					sysPuinstore.update();
-				}
-			}
-		}
+		sysPuinstoreService.batchApprove(StringUtils.join(formAutoIds, COMMA));
 		return null;
 	}
 
