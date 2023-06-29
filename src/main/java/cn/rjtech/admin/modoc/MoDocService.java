@@ -1173,7 +1173,11 @@ public class MoDocService extends BaseService<MoDoc> {
               set("iinventoryid", record.getStr("codekehu")).set("ioperationid", record.getStr("gonxuid"))).queryStr();
           ValidationUtils.notBlank(routingconfigid, "工单号【" + record.getStr("cmodocno") + "】对应列未找到工单工艺配置数据！！！");
           //删除之前跟工单工艺配置ID相关联的工单工艺人员配置信息
-
+          List<Record> records11 = dbTemplate("modocbatch.deleteModocPersonByConfigId", Kv.by("routingconfigid", Long.parseLong(routingconfigid))).find();
+          records11.forEach(record1 -> {
+            MoMoroutingconfigPerson person = moMoroutingconfigPersonService.findByid(record1.getLong("iautoid"));
+            person.delete();
+          });
           JSONArray records1 = JSON.parseArray(record.getStr("renyuanid"));
           for (Object o : records1) {
             MoMoroutingconfigPerson person = new MoMoroutingconfigPerson();

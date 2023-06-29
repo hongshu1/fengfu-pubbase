@@ -850,11 +850,9 @@ public class MoMotaskService extends BaseService<MoMotask> {
               String imonth = record1.getStr("imonth");
               String idate = record1.getStr("idate");
               String iworkshiftmid = record1.getStr("iworkshiftmid");
-              Kv kv1 = Kv.by("iyear", record1.getStr("iyear")).
-                  set("imonth", record1.getStr("imonth")).set("idate", record1.getStr("idate")).
-                  set("iworkshiftmid", record1.getStr("iworkshiftmid")).set("taskid", kv.getStr("taskid"));
+
               String modocid1 = record1.getStr("iAutoId");
-              String matchingid = year + imonth + idate + iworkshiftmid;
+              String matchingid = year + imonth + idate + iworkshiftmid + ioperationid;
               boolean bol = false;
               if (map2.size() > 0) {
                 List<Record> records11 = map2.get(matchingid) == null ? new ArrayList<>() : map2.get(matchingid);
@@ -869,13 +867,15 @@ public class MoMotaskService extends BaseService<MoMotask> {
                 Record record = new Record();
                 String psnname = "";
                 String psnnum = "";
-                for (int k = 0; k < records4.size(); k++) {
-                  if (k == 0) {
-                    psnname = records4.get(k).getStr("psnname");
-                    psnnum = records4.get(k).getStr("psnnum");
-                  } else {
-                    psnname = psnname + "/" + records4.get(k).getStr("psnname");
-                    psnnum = psnnum + "," + records4.get(k).getStr("psnnum");
+                if (records4 != null) {
+                  for (int k = 0; k < records4.size(); k++) {
+                    if (k == 0) {
+                      psnname = records4.get(k).getStr("psnname");
+                      psnnum = records4.get(k).getStr("psnnum");
+                    } else {
+                      psnname = psnname + "/" + records4.get(k).getStr("psnname");
+                      psnnum = psnnum + "," + records4.get(k).getStr("psnnum");
+                    }
                   }
                 }
                 record.put("psnnum", psnnum);
