@@ -1,11 +1,13 @@
 package cn.rjtech.admin.investmentplanitemd;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.common.enums.BusObjectTypeEnum;
 import cn.jbolt.core.common.enums.DataOperationEnum;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -38,8 +40,8 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-10-18 09:38
  */
-//@CheckPermission(PermissionKey.INVESTMENT_PLAN_ITEMD)
 @UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.STATISTIC_ANALYSIS_INVESTMENTPLANITEMD)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/investmentplanitemd", viewPath = "/_view/admin/investmentplanitemd")
 public class InvestmentPlanItemdAdminController extends BaseAdminController {
@@ -62,6 +64,7 @@ public class InvestmentPlanItemdAdminController extends BaseAdminController {
 	/**
 	 * 数据源
 	 */
+	@UnCheck
 	@CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));

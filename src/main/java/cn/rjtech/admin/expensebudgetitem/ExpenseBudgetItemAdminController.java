@@ -1,9 +1,11 @@
 package cn.rjtech.admin.expensebudgetitem;
 
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.common.enums.BusObjectTypeEnum;
 import cn.jbolt.core.common.enums.DataOperationEnum;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -79,12 +81,14 @@ public class ExpenseBudgetItemAdminController extends BaseAdminController {
     /**
      * 费用预算差异管理
      */
+    @CheckPermission(PermissionKey.EXPENSE_BUDGET_DIFFERENCES)
     public void expenseBudgetDifferences(){
         render("differences_index.html");
     }
     /**
      * 费用预算差异管理数据源
      */
+    @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void differencesManagementDatas(){
         renderJsonData(service.differencesManagementDatas(getKv()));

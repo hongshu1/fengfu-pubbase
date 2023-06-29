@@ -439,6 +439,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     /**
      * 费用预算期间对比数据源
      */
+    @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void periodContrastDatas(){
         renderJsonData(service.periodContrastDatas(getPageNumber(),getPageSize(),getKv()));
@@ -446,6 +447,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     /**
      * 费用预算期间对比页面
      */
+    @CheckPermission(PermissionKey.EXPENSEBUDGET_CONTRAST)
     public void periodContrastIndex(){
         render("period_contrast_index.html");
     }
