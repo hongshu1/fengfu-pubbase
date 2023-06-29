@@ -63,6 +63,8 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
     public static final String VENCODE = "VenCode";
     /**存货编码*/
     public static final String INVCODE = "invcode";
+    /**包装数量*/
+    public static final String IPKGQTY = "iPkgQty";
 	/**
 	 * AutoID
 	 */
@@ -497,6 +499,23 @@ public abstract class BaseSysAssemdetail<M extends BaseSysAssemdetail<M>> extend
 	@JSONField(name = "invcode")
 	public java.lang.String getInvcode() {
 		return getStr("invcode");
+	}
+
+	/**
+	 * 包装数量
+	 */
+	public M setIPkgQty(java.lang.Integer iPkgQty) {
+		set("iPkgQty", iPkgQty);
+		return (M)this;
+	}
+
+	/**
+	 * 包装数量
+	 */
+	@JBoltField(name="ipkgqty" ,columnName="iPkgQty",type="Integer", remark="包装数量", required=false, maxLength=10, fixed=0, order=27)
+	@JSONField(name = "ipkgqty")
+	public java.lang.Integer getIPkgQty() {
+		return getInt("iPkgQty");
 	}
 
 }
