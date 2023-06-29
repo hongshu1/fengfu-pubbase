@@ -76,7 +76,7 @@ public class ProdFormParamAdminController extends BaseAdminController {
 		set("FormItemCodes", get("FormItemCodes"));
 		set("iqcformitemid", get("typeId"));
 		set("iQcItemIds", get("iQcItemIds"));
-		//keepPara();
+		keepPara();
 		render("qcformparam.html");
 	}
 	/**

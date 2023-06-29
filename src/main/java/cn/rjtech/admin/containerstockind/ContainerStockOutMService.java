@@ -2,8 +2,8 @@ package cn.rjtech.admin.containerstockind;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.base.service.BaseService;
 import cn.rjtech.model.momdata.ContainerStockOutM;
 import com.jfinal.kit.Ret;
 
@@ -13,10 +13,13 @@ import java.util.Date;
  * 容器出库表service
  */
 public class ContainerStockOutMService extends BaseService<ContainerStockOutM> {
-    private final ContainerStockOutM dao=new ContainerStockOutM().dao();
+
+    private final ContainerStockOutM dao = new ContainerStockOutM().dao();
 
     @Override
-    public int systemLogTargetType() { return ProjectSystemLogTargetType.NONE.getValue(); }
+    public int systemLogTargetType() {
+        return ProjectSystemLogTargetType.NONE.getValue();
+    }
 
     @Override
     protected ContainerStockOutM dao() {
@@ -25,11 +28,9 @@ public class ContainerStockOutMService extends BaseService<ContainerStockOutM> {
 
     /**
      * 保存
-     * @param
-     * @return
      */
     public Ret save(ContainerStockOutM stockOutM) {
-        if(stockOutM==null || isOk(stockOutM.getIAutoId())) {
+        if (stockOutM == null || isOk(stockOutM.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         //if(existsName(container.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
@@ -48,11 +49,12 @@ public class ContainerStockOutMService extends BaseService<ContainerStockOutM> {
         stockOutM.setCOrgName(getOrgName());
         stockOutM.setIOrgId(getOrgId());
 
-        boolean success=stockOutM.save();
-        if(success) {
+        boolean success = stockOutM.save();
+        if (success) {
             //添加日志
             //addSaveSystemLog(container.getIAutoId(), JBoltUserKit.getUserId(), container.getName());
         }
         return ret(success);
     }
+    
 }

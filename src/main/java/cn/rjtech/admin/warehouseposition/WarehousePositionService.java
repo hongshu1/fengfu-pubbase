@@ -12,7 +12,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
 import cn.rjtech.admin.warehouseshelves.WarehouseShelvesService;
-import cn.rjtech.base.service.BaseService;
+import cn.jbolt.core.service.base.BaseService;
 import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.model.momdata.WarehouseArea;
 import cn.rjtech.model.momdata.WarehousePosition;

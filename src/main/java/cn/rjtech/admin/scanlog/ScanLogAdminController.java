@@ -3,6 +3,7 @@ package cn.rjtech.admin.scanlog;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.ScanLog;
@@ -32,6 +33,7 @@ public class ScanLogAdminController extends BaseAdminController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
 	}

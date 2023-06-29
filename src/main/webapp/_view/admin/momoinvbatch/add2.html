@@ -2,113 +2,121 @@
 #define main()
 <div class="jbolt_page">
     <div class="jbolt_page_content">
-        <form onsubmit="return false;" id="processDefectForm"  action="" method="post">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form onsubmit="return false;" id="processDefectForm" action="" method="post">
+                            <button onclick="closeHandler()" class="btn btn-danger btn-sm"><i
+                                    class="fa fa-window-maximize"></i> 关闭
+                            </button>
+                            <input type="hidden" name="iautoid" value="#(imodocid??)"/>
+                            <hr/>
+                            <h5><b>工单信息</b></h5>
+                            <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">工单号:</label>
+                            <div class="col-sm-2">
+                                #(moDoc.cmodocno??)
+                            </div>
+                            <label class="col-sm-2 col-form-label">计划日期:</label>
+                            <div class="col-sm-2">
+                                #date(moDoc.dplandate??,'yyyy-MM-dd')
+                            </div>
+                            <label class="col-sm-2 col-form-label">生产部门:</label>
+                            <div class="col-sm-2">
+                                #(moDoc.cdepname)
+                            </div>
+                        </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">存货编码:</label>
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.cinvcode??)
+                                </div>
+                                <label class="col-sm-2 col-form-label">客户部番:</label>
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.cnvcode1??)
+                                </div>
+                                <label class="col-sm-2 col-form-label">部品名称:</label>
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.cinvname1??)
+                                </div>
 
-            <button onclick="closeHandler()" class="btn btn-danger btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
-            <input type="hidden" name="iautoid" value="#(imodocid??)" />
-            <h5></h5>
-            <hr/>
-            <div class="form-group row">
 
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">产线名称:</label>
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.cworkname??)
+                                </div>
+                                <label class="col-sm-2 col-form-label">班次名称:</label>
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.cworkshiftname??)
+                                </div>
+                                <label class="col-sm-2 col-form-label">计划数量:</label>
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.iqty??)
+                                </div>
 
-
-
-
-                    <label class="col-sm-2 col-form-label">工单号:</label>
-                    <div class="col-sm-2 col-form-label">
-                        #(moDoc.cmodocno??)
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">完工数量:</label>
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.icompqty??)
+                                </div>
+                                <label class="col-sm-2 col-form-label">差异数量:</label>
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.cyqty??)
+                                </div>
+                                <label class="col-sm-2 col-form-label">包装数量:</label>
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.cyqty??)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">作业人员:</label>
+                                <input type="text" autocomplete="off" class="form-control"
+                                       data-autocomplete
+                                       name="moMoinvbatch.jobname"
+                                       readonly="readonly"
+                                       data-url="admin/person/autocomplete"
+                                       data-link-para-ele="#capplypersoncode"
+                                       data-sync-ele="capplypersoncode"
+                                       data-text-attr="cpsnname"
+                                       data-value-attr="cpsnnum"
+                                       placeholder="=作业人员="
+                                       value="#(moMoinvbatch.jobname??)"
+                                       data-column-attr="cpsnnum,cpsnname">
+                                <label class="col-sm-2 col-form-label">产线组长:</label>
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.cinvname1??)
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                <label class="col-sm-2 col-form-label">计划日期:</label>
-                <div class="col-sm-2 col-form-label">
-                    #date(moDoc.dplandate??,'yyyy-MM-dd')
                 </div>
-                <label class="col-sm-2 col-form-label">生产部门:</label>
-                <div class="col-sm-2 col-form-label">
-                    #(moDoc.cdepname)
-                </div>
-
-                </div>
-                <div class="form-group row">
-
-                  <label class="col-sm-2 col-form-label">存货编码:</label>
-                    <div class="col-sm-2 col-form-label">
-                        #(moDoc.cinvcode??)
-                    </div>
-                    <label class="col-sm-2 col-form-label">客户部番:</label>
-                    <div class="col-sm-2 col-form-label">
-                        #(moDoc.cnvcode1??)
-                    </div>
-                    <label class="col-sm-2 col-form-label">部品名称:</label>
-                    <div class="col-sm-2 col-form-label">
-                        #(moDoc.cinvname1??)
-                    </div>
-
-
-                </div>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">产线:</label>
-                <div class="col-sm-2 col-form-label">
-                    #(moDoc.cworkname??)
-                </div>
-                <label class="col-sm-2 col-form-label">班次:</label>
-                <div class="col-sm-2 col-form-label">
-                    #(moDoc.cworkshiftname??)
-                </div>
-                <label class="col-sm-2 col-form-label">计划数量:</label>
-                <div class="col-sm-2 col-form-label">
-                    #(moDoc.iqty??)
-                </div>
-
-            </div>
-            <div class="form-group row">
-
-                <label class="col-sm-2 col-form-label">完工数量:</label>
-                <div class="col-sm-2 col-form-label">
-                    #(moDoc.icompqty??)
-                </div>
-                <label class="col-sm-2 col-form-label">差异数量:</label>
-                <div class="col-sm-2 col-form-label">
-                    #(moDoc.cyqty??)
-                </div>
-
-
-            </div>
-
-
-
-
-
-
-
-
-        </form>
-    </div>
-</div>
-<div class="jbolt_page_content">
-<div class="row">
-
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">未打印现品票</div>
-            <div class="card-body">
-
-                #include("table1.html")
-
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">已打印现品票</div>
-            <div class="card-body">
-
-                #include("table2.html")
-
             </div>
         </div>
     </div>
-
-</div>
+    <div class="jbolt_page_content">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header"><b>未打印现品票</b></div>
+                <div class="card-body">
+                    #include("table1.html")
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header"><b>已打印现品票</b></div>
+                <div class="card-body">
+                    #include("table2.html")
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
 </div>
 #define js()
 <script>

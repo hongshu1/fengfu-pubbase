@@ -1,5 +1,6 @@
 package cn.jbolt.admin.wechat.mpinfo;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.JFinal;
@@ -40,6 +41,7 @@ public class WechatMpinfoAdminController extends JBoltBaseController {
 	/**
 	 * 数据源
 	 */
+    @UnCheck
 	public void datas(){
 		renderJsonData(service.paginateAdminList(getPageNumber(),getPageSize(),getKeywords(),getEnable(),getType(),getInt("subjectType"),getBoolean("isAuthenticated")));
 	}

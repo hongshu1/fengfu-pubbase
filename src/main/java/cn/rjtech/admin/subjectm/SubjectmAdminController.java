@@ -50,6 +50,7 @@ public class SubjectmAdminController extends BaseAdminController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getKv()));
 	}

@@ -66,6 +66,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	/**
 	 * codeGen数据源
 	 */
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getInt("pid"),getPageNumber(), getPageSize(), getSortColumn("update_time"), getSortType("desc"), getKeywords(), getInt("style"), getState(),getBoolean("isDeleted"),"main_table_name,author,remark,version_sn"));
 	}
@@ -161,6 +162,7 @@ public class CodeGenAdminController extends JBoltBaseController {
 	/**
 	 * 系统数据源
 	 */
+    @UnCheck
 	public void datasources() {
 		renderJsonData(JBoltDataSourceUtil.me.getAllDatasource());
 	}

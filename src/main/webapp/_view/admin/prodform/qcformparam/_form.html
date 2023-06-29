@@ -25,8 +25,8 @@
                 <!-- 工具条 toolbar -->
 
                 <table class="jbolt_table jbolt_main_table  table-center"
-                       ###id="jbolt_table_qcformparam_split_#(pageId)"
-                       id="jbolt_table_qcformparam_split"
+                       ###id="jbolt_table_prod_qcformparam_split_#(pageId)"
+                       id="jbolt_table_prod_qcformparam_split"
                        data-jbolttable
                        data-width="auto"
                        data-height="200"
@@ -63,7 +63,7 @@
 </div>
 <script>
     function addparam(ele) {
-        const dataList = jboltTableGetAllDatas('#jbolt_table_qcformparam_split', ['iqcparamid']);
+        const dataList = jboltTableGetAllDatas('#jbolt_table_prod_qcformparam_split', ['iqcparamid']);
         let FormItemCodes = '';
         if(isOk(dataList)){
             dataList.forEach((value,index)=>{
@@ -124,7 +124,7 @@
     }
 
     function insertRow(data) {
-        jboltTableInsertRow('#jbolt_table_qcformparam_split', data, false);
+        jboltTableInsertRow('#jbolt_table_prod_qcformparam_split', data, false);
     }
 
     // function addBomcompareTr(ele) {

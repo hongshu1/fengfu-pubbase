@@ -27,6 +27,7 @@ public class RoleAdminController extends JBoltBaseController {
 		render("index.html");
 	}
 
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.getAllRoleTreeDatas());
 	}
@@ -116,7 +117,7 @@ public class RoleAdminController extends JBoltBaseController {
         renderJsonData(service.paginateUserAndRoleDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
-
+    @UnCheck
 	public void autocomplete(){
 		renderJsonData(service.autocomplete(getKv()));
 	}

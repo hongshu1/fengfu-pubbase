@@ -1,5 +1,6 @@
 package cn.rjtech.admin.bomdata;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -33,6 +34,7 @@ public class BomDataAdminController extends BaseAdminController {
    /**
 	* 数据源
 	*/
+   @UnCheck
 	public void datas() {
 		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize()));
 	}

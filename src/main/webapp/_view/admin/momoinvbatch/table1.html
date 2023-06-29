@@ -1,11 +1,10 @@
-
-<div class="jbolt_page" data-key="#(pmkey)" >
+<div class="jbolt_page" data-key="#(pmkey)">
 
     <div class="jbolt_page_title">
         <div class="row">
 
             <div class="col">
-                <form class="form-inline" id="moMoinvbatchForm_#(pageId)"   onsubmit="return false;" method="post">
+                <form class="form-inline" id="moMoinvbatchForm_#(pageId)" onsubmit="return false;" method="post">
 
                 </form>
             </div>
@@ -23,9 +22,6 @@
 <td>${data.cbarcode}</td>
  <td>${data.cversion}</td>
 <td>${data.iqty}</td>
-<td>${data.iprintstatusname}</td>
-
-
 <td>
     {@if data.iprintstatus==1}
 	<a href="admin/momoinvbatch/editprint/${data.iautoid}" data-area="50%,100%"  tooltip data-title="打印"  data-handler="refreshJBoltTable" data-dialog-title="打印" class="jbolt_table_editbtn"><i class="fa fa-print"></i>打印</a>
@@ -39,19 +35,17 @@
 </tr>
 {@/each}
 </textarea>
-
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="moMoinvbatch_toolbar_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
-
-                <button  data-openpage="dialog" data-area="50%,100%" data-dialog-title="批量打印" data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/momoinvbatch/subListPrintPage?imodocid=#(imodocid??)&ids=" data-confirm="批量打印？" class="btn btn-primary btn-sm" ><i class="fa fa-print"></i>批量打印</button>
-
+                <button data-openpage="dialog" data-area="50%,100%" data-dialog-title="批量打印" data-ajaxbtn
+                        data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                        id="toolbar_deleteBtn_#(pageId)"
+                        data-url="admin/momoinvbatch/subListPrintPage?imodocid=#(imodocid??)&ids=" data-confirm="批量打印？"
+                        class="btn btn-primary btn-sm"><i class="fa fa-print"></i>批量打印
+                </button>
             </div>
-
-            <div class="clearfix"></div>
         </div>
-
-
 
         <table class="jbolt_table jbolt_main_table table-center hover_info"
                data-jbolttable
@@ -65,10 +59,6 @@
                data-rowtpl="moMoinvbatchRowtpl_#(pageId)"
                data-page="moMoinvbatchPage_#(pageId)"
                data-toolbar="moMoinvbatch_toolbar_#(pageId)"
-
-
-
-
                data-fixed-columns-left="1,2,3"
                data-fixed-columns-right="-1"
                data-row-dblclick-active="true"
@@ -77,19 +67,15 @@
             <thead>
             <tr>
                 <th data-width="10">序号</th>
-
-
                 <th data-width="150" data-column="cBarcode">现品票</th>
-                <th data-width="50" data-column="cversion">版本</th>
+                <th data-width="30" data-column="cversion">版本</th>
                 <th data-width="50" data-column="iQty">数量</th>
-                <th data-width="50" data-column="iPrintStatus">打印状态</th>
-                <th data-width="150" >操作</th>
+                <th data-width="150">操作</th>
             </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
-
 
 
     </div>

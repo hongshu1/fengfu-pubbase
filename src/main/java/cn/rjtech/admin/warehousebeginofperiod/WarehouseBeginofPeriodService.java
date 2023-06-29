@@ -19,7 +19,7 @@ import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
-import cn.rjtech.base.service.BaseService;
+import cn.jbolt.core.service.base.BaseService;
 import cn.rjtech.common.model.Barcodedetail;
 import cn.rjtech.common.model.Barcodemaster;
 import cn.rjtech.model.momdata.*;
