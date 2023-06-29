@@ -481,5 +481,11 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
     public List<InventorySpotCheckForm> findByInventoryId(Long iinventoryid,int iType){
         return find("select * from Bd_InventorySpotCheckForm where iInventoryId=? and iType=?",iinventoryid,iType);
     }
+    /**
+     * 根据存货id和工序名称获取数据 获取对应点检表数据
+     */
+    public List<Record> findByInventoryIdAndOperationName(Long inventoryid,String operationname,int itye){
+        return  dbTemplate("inventoryspotcheckform.findByInventoryIdAndOperationName",Kv.by("iinventoryid",inventoryid).set("coperationname",operationname).set("itye",itye)).find();
+    }
 
 }
