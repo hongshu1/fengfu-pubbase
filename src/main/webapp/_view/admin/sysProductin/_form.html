@@ -1,12 +1,12 @@
+#set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button class="btn btn-success btn-sm" onclick="submitThisForm()" #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) disabled #end ><i
-                                class="fa fa-refresh"></i> 保存
-                        </button>
+                        <button class="btn btn-success btn-sm" onclick="submitThisForm()" #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) disabled #end ><i class="fa fa-refresh"></i> 保存</button>
+                        
                         #if(sysProductin.AutoID??)
                         ### 参数列表
                         ### uri:                接口URI
@@ -16,9 +16,7 @@
                         #include("/_view/_common/_approval_btns.html", uri="/admin/productInList", formSn="T_Sys_ProductIn", o=sysProductin, edit=edit??, primaryKeyName="AutoID")
                         #end
 
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 关闭
-                        </button>
+                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
                     </div>
                 </div>
             </div>
@@ -160,14 +158,14 @@
         </div>
     </div>
 </div>
+
 ### 新增之后，并且为审核流
 #if(sysProductin.AutoID?? && sysProductin.iauditway == 2)
 #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysProductin.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId,primaryKeyName="AutoID", className="cn.rjtech.admin.sysproductin.SysProductinService")
 #end
 
-
-
 <div class="jbolt_page_content">
+    
     <script type="text/template" id="sysProductin_tpl_#(pageId)">
         {@each datas as data,index}
         <tr data-id="${data.autoid}">
@@ -196,6 +194,7 @@
         </tr>
         {@/each}
     </script>
+    
     <div class="jbolt_table_toolbar" id="sysProductin_toolbar_#(pageId)">
         <div class="col-md-4">
             <div class="form-group row">
@@ -215,13 +214,11 @@
                     <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) disabled #end   ><i class="fa fa-trash"></i> 删除行</button>
                 </div>
 
-
-
-
             </div>
         </div>
 
     </div>
+    
     <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(sysProductin.AutoID??)
            data-ajax="true" data-url="admin/sysProductindetail/findEditTableDatas?masid=#(sysProductin.AutoID??)" #end
            id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
@@ -246,10 +243,11 @@
 </div>
 #define js()
 <script>
+    
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
 
-    function submitThisForm() {
+    function submitThisForm_#(pageId)() {
         jboltTableSubmit("#jbolt_Table_#(pageId)");
         return true;
     }
@@ -271,11 +269,6 @@
             cols: {
                 AutoID: {
                     submitAttr: "AutoID",
-                },
-                barcode: {
-                    type: "input",//类型
-                    placeholder: "现品票", //输入提示，里面
-                    tooltip: "现品票",//输入提示，上方
                 },
                 memo: {
                     type: "input",//类型
