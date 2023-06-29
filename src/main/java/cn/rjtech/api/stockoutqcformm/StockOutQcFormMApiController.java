@@ -7,6 +7,7 @@ import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.instockqcformm.GetExportExcelVo;
 import cn.rjtech.entity.vo.instockqcformm.InStockAutoGetCheckOutTableDatasVo;
+import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMApiCheckOutVo;
 import cn.rjtech.entity.vo.stockoutqcformm.*;
 import cn.rjtech.util.ValidationUtils;
 
@@ -91,7 +92,7 @@ public class StockOutQcFormMApiController extends BaseApiController {
      *
      * @param iautoid 主键
      */
-    @ApiDoc(result = StockoutQcFormMCheckoutVo.class)
+    @ApiDoc(result = RcvDocQcFormMApiCheckOutVo.class)
     @UnCheck
     public void jumpCheckout(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
@@ -103,7 +104,7 @@ public class StockOutQcFormMApiController extends BaseApiController {
      *
      * @param iautoid 主键
      */
-    @ApiDoc(result = StockoutQcFormMOnlyseeVo.class)
+    @ApiDoc(result = RcvDocQcFormMApiCheckOutVo.class)
     @UnCheck
     public void jumpOnlysee(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
@@ -114,7 +115,7 @@ public class StockOutQcFormMApiController extends BaseApiController {
     /*
      * 点击编辑按钮，跳转到编辑页面
      * */
-    @ApiDoc(result = StockoutQcFormMOnlyseeVo.class)
+    @ApiDoc(result = RcvDocQcFormMApiCheckOutVo.class)
     @UnCheck
     public void jumpEdit(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, JBoltMsg.PARAM_ERROR);
