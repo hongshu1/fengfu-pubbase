@@ -81,8 +81,11 @@ WHERE 1 = 1
     OR  dt.cDepName LIKE CONCAT('%', #para(selectparam), '%')
     )
     #end
-   #if(iorderstatus)
-        AND t1.Status = #para(iorderstatus)
+   #if(state)
+        AND t1.iAuditStatus = #para(state)
+    #end
+    #if(iorderstatus)
+        AND t1.iAuditStatus = #para(iorderstatus)
     #end
 #if(startdate)
     and CONVERT(VARCHAR(10),t1.ModifyDate,23) >='#(startdate)'
@@ -124,41 +127,47 @@ WHERE
 
 
 #sql("TableBarcodeData")
-select m.cOrderNo AS sourcebillno,
-       a.cCompleteBarcode AS barcode,
-       b.cInvCode AS invcode,
-       b.cInvCode1,
-       b.cInvName1,
-       b.cInvName,
-       b.cInvAddCode,
-       a.dPlanDate AS plandate,
-       b.cInvStd AS cinvstd,
-       a.iQty AS qty,
-       a.iQty AS qtys,
-       m.cOrderNo AS SourceBillNo,
-       m.iBusType AS SourceBillType,
-       m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
-       m.cOrderNo AS SourceBillID,
-       d.iAutoId AS SourceBillDid,
-       m.iVendorId,
-       v.cVenCode AS vencode,
-       v.cVenName AS venname,
-       uom.cUomCode AS purchasecuomcode,
-       uom.cUomName AS purchasecuomname,
-       config.iWarehouseId
+SELECT
+    m.cOrderNo AS SourceBillNo,
+    m.cOrderNo + '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+    m.iAutoId AS SourceBillID,
+    d.iAutoId AS SourceBillDid,
+    tc.iSeq AS RowNo,
+    b.cInvCode AS invcode,
+    b.cInvName,
+    b.cInvCode1,
+    b.cInvName1,
+    a.cCompleteBarcode AS barcode,
+    CONVERT ( VARCHAR ( 10 ), a.dPlanDate, 120 ) AS dPlanDate,
+    b.cInvStd AS cinvstd,
+    a.iQty AS qty,
+    a.iQty AS quantity,
+    v.cVenCode AS vencode,
+    v.cVenName AS venname,
+    uom.cUomCode,
+    uom.cUomName,
+    change.iBeforeInventoryId,
+    change.iAfterInventoryId,
+    wh.cWhCode AS whcode,
+    wh.cWhName AS whname,
+    area.cAreaCode AS poscode,
+    area.cAreaName AS posname
 FROM
     PS_PurchaseOrderDBatch a
         LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
         LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
         LEFT JOIN PS_PurchaseOrderM m ON m.iAutoId = d.iPurchaseOrderMid
         LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
-        LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cBarcode
-        AND pd.isDeleted = '0'
         LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId
         AND tc.iAutoId = a.iPurchaseOrderdQtyId
         LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+        LEFT JOIN Bd_InventoryChange change ON change.iBeforeInventoryId= b.iAutoId
         LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
-where 1=1
+        LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+        LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = config.iWarehouseId
+WHERE 1=1
+    AND a.isEffective = '1'
+	AND change.iAutoId IS NOT NULL
 	#if(invcode != null)
         AND b.cInvCode  in ( #(invcode) )
     #end
