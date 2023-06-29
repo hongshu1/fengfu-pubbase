@@ -95,13 +95,6 @@ public class WeekOrderMAdminController extends BaseAdminController {
     }
 
     /**
-     * 审批通过
-     */
-    public void approve() {
-        renderJson(service.approve(getLong(0)));
-    }
-
-    /**
      * 关闭
      */
     public void closeWeekOrder(@Para(value = "iautoid") String iAutoId) {
