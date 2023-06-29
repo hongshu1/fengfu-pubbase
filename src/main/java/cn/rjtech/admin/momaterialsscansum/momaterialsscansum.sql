@@ -119,7 +119,7 @@ SELECT
     a.iUsageUOM*d.iQty AS planIqty
 FROM
     Mo_MoRoutingInvc a   ### 工艺工序物料集
-        LEFT JOIN Bd_Inventory f ON a.iInventoryId= f.iAutoId
+    LEFT JOIN Bd_Inventory f ON a.iInventoryId= f.iAutoId
     LEFT JOIN Mo_MoRoutingConfig b ON a.iMoRoutingConfigId= b.iAutoId ###工单工艺配置
     LEFT JOIN Mo_MoRouting c ON b.iMoRoutingId= c.iAutoId   ###工艺路线
     LEFT JOIN Mo_MoDoc d ON c.iMoDocId= d.iAutoId
@@ -139,7 +139,7 @@ SELECT LOG.*, cInvCode, cInvCode1,cInvName1,cInvStd, uom.cUomName
 FROM Mo_MaterialScanLog LOG
 LEFT JOIN Bd_Inventory INV ON LOG.iInventoryId=INV.iAutoId
 LEFT JOIN Bd_Uom uom ON uom.iAutoId = INV.iInventoryUomId1
-WHERE isScanned=#para(isScanned) AND LOG.iMoDocId = #para(imodocid)
+WHERE isScanned=#para(isscanned) AND LOG.iMoDocId = #para(imodocid)
 #end
 
 #sql("getMaterialScanLogY")

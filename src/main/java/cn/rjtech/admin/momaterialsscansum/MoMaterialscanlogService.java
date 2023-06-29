@@ -3,7 +3,9 @@ package cn.rjtech.admin.momaterialsscansum;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.momaterialscanusedlog.MoMaterialscanusedlogmService;
+import cn.rjtech.model.momdata.MoDoc;
 import cn.rjtech.model.momdata.MoMaterialscanlog;
 import cn.rjtech.model.momdata.MoMaterialsscansum;
 import cn.rjtech.model.momdata.MoMojob;
@@ -35,7 +37,8 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 	private MoMaterialscanusedlogmService moMaterialscanusedlogmService;
 	@Inject
 	private  MoMaterialsscansumService moMaterialsscansumService; //齐料汇总
-
+	@Inject
+	private  MoDocService moDocService;
 	/**
 	 * 后台管理分页查询
 	 */
@@ -130,6 +133,7 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 	 * 未扫描/已扫码
 	 */
 	public Page<Record> getMoMaterialNotScanLogList(int pageNumber, int pageSize, Kv kv) {
+		Page<Record> recordPage=dbTemplate("momaterialsscansum.getMaterialScanLogN", kv).paginate(pageNumber, pageSize);
 		return dbTemplate("momaterialsscansum.getMaterialScanLogN", kv).paginate(pageNumber, pageSize);
 	}
 
@@ -157,12 +161,8 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 				moMojob.setIRealQty(jobY.getInt("irealqty"));
 				if(Objects.equals(jobN.getInt("iplanqty"), jobY.getInt("irealqty"))){
 					moMojob.setIStatus(2);
-					map.put("vincodeStae","已齐料");
-					map.put("numStatus","已齐料");
 				}else{
 					moMojob.setIStatus(1);
-					map.put("vincodeStae","未齐料");
-					map.put("numStatus","未齐料");
 				}
 				moMojob.setDUpdateTime(new Date());
 				moMojob.save();
@@ -209,9 +209,9 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 
     public Page<Record> getBarcodeAll(int pageNumber, int pageSize, Kv kv) {
         Page<Record> page = dbTemplate("momaterialsscansum.getBarcodeAll", kv).paginate(pageNumber, pageSize);
-        
+
         List<Record> record1 = dbTemplate("momaterialsscansum.getAllById", kv).find();
-        
+
         for (Record record : page.getList()) {
             record.set("iqty2", ZERO_STR);
             for (Record record2 : record1) {
@@ -223,5 +223,25 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 
         return page;
     }
+	public Map<String, Object> getApiBarcodeAll(int pageNumber, int pageSize, Kv kv) {
+		Page<Record> page = dbTemplate("momaterialsscansum.getBarcodeAll", kv).paginate(pageNumber, pageSize);
+
+		List<Record> record1 = dbTemplate("momaterialsscansum.getAllById", kv).find();
+
+		for (Record record : page.getList()) {
+			record.set("iqty2", ZERO_STR);
+			for (Record record2 : record1) {
+				if (record.getLong("iautoid").longValue() == record2.getLong("iautoid").longValue()) {
+					record.set("iqty2", record2.get("iqty"));
+				}
+			}
+		}
+		String isScanned = moDocService.findByisScanned(kv.getLong("imodocid"));
+		Map<String,Object> map =new HashMap<>();
+		map.put("isScanned",isScanned);
+		map.put("pageInfo",page);
+		return map;
+	}
+
 
 }

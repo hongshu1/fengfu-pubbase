@@ -39,6 +39,7 @@ public class ApprovalDAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         String autoid = get("approvalM.iautoid");
         Kv kv = new Kv();

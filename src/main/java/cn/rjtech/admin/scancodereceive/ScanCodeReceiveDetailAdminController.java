@@ -94,6 +94,7 @@ public class ScanCodeReceiveDetailAdminController extends BaseAdminController {
         renderJson(service.toggleBoolean(getLong(0), "IsDeleted"));
     }
 
+    @UnCheck
     public void findEditTableDatas() {
         Kv kv = new Kv();
         Long id = getLong("sysPureceive.AutoID");

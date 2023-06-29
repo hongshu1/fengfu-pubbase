@@ -254,6 +254,11 @@ WHERE
 select * from Bd_InventoryRoutingEquipment  where iInventoryRoutingConfigId=#para(iEquipmentIds)
 #end
 
+#sql("getMoDocEquipments")
+	select * from Mo_MoRoutingEquipment where iMoRoutingConfigId=#para(iEquipmentIds)
+#end
+
+
 #sql("getPersonByEquipment")
 SELECT * FROM Bd_Person  per
 WHERE iAutoId IN (SELECT iPersonId FROM Bd_PersonEquipment EQ  WHERE EQ.iEquipmentId IN (#(iEquipmentIds)) AND isDeleted=0)
@@ -294,36 +299,69 @@ WHERE DOC.iAutoId=#para(iautoid)
 
 #sql("getMoDocbyIinventoryRoutingId")
 SELECT
-	mf.*,
-	rs.equipments,
-	invs.invcs,
-	persons.configperson,
-	persons2.configpersonids
+    mf.*,
+    rs.equipments,
+    invs.invcs,
+    persons.configperson,
+    persons2.configpersonids
 FROM
-	Mo_MoRouting mr
-	INNER JOIN Mo_MoRoutingConfig mf ON mr.iAutoId= mf.iMoRoutingId
-	LEFT JOIN ( SELECT COUNT ( iMoRoutingConfigId ) equipments, iMoRoutingConfigId FROM Mo_MoRoutingEquipment GROUP BY iMoRoutingConfigId ) rs ON rs.iMoRoutingConfigId= mf.iAutoId
-	LEFT JOIN ( SELECT COUNT ( iMoRoutingConfigId ) invcs, iMoRoutingConfigId FROM Mo_MoRoutingInvc GROUP BY iMoRoutingConfigId ) invs ON invs.iMoRoutingConfigId= mf.iAutoId
-	LEFT JOIN (
-SELECT
-	mp.iMoRoutingConfigId ,
-	STRING_AGG ( per.cPsn_Name, '-' ) WITHIN GROUP ( ORDER BY per.cPsn_Name ) AS configperson
-FROM
-	Mo_MoRoutingConfig_Person mp
-	INNER JOIN Bd_Person per ON mp.iPersonId = per.iAutoId
-GROUP BY
-	mp.iMoRoutingConfigId
-	) persons ON persons.iMoRoutingConfigId= mf.iAutoId
-	LEFT JOIN (
-SELECT
-	mp.iMoRoutingConfigId ,
-		STRING_AGG ( mp.iPersonId, ',' ) WITHIN GROUP ( ORDER BY mp.iPersonId ) AS configpersonids
-FROM
-	Mo_MoRoutingConfig_Person mp
-	INNER JOIN Bd_Person per ON mp.iPersonId = per.iAutoId
-GROUP BY
-	mp.iMoRoutingConfigId
-	) persons2 ON persons2.iMoRoutingConfigId= mf.iAutoId
+    Mo_MoRouting mr
+    INNER JOIN Mo_MoRoutingConfig mf ON mr.iAutoId = mf.iMoRoutingId
+    LEFT JOIN (SELECT COUNT(iMoRoutingConfigId) equipments, iMoRoutingConfigId FROM Mo_MoRoutingEquipment GROUP BY iMoRoutingConfigId) rs ON rs.iMoRoutingConfigId = mf.iAutoId
+    LEFT JOIN (SELECT COUNT(iMoRoutingConfigId) invcs, iMoRoutingConfigId FROM Mo_MoRoutingInvc GROUP BY iMoRoutingConfigId) invs ON invs.iMoRoutingConfigId = mf.iAutoId
+    LEFT JOIN (
+        SELECT mp1.iMoRoutingConfigId,
+            STUFF((SELECT '/' + per.cPsn_Name
+                   FROM (
+                        SELECT iMoRoutingConfigId, CAST(iPersonId AS BIGINT) AS iPersonId
+                        FROM Mo_MoRoutingConfig_Person
+                        WHERE ISNUMERIC(iPersonId) = 1
+                   ) mp2
+                   INNER JOIN Bd_Person per ON mp2.iPersonId = per.iAutoId
+                   WHERE mp2.iMoRoutingConfigId = mp1.iMoRoutingConfigId
+                   FOR XML PATH('')), 1, 1, '') AS configperson
+        FROM Mo_MoRoutingConfig_Person mp1
+        GROUP BY mp1.iMoRoutingConfigId
+    ) persons ON persons.iMoRoutingConfigId = mf.iAutoId
+    LEFT JOIN (
+        SELECT mp1.iMoRoutingConfigId,
+            STUFF((SELECT ',' + CAST(mp2.iPersonId AS VARCHAR(MAX))
+                   FROM (
+                        SELECT iMoRoutingConfigId, CAST(iPersonId AS BIGINT) AS iPersonId
+                        FROM Mo_MoRoutingConfig_Person
+                        WHERE ISNUMERIC(iPersonId) = 1
+                   ) mp2
+                   INNER JOIN Bd_Person per ON mp2.iPersonId = per.iAutoId
+                   WHERE mp2.iMoRoutingConfigId = mp1.iMoRoutingConfigId
+                   FOR XML PATH('')), 1, 1, '') AS configpersonids
+        FROM Mo_MoRoutingConfig_Person mp1
+        GROUP BY mp1.iMoRoutingConfigId
+    ) persons2 ON persons2.iMoRoutingConfigId = mf.iAutoId
 WHERE
 	iMoDocId = #para(iMoDocId)
+#end
+
+
+#sql("getMoDocinv")
+   SELECT *
+FROM Mo_MoRoutingInvc mi
+INNER JOIN  Bd_Inventory inv on mi.iInventoryId=inv.iAutoId
+where iMoRoutingConfigId=#para(iautoid)
+#end
+
+#sql("getMoDocEquipment")
+SELECT * FROM Mo_MoRoutingEquipment ME
+INNER JOIN Bd_Equipment EQ ON ME.iEquipmentId=EQ.iAutoId
+where iMoRoutingConfigId=#para(iautoid)
+#end
+
+#sql("moDocInventoryRouting")
+SELECT * FROM Mo_MoRoutingEquipment ME
+INNER JOIN Bd_Equipment EQ ON ME.iEquipmentId=EQ.iAutoId
+where iMoRoutingConfigId=#para(iautoid)
+#end
+
+
+#sql("getPersonsByIds")
+select * from Bd_Person per where iautoid  IN (#(configpersonids))
 #end

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -45,6 +46,7 @@ public class SysNoticeAdminController extends JBoltBaseController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords(),getBoolean("delFlag",false),getSortColumn("create_time"),getSortType("desc")));
 	}

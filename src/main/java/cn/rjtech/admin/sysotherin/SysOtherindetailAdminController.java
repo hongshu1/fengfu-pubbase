@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysOtherindetail;
 import com.jfinal.aop.Before;
@@ -34,6 +35,7 @@ public class SysOtherindetailAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("TrackType"), get("SourceBillType"), get("projectTypeCode"), get("projectTypeName")));
     }
@@ -86,6 +88,7 @@ public class SysOtherindetailAdminController extends BaseAdminController {
         renderJson(service.delete(getLong(0)));
     }
 
+    @UnCheck
     public void findEditTableDatas() {
         renderJsonData(service.findEditTableDatas(getKv()));
     }

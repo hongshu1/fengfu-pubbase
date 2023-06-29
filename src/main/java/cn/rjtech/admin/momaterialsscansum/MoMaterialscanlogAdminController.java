@@ -113,4 +113,5 @@ public class MoMaterialscanlogAdminController extends BaseAdminController {
 		renderJsonData(page);
 	}
 
+
 }

@@ -3,6 +3,7 @@ package cn.rjtech.admin.modocbatch;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.modoc.MoDocService;
@@ -40,6 +41,7 @@ public class MoDocBatchController extends BaseAdminController {
   /**
    * 数据源
    */
+  @UnCheck
   public void datas() {
     renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
   }

@@ -9,6 +9,7 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.model.momdata.UptimeParam;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
@@ -64,7 +65,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	* 保存
 	*/
 	@Before(Tx.class)
-    @TxConfig(UptimeParam.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void save(@Para("uptimeParam")UptimeParam uptimeParam) {
 		renderJson(service.save(uptimeParam));
 	}
@@ -86,7 +87,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	* 更新
 	*/
 	@Before(Tx.class)
-    @TxConfig(UptimeParam.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void update(@Para("uptimeParam")UptimeParam uptimeParam) {
 		renderJson(service.update(uptimeParam));
 	}
@@ -95,7 +96,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	* 删除
 	*/
 	@Before(Tx.class)
-    @TxConfig(UptimeParam.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void delete() {
 		renderJson(service.deleteById(getLong(0)));
 	}
@@ -104,7 +105,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	* 切换isEnabled
 	*/
 	@Before(Tx.class)
-    @TxConfig(UptimeParam.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void toggleIsEnabled() {
 	    renderJson(service.toggleBoolean(getLong(0),"isEnabled"));
 	}
@@ -113,7 +114,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	* 切换isDeleted
 	*/
 	@Before(Tx.class)
-    @TxConfig(UptimeParam.DATASOURCE_CONFIG_NAME)
+    @TxConfig(DataSourceConstants.MOMDATA)
 	public void toggleIsDeleted() {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}

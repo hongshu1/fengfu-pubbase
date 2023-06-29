@@ -80,7 +80,7 @@ public class SysScandeliverService extends BaseService<SysScandeliver> {
 			}
 			return true;
 		});
-		return ret(true);
+		return SUCCESS;
 	}
 	/**
 	 * 删除
@@ -93,7 +93,7 @@ public class SysScandeliverService extends BaseService<SysScandeliver> {
 			delete("DELETE T_Sys_ScanDeliverDetail   where  MasID = ?",id);
 			return true;
 		});
-		return ret(true);
+		return SUCCESS;
 	}
 
 	/**

@@ -2,16 +2,6 @@
 <div class="jbolt_page" data-key="#(pmkey)">
 
     <div class="jbolt_page_title">
-        <div class="row">
-
-            <div class="col">
-                <form class="form-inline" id="moDocForm_#(pageId)" >
-
-                </form>
-            </div>
-            <div class="col-md-auto">
-            </div>
-        </div>
     </div>
     <div class="jbolt_page_content" >
         <!-- JBoltTable的数据模板定义-->
@@ -22,13 +12,13 @@
 
        	<td>${pageNumber,pageSize,index | rownum}</td>
 
-		<td>${data.invcode}</td>
-		<td>${data.cinvcode1}</td>
-		<td>${data.cinvname1}</td>
-		<td>${data.cinvstd}</td>
-		<td>${data.cuomname}</td>
-		<td>${data.barcode}</td>
-		<td>${data.iqty}</td>
+				<td>${data.cinvcode}</td>
+				<td>${data.cinvcode1}</td>
+				<td>${data.cinvname1}</td>
+				<td>${data.cinvstd}</td>
+				<td>${data.cuomname}</td>
+				<td>${data.cbarcode}</td>
+				<td>${data.iqty}</td>
 
 </tr>
 {@/each}
@@ -44,10 +34,9 @@
 
         <table class="jbolt_table jbolt_main_table table-center hover_info"
                data-jbolttable
-
                data-height="fill"
                data-ajax="true"
-               data-url="admin/momaterialsscanlog/getMoMaterialScanLogList?imodocid=#(imodocid??)"
+               data-url="admin/momaterialsscanlog/getMoMaterialNotScanLogList?imodocid=#(imodocid??)&&isscanned=1"
                data-column-resize="true"
                data-row-click-active="true"
                data-column-prepend="1:checkbox:true"
@@ -62,14 +51,12 @@
             <thead>
             <tr>
                 <th data-width="60">序号</th>
-
-                <th data-width="100" data-column="index">序号</th>
-                <th data-width="150" data-column="InvCode">存货编码</th>
-                <th data-width="150" data-column="cInvCode1">客户部番</th>
-                <th data-width="150" data-column="cInvName1">部品名称</th>
-                <th data-width="150" data-column="cInvStd">规格</th>
-                <th data-width="150" data-column="cUomName">主计量单位</th>
-                <th data-width="150" data-column="barcode">现品票</th>
+                <th data-width="150" data-column="cinvcode">存货编码</th>
+                <th data-width="150" data-column="cinvcode1">客户部番</th>
+                <th data-width="150" data-column="cinvname1">部品名称</th>
+                <th data-width="150" data-column="cinvstd">规格</th>
+                <th data-width="150" data-column="cuomname">主计量单位</th>
+                <th data-width="150" data-column="cbarcode">现品票</th>
                 <th data-width="150" data-column="iqty">现品票数量</th>
             </tr>
             </thead>

@@ -41,6 +41,7 @@ public class UserOrgAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(get("position"), getBoolean("isPrincipal"), getBoolean("isDeleted", false)));
     }

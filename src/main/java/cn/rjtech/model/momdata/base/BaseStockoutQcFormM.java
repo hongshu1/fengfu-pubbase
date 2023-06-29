@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -11,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseStockoutQcFormM<M extends BaseStockoutQcFormM<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
@@ -67,6 +67,8 @@ public abstract class BaseStockoutQcFormM<M extends BaseStockoutQcFormM<M>> exte
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "IsDeleted";
+    /**手配订单Co_ManualOrderM的id*/
+    public static final String IMANUALORDERMID = "iManualOrderMid";
 	/**
 	 * 主键ID
 	 */
@@ -541,6 +543,23 @@ public abstract class BaseStockoutQcFormM<M extends BaseStockoutQcFormM<M>> exte
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("IsDeleted");
+	}
+
+	/**
+	 * 手配订单Co_ManualOrderM的id
+	 */
+	public M setIManualOrderMid(java.lang.Long iManualOrderMid) {
+		set("iManualOrderMid", iManualOrderMid);
+		return (M)this;
+	}
+
+	/**
+	 * 手配订单Co_ManualOrderM的id
+	 */
+	@JBoltField(name="imanualordermid" ,columnName="iManualOrderMid",type="Long", remark="手配订单Co_ManualOrderM的id", required=true, maxLength=19, fixed=0, order=29)
+	@JSONField(name = "imanualordermid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIManualOrderMid() {
+		return getLong("iManualOrderMid");
 	}
 
 }

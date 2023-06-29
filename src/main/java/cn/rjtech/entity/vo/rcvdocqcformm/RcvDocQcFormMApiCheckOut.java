@@ -38,7 +38,7 @@ public class RcvDocQcFormMApiCheckOut implements Serializable {
     private String              corgcode;
     private String              corgname;
     /*检验单号*/
-    private String              cRcvDocQcFormNo;
+    private String              crcvdocqcformno;
     private String              cupdatename;
     /*是否合格*/
     private String              isok;
@@ -77,6 +77,8 @@ public class RcvDocQcFormMApiCheckOut implements Serializable {
     private Date                dqctime;
     /*在库检-检验单号*/
     private String cInvQcFormNo;
+    /*出货检-检验单号*/
+    private String cstockoutqcformno;
     /*table的头部*/
     public  List<tableHeadData> columns;
 
@@ -459,6 +461,14 @@ public class RcvDocQcFormMApiCheckOut implements Serializable {
         }
     }
 
+    public String getCstockoutqcformno() {
+        return cstockoutqcformno;
+    }
+
+    public void setCstockoutqcformno(String cstockoutqcformno) {
+        this.cstockoutqcformno = cstockoutqcformno;
+    }
+
     public String getcInvQcFormNo() {
         return cInvQcFormNo;
     }
@@ -587,12 +597,12 @@ public class RcvDocQcFormMApiCheckOut implements Serializable {
         this.corgname = corgname;
     }
 
-    public String getcRcvDocQcFormNo() {
-        return cRcvDocQcFormNo;
+    public String getCrcvdocqcformno() {
+        return crcvdocqcformno;
     }
 
-    public void setcRcvDocQcFormNo(String cRcvDocQcFormNo) {
-        this.cRcvDocQcFormNo = cRcvDocQcFormNo;
+    public void setCrcvdocqcformno(String crcvdocqcformno) {
+        this.crcvdocqcformno = crcvdocqcformno;
     }
 
     public String getCupdatename() {

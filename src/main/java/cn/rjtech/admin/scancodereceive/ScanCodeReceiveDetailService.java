@@ -154,7 +154,7 @@ public class ScanCodeReceiveDetailService extends BaseService<SysPureceivedetail
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -162,7 +162,7 @@ public class ScanCodeReceiveDetailService extends BaseService<SysPureceivedetail
      */
     public Ret delete(Long id) {
         updateColumn(id, "isdeleted", true);
-        return ret(true);
+        return SUCCESS;
     }
 
     public List<Record> getwhname(String id) {

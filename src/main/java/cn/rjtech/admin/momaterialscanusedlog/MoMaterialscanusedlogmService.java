@@ -463,11 +463,13 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 				Warehouse warehouse=warehouseService.findById(workregionm.getIWarehouseId());
 
 			}
-
-
-
 		}
 	}
 
 
+	public Page<Record>  getBarcodeAllBycBarcode(int pageNumber, int pageSize, Kv keywords) {
+		Page<Record> page=dbTemplate("momaterialsscansum.getBarcodeAllBycBarcode",keywords).paginate(pageNumber,pageSize);
+		return page;
+
+	}
 }

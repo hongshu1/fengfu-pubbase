@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysSaledeliverplandetail;
@@ -89,6 +90,7 @@ public class SysSaledeliverplandetailAdminController extends BaseAdminController
         renderJson(service.deleteById(getLong(0)));
     }
 
+    @UnCheck
     public void findEditTableDatas(){
         renderJsonData(service.findEditTableDatas(getKv()));
     }

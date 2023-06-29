@@ -92,7 +92,7 @@ public class SysScandeliverOnedetailAdminController extends BaseAdminController 
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 
-
+    @UnCheck
 	public void findEditTableDatas(){
 		renderJsonData(service.findEditTableDatas(get("sysscandeliver.AutoID")));
 	}

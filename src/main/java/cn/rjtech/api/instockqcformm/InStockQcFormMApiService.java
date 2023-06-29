@@ -15,7 +15,6 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,42 +79,6 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(record);
     }
 
-    /*
-     * 跳转到checkout页面后，自动加载table数据
-     * */
-    public JBoltApiRet autoGetCheckOutTableDatas(Long iinstockqcformmid) {
-        Kv kv = new Kv();
-        kv.set("iinstockqcformmid", iinstockqcformmid);
-        //1、查询
-        List<Record> tableDatas = service.getTableDatas(kv);
-        //2、遍历
-        /*recordList.stream().forEach(record -> {
-            record.keep("iautoid", "iformparamid", "iqcformid", "iinstockqcformmid", "iseq", "isubseq",
-                "itype", "coptions", "cqcformparamids", "cqcitemname", "cqcparamname", "imaxval", "iminval", "istdval");
-        });*/
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(tableDatas);
-    }
-
-    /*
-     * 在检验页面点击确定,保存数据
-     * */
-    public JBoltApiRet saveCheckOut(String cmeasurepurpose, String cdcno, Long iinstockqcformmid, String cmeasureunit,
-                                    String isok, String cmeasurereason, String serializeSubmitList, String cmemo) {
-        //1、开始保存检验页面的数据
-        Boolean result = service.achiveSerializeSubmitList(JSON.parseArray(serializeSubmitList),
-            iinstockqcformmid, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
-        //2、最后返回成功
-        return JBoltApiRet.API_SUCCESS;
-    }
-
-    /*
-     * 删除在库检查表
-     * */
-    public JBoltApiRet deleteCheckoutByIautoid(Long iautoid) {
-        Ret ret = service.deleteCheckoutByIautoid(iautoid);
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(ret);
-    }
-
     /**
      * 点击查看按钮，跳转到onlysee页面
      */
@@ -151,6 +114,34 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
     }
 
     /*
+     * 跳转到checkout页面后，自动加载table数据
+     * */
+    public JBoltApiRet autoGetCheckOutTableDatas(Long iinstockqcformmid) {
+        Kv kv = new Kv();
+        kv.set("iinstockqcformmid", iinstockqcformmid);
+        //1、查询
+        List<Record> tableDatas = service.getTableDatas(kv);
+        //2、遍历
+        /*recordList.stream().forEach(record -> {
+            record.keep("iautoid", "iformparamid", "iqcformid", "iinstockqcformmid", "iseq", "isubseq",
+                "itype", "coptions", "cqcformparamids", "cqcitemname", "cqcparamname", "imaxval", "iminval", "istdval");
+        });*/
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(tableDatas);
+    }
+
+    /*
+     * 在检验页面点击确定,保存数据
+     * */
+    public JBoltApiRet saveCheckOut(String cmeasurepurpose, String cdcno, Long iinstockqcformmid, String cmeasureunit,
+                                    String isok, String cmeasurereason, String serializeSubmitList, String cmemo) {
+        //1、开始保存检验页面的数据
+        Boolean result = service.achiveSerializeSubmitList(JSON.parseArray(serializeSubmitList),
+            iinstockqcformmid, cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
+        //2、最后返回成功
+        return JBoltApiRet.API_SUCCESS;
+    }
+
+    /*
      * 在编辑页面点击确定，保存编辑页面的数据
      */
     public JBoltApiRet saveEdit(String cmeasurepurpose, String cdcno, Long iinstockqcformmid, String cmeasureunit, String isok,
@@ -159,6 +150,14 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
         Boolean result = service.achiveSerializeSubmitList(JSON.parseArray(serializeSubmitList), iinstockqcformmid,
             cmeasurepurpose, cmeasurereason, cmeasureunit, cmemo, cdcno, isok);
         return JBoltApiRet.API_SUCCESS;
+    }
+
+    /*
+     * 删除在库检查表
+     * */
+    public JBoltApiRet deleteCheckoutByIautoid(Long iautoid) {
+        Ret ret = service.deleteCheckoutByIautoid(iautoid);
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(ret);
     }
 
     /*

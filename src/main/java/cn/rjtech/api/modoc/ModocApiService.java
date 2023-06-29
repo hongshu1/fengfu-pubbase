@@ -268,12 +268,27 @@ public class ModocApiService extends JBoltApiBaseService {
   /**
    * 根据制造工单id查询特殊领料数据源Api
    *
-   * @param imodocid
-   * @param pageNumber
-   * @param pageSize
+   * @param imodocid   制造工单id
+   * @param pageNumber 页数
+   * @param pageSize   页面数量
    * @return
    */
   public Page<Record> getSpecmaterialsrcvmDatas(Long imodocid, Integer pageNumber, Integer pageSize) {
     return specMaterialsRcvMService.getApiSpecmaterialsrcvmDatas(imodocid, pageNumber, pageSize);
+  }
+
+  /**
+   * 根据制造工单id查询当前工单的存货档案数据
+   *
+   * @param imodocid   制造工单id
+   * @param pageNumber 页数
+   * @param pageSize   页面数量
+   * @param cinvcode   存货编码
+   * @param cinvcode1  客户部番
+   * @param cinvname1  部品名称
+   * @return
+   */
+  public Page<Record> getInventoryDatasByDocid(Long imodocid, Integer pageNumber, Integer pageSize, String cinvcode, String cinvcode1, String cinvname1) {
+    return specMaterialsRcvMService.getInventoryDatasByDocid(imodocid, pageNumber, pageSize, cinvcode, cinvcode1, cinvname1);
   }
 }

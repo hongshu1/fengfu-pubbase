@@ -47,6 +47,46 @@ public class AutoGetCheckOutTableDatas implements Serializable {
         public String ircvdocqcformdid;
         public String iseq;
         public String name;
+
+        public String getCvalue() {
+            return cvalue;
+        }
+
+        public void setCvalue(String cvalue) {
+            this.cvalue = cvalue;
+        }
+
+        public String getIautoid() {
+            return iautoid;
+        }
+
+        public void setIautoid(String iautoid) {
+            this.iautoid = iautoid;
+        }
+
+        public String getIrcvdocqcformdid() {
+            return ircvdocqcformdid;
+        }
+
+        public void setIrcvdocqcformdid(String ircvdocqcformdid) {
+            this.ircvdocqcformdid = ircvdocqcformdid;
+        }
+
+        public String getIseq() {
+            return iseq;
+        }
+
+        public void setIseq(String iseq) {
+            this.iseq = iseq;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 
     public Long getIautoid() {

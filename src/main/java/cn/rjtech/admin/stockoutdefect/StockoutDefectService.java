@@ -261,14 +261,13 @@ public class StockoutDefectService extends BaseService<StockoutDefect> {
 		Date date = new Date();
 		Long userId = JBoltUserKit.getUserId();
 		String userName = JBoltUserKit.getUserName();
-		stockoutDefect.setCDocNo(stockoutQcFormM.getCStockoutQcFormNo());   //异常品单号
+//		stockoutDefect.setCDocNo(stockoutQcFormM.getCStockoutQcFormNo());   //异常品单号
 		stockoutDefect.setIStockoutQcFormMid(stockoutQcFormM.getIAutoId()); //出库检id
 		stockoutDefect.setIInventoryId(stockoutQcFormM.getIInventoryId());  //存货ID
 		stockoutDefect.setIStatus(1);                                       //状态：1. 待记录 2. 待判定 3. 已完成
 		stockoutDefect.setCDesc(stockoutQcFormM.getCMemo());                //不良内容描述
 		stockoutDefect.setIQcUserId(stockoutQcFormM.getIQcUserId());        //检验用户ID
 		stockoutDefect.setDQcTime(stockoutQcFormM.getDUpdateTime());        //检验时间
-
 		stockoutDefect.setICreateBy(userId);
 		stockoutDefect.setDCreateTime(date);
 		stockoutDefect.setCCreateName(userName);

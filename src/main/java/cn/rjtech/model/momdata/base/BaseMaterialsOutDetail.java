@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseMaterialsOutDetail<M extends BaseMaterialsOutDetail<M>> extends JBoltBaseModel<M>{
-    public static final String DATASOURCE_CONFIG_NAME = "momdata";
+    
     /**MasID*/
     public static final String MASID = "MasID";
     /**仓位*/
