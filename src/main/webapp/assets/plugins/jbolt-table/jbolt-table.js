@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.5.2";
+var jbolt_table_js_version="3.5.3";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 
@@ -6265,38 +6265,51 @@ function getScrollBarHeight(ele){
 					table.footbox = footbox;
 					table.leftbox = leftbox;
 					table.rightbox = rightbox;
+
+					if(table.hasClass("border-dark")){
+						table_view.addClass("border-dark");
+						table_box.addClass("border-dark");
+						table_body.addClass("border-dark");
+						if(isOk(toolbar)){
+							toolbar.addClass("border-dark");
+						}
+						if(isOk(footbox)){
+							footbox.addClass("border-dark");
+						}
+					}else if(table.hasClass("border-secondary")){
+						table_view.addClass("border-secondary");
+						table_box.addClass("border-secondary");
+						table_body.addClass("border-secondary");
+						if(isOk(toolbar)){
+							toolbar.addClass("border-secondary");
+						}
+						if(isOk(footbox)){
+							footbox.addClass("border-secondary");
+						}
+					}else if(table.hasClass("border-gray")){
+						table_view.addClass("border-gray");
+						table_box.addClass("border-gray");
+						table_body.addClass("border-gray");
+						if(isOk(toolbar)){
+							toolbar.addClass("border-gray");
+						}
+						if(isOk(footbox)){
+							footbox.addClass("border-gray");
+						}
+					}
+				}else{
+					if(table.hasClass("border-dark")){
+						table_box.addClass("border-dark");
+						table_body.addClass("border-dark");
+					}else if(table.hasClass("border-secondary")){
+						table_box.addClass("border-secondary");
+						table_body.addClass("border-secondary");
+					}else if(table.hasClass("border-gray")){
+						table_box.addClass("border-gray");
+						table_body.addClass("border-gray");
+					}
 				}
-				if(table.hasClass("border-dark")){
-					table_view.addClass("border-dark");
-					table_box.addClass("border-dark");
-					table_body.addClass("border-dark");
-					if(isOk(toolbar)){
-						toolbar.addClass("border-dark");
-					}
-					if(isOk(footbox)){
-						footbox.addClass("border-dark");
-					}
-				}else if(table.hasClass("border-secondary")){
-					table_view.addClass("border-secondary");
-					table_box.addClass("border-secondary");
-					table_body.addClass("border-secondary");
-					if(isOk(toolbar)){
-						toolbar.addClass("border-secondary");
-					}
-					if(isOk(footbox)){
-						footbox.addClass("border-secondary");
-					}
-				}else if(table.hasClass("border-gray")){
-					table_view.addClass("border-gray");
-					table_box.addClass("border-gray");
-					table_body.addClass("border-gray");
-					if(isOk(toolbar)){
-						toolbar.addClass("border-gray");
-					}
-					if(isOk(footbox)){
-						footbox.addClass("border-gray");
-					}
-				}
+
 				table.table_view=table_view;
 				table.table_box=table_box;
 				table.table_body=table_body;
@@ -14111,70 +14124,74 @@ function getScrollBarHeight(ele){
 		},
 		//table四周box调整
 		processTableBoxResizeEvent:function(table){
-			//指定位置按下之后 处理leftbox的启动状态
-			table.leftbox.on("mousedown",".jb_header",function(e){
-				if(!table.leftbox.canResize){
+			if(table.leftbox) {
+				//指定位置按下之后 处理leftbox的启动状态
+				table.leftbox.on("mousedown", ".jb_header", function (e) {
+					if (!table.leftbox.canResize) {
+						var left = table.leftbox.offset().left;
+						var width = table.leftbox.width();
+						var right = left + width;
+						var newLeft = right - 10;
+						var currentMouseLeft = e.clientX;
+						if (currentMouseLeft >= newLeft && currentMouseLeft <= right) {
+							jboltBody.addClass("noselect");
+							jboltBody.css("cursor", "col-resize");
+							table.leftbox.canResize = true;
+							table.leftbox.css("border-right", "1px solid black");
+							table.leftbox.css("width", (currentMouseLeft - left + 1) + "px");
+						}
+					} else {
+						jboltBody.css("cursor", "auto");
+					}
+				});
+
+				table.leftbox.on("mousemove", ".jb_header", function (e) {
 					var left = table.leftbox.offset().left;
 					var width = table.leftbox.width();
-					var right = left+width;
-					var newLeft = right-10;
+					var right = left + width;
+					var newLeft = right - 4;
 					var currentMouseLeft = e.clientX;
-					if(currentMouseLeft>=newLeft && currentMouseLeft<=right){
-						jboltBody.addClass("noselect");
-						jboltBody.css("cursor","col-resize");
-						table.leftbox.canResize = true;
-						table.leftbox.css("border-right","1px solid black");
-						table.leftbox.css("width",(currentMouseLeft-left+1)+"px");
+					if (currentMouseLeft >= newLeft && currentMouseLeft <= right) {
+						jboltBody.css("cursor", "col-resize");
+						if (table.leftbox.canResize) {
+							jboltBody.addClass("noselect");
+							table.leftbox.css("width", (currentMouseLeft - left + 1) + "px");
+						}
 					}
-				}else{
-					jboltBody.css("cursor","auto");
-				}
-			});
-			table.leftbox.on("mousemove",".jb_header",function(e){
-				var left = table.leftbox.offset().left;
-				var width = table.leftbox.width();
-				var right = left+width;
-				var newLeft = right-4;
-				var currentMouseLeft = e.clientX;
-				if(currentMouseLeft>=newLeft && currentMouseLeft<=right){
-					jboltBody.css("cursor","col-resize");
-					if(table.leftbox.canResize){
-						jboltBody.addClass("noselect");
-						table.leftbox.css("width",(currentMouseLeft-left+1)+"px");
+				});
+
+				table.leftbox.on("mouseleave", ".jb_header", function (e) {
+					if (!table.leftbox.canResize) {
+						jboltBody.removeClass("noselect");
+						jboltBody.css("cursor", "auto");
 					}
-				}
-			});
+				});
 
-			table.leftbox.on("mouseleave",".jb_header",function(e){
-				if(!table.leftbox.canResize){
-					jboltBody.removeClass("noselect");
-					jboltBody.css("cursor","auto");
-				}
-			});
 
-			jboltBody.on("mousemove",function(e){
-				if(table.leftbox.canResize){
-					var left = table.leftbox.offset().left;
-					var width = table.leftbox.width();
-					var right = left+width;
-					var newLeft = right-4;
-					var currentMouseLeft = e.clientX;
-					if(currentMouseLeft>=left){
-						jboltBody.css("cursor","col-resize");
-						jboltBody.addClass("noselect");
-						table.leftbox.css("width",(currentMouseLeft-left+1)+"px");
+				jboltBody.on("mousemove", function (e) {
+					if (table.leftbox && table.leftbox.canResize) {
+						var left = table.leftbox.offset().left;
+						var width = table.leftbox.width();
+						var right = left + width;
+						var newLeft = right - 4;
+						var currentMouseLeft = e.clientX;
+						if (currentMouseLeft >= left) {
+							jboltBody.css("cursor", "col-resize");
+							jboltBody.addClass("noselect");
+							table.leftbox.css("width", (currentMouseLeft - left + 1) + "px");
+						}
 					}
-				}
-			});
+				});
 
-			jboltBody.on("mouseup",function(e){
-				if(table.leftbox.canResize){
-					jboltBody.removeClass("noselect");
-					jboltBody.css("cursor","auto");
-					table.leftbox.canResize = false;
-					table.leftbox.css("border-right","1px solid #ededed");
-				}
-			});
+				jboltBody.on("mouseup", function (e) {
+					if (table.leftbox && table.leftbox.canResize) {
+						jboltBody.removeClass("noselect");
+						jboltBody.css("cursor", "auto");
+						table.leftbox.canResize = false;
+						table.leftbox.css("border-right", "1px solid #ededed");
+					}
+				});
+			}
 		},
 		processTableColWidthResizeAndColSortEvent:function(table){
 			//处理tableheader上的拖拽列宽和点击列头排序事件
