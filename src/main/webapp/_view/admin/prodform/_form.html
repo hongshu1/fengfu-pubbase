@@ -75,7 +75,7 @@
                                     <div class="col-md-auto">
                                         <form id="qcformtableparamForm" method="post" class="form-inline" onsubmit="return false;">
                                             <!-- 工具条 toolbar -->
-                                            <input type="text" hidden name="iqcformid" id="iqcformid" value="#(prodForm.iAutoId??)"/>
+                                            <input hidden type="text"  name="iqcformid" id="iqcformid" value="#(prodForm.iAutoId??)"/>
                                             <input type="text" hidden name="qcItemJsonStr" id="qcItemJsonStr" value=""/>
                                             <input type="text" hidden name="qcParamJsonStr" id="qcParamJsonStr" value=""/>
                                             <input type="text" hidden name="qcTableParamJsonStr" id="qcTableParamJsonStr" value=""/>
@@ -85,7 +85,7 @@
                             </div>
 
                             <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: 300px;">
-                                #ajaxPortal("/admin/prodForm/table3?iqcformid="+(spotCheckForm.iAutoId??''),"qcformtable_portal_" + pageId, true)
+                                #ajaxPortal("/admin/prodForm/table3?iqcformid="+(prodForm.iAutoId??''),"qcformtable_portal_" + pageId, true)
                             </div>
 
                         </div>
