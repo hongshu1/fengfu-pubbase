@@ -40,6 +40,10 @@ public class UptimeMApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.updateAndSaveApi(updateOrSaveType,data,dataList));
     }
 
+    public JBoltApiRet deleteUptimeMById(Long id) {
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.delete(id));
+    }
+
     public JBoltApiRet getWorkshiftmSelect() {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(workshiftmService.getSelect());
     }
