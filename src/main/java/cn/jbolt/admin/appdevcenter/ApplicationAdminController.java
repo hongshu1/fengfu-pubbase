@@ -1,5 +1,6 @@
 package cn.jbolt.admin.appdevcenter;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -152,6 +153,7 @@ public class ApplicationAdminController extends JBoltBaseController {
 		renderJson(service.removeLinkTarget(getLong(0)));
 	}
 
+    @UnCheck
     public void options() {
         renderJsonData(service.findAll());
     }

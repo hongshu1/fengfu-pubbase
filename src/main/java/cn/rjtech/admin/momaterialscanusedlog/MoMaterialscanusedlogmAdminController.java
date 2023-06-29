@@ -14,7 +14,7 @@ import com.jfinal.core.Path;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-25 18:06
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MO_DOC)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/momaterialscanusedlog", viewPath = "/_view/admin/momaterialscanusedlog")
 public class MoMaterialscanusedlogmAdminController extends BaseAdminController {

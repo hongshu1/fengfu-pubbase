@@ -120,6 +120,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         List<Subcontractsaleorderm> list = getListByIds(ids);
         List<Subcontractsaleorderm> notAuditList = new ArrayList<>();
         for (Subcontractsaleorderm subcontractsaleorderm : list) {
+            ValidationUtils.equals(subcontractsaleorderm.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
             if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != subcontractsaleorderm.getIOrderStatus()) {
                 notAuditList.add(subcontractsaleorderm);
             }
@@ -137,6 +138,8 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * 删除
      */
     public Ret delete(Long id) {
+        Subcontractsaleorderm subcontractsaleorderm = findById(id);
+        ValidationUtils.equals(subcontractsaleorderm.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
         return updateColumn(id, "isdeleted", true);
     }
 

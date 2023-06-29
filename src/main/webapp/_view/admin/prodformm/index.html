@@ -7,7 +7,63 @@
 	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>生产表单管理</h1></div>
 	<div class="col">
 	<form class="form-inline" id="ProdFormM_form_#(pageId)">
-<input type="text"    data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入生产表格" maxlength="40" name="iProdFormId" />
+		<select class="form-control"
+				data-autoload
+				data-url="admin/prodForm/options"
+				data-select-type="select"
+				name="iprodformid"
+				data-refresh="false"
+				data-rule="select"
+				data-notnull="false"
+				data-tips="请选择生产表格名称"
+				data-text="=请选择生产表格名称="
+				data-value-attr="iautoid"
+				data-text-attr="cprodformname"
+				data-select="#(iprodformid??)"
+		></select>
+		<select class="form-control"
+				data-autoload
+				data-url="admin/workregionm/options"
+				data-select-type="select"
+				name="cworkid"
+				data-refresh="false"
+				data-rule="select"
+				data-notnull="false"
+				data-tips="请选择产线名称"
+				data-text="=选择产线名称="
+				data-value-attr="iautoid"
+				data-text-attr="cworkname"
+				data-select="#(cworkname??)"
+		></select>
+		<select class="form-control"
+				data-autoload
+				data-url="admin/workshiftm/getSelect"
+				data-select-type="select"
+				name="cworkshiftid"
+				data-refresh="false"
+				data-rule="select"
+				data-notnull="false"
+				data-tips="请选择班次"
+				data-text="=选择班次="
+				data-value=""
+				data-value-attr="iautoid"
+				data-text-attr="cworkshiftname"
+				data-select="#(cworkshiftname??)"
+		></select>
+		<select class="form-control"
+				name="iauditstatus"
+				data-autoload
+				data-url="admin/dictionary/options?key=audit_status"
+				data-select-type="select"
+				data-text="=选择状态="
+				data-value=""
+				data-with-clearbtn="true"
+				data-value-attr="sn"
+		></select>
+		<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
+		<span style="margin-top: 5px">至</span>
+		<input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
+
 		<div class="btn-group text-center mx-1">
 			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
 			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
@@ -16,9 +72,7 @@
 	</div>
 	<div class="col-sm-auto text-right">
 	
-	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/prodFormM/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增制造管理-生产表单主表"><i class="fa fa-plus"></i></button>
-	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
-	
+
 	
 	</div>
 </div>

@@ -89,6 +89,7 @@ public class GoodsPaymentDAdminController extends BaseAdminController {
         renderJson(service.delete(getLong(0)));
     }
 
+    @UnCheck
     public void findEditTableDatas() {
         renderJsonData(service.findEditTableDatas(getKv()));
     }

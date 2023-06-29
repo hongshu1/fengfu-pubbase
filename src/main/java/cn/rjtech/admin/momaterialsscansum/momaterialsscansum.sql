@@ -139,7 +139,7 @@ SELECT LOG.*, cInvCode, cInvCode1,cInvName1,cInvStd, uom.cUomName
 FROM Mo_MaterialScanLog LOG
 LEFT JOIN Bd_Inventory INV ON LOG.iInventoryId=INV.iAutoId
 LEFT JOIN Bd_Uom uom ON uom.iAutoId = INV.iInventoryUomId1
-WHERE isScanned=#para(isScanned) AND LOG.iMoDocId = #para(imodocid)
+WHERE isScanned=#para(isscanned) AND LOG.iMoDocId = #para(imodocid)
 #end
 
 #sql("getMaterialScanLogY")

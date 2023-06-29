@@ -2597,4 +2597,37 @@ public class PermissionKey {
 	 * 撤回审核
 	 */
 	public static final String UPTIMEM_WITHDRAW = "uptimem_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String PRODFORMM_SUBMIT = "prodformm_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String PRODFORMM_APPROVE = "prodformm_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String PRODFORMM_REJECT = "prodformm_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String PRODFORMM_REVERSE_APPROVE = "prodformm_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String PRODFORMM_BATCH_APPROVE = "prodformm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String PRODFORMM_BATCH_REJECT = "prodformm_batch_reject";
+	/**
+	 * 撤回审核
+	 */
+	public static final String PRODFORMM_WITHDRAW = "prodformm_withdraw";
+	/**
+	 * 始业点检表管理
+	 */
+	public static final String SPOTCHECKFORMM = "spotcheckformm";
+
 }

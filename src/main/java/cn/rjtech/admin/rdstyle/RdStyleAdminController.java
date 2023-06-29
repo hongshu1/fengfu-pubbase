@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.RdStyle;
@@ -156,15 +157,24 @@ public class RdStyleAdminController extends BaseAdminController {
     public void getPurchaseType() {
         renderJsonData(service.getPurchaseType(true, true));
     }
-    //收类别编码
+
+    /**
+     * 收类别编码
+     */
+    @UnCheck
     public void options(){
      renderJsonData(service.getCvrrcodeType("收","0"));
     }
-    //发类别编码
+    
+    /**
+     * 发类别编码
+     */
+    @UnCheck
     public void options1(){
         renderJsonData(service.getCvrscodeType("发","0"));
     }
 
+    @UnCheck
     public void getoptions(){
         renderJsonData(service.getoptions());
     }

@@ -175,6 +175,8 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     }
 
     public Ret delete(Long id) {
+        WeekOrderM weekOrderM = findById(id);
+        ValidationUtils.equals(weekOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
         return updateColumn(id, "IsDeleted", true);
     }
 
@@ -233,6 +235,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
         List<WeekOrderM> notAuditList = new ArrayList<>();
 
         for (WeekOrderM weekOrderM : list) {
+            ValidationUtils.equals(weekOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
             if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != weekOrderM.getIOrderStatus()) {
                 notAuditList.add(weekOrderM);
             }

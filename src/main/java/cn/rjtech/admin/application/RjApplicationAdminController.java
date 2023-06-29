@@ -7,6 +7,7 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.RjApplication;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.RjApplicationService;
 import com.jfinal.aop.Before;
@@ -126,6 +127,7 @@ public class RjApplicationAdminController extends JBoltBaseController {
         renderJson(service.realDeleteById(getLong(0)));
     }
 
+    @UnCheck
     public void options() {
         renderJsonData(service.getAllPermissionsOptionsWithLevel());
     }
