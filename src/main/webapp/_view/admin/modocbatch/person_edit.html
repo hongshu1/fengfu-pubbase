@@ -866,7 +866,6 @@
      * @param dialogBtnOk 编辑人员确定事件
      */
     function dialogBtnOk(){
-        console.log(parms['tableData'],'tableData1')
         let str = "";
         let names = parms['tableData'].map(obj => obj.cpsnname); // 使用map方法获取所有name
         if(parms['userType']==0){
@@ -880,10 +879,9 @@
             if(parms['tableData'].length>1){
                 LayerMsgBox.error('产线组长,班长,其余人员等只能选择一个成员',1500);
                 parms['tableData'] = Array.from([]);
-                console.log(parms['tableData'],'tableData2')
-                console.log(parms.editCellValue,"parms.editCellValue2")
             }else{
-                getArrayCellRow(parms['tableData'][]);
+                getArrayCellRow(parms['tableData'][0].iautoid);
+                str=names[0];
                 hideDialog();
             }
         }
@@ -918,16 +916,15 @@
                 data:colData[1][0],//当前单元格所在年月日
                 plan:colData[3][0],//排班(1S,2S)
                 type:rowData[0][8],//人员类型
-                taskId,//页面id
             }
             if(rowData[0][8]==3){
-                parms.editCellValueObj.taskId = taskId;
+                parms.editCellValueObj.taskId = taskId;//页面id
                 parms.editCellValueObj.itype = 1;
             }else if(rowData[0][8]==4){
-                parms.editCellValueObj.taskId = taskId;
+                parms.editCellValueObj.taskId = taskId;//页面id
                 parms.editCellValueObj.itype = 2;
             }else if(rowData[0][8]==5){
-                parms.editCellValueObj.taskId = taskId;
+                parms.editCellValueObj.taskId = taskId;//页面id
                 parms.editCellValueObj.itype = 3;
             }else if(rowData[0][8]==2){
                 let mod = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取当前列数据
@@ -950,21 +947,26 @@
      */
     function getArrayCellRow(id){
         parms.editCellValueObj.renYuanId = [];
-        id.forEach((arr)=>{
-            parms.editCellValueObj.renYuanId.push(arr);
-        })
-        //获取当前的班次id
-        let blan = parms['tableHeadArray'].find((v,i)=>v.find((item,ind)=>item.yeartodate==parms.editCellValueObj.data)).find((ite,id)=>ite.cworkshiftcode==parms.editCellValueObj.plan);
-        parms.editCellValueObj.iworkshiftmid = blan.iworkshiftmid;
-
-        if(parms['userType']==0){
-            let productionLineObj = parms['pageData'].slice(0,parms['pageData'].length-3).find((v,i)=>v.cinvcode==parms.keHuCode);//查找到当前产线对象
-            let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
-            parms.editCellValueObj.sheBeiid = sheBeigonXuObj.cequipment.iequipmentid;//设备id
-            parms.editCellValueObj.gonXuid = sheBeigonXuObj.coperation.ioperationid;//工序id
-            parms.editCellValueObj.iworkregionmid = productionLineObj.iworkregionmid;
+        if(typeof id=='object'){
+            id.forEach((arr)=>{
+                parms.editCellValueObj.renYuanId.push(arr);
+            })
+            //获取当前的班次id
+            let blan = parms['tableHeadArray'].find((v,i)=>v.find((item,ind)=>item.yeartodate==parms.editCellValueObj.data)).find((ite,id)=>ite.cworkshiftcode==parms.editCellValueObj.plan);
+            parms.editCellValueObj.iworkshiftmid = blan.iworkshiftmid;
+            if(parms['userType']==0){
+                let productionLineObj = parms['pageData'].slice(0,parms['pageData'].length-3).find((v,i)=>v.cinvcode==parms.keHuCode);//查找到当前产线对象
+                let sheBeigonXuObj = productionLineObj.rowdatas.find((v,i)=>v.cequipment.cequipmentname==parms.sheBeiName && v.coperation.coperationname==parms.gonXuName);//查找到当前设备工序对象
+                parms.editCellValueObj.sheBeiid = sheBeigonXuObj.cequipment.iequipmentid;//设备id
+                parms.editCellValueObj.gonXuid = sheBeigonXuObj.coperation.ioperationid;//工序id
+                parms.editCellValueObj.iworkregionmid = productionLineObj.iworkregionmid;//产线id
+                parms.editCellValue.push(parms.editCellValueObj);
+            }
+        }else if(typeof id=='string'){
+            parms.editCellValueObj.renYuanId.push(id);
+            parms.editCellValue.push(parms.editCellValueObj);
         }
-        parms.editCellValue.push(parms.editCellValueObj);
+        console.log(parms.editCellValue)
     }
     /**
      * 关闭Dialog事件
