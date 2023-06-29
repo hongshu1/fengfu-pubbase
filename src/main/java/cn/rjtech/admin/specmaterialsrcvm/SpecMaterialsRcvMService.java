@@ -184,12 +184,29 @@ public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> {
   /**
    * 根据制造工单id查询特殊领料数据源Api
    *
-   * @param imodocid
-   * @param pageNumber
-   * @param pageSize
+   * @param imodocid   制造工单id
+   * @param pageNumber 页数
+   * @param pageSize   页面数量
    * @return
    */
   public Page<Record> getApiSpecmaterialsrcvmDatas(Long imodocid, Integer pageNumber, Integer pageSize) {
     return dbTemplate("specmaterialsrcvm.getApiSpecmaterialsrcvmDatas", Kv.by("imodocid", imodocid)).paginate(pageNumber, pageSize);
+  }
+
+
+  /**
+   * 根据制造工单id查询特殊领料数据源Api
+   *
+   * @param imodocid   制造工单id
+   * @param pageNumber 页数
+   * @param pageSize   页面数量
+   * @param cinvcode   存货编码
+   * @param cinvcode1  客户部番
+   * @param cinvname1  部品名称
+   * @return
+   */
+  public Page<Record> getInventoryDatasByDocid(Long imodocid, Integer pageNumber, Integer pageSize, String cinvcode, String cinvcode1, String cinvname1) {
+    return dbTemplate("specmaterialsrcvm.getInventoryDatasByDocid", Kv.by("imodocid", imodocid).set("cinvcode", cinvcode).
+        set("cinvcode1", cinvcode1).set("cinvname1", cinvname1)).paginate(pageNumber, pageSize);
   }
 }

@@ -1,0 +1,118 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col">
+                <form class="form-inline text-left" id="itemroutingForm_#(pageId)"   onsubmit="return false;" method="post">
+                    <input type="hidden" autocomplete="off" class="form-control col-sm-4"  placeholder="料品工艺档案配置Id" name="configid" value="#(configid)" />
+                    <input type="hidden" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+                    <button  type="submit" style="display: none" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+                    <input type="hidden" id="iMoDocId" value="#(imdocid??)">
+                </form>
+            </div>
+            <div class="col-md-auto">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="itemroutingRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.cname}</td>
+<td>${data.csuffix}</td>
+<td>${data.isize}</td>
+<td>${data.iversion}</td>
+<td>${data.dfromdate |date_ymd}</td>
+<td>${data.dtodate |date_ymd}</td>
+<td><a href="${data.cpath}" data-area="1600,800"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn">查看</a>
+			</td>
+<td>${data.ccreatename}</td>
+    <!--<td>${data.dcreatetime}</td>
+        <td>
+        <a class="btn" onclick="jboltTableRemoveRow(this)"  ><i class="fa fa-remove c-danger"></i></a>
+    </td>-->
+</tr>
+{@/each}
+</textarea>
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="itemrouting_toolbar_#(pageId)">
+            <div class="" role="group" aria-label="btn-group">
+                <div>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+
+                        <button onclick="refreshPjaxContainer(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table table-center"
+               id="drawingtableid"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-url="admin/modoc/moDocInventoryRouting"
+               data-column-resize="true"
+               data-column-prepend="1:checkbox:true"
+               data-conditions-form="itemroutingForm_#(pageId)"
+               data-rowtpl="itemroutingRowtpl_#(pageId)"
+               data-toolbar="itemrouting_toolbar_#(pageId)"
+        >
+            <thead class="fw-normal">
+            <tr>
+                <!--<th data-min-width="150" data-column="iItemId">料品档案ID</th>-->
+                <th data-width="60" data-min-width="60" data-column="index">序号</th>
+                <th data-width="150" data-column="cname">名称</th>
+                <th data-width="120" data-column="csuffix">文件类型</th>
+                <th data-width="120" data-column="isize">大小</th>
+                <th data-width="120" data-column="iversion">版本号</th>
+                <th data-width="150" data-column="dfromdate">启用时间</th>
+                <th data-width="150" data-column="dtodate">停用时间</th>
+                <th data-width="150" data-column="cpath">路径</th>
+                <th data-width="120" data-column="ccreatename">创建人</th>
+                <th data-width="150" data-column="dcreatetime">创建时间</th>
+                <!--<th data-width="80" >操作</th>-->
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<script>
+
+
+    $(function(){
+        hideParentLayerDialogBtn(0);
+    });
+
+    var version = "";
+    function addTableRow(ele){
+        //获取表格数据
+        var tableDatas = getJboltTableAllDatas(ele);
+        if (tableDatas != null){
+            var data = tableDatas[tableDatas.length - 1];
+            if (!data.iversion){
+                LayerMsgBox.alert("请先输入文件版本！");
+                return;
+            }
+            version = data.iversion;
+            //表格新增行/带参数
+            jboltTableInsertRow(ele,{iversion:(Number(version) +0.1).toFixed(1)})
+        }else {
+            //表格新增行/带参数
+            jboltTableInsertRow(ele,{iversion:'1.0'})
+        }
+    }
+</script>
+#end
+
+

@@ -41,6 +41,7 @@ public class OtherOutAdminController extends BaseAdminController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		Kv kv =new Kv();
 		kv.setIfNotNull("selectparam", get("billno"));
@@ -51,7 +52,7 @@ public class OtherOutAdminController extends BaseAdminController {
 		kv.setIfNotNull("enddate", get("enddate"));
 		kv.setIfNotNull("sourcebilldid", get("sourcebilldid"));//来源单号ID sourcebilldid
 		kv.setIfNotNull("idepartmentid", get("idepartmentid"));
-
+		kv.setIfNotNull("state", get("state"));
 		renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), kv));
 
 	}

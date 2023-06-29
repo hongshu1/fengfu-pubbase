@@ -7,6 +7,7 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Busobject;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.BusobjectService;
 import com.jfinal.aop.Before;
@@ -43,6 +44,7 @@ public class BusobjectAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getSortColumn("id"), getSortType("desc"), getLong("appId"), get("dataSource"), getBoolean("isEnabled"), getBoolean("isDeleted", false)));
     }
@@ -123,6 +125,7 @@ public class BusobjectAdminController extends JBoltBaseController {
         renderJson(service.realDeleteByIds(get("ids")));
     }
 
+    @UnCheck
     public void options() {
         renderJsonData(service.getOptionList(Busobject.BUSOBJECT_NAME, Busobject.ID, Okv.by(Busobject.IS_DELETED, "0").set(Busobject.IS_ENABLED, "1")));
     }

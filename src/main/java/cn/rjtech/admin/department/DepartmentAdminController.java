@@ -12,7 +12,6 @@ import cn.jbolt.core.util.JBoltStringUtil;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.config.MesConfigKey;
-import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.Util;
@@ -77,7 +76,6 @@ public class DepartmentAdminController extends BaseAdminController {
     	String depGrade = globalConfigService.getConfigValue(MesConfigKey.DEP_GRADE);
     	depGrade = JBoltStringUtil.isBlank(depGrade) ? "3" : depGrade;
     	para.set("idepgrade",depGrade);
-    	para.set("bdepend",IsEnableEnum.NO.getValue());
     	para.set("isEnabled","true");
         renderJsonData(service.treeDatasForProposalSystem(para));
     }
@@ -269,6 +267,7 @@ public class DepartmentAdminController extends BaseAdminController {
         renderJsonData(trees);
     }
 
+    @UnCheck
     public void options() {
         renderJsonData(service.findAll());
     }

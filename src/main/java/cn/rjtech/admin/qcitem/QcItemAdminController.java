@@ -5,6 +5,7 @@ import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.rjtech.admin.qcparam.QcParamService;
@@ -51,6 +52,7 @@ public class QcItemAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.pageList(getKv()));
 //        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isDeleted")));
@@ -173,6 +175,7 @@ public class QcItemAdminController extends BaseAdminController {
         renderBytesToExcelXlsFile(jBoltExcel);
     }
 
+    @UnCheck
     public void options() {
         renderJsonData(service.options());
     }

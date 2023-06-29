@@ -1,28 +1,26 @@
 package cn.rjtech.admin.prodformm;
 
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.prodform.ProdFormService;
 import cn.rjtech.admin.prodformitem.ProdFormItemService;
 import cn.rjtech.admin.prodformtableparam.ProdFormTableParamService;
-import cn.rjtech.model.momdata.FormUploadM;
-import cn.rjtech.model.momdata.ProdFormItem;
-import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
+import cn.rjtech.constants.DataSourceConstants;
+import cn.rjtech.model.momdata.ProdFormM;
 import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.ProdFormM;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,7 +68,7 @@ public class ProdFormMAdminController extends BaseAdminController {
 	 * 保存
 	 */
 	@Before(Tx.class)
-	@TxConfig(ProdFormM.DATASOURCE_CONFIG_NAME)
+	@TxConfig(DataSourceConstants.MOMDATA)
 	public void save(@Para("prodFormM")ProdFormM prodFormM) {
 		renderJson(service.save(prodFormM));
 	}
@@ -97,7 +95,7 @@ public class ProdFormMAdminController extends BaseAdminController {
 	 * 更新
 	 */
 	@Before(Tx.class)
-	@TxConfig(ProdFormM.DATASOURCE_CONFIG_NAME)
+	@TxConfig(DataSourceConstants.MOMDATA)
 	public void update(@Para("prodFormM")ProdFormM prodFormM) {
 		renderJson(service.update(prodFormM));
 	}
@@ -106,7 +104,7 @@ public class ProdFormMAdminController extends BaseAdminController {
 	 * 批量删除
 	 */
 	@Before(Tx.class)
-	@TxConfig(ProdFormM.DATASOURCE_CONFIG_NAME)
+	@TxConfig(DataSourceConstants.MOMDATA)
 	public void deleteByIds() {
 		renderJson(service.deleteByIds(get("ids")));
 	}
@@ -115,7 +113,7 @@ public class ProdFormMAdminController extends BaseAdminController {
 	 * 删除
 	 */
 	@Before(Tx.class)
-	@TxConfig(ProdFormM.DATASOURCE_CONFIG_NAME)
+	@TxConfig(DataSourceConstants.MOMDATA)
 	public void delete() {
 		renderJson(service.deleteById(getLong(0)));
 	}
@@ -147,28 +145,4 @@ public class ProdFormMAdminController extends BaseAdminController {
 		renderJsonData(service.submitForm(formJsonDataStr, tableJsonDataStr));
 	}
 
-	public void batchReverseApprove() {
-		renderJson(service.batchReverseApprove(get("ids")));
-	}
-
-	/**
-	 * 提交审批
-	 */
-	public void submit() {
-		renderJson(service.submit(getLong("iautoid")));
-	}
-
-	/**
-	 * 审批通过
-	 */
-	public void approve() {
-		renderJson(service.approve(getLong(0)));
-	}
-
-	/**
-	 * 审批不通过
-	 */
-	public void reject() {
-		renderJson(service.reject(getLong(0)));
-	}
 }

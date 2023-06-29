@@ -590,7 +590,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         inStockQcFormM.setIsDeleted(false);
 
         ValidationUtils.isTrue(inStockQcFormM.save(), "在库检验单据创建失败！！！");
-        return ret(true);
+        return SUCCESS;
     }
 
     /**

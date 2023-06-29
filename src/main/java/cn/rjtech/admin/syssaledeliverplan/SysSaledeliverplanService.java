@@ -104,7 +104,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -118,7 +118,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
             delete("DELETE T_Sys_SaleDeliverPlanDetail   where  MasID = ?",id);
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
     /**
      * 更新

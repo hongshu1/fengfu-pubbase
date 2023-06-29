@@ -9,7 +9,7 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.uom.UomService;
-import cn.rjtech.base.service.BaseService;
+import cn.jbolt.core.service.base.BaseService;
 import cn.rjtech.model.momdata.Uomclass;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;

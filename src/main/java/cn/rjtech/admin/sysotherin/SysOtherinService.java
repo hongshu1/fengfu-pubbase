@@ -138,7 +138,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
             delete("DELETE T_Sys_OtherInDetail   where  MasID = ?", id);
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
     /**
@@ -153,7 +153,7 @@ public class SysOtherinService extends BaseService<SysOtherin> {
             }
             return true;
         });
-        return ret(true);
+        return SUCCESS;
     }
 
 

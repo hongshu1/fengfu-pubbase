@@ -9,6 +9,7 @@ import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.qcformtableparam.QcFormTableParamService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -57,6 +58,7 @@ public class QcFormAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         Okv kv = new Okv();
         kv.setIfNotNull("cQcFormName", get("cQcFormName"));
@@ -207,6 +209,7 @@ public class QcFormAdminController extends BaseAdminController {
 
     }
 
+    @UnCheck
 	public void options(){
 		renderJsonData(service.options());
 	}

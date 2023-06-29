@@ -1,0 +1,72 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>始业点检表管理</h1></div>
+            <div class="col">
+                <form class="form-inline" id="SpotCheckFormM_form_#(pageId)">
+                </form>
+            </div>
+            <div class="col-sm-auto text-right">
+            </div>
+        </div>
+    </div>
+    <div class="jbolt_page_content">
+        <!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="SpotCheckFormM_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iAutoId}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>
+<a href="admin/spotCheckFormM/edit?inventoryspotcheckformid=${data.iautoid}&
+    cinvcode=${data.cinvcode}&cmodocno=${data.cmodocno}&croutingname=${data.croutingname}&edit=true"
+    data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable"
+    data-dialog-title="编辑" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+</td>
+<td>$${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
+<td>${data.coperationname}</td>
+<td>${data.cequipmentmodelname}</td>
+<td>${data.cOperationName}</td>
+<td>${data.cRcvDocNo}</td>
+<td>${data.cCreateName}</td>
+<td>${data.dCreateTime}</td>
+</tr>
+{@/each}
+</textarea>
+        <div class="jbolt_table_toolbar" id="SpotCheckFormM_toolbar_#(pageId)">
+        </div>
+        <table class="jbolt_table jbolt_main_table  table-center "
+               data-jbolttable
+               data-width="fill"
+               data-height="fill"
+               data-ajax="true"
+               data-conditions-form="SpotCheckFormM_form_#(pageId)"
+               data-url="admin/spotCheckFormM/datas2?cinvcode=#(cinvcode??)&cmodocno=#(cmodocno??)&croutingname=#(croutingname)"
+               data-rowtpl="SpotCheckFormM_tpl_#(pageId)"
+               data-copy-to-excel="false"
+               data-page="SpotCheckFormM_page"
+               data-toolbar="SpotCheckFormM_toolbar_#(pageId)"
+        >
+            <thead class="fw-normal" >
+            <tr>
+                <th data-width="60" data-column="index">序号</th>
+                <th data-width="100">操作</th>
+                <th  data-width="100" data-column="iAuditStatus">审核状态</th>
+                <th  data-width="150" data-column="coperationname">工序名称</th>
+                <th  data-width="100" data-column="cequipmentmodelname">设备名称</th>
+                <th  data-width="100" data-column="iSpotCheckFormId">生成人员</th>
+                <th  data-width="100" data-column="iMoDocId">提交时间</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end

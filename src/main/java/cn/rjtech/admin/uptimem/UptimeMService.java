@@ -11,6 +11,8 @@ import cn.rjtech.model.momdata.MoMopatchweldm;
 import cn.rjtech.model.momdata.UptimeD;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -226,11 +228,20 @@ public class UptimeMService extends BaseService<UptimeM> implements IApprovalSer
 			model.setCUpdateName(JBoltUserKit.getUserName());
 			model.setDUpdateTime(newDate);
 
+			List<UptimeD> list = new ArrayList<>();
+			JSONObject jsonObject = jBoltTable.getForm();
+			Object tableDataArray = jsonObject.get("tableDataArray");
+			if (tableDataArray != null && !tableDataArray.equals("[]")  && !tableDataArray.equals("null")){
+				list = JSONArray.parseArray(tableDataArray.toString(),UptimeD.class);
+				for (UptimeD uptimeD : list){
+					uptimeD.setIUptimeMid(mid);
+				}
+			}
+
+			List<UptimeD> finalList = list;
 			tx(() -> {
 				model.save();
-				if (CollUtil.isNotEmpty(updateRecords)) {
-					uptimeDService.batchSave(updateRecords, 500);
-				}
+				uptimeDService.batchSave(finalList, 500);
 				return true;
 			});
 		}else {

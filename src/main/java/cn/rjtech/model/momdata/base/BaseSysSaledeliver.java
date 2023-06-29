@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSysSaledeliver<M extends BaseSysSaledeliver<M>> extends JBoltBaseModel<M>{
-    public static final String DATASOURCE_CONFIG_NAME = "momdata";
+    
     /**AutoID*/
     public static final String AUTOID = "AutoID";
     /**来源类型;MO生产工单*/

@@ -1,5 +1,6 @@
 package cn.rjtech.admin.stockcheck;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -34,6 +35,7 @@ public class StockCheckAdminController extends BaseAdminController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
 	}

@@ -5,6 +5,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.SensitiveWord;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.sensitiveword.JBoltSensitiveWordUtil;
 import cn.jbolt.core.service.JBoltSensitiveWordService;
@@ -68,6 +69,7 @@ public class SensitiveWordAdminController extends JBoltBaseController {
         render("mgr.html");
     }
 
+    @UnCheck
     public void datas(){
         renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords(),getEnable()));
     }

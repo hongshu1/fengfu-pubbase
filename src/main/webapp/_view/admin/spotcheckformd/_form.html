@@ -1,0 +1,81 @@
+<form onsubmit="return false;" id="SpotCheckFormD_Form" action="#(action)" method="post">
+	#if(spotCheckFormD.iAutoId??)
+	<input type="hidden" name="spotCheckFormD.iAutoId" value="#(spotCheckFormD.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="spotCheckFormD.iAutoId" value="#(spotCheckFormD.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">来料检ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入来料检ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来料检ID" maxlength="40" name="spotCheckFormD.iSpotCheckFormMid" value="#(spotCheckFormD.iSpotCheckFormMid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">检验表格ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入检验表格ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入检验表格ID" maxlength="40" name="spotCheckFormD.iSpotCheckFormId" value="#(spotCheckFormD.iSpotCheckFormId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">检验项目ID，Bd_SpotCheckFormTableParam.iAutoId</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入检验项目ID，Bd_SpotCheckFormTableParam.iAutoId"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入检验项目ID，Bd_SpotCheckFormTableParam.iAutoId" maxlength="40" name="spotCheckFormD.iSpotCheckFormParamId" value="#(spotCheckFormD.iSpotCheckFormParamId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">项目次序，固定取参数项目名为“项目”的参数名称次序值</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入项目次序，固定取参数项目名为“项目”的参数名称次序值"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入项目次序，固定取参数项目名为“项目”的参数名称次序值" maxlength="40" name="spotCheckFormD.iSeq" value="#(spotCheckFormD.iSeq??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">检验参数值ID，点检方法允许为空（拼接“-”）多个逗号分隔</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入检验参数值ID，点检方法允许为空（拼接“-”）多个逗号分隔" maxlength="200" name="spotCheckFormD.cSpotCheckFormParamIds">#(spotCheckFormD.cSpotCheckFormParamIds??)</textarea>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间</label>
+<div class="col-10">
+    <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间" maxlength="40" name="spotCheckFormD.iType" value="#(spotCheckFormD.iType??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">标准值</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入标准值" maxlength="40" name="spotCheckFormD.iStdVal" value="#(spotCheckFormD.iStdVal??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">最大设定值</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入最大设定值" maxlength="40" name="spotCheckFormD.iMaxVal" value="#(spotCheckFormD.iMaxVal??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">最小设定值</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入最小设定值" maxlength="40" name="spotCheckFormD.iMinVal" value="#(spotCheckFormD.iMinVal??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">列表可选值;多个“,”分隔</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入列表可选值;多个“,”分隔" maxlength="200" name="spotCheckFormD.cOptions">#(spotCheckFormD.cOptions??)</textarea>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="SpotCheckFormD_Form")
+#end
+

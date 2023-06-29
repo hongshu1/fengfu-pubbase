@@ -50,6 +50,7 @@ public class SubjectmAdminController extends BaseAdminController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getKv()));
 	}
@@ -127,6 +128,7 @@ public class SubjectmAdminController extends BaseAdminController {
 		renderJson(service.toggleIsend(getLong(0)));
 	}
 
+    @UnCheck
 	public void options() {
 		renderJsonData(service.getAllSubjectmsOptionsWithLevel());
 	}

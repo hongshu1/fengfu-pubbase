@@ -1,0 +1,143 @@
+#set(pageId=RandomUtil.random(6))
+#set(iYear=DateUtil.getYear())
+#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
+#if(readonly != 'readonly' && (formUploadM.iauditstatus??0 == 1 || formUploadM.iauditstatus??0 == 2))
+#set(readonly = 'readonly')
+#end
+<form onsubmit="return false;" id="spotCheckFormMForm" action="#(action)" method="post">
+
+    <input type="hidden" name="spotCheckFormM.iautoid" value="#(spotCheckFormM.iautoid??)" />
+    <input type="hidden" maxlength="255" id="spotCheckFormMiautoid" name="spotCheckFormM.iautoid" value="#(spotCheckFormM.iautoid??)"/>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="col">
+                    #if(readonly != 'readonly')
+                    <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
+                    #end
+                    #include("/_view/_common/_approval_btns.html", uri="/admin/spotCheckFormM",
+                    formSn="PL_spotCheckFormM", primaryKeyName="iAutoId", o=spotCheckFormM,
+                    permissionKeyPrefix="spotCheckFormM",  className="cn.rjtech.admin.spotCheckFormM.spotCheckFormMService")
+
+                    <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="py-2" style="padding:.5rem 0rem;">
+        <span class="py-1"><strong></strong></span>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">工序名称</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="10" name="spotCheckFormM.coperationname" value="#(spotCheckFormM.coperationname??)"/>
+                    <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="10" name="iprodformid" value="#(spotcheckformid??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">设备名称</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="10" name="spotCheckFormM.cequipmentmodelname" value="#(spotCheckFormM.cequipmentmodelname??)"/>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: 300px;">
+        #ajaxPortal("/admin/spotCheckFormM/table3?spotcheckformid="+(spotcheckformid??''),"qcformtable_portal_" + pageId, true)
+    </div>
+</form>
+#define js()
+#include("_table3_js.html")
+<script>
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
+
+    function closeHandler(){
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+
+
+    // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
+    var submit = false;
+
+    function submitThisForm_#(pageId)(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
+
+        }
+        var tableData = getTableData();
+        var formData1 = formToJson('#spotCheckFormMForm');
+        Ajax.post('/admin/spotCheckFormM/submitForm', {
+            formJsonData: JSON.stringify(formData1),
+            tableJsonData: JSON.stringify(tableData)
+        }, function (ret) {
+            if (ret.state === 'ok') {
+                LayerMsgBox.success(ret.msg, 1000, function () {
+                    // 表格保存之后，判断是否需要提审处理
+                    // 提交审核（审批）调用
+                    if (submit) {
+                        // 提审
+                        submit_#(pageId)(ret.data.data.iautoid, function (data) {
+                            console.log(3)
+                            successHandler('提审成功', ret.data.data.iautoid);
+                        });
+                    } else {
+                        successHandler(ret.msg, ret.data.data.iautoid);
+                    }
+                });
+            } else {
+                LayerMsgBox.alert(ret.msg, 2);
+            }
+        });
+    }
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, id) {
+        LayerMsgBox.success(msg, 600, function () {
+            // 新增/修改，均跳转到详情页
+            var url="admin/spotCheckFormM/edit?iautoid="+id+ '&_jb_rqtype_=dialog';
+            location.href = url;
+            parent.refreshPjaxContainer();
+        });
+    }
+    function getTableData() {
+        var pageId = $("#jbolt_table_qcformtableparam_split_input").val();
+        var tableParamTableData = $('#jbolt_table_qcformtableparam_split_'+pageId);
+        var rows = [];
+        tableParamTableData.children("tbody").children("tr").each(function () {
+            var row = {};
+            // 获取input标签 class属性还有form-control
+            $(this).find('td').each(function () {
+                var inputs = $(this).find("input[class*='form-control']");
+                getField(row, inputs);
+                var selects = $(this).find("select[class*='form-control']");
+                getField(row, selects);
+
+            })
+            rows.push(row);
+        })
+        return rows;
+    }
+
+    function getField(row, labels) {
+        if (labels && labels.length > 0) {
+            $.each(labels, function (idx, v) {
+                if (v.name && v.name !== '' && v.value) {
+                    row[v.name] = row[v.name] ? (row[v.name] + ',' + v.value) : v.value;
+                }
+            });
+        }
+    }
+
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="spotCheckFormMForm")
+#end
+

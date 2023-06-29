@@ -1,0 +1,39 @@
+<form onsubmit="return false;" id="SpotcheckformdLine_Form" action="#(action)" method="post">
+	#if(spotcheckformdLine.iAutoId??)
+	<input type="hidden" name="spotcheckformdLine.iAutoId" value="#(spotcheckformdLine.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="spotcheckformdLine.iAutoId" value="#(spotcheckformdLine.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">检验项目配置</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入检验项目配置"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入检验项目配置" maxlength="40" name="spotcheckformdLine.iSpotCheckFormDid" value="#(spotcheckformdLine.iSpotCheckFormDid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">列顺序值</label>
+<div class="col-10">
+    <input type="number"    data-rule="required" data-notnull="true" data-tips="请输入列顺序值"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入列顺序值" maxlength="40" name="spotcheckformdLine.iSeq" value="#(spotcheckformdLine.iSeq??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">填写值</label>
+<div class="col-10">
+    <textarea style="height:100px;"  data-rule="required"  data-notnull="true" data-tips="请输入填写值" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入填写值" maxlength="200" name="spotcheckformdLine.cValue">#(spotcheckformdLine.cValue??)</textarea>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="SpotcheckformdLine_Form")
+#end
+

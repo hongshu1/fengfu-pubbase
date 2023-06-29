@@ -107,7 +107,7 @@ public class FormUploadDService extends BaseService<FormUploadD> {
 	 */
 	public Ret delete(Long id) {
 		deleteById(id);
-		return ret(true);
+		return SUCCESS;
 	}
 	/**
 	 * 根据主id
@@ -125,6 +125,6 @@ public class FormUploadDService extends BaseService<FormUploadD> {
 
 	public Ret delete2(Long iautoid) {
 		deleteById(iautoid);
-		return ret(true);
+		return SUCCESS;
 	}
 }

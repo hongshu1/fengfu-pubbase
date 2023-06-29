@@ -3,10 +3,7 @@ package cn.rjtech.admin.currentstock;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.permission.JBoltUserAuthKit;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.permission.*;
 import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockCheckVouch;
@@ -99,17 +96,21 @@ public class CurrentStockController extends BaseAdminController {
 	   render("stockEdit.html");
    }
 
+    @UnCheck
 	public void autocompleteWareHouse() {
 		renderJsonData(service.autocompleteWareHouse(getKv()));
 	}
 
+    @UnCheck
 	public void autocompletePosition() {
 		renderJsonData(service.autocompletePosition(getKv()));
 	}
 
+    @UnCheck
 	public void autocompleteUser() {
 		renderJsonData(service.autocompleteUser(getKv()));
 	}
+    
 	/**
 	 * 新增提交
 	 * */
