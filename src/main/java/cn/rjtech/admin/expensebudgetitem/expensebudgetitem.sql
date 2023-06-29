@@ -98,5 +98,6 @@ EXEC	[dbo].[P_ExpenseBudgetActualDifference]
 		@iBudgetYear = #(ibudgetyear),
 		@cDepCode = #para(cdepcode),
 		@expensediffbudgettype = #para(expensediffbudgettype),
-		@u8DbName = #para(u8dbname)
+		@u8DbName = #para(u8dbname),
+		@accesscdepcodes = #para(accesscdepcodes)
 #end

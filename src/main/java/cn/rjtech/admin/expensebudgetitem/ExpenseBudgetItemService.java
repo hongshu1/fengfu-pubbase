@@ -5,6 +5,7 @@ import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
+import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.model.User;
@@ -183,6 +184,16 @@ public class ExpenseBudgetItemService extends BaseService<ExpenseBudgetItem> {
      */
     public List<Record> differencesManagementDatas(Kv para) {
     	para.set("u8dbname",U8DataSourceKit.ME.getU8DbName(getOrgCode()));
+    	List<String> list = DataPermissionKit.getAccessCdepcodes();
+        if (CollUtil.isNotEmpty(list)) {
+            String sqlInStrCdepcode = "";
+            for (String cdepcode : list) {
+                sqlInStrCdepcode += "'" + cdepcode + "',";
+            }
+            sqlInStrCdepcode += "''";
+            para.set("accesscdepcodes", sqlInStrCdepcode);
+        }
+        
     	return dbTemplate("expensebudgetitem.differencesManagementDatas",para).find();
     }
     /**

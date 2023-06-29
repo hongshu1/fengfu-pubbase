@@ -85,7 +85,8 @@ public class ExpenseBudgetItemAdminController extends BaseAdminController {
     /**
      * 费用预算差异管理数据源
      */
-    public void  differencesManagementDatas(){
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
+    public void differencesManagementDatas(){
         renderJsonData(service.differencesManagementDatas(getKv()));
     }
 

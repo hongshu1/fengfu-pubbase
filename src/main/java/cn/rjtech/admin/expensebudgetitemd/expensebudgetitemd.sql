@@ -85,7 +85,7 @@ where 1=1
     #if(islargeamountexpense)
   and ebi.isLargeAmountExpense = #para(islargeamountexpense)
     #end
-
+	#(getDataPermissionSql("eb", "cdepcode")) 
 group by
     ebi.iautoid,ebi.iexpenseid,d.cdepcode,d.cdepname,eb.ibudgetyear,eb.ibudgettype,eb.cbegindate,eb.cenddate,
     bp.cprojectcode,bp.cprojectname,ebi.cbudgetno,bsh.csubjectname,bsl.csubjectname,ebi.citemname,eb.iAuditStatus,

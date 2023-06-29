@@ -1,8 +1,11 @@
 package cn.rjtech.admin.investmentplanitemd;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -59,6 +62,7 @@ public class InvestmentPlanItemdAdminController extends BaseAdminController {
 	/**
 	 * 数据源
 	 */
+	@CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
 	}
