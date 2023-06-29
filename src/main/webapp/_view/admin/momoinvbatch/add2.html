@@ -1,7 +1,7 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
-#set(printworkorderspotticketsinadvance=JBoltGlobalConfigCache.getConfigValue("print_work_order_spot_tickets_in_advance"))
+#set(printworkorderspotticketsinadvance=JBoltGlobalConfigCache.getBooleanConfigValue("print_work_order_spot_tickets_in_advance"))
 <div class="jbolt_page">
     <div class="jbolt_page_content">
         <div class="row">
@@ -102,7 +102,7 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="card">
-                <div class="card-header"><b>未打印现品票#(printworkorderspotticketsinadvance)</b></div>
+                <div class="card-header"><b>未打印现品票</b></div>
                 <div class="card-body">
                     #include("table1.html")
                 </div>
@@ -189,7 +189,7 @@
    function modifyTable1() {
        // 刷新页面
        refreshJBoltTable($("#table1_#(pageId)"));
-       $("#create_moinvbatch_#(pageId)").attr("hidden", "hidden");
+       $("#create_moinvbatch_#(pageId)").hide();
        #if(printworkorderspotticketsinadvance)
        $("#toolbar_deleteBtn_#(pageId)").removeAttr("disabled");
        #end
@@ -200,7 +200,7 @@
        var datas = getJboltTableAllDatas("table1_#(pageId)");
        // 已生成现品票数据默认隐藏生成现品票按钮
        if (datas) {
-           $("#create_moinvbatch_#(pageId)").attr("hidden", "hidden");
+           $("#create_moinvbatch_#(pageId)").hide();
            #if(printworkorderspotticketsinadvance)
            $("#toolbar_deleteBtn_#(pageId)").removeAttr("disabled");
            #end
