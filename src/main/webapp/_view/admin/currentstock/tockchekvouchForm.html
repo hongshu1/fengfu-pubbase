@@ -9,8 +9,8 @@
             <td>${data.cinvname1}</td>
             <td>${data.cinvstd}</td>
             <td>${data.cuomname}</td>
-            <td>${data.imaxcapacity}</td><!--数量-->
-            <td>${data.iqty}</td> <!--实盘数量-->
+            <td>${data.iqty}</td><!--数量-->
+            <td>${data.qty}</td> <!--实盘数量-->
             <td>${data.barcode}</td> <!--现品票-->
             <td>${data.cversion}</td> <!--批次号-->
             <td>${data.dplandate}</td> <!--生产日期-->
@@ -57,8 +57,8 @@
                         <th data-width="150" data-column="invname">部品名称</th>
                         <th data-width="150" data-column="invstd">规格</th>
                         <th data-width="110" data-column="unitname">主计量单位</th>
-                        <th data-column="imaxcapacity">数量</th>
-                        <th data-column="iqty">实盘数量</th>
+                        <th data-column="iqty">数量</th>
+                        <th data-column="qty">实盘数量</th>
                         <th data-column="barcode">现品票</th>
                         <th data-column="cversion">批次号</th>
                         <th data-column="dplandate">生产日期</th>
@@ -142,8 +142,15 @@
             }
         });
 
+        var cols = [
+            {column: "realqty", text: qtySum, value: qtySum},
+            {column: "tips", text: '已盘点', value: "已盘点"},
+        ];
+
         // 修改指定单元格数据
-        jboltTableSetCell($table, $td.parent(), 'qty', qtySum, qtySum);
+        jboltTableSetCells($table, $td.parent(), cols);
+
+
     }
 
     function barcodes(){
@@ -173,7 +180,6 @@
             maxRowCount:1000,
             trigger:"click",
             submit:{
-                withForm: ["materialsOutForm_#(pageId)"],
                 type:"multi",//cell|all|multi
                 name:"table2"
             },
@@ -181,7 +187,7 @@
                 iautoid: {
                     submitAttr: "iautoid",
                 },
-                iqty: {
+                qty: {
                     type:"amount",
                     placeholder:'数量',
                     required:true,
@@ -192,6 +198,17 @@
                         removezero:true,
                         formula:"sum"
                     }],
+                    handler:function (table,td,text,value,jsonData) {
+                        let iqty =  jsonData.iqty;
+                        console.log(iqty);
+                        let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
+                        console.log('实盘数量===>',qty);
+                        if (qty > iqty){
+                            showFormEleErrorStyle(td,"请输入实盘数量小于或等于数量的！！！");
+                            return false;
+                        }
+                        computeQty(jsonData);
+                    }
                 },
             }
         };

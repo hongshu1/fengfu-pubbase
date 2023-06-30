@@ -1,30 +1,29 @@
 package cn.rjtech.admin.currentstock;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.jbolt._admin.user.UserService;
+import cn.jbolt.common.model.UserExtend;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.kit.OrgAccessKit;
+import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.otherdeliverylist.OtherOutDeliveryService;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
-import cn.rjtech.admin.stockcheckdetail.StockCheckDetailService;
 import cn.rjtech.admin.stockcheckvouchbarcode.StockCheckVouchBarcodeService;
 import cn.rjtech.admin.stockcheckvouchdetail.StockCheckVouchDetailService;
 import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
 import cn.rjtech.admin.sysotherin.SysOtherinService;
 import cn.rjtech.admin.sysotherin.SysOtherindetailService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.OtherOut;
-import cn.rjtech.model.momdata.OtherOutDetail;
-import cn.rjtech.model.momdata.StockCheckVouch;
-import cn.rjtech.model.momdata.StockCheckVouchBarcode;
-import cn.rjtech.model.momdata.StockCheckVouchDetail;
-import cn.rjtech.model.momdata.SysOtherin;
-import cn.rjtech.model.momdata.SysOtherindetail;
+import cn.rjtech.model.main.UserOrg;
+import cn.rjtech.model.main.UserThirdparty;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
@@ -38,8 +37,10 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 
 /**
  * 盘点单Service
@@ -62,24 +63,21 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-    Logger log = Logger.getLogger("CurrentStockService");
     @Inject
-    StockChekVouchService         stockChekVouchService; //盘点单主表
+    private StockChekVouchService         stockChekVouchService; //盘点单主表
     @Inject
-    StockCheckVouchDetailService  stockCheckVouchDetailService;//T_Sys_StockCheckVouchDetail(盘点明细表)
+    private StockCheckVouchDetailService  stockCheckVouchDetailService;//T_Sys_StockCheckVouchDetail(盘点明细表)
     @Inject
-    StockCheckVouchBarcodeService stockCheckVouchBarcodeService;//T_Sys_StockCheckVouchBarcode(库存盘点-条码明细)
+    private StockCheckVouchBarcodeService stockCheckVouchBarcodeService;//T_Sys_StockCheckVouchBarcode(库存盘点-条码明细)
     @Inject
-    SysOtherinService             sysOtherinService;//其它入库单
+    private SysOtherinService             sysOtherinService;//其它入库单
     @Inject
-    SysOtherindetailService       sysotherindetailservice;//其它入库单-明细表
+    private SysOtherindetailService       sysotherindetailservice;//其它入库单-明细表
     @Inject
-    OtherOutDeliveryService       otherOutDeliveryService;//其它出库单
+    private OtherOutDeliveryService       otherOutDeliveryService;//其它出库单
     @Inject
-    OtherOutDetailService         otherOutDetailService;//其它出库单-明细表
+    private OtherOutDetailService         otherOutDetailService;//其它出库单-明细表
 
-    @Inject
-    UserService userService;
 
 
 
@@ -405,6 +403,30 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         return SUCCESS;
     }
 
+    /**
+     * 更新
+     * @param stockchekvouch
+     * @return
+     */
+    public Ret update(StockCheckVouch stockchekvouch) {
+        if(stockchekvouch==null || notOk(stockchekvouch.getAutoId())) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        //更新时需要判断数据存在
+        StockCheckVouch stockCheckVouch=findById(stockchekvouch.getAutoId());
+        if(stockCheckVouch==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
+        //if(existsName(sysPuinstore.getName(), sysPuinstore.getAutoid())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+        boolean success=stockchekvouch.update();
+        if(success) {
+            //添加日志
+            //addUpdateSystemLog(sysPuinstore.getAutoid(), JBoltUserKit.getUserId(), sysPuinstore.getName());
+        }
+        return ret(success);
+    }
+
+
+
+
     public Ret saveSubmit(Kv kv) {
         String datas = kv.getStr("datas");
         String barcode = kv.getStr("barcode");
@@ -413,6 +435,46 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         return SUCCESS;
 
     }
+
+    public Ret saveTableSubmit(JBoltTableMulti jBoltTable, User loginUser, Date now) {
+
+
+        // 盘点明细
+        JBoltTable StockCheckVouchDetail = jBoltTable.getJBoltTable("table1");
+        // 盘点条码
+        JBoltTable StockCheckVouchBarcode = jBoltTable.getJBoltTable("table2");
+        // 主表form
+        StockCheckVouch stockCheckVouch = StockCheckVouchDetail.getFormModel(StockCheckVouch.class, "stockchekvouch");
+
+
+        if (StockCheckVouchDetail.paramsIsNotBlank()) {
+            System.out.println(StockCheckVouchDetail.getParams().toJSONString());
+        }
+
+        //	当前操作人员  当前时间 单号
+        Long userId = JBoltUserKit.getUserId();
+        String userName = JBoltUserKit.getUserName();
+        Date nowDate = new Date();
+        String OrgCode =getOrgCode();
+
+
+
+        System.out.println("saveTable===>" + StockCheckVouchDetail.getSave());
+        System.out.println("updateTable===>" + StockCheckVouchDetail.getUpdate());
+        System.out.println("deleteTable===>" + StockCheckVouchDetail.getDelete());
+        System.out.println("form===>" + StockCheckVouchDetail.getForm());
+
+        System.out.println("saveTable===>" + StockCheckVouchBarcode.getSave());
+        System.out.println("updateTable===>" + StockCheckVouchBarcode.getUpdate());
+        System.out.println("deleteTable===>" + StockCheckVouchBarcode.getDelete());
+        System.out.println("form===>" + StockCheckVouchBarcode.getForm());
+
+
+
+        return SUCCESS;
+    }
+
+
 
     /**
      * 盘点单

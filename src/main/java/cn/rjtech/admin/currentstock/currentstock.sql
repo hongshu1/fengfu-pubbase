@@ -267,6 +267,7 @@ SELECT
     uom.cUomName,
     area.iMaxCapacity,
     t4.iQty,
+    t4.iQty AS Qty,
     t4.cCompleteBarcode AS barcode,
     t4.cVersion,
     t4.dPlanDate
