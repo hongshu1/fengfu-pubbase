@@ -233,3 +233,14 @@ where masid in (#(ids)) and ( p.OrganizeCode=#para(orgcode) OR p.OrganizeCode IS
 order by d.poscode, d.invcode
 #end
 
+
+#sql("findCheckVouchDetailByMasIdAndInvcode")
+select t1.* from T_Sys_StockCheckVouchDetail t1
+where 1=1
+#if(masid)
+    and t1.maid = #para(masid)
+#end
+#if(invcode)
+    and t1.invcode = #para(invcode)
+#end
+#end

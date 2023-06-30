@@ -870,7 +870,7 @@ public class PermissionKey {
 	 */
 	public static final String RDSTYLE = "rdstyle";
 	/**
-	 * 项目管理项目分类目录
+	 * 项目大类
 	 */
 	public static final String FITEMSS97CLASS = "fitemss97class";
 	/**
@@ -978,7 +978,7 @@ public class PermissionKey {
 	 */
 	public static final String ROUTING_RECORD = "routing_record";
 	/**
-	 * 出库检
+	 * 出货检
 	 */
 	public static final String STOCKOUTQCFORMM = "stockoutqcformm";
 	/**
@@ -1497,6 +1497,14 @@ public class PermissionKey {
 	 * 稼动时间管理
 	 */
 	public static final String UPTIMEM = "uptimem";
+	/**
+	 * 始业点检表管理
+	 */
+	public static final String SPOTCHECKFORMM = "spotcheckformm";
+	/**
+	 * 首末件点检表管理
+	 */
+	public static final String SPOTCHECKFORMM2 = "spotcheckformm2";
 	/**
 	 * 新增
 	 */
@@ -2626,12 +2634,107 @@ public class PermissionKey {
 	 */
 	public static final String PRODFORMM_WITHDRAW = "prodformm_withdraw";
 	/**
-	 * 始业点检表管理
+	 * 提审
 	 */
-	public static final String SPOTCHECKFORMM = "spotcheckformm";
+	public static final String PRODUCTINLIST_SUBMIT = "productInList_submit";
+	/**
+	 * 通过
+	 */
+	public static final String PRODUCTINLIST_APPROVE = "productInList_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String PRODUCTINLIST_REJECT = "productInList_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String PRODUCTINLIST_REVERSE_APPROVE = "productInList_reverse_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String PRODUCTINLIST_BATCH_REJECT = "productInList_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String PRODUCTINLIST_REVESE_APPROVE = "productInList_revese_approve";
+	/**
+	 * 提审
+	 */
+	public static final String SYSPRODUCTIN_SUBMIT = "sysproductin_submit";
+	/**
+	 * 通过
+	 */
+	public static final String SYSPRODUCTIN_APPROVE = "sysproductin_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String SYSPRODUCTIN_REJECT = "sysproductin_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SYSPRODUCTIN_BATCH_APPROVE = "sysproductin_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SYSPRODUCTIN_BATCH_REJECT = "sysproductin_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String SYSPRODUCTIN_REVERSE_APPROVE = "sysproductin_reverse_approve";
+	/**
+	 * 提审
+	 */
+	public static final String SPOTCHECKFORMM_SUBMIT = "spotcheckformm_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String SPOTCHECKFORMM_APPROVE = "spotcheckformm_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String SPOTCHECKFORMM_REJECT = "spotcheckformm_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String SPOTCHECKFORMM_REVERSE_APPROVE = "spotcheckformm_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SPOTCHECKFORMM_BATCH_APPROVE = "spotcheckformm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SPOTCHECKFORMM_BATCH_REJECT = "spotcheckformm_batch_reject";
+	/**
+	 * 撤回审核
+	 */
+	public static final String SPOTCHECKFORMM_WITHDRAW = "spotcheckformm_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String SYSOTHERIN_SUBMIT = "sysotherin_submit";
+	/**
+	 * 通过
+	 */
+	public static final String SYSOTHERIN_APPROVE = "sysotherin_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String SYSOTHERIN_REJECT = "sysotherin_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SYSOTHERIN_BATCH_APPROVE = "sysotherin_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SYSOTHERIN_BATCH_REJECT = "sysotherin_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String SYSOTHERIN_REVERSE_APPROVE = "sysotherin_reverse_approve";
 	/**
 	 * 现品票
 	 */
 	public static final String MOMOINVBATCH = "momoinvbatch";
-
 }
