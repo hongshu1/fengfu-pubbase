@@ -23,8 +23,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="input-group-append">
-                    <input  type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
-                           maxlength="50" id="barcode" name="barcode" value="#(barcode??)"/>
+                    <input  type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码=" maxlength="50" id="barcode" name="barcode" value="#(barcode??)"/>
                     <button  id="Search" onclick="barcode_#(pageId)(this)" class="btn btn-outline-secondary"><i class="fa fa-search"></i>搜索</button>
                 </div>
                 <!-- 工具条 toolbar -->
@@ -49,20 +48,20 @@
                        data-toolbar="StockCheckVouchBarcode_split_toolbar_#(pageId)"
                        data-editable="true"
                        data-editable-option="getEditableTableOptions_split_#(pageId)">
-                    <thead class="fw-normal">
+                    <thead>
                     <tr>
-                        <th style="width: 60px;max-width: 60px" data-width="60" data-column="index">序号</th>
-                        <th style="width: 150px;max-width: 150px" data-width="150" data-column="posname">库位名称</th>
-                        <th style="width: 150px;max-width: 150px" data-width="150" data-column="invcode">存货编码</th>
-                        <th style="width: 150px;max-width: 150px" data-width="150" data-column="cinvcode1">客户部番</th>
-                        <th style="width: 150px;max-width: 150px" data-width="150" data-column="invname">部品名称</th>
-                        <th style="width: 150px;max-width: 150px" data-width="150" data-column="invstd">规格</th>
-                        <th style="width: 110px;max-width: 110px" data-width="110" data-column="unitname">主计量单位</th>
-                        <th style="width: 110px;max-width: 110px" data-column="imaxcapacity">数量</th>
-                        <th style="width: 110px;max-width: 110px" data-column="iqty">实盘数量</th>
-                        <th style="width: 110px;max-width: 110px" data-column="barcode">现品票</th>
-                        <th style="width: 110px;max-width: 110px" data-column="cversion">批次号</th>
-                        <th style="width: 110px;max-width: 110px" data-column="dplandate">生产日期</th>
+                        <th data-width="60" data-column="index">序号</th>
+                        <th data-width="150" data-column="posname">库位名称</th>
+                        <th data-width="150" data-column="invcode">存货编码</th>
+                        <th data-width="150" data-column="cinvcode1">客户部番</th>
+                        <th data-width="150" data-column="invname">部品名称</th>
+                        <th data-width="150" data-column="invstd">规格</th>
+                        <th data-width="110" data-column="unitname">主计量单位</th>
+                        <th data-column="imaxcapacity">数量</th>
+                        <th data-column="iqty">实盘数量</th>
+                        <th data-column="barcode">现品票</th>
+                        <th data-column="cversion">批次号</th>
+                        <th data-column="dplandate">生产日期</th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -73,8 +72,8 @@
 </div>
 <script>
     function barcode_#(pageId)(ele){
-        LayerMsgBox.loading("执行中......",2000);
-        debugger;
+        LayerMsgBox.loading("执行中......", 2000);
+
         var whcode = $("#whcode").val();
         var poscodes = $("#poscodes").val();
         var barcode = $("#barcode").val();
@@ -83,7 +82,7 @@
 
         //扫入多条现品票判断是否存在
         let data = getJboltTableAllDatas("jbolt_table_StockCheckVouchBarcode_split_#(pageId)",["barcode"]);
-        let array = new Array();
+        let array = [];
         if (data != null){
             for (let i = 0; i < data.length; i++) {
                 array.push("'"+data[i].barcode+"'");
@@ -101,16 +100,50 @@
         } else {
             $("#detailHidden").val('');
         }
+        
         if (barcode) {
-            Ajax.post("admin/currentstock/barcode", {"barcode": barcode,"autoid":autoid,"detailHidden":detailHidden,"whcode":whcode,"poscodes":poscodes},
-                function (res) {
-                    jboltTableInsertRow("jbolt_table_StockCheckVouchBarcode_split_#(pageId)", res.data, false, true, true)
+            data = {"barcode": barcode, "autoid": autoid, "detailHidden": detailHidden, "whcode": whcode, "poscodes": poscodes};
+            Ajax.post("admin/currentstock/barcode", data, function (res) {
+                if (res.state === 'ok') {
+                    
+                    jboltTableInsertRow("jbolt_table_StockCheckVouchBarcode_split_#(pageId)", res.data, false, true, true);
+
+                    computeQty(res.data);
+                    
                     $("#barcode").val('');
-                }, function (err) {
-                })
+                } else {
+                    LayerMsgBox.alert(res.msg, 2);
+                }
+            }, function (err) {
+                
+            });
         } else {
             LayerMsgBox.alert("请输入条码")
         }
+    }
+
+    /**
+     * 计算并赋值
+     */
+    function computeQty(data) {
+        // 表格
+        var $table = $('#jbolt_table_#(pageId)');
+        // 根据存货编码匹配单元格
+        var $td = $("table#jbolt_table_#(pageId) td:contains('" + data.cinvcode + "')").first();
+        
+        var datas = jboltTableGetAllDatas('#jbolt_table_StockCheckVouchBarcode_split_#(pageId)');
+        console.log(datas);
+
+        var qtySum = 0;
+
+        $.each(datas, function (index, row) {
+            if (row.cinvcode === data.cinvcode) {
+                qtySum += parseFloat(row.iqty);
+            }
+        });
+
+        // 修改指定单元格数据
+        jboltTableSetCell($table, $td.parent(), 'qty', qtySum, qtySum);
     }
 
     function barcodes(){
@@ -118,7 +151,7 @@
         // //扫入多条现品票判断是否存在
         let data = getJboltTableAllDatas("jbolt_table_StockCheckVouchBarcode_split_#(pageId)",["barcode"]);
         console.log(data);
-        let array = new Array();
+        let array = [];
         if (data != null){
             for (let i = 0; i < data.length; i++) {
                 array.push("'"+data[i].barcode+"'");
