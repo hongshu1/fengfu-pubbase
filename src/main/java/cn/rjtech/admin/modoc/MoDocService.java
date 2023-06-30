@@ -462,19 +462,19 @@ public class MoDocService extends BaseService<MoDoc> {
     }
     /// checkDoc(moDoc);
     if (!isOk(moDoc.getIInventoryId())) {
-      return Ret.fail("缺少产线,请重新选择人员在提交");
+      return fail("缺少产线,请重新选择人员在提交");
     }
     if (!isOk(moDoc.getIDepartmentId())) {
-      return Ret.fail("缺少部门,请重新选择人员在提交");
+      return fail("缺少部门,请重新选择人员在提交");
     }
     if (!isOk(moDoc.getIInventoryId())) {
-      return Ret.fail("缺少存货编号,请重新选择人员在提交");
+      return fail("缺少存货编号,请重新选择人员在提交");
     }
     if (!isOk(moDoc.getIQty())) {
-      return Ret.fail("缺少计划数,请重新选择人员在提交");
+      return fail("缺少计划数,请重新选择人员在提交");
     }
     if (!isOk(moDoc.getDPlanDate())) {
-      return Ret.fail("缺少计划日期,请重新选择人员在提交");
+      return fail("缺少计划日期,请重新选择人员在提交");
     }
     if (!isOk(moDoc.getIAutoId()) && StrUtil.isBlank(moDoc.getCMoDocNo())) {
       return addDoc(jBoltTable, rowid);
@@ -931,19 +931,19 @@ public class MoDocService extends BaseService<MoDoc> {
 
   public Ret checkDoc(MoDoc moDoc) {
     if (!isOk(moDoc.getIInventoryId())) {
-      return Ret.fail("缺少产线");
+      return fail("缺少产线");
     }
     if (!isOk(moDoc.getIDepartmentId())) {
-      return Ret.fail("缺少部门");
+      return fail("缺少部门");
     }
     if (!isOk(moDoc.getIInventoryId())) {
-      return Ret.fail("缺少存货编号");
+      return fail("缺少存货编号");
     }
     if (!isOk(moDoc.getIQty())) {
-      return Ret.fail("缺少计划数");
+      return fail("缺少计划数");
     }
     if (!isOk(moDoc.getDPlanDate())) {
-      return Ret.fail("缺少计划日期");
+      return fail("缺少计划日期");
     }
     return SUCCESS;
   }
@@ -1041,7 +1041,7 @@ public class MoDocService extends BaseService<MoDoc> {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return Ret.fail("上传u8失败");
+    return fail("上传u8失败");
   }
 
   //通过当前登录人名称获取部门id
