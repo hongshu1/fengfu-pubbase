@@ -1,6 +1,7 @@
 package cn.rjtech.admin.momoinvbatch;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.cache.JBoltGlobalConfigCache;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
@@ -605,17 +606,28 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 
 	/**
 	 * 批量报工
+	 *
+	 * @param imodocid
 	 * @param ids
 	 * @return
 	 */
-	public Ret workByIds(String ids) {
-		List<MoMoinvbatch> moMoinvbatches = getListByIds(ids);
+	public Ret workByIds(String imodocid, String ids) {
+		ValidationUtils.notNull(ids, "参数错误,无法打印!");
+		ValidationUtils.notNull(imodocid, "参数错误,无法打印!");
+		tx(() -> {
+			List<MoMoinvbatch> moMoinvbatches = getListByIds(ids);
+			MoDoc moDoc = moDocService.findById(imodocid);
+			BigDecimal compQty = BigDecimal.ZERO;
+			for (MoMoinvbatch moMoinvbatch : moMoinvbatches) {
+				moMoinvbatch.setIStatus(1);
+				compQty = compQty.add(moMoinvbatch.getIQty());
+			}
 
-		moMoinvbatches = moMoinvbatches.stream().map(item -> {
-			item.setIStatus(1);
-			return item;
-		}).collect(Collectors.toList());
-		batchSave(moMoinvbatches);
+			moDoc.setICompQty(compQty.add(moDoc.getICompQty()));
+			ValidationUtils.isTrue(moDoc.update(),"更新制造工单信息失败");
+			ValidationUtils.isTrue(batchSave(moMoinvbatches).length>0,"更新现品票信息失败");
+			return true;
+		});
 		return SUCCESS;
 	}
 
@@ -643,6 +655,9 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 			Integer version = Integer.valueOf(moinvbatch.getCVersion());
 			Integer newVersion = version + 1;
 			moinvbatch.setCVersion(newVersion >= 10 ? newVersion.toString() : "0" + newVersion);
+			moinvbatch.setIUpdateBy(JBoltUserKit.getUserId());
+			moinvbatch.setCUpdateName(JBoltUserKit.getUserName());
+			moinvbatch.setDUpdateTime(new Date());
 			ValidationUtils.isTrue(moinvbatch.update(), "修改原现品票失败");
 
 			// 生成新对象
@@ -668,5 +683,36 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 	 */
 	private Integer getMaxSeqByMoDocId(Long iMoDocId) {
 		return queryColumn(selectSql().max("iSeq").eq("iMoDocId", iMoDocId));
+	}
+
+	/**
+	 * 批量打印
+	 *
+	 * @param imodocid
+	 * @param ids
+	 * @return
+	 */
+	public Ret batchPrint(String imodocid, String ids) {
+		ValidationUtils.notNull(ids, "参数错误,无法打印!");
+		ValidationUtils.notNull(imodocid, "参数错误,无法打印!");
+		tx(() -> {
+			Boolean printWorkOrderSpotTicketsInAdvance = JBoltGlobalConfigCache.me.getBooleanConfigValue("print_work_order_spot_tickets_in_advance");
+			List<MoMoinvbatch> moinvbatches = getListByIds(ids);
+			MoDoc moDoc = moDocService.findById(imodocid);
+			for (MoMoinvbatch moMoinvbatch:moinvbatches) {
+				moMoinvbatch.setIPrintStatus(2);
+				moMoinvbatch.setIUpdateBy(JBoltUserKit.getUserId());
+				moMoinvbatch.setCUpdateName(JBoltUserKit.getUserName());
+				moMoinvbatch.setDUpdateTime(new Date());
+				if (!printWorkOrderSpotTicketsInAdvance) {
+					moMoinvbatch.setIStatus(1);
+					moDoc.setICompQty(moMoinvbatch.getIQty().add(moDoc.getICompQty()));
+				}
+			}
+			ValidationUtils.isTrue(moDoc.update(),"更新制造工单信息失败");
+			ValidationUtils.isTrue(batchUpdate(moinvbatches).length > 0, "处理失败,无法打印!");
+			return true;
+		});
+		return SUCCESS;
 	}
 }

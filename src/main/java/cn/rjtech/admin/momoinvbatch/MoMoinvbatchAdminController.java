@@ -346,7 +346,7 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
      */
     public void workByIds()
     {
-        renderJson(service.workByIds(get("ids")));
+        renderJson(service.workByIds(get("imodocid"), get("ids")));
     }
 
     /**
@@ -364,5 +364,14 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
         Long iautoid = getLong("moMoinvbatch.iautoid");
         BigDecimal newQty = getBigDecimal("moMoinvbatch.iqty");
         renderJson(service.updateNumber(iautoid, newQty));
+    }
+
+    /**
+     * 批量打印
+     */
+
+    public void batchPrint()
+    {
+        renderJson(service.batchPrint(get("imodocid"), get("ids")));
     }
 }
