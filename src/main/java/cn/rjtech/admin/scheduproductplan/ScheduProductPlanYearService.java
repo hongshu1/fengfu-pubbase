@@ -1,6 +1,7 @@
 package cn.rjtech.admin.scheduproductplan;
 
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -17,7 +18,6 @@ import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.ApsAnnualpland;
 import cn.rjtech.model.momdata.ApsAnnualplandQty;
 import cn.rjtech.model.momdata.ApsAnnualplanm;
-import cn.rjtech.model.momdata.WeekOrderM;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
@@ -30,7 +30,6 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -972,7 +971,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
         return SUCCESS;
     }*/
     public Ret saveScheduPlanYear(String yearDataArry) {
-        if (StringUtils.isBlank(yearDataArry) || yearDataArry.equals("null")){
+        if (StrUtil.isBlank(yearDataArry) || yearDataArry.equals("null")){
             ValidationUtils.error("无计划保存!");
         }
         try {

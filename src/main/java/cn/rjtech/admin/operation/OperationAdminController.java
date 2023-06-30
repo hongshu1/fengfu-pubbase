@@ -1,5 +1,6 @@
 package cn.rjtech.admin.operation;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -20,7 +21,6 @@ import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -153,7 +153,7 @@ public class OperationAdminController extends JBoltBaseController {
         for (Operation operation : operations) {
             Workclass workclass = workClassService.findById(operation.getIworkclassid());
             operation.put("iworkclassname",
-                StringUtils.isNotBlank(workclass.getCworkclassname()) ? workclass.getCworkclassname() : "");
+                StrUtil.isNotBlank(workclass.getCworkclassname()) ? workclass.getCworkclassname() : "");
         }
         //2、生成excel文件
         JBoltExcel jBoltExcel = service.exportExcelTpl(operations);
@@ -175,7 +175,7 @@ public class OperationAdminController extends JBoltBaseController {
         for (Operation operation : operations) {
             Workclass workclass = workClassService.findById(operation.getIworkclassid());
             operation.put("iworkclassname",
-                StringUtils.isNotBlank(workclass.getCworkclassname()) ? workclass.getCworkclassname() : "");
+                StrUtil.isNotBlank(workclass.getCworkclassname()) ? workclass.getCworkclassname() : "");
         }
         //2、生成excel文件
         JBoltExcel jBoltExcel = service.exportExcelTpl(operations);

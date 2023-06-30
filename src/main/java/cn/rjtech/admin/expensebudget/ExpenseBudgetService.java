@@ -300,7 +300,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
         if(CollUtil.isNotEmpty(excelRowList)){
         	constructJBoltTableExpenseBudgetItem(expenseBudget,excelRowList,errorMsg,startRow);
         }
-        if(errorMsg.toString().length() > 0) return Ret.fail(errorMsg.toString());
+        if(errorMsg.toString().length() > 0) return fail(errorMsg.toString());
         if(iexpenseId != null){
 	        tx(()->{
 	        	//删除费用预算项目和项目明细数据

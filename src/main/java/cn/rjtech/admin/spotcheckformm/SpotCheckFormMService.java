@@ -5,7 +5,6 @@ import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
@@ -21,6 +20,7 @@ import cn.rjtech.admin.inventoryspotcheckformOperation.InventoryspotcheckformOpe
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.morouting.MoMoroutingService;
 import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
+import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
 import cn.rjtech.admin.spotcheckformd.SpotCheckFormDService;
 import cn.rjtech.admin.spotcheckformdline.SpotcheckformdLineService;
 import cn.rjtech.enums.AuditStatusEnum;
@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -84,26 +85,17 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 	private MoDocService moDocService;
 	@Inject
 	private FormApprovalService formApprovalService;
+	@Inject
+	private SpotCheckFormService spotCheckFormService;
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-	 * @param keywords   关键词
-     * @param iType 类型;1.首末点检表 2.首中末点检表
-     * @param IsDeleted 删除状态;0. 未删除 1. 已删除
 	 * @return
 	 */
-	public Page<SpotCheckFormM> getAdminDatas(int pageNumber, int pageSize, String keywords, Integer iType, Boolean IsDeleted) {
-	    //创建sql对象
-	    Sql sql = selectSql().page(pageNumber,pageSize);
-	    //sql条件处理
-        sql.eq("iType",iType);
-        sql.eqBooleanToChar("IsDeleted",IsDeleted);
-        //关键词模糊查询
-        sql.likeMulti(keywords,"cOrgName", "cOperationName", "cPersonName", "cCreateName", "cUpdateName", "cAuditName");
-        //排序
-        sql.desc("iAutoId");
-		return paginate(sql);
+	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv para) {
+	    return  dbTemplate("spotcheckformm.list",para).paginate(pageNumber,pageSize);
+
 	}
 
 	/**
@@ -170,7 +162,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 	/**
 	 *制造工单入口数据
 	 */
-	public List<Record> getAdminDatas2(Integer pageNumber, Integer pageSize, Kv kv) {
+	public List<Record> getAdminDatas2( Kv kv) {
 		//根据工单id获取工艺路线每个工序
 		MoMorouting morouting = moMoroutingService.findByImdocId(kv.getLong("modocid"));
 		//根据工艺路线获取对应的工序
@@ -180,7 +172,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 			//通过工序名称获取对应的点检数据
 			for (Record record : records) {
 				Long routingConfigId = record.getLong(InventoryRoutingConfig.IAUTOID);
-				List<Record> list = inventorySpotCheckFormService.findByInventoryIdAndOperationName(morouting.getIInventoryId(), record.getStr("coperationname"), 1);
+				List<Record> list = inventorySpotCheckFormService.findByInventoryIdAndOperationName(morouting.getIInventoryId(), record.getStr("coperationname"), kv.getInt("itype"));
 				List<Record> equipmentList = inventoryRoutingEquipmentService.findRoutingConfigId(routingConfigId);
 					StringBuilder cequipmentnames =new StringBuilder();
 					StringBuilder cequipmentids =new StringBuilder();
@@ -197,20 +189,29 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 				//通过表格id工序id工单id获取已保存的数据
 
 				for (Record r : list) {
-					SpotCheckFormM m = findBySpotCheckFormIdAndRoutingConfigIdAndModocId(r.getLong("ispotcheckformid"), kv.getLong("modocid"), routingConfigId, 1);
+					SpotCheckForm spotcheckform = spotCheckFormService.findById(r.getStr("ispotcheckformid"));
+					record.set("cspotcheckformname",spotcheckform.getCSpotCheckFormName());
+					SpotCheckFormM m = findBySpotCheckFormIdAndRoutingConfigIdAndModocId(r.getLong("ispotcheckformid"), kv.getLong("modocid"), routingConfigId, kv.getInt("itype"));
 					if (ObjUtil.isNotNull(m)){
 					record.set("spotcheckformmid",m.getIAutoId());
 					record.set("cpersonname",m.getCPersonName());
 					record.set("dcreatetime2",m.getDCreateTime());
-					record.set("iauditstatus",m.getIAuditStatus());
+						String s = m.getIAuditStatus() == 0 ? "未审核" : m.getIAuditStatus() == 1 ? "待审核" :
+								m.getIAuditStatus() == 2 ? "审核通过" : "审核不通过";
+					record.set("iauditstatus",s);
+					}else {
+						record.set("iauditstatus","未生成");
 					}
-					record.set("iSpotCheckFormId",r.getStr("ispotcheckformid"));
+					record.set("ispotcheckformid",r.getStr("ispotcheckformid"));
 					record.set("cequipmentnames",keywordStr);
 					record.set("cequipmentids",keywordStr2);
 					record.set("IInventoryId",morouting.getIInventoryId());
 					record.set("routingConfigId",routingConfigId);
 					record.set("modocid",kv.getLong("modocid"));
-
+				}
+				record.set("itype",kv.getStr("itype"));
+				if (list.size()<=0) {
+					record.set("iauditstatus","未有点检表");
 				}
 			}
 		}
@@ -221,6 +222,32 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 																			Long routingConfigId,int itype){
 		return  findFirst("select * from PL_SpotCheckFormM where iMoDocId=? and iMoRoutingConfigId=? and iSpotCheckFormId=?   and itype=?",
 				modocid,routingConfigId,ispotcheckformid,itype);
+	}
+
+	/**
+	 * 获取设备名称并拼接
+	 */
+	public Record getEquipment(Long routingConfigId){
+		List<Record> equipmentList = inventoryRoutingEquipmentService.findRoutingConfigId(routingConfigId);
+		StringBuilder cequipmentnames =new StringBuilder();
+		StringBuilder cequipmentids =new StringBuilder();
+		for (Record record1 : equipmentList) {
+			cequipmentnames.append(	record1.getStr("cequipmentname")).append(",");
+			cequipmentids.append(	record1.getStr("iequipmentid")).append(",");
+		}
+		String keywordStr="";
+		String keywordStr2="";
+		if (equipmentList.size()>0) {
+			keywordStr = cequipmentnames.deleteCharAt(cequipmentnames.length() - 1).toString();
+			keywordStr2 = cequipmentids.deleteCharAt(cequipmentids.length() - 1).toString();
+		}
+		return  new Record().set("cequipmentnames",keywordStr).set("cequipmentids",keywordStr2);
+	}
+	/**
+	 * 根据id获取数据
+	 */
+	public  Record getData(Long iAutoId){
+		return dbTemplate("spotcheckformm.list",Kv.by("id",iAutoId)).findFirst();
 	}
 
 	/**
@@ -279,7 +306,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 						if (!object.getStr("iAutoId").equals(id)) {
 							id=object.getStr("iAutoId");
 							if (StrUtil.isNotBlank(spotcheckformmid)) {
-								SpotCheckFormD checkFormD = spotCheckFormDService.findFirst("select * from PL_SpotCheckFormD where iSpotCheckFormParamId=?", object.getLong("iAutoId"));
+								SpotCheckFormD checkFormD = spotCheckFormDService.findFirst("select * from PL_SpotCheckFormD where iSpotCheckFormMid=?", spotcheckformmid);
 								if (ObjUtil.isNotNull(checkFormD)) {
 									List<SpotcheckformdLine> list = spotcheckformdLineService.findBySpotCheckFormDId(checkFormD.getIAutoId());
 									object.set("cValue",list.get(0).getCValue());
@@ -326,148 +353,157 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 		ValidationUtils.notEmpty(qcParamJsonData, JBoltMsg.JBOLTTABLE_IS_BLANK);
 
 		JSONObject formJsonData = JSONObject.parseObject(formJsonDataStr);
-		String string = formJsonData.getString("spotCheckFormM.iautoid");
-		SpotCheckFormM spotCheckFormM2= findById(Long.valueOf(string));
+		AtomicReference<String> id = new AtomicReference<>("");
 
-
-		//主表数据
-		if (StrUtil.isBlank(formJsonData.getString("spotCheckFormM.iautoid"))) {
-			if (ObjUtil.isNull(spotCheckFormM2)) {
-				spotCheckFormM2 = new SpotCheckFormM();
+		tx(()->{
+			SpotCheckFormM spotCheckFormM2=null;
+			if (StrUtil.isNotBlank(formJsonData.getString("spotCheckFormM.iautoid"))) {
+				String string = formJsonData.getString("spotCheckFormM.iautoid");
+				spotCheckFormM2= findById(Long.valueOf(string));
+				id.set(string);
 			}
-			//单号
-			String routingconfigid = formJsonData.getString("routingconfigid");
-			Long modocid = formJsonData.getLong("modocid");
-			MoDoc moDoc = moDocService.findById(modocid);
-			spotCheckFormM2.setIMoDocId(modocid);
-			spotCheckFormM2.setCMoDocNo(moDoc.getCMoDocNo());
-			spotCheckFormM2.setIMoRoutingConfigId(routingconfigid);
-			//工序名称
-			String coperationname = formJsonData.getString("coperationname");
-			spotCheckFormM2.setCOperationName(coperationname);
-			//设备名称
+			//主表数据
+			if (StrUtil.isBlank(formJsonData.getString("spotCheckFormM.iautoid"))) {
+				if (ObjUtil.isNull(spotCheckFormM2)) {
+					spotCheckFormM2 = new SpotCheckFormM();
+				}
+				//单号
+				String routingconfigid = formJsonData.getString("routingconfigid");
+				Long modocid = formJsonData.getLong("modocid");
+				MoDoc moDoc = moDocService.findById(modocid);
+				spotCheckFormM2.setIMoDocId(modocid);
+				spotCheckFormM2.setCMoDocNo(moDoc.getCMoDocNo());
+				spotCheckFormM2.setIMoRoutingConfigId(routingconfigid);
+				//工序名称
+				String coperationname = formJsonData.getString("coperationname");
+				spotCheckFormM2.setCOperationName(coperationname);
+				//设备名称
 
-			spotCheckFormM2.setISpotCheckFormId(formJsonData.getLong("iprodformid"));
-			spotCheckFormM2.setIType(1);
-			//基础数据
-			User user = JBoltUserKit.getUser();
-			Date date = new Date();
-			spotCheckFormM2.setCOrgCode(getOrgCode());
-			spotCheckFormM2.setCOrgName(getOrgName());
-			spotCheckFormM2.setIOrgId(getOrgId());
-			spotCheckFormM2.setICreateBy(user.getId());
-			spotCheckFormM2.setCCreateName(user.getName());
-			spotCheckFormM2.setDCreateTime(date);
-			spotCheckFormM2.setCUpdateName(user.getName());
-			spotCheckFormM2.setDUpdateTime(date);
-			spotCheckFormM2.setIUpdateBy(user.getId());
-			spotCheckFormM2.setIAuditStatus(0);
-			spotCheckFormM2.setIPersonId(user.getId());
-			spotCheckFormM2.setCPersonName(user.getName());
-			ValidationUtils.isTrue(spotCheckFormM2.save(), "保存失败");
+				spotCheckFormM2.setISpotCheckFormId(formJsonData.getLong("iprodformid"));
+				spotCheckFormM2.setIType(formJsonData.getInteger("itype"));
+				//基础数据
+				User user = JBoltUserKit.getUser();
+				Date date = new Date();
+				spotCheckFormM2.setCOrgCode(getOrgCode());
+				spotCheckFormM2.setCOrgName(getOrgName());
+				spotCheckFormM2.setIOrgId(getOrgId());
+				spotCheckFormM2.setICreateBy(user.getId());
+				spotCheckFormM2.setCCreateName(user.getName());
+				spotCheckFormM2.setDCreateTime(date);
+				spotCheckFormM2.setCUpdateName(user.getName());
+				spotCheckFormM2.setDUpdateTime(date);
+				spotCheckFormM2.setIUpdateBy(user.getId());
+				spotCheckFormM2.setIAuditStatus(0);
+				spotCheckFormM2.setIPersonId(user.getId());
+				spotCheckFormM2.setCPersonName(user.getName());
+				ValidationUtils.isTrue(spotCheckFormM2.save(), "保存失败");
+				id.set(String.valueOf(spotCheckFormM2.getIAutoId()));
 
-			//细表数据
-			ArrayList<SpotCheckFormD> prodFormDS = new ArrayList<>();
-			ArrayList<SpotcheckformdLine> prodformdLines = new ArrayList<>();
-			for (int i = 0; i < qcParamJsonData.size(); i++) {
-				JSONObject jsonObject = qcParamJsonData.getJSONObject(i);
-				//子表
-				SpotCheckFormD prodFormD = new SpotCheckFormD();
-				prodFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
-				prodFormD.setISpotCheckFormMid(spotCheckFormM2.getIAutoId());
-				prodFormD.setISpotCheckFormId(spotCheckFormM2.getISpotCheckFormId());
-				String prodformtableparamid = StrSplitter.split(jsonObject.getString("spotcheckformtableparamid"), COMMA, true, true).get(0);
-				prodFormD.setISpotCheckFormParamId(Long.valueOf(prodformtableparamid));
-				prodFormD.setISeq(jsonObject.getInteger("iseq"));
-				prodFormD.setCSpotCheckFormParamIds(jsonObject.getString("spotcheckparamid"));
-				prodFormD.setIType(jsonObject.getInteger("itype"));
-				if (StrUtil.isNotBlank(jsonObject.getString("istdval"))){
-					prodFormD.setIStdVal(jsonObject.getBigDecimal("istdval"));
+				//细表数据
+				ArrayList<SpotCheckFormD> prodFormDS = new ArrayList<>();
+				ArrayList<SpotcheckformdLine> prodformdLines = new ArrayList<>();
+				for (int i = 0; i < qcParamJsonData.size(); i++) {
+					JSONObject jsonObject = qcParamJsonData.getJSONObject(i);
+					//子表
+					SpotCheckFormD prodFormD = new SpotCheckFormD();
+					prodFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
+					prodFormD.setISpotCheckFormMid(spotCheckFormM2.getIAutoId());
+					prodFormD.setISpotCheckFormId(spotCheckFormM2.getISpotCheckFormId());
+					String prodformtableparamid = StrSplitter.split(jsonObject.getString("spotcheckformtableparamid"), COMMA, true, true).get(0);
+					prodFormD.setISpotCheckFormParamId(Long.valueOf(prodformtableparamid));
+					prodFormD.setISeq(jsonObject.getInteger("iseq"));
+					prodFormD.setCSpotCheckFormParamIds(jsonObject.getString("spotcheckparamid"));
+					prodFormD.setIType(jsonObject.getInteger("itype"));
+					if (StrUtil.isNotBlank(jsonObject.getString("istdval"))){
+						prodFormD.setIStdVal(jsonObject.getBigDecimal("istdval"));
+					}
+					if (StrUtil.isNotBlank(jsonObject.getString("imaxval"))){
+						prodFormD.setIMaxVal(jsonObject.getBigDecimal("imaxval"));
+					}
+					if (StrUtil.isNotBlank(jsonObject.getString("iminval"))){
+						prodFormD.setIMinVal(jsonObject.getBigDecimal("iminval"));
+					}
+					if (StrUtil.isNotBlank(jsonObject.getString("coptions"))){
+						prodFormD.setCOptions(jsonObject.getString("coptions"));
+					}
+					prodFormDS.add(prodFormD);
+					//明细列值表数据
+					SpotcheckformdLine prodformdLine = new SpotcheckformdLine();
+					prodformdLine.setISpotCheckFormDid(prodFormD.getIAutoId());
+					prodformdLine.setISeq(prodFormD.getISeq());
+					if (StrUtil.isNotBlank(jsonObject.getString("cvalue"))){
+						prodformdLine.setCValue(jsonObject.getString("cvalue"));
+					}
+					prodformdLines.add(prodformdLine);
 				}
-				if (StrUtil.isNotBlank(jsonObject.getString("imaxval"))){
-					prodFormD.setIMaxVal(jsonObject.getBigDecimal("imaxval"));
+				spotCheckFormDService.batchSave(prodFormDS);
+				spotcheckformdLineService.batchSave(prodformdLines);
+			}else {
+				SpotCheckFormM spotCheckFormM = findById(formJsonData.getString("spotCheckFormM.iautoid"));
+				User user = JBoltUserKit.getUser();
+				Date date = new Date();
+				spotCheckFormM.setCUpdateName(user.getName());
+				spotCheckFormM.setDUpdateTime(date);
+				spotCheckFormM.setIUpdateBy(user.getId());
+				spotCheckFormM.setISpotCheckFormId(formJsonData.getLong("iprodformid"));
+				ValidationUtils.isTrue(spotCheckFormM.update(), "修改失败");
+				//根据主表id获取数据
+				List<SpotCheckFormD> formDList = spotCheckFormDService.findByPid(spotCheckFormM.getIAutoId());
+				for (SpotCheckFormD spotcheckformd : formDList) {
+					List<SpotcheckformdLine> list = spotcheckformdLineService.findBySpotCheckFormDId(spotcheckformd.getIAutoId());
+					for (SpotcheckformdLine spotcheckformdline : list) {
+						spotcheckformdline.delete();
+					}
+					spotcheckformd.delete();
 				}
-				if (StrUtil.isNotBlank(jsonObject.getString("iminval"))){
-					prodFormD.setIMinVal(jsonObject.getBigDecimal("iminval"));
+				//细表数据
+				ArrayList<SpotCheckFormD> prodFormDS = new ArrayList<>();
+				ArrayList<SpotcheckformdLine> prodformdLines = new ArrayList<>();
+				for (int i = 0; i < qcParamJsonData.size(); i++) {
+					JSONObject jsonObject = qcParamJsonData.getJSONObject(i);
+					//子表
+					SpotCheckFormD prodFormD = new SpotCheckFormD();
+					prodFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
+					prodFormD.setISpotCheckFormMid(spotCheckFormM.getIAutoId());
+					prodFormD.setISpotCheckFormId(spotCheckFormM.getISpotCheckFormId());
+					String prodformtableparamid = StrSplitter.split(jsonObject.getString("spotcheckformtableparamid"), COMMA, true, true).get(0);
+					prodFormD.setISpotCheckFormParamId(Long.valueOf(prodformtableparamid));
+					prodFormD.setISeq(jsonObject.getInteger("iseq"));
+					prodFormD.setCSpotCheckFormParamIds(jsonObject.getString("spotcheckparamid"));
+					prodFormD.setIType(jsonObject.getInteger("itype"));
+					if (StrUtil.isNotBlank(jsonObject.getString("istdval"))){
+						prodFormD.setIStdVal(jsonObject.getBigDecimal("istdval"));
+					}
+					if (StrUtil.isNotBlank(jsonObject.getString("imaxval"))){
+						prodFormD.setIMaxVal(jsonObject.getBigDecimal("imaxval"));
+					}
+					if (StrUtil.isNotBlank(jsonObject.getString("iminval"))){
+						prodFormD.setIMinVal(jsonObject.getBigDecimal("iminval"));
+					}
+					if (StrUtil.isNotBlank(jsonObject.getString("coptions"))){
+						prodFormD.setCOptions(jsonObject.getString("coptions"));
+					}
+					prodFormDS.add(prodFormD);
+					//明细列值表数据
+					SpotcheckformdLine prodformdLine = new SpotcheckformdLine();
+					prodformdLine.setISpotCheckFormDid(prodFormD.getIAutoId());
+					prodformdLine.setISeq(prodFormD.getISeq());
+					if (StrUtil.isNotBlank(jsonObject.getString("cvalue"))){
+						prodformdLine.setCValue(jsonObject.getString("cvalue"));
+					}
+					prodformdLine.save();
+
 				}
-				if (StrUtil.isNotBlank(jsonObject.getString("coptions"))){
-					prodFormD.setCOptions(jsonObject.getString("coptions"));
-				}
-				prodFormDS.add(prodFormD);
-				//明细列值表数据
-				SpotcheckformdLine prodformdLine = new SpotcheckformdLine();
-				prodformdLine.setISpotCheckFormDid(prodFormD.getIAutoId());
-				prodformdLine.setISeq(prodFormD.getISeq());
-				if (StrUtil.isNotBlank(jsonObject.getString("cvalue"))){
-					prodformdLine.setCValue(jsonObject.getString("cvalue"));
-				}
-				prodformdLines.add(prodformdLine);
+
+				spotCheckFormDService.batchSave(prodFormDS);
+				spotcheckformdLineService.batchSave(prodformdLines);
+
 			}
-			spotCheckFormDService.batchSave(prodFormDS);
-			spotcheckformdLineService.batchSave(prodformdLines);
-		}else {
-			SpotCheckFormM spotCheckFormM = findById(formJsonData.getString("spotCheckFormM.iautoid"));
-			User user = JBoltUserKit.getUser();
-			Date date = new Date();
-			spotCheckFormM.setCUpdateName(user.getName());
-			spotCheckFormM.setDUpdateTime(date);
-			spotCheckFormM.setIUpdateBy(user.getId());
-			spotCheckFormM.setISpotCheckFormId(formJsonData.getLong("iprodformid"));
-			ValidationUtils.isTrue(spotCheckFormM.update(), "修改失败");
-			//根据主表id获取数据
-			List<SpotCheckFormD> formDList = spotCheckFormDService.findByPid(spotCheckFormM.getIAutoId());
-			for (SpotCheckFormD spotcheckformd : formDList) {
-				List<SpotcheckformdLine> list = spotcheckformdLineService.findBySpotCheckFormDId(spotcheckformd.getIAutoId());
-				for (SpotcheckformdLine spotcheckformdline : list) {
-					spotcheckformdline.delete();
-				}
-				spotcheckformd.delete();
-			}
-			//细表数据
-			ArrayList<SpotCheckFormD> prodFormDS = new ArrayList<>();
-			ArrayList<SpotcheckformdLine> prodformdLines = new ArrayList<>();
-			for (int i = 0; i < qcParamJsonData.size(); i++) {
-				JSONObject jsonObject = qcParamJsonData.getJSONObject(i);
-				//子表
-				SpotCheckFormD prodFormD = new SpotCheckFormD();
-				prodFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
-				prodFormD.setISpotCheckFormMid(spotCheckFormM.getIAutoId());
-				prodFormD.setISpotCheckFormId(spotCheckFormM.getISpotCheckFormId());
-				String prodformtableparamid = StrSplitter.split(jsonObject.getString("spotcheckformtableparamid"), COMMA, true, true).get(0);
-				prodFormD.setISpotCheckFormParamId(Long.valueOf(prodformtableparamid));
-				prodFormD.setISeq(jsonObject.getInteger("iseq"));
-				prodFormD.setCSpotCheckFormParamIds(jsonObject.getString("spotcheckparamid"));
-				prodFormD.setIType(jsonObject.getInteger("itype"));
-				if (StrUtil.isNotBlank(jsonObject.getString("istdval"))){
-					prodFormD.setIStdVal(jsonObject.getBigDecimal("istdval"));
-				}
-				if (StrUtil.isNotBlank(jsonObject.getString("imaxval"))){
-					prodFormD.setIMaxVal(jsonObject.getBigDecimal("imaxval"));
-				}
-				if (StrUtil.isNotBlank(jsonObject.getString("iminval"))){
-					prodFormD.setIMinVal(jsonObject.getBigDecimal("iminval"));
-				}
-				if (StrUtil.isNotBlank(jsonObject.getString("coptions"))){
-					prodFormD.setCOptions(jsonObject.getString("coptions"));
-				}
-				prodFormDS.add(prodFormD);
-				//明细列值表数据
-				SpotcheckformdLine prodformdLine = new SpotcheckformdLine();
-				prodformdLine.setISpotCheckFormDid(prodFormD.getIAutoId());
-				prodformdLine.setISeq(prodFormD.getISeq());
-				if (StrUtil.isNotBlank(jsonObject.getString("cvalue"))){
-					prodformdLine.setCValue(jsonObject.getString("cvalue"));
-				}
-				prodformdLine.save();
-
-			}
-
-			spotCheckFormDService.batchSave(prodFormDS);
-			spotcheckformdLineService.batchSave(prodformdLines);
-
-		}
-
-		return successWithData(spotCheckFormM2.keep("iautoid"));
+				return true;
+		});
+		SpotCheckFormM m = new SpotCheckFormM();
+		m.setIAutoId(Long.valueOf(id.get()));
+		return successWithData(m.keep("iautoid"));
 	}
 
 	/**

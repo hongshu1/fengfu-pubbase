@@ -1,6 +1,7 @@
 package cn.rjtech.admin.containerclass;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -16,7 +17,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -131,7 +131,7 @@ public class ContainerClassAdminController extends BaseAdminController {
     public void dataExport() throws Exception {
         List<Record> rows = service.list(getKv());
         for (Record row : rows) {
-            row.put("isenabled", StringUtils.equals("1", row.getStr("isenabled")) ? "是" : "否");
+            row.put("isenabled", StrUtil.equals("1", row.getStr("isenabled")) ? "是" : "否");
         }
         renderJxls("containerClass.xlsx", Kv.by("rows", rows), "容器分类_" + DateUtil.today() + ".xlsx");
     }

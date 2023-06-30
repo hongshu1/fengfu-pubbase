@@ -35,7 +35,7 @@ public class UptimeMApiController extends BaseApiController {
                             @Para(value = "pageSize") int pageSize,
                             @Para(value = "cworkname") String cworkname,
                             @Para(value = "cworkshiftname") String cworkshiftname,
-                            @Para(value = "iauditstatus") int iauditstatus,
+                            @Para(value = "iauditstatus") String iauditstatus,
                             @Para(value = "startdate") String startdate,
                             @Para(value = "enddate") String enddate) {
         //ValidationUtils.validateId(iMoDocId,"工单主键id");
@@ -63,7 +63,7 @@ public class UptimeMApiController extends BaseApiController {
     @UnCheck
     public void getUptimeMInfoList(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.validateId(iautoid,"主键id");
-        Kv kv = Kv.by("iautoid",iautoid);
+        Kv kv = Kv.by("mid",iautoid).set("iautoid",iautoid);
         renderJBoltApiRet(service.getUptimeMInfoList(kv));
     }
 

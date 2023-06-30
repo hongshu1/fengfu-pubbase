@@ -68,7 +68,7 @@ public class ProdFormService extends BaseService<ProdForm> {
 	 * @return
 	 */
 	public Page<ProdForm> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("dcreatetime","desc", pageNumber, pageSize, keywords, "iAutoId");
+		return paginateByKeywords("dcreatetime","desc", pageNumber, pageSize, keywords, "cprodformname");
 	}
 	/**
 	 * 保存
@@ -417,7 +417,6 @@ public class ProdFormService extends BaseService<ProdForm> {
 			if (qcFormItemMap.containsKey(qcItemId)){
 				ProdFormItem qcFormItem = qcFormItemMap.get(qcItemId);
 				jsonObject.put(ProdFormParam.IPRODFORMITEMID.toLowerCase(), qcFormItem.getIAutoId());
-				//QcFormParam.IQCFORMITEMID
 			}
 		}
 

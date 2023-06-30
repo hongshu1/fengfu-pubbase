@@ -1,20 +1,27 @@
+#set(pageId=RandomUtil.random(6))
+### 默认为非只读,查看页有readonly=readonly标识
+### 【readonly为false】, 或 【审核中或已通过】，设置只读
+#if(readonly != 'readonly' && (sysotherin.iAuditStatus??0 == 1 || sysotherin.iAuditStatus??0 == 2))
+#set(readonly = 'readonly')
+#end
+
 <div class="jbolt_page_title">
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button class="btn btn-success btn-sm" onclick="submitThisForm()" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end><i
-                                class="fa fa-refresh" ></i> 保存
-                        </button>
-                        #if(sysotherin.AutoID??)
-                        ### 参数列表
-                        ### uri:                接口URI
-                        ### formSn:             表单名
-                        ### o:                  当前表单对象名
-                        ### primaryKeyName:     主键名
-                        #include("/_view/_common/_approval_btns.html", uri="/admin/otherInList", formSn="T_Sys_OtherIn", o=sysotherin, edit=edit??, primaryKeyName="AutoID")
+<!--                        <button class="btn btn-success btn-sm" onclick="submitThisForm()" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end><i-->
+<!--                                class="fa fa-refresh" ></i> 保存-->
+<!--                        </button>-->
+
+                        #if(readonly != 'readonly')
+                        <button class="btn btn-success btn-sm" onclick="submitThisForm_#(pageId)(false)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end ><i class="fa fa-refresh"></i> 保存</button>
                         #end
+
+                        #include("/_view/_common/_approval_btns.html", formSn="T_Sys_OtherIn", o=sysotherin,primaryKeyName="AutoID",className="cn.rjtech.admin.sysotherin.SysOtherinService",permissionKeyPrefix="sysotherin")
+
+
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
                                 class="fa fa-window-maximize"></i> 关闭
                         </button>
@@ -85,21 +92,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">业务类型</label>
-                                    <div class="col-9">
-                                        <select class="form-control" name="SourceBillType"
-                                                data-autoload
-                                                data-url="admin/dictionary/options?key=null"
-                                                data-select-type="select"
-                                                data-text="=业务类型="
-                                                data-value=""
-                                                data-value-attr="sn"
-                                        ></select>
-                                    </div>
-                                </div>
-                            </div>
+
 
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -115,20 +108,26 @@
 
                             <div class="col-md-4">
                                 <div class="form-group row">
-                                    <input type="hidden" name="sysotherin.VenCode" value="#(sysotherin.VenCode??)"
-                                           id="vencode" data-value-attr="vencode"/>
-                                    <label class="col-sm-3 col-form-label">供应商名称</label>
+                                    <input type="hidden" name="sysotherin.BillType" value="#(sysotherin.BillType??)"id="cbtid" data-sync-attr="cbtid"/>
+                                    <label class="col-sm-3 col-form-label">业务类型</label>
                                     <div class="col-9">
-                                        <input type="text" class="form-control" data-autocomplete
-                                               data-url="admin/materialReceiptList/venCode" data-rule="required"
-                                               data-hidden-input="vencode" data-text-attr="venname"
-                                               data-column-attr="vencode,venname" placeholder="请选择供应商名称"
-                                               data-tips="请选择供应商名称" data-header="供应商编码,供应商名称"
-                                               maxlength="40"
-                                               value="#(venname??)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
+                                        <input type="text" 
+                                                class="form-control" data-autocomplete
+                                               data-url="admin/otherInList/billtype" data-rule="required"
+                                               ###data-hidden-input="cbtid" 
+                                               data-sync-ele="#cbtid"
+                                               data-text-attr="cbtchname"
+                                               data-column-attr="cbtid,cbtchname" placeholder="请选择业务类型"
+                                               data-tips="请选择业务类型" data-header="业务类型编码,业务类型" maxlength="40"
+                                               value="#(cbtchname??)" 
+                                               #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) 
+                                               disabled 
+                                               #end>
                                     </div>
                                 </div>
                             </div>
+
+
 
                             <div class="col-md-4">
                                 <div class="form-group row">
@@ -278,10 +277,31 @@
                 type: "all",
                 url: "/admin/otherInList/submitAll",
                 success: function (res) {
-                    LayerMsgBox.success("提交成功", 600, function () {
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
-                    });
+                    var state = res.state;
+                    if (state==='ok'){
+                        var autoid = res.autoid;
+                        if (submit){
+                            submit_#(pageId)(autoid,function () {
+                                LayerMsgBox.success("提交成功", 600, function () {
+                                    // parent.refreshPjaxContainer();
+                                    // parent.layer.closeAll();
+                                    self.location.href = "/admin/otherInList/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
+                                });
+
+                            });
+                        } else {
+                            LayerMsgBox.success("提交成功", 600, function () {
+                                // parent.refreshPjaxContainer();
+                                // parent.layer.closeAll();
+                                self.location.href = "/admin/otherInList/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
+                            });
+
+                        }
+                    }
+                    // LayerMsgBox.success("提交成功", 600, function () {
+                    //     parent.refreshPjaxContainer();
+                    //     parent.layer.closeAll();
+                    // });
                 }
             },
             cols: {
@@ -326,10 +346,23 @@
         };
         return editableTableOptions;
     }
-
+    function submitThisForm_#(pageId)() {
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
+        return true;
+    }
     function closeHandler() {
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         window.parent.refreshJBoltTable();
+    }
+    //是否提审
+    var submit = false;
+
+    /**
+     * 保存方法
+     */
+    function submitThisForm_#(pageId)(ele) {
+        submit = ele;
+        jboltTableSubmit("#jbolt_Table_#(pageId)");
     }
 
 </script>

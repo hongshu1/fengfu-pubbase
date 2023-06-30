@@ -22,7 +22,6 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -317,14 +316,14 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 			String coperationname = inventoryRoutingConfig.getStr("COperationName");
 			Long iAutoId = inventoryRoutingConfig.getLong("iAutoId");
 			String ioperationIds = "";
-			if (StringUtils.isNotBlank(coperationname)) {
+			if (StrUtil.isNotBlank(coperationname)) {
 				String[] arry = coperationname.split("\\^");
 				inventoryRoutingConfig.set("COperationName",arry[0]);
 				ioperationIds = arry[1];
 			}
 			updateRecord(inventoryRoutingConfig);
 			//工序名称子表
-			if (StringUtils.isNotBlank(ioperationIds)){
+			if (StrUtil.isNotBlank(ioperationIds)){
 				String[] arry = ioperationIds.split("/");
 				List<Long> longList = new ArrayList<>();
 				for (int i = 0; i < arry.length; i++) {

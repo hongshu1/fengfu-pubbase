@@ -1,5 +1,6 @@
 package cn.rjtech.admin.modoc;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -27,7 +28,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -463,7 +463,7 @@ public class MoDocAdminController extends BaseAdminController {
 	 * 特殊领料界面-审批
 	 */
 	public void othermaterialapprove(String iAutoId,Integer mark) {
-		if (StringUtils.isEmpty(iAutoId)) {
+		if (StrUtil.isBlank(iAutoId)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
@@ -473,7 +473,7 @@ public class MoDocAdminController extends BaseAdminController {
 	 * 特殊领料界面-手动关闭
 	 */
 	public void closeWeekOrder(String iAutoId) {
-		if (StringUtils.isEmpty(iAutoId)) {
+		if (StrUtil.isBlank(iAutoId)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
@@ -484,7 +484,7 @@ public class MoDocAdminController extends BaseAdminController {
 	 * 特殊领料界面-撤回
 	 */
 	public void recall(String iAutoId) {
-		if (StringUtils.isEmpty(iAutoId)) {
+		if (StrUtil.isBlank(iAutoId)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}

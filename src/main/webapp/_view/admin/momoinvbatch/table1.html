@@ -23,7 +23,7 @@
 <td>${data.iqty}</td>
 <td>
 {@if data.iprintstatus==1}
-	<a href="admin/momoinvbatch/editprint/${data.iautoid}" data-area="50%,100%"  tooltip data-title="打印"  data-handler="refreshJBoltTable" data-dialog-title="打印" class="jbolt_table_editbtn"><i class="fa fa-print"></i>打印</a>
+	<a href="admin/momoinvbatch/batchPrint?imodocid=#(moDoc.iautoid??)&ids=${data.iautoid}" data-confirm="确定打印？"  data-handler="refreshTable2" class="jbolt_table_editbtn"><i class="fa fa-print"></i>打印</a>
     <a href="admin/momoinvbatch/updatePage/${data.iautoid}" data-area="800,600"  tooltip data-title="修改数量" data-handler="refreshJBoltTable"  class="jbolt_table_editbtn" data-btn="no"><i class="fa fa-pencil"></i>修改数量</a>
 {@/if}
 </td>
@@ -37,10 +37,10 @@
                         data-url="admin/momoinvbatch/createMomoinvbatch?imodocid=#(imodocid??)"
                         class="btn btn-primary btn-sm"><i class="fa fa-print"></i>生成现品票
                 </button>
-                <button data-openpage="dialog" data-area="50%,100%" data-dialog-title="批量打印" data-ajaxbtn
-                        data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
+                <button data-dialog-title="批量打印" data-ajaxbtn
+                        data-handler="refreshTable2" data-check-handler="jboltTableGetCheckedIds"
                         id="toolbar_deleteBtn_#(pageId)"
-                        data-url="admin/momoinvbatch/subListPrintPage?imodocid=#(imodocid??)&ids=" data-confirm="批量打印？"
+                        data-url="admin/momoinvbatch/batchPrint?imodocid=#(moDoc.iautoid??)&ids=" data-confirm="确定批量打印？"
                         class="btn btn-primary btn-sm" disabled><i class="fa fa-print"></i>批量打印
                 </button>
             </div>

@@ -19,7 +19,7 @@ import com.jfinal.plugin.activerecord.Record;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2022-10-31 14:38
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.SPLIT_BARCODE)
 @Before(JBoltAdminAuthInterceptor.class)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/splitBarcode", viewPath = "_view/admin/splitbarcode")

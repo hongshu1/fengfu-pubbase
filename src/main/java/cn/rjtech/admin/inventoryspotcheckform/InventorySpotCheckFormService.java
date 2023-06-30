@@ -422,7 +422,7 @@ public class InventorySpotCheckFormService extends BaseService<InventorySpotChec
                         ValidationUtils.notNull(data.get("cvccode"), "供应商分类编码为空！");
                         ValidationUtils.notNull(data.get("cvcname"), "供应商分类名称为空！");
                         //子级供应商编码不能重复
-                       /* ValidationUtils.isTrue(StringUtils.isBlank(findCVCCodeInfo(data.getStr("cvccode"))),
+                       /* ValidationUtils.isTrue(StrUtil.isBlank(findCVCCodeInfo(data.getStr("cvccode"))),
                             data.getStr("cvccode")+" 供应商分类编码重复");*/
                         /*if (!data.getStr("ipid").equals("父级供应商分类编码")){
                             VendorClass vendorClass = findFirst(Okv.by("cVCCode", data.getStr("ipid")), "iautoid", "desc");

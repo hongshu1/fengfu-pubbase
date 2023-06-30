@@ -22,7 +22,6 @@ import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -273,7 +272,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
      * 反审批
      */
     public void reverseApprove(String ids) {
-        if (StringUtils.isEmpty(ids)) {
+        if (StrUtil.isBlank(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
         }
@@ -284,7 +283,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
      * 批量审核通过（批量审批也走这里）
      */
     public void batchApprove(@Para(value = "ids") String ids) {
-        if (StringUtils.isEmpty(ids)) {
+        if (StrUtil.isBlank(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
         }
@@ -296,7 +295,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
      * 批量反审核
      */
     public void batchReverseApprove(@Para(value = "ids") String ids) {
-        if (StringUtils.isEmpty(ids)) {
+        if (StrUtil.isBlank(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
         }
@@ -306,7 +305,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
      * 批量审批不通过
      */
     public void batchReject(@Para(value = "ids") String ids) {
-        if (StringUtils.isEmpty(ids)) {
+        if (StrUtil.isBlank(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
         }

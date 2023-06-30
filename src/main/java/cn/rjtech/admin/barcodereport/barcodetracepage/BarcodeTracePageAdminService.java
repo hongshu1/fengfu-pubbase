@@ -1,9 +1,9 @@
 package cn.rjtech.admin.barcodereport.barcodetracepage;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.util.JBoltRandomUtil;
 import cn.rjtech.base.service.view.BaseU9ViewService;
 import cn.rjtech.constants.DataSourceConstants;
-import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
@@ -26,9 +26,7 @@ public class BarcodeTracePageAdminService extends BaseU9ViewService {
 
 
     public Page<Record> newdatas(int pageSize, int pageNumber, Kv para){
-
-        Page<Record> page = barcodeTotalDatas(pageSize, pageNumber, para);
-        return page;
+        return barcodeTotalDatas(pageSize, pageNumber, para);
     }
 
     /**
@@ -177,7 +175,7 @@ public class BarcodeTracePageAdminService extends BaseU9ViewService {
 
 
 
-            if(StringUtils.isNotBlank(parmsKey)){
+            if(StrUtil.isNotBlank(parmsKey)){
                 record.set("ParmsKey",parmsKey ).set("ParmsValue", parmsValue);
                 records.add(record);
             }
