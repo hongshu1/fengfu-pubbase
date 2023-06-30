@@ -1,6 +1,5 @@
 package cn.rjtech.admin.modoc;
 
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -24,14 +23,12 @@ import cn.rjtech.wms.utils.EncodeUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.crypto.spec.IvParameterSpec;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -292,11 +289,12 @@ public class MoDocAdminController extends BaseAdminController {
 		renderJson(service.update(getModel(MoDoc.class, "moDoc")));
 	}
 
+    @UnCheck
 	public void getMoPlanNo() {
-
 		renderJsonData(service.generateBarCode());
 	}
 
+    @UnCheck
 	public void getDocdetail() {
 		Long imodocid=getLong("imodocid");
 		Long iinventoryroutingid=getLong("iinventoryroutingid");
@@ -515,13 +513,16 @@ public class MoDocAdminController extends BaseAdminController {
 	/**
 	 * 获取存货档案
 	 */
+    @UnCheck
 	public void getInventoryList(){
 		Page<Record> pageList = service.getInventoryList(getPageNumber(),getPageSize(),getKv());
 		renderJsonData(pageList);
 	}
+    
 	/**
 	 * 获取操作资质的人员
 	 */
+    @UnCheck
 	public void getPersonByEquipment(){
 		Kv kv = getKv();
 		Page<Record> page=service.getPersonByEquipment(getPageNumber(),getPageSize(),getKv());
@@ -531,6 +532,7 @@ public class MoDocAdminController extends BaseAdminController {
 	/**
 	 * 编辑界面数据
 	 */
+    @UnCheck
 	public void getMoDocbyIinventoryRoutingId(){
 		Kv kv = getKv();
 		renderJsonData(service.getMoDocbyIinventoryRoutingId(kv.getLong("iMoDocId")));
@@ -539,8 +541,8 @@ public class MoDocAdminController extends BaseAdminController {
 	/**
 	 * 编辑界面工序物料集数据
 	 */
+    @UnCheck
 	public void getMoDocinv(){
-		Kv kv = getKv();
 		renderJsonData(service.getMoDocinv(getKv()));
 	}
 
@@ -563,11 +565,12 @@ public class MoDocAdminController extends BaseAdminController {
 		set("imdocid",get("imdocid"));
 		render("modoc_equipment_index.html");
 	}
+    
 	/**
 	 * 跳转工序设备集界面数据
 	 */
+    @UnCheck
 	public void getMoDocEquipment(){
-		Kv kv = getKv();
 		renderJsonData(service.getMoDocEquipment(getKv()));
 	}
 

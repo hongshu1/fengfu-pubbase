@@ -7,6 +7,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.warehouse.WarehouseService;
@@ -121,9 +122,10 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         renderJsonData(service.submitAddBarcode(jBoltPara));
     }
 
-    /*
+    /**
      * 新增页加载的数据
-     * */
+     */
+    @UnCheck
     public void findDetails() {
         renderJsonData(null);
     }
@@ -181,9 +183,10 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         renderJsonData(service.addPrintData(getKv()));
     }
 
-    /*
+    /**
      * 根据仓库编码查询库区编码
-     * */
+     */
+    @UnCheck
     public void findAreaByWhcode() {
         renderJsonData(service.findAreaByWhcode());
     }

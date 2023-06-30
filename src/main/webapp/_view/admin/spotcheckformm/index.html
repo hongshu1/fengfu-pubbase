@@ -7,25 +7,42 @@
 	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>始业点检表管理</h1></div>
 	<div class="col">
 	<form class="form-inline" id="SpotCheckFormM_form_#(pageId)">
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
-
-<select class="form-control" name="iType"
-	data-autoload
-	data-url="admin/dictionary/options?key=null"
-	data-select-type="select"
-	data-text="=类型;1.首末点检表 2.首中末点检表="
-	data-value=""
-	data-value-attr="sn"
-	></select>
-
-<select class="form-control" name="IsDeleted"
-	data-autoload
-	data-url="admin/dictionary/options?key=options_enable"
-	data-select-type="select"
-	data-text="=删除状态;0. 未删除 1. 已删除="
-	data-value=""
-	data-value-attr="sn"
-	></select>
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="点检表名称" name="cspotcheckformname" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="工单号" name="cmodocno" value="" />
+		<select class="form-control" name="iworkregionmid"
+				data-autoload
+				data-url="admin/workregionm/options"
+				data-select-type="select"
+				data-text="=产线名称="
+				data-value=""
+				data-text-attr="cworkname"
+				data-value-attr="iautoid"
+		></select>
+		<select class="form-control"
+				data-autoload
+				data-url="admin/workshiftm/getSelect"
+				name="iworkshiftmid"
+				data-select-type="select"
+				data-text="=班次名称="
+				data-value=""
+				data-value-attr="iautoid"
+				data-text-attr="cworkshiftname"
+		></select>
+		<select style="width:150px" class="form-control"
+				data-autoload
+				data-text="=状态="
+				name="iauditstatus"
+		>
+			<option value="">=状态=</option>
+			<option value="1">未审核</option>
+			<option value="1">已保存/待审核</option>
+			<option value="2">审核通过</option>
+			<option value="3">审核不通过 </option>
+		</select>
+		日期：
+		<input type="text" style="height: 30px; font-size: 12px; width: 120px;" data-date data-type="date" data-fmt="yyyy-MM-dd" autocomplete="off" class="form-control" placeholder="开始日期" maxlength="23" name="dcreatetime" value=""/>
+		至
+		<input type="text" style="height: 30px; font-size: 12px; width: 120px;" data-date data-type="date" data-fmt="yyyy-MM-dd" autocomplete="off" class="form-control" placeholder="结束日期" maxlength="23" name="ecreatetime" value=""/>
 		<div class="btn-group text-center mx-1">
 			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
 			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
@@ -45,26 +62,37 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="SpotCheckFormM_tpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iAutoId}">
+<tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-
+	<a class=jbolt_table_editbtn
+	href="admin/spotCheckFormM/edit2?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
+    &modocid=${data.imodocid}&routingconfigid=${data.imoroutingconfigid}&cequipmentnames=${data.cequipmentnames}
+    &spotcheckformmid=${data.iautoid}&controls=1&readonly=readonly"
+  data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="详情" class=jbolt_table_editbtn></i>查看</a>
 </td>
-<td>${data.iSpotCheckFormId}</td>
-<td>${data.iMoDocId}</td>
-<td>${data.iMoRoutingConfigId}</td>
-<td>${data.cOperationName}</td>
-<td>${data.cRcvDocNo}</td>
-<td>${data.cCreateName}</td>
-<td>${data.dCreateTime}</td>
-<td>${data.iAuditStatus}</td>
+
+<td>$${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
+<td>${data.cspotcheckformname}</td>
+<td>${data.cmodocno}</td>
+<td>${data.cinvcode}</td>
+<td>${data.cinvcode1}</td>
+<td>${data.cinvname1}</td>
+<td>${data.dcreatetime}</td>
+<td>${data.cworkname}</td>
+<td>${data.cworkshiftname}</td>
+<td>${data.coperationname}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
 
 </tr>
 {@/each}
 </textarea>
 <div class="jbolt_table_toolbar" id="SpotCheckFormM_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-<!--	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增始业点检表管理" data-url="admin/spotCheckFormM/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>-->
+	#include("/_view/_common/_batch_approval_btns.html", formSn="PL_SpotCheckFormM", uri="admin/spotCheckFormM??", primaryKeyName="iAutoId", className="cn.rjtech.admin.spotcheckformm.SpotCheckFormMService", permissionKeyPrefix="spotcheckformm")
+
+	<!--	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增始业点检表管理" data-url="admin/spotCheckFormM/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>-->
 <!--	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑始业点检表管理" data-check-handler="jboltTableGetCheckedId" data-url="admin/spotCheckFormM/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>-->
 <!--	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/spotCheckFormM/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>-->
 <!--<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>-->
@@ -77,11 +105,13 @@
 	   data-height="fill"
 	   data-ajax="true"
 	   data-conditions-form="SpotCheckFormM_form_#(pageId)"
-	   data-url="admin/spotCheckFormM/datas"
+	   data-url="admin/spotCheckFormM/datas?itype=1"
 	   data-rowtpl="SpotCheckFormM_tpl_#(pageId)"
 	   data-copy-to-excel="false"
 	   data-page="SpotCheckFormM_page"
 	   data-toolbar="SpotCheckFormM_toolbar_#(pageId)"
+	   data-column-prepend="1:checkbox:true:false:false"
+
 >
 <thead class="fw-normal" >
 <tr>

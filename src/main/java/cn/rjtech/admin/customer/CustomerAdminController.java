@@ -174,12 +174,12 @@ public class CustomerAdminController extends BaseAdminController {
     /**
      * 供应商数据源
      */
+    @UnCheck
     public void findVendorPage() {
         String keywords = getKeywords();
         Kv kv = new Kv();
         kv.setIfNotNull("keywords", keywords);
         renderJsonData(service.findVendorPage(getPageNumber(), getPageSize(), kv));
-
     }
 
     /**

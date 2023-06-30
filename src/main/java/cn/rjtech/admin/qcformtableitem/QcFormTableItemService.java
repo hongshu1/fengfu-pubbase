@@ -1,7 +1,7 @@
 package cn.rjtech.admin.qcformtableitem;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -14,7 +14,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,7 +118,7 @@ public class QcFormTableItemService extends BaseService<QcFormTableItem> {
 
 	public QcFormTableItem createQcFormTableItem(Long id, Long qcFormId, Long qcFormItemId, Long qcFormParamId, Long qcFormTableParamId){
 		QcFormTableItem qcFormTableItem = new QcFormTableItem();
-		if (ObjectUtil.isNull(id)){
+		if (ObjUtil.isNull(id)){
 			id = JBoltSnowflakeKit.me.nextId();
 		}
 		qcFormTableItem.setIAutoId(id);
@@ -131,7 +130,7 @@ public class QcFormTableItemService extends BaseService<QcFormTableItem> {
 	}
 
 	public List<QcFormTableItem> createQcFormTableItemList(Long qcFormId, List<QcFormItem> qcFormItemList, JSONArray jsonArray){
-		if (CollectionUtil.isEmpty(jsonArray)){
+		if (CollUtil.isEmpty(jsonArray)){
 			return null;
 		}
 		Map<Long, QcFormItem> qcItemMap = qcFormItemList.stream().collect(Collectors.toMap(QcFormItem::getIQcItemId, Function.identity(), (key1, key2) -> key2));

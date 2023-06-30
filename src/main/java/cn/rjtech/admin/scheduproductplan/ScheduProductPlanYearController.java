@@ -5,6 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -16,8 +17,6 @@ import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.StringUtils;
 
@@ -176,7 +175,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
 
     //-----------------------------------------------------------------年度生产计划排产-----------------------------------------------
 
-
+    @UnCheck
     public void getCustomerList() {
         renderJsonData(service.getCustomerList());
     }
@@ -197,6 +196,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     /**
      * 获取计划
      */
+    @UnCheck
     public void getApsYearPlanList() {
         String cplanorderno = get("cplanorderno");
         Long icustomerid = getLong("icustomerid");
@@ -207,6 +207,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     /**
      * 获取订单计划
      */
+    @UnCheck
     public void getApsYearPlanMasterPage() {
         renderJsonData(service.getApsYearPlanMasterPage(getPageNumber(),getPageSize(),getKv()));
     }
@@ -296,6 +297,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     /**
      * 获取年度生产计划汇总
      */
+    @UnCheck
     public void getApsYearPlanSumPage() {
         renderJsonData(service.getApsYearPlanSumPage(getPageNumber(),getPageSize(),getKv()));
     }
@@ -418,6 +420,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     /**
      *计划选择
      */
+    @UnCheck
     public void selectaprm() {
         set("month",get("month"));
         render("selectaprm.html");

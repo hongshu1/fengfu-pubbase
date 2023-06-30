@@ -1,12 +1,13 @@
 package cn.rjtech.admin.inventoryqcform;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.MultipleUploadFile;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.service.JBoltFileService;
 import cn.rjtech.admin.qcform.QcFormService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -82,7 +83,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 			return;
 		}
 		QcForm qcForm = qcFormService.findById(inventoryQcForm.getIQcFormId());
-		if (ObjectUtil.isNotNull(qcForm)){
+		if (ObjUtil.isNotNull(qcForm)){
 			set("qcFormName", qcForm.getCQcFormName());
 		}
 		set("inventoryQcForm",inventoryQcForm);
@@ -246,6 +247,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	/**
 	 * 检验表格数据源
 	 */
+    @UnCheck
 	public void getFormList(){
 		renderJsonData(service.getFormList(getKv()));
 	}

@@ -1,6 +1,6 @@
 package cn.rjtech.admin.momaterialsreturnm;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -384,7 +384,7 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 		Kv para = Kv.by("barcode", barcode);
 		List<Record> records = dbTemplate("momaterialsreturnm.getMaterialScanLogBycBarcode", para).find();
 		for (Record record : records) {
-			if (ObjectUtil.isNull(record.getBigDecimal("iQty")) && ObjectUtil.isNull(record.getBigDecimal("iScannedQty"))) {
+			if (ObjUtil.isNull(record.getBigDecimal("iQty")) && ObjUtil.isNull(record.getBigDecimal("iScannedQty"))) {
 				ValidationUtils.error(record.getStr("cbarcode") + "中的现品票数量或耗用数量为空");
 			}
 			BigDecimal subtract = record.getBigDecimal("iQty").subtract(record.getBigDecimal("iScannedQty"));
@@ -399,7 +399,7 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 		Kv para = Kv.by("barcode", barcode);
 		List<Record> records = dbTemplate("momaterialsreturnm.getMaterialScanLogBycBarcode", para).find();
 		for (Record record : records) {
-			if (ObjectUtil.isNull(record.getBigDecimal("iQty")) && ObjectUtil.isNull(record.getBigDecimal("iScannedQty"))) {
+			if (ObjUtil.isNull(record.getBigDecimal("iQty")) && ObjUtil.isNull(record.getBigDecimal("iScannedQty"))) {
 				ValidationUtils.error(record.getStr("cbarcode") + "中的现品票数量或耗用数量为空");
 			}
 			BigDecimal subtract = record.getBigDecimal("iQty").subtract(record.getBigDecimal("iScannedQty"));
@@ -412,7 +412,7 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 	public List<Record> getBycBarcodeList() {
 		List<Record> records = dbTemplate("momaterialsreturnm.getmomaterialscanusedlogList").find();
 		for (Record record : records) {
-			if (ObjectUtil.isNull(record.getBigDecimal("iQty")) && ObjectUtil.isNull(record.getBigDecimal("iScannedQty"))) {
+			if (ObjUtil.isNull(record.getBigDecimal("iQty")) && ObjUtil.isNull(record.getBigDecimal("iScannedQty"))) {
 				ValidationUtils.error(record.getStr("cbarcode") + "中的现品票数量或耗用数量为空");
 			}
 			BigDecimal subtract = record.getBigDecimal("iQty").subtract(record.getBigDecimal("iScannedQty"));

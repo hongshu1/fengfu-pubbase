@@ -6,12 +6,12 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -166,6 +166,7 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
     /**
      * 进入子页面自动加载table的数据
      */
+    @UnCheck
     public void getCheckOutTableDatas() {
         renderJsonData(service.getCheckOutTableDatas(getKv()));
     }

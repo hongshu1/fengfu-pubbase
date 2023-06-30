@@ -1,6 +1,6 @@
 package cn.rjtech.admin.department;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -113,21 +113,21 @@ public class DepartmentAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        if (ObjectUtil.isNotNull(department.getIDutyUserId())) {
+        if (ObjUtil.isNotNull(department.getIDutyUserId())) {
             Person person = personService.findById(department.getIDutyUserId());
-            if (ObjectUtil.isNotNull(person)) {
+            if (ObjUtil.isNotNull(person)) {
                 set("cdeppersonname", person.getCpsnName());
             }
         }
-        if (ObjectUtil.isNotNull(department.getCDepLeader())) {
+        if (ObjUtil.isNotNull(department.getCDepLeader())) {
             Person person = personService.findById(department.getCDepLeader());
-            if (ObjectUtil.isNotNull(person)) {
+            if (ObjUtil.isNotNull(person)) {
                 set("cdepleadername", person.getCpsnName());
             }
         }
-        if (ObjectUtil.isNotNull(department.getIPid())) {
+        if (ObjUtil.isNotNull(department.getIPid())) {
             Department pDepartment = service.findById(department.getIPid());
-            if (ObjectUtil.isNotNull(pDepartment)) {
+            if (ObjUtil.isNotNull(pDepartment)) {
                 set("pname", pDepartment.getCDepName());
             }
         }
@@ -211,6 +211,7 @@ public class DepartmentAdminController extends BaseAdminController {
         render("person_table.html");
     }
 
+    @UnCheck
     public void findPersonPage() {
         renderJsonData(personService.paginateDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -219,6 +220,7 @@ public class DepartmentAdminController extends BaseAdminController {
     /**
      * 下拉框选择人员数据源
      */
+    @UnCheck
     public void selectPerson() {
         String key = get("key");
         Kv kv = new Kv();
@@ -226,10 +228,12 @@ public class DepartmentAdminController extends BaseAdminController {
         renderJsonData(personService.findAll(kv));
     }
 
+    @UnCheck
     public void findPersonAll() {
         renderJsonData(personService.findAll(getKv()));
     }
 
+    @UnCheck
     public void findParentData(Long excludeId) {
         renderJsonData(service.findParentData(excludeId));
     }
@@ -261,6 +265,7 @@ public class DepartmentAdminController extends BaseAdminController {
         renderBytesToExcelXlsFile(service.exportExcelTpl(null));
     }
 
+    @UnCheck
     public void getTreeTableDatas() {
         List<Record> datas = service.findAll(getKv());
         List<Record> trees = service.convertToRecordTree(datas, Department.IAUTOID, Department.IPID, (p) -> this.notOk(p.getLong(Department.IPID)));

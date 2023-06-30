@@ -153,17 +153,19 @@ public class SysPuinstoreAdminController extends BaseAdminController {
         render("sysPuinstoreDialog.html");
     }
 
-    /*
+    /**
      * 获取采购订单视图MES的订单号
-     * */
+     */
+    @UnCheck
     public void getMesSysPODetails() {
         Page<Record> recordPage = service.getMesSysPODetails(getKv(), getPageNumber(), getPageSize());
         renderJsonData(recordPage);
     }
 
-    /*
+    /**
      * 详情表，新增行获取数据
-     * */
+     */
+    @UnCheck
     public void getInsertPuinstoreDetail() {
         Kv kv = getKv();
         if (StrUtil.isBlank(kv.getStr("sourcebillno"))){
@@ -174,16 +176,18 @@ public class SysPuinstoreAdminController extends BaseAdminController {
         renderJsonData(recordList);
     }
 
-    /*
+    /**
      * 获取仓库名
-     * */
+     */
+    @UnCheck
     public void getWareHouseName() {
         renderJson(service.getWareHouseName(getKv()));
     }
 
-    /*
+    /**
      * 获取需要打印的模板数据
-     * */
+     */
+    @UnCheck
     public void getPrintData() {
         renderJson(service.printData(getKv()));
     }

@@ -121,20 +121,14 @@
 </div>
 #define js()
 <script>
-   /// if(isOk('#(type??)')){
-        hideParentLayerDialogBtn(0);
-    //}
     function submitForm(){
-
         LayerMsgBox.confirm("确认保存此数据?",function(){
-            // submitThisForms();
             submitThisForms("admin/processdefect/saveprocessDefect");
 
         });
     }
    function submitForms(){
        LayerMsgBox.confirm("确认提交此数据?",function(){
-           // submitThisForms();
            submitThisForms("admin/processdefect/subprocessDefect");
 
        });
@@ -197,14 +191,25 @@
    }
 
    function checkDatas() {
-       var datas = getJboltTableAllDatas("table1_#(pageId)");
+       var table1datas = getJboltTableAllDatas("table1_#(pageId)");
+       var table2Datas = getJboltTableAllDatas("table2_#(pageId)");
        // 已生成现品票数据默认隐藏生成现品票按钮
-       if (datas) {
+       if (table1datas||table2Datas) {
            $("#create_moinvbatch_#(pageId)").hide();
            #if(printworkorderspotticketsinadvance)
            $("#toolbar_deleteBtn_#(pageId)").removeAttr("disabled");
            #end
        }
+   }
+
+    /**
+     * 打印刷新已打印现品票数据
+     */
+   function refreshTable2() {
+       // 更新页面
+        refreshPjaxContainer();
+
+       // 调用打印
    }
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="processDefectForm")

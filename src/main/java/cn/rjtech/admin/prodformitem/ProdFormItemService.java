@@ -1,21 +1,20 @@
 package cn.rjtech.admin.prodformitem;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.ProdFormItem;
 import cn.rjtech.model.momdata.QcFormItem;
-import cn.rjtech.model.momdata.SpotCheckFormItem;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.rjtech.model.momdata.ProdFormItem;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.ArrayList;
@@ -99,7 +98,7 @@ public class ProdFormItemService extends BaseService<ProdFormItem> {
 	}
 	public ProdFormItem createQcFormItem(Long qcFormItemId, Long qcFormId, Long qcItemId, Integer seq, Boolean isDeleted){
 		ProdFormItem qcFormItem = new ProdFormItem();
-		if (ObjectUtil.isNull(qcFormItemId)){
+		if (ObjUtil.isNull(qcFormItemId)){
 			qcFormItemId = JBoltSnowflakeKit.me.nextId();
 		}
 		qcFormItem.setIAutoId(qcFormItemId);
@@ -111,7 +110,7 @@ public class ProdFormItemService extends BaseService<ProdFormItem> {
 	}
 
 	public List<ProdFormItem> createQcFormItemList(Long qcFormId, boolean isDelete , JSONArray formItemArray){
-		if (CollectionUtil.isEmpty(formItemArray)){
+		if (CollUtil.isEmpty(formItemArray)){
 			return null;
 		}
 		List<ProdFormItem> list = new ArrayList<>();

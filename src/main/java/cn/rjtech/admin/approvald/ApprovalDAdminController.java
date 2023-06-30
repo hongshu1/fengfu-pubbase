@@ -126,6 +126,7 @@ public class ApprovalDAdminController extends BaseAdminController {
     /**
      * 选择人员数据源
      */
+    @UnCheck
     public void getPerson() {
         String key = get("key");
         Kv kv = getKv();
@@ -144,6 +145,7 @@ public class ApprovalDAdminController extends BaseAdminController {
     /**
      * 选择角色数据源
      */
+    @UnCheck
     public void getRole() {
         Kv kv = getKv();
         renderJsonData(service.getRole(getPageNumber(), getPageSize(), kv));
@@ -152,6 +154,7 @@ public class ApprovalDAdminController extends BaseAdminController {
     /**
      * 下拉框选择人员数据源
      */
+    @UnCheck
     public void selectPerson() {
         String key = get("key");
         Kv kv = new Kv();

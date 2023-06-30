@@ -2,10 +2,15 @@ package cn.rjtech.admin.sysproductin;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
+import cn.rjtech.model.momdata.SysPureceive;
+import cn.rjtech.model.momdata.SysPureceivedetail;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -26,6 +31,9 @@ public class SysProductindetailService extends BaseService<SysProductindetail> {
     protected SysProductindetail dao() {
         return dao;
     }
+
+    @Inject
+    private SysProductinService sysproductinservice;
 
     @Override
     protected int systemLogTargetType() {
@@ -133,8 +141,19 @@ public class SysProductindetailService extends BaseService<SysProductindetail> {
         tx(() -> {
             String[] split = ids.split(",");
             for (String s : split) {
-                updateColumn(s, "isdeleted", true);
+                SysProductindetail byId1 = findById(s);
+                SysProductin byId = sysproductinservice.findById(byId1.getMasID());
+                if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+                }
+                if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                    ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+                }
             }
+            deleteByIds(ids);
+//            for (String s : split) {
+//                updateColumn(s, "isdeleted", true);
+//            }
             return true;
         });
         return SUCCESS;
@@ -147,7 +166,20 @@ public class SysProductindetailService extends BaseService<SysProductindetail> {
      * @return
      */
     public Ret delete(Long id) {
-        updateColumn(id, "isdeleted", true);
+        SysProductindetail byId1 = findById(id);
+        SysProductin byId = sysproductinservice.findById(byId1.getMasID());
+        if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+            ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+        }
+        if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+            ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+        }
+        deleteById(id);
+//        updateColumn(id, "isdeleted", true);
         return SUCCESS;
+    }
+
+    public List<SysProductindetail> findFirstBy(String masId) {
+        return find("select * from  T_Sys_ProductInDetail where MasID = ? and isDeleted = '0'", masId);
     }
 }

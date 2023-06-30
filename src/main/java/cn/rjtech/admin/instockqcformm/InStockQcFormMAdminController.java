@@ -6,6 +6,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.instockqcformd.InStockQcFormDService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
@@ -13,7 +14,6 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.InStockQcFormD;
 import cn.rjtech.model.momdata.InStockQcFormM;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -184,7 +184,10 @@ public class InStockQcFormMAdminController extends BaseAdminController {
         render("editInStockOutQcFormMTable.html");
     }
 
-    /*详情页面的table数据*/
+    /**
+     * 详情页面的table数据
+     */
+    @UnCheck
     public void getTableDatas() {
         renderJsonData(service.getTableDatas(getKv()));
     }
@@ -211,9 +214,10 @@ public class InStockQcFormMAdminController extends BaseAdminController {
         renderJxls("instockqcformm.xlsx", kv, "在库检_" + DateUtil.today() + "_成绩表.xlsx");
     }
 
-    /*
+    /**
      * 根据现品票查询数据
-     * */
+     */
+    @UnCheck
     public void findDetailByBarcode(@Para(value = "cbarcode") String cbarcod) {
         renderJsonData(service.findDetailByBarcode(cbarcod));
     }

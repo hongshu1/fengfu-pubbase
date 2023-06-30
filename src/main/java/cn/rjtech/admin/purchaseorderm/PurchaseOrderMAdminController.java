@@ -1,13 +1,14 @@
 package cn.rjtech.admin.purchaseorderm;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.hiprint.HiprintTplService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.exch.ExchService;
@@ -111,20 +112,20 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         record.set(PurchaseOrderM.DBEGINDATE, beginDate);
         record.set(PurchaseOrderM.DENDDATE, endDate);
 
-        if (ObjectUtil.isNotNull(vendor.getITaxRate())) {
+        if (ObjUtil.isNotNull(vendor.getITaxRate())) {
             record.set(PurchaseOrderM.ITAXRATE, vendor.getITaxRate().stripTrailingZeros().stripTrailingZeros());
         }
 
         record.set(PurchaseOrderM.CCURRENCY, vendor.getCCurrency());
         Exch exch = exchService.getNameByLatestExch(getOrgId(), vendor.getCCurrency());
         // 汇率
-        if (ObjectUtil.isNotNull(exch)) {
+        if (ObjUtil.isNotNull(exch)) {
             record.set(PurchaseOrderM.IEXCHANGERATE, exch.getNflat());
         }
 
         record.set(PurchaseOrderM.IDUTYUSERID, vendor.getIDutyPersonId());
         Person person = personService.findById(vendor.getIDutyPersonId());
-        if (ObjectUtil.isNotNull(person)) {
+        if (ObjUtil.isNotNull(person)) {
             set("personname", person.getCpsnName());
         }
         record.set(PurchaseOrderM.IDEPARTMENTID, vendor.getCVenDepart());
@@ -175,7 +176,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
             return;
         }
         Person person = personService.findById(purchaseOrderM.getIDutyUserId());
-        if (ObjectUtil.isNotNull(person)) {
+        if (ObjUtil.isNotNull(person)) {
             set("personname", person.getCpsnName());
         }
 
@@ -185,10 +186,10 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         if (StrUtil.isNotBlank(isView)) {
             set("isView", 1);
         }
-        if (ObjectUtil.isNotNull(purchaseOrderM.getITaxRate())) {
+        if (ObjUtil.isNotNull(purchaseOrderM.getITaxRate())) {
             purchaseOrderM.setITaxRate(purchaseOrderM.getITaxRate().stripTrailingZeros());
         }
-        if (ObjectUtil.isNotNull(purchaseOrderM.getIExchangeRate())) {
+        if (ObjUtil.isNotNull(purchaseOrderM.getIExchangeRate())) {
             purchaseOrderM.setIExchangeRate(purchaseOrderM.getIExchangeRate().stripTrailingZeros());
         }
         set("purchaseOrderM", purchaseOrderM);
@@ -207,7 +208,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
             return;
         }
         Person person = personService.findById(purchaseOrderM.getIDutyUserId());
-        if (ObjectUtil.isNotNull(person)) {
+        if (ObjUtil.isNotNull(person)) {
             set("personname", person.getCpsnName());
         }
 
@@ -247,14 +248,17 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         render("consummate.html");
     }
 
+    @UnCheck
     public void findForeignCurrencyAll() {
         renderJsonData(foreignCurrencyService.findAll(getKv()));
     }
 
+    @UnCheck
     public void findPurchaseType() {
         renderJsonData(purchaseTypeService.selectAll(getKv()));
     }
 
+    @UnCheck
     public void findByiVendorId(@Para(value = "vendorId") String vendorId,
                                 @Para(value = "id") String id) {
         renderJsonData(vendorAddrService.findList(getKv()));
@@ -325,6 +329,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         renderJsonData(service.batchDel(ids));
     }
 
+    @UnCheck
     public void findPurchaseOrderDBatch() {
         renderJsonData(purchaseOrderDBatchService.findByPurchaseOrderMId(getPageNumber(), getPageSize(), getKv()));
     }
@@ -342,6 +347,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         renderJsonData(purchaseOrderDBatchService.updateOrderBatch(purchaseOrderMId, id, cVersion, qty));
     }
 
+    @UnCheck
     public void findPurchaseOrderDBatchVersion() {
         renderJsonData(purchaseOrderDBatchVersionService.findByPurchaseOrderMid(getPageNumber(), getPageSize(), getKv()));
     }
@@ -350,6 +356,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         renderJson(service.saveSubmit(getJBoltTable()));
     }
 
+    @UnCheck
     public void findPurchaseOrderD(@Para(value = "purchaseOrderMId") Long purchaseOrderMId) {
         renderJsonData(service.findPurchaseOrderD(purchaseOrderMId));
     }
@@ -366,7 +373,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
     }
 
-
+    @UnCheck
     public void findPrintPurchaseorderm() {
 //          获取模板
 //        HiprintTpl hiprintTpl= tplService.getCacheByKey("109607");
