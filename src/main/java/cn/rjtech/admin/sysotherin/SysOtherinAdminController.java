@@ -19,8 +19,11 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -157,6 +160,31 @@ public class SysOtherinAdminController extends BaseAdminController {
      */
     public void billtype() {
         renderJsonData(service.billtype(getKv()));
+    }
+
+
+    /**
+     * 条码数据源
+     */
+    @UnCheck
+    public void barcodeDatas() {
+        List<Record> barcodeDatas = service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()));
+        String barcode = get("detailHidden");
+        if(null != barcode &&  !"".equals(barcode)){
+            String[] split = barcode.split(",");
+            for (int i = 0; i < split.length; i++) {
+                String s = split[i].replaceAll("'", "");
+                Iterator<Record> iterator = barcodeDatas.iterator();
+                while (iterator.hasNext()) {
+                    Record r = iterator.next();
+                    if (r.getStr("barcode").equals(s)) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+
+        renderJsonData(barcodeDatas);
     }
 
 }

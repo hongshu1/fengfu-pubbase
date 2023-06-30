@@ -80,13 +80,14 @@ public class ProdFormMApiController extends BaseApiController {
 
     /**
      * 新增页面数据
+     * byIdGetDetail 中的iseq 相同的要合成一条数据并排序，proditemiseq 为页面数据排序
      */
     @UnCheck
     public void addDatas(@Para( value = "iprodformid") String iprodformid){
         //生产表单项目标题
         List<Record> formItemLists = prodFormItemService.formItemLists(Kv.by("iqcformid", iprodformid));
         List<Record> byIdGetDetail = prodFormService.findByIdGetDetail(iprodformid);
-        renderJBoltApiRet( service.addDatas( prodFormMService.lineRoll2(byIdGetDetail),prodFormMService.lineRoll(formItemLists,iprodformid)));
+        renderJBoltApiRet( service.addDatas( formItemLists,byIdGetDetail));
     }
     /**
      * 编辑页面

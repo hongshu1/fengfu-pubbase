@@ -110,8 +110,8 @@ public class ProdFormMApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS;
     }
 
-    public JBoltApiRet addDatas(List<Map<String, Object>> lineRoll2, List<Map<String, Object>> lineRoll) {
-        Kv kv = Kv.by("lineRoll", lineRoll).set("lineRoll2", lineRoll);
+    public JBoltApiRet addDatas(List<Record>  lineRoll,List<Record> lineRoll2) {
+        Kv kv = Kv.by("lineRoll", lineRoll).set("lineRoll2", lineRoll2);
         return JBoltApiRet.successWithData(kv);
     }
 }

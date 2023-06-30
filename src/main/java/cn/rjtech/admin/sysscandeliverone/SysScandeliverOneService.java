@@ -10,6 +10,7 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.sysscandeliver.SysScandeliverService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.SysScandeliver;
 import cn.rjtech.model.momdata.SysScandeliverdetail;
@@ -41,6 +42,8 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 
 	@Inject
 	private SysScandeliverOnedetailService sysscandeliverdetailservice;
+	@Inject
+	private SysScandeliverService sysScandeliverService;
 
 	@Override
     protected int systemLogTargetType() {
@@ -203,11 +206,17 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
         AtomicReference<String> headerId = new AtomicReference<>();
         tx(() -> {
 
+			String cusCode = " ";
+
             //判断form是否为空
             if (jBoltTable.formIsNotBlank()) {
-                SysScandeliver sysScandeliver = jBoltTable.getFormBean(SysScandeliver.class, "sysscandeliver");
+                SysScandeliver sysScandeliver = jBoltTable.getFormModel(SysScandeliver.class, "sysscandeliver");
+
+				cusCode = sysScandeliver.getCusCode();
 
                 String autoID = sysScandeliver.getAutoID();
+
+				List<SysScandeliverdetail> detailList = new ArrayList<>();
 
                 if (notOk(autoID)) {
                     ValidationUtils.isTrue(jBoltTable.saveIsNotBlank(), "行数据为空，不允许保存！");
@@ -227,7 +236,7 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
                 }
 
                 headerId.set(autoID);
-            }
+
 
             if (jBoltTable.saveIsNotBlank()) {
                 List<SysScandeliverdetail> saveModelList = jBoltTable.getSaveModelList(SysScandeliverdetail.class);
@@ -244,6 +253,7 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
                 });
 //                    保存
                 sysscandeliverdetailservice.batchSave(saveModelList,saveModelList.size());
+				detailList.addAll(saveModelList);
             }
 
             //更新
@@ -255,6 +265,7 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
                     sysScandeliverdetail.setCUpdateName(user.getName());
                 });
                 sysscandeliverdetailservice.batchUpdate(updateModelList, updateModelList.size());
+				detailList.addAll(updateModelList);
             }
 
             //获取待删除数据 执行删除
@@ -262,7 +273,21 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
                 sysscandeliverdetailservice.deleteByIds(jBoltTable.getDelete());
             }
 
-            return true;
+			//			在客户档案找到该客户的发货类型 1、调拨单 2、销售发货单
+			Record cusShipment = findFirstRecord("select cShipment from Bd_Customer where cCusCode = '" + cusCode + "' and isDeleted = '0'");
+			if (isOk(cusShipment)){
+
+				if ("1".equals(cusShipment.getStr("cshipment"))){
+					sysScandeliverService.saveTransVouch(sysScandeliver,detailList);
+				} else {
+					sysScandeliverService.saveSaleDeliverP(sysScandeliver, detailList);
+				}
+
+			} else {
+				ValidationUtils.isTrue(false, "该客户未配置出货单据类型");
+			}
+		}
+			return true;
         });
         return SUCCESS.set("autoid",headerId.get());
     }
@@ -358,4 +383,15 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
         kv.set("orgId",orgId);
         return dbTemplate("sysscandeliverone.getOrder",kv).find();
     }
+
+	/**
+	 * 扫码获取资源
+	 * @param kv
+	 * @return
+	 */
+	public List<Record> getResource(Kv kv){
+		List<Record> list = dbTemplate("sysscandeliverone.getResource", kv).find();
+		ValidationUtils.isTrue(list != null && list.size() > 0, "找不到该现品票信息");
+		return list;
+	}
 }

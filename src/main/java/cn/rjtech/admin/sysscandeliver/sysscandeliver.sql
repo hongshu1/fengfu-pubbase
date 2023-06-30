@@ -65,10 +65,89 @@ ORDER BY a.dupdatetime DESC
 #end
 
 
+### -- ===========重新开发
+#sql("getCarData")
+select d.cCarNo, d.cBarcode, d.cVersion, m.iCustomerId as cusId, c.cCusName, c.cCusCode, d.iAutoId  as SourceBillDid
+from SM_RcvPlanD d
+         left join SM_RcvPlanM m on d.iRcvPlanMid = m.iAutoId
+         left join Bd_Customer c on m.iCustomerId = c.iAutoId
+where 1=1
+#if(carNo)
+ and d.cCarNo like concat('%',#para(carNo),'%')
+#end
+  and m.IsDeleted = '0' and d.IsDeleted = '0'
+#end
 
+#sql("getLine")
+select * from T_Sys_ScanDeliverDetail where MasID = '#(autoId)'
+#end
 
+#sql("getOrderLine")
+select t.*,
+       isnull(delivery.deliveryQty, 0) as deliveryQty
+from (select d.cCarNo,
+             d.cRcvDate,
+             d.cRcvTime,
+             d.cBarcode,
+             d.cVersion,
+             d.iInventoryId,
+             0      as qty,
+             d.iQty as planQty,
+             b.cInvCode as InvCode,
+             b.cInvName,
+             b.cInvCode1,
+             b.cInvName1,
+             b.cInvStd,
+             uom.cUomName
+      from SM_RcvPlanD d
+               left join SM_RcvPlanM m on d.iRcvPlanMid = m.iAutoId
+               left join Bd_Inventory b on d.iInventoryId = b.iAutoId
+               left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
+      where cCarNo = '#(carNo)'
+    and d.IsDeleted = '0'
+    and m.IsDeleted = '0'
+    ) t
+         left join (select InvCode, sum(Qty) as deliveryQty
+                    from T_Sys_SaleDeliverDetail
+                    where isDeleted = '0'
+                    group by InvCode) delivery on t.InvCode = delivery.InvCode
+#end
 
-
-
-
+#sql("getResource")
+select *
+from (select t1.AutoID,
+             t1.Barcode as oldBarcode,
+             t1.cCompleteBarcode as Barcode,
+             t1.InvCode as cInvCode,
+             t1.Qty,
+             t2.Whcode,
+             b.cInvCode1,
+             b.cInvName1,
+             b.cInvStd,
+             uom.cUomName,
+             w.cWhName,
+             d.cBarcode,
+             d.cVersion,
+             wd.cCode as cusBarcode,
+             wm.cOrderNo
+      from T_Sys_ProductInDetail t1
+               left join T_Sys_ProductIn t2 on t1.MasID = t2.AutoID
+               left join Bd_Inventory b on t1.InvCode = b.cInvCode
+               left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
+               left join Bd_Warehouse w on t2.Whcode = w.cWhCode
+               left join SM_RcvPlanD d on d.iInventoryId = b.iAutoId
+               left join Co_WeekOrderD wd on wd.cCode = d.cBarcode
+               left join Co_WeekOrderM wm on wm.iAutoId = wd.iWeekOrderMid
+      where 1=1
+        and t1.isDeleted = '0'
+        and t2.isDeleted = '0'
+        and d.isDeleted = '0'
+        and wd.isDeleted = '0'
+        and wm.IsDeleted = '0'
+        ###and t2.iAuditStatus = '2'
+        and t1.Barcode = '#(barcode)'
+     ) t
+where t.cusBarcode = '#(cusBarcode)'
+  and t.Barcode = '#(barcode)'
+#end
 

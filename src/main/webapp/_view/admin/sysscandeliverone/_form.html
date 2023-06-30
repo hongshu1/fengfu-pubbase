@@ -5,8 +5,8 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="submitThisForm()" class="btn btn-outline-secondary"><i
-                                class="fa fa-refresh"></i> 保存</button>
+                        <button onclick="submitThisForm_#(pageId)()" class="btn btn-outline-secondary"><i
+                                class="fa fa-refresh"></i> 提交</button>
                         <!--<button onclick="closeHandler()" class="btn btn-info btn-sm"><i
                                 class="fa fa-window-maximize"></i> 关闭
                         </button>-->
@@ -21,7 +21,7 @@
                         #if(sysscandeliver.autoid??)
                         <input type="hidden" name="sysscandeliver.autoid" value="#(sysscandeliver.autoid??)" />
                         #end
-                        <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
+                        <input type="hidden" id="detailHidden_#(pageId)" name="detailHidden" value="#(detailHidden??)"/>
                         <div class="row">
 
                             <div class="col-md-4">
@@ -33,7 +33,7 @@
                                                class="form-control"
                                                data-handler=""
                                                data-rule="required"
-                                               data-sync-ele="#versionCusCode,#versionCusId"
+                                               data-sync-ele="#versionCusCode_#(pageId),#versionCusId_#(pageId)"
                                                data-text-attr="cusname"
                                                data-column-attr="cuscode,cusname"
                                                placeholder="请选择"
@@ -42,12 +42,12 @@
                                                value="#(sysscandeliver.cusname??)"
                                                placeholder="请选择客户" data-tips="请选择客户" maxlength="40">
 
-                                        <input type="hidden" class="form-control" id="versionCusId"
-                                               name="sysscandeliver.cusid"
+                                        <input type="hidden" class="form-control" id="versionCusId_#(pageId)"
+                                               name="cusid"
                                                placeholder="客户ID"
                                                data-value-attr="cusid"
                                                value="#(sysscandeliver.cusid??)"/>
-                                        <input type="hidden" class="form-control" id="versionCusCode"
+                                        <input type="hidden" class="form-control" id="versionCusCode_#(pageId)"
                                                name="sysscandeliver.cuscode"
                                                placeholder="客户编码"
                                                data-value-attr="cuscode"
@@ -61,8 +61,8 @@
                                     <label class="col-sm-3 col-form-label">客户位置</label>
                                     <div class="col-9">
                                     <input type="text"
-                                           data-link-para-ele="#versionCusId"
-                                           data-sync-ele="#versionWhCode,#versionWhName"
+                                           data-link-para-ele="#versionCusId_#(pageId)"
+                                           data-sync-ele="#versionWhCode_#(pageId),#versionWhName_#(pageId)"
                                            data-text-attr="addrname"
                                            data-column-attr="addrname,whcode,whname"
                                            placeholder="请选择"
@@ -79,11 +79,12 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">仓库名称</label>
                                     <div class="col-9">
-                                        <input type="hidden" name="sysscandeliver.whcode" id="versionWhCode"
+                                        <input type="hidden" name="sysscandeliver.whcode" id="versionWhCode_#(pageId)"
                                                data-value-attr="whcode"
                                                value="#(sysscandeliver.whcode??)"/>
                                         <input type="text" data-notnull="true" data-tips="仓库名称"
-                                               readonly="readonly" class="form-control" id="versionWhName"
+                                               name="sysscandeliver.whname"
+                                               readonly="readonly" class="form-control" id="versionWhName_#(pageId)"
                                                 placeholder="仓库名称" data-value-attr="whname"
                                                value="#(sysscandeliver.whname??)" />
                                     </div>
@@ -95,23 +96,23 @@
                                     <label class="col-sm-3 col-form-label">订单号</label>
                                     <div class="col-9">
                                         <div class="input-group-append">
-                                            <input type="hidden" id="SourceBillType" class="form-control"
+                                            <input type="hidden" id="SourceBillType_#(pageId)" class="form-control"
                                                    name="sysscandeliver.sourcebilltype" placeholder="来源类型"
                                                    value="#(sysscandeliver.sourcebilltype??)" />
-                                            <input type="hidden" id="SourceBillID" class="form-control"
+                                            <input type="hidden" id="SourceBillID_#(pageId)" class="form-control"
                                                    name="sysscandeliver.sourcebillid" placeholder="来源ID"
                                                    value="#(sysscandeliver.sourcebillid??)" />
-                                            <input type="hidden" id="BillType" class="form-control"
+                                            <input type="hidden" id="BillType_#(pageId)" class="form-control"
                                                    name="sysscandeliver.billtype" placeholder="业务类型"
                                                    value="#(sysscandeliver.billtype??)" />
-                                            <input type="text" id="sourceBillNo" readonly="readonly"
+                                            <input type="text" id="sourceBillNo_#(pageId)" readonly="readonly"
                                                    class="form-control" data-rule="required"
                                                    placeholder="请选择订单号"
                                                    name="sysscandeliver.sourcebillno"
                                                    value="#(sysscandeliver.sourcebillno??)" />
                                             <button class="btn btn-outline-secondary" data-dialogbtn
-                                                    data-link-para-ele="#versionCusId,#versionCusCode"
-                                                    data-area="80%,80%" data-title="选择数据（单选）" id="billButton"
+                                                    data-link-para-ele="#versionCusId_#(pageId),#versionCusCode_#(pageId)"
+                                                    data-area="80%,80%" data-title="选择数据（单选）" id="billButton_#(pageId)"
                                                     data-url="/admin/scanCodeShipment/orderData"><i
                                                     class="fa fa-search mr-1"></i></button>
                                         </div>
@@ -179,18 +180,18 @@
                 #if(sysscandeliver.autoid??)
                 <input type="hidden" name="sysscandeliver.autoid" value="#(sysscandeliver.autoid??)" />
                 #end
-                <input type="text" autocomplete="off" class="form-control"  placeholder="现品票扫码" id="barcode"
+                <input type="text" autocomplete="off" class="form-control"  placeholder="现品票扫码" id="barcode_#(pageId)"
                        name="barcode"
                        value="" />
                 <input type="text" autocomplete="off"  class="form-control"  placeholder="容器扫码" style="display: none"
                        name="storeNum"
-                       id="storeNum"
+                       id="storeNum_#(pageId)"
                        value="" />
                 <span style="padding: 0 12px 0 12px">
                 开启容器扫码:
-                <img data-switchbtn data-value="false" id="switchBtn" data-handler="switchFun"/>
+                <img data-switchbtn data-value="false" id="switchBtn_#(pageId)" data-handler="switchFun_#(pageId)"/>
                     </span>
-                <button type="button" onclick="searchBarcode()" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
+                <button type="button" onclick="searchBarcode_#(pageId)()" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 搜索</button>
             </form>
         </div>
         <div style="padding-left: 50%;display: none">
@@ -204,7 +205,7 @@
         data-column-resize="true"
         ### 设置为异步加载数据
         data-ajax="true"
-        data-ajax-success-handler="tableDataSuccess"
+        data-ajax-success-handler="tableDataSuccess_#(pageId)"
         ### 数据接口地址
         data-url="admin/scanCodeShipmentdetail/getLine"
         data-conditions-form="sysscandeliver_detail_#(pageId)"
@@ -241,9 +242,9 @@
     /**
      * 搜索现品票
      * */
-    function searchBarcode() {
-        var barcode = $("#barcode").val();
-        var storeNum = $("#storeNum").val();
+    function searchBarcode_#(pageId)() {
+        var barcode = $("#barcode_#(pageId)").val();
+        var storeNum = $("#storeNum_#(pageId)").val();
         if (barcode != null && barcode !== ''){
             var index = LayerMsgBox.loading("执行中......",2000);
             var data = getJboltTableAllDatas("jbolt_Table_#(pageId)",["barcode"]);
@@ -255,8 +256,9 @@
                     }
                 }
             }
-            var detailHidden = $("#detailHidden").val();
-            Ajax.post("admin/scancodereceive/getResource", {"q": barcode,"detailHidden":detailHidden,"groupCode":1},
+            var detailHidden = $("#detailHidden_#(pageId)").val();
+            Ajax.post("admin/scanCodeShipment/getResource",
+                {"barcode": barcode,"detailHidden":detailHidden},
                 function (res) {
                     if (res.state==='ok'){
                         var trJsonData = res.data;
@@ -269,7 +271,7 @@
                             //    判断是否社内
                                 one.packbarcode = storeNum;
                             }
-                            let quantity = one.quantity;
+                            let quantity = one.qty;
                             let order = getJboltTableAllDatas("jbolt_Table_item_#(pageId)");
                             if (order != null && order.length > 0){
                                 for (var i = 0; i < order.length; i++) {
@@ -306,16 +308,19 @@
                                         break;
                                     } else {
                                         LayerMsgBox.error('没有匹配到存货编码')
+                                        return;
                                     }
                                 }
                             } else {
                                 LayerMsgBox.error("请先选择订单")
+                                return;
                             }
                         } else {
                             LayerMsgBox.error("找不到现品票")
+                            return;
                         }
                         jboltTableInsertRow("jbolt_Table_#(pageId)", one, false, false, false);
-                        $("#barcode").val('');
+                        $("#barcode_#(pageId)").val('');
                     }
                 }, function (err) {
                 })
@@ -330,7 +335,7 @@
      * 开启容器扫码
      * @param ele
      */
-    function switchFun(ele) {
+    function switchFun_#(pageId)(ele) {
         console.log('ele',ele.data("value"));
         let isOpen = ele.data("value");
         if (isOpen){
@@ -343,7 +348,7 @@
     /**
      * 获取表格数据
      * */
-    function tableDataSuccess() {
+    function tableDataSuccess_#(pageId)() {
         let result = jboltTableGetAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
         console.log('result===>',result)
         let array = [];
@@ -356,16 +361,16 @@
                 }
             }
             let codes = array.length > 0 ?array.join(','):'';
-            $("#detailHidden").val(codes);
+            $("#detailHidden_#(pageId)").val(codes);
         }
-        console.log('detailHidden===',$("#detailHidden").val());
+        console.log('detailHidden===',$("#detailHidden_#(pageId)").val());
         return true;
     }
 </script>
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-    function submitThisForm() {
+    function submitThisForm_#(pageId)() {
         jboltTableSubmit("#jbolt_Table_item_#(pageId)");
     }
 
@@ -400,10 +405,10 @@
         console.log(data)
         console.log(data.sourcebilltype)
         console.log(data.sourcebillno)
-        $("#SourceBillType").val(data.sourcebilltype);
-        $("#sourceBillNo").val(data.sourcebillno);
-        $("#BillType").val(data.billtype);
-        $("#SourceBillID").val(data.sourcebillid);
+        $("#SourceBillType_#(pageId)").val(data.sourcebilltype);
+        $("#sourceBillNo_#(pageId)").val(data.sourcebillno);
+        $("#BillType_#(pageId)").val(data.billtype);
+        $("#SourceBillID_#(pageId)").val(data.sourcebillid);
         jboltTableRefresh("jbolt_Table_item_#(pageId)");
     }
 

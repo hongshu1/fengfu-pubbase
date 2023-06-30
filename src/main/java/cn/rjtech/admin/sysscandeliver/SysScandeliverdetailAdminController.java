@@ -102,4 +102,27 @@ public class SysScandeliverdetailAdminController extends BaseAdminController {
 		kv.set("id",id==null?' ':id);
 		renderJsonData(service.findEditTableDatas(kv));
 	}
+
+
+//	===================
+
+	/**
+	 * 获取行信息
+	 */
+	public void getLine(){
+		String autoId = get("sysscandeliver.autoid");
+		Kv kv = new Kv();
+		kv.set("autoId",isOk(autoId)?autoId:" ");
+		renderJsonData(service.getLine(kv));
+	}
+
+	/**
+	 * 获取订单行信息
+	 */
+	public void getOrderLine(){
+		String carNo = get("carNo");
+		Kv kv = new Kv();
+		kv.set("carNo",isOk(carNo)?carNo:" ");
+		renderJsonData(service.getOrderLine(kv));
+	}
 }

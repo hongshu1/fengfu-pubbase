@@ -161,6 +161,7 @@ WHERE C.TYPE<>0
 
 #sql("getModandMomlist")
 select
+d.iMaterialsReturnMid,
 d.iMoDocId,
 d.cBarcode,
 i.cInvCode,
@@ -169,8 +170,9 @@ i.cInvName,
 i.cInvStd,
 i.iUomClassId,
 d.iQty
-from Mo_MaterialsReturnM m
+from
+Mo_MaterialsReturnM m
 left join Mo_MaterialsReturnD d on m.iAutoId=d.iMaterialsReturnMid
 left join Bd_Inventory i on d.iInventoryId=i.iAutoId
-where d.iMoDocId=#para(imodocid)
+where d.iMaterialsReturnMid=#para(iautoid)
 #end

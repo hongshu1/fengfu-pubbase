@@ -1,162 +1,105 @@
-<form onsubmit="return false;" id="SysScandeliverdetail_Form" action="#(action)" method="post">
-	#if(sysScandeliverdetail.AutoID??)
-	<input type="hidden" name="sysScandeliverdetail.AutoID" value="#(sysScandeliverdetail.AutoID??)" />
-	#end
-<div class="row">
-<div class="col" >
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">AutoID</label>
-<div class="col-10">
-    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入AutoID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入AutoID" maxlength="40" name="sysScandeliverdetail.AutoID" value="#(sysScandeliverdetail.AutoID??)"/>
+<div class="jbolt_page_content">
+    <script type="text/template" id="sysscandeliver_item_tpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.autoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.ccarno}</td>
+            <td>${data.crcvdate}</td>
+            <td>${data.crcvtime}</td>
+            <td>${data.invcode}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.cuomname}</td>
+            <td>${data.planqty}</td>
+            <td>${data.deliveryqty}</td>
+            <td>${data.qty}</td>
+            <td hidden>${data.sourcebilldid}</td>
+            <td hidden>${data.cusbarcode}</td>
+            <td hidden>${data.barcode}</td>
+            <td hidden>${data.packbarcode}</td>
+        </tr>
+        {@/each}
+    </script>
 </div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">MasID;T_Sys_ScanDeliver.AutoID</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入MasID;T_Sys_ScanDeliver.AutoID" maxlength="40" name="sysScandeliverdetail.MasID" value="#(sysScandeliverdetail.MasID??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">仓库编码</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入仓库编码" maxlength="40" name="sysScandeliverdetail.WhCode" value="#(sysScandeliverdetail.WhCode??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">仓位编码</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入仓位编码" maxlength="40" name="sysScandeliverdetail.PosCode" value="#(sysScandeliverdetail.PosCode??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">客户传票号</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入客户传票号" maxlength="40" name="sysScandeliverdetail.CusBarcode" value="#(sysScandeliverdetail.CusBarcode??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">现品票</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入现品票" maxlength="40" name="sysScandeliverdetail.Barcode" value="#(sysScandeliverdetail.Barcode??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">容器编码</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入容器编码" maxlength="40" name="sysScandeliverdetail.PackBarcode" value="#(sysScandeliverdetail.PackBarcode??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">存货编码</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货编码" maxlength="40" name="sysScandeliverdetail.InvCode" value="#(sysScandeliverdetail.InvCode??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">件数</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入件数" maxlength="40" name="sysScandeliverdetail.Num" value="#(sysScandeliverdetail.Num??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">数量</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入数量" maxlength="40" name="sysScandeliverdetail.Qty" value="#(sysScandeliverdetail.Qty??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">收容数量</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入收容数量" maxlength="40" name="sysScandeliverdetail.PackRate" value="#(sysScandeliverdetail.PackRate??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">跟单类型</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入跟单类型" maxlength="40" name="sysScandeliverdetail.TrackType" value="#(sysScandeliverdetail.TrackType??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">来源单据类型</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源单据类型" maxlength="40" name="sysScandeliverdetail.SourceBillType" value="#(sysScandeliverdetail.SourceBillType??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">来源单号</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源单号" maxlength="40" name="sysScandeliverdetail.SourceBillNo" value="#(sysScandeliverdetail.SourceBillNo??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">来源单号+行号</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源单号+行号" maxlength="40" name="sysScandeliverdetail.SourceBIllNoRow" value="#(sysScandeliverdetail.SourceBIllNoRow??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">来源单据ID</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源单据ID" maxlength="40" name="sysScandeliverdetail.SourceBillID" value="#(sysScandeliverdetail.SourceBillID??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">来源单据Did</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入来源单据Did" maxlength="40" name="sysScandeliverdetail.SourceBillDid" value="#(sysScandeliverdetail.SourceBillDid??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">备注</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入备注" maxlength="40" name="sysScandeliverdetail.Memo" value="#(sysScandeliverdetail.Memo??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">创建人</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人" maxlength="40" name="sysScandeliverdetail.CreatePerson" value="#(sysScandeliverdetail.CreatePerson??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">创建时间</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="sysScandeliverdetail.CreateDate"    value="#datetime(sysScandeliverdetail.CreateDate??,'yyyy-MM-dd')"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">更新人</label>
-<div class="col-10">
-    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入更新人" maxlength="40" name="sysScandeliverdetail.ModifyPerson" value="#(sysScandeliverdetail.ModifyPerson??)"/>
-</div>
-</div>
-<div class="form-group row" >
-<label class="col-sm-2 col-form-label">更新时间</label>
-<div class="col-10">
-    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入更新时间" maxlength="20" name="sysScandeliverdetail.ModifyDate"    value="#datetime(sysScandeliverdetail.ModifyDate??,'yyyy-MM-dd')"/>
-</div>
-</div>
-<div class="form-group row" 
-data-radio
-data-name="sysScandeliverdetail.isDeleted"
-data-value-attr="sn"
-data-default="options_first"
-data-url="admin/dictionary/options?key=options_enable"
-data-label="删除状态"
-data-width="col-sm-2,col-10"
-data-value="#(sysScandeliverdetail.isDeleted??)"
-data-rule="radio"
-data-notnull="false"
-data-tips="请输入删除状态"
-data-inline="true"
->
-</div>
-</div>
-</div>
-</form>
-#define js()
-<script>
-</script>
-#include("/_view/_admin/common/_formjs.html",formId="SysScandeliverdetail_Form")
-#end
 
+<table  class="jbolt_table thead_font_normal table-bordered table-center"
+        ### 可排序列 定义 多个用逗号隔开
+        ### 启用动态调整列宽
+        data-column-resize="true"
+        ### 设置为异步加载数据
+        data-ajax="true"
+        data-ajax-success-handler=""
+        ### 数据接口地址
+        data-url="admin/sysscandeliverdetail/getOrderLine"
+        data-conditions-form="sysscandeliver_#(pageId)"
+        ### 禁止回车键新增行
+        data-auto-create-empty-tr="false"
+        ### 加一列checkbox
+        data-column-prepend="1:checkbox"
+        data-tfoot-fixed="true"
+        data-jbolttable
+        id="jbolt_Table_item_#(pageId)"
+        data-rowtpl="sysscandeliver_item_tpl_#(pageId)"
+        data-toolbar="sysscandeliver_item_toolbar_#(pageId)"
+        data-editable="true"
+        data-editable-option="getJBoltTableEditableColsOpton_item_#(pageId)">
+    <thead class="fw_normal">
+    <tr>
+        <th data-width="60">序号</th>
+        <th data-min-width="120" data-column="ccarno">车次号</th>
+        <th data-width="100" data-column="crcvdate">取货日期</th>
+        <th data-width="100" data-column="crcvtime">取货时间</th>
+        <th data-min-width="120" data-column="invcode">存货编码</th>
+        <th data-width="100" data-column="cinvcode1">客户部番</th>
+        <th data-width="100" data-column="cinvname1">部品名称</th>
+        <th data-width="100" data-column="cinvstd">规格型号</th>
+        <th data-width="100" data-column="cuomname">主计量单位</th>
+        <th data-width="100" data-column="planqty">计划数量</th>
+        <th data-width="100" data-column="deliveryqty">出货数量</th>
+        <th data-width="100" data-column="qty">扫描数量</th>
+    </tr>
+    </thead>
+</table>
+
+<script>
+    function getJBoltTableEditableColsOpton_item_#(pageId)() {
+        var editableTableOptions = {
+            submit: {
+                withForm: ["sysscandeliver_#(pageId)"],
+                name: 'sysscandeliver',
+                type: "all",
+                url: "/admin/doubleCodeScanningShipment/submitAll",
+                success: function (res) {
+                    LayerMsgBox.success("提交成功", 600, function () {
+                        parent.refreshPjaxContainer();
+                        parent.layer.closeAll();
+                    });
+                }
+            },
+            cols: {
+                autoid: {
+                    submitAttr: "AutoID",
+                },
+                sourcebilldid: {
+                    submitAttr:"SourceBillDid"
+                },
+                invcode:{
+                    type:"input",
+                    submitAttr:"InvCode"
+                },
+                qty:{
+                    type:"input",
+                    submitAttr:"Qty"
+                },
+                planqty:{
+                    submitAttr:"planQty"
+                },
+                batch:{
+                    submitAttr:"Batch"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>

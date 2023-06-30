@@ -12,6 +12,8 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.cache.AuditFormConfigCache;
+import cn.rjtech.entity.vo.base.NullDataResult;
+import cn.rjtech.entity.vo.formapproval.FormApprovalVo;
 import cn.rjtech.enums.FormAuditConfigTypeEnum;
 import cn.rjtech.model.momdata.FormApproval;
 import cn.rjtech.util.MsgEventUtil;
@@ -21,6 +23,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Ret;
+import io.github.yedaxia.apidocs.ApiDoc;
 
 import java.util.List;
 
@@ -49,6 +52,7 @@ public class FormApprovalApiController extends BaseApiController {
      * @param className      实现审批通过业务的类名
      * @param permissionKey  单据提审权限key
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_SUBMIT)
     public void submit(@Para(value = "formSn") String formSn,
                        @Para(value = "formAutoId") Long formAutoId,
@@ -91,6 +95,7 @@ public class FormApprovalApiController extends BaseApiController {
      * @param className      实现审批通过业务的类名
      * @param remark         审批意见
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_APPROVE)
     public void approve(@Para(value = "formAutoId") Long formAutoId,
                         @Para(value = "formSn") String formSn,
@@ -127,6 +132,7 @@ public class FormApprovalApiController extends BaseApiController {
      * @param className      处理审批的Service类名
      * @param remark         审批意见
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_REJECT)
     public void reject(@Para(value = "formAutoId") Long formAutoId,
                        @Para(value = "formSn") String formSn,
@@ -159,6 +165,7 @@ public class FormApprovalApiController extends BaseApiController {
      * @param className      处理审批的Service类名
      * @param remark         审批意见
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_REVERSEAPPROVE)
     public void reverseApprove(@Para(value = "formAutoId") Long formAutoId,
                                @Para(value = "formSn") String formSn,
@@ -183,6 +190,7 @@ public class FormApprovalApiController extends BaseApiController {
      * @param primaryKeyName 单据主键名称
      * @param className      实现审批通过的业务类名
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_BATCH_APPROVE)
     public void batchApprove(@Para(value = "ids") String ids,
                              @Para(value = "formSn") String formSn,
@@ -204,6 +212,7 @@ public class FormApprovalApiController extends BaseApiController {
      * @param primaryKeyName 单据主键名称
      * @param className      实现审批通过的业务类名
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_BATCH_REJECT)
     public void batchReject(@Para(value = "ids") String ids,
                             @Para(value = "formSn") String formSn,
@@ -238,11 +247,12 @@ public class FormApprovalApiController extends BaseApiController {
 
     /**
      * 批量撤销审批
-     *
      * @param ids            单据ID
      * @param formSn         表名
      * @param primaryKeyName 单据主键名称
+     * @param className      实现审批通过的业务类名
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_BATCH_BACKOUT)
     public void batchBackOut(@Para(value = "ids") String ids,
                              @Para(value = "formSn") String formSn,
@@ -279,6 +289,7 @@ public class FormApprovalApiController extends BaseApiController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_AUDIT)
     public void approveByStatus(@Para(value = "formSn") String formSn,
                                 @Para(value = "formAutoId") Long formAutoId,
@@ -304,6 +315,7 @@ public class FormApprovalApiController extends BaseApiController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_REJECT_AUDIT)
     public void rejectByStatus(@Para(value = "formSn") String formSn,
                                @Para(value = "formAutoId") Long formAutoId,
@@ -329,6 +341,7 @@ public class FormApprovalApiController extends BaseApiController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_REVERSE_AUDIT)
     public void reverseApproveByStatus(@Para(value = "formSn") String formSn,
                                        @Para(value = "formAutoId") Long formAutoId,
@@ -354,6 +367,7 @@ public class FormApprovalApiController extends BaseApiController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_BATCH_AUDIT)
     public void batchApproveByStatus(@Para(value = "ids") String ids,
                                      @Para(value = "formSn") String formSn,
@@ -379,6 +393,7 @@ public class FormApprovalApiController extends BaseApiController {
      * @param className      实现审批通过的业务类名
      * @param permissionKey  权限key
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_BATCH_REJECT_AUDIT)
     public void batchRejectByStatus(@Para(value = "ids") String ids,
                                     @Para(value = "formSn") String formSn,
@@ -401,6 +416,7 @@ public class FormApprovalApiController extends BaseApiController {
      * @param formAutoId 单据ID
      * @param size       人数
      */
+    @ApiDoc(result = FormApprovalVo.class)
     public void approvalProcessUsers(@Para(value = "formAutoId") Long formAutoId,
                                      @Para(value = "size", defaultValue = "5") Integer size) {
         ValidationUtils.validateId(formAutoId, "formAutoId");
@@ -410,7 +426,13 @@ public class FormApprovalApiController extends BaseApiController {
 
     /**
      * 撤回审核、审批
+     * @param formAutoId     单据IDs
+     * @param formSn         表单
+     * @param primaryKeyName 单据主键名称
+     * @param className      实现审批通过的业务类名
+     * @param permissionKey  权限key
      */
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.FORM_APP_WITHDRAW)
     public void withdraw(@Para(value = "formAutoId") Long formAutoId,
                          @Para(value = "formSn") String formSn,

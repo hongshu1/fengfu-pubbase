@@ -17,6 +17,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
+import cn.rjtech.admin.weekorderm.WeekOrderMService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
@@ -55,7 +56,8 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     private CusOrderSumService cusOrderSumService;
     @Inject
     private FormApprovalService formApprovalService;
-
+    @Inject
+    private WeekOrderMService weekOrderMService;
     @Override
     protected Subcontractsaleorderm dao() {
         return dao;
@@ -67,12 +69,17 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
         para.set("iorgid", getOrgId());
         Page<Record> pageList = dbTemplate("subcontractsaleorderm.paginateAdminDatas", para).paginate(pageNumber, pageSize);
-        for (Record row : pageList.getList()) {
+        List<Record> list = pageList.getList();
+        for (Record row : list) {
             Dept dept = deptService.findById(row.getLong("idepartmentid"));
             row.set("cdepname", dept == null ? null : dept.getName());
             row.set("cbususername", JBoltUserCache.me.getUserName(row.getLong("iBusPersonId")));
             row.set("ccurrencyname", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.ccurrency.name(), row.getStr("cCurrency")));
         }
+        weekOrderMService.change(list);
+        pageList.setList(list);
+
+
         return pageList;
     }
 
