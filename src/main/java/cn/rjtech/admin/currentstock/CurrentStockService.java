@@ -8,7 +8,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.stockcheckdetail.StockCheckDetailService;
 import cn.rjtech.admin.stockcheckvouchbarcode.StockCheckVouchBarcodeService;
 import cn.rjtech.admin.stockcheckvouchdetail.StockCheckVouchDetailService;
 import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
@@ -25,6 +24,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -58,11 +58,11 @@ public class CurrentStockService  extends BaseService<StockCheckVouch> implement
 	@Inject
 	StockCheckVouchBarcodeService stockCheckVouchBarcodeService;//T_Sys_StockCheckVouchBarcode(库存盘点-条码明细)
 
-	@Inject
-	StockCheckDetailService stockCheckDetailService;//todo 弃用，请改为stockCheckVouchDetailService查询
 
 	@Inject
 	UserService userService;
+
+
 
 
 	public Page<Record> datas(Integer pageNumber, Integer pageSize, Kv kv) {
@@ -113,6 +113,29 @@ public class CurrentStockService  extends BaseService<StockCheckVouch> implement
 		return list;
 	}
 
+	/**
+	 * 盘点条码 明细
+	 * @param kv
+	 * @return
+	 */
+	public List<Record> getStockCheckVouchBarcodeLines(Kv kv){
+		return dbTemplate("currentstock.getStockCheckVouchBarcodeLines",kv).find();
+	}
+
+	/**
+	 * 获取条码列表
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	public Record barcode(Kv kv) {
+////		先查询条码是否已添加
+		Record first = dbTemplate("currentstock.barcodeDatas", kv).findFirst();
+		if(null == first){
+			ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "该现品票没有库存！！！");
+		}
+		return first;
+	}
+
 
 	/**
 	 * 盘点单物料清单列表
@@ -121,123 +144,34 @@ public class CurrentStockService  extends BaseService<StockCheckVouch> implement
 		String isApp = kv.getStr("isapp");
 		kv.set("orgcode",getOrgCode());
 
-		List<Record> list=new ArrayList<>();
-		if("1".equals(isApp)){
-			list = invAppDatas(kv);
-		}else{
+		//多个库区处理
+		String poscodes = kv.getStr("poscodes");
+		String[] split = poscodes.split(",");
+		String str="";
+		for (int i = 0; i < split.length; i++) {
+			if(i==split.length-1){
+				str =str+"'" + split[i] +"'";
+				break;
+			}
+			str = str+"'" + split[i] +"',";
+		}
+		kv.setIfNotNull("poscode",str);
+		List<Record> list= new ArrayList<>();
+
 			list= invTotalDatas(kv);
-		}
 		return list;
 	}
 
 
 
-	/**
-	 * 盘点单物料清单列表
-	 * */
-	public List<Record> invAppDatas(Kv kv) {
-		List<Record> list= dbTemplate("currentstock.invDatas", kv).find();
-		String mid = kv.getStr("mid");
-		//查询后迭代出想要的,减少查询次数
-		List<StockCheckDetail> barcodeList = stockCheckDetailService.findByMasid_app(mid);
-		for (Record record : list) {
-			String did = record.getLong("autoid").toString();
-			BigDecimal qty = record.getBigDecimal("qty");
 
-			List<StockCheckDetail> stockcheckdetailList = new ArrayList<>();
-			for (StockCheckDetail stockcheckdetail : barcodeList) {
-				String sourceID = stockcheckdetail.getSourceID();
-				if(StringUtils.isNotBlank(sourceID)&&did.equals(sourceID)){
-					stockcheckdetailList.add(stockcheckdetail);
-				}
-			}
-
-			//合计真实数量
-			BigDecimal totalRealQty=BigDecimal.ZERO;
-			//合计调整数量
-			BigDecimal totalAdjustQty=BigDecimal.ZERO;
-
-
-
-			//核心逻辑,迭代然后计算盈亏数量
-			for (StockCheckDetail model : stockcheckdetailList) {
-				BigDecimal modelRealQty = model.getRealQty();
-				BigDecimal modelAdjustQty = model.getAdjustQty();
-				BigDecimal modelQty = model.getQty();
-
-				if(modelAdjustQty!=null){
-					//如果调整数量不为空,则 盘点数量=库存数量+盈亏数量
-					modelRealQty=modelAdjustQty.add(modelQty);
-				}
-				totalRealQty=totalRealQty.add(modelRealQty);
-			}
-
-			if(totalRealQty.compareTo(BigDecimal.ZERO)==1){
-				//大于0
-				record.set("totalRealQty",totalRealQty);
-				record.set("isiqc1",totalRealQty.subtract(qty));
-				record.set("status","已盘点");
-			}else {
-				record.set("status","未盘点");
-			}
-
-
-		}
-
-		return list;
-	}
 
 
 	/**
 	 * 盘点单物料清单列表
 	 * */
 	public List<Record> invTotalDatas(Kv kv) {
-		List<Record> list= dbTemplate("currentstock.invDatas", kv).find();
-		String mid = kv.getStr("mid");
-		//查询后迭代出想要的,减少查询次数
-		List<StockCheckDetail> barcodeList = stockCheckDetailService.findByMasid(mid);
-		for (Record record : list) {
-			String did = record.getLong("autoid").toString();
-			BigDecimal qty = record.getBigDecimal("qty");
-
-			List<StockCheckDetail> stockcheckdetailList = new ArrayList<>();
-			for (StockCheckDetail stockcheckdetail : barcodeList) {
-				String sourceID = stockcheckdetail.getSourceID();
-				if(StringUtils.isNotBlank(sourceID)&&did.equals(sourceID)){
-					stockcheckdetailList.add(stockcheckdetail);
-				}
-			}
-
-			//合计真实数量
-			BigDecimal totalRealQty=BigDecimal.ZERO;
-			//合计调整数量
-			BigDecimal totalAdjustQty=BigDecimal.ZERO;
-
-
-
-			//核心逻辑,迭代然后计算盈亏数量
-			for (StockCheckDetail model : stockcheckdetailList) {
-				BigDecimal modelRealQty = model.getRealQty();
-				BigDecimal modelAdjustQty = model.getAdjustQty();
-				BigDecimal modelQty = model.getQty();
-
-				if(modelAdjustQty!=null){
-					//如果调整数量不为空,则 盘点数量=库存数量+盈亏数量
-					modelRealQty=modelAdjustQty.add(modelQty);
-				}
-				totalRealQty=totalRealQty.add(modelRealQty);
-			}
-
-			if(totalRealQty.compareTo(BigDecimal.ZERO)==1){
-				//大于0
-				record.set("totalRealQty",totalRealQty);
-				record.set("isiqc1",totalRealQty.subtract(qty));
-				record.set("status","已盘点");
-			}else {
-				record.set("status","未盘点");
-			}
-		}
-
+		List<Record> list = dbTemplate("currentstock.paginateAdminDatas", kv).find();
 		return list;
 	}
 
