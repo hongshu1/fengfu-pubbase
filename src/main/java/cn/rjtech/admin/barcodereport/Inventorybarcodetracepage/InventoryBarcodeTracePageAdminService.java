@@ -1,13 +1,12 @@
 package cn.rjtech.admin.barcodereport.Inventorybarcodetracepage;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.util.JBoltRandomUtil;
 import cn.rjtech.base.service.view.BaseU9ViewService;
 import cn.rjtech.constants.DataSourceConstants;
-import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
-
 import com.jfinal.plugin.activerecord.Record;
 
 import java.sql.CallableStatement;
@@ -68,8 +67,7 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
      * 获取打印数据
      */
     public List<Record> PrintData(int pageSize, int pageNumber, Kv kv){
-        List<Record> list = getBarcodeTotalList(DataSourceConstants.U8,kv);
-        return list;
+        return getBarcodeTotalList(DataSourceConstants.U8,kv);
     }
 
         /**
@@ -78,9 +76,7 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
         public List<Record> getBarcodeTotalList(String dataSourceConfigName,Kv para) {
             String tempTableName = buildTempdb(dataSourceConfigName,para);
 
-            List<Record> list = excuteBarcodeTracePage(dataSourceConfigName, tempTableName);
-
-            return list;
+            return excuteBarcodeTracePage(dataSourceConfigName, tempTableName);
         }
 
     /**
@@ -178,7 +174,7 @@ public class InventoryBarcodeTracePageAdminService extends BaseU9ViewService {
 
 
 
-            if(StringUtils.isNotBlank(parmsKey)){
+            if(StrUtil.isNotBlank(parmsKey)){
                 record.set("ParmsKey",parmsKey ).set("ParmsValue", parmsValue);
                 records.add(record);
             }

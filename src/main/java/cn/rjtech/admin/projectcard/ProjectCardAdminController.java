@@ -85,5 +85,12 @@ public class ProjectCardAdminController extends BaseAdminController {
 	public void toggleIsfreeze(){
 		renderJson(service.toggleIsfreeze(getLong(0)));
 	}
-
+	/**
+	 * 切换是否完成
+	 * */
+	public void toggleIsFinish(){
+		String ccode = getKv().getStr("ccode");
+		Integer istatus = getKv().getInt("istatus");
+		renderJson(service.toggleIsFinish(ccode,istatus));
+	}
 }

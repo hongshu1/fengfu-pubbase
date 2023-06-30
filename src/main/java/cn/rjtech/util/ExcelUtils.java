@@ -1,8 +1,8 @@
 package cn.rjtech.util;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.poi.excel.JBoltExcelMerge;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -39,7 +39,7 @@ public class ExcelUtils {
                     String currentValue = records.get(i).getStr(colValue);
                     String saveValue = values.get(colValue);
                     Map<String, Integer> columnInfo = mergeColumns.get(col);
-                    if(StringUtils.equalsIgnoreCase(currentValue,saveValue)){
+                    if(StrUtil.equalsIgnoreCase(currentValue,saveValue)){
                         //相邻值相等
                         columnInfo.put("lastRow",columnInfo.get("lastRow")+1);
                         //判断是否是最后一行 如果是也要输出

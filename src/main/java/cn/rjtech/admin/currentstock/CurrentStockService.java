@@ -1,10 +1,10 @@
 package cn.rjtech.admin.currentstock;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
-
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -13,11 +13,12 @@ import cn.rjtech.admin.stockcheckvouchbarcode.StockCheckVouchBarcodeService;
 import cn.rjtech.admin.stockcheckvouchdetail.StockCheckVouchDetailService;
 import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.StockCheckDetail;
+import cn.rjtech.model.momdata.StockCheckVouch;
+import cn.rjtech.model.momdata.StockCheckVouchDetail;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
@@ -27,8 +28,9 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 盘点单Service
@@ -50,7 +52,6 @@ public class CurrentStockService  extends BaseService<StockCheckVouch> implement
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
-	Logger log = Logger.getLogger("CurrentStockService");
 	@Inject
 	StockChekVouchService stockChekVouchService; //盘点单主表
 	@Inject
@@ -147,7 +148,7 @@ public class CurrentStockService  extends BaseService<StockCheckVouch> implement
 			List<StockCheckDetail> stockcheckdetailList = new ArrayList<>();
 			for (StockCheckDetail stockcheckdetail : barcodeList) {
 				String sourceID = stockcheckdetail.getSourceID();
-				if(StringUtils.isNotBlank(sourceID)&&did.equals(sourceID)){
+				if(StrUtil.isNotBlank(sourceID)&&did.equals(sourceID)){
 					stockcheckdetailList.add(stockcheckdetail);
 				}
 			}
@@ -203,7 +204,7 @@ public class CurrentStockService  extends BaseService<StockCheckVouch> implement
 			List<StockCheckDetail> stockcheckdetailList = new ArrayList<>();
 			for (StockCheckDetail stockcheckdetail : barcodeList) {
 				String sourceID = stockcheckdetail.getSourceID();
-				if(StringUtils.isNotBlank(sourceID)&&did.equals(sourceID)){
+				if(StrUtil.isNotBlank(sourceID)&&did.equals(sourceID)){
 					stockcheckdetailList.add(stockcheckdetail);
 				}
 			}
@@ -504,7 +505,7 @@ public class CurrentStockService  extends BaseService<StockCheckVouch> implement
 //				}
 //			}
 //
-//			if(StringUtils.isEmpty(poscodeSql)){
+//			if(StrUtil.isBlank(poscodeSql)){
 //				poscodeSql=null;
 //			}
 //			String whCode = stockcheckvouch.getWhCode();

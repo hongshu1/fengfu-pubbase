@@ -17,7 +17,6 @@ import cn.rjtech.common.model.Barcodemaster;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -86,7 +85,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     public void detailDatas() {
         Kv kv = getKv();
         Long aLong = getLong(0);
-        if (StringUtils.isBlank(kv.getStr("masid"))) {
+        if (StrUtil.isBlank(kv.getStr("masid"))) {
             renderJsonData(null);
             return;
         }
@@ -226,7 +225,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         ValidationUtils.notBlank(type, JBoltMsg.PARAM_ERROR);
         // 部品存货id
         String cwhcode = "";
-        if (StringUtils.isNotBlank(get("cwhcode"))) {
+        if (StrUtil.isNotBlank(get("cwhcode"))) {
             cwhcode = get("cwhcode");
             Warehouse warehouse = warehouseService.findByWhCode(cwhcode);
             set("cwhcode", warehouse.getCWhCode());
@@ -239,7 +238,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         ValidationUtils.notBlank(index, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notBlank(type, JBoltMsg.PARAM_ERROR);
         // 部品存货id
-        if (StringUtils.isNotBlank(get("careacode"))) {
+        if (StrUtil.isNotBlank(get("careacode"))) {
             set("careacode", get("careacode"));
         }
         keepPara();
@@ -250,7 +249,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         ValidationUtils.notBlank(index, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notBlank(type, JBoltMsg.PARAM_ERROR);
         // 部品存货id
-        if (StringUtils.isNotBlank(get("cvencode"))) {
+        if (StrUtil.isNotBlank(get("cvencode"))) {
             set("cvencode", get("cvencode"));
         }
         keepPara();

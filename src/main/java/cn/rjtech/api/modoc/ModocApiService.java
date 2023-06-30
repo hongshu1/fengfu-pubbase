@@ -1,8 +1,8 @@
 package cn.rjtech.api.modoc;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
-import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.modoc.MoDocService;
@@ -14,15 +14,12 @@ import cn.rjtech.admin.workshiftm.WorkshiftmService;
 import cn.rjtech.entity.vo.modoc.ModocApiPage;
 import cn.rjtech.entity.vo.modoc.ModocApiResVo;
 import cn.rjtech.model.momdata.*;
-import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
-import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 public class ModocApiService extends JBoltApiBaseService {
@@ -103,19 +100,19 @@ public class ModocApiService extends JBoltApiBaseService {
       Inventory inventory = inventoryService.findById(moDoc.getIInventoryId());
       if (inventory != null) {
         //料品编码
-        if (StringUtils.isNotBlank(inventory.getCInvCode())) {
+        if (StrUtil.isNotBlank(inventory.getCInvCode())) {
           moRecod.set("cinvcode", inventory.getCInvCode());
         } else {
           moRecod.set("cinvcode", "");
         }
         //客户部番
-        if (StringUtils.isNotBlank(inventory.getCInvCode1())) {
+        if (StrUtil.isNotBlank(inventory.getCInvCode1())) {
           moRecod.set("cinvcode1", inventory.getCInvCode1());
         } else {
           moRecod.set("cinvcode1", "");
         }
         //部品名称
-        if (StringUtils.isNotBlank(inventory.getCInvName1())) {
+        if (StrUtil.isNotBlank(inventory.getCInvName1())) {
           moRecod.set("cinvname1", inventory.getCInvName1());
         } else {
           moRecod.set("cinvname1", "");
@@ -143,7 +140,7 @@ public class ModocApiService extends JBoltApiBaseService {
     if (isOk(moDoc.getIWorkRegionMid())) {
       Workregionm workregionm = workregionmService.findById(moDoc.getIWorkRegionMid());
       if (workregionm != null) {
-        if (StringUtils.isNotBlank(workregionm.getCWorkName())) {
+        if (StrUtil.isNotBlank(workregionm.getCWorkName())) {
           moRecod.set("cworkname", workregionm.getCWorkName());
         } else {
 
@@ -160,7 +157,7 @@ public class ModocApiService extends JBoltApiBaseService {
     if (isOk(moDoc.getIWorkShiftMid())) {
       Workshiftm workshiftm = workshiftmService.findById(moDoc.getIWorkShiftMid());
       if (workshiftm != null) {
-        if (StringUtils.isNotBlank(workshiftm.getCworkshiftname())) {
+        if (StrUtil.isNotBlank(workshiftm.getCworkshiftname())) {
           moRecod.set("cworkshiftname", workshiftm.getCworkshiftname());
         } else {
           moRecod.set("cworkshiftname", "");
@@ -175,7 +172,7 @@ public class ModocApiService extends JBoltApiBaseService {
     if (isOk(moDoc.getIDepartmentId())) {
       Department department = departmentService.findById(moDoc.getIDepartmentId());
       if (department != null) {
-        if (StringUtils.isNotBlank(department.getCDepName())) {
+        if (StrUtil.isNotBlank(department.getCDepName())) {
           moRecod.set("cdepname", department.getCDepName());
         } else {
           moRecod.set("cdepname", "");
@@ -213,7 +210,7 @@ public class ModocApiService extends JBoltApiBaseService {
         modocApiPag.setcInvCode1(inventory.getCInvCode1());
 
         //部品名称
-        if (StringUtils.isNotBlank(inventory.getCInvName1())) {
+        if (StrUtil.isNotBlank(inventory.getCInvName1())) {
           modocApiPag.setcInvName1(inventory.getCInvName1());
         } else {
           modocApiPag.setcInvName1("");

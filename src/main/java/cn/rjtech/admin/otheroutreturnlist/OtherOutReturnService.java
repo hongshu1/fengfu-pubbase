@@ -23,7 +23,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.json.JSONArray;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -379,7 +378,7 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 		preallocate.set("tag","OtherOut");
 		preallocate.set("type","OtherOut");
 
-		data.put("PreAllocate",preallocate);
+		data.set("PreAllocate",preallocate);
 
 		ArrayList<Object> maindata = new ArrayList<>();
 		otheroutdetail.stream().forEach(s -> {

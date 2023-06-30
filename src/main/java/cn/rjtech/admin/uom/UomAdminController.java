@@ -1,6 +1,7 @@
 package cn.rjtech.admin.uom;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -18,7 +19,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,7 +150,7 @@ public class UomAdminController extends JBoltBaseController {
             return;
         }
         for (Record record : data) {
-            record.put("isbase", StringUtils.equals("1", record.getStr("isbase")) ? "是" : "否");
+            record.put("isbase", StrUtil.equals("1", record.getStr("isbase")) ? "是" : "否");
         }
         renderJxls("uom.xlsx", Kv.by("rows", data), "计量单位(选中导出)_" + DateUtil.today() + ".xlsx");
     }
@@ -168,7 +168,7 @@ public class UomAdminController extends JBoltBaseController {
             return;
         }
         for (Record record : rows) {
-            record.put("isbase", StringUtils.equals("1", record.getStr("isbase")) ? "是" : "否");
+            record.put("isbase", StrUtil.equals("1", record.getStr("isbase")) ? "是" : "否");
         }
         renderJxls("uom.xlsx", Kv.by("rows", rows), "计量单位_" + DateUtil.today() + ".xlsx");
     }

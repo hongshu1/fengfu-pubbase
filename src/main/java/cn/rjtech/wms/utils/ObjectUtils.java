@@ -5,7 +5,6 @@ package cn.rjtech.wms.utils;
 
 import com.beust.jcommander.ParameterException;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.nustaq.serialization.FSTConfiguration;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.NamedThreadLocal;

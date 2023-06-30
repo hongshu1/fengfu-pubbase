@@ -1,5 +1,6 @@
 package cn.rjtech.admin.momaterialsreturnm;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -120,7 +121,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
 	 * 审核
 	 */
 	public void approve(String iAutoId,Integer mark) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(iAutoId)) {
+		if (StrUtil.isBlank(iAutoId)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
@@ -131,7 +132,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
 	 * 反审核
 	 */
 	public void NoApprove(String ids) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(ids)) {
+		if (StrUtil.isBlank(ids)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}

@@ -19,7 +19,6 @@ import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
-import cn.rjtech.model.momdata.SysPureceive;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -30,7 +29,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.json.JSONArray;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -362,7 +360,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
         data.put("PreAllocate",preallocate);
 
         ArrayList<Object> maindata = new ArrayList<>();
-        sysproductindetail.stream().forEach(s -> {
+        sysproductindetail.forEach(s -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("Tag","ProductionIn");
             jsonObject.set("BillDate",sysproductin.getBillDate());

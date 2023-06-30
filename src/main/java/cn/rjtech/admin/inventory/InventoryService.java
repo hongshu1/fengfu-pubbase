@@ -49,7 +49,6 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -127,7 +126,7 @@ public class InventoryService extends BaseService<Inventory> {
             kv.remove("iInventoryClassId");
         }
         String iInventoryClassCode = kv.getStr("iInventoryClassCode");
-        if (StringUtils.isNotBlank(iInventoryClassCode)) {
+        if (StrUtil.isNotBlank(iInventoryClassCode)) {
             if (!iInventoryClassCode.contains("["))
                 kv.remove("iInventoryClassCode");
             else
@@ -186,7 +185,7 @@ public class InventoryService extends BaseService<Inventory> {
     public Inventory setIItemAttribute(Inventory inventory) {
         String itemAttributes = inventory.getItemAttributes();
         String[] itemAttribute = null;
-        if (StringUtils.isNotBlank(itemAttributes)) {
+        if (StrUtil.isNotBlank(itemAttributes)) {
             itemAttribute = itemAttributes.split(",");
         }
         List<Dictionary> dictionaries = dictionaryService.getOptionListByTypeKey("iItem_attribute_column");
@@ -1014,7 +1013,7 @@ public class InventoryService extends BaseService<Inventory> {
             String cInvCode1 = kv.getStr("cinvcode1");
             String cInvName1 = kv.getStr("cinvname1");
             String cInvStd = kv.getStr("cinvstd");
-            if (StringUtils.isBlank(cInvName1)) {
+            if (StrUtil.isBlank(cInvName1)) {
                 return inventories;
             }
             inventory.put("iautoid", inventoryId);

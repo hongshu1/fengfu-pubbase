@@ -2,6 +2,7 @@ package cn.rjtech.admin.person;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -36,7 +37,6 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -445,7 +445,7 @@ public class PersonService extends BaseService<Person> {
         if (notNull(value)) {
             if (notNull(key)) {
                 List<Dictionary> list = JBoltDictionaryCache.me.getListByTypeKey(key, true);
-                Dictionary find = list.stream().filter(dictionary -> StringUtils.equalsIgnoreCase(dictionary.getSn(), String.valueOf(value))).findFirst().orElse(null);
+                Dictionary find = list.stream().filter(dictionary -> StrUtil.equalsIgnoreCase(dictionary.getSn(), String.valueOf(value))).findFirst().orElse(null);
                 return find == null ? null : find.getName();
             }
         }
