@@ -18,7 +18,7 @@ import cn.rjtech.model.momdata.UptimeM;
  * @author: chentao
  * @date: 2023-06-28 10:30
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.UPTIMEM)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/uptimem", viewPath = "/_view/admin/uptimem")
 public class UptimeMAdminController extends BaseAdminController {
