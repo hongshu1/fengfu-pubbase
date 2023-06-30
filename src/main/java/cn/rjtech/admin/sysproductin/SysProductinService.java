@@ -19,6 +19,8 @@ import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
+import cn.rjtech.model.momdata.SysPureceive;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -39,7 +41,7 @@ import java.util.*;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-08 09:56
  */
-public class SysProductinService extends BaseService<SysProductin> {
+public class SysProductinService extends BaseService<SysProductin> implements IApprovalService {
     private final SysProductin dao = new SysProductin().dao();
 
     @Override
@@ -167,6 +169,15 @@ public class SysProductinService extends BaseService<SysProductin> {
      */
     public Ret deleteRmRdByIds(String ids) {
         tx(() -> {
+            List<SysProductin> sysProductins = find("select *  from T_Sys_ProductIn where AutoID in (" + ids + ")");
+            for (SysProductin s : sysProductins) {
+                if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
+                }
+                if(s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                    ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
+                }
+            }
             deleteByIds(ids);
             String[] split = ids.split(",");
             for (String s : split) {
@@ -184,6 +195,13 @@ public class SysProductinService extends BaseService<SysProductin> {
      */
     public Ret delete(Long id) {
         tx(() -> {
+            SysProductin first = findFirst("select *  from T_Sys_ProductIn where AutoID in (" + id + ")");
+            if (!"0".equals(String.valueOf(first.getIAuditStatus()))) {
+                ValidationUtils.isTrue(false, "编号：" + first.getBillNo() + "单据状态已改变，不可删除！");
+            }
+            if(first.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + first.getCcreatename() + " 不可删除!!!");
+            }
             deleteById(id);
             delete("DELETE T_Sys_ProductInDetail   where  MasID = ?", id);
             return true;
@@ -317,24 +335,24 @@ public class SysProductinService extends BaseService<SysProductin> {
 
 
 
-    //推送u8数据接口
-    public Ret pushU8(SysProductin sysproductin, List<SysProductindetail> sysproductindetail) {
+    //推送u8数据接口,返回 null 表示成功
+    public String pushU8(SysProductin sysproductin, List<SysProductindetail> sysproductindetail) {
         if(!CollectionUtils.isNotEmpty(sysproductindetail)){
-            return Ret.ok().msg("数据不能为空");
+            return "从表数据不能为空";
         }
 
         User user = JBoltUserKit.getUser();
         JSONObject data = new JSONObject();
 
         data.set("userCode",user.getUsername());
-        data.set("organizeCode",this.getdeptid());
+        data.set("organizeCode",getOrgCode());
         data.set("token","");
 
         JSONObject preallocate = new JSONObject();
 
 
         preallocate.set("userCode",user.getUsername());
-        preallocate.set("organizeCode",this.getdeptid());
+        preallocate.set("organizeCode",getOrgCode());
         preallocate.set("CreatePerson",user.getUsername());
         preallocate.set("CreatePersonName",user.getName());
         preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
@@ -348,7 +366,7 @@ public class SysProductinService extends BaseService<SysProductin> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("Tag","ProductionIn");
             jsonObject.set("BillDate",sysproductin.getBillDate());
-            jsonObject.set("organizecode",this.getdeptid());
+            jsonObject.set("organizecode",getOrgCode());
             jsonObject.set("iwhcode",sysproductin.getWhcode());
             jsonObject.set("iposcode",s.getPosCode());
             jsonObject.set("iposname","");
@@ -377,7 +395,7 @@ public class SysProductinService extends BaseService<SysProductin> {
             jsonObject.set("vencode",sysproductin.getVenCode());
             jsonObject.set("encodingname","产成品条码");
             jsonObject.set("encodingcode","ProductionBarCode");
-            jsonObject.set("IDeptCode",this.getdeptid());
+            jsonObject.set("IDeptCode",getOrgCode());
             jsonObject.set("IRdType","101");
             jsonObject.set("IRdName","生产入库");
             jsonObject.set("IRdCode","101");
@@ -396,13 +414,13 @@ public class SysProductinService extends BaseService<SysProductin> {
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
                 if ("201".equals(jsonObject.getString("code"))) {
-                    return Ret.ok().setOk().data(jsonObject);
+                    return null;
                 }
             }
         }catch (Exception e){
             e.printStackTrace();
         }
-        return fail("上传u8失败");
+        return "上传u8失败";
     }
 
 
@@ -470,44 +488,6 @@ public class SysProductinService extends BaseService<SysProductin> {
         return SUCCESS;
     }
 
-    /**
-     * 审核通过
-     */
-    public Ret process(String ids) {
-        tx(() -> {
-            this.check(ids);
-            String[] split = ids.split(",");
-            for (String s : split) {
-                SysProductin byId = findById(s);
-                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-                byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                byId.update();
-            }
-            //业务逻辑
-            this.passage(ids);
-            return true;
-        });
-        return SUCCESS;
-    }
-    /**
-     * 批量反审核
-     */
-    public Ret noProcess(String ids) {
-        tx(() -> {
-            //反审，调用删除U8数据接口
-            String[] split = ids.split(",");
-            for (String s : split) {
-                SysProductin byId = findById(s);
-                byId.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-                byId.setIAuditWay(null);
-                byId.update();
-            }
-
-            return true;
-        });
-        return SUCCESS;
-    }
-
 
     public void check(String ids) {
         String[] split = ids.split(",");
@@ -515,10 +495,10 @@ public class SysProductinService extends BaseService<SysProductin> {
             List<SysProductin> SysProductin = find("select *  from T_Sys_ProductIn where AutoID in (" + p + ")");
             for (SysProductin s : SysProductin) {
                 if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据未提交审核或审批！！");
+                    ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + "单据未提交审核或审批！！");
                 }
                 if ("2".equals(String.valueOf(s.getIAuditStatus())) || "3".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "流程已结束！！");
+                    ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + "流程已结束！！");
                 }
             }
         }
@@ -532,7 +512,7 @@ public class SysProductinService extends BaseService<SysProductin> {
             List<SysProductindetail> sysProductindetails = sysproductindetailservice.find("select *  from T_Sys_ProductInDetail where MasID in (" + sysProductin.getAutoID() + ")");
             // 测试调用接口
             System.out.println("```````````````````````````````"+ new Date());
-            Ret ret = pushU8(sysProductin, sysProductindetails);
+            String ret = pushU8(sysProductin, sysProductindetails);
             System.out.println(new Date()+"```````````````````````````````"+ret);
         }
 
@@ -543,15 +523,30 @@ public class SysProductinService extends BaseService<SysProductin> {
             List<SysProductin> sysProductins = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
             for (SysProductin s : sysProductins) {
                 if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！");
+                    ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！");
                 }
                 if ("1".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！");
+                    ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！");
                 }
 
             }
         }
     }
+    public String checkbelow(Long formAutoId) {
+
+        List<SysProductin> sysProductins = find("select *  from T_Sys_PUReceive where AutoID in (" + formAutoId + ")");
+        for (SysProductin s : sysProductins) {
+            if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
+                return "编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！";
+            }
+            if ("1".equals(String.valueOf(s.getIAuditStatus()))) {
+                return "编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！";
+            }
+
+        }
+        return null;
+    }
+
 
 
     /**
@@ -579,4 +574,118 @@ public class SysProductinService extends BaseService<SysProductin> {
         return first;
     }
 
+    /**
+     * todo  审核通过
+     */
+    @Override
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        return this.passagetwo(formAutoId);
+    }
+
+    /**
+     * 审核不通过
+     */
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+        return null;
+    }
+
+    /**
+     * todo 实现反审之前的其他业务操作，如有异常返回错误信息
+     */
+    @Override
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        String checkbelowtwo =null;
+        //最后一个节点才判断下游单据状态
+        if (isLast) {
+            checkbelowtwo = this.checkbelow(formAutoId);
+        }
+        return checkbelowtwo;
+    }
+
+    /**
+     * todo 实现反审之后的其他业务操作, 如有异常返回错误信息
+     */
+    @Override
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    /**
+     * 提审前业务，如有异常返回错误信息
+     */
+    @Override
+    public String preSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 提审后业务处理，如有异常返回错误信息
+     */
+    @Override
+    public String postSubmitFunc(long formAutoId) {
+        return null;
+    }
+    /**
+     * 撤回审核业务处理，如有异常返回错误信息，没走完的，不用做业务出来
+     */
+    @Override
+    public String postWithdrawFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 从审批中，撤回到已保存，业务实现，如有异常返回错误信息
+     */
+    @Override
+    public String withdrawFromAuditting(long formAutoId) {
+        return null;
+    }
+
+    /**
+     *  todo 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
+     */
+    @Override
+    public String preWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * todo 从已审核，撤回到已保存，业务实现，如有异常返回错误信息
+     */
+    @Override
+    public String postWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * todo 批量审核（审批）通过，后置业务实现
+     */
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        return null;
+    }
+
+    /**
+     * 批量审批（审核）不通过，后置业务实现
+     */
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        return null;
+    }
+
+    /**
+     * todo 批量撤销审批，后置业务实现，需要做业务出来
+     */
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        return null;
+    }
+
+    public String passagetwo(long formAutoId){
+        SysProductin byId = findById(formAutoId);
+        List<SysProductindetail> firstBy = sysproductindetailservice.findFirstBy(byId.getAutoID());
+        ;
+        return this.pushU8(byId,firstBy);
+    }
 }
