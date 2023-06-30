@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.CustomerWorkDays;
@@ -41,6 +42,7 @@ public class CustomerWorkDaysAdminController extends BaseAdminController {
 	/**
 	 * 根据客户主键获取数据
 	 */
+    @UnCheck
 	public void getList(){
 		renderJsonData(service.getList(getKv()));
 	}

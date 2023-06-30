@@ -69,6 +69,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.pageList(getPageNumber(), getPageSize(), getKv()));
     }
@@ -220,14 +221,17 @@ public class WorkregionmAdminController extends JBoltBaseController {
         renderJsonData(service.selectWorkRegionMList());
     }
 
+    @UnCheck
     public void findByWarehouse() {
         renderJsonData(warehouseService.findByWarehouse());
     }
 
+    @UnCheck
     public void findByWareHouseId() {
         renderJsonData(warehouseAreaService.findByWareHouseId(getLong("iWarehouseId")));
     }
 
+    @UnCheck
     public void findPersonPage() {
         renderJsonData(personService.paginateDatas(getPageNumber(), getPageSize(), getKv()));
     }

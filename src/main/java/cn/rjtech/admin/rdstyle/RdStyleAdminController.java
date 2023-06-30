@@ -148,6 +148,7 @@ public class RdStyleAdminController extends BaseAdminController {
     /**
      * 销售类型_新增_出库
      */
+    @UnCheck
     public void getSaleType() {
         renderJsonData(service.getSaleType(true, true));
     }
@@ -155,6 +156,7 @@ public class RdStyleAdminController extends BaseAdminController {
     /**
      * 采购类型_新增_入库
      */
+    @UnCheck
     public void getPurchaseType() {
         renderJsonData(service.getPurchaseType(true, true));
     }

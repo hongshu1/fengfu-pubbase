@@ -6,6 +6,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -981,18 +982,19 @@ public class MoDocService extends BaseService<MoDoc> {
     return SUCCESS;
   }
 
-  /**
-   * 获取工单对应产线关联所属仓库信息
-   *
-   * @param imdcocid
-   */
-  public void getModocWarehouse(Long imdcocid) {
-    MoDoc moDoc = findById(imdcocid);
-    //获取产线
-    if (moDoc != null) {
+    /**
+     * 获取工单对应产线关联所属仓库信息
+     *
+     * @param imdcocid
+     */
+    @UnCheck
+    public void getModocWarehouse(Long imdcocid) {
+        MoDoc moDoc = findById(imdcocid);
+        //获取产线
+        if (moDoc != null) {
 
+        }
     }
-  }
 
   //推送u8数据接口
   public Ret pushU8(MoDoc moDoc) {

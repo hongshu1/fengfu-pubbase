@@ -6,6 +6,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.MultipleUploadFile;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.JBoltFileService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -47,6 +48,7 @@ public class FormUploadMAdminController extends BaseAdminController {
    /**
 	* 数据源
 	*/
+   @UnCheck
 	public void datas() {
 		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(),getKv()));
 	}

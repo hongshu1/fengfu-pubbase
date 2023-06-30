@@ -8,6 +8,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.exch.ExchService;
@@ -247,14 +248,17 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         render("consummate.html");
     }
 
+    @UnCheck
     public void findForeignCurrencyAll() {
         renderJsonData(foreignCurrencyService.findAll(getKv()));
     }
 
+    @UnCheck
     public void findPurchaseType() {
         renderJsonData(purchaseTypeService.selectAll(getKv()));
     }
 
+    @UnCheck
     public void findByiVendorId(@Para(value = "vendorId") String vendorId,
                                 @Para(value = "id") String id) {
         renderJsonData(vendorAddrService.findList(getKv()));
@@ -325,6 +329,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         renderJsonData(service.batchDel(ids));
     }
 
+    @UnCheck
     public void findPurchaseOrderDBatch() {
         renderJsonData(purchaseOrderDBatchService.findByPurchaseOrderMId(getPageNumber(), getPageSize(), getKv()));
     }
@@ -342,6 +347,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         renderJsonData(purchaseOrderDBatchService.updateOrderBatch(purchaseOrderMId, id, cVersion, qty));
     }
 
+    @UnCheck
     public void findPurchaseOrderDBatchVersion() {
         renderJsonData(purchaseOrderDBatchVersionService.findByPurchaseOrderMid(getPageNumber(), getPageSize(), getKv()));
     }
@@ -350,6 +356,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         renderJson(service.saveSubmit(getJBoltTable()));
     }
 
+    @UnCheck
     public void findPurchaseOrderD(@Para(value = "purchaseOrderMId") Long purchaseOrderMId) {
         renderJsonData(service.findPurchaseOrderD(purchaseOrderMId));
     }
@@ -366,7 +373,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), getPageSize(), getKv()));
     }
 
-
+    @UnCheck
     public void findPrintPurchaseorderm() {
 //          获取模板
 //        HiprintTpl hiprintTpl= tplService.getCacheByKey("109607");

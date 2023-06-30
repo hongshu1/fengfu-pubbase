@@ -3,6 +3,7 @@ package cn.rjtech.admin.subcontractorderm;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
@@ -209,18 +210,21 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
     render("consummate.html");
   }
 
-  public void findForeignCurrencyAll() {
-    renderJsonData(foreignCurrencyService.findAll(getKv()));
-  }
+    @UnCheck
+    public void findForeignCurrencyAll() {
+        renderJsonData(foreignCurrencyService.findAll(getKv()));
+    }
 
-  public void findPurchaseType() {
-    renderJsonData(purchaseTypeService.selectAll(getKv()));
-  }
+    @UnCheck
+    public void findPurchaseType() {
+        renderJsonData(purchaseTypeService.selectAll(getKv()));
+    }
 
-  public void findByiVendorId(@Para(value = "vendorId") String vendorId,
-                              @Para(value = "id") String id) {
-    renderJsonData(vendorAddrService.findList(getKv()));
-  }
+    @UnCheck
+    public void findByiVendorId(@Para(value = "vendorId") String vendorId,
+                                @Para(value = "id") String id) {
+        renderJsonData(vendorAddrService.findList(getKv()));
+    }
 
   /**
    * 保存
@@ -287,10 +291,10 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
     renderJsonData(service.batchDel(ids));
   }
 
-
-  public void findSubcontractOrderDBatch() {
-    renderJsonData(subcontractOrderDBatchService.findBySubcontractOrderMId(getPageNumber(), getPageSize(), getKv()));
-  }
+    @UnCheck
+    public void findSubcontractOrderDBatch() {
+        renderJsonData(subcontractOrderDBatchService.findBySubcontractOrderMId(getPageNumber(), getPageSize(), getKv()));
+    }
 
   /**
    * /
@@ -325,17 +329,19 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
     renderJsonData(subcontractOrderDBatchService.updateOrderBatch(subcontractOrderMid, id, cVersion, qty));
   }
 
-  public void findSubcontractOrderDBatchVersion() {
-    renderJsonData(subcontractOrderDBatchVersionService.findBySubcontractOrderMid(getPageNumber(), getPageSize(), getKv()));
-  }
+    @UnCheck
+    public void findSubcontractOrderDBatchVersion() {
+        renderJsonData(subcontractOrderDBatchVersionService.findBySubcontractOrderMid(getPageNumber(), getPageSize(), getKv()));
+    }
 
   public void saveSubmit() {
     renderJson(service.saveSubmit(getJBoltTable()));
   }
 
-  public void findPurchaseOrderD(@Para(value = "purchaseOrderMId") Long purchaseOrderMId) {
-    renderJsonData(service.findPurchaseOrderD(purchaseOrderMId));
-  }
+    @UnCheck
+    public void findPurchaseOrderD(@Para(value = "purchaseOrderMId") Long purchaseOrderMId) {
+        renderJsonData(service.findPurchaseOrderD(purchaseOrderMId));
+    }
 
   public void inventory_dialog_index() {
     keepPara();

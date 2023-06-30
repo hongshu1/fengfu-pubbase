@@ -123,9 +123,11 @@ public class SpotCheckFormAdminController extends BaseAdminController {
     public void options() {
         renderJsonData(service.options());
     }
+    
     /**
      * 按主表qcformparam查询列表
      */
+    @UnCheck
     public void getQcFormParamListByPId() {
         renderJsonData(service.getQcFormParamListByPId(getPageNumber(), getPageSize(), getKv()));
     }
@@ -133,6 +135,7 @@ public class SpotCheckFormAdminController extends BaseAdminController {
     /**
      * 按主表qcformtableparam查询列表
      */
+    @UnCheck
     public void getQcFormTableParamListByPId() {
         /**
          * 三种情况
@@ -153,6 +156,7 @@ public class SpotCheckFormAdminController extends BaseAdminController {
     /**
      * 按主表qcformitem查询列表qcform
      */
+    @UnCheck
     public void getItemCombinedListByPId() {
         renderJsonData(service.getItemCombinedListByPId(getKv()));
     }

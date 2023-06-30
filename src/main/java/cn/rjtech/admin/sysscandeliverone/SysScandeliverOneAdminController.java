@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysScandeliver;
@@ -160,16 +161,16 @@ public class SysScandeliverOneAdminController extends BaseAdminController {
 
 	/**
 	 * 获取客户信息
-	 * @return
 	 */
+    @UnCheck
 	public void getCustomer(){
 		renderJsonData(service.getCustomer(getKv()));
 	}
 
 	/**
 	 * 获取客户地址
-	 * @return
 	 */
+    @UnCheck
 	public void getCustAddr(){
 		renderJsonData(service.getCustAddr(getKv()));
 	}
@@ -187,6 +188,7 @@ public class SysScandeliverOneAdminController extends BaseAdminController {
     /**
      * 获取订单数据源
      */
+    @UnCheck
 	public void getOrder(){
 	    Kv kv = new Kv();
         String cusid = get("cusid");

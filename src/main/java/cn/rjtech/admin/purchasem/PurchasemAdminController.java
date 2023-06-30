@@ -236,6 +236,7 @@ public class PurchasemAdminController extends BaseAdminController {
     /**
      * 选择费用预算列表数据
      */
+    @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findExpenseBudgetItemDatas() {
         renderJsonData(service.findExpenseBudgetItemDatas(getKv()));
@@ -251,9 +252,11 @@ public class PurchasemAdminController extends BaseAdminController {
     	set("period", period);
         render("choose_investmentplan.html");
     }    
+    
     /**
      * 选择投资计划列表数据
      */
+    @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findInvestmentPlanItemDatas() {
         renderJsonData(service.findInvestmentPlanItemDatas(getKv()));

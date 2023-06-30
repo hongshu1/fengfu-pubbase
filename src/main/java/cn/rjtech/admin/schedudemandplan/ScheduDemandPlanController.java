@@ -3,6 +3,7 @@ package cn.rjtech.admin.schedudemandplan;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -124,10 +125,12 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		renderJsonData(service.apsScheduDemandPlan(endDate));
 	}
 
+    @UnCheck
 	public void getDemandList() {
 		renderJsonData(service.getDemandList(getKv()));
 	}
 
+    @UnCheck
 	public void getSupplierList() {
 		renderJsonData(service.getSupplierList(getKv()));
 	}
@@ -154,6 +157,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		render("demandforecastm.html");
 	}
 
+    @UnCheck
 	public void getMrpDemandForecastMPage() {
 		renderJsonData(service.getMrpDemandForecastMList(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -263,6 +267,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 	/**
 	 * 物料需求计划预示
 	 */
+    @UnCheck
 	public void getMrpDemandForecastDPage() {
 		renderJsonData(service.getMrpDemandForecastDList(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -333,6 +338,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		render("demandplanm.html");
 	}
 
+    @UnCheck
 	public void getMrpDemandPlanMPage() {
 		renderJsonData(service.getMrpDemandPlanMList(getPageNumber(),getPageSize(),getKv()));
 	}

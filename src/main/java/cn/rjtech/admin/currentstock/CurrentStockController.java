@@ -3,12 +3,14 @@ package cn.rjtech.admin.currentstock;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.permission.*;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltUserAuthKit;
+import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockCheckVouch;
 import cn.rjtech.util.ValidationUtils;
-import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
@@ -58,9 +60,11 @@ public class CurrentStockController extends BaseAdminController {
 		renderJsonData(service.CurrentStockByDatas(getPageNumber(),getPageSize(),getKv()));
 
 	}
-	/**
-	 * 列表也数据
-	 * */
+
+    /**
+     * 列表也数据
+     */
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.datas_calculate(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -68,7 +72,8 @@ public class CurrentStockController extends BaseAdminController {
 
 	/**
 	 * 列表也数据
-	 * */
+	 */
+    @UnCheck
 	public void getdatas() {
 		renderJsonData(service.getdatas(getPageNumber(),getPageSize(),getKv()));
 	}

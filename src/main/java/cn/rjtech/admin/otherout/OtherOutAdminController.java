@@ -54,11 +54,12 @@ public class OtherOutAdminController extends BaseAdminController {
 		kv.setIfNotNull("idepartmentid", get("idepartmentid"));
 		kv.setIfNotNull("state", get("state"));
 		renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), kv));
-
 	}
+    
 	/**
 	* 特殊领料单列表明细
 	*/
+    @UnCheck
 	public void getOtherOutLines() {
 		String autoid = get("autoid");
 				Kv kv = new Kv();
@@ -232,6 +233,7 @@ public class OtherOutAdminController extends BaseAdminController {
 	 * 获取现品票
 	 * 通过关键字匹配
 	 */
+    @UnCheck
 	public void gettable2() {
 		Kv kv = new Kv();
 		kv.setIfNotNull("billno",get("billno"));

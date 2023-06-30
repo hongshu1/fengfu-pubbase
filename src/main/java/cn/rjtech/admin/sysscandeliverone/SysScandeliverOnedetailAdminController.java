@@ -100,6 +100,7 @@ public class SysScandeliverOnedetailAdminController extends BaseAdminController 
 	/**
 	 * 获取行信息
 	 */
+    @UnCheck
 	public void getLine(){
 		String autoId = get("sysscandeliver.autoid");
 		Kv kv = new Kv();
@@ -110,6 +111,7 @@ public class SysScandeliverOnedetailAdminController extends BaseAdminController 
     /**
      * 获取订单行信息
      */
+    @UnCheck
     public void getOrderLine(){
         String orderId = get("sysscandeliver.sourcebillid");
         Kv kv = new Kv();

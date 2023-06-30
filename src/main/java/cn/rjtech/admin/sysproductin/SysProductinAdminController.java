@@ -154,6 +154,7 @@ public class SysProductinAdminController extends BaseAdminController {
     /**
      * 获取仓库下拉
      */
+    @UnCheck
     public void getWarehouse() {
         renderJsonData(service.getwareHouseDatas(getKv()));
     }
@@ -161,6 +162,7 @@ public class SysProductinAdminController extends BaseAdminController {
     /**
      * 获取入库类别下拉
      */
+    @UnCheck
     public void getRdStyle() {
         renderJsonData(service.getRdStyleDatas(getKv()));
     }
@@ -168,6 +170,7 @@ public class SysProductinAdminController extends BaseAdminController {
     /**
      * 获取生产部门下拉
      */
+    @UnCheck
     public void getDepartment() {
         renderJsonData(service.getDepartmentDatas(getKv()));
     }

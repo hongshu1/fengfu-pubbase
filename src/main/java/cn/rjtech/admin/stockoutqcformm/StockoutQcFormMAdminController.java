@@ -6,13 +6,13 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockoutQcFormD;
 import cn.rjtech.model.momdata.StockoutQcFormM;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -151,7 +151,10 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
         render("editstockoutqcformmTable.html");
     }
 
-    /*详情页面的table数据*/
+    /**
+     * 详情页面的table数据
+     */
+    @UnCheck
     public void getTableDatas() {
         renderJsonData(service.getTableDatas(getKv()));
     }

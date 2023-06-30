@@ -11,7 +11,6 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.ExpenseBudget;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -45,6 +44,7 @@ public class ExpenseBudgetManageAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
