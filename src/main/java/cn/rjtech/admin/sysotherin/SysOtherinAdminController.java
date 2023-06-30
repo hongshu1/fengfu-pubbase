@@ -1,6 +1,5 @@
 package cn.rjtech.admin.sysotherin;
 
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -157,11 +156,7 @@ public class SysOtherinAdminController extends BaseAdminController {
      * 查询业务类型类型
      */
     public void billtype() {
-
-        renderJson(service.billtype(getKv()));
+        renderJsonData(service.billtype(getKv()));
     }
-
-
-
 
 }
