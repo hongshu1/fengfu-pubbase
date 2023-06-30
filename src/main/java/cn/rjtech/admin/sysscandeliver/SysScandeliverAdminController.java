@@ -7,6 +7,7 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysScandeliver;
+import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -30,12 +31,6 @@ public class SysScandeliverAdminController extends BaseAdminController {
 
 	@Inject
 	private SysScandeliverService service;
-//   /**
-//	* 首页
-//	*/
-//	public void index() {
-//		render("_form.html");
-//	}
 
 	/**
 	 * 首页
@@ -164,9 +159,49 @@ public class SysScandeliverAdminController extends BaseAdminController {
 	/**
 	 * 新增-可编辑表格-批量提交
 	 */
-	@Before(Tx.class)
 	public void submitAll() {
 		renderJson(service.submitByJBoltTable(getJBoltTable()));
 	}
 
+
+//	========
+
+	/**
+	 * 获取车次号相关数据
+	 * @return
+	 */
+	public void getCarData(){
+		Kv kv = new Kv();
+		kv.setIfNotNull("carNo", isOk(get("q"))? StringUtils.trim(get("q")) : " ");
+		renderJsonData(service.getCarData(kv));
+	}
+
+	/**
+	 * 获取客户地址
+	 * @return
+	 */
+	public void getCustAddr(){
+		renderJsonData(service.getCustAddr(getKv()));
+	}
+
+    /**
+     * 扫码获取资源
+     */
+	public void getResource(){
+        String barcode = get("barcode");
+        String cusBarcode = get("cusBarcode");
+        Kv kv = new Kv();
+        kv.set("barcode",barcode);
+        kv.set("cusBarcode",cusBarcode);
+        renderJsonData(service.getResource(kv));
+    }
+
+	/**
+	 * 拆分条码Dialog
+	 */
+	public void kaiBarcode(){
+		set("barcode", get("barcode"));
+		set("quantity", get("quantity"));
+		render("kaibarcode.html");
+	}
 }
