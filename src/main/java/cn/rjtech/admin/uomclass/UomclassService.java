@@ -1,15 +1,16 @@
 package cn.rjtech.admin.uomclass;
 
 import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.uom.UomService;
-import cn.jbolt.core.service.base.BaseService;
 import cn.rjtech.model.momdata.Uomclass;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
@@ -20,7 +21,6 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -345,9 +345,9 @@ public class UomclassService extends BaseService<Uomclass> {
 			u.setISource(1);
 			saveUomClassHandle(u,userId,new Date(),userName,getOrgId(),getOrgCode(), getOrgName());
 		}
-		if(StringUtils.isNotBlank(finalDefaultCode)){
+		if(StrUtil.isNotBlank(finalDefaultCode)){
 			for(Uomclass u:models){
-				if(StringUtils.equals(u.getCUomClassCode(),finalDefaultCode)){
+				if(StrUtil.equals(u.getCUomClassCode(),finalDefaultCode)){
 					u.setIsDefault(true);
 				}else{
 					u.setIsDefault(false);

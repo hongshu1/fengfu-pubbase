@@ -158,3 +158,19 @@ left join Mo_MaterialScanUsedLogM m on d.iMaterialScanUsedLogMid=m.iAutoId
 ) C ON B.cBarcode = C.cBarcode AND C.type = B.type
 WHERE C.TYPE<>0
 #end
+
+#sql("getModandMomlist")
+select
+d.iMoDocId,
+d.cBarcode,
+i.cInvCode,
+i.cInvAddCode,
+i.cInvName,
+i.cInvStd,
+i.iUomClassId,
+d.iQty
+from Mo_MaterialsReturnM m
+left join Mo_MaterialsReturnD d on m.iAutoId=d.iMaterialsReturnMid
+left join Bd_Inventory i on d.iInventoryId=i.iAutoId
+where d.iMoDocId=#para(imodocid)
+#end

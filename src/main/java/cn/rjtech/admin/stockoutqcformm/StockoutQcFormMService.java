@@ -22,16 +22,9 @@ import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
 import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
 import cn.rjtech.enums.CMeasurePurposeEnum;
 import cn.rjtech.enums.IsOkEnum;
-import cn.rjtech.model.momdata.Inventory;
-import cn.rjtech.model.momdata.InventoryQcForm;
-import cn.rjtech.model.momdata.QcForm;
-import cn.rjtech.model.momdata.StockoutDefect;
-import cn.rjtech.model.momdata.StockoutQcFormD;
-import cn.rjtech.model.momdata.StockoutQcFormM;
-import cn.rjtech.model.momdata.StockoutqcformdLine;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.excel.SheetPage;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -40,9 +33,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jxls.util.Util;
 
 import java.io.File;
@@ -453,12 +444,12 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         String cMeasurePurpose = "";
         String[] split = stockoutrecord.getStr("cmeasurepurpose").split(",");
         for (int i = 0; i < split.length; i++) {
-            if (StringUtils.isNotBlank(split[i])) {
+            if (StrUtil.isNotBlank(split[i])) {
                 String text = CMeasurePurposeEnum.toEnum(Integer.valueOf(split[i])).getText();
                 cMeasurePurpose += text + ",";
             }
         }
-        stockoutrecord.set("cmeasurepurpose", StringUtils.isNotBlank(cMeasurePurpose.toString())
+        stockoutrecord.set("cmeasurepurpose", StrUtil.isNotBlank(cMeasurePurpose.toString())
             ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose.toString());
         //4、明细表数据
         List<Record> recordList = getTableDatas(Kv.by("istockoutqcformmid", iautoid));

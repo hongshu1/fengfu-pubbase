@@ -2,6 +2,7 @@ package cn.rjtech.admin.personequipment;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
@@ -18,7 +19,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class PersonEquipmentService extends BaseService<PersonEquipment> {
    * @return
    */
   public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
-    if (StringUtils.isBlank(kv.getStr("cequipmentcodes"))) {
+    if (StrUtil.isBlank(kv.getStr("cequipmentcodes"))) {
       return new Page<Record>();
     }
     Sql sql = selectSql().select("distinct b.iAutoId as iPersonId,b.cPsn_Num, b.cPsn_Name ," +

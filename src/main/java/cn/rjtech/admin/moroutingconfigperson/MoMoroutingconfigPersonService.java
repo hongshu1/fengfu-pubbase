@@ -1,5 +1,6 @@
 package cn.rjtech.admin.moroutingconfigperson;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
@@ -13,7 +14,6 @@ import cn.rjtech.model.momdata.MoDoc;
 import cn.rjtech.model.momdata.MoMoroutingconfigPerson;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -94,7 +94,7 @@ public class MoMoroutingconfigPersonService extends BaseService<MoMoroutingconfi
     if (!recordList.isEmpty()) {
       if (recordList.size() > 1) {
         for (Record record : recordList) {
-          if (StringUtils.isNotBlank(record.getStr("cpsn_name"))) {
+          if (StrUtil.isNotBlank(record.getStr("cpsn_name"))) {
             s = s.append(record.getStr("cpsn_name")).append(",");
           }
         }
@@ -155,7 +155,7 @@ public class MoMoroutingconfigPersonService extends BaseService<MoMoroutingconfi
    * @return
    */
   public Ret deleteByBatchIds(String ids, Long imdocid) {
-    if (StringUtils.isBlank(ids)) {
+    if (StrUtil.isBlank(ids)) {
       return fail("未选中数据，不允许操作");
     }
     String[] idsStrs = ids.split(",");
@@ -252,7 +252,7 @@ public class MoMoroutingconfigPersonService extends BaseService<MoMoroutingconfi
           }
           iPersonId = p.getIAutoId();
         } else {
-          if (StringUtils.isNotBlank(record.getStr("cpsn_num"))) {
+          if (StrUtil.isNotBlank(record.getStr("cpsn_num"))) {
             Record p = personService.getpersonByCpsnnum(record.getStr("cpsn_num"));
             if (p == null) {
               throw new ParameterException("存在无效人员信息");

@@ -1,9 +1,9 @@
 package cn.rjtech.admin.barcodereport.billnobarcodetracepage;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.util.JBoltRandomUtil;
 import cn.rjtech.base.service.view.BaseU9ViewService;
 import cn.rjtech.constants.DataSourceConstants;
-import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
@@ -180,7 +180,7 @@ public class BillNoBarcodeTracePageAdminService extends BaseU9ViewService {
 
 
 
-            if(StringUtils.isNotBlank(parmsKey)){
+            if(StrUtil.isNotBlank(parmsKey)){
                 record.set("ParmsKey",parmsKey ).set("ParmsValue", parmsValue);
                 records.add(record);
             }

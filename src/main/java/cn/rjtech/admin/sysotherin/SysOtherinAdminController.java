@@ -1,5 +1,6 @@
 package cn.rjtech.admin.sysotherin;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -20,7 +21,6 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.tx.Tx;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
@@ -165,7 +165,7 @@ public class SysOtherinAdminController extends BaseAdminController {
      * 批量审核通过（批量审批也走这里）
      */
     public void batchApprove(@Para(value = "ids") String ids) {
-        if (StringUtils.isEmpty(ids)) {
+        if (StrUtil.isBlank(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
         }
@@ -176,7 +176,7 @@ public class SysOtherinAdminController extends BaseAdminController {
      * 批量反审核
      */
     public void batchReverseApprove(@Para(value = "ids") String ids) {
-        if (StringUtils.isEmpty(ids)) {
+        if (StrUtil.isBlank(ids)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
         }

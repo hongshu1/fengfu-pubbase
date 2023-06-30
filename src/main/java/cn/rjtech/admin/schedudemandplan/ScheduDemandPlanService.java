@@ -1,6 +1,7 @@
 package cn.rjtech.admin.schedudemandplan;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -24,7 +25,6 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.math.BigDecimal;
@@ -306,7 +306,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		Map<String, ScheduDemandTempDTO> invListMap = new HashMap<>();
 		for(ScheduDemandTempDTO dto : scheduTempDTOList) {
 			//子件去重并取值拼接 顺序号取最大值
-			if (invListMap.containsKey(dto.getInvCode())) { //&& StringUtils.isNotBlank(tmpUser.getInvCode()) && StringUtils.isNotBlank(tmpUser.getPinvCode())
+			if (invListMap.containsKey(dto.getInvCode())) { //&& StrUtil.isNotBlank(tmpUser.getInvCode()) && StrUtil.isNotBlank(tmpUser.getPinvCode())
 				ScheduDemandTempDTO tmpUser = invListMap.get(dto.getInvCode());
 				String tmpPinv = tmpUser.getPinvCode() != null ? tmpUser.getPinvCode() : "";
 				String dtoPinv = dto.getPinvCode() != null ? dto.getPinvCode() : "";
@@ -355,7 +355,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				bomCompareCur.getChildrenList().add(bom);
 
 				//判断当前子级物料是否在BOM主表中存在 存在子件
-				if (org.apache.commons.lang3.StringUtils.isNotBlank(bomCompareDTO.getiBOMMasterIdListStr())) {
+				if (StrUtil.isNotBlank(bomCompareDTO.getiBOMMasterIdListStr())) {
 					List<Long> iBOMMasterIdList =  Arrays.stream(bomCompareDTO.getiBOMMasterIdListStr().split(COMMA)).map(Long::parseLong).collect(Collectors.toList());
 					for (Long iBOMMasterId : iBOMMasterIdList) {
 						packChildren(bomCompareList, bom, iBOMMasterId, itemIdList);
@@ -421,7 +421,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 	 * @return
 	 */
 	public synchronized Ret apsScheduDemandPlan(String endDate) {
-		if (StringUtils.isBlank(endDate)){
+		if (StrUtil.isBlank(endDate)){
 			return fail("截止日期不能为空！");
 		}
 
@@ -1118,10 +1118,10 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		String endDate = kv.getStr("enddate");
 
 		LocalDate localDate = LocalDate.now();
-		if (StringUtils.isBlank(startDate)){
+		if (StrUtil.isBlank(startDate)){
 			startDate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
 		}
-		if (StringUtils.isBlank(endDate)){
+		if (StrUtil.isBlank(endDate)){
 			endDate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
 		}
 
@@ -1250,7 +1250,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		String enddate = kv.getStr("enddate");
 		//供应商id数组json
 		String data = kv.getStr("data");
-		if (StringUtils.isBlank(startdate) || StringUtils.isBlank(enddate) || data.equals("[]")){
+		if (StrUtil.isBlank(startdate) || StrUtil.isBlank(enddate) || data.equals("[]")){
 			return fail("请先选择保存条件！");
 		}
 
@@ -1341,7 +1341,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		String enddate = kv.getStr("enddate");
 		//供应商id数组json
 		String data = kv.getStr("data");
-		if (StringUtils.isBlank(startdate) || StringUtils.isBlank(enddate) || data.equals("[]")){
+		if (StrUtil.isBlank(startdate) || StrUtil.isBlank(enddate) || data.equals("[]")){
 			return fail("请先选择保存条件！");
 		}
 
@@ -1543,7 +1543,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		planRecord.set("cVenName",invInfo.getStr("cVenName"));
 		planRecord.set("iPkgQty",invInfo.getStr("iPkgQty"));
 		planRecord.set("iInnerInStockDays",invInfo.getStr("iInnerInStockDays"));
-		if (StringUtils.isNotBlank(colName)){
+		if (StrUtil.isNotBlank(colName)){
 			planRecord.set("colName",colName);  //自定义列名
 		}
 		planRecord.set("seq",invInfo.getInt("seq"));  //用于页面排序

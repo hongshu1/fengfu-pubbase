@@ -145,4 +145,11 @@ public class ProdFormParamService extends BaseService<ProdFormParam> {
 	public Page<Record> qcformparamlist(int pageNumber, int pageSize, Okv kv) {
 		return dbTemplate("prodformparam.qcformparamlist", kv).paginate(pageNumber, pageSize);
 	}
+
+	/**
+	 * 切换isenabled属性
+	 */
+	public Ret toggleIsEnabled(Long id) {
+		return toggleBoolean(id, "isenabled");
+	}
 }

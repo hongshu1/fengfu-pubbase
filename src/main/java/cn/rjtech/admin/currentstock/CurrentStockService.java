@@ -6,7 +6,6 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
-
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -19,12 +18,12 @@ import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
 import cn.rjtech.admin.sysotherin.SysOtherinService;
 import cn.rjtech.admin.sysotherin.SysOtherindetailService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.StockCheckDetail;
+import cn.rjtech.model.momdata.StockCheckVouch;
+import cn.rjtech.model.momdata.StockCheckVouchDetail;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.StringUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
@@ -160,7 +159,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             List<StockCheckDetail> stockcheckdetailList = new ArrayList<>();
             for (StockCheckDetail stockcheckdetail : barcodeList) {
                 String sourceID = stockcheckdetail.getSourceID();
-                if (StringUtils.isNotBlank(sourceID) && did.equals(sourceID)) {
+                if (StrUtil.isNotBlank(sourceID) && did.equals(sourceID)) {
                     stockcheckdetailList.add(stockcheckdetail);
                 }
             }
@@ -214,7 +213,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             List<StockCheckDetail> stockcheckdetailList = new ArrayList<>();
             for (StockCheckDetail stockcheckdetail : barcodeList) {
                 String sourceID = stockcheckdetail.getSourceID();
-                if (StringUtils.isNotBlank(sourceID) && did.equals(sourceID)) {
+                if (StrUtil.isNotBlank(sourceID) && did.equals(sourceID)) {
                     stockcheckdetailList.add(stockcheckdetail);
                 }
             }
@@ -509,7 +508,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 //				}
 //			}
 //
-//			if(StringUtils.isEmpty(poscodeSql)){
+//			if(StrUtil.isBlank(poscodeSql)){
 //				poscodeSql=null;
 //			}
 //			String whCode = stockcheckvouch.getWhCode();

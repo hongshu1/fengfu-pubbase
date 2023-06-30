@@ -1,5 +1,6 @@
 package cn.rjtech.admin.cusorderresult;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -14,7 +15,6 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,7 +65,7 @@ public class CusOrderResultController extends BaseAdminController {
             List<String> namelist = new ArrayList<>();
             List<String> weeklist = new ArrayList<>();
             List<Record> name2list = new ArrayList<>();
-            if (StringUtils.isNotBlank(startdate) && StringUtils.isNotBlank(enddate)){
+            if (StrUtil.isNotBlank(startdate) && StrUtil.isNotBlank(enddate)){
                 //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
                 List<String> scheduDateList = Util.getBetweenDate(startdate,enddate);
                 //页面顶部colspan列  key:2023年1月  value:colspan="13"

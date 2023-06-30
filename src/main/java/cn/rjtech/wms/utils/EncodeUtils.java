@@ -5,6 +5,7 @@
  */
 package cn.rjtech.wms.utils;
 
+import cn.hutool.core.util.StrUtil;
 import com.beust.jcommander.ParameterException;
 import com.jfinal.log.Log;
 import org.apache.commons.codec.DecoderException;
@@ -67,7 +68,7 @@ public class EncodeUtils {
      * Base64编码.
      */
     public static String encodeBase64(String input) {
-        if (StringUtils.isBlank(input)) {
+        if (StrUtil.isBlank(input)) {
             throw new ParameterException("EMPTY");
         }
         return new String(Base64.encodeBase64(input.getBytes(StandardCharsets.UTF_8)));
@@ -91,7 +92,7 @@ public class EncodeUtils {
      * Base64解码.
      */
     public static String decodeBase64String(String input) {
-        if (StringUtils.isBlank(input)) {
+        if (StrUtil.isBlank(input)) {
             return StringUtils.EMPTY;
         }
         return new String(Base64.decodeBase64(input.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);

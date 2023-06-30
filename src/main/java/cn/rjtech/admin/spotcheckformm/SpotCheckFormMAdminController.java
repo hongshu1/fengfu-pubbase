@@ -52,8 +52,9 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
    /**
 	* 始业点检-制造工单入口
 	*/
-	public void index2(@Para(value = "modocid") String modocid) {
+	public void index2(@Para(value = "modocid") String modocid,@Para(value = "itype") String itype) {
 		set("modocid",modocid);
+		set("itype",itype);
 		render("spotcheckformm.html");
 	}
 	/**
@@ -62,17 +63,21 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
 	public void index() {
 		render("index.html");
 	}
+
+	public void index3() {
+		render("index2.html");
+	}
 	/**
 	 * 数据源
 	 */
-	public void datas2() {
-		renderJsonData(service.getAdminDatas2(getPageNumber(), getPageSize(),getKv()));
+	public void datas2(@Para(value = "itype") String itype) {
+		renderJsonData(service.getAdminDatas2(getKv().set("itype",itype)));
 	}
    /**
 	* 数据源
 	*/
 	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getInt("iType"), getBoolean("IsDeleted")));
+		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
 	}
 
    /**
@@ -100,30 +105,89 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
 					 @Para(value = "routingconfigid") String routingconfigid,
 					 @Para(value = "cequipmentnames") String cequipmentnames,
 					 @Para(value = "spotcheckformmid") Long spotcheckformmid,
+					 @Para(value = "controls") int controls,
 					 @Para(value = "croutingname") String croutingname) {
+		if(routingconfigid == null){
+			renderFail("请在【点检建模】配置点检表后，再完成点检操作！");
+			return;
+		}
 		List<Record> list = inventorySpotCheckFormService.pageList(Kv.create().set("iinventoryid",iinventoryid)
 				.set("page", 1).set("pageSize", 5)).getList();
 		if (list.size()>0) {
 			Record record = list.get(0);
 			SpotCheckForm spotCheckForm = spotCheckFormService.findById(record.getStr("ispotcheckformid"));
 			record.set("iautoid",null);
-			record.set("cequipmentnames",cequipmentnames);
+			if (StrUtil.isBlank(cequipmentnames)){
+				Record equipment = service.getEquipment(Long.valueOf(routingconfigid));
+				record.set("cequipmentnames",equipment.getStr("cequipmentnames"));
+			}else {
+				record.set("cequipmentnames",cequipmentnames);
+			}
 			if (spotcheckformmid!=null){
 				record.set("iautoid",spotcheckformmid);
 				SpotCheckFormM checkFormM = service.findById(spotcheckformmid);
 				record.set("iauditstatus",checkFormM.getIAuditStatus());
+				record.set("iauditway",checkFormM.getIAuditWay());
 			}
 			set("spotCheckFormM",record);
 			set("croutingname",croutingname);
 			set("coperationname",coperationname);
 			set("modocid",modocid);
+			set("iinventoryid",iinventoryid);
 			set("routingconfigid",routingconfigid);
 			set("spotcheckformid",spotCheckForm.getIAutoId());
+			set("controls",controls);
 		}
-
 		keepPara();
 		render("edit.html");
 	}
+
+	/**
+	 * 编辑
+	 */
+	public void edit2(@Para(value = "coperationname") String coperationname,
+					 @Para(value = "iinventoryid") String iinventoryid,
+					 @Para(value = "modocid") String modocid,
+					 @Para(value = "routingconfigid") String routingconfigid,
+					 @Para(value = "cequipmentnames") String cequipmentnames,
+					 @Para(value = "spotcheckformmid") Long spotcheckformmid,
+					 @Para(value = "controls") int controls,
+					 @Para(value = "croutingname") String croutingname) {
+		Record data = service.getData(spotcheckformmid);
+		List<Record> list = inventorySpotCheckFormService.pageList(Kv.create().set("iinventoryid",iinventoryid).set("itype",data.getStr("itype"))
+				.set("page", 1).set("pageSize", 5)).getList();
+		if (list.size()>0) {
+			Record record = list.get(0);
+			SpotCheckForm spotCheckForm = spotCheckFormService.findById(record.getStr("ispotcheckformid"));
+			record.set("iautoid",null);
+			if (StrUtil.isBlank(cequipmentnames)){
+				Record equipment = service.getEquipment(Long.valueOf(routingconfigid));
+				record.set("cequipmentnames",equipment.getStr("cequipmentnames"));
+			}else {
+				record.set("cequipmentnames",cequipmentnames);
+			}
+			if (spotcheckformmid!=null){
+				record.set("iautoid",spotcheckformmid);
+				SpotCheckFormM checkFormM = service.findById(spotcheckformmid);
+				record.set("iauditstatus",checkFormM.getIAuditStatus());
+				record.set("iauditway",checkFormM.getIAuditWay());
+			}
+			set("spotCheckFormM",record);
+			set("croutingname",croutingname);
+			set("coperationname",coperationname);
+			set("modocid",modocid);
+			set("iinventoryid",iinventoryid);
+			set("routingconfigid",routingconfigid);
+			set("spotcheckformid",spotCheckForm.getIAutoId());
+			set("controls",controls);
+			set("data",data);
+		}
+		keepPara();
+		render("edit2.html");
+	}
+
+
+
 	/**
 	 * 获取表格中的数据
 	 */

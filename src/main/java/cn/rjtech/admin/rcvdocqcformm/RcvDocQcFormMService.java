@@ -31,7 +31,6 @@ import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseRcvdocqcformdLine;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.excel.SheetPage;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -40,9 +39,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jxls.util.Util;
 
 import java.io.File;
@@ -663,12 +660,12 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         StringBuilder cMeasurePurpose = new StringBuilder();
         String[] split = rcvDocQcFormMRecord.getStr("cmeasurepurpose").split(",");
         for (String s : split) {
-            if (StringUtils.isNotBlank(s)) {
+            if (StrUtil.isNotBlank(s)) {
                 String text = CMeasurePurposeEnum.toEnum(Integer.parseInt(s)).getText();
                 cMeasurePurpose.append(text).append(",");
             }
         }
-        rcvDocQcFormMRecord.set("cmeasurepurpose", StringUtils.isNotBlank(cMeasurePurpose.toString())
+        rcvDocQcFormMRecord.set("cmeasurepurpose", StrUtil.isNotBlank(cMeasurePurpose.toString())
             ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose.toString());
         //4、如果cvalue的列数>10行，分多个页签
         List<Record> recordList = getCheckOutTableDatas(Kv.by("ircvdocqcformmid", iautoid));

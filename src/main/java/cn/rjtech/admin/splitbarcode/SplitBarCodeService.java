@@ -1,5 +1,6 @@
 package cn.rjtech.admin.splitbarcode;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,7 +10,6 @@ import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.beust.jcommander.ParameterException;
@@ -139,7 +139,7 @@ public class SplitBarCodeService extends BaseService<Inventory> {
     }
 
     public List<Record> findListByCsourceid(String csourceid) {
-        if (StringUtils.isBlank(csourceid)){
+        if (StrUtil.isBlank(csourceid)){
             return null;
         }
         return dbTemplate("splitbarcode.findByListCsourceid", Kv.by("csourceid", csourceid)).find();

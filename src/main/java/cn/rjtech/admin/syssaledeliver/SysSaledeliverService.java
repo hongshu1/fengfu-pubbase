@@ -23,7 +23,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.json.JSONArray;
 
 import java.util.*;
 
@@ -203,7 +202,7 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
     //推送u8数据接口
     public Ret pushU8(SysSaledeliver syssaledeliver, List<SysSaledeliverdetail> syssaledeliverdetail) {
         if(!CollectionUtils.isNotEmpty(syssaledeliverdetail)){
-            return Ret.fail("数据不能为空");
+            return fail("数据不能为空");
         }
 
         User user = JBoltUserKit.getUser();
@@ -275,7 +274,7 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         }catch (Exception e){
             e.printStackTrace();
         }
-        return Ret.fail("上传u8失败");
+        return fail("上传u8失败");
     }
 
 
