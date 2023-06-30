@@ -16,14 +16,14 @@
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.cbarcode}</td>
- <td>${data.cversion}</td>
+<td>${data.cversion}</td>
 <td>${data.iqty}</td>
 <td>${data.istatusname}</td>
 <td>
     <a href="javascript:void(0);" onclick="jboltTableRemoveRow()" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-print"></i>补打</a>
-    #if(index == 0)
-    <a href="admin/momoinvbatch/withdraw?iautoid=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="撤回" data-handler="refreshJBoltTable" data-confirm="确定撤回？" class="jbolt_table_delbtn"><i class="fa fa-pencil"></i>撤回</a>
-    #end
+    {@if index == 0}
+    <a href="admin/momoinvbatch/withdraw?iautoid=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="撤回" data-handler="refreshPjaxContainer" data-confirm="确定撤回？" class="jbolt_table_delbtn"><i class="fa fa-pencil"></i>撤回</a>
+   {@/if}
 </td>
 </tr>
 {@/each}

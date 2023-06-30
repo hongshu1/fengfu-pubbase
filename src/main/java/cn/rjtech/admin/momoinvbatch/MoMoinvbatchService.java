@@ -638,9 +638,20 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 	 * @return
 	 */
 	public Ret withdraw(Long iautoid) {
-		MoMoinvbatch moinvbatch = findById(iautoid);
-		moinvbatch.setIPrintStatus(1);
-		moinvbatch.setIStatus(0);
+		tx(()->{
+			MoMoinvbatch moinvbatch = findById(iautoid);
+			moinvbatch.setIPrintStatus(1);
+			// 已报工状态撤回要删除制造工单完工数量
+			if(moinvbatch.getIStatus() == 1)
+			{
+				MoDoc moDoc = moDocService.findById(moinvbatch.getIMoDocId());
+				moDoc.setICompQty(moDoc.getICompQty().subtract(moinvbatch.getIQty()));
+				moinvbatch.setIStatus(0);
+				ValidationUtils.isTrue(moDoc.update(), "更新制造工单信息失败");
+			}
+			ValidationUtils.isTrue(moinvbatch.update(), "处理失败,无法打印!");
+			return true;
+		});
 		return SUCCESS;
 	}
 
