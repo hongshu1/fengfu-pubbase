@@ -2629,5 +2629,9 @@ public class PermissionKey {
 	 * 始业点检表管理
 	 */
 	public static final String SPOTCHECKFORMM = "spotcheckformm";
+	/**
+	 * 现品票
+	 */
+	public static final String MOMOINVBATCH = "momoinvbatch";
 
 }
