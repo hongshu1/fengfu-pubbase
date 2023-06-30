@@ -88,22 +88,11 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-	 * @param keywords   关键词
-     * @param iType 类型;1.首末点检表 2.首中末点检表
-     * @param IsDeleted 删除状态;0. 未删除 1. 已删除
 	 * @return
 	 */
-	public Page<SpotCheckFormM> getAdminDatas(int pageNumber, int pageSize, String keywords, Integer iType, Boolean IsDeleted) {
-	    //创建sql对象
-	    Sql sql = selectSql().page(pageNumber,pageSize);
-	    //sql条件处理
-        sql.eq("iType",iType);
-        sql.eqBooleanToChar("IsDeleted",IsDeleted);
-        //关键词模糊查询
-        sql.likeMulti(keywords,"cOrgName", "cOperationName", "cPersonName", "cCreateName", "cUpdateName", "cAuditName");
-        //排序
-        sql.desc("iAutoId");
-		return paginate(sql);
+	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv para) {
+	    return  dbTemplate("spotcheckformm.list",para).paginate(pageNumber,pageSize);
+
 	}
 
 	/**
@@ -170,7 +159,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 	/**
 	 *制造工单入口数据
 	 */
-	public List<Record> getAdminDatas2(Integer pageNumber, Integer pageSize, Kv kv) {
+	public List<Record> getAdminDatas2( Kv kv) {
 		//根据工单id获取工艺路线每个工序
 		MoMorouting morouting = moMoroutingService.findByImdocId(kv.getLong("modocid"));
 		//根据工艺路线获取对应的工序
@@ -221,6 +210,32 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 																			Long routingConfigId,int itype){
 		return  findFirst("select * from PL_SpotCheckFormM where iMoDocId=? and iMoRoutingConfigId=? and iSpotCheckFormId=?   and itype=?",
 				modocid,routingConfigId,ispotcheckformid,itype);
+	}
+
+	/**
+	 * 获取设备名称并拼接
+	 */
+	public Record getEquipment(Long routingConfigId){
+		List<Record> equipmentList = inventoryRoutingEquipmentService.findRoutingConfigId(routingConfigId);
+		StringBuilder cequipmentnames =new StringBuilder();
+		StringBuilder cequipmentids =new StringBuilder();
+		for (Record record1 : equipmentList) {
+			cequipmentnames.append(	record1.getStr("cequipmentname")).append(",");
+			cequipmentids.append(	record1.getStr("iequipmentid")).append(",");
+		}
+		String keywordStr="";
+		String keywordStr2="";
+		if (equipmentList.size()>0) {
+			keywordStr = cequipmentnames.deleteCharAt(cequipmentnames.length() - 1).toString();
+			keywordStr2 = cequipmentids.deleteCharAt(cequipmentids.length() - 1).toString();
+		}
+		return  new Record().set("cequipmentnames",keywordStr).set("cequipmentids",keywordStr2);
+	}
+	/**
+	 * 根据id获取数据
+	 */
+	public  Record getData(Long iAutoId){
+		return dbTemplate("spotcheckformm.list",Kv.by("id",iAutoId)).findFirst();
 	}
 
 	/**
