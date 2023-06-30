@@ -154,7 +154,6 @@ public class SysScandeliverOneAdminController extends BaseAdminController {
 	/**
 	 * 新增-可编辑表格-批量提交
 	 */
-	@Before(Tx.class)
 	public void submitAll() {
 		renderJson(service.submitByJBoltTable(getJBoltTable()));
 	}
@@ -197,4 +196,15 @@ public class SysScandeliverOneAdminController extends BaseAdminController {
         kv.setIfNotNull("orderNo", orderNo);
         renderJsonData(service.getOrder(kv));
     }
+
+	/**
+	 * 扫码获取资源
+	 */
+	public void getResource(){
+		String barcode = get("barcode");
+		String detailHidden = get("detailHidden");
+		Kv kv = new Kv();
+		kv.set("barcode",barcode);
+		renderJsonData(service.getResource(kv));
+	}
 }

@@ -114,11 +114,12 @@ from (select d.cCarNo,
 #end
 
 #sql("getResource")
-select *, 61 as qty
+select *
 from (select t1.AutoID,
-             t1.Barcode,
+             t1.Barcode as oldBarcode,
+             t1.cCompleteBarcode as Barcode,
              t1.InvCode as cInvCode,
-             ###t1.Qty,
+             t1.Qty,
              t2.Whcode,
              b.cInvCode1,
              b.cInvName1,

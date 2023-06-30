@@ -190,6 +190,7 @@ public class SysScandeliverAdminController extends BaseAdminController {
 	public void getResource(){
         String barcode = get("barcode");
         String cusBarcode = get("cusBarcode");
+		String detailHidden = get("detailHidden");
         Kv kv = new Kv();
         kv.set("barcode",barcode);
         kv.set("cusBarcode",cusBarcode);
