@@ -1,6 +1,6 @@
 package cn.rjtech.admin.bommaster;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
@@ -1111,7 +1111,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 	
 	public Page<Record> getVersionRecord(Integer pageNumber, Integer pageSize, Kv kv) {
 		Page<Record> page = dbTemplate("bommaster.getVersionRecord", kv.set("orgId", getOrgId())).paginate(pageNumber, pageSize);
-		if (CollectionUtil.isEmpty(page.getList())){
+		if (CollUtil.isEmpty(page.getList())){
 			return page;
 		}
 		for (Record record : page.getList()){
@@ -1414,11 +1414,11 @@ public class BomMasterService extends BaseService<BomMaster> {
 				// 为true才会校验， false
 				if (flag){
 					// 判断是否为空
-					flag = CollectionUtil.isEmpty(awaitCommonInv);
+					flag = CollUtil.isEmpty(awaitCommonInv);
 				}
 				List<Record> commonInv = bomCompareService.getCommonInv(bomMasterId, invId, item.getString("qty"), item.getString("weight"), 2, true);
 				// 校验是否存在不一样存货重量及数量的生效物料清单
-				if (CollectionUtil.isNotEmpty(commonInv)){
+				if (CollUtil.isNotEmpty(commonInv)){
 						for (Record record : commonInv){
 							Long masterId = record.getLong(BomCompare.IBOMMASTERID);
 							if (masterIdMap.containsKey(masterId)){
@@ -1433,12 +1433,12 @@ public class BomMasterService extends BaseService<BomMaster> {
 						}
 				}
 			}
-			if (CollectionUtil.isNotEmpty(masterList)){
+			if (CollUtil.isNotEmpty(masterList)){
 				commonInvMap.put(invId, masterList);
 			}
 		}
 		
-		if (CollectionUtil.isNotEmpty(commonInvMap)){
+		if (CollUtil.isNotEmpty(commonInvMap)){
 			Ret ok = Ret.ok("data", commonInvMap);
 			ok.set("flag", flag);
 			return ok;
@@ -1460,7 +1460,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 			listMap.addItem(record.getLong("pid"), record);
 		}
 		
-		if (CollectionUtil.isEmpty(listMap)){
+		if (CollUtil.isEmpty(listMap)){
 			return null;
 		}
 		DateTime date = DateUtil.date();

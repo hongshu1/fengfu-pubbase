@@ -1,6 +1,6 @@
 package cn.rjtech.admin.bommasterinv;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -150,7 +150,7 @@ public class BomMasterInvService extends BaseService<BomMasterInv> {
 			bomCompareChildMap.put(bomCompare.getIAutoId(), bomCompares);
 		}
 		for (Long id :bomCompareChildMap.keySet()){
-			if (CollectionUtil.isEmpty(bomCompareChildMap.get(id))){
+			if (CollUtil.isEmpty(bomCompareChildMap.get(id))){
 				continue;
 			}
 			// 说明是产成品id

@@ -27,42 +27,45 @@ FROM PL_InStockQcFormM t1
                SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion,cCompleteBarcode from PS_SubcontractOrderDBatch)
     t7 on t1.cBarcode = t7.ccompletebarcode
 where t1.IsDeleted = '0'
-#if(iautoid)
+    #if(iautoid)
     AND t1.iautoid =#para(iautoid)
-                     #end
-                     #if(cinvqcformno)
+    #end
+    #if(cinvqcformno)
     AND t1.cinvqcformno LIKE CONCAT('%', #para(cinvqcformno), '%')
-                     #end
-                     #if(cinvaddcode)
+    #end
+    #if(cinvaddcode)
     AND t3.cinvaddcode LIKE CONCAT('%', #para(cinvaddcode), '%')
-                     #end
-                     #if(cinvcode1)
+    #end
+    #if(cinvcode1)
     AND t3.cinvcode1 LIKE CONCAT('%', #para(cinvcode1), '%')
-                     #end
-                     #if(cinvname1)
+    #end
+    #if(cinvname1)
     AND t3.cinvname1 LIKE CONCAT('%', #para(cinvname1), '%')
-                     #end
-                     #if(cinvcode)
+    #end
+    #if(cinvcode)
     AND t3.cinvcode LIKE CONCAT('%', #para(cinvcode), '%')
-                        #end
-                     #if(iqcuserid)
+    #end
+    #if(iqcuserid)
     AND t1.iqcuserid =#para(iqcuserid)
-                     #end
-                     #if(iscompleted)
+    #end
+    #if(iscompleted)
     AND t1.iscompleted =#para(iscompleted)
-                     #end
-                     #if(istatus)
+    #end
+    #if(istatus)
     AND t1.istatus =#para(istatus)
-                     #end
-                     #if(cqcformname)
+    #end
+    #if(cqcformname)
     AND t2.cqcformname =#para(cqcformname)
-                     #end
-                     #if(starttime)
+    #end
+    #if(starttime)
     AND t1.dcreatetime >= #para(starttime)
-                     #end
-                     #if(endtime)
+    #end
+    #if(endtime)
     AND t1.dcreatetime <= #para(endtime)
-                     #end
+    #end
+    #if(name)
+    AND t1.cupdatename <= #para(name)
+    #end
     #if(cbarcode)
     AND t1.cBarcode LIKE CONCAT('%', #para(cbarcode), '%')
     #end

@@ -1,6 +1,6 @@
 package cn.rjtech.admin.bomcompare;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
@@ -196,7 +196,7 @@ public class BomCompareService extends BaseService<BomCompare> {
 	public List<Record> findByBomMasterId(Long bomMasterId) {
 		ValidationUtils.notNull(bomMasterId, JBoltMsg.DATA_NOT_EXIST);
 		List<Record> records = dbTemplate("bomcompare.findByBomMasterId", Okv.by("bomMasterId", bomMasterId)).find();
-		if (CollectionUtil.isEmpty(records)){
+		if (CollUtil.isEmpty(records)){
 			return records;
 		}
 		Map<String, List<Record>> cInvLevMap = new HashMap<>();

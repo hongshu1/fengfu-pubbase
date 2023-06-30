@@ -1,6 +1,6 @@
 package cn.rjtech.admin.prodformm;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
@@ -32,7 +32,6 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -172,7 +171,7 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 			}
 		}
 
-		if (CollectionUtil.isNotEmpty(mapList)){
+		if (CollUtil.isNotEmpty(mapList)){
 
 			Collections.sort(mapList, new Comparator<Map<String, Object>>() {
 				@Override
@@ -226,7 +225,7 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 
 			}
 		}
-		if (CollectionUtil.isNotEmpty(mapList)){
+		if (CollUtil.isNotEmpty(mapList)){
 
 			Collections.sort(mapList, new Comparator<Map<String, Object>>() {
 				@Override

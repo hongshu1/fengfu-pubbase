@@ -1,7 +1,6 @@
 package cn.rjtech.admin.inventoryroutingequipment;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
@@ -174,7 +173,7 @@ public class InventoryRoutingEquipmentService extends BaseService<InventoryRouti
 		if (StrUtil.isNotBlank(kv.getStr(InventoryRoutingConfig.EQUIPMENTJSON))){
 			String str = kv.getStr(InventoryRoutingConfig.EQUIPMENTJSON);
 			JSONArray jsonArray = JSONObject.parseArray(str);
-			if (CollectionUtil.isEmpty(jsonArray)){
+			if (CollUtil.isEmpty(jsonArray)){
 				return null;
 			}
 			List<Record> recordList = new ArrayList<>();
@@ -226,7 +225,7 @@ public class InventoryRoutingEquipmentService extends BaseService<InventoryRouti
 			if (object instanceof List){
 				itemJson =(List<JSONObject> )object;
 			}
-			if (CollectionUtil.isEmpty(itemJson)){
+			if (CollUtil.isEmpty(itemJson)){
 				continue;
 			}
 			
@@ -239,7 +238,7 @@ public class InventoryRoutingEquipmentService extends BaseService<InventoryRouti
 			}
 			
 		}
-		if (CollectionUtil.isNotEmpty(equipmentList)){
+		if (CollUtil.isNotEmpty(equipmentList)){
 			batchSave(equipmentList, 500);
 		}
 	}

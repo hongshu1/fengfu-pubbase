@@ -1,7 +1,6 @@
 package cn.rjtech.admin.bomm;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
@@ -195,7 +194,7 @@ public class BomMService extends BaseService<BomM> {
 	
 	public List<JsTreeBean> createJsTreeBean(String enableIconStr, List<Record> recordList){
 		List<JsTreeBean> trees = new ArrayList<>();
-		if (CollectionUtil.isNotEmpty(recordList)){
+		if (CollUtil.isNotEmpty(recordList)){
 			
 			List<Record> allList = dbTemplate("bomm.datas", Kv.by("orgId", getOrgId())).find();
 			Map<Long, List<Record>> compareMap = allList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IPID))).collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID)));
@@ -278,7 +277,7 @@ public class BomMService extends BaseService<BomM> {
 	}
     
     public void changeRecord(List<Record> recordList){
-        if (CollectionUtil.isEmpty(recordList)){
+        if (CollUtil.isEmpty(recordList)){
             return;
         }
         for (Record record : recordList){
@@ -385,7 +384,7 @@ public class BomMService extends BaseService<BomM> {
 	
 	public Map<Long, Record> findByVersionMap(Long orgId){
 		List<Record> versionList = findByVersionList(orgId);
-		if (CollectionUtil.isEmpty(versionList)){
+		if (CollUtil.isEmpty(versionList)){
 			return new HashMap<>();
 		}
 		return versionList.stream().collect(Collectors.toMap(record -> record.getLong(BomM.IINVENTORYID), record -> record));
@@ -424,10 +423,10 @@ public class BomMService extends BaseService<BomM> {
 //			ValidationUtils.isTrue((AuditStatusEnum.NOT_AUDIT.getValue()==iAuditStatus || AuditStatusEnum.REJECTED.getValue()==iAuditStatus), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行删除");
 			// 校验母件是否有被其他子件引用到
 			List<BomM> bomMList = findBomByPartBomMid(bomMasterId);
-			if (CollectionUtil.isNotEmpty(bomMList)){
+			if (CollUtil.isNotEmpty(bomMList)){
 				List<String> invCodeList = bomMList.stream().map(BomM::getCInvCode).collect(Collectors.toList());
 				String format = String.format("该半成品版本记录，有存在其他地方使用【%s】", CollUtil.join(invCodeList, ","));
-				ValidationUtils.isTrue(CollectionUtil.isEmpty(bomMList), format);
+				ValidationUtils.isTrue(CollUtil.isEmpty(bomMList), format);
 			}
 			// 查询子件，将子件状态改为删除
 			List<BomD> compareList = bomDService.queryBomCompareList(bomMasterId, BomD.IBOMMID);
@@ -551,14 +550,14 @@ public class BomMService extends BaseService<BomM> {
 		// 校验版本号
 		/*if (StrUtil.isNotBlank(cVersion)){
 			List<Record> versionList = bomMService.findVersionByInvId(getOrgId(), bomM.getIInventoryId(), bomM.getIAutoId());
-			if (CollectionUtil.isNotEmpty(versionList)){
+			if (CollUtil.isNotEmpty(versionList)){
 			
 			}
 		}*/
 		
 		// 校验日期 和 版本号
 		List<Record> invBomList = findByInvId(getOrgId(), bomM.getIInventoryId(), bomM.getIAutoId());
-		if (CollectionUtil.isNotEmpty(invBomList)){
+		if (CollUtil.isNotEmpty(invBomList)){
 			invBomList.forEach(record -> {
 				boolean overlapping = isOverlapping(bomM, record);
 				ValidationUtils.isTrue(overlapping, "母件不可重复创建版本，启用日期停用日期重叠！");
@@ -874,7 +873,7 @@ public class BomMService extends BaseService<BomM> {
 		
 		Map<Long, Inventory> inventoryMap = inventoryList.stream().collect(Collectors.toMap(Inventory::getIAutoId, Function.identity()));
 		Map<Long, Vendor> vendorMap = null;
-		if (CollectionUtil.isNotEmpty(vendorList)){
+		if (CollUtil.isNotEmpty(vendorList)){
 			vendorMap = vendorList.stream().collect(Collectors.toMap(Vendor::getIAutoId, Function.identity()));
 		}
 		
@@ -1098,7 +1097,7 @@ public class BomMService extends BaseService<BomM> {
 				// 落料
 				BomD blankBomCompare = bomD.getChildBom();
 				List<String> nextCodes = findNextLevelCodes(code, codeBomCompareMap.keySet());
-				ValidationUtils.isTrue(CollectionUtil.isEmpty(nextCodes), "编码【"+code+"】已存在多个存货，不允许存在下一级");
+				ValidationUtils.isTrue(CollUtil.isEmpty(nextCodes), "编码【"+code+"】已存在多个存货，不允许存在下一级");
 				// 1-1
 				if (ObjUtil.isNull(bomD.getICodeLevel()) && StrUtil.isNotBlank(perCode)){
 					BomD parentBom = codeBomCompareMap.get(perCode);
@@ -1207,7 +1206,7 @@ public class BomMService extends BaseService<BomM> {
 		// 校验子件个数是否相同
 		ValidationUtils.isTrue(recordList.size() == compareInvIds.size(), versionErrorMsg(0, cInvLev, cVersion));
 		// 校验子件编码是否相同
-		ValidationUtils.isTrue(CollectionUtil.containsAll(invIds, compareInvIds), versionErrorMsg(1, cInvLev, cVersion));
+		ValidationUtils.isTrue(CollUtil.containsAll(invIds, compareInvIds), versionErrorMsg(1, cInvLev, cVersion));
 		
 		// 校验子件数量，重量是否相同
 		for (Record record :recordList){
@@ -1311,7 +1310,7 @@ public class BomMService extends BaseService<BomM> {
 		List<Long> invIds = recordList.stream().map(record -> record.getLong(BomD.IINVENTORYID)).collect(Collectors.toList());
 		List<Long> compareInvIds = new ArrayList<>();
 		
-		if (CollectionUtil.isNotEmpty(nextLevelCodes)){
+		if (CollUtil.isNotEmpty(nextLevelCodes)){
 			for (String code : nextLevelCodes){
 				BomD bomCompare = CodeBomCompareMap.get(code);
 				compareInvIds.add(bomCompare.getIInventoryId());
@@ -1323,7 +1322,7 @@ public class BomMService extends BaseService<BomM> {
 		// 校验子件个数是否相同
 		ValidationUtils.isTrue(recordList.size() == compareInvIds.size(), versionErrorMsg(0, cInvLev, cVersion));
 		// 校验子件编码是否相同
-		ValidationUtils.isTrue(CollectionUtil.containsAll(invIds, compareInvIds), versionErrorMsg(1, cInvLev, cVersion));
+		ValidationUtils.isTrue(CollUtil.containsAll(invIds, compareInvIds), versionErrorMsg(1, cInvLev, cVersion));
 		
 		// 校验子件数量，重量是否相同
 		for (Record record :recordList){
@@ -1360,7 +1359,7 @@ public class BomMService extends BaseService<BomM> {
 			}else if (ObjUtil.isNotNull(bomD.getChildBom())){
 				BomD childBom = bomD.getChildBom();
 				ValidationUtils.isTrue(ObjUtil.isNull(childBom.getChildBom()), cInvCode+"：存货下，不允许再有子件！");
-			}else if (CollectionUtil.isNotEmpty(nextLevelCodes)){
+			}else if (CollUtil.isNotEmpty(nextLevelCodes)){
 				for (String code : nextLevelCodes){
 					BomD bomCompare = CodeBomCompareMap.get(code);
 					if (invId.equals(bomCompare.getIInventoryId())){
@@ -1386,7 +1385,7 @@ public class BomMService extends BaseService<BomM> {
 	
 	public List<Record> getEffectiveBomList(Long orgId, List<Long> invIds){
 		Okv okv = Okv.by("orgId", orgId);
-		if (CollectionUtil.isNotEmpty(invIds) && invIds.size() < 150){
+		if (CollUtil.isNotEmpty(invIds) && invIds.size() < 150){
 			okv.set("invIds", invIds);
 		}
 		return dbTemplate("bomm.getEffectiveBomM", okv).find();
@@ -1394,7 +1393,7 @@ public class BomMService extends BaseService<BomM> {
 	
 	public Map<Long, Record> getEffectiveBomMap(Long orgId, List<Long> invIds){
 		List<Record> recordList = getEffectiveBomList(orgId, invIds);
-		if (CollectionUtil.isEmpty(recordList)){
+		if (CollUtil.isEmpty(recordList)){
 			return new HashMap<>();
 		}
 		return recordList.stream().collect(Collectors.toMap(record -> record.getLong(BomM.IINVENTORYID), record -> record, (record1, record2)-> record1));

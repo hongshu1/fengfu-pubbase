@@ -1,6 +1,6 @@
 package cn.rjtech.admin.qcformparam;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -265,7 +265,7 @@ public class QcFormParamService extends BaseService<QcFormParam> {
 	}
 	
 	public List<QcFormParam> createQcFormParamList(Long qcFormId, JSONArray formParamArray){
-		if (CollectionUtil.isEmpty(formParamArray)){
+		if (CollUtil.isEmpty(formParamArray)){
 			return null;
 		}
 		List<QcFormParam> qcFormParamList = new ArrayList<>();
