@@ -71,7 +71,7 @@
     </div>
 </div>
 <script>
-    function barcode_#(pageId)(ele){
+    function barcode_#(pageId)(ele) {
         LayerMsgBox.loading("执行中......", 2000);
 
         var whcode = $("#whcode").val();
@@ -106,7 +106,7 @@
             Ajax.post("admin/currentstock/barcode", data, function (res) {
                 if (res.state === 'ok') {
                     
-                    jboltTableInsertRow("jbolt_table_StockCheckVouchBarcode_split_#(pageId)", res.data, false, true, true);
+                    jboltTableInsertRow("jbolt_table_StockCheckVouchBarcode_split_#(pageId)", res.data, false, false, true);
 
                     computeQty(res.data);
                     
@@ -149,19 +149,18 @@
 
         // 修改指定单元格数据
         jboltTableSetCells($table, $td.parent(), cols);
-
-
     }
 
-    function barcodes(){
+    function barcodes() {
 
-        // //扫入多条现品票判断是否存在
-        let data = getJboltTableAllDatas("jbolt_table_StockCheckVouchBarcode_split_#(pageId)",["barcode"]);
+        // 扫入多条现品票判断是否存在
+        let data = getJboltTableAllDatas("jbolt_table_StockCheckVouchBarcode_split_#(pageId)", ["barcode"]);
         console.log(data);
+
         let array = [];
-        if (data != null){
+        if (data != null) {
             for (let i = 0; i < data.length; i++) {
-                array.push("'"+data[i].barcode+"'");
+                array.push("'" + data[i].barcode + "'");
             }
             //通过逗号分开，一个一个加进数组中
             let codes = array.join(',');
@@ -169,42 +168,46 @@
         } else {
             $("#barcodes").val('');
         }
+
         return true;
     }
+    
     /*去后端执行提交功能*/
-    function getEditableTableOptions_split_#(pageId)(){
+    function getEditableTableOptions_split_#(pageId)() {
         var editableTableOptions={
             //初始行数
             // initRowCount:10,
             //限制最大数 默认30
             maxRowCount:1000,
             trigger:"click",
-            submit:{
-                type:"multi",//cell|all|multi
-                name:"table2"
+            submit: {
+                type: "multi",//cell|all|multi
+                name: "table2"
             },
             cols: {
                 iautoid: {
                     submitAttr: "iautoid",
                 },
                 qty: {
-                    type:"amount",
-                    placeholder:'数量',
-                    required:true,
-                    summary:[{
-                        dir:"v",
-                        tofixed:2,
-                        roundtag:"round",
-                        removezero:true,
-                        formula:"sum"
+                    type: "amount",
+                    placeholder: '数量',
+                    required: true,
+                    summary: [{
+                        dir: "v",
+                        tofixed: 2,
+                        roundtag: "round",
+                        removezero: true,
+                        formula: "sum"
                     }],
-                    handler:function (table,td,text,value,jsonData) {
-                        let iqty =  jsonData.iqty;
+                    handler: function (table, td, text, value, jsonData) {
+                        let iqty = jsonData.iqty;
                         console.log(iqty);
-                        let qty = (typeof +value === 'number' && !isNaN(value))?value:0;
-                        console.log('实盘数量===>',qty);
-                        if (qty > iqty){
-                            showFormEleErrorStyle(td,"请输入实盘数量小于或等于数量的！！！");
+                        
+                        let qty = (typeof +value === 'number' && !isNaN(value)) ? value : 0;
+                        console.log('实盘数量===>', qty);
+                        
+                        if (qty > iqty) {
+                            showFormEleErrorStyle(td, "请输入实盘数量小于或等于数量的！！！");
                             return false;
                         }
                         computeQty(jsonData);
