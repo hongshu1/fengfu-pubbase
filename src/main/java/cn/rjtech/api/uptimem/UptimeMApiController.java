@@ -35,7 +35,7 @@ public class UptimeMApiController extends BaseApiController {
                             @Para(value = "pageSize") int pageSize,
                             @Para(value = "cworkname") String cworkname,
                             @Para(value = "cworkshiftname") String cworkshiftname,
-                            @Para(value = "iauditstatus") int iauditstatus,
+                            @Para(value = "iauditstatus") String iauditstatus,
                             @Para(value = "startdate") String startdate,
                             @Para(value = "enddate") String enddate) {
         //ValidationUtils.validateId(iMoDocId,"工单主键id");
