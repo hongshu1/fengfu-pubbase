@@ -69,7 +69,7 @@ public class UptimeMApiController extends BaseApiController {
 
 
     /**
-     * 补焊纪录保存接口
+     * 补焊纪录保存及审核接口
      * @param updateOrSaveType 新增或者编辑，新增传1，编辑传0
      * @param data {  //表头数据json串，新增时iautoid为空
      *                 "iautoid":"1674253970028417024",  //主键id
@@ -81,7 +81,8 @@ public class UptimeMApiController extends BaseApiController {
      *                 "iswitchmins":20,                 //机种切换时间（分钟）
      *                 "iworkmins":20,                   //机种切换时间（分钟）
      *                 "iworkregionmid":"1663734219389444096",  //产线id
-     *                 "iworkshiftmid":"1646683347910529024"    //班次id
+     *                 "iworkshiftmid":"1646683347910529024",   //班次id
+     *                 "iauditstatus":0                         //保存或审核，保存传0，审核传1
      *             }
      *
      * @param dataList [  //表格数据json串，新增时iautoid为空
