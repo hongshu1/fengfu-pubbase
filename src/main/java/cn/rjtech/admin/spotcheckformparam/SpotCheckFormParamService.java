@@ -1,6 +1,6 @@
 package cn.rjtech.admin.spotcheckformparam;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -147,7 +147,7 @@ public class SpotCheckFormParamService extends BaseService<SpotCheckFormParam> {
 	}
 
 	public List<SpotCheckFormParam> createQcFormParamList(Long qcFormId, JSONArray formParamArray){
-		if (CollectionUtil.isEmpty(formParamArray)){
+		if (CollUtil.isEmpty(formParamArray)){
 			return null;
 		}
 		List<SpotCheckFormParam> qcFormParamList = new ArrayList<>();

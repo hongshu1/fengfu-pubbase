@@ -1,6 +1,6 @@
 package cn.rjtech.admin.spotcheckform;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
@@ -583,7 +583,7 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 			}
 		}
 
-		if (CollectionUtil.isNotEmpty(mapList)){
+		if (CollUtil.isNotEmpty(mapList)){
 
 			Collections.sort(mapList, new Comparator<Map<String, Object>>() {
 				@Override

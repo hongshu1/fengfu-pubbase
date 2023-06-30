@@ -1,7 +1,6 @@
 package cn.rjtech.admin.inventoryroutinginvc;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
@@ -139,7 +138,7 @@ public class InventoryRoutingInvcService extends BaseService<InventoryRoutingInv
 		if (StrUtil.isNotBlank(kv.getStr(InventoryRoutingConfig.ITEMJSON))){
 			String itemJson = EncodeUtils.decodeUrl(kv.getStr(InventoryRoutingConfig.ITEMJSON), EncodeUtils.UTF_8);
 			JSONArray jsonArray = JSONObject.parseArray(itemJson);
-			if (CollectionUtil.isEmpty(jsonArray)){
+			if (CollUtil.isEmpty(jsonArray)){
 				return null;
 			}
 			List<Record> recordList = new ArrayList<>();
@@ -214,7 +213,7 @@ public class InventoryRoutingInvcService extends BaseService<InventoryRoutingInv
 	
 	public void saveRoutingInv(Long userId, String userName, Date date, List<Record> recordList) {
 		List<InventoryRoutingInvc> inventoryRoutingInvcList = new ArrayList<>();
-		if (CollectionUtil.isEmpty(recordList)){
+		if (CollUtil.isEmpty(recordList)){
 			return;
 		}
 		for (Record record : recordList){
@@ -227,7 +226,7 @@ public class InventoryRoutingInvcService extends BaseService<InventoryRoutingInv
 			if (object instanceof List){
 				itemJson =(List<JSONObject> )object;
 			}
-			if (CollectionUtil.isEmpty(itemJson)){
+			if (CollUtil.isEmpty(itemJson)){
 				continue;
 			}
 			List<InventoryRoutingInvc> invcList = new ArrayList<>();
@@ -238,7 +237,7 @@ public class InventoryRoutingInvcService extends BaseService<InventoryRoutingInv
 				InventoryRoutingInvc inventoryRoutingInvc = create(userId, id, routingConfigId, invId, userName, null, usageUom, date);
 				invcList.add(inventoryRoutingInvc);
 			}
-			if (CollectionUtil.isNotEmpty(invcList)){
+			if (CollUtil.isNotEmpty(invcList)){
 				batchSave(invcList, 500);
 			}
 		}

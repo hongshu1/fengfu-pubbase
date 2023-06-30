@@ -1,6 +1,6 @@
 package cn.rjtech.admin.department;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
@@ -64,9 +64,9 @@ public class DepartmentService extends BaseService<Department> {
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv, String sortColumn, String sortType) {
         Page<Record> paginate = dbTemplate("department.list", kv.set("sortColumn", sortColumn).set("sortType", sortType).set("orgId", getOrgId())).paginate(pageNumber, pageSize);
-        if (CollectionUtil.isNotEmpty(paginate.getList())){
+        if (CollUtil.isNotEmpty(paginate.getList())){
             List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey("org_type", true);
-            if (CollectionUtil.isEmpty(dictionaryList)){
+            if (CollUtil.isEmpty(dictionaryList)){
                 return paginate;
             }
             Map<String, Dictionary> dictionaryMap = dictionaryList.stream().collect(Collectors.toMap(Dictionary::getSn, dictionary -> dictionary));
@@ -320,7 +320,7 @@ public class DepartmentService extends BaseService<Department> {
 
     public List<Department> getTreeTableDatas(Kv kv) {
         List<Department> departmentList = daoTemplate("department.list", kv).find();
-        if (CollectionUtil.isNotEmpty(departmentList)){
+        if (CollUtil.isNotEmpty(departmentList)){
             List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey("org_type", true);
             Map<String, Dictionary> dictionaryMap = dictionaryList.stream().collect(Collectors.toMap(Dictionary::getSn, dictionary -> dictionary));
             for (Department department : departmentList){

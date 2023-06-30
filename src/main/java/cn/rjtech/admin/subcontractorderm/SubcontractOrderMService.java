@@ -1,7 +1,6 @@
 package cn.rjtech.admin.subcontractorderm;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -98,7 +97,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 	
 	
 	private void changeData(List<Record> list){
-		if (CollectionUtil.isEmpty(list)){
+		if (CollUtil.isEmpty(list)){
 			return;
 		}
 		// 应付类型
@@ -467,7 +466,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 		
 		tx(()->{
 			// 删除 先修改细表状态，在删除中间表数据，在修改到货计划细表及主表状态
-			if (CollectionUtil.isNotEmpty(notIds)){
+			if (CollUtil.isNotEmpty(notIds)){
 				for (Long purchaseOrderDId : notIds){
 					SubcontractOrderD subcontractOrderD = subcontractOrderDService.findById(purchaseOrderDId);
 					ValidationUtils.notNull(subcontractOrderD, "采购订单细表数据未找到");
@@ -855,7 +854,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 		List<Record> subcontractOrderRefList = subcontractOrderRefService.findBySubContractOrderMId(id);
 		// 修改细表数据
 		subcontractOrderDService.removeBySubcontractOrderMId(id);
-		if (CollectionUtil.isNotEmpty(subcontractOrderRefList)){
+		if (CollUtil.isNotEmpty(subcontractOrderRefList)){
 			List<Long> demandPlanDIds = subcontractOrderRefList.stream().map(record -> record.getLong(SubcontractOrderRef.IDEMANDPLANDID)).collect(Collectors.toList());
 			// 修改到货计划细表状态
 			demandPlanDService.batchUpdateGenTypeByIds(demandPlanDIds, OrderGenTypeEnum.NOT_GEN.getValue(), CompleteTypeEnum.INCOMPLETE.getValue());

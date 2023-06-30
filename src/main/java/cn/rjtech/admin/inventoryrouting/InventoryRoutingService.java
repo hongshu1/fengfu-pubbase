@@ -1,7 +1,6 @@
 package cn.rjtech.admin.inventoryrouting;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
@@ -165,7 +164,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 
     public List<Record> dataList(Long iinventoryid) {
 		List<Record> list = dbTemplate("inventoryclass.getRouings", Okv.by("iinventoryid", iinventoryid)).find();
-		if (CollectionUtil.isNotEmpty(list)){
+		if (CollUtil.isNotEmpty(list)){
 			for (Record record :list){
 				Integer iAuditStatus = record.getInt(InventoryRouting.IAUDITSTATUS);
 				ValidationUtils.notNull(iAuditStatus, "该工艺路线缺少审批状态！");

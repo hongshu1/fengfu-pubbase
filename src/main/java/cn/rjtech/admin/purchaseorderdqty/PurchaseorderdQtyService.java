@@ -1,6 +1,6 @@
 package cn.rjtech.admin.purchaseorderdqty;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -135,7 +135,7 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 	
 	public List<PurchaseorderdQty> getPurchaseorderdQty(Long purchaseOrderDId, JSONArray purchaseorderdQtyJsonArray, int seq){
 		List<PurchaseorderdQty> list = new ArrayList<>();
-		if (CollectionUtil.isEmpty(purchaseorderdQtyJsonArray)){
+		if (CollUtil.isEmpty(purchaseorderdQtyJsonArray)){
 			return null;
 		}
 		for (int i=0; i<purchaseorderdQtyJsonArray.size(); i++){
